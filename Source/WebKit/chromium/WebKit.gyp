@@ -399,6 +399,7 @@
                 'src/GeolocationClientProxy.cpp',
                 'src/GeolocationClientProxy.h',
                 'src/GraphicsContext3DChromium.cpp',
+                'src/GraphicsContext3DPrivate.cpp',
                 'src/GraphicsContext3DPrivate.h',
                 'src/gtk/WebInputEventFactory.cpp',
                 'src/WebHelperPluginImpl.cpp',

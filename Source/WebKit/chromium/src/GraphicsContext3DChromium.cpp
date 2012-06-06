@@ -30,948 +30,18 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL)
-
 #include "GraphicsContext3D.h"
 
 #include "DrawingBuffer.h"
-#include "Extensions3DChromium.h"
-#include "GrContext.h"
-#include "GrGLInterface.h"
 #include "GraphicsContext3DPrivate.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include <public/Platform.h>
 #include <public/WebGraphicsContext3D.h>
-
-#include <stdio.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringHash.h>
-
-
-namespace {
-
-// The limit of the number of textures we hold in the GrContext's bitmap->texture cache.
-const int maxGaneshTextureCacheCount = 512;
-// The limit of the bytes allocated toward textures in the GrContext's bitmap->texture cache.
-const size_t maxGaneshTextureCacheBytes = 96 * 1024 * 1024;
-
-}
-
-// There are two levels of delegation in this file:
-//
-//   1. GraphicsContext3D delegates to GraphicsContext3DPrivate. This is done
-//      so that we have some place to store data members common among
-//      implementations; GraphicsContext3D only provides us the m_private
-//      pointer. We always delegate to the GraphicsContext3DPrivate. While we
-//      could sidestep it and go directly to the WebGraphicsContext3D in some
-//      cases, it is better for consistency to always delegate through it.
-//
-//   2. GraphicsContext3DPrivate delegates to an implementation of
-//      WebGraphicsContext3D. This is done so we have a place to inject an
-//      implementation which remotes the OpenGL calls across processes.
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-//----------------------------------------------------------------------
-// GraphicsContext3DPrivate
-
-GraphicsContext3DPrivate::GraphicsContext3DPrivate(PassOwnPtr<WebKit::WebGraphicsContext3D> webContext, bool preserveDrawingBuffer)
-    : m_impl(webContext)
-    , m_initializedAvailableExtensions(false)
-    , m_layerComposited(false)
-    , m_preserveDrawingBuffer(preserveDrawingBuffer)
-    , m_resourceSafety(ResourceSafetyUnknown)
-    , m_grContext(0)
-{
-}
-
-GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
-{
-    if (m_grContext) {
-        m_grContext->contextDestroyed();
-        GrSafeUnref(m_grContext);
-    }
-}
-
-PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D> webContext, GraphicsContext3D::RenderStyle renderStyle, bool preserveDrawingBuffer)
-{
-    bool renderDirectlyToHostWindow = renderStyle == GraphicsContext3D::RenderDirectlyToHostWindow;
-
-    RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(GraphicsContext3D::Attributes(), 0, renderDirectlyToHostWindow));
-
-    OwnPtr<GraphicsContext3DPrivate> priv = adoptPtr(new GraphicsContext3DPrivate(webContext, preserveDrawingBuffer));
-    context->m_private = priv.release();
-    return context.release();
-}
-
-namespace {
-
-void getDrawingParameters(DrawingBuffer* drawingBuffer, WebKit::WebGraphicsContext3D* graphicsContext3D,
-                          Platform3DObject* frameBufferId, int* width, int* height)
-{
-    if (drawingBuffer) {
-        *frameBufferId = drawingBuffer->framebuffer();
-        *width = drawingBuffer->size().width();
-        *height = drawingBuffer->size().height();
-    } else {
-        *frameBufferId = 0;
-        *width = graphicsContext3D->width();
-        *height = graphicsContext3D->height();
-    }
-}
-
-} // anonymous namespace
-
-WebKit::WebGraphicsContext3D* GraphicsContext3DPrivate::extractWebGraphicsContext3D(GraphicsContext3D* context)
-{
-    if (!context)
-        return 0;
-    return context->m_private->m_impl.get();
-}
-
-PlatformGraphicsContext3D GraphicsContext3DPrivate::platformGraphicsContext3D() const
-{
-    return m_impl.get();
-}
-
-Platform3DObject GraphicsContext3DPrivate::platformTexture() const
-{
-    return m_impl->getPlatformTextureId();
-}
-
-class GrMemoryAllocationChangedCallback : public Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM {
-public:
-    GrMemoryAllocationChangedCallback(GraphicsContext3DPrivate* context)
-        : m_context(context)
-    {
-    }
-
-    virtual void onGpuMemoryAllocationChanged(Extensions3DChromium::GpuMemoryAllocationCHROMIUM allocation)
-    {
-        GrContext* context = m_context->grContext();
-        if (!context)
-            return;
-
-        if (!allocation.gpuResourceSizeInBytes) {
-            context->freeGpuResources();
-            context->setTextureCacheLimits(0, 0);
-        } else
-            context->setTextureCacheLimits(maxGaneshTextureCacheCount, maxGaneshTextureCacheBytes);
-    }
-
-private:
-    GraphicsContext3DPrivate* m_context;
-};
-
-GrContext* GraphicsContext3DPrivate::grContext()
-{
-    if (!m_grContext) {
-        SkAutoTUnref<GrGLInterface> interface(m_impl->createGrGLInterface());
-        m_grContext = GrContext::Create(kOpenGL_Shaders_GrEngine, reinterpret_cast<GrPlatform3DContext>(interface.get()));
-        if (m_grContext) {
-            m_grContext->setTextureCacheLimits(maxGaneshTextureCacheCount, maxGaneshTextureCacheBytes);
-            Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(getExtensions());
-            if (extensions3DChromium->supports("GL_CHROMIUM_gpu_memory_manager"))
-                extensions3DChromium->setGpuMemoryAllocationChangedCallbackCHROMIUM(adoptPtr(new GrMemoryAllocationChangedCallback(this)));
-        }
-    }
-    return m_grContext;
-}
-
-void GraphicsContext3DPrivate::prepareTexture()
-{
-    m_impl->prepareTexture();
-}
-
-void GraphicsContext3DPrivate::markContextChanged()
-{
-    m_layerComposited = false;
-}
-
-void GraphicsContext3DPrivate::markLayerComposited()
-{
-    m_layerComposited = true;
-}
-
-bool GraphicsContext3DPrivate::layerComposited() const
-{
-    return m_layerComposited;
-}
-
-void GraphicsContext3DPrivate::paintFramebufferToCanvas(int framebuffer, int width, int height, bool premultiplyAlpha, ImageBuffer* imageBuffer)
-{
-    unsigned char* pixels = 0;
-    size_t bufferSize = 4 * width * height;
-
-    const SkBitmap* canvasBitmap = imageBuffer->context()->platformContext()->bitmap();
-    const SkBitmap* readbackBitmap = 0;
-    ASSERT(canvasBitmap->config() == SkBitmap::kARGB_8888_Config);
-    if (canvasBitmap->width() == width && canvasBitmap->height() == height) {
-        // This is the fastest and most common case. We read back
-        // directly into the canvas's backing store.
-        readbackBitmap = canvasBitmap;
-        m_resizingBitmap.reset();
-    } else {
-        // We need to allocate a temporary bitmap for reading back the
-        // pixel data. We will then use Skia to rescale this bitmap to
-        // the size of the canvas's backing store.
-        if (m_resizingBitmap.width() != width || m_resizingBitmap.height() != height) {
-            m_resizingBitmap.setConfig(SkBitmap::kARGB_8888_Config,
-                                       width,
-                                       height);
-            if (!m_resizingBitmap.allocPixels())
-                return;
-        }
-        readbackBitmap = &m_resizingBitmap;
-    }
-
-    // Read back the frame buffer.
-    SkAutoLockPixels bitmapLock(*readbackBitmap);
-    pixels = static_cast<unsigned char*>(readbackBitmap->getPixels());
-
-    m_impl->readBackFramebuffer(pixels, 4 * width * height, framebuffer, width, height);
-
-    if (premultiplyAlpha) {
-        for (size_t i = 0; i < bufferSize; i += 4) {
-            pixels[i + 0] = std::min(255, pixels[i + 0] * pixels[i + 3] / 255);
-            pixels[i + 1] = std::min(255, pixels[i + 1] * pixels[i + 3] / 255);
-            pixels[i + 2] = std::min(255, pixels[i + 2] * pixels[i + 3] / 255);
-        }
-    }
-
-    readbackBitmap->notifyPixelsChanged();
-    if (m_resizingBitmap.readyToDraw()) {
-        // We need to draw the resizing bitmap into the canvas's backing store.
-        SkCanvas canvas(*canvasBitmap);
-        SkRect dst;
-        dst.set(SkIntToScalar(0), SkIntToScalar(0), SkIntToScalar(canvasBitmap->width()), SkIntToScalar(canvasBitmap->height()));
-        canvas.drawBitmapRect(m_resizingBitmap, 0, dst);
-    }
-}
-
-void GraphicsContext3DPrivate::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer, DrawingBuffer* drawingBuffer)
-{
-    Platform3DObject framebufferId;
-    int width, height;
-    getDrawingParameters(drawingBuffer, m_impl.get(), &framebufferId, &width, &height);
-    paintFramebufferToCanvas(framebufferId, width, height, !m_impl->getContextAttributes().premultipliedAlpha, imageBuffer);
-}
-
-bool GraphicsContext3DPrivate::paintCompositedResultsToCanvas(ImageBuffer*)
-{
-    return false;
-}
-
-PassRefPtr<ImageData> GraphicsContext3DPrivate::paintRenderingResultsToImageData(DrawingBuffer* drawingBuffer)
-{
-    if (m_impl->getContextAttributes().premultipliedAlpha)
-        return 0;
-
-    Platform3DObject framebufferId;
-    int width, height;
-    getDrawingParameters(drawingBuffer, m_impl.get(), &framebufferId, &width, &height);
-
-    RefPtr<ImageData> imageData = ImageData::create(IntSize(width, height));
-    unsigned char* pixels = imageData->data()->data();
-    size_t bufferSize = 4 * width * height;
-
-    m_impl->readBackFramebuffer(pixels, bufferSize, framebufferId, width, height);
-
-    for (size_t i = 0; i < bufferSize; i += 4)
-        std::swap(pixels[i], pixels[i + 2]);
-
-    return imageData.release();
-}
-
-void GraphicsContext3DPrivate::reshape(int width, int height)
-{
-    if (width == m_impl->width() && height == m_impl->height())
-        return;
-
-    m_impl->reshape(width, height);
-}
-
-IntSize GraphicsContext3DPrivate::getInternalFramebufferSize() const
-{
-    return IntSize(m_impl->width(), m_impl->height());
-}
-
-bool GraphicsContext3DPrivate::isContextLost()
-{
-    return m_impl->isContextLost();
-}
-
-// Macros to assist in delegating from GraphicsContext3DPrivate to
-// WebGraphicsContext3D.
-
-#define DELEGATE_TO_IMPL(name) \
-void GraphicsContext3DPrivate::name() \
-{ \
-    m_impl->name(); \
-}
-
-#define DELEGATE_TO_IMPL_R(name, rt)           \
-rt GraphicsContext3DPrivate::name() \
-{ \
-    return m_impl->name(); \
-}
-
-#define DELEGATE_TO_IMPL_1(name, t1) \
-void GraphicsContext3DPrivate::name(t1 a1) \
-{ \
-    m_impl->name(a1); \
-}
-
-#define DELEGATE_TO_IMPL_1R(name, t1, rt)    \
-rt GraphicsContext3DPrivate::name(t1 a1) \
-{ \
-    return m_impl->name(a1); \
-}
-
-#define DELEGATE_TO_IMPL_2(name, t1, t2) \
-void GraphicsContext3DPrivate::name(t1 a1, t2 a2) \
-{ \
-    m_impl->name(a1, a2); \
-}
-
-#define DELEGATE_TO_IMPL_2R(name, t1, t2, rt)  \
-rt GraphicsContext3DPrivate::name(t1 a1, t2 a2) \
-{ \
-    return m_impl->name(a1, a2); \
-}
-
-#define DELEGATE_TO_IMPL_3(name, t1, t2, t3)   \
-void GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3)    \
-{ \
-    m_impl->name(a1, a2, a3);                  \
-}
-
-#define DELEGATE_TO_IMPL_3R(name, t1, t2, t3, rt)   \
-rt GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3)    \
-{ \
-    return m_impl->name(a1, a2, a3);                  \
-}
-
-#define DELEGATE_TO_IMPL_4(name, t1, t2, t3, t4)    \
-void GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
-{ \
-    m_impl->name(a1, a2, a3, a4);              \
-}
-
-#define DELEGATE_TO_IMPL_4R(name, t1, t2, t3, t4, rt)       \
-rt GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4)        \
-{ \
-    return m_impl->name(a1, a2, a3, a4);           \
-}
-
-#define DELEGATE_TO_IMPL_5(name, t1, t2, t3, t4, t5)      \
-void GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5)        \
-{ \
-    m_impl->name(a1, a2, a3, a4, a5);   \
-}
-
-#define DELEGATE_TO_IMPL_5R(name, t1, t2, t3, t4, t5, rt)      \
-rt GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5)        \
-{ \
-    return m_impl->name(a1, a2, a3, a4, a5);   \
-}
-
-#define DELEGATE_TO_IMPL_6(name, t1, t2, t3, t4, t5, t6)  \
-void GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6) \
-{ \
-    m_impl->name(a1, a2, a3, a4, a5, a6);       \
-}
-
-#define DELEGATE_TO_IMPL_6R(name, t1, t2, t3, t4, t5, t6, rt)  \
-rt GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6) \
-{ \
-    return m_impl->name(a1, a2, a3, a4, a5, a6);       \
-}
-
-#define DELEGATE_TO_IMPL_7(name, t1, t2, t3, t4, t5, t6, t7) \
-void GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7) \
-{ \
-    m_impl->name(a1, a2, a3, a4, a5, a6, a7);   \
-}
-
-#define DELEGATE_TO_IMPL_7R(name, t1, t2, t3, t4, t5, t6, t7, rt) \
-rt GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7) \
-{ \
-    return m_impl->name(a1, a2, a3, a4, a5, a6, a7);   \
-}
-
-#define DELEGATE_TO_IMPL_8(name, t1, t2, t3, t4, t5, t6, t7, t8)       \
-void GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8) \
-{ \
-    m_impl->name(a1, a2, a3, a4, a5, a6, a7, a8);      \
-}
-
-#define DELEGATE_TO_IMPL_9(name, t1, t2, t3, t4, t5, t6, t7, t8, t9)       \
-void GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8, t9 a9) \
-{ \
-    m_impl->name(a1, a2, a3, a4, a5, a6, a7, a8, a9);      \
-}
-
-#define DELEGATE_TO_IMPL_9R(name, t1, t2, t3, t4, t5, t6, t7, t8, t9, rt) \
-rt GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8, t9 a9) \
-{ \
-    return m_impl->name(a1, a2, a3, a4, a5, a6, a7, a8, a9);   \
-}
-
-#define DELEGATE_TO_IMPL_10(name, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) \
-void GraphicsContext3DPrivate::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8, t9 a9, t10 a10) \
-{ \
-    m_impl->name(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); \
-}
-
-DELEGATE_TO_IMPL_R(makeContextCurrent, bool)
-
-bool GraphicsContext3DPrivate::isGLES2Compliant() const
-{
-    return m_impl->isGLES2Compliant();
-}
-
-DELEGATE_TO_IMPL_1(activeTexture, GC3Denum)
-DELEGATE_TO_IMPL_2(attachShader, Platform3DObject, Platform3DObject)
-
-void GraphicsContext3DPrivate::bindAttribLocation(Platform3DObject program, GC3Duint index, const String& name)
-{
-    m_impl->bindAttribLocation(program, index, name.utf8().data());
-}
-
-DELEGATE_TO_IMPL_2(bindBuffer, GC3Denum, Platform3DObject)
-DELEGATE_TO_IMPL_2(bindFramebuffer, GC3Denum, Platform3DObject)
-DELEGATE_TO_IMPL_2(bindRenderbuffer, GC3Denum, Platform3DObject)
-DELEGATE_TO_IMPL_2(bindTexture, GC3Denum, Platform3DObject)
-DELEGATE_TO_IMPL_4(blendColor, GC3Dclampf, GC3Dclampf, GC3Dclampf, GC3Dclampf)
-DELEGATE_TO_IMPL_1(blendEquation, GC3Denum)
-DELEGATE_TO_IMPL_2(blendEquationSeparate, GC3Denum, GC3Denum)
-DELEGATE_TO_IMPL_2(blendFunc, GC3Denum, GC3Denum)
-DELEGATE_TO_IMPL_4(blendFuncSeparate, GC3Denum, GC3Denum, GC3Denum, GC3Denum)
-
-void GraphicsContext3DPrivate::bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage)
-{
-    m_impl->bufferData(target, size, 0, usage);
-}
-
-void GraphicsContext3DPrivate::bufferData(GC3Denum target, GC3Dsizeiptr size, const void* data, GC3Denum usage)
-{
-    m_impl->bufferData(target, size, data, usage);
-}
-
-void GraphicsContext3DPrivate::bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr size, const void* data)
-{
-    m_impl->bufferSubData(target, offset, size, data);
-}
-
-DELEGATE_TO_IMPL_1R(checkFramebufferStatus, GC3Denum, GC3Denum)
-DELEGATE_TO_IMPL_1(clear, GC3Dbitfield)
-DELEGATE_TO_IMPL_4(clearColor, GC3Dclampf, GC3Dclampf, GC3Dclampf, GC3Dclampf)
-DELEGATE_TO_IMPL_1(clearDepth, GC3Dclampf)
-DELEGATE_TO_IMPL_1(clearStencil, GC3Dint)
-DELEGATE_TO_IMPL_4(colorMask, GC3Dboolean, GC3Dboolean, GC3Dboolean, GC3Dboolean)
-DELEGATE_TO_IMPL_1(compileShader, Platform3DObject)
-
-DELEGATE_TO_IMPL_8(compressedTexImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, const void*)
-DELEGATE_TO_IMPL_9(compressedTexSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Denum, GC3Dsizei, const void*)
-DELEGATE_TO_IMPL_8(copyTexImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint)
-DELEGATE_TO_IMPL_8(copyTexSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
-DELEGATE_TO_IMPL_1(cullFace, GC3Denum)
-DELEGATE_TO_IMPL_1(depthFunc, GC3Denum)
-DELEGATE_TO_IMPL_1(depthMask, GC3Dboolean)
-DELEGATE_TO_IMPL_2(depthRange, GC3Dclampf, GC3Dclampf)
-DELEGATE_TO_IMPL_2(detachShader, Platform3DObject, Platform3DObject)
-DELEGATE_TO_IMPL_1(disable, GC3Denum)
-DELEGATE_TO_IMPL_1(disableVertexAttribArray, GC3Duint)
-DELEGATE_TO_IMPL_3(drawArrays, GC3Denum, GC3Dint, GC3Dsizei)
-DELEGATE_TO_IMPL_4(drawElements, GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizeiptr)
-
-DELEGATE_TO_IMPL_1(enable, GC3Denum)
-DELEGATE_TO_IMPL_1(enableVertexAttribArray, GC3Duint)
-DELEGATE_TO_IMPL(finish)
-DELEGATE_TO_IMPL(flush)
-DELEGATE_TO_IMPL_4(framebufferRenderbuffer, GC3Denum, GC3Denum, GC3Denum, Platform3DObject)
-DELEGATE_TO_IMPL_5(framebufferTexture2D, GC3Denum, GC3Denum, GC3Denum, Platform3DObject, GC3Dint)
-DELEGATE_TO_IMPL_1(frontFace, GC3Denum)
-DELEGATE_TO_IMPL_1(generateMipmap, GC3Denum)
-
-bool GraphicsContext3DPrivate::getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo& info)
-{
-    WebKit::WebGraphicsContext3D::ActiveInfo webInfo;
-    if (!m_impl->getActiveAttrib(program, index, webInfo))
-        return false;
-    info.name = webInfo.name;
-    info.type = webInfo.type;
-    info.size = webInfo.size;
-    return true;
-}
-
-bool GraphicsContext3DPrivate::getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo& info)
-{
-    WebKit::WebGraphicsContext3D::ActiveInfo webInfo;
-    if (!m_impl->getActiveUniform(program, index, webInfo))
-        return false;
-    info.name = webInfo.name;
-    info.type = webInfo.type;
-    info.size = webInfo.size;
-    return true;
-}
-
-DELEGATE_TO_IMPL_4(getAttachedShaders, Platform3DObject, GC3Dsizei, GC3Dsizei*, Platform3DObject*)
-
-GC3Dint GraphicsContext3DPrivate::getAttribLocation(Platform3DObject program, const String& name)
-{
-    return m_impl->getAttribLocation(program, name.utf8().data());
-}
-
-DELEGATE_TO_IMPL_2(getBooleanv, GC3Denum, GC3Dboolean*)
-
-DELEGATE_TO_IMPL_3(getBufferParameteriv, GC3Denum, GC3Denum, GC3Dint*)
-
-GraphicsContext3D::Attributes GraphicsContext3DPrivate::getContextAttributes()
-{
-    WebKit::WebGraphicsContext3D::Attributes webAttributes = m_impl->getContextAttributes();
-    GraphicsContext3D::Attributes attributes;
-    attributes.alpha = webAttributes.alpha;
-    attributes.depth = webAttributes.depth;
-    attributes.stencil = webAttributes.stencil;
-    attributes.antialias = webAttributes.antialias;
-    attributes.premultipliedAlpha = webAttributes.premultipliedAlpha;
-    attributes.preserveDrawingBuffer = m_preserveDrawingBuffer;
-    attributes.preferDiscreteGPU = webAttributes.preferDiscreteGPU;
-    return attributes;
-}
-
-DELEGATE_TO_IMPL_R(getError, GC3Denum)
-
-DELEGATE_TO_IMPL_2(getFloatv, GC3Denum, GC3Dfloat*)
-
-DELEGATE_TO_IMPL_4(getFramebufferAttachmentParameteriv, GC3Denum, GC3Denum, GC3Denum, GC3Dint*)
-
-DELEGATE_TO_IMPL_2(getIntegerv, GC3Denum, GC3Dint*)
-
-DELEGATE_TO_IMPL_3(getProgramiv, Platform3DObject, GC3Denum, GC3Dint*)
-
-String GraphicsContext3DPrivate::getProgramInfoLog(Platform3DObject program)
-{
-    return m_impl->getProgramInfoLog(program);
-}
-
-DELEGATE_TO_IMPL_3(getRenderbufferParameteriv, GC3Denum, GC3Denum, GC3Dint*)
-
-DELEGATE_TO_IMPL_3(getShaderiv, Platform3DObject, GC3Denum, GC3Dint*)
-
-String GraphicsContext3DPrivate::getShaderInfoLog(Platform3DObject shader)
-{
-    return m_impl->getShaderInfoLog(shader);
-}
-
-DELEGATE_TO_IMPL_4(getShaderPrecisionFormat, GC3Denum, GC3Denum, GC3Dint*, GC3Dint*)
-
-String GraphicsContext3DPrivate::getShaderSource(Platform3DObject shader)
-{
-    return m_impl->getShaderSource(shader);
-}
-
-String GraphicsContext3DPrivate::getString(GC3Denum name)
-{
-    return m_impl->getString(name);
-}
-
-DELEGATE_TO_IMPL_3(getTexParameterfv, GC3Denum, GC3Denum, GC3Dfloat*)
-DELEGATE_TO_IMPL_3(getTexParameteriv, GC3Denum, GC3Denum, GC3Dint*)
-
-DELEGATE_TO_IMPL_3(getUniformfv, Platform3DObject, GC3Dint, GC3Dfloat*)
-DELEGATE_TO_IMPL_3(getUniformiv, Platform3DObject, GC3Dint, GC3Dint*)
-
-GC3Dint GraphicsContext3DPrivate::getUniformLocation(Platform3DObject program, const String& name)
-{
-    return m_impl->getUniformLocation(program, name.utf8().data());
-}
-
-DELEGATE_TO_IMPL_3(getVertexAttribfv, GC3Duint, GC3Denum, GC3Dfloat*)
-DELEGATE_TO_IMPL_3(getVertexAttribiv, GC3Duint, GC3Denum, GC3Dint*)
-
-DELEGATE_TO_IMPL_2R(getVertexAttribOffset, GC3Duint, GC3Denum, GC3Dsizeiptr)
-
-DELEGATE_TO_IMPL_2(hint, GC3Denum, GC3Denum)
-DELEGATE_TO_IMPL_1R(isBuffer, Platform3DObject, GC3Dboolean)
-DELEGATE_TO_IMPL_1R(isEnabled, GC3Denum, GC3Dboolean)
-DELEGATE_TO_IMPL_1R(isFramebuffer, Platform3DObject, GC3Dboolean)
-DELEGATE_TO_IMPL_1R(isProgram, Platform3DObject, GC3Dboolean)
-DELEGATE_TO_IMPL_1R(isRenderbuffer, Platform3DObject, GC3Dboolean)
-DELEGATE_TO_IMPL_1R(isShader, Platform3DObject, GC3Dboolean)
-DELEGATE_TO_IMPL_1R(isTexture, Platform3DObject, GC3Dboolean)
-DELEGATE_TO_IMPL_1(lineWidth, GC3Dfloat)
-DELEGATE_TO_IMPL_1(linkProgram, Platform3DObject)
-DELEGATE_TO_IMPL_2(pixelStorei, GC3Denum, GC3Dint)
-DELEGATE_TO_IMPL_2(polygonOffset, GC3Dfloat, GC3Dfloat)
-DELEGATE_TO_IMPL_7(readPixels, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, void*)
-DELEGATE_TO_IMPL(releaseShaderCompiler)
-DELEGATE_TO_IMPL_4(renderbufferStorage, GC3Denum, GC3Denum, GC3Dsizei, GC3Dsizei)
-DELEGATE_TO_IMPL_2(sampleCoverage, GC3Dclampf, GC3Dboolean)
-DELEGATE_TO_IMPL_4(scissor, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
-
-void GraphicsContext3DPrivate::shaderSource(Platform3DObject shader, const String& string)
-{
-    m_impl->shaderSource(shader, string.utf8().data());
-}
-
-DELEGATE_TO_IMPL_3(stencilFunc, GC3Denum, GC3Dint, GC3Duint)
-DELEGATE_TO_IMPL_4(stencilFuncSeparate, GC3Denum, GC3Denum, GC3Dint, GC3Duint)
-DELEGATE_TO_IMPL_1(stencilMask, GC3Duint)
-DELEGATE_TO_IMPL_2(stencilMaskSeparate, GC3Denum, GC3Duint)
-DELEGATE_TO_IMPL_3(stencilOp, GC3Denum, GC3Denum, GC3Denum)
-DELEGATE_TO_IMPL_4(stencilOpSeparate, GC3Denum, GC3Denum, GC3Denum, GC3Denum)
-
-bool GraphicsContext3DPrivate::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
-{
-    m_impl->texImage2D(target, level, internalformat, width, height, border, format, type, pixels);
-    return true;
-}
-
-DELEGATE_TO_IMPL_3(texParameterf, GC3Denum, GC3Denum, GC3Dfloat)
-DELEGATE_TO_IMPL_3(texParameteri, GC3Denum, GC3Denum, GC3Dint)
-
-void GraphicsContext3DPrivate::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels)
-{
-    m_impl->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
-}
-
-DELEGATE_TO_IMPL_2(uniform1f, GC3Dint, GC3Dfloat)
-
-void GraphicsContext3DPrivate::uniform1fv(GC3Dint location, GC3Dsizei size, GC3Dfloat* v)
-{
-    m_impl->uniform1fv(location, size, v);
-}
-
-DELEGATE_TO_IMPL_2(uniform1i, GC3Dint, GC3Dint)
-
-void GraphicsContext3DPrivate::uniform1iv(GC3Dint location, GC3Dsizei size, GC3Dint* v)
-{
-    m_impl->uniform1iv(location, size, v);
-}
-
-DELEGATE_TO_IMPL_3(uniform2f, GC3Dint, GC3Dfloat, GC3Dfloat)
-
-void GraphicsContext3DPrivate::uniform2fv(GC3Dint location, GC3Dsizei size, GC3Dfloat* v)
-{
-    m_impl->uniform2fv(location, size, v);
-}
-
-DELEGATE_TO_IMPL_3(uniform2i, GC3Dint, GC3Dint, GC3Dint)
-
-void GraphicsContext3DPrivate::uniform2iv(GC3Dint location, GC3Dsizei size, GC3Dint* v)
-{
-    m_impl->uniform2iv(location, size, v);
-}
-
-DELEGATE_TO_IMPL_4(uniform3f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat)
-
-void GraphicsContext3DPrivate::uniform3fv(GC3Dint location, GC3Dsizei size, GC3Dfloat* v)
-{
-    m_impl->uniform3fv(location, size, v);
-}
-
-DELEGATE_TO_IMPL_4(uniform3i, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
-
-void GraphicsContext3DPrivate::uniform3iv(GC3Dint location, GC3Dsizei size, GC3Dint* v)
-{
-    m_impl->uniform3iv(location, size, v);
-}
-
-DELEGATE_TO_IMPL_5(uniform4f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat)
-
-void GraphicsContext3DPrivate::uniform4fv(GC3Dint location, GC3Dsizei size, GC3Dfloat* v)
-{
-    m_impl->uniform4fv(location, size, v);
-}
-
-DELEGATE_TO_IMPL_5(uniform4i, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
-
-void GraphicsContext3DPrivate::uniform4iv(GC3Dint location, GC3Dsizei size, GC3Dint* v)
-{
-    m_impl->uniform4iv(location, size, v);
-}
-
-void GraphicsContext3DPrivate::uniformMatrix2fv(GC3Dint location, GC3Dsizei size, GC3Dboolean transpose, GC3Dfloat* value)
-{
-    m_impl->uniformMatrix2fv(location, size, transpose, value);
-}
-
-void GraphicsContext3DPrivate::uniformMatrix3fv(GC3Dint location, GC3Dsizei size, GC3Dboolean transpose, GC3Dfloat* value)
-{
-    m_impl->uniformMatrix3fv(location, size, transpose, value);
-}
-
-void GraphicsContext3DPrivate::uniformMatrix4fv(GC3Dint location, GC3Dsizei size, GC3Dboolean transpose, GC3Dfloat* value)
-{
-    m_impl->uniformMatrix4fv(location, size, transpose, value);
-}
-
-DELEGATE_TO_IMPL_1(useProgram, Platform3DObject)
-DELEGATE_TO_IMPL_1(validateProgram, Platform3DObject)
-
-DELEGATE_TO_IMPL_2(vertexAttrib1f, GC3Duint, GC3Dfloat)
-DELEGATE_TO_IMPL_2(vertexAttrib1fv, GC3Duint, GC3Dfloat*)
-DELEGATE_TO_IMPL_3(vertexAttrib2f, GC3Duint, GC3Dfloat, GC3Dfloat)
-DELEGATE_TO_IMPL_2(vertexAttrib2fv, GC3Duint, GC3Dfloat*)
-DELEGATE_TO_IMPL_4(vertexAttrib3f, GC3Duint, GC3Dfloat, GC3Dfloat, GC3Dfloat)
-DELEGATE_TO_IMPL_2(vertexAttrib3fv, GC3Duint, GC3Dfloat*)
-DELEGATE_TO_IMPL_5(vertexAttrib4f, GC3Duint, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat)
-DELEGATE_TO_IMPL_2(vertexAttrib4fv, GC3Duint, GC3Dfloat*)
-DELEGATE_TO_IMPL_6(vertexAttribPointer, GC3Duint, GC3Dint, GC3Denum, GC3Dboolean, GC3Dsizei, GC3Dsizeiptr)
-
-DELEGATE_TO_IMPL_4(viewport, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
-
-DELEGATE_TO_IMPL_R(createBuffer, Platform3DObject)
-DELEGATE_TO_IMPL_R(createFramebuffer, Platform3DObject)
-DELEGATE_TO_IMPL_R(createProgram, Platform3DObject)
-DELEGATE_TO_IMPL_R(createRenderbuffer, Platform3DObject)
-DELEGATE_TO_IMPL_1R(createShader, GC3Denum, Platform3DObject)
-DELEGATE_TO_IMPL_R(createTexture, Platform3DObject)
-
-DELEGATE_TO_IMPL_1(deleteBuffer, Platform3DObject)
-DELEGATE_TO_IMPL_1(deleteFramebuffer, Platform3DObject)
-DELEGATE_TO_IMPL_1(deleteProgram, Platform3DObject)
-DELEGATE_TO_IMPL_1(deleteRenderbuffer, Platform3DObject)
-DELEGATE_TO_IMPL_1(deleteShader, Platform3DObject)
-DELEGATE_TO_IMPL_1(deleteTexture, Platform3DObject)
-
-DELEGATE_TO_IMPL_1(synthesizeGLError, GC3Denum)
-
-Extensions3D* GraphicsContext3DPrivate::getExtensions()
-{
-    if (!m_extensions)
-        m_extensions = adoptPtr(new Extensions3DChromium(this));
-    return m_extensions.get();
-}
-
-bool GraphicsContext3DPrivate::isResourceSafe()
-{
-    if (m_resourceSafety == ResourceSafetyUnknown)
-        m_resourceSafety = getExtensions()->isEnabled("GL_CHROMIUM_resource_safe") ? ResourceSafe : ResourceUnsafe;
-    return m_resourceSafety == ResourceSafe;
-}
-
-namespace {
-
-void splitStringHelper(const String& str, HashSet<String>& set)
-{
-    Vector<String> substrings;
-    str.split(" ", substrings);
-    for (size_t i = 0; i < substrings.size(); ++i)
-        set.add(substrings[i]);
-}
-
-String mapExtensionName(const String& name)
-{
-    if (name == "GL_ANGLE_framebuffer_blit"
-        || name == "GL_ANGLE_framebuffer_multisample")
-        return "GL_CHROMIUM_framebuffer_multisample";
-    return name;
-}
-
-} // anonymous namespace
-
-void GraphicsContext3DPrivate::initializeExtensions()
-{
-    if (m_initializedAvailableExtensions)
-        return;
-
-    m_initializedAvailableExtensions = true;
-    bool success = makeContextCurrent();
-    ASSERT(success);
-    if (!success)
-        return;
-
-    String extensionsString = getString(GraphicsContext3D::EXTENSIONS);
-    splitStringHelper(extensionsString, m_enabledExtensions);
-
-    String requestableExtensionsString = m_impl->getRequestableExtensionsCHROMIUM();
-    splitStringHelper(requestableExtensionsString, m_requestableExtensions);
-}
-
-
-bool GraphicsContext3DPrivate::supportsExtension(const String& name)
-{
-    initializeExtensions();
-    String mappedName = mapExtensionName(name);
-    return m_enabledExtensions.contains(mappedName) || m_requestableExtensions.contains(mappedName);
-}
-
-bool GraphicsContext3DPrivate::ensureExtensionEnabled(const String& name)
-{
-    initializeExtensions();
-
-    String mappedName = mapExtensionName(name);
-    if (m_enabledExtensions.contains(mappedName))
-        return true;
-
-    if (m_requestableExtensions.contains(mappedName)) {
-        m_impl->requestExtensionCHROMIUM(mappedName.ascii().data());
-        m_enabledExtensions.clear();
-        m_requestableExtensions.clear();
-        m_initializedAvailableExtensions = false;
-    }
-
-    initializeExtensions();
-    return m_enabledExtensions.contains(mappedName);
-}
-
-bool GraphicsContext3DPrivate::isExtensionEnabled(const String& name)
-{
-    initializeExtensions();
-    String mappedName = mapExtensionName(name);
-    return m_enabledExtensions.contains(mappedName);
-}
-
-DELEGATE_TO_IMPL_4(postSubBufferCHROMIUM, int, int, int, int)
-
-DELEGATE_TO_IMPL_4R(mapBufferSubDataCHROMIUM, GC3Denum, GC3Dsizeiptr, GC3Dsizei, GC3Denum, void*)
-DELEGATE_TO_IMPL_1(unmapBufferSubDataCHROMIUM, const void*)
-DELEGATE_TO_IMPL_9R(mapTexSubImage2DCHROMIUM, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Denum, void*)
-DELEGATE_TO_IMPL_1(unmapTexSubImage2DCHROMIUM, const void*)
-
-DELEGATE_TO_IMPL_1(setVisibilityCHROMIUM, bool);
-
-DELEGATE_TO_IMPL_3(discardFramebufferEXT, GC3Denum, GC3Dsizei, const GC3Denum*);
-DELEGATE_TO_IMPL(ensureFramebufferCHROMIUM);
-
-DELEGATE_TO_IMPL_10(blitFramebufferCHROMIUM, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dbitfield, GC3Denum)
-DELEGATE_TO_IMPL_5(renderbufferStorageMultisampleCHROMIUM, GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
-
-DELEGATE_TO_IMPL(rateLimitOffscreenContextCHROMIUM)
-DELEGATE_TO_IMPL_R(getGraphicsResetStatusARB, GC3Denum)
-
-DELEGATE_TO_IMPL_1R(getTranslatedShaderSourceANGLE, Platform3DObject, String)
-DELEGATE_TO_IMPL_5(texImageIOSurface2DCHROMIUM, GC3Denum, GC3Dint, GC3Dint, GC3Duint, GC3Duint)
-DELEGATE_TO_IMPL_5(texStorage2DEXT, GC3Denum, GC3Dint, GC3Duint, GC3Dint, GC3Dint)
-
-DELEGATE_TO_IMPL_R(createQueryEXT, Platform3DObject)
-DELEGATE_TO_IMPL_1(deleteQueryEXT, Platform3DObject)
-DELEGATE_TO_IMPL_1R(isQueryEXT, Platform3DObject, GC3Dboolean)
-DELEGATE_TO_IMPL_2(beginQueryEXT, GC3Denum, Platform3DObject)
-DELEGATE_TO_IMPL_1(endQueryEXT, GC3Denum)
-DELEGATE_TO_IMPL_3(getQueryivEXT, GC3Denum, GC3Denum, GC3Dint*)
-DELEGATE_TO_IMPL_3(getQueryObjectuivEXT, Platform3DObject, GC3Denum, GC3Duint*)
-
-//----------------------------------------------------------------------
-// GraphicsContext3D
-//
-
-// Macros to assist in delegating from GraphicsContext3D to
-// GraphicsContext3DPrivate.
-
-#define DELEGATE_TO_INTERNAL(name) \
-void GraphicsContext3D::name() \
-{ \
-    m_private->name(); \
-}
-
-#define DELEGATE_TO_INTERNAL_R(name, rt)           \
-rt GraphicsContext3D::name() \
-{ \
-    return m_private->name(); \
-}
-
-#define DELEGATE_TO_INTERNAL_1(name, t1) \
-void GraphicsContext3D::name(t1 a1) \
-{ \
-    m_private->name(a1); \
-}
-
-#define DELEGATE_TO_INTERNAL_1R(name, t1, rt)    \
-rt GraphicsContext3D::name(t1 a1) \
-{ \
-    return m_private->name(a1); \
-}
-
-#define DELEGATE_TO_INTERNAL_2(name, t1, t2) \
-void GraphicsContext3D::name(t1 a1, t2 a2) \
-{ \
-    m_private->name(a1, a2); \
-}
-
-#define DELEGATE_TO_INTERNAL_2R(name, t1, t2, rt)  \
-rt GraphicsContext3D::name(t1 a1, t2 a2) \
-{ \
-    return m_private->name(a1, a2); \
-}
-
-#define DELEGATE_TO_INTERNAL_3(name, t1, t2, t3)   \
-void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3)    \
-{ \
-    m_private->name(a1, a2, a3);                  \
-}
-
-#define DELEGATE_TO_INTERNAL_3R(name, t1, t2, t3, rt)   \
-rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3)    \
-{ \
-    return m_private->name(a1, a2, a3);                  \
-}
-
-#define DELEGATE_TO_INTERNAL_4(name, t1, t2, t3, t4)    \
-void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
-{ \
-    m_private->name(a1, a2, a3, a4);              \
-}
-
-#define DELEGATE_TO_INTERNAL_4R(name, t1, t2, t3, t4, rt)    \
-rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
-{ \
-    return m_private->name(a1, a2, a3, a4);           \
-}
-
-#define DELEGATE_TO_INTERNAL_5(name, t1, t2, t3, t4, t5)      \
-void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5)        \
-{ \
-    m_private->name(a1, a2, a3, a4, a5);   \
-}
-
-#define DELEGATE_TO_INTERNAL_6(name, t1, t2, t3, t4, t5, t6)  \
-void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6) \
-{ \
-    m_private->name(a1, a2, a3, a4, a5, a6);   \
-}
-
-#define DELEGATE_TO_INTERNAL_6R(name, t1, t2, t3, t4, t5, t6, rt)  \
-rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6) \
-{ \
-    return m_private->name(a1, a2, a3, a4, a5, a6);       \
-}
-
-#define DELEGATE_TO_INTERNAL_7(name, t1, t2, t3, t4, t5, t6, t7) \
-void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7) \
-{ \
-    m_private->name(a1, a2, a3, a4, a5, a6, a7);   \
-}
-
-#define DELEGATE_TO_INTERNAL_7R(name, t1, t2, t3, t4, t5, t6, t7, rt) \
-rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7) \
-{ \
-    return m_private->name(a1, a2, a3, a4, a5, a6, a7);   \
-}
-
-#define DELEGATE_TO_INTERNAL_8(name, t1, t2, t3, t4, t5, t6, t7, t8)       \
-void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8) \
-{ \
-    m_private->name(a1, a2, a3, a4, a5, a6, a7, a8);      \
-}
-
-#define DELEGATE_TO_INTERNAL_9(name, t1, t2, t3, t4, t5, t6, t7, t8, t9) \
-void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8, t9 a9) \
-{ \
-    m_private->name(a1, a2, a3, a4, a5, a6, a7, a8, a9);   \
-}
-
-#define DELEGATE_TO_INTERNAL_9R(name, t1, t2, t3, t4, t5, t6, t7, t8, t9, rt) \
-rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8, t9 a9) \
-{ \
-    return m_private->name(a1, a2, a3, a4, a5, a6, a7, a8, a9);   \
-}
 
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes, HostWindow*, bool)
 {
@@ -983,6 +53,16 @@ GraphicsContext3D::~GraphicsContext3D()
     m_private->setErrorMessageCallback(nullptr);
     m_private->setSwapBuffersCompleteCallbackCHROMIUM(nullptr);
     m_private->setGpuMemoryAllocationChangedCallbackCHROMIUM(nullptr);
+}
+
+void GraphicsContext3D::setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback> callback)
+{
+    m_private->setContextLostCallback(callback);
+}
+
+void GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<GraphicsContext3D::ErrorMessageCallback> callback)
+{
+    m_private->setErrorMessageCallback(callback);
 }
 
 PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow*, GraphicsContext3D::RenderStyle renderStyle)
@@ -1008,12 +88,12 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
 
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D() const
 {
-    return m_private->platformGraphicsContext3D();
+    return m_private->webContext();
 }
 
 Platform3DObject GraphicsContext3D::platformTexture() const
 {
-    return m_private->platformTexture();
+    return m_private->webContext()->getPlatformTextureId();
 }
 
 GrContext* GraphicsContext3D::grContext()
@@ -1021,333 +101,471 @@ GrContext* GraphicsContext3D::grContext()
     return m_private->grContext();
 }
 
-void GraphicsContext3D::prepareTexture()
+PlatformLayer* GraphicsContext3D::platformLayer() const
 {
-    return m_private->prepareTexture();
+    return 0;
 }
 
-IntSize GraphicsContext3D::getInternalFramebufferSize() const
-{
-    return m_private->getInternalFramebufferSize();
+// Macros to assist in delegating from GraphicsContext3D to
+// WebGraphicsContext3D.
+
+#define DELEGATE_TO_WEBCONTEXT(name) \
+void GraphicsContext3D::name() \
+{ \
+    m_private->webContext()->name(); \
 }
+
+#define DELEGATE_TO_WEBCONTEXT_R(name, rt)           \
+rt GraphicsContext3D::name() \
+{ \
+    return m_private->webContext()->name(); \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_1(name, t1) \
+void GraphicsContext3D::name(t1 a1) \
+{ \
+    m_private->webContext()->name(a1); \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_1R(name, t1, rt)    \
+rt GraphicsContext3D::name(t1 a1) \
+{ \
+    return m_private->webContext()->name(a1); \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_2(name, t1, t2) \
+void GraphicsContext3D::name(t1 a1, t2 a2) \
+{ \
+    m_private->webContext()->name(a1, a2); \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_2R(name, t1, t2, rt)  \
+rt GraphicsContext3D::name(t1 a1, t2 a2) \
+{ \
+    return m_private->webContext()->name(a1, a2); \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_3(name, t1, t2, t3)   \
+void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3)    \
+{ \
+    m_private->webContext()->name(a1, a2, a3);                  \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_3R(name, t1, t2, t3, rt)   \
+rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3)    \
+{ \
+    return m_private->webContext()->name(a1, a2, a3);                  \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_4(name, t1, t2, t3, t4)    \
+void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
+{ \
+    m_private->webContext()->name(a1, a2, a3, a4);              \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_4R(name, t1, t2, t3, t4, rt)    \
+rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4)  \
+{ \
+    return m_private->webContext()->name(a1, a2, a3, a4);           \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_5(name, t1, t2, t3, t4, t5)      \
+void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5)        \
+{ \
+    m_private->webContext()->name(a1, a2, a3, a4, a5);   \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_6(name, t1, t2, t3, t4, t5, t6)  \
+void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6) \
+{ \
+    m_private->webContext()->name(a1, a2, a3, a4, a5, a6);   \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_6R(name, t1, t2, t3, t4, t5, t6, rt)  \
+rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6) \
+{ \
+    return m_private->webContext()->name(a1, a2, a3, a4, a5, a6);       \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_7(name, t1, t2, t3, t4, t5, t6, t7) \
+void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7) \
+{ \
+    m_private->webContext()->name(a1, a2, a3, a4, a5, a6, a7);   \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_7R(name, t1, t2, t3, t4, t5, t6, t7, rt) \
+rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7) \
+{ \
+    return m_private->webContext()->name(a1, a2, a3, a4, a5, a6, a7);   \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_8(name, t1, t2, t3, t4, t5, t6, t7, t8)       \
+void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8) \
+{ \
+    m_private->webContext()->name(a1, a2, a3, a4, a5, a6, a7, a8);      \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_9(name, t1, t2, t3, t4, t5, t6, t7, t8, t9) \
+void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8, t9 a9) \
+{ \
+    m_private->webContext()->name(a1, a2, a3, a4, a5, a6, a7, a8, a9);   \
+}
+
+#define DELEGATE_TO_WEBCONTEXT_9R(name, t1, t2, t3, t4, t5, t6, t7, t8, t9, rt) \
+rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8, t9 a9) \
+{ \
+    return m_private->webContext()->name(a1, a2, a3, a4, a5, a6, a7, a8, a9);   \
+}
+
+DELEGATE_TO_WEBCONTEXT_R(makeContextCurrent, bool)
+DELEGATE_TO_WEBCONTEXT(prepareTexture)
+
+bool GraphicsContext3D::isGLES2Compliant() const
+{
+    return m_private->webContext()->isGLES2Compliant();
+}
+
+
 
 bool GraphicsContext3D::isResourceSafe()
 {
     return m_private->isResourceSafe();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
-PlatformLayer* GraphicsContext3D::platformLayer() const
+DELEGATE_TO_WEBCONTEXT_1(activeTexture, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_2(attachShader, Platform3DObject, Platform3DObject)
+
+void GraphicsContext3D::bindAttribLocation(Platform3DObject program, GC3Duint index, const String& name)
 {
-    return 0;
+    m_private->webContext()->bindAttribLocation(program, index, name.utf8().data());
 }
-#endif
 
-DELEGATE_TO_INTERNAL_R(makeContextCurrent, bool)
-DELEGATE_TO_INTERNAL_2(reshape, int, int)
+DELEGATE_TO_WEBCONTEXT_2(bindBuffer, GC3Denum, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_2(bindFramebuffer, GC3Denum, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_2(bindRenderbuffer, GC3Denum, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_2(bindTexture, GC3Denum, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_4(blendColor, GC3Dclampf, GC3Dclampf, GC3Dclampf, GC3Dclampf)
+DELEGATE_TO_WEBCONTEXT_1(blendEquation, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_2(blendEquationSeparate, GC3Denum, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_2(blendFunc, GC3Denum, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_4(blendFuncSeparate, GC3Denum, GC3Denum, GC3Denum, GC3Denum)
 
-DELEGATE_TO_INTERNAL_1(activeTexture, GC3Denum)
-DELEGATE_TO_INTERNAL_2(attachShader, Platform3DObject, Platform3DObject)
-DELEGATE_TO_INTERNAL_3(bindAttribLocation, Platform3DObject, GC3Duint, const String&)
+void GraphicsContext3D::bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage)
+{
+    bufferData(target, size, 0, usage);
+}
 
-DELEGATE_TO_INTERNAL_2(bindBuffer, GC3Denum, Platform3DObject)
-DELEGATE_TO_INTERNAL_2(bindFramebuffer, GC3Denum, Platform3DObject)
-DELEGATE_TO_INTERNAL_2(bindRenderbuffer, GC3Denum, Platform3DObject)
-DELEGATE_TO_INTERNAL_2(bindTexture, GC3Denum, Platform3DObject)
-DELEGATE_TO_INTERNAL_4(blendColor, GC3Dclampf, GC3Dclampf, GC3Dclampf, GC3Dclampf)
-DELEGATE_TO_INTERNAL_1(blendEquation, GC3Denum)
-DELEGATE_TO_INTERNAL_2(blendEquationSeparate, GC3Denum, GC3Denum)
-DELEGATE_TO_INTERNAL_2(blendFunc, GC3Denum, GC3Denum)
-DELEGATE_TO_INTERNAL_4(blendFuncSeparate, GC3Denum, GC3Denum, GC3Denum, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_4(bufferData, GC3Denum, GC3Dsizeiptr, const void*, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_4(bufferSubData, GC3Denum, GC3Dintptr, GC3Dsizeiptr, const void*)
 
-DELEGATE_TO_INTERNAL_3(bufferData, GC3Denum, GC3Dsizeiptr, GC3Denum)
-DELEGATE_TO_INTERNAL_4(bufferData, GC3Denum, GC3Dsizeiptr, const void*, GC3Denum)
-DELEGATE_TO_INTERNAL_4(bufferSubData, GC3Denum, GC3Dintptr, GC3Dsizeiptr, const void*)
+DELEGATE_TO_WEBCONTEXT_1R(checkFramebufferStatus, GC3Denum, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_1(clear, GC3Dbitfield)
+DELEGATE_TO_WEBCONTEXT_4(clearColor, GC3Dclampf, GC3Dclampf, GC3Dclampf, GC3Dclampf)
+DELEGATE_TO_WEBCONTEXT_1(clearDepth, GC3Dclampf)
+DELEGATE_TO_WEBCONTEXT_1(clearStencil, GC3Dint)
+DELEGATE_TO_WEBCONTEXT_4(colorMask, GC3Dboolean, GC3Dboolean, GC3Dboolean, GC3Dboolean)
+DELEGATE_TO_WEBCONTEXT_1(compileShader, Platform3DObject)
 
-DELEGATE_TO_INTERNAL_1R(checkFramebufferStatus, GC3Denum, GC3Denum)
-DELEGATE_TO_INTERNAL_1(clear, GC3Dbitfield)
-DELEGATE_TO_INTERNAL_4(clearColor, GC3Dclampf, GC3Dclampf, GC3Dclampf, GC3Dclampf)
-DELEGATE_TO_INTERNAL_1(clearDepth, GC3Dclampf)
-DELEGATE_TO_INTERNAL_1(clearStencil, GC3Dint)
-DELEGATE_TO_INTERNAL_4(colorMask, GC3Dboolean, GC3Dboolean, GC3Dboolean, GC3Dboolean)
-DELEGATE_TO_INTERNAL_1(compileShader, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_8(compressedTexImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, const void*)
+DELEGATE_TO_WEBCONTEXT_9(compressedTexSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Denum, GC3Dsizei, const void*)
+DELEGATE_TO_WEBCONTEXT_8(copyTexImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint)
+DELEGATE_TO_WEBCONTEXT_8(copyTexSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
+DELEGATE_TO_WEBCONTEXT_1(cullFace, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_1(depthFunc, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_1(depthMask, GC3Dboolean)
+DELEGATE_TO_WEBCONTEXT_2(depthRange, GC3Dclampf, GC3Dclampf)
+DELEGATE_TO_WEBCONTEXT_2(detachShader, Platform3DObject, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_1(disable, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_1(disableVertexAttribArray, GC3Duint)
+DELEGATE_TO_WEBCONTEXT_3(drawArrays, GC3Denum, GC3Dint, GC3Dsizei)
+DELEGATE_TO_WEBCONTEXT_4(drawElements, GC3Denum, GC3Dsizei, GC3Denum, GC3Dintptr)
 
-DELEGATE_TO_INTERNAL_8(compressedTexImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, const void*)
-DELEGATE_TO_INTERNAL_9(compressedTexSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Denum, GC3Dsizei, const void*)
-DELEGATE_TO_INTERNAL_8(copyTexImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint)
-DELEGATE_TO_INTERNAL_8(copyTexSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
-DELEGATE_TO_INTERNAL_1(cullFace, GC3Denum)
-DELEGATE_TO_INTERNAL_1(depthFunc, GC3Denum)
-DELEGATE_TO_INTERNAL_1(depthMask, GC3Dboolean)
-DELEGATE_TO_INTERNAL_2(depthRange, GC3Dclampf, GC3Dclampf)
-DELEGATE_TO_INTERNAL_2(detachShader, Platform3DObject, Platform3DObject)
-DELEGATE_TO_INTERNAL_1(disable, GC3Denum)
-DELEGATE_TO_INTERNAL_1(disableVertexAttribArray, GC3Duint)
-DELEGATE_TO_INTERNAL_3(drawArrays, GC3Denum, GC3Dint, GC3Dsizei)
-DELEGATE_TO_INTERNAL_4(drawElements, GC3Denum, GC3Dsizei, GC3Denum, GC3Dintptr)
+DELEGATE_TO_WEBCONTEXT_1(enable, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_1(enableVertexAttribArray, GC3Duint)
+DELEGATE_TO_WEBCONTEXT(finish)
+DELEGATE_TO_WEBCONTEXT(flush)
+DELEGATE_TO_WEBCONTEXT_4(framebufferRenderbuffer, GC3Denum, GC3Denum, GC3Denum, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_5(framebufferTexture2D, GC3Denum, GC3Denum, GC3Denum, Platform3DObject, GC3Dint)
+DELEGATE_TO_WEBCONTEXT_1(frontFace, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_1(generateMipmap, GC3Denum)
 
-DELEGATE_TO_INTERNAL_1(enable, GC3Denum)
-DELEGATE_TO_INTERNAL_1(enableVertexAttribArray, GC3Duint)
-DELEGATE_TO_INTERNAL(finish)
-DELEGATE_TO_INTERNAL(flush)
-DELEGATE_TO_INTERNAL_4(framebufferRenderbuffer, GC3Denum, GC3Denum, GC3Denum, Platform3DObject)
-DELEGATE_TO_INTERNAL_5(framebufferTexture2D, GC3Denum, GC3Denum, GC3Denum, Platform3DObject, GC3Dint)
-DELEGATE_TO_INTERNAL_1(frontFace, GC3Denum)
-DELEGATE_TO_INTERNAL_1(generateMipmap, GC3Denum)
+bool GraphicsContext3D::getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo& info)
+{
+    WebKit::WebGraphicsContext3D::ActiveInfo webInfo;
+    if (!m_private->webContext()->getActiveAttrib(program, index, webInfo))
+        return false;
+    info.name = webInfo.name;
+    info.type = webInfo.type;
+    info.size = webInfo.size;
+    return true;
+}
 
-DELEGATE_TO_INTERNAL_3R(getActiveAttrib, Platform3DObject, GC3Duint, ActiveInfo&, bool)
-DELEGATE_TO_INTERNAL_3R(getActiveUniform, Platform3DObject, GC3Duint, ActiveInfo&, bool)
-DELEGATE_TO_INTERNAL_4(getAttachedShaders, Platform3DObject, GC3Dsizei, GC3Dsizei*, Platform3DObject*)
-DELEGATE_TO_INTERNAL_2R(getAttribLocation, Platform3DObject, const String&, GC3Dint)
-DELEGATE_TO_INTERNAL_2(getBooleanv, GC3Denum, GC3Dboolean*)
-DELEGATE_TO_INTERNAL_3(getBufferParameteriv, GC3Denum, GC3Denum, GC3Dint*)
-DELEGATE_TO_INTERNAL_R(getContextAttributes, GraphicsContext3D::Attributes)
-DELEGATE_TO_INTERNAL_R(getError, GC3Denum)
-DELEGATE_TO_INTERNAL_2(getFloatv, GC3Denum, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_4(getFramebufferAttachmentParameteriv, GC3Denum, GC3Denum, GC3Denum, GC3Dint*)
-DELEGATE_TO_INTERNAL_2(getIntegerv, GC3Denum, GC3Dint*)
-DELEGATE_TO_INTERNAL_3(getProgramiv, Platform3DObject, GC3Denum, GC3Dint*)
-DELEGATE_TO_INTERNAL_1R(getProgramInfoLog, Platform3DObject, String)
-DELEGATE_TO_INTERNAL_3(getRenderbufferParameteriv, GC3Denum, GC3Denum, GC3Dint*)
-DELEGATE_TO_INTERNAL_3(getShaderiv, Platform3DObject, GC3Denum, GC3Dint*)
-DELEGATE_TO_INTERNAL_1R(getShaderInfoLog, Platform3DObject, String)
-DELEGATE_TO_INTERNAL_4(getShaderPrecisionFormat, GC3Denum, GC3Denum, GC3Dint*, GC3Dint*)
-DELEGATE_TO_INTERNAL_1R(getShaderSource, Platform3DObject, String)
-DELEGATE_TO_INTERNAL_1R(getString, GC3Denum, String)
-DELEGATE_TO_INTERNAL_3(getTexParameterfv, GC3Denum, GC3Denum, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_3(getTexParameteriv, GC3Denum, GC3Denum, GC3Dint*)
-DELEGATE_TO_INTERNAL_3(getUniformfv, Platform3DObject, GC3Dint, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_3(getUniformiv, Platform3DObject, GC3Dint, GC3Dint*)
-DELEGATE_TO_INTERNAL_2R(getUniformLocation, Platform3DObject, const String&, GC3Dint)
-DELEGATE_TO_INTERNAL_3(getVertexAttribfv, GC3Duint, GC3Denum, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_3(getVertexAttribiv, GC3Duint, GC3Denum, GC3Dint*)
-DELEGATE_TO_INTERNAL_2R(getVertexAttribOffset, GC3Duint, GC3Denum, GC3Dsizeiptr)
+bool GraphicsContext3D::getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo& info)
+{
+    WebKit::WebGraphicsContext3D::ActiveInfo webInfo;
+    if (!m_private->webContext()->getActiveUniform(program, index, webInfo))
+        return false;
+    info.name = webInfo.name;
+    info.type = webInfo.type;
+    info.size = webInfo.size;
+    return true;
+}
 
-DELEGATE_TO_INTERNAL_2(hint, GC3Denum, GC3Denum)
-DELEGATE_TO_INTERNAL_1R(isBuffer, Platform3DObject, GC3Dboolean)
-DELEGATE_TO_INTERNAL_1R(isEnabled, GC3Denum, GC3Dboolean)
-DELEGATE_TO_INTERNAL_1R(isFramebuffer, Platform3DObject, GC3Dboolean)
-DELEGATE_TO_INTERNAL_1R(isProgram, Platform3DObject, GC3Dboolean)
-DELEGATE_TO_INTERNAL_1R(isRenderbuffer, Platform3DObject, GC3Dboolean)
-DELEGATE_TO_INTERNAL_1R(isShader, Platform3DObject, GC3Dboolean)
-DELEGATE_TO_INTERNAL_1R(isTexture, Platform3DObject, GC3Dboolean)
-DELEGATE_TO_INTERNAL_1(lineWidth, GC3Dfloat)
-DELEGATE_TO_INTERNAL_1(linkProgram, Platform3DObject)
-DELEGATE_TO_INTERNAL_2(pixelStorei, GC3Denum, GC3Dint)
-DELEGATE_TO_INTERNAL_2(polygonOffset, GC3Dfloat, GC3Dfloat)
 
-DELEGATE_TO_INTERNAL_7(readPixels, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, void*)
+DELEGATE_TO_WEBCONTEXT_4(getAttachedShaders, Platform3DObject, GC3Dsizei, GC3Dsizei*, Platform3DObject*)
 
-DELEGATE_TO_INTERNAL(releaseShaderCompiler)
-DELEGATE_TO_INTERNAL_4(renderbufferStorage, GC3Denum, GC3Denum, GC3Dsizei, GC3Dsizei)
-DELEGATE_TO_INTERNAL_2(sampleCoverage, GC3Dclampf, GC3Dboolean)
-DELEGATE_TO_INTERNAL_4(scissor, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
-DELEGATE_TO_INTERNAL_2(shaderSource, Platform3DObject, const String&)
-DELEGATE_TO_INTERNAL_3(stencilFunc, GC3Denum, GC3Dint, GC3Duint)
-DELEGATE_TO_INTERNAL_4(stencilFuncSeparate, GC3Denum, GC3Denum, GC3Dint, GC3Duint)
-DELEGATE_TO_INTERNAL_1(stencilMask, GC3Duint)
-DELEGATE_TO_INTERNAL_2(stencilMaskSeparate, GC3Denum, GC3Duint)
-DELEGATE_TO_INTERNAL_3(stencilOp, GC3Denum, GC3Denum, GC3Denum)
-DELEGATE_TO_INTERNAL_4(stencilOpSeparate, GC3Denum, GC3Denum, GC3Denum, GC3Denum)
+GC3Dint GraphicsContext3D::getAttribLocation(Platform3DObject program, const String& name)
+{
+    return m_private->webContext()->getAttribLocation(program, name.utf8().data());
+}
 
-DELEGATE_TO_INTERNAL_9R(texImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, const void*, bool)
-DELEGATE_TO_INTERNAL_3(texParameterf, GC3Denum, GC3Denum, GC3Dfloat)
-DELEGATE_TO_INTERNAL_3(texParameteri, GC3Denum, GC3Denum, GC3Dint)
-DELEGATE_TO_INTERNAL_9(texSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, const void*)
+DELEGATE_TO_WEBCONTEXT_2(getBooleanv, GC3Denum, GC3Dboolean*)
+DELEGATE_TO_WEBCONTEXT_3(getBufferParameteriv, GC3Denum, GC3Denum, GC3Dint*)
 
-DELEGATE_TO_INTERNAL_2(uniform1f, GC3Dint, GC3Dfloat)
-DELEGATE_TO_INTERNAL_3(uniform1fv, GC3Dint, GC3Dsizei, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_2(uniform1i, GC3Dint, GC3Dint)
-DELEGATE_TO_INTERNAL_3(uniform1iv, GC3Dint, GC3Dsizei, GC3Dint*)
-DELEGATE_TO_INTERNAL_3(uniform2f, GC3Dint, GC3Dfloat, GC3Dfloat)
-DELEGATE_TO_INTERNAL_3(uniform2fv, GC3Dint, GC3Dsizei, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_3(uniform2i, GC3Dint, GC3Dint, GC3Dint)
-DELEGATE_TO_INTERNAL_3(uniform2iv, GC3Dint, GC3Dsizei, GC3Dint*)
-DELEGATE_TO_INTERNAL_4(uniform3f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat)
-DELEGATE_TO_INTERNAL_3(uniform3fv, GC3Dint, GC3Dsizei, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_4(uniform3i, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
-DELEGATE_TO_INTERNAL_3(uniform3iv, GC3Dint, GC3Dsizei, GC3Dint*)
-DELEGATE_TO_INTERNAL_5(uniform4f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat)
-DELEGATE_TO_INTERNAL_3(uniform4fv, GC3Dint, GC3Dsizei, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_5(uniform4i, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
-DELEGATE_TO_INTERNAL_3(uniform4iv, GC3Dint, GC3Dsizei, GC3Dint*)
-DELEGATE_TO_INTERNAL_4(uniformMatrix2fv, GC3Dint, GC3Dsizei, GC3Dboolean, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_4(uniformMatrix3fv, GC3Dint, GC3Dsizei, GC3Dboolean, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_4(uniformMatrix4fv, GC3Dint, GC3Dsizei, GC3Dboolean, GC3Dfloat*)
+GraphicsContext3D::Attributes GraphicsContext3D::getContextAttributes()
+{
+    WebKit::WebGraphicsContext3D::Attributes webAttributes = m_private->webContext()->getContextAttributes();
+    GraphicsContext3D::Attributes attributes;
+    attributes.alpha = webAttributes.alpha;
+    attributes.depth = webAttributes.depth;
+    attributes.stencil = webAttributes.stencil;
+    attributes.antialias = webAttributes.antialias;
+    attributes.premultipliedAlpha = webAttributes.premultipliedAlpha;
+    attributes.preserveDrawingBuffer = m_private->preserveDrawingBuffer();
+    attributes.preferDiscreteGPU = webAttributes.preferDiscreteGPU;
+    return attributes;
+}
 
-DELEGATE_TO_INTERNAL_1(useProgram, Platform3DObject)
-DELEGATE_TO_INTERNAL_1(validateProgram, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_R(getError, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_2(getFloatv, GC3Denum, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_4(getFramebufferAttachmentParameteriv, GC3Denum, GC3Denum, GC3Denum, GC3Dint*)
+DELEGATE_TO_WEBCONTEXT_2(getIntegerv, GC3Denum, GC3Dint*)
+DELEGATE_TO_WEBCONTEXT_3(getProgramiv, Platform3DObject, GC3Denum, GC3Dint*)
 
-DELEGATE_TO_INTERNAL_2(vertexAttrib1f, GC3Duint, GC3Dfloat)
-DELEGATE_TO_INTERNAL_2(vertexAttrib1fv, GC3Duint, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_3(vertexAttrib2f, GC3Duint, GC3Dfloat, GC3Dfloat)
-DELEGATE_TO_INTERNAL_2(vertexAttrib2fv, GC3Duint, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_4(vertexAttrib3f, GC3Duint, GC3Dfloat, GC3Dfloat, GC3Dfloat)
-DELEGATE_TO_INTERNAL_2(vertexAttrib3fv, GC3Duint, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_5(vertexAttrib4f, GC3Duint, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat)
-DELEGATE_TO_INTERNAL_2(vertexAttrib4fv, GC3Duint, GC3Dfloat*)
-DELEGATE_TO_INTERNAL_6(vertexAttribPointer, GC3Duint, GC3Dint, GC3Denum, GC3Dboolean, GC3Dsizei, GC3Dintptr)
+String GraphicsContext3D::getProgramInfoLog(Platform3DObject program)
+{
+    return m_private->webContext()->getProgramInfoLog(program);
+}
 
-DELEGATE_TO_INTERNAL_4(viewport, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
 
-DELEGATE_TO_INTERNAL(markLayerComposited)
-DELEGATE_TO_INTERNAL(markContextChanged)
+DELEGATE_TO_WEBCONTEXT_3(getRenderbufferParameteriv, GC3Denum, GC3Denum, GC3Dint*)
+DELEGATE_TO_WEBCONTEXT_3(getShaderiv, Platform3DObject, GC3Denum, GC3Dint*)
+
+String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
+{
+    return m_private->webContext()->getShaderInfoLog(shader);
+}
+
+
+DELEGATE_TO_WEBCONTEXT_4(getShaderPrecisionFormat, GC3Denum, GC3Denum, GC3Dint*, GC3Dint*)
+
+String GraphicsContext3D::getShaderSource(Platform3DObject shader)
+{
+    return m_private->webContext()->getShaderSource(shader);
+}
+
+String GraphicsContext3D::getString(GC3Denum name)
+{
+    return m_private->webContext()->getString(name);
+}
+
+
+DELEGATE_TO_WEBCONTEXT_3(getTexParameterfv, GC3Denum, GC3Denum, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_3(getTexParameteriv, GC3Denum, GC3Denum, GC3Dint*)
+DELEGATE_TO_WEBCONTEXT_3(getUniformfv, Platform3DObject, GC3Dint, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_3(getUniformiv, Platform3DObject, GC3Dint, GC3Dint*)
+
+GC3Dint GraphicsContext3D::getUniformLocation(Platform3DObject program, const String& name)
+{
+    return m_private->webContext()->getUniformLocation(program, name.utf8().data());
+}
+
+
+DELEGATE_TO_WEBCONTEXT_3(getVertexAttribfv, GC3Duint, GC3Denum, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_3(getVertexAttribiv, GC3Duint, GC3Denum, GC3Dint*)
+DELEGATE_TO_WEBCONTEXT_2R(getVertexAttribOffset, GC3Duint, GC3Denum, GC3Dsizeiptr)
+
+DELEGATE_TO_WEBCONTEXT_2(hint, GC3Denum, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_1R(isBuffer, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_WEBCONTEXT_1R(isEnabled, GC3Denum, GC3Dboolean)
+DELEGATE_TO_WEBCONTEXT_1R(isFramebuffer, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_WEBCONTEXT_1R(isProgram, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_WEBCONTEXT_1R(isRenderbuffer, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_WEBCONTEXT_1R(isShader, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_WEBCONTEXT_1R(isTexture, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_WEBCONTEXT_1(lineWidth, GC3Dfloat)
+DELEGATE_TO_WEBCONTEXT_1(linkProgram, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_2(pixelStorei, GC3Denum, GC3Dint)
+DELEGATE_TO_WEBCONTEXT_2(polygonOffset, GC3Dfloat, GC3Dfloat)
+
+DELEGATE_TO_WEBCONTEXT_7(readPixels, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, void*)
+
+DELEGATE_TO_WEBCONTEXT(releaseShaderCompiler)
+DELEGATE_TO_WEBCONTEXT_4(renderbufferStorage, GC3Denum, GC3Denum, GC3Dsizei, GC3Dsizei)
+DELEGATE_TO_WEBCONTEXT_2(sampleCoverage, GC3Dclampf, GC3Dboolean)
+DELEGATE_TO_WEBCONTEXT_4(scissor, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
+
+void GraphicsContext3D::shaderSource(Platform3DObject shader, const String& string)
+{
+    m_private->webContext()->shaderSource(shader, string.utf8().data());
+}
+
+DELEGATE_TO_WEBCONTEXT_3(stencilFunc, GC3Denum, GC3Dint, GC3Duint)
+DELEGATE_TO_WEBCONTEXT_4(stencilFuncSeparate, GC3Denum, GC3Denum, GC3Dint, GC3Duint)
+DELEGATE_TO_WEBCONTEXT_1(stencilMask, GC3Duint)
+DELEGATE_TO_WEBCONTEXT_2(stencilMaskSeparate, GC3Denum, GC3Duint)
+DELEGATE_TO_WEBCONTEXT_3(stencilOp, GC3Denum, GC3Denum, GC3Denum)
+DELEGATE_TO_WEBCONTEXT_4(stencilOpSeparate, GC3Denum, GC3Denum, GC3Denum, GC3Denum)
+
+bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
+{
+    m_private->webContext()->texImage2D(target, level, internalformat, width, height, border, format, type, pixels);
+    return true;
+}
+
+DELEGATE_TO_WEBCONTEXT_3(texParameterf, GC3Denum, GC3Denum, GC3Dfloat)
+DELEGATE_TO_WEBCONTEXT_3(texParameteri, GC3Denum, GC3Denum, GC3Dint)
+
+void GraphicsContext3D::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels)
+{
+    m_private->webContext()->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
+}
+
+DELEGATE_TO_WEBCONTEXT_2(uniform1f, GC3Dint, GC3Dfloat)
+DELEGATE_TO_WEBCONTEXT_3(uniform1fv, GC3Dint, GC3Dsizei, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_2(uniform1i, GC3Dint, GC3Dint)
+DELEGATE_TO_WEBCONTEXT_3(uniform1iv, GC3Dint, GC3Dsizei, GC3Dint*)
+DELEGATE_TO_WEBCONTEXT_3(uniform2f, GC3Dint, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_WEBCONTEXT_3(uniform2fv, GC3Dint, GC3Dsizei, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_3(uniform2i, GC3Dint, GC3Dint, GC3Dint)
+DELEGATE_TO_WEBCONTEXT_3(uniform2iv, GC3Dint, GC3Dsizei, GC3Dint*)
+DELEGATE_TO_WEBCONTEXT_4(uniform3f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_WEBCONTEXT_3(uniform3fv, GC3Dint, GC3Dsizei, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_4(uniform3i, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
+DELEGATE_TO_WEBCONTEXT_3(uniform3iv, GC3Dint, GC3Dsizei, GC3Dint*)
+DELEGATE_TO_WEBCONTEXT_5(uniform4f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_WEBCONTEXT_3(uniform4fv, GC3Dint, GC3Dsizei, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_5(uniform4i, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
+DELEGATE_TO_WEBCONTEXT_3(uniform4iv, GC3Dint, GC3Dsizei, GC3Dint*)
+DELEGATE_TO_WEBCONTEXT_4(uniformMatrix2fv, GC3Dint, GC3Dsizei, GC3Dboolean, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_4(uniformMatrix3fv, GC3Dint, GC3Dsizei, GC3Dboolean, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_4(uniformMatrix4fv, GC3Dint, GC3Dsizei, GC3Dboolean, GC3Dfloat*)
+
+DELEGATE_TO_WEBCONTEXT_1(useProgram, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_1(validateProgram, Platform3DObject)
+
+DELEGATE_TO_WEBCONTEXT_2(vertexAttrib1f, GC3Duint, GC3Dfloat)
+DELEGATE_TO_WEBCONTEXT_2(vertexAttrib1fv, GC3Duint, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_3(vertexAttrib2f, GC3Duint, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_WEBCONTEXT_2(vertexAttrib2fv, GC3Duint, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_4(vertexAttrib3f, GC3Duint, GC3Dfloat, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_WEBCONTEXT_2(vertexAttrib3fv, GC3Duint, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_5(vertexAttrib4f, GC3Duint, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_WEBCONTEXT_2(vertexAttrib4fv, GC3Duint, GC3Dfloat*)
+DELEGATE_TO_WEBCONTEXT_6(vertexAttribPointer, GC3Duint, GC3Dint, GC3Denum, GC3Dboolean, GC3Dsizei, GC3Dintptr)
+
+DELEGATE_TO_WEBCONTEXT_4(viewport, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
+
+void GraphicsContext3D::reshape(int width, int height)
+{
+    if (width == m_private->webContext()->width() && height == m_private->webContext()->height())
+        return;
+
+    m_private->webContext()->reshape(width, height);
+}
+
+void GraphicsContext3D::markContextChanged()
+{
+    m_private->markContextChanged();
+}
 
 bool GraphicsContext3D::layerComposited() const
 {
     return m_private->layerComposited();
 }
 
+void GraphicsContext3D::markLayerComposited()
+{
+    m_private->markLayerComposited();
+}
+
+namespace {
+
+void getDrawingParameters(DrawingBuffer* drawingBuffer, WebKit::WebGraphicsContext3D* graphicsContext3D,
+                          Platform3DObject* frameBufferId, int* width, int* height)
+{
+    if (drawingBuffer) {
+        *frameBufferId = drawingBuffer->framebuffer();
+        *width = drawingBuffer->size().width();
+        *height = drawingBuffer->size().height();
+    } else {
+        *frameBufferId = 0;
+        *width = graphicsContext3D->width();
+        *height = graphicsContext3D->height();
+    }
+}
+
+} // anonymous namespace
+
 void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer, DrawingBuffer* drawingBuffer)
 {
-    return m_private->paintRenderingResultsToCanvas(imageBuffer, drawingBuffer);
+    Platform3DObject framebufferId;
+    int width, height;
+    getDrawingParameters(drawingBuffer, m_private->webContext(), &framebufferId, &width, &height);
+    m_private->paintFramebufferToCanvas(framebufferId, width, height, !getContextAttributes().premultipliedAlpha, imageBuffer);
 }
 
 PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(DrawingBuffer* drawingBuffer)
 {
-    return m_private->paintRenderingResultsToImageData(drawingBuffer);
+    if (getContextAttributes().premultipliedAlpha)
+        return 0;
+
+    Platform3DObject framebufferId;
+    int width, height;
+    getDrawingParameters(drawingBuffer, m_private->webContext(), &framebufferId, &width, &height);
+
+    RefPtr<ImageData> imageData = ImageData::create(IntSize(width, height));
+    unsigned char* pixels = imageData->data()->data();
+    size_t bufferSize = 4 * width * height;
+
+    m_private->webContext()->readBackFramebuffer(pixels, bufferSize, framebufferId, width, height);
+
+    for (size_t i = 0; i < bufferSize; i += 4)
+        std::swap(pixels[i], pixels[i + 2]);
+
+    return imageData.release();
 }
 
-DELEGATE_TO_INTERNAL_1R(paintCompositedResultsToCanvas, ImageBuffer*, bool)
-
-DELEGATE_TO_INTERNAL_R(createBuffer, Platform3DObject)
-DELEGATE_TO_INTERNAL_R(createFramebuffer, Platform3DObject)
-DELEGATE_TO_INTERNAL_R(createProgram, Platform3DObject)
-DELEGATE_TO_INTERNAL_R(createRenderbuffer, Platform3DObject)
-DELEGATE_TO_INTERNAL_1R(createShader, GC3Denum, Platform3DObject)
-DELEGATE_TO_INTERNAL_R(createTexture, Platform3DObject)
-
-DELEGATE_TO_INTERNAL_1(deleteBuffer, Platform3DObject)
-DELEGATE_TO_INTERNAL_1(deleteFramebuffer, Platform3DObject)
-DELEGATE_TO_INTERNAL_1(deleteProgram, Platform3DObject)
-DELEGATE_TO_INTERNAL_1(deleteRenderbuffer, Platform3DObject)
-DELEGATE_TO_INTERNAL_1(deleteShader, Platform3DObject)
-DELEGATE_TO_INTERNAL_1(deleteTexture, Platform3DObject)
-
-DELEGATE_TO_INTERNAL_1(synthesizeGLError, GC3Denum)
-DELEGATE_TO_INTERNAL_R(getExtensions, Extensions3D*)
-
-DELEGATE_TO_INTERNAL_1(setContextLostCallback, PassOwnPtr<GraphicsContext3D::ContextLostCallback>)
-DELEGATE_TO_INTERNAL_1(setErrorMessageCallback, PassOwnPtr<GraphicsContext3D::ErrorMessageCallback>)
-
-class GraphicsContextLostCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsContextLostCallback {
-public:
-    virtual void onContextLost();
-    static PassOwnPtr<GraphicsContextLostCallbackAdapter> create(PassOwnPtr<GraphicsContext3D::ContextLostCallback>);
-    virtual ~GraphicsContextLostCallbackAdapter() { }
-private:
-    GraphicsContextLostCallbackAdapter(PassOwnPtr<GraphicsContext3D::ContextLostCallback> cb) : m_contextLostCallback(cb) { }
-    OwnPtr<GraphicsContext3D::ContextLostCallback> m_contextLostCallback;
-};
-
-void GraphicsContextLostCallbackAdapter::onContextLost()
+bool GraphicsContext3D::paintCompositedResultsToCanvas(ImageBuffer*)
 {
-    if (m_contextLostCallback)
-        m_contextLostCallback->onContextLost();
+    return false;
 }
 
-PassOwnPtr<GraphicsContextLostCallbackAdapter> GraphicsContextLostCallbackAdapter::create(PassOwnPtr<GraphicsContext3D::ContextLostCallback> cb)
+DELEGATE_TO_WEBCONTEXT_R(createBuffer, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_R(createFramebuffer, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_R(createProgram, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_R(createRenderbuffer, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_1R(createShader, GC3Denum, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_R(createTexture, Platform3DObject)
+
+DELEGATE_TO_WEBCONTEXT_1(deleteBuffer, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_1(deleteFramebuffer, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_1(deleteProgram, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_1(deleteRenderbuffer, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_1(deleteShader, Platform3DObject)
+DELEGATE_TO_WEBCONTEXT_1(deleteTexture, Platform3DObject)
+
+DELEGATE_TO_WEBCONTEXT_1(synthesizeGLError, GC3Denum)
+
+Extensions3D* GraphicsContext3D::getExtensions()
 {
-    return adoptPtr(cb.get() ? new GraphicsContextLostCallbackAdapter(cb) : 0);
+    return m_private->getExtensions();
 }
 
-void GraphicsContext3DPrivate::setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback> cb)
+
+IntSize GraphicsContext3D::getInternalFramebufferSize() const
 {
-    m_contextLostCallbackAdapter = GraphicsContextLostCallbackAdapter::create(cb);
-    m_impl->setContextLostCallback(m_contextLostCallbackAdapter.get());
-}
-
-class GraphicsErrorMessageCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsErrorMessageCallback {
-public:
-    virtual void onErrorMessage(const WebKit::WebString&, WebKit::WGC3Dint);
-    static PassOwnPtr<GraphicsErrorMessageCallbackAdapter> create(PassOwnPtr<GraphicsContext3D::ErrorMessageCallback>);
-    virtual ~GraphicsErrorMessageCallbackAdapter() { }
-private:
-    GraphicsErrorMessageCallbackAdapter(PassOwnPtr<GraphicsContext3D::ErrorMessageCallback> cb) : m_errorMessageCallback(cb) { }
-    OwnPtr<GraphicsContext3D::ErrorMessageCallback> m_errorMessageCallback;
-};
-
-void GraphicsErrorMessageCallbackAdapter::onErrorMessage(const WebKit::WebString& message, WebKit::WGC3Dint id)
-{
-    if (m_errorMessageCallback)
-        m_errorMessageCallback->onErrorMessage(message, id);
-}
-
-PassOwnPtr<GraphicsErrorMessageCallbackAdapter> GraphicsErrorMessageCallbackAdapter::create(PassOwnPtr<GraphicsContext3D::ErrorMessageCallback> cb)
-{
-    return adoptPtr(cb.get() ? new GraphicsErrorMessageCallbackAdapter(cb) : 0);
-}
-
-void GraphicsContext3DPrivate::setErrorMessageCallback(PassOwnPtr<GraphicsContext3D::ErrorMessageCallback> cb)
-{
-    m_errorMessageCallbackAdapter = GraphicsErrorMessageCallbackAdapter::create(cb);
-    m_impl->setErrorMessageCallback(m_errorMessageCallbackAdapter.get());
-}
-
-bool GraphicsContext3D::isGLES2Compliant() const
-{
-    return m_private->isGLES2Compliant();
-}
-
-class GraphicsContext3DSwapBuffersCompleteCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsSwapBuffersCompleteCallbackCHROMIUM {
-public:
-    virtual void onSwapBuffersComplete();
-    static PassOwnPtr<GraphicsContext3DSwapBuffersCompleteCallbackAdapter> create(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM>);
-    virtual ~GraphicsContext3DSwapBuffersCompleteCallbackAdapter() { }
-
-private:
-    GraphicsContext3DSwapBuffersCompleteCallbackAdapter(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> cb) : m_swapBuffersCompleteCallback(cb) { }
-    OwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> m_swapBuffersCompleteCallback;
-};
-
-void GraphicsContext3DSwapBuffersCompleteCallbackAdapter::onSwapBuffersComplete()
-{
-    if (m_swapBuffersCompleteCallback)
-        m_swapBuffersCompleteCallback->onSwapBuffersComplete();
-}
-
-PassOwnPtr<GraphicsContext3DSwapBuffersCompleteCallbackAdapter> GraphicsContext3DSwapBuffersCompleteCallbackAdapter::create(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> cb)
-{
-    return adoptPtr(cb.get() ? new GraphicsContext3DSwapBuffersCompleteCallbackAdapter(cb) : 0);
-}
-
-void GraphicsContext3DPrivate::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> cb)
-{
-    m_swapBuffersCompleteCallbackAdapter = GraphicsContext3DSwapBuffersCompleteCallbackAdapter::create(cb);
-    m_impl->setSwapBuffersCompleteCallbackCHROMIUM(m_swapBuffersCompleteCallbackAdapter.get());
-}
-
-class GraphicsContext3DMemoryAllocationChangedCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsMemoryAllocationChangedCallbackCHROMIUM {
-public:
-    GraphicsContext3DMemoryAllocationChangedCallbackAdapter(PassOwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM> cb)
-        : m_memoryAllocationChangedCallback(cb)
-    {
-    }
-
-    virtual ~GraphicsContext3DMemoryAllocationChangedCallbackAdapter() { }
-
-    virtual void onMemoryAllocationChanged(size_t gpuResourceSizeInBytes)
-    {
-        // FIXME: Remove this once clients start using WebGraphicsMemoryAllocation exclusively.
-        onMemoryAllocationChanged(WebKit::WebGraphicsMemoryAllocation(gpuResourceSizeInBytes, true));
-    }
-
-    virtual void onMemoryAllocationChanged(WebKit::WebGraphicsMemoryAllocation allocation)
-    {
-        if (m_memoryAllocationChangedCallback)
-            m_memoryAllocationChangedCallback->onGpuMemoryAllocationChanged(Extensions3DChromium::GpuMemoryAllocationCHROMIUM(allocation.gpuResourceSizeInBytes, allocation.suggestHaveBackbuffer));
-    }
-
-private:
-    OwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM> m_memoryAllocationChangedCallback;
-};
-
-void GraphicsContext3DPrivate::setGpuMemoryAllocationChangedCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM> cb)
-{
-    m_memoryAllocationChangedCallbackAdapter = adoptPtr(new GraphicsContext3DMemoryAllocationChangedCallbackAdapter(cb));
-    m_impl->setMemoryAllocationChangedCallbackCHROMIUM(m_memoryAllocationChangedCallbackAdapter.get());
+    return IntSize(m_private->webContext()->width(), m_private->webContext()->height());
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEBGL)

@@ -25,12 +25,11 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL)
-
 #include "Extensions3DChromium.h"
 
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
+#include <public/WebGraphicsContext3D.h>
 
 namespace WebCore {
 
@@ -50,11 +49,8 @@ bool Extensions3DChromium::supports(const String& name)
 
 void Extensions3DChromium::ensureEnabled(const String& name)
 {
-#ifndef NDEBUG
-    bool result =
-#endif
-        m_private->ensureExtensionEnabled(name);
-    ASSERT(result);
+    bool result = m_private->ensureExtensionEnabled(name);
+    ASSERT_UNUSED(result, result);
 }
 
 bool Extensions3DChromium::isEnabled(const String& name)
@@ -64,57 +60,57 @@ bool Extensions3DChromium::isEnabled(const String& name)
 
 int Extensions3DChromium::getGraphicsResetStatusARB()
 {
-    return static_cast<int>(m_private->getGraphicsResetStatusARB());
+    return static_cast<int>(m_private->webContext()->getGraphicsResetStatusARB());
 }
 
 void Extensions3DChromium::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
 {
-    m_private->blitFramebufferCHROMIUM(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+    m_private->webContext()->blitFramebufferCHROMIUM(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
 void Extensions3DChromium::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
 {
-    m_private->renderbufferStorageMultisampleCHROMIUM(target, samples, internalformat, width, height);
+    m_private->webContext()->renderbufferStorageMultisampleCHROMIUM(target, samples, internalformat, width, height);
 }
 
 void Extensions3DChromium::postSubBufferCHROMIUM(int x, int y, int width, int height)
 {
-    m_private->postSubBufferCHROMIUM(x, y, width, height);
+    m_private->webContext()->postSubBufferCHROMIUM(x, y, width, height);
 }
 
 void* Extensions3DChromium::mapBufferSubDataCHROMIUM(unsigned target, int offset, int size, unsigned access)
 {
-    return m_private->mapBufferSubDataCHROMIUM(target, offset, size, access);
+    return m_private->webContext()->mapBufferSubDataCHROMIUM(target, offset, size, access);
 }
 
 void Extensions3DChromium::unmapBufferSubDataCHROMIUM(const void* data)
 {
-    m_private->unmapBufferSubDataCHROMIUM(data);
+    m_private->webContext()->unmapBufferSubDataCHROMIUM(data);
 }
 
 void* Extensions3DChromium::mapTexSubImage2DCHROMIUM(unsigned target, int level, int xoffset, int yoffset, int width, int height, unsigned format, unsigned type, unsigned access)
 {
-    return m_private->mapTexSubImage2DCHROMIUM(target, level, xoffset, yoffset, width, height, format, type, access);
+    return m_private->webContext()->mapTexSubImage2DCHROMIUM(target, level, xoffset, yoffset, width, height, format, type, access);
 }
 
 void Extensions3DChromium::unmapTexSubImage2DCHROMIUM(const void* data)
 {
-    m_private->unmapTexSubImage2DCHROMIUM(data);
+    m_private->webContext()->unmapTexSubImage2DCHROMIUM(data);
 }
 
 void Extensions3DChromium::setVisibilityCHROMIUM(bool visibility)
 {
-    m_private->setVisibilityCHROMIUM(visibility);
+    m_private->webContext()->setVisibilityCHROMIUM(visibility);
 }
 
 void Extensions3DChromium::discardFramebufferEXT(GC3Denum target, GC3Dsizei numAttachments, const GC3Denum* attachments)
 {
-    m_private->discardFramebufferEXT(target, numAttachments, attachments);
+    m_private->webContext()->discardFramebufferEXT(target, numAttachments, attachments);
 }
 
 void Extensions3DChromium::ensureFramebufferCHROMIUM()
 {
-    m_private->ensureFramebufferCHROMIUM();
+    m_private->webContext()->ensureFramebufferCHROMIUM();
 }
 
 void Extensions3DChromium::setGpuMemoryAllocationChangedCallbackCHROMIUM(PassOwnPtr<GpuMemoryAllocationChangedCallbackCHROMIUM> callback)
@@ -142,7 +138,7 @@ void Extensions3DChromium::bindVertexArrayOES(Platform3DObject)
 
 String Extensions3DChromium::getTranslatedShaderSourceANGLE(Platform3DObject shader)
 {
-    return m_private->getTranslatedShaderSourceANGLE(shader);
+    return m_private->webContext()->getTranslatedShaderSourceANGLE(shader);
 }
 
 void Extensions3DChromium::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<SwapBuffersCompleteCallbackCHROMIUM> callback)
@@ -152,7 +148,7 @@ void Extensions3DChromium::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<Swa
 
 void Extensions3DChromium::rateLimitOffscreenContextCHROMIUM()
 {
-    m_private->rateLimitOffscreenContextCHROMIUM();
+    m_private->webContext()->rateLimitOffscreenContextCHROMIUM();
 }
 
 void Extensions3DChromium::paintFramebufferToCanvas(int framebuffer, int width, int height, bool premultiplyAlpha, ImageBuffer* imageBuffer)
@@ -162,49 +158,47 @@ void Extensions3DChromium::paintFramebufferToCanvas(int framebuffer, int width, 
 
 void Extensions3DChromium::texImageIOSurface2DCHROMIUM(unsigned target, int width, int height, uint32_t ioSurfaceId, unsigned plane)
 {
-    m_private->texImageIOSurface2DCHROMIUM(target, width, height, ioSurfaceId, plane);
+    m_private->webContext()->texImageIOSurface2DCHROMIUM(target, width, height, ioSurfaceId, plane);
 }
 
 void Extensions3DChromium::texStorage2DEXT(unsigned int target, int levels, unsigned int internalFormat, int width, int height)
 {
-    m_private->texStorage2DEXT(target, levels, internalFormat, width, height);
+    m_private->webContext()->texStorage2DEXT(target, levels, internalFormat, width, height);
 }
 
 Platform3DObject Extensions3DChromium::createQueryEXT()
 {
-    return m_private->createQueryEXT();
+    return m_private->webContext()->createQueryEXT();
 }
 
 void Extensions3DChromium::deleteQueryEXT(Platform3DObject query)
 {
-    m_private->deleteQueryEXT(query);
+    m_private->webContext()->deleteQueryEXT(query);
 }
 
 GC3Dboolean Extensions3DChromium::isQueryEXT(Platform3DObject query)
 {
-    return m_private->isQueryEXT(query);
+    return m_private->webContext()->isQueryEXT(query);
 }
 
 void Extensions3DChromium::beginQueryEXT(GC3Denum target, Platform3DObject query)
 {
-    m_private->beginQueryEXT(target, query);
+    m_private->webContext()->beginQueryEXT(target, query);
 }
 
 void Extensions3DChromium::endQueryEXT(GC3Denum target)
 {
-    m_private->endQueryEXT(target);
+    m_private->webContext()->endQueryEXT(target);
 }
 
 void Extensions3DChromium::getQueryivEXT(GC3Denum target, GC3Denum pname, GC3Dint* params)
 {
-    m_private->getQueryivEXT(target, pname, params);
+    m_private->webContext()->getQueryivEXT(target, pname, params);
 }
 
 void Extensions3DChromium::getQueryObjectuivEXT(Platform3DObject query, GC3Denum pname, GC3Duint* params)
 {
-    m_private->getQueryObjectuivEXT(query, pname, params);
+    m_private->webContext()->getQueryObjectuivEXT(query, pname, params);
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEBGL)

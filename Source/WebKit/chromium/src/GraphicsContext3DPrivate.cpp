@@ -1,0 +1,379 @@
+/*
+ * Copyright (C) 2009 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+
+#include "GraphicsContext3DPrivate.h"
+
+#include "DrawingBuffer.h"
+#include "Extensions3DChromium.h"
+#include "GrContext.h"
+#include "GrGLInterface.h"
+#include "ImageBuffer.h"
+#include <public/WebGraphicsContext3D.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
+
+namespace {
+
+// The limit of the number of textures we hold in the GrContext's bitmap->texture cache.
+const int maxGaneshTextureCacheCount = 512;
+// The limit of the bytes allocated toward textures in the GrContext's bitmap->texture cache.
+const size_t maxGaneshTextureCacheBytes = 96 * 1024 * 1024;
+
+}
+
+namespace WebCore {
+
+//----------------------------------------------------------------------
+// GraphicsContext3DPrivate
+
+GraphicsContext3DPrivate::GraphicsContext3DPrivate(PassOwnPtr<WebKit::WebGraphicsContext3D> webContext, bool preserveDrawingBuffer)
+    : m_impl(webContext)
+    , m_initializedAvailableExtensions(false)
+    , m_layerComposited(false)
+    , m_preserveDrawingBuffer(preserveDrawingBuffer)
+    , m_resourceSafety(ResourceSafetyUnknown)
+    , m_grContext(0)
+{
+}
+
+GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
+{
+    if (m_grContext) {
+        m_grContext->contextDestroyed();
+        GrSafeUnref(m_grContext);
+    }
+}
+
+PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D> webContext, GraphicsContext3D::RenderStyle renderStyle, bool preserveDrawingBuffer)
+{
+    bool renderDirectlyToHostWindow = renderStyle == GraphicsContext3D::RenderDirectlyToHostWindow;
+
+    RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(GraphicsContext3D::Attributes(), 0, renderDirectlyToHostWindow));
+
+    OwnPtr<GraphicsContext3DPrivate> priv = adoptPtr(new GraphicsContext3DPrivate(webContext, preserveDrawingBuffer));
+    context->m_private = priv.release();
+    return context.release();
+}
+
+WebKit::WebGraphicsContext3D* GraphicsContext3DPrivate::extractWebGraphicsContext3D(GraphicsContext3D* context)
+{
+    if (!context)
+        return 0;
+    return context->m_private->webContext();
+}
+
+class GrMemoryAllocationChangedCallback : public Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM {
+public:
+    GrMemoryAllocationChangedCallback(GraphicsContext3DPrivate* context)
+        : m_context(context)
+    {
+    }
+
+    virtual void onGpuMemoryAllocationChanged(Extensions3DChromium::GpuMemoryAllocationCHROMIUM allocation)
+    {
+        GrContext* context = m_context->grContext();
+        if (!context)
+            return;
+
+        if (!allocation.gpuResourceSizeInBytes) {
+            context->freeGpuResources();
+            context->setTextureCacheLimits(0, 0);
+        } else
+            context->setTextureCacheLimits(maxGaneshTextureCacheCount, maxGaneshTextureCacheBytes);
+    }
+
+private:
+    GraphicsContext3DPrivate* m_context;
+};
+
+GrContext* GraphicsContext3DPrivate::grContext()
+{
+    if (!m_grContext) {
+        SkAutoTUnref<GrGLInterface> interface(m_impl->createGrGLInterface());
+        m_grContext = GrContext::Create(kOpenGL_Shaders_GrEngine, reinterpret_cast<GrPlatform3DContext>(interface.get()));
+        if (m_grContext) {
+            m_grContext->setTextureCacheLimits(maxGaneshTextureCacheCount, maxGaneshTextureCacheBytes);
+            Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(getExtensions());
+            if (extensions3DChromium->supports("GL_CHROMIUM_gpu_memory_manager"))
+                extensions3DChromium->setGpuMemoryAllocationChangedCallbackCHROMIUM(adoptPtr(new GrMemoryAllocationChangedCallback(this)));
+        }
+    }
+    return m_grContext;
+}
+
+void GraphicsContext3DPrivate::markContextChanged()
+{
+    m_layerComposited = false;
+}
+
+bool GraphicsContext3DPrivate::layerComposited() const
+{
+    return m_layerComposited;
+}
+
+void GraphicsContext3DPrivate::markLayerComposited()
+{
+    m_layerComposited = true;
+}
+
+void GraphicsContext3DPrivate::paintFramebufferToCanvas(int framebuffer, int width, int height, bool premultiplyAlpha, ImageBuffer* imageBuffer)
+{
+    unsigned char* pixels = 0;
+    size_t bufferSize = 4 * width * height;
+
+    const SkBitmap* canvasBitmap = imageBuffer->context()->platformContext()->bitmap();
+    const SkBitmap* readbackBitmap = 0;
+    ASSERT(canvasBitmap->config() == SkBitmap::kARGB_8888_Config);
+    if (canvasBitmap->width() == width && canvasBitmap->height() == height) {
+        // This is the fastest and most common case. We read back
+        // directly into the canvas's backing store.
+        readbackBitmap = canvasBitmap;
+        m_resizingBitmap.reset();
+    } else {
+        // We need to allocate a temporary bitmap for reading back the
+        // pixel data. We will then use Skia to rescale this bitmap to
+        // the size of the canvas's backing store.
+        if (m_resizingBitmap.width() != width || m_resizingBitmap.height() != height) {
+            m_resizingBitmap.setConfig(SkBitmap::kARGB_8888_Config,
+                                       width,
+                                       height);
+            if (!m_resizingBitmap.allocPixels())
+                return;
+        }
+        readbackBitmap = &m_resizingBitmap;
+    }
+
+    // Read back the frame buffer.
+    SkAutoLockPixels bitmapLock(*readbackBitmap);
+    pixels = static_cast<unsigned char*>(readbackBitmap->getPixels());
+
+    m_impl->readBackFramebuffer(pixels, 4 * width * height, framebuffer, width, height);
+
+    if (premultiplyAlpha) {
+        for (size_t i = 0; i < bufferSize; i += 4) {
+            pixels[i + 0] = std::min(255, pixels[i + 0] * pixels[i + 3] / 255);
+            pixels[i + 1] = std::min(255, pixels[i + 1] * pixels[i + 3] / 255);
+            pixels[i + 2] = std::min(255, pixels[i + 2] * pixels[i + 3] / 255);
+        }
+    }
+
+    readbackBitmap->notifyPixelsChanged();
+    if (m_resizingBitmap.readyToDraw()) {
+        // We need to draw the resizing bitmap into the canvas's backing store.
+        SkCanvas canvas(*canvasBitmap);
+        SkRect dst;
+        dst.set(SkIntToScalar(0), SkIntToScalar(0), SkIntToScalar(canvasBitmap->width()), SkIntToScalar(canvasBitmap->height()));
+        canvas.drawBitmapRect(m_resizingBitmap, 0, dst);
+    }
+}
+
+class GraphicsContext3DContextLostCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsContextLostCallback {
+public:
+    GraphicsContext3DContextLostCallbackAdapter(PassOwnPtr<GraphicsContext3D::ContextLostCallback> callback)
+        : m_contextLostCallback(callback) { }
+    virtual ~GraphicsContext3DContextLostCallbackAdapter() { }
+
+    virtual void onContextLost()
+    {
+        if (m_contextLostCallback)
+            m_contextLostCallback->onContextLost();
+    }
+private:
+    OwnPtr<GraphicsContext3D::ContextLostCallback> m_contextLostCallback;
+};
+
+void GraphicsContext3DPrivate::setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback> callback)
+{
+    m_contextLostCallbackAdapter = adoptPtr(new GraphicsContext3DContextLostCallbackAdapter(callback));
+    m_impl->setContextLostCallback(m_contextLostCallbackAdapter.get());
+}
+
+class GraphicsContext3DErrorMessageCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsErrorMessageCallback {
+public:
+    GraphicsContext3DErrorMessageCallbackAdapter(PassOwnPtr<GraphicsContext3D::ErrorMessageCallback> callback)
+        : m_errorMessageCallback(callback) { }
+    virtual ~GraphicsContext3DErrorMessageCallbackAdapter() { }
+
+    virtual void onErrorMessage(const WebKit::WebString& message, WebKit::WGC3Dint id)
+    {
+        if (m_errorMessageCallback)
+            m_errorMessageCallback->onErrorMessage(message, id);
+    }
+private:
+    OwnPtr<GraphicsContext3D::ErrorMessageCallback> m_errorMessageCallback;
+};
+
+void GraphicsContext3DPrivate::setErrorMessageCallback(PassOwnPtr<GraphicsContext3D::ErrorMessageCallback> callback)
+{
+    m_errorMessageCallbackAdapter = adoptPtr(new GraphicsContext3DErrorMessageCallbackAdapter(callback));
+    m_impl->setErrorMessageCallback(m_errorMessageCallbackAdapter.get());
+}
+
+Extensions3D* GraphicsContext3DPrivate::getExtensions()
+{
+    if (!m_extensions)
+        m_extensions = adoptPtr(new Extensions3DChromium(this));
+    return m_extensions.get();
+}
+
+namespace {
+
+void splitStringHelper(const String& str, HashSet<String>& set)
+{
+    Vector<String> substrings;
+    str.split(" ", substrings);
+    for (size_t i = 0; i < substrings.size(); ++i)
+        set.add(substrings[i]);
+}
+
+String mapExtensionName(const String& name)
+{
+    if (name == "GL_ANGLE_framebuffer_blit"
+        || name == "GL_ANGLE_framebuffer_multisample")
+        return "GL_CHROMIUM_framebuffer_multisample";
+    return name;
+}
+
+} // anonymous namespace
+
+void GraphicsContext3DPrivate::initializeExtensions()
+{
+    if (m_initializedAvailableExtensions)
+        return;
+
+    m_initializedAvailableExtensions = true;
+    bool success = m_impl->makeContextCurrent();
+    ASSERT(success);
+    if (!success)
+        return;
+
+    String extensionsString = m_impl->getString(GraphicsContext3D::EXTENSIONS);
+    splitStringHelper(extensionsString, m_enabledExtensions);
+
+    String requestableExtensionsString = m_impl->getRequestableExtensionsCHROMIUM();
+    splitStringHelper(requestableExtensionsString, m_requestableExtensions);
+}
+
+
+bool GraphicsContext3DPrivate::supportsExtension(const String& name)
+{
+    initializeExtensions();
+    String mappedName = mapExtensionName(name);
+    return m_enabledExtensions.contains(mappedName) || m_requestableExtensions.contains(mappedName);
+}
+
+bool GraphicsContext3DPrivate::ensureExtensionEnabled(const String& name)
+{
+    initializeExtensions();
+
+    String mappedName = mapExtensionName(name);
+    if (m_enabledExtensions.contains(mappedName))
+        return true;
+
+    if (m_requestableExtensions.contains(mappedName)) {
+        m_impl->requestExtensionCHROMIUM(mappedName.ascii().data());
+        m_enabledExtensions.clear();
+        m_requestableExtensions.clear();
+        m_initializedAvailableExtensions = false;
+    }
+
+    initializeExtensions();
+    return m_enabledExtensions.contains(mappedName);
+}
+
+bool GraphicsContext3DPrivate::isExtensionEnabled(const String& name)
+{
+    initializeExtensions();
+    String mappedName = mapExtensionName(name);
+    return m_enabledExtensions.contains(mappedName);
+}
+
+
+bool GraphicsContext3DPrivate::isResourceSafe()
+{
+    if (m_resourceSafety == ResourceSafetyUnknown)
+        m_resourceSafety = getExtensions()->isEnabled("GL_CHROMIUM_resource_safe") ? ResourceSafe : ResourceUnsafe;
+    return m_resourceSafety == ResourceSafe;
+}
+
+class GraphicsContext3DMemoryAllocationChangedCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsMemoryAllocationChangedCallbackCHROMIUM {
+public:
+    GraphicsContext3DMemoryAllocationChangedCallbackAdapter(PassOwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM> callback)
+        : m_memoryAllocationChangedCallback(callback) { }
+
+    virtual ~GraphicsContext3DMemoryAllocationChangedCallbackAdapter() { }
+
+    virtual void onMemoryAllocationChanged(size_t gpuResourceSizeInBytes)
+    {
+        // FIXME: Remove this once clients start using WebGraphicsMemoryAllocation exclusively.
+        onMemoryAllocationChanged(WebKit::WebGraphicsMemoryAllocation(gpuResourceSizeInBytes, true));
+    }
+
+    virtual void onMemoryAllocationChanged(WebKit::WebGraphicsMemoryAllocation allocation)
+    {
+        if (m_memoryAllocationChangedCallback)
+            m_memoryAllocationChangedCallback->onGpuMemoryAllocationChanged(Extensions3DChromium::GpuMemoryAllocationCHROMIUM(allocation.gpuResourceSizeInBytes, allocation.suggestHaveBackbuffer));
+    }
+
+private:
+    OwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM> m_memoryAllocationChangedCallback;
+};
+
+void GraphicsContext3DPrivate::setGpuMemoryAllocationChangedCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM> callback)
+{
+    m_memoryAllocationChangedCallbackAdapter = adoptPtr(new GraphicsContext3DMemoryAllocationChangedCallbackAdapter(callback));
+    m_impl->setMemoryAllocationChangedCallbackCHROMIUM(m_memoryAllocationChangedCallbackAdapter.get());
+}
+
+class GraphicsContext3DSwapBuffersCompleteCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsSwapBuffersCompleteCallbackCHROMIUM {
+public:
+    GraphicsContext3DSwapBuffersCompleteCallbackAdapter(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> callback)
+        : m_swapBuffersCompleteCallback(callback) { }
+    virtual ~GraphicsContext3DSwapBuffersCompleteCallbackAdapter() { }
+
+    virtual void onSwapBuffersComplete()
+    {
+        if (m_swapBuffersCompleteCallback)
+            m_swapBuffersCompleteCallback->onSwapBuffersComplete();
+    }
+
+private:
+    OwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> m_swapBuffersCompleteCallback;
+};
+
+void GraphicsContext3DPrivate::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> callback)
+{
+    m_swapBuffersCompleteCallbackAdapter = adoptPtr(new GraphicsContext3DSwapBuffersCompleteCallbackAdapter(callback));
+    m_impl->setSwapBuffersCompleteCallbackCHROMIUM(m_swapBuffersCompleteCallbackAdapter.get());
+}
+
+} // namespace WebCore
