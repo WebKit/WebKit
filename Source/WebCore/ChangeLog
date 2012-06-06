@@ -1,3 +1,20 @@
+2012-06-06  Joone Hur  <joone.hur@intel.com>
+
+        [GTK] Build fix for Accelerated Compositing with OpenGL
+        https://bugs.webkit.org/show_bug.cgi?id=88292
+
+        Reviewed by Martin Robinson.
+
+        Build fix after r119247.
+        Do not include GraphicsSurface.h when not building
+        with GRAPHICS_SURFACE.
+
+        No new tests. This is only a build fix.
+
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+
 2012-06-05  Joe Thomas  <joethomas@motorola.com>
 
         ASSERTION FAILED: ASSERT(!isPercentageIntrinsicSize) in RenderReplaced::computeIntrinsicRatioInformationForRenderBox

@@ -21,7 +21,6 @@
 #include "TextureMapperGL.h"
 
 #include "GraphicsContext.h"
-#include "GraphicsSurface.h"
 #include "Image.h"
 #include "TextureMapperShaderManager.h"
 #include "Timer.h"
@@ -30,6 +29,10 @@
 #include <wtf/PassOwnArrayPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+
+#if USE(GRAPHICS_SURFACE)
+#include "GraphicsSurface.h"
+#endif
 
 #if PLATFORM(QT)
 #if QT_VERSION >= 0x050000

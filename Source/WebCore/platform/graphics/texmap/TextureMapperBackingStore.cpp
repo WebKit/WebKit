@@ -21,11 +21,11 @@
 #include "TextureMapperBackingStore.h"
 
 #include "GraphicsLayer.h"
-#include "GraphicsSurface.h"
 #include "ImageBuffer.h"
 #include "TextureMapper.h"
 
 #if USE(GRAPHICS_SURFACE)
+#include "GraphicsSurface.h"
 #include "TextureMapperGL.h"
 #endif
 
