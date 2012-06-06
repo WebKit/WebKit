@@ -1,3 +1,18 @@
+2012-06-06  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt] Fix harmattan builds broken by r119247.
+        https://bugs.webkit.org/show_bug.cgi?id=88330
+
+        Reviewed by Jocelyn Turcotte.
+
+        Fix Harmattan build break caused by undefined constant
+        GL_TEXTURE_RECTANGLE_ARB by adding defined(GL_ARB_texture_rectangle)
+        guards around TextureMapperGL::drawTextureRectangleARB.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp: Added defined(GL_ARB_texture_rectangle) guards around drawTextureRectangleARB.
+        (WebCore):
+        * platform/graphics/texmap/TextureMapperGL.h: Added definded(GL_ARB_texture_rectangle) guards around drawTextureRectangleARB.
+
 2012-06-06  Shinya Kawanaka  <shinyak@chromium.org>
 
         PositionIterator:;setOffsetInLeafNode() is not used anywhere.

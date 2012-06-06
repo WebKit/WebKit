@@ -370,6 +370,7 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
     drawTexture(textureGL.id(), textureGL.isOpaque() ? 0 : SupportsBlending, textureGL.size(), targetRect, matrix, opacity, mask);
 }
 
+#if defined(GL_ARB_texture_rectangle)
 void TextureMapperGL::drawTextureRectangleARB(uint32_t texture, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
 {
     RefPtr<TextureMapperShaderProgram> shaderInfo;
@@ -397,6 +398,7 @@ void TextureMapperGL::drawTextureRectangleARB(uint32_t texture, Flags flags, con
     bool needsBlending = (flags & SupportsBlending) || opacity < 0.99 || maskTexture;
     drawRect(targetRect, modelViewMatrix, shaderInfo.get(), GL_TRIANGLE_FAN, needsBlending);
 }
+#endif // defined(GL_ARB_texture_rectangle) 
 
 void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
 {

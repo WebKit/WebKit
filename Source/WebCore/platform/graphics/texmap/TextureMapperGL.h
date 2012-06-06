@@ -52,7 +52,9 @@ public:
     virtual void drawBorder(const Color&, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix = TransformationMatrix()) OVERRIDE;
     virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture) OVERRIDE;
     virtual void drawTexture(uint32_t texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
+#if defined(GL_ARB_texture_rectangle)
     virtual void drawTextureRectangleARB(uint32_t texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
+#endif
     virtual void bindSurface(BitmapTexture* surface) OVERRIDE;
     virtual void beginClip(const TransformationMatrix&, const FloatRect&) OVERRIDE;
     virtual void beginPainting(PaintFlags = 0) OVERRIDE;
