@@ -1,3 +1,23 @@
+2012-06-05  Vitaly Buka  <vitalybuka@chromium.org>
+
+        Special layout handler should be done on top frame being printed.
+        https://bugs.webkit.org/show_bug.cgi?id=88201
+
+        Reviewed by Brady Eidson.
+
+        No new tests. Root case is already covered by tests.
+        Case described in the issue can be reproduced only by direct call
+        to Frame::setPrinting of subframe. Probably it's not possible with
+        layout tests.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setPrinting):
+        Use shouldUsePrintingLayout to choose proper version of forceLayout().
+        (WebCore::Frame::shouldUsePrintingLayout):
+        Checks if current frame is the top frame being printed.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::shouldUsePrintingLayout): Forward to Frame.
+
 2012-06-05  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Conditionally enlarge HTML5 video controls in fullscreen mode

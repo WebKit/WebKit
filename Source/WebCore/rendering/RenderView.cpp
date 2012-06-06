@@ -656,8 +656,7 @@ bool RenderView::shouldUsePrintingLayout() const
     if (!printing() || !m_frameView)
         return false;
     Frame* frame = m_frameView->frame();
-    // Only root frame should have special handling for printing.
-    return frame && !frame->tree()->parent();
+    return frame && frame->shouldUsePrintingLayout();
 }
 
 size_t RenderView::getRetainedWidgets(Vector<RenderWidget*>& renderWidgets)
