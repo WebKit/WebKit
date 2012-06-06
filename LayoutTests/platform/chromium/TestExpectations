@@ -3744,26 +3744,6 @@ BUGWK87273 : webaudio/audioparam-connect-audioratesignal.html = TIMEOUT PASS
 BUGWK87321 XP : fast/history/history-subframe-with-name.html = TEXT PASS
 BUGWK87321 XP : fast/history/history-traversal-is-asynchronous.html = TEXT PASS
 
-// Need rebaselines after landing the patch on bug 88000
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/3690703.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/vertical-rl-rtl-extend-line-backward-p.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/vertical-rl-rtl-extend-line-backward-br.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/vertical-lr-ltr-extend-line-forward-br.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/selection-button-text.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/3690703-2.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/vertical-rl-rtl-extend-line-forward-br.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/3690719.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/vertical-rl-ltr-extend-line-backward-p.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/vertical-rl-ltr-extend-line-backward-br.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : editing/selection/vertical-rl-rtl-extend-line-forward-p.html = IMAGE
-BUGLEVI LINUX : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
-BUGLEVI WIN LINUX LION LEOPARD : fast/sub-pixel/selection/selection-gaps-at-fractional-offsets.html = FAIL MISSING
-
 // File blob tests failing after chromium r138702
 BUGWK87356 : fast/files/read-blob-async.html = TEXT
 BUGWK87356 : fast/files/workers/worker-read-blob-async.html = TEXT

@@ -1,3 +1,62 @@
+2012-06-05  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. More updated Chromium test expectations following 119528.
+
+        * platform/chromium-linux-x86/editing/selection: Added.
+        * platform/chromium-linux-x86/editing/selection/3690703-2-expected.png: Added.
+        * platform/chromium-linux-x86/editing/selection/3690703-expected.png: Added.
+        * platform/chromium-linux-x86/editing/selection/3690719-expected.png: Added.
+        * platform/chromium-linux-x86/fast/sub-pixel: Added.
+        * platform/chromium-linux-x86/fast/sub-pixel/selection: Added.
+        * platform/chromium-linux-x86/fast/sub-pixel/selection/selection-gaps-at-fractional-offsets-expected.png: Added.
+        * platform/chromium-linux/fast/sub-pixel: Added.
+        * platform/chromium-linux/fast/sub-pixel/selection: Added.
+        * platform/chromium-linux/fast/sub-pixel/selection/selection-gaps-at-fractional-offsets-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/3690703-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/3690719-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/selection-button-text-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.png:
+        * platform/chromium-mac/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac/editing/selection/3690703-expected.png:
+        * platform/chromium-mac/editing/selection/3690719-expected.png:
+        * platform/chromium-mac/editing/selection/selection-button-text-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.png:
+        * platform/chromium-mac/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.png:
+        * platform/chromium-mac/fast/sub-pixel/selection: Added.
+        * platform/chromium-mac/fast/sub-pixel/selection/selection-gaps-at-fractional-offsets-expected.png: Added.
+        * platform/chromium-win-vista/fast/sub-pixel: Added.
+        * platform/chromium-win-vista/fast/sub-pixel/selection: Added.
+        * platform/chromium-win-vista/fast/sub-pixel/selection/selection-gaps-at-fractional-offsets-expected.png: Added.
+        * platform/chromium-win/editing/selection/3690703-2-expected.png:
+        * platform/chromium-win/editing/selection/3690703-expected.png:
+        * platform/chromium-win/editing/selection/3690719-expected.png:
+        * platform/chromium-win/fast/sub-pixel: Added.
+        * platform/chromium-win/fast/sub-pixel/selection: Added.
+        * platform/chromium-win/fast/sub-pixel/selection/selection-gaps-at-fractional-offsets-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-06-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaselines for r119523 and r119529.
