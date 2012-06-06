@@ -380,7 +380,7 @@ committers_unable_to_review = [
     Committer("Yael Aharon", "yael.aharon@nokia.com", "yael"),
     Committer("Yaar Schnitman", ["yaar@chromium.org", "yaar@google.com"]),
     Committer("Yi Shen", ["yi.4.shen@nokia.com", "shenyi2006@gmail.com"]),
-    Committer("Yong Li", ["yong.li.webkit@gmail.com", "yong.li@torchmobile.com", "yoli@rim.com"], "yong"),
+    Committer("Yong Li", ["yoli@rim.com", "yong.li.webkit@gmail.com"], "yoli"),
     Committer("Yongjun Zhang", ["yongjun.zhang@nokia.com", "yongjun_zhang@apple.com"]),
     Committer("Yoshifumi Inoue", "yosin@chromium.org", "yosin"),
     Committer("Yuqiang Xian", "yuqiang.xian@intel.com"),

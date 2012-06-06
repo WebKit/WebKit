@@ -1,3 +1,9 @@
+2012-06-06  Yong Li <yoli@rim.com>
+
+        Unreviewed. Update my email address in committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-06-06  Robert Kroeger  <rjkroege@chromium.org>
 
         Add Robert Kroeger  to commiters.py
