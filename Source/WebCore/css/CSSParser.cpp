@@ -5590,9 +5590,9 @@ PassRefPtr<CSSValue> CSSParser::parseFlex(CSSParserValueList* args)
     }
 
     if (positiveFlex == unsetValue)
-        positiveFlex = 1;
+        positiveFlex = 0;
     if (negativeFlex == unsetValue)
-        negativeFlex = positiveFlex ? 1 : 0;
+        negativeFlex = 1;
     if (!preferredSize)
         preferredSize = cssValuePool().createValue(0, CSSPrimitiveValue::CSS_PX);
 

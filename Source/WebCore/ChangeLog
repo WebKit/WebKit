@@ -1,3 +1,16 @@
+2012-06-06  Ojan Vafai  <ojan@chromium.org>
+
+        Remove some magic from the -webkit-flex shorthand parsing to match the changes in the spec
+        https://bugs.webkit.org/show_bug.cgi?id=88444
+
+        Reviewed by Tony Chang.
+
+        -Unset positive flex defaults to 0.
+        -Unset negative flex defaults to 1. No magic of doing something different if positive flex was set.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFlex):
+
 2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert r119440 now that I have a time to rebaseline them all!

@@ -1,3 +1,13 @@
+2012-06-06  Ojan Vafai  <ojan@chromium.org>
+
+        Remove some magic from the -webkit-flex shorthand parsing to match the changes in the spec
+        https://bugs.webkit.org/show_bug.cgi?id=88444
+
+        Reviewed by Tony Chang.
+
+        * css3/flexbox/flex-property-parsing-expected.txt:
+        * css3/flexbox/flex-property-parsing.html:
+
 2012-06-06  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Infinite recursion in IDBObjectStore.openCursor(key, legacy_constant)
