@@ -351,6 +351,18 @@ public:
         writeLittleEndian<uint8_t>(out, value ? TrueTag : FalseTag);
     }
 
+    static void serializeNumber(double value, Vector<uint8_t>& out)
+    {
+        writeLittleEndian(out, CurrentVersion);
+        writeLittleEndian<uint8_t>(out, DoubleTag);
+        union {
+            double d;
+            int64_t i;
+        } u;
+        u.d = value;
+        writeLittleEndian(out, u.i);
+    }
+
 private:
     typedef HashMap<JSObject*, uint32_t> ObjectPool;
 
@@ -976,6 +988,18 @@ typedef Vector<WTF::ArrayBufferContents> ArrayBufferContentsArray;
 
 class CloneDeserializer : CloneBase {
 public:
+    static String toWireString(const Vector<unsigned char>& value)
+    {
+        const uint8_t* start = value.begin();
+        const uint8_t* end = value.end();
+        const uint32_t length = value.size() / sizeof(UChar);
+        UString str;
+        if (!CloneDeserializer::readString(start, end, str, length))
+            return String();
+
+        return String(str.impl());
+    }
+
     static String deserializeString(const Vector<uint8_t>& buffer)
     {
         const uint8_t* ptr = buffer.begin();
@@ -1763,33 +1787,34 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& st
 }
 
 #if ENABLE(INDEXED_DATABASE)
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSC::ExecState*, JSC::JSValue)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSC::ExecState* exec, JSC::JSValue value)
 {
-    notImplemented();
-    return PassRefPtr<SerializedScriptValue>();
+    return SerializedScriptValue::create(exec, value, 0, 0);
 }
 
 String SerializedScriptValue::toWireString() const
 {
-    notImplemented();
-    return String();
-}
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWire(const String&)
-{
-    notImplemented();
-    return PassRefPtr<SerializedScriptValue>();
+    return CloneDeserializer::toWireString(m_data);
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::numberValue(double)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWire(const String& value)
 {
-    notImplemented();
-    return PassRefPtr<SerializedScriptValue>();
+    Vector<uint8_t> buffer;
+    if (!writeLittleEndian(buffer, value.impl()->characters(), value.length()))
+        return 0;
+    return adoptRef(new SerializedScriptValue(buffer));
 }
 
-JSValue SerializedScriptValue::deserialize(JSC::ExecState*, JSC::JSGlobalObject*)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::numberValue(double value)
 {
-    notImplemented();
-    return JSValue();
+    Vector<uint8_t> buffer;
+    CloneSerializer::serializeNumber(value, buffer);
+    return adoptRef(new SerializedScriptValue(buffer));
+}
+
+JSValue SerializedScriptValue::deserialize(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject)
+{
+    return deserialize(exec, globalObject, 0);
 }
 #endif
 

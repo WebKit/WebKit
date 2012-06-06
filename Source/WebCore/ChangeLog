@@ -1,3 +1,24 @@
+2012-06-05  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        JSC implementation of SerializedScriptValue for IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=88048
+
+        Reviewed by George Staikos.
+
+        No new tests. All the current indexeddb test cases apply when indexeddb works for JSC.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serializeNumber):
+        (CloneSerializer):
+        (WebCore::CloneDeserializer::toWireString):
+        (CloneDeserializer):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::toWireString):
+        (WebCore):
+        (WebCore::SerializedScriptValue::createFromWire):
+        (WebCore::SerializedScriptValue::numberValue):
+        (WebCore::SerializedScriptValue::deserialize):
+
 2012-06-05  Ojan Vafai  <ojan@chromium.org>
 
         Nested CSS flexbox renders incorrectly
