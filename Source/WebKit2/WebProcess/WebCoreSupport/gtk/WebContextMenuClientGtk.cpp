@@ -27,6 +27,8 @@
 #include "config.h"
 #include "WebContextMenuClient.h"
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
@@ -55,3 +57,4 @@ void WebContextMenuClient::stopSpeaking()
 }
 
 } // namespace WebKit
+#endif // ENABLE(CONTEXT_MENUS)

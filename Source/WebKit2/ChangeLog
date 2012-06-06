@@ -1,3 +1,16 @@
+2012-06-06  chandra Shekar Vallala  <chandra.vallala@motorola.com>
+
+        [WK2-Gtk]Compilation errors with flag CONTEXT_MENUS=0
+        https://bugs.webkit.org/show_bug.cgi?id=87842
+
+        Reviewed by Martin Robinson.
+
+        Fix for compilation errors while building webkit2-gtk with CONTEXT_MENUS=0
+
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp: Added code under CONTEXT_MENUS CC
+        * UIProcess/gtk/WebContextMenuProxyGtk.h: Ditto
+        * WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp: Ditto
+
 2012-06-06  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Add preferredMinimumContentsWidth to the viewport info in MiniBrowser.

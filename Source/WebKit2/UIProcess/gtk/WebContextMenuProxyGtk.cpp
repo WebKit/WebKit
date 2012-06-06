@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebContextMenuProxyGtk.h"
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "NativeWebMouseEvent.h"
 #include "WebContextMenuItemData.h"
 #include "WebPageProxy.h"
@@ -124,3 +126,4 @@ void WebContextMenuProxyGtk::menuPositionFunction(GtkMenu* menu, gint* x, gint* 
 }
 
 } // namespace WebKit
+#endif // ENABLE(CONTEXT_MENUS)

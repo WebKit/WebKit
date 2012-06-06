@@ -26,6 +26,8 @@
 #ifndef WebContextMenuProxyGtk_h
 #define WebContextMenuProxyGtk_h
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "WebContextMenuProxy.h"
 #include <WebCore/IntPoint.h>
 
@@ -60,4 +62,5 @@ private:
 
 } // namespace WebKit
 
+#endif // ENABLE(CONTEXT_MENUS)
 #endif // WebContextMenuProxyGtk_h
