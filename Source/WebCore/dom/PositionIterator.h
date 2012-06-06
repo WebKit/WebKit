@@ -56,7 +56,6 @@ public:
 
     Node* node() const { return m_anchorNode; }
     int offsetInLeafNode() const { return m_offsetInAnchor; }
-    void setOffsetInLeafNode(int offset);
 
     bool atStart() const;
     bool atEnd() const;

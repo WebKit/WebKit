@@ -102,13 +102,6 @@ void PositionIterator::decrement()
     }
 }
 
-void PositionIterator::setOffsetInLeafNode(int offset)
-{
-    ASSERT(!m_anchorNode->hasChildNodes());
-    ASSERT(0 <= offset && offset <= lastOffsetForEditing(m_anchorNode));
-    m_offsetInAnchor = offset;
-}
-
 bool PositionIterator::atStart() const
 {
     if (!m_anchorNode)

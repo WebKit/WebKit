@@ -1,3 +1,18 @@
+2012-06-06  Shinya Kawanaka  <shinyak@chromium.org>
+
+        PositionIterator:;setOffsetInLeafNode() is not used anywhere.
+        https://bugs.webkit.org/show_bug.cgi?id=88397
+
+        Reviewed by Ryosuke Niwa.
+
+        It's not used anywhere. We can remove it safely.
+
+        No new tests, no change in behavior.
+
+        * WebCore.order:
+        * dom/PositionIterator.cpp:
+        * dom/PositionIterator.h:
+
 2012-06-06  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [WebGL] Add WebGL instrumentation support on the backend
