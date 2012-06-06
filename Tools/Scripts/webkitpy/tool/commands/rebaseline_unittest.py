@@ -84,6 +84,25 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         new_expectations = tool.filesystem.read_text_file(lion_port.path_to_test_expectations_file())
         self.assertEqual(new_expectations, "BUGX LEOPARD SNOWLEOPARD : userscripts/another-test.html = IMAGE\nBUGZ LINUX : userscripts/another-test.html = IMAGE\n")
 
+    def test_rebaseline_does_not_include_overrides(self):
+        command = RebaselineTest()
+        tool = MockTool()
+        command.bind_to_tool(tool)
+
+        lion_port = tool.port_factory.get_from_builder_name("Webkit Mac10.7")
+        tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), "BUGX MAC : userscripts/another-test.html = IMAGE\nBUGZ LINUX : userscripts/another-test.html = IMAGE\n")
+        tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), "BUGY MAC : other-test.html = TEXT\n")
+        tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "userscripts/another-test.html"), "Dummy test contents")
+
+        expected_logs = """Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-results/userscripts/another-test-actual.png.
+Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-results/userscripts/another-test-actual.wav.
+Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt.
+"""
+        OutputCapture().assert_outputs(self, command._rebaseline_test_and_update_expectations, ["Webkit Mac10.7", "userscripts/another-test.html", None], expected_logs=expected_logs)
+
+        new_expectations = tool.filesystem.read_text_file(lion_port.path_to_test_expectations_file())
+        self.assertEqual(new_expectations, "BUGX LEOPARD SNOWLEOPARD : userscripts/another-test.html = IMAGE\nBUGZ LINUX : userscripts/another-test.html = IMAGE\n")
+
     def test_rebaseline_test(self):
         command = RebaselineTest()
         command.bind_to_tool(MockTool())

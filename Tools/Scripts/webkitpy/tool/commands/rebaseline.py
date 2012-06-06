@@ -140,7 +140,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
 
     def _update_expectations_file(self, builder_name, test_name):
         port = self._tool.port_factory.get_from_builder_name(builder_name)
-        expectations = TestExpectations(port)
+        expectations = TestExpectations(port, include_overrides=False)
 
         for test_configuration in port.all_test_configurations():
             if test_configuration.version == port.test_configuration().version:

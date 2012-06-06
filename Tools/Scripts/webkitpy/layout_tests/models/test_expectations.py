@@ -720,7 +720,7 @@ class TestExpectations(object):
         assert(' ' not in string)  # This only handles one expectation at a time.
         return cls.EXPECTATIONS.get(string.lower())
 
-    def __init__(self, port, tests=None, is_lint_mode=False):
+    def __init__(self, port, tests=None, is_lint_mode=False, include_overrides=True):
         self._full_test_list = tests
         self._test_config = port.test_configuration()
         self._is_lint_mode = is_lint_mode
@@ -733,7 +733,7 @@ class TestExpectations(object):
         self._add_expectations(self._expectations, in_overrides=False)
 
         overrides = port.test_expectations_overrides()
-        if overrides:
+        if overrides and include_overrides:
             overrides_expectations = self._parser.parse(overrides)
             self._add_expectations(overrides_expectations, in_overrides=True)
             self._expectations += overrides_expectations

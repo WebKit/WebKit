@@ -1,3 +1,17 @@
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r117789): "webkit-patch rebaseline-expectations" copies contents in skia_test_expectations.txt into test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=87406
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.__init__):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._update_expectations_file):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline_does_not_include_overrides):
+
 2012-06-06  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: perf tests unit tests fail on chromium win
