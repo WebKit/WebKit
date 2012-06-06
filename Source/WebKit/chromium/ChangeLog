@@ -1,5 +1,12 @@
 2012-06-06  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Unreviewed build fix, add an apparently used include of OwnArrayPtr.h back to GraphicsContext3DPrivate.h
+        https://bugs.webkit.org/show_bug.cgi?id=88468
+
+        * src/GraphicsContext3DPrivate.h:
+
+2012-06-06  James Robinson  <jamesr@chromium.org>
+
         [chromium] Clean up GraphicsContext3D implementation
         https://bugs.webkit.org/show_bug.cgi?id=88460
 

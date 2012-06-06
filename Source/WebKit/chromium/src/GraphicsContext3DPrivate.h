@@ -30,6 +30,7 @@
 #include "GraphicsContext3D.h"
 #include "SkBitmap.h"
 #include <wtf/HashSet.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
 
 class GrContext;
