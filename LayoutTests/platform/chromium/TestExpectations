@@ -3795,8 +3795,6 @@ BUGWK88131 DEBUG : fast/dom/HTMLMeterElement/meter-element-crash.html = PASS TEX
 // Needs rebaseline after the bots cycle.
 BUG_OJAN WIN MAC : tables/mozilla/bugs/bug131020.html = PASS FAIL
 
-BUG_EAE WIN : fast/sub-pixel/float-containing-block-with-margin.html = PASS FAIL
-
 //BUGWK45991 WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 //BUGCR84157 WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
 BUGCR131187 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT

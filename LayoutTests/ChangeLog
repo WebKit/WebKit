@@ -1,3 +1,11 @@
+2012-06-05  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed gardening. Chromium windows test expectation updates.
+
+        * platform/chromium-win/fast/sub-pixel: Added.
+        * platform/chromium-win/fast/sub-pixel/float-containing-block-with-margin-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-06-05  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed gardening. More updated Chromium test expectations following 119528.
