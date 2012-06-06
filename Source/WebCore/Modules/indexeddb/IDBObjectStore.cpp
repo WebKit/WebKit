@@ -321,7 +321,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
     if (ec)
         return 0;
-    return openCursor(context, key, direction, ec);
+    return openCursor(context, keyRange.release(), direction, ec);
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, ExceptionCode& ec)

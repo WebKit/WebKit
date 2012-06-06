@@ -1,11 +1,15 @@
 CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
 CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
 CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use"next", "nextunique", "prev", or "prevunique".
-CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
 CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use"next", "nextunique", "prev", or "prevunique".
 CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
 CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use"next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use"next", "nextunique", "prev", or "prevunique".
 CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
+CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use"next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use"next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
+CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use"next", "nextunique", "prev", or "prevunique".
 CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use"next", "nextunique", "prev", or "prevunique".
 Test that legacy direction/mode constants work
 
@@ -35,11 +39,17 @@ PASS cursor.direction is "next"
 cursor.continue();
 PASS cursor.direction is "next"
 cursor.continue();
+request = store.openCursor(1, IDBCursor.NEXT)
+PASS cursor.direction is "next"
+cursor.continue();
 trans = db.transaction('store', IDBTransaction.READ_ONLY)
 PASS trans.mode is "readonly"
 request = store.openCursor(null, IDBCursor.NEXT_NO_DUPLICATE)
 PASS cursor.direction is "nextunique"
 cursor.continue();
+PASS cursor.direction is "nextunique"
+cursor.continue();
+request = store.openCursor(1, IDBCursor.NEXT_NO_DUPLICATE)
 PASS cursor.direction is "nextunique"
 cursor.continue();
 trans = db.transaction('store', IDBTransaction.READ_ONLY)
@@ -49,12 +59,18 @@ PASS cursor.direction is "prev"
 cursor.continue();
 PASS cursor.direction is "prev"
 cursor.continue();
+request = store.openCursor(1, IDBCursor.PREV)
+PASS cursor.direction is "prev"
+cursor.continue();
 trans = db.transaction('store', IDBTransaction.READ_ONLY)
 PASS trans.mode is "readonly"
-request = store.openCursor(null, IDBCursor.NEXT)
-PASS cursor.direction is "next"
+request = store.openCursor(null, IDBCursor.PREV_NO_DUPLICATE)
+PASS cursor.direction is "prevunique"
 cursor.continue();
-PASS cursor.direction is "next"
+PASS cursor.direction is "prevunique"
+cursor.continue();
+request = store.openCursor(1, IDBCursor.PREV_NO_DUPLICATE)
+PASS cursor.direction is "prevunique"
 cursor.continue();
 PASS successfullyParsed is true
 

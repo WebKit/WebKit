@@ -1,5 +1,19 @@
 2012-06-06  Joshua Bell  <jsbell@chromium.org>
 
+        IndexedDB: Infinite recursion in IDBObjectStore.openCursor(key, legacy_constant)
+        https://bugs.webkit.org/show_bug.cgi?id=88431
+
+        Reviewed by Tony Chang.
+
+        Function was calling itself, rather than delegating to the correct (IDBKeyRange) overload.
+
+        Test: storage/indexeddb/legacy-constants.html
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::openCursor):
+
+2012-06-06  Joshua Bell  <jsbell@chromium.org>
+
         IndexedDB: Rename IDBFactory.getDatabaseNames() to webkitGetDatabaseNames()
         https://bugs.webkit.org/show_bug.cgi?id=86874
 

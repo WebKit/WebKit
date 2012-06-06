@@ -42,76 +42,59 @@ function populateStore()
 
     evalAndLog("store.put({value: 111}, 1)");
     evalAndLog("store.put({value: 222}, 2)");
-    trans.oncomplete = checkNext;
+    trans.oncomplete = doChecks;
 }
 
-function checkNext()
+function doChecks()
 {
-    evalAndLog("trans = db.transaction('store', IDBTransaction.READ_ONLY)");
-    shouldBeEqualToString("trans.mode", "readonly");
-    store = trans.objectStore('store');
-    evalAndLog("request = store.openCursor(null, IDBCursor.NEXT)");
-    request.onsuccess = function()
-    {
-        cursor = event.target.result;
-        if (!cursor)
-            return;
-        shouldBeEqualToString("cursor.direction", "next");
-        evalAndLog("cursor.continue();");
-    };
-    trans.oncomplete = checkNextNoDuplicate;
-}
+    var tests = [
+        { legacy: 'IDBCursor.NEXT', current: 'next' },
+        { legacy: 'IDBCursor.NEXT_NO_DUPLICATE', current: 'nextunique' },
+        { legacy: 'IDBCursor.PREV', current: 'prev' },
+        { legacy: 'IDBCursor.PREV_NO_DUPLICATE', current: 'prevunique' }
+    ];
 
-function checkNextNoDuplicate()
-{
-    evalAndLog("trans = db.transaction('store', IDBTransaction.READ_ONLY)");
-    shouldBeEqualToString("trans.mode", "readonly");
-    store = trans.objectStore('store');
-    evalAndLog("request = store.openCursor(null, IDBCursor.NEXT_NO_DUPLICATE)");
-    request.onsuccess = function()
+    function doNext()
     {
-        cursor = event.target.result;
-        if (!cursor)
+        var test = tests.shift();
+        if (!test) {
+            finishJSTest();
             return;
-        shouldBeEqualToString("cursor.direction", "nextunique");
-        evalAndLog("cursor.continue();");
-    };
-    trans.oncomplete = checkPrev;
-}
+        }
 
-function checkPrev()
-{
-    evalAndLog("trans = db.transaction('store', IDBTransaction.READ_ONLY)");
-    shouldBeEqualToString("trans.mode", "readonly");
-    store = trans.objectStore('store');
-    evalAndLog("request = store.openCursor(null, IDBCursor.PREV)");
-    request.onsuccess = function()
-    {
-        cursor = event.target.result;
-        if (!cursor)
-            return;
-        shouldBeEqualToString("cursor.direction", "prev");
-        evalAndLog("cursor.continue();");
-    };
-    trans.oncomplete = checkPrevNoDuplicate;
-}
+        evalAndLog("trans = db.transaction('store', IDBTransaction.READ_ONLY)");
+        shouldBeEqualToString("trans.mode", "readonly");
+        store = trans.objectStore('store');
 
-function checkPrevNoDuplicate()
-{
-    evalAndLog("trans = db.transaction('store', IDBTransaction.READ_ONLY)");
-    shouldBeEqualToString("trans.mode", "readonly");
-    store = trans.objectStore('store');
-    evalAndLog("request = store.openCursor(null, IDBCursor.NEXT)");
-    request.onsuccess = function()
-    {
-        cursor = event.target.result;
-        if (!cursor)
-            return;
-        shouldBeEqualToString("cursor.direction", "next");
-        evalAndLog("cursor.continue();");
-    };
-    trans.oncomplete = finishJSTest;
-}
+        evalAndLog("request = store.openCursor(null, " + test.legacy + ")");
+        request.onsuccess = function()
+        {
+            cursor = event.target.result;
+            if (!cursor) {
+                testWithKey();
+                return;
+            }
+            shouldBeEqualToString("cursor.direction", test.current);
+            evalAndLog("cursor.continue();");
+        };
 
+        function testWithKey()
+        {
+            evalAndLog("request = store.openCursor(1, " + test.legacy + ")");
+            request.onsuccess = function()
+            {
+                cursor = event.target.result;
+                if (!cursor)
+                    return;
+                shouldBeEqualToString("cursor.direction", test.current);
+                evalAndLog("cursor.continue();");
+            };
+        }
+
+
+        trans.oncomplete = doNext;
+    }
+    doNext();
+}
 
 test();
