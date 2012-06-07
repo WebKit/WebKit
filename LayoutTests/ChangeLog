@@ -1,3 +1,14 @@
+2012-06-07  Takashi Sakamoto  <tasak@google.com>
+
+        Incorrect border rendering when border radius is above 2px.
+        https://bugs.webkit.org/show_bug.cgi?id=88046
+
+        Reviewed by Simon Fraser.
+
+        * fast/borders/border-radius-valid-border-clipping-expected.txt: Added.
+        * fast/borders/border-radius-valid-border-clipping.html: Added.
+        * platform/chromium-mac/fast/borders/border-radius-valid-border-clipping-expected.png: Added.
+
 2012-06-07  Edaena Salinas Jasso  <edaena@apple.com>
 
         Should fire error event for empty 404 script

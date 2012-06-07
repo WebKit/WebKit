@@ -1,3 +1,19 @@
+2012-06-07  Takashi Sakamoto  <tasak@google.com>
+
+        Incorrect border rendering when border radius is above 2px.
+        https://bugs.webkit.org/show_bug.cgi?id=88046
+
+        Fixing findInnerVertex's logic to decide which is the better line
+        to find an inner vertex, x=center point's x of a rendering box or
+        y=center point's y of a rendering box.
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/borders/border-radius-valid-border-clipping.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::findInnerVertex):
+
 2012-06-07  Edaena Salinas Jasso  <edaena@apple.com>
 
         Should fire error event for empty 404 script

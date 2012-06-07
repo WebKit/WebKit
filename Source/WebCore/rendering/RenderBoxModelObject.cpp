@@ -2431,7 +2431,11 @@ static void findInnerVertex(const FloatPoint& outerCorner, const FloatPoint& inn
     // If the line between outer and inner corner is towards the horizontal, intersect with a vertical line through the center,
     // otherwise with a horizontal line through the center. The points that form this line are arbitrary (we use 0, 100).
     // Note that if findIntersection fails, it will leave result untouched.
-    if (fabs(outerCorner.x() - innerCorner.x()) > fabs(outerCorner.y() - innerCorner.y()))
+    float diffInnerOuterX = fabs(innerCorner.x() - outerCorner.x());
+    float diffInnerOuterY = fabs(innerCorner.y() - outerCorner.y());
+    float diffCenterOuterX = fabs(centerPoint.x() - outerCorner.x());
+    float diffCenterOuterY = fabs(centerPoint.y() - outerCorner.y());
+    if (diffInnerOuterY * diffCenterOuterX < diffCenterOuterY * diffInnerOuterX)
         findIntersection(outerCorner, innerCorner, FloatPoint(centerPoint.x(), 0), FloatPoint(centerPoint.x(), 100), result);
     else
         findIntersection(outerCorner, innerCorner, FloatPoint(0, centerPoint.y()), FloatPoint(100, centerPoint.y()), result);
