@@ -5842,7 +5842,7 @@ public:
     BorderImageSliceParseContext(CSSParser* parser)
     : m_parser(parser)
     , m_allowNumber(true)
-    , m_allowFill(false)
+    , m_allowFill(true)
     , m_allowFinalCommit(false)
     , m_fill(false)
     { }
@@ -5867,14 +5867,10 @@ public:
         }
 
         m_allowNumber = !m_left;
-        m_allowFill = true;
         m_allowFinalCommit = true;
     }
 
-    void commitFill() { m_fill = true; m_allowFill = false; m_allowNumber = false; }
-
-    void setAllowFinalCommit() { m_allowFinalCommit = true; }
-    void setTop(PassRefPtr<CSSPrimitiveValue> val) { m_top = val; }
+    void commitFill() { m_fill = true; m_allowFill = false; m_allowNumber = !m_top; }
 
     PassRefPtr<CSSBorderImageSliceValue> commitBorderImageSlice()
     {

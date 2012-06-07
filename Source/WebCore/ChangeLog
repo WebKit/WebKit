@@ -1,3 +1,27 @@
+2012-06-06  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Fix border-image-slice failures on http://css3test.com.
+        https://bugs.webkit.org/show_bug.cgi?id=88328
+
+        Reviewed by Tony Chang.
+
+        The old parsing code was assuming that the fill keyword comes after the
+        numbers or the percentage values. http://www.w3.org/TR/css3-background/#the-border-image-slice
+        defines the property like this : [<number> | <percentage>]{1,4} && fill? where the fill
+        keyword is not mandatory. But according to http://www.w3.org/TR/CSS2/about.html "&&" 
+        separates two or more components, all of which must occur, in any order. So the previous
+        code was wrong the fill can come first following by the percentages or the numbers. http://css3test.com
+        was covering this particular case. I took the opportunity to extend our coverage 
+        by adding tests on many different values the boder-image-slice property could take. I
+        also did a small cleanup by removing unused functions in BorderImageSliceParseContext.
+
+        Test: fast/css/getComputedStyle/getComputedStyle-border-image-slice.html
+
+        * css/CSSParser.cpp:
+        (WebCore::BorderImageSliceParseContext::BorderImageSliceParseContext):
+        (WebCore::BorderImageSliceParseContext::commitNumber):
+        (WebCore::BorderImageSliceParseContext::commitFill):
+
 2012-06-06  Levi Weintraub  <leviw@chromium.org>
 
         Use enclosingIntRect instead of pixelSnappedIntRect in RenderFileUploadControl

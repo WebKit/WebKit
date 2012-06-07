@@ -1,3 +1,15 @@
+2012-06-06  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Fix border-image-slice failures on http://css3test.com.
+        https://bugs.webkit.org/show_bug.cgi?id=88328
+
+        Reviewed by Tony Chang.
+
+        Make sure we cover more border-image-slice parsing.
+
+        * fast/css/getComputedStyle/getComputedStyle-border-image-slice-expected.txt: Added.
+        * fast/css/getComputedStyle/getComputedStyle-border-image-slice.html: Added.
+
 2012-06-06  Levi Weintraub  <leviw@chromium.org>
 
         Use enclosingIntRect instead of pixelSnappedIntRect in RenderFileUploadControl
