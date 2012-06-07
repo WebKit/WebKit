@@ -1,3 +1,8 @@
+2012-06-07  Ojan Vafai  <ojan@chromium.org>
+
+        Mark another test as slow on Chromium Windows.
+        * platform/chromium/TestExpectations:
+
 2012-06-07  Elliot Poger  <epoger@chromium.org>
 
         Part 1 of rebaselines for http://crbug.com/131189
