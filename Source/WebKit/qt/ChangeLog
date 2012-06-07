@@ -1,3 +1,15 @@
+2012-06-07  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Qt DRT should load external resources - cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=88568
+
+        Make things more straighforward to load external URLs in DRT.
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchWillSendRequest):
+
 2012-06-06  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Qt DRT / WTR should be able to load external resources

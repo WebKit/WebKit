@@ -1040,8 +1040,6 @@ static bool hostIsUsedBySomeTestsToGenerateError(const QString& host)
 
 void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long identifier, WebCore::ResourceRequest& newRequest, const WebCore::ResourceResponse& redirectResponse)
 {
-    QUrl url = newRequest.url();
-
     if (dumpResourceLoadCallbacks)
         printf("%s - willSendRequest %s redirectResponse %s\n",
                qPrintable(dumpAssignedUrls[identifier]),
@@ -1059,19 +1057,21 @@ void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsi
         return;
     }
 
+    QUrl url = newRequest.url();
     QString host = url.host();
-    QString urlLowerScheme = url.scheme().toLower();
+    QString urlScheme = url.scheme().toLower();
 
     if (QWebPagePrivate::drtRun
         && !host.isEmpty()
-        && (urlLowerScheme == QLatin1String("http") || urlLowerScheme == QLatin1String("https"))) {
+        && (urlScheme == QLatin1String("http") || urlScheme == QLatin1String("https"))) {
 
-        QUrl testURL = m_frame->page()->mainFrame()->document()->url();
+        QUrl testURL = m_webFrame->page()->mainFrame()->requestedUrl();
         QString testHost = testURL.host();
+        QString testURLScheme = testURL.scheme().toLower();
 
         if (!isLocalhost(host)
             && !hostIsUsedBySomeTestsToGenerateError(host)
-            && ((urlLowerScheme != QLatin1String("http") && urlLowerScheme != QLatin1String("https")) || testHost.isEmpty() || isLocalhost(testHost))) {
+            && ((testURLScheme != QLatin1String("http") && testURLScheme != QLatin1String("https")) || isLocalhost(testHost))) {
             printf("Blocked access to external URL %s\n", qPrintable(drtDescriptionSuitableForTestResult(newRequest.url())));
             blockRequest(newRequest);
             return;
