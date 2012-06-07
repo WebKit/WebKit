@@ -87,7 +87,7 @@ bool InsertListCommand::selectionHasListOfType(const VisibleSelection& selection
     if (!enclosingList(start.deepEquivalent().deprecatedNode()))
         return false;
 
-    VisiblePosition end = selection.visibleEnd();
+    VisiblePosition end = startOfParagraph(selection.visibleEnd());
     while (start.isNotNull() && start != end) {
         Element* listNode = enclosingList(start.deepEquivalent().deprecatedNode());
         if (!listNode || !listNode->hasTagName(listTag))

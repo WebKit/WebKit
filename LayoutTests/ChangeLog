@@ -1,3 +1,17 @@
+2012-06-07  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        InsertUnorderedList and InsertOrderedList (execCommand) do not remove bullets
+        https://bugs.webkit.org/show_bug.cgi?id=84597
+
+        Reviewed by Ryosuke Niwa.
+
+        This test verifies removing of an (un)ordered list on a selection consisting of multiple
+        list items (paragraphs) when the end point of the selection points to the end of the last
+        list item; followed by another paragraph not part of the selection/list.
+ 
+        * editing/execCommand/remove-list-from-multi-list-items-expected.txt: Added.
+        * editing/execCommand/remove-list-from-multi-list-items.html: Added.
+
 2012-06-07  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Improve test coverage of input-number-size.html

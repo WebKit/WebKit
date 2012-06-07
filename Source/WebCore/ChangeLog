@@ -1,3 +1,22 @@
+2012-06-07  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        InsertUnorderedList and InsertOrderedList (execCommand) do not remove bullets
+        https://bugs.webkit.org/show_bug.cgi?id=84597
+
+        Reviewed by Ryosuke Niwa.
+
+        Comparison between start and end VisiblePositions will fail when a position inside
+        a paragraph is compared with one at the start of the paragraph.
+        
+        This fix thus converts the end VisiblePosition (which could be inside the paragraph)
+        to the start of the paragraph thereby enabling a proper comparison of start and end
+        positions.
+
+        Test: editing/execCommand/remove-list-from-multi-list-items.html
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::selectionHasListOfType):
+
 2012-06-07  Li Yin  <li.yin@intel.com>
 
         [FileAPI] FileReader should throw an InvalidStateError exception when readyState is LOADING
