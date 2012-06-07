@@ -102,6 +102,8 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
         dictionary.get("type", type);
         if (tryCatchType.HasCaught())
             return throwError(tryCatchType.Exception(), args.GetIsolate());
+        if (!type.containsOnlyASCII())
+            return V8Proxy::throwError(V8Proxy::SyntaxError, "type must consist of ASCII characters", args.GetIsolate());
     }
 
     ASSERT(endings == "transparent" || endings == "native");

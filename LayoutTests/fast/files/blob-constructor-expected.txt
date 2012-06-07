@@ -28,6 +28,7 @@ PASS (new Blob([], {unknownKey:'value'})) instanceof window.Blob is true
 PASS new Blob([], {endings:'illegalValue'}) threw exception TypeError: The endings property must be either "transparent" or "native".
 PASS new Blob([], {endings:throwingObj}) threw exception Error.
 PASS new Blob([], {type:throwingObj}) threw exception Error.
+PASS new Blob([], {type:'helloî'}) threw exception SyntaxError: type must consist of ASCII characters.
 PASS new Blob([], {endings:throwingObj1, type:throwingObj2}) threw exception Error 1.
 PASS new Blob([], {type:throwingObj2, endings:throwingObj1}) threw exception Error 1.
 PASS new Blob([], {type:throwingObj2, endings:'illegal'}) threw exception TypeError: The endings property must be either "transparent" or "native".

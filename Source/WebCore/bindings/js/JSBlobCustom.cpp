@@ -103,6 +103,8 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
         dictionary.get("type", type);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
+        if (!type.containsOnlyASCII())
+            return throwVMError(exec, createSyntaxError(exec, "type must consist of ASCII characters"));
     }
 
     ASSERT(endings == "transparent" || endings == "native");

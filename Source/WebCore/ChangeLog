@@ -1,3 +1,22 @@
+2012-06-07  Li Yin  <li.yin@intel.com>
+
+        FileAPI: If type consists of non-ASCII characters in Blob constructor, it should throw a SyntaxError.
+        https://bugs.webkit.org/show_bug.cgi?id=88411
+
+        Reviewed by Kentaro Hara.
+
+        From spec: http://dev.w3.org/2006/webapi/FileAPI/#constructorBlob
+        If type consists of any non-ASCII characters, throw a SyntaxError and
+        return from this algorithm.
+        This patch checks the String is ASCii or not, if not, throw SyntaxError.
+
+        Test: fast/files/blob-constructor.html
+
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::JSBlobConstructor::constructJSBlob):
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::V8Blob::constructorCallback):
+
 2012-06-07  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         InsertUnorderedList and InsertOrderedList (execCommand) do not remove bullets

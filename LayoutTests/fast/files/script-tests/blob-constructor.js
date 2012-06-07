@@ -38,6 +38,7 @@ shouldBeTrue("(new Blob([], {unknownKey:'value'})) instanceof window.Blob");    
 shouldThrow("new Blob([], {endings:'illegalValue'})", "'TypeError: The endings property must be either \"transparent\" or \"native\"'");
 shouldThrow("new Blob([], {endings:throwingObj})", "'Error'");
 shouldThrow("new Blob([], {type:throwingObj})", "'Error'");
+shouldThrow("new Blob([], {type:'hello\u00EE'})", "'SyntaxError: type must consist of ASCII characters'");
 
 // Test that order of property bag evaluation is lexigraphical
 var throwingObj1 = { toString: function() { throw "Error 1"; } };
