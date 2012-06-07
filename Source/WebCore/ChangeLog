@@ -1,3 +1,18 @@
+2012-06-06  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] In each composited frame, didDraw() should only be called on layers for which willDraw() was called
+        https://bugs.webkit.org/show_bug.cgi?id=88469
+
+        Reviewed by James Robinson.
+
+        Unit test: CCLayerTreeHostImplTest.didDrawNotCalledOnScissoredLayer
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::shouldDrawLayer):
+        (WebCore):
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::didDrawAllLayers):
+
 2012-06-07  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: sorting of object fields is broken in heap profiler

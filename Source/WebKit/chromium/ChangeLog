@@ -1,3 +1,12 @@
+2012-06-06  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] In each composited frame, didDraw() should only be called on layers for which willDraw() was called
+        https://bugs.webkit.org/show_bug.cgi?id=88469
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-06-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119694.

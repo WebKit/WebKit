@@ -454,6 +454,12 @@ public:
     bool didDrawCalled() const { return m_didDrawCalled; }
     bool willDrawCalled() const { return m_willDrawCalled; }
 
+    void clearDidDrawCheck()
+    {
+        m_didDrawCalled = false;
+        m_willDrawCalled = false;
+    }
+
 protected:
     explicit DidDrawCheckLayer(int id)
         : CCTiledLayerImpl(id)
@@ -1409,6 +1415,59 @@ TEST_F(CCLayerTreeHostImplTest, contributingLayerEmptyScissorNoPartialSwap)
         EXPECT_EQ(CCDrawQuad::SolidColor, frame.renderPasses[0]->quadList()[0]->material());
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
     }
+}
+
+TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnScissoredLayer)
+{
+    CCSettings settings;
+    settings.partialSwapEnabled = true;
+
+    RefPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new PartialSwapContext()), GraphicsContext3D::RenderDirectlyToHostWindow));
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
+    myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
+    myHostImpl->setViewportSize(IntSize(10, 10));
+
+    myHostImpl->setRootLayer(DidDrawCheckLayer::create(1));
+    DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(myHostImpl->rootLayer());
+    root->setMasksToBounds(true);
+
+    root->addChild(DidDrawCheckLayer::create(2));
+    DidDrawCheckLayer* layer = static_cast<DidDrawCheckLayer*>(root->children()[0].get());
+
+    CCLayerTreeHostImpl::FrameData frame;
+
+    EXPECT_FALSE(root->willDrawCalled());
+    EXPECT_FALSE(root->didDrawCalled());
+    EXPECT_FALSE(layer->willDrawCalled());
+    EXPECT_FALSE(layer->didDrawCalled());
+
+    // We should draw everything the first frame.
+    EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+    myHostImpl->drawLayers(frame);
+    myHostImpl->didDrawAllLayers(frame);
+
+    EXPECT_TRUE(root->willDrawCalled());
+    EXPECT_TRUE(root->didDrawCalled());
+    EXPECT_TRUE(layer->willDrawCalled());
+    EXPECT_TRUE(layer->didDrawCalled());
+
+    root->clearDidDrawCheck();
+    layer->clearDidDrawCheck();
+
+    EXPECT_FALSE(root->willDrawCalled());
+    EXPECT_FALSE(root->didDrawCalled());
+    EXPECT_FALSE(layer->willDrawCalled());
+    EXPECT_FALSE(layer->didDrawCalled());
+
+    // Drawing again, we should scissor out everything since there is no damage.
+    EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+    myHostImpl->drawLayers(frame);
+    myHostImpl->didDrawAllLayers(frame);
+
+    EXPECT_FALSE(root->willDrawCalled());
+    EXPECT_FALSE(root->didDrawCalled());
+    EXPECT_FALSE(layer->willDrawCalled());
+    EXPECT_FALSE(layer->didDrawCalled());
 }
 
 // Make sure that context lost notifications are propagated through the tree.

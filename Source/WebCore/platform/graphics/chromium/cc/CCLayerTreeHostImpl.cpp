@@ -261,6 +261,11 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
     }
 }
 
+static inline bool shouldDrawLayer(CCLayerImpl* layer)
+{
+    return !layer->visibleLayerRect().isEmpty() && !layer->scissorRect().isEmpty();
+}
+
 bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLayerList& renderSurfaceLayerList)
 {
     ASSERT(passes.isEmpty());
@@ -305,7 +310,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         if (it.representsContributingRenderSurface() && !it->renderSurface()->scissorRect().isEmpty()) {
             CCRenderPass* contributingRenderPass = surfacePassMap.get(it->renderSurface());
             pass->appendQuadsForRenderSurfaceLayer(*it, contributingRenderPass, &occlusionTracker);
-        } else if (it.representsItself() && !it->visibleLayerRect().isEmpty() && !it->scissorRect().isEmpty()) {
+        } else if (it.representsItself() && shouldDrawLayer(*it)) {
             it->willDraw(m_layerRenderer.get(), context());
             pass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
         }
@@ -435,7 +440,7 @@ void CCLayerTreeHostImpl::didDrawAllLayers(const FrameData& frame)
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&frame.renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&frame.renderSurfaceLayerList); it != end; ++it) {
-        if (it.representsItself() && !it->visibleLayerRect().isEmpty())
+        if (it.representsItself() && shouldDrawLayer(*it))
             it->didDraw();
     }
 }
