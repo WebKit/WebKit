@@ -521,7 +521,6 @@ void ChromeClientImpl::invalidateContentsAndRootView(const IntRect& updateRect, 
 
 void ChromeClientImpl::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
 {
-    m_webView->hidePopups();
     invalidateContentsAndRootView(updateRect, immediate);
 }
 
@@ -536,7 +535,6 @@ void ChromeClientImpl::scroll(
     const IntSize& scrollDelta, const IntRect& scrollRect,
     const IntRect& clipRect)
 {
-    m_webView->hidePopups();
 #if USE(ACCELERATED_COMPOSITING)
     if (!m_webView->isAcceleratedCompositingActive()) {
 #endif

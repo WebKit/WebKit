@@ -1,3 +1,14 @@
+2012-06-06  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r60044.
+        http://trac.webkit.org/changeset/60044
+
+        It made a regression, crbug.com/114922.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::invalidateContentsForSlowScroll): Do not hide popups by scrolling.
+        (WebKit::ChromeClientImpl::scroll): ditto.
+
 2012-06-06  Noel Gordon  <noel.gordon@gmail.com>
 
         Unreviewed. Rolled DEPS.
