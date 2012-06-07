@@ -1,3 +1,9 @@
+2012-06-07  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Clean chromium test expectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-07  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: reuse edge_count field of heap snapshot to store retained size
