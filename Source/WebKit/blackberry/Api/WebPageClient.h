@@ -99,7 +99,8 @@ public:
 
     virtual void notifyRunLayoutTestsFinished() = 0;
 
-    virtual void notifyInRegionScrollingStartingPointChanged(std::vector<Platform::ScrollViewBase>) = 0;
+    // Client is responsible for deleting the vector elements.
+    virtual void notifyInRegionScrollingStartingPointChanged(std::vector<Platform::ScrollViewBase*>) = 0;
 
     virtual void notifyDocumentOnLoad() = 0;
 

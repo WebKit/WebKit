@@ -1,3 +1,40 @@
+2012-06-05  Antonio Gomes  <agomes@rim.com>
+
+       [BlackBerry] Implement a top-down in-region boundary detection in InRegionScrollableArea
+       https://bugs.webkit.org/show_bug.cgi?id=88254
+       PR #125237
+
+       Reviewed by Rob Buis.
+
+       Patch implements a top-down visibleWindowRect calculation for all scrollable
+       elements hit-tested by a given point.
+
+       The reason on why this approach is better is that it calculates the visible
+       window rect from the outermost scrollable element towards the inner ones, and
+       that allows it to use the visible window rect of the previous scrollable element
+       as the clipping rect for the current one.
+
+       Patch also changes the return vector to store ScrollViewBase pointers, so
+       we can make use of static_cast properly. As now also stated in the header
+       file, the client is responsible for deleting the ScrollViewBase
+       elements in the vector.
+
+       Internally reviewed by Jakob Petsovits.
+
+       * Api/WebPage.cpp:
+       (BlackBerry::WebKit::pushBackInRegionScrollable):
+       (BlackBerry::WebKit::WebPagePrivate::inRegionScrollableAreasForPoint):
+       * Api/WebPageClient.h:
+       * Api/WebPage_p.h:
+       (WebPagePrivate):
+       * WebKitSupport/InRegionScrollableArea.cpp:
+       (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+       (BlackBerry::WebKit::InRegionScrollableArea::setVisibleWindowRect):
+       (WebKit):
+       (BlackBerry::WebKit::InRegionScrollableArea::visibleWindowRect):
+       * WebKitSupport/InRegionScrollableArea.h:
+       (InRegionScrollableArea):
+
 2012-06-06  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] IndexedDB file should be sand-boxed to the application data directory.

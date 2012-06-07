@@ -19,7 +19,8 @@
 #ifndef InRegionScrollableArea_h
 #define InRegionScrollableArea_h
 
-#include <BlackBerryPlatformPrimitives.h>
+#include "IntRect.h"
+
 #include <interaction/ScrollViewBase.h>
 
 namespace WebCore {
@@ -37,11 +38,15 @@ public:
     InRegionScrollableArea();
     InRegionScrollableArea(WebPagePrivate*, WebCore::RenderLayer*);
 
+    void setVisibleWindowRect(const WebCore::IntRect&);
+    Platform::IntRect visibleWindowRect() const;
+
     WebCore::RenderLayer* layer() const;
 
 private:
     WebPagePrivate* m_webPage;
     WebCore::RenderLayer* m_layer;
+    bool m_hasWindowVisibleRectCalculated;
 };
 
 }

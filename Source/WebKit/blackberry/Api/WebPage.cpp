@@ -4633,23 +4633,23 @@ static Node* enclosingLayerNode(RenderLayer* layer)
     return 0;
 }
 
-static void pushBackInRegionScrollable(std::vector<Platform::ScrollViewBase>& vector, InRegionScrollableArea scroller, WebPagePrivate* webPage)
+static void pushBackInRegionScrollable(std::vector<Platform::ScrollViewBase*>& vector, InRegionScrollableArea* scroller, WebPagePrivate* webPage)
 {
     ASSERT(webPage);
     ASSERT(!scroller.isNull());
 
-    scroller.setCanPropagateScrollingToEnclosingScrollable(!isNonRenderViewFixedPositionedContainer(scroller.layer()));
+    scroller->setCanPropagateScrollingToEnclosingScrollable(!isNonRenderViewFixedPositionedContainer(scroller->layer()));
     vector.push_back(scroller);
     if (vector.size() == 1) {
         // FIXME: Use RenderLayer::renderBox()->node() instead?
-        webPage->m_inRegionScrollStartingNode = enclosingLayerNode(scroller.layer());
+        webPage->m_inRegionScrollStartingNode = enclosingLayerNode(scroller->layer());
     }
 }
 
-std::vector<Platform::ScrollViewBase> WebPagePrivate::inRegionScrollableAreasForPoint(const Platform::IntPoint& point)
+std::vector<Platform::ScrollViewBase*> WebPagePrivate::inRegionScrollableAreasForPoint(const Platform::IntPoint& point)
 {
-    std::vector<Platform::ScrollViewBase> validReturn;
-    std::vector<Platform::ScrollViewBase> emptyReturn;
+    std::vector<Platform::ScrollViewBase*> validReturn;
+    std::vector<Platform::ScrollViewBase*> emptyReturn;
 
     HitTestResult result = m_mainFrame->eventHandler()->hitTestResultAtPoint(mapFromViewportToContents(point), false /*allowShadowContent*/);
     Node* node = result.innerNonSharedNode();
@@ -4672,25 +4672,62 @@ std::vector<Platform::ScrollViewBase> WebPagePrivate::inRegionScrollableAreasFor
                     return emptyReturn;
 
                 if (canScrollInnerFrame(view->frame())) {
-                    pushBackInRegionScrollable(validReturn, InRegionScrollableArea(this, layer), this);
+                    pushBackInRegionScrollable(validReturn, new InRegionScrollableArea(this, layer), this);
                     continue;
                 }
             }
         } else if (canScrollRenderBox(layer->renderBox())) {
-            pushBackInRegionScrollable(validReturn, InRegionScrollableArea(this, layer), this);
+            pushBackInRegionScrollable(validReturn, new InRegionScrollableArea(this, layer), this);
             continue;
         }
 
         // If we run into a fix positioned layer, set the last scrollable in-region object
         // as not able to propagate scroll to its parent scrollable.
         if (isNonRenderViewFixedPositionedContainer(layer) && validReturn.size()) {
-            Platform::ScrollViewBase& end = validReturn.back();
-            end.setCanPropagateScrollingToEnclosingScrollable(false);
+            Platform::ScrollViewBase* end = validReturn.back();
+            end->setCanPropagateScrollingToEnclosingScrollable(false);
         }
 
     } while (layer = parentLayer(layer));
+
     if (validReturn.empty())
         return emptyReturn;
+
+    // Post-calculate the visible window rects in reverse hit test order so
+    // we account for all and any clipping rects.
+    WebCore::IntRect recursiveClippingRect(WebCore::IntPoint::zero(), transformedViewportSize());
+
+    std::vector<Platform::ScrollViewBase*>::reverse_iterator rend = validReturn.rend();
+    for (std::vector<Platform::ScrollViewBase*>::reverse_iterator rit = validReturn.rbegin(); rit != rend; ++rit) {
+
+        InRegionScrollableArea* curr = static_cast<InRegionScrollableArea*>(*rit);
+        RenderLayer* layer = curr->layer();
+
+        if (layer && layer->renderer()->isRenderView()) { // #document case
+            FrameView* view = toRenderView(layer->renderer())->frameView();
+            ASSERT(view);
+            ASSERT(canScrollInnerFrame(view->frame()));
+
+            WebCore::IntRect frameWindowRect = mapToTransformed(getRecursiveVisibleWindowRect(view));
+            frameWindowRect.intersect(recursiveClippingRect);
+            curr->setVisibleWindowRect(frameWindowRect);
+            recursiveClippingRect = frameWindowRect;
+
+        } else { // RenderBox-based elements case (scrollable boxes (div's, p's, textarea's, etc)).
+
+            RenderBox* box = layer->renderBox();
+            ASSERT(box);
+            ASSERT(canScrollRenderBox(box));
+
+            WebCore::IntRect visibleWindowRect = box->absoluteClippedOverflowRect();
+            visibleWindowRect = box->frame()->view()->contentsToWindow(visibleWindowRect);
+            visibleWindowRect = mapToTransformed(visibleWindowRect);
+            visibleWindowRect.intersect(recursiveClippingRect);
+
+            curr->setVisibleWindowRect(visibleWindowRect);
+            recursiveClippingRect = visibleWindowRect;
+        }
+    }
 
     return validReturn;
 }

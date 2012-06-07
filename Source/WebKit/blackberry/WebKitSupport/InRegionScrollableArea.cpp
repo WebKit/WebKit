@@ -35,12 +35,14 @@ namespace WebKit {
 InRegionScrollableArea::InRegionScrollableArea()
     : m_webPage(0)
     , m_layer(0)
+    , m_hasWindowVisibleRectCalculated(false)
 {
 }
 
 InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLayer* layer)
     : m_webPage(webPage)
     , m_layer(layer)
+    , m_hasWindowVisibleRectCalculated(false)
 {
     ASSERT(webPage);
     ASSERT(layer);
@@ -63,10 +65,6 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
         m_contentsSize = m_webPage->mapToTransformed(view->contentsSize());
         m_viewportSize = m_webPage->mapToTransformed(view->visibleContentRect(false /*includeScrollbars*/)).size();
 
-        m_visibleWindowRect = m_webPage->mapToTransformed(m_webPage->getRecursiveVisibleWindowRect(view));
-        IntRect transformedWindowRect = IntRect(IntPoint::zero(), m_webPage->transformedViewportSize());
-        m_visibleWindowRect.intersect(transformedWindowRect);
-
         m_scrollsHorizontally = view->contentsWidth() > view->visibleWidth();
         m_scrollsVertically = view->contentsHeight() > view->visibleHeight();
 
@@ -82,19 +80,23 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
         m_contentsSize = m_webPage->mapToTransformed(scrollableArea->contentsSize());
         m_viewportSize = m_webPage->mapToTransformed(scrollableArea->visibleContentRect(false /*includeScrollbars*/)).size();
 
-        m_visibleWindowRect = m_layer->renderer()->absoluteClippedOverflowRect();
-        m_visibleWindowRect = m_layer->renderer()->frame()->view()->contentsToWindow(m_visibleWindowRect);
-        IntRect visibleFrameWindowRect = m_webPage->getRecursiveVisibleWindowRect(m_layer->renderer()->frame()->view());
-        m_visibleWindowRect.intersect(visibleFrameWindowRect);
-        m_visibleWindowRect = m_webPage->mapToTransformed(m_visibleWindowRect);
-        IntRect transformedWindowRect = IntRect(IntPoint::zero(), m_webPage->transformedViewportSize());
-        m_visibleWindowRect.intersect(transformedWindowRect);
-
         m_scrollsHorizontally = box->scrollWidth() != box->clientWidth() && box->scrollsOverflowX();
         m_scrollsVertically = box->scrollHeight() != box->clientHeight() && box->scrollsOverflowY();
 
         m_overscrollLimitFactor = 0.0; // FIXME eventually support overscroll
     }
+}
+
+void InRegionScrollableArea::setVisibleWindowRect(const WebCore::IntRect& rect)
+{
+    m_hasWindowVisibleRectCalculated = true;
+    m_visibleWindowRect = rect;
+}
+
+Platform::IntRect InRegionScrollableArea::visibleWindowRect() const
+{
+    ASSERT(m_hasWindowVisibleRectCalculated);
+    return m_visibleWindowRect;
 }
 
 RenderLayer* InRegionScrollableArea::layer() const
