@@ -1,3 +1,13 @@
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add failing test expectation for the test added by r119644.
+        The failure is tracked by the bug 88481.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-06-06  Noel Gordon  <noel.gordon@gmail.com>
 
         Add a test for PNG COLOR_TYPE_PALETTE image with a color profile

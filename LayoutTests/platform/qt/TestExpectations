@@ -91,3 +91,5 @@ BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS FAIL
 
 // LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
 BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = FAIL
+
+BUGWK88481 : fast/loader/webarchive-encoding-respected.html = TEXT
