@@ -316,6 +316,9 @@ BUGWK79203 SKIP : fast/mediastream = FAIL
 // CSS Variables are not yet enabled.
 BUGWK85580 SKIP : fast/css/variables = PASS FAIL
 
+// No CORS support for media elements is implemented yet.
+BUGWKGTK SKIP : http/tests/security/video-cross-origin-readback.html = FAIL
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
 //////////////////////////////////////////////////////////////////////////////////////////

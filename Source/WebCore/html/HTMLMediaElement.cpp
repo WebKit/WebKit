@@ -4456,6 +4456,15 @@ String HTMLMediaElement::mediaPlayerUserAgent() const
 
 }
 
+MediaPlayerClient::CORSMode HTMLMediaElement::mediaPlayerCORSMode() const
+{
+    if (!fastHasAttribute(HTMLNames::crossoriginAttr))
+        return Unspecified;
+    if (equalIgnoringCase(fastGetAttribute(HTMLNames::crossoriginAttr), "use-credentials"))
+        return UseCredentials;
+    return Anonymous;
+}
+
 bool HTMLMediaElement::mediaPlayerNeedsSiteSpecificHacks() const
 {
     Settings* settings = document()->settings();

@@ -1752,6 +1752,9 @@ fast/sub-pixel/size-of-box-with-zoom.html
 fast/sub-pixel/selection/selection-gaps-at-fractional-offsets.html
 fast/sub-pixel/file-upload-control-at-fractional-offset.html
 
+# No CORS support for media elements is implemented yet.
+http/tests/security/video-cross-origin-readback.html
+
 # http://webkit.org/b/82886
 inspector/styles/override-screen-size.html
 

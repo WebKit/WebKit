@@ -135,6 +135,8 @@ public:
 
     virtual bool hasSingleSecurityOrigin() const { return false; }
 
+    virtual bool didPassCORSAccessCheck() const { return false; }
+
     virtual MediaPlayer::MovieLoadType movieLoadType() const { return MediaPlayer::Unknown; }
 
     virtual void prepareForRendering() { }

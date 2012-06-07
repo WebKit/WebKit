@@ -302,6 +302,9 @@ fast/mutation/database-callback-delivery.html
 fast/images/exif-orientation.html
 fast/images/exif-orientation-css.html
 
+# No CORS support for media elements is implemented yet.
+http/tests/security/video-cross-origin-readback.html
+
 # --------------------------------
 # Tests which are expected to fail
 # --------------------------------

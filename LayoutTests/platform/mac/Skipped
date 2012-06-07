@@ -813,6 +813,9 @@ fast/sub-pixel/size-of-box-with-zoom.html
 fast/sub-pixel/selection/selection-gaps-at-fractional-offsets.html
 fast/sub-pixel/file-upload-control-at-fractional-offset.html
 
+# No CORS support for media elements is implemented yet.
+http/tests/security/video-cross-origin-readback.html
+
 # media/audio-repaint.html sometimes fails on Lion Debug (Tests)
 # https://bugs.webkit.org/show_bug.cgi?id=84357
 media/audio-repaint.html

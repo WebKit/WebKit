@@ -1,3 +1,20 @@
+2012-06-07  Ami Fischman  <fischman@chromium.org>
+
+        Plumb CORS attribute information from HTMLMediaElement to media players so it can be used
+        https://bugs.webkit.org/show_bug.cgi?id=88349
+
+        Reviewed by Adam Barth.
+
+        * public/WebMediaPlayer.h:
+        (WebMediaPlayer):
+        * src/AssertMatchingEnums.cpp:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::loadInternal):
+        (WebKit::WebMediaPlayerClientImpl::didPassCORSAccessCheck):
+        (WebKit):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+
 2012-06-07  Daniel Erat  <derat@chromium.org>
 
         Add setting to enable subpixel-positioned text on Linux.

@@ -1,3 +1,20 @@
+2012-06-07  Ami Fischman  <fischman@chromium.org>
+
+        Plumb CORS attribute information from HTMLMediaElement to media players so it can be used
+        https://bugs.webkit.org/show_bug.cgi?id=88349
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/resources/video-cross-origin-allow.php: Added.
+        * http/tests/security/video-cross-origin-readback-expected.txt: Added.
+        * http/tests/security/video-cross-origin-readback.html: Added.
+        * platform/efl/Skipped:
+        * platform/gtk/TestExpectations:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wk2/Skipped:
+
 2012-06-07  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; chromium test_expectations update.
