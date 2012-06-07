@@ -1,3 +1,8 @@
+2012-06-07  Ojan Vafai  <ojan@chromium.org>
+
+        Update some flaky/slow expectations to better match the bots.
+        * platform/chromium/TestExpectations:
+
 2012-06-07  Raymes Khoury  <raymes@chromium.org>
 
         Incorrect rect-based hit-test result for culled-inline elements
