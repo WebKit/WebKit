@@ -1,3 +1,21 @@
+2012-06-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119668.
+        http://trac.webkit.org/changeset/119668
+        https://bugs.webkit.org/show_bug.cgi?id=88493
+
+        Hitting assertions in debug builds (Requested by rniwa on
+        #webkit).
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::localCaretRect):
+        * rendering/RenderBoxModelObject.cpp:
+        * rendering/RenderBoxModelObject.h:
+        (RenderBoxModelObject):
+        * rendering/RenderInline.cpp:
+        * rendering/RenderInline.h:
+        (RenderInline):
+
 2012-06-06  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Cache isSelfPaintingLayer() for better performance

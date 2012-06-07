@@ -233,24 +233,6 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
     }
 }
 
-LayoutRect RenderInline::localCaretRect(InlineBox* inlineBox, int, LayoutUnit* extraWidthToEndOfLine)
-{
-    // This will only be called if the RenderInline is empty.
-    // Otherwise, RenderText::localCaretRect will be called.
-    ASSERT(!firstChild());
-    ASSERT_UNUSED(inlineBox, !inlineBox);
-
-    if (extraWidthToEndOfLine)
-        *extraWidthToEndOfLine = 0;
-
-    LayoutRect caretRect = localCaretRectForEmptyElement(borderAndPaddingWidth(), 0);
-
-    if (InlineBox* firstBox = firstLineBox())
-        caretRect.moveBy(roundedLayoutPoint(firstBox->topLeft()));
-
-    return caretRect;
-}
-
 void RenderInline::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (continuation())
