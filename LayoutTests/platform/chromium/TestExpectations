@@ -3782,6 +3782,3 @@ BUGLEVIW LEOPARD LION WIN LINUX : fast/sub-pixel/file-upload-control-at-fraction
 //BUGCR84157 WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
 BUGCR131187 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGCR131187 : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
-
-BUGWK88481 : fast/loader/webarchive-encoding-respected.html = TEXT
-

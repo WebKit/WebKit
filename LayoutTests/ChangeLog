@@ -1,3 +1,18 @@
+2012-06-07  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=88481
+
+        Move new test added by r119644 that was only meant for platform/mac into the platform/mac directory:
+        * platform/mac/fast/loader/resources/utf8-encoded.webarchive: Renamed from LayoutTests/fast/loader/resources/utf8-encoded.webarchive.
+        * platform/mac/fast/loader/webarchive-encoding-respected-expected.txt: Renamed from LayoutTests/fast/loader/webarchive-encoding-respected-expected.txt.
+        * platform/mac/fast/loader/webarchive-encoding-respected.html: Renamed from LayoutTests/fast/loader/webarchive-encoding-respected.html.
+
+        Also remove it from the TestExpectations files for platforms where it was Skipped:
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-06-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119707.
