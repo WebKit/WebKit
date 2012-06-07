@@ -56,7 +56,7 @@ public:
         const WebString& errorString, int lineNumber,
         const WebString& sourceURL) = 0;
 
-    // FIXME: the below is for compatibility only and should be   
+    // FIXME: the below is for compatibility only and should be
     // removed once Chromium is updated to remove message
     // destination parameter <http://webkit.org/b/37155>.
     virtual void postConsoleMessageToWorkerObject(int, int sourceIdentifier, int messageType, int messageLevel,

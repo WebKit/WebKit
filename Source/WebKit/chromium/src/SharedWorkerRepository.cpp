@@ -47,14 +47,16 @@
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebKit.h"
-#include "WebMessagePortChannel.h"
 #include "WebSharedWorker.h"
 #include "WebSharedWorkerRepository.h"
 #include "platform/WebKitPlatformSupport.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerScriptLoaderClient.h"
+
+#include <public/Platform.h>
+#include <public/WebMessagePortChannel.h>
+#include <public/WebString.h>
+#include <public/WebURL.h>
 
 namespace WebCore {
 
