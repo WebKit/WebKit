@@ -117,14 +117,9 @@ function associateBuildersWithMaster(builders, master)
     });
 }
 
-function requestBuilderList(builderGroups, builderFilter, master, groupName, groupEnum, builderGroup)
+function doXHR(url, onLoad, builderGroups, groupName)
 {
-    if (!(groupName in builderGroups))
-        builderGroups[groupName] = builderGroup;
-
-    var onLoad = partial(onBuilderListLoad, builderGroups, builderFilter, master, groupName, groupEnum);
     var xhr = new XMLHttpRequest();
-    var url = master.builderJsonPath();
     xhr.open('GET', url, true);
     xhr.onload = function() {
         if (xhr.status == 200)
@@ -134,6 +129,14 @@ function requestBuilderList(builderGroups, builderFilter, master, groupName, gro
     };
     xhr.onerror = function() { onErrorLoadingBuilderList(url, builderGroups, groupName); };
     xhr.send();
+}
+
+function requestBuilderList(builderGroups, builderFilter, master, groupName, groupEnum, builderGroup)
+{
+    if (!builderGroups[groupName])
+        builderGroups[groupName] = builderGroup;
+    var onLoad = partial(onBuilderListLoad, builderGroups, builderFilter, master, groupName, groupEnum);
+    doXHR(master.builderJsonPath(), onLoad, builderGroups, groupName);
     builderGroups[groupName].expectedGroups += 1;
 }
 

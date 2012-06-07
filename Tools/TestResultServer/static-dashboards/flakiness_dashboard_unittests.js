@@ -661,6 +661,26 @@ test('builderGroupExpectedGroups', 4, function() {
     equal(testBuilderGroups['@ToT - dummy.org'].groups, 3);
 });
 
+test('requestBuilderListAddsBuilderGroupEntry', 2, function() {
+    var testBuilderGroups = { '@ToT - dummy.org': null };
+
+    var oldDoXHR = doXHR;
+    try {
+        doXHR = function() {};
+        var builderFilter = null;
+        var master = { builderJsonPath: function() {} };
+        var groupName = '@ToT - dummy.org';
+        var groupEnum = null;
+        var builderGroup = { expectedGroups: 0 };
+        requestBuilderList(testBuilderGroups, builderFilter, master, groupName, groupEnum, builderGroup);
+
+        equal(testBuilderGroups['@ToT - dummy.org'], builderGroup);
+        equal(testBuilderGroups['@ToT - dummy.org'].expectedGroups, 1);
+    } finally {
+        doXHR = oldDoXHR;
+    }
+})
+
 test('sortTests', 4, function() {
     var test1 = createResultsObjectForTest('foo/test1.html', 'dummyBuilder');
     var test2 = createResultsObjectForTest('foo/test2.html', 'dummyBuilder');
