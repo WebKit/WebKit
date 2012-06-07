@@ -33,7 +33,6 @@
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "cc/CCIOSurfaceDrawQuad.h"
-#include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCProxy.h"
 #include "cc/CCQuadCuller.h"
 
@@ -49,14 +48,9 @@ CCIOSurfaceLayerImpl::CCIOSurfaceLayerImpl(int id)
 
 CCIOSurfaceLayerImpl::~CCIOSurfaceLayerImpl()
 {
-    if (!m_ioSurfaceTextureId)
-        return;
-
-    CCGraphicsContext* context = layerTreeHostImpl()->context();
-    // FIXME: Implement this path for software compositing.
-    GraphicsContext3D* context3d = context->context3D();
-    if (context3d)
-        context3d->deleteTexture(m_ioSurfaceTextureId);
+    // FIXME: it seems there is no layer renderer / GraphicsContext3D available here. Ideally we
+    // would like to delete m_ioSurfaceTextureId.
+    m_ioSurfaceTextureId = 0;
 }
 
 void CCIOSurfaceLayerImpl::willDraw(CCRenderer* layerRenderer, CCGraphicsContext* context)
@@ -73,7 +67,6 @@ void CCIOSurfaceLayerImpl::willDraw(CCRenderer* layerRenderer, CCGraphicsContext
         ASSERT(extensions->supports("GL_CHROMIUM_iosurface"));
         ASSERT(extensions->supports("GL_ARB_texture_rectangle"));
 
-        // FIXME: Do this in a way that we can track memory usage.
         if (!m_ioSurfaceTextureId)
             m_ioSurfaceTextureId = context3d->createTexture();
 
