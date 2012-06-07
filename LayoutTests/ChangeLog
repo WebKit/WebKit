@@ -1,3 +1,9 @@
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert erroneous change in r119637.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-06  Jessie Berlin  <jberlin@apple.com>
 
         [Win] ASSERT(m_manualStream) failed in PluginView::didFinishLoading running
