@@ -313,6 +313,9 @@ protected:
 
 void WebPage::autofillTextField(const string& item)
 {
+    if (!d->m_webSettings->isFormAutofillEnabled())
+        return;
+
     d->m_autofillManager->autofillTextField(item.c_str());
 }
 
@@ -2157,7 +2160,7 @@ bool WebPagePrivate::authenticationChallenge(const KURL& url, const ProtectionSp
 #endif
 
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
-    if (!m_webSettings->isPrivateBrowsingEnabled())
+    if (m_webSettings->isCredentialAutofillEnabled() && !m_webSettings->isPrivateBrowsingEnabled())
         credentialManager().autofillAuthenticationChallenge(protectionSpace, username, password);
 #endif
 
@@ -2165,7 +2168,7 @@ bool WebPagePrivate::authenticationChallenge(const KURL& url, const ProtectionSp
 
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
     Credential credential(username, password, CredentialPersistencePermanent);
-    if (!m_webSettings->isPrivateBrowsingEnabled() && isConfirmed)
+    if (m_webSettings->isCredentialAutofillEnabled() && !m_webSettings->isPrivateBrowsingEnabled() && isConfirmed)
         credentialManager().saveCredentialIfConfirmed(this, CredentialTransformData(url, protectionSpace, credential));
 #else
     Credential credential(username, password, CredentialPersistenceNone);
@@ -5285,19 +5288,22 @@ void WebPage::clearLocalStorage()
 void WebPage::clearCredentials()
 {
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
-    credentialManager().clearCredentials();
+    if (d->m_webSettings->isCredentialAutofillEnabled())
+        credentialManager().clearCredentials();
 #endif
 }
 
 void WebPage::clearAutofillData()
 {
-    AutofillManager::clear();
+    if (d->m_webSettings->isFormAutofillEnabled())
+        AutofillManager::clear();
 }
 
 void WebPage::clearNeverRememberSites()
 {
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
-    credentialManager().clearNeverRememberSites();
+    if (d->m_webSettings->isCredentialAutofillEnabled())
+        credentialManager().clearNeverRememberSites();
 #endif
 }
 

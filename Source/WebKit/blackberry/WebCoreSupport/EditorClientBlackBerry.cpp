@@ -509,14 +509,18 @@ void EditorClientBlackBerry::textFieldDidBeginEditing(Element*)
 
 void EditorClientBlackBerry::textFieldDidEndEditing(Element* element)
 {
-    if (HTMLInputElement* inputElement = element->toInputElement())
-        m_webPagePrivate->m_autofillManager->textFieldDidEndEditing(inputElement);
+    if (m_webPagePrivate->m_webSettings->isFormAutofillEnabled()) {
+        if (HTMLInputElement* inputElement = element->toInputElement())
+            m_webPagePrivate->m_autofillManager->textFieldDidEndEditing(inputElement);
+    }
 }
 
 void EditorClientBlackBerry::textDidChangeInTextField(Element* element)
 {
-    if (HTMLInputElement* inputElement = element->toInputElement())
-        m_webPagePrivate->m_autofillManager->didChangeInTextField(inputElement);
+    if (m_webPagePrivate->m_webSettings->isFormAutofillEnabled()) {
+        if (HTMLInputElement* inputElement = element->toInputElement())
+            m_webPagePrivate->m_autofillManager->didChangeInTextField(inputElement);
+    }
 }
 
 bool EditorClientBlackBerry::doTextFieldCommandFromEvent(Element*, KeyboardEvent*)

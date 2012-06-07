@@ -226,6 +226,12 @@ public:
     bool fullScreenVideoCapable() const;
     void setFullScreenVideoCapable(bool);
 
+    bool isCredentialAutofillEnabled() const;
+    void setCredentialAutofillEnabled(bool);
+
+    bool isFormAutofillEnabled() const;
+    void setFormAutofillEnabled(bool);
+
 private:
     WebSettingsPrivate* m_private;
     WebSettings();

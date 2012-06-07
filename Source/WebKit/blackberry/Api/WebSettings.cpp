@@ -55,6 +55,8 @@ DEFINE_STATIC_LOCAL(String, BlackBerryUserScalableEnabled, ("BlackBerryUserScala
 DEFINE_STATIC_LOCAL(String, BlackBerryViewportWidth, ("BlackBerryViewportWidth"));
 DEFINE_STATIC_LOCAL(String, BlackBerryZoomToFitOnLoadEnabled, ("BlackBerryZoomToFitOnLoadEnabled"));
 DEFINE_STATIC_LOCAL(String, BlackBerryFullScreenVideoCapable, ("BlackBerryFullScreenVideoCapable"));
+DEFINE_STATIC_LOCAL(String, BlackBerryCredentialAutofillEnabled, ("BlackBerryCredentialAutofillEnabled"));
+DEFINE_STATIC_LOCAL(String, BlackBerryFormAutofillEnabled, ("BlackBerryFormAutofillEnabled"));
 DEFINE_STATIC_LOCAL(String, SpatialNavigationEnabled, ("SpatialNavigationEnabled"));
 DEFINE_STATIC_LOCAL(String, WebKitDatabasePath, ("WebKitDatabasePath"));
 DEFINE_STATIC_LOCAL(String, WebKitDatabasesEnabled, ("WebKitDatabasesEnabled"));
@@ -165,6 +167,8 @@ WebSettings* WebSettings::standardSettings()
     settings->m_private->setBoolean(BlackBerryUserScalableEnabled, true);
     settings->m_private->setBoolean(BlackBerryZoomToFitOnLoadEnabled, true);
     settings->m_private->setBoolean(BlackBerryFullScreenVideoCapable, false);
+    settings->m_private->setBoolean(BlackBerryCredentialAutofillEnabled, false);
+    settings->m_private->setBoolean(BlackBerryFormAutofillEnabled, false);
 
     settings->m_private->setInteger(WebKitDefaultFontSize, 16);
     settings->m_private->setInteger(WebKitDefaultFixedFontSize, 13);
@@ -770,6 +774,26 @@ bool WebSettings::fullScreenVideoCapable() const
 void WebSettings::setFullScreenVideoCapable(bool enable)
 {
     m_private->setBoolean(BlackBerryFullScreenVideoCapable, enable);
+}
+
+bool WebSettings::isCredentialAutofillEnabled() const
+{
+    return m_private->getBoolean(BlackBerryCredentialAutofillEnabled);
+}
+
+void WebSettings::setCredentialAutofillEnabled(bool enable)
+{
+    return m_private->setBoolean(BlackBerryCredentialAutofillEnabled, enable);
+}
+
+bool WebSettings::isFormAutofillEnabled() const
+{
+    return m_private->getBoolean(BlackBerryFormAutofillEnabled);
+}
+
+void WebSettings::setFormAutofillEnabled(bool enable)
+{
+    return m_private->setBoolean(BlackBerryFormAutofillEnabled, enable);
 }
 
 } // namespace WebKit

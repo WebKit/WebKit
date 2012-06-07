@@ -608,7 +608,8 @@ void FrameLoaderClientBlackBerry::dispatchDidFinishLoad()
     }
 
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
-    if (!m_webPagePrivate->m_webSettings->isPrivateBrowsingEnabled())
+    if (m_webPagePrivate->m_webSettings->isCredentialAutofillEnabled()
+        && !m_webPagePrivate->m_webSettings->isPrivateBrowsingEnabled())
         credentialManager().autofillPasswordForms(m_frame->document()->forms());
 #endif
 }
@@ -706,9 +707,11 @@ void FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad(const ResourceE
 void FrameLoaderClientBlackBerry::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState> formState)
 {
     if (!m_webPagePrivate->m_webSettings->isPrivateBrowsingEnabled()) {
-        m_webPagePrivate->m_autofillManager->saveTextFields(formState->form());
+        if (m_webPagePrivate->m_webSettings->isFormAutofillEnabled())
+            m_webPagePrivate->m_autofillManager->saveTextFields(formState->form());
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
-        credentialManager().saveCredentialIfConfirmed(m_webPagePrivate, CredentialTransformData(formState->form()));
+        if (m_webPagePrivate->m_webSettings->isCredentialAutofillEnabled())
+            credentialManager().saveCredentialIfConfirmed(m_webPagePrivate, CredentialTransformData(formState->form()));
 #endif
     }
 
@@ -719,9 +722,11 @@ void FrameLoaderClientBlackBerry::dispatchWillSubmitForm(FramePolicyFunction fun
 void FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent(PassRefPtr<FormState> prpFormState)
 {
     if (!m_webPagePrivate->m_webSettings->isPrivateBrowsingEnabled()) {
-        m_webPagePrivate->m_autofillManager->saveTextFields(prpFormState->form());
+        if (m_webPagePrivate->m_webSettings->isFormAutofillEnabled())
+            m_webPagePrivate->m_autofillManager->saveTextFields(prpFormState->form());
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
-    credentialManager().saveCredentialIfConfirmed(m_webPagePrivate, CredentialTransformData(prpFormState->form()));
+        if (m_webPagePrivate->m_webSettings->isCredentialAutofillEnabled())
+            credentialManager().saveCredentialIfConfirmed(m_webPagePrivate, CredentialTransformData(prpFormState->form()));
 #endif
     }
 }
