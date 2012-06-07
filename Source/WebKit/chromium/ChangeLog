@@ -1,3 +1,17 @@
+2012-06-06  Robert Kroeger  <rjkroege@chromium.org>
+
+        [Chromium] Re-enable handling of smooth scrolling on Chromium Linux/Windows
+        https://bugs.webkit.org/show_bug.cgi?id=87535 by adding support for precise
+        scrolling deltas on all Chromium platforms.
+
+        Reviewed by James Robinson.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformWheelEventBuilder::PlatformWheelEventBuilder): Create PlatformWheelEvents
+        with m_hasPreciseScrollingDelta flag as required.
+        * tests/ScrollAnimatorNoneTest.cpp: Added new unit test condiiton for precise scrolling.
+        (TEST):
+
 2012-06-06  Michal Mocny  <mmocny@google.com>
 
         [chromium] Stop dropping texture limits when the layer tree host becomes invisible, and initialize with 0 allocation.

@@ -108,6 +108,7 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
         step = scrollbar->totalSize();
         break;
     case ScrollByPixel:
+    case ScrollByPrecisePixel:
         step = scrollbar->pixelStep();
         break;
     case ScrollByPixelVelocity:

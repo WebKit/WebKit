@@ -110,7 +110,7 @@ TEST(ScrollAnimatorEnabled, Enabled)
     MockScrollAnimatorNone scrollAnimatorNone(&scrollableArea);
 
     EXPECT_CALL(scrollableArea, scrollSize(_)).Times(AtLeast(1)).WillRepeatedly(Return(1000));
-    EXPECT_CALL(scrollableArea, setScrollOffset(_)).Times(3);
+    EXPECT_CALL(scrollableArea, setScrollOffset(_)).Times(4);
 
     scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByLine, 100, 1);
     EXPECT_NE(100, scrollAnimatorNone.currentX());
@@ -125,6 +125,12 @@ TEST(ScrollAnimatorEnabled, Enabled)
     scrollAnimatorNone.reset();
 
     scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByPixel, 4, 25);
+    EXPECT_NE(100, scrollAnimatorNone.currentX());
+    EXPECT_NE(0, scrollAnimatorNone.currentX());
+    EXPECT_EQ(0, scrollAnimatorNone.currentY());
+    scrollAnimatorNone.reset();
+
+    scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByPrecisePixel, 4, 25);
     EXPECT_EQ(100, scrollAnimatorNone.currentX());
     EXPECT_NE(0, scrollAnimatorNone.currentX());
     EXPECT_EQ(0, scrollAnimatorNone.currentY());
