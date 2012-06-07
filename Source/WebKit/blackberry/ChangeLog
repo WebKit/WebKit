@@ -1,3 +1,20 @@
+2012-06-07  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Get rid of unused maximumLayoutSize in WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=88574
+
+        Reviewed by Rob Buis.
+        Patch by Jacky Jiang <zhajiang@rim.com>
+
+        PR: 164098
+        maximumLayoutSize was deprecated when we made use of
+        WebCore::computeViewportAttributes for
+        WebPagePrivate::recomputeVirtualViewportFromViewportArguments.
+        So clean it up.
+
+        * Api/WebPage.cpp:
+        (WebKit):
+
 2012-06-07  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] User viewport arguments are not respected

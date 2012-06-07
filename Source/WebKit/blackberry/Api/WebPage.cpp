@@ -198,7 +198,6 @@ const double manualScrollInterval = 0.1; // The time interval during which we as
 const double delayedZoomInterval = 0;
 
 const IntSize minimumLayoutSize(10, 10); // Needs to be a small size, greater than 0, that we can grow the layout from.
-const IntSize maximumLayoutSize(10000, 10000); // Used with viewport meta tag, but we can still grow from this of course.
 
 const double minimumExpandingRatio = 0.15;
 
