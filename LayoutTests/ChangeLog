@@ -1,3 +1,9 @@
+2012-06-07  Ojan Vafai  <ojan@chromium.org>
+
+        Hopefully final chromium rebaseline for r119617.
+
+        * platform/chromium-mac/compositing/geometry/fixed-position-composited-page-scale-down-expected.png:
+
 2012-06-07  Ami Fischman  <fischman@chromium.org>
 
         Plumb CORS attribute information from HTMLMediaElement to media players so it can be used
