@@ -1,3 +1,16 @@
+2012-06-07  Alexander Færøy  <ahf@0x90.dk>
+
+        Add QML API tests for Device Pixel Ratio
+        https://bugs.webkit.org/show_bug.cgi?id=88531
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch adds an initial test case for the QML device pixel ratio
+        API. The test currently fails and is therefore marked as being
+        expected to fail. This will be fixed in a separated patch.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_devicePixelRatio.qml: Added.
+
 2012-06-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] WebKit2-EFL does not link in debug mode
