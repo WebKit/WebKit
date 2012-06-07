@@ -252,6 +252,11 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
 }
 #endif
 
+IntSize ScrollView::layoutSize() const
+{
+    return m_fixedLayoutSize.isEmpty() || !m_useFixedLayout ? visibleSize() : m_fixedLayoutSize;
+}
+
 int ScrollView::layoutWidth() const
 {
     return m_fixedLayoutSize.isEmpty() || !m_useFixedLayout ? visibleWidth() : m_fixedLayoutSize.width();

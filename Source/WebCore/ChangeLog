@@ -1,3 +1,47 @@
+2012-06-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Optimize FrameView::scrollXForFixedPosition() / scrollYForFixedPosition()
+        https://bugs.webkit.org/show_bug.cgi?id=88475
+
+        Reviewed by Sam Weinig.
+        
+        FrameView's scrollXForFixedPosition() and scrollYForFixedPosition()
+        methods were often called together, but they do duplicate work,
+        including calling into platform widget code which might be slow.
+        
+        Fix by converting scrollOffsetForFixedPosition() from being a wrapper
+        that just calls scrollXForFixedPosition() and scrollYForFixedPosition()
+        to the method that does all the work, calling just once into platform
+        widget code.
+        
+        Changed callers to use scrollOffsetForFixedPosition() rather than make
+        two separate method calls.
+        
+        Added ScrollView::layoutSize() and visibleSize() methods for
+        convenience.
+        
+        Removed FrameView::scrollXForFixedPosition and FrameView::scrollYForFixedPosition
+        to avoid inefficient callers in future.
+
+        No new tests; refactoring only.
+
+        * page/FrameView.cpp:
+        (WebCore::fixedPositionScrollOffset):
+        (WebCore::FrameView::scrollOffsetForFixedPosition):
+        * page/FrameView.h: Removed scrollXForFixedPosition and scrollYForFixedPosition.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::layoutSize):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::visibleSize):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::backgroundClipRect):
+        * rendering/RenderLayer.h:
+        (WebCore::ClipRect::move):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::computeRectForRepaint):
+
 2012-06-07  Raymes Khoury  <raymes@chromium.org>
 
         Incorrect rect-based hit-test result for culled-inline elements

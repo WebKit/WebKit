@@ -390,7 +390,7 @@ void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, L
     }
 
     if (fixed && m_frameView)
-        rect.move(m_frameView->scrollXForFixedPosition(), m_frameView->scrollYForFixedPosition());
+        rect.move(m_frameView->scrollOffsetForFixedPosition());
         
     // Apply our transform if we have one (because of full page zooming).
     if (!repaintContainer && m_layer && m_layer->transform())

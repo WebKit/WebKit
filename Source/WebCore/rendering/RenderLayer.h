@@ -111,6 +111,7 @@ public:
             m_hasRadius = true;
     }
     void move(LayoutUnit x, LayoutUnit y) { m_rect.move(x, y); }
+    void move(const LayoutSize& size) { m_rect.move(size); }
 
     bool isEmpty() const { return m_rect.isEmpty(); }
     bool intersects(const LayoutRect& rect) { return m_rect.intersects(rect); }

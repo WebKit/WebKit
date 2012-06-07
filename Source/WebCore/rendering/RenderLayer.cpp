@@ -3902,7 +3902,7 @@ ClipRect RenderLayer::backgroundClipRect(const RenderLayer* rootLayer, RenderReg
 
     // Note: infinite clipRects should not be scrolled here, otherwise they will accidentally no longer be considered infinite.
     if (parentRects.fixed() && rootLayer->renderer() == view && backgroundClipRect != PaintInfo::infiniteRect())
-        backgroundClipRect.move(view->frameView()->scrollXForFixedPosition(), view->frameView()->scrollYForFixedPosition());
+        backgroundClipRect.move(view->frameView()->scrollOffsetForFixedPosition());
 
     return backgroundClipRect;
 }

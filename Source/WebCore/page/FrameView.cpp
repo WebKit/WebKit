@@ -1372,74 +1372,45 @@ void FrameView::removeFixedObject()
     }
 }
 
-int FrameView::scrollXForFixedPosition() const
+static int fixedPositionScrollOffset(int scrollPosition, int maxValue, int scrollOrigin, float dragFactor)
 {
-    int visibleContentWidth = visibleContentRect().width();
-    int maxX = contentsWidth() - visibleContentWidth;
-
-    if (maxX == 0)
+    if (!maxValue)
         return 0;
 
-    int x = scrollX();
-
-    if (!scrollOrigin().x()) {
-        if (x < 0)
-            x = 0;
-        else if (x > maxX)
-            x = maxX;
+    if (!scrollOrigin) {
+        if (scrollPosition < 0)
+            scrollPosition = 0;
+        else if (scrollPosition > maxValue)
+            scrollPosition = maxValue;
     } else {
-        if (x > 0)
-            x = 0;
-        else if (x < -maxX)
-            x = -maxX;
+        if (scrollPosition > 0)
+            scrollPosition = 0;
+        else if (scrollPosition < -maxValue)
+            scrollPosition = -maxValue;
     }
-
-    if (!m_frame)
-        return x;
-
-    float frameScaleFactor = m_frame->frameScaleFactor();
-
-    // When the page is scaled, the scaled "viewport" with respect to which fixed object are positioned
-    // doesn't move as fast as the content view, so that when the content is scrolled all the way to the
-    // end, the bottom of the scaled "viewport" touches the bottom of the real viewport.
-    float dragFactor = fixedElementsLayoutRelativeToFrame() ? 1 : (contentsWidth() - visibleContentWidth * frameScaleFactor) / maxX;
-
-    return x * dragFactor / frameScaleFactor;
-}
-
-int FrameView::scrollYForFixedPosition() const
-{
-    int visibleContentHeight = visibleContentRect().height();
-
-    int maxY = contentsHeight() - visibleContentHeight;
-    if (maxY == 0)
-        return 0;
-
-    int y = scrollY();
-
-    if (!scrollOrigin().y()) {
-        if (y < 0)
-            y = 0;
-        else if (y > maxY)
-            y = maxY;
-    } else {
-        if (y > 0)
-            y = 0;
-        else if (y < -maxY)
-            y = -maxY;
-    }
-
-    if (!m_frame)
-        return y;
-
-    float frameScaleFactor = m_frame->frameScaleFactor();
-    float dragFactor = fixedElementsLayoutRelativeToFrame() ? 1 : (contentsHeight() - visibleContentHeight * frameScaleFactor) / maxY;
-    return y * dragFactor / frameScaleFactor;
+    
+    return scrollPosition * dragFactor;
 }
 
 IntSize FrameView::scrollOffsetForFixedPosition() const
 {
-    return IntSize(scrollXForFixedPosition(), scrollYForFixedPosition());
+    IntRect visibleContentRect = this->visibleContentRect();
+    IntSize contentsSize = this->contentsSize();
+    IntPoint scrollPosition = this->scrollPosition();
+    IntPoint scrollOrigin = this->scrollOrigin();
+    
+    IntSize maxOffset(contentsSize.width() - visibleContentRect.width(), contentsSize.height() - visibleContentRect.height());
+    
+    float frameScaleFactor = m_frame ? m_frame->frameScaleFactor() : 1;
+
+    FloatSize dragFactor = fixedElementsLayoutRelativeToFrame() ? FloatSize(1, 1) : FloatSize(
+        (contentsSize.width() - visibleContentRect.width() * frameScaleFactor) / maxOffset.width(),
+        (contentsSize.height() - visibleContentRect.height() * frameScaleFactor) / maxOffset.height());
+
+    int x = fixedPositionScrollOffset(scrollPosition.x(), maxOffset.width(), scrollOrigin.x(), dragFactor.width() / frameScaleFactor);
+    int y = fixedPositionScrollOffset(scrollPosition.y(), maxOffset.height(), scrollOrigin.y(), dragFactor.height() / frameScaleFactor);
+
+    return IntSize(x, y);
 }
 
 bool FrameView::fixedElementsLayoutRelativeToFrame() const

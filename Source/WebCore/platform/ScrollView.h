@@ -146,11 +146,13 @@ public:
     virtual IntRect visibleContentRect(bool includeScrollbars = false) const;
     virtual void setFixedVisibleContentRect(const IntRect& visibleContentRect) { m_fixedVisibleContentRect = visibleContentRect; }
     IntRect fixedVisibleContentRect() const { return m_fixedVisibleContentRect; }
+    IntSize visibleSize() const { return visibleContentRect().size(); }
     int visibleWidth() const { return visibleContentRect().width(); }
     int visibleHeight() const { return visibleContentRect().height(); }
 
     // Functions for getting/setting the size webkit should use to layout the contents. By default this is the same as the visible
     // content size. Explicitly setting a layout size value will cause webkit to layout the contents using this size instead.
+    IntSize layoutSize() const;
     int layoutWidth() const;
     int layoutHeight() const;
     IntSize fixedLayoutSize() const;
