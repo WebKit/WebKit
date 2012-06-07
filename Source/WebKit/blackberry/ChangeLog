@@ -1,3 +1,25 @@
+2012-06-06  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] browser video player fullscreen mode (portrait) - Controls are off screen so cannot exit fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=88488
+        PR #162991
+
+        Reviewed by George Staikos.
+
+        When we use width:100%/pageScale as the math to calculate the width of the
+        FullScreen element, it goes too wide for horizontally scrollable webpages.
+        The reason is that 100% is relative to the content size here, and we want 100%
+        relative to the viewport size. However, since there is no such a thing in CSS,
+        we set an absolute file.
+
+        A known problem with this will be rotating the device when in fullscreen mode
+        that we can address when rotating is supported.
+
+        Internally reviewed by Jacky Jiang.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::fullScreenRendererChanged):
+
 2012-06-05  Antonio Gomes  <agomes@rim.com>
 
        [BlackBerry] Implement a top-down in-region boundary detection in InRegionScrollableArea
