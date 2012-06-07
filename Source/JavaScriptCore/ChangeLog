@@ -1,3 +1,9 @@
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium build fix attempt. Why do we need to list these files in gyp!?
+
+        * JavaScriptCore.gypi:
+
 2012-06-06  Filip Pizlo  <fpizlo@apple.com>
 
         PredictedType should be called SpeculatedType

@@ -364,7 +364,7 @@
             'bytecode/MethodOfGettingAValueProfile.cpp',
             'bytecode/Opcode.cpp',
             'bytecode/PolymorphicPutByIdList.cpp',
-            'bytecode/PredictedType.cpp',
+            'bytecode/SpeculatedType.cpp',
             'bytecode/PutByIdStatus.cpp',
             'bytecode/SamplingTool.cpp',
             'bytecode/StructureStubInfo.cpp',
