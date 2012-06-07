@@ -1799,6 +1799,7 @@ networkinformation
 
 # Asserts/crashes in PluginView::didFinishLoading
 fast/loader/reload-zero-byte-plugin.html
+userscripts/user-script-plugin-document.html
 
 # JavaScript Experiments are not enabled on Windows
 # https://bugs.webkit.org/show_bug.cgi?id=87858
