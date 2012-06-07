@@ -131,7 +131,6 @@ public:
     virtual void paintCurrentFrameInContext(WebCore::GraphicsContext*, const WebCore::IntRect&);
     virtual void setPreload(WebCore::MediaPlayer::Preload);
     virtual bool hasSingleSecurityOrigin() const;
-    virtual bool didPassCORSAccessCheck() const;
     virtual WebCore::MediaPlayer::MovieLoadType movieLoadType() const;
     virtual float mediaTimeForTimeValue(float timeValue) const;
     virtual unsigned decodedFrameCount() const;

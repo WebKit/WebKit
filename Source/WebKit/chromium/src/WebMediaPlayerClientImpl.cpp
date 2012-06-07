@@ -318,9 +318,7 @@ void WebMediaPlayerClientImpl::loadInternal()
         // Make sure if we create/re-create the WebMediaPlayer that we update our wrapper.
         m_audioSourceProvider.wrap(m_webMediaPlayer->audioSourceProvider());
 #endif
-        m_webMediaPlayer->load(
-            KURL(ParsedURLString, m_url),
-            static_cast<WebMediaPlayer::CORSMode>(m_mediaPlayer->mediaPlayerClient()->mediaPlayerCORSMode()));
+        m_webMediaPlayer->load(KURL(ParsedURLString, m_url));
     }
 }
 
@@ -661,13 +659,6 @@ bool WebMediaPlayerClientImpl::hasSingleSecurityOrigin() const
 {
     if (m_webMediaPlayer)
         return m_webMediaPlayer->hasSingleSecurityOrigin();
-    return false;
-}
-
-bool WebMediaPlayerClientImpl::didPassCORSAccessCheck() const
-{
-    if (m_webMediaPlayer)
-        return m_webMediaPlayer->didPassCORSAccessCheck();
     return false;
 }
 

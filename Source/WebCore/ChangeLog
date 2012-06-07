@@ -1,3 +1,22 @@
+2012-06-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119694.
+        http://trac.webkit.org/changeset/119694
+        https://bugs.webkit.org/show_bug.cgi?id=88529
+
+        it broke PrerenderBrowserTest.PrerenderHTML5VideoNetwork
+        (Requested by loislo on #webkit).
+
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin):
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/MediaPlayer.h:
+        (MediaPlayer):
+        * platform/graphics/MediaPlayerPrivate.h:
+
 2012-06-07  Shinya Kawanaka  <shinyak@chromium.org>
 
         Delete a contenteditable element having a Shadow DOM causes a crash.

@@ -834,11 +834,6 @@ bool MediaPlayer::hasSingleSecurityOrigin() const
     return m_private->hasSingleSecurityOrigin();
 }
 
-bool MediaPlayer::didPassCORSAccessCheck() const
-{
-    return m_private->didPassCORSAccessCheck();
-}
-
 MediaPlayer::MovieLoadType MediaPlayer::movieLoadType() const
 {
     return m_private->movieLoadType();
