@@ -34,6 +34,8 @@
 // The exact format of this tool's output to stdout is important, to match
 // what the run-webkit-tests script expects.
 
+#include "config.h"
+
 #include "webkit/support/webkit_support_gfx.h"
 #include <algorithm>
 #include <iterator>
@@ -42,7 +44,7 @@
 #include <string.h>
 #include <vector>
 
-#if defined(OS_WINDOWS)
+#if OS(WINDOWS)
 #include <windows.h>
 #define PATH_MAX MAX_PATH
 #endif
@@ -340,7 +342,7 @@ int untestedCompareImages(ImageComparisonProc comparator)
     while (fgets(buffer, sizeof(buffer), stdin)) {
         if (!strncmp("Content-length: ", buffer, 16)) {
             char* context;
-#if defined(OS_WINDOWS)
+#if OS(WINDOWS)
             strtok_s(buffer, " ", &context);
             int imageSize = strtol(strtok_s(0, " ", &context), 0, 10);
 #else

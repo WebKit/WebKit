@@ -58,6 +58,7 @@
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support_gfx',
             ],
             'include_dirs': [
+                '<(source_dir)/WTF',
                 '<(DEPTH)',
             ],
             'sources': [
