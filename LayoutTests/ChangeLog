@@ -1,3 +1,10 @@
+2012-06-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed Skipped list cleanup. Remove disabled/passing tests, add bug reports.
+
+        * platform/qt-arm/Skipped:
+        * platform/qt/Skipped:
+
 2012-06-07  Li Yin  <li.yin@intel.com>
 
         FileAPI: If type consists of non-ASCII characters in Blob constructor, it should throw a SyntaxError.

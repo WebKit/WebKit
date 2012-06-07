@@ -900,28 +900,18 @@ plugins/npruntime/delete-plugin-within-invoke.html
 # =========================================================================== #
 # Failing Sputnik tests                                                       #
 # =========================================================================== #
-sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3.html
-sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html
-sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T2.html
-sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T3.html
-sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html
-sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html
-sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html
+
+# [Qt] 4 sputnik/Unicode/Unicode_510/* tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=88522
 sputnik/Unicode/Unicode_510/S7.6_A3.1.html
 sputnik/Unicode/Unicode_510/S7.6_A3.2.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
-# Failing Sputnik tests on 32 bit
+# [Qt] 2 math sputnik test fail on 32 bit
+# https://bugs.webkit.org/show_bug.cgi?id=88519
 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
-
-# Failing Sputnik test on 64 bit
-sputnik/Conformance/11_Expressions/11.5_Multiplicative_Operators/11.5.3_Percent/S11.5.3_A4_T2.html
-
-# Timed out Sputnik tests on ARM
-sputnik/Unicode/Unicode_218/S7.6_A3.1.html
-sputnik/Unicode/Unicode_218/S7.6_A3.2.html
 
 # =========================================================================== #
 # Fluctuating/flakey tests

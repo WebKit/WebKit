@@ -205,3 +205,7 @@ tables/mozilla_expected_failures/bugs/bug7243.html
 fast/events/media-focus-in-standalone-media-document.html
 
 fast/events/touch/send-oncancel-event.html
+
+# Timed out Sputnik tests on ARM
+sputnik/Unicode/Unicode_218/S7.6_A3.1.html
+sputnik/Unicode/Unicode_218/S7.6_A3.2.html
