@@ -5216,7 +5216,7 @@ skip_id_custom_self:
         */
         int function = vPC[1].u.operand;
 
-        if (Profiler* profiler = globalData.enabledProfiler())
+        if (Profiler* profiler = globalData->enabledProfiler())
             profiler->willExecute(callFrame, callFrame->r(function).jsValue());
 
         vPC += OPCODE_LENGTH(op_profile_will_call);
@@ -5230,7 +5230,7 @@ skip_id_custom_self:
         */
         int function = vPC[1].u.operand;
 
-        if (Profiler* profiler = globalData.enabledProfiler())
+        if (Profiler* profiler = globalData->enabledProfiler())
             profiler->didExecute(callFrame, callFrame->r(function).jsValue());
 
         vPC += OPCODE_LENGTH(op_profile_did_call);
