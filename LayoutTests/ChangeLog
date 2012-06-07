@@ -1,3 +1,14 @@
+2012-06-07  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test_expectations update.
+
+        Removing expected-to-fail results for now-passing tests.
+
+        * platform/chromium-mac/canvas/philip/tests/2d.line.width.basic-expected.txt: Removed.
+        * platform/chromium-mac/canvas/philip/tests/2d.line.width.transformed-expected.txt: Removed.
+        * platform/chromium-mac/canvas/philip/tests/2d.transformation.setTransform.skewed-expected.txt: Removed.
+        * platform/chromium-mac/canvas/philip/tests/2d.transformation.transform.skewed-expected.txt: Removed.
+
 2012-06-07  Jer Noble  <jer.noble@apple.com>
 
         sometimes all slaved videos don't start playing
