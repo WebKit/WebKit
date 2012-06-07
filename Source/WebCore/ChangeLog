@@ -1,3 +1,137 @@
+2012-06-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move implementation of WebCore::GraphicsContext3D and related from WebKit/chromium/src to WebCore/platform/chromium/support
+        https://bugs.webkit.org/show_bug.cgi?id=86257
+
+        Reviewed by Kenneth Russell.
+
+        The WebCore platform interfaces GraphicsContext3D and Extensions3DChromium are implemented in chromium
+        on top of the Platform interface WebGraphicsContext3D. This moves the implementation support code from
+        WebKit/chromium/src to WebCore/platform/chromium/support, which avoids having code in WebKit/ implementing WebCore
+        interfaces and allows code in WebCore/platform to use this support code directly where appropriate.
+
+        Refactor only, no new functionality or tests.
+
+        * WebCore.gypi:
+        * platform/chromium/support/Extensions3DChromium.cpp: Renamed from Source/WebKit/chromium/src/Extensions3DChromium.cpp.
+        (WebCore):
+        (WebCore::Extensions3DChromium::Extensions3DChromium):
+        (WebCore::Extensions3DChromium::~Extensions3DChromium):
+        (WebCore::Extensions3DChromium::supports):
+        (WebCore::Extensions3DChromium::ensureEnabled):
+        (WebCore::Extensions3DChromium::isEnabled):
+        (WebCore::Extensions3DChromium::getGraphicsResetStatusARB):
+        (WebCore::Extensions3DChromium::blitFramebuffer):
+        (WebCore::Extensions3DChromium::renderbufferStorageMultisample):
+        (WebCore::Extensions3DChromium::postSubBufferCHROMIUM):
+        (WebCore::Extensions3DChromium::mapBufferSubDataCHROMIUM):
+        (WebCore::Extensions3DChromium::unmapBufferSubDataCHROMIUM):
+        (WebCore::Extensions3DChromium::mapTexSubImage2DCHROMIUM):
+        (WebCore::Extensions3DChromium::unmapTexSubImage2DCHROMIUM):
+        (WebCore::Extensions3DChromium::setVisibilityCHROMIUM):
+        (WebCore::Extensions3DChromium::discardFramebufferEXT):
+        (WebCore::Extensions3DChromium::ensureFramebufferCHROMIUM):
+        (WebCore::Extensions3DChromium::setGpuMemoryAllocationChangedCallbackCHROMIUM):
+        (WebCore::Extensions3DChromium::createVertexArrayOES):
+        (WebCore::Extensions3DChromium::deleteVertexArrayOES):
+        (WebCore::Extensions3DChromium::isVertexArrayOES):
+        (WebCore::Extensions3DChromium::bindVertexArrayOES):
+        (WebCore::Extensions3DChromium::getTranslatedShaderSourceANGLE):
+        (WebCore::Extensions3DChromium::setSwapBuffersCompleteCallbackCHROMIUM):
+        (WebCore::Extensions3DChromium::rateLimitOffscreenContextCHROMIUM):
+        (WebCore::Extensions3DChromium::paintFramebufferToCanvas):
+        (WebCore::Extensions3DChromium::texImageIOSurface2DCHROMIUM):
+        (WebCore::Extensions3DChromium::texStorage2DEXT):
+        (WebCore::Extensions3DChromium::createQueryEXT):
+        (WebCore::Extensions3DChromium::deleteQueryEXT):
+        (WebCore::Extensions3DChromium::isQueryEXT):
+        (WebCore::Extensions3DChromium::beginQueryEXT):
+        (WebCore::Extensions3DChromium::endQueryEXT):
+        (WebCore::Extensions3DChromium::getQueryivEXT):
+        (WebCore::Extensions3DChromium::getQueryObjectuivEXT):
+        * platform/chromium/support/GraphicsContext3DChromium.cpp: Renamed from Source/WebKit/chromium/src/GraphicsContext3DChromium.cpp.
+        (WebCore):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::setContextLostCallback):
+        (WebCore::GraphicsContext3D::setErrorMessageCallback):
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformTexture):
+        (WebCore::GraphicsContext3D::grContext):
+        (WebCore::GraphicsContext3D::platformLayer):
+        (WebCore::GraphicsContext3D::isGLES2Compliant):
+        (WebCore::GraphicsContext3D::isResourceSafe):
+        (WebCore::GraphicsContext3D::bindAttribLocation):
+        (WebCore::GraphicsContext3D::bufferData):
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+        (WebCore::GraphicsContext3D::getAttribLocation):
+        (WebCore::GraphicsContext3D::getContextAttributes):
+        (WebCore::GraphicsContext3D::getProgramInfoLog):
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+        (WebCore::GraphicsContext3D::getShaderSource):
+        (WebCore::GraphicsContext3D::getString):
+        (WebCore::GraphicsContext3D::getUniformLocation):
+        (WebCore::GraphicsContext3D::shaderSource):
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::texSubImage2D):
+        (WebCore::GraphicsContext3D::reshape):
+        (WebCore::GraphicsContext3D::markContextChanged):
+        (WebCore::GraphicsContext3D::layerComposited):
+        (WebCore::GraphicsContext3D::markLayerComposited):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToImageData):
+        (WebCore::GraphicsContext3D::paintCompositedResultsToCanvas):
+        (WebCore::GraphicsContext3D::getExtensions):
+        (WebCore::GraphicsContext3D::getInternalFramebufferSize):
+        * platform/chromium/support/GraphicsContext3DPrivate.cpp: Renamed from Source/WebKit/chromium/src/GraphicsContext3DPrivate.cpp.
+        (WebCore):
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::createGraphicsContextFromWebContext):
+        (WebCore::GraphicsContext3DPrivate::extractWebGraphicsContext3D):
+        (GrMemoryAllocationChangedCallback):
+        (WebCore::GrMemoryAllocationChangedCallback::GrMemoryAllocationChangedCallback):
+        (WebCore::GrMemoryAllocationChangedCallback::onGpuMemoryAllocationChanged):
+        (WebCore::GraphicsContext3DPrivate::grContext):
+        (WebCore::GraphicsContext3DPrivate::markContextChanged):
+        (WebCore::GraphicsContext3DPrivate::layerComposited):
+        (WebCore::GraphicsContext3DPrivate::markLayerComposited):
+        (WebCore::GraphicsContext3DPrivate::paintFramebufferToCanvas):
+        (GraphicsContext3DContextLostCallbackAdapter):
+        (WebCore::GraphicsContext3DContextLostCallbackAdapter::GraphicsContext3DContextLostCallbackAdapter):
+        (WebCore::GraphicsContext3DContextLostCallbackAdapter::~GraphicsContext3DContextLostCallbackAdapter):
+        (WebCore::GraphicsContext3DContextLostCallbackAdapter::onContextLost):
+        (WebCore::GraphicsContext3DPrivate::setContextLostCallback):
+        (GraphicsContext3DErrorMessageCallbackAdapter):
+        (WebCore::GraphicsContext3DErrorMessageCallbackAdapter::GraphicsContext3DErrorMessageCallbackAdapter):
+        (WebCore::GraphicsContext3DErrorMessageCallbackAdapter::~GraphicsContext3DErrorMessageCallbackAdapter):
+        (WebCore::GraphicsContext3DErrorMessageCallbackAdapter::onErrorMessage):
+        (WebCore::GraphicsContext3DPrivate::setErrorMessageCallback):
+        (WebCore::GraphicsContext3DPrivate::getExtensions):
+        (WebCore::GraphicsContext3DPrivate::initializeExtensions):
+        (WebCore::GraphicsContext3DPrivate::supportsExtension):
+        (WebCore::GraphicsContext3DPrivate::ensureExtensionEnabled):
+        (WebCore::GraphicsContext3DPrivate::isExtensionEnabled):
+        (WebCore::GraphicsContext3DPrivate::isResourceSafe):
+        (GraphicsContext3DMemoryAllocationChangedCallbackAdapter):
+        (WebCore::GraphicsContext3DMemoryAllocationChangedCallbackAdapter::GraphicsContext3DMemoryAllocationChangedCallbackAdapter):
+        (WebCore::GraphicsContext3DMemoryAllocationChangedCallbackAdapter::~GraphicsContext3DMemoryAllocationChangedCallbackAdapter):
+        (WebCore::GraphicsContext3DMemoryAllocationChangedCallbackAdapter::onMemoryAllocationChanged):
+        (WebCore::GraphicsContext3DPrivate::setGpuMemoryAllocationChangedCallbackCHROMIUM):
+        (GraphicsContext3DSwapBuffersCompleteCallbackAdapter):
+        (WebCore::GraphicsContext3DSwapBuffersCompleteCallbackAdapter::GraphicsContext3DSwapBuffersCompleteCallbackAdapter):
+        (WebCore::GraphicsContext3DSwapBuffersCompleteCallbackAdapter::~GraphicsContext3DSwapBuffersCompleteCallbackAdapter):
+        (WebCore::GraphicsContext3DSwapBuffersCompleteCallbackAdapter::onSwapBuffersComplete):
+        (WebCore::GraphicsContext3DPrivate::setSwapBuffersCompleteCallbackCHROMIUM):
+        * platform/chromium/support/GraphicsContext3DPrivate.h: Renamed from Source/WebKit/chromium/src/GraphicsContext3DPrivate.h.
+        (WebKit):
+        (WebCore):
+        (GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::webContext):
+        (WebCore::GraphicsContext3DPrivate::preserveDrawingBuffer):
+
 2012-06-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119624.
