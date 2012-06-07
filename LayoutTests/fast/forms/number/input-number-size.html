@@ -149,6 +149,8 @@ shouldBe('numberWidth(1.5, 2, 1)', 'textWidthPlusSpinButtonWidth(3)');
 shouldBe('numberWidth(1.05, 2, 1)', 'textWidthPlusSpinButtonWidth(4)');
 shouldBe('numberWidth(1.005, 2, 1)', 'textWidthPlusSpinButtonWidth(5)');
 
+shouldBe('numberWidth(123456, 123456, 0.0000005)', 'textWidthPlusSpinButtonWidth(14)');
+
 debug('')
 </script>
 

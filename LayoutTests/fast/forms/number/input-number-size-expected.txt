@@ -77,6 +77,7 @@ PASS numberWidth(0.005, 1, 1) is textWidthPlusSpinButtonWidth(5)
 PASS numberWidth(1.5, 2, 1) is textWidthPlusSpinButtonWidth(3)
 PASS numberWidth(1.05, 2, 1) is textWidthPlusSpinButtonWidth(4)
 PASS numberWidth(1.005, 2, 1) is textWidthPlusSpinButtonWidth(5)
+PASS numberWidth(123456, 123456, 0.0000005) is textWidthPlusSpinButtonWidth(14)
 
 PASS successfullyParsed is true
 

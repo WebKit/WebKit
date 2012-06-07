@@ -1,3 +1,16 @@
+2012-06-07  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Improve test coverage of input-number-size.html
+        https://bugs.webkit.org/show_bug.cgi?id=88489
+
+        Reviewed by Kent Tamura.
+
+        This patch improves test coverage for NumberInputType::sizeShouldIncludeDecoration()
+        for preparation of introducing decimal arithmetic.
+
+        * fast/forms/number/input-number-size-expected.txt: Updated for a new test case.
+        * fast/forms/number/input-number-size.html: Added a test case.
+
 2012-06-07  Li Yin  <li.yin@intel.com>
 
         [FileAPI] FileReader should throw an InvalidStateError exception when readyState is LOADING
