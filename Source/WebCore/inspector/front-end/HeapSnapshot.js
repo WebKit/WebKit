@@ -1859,11 +1859,11 @@ WebInspector.HeapSnapshotEdgesProvider.prototype = {
         {
             edgeA.edgeIndex = indexA;
             nodeA.nodeIndex = edgeA.nodeIndex();
-            var valueA = nodeA[fieldName];
+            var valueA = nodeA[fieldName]();
 
             edgeB.edgeIndex = indexB;
             nodeB.nodeIndex = edgeB.nodeIndex();
-            var valueB = nodeB[fieldName];
+            var valueB = nodeB[fieldName]();
 
             var result = valueA < valueB ? -1 : (valueA > valueB ? 1 : 0);
             return ascending ? result : -result;

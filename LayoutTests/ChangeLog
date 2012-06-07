@@ -1,3 +1,34 @@
+2012-06-07  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: sorting of object fields is broken in heap profiler
+        https://bugs.webkit.org/show_bug.cgi?id=88532
+
+        A recent change to heap profiler has replaced getters with functions.
+        Function calls were missing in couple places after that change.
+
+        The following changes were made to the tests:
+        - generateSnapshot now uses pseudo random numbers for object sizes.
+          It allows to test sorting.
+        - Added a test that checks sorting of object instances of a particular class.
+        - Added a test that checks sorting of fields in an object instance.
+
+        Reviewed by Vsevolod Vlasov.
+
+        Tests: inspector/profiler/heap-snapshot-summary-sorting-fields.html
+               inspector/profiler/heap-snapshot-summary-sorting-instances.html
+
+        * inspector/profiler/heap-snapshot-summary-sorting-fields-expected.txt: Added.
+        * inspector/profiler/heap-snapshot-summary-sorting-fields.html: Added.
+        * inspector/profiler/heap-snapshot-summary-sorting-instances-expected.txt: Added.
+        * inspector/profiler/heap-snapshot-summary-sorting-instances.html: Added.
+        * inspector/profiler/heap-snapshot-test.js:
+        (initialize_HeapSnapshotTest.):
+        (initialize_HeapSnapshotTest):
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-06-07  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Clean chromium test expectations.

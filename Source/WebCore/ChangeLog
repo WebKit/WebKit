@@ -1,3 +1,19 @@
+2012-06-07  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: sorting of object fields is broken in heap profiler
+        https://bugs.webkit.org/show_bug.cgi?id=88532
+
+        A recent change to heap profiler has replaced getters with functions.
+        Function calls were missing in couple places after that change.
+
+        Reviewed by Vsevolod Vlasov.
+
+        Tests: inspector/profiler/heap-snapshot-summary-sorting-fields.html
+               inspector/profiler/heap-snapshot-summary-sorting-instances.html
+
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotEdgesProvider.prototype.sort.compareNodeField):
+
 2012-06-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Consider Ctrl+Shift+key as valid zoom change combinations

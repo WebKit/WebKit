@@ -264,42 +264,35 @@ InspectorTest.checkArrayIsSorted = function(contents, sortType, sortOrder)
     }
     function parseSize(size)
     {
-        if (size.charAt(0) === ">")
-            size = size.substring(2);
-        var amount = parseFloat(size, 10);
-        var multiplier = {
-            "KB": 1024,
-            "MB": 1024 * 1024
-        }[size.substring(size.length - 2)];
-        return multiplier ? amount * multiplier : amount;
+        if (size.substr(0, 1) === '"') size = JSON.parse(size);
+        // Remove thousands separator.
+        return parseInt(size.replace(/[\u2009,]/g, ""));
     }
-    function extractName(data)
+    function extractField(data, field)
     {
+        if (data.substr(0, 1) !== "{") return data;
         data = JSON.parse(data);
-        if (!data.name)
-            InspectorTest.addResult("No name field in " + JSON.stringify(data));
-        return parseInt(data.name, 10);
+        if (!data[field])
+            InspectorTest.addResult("No " + field + " field in " + JSON.stringify(data));
+        return data[field];
     }
     function extractId(data)
     {
-        data = JSON.parse(data);
-        if (!data.nodeId)
-            InspectorTest.addResult("No nodeId field in " + JSON.stringify(data));
-        return parseInt(data.nodeId, 10);
+        return parseInt(extractField(data, "nodeId"));
     }
-    var comparator = {
-        text: simpleComparator,
-        number: function (a, b) { return simpleComparator(parseInt(a, 10), parseInt(b, 10)); },
-        size: function (a, b) { return simpleComparator(parseSize(a), parseSize(b)); },
-        name: function (a, b) { return simpleComparator(extractName(a), extractName(b)); },
-        id: function (a, b) { return simpleComparator(extractId(a), extractId(b)); }
+    var extractor = {
+        text: function (data) { return extractField(data, "value"); },
+        number: function (data) { return parseInt(data, 10); },
+        size: function (data) { return parseSize(data); },
+        name: function (data) { return extractField(data, "name"); },
+        id: function (data) { return extractId(data); }
     }[sortType];
     var acceptableComparisonResult = {
         ascending: -1,
         descending: 1
     }[sortOrder];
 
-    if (!comparator) {
+    if (!extractor) {
         InspectorTest.addResult("Invalid sort type: " + sortType);
         return;
     }
@@ -309,9 +302,11 @@ InspectorTest.checkArrayIsSorted = function(contents, sortType, sortOrder)
     }
 
     for (var i = 0; i < contents.length - 1; ++i) {
-        var result = comparator(contents[i], contents[i + 1]);
+        var a = extractor(contents[i]);
+        var b = extractor(contents[i + 1]);
+        var result = simpleComparator(a, b);
         if (result !== 0 && result !== acceptableComparisonResult)
-            InspectorTest.addResult("Elements " + i + " and " + (i + 1) + " are out of order: " + contents[i] + " " + contents[i + 1] + " (" + sortOrder + ")");
+            InspectorTest.addResult("Elements " + i + " and " + (i + 1) + " are out of order: " + a + " " + b + " (" + sortOrder + ")");
     }
 };
 
@@ -602,9 +597,13 @@ InspectorTest.createHeapSnapshot = function(instanceCount, firstId)
     // function B(x) { this.a = new A(x); }
     // for (var i = 0; i < instanceCount; ++i) new B();
     // 
-    // Instances of A have 12 bytes size, instances of B has 16 bytes size.
-    var sizeOfA = 12;
-    var sizeOfB = 16;
+    // Set A and B object sizes to pseudo random numbers. It is used in sorting tests.
+
+    var seed = 881669;
+    function pseudoRandom(limit) {
+        seed = ((seed * 355109 + 153763) >> 2) & 0xffff;
+        return seed % limit;
+    }
 
     var builder = new InspectorTest.HeapSnapshotBuilder();
     var rootNode = builder.rootNode;
@@ -612,13 +611,15 @@ InspectorTest.createHeapSnapshot = function(instanceCount, firstId)
     var gcRootsNode = new InspectorTest.HeapNode("(GC roots)");
     rootNode.linkNode(gcRootsNode, InspectorTest.HeapEdge.Type.element);
 
-    var windowNode = new InspectorTest.HeapNode("Window");
+    var windowNode = new InspectorTest.HeapNode("Window", 20);
     rootNode.linkNode(windowNode, InspectorTest.HeapEdge.Type.shortcut);
     gcRootsNode.linkNode(windowNode, InspectorTest.HeapEdge.Type.element);
 
     for (var i = 0; i < instanceCount; ++i) {
+        var sizeOfB = pseudoRandom(20) + 1;
         var nodeB = new InspectorTest.HeapNode("B", sizeOfB, undefined, firstId++);
         windowNode.linkNode(nodeB, InspectorTest.HeapEdge.Type.element);
+        var sizeOfA = pseudoRandom(50) + 1;
         var nodeA = new InspectorTest.HeapNode("A", sizeOfA, undefined, firstId++);
         nodeB.linkNode(nodeA, InspectorTest.HeapEdge.Type.property, "a");
         nodeA.linkNode(nodeA, InspectorTest.HeapEdge.Type.property, "a");
