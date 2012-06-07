@@ -1,3 +1,9 @@
+2012-06-07  Ami Fischman  <fischman@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-06-06  Dana Jansens  <danakj@chromium.org>
 
         [chromium] In each composited frame, didDraw() should only be called on layers for which willDraw() was called
