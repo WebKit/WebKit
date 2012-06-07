@@ -1,3 +1,10 @@
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a timeout expectation to http/tests/media/video-cookie.html.
+        The failure is tracked by the Chromium issue 131533.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-06  Shezan Baig  <shezbaig.wk@gmail.com>
 
         Caret is not rendered in empty inline contenteditable elements

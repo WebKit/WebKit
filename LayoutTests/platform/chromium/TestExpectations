@@ -3804,3 +3804,5 @@ BUGWK88253 : svg/W3C-SVG-1.1/pservers-grad-06-b.svg = IMAGE
 BUGWK88253 : svg/custom/pattern-with-transformation.svg = IMAGE
 
 BUGWK88481 : fast/loader/webarchive-encoding-respected.html = TEXT
+
+BUGCR131533 : http/tests/media/video-cookie.html = TIMEOUT
