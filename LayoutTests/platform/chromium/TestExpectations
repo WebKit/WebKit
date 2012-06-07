@@ -2958,6 +2958,8 @@ BUGWK69998 LINUX WIN : plugins/refcount-leaks.html = PASS TEXT
 
 // ICC color profiles are not supported on WIN, LINUX so SKIP for now.
 BUGWK70001 SKIP LINUX WIN : fast/images/color-jpeg-with-color-profile.html = FAIL MISSING
+// Paletted PNG with ICC color profiles not working.
+BUGWK86722 : fast/images/paletted-png-with-color-profile.html = MISSING
 
 // V8 handles stack overflow exceptions differently than JSC
 BUGWK70210 : fast/js/stack-overflow-arrity-catch.html = TEXT

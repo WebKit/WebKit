@@ -1,3 +1,25 @@
+2012-06-06  Noel Gordon  <noel.gordon@gmail.com>
+
+        Add a test for PNG COLOR_TYPE_PALETTE image with a color profile
+        https://bugs.webkit.org/show_bug.cgi?id=86722
+
+        Reviewed by Adam Barth
+
+        Add paletted PNG image with a color profile and write a test. Add platform exceptions
+        since color correction is not implemented on all platforms. Note: that wincairo skips
+        fast/images/*.
+
+        * fast/images/paletted-png-with-color-profile-expected.txt: Added.
+        * fast/images/paletted-png-with-color-profile.html: Added.
+        * fast/images/resources/palatted-color-png-gamma-one-color-profile.png: Added.
+        * platform/chromium/TestExpectations: No color correction for paletted PNG images.
+        * platform/efl/TestExpectations: SKIP, no color correction.
+        * platform/gtk/TestExpectations: SKIP, no color correction.
+        * platform/mac-snowleopard/fast/images/paletted-png-with-color-profile-expected.png: Added.
+        The image is a 64-color, paletted PNG image containing a gamma 1.0 sRGB color profile.
+        See the bug for more detailed properties of the test image and its color profile.
+        * platform/qt/TestExpectations: SKIP, no color correction.
+
 2012-06-06  Alexis Menard  <alexis.menard@openbossa.org>
 
         Fix border-image-slice failures on http://css3test.com.
