@@ -1,3 +1,18 @@
+2012-06-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Worker tear-down can re-enter JSC during GC finalization
+        https://bugs.webkit.org/show_bug.cgi?id=88449
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests. 
+
+        This is the first of two patches to fix this issue with Workers.
+
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::~AbstractWorker): We don't need to call onDestroyWorker() here, it 
+        will be called elsewhere in contextDestroyed().
+
 2012-06-07  Jer Noble  <jer.noble@apple.com>
 
         sometimes all slaved videos don't start playing
