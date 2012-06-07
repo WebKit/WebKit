@@ -1,3 +1,20 @@
+2012-06-07  Ami Fischman  <fischman@chromium.org>
+
+        Plumb CORS attribute information from HTMLMediaElement to media players so it can be used
+        https://bugs.webkit.org/show_bug.cgi?id=88349
+
+        Reviewed by Adam Barth.
+
+        Test: http/tests/security/video-cross-origin-readback.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerCORSMode):
+        (WebCore):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerCORSMode):
+
 2012-06-07  Hironori Bono  <hbono@chromium.org>
 
         Use light gray for grammar markers on Windows and Linux

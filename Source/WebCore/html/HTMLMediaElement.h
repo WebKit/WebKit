@@ -427,6 +427,7 @@ private:
 
     virtual String mediaPlayerReferrer() const OVERRIDE;
     virtual String mediaPlayerUserAgent() const OVERRIDE;
+    virtual CORSMode mediaPlayerCORSMode() const OVERRIDE;
 
     virtual bool mediaPlayerNeedsSiteSpecificHacks() const OVERRIDE;
     virtual String mediaPlayerDocumentHost() const OVERRIDE;

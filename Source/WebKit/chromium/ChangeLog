@@ -1,3 +1,15 @@
+2012-06-07  Ami Fischman  <fischman@chromium.org>
+
+        Plumb CORS attribute information from HTMLMediaElement to media players so it can be used
+        https://bugs.webkit.org/show_bug.cgi?id=88349
+
+        Reviewed by Adam Barth.
+
+        * public/WebMediaPlayer.h:
+        (WebMediaPlayer):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::loadInternal):
+
 2012-06-07  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Platform] Introduce conversion from/to Deciaml to/from double and helper functions
