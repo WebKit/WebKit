@@ -1,3 +1,59 @@
+2012-06-05  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move deferral-related logic out of Canvas2DLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=86050
+
+        Reviewed by Stephen White.
+
+        This removes Canvas2DLayerChromium and puts the deferral and double-buffering related logic in a new class,
+        Canvas2DLayerBridge, that uses TextureLayerChromium for compositing.  The bridge is responsible for managing the
+        front texture when double buffering is active, inserting the correct makeContextCurrent() and flush() calls on
+        the GraphicsContext3D and SkCanvas when appropriate, and owning the lifetime of the layer.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/Canvas2DLayerBridge.cpp: Added.
+        (WebCore):
+        (AcceleratedDeviceContext):
+        (WebCore::AcceleratedDeviceContext::AcceleratedDeviceContext):
+        (WebCore::AcceleratedDeviceContext::prepareForDraw):
+        (WebCore::Canvas2DLayerBridge::Canvas2DLayerBridge):
+        (WebCore::Canvas2DLayerBridge::~Canvas2DLayerBridge):
+        (WebCore::Canvas2DLayerBridge::skCanvas):
+        (WebCore::Canvas2DLayerBridge::prepareTexture):
+        (WebCore::Canvas2DLayerBridge::context):
+        (WebCore::Canvas2DLayerBridge::layer):
+        (WebCore::Canvas2DLayerBridge::contextAcquired):
+        * platform/graphics/chromium/Canvas2DLayerBridge.h: Added.
+        (WebCore):
+        (Canvas2DLayerBridge):
+        (WebCore::Canvas2DLayerBridge::create):
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp: Removed.
+        * platform/graphics/chromium/Canvas2DLayerChromium.h: Removed.
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        * platform/graphics/chromium/ImageBufferDataSkia.h:
+        (WebCore):
+        (ImageBufferData):
+        * platform/graphics/chromium/TextureLayerChromium.cpp:
+        (WebCore::TextureLayerChromium::willModifyTexture):
+            willModifyTexture() is called whenever the texture currently owned by the TextureLayerChromium will be
+            modified by a system out of the compositor's control. It makes sure that the compositor does not attempt to
+            draw with the potentially-modified texture until the next commit. For canvas, this is used when threading is
+            enabled and a non-deferrable drawing command is invoked from JS.
+        (WebCore):
+        * platform/graphics/chromium/TextureLayerChromium.h:
+        (TextureLayerChromium):
+        * platform/graphics/chromium/cc/CCTextureUpdater.cpp:
+        (WebCore::CCTextureUpdater::hasMoreUpdates):
+        (WebCore::CCTextureUpdater::update):
+        (WebCore::CCTextureUpdater::clear):
+        * platform/graphics/chromium/cc/CCTextureUpdater.h:
+        (CCTextureUpdater):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::createAcceleratedCanvas):
+        (WebCore::ImageBuffer::~ImageBuffer):
+        (WebCore::ImageBuffer::context):
+        (WebCore::ImageBuffer::platformLayer):
+
 2012-06-07  Patrick Gansterer  <paroga@webkit.org>
 
         Remove HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)

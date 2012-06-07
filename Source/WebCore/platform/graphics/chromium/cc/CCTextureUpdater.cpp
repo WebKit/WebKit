@@ -31,7 +31,6 @@
 
 #include "GraphicsContext3D.h"
 #include "LayerTextureUpdater.h"
-#include "ManagedTexture.h"
 #include "TextureCopier.h"
 #include "TextureUploader.h"
 
@@ -78,18 +77,9 @@ void CCTextureUpdater::appendCopy(unsigned sourceTexture, unsigned destTexture, 
     m_copyEntries.append(copy);
 }
 
-void CCTextureUpdater::appendManagedCopy(unsigned sourceTexture, ManagedTexture* destTexture, const IntSize& size)
-{
-    ManagedCopyEntry copy;
-    copy.sourceTexture = sourceTexture;
-    copy.destTexture = destTexture;
-    copy.size = size;
-    m_managedCopyEntries.append(copy);
-}
-
 bool CCTextureUpdater::hasMoreUpdates() const
 {
-    return m_entries.size() || m_partialEntries.size() || m_copyEntries.size() || m_managedCopyEntries.size();
+    return m_entries.size() || m_partialEntries.size() || m_copyEntries.size();
 }
 
 void CCTextureUpdater::update(CCGraphicsContext* context, TextureAllocator* allocator, TextureCopier* copier, TextureUploader* uploader, size_t count)
@@ -134,15 +124,11 @@ void CCTextureUpdater::update(CCGraphicsContext* context, TextureAllocator* allo
         CopyEntry& copyEntry = m_copyEntries[index];
         copier->copyTexture(context, copyEntry.sourceTexture, copyEntry.destTexture, copyEntry.size);
     }
-    for (index = 0; index < m_managedCopyEntries.size(); ++index) {
-        ManagedCopyEntry& managedCopyEntry = m_managedCopyEntries[index];
-        managedCopyEntry.destTexture->allocate(allocator);
-        copier->copyTexture(context, managedCopyEntry.sourceTexture, managedCopyEntry.destTexture->textureId(), managedCopyEntry.size);
-    }
+
     // If we've performed any texture copies, we need to insert a flush here into the compositor context
     // before letting the main thread proceed as it may make draw calls to the source texture of one of
     // our copy operations.
-    if (m_copyEntries.size() || m_managedCopyEntries.size()) {
+    if (m_copyEntries.size()) {
         GraphicsContext3D* context3d = context->context3D();
         if (context3d)
             context3d->flush();
@@ -159,7 +145,6 @@ void CCTextureUpdater::clear()
     m_entries.clear();
     m_partialEntries.clear();
     m_copyEntries.clear();
-    m_managedCopyEntries.clear();
 }
 
 }

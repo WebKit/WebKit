@@ -59,7 +59,7 @@
         'webkit_unittest_files': [
             'tests/ArenaTestHelpers.h',
             'tests/AssociatedURLLoaderTest.cpp',
-            'tests/Canvas2DLayerChromiumTest.cpp',
+            'tests/Canvas2DLayerBridgeTest.cpp',
             'tests/CCActiveAnimationTest.cpp',
             'tests/CCAnimationTestCommon.cpp',
             'tests/CCAnimationTestCommon.h',

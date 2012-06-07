@@ -77,6 +77,8 @@ public:
     // Code path for plugins which supply their own texture ID.
     void setTextureId(unsigned);
 
+    void willModifyTexture();
+
     virtual void setNeedsDisplayRect(const FloatRect&) OVERRIDE;
 
     virtual void setLayerTreeHost(CCLayerTreeHost*) OVERRIDE;

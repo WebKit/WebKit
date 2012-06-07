@@ -103,6 +103,12 @@ void TextureLayerChromium::setTextureId(unsigned id)
     setNeedsCommit();
 }
 
+void TextureLayerChromium::willModifyTexture()
+{
+    if (layerTreeHost())
+        layerTreeHost()->acquireLayerTextures();
+}
+
 void TextureLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 {
     LayerChromium::setNeedsDisplayRect(dirtyRect);

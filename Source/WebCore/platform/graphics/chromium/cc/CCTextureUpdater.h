@@ -44,7 +44,6 @@ public:
     void appendUpdate(LayerTextureUpdater::Texture*, const IntRect& sourceRect, const IntRect& destRect);
     void appendPartialUpdate(LayerTextureUpdater::Texture*, const IntRect& sourceRect, const IntRect& destRect);
     void appendCopy(unsigned sourceTexture, unsigned destTexture, const IntSize&);
-    void appendManagedCopy(unsigned sourceTexture, ManagedTexture* destTexture, const IntSize&);
 
     bool hasMoreUpdates() const;
 
@@ -66,19 +65,12 @@ private:
         unsigned destTexture;
     };
 
-    struct ManagedCopyEntry {
-        IntSize size;
-        unsigned sourceTexture;
-        ManagedTexture* destTexture;
-    };
-
     static void appendUpdate(LayerTextureUpdater::Texture*, const IntRect& sourceRect, const IntRect& destRect, Vector<UpdateEntry>&);
 
     size_t m_entryIndex;
     Vector<UpdateEntry> m_entries;
     Vector<UpdateEntry> m_partialEntries;
     Vector<CopyEntry> m_copyEntries;
-    Vector<ManagedCopyEntry> m_managedCopyEntries;
 };
 
 }

@@ -46,7 +46,6 @@
 #include "GraphicsLayerChromium.h"
 
 #include "AnimationIdVendor.h"
-#include "Canvas2DLayerChromium.h"
 #include "ContentLayerChromium.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"

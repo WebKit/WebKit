@@ -51,7 +51,7 @@
 #include "WEBPImageEncoder.h"
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "Canvas2DLayerChromium.h"
+#include "Canvas2DLayerBridge.h"
 #endif
 
 #include <wtf/text/WTFString.h>
@@ -68,30 +68,6 @@ ImageBufferData::ImageBufferData(const IntSize& size)
     : m_platformContext(0)  // Canvas is set in ImageBuffer constructor.
 {
 }
-
-#if USE(ACCELERATED_COMPOSITING)
-class AcceleratedDeviceContext : public SkDeferredCanvas::DeviceContext {
-public:
-    AcceleratedDeviceContext(GraphicsContext3D* context3D, Canvas2DLayerChromium* layer)
-        : m_platformLayer(layer)
-        , m_context3D()
-    {
-        ASSERT(context3D);
-        ASSERT(layer);
-        m_context3D = context3D;
-    }
-
-    virtual void prepareForDraw()
-    {
-        m_platformLayer->layerWillDraw(Canvas2DLayerChromium::WillDrawUnconditionally);
-        m_context3D->makeContextCurrent();
-    }
-
-private:
-    Canvas2DLayerChromium* m_platformLayer;
-    GraphicsContext3D* m_context3D;
-};
-#endif
 
 static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* data, DeferralMode deferralMode)
 {
@@ -114,20 +90,12 @@ static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* d
     SkCanvas* canvas;
     SkAutoTUnref<SkDevice> device(new SkGpuDevice(gr, texture.get()));
 #if USE(ACCELERATED_COMPOSITING)
-    data->m_platformLayer = Canvas2DLayerChromium::create(context3D, size, deferralMode);
-    if (deferralMode == Deferred) {
-        SkAutoTUnref<AcceleratedDeviceContext> deviceContext(new AcceleratedDeviceContext(context3D.get(), data->m_platformLayer.get()));
-        canvas = new SkDeferredCanvas(device.get(), deviceContext.get());
-    } else
-        canvas = new SkCanvas(device.get());
+    data->m_layerBridge = Canvas2DLayerBridge::create(context3D.release(), size, deferralMode, texture.get()->getTextureHandle());
+    canvas = data->m_layerBridge->skCanvas(device.get());
 #else
     canvas = new SkCanvas(device.get());
 #endif
     data->m_platformContext.setAccelerated(true);
-#if USE(ACCELERATED_COMPOSITING)
-    data->m_platformLayer->setTextureId(texture.get()->getTextureHandle());
-    data->m_platformLayer->setCanvas(canvas);
-#endif
     return canvas;
 }
 
@@ -174,17 +142,16 @@ ImageBuffer::ImageBuffer(const IntSize& size, float /* resolutionScale */, Color
 
 ImageBuffer::~ImageBuffer()
 {
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_data.m_platformLayer)
-        m_data.m_platformLayer->setTextureId(0);
-#endif
 }
 
 GraphicsContext* ImageBuffer::context() const
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_data.m_platformLayer)
-        m_data.m_platformLayer->layerWillDraw(Canvas2DLayerChromium::WillDrawIfLayerNotDeferred);
+    if (m_data.m_layerBridge) {
+        // We're using context acquisition as a signal that someone is about to render into our buffer and we need
+        // to be ready. This isn't logically const-correct, hence the cast.
+        const_cast<Canvas2DLayerBridge*>(m_data.m_layerBridge.get())->contextAcquired();
+    }
 #endif
     return m_context.get();
 }
@@ -196,7 +163,7 @@ PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior) const
 
 PlatformLayer* ImageBuffer::platformLayer() const
 {
-    return m_data.m_platformLayer.get();
+    return m_data.m_layerBridge ? m_data.m_layerBridge->layer() : 0;
 }
 
 void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
