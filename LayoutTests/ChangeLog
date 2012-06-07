@@ -1,3 +1,12 @@
+2012-06-07  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Gardening. Skip failing new test.
+        https://bugs.webkit.org/show_bug.cgi?id=88523
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped: Skip http/tests/security/video-cross-origin-readback.html.
+
 2012-06-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed Skipped list cleanup. Remove disabled/passing tests, add bug reports.

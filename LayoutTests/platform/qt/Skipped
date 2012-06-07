@@ -2499,3 +2499,7 @@ fast/frames/flattening/iframe-tiny.html
 # most likely related to https://bugs.webkit.org/show_bug.cgi?id=84102
 fast/profiler/stop-profiling-after-setTimeout.html
 fast/profiler/dead-time.html
+
+# Newly added test fails after r119694
+# https://bugs.webkit.org/show_bug.cgi?id=88523
+http/tests/security/video-cross-origin-readback.html
