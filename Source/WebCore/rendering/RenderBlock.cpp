@@ -6489,80 +6489,17 @@ LayoutRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, La
     if (firstChild())
         return RenderBox::localCaretRect(inlineBox, caretOffset, extraWidthToEndOfLine);
 
-    // This is a special case:
-    // The element is not an inline element, and it's empty. So we have to
-    // calculate a fake position to indicate where objects are to be inserted.
-    
-    // FIXME: This does not take into account either :first-line or :first-letter
-    // However, as soon as some content is entered, the line boxes will be
-    // constructed and this kludge is not called any more. So only the caret size
-    // of an empty :first-line'd block is wrong. I think we can live with that.
-    RenderStyle* currentStyle = firstLineStyle();
-    LayoutUnit height = lineHeight(true, currentStyle->isHorizontalWritingMode() ? HorizontalLine : VerticalLine);
-
-    enum CaretAlignment { alignLeft, alignRight, alignCenter };
-
-    CaretAlignment alignment = alignLeft;
-
-    switch (currentStyle->textAlign()) {
-        case TAAUTO:
-        case JUSTIFY:
-            if (!currentStyle->isLeftToRightDirection())
-                alignment = alignRight;
-            break;
-        case LEFT:
-        case WEBKIT_LEFT:
-            break;
-        case CENTER:
-        case WEBKIT_CENTER:
-            alignment = alignCenter;
-            break;
-        case RIGHT:
-        case WEBKIT_RIGHT:
-            alignment = alignRight;
-            break;
-        case TASTART:
-            if (!currentStyle->isLeftToRightDirection())
-                alignment = alignRight;
-            break;
-        case TAEND:
-            if (currentStyle->isLeftToRightDirection())
-                alignment = alignRight;
-            break;
-    }
-
-    LayoutUnit x = borderLeft() + paddingLeft();
-    LayoutUnit w = width();
-
-    switch (alignment) {
-        case alignLeft:
-            if (currentStyle->isLeftToRightDirection())
-                x += textIndentOffset();
-            break;
-        case alignCenter:
-            x = (x + w - (borderRight() + paddingRight())) / 2;
-            if (currentStyle->isLeftToRightDirection())
-                x += textIndentOffset() / 2;
-            else
-                x -= textIndentOffset() / 2;
-            break;
-        case alignRight:
-            x = w - (borderRight() + paddingRight()) - caretWidth;
-            if (!currentStyle->isLeftToRightDirection())
-                x -= textIndentOffset();
-            break;
-    }
-    x = min(x, w - borderRight() - paddingRight() - caretWidth);
+    LayoutRect caretRect = localCaretRectForEmptyElement(width(), textIndentOffset());
 
     if (extraWidthToEndOfLine) {
         if (isRenderBlock()) {
-            *extraWidthToEndOfLine = w - (x + caretWidth);
+            *extraWidthToEndOfLine = width() - caretRect.maxX();
         } else {
             // FIXME: This code looks wrong.
             // myRight and containerRight are set up, but then clobbered.
             // So *extraWidthToEndOfLine will always be 0 here.
 
-            LayoutUnit myRight = x + caretWidth;
+            LayoutUnit myRight = caretRect.maxX();
             // FIXME: why call localToAbsoluteForContent() twice here, too?
             FloatPoint absRightPoint = localToAbsolute(FloatPoint(myRight, 0));
 
@@ -6573,9 +6510,7 @@ LayoutRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, La
         }
     }
 
-    LayoutUnit y = paddingTop() + borderTop();
-
-    return LayoutRect(x, y, caretWidth, height);
+    return caretRect;
 }
 
 void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& additionalOffset)

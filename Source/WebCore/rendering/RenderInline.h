@@ -84,6 +84,8 @@ public:
     void setAlwaysCreateLineBoxes() { m_alwaysCreateLineBoxes = true; }
     void updateAlwaysCreateLineBoxes(bool fullLayout);
 
+    virtual LayoutRect localCaretRect(InlineBox*, int, LayoutUnit* extraWidthToEndOfLine) OVERRIDE;
+
 protected:
     virtual void willBeDestroyed();
 

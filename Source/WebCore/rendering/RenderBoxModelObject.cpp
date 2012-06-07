@@ -2971,6 +2971,76 @@ void RenderBoxModelObject::setFirstLetterRemainingText(RenderObject* remainingTe
         firstLetterRemainingTextMap->remove(this);
 }
 
+LayoutRect RenderBoxModelObject::localCaretRectForEmptyElement(LayoutUnit width, LayoutUnit textIndentOffset)
+{
+    ASSERT(!firstChild());
+
+    // FIXME: This does not take into account either :first-line or :first-letter
+    // However, as soon as some content is entered, the line boxes will be
+    // constructed and this kludge is not called any more. So only the caret size
+    // of an empty :first-line'd block is wrong. I think we can live with that.
+    RenderStyle* currentStyle = firstLineStyle();
+    LayoutUnit height = lineHeight(true, currentStyle->isHorizontalWritingMode() ? HorizontalLine : VerticalLine);
+
+    enum CaretAlignment { alignLeft, alignRight, alignCenter };
+
+    CaretAlignment alignment = alignLeft;
+
+    switch (currentStyle->textAlign()) {
+    case TAAUTO:
+    case JUSTIFY:
+        if (!currentStyle->isLeftToRightDirection())
+            alignment = alignRight;
+        break;
+    case LEFT:
+    case WEBKIT_LEFT:
+        break;
+    case CENTER:
+    case WEBKIT_CENTER:
+        alignment = alignCenter;
+        break;
+    case RIGHT:
+    case WEBKIT_RIGHT:
+        alignment = alignRight;
+        break;
+    case TASTART:
+        if (!currentStyle->isLeftToRightDirection())
+            alignment = alignRight;
+        break;
+    case TAEND:
+        if (currentStyle->isLeftToRightDirection())
+            alignment = alignRight;
+        break;
+    }
+
+    LayoutUnit x = borderLeft() + paddingLeft();
+    LayoutUnit maxX = width - borderRight() - paddingRight();
+
+    switch (alignment) {
+    case alignLeft:
+        if (currentStyle->isLeftToRightDirection())
+            x += textIndentOffset;
+        break;
+    case alignCenter:
+        x = (x + maxX) / 2;
+        if (currentStyle->isLeftToRightDirection())
+            x += textIndentOffset / 2;
+        else
+            x -= textIndentOffset / 2;
+        break;
+    case alignRight:
+        x = maxX - caretWidth;
+        if (!currentStyle->isLeftToRightDirection())
+            x -= textIndentOffset;
+        break;
+    }
+    x = min(x, max(maxX - caretWidth, ZERO_LAYOUT_UNIT));
+
+    LayoutUnit y = paddingTop() + borderTop();
+
+    return LayoutRect(x, y, caretWidth, height);
+}
+
 bool RenderBoxModelObject::shouldAntialiasLines(GraphicsContext* context)
 {
     // FIXME: We may want to not antialias when scaled by an integral value,
