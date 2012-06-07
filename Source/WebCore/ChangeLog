@@ -1,3 +1,19 @@
+2012-06-06  Michal Mocny  <mmocny@google.com>
+
+        [chromium] Stop dropping texture limits when the layer tree host becomes invisible, and initialize with 0 allocation.
+        https://bugs.webkit.org/show_bug.cgi?id=87747
+
+        Reviewed by Adrienne Walker.
+
+        GpuMemoryManager manages texture memory allocation limits. It will send a 0 allocation when a renderer becomes
+        invisible, and an appropriate allocation after a renderer is initialized.  These numbers will change
+        depending on the state of memory across devices and other renderers, so we would like to remove all explicit
+        management by the renderers themselves.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initializeLayerRenderer):
+        (WebCore::CCLayerTreeHost::setVisible):
+
 2012-06-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119680.

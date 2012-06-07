@@ -149,11 +149,6 @@ void CCLayerTreeHost::initializeLayerRenderer()
 
     m_contentsTextureManager = TextureManager::create(0, 0, m_proxy->layerRendererCapabilities().maxTextureSize);
 
-    // FIXME: This is the same as setContentsMemoryAllocationLimitBytes, but
-    // we're in the middle of a commit here and don't want to force another.
-    m_memoryAllocationBytes = TextureManager::highLimitBytes(deviceViewportSize());
-    m_memoryAllocationIsForDisplay = true;
-
     m_layerRendererInitialized = true;
 
     m_settings.defaultTileSize = IntSize(min(m_settings.defaultTileSize.width(), m_proxy->layerRendererCapabilities().maxTextureSize),
@@ -405,15 +400,6 @@ void CCLayerTreeHost::setVisible(bool visible)
         return;
 
     m_visible = visible;
-
-    // FIXME: Remove this stuff, it is here just for the m20 merge.
-    if (!m_visible && m_layerRendererInitialized) {
-        if (m_proxy->layerRendererCapabilities().contextHasCachedFrontBuffer)
-            setContentsMemoryAllocationLimitBytes(0);
-        else
-            setContentsMemoryAllocationLimitBytes(m_contentsTextureManager->preferredMemoryLimitBytes());
-    }
-
     setNeedsForcedCommit();
 }
 

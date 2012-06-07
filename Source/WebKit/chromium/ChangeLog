@@ -1,3 +1,15 @@
+2012-06-06  Michal Mocny  <mmocny@google.com>
+
+        [chromium] Stop dropping texture limits when the layer tree host becomes invisible, and initialize with 0 allocation.
+        https://bugs.webkit.org/show_bug.cgi?id=87747
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHost::create):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        (Canvas2DLayerChromiumTest::fullLifecycleTest):
+
 2012-06-06  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move createMessagePortChannel to Platform.h

@@ -227,6 +227,7 @@ public:
 
         // LayerTreeHostImpl won't draw if it has 1x1 viewport.
         layerTreeHost->setViewportSize(IntSize(1, 1));
+        layerTreeHost->setContentsMemoryAllocationLimitBytes(TextureManager::highLimitBytes(layerTreeHost->viewportSize()));
 
         layerTreeHost->rootLayer()->setLayerAnimationDelegate(testHooks);
 
