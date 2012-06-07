@@ -1,0 +1,44 @@
+Test expected pointerlockchange and pointerlockerror events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+     Unlock.
+     Lock targetDiv1.
+PASS onwebkitpointerlockchange received after: Lock targetDiv1.
+     Unlock again.
+PASS onwebkitpointerlockchange received after: Unlock again.
+     Lock targetDiv1 again.
+PASS onwebkitpointerlockchange received after: Lock targetDiv1 again.
+     Lock targetDiv2.
+PASS onwebkitpointerlockchange received after: Lock targetDiv2.
+PASS onwebkitpointerlockchange received after: Lock targetDiv2.
+     Lock targetDiv2 again.
+PASS onwebkitpointerlockchange received after: Lock targetDiv2 again.
+     Lock null.
+     Lock targetIframe1.
+     Lock targetIframe1 (handler for iframe1).
+PASS onwebkitpointerlockchange received after: Lock targetIframe1 (handler for iframe1).
+PASS onwebkitpointerlockchange received after: Lock targetIframe1.
+PASS onwebkitpointerlockchange received after: Lock targetIframe1.
+     Lock targetIframe2.
+     Lock targetIframe2 (handler for iframe1).
+     Lock targetIframe2 (handler for iframe2).
+PASS onwebkitpointerlockchange received after: Lock targetIframe2 (handler for iframe2).
+PASS onwebkitpointerlockchange received after: Lock targetIframe2 (handler for iframe1).
+PASS onwebkitpointerlockchange received after: Lock targetIframe2 (handler for iframe1).
+     Unlock targetIframe2.
+     Unlock targetIframe2 (handler for iframe1).
+     Unlock targetIframe2 (handler for iframe2).
+PASS onwebkitpointerlockchange received after: Unlock targetIframe2 (handler for iframe2).
+PASS layoutTestController.setPointerLockWillFailSynchronously is defined.
+     Lock with synchronous failure.
+PASS onwebkitpointerlockerror received after: Lock with synchronous failure.
+PASS layoutTestController.setPointerLockWillFailAsynchronously is defined.
+     Lock with asynchronous failure.
+PASS onwebkitpointerlockerror received after: Lock with asynchronous failure.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+doNextStep for manual testing
+  

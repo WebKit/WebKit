@@ -9,12 +9,16 @@ JavaScript initiated unlock.
 PASS webkitpointerlocklost handler call 0
 PASS webkitpointerlocklost handler call 1
 PASS All expected webkitpointerlocklost events received.
+PASS onwebkitpointerlockchange received.
+PASS All expected onwebkitpointerlockchange events received.
 PASS navigator.webkitPointer.isLocked is false
 PASS navigator.webkitPointer.isLocked is true
 Host initiated unlock.
 PASS webkitpointerlocklost handler call 0
 PASS webkitpointerlocklost handler call 1
 PASS All expected webkitpointerlocklost events received.
+PASS onwebkitpointerlockchange received.
+PASS All expected onwebkitpointerlockchange events received.
 PASS navigator.webkitPointer.isLocked is false
 PASS successfullyParsed is true
 

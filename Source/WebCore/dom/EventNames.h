@@ -220,6 +220,8 @@ namespace WebCore {
     macro(show) \
     \
     macro(webkitpointerlocklost) \
+    macro(webkitpointerlockchange) \
+    macro(webkitpointerlockerror) \
     \
     macro(webkitRegionLayoutUpdate) \
     \

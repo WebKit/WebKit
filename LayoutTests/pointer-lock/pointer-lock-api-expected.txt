@@ -4,6 +4,8 @@ PASS navigator.webkitPointer.isLocked is false
 PASS navigator.webkitPointer.lock() threw exception TypeError: Not enough arguments.
 PASS navigator.webkitPointer.lock(document) is undefined
 PASS navigator.webkitPointer.unlock() is undefined
+PASS document.onwebkitpointerlockchange is defined.
+PASS document.onwebkitpointerlockerror is defined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

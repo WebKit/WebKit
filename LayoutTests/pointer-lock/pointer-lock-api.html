@@ -10,6 +10,8 @@
     shouldThrow("navigator.webkitPointer.lock()", "'TypeError: Not enough arguments'");
     shouldEvaluateTo("navigator.webkitPointer.lock(document)", "undefined");
     shouldEvaluateTo("navigator.webkitPointer.unlock()", "undefined");
+    shouldBeDefined("document.onwebkitpointerlockchange");
+    shouldBeDefined("document.onwebkitpointerlockerror");
 </script>
 <script src="../fast/js/resources/js-test-post.js"></script>
 </body>

@@ -8,12 +8,32 @@
   <div id="target"></div>
 </div>
 <script>
+    // FIXME: Rename this test to pointerlockchange-event-on-lock-lost. (https://bugs.webkit.org/show_bug.cgi?id=84402)
+
     description("Test that pointerlocklost event is dispatched.")
     window.jsTestIsAsync = true;
     shouldBeDefined("window.layoutTestController");
 
     targetdiv = document.getElementById("target");
 
+    // FIXME: Keep pointerlockchange and pointerlockerror event usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
+    document.onwebkitpointerlockchange = lockchangeToUnlockedHandler;
+    document.onwebkitpointerlockerror =
+        function () { testFailed("document.onwebkitpointerlockerror dispatched"); finishJSTest(); };
+    lockchangeToUnlockedHandlers = 1;
+
+    lockchangeToUnlockedReceipts = 0;
+    function lockchangeToUnlockedHandler() {
+        if (navigator.webkitPointer.isLocked == false) {
+            testPassed("onwebkitpointerlockchange received.");
+            lockchangeToUnlockedReceipts++;
+            if (lockchangeToUnlockedReceipts == lockchangeToUnlockedHandlers) {
+                testPassed("All expected onwebkitpointerlockchange events received.");
+            }
+        }
+    }
+
+    // FIXME: Remove pointerlocklost usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
     document.addEventListener("webkitpointerlocklost", locklostHandler);
     targetdiv.addEventListener("webkitpointerlocklost", locklostHandler);
     locklosthandlers = 2;
@@ -30,7 +50,7 @@
 
     currentStep = 0;
     function doNextStep() {
-      todo[currentStep++]();
+      setTimeout(function () { todo[currentStep++](); }, 0);
     }
     todo = [
         function () {
@@ -67,6 +87,7 @@
         },
         function () {
             debug("Host initiated unlock.")
+            lockchangeToUnlockedReceipts = 0;
             locklostreceipts = 0;
             layoutTestController.didLosePointerLock();
         },

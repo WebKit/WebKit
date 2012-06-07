@@ -1,3 +1,27 @@
+2012-06-06  Vincent Scheib  <scheib@chromium.org>
+
+        Add new Pointer Lock spec events webkitpointerlockchange and webkitpointerlockerror
+        https://bugs.webkit.org/show_bug.cgi?id=88377
+
+        Reviewed by Dimitri Glazkov.
+
+        Part of a series of refactoring changes to update pointer lock API to
+        the fullscreen locking style. https://bugs.webkit.org/show_bug.cgi?id=84402
+
+        New change and error events added. Follow up patches will remove
+        the previous callbacks and pointerlocklost event. Tests updated
+        to include the new events, and a new test added specifically for
+        the new events, pointerlockchange-pointerlockerror-events.html.
+
+        * pointer-lock/lock-already-locked-expected.txt:
+        * pointer-lock/lock-already-locked.html:
+        * pointer-lock/pointer-lock-api-expected.txt:
+        * pointer-lock/pointer-lock-api.html:
+        * pointer-lock/pointerlockchange-pointerlockerror-events-expected.txt: Added.
+        * pointer-lock/pointerlockchange-pointerlockerror-events.html: Added.
+        * pointer-lock/pointerlocklost-event-expected.txt:
+        * pointer-lock/pointerlocklost-event.html:
+
 2012-06-07  Takashi Sakamoto  <tasak@google.com>
 
         Incorrect border rendering when border radius is above 2px.

@@ -15,6 +15,12 @@
     targetdiv1 = document.getElementById("target1");
     targetdiv2 = document.getElementById("target2");
 
+    // Expect change event only for all transitions below.
+    document.onwebkitpointerlockchange =
+        function () { testPassed("document.onwebkitpointerlockchange event received."); };
+    document.onwebkitpointerlockerror =
+        function () { testFailed("document.onwebkitpointerlockerror event received."); finishJSTest(); };
+
     var expectTarget1Unlock = false;
     targetdiv1.addEventListener("webkitpointerlocklost",
         function () { shouldBe("expectTarget1Unlock", "true"); });
@@ -24,7 +30,7 @@
 
     currentStep = 0;
     function doNextStep() {
-      todo[currentStep++]();
+      setTimeout(function () { todo[currentStep++](); }, 0);
     }
     todo = [
         function () {
