@@ -83,6 +83,11 @@ public:
     }
     static PassRefPtr<IDBKeyRange> bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen, ExceptionCode&);
 
+    bool isOnlyKey()
+    {
+        return m_lower == m_upper && m_lowerType == LowerBoundOpen && m_upperType == UpperBoundClosed;
+    }
+
 private:
     IDBKeyRange(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, LowerBoundType lowerType, UpperBoundType upperType);
 

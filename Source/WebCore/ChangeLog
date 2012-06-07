@@ -1,3 +1,25 @@
+2012-06-06  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Optimize single-key get()
+        https://bugs.webkit.org/show_bug.cgi?id=85288
+
+        Reviewed by Tony Chang.
+
+        No new tests, this is just an optimization.
+
+        After a recent refactoring, we started creating
+        an internal cursor with every call to get(). The
+        most common use of get() is with a single key,
+        so provide a fast-path to avoid creating the cursor.
+
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::getByRangeInternal):
+        * Modules/indexeddb/IDBKeyRange.h:
+        (WebCore::IDBKeyRange::isOnlyKey):
+        (IDBKeyRange):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::getByRangeInternal):
+
 2012-06-06  Shezan Baig  <shezbaig.wk@gmail.com>
 
         Caret is not rendered in empty inline contenteditable elements

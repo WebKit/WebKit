@@ -149,22 +149,27 @@ void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBInd
 {
     IDB_TRACE("IDBIndexBackendImpl::getInternal");
 
-    RefPtr<IDBBackingStore::Cursor> backingStoreCursor =
-            index->backingStore()->openIndexCursor(index->databaseId(), index->m_objectStoreBackend->id(), index->id(), keyRange.get(), IDBCursor::NEXT);
+    RefPtr<IDBKey> key;
 
-    if (!backingStoreCursor) {
-        callbacks->onSuccess(SerializedScriptValue::undefinedValue());
-        return;
+    if (keyRange->isOnlyKey())
+        key = keyRange->lower();
+    else {
+        RefPtr<IDBBackingStore::Cursor> backingStoreCursor = index->backingStore()->openIndexCursor(index->databaseId(), index->m_objectStoreBackend->id(), index->id(), keyRange.get(), IDBCursor::NEXT);
+
+        if (!backingStoreCursor) {
+            callbacks->onSuccess(SerializedScriptValue::undefinedValue());
+            return;
+        }
+        key = backingStoreCursor->key();
+        backingStoreCursor->close();
     }
 
-    String value = index->backingStore()->getObjectViaIndex(index->databaseId(), index->m_objectStoreBackend->id(), index->id(), *backingStoreCursor->key());
+    String value = index->backingStore()->getObjectViaIndex(index->databaseId(), index->m_objectStoreBackend->id(), index->id(), *key);
     if (value.isNull()) {
         callbacks->onSuccess(SerializedScriptValue::undefinedValue());
-        backingStoreCursor->close();
         return;
     }
     callbacks->onSuccess(SerializedScriptValue::createFromWire(value));
-    backingStoreCursor->close();
 }
 
 void IDBIndexBackendImpl::getKeyInternal(ScriptExecutionContext* context, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)

@@ -95,22 +95,27 @@ void IDBObjectStoreBackendImpl::get(PassRefPtr<IDBKeyRange> prpKeyRange, PassRef
 
 void IDBObjectStoreBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
 {
-    IDB_TRACE("IDBObjectStoreBackendImpl::getInternal");
-    RefPtr<IDBBackingStore::Cursor> backingStoreCursor = objectStore->backingStore()->openObjectStoreCursor(objectStore->databaseId(), objectStore->id(), keyRange.get(), IDBCursor::NEXT);
-    if (!backingStoreCursor) {
-        callbacks->onSuccess(SerializedScriptValue::undefinedValue());
-        return;
+    IDB_TRACE("IDBObjectStoreBackendImpl::getByRangeInternal");
+    RefPtr<IDBKey> key;
+    if (keyRange->isOnlyKey())
+        key = keyRange->lower();
+    else {
+        RefPtr<IDBBackingStore::Cursor> backingStoreCursor = objectStore->backingStore()->openObjectStoreCursor(objectStore->databaseId(), objectStore->id(), keyRange.get(), IDBCursor::NEXT);
+        if (!backingStoreCursor) {
+            callbacks->onSuccess(SerializedScriptValue::undefinedValue());
+            return;
+        }
+        key = backingStoreCursor->key();
+        backingStoreCursor->close();
     }
 
-    String wireData = objectStore->backingStore()->getObjectStoreRecord(objectStore->databaseId(), objectStore->id(), *backingStoreCursor->key());
+    String wireData = objectStore->backingStore()->getObjectStoreRecord(objectStore->databaseId(), objectStore->id(), *key);
     if (wireData.isNull()) {
         callbacks->onSuccess(SerializedScriptValue::undefinedValue());
-        backingStoreCursor->close();
         return;
     }
 
     callbacks->onSuccess(SerializedScriptValue::createFromWire(wireData));
-    backingStoreCursor->close();
 }
 
 static PassRefPtr<IDBKey> fetchKeyFromKeyPath(SerializedScriptValue* value, const IDBKeyPath& keyPath)
