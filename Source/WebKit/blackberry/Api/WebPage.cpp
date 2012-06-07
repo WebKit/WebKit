@@ -5731,12 +5731,21 @@ void WebPagePrivate::setCompositor(PassRefPtr<WebPageCompositorPrivate> composit
     }
 
     m_compositor = compositor;
-    if (m_compositor)
+    if (m_compositor) {
         m_compositor->setPage(this);
+
+        m_compositor->setBackgroundColor(m_webSettings->backgroundColor());
+    }
 
     // The previous compositor, if any, has now released it's OpenGL resources,
     // so we can safely free the owned context, if any.
     m_ownedContext.clear();
+}
+
+void WebPagePrivate::setCompositorBackgroundColor(const Color& backgroundColor)
+{
+    if (m_compositor)
+        m_compositor->setBackgroundColor(backgroundColor);
 }
 
 void WebPagePrivate::commitRootLayer(const IntRect& layoutRectForCompositing,
@@ -5971,6 +5980,10 @@ bool WebPagePrivate::createCompositor()
     m_ownedContext = GLES2Context::create(this);
     m_compositor = WebPageCompositorPrivate::create(this, 0);
     m_compositor->setContext(m_ownedContext.get());
+
+    // The compositor is created in a sync message, so there's no risk of race condition on the
+    // WebSettings.
+    m_compositor->setBackgroundColor(m_webSettings->backgroundColor());
 
     return true;
 }
@@ -6270,6 +6283,9 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     if (m_mainFrame && m_mainFrame->view()) {
         Color backgroundColor(webSettings->backgroundColor());
         m_mainFrame->view()->updateBackgroundRecursively(backgroundColor, backgroundColor.hasAlpha());
+
+        Platform::userInterfaceThreadMessageClient()->dispatchMessage(
+            createMethodCallMessage(&WebPagePrivate::setCompositorBackgroundColor, this, backgroundColor));
     }
 }
 

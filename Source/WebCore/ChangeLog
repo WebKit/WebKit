@@ -1,3 +1,24 @@
+2012-06-07  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Allow WebPageCompositor to blend a transparent web page
+        https://bugs.webkit.org/show_bug.cgi?id=88233
+
+        Reviewed by Rob Buis.
+
+        RIM PR #159998
+
+        Add a parameter to LayerRenderer::compositeBuffer() indicating whether
+        the buffer contents are opaque, and set the GL blend mode accordingly.
+
+        This is not currently testable using BlackBerry testing infrastructure.
+
+        Reviewed internally by Jakob Petsovits.
+
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::compositeBuffer):
+        * platform/graphics/blackberry/LayerRenderer.h:
+        (LayerRenderer):
+
 2012-06-07  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: reuse edge_count field of heap snapshot to store retained size

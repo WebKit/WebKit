@@ -396,6 +396,7 @@ public:
     bool isAcceleratedCompositingActive() const { return m_compositor; }
     WebPageCompositorPrivate* compositor() const { return m_compositor.get(); }
     void setCompositor(PassRefPtr<WebPageCompositorPrivate>, EGLContext compositingContext);
+    void setCompositorBackgroundColor(const WebCore::Color&);
     bool createCompositor();
     void destroyCompositor();
     void syncDestroyCompositorOnCompositingThread();

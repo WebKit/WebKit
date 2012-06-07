@@ -1,3 +1,37 @@
+2012-06-07  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Allow WebPageCompositor to blend a transparent web page
+        https://bugs.webkit.org/show_bug.cgi?id=88233
+
+        Reviewed by Rob Buis.
+
+        RIM PR #159998
+
+        Keep track of the web page background color in the compositor so we can
+        determine whether the contents of the root layer are transparent.
+
+        Reviewed internally by Jakob Petsovits.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::compositeContents):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setCompositor):
+        (BlackBerry::WebKit::WebPagePrivate::setCompositorBackgroundColor):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::createCompositor):
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::render):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setBackgroundColor):
+        (WebKit):
+        * Api/WebPageCompositor_p.h:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::backgroundColor):
+        (WebPageCompositorPrivate):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-06-07  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Add enable credential autofill and enable form autofill feature control in WebSetting

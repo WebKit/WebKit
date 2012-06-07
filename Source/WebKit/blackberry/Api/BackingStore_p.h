@@ -202,7 +202,7 @@ public:
     // Note that contents is expressed in untransformed content coordinates.
     // Preconditions: You have to call prepareFrame and setViewport on the LayerRenderer before
     //                calling this.
-    void compositeContents(WebCore::LayerRenderer*, const WebCore::TransformationMatrix&, const WebCore::FloatRect& contents);
+    void compositeContents(WebCore::LayerRenderer*, const WebCore::TransformationMatrix&, const WebCore::FloatRect& contents, bool contentsOpaque);
 
     void blendCompositingSurface(const Platform::IntRect& dstRect);
     void clearCompositingSurface();

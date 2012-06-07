@@ -1637,7 +1637,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRenderer, const WebCore::TransformationMatrix& transform, const WebCore::FloatRect& contents)
+void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRenderer, const WebCore::TransformationMatrix& transform, const WebCore::FloatRect& contents, bool contentsOpaque)
 {
     const Platform::IntRect transformedContentsRect = Platform::IntRect(Platform::IntPoint(0, 0), m_client->transformedContentsSize());
     Platform::IntRect transformedContents = enclosingIntRect(m_webPage->d->m_transformationMatrix->mapRect(contents));
@@ -1691,7 +1691,7 @@ void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRendere
         if (!committed)
             layerRenderer->drawCheckerboardPattern(transform, m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(dirtyRect)));
         else {
-            layerRenderer->compositeBuffer(transform, m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(wholeRect)), tileBuffer->nativeBuffer(), 1.0f);
+            layerRenderer->compositeBuffer(transform, m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(wholeRect)), tileBuffer->nativeBuffer(), contentsOpaque, 1.0f);
 
             // Intersect the rendered region.
             Platform::IntRectRegion notRenderedRegion = Platform::IntRectRegion::subtractRegions(dirtyTileRect, tileBuffer->renderedRegion());

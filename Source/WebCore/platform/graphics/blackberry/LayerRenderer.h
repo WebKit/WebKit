@@ -106,7 +106,7 @@ public:
     // 3. Prepares all the layers for compositing
     // transform is the model-view-project matrix that goes all the way from contents to normalized device coordinates.
     void compositeLayers(const TransformationMatrix&, LayerCompositingThread* rootLayer);
-    void compositeBuffer(const TransformationMatrix&, const FloatRect& contents, BlackBerry::Platform::Graphics::Buffer*, float opacity);
+    void compositeBuffer(const TransformationMatrix&, const FloatRect& contents, BlackBerry::Platform::Graphics::Buffer*, bool contentsOpaque, float opacity);
     void drawCheckerboardPattern(const TransformationMatrix&, const FloatRect& contents);
 
     // Keep track of layers that need cleanup when the LayerRenderer is destroyed

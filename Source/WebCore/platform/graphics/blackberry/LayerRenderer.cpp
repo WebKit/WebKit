@@ -402,7 +402,7 @@ void LayerRenderer::compositeLayers(const TransformationMatrix& matrix, LayerCom
 
 static float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
 
-void LayerRenderer::compositeBuffer(const TransformationMatrix& transform, const FloatRect& contents, BlackBerry::Platform::Graphics::Buffer* buffer, float opacity)
+void LayerRenderer::compositeBuffer(const TransformationMatrix& transform, const FloatRect& contents, BlackBerry::Platform::Graphics::Buffer* buffer, bool contentsOpaque, float opacity)
 {
     if (!buffer)
         return;
@@ -415,7 +415,8 @@ void LayerRenderer::compositeBuffer(const TransformationMatrix& transform, const
     if (!vertices.boundingBox().intersects(m_clipRect))
         return;
 
-    if (opacity < 1.0f) {
+    bool blending = !contentsOpaque || opacity < 1.0f;
+    if (blending) {
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     }
@@ -431,7 +432,7 @@ void LayerRenderer::compositeBuffer(const TransformationMatrix& transform, const
         BlackBerry::Platform::Graphics::releaseBufferGLTexture(buffer);
     }
 
-    if (opacity < 1.0f)
+    if (blending)
         glDisable(GL_BLEND);
 }
 
