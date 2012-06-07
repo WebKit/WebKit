@@ -3775,6 +3775,8 @@ BUGWK67116 DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PAS
 
 BUGCR131687 RELEASE : fast/js/dfg-double-vote-fuzz.html = PASS TEXT
 
+BUGWK88593 : fast/table/multiple-captions-display.xhtml = PASS IMAGE IMAGE+TEXT
+
 // Needs rebaseline after the bots cycle.
 BUG_OJAN WIN MAC : tables/mozilla/bugs/bug131020.html = PASS FAIL
 BUGLEVIW LEOPARD LION WIN LINUX : fast/sub-pixel/file-upload-control-at-fractional-offset.html = PASS FAIL MISSING

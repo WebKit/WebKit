@@ -1,5 +1,10 @@
 2012-06-07  Ojan Vafai  <ojan@chromium.org>
 
+        Mark fast/table/multiple-captions-display.xhtml as flaky on Chromium.
+        * platform/chromium/TestExpectations:
+
+2012-06-07  Ojan Vafai  <ojan@chromium.org>
+
         Chromium rebaselines after http://trac.webkit.org/changeset/119760.
 
         * platform/chromium-linux/fast/borders/border-radius-valid-border-clipping-expected.png: Added.
