@@ -296,6 +296,7 @@ committers_unable_to_review = [
     Committer(u"Kim Gr\u00f6nholm", "kim.1.gronholm@nokia.com"),
     Committer("Kimmo Kinnunen", ["kimmo.t.kinnunen@nokia.com", "kimmok@iki.fi", "ktkinnun@webkit.org"], "kimmok"),
     Committer("Kinuko Yasuda", "kinuko@chromium.org", "kinuko"),
+    Committer("Konrad Piascik", "kpiascik@rim.com", "kpiascik"),
     Committer("Kristof Kosztyo", "kkristof@inf.u-szeged.hu", "kkristof"),
     Committer("Krzysztof Kowalczyk", "kkowalczyk@gmail.com"),
     Committer("Kwang Yul Seo", ["kwangyul.seo@gmail.com", "skyul@company100.net", "kseo@webkit.org"], "kwangseo"),
