@@ -1,3 +1,20 @@
+2012-06-07  Simon Pena  <spena@igalia.com>
+
+        [GTK] Add baselines for new tests
+        https://bugs.webkit.org/show_bug.cgi?id=88540
+
+        Unreviewed gardening. Added baselines for new tests.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png: Added.
+        * platform/gtk/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.txt: Added.
+        * platform/gtk/fast/reflections/reflection-with-zoom-expected.png: Added.
+        * platform/gtk/fast/reflections/reflection-with-zoom-expected.txt: Added.
+        * platform/gtk/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Added.
+        * platform/gtk/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Added.
+        * platform/gtk/svg/repaint/text-mask-update-expected.png: Added.
+        * platform/gtk/svg/repaint/text-mask-update-expected.txt: Added.
+
 2012-06-07  Brady Eidson  <beidson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=88481
