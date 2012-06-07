@@ -122,7 +122,7 @@ public:
     virtual NSURL* canonicalizeURLString(NSString*) = 0;
 #endif
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     virtual void uppercaseWord() = 0;
     virtual void lowercaseWord() = 0;
     virtual void capitalizeWord() = 0;

@@ -100,7 +100,7 @@ private:
     virtual NSURL* canonicalizeURLString(NSString*) OVERRIDE;
 #endif
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     virtual void uppercaseWord() OVERRIDE;
     virtual void lowercaseWord() OVERRIDE;
     virtual void capitalizeWord() OVERRIDE;

@@ -1,3 +1,21 @@
+2012-06-06  Andy Estes  <aestes@apple.com>
+
+        Wrap uppercaseWord, lowercaseWord, and capitalizeWord with USE(APPKIT)
+        https://bugs.webkit.org/show_bug.cgi?id=88504
+
+        Reviewed by Dan Bernstein.
+
+        uppercaseWord, lowercaseWord, and capitalizeWord are methods declared
+        by NSResponder that subclasses are expected to implement. WebKit should
+        only support these implementations on platforms that use AppKit.
+
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2012-06-06  chandra Shekar Vallala  <chandra.vallala@motorola.com>
 
         [WK2-Gtk]Compilation errors with flag CONTEXT_MENUS=0

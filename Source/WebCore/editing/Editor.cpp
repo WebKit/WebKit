@@ -1116,7 +1116,7 @@ int Editor::spellCheckerDocumentTag()
     return client() ? client()->spellCheckerDocumentTag() : 0;
 }
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
 
 void Editor::uppercaseWord()
 {

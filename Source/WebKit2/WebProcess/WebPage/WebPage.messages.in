@@ -178,7 +178,7 @@ messages -> WebPage {
     # Spelling and grammar.
     AdvanceToNextMisspelling(bool startBeforeSelection)
     ChangeSpellingToWord(WTF::String word)
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     UppercaseWord();
     LowercaseWord();
     CapitalizeWord();

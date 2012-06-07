@@ -145,6 +145,7 @@ static void changeWordCase(WebPage* page, SEL selector)
     page->replaceSelectionWithText(frame, [selectedString performSelector:selector]);
 }
 
+#if USE(APPKIT)
 void WebEditorClient::uppercaseWord()
 {
     changeWordCase(m_page, @selector(uppercaseString));
@@ -159,6 +160,7 @@ void WebEditorClient::capitalizeWord()
 {
     changeWordCase(m_page, @selector(capitalizedString));
 }
+#endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
 void WebEditorClient::showSubstitutionsPanel(bool)

@@ -233,7 +233,7 @@ public:
     void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
     void markAndReplaceFor(PassRefPtr<SpellCheckRequest>, const Vector<TextCheckingResult>&);
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     void uppercaseWord();
     void lowercaseWord();
     void capitalizeWord();

@@ -376,6 +376,7 @@ void WebEditorClient::setInsertionPasteboard(const String& pasteboardName)
     [m_webView _setInsertionPasteboard:pasteboard];
 }
 
+#if USE(APPKIT)
 void WebEditorClient::uppercaseWord()
 {
     [m_webView uppercaseWord:nil];
@@ -390,6 +391,7 @@ void WebEditorClient::capitalizeWord()
 {
     [m_webView capitalizeWord:nil];
 }
+#endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
 void WebEditorClient::showSubstitutionsPanel(bool show)

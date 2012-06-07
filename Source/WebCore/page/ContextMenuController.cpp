@@ -436,7 +436,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         frame->editor()->showColorPanel();
         break;
 #endif
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
+#if USE(APPKIT)
     case ContextMenuItemTagMakeUpperCase:
         frame->editor()->uppercaseWord();
         break;
@@ -446,6 +446,8 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
     case ContextMenuItemTagCapitalize:
         frame->editor()->capitalizeWord();
         break;
+#endif
+#if PLATFORM(MAC)
     case ContextMenuItemTagChangeBack:
         frame->editor()->changeBackToReplacedString(m_hitTestResult.replacedString());
         break;

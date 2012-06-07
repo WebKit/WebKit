@@ -682,11 +682,13 @@ private:
 
     void advanceToNextMisspelling(bool startBeforeSelection);
     void changeSpellingToWord(const String& word);
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     void uppercaseWord();
     void lowercaseWord();
     void capitalizeWord();
+#endif
 
+#if PLATFORM(MAC)
     void setSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled) { m_isSmartInsertDeleteEnabled = isSmartInsertDeleteEnabled; }
 #endif
 

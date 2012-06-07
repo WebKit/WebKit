@@ -76,9 +76,11 @@ public:
     virtual NSURL* canonicalizeURL(NSURL*) OVERRIDE;
     virtual NSURL* canonicalizeURLString(NSString*) OVERRIDE;
     
+#if USE(APPKIT)
     virtual void uppercaseWord() OVERRIDE;
     virtual void lowercaseWord() OVERRIDE;
     virtual void capitalizeWord() OVERRIDE;
+#endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
     virtual void showSubstitutionsPanel(bool show) OVERRIDE;

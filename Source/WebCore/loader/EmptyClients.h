@@ -474,7 +474,7 @@ public:
     virtual NSURL* canonicalizeURLString(NSString*) { return 0; }
 #endif
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     virtual void uppercaseWord() { }
     virtual void lowercaseWord() { }
     virtual void capitalizeWord() { }

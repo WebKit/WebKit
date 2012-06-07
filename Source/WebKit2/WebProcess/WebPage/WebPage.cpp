@@ -2404,7 +2404,7 @@ void WebPage::unmarkAllBadGrammar()
     }
 }
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
 void WebPage::uppercaseWord()
 {
     m_page->focusController()->focusedOrMainFrame()->editor()->uppercaseWord();

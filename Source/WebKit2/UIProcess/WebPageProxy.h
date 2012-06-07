@@ -606,11 +606,13 @@ public:
 
     void advanceToNextMisspelling(bool startBeforeSelection) const;
     void changeSpellingToWord(const String& word) const;
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     void uppercaseWord();
     void lowercaseWord();
     void capitalizeWord();
+#endif
 
+#if PLATFORM(MAC)
     bool isSmartInsertDeleteEnabled() const { return m_isSmartInsertDeleteEnabled; }
     void setSmartInsertDeleteEnabled(bool);
 #endif
