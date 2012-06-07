@@ -553,11 +553,11 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float widt
 #else
         static const uint32_t lineColors[2] = {
             0xFF << SK_A32_SHIFT | 0xFF << SK_R32_SHIFT, // Opaque red.
-            0xFF << SK_A32_SHIFT | 0x50 << SK_R32_SHIFT | 0x50 << SK_G32_SHIFT | 0x50 << SK_B32_SHIFT, // Opaque gray.
+            0xFF << SK_A32_SHIFT | 0xC0 << SK_R32_SHIFT | 0xC0 << SK_G32_SHIFT | 0xC0 << SK_B32_SHIFT, // Opaque gray.
         };
         static const uint32_t antiColors[2] = {
             0x60 << SK_A32_SHIFT | 0x60 << SK_R32_SHIFT, // Semitransparent red
-            0xFF << SK_A32_SHIFT | 0x30 << SK_R32_SHIFT | 0x30 << SK_G32_SHIFT | 0x30 << SK_B32_SHIFT, // Semitransparent gray
+            0xFF << SK_A32_SHIFT | 0xC0 << SK_R32_SHIFT | 0xC0 << SK_G32_SHIFT | 0xC0 << SK_B32_SHIFT, // Semitransparent gray
         };
         const uint32_t lineColor = lineColors[index];
         const uint32_t antiColor = antiColors[index];

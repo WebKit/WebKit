@@ -1,3 +1,16 @@
+2012-06-07  Hironori Bono  <hbono@chromium.org>
+
+        Use light gray for grammar markers on Windows and Linux
+        https://bugs.webkit.org/show_bug.cgi?id=88398
+
+        Reviewed by Ryosuke Niwa.
+
+        This change changes the color of grammar markers from dark gray to light gray
+        and rebaselines a couple of pixel tests affected by this change.
+
+        * platform/chromium-linux/editing/spelling/grammar-markers-expected.png:
+        * platform/chromium-win/editing/spelling/grammar-markers-expected.png:
+
 2012-06-06  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Element.getBoundingClientRect() and Element.getClientRects() return incorrect values in frames in a scaled page

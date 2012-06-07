@@ -1,3 +1,17 @@
+2012-06-07  Hironori Bono  <hbono@chromium.org>
+
+        Use light gray for grammar markers on Windows and Linux
+        https://bugs.webkit.org/show_bug.cgi?id=88398
+
+        Reviewed by Ryosuke Niwa.
+
+        This change changes the color of grammar markers from dark gray to light gray
+        and rebaselines a couple of pixel tests affected by this change.
+
+        No new tests because it changes the marker color of an existing test 'grammar-markers.html'.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp: Change dark gray to light gray.
+
 2012-06-07  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Platform] Introduce conversion from/to Deciaml to/from double
