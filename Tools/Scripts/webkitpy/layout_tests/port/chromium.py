@@ -85,6 +85,26 @@ class ChromiumPort(Port):
         'android': ['icecreamsandwich'],
     }
 
+    DEFAULT_BUILD_DIRECTORIES = ('out',)
+
+    @classmethod
+    def _static_build_path(cls, filesystem, build_directory, chromium_base, webkit_base, *comps):
+        if build_directory:
+            return filesystem.join(build_directory, *comps)
+
+        for directory in cls.DEFAULT_BUILD_DIRECTORIES:
+            base_dir = filesystem.join(chromium_base, directory)
+            if filesystem.exists(base_dir):
+                return filesystem.join(base_dir, *comps)
+
+        for directory in cls.DEFAULT_BUILD_DIRECTORIES:
+            base_dir = filesystem.join(webkit_base, directory)
+            if filesystem.exists(base_dir):
+                return filesystem.join(base_dir, *comps)
+
+        # We have to default to something, so pick the last one.
+        return filesystem.join(base_dir, *comps)
+
     @classmethod
     def _chromium_base_dir(cls, filesystem):
         module_path = filesystem.path_to_module(cls.__module__)
@@ -383,6 +403,9 @@ class ChromiumPort(Port):
     # These routines should only be called by other methods in this file
     # or any subclasses.
     #
+
+    def _build_path(self, *comps):
+        return self._static_build_path(self._filesystem, self.get_option('build_directory'), self.path_from_chromium_base(), self.path_from_webkit_base(), *comps)
 
     def _check_driver_build_up_to_date(self, configuration):
         if configuration in ('Debug', 'Release'):

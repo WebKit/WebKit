@@ -30,6 +30,7 @@ import unittest
 
 from webkitpy.layout_tests.port import chromium_mac
 from webkitpy.layout_tests.port import port_testcase
+from webkitpy.tool.mocktool import MockOptions
 
 
 class ChromiumMacPortTest(port_testcase.PortTestCase):
@@ -80,6 +81,30 @@ class ChromiumMacPortTest(port_testcase.PortTestCase):
 
     def test_operating_system(self):
         self.assertEqual('mac', self.make_port().operating_system())
+
+    def test_build_path(self):
+        # Test that optional paths are used regardless of whether they exist.
+        options = MockOptions(configuration='Release', build_directory='/foo')
+        self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/out'], '/foo')
+
+        # Test that optional relative paths are returned unmodified.
+        options = MockOptions(configuration='Release', build_directory='foo')
+        self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/out'], 'foo')
+
+        # Test that we look in a chromium directory before the webkit directory.
+        options = MockOptions(configuration='Release', build_directory=None)
+        self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/out', '/mock-checkout/out'], '/mock-checkout/Source/WebKit/chromium/out')
+
+        # Test that we prefer the legacy dir over the new dir.
+        options = MockOptions(configuration='Release', build_directory=None)
+        self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/xcodebuild', '/mock-checkout/Source/WebKit/chromium/out'], '/mock-checkout/Source/WebKit/chromium/xcodebuild')
+
+    def test_driver_name_option(self):
+        self.assertTrue(self.make_port()._path_to_driver().endswith('DumpRenderTree'))
+        self.assertTrue(self.make_port(options=MockOptions(driver_name='OtherDriver'))._path_to_driver().endswith('OtherDriver'))
+
+    def test_path_to_image_diff(self):
+        self.assertEquals(self.make_port()._path_to_image_diff(), '/mock-checkout/out/Release/ImageDiff')
 
 
 if __name__ == '__main__':

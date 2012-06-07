@@ -252,12 +252,6 @@ class ChromiumPortTest(port_testcase.PortTestCase):
             self.default_configuration_called = True
             return 'default'
 
-    def test_path_to_image_diff(self):
-        # FIXME: These don't need to use endswith now that the port uses a MockFileSystem.
-        self.assertTrue(ChromiumPortTest.TestLinuxPort()._path_to_image_diff().endswith('/out/default/ImageDiff'))
-        self.assertTrue(ChromiumPortTest.TestMacPort()._path_to_image_diff().endswith('/xcodebuild/default/ImageDiff'))
-        self.assertTrue(ChromiumPortTest.TestWinPort()._path_to_image_diff().endswith('/default/ImageDiff.exe'))
-
     def test_default_configuration(self):
         mock_options = MockOptions()
         port = ChromiumPortTest.TestLinuxPort(options=mock_options)
@@ -344,16 +338,6 @@ class ChromiumPortTest(port_testcase.PortTestCase):
         port._options.additional_expectations = [additional_expectations_path]
         self.assertEquals(port.test_expectations_overrides(),
                           SKIA_OVERRIDES + ADDITIONAL_EXPECTATIONS)
-
-    def test_driver_name_option(self):
-        self.assertTrue(ChromiumPortTest.TestLinuxPort()._path_to_driver().endswith('/out/default/DumpRenderTree'))
-        self.assertTrue(ChromiumPortTest.TestMacPort()._path_to_driver().endswith('/xcodebuild/default/DumpRenderTree.app/Contents/MacOS/DumpRenderTree'))
-        self.assertTrue(ChromiumPortTest.TestWinPort()._path_to_driver().endswith('/default/DumpRenderTree.exe'))
-
-        options = MockOptions(driver_name='OtherDriver')
-        self.assertTrue(ChromiumPortTest.TestLinuxPort(options)._path_to_driver().endswith('/out/default/OtherDriver'))
-        self.assertTrue(ChromiumPortTest.TestMacPort(options)._path_to_driver().endswith('/xcodebuild/default/OtherDriver.app/Contents/MacOS/OtherDriver'))
-        self.assertTrue(ChromiumPortTest.TestWinPort(options)._path_to_driver().endswith('/default/OtherDriver.exe'))
 
 
 class ChromiumPortLoggingTest(logtesting.LoggingTestCase):

@@ -66,6 +66,8 @@ class ChromiumWinPort(chromium.ChromiumPort):
         ],
     }
 
+    DEFAULT_BUILD_DIRECTORIES = ('build', 'out')
+
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         if port_name.endswith('-win'):
@@ -128,14 +130,6 @@ class ChromiumWinPort(chromium.ChromiumPort):
     #
     # PROTECTED ROUTINES
     #
-    def _build_path(self, *comps):
-        if self.get_option('build_directory'):
-            return self._filesystem.join(self.get_option('build_directory'), *comps)
-
-        p = self.path_from_chromium_base('build', *comps)
-        if self._filesystem.exists(p):
-            return p
-        return self._filesystem.join(self.path_from_webkit_base(), 'Source', 'WebKit', 'chromium', 'build', *comps)
 
     def _uses_apache(self):
         return False

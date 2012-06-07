@@ -333,6 +333,13 @@ class PortTestCase(unittest.TestCase):
              u'STDOUT: foo\ufffdbar\n'
              u'STDERR: foo\ufffdbar\n'))
 
+    def assert_build_path(self, options, dirs, expected_path):
+        port = self.make_port(options=options)
+        for directory in dirs:
+            port.host.filesystem.maybe_make_directory(directory)
+        self.assertEquals(port._build_path(), expected_path)
+
+
 # FIXME: This class and main() should be merged into test-webkitpy.
 class EnhancedTestLoader(unittest.TestLoader):
     integration_tests = False
