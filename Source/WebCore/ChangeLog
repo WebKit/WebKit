@@ -1,3 +1,23 @@
+2012-06-06  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r109729) [Form] Rendering of select/optgroup/option combination is too slow.
+        https://bugs.webkit.org/show_bug.cgi?id=88059
+
+        Reviewed by Kent Tamura.
+
+        This patch changes not to share RenderStyle object for option and
+        optgroup element regardless attributes.
+
+        When we tried to shared RenderStyle object, rendering performance was
+        good but we had issue in selected option and text transform, see
+        https://bugs.webkit.org/show_bug.cgi?id=88405 for details.
+
+        No new tests. This patch doesn't change behavior but rendering performance.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithElement): Changed to always
+        return false for option and optgroup.
+
 2012-06-06  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Optimize single-key get()

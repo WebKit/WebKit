@@ -1391,10 +1391,10 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     }
 #endif
 
-    if (element->hasTagName(optionTag))
-        return false;
-
-    if (element->hasTagName(optgroupTag) && m_element->disabled() != element->disabled())
+    // FIXME: We should share style for option and optgroup whenever possible.
+    // Before doing so, we need to resolve issues in HTMLSelectElement::recalcListItems
+    // and RenderMenuList::setText. See also https://bugs.webkit.org/show_bug.cgi?id=88405
+    if (element->hasTagName(optionTag) || element->hasTagName(optgroupTag))
         return false;
 
     bool isControl = element->isFormControlElement();
