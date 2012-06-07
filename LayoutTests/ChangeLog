@@ -1,3 +1,15 @@
+2012-06-07  Elliot Poger  <epoger@chromium.org>
+
+        Part 1 of rebaselines for http://crbug.com/131189
+
+        Unreviewed rebaselining.
+
+        * css1/basic/class_as_selector-expected.txt: Added.
+        * css1/basic/containment-expected.txt: Added.
+        ...
+        * platform/gtk/css3/selectors3/xml/css3-modsel-74-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-74b-expected.txt: Removed.
+
 2012-06-07  Mike Reed  <reed@google.com>
 
         clean up suppressions around two-point-radial-gradient in skia (fix will come later)
