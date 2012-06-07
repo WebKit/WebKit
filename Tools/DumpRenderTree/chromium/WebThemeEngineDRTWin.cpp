@@ -51,7 +51,7 @@ static const int dfcsNormal = 0x0000;
 static SkIRect webRectToSkIRect(const WebRect& webRect)
 {
     SkIRect irect;
-    irect.set(webRect.x, webRect.y, webRect.x + webRect.width, webRect.y + webRect.height);
+    irect.set(webRect.x, webRect.y, webRect.x + webRect.width - 1, webRect.y + webRect.height - 1);
     return irect;
 }
 
