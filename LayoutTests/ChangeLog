@@ -1,3 +1,161 @@
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaseline after r119617 part 5.
+
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/bugs/bug10140-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/bugs/bug101759-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/bugs/bug10216-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/bugs/bug1055-2-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/bugs/bug22122-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/core: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/core/captions3-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/core/columns-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/marvin: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1055-1-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug113235-3-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug11944-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug131020-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug137388-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug149275-1-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug16252-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug22019-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2947-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2997-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug32205-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug3977-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug43039-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug43854-1-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug46480-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug5797-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug650-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug96343-expected.png:
+        * platform/chromium-linux/tables/mozilla/collapsing_borders/bug41262-3-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/borders-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/captions-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/col_widths_auto_fix-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/col_widths_fix_fixPer-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/row_span-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-column-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-column-group-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-row-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_simple-table-row-group-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_table_bgcolor_name-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_table_bgcolor_rgb-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_td_height-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_td_nowrap-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_th_height-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/x_th_nowrap-expected.png:
+        * platform/chromium-linux/tables/mozilla/other/nestedTables-expected.png:
+        * platform/chromium-linux/tables/mozilla/other/test6-expected.png:
+        * platform/chromium-linux/tables/mozilla/other/wa_table_tr_align-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug10140-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug101759-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug10216-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug1055-2-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug14007-2-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug22122-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug32205-1-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug80762-2-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions1-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions3-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/columns-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/standards1-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/other/test4-expected.png:
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-expected.png:
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png:
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/bugs/bug10140-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/bugs/bug101759-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/bugs/bug10216-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/bugs/bug1055-2-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/bugs/bug106966-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/bugs/bug131020-3-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/bugs/bug19526-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/bugs/bug22122-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/bugs/bug85016-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/core: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/core/captions2-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/core/captions3-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/core/col_span2-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/core/columns-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/marvin: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/other: Added.
+        * platform/chromium-win-vista/tables/mozilla_expected_failures/other/empty_cells-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug131020-expected.png: Removed.
+        * platform/chromium-win/tables/mozilla/bugs/bug101674-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug10269-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1055-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug113235-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug137388-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug149275-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug22019-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug2997-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug38916-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug3977-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug43854-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug46480-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug50695-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug56405-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug625-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug7112-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug7112-2-expected.png:
+        * platform/chromium-win/tables/mozilla/core/borders-expected.png:
+        * platform/chromium-win/tables/mozilla/core/captions-expected.png:
+        * platform/chromium-win/tables/mozilla/core/col_span-expected.png:
+        * platform/chromium-win/tables/mozilla/core/row_span-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/backgr_simple-table-row-group-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/x_table_bgcolor_name-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/x_table_bgcolor_rgb-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/x_td_nowrap-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/x_th_nowrap-expected.png:
+        * platform/chromium-win/tables/mozilla/other/cell_widths-expected.png:
+        * platform/chromium-win/tables/mozilla/other/nestedTables-expected.png:
+        * platform/chromium-win/tables/mozilla/other/wa_table_thtd_rowspan-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug10140-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug101759-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug10216-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug1055-2-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug106966-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug131020-3-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug19526-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug22122-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/captions2-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/captions3-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/col_span2-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/core/columns-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/other/empty_cells-expected.png:
+
 2012-06-06  Filip Pizlo  <fpizlo@apple.com>
 
         DFG arguments access slow path should not crash if the arguments haven't been created
