@@ -1,3 +1,26 @@
+2012-06-07  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Incorrect data retrieved in calls to get selection data in client->textWillBeReplaced from CharacterData::setDataAndUpdate
+        https://bugs.webkit.org/show_bug.cgi?id=66120
+
+        Reviewed by Ryosuke Niwa.
+
+        Since FrameSelection::textWillBeReplaced was called before replacing text, updated Selection became
+        temporarily invalid. The invalid selection was set to updateSelection(), so client will have
+        invalid selection.
+
+        This patch makes calling updateSelection() after updating selection.
+
+        No new tests, it's too hard to create a correct test cases in DRT.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setDataAndUpdate):
+        * editing/FrameSelection.cpp:
+        (WebCore::updatePositionAfterAdoptingTextReplacement):
+        (WebCore::FrameSelection::textWasReplaced):
+        * editing/FrameSelection.h:
+        (FrameSelection):
+
 2012-06-07  Li Yin  <li.yin@intel.com>
 
         FileAPI: If type consists of non-ASCII characters in Blob constructor, it should throw a SyntaxError.
