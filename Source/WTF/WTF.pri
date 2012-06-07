@@ -27,7 +27,8 @@ haveQt(5) {
         LIBS += -licucore
     } else {
         contains(QT_CONFIG,icu) {
-            LIBS += -licui18n -licuuc -licudata
+            win32: LIBS += -licuin -licuuc -licudt
+            else: LIBS += -licui18n -licuuc -licudata
         } else {
             error("To build QtWebKit with Qt 5 you need ICU")
         }
