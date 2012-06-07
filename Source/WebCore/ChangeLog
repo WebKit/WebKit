@@ -1,3 +1,42 @@
+2012-06-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Cache RenderLayer::isRootLayer for better performance
+        https://bugs.webkit.org/show_bug.cgi?id=88570
+
+        Reviewed by Ojan Vafai.
+
+        Caching covered by existing tests.
+
+        RenderLayer::isRootLayer()'s answer will be the same during the RenderLayer's
+        lifetime as a RenderLayer is tied to a RenderBoxModelObject. This change caches
+        isRootLayer value in the constructor.
+
+        On http://dglazkov.github.com/performance-tests/biggrid.html with a 100,000 rows
+        by 100 columns table, it saves about 10% on the paint time during scrolling on
+        my machine (going from 50ms to 45ms). It would expect all code paths to see some
+        improvement as checking renderer()->isRenderView() was pretty common.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        Added code to cache the result of renderer()->isRenderView() here.
+
+        (WebCore::RenderLayer::stackingContext):
+        (WebCore::isPositionedContainer):
+        (WebCore::isFixedPositionedContainer):
+        (WebCore::RenderLayer::enclosingTransformedAncestor):
+        (WebCore::RenderLayer::clippingRootForPainting):
+        (WebCore::shouldSuppressPaintingLayer):
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::RenderLayer::intersectsDamageRect):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::isStackingContext):
+        Updated all the call sites to use isRootLayer() instead of renderer()->isRenderView()
+        as it is faster.
+
+        (WebCore::RenderLayer::isRootLayer):
+        Added our caching here. Also made m_canSkipRepaintRectsUpdateOnScroll to follow
+        m_isRootLayer example.
+
 2012-06-07  Takashi Sakamoto  <tasak@google.com>
 
         Incorrect border rendering when border radius is above 2px.

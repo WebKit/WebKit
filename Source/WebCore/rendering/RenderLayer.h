@@ -368,8 +368,8 @@ public:
     bool inResizeMode() const { return m_inResizeMode; }
     void setInResizeMode(bool b) { m_inResizeMode = b; }
 
-    bool isRootLayer() const { return renderer()->isRenderView(); }
-    
+    bool isRootLayer() const { return m_isRootLayer; }
+
 #if USE(ACCELERATED_COMPOSITING)
     RenderLayerCompositor* compositor() const;
     
@@ -646,7 +646,7 @@ private:
 
     void updateNormalFlowList();
 
-    bool isStackingContext(const RenderStyle* style) const { return !style->hasAutoZIndex() || renderer()->isRenderView(); }
+    bool isStackingContext(const RenderStyle* style) const { return !style->hasAutoZIndex() || isRootLayer(); }
     bool isDirtyStackingContext() const { return m_zOrderListsDirty && isStackingContext(); }
 
     void computeRepaintRects(LayoutPoint* offsetFromRoot = 0);
@@ -871,6 +871,8 @@ protected:
 
     bool m_isSelfPaintingLayer : 1;
 
+    const bool m_isRootLayer : 1;
+
     bool m_usedTransparency : 1; // Tracks whether we need to close a transparent layer, i.e., whether
                                  // we ended up painting this layer or any descendants (and therefore need to
                                  // blend).
@@ -900,7 +902,7 @@ protected:
     // This is an optimization added for <table>.
     // Currently cells do not need to update their repaint rectangles when scrolling. This also
     // saves a lot of time when scrolling on a table.
-    bool m_canSkipRepaintRectsUpdateOnScroll : 1;
+    const bool m_canSkipRepaintRectsUpdateOnScroll : 1;
 
 #if ENABLE(CSS_FILTERS)
     bool m_hasFilterInfo : 1;
