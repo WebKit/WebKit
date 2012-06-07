@@ -200,7 +200,7 @@ private:
 bool nodeHasRole(Node*, const String& role);
 
 #if !HAVE(ACCESSIBILITY)
-inline AXObjectCache::AXObjectCache(const Document*) : m_document(0), m_notificationPostTimer(this, 0) { }
+inline AXObjectCache::AXObjectCache(const Document* doc) : m_document(const_cast<Document*>(doc)), m_notificationPostTimer(this, 0) { }
 inline AXObjectCache::~AXObjectCache() { }
 inline AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page*) { return 0; }
 inline AccessibilityObject* AXObjectCache::get(RenderObject*) { return 0; }

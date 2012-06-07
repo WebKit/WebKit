@@ -1,3 +1,16 @@
+2012-06-07  Peter Beverloo  <peter@chromium.org>
+
+        Initialize m_document in AXObjectCache's constructor for !HAVE(ACCESSIBILITY) builds
+        https://bugs.webkit.org/show_bug.cgi?id=88527
+
+        Reviewed by Adam Barth.
+
+        Initialize the m_document member with the passed on document in the stubbed
+        AXObjectCache constructor. No behavioral changes.
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::AXObjectCache):
+
 2012-06-05  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move deferral-related logic out of Canvas2DLayerChromium
