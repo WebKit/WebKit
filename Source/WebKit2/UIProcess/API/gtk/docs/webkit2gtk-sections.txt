@@ -709,6 +709,7 @@ webkit_web_inspector_get_type
 WebKitWebInspectorPrivate
 </SECTION>
 
+<SECTION>
 <FILE>WebKitURISchemeRequest</FILE>
 WebKitURISchemeRequest
 webkit_uri_scheme_request_get_scheme

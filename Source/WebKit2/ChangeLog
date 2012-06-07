@@ -1,3 +1,12 @@
+2012-06-07  Simon Pena  <spena@igalia.com>
+
+        [GTK] Fix broken build due to missing <SECTION> in GTK-DOC
+        https://bugs.webkit.org/show_bug.cgi?id=88525
+
+        Unreviewed gardening. Added missing <SECTION> tag.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+
 2012-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to register custom URI schemes to WebKit2 GTK+ API
