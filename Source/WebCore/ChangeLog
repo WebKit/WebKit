@@ -1,3 +1,13 @@
+2012-06-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Consider Ctrl+Shift+key as valid zoom change combinations
+        https://bugs.webkit.org/show_bug.cgi?id=88520
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+
 2012-06-07  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Allow WebPageCompositor to blend a transparent web page

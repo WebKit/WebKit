@@ -754,7 +754,6 @@ WebInspector.documentKeyDown = function(event)
     }
 
     var isValidZoomShortcut = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) &&
-        !event.shiftKey &&
         !event.altKey &&
         !InspectorFrontendHost.isStub;
     switch (event.keyCode) {
@@ -773,7 +772,8 @@ WebInspector.documentKeyDown = function(event)
             }
             break;
         case 48: // 0
-            if (isValidZoomShortcut) {
+            // Zoom reset shortcut does not allow "Shift" when handled by the browser.
+            if (isValidZoomShortcut && !event.shiftKey) {
                 WebInspector._resetZoom();
                 event.consume(true);
             }
