@@ -142,8 +142,9 @@ float MediaController::currentTime() const
 {
     if (m_mediaElements.isEmpty())
         return 0;
-    
-    return m_clock->currentTime();
+
+    // Some clocks may return times outside the range of [0..duration].
+    return max(0.0f, min(duration(), m_clock->currentTime()));
 }
 
 void MediaController::setCurrentTime(float time, ExceptionCode& code)

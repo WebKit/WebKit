@@ -1,3 +1,13 @@
+2012-06-07  Jer Noble  <jer.noble@apple.com>
+
+        sometimes all slaved videos don't start playing
+        https://bugs.webkit.org/show_bug.cgi?id=88553
+
+        Reviewed by Darin Adler.
+
+        * media/media-controller-time-clamp-expected.txt: Added.
+        * media/media-controller-time-clamp.html: Added.
+
 2012-06-07  Ojan Vafai  <ojan@chromium.org>
 
         Mark another test as slow on Chromium Windows.

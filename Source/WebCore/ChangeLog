@@ -1,3 +1,19 @@
+2012-06-07  Jer Noble  <jer.noble@apple.com>
+
+        sometimes all slaved videos don't start playing
+        https://bugs.webkit.org/show_bug.cgi?id=88553
+
+        Reviewed by Darin Adler.
+
+        Test: media/media-controller-time-clamp.html
+
+        Some PlatformClock classes will occasionally return times < 0 and will
+        always return times slightly > duration() when playback has ended.  Clamp
+        the value of currentTime() to the specified [0..duration] range.
+
+        * html/MediaController.cpp:
+        (MediaController::currentTime):
+
 2012-06-07  Simon Fraser  <simon.fraser@apple.com>
 
         Optimize FrameView::scrollXForFixedPosition() / scrollYForFixedPosition()
