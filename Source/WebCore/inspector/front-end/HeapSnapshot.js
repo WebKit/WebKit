@@ -508,7 +508,8 @@ WebInspector.HeapSnapshotNode.prototype = {
 
     retainedSize: function()
     {
-        return this._snapshot._retainedSizes[this.nodeIndex / this._snapshot._nodeFieldCount];
+        var snapshot = this._snapshot;
+        return snapshot._nodes[this.nodeIndex + snapshot._nodeRetainedSizeOffset];
     },
 
     retainers: function()
@@ -1277,16 +1278,19 @@ WebInspector.HeapSnapshot.prototype = {
         var nodeSelfSizeOffset = this._nodeSelfSizeOffset;
         var nodeFieldCount = this._nodeFieldCount;
         var dominatorsTree = this._dominatorsTree;
-        var retainedSizes = this._retainedSizes = new Uint32Array(nodeCount);
-        var rootNodeOrdinal = this._rootNodeIndex / nodeFieldCount;
+        // Reuse now unused edge_count field to store retained size.
+        var nodeRetainedSizeOffset = this._nodeRetainedSizeOffset = this._nodeEdgeCountOffset;
+        delete this._nodeEdgeCountOffset;
 
-        retainedSizes[rootNodeOrdinal] = nodes[this._rootNodeIndex + nodeSelfSizeOffset];
-        // Propagate retained sizes for each node excluding root, as it refers to self.
+        for (var nodeIndex = 0, l = nodes.length; nodeIndex < l; nodeIndex += nodeFieldCount)
+            nodes[nodeIndex + nodeRetainedSizeOffset] = nodes[nodeIndex + nodeSelfSizeOffset];
+
+        // Propagate retained sizes for each node excluding root.
         for (var postOrderIndex = 0; postOrderIndex < nodeCount - 1; ++postOrderIndex) {
             var nodeOrdinal = postOrderIndex2NodeOrdinal[postOrderIndex];
-            var dominatorOrdinal = dominatorsTree[nodeOrdinal];
-            retainedSizes[nodeOrdinal] += nodes[nodeOrdinal * nodeFieldCount + nodeSelfSizeOffset];
-            retainedSizes[dominatorOrdinal] += retainedSizes[nodeOrdinal];
+            var nodeIndex = nodeOrdinal * nodeFieldCount;
+            var dominatorIndex = dominatorsTree[nodeOrdinal] * nodeFieldCount;
+            nodes[dominatorIndex + nodeRetainedSizeOffset] += nodes[nodeIndex + nodeRetainedSizeOffset];
         }
     },
 
