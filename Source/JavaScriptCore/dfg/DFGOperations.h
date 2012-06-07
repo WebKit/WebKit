@@ -77,6 +77,7 @@ typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EPP)(ExecState*, void*, vo
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EPS)(ExecState*, void*, size_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ESS)(ExecState*, size_t, size_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EZ)(ExecState*, int32_t);
+typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EZIcfZ)(ExecState*, int32_t, InlineCallFrame*, int32_t);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EZZ)(ExecState*, int32_t, int32_t);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_E)(ExecState*);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_EC)(ExecState*, JSCell*);
@@ -165,6 +166,7 @@ void DFG_OPERATION operationTearOffActivation(ExecState*, JSCell*, int32_t unmod
 void DFG_OPERATION operationTearOffArguments(ExecState*, JSCell*);
 void DFG_OPERATION operationTearOffInlinedArguments(ExecState*, JSCell*, InlineCallFrame*);
 EncodedJSValue DFG_OPERATION operationGetArgumentsLength(ExecState*, int32_t);
+    EncodedJSValue DFG_OPERATION operationGetInlinedArgumentByVal(ExecState*, int32_t, InlineCallFrame*, int32_t);
 EncodedJSValue DFG_OPERATION operationGetArgumentByVal(ExecState*, int32_t, int32_t);
 JSCell* DFG_OPERATION operationNewFunction(ExecState*, JSCell*);
 JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState*, JSCell*);

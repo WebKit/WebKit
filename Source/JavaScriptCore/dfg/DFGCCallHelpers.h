@@ -216,6 +216,15 @@ public:
         addCallArgument(arg4);
     }
 
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, TrustedImmPtr arg2, GPRReg arg3)
+    {
+        resetCallArguments();
+        addCallArgument(GPRInfo::callFrameRegister);
+        addCallArgument(arg1);
+        addCallArgument(arg2);
+        addCallArgument(arg3);
+    }
+
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, TrustedImmPtr arg4)
     {
         resetCallArguments();
@@ -547,6 +556,14 @@ public:
     }
 
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, TrustedImm32 arg2, GPRReg arg3)
+    {
+        move(arg3, GPRInfo::argumentGPR3);
+        move(arg1, GPRInfo::argumentGPR1);
+        move(arg2, GPRInfo::argumentGPR2);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, TrustedImmPtr arg2, GPRReg arg3)
     {
         move(arg3, GPRInfo::argumentGPR3);
         move(arg1, GPRInfo::argumentGPR1);

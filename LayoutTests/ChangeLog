@@ -1,3 +1,21 @@
+2012-06-06  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG arguments access slow path should not crash if the arguments haven't been created
+        https://bugs.webkit.org/show_bug.cgi?id=88471
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/dfg-arguments-out-of-bounds-expected.txt: Added.
+        * fast/js/dfg-arguments-out-of-bounds.html: Added.
+        * fast/js/dfg-inline-arguments-out-of-bounds-expected.txt: Added.
+        * fast/js/dfg-inline-arguments-out-of-bounds.html: Added.
+        * fast/js/script-tests/dfg-arguments-out-of-bounds.js: Added.
+        (foo.bar):
+        (foo):
+        * fast/js/script-tests/dfg-inline-arguments-out-of-bounds.js: Added.
+        (foo):
+        (bar):
+
 2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaseline after r119617 part 4.

@@ -1294,6 +1294,11 @@ public:
         m_jit.setupArgumentsWithExecState(TrustedImm32(arg1), arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(J_DFGOperation_EZIcfZ operation, GPRReg result, int32_t arg1, InlineCallFrame* inlineCallFrame, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImm32(arg1), TrustedImmPtr(inlineCallFrame), arg2);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(C_DFGOperation_E operation, GPRReg result)
     {
         m_jit.setupArgumentsExecState();
@@ -1545,6 +1550,11 @@ public:
     JITCompiler::Call callOperation(J_DFGOperation_EZ operation, GPRReg resultTag, GPRReg resultPayload, int32_t arg1)
     {
         m_jit.setupArgumentsWithExecState(TrustedImm32(arg1));
+        return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
+    }
+    JITCompiler::Call callOperation(J_DFGOperation_EZIcfZ operation, GPRReg resultTag, GPRReg resultPayload, int32_t arg1, InlineCallFrame* inlineCallFrame, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImm32(arg1), TrustedImmPtr(inlineCallFrame), arg2);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EZZ operation, GPRReg resultTag, GPRReg resultPayload, int32_t arg1, GPRReg arg2)

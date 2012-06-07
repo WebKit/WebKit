@@ -4038,11 +4038,20 @@ void SpeculativeJIT::compile(Node& node)
                 baseOffset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
             resultPayloadGPR);
         
-        addSlowPathGenerator(
-            slowPathCall(
-                slowPath, this, operationGetArgumentByVal,
-                JSValueRegs(resultTagGPR, resultPayloadGPR),
-                m_jit.argumentsRegisterFor(node.codeOrigin), indexGPR));
+        if (node.codeOrigin.inlineCallFrame) {
+            addSlowPathGenerator(
+                slowPathCall(
+                    slowPath, this, operationGetInlinedArgumentByVal,
+                    JSValueRegs(resultTagGPR, resultPayloadGPR),
+                    m_jit.argumentsRegisterFor(node.codeOrigin),
+                    node.codeOrigin.inlineCallFrame, indexGPR));
+        } else {
+            addSlowPathGenerator(
+                slowPathCall(
+                    slowPath, this, operationGetArgumentByVal,
+                    JSValueRegs(resultTagGPR, resultPayloadGPR),
+                    m_jit.argumentsRegisterFor(node.codeOrigin), indexGPR));
+        }
         
         jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex);
         break;

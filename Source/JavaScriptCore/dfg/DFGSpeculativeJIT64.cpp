@@ -4027,11 +4027,20 @@ void SpeculativeJIT::compile(Node& node)
                   : 0) + CallFrame::argumentOffsetIncludingThis(0)) * sizeof(Register)),
             resultGPR);
         
-        addSlowPathGenerator(
-            slowPathCall(
-                slowPath, this, operationGetArgumentByVal, resultGPR, 
-                m_jit.argumentsRegisterFor(node.codeOrigin),
-                indexGPR));
+        if (node.codeOrigin.inlineCallFrame) {
+            addSlowPathGenerator(
+                slowPathCall(
+                    slowPath, this, operationGetInlinedArgumentByVal, resultGPR, 
+                    m_jit.argumentsRegisterFor(node.codeOrigin),
+                    node.codeOrigin.inlineCallFrame,
+                    indexGPR));
+        } else {
+            addSlowPathGenerator(
+                slowPathCall(
+                    slowPath, this, operationGetArgumentByVal, resultGPR, 
+                    m_jit.argumentsRegisterFor(node.codeOrigin),
+                    indexGPR));
+        }
         
         jsValueResult(resultGPR, m_compileIndex);
         break;

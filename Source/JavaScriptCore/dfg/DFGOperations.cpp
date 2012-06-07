@@ -1096,6 +1096,8 @@ void DFG_OPERATION operationTearOffInlinedArguments(
 
 EncodedJSValue DFG_OPERATION operationGetArgumentsLength(ExecState* exec, int32_t argumentsRegister)
 {
+    // Here we can assume that the argumernts were created. Because otherwise the JIT code would
+    // have not made this call.
     Identifier ident(&exec->globalData(), "length");
     JSValue baseValue = exec->uncheckedR(argumentsRegister).jsValue();
     PropertySlot slot(baseValue);
@@ -1104,8 +1106,29 @@ EncodedJSValue DFG_OPERATION operationGetArgumentsLength(ExecState* exec, int32_
 
 EncodedJSValue DFG_OPERATION operationGetArgumentByVal(ExecState* exec, int32_t argumentsRegister, int32_t index)
 {
-    return JSValue::encode(
-        exec->uncheckedR(argumentsRegister).jsValue().get(exec, index));
+    JSValue argumentsValue = exec->uncheckedR(argumentsRegister).jsValue();
+    
+    // If there are no arguments, and we're accessing out of bounds, then we have to create the
+    // arguments in case someone has installed a getter on a numeric property.
+    if (!argumentsValue)
+        exec->uncheckedR(argumentsRegister) = argumentsValue = Arguments::create(exec->globalData(), exec);
+    
+    return JSValue::encode(argumentsValue.get(exec, index));
+}
+
+EncodedJSValue DFG_OPERATION operationGetInlinedArgumentByVal(
+    ExecState* exec, int32_t argumentsRegister, InlineCallFrame* inlineCallFrame, int32_t index)
+{
+    JSValue argumentsValue = exec->uncheckedR(argumentsRegister).jsValue();
+    
+    // If there are no arguments, and we're accessing out of bounds, then we have to create the
+    // arguments in case someone has installed a getter on a numeric property.
+    if (!argumentsValue) {
+        exec->uncheckedR(argumentsRegister) = argumentsValue =
+            Arguments::create(exec->globalData(), exec, inlineCallFrame);
+    }
+    
+    return JSValue::encode(argumentsValue.get(exec, index));
 }
 
 JSCell* DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)
