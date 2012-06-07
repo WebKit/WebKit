@@ -1,3 +1,31 @@
+2012-06-07  Dirk Pranke  <dpranke@chromium.org>
+
+        webkit-patch rebaseline-expectations should only rebaseline the appropriate suffixes for the failure in question
+        https://bugs.webkit.org/show_bug.cgi?id=88581
+
+        Reviewed by Ojan Vafai.
+
+        webkit-paptch rebaseline-expectations was ignoring what the
+        expected results for a test were and pulling down all the result
+        files from a bot. This could lead to us pulling down old,
+        incorrect .txt or .png files. With this patch we will now only
+        pull down expectations of the appropriate file types (so an
+        IMAGE failure will only pull the png and not the txt file).
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (has_pixel_failures):
+        (suffixes_for_expectations):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (FunctionsTest.test_suffixes_for_expectations):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractRebaseliningCommand.__init__):
+        (RebaselineExpectations._is_supported_port):
+        (RebaselineExpectations._update_expectations_file):
+        (RebaselineExpectations._tests_to_rebaseline):
+        (RebaselineExpectations._rebaseline_port):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_overrides_are_included_correctly):
+
 2012-06-07  Ojan Vafai  <ojan@chromium.org>
 
         Fix recent null pointer error regression in the flakiness dashboard

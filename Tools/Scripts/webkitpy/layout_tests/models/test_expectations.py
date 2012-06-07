@@ -85,6 +85,21 @@ def has_pixel_failures(actual_results):
     return IMAGE in actual_results or IMAGE_PLUS_TEXT in actual_results
 
 
+# FIXME: Perhas these two routines should be part of the Port instead?
+BASELINE_SUFFIX_LIST = ('png', 'wav', 'txt')
+
+
+def suffixes_for_expectations(expectations):
+    suffixes = set()
+    if expectations.intersection(set([TEXT, IMAGE_PLUS_TEXT, FAIL])):
+        suffixes.add('txt')
+    if expectations.intersection(set([IMAGE, IMAGE_PLUS_TEXT, FAIL])):
+        suffixes.add('png')
+    if AUDIO in expectations:
+        suffixes.add('wav')
+    return set(suffixes)
+
+
 # FIXME: This method is no longer used here in this module. Remove remaining callsite in manager.py and this method.
 def strip_comments(line):
     """Strips comments from a line and return None if the line is empty

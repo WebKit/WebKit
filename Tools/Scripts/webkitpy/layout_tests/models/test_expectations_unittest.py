@@ -86,6 +86,15 @@ class FunctionsTest(unittest.TestCase):
         self.assertEquals(remove_pixel_failures(set([PASS, IMAGE, CRASH])),
                           set([PASS, CRASH]))
 
+    def test_suffixes_for_expectations(self):
+        self.assertEquals(suffixes_for_expectations(set([TEXT])), set(['txt']))
+        self.assertEquals(suffixes_for_expectations(set([FAIL])), set(['txt', 'png']))
+        self.assertEquals(suffixes_for_expectations(set([IMAGE_PLUS_TEXT])), set(['txt', 'png']))
+        self.assertEquals(suffixes_for_expectations(set([IMAGE])), set(['png']))
+        self.assertEquals(suffixes_for_expectations(set([AUDIO])), set(['wav']))
+        self.assertEquals(suffixes_for_expectations(set([TEXT, FAIL, CRASH])), set(['txt', 'png']))
+        self.assertEquals(suffixes_for_expectations(set()), set())
+
 
 class Base(unittest.TestCase):
     # Note that all of these tests are written assuming the configuration
