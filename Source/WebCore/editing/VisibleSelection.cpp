@@ -451,6 +451,11 @@ void VisibleSelection::validate(TextGranularity granularity)
         // set these two positions to VisiblePosition deepEquivalent()s above)?
         m_start = m_start.downstream();
         m_end = m_end.upstream();
+
+        // FIXME: Position::downstream() or Position::upStream() might violate editing boundaries
+        // if an anchor node has a Shadow DOM. So we adjust selection to avoid crossing editing
+        // boundaries again. See https://bugs.webkit.org/show_bug.cgi?id=87463
+        adjustSelectionToAvoidCrossingEditingBoundaries();
     }
 }
 

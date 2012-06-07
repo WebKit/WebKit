@@ -1,3 +1,18 @@
+2012-06-07  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Delete a contenteditable element having a Shadow DOM causes a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=86345
+
+        Reviewed by Ryosuke Niwa.
+
+        In VisibleSelection::validate(), m_start.downstream() or m_end.upstream() might cross
+        editing boundaries. So we adjust selection after calling them again.
+
+        Test: editing/shadow/select-contenteditable-shadowhost.html
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::validate):
+
 2012-06-07  Vivek Galatage  <vivekgalatage@gmail.com>
 
         No new line at the end for SVGCSSPropertyNames.in causes compilation warning

@@ -1,3 +1,13 @@
+2012-06-07  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Delete a contenteditable element having a Shadow DOM causes a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=86345
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/shadow/select-contenteditable-shadowhost-expected.txt: Added.
+        * editing/shadow/select-contenteditable-shadowhost.html: Added.
+
 2012-06-07  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed rebaseline for r115582.
