@@ -1,5 +1,260 @@
 2012-06-06  Filip Pizlo  <fpizlo@apple.com>
 
+        PredictedType should be called SpeculatedType
+        https://bugs.webkit.org/show_bug.cgi?id=88477
+
+        Rubber stamped by Gavin Barraclough.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::shouldOptimizeNow):
+        (JSC::CodeBlock::dumpValueProfiles):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::valueProfilePredictionForBytecodeOffset):
+        * bytecode/LazyOperandValueProfile.cpp:
+        (JSC::LazyOperandValueProfileParser::prediction):
+        * bytecode/LazyOperandValueProfile.h:
+        (LazyOperandValueProfileParser):
+        * bytecode/PredictedType.cpp: Removed.
+        * bytecode/PredictedType.h: Removed.
+        * bytecode/SpeculatedType.cpp: Copied from Source/JavaScriptCore/bytecode/PredictedType.cpp.
+        (JSC::speculationToString):
+        (JSC::speculationToAbbreviatedString):
+        (JSC::speculationFromClassInfo):
+        (JSC::speculationFromStructure):
+        (JSC::speculationFromCell):
+        (JSC::speculationFromValue):
+        * bytecode/SpeculatedType.h: Copied from Source/JavaScriptCore/bytecode/PredictedType.h.
+        (JSC):
+        (JSC::isAnySpeculation):
+        (JSC::isCellSpeculation):
+        (JSC::isObjectSpeculation):
+        (JSC::isFinalObjectSpeculation):
+        (JSC::isFinalObjectOrOtherSpeculation):
+        (JSC::isFixedIndexedStorageObjectSpeculation):
+        (JSC::isStringSpeculation):
+        (JSC::isArraySpeculation):
+        (JSC::isFunctionSpeculation):
+        (JSC::isInt8ArraySpeculation):
+        (JSC::isInt16ArraySpeculation):
+        (JSC::isInt32ArraySpeculation):
+        (JSC::isUint8ArraySpeculation):
+        (JSC::isUint8ClampedArraySpeculation):
+        (JSC::isUint16ArraySpeculation):
+        (JSC::isUint32ArraySpeculation):
+        (JSC::isFloat32ArraySpeculation):
+        (JSC::isFloat64ArraySpeculation):
+        (JSC::isArgumentsSpeculation):
+        (JSC::isActionableIntMutableArraySpeculation):
+        (JSC::isActionableFloatMutableArraySpeculation):
+        (JSC::isActionableTypedMutableArraySpeculation):
+        (JSC::isActionableMutableArraySpeculation):
+        (JSC::isActionableArraySpeculation):
+        (JSC::isArrayOrOtherSpeculation):
+        (JSC::isMyArgumentsSpeculation):
+        (JSC::isInt32Speculation):
+        (JSC::isDoubleRealSpeculation):
+        (JSC::isDoubleSpeculation):
+        (JSC::isNumberSpeculation):
+        (JSC::isBooleanSpeculation):
+        (JSC::isOtherSpeculation):
+        (JSC::isEmptySpeculation):
+        (JSC::mergeSpeculations):
+        (JSC::mergeSpeculation):
+        * bytecode/StructureSet.h:
+        (JSC::StructureSet::speculationFromStructures):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::ValueProfileBase):
+        (JSC::ValueProfileBase::dump):
+        (JSC::ValueProfileBase::computeUpdatedPrediction):
+        (ValueProfileBase):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+        * dfg/DFGAbstractState.h:
+        (JSC::DFG::AbstractState::speculateInt32Unary):
+        (JSC::DFG::AbstractState::speculateNumberUnary):
+        (JSC::DFG::AbstractState::speculateBooleanUnary):
+        (JSC::DFG::AbstractState::speculateInt32Binary):
+        (JSC::DFG::AbstractState::speculateNumberBinary):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::filter):
+        (JSC::DFG::StructureAbstractValue::speculationFromStructures):
+        (JSC::DFG::AbstractValue::AbstractValue):
+        (JSC::DFG::AbstractValue::clear):
+        (JSC::DFG::AbstractValue::isClear):
+        (JSC::DFG::AbstractValue::makeTop):
+        (JSC::DFG::AbstractValue::clobberStructures):
+        (JSC::DFG::AbstractValue::isTop):
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::merge):
+        (JSC::DFG::AbstractValue::filter):
+        (JSC::DFG::AbstractValue::validateIgnoringValue):
+        (JSC::DFG::AbstractValue::validate):
+        (JSC::DFG::AbstractValue::checkConsistency):
+        (JSC::DFG::AbstractValue::dump):
+        (AbstractValue):
+        * dfg/DFGArgumentPosition.h:
+        (JSC::DFG::ArgumentPosition::ArgumentPosition):
+        (JSC::DFG::ArgumentPosition::mergeArgumentAwareness):
+        (JSC::DFG::ArgumentPosition::prediction):
+        (ArgumentPosition):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::injectLazyOperandSpeculation):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::getSpeculationWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::getSpeculation):
+        (InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::fixVariableAccessSpeculations):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getIndexedPropertyStorageLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::run):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixDoubleEdge):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::nameOfVariableAccessData):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::getJSConstantSpeculation):
+        (JSC::DFG::Graph::isPredictedNumerical):
+        (JSC::DFG::Graph::byValIsPure):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::getSpeculation):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::getHeapPrediction):
+        (JSC::DFG::Node::predictHeap):
+        (JSC::DFG::Node::prediction):
+        (JSC::DFG::Node::predict):
+        (JSC::DFG::Node::shouldSpeculateInteger):
+        (JSC::DFG::Node::shouldSpeculateDouble):
+        (JSC::DFG::Node::shouldSpeculateNumber):
+        (JSC::DFG::Node::shouldSpeculateBoolean):
+        (JSC::DFG::Node::shouldSpeculateFinalObject):
+        (JSC::DFG::Node::shouldSpeculateFinalObjectOrOther):
+        (JSC::DFG::Node::shouldSpeculateArray):
+        (JSC::DFG::Node::shouldSpeculateArguments):
+        (JSC::DFG::Node::shouldSpeculateInt8Array):
+        (JSC::DFG::Node::shouldSpeculateInt16Array):
+        (JSC::DFG::Node::shouldSpeculateInt32Array):
+        (JSC::DFG::Node::shouldSpeculateUint8Array):
+        (JSC::DFG::Node::shouldSpeculateUint8ClampedArray):
+        (JSC::DFG::Node::shouldSpeculateUint16Array):
+        (JSC::DFG::Node::shouldSpeculateUint32Array):
+        (JSC::DFG::Node::shouldSpeculateFloat32Array):
+        (JSC::DFG::Node::shouldSpeculateFloat64Array):
+        (JSC::DFG::Node::shouldSpeculateArrayOrOther):
+        (JSC::DFG::Node::shouldSpeculateObject):
+        (JSC::DFG::Node::shouldSpeculateCell):
+        (Node):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::setPrediction):
+        (JSC::DFG::PredictionPropagationPhase::mergePrediction):
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::fillStorage):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        (JSC::DFG::FPRTemporary::FPRTemporary):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleDoubleBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compileGetCharCodeAt):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileDoubleAsInt32):
+        (JSC::DFG::SpeculativeJIT::compileInt32ToDouble):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayLength):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArgumentsLength):
+        (JSC::DFG::SpeculativeJIT::compileRegExpExec):
+        * dfg/DFGSpeculativeJIT.h:
+        (DFG):
+        (JSC::DFG::ValueSource::forSpeculation):
+        (SpeculativeJIT):
+        (GPRTemporary):
+        (FPRTemporary):
+        (JSC::DFG::SpecDoubleOperand::SpecDoubleOperand):
+        (JSC::DFG::SpecDoubleOperand::~SpecDoubleOperand):
+        (JSC::DFG::SpecDoubleOperand::fpr):
+        (JSC::DFG::SpecCellOperand::SpecCellOperand):
+        (JSC::DFG::SpecCellOperand::~SpecCellOperand):
+        (JSC::DFG::SpecCellOperand::gpr):
+        (JSC::DFG::SpecBooleanOperand::SpecBooleanOperand):
+        (JSC::DFG::SpecBooleanOperand::~SpecBooleanOperand):
+        (JSC::DFG::SpecBooleanOperand::gpr):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpecDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpecCell):
+        (JSC::DFG::SpeculativeJIT::fillSpecBoolean):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileDoubleCompare):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpecDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpecCell):
+        (JSC::DFG::SpeculativeJIT::fillSpecBoolean):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileDoubleCompare):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::VariableAccessData):
+        (JSC::DFG::VariableAccessData::predict):
+        (JSC::DFG::VariableAccessData::nonUnifiedPrediction):
+        (JSC::DFG::VariableAccessData::prediction):
+        (JSC::DFG::VariableAccessData::argumentAwarePrediction):
+        (JSC::DFG::VariableAccessData::mergeArgumentAwarePrediction):
+        (JSC::DFG::VariableAccessData::shouldUseDoubleFormatAccordingToVote):
+        (JSC::DFG::VariableAccessData::makePredictionForDoubleFormat):
+        (VariableAccessData):
+
+2012-06-06  Filip Pizlo  <fpizlo@apple.com>
+
         Global object variable accesses should not require an extra load
         https://bugs.webkit.org/show_bug.cgi?id=88385
 

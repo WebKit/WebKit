@@ -26,7 +26,7 @@
 #ifndef StructureSet_h
 #define StructureSet_h
 
-#include "PredictedType.h"
+#include "SpeculatedType.h"
 #include "Structure.h"
 #include <stdio.h>
 #include <wtf/Vector.h>
@@ -121,12 +121,12 @@ public:
     
     Structure* last() const { return m_structures.last(); }
 
-    PredictedType predictionFromStructures() const
+    SpeculatedType speculationFromStructures() const
     {
-        PredictedType result = PredictNone;
+        SpeculatedType result = SpecNone;
         
         for (size_t i = 0; i < m_structures.size(); ++i)
-            mergePrediction(result, predictionFromStructure(m_structures[i]));
+            mergeSpeculation(result, speculationFromStructure(m_structures[i]));
         
         return result;
     }

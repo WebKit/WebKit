@@ -31,7 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "JSCell.h"
-#include "PredictedType.h"
+#include "SpeculatedType.h"
 #include "StructureSet.h"
 
 namespace JSC { namespace DFG {
@@ -225,9 +225,9 @@ public:
         m_structure = 0;
     }
     
-    void filter(PredictedType other)
+    void filter(SpeculatedType other)
     {
-        if (!(other & PredictCell)) {
+        if (!(other & SpecCell)) {
             clear();
             return;
         }
@@ -235,7 +235,7 @@ public:
         if (isClearOrTop())
             return;
 
-        if (!(predictionFromStructure(m_structure) & other))
+        if (!(speculationFromStructure(m_structure) & other))
             m_structure = 0;
     }
     
@@ -273,13 +273,13 @@ public:
         return at(0);
     }
     
-    PredictedType predictionFromStructures() const
+    SpeculatedType speculationFromStructures() const
     {
         if (isTop())
-            return PredictCell;
+            return SpecCell;
         if (isClear())
-            return PredictNone;
-        return predictionFromStructure(m_structure);
+            return SpecNone;
+        return speculationFromStructure(m_structure);
     }
     
     bool operator==(const StructureAbstractValue& other) const
@@ -309,13 +309,13 @@ private:
 
 struct AbstractValue {
     AbstractValue()
-        : m_type(PredictNone)
+        : m_type(SpecNone)
     {
     }
     
     void clear()
     {
-        m_type = PredictNone;
+        m_type = SpecNone;
         m_structure.clear();
         m_value = JSValue();
         checkConsistency();
@@ -323,7 +323,7 @@ struct AbstractValue {
     
     bool isClear() const
     {
-        bool result = m_type == PredictNone && m_structure.isClear();
+        bool result = m_type == SpecNone && m_structure.isClear();
         if (result)
             ASSERT(!m_value);
         return result;
@@ -331,7 +331,7 @@ struct AbstractValue {
     
     void makeTop()
     {
-        m_type = PredictTop;
+        m_type = SpecTop;
         m_structure.makeTop();
         m_value = JSValue();
         checkConsistency();
@@ -339,7 +339,7 @@ struct AbstractValue {
     
     void clobberStructures()
     {
-        if (m_type & PredictCell)
+        if (m_type & SpecCell)
             m_structure.makeTop();
         else
             ASSERT(m_structure.isClear());
@@ -353,7 +353,7 @@ struct AbstractValue {
     
     bool isTop() const
     {
-        return m_type == PredictTop && m_structure.isTop();
+        return m_type == SpecTop && m_structure.isTop();
     }
     
     bool valueIsTop() const
@@ -386,7 +386,7 @@ struct AbstractValue {
         } else
             m_structure.clear();
         
-        m_type = predictionFromValue(value);
+        m_type = speculationFromValue(value);
         m_value = value;
         
         checkConsistency();
@@ -397,15 +397,15 @@ struct AbstractValue {
         m_structure.clear();
         m_structure.add(structure);
         
-        m_type = predictionFromStructure(structure);
+        m_type = speculationFromStructure(structure);
         m_value = JSValue();
         
         checkConsistency();
     }
     
-    void set(PredictedType type)
+    void set(SpeculatedType type)
     {
-        if (type & PredictCell)
+        if (type & SpecCell)
             m_structure.makeTop();
         else
             m_structure.clear();
@@ -435,7 +435,7 @@ struct AbstractValue {
             *this = other;
             result = !other.isClear();
         } else {
-            result |= mergePrediction(m_type, other.m_type);
+            result |= mergeSpeculation(m_type, other.m_type);
             result |= m_structure.addAll(other.m_structure);
             if (m_value != other.m_value) {
                 result |= !!m_value;
@@ -447,11 +447,11 @@ struct AbstractValue {
         return result;
     }
     
-    void merge(PredictedType type)
+    void merge(SpeculatedType type)
     {
-        mergePrediction(m_type, type);
+        mergeSpeculation(m_type, type);
         
-        if (type & PredictCell)
+        if (type & SpecCell)
             m_structure.makeTop();
         m_value = JSValue();
 
@@ -460,13 +460,13 @@ struct AbstractValue {
     
     void filter(const StructureSet& other)
     {
-        m_type &= other.predictionFromStructures();
+        m_type &= other.speculationFromStructures();
         m_structure.filter(other);
         
         // It's possible that prior to the above two statements we had (Foo, TOP), where
-        // Foo is a PredictedType that is disjoint with the passed StructureSet. In that
+        // Foo is a SpeculatedType that is disjoint with the passed StructureSet. In that
         // case, we will now have (None, [someStructure]). In general, we need to make
-        // sure that new information gleaned from the PredictedType needs to be fed back
+        // sure that new information gleaned from the SpeculatedType needs to be fed back
         // into the information gleaned from the StructureSet.
         m_structure.filter(m_type);
         
@@ -476,9 +476,9 @@ struct AbstractValue {
         checkConsistency();
     }
     
-    void filter(PredictedType type)
+    void filter(SpeculatedType type)
     {
-        if (type == PredictTop)
+        if (type == SpecTop)
             return;
         m_type &= type;
         
@@ -499,11 +499,11 @@ struct AbstractValue {
         if (isTop())
             return true;
         
-        if (mergePredictions(m_type, predictionFromValue(value)) != m_type)
+        if (mergeSpeculations(m_type, speculationFromValue(value)) != m_type)
             return false;
         
         if (value.isEmpty()) {
-            ASSERT(m_type & PredictEmpty);
+            ASSERT(m_type & SpecEmpty);
             return true;
         }
         
@@ -511,7 +511,7 @@ struct AbstractValue {
             return true;
         
         if (!!value && value.isCell()) {
-            ASSERT(m_type & PredictCell);
+            ASSERT(m_type & SpecCell);
             return m_structure.contains(value.asCell()->structure());
         }
         
@@ -526,11 +526,11 @@ struct AbstractValue {
         if (!!m_value)
             return m_value == value;
         
-        if (mergePredictions(m_type, predictionFromValue(value)) != m_type)
+        if (mergeSpeculations(m_type, speculationFromValue(value)) != m_type)
             return false;
         
         if (value.isEmpty()) {
-            ASSERT(m_type & PredictEmpty);
+            ASSERT(m_type & SpecEmpty);
             return true;
         }
         
@@ -538,7 +538,7 @@ struct AbstractValue {
             return true;
         
         if (!!value && value.isCell()) {
-            ASSERT(m_type & PredictCell);
+            ASSERT(m_type & SpecCell);
             return m_structure.contains(value.asCell()->structure());
         }
         
@@ -547,14 +547,14 @@ struct AbstractValue {
     
     void checkConsistency() const
     {
-        if (!(m_type & PredictCell))
+        if (!(m_type & SpecCell))
             ASSERT(m_structure.isClear());
         
         if (isClear())
             ASSERT(!m_value);
         
         if (!!m_value)
-            ASSERT(mergePredictions(m_type, predictionFromValue(m_value)) == m_type);
+            ASSERT(mergeSpeculations(m_type, speculationFromValue(m_value)) == m_type);
         
         // Note that it's possible for a prediction like (Final, []). This really means that
         // the value is bottom and that any code that uses the value is unreachable. But
@@ -564,7 +564,7 @@ struct AbstractValue {
     
     void dump(FILE* out) const
     {
-        fprintf(out, "(%s, ", predictionToString(m_type));
+        fprintf(out, "(%s, ", speculationToString(m_type));
         m_structure.dump(out);
         if (!!m_value)
             fprintf(out, ", %s", m_value.description());
@@ -572,7 +572,7 @@ struct AbstractValue {
     }
 
     StructureAbstractValue m_structure;
-    PredictedType m_type;
+    SpeculatedType m_type;
     JSValue m_value;
 };
 

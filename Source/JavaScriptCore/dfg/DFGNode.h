@@ -39,7 +39,7 @@
 #include "DFGVariableAccessData.h"
 #include "JSValue.h"
 #include "Operands.h"
-#include "PredictedType.h"
+#include "SpeculatedType.h"
 #include "ValueProfile.h"
 
 namespace JSC { namespace DFG {
@@ -82,7 +82,7 @@ struct Node {
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
-        , m_prediction(PredictNone)
+        , m_prediction(SpecNone)
     {
         setOpAndDefaultFlags(op);
         ASSERT(!(m_flags & NodeHasVarArgs));
@@ -95,7 +95,7 @@ struct Node {
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm.m_value)
-        , m_prediction(PredictNone)
+        , m_prediction(SpecNone)
     {
         setOpAndDefaultFlags(op);
         ASSERT(!(m_flags & NodeHasVarArgs));
@@ -109,7 +109,7 @@ struct Node {
         , m_refCount(0)
         , m_opInfo(imm1.m_value)
         , m_opInfo2(safeCast<unsigned>(imm2.m_value))
-        , m_prediction(PredictNone)
+        , m_prediction(SpecNone)
     {
         setOpAndDefaultFlags(op);
         ASSERT(!(m_flags & NodeHasVarArgs));
@@ -123,7 +123,7 @@ struct Node {
         , m_refCount(0)
         , m_opInfo(imm1.m_value)
         , m_opInfo2(safeCast<unsigned>(imm2.m_value))
-        , m_prediction(PredictNone)
+        , m_prediction(SpecNone)
     {
         setOpAndDefaultFlags(op);
         ASSERT(m_flags & NodeHasVarArgs);
@@ -594,17 +594,17 @@ struct Node {
         }
     }
     
-    PredictedType getHeapPrediction()
+    SpeculatedType getHeapPrediction()
     {
         ASSERT(hasHeapPrediction());
-        return static_cast<PredictedType>(m_opInfo2);
+        return static_cast<SpeculatedType>(m_opInfo2);
     }
     
-    bool predictHeap(PredictedType prediction)
+    bool predictHeap(SpeculatedType prediction)
     {
         ASSERT(hasHeapPrediction());
         
-        return mergePrediction(m_opInfo2, prediction);
+        return mergeSpeculation(m_opInfo2, prediction);
     }
     
     bool hasFunctionCheckData()
@@ -777,114 +777,114 @@ struct Node {
         return children.numChildren();
     }
     
-    PredictedType prediction()
+    SpeculatedType prediction()
     {
         return m_prediction;
     }
     
-    bool predict(PredictedType prediction)
+    bool predict(SpeculatedType prediction)
     {
-        return mergePrediction(m_prediction, prediction);
+        return mergeSpeculation(m_prediction, prediction);
     }
     
     bool shouldSpeculateInteger()
     {
-        return isInt32Prediction(prediction());
+        return isInt32Speculation(prediction());
     }
     
     bool shouldSpeculateDouble()
     {
-        return isDoublePrediction(prediction());
+        return isDoubleSpeculation(prediction());
     }
     
     bool shouldSpeculateNumber()
     {
-        return isNumberPrediction(prediction());
+        return isNumberSpeculation(prediction());
     }
     
     bool shouldSpeculateBoolean()
     {
-        return isBooleanPrediction(prediction());
+        return isBooleanSpeculation(prediction());
     }
     
     bool shouldSpeculateFinalObject()
     {
-        return isFinalObjectPrediction(prediction());
+        return isFinalObjectSpeculation(prediction());
     }
     
     bool shouldSpeculateFinalObjectOrOther()
     {
-        return isFinalObjectOrOtherPrediction(prediction());
+        return isFinalObjectOrOtherSpeculation(prediction());
     }
     
     bool shouldSpeculateArray()
     {
-        return isArrayPrediction(prediction());
+        return isArraySpeculation(prediction());
     }
     
     bool shouldSpeculateArguments()
     {
-        return isArgumentsPrediction(prediction());
+        return isArgumentsSpeculation(prediction());
     }
     
     bool shouldSpeculateInt8Array()
     {
-        return isInt8ArrayPrediction(prediction());
+        return isInt8ArraySpeculation(prediction());
     }
     
     bool shouldSpeculateInt16Array()
     {
-        return isInt16ArrayPrediction(prediction());
+        return isInt16ArraySpeculation(prediction());
     }
     
     bool shouldSpeculateInt32Array()
     {
-        return isInt32ArrayPrediction(prediction());
+        return isInt32ArraySpeculation(prediction());
     }
     
     bool shouldSpeculateUint8Array()
     {
-        return isUint8ArrayPrediction(prediction());
+        return isUint8ArraySpeculation(prediction());
     }
 
     bool shouldSpeculateUint8ClampedArray()
     {
-        return isUint8ClampedArrayPrediction(prediction());
+        return isUint8ClampedArraySpeculation(prediction());
     }
     
     bool shouldSpeculateUint16Array()
     {
-        return isUint16ArrayPrediction(prediction());
+        return isUint16ArraySpeculation(prediction());
     }
     
     bool shouldSpeculateUint32Array()
     {
-        return isUint32ArrayPrediction(prediction());
+        return isUint32ArraySpeculation(prediction());
     }
     
     bool shouldSpeculateFloat32Array()
     {
-        return isFloat32ArrayPrediction(prediction());
+        return isFloat32ArraySpeculation(prediction());
     }
     
     bool shouldSpeculateFloat64Array()
     {
-        return isFloat64ArrayPrediction(prediction());
+        return isFloat64ArraySpeculation(prediction());
     }
     
     bool shouldSpeculateArrayOrOther()
     {
-        return isArrayOrOtherPrediction(prediction());
+        return isArrayOrOtherSpeculation(prediction());
     }
     
     bool shouldSpeculateObject()
     {
-        return isObjectPrediction(prediction());
+        return isObjectSpeculation(prediction());
     }
     
     bool shouldSpeculateCell()
     {
-        return isCellPrediction(prediction());
+        return isCellSpeculation(prediction());
     }
     
     static bool shouldSpeculateInteger(Node& op1, Node& op2)
@@ -942,7 +942,7 @@ private:
     uintptr_t m_opInfo;
     unsigned m_opInfo2;
     // The prediction ascribed to this node after propagation.
-    PredictedType m_prediction;
+    SpeculatedType m_prediction;
 };
 
 } } // namespace JSC::DFG

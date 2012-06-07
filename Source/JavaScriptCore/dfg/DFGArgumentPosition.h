@@ -28,14 +28,14 @@
 
 #include "DFGDoubleFormatState.h"
 #include "DFGVariableAccessData.h"
-#include "PredictedType.h"
+#include "SpeculatedType.h"
 
 namespace JSC { namespace DFG {
 
 class ArgumentPosition {
 public:
     ArgumentPosition()
-        : m_prediction(PredictNone)
+        : m_prediction(SpecNone)
         , m_doubleFormatState(EmptyDoubleFormatState)
     {
     }
@@ -49,7 +49,7 @@ public:
     {
         bool changed = false;
         for (unsigned i = 0; i < m_variables.size(); ++i) {
-            changed |= mergePrediction(m_prediction, m_variables[i]->argumentAwarePrediction());
+            changed |= mergeSpeculation(m_prediction, m_variables[i]->argumentAwarePrediction());
             changed |= mergeDoubleFormatState(m_doubleFormatState, m_variables[i]->doubleFormatState());
         }
         if (!changed)
@@ -62,7 +62,7 @@ public:
         return changed;
     }
     
-    PredictedType prediction() const { return m_prediction; }
+    SpeculatedType prediction() const { return m_prediction; }
     DoubleFormatState doubleFormatState() const { return m_doubleFormatState; }
     bool shouldUseDoubleFormat() const
     {
@@ -70,7 +70,7 @@ public:
     }
     
 private:
-    PredictedType m_prediction;
+    SpeculatedType m_prediction;
     DoubleFormatState m_doubleFormatState;
     
     Vector<VariableAccessData*, 2> m_variables;

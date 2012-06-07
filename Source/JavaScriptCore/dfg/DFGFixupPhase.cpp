@@ -74,13 +74,13 @@ private:
         
         switch (op) {
         case GetById: {
-            if (!isInt32Prediction(m_graph[m_compileIndex].prediction()))
+            if (!isInt32Speculation(m_graph[m_compileIndex].prediction()))
                 break;
             if (codeBlock()->identifier(node.identifierNumber()) != globalData().propertyNames->length)
                 break;
-            bool isArray = isArrayPrediction(m_graph[node.child1()].prediction());
-            bool isArguments = isArgumentsPrediction(m_graph[node.child1()].prediction());
-            bool isString = isStringPrediction(m_graph[node.child1()].prediction());
+            bool isArray = isArraySpeculation(m_graph[node.child1()].prediction());
+            bool isArguments = isArgumentsSpeculation(m_graph[node.child1()].prediction());
+            bool isString = isStringSpeculation(m_graph[node.child1()].prediction());
             bool isInt8Array = m_graph[node.child1()].shouldSpeculateInt8Array();
             bool isInt16Array = m_graph[node.child1()].shouldSpeculateInt16Array();
             bool isInt32Array = m_graph[node.child1()].shouldSpeculateInt32Array();
@@ -129,10 +129,10 @@ private:
             break;
         }
         case GetIndexedPropertyStorage: {
-            PredictedType basePrediction = m_graph[node.child2()].prediction();
-            if ((!(basePrediction & PredictInt32) && basePrediction)
+            SpeculatedType basePrediction = m_graph[node.child2()].prediction();
+            if ((!(basePrediction & SpecInt32) && basePrediction)
                 || m_graph[node.child1()].shouldSpeculateArguments()
-                || !isActionableArrayPrediction(m_graph[node.child1()].prediction())) {
+                || !isActionableArraySpeculation(m_graph[node.child1()].prediction())) {
                 node.setOpAndDefaultFlags(Nop);
                 m_graph.clearAndDerefChild1(node);
                 m_graph.clearAndDerefChild2(node);
@@ -284,7 +284,7 @@ private:
                 
                 Node newDivision = oldDivision;
                 newDivision.setRefCount(2);
-                newDivision.predict(PredictDouble);
+                newDivision.predict(SpecDouble);
                 NodeIndex newDivisionIndex = m_graph.size();
                 
                 oldDivision.setOp(DoubleAsInt32);
@@ -318,7 +318,7 @@ private:
                 break;
             if (!m_graph[node.child2()].shouldSpeculateInteger())
                 break;
-            if (isActionableIntMutableArrayPrediction(m_graph[node.child1()].prediction())) {
+            if (isActionableIntMutableArraySpeculation(m_graph[node.child1()].prediction())) {
                 if (m_graph[node.child3()].isConstant())
                     break;
                 if (m_graph[node.child3()].shouldSpeculateInteger())
@@ -326,7 +326,7 @@ private:
                 fixDoubleEdge(2);
                 break;
             }
-            if (isActionableFloatMutableArrayPrediction(m_graph[node.child1()].prediction())) {
+            if (isActionableFloatMutableArraySpeculation(m_graph[node.child1()].prediction())) {
                 fixDoubleEdge(2);
                 break;
             }
@@ -390,7 +390,7 @@ private:
         m_insertionSet.append(m_indexInBlock, resultIndex);
         
         Node& int32ToDouble = m_graph[resultIndex];
-        int32ToDouble.predict(PredictDouble);
+        int32ToDouble.predict(SpecDouble);
         int32ToDouble.ref();
     }
     

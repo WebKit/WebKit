@@ -2560,7 +2560,7 @@ bool CodeBlock::shouldOptimizeNow()
             profile->computeUpdatedPrediction();
             continue;
         }
-        if (profile->numberOfSamples() || profile->m_prediction != PredictNone)
+        if (profile->numberOfSamples() || profile->m_prediction != SpecNone)
             numberOfLiveNonArgumentValueProfiles++;
         profile->computeUpdatedPrediction();
     }
@@ -2614,7 +2614,7 @@ void CodeBlock::dumpValueProfiles()
             dataLog("   arg = %u: ", i);
         } else
             dataLog("   bc = %d: ", profile->m_bytecodeOffset);
-        if (!profile->numberOfSamples() && profile->m_prediction == PredictNone) {
+        if (!profile->numberOfSamples() && profile->m_prediction == SpecNone) {
             dataLog("<empty>\n");
             continue;
         }

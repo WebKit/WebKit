@@ -539,8 +539,8 @@ private:
             Node& node = m_graph[index];
             switch (node.op()) {
             case GetIndexedPropertyStorage: {
-                PredictedType basePrediction = m_graph[node.child2()].prediction();
-                bool nodeHasIntegerIndexPrediction = !(!(basePrediction & PredictInt32) && basePrediction);
+                SpeculatedType basePrediction = m_graph[node.child2()].prediction();
+                bool nodeHasIntegerIndexPrediction = !(!(basePrediction & SpecInt32) && basePrediction);
                 if (node.child1() == child1 && hasIntegerIndexPrediction == nodeHasIntegerIndexPrediction)
                     return index;
                 break;
@@ -557,7 +557,7 @@ private:
                 break;
                 
             case PutByVal:
-                if (isFixedIndexedStorageObjectPrediction(m_graph[node.child1()].prediction()) && m_graph.byValIsPure(node))
+                if (isFixedIndexedStorageObjectSpeculation(m_graph[node.child1()].prediction()) && m_graph.byValIsPure(node))
                     break;
                 return NoNode;
 
@@ -911,12 +911,12 @@ private:
                 } else {
                     if (variableAccessData->shouldUseDoubleFormat())
                         break;
-                    PredictedType prediction = variableAccessData->argumentAwarePrediction();
-                    if (isInt32Prediction(prediction))
+                    SpeculatedType prediction = variableAccessData->argumentAwarePrediction();
+                    if (isInt32Speculation(prediction))
                         break;
-                    if (isArrayPrediction(prediction))
+                    if (isArraySpeculation(prediction))
                         break;
-                    if (isBooleanPrediction(prediction))
+                    if (isBooleanSpeculation(prediction))
                         break;
                 }
             } else {
@@ -1020,8 +1020,8 @@ private:
             break;
                 
         case GetIndexedPropertyStorage: {
-            PredictedType basePrediction = m_graph[node.child2()].prediction();
-            bool nodeHasIntegerIndexPrediction = !(!(basePrediction & PredictInt32) && basePrediction);
+            SpeculatedType basePrediction = m_graph[node.child2()].prediction();
+            bool nodeHasIntegerIndexPrediction = !(!(basePrediction & SpecInt32) && basePrediction);
             setReplacement(getIndexedPropertyStorageLoadElimination(node.child1().index(), nodeHasIntegerIndexPrediction));
             break;
         }

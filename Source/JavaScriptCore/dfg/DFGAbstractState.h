@@ -223,22 +223,22 @@ private:
     void speculateInt32Unary(Node& node, bool forceCanExit = false)
     {
         AbstractValue& childValue = forNode(node.child1());
-        node.setCanExit(forceCanExit || !isInt32Prediction(childValue.m_type));
-        childValue.filter(PredictInt32);
+        node.setCanExit(forceCanExit || !isInt32Speculation(childValue.m_type));
+        childValue.filter(SpecInt32);
     }
     
     void speculateNumberUnary(Node& node)
     {
         AbstractValue& childValue = forNode(node.child1());
-        node.setCanExit(!isNumberPrediction(childValue.m_type));
-        childValue.filter(PredictNumber);
+        node.setCanExit(!isNumberSpeculation(childValue.m_type));
+        childValue.filter(SpecNumber);
     }
     
     void speculateBooleanUnary(Node& node)
     {
         AbstractValue& childValue = forNode(node.child1());
-        node.setCanExit(!isBooleanPrediction(childValue.m_type));
-        childValue.filter(PredictBoolean);
+        node.setCanExit(!isBooleanSpeculation(childValue.m_type));
+        childValue.filter(SpecBoolean);
     }
     
     void speculateInt32Binary(Node& node, bool forceCanExit = false)
@@ -247,10 +247,10 @@ private:
         AbstractValue& childValue2 = forNode(node.child2());
         node.setCanExit(
             forceCanExit
-            || !isInt32Prediction(childValue1.m_type)
-            || !isInt32Prediction(childValue2.m_type));
-        childValue1.filter(PredictInt32);
-        childValue2.filter(PredictInt32);
+            || !isInt32Speculation(childValue1.m_type)
+            || !isInt32Speculation(childValue2.m_type));
+        childValue1.filter(SpecInt32);
+        childValue2.filter(SpecInt32);
     }
     
     void speculateNumberBinary(Node& node)
@@ -258,10 +258,10 @@ private:
         AbstractValue& childValue1 = forNode(node.child1());
         AbstractValue& childValue2 = forNode(node.child2());
         node.setCanExit(
-            !isNumberPrediction(childValue1.m_type)
-            || !isNumberPrediction(childValue2.m_type));
-        childValue1.filter(PredictNumber);
-        childValue2.filter(PredictNumber);
+            !isNumberSpeculation(childValue1.m_type)
+            || !isNumberSpeculation(childValue2.m_type));
+        childValue1.filter(SpecNumber);
+        childValue2.filter(SpecNumber);
     }
     
     CodeBlock* m_codeBlock;

@@ -67,7 +67,7 @@ public:
                     
                 switch (node.op()) {
                 case CheckArgumentsNotCreated: {
-                    if (!isEmptyPrediction(
+                    if (!isEmptySpeculation(
                             state.variables().operand(
                                 m_graph.argumentsRegisterFor(node.codeOrigin)).m_type))
                         break;

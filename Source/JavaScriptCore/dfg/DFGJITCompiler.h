@@ -260,9 +260,9 @@ public:
     }
     
     // Helper methods to get predictions
-    PredictedType getPrediction(Node& node) { return node.prediction(); }
-    PredictedType getPrediction(NodeIndex nodeIndex) { return getPrediction(graph()[nodeIndex]); }
-    PredictedType getPrediction(Edge nodeUse) { return getPrediction(nodeUse.index()); }
+    SpeculatedType getSpeculation(Node& node) { return node.prediction(); }
+    SpeculatedType getSpeculation(NodeIndex nodeIndex) { return getSpeculation(graph()[nodeIndex]); }
+    SpeculatedType getSpeculation(Edge nodeUse) { return getSpeculation(nodeUse.index()); }
 
 #if USE(JSVALUE32_64)
     void* addressOfDoubleConstant(NodeIndex nodeIndex)

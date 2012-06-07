@@ -120,8 +120,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/Operands.h \
 	Source/JavaScriptCore/bytecode/PolymorphicPutByIdList.cpp \
 	Source/JavaScriptCore/bytecode/PolymorphicPutByIdList.h \
-	Source/JavaScriptCore/bytecode/PredictedType.cpp \
-	Source/JavaScriptCore/bytecode/PredictedType.h \
+	Source/JavaScriptCore/bytecode/SpeculatedType.cpp \
+	Source/JavaScriptCore/bytecode/SpeculatedType.h \
 	Source/JavaScriptCore/bytecode/PutByIdStatus.cpp \
 	Source/JavaScriptCore/bytecode/PutByIdStatus.h \
 	Source/JavaScriptCore/bytecode/PutKind.h \

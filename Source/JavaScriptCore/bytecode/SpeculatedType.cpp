@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "PredictedType.h"
+#include "SpeculatedType.h"
 
 #include "Arguments.h"
 #include "JSArray.h"
@@ -37,9 +37,9 @@
 
 namespace JSC {
 
-const char* predictionToString(PredictedType value)
+const char* speculationToString(SpeculatedType value)
 {
-    if (value == PredictNone)
+    if (value == SpecNone)
         return "None";
     
     static const int size = 256;
@@ -48,112 +48,112 @@ const char* predictionToString(PredictedType value)
     
     bool isTop = true;
     
-    if (value & PredictCellOther)
+    if (value & SpecCellOther)
         ptr.strcat("Othercell");
     else
         isTop = false;
     
-    if (value & PredictObjectOther)
+    if (value & SpecObjectOther)
         ptr.strcat("Otherobj");
     else
         isTop = false;
     
-    if (value & PredictFinalObject)
+    if (value & SpecFinalObject)
         ptr.strcat("Final");
     else
         isTop = false;
 
-    if (value & PredictArray)
+    if (value & SpecArray)
         ptr.strcat("Array");
     else
         isTop = false;
     
-    if (value & PredictInt8Array)
+    if (value & SpecInt8Array)
         ptr.strcat("Int8array");
     else
         isTop = false;
     
-    if (value & PredictInt16Array)
+    if (value & SpecInt16Array)
         ptr.strcat("Int16array");
     else
         isTop = false;
     
-    if (value & PredictInt32Array)
+    if (value & SpecInt32Array)
         ptr.strcat("Int32array");
     else
         isTop = false;
     
-    if (value & PredictUint8Array)
+    if (value & SpecUint8Array)
         ptr.strcat("Uint8array");
     else
         isTop = false;
 
-    if (value & PredictUint8ClampedArray)
+    if (value & SpecUint8ClampedArray)
         ptr.strcat("Uint8clampedarray");
     else
         isTop = false;
     
-    if (value & PredictUint16Array)
+    if (value & SpecUint16Array)
         ptr.strcat("Uint16array");
     else
         isTop = false;
     
-    if (value & PredictUint32Array)
+    if (value & SpecUint32Array)
         ptr.strcat("Uint32array");
     else
         isTop = false;
     
-    if (value & PredictFloat32Array)
+    if (value & SpecFloat32Array)
         ptr.strcat("Float32array");
     else
         isTop = false;
     
-    if (value & PredictFloat64Array)
+    if (value & SpecFloat64Array)
         ptr.strcat("Float64array");
     else
         isTop = false;
     
-    if (value & PredictFunction)
+    if (value & SpecFunction)
         ptr.strcat("Function");
     else
         isTop = false;
     
-    if (value & PredictMyArguments)
+    if (value & SpecMyArguments)
         ptr.strcat("Myarguments");
     else
         isTop = false;
     
-    if (value & PredictForeignArguments)
+    if (value & SpecForeignArguments)
         ptr.strcat("Foreignarguments");
     else
         isTop = false;
     
-    if (value & PredictString)
+    if (value & SpecString)
         ptr.strcat("String");
     else
         isTop = false;
     
-    if (value & PredictInt32)
+    if (value & SpecInt32)
         ptr.strcat("Int");
     else
         isTop = false;
     
-    if (value & PredictDoubleReal)
+    if (value & SpecDoubleReal)
         ptr.strcat("Doublereal");
     else
         isTop = false;
     
-    if (value & PredictDoubleNaN)
+    if (value & SpecDoubleNaN)
         ptr.strcat("Doublenan");
     else
         isTop = false;
     
-    if (value & PredictBoolean)
+    if (value & SpecBoolean)
         ptr.strcat("Bool");
     else
         isTop = false;
     
-    if (value & PredictOther)
+    if (value & SpecOther)
         ptr.strcat("Other");
     else
         isTop = false;
@@ -163,7 +163,7 @@ const char* predictionToString(PredictedType value)
         ptr.strcat("Top");
     }
     
-    if (value & PredictEmpty)
+    if (value & SpecEmpty)
         ptr.strcat("Empty");
     
     *ptr++ = 0;
@@ -171,130 +171,130 @@ const char* predictionToString(PredictedType value)
     return description;
 }
 
-const char* predictionToAbbreviatedString(PredictedType prediction)
+const char* speculationToAbbreviatedString(SpeculatedType prediction)
 {
-    if (isFinalObjectPrediction(prediction))
+    if (isFinalObjectSpeculation(prediction))
         return "<Final>";
-    if (isArrayPrediction(prediction))
+    if (isArraySpeculation(prediction))
         return "<Array>";
-    if (isStringPrediction(prediction))
+    if (isStringSpeculation(prediction))
         return "<String>";
-    if (isFunctionPrediction(prediction))
+    if (isFunctionSpeculation(prediction))
         return "<Function>";
-    if (isInt8ArrayPrediction(prediction))
+    if (isInt8ArraySpeculation(prediction))
         return "<Int8array>";
-    if (isInt16ArrayPrediction(prediction))
+    if (isInt16ArraySpeculation(prediction))
         return "<Int16array>";
-    if (isInt32ArrayPrediction(prediction))
+    if (isInt32ArraySpeculation(prediction))
         return "<Int32array>";
-    if (isUint8ArrayPrediction(prediction))
+    if (isUint8ArraySpeculation(prediction))
         return "<Uint8array>";
-    if (isUint16ArrayPrediction(prediction))
+    if (isUint16ArraySpeculation(prediction))
         return "<Uint16array>";
-    if (isUint32ArrayPrediction(prediction))
+    if (isUint32ArraySpeculation(prediction))
         return "<Uint32array>";
-    if (isFloat32ArrayPrediction(prediction))
+    if (isFloat32ArraySpeculation(prediction))
         return "<Float32array>";
-    if (isFloat64ArrayPrediction(prediction))
+    if (isFloat64ArraySpeculation(prediction))
         return "<Float64array>";
-    if (isMyArgumentsPrediction(prediction))
+    if (isMyArgumentsSpeculation(prediction))
         return "<Myarguments>";
-    if (isArgumentsPrediction(prediction))
+    if (isArgumentsSpeculation(prediction))
         return "<Arguments>";
-    if (isObjectPrediction(prediction))
+    if (isObjectSpeculation(prediction))
         return "<Object>";
-    if (isCellPrediction(prediction))
+    if (isCellSpeculation(prediction))
         return "<Cell>";
-    if (isInt32Prediction(prediction))
+    if (isInt32Speculation(prediction))
         return "<Int32>";
-    if (isDoublePrediction(prediction))
+    if (isDoubleSpeculation(prediction))
         return "<Double>";
-    if (isNumberPrediction(prediction))
+    if (isNumberSpeculation(prediction))
         return "<Number>";
-    if (isBooleanPrediction(prediction))
+    if (isBooleanSpeculation(prediction))
         return "<Boolean>";
-    if (isOtherPrediction(prediction))
+    if (isOtherSpeculation(prediction))
         return "<Other>";
     return "";
 }
 
-PredictedType predictionFromClassInfo(const ClassInfo* classInfo)
+SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
 {
     if (classInfo == &JSFinalObject::s_info)
-        return PredictFinalObject;
+        return SpecFinalObject;
     
     if (classInfo == &JSArray::s_info)
-        return PredictArray;
+        return SpecArray;
     
     if (classInfo == &JSString::s_info)
-        return PredictString;
+        return SpecString;
     
     if (classInfo == &Arguments::s_info)
-        return PredictArguments; // Cannot distinguish between MyArguments and ForeignArguments at this stage. That happens in the flow analysis.
+        return SpecArguments; // Cannot distinguish between MyArguments and ForeignArguments at this stage. That happens in the flow analysis.
     
     if (classInfo->isSubClassOf(&JSFunction::s_info))
-        return PredictFunction;
+        return SpecFunction;
 
     
     if (classInfo->typedArrayStorageType != TypedArrayNone) {
         switch (classInfo->typedArrayStorageType) {
         case TypedArrayInt8:
-            return PredictInt8Array;
+            return SpecInt8Array;
         case TypedArrayInt16:
-            return PredictInt16Array;
+            return SpecInt16Array;
         case TypedArrayInt32:
-            return PredictInt32Array;
+            return SpecInt32Array;
         case TypedArrayUint8:
-            return PredictUint8Array;
+            return SpecUint8Array;
         case TypedArrayUint8Clamped:
-            return PredictUint8ClampedArray;
+            return SpecUint8ClampedArray;
         case TypedArrayUint16:
-            return PredictUint16Array;
+            return SpecUint16Array;
         case TypedArrayUint32:
-            return PredictUint32Array;
+            return SpecUint32Array;
         case TypedArrayFloat32:
-            return PredictFloat32Array;
+            return SpecFloat32Array;
         case TypedArrayFloat64:
-            return PredictFloat64Array;
+            return SpecFloat64Array;
         default:
             break;
         }
     }
     
     if (classInfo->isSubClassOf(&JSObject::s_info))
-        return PredictObjectOther;
+        return SpecObjectOther;
     
-    return PredictCellOther;
+    return SpecCellOther;
 }
 
-PredictedType predictionFromStructure(Structure* structure)
+SpeculatedType speculationFromStructure(Structure* structure)
 {
-    return predictionFromClassInfo(structure->classInfo());
+    return speculationFromClassInfo(structure->classInfo());
 }
 
-PredictedType predictionFromCell(JSCell* cell)
+SpeculatedType speculationFromCell(JSCell* cell)
 {
-    return predictionFromStructure(cell->structure());
+    return speculationFromStructure(cell->structure());
 }
 
-PredictedType predictionFromValue(JSValue value)
+SpeculatedType speculationFromValue(JSValue value)
 {
     if (value.isEmpty())
-        return PredictEmpty;
+        return SpecEmpty;
     if (value.isInt32())
-        return PredictInt32;
+        return SpecInt32;
     if (value.isDouble()) {
         double number = value.asNumber();
         if (number == number)
-            return PredictDoubleReal;
-        return PredictDoubleNaN;
+            return SpecDoubleReal;
+        return SpecDoubleNaN;
     }
     if (value.isCell())
-        return predictionFromCell(value.asCell());
+        return speculationFromCell(value.asCell());
     if (value.isBoolean())
-        return PredictBoolean;
+        return SpecBoolean;
     ASSERT(value.isUndefinedOrNull());
-    return PredictOther;
+    return SpecOther;
 }
 
 } // namespace JSC

@@ -84,12 +84,12 @@ LazyOperandValueProfile* LazyOperandValueProfileParser::getIfPresent(
     return iter->second;
 }
 
-PredictedType LazyOperandValueProfileParser::prediction(
+SpeculatedType LazyOperandValueProfileParser::prediction(
     const LazyOperandValueProfileKey& key) const
 {
     LazyOperandValueProfile* profile = getIfPresent(key);
     if (!profile)
-        return PredictNone;
+        return SpecNone;
     
     return profile->computeUpdatedPrediction();
 }

@@ -81,13 +81,13 @@ public:
         ASSERT(kind() == HaveNode);
     }
     
-    static ValueSource forPrediction(PredictedType prediction)
+    static ValueSource forSpeculation(SpeculatedType prediction)
     {
-        if (isInt32Prediction(prediction))
+        if (isInt32Speculation(prediction))
             return ValueSource(Int32InRegisterFile);
-        if (isArrayPrediction(prediction))
+        if (isArraySpeculation(prediction))
             return ValueSource(CellInRegisterFile);
-        if (isBooleanPrediction(prediction))
+        if (isBooleanSpeculation(prediction))
             return ValueSource(BooleanInRegisterFile);
         return ValueSource(ValueInRegisterFile);
     }
@@ -2044,12 +2044,12 @@ public:
     bool compilePeepHoleBranch(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
     void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
     void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition);
-    void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, const ClassInfo*, PredictionChecker);
+    void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, const ClassInfo*, SpeculatedTypeChecker);
     void compilePeepHoleObjectToObjectOrOtherEquality(
-        Edge leftChild, Edge rightChild, NodeIndex branchNodeIndex, const ClassInfo*, PredictionChecker);
-    void compileObjectEquality(Node&, const ClassInfo*, PredictionChecker);
+        Edge leftChild, Edge rightChild, NodeIndex branchNodeIndex, const ClassInfo*, SpeculatedTypeChecker);
+    void compileObjectEquality(Node&, const ClassInfo*, SpeculatedTypeChecker);
     void compileObjectToObjectOrOtherEquality(
-        Edge leftChild, Edge rightChild, const ClassInfo*, PredictionChecker);
+        Edge leftChild, Edge rightChild, const ClassInfo*, SpeculatedTypeChecker);
     void compileValueAdd(Node&);
     void compileObjectOrOtherLogicalNot(Edge value, const ClassInfo*, bool needSpeculationCheck);
     void compileLogicalNot(Node&);

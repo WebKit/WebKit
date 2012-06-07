@@ -576,7 +576,7 @@ namespace JSC {
                                bytecodeOffset].u.opcode)) - 1].u.profile == result);
             return result;
         }
-        PredictedType valueProfilePredictionForBytecodeOffset(int bytecodeOffset)
+        SpeculatedType valueProfilePredictionForBytecodeOffset(int bytecodeOffset)
         {
             return valueProfileForBytecodeOffset(bytecodeOffset)->computeUpdatedPrediction();
         }

@@ -93,9 +93,9 @@ private:
     // Handle setting the result of an intrinsic.
     void setIntrinsicResult(bool usesResult, int resultOperand, NodeIndex);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
-    bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, PredictedType prediction);
+    bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction);
     void handleGetById(
-        int destinationOperand, PredictedType, NodeIndex base, unsigned identifierNumber,
+        int destinationOperand, SpeculatedType, NodeIndex base, unsigned identifierNumber,
         const GetByIdStatus&);
     // Prepare to parse a block.
     void prepareToParseBlock();
@@ -112,7 +112,7 @@ private:
     template<PhiStackType stackType>
     void processPhiStack();
     
-    void fixVariableAccessPredictions();
+    void fixVariableAccessSpeculations();
     // Add spill locations to nodes.
     void allocateVirtualRegisters();
     
@@ -162,17 +162,17 @@ private:
         setDirect(m_inlineStackTop->remapOperand(operand), value, setMode);
     }
     
-    NodeIndex injectLazyOperandPrediction(NodeIndex nodeIndex)
+    NodeIndex injectLazyOperandSpeculation(NodeIndex nodeIndex)
     {
         Node& node = m_graph[nodeIndex];
         ASSERT(node.op() == GetLocal);
         ASSERT(node.codeOrigin.bytecodeIndex == m_currentIndex);
-        PredictedType prediction = 
+        SpeculatedType prediction = 
             m_inlineStackTop->m_lazyOperands.prediction(
                 LazyOperandValueProfileKey(m_currentIndex, node.local()));
 #if DFG_ENABLE(DEBUG_VERBOSE)
         dataLog("Lazy operand [@%u, bc#%u, r%d] prediction: %s\n",
-                nodeIndex, m_currentIndex, node.local(), predictionToString(prediction));
+                nodeIndex, m_currentIndex, node.local(), speculationToString(prediction));
 #endif
         node.variableAccessData()->predict(prediction);
         return nodeIndex;
@@ -195,7 +195,7 @@ private:
                 if (flushChild.op() == Phi) {
                     VariableAccessData* variableAccessData = flushChild.variableAccessData();
                     variableAccessData->mergeIsCaptured(isCaptured);
-                    nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), nodeIndex));
+                    nodeIndex = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variableAccessData), nodeIndex));
                     m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
                     return nodeIndex;
                 }
@@ -216,7 +216,7 @@ private:
                 if (nodePtr->op() == GetLocal)
                     nodeIndex = nodePtr->child1().index();
                 
-                return injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
+                return injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
             }
             
             if (nodePtr->op() == GetLocal)
@@ -233,7 +233,7 @@ private:
         
         NodeIndex phi = addToGraph(Phi, OpInfo(variableAccessData));
         m_localPhiStack.append(PhiStackEntry(m_currentBlock, phi, operand));
-        nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), phi));
+        nodeIndex = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variableAccessData), phi));
         m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
         
         m_currentBlock->variablesAtHead.setLocalFirstTime(operand, nodeIndex);
@@ -277,7 +277,7 @@ private:
                 if (flushChild.op() == Phi) {
                     VariableAccessData* variableAccessData = flushChild.variableAccessData();
                     variableAccessData->mergeIsCaptured(isCaptured);
-                    nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), nodeIndex));
+                    nodeIndex = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variableAccessData), nodeIndex));
                     m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
                     return nodeIndex;
                 }
@@ -293,7 +293,7 @@ private:
                 // We're getting an argument in the first basic block; link
                 // the GetLocal to the SetArgument.
                 ASSERT(nodePtr->local() == static_cast<VirtualRegister>(operand));
-                nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
+                nodeIndex = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
                 m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
                 return nodeIndex;
             }
@@ -301,7 +301,7 @@ private:
             if (isCaptured) {
                 if (nodePtr->op() == GetLocal)
                     nodeIndex = nodePtr->child1().index();
-                return injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
+                return injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
             }
             
             if (nodePtr->op() == GetLocal)
@@ -315,7 +315,7 @@ private:
 
         NodeIndex phi = addToGraph(Phi, OpInfo(variableAccessData));
         m_argumentPhiStack.append(PhiStackEntry(m_currentBlock, phi, argument));
-        nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), phi));
+        nodeIndex = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variableAccessData), phi));
         m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
         
         m_currentBlock->variablesAtHead.setArgumentFirstTime(argument, nodeIndex);
@@ -728,10 +728,10 @@ private:
     {
         Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
 
-        PredictedType prediction = PredictNone;
+        SpeculatedType prediction = SpecNone;
         if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
             m_currentProfilingIndex = m_currentIndex + OPCODE_LENGTH(op_call);
-            prediction = getPrediction();
+            prediction = getSpeculation();
         }
         
         addVarArgChild(get(currentInstruction[1].u.operand));
@@ -750,23 +750,23 @@ private:
         return call;
     }
     
-    PredictedType getPredictionWithoutOSRExit(NodeIndex nodeIndex, unsigned bytecodeIndex)
+    SpeculatedType getSpeculationWithoutOSRExit(NodeIndex nodeIndex, unsigned bytecodeIndex)
     {
         UNUSED_PARAM(nodeIndex);
         
-        PredictedType prediction = m_inlineStackTop->m_profiledBlock->valueProfilePredictionForBytecodeOffset(bytecodeIndex);
+        SpeculatedType prediction = m_inlineStackTop->m_profiledBlock->valueProfilePredictionForBytecodeOffset(bytecodeIndex);
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Dynamic [@%u, bc#%u] prediction: %s\n", nodeIndex, bytecodeIndex, predictionToString(prediction));
+        dataLog("Dynamic [@%u, bc#%u] prediction: %s\n", nodeIndex, bytecodeIndex, speculationToString(prediction));
 #endif
         
         return prediction;
     }
 
-    PredictedType getPrediction(NodeIndex nodeIndex, unsigned bytecodeIndex)
+    SpeculatedType getSpeculation(NodeIndex nodeIndex, unsigned bytecodeIndex)
     {
-        PredictedType prediction = getPredictionWithoutOSRExit(nodeIndex, bytecodeIndex);
+        SpeculatedType prediction = getSpeculationWithoutOSRExit(nodeIndex, bytecodeIndex);
         
-        if (prediction == PredictNone) {
+        if (prediction == SpecNone) {
             // We have no information about what values this node generates. Give up
             // on executing this code, since we're likely to do more damage than good.
             addToGraph(ForceOSRExit);
@@ -775,14 +775,14 @@ private:
         return prediction;
     }
     
-    PredictedType getPredictionWithoutOSRExit()
+    SpeculatedType getSpeculationWithoutOSRExit()
     {
-        return getPredictionWithoutOSRExit(m_graph.size(), m_currentProfilingIndex);
+        return getSpeculationWithoutOSRExit(m_graph.size(), m_currentProfilingIndex);
     }
     
-    PredictedType getPrediction()
+    SpeculatedType getSpeculation()
     {
-        return getPrediction(m_graph.size(), m_currentProfilingIndex);
+        return getSpeculation(m_graph.size(), m_currentProfilingIndex);
     }
 
     NodeIndex makeSafe(NodeIndex nodeIndex)
@@ -1023,7 +1023,7 @@ private:
         
         VirtualRegister m_returnValue;
         
-        // Predictions about variable types collected from the profiled code block,
+        // Speculations about variable types collected from the profiled code block,
         // which are based on OSR exit profiles that past DFG compilatins of this
         // code block had gathered.
         LazyOperandValueProfileParser m_lazyOperands;
@@ -1150,12 +1150,12 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
         int resultOperand = 0; // make compiler happy
         unsigned nextOffset = m_currentIndex + OPCODE_LENGTH(op_call);
         Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
-        PredictedType prediction = PredictNone;
+        SpeculatedType prediction = SpecNone;
         if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
             resultOperand = putInstruction[1].u.operand;
             usesResult = true;
             m_currentProfilingIndex = nextOffset;
-            prediction = getPrediction();
+            prediction = getSpeculation();
             nextOffset += OPCODE_LENGTH(op_call_put_result);
         }
         JSFunction* expectedFunction;
@@ -1423,7 +1423,7 @@ bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType o
 
 // FIXME: We dead-code-eliminate unused Math intrinsics, but that's invalid because
 // they need to perform the ToNumber conversion, which can have side-effects.
-bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, PredictedType prediction)
+bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction)
 {
     switch (intrinsic) {
     case AbsIntrinsic: {
@@ -1487,7 +1487,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             return false;
 
         int thisOperand = registerOffset + argumentToOperand(0);
-        if (!(m_graph[get(thisOperand)].prediction() & PredictString))
+        if (!(m_graph[get(thisOperand)].prediction() & SpecString))
             return false;
         
         int indexOperand = registerOffset + argumentToOperand(1);
@@ -1504,7 +1504,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             return false;
 
         int thisOperand = registerOffset + argumentToOperand(0);
-        if (!(m_graph[get(thisOperand)].prediction() & PredictString))
+        if (!(m_graph[get(thisOperand)].prediction() & SpecString))
             return false;
 
         int indexOperand = registerOffset + argumentToOperand(1);
@@ -1544,7 +1544,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
 }
 
 void ByteCodeParser::handleGetById(
-    int destinationOperand, PredictedType prediction, NodeIndex base, unsigned identifierNumber,
+    int destinationOperand, SpeculatedType prediction, NodeIndex base, unsigned identifierNumber,
     const GetByIdStatus& getByIdStatus)
 {
     if (getByIdStatus.isSimpleDirect()
@@ -1553,7 +1553,7 @@ void ByteCodeParser::handleGetById(
                 
         // The implementation of GetByOffset does not know to terminate speculative
         // execution if it doesn't have a prediction, so we do it manually.
-        if (prediction == PredictNone)
+        if (prediction == SpecNone)
             addToGraph(ForceOSRExit);
                 
         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(getByIdStatus.structureSet())), base);
@@ -2018,7 +2018,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         // === Property access operations ===
 
         case op_get_by_val: {
-            PredictedType prediction = getPrediction();
+            SpeculatedType prediction = getSpeculation();
             
             NodeIndex base = get(currentInstruction[2].u.operand);
             NodeIndex property = get(currentInstruction[3].u.operand);
@@ -2043,7 +2043,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             m_currentProfilingIndex += OPCODE_LENGTH(op_method_check);
             Instruction* getInstruction = currentInstruction + OPCODE_LENGTH(op_method_check);
             
-            PredictedType prediction = getPrediction();
+            SpeculatedType prediction = getSpeculation();
             
             ASSERT(interpreter->getOpcodeID(getInstruction->u.opcode) == op_get_by_id);
             
@@ -2079,7 +2079,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             continue;
         }
         case op_get_scoped_var: {
-            PredictedType prediction = getPrediction();
+            SpeculatedType prediction = getSpeculation();
             int dst = currentInstruction[1].u.operand;
             int slot = currentInstruction[2].u.operand;
             int depth = currentInstruction[3].u.operand;
@@ -2097,7 +2097,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_put_scoped_var);
         }
         case op_get_by_id: {
-            PredictedType prediction = getPredictionWithoutOSRExit();
+            SpeculatedType prediction = getSpeculationWithoutOSRExit();
             
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
@@ -2214,7 +2214,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_get_global_var: {
-            PredictedType prediction = getPrediction();
+            SpeculatedType prediction = getSpeculation();
             
             NodeIndex getGlobalVar = addToGraph(
                 GetGlobalVar,
@@ -2461,10 +2461,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call_varargs);
             
-            PredictedType prediction = PredictNone;
+            SpeculatedType prediction = SpecNone;
             if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
                 m_currentProfilingIndex = m_currentIndex + OPCODE_LENGTH(op_call_varargs);
-                prediction = getPrediction();
+                prediction = getSpeculation();
             }
             
             addToGraph(CheckArgumentsNotCreated);
@@ -2499,7 +2499,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jneq_ptr);
 
         case op_resolve: {
-            PredictedType prediction = getPrediction();
+            SpeculatedType prediction = getSpeculation();
             
             unsigned identifier = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
 
@@ -2510,7 +2510,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_resolve_base: {
-            PredictedType prediction = getPrediction();
+            SpeculatedType prediction = getSpeculation();
             
             unsigned identifier = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
 
@@ -2521,7 +2521,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_resolve_global: {
-            PredictedType prediction = getPrediction();
+            SpeculatedType prediction = getSpeculation();
             
             NodeIndex resolve = addToGraph(ResolveGlobal, OpInfo(m_graph.m_resolveGlobalData.size()), OpInfo(prediction));
             m_graph.m_resolveGlobalData.append(ResolveGlobalData());
@@ -2591,7 +2591,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             m_graph.m_hasArguments = true;
             set(currentInstruction[1].u.operand,
                 addToGraph(
-                    GetMyArgumentByValSafe, OpInfo(0), OpInfo(getPrediction()),
+                    GetMyArgumentByValSafe, OpInfo(0), OpInfo(getSpeculation()),
                     get(currentInstruction[3].u.operand)));
             NEXT_OPCODE(op_get_argument_by_val);
         }
@@ -2775,7 +2775,7 @@ void ByteCodeParser::processPhiStack()
     }
 }
 
-void ByteCodeParser::fixVariableAccessPredictions()
+void ByteCodeParser::fixVariableAccessSpeculations()
 {
     for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i) {
         VariableAccessData* data = &m_graph.m_variableAccessData[i];
@@ -3101,7 +3101,7 @@ bool ByteCodeParser::parse()
             m_graph.m_blocks[blockIndex].clear();
     }
     
-    fixVariableAccessPredictions();
+    fixVariableAccessSpeculations();
     
     m_graph.m_preservedVars = m_preservedVars;
     m_graph.m_localVars = m_numLocals;

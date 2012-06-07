@@ -1646,11 +1646,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\bytecode\PredictedType.cpp"
+				RelativePath="..\..\bytecode\SpeculatedType.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\bytecode\PredictedType.h"
+				RelativePath="..\..\bytecode\SpeculatedType.h"
 				>
 			</File>
 			<File

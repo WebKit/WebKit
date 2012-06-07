@@ -284,7 +284,7 @@ public:
                         break;
                     }
                     
-                    if (!isActionableArrayPrediction(m_graph[node.child1()].prediction())
+                    if (!isActionableArraySpeculation(m_graph[node.child1()].prediction())
                         || !m_graph[node.child2()].shouldSpeculateInteger()) {
                         observeBadArgumentsUses(node);
                         break;
@@ -477,7 +477,7 @@ public:
                         || !m_graph[node.child2()].prediction())
                         break;
                     
-                    if (!isActionableArrayPrediction(m_graph[node.child1()].prediction())
+                    if (!isActionableArraySpeculation(m_graph[node.child1()].prediction())
                         || !m_graph[node.child2()].shouldSpeculateInteger())
                         break;
                     
