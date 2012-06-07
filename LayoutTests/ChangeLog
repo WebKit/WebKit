@@ -1,5 +1,15 @@
 2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        More Chromium rebaselines for r119591 and r119617.
+
+        * platform/chromium-linux/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/compositing/geometry/fixed-position-composited-page-scale-down-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/backslash-to-yen-sign-euc-expected.png:
+        * platform/chromium-win/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png:
+
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add an image failure expectation to fast/repaint/fixed-tranformed.html
         on Chromium Windows and Chromium Mac. The failure is tracked by the bug 88490.
 
