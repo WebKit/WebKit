@@ -1,3 +1,16 @@
+2012-06-07  Anders Carlsson  <andersca@apple.com>
+
+        Search highlight does not scroll with the content of the page, and find overlay doesn't work, on large-enough window
+        https://bugs.webkit.org/show_bug.cgi?id=88577
+        <rdar://problem/11430118>
+
+        Reviewed by John Sullivan.
+
+        Prevent the page overlay layer from falling into tiled mode.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::createPageOverlayLayer):
+
 2012-06-07  Alexander Færøy  <ahf@0x90.dk>
 
         Add QML API tests for Device Pixel Ratio
