@@ -634,12 +634,10 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     if (!m_webView->settings()->viewportEnabled() || !m_webView->isFixedLayoutModeEnabled() || !m_webView->client() || !m_webView->page())
         return;
 
-    bool useDefaultDeviceScaleFactor = false;
     ViewportArguments args;
     if (arguments == args) {
         // Default viewport arguments passed in. This is a signal to reset the viewport.
         args.width = ViewportArguments::ValueDesktopWidth;
-        useDefaultDeviceScaleFactor = true;
     } else
         args = arguments;
 
@@ -664,10 +662,7 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     m_webView->setFixedLayoutSize(IntSize(layoutWidth, layoutHeight));
 
     bool needInitializePageScale = !m_webView->isPageScaleFactorSet();
-    if (useDefaultDeviceScaleFactor && settings->defaultDeviceScaleFactor())
-        m_webView->setDeviceScaleFactor(settings->defaultDeviceScaleFactor());
-    else
-        m_webView->setDeviceScaleFactor(computed.devicePixelRatio);
+    m_webView->setDeviceScaleFactor(computed.devicePixelRatio);
     m_webView->setPageScaleFactorLimits(computed.minimumScale, computed.maximumScale);
     if (needInitializePageScale)
         m_webView->setPageScaleFactorPreservingScrollOffset(computed.initialScale * computed.devicePixelRatio);

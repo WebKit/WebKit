@@ -225,13 +225,12 @@ TEST_F(WebFrameTest, DeviceScaleFactorUsesDefaultWithoutViewportTag)
     int viewportHeight = 480;
 
     FixedLayoutTestWebViewClient client;
-    client.m_screenInfo.horizontalDPI = 160;
+    client.m_screenInfo.horizontalDPI = 320;
     client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
 
     WebView* webView = static_cast<WebView*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "no_viewport_tag.html", true, 0, &client));
 
     webView->settings()->setViewportEnabled(true);
-    webView->settings()->setDefaultDeviceScaleFactor(2);
     webView->enableFixedLayoutMode(true);
     webView->resize(WebSize(viewportWidth, viewportHeight));
     webView->layout();

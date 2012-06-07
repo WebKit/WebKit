@@ -119,16 +119,6 @@ void WebSettingsImpl::setMinimumLogicalFontSize(int size)
     m_settings->setMinimumLogicalFontSize(size);
 }
 
-void WebSettingsImpl::setDefaultDeviceScaleFactor(int defaultDeviceScaleFactor)
-{
-    m_settings->setDefaultDeviceScaleFactor(defaultDeviceScaleFactor);
-}
-
-int WebSettingsImpl::defaultDeviceScaleFactor()
-{
-    return m_settings->defaultDeviceScaleFactor();
-}
-
 void WebSettingsImpl::setDeviceSupportsTouch(bool deviceSupportsTouch)
 {
     m_settings->setDeviceSupportsTouch(deviceSupportsTouch);

@@ -103,9 +103,6 @@ namespace WebCore {
         void setDefaultFixedFontSize(int);
         int defaultFixedFontSize() const { return m_defaultFixedFontSize; }
 
-        void setDefaultDeviceScaleFactor(int);
-        int defaultDeviceScaleFactor() const { return m_defaultDeviceScaleFactor; }
-
         void setFontBoostingEnabled(bool);
         bool fontBoostingEnabled() const { return m_fontBoostingEnabled; }
 
@@ -626,7 +623,6 @@ namespace WebCore {
         int m_minimumLogicalFontSize;
         int m_defaultFontSize;
         int m_defaultFixedFontSize;
-        int m_defaultDeviceScaleFactor;
         int m_validationMessageTimerMagnification;
         int m_minimumAccelerated2dCanvasSize;
         int m_layoutFallbackWidth;

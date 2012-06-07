@@ -3476,10 +3476,10 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
         m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());
 
-        if (m_webSettings->applyDefaultDeviceScaleFactorInCompositor() && page()->settings()->defaultDeviceScaleFactor() != 1) {
-            ASSERT(page()->settings()->defaultDeviceScaleFactor());
+        if (m_webSettings->applyDefaultDeviceScaleFactorInCompositor() && page()->deviceScaleFactor() != 1) {
+            ASSERT(page()->deviceScaleFactor());
 
-            m_deviceScaleInCompositor = page()->settings()->defaultDeviceScaleFactor();
+            m_deviceScaleInCompositor = page()->deviceScaleFactor();
             layerTreeViewSettings.deviceScaleFactor = m_deviceScaleInCompositor;
             setDeviceScaleFactor(m_deviceScaleInCompositor);
         }

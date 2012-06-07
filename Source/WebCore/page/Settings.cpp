@@ -129,7 +129,6 @@ Settings::Settings(Page* page)
     , m_minimumLogicalFontSize(0)
     , m_defaultFontSize(0)
     , m_defaultFixedFontSize(0)
-    , m_defaultDeviceScaleFactor(1)
     , m_validationMessageTimerMagnification(50)
     , m_minimumAccelerated2dCanvasSize(257 * 256)
     , m_layoutFallbackWidth(980)
@@ -402,11 +401,6 @@ void Settings::setDefaultFixedFontSize(int defaultFontSize)
 
     m_defaultFixedFontSize = defaultFontSize;
     m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-void Settings::setDefaultDeviceScaleFactor(int defaultDeviceScaleFactor)
-{
-    m_defaultDeviceScaleFactor = defaultDeviceScaleFactor;
 }
 
 void Settings::setFontBoostingEnabled(bool fontBoostingEnabled)

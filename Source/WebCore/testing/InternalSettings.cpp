@@ -278,8 +278,6 @@ void InternalSettings::setDeviceSupportsMouse(bool enabled, ExceptionCode& ec)
 
 void InternalSettings::setDeviceScaleFactor(float scaleFactor, ExceptionCode& ec)
 {
-    InternalSettingsGuardForSettings();
-    settings()->setDefaultDeviceScaleFactor(scaleFactor);
     InternalSettingsGuardForPage();
     page()->setDeviceScaleFactor(scaleFactor);
 }
