@@ -514,6 +514,7 @@ static void paintWebView(WebKitWebView* webView, Frame* frame, Region dirtyRegio
 
     RefPtr<cairo_t> backingStoreContext = adoptRef(cairo_create(webView->priv->backingStore->cairoSurface()));
     GraphicsContext gc(backingStoreContext.get());
+    gc.applyDeviceScaleFactor(frame->page()->deviceScaleFactor());
     for (size_t i = 0; i < rects.size(); i++) {
         const IntRect& rect = rects[i];
 
