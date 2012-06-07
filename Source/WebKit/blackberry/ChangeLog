@@ -1,5 +1,25 @@
 2012-06-07  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] User viewport arguments are not respected
+        https://bugs.webkit.org/show_bug.cgi?id=88530
+
+        Reviewed by Antonio Gomes.
+
+        RIM PR #163767
+
+        Fixed by applying the user supplied viewport arguments if the page
+        specifies default viewport arguments (i.e. the page has no viewport
+        meta tag).
+
+        If the user didn't supply any viewport arguments either, the behaviour
+        is the same as before the patch, the caller will successfully reset to
+        default viewport arguments.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::dispatchViewportPropertiesDidChange):
+
+2012-06-07  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] Allow WebPageCompositor to blend a transparent web page
         https://bugs.webkit.org/show_bug.cgi?id=88233
 

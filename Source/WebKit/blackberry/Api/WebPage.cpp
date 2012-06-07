@@ -3411,7 +3411,12 @@ void WebPagePrivate::dispatchViewportPropertiesDidChange(const ViewportArguments
     if (arguments == m_viewportArguments)
         return;
 
-    m_viewportArguments = arguments;
+    // If the caller is trying to reset to default arguments, use the user supplied ones instead.
+    static const ViewportArguments defaultViewportArguments;
+    if (arguments == defaultViewportArguments)
+        m_viewportArguments = m_userViewportArguments;
+    else
+        m_viewportArguments = arguments;
 
     // 0 width or height in viewport arguments makes no sense, and results in a very large initial scale.
     // In real world, a 0 width or height is usually caused by a syntax error in "content" field of viewport
