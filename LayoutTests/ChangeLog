@@ -1,3 +1,16 @@
+2012-06-07  Elliot Poger  <epoger@chromium.org>
+
+        Unreviewed, rolling out r119737.
+        http://trac.webkit.org/changeset/119737
+
+        see https://bugs.webkit.org/show_bug.cgi?id=88561
+
+        * css1/basic/class_as_selector-expected.txt: Removed.
+        * css1/basic/containment-expected.txt: Removed.
+        ...
+        * platform/gtk/css3/selectors3/xml/css3-modsel-74-expected.txt: Copied from LayoutTests/platform/gtk/css3/selectors3/xml/css3-modsel-74-expected.txt.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-74b-expected.txt: Copied from LayoutTests/platform/gtk/css3/selectors3/xml/css3-modsel-74b-expected.txt.
+
 2012-06-07  Ojan Vafai  <ojan@chromium.org>
 
         Hopefully final chromium rebaseline for r119617.
