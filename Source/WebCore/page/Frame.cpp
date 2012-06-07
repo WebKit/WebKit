@@ -522,8 +522,7 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSiz
     view()->adjustMediaTypeForPrinting(printing);
 
     m_doc->styleResolverChanged(RecalcStyleImmediately);
-    if (printing && !tree()->parent()) {
-        // Only root frame should be fit to page size. Subframes should be constrained by parents only.
+    if (shouldUsePrintingLayout()) {
         view()->forceLayoutForPagination(pageSize, originalPageSize, maximumShrinkRatio, shouldAdjustViewSize);
     } else {
         view()->forceLayout();
@@ -534,6 +533,13 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSiz
     // Subframes of the one we're printing don't lay out to the page size.
     for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
         child->setPrinting(printing, FloatSize(), FloatSize(), 0, shouldAdjustViewSize);
+}
+
+bool Frame::shouldUsePrintingLayout() const
+{
+    // Only top frame being printed should be fit to page size.
+    // Subframes should be constrained by parents only.
+    return m_doc->printing() && (!tree()->parent() || !tree()->parent()->m_doc->printing());
 }
 
 FloatSize Frame::resizePageRectsKeepingRatio(const FloatSize& originalSize, const FloatSize& expectedSize)
