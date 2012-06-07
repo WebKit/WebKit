@@ -444,6 +444,13 @@ public:
     // Cause the web intent to be delivered to this context.
     void deliverWebIntent(const CppArgumentList&, CppVariant*);
 
+    // Enables or disables subpixel positioning (i.e. fractional X positions for
+    // glyphs) in text rendering on Linux. Since this method changes global
+    // settings, tests that call it must use their own custom font family for
+    // all text that they render. If not, an already-cached style will be used,
+    // resulting in the changed setting being ignored.
+    void setTextSubpixelPositioning(const CppArgumentList&, CppVariant*);
+
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }

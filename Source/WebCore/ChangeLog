@@ -1,3 +1,36 @@
+2012-06-07  Daniel Erat  <derat@chromium.org>
+
+        Make Skia backend honor requests for subpixel-positioned text.
+        https://bugs.webkit.org/show_bug.cgi?id=88263
+
+        Reviewed by Tony Chang.
+
+        Add subpixel positioning field to FontRenderStyle and rename
+        subpixel rendering field.
+
+        Pass setting to SkPaint in FontPlatformDataHarfBuzz and remove
+        round() call when computing glyph widths in SimpleFontDataSkia.
+
+        Test: platform/chromium-linux/fast/text/chromium-linux-text-subpixel-positioning.html
+
+        * platform/graphics/blackberry/skia/PlatformSupport.cpp:
+        (WebCore::setFontRenderStyleDefaults):
+        (WebCore::PlatformSupport::getRenderStyleForStrike):
+        * platform/graphics/chromium/FontRenderStyle.h:
+        (WebCore::FontRenderStyle::FontRenderStyle):
+        (WebCore::FontRenderStyle::operator==):
+        (FontRenderStyle):
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.cpp:
+        (WebCore):
+        (WebCore::FontPlatformData::setSubpixelRendering):
+        (WebCore::FontPlatformData::setSubpixelPositioning):
+        (WebCore::FontPlatformData::setupPaint):
+        (WebCore::FontPlatformData::querySystemForRenderStyle):
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.h:
+        (FontPlatformData):
+        * platform/graphics/skia/SimpleFontDataSkia.cpp:
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+
 2012-06-06  Dana Jansens  <danakj@chromium.org>
 
         [chromium] In each composited frame, didDraw() should only be called on layers for which willDraw() was called

@@ -52,7 +52,19 @@ void WebFontRendering::setAntiAlias(bool isAntiAlias)
 // static
 void WebFontRendering::setSubpixelGlyphs(bool isSubpixelGlyphs)
 {
-    FontPlatformData::setSubpixelGlyphs(isSubpixelGlyphs);
+    FontPlatformData::setSubpixelRendering(isSubpixelGlyphs);
+}
+
+// static
+void WebFontRendering::setSubpixelRendering(bool useSubpixelRendering)
+{
+    FontPlatformData::setSubpixelRendering(useSubpixelRendering);
+}
+
+// static
+void WebFontRendering::setSubpixelPositioning(bool useSubpixelPositioning)
+{
+    FontPlatformData::setSubpixelPositioning(useSubpixelPositioning);
 }
 
 // static

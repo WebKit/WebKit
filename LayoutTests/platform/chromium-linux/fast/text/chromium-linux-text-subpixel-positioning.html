@@ -1,0 +1,23 @@
+<html>
+  <!-- Use a fake font family for all of the text that we draw.
+       The setTextSubpixelPositioning() call changes a global text style
+       setting.  It gets reset after we're dumped, but if we run first, our
+       style would be cached and would affect other tests, and if we run after
+       another test, we'd use its cached style and subpixel positioning won't be
+       enabled. -->
+  <body style="font-family:SubpixelPositioning">
+    <script>
+      if (window.layoutTestController) {
+          layoutTestController.setTextSubpixelPositioning(true);
+      }
+    </script>
+
+    <p>This test requires a Linux build of DumpRenderTree, as it needs to turn
+    on subpixel positioning.</p>
+
+    <p>This text should be rendered using subpixel positioning.  Glyphs should
+    be placed at non-integral positions, and in the following string of repeated
+    &quot;l&quot; characters, the glyphs should not all be rendered
+    identically: llllllllllllllllllllll</p>
+  </body>
+</html>

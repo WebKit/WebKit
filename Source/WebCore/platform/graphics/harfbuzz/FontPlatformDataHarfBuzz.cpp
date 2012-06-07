@@ -46,7 +46,8 @@ namespace WebCore {
 
 static SkPaint::Hinting skiaHinting = SkPaint::kNormal_Hinting;
 static bool isSkiaAntiAlias = true;
-static bool isSkiaSubpixelGlyphs = false;
+static bool useSkiaSubpixelRendering = false;
+static bool useSkiaSubpixelPositioning = false;
 
 void FontPlatformData::setHinting(SkPaint::Hinting hinting)
 {
@@ -58,9 +59,14 @@ void FontPlatformData::setAntiAlias(bool isAntiAlias)
     isSkiaAntiAlias = isAntiAlias;
 }
 
-void FontPlatformData::setSubpixelGlyphs(bool isSubpixelGlyphs)
+void FontPlatformData::setSubpixelRendering(bool useSubpixelRendering)
 {
-    isSkiaSubpixelGlyphs = isSubpixelGlyphs;
+    useSkiaSubpixelRendering = useSubpixelRendering;
+}
+
+void FontPlatformData::setSubpixelPositioning(bool useSubpixelPositioning)
+{
+    useSkiaSubpixelPositioning = useSubpixelPositioning;
 }
 
 FontPlatformData::FontPlatformData(const FontPlatformData& src)
@@ -178,9 +184,10 @@ void FontPlatformData::setupPaint(SkPaint* paint) const
     paint->setFakeBoldText(m_fakeBold);
     paint->setTextSkewX(m_fakeItalic ? -SK_Scalar1 / 4 : 0);
     paint->setAutohinted(m_style.useAutoHint);
+    paint->setSubpixelText(m_style.useSubpixelPositioning == FontRenderStyle::NoPreference ? useSkiaSubpixelPositioning : m_style.useSubpixelPositioning);
 
     if (m_style.useAntiAlias == 1 || (m_style.useAntiAlias == FontRenderStyle::NoPreference && isSkiaAntiAlias))
-        paint->setLCDRenderText(m_style.useSubpixel == FontRenderStyle::NoPreference ? isSkiaSubpixelGlyphs : m_style.useSubpixel);
+        paint->setLCDRenderText(m_style.useSubpixelRendering == FontRenderStyle::NoPreference ? useSkiaSubpixelRendering : m_style.useSubpixelRendering);
 }
 
 SkFontID FontPlatformData::uniqueID() const
@@ -243,14 +250,14 @@ HarfbuzzFace* FontPlatformData::harfbuzzFace() const
 void FontPlatformData::querySystemForRenderStyle()
 {
     if (!m_family.length()) {
-        // We don't have a family for this. Probably because it's a webfont. We
-        // set all the values to 'no preference' and take the defaults passed
-        // in from XSETTINGS.
+        // We don't have a family for this, probably because it's a webfont. We
+        // set all the values to 'no preference' and take the system defaults.
         m_style.useBitmaps = FontRenderStyle::NoPreference;
         m_style.useAutoHint = FontRenderStyle::NoPreference;
         m_style.useHinting = FontRenderStyle::NoPreference;
         m_style.useAntiAlias = FontRenderStyle::NoPreference;
-        m_style.useSubpixel = FontRenderStyle::NoPreference;
+        m_style.useSubpixelRendering = FontRenderStyle::NoPreference;
+        m_style.useSubpixelPositioning = FontRenderStyle::NoPreference;
         return;
     }
 

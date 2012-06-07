@@ -44,7 +44,8 @@ void WebFontRenderStyle::toFontRenderStyle(FontRenderStyle* out)
     out->useHinting = useHinting;
     out->hintStyle = hintStyle;
     out->useAntiAlias = useAntiAlias;
-    out->useSubpixel = useSubpixel;
+    out->useSubpixelRendering = useSubpixelRendering != 2 ? useSubpixelRendering : useSubpixel;
+    out->useSubpixelPositioning = useSubpixelPositioning;
 }
 
 void WebFontRenderStyle::setDefaults()
@@ -55,6 +56,8 @@ void WebFontRenderStyle::setDefaults()
     hintStyle = 0;
     useAntiAlias = 2;
     useSubpixel = 2;
+    useSubpixelRendering = 2;
+    useSubpixelPositioning = 2;
 }
 
 } // namespace WebKit

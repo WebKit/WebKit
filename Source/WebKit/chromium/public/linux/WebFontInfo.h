@@ -42,6 +42,11 @@ namespace WebKit {
 
 class WebFontInfo {
 public:
+    // Set a global preference describing whether renderStyleForStrike() should
+    // enable subpixel positioning or not. FontConfig doesn't currently provide
+    // a parameter for controlling this.
+    WEBKIT_EXPORT static void setSubpixelPositioning(bool);
+
     // Return a font family which provides glyphs for the Unicode code points
     // specified by |utf16|
     //   characters: a native-endian UTF16 string

@@ -1,3 +1,36 @@
+2012-06-07  Daniel Erat  <derat@chromium.org>
+
+        Add setting to enable subpixel-positioned text on Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=88263
+
+        Reviewed by Tony Chang.
+
+        Add subpixel positioning field to WebFontRenderStyle and rename
+        subpixel rendering field.  Make similar changes in
+        WebFontRendering.
+
+        Also add global WebFontInfo::setSubpixelPositioning() to turn
+        subpixel positioning on or off (there's not currently a
+        well-defined way to configure subpixel positioning via FontConfig).
+
+        * public/linux/WebFontInfo.h:
+        (WebFontInfo):
+        * public/linux/WebFontRenderStyle.h:
+        * public/linux/WebFontRendering.h:
+        (WebFontRendering):
+        * src/linux/WebFontInfo.cpp:
+        (WebKit):
+        (WebKit::WebFontInfo::setSubpixelPositioning):
+        (WebKit::WebFontInfo::renderStyleForStrike):
+        * src/linux/WebFontRenderStyle.cpp:
+        (WebKit::WebFontRenderStyle::toFontRenderStyle):
+        (WebKit::WebFontRenderStyle::setDefaults):
+        * src/linux/WebFontRendering.cpp:
+        (WebKit::WebFontRendering::setSubpixelGlyphs):
+        (WebKit):
+        (WebKit::WebFontRendering::setSubpixelRendering):
+        (WebKit::WebFontRendering::setSubpixelPositioning):
+
 2012-06-06  Dana Jansens  <danakj@chromium.org>
 
         [chromium] In each composited frame, didDraw() should only be called on layers for which willDraw() was called

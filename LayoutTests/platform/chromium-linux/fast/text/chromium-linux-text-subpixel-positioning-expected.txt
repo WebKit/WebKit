@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 617x19
+          text run at (0,0) width 463: "This test requires a Linux build of DumpRenderTree, as it needs to turn "
+          text run at (462,0) width 155: "on subpixel positioning."
+      RenderBlock {P} at (0,36) size 784x40
+        RenderText {#text} at (0,0) size 752x39
+          text run at (0,0) width 364: "This text should be rendered using subpixel positioning. "
+          text run at (363,0) width 97: "Glyphs should "
+          text run at (459,0) width 293: "be placed at non-integral positions, and in the"
+          text run at (0,20) width 183: "following string of repeated "
+          text run at (182,20) width 335: "\"l\" characters, the glyphs should not all be rendered "
+          text run at (516,20) width 175: "identically: llllllllllllllllllllll"

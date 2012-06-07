@@ -1,3 +1,18 @@
+2012-06-07  Daniel Erat  <derat@chromium.org>
+
+        [chromium] Add LayoutTestController::setTextSubpixelPositioning() for Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=88263
+
+        Reviewed by Tony Chang.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        (LayoutTestController::setTextSubpixelPositioning):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController):
+        * DumpRenderTree/chromium/fonts.conf:
+
 2012-06-07  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Assertions in gtk_widget_draw when acquiring pixel output

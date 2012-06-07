@@ -40,12 +40,13 @@ struct FontRenderStyle {
     };
 
     FontRenderStyle()
-        : useBitmaps(0),
-          useAutoHint(0),
-          useHinting(0),
-          hintStyle(0),
-          useAntiAlias(0),
-          useSubpixel(0) { }
+        : useBitmaps(0)
+        , useAutoHint(0)
+        , useHinting(0)
+        , hintStyle(0)
+        , useAntiAlias(0)
+        , useSubpixelRendering(0)
+        , useSubpixelPositioning(0) { }
 
     bool operator==(const FontRenderStyle& a) const
     {
@@ -54,7 +55,8 @@ struct FontRenderStyle {
             && useHinting == a.useHinting
             && hintStyle == a.hintStyle
             && useAntiAlias == a.useAntiAlias
-            && useSubpixel == a.useSubpixel;
+            && useSubpixelRendering == a.useSubpixelRendering
+            && useSubpixelPositioning == a.useSubpixelPositioning;
     }
 
     // Each of the use* members below can take one of three values:
@@ -66,7 +68,8 @@ struct FontRenderStyle {
     char useHinting; // hint glyphs to the pixel grid
     char hintStyle; // level of hinting, 0..3
     char useAntiAlias; // antialias glyph shapes
-    char useSubpixel; // use subpixel antialias
+    char useSubpixelRendering; // use subpixel rendering (partially-filled pixels)
+    char useSubpixelPositioning; // use subpixel positioning (fractional X positions for glyphs)
 };
 
 }

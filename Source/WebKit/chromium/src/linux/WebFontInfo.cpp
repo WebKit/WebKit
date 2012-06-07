@@ -39,6 +39,13 @@
 
 namespace WebKit {
 
+static bool useSubpixelPositioning = false;
+
+void WebFontInfo::setSubpixelPositioning(bool subpixelPositioning)
+{
+    useSubpixelPositioning = subpixelPositioning;
+}
+
 void WebFontInfo::familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale, WebFontFamily* family)
 {
     FcCharSet* cset = FcCharSetCreate();
@@ -186,19 +193,26 @@ void WebFontInfo::renderStyleForStrike(const char* family, int sizeAndStyle, Web
         switch (i) {
         case FC_RGBA_NONE:
             out->useSubpixel = 0;
+            out->useSubpixelRendering = 0;
             break;
         case FC_RGBA_RGB:
         case FC_RGBA_BGR:
         case FC_RGBA_VRGB:
         case FC_RGBA_VBGR:
             out->useSubpixel = 1;
+            out->useSubpixelRendering = 1;
             break;
         default:
             // This includes FC_RGBA_UNKNOWN.
             out->useSubpixel = 2;
+            out->useSubpixelRendering = 2;
             break;
         }
     }
+
+    // FontConfig doesn't provide parameters to configure whether subpixel
+    // positioning should be used or not, so we just use a global setting.
+    out->useSubpixelPositioning = useSubpixelPositioning;
 
     FcPatternDestroy(match);
 }

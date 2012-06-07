@@ -77,6 +77,11 @@
 #include <wtf/OwnArrayPtr.h>
 #endif
 
+#if OS(LINUX)
+#include "linux/WebFontInfo.h"
+#include "linux/WebFontRendering.h"
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 using namespace std;
@@ -211,6 +216,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setPrinting", &LayoutTestController::setPrinting);
     bindMethod("setScrollbarPolicy", &LayoutTestController::setScrollbarPolicy);
     bindMethod("setSelectTrailingWhitespaceEnabled", &LayoutTestController::setSelectTrailingWhitespaceEnabled);
+    bindMethod("setTextSubpixelPositioning", &LayoutTestController::setTextSubpixelPositioning);
     bindMethod("setSmartInsertDeleteEnabled", &LayoutTestController::setSmartInsertDeleteEnabled);
     bindMethod("setStopProvisionalFrameLoads", &LayoutTestController::setStopProvisionalFrameLoads);
     bindMethod("setTabKeyCyclesThroughElements", &LayoutTestController::setTabKeyCyclesThroughElements);
@@ -692,6 +698,10 @@ void LayoutTestController::reset()
     m_taskList.revokeAll();
     m_shouldStayOnPageAfterHandlingBeforeUnload = false;
     m_hasCustomFullScreenBehavior = false;
+#if OS(LINUX)
+    WebFontInfo::setSubpixelPositioning(false);
+    WebFontRendering::setSubpixelPositioning(false);
+#endif
 }
 
 void LayoutTestController::locationChangeDone()
@@ -2170,6 +2180,19 @@ void LayoutTestController::deliverWebIntent(const CppArgumentList& arguments, Cp
     WebIntent intent = WebIntent::create(action, type, serializedData.toString(), WebVector<WebString>(), WebVector<WebString>());
 
     m_shell->webView()->mainFrame()->deliverIntent(intent, 0, m_intentClient.get());
+}
+
+void LayoutTestController::setTextSubpixelPositioning(const CppArgumentList& arguments, CppVariant* result)
+{
+#if OS(LINUX)
+    // Since FontConfig doesn't provide a variable to control subpixel positioning, we'll fall back
+    // to setting it globally for all fonts.
+    if (arguments.size() > 0 && arguments[0].isBool()) {
+        WebFontInfo::setSubpixelPositioning(arguments[0].value.boolValue);
+        WebFontRendering::setSubpixelPositioning(arguments[0].value.boolValue);
+    }
+#endif
+    result->setNull();
 }
 
 void LayoutTestController::setPluginsEnabled(const CppArgumentList& arguments, CppVariant* result)

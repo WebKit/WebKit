@@ -134,8 +134,9 @@ public:
     // Global font preferences...
 
     static void setHinting(SkPaint::Hinting);
-    static void setAntiAlias(bool on);
-    static void setSubpixelGlyphs(bool on);
+    static void setAntiAlias(bool);
+    static void setSubpixelRendering(bool);
+    static void setSubpixelPositioning(bool);
 
 private:
     void querySystemForRenderStyle();

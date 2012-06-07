@@ -47,7 +47,9 @@ struct WEBKIT_EXPORT WebFontRenderStyle {
     char useHinting; // hint glyphs to the pixel grid
     char hintStyle; // level of hinting, 0..3
     char useAntiAlias; // antialias glyph shapes
-    char useSubpixel; // use subpixel antialias
+    char useSubpixel; // DEPRECATED: replaced by useSubpixelRendering
+    char useSubpixelRendering; // use subpixel rendering (partially-filled pixels)
+    char useSubpixelPositioning; // use subpixel positioning (fractional X positions for glyphs)
 
 #ifdef WEBKIT_IMPLEMENTATION
     // Translates the members of this struct to a FontRenderStyle

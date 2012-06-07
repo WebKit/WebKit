@@ -42,8 +42,10 @@ public:
     // Set global font renderering preferences.
 
     WEBKIT_EXPORT static void setHinting(SkPaint::Hinting);
-    WEBKIT_EXPORT static void setAntiAlias(bool on);
-    WEBKIT_EXPORT static void setSubpixelGlyphs(bool on);
+    WEBKIT_EXPORT static void setAntiAlias(bool);
+    WEBKIT_EXPORT static void setSubpixelGlyphs(bool); // DEPRECATED: use setSubpixelRendering instead
+    WEBKIT_EXPORT static void setSubpixelRendering(bool);
+    WEBKIT_EXPORT static void setSubpixelPositioning(bool);
     WEBKIT_EXPORT static void setLCDOrder(SkFontHost::LCDOrder);
     WEBKIT_EXPORT static void setLCDOrientation(SkFontHost::LCDOrientation);
 };
