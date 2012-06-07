@@ -316,7 +316,6 @@ SET(WebKit2_SOURCES
     UIProcess/Plugins/WebPluginSiteDataManager.cpp
 
     WebProcess/WebConnectionToUIProcess.cpp
-    WebProcess/WebKitMain.cpp
     WebProcess/WebProcess.cpp
 
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp
