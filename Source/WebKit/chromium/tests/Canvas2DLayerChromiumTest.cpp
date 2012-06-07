@@ -125,7 +125,6 @@ protected:
         WebCompositor::initialize(thread.get());
 
         OwnPtr<FakeCCLayerTreeHost> layerTreeHost(FakeCCLayerTreeHost::create());
-        layerTreeHost->setContentsMemoryAllocationLimitBytes(TextureManager::highLimitBytes(layerTreeHost->viewportSize()));
         // Force an update, so that we get a valid TextureManager.
         layerTreeHost->updateLayers(updater);
 

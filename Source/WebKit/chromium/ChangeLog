@@ -1,3 +1,18 @@
+2012-06-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119683.
+        http://trac.webkit.org/changeset/119683
+        https://bugs.webkit.org/show_bug.cgi?id=88505
+
+        it broke webkit-unit-test
+        WebLayerTreeViewThreadedTest.InstrumentationCallbacks on mac
+        (Requested by loislo on #webkit).
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHost::create):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        (Canvas2DLayerChromiumTest::fullLifecycleTest):
+
 2012-06-06  Robert Kroeger  <rjkroege@chromium.org>
 
         [Chromium] Re-enable handling of smooth scrolling on Chromium Linux/Windows
