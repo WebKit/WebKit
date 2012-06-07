@@ -2005,8 +2005,6 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.behind.html =
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.beside.html = TEXT
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.behind.html = TEXT
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.beside.html = TEXT
-BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
-BUGWK45991 LINUX : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.shape2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.touch1.html = TEXT
@@ -2207,9 +2205,6 @@ BUGWK46600 SKIP : media/nodesFromRect-shadowContent.html = TEXT
 
 BUGJAMESR LINUX WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
 BUGJAMESR LINUX WIN : fast/text/international/vertical-text-metrics-test.html = TEXT
-
-// Added in WebKit r69755, failed immediately.
-BUGCR81837 LINUX WIN : fast/canvas/canvas-currentColor.html = TEXT
 
 // Added in Webkit r69707 without expected results.
 // Expected result file added in r83450. Still no match.
@@ -3781,7 +3776,10 @@ BUGWK67116 DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PAS
 BUG_OJAN WIN MAC : tables/mozilla/bugs/bug131020.html = PASS FAIL
 BUGLEVIW LEOPARD LION WIN LINUX : fast/sub-pixel/file-upload-control-at-fractional-offset.html = PASS FAIL MISSING
 
-//BUGWK45991 WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
-//BUGCR84157 WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
 BUGCR131187 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGCR131187 : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
+BUGCR131187 : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
+BUGCR131187 : fast/canvas/canvas-currentColor.html = TEXT
+
+
+
