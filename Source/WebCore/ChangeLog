@@ -1,3 +1,27 @@
+2012-06-07  Edaena Salinas Jasso  <edaena@apple.com>
+
+        Should fire error event for empty 404 script
+        https://bugs.webkit.org/show_bug.cgi?id=50589
+        
+        Reviewed by Brady Eidson.
+
+        Tests: 
+        http/tests/loading/fire-error-event-empty-404-script.html
+        http/tests/loading/fire-error-script-no-content-type.html
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse): We should check for http status 
+        codes here to stop depending on the response being non-empty.
+        (WebCore::SubresourceLoader::didReceiveData): Moved the http status check but
+        avoid messing with multipart responses.
+        (WebCore::SubresourceLoader::checkForHTTPStatusCodeError): Renamed from 
+        errorLoadingResource for clarity.
+
+        * loader/SubresourceLoader.h:
+        * loader/cf/SubresourceLoaderCF.cpp:
+        (WebCore::SubresourceLoader::didReceiveDataArray):
+        Updated for errorLoadingResource renaming.
+
 2012-06-07  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Update PlayBook's User Agent String for Web Inspector

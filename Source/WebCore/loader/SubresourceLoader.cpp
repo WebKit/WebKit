@@ -209,6 +209,8 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
         m_documentLoader->subresourceLoaderFinishedLoadingOnePart(this);
         didFinishLoadingOnePart(0);
     }
+
+    checkForHTTPStatusCodeError();
 }
 
 void SubresourceLoader::didReceiveData(const char* data, int length, long long encodedDataLength, bool allAtOnce)
@@ -221,13 +223,13 @@ void SubresourceLoader::didReceiveData(const char* data, int length, long long e
     RefPtr<SubresourceLoader> protect(this);
     ResourceLoader::didReceiveData(data, length, encodedDataLength, allAtOnce);
 
-    if (errorLoadingResource() || m_loadingMultipartContent)
+    if (m_loadingMultipartContent)
         return;
 
     sendDataToResource(data, length);
 }
 
-bool SubresourceLoader::errorLoadingResource()
+bool SubresourceLoader::checkForHTTPStatusCodeError()
 {
     if (m_resource->response().httpStatusCode() < 400 || m_resource->shouldIgnoreHTTPStatusCodeErrors())
         return false;

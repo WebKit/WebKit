@@ -36,7 +36,7 @@ void SubresourceLoader::didReceiveDataArray(CFArrayRef dataArray)
 
     ResourceLoader::didReceiveDataArray(dataArray);
 
-    if (errorLoadingResource())
+    if (checkForHTTPStatusCodeError())
         return;
 
     // A subresource loader does not load multipart sections progressively.

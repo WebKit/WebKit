@@ -1,0 +1,10 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+Test for bug 50589: Fire an error event for empty 404 script with no content-type.
+
+Should say SUCCESS:
+
+SUCCESS

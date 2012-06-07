@@ -72,7 +72,7 @@ private:
 #endif
     virtual void releaseResources();
 
-    bool errorLoadingResource();
+    bool checkForHTTPStatusCodeError();
     void sendDataToResource(const char*, int);
 
     enum SubresourceLoaderState {

@@ -1,3 +1,21 @@
+2012-06-07  Edaena Salinas Jasso  <edaena@apple.com>
+
+        Should fire error event for empty 404 script
+        https://bugs.webkit.org/show_bug.cgi?id=50589
+
+        Reviewed by Brady Eidson.
+
+        Based on a test by Ojan Vafai.
+
+        * http/tests/loading/fire-error-event-empty-404-script-expected.txt: Added.
+        * http/tests/loading/fire-error-event-empty-404-script.html: Added.
+        * http/tests/loading/fire-error-event-script-no-content-type-expected.txt: Added.
+        * http/tests/loading/fire-error-event-script-no-content-type.html: Added.
+        * http/tests/loading/resources/404-with-empty-body-no-content-type.cgi: Added.
+        * http/tests/loading/resources/404-with-empty-body.cgi: Added.
+        * http/tests/resources/network-simulator.php: Fixed to no longer return 404 error
+        when logging a request.
+
 2012-06-07  Ojan Vafai  <ojan@chromium.org>
 
         fast/js/dfg-double-vote-fuzz.html fails on Chromium release.
