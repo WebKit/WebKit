@@ -163,6 +163,9 @@ QtViewportHandler::QtViewportHandler(WebKit::WebPageProxy* proxy, QQuickWebView*
     , m_lastCommittedScale(-1)
     , m_zoomOutScale(0.0)
 {
+    m_scaleAnimation->setDuration(kScaleAnimationDurationMillis);
+    m_scaleAnimation->setEasingCurve(QEasingCurve::OutCubic);
+
     connect(m_viewportItem, SIGNAL(movementStarted()), SLOT(flickMoveStarted()), Qt::DirectConnection);
     connect(m_viewportItem, SIGNAL(movementEnded()), SLOT(flickMoveEnded()), Qt::DirectConnection);
 
@@ -292,9 +295,6 @@ void QtViewportHandler::animatePageItemRectVisible(const QRectF& itemRect)
     if (itemRect == currentPageItemRectVisible)
         return;
 
-    m_scaleAnimation->setDuration(kScaleAnimationDurationMillis);
-    m_scaleAnimation->setEasingCurve(QEasingCurve::OutCubic);
-
     m_scaleAnimation->setStartValue(currentPageItemRectVisible);
     m_scaleAnimation->setEndValue(itemRect);
 
@@ -366,6 +366,13 @@ void QtViewportHandler::scaleAnimationStateChanged(QAbstractAnimation::State new
 
 void QtViewportHandler::scaleAnimationValueChanged(QVariant value)
 {
+    // Resetting the end value, the easing curve or the duration of the scale animation
+    // triggers a recalculation of the animation interval. This might change the current
+    // value of the animated property.
+    // Make sure we only act on animation value changes if the animation is active.
+    if (!scaleAnimationActive())
+        return;
+
     setPageItemRectVisible(value.toRectF());
 }
 
