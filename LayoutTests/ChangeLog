@@ -1,3 +1,10 @@
+2012-06-07  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, new baselines for chromium-win after fixing
+        scrollbar rendering in r119748.
+
+        List of files omitted since it's long.
+
 2012-06-06  Vincent Scheib  <scheib@chromium.org>
 
         Add new Pointer Lock spec events webkitpointerlockchange and webkitpointerlockerror
