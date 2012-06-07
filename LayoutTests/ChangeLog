@@ -1,5 +1,12 @@
 2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add an image failure expectation to fast/repaint/fixed-tranformed.html
+        on Chromium Windows and Chromium Mac. The failure is tracked by the bug 88490.
+
+        * platform/chromium/TestExpectations:
+
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add a timeout expectation to http/tests/media/video-cookie.html.
         The failure is tracked by the Chromium issue 131533.
 

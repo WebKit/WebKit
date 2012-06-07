@@ -3681,6 +3681,7 @@ BUGWK86592 LINUX : fast/repaint/fixed-scale.html = IMAGE PASS
 BUGWK86592 LINUX : fast/repaint/fixed-table-overflow-zindex.html = IMAGE PASS
 BUGWK86592 LINUX : fast/repaint/fixed-tranformed.html = IMAGE PASS
 BUGWK86592 LINUX : fast/repaint/scroll-fixed-reflected-layer.html = IMAGE PASS
+BUGWK88490 MAC WIN : fast/repaint/fixed-tranformed.html = IMAGE
 
 BUGWK86592 LINUX : fast/loader/text-document-wrapping.html = TIMEOUT PASS
 BUGWK86592 LINUX : http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html = TIMEOUT PASS
