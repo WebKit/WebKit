@@ -1,3 +1,18 @@
+2012-06-07  Peter Beverloo  <peter@chromium.org>
+
+        Buildfix for ENABLE_OVERFLOW_SCROLLING=0 (though defined)
+        https://bugs.webkit.org/show_bug.cgi?id=88564
+
+        Reviewed by Adam Barth.
+
+        Where ENABLE(X) mandates that X both has to be defined and evaluates to
+        true as a lone preprocessor statement, there were two places in the CSS
+        property and value input files where only was checked whether is has
+        been defined. This also goes against other #ifdefs in those files.
+
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+
 2012-06-07  Ami Fischman  <fischman@chromium.org>
 
         Plumb CORS attribute information from HTMLMediaElement to media players so it can be used
