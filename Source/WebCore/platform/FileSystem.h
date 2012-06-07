@@ -145,6 +145,8 @@ enum FileSeekOrigin {
     SeekFromEnd
 };
 
+const double invalidTime = std::numeric_limits<double>::quiet_NaN();
+
 #if OS(WINDOWS)
 static const char PlatformFilePathSeparator = '\\';
 #else
