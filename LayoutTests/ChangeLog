@@ -1,3 +1,29 @@
+2012-06-07  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Rebaseline tests after r119591 that enabled imageSmoothingEnabled for patterns
+        https://bugs.webkit.org/show_bug.cgi?id=88253
+
+        Unreviewed; test expectations update.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/chromium-linux/svg/custom/pattern-skew-transformed-expected.png: Removed.
+        * platform/chromium-linux/svg/custom/pattern-with-transformation-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/pattern-with-transformation-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/pattern-with-transformation-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/chromium-mac/svg/custom/nested-pattern-boundingBoxModeContent-expected.png:
+        * platform/chromium-mac/svg/custom/oversized-pattern-scale-expected.png:
+        * platform/chromium-mac/svg/custom/pattern-in-defs-expected.png:
+        * platform/chromium-mac/svg/custom/pattern-skew-transformed-expected.png:
+        * platform/chromium-mac/svg/custom/pattern-with-transformation-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.png:
+        * platform/chromium-win/svg/custom/nested-pattern-boundingBoxModeContent-expected.png:
+        * platform/chromium-win/svg/custom/oversized-pattern-scale-expected.png:
+        * platform/chromium-win/svg/custom/pattern-in-defs-expected.png:
+        * platform/chromium-win/svg/custom/pattern-skew-transformed-expected.png:
+        * platform/chromium-win/svg/custom/pattern-with-transformation-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-06-07  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed. Unskip passing tests for GTK.

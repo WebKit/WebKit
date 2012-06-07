@@ -3782,18 +3782,6 @@ BUGLEVIW LEOPARD LION WIN LINUX : fast/sub-pixel/file-upload-control-at-fraction
 //BUGCR84157 WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
 BUGCR131187 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGCR131187 : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
-// Needs rebaselining for changes that fix BUGWK88103
-BUGWK88253 : fast/canvas/image-object-in-canvas.html = IMAGE
-BUGWK88253 : fast/canvas/image-pattern-rotate.html = IMAGE
-BUGWK88253 : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
-BUGWK88253 : svg/custom/non-scaling-stroke.svg = IMAGE
-BUGWK88253 : svg/custom/oversized-pattern-scale.svg = IMAGE
-BUGWK88253 : svg/custom/pattern-in-defs.svg = IMAGE
-BUGWK88253 : svg/custom/pattern-rotate.svg = IMAGE
-BUGWK88253 : svg/custom/pattern-skew-transformed.svg = IMAGE
-BUGWK88253 : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE
-BUGWK88253 : svg/W3C-SVG-1.1/pservers-grad-06-b.svg = IMAGE
-BUGWK88253 : svg/custom/pattern-with-transformation.svg = IMAGE
 
 BUGWK88481 : fast/loader/webarchive-encoding-respected.html = TEXT
 
