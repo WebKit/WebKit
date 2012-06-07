@@ -1,3 +1,22 @@
+2012-06-06  Amy Ousterhout  <aousterh@chromium.org>
+
+        [Chromium] DeviceOrientation cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=88406
+
+        Reviewed by Kent Tamura.
+
+        Made default constructor public and added a set function for each property.
+        This will allow us to remove the 8-parameter constructor.
+
+        * public/WebDeviceOrientation.h:
+        (WebKit::WebDeviceOrientation::WebDeviceOrientation):
+        (WebKit::WebDeviceOrientation::setNull):
+        (WebKit::WebDeviceOrientation::setAlpha):
+        (WebKit::WebDeviceOrientation::setBeta):
+        (WebKit::WebDeviceOrientation::setGamma):
+        (WebKit::WebDeviceOrientation::setAbsolute):
+        (WebDeviceOrientation):
+
 2012-06-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move implementation of WebCore::GraphicsContext3D and related from WebKit/chromium/src to WebCore/platform/chromium/support

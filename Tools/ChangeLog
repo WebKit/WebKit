@@ -1,3 +1,15 @@
+2012-06-06  Amy Ousterhout  <aousterh@chromium.org>
+
+        [WebKit] DeviceOrientation cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=88406
+
+        Reviewed by Kent Tamura.
+
+        Updated LayoutTestController to use new public default constructor in WebDeviceOrientation.h.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::setMockDeviceOrientation):
+
 2012-05-29  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: add support for an ordered dict of test expectations

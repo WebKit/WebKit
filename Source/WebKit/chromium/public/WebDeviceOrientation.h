@@ -35,28 +35,66 @@ namespace WebKit {
 
 class WebDeviceOrientation {
 public:
+    // FIXME: Remove once Chromium is updated.
     WebDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute = false, bool absolute = false)
-        : m_isNull(false),
-          m_canProvideAlpha(canProvideAlpha),
-          m_alpha(alpha),
-          m_canProvideBeta(canProvideBeta),
-          m_beta(beta),
-          m_canProvideGamma(canProvideGamma),
-          m_gamma(gamma),
-          m_canProvideAbsolute(canProvideAbsolute),
-          m_absolute(absolute)
+        : m_isNull(false)
+        , m_canProvideAlpha(canProvideAlpha)
+        , m_alpha(alpha)
+        , m_canProvideBeta(canProvideBeta)
+        , m_beta(beta)
+        , m_canProvideGamma(canProvideGamma)
+        , m_gamma(gamma)
+        , m_canProvideAbsolute(canProvideAbsolute)
+        , m_absolute(absolute)
+    {
+    }
+    WebDeviceOrientation()
+        : m_isNull(true)
+        , m_canProvideAlpha(false)
+        , m_alpha(0)
+        , m_canProvideBeta(false)
+        , m_beta(0)
+        , m_canProvideGamma(false)
+        , m_gamma(0)
+        , m_canProvideAbsolute(false)
+        , m_absolute(false)
     {
     }
 
     static WebDeviceOrientation nullOrientation() { return WebDeviceOrientation(); }
 
+    void setNull(bool isNull) { m_isNull = isNull; }
     bool isNull() { return m_isNull; }
+
+    void setAlpha(double alpha)
+    {
+        m_canProvideAlpha = true;
+        m_alpha = alpha;
+    }
     bool canProvideAlpha() { return m_canProvideAlpha; }
     double alpha() { return m_alpha; }
+
+    void setBeta(double beta)
+    {
+        m_canProvideBeta = true;
+        m_beta = beta;
+    }
     bool canProvideBeta() { return m_canProvideBeta; }
     double beta() { return m_beta; }
+
+    void setGamma(double gamma)
+    {
+        m_canProvideGamma = true;
+        m_gamma = gamma;
+    }
     bool canProvideGamma() { return m_canProvideGamma; }
     double gamma() { return m_gamma; }
+
+    void setAbsolute(bool absolute)
+    {
+        m_canProvideAbsolute = true;
+        m_absolute = absolute;
+    }
     bool canProvideAbsolute() {return m_canProvideAbsolute; }
     bool absolute() { return m_absolute; }
 
@@ -67,19 +105,6 @@ public:
 #endif
 
 private:
-    WebDeviceOrientation()
-        : m_isNull(true),
-          m_canProvideAlpha(false),
-          m_alpha(0),
-          m_canProvideBeta(false),
-          m_beta(0),
-          m_canProvideGamma(false),
-          m_gamma(0),
-          m_canProvideAbsolute(false),
-          m_absolute(false)
-    {
-    }
-
     bool m_isNull;
     bool m_canProvideAlpha;
     double m_alpha;
