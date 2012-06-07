@@ -22,6 +22,7 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,6 +39,7 @@ class MessageID;
 namespace WebKit {
 
 class WebProcess;
+struct WebSoupRequestAsyncData;
 
 class WebSoupRequestManager {
     WTF_MAKE_NONCOPYABLE(WebSoupRequestManager);
@@ -45,7 +47,7 @@ public:
     explicit WebSoupRequestManager(WebProcess*);
     ~WebSoupRequestManager();
 
-    void send(GSimpleAsyncResult*);
+    void send(GSimpleAsyncResult*, GCancellable*);
     GInputStream* finish(GSimpleAsyncResult*);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
@@ -59,8 +61,7 @@ private:
 
     WebProcess* m_process;
     GRefPtr<GPtrArray> m_schemes;
-    HashMap<uint64_t, GSimpleAsyncResult*> m_requestMap;
-    HashMap<uint64_t, GInputStream*> m_requestStreamMap;
+    HashMap<uint64_t, OwnPtr<WebSoupRequestAsyncData> > m_requestMap;
 };
 
 } // namespace WebKit

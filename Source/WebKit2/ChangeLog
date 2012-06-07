@@ -1,3 +1,50 @@
+2012-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] WebSoupRequestManager should handle loading errors and zero-length replies
+        https://bugs.webkit.org/show_bug.cgi?id=88087
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/C/soup/WKSoupRequestManager.h:
+        * UIProcess/soup/WebSoupRequestManagerClient.cpp:
+        (WebKit::WebSoupRequestManagerClient::didFailToLoadURIRequest):
+        Call didFailToLoadURIRequest in the client if present.
+        * UIProcess/soup/WebSoupRequestManagerClient.h:
+        * UIProcess/soup/WebSoupRequestManagerProxy.cpp:
+        (WebKit::WebSoupRequestManagerProxy::WebSoupRequestManagerProxy):
+        Initialize m_loadFailed.
+        (WebKit::WebSoupRequestManagerProxy::didReceiveURIRequestData):
+        Don't send more data to the web process if the resource failed to
+        load.
+        (WebKit::WebSoupRequestManagerProxy::didFailToLoadURIRequest): Set
+        m_loadFailed and notifiy the client calling didFailToLoadURIRequest.
+        * UIProcess/soup/WebSoupRequestManagerProxy.h:
+        * UIProcess/soup/WebSoupRequestManagerProxy.messages.in: Add
+        DidFailToLoadURIRequest message.
+        * WebProcess/soup/WebKitSoupRequestGeneric.cpp:
+        (webkitSoupRequestGenericSendAsync): Pass the cancellable to the
+        WebSoupRequestManager.
+        * WebProcess/soup/WebSoupRequestManager.cpp:
+        (WebKit::WebSoupRequestAsyncData::WebSoupRequestAsyncData): Helper
+        struct to save requests.
+        (WebSoupRequestAsyncData): Add a weak pointer to invalidate the
+        request when it's destroyed before the operation has finished.
+        (WebKit::WebSoupRequestAsyncData::~WebSoupRequestAsyncData):
+        Remove the weak pointer.
+        (WebKit::WebSoupRequestAsyncData::requestFailed): Return whther
+        the request failed.
+        (WebKit::WebSoupRequestAsyncData::releaseResult): Return the
+        result and clear the pointer.
+        (WebKit::WebSoupRequestManager::didHandleURIRequest): Create and
+        empty memory stream for zero-length replies instead of creating an
+        error.
+        (WebKit::WebSoupRequestManager::didReceiveURIRequestData): If the
+        request failed and more data expected from the UI process, send a
+        message to the UI process to notify that the resource load failed.
+        (WebKit::WebSoupRequestManager::send): Save request information in
+        the request map.
+        * WebProcess/soup/WebSoupRequestManager.h:
+
 2012-06-06  Andy Estes  <aestes@apple.com>
 
         Wrap uppercaseWord, lowercaseWord, and capitalizeWord with USE(APPKIT)

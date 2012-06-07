@@ -41,6 +41,40 @@ static uint64_t generateSoupRequestID()
     return uniqueSoupRequestID++;
 }
 
+struct WebSoupRequestAsyncData {
+    WebSoupRequestAsyncData(GSimpleAsyncResult* result, WebKitSoupRequestGeneric* requestGeneric, GCancellable* cancellable)
+        : result(result)
+        , request(requestGeneric)
+        , cancellable(cancellable)
+    {
+        // If the struct contains a null request, it is because the request failed.
+        g_object_add_weak_pointer(G_OBJECT(request), reinterpret_cast<void**>(&request));
+    }
+
+    ~WebSoupRequestAsyncData()
+    {
+        if (request)
+            g_object_remove_weak_pointer(G_OBJECT(request), reinterpret_cast<void**>(&request));
+    }
+
+    bool requestFailed()
+    {
+        return g_cancellable_is_cancelled(cancellable.get()) || !request;
+    }
+
+    GRefPtr<GSimpleAsyncResult> releaseResult()
+    {
+        GSimpleAsyncResult* returnValue = result;
+        result = 0;
+        return adoptGRef(returnValue);
+    }
+
+    GSimpleAsyncResult* result;
+    WebKitSoupRequestGeneric* request;
+    GRefPtr<GCancellable> cancellable;
+    GRefPtr<GInputStream> stream;
+};
+
 WebSoupRequestManager::WebSoupRequestManager(WebProcess* process)
     : m_process(process)
     , m_schemes(adoptGRef(g_ptr_array_new_with_free_func(g_free)))
@@ -78,51 +112,68 @@ void WebSoupRequestManager::registerURIScheme(const String& scheme)
 
 void WebSoupRequestManager::didHandleURIRequest(const CoreIPC::DataReference& requestData, uint64_t contentLength, const String& mimeType, uint64_t requestID)
 {
-    GRefPtr<GSimpleAsyncResult> result = adoptGRef(m_requestMap.take(requestID));
+    WebSoupRequestAsyncData* data = m_requestMap.get(requestID);
+    ASSERT(data);
+    GRefPtr<GSimpleAsyncResult> result = data->releaseResult();
     ASSERT(result.get());
 
     GRefPtr<WebKitSoupRequestGeneric> request = adoptGRef(WEBKIT_SOUP_REQUEST_GENERIC(g_async_result_get_source_object(G_ASYNC_RESULT(result.get()))));
-    if (requestData.size()) {
-        webkitSoupRequestGenericSetContentLength(request.get(), contentLength ? contentLength : -1);
-        webkitSoupRequestGenericSetContentType(request.get(), !mimeType.isEmpty() ? mimeType.utf8().data() : 0);
+    webkitSoupRequestGenericSetContentLength(request.get(), contentLength ? contentLength : -1);
+    webkitSoupRequestGenericSetContentType(request.get(), !mimeType.isEmpty() ? mimeType.utf8().data() : 0);
 
-        GInputStream* dataStream;
-        if (requestData.size() == contentLength) {
-            // We don't expect more data, so we can just create a GMemoryInputStream with all the data.
-            dataStream = g_memory_input_stream_new_from_data(g_memdup(requestData.data(), requestData.size()), contentLength, g_free);
-        } else {
-            dataStream = webkitSoupRequestInputStreamNew(contentLength);
-            webkitSoupRequestInputStreamAddData(WEBKIT_SOUP_REQUEST_INPUT_STREAM(dataStream), requestData.data(), requestData.size());
-            m_requestStreamMap.set(requestID, dataStream);
-        }
-        g_simple_async_result_set_op_res_gpointer(result.get(), dataStream, g_object_unref);
+    GInputStream* dataStream;
+    if (!requestData.size()) {
+        // Empty reply, just create and empty GMemoryInputStream.
+        dataStream = g_memory_input_stream_new();
+        m_requestMap.remove(requestID);
+    } else if (requestData.size() == contentLength) {
+        // We don't expect more data, so we can just create a GMemoryInputStream with all the data.
+        dataStream = g_memory_input_stream_new_from_data(g_memdup(requestData.data(), requestData.size()), contentLength, g_free);
+        m_requestMap.remove(requestID);
     } else {
-        GOwnPtr<char> uriString(soup_uri_to_string(soup_request_get_uri(SOUP_REQUEST(request.get())), FALSE));
-        WebCore::ResourceRequest resourceRequest(String::fromUTF8(uriString.get()));
-        WebCore::ResourceError resourceError(cannotShowURLError(resourceRequest));
-        g_simple_async_result_set_error(result.get(), g_quark_from_string(resourceError.domain().utf8().data()),
-                                        resourceError.errorCode(), "%s", resourceError.localizedDescription().utf8().data());
+        // We expect more data chunks from the UI process.
+        dataStream = webkitSoupRequestInputStreamNew(contentLength);
+        data->stream = dataStream;
+        webkitSoupRequestInputStreamAddData(WEBKIT_SOUP_REQUEST_INPUT_STREAM(dataStream), requestData.data(), requestData.size());
     }
+    g_simple_async_result_set_op_res_gpointer(result.get(), dataStream, g_object_unref);
     g_simple_async_result_complete(result.get());
 }
 
 void WebSoupRequestManager::didReceiveURIRequestData(const CoreIPC::DataReference& requestData, uint64_t requestID)
 {
-    GInputStream* dataStream = m_requestStreamMap.get(requestID);
-    ASSERT(dataStream);
-    webkitSoupRequestInputStreamAddData(WEBKIT_SOUP_REQUEST_INPUT_STREAM(dataStream), requestData.data(), requestData.size());
-    if (webkitSoupRequestInputStreamFinished(WEBKIT_SOUP_REQUEST_INPUT_STREAM(dataStream)))
-        m_requestStreamMap.remove(requestID);
+    WebSoupRequestAsyncData* data = m_requestMap.get(requestID);
+    // The data might have been removed from the request map if a previous chunk failed
+    // and a new message was sent by the UI process before being notified about the failure.
+    if (!data)
+        return;
+    ASSERT(data->stream.get());
+
+    if (data->requestFailed()) {
+        // ResourceRequest failed or it was cancelled. It doesn't matter here the error or if it was cancelled,
+        // because that's already handled by the resource handle client, we just want to notify the UI process
+        // to stop reading data from the user input stream. If UI process already sent all the data we simply
+        // finish silently.
+        if (!webkitSoupRequestInputStreamFinished(WEBKIT_SOUP_REQUEST_INPUT_STREAM(data->stream.get())))
+            m_process->connection()->send(Messages::WebSoupRequestManagerProxy::DidFailToLoadURIRequest(requestID), 0);
+        m_requestMap.remove(requestID);
+
+        return;
+    }
+
+    webkitSoupRequestInputStreamAddData(WEBKIT_SOUP_REQUEST_INPUT_STREAM(data->stream.get()), requestData.data(), requestData.size());
+    if (webkitSoupRequestInputStreamFinished(WEBKIT_SOUP_REQUEST_INPUT_STREAM(data->stream.get())))
+        m_requestMap.remove(requestID);
 }
 
-void WebSoupRequestManager::send(GSimpleAsyncResult* result)
+void WebSoupRequestManager::send(GSimpleAsyncResult* result, GCancellable* cancellable)
 {
     GRefPtr<WebKitSoupRequestGeneric> request = adoptGRef(WEBKIT_SOUP_REQUEST_GENERIC(g_async_result_get_source_object(G_ASYNC_RESULT(result))));
     SoupURI* uri = soup_request_get_uri(SOUP_REQUEST(request.get()));
     GOwnPtr<char> uriString(soup_uri_to_string(uri, FALSE));
 
     uint64_t requestID = generateSoupRequestID();
-    m_requestMap.set(requestID, result);
+    m_requestMap.set(requestID, adoptPtr(new WebSoupRequestAsyncData(result, request.get(), cancellable)));
     m_process->connection()->send(Messages::WebSoupRequestManagerProxy::DidReceiveURIRequest(String::fromUTF8(uriString.get()), requestID), 0);
 }
 

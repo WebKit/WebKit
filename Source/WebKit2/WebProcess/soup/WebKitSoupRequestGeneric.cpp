@@ -48,7 +48,7 @@ static void webkit_soup_request_generic_init(WebKitSoupRequestGeneric* request)
 static void webkitSoupRequestGenericSendAsync(SoupRequest* request, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
     GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(request), callback, userData, reinterpret_cast<void*>(webkitSoupRequestGenericSendAsync));
-    WebProcess::shared().soupRequestManager().send(result);
+    WebProcess::shared().soupRequestManager().send(result, cancellable);
 }
 
 static GInputStream* webkitSoupRequestGenericSendFinish(SoupRequest* request, GAsyncResult* result, GError** error)

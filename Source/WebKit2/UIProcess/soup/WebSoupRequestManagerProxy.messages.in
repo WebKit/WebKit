@@ -22,4 +22,5 @@
 
 messages -> WebSoupRequestManagerProxy {
     DidReceiveURIRequest(WTF::String uriString, uint64_t requestID);
+    DidFailToLoadURIRequest(uint64_t requestID);
 }

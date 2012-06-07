@@ -34,11 +34,13 @@ extern "C" {
 #endif
 
 typedef void (*WKSoupRequestManagerDidReceiveURIRequestCallback)(WKSoupRequestManagerRef soupRequestManagerRef, WKURLRef urlRef, uint64_t requestID, const void* clientInfo);
+typedef void (*WKSoupRequestManagerDidFailToLoadURIRequestCallback)(WKSoupRequestManagerRef soupRequestManagerRef, uint64_t requestID, const void* clientInfo);
 
 struct WKSoupRequestManagerClient {
-    int                                              version;
-    const void*                                      clientInfo;
-    WKSoupRequestManagerDidReceiveURIRequestCallback didReceiveURIRequest;
+    int                                                 version;
+    const void*                                         clientInfo;
+    WKSoupRequestManagerDidReceiveURIRequestCallback    didReceiveURIRequest;
+    WKSoupRequestManagerDidFailToLoadURIRequestCallback didFailToLoadURIRequest;
 };
 typedef struct WKSoupRequestManagerClient WKSoupRequestManagerClient;
 

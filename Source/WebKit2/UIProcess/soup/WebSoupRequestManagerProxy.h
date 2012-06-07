@@ -52,6 +52,7 @@ public:
     void registerURIScheme(const String& scheme);
     void didHandleURIRequest(const WebData*, uint64_t contentLength, const String& mimeType, uint64_t requestID);
     void didReceiveURIRequestData(const WebData*, uint64_t requestID);
+    void didFailToLoadURIRequest(uint64_t requestID);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
@@ -66,6 +67,7 @@ private:
 
     WebContext* m_webContext;
     WebSoupRequestManagerClient m_client;
+    bool m_loadFailed;
 };
 
 } // namespace WebKit

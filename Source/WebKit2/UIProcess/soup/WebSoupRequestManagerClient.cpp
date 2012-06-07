@@ -33,4 +33,10 @@ bool WebSoupRequestManagerClient::didReceiveURIRequest(WebSoupRequestManagerProx
     return true;
 }
 
+void WebSoupRequestManagerClient::didFailToLoadURIRequest(WebSoupRequestManagerProxy* soupRequestManager, uint64_t requestID)
+{
+    if (m_client.didFailToLoadURIRequest)
+        m_client.didFailToLoadURIRequest(toAPI(soupRequestManager), requestID, m_client.clientInfo);
+}
+
 } // namespace WebKit

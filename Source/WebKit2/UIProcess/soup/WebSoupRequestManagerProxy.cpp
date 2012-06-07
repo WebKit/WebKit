@@ -33,6 +33,7 @@ PassRefPtr<WebSoupRequestManagerProxy> WebSoupRequestManagerProxy::create(WebCon
 
 WebSoupRequestManagerProxy::WebSoupRequestManagerProxy(WebContext* context)
     : m_webContext(context)
+    , m_loadFailed(false)
 {
 }
 
@@ -68,6 +69,9 @@ void WebSoupRequestManagerProxy::didHandleURIRequest(const WebData* requestData,
 
 void WebSoupRequestManagerProxy::didReceiveURIRequestData(const WebData* requestData, uint64_t requestID)
 {
+    if (m_loadFailed)
+        return;
+
     ASSERT(m_webContext);
     m_webContext->sendToAllProcesses(Messages::WebSoupRequestManager::DidReceiveURIRequestData(requestData->dataReference(), requestID));
 }
@@ -76,6 +80,12 @@ void WebSoupRequestManagerProxy::didReceiveURIRequest(const String& uriString, u
 {
     if (!m_client.didReceiveURIRequest(this, WebURL::create(uriString).get(), requestID))
         didHandleURIRequest(WebData::create(0, 0).get(), 0, String(), requestID);
+}
+
+void WebSoupRequestManagerProxy::didFailToLoadURIRequest(uint64_t requestID)
+{
+    m_loadFailed = true;
+    m_client.didFailToLoadURIRequest(this, requestID);
 }
 
 } // namespace WebKit
