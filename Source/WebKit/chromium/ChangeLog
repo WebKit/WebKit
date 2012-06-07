@@ -1,3 +1,9 @@
+2012-06-06  Noel Gordon  <noel.gordon@gmail.com>
+
+        Unreviewed. Rolled DEPS.
+
+        * DEPS: Roll to chromium 140955.
+
 2012-06-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119683.
