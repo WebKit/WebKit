@@ -1,3 +1,9 @@
+2012-06-07  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed. Unskip passing tests for GTK.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-07  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: sorting of object fields is broken in heap profiler
