@@ -1,3 +1,14 @@
+2012-06-06  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Remove header dependency of ImageDiff to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=88422
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/chromium/ImageDiff.cpp:
+        (untestedCompareImages):
+
 2012-06-06  Amy Ousterhout  <aousterh@chromium.org>
 
         [WebKit] DeviceOrientation cleanup
