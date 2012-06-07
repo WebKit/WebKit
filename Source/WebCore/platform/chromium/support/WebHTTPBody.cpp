@@ -31,7 +31,6 @@
 #include "config.h"
 #include <public/WebHTTPBody.h>
 
-#include "FileSystem.h"
 #include "FormData.h"
 
 using namespace WebCore;
@@ -78,7 +77,7 @@ bool WebHTTPBody::elementAt(size_t index, Element& result) const
     result.filePath.reset();
     result.fileStart = 0;
     result.fileLength = 0;
-    result.modificationTime = invalidTime;
+    result.modificationTime = 0.0;
     result.blobURL = KURL();
 
     switch (element.m_type) {

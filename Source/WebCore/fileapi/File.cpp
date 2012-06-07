@@ -30,7 +30,6 @@
 #include "FileSystem.h"
 #include "MIMETypeRegistry.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -87,7 +86,7 @@ File::File(const String& path)
     , m_name(pathGetFileName(path))
 #if ENABLE(FILE_SYSTEM)
     , m_snapshotSize(-1)
-    , m_snapshotModificationTime(invalidTime)
+    , m_snapshotModificationTime(0)
 #endif
 {
 }
@@ -97,7 +96,7 @@ File::File(const String& path, const KURL& url, const String& type)
     , m_path(path)
 #if ENABLE(FILE_SYSTEM)
     , m_snapshotSize(-1)
-    , m_snapshotModificationTime(invalidTime)
+    , m_snapshotModificationTime(0)
 #endif
 {
     m_name = pathGetFileName(path);
@@ -112,7 +111,7 @@ File::File(const String& path, const String& name)
     , m_name(name)
 #if ENABLE(FILE_SYSTEM)
     , m_snapshotSize(-1)
-    , m_snapshotModificationTime(invalidTime)
+    , m_snapshotModificationTime(0)
 #endif
 {
 }
@@ -137,10 +136,16 @@ double File::lastModifiedDate() const
 
     time_t modificationTime;
     if (!getFileModificationTime(m_path, modificationTime))
-        return invalidTime;
+        return 0;
 
     // Needs to return epoch time in milliseconds for Date.
     return modificationTime * 1000.0;
+}
+
+double File::lastModifiedDateForBinding() const
+{
+    double value = lastModifiedDate();
+    return (!value) ? std::numeric_limits<double>::quiet_NaN() : value;
 }
 
 unsigned long long File::size() const
@@ -173,7 +178,7 @@ void File::captureSnapshot(long long& snapshotSize, double& snapshotModification
     FileMetadata metadata;
     if (!getFileMetadata(m_path, metadata)) {
         snapshotSize = 0;
-        snapshotModificationTime = invalidTime;
+        snapshotModificationTime = 0;
         return;
     }
 

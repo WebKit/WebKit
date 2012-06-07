@@ -30,7 +30,6 @@
 
 #include "config.h"
 #include "BlobData.h"
-#include "FileSystem.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -41,7 +40,7 @@
 namespace WebCore {
 
 const long long BlobDataItem::toEndOfFile = -1;
-const double BlobDataItem::doNotCheckFileChange = invalidTime;
+const double BlobDataItem::doNotCheckFileChange = 0;
 
 RawData::RawData()
 {

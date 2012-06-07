@@ -1,3 +1,28 @@
+2012-06-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119680.
+        http://trac.webkit.org/changeset/119680
+        https://bugs.webkit.org/show_bug.cgi?id=88498
+
+        It broke mac build (Requested by kinuko on #webkit).
+
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        (WebCore::File::lastModifiedDate):
+        (WebCore::File::lastModifiedDateForBinding):
+        (WebCore):
+        (WebCore::File::captureSnapshot):
+        * fileapi/File.h:
+        (File):
+        * fileapi/File.idl:
+        * platform/FileMetadata.h:
+        (WebCore::FileMetadata::FileMetadata):
+        * platform/FileSystem.h:
+        * platform/chromium/support/WebHTTPBody.cpp:
+        (WebKit::WebHTTPBody::elementAt):
+        * platform/network/BlobData.cpp:
+        (WebCore):
+
 2012-06-06  Kinuko Yasuda  <kinuko@chromium.org>
 
         File::lastModifiedDate should use NaN or separate boolean flag for null Date value
