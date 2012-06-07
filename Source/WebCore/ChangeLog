@@ -1,3 +1,13 @@
+2012-06-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Win] Use OS(WINDOWS) instead of Q_WS_WIN in WebCore/platform/graphics/GraphicsContext.h
+        https://bugs.webkit.org/show_bug.cgi?id=88305
+
+        Reviewed by Simon Hausmann.
+
+        * platform/graphics/GraphicsContext.h: Buildfix.
+        (GraphicsContext):
+
 2012-06-07  Shinya Kawanaka  <shinyak@chromium.org>
 
         Incorrect data retrieved in calls to get selection data in client->textWillBeReplaced from CharacterData::setDataAndUpdate
