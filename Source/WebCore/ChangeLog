@@ -1,3 +1,37 @@
+2012-06-06  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Cache isSelfPaintingLayer() for better performance
+        https://bugs.webkit.org/show_bug.cgi?id=88464
+
+        Reviewed by Simon Fraser.
+
+        Covered by existing tests (repaint tests among them).
+
+        isSelfPaintingLayer() has shown up several times on some scrolling benchmarks due
+        to the function being called several time per paint phase. This change caches the
+        boolean at style change time.
+        
+        On http://dglazkov.github.com/performance-tests/biggrid.html, this nearly speed-up
+        painting by 2 (lowering the time taken to paint the newly exposed area when scrolling
+        on a 10,000 * 100 table from 95ms to 50ms).
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        Initialized m_isSelfPaintingLayer here.
+
+        (WebCore::RenderLayer::paintLayer):
+        Changed the order of the checks to get the more likely check first.
+
+        (WebCore::RenderLayer::shouldBeSelfPaintingLayer):
+        Renamed from isSelfPaintingLayer to make m_isNormalFlowOnly.
+
+        (WebCore::RenderLayer::styleChanged):
+        Added code to update our cached m_isSelfPaintingLayer.
+
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::isSelfPaintingLayer):
+        Changed to return m_isSelfPaintingLayer.
+
 2012-06-06  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r109729) [Form] Rendering of select/optgroup/option combination is too slow.

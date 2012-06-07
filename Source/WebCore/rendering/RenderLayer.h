@@ -275,7 +275,7 @@ public:
     RenderMarquee* marquee() const { return m_marquee; }
 
     bool isNormalFlowOnly() const { return m_isNormalFlowOnly; }
-    bool isSelfPaintingLayer() const;
+    bool isSelfPaintingLayer() const { return m_isSelfPaintingLayer; }
 
     bool cannotBlitToWindow() const;
 
@@ -729,7 +729,9 @@ private:
     bool hasHorizontalOverflow() const;
     bool hasVerticalOverflow() const;
 
-    bool shouldBeNormalFlowOnly() const; 
+    bool shouldBeNormalFlowOnly() const;
+
+    bool shouldBeSelfPaintingLayer() const;
 
     int scrollPosition(Scrollbar*) const;
     
@@ -865,6 +867,8 @@ protected:
     bool m_zOrderListsDirty : 1;
     bool m_normalFlowListDirty: 1;
     bool m_isNormalFlowOnly : 1;
+
+    bool m_isSelfPaintingLayer : 1;
 
     bool m_usedTransparency : 1; // Tracks whether we need to close a transparent layer, i.e., whether
                                  // we ended up painting this layer or any descendants (and therefore need to

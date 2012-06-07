@@ -169,6 +169,8 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_resizer(0)
 {
     m_isNormalFlowOnly = shouldBeNormalFlowOnly();
+    m_isSelfPaintingLayer = shouldBeSelfPaintingLayer();
+
     // Non-stacking contexts should have empty z-order lists. As this is already the case,
     // there is no need to dirty / recompute these lists.
     m_zOrderListsDirty = isStackingContext();
@@ -2879,15 +2881,15 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* context,
     }
 #endif
 
+    // Non self-painting leaf layers don't need to be painted as their renderer() should properly paint itself.
+    if (!isSelfPaintingLayer() && !firstChild())
+        return;
+
     if (shouldSuppressPaintingLayer(this))
         return;
     
     // If this layer is totally invisible then there is nothing to paint.
     if (!renderer()->opacity())
-        return;
-
-    // Non self-painting leaf layers don't need to be painted as their renderer() should properly paint itself.
-    if (!isSelfPaintingLayer() && !firstChild())
         return;
 
     if (paintsWithTransparency(paintBehavior))
@@ -4659,7 +4661,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
             && !isTransparent();
 }
 
-bool RenderLayer::isSelfPaintingLayer() const
+bool RenderLayer::shouldBeSelfPaintingLayer() const
 {
     return !isNormalFlowOnly()
         || renderer()->hasReflection()
@@ -4741,6 +4743,8 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
             p->dirtyNormalFlowList();
         dirtyStackingContextZOrderLists();
     }
+
+    m_isSelfPaintingLayer = shouldBeSelfPaintingLayer();
 
     if (renderer()->style()->overflowX() == OMARQUEE && renderer()->style()->marqueeBehavior() != MNONE && renderer()->isBox()) {
         if (!m_marquee)
