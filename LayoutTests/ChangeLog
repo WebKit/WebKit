@@ -1,3 +1,10 @@
+2012-06-07  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed rebaseline for r115582.
+
+        * http/tests/security/filesystem-iframe-from-remote-expected.txt:
+        * platform/chromium/TestExpectations:
+
 2012-06-07  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Gardening. Skip failing new test.
