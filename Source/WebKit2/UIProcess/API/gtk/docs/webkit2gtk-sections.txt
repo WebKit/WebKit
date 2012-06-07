@@ -33,6 +33,10 @@ webkit_web_context_set_additional_plugins_directory
 webkit_web_context_get_plugins
 webkit_web_context_get_plugins_finish
 
+<SUBSECTION URI Scheme>
+WebKitURISchemeRequestCallback
+webkit_web_context_register_uri_scheme
+
 <SUBSECTION Standard>
 WebKitWebContextClass
 WEBKIT_WEB_CONTEXT
@@ -703,4 +707,25 @@ WEBKIT_WEB_INSPECTOR_GET_CLASS
 <SUBSECTION Private>
 webkit_web_inspector_get_type
 WebKitWebInspectorPrivate
+</SECTION>
+
+<FILE>WebKitURISchemeRequest</FILE>
+WebKitURISchemeRequest
+webkit_uri_scheme_request_get_scheme
+webkit_uri_scheme_request_get_uri
+webkit_uri_scheme_request_get_path
+webkit_uri_scheme_request_finish
+
+<SUBSECTION Standard>
+WebKitURISchemeRequestClass
+WEBKIT_TYPE_URI_SCHEME_REQUEST
+WEBKIT_URI_SCHEME_REQUEST
+WEBKIT_IS_URI_SCHEME_REQUEST
+WEBKIT_URI_SCHEME_REQUEST_CLASS
+WEBKIT_IS_URI_SCHEME_REQUEST_CLASS
+WEBKIT_URI_SCHEME_REQUEST_GET_CLASS
+
+<SUBSECTION Private>
+WebKitURISchemeRequestPrivate
+webkit_uri_scheme_request_get_type
 </SECTION>

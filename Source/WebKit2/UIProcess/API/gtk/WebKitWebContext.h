@@ -28,6 +28,7 @@
 #include <webkit2/WebKitCookieManager.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitDownload.h>
+#include <webkit2/WebKitURISchemeRequest.h>
 
 G_BEGIN_DECLS
 
@@ -58,6 +59,17 @@ typedef enum {
     WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER
 } WebKitCacheModel;
 
+/**
+ * WebKitURISchemeRequestCallback:
+ * @request: the #WebKitURISchemeRequest
+ * @user_data: user data passed to the callback
+ *
+ * Type definition for a function that will be called back when an URI request is
+ * made for a user registered URI scheme.
+ */
+typedef void (* WebKitURISchemeRequestCallback) (WebKitURISchemeRequest *request,
+                                                 gpointer                user_data);
+
 typedef struct _WebKitWebContext        WebKitWebContext;
 typedef struct _WebKitWebContextClass   WebKitWebContextClass;
 typedef struct _WebKitWebContextPrivate WebKitWebContextPrivate;
@@ -86,33 +98,37 @@ WEBKIT_API WebKitWebContext *
 webkit_web_context_get_default                      (void);
 
 WEBKIT_API void
-webkit_web_context_set_cache_model                  (WebKitWebContext   *context,
-                                                     WebKitCacheModel    cache_model);
+webkit_web_context_set_cache_model                  (WebKitWebContext              *context,
+                                                     WebKitCacheModel               cache_model);
 WEBKIT_API WebKitCacheModel
-webkit_web_context_get_cache_model                  (WebKitWebContext   *context);
+webkit_web_context_get_cache_model                  (WebKitWebContext              *context);
 
 WEBKIT_API WebKitDownload *
-webkit_web_context_download_uri                     (WebKitWebContext   *context,
-                                                     const gchar        *uri);
+webkit_web_context_download_uri                     (WebKitWebContext              *context,
+                                                     const gchar                   *uri);
 
 WEBKIT_API WebKitCookieManager *
-webkit_web_context_get_cookie_manager               (WebKitWebContext   *context);
+webkit_web_context_get_cookie_manager               (WebKitWebContext              *context);
 
 WEBKIT_API void
-webkit_web_context_set_additional_plugins_directory (WebKitWebContext   *context,
-                                                     const gchar        *directory);
+webkit_web_context_set_additional_plugins_directory (WebKitWebContext              *context,
+                                                     const gchar                   *directory);
 
 WEBKIT_API void
-webkit_web_context_get_plugins                      (WebKitWebContext   *context,
-                                                     GCancellable       *cancellable,
-                                                     GAsyncReadyCallback callback,
-                                                     gpointer            user_data);
+webkit_web_context_get_plugins                      (WebKitWebContext              *context,
+                                                     GCancellable                  *cancellable,
+                                                     GAsyncReadyCallback            callback,
+                                                     gpointer                       user_data);
 
 WEBKIT_API GList *
-webkit_web_context_get_plugins_finish               (WebKitWebContext   *context,
-                                                     GAsyncResult       *result,
-                                                     GError            **error);
-
+webkit_web_context_get_plugins_finish               (WebKitWebContext              *context,
+                                                     GAsyncResult                  *result,
+                                                     GError                       **error);
+WEBKIT_API void
+webkit_web_context_register_uri_scheme              (WebKitWebContext              *context,
+                                                     const gchar                   *scheme,
+                                                     WebKitURISchemeRequestCallback callback,
+                                                     gpointer                       user_data);
 G_END_DECLS
 
 #endif

@@ -26,16 +26,17 @@
 #ifndef WebKitWebContextPrivate_h
 #define WebKitWebContextPrivate_h
 
+#include "WebKitPrivate.h"
+#include "WebKitURISchemeRequest.h"
 #include "WebKitWebContext.h"
-#include <WebKit2/WebKit2.h>
-
-G_BEGIN_DECLS
 
 WKContextRef webkitWebContextGetWKContext(WebKitWebContext*);
 WebKitDownload* webkitWebContextGetOrCreateDownload(WKDownloadRef);
 void webkitWebContextRemoveDownload(WKDownloadRef);
 void webkitWebContextDownloadStarted(WebKitWebContext*, WebKitDownload*);
-
-G_END_DECLS
+WKSoupRequestManagerRef webkitWebContextGetRequestManager(WebKitWebContext*);
+void webkitWebContextReceivedURIRequest(WebKitWebContext*, WebKitURISchemeRequest*);
+void webkitWebContextDidFailToLoadURIRequest(WebKitWebContext*, uint64_t requestID);
+void webkitWebContextDidFinishURIRequest(WebKitWebContext*, uint64_t requestID);
 
 #endif // WebKitWebContextPrivate_h

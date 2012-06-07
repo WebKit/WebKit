@@ -109,6 +109,7 @@ webkit2gtk_h_api += \
 	$(WebKit2)/UIProcess/API/gtk/WebKitSettings.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitURIRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitURIResponse.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitURISchemeRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebContext.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebInspector.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebResource.h \
@@ -622,6 +623,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPrintOperationPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitPrivate.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitRequestManagerClient.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitRequestManagerClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitResourceLoadClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitResourceLoadClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp \
@@ -641,6 +644,9 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitURIResponse.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitURIResponsePrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitURISchemeRequest.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitURISchemeRequest.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitURISchemeRequestPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContext.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContext.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebContextPrivate.h \

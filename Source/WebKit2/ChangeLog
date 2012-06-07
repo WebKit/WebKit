@@ -1,3 +1,71 @@
+2012-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to register custom URI schemes to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=84133
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitRequestManagerClient.cpp: Added.
+        (didReceiveURIRequest): Callback emitted by the C API when a
+        request for a custom URI scheme has been received. Call
+        webkitWebContextReceivedURIRequest() to handle the request.
+        (didFailToLoadURIRequest): Callback emitted by the C API when a
+        request for a custom URI scheme failed to load. Call
+        webkitWebContextDidFailToLoadURIRequest() to noitfy the web
+        context.
+        (attachRequestManagerClientToContext): Initialize the
+        WKSoupRequestManagerClient.
+        * UIProcess/API/gtk/WebKitRequestManagerClient.h: Added.
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp: Added.
+        (webkit_uri_scheme_request_init):
+        (webkitURISchemeRequestFinalize):
+        (webkit_uri_scheme_request_class_init):
+        (webkitURISchemeRequestCreate): Create a new
+        WebKitURISchemeRequest for the given URI and request identifier.
+        (webkitURISchemeRequestGetID): Return the request identifier.
+        (webkitURISchemeRequestCancel): Cancel the request operation.
+        (webkit_uri_scheme_request_get_scheme): Return the scheme of the
+        request.
+        (webkit_uri_scheme_request_get_uri): Return the full URI of the
+        request.
+        (webkit_uri_scheme_request_get_path): Return the path of the URI.
+        (webkitURISchemeRequestReadCallback): Read callback emitted when
+        reading the contents of the input stream.
+        (webkit_uri_scheme_request_finish): Finish the request by reading
+        the contents of the input stream and sending the data to the
+        WebProcess.
+        * UIProcess/API/gtk/WebKitURISchemeRequest.h: Added.
+        * UIProcess/API/gtk/WebKitURISchemeRequestPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (WebKitURISchemeHandler::WebKitURISchemeHandler): Helper struct to
+        save callback and user data of registered URI schemes.
+        (createDefaultWebContext): Initialize the SoupRequestManager.
+        (webkit_web_context_register_uri_scheme): Public API to register a
+        custom URI scheme providing a callback that will be called to
+        handle requests for that URI scheme.
+        (webkitWebContextGetRequestManager): Helper private method to
+        return the SoupRequestManager.
+        (webkitWebContextReceivedURIRequest): Get the
+        WebKitURISchemeHandler for the given request identifier and call
+        the callback. Save the request in the request map.
+        (webkitWebContextDidFailToLoadURIRequest): Cancel the ongoing
+        request.
+        (webkitWebContextDidFinishURIRequest): Remove the request from the
+        map.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add
+        WebKitURISchemeRequest section.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add
+        webkit_uri_scheme_request_get_type.
+        * UIProcess/API/gtk/tests/TestWebKitWebContext.cpp:
+        (testWebContextURIScheme):
+        (beforeAll):
+        * UIProcess/API/gtk/webkit2.h: Include WebKitURISchemeRequest.h.
+
 2012-06-07  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] setPageItemRectVisible() is not guarded by ViewportUpdateDeferrer at scaleAnimationValueChanged()

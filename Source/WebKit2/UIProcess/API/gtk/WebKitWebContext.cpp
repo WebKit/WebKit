@@ -27,6 +27,8 @@
 #include "WebKitGeolocationProvider.h"
 #include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
+#include "WebKitRequestManagerClient.h"
+#include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include <WebCore/FileSystem.h>
 #include <wtf/HashMap.h>
@@ -41,10 +43,32 @@ enum {
     LAST_SIGNAL
 };
 
+struct WebKitURISchemeHandler {
+    WebKitURISchemeHandler()
+        : callback(0)
+        , userData(0)
+    {
+    }
+    WebKitURISchemeHandler(WebKitURISchemeRequestCallback callback, void* userData)
+        : callback(callback)
+        , userData(userData)
+    {
+    }
+
+    WebKitURISchemeRequestCallback callback;
+    void* userData;
+};
+
+typedef HashMap<String, WebKitURISchemeHandler> URISchemeHandlerMap;
+typedef HashMap<uint64_t, GRefPtr<WebKitURISchemeRequest> > URISchemeRequestMap;
+
 struct _WebKitWebContextPrivate {
     WKRetainPtr<WKContextRef> context;
 
     GRefPtr<WebKitCookieManager> cookieManager;
+    WKRetainPtr<WKSoupRequestManagerRef> requestManager;
+    URISchemeHandlerMap uriSchemeHandlers;
+    URISchemeRequestMap uriSchemeRequests;
 #if ENABLE(GEOLOCATION)
     RefPtr<WebKitGeolocationProvider> geolocationProvider;
 #endif
@@ -95,8 +119,10 @@ static gpointer createDefaultWebContext(gpointer)
 {
     static GRefPtr<WebKitWebContext> webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, NULL)));
     webContext->priv->context = WKContextGetSharedProcessContext();
+    webContext->priv->requestManager = WKContextGetSoupRequestManager(webContext->priv->context.get());
     WKContextSetCacheModel(webContext->priv->context.get(), kWKCacheModelPrimaryWebBrowser);
     attachDownloadClientToContext(webContext.get());
+    attachRequestManagerClientToContext(webContext.get());
 #if ENABLE(GEOLOCATION)
     WKGeolocationManagerRef wkGeolocationManager = WKContextGetGeolocationManager(webContext->priv->context.get());
     webContext->priv->geolocationProvider = WebKitGeolocationProvider::create(wkGeolocationManager);
@@ -325,6 +351,59 @@ GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncRe
     return plugins;
 }
 
+/**
+ * webkit_web_context_register_uri_scheme:
+ * @context: a #WebKitWebContext
+ * @scheme: the network scheme to register
+ * @callback: a #WebKitURISchemeRequestCallback
+ * @user_data: data to pass to callback function
+ *
+ * Register @scheme in @context, so that when an URI request with @scheme is made in the
+ * #WebKitWebContext, the #WebKitURISchemeRequestCallback registered will be called with a
+ * #WebKitURISchemeRequest.
+ * It is possible to handle URI scheme requests asynchronously, by calling g_object_ref() on the
+ * #WebKitURISchemeRequest and calling webkit_uri_scheme_request_finish() later when the data of
+ * the request is available.
+ *
+ * <informalexample><programlisting>
+ * static void
+ * about_uri_scheme_request_cb (WebKitURISchemeRequest *request,
+ *                              gpointer                user_data)
+ * {
+ *     GInputStream *stream;
+ *     gsize         stream_length;
+ *     const gchar  *path;
+ *
+ *     path = webkit_uri_scheme_request_get_path (request);
+ *     if (!g_strcmp0 (path, "plugins")) {
+ *         /<!-- -->* Create a GInputStream with the contents of plugins about page, and set its length to stream_length *<!-- -->/
+ *     } else if (!g_strcmp0 (path, "memory")) {
+ *         /<!-- -->* Create a GInputStream with the contents of memory about page, and set its length to stream_length *<!-- -->/
+ *     } else if (!g_strcmp0 (path, "applications")) {
+ *         /<!-- -->* Create a GInputStream with the contents of applications about page, and set its length to stream_length *<!-- -->/
+ *     } else {
+ *         gchar *contents;
+ *
+ *         contents = g_strdup_printf ("&lt;html&gt;&lt;body&gt;&lt;p&gt;Invalid about:%s page&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;", path);
+ *         stream_length = strlen (contents);
+ *         stream = g_memory_input_stream_new_from_data (contents, stream_length, g_free);
+ *     }
+ *     webkit_uri_scheme_request_finish (request, stream, stream_length, "text/html");
+ *     g_object_unref (stream);
+ * }
+ * </programlisting></informalexample>
+ */
+void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const char* scheme, WebKitURISchemeRequestCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+    g_return_if_fail(scheme);
+    g_return_if_fail(callback);
+
+    context->priv->uriSchemeHandlers.set(String::fromUTF8(scheme), WebKitURISchemeHandler(callback, userData));
+    WKRetainPtr<WKStringRef> wkScheme(AdoptWK, WKStringCreateWithUTF8CString(scheme));
+    WKSoupRequestManagerRegisterURIScheme(context->priv->requestManager.get(), wkScheme.get());
+}
+
 WebKitDownload* webkitWebContextGetOrCreateDownload(WKDownloadRef wkDownload)
 {
     GRefPtr<WebKitDownload> download = downloadsMap().get(wkDownload);
@@ -353,3 +432,30 @@ WKContextRef webkitWebContextGetWKContext(WebKitWebContext* context)
     return context->priv->context.get();
 }
 
+WKSoupRequestManagerRef webkitWebContextGetRequestManager(WebKitWebContext* context)
+{
+    return context->priv->requestManager.get();
+}
+
+void webkitWebContextReceivedURIRequest(WebKitWebContext* context, WebKitURISchemeRequest* request)
+{
+    WebKitURISchemeHandler handler = context->priv->uriSchemeHandlers.get(webkit_uri_scheme_request_get_scheme(request));
+    if (!handler.callback)
+        return;
+
+    context->priv->uriSchemeRequests.set(webkitURISchemeRequestGetID(request), request);
+    handler.callback(request, handler.userData);
+}
+
+void webkitWebContextDidFailToLoadURIRequest(WebKitWebContext* context, uint64_t requestID)
+{
+    GRefPtr<WebKitURISchemeRequest> request = context->priv->uriSchemeRequests.get(requestID);
+    if (!request.get())
+        return;
+    webkitURISchemeRequestCancel(request.get());
+}
+
+void webkitWebContextDidFinishURIRequest(WebKitWebContext* context, uint64_t requestID)
+{
+    context->priv->uriSchemeRequests.remove(requestID);
+}
