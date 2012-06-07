@@ -1,3 +1,9 @@
+2012-06-07  Ojan Vafai  <ojan@chromium.org>
+
+        fast/js/dfg-double-vote-fuzz.html fails on Chromium release.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-07  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Error codes, phase one
