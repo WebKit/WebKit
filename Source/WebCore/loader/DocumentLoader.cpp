@@ -342,6 +342,10 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
         if (encoding.isNull()) {
             userChosen = false;
             encoding = response().textEncodingName();
+#if ENABLE(WEB_ARCHIVE)
+            if (m_archive && m_archive->type() == Archive::WebArchive)
+                encoding = m_archive->mainResource()->textEncoding();
+#endif
         }
         m_writer.setEncoding(encoding, userChosen);
     }

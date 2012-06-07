@@ -1,0 +1,7 @@
+The webarchive in this iframe is utf-8 encoded and will only display properly if the webarchive's encoding is respected.
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+This content is UTF-8 encoded and includes a Hebrew Resh character -> ר

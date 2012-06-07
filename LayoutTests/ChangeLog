@@ -1,3 +1,14 @@
+2012-06-06  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11575112> and https://bugs.webkit.org/show_bug.cgi?id=88428
+        REGRESSION (r115654): Opening many non-English WebArchives shows obvious encoding issues
+
+        Reviewed by Nate Chapin.
+
+        * fast/loader/resources/utf8-encoded.webarchive: Added.
+        * fast/loader/webarchive-encoding-respected-expected.txt: Added.
+        * fast/loader/webarchive-encoding-respected.html: Added.
+
 2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaseline after r119617 part 3.
