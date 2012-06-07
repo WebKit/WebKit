@@ -41,10 +41,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/UnusedParam.h>
 
-#if USE(CG) || USE(CAIRO) || USE(SKIA) || PLATFORM(QT) || PLATFORM(WX)
-#define HAVE_PATH_BASED_BORDER_RADIUS_DRAWING 1
-#endif
-
 namespace WebCore {
 
 class AffineTransform;
@@ -551,13 +547,6 @@ public:
 #endif
 
     inline bool preservesNewline() const;
-
-#if !HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
-    // FIXME: This function should be removed when all ports implement GraphicsContext::clipConvexPolygon()!!
-    // At that time, everyone can use RenderObject::drawBoxSideFromPath() instead. This should happen soon.
-    void drawArcForBoxSide(GraphicsContext*, int x, int y, float thickness, const IntSize& radius, int angleStart,
-                           int angleSpan, BoxSide, Color, EBorderStyle, bool firstCorner);
-#endif
 
     // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
     // any pseudo classes (and therefore has no concept of changing state).

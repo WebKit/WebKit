@@ -1,3 +1,21 @@
+2012-06-07  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
+        https://bugs.webkit.org/show_bug.cgi?id=87931
+
+        Reviewed by Beth Dakin.
+
+        r62035 added HAVE(PATH_BASED_BORDER_RADIUS_DRAWING) until all ports implement
+        GraphicsContext::clipConvexPolygon(). All major ports define HAVE_PATH_BASED_BORDER_RADIUS_DRAWING in the
+        meantime and the alternative path has unnecessary maintainace costs and even don't compile at the moment.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintFocusRing):
+        * rendering/RenderObject.h:
+        (RenderObject):
+
 2012-06-06  Vincent Scheib  <scheib@chromium.org>
 
         Add new Pointer Lock spec events webkitpointerlockchange and webkitpointerlockerror
