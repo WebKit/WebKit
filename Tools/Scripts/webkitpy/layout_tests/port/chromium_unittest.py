@@ -339,6 +339,10 @@ class ChromiumPortTest(port_testcase.PortTestCase):
         self.assertEquals(port.test_expectations_overrides(),
                           SKIA_OVERRIDES + ADDITIONAL_EXPECTATIONS)
 
+    def test_expectations_ordering(self):
+        # since we don't implement self.port_name in ChromiumPort.
+        pass
+
 
 class ChromiumPortLoggingTest(logtesting.LoggingTestCase):
     def test_check_sys_deps(self):

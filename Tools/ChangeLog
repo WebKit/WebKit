@@ -1,3 +1,53 @@
+2012-05-29  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: add support for an ordered dict of test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=87802
+
+        Reviewed by Ojan Vafai.
+
+        As per https://bugs.webkit.org/show_bug.cgi?id=65834 we want to
+        support a cascaded list of test expectations files. An easy way
+        to think of this is as an ordered dictionary of name -> contents
+        for files, where the name is usually a path on disk (I say
+        usually because we want to support other kinds of expectations
+        like the compile-time skips for unsupported features in
+        webkit.py, and we want to continue to support "in-memory" test
+        expectations that don't require a filesystem).
+
+        Conveniently there is an OrderedDict implementation in Python
+        2.7+ and it is available as a backport, so the first step in
+        adding this support is to use that implementation. Subsequent
+        patches will update the test_expectations.py module (and other
+        callers) to access the dict directly.
+
+        This patch just changes the base internal implementation and
+        provides wrappers for compatibility. The derived ports
+        (WebKitPort, TestPort, etc.) still need to be updated.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port._expectations_dict):
+        (Port.test_expectations):
+        (Port):
+        (Port._expectations_overrides_dict):
+        (Port.test_expectations_overrides):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_expectations_ordering):
+        (PortTestCase):
+        (PortTestCase.test_expectations_overrides_ordering):
+        * Scripts/webkitpy/thirdparty/ordered_dict.py: Added.
+        (OrderedDict):
+        (OrderedDict.__init__):
+        (OrderedDict.clear):
+        (OrderedDict.__setitem__):
+        (OrderedDict.__delitem__):
+        (OrderedDict.__iter__):
+        (OrderedDict.__reversed__):
+        (OrderedDict.popitem):
+        (OrderedDict.__reduce__):
+        (OrderedDict.__repr__):
+        (OrderedDict.copy):
+        (OrderedDict.fromkeys):
+
 2012-06-06  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed gardening. Unit test fails on GTK 64bit debug bot.
