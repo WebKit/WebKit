@@ -1,0 +1,56 @@
+<html>
+<head>
+  <title>Document::nodesFromRect test - bug 85849</title>
+  <script src="../js/resources/js-test-pre.js"></script>
+  <script src="resources/nodesFromRect.js"></script>
+  <script type="application/javascript">
+    function runTest()
+    {
+      if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+      }
+
+      var e = {};
+
+      // Set up shortcut access to elements
+      e['html'] = document.getElementsByTagName("html")[0];
+      ['body', 'span', 'img'].forEach(function(a) {
+        e[a] = document.getElementById(a);
+      });
+
+      window.scrollTo(0, 0);
+
+      /* Point based test over the img only. */
+      check(20, 20, 0, 0, 0, 0, [e.img]);
+      /* Rect based test over the img only. */
+      check(20, 20, 5, 5, 5, 5, [e.img]);
+
+      /* Note that for the tests below, the img bounds are considered to be (99, 99). */
+      /* Point based test over the img and the span. */
+      check(0, 99, 0, 0, 0, 0, [e.img]);
+      /* Rect based test over the img and the span with the img fully covering the hit region. */
+      check(0, 98, 0, 1, 1, 0, [e.img]);
+      /* Rect based test over the img and the span with the img not fully covering the hit region. */
+      /* FIXME: This fails due to: https://bugs.webkit.org/show_bug.cgi?id=88376 */
+      check(0, 98, 0, 1, 2, 0, [e.img, e.span]);
+      /* Rect based test over the entire img. */
+      check(0, 0, 0, 99, 99, 0, [e.img]);
+
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }
+
+    window.onload = runTest;
+  </script>
+</head>
+<body id="body" style="padding: 0; margin: 0;">
+  <span id="span" style="margin: 0; padding: 0; font-size:36px">
+    <img id="img" width="100" height="100" style="background-color: black; margin: 0; padding: 0;" />
+  </span>
+
+  <span id="console" style="position: absolute; top: 150px;"></span>
+  <script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

@@ -1,3 +1,17 @@
+2012-06-07  Raymes Khoury  <raymes@chromium.org>
+
+        Incorrect rect-based hit-test result for culled-inline elements
+        https://bugs.webkit.org/show_bug.cgi?id=85849
+
+        Reviewed by Levi Weintraub.
+
+        Added tests for rect-based hit-testing for the case when the child of a
+        culled inline element is in the hit-test result. One of these tests is
+        expected to fail due to https://bugs.webkit.org/show_bug.cgi?id=88376.
+
+        * fast/dom/nodesFromRect-culled-inline-expected.txt: Added.
+        * fast/dom/nodesFromRect-culled-inline.html: Added.
+
 2012-06-07  Daniel Erat  <derat@chromium.org>
 
         [chromium] Add test for subpixel positioning.

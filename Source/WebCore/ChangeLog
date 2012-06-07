@@ -1,3 +1,19 @@
+2012-06-07  Raymes Khoury  <raymes@chromium.org>
+
+        Incorrect rect-based hit-test result for culled-inline elements
+        https://bugs.webkit.org/show_bug.cgi?id=85849
+
+        Reviewed by Levi Weintraub.
+
+        Modified code which blindly adds culled inlines to rect-based hit-test
+        results so that it only does so if the child node does not fully cover
+        the hit-test region.
+
+        Test: fast/dom/nodesFromRect-culled-inline.html
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult):
+
 2012-06-07  Daniel Erat  <derat@chromium.org>
 
         Make Skia backend honor requests for subpixel-positioned text.

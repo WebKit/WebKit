@@ -622,21 +622,23 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const LayoutPoint& 
 
     mutableRectBasedTestResult().add(node);
 
-    if (node->renderer()->isInline()) {
+    bool regionFilled = rect.contains(rectForPoint(pointInContainer));
+    // FIXME: This code (incorrectly) attempts to correct for culled inline nodes. See https://bugs.webkit.org/show_bug.cgi?id=85849.
+    if (node->renderer()->isInline() && !regionFilled) {
         for (RenderObject* curr = node->renderer()->parent(); curr; curr = curr->parent()) {
             if (!curr->isRenderInline())
                 break;
-            
+
             // We need to make sure the nodes for culled inlines get included.
             RenderInline* currInline = toRenderInline(curr);
             if (currInline->alwaysCreateLineBoxes())
                 break;
-            
+
             if (currInline->visibleToHitTesting() && currInline->node())
                 mutableRectBasedTestResult().add(currInline->node()->shadowAncestorNode());
         }
     }
-    return !rect.contains(rectForPoint(pointInContainer));
+    return !regionFilled;
 }
 
 bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const LayoutPoint& pointInContainer, const FloatRect& rect)
@@ -655,21 +657,23 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const LayoutPoint& 
 
     mutableRectBasedTestResult().add(node);
 
-    if (node->renderer()->isInline()) {
+    bool regionFilled = rect.contains(rectForPoint(pointInContainer));
+    // FIXME: This code (incorrectly) attempts to correct for culled inline nodes. See https://bugs.webkit.org/show_bug.cgi?id=85849.
+    if (node->renderer()->isInline() && !regionFilled) {
         for (RenderObject* curr = node->renderer()->parent(); curr; curr = curr->parent()) {
             if (!curr->isRenderInline())
                 break;
-            
+
             // We need to make sure the nodes for culled inlines get included.
             RenderInline* currInline = toRenderInline(curr);
             if (currInline->alwaysCreateLineBoxes())
                 break;
-            
+
             if (currInline->visibleToHitTesting() && currInline->node())
                 mutableRectBasedTestResult().add(currInline->node()->shadowAncestorNode());
         }
     }
-    return !rect.contains(rectForPoint(pointInContainer));
+    return !regionFilled;
 }
 
 void HitTestResult::append(const HitTestResult& other)
