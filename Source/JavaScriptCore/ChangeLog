@@ -1,3 +1,12 @@
+2012-06-07  Andy Wingo  <wingo@igalia.com>
+
+        Unreviewed build fix after r119593.
+
+        * llint/LLIntOfflineAsmConfig.h (OFFLINE_ASM_GLOBAL_LABEL): Fix
+        uses of "name" to be "label", the macro's parameter.  Otherwise we
+        serialize mentions of the literal symbol "name" into the objcode.
+        Causes a build error using GNU ld (not gold).
+
 2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium build fix attempt. Why do we need to list these files in gyp!?

@@ -94,14 +94,14 @@
 #if CPU(ARM_THUMB2)
 #define OFFLINE_ASM_GLOBAL_LABEL(label)          \
     ".globl " SYMBOL_STRING(label) "\n"          \
-    HIDE_SYMBOL(name) "\n"                       \
+    HIDE_SYMBOL(label) "\n"                      \
     ".thumb\n"                                   \
     ".thumb_func " THUMB_FUNC_PARAM(label) "\n"  \
     SYMBOL_STRING(label) ":\n"
 #else
 #define OFFLINE_ASM_GLOBAL_LABEL(label)         \
     ".globl " SYMBOL_STRING(label) "\n"         \
-    HIDE_SYMBOL(name) "\n"                      \
+    HIDE_SYMBOL(label) "\n"                     \
     SYMBOL_STRING(label) ":\n"
 #endif
 
