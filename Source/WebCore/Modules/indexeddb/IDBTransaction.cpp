@@ -141,7 +141,7 @@ void IDBTransaction::setError(PassRefPtr<DOMError> error)
 PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, ExceptionCode& ec)
 {
     if (m_transactionFinished) {
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
 
@@ -268,7 +268,7 @@ unsigned short IDBTransaction::stringToMode(const String& modeString, ExceptionC
         return IDBTransaction::READ_ONLY;
     if (modeString == IDBTransaction::modeReadWrite())
         return IDBTransaction::READ_WRITE;
-    ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+    ec = IDBDatabaseException::IDB_TYPE_ERR;
     return 0;
 }
 
@@ -288,7 +288,7 @@ const AtomicString& IDBTransaction::modeToString(unsigned short mode, ExceptionC
         break;
 
     default:
-        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+        ec = IDBDatabaseException::IDB_TYPE_ERR;
         return IDBTransaction::modeReadOnly();
     }
 }

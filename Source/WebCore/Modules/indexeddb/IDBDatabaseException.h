@@ -45,11 +45,11 @@ public:
     enum IDBDatabaseExceptionCode {
         NO_ERR = IDBDatabaseExceptionOffset,
         UNKNOWN_ERR,
-        NON_TRANSIENT_ERR, // FIXME: No longer in the spec
+        LEGACY_NON_TRANSIENT_ERR, // FIXME: Placeholder, not in spec.
         LEGACY_NOT_FOUND_ERR, // FIXME: Placeholder.
         CONSTRAINT_ERR,
         DATA_ERR,
-        NOT_ALLOWED_ERR, // FIXME: No longer in the spec
+        LEGACY_NOT_ALLOWED_ERR, // FIXME: Placeholder, not in spec.
         TRANSACTION_INACTIVE_ERR,
         LEGACY_ABORT_ERR, // FIXME: Placeholder.
         READ_ONLY_ERR,
@@ -65,7 +65,7 @@ public:
         IDB_QUOTA_EXCEEDED_ERR,
         IDB_SYNTAX_ERR,
         IDB_DATA_CLONE_ERR,
-        IDB_TYPE_MISMATCH_ERR,
+        IDB_TYPE_ERR, // FIXME: Placeholder until bindings have been updated to throw a JS TypeError. See https://bugs.webkit.org/show_bug.cgi?id=85513
         IDB_NOT_SUPPORTED_ERR,
     };
 

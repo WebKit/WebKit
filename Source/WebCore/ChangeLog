@@ -1,3 +1,57 @@
+2012-06-07  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Error codes, phase one
+        https://bugs.webkit.org/show_bug.cgi?id=88459
+
+        Reviewed by Tony Chang.
+
+        This phase gets rid of the now-deprecated NOT_ALLOWED_ERR and
+        NON_TRANSIENT_ERR from earlier versions of the spec, and
+        normalizes the place where TypeError should be thrown so that it's
+        easier to update when the bindings change.
+
+        No new tests: existing tests cover these changes and have been updated.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::advance):
+        (WebCore::IDBCursor::continueFunction):
+        (WebCore::IDBCursor::stringToDirection):
+        (WebCore::IDBCursor::directionToString):
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::update):
+        (WebCore::IDBCursorBackendImpl::deleteFunction):
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::deleteObjectStore):
+        (WebCore::IDBDatabase::setVersion):
+        (WebCore::IDBDatabase::transaction):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::deleteObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        * Modules/indexeddb/IDBDatabaseException.cpp:
+        (WebCore):
+        * Modules/indexeddb/IDBDatabaseException.h:
+        * Modules/indexeddb/IDBDatabaseException.idl:
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::open):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::index):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndex):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::result):
+        (WebCore::IDBRequest::errorCode):
+        (WebCore::IDBRequest::webkitErrorMessage):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::objectStore):
+        (WebCore::IDBTransaction::stringToMode):
+        (WebCore::IDBTransaction::modeToString):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::objectStore):
+
 2012-06-07  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Free texture from CCIOSurfaceLayerImpl when it is destroyed

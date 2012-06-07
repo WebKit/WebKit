@@ -197,7 +197,7 @@ function keyCursor()
     shouldBe("event.target.result.primaryKey", "counter");
 
     evalAndExpectException("event.target.result.update({id: counter, number: counter + 200})",
-                           "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
+                           "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
 
     counter++;
     event.target.result.continue();

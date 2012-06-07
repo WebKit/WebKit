@@ -93,7 +93,7 @@ void IDBCursorBackendImpl::update(PassRefPtr<SerializedScriptValue> value, PassR
 {
     IDB_TRACE("IDBCursorBackendImpl::update");
     if (!m_cursor || m_cursorType == IndexKeyCursor) {
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return;
     }
 
@@ -164,7 +164,7 @@ void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks,
 {
     IDB_TRACE("IDBCursorBackendImpl::delete");
     if (!m_cursor || m_cursorType == IndexKeyCursor) {
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return;
     }
 

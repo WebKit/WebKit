@@ -49,6 +49,10 @@ module storage {
         const unsigned short READ_ONLY_ERR = 9;
         const unsigned short VER_ERR = 12;
 
+        // FIXME: Placeholder until bindings have been updated to throw a JS TypeError.
+        // See https://bugs.webkit.org/show_bug.cgi?id=85513
+        const unsigned short TYPE_ERR = 21;
+        
         const unsigned short NOT_FOUND_ERR = 8;
         const unsigned short ABORT_ERR = 20;
         const unsigned short TIMEOUT_ERR = 23;

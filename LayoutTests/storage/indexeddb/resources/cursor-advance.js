@@ -326,8 +326,7 @@ function testBadAdvance()
     {
         cursor = event.target.result;
 
-        // FIXME: this should throw a TypeError. (See IDBCursor.cpp)
-        evalAndExpectException("cursor.advance(0)", "DOMException.TYPE_MISMATCH_ERR");
+        evalAndExpectException("cursor.advance(0)", "IDBDatabaseException.TYPE_ERR");
         testDelete();
     }
     request.onsuccess = advanceBadly;

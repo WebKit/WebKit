@@ -79,7 +79,7 @@ IDBRequest::~IDBRequest()
 PassRefPtr<IDBAny> IDBRequest::result(ExceptionCode& ec) const
 {
     if (m_readyState != DONE) {
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
     return m_result;
@@ -97,7 +97,7 @@ PassRefPtr<DOMError> IDBRequest::error(ExceptionCode& ec) const
 unsigned short IDBRequest::errorCode(ExceptionCode& ec) const
 {
     if (m_readyState != DONE) {
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
     return m_errorCode;
@@ -106,7 +106,7 @@ unsigned short IDBRequest::errorCode(ExceptionCode& ec) const
 String IDBRequest::webkitErrorMessage(ExceptionCode& ec) const
 {
     if (m_readyState != DONE) {
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return String();
     }
     return m_errorMessage;

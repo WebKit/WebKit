@@ -133,7 +133,7 @@ objectStore = trans.objectStore(objectStoreName)
 request = objectStore.openCursor()
 Expecting exception from cursor.advance(0)
 PASS Exception was thrown.
-PASS code is DOMException.TYPE_MISMATCH_ERR
+PASS code is IDBDatabaseException.TYPE_ERR
 testDelete()
 trans = db.transaction(objectStoreName, 'readwrite')
 objectStore = trans.objectStore(objectStoreName)

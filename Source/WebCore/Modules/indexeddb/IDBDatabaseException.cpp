@@ -63,7 +63,7 @@ static const struct IDBDatabaseExceptionNameDescription {
     { "SyntaxError", "The keypath argument contains an invalid key path.", SYNTAX_ERR },
     { "DataCloneError", "The data being stored could not be cloned by the internal structured cloning algorithm.", DATA_CLONE_ERR },
     // FIXME: should be a JavaScript TypeError. See https://bugs.webkit.org/show_bug.cgi?id=85513
-    { "TypeMismatchError", "This should be a TypeError", TYPE_MISMATCH_ERR },
+    { "TypeError", "This should be a TypeError", 0 },
     { "NotSupportedError", "Cannot use multiEntry indexed with an array keypath", NOT_SUPPORTED_ERR },
 };
 

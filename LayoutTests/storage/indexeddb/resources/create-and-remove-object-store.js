@@ -27,9 +27,9 @@ function openSuccess()
 function testCreateAndRemove()
 {
     debug("Trying create");
-    evalAndExpectException('db.createObjectStore("some os")', "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
+    evalAndExpectException('db.createObjectStore("some os")', "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     debug("Trying remove");
-    evalAndExpectException('db.deleteObjectStore("some os")', "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
+    evalAndExpectException('db.deleteObjectStore("some os")', "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
 }
 
 function cleanDatabase()
@@ -56,9 +56,9 @@ function tryOnceMore()
     testCreateAndRemove();
 
     debug("Trying create with store that already exists");
-    evalAndExpectException("db.createObjectStore('tmp')", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
+    evalAndExpectException("db.createObjectStore('tmp')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     debug("Trying remove with store that already exists");
-    evalAndExpectException("db.deleteObjectStore('tmp')", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
+    evalAndExpectException("db.deleteObjectStore('tmp')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
 
     finishJSTest();
 }

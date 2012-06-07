@@ -158,13 +158,13 @@ void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
     }
 
     if (!count) {
-        // FIXME: should be a JavaScript TypeError. See https://bugs.webkit.org/show_bug.cgi?id=85513
-        ec = IDBDatabaseException::IDB_TYPE_MISMATCH_ERR;
+        ec = IDBDatabaseException::IDB_TYPE_ERR;
         return;
     }
 
     if (!m_request->resetReadyState(m_transaction.get())) {
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        ASSERT_NOT_REACHED();
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return;
     }
     m_request->setCursor(this);
@@ -196,8 +196,10 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
         m_request->setCursor(this);
         m_gotValue = false;
         m_backend->continueFunction(key, m_request, ec);
-    } else
-        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+    } else {
+        ASSERT_NOT_REACHED();
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+    }
 }
 
 PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
@@ -247,8 +249,7 @@ unsigned short IDBCursor::stringToDirection(const String& directionString, Excep
     if (directionString == IDBCursor::directionPrevUnique())
         return IDBCursor::PREV_NO_DUPLICATE;
 
-    // FIXME: should be a JavaScript TypeError. See https://bugs.webkit.org/show_bug.cgi?id=85513
-    ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+    ec = IDBDatabaseException::IDB_TYPE_ERR;
     return 0;
 }
 
@@ -268,7 +269,7 @@ const AtomicString& IDBCursor::directionToString(unsigned short direction, Excep
         return IDBCursor::directionPrevUnique();
 
     default:
-        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+        ec = IDBDatabaseException::IDB_TYPE_ERR;
         return IDBCursor::directionNext();
     }
 }

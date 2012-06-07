@@ -1,3 +1,42 @@
+2012-06-07  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Error codes, phase one
+        https://bugs.webkit.org/show_bug.cgi?id=88459
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/basics-expected.txt:
+        * storage/indexeddb/basics-shared-workers-expected.txt:
+        * storage/indexeddb/basics-workers-expected.txt:
+        * storage/indexeddb/create-and-remove-object-store-expected.txt:
+        * storage/indexeddb/cursor-advance-expected.txt:
+        * storage/indexeddb/cursor-update-expected.txt:
+        * storage/indexeddb/database-basics-expected.txt:
+        * storage/indexeddb/deleteIndex-expected.txt:
+        * storage/indexeddb/resources/basics.js:
+        (test):
+        * storage/indexeddb/resources/create-and-remove-object-store.js:
+        (testCreateAndRemove):
+        (tryOnceMore):
+        * storage/indexeddb/resources/cursor-advance.js:
+        (testBadAdvance.advanceBadly):
+        (testBadAdvance):
+        * storage/indexeddb/resources/cursor-update.js:
+        (keyCursor):
+        * storage/indexeddb/resources/database-basics.js:
+        (testClose):
+        * storage/indexeddb/resources/deleteIndex.js:
+        (postTwiddling):
+        * storage/indexeddb/resources/transaction-after-close.js:
+        (firstTransactionComplete):
+        * storage/indexeddb/resources/transaction-and-objectstore-calls.js:
+        (afterComplete):
+        * storage/indexeddb/resources/transaction-basics.js:
+        (testInvalidMode):
+        * storage/indexeddb/transaction-after-close-expected.txt:
+        * storage/indexeddb/transaction-and-objectstore-calls-expected.txt:
+        * storage/indexeddb/transaction-basics-expected.txt:
+
 2012-06-07  Elliot Poger  <epoger@chromium.org>
 
         Unreviewed, rolling out r119737.

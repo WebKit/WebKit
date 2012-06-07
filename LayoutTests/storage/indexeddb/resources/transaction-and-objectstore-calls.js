@@ -115,8 +115,8 @@ function afterComplete()
     debug("transaction complete, ensuring methods fail");
     shouldBeNonNull("trans");
     shouldBeNonNull("store");
-    evalAndExpectException("trans.objectStore('store')", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
-    evalAndExpectException("store.index('index')", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
+    evalAndExpectException("trans.objectStore('store')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+    evalAndExpectException("store.index('index')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
 
     finishJSTest();
 }

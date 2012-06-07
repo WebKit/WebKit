@@ -85,7 +85,7 @@ PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const S
     ASSERT(context->isDocument() || context->isWorkerContext());
 
     if (name.isNull()) {
-        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+        ec = IDBDatabaseException::IDB_TYPE_ERR;
         return 0;
     }
     if (context->isDocument()) {
@@ -118,7 +118,7 @@ PassRefPtr<IDBVersionChangeRequest> IDBFactory::deleteDatabase(ScriptExecutionCo
         return 0;
 
     if (name.isNull()) {
-        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+        ec = IDBDatabaseException::IDB_TYPE_ERR;
         return 0;
     }
 

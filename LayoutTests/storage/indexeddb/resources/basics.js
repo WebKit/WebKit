@@ -10,11 +10,11 @@ function test()
     removeVendorPrefixes();
     request = evalAndLog("indexedDB.open('basics')");
     shouldBeTrue("'result' in request");
-    evalAndExpectException("request.result", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
+    evalAndExpectException("request.result", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     shouldBeTrue("'errorCode' in request");
-    evalAndExpectException("request.errorCode", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
+    evalAndExpectException("request.errorCode", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     shouldBeTrue("'webkitErrorMessage' in request");
-    evalAndExpectException("request.webkitErrorMessage", "IDBDatabaseException.NOT_ALLOWED_ERR", "'NotAllowedError'");
+    evalAndExpectException("request.webkitErrorMessage", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     evalAndExpectException("request.error", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     shouldBeTrue("'source' in request");
     shouldBe("request.source", "indexedDB");
