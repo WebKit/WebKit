@@ -1,3 +1,9 @@
+2012-06-07  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r113570.
+
+        * Source/cmake/OptionsWinCE.cmake:
+
 2012-06-07  Adam Barth  <abarth@webkit.org>
 
         Settings::defaultDeviceScaleFactor is redundant with Page::deviceScaleFactor
