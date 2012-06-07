@@ -1,3 +1,15 @@
+2012-06-07  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform] Introduce conversion from/to Deciaml to/from double and helper functions
+        https://bugs.webkit.org/show_bug.cgi?id=88480
+
+        Reviewed by Kent Tamura.
+
+        This patch added tests for Decimal::fromDouble, isInfinity, toDouble.
+
+        * tests/DecimalTest.cpp:
+        (TEST_F):
+
 2012-06-07  Ami Fischman  <fischman@chromium.org>
 
         Unreviewed.  Rolled DEPS.

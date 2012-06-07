@@ -556,6 +556,32 @@ TEST_F(DecimalTest, FloorSpecialValues)
     EXPECT_EQ(Decimal::nan(), Decimal::nan().floor());
 }
 
+TEST_F(DecimalTest, FromDouble)
+{
+    EXPECT_EQ(encode(0, 0, Positive), Decimal::fromDouble(0.0));
+    EXPECT_EQ(encode(0, 0, Negative), Decimal::fromDouble(-0.0));
+    EXPECT_EQ(encode(1, 0, Positive), Decimal::fromDouble(1));
+    EXPECT_EQ(encode(1, 0, Negative), Decimal::fromDouble(-1));
+    EXPECT_EQ(encode(123, 0, Positive), Decimal::fromDouble(123));
+    EXPECT_EQ(encode(123, 0, Negative), Decimal::fromDouble(-123));
+    EXPECT_EQ(encode(1, -1, Positive), Decimal::fromDouble(0.1));
+    EXPECT_EQ(encode(1, -1, Negative), Decimal::fromDouble(-0.1));
+}
+
+TEST_F(DecimalTest, FromDoubleLimits)
+{
+    EXPECT_EQ(encode(UINT64_C(2220446049250313), -31, Positive), Decimal::fromDouble(std::numeric_limits<double>::epsilon()));
+    EXPECT_EQ(encode(UINT64_C(2220446049250313), -31, Negative), Decimal::fromDouble(-std::numeric_limits<double>::epsilon()));
+    EXPECT_EQ(encode(UINT64_C(17976931348623157), 292, Positive), Decimal::fromDouble(std::numeric_limits<double>::max()));
+    EXPECT_EQ(encode(UINT64_C(17976931348623157), 292, Negative), Decimal::fromDouble(-std::numeric_limits<double>::max()));
+    EXPECT_EQ(encode(UINT64_C(22250738585072014), -324, Positive), Decimal::fromDouble(std::numeric_limits<double>::min()));
+    EXPECT_EQ(encode(UINT64_C(22250738585072014), -324, Negative), Decimal::fromDouble(-std::numeric_limits<double>::min()));
+    EXPECT_TRUE(Decimal::fromDouble(std::numeric_limits<double>::infinity()).isInfinity());
+    EXPECT_TRUE(Decimal::fromDouble(-std::numeric_limits<double>::infinity()).isInfinity());
+    EXPECT_TRUE(Decimal::fromDouble(std::numeric_limits<double>::quiet_NaN()).isNaN());
+    EXPECT_TRUE(Decimal::fromDouble(-std::numeric_limits<double>::quiet_NaN()).isNaN());
+}
+
 TEST_F(DecimalTest, FromInt32)
 {
     EXPECT_EQ(encode(0, 0, Positive), Decimal(0));
@@ -750,24 +776,32 @@ TEST_F(DecimalTest, NegateSpecialValues)
 TEST_F(DecimalTest, Predicates)
 {
     EXPECT_TRUE(Decimal::zero(Positive).isFinite());
+    EXPECT_FALSE(Decimal::zero(Positive).isInfinity());
+    EXPECT_FALSE(Decimal::zero(Positive).isNaN());
     EXPECT_TRUE(Decimal::zero(Positive).isPositive());
     EXPECT_FALSE(Decimal::zero(Positive).isNegative());
     EXPECT_FALSE(Decimal::zero(Positive).isSpecial());
     EXPECT_TRUE(Decimal::zero(Positive).isZero());
 
     EXPECT_TRUE(Decimal::zero(Negative).isFinite());
+    EXPECT_FALSE(Decimal::zero(Negative).isInfinity());
+    EXPECT_FALSE(Decimal::zero(Negative).isNaN());
     EXPECT_FALSE(Decimal::zero(Negative).isPositive());
     EXPECT_TRUE(Decimal::zero(Negative).isNegative());
     EXPECT_FALSE(Decimal::zero(Negative).isSpecial());
     EXPECT_TRUE(Decimal::zero(Negative).isZero());
 
     EXPECT_TRUE(Decimal(123).isFinite());
+    EXPECT_FALSE(Decimal(123).isInfinity());
+    EXPECT_FALSE(Decimal(123).isNaN());
     EXPECT_TRUE(Decimal(123).isPositive());
     EXPECT_FALSE(Decimal(123).isNegative());
     EXPECT_FALSE(Decimal(123).isSpecial());
     EXPECT_FALSE(Decimal(123).isZero());
 
     EXPECT_TRUE(Decimal(-123).isFinite());
+    EXPECT_FALSE(Decimal(-123).isInfinity());
+    EXPECT_FALSE(Decimal(-123).isNaN());
     EXPECT_FALSE(Decimal(-123).isPositive());
     EXPECT_TRUE(Decimal(-123).isNegative());
     EXPECT_FALSE(Decimal(-123).isSpecial());
@@ -777,18 +811,24 @@ TEST_F(DecimalTest, Predicates)
 TEST_F(DecimalTest, PredicatesSpecialValues)
 {
     EXPECT_FALSE(Decimal::infinity(Positive).isFinite());
+    EXPECT_TRUE(Decimal::infinity(Positive).isInfinity());
+    EXPECT_FALSE(Decimal::infinity(Positive).isNaN());
     EXPECT_TRUE(Decimal::infinity(Positive).isPositive());
     EXPECT_FALSE(Decimal::infinity(Positive).isNegative());
     EXPECT_TRUE(Decimal::infinity(Positive).isSpecial());
     EXPECT_FALSE(Decimal::infinity(Positive).isZero());
 
     EXPECT_FALSE(Decimal::infinity(Negative).isFinite());
+    EXPECT_TRUE(Decimal::infinity(Negative).isInfinity());
+    EXPECT_FALSE(Decimal::infinity(Negative).isNaN());
     EXPECT_FALSE(Decimal::infinity(Negative).isPositive());
     EXPECT_TRUE(Decimal::infinity(Negative).isNegative());
     EXPECT_TRUE(Decimal::infinity(Negative).isSpecial());
     EXPECT_FALSE(Decimal::infinity(Negative).isZero());
 
     EXPECT_FALSE(Decimal::nan().isFinite());
+    EXPECT_FALSE(Decimal::nan().isInfinity());
+    EXPECT_TRUE(Decimal::nan().isNaN());
     EXPECT_TRUE(Decimal::nan().isSpecial());
     EXPECT_FALSE(Decimal::nan().isZero());
 }
@@ -938,6 +978,42 @@ TEST_F(DecimalTest, SubtractSpecialValues)
     EXPECT_EQ(NaN, NaN - MinusInfinity);
     EXPECT_EQ(NaN, Infinity - NaN);
     EXPECT_EQ(NaN, MinusInfinity - NaN);
+}
+
+TEST_F(DecimalTest, ToDouble)
+{
+    EXPECT_EQ(0.0, encode(0, 0, Positive).toDouble());
+    EXPECT_EQ(-0.0, encode(0, 0, Negative).toDouble());
+
+    EXPECT_EQ(1.0, encode(1, 0, Positive).toDouble());
+    EXPECT_EQ(-1.0, encode(1, 0, Negative).toDouble());
+
+    EXPECT_EQ(0.1, encode(1, -1, Positive).toDouble());
+    EXPECT_EQ(-0.1, encode(1, -1, Negative).toDouble());
+    EXPECT_EQ(0.3, encode(3, -1, Positive).toDouble());
+    EXPECT_EQ(-0.3, encode(3, -1, Negative).toDouble());
+    EXPECT_EQ(0.6, encode(6, -1, Positive).toDouble());
+    EXPECT_EQ(-0.6, encode(6, -1, Negative).toDouble());
+    EXPECT_EQ(0.7, encode(7, -1, Positive).toDouble());
+    EXPECT_EQ(-0.7, encode(7, -1, Negative).toDouble());
+
+    EXPECT_EQ(0.01, encode(1, -2, Positive).toDouble());
+    EXPECT_EQ(0.001, encode(1, -3, Positive).toDouble());
+    EXPECT_EQ(0.0001, encode(1, -4, Positive).toDouble());
+    EXPECT_EQ(0.00001, encode(1, -5, Positive).toDouble());
+
+    EXPECT_EQ(1e+308, encode(1, 308, Positive).toDouble());
+    EXPECT_EQ(1e-307, encode(1, -307, Positive).toDouble());
+
+    EXPECT_TRUE(isinf(encode(1, 1000, Positive).toDouble()));
+    EXPECT_EQ(0.0, encode(1, -1000, Positive).toDouble());
+}
+
+TEST_F(DecimalTest, ToDoubleSpecialValues)
+{
+    EXPECT_TRUE(isinf(Decimal::infinity(Decimal::Positive).toDouble()));
+    EXPECT_TRUE(isinf(Decimal::infinity(Decimal::Negative).toDouble()));
+    EXPECT_TRUE(isnan(Decimal::nan().toDouble()));
 }
 
 TEST_F(DecimalTest, ToString)

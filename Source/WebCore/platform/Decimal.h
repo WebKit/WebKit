@@ -68,6 +68,7 @@ public:
         int countDigits() const;
         int exponent() const { return m_exponent; }
         bool isFinite() const { return !isSpecial(); }
+        bool isInfinity() const { return m_formatClass == ClassInfinity; }
         bool isNaN() const { return m_formatClass == ClassNaN; }
         bool isSpecial() const { return m_formatClass == ClassInfinity || m_formatClass == ClassNaN; }
         bool isZero() const { return m_formatClass == ClassZero; }
@@ -122,6 +123,7 @@ public:
     }
 
     bool isFinite() const { return m_data.isFinite(); }
+    bool isInfinity() const { return m_data.isInfinity(); }
     bool isNaN() const { return m_data.isNaN(); }
     bool isNegative() const { return sign() == Negative; }
     bool isPositive() const { return sign() == Positive; }
@@ -134,9 +136,11 @@ public:
     Decimal remainder(const Decimal&) const;
     Decimal round() const;
 
+    double toDouble() const;
     // Note: toString method supports infinity and nan but fromString not.
     String toString() const;
 
+    static Decimal fromDouble(double);
     // fromString supports following syntax EBNF:
     //  number ::= sign? digit+ ('.' digit*) (exponent-marker sign? digit+)?
     //          | sign? '.' digit+ (exponent-marker sign? digit+)?

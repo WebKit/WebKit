@@ -37,6 +37,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/dtoa.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -678,6 +679,19 @@ Decimal Decimal::floor() const
     return Decimal(sign(), 0, result);
 }
 
+Decimal Decimal::fromDouble(double doubleValue)
+{
+    if (isfinite(doubleValue)) {
+        NumberToStringBuffer buffer;
+        return fromString(numberToString(doubleValue, buffer));
+    }
+
+    if (isinf(doubleValue))
+        return infinity(doubleValue < 0 ? Negative : Positive);
+
+    return nan();
+}
+
 Decimal Decimal::fromString(const String& str)
 {
     int exponent = 0;
@@ -914,6 +928,20 @@ Decimal Decimal::round() const
         result += 10;
     result /= 10;
     return Decimal(sign(), 0, result);
+}
+
+double Decimal::toDouble() const
+{
+    if (isFinite()) {
+        bool valid;
+        const double doubleValue = toString().toDouble(&valid);
+        return valid ? doubleValue : std::numeric_limits<double>::quiet_NaN();
+    }
+
+    if (isInfinity())
+        return isNegative() ? -std::numeric_limits<double>::infinity() : std::numeric_limits<double>::infinity();
+
+    return std::numeric_limits<double>::quiet_NaN();
 }
 
 String Decimal::toString() const
