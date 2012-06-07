@@ -1,3 +1,35 @@
+2012-06-06  Levi Weintraub  <leviw@chromium.org>
+
+        Use enclosingIntRect instead of pixelSnappedIntRect in RenderFileUploadControl
+        https://bugs.webkit.org/show_bug.cgi?id=88454
+
+        Reviewed by Kent Tamura.
+
+        Skipping new test on non-chromium platforms, and correcting a typo in several skipped files.
+        Also updating the bug number in the gtk skipped file to 85532 from 60318 to better reflect
+        the outstanding work of enabling each port to support sub-pixel layout, instead of sub-pixel
+        layout itself.
+
+        * fast/sub-pixel/file-upload-control-at-fractional-offset.html: Added.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel: Added.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/Skipped:
+        * platform/gtk-wk2/Skipped:
+        * platform/gtk/TestExpectations:
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win-xp/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert erroneous change in r119637.

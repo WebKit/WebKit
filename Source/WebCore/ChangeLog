@@ -1,3 +1,18 @@
+2012-06-06  Levi Weintraub  <leviw@chromium.org>
+
+        Use enclosingIntRect instead of pixelSnappedIntRect in RenderFileUploadControl
+        https://bugs.webkit.org/show_bug.cgi?id=88454
+
+        Reviewed by Kent Tamura.
+
+        Properly clipping the file upload control to avoid clipping out the top of the file upload button
+        when the control is positioned at a sub-pixel offset that rounds up.
+
+        Test: fast/sub-pixel/file-upload-control-at-fractional-offset.html
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+
 2012-06-06  Filip Pizlo  <fpizlo@apple.com>
 
         Global object variable accesses should not require an extra load

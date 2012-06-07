@@ -303,11 +303,11 @@ BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
 BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
 
 // These tests require subpixel layout to be enabled
-BUGWK60318 : fast/sub-pixel = FAIL
-BUGWK60318 : fast/sub-pixel/float-containing-block-with-margin.html = PASS
-BUGWK60318 : fast/sub-pixel/float-with-right-margin-zoom.html = PASS
-BUGWK60318 : fast/sub-pixel/float-wrap-with-subpixel-top.html = PASS
-BUGWK60318 : fast/sub-pixel/inline-block-with-margin.html = PASS
+BUGWK85532 : fast/sub-pixel = FAIL
+BUGWK85532 : fast/sub-pixel/float-containing-block-with-margin.html = PASS
+BUGWK85532 : fast/sub-pixel/float-with-right-margin-zoom.html = PASS
+BUGWK85532 : fast/sub-pixel/float-wrap-with-subpixel-top.html = PASS
+BUGWK85532 : fast/sub-pixel/inline-block-with-margin.html = PASS
 
 // Mediastream implementation is not complete yet.
 BUGWK79203 SKIP : fast/mediastream = FAIL
