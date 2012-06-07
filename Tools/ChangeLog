@@ -1,3 +1,17 @@
+2012-06-07  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Assertions in gtk_widget_draw when acquiring pixel output
+        https://bugs.webkit.org/show_bug.cgi?id=88060
+
+        Reviewed by Martin Robinson.
+
+        Spin the main loop before acquiring the pixel content. This ensures things
+        like late size allocations are finished before calling gtk_widget_draw,
+        avoiding assertions and subsequent empty pixel results.
+
+        * DumpRenderTree/gtk/PixelDumpSupportGtk.cpp:
+        (createBitmapContextFromWebView):
+
 2012-06-06  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Improve the visual of the viewport info box

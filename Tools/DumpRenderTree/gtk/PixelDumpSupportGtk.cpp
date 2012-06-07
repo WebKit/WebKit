@@ -48,6 +48,9 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool 
     height = gtk_widget_get_allocated_height(viewContainer);
 #endif
 
+    while (gtk_events_pending())
+        gtk_main_iteration();
+
     cairo_surface_t* imageSurface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
     cairo_t* context = cairo_create(imageSurface);
 
