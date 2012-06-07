@@ -1,3 +1,18 @@
+2012-06-07  Dirk Pranke  <dpranke@chromium.org>
+
+        run-webkit-tests --lint-test-files gives an error when run on linux
+        https://bugs.webkit.org/show_bug.cgi?id=88551
+
+        Reviewed by Ojan Vafai.
+
+        We weren't mapping the expectations properly for the
+        google-chrome ports.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.path_to_test_expectations_file):
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        (TestGoogleChromePort.test_path_to_expectations):
+
 2012-06-07  Daniel Erat  <derat@chromium.org>
 
         [chromium] Add LayoutTestController::setTextSubpixelPositioning() for Linux.

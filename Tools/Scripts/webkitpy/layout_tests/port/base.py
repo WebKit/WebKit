@@ -691,7 +691,7 @@ class Port(object):
 
         # test_expectations are always in mac/ not mac-leopard/ by convention, hence we use port_name instead of name().
         port_name = self.port_name
-        if port_name.startswith('chromium'):
+        if port_name.startswith('chromium') or port_name.startswith('google-chrome'):
             port_name = 'chromium'
 
         baseline_path = self._webkit_baseline_path(port_name)

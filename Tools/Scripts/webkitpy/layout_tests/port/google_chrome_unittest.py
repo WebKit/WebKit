@@ -67,6 +67,11 @@ class TestGoogleChromePort(unittest.TestCase):
         self._verify_expectations_overrides('google-chrome-linux32')
         self._verify_expectations_overrides('google-chrome-linux64')
 
+    def test_path_to_expectations(self):
+        port_factory = PortFactory(MockSystemHost())
+        for port_name in ('google-chrome-linux32', 'google-chrome-linux64', 'google-chrome-mac', 'google-chrome-win'):
+            self.assertTrue(port_factory.get(port_name).path_to_test_expectations_file().endswith('platform/chromium/TestExpectations'))
+
 
 if __name__ == '__main__':
     unittest.main()
