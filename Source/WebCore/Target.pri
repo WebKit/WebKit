@@ -706,7 +706,6 @@ SOURCES += \
     fileapi/FileReaderLoader.cpp \
     fileapi/FileReaderSync.cpp \
     fileapi/FileThread.cpp \
-    fileapi/OperationNotAllowedException.cpp \
     fileapi/ThreadableBlobRegistry.cpp \
     fileapi/WebKitBlobBuilder.cpp \
     history/BackForwardController.cpp \
@@ -1871,7 +1870,6 @@ HEADERS += \
     fileapi/FileReaderSync.h \
     fileapi/FileThread.h \
     fileapi/FileThreadTask.h \
-    fileapi/OperationNotAllowedException.h \
     fileapi/WebKitBlobBuilder.h \
     history/BackForwardController.h \
     history/BackForwardListImpl.h \

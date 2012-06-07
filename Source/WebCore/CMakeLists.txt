@@ -734,7 +734,6 @@ SET(WebCore_SOURCES
     fileapi/File.cpp
     fileapi/FileException.cpp
     fileapi/FileList.cpp
-    fileapi/OperationNotAllowedException.cpp
     fileapi/ThreadableBlobRegistry.cpp
     fileapi/WebKitBlobBuilder.cpp
 
@@ -1515,7 +1514,6 @@ IF (ENABLE_BLOB)
     LIST(APPEND WebCore_IDL_FILES
         fileapi/FileException.idl
         fileapi/FileReaderSync.idl
-        fileapi/OperationNotAllowedException.idl
     )
 ENDIF ()
 

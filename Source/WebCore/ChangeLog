@@ -1,3 +1,35 @@
+2012-06-07  Li Yin  <li.yin@intel.com>
+
+        [FileAPI] FileReader should throw an InvalidStateError exception when readyState is LOADING
+        https://bugs.webkit.org/show_bug.cgi?id=88212
+
+        Reviewed by Jian Li.
+
+        From Spec: http://www.w3.org/TR/FileAPI/#readAsBinaryString
+        FileReader should throw an InvalidStateError exception instead of NOT_ALLOWED_ERR
+        when the readyState is LOADING.
+        Also delete OperationNotAllowedException related code, because it is not longer needed.
+
+        Tests: fast/files/read-file-async.html
+               fast/files/workers/worker-read-file-async.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMExceptions.in:
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::readInternal): Changed it to throw INVALID_STATE_ERR.
+        * fileapi/FileReader.idl: Changed it to raise DOMException for all read methods.
+        * fileapi/OperationNotAllowedException.cpp: Removed.
+        * fileapi/OperationNotAllowedException.h: Removed.
+        * fileapi/OperationNotAllowedException.idl: Removed.
+
 2012-06-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119689.

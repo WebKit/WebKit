@@ -35,9 +35,9 @@
 #include "FileReader.h"
 
 #include "CrossThreadTask.h"
+#include "ExceptionCode.h"
 #include "File.h"
 #include "Logging.h"
-#include "OperationNotAllowedException.h"
 #include "ProgressEvent.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/ArrayBuffer.h>
@@ -133,9 +133,9 @@ void FileReader::readAsDataURL(Blob* blob, ExceptionCode& ec)
 
 void FileReader::readInternal(Blob* blob, FileReaderLoader::ReadType type, ExceptionCode& ec)
 {
-    // If multiple concurrent read methods are called on the same FileReader, OperationNotAllowedException should be thrown when the state is LOADING.
+    // If multiple concurrent read methods are called on the same FileReader, INVALID_STATE_ERR should be thrown when the state is LOADING.
     if (m_state == LOADING) {
-        ec = OperationNotAllowedException::NOT_ALLOWED_ERR;
+        ec = INVALID_STATE_ERR;
         return;
     }
 

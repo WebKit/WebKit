@@ -772,9 +772,6 @@
 		2E0888D41148848A00AF4265 /* JSDOMFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */; };
 		2E0888D51148848A00AF4265 /* JSDOMFormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E0888D31148848A00AF4265 /* JSDOMFormData.h */; };
 		2E0888E6114884E200AF4265 /* JSDOMFormDataCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0888E5114884E200AF4265 /* JSDOMFormDataCustom.cpp */; };
-		2E2445F71395893A004B6C19 /* OperationNotAllowedException.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E2445F51395893A004B6C19 /* OperationNotAllowedException.h */; };
-		2E24476813959173004B6C19 /* JSOperationNotAllowedException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E24476613959173004B6C19 /* JSOperationNotAllowedException.cpp */; };
-		2E24476913959173004B6C19 /* JSOperationNotAllowedException.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E24476713959173004B6C19 /* JSOperationNotAllowedException.h */; };
 		2E2D99CD10E2BBDA00496337 /* JSBlob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E2D99CB10E2BBDA00496337 /* JSBlob.cpp */; };
 		2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E2D99CC10E2BBDA00496337 /* JSBlob.h */; };
 		2E2D99E710E2BC1C00496337 /* DOMBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E2D99E510E2BC1C00496337 /* DOMBlob.h */; };
@@ -3510,7 +3507,6 @@
 		978AD67414130A8D00C7CAE3 /* HTMLSpanElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978AD67114130A8D00C7CAE3 /* HTMLSpanElement.cpp */; };
 		978AD67514130A8D00C7CAE3 /* HTMLSpanElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 978AD67214130A8D00C7CAE3 /* HTMLSpanElement.h */; };
 		978D07B6145A0F030096908D /* FileException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07B5145A0F030096908D /* FileException.cpp */; };
-		978D07B8145A0F1B0096908D /* OperationNotAllowedException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07B7145A0F1B0096908D /* OperationNotAllowedException.cpp */; };
 		978D07BA145A0F3C0096908D /* RangeException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07B9145A0F3C0096908D /* RangeException.cpp */; };
 		978D07BC145A0F560096908D /* EventException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07BB145A0F560096908D /* EventException.cpp */; };
 		978D07BE145A0F6C0096908D /* DOMCoreException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978D07BD145A0F6C0096908D /* DOMCoreException.cpp */; };
@@ -7737,10 +7733,6 @@
 		2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMFormData.cpp; sourceTree = "<group>"; };
 		2E0888D31148848A00AF4265 /* JSDOMFormData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMFormData.h; sourceTree = "<group>"; };
 		2E0888E5114884E200AF4265 /* JSDOMFormDataCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMFormDataCustom.cpp; sourceTree = "<group>"; };
-		2E2445F51395893A004B6C19 /* OperationNotAllowedException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationNotAllowedException.h; path = fileapi/OperationNotAllowedException.h; sourceTree = "<group>"; };
-		2E2445F61395893A004B6C19 /* OperationNotAllowedException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OperationNotAllowedException.idl; path = fileapi/OperationNotAllowedException.idl; sourceTree = "<group>"; };
-		2E24476613959173004B6C19 /* JSOperationNotAllowedException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOperationNotAllowedException.cpp; sourceTree = "<group>"; };
-		2E24476713959173004B6C19 /* JSOperationNotAllowedException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOperationNotAllowedException.h; sourceTree = "<group>"; };
 		2E2D99CB10E2BBDA00496337 /* JSBlob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlob.cpp; sourceTree = "<group>"; };
 		2E2D99CC10E2BBDA00496337 /* JSBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBlob.h; sourceTree = "<group>"; };
 		2E2D99E510E2BC1C00496337 /* DOMBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMBlob.h; sourceTree = "<group>"; };
@@ -10577,7 +10569,6 @@
 		978AD67214130A8D00C7CAE3 /* HTMLSpanElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLSpanElement.h; sourceTree = "<group>"; };
 		978AD67314130A8D00C7CAE3 /* HTMLSpanElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLSpanElement.idl; sourceTree = "<group>"; };
 		978D07B5145A0F030096908D /* FileException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileException.cpp; path = fileapi/FileException.cpp; sourceTree = "<group>"; };
-		978D07B7145A0F1B0096908D /* OperationNotAllowedException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OperationNotAllowedException.cpp; path = fileapi/OperationNotAllowedException.cpp; sourceTree = "<group>"; };
 		978D07B9145A0F3C0096908D /* RangeException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RangeException.cpp; sourceTree = "<group>"; };
 		978D07BB145A0F560096908D /* EventException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventException.cpp; sourceTree = "<group>"; };
 		978D07BD145A0F6C0096908D /* DOMCoreException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCoreException.cpp; sourceTree = "<group>"; };
@@ -16771,8 +16762,6 @@
 				898785A1122CA2A7003AABDA /* JSMetadata.h */,
 				898785A2122CA2A7003AABDA /* JSMetadataCallback.cpp */,
 				898785A3122CA2A7003AABDA /* JSMetadataCallback.h */,
-				2E24476613959173004B6C19 /* JSOperationNotAllowedException.cpp */,
-				2E24476713959173004B6C19 /* JSOperationNotAllowedException.h */,
 				89CD029111C85B870070B791 /* JSWebKitBlobBuilder.cpp */,
 				89CD029211C85B870070B791 /* JSWebKitBlobBuilder.h */,
 			);
@@ -17598,9 +17587,6 @@
 				E1AB1EC114E9E3CC00449E13 /* Metadata.idl */,
 				89878551122CA064003AABDA /* MetadataCallback.h */,
 				E1AB1EC214E9E3D500449E13 /* MetadataCallback.idl */,
-				978D07B7145A0F1B0096908D /* OperationNotAllowedException.cpp */,
-				2E2445F51395893A004B6C19 /* OperationNotAllowedException.h */,
-				2E2445F61395893A004B6C19 /* OperationNotAllowedException.idl */,
 				976D6C75122B8A3D001FD1F7 /* ThreadableBlobRegistry.cpp */,
 				976D6C76122B8A3D001FD1F7 /* ThreadableBlobRegistry.h */,
 				976D6C5C122B8A3D001FD1F7 /* WebKitBlobBuilder.cpp */,
@@ -23568,7 +23554,6 @@
 				6EBF0E7712A9868800DB1709 /* JSOESTextureFloat.h in Headers */,
 				77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */,
 				FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */,
-				2E24476913959173004B6C19 /* JSOperationNotAllowedException.h in Headers */,
 				FDEA6243152102E200479DF0 /* JSOscillator.h in Headers */,
 				1A0D57410A5C7867007EDD4C /* JSOverflowEvent.h in Headers */,
 				E1284BB110449FFA00EAEB52 /* JSPageTransitionEvent.h in Headers */,
@@ -23992,7 +23977,6 @@
 				FDA3E95A134A49EF008D4B5A /* OfflineAudioCompletionEvent.h in Headers */,
 				FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */,
 				F4EAF4AF10C742B1009100D3 /* OpenTypeSanitizer.h in Headers */,
-				2E2445F71395893A004B6C19 /* OperationNotAllowedException.h in Headers */,
 				0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */,
 				97BC6A381505F081001B74AC /* OriginQuotaManager.h in Headers */,
 				97BC6A3A1505F081001B74AC /* OriginUsageRecord.h in Headers */,
@@ -26778,7 +26762,6 @@
 				6EBF0E7612A9868800DB1709 /* JSOESTextureFloat.cpp in Sources */,
 				77A17AA612F28B2A004E02F6 /* JSOESVertexArrayObject.cpp in Sources */,
 				FDF6BAF8134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp in Sources */,
-				2E24476813959173004B6C19 /* JSOperationNotAllowedException.cpp in Sources */,
 				FDEA6242152102E200479DF0 /* JSOscillator.cpp in Sources */,
 				1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */,
 				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
@@ -27219,7 +27202,6 @@
 				FDA3E959134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp in Sources */,
 				FDA3E95B134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp in Sources */,
 				F4EAF4AE10C742B1009100D3 /* OpenTypeSanitizer.cpp in Sources */,
-				978D07B8145A0F1B0096908D /* OperationNotAllowedException.cpp in Sources */,
 				0014628A103CD1DE000B20DB /* OriginAccessEntry.cpp in Sources */,
 				97BC6A371505F081001B74AC /* OriginQuotaManager.cpp in Sources */,
 				97BC6A391505F081001B74AC /* OriginUsageRecord.cpp in Sources */,

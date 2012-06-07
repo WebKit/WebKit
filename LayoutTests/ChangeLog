@@ -1,3 +1,16 @@
+2012-06-07  Li Yin  <li.yin@intel.com>
+
+        [FileAPI] FileReader should throw an InvalidStateError exception when readyState is LOADING
+        https://bugs.webkit.org/show_bug.cgi?id=88212
+
+        Reviewed by Jian Li.
+
+        From spec: http://www.w3.org/TR/FileAPI/#readAsBinaryString
+        FileReader should throw an InvalidStateError exception instead of NOT_ALLOWED_ERR.
+
+        * fast/files/read-file-async-expected.txt:
+        * fast/files/workers/worker-read-file-async-expected.txt:
+
 2012-06-07  Hironori Bono  <hbono@chromium.org>
 
         Use light gray for grammar markers on Windows and Linux

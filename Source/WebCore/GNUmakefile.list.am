@@ -439,8 +439,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSOESTextureFloat.h \
 	DerivedSources/WebCore/JSOESVertexArrayObject.cpp \
 	DerivedSources/WebCore/JSOESVertexArrayObject.h \
-	DerivedSources/WebCore/JSOperationNotAllowedException.cpp \
-	DerivedSources/WebCore/JSOperationNotAllowedException.h \
 	DerivedSources/WebCore/JSOscillator.cpp \
 	DerivedSources/WebCore/JSOscillator.h \
 	DerivedSources/WebCore/JSOverflowEvent.cpp \
@@ -804,7 +802,6 @@ dom_binding_idls += \
 	$(WebCore)/fileapi/FileList.idl \
 	$(WebCore)/fileapi/FileReader.idl \
 	$(WebCore)/fileapi/FileReaderSync.idl \
-	$(WebCore)/fileapi/OperationNotAllowedException.idl \
 	$(WebCore)/fileapi/WebKitBlobBuilder.idl \
 	$(WebCore)/html/DOMFormData.idl \
 	$(WebCore)/html/DOMSettableTokenList.idl \
@@ -2193,8 +2190,6 @@ webcore_sources += \
 	Source/WebCore/fileapi/FileThread.cpp \
 	Source/WebCore/fileapi/FileThread.h \
 	Source/WebCore/fileapi/FileThreadTask.h \
-	Source/WebCore/fileapi/OperationNotAllowedException.cpp \
-	Source/WebCore/fileapi/OperationNotAllowedException.h \
 	Source/WebCore/fileapi/ThreadableBlobRegistry.cpp \
 	Source/WebCore/fileapi/ThreadableBlobRegistry.h \
 	Source/WebCore/fileapi/WebKitBlobBuilder.cpp \

@@ -12206,14 +12206,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSOperationNotAllowedException.cpp"
-				>
-			</File>
-			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSOperationNotAllowedException.h"
-				>
-			</File>
-			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSOverflowEvent.cpp"
 				>
 				<FileConfiguration
@@ -62592,18 +62584,6 @@
 			</File>
 			<File
 				RelativePath="..\html\NumberInputType.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\OperationNotAllowedException.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\OperationNotAllowedException.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\OperationNotAllowedException.h"
 				>
 			</File>
 			<File

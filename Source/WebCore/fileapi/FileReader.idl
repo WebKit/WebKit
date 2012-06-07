@@ -46,13 +46,13 @@ module html {
 
         // async read methods
         void readAsArrayBuffer(in Blob blob)
-            raises(OperationNotAllowedException);
+            raises(DOMException);
         void readAsBinaryString(in Blob blob)
-            raises(OperationNotAllowedException);
+            raises(DOMException);
         void readAsText(in Blob blob, in [Optional] DOMString encoding)
-            raises(OperationNotAllowedException);
+            raises(DOMException);
         void readAsDataURL(in Blob blob)
-            raises(OperationNotAllowedException);
+            raises(DOMException);
 
         void abort();
 
