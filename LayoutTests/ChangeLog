@@ -1,3 +1,151 @@
+2012-06-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaseline after r119617 part 4.
+
+        * platform/chromium-linux-x86/fast/text/international: Added.
+        * platform/chromium-linux-x86/fast/text/international/bidi-neutral-run-expected.png: Added.
+        * platform/chromium-linux-x86/ietestcenter: Added.
+        * platform/chromium-linux-x86/ietestcenter/css3: Added.
+        * platform/chromium-linux-x86/ietestcenter/css3/bordersbackgrounds: Added.
+        * platform/chromium-linux-x86/ietestcenter/css3/bordersbackgrounds/background_position_three_four_values-expected.png: Added.
+        * platform/chromium-linux-x86/platform/chromium/compositing: Removed.
+        * platform/chromium-linux/fast/text/international/bidi-LDB-2-formatting-characters-expected.png:
+        * platform/chromium-linux/fast/text/international/bidi-european-terminators-expected.png:
+        * platform/chromium-linux/fast/text/international/bidi-neutral-run-expected.png:
+        * platform/chromium-linux/fast/text/softHyphen-expected.png:
+        * platform/chromium-linux/fast/text/wbr-expected.png:
+        * platform/chromium-linux/fast/text/whitespace/024-expected.png:
+        * platform/chromium-linux/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.png:
+        * platform/chromium-linux/fast/writing-mode/fieldsets-expected.png:
+        * platform/chromium-linux/fonts/cursive-expected.png:
+        * platform/chromium-linux/fonts/default-expected.png:
+        * platform/chromium-linux/fonts/fantasy-expected.png:
+        * platform/chromium-linux/fonts/serif-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/bordersbackgrounds/background_position_three_four_values-expected.png:
+        * platform/chromium-linux/media/video-zoom-expected.png:
+        * platform/chromium-linux/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-linux/platform/chromium/media/video-frame-size-change-expected.png:
+        * platform/chromium-linux/platform/chromium/virtual/gpu/fast/canvas/canvas-bg-expected.png:
+        * platform/chromium-linux/printing/return-from-printing-mode-expected.png:
+        * platform/chromium-linux/scrollbars/basic-scrollbar-expected.png:
+        * platform/chromium-linux/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-linux/scrollbars/scrollbar-orientation-expected.png:
+        * platform/chromium-linux/svg/custom/altglyph-expected.png:
+        * platform/chromium-linux/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/chromium-linux/svg/custom/text-xy-updates-SVGList-expected.png:
+        * platform/chromium-linux/svg/dom/SVGLengthList-basics-expected.png:
+        * platform/chromium-linux/svg/dom/SVGLengthList-insertItemBefore-expected.png:
+        * platform/chromium-linux/svg/dom/SVGLengthList-replaceItem-expected.png:
+        * platform/chromium-linux/svg/dom/SVGLengthList-xml-dom-modifications-expected.png:
+        * platform/chromium-linux/svg/dom/SVGPathSegList-appendItem-expected.png:
+        * platform/chromium-linux/svg/dom/SVGPathSegList-clear-and-initialize-expected.png:
+        * platform/chromium-linux/svg/dom/SVGPathSegList-insertItemBefore-expected.png:
+        * platform/chromium-linux/svg/dom/SVGPathSegList-removeItem-expected.png:
+        * platform/chromium-linux/svg/dom/SVGPathSegList-replaceItem-expected.png:
+        * platform/chromium-linux/svg/dom/SVGPointList-basics-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-dom-textLength-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png:
+        * platform/chromium-linux/svg/overflow/overflow-on-outermost-svg-element-defaults-expected.png:
+        * platform/chromium-linux/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.png:
+        * platform/chromium-linux/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2-expected.png:
+        * platform/chromium-linux/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3-expected.png:
+        * platform/chromium-linux/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.png:
+        * platform/chromium-linux/svg/text/multichar-glyph-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-float-border-padding-expected.png:
+        * platform/chromium-linux/svg/zoom/text/zoom-svg-float-border-padding-expected.png:
+        * platform/chromium-mac-leopard/media/video-zoom-expected.png:
+        * platform/chromium-mac-leopard/scrollbars/basic-scrollbar-expected.png:
+        * platform/chromium-mac-leopard/scrollbars/disabled-scrollbar-expected.png:
+        * platform/chromium-mac-leopard/scrollbars/listbox-scrollbar-combinations-expected.png:
+        * platform/chromium-mac-leopard/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac-leopard/scrollbars/scrollbar-orientation-expected.png:
+        * platform/chromium-mac-snowleopard/media/video-zoom-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-mac-snowleopard/scrollbars/basic-scrollbar-expected.png:
+        * platform/chromium-mac-snowleopard/scrollbars/disabled-scrollbar-expected.png:
+        * platform/chromium-mac-snowleopard/scrollbars/listbox-scrollbar-combinations-expected.png:
+        * platform/chromium-mac-snowleopard/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac-snowleopard/scrollbars/scrollbar-orientation-expected.png:
+        * platform/chromium-mac/media/video-zoom-expected.png:
+        * platform/chromium-mac/platform/chromium/compositing/img-layer-grow-expected.png:
+        * platform/chromium-mac/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-mac/scrollbars/basic-scrollbar-expected.png:
+        * platform/chromium-mac/scrollbars/disabled-scrollbar-expected.png:
+        * platform/chromium-mac/scrollbars/listbox-scrollbar-combinations-expected.png:
+        * platform/chromium-mac/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac/scrollbars/scrollbar-orientation-expected.png:
+        * platform/chromium-win-vista/platform/chromium/compositing: Added.
+        * platform/chromium-win-vista/platform/chromium/compositing/layout-width-change-expected.png: Added.
+        * platform/chromium-win-xp/platform/chromium/compositing: Added.
+        * platform/chromium-win-xp/platform/chromium/compositing/layout-width-change-expected.png: Added.
+        * platform/chromium-win/fast/text/international/bidi-european-terminators-expected.png:
+        * platform/chromium-win/fast/text/word-break-expected.png:
+        * platform/chromium-win/fast/writing-mode/fieldsets-expected.png:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/background_position_three_four_values-expected.png:
+        * platform/chromium-win/media/video-zoom-expected.png:
+        * platform/chromium-win/platform/chromium/compositing/img-layer-grow-expected.png: Added.
+        * platform/chromium-win/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-win/platform/chromium/media/video-frame-size-change-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/canvas-bg-expected.png:
+        * platform/chromium-win/scrollbars/basic-scrollbar-expected.png:
+        * platform/chromium-win/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-win/scrollbars/scrollbar-orientation-expected.png:
+        * platform/chromium-win/scrollbars/scrollbars-on-positioned-content-expected.png:
+        * platform/chromium-win/svg/custom/altglyph-expected.png:
+        * platform/chromium-win/svg/custom/invisible-text-after-scrolling-expected.png:
+        * platform/chromium-win/svg/custom/junk-data-expected.png:
+        * platform/chromium-win/svg/custom/missing-xlink-expected.png:
+        * platform/chromium-win/svg/custom/path-bad-data-expected.png:
+        * platform/chromium-win/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/chromium-win/svg/custom/text-xy-updates-SVGList-expected.png:
+        * platform/chromium-win/svg/custom/use-font-face-crash-expected.png:
+        * platform/chromium-win/svg/dom/SVGLengthList-initialize-expected.png:
+        * platform/chromium-win/svg/dom/SVGLengthList-xml-dom-modifications-expected.png:
+        * platform/chromium-win/svg/dom/SVGNumberList-basics-expected.png:
+        * platform/chromium-win/svg/dom/SVGPathSegList-clear-and-initialize-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-type-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-dom-textLength-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png:
+        * platform/chromium-win/svg/hixie/error/012-expected.png:
+        * platform/chromium-win/svg/overflow/overflow-on-outermost-svg-element-defaults-expected.png:
+        * platform/chromium-win/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.png:
+        * platform/chromium-win/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2-expected.png:
+        * platform/chromium-win/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3-expected.png:
+        * platform/chromium-win/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.png:
+        * platform/chromium-win/svg/repaint/image-with-clip-path-expected.png:
+        * platform/chromium-win/svg/text/multichar-glyph-expected.png:
+
 2012-06-06  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11575112> and https://bugs.webkit.org/show_bug.cgi?id=88428
