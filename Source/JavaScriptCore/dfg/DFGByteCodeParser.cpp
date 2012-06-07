@@ -2216,14 +2216,20 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_get_global_var: {
             PredictedType prediction = getPrediction();
             
-            NodeIndex getGlobalVar = addToGraph(GetGlobalVar, OpInfo(currentInstruction[2].u.operand), OpInfo(prediction));
+            NodeIndex getGlobalVar = addToGraph(
+                GetGlobalVar,
+                OpInfo(m_inlineStackTop->m_codeBlock->globalObject()->assertRegisterIsInThisObject(currentInstruction[2].u.registerPointer)),
+                OpInfo(prediction));
             set(currentInstruction[1].u.operand, getGlobalVar);
             NEXT_OPCODE(op_get_global_var);
         }
 
         case op_put_global_var: {
             NodeIndex value = get(currentInstruction[2].u.operand);
-            addToGraph(PutGlobalVar, OpInfo(currentInstruction[1].u.operand), value);
+            addToGraph(
+                PutGlobalVar,
+                OpInfo(m_inlineStackTop->m_codeBlock->globalObject()->assertRegisterIsInThisObject(currentInstruction[1].u.registerPointer)),
+                value);
             NEXT_OPCODE(op_put_global_var);
         }
 

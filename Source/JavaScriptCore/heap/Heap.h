@@ -85,6 +85,7 @@ namespace JSC {
         static bool testAndSetMarked(const void*);
         static void setMarked(const void*);
 
+        static bool isWriteBarrierEnabled();
         static void writeBarrier(const JSCell*, JSValue);
         static void writeBarrier(const JSCell*, JSCell*);
         static uint8_t* addressOfCardFor(JSCell*);
@@ -280,6 +281,15 @@ namespace JSC {
     inline void Heap::setMarked(const void* cell)
     {
         MarkedBlock::blockFor(cell)->setMarked(cell);
+    }
+
+    inline bool Heap::isWriteBarrierEnabled()
+    {
+#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+        return true;
+#else
+        return false;
+#endif
     }
 
 #if ENABLE(GGC)

@@ -923,15 +923,15 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_get_global_var: {
             int r0 = (++it)->u.operand;
-            int index = (++it)->u.operand;
-            dataLog("[%4d] get_global_var\t %s, %d\n", location, registerName(exec, r0).data(), index);
+            WriteBarrier<Unknown>* registerPointer = (++it)->u.registerPointer;
+            dataLog("[%4d] get_global_var\t %s, g%d(%p)\n", location, registerName(exec, r0).data(), m_globalObject->findRegisterIndex(registerPointer), registerPointer);
             it++;
             break;
         }
         case op_put_global_var: {
-            int index = (++it)->u.operand;
+            WriteBarrier<Unknown>* registerPointer = (++it)->u.registerPointer;
             int r0 = (++it)->u.operand;
-            dataLog("[%4d] put_global_var\t %d, %s\n", location, index, registerName(exec, r0).data());
+            dataLog("[%4d] put_global_var\t g%d(%p), %s\n", location, m_globalObject->findRegisterIndex(registerPointer), registerPointer, registerName(exec, r0).data());
             break;
         }
         case op_resolve_base: {

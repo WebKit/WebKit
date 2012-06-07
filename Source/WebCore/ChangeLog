@@ -1,3 +1,18 @@
+2012-06-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Global object variable accesses should not require an extra load
+        https://bugs.webkit.org/show_bug.cgi?id=88385
+
+        Reviewed by Gavin Barraclough and Geoffrey Garen.
+
+        Updated JSDOMWindowBase.cpp to use the new symbol table API. this->symbolTableFoo(...)
+        becomes symbolTableFoo(this, ...).
+                
+        No new tests because no change in behavior.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::updateDocument):
+
 2012-06-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move implementation of WebCore::GraphicsContext3D and related from WebKit/chromium/src to WebCore/platform/chromium/support

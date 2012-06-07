@@ -30,6 +30,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGSlowPathGenerator.h"
+#include "JSVariableObject.h"
 
 namespace JSC { namespace DFG {
 
@@ -3564,33 +3565,32 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case GetGlobalVar: {
-        GPRTemporary result(this);
-        GPRTemporary scratch(this);
+        GPRTemporary resultPayload(this);
+        GPRTemporary resultTag(this);
 
-        JSVariableObject* globalObject = m_jit.globalObjectFor(node.codeOrigin);
-        m_jit.loadPtr(const_cast<WriteBarrier<Unknown>**>(globalObject->addressOfRegisters()), result.gpr());
-        m_jit.load32(JITCompiler::tagForGlobalVar(result.gpr(), node.varNumber()), scratch.gpr());
-        m_jit.load32(JITCompiler::payloadForGlobalVar(result.gpr(), node.varNumber()), result.gpr());
+        m_jit.move(TrustedImmPtr(node.registerPointer()), resultPayload.gpr());
+        m_jit.load32(JITCompiler::Address(resultPayload.gpr(), OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTag.gpr());
+        m_jit.load32(JITCompiler::Address(resultPayload.gpr(), OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultPayload.gpr());
 
-        jsValueResult(scratch.gpr(), result.gpr(), m_compileIndex);
+        jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex);
         break;
     }
 
     case PutGlobalVar: {
         JSValueOperand value(this, node.child1());
-        GPRTemporary globalObject(this);
-        GPRTemporary scratch(this);
-        
-        GPRReg globalObjectReg = globalObject.gpr();
-        GPRReg scratchReg = scratch.gpr();
+        if (Heap::isWriteBarrierEnabled()) {
+            GPRTemporary scratch(this);
+            GPRReg scratchReg = scratch.gpr();
+            
+            writeBarrier(m_jit.globalObjectFor(node.codeOrigin), value.tagGPR(), node.child1(), WriteBarrierForVariableAccess, scratchReg);
+        }
 
-        m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.globalObjectFor(node.codeOrigin)), globalObjectReg);
-
-        writeBarrier(m_jit.globalObjectFor(node.codeOrigin), value.tagGPR(), node.child1(), WriteBarrierForVariableAccess, scratchReg);
-
-        m_jit.loadPtr(MacroAssembler::Address(globalObjectReg, JSVariableObject::offsetOfRegisters()), scratchReg);
-        m_jit.store32(value.tagGPR(), JITCompiler::tagForGlobalVar(scratchReg, node.varNumber()));
-        m_jit.store32(value.payloadGPR(), JITCompiler::payloadForGlobalVar(scratchReg, node.varNumber()));
+        // FIXME: if we happen to have a spare register - and _ONLY_ if we happen to have
+        // a spare register - a good optimization would be to put the register pointer into
+        // a register and then do a zero offset store followed by a four-offset store (or
+        // vice-versa depending on endianness).
+        m_jit.store32(value.tagGPR(), node.registerPointer()->tagPointer());
+        m_jit.store32(value.payloadGPR(), node.registerPointer()->payloadPointer());
 
         noResult(m_compileIndex);
         break;

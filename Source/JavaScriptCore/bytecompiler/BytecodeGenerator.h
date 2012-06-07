@@ -197,6 +197,7 @@ namespace JSC {
         int index() const { ASSERT (isIndexed() || isRegister()); return m_index; }
         size_t depth() const { ASSERT(isScoped()); return m_depth; }
         JSObject* globalObject() const { ASSERT(isGlobal()); ASSERT(m_globalObject); return m_globalObject; }
+        WriteBarrier<Unknown>* registerPointer() const;
 
         bool isRegister() const { return m_type & RegisterFlag; }
         bool isDynamic() const { return m_type & DynamicFlag; }
@@ -541,6 +542,7 @@ namespace JSC {
         ValueProfile* emitProfiledOpcode(OpcodeID);
         void retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index);
         void retrieveLastUnaryOp(int& dstIndex, int& srcIndex);
+        void retrieveLastUnaryOp(WriteBarrier<Unknown>*& dstPointer, int& srcIndex);
         ALWAYS_INLINE void rewindBinaryOp();
         ALWAYS_INLINE void rewindUnaryOp();
 

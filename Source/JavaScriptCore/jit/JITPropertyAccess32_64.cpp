@@ -30,12 +30,13 @@
 #include "JIT.h"
 
 #include "CodeBlock.h"
+#include "Interpreter.h"
 #include "JITInlineMethods.h"
 #include "JITStubCall.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSPropertyNameIterator.h"
-#include "Interpreter.h"
+#include "JSVariableObject.h"
 #include "LinkBuffer.h"
 #include "RepatchBuffer.h"
 #include "ResultType.h"
@@ -1060,13 +1061,10 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
 void JIT::emit_op_get_global_var(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
-    JSGlobalObject* globalObject = m_codeBlock->globalObject();
-    ASSERT(globalObject->isGlobalObject());
-    int index = currentInstruction[2].u.operand;
+    WriteBarrier<Unknown>* registerPointer = currentInstruction[2].u.registerPointer;
 
-    loadPtr(&globalObject->m_registers, regT2);
-
-    emitLoad(index, regT1, regT0, regT2);
+    load32(registerPointer->tagPointer(), regT1);
+    load32(registerPointer->payloadPointer(), regT0);
     emitValueProfilingSite();
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_get_global_var), dst, regT1, regT0);
@@ -1074,18 +1072,21 @@ void JIT::emit_op_get_global_var(Instruction* currentInstruction)
 
 void JIT::emit_op_put_global_var(Instruction* currentInstruction)
 {
-    int index = currentInstruction[1].u.operand;
+    WriteBarrier<Unknown>* registerPointer = currentInstruction[1].u.registerPointer;
     int value = currentInstruction[2].u.operand;
 
     JSGlobalObject* globalObject = m_codeBlock->globalObject();
 
     emitLoad(value, regT1, regT0);
-    move(TrustedImmPtr(globalObject), regT2);
+    
+    if (Heap::isWriteBarrierEnabled()) {
+        move(TrustedImmPtr(globalObject), regT2);
+        
+        emitWriteBarrier(globalObject, regT1, regT3, ShouldFilterImmediates, WriteBarrierForVariableAccess);
+    }
 
-    emitWriteBarrier(globalObject, regT1, regT3, ShouldFilterImmediates, WriteBarrierForVariableAccess);
-
-    loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT2);
-    emitStore(index, regT1, regT0, regT2);
+    store32(regT1, registerPointer->tagPointer());
+    store32(regT0, registerPointer->payloadPointer());
     map(m_bytecodeOffset + OPCODE_LENGTH(op_put_global_var), value, regT1, regT0);
 }
 

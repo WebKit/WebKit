@@ -194,9 +194,11 @@ SOURCES += \
     runtime/JSObject.cpp \
     runtime/JSONObject.cpp \
     runtime/JSPropertyNameIterator.cpp \
+    runtime/JSSegmentedVariableObject.cpp \
     runtime/JSStaticScopeObject.cpp \
     runtime/JSString.cpp \
     runtime/JSStringJoiner.cpp \
+    runtime/JSSymbolTableObject.cpp \
     runtime/JSValue.cpp \
     runtime/JSVariableObject.cpp \
     runtime/JSWrapperObject.cpp \

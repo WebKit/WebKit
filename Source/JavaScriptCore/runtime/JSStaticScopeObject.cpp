@@ -66,13 +66,13 @@ void JSStaticScopeObject::put(JSCell* cell, ExecState* exec, PropertyName proper
         // a pointer compare.
         PropertySlot slot;
         bool isWritable = true;
-        thisObject->symbolTableGet(propertyName, slot, isWritable);
+        symbolTableGet(thisObject, propertyName, slot, isWritable);
         if (!isWritable) {
             throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
             return;
         }
     }
-    if (thisObject->symbolTablePut(exec, propertyName, value, slot.isStrictMode()))
+    if (symbolTablePut(thisObject, exec, propertyName, value, slot.isStrictMode()))
         return;
     
     ASSERT_NOT_REACHED();
@@ -81,7 +81,7 @@ void JSStaticScopeObject::put(JSCell* cell, ExecState* exec, PropertyName proper
 void JSStaticScopeObject::putDirectVirtual(JSObject* object, ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     JSStaticScopeObject* thisObject = jsCast<JSStaticScopeObject*>(object);
-    if (thisObject->symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
+    if (symbolTablePutWithAttributes(thisObject, exec->globalData(), propertyName, value, attributes))
         return;
     
     ASSERT_NOT_REACHED();
@@ -89,7 +89,7 @@ void JSStaticScopeObject::putDirectVirtual(JSObject* object, ExecState* exec, Pr
 
 bool JSStaticScopeObject::getOwnPropertySlot(JSCell* cell, ExecState*, PropertyName propertyName, PropertySlot& slot)
 {
-    return jsCast<JSStaticScopeObject*>(cell)->symbolTableGet(propertyName, slot);
+    return symbolTableGet(jsCast<JSStaticScopeObject*>(cell), propertyName, slot);
 }
 
 }

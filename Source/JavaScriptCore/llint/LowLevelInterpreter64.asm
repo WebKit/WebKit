@@ -895,28 +895,22 @@ _llint_op_put_scoped_var:
 
 _llint_op_get_global_var:
     traceExecution()
-    loadis 16[PB, PC, 8], t1
+    loadp 16[PB, PC, 8], t0
     loadis 8[PB, PC, 8], t3
-    loadp CodeBlock[cfr], t0
-    loadp CodeBlock::m_globalObject[t0], t0
-    loadp JSGlobalObject::m_registers[t0], t0
-    loadp [t0, t1, 8], t2
-    storep t2, [cfr, t3, 8]
-    loadp 24[PB, PC, 8], t3
-    valueProfile(t2, t3)
+    loadp [t0], t1
+    storep t1, [cfr, t3, 8]
+    loadp 24[PB, PC, 8], t0
+    valueProfile(t1, t0)
     dispatch(4)
 
 
 _llint_op_put_global_var:
     traceExecution()
     loadis 16[PB, PC, 8], t1
-    loadp CodeBlock[cfr], t0
-    loadp CodeBlock::m_globalObject[t0], t0
-    loadp JSGlobalObject::m_registers[t0], t0
+    loadp 8[PB, PC, 8], t0
     loadConstantOrVariable(t1, t2)
-    loadis 8[PB, PC, 8], t1
     writeBarrier(t2)
-    storep t2, [t0, t1, 8]
+    storep t2, [t0]
     dispatch(3)
 
 

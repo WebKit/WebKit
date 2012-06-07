@@ -1041,13 +1041,10 @@ _llint_op_put_scoped_var:
 
 _llint_op_get_global_var:
     traceExecution()
-    loadi 8[PC], t1
+    loadp 8[PC], t0
     loadi 4[PC], t3
-    loadp CodeBlock[cfr], t0
-    loadp CodeBlock::m_globalObject[t0], t0
-    loadp JSGlobalObject::m_registers[t0], t0
-    loadi TagOffset[t0, t1, 8], t2
-    loadi PayloadOffset[t0, t1, 8], t1
+    loadi TagOffset[t0], t2
+    loadi PayloadOffset[t0], t1
     storei t2, TagOffset[cfr, t3, 8]
     storei t1, PayloadOffset[cfr, t3, 8]
     loadi 12[PC], t3
@@ -1058,14 +1055,11 @@ _llint_op_get_global_var:
 _llint_op_put_global_var:
     traceExecution()
     loadi 8[PC], t1
-    loadp CodeBlock[cfr], t0
-    loadp CodeBlock::m_globalObject[t0], t0
-    loadp JSGlobalObject::m_registers[t0], t0
+    loadi 4[PC], t0
     loadConstantOrVariable(t1, t2, t3)
-    loadi 4[PC], t1
     writeBarrier(t2, t3)
-    storei t2, TagOffset[t0, t1, 8]
-    storei t3, PayloadOffset[t0, t1, 8]
+    storei t2, TagOffset[t0]
+    storei t3, PayloadOffset[t0]
     dispatch(3)
 
 

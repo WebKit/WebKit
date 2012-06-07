@@ -3593,9 +3593,7 @@ void SpeculativeJIT::compile(Node& node)
     case GetGlobalVar: {
         GPRTemporary result(this);
 
-        JSVariableObject* globalObject = m_jit.globalObjectFor(node.codeOrigin);
-        m_jit.loadPtr(globalObject->addressOfRegisters(), result.gpr());
-        m_jit.loadPtr(JITCompiler::addressForGlobalVar(result.gpr(), node.varNumber()), result.gpr());
+        m_jit.loadPtr(node.registerPointer(), result.gpr());
 
         jsValueResult(result.gpr(), m_compileIndex);
         break;
@@ -3603,18 +3601,15 @@ void SpeculativeJIT::compile(Node& node)
 
     case PutGlobalVar: {
         JSValueOperand value(this, node.child1());
-        GPRTemporary globalObject(this);
-        GPRTemporary scratch(this);
         
-        GPRReg globalObjectReg = globalObject.gpr();
-        GPRReg scratchReg = scratch.gpr();
-
-        m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.globalObjectFor(node.codeOrigin)), globalObjectReg);
-
-        writeBarrier(m_jit.globalObjectFor(node.codeOrigin), value.gpr(), node.child1(), WriteBarrierForVariableAccess, scratchReg);
-
-        m_jit.loadPtr(MacroAssembler::Address(globalObjectReg, JSVariableObject::offsetOfRegisters()), scratchReg);
-        m_jit.storePtr(value.gpr(), JITCompiler::addressForGlobalVar(scratchReg, node.varNumber()));
+        if (Heap::isWriteBarrierEnabled()) {
+            GPRTemporary scratch(this);
+            GPRReg scratchReg = scratch.gpr();
+            
+            writeBarrier(m_jit.globalObjectFor(node.codeOrigin), value.gpr(), node.child1(), WriteBarrierForVariableAccess, scratchReg);
+        }
+        
+        m_jit.storePtr(value.gpr(), node.registerPointer());
 
         noResult(m_compileIndex);
         break;

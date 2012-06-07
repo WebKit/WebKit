@@ -161,6 +161,11 @@ void ResolveResult::checkValidity()
 }
 #endif
 
+WriteBarrier<Unknown>* ResolveResult::registerPointer() const
+{
+    return &jsCast<JSGlobalObject*>(globalObject())->registerAt(index());
+}
+
 static bool s_dumpsGeneratedCode = false;
 
 void BytecodeGenerator::setDumpsGeneratedCode(bool dumpsGeneratedCode)
@@ -280,7 +285,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
     size_t newGlobals = varStack.size() + functionStack.size();
     if (!newGlobals)
         return;
-    globalObject->resizeRegisters(symbolTable->size() + newGlobals);
+    globalObject->addRegisters(newGlobals);
 
     for (size_t i = 0; i < functionStack.size(); ++i) {
         FunctionBodyNode* function = functionStack[i];
@@ -676,6 +681,14 @@ void BytecodeGenerator::retrieveLastUnaryOp(int& dstIndex, int& srcIndex)
     ASSERT(instructions().size() >= 3);
     size_t size = instructions().size();
     dstIndex = instructions().at(size - 2).u.operand;
+    srcIndex = instructions().at(size - 1).u.operand;
+}
+
+void BytecodeGenerator::retrieveLastUnaryOp(WriteBarrier<Unknown>*& dstPointer, int& srcIndex)
+{
+    ASSERT(instructions().size() >= 3);
+    size_t size = instructions().size();
+    dstPointer = instructions().at(size - 2).u.registerPointer;
     srcIndex = instructions().at(size - 1).u.operand;
 }
 
@@ -1178,7 +1191,7 @@ ResolveResult BytecodeGenerator::resolve(const Identifier& property)
             flags |= ResolveResult::DynamicFlag;
             break;
         }        
-        JSVariableObject* currentVariableObject = jsCast<JSVariableObject*>(currentScope);
+        JSSymbolTableObject* currentVariableObject = jsCast<JSSymbolTableObject*>(currentScope);
         SymbolTableEntry entry = currentVariableObject->symbolTable().get(property.impl());
 
         // Found the property
@@ -1243,7 +1256,7 @@ ResolveResult BytecodeGenerator::resolveConstDecl(const Identifier& property)
         JSObject* currentScope = iter->get();
         if (!currentScope->isVariableObject())
             continue;
-        JSVariableObject* currentVariableObject = jsCast<JSVariableObject*>(currentScope);
+        JSSymbolTableObject* currentVariableObject = jsCast<JSSymbolTableObject*>(currentScope);
         SymbolTableEntry entry = currentVariableObject->symbolTable().get(property.impl());
         if (entry.isNull())
             continue;
@@ -1446,16 +1459,16 @@ RegisterID* BytecodeGenerator::emitGetStaticVar(RegisterID* dst, const ResolveRe
     case ResolveResult::IndexedGlobal:
     case ResolveResult::ReadOnlyIndexedGlobal:
         if (m_lastOpcodeID == op_put_global_var) {
-            int dstIndex;
+            WriteBarrier<Unknown>* dstPointer;
             int srcIndex;
-            retrieveLastUnaryOp(dstIndex, srcIndex);
-            if (dstIndex == resolveResult.index() && srcIndex == dst->index())
+            retrieveLastUnaryOp(dstPointer, srcIndex);
+            if (dstPointer == resolveResult.registerPointer() && srcIndex == dst->index())
                 return dst;
         }
 
         profile = emitProfiledOpcode(op_get_global_var);
         instructions().append(dst->index());
-        instructions().append(resolveResult.index());
+        instructions().append(resolveResult.registerPointer());
         instructions().append(profile);
         return dst;
 
@@ -1483,7 +1496,7 @@ RegisterID* BytecodeGenerator::emitPutStaticVar(const ResolveResult& resolveResu
     case ResolveResult::IndexedGlobal:
     case ResolveResult::ReadOnlyIndexedGlobal:
         emitOpcode(op_put_global_var);
-        instructions().append(resolveResult.index());
+        instructions().append(resolveResult.registerPointer());
         instructions().append(value->index());
         return value;
 

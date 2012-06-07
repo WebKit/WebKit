@@ -874,6 +874,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\JSSegmentedVariableObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSSegmentedVariableObject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\JSStaticScopeObject.cpp"
 				>
 			</File>
@@ -897,6 +905,14 @@
                                 RelativePath="..\..\runtime\JSStringJoiner.h"
                                 >
                         </File>
+			<File
+				RelativePath="..\..\runtime\JSSymbolTableObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSSymbolTableObject.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\runtime\JSType.h"
 				>

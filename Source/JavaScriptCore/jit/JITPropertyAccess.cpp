@@ -30,12 +30,13 @@
 
 #include "CodeBlock.h"
 #include "GetterSetter.h"
+#include "Interpreter.h"
 #include "JITInlineMethods.h"
 #include "JITStubCall.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSPropertyNameIterator.h"
-#include "Interpreter.h"
+#include "JSVariableObject.h"
 #include "LinkBuffer.h"
 #include "RepatchBuffer.h"
 #include "ResultType.h"
@@ -1010,9 +1011,7 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
 
 void JIT::emit_op_get_global_var(Instruction* currentInstruction)
 {
-    JSVariableObject* globalObject = m_codeBlock->globalObject();
-    loadPtr(&globalObject->m_registers, regT0);
-    loadPtr(Address(regT0, currentInstruction[2].u.operand * sizeof(Register)), regT0);
+    loadPtr(currentInstruction[2].u.registerPointer, regT0);
     emitValueProfilingSite();
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
@@ -1022,11 +1021,10 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
     JSGlobalObject* globalObject = m_codeBlock->globalObject();
 
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-
-    move(TrustedImmPtr(globalObject), regT1);
-    loadPtr(Address(regT1, JSVariableObject::offsetOfRegisters()), regT1);
-    storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
-    emitWriteBarrier(globalObject, regT0, regT2, ShouldFilterImmediates, WriteBarrierForVariableAccess);
+    
+    storePtr(regT0, currentInstruction[1].u.registerPointer);
+    if (Heap::isWriteBarrierEnabled())
+        emitWriteBarrier(globalObject, regT0, regT2, ShouldFilterImmediates, WriteBarrierForVariableAccess);
 }
 
 void JIT::resetPatchGetById(RepatchBuffer& repatchBuffer, StructureStubInfo* stubInfo)

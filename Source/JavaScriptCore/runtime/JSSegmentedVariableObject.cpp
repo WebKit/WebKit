@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,45 @@
  */
 
 #include "config.h"
-#include "JSVariableObject.h"
+#include "JSSegmentedVariableObject.h"
 
 namespace JSC {
 
-void JSVariableObject::destroy(JSCell* cell)
+int JSSegmentedVariableObject::findRegisterIndex(void* registerAddress)
 {
-    static_cast<JSVariableObject*>(cell)->JSVariableObject::~JSVariableObject();
+    for (int i = m_registers.size(); i--;) {
+        if (&m_registers[i] != registerAddress)
+            continue;
+        return i;
+    }
+    CRASH();
+    return -1;
+}
+
+int JSSegmentedVariableObject::addRegisters(int numberOfRegistersToAdd)
+{
+    ASSERT(numberOfRegistersToAdd >= 0);
+    
+    size_t oldSize = m_registers.size();
+    m_registers.grow(oldSize + numberOfRegistersToAdd);
+    
+    for (size_t i = numberOfRegistersToAdd; i--;)
+        m_registers[oldSize + i].setWithoutWriteBarrier(jsUndefined());
+    
+    return static_cast<int>(oldSize);
+}
+
+void JSSegmentedVariableObject::visitChildren(JSCell* cell, SlotVisitor& slotVisitor)
+{
+    JSSegmentedVariableObject* thisObject = jsCast<JSSegmentedVariableObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    JSSymbolTableObject::visitChildren(thisObject, slotVisitor);
+    
+    for (unsigned i = thisObject->m_registers.size(); i--;)
+        slotVisitor.append(&thisObject->m_registers[i]);
 }
 
 } // namespace JSC
+

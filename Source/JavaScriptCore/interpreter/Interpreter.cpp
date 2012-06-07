@@ -1543,7 +1543,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     for (ScopeChainNode* node = scopeChain; ; node = node->next.get()) {
         ASSERT(node);
         if (node->object->isVariableObject() && !node->object->isStaticScopeObject()) {
-            variableObject = jsCast<JSVariableObject*>(node->object.get());
+            variableObject = jsCast<JSSymbolTableObject*>(node->object.get());
             break;
         }
     }
@@ -2860,30 +2860,28 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_get_global_var) {
-        /* get_global_var dst(r) globalObject(c) index(n)
+        /* get_global_var dst(r) globalObject(c) registerPointer(n)
 
            Gets the global var at global slot index and places it in register dst.
          */
         int dst = vPC[1].u.operand;
-        JSGlobalObject* scope = codeBlock->globalObject();
-        ASSERT(scope->isGlobalObject());
-        int index = vPC[2].u.operand;
+        WriteBarrier<Unknown>* registerPointer = vPC[2].u.registerPointer;
 
-        callFrame->uncheckedR(dst) = scope->registerAt(index).get();
+        callFrame->uncheckedR(dst) = registerPointer->get();
         vPC += OPCODE_LENGTH(op_get_global_var);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_put_global_var) {
-        /* put_global_var globalObject(c) index(n) value(r)
+        /* put_global_var globalObject(c) registerPointer(n) value(r)
          
            Puts value into global slot index.
          */
         JSGlobalObject* scope = codeBlock->globalObject();
         ASSERT(scope->isGlobalObject());
-        int index = vPC[1].u.operand;
+        WriteBarrier<Unknown>* registerPointer = vPC[1].u.registerPointer;
         int value = vPC[2].u.operand;
         
-        scope->registerAt(index).set(*globalData, scope, callFrame->r(value).jsValue());
+        registerPointer->set(*globalData, scope, callFrame->r(value).jsValue());
         vPC += OPCODE_LENGTH(op_put_global_var);
         NEXT_INSTRUCTION();
     }

@@ -501,6 +501,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSONObject.h \
 	Source/JavaScriptCore/runtime/JSPropertyNameIterator.cpp \
 	Source/JavaScriptCore/runtime/JSPropertyNameIterator.h \
+	Source/JavaScriptCore/runtime/JSSegmentedVariableObject.cpp \
+	Source/JavaScriptCore/runtime/JSSegmentedVariableObject.h \
 	Source/JavaScriptCore/runtime/JSStaticScopeObject.cpp \
 	Source/JavaScriptCore/runtime/JSStaticScopeObject.h \
 	Source/JavaScriptCore/runtime/JSStringBuilder.h \
@@ -508,6 +510,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSStringJoiner.h \
 	Source/JavaScriptCore/runtime/JSString.cpp \
 	Source/JavaScriptCore/runtime/JSString.h \
+	Source/JavaScriptCore/runtime/JSSymbolTableObject.cpp \
+	Source/JavaScriptCore/runtime/JSSymbolTableObject.h \
 	Source/JavaScriptCore/runtime/JSType.h \
 	Source/JavaScriptCore/runtime/JSTypeInfo.h \
 	Source/JavaScriptCore/runtime/JSValue.cpp \

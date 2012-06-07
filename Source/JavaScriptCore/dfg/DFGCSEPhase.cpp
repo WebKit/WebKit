@@ -194,18 +194,18 @@ private:
         return NoNode;
     }
     
-    NodeIndex globalVarLoadElimination(unsigned varNumber, JSGlobalObject* globalObject)
+    NodeIndex globalVarLoadElimination(WriteBarrier<Unknown>* registerPointer)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             Node& node = m_graph[index];
             switch (node.op()) {
             case GetGlobalVar:
-                if (node.varNumber() == varNumber && codeBlock()->globalObjectFor(node.codeOrigin) == globalObject)
+                if (node.registerPointer() == registerPointer)
                     return index;
                 break;
             case PutGlobalVar:
-                if (node.varNumber() == varNumber && codeBlock()->globalObjectFor(node.codeOrigin) == globalObject)
+                if (node.registerPointer() == registerPointer)
                     return node.child1().index();
                 break;
             default:
@@ -217,7 +217,7 @@ private:
         return NoNode;
     }
     
-    NodeIndex globalVarStoreElimination(unsigned varNumber, JSGlobalObject* globalObject)
+    NodeIndex globalVarStoreElimination(WriteBarrier<Unknown>* registerPointer)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
@@ -226,12 +226,12 @@ private:
                 continue;
             switch (node.op()) {
             case PutGlobalVar:
-                if (node.varNumber() == varNumber && codeBlock()->globalObjectFor(node.codeOrigin) == globalObject)
+                if (node.registerPointer() == registerPointer)
                     return index;
                 break;
                 
             case GetGlobalVar:
-                if (node.varNumber() == varNumber && codeBlock()->globalObjectFor(node.codeOrigin) == globalObject)
+                if (node.registerPointer() == registerPointer)
                     return NoNode;
                 break;
                 
@@ -982,13 +982,13 @@ private:
         // Finally handle heap accesses. These are not quite pure, but we can still
         // optimize them provided that some subtle conditions are met.
         case GetGlobalVar:
-            setReplacement(globalVarLoadElimination(node.varNumber(), codeBlock()->globalObjectFor(node.codeOrigin)));
+            setReplacement(globalVarLoadElimination(node.registerPointer()));
             break;
             
         case PutGlobalVar:
             if (m_fixpointState == FixpointNotConverged)
                 break;
-            eliminate(globalVarStoreElimination(node.varNumber(), codeBlock()->globalObjectFor(node.codeOrigin)));
+            eliminate(globalVarStoreElimination(node.registerPointer()));
             break;
             
         case GetByVal:

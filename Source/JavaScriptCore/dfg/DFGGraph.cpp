@@ -202,6 +202,13 @@ void Graph::dump(NodeIndex nodeIndex)
         dataLog("%svar%u", hasPrinted ? ", " : "", node.varNumber());
         hasPrinted = true;
     }
+    if (node.hasRegisterPointer()) {
+        dataLog(
+            "%sglobal%u(%p)", hasPrinted ? ", " : "",
+            globalObjectFor(node.codeOrigin)->findRegisterIndex(node.registerPointer()),
+            node.registerPointer());
+        hasPrinted = true;
+    }
     if (node.hasIdentifier()) {
         dataLog("%sid%u{%s}", hasPrinted ? ", " : "", node.identifierNumber(), m_codeBlock->identifier(node.identifierNumber()).ustring().utf8().data());
         hasPrinted = true;

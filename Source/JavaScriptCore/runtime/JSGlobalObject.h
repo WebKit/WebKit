@@ -25,7 +25,7 @@
 #include "JSArray.h"
 #include "JSGlobalData.h"
 #include "JSGlobalThis.h"
-#include "JSVariableObject.h"
+#include "JSSegmentedVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include "NumberPrototype.h"
 #include "StringPrototype.h"
@@ -74,7 +74,7 @@ namespace JSC {
         JavaScriptExperimentsEnabledFunctionPtr javaScriptExperimentsEnabled;
     };
 
-    class JSGlobalObject : public JSVariableObject {
+    class JSGlobalObject : public JSSegmentedVariableObject {
     private:
         typedef HashSet<RefPtr<OpaqueJSWeakObjectMap> > WeakMapSet;
 
@@ -90,7 +90,6 @@ namespace JSC {
 
     protected:
 
-        size_t m_registerArraySize;
         Register m_globalCallFrame[RegisterFile::CallFrameHeaderSize];
 
         WriteBarrier<ScopeChainNode> m_globalScopeChain;
@@ -164,7 +163,7 @@ namespace JSC {
         }
         
     public:
-        typedef JSVariableObject Base;
+        typedef JSSegmentedVariableObject Base;
 
         static JSGlobalObject* create(JSGlobalData& globalData, Structure* structure)
         {
@@ -177,8 +176,7 @@ namespace JSC {
 
     protected:
         explicit JSGlobalObject(JSGlobalData& globalData, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable = 0)
-            : JSVariableObject(globalData, structure, &m_symbolTable, 0)
-            , m_registerArraySize(0)
+            : JSSegmentedVariableObject(globalData, structure, &m_symbolTable)
             , m_globalScopeChain()
             , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
             , m_evalEnabled(true)
@@ -308,8 +306,6 @@ namespace JSC {
         void setEvalEnabled(bool enabled) { m_evalEnabled = enabled; }
         bool evalEnabled() { return m_evalEnabled; }
 
-        void resizeRegisters(size_t newSize);
-
         void resetPrototype(JSGlobalData&, JSValue prototype);
 
         JSGlobalData& globalData() const { return *Heap::heap(this)->globalData(); }
@@ -334,7 +330,7 @@ namespace JSC {
         double weakRandomNumber() { return m_weakRandom.get(); }
     protected:
 
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSSegmentedVariableObject::StructureFlags;
 
         struct GlobalPropertyInfo {
             GlobalPropertyInfo(const Identifier& i, JSValue v, unsigned a)
@@ -359,7 +355,6 @@ namespace JSC {
 
         void createThrowTypeError(ExecState*);
 
-        void setRegisters(WriteBarrier<Unknown>* registers, PassOwnArrayPtr<WriteBarrier<Unknown> > registerArray, size_t count);
         JS_EXPORT_PRIVATE static void clearRareData(JSCell*);
     };
 
@@ -371,19 +366,13 @@ namespace JSC {
         return jsCast<JSGlobalObject*>(asObject(value));
     }
 
-    inline void JSGlobalObject::setRegisters(WriteBarrier<Unknown>* registers, PassOwnArrayPtr<WriteBarrier<Unknown> > registerArray, size_t count)
-    {
-        JSVariableObject::setRegisters(registers, registerArray);
-        m_registerArraySize = count;
-    }
-
     inline bool JSGlobalObject::hasOwnPropertyForWrite(ExecState* exec, PropertyName propertyName)
     {
         PropertySlot slot;
-        if (JSVariableObject::getOwnPropertySlot(this, exec, propertyName, slot))
+        if (JSSegmentedVariableObject::getOwnPropertySlot(this, exec, propertyName, slot))
             return true;
         bool slotIsWriteable;
-        return symbolTableGet(propertyName, slot, slotIsWriteable);
+        return symbolTableGet(this, propertyName, slot, slotIsWriteable);
     }
 
     inline bool JSGlobalObject::symbolTableHasProperty(PropertyName propertyName)

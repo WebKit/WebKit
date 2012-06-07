@@ -310,6 +310,11 @@ public:
         return &m_structureTransitionData.last();
     }
     
+    JSGlobalObject* globalObjectFor(CodeOrigin codeOrigin)
+    {
+        return m_codeBlock->globalObjectFor(codeOrigin);
+    }
+    
     ExecutableBase* executableFor(InlineCallFrame* inlineCallFrame)
     {
         if (!inlineCallFrame)

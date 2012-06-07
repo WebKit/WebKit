@@ -177,6 +177,9 @@ public:
         return u.slot;
     }
     
+    int32_t* tagPointer() { return &bitwise_cast<EncodedValueDescriptor*>(&m_value)->asBits.tag; }
+    int32_t* payloadPointer() { return &bitwise_cast<EncodedValueDescriptor*>(&m_value)->asBits.payload; }
+    
     typedef JSValue (WriteBarrierBase::*UnspecifiedBoolType);
     operator UnspecifiedBoolType*() const { return get() ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
     bool operator!() const { return !get(); } 

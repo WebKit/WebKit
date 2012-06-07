@@ -421,13 +421,23 @@ struct Node {
     
     bool hasVarNumber()
     {
-        return op() == GetGlobalVar || op() == PutGlobalVar || op() == GetScopedVar || op() == PutScopedVar;
+        return op() == GetScopedVar || op() == PutScopedVar;
     }
 
     unsigned varNumber()
     {
         ASSERT(hasVarNumber());
         return m_opInfo;
+    }
+    
+    bool hasRegisterPointer()
+    {
+        return op() == GetGlobalVar || op() == PutGlobalVar;
+    }
+    
+    WriteBarrier<Unknown>* registerPointer()
+    {
+        return bitwise_cast<WriteBarrier<Unknown>*>(m_opInfo);
     }
 
     bool hasScopeChainDepth()

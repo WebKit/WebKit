@@ -1,5 +1,173 @@
 2012-06-06  Filip Pizlo  <fpizlo@apple.com>
 
+        Global object variable accesses should not require an extra load
+        https://bugs.webkit.org/show_bug.cgi?id=88385
+
+        Reviewed by Gavin Barraclough and Geoffrey Garen.
+        
+        Previously, if you wanted to access a global variable, you'd first have
+        to load the register array from the appropriate global object and then
+        either load or store at an offset to the register array. This is because
+        JSGlobalObject inherited from JSVariableObject, and JSVariableObject is
+        designed with the pessimistic assumption that its register array may
+        point into the call stack. This is never the case for global objects.
+        Hence, even though the global object may add more registers at any time,
+        it does not need to store them in a contiguous array. It can use a
+        SegmentedVector or similar.
+        
+        This patch refactors global objects and variable objects as follows:
+        
+        - The functionality to track variables in an indexable array using a
+          SymbolTable to map names to indices is moved into JSSymbolTableObject,
+          which is now a supertype of JSVariableObject. JSVariableObject is now
+          just a holder for a registers array and implements the registerAt()
+          method that is left abstract in JSSymbolTableObject. Because all users
+          of JSVariableObject know whether they are a JSStaticScopeObject,
+          JSActivation, or JSGlobalObject, this "abstract" method is not virtual;
+          instead the utility methods that would call registerAt() are now
+          template functions that require you to know statically what subtype of
+          JSSymbolTableObject you're using (JSVariableObject or something else),
+          so that registerAt() can be statically bound.
+        
+        - A new class is added called JSSegmentedVariableObject, which only
+          differs from JSVariableObject in how it allocates registers. It uses a
+          SegmentedVector instead of manually managing a pointer to a contiguous
+          slab of registers. This changes the interface somewhat; for example
+          with JSVariableObject if you wanted to add a register you had to do
+          it yourself since the JSVariableObject didn't know how the registers
+          array ought to be allocated. With JSSegmentedVariableObject you can
+          just call addRegisters(). JSSegmentedVariableObject preserves the
+          invariant that once you get a pointer into a register, that pointer
+          will continue to be valid so long as the JSSegmentedVariableObject is
+          alive. This allows the JITs and interpreters to skip the extra load.
+        
+        - JSGlobalObject now inherits from JSSegmentedVariableObject. For now
+          (and possibly forever) it is the only subtype of this new class.
+        
+        - The bytecode format is changed so that get_global_var and
+          put_global_var have a pointer to the register directly rather than
+          having an index. A convenience method is provided in
+          JSSegmentedVariableObject to get the index given a a pointer, which is
+          used for assertions and debug dumps.
+        
+        This appears to be a 1% across the board win.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Instruction.h:
+        (Instruction):
+        (JSC::Instruction::Instruction):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::ResolveResult::registerPointer):
+        (JSC):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::retrieveLastUnaryOp):
+        (JSC::BytecodeGenerator::resolve):
+        (JSC::BytecodeGenerator::resolveConstDecl):
+        (JSC::BytecodeGenerator::emitGetStaticVar):
+        (JSC::BytecodeGenerator::emitPutStaticVar):
+        * bytecompiler/BytecodeGenerator.h:
+        (ResolveResult):
+        (BytecodeGenerator):
+        * dfg/DFGAssemblyHelpers.h:
+        (AssemblyHelpers):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::globalVarLoadElimination):
+        (JSC::DFG::CSEPhase::globalVarStoreElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::globalObjectFor):
+        (Graph):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasVarNumber):
+        (Node):
+        (JSC::DFG::Node::hasRegisterPointer):
+        (JSC::DFG::Node::registerPointer):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * heap/Heap.h:
+        (Heap):
+        (JSC::Heap::isWriteBarrierEnabled):
+        (JSC):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_global_var):
+        (JSC::JIT::emit_op_put_global_var):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_global_var):
+        (JSC::JIT::emit_op_put_global_var):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSGlobalObject.cpp:
+        (JSC):
+        (JSC::JSGlobalObject::put):
+        (JSC::JSGlobalObject::putDirectVirtual):
+        (JSC::JSGlobalObject::defineOwnProperty):
+        (JSC::JSGlobalObject::visitChildren):
+        (JSC::JSGlobalObject::addStaticGlobals):
+        (JSC::JSGlobalObject::getOwnPropertySlot):
+        (JSC::JSGlobalObject::getOwnPropertyDescriptor):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC):
+        (JSC::JSGlobalObject::hasOwnPropertyForWrite):
+        * runtime/JSSegmentedVariableObject.cpp: Added.
+        (JSC):
+        (JSC::JSSegmentedVariableObject::findRegisterIndex):
+        (JSC::JSSegmentedVariableObject::addRegisters):
+        (JSC::JSSegmentedVariableObject::visitChildren):
+        * runtime/JSSegmentedVariableObject.h: Added.
+        (JSC):
+        (JSSegmentedVariableObject):
+        (JSC::JSSegmentedVariableObject::registerAt):
+        (JSC::JSSegmentedVariableObject::assertRegisterIsInThisObject):
+        (JSC::JSSegmentedVariableObject::JSSegmentedVariableObject):
+        (JSC::JSSegmentedVariableObject::finishCreation):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::put):
+        (JSC::JSStaticScopeObject::putDirectVirtual):
+        (JSC::JSStaticScopeObject::getOwnPropertySlot):
+        * runtime/JSSymbolTableObject.cpp: Added.
+        (JSC):
+        (JSC::JSSymbolTableObject::destroy):
+        (JSC::JSSymbolTableObject::deleteProperty):
+        (JSC::JSSymbolTableObject::getOwnPropertyNames):
+        (JSC::JSSymbolTableObject::putDirectVirtual):
+        (JSC::JSSymbolTableObject::isDynamicScope):
+        * runtime/JSSymbolTableObject.h: Added.
+        (JSC):
+        (JSSymbolTableObject):
+        (JSC::JSSymbolTableObject::symbolTable):
+        (JSC::JSSymbolTableObject::JSSymbolTableObject):
+        (JSC::JSSymbolTableObject::finishCreation):
+        (JSC::symbolTableGet):
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutWithAttributes):
+        * runtime/JSVariableObject.cpp:
+        (JSC):
+        * runtime/JSVariableObject.h:
+        (JSVariableObject):
+        (JSC::JSVariableObject::JSVariableObject):
+        (JSC::JSVariableObject::finishCreation):
+        (JSC):
+        * runtime/WriteBarrier.h:
+
+2012-06-06  Filip Pizlo  <fpizlo@apple.com>
+
         DFG arguments access slow path should not crash if the arguments haven't been created
         https://bugs.webkit.org/show_bug.cgi?id=88471
 
