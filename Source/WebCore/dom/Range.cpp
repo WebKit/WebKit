@@ -1940,25 +1940,6 @@ PassRefPtr<ClientRect> Range::getBoundingClientRect() const
     return ClientRect::create(boundingRect());
 }
 
-static void adjustFloatQuadsForScrollAndAbsoluteZoomAndPageScale(Vector<FloatQuad>& quads, Document* document, RenderObject* renderer)
-{
-    FrameView* view = document->view();
-    if (!view)
-        return;
-
-    float pageScale = 1;
-    if (Page* page = document->page())
-        pageScale = page->pageScaleFactor();
-
-    LayoutRect visibleContentRect = view->visibleContentRect();
-    for (size_t i = 0; i < quads.size(); ++i) {
-        quads[i].move(-visibleContentRect.x(), -visibleContentRect.y());
-        adjustFloatQuadForAbsoluteZoom(quads[i], renderer);
-        if (pageScale != 1)
-            adjustFloatQuadForPageScale(quads[i], pageScale);
-    }
-}
-
 void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
 {
     Node* startContainer = m_start.container();
@@ -1977,7 +1958,7 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
                 if (RenderBoxModelObject* renderBoxModelObject = static_cast<Element*>(node)->renderBoxModelObject()) {
                     Vector<FloatQuad> elementQuads;
                     renderBoxModelObject->absoluteQuads(elementQuads);
-                    adjustFloatQuadsForScrollAndAbsoluteZoomAndPageScale(elementQuads, m_ownerDocument.get(), renderBoxModelObject);
+                    m_ownerDocument->adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(elementQuads, renderBoxModelObject);
 
                     quads.append(elementQuads);
                 }
@@ -1990,7 +1971,7 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
                 
                 Vector<FloatQuad> textQuads;
                 renderText->absoluteQuadsForRange(textQuads, startOffset, endOffset);
-                adjustFloatQuadsForScrollAndAbsoluteZoomAndPageScale(textQuads, m_ownerDocument.get(), renderText);
+                m_ownerDocument->adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(textQuads, renderText);
 
                 quads.append(textQuads);
             }

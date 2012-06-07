@@ -557,21 +557,7 @@ PassRefPtr<ClientRectList> Element::getClientRects()
 
     Vector<FloatQuad> quads;
     renderBoxModelObject->absoluteQuads(quads);
-
-    float pageScale = 1;
-    if (Page* page = document()->page()) 
-        pageScale = page->pageScaleFactor();
-
-    if (FrameView* view = document()->view()) {
-        LayoutRect visibleContentRect = view->visibleContentRect();
-        for (size_t i = 0; i < quads.size(); ++i) {
-            quads[i].move(-visibleContentRect.x(), -visibleContentRect.y());
-            adjustFloatQuadForAbsoluteZoom(quads[i], renderBoxModelObject);
-            if (pageScale != 1)
-                adjustFloatQuadForPageScale(quads[i], pageScale);
-        }
-    }
-
+    document()->adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(quads, renderBoxModelObject);
     return ClientRectList::create(quads);
 }
 
@@ -602,15 +588,7 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect()
     for (size_t i = 1; i < quads.size(); ++i)
         result.unite(quads[i].boundingBox());
 
-    if (FrameView* view = document()->view()) {
-        LayoutRect visibleContentRect = view->visibleContentRect();
-        result.move(-visibleContentRect.x(), -visibleContentRect.y());
-    }
-
-    adjustFloatRectForAbsoluteZoom(result, renderer());
-    if (Page* page = document()->page())
-        adjustFloatRectForPageScale(result, page->pageScaleFactor());
-
+    document()->adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(result, renderer());
     return ClientRect::create(result);
 }
     

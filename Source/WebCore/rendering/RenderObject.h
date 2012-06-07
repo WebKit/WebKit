@@ -1214,18 +1214,6 @@ inline void adjustFloatRectForAbsoluteZoom(FloatRect& rect, RenderObject* render
         rect.scale(1 / zoom, 1 / zoom);
 }
 
-inline void adjustFloatQuadForPageScale(FloatQuad& quad, float pageScale)
-{
-    if (pageScale != 1)
-        quad.scale(1 / pageScale, 1 / pageScale);
-}
-
-inline void adjustFloatRectForPageScale(FloatRect& rect, float pageScale)
-{
-    if (pageScale != 1)
-        rect.scale(1 / pageScale, 1 / pageScale);
-}
-
 } // namespace WebCore
 
 #ifndef NDEBUG

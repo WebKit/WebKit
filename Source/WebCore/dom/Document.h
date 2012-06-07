@@ -83,6 +83,8 @@ class Element;
 class EntityReference;
 class Event;
 class EventListener;
+class FloatRect;
+class FloatQuad;
 class FontData;
 class FormAssociatedElement;
 class Frame;
@@ -1159,6 +1161,9 @@ public:
 #if ENABLE(LINK_PRERENDER)
     Prerenderer* prerenderer() { return m_prerenderer.get(); }
 #endif
+
+    void adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<FloatQuad>&, RenderObject*);
+    void adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect&, RenderObject*);
 
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);

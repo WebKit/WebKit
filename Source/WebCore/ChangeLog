@@ -1,3 +1,33 @@
+2012-06-06  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Element.getBoundingClientRect() and Element.getClientRects() return incorrect values in frames in a scaled page
+        https://bugs.webkit.org/show_bug.cgi?id=88430
+
+        Element.getBoudingClientRect() and Element.getClientRects() should not scale back the rects
+        if the element is in a frame because page scale only apply to elements in the main frame.
+
+        Reviewed by James Robinson.
+
+        Tests: fast/dom/Element/scale-page-bounding-client-rect-in-frame.html
+               fast/dom/Element/scale-page-client-rects-in-frame.html
+
+        * dom/Document.cpp:
+        (WebCore):
+        (WebCore::Document::adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale): Extracted from Element.cpp and Range.cpp and fixed issue of pageScale in frames.
+        (WebCore::Document::adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale): Extracted from Element.cpp and fixed issue of pageScale in frames.
+        * dom/Document.h:
+        (WebCore):
+        (Document):
+        * dom/Element.cpp:
+        (WebCore::Element::getClientRects):
+        (WebCore::Element::getBoundingClientRect):
+        * dom/Range.cpp:
+        (WebCore):
+        (WebCore::adjustFloatQuadsForScrollAndAbsoluteZoomAndPageScale): Moved into Document and fixed issue of pageScale in frames.
+        (WebCore::Range::getBorderAndTextQuads):
+        * rendering/RenderObject.h: Removed adjustFloatQuadForPageScale and adjustFloatRectForPageScale because they seem unrelated to RenderObject.
+        (WebCore):
+
 2012-06-06  Dana Jansens  <danakj@chromium.org>
 
         [chromium] In each composited frame, didDraw() should only be called on layers for which willDraw() was called
