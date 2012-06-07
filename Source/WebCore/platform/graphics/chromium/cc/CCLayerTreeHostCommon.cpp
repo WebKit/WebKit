@@ -269,11 +269,6 @@ static inline bool subtreeShouldBeSkipped(LayerChromium* layer)
 template<typename LayerType>
 static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlignedWithRespectToParent)
 {
-    // FIXME: If we decide to create a render surface here while this layer does
-    //        preserve-3d, then we may be sorting incorrectly because we will not be
-    //        sorting the individual layers of this subtree with other layers outside of
-    //        this subtree.
-
     // Cache this value, because otherwise it walks the entire subtree several times.
     bool descendantDrawsContent = layer->descendantDrawsContent();
 
