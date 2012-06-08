@@ -1,3 +1,17 @@
+2012-06-08  Adam Barth  <abarth@webkit.org>
+
+        HTTP 204 No Content responses shouldn't trigger MIME type warnings in the web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=88603
+
+        Reviewed by Pavel Feldman.
+
+        A 204 response doesn't have an entity body, so its MIME type is kind of
+        meaningless.  We shouldn't spam the console with a warning about MIME
+        types.
+
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype._mimeTypeIsConsistentWithType):
+
 2012-06-08  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Drop StepRange::NumberWithDecimalPlacesOrMissing

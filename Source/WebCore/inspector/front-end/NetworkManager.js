@@ -233,7 +233,7 @@ WebInspector.NetworkDispatcher.prototype = {
         // Also, if a URL like http://localhost/wiki/load.php?debug=true&lang=en produces text/css and gets reloaded,
         // it is 304 Not Modified and its guessed mime-type is text/php, which is wrong.
         // Don't check for mime-types in 304-resources.
-        if (networkRequest.hasErrorStatusCode() || networkRequest.statusCode === 304)
+        if (networkRequest.hasErrorStatusCode() || networkRequest.statusCode === 304 || networkRequest.statusCode === 204)
             return true;
 
         if (typeof networkRequest.type === "undefined"
