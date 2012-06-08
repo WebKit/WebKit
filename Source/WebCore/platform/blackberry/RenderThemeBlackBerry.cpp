@@ -152,8 +152,8 @@ static Path roundedRectForBorder(RenderObject* object, const IntRect& rect)
 static RenderSlider* determineRenderSlider(RenderObject* object)
 {
     ASSERT(object->isSliderThumb());
-    // The RenderSlider is 3 parent levels above the slider thumb.
-    for (int i = 1; object && i <= 3; i++)
+    // The RenderSlider is an ancestor of the slider thumb.
+    while (object && !object->isSlider())
         object = object->parent();
     return toRenderSlider(object);
 }
