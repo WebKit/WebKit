@@ -1,3 +1,14 @@
+2012-06-08  Stephen Chenney  <schenney@chromium.org>
+
+        WebCore::ImageBuffer.cpp has broken color table code
+        https://bugs.webkit.org/show_bug.cgi?id=80321
+
+        Unreviewed Chromium test expectations update after changes to SVG filter color conversion.
+
+        Full list of changed files excluded to to very large number.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-08  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Add regression test to verify that legacy constants have been removed
