@@ -1,3 +1,14 @@
+2012-06-08  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: Better labels positioning on the memory pie chart
+        https://bugs.webkit.org/show_bug.cgi?id=88652
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeMemoryPieChart.prototype._paint.paintPercentAndLabel):
+        (WebInspector.NativeMemoryPieChart.prototype._paint):
+
 2012-06-08  Bryan McQuade  <bmcquade@google.com>
 
         Web Inspector: Annotate timeline records with a frame identifier

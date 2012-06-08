@@ -302,30 +302,31 @@ WebInspector.NativeMemoryPieChart.prototype = {
         ctx.stroke();
         ctx.closePath();
 
-        var startAngle = - Math.PI / 2;
-        var currentAngle = startAngle;
+        var currentAngle = 0;
         var memoryBlock = this._memorySnapshot;
 
         function paintPercentAndLabel(fraction, title, midAngle)
         {
             ctx.beginPath();
-            ctx.font = "14px Arial";
+            ctx.font = "13px Arial";
             ctx.fillStyle = "rgba(10, 10, 10, 0.8)";
 
-            var textX = x + radius * Math.cos(midAngle) / 2;
-            var textY = y + radius * Math.sin(midAngle) / 2;
-            ctx.fillText((100 * fraction).toFixed(0) + "%", textX, textY);
-
-            textX = x + radius * Math.cos(midAngle);
-            textY = y + radius * Math.sin(midAngle);
-            if (midAngle <= startAngle + Math.PI) {
-                textX += 10;
-                textY += 10;
-            } else {
-                var metrics = ctx.measureText(title);
-                textX -= metrics.width + 10;
-            }
+            var textX = x + (radius + 10) * Math.cos(midAngle);
+            var textY = y + (radius + 10) * Math.sin(midAngle);
+            var relativeOffset = -Math.cos(midAngle) / Math.sin(Math.PI / 12);
+            relativeOffset = Number.constrain(relativeOffset, -1, 1);
+            var metrics = ctx.measureText(title);
+            textX -= metrics.width * (relativeOffset + 1) / 2;
+            textY += 5;
             ctx.fillText(title, textX, textY);
+
+            // Do not print percentage if the sector is too narrow.
+            if (fraction > 0.03) {
+                textX = x + radius * Math.cos(midAngle) / 2;
+                textY = y + radius * Math.sin(midAngle) / 2;
+                ctx.fillText((100 * fraction).toFixed(0) + "%", textX - 8, textY + 5);
+            }
+
             ctx.closePath();
         }
 
