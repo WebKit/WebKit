@@ -44,15 +44,61 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 
     Structure* structure = instruction[4].u.structure.get();
     if (!structure)
-        return GetByIdStatus(NoInformation, StructureSet(), notFound, false);
+        return GetByIdStatus(NoInformation, false);
     
-    size_t offset = structure->get(*profiledBlock->globalData(), ident);
+    unsigned attributesIgnored;
+    JSCell* specificValue;
+    size_t offset = structure->get(
+        *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
     if (offset == notFound)
-        return GetByIdStatus(NoInformation, StructureSet(), notFound, false);
+        return GetByIdStatus(NoInformation, false);
     
-    return GetByIdStatus(SimpleDirect, StructureSet(structure), offset, false);
+    return GetByIdStatus(Simple, false, StructureSet(structure), offset, specificValue);
 #else
-    return GetByIdStatus(NoInformation, StructureSet(), notFound, false);
+    return GetByIdStatus(NoInformation, false);
+#endif
+}
+
+void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBlock, Identifier& ident, Structure* structure)
+{
+#if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
+    // Validate the chain. If the chain is invalid, then currently the best thing
+    // we can do is to assume that TakesSlow is true. In the future, it might be
+    // worth exploring reifying the structure chain from the structure we've got
+    // instead of using the one from the cache, since that will do the right things
+    // if the structure chain has changed. But that may be harder, because we may
+    // then end up having a different type of access altogether. And it currently
+    // does not appear to be worth it to do so -- effectively, the heuristic we
+    // have now is that if the structure chain has changed between when it was
+    // cached on in the baseline JIT and when the DFG tried to inline the access,
+    // then we fall back on a polymorphic access.
+    Structure* currentStructure = structure;
+    JSObject* currentObject = 0;
+    for (unsigned i = 0; i < result.m_chain.size(); ++i) {
+        currentObject = asObject(currentStructure->prototypeForLookup(profiledBlock));
+        currentStructure = result.m_chain[i];
+        if (currentObject->structure() != currentStructure)
+            return;
+    }
+        
+    ASSERT(currentObject);
+        
+    unsigned attributesIgnored;
+    JSCell* specificValue;
+        
+    result.m_offset = currentStructure->get(
+        *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
+    if (result.m_offset == notFound)
+        return;
+        
+    result.m_structureSet.add(structure);
+    result.m_specificValue = JSValue(specificValue);
+#else
+    UNUSED_PARAM(result);
+    UNUSED_PARAM(profiledBlock);
+    UNUSED_PARAM(ident);
+    UNUSED_PARAM(structure);
+    ASSERT_NOT_REACHED();
 #endif
 }
 
@@ -89,12 +135,12 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     }
     for (int i = 0; i < listSize; ++i) {
         if (!list->list[i].isDirect)
-            return GetByIdStatus(MakesCalls, StructureSet(), notFound, true);
+            return GetByIdStatus(MakesCalls, true);
     }
     
     // Next check if it takes slow case, in which case we want to be kind of careful.
     if (profiledBlock->likelyToTakeSlowCase(bytecodeIndex))
-        return GetByIdStatus(TakesSlowPath, StructureSet(), notFound, true);
+        return GetByIdStatus(TakesSlowPath, true);
     
     // Finally figure out if we can derive an access strategy.
     GetByIdStatus result;
@@ -105,10 +151,15 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
         
     case access_get_by_id_self: {
         Structure* structure = stubInfo.u.getByIdSelf.baseObjectStructure.get();
-        result.m_offset = structure->get(*profiledBlock->globalData(), ident);
+        unsigned attributesIgnored;
+        JSCell* specificValue;
+        result.m_offset = structure->get(
+            *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
         
-        if (result.m_offset != notFound)
+        if (result.m_offset != notFound) {
             result.m_structureSet.add(structure);
+            result.m_specificValue = JSValue(specificValue);
+        }
         
         if (result.m_offset != notFound)
             ASSERT(result.m_structureSet.size());
@@ -116,34 +167,58 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     }
         
     case access_get_by_id_self_list: {
-        PolymorphicAccessStructureList* list = stubInfo.u.getByIdProtoList.structureList;
-        unsigned size = stubInfo.u.getByIdProtoList.listSize;
-        for (unsigned i = 0; i < size; ++i) {
+        for (int i = 0; i < listSize; ++i) {
             ASSERT(list->list[i].isDirect);
             
             Structure* structure = list->list[i].base.get();
             if (result.m_structureSet.contains(structure))
                 continue;
             
-            size_t myOffset = structure->get(*profiledBlock->globalData(), ident);
+            unsigned attributesIgnored;
+            JSCell* specificValue;
+            size_t myOffset = structure->get(
+                *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
             
             if (myOffset == notFound) {
                 result.m_offset = notFound;
                 break;
             }
                     
-            if (!i)
+            if (!i) {
                 result.m_offset = myOffset;
-            else if (result.m_offset != myOffset) {
+                result.m_specificValue = JSValue(specificValue);
+            } else if (result.m_offset != myOffset) {
                 result.m_offset = notFound;
                 break;
-            }
-                    
+            } else if (result.m_specificValue != JSValue(specificValue))
+                result.m_specificValue = JSValue();
+            
             result.m_structureSet.add(structure);
         }
                     
         if (result.m_offset != notFound)
             ASSERT(result.m_structureSet.size());
+        break;
+    }
+        
+    case access_get_by_id_proto: {
+        if (!stubInfo.u.getByIdProto.isDirect)
+            return GetByIdStatus(MakesCalls, true);
+        result.m_chain.append(stubInfo.u.getByIdProto.prototypeStructure.get());
+        computeForChain(
+            result, profiledBlock, ident,
+            stubInfo.u.getByIdProto.baseObjectStructure.get());
+        break;
+    }
+        
+    case access_get_by_id_chain: {
+        if (!stubInfo.u.getByIdChain.isDirect)
+            return GetByIdStatus(MakesCalls, true);
+        for (unsigned i = 0; i < stubInfo.u.getByIdChain.count; ++i)
+            result.m_chain.append(stubInfo.u.getByIdChain.chain->head()[i].get());
+        computeForChain(
+            result, profiledBlock, ident,
+            stubInfo.u.getByIdChain.baseObjectStructure.get());
         break;
     }
         
@@ -155,12 +230,14 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     if (result.m_offset == notFound) {
         result.m_state = TakesSlowPath;
         result.m_structureSet.clear();
+        result.m_chain.clear();
+        result.m_specificValue = JSValue();
     } else
-        result.m_state = SimpleDirect;
+        result.m_state = Simple;
     
     return result;
 #else // ENABLE(JIT)
-    return GetByIdStatus(NoInformation, StructureSet(), notFound, false);
+    return GetByIdStatus(NoInformation, false);
 #endif // ENABLE(JIT)
 }
 

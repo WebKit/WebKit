@@ -381,13 +381,18 @@ namespace JSC {
         return !entry.isNull();
     }
 
-    inline JSValue Structure::prototypeForLookup(ExecState* exec) const
+    inline JSValue Structure::prototypeForLookup(JSGlobalObject* globalObject) const
     {
         if (isObject())
             return m_prototype.get();
 
         ASSERT(typeInfo().type() == StringType);
-        return exec->lexicalGlobalObject()->stringPrototype();
+        return globalObject->stringPrototype();
+    }
+
+    inline JSValue Structure::prototypeForLookup(ExecState* exec) const
+    {
+        return prototypeForLookup(exec->lexicalGlobalObject());
     }
 
     inline StructureChain* Structure::prototypeChain(ExecState* exec) const

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1499,6 +1499,11 @@ namespace JSC {
     }
 #endif
     
+    inline JSValue Structure::prototypeForLookup(CodeBlock* codeBlock) const
+    {
+        return prototypeForLookup(codeBlock->globalObject());
+    }
+
 } // namespace JSC
 
 #endif // CodeBlock_h

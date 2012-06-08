@@ -102,20 +102,23 @@ namespace JSC {
             u.getByIdSelf.baseObjectStructure.set(globalData, owner, baseObjectStructure);
         }
 
-        void initGetByIdProto(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure, Structure* prototypeStructure)
+        void initGetByIdProto(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure, Structure* prototypeStructure, bool isDirect)
         {
             accessType = access_get_by_id_proto;
 
             u.getByIdProto.baseObjectStructure.set(globalData, owner, baseObjectStructure);
             u.getByIdProto.prototypeStructure.set(globalData, owner, prototypeStructure);
+            u.getByIdProto.isDirect = isDirect;
         }
 
-        void initGetByIdChain(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure, StructureChain* chain)
+        void initGetByIdChain(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure, StructureChain* chain, unsigned count, bool isDirect)
         {
             accessType = access_get_by_id_chain;
 
             u.getByIdChain.baseObjectStructure.set(globalData, owner, baseObjectStructure);
             u.getByIdChain.chain.set(globalData, owner, chain);
+            u.getByIdChain.count = count;
+            u.getByIdChain.isDirect = isDirect;
         }
 
         void initGetByIdSelfList(PolymorphicAccessStructureList* structureList, int listSize)
@@ -251,10 +254,13 @@ namespace JSC {
             struct {
                 WriteBarrierBase<Structure> baseObjectStructure;
                 WriteBarrierBase<Structure> prototypeStructure;
+                bool isDirect;
             } getByIdProto;
             struct {
                 WriteBarrierBase<Structure> baseObjectStructure;
                 WriteBarrierBase<StructureChain> chain;
+                unsigned count : 31;
+                bool isDirect : 1;
             } getByIdChain;
             struct {
                 PolymorphicAccessStructureList* structureList;

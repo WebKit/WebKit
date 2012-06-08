@@ -1,3 +1,45 @@
+2012-06-07  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should inline prototype chain accesses, and do the right things if the
+        specific function optimization is available
+        https://bugs.webkit.org/show_bug.cgi?id=88594
+
+        Reviewed by Gavin Barraclough.
+        
+        Looks like a 3% win on V8.
+
+        * bytecode/CodeBlock.h:
+        (JSC::Structure::prototypeForLookup):
+        (JSC):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC):
+        (JSC::GetByIdStatus::computeForChain):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/GetByIdStatus.h:
+        (JSC::GetByIdStatus::GetByIdStatus):
+        (JSC::GetByIdStatus::isSimple):
+        (JSC::GetByIdStatus::chain):
+        (JSC::GetByIdStatus::specificValue):
+        (GetByIdStatus):
+        * bytecode/StructureSet.h:
+        (StructureSet):
+        (JSC::StructureSet::singletonStructure):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::initGetByIdProto):
+        (JSC::StructureStubInfo::initGetByIdChain):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCacheGetByID):
+        * runtime/JSGlobalObject.h:
+        (JSC::Structure::prototypeForLookup):
+        (JSC):
+        * runtime/Structure.h:
+        (Structure):
+
 2012-06-07  Gavin Barraclough  <barraclough@apple.com>
 
         Math.pow on iOS does not support denormal numbers.

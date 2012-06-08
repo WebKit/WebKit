@@ -115,6 +115,14 @@ public:
         return true;
     }
     
+    // Call this if you know that the structure set must consist of exactly
+    // one structure.
+    Structure* singletonStructure() const
+    {
+        ASSERT(m_structures.size() == 1);
+        return m_structures[0];
+    }
+    
     Structure* at(size_t i) const { return m_structures.at(i); }
     
     Structure* operator[](size_t i) const { return at(i); }

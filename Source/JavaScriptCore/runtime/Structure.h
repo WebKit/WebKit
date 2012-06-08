@@ -127,6 +127,8 @@ namespace JSC {
         
         JSValue storedPrototype() const { return m_prototype.get(); }
         JSValue prototypeForLookup(ExecState*) const;
+        JSValue prototypeForLookup(JSGlobalObject*) const;
+        JSValue prototypeForLookup(CodeBlock*) const;
         StructureChain* prototypeChain(ExecState*) const;
         static void visitChildren(JSCell*, SlotVisitor&);
 

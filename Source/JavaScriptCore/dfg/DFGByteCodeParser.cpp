@@ -1547,41 +1547,64 @@ void ByteCodeParser::handleGetById(
     int destinationOperand, SpeculatedType prediction, NodeIndex base, unsigned identifierNumber,
     const GetByIdStatus& getByIdStatus)
 {
-    if (getByIdStatus.isSimpleDirect()
-        && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
-        ASSERT(getByIdStatus.structureSet().size());
-                
-        // The implementation of GetByOffset does not know to terminate speculative
-        // execution if it doesn't have a prediction, so we do it manually.
-        if (prediction == SpecNone)
-            addToGraph(ForceOSRExit);
-                
-        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(getByIdStatus.structureSet())), base);
-        NodeIndex propertyStorage;
-        size_t offsetOffset;
-        if (getByIdStatus.structureSet().allAreUsingInlinePropertyStorage()) {
-            propertyStorage = base;
-            ASSERT(!(sizeof(JSObject) % sizeof(EncodedJSValue)));
-            offsetOffset = sizeof(JSObject) / sizeof(EncodedJSValue);
-        } else {
-            propertyStorage = addToGraph(GetPropertyStorage, base);
-            offsetOffset = 0;
-        }
-        set(destinationOperand,
-            addToGraph(
-                GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction),
-                propertyStorage));
-        
-        StorageAccessData storageAccessData;
-        storageAccessData.offset = getByIdStatus.offset() + offsetOffset;
-        storageAccessData.identifierNumber = identifierNumber;
-        m_graph.m_storageAccessData.append(storageAccessData);
-    } else {
+    if (!getByIdStatus.isSimple()
+        || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
         set(destinationOperand,
             addToGraph(
                 getByIdStatus.makesCalls() ? GetByIdFlush : GetById,
                 OpInfo(identifierNumber), OpInfo(prediction), base));
+        return;
     }
+    
+    ASSERT(getByIdStatus.structureSet().size());
+                
+    // The implementation of GetByOffset does not know to terminate speculative
+    // execution if it doesn't have a prediction, so we do it manually.
+    if (prediction == SpecNone)
+        addToGraph(ForceOSRExit);
+                
+    addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(getByIdStatus.structureSet())), base);
+    
+    bool useInlineStorage;
+    if (!getByIdStatus.chain().isEmpty()) {
+        Structure* currentStructure = getByIdStatus.structureSet().singletonStructure();
+        JSObject* currentObject = 0;
+        for (unsigned i = 0; i < getByIdStatus.chain().size(); ++i) {
+            currentObject = asObject(currentStructure->prototypeForLookup(m_inlineStackTop->m_codeBlock));
+            currentStructure = getByIdStatus.chain()[i];
+            base = addToGraph(WeakJSConstant, OpInfo(currentObject));
+            addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(currentStructure)), base);
+        }
+        useInlineStorage = currentStructure->isUsingInlineStorage();
+    } else
+        useInlineStorage = getByIdStatus.structureSet().allAreUsingInlinePropertyStorage();
+    
+    if (getByIdStatus.specificValue()) {
+        ASSERT(getByIdStatus.specificValue().isCell());
+        set(destinationOperand,
+            addToGraph(WeakJSConstant, OpInfo(getByIdStatus.specificValue().asCell())));
+        return;
+    }
+    
+    NodeIndex propertyStorage;
+    size_t offsetOffset;
+    if (useInlineStorage) {
+        propertyStorage = base;
+        ASSERT(!(sizeof(JSObject) % sizeof(EncodedJSValue)));
+        offsetOffset = sizeof(JSObject) / sizeof(EncodedJSValue);
+    } else {
+        propertyStorage = addToGraph(GetPropertyStorage, base);
+        offsetOffset = 0;
+    }
+    set(destinationOperand,
+        addToGraph(
+            GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction),
+            propertyStorage));
+        
+    StorageAccessData storageAccessData;
+    storageAccessData.offset = getByIdStatus.offset() + offsetOffset;
+    storageAccessData.identifierNumber = identifierNumber;
+    m_graph.m_storageAccessData.append(storageAccessData);
 }
 
 void ByteCodeParser::prepareToParseBlock()
