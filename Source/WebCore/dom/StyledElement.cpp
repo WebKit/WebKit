@@ -130,10 +130,7 @@ void StyledElement::updateStyleAttribute() const
 
 StyledElement::StyledElement(const QualifiedName& name, Document* document, ConstructionType type)
     : Element(name, document, type)
-    , m_startLineNumber(WTF::OrdinalNumber::beforeFirst())
 {
-    if (document && document->scriptableDocumentParser() && !document->isInDocumentWrite())
-        m_startLineNumber = document->scriptableDocumentParser()->lineNumber();
 }
 
 StyledElement::~StyledElement()
@@ -181,9 +178,12 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
 void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, ShouldReparseStyleAttribute shouldReparse)
 {
     if (shouldReparse) {
+        WTF::OrdinalNumber startLineNumber = WTF::OrdinalNumber::beforeFirst();
+        if (document() && document()->scriptableDocumentParser() && !document()->isInDocumentWrite())
+            startLineNumber = document()->scriptableDocumentParser()->lineNumber();
         if (newStyleString.isNull())
             destroyInlineStyle();
-        else if (document()->contentSecurityPolicy()->allowInlineStyle(document()->url(), m_startLineNumber))
+        else if (document()->contentSecurityPolicy()->allowInlineStyle(document()->url(), startLineNumber))
             ensureAttributeData()->updateInlineStyleAvoidingMutation(this, newStyleString);
         setIsStyleAttributeValid();
     }

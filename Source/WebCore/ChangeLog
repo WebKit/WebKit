@@ -1,3 +1,23 @@
+2012-06-07  Mike West  <mkwst@chromium.org>
+
+        Dropping m_startingLineNumber property from StyledElement.
+        https://bugs.webkit.org/show_bug.cgi?id=86848
+
+        Reviewed by Adam Barth.
+
+        We can have the same effect by moving the line-number calculation
+        directly into StyledElement::styleAttributeChanged. This means that
+        subsequent changes to the style attribute (via script) won't generate
+        error messages with line numbers, but that's an acceptable tradeoff.
+
+        Behavior is covered by existing CSP tests.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::StyledElement):
+        (WebCore::StyledElement::styleAttributeChanged):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::destroyInlineStyle):
+
 2012-06-07  Peter Beverloo  <peter@chromium.org>
 
         Initialize m_document in AXObjectCache's constructor for !HAVE(ACCESSIBILITY) builds

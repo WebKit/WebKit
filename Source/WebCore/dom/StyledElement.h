@@ -27,7 +27,6 @@
 
 #include "Element.h"
 #include "StylePropertySet.h"
-#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
@@ -93,8 +92,6 @@ private:
         if (attributeData())
             attributeData()->destroyInlineStyle(this);
     }
-
-    WTF::OrdinalNumber m_startLineNumber;
 };
 
 inline const SpaceSplitString& StyledElement::classNames() const
