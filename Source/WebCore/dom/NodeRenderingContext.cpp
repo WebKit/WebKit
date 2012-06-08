@@ -55,6 +55,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     : m_phase(AttachingNotInTree)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
+    , m_resetStyleInheritance(false)
     , m_visualParentShadow(0)
     , m_insertionPoint(0)
     , m_style(0)
@@ -67,6 +68,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     if (parent->isShadowRoot() && toShadowRoot(parent)->isYoungest()) {
         m_phase = AttachingShadowChild;
         m_parentNodeForRenderingAndStyle = toShadowRoot(parent)->host();
+        m_resetStyleInheritance = toShadowRoot(parent)->resetStyleInheritance();
         return;
     }
 
@@ -82,7 +84,9 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
             if ((m_insertionPoint = m_visualParentShadow->insertionPointFor(m_node))) {
                 if (m_insertionPoint->shadowRoot()->isUsedForRendering()) {
                     m_phase = AttachingDistributed;
-                    m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_insertionPoint).parentNodeForRenderingAndStyle();
+                    NodeRenderingContext insertionPointContext(m_insertionPoint);
+                    m_parentNodeForRenderingAndStyle = insertionPointContext.parentNodeForRenderingAndStyle();
+                    m_resetStyleInheritance = insertionPointContext.resetStyleInheritance();
                     return;
                 }
             }
@@ -107,9 +111,11 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
             else
                 m_phase = AttachingFallbacked;
 
-            if (toInsertionPoint(parent)->isActive())
-                m_parentNodeForRenderingAndStyle = NodeRenderingContext(parent).parentNodeForRenderingAndStyle();
-            else
+            if (toInsertionPoint(parent)->isActive()) {
+                NodeRenderingContext parentContext(parent);
+                m_parentNodeForRenderingAndStyle = parentContext.parentNodeForRenderingAndStyle();
+                m_resetStyleInheritance = parentContext.resetStyleInheritance();
+            } else
                 m_parentNodeForRenderingAndStyle = parent;
             return;
         }
@@ -123,6 +129,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
     : m_phase(Calculating)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
+    , m_resetStyleInheritance(false)
     , m_visualParentShadow(0)
     , m_insertionPoint(0)
     , m_style(style)

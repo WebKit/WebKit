@@ -34,6 +34,7 @@ module core {
         readonly attribute Element host;
         readonly attribute Element activeElement;
         attribute boolean applyAuthorStyles;
+        attribute boolean resetStyleInheritance;
 
         attribute [TreatNullAs=NullString] DOMString innerHTML
             setter raises(DOMException);

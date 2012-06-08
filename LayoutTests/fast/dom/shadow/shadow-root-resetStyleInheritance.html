@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div.resetTest {
+  background-color: #eef;
+  border: solid;
+  margin: 4px;
+  padding: 16px;
+  color: #fee;
+  font-family: Serif;
+  font-size: 24px;
+  font-style: italic;
+  font-variant: small-caps;
+  font-weight: bold;
+  letter-spacing: 2px;
+  line-height: 200%;
+  text-align: start;
+  text-indent: 50px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  word-spacing: 30px;
+}
+</style>
+<script>
+function assertTrue(id, actual) {
+    if (!actual)
+        throw "failure:" + id + ": assertTrue failed";
+}
+
+function assertFalse(id, actual) {
+    if (actual)
+        throw "failure:" + id +  ": assertFalse failed";
+}
+
+function shouldBe(a, b)
+{
+    if (a != b)
+        throw "failure:" + a + ": should be " + b;
+}
+
+function shouldNotBe(a, b)
+{
+    if (a == b)
+        throw "failure:" + a + ": should not be " + b;
+}
+</script>
+<script src="resources/polyfill.js"></script>
+</head>
+<body>
+<div id="reset-style-inheritance"></div>
+<div id="no-reset-style-inheritance"></div>
+<div id="reset-style-inheritance-true-to-false"></div>
+<div id="reset-style-inheritance-false-to-true"></div>
+<div id="reset-style-inheritance-for-content"></div>
+<div id="no-reset-style-inheritance-for-content"></div>
+
+<script>
+function renderWithNoResetStyleInheritance() {
+    var div = document.createElement('div');
+    div.className = 'resetTest';
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    assertFalse('default resetStyleInheritance should be false', shadowRoot.resetStyleInheritance);
+    shadowRoot.innerHTML = '<div>text</div>';
+    
+    document.getElementById('no-reset-style-inheritance').appendChild(div);
+}
+
+function renderWithResetStyleInheritance() {
+    var div = document.createElement('div');
+    div.className = 'resetTest';
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    assertFalse('default resetStyleInheritance should be false', shadowRoot.resetStyleInheritance);
+    shadowRoot.resetStyleInheritance = true;
+    shadowRoot.innerHTML = '<div>text</div>';
+    assertTrue('resetStyleInheritance should be true as explicitly set', shadowRoot.resetStyleInheritance);
+    
+    document.getElementById('reset-style-inheritance').appendChild(div);
+}
+
+function renderWithChangingResetStyleInheritanceFromTrueToFalse() {
+    var div = document.createElement('div');
+    div.className = 'resetTest';
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    assertFalse('default resetStyleInheritance should be false', shadowRoot.resetStyleInheritance);
+    shadowRoot.resetStyleInheritance = true;
+    shadowRoot.innerHTML = '<div id="test1">text</div>';
+    assertTrue('resetStyleInheritance should be true', shadowRoot.resetStyleInheritance);
+    
+    document.getElementById('reset-style-inheritance-true-to-false').appendChild(div);
+    div.offsetLeft;
+    var target = shadowRoot.getElementById('test1');
+    shouldNotBe(window.getComputedStyle(target).getPropertyValue('font-family'), 'serif');
+    shouldNotBe(window.getComputedStyle(target).getPropertyValue('line-height'), '48px');
+
+    shadowRoot.resetStyleInheritance = false;
+    assertFalse('resetStyleInheritance should be false', shadowRoot.resetStyleInheritance);
+    div.offsetLeft;
+    shouldBe(window.getComputedStyle(target).getPropertyValue('font-family'), 'serif');
+    shouldBe(window.getComputedStyle(target).getPropertyValue('line-height'), '48px');
+}
+
+function renderWithChangingResetStyleInheritanceFromFalseToTrue() {
+    var div = document.createElement('div');
+    div.className = 'resetTest';
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    assertFalse('default resetStyleInheritance should be false', shadowRoot.resetStyleInheritance);
+    shadowRoot.resetStyleInheritance = false;
+    shadowRoot.innerHTML = '<div id="test2">text</div>';
+    assertFalse('default resetStyleInheritance should be false', shadowRoot.resetStyleInheritance);
+    
+    document.getElementById('reset-style-inheritance-false-to-true').appendChild(div);
+    div.offsetLeft;
+    var target = shadowRoot.getElementById('test2');
+    shouldBe(window.getComputedStyle(target).getPropertyValue('font-family'), 'serif');
+    shouldBe(window.getComputedStyle(target).getPropertyValue('line-height'), '48px');
+
+    shadowRoot.resetStyleInheritance = true;
+    assertTrue('resetStyleInheritance should be true', shadowRoot.resetStyleInheritance);
+    div.offsetLeft;
+    shouldNotBe(window.getComputedStyle(target).getPropertyValue('font-family'), 'serif');
+    shouldNotBe(window.getComputedStyle(target).getPropertyValue('line-height'), '48px');
+}
+
+function createDivWithText(text) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(text));
+    return div;
+}
+
+function renderResetStyleInheritanceForContent() {
+    var div = document.createElement('div');
+    div.className = 'resetTest';
+    div.appendChild(createDivWithText('text'));
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    shadowRoot.innerHTML = '<content select="div"></content>';
+    shadowRoot.resetStyleInheritance = true;
+    assertTrue('resetStyleInheritance should be true', shadowRoot.resetStyleInheritance);
+    document.getElementById('reset-style-inheritance-for-content').appendChild(div);
+    div.offsetLeft;
+}
+
+function renderNoResetStyleInheritanceForContent() {
+    var div = document.createElement('div');
+    div.className = 'resetTest';
+    div.appendChild(createDivWithText('text'));
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    shadowRoot.innerHTML = '<content select="div"></content>';
+    shadowRoot.resetStyleInheritance = false;
+    assertFalse('resetStyleInheritance should be false', shadowRoot.resetStyleInheritance);
+    document.getElementById('no-reset-style-inheritance-for-content').appendChild(div);
+    div.offsetLeft;
+}
+
+renderWithNoResetStyleInheritance();
+renderWithResetStyleInheritance();
+renderWithChangingResetStyleInheritanceFromTrueToFalse();
+renderWithChangingResetStyleInheritanceFromFalseToTrue();
+renderResetStyleInheritanceForContent();
+renderNoResetStyleInheritanceForContent();
+</script>
+</body>
+</html>

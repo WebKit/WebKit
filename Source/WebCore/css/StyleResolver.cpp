@@ -78,6 +78,7 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "NodeRenderStyle.h"
+#include "NodeRenderingContext.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "Pair.h"
@@ -1163,12 +1164,16 @@ inline void StyleResolver::initForStyleResolve(Element* e, RenderStyle* parentSt
 {
     m_checker.setPseudoStyle(pseudoID);
 
-    m_parentNode = e ? e->parentNodeForRenderingAndStyle() : 0;
-
-    if (parentStyle)
+    if (e) {
+        NodeRenderingContext context(e);
+        m_parentNode = context.parentNodeForRenderingAndStyle();
+        m_parentStyle = context.resetStyleInheritance()? 0 :
+            parentStyle ? parentStyle :
+            m_parentNode ? m_parentNode->renderStyle() : 0;
+    } else {
+        m_parentNode = 0;
         m_parentStyle = parentStyle;
-    else
-        m_parentStyle = m_parentNode ? m_parentNode->renderStyle() : 0;
+    }
 
     Node* docElement = e ? e->document()->documentElement() : 0;
     RenderStyle* docStyle = m_checker.document()->renderStyle();
@@ -1653,7 +1658,11 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     else {
         m_parentStyle = style();
         // Make sure our fonts are initialized if we don't inherit them from our parent style.
-        m_style->font().update(0);
+        if (Settings* settings = documentSettings()) {
+            initializeFontStyle(settings);
+            m_style->font().update(fontSelector());
+        } else
+            m_style->font().update(0);
     }
 
     // Even if surrounding content is user-editable, shadow DOM should act as a single unit, and not necessarily be editable
@@ -3347,7 +3356,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
                 continue;
             CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(item);
             AtomicString face;
-            Settings* settings = m_checker.document()->settings();
+            Settings* settings = documentSettings();
             if (contentValue->isString())
                 face = contentValue->getStringValue();
             else if (settings) {
@@ -3431,24 +3440,11 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
             m_lineHeightValue = 0;
             setFontDescription(fontDescription);
         } else if (isInitial) {
-            Settings* settings = m_checker.document()->settings();
+            Settings* settings = documentSettings();
             ASSERT(settings); // If we're doing style resolution, this document should always be in a frame and thus have settings
             if (!settings)
                 return;
-            FontDescription fontDescription;
-            fontDescription.setGenericFamily(FontDescription::StandardFamily);
-            fontDescription.setRenderingMode(settings->fontRenderingMode());
-            fontDescription.setUsePrinterFont(m_checker.document()->printing());
-            const AtomicString& standardFontFamily = m_checker.document()->settings()->standardFontFamily();
-            if (!standardFontFamily.isEmpty()) {
-                fontDescription.firstFamily().setFamily(standardFontFamily);
-                fontDescription.firstFamily().appendFamily(0);
-            }
-            fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);
-            setFontSize(fontDescription, fontSizeForKeyword(m_checker.document(), CSSValueMedium, false));
-            m_style->setLineHeight(RenderStyle::initialLineHeight());
-            m_lineHeightValue = 0;
-            setFontDescription(fontDescription);
+            initializeFontStyle(settings);
         } else if (primitiveValue) {
             m_style->setLineHeight(RenderStyle::initialLineHeight());
             m_lineHeightValue = 0;
@@ -3459,7 +3455,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
             // Double-check and see if the theme did anything. If not, don't bother updating the font.
             if (fontDescription.isAbsoluteSize()) {
                 // Make sure the rendering mode and printer font settings are updated.
-                Settings* settings = m_checker.document()->settings();
+                Settings* settings = documentSettings();
                 ASSERT(settings); // If we're doing style resolution, this document should always be in a frame and thus have settings
                 if (!settings)
                     return;
@@ -4912,7 +4908,7 @@ void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, RenderStyle*
     if (childFont.keywordSize())
         size = fontSizeForKeyword(m_checker.document(), CSSValueXxSmall + childFont.keywordSize() - 1, childFont.useFixedDefaultSize());
     else {
-        Settings* settings = m_checker.document()->settings();
+        Settings* settings = documentSettings();
         float fixedScaleFactor = settings
             ? static_cast<float>(settings->defaultFixedFontSize()) / settings->defaultFontSize()
             : 1;
@@ -4924,6 +4920,24 @@ void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, RenderStyle*
     FontDescription newFontDescription(childFont);
     setFontSize(newFontDescription, size);
     style->setFontDescription(newFontDescription);
+}
+
+void StyleResolver::initializeFontStyle(Settings* settings)
+{
+    FontDescription fontDescription;
+    fontDescription.setGenericFamily(FontDescription::StandardFamily);
+    fontDescription.setRenderingMode(settings->fontRenderingMode());
+    fontDescription.setUsePrinterFont(m_checker.document()->printing());
+    const AtomicString& standardFontFamily = documentSettings()->standardFontFamily();
+    if (!standardFontFamily.isEmpty()) {
+        fontDescription.firstFamily().setFamily(standardFontFamily);
+        fontDescription.firstFamily().appendFamily(0);
+    }
+    fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);
+    setFontSize(fontDescription, fontSizeForKeyword(m_checker.document(), CSSValueMedium, false));
+    m_style->setLineHeight(RenderStyle::initialLineHeight());
+    m_lineHeightValue = 0;
+    setFontDescription(fontDescription);
 }
 
 void StyleResolver::setFontSize(FontDescription& fontDescription, float size)

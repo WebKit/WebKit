@@ -1,3 +1,63 @@
+2012-06-07  Takashi Sakamoto  <tasak@google.com>
+
+        ShadowRoot needs resetStyleInheritance
+        https://bugs.webkit.org/show_bug.cgi?id=84048
+
+        Added resetStyleInheritance API to ShadowRoot. The spec URL is
+        http://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html#shadow-root-attributes
+        To implement the API, modified StyleResolver to use empty style
+        instead of parent style if resetStyleInheritance is true,
+        and a node and its parent node are placed in different shadow trees.
+
+        Reviewed by Hajime Morita.
+
+        Test: fast/dom/shadow/shadow-root-resetStyleInheritance.html
+              fast/dom/shadow/shadow-root-resetStyleInheritance-expected.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::initForStyleResolve):
+        Set m_parentStyle to NULL when resetStyleInheritance.
+        (WebCore::StyleResolver::documentSettings):
+        Added a new method to obtain current document's settings.
+        (WebCore::StyleResolver::initializeFontStyle):
+        Initialize m_style by using document settings. Its code was move
+        from the code initializing font style in applyProperty.
+        (WebCore::StyleResolver::styleForElement):
+        Initialize font style if m_parentStyle is NULL. The old code just
+        used style() and don't touch font style. The new code uses the above
+        initializeFontStyle.
+        (WebCore::StyleResolver::applyProperty):
+        Moved a code for initializing font style as "initial" to
+        a new method: initializeFontStyle and modified to use the method.
+        Modified to use documentSettings().
+        (WebCore::StyleResolver::checkForGenericFamilyChange):
+        Modified to use documentSettings().
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::documentSettings):
+        (WebCore::StyleResolver::initializeFontStyle):
+        Added two new methods to class StyleResolver.
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        Modified to calculate m_resetStyleInheritance in its constructor.
+        * dom/NodeRenderingContext.h:
+        (WebCore::NodeRenderingContext::resetStyleInheritance):
+        Implemented a new method, just returning m_resetStyleInheritance.
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::setResetStyleInheritance):
+        Modified to force to recalculate children's styles if
+        resetStyleInheritance is changed.
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+        Added resetStyleInheritance getter and setter.
+        * dom/ShadowRoot.idl:
+        Added an attribute, resetStyleInheritance.
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::resetStyleInheritance):
+        * dom/TreeScope.h:
+        (TreeScope):
+        Added resetStyleInheritance's default getter.
+        The getter will be overrided by class ShadowRoot's getter.
+
 2012-06-07  Victor Carbune  <victor@rosedu.org>
 
         addTextTrack should set track mode to HIDDEN

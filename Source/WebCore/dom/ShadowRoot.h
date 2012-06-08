@@ -63,6 +63,8 @@ public:
 
     virtual bool applyAuthorStyles() const OVERRIDE;
     void setApplyAuthorStyles(bool);
+    virtual bool resetStyleInheritance() const OVERRIDE;
+    void setResetStyleInheritance(bool);
 
     Element* host() const;
     void setHost(Element*);
@@ -98,6 +100,7 @@ private:
     ShadowRoot* m_prev;
     ShadowRoot* m_next;
     bool m_applyAuthorStyles : 1;
+    bool m_resetStyleInheritance : 1;
     InsertionPoint* m_insertionPointAssignedTo;
 };
 

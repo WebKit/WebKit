@@ -208,6 +208,7 @@ public:
     void applyPropertyToCurrentStyle(CSSPropertyID, CSSValue*);
 
     void updateFont();
+    void initializeFontStyle(Settings*);
 
     static float getComputedSizeFromSpecifiedSize(Document*, float zoomFactor, bool isAbsoluteSize, float specifiedSize, ESmartMinimumForFontSize = UseSmartMinimumForFontFize);
 
@@ -366,6 +367,8 @@ private:
 
     void matchPageRules(MatchResult&, RuleSet*, bool isLeftPage, bool isFirstPage, const String& pageName);
     void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>&, bool isLeftPage, bool isFirstPage, const String& pageName);
+    Settings* documentSettings() { return m_checker.document()->settings(); }
+
     bool isLeftPage(int pageIndex) const;
     bool isRightPage(int pageIndex) const { return !isLeftPage(pageIndex); }
     bool isFirstPage(int pageIndex) const;
