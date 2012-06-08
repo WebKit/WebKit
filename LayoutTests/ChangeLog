@@ -1,3 +1,10 @@
+2012-06-08  Dan Bernstein  <mitz@apple.com>
+
+        Added svg/filters/color-space-conversion.svg to the Mac skip list. It has been failing since
+        its addition in r119841. <http://webkit.org/b/88672> is tracking the failure.
+
+        * platform/mac/Skipped:
+
 2012-06-08  Stephen Chenney  <schenney@chromium.org>
 
         WebCore::ImageBuffer.cpp has broken color table code

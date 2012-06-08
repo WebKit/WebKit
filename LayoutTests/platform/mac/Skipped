@@ -882,3 +882,6 @@ fast/forms/select/optgroup-clicking.html
 # Assertion failure on mac-lion-wk2, no reftest results on mac
 # https://bugs.webkit.org/show_bug.cgi?id=88356
 fast/hidpi/device-scale-factor-paint.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=88672
+svg/filters/color-space-conversion.svg
