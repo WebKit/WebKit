@@ -1,5 +1,62 @@
 2012-06-08  Ojan Vafai  <ojan@chromium.org>
 
+        Final set of chromium rebaselines for skia change. See crbug.com/131829.
+
+        * platform/chromium-linux/svg/clip-path/clipper-placement-issue-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-update-container-expected.png.
+        * platform/chromium-linux/svg/css/arrow-with-shadow-expected.png: Added.
+        * platform/chromium-linux/svg/css/background-image-svg-expected.png: Added.
+        * platform/chromium-linux/svg/custom/broken-internal-references-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/marker-strokeWidth-changes-expected.png.
+        * platform/chromium-linux/svg/custom/dynamic-empty-path-expected.png: Added.
+        * platform/chromium-linux/svg/custom/gradient-stop-corner-cases-expected.png: Added.
+        * platform/chromium-linux/svg/custom/svgpolyparser-extra-space-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-update-container-expected.png.
+        * platform/chromium-linux/svg/custom/use-forward-refs-expected.png: Added.
+        * platform/chromium-linux/svg/custom/use-on-clip-path-with-transformation-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-repaint-rect-on-path-with-stroke-expected.png.
+        * platform/chromium-linux/svg/text/text-hkern-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-update-container-expected.png.
+        * platform/chromium-linux/svg/text/text-hkern-on-vertical-text-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-update-container-expected.png.
+        * platform/chromium-linux/svg/text/text-vkern-expected.png: Added.
+        * platform/chromium-linux/svg/text/text-vkern-on-horizontal-text-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/marker-strokeWidth-changes-expected.png.
+        * platform/chromium-linux/svg/zoom/page/absolute-sized-document-no-scrollbars-expected.png: Added.
+        * platform/chromium-linux/svg/zoom/page/relative-sized-document-scrollbars-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-repaint-rect-on-path-with-stroke-expected.png.
+        * platform/chromium-linux/svg/zoom/page/zoom-background-image-tiled-expected.png: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-as-relative-image-expected.png: Copied from LayoutTests/platform/chromium-win/svg/custom/js-update-container-expected.png.
+        * platform/chromium-win-xp/platform/chromium/compositing/accelerated-drawing/svg-filters-expected.png: Removed.
+        * platform/chromium-win/svg/custom/js-late-marker-creation-expected.png:
+        * platform/chromium-win/svg/custom/js-repaint-rect-on-path-with-stroke-expected.png:
+        * platform/chromium-win/svg/custom/js-update-bounce-expected.png:
+        * platform/chromium-win/svg/custom/js-update-container-expected.png:
+        * platform/chromium-win/svg/custom/js-update-path-changes-expected.png:
+        * platform/chromium-win/svg/custom/js-update-path-removal-expected.png:
+        * platform/chromium-win/svg/custom/js-update-polygon-changes-expected.png:
+        * platform/chromium-win/svg/custom/js-update-polygon-removal-expected.png:
+        * platform/chromium-win/svg/custom/js-update-transform-addition-expected.png:
+        * platform/chromium-win/svg/custom/js-update-transform-changes-expected.png:
+        * platform/chromium-win/svg/custom/linking-a-03-b-preserveAspectRatio-expected.png:
+        * platform/chromium-win/svg/custom/linking-a-03-b-transform-expected.png:
+        * platform/chromium-win/svg/custom/linking-a-03-b-viewBox-expected.png:
+        * platform/chromium-win/svg/custom/linking-a-03-b-viewBox-transform-expected.png:
+        * platform/chromium-win/svg/custom/linking-a-03-b-viewTarget-expected.png:
+        * platform/chromium-win/svg/custom/linking-a-03-b-zoomAndPan-expected.png:
+        * platform/chromium-win/svg/custom/linking-uri-01-b-expected.png:
+        * platform/chromium-win/svg/custom/marker-changes-expected.png:
+        * platform/chromium-win/svg/custom/marker-child-changes-css-expected.png:
+        * platform/chromium-win/svg/custom/marker-child-changes-expected.png:
+        * platform/chromium-win/svg/custom/marker-opacity-expected.png:
+        * platform/chromium-win/svg/custom/marker-referencePoint-expected.png:
+        * platform/chromium-win/svg/custom/marker-strokeWidth-changes-expected.png:
+        * platform/chromium-win/svg/custom/marker-viewBox-changes-expected.png:
+        * platform/chromium-win/svg/custom/mask-colorspace-expected.png:
+        * platform/chromium-win/svg/custom/mask-on-multiple-objects-expected.png:
+        * platform/chromium-win/svg/custom/no-inherited-dashed-stroke-expected.png:
+        * platform/chromium-win/svg/custom/non-circular-marker-reference-expected.png:
+        * platform/chromium-win/svg/custom/non-scaling-stroke-markers-expected.png:
+        * platform/chromium-win/svg/custom/object-sizing-explicit-height-expected.png:
+        * platform/chromium-win/svg/custom/object-sizing-explicit-width-height-expected.png:
+        * platform/chromium-win/svg/filters/invalidate-on-child-layout-expected.png:
+        * platform/chromium-win/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/chromium/TestExpectations:
+
+2012-06-08  Ojan Vafai  <ojan@chromium.org>
+
         viewspec-parser tests still timeout in Chromium debug even when marked slow.
         * platform/chromium/TestExpectations:
 
