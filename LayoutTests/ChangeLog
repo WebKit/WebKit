@@ -1,3 +1,15 @@
+2012-06-07  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Fix unmatched parenthesis in fast/dom/HTMLAnchorElement/anchor-download-unset.html
+        https://bugs.webkit.org/show_bug.cgi?id=88526
+
+        Reviewed by Alexey Proskuryakov.
+
+        This test is skipped on other platforms than chromium.
+
+        * fast/dom/HTMLAnchorElement/anchor-download-unset.html:
+        * platform/chromium/TestExpectations:
+
 2012-06-07  Victor Carbune  <victor@rosedu.org>
 
         addTextTrack should set track mode to HIDDEN

@@ -3596,7 +3596,6 @@ BUGWK85090 DEBUG SLOW : fast/js/dfg-uint8array.html = PASS
 BUGWK85106 SLOW : tables/mozilla/other/slashlogo.html = PASS
 
 BUGWK85174 : fast/files/blob-constructor.html = TEXT
-BUGWK85174 : fast/dom/HTMLAnchorElement/anchor-download-unset.html = TIMEOUT
 
 BUGWK85120 : fast/js/toString-number.html = TEXT
 
