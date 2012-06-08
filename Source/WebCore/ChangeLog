@@ -1,3 +1,9 @@
+2012-06-08  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed, removing duplicated entries in gyp.
+
+        * WebCore.gypi:
+
 2012-06-08  Arko Saha  <arko@motorola.com>
 
         Microdata: An element with an empty itemprop='' should not get listed in the .properties list.
