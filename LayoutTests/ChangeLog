@@ -1,3 +1,13 @@
+2012-06-08  Dan Bernstein  <mitz@apple.com>
+
+        Added Mac pixel results for canvas-imageSmoothingEnabled-patterns.html, and made the text
+        results shared between platforms.
+
+        * fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.txt: Added.
+        * platform/chromium/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.txt: Removed.
+        * platform/gtk/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.txt: Removed.
+        * platform/mac/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png: Added.
+
 2012-06-08  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed, rebaseline a chromium-win result that changed
