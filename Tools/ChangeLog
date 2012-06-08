@@ -1,3 +1,60 @@
+2012-06-07  Tony Payne  <tpayne@chromium.org>
+
+        [chromium] Allow LayoutTests under new git workflow
+        https://bugs.webkit.org/show_bug.cgi?id=88575
+
+        On Windows, chromium indirects through git.bat. Adds the same hack that
+        is currently used for discovering svn.bat to support the new git
+        workflow.
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git): Replaces all hard-coded references to 'git' with the class
+        variable executable_name.
+        (Git._check_git_architecture):
+        (Git.in_working_directory):
+        (Git.find_checkout_root):
+        (Git.read_git_config):
+        (Git.discard_local_commits):
+        (Git.local_commits):
+        (Git.working_directory_is_clean):
+        (Git.clean_working_directory):
+        (Git.status_command):
+        (Git.add_list):
+        (Git.delete_list):
+        (Git.exists):
+        (Git._current_branch):
+        (Git.changed_files):
+        (Git._changes_files_for_commit):
+        (Git.revisions_changing_file):
+        (Git.conflicted_files):
+        (Git.svn_revision):
+        (Git.create_patch):
+        (Git._run_git_svn_find_rev):
+        (Git.contents_at_revision):
+        (Git.diff_for_file):
+        (Git.show_head):
+        (Git.committer_email_for_revision):
+        (Git.apply_reverse_diff):
+        (Git.revert_files):
+        (Git.commit_with_message):
+        (Git._commit_on_branch):
+        (Git.svn_commit_log):
+        (Git.last_svn_commit_log):
+        (Git.svn_blame):
+        (Git._branch_ref_exists):
+        (Git.delete_branch):
+        (Git.remote_merge_base):
+        (Git.commit_locally_with_message):
+        (Git.push_local_commits_to_server):
+        (Git.commit_ids_from_commitish_arguments):
+        (Git.commit_message_for_local_commit):
+        (Git.files_changed_summary_for_commit):
+        * Scripts/webkitpy/common/host.py:
+        (Host._engage_awesome_windows_hacks): Adds an awesome 'git.bat' hack
+        that duplicates the logic in the existing 'svn.bat' hack.
+
 2012-06-07  Ojan Vafai  <ojan@chromium.org>
 
         Style build architectures like build versions for non-layout test failures

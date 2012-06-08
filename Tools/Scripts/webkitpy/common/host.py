@@ -104,6 +104,26 @@ class Host(SystemHost):
                 SVN.executable_name = 'svn.bat'
             except OSError, e:
                 _log.debug('Failed to engage svn.bat Windows hack.')
+        try:
+            self.executive.run_command(['git', 'help'])
+        except OSError, e:
+            try:
+                self.executive.run_command(['git.bat', 'help'])
+                # Chromium Win uses the depot_tools package, which contains a number
+                # of development tools, including Python and git. Instead of using a
+                # real git executable, depot_tools indirects via a batch file, called
+                # git.bat. This batch file allows depot_tools to auto-update the real
+                # git executable, which is contained in a subdirectory.
+                #
+                # That's all fine and good, except that subprocess.popen can detect
+                # the difference between a real git executable and batch file when we
+                # don't provide use shell=True. Rather than use shell=True on Windows,
+                # We hack the git.bat name into the SVN class.
+                _log.debug('Engaging git.bat Windows hack.')
+                from webkitpy.common.checkout.scm.git import Git
+                Git.executable_name = 'git.bat'
+            except OSError, e:
+                _log.debug('Failed to engage git.bat Windows hack.')
 
     def _initialize_scm(self, patch_directories=None):
         if sys.platform == "win32":
