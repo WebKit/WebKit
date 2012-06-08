@@ -1,3 +1,15 @@
+2012-06-08  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        [Qt] fast/viewport/viewport-133.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=80689
+
+        Since https://bugs.webkit.org/show_bug.cgi?id=88047 remove this
+        test case, remove it from skip list.
+
+        Reviewed by Laszlo Gombos.
+
+        * platform/qt/Skipped:
+
 2012-06-08  Bryan McQuade  <bmcquade@google.com>
         Web Inspector: Annotate timeline records with a frame identifier
         https://bugs.webkit.org/show_bug.cgi?id=86406

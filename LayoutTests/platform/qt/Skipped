@@ -1871,10 +1871,6 @@ fast/viewport/viewport-127.html
 fast/writing-mode/border-styles-vertical-lr.html
 fast/writing-mode/border-styles-vertical-rl.html
 
-# [Qt] fast/viewport/viewport-133.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=80689
-fast/viewport/viewport-133.html
-
 # [Qt] fast/dom/shadow/drag-to-meter-in-shadow-crash.html asserts
 # https://bugs.webkit.org/show_bug.cgi?id=82308
 fast/dom/shadow/drag-to-meter-in-shadow-crash.html
