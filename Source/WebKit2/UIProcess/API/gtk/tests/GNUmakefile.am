@@ -8,6 +8,7 @@ TEST_PROGS += \
 	Programs/WebKit2APITests/TestLoaderClient \
 	Programs/WebKit2APITests/TestPrinting \
 	Programs/WebKit2APITests/TestResources \
+	Programs/WebKit2APITests/TestWebKitVersion \
 	Programs/WebKit2APITests/TestWebKitFindController \
 	Programs/WebKit2APITests/TestWebKitPolicyClient \
 	Programs/WebKit2APITests/TestWebKitSettings \
@@ -159,5 +160,11 @@ Programs_WebKit2APITests_TestInspector_CPPFLAGS = \
 	$(webkit2_tests_cppflags)
 Programs_WebKit2APITests_TestInspector_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestInspector_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestWebKitVersion_SOURCES = \
+        Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitVersion.cpp
+Programs_WebKit2APITests_TestWebKitVersion_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestWebKitVersion_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestWebKitVersion_LDFLAGS = $(webkit2_tests_ldflags)
 
 endif # ENABLE_WEBKIT2

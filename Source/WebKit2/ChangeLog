@@ -1,3 +1,28 @@
+2012-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to get the library version to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=88426
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * UIProcess/API/gtk/WebKitVersion.cpp: Added.
+        (webkit_get_major_version):
+        (webkit_get_minor_version):
+        (webkit_get_micro_version):
+        * UIProcess/API/gtk/WebKitVersion.h.in: Added.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new section
+        for WebKitVersion.
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+        * UIProcess/API/gtk/tests/TestWebKitVersion.cpp: Added.
+        (testWebKitVersion):
+        (testWebKitCheckVersion):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/webkit2.h: Include WebKitVersion.h.
+
 2012-06-08  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the Snow Leopard build after r119806.

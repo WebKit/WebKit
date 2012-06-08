@@ -730,3 +730,16 @@ WEBKIT_URI_SCHEME_REQUEST_GET_CLASS
 WebKitURISchemeRequestPrivate
 webkit_uri_scheme_request_get_type
 </SECTION>
+
+<SECTION>
+<FILE>WebKitVersion</FILE>
+webkit_get_major_version
+webkit_get_minor_version
+webkit_get_micro_version
+
+<SUBSECTION>
+WEBKIT_MAJOR_VERSION
+WEBKIT_MINOR_VERSION
+WEBKIT_MICRO_VERSION
+WEBKIT_CHECK_VERSION
+</SECTION>

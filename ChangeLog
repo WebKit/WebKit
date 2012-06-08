@@ -1,3 +1,13 @@
+2012-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to get the library version to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=88426
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: Generate WebKitVersion.h from WebKitVersion.h.in
+        file.
+
 2012-06-08  Ion Rosca  <rosca@adobe.com>
 
         Some overlay scrollbar API calls in ScrollAnimatorMac can lead to an assertion in RenderBox::mapAbsoluteToLocalPoint
