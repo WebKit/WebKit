@@ -1,3 +1,11 @@
+2012-06-08  Stephen Chenney  <schenney@chromium.org>
+
+        Unreviewed fix for Chromium TestExpectations.
+
+        A file crept into the expectations that has not yet been submitted.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-08  Renata Hodovan  <reni@webkit.org>
 
         Adding few already supported features to the FeatureSet in DOMImplementation

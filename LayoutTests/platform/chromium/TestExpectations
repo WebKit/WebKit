@@ -1450,7 +1450,6 @@ BUGWK80321 : svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-x-p
 BUGWK80321 : svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-y-prop.html = IMAGE
 BUGWK80321 : svg/filters/animate-fill.svg = IMAGE
 BUGWK80321 : svg/filters/big-sized-filter-2.svg = IMAGE
-BUGWK80321 : svg/filters/container-with-filters.svg = IMAGE
 BUGWK80321 : svg/filters/feColorMatrix-default-type.svg = IMAGE
 BUGWK80321 : svg/filters/feColorMatrix-offset.svg = IMAGE
 BUGWK80321 : svg/filters/feColorMatrix-saturate.svg = IMAGE
