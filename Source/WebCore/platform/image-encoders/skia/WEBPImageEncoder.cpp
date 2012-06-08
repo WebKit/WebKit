@@ -49,9 +49,9 @@ static int writeOutput(const uint8_t* data, size_t size, const WebPPicture* cons
     return 1;
 }
 
-static bool importPicture(const unsigned char* pixels, bool premultiply, WebPImporter importRGBX, WebPImporter importRGB, WebPPicture* picture)
+static bool rgbPictureImport(const unsigned char* pixels, bool premultiplied, WebPImporter importRGBX, WebPImporter importRGB, WebPPicture* picture)
 {
-    if (!premultiply)
+    if (premultiplied)
         return importRGBX(picture, pixels, picture->width * 4);
 
     // Write the RGB pixels to an rgb data buffer, alpha premultiplied, then import the rgb data.
@@ -76,14 +76,14 @@ static bool importPicture(const unsigned char* pixels, bool premultiply, WebPImp
     return importRGB(picture, rgb.data(), picture->width * 3);
 }
 
-template <bool Premultiply> inline bool importPictureBGRA(const unsigned char* pixels, WebPPicture* picture)
+template <bool Premultiplied> inline bool importPictureBGRX(const unsigned char* pixels, WebPPicture* picture)
 {
-    return importPicture(pixels, Premultiply, &WebPPictureImportBGRA, &WebPPictureImportBGR, picture);
+    return rgbPictureImport(pixels, Premultiplied, &WebPPictureImportBGRX, &WebPPictureImportBGR, picture);
 }
 
-template <bool Premultiply> inline bool importPictureRGBA(const unsigned char* pixels, WebPPicture* picture)
+template <bool Premultiplied> inline bool importPictureRGBX(const unsigned char* pixels, WebPPicture* picture)
 {
-    return importPicture(pixels, Premultiply, &WebPPictureImportRGBA, &WebPPictureImportRGB, picture);
+    return rgbPictureImport(pixels, Premultiplied, &WebPPictureImportRGBX, &WebPPictureImportRGB, picture);
 }
 
 static bool encodePixels(IntSize imageSize, const unsigned char* pixels, bool premultiplied, int quality, Vector<unsigned char>* output)
@@ -103,9 +103,9 @@ static bool encodePixels(IntSize imageSize, const unsigned char* pixels, bool pr
         return false;
     picture.height = imageSize.height();
 
-    if (premultiplied && !importPictureBGRA<false>(pixels, &picture))
+    if (premultiplied && !importPictureBGRX<true>(pixels, &picture))
         return false;
-    if (!premultiplied && !importPictureRGBA<true>(pixels, &picture))
+    if (!premultiplied && !importPictureRGBX<false>(pixels, &picture))
         return false;
 
     picture.custom_ptr = output;

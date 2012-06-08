@@ -1,3 +1,26 @@
+2012-06-07  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Use WEBPImportPictureRGBX|BGRX to import picture data
+        https://bugs.webkit.org/show_bug.cgi?id=88218
+
+        Reviewed by Kent Tamura.
+
+        Stop using the RGBA and RGBA variants of the picture import routines (since
+        these will import alpha channel data in a future libwebp). Use the RGBX and
+        BGRX variants to import picture data for encoding to make it clear that the
+        alpha channel is (and must be) ignored.
+
+        Test: fast/canvas/canvas-toDataURL-webp.html
+
+        * platform/image-encoders/skia/WEBPImageEncoder.cpp:
+        (WebCore::rgbPictureImport):
+        (WebCore::importPictureBGRX): Use WEBPImportPictureBGRX for picture imports
+        that must ignore the alpha channel. Change the template parameter to be the
+        premultiplied alpha state of the input image data.
+        (WebCore::importPictureRGBX): Use WEBPImportPictureRGBX, ditto.
+        (WebCore::encodePixels): Invert the sense of the template parameter to make
+        it now indicate the premultiplied alpha state of the input image data.
+
 2012-06-07  Takashi Sakamoto  <tasak@google.com>
 
         Improve the performance of pushScope in StyleResolver

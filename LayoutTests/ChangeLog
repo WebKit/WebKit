@@ -1,3 +1,21 @@
+2012-06-07  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Use WEBPImportPictureRGBX|BGRX to import picture data
+        https://bugs.webkit.org/show_bug.cgi?id=88218
+
+        Reviewed by Kent Tamura.
+
+        The test image (html5.png) has an alpha 255 background. The background should
+        be rendered black when a <canvas>.toDataURL('image/webp') is used as an <img>
+        element src attribute for example, since WEBP does not support alpha.
+
+        * fast/canvas/canvas-toDataURL-webp-expected.txt:
+        * fast/canvas/canvas-toDataURL-webp.html: Change the test to encode the added
+        html5.png test image as an image/webp data url.
+        * fast/canvas/resources/html5.png: Added.
+        * platform/chromium-mac-snowleopard/fast/canvas/canvas-toDataURL-webp-expected.png: Added.
+        * platform/chromium/TestExpectations: Requires WIN, LINUX rebaselines.
+
 2012-06-07  Ojan Vafai  <ojan@chromium.org>
 
         Last set of chromium rebaselines after r119748.

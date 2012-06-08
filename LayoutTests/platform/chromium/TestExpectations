@@ -3426,6 +3426,8 @@ BUGWK82122 LEOPARD SNOWLEOPARD : css3/selectors3/xml/css3-modsel-d2.xml = FAIL P
 BUGWK82122 LEOPARD SNOWLEOPARD : css3/selectors3/xml/css3-modsel-d3.xml = FAIL PASS
 BUGWK82122 LEOPARD SNOWLEOPARD : css3/selectors3/xml/css3-modsel-d4.xml = FAIL PASS
 
+BUGWK88218 LINUX WIN : fast/canvas/canvas-toDataURL-webp.html = MISSING
+
 // Needs a rebaseline after the bug.
 // The inner <input> should now grow to take the full cell's height.
 BUGWK80531 WIN : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT

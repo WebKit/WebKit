@@ -1,2 +1,1 @@
-PASS: canvas.toDataURL('image/webp')
 
