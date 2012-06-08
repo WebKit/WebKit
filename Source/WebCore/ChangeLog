@@ -1,3 +1,21 @@
+2012-06-07  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Show correct fullscreen button image (media controls)
+        https://bugs.webkit.org/show_bug.cgi?id=88563
+
+        Reviewed by Antonio Gomes.
+
+        PR159306: Show "exit" fullscreen button image instead of "enter"
+        fullscreen button image when in fullscreen mode (HTML5 media
+        controls).
+
+        I am not providing a test due to the simplicity of this patch
+        and the relative difficulty and maintainability issues associated
+        with testing how an image is rendered.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::RenderThemeBlackBerry::paintMediaFullscreenButton):
+
 2012-06-07  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Use WEBPImportPictureRGBX|BGRX to import picture data

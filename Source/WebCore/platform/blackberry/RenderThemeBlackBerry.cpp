@@ -852,12 +852,19 @@ bool RenderThemeBlackBerry::paintMediaMuteButton(RenderObject* object, const Pai
 bool RenderThemeBlackBerry::paintMediaFullscreenButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    if (!toParentMediaElement(object))
+    HTMLMediaElement* mediaElement = toParentMediaElement(object);
+    if (!mediaElement)
         return false;
 
-    static Image* mediaFullscreen = Image::loadPlatformResource("fullscreen").leakRef();
+    static Image* mediaEnterFullscreen = Image::loadPlatformResource("fullscreen").leakRef();
+    static Image* mediaExitFullscreen = Image::loadPlatformResource("exit_fullscreen").leakRef();
 
-    return paintMediaButton(paintInfo.context, rect, mediaFullscreen);
+    Image* buttonImage = mediaEnterFullscreen;
+#if ENABLE(FULLSCREEN_API)
+    if (mediaElement->document()->webkitIsFullScreen() && mediaElement->document()->webkitCurrentFullScreenElement() == mediaElement)
+        buttonImage = mediaExitFullscreen;
+#endif
+    return paintMediaButton(paintInfo.context, rect, buttonImage);
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
