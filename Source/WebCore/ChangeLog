@@ -1,3 +1,10 @@
+2012-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the assertion that has been moved to TreeScope after r119802.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+
 2012-06-07  Kentaro Hara  <haraken@chromium.org>
 
         Reduce Node object size from 72 byte to 64 byte
