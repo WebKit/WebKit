@@ -1,3 +1,18 @@
+2012-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119514.
+        http://trac.webkit.org/changeset/119514
+        https://bugs.webkit.org/show_bug.cgi?id=88664
+
+        Broke JSFiddle.net (Requested by arv on #webkit).
+
+        * fast/dom/Window/window-property-shadowing-name-expected.txt:
+        * fast/dom/Window/window-property-shadowing-name.html:
+        * fast/dom/Window/window-property-shadowing-onclick-expected.txt: Removed.
+        * fast/dom/Window/window-property-shadowing-onclick.html: Removed.
+        * platform/chromium/fast/dom/Window/window-property-shadowing-name-expected.txt: Removed.
+        * platform/chromium/fast/dom/Window/window-property-shadowing-onclick-expected.txt: Removed.
+
 2012-06-08  Ojan Vafai  <ojan@chromium.org>
 
         Second wave of Chromium rebaselines after skia change. See crbug.com/131829.
