@@ -35,6 +35,9 @@ namespace WebCore {
 #if !USE(CG)
 void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace)
 {
+    DEFINE_STATIC_LOCAL(Vector<int>, deviceRgbLUT, ());
+    DEFINE_STATIC_LOCAL(Vector<int>, linearRgbLUT, ());
+
     if (srcColorSpace == dstColorSpace)
         return;
 
@@ -44,27 +47,27 @@ void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstCo
         return;
 
     if (dstColorSpace == ColorSpaceLinearRGB) {
-        if (m_linearRgbLUT.isEmpty()) {
+        if (linearRgbLUT.isEmpty()) {
             for (unsigned i = 0; i < 256; i++) {
                 float color = i  / 255.0f;
                 color = (color <= 0.04045f ? color / 12.92f : pow((color + 0.055f) / 1.055f, 2.4f));
                 color = std::max(0.0f, color);
                 color = std::min(1.0f, color);
-                m_linearRgbLUT.append(static_cast<int>(color * 255));
+                linearRgbLUT.append(static_cast<int>(round(color * 255)));
             }
         }
-        platformTransformColorSpace(m_linearRgbLUT);
+        platformTransformColorSpace(linearRgbLUT);
     } else if (dstColorSpace == ColorSpaceDeviceRGB) {
-        if (m_deviceRgbLUT.isEmpty()) {
+        if (deviceRgbLUT.isEmpty()) {
             for (unsigned i = 0; i < 256; i++) {
                 float color = i / 255.0f;
                 color = (powf(color, 1.0f / 2.4f) * 1.055f) - 0.055f;
                 color = std::max(0.0f, color);
                 color = std::min(1.0f, color);
-                m_deviceRgbLUT.append(static_cast<int>(color * 255));
+                deviceRgbLUT.append(static_cast<int>(round(color * 255)));
             }
         }
-        platformTransformColorSpace(m_deviceRgbLUT);
+        platformTransformColorSpace(deviceRgbLUT);
     }
 }
 #endif // USE(CG)

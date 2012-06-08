@@ -140,11 +140,6 @@ namespace WebCore {
         float m_resolutionScale;
         OwnPtr<GraphicsContext> m_context;
 
-#if !USE(CG)
-        Vector<int> m_linearRgbLUT;
-        Vector<int> m_deviceRgbLUT;
-#endif
-
         // This constructor will place its success into the given out-variable
         // so that create() knows when it should return failure.
         ImageBuffer(const IntSize&, float resolutionScale, ColorSpace, RenderingMode, DeferralMode, bool& success);

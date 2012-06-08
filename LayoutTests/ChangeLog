@@ -1,3 +1,16 @@
+2012-06-08  Stephen Chenney  <schenney@chromium.org>
+
+        WebCore::ImageBuffer.cpp has broken color table code
+        https://bugs.webkit.org/show_bug.cgi?id=80321
+
+        Reviewed by Dirk Schulze.
+
+        Temporarily marking Chromium tests expected to fail as a result of this patch. And a new test.
+
+        * platform/chromium/TestExpectations:
+        * svg/filters/color-space-conversion.svg:
+        * svg/filters/color-space-conversion-expected.svg:
+
 2012-06-08  Qi Zhang  <qi.2.zhang@nokia.com>
 
         [Qt] fast/viewport/viewport-133.html fails
