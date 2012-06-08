@@ -1,5 +1,14 @@
 2012-06-07  Ojan Vafai  <ojan@chromium.org>
 
+        Last set of chromium rebaselines after r119748.
+        Also mark pointer-lock/pointerlockchange-pointerlockerror-events.html
+        as crashing in Chromium debug after r119763.
+
+        Excluding list of changed pngs because it's too long.
+        * platform/chromium/TestExpectations:
+
+2012-06-07  Ojan Vafai  <ojan@chromium.org>
+
         Mark fast/table/multiple-captions-display.xhtml as flaky on Chromium.
         * platform/chromium/TestExpectations:
 
