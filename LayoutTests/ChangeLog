@@ -1,3 +1,12 @@
+2012-06-08  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Run optimize-baselines over canvas-toDataURL-webp.html results
+
+        Unreviewed test expectations update.
+
+        * platform/chromium-mac/fast/canvas/canvas-toDataURL-webp-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/canvas/canvas-toDataURL-webp-expected.png.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-toDataURL-webp-expected.png: Renamed from LayoutTests/platform/chromium-mac-snowleopard/fast/canvas/canvas-toDataURL-webp-expected.png.
+
 2012-06-08  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip tests using disabled SHADOW_DOM feature on Qt.
