@@ -385,7 +385,9 @@ public:
 
 class WebTouchEvent : public WebInputEvent {
 public:
-    enum { touchesLengthCap = 8 };
+    // Maximum number of simultaneous touches supported on
+    // Ash/Aura.
+    enum { touchesLengthCap = 12 };
 
     unsigned touchesLength;
     // List of all touches which are currently down.
