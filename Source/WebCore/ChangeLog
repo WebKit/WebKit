@@ -1,3 +1,15 @@
+2012-06-08  Mike West  <mkwst@chromium.org>
+
+        Add COMPILE_ASSERT to StyledElement to ensure it doesn't accidentally grow larger.
+        https://bugs.webkit.org/show_bug.cgi?id=88627
+
+        Reviewed by Adam Barth.
+
+        No change in user-facing behavior.
+
+        * dom/StyledElement.cpp:
+        (WebCore):
+
 2012-06-08  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Fix several compiler warnings and errors.

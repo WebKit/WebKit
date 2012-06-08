@@ -47,6 +47,8 @@ using namespace std;
 
 namespace WebCore {
 
+COMPILE_ASSERT(sizeof(StyledElement) == sizeof(Element), styledelement_should_remain_same_size_as_element);
+
 using namespace HTMLNames;
 
 struct PresentationAttributeCacheKey {
