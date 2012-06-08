@@ -3745,11 +3745,16 @@ BUGWK87657 : http/tests/cache/cancel-in-progress-load.html = PASS TEXT MISSING
 // Fails with a mismatch in $("menulist").selectedIndex
 BUGWK87748 MAC : fast/forms/select/optgroup-clicking.html = TEXT
 
-BUGWK87772 SLOW : svg/dom/viewspec-parser-1.html = PASS
-BUGWK87772 SLOW : svg/dom/viewspec-parser-2.html = PASS
-BUGWK87772 SLOW : svg/dom/viewspec-parser-3.html = PASS
-BUGWK87772 SLOW : svg/dom/viewspec-parser-4.html = PASS
-BUGWK87772 SLOW : svg/dom/viewspec-parser-5.html = PASS
+BUGWK87772 SLOW RELEASE : svg/dom/viewspec-parser-1.html = PASS
+BUGWK87772 DEBUG : svg/dom/viewspec-parser-1.html = TIMEOUT
+BUGWK87772 SLOW RELEASE : svg/dom/viewspec-parser-2.html = PASS
+BUGWK87772 DEBUG : svg/dom/viewspec-parser-2.html = TIMEOUT
+BUGWK87772 SLOW RELEASE : svg/dom/viewspec-parser-3.html = PASS
+BUGWK87772 DEBUG : svg/dom/viewspec-parser-3.html = TIMEOUT
+BUGWK87772 SLOW RELEASE : svg/dom/viewspec-parser-4.html = PASS
+BUGWK87772 DEBUG : svg/dom/viewspec-parser-4.html = TIMEOUT
+BUGWK87772 SLOW RELEASE : svg/dom/viewspec-parser-5.html = PASS
+BUGWK87772 DEBUG : svg/dom/viewspec-parser-5.html = TIMEOUT
 
 BUGWK87789 : media/track/track-cues-missed.html = PASS CRASH
 
