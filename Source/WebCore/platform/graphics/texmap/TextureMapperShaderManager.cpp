@@ -22,6 +22,8 @@
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 
+#include "LengthFunctions.h"
+#include "Logging.h"
 #include "TextureMapperGL.h"
 
 namespace WebCore {
@@ -359,7 +361,7 @@ StandardFilterProgram::~StandardFilterProgram()
     glDeleteProgram(m_id);
 }
 
-StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type)
+StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type, unsigned pass)
     : m_id(0)
 {
     const char* vertexShaderSource =
@@ -468,6 +470,147 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
             }
         );
         break;
+    case FilterOperation::BLUR:
+        fragmentShaderSource = FRAGMENT_SHADER(
+            varying highp vec2 v_texCoord;
+            uniform lowp vec2 u_blurRadius;
+            uniform sampler2D u_texture;
+            const float pi = 3.14159;
+            const float e = 2.71828;
+
+            // FIXME: share gaussian formula between shaders.
+            lowp float gaussian(lowp float value)
+            {
+                // Normal distribution formula, when the mean is 0 and the standard deviation is 1.
+                return pow(e, -pow(value, 2.) / 2.) / (sqrt(2. * pi));
+            }
+
+            lowp vec4 sampleColor(float radius)
+            {
+                vec2 coord = v_texCoord + radius * u_blurRadius;
+                return texture2D(u_texture, coord) * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
+            }
+
+            vec4 blur()
+            {
+                // Create a normal distribution of 20 values between 0. and 2.
+                vec4 total = vec4(0., 0., 0., 0.);
+                float totalWeight = 0.;
+                for (float i = -2.; i <= 2.; i += .2) {
+                    float weight = gaussian(i);
+                    total += sampleColor(i) * weight;
+                    totalWeight += weight;
+                }
+
+                return total / totalWeight;
+            }
+
+            void main(void)
+            {
+                gl_FragColor = blur();
+            }
+        );
+        break;
+    case FilterOperation::DROP_SHADOW:
+        switch (pass) {
+        case 0: {
+            // First pass: horizontal alpha blur.
+            fragmentShaderSource = FRAGMENT_SHADER(
+                varying highp vec2 v_texCoord;
+                uniform lowp float u_shadowBlurRadius;
+                uniform lowp vec2 u_shadowOffset;
+                uniform sampler2D u_texture;
+                const float pi = 3.14159;
+                const float e = 2.71828;
+
+                // FIXME: share gaussian formula between shaders.
+                lowp float gaussian(lowp float value)
+                {
+                    // Normal distribution formula, when the mean is 0 and the standard deviation is 1.
+                    return pow(e, -pow(value, 2.) / 2.) / (sqrt(2. * pi));
+                }
+
+                lowp float sampleAlpha(float radius)
+                {
+                    vec2 coord = v_texCoord - u_shadowOffset + vec2(radius * u_shadowBlurRadius, 0.);
+                    return texture2D(u_texture, coord).a * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
+                }
+
+                lowp float shadowBlurHorizontal()
+                {
+                    // Create a normal distribution of 20 values between -2 and 2.
+                    float total = 0.;
+                    float totalWeight = 0.;
+                    for (float i = -2.; i <= 2.; i += .2) {
+                        float weight = gaussian(i);
+                        total += sampleAlpha(i) * weight;
+                        totalWeight += weight;
+                    }
+
+                    return total / totalWeight;
+                }
+
+                void main(void)
+                {
+                    gl_FragColor = vec4(1., 1., 1., 1.) * shadowBlurHorizontal();
+                }
+            );
+            break;
+            }
+        case 1: {
+            // Second pass: vertical alpha blur and composite with origin.
+            fragmentShaderSource = FRAGMENT_SHADER(
+                varying highp vec2 v_texCoord;
+                uniform lowp float u_shadowBlurRadius;
+                uniform lowp vec4 u_shadowColor;
+                uniform sampler2D u_texture;
+                uniform sampler2D u_contentTexture;
+
+                // FIXME: share gaussian formula between shaders.
+                const float pi = 3.14159;
+                const float e = 2.71828;
+
+                lowp float gaussian(float value)
+                {
+                    // Normal distribution formula, when the mean is 0 and the standard deviation is 1.
+                    return pow(e, -pow(value, 2.) / 2.) / (sqrt(2. * pi));
+                }
+
+                lowp float sampleAlpha(float r)
+                {
+                    vec2 coord = v_texCoord + vec2(0., r * u_shadowBlurRadius);
+                    return texture2D(u_texture, coord).a * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
+                }
+
+                lowp float shadowBlurVertical()
+                {
+                    // Create a normal distribution of 20 values between -2 and 2.
+                    float total = 0.;
+                    float totalWeight = 0.;
+                    for (float i = -2.; i <= 2.; i += .2) {
+                        float weight = gaussian(i);
+                        total += sampleAlpha(i) * weight;
+                        totalWeight += weight;
+                    }
+
+                    return total / totalWeight;
+                }
+
+                lowp vec4 sourceOver(lowp vec4 source, lowp vec4 destination)
+                {
+                    // Composite the shadow with the original texture.
+                    return source + destination * (1. - source.a);
+                }
+
+                void main(void)
+                {
+                    gl_FragColor = sourceOver(texture2D(u_contentTexture, v_texCoord), shadowBlurVertical() * u_shadowColor);
+                }
+            );
+            break;
+            }
+            break;
+        }
     default:
         break;
     }
@@ -478,12 +621,15 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, 0);
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, 0);
-    GLchar log[100];
-    GLint len;
     GLuint programID = glCreateProgram();
     glCompileShader(vertexShader);
     glCompileShader(fragmentShader);
+#if !LOG_DISABLED
+    GLchar log[100];
+    GLint len;
     glGetShaderInfoLog(fragmentShader, 100, &len, log);
+    WTFLog(&LogCompositing, "%s\n", log);
+#endif
     glAttachShader(programID, vertexShader);
     glAttachShader(programID, fragmentShader);
     glLinkProgram(programID);
@@ -502,6 +648,19 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
     case FilterOperation::OPACITY:
         m_uniformLocations.amount = glGetUniformLocation(programID, "u_amount");
         break;
+    case FilterOperation::BLUR:
+        m_uniformLocations.blur.radius = glGetUniformLocation(programID, "u_blurRadius");
+        break;
+    case FilterOperation::DROP_SHADOW:
+        m_uniformLocations.shadow.blurRadius = glGetUniformLocation(programID, "u_shadowBlurRadius");
+        if (!pass)
+            m_uniformLocations.shadow.offset = glGetUniformLocation(programID, "u_shadowOffset");
+        else {
+            // We only need the color and the content texture in the second pass, the first pass is only a horizontal alpha blur.
+            m_uniformLocations.shadow.color = glGetUniformLocation(programID, "u_shadowColor");
+            m_uniformLocations.shadow.contentTexture = glGetUniformLocation(programID, "u_contentTexture");
+        }
+        break;
     default:
         break;
     }
@@ -510,54 +669,108 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
     m_fragmentShader = fragmentShader;
 }
 
-PassRefPtr<StandardFilterProgram> StandardFilterProgram::create(FilterOperation::OperationType type)
+PassRefPtr<StandardFilterProgram> StandardFilterProgram::create(FilterOperation::OperationType type, unsigned pass)
 {
-    RefPtr<StandardFilterProgram> program = adoptRef(new StandardFilterProgram(type));
+    RefPtr<StandardFilterProgram> program = adoptRef(new StandardFilterProgram(type, pass));
     if (!program->m_id)
         return 0;
 
     return program;
 }
 
-void StandardFilterProgram::prepare(const FilterOperation& operation)
+void StandardFilterProgram::prepare(const FilterOperation& operation, unsigned pass, const IntSize& size, GLuint contentTexture)
 {
-    double amount = 0;
+    glUseProgram(m_id);
     switch (operation.getOperationType()) {
     case FilterOperation::GRAYSCALE:
     case FilterOperation::SEPIA:
     case FilterOperation::SATURATE:
     case FilterOperation::HUE_ROTATE:
-        amount = static_cast<const BasicColorMatrixFilterOperation&>(operation).amount();
+        glUniform1f(m_uniformLocations.amount, static_cast<const BasicColorMatrixFilterOperation&>(operation).amount());
         break;
     case FilterOperation::INVERT:
     case FilterOperation::BRIGHTNESS:
     case FilterOperation::CONTRAST:
     case FilterOperation::OPACITY:
-        amount = static_cast<const BasicComponentTransferFilterOperation&>(operation).amount();
+        glUniform1f(m_uniformLocations.amount, static_cast<const BasicComponentTransferFilterOperation&>(operation).amount());
         break;
+    case FilterOperation::BLUR: {
+        const BlurFilterOperation& blur = static_cast<const BlurFilterOperation&>(operation);
+        FloatSize radius;
+
+        // Blur is done in two passes, first horizontally and then vertically. The same shader is used for both.
+        if (pass)
+            radius.setHeight(floatValueForLength(blur.stdDeviation(), size.height()) / size.height());
+        else
+            radius.setWidth(floatValueForLength(blur.stdDeviation(), size.width()) / size.width());
+
+        glUniform2f(m_uniformLocations.blur.radius, radius.width(), radius.height());
+        break;
+    }
+    case FilterOperation::DROP_SHADOW: {
+        const DropShadowFilterOperation& shadow = static_cast<const DropShadowFilterOperation&>(operation);
+        switch (pass) {
+        case 0:
+            // First pass: vertical alpha blur.
+            glUniform2f(m_uniformLocations.shadow.offset, float(shadow.location().x()) / float(size.width()), float(shadow.location().y()) / float(size.height()));
+            glUniform1f(m_uniformLocations.shadow.blurRadius, shadow.stdDeviation() / float(size.width()));
+            break;
+        case 1:
+            // Second pass: we need the shadow color and the content texture for compositing.
+            glUniform1f(m_uniformLocations.shadow.blurRadius, shadow.stdDeviation() / float(size.height()));
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, contentTexture);
+            glUniform1i(m_uniformLocations.shadow.contentTexture, 1);
+            float r, g, b, a;
+            shadow.color().getRGBA(r, g, b, a);
+            glUniform4f(m_uniformLocations.shadow.color, r, g, b, a);
+            break;
+        }
+        break;
+    }
     default:
         break;
     }
-    glUseProgram(m_id);
-    glUniform1f(m_uniformLocations.amount, amount);
 }
 
-PassRefPtr<StandardFilterProgram> TextureMapperShaderManager::getShaderForFilter(const FilterOperation& filter)
+PassRefPtr<StandardFilterProgram> TextureMapperShaderManager::getShaderForFilter(const FilterOperation& filter, unsigned pass)
 {
     RefPtr<StandardFilterProgram> program;
     FilterOperation::OperationType type = filter.getOperationType();
-    FilterMap::iterator iterator = m_filterMap.find(type);
+    int key = int(type) | (pass << 16);
+    FilterMap::iterator iterator = m_filterMap.find(key);
     if (iterator == m_filterMap.end()) {
-        program = StandardFilterProgram::create(type);
+        program = StandardFilterProgram::create(type, pass);
         if (!program)
             return 0;
 
-        m_filterMap.add(type, program);
+        m_filterMap.add(key, program);
     } else
         program = iterator->second;
 
-    program->prepare(filter);
     return program;
+}
+
+unsigned TextureMapperShaderManager::getPassesRequiredForFilter(const FilterOperation& operation) const
+{
+    switch (operation.getOperationType()) {
+    case FilterOperation::GRAYSCALE:
+    case FilterOperation::SEPIA:
+    case FilterOperation::SATURATE:
+    case FilterOperation::HUE_ROTATE:
+    case FilterOperation::INVERT:
+    case FilterOperation::BRIGHTNESS:
+    case FilterOperation::CONTRAST:
+    case FilterOperation::OPACITY:
+        return 1;
+    case FilterOperation::BLUR:
+    case FilterOperation::DROP_SHADOW:
+        // We use two-passes (vertical+horizontal) for blur and drop-shadow.
+        return 2;
+    default:
+        return 0;
+    }
+
 }
 
 #endif

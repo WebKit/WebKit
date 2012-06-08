@@ -1,3 +1,36 @@
+2012-06-08  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Accelerated versions of drop-shadow and blur filters
+        https://bugs.webkit.org/show_bug.cgi?id=87695
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added shaders for blur and drop-shadow effects.
+        The shaders use sampling of multiple coordinates and averaging them with normal-
+        distribution to create a fast gaussian blur effect.
+
+        Covered by existing tests in css3/filters.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawFiltered):
+            Call the prepare function explicitly, with a size argument that's used to calculate
+            some of the uniform values.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::intermediateSurfaceRect):
+            The outsets of the effect have to be considered when calculating the intermediate rect.
+            Otherwise the resulting image is scaled instead of outsetted.
+
+        (WebCore::applyFilters):
+        * platform/graphics/texmap/TextureMapperShaderManager.cpp:
+        (WebCore::StandardFilterProgram::StandardFilterProgram):
+            Added the new shaders.
+
+        (WebCore::StandardFilterProgram::prepare):
+        (WebCore::TextureMapperShaderManager::getShaderForFilter):
+        * platform/graphics/texmap/TextureMapperShaderManager.h:
+        (StandardFilterProgram):
+
 2012-06-08  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the build after r119844.

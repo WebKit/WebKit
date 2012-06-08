@@ -74,13 +74,13 @@ protected:
 class StandardFilterProgram : public RefCounted<StandardFilterProgram> {
 public:
     virtual ~StandardFilterProgram();
-    virtual void prepare(const FilterOperation&);
-    static PassRefPtr<StandardFilterProgram> create(FilterOperation::OperationType);
+    virtual void prepare(const FilterOperation&, unsigned pass, const IntSize&, GLuint contentTexture);
+    static PassRefPtr<StandardFilterProgram> create(FilterOperation::OperationType, unsigned pass);
     GLuint vertexAttrib() const { return m_vertexAttrib; }
     GLuint texCoordAttrib() const { return m_texCoordAttrib; }
     GLuint textureUniform() const { return m_textureUniformLocation; }
 private:
-    StandardFilterProgram(FilterOperation::OperationType);
+    StandardFilterProgram(FilterOperation::OperationType, unsigned pass);
     GLuint m_id;
     GLuint m_vertexShader;
     GLuint m_fragmentShader;
@@ -89,11 +89,16 @@ private:
     GLuint m_textureUniformLocation;
     union {
         GLuint amount;
-        GLuint stddev;
+
         struct {
-            GLuint stddev;
+            GLuint radius;
+        } blur;
+
+        struct {
+            GLuint blurRadius;
             GLuint color;
             GLuint offset;
+            GLuint contentTexture;
         } shadow;
     } m_uniformLocations;
 };
@@ -182,8 +187,10 @@ public:
     virtual ~TextureMapperShaderManager();
 
 #if ENABLE(CSS_FILTERS)
-    PassRefPtr<StandardFilterProgram> getShaderForFilter(const FilterOperation&);
+    unsigned getPassesRequiredForFilter(const FilterOperation&) const;
+    PassRefPtr<StandardFilterProgram> getShaderForFilter(const FilterOperation&, unsigned pass);
 #endif
+
     PassRefPtr<TextureMapperShaderProgram> getShaderProgram(ShaderType);
     PassRefPtr<TextureMapperShaderProgramSolidColor> solidColorProgram();
 
@@ -192,7 +199,7 @@ private:
     TextureMapperShaderProgramMap m_textureMapperShaderProgramMap;
 
 #if ENABLE(CSS_FILTERS)
-    typedef HashMap<FilterOperation::OperationType, RefPtr<StandardFilterProgram>, DefaultHash<int>::Hash, HashTraits<int> > FilterMap;
+    typedef HashMap<int, RefPtr<StandardFilterProgram> > FilterMap;
     FilterMap m_filterMap;
 #endif
 

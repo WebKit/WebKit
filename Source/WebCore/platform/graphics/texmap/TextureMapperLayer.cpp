@@ -216,6 +216,20 @@ IntRect TextureMapperLayer::intermediateSurfaceRect(const TransformationMatrix& 
             rect.unite(m_children[i]->intermediateSurfaceRect(matrix));
     }
 
+#if ENABLE(CSS_FILTERS)
+    if (m_state.filters.hasOutsets()) {
+        int leftOutset;
+        int topOutset;
+        int bottomOutset;
+        int rightOutset;
+        m_state.filters.getOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
+        IntRect unfilteredTargetRect(rect);
+        rect.move(std::max(0, -leftOutset), std::max(0, -topOutset));
+        rect.expand(leftOutset + rightOutset, topOutset + bottomOutset);
+        rect.unite(unfilteredTargetRect);
+    }
+#endif
+
     if (m_state.replicaLayer)
         rect.unite(m_state.replicaLayer->intermediateSurfaceRect(matrix));
 
@@ -296,22 +310,28 @@ void TextureMapperLayer::paintSelfAndChildrenWithReplica(const TextureMapperPain
 }
 
 #if ENABLE(CSS_FILTERS)
+static bool shouldKeepContentTexture(const FilterOperations& filters)
+{
+    for (int i = 0; i < filters.size(); ++i) {
+        switch (filters.operations().at(i)->getOperationType()) {
+        // The drop-shadow filter requires the content texture, because it needs to composite it
+        // on top of the blurred shadow color.
+        case FilterOperation::DROP_SHADOW:
+            return true;
+        default:
+            break;
+        }
+    }
+
+    return false;
+}
+
 static PassRefPtr<BitmapTexture> applyFilters(const FilterOperations& filters, TextureMapper* textureMapper, BitmapTexture* source, IntRect& targetRect)
 {
     if (!filters.size())
         return source;
 
-    RefPtr<BitmapTexture> filterSurface(source);
-    int leftOutset, topOutset, bottomOutset, rightOutset;
-    if (filters.hasOutsets()) {
-        filters.getOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
-        IntRect unfilteredTargetRect(targetRect);
-        targetRect.move(std::max(0, -leftOutset), std::max(0, -topOutset));
-        targetRect.expand(leftOutset + rightOutset, topOutset + bottomOutset);
-        targetRect.unite(unfilteredTargetRect);
-        filterSurface = textureMapper->acquireTextureFromPool(targetRect.size());
-    }
-
+    RefPtr<BitmapTexture> filterSurface = shouldKeepContentTexture(filters) ? textureMapper->acquireTextureFromPool(source->size()) : source;
     return filterSurface->applyFilters(*source, filters);
 }
 #endif

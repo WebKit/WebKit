@@ -558,14 +558,14 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
 }
 
 #if ENABLE(CSS_FILTERS)
-void TextureMapperGL::drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture& contentTexture, const FilterOperation& filter)
+void TextureMapperGL::drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture& contentTexture, const FilterOperation& filter, int pass)
 {
     // For standard filters, we always draw the whole texture without transformations.
-    RefPtr<StandardFilterProgram> program = data().sharedGLData().textureMapperShaderManager.getShaderForFilter(filter);
-    if (!program) {
-        drawTexture(sourceTexture, FloatRect(FloatPoint::zero(), sourceTexture.size()), TransformationMatrix(), 1, 0);
-        return;
-    }
+    RefPtr<StandardFilterProgram> program = data().sharedGLData().textureMapperShaderManager.getShaderForFilter(filter, pass);
+    ASSERT(program);
+
+    program->prepare(filter, pass, sourceTexture.contentSize(), static_cast<const BitmapTextureGL&>(contentTexture).id());
+
     GL_CMD(glEnableVertexAttribArray(program->vertexAttrib()));
     GL_CMD(glEnableVertexAttribArray(program->texCoordAttrib()));
     GL_CMD(glActiveTexture(GL_TEXTURE0));
@@ -591,9 +591,12 @@ PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(const BitmapTexture& con
         const FilterOperation* filter = filters.at(i);
         ASSERT(filter);
 
-        m_textureMapper->bindSurface(target.get());
-        m_textureMapper->drawFiltered(i ? *source.get() : contentTexture, contentTexture, *filter);
-        std::swap(source, target);
+        int numPasses = m_textureMapper->data().sharedGLData().textureMapperShaderManager.getPassesRequiredForFilter(*filter);
+        for (int j = 0; j < numPasses; ++j) {
+            m_textureMapper->bindSurface(target.get());
+            m_textureMapper->drawFiltered((i || j) ? *source : contentTexture, contentTexture, *filter, j);
+            std::swap(source, target);
+        }
     }
 
     m_textureMapper->bindSurface(previousSurface.get());

@@ -67,7 +67,7 @@ public:
     virtual void setGraphicsContext(GraphicsContext* context) OVERRIDE { m_context = context; }
 
 #if ENABLE(CSS_FILTERS)
-    void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture& contentTexture, const FilterOperation&);
+    void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture& contentTexture, const FilterOperation&, int pass);
 #endif
 
 
