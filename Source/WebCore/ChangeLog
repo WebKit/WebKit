@@ -1,3 +1,22 @@
+2012-06-08  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        IndexedDB: Transactions without any request scheduled should abort itself.
+        https://bugs.webkit.org/show_bug.cgi?id=88052
+
+        Reviewed by Kentaro Hara.
+
+        This is needed for indexedDB to make it work for JSC. We need to clean up all the
+        pending transactions(transactions without any request scheduled) when leaving Javascript context.
+
+        Manually tested using the existing test LayoutTests/storage/indexeddb/tutorial.html
+
+        * bindings/js/JSMainThreadExecState.cpp:
+        (WebCore):
+        (WebCore::JSMainThreadExecState::didLeaveScriptContext):
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState::~JSMainThreadExecState):
+        (JSMainThreadExecState):
+
 2012-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in WebCore::CompositeEditCommand::breakOutOfEmptyListItem

@@ -88,25 +88,19 @@ protected:
     {
         ASSERT(isMainThread());
 
-#if ENABLE(MUTATION_OBSERVERS)
         bool didExitJavaScript = s_mainThreadState && !m_previousState;
-#endif
 
         s_mainThreadState = m_previousState;
 
-#if ENABLE(MUTATION_OBSERVERS)
         if (didExitJavaScript)
             didLeaveScriptContext();
-#endif
     }
 
 private:
     static JSC::ExecState* s_mainThreadState;
     JSC::ExecState* m_previousState;
 
-#if ENABLE(MUTATION_OBSERVERS)
     static void didLeaveScriptContext();
-#endif
 };
 
 // Null state prevents origin security checks.

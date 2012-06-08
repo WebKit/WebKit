@@ -27,15 +27,23 @@
 #include "JSMainThreadExecState.h"
 #include "WebKitMutationObserver.h"
 
+#if ENABLE(INDEXED_DATABASE)
+#include "IDBPendingTransactionMonitor.h"
+#endif
+
 namespace WebCore {
 
 JSC::ExecState* JSMainThreadExecState::s_mainThreadState = 0;
 
-#if ENABLE(MUTATION_OBSERVERS)
 void JSMainThreadExecState::didLeaveScriptContext()
 {
-    WebKitMutationObserver::deliverAllMutations();
-}
+#if ENABLE(INDEXED_DATABASE)
+    IDBPendingTransactionMonitor::abortPendingTransactions();   
 #endif
+
+#if ENABLE(MUTATION_OBSERVERS)
+    WebKitMutationObserver::deliverAllMutations();
+#endif
+}
 
 } // namespace WebCore
