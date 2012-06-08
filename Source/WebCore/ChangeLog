@@ -1,3 +1,11 @@
+2012-06-08  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/11412294> Add appropriate iOS default font settings
+
+        Reviewed by Dan Bernstein.
+
+        * page/mac/SettingsMac.mm: (WebCore::Settings::initializeDefaultFontFamilies):
+
 2012-06-08  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         IndexedDB: Transactions without any request scheduled should abort itself.
