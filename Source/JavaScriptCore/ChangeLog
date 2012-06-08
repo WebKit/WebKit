@@ -1,3 +1,24 @@
+2012-06-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Math.pow on iOS does not support denormal numbers.
+        https://bugs.webkit.org/show_bug.cgi?id=88592
+
+        Reviewed by Filip Pizlo.
+
+        Import an implementation from fdlibm, detect cases where it is safe to use the system
+        implementation & where we should fall back to fdlibm.
+
+        * runtime/MathObject.cpp:
+        (JSC::isDenormal):
+        (JSC::isEdgeCase):
+        (JSC::mathPow):
+            - On iOS, detect cases where denormal support may be required & use fdlibm in these cases.
+        (JSC::mathProtoFuncPow):
+            - Changed to use mathPow.
+        (JSC::fdlibmScalbn):
+        (JSC::fdlibmPow):
+            - These functions imported from fdlibm; original style retained to ease future merging.
+
 2012-06-07  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed. Build fix for !ENABLE(JIT) after r119441.
