@@ -458,6 +458,8 @@ void WebLayerTreeRenderer::purgeGLResources()
     m_textureMapper.clear();
     m_backingStoresWithPendingBuffers.clear();
 
+    setActive(false);
+
     callOnMainThread(bind(&WebLayerTreeRenderer::purgeBackingStores, this));
 }
 

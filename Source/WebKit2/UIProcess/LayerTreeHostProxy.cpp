@@ -157,7 +157,6 @@ void LayerTreeHostProxy::syncCanvas(uint32_t id, const IntSize& canvasSize, uint
 
 void LayerTreeHostProxy::purgeBackingStores()
 {
-    m_renderer->setActive(false);
     m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::PurgeBackingStores(), m_drawingAreaProxy->page()->pageID());
 }
 

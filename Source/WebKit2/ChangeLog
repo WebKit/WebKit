@@ -1,3 +1,22 @@
+2012-06-08  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] API tests randomly assert in WebLayerTreeRenderer::assignImageToLayer
+        https://bugs.webkit.org/show_bug.cgi?id=88667
+
+        Reviewed by Noam Rosenthal.
+
+        Move deactivation of WebLayerTreeRenderer from LayerTreeHostProxy::purgeBackingStores 
+        to WebLayerTreeRenderer::purgeGLResources. LayerTreeHostProxy::purgeBackingStores is 
+        invoked on main thread after going through call gate and it is too late to deactivate
+        renderer here, because some update messages are able to go through. 
+        WebLayerTreeRenderer::purgeGLResources is called directly from render node deallocation
+        and it is right place to deactivate renderer.
+
+        * UIProcess/LayerTreeHostProxy.cpp:
+        (WebKit::LayerTreeHostProxy::purgeBackingStores):
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::purgeGLResources):
+
 2012-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to get the library version to WebKit2 GTK+
