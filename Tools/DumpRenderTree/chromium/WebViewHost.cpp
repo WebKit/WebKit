@@ -845,7 +845,8 @@ bool WebViewHost::requestPointerLock()
 
 void WebViewHost::requestPointerUnlock()
 {
-    postDelayedTask(new HostMethodTask(this, &WebViewHost::didLosePointerLock), 0);
+    if (m_pointerLocked)
+        postDelayedTask(new HostMethodTask(this, &WebViewHost::didLosePointerLock), 0);
 }
 
 bool WebViewHost::isPointerLocked()

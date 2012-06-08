@@ -1,3 +1,16 @@
+2012-06-07  Vincent Scheib  <scheib@chromium.org>
+
+        Layout Test pointer-lock/pointerlockchange-pointerlockerror-events.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=88604
+
+        Reviewed by Kent Tamura.
+
+        DumpRenderTree fixed to not call didLosePointerLock if pointer is not currently locked.
+        Fixes debug only assert crash in pointer-lock/pointerlockchange-pointerlockerror-events.html test.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::requestPointerUnlock):
+
 2012-06-08  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: mock WebSpeechRecognizer for DumpRenderTree
