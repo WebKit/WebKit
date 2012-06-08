@@ -1,3 +1,10 @@
+2012-06-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, removing crash expectations for two plugins
+        tests that were fixed after LLInt was enabled for the Gtk port in r119593.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-08  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: mock WebSpeechRecognizer for DumpRenderTree

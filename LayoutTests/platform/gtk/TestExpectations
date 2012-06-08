@@ -334,9 +334,6 @@ BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS C
 // Crashes due to debug assert until we fix issues with style elements in SVG
 BUGWKGTK DEBUG : svg/custom/use-referencing-style-crash.svg = CRASH
 
-BUGWK84073 DEBUG : plugins/npruntime/object-from-destroyed-plugin.html = CRASH
-BUGWK84073 DEBUG : plugins/npruntime/object-from-destroyed-plugin-in-subframe.html = CRASH
-
 BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH
 
 BUGWK86443 : plugins/npruntime/delete-plugin-within-getProperty.html = CRASH
