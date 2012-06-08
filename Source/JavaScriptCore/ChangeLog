@@ -36,6 +36,8 @@
         * offlineasm/asm.rb: Generate LOCAL_REFERENCE instead of
         SYMBOL_STRING_RELOCATION.
 
+2012-06-08  Geoffrey Garen  <ggaren@apple.com>
+
         Don't rely on weak pointers for eager CodeBlock finalization
         https://bugs.webkit.org/show_bug.cgi?id=88465
 
