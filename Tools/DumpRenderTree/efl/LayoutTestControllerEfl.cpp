@@ -716,6 +716,8 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
         DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(browser->mainView(), toBool(value));
     else if (equals(key, "WebKitCSSGridLayoutEnabled"))
         DumpRenderTreeSupportEfl::setCSSGridLayoutEnabled(browser->mainView(), toBool(value));
+    else if (equals(key, "WebKitWebAudioEnabled"))
+        ewk_view_setting_web_audio_set(browser->mainView(), toBool(value));
     else
         fprintf(stderr, "LayoutTestController::overridePreference tried to override unknown preference '%s'.\n", value->ustring().utf8().data());
 }
