@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
- * 
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,43 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8HiddenPropertyName_h
-#define V8HiddenPropertyName_h
+#include "config.h"
+#include "V8TextTrackList.h"
 
-#include <v8.h>
+#include "TextTrackList.h"
+#include "V8Binding.h"
+#include "V8DOMWrapper.h"
+#include "V8HTMLMediaElement.h"
 
 namespace WebCore {
 
-#define V8_HIDDEN_PROPERTIES(V) \
-    V(listener) \
-    V(attributeListener) \
-    V(scriptState) \
-    V(devtoolsInjectedScript) \
-    V(sleepFunction) \
-    V(toStringString) \
-    V(event) \
-    V(state) \
-    V(domStringMap) \
-    V(domTokenList) \
-    V(ownerNode) \
-    V(textTracks)
+v8::Handle<v8::Value> toV8(TextTrackList* impl, v8::Isolate* isolate)
+{
+    if (!impl)
+        return v8NullWithCheck(isolate);
+    v8::Handle<v8::Object> wrapper = V8TextTrackList::wrap(impl, isolate);
 
-    class V8HiddenPropertyName {
-    public:
-        V8HiddenPropertyName() { }
-#define V8_DECLARE_PROPERTY(name) static v8::Handle<v8::String> name();
-        V8_HIDDEN_PROPERTIES(V8_DECLARE_PROPERTY);
-#undef V8_DECLARE_PROPERTY
-
-        static v8::Handle<v8::String> hiddenReferenceName(const char* name);
-
-    private:
-        static v8::Persistent<v8::String> createString(const char* key);
-#define V8_DECLARE_FIELD(name) v8::Persistent<v8::String> m_##name;
-        V8_HIDDEN_PROPERTIES(V8_DECLARE_FIELD);
-#undef V8_DECLARE_FIELD
-    };
-
+    // Add a hidden reference from the media element to the text track list.
+    Node* element = impl->owner();
+    if (!wrapper.IsEmpty() && element) {
+        v8::Handle<v8::Value> elementValue = toV8(element, isolate);
+        if (!elementValue.IsEmpty() && elementValue->IsObject())
+            elementValue.As<v8::Object>()->SetHiddenValue(V8HiddenPropertyName::textTracks(), wrapper);
+    }
+    return wrapper;
 }
 
-#endif // V8HiddenPropertyName_h
+} // namespace WebCore

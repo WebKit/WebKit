@@ -2330,6 +2330,7 @@
             'bindings/v8/custom/V8StorageCustom.cpp',
             'bindings/v8/custom/V8StyleSheetCustom.cpp',
             'bindings/v8/custom/V8StyleSheetListCustom.cpp',
+            'bindings/v8/custom/V8TextTrackListCustom.cpp',
             'bindings/v8/custom/V8TrackEventCustom.cpp',
             'bindings/v8/custom/V8Uint16ArrayCustom.cpp',
             'bindings/v8/custom/V8Uint32ArrayCustom.cpp',

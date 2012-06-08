@@ -1,3 +1,24 @@
+2012-06-08  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Keep TextTrackList alive as long as its owner is alive
+        https://bugs.webkit.org/show_bug.cgi?id=88541
+
+        Reviewed by Adam Barth.
+
+        Add a hidden reference from the owner to the text track list.
+
+        Covered by existing tests.
+
+        * Target.pri: Add V8TextTrackListCustom.cpp.
+        * UseV8.cmake: Ditto.
+        * WebCore.gypi: Ditto.
+        * bindings/v8/V8HiddenPropertyName.h:
+        (WebCore):
+        * bindings/v8/custom/V8TextTrackListCustom.cpp: Copied from Source/WebCore/bindings/v8/V8HiddenPropertyName.h.
+        (WebCore):
+        (WebCore::toV8): When the wrapper is created add a reference to the owner of the TextTrackList to the TextTrackList.
+        * html/track/TextTrackList.idl:
+
 2012-06-08  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Accelerated animations should use WebTransformOperations

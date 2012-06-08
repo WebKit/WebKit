@@ -1,3 +1,14 @@
+2012-06-08  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Keep TextTrackList alive as long as its owner is alive
+        https://bugs.webkit.org/show_bug.cgi?id=88541
+
+        Reviewed by Adam Barth.
+
+        Add a hidden reference from the owner to the text track list.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-08  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed, rebaseline platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html after skia gamma correction

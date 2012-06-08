@@ -220,6 +220,7 @@ v8 {
         bindings/v8/custom/V8StorageCustom.cpp \
         bindings/v8/custom/V8StyleSheetCustom.cpp \
         bindings/v8/custom/V8StyleSheetListCustom.cpp \
+        bindings/v8/custom/V8TextTrackListCustom.cpp \
         bindings/v8/custom/V8WebKitAnimationCustom.cpp \
         bindings/v8/custom/V8WebKitMutationObserverCustom.cpp \
         bindings/v8/custom/V8WebKitPointConstructor.cpp \
