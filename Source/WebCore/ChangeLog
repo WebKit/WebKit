@@ -1,3 +1,30 @@
+2012-06-08  Antonio Gomes  <agomes@rim.com>
+
+        EventHandler shouldn't schedule the fake mousemove event timer when scrolling on devices that don't have a mouse
+        https://bugs.webkit.org/show_bug.cgi?id=88379
+
+        Reviewed by James Robinson.
+
+        Paraphrasing Andy Estes:
+        "In <http://trac.webkit.org/changeset/119465> we stopped dispatching fake
+        mousemove events when scrolling on devices that don't support mice. This event
+        is dispatched on a timer, so one better would be to not even schedule the
+        timer (rather than scheduling the timer but making it a no-op).
+
+        No new tests, as no functionality has changed. We basically do not
+        start a timer under a given circumstance instead of fire it, it times out,
+        and we make the callback no-op when under the given circumstance.
+
+        It is still possible though that we have the following scenario:
+        - Setting::deviceSupportsMouse set as true;
+        - we fire the timer;
+        - before its callback gets executed (timed out) the setting gets toggled.
+        So for sakeness, lets keep the check in both places.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoon):
+        (WebCore::EventHandler::fakeMouseMoveEventTimerFired):
+
 2012-06-08  James Robinson  <jamesr@chromium.org>
 
         [chromium] Clean up some unnecessary LayerChromium.h includes

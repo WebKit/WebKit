@@ -2628,6 +2628,10 @@ void EventHandler::dispatchFakeMouseMoveEventSoon()
     if (m_mousePressed)
         return;
 
+    Settings* settings = m_frame->settings();
+    if (settings && !settings->deviceSupportsMouse())
+        return;
+
     // If the content has ever taken longer than fakeMouseMoveShortInterval we
     // reschedule the timer and use a longer time. This will cause the content
     // to receive these moves only after the user is done scrolling, reducing
