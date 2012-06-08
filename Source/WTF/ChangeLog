@@ -1,3 +1,18 @@
+2012-06-08  Andy Wingo  <wingo@igalia.com>
+
+        Explictly mark stubs called by JIT as being internal
+        https://bugs.webkit.org/show_bug.cgi?id=88552
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/ExportMacros.h (WTF_INTERNAL, HAVE_INTERNAL_VISIBILITY): New
+        defines.  Regardless of what the port does about visibility in
+        general, for code referenced only from assembly it is useful to
+        give it internal visibility.
+        * wtf/InlineASM.h: Split SYMBOL_STRING_RELOCATION into
+        LOCAL_REFERENCE and GLOBAL_REFERENCE; the former will try to avoid
+        indirection if HAVE(INTERNAL_VISIBILITY).
+
 2012-06-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Win] Fix linking WTF with ICU

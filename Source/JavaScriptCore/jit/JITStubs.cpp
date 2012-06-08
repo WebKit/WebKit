@@ -112,7 +112,7 @@ asm (
 HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "movl %esp, %ecx" "\n"
-    "call " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
+    "call " LOCAL_REFERENCE(cti_vm_throw) "\n"
     "int3" "\n"
 );
     
@@ -172,7 +172,7 @@ asm (
 HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "movq %rsp, %rdi" "\n"
-    "call " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
+    "call " LOCAL_REFERENCE(cti_vm_throw) "\n"
     "int3" "\n"
 );
 
@@ -416,7 +416,7 @@ asm (
 HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "movq %rsp, %rdi" "\n"
-    "call " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
+    "call " LOCAL_REFERENCE(cti_vm_throw) "\n"
     "int3" "\n"
 );
 
@@ -584,7 +584,7 @@ HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 ".thumb_func " THUMB_FUNC_PARAM(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "mov r0, sp" "\n"
-    "bl " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
+    "bl " LOCAL_REFERENCE(cti_vm_throw) "\n"
     "ldr r11, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R11_OFFSET) "]" "\n"
     "ldr r10, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R10_OFFSET) "]" "\n"
     "ldr r9, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R9_OFFSET) "]" "\n"

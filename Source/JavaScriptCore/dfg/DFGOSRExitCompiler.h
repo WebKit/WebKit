@@ -78,7 +78,7 @@ private:
 };
 
 extern "C" {
-void DFG_OPERATION compileOSRExit(ExecState*);
+void DFG_OPERATION compileOSRExit(ExecState*) WTF_INTERNAL;
 }
 
 } } // namespace JSC::DFG

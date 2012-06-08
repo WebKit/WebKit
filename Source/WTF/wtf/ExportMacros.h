@@ -32,6 +32,22 @@
 
 #include <wtf/Platform.h>
 
+// Different platforms have different defaults for symbol visibility. Usually
+// the compiler and the linker just take care of it. However for references to
+// runtime routines from JIT stubs, it matters to be able to declare a symbol as
+// being local to the target being generated, and thus not subject to (e.g.) ELF
+// symbol interposition rules.
+
+#if !PLATFORM(CHROMIUM) && OS(WINDOWS) && !COMPILER(GCC)
+#define HAVE_INTERNAL_VISIBILITY 1
+#define WTF_INTERNAL
+#elif defined(__GNUC__) && !defined(__CC_ARM) && !defined(__ARMCC__)
+#define HAVE_INTERNAL_VISIBILITY 1
+#define WTF_INTERNAL __attribute__((visibility("hidden")))
+#else
+#define WTF_INTERNAL
+#endif
+
 // See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)
 

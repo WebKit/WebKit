@@ -43,10 +43,10 @@
 
 namespace JSC {
 
-extern "C" EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValue() REFERENCED_FROM_ASM;
+extern "C" EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValue() REFERENCED_FROM_ASM WTF_INTERNAL;
 
 // This is a public declaration only to convince CLANG not to elide it.
-extern "C" EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValueWithExecState(ExecState*) REFERENCED_FROM_ASM;
+extern "C" EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValueWithExecState(ExecState*) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 inline void initializeHostCallReturnValue()
 {

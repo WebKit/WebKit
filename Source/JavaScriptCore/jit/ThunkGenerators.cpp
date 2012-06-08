@@ -135,7 +135,7 @@ double jsRound(double d)
         ".globl " SYMBOL_STRING(function##Thunk) "\n" \
         HIDE_SYMBOL(function##Thunk) "\n" \
         SYMBOL_STRING(function##Thunk) ":" "\n" \
-        "call " SYMBOL_STRING_RELOCATION(function) "\n" \
+        "call " GLOBAL_REFERENCE(function) "\n" \
         "ret\n" \
     );\
     extern "C" { \
@@ -152,7 +152,7 @@ double jsRound(double d)
         SYMBOL_STRING(function##Thunk) ":" "\n" \
         "subl $8, %esp\n" \
         "movsd %xmm0, (%esp) \n" \
-        "call " SYMBOL_STRING_RELOCATION(function) "\n" \
+        "call " GLOBAL_REFERENCE(function) "\n" \
         "fstpl (%esp) \n" \
         "movsd (%esp), %xmm0 \n" \
         "addl $8, %esp\n" \

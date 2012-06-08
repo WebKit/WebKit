@@ -1,3 +1,24 @@
+2012-06-08  Andy Wingo  <wingo@igalia.com>
+
+        Explictly mark stubs called by JIT as being internal
+        https://bugs.webkit.org/show_bug.cgi?id=88552
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGOSRExitCompiler.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * jit/HostCallReturnValue.h:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/ThunkGenerators.cpp:
+        * llint/LLIntSlowPaths.h: Mark a bunch of stubs as being
+        WTF_INTERNAL.  Change most calls to SYMBOL_STRING_RELOCATION to
+        LOCAL_REFERENCE, or GLOBAL_REFERENCE in the case of the wrappers
+        to truly global symbols.
+        * offlineasm/asm.rb: Generate LOCAL_REFERENCE instead of
+        SYMBOL_STRING_RELOCATION.
+
         Don't rely on weak pointers for eager CodeBlock finalization
         https://bugs.webkit.org/show_bug.cgi?id=88465
 

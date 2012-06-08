@@ -51,7 +51,7 @@
     HIDE_SYMBOL(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
         "mov (%rsp), %" STRINGIZE(register) "\n" \
-        "jmp " SYMBOL_STRING_RELOCATION(function##WithReturnAddress) "\n" \
+        "jmp " LOCAL_REFERENCE(function##WithReturnAddress) "\n" \
     );
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function)    FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rsi)
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rcx)
@@ -68,7 +68,7 @@
     SYMBOL_STRING(function) ":" "\n" \
         "mov (%esp), %eax\n" \
         "mov %eax, " STRINGIZE(offset) "(%esp)\n" \
-        "jmp " SYMBOL_STRING_RELOCATION(function##WithReturnAddress) "\n" \
+        "jmp " LOCAL_REFERENCE(function##WithReturnAddress) "\n" \
     );
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function)    FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 8)
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 16)
@@ -87,7 +87,7 @@
     ".thumb_func " THUMB_FUNC_PARAM(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
         "mov a2, lr" "\n" \
-        "b " SYMBOL_STRING_RELOCATION(function) "WithReturnAddress" "\n" \
+        "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
     );
 
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function) \
@@ -100,7 +100,7 @@
     ".thumb_func " THUMB_FUNC_PARAM(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
         "mov a4, lr" "\n" \
-        "b " SYMBOL_STRING_RELOCATION(function) "WithReturnAddress" "\n" \
+        "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
     );
 
 // EncodedJSValue in JSVALUE32_64 is a 64-bit integer. When being compiled in ARM EABI, it must be aligned even-numbered register (r0, r2 or [sp]).
@@ -123,7 +123,7 @@
     ".thumb_func " THUMB_FUNC_PARAM(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
         INSTRUCTION_STORE_RETURN_ADDRESS_EJI "\n" \
-        "b " SYMBOL_STRING_RELOCATION(function) "WithReturnAddress" "\n" \
+        "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
     );
 
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) \
@@ -136,25 +136,25 @@
     ".thumb_func " THUMB_FUNC_PARAM(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
         INSTRUCTION_STORE_RETURN_ADDRESS_EJCI "\n" \
-        "b " SYMBOL_STRING_RELOCATION(function) "WithReturnAddress" "\n" \
+        "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
     );
 
 #endif
 
 #define P_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function) \
-void* DFG_OPERATION function##WithReturnAddress(ExecState*, ReturnAddressPtr) REFERENCED_FROM_ASM; \
+void* DFG_OPERATION function##WithReturnAddress(ExecState*, ReturnAddressPtr) REFERENCED_FROM_ASM WTF_INTERNAL; \
 FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function)
 
 #define J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function) \
-EncodedJSValue DFG_OPERATION function##WithReturnAddress(ExecState*, JSCell*, Identifier*, ReturnAddressPtr) REFERENCED_FROM_ASM; \
+EncodedJSValue DFG_OPERATION function##WithReturnAddress(ExecState*, JSCell*, Identifier*, ReturnAddressPtr) REFERENCED_FROM_ASM WTF_INTERNAL; \
 FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)
 
 #define J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function) \
-EncodedJSValue DFG_OPERATION function##WithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr) REFERENCED_FROM_ASM; \
+EncodedJSValue DFG_OPERATION function##WithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr) REFERENCED_FROM_ASM WTF_INTERNAL; \
 FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function)
 
 #define V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) \
-void DFG_OPERATION function##WithReturnAddress(ExecState*, EncodedJSValue, JSCell*, Identifier*, ReturnAddressPtr) REFERENCED_FROM_ASM; \
+void DFG_OPERATION function##WithReturnAddress(ExecState*, EncodedJSValue, JSCell*, Identifier*, ReturnAddressPtr) REFERENCED_FROM_ASM WTF_INTERNAL; \
 FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function)
 
 namespace JSC { namespace DFG {
@@ -1264,7 +1264,7 @@ HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov -40(%r13), %r13\n"
     "mov %r13, %rdi\n"
-    "jmp " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
+    "jmp " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 #elif CPU(X86)
 asm (
@@ -1274,7 +1274,7 @@ HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "mov -40(%edi), %edi\n"
     "mov %edi, 4(%esp)\n"
-    "jmp " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
+    "jmp " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 #elif CPU(ARM_THUMB2)
 asm (
@@ -1287,7 +1287,7 @@ HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "ldr r5, [r5, #-40]" "\n"
     "mov r0, r5" "\n"
-    "b " SYMBOL_STRING_RELOCATION(getHostCallReturnValueWithExecState) "\n"
+    "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 #endif
 
