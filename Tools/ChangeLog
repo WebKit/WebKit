@@ -1,3 +1,16 @@
+2012-06-07  Kinuko Yasuda  <kinuko@chromium.org>
+
+        check-webkit-style needs to be taught about <public/Foo.h>
+        https://bugs.webkit.org/show_bug.cgi?id=88524
+
+        Reviewed by David Levin.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_classify_include):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (OrderOfIncludesTest.test_public_primary_header):
+        (OrderOfIncludesTest.test_classify_include):
+
 2012-06-07  Joshua Lock  <joshua.lock@intel.com>
 
         [EFL][DRT] Normalize file:///tmp/LayoutTests in LayoutTestController::pathToLocalResource()

@@ -2696,6 +2696,30 @@ class OrderOfIncludesTest(CppStyleTestBase):
 
         os.path.isfile = self.os_path_isfile_orig
 
+    def test_public_primary_header(self):
+        # System header is not considered a primary header.
+        self.assert_language_rules_check('foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include <other/foo.h>\n'
+                                         '\n'
+                                         '#include "a.h"\n',
+                                         'Alphabetical sorting problem.  [build/include_order] [4]')
+
+        # ...except that it starts with public/.
+        self.assert_language_rules_check('foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include <public/foo.h>\n'
+                                         '\n'
+                                         '#include "a.h"\n',
+                                         '')
+
+        # Even if it starts with public/ its base part must match with the source file name.
+        self.assert_language_rules_check('foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include <public/foop.h>\n'
+                                         '\n'
+                                         '#include "a.h"\n',
+                                         'Alphabetical sorting problem.  [build/include_order] [4]')
 
     def test_check_wtf_includes(self):
         self.assert_language_rules_check('foo.cpp',
@@ -2751,6 +2775,19 @@ class OrderOfIncludesTest(CppStyleTestBase):
                          classify_include('foo.cpp',
                                           'moc_foo.cpp',
                                           False, include_state))
+        # <public/foo.h> must be considered as primary even if is_system is True.
+        self.assertEqual(cpp_style._PRIMARY_HEADER,
+                         classify_include('foo/foo.cpp',
+                                          'public/foo.h',
+                                          True, include_state))
+        self.assertEqual(cpp_style._OTHER_HEADER,
+                         classify_include('foo.cpp',
+                                          'foo.h',
+                                          True, include_state))
+        self.assertEqual(cpp_style._OTHER_HEADER,
+                         classify_include('foo.cpp',
+                                          'public/foop.h',
+                                          True, include_state))
         # Qt private APIs use _p.h suffix.
         self.assertEqual(cpp_style._PRIMARY_HEADER,
                          classify_include('foo.cpp',
