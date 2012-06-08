@@ -1,3 +1,16 @@
+2012-06-08  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Move Mac-specific bits from config.h to WebKit2Prefix.h
+        https://bugs.webkit.org/show_bug.cgi?id=88625
+
+        Reviewed by Dan Bernstein.
+
+        Since the Mac supports prefix headers, there is no point in having
+        Mac-specific code in WebKit2's config.h. Move it to WebKit2Prefix.h.
+
+        * WebKit2Prefix.h:
+        * config.h:
+
 2012-06-07  Kentaro Hara  <haraken@chromium.org>
 
         Reduce Node object size from 72 byte to 64 byte
