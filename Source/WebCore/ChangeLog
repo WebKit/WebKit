@@ -1,3 +1,10 @@
+2012-06-08  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Fixed a comment, pointed out by ap@.
+
+        * platform/TreeShared.h:
+        (WebCore):
+
 2012-06-08  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] WEBP image blue and red color channels reversed on Android

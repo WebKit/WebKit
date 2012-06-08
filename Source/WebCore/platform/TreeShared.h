@@ -39,7 +39,7 @@ template<typename T> class TreeShared;
 // All classes that inherit TreeShared need to define
 // callRemovedLastRef(TreeShared<T>*). This is necessary
 // to kill all virtual methods from TreeShared, by which
-// we can save 8 byte for the virtual method table.
+// we can save 8 byte for a virtual method table pointer.
 void callRemovedLastRef(TreeShared<ContainerNode>*);
 void callRemovedLastRef(TreeShared<SVGElementInstance>*);
 
