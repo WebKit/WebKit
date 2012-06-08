@@ -675,4 +675,14 @@ Map.prototype = {
     {
         this._map = {};
     }
-}
+};
+
+Object.defineProperty(Object.prototype, "isEmpty",
+{
+    value: function()
+    {
+        for (var i in this)
+            return false;
+        return true;
+    }
+});

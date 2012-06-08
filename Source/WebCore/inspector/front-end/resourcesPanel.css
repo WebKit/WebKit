@@ -326,7 +326,6 @@ li.selected .base-storage-tree-element-subtitle {
     content: url(Images/applicationCache.png);
 }
 
-/* FIXME: Make separate png for file-system */
 .file-system-storage-tree-item .icon {
-    content: url(Images/applicationCache.png);
+    content: url(Images/fileSystem.png);
 }

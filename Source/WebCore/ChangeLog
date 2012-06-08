@@ -1,3 +1,35 @@
+2012-06-08  Taiju Tsuiki  <tzik@chromium.org>
+
+        Add FileSystem item to storage tree.
+        https://bugs.webkit.org/show_bug.cgi?id=72691
+
+        Reviewed by Vsevolod Vlasov.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/FileSystemModel.js: Added.
+        * inspector/front-end/Images/fileSystem.png: Added.
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FileSystemListTreeElement):
+        (WebInspector.FileSystemListTreeElement.prototype.onexpand):
+        (WebInspector.FileSystemListTreeElement.prototype.onattach):
+        (WebInspector.FileSystemListTreeElement.prototype._handleContextMenuEvent):
+        (WebInspector.FileSystemListTreeElement.prototype._fileSystemAdded):
+        (WebInspector.FileSystemListTreeElement.prototype._fileSystemRemoved):
+        (WebInspector.FileSystemListTreeElement.prototype._fileSystemTreeElementByName):
+        (WebInspector.FileSystemListTreeElement.prototype._refreshFileSystem):
+        (WebInspector.FileSystemTreeElement):
+        (WebInspector.FileSystemTreeElement.prototype.get fileSystemName):
+        (WebInspector.FileSystemTreeElement.prototype.get itemURL):
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/resourcesPanel.css:
+        (.file-system-storage-tree-item .icon):
+        * inspector/front-end/utilities.js:
+
 2012-06-08  Kentaro Hara  <haraken@chromium.org>
 
         REGRESSION r119802: Remove unnecessary ASSERT(!m_deletionHasBegun) from Document.h

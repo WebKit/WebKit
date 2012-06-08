@@ -58,6 +58,7 @@
     <file>ExtensionRegistryStub.js</file>
     <file>ExtensionServer.js</file>
     <file>FileManager.js</file>
+    <file>FileSystemModel.js</file>
     <file>FilteredItemSelectionDialog.js</file>
     <file>FontView.js</file>
     <file>GoToLineDialog.js</file>
@@ -243,6 +244,7 @@
     <file>Images/errorIcon.png</file>
     <file>Images/errorMediumIcon.png</file>
     <file>Images/errorRedDot.png</file>
+    <file>Images/fileSystem.png</file>
     <file>Images/forward.png</file>
     <file>Images/frame.png</file>
     <file>Images/glossyHeader.png</file>

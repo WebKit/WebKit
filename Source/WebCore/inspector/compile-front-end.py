@@ -82,6 +82,7 @@ modules = [
             "DebuggerResourceBinding.js",
             "DebuggerScriptMapping.js",
             "FileManager.js",
+            "FileSystemModel.js",
             "HAREntry.js",
             "IndexedDBModel.js",
             "Linkifier.js",

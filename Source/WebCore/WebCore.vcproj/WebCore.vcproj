@@ -74602,6 +74602,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\FileSystemModel.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\filteredItemSelectionDialog.css"
 					>
 				</File>

@@ -1,3 +1,12 @@
+2012-06-08  Taiju Tsuiki  <tzik@chromium.org>
+
+        Add FileSystem item to storage tree.
+        https://bugs.webkit.org/show_bug.cgi?id=72691
+
+        Reviewed by Vsevolod Vlasov.
+
+        * src/js/DevTools.js:
+
 2012-06-08  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Re-enable SHARED_WORKERS for Android until a build fix has been resolved.
