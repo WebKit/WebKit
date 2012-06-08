@@ -146,7 +146,13 @@ public:
     static StyleChange diff(const RenderStyle*, const RenderStyle*, Document*);
 
     virtual ~Node();
-    virtual void removedLastRef() { delete this; }
+    virtual void removedLastRef()
+    {
+#ifndef NDEBUG
+        m_deletionHasBegun = true;
+#endif
+        delete this;
+    }
 
     // DOM methods & attributes for Node
 

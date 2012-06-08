@@ -641,6 +641,7 @@ Document::~Document()
 
 void Document::removedLastRef()
 {
+    ASSERT(!m_deletionHasBegun);
     if (m_guardRefCount) {
         // If removing a child removes the last self-only ref, we don't
         // want the scope to be destructed until after
@@ -685,6 +686,9 @@ void Document::removedLastRef()
 
         guardDeref();
     } else {
+#ifndef NDEBUG 
+        m_deletionHasBegun = true; 
+#endif 
         delete this;
     }
 }

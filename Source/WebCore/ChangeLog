@@ -1,3 +1,18 @@
+2012-06-08  Kentaro Hara  <haraken@chromium.org>
+
+        REGRESSION r119802: Remove unnecessary ASSERT(!m_deletionHasBegun) from Document.h
+        https://bugs.webkit.org/show_bug.cgi?id=88528
+
+        Reviewed by Ryosuke Niwa.
+
+        m_deletionHasBegun should become true just before 'delete this'.
+
+        No tests. No change in behavior.
+
+        * dom/Document.h:
+        (WebCore::Document::guardRef):
+        (WebCore::Document::guardDeref):
+
 2012-06-08  Adam Barth  <abarth@webkit.org>
 
         HTTP 204 No Content responses shouldn't trigger MIME type warnings in the web inspector

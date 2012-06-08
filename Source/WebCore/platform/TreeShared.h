@@ -89,7 +89,6 @@ public:
         if (--m_refCount <= 0 && !m_parent) {
 #ifndef NDEBUG
             m_inRemovedLastRefFunction = true;
-            m_deletionHasBegun = true;
 #endif
             callRemovedLastRef(this);
         }
