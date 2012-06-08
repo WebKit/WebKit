@@ -39,6 +39,8 @@
 
 #if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN)
 inline WEBP_CSP_MODE outputMode() { return MODE_RGBA; }
+#elif USE(SKIA) && SK_B32_SHIFT
+inline WEBP_CSP_MODE outputMode() { return MODE_RGBA; }
 #else // LITTLE_ENDIAN, output BGRA pixels.
 inline WEBP_CSP_MODE outputMode() { return MODE_BGRA; }
 #endif
