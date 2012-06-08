@@ -1,3 +1,14 @@
+2012-06-07  Kentaro Hara  <haraken@chromium.org>
+
+        Reduce Node object size from 72 byte to 64 byte
+        https://bugs.webkit.org/show_bug.cgi?id=88528
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a symbol for callRemovedLastRef().
+
+        * WebKit.order:
+
 2012-06-06  Andy Estes  <aestes@apple.com>
 
         Wrap uppercaseWord, lowercaseWord, and capitalizeWord with USE(APPKIT)

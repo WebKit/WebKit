@@ -1,3 +1,60 @@
+2012-06-07  Kentaro Hara  <haraken@chromium.org>
+
+        Reduce Node object size from 72 byte to 64 byte
+        https://bugs.webkit.org/show_bug.cgi?id=88528
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch removes all virtual methods from TreeShared.h,
+        by which we can remove a virtual method table pointer (8 byte
+        in a 64bit architechture) from each Node object. Consequently,
+        this patch reduces the Node object size from 72 byte to 64 byte.
+
+        e.g. The HTML spec (http://www.whatwg.org/specs/web-apps/current-work/)
+        contains 325640 Node objects. Thus this patch saves 325640 * 8 byte = 2.6 MB.
+
+        e.g. sizeof(Element) is reduced from 104 byte to 96 byte.
+
+        - In multiple inheritance, a virtual method table pointer is allocated
+        for each base class that has virtual methods. For example, for
+        'class A : public B, C {};' where B and C have virtual methods,
+        two virtual method table pointers are allocated for each A object.
+        In this patch, A = Node, B = EventTarget, and C = TreeShared.
+        By removing the virtual methods from TreeShared, we can save the virtual
+        method table pointer for TreeShared. 8 byte saving.
+
+        - Node and SVGElementInstance are the only classes that inherit TreeShared.
+
+        - This patch removes virtual TreeShared::removeLastRef() and implements
+        virtual Node::removeLastRef() and virtual SVGElementInstance::removeLastRef().
+        Node::removeLastRef() calls 'delete this' for 'this' of type Node*,
+        and SVGElementInstance::removeLastRef() calls 'delete this' for 'this' of type
+        SVGElementInstance*.
+
+        - This patch removes the virtual destructor of TreeShared. This removal is safe
+        because (1) no one calls 'delete this' for 'this' of type TreeShared*,
+        and (2) both Node and SVGElementInstance have virtual destructor.
+
+        No change in behavior. Confirm no regression in existing tests.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::callRemovedLastRef):
+        (WebCore):
+        * dom/Node.h:
+        (WebCore::Node::removedLastRef):
+        * platform/TreeShared.h:
+        (WebCore):
+        (TreeShared):
+        (WebCore::TreeShared::deref):
+        * svg/SVGElementInstance.cpp:
+        (WebCore::callRemovedLastRef):
+        (WebCore):
+        * svg/SVGElementInstance.h:
+        (WebCore::SVGElementInstance::removedLastRef):
+
+        * WebCore.order: Added a symbol for callRemovedLastRef().
+        * WebCore.exp.in: Ditto.
+
 2012-06-07  Takashi Sakamoto  <tasak@google.com>
 
         ShadowRoot needs resetStyleInheritance

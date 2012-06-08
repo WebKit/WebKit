@@ -47,6 +47,7 @@ public:
     }
 
     virtual ~SVGElementInstance();
+    virtual void removedLastRef() { delete this; };
 
     void setParentOrHostNode(SVGElementInstance* instance) { setParent(instance); }
 

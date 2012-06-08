@@ -1,3 +1,16 @@
+2012-06-07  Kentaro Hara  <haraken@chromium.org>
+
+        Reduce Node object size from 72 byte to 64 byte
+        https://bugs.webkit.org/show_bug.cgi?id=88528
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a symbol for callRemovedLastRef().
+
+        * mac/WebKit2.order:
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-06-07  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Explicitly include CoreFoundation.h in config.h

@@ -32,6 +32,17 @@ template<typename T> class TreeShared;
 template<typename T> void adopted(TreeShared<T>*);
 #endif
 
+class ContainerNode;
+class SVGElementInstance;
+template<typename T> class TreeShared;
+
+// All classes that inherit TreeShared need to define
+// callRemovedLastRef(TreeShared<T>*). This is necessary
+// to kill all virtual methods from TreeShared, by which
+// we can save 8 byte for the virtual method table.
+void callRemovedLastRef(TreeShared<ContainerNode>*);
+void callRemovedLastRef(TreeShared<SVGElementInstance>*);
+
 template<typename T> class TreeShared {
     WTF_MAKE_NONCOPYABLE(TreeShared);
 public:
@@ -48,6 +59,8 @@ public:
         m_inRemovedLastRefFunction = false;
 #endif
     }
+
+#ifndef NDEBUG
     virtual ~TreeShared()
     {
         ASSERT(isMainThread());
@@ -55,6 +68,7 @@ public:
         ASSERT(m_deletionHasBegun);
         ASSERT(!m_adoptionIsRequired);
     }
+#endif
 
     void ref()
     {
@@ -75,8 +89,9 @@ public:
         if (--m_refCount <= 0 && !m_parent) {
 #ifndef NDEBUG
             m_inRemovedLastRefFunction = true;
+            m_deletionHasBegun = true;
 #endif
-            removedLastRef();
+            callRemovedLastRef(this);
         }
     }
 
@@ -109,16 +124,11 @@ public:
     bool m_inRemovedLastRefFunction;
 #endif
 
-protected:
-    virtual void removedLastRef()
-    {
-#ifndef NDEBUG
-        m_deletionHasBegun = true;
-#endif
-        delete this;
-    }
-
 private:
+    // Never called. removedLastRef() must be implemented in all the classes
+    // that inherit TreeShared.
+    void removedLastRef() { ASSERT(0); }
+
 #ifndef NDEBUG
     friend void adopted<>(TreeShared<T>*);
 #endif

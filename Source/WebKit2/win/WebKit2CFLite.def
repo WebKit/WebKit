@@ -108,6 +108,7 @@ EXPORTS
         ??1ThreadCondition@WTF@@QAE@XZ
         ?broadcast@ThreadCondition@WTF@@QAEXXZ
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
+        ?callRemovedLastRef@WebCore@@YAXPAV?$TreeShared@VContainerNode@WebCore@@@1@@Z
         ?consoleMessageArgumentCounts@InspectorConsoleAgent@WebCore@@QAE?AV?$Vector@I$0A@@WTF@@XZ
         ?counterValue@InspectorCounters@WebCore@@SAHW4CounterType@12@@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z

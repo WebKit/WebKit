@@ -72,6 +72,11 @@ SVGElementInstance::~SVGElementInstance()
     m_element = 0;
 }
 
+void callRemovedLastRef(TreeShared<SVGElementInstance>* self)
+{
+    static_cast<SVGElementInstance*>(self)->removedLastRef();
+}
+
 void SVGElementInstance::detach()
 {
     // Clear all pointers. When the node is detached from the shadow DOM it should be removed but,

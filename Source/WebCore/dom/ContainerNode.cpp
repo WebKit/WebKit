@@ -86,6 +86,11 @@ void ContainerNode::removeAllChildren()
     removeAllChildrenInContainer<Node, ContainerNode>(this);
 }
 
+void callRemovedLastRef(TreeShared<ContainerNode>* self)
+{
+    static_cast<ContainerNode*>(self)->removedLastRef();
+}
+
 void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 {
     NodeVector children;
