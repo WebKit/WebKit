@@ -1,3 +1,9 @@
+2012-06-08  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the Snow Leopard build after r119806.
+
+        * WebKit2Prefix.h:
+
 2012-06-08  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Move Mac-specific bits from config.h to WebKit2Prefix.h
