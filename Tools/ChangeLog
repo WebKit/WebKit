@@ -1,3 +1,14 @@
+2012-06-07  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Remove header dependency of ImageDiff to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=88422
+
+        Reviewed by Ryosuke Niwa.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/chromium/ImageDiff.cpp:
+        (untestedCompareImages):
+
 2012-06-07  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL] [DRT] DRT enables WebAudio when WebAudio feature is enabled.

@@ -34,8 +34,6 @@
 // The exact format of this tool's output to stdout is important, to match
 // what the run-webkit-tests script expects.
 
-#include "config.h"
-
 #include "webkit/support/webkit_support_gfx.h"
 #include <algorithm>
 #include <iterator>
@@ -44,12 +42,13 @@
 #include <string.h>
 #include <vector>
 
-#if OS(WINDOWS)
+#if defined(_WIN32)
 #include <windows.h>
 #define PATH_MAX MAX_PATH
+#define strtok_r strtok_s
 #endif
 
-// Define macro here to make ImageDiff independent of JavaScriptCore.
+// Define macro here to make ImageDiff independent of WTF.
 #ifdef NDEBUG
 #define ASSERT(assertion) do { } while (0)
 #else
@@ -342,13 +341,8 @@ int untestedCompareImages(ImageComparisonProc comparator)
     while (fgets(buffer, sizeof(buffer), stdin)) {
         if (!strncmp("Content-length: ", buffer, 16)) {
             char* context;
-#if OS(WINDOWS)
-            strtok_s(buffer, " ", &context);
-            int imageSize = strtol(strtok_s(0, " ", &context), 0, 10);
-#else
             strtok_r(buffer, " ", &context);
             int imageSize = strtol(strtok_r(0, " ", &context), 0, 10);
-#endif
 
             bool success = false;
             if (imageSize > 0 && !actualImage.hasImage()) {
