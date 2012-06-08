@@ -23,7 +23,7 @@ function createStringWithLength(length)
 
 function createBlobWithLength(length)
 {
-    return new Blob([new ArrayBuffer(length)]);
+    return new Blob([new Uint8Array(length)]);
 }
 
 var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/simple");

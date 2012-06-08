@@ -15,7 +15,6 @@ shouldThrow("new Blob(0)", "'TypeError: First argument of the constructor is not
 
 // Test valid blob parts.
 shouldBeTrue("(new Blob([])) instanceof window.Blob");
-shouldBeTrue("(new Blob([new ArrayBuffer(8)])) instanceof window.Blob");
 shouldBeTrue("(new Blob(['stringPrimitive'])) instanceof window.Blob");
 shouldBeTrue("(new Blob([String('stringObject')])) instanceof window.Blob");
 shouldBeTrue("(new Blob([new Blob])) instanceof window.Blob");
@@ -64,3 +63,17 @@ shouldBe("(new Blob([], {type:'text/html'})).size", "0");
 
 // Odds and ends
 shouldBe("window.Blob.length", "2");
+
+// Test ArrayBufferView Parameters
+shouldBe("new Blob([new DataView(new ArrayBuffer(100))]).size", "100");
+shouldBe("new Blob([new Uint8Array(100)]).size", "100");
+shouldBe("new Blob([new Uint8ClampedArray(100)]).size", "100");
+shouldBe("new Blob([new Uint16Array(100)]).size", "200");
+shouldBe("new Blob([new Uint32Array(100)]).size", "400");
+shouldBe("new Blob([new Int8Array(100)]).size", "100");
+shouldBe("new Blob([new Int16Array(100)]).size", "200");
+shouldBe("new Blob([new Int32Array(100)]).size", "400");
+shouldBe("new Blob([new Float32Array(100)]).size", "400");
+shouldBe("new Blob([new Float64Array(100)]).size", "800");
+shouldBe("new Blob([new Float64Array(100), new Int32Array(100), new Uint8Array(100), new DataView(new ArrayBuffer(100))]).size", "1400");
+shouldBe("new Blob([new Blob([new Int32Array(100)]), new Uint8Array(100), new Float32Array(100), new DataView(new ArrayBuffer(100))]).size", "1000");

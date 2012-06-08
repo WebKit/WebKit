@@ -1,3 +1,28 @@
+2012-06-07  Li Yin  <li.yin@intel.com>
+
+        FileAPI: Blob should support ArrayBufferView instead of ArrayBuffer for Constructor Parameters
+        https://bugs.webkit.org/show_bug.cgi?id=88294
+
+        Reviewed by Jian Li.
+
+        From Spec: http://dev.w3.org/2006/webapi/FileAPI/#dfn-Blob
+        Currently we add the support for ArrayBufferView, while still keeping ArrayBuffer for
+        backward compatibility. We will remove it in the near future.
+
+        Test: fast/files/blob-constructor.html
+
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::JSBlobConstructor::constructJSBlob):
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::V8Blob::constructorCallback):
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::WebKitBlobBuilder::append):
+        (WebCore):
+        * fileapi/WebKitBlobBuilder.h:
+        (WebCore):
+        (WebKitBlobBuilder):
+        * fileapi/WebKitBlobBuilder.idl: Add support for ArrayBufferView in append method
+
 2012-06-07  MORITA Hajime  <morrita@google.com>
 
         A style in an older shadow subtree causes assert when composing with <shadow>

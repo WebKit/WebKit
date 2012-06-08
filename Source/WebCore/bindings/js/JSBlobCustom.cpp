@@ -35,6 +35,7 @@
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
 #include "JSArrayBuffer.h"
+#include "JSArrayBufferView.h"
 #include "JSDOMBinding.h"
 #include "JSDictionary.h"
 #include "JSFile.h"
@@ -119,7 +120,9 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
         JSValue item = array->getIndex(i);
 #if ENABLE(BLOB)
         if (item.inherits(&JSArrayBuffer::s_info))
-            blobBuilder->append(toArrayBuffer(item));
+            blobBuilder->append(context, toArrayBuffer(item));
+        else if (item.inherits(&JSArrayBufferView::s_info))
+            blobBuilder->append(toArrayBufferView(item));
         else
 #endif
         if (item.inherits(&JSBlob::s_info))

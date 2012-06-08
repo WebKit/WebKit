@@ -1,3 +1,22 @@
+2012-06-07  Li Yin  <li.yin@intel.com>
+
+        FileAPI: Blob should support ArrayBufferView instead of ArrayBuffer for Constructor Parameters
+        https://bugs.webkit.org/show_bug.cgi?id=88294
+
+        Reviewed by Jian Li.
+
+        Support ArrayBufferView in Blob constructing function.
+
+        * fast/files/blob-constructor-expected.txt:
+        * fast/files/file-reader-fffd-expected.txt:
+        * fast/files/file-reader-fffd.html:
+        * fast/files/script-tests/blob-constructor.js:
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html:
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close.html:
+        * http/tests/websocket/tests/hybi/send-blob.html:
+        * http/tests/websocket/tests/hybi/workers/resources/send-blob.js:
+        (createBlobContainingAllDistinctBytes):
+
 2012-06-07  MORITA Hajime  <morrita@google.com>
 
         A style in an older shadow subtree causes assert when composing with <shadow>

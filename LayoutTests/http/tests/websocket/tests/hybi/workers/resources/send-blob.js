@@ -13,7 +13,7 @@ function createBlobContainingAllDistinctBytes()
     var array = new Uint8Array(256);
     for (var i = 0; i < 256; ++i)
         array[i] = i;
-    return new Blob([array.buffer]);
+    return new Blob([array]);
 }
 
 var url = "ws://127.0.0.1:8880/websocket/tests/hybi/workers/resources/check-binary-messages";

@@ -33,6 +33,7 @@
 
 #include "Dictionary.h"
 #include "V8ArrayBuffer.h"
+#include "V8ArrayBufferView.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
 #include "V8Blob.h"
@@ -120,7 +121,11 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
         if (V8ArrayBuffer::HasInstance(item)) {
             ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(item));
             ASSERT(arrayBuffer);
-            blobBuilder->append(arrayBuffer);
+            blobBuilder->append(context, arrayBuffer);
+        } else if (V8ArrayBufferView::HasInstance(item)) {
+            ArrayBufferView* arrayBufferView = V8ArrayBufferView::toNative(v8::Handle<v8::Object>::Cast(item));
+            ASSERT(arrayBufferView);
+            blobBuilder->append(arrayBufferView);
         } else
 #endif
         if (V8Blob::HasInstance(item)) {

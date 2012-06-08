@@ -13,7 +13,6 @@ PASS (new Blob(['hello'], {type:'text/html', endings:'transparent'})) instanceof
 PASS new Blob('hello') threw exception TypeError: First argument of the constructor is not of type Array.
 PASS new Blob(0) threw exception TypeError: First argument of the constructor is not of type Array.
 PASS (new Blob([])) instanceof window.Blob is true
-PASS (new Blob([new ArrayBuffer(8)])) instanceof window.Blob is true
 PASS (new Blob(['stringPrimitive'])) instanceof window.Blob is true
 PASS (new Blob([String('stringObject')])) instanceof window.Blob is true
 PASS (new Blob([new Blob])) instanceof window.Blob is true
@@ -44,6 +43,18 @@ PASS (new Blob([], function () {})) instanceof window.Blob is true
 PASS (new Blob([], {type:'text/html'})).type is 'text/html'
 PASS (new Blob([], {type:'text/html'})).size is 0
 PASS window.Blob.length is 2
+PASS new Blob([new DataView(new ArrayBuffer(100))]).size is 100
+PASS new Blob([new Uint8Array(100)]).size is 100
+PASS new Blob([new Uint8ClampedArray(100)]).size is 100
+PASS new Blob([new Uint16Array(100)]).size is 200
+PASS new Blob([new Uint32Array(100)]).size is 400
+PASS new Blob([new Int8Array(100)]).size is 100
+PASS new Blob([new Int16Array(100)]).size is 200
+PASS new Blob([new Int32Array(100)]).size is 400
+PASS new Blob([new Float32Array(100)]).size is 400
+PASS new Blob([new Float64Array(100)]).size is 800
+PASS new Blob([new Float64Array(100), new Int32Array(100), new Uint8Array(100), new DataView(new ArrayBuffer(100))]).size is 1400
+PASS new Blob([new Blob([new Int32Array(100)]), new Uint8Array(100), new Float32Array(100), new DataView(new ArrayBuffer(100))]).size is 1000
 PASS successfullyParsed is true
 
 TEST COMPLETE

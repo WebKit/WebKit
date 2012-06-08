@@ -36,8 +36,10 @@
 #include "ExceptionCode.h"
 #include "File.h"
 #include "LineEnding.h"
+#include "ScriptExecutionContext.h"
 #include "TextEncoding.h"
 #include <wtf/ArrayBuffer.h>
+#include <wtf/ArrayBufferView.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
@@ -86,13 +88,25 @@ void WebKitBlobBuilder::append(const String& text, ExceptionCode& ec)
 }
 
 #if ENABLE(BLOB)
-void WebKitBlobBuilder::append(ArrayBuffer* arrayBuffer)
+void WebKitBlobBuilder::append(ScriptExecutionContext* context, ArrayBuffer* arrayBuffer)
 {
+    String consoleMessage("ArrayBuffer values are deprecated in Blob Constructor. Use ArrayBufferView instead.");
+    context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
     if (!arrayBuffer)
         return;
     Vector<char>& buffer = getBuffer();
     size_t oldSize = buffer.size();
     buffer.append(static_cast<const char*>(arrayBuffer->data()), arrayBuffer->byteLength());
+    m_size += buffer.size() - oldSize;
+}
+
+void WebKitBlobBuilder::append(ArrayBufferView* arrayBufferView)
+{
+    if (!arrayBufferView)
+        return;
+    Vector<char>& buffer = getBuffer();
+    size_t oldSize = buffer.size();
+    buffer.append(static_cast<const char*>(arrayBufferView->baseAddress()), arrayBufferView->byteLength());
     m_size += buffer.size() - oldSize;
 }
 #endif
