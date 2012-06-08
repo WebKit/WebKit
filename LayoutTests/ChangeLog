@@ -1,3 +1,15 @@
+2012-06-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed update for chromium test expectations.
+        viewspec-parser-*.html were marked as SLOW.
+
+        * platform/chromium/TestExpectations:
+        BUGWK87772 SLOW : svg/dom/viewspec-parser-1.html = PASS
+        BUGWK87772 SLOW : svg/dom/viewspec-parser-2.html = PASS
+        BUGWK87772 SLOW : svg/dom/viewspec-parser-3.html = PASS
+        BUGWK87772 SLOW : svg/dom/viewspec-parser-4.html = PASS
+        BUGWK87772 SLOW : svg/dom/viewspec-parser-5.html = PASS
+
 2012-06-08  Arko Saha  <arko@motorola.com>
 
         Microdata: An element with an empty itemprop='' should not get listed in the .properties list.
