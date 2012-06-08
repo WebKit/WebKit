@@ -643,15 +643,38 @@ PassOwnPtr<TypeCountSet> Heap::objectTypeCounts()
     return m_objectSpace.forEachCell<RecordType>();
 }
 
-void Heap::discardAllCompiledCode()
+void Heap::deleteAllCompiledCode()
 {
-    // If JavaScript is running, it's not safe to recompile, since we'll end
-    // up throwing away code that is live on the stack.
+    // If JavaScript is running, it's not safe to delete code, since we'll end
+    // up deleting code that is live on the stack.
     if (m_globalData->dynamicGlobalObject)
         return;
 
-    for (FunctionExecutable* current = m_functions.head(); current; current = current->next())
-        current->discardCode();
+    for (ExecutableBase* current = m_compiledCode.head(); current; current = current->next()) {
+        if (!current->isFunctionExecutable())
+            continue;
+        static_cast<FunctionExecutable*>(current)->clearCodeIfNotCompiling();
+    }
+
+    m_dfgCodeBlocks.clearMarks();
+    m_dfgCodeBlocks.deleteUnmarkedJettisonedCodeBlocks();
+}
+
+void Heap::deleteUnmarkedCompiledCode()
+{
+    ExecutableBase* next;
+    for (ExecutableBase* current = m_compiledCode.head(); current; current = next) {
+        next = current->next();
+        if (isMarked(current))
+            continue;
+
+        // We do this because executable memory is limited on some platforms and because
+        // CodeBlock requires eager finalization.
+        ExecutableBase::clearCodeVirtual(current);
+        m_compiledCode.remove(current);
+    }
+
+    m_dfgCodeBlocks.deleteUnmarkedJettisonedCodeBlocks();
 }
 
 void Heap::collectAllGarbage()
@@ -680,7 +703,7 @@ void Heap::collect(SweepToggle sweepToggle)
 
     double lastGCStartTime = WTF::currentTime();
     if (lastGCStartTime - m_lastCodeDiscardTime > minute) {
-        discardAllCompiledCode();
+        deleteAllCompiledCode();
         m_lastCodeDiscardTime = WTF::currentTime();
     }
 
@@ -703,6 +726,8 @@ void Heap::collect(SweepToggle sweepToggle)
         m_objectSpace.reapWeakSets();
     }
 
+    JAVASCRIPTCORE_GC_MARKED();
+
     {
         GCPHASE(FinalizeUnconditionalFinalizers);
         finalizeUnconditionalFinalizers();
@@ -713,12 +738,10 @@ void Heap::collect(SweepToggle sweepToggle)
         m_objectSpace.sweepWeakSets();
         m_globalData->smallStrings.finalizeSmallStrings();
     }
-    
-    JAVASCRIPTCORE_GC_MARKED();
 
     {
         GCPHASE(DeleteCodeBlocks);
-        m_dfgCodeBlocks.deleteUnmarkedJettisonedCodeBlocks();
+        deleteUnmarkedCompiledCode();
     }
 
     if (sweepToggle == DoSweep) {
@@ -808,14 +831,9 @@ void Heap::FinalizerOwner::finalize(Handle<Unknown> handle, void* context)
     WeakSet::deallocate(WeakImpl::asWeakImpl(slot));
 }
 
-void Heap::addFunctionExecutable(FunctionExecutable* executable)
+void Heap::addCompiledCode(ExecutableBase* executable)
 {
-    m_functions.append(executable);
-}
-
-void Heap::removeFunctionExecutable(FunctionExecutable* executable)
-{
-    m_functions.remove(executable);
+    m_compiledCode.append(executable);
 }
 
 } // namespace JSC

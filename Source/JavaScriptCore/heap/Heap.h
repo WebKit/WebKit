@@ -42,7 +42,7 @@ namespace JSC {
 
     class CopiedSpace;
     class CodeBlock;
-    class FunctionExecutable;
+    class ExecutableBase;
     class GCActivityCallback;
     class GlobalCodeBlock;
     class Heap;
@@ -116,8 +116,7 @@ namespace JSC {
 
         typedef void (*Finalizer)(JSCell*);
         JS_EXPORT_PRIVATE void addFinalizer(JSCell*, Finalizer);
-        void addFunctionExecutable(FunctionExecutable*);
-        void removeFunctionExecutable(FunctionExecutable*);
+        void addCompiledCode(ExecutableBase*);
 
         void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
 
@@ -159,7 +158,7 @@ namespace JSC {
         double lastGCLength() { return m_lastGCLength; }
         void increaseLastGCLength(double amount) { m_lastGCLength += amount; }
 
-        JS_EXPORT_PRIVATE void discardAllCompiledCode();
+        JS_EXPORT_PRIVATE void deleteAllCompiledCode();
 
         void didAllocate(size_t);
         void didAbandon(size_t);
@@ -194,6 +193,7 @@ namespace JSC {
         void markTempSortVectors(HeapRootVisitor&);
         void harvestWeakReferences();
         void finalizeUnconditionalFinalizers();
+        void deleteUnmarkedCompiledCode();
         
         RegisterFile& registerFile();
         BlockAllocator& blockAllocator();
@@ -239,7 +239,7 @@ namespace JSC {
         double m_lastGCLength;
         double m_lastCodeDiscardTime;
 
-        DoublyLinkedList<FunctionExecutable> m_functions;
+        DoublyLinkedList<ExecutableBase> m_compiledCode;
     };
 
     inline bool Heap::shouldCollect()

@@ -1,3 +1,85 @@
+        Don't rely on weak pointers for eager CodeBlock finalization
+        https://bugs.webkit.org/show_bug.cgi?id=88465
+
+        Reviewed by Gavin Barraclough.
+
+        This is incompatible with lazy weak pointer finalization.
+
+        I considered just making CodeBlock finalization lazy-friendly, but it
+        turns out that the heap is already way up in CodeBlock's business when
+        it comes to finalization, so I decided to finish the job and move full
+        responsibility for CodeBlock finalization into the heap.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Maybe this
+        will build.
+
+        * debugger/Debugger.cpp: Updated for rename.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteAllCompiledCode): Renamed for consistency. Fixed a bug
+        where we would not delete code for a code block that had been previously
+        jettisoned. I don't know if this happens in practice -- I mostly did
+        this to improve consistency with deleteUnmarkedCompiledCode.
+
+        (JSC::Heap::deleteUnmarkedCompiledCode): New function, responsible for
+        eager finalization of unmarked code blocks.
+
+        (JSC::Heap::collect): Updated for rename. Updated to call
+        deleteUnmarkedCompiledCode(), which takes care of jettisoned DFG code
+        blocks too.
+
+        (JSC::Heap::addCompiledCode): Renamed, since this points to all code
+        now, not just functions.
+
+        * heap/Heap.h:
+        (Heap): Keep track of all user code, not just functions. This is a
+        negligible additional overhead, since most code is function code.
+
+        * runtime/Executable.cpp:
+        (JSC::*::finalize): Removed these functions, since we don't rely on
+        weak pointer finalization anymore.
+
+        (JSC::FunctionExecutable::FunctionExecutable): Moved linked-list stuff
+        into base class so all executables can be in the list.
+
+        (JSC::EvalExecutable::clearCode):
+        (JSC::ProgramExecutable::clearCode):
+        (JSC::FunctionExecutable::clearCode): All we need to do is delete our
+        CodeBlock -- that will delete all of its internal data structures.
+
+        (JSC::FunctionExecutable::clearCodeIfNotCompiling): Factored out a helper
+        function to improve clarity.
+
+        * runtime/Executable.h:
+        (JSC::ExecutableBase): Moved linked-list stuff
+        into base class so all executables can be in the list.
+
+        (JSC::NativeExecutable::create):
+        (NativeExecutable):
+        (ScriptExecutable):
+        (JSC::ScriptExecutable::finishCreation):
+        (JSC::EvalExecutable::create):
+        (EvalExecutable):
+        (JSC::ProgramExecutable::create):
+        (ProgramExecutable):
+        (FunctionExecutable):
+        (JSC::FunctionExecutable::create): Don't use a finalizer -- the heap
+        will call us back to destroy our code block.
+
+        (JSC::FunctionExecutable::discardCode): Renamed to clearCodeIfNotCompiling()
+        for clarity.
+
+        (JSC::FunctionExecutable::isCompiling): New helper function, for clarity.
+
+        (JSC::ScriptExecutable::clearCodeVirtual): New helper function, since
+        the heap needs to make polymorphic calls to clear code.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::StackPreservingRecompiler::operator()):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::DynamicGlobalObjectScope::DynamicGlobalObjectScope): Updated for
+        renames.
+
 2012-06-07  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should inline prototype chain accesses, and do the right things if the
