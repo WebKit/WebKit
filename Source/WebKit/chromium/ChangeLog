@@ -1,3 +1,27 @@
+2012-06-07  Nico Weber  <thakis@chromium.org>
+
+        [chromium/mac] Improve deviceDPI, rect, and availableRect computation
+        https://bugs.webkit.org/show_bug.cgi?id=88596
+
+        Reviewed by Adam Barth.
+
+        Set deviceDPI to 160 for normal displays and 320 for HiDPI displays.
+        (Why 160? That's what chromium's render_view.cc assumes as default
+        single-resolution resolution at the moment. The only other place
+        where this number gets used is fixed layout mode, which is currently
+        not enabled.)
+
+        Also fix rect and availableRect computations: They get returned in
+        user space already.
+
+        Needed for http://crbug.com/31960.
+
+        * src/mac/WebScreenInfoFactory.mm:
+        (WebKit::toUserSpace):
+        (WebKit::deviceScaleFactor):
+        (WebKit):
+        (WebKit::WebScreenInfoFactory::screenInfo):
+
 2012-06-07  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move didStartWorkerRunLoop to Platform.h

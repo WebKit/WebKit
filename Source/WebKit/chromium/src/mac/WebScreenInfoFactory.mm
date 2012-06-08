@@ -35,6 +35,14 @@
 
 #include "WebScreenInfo.h"
 
+@interface NSWindow (LionAPI)
+- (CGFloat)backingScaleFactor;
+@end
+
+@interface NSScreen (LionAPI)
+- (CGFloat)backingScaleFactor;
+@end
+
 namespace WebKit {
 
 static NSScreen* screenForWindow(NSWindow* window)
@@ -50,25 +58,35 @@ static NSScreen* screenForWindow(NSWindow* window)
     return nil;
 }
 
-static WebRect toUserSpace(const NSRect& rect, NSWindow* destination)
+static WebRect convertRect(const NSRect& rect, NSWindow* destination)
 {
     CGRect userRect = NSRectToCGRect(rect);
-
     userRect.origin.y =
-        NSMaxY([screenForWindow(destination) frame]) - (userRect.origin.y + userRect.size.height); // flip
-
-    if (destination) {
-        CGFloat scale = 1 / [destination userSpaceScaleFactor];  // scale down
-        userRect.origin.x *= scale;
-        userRect.origin.y *= scale;
-        userRect.size.width *= scale;
-        userRect.size.height *= scale;
-    }
-
+        NSMaxY([screenForWindow(destination) frame]) - NSMaxY(rect); // flip
     return WebRect(userRect.origin.x,
                    userRect.origin.y,
                    userRect.size.width,
                    userRect.size.height);
+}
+
+static float deviceScaleFactor(NSView* view)
+{
+    NSWindow* window = [view window];
+    if (window)
+    {
+        if ([window respondsToSelector:@selector(backingScaleFactor)])
+            return [window backingScaleFactor];
+        return [window userSpaceScaleFactor];
+    }
+
+    NSArray* screens = [NSScreen screens];
+    if (![screens count])
+        return 1;
+
+    NSScreen* screen = [screens objectAtIndex:0];
+    if ([screen respondsToSelector:@selector(backingScaleFactor)])
+        return [screen backingScaleFactor];
+    return [screen userSpaceScaleFactor];
 }
 
 WebScreenInfo WebScreenInfoFactory::screenInfo(NSView* view)
@@ -77,13 +95,9 @@ WebScreenInfo WebScreenInfoFactory::screenInfo(NSView* view)
 
     WebScreenInfo results;
 
-    // FIXME: Currently Mac seems to always report 72dpi. Need to find a way to
-    // report the true screen dpi.
-    NSWindow* window = [view window];
-    NSDictionary* deviceDescription = [window deviceDescription];
-    NSSize deviceDPI = [[deviceDescription valueForKey:NSDeviceResolution] sizeValue];
-    results.horizontalDPI = static_cast<int>(deviceDPI.width);
-    results.verticalDPI = static_cast<int>(deviceDPI.height);
+    float deviceDPI = 160 * deviceScaleFactor(view);
+    results.horizontalDPI = deviceDPI;
+    results.verticalDPI = deviceDPI;
 
     results.depth =
         NSBitsPerPixelFromDepth([[NSScreen deepestScreen] depth]);
@@ -93,10 +107,9 @@ WebScreenInfo WebScreenInfoFactory::screenInfo(NSView* view)
                         || colorSpace == NSCalibratedBlackColorSpace
                         || colorSpace == NSDeviceWhiteColorSpace
                         || colorSpace == NSDeviceBlackColorSpace;
-    results.rect =
-        toUserSpace([screenForWindow([view window]) frame], [view window]);
+    results.rect = convertRect([screenForWindow([view window]) frame], [view window]);
     results.availableRect =
-        toUserSpace([screenForWindow([view window]) visibleFrame], [view window]);
+        convertRect([screenForWindow([view window]) visibleFrame], [view window]);
     return results;
 }
 
