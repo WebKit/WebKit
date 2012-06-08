@@ -52,7 +52,7 @@ public:
     virtual PassRefPtr<WebCore::IDBTransactionBackendInterface> transaction(WebCore::DOMStringList* storeNames, unsigned short mode, WebCore::ExceptionCode&);
     virtual void close(PassRefPtr<WebCore::IDBDatabaseCallbacks>);
 
-    virtual void open(PassRefPtr<WebCore::IDBDatabaseCallbacks>);
+    virtual void registerFrontendCallbacks(PassRefPtr<WebCore::IDBDatabaseCallbacks>);
 
 private:
     IDBDatabaseBackendProxy(PassOwnPtr<WebIDBDatabase>);

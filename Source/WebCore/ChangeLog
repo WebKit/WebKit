@@ -1,3 +1,27 @@
+2012-06-08  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: rename some instances of open to registerFrontendCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=88611
+
+        We should still make the change in the WebKit API.
+
+        Reviewed by Tony Chang.
+
+        No new tests, just a method rename.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::registerFrontendCallbacks):
+        * Modules/indexeddb/IDBDatabase.h:
+        (IDBDatabase):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::registerFrontendCallbacks):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h:
+        (IDBDatabaseBackendInterface):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+
 2012-06-08  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Skip willDraw() and didDraw() on fully occluded layers

@@ -254,7 +254,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
         return;
 
     RefPtr<IDBDatabase> idbDatabase = IDBDatabase::create(scriptExecutionContext(), backend);
-    idbDatabase->open();
+    idbDatabase->registerFrontendCallbacks();
 
     m_result = IDBAny::create(idbDatabase.release());
     enqueueEvent(createSuccessEvent());

@@ -86,7 +86,7 @@ public:
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
-    void open();
+    void registerFrontendCallbacks();
     void enqueueEvent(PassRefPtr<Event>);
     bool dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec) { return EventTarget::dispatchEvent(event, ec); }
     virtual bool dispatchEvent(PassRefPtr<Event>);

@@ -111,7 +111,7 @@ void WebIDBDatabaseImpl::open(WebIDBDatabaseCallbacks* callbacks)
 {
     ASSERT(!m_databaseCallbacks);
     m_databaseCallbacks = IDBDatabaseCallbacksProxy::create(adoptPtr(callbacks));
-    m_databaseBackend->open(m_databaseCallbacks);
+    m_databaseBackend->registerFrontendCallbacks(m_databaseCallbacks);
 }
 
 } // namespace WebKit

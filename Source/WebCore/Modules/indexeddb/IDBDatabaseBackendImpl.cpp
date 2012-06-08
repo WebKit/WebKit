@@ -321,7 +321,7 @@ PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(D
     return IDBTransactionBackendImpl::create(objectStoreNames, mode, this);
 }
 
-void IDBDatabaseBackendImpl::open(PassRefPtr<IDBDatabaseCallbacks> callbacks)
+void IDBDatabaseBackendImpl::registerFrontendCallbacks(PassRefPtr<IDBDatabaseCallbacks> callbacks)
 {
     m_databaseCallbacksSet.add(RefPtr<IDBDatabaseCallbacks>(callbacks));
 }

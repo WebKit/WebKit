@@ -59,6 +59,7 @@ public:
     virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, WebExceptionCode&);
     virtual void close();
 
+    // FIXME: Rename "open" to registerFrontendCallbacks.
     virtual void open(WebIDBDatabaseCallbacks*);
 
 private:

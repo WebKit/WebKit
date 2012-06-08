@@ -237,9 +237,9 @@ void IDBDatabase::onVersionChange(const String& version)
     enqueueEvent(IDBVersionChangeEvent::create(version, eventNames().versionchangeEvent));
 }
 
-void IDBDatabase::open()
+void IDBDatabase::registerFrontendCallbacks()
 {
-    m_backend->open(m_databaseCallbacks);
+    m_backend->registerFrontendCallbacks(m_databaseCallbacks);
 }
 
 void IDBDatabase::enqueueEvent(PassRefPtr<Event> event)

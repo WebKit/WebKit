@@ -62,7 +62,7 @@ public:
     virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, ExceptionCode&) = 0;
     virtual void close(PassRefPtr<IDBDatabaseCallbacks>) = 0;
 
-    virtual void open(PassRefPtr<IDBDatabaseCallbacks>) = 0;
+    virtual void registerFrontendCallbacks(PassRefPtr<IDBDatabaseCallbacks>) = 0;
 };
 
 } // namespace WebCore

@@ -53,8 +53,7 @@ public:
     static const int64_t InvalidId = 0;
     int64_t id() const { return m_id; }
 
-    // FIXME: Rename "open" to something more descriptive, like registerFrontEndCallbacks.
-    void open(PassRefPtr<IDBDatabaseCallbacks>);
+    void registerFrontendCallbacks(PassRefPtr<IDBDatabaseCallbacks>);
     void openConnection(PassRefPtr<IDBCallbacks>);
     void deleteDatabase(PassRefPtr<IDBCallbacks>);
 
