@@ -1,3 +1,9 @@
+2012-06-08  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip tests using disabled SHADOW_DOM feature on Qt.
+
+        * platform/qt/Skipped:
+
 2012-06-08  Dan Bernstein  <mitz@apple.com>
 
         Fixed fast/files/read-blob-async.html failing after r119791.
