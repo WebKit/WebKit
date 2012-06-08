@@ -1,3 +1,14 @@
+2012-06-08  Renata Hodovan  <reni@webkit.org>
+
+        Adding few already supported features to the FeatureSet in DOMImplementation
+        https://bugs.webkit.org/show_bug.cgi?id=86482
+
+        Reviewed by Nikolas Zimmermann.
+
+        * platform/qt-5.0/svg/custom/svg-features-expected.txt:
+        * platform/qt/svg/custom/svg-features-expected.txt:
+        * svg/custom/svg-features-expected.txt:
+
 2012-06-07  Vincent Scheib  <scheib@chromium.org>
 
         Layout Test pointer-lock/pointerlockchange-pointerlockerror-events.html is failing

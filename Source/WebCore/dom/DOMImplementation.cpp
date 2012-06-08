@@ -147,7 +147,7 @@ static bool isSVG11Feature(const String &feature, const String &version)
         addString(svgFeatures, "Style");
         addString(svgFeatures, "ViewportAttribute");
         addString(svgFeatures, "Shape");
-//      addString(svgFeatures, "Text"); // requires altGlyph, bug 6426
+        addString(svgFeatures, "Text");
         addString(svgFeatures, "BasicText");
         addString(svgFeatures, "PaintAttribute");
         addString(svgFeatures, "BasicPaintAttribute");
@@ -162,7 +162,7 @@ static bool isSVG11Feature(const String &feature, const String &version)
         addString(svgFeatures, "BasicClip");
         addString(svgFeatures, "Mask");
 #if ENABLE(FILTERS)
-//      addString(svgFeatures, "Filter");
+        addString(svgFeatures, "Filter");
         addString(svgFeatures, "BasicFilter");
 #endif
         addString(svgFeatures, "DocumentEventsAttribute");
@@ -172,7 +172,7 @@ static bool isSVG11Feature(const String &feature, const String &version)
         addString(svgFeatures, "Hyperlinking");
         addString(svgFeatures, "XlinkAttribute");
         addString(svgFeatures, "ExternalResourcesRequired");
-//      addString(svgFeatures, "View"); // buggy <view> support, bug 16962
+        addString(svgFeatures, "View");
         addString(svgFeatures, "Script");
         addString(svgFeatures, "Animation"); 
 #if ENABLE(SVG_FONTS)
