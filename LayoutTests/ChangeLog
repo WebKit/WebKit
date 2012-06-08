@@ -1,3 +1,9 @@
+2012-06-08  Ojan Vafai  <ojan@chromium.org>
+
+        Second wave of Chromium rebaselines after skia change. See crbug.com/131829.
+
+        List of changed expectations deleted because it's too long.
+
 2012-06-08  Dan Bernstein  <mitz@apple.com>
 
         Added Mac pixel results for canvas-imageSmoothingEnabled-patterns.html, and made the text
