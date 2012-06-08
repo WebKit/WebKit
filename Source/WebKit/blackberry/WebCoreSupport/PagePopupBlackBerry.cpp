@@ -19,10 +19,8 @@
 
 #include "PagePopupBlackBerry.h"
 
-#include "ChromeClientBlackBerry.h"
 #include "EmptyClients.h"
 #include "FrameView.h"
-#include "InspectorClientBlackBerry.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindowBase.h"
 #include "JSObject.h"
@@ -47,30 +45,6 @@ using namespace BlackBerry::Platform::Graphics;
 using namespace BlackBerry::WebKit;
 namespace WebCore {
 
-class PagePopupChromeClient : public ChromeClientBlackBerry {
-public:
-    explicit PagePopupChromeClient(WebPagePrivate* webpage, PagePopupBlackBerry* popup)
-        : ChromeClientBlackBerry(webpage)
-        , m_popup(popup)
-        , m_webPage(webpage)
-    {
-    }
-
-    virtual void closeWindowSoon()
-    {
-        m_popup->closePopup();
-    }
-
-    WebPagePrivate* webPage()
-    {
-        return m_webPage;
-    }
-
-    PagePopupBlackBerry* m_popup;
-    WebPagePrivate* m_webPage;
-    IntRect m_rect;
-};
-
 PagePopupBlackBerry::PagePopupBlackBerry(BlackBerry::WebKit::WebPagePrivate* webPage, PagePopupClient* client, const IntRect& rect)
     : m_webPagePrivate(webPage)
     , m_client(adoptPtr(client))
@@ -89,40 +63,10 @@ void PagePopupBlackBerry::sendCreatePopupWebViewRequest()
 
 bool PagePopupBlackBerry::init(WebPage* webpage)
 {
-    static FrameLoaderClient* emptyFrameLoaderClient = new EmptyFrameLoaderClient;
-    Page::PageClients pageClients;
-    m_chromeClient = adoptPtr(new PagePopupChromeClient(webpage->d, this));
-    static EditorClient* emptyEditorClient = new EmptyEditorClient;
-    pageClients.chromeClient = m_chromeClient.get();
-    pageClients.editorClient = emptyEditorClient;
-#if ENABLE(CONTEXT_MENUS)
-    static ContextMenuClient* emptyContextMenuClient = new EmptyContextMenuClient;
-    pageClients.contextMenuClient = emptyContextMenuClient;
-#endif
-#if ENABLE(DRAG_SUPPORT)
-    static DragClient* emptyDragClient = new EmptyDragClient;
-    pageClients.dragClient = emptyDragClient;
-#endif
-#if ENABLE(INSPECTOR)
-    static InspectorClient* emptyInspectorClient = new EmptyInspectorClient;
-    pageClients.inspectorClient = emptyInspectorClient;
-#endif
-
-    m_page = adoptPtr(new Page(pageClients));
-    m_page->settings()->setScriptEnabled(true);
-    m_page->settings()->setAllowScriptsToCloseWindows(true);
-
-    RefPtr<Frame> frame = Frame::create(m_page.get(), 0,
-            emptyFrameLoaderClient);
-    frame->setView(FrameView::create(frame.get()));
-    frame->init();
-    frame->view()->resize(m_client->contentSize());
-
-    CString htmlSource = m_client->htmlSource().utf8();
-    DocumentWriter* writer = frame->loader()->activeDocumentLoader()->writer();
+    DocumentWriter* writer = webpage->d->mainFrame()->loader()->activeDocumentLoader()->writer();
     m_client->writeDocument(*writer);
 
-    installDomFunction(frame.get());
+    installDomFunction(webpage->d->mainFrame());
 
     webpage->d->setParentPopup(this);
 
@@ -139,7 +83,7 @@ static JSValueRef setValueAndClosePopupCallback(JSContextRef context,
 
     JSStringRef string = JSValueToStringCopy(context, arguments[0], 0);
     size_t sizeUTF8 = JSStringGetMaximumUTF8CStringSize(string);
-    WTF::Vector<char> strArgs(sizeUTF8 + 1);
+    Vector<char> strArgs(sizeUTF8 + 1);
     strArgs[sizeUTF8] = 0;
     JSStringGetUTF8CString(string, strArgs.data(), sizeUTF8);
     JSStringRelease(string);
@@ -217,16 +161,13 @@ void PagePopupBlackBerry::installDomFunction(Frame* frame)
 
 bool PagePopupBlackBerry::handleMouseEvent(PlatformMouseEvent& event)
 {
-    if (!m_page->mainFrame() || !m_page->mainFrame()->view())
-        return false;
-
     switch (event.type()) {
     case PlatformEvent::MouseMoved:
-        return m_page->mainFrame()->eventHandler()->handleMouseMoveEvent(event);
+        return m_webPagePrivate->mainFrame()->eventHandler()->handleMouseMoveEvent(event);
     case PlatformEvent::MousePressed:
-        return m_page->mainFrame()->eventHandler()->handleMousePressEvent(event);
+        return m_webPagePrivate->mainFrame()->eventHandler()->handleMousePressEvent(event);
     case PlatformEvent::MouseReleased:
-        return m_page->mainFrame()->eventHandler()->handleMouseReleaseEvent(event);
+        return m_webPagePrivate->mainFrame()->eventHandler()->handleMouseReleaseEvent(event);
     default:
         return false;
     }
@@ -234,21 +175,9 @@ bool PagePopupBlackBerry::handleMouseEvent(PlatformMouseEvent& event)
 
 void PagePopupBlackBerry::closePopup()
 {
-    closeWebPage();
     m_client->didClosePopup();
     m_webPagePrivate->client()->closePopupWebView();
 }
 
-void PagePopupBlackBerry::closeWebPage()
-{
-    if (!m_page)
-        return;
-
-    m_page->setGroupName(String());
-    m_page->mainFrame()->loader()->stopAllLoaders();
-    m_page->mainFrame()->loader()->stopLoading(UnloadEventPolicyNone);
-    m_page->mainFrame()->view()->clear();
-    m_page.clear();
-}
 }
 

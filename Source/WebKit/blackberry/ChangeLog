@@ -1,3 +1,24 @@
+2012-06-07  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Should Use the WebPage Already Created by Client, No Need to Create New One.
+        https://bugs.webkit.org/show_bug.cgi?id=88576
+
+        Reviewed by Rob Buis.
+
+        When PagePopupBlackBerry::init() is called, a WebPage is already created, we can just use 
+        this to load popup, no need to create a new one. The old code is based on an old solution 
+        which has been abandoned.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::openPagePopup):
+        * WebCoreSupport/PagePopupBlackBerry.cpp:
+        (WebCore::PagePopupBlackBerry::init):
+        (WebCore::setValueAndClosePopupCallback):
+        (WebCore::PagePopupBlackBerry::handleMouseEvent):
+        (WebCore::PagePopupBlackBerry::closePopup):
+        * WebCoreSupport/PagePopupBlackBerry.h:
+        (PagePopupBlackBerry):
+
 2012-06-07  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Get rid of unused maximumLayoutSize in WebPage

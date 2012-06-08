@@ -33,7 +33,6 @@ class WebPagePrivate;
 namespace WebCore {
 class Frame;
 class Page;
-class PagePopupChromeClient;
 class PagePopupClient;
 class PlatformMouseEvent;
 
@@ -47,7 +46,6 @@ public:
     void closePopup();
     void installDomFunction(Frame*);
     void setRect();
-    void closeWebPage();
 
     bool handleMouseEvent(PlatformMouseEvent&);
 
@@ -56,10 +54,6 @@ private:
     BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;
     OwnPtr<PagePopupClient> m_client;
     IntRect m_rect;
-    OwnPtr<WebCore::Page> m_page;
-    OwnPtr<PagePopupChromeClient> m_chromeClient;
-
-    friend class PagePopupChromeClient;
 };
 
 }
