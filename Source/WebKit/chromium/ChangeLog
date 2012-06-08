@@ -1,3 +1,9 @@
+2012-06-08  Jochen Eisinger  <jochen@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-06-08  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Accelerated animations should use WebTransformOperations
