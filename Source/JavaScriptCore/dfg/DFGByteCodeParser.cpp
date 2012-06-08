@@ -731,7 +731,7 @@ private:
         SpeculatedType prediction = SpecNone;
         if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
             m_currentProfilingIndex = m_currentIndex + OPCODE_LENGTH(op_call);
-            prediction = getSpeculation();
+            prediction = getPrediction();
         }
         
         addVarArgChild(get(currentInstruction[1].u.operand));
@@ -750,7 +750,7 @@ private:
         return call;
     }
     
-    SpeculatedType getSpeculationWithoutOSRExit(NodeIndex nodeIndex, unsigned bytecodeIndex)
+    SpeculatedType getPredictionWithoutOSRExit(NodeIndex nodeIndex, unsigned bytecodeIndex)
     {
         UNUSED_PARAM(nodeIndex);
         
@@ -762,9 +762,9 @@ private:
         return prediction;
     }
 
-    SpeculatedType getSpeculation(NodeIndex nodeIndex, unsigned bytecodeIndex)
+    SpeculatedType getPrediction(NodeIndex nodeIndex, unsigned bytecodeIndex)
     {
-        SpeculatedType prediction = getSpeculationWithoutOSRExit(nodeIndex, bytecodeIndex);
+        SpeculatedType prediction = getPredictionWithoutOSRExit(nodeIndex, bytecodeIndex);
         
         if (prediction == SpecNone) {
             // We have no information about what values this node generates. Give up
@@ -775,14 +775,14 @@ private:
         return prediction;
     }
     
-    SpeculatedType getSpeculationWithoutOSRExit()
+    SpeculatedType getPredictionWithoutOSRExit()
     {
-        return getSpeculationWithoutOSRExit(m_graph.size(), m_currentProfilingIndex);
+        return getPredictionWithoutOSRExit(m_graph.size(), m_currentProfilingIndex);
     }
     
-    SpeculatedType getSpeculation()
+    SpeculatedType getPrediction()
     {
-        return getSpeculation(m_graph.size(), m_currentProfilingIndex);
+        return getPrediction(m_graph.size(), m_currentProfilingIndex);
     }
 
     NodeIndex makeSafe(NodeIndex nodeIndex)
@@ -1155,7 +1155,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
             resultOperand = putInstruction[1].u.operand;
             usesResult = true;
             m_currentProfilingIndex = nextOffset;
-            prediction = getSpeculation();
+            prediction = getPrediction();
             nextOffset += OPCODE_LENGTH(op_call_put_result);
         }
         JSFunction* expectedFunction;
@@ -2041,7 +2041,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         // === Property access operations ===
 
         case op_get_by_val: {
-            SpeculatedType prediction = getSpeculation();
+            SpeculatedType prediction = getPrediction();
             
             NodeIndex base = get(currentInstruction[2].u.operand);
             NodeIndex property = get(currentInstruction[3].u.operand);
@@ -2066,7 +2066,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             m_currentProfilingIndex += OPCODE_LENGTH(op_method_check);
             Instruction* getInstruction = currentInstruction + OPCODE_LENGTH(op_method_check);
             
-            SpeculatedType prediction = getSpeculation();
+            SpeculatedType prediction = getPrediction();
             
             ASSERT(interpreter->getOpcodeID(getInstruction->u.opcode) == op_get_by_id);
             
@@ -2102,7 +2102,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             continue;
         }
         case op_get_scoped_var: {
-            SpeculatedType prediction = getSpeculation();
+            SpeculatedType prediction = getPrediction();
             int dst = currentInstruction[1].u.operand;
             int slot = currentInstruction[2].u.operand;
             int depth = currentInstruction[3].u.operand;
@@ -2120,7 +2120,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_put_scoped_var);
         }
         case op_get_by_id: {
-            SpeculatedType prediction = getSpeculationWithoutOSRExit();
+            SpeculatedType prediction = getPredictionWithoutOSRExit();
             
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
@@ -2237,7 +2237,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_get_global_var: {
-            SpeculatedType prediction = getSpeculation();
+            SpeculatedType prediction = getPrediction();
             
             NodeIndex getGlobalVar = addToGraph(
                 GetGlobalVar,
@@ -2487,7 +2487,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             SpeculatedType prediction = SpecNone;
             if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
                 m_currentProfilingIndex = m_currentIndex + OPCODE_LENGTH(op_call_varargs);
-                prediction = getSpeculation();
+                prediction = getPrediction();
             }
             
             addToGraph(CheckArgumentsNotCreated);
@@ -2522,7 +2522,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jneq_ptr);
 
         case op_resolve: {
-            SpeculatedType prediction = getSpeculation();
+            SpeculatedType prediction = getPrediction();
             
             unsigned identifier = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
 
@@ -2533,7 +2533,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_resolve_base: {
-            SpeculatedType prediction = getSpeculation();
+            SpeculatedType prediction = getPrediction();
             
             unsigned identifier = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
 
@@ -2544,7 +2544,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_resolve_global: {
-            SpeculatedType prediction = getSpeculation();
+            SpeculatedType prediction = getPrediction();
             
             NodeIndex resolve = addToGraph(ResolveGlobal, OpInfo(m_graph.m_resolveGlobalData.size()), OpInfo(prediction));
             m_graph.m_resolveGlobalData.append(ResolveGlobalData());
@@ -2614,7 +2614,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             m_graph.m_hasArguments = true;
             set(currentInstruction[1].u.operand,
                 addToGraph(
-                    GetMyArgumentByValSafe, OpInfo(0), OpInfo(getSpeculation()),
+                    GetMyArgumentByValSafe, OpInfo(0), OpInfo(getPrediction()),
                     get(currentInstruction[3].u.operand)));
             NEXT_OPCODE(op_get_argument_by_val);
         }

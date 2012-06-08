@@ -1,3 +1,20 @@
+2012-06-08  Filip Pizlo  <fpizlo@apple.com>
+
+        PredictedType should be called SpeculatedType
+        https://bugs.webkit.org/show_bug.cgi?id=88477
+
+        Unreviewed, fix a renaming goof from http://trac.webkit.org/changeset/119660.
+        I accidentally renamed ByteCodeParser::getPrediction to
+        ByteCodeParser::getSpeculation.  That was not the intent. This changes it
+        back.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::getPrediction):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2012-06-08  Andy Wingo  <wingo@igalia.com>
 
         Explictly mark stubs called by JIT as being internal
