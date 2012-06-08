@@ -1,3 +1,42 @@
+2012-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling back in part1 of r118646.
+
+        This patch includes everything necessary for lazy finalization, but
+        keeps eager finalization enabled for the time being.
+
+        Weak pointer finalization should be lazy
+        https://bugs.webkit.org/show_bug.cgi?id=87599
+
+        Reviewed by Sam Weinig.
+
+        * heap/MarkedBlock.cpp:
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::resetAllocator):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::resetAllocators):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::resetAllocators): Don't force allocator reset anymore.
+        It will happen automatically when a weak set is swept. It's simpler to
+        have only one canonical way for this to happen, and it wasn't buying
+        us anything to do it eagerly.
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::sweep): Don't short-circuit a sweep unless we know
+        the sweep would be a no-op. If even one finalizer is pending, we need to
+        run it, since we won't get another chance.
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::sweep): This loop can be simpler now that
+        WeakBlock::sweep() does what we mean.
+        Reset our allocator after a sweep because this is the optimal time to
+        start trying to recycle old weak pointers.
+        (JSC::WeakSet::tryFindAllocator): Don't sweep when searching for an
+        allocator because we've swept already, and forcing a new sweep would be
+        wasteful.
+        * heap/WeakSet.h:
+        (JSC::WeakSet::shrink): Be sure to reset our allocator after a shrink
+        because the shrink may have removed the block the allocator was going to
+        allocate out of.
+
 2012-06-08  Gavin Barraclough  <barraclough@apple.com>
 
         Unreviewed roll out r119795.
