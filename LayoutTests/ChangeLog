@@ -1,3 +1,12 @@
+2012-06-08  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, rebaseline a chromium-win result that changed
+        due to the various mock scrollbar changes.
+        https://bugs.webkit.org/show_bug.cgi?id=88490
+
+        * platform/chromium-win/fast/repaint/fixed-tranformed-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-06-08  Stephen Chenney  <schenney@chromium.org>
 
         WebCore::ImageBuffer.cpp has broken color table code
