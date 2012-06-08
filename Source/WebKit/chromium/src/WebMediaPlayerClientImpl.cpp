@@ -19,7 +19,6 @@
 #include "PlatformContextSkia.h"
 #include "RenderView.h"
 #include "TimeRanges.h"
-#include "VideoLayerChromium.h"
 #include "WebAudioSourceProvider.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
@@ -331,10 +330,10 @@ void WebMediaPlayerClientImpl::cancelLoad()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-PlatformLayer* WebMediaPlayerClientImpl::platformLayer() const
+LayerChromium* WebMediaPlayerClientImpl::platformLayer() const
 {
     ASSERT(m_supportsAcceleratedCompositing);
-    return m_videoLayer.unwrap<VideoLayerChromium>();
+    return m_videoLayer.unwrap<LayerChromium>();
 }
 #endif
 
@@ -627,7 +626,7 @@ void WebMediaPlayerClientImpl::paint(GraphicsContext* context, const IntRect& re
 {
 #if USE(ACCELERATED_COMPOSITING)
     // If we are using GPU to render video, ignore requests to paint frames into
-    // canvas because it will be taken care of by VideoLayerChromium.
+    // canvas because it will be taken care of by WebVideoLayer.
     if (acceleratedRenderingInUse())
         return;
 #endif

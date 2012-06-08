@@ -82,9 +82,10 @@
 #endif
 
 #if PLATFORM(CHROMIUM)
+#include "FilterOperation.h"
 #include "FilterOperations.h"
 #include "GraphicsLayer.h"
-#include "LayerChromium.h"
+#include "GraphicsLayerChromium.h"
 #include "RenderLayerBacking.h"
 #endif
 
@@ -468,15 +469,9 @@ void Internals::setBackgroundBlurOnNode(Node* node, int blurLength, ExceptionCod
         return;
     }
 
-    PlatformLayer* platformLayer = graphicsLayer->platformLayer();
-    if (!platformLayer) {
-        ec = INVALID_NODE_TYPE_ERR;
-        return;
-    }
-
-    WebKit::WebFilterOperations filters;
-    filters.append(WebKit::WebFilterOperation::createBlurFilter(blurLength));
-    platformLayer->setBackgroundFilters(filters);
+    FilterOperations filters;
+    filters.operations().append(BlurFilterOperation::create(Length(blurLength, Fixed), FilterOperation::BLUR));
+    static_cast<GraphicsLayerChromium*>(graphicsLayer)->setBackgroundFilters(filters);
 }
 #else
 void Internals::setBackgroundBlurOnNode(Node*, int, ExceptionCode&)
