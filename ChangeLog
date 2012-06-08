@@ -1,3 +1,15 @@
+2012-06-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] build accelerated compositing on by default if OpenGL is present
+        https://bugs.webkit.org/show_bug.cgi?id=88677
+
+        Reviewed by Alejandro G. Castro.
+
+        Build accelerated compositing by default if OpenGL is present, just like WebGL.
+        Also prevent enabling WebGL if Clutter is turned on.
+
+        * configure.ac: Build AC by default.
+
 2012-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to get the library version to WebKit2 GTK+

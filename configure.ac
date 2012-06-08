@@ -527,40 +527,59 @@ AC_ARG_ENABLE(optimizations,
               [if test "$enable_debug" = "yes"; then enable_optimizations="no"; else enable_optimizations="yes"; fi])
 AC_MSG_RESULT([$enable_optimizations])
 
-# check whether to enable WebGL support
+found_opengl="no"
+if test "$with_target" = "x11"; then
+    AC_CHECK_HEADERS([GL/gl.h], [found_opengl="yes"], [])
+    AC_CHECK_HEADERS([GL/glx.h], [], [found_opengl="no"])
+fi
+AC_MSG_CHECKING([which GPU acceleration backend to use])
+AC_ARG_WITH(acceleration_backend,
+            AC_HELP_STRING([--with-acceleration-backend=@<:@opengl/clutter/none@:>@],
+                           [Select accelerated backend (Clutter currently unsupported, OpenGL autodetected) [default=autodetect]]), [],
+                           [
+                                if test "$found_opengl" = "yes"; then
+                                   with_acceleration_backend="opengl";
+                                else
+                                   with_acceleration_backend="none";
+                                fi
+                           ])
+AC_MSG_RESULT([$with_acceleration_backend])
+
+# OpenGL is turned on by default (along with WebGL and accelerated compositing), but if
+# Clutter is chosen as the accelerated drawing backend, we want to disable it. COGL does 
+# not play well with OpenGL.
 AC_MSG_CHECKING([whether to enable WebGL support])
 AC_ARG_ENABLE(webgl,
-              AC_HELP_STRING([--enable-webgl], [enable support for WebGL [default=yes]]),
-              [], [if test "$with_target" = "x11"; then enable_webgl="yes"; else enable_webgl="no"; fi])
+              AC_HELP_STRING([--enable-webgl], [enable support for WebGL [default=check]]), [],
+              [
+                if test "$with_acceleration_backend" = "opengl"; then
+                    enable_webgl="yes";
+                else
+                    enable_webgl="no";
+                fi
+             ])
 AC_MSG_RESULT([$enable_webgl])
+if test "$enable_webgl" = "yes" && test "$with_acceleration_backend" != "opengl"; then
+    AC_MSG_ERROR([OpenGL must be active (and Clutter disabled) to use WebGL.])
+fi;
 
-# check whether to enable accelerated compositing support
 AC_MSG_CHECKING([whether to enable accelerated compositing support])
-AC_ARG_WITH(accelerated_compositing,
-            AC_HELP_STRING([--with-accelerated-compositing=@<:@no/opengl/cairo/clutter@:>@],
-                           [use accelerated compositing (experimental) [default=no]]),
-            [], [with_accelerated_compositing="no"])
-AC_MSG_RESULT([$with_accelerated_compositing])
-
-if test "$enable_webgl" = "yes" ||  test "$with_accelerated_compositing" = "opengl" ; then
-    if test "$with_target" != "x11"; then
-        AC_MSG_ERROR([OpenGL support is only available on X11 currently.])
-    fi
-    AC_CHECK_HEADERS([GL/gl.h], [], AC_MSG_ERROR([OpenGL header not found]))
-    AC_CHECK_HEADERS([GL/glx.h], [], AC_MSG_ERROR([GLX header not found]))
-    OPENGL_LIBS="-lGL -ldl"
-fi
-AC_SUBST([OPENGL_LIBS])
-
-if test "$with_accelerated_compositing" = "clutter"; then
-   PKG_CHECK_MODULES(CLUTTER, clutter-1.0 >= $CLUTTER_REQUIRED_VERSION)
-   PKG_CHECK_MODULES([CLUTTER_GTK], [clutter-gtk-1.0 >= $CLUTTER_GTK_REQUIRED_VERSION])
-
-   AC_SUBST(CLUTTER_CFLAGS)
-   AC_SUBST(CLUTTER_LIBS)
-   AC_SUBST(CLUTTER_GTK_CFLAGS)
-   AC_SUBST(CLUTTER_GTK_LIBS)
-fi
+AC_ARG_ENABLE(accelerated_compositing,
+            AC_HELP_STRING([--enable-accelerated-compositing], [enable support for accelerated compositing [default=check]]),
+            [
+                if test "$enableval" = "yes" && test "$with_acceleration_backend" = "none"; then
+                    AC_MSG_ERROR([OpenGL or Clutter must be active to use accelerated compositing.])
+                fi
+                enable_accelerated_compositing=$enableval;
+            ],
+            [
+                if test "$with_acceleration_backend" != "none"; then
+                    enable_accelerated_compositing="yes";
+                else
+                    enable_accelerated_compositing="no";
+                fi
+            ])
+AC_MSG_RESULT([$enable_accelerated_compositing])
 
 # check whether to enable channel messaging support
 AC_MSG_CHECKING([whether to enable HTML5 Channel Messaging support])
@@ -1227,7 +1246,7 @@ if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
 fi
 
 
-if test "$with_accelerated_compositing" = "clutter"; then
+if test "$with_acceleration_backend" = "clutter"; then
    PKG_CHECK_MODULES(CLUTTER, clutter-1.0 >= $CLUTTER_REQUIRED_VERSION)
    PKG_CHECK_MODULES([CLUTTER_GTK],
                      [clutter-gtk-1.0 >= $CLUTTER_GTK_REQUIRED_VERSION])
@@ -1237,6 +1256,11 @@ if test "$with_accelerated_compositing" = "clutter"; then
    AC_SUBST(CLUTTER_GTK_CFLAGS)
    AC_SUBST(CLUTTER_GTK_LIBS)
 fi
+
+if test "$with_acceleration_backend" = "opengl"; then
+    OPENGL_LIBS="-lGL -ldl"
+fi
+AC_SUBST([OPENGL_LIBS])
 
 # check if atspi2 is available (only needed for Webkit2 unit tests)
 if test "$enable_webkit2" = "yes"; then
@@ -1335,14 +1359,14 @@ AM_CONDITIONAL([USE_WEBAUDIO_GSTREAMER], [test "$enable_web_audio" = "yes"])
 AM_CONDITIONAL([HAVE_ATSPI2], [test "$have_atspi2" = "yes"])
 
 # Accelerated compositing conditional
-AM_CONDITIONAL([USE_ACCELERATED_COMPOSITING], [test "$with_accelerated_compositing" = "cairo" || test "$with_accelerated_compositing" = "opengl" || test "$with_accelerated_compositing" = "clutter"])
-AM_CONDITIONAL([USE_TEXTURE_MAPPER_CAIRO], [test "$with_accelerated_compositing" = "cairo"])
-AM_CONDITIONAL([USE_TEXTURE_MAPPER_GL], [test "$with_accelerated_compositing" = "opengl"])
-AM_CONDITIONAL([USE_CLUTTER], [test "$with_accelerated_compositing" = "clutter"])
+AM_CONDITIONAL([USE_ACCELERATED_COMPOSITING], [test "$enable_accelerated_compositing" = "yes"])
+AM_CONDITIONAL([USE_TEXTURE_MAPPER_CAIRO], [test "$enable_accelerated_compositing" = "yes" && test "$with_acceleration_backend" = "none"])
+AM_CONDITIONAL([USE_TEXTURE_MAPPER_GL], [test "$enable_accelerated_compositing" = "yes" && test "$with_acceleration_backend" = "opengl"])
+AM_CONDITIONAL([USE_CLUTTER], [test "$with_acceleration_backend" = "clutter"])
 
 # These are the same now, but they will soon be separate.
-AM_CONDITIONAL([USE_GLX], [test "$with_accelerated_compositing" = "opengl" || test "$enable_webgl" = "yes"])
-AM_CONDITIONAL([USE_OPENGL], [test "$with_accelerated_compositing" = "opengl" || test "$enable_webgl" = "yes"])
+AM_CONDITIONAL([USE_GLX], [test "$enable_opengl" = "yes"])
+AM_CONDITIONAL([USE_OPENGL], [test "$enable_opengl" = "yes"])
 
 # IndexedDB implies LevelDB, but other features may one day require LevelDB.
 AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
@@ -1462,9 +1486,12 @@ Build configuration:
  Unicode backend                                          : $with_unicode_backend
  Font backend                                             : $with_font_backend
  Optimized memory allocator                               : $enable_fast_malloc
- Accelerated Compositing                                  : $with_accelerated_compositing
+ Accelerated rendering backend                            : $with_acceleration_backend
 
 Features:
+=======
+ WebGL                                                    : $enable_webgl
+ Accelerated Compositing                                  : $enable_accelerated_compositing
  Animation API                                            : $enable_animation_api
  Blob support                                             : $enable_blob
  Color input support                                      : $enable_input_type_color
