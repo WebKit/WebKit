@@ -1,3 +1,10 @@
+2012-06-08  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, remove css3/flexbox/child-overflow.html from TestExpectations.
+        Since bug 77368 is now fixed, this test passes.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-08  Stephen Chenney  <schenney@chromium.org>
 
         Unreviewed fix for Chromium TestExpectations.
