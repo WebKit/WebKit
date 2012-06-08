@@ -428,7 +428,7 @@ static bool addFileToSoupMessageBody(SoupMessage* message, const String& fileNam
 static bool blobIsOutOfDate(const BlobDataItem& blobItem)
 {
     ASSERT(blobItem.type == BlobDataItem::File);
-    if (!isValidFileTime(blobItem.expectedModificationTime))
+    if (blobItem.expectedModificationTime == BlobDataItem::doNotCheckFileChange)
         return false;
 
     time_t fileModificationTime;

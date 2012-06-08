@@ -86,7 +86,7 @@ File::File(const String& path)
     , m_name(pathGetFileName(path))
 #if ENABLE(FILE_SYSTEM)
     , m_snapshotSize(-1)
-    , m_snapshotModificationTime(invalidFileTime())
+    , m_snapshotModificationTime(0)
 #endif
 {
 }
@@ -96,7 +96,7 @@ File::File(const String& path, const KURL& url, const String& type)
     , m_path(path)
 #if ENABLE(FILE_SYSTEM)
     , m_snapshotSize(-1)
-    , m_snapshotModificationTime(invalidFileTime())
+    , m_snapshotModificationTime(0)
 #endif
 {
     m_name = pathGetFileName(path);
@@ -111,7 +111,7 @@ File::File(const String& path, const String& name)
     , m_name(name)
 #if ENABLE(FILE_SYSTEM)
     , m_snapshotSize(-1)
-    , m_snapshotModificationTime(invalidFileTime())
+    , m_snapshotModificationTime(0)
 #endif
 {
 }
@@ -136,10 +136,16 @@ double File::lastModifiedDate() const
 
     time_t modificationTime;
     if (!getFileModificationTime(m_path, modificationTime))
-        return invalidFileTime();
+        return 0;
 
     // Needs to return epoch time in milliseconds for Date.
     return modificationTime * 1000.0;
+}
+
+double File::lastModifiedDateForBinding() const
+{
+    double value = lastModifiedDate();
+    return (!value) ? std::numeric_limits<double>::quiet_NaN() : value;
 }
 
 unsigned long long File::size() const
@@ -172,7 +178,7 @@ void File::captureSnapshot(long long& snapshotSize, double& snapshotModification
     FileMetadata metadata;
     if (!getFileMetadata(m_path, metadata)) {
         snapshotSize = 0;
-        snapshotModificationTime = invalidFileTime();
+        snapshotModificationTime = 0;
         return;
     }
 

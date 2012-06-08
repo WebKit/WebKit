@@ -1,3 +1,38 @@
+2012-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119821.
+        http://trac.webkit.org/changeset/119821
+        https://bugs.webkit.org/show_bug.cgi?id=88648
+
+        Seems to have regression on Mac (Requested by kinuko on
+        #webkit).
+
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        (WebCore::File::lastModifiedDate):
+        (WebCore::File::lastModifiedDateForBinding):
+        (WebCore):
+        (WebCore::File::captureSnapshot):
+        * fileapi/File.h:
+        (File):
+        * fileapi/File.idl:
+        * platform/FileMetadata.h:
+        (WebCore::FileMetadata::FileMetadata):
+        * platform/FileSystem.h:
+        * platform/chromium/support/WebHTTPBody.cpp:
+        (WebKit::WebHTTPBody::elementAt):
+        * platform/network/BlobData.cpp:
+        (WebCore):
+        * platform/network/BlobData.h:
+        (BlobDataItem):
+        (WebCore::BlobDataItem::BlobDataItem):
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::appendFile):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::advanceCurrentStream):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::blobIsOutOfDate):
+
 2012-06-08  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed, removing duplicated entries in gyp.
