@@ -49,8 +49,11 @@ void InsertionPoint::attach()
 {
     if (ShadowRoot* root = shadowRoot())
         root->owner()->ensureDistribution();
-    for (size_t i = 0; i < m_distribution.size(); ++i)
-        m_distribution.at(i)->attach();
+    for (size_t i = 0; i < m_distribution.size(); ++i) {
+        if (!m_distribution.at(i)->attached())
+            m_distribution.at(i)->attach();
+    }
+
     HTMLElement::attach();
 }
 
@@ -60,6 +63,7 @@ void InsertionPoint::detach()
         root->owner()->ensureDistribution();
     for (size_t i = 0; i < m_distribution.size(); ++i)
         m_distribution.at(i)->detach();
+
     HTMLElement::detach();
 }
 

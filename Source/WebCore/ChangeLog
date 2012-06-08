@@ -1,3 +1,19 @@
+2012-06-07  MORITA Hajime  <morrita@google.com>
+
+        A style in an older shadow subtree causes assert when composing with <shadow>
+        https://bugs.webkit.org/show_bug.cgi?id=88299
+
+        Reviewed by Dimitri Glazkov.
+
+        InsertionPoint::attach() assumes its distributed content not being attach()-ed.
+        But this assumption can break. This change added a guard for that.
+        This can happen for shadow boundaries in general. But ShadowRoot already handles that case.
+
+        Test: fast/dom/shadow/insertion-point-shadow-crash.html
+
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::attach):
+
 2012-06-07  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Show correct fullscreen button image (media controls)

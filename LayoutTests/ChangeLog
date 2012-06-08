@@ -1,3 +1,13 @@
+2012-06-07  MORITA Hajime  <morrita@google.com>
+
+        A style in an older shadow subtree causes assert when composing with <shadow>
+        https://bugs.webkit.org/show_bug.cgi?id=88299
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/insertion-point-shadow-crash-expected.txt: Added.
+        * fast/dom/shadow/insertion-point-shadow-crash.html: Added.
+
 2012-06-07  Joshua Lock  <joshua.lock@intel.com>
 
         [EFL][DRT] Normalize file:///tmp/LayoutTests in LayoutTestController::pathToLocalResource()
