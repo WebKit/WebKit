@@ -73,6 +73,7 @@ static const type& name() \
 #define ENABLE_MEMORY_SAMPLER 1
 #endif
 
+#import <CoreFoundation/CoreFoundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 
 #include <WebCore/EmptyProtocolDefinitions.h>

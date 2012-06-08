@@ -1,5 +1,19 @@
 2012-06-07  Andy Estes  <aestes@apple.com>
 
+        [WebKit2] Explicitly include CoreFoundation.h in config.h
+        https://bugs.webkit.org/show_bug.cgi?id=88619
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2 relies (probably unintentionally) on CoreFoundation.h being
+        included by CoreGraphics.h (via CGSession.h), but some versions of
+        CoreGraphics headers don't include CoreFoundation.h. WebKit2 should
+        include it explicitly in config.h.
+
+        * config.h: Import CoreFoundation.h.
+
+2012-06-07  Andy Estes  <aestes@apple.com>
+
         [WebKit2] Only include Cocoa.h on platforms that use AppKit
         https://bugs.webkit.org/show_bug.cgi?id=88517
 
