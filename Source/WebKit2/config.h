@@ -75,11 +75,6 @@ static const type& name() \
 
 #import <CoreGraphics/CoreGraphics.h>
 
-#ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
-#endif
-
-
 #include <WebCore/EmptyProtocolDefinitions.h>
 
 #elif defined(WIN32) || defined(_WIN32)

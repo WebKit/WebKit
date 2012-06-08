@@ -1,3 +1,18 @@
+2012-06-07  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Only include Cocoa.h on platforms that use AppKit
+        https://bugs.webkit.org/show_bug.cgi?id=88517
+
+        Reviewed by Sam Weinig.
+
+        * WebKit2Prefix.h: Include Platform.h to get USE() macros. GTK needs to
+        include autotoolsconfig.h before including Platform.h, so do that first
+        if building on GTK. Then, if compiling an Objective-C file, it's safe
+        to include Foundation.h, but not necessarily Cocoa.h; only include the
+        latter if USE(APPKIT) is true.
+        * config.h: There's no need to import Cocoa.h since this is already
+        imported in the prefix header.
+
 2012-06-07  Anders Carlsson  <andersca@apple.com>
 
         Search highlight does not scroll with the content of the page, and find overlay doesn't work, on large-enough window

@@ -22,10 +22,19 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
+
+#if defined (BUILDING_GTK__)
+#include "autotoolsconfig.h"
+#endif /* defined (BUILDING_GTK__) */
+
+#include <wtf/Platform.h>
 
 #ifdef __OBJC__
+#import <Foundation/Foundation.h>
+#if USE(APPKIT)
 #import <Cocoa/Cocoa.h>
+#endif
 #endif
 
 /* When C++ exceptions are disabled, the C++ library defines |try| and |catch|
