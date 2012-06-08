@@ -1,6 +1,6 @@
 2012-06-08  Ojan Vafai  <ojan@chromium.org>
 
-        First wave of Chromium rebaselines after skia rollback. See crbug.com/131289.
+        First wave of Chromium rebaselines after skia rollback. See crbug.com/131829.
 
         List of changed expected files excluded because it's too long.
 
