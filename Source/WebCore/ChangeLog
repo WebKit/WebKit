@@ -1,3 +1,10 @@
+2012-06-08  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the build after r119844.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::discardAllCompiledCode):
+
 2012-06-08  Mike West  <mkwst@chromium.org>
 
         Add COMPILE_ASSERT to StyledElement to ensure it doesn't accidentally grow larger.
