@@ -1,3 +1,11 @@
+2012-06-08  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] New virtual GPU canvas-toDataURL-webp.html results after r119787
+
+        Unreviewed test expectations update.
+
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/canvas-toDataURL-webp-expected.png: Added.
+
 2012-06-07  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Update canvas-toDataURL-webp.html results after r119787
