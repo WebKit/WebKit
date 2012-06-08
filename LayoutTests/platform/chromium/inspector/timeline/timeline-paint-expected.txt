@@ -13,6 +13,7 @@ Paint Properties:
     children : <object>
     endTime : <number>
     type : "Paint"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>

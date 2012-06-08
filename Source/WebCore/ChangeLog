@@ -1,3 +1,108 @@
+2012-06-08  Bryan McQuade  <bmcquade@google.com>
+
+        Web Inspector: Annotate timeline records with a frame identifier
+        https://bugs.webkit.org/show_bug.cgi?id=86406
+
+        Reviewed by Vsevolod Vlasov.
+
+        Tests: Updated existing layout tests.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::frameForScriptExecutionContext):
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didScheduleResourceRequestImpl):
+        (WebCore::InspectorInstrumentation::didInstallTimerImpl):
+        (WebCore::InspectorInstrumentation::didRemoveTimerImpl):
+        (WebCore::InspectorInstrumentation::willCallFunctionImpl):
+        (WebCore::InspectorInstrumentation::willChangeXHRReadyStateImpl):
+        (WebCore::InspectorInstrumentation::willDispatchEventImpl):
+        (WebCore::InspectorInstrumentation::willDispatchEventOnWindowImpl):
+        (WebCore::InspectorInstrumentation::willEvaluateScriptImpl):
+        (WebCore::InspectorInstrumentation::willFireTimerImpl):
+        (WebCore::InspectorInstrumentation::willLayoutImpl):
+        (WebCore::InspectorInstrumentation::willLoadXHRImpl):
+        (WebCore::InspectorInstrumentation::willPaintImpl):
+        (WebCore::InspectorInstrumentation::willRecalculateStyleImpl):
+        (WebCore::InspectorInstrumentation::willSendRequestImpl):
+        (WebCore::InspectorInstrumentation::willReceiveResourceDataImpl):
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponseImpl):
+        (WebCore::InspectorInstrumentation::didFinishLoadingImpl):
+        (WebCore::InspectorInstrumentation::didFailLoadingImpl):
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFiredImpl):
+        (WebCore::InspectorInstrumentation::loadEventFiredImpl):
+        (WebCore::InspectorInstrumentation::willWriteHTMLImpl):
+        (WebCore::InspectorInstrumentation::didRequestAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrameImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::didScheduleResourceRequest):
+        (WebCore::InspectorInstrumentation::didInstallTimer):
+        (WebCore::InspectorInstrumentation::didRemoveTimer):
+        (WebCore::InspectorInstrumentation::willCallFunction):
+        (WebCore::InspectorInstrumentation::willChangeXHRReadyState):
+        (WebCore::InspectorInstrumentation::willDispatchEvent):
+        (WebCore::InspectorInstrumentation::willEvaluateScript):
+        (WebCore::InspectorInstrumentation::willFireTimer):
+        (WebCore::InspectorInstrumentation::willLayout):
+        (WebCore::InspectorInstrumentation::willLoadXHR):
+        (WebCore::InspectorInstrumentation::willPaint):
+        (WebCore::InspectorInstrumentation::willRecalculateStyle):
+        (WebCore::InspectorInstrumentation::willReceiveResourceData):
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponse):
+        (WebCore::InspectorInstrumentation::willWriteHTML):
+        (WebCore::InspectorInstrumentation::didRequestAnimationFrame):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrame):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrame):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::pushGCEventRecords):
+        (WebCore::InspectorTimelineAgent::didBeginFrame):
+        (WebCore::InspectorTimelineAgent::willCallFunction):
+        (WebCore::InspectorTimelineAgent::willDispatchEvent):
+        (WebCore::InspectorTimelineAgent::willLayout):
+        (WebCore::InspectorTimelineAgent::willRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::willComposite):
+        (WebCore::InspectorTimelineAgent::willWriteHTML):
+        (WebCore::InspectorTimelineAgent::didInstallTimer):
+        (WebCore::InspectorTimelineAgent::didRemoveTimer):
+        (WebCore::InspectorTimelineAgent::willFireTimer):
+        (WebCore::InspectorTimelineAgent::willChangeXHRReadyState):
+        (WebCore::InspectorTimelineAgent::willLoadXHR):
+        (WebCore::InspectorTimelineAgent::willEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didScheduleResourceRequest):
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceData):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceResponse):
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        (WebCore::InspectorTimelineAgent::didTimeStamp):
+        (WebCore::InspectorTimelineAgent::didMarkDOMContentEvent):
+        (WebCore::InspectorTimelineAgent::didMarkLoadEvent):
+        (WebCore::InspectorTimelineAgent::didRequestAnimationFrame):
+        (WebCore::InspectorTimelineAgent::didCancelAnimationFrame):
+        (WebCore::InspectorTimelineAgent::willFireAnimationFrame):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::innerAddRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::appendRecord):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        (WebCore::InspectorTimelineAgent::pushCancelableRecord):
+        (WebCore::InspectorTimelineAgent::commitCancelableRecords):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore):
+        (WebCore::InspectorTimelineAgent::create):
+        (InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::TimelineRecordEntry::TimelineRecordEntry):
+        (TimelineRecordEntry):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.isEventDivider):
+        (WebInspector.TimelinePresentationModel.Record):
+
 2012-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119821.

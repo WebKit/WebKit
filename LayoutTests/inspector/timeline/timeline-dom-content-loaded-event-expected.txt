@@ -6,6 +6,7 @@ MarkDOMContent Properties:
     data : {
     }
     type : "MarkDOMContent"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>

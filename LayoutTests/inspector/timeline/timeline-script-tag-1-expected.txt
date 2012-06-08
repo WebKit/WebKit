@@ -16,6 +16,7 @@ EvaluateScript Properties:
     children : <object>
     endTime : <number>
     type : "EvaluateScript"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>

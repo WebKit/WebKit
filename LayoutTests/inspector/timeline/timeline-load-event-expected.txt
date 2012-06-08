@@ -7,6 +7,7 @@ MarkLoad Properties:
     data : {
     }
     type : "MarkLoad"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>

@@ -9,6 +9,7 @@ Layout Properties:
     children : <object>
     endTime : <number>
     type : "Layout"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>

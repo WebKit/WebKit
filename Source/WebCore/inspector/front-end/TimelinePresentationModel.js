@@ -107,7 +107,12 @@ WebInspector.TimelinePresentationModel.categoryForRecord = function(record)
 WebInspector.TimelinePresentationModel.isEventDivider = function(record)
 {
     var recordTypes = WebInspector.TimelineModel.RecordType;
-    return record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad || record.type === recordTypes.TimeStamp;
+    if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad || record.type === recordTypes.TimeStamp) {
+        var mainFrame = WebInspector.resourceTreeModel.mainFrame;
+        if (mainFrame && mainFrame.id === record.frameId)
+            return true;
+    }
+    return false;
 }
 
 WebInspector.TimelinePresentationModel.forAllRecords = function(recordsArray, callback)
@@ -357,6 +362,7 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
     this.startTime = WebInspector.TimelineModel.startTimeInSeconds(record);
     this.data = record.data;
     this.type = record.type;
+    this.frameId = record.frameId;
     this.endTime = WebInspector.TimelineModel.endTimeInSeconds(record);
     this._selfTime = this.endTime - this.startTime;
     this._lastChildEndTime = this.endTime;

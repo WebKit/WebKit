@@ -280,36 +280,36 @@ private:
     static bool forcePseudoStateImpl(InstrumentingAgents*, Element*, CSSSelector::PseudoType);
 
     static void willSendXMLHttpRequestImpl(InstrumentingAgents*, const String& url);
-    static void didScheduleResourceRequestImpl(InstrumentingAgents*, const String& url);
-    static void didInstallTimerImpl(InstrumentingAgents*, int timerId, int timeout, bool singleShot);
-    static void didRemoveTimerImpl(InstrumentingAgents*, int timerId);
+    static void didScheduleResourceRequestImpl(InstrumentingAgents*, const String& url, Frame*);
+    static void didInstallTimerImpl(InstrumentingAgents*, int timerId, int timeout, bool singleShot, ScriptExecutionContext*);
+    static void didRemoveTimerImpl(InstrumentingAgents*, int timerId, ScriptExecutionContext*);
 
-    static InspectorInstrumentationCookie willCallFunctionImpl(InstrumentingAgents*, const String& scriptName, int scriptLine);
+    static InspectorInstrumentationCookie willCallFunctionImpl(InstrumentingAgents*, const String& scriptName, int scriptLine, ScriptExecutionContext*);
     static void didCallFunctionImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willChangeXHRReadyStateImpl(InstrumentingAgents*, XMLHttpRequest*);
+    static InspectorInstrumentationCookie willChangeXHRReadyStateImpl(InstrumentingAgents*, XMLHttpRequest*, ScriptExecutionContext*);
     static void didChangeXHRReadyStateImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willDispatchEventImpl(InstrumentingAgents*, const Event&, DOMWindow*, Node*, const Vector<EventContext>& ancestors);
+    static InspectorInstrumentationCookie willDispatchEventImpl(InstrumentingAgents*, const Event&, DOMWindow*, Node*, const Vector<EventContext>& ancestors, Document*);
     static InspectorInstrumentationCookie willHandleEventImpl(InstrumentingAgents*, Event*);
     static void didHandleEventImpl(const InspectorInstrumentationCookie&);
     static void didDispatchEventImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEventOnWindowImpl(InstrumentingAgents*, const Event&, DOMWindow*);
     static void didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willEvaluateScriptImpl(InstrumentingAgents*, const String& url, int lineNumber);
+    static InspectorInstrumentationCookie willEvaluateScriptImpl(InstrumentingAgents*, const String& url, int lineNumber, Frame*);
     static void didEvaluateScriptImpl(const InspectorInstrumentationCookie&);
     static void didCreateIsolatedContextImpl(InstrumentingAgents*, Frame*, ScriptState*, SecurityOrigin*);
-    static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents*, int timerId);
+    static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents*, int timerId, ScriptExecutionContext*);
     static void didFireTimerImpl(const InspectorInstrumentationCookie&);
     static void didBeginFrameImpl(InstrumentingAgents*);
     static void didCancelFrameImpl(InstrumentingAgents*);
-    static InspectorInstrumentationCookie willLayoutImpl(InstrumentingAgents*);
+    static InspectorInstrumentationCookie willLayoutImpl(InstrumentingAgents*, Frame*);
     static void didLayoutImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willLoadXHRImpl(InstrumentingAgents*, XMLHttpRequest*);
+    static InspectorInstrumentationCookie willLoadXHRImpl(InstrumentingAgents*, XMLHttpRequest*, ScriptExecutionContext*);
     static void didLoadXHRImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willPaintImpl(InstrumentingAgents*, GraphicsContext*, const LayoutRect&);
+    static InspectorInstrumentationCookie willPaintImpl(InstrumentingAgents*, GraphicsContext*, const LayoutRect&, Frame*);
     static void didPaintImpl(const InspectorInstrumentationCookie&);
     static void willCompositeImpl(InstrumentingAgents*);
     static void didCompositeImpl(InstrumentingAgents*);
-    static InspectorInstrumentationCookie willRecalculateStyleImpl(InstrumentingAgents*);
+    static InspectorInstrumentationCookie willRecalculateStyleImpl(InstrumentingAgents*, Frame*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculationImpl(InstrumentingAgents*, Document*);
     static InspectorInstrumentationCookie willMatchRuleImpl(InstrumentingAgents*, const StyleRule*);
@@ -326,9 +326,9 @@ private:
     static void continueAfterPingLoaderImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
     static void markResourceAsCachedImpl(InstrumentingAgents*, unsigned long identifier);
     static void didLoadResourceFromMemoryCacheImpl(InstrumentingAgents*, DocumentLoader*, CachedResource*);
-    static InspectorInstrumentationCookie willReceiveResourceDataImpl(InstrumentingAgents*, unsigned long identifier);
+    static InspectorInstrumentationCookie willReceiveResourceDataImpl(InstrumentingAgents*, unsigned long identifier, Frame*);
     static void didReceiveResourceDataImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willReceiveResourceResponseImpl(InstrumentingAgents*, unsigned long identifier, const ResourceResponse&);
+    static InspectorInstrumentationCookie willReceiveResourceResponseImpl(InstrumentingAgents*, unsigned long identifier, const ResourceResponse&, Frame*);
     static void didReceiveResourceResponseImpl(const InspectorInstrumentationCookie&, unsigned long identifier, DocumentLoader*, const ResourceResponse&);
     static void didReceiveResourceResponseButCanceledImpl(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     static void continueAfterXFrameOptionsDeniedImpl(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
@@ -349,7 +349,7 @@ private:
     static void didCommitLoadImpl(InstrumentingAgents*, Page*, DocumentLoader*);
     static void loaderDetachedFromFrameImpl(InstrumentingAgents*, DocumentLoader*);
 
-    static InspectorInstrumentationCookie willWriteHTMLImpl(InstrumentingAgents*, unsigned int length, unsigned int startLine);
+    static InspectorInstrumentationCookie willWriteHTMLImpl(InstrumentingAgents*, unsigned int length, unsigned int startLine, Frame*);
     static void didWriteHTMLImpl(const InspectorInstrumentationCookie&, unsigned int endLine);
 
     static void addMessageToConsoleImpl(InstrumentingAgents*, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
@@ -359,9 +359,9 @@ private:
     static void stopConsoleTimingImpl(InstrumentingAgents*, const String& title, PassRefPtr<ScriptCallStack>);
     static void consoleTimeStampImpl(InstrumentingAgents*, PassRefPtr<ScriptArguments>);
 
-    static void didRequestAnimationFrameImpl(InstrumentingAgents*, int callbackId);
-    static void didCancelAnimationFrameImpl(InstrumentingAgents*, int callbackId);
-    static InspectorInstrumentationCookie willFireAnimationFrameImpl(InstrumentingAgents*, int callbackId);
+    static void didRequestAnimationFrameImpl(InstrumentingAgents*, int callbackId, Frame*);
+    static void didCancelAnimationFrameImpl(InstrumentingAgents*, int callbackId, Frame*);
+    static InspectorInstrumentationCookie willFireAnimationFrameImpl(InstrumentingAgents*, int callbackId, Frame*);
     static void didFireAnimationFrameImpl(const InspectorInstrumentationCookie&);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -587,7 +587,7 @@ inline void InspectorInstrumentation::didScheduleResourceRequest(Document* docum
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        didScheduleResourceRequestImpl(instrumentingAgents, url);
+        didScheduleResourceRequestImpl(instrumentingAgents, url, document->frame());
 #endif
 }
 
@@ -596,7 +596,7 @@ inline void InspectorInstrumentation::didInstallTimer(ScriptExecutionContext* co
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        didInstallTimerImpl(instrumentingAgents, timerId, timeout, singleShot);
+        didInstallTimerImpl(instrumentingAgents, timerId, timeout, singleShot, context);
 #endif
 }
 
@@ -605,7 +605,7 @@ inline void InspectorInstrumentation::didRemoveTimer(ScriptExecutionContext* con
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        didRemoveTimerImpl(instrumentingAgents, timerId);
+        didRemoveTimerImpl(instrumentingAgents, timerId, context);
 #endif
 }
 
@@ -614,7 +614,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willCallFunction
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        return willCallFunctionImpl(instrumentingAgents, scriptName, scriptLine);
+        return willCallFunctionImpl(instrumentingAgents, scriptName, scriptLine, context);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -634,7 +634,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willChangeXHRRea
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        return willChangeXHRReadyStateImpl(instrumentingAgents, request);
+        return willChangeXHRReadyStateImpl(instrumentingAgents, request, context);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -653,7 +653,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEven
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        return willDispatchEventImpl(instrumentingAgents, event, window, node, ancestors);
+        return willDispatchEventImpl(instrumentingAgents, event, window, node, ancestors, document);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -710,7 +710,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willEvaluateScri
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        return willEvaluateScriptImpl(instrumentingAgents, url, lineNumber);
+        return willEvaluateScriptImpl(instrumentingAgents, url, lineNumber, frame);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -738,7 +738,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willFireTimer(Sc
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        return willFireTimerImpl(instrumentingAgents, timerId);
+        return willFireTimerImpl(instrumentingAgents, timerId, context);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -775,7 +775,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willLayout(Frame
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        return willLayoutImpl(instrumentingAgents);
+        return willLayoutImpl(instrumentingAgents, frame);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -794,7 +794,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willLoadXHR(Scri
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        return willLoadXHRImpl(instrumentingAgents, request);
+        return willLoadXHRImpl(instrumentingAgents, request, context);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -813,7 +813,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willPaint(Frame*
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        return willPaintImpl(instrumentingAgents, context, rect);
+        return willPaintImpl(instrumentingAgents, context, rect, frame);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -850,7 +850,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willRecalculateS
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        return willRecalculateStyleImpl(instrumentingAgents);
+        return willRecalculateStyleImpl(instrumentingAgents, document->frame());
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -997,7 +997,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResou
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        return willReceiveResourceDataImpl(instrumentingAgents, identifier);
+        return willReceiveResourceDataImpl(instrumentingAgents, identifier, frame);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -1015,7 +1015,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResou
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        return willReceiveResourceResponseImpl(instrumentingAgents, identifier, response);
+        return willReceiveResourceResponseImpl(instrumentingAgents, identifier, response, frame);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -1174,7 +1174,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willWriteHTML(Do
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        return willWriteHTMLImpl(instrumentingAgents, length, startLine);
+        return willWriteHTMLImpl(instrumentingAgents, length, startLine, document->frame());
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -1330,7 +1330,7 @@ inline void InspectorInstrumentation::didRequestAnimationFrame(Document* documen
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        didRequestAnimationFrameImpl(instrumentingAgents, callbackId);
+        didRequestAnimationFrameImpl(instrumentingAgents, callbackId, document->frame());
 #endif
 }
 
@@ -1338,7 +1338,7 @@ inline void InspectorInstrumentation::didCancelAnimationFrame(Document* document
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        didCancelAnimationFrameImpl(instrumentingAgents, callbackId);
+        didCancelAnimationFrameImpl(instrumentingAgents, callbackId, document->frame());
 #endif
 }
 
@@ -1346,7 +1346,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willFireAnimatio
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        return willFireAnimationFrameImpl(instrumentingAgents, callbackId);
+        return willFireAnimationFrameImpl(instrumentingAgents, callbackId, document->frame());
 #endif
     return InspectorInstrumentationCookie();
 }

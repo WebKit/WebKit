@@ -8,6 +8,7 @@ RequestAnimationFrame Properties:
         id : <number>
     }
     type : "RequestAnimationFrame"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>
@@ -21,6 +22,7 @@ FireAnimationFrame Properties:
     children : <object>
     endTime : <number>
     type : "FireAnimationFrame"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>
@@ -33,6 +35,7 @@ CancelAnimationFrame Properties:
         id : <number>
     }
     type : "CancelAnimationFrame"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>

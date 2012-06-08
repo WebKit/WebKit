@@ -10,6 +10,7 @@ EventDispatch Properties:
     children : <object>
     endTime : <number>
     type : "EventDispatch"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>

@@ -10,6 +10,7 @@ FunctionCall Properties:
     children : <object>
     endTime : <number>
     type : "FunctionCall"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>
@@ -24,6 +25,7 @@ FunctionCall Properties:
     children : <object>
     endTime : <number>
     type : "FunctionCall"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>

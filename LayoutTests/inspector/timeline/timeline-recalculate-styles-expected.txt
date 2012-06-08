@@ -9,6 +9,7 @@ RecalculateStyles Properties:
     children : <object>
     endTime : <number>
     type : "RecalculateStyles"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>

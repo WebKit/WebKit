@@ -13,6 +13,7 @@ ParseHTML Properties:
     children : <object>
     endTime : <number>
     type : "ParseHTML"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>
@@ -29,6 +30,7 @@ ParseHTML Properties:
     children : <object>
     endTime : <number>
     type : "ParseHTML"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>

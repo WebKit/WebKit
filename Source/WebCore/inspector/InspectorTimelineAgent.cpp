@@ -35,10 +35,12 @@
 #include "InspectorTimelineAgent.h"
 
 #include "Event.h"
+#include "Frame.h"
 #include "IdentifiersFactory.h"
 #include "InspectorClient.h"
 #include "InspectorCounters.h"
 #include "InspectorFrontend.h"
+#include "InspectorPageAgent.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
@@ -106,7 +108,7 @@ void InspectorTimelineAgent::pushGCEventRecords()
         RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestampFromMicroseconds(i->startTime), m_maxCallStackDepth);
         record->setObject("data", TimelineRecordFactory::createGCEventData(i->collectedBytes));
         record->setNumber("endTime", timestampFromMicroseconds(i->endTime));
-        addRecordToTimeline(record.release(), TimelineRecordType::GCEvent);
+        addRecordToTimeline(record.release(), TimelineRecordType::GCEvent, String());
     }
 }
 
@@ -182,7 +184,7 @@ void InspectorTimelineAgent::supportsFrameInstrumentation(ErrorString*, bool* re
 
 void InspectorTimelineAgent::didBeginFrame()
 {
-    pushCancelableRecord(InspectorObject::create(), TimelineRecordType::BeginFrame);
+    pushCancelableRecord(InspectorObject::create(), TimelineRecordType::BeginFrame, 0);
 }
 
 void InspectorTimelineAgent::didCancelFrame()
@@ -190,9 +192,9 @@ void InspectorTimelineAgent::didCancelFrame()
     cancelRecord(TimelineRecordType::BeginFrame);
 }
 
-void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine)
+void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine, Frame* frame)
 {
-    pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(scriptName, scriptLine), TimelineRecordType::FunctionCall, true);
+    pushCurrentRecord(TimelineRecordFactory::createFunctionCallData(scriptName, scriptLine), TimelineRecordType::FunctionCall, true, frame);
 }
 
 void InspectorTimelineAgent::didCallFunction()
@@ -200,9 +202,9 @@ void InspectorTimelineAgent::didCallFunction()
     didCompleteCurrentRecord(TimelineRecordType::FunctionCall);
 }
 
-void InspectorTimelineAgent::willDispatchEvent(const Event& event)
+void InspectorTimelineAgent::willDispatchEvent(const Event& event, Frame* frame)
 {
-    pushCurrentRecord(TimelineRecordFactory::createEventDispatchData(event), TimelineRecordType::EventDispatch, false);
+    pushCurrentRecord(TimelineRecordFactory::createEventDispatchData(event), TimelineRecordType::EventDispatch, false, frame);
 }
 
 void InspectorTimelineAgent::didDispatchEvent()
@@ -210,9 +212,9 @@ void InspectorTimelineAgent::didDispatchEvent()
     didCompleteCurrentRecord(TimelineRecordType::EventDispatch);
 }
 
-void InspectorTimelineAgent::willLayout()
+void InspectorTimelineAgent::willLayout(Frame* frame)
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Layout, true);
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Layout, true, frame);
 }
 
 void InspectorTimelineAgent::didLayout()
@@ -220,9 +222,9 @@ void InspectorTimelineAgent::didLayout()
     didCompleteCurrentRecord(TimelineRecordType::Layout);
 }
 
-void InspectorTimelineAgent::willRecalculateStyle()
+void InspectorTimelineAgent::willRecalculateStyle(Frame* frame)
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RecalculateStyles, true);
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RecalculateStyles, true, frame);
 }
 
 void InspectorTimelineAgent::didRecalculateStyle()
@@ -230,9 +232,9 @@ void InspectorTimelineAgent::didRecalculateStyle()
     didCompleteCurrentRecord(TimelineRecordType::RecalculateStyles);
 }
 
-void InspectorTimelineAgent::willPaint(const LayoutRect& rect)
+void InspectorTimelineAgent::willPaint(const LayoutRect& rect, Frame* frame)
 {
-    pushCurrentRecord(TimelineRecordFactory::createPaintData(rect), TimelineRecordType::Paint, true);
+    pushCurrentRecord(TimelineRecordFactory::createPaintData(rect), TimelineRecordType::Paint, true, frame);
 }
 
 void InspectorTimelineAgent::didPaint()
@@ -242,7 +244,7 @@ void InspectorTimelineAgent::didPaint()
 
 void InspectorTimelineAgent::willComposite()
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::CompositeLayers, false);
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::CompositeLayers, false, 0);
 }
 
 void InspectorTimelineAgent::didComposite()
@@ -250,9 +252,9 @@ void InspectorTimelineAgent::didComposite()
     didCompleteCurrentRecord(TimelineRecordType::CompositeLayers);
 }
 
-void InspectorTimelineAgent::willWriteHTML(unsigned int length, unsigned int startLine)
+void InspectorTimelineAgent::willWriteHTML(unsigned int length, unsigned int startLine, Frame* frame)
 {
-    pushCurrentRecord(TimelineRecordFactory::createParseHTMLData(length, startLine), TimelineRecordType::ParseHTML, true);
+    pushCurrentRecord(TimelineRecordFactory::createParseHTMLData(length, startLine), TimelineRecordType::ParseHTML, true, frame);
 }
 
 void InspectorTimelineAgent::didWriteHTML(unsigned int endLine)
@@ -264,19 +266,19 @@ void InspectorTimelineAgent::didWriteHTML(unsigned int endLine)
     }
 }
 
-void InspectorTimelineAgent::didInstallTimer(int timerId, int timeout, bool singleShot)
+void InspectorTimelineAgent::didInstallTimer(int timerId, int timeout, bool singleShot, Frame* frame)
 {
-    appendRecord(TimelineRecordFactory::createTimerInstallData(timerId, timeout, singleShot), TimelineRecordType::TimerInstall, true);
+    appendRecord(TimelineRecordFactory::createTimerInstallData(timerId, timeout, singleShot), TimelineRecordType::TimerInstall, true, frame);
 }
 
-void InspectorTimelineAgent::didRemoveTimer(int timerId)
+void InspectorTimelineAgent::didRemoveTimer(int timerId, Frame* frame)
 {
-    appendRecord(TimelineRecordFactory::createGenericTimerData(timerId), TimelineRecordType::TimerRemove, true);
+    appendRecord(TimelineRecordFactory::createGenericTimerData(timerId), TimelineRecordType::TimerRemove, true, frame);
 }
 
-void InspectorTimelineAgent::willFireTimer(int timerId)
+void InspectorTimelineAgent::willFireTimer(int timerId, Frame* frame)
 {
-    pushCurrentRecord(TimelineRecordFactory::createGenericTimerData(timerId), TimelineRecordType::TimerFire, false);
+    pushCurrentRecord(TimelineRecordFactory::createGenericTimerData(timerId), TimelineRecordType::TimerFire, false, frame);
 }
 
 void InspectorTimelineAgent::didFireTimer()
@@ -284,9 +286,9 @@ void InspectorTimelineAgent::didFireTimer()
     didCompleteCurrentRecord(TimelineRecordType::TimerFire);
 }
 
-void InspectorTimelineAgent::willChangeXHRReadyState(const String& url, int readyState)
+void InspectorTimelineAgent::willChangeXHRReadyState(const String& url, int readyState, Frame* frame)
 {
-    pushCurrentRecord(TimelineRecordFactory::createXHRReadyStateChangeData(url, readyState), TimelineRecordType::XHRReadyStateChange, false);
+    pushCurrentRecord(TimelineRecordFactory::createXHRReadyStateChangeData(url, readyState), TimelineRecordType::XHRReadyStateChange, false, frame);
 }
 
 void InspectorTimelineAgent::didChangeXHRReadyState()
@@ -294,9 +296,9 @@ void InspectorTimelineAgent::didChangeXHRReadyState()
     didCompleteCurrentRecord(TimelineRecordType::XHRReadyStateChange);
 }
 
-void InspectorTimelineAgent::willLoadXHR(const String& url) 
+void InspectorTimelineAgent::willLoadXHR(const String& url, Frame* frame)
 {
-    pushCurrentRecord(TimelineRecordFactory::createXHRLoadData(url), TimelineRecordType::XHRLoad, true);
+    pushCurrentRecord(TimelineRecordFactory::createXHRLoadData(url), TimelineRecordType::XHRLoad, true, frame);
 }
 
 void InspectorTimelineAgent::didLoadXHR()
@@ -304,9 +306,9 @@ void InspectorTimelineAgent::didLoadXHR()
     didCompleteCurrentRecord(TimelineRecordType::XHRLoad);
 }
 
-void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumber)
+void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumber, Frame* frame)
 {
-    pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptData(url, lineNumber), TimelineRecordType::EvaluateScript, true);
+    pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptData(url, lineNumber), TimelineRecordType::EvaluateScript, true, frame);
 }
     
 void InspectorTimelineAgent::didEvaluateScript()
@@ -314,28 +316,32 @@ void InspectorTimelineAgent::didEvaluateScript()
     didCompleteCurrentRecord(TimelineRecordType::EvaluateScript);
 }
 
-void InspectorTimelineAgent::didScheduleResourceRequest(const String& url)
+void InspectorTimelineAgent::didScheduleResourceRequest(const String& url, Frame* frame)
 {
-    appendRecord(TimelineRecordFactory::createScheduleResourceRequestData(url), TimelineRecordType::ScheduleResourceRequest, true);
+    appendRecord(TimelineRecordFactory::createScheduleResourceRequestData(url), TimelineRecordType::ScheduleResourceRequest, true, frame);
 }
 
-void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, const ResourceRequest& request)
+void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, const ResourceRequest& request, Frame* frame)
 {
     pushGCEventRecords();
     RefPtr<InspectorObject> recordRaw = TimelineRecordFactory::createGenericRecord(timestamp(), m_maxCallStackDepth);
     String requestId = IdentifiersFactory::requestId(identifier);
     recordRaw->setObject("data", TimelineRecordFactory::createResourceSendRequestData(requestId, request));
     recordRaw->setString("type", TimelineRecordType::ResourceSendRequest);
+    if (frame && m_pageAgent) {
+        String frameId(m_pageAgent->frameId(frame));
+        recordRaw->setString("frameId", frameId);
+    }
     setHeapSizeStatistic(recordRaw.get());
     // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
     RefPtr<TypeBuilder::Timeline::TimelineEvent> record = TypeBuilder::Timeline::TimelineEvent::runtimeCast(recordRaw.release());
     m_frontend->eventRecorded(record.release());
 }
 
-void InspectorTimelineAgent::willReceiveResourceData(unsigned long identifier)
+void InspectorTimelineAgent::willReceiveResourceData(unsigned long identifier, Frame* frame)
 {
     String requestId = IdentifiersFactory::requestId(identifier);
-    pushCurrentRecord(TimelineRecordFactory::createReceiveResourceData(requestId), TimelineRecordType::ResourceReceivedData, false);
+    pushCurrentRecord(TimelineRecordFactory::createReceiveResourceData(requestId), TimelineRecordType::ResourceReceivedData, false, frame);
 }
 
 void InspectorTimelineAgent::didReceiveResourceData()
@@ -343,10 +349,10 @@ void InspectorTimelineAgent::didReceiveResourceData()
     didCompleteCurrentRecord(TimelineRecordType::ResourceReceivedData);
 }
     
-void InspectorTimelineAgent::willReceiveResourceResponse(unsigned long identifier, const ResourceResponse& response)
+void InspectorTimelineAgent::willReceiveResourceResponse(unsigned long identifier, const ResourceResponse& response, Frame* frame)
 {
     String requestId = IdentifiersFactory::requestId(identifier);
-    pushCurrentRecord(TimelineRecordFactory::createResourceReceiveResponseData(requestId, response), TimelineRecordType::ResourceReceiveResponse, false);
+    pushCurrentRecord(TimelineRecordFactory::createResourceReceiveResponseData(requestId, response), TimelineRecordType::ResourceReceiveResponse, false, frame);
 }
 
 void InspectorTimelineAgent::didReceiveResourceResponse()
@@ -354,24 +360,24 @@ void InspectorTimelineAgent::didReceiveResourceResponse()
     didCompleteCurrentRecord(TimelineRecordType::ResourceReceiveResponse);
 }
 
-void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, bool didFail, double finishTime)
+void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, bool didFail, double finishTime, Frame* frame)
 {
-    appendRecord(TimelineRecordFactory::createResourceFinishData(IdentifiersFactory::requestId(identifier), didFail, finishTime * 1000), TimelineRecordType::ResourceFinish, false);
+    appendRecord(TimelineRecordFactory::createResourceFinishData(IdentifiersFactory::requestId(identifier), didFail, finishTime * 1000), TimelineRecordType::ResourceFinish, false, frame);
 }
 
 void InspectorTimelineAgent::didTimeStamp(const String& message)
 {
-    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeStamp, true);
+    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeStamp, true, 0);
 }
 
-void InspectorTimelineAgent::didMarkDOMContentEvent()
+void InspectorTimelineAgent::didMarkDOMContentEvent(Frame* frame)
 {
-    appendRecord(InspectorObject::create(), TimelineRecordType::MarkDOMContent, false);
+    appendRecord(InspectorObject::create(), TimelineRecordType::MarkDOMContent, false, frame);
 }
 
-void InspectorTimelineAgent::didMarkLoadEvent()
+void InspectorTimelineAgent::didMarkLoadEvent(Frame* frame)
 {
-    appendRecord(InspectorObject::create(), TimelineRecordType::MarkLoad, false);
+    appendRecord(InspectorObject::create(), TimelineRecordType::MarkLoad, false, frame);
 }
 
 void InspectorTimelineAgent::didCommitLoad()
@@ -379,19 +385,19 @@ void InspectorTimelineAgent::didCommitLoad()
     clearRecordStack();
 }
 
-void InspectorTimelineAgent::didRequestAnimationFrame(int callbackId)
+void InspectorTimelineAgent::didRequestAnimationFrame(int callbackId, Frame* frame)
 {
-    appendRecord(TimelineRecordFactory::createAnimationFrameData(callbackId), TimelineRecordType::RequestAnimationFrame, true);
+    appendRecord(TimelineRecordFactory::createAnimationFrameData(callbackId), TimelineRecordType::RequestAnimationFrame, true, frame);
 }
 
-void InspectorTimelineAgent::didCancelAnimationFrame(int callbackId)
+void InspectorTimelineAgent::didCancelAnimationFrame(int callbackId, Frame* frame)
 {
-    appendRecord(TimelineRecordFactory::createAnimationFrameData(callbackId), TimelineRecordType::CancelAnimationFrame, true);
+    appendRecord(TimelineRecordFactory::createAnimationFrameData(callbackId), TimelineRecordType::CancelAnimationFrame, true, frame);
 }
 
-void InspectorTimelineAgent::willFireAnimationFrame(int callbackId)
+void InspectorTimelineAgent::willFireAnimationFrame(int callbackId, Frame* frame)
 {
-    pushCurrentRecord(TimelineRecordFactory::createAnimationFrameData(callbackId), TimelineRecordType::FireAnimationFrame, false);
+    pushCurrentRecord(TimelineRecordFactory::createAnimationFrameData(callbackId), TimelineRecordType::FireAnimationFrame, false, frame);
 }
 
 void InspectorTimelineAgent::didFireAnimationFrame()
@@ -399,16 +405,18 @@ void InspectorTimelineAgent::didFireAnimationFrame()
     didCompleteCurrentRecord(TimelineRecordType::FireAnimationFrame);
 }
 
-void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> record, const String& type)
+void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> record, const String& type, const String& frameId)
 {
     commitCancelableRecords();
-    innerAddRecordToTimeline(record, type);
+    innerAddRecordToTimeline(record, type, frameId);
 }
 
-void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, const String& type)
+void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, const String& type, const String& frameId)
 {
     RefPtr<InspectorObject> record(prpRecord);
     record->setString("type", type);
+    if (!frameId.isEmpty())
+        record->setString("frameId", frameId);
     setHeapSizeStatistic(record.get());
     if (m_recordStack.isEmpty()) {
         // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
@@ -450,12 +458,13 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
         entry.record->setObject("data", entry.data);
         entry.record->setArray("children", entry.children);
         entry.record->setNumber("endTime", timestamp());
-        addRecordToTimeline(entry.record, type);
+        addRecordToTimeline(entry.record, type, entry.frameId);
     }
 }
 
-InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorType type, FrameInstrumentationSupport frameInstrumentationSupport)
+InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state, InspectorType type, FrameInstrumentationSupport frameInstrumentationSupport)
     : InspectorBaseAgent<InspectorTimelineAgent>("Timeline", instrumentingAgents, state)
+    , m_pageAgent(pageAgent)
     , m_frontend(0)
     , m_timestampOffset(0)
     , m_id(1)
@@ -465,27 +474,36 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
 {
 }
 
-void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack)
+void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame* frame)
 {
     pushGCEventRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
     record->setObject("data", data);
     record->setString("type", type);
-    addRecordToTimeline(record.release(), type);
+    String frameId;
+    if (frame && m_pageAgent)
+        frameId = m_pageAgent->frameId(frame);
+    addRecordToTimeline(record.release(), type, frameId);
 }
 
-void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack)
+void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame* frame)
 {
     pushGCEventRecords();
     commitCancelableRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
-    m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type));
+    String frameId;
+    if (frame && m_pageAgent)
+        frameId = m_pageAgent->frameId(frame);
+    m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type, frameId));
 }
 
-void InspectorTimelineAgent::pushCancelableRecord(PassRefPtr<InspectorObject> data, const String& type)
+void InspectorTimelineAgent::pushCancelableRecord(PassRefPtr<InspectorObject> data, const String& type, Frame* frame)
 {
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), 0);
-    m_recordStack.append(TimelineRecordEntry(record.release(), data, 0, type, true));
+    String frameId;
+    if (frame && m_pageAgent)
+        frameId = m_pageAgent->frameId(frame);
+    m_recordStack.append(TimelineRecordEntry(record.release(), data, 0, type, frameId, true));
 }
 
 void InspectorTimelineAgent::commitCancelableRecords()
@@ -502,7 +520,7 @@ void InspectorTimelineAgent::commitCancelableRecords()
         TimelineRecordEntry entry = cancelableRecords.last();
         cancelableRecords.removeLast();
         entry.record->setObject("data", entry.data);
-        innerAddRecordToTimeline(entry.record.release(), entry.type);
+        innerAddRecordToTimeline(entry.record.release(), entry.type, entry.frameId);
     }
 }
 

@@ -18,7 +18,8 @@ InspectorTest.timelinePropertyFormatters = {
     counters: "formatAsTypeName",
     timerId: "formatAsTypeName",
     scriptLine: "formatAsTypeName",
-    lineNumber: "formatAsTypeName"
+    lineNumber: "formatAsTypeName",
+    frameId: "formatAsTypeName"
 };
 
 InspectorTest.startTimeline = function(callback)

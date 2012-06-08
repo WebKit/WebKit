@@ -13,6 +13,7 @@ ResourceSendRequest Properties:
         requestMethod : "GET"
     }
     type : "ResourceSendRequest"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>
@@ -29,6 +30,7 @@ ResourceReceiveResponse Properties:
     children : <object>
     endTime : <number>
     type : "ResourceReceiveResponse"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>
@@ -42,6 +44,7 @@ ResourceFinish Properties:
         didFail : false
     }
     type : "ResourceFinish"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>
