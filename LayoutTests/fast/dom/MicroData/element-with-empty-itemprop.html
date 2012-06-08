@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This test ensures that an element with empty itemprop="" doesn't get listed in the .properties list.</p>
+<div itemscope id="microdata-item">
+<div itemprop="foo"></div>
+<div itemprop=""></div>
+</div>
+<div id="console"></div>
+<script>
+var item = document.getElementById('microdata-item');
+shouldBe("item.properties.length", "1");
+shouldBe("item.children[1].itemProp.add('buz'); item.properties.length", "2");
+shouldBe("item.children[1].itemProp.remove('buz'); item.properties.length", "1");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

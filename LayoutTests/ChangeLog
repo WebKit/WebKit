@@ -1,3 +1,13 @@
+2012-06-08  Arko Saha  <arko@motorola.com>
+
+        Microdata: An element with an empty itemprop='' should not get listed in the .properties list.
+        https://bugs.webkit.org/show_bug.cgi?id=88235
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/MicroData/element-with-empty-itemprop-expected.txt: Added.
+        * fast/dom/MicroData/element-with-empty-itemprop.html: Added.
+
 2012-06-08  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Unskip passing sputnik tests

@@ -1,0 +1,9 @@
+This test ensures that an element with empty itemprop="" doesn't get listed in the .properties list.
+
+PASS item.properties.length is 1
+PASS item.children[1].itemProp.add('buz'); item.properties.length is 2
+PASS item.children[1].itemProp.remove('buz'); item.properties.length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

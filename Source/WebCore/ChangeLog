@@ -1,3 +1,18 @@
+2012-06-08  Arko Saha  <arko@motorola.com>
+
+        Microdata: An element with an empty itemprop='' should not get listed in the .properties list.
+        https://bugs.webkit.org/show_bug.cgi?id=88235
+
+        Reviewed by Ryosuke Niwa.
+
+        As per the specification change http://html5.org/r/6854, an element should be listed in .properties
+        if the elelement has an attribute itemprop specified and the element has one or more property names.
+
+        Test: fast/dom/MicroData/element-with-empty-itemprop.html
+
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::itemAfter):
+
 2012-06-07  Kinuko Yasuda  <kinuko@chromium.org>
 
         File::lastModifiedDate should use NaN or separate boolean flag for null Date value

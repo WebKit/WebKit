@@ -128,7 +128,7 @@ Element* HTMLPropertiesCollection::itemAfter(Element* base, Element* previous) c
         if (!current->isHTMLElement())
             continue;
         HTMLElement* element = toHTMLElement(current);
-        if (element->fastHasAttribute(itempropAttr)) {
+        if (element->fastHasAttribute(itempropAttr) && element->itemProp()->length()) {
             return element;
         }
     }
