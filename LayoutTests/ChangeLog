@@ -1,3 +1,15 @@
+2012-06-08  Dan Bernstein  <mitz@apple.com>
+
+        Fixed fast/files/read-blob-async.html failing after r119791.
+
+        * fast/files/resources/read-blob-test-cases.js:
+        (testReadingSingleArrayBufferBlob):
+        (testReadingSlicedArrayBufferBlob):
+        (testReadingMultipleArrayBufferBlob):
+        (testReadingHybridBlob):
+        (testReadingSlicedHybridBlob):
+        (testReadingTripleSlicedHybridBlob):
+
 2012-06-08  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] New virtual GPU canvas-toDataURL-webp.html results after r119787
