@@ -1365,8 +1365,8 @@ AM_CONDITIONAL([USE_TEXTURE_MAPPER_GL], [test "$enable_accelerated_compositing" 
 AM_CONDITIONAL([USE_CLUTTER], [test "$with_acceleration_backend" = "clutter"])
 
 # These are the same now, but they will soon be separate.
-AM_CONDITIONAL([USE_GLX], [test "$enable_opengl" = "yes"])
-AM_CONDITIONAL([USE_OPENGL], [test "$enable_opengl" = "yes"])
+AM_CONDITIONAL([USE_GLX], [test "$with_acceleration_backend" = "opengl"])
+AM_CONDITIONAL([USE_OPENGL], [test "$with_acceleration_backend" = "opengl"])
 
 # IndexedDB implies LevelDB, but other features may one day require LevelDB.
 AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])

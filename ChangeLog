@@ -1,5 +1,11 @@
 2012-06-08  Martin Robinson  <mrobinson@igalia.com>
 
+        Fix the GTK+ build when OpenGL is enabled.
+
+        * configure.ac: Fix the build.
+
+2012-06-08  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] build accelerated compositing on by default if OpenGL is present
         https://bugs.webkit.org/show_bug.cgi?id=88677
 
