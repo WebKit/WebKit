@@ -468,7 +468,12 @@ protected:
     {
         setAnchorPoint(FloatPoint(0, 0));
         setBounds(IntSize(10, 10));
+        setContentBounds(IntSize(10, 10));
         setDrawsContent(true);
+        setSkipsDraw(false);
+
+        OwnPtr<CCLayerTilingData> tiler = CCLayerTilingData::create(IntSize(100, 100), CCLayerTilingData::HasBorderTexels);
+        setTilingData(*tiler.get());
     }
 
 private:
@@ -519,6 +524,42 @@ TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
     EXPECT_TRUE(layer->didDrawCalled());
 
     EXPECT_FALSE(layer->visibleLayerRect().isEmpty());
+}
+
+TEST_F(CCLayerTreeHostImplTest, willDrawNotCalledOnOccludedLayer)
+{
+    // Make the viewport large so that we can have large layers that get considered for occlusion (small layers do not).
+    IntSize bigSize(1000, 1000);
+    m_hostImpl->setViewportSize(bigSize);
+
+    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
+    DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
+
+    root->addChild(DidDrawCheckLayer::create(1));
+    DidDrawCheckLayer* occludedLayer = static_cast<DidDrawCheckLayer*>(root->children()[0].get());
+
+    root->addChild(DidDrawCheckLayer::create(2));
+    DidDrawCheckLayer* topLayer = static_cast<DidDrawCheckLayer*>(root->children()[1].get());
+    // This layer covers the occludedLayer above. Make this layer large so it can occlude.
+    topLayer->setBounds(bigSize);
+    topLayer->setContentBounds(bigSize);
+    topLayer->setOpaque(true);
+
+    CCLayerTreeHostImpl::FrameData frame;
+
+    EXPECT_FALSE(occludedLayer->willDrawCalled());
+    EXPECT_FALSE(occludedLayer->didDrawCalled());
+    EXPECT_FALSE(topLayer->willDrawCalled());
+    EXPECT_FALSE(topLayer->didDrawCalled());
+
+    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
+    m_hostImpl->drawLayers(frame);
+    m_hostImpl->didDrawAllLayers(frame);
+
+    EXPECT_FALSE(occludedLayer->willDrawCalled());
+    EXPECT_FALSE(occludedLayer->didDrawCalled());
+    EXPECT_TRUE(topLayer->willDrawCalled());
+    EXPECT_TRUE(topLayer->didDrawCalled());
 }
 
 TEST_F(CCLayerTreeHostImplTest, didDrawCalledOnAllLayers)

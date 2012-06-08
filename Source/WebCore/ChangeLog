@@ -1,3 +1,32 @@
+2012-06-08  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Skip willDraw() and didDraw() on fully occluded layers
+        https://bugs.webkit.org/show_bug.cgi?id=88435
+
+        Reviewed by Adrienne Walker.
+
+        Current willDraw() is called on all layers with non-empty
+        visibleLayerRect and non-empty scissorRect. This excludes
+        layers outside the viewport, but does not exclude occluded
+        layers. We add a check for occlusion to calculateRenderPasses
+        in order to avoid willDraw() when it will be culled anyway.
+
+        We prevent didDraw() from being called for occluded layers, for
+        which we did not call didDraw() by holding a vector of layers
+        for which we did call willDraw(). This lets us avoid storing a
+        flag on the layers, or computing occlusion again in
+        didDrawAllLayers.
+
+        Unit test: CCLayerTreeHostImplTest.willDrawNotCalledOnOccludedLayer
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::prepareToDraw):
+        (WebCore::CCLayerTreeHostImpl::didDrawAllLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (FrameData):
+        (CCLayerTreeHostImpl):
+
 2012-06-08  Antonio Gomes  <agomes@rim.com>
 
         EventHandler shouldn't schedule the fake mousemove event timer when scrolling on devices that don't have a mouse

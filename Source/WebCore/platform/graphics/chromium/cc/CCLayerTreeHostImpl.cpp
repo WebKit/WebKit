@@ -261,12 +261,7 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
     }
 }
 
-static inline bool shouldDrawLayer(CCLayerImpl* layer)
-{
-    return !layer->visibleLayerRect().isEmpty() && !layer->scissorRect().isEmpty();
-}
-
-bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLayerList& renderSurfaceLayerList)
+bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLayerList& renderSurfaceLayerList, CCLayerList& willDrawLayers)
 {
     ASSERT(passes.isEmpty());
 
@@ -310,8 +305,10 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         if (it.representsContributingRenderSurface() && !it->renderSurface()->scissorRect().isEmpty()) {
             CCRenderPass* contributingRenderPass = surfacePassMap.get(it->renderSurface());
             pass->appendQuadsForRenderSurfaceLayer(*it, contributingRenderPass, &occlusionTracker);
-        } else if (it.representsItself() && shouldDrawLayer(*it)) {
+        } else if (it.representsItself() && !occlusionTracker.occluded(*it, it->visibleLayerRect()) && !it->visibleLayerRect().isEmpty() && !it->scissorRect().isEmpty()) {
             it->willDraw(m_layerRenderer.get(), context());
+            willDrawLayers.append(*it);
+
             pass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
         }
 
@@ -384,8 +381,9 @@ bool CCLayerTreeHostImpl::prepareToDraw(FrameData& frame)
 
     frame.renderPasses.clear();
     frame.renderSurfaceLayerList.clear();
+    frame.willDrawLayers.clear();
 
-    if (!calculateRenderPasses(frame.renderPasses, frame.renderSurfaceLayerList))
+    if (!calculateRenderPasses(frame.renderPasses, frame.renderSurfaceLayerList, frame.willDrawLayers))
         return false;
 
     // If we return true, then we expect drawLayers() to be called before this function is called again.
@@ -436,13 +434,8 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
 
 void CCLayerTreeHostImpl::didDrawAllLayers(const FrameData& frame)
 {
-    typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
-
-    CCLayerIteratorType end = CCLayerIteratorType::end(&frame.renderSurfaceLayerList);
-    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&frame.renderSurfaceLayerList); it != end; ++it) {
-        if (it.representsItself() && shouldDrawLayer(*it))
-            it->didDraw();
-    }
+    for (size_t i = 0; i < frame.willDrawLayers.size(); ++i)
+        frame.willDrawLayers[i]->didDraw();
 }
 
 void CCLayerTreeHostImpl::finishAllRendering()

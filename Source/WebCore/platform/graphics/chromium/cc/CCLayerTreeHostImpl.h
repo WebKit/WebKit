@@ -87,6 +87,7 @@ public:
     struct FrameData {
         CCRenderPassList renderPasses;
         CCLayerList renderSurfaceLayerList;
+        CCLayerList willDrawLayers;
     };
 
     // Virtual for testing.
@@ -200,7 +201,7 @@ private:
     // Returns false if the frame should not be displayed. This function should
     // only be called from prepareToDraw, as didDrawAllLayers must be called
     // if this helper function is called.
-    bool calculateRenderPasses(CCRenderPassList&, CCLayerList& renderSurfaceLayerList);
+    bool calculateRenderPasses(CCRenderPassList&, CCLayerList& renderSurfaceLayerList, CCLayerList& willDrawLayers);
     void animateLayersRecursive(CCLayerImpl*, double monotonicTime, double wallClockTime, CCAnimationEventsVector*, bool& didAnimate, bool& needsAnimateLayers);
     void setBackgroundTickingEnabled(bool);
     IntSize contentSize() const;
