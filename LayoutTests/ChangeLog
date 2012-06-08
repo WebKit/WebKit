@@ -1,3 +1,11 @@
+2012-06-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening after r119795, adding separate test expectations
+        for jquery/core.html - the test is crashing on debug builds and failing
+        with a text diff on release builds.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-08  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Run optimize-baselines over canvas-toDataURL-webp.html results

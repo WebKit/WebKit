@@ -344,6 +344,8 @@ BUGWK86443 : plugins/npruntime/delete-plugin-within-invoke.html = CRASH
 
 BUGWK86875 : ietestcenter/css3/valuesandunits/units-000.htm = CRASH IMAGE
 
+BUGWK88643 DEBUG : jquery/core.html = CRASH
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1313,6 +1315,8 @@ BUGWK88061 : fast/replaced/border-radius-clip.html = TEXT PASS
 BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS FAIL
 
 BUGWK88138 : http/tests/media/video-buffered.html = TEXT
+
+BUGWK88643 : jquery/core.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
