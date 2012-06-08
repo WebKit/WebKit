@@ -1,3 +1,17 @@
+2012-06-07  Joshua Lock  <joshua.lock@intel.com>
+
+        [EFL][DRT] Normalize file:///tmp/LayoutTests in LayoutTestController::pathToLocalResource()
+        https://bugs.webkit.org/show_bug.cgi?id=67255
+
+        Reviewed by Dirk Pranke.
+
+        Implement pathToLocalResource to redirect file:///tmp URL's to
+        DUMPRENDERTREE_TEMP and file:///tmp/LayoutTests to point to the
+        LayoutTests sub-directory of the WebKit source tree.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::pathToLocalResource):
+
 2012-06-07  Tony Payne  <tpayne@chromium.org>
 
         [chromium] Allow LayoutTests under new git workflow

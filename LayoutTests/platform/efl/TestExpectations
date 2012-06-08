@@ -224,9 +224,6 @@ BUGWK84333 : http/tests/local/fileapi/send-sliced-dragged-file.html = TEXT
 BUGWK84333 : http/tests/local/formdata = TEXT
 BUGWK84333 : http/tests/security/clipboard/clipboard-file-access.html = TEXT
 
-// LayoutTestController.pathToLocalResource needs special handling of file URLs to /tmp.
-BUGWK84336 : fast/dom/frame-loading-via-document-write.html = TIMEOUT TEXT
-
 // Missing execCommand('copy') and execCommand('paste').
 BUGWK84338 : editing/deleting/paste-with-transparent-background-color.html = TEXT
 BUGWK84338 : editing/execCommand/find-after-replace.html = TEXT MISSING

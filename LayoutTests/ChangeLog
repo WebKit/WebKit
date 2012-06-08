@@ -1,3 +1,14 @@
+2012-06-07  Joshua Lock  <joshua.lock@intel.com>
+
+        [EFL][DRT] Normalize file:///tmp/LayoutTests in LayoutTestController::pathToLocalResource()
+        https://bugs.webkit.org/show_bug.cgi?id=67255
+
+        Reviewed by Dirk Pranke.
+
+        * platform/efl/TestExpectations: unskip
+        fast/dom/frame-loading-via-document-write.html now that
+        LayoutTestController::pathToLocalResource() is implemented for EFL.
+
 2012-06-07  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Use WEBPImportPictureRGBX|BGRX to import picture data
