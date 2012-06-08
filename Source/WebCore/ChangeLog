@@ -1,3 +1,28 @@
+2012-06-07  Takashi Sakamoto  <tasak@google.com>
+
+        Improve the performance of pushScope in StyleResolver
+        https://bugs.webkit.org/show_bug.cgi?id=88222
+
+        Reviewed by Hajime Morita.
+
+        As setupScopeStack always sets m_scopeStackParent to be NULL,
+        m_scopeStack is never reused. m_scopeStackParent should be the last
+        element of m_scopeStack.
+
+        No new tests, because fast/css/style-scoped/ uses pushScope,
+        popScope and setupScopeStack and checks whether there exists
+        any crash bug or not. And this patch doesn't change any behavior
+        of scoped author syltes.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::setupScopeStack):
+        Modified to set m_scopeSackParent to be the last element of
+        m_scopeStack.
+        (WebCore::StyleResolver::popScope):
+        Modified to remove the last element if m_scopeStack is not empty and
+        the last element of m_scopeStack has the same scope as the scoping
+        element given by the argument.
+
 2012-06-07  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move didStartWorkerRunLoop to Platform.h

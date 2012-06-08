@@ -559,10 +559,10 @@ void StyleResolver::setupScopeStack(const ContainerNode* parent)
     ASSERT(!m_scopedAuthorStyles.isEmpty());
 
     m_scopeStack.shrink(0);
-    for (; parent; parent = parent->parentOrHostNode()) {
-        RuleSet* ruleSet = ruleSetForScope(parent);
+    for (const ContainerNode* scope = parent; scope; scope = scope->parentOrHostNode()) {
+        RuleSet* ruleSet = ruleSetForScope(scope);
         if (ruleSet)
-            m_scopeStack.append(ScopeStackFrame(parent, ruleSet));
+            m_scopeStack.append(ScopeStackFrame(scope, ruleSet));
     }
     m_scopeStack.reverse();
     m_scopeStackParent = parent;
@@ -593,7 +593,8 @@ void StyleResolver::popScope(const ContainerNode* scope)
 {
     // Only bother to update the scoping element stack if it is consistent.
     if (scopeStackIsConsistent(scope)) {
-        m_scopeStack.removeLast();
+        if (!m_scopeStack.isEmpty() && m_scopeStack.last().m_scope == scope)
+            m_scopeStack.removeLast();
         m_scopeStackParent = scope->parentOrHostNode();
     }
 }
