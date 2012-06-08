@@ -1,3 +1,12 @@
+2012-06-08  Ion Rosca  <rosca@adobe.com>
+
+        Some overlay scrollbar API calls in ScrollAnimatorMac can lead to an assertion in RenderBox::mapAbsoluteToLocalPoint
+        https://bugs.webkit.org/show_bug.cgi?id=74111
+
+        Reviewed by Simon Fraser.
+
+        * ManualTests/scrollbar-crash-on-hide-scrolled-area.html: Added.
+
 2012-06-07  Kentaro Hara  <haraken@chromium.org>
 
         Reduce Node object size from 72 byte to 64 byte

@@ -65,6 +65,8 @@ public:
     void startScrollbarPaintTimer();
     void stopScrollbarPaintTimer();
 
+    void sendContentAreaScrolledSoon();
+
     void setVisibleScrollerThumbRect(const IntRect&);
 
 private:
@@ -78,6 +80,9 @@ private:
 
     void initialScrollbarPaintTimerFired(Timer<ScrollAnimatorMac>*);
     Timer<ScrollAnimatorMac> m_initialScrollbarPaintTimer;
+
+    void sendContentAreaScrolledTimerFired(Timer<ScrollAnimatorMac>*);
+    Timer<ScrollAnimatorMac> m_sendContentAreaScrolledTimer;
 
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
