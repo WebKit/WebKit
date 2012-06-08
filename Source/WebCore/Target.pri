@@ -735,6 +735,7 @@ SOURCES += \
     html/FTPDirectoryDocument.cpp \
     html/FileInputType.cpp \
     html/FormAssociatedElement.cpp \
+    html/FormController.cpp \
     html/FormDataList.cpp \
     html/HTMLAllCollection.cpp \
     html/HTMLAnchorElement.cpp \
@@ -1890,6 +1891,7 @@ HEADERS += \
     html/DOMTokenList.h \
     html/DOMURL.h \
     html/FormAssociatedElement.h \
+    html/FormController.h \
     html/FormDataList.h \
     html/FTPDirectoryDocument.h \
     html/HTMLAllCollection.h \

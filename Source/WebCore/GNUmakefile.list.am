@@ -2262,6 +2262,8 @@ webcore_sources += \
 	Source/WebCore/html/FileInputType.h \
 	Source/WebCore/html/FormAssociatedElement.cpp \
 	Source/WebCore/html/FormAssociatedElement.h \
+	Source/WebCore/html/FormController.cpp \
+	Source/WebCore/html/FormController.h \
 	Source/WebCore/html/FormDataList.cpp \
 	Source/WebCore/html/FormDataList.h \
 	Source/WebCore/html/FTPDirectoryDocument.cpp \

@@ -75,6 +75,7 @@ enum WhitespaceMode {
 class AtomicHTMLToken;
 class Document;
 class Element;
+class HTMLFormElement;
 
 class HTMLConstructionSite {
     WTF_MAKE_NONCOPYABLE(HTMLConstructionSite);

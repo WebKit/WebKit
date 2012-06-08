@@ -28,7 +28,6 @@
 #ifndef Document_h
 #define Document_h
 
-#include "CheckedRadioButtons.h"
 #include "CollectionType.h"
 #include "Color.h"
 #include "ContainerNode.h"
@@ -86,7 +85,7 @@ class EventListener;
 class FloatRect;
 class FloatQuad;
 class FontData;
-class FormAssociatedElement;
+class FormController;
 class Frame;
 class FrameView;
 class HTMLCanvasElement;
@@ -94,11 +93,8 @@ class HTMLCollection;
 class HTMLAllCollection;
 class HTMLDocument;
 class HTMLElement;
-class HTMLFormControlElementWithState;
-class HTMLFormElement;
 class HTMLFrameOwnerElement;
 class HTMLHeadElement;
-class HTMLInputElement;
 class HTMLIFrameElement;
 class HTMLMapElement;
 class HTMLNameCollection;
@@ -175,46 +171,6 @@ class Prerenderer;
 #endif
 
 typedef int ExceptionCode;
-
-class FormElementKey {
-public:
-    FormElementKey(AtomicStringImpl* = 0, AtomicStringImpl* = 0);
-    ~FormElementKey();
-    FormElementKey(const FormElementKey&);
-    FormElementKey& operator=(const FormElementKey&);
-
-    AtomicStringImpl* name() const { return m_name; }
-    AtomicStringImpl* type() const { return m_type; }
-
-    // Hash table deleted values, which are only constructed and never copied or destroyed.
-    FormElementKey(WTF::HashTableDeletedValueType) : m_name(hashTableDeletedValue()) { }
-    bool isHashTableDeletedValue() const { return m_name == hashTableDeletedValue(); }
-
-private:
-    void ref() const;
-    void deref() const;
-
-    static AtomicStringImpl* hashTableDeletedValue() { return reinterpret_cast<AtomicStringImpl*>(-1); }
-
-    AtomicStringImpl* m_name;
-    AtomicStringImpl* m_type;
-};
-
-inline bool operator==(const FormElementKey& a, const FormElementKey& b)
-{
-    return a.name() == b.name() && a.type() == b.type();
-}
-
-struct FormElementKeyHash {
-    static unsigned hash(const FormElementKey&);
-    static bool equal(const FormElementKey& a, const FormElementKey& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
-struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {
-    static void constructDeletedValue(FormElementKey& slot) { new (NotNull, &slot) FormElementKey(WTF::HashTableDeletedValue); }
-    static bool isDeletedValue(const FormElementKey& value) { return value.isHashTableDeletedValue(); }
-};
 
 enum PageshowEventPersistence {
     PageshowEventNotPersisted = 0,
@@ -540,17 +496,10 @@ public:
     bool usesLinkRules() const { return linkColor() != visitedLinkColor() || m_usesLinkRules; }
     void setUsesLinkRules(bool b) { m_usesLinkRules = b; }
 
-    // Machinery for saving and restoring state when you leave and then go back to a page.
-    void registerFormElementWithState(HTMLFormControlElementWithState* control) { m_formElementsWithState.add(control); }
-    void unregisterFormElementWithState(HTMLFormControlElementWithState* control) { m_formElementsWithState.remove(control); }
+    // Never returns 0.
+    FormController* formController();
     Vector<String> formElementsState() const;
     void setStateForNewFormElements(const Vector<String>&);
-    bool hasStateForNewFormElements() const;
-    bool takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type, String& state);
-
-    void registerFormElementWithFormAttribute(FormAssociatedElement*);
-    void unregisterFormElementWithFormAttribute(FormAssociatedElement*);
-    void resetFormElementsOwner();
 
     FrameView* view() const; // can be NULL
     Frame* frame() const { return m_frame; } // can be NULL
@@ -1045,8 +994,6 @@ public:
 
     virtual void removeAllEventListeners();
 
-    CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
-    
 #if ENABLE(SVG)
     const SVGDocumentExtensions* svgExtensions();
     SVGDocumentExtensions* accessSVGExtensions();
@@ -1338,14 +1285,8 @@ private:
     typedef ListHashSet<Node*, 32> StyleSheetCandidateListHashSet;
     StyleSheetCandidateListHashSet m_styleSheetCandidateNodes; // All of the nodes that could potentially provide stylesheets to the document (<link>, <style>, <?xml-stylesheet>)
 
-    typedef ListHashSet<HTMLFormControlElementWithState*, 64> FormElementListHashSet;
-    FormElementListHashSet m_formElementsWithState;
-    typedef ListHashSet<RefPtr<FormAssociatedElement>, 32> FormAssociatedElementListHashSet;
-    FormAssociatedElementListHashSet m_formElementsWithFormAttribute;
+    OwnPtr<FormController> m_formController;
 
-    typedef HashMap<FormElementKey, Vector<String>, FormElementKeyHash, FormElementKeyHashTraits> FormElementStateMap;
-    FormElementStateMap m_stateForNewFormElements;
-    
     Color m_linkColor;
     Color m_visitedLinkColor;
     Color m_activeLinkColor;
@@ -1428,8 +1369,6 @@ private:
 
     InheritedBool m_designMode;
     
-    CheckedRadioButtons m_checkedRadioButtons;
-
     OwnPtr<HTMLCollection> m_collections[NumUnnamedDocumentCachedTypes];
     OwnPtr<HTMLAllCollection> m_allCollection;
 

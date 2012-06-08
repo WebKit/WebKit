@@ -37,6 +37,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FileList.h"
+#include "FormController.h"
 #include "Frame.h"
 #include "HTMLCollection.h"
 #include "HTMLDataListElement.h"
@@ -127,7 +128,7 @@ HTMLInputElement::~HTMLInputElement()
     // setForm(0) may register this to a document-level radio button group.
     // We should unregister it to avoid accessing a deleted object.
     if (isRadioButton())
-        document()->checkedRadioButtons().removeButton(this);
+        document()->formController()->checkedRadioButtons().removeButton(this);
 }
 
 const AtomicString& HTMLInputElement::formControlName() const
@@ -1374,7 +1375,7 @@ void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)
         if (needsSuspensionCallback)
             oldDocument->unregisterForPageCacheSuspensionCallbacks(this);
         if (isRadioButton())
-            oldDocument->checkedRadioButtons().removeButton(this);
+            oldDocument->formController()->checkedRadioButtons().removeButton(this);
     }
 
     if (needsSuspensionCallback)
@@ -1672,7 +1673,7 @@ CheckedRadioButtons* HTMLInputElement::checkedRadioButtons() const
     if (HTMLFormElement* formElement = form())
         return &formElement->checkedRadioButtons();
     if (inDocument())
-        return &document()->checkedRadioButtons();
+        return &document()->formController()->checkedRadioButtons();
     return 0;
 }
 

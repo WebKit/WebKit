@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class CheckedRadioButtons;
 class FileList;
 class HTMLDataListElement;
 class HTMLOptionElement;

@@ -34,6 +34,7 @@
 #include "EventNames.h"
 #include "FileList.h"
 #include "FileSystem.h"
+#include "FormController.h"
 #include "FormData.h"
 #include "FormDataList.h"
 #include "FormState.h"
@@ -144,7 +145,7 @@ void HTMLFormElement::didNotifyDescendantInsertions(ContainerNode* insertionPoin
     ASSERT(insertionPoint->inDocument());
     HTMLElement::didNotifyDescendantInsertions(insertionPoint);
     if (hasID())
-        document()->resetFormElementsOwner();
+        document()->formController()->resetFormElementsOwner();
 }
 
 static inline Node* findRoot(Node* n)
@@ -163,7 +164,7 @@ void HTMLFormElement::removedFrom(ContainerNode* insertionPoint)
         associatedElements[i]->formRemovedFromTree(root);
     HTMLElement::removedFrom(insertionPoint);
     if (insertionPoint->inDocument() && hasID())
-        document()->resetFormElementsOwner();
+        document()->formController()->resetFormElementsOwner();
 }
 
 void HTMLFormElement::handleLocalEvents(Event* event)

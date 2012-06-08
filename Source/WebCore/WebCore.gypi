@@ -5472,6 +5472,8 @@
             'html/FileInputType.cpp',
             'html/FileInputType.h',
             'html/FormAssociatedElement.cpp',
+            'html/FormController.cpp',
+            'html/FormController.h',
             'html/FormDataList.cpp',
             'html/FormDataList.h',
             'html/HTMLAllCollection.cpp',

@@ -764,6 +764,7 @@ SET(WebCore_SOURCES
     html/FTPDirectoryDocument.cpp
     html/FileInputType.cpp
     html/FormAssociatedElement.cpp
+    html/FormController.cpp
     html/FormDataList.cpp
     html/HTMLAllCollection.cpp
     html/HTMLAnchorElement.cpp

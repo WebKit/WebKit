@@ -71,7 +71,7 @@
 #include "ExceptionCode.h"
 #include "FlowThreadController.h"
 #include "FocusController.h"
-#include "FormAssociatedElement.h"
+#include "FormController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -92,7 +92,6 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLIFrameElement.h"
-#include "HTMLInputElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNameCollection.h"
@@ -1624,6 +1623,27 @@ String Document::nodeName() const
 Node::NodeType Document::nodeType() const
 {
     return DOCUMENT_NODE;
+}
+
+FormController* Document::formController()
+{
+    if (!m_formController)
+        m_formController = FormController::create();
+    return m_formController.get();
+}
+
+Vector<String> Document::formElementsState() const
+{
+    if (!m_formController)
+        return Vector<String>();
+    return m_formController->formElementsState();
+}
+
+void Document::setStateForNewFormElements(const Vector<String>& stateVector)
+{
+    if (!stateVector.size() && !m_formController)
+        return;
+    formController()->setStateForNewFormElements(stateVector);
 }
 
 FrameView* Document::view() const
@@ -4747,26 +4767,6 @@ void Document::finishedParsing()
     }
 }
 
-Vector<String> Document::formElementsState() const
-{
-    Vector<String> stateVector;
-    stateVector.reserveInitialCapacity(m_formElementsWithState.size() * 3);
-    typedef FormElementListHashSet::const_iterator Iterator;
-    Iterator end = m_formElementsWithState.end();
-    for (Iterator it = m_formElementsWithState.begin(); it != end; ++it) {
-        HTMLFormControlElementWithState* elementWithState = *it;
-        if (!elementWithState->shouldSaveAndRestoreFormControlState())
-            continue;
-        String value;
-        if (!elementWithState->saveFormControlState(value))
-            continue;
-        stateVector.append(elementWithState->formControlName().string());
-        stateVector.append(elementWithState->formControlType().string());
-        stateVector.append(value);
-    }
-    return stateVector;
-}
-
 PassRefPtr<XPathExpression> Document::createExpression(const String& expression,
                                                        XPathNSResolver* resolver,
                                                        ExceptionCode& ec)
@@ -4795,96 +4795,6 @@ PassRefPtr<XPathResult> Document::evaluate(const String& expression,
     return m_xpathEvaluator->evaluate(expression, contextNode, resolver, type, result, ec);
 }
 
-void Document::setStateForNewFormElements(const Vector<String>& stateVector)
-{
-    // Walk the state vector backwards so that the value to use for each
-    // name/type pair first is the one at the end of each individual vector
-    // in the FormElementStateMap. We're using them like stacks.
-    typedef FormElementStateMap::iterator Iterator;
-    m_formElementsWithState.clear();
-    for (size_t i = stateVector.size() / 3 * 3; i; i -= 3) {
-        AtomicString a = stateVector[i - 3];
-        AtomicString b = stateVector[i - 2];
-        const String& c = stateVector[i - 1];
-        FormElementKey key(a.impl(), b.impl());
-        Iterator it = m_stateForNewFormElements.find(key);
-        if (it != m_stateForNewFormElements.end())
-            it->second.append(c);
-        else {
-            Vector<String> v(1);
-            v[0] = c;
-            m_stateForNewFormElements.set(key, v);
-        }
-    }
-}
-
-bool Document::hasStateForNewFormElements() const
-{
-    return !m_stateForNewFormElements.isEmpty();
-}
-
-bool Document::takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type, String& state)
-{
-    typedef FormElementStateMap::iterator Iterator;
-    Iterator it = m_stateForNewFormElements.find(FormElementKey(name, type));
-    if (it == m_stateForNewFormElements.end())
-        return false;
-    ASSERT(it->second.size());
-    state = it->second.last();
-    if (it->second.size() > 1)
-        it->second.removeLast();
-    else
-        m_stateForNewFormElements.remove(it);
-    return true;
-}
-
-FormElementKey::FormElementKey(AtomicStringImpl* name, AtomicStringImpl* type)
-    : m_name(name), m_type(type)
-{
-    ref();
-}
-
-FormElementKey::~FormElementKey()
-{
-    deref();
-}
-
-FormElementKey::FormElementKey(const FormElementKey& other)
-    : m_name(other.name()), m_type(other.type())
-{
-    ref();
-}
-
-FormElementKey& FormElementKey::operator=(const FormElementKey& other)
-{
-    other.ref();
-    deref();
-    m_name = other.name();
-    m_type = other.type();
-    return *this;
-}
-
-void FormElementKey::ref() const
-{
-    if (name())
-        name()->ref();
-    if (type())
-        type()->ref();
-}
-
-void FormElementKey::deref() const
-{
-    if (name())
-        name()->deref();
-    if (type())
-        type()->deref();
-}
-
-unsigned FormElementKeyHash::hash(const FormElementKey& key)
-{
-    return StringHasher::hashMemory<sizeof(FormElementKey)>(&key);
-}
-
 const Vector<IconURL>& Document::iconURLs() const
 {
     return m_iconURLs;
@@ -4904,25 +4814,6 @@ void Document::addIconURL(const String& url, const String& mimeType, const Strin
         if (iconURL == newURL)
             f->loader()->didChangeIcons(iconType);
     }
-}
-
-void Document::registerFormElementWithFormAttribute(FormAssociatedElement* element)
-{
-    ASSERT(toHTMLElement(element)->fastHasAttribute(formAttr));
-    m_formElementsWithFormAttribute.add(element);
-}
-
-void Document::unregisterFormElementWithFormAttribute(FormAssociatedElement* element)
-{
-    m_formElementsWithFormAttribute.remove(element);
-}
-
-void Document::resetFormElementsOwner()
-{
-    typedef FormAssociatedElementListHashSet::iterator Iterator;
-    Iterator end = m_formElementsWithFormAttribute.end();
-    for (Iterator it = m_formElementsWithFormAttribute.begin(); it != end; ++it)
-        (*it)->resetFormOwner();
 }
 
 void Document::setUseSecureKeyboardEntryWhenActive(bool usesSecureKeyboard)

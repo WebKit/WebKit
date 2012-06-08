@@ -1,3 +1,59 @@
+2012-06-08  Kent Tamura  <tkent@chromium.org>
+
+        Move form-related functions of Document to FormController
+        https://bugs.webkit.org/show_bug.cgi?id=88497
+
+        Reviewed by Hajime Morita.
+
+        A lot of files depend on Document.h. We had to build many files when we
+        touched form-related features in Document.h or
+        CheckedRadioButtons.h. This patch reduces such pain.
+
+        No new tests. Just a refactoring.
+
+        * CMakeLists.txt: Add FormController.cpp and/or FormController.h.
+        * GNUmakefile.list.am: ditto.
+        * Target.pri: ditto.
+        * WebCore.gypi: ditto.
+        * WebCore.vcproj/WebCore.vcproj: ditto.
+        * WebCore.xcodeproj/project.pbxproj: ditto.
+
+        * dom/Document.cpp: Removed form-releated features except the followings.
+        (WebCore::Document::formController): Accessor for a FormController.
+        (WebCore::Document::formElementsState):
+        Just returns FormController::formElementsState().
+        We don't create new FormController.
+        (WebCore::Document::setStateForNewFormElements):
+        Just returns FormController::setStateForNewFormElements().
+        We don't create new FormController if the specified vector is empty.
+        * dom/Document.h:
+        Moved form-related functions to FormController.
+
+        * html/FormController.cpp: Added. Moved from Document.cpp.
+        * html/FormController.h: Added. Moved from Document.h
+
+        * html/FormAssociatedElement.cpp: Use Document::formController().
+        (WebCore::FormAssociatedElement::didMoveToNewDocument):
+        (WebCore::FormAssociatedElement::insertedInto):
+        (WebCore::FormAssociatedElement::removedFrom):
+        (WebCore::FormAssociatedElement::formAttributeChanged):
+        * html/HTMLFormControlElementWithState.cpp: Use Document::formController().
+        (WebCore::HTMLFormControlElementWithState::HTMLFormControlElementWithState):
+        (WebCore::HTMLFormControlElementWithState::~HTMLFormControlElementWithState):
+        (WebCore::HTMLFormControlElementWithState::didMoveToNewDocument):
+        (WebCore::HTMLFormControlElementWithState::finishParsingChildren):
+        * html/HTMLFormElement.cpp: Use Document::formController().
+        (WebCore::HTMLFormElement::didNotifyDescendantInsertions):
+        (WebCore::HTMLFormElement::removedFrom):
+        * html/HTMLInputElement.cpp: Use Document::formController().
+        (WebCore::HTMLInputElement::~HTMLInputElement):
+        (WebCore::HTMLInputElement::didMoveToNewDocument):
+        (WebCore::HTMLInputElement::checkedRadioButtons):
+        * html/HTMLInputElement.h:
+        Declare CheckedRadioButtons. It was provided by Document.h.
+        * html/parser/HTMLConstructionSite.h:
+        Declare HTMLFormElement. It was provided by Document.h
+
 2012-06-08  Taiju Tsuiki  <tzik@chromium.org>
 
         Add FileSystem item to storage tree.
