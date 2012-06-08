@@ -1260,14 +1260,14 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
 // FIXME: Send an appropriate shouldDeleteRange call.
 bool CompositeEditCommand::breakOutOfEmptyListItem()
 {
-    Node* emptyListItem = enclosingEmptyListItem(endingSelection().visibleStart());
+    RefPtr<Node> emptyListItem = enclosingEmptyListItem(endingSelection().visibleStart());
     if (!emptyListItem)
         return false;
 
     RefPtr<EditingStyle> style = EditingStyle::create(endingSelection().start());
     style->mergeTypingStyle(document());
 
-    ContainerNode* listNode = emptyListItem->parentNode();
+    RefPtr<ContainerNode> listNode = emptyListItem->parentNode();
     // FIXME: Can't we do something better when the immediate parent wasn't a list node?
     if (!listNode
         || (!listNode->hasTagName(ulTag) && !listNode->hasTagName(olTag))
@@ -1278,7 +1278,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     RefPtr<Element> newBlock = 0;
     if (ContainerNode* blockEnclosingList = listNode->parentNode()) {
         if (blockEnclosingList->hasTagName(liTag)) { // listNode is inside another list item
-            if (visiblePositionAfterNode(blockEnclosingList) == visiblePositionAfterNode(listNode)) {
+            if (visiblePositionAfterNode(blockEnclosingList) == visiblePositionAfterNode(listNode.get())) {
                 // If listNode appears at the end of the outer list item, then move listNode outside of this list item
                 // e.g. <ul><li>hello <ul><li><br></li></ul> </li></ul> should become <ul><li>hello</li> <ul><li><br></li></ul> </ul> after this section
                 // If listNode does NOT appear at the end, then we should consider it as a regular paragraph.
@@ -1294,12 +1294,12 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     if (!newBlock)
         newBlock = createDefaultParagraphElement(document());
 
-    Node* previousListNode = emptyListItem->isElementNode() ? toElement(emptyListItem)->previousElementSibling(): emptyListItem->previousSibling();
-    Node* nextListNode = emptyListItem->isElementNode() ? toElement(emptyListItem)->nextElementSibling(): emptyListItem->nextSibling();
-    if (isListItem(nextListNode) || isListElement(nextListNode)) {
+    RefPtr<Node> previousListNode = emptyListItem->isElementNode() ? toElement(emptyListItem.get())->previousElementSibling(): emptyListItem->previousSibling();
+    RefPtr<Node> nextListNode = emptyListItem->isElementNode() ? toElement(emptyListItem.get())->nextElementSibling(): emptyListItem->nextSibling();
+    if (isListItem(nextListNode.get()) || isListElement(nextListNode.get())) {
         // If emptyListItem follows another list item or nested list, split the list node.
-        if (isListItem(previousListNode) || isListElement(previousListNode))
-            splitElement(static_cast<Element*>(listNode), emptyListItem);
+        if (isListItem(previousListNode.get()) || isListElement(previousListNode.get()))
+            splitElement(static_cast<Element*>(listNode.get()), emptyListItem);
 
         // If emptyListItem is followed by other list item or nested list, then insert newBlock before the list node.
         // Because we have splitted the element, emptyListItem is the first element in the list node.
@@ -1310,7 +1310,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
         // When emptyListItem does not follow any list item or nested list, insert newBlock after the enclosing list node.
         // Remove the enclosing node if emptyListItem is the only child; otherwise just remove emptyListItem.
         insertNodeAfter(newBlock, listNode);
-        removeNode(isListItem(previousListNode) || isListElement(previousListNode) ? emptyListItem : listNode);
+        removeNode(isListItem(previousListNode.get()) || isListElement(previousListNode.get()) ? emptyListItem.get() : listNode.get());
     }
 
     appendBlockPlaceholder(newBlock);
