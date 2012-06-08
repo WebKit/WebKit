@@ -124,7 +124,7 @@ WebInspector.FileSystemModel.prototype = {
         delete this._originForFrameId[frame.id];
         delete this._frameIdsForOrigin[origin][frame.id];
 
-        var lastOrigin = this._frameIdsForOrigin[origin].isEmpty();
+        var lastOrigin = Object.isEmpty(this._frameIdsForOrigin[origin]);
         if (lastOrigin) {
             delete this._frameIdsForOrigin[origin];
             this._originRemoved(origin);

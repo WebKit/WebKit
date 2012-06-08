@@ -27,6 +27,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+Object.isEmpty = function(obj)
+{
+    for (var i in obj)
+        return false;
+    return true;
+}
+
 String.prototype.hasSubstring = function(string, caseInsensitive)
 {
     if (!caseInsensitive)
@@ -676,13 +683,3 @@ Map.prototype = {
         this._map = {};
     }
 };
-
-Object.defineProperty(Object.prototype, "isEmpty",
-{
-    value: function()
-    {
-        for (var i in this)
-            return false;
-        return true;
-    }
-});

@@ -1188,9 +1188,10 @@ WebInspector.HeapSnapshot.prototype = {
         // The affected array is used to mark entries which dominators
         // have to be racalculated because of changes in their retainers.
         var affected = new Uint8Array(nodesCount);
+        var nodeOrdinal;
 
         { // Mark the root direct children as affected.
-            var nodeOrdinal = this._rootNodeIndex / nodeFieldCount;
+            nodeOrdinal = this._rootNodeIndex / nodeFieldCount;
             var beginEdgeToNodeFieldIndex = firstEdgeIndexes[nodeOrdinal] + edgeToNodeOffset;
             var endEdgeToNodeFieldIndex = firstEdgeIndexes[nodeOrdinal + 1];
             for (var toNodeFieldIndex = beginEdgeToNodeFieldIndex;
@@ -1212,7 +1213,7 @@ WebInspector.HeapSnapshot.prototype = {
                 // then it can't propagate any further.
                 if (dominators[postOrderIndex] === rootPostOrderedIndex)
                     continue;
-                var nodeOrdinal = postOrderIndex2NodeOrdinal[postOrderIndex];
+                nodeOrdinal = postOrderIndex2NodeOrdinal[postOrderIndex];
                 var nodeFlag = !!(flags[nodeOrdinal] & flag);
                 var newDominatorIndex = noEntry;
                 var beginRetainerIndex = firstRetainerIndex[nodeOrdinal];
@@ -1265,7 +1266,7 @@ WebInspector.HeapSnapshot.prototype = {
 
         var dominatorsTree = new Uint32Array(nodesCount);
         for (var postOrderIndex = 0, l = dominators.length; postOrderIndex < l; ++postOrderIndex) {
-            var nodeOrdinal = postOrderIndex2NodeOrdinal[postOrderIndex];
+            nodeOrdinal = postOrderIndex2NodeOrdinal[postOrderIndex];
             dominatorsTree[nodeOrdinal] = postOrderIndex2NodeOrdinal[dominators[postOrderIndex]];
         }
         return dominatorsTree;

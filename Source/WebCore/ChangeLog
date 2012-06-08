@@ -1,3 +1,21 @@
+2012-06-08  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Fix several compiler warnings and errors.
+        https://bugs.webkit.org/show_bug.cgi?id=88660
+
+        Reviewed by Pavel Feldman.
+
+        Fixed several compiler warnings and errors.
+        Removed isEmpty method from Object.prototype and made it static method on Object.
+
+        * inspector/InjectedScriptExterns.js:
+        * inspector/front-end/FileSystemModel.js:
+        (WebInspector.FileSystemModel.prototype._detachFrame):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshot.prototype._buildDominatorTree):
+        * inspector/front-end/utilities.js:
+        (Object.isEmpty):
+
 2012-06-08  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Fix assertion failure introduced by bug 87551

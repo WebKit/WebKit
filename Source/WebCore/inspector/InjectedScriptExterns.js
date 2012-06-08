@@ -98,5 +98,13 @@ function JavaScriptCallFrame()
  */
 JavaScriptCallFrame.prototype.scopeType = function(index) { }
 
+/**
+ * @constructor
+ */
+function JavaScriptFunction()
+{
+    /** @type {Array} */
+    this.rawScopes;
+}
 
 var InspectorBackend = { };
