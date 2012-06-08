@@ -53,7 +53,6 @@ function createAndVerifyIndex()
     }
     shouldBeTrue("foundNewlyCreatedIndex");
     shouldBe("event.target.transaction.db", "db");
-    shouldBe("event.target.transaction.readyState", "IDBTransaction.LOADING");
     shouldBe("event.target.transaction.mode", "'versionchange'");
     finishJSTest();
 }

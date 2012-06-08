@@ -72,6 +72,16 @@ cursor.continue();
 request = store.openCursor(1, IDBCursor.PREV_NO_DUPLICATE)
 PASS cursor.direction is "prevunique"
 cursor.continue();
+
+Verify that constants from previous version of the spec (beyond a grace period) have been removed:
+PASS IDBKeyRange.SINGLE is undefined
+PASS IDBKeyRange.LEFT_OPEN is undefined
+PASS IDBKeyRange.RIGHT_OPEN is undefined
+PASS IDBKeyRange.LEFT_BOUND is undefined
+PASS IDBKeyRange.RIGHT_BOUND is undefined
+PASS IDBTransaction.LOADING is undefined
+PASS IDBRequest.LOADING is undefined
+PASS IDBRequest.DONE is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

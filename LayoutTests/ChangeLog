@@ -1,3 +1,19 @@
+2012-06-08  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Add regression test to verify that legacy constants have been removed
+        https://bugs.webkit.org/show_bug.cgi?id=88669
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/legacy-constants-expected.txt:
+        * storage/indexeddb/mozilla/create-index-unique-expected.txt:
+        * storage/indexeddb/mozilla/resources/create-index-unique.js:
+        (createAndVerifyIndex):
+        * storage/indexeddb/resources/constants.js:
+        (test):
+        * storage/indexeddb/resources/legacy-constants.js:
+        (testObsoleteConstants):
+
 2012-06-08  Ojan Vafai  <ojan@chromium.org>
 
         First wave of Chromium rebaselines after skia rollback. See crbug.com/131829.

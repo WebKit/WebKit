@@ -17,7 +17,6 @@ PASS index.unique is true
 PASS objectStore.indexNames.length is 1
 PASS foundNewlyCreatedIndex is true
 PASS event.target.transaction.db is db
-PASS event.target.transaction.readyState is IDBTransaction.LOADING
 PASS event.target.transaction.mode is 'versionchange'
 PASS successfullyParsed is true
 
