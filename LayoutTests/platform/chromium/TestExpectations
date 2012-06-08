@@ -3438,9 +3438,6 @@ BUGWK79703 : fast/regex/overflow.html = TEXT
 BUGWK79862 : fast/js/primitive-property-access-edge-cases.html = TEXT
 BUGWK79862 : fast/js/read-modify-eval.html = TEXT
 
-// EPOGER: To be rebaselined after skia rev. 3283 lands in webkit
-BUGCR116252 LINUX : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE IMAGE+TEXT
-
 BUGV8_1973 : fast/js/caller-property.html = TEXT
 
 BUGWK78684 : fast/block/basic/fieldset-stretch-to-legend.html = FAIL
