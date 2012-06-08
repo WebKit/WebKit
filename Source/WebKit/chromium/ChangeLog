@@ -1,3 +1,16 @@
+2012-06-08  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Re-enable SHARED_WORKERS for Android until a build fix has been resolved.
+        https://bugs.webkit.org/show_bug.cgi?id=88637
+
+        Unreviewed build fix.
+
+        Linking content_shell on the Chromium side fails due to an unresolved
+        call to WebSharedWorker::create(). Since this blocks WebKit rolls,
+        temporarily re-enable the feature until this has been solved.
+
+        * features.gypi:
+
 2012-06-07  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Improve deviceDPI, rect, and availableRect computation
