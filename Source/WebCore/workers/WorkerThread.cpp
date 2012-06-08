@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
@@ -45,6 +45,11 @@
 #if ENABLE(SQL_DATABASE)
 #include "DatabaseTask.h"
 #include "DatabaseTracker.h"
+#endif
+
+#if PLATFORM(CHROMIUM)
+#include <public/Platform.h>
+#include <public/WebWorkerRunLoop.h>
 #endif
 
 namespace WebCore {
@@ -144,7 +149,7 @@ void WorkerThread::workerThread()
 #if PLATFORM(CHROMIUM)
     // The corresponding call to didStopWorkerRunLoop is in
     // ~WorkerScriptController.
-    PlatformSupport::didStartWorkerRunLoop(&m_runLoop);
+    WebKit::Platform::current()->didStartWorkerRunLoop(WebKit::WebWorkerRunLoop(&m_runLoop));
 #endif
 
     WorkerScriptController* script = m_workerContext->script();

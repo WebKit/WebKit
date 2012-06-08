@@ -96,7 +96,6 @@
 #include <public/WebCookie.h>
 #include <public/WebCookieJar.h>
 #include <public/WebMimeRegistry.h>
-#include <public/WebWorkerRunLoop.h>
 #include <wtf/Assertions.h>
 
 // We are part of the WebKit implementation.
@@ -721,16 +720,6 @@ bool PlatformSupport::popupsAllowed(NPP npp)
 }
 
 #if ENABLE(WORKERS)
-void PlatformSupport::didStartWorkerRunLoop(WorkerRunLoop* loop)
-{
-    WebKit::Platform::current()->didStartWorkerRunLoop(WebWorkerRunLoop(loop));
-}
-
-void PlatformSupport::didStopWorkerRunLoop(WorkerRunLoop* loop)
-{
-    WebKit::Platform::current()->didStopWorkerRunLoop(WebWorkerRunLoop(loop));
-}
-
 WorkerContextProxy* WorkerContextProxy::create(Worker* worker)
 {
     return WebWorkerClientImpl::createWorkerContextProxy(worker);

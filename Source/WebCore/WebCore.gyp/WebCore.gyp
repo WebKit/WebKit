@@ -1841,6 +1841,9 @@
     {
       'target_name': 'webcore_remaining',
       'type': 'static_library',
+      'defines': [
+        'WEBKIT_IMPLEMENTATION=1',
+      ],
       'dependencies': [
         'webcore_prerequisites',
         '<(chromium_src_dir)/third_party/v8-i18n/build/all.gyp:v8-i18n',

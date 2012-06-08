@@ -1,3 +1,20 @@
+2012-06-07  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move didStartWorkerRunLoop to Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=88562
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * WebCore.gyp/WebCore.gyp:
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::~WorkerScriptController):
+        * platform/chromium/PlatformSupport.h:
+        (WebCore):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+
 2012-06-07  Mike West  <mkwst@chromium.org>
 
         Dropping m_startingLineNumber property from StyledElement.

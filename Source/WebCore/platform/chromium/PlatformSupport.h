@@ -81,7 +81,6 @@ class IntRect;
 class KURL;
 class SerializedScriptValue;
 class Widget;
-class WorkerRunLoop;
 
 struct Cookie;
 struct FontRenderStyle;
@@ -331,9 +330,6 @@ public:
     // Visited links ------------------------------------------------------
     static LinkHash visitedLinkHash(const UChar* url, unsigned length);
     static LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL);
-
-    static void didStartWorkerRunLoop(WorkerRunLoop*);
-    static void didStopWorkerRunLoop(WorkerRunLoop*);
 };
 
 } // namespace WebCore
