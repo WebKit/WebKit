@@ -98,6 +98,9 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
         thisObject->m_propertyStorage.set(storage, StorageBarrier::Unchecked);
     }
 
+    if (thisObject->m_inheritorID)
+        visitor.append(&thisObject->m_inheritorID);
+
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
 #endif
@@ -533,21 +536,15 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, WriteBarr
 
 Structure* JSObject::createInheritorID(JSGlobalData& globalData)
 {
-    ASSERT(!getDirectLocation(globalData, globalData.m_inheritorIDKey));
-
     JSGlobalObject* globalObject;
     if (isGlobalThis())
         globalObject = static_cast<JSGlobalThis*>(this)->unwrappedObject();
     else
         globalObject = structure()->globalObject();
     ASSERT(globalObject);
-    
-    Structure* inheritorID = createEmptyObjectStructure(globalData, globalObject, this);
-    ASSERT(inheritorID->isEmpty());
-
-    PutPropertySlot slot;
-    putDirectInternal<PutModeDefineOwnProperty>(globalData, globalData.m_inheritorIDKey, inheritorID, 0, slot, 0);
-    return inheritorID;
+    m_inheritorID.set(globalData, this, createEmptyObjectStructure(globalData, globalObject, this));
+    ASSERT(m_inheritorID->isEmpty());
+    return m_inheritorID.get();
 }
 
 PropertyStorage JSObject::growPropertyStorage(JSGlobalData& globalData, size_t oldSize, size_t newSize)

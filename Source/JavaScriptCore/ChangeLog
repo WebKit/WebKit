@@ -1,3 +1,28 @@
+2012-06-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Unreviewed roll out r119795.
+        
+        This broke jquery/core.html
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicJSObject):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicJSObject):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/JSGlobalThis.cpp:
+        (JSC::JSGlobalThis::setUnwrappedObject):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildren):
+        (JSC::JSObject::createInheritorID):
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC::JSObject::resetInheritorID):
+        (JSC):
+        (JSC::JSObject::offsetOfInheritorID):
+        (JSC::JSObject::inheritorID):
+
 2012-06-08  Filip Pizlo  <fpizlo@apple.com>
 
         PredictedType should be called SpeculatedType
