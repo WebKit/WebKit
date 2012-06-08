@@ -1,3 +1,12 @@
+2012-06-08  Wei James  <james.wei@intel.com>
+
+        Add app_abi option for DumpRenderTree_apk
+        https://bugs.webkit.org/show_bug.cgi?id=88626
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2012-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to get the library version to WebKit2 GTK+
