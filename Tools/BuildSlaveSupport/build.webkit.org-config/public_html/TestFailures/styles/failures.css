@@ -48,6 +48,11 @@ a.failing-builder {
         padding: 0 2px;
     }
 
+    .effects a.failing-builder>span.architecture {
+        background-color: #555;
+        color: White;
+    }
+
     a.failing-builder>span.graphics {
         padding: 0 2px;
     }
