@@ -65,7 +65,6 @@ public:
     virtual float opacity() const OVERRIDE { return m_opacity; }
     virtual void setTransformFromAnimation(const WebKit::WebTransformationMatrix&) OVERRIDE;
     virtual const WebKit::WebTransformationMatrix& transform() const OVERRIDE { return m_transform; }
-    virtual const IntSize& bounds() const OVERRIDE { return m_bounds; }
 
     // Tree structure.
     CCLayerImpl* parent() const { return m_parent; }
@@ -176,6 +175,7 @@ public:
     void setTargetRenderSurface(CCRenderSurface* surface) { m_targetRenderSurface = surface; }
 
     void setBounds(const IntSize&);
+    const IntSize& bounds() const { return m_bounds; }
 
     const IntSize& contentBounds() const { return m_contentBounds; }
     void setContentBounds(const IntSize&);

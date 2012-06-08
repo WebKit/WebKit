@@ -29,8 +29,11 @@
 #include "GraphicsLayer.h"
 #include "LayerChromium.h"
 #include "TranslateTransformOperation.h"
+#include "cc/CCKeyframedAnimationCurve.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerImpl.h"
+
+#include <public/WebTransformOperations.h>
 
 using namespace WebCore;
 
@@ -39,38 +42,38 @@ namespace {
 template <class Target>
 void addOpacityTransition(Target& target, double duration, float startOpacity, float endOpacity, bool useTimingFunction)
 {
-    WebCore::KeyframeValueList values(AnimatedPropertyOpacity);
+    OwnPtr<CCKeyframedFloatAnimationCurve> curve(CCKeyframedFloatAnimationCurve::create());
+
     if (duration > 0)
-        values.insert(new FloatAnimationValue(0, startOpacity));
-    values.insert(new FloatAnimationValue(duration, endOpacity));
+        curve->addKeyframe(CCFloatKeyframe::create(0, startOpacity, useTimingFunction ? nullptr : CCEaseTimingFunction::create()));
+    curve->addKeyframe(CCFloatKeyframe::create(duration, endOpacity, nullptr));
 
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
+    OwnPtr<CCActiveAnimation> animation(CCActiveAnimation::create(curve.release(), 0, 0, CCActiveAnimation::Opacity));
+    animation->setNeedsSynchronizedStartTime(true);
 
-    if (useTimingFunction)
-        animation->setTimingFunction(LinearTimingFunction::create());
-
-    IntSize boxSize;
-
-    target.addAnimation(values, boxSize, animation.get(), 0, 0, 0);
+    target.addAnimation(animation.release());
 }
 
 template <class Target>
 void addAnimatedTransform(Target& target, double duration, int deltaX, int deltaY)
 {
     static int id = 0;
-    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
+    OwnPtr<CCKeyframedTransformAnimationCurve> curve(CCKeyframedTransformAnimationCurve::create());
 
-    TransformOperations operations;
-    operations.operations().append(TranslateTransformOperation::create(Length(deltaX, WebCore::Fixed), Length(deltaY, WebCore::Fixed), TransformOperation::TRANSLATE_X));
-    values.insert(new TransformAnimationValue(0, &operations));
+    if (duration > 0) {
+        WebKit::WebTransformOperations startOperations;
+        startOperations.appendTranslate(deltaX, deltaY, 0);
+        curve->addKeyframe(CCTransformKeyframe::create(0, startOperations, nullptr));
+    }
 
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
+    WebKit::WebTransformOperations operations;
+    operations.appendTranslate(deltaX, deltaY, 0);
+    curve->addKeyframe(CCTransformKeyframe::create(duration, operations, nullptr));
 
-    IntSize boxSize;
+    OwnPtr<CCActiveAnimation> animation(CCActiveAnimation::create(curve.release(), id++, 0, CCActiveAnimation::Transform));
+    animation->setNeedsSynchronizedStartTime(true);
 
-    target.addAnimation(values, boxSize, animation.get(), ++id, 0, 0);
+    target.addAnimation(animation.release());
 }
 
 } // namespace
@@ -99,7 +102,7 @@ FakeTransformTransition::~FakeTransformTransition()
 {
 }
 
-WebKit::WebTransformationMatrix FakeTransformTransition::getValue(double time, const WebCore::IntSize& size) const
+WebKit::WebTransformationMatrix FakeTransformTransition::getValue(double time) const
 {
     return WebKit::WebTransformationMatrix();
 }

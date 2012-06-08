@@ -54,7 +54,7 @@ public:
     virtual ~FakeTransformTransition();
 
     virtual double duration() const OVERRIDE { return m_duration; }
-    virtual WebKit::WebTransformationMatrix getValue(double time, const WebCore::IntSize&) const OVERRIDE;
+    virtual WebKit::WebTransformationMatrix getValue(double time) const OVERRIDE;
 
     virtual PassOwnPtr<WebCore::CCAnimationCurve> clone() const OVERRIDE;
 
@@ -89,12 +89,10 @@ public:
     virtual float opacity() const OVERRIDE { return m_opacity; }
     virtual void setTransformFromAnimation(const WebKit::WebTransformationMatrix& transform) OVERRIDE { m_transform = transform; }
     virtual const WebKit::WebTransformationMatrix& transform() const OVERRIDE { return m_transform; }
-    virtual const WebCore::IntSize& bounds() const OVERRIDE { return m_bounds; }
 
 private:
     float m_opacity;
     WebKit::WebTransformationMatrix m_transform;
-    WebCore::IntSize m_bounds;
 };
 
 void addOpacityTransitionToController(WebCore::CCLayerAnimationController&, double duration, float startOpacity, float endOpacity, bool useTimingFunction);

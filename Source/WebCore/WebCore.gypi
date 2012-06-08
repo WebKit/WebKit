@@ -3558,6 +3558,8 @@
             'platform/graphics/cg/TransformationMatrixCG.cpp',
             'platform/graphics/chromium/AnimationIdVendor.cpp',
             'platform/graphics/chromium/AnimationIdVendor.h',
+            'platform/graphics/chromium/AnimationTranslationUtil.cpp',
+            'platform/graphics/chromium/AnimationTranslationUtil.h',
             'platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp',
             'platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h',
             'platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp',
