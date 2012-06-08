@@ -1,3 +1,45 @@
+2012-06-08  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: mock WebSpeechRecognizer for DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=87976
+
+        Reviewed by Kent Tamura.
+
+        Provide a mock implementation of WebSpeechRecognizer for
+        DumpRenderTree. This will allow better testing of the API via layout
+        tests.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::addMockSpeechRecognitionResult):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController):
+        * DumpRenderTree/chromium/MockWebSpeechRecognizer.cpp: Added.
+        (MockWebSpeechRecognizer::create):
+        (MockWebSpeechRecognizer::start):
+        (MockWebSpeechRecognizer::stop):
+        (MockWebSpeechRecognizer::abort):
+        (MockWebSpeechRecognizer::MockWebSpeechRecognizer):
+        (MockWebSpeechRecognizer::~MockWebSpeechRecognizer):
+        (MockWebSpeechRecognizer::ResultTask::runIfValid):
+        * DumpRenderTree/chromium/MockWebSpeechRecognizer.h: Added.
+        (WebKit):
+        (MockWebSpeechRecognizer):
+        (MockWebSpeechRecognizer::addMockResult):
+        (MockWebSpeechRecognizer::taskList):
+        (ClientCallTask):
+        (MockWebSpeechRecognizer::ClientCallTask::ClientCallTask):
+        (ResultTask):
+        (MockWebSpeechRecognizer::ResultTask::ResultTask):
+        (NoMatchTask):
+        (MockWebSpeechRecognizer::NoMatchTask::NoMatchTask):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::speechRecognizer):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+        (WebViewHost::mockSpeechRecognizer):
+
 2012-06-07  Kinuko Yasuda  <kinuko@chromium.org>
 
         check-webkit-style needs to be taught about <public/Foo.h>

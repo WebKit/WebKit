@@ -48,6 +48,7 @@
 
 class LayoutTestController;
 class MockWebSpeechInputController;
+class MockWebSpeechRecognizer;
 class SkCanvas;
 class TestShell;
 
@@ -117,6 +118,10 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     MockWebSpeechInputController* speechInputControllerMock() { return m_speechInputControllerMock.get(); }
 #endif
 
+#if ENABLE(SCRIPTED_SPEECH)
+    MockWebSpeechRecognizer* mockSpeechRecognizer() { return m_mockSpeechRecognizer.get(); }
+#endif
+
 #if ENABLE(POINTER_LOCK)
     void didLosePointerLock();
     void setPointerLockWillFailAsynchronously() { m_pointerLockPlannedResult = PointerLockWillFailAsync; }
@@ -175,6 +180,9 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual WebKit::WebGeolocationClient* geolocationClient();
 #if ENABLE(INPUT_SPEECH)
     virtual WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener*);
+#endif
+#if ENABLE(SCRIPTED_SPEECH)
+    virtual WebKit::WebSpeechRecognizer* speechRecognizer() OVERRIDE;
 #endif
     virtual WebKit::WebDeviceOrientationClient* deviceOrientationClient();
 #if ENABLE(MEDIA_STREAM)
@@ -410,6 +418,10 @@ private:
     OwnPtr<WebKit::WebDeviceOrientationClientMock> m_deviceOrientationClientMock;
 #if ENABLE(INPUT_SPEECH)
     OwnPtr<MockWebSpeechInputController> m_speechInputControllerMock;
+#endif
+
+#if ENABLE(SCRIPTED_SPEECH)
+    OwnPtr<MockWebSpeechRecognizer> m_mockSpeechRecognizer;
 #endif
 
 #if ENABLE(MEDIA_STREAM)

@@ -1,3 +1,16 @@
+2012-06-08  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: mock WebSpeechRecognizer for DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=87976
+
+        Reviewed by Kent Tamura.
+
+        Add a layout test using the new mock, pushing a mock result through
+        and checking that events fire correctly.
+
+        * fast/speech/scripted/speechrecognition-basics-expected.txt: Added.
+        * fast/speech/scripted/speechrecognition-basics.html: Added.
+
 2012-06-08  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening after r119795, adding separate test expectations

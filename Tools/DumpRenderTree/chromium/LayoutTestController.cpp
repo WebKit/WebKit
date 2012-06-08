@@ -34,6 +34,7 @@
 
 #include "DRTDevToolsAgent.h"
 #include "MockWebSpeechInputController.h"
+#include "MockWebSpeechRecognizer.h"
 #include "TestShell.h"
 #include "WebAnimationController.h"
 #include "WebBindings.h"
@@ -114,6 +115,9 @@ LayoutTestController::LayoutTestController(TestShell* shell)
 #if ENABLE(INPUT_SPEECH)
     bindMethod("addMockSpeechInputResult", &LayoutTestController::addMockSpeechInputResult);
     bindMethod("setMockSpeechInputDumpRect", &LayoutTestController::setMockSpeechInputDumpRect);
+#endif
+#if ENABLE(SCRIPTED_SPEECH)
+    bindMethod("addMockSpeechRecognitionResult", &LayoutTestController::addMockSpeechRecognitionResult);
 #endif
     bindMethod("addOriginAccessWhitelistEntry", &LayoutTestController::addOriginAccessWhitelistEntry);
     bindMethod("addUserScript", &LayoutTestController::addUserScript);
@@ -1955,6 +1959,18 @@ void LayoutTestController::setMockSpeechInputDumpRect(const CppArgumentList& arg
 
     if (MockWebSpeechInputController* controller = m_shell->webViewHost()->speechInputControllerMock())
         controller->setDumpRect(arguments[0].value.boolValue);
+}
+#endif
+
+#if ENABLE(SCRIPTED_SPEECH)
+void LayoutTestController::addMockSpeechRecognitionResult(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 2 || !arguments[0].isString() || !arguments[1].isNumber())
+        return;
+
+    if (MockWebSpeechRecognizer* recognizer = m_shell->webViewHost()->mockSpeechRecognizer())
+        recognizer->addMockResult(cppVariantToWebString(arguments[0]), arguments[1].toDouble());
 }
 #endif
 

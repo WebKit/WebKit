@@ -28,6 +28,8 @@
             'chromium/MockWebPrerenderingSupport.h',
             'chromium/MockWebSpeechInputController.cpp',
             'chromium/MockWebSpeechInputController.h',
+            'chromium/MockWebSpeechRecognizer.cpp',
+            'chromium/MockWebSpeechRecognizer.h',
             'chromium/NotificationPresenter.h',
             'chromium/NotificationPresenter.cpp',
             'chromium/Task.h',

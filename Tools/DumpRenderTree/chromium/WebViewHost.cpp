@@ -34,6 +34,7 @@
 #include "LayoutTestController.h"
 #include "MockGrammarCheck.h"
 #include "MockWebSpeechInputController.h"
+#include "MockWebSpeechRecognizer.h"
 #include "TestNavigationController.h"
 #include "TestShell.h"
 #include "TestWebPlugin.h"
@@ -712,6 +713,15 @@ WebSpeechInputController* WebViewHost::speechInputController(WebKit::WebSpeechIn
     if (!m_speechInputControllerMock)
         m_speechInputControllerMock = MockWebSpeechInputController::create(listener);
     return m_speechInputControllerMock.get();
+}
+#endif
+
+#if ENABLE(SCRIPTED_SPEECH)
+WebSpeechRecognizer* WebViewHost::speechRecognizer()
+{
+    if (!m_mockSpeechRecognizer)
+        m_mockSpeechRecognizer = MockWebSpeechRecognizer::create();
+    return m_mockSpeechRecognizer.get();
 }
 #endif
 
