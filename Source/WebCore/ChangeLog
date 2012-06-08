@@ -1,3 +1,18 @@
+2012-06-07  Victor Carbune  <victor@rosedu.org>
+
+        addTextTrack should set track mode to HIDDEN
+        https://bugs.webkit.org/show_bug.cgi?id=88317
+
+        Reviewed by Eric Carlson.
+
+        Updated existing test.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addTextTrack): Set the default parameters
+        for the newly created TextTrack.
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack):
+
 2012-06-07  Li Yin  <li.yin@intel.com>
 
         FileAPI: Blob should support ArrayBufferView instead of ArrayBuffer for Constructor Parameters

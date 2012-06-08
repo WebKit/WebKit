@@ -1,3 +1,13 @@
+2012-06-07  Victor Carbune  <victor@rosedu.org>
+
+        addTextTrack should set track mode to HIDDEN
+        https://bugs.webkit.org/show_bug.cgi?id=88317
+
+        Reviewed by Eric Carlson.
+
+        * media/track/track-texttracks-expected.txt: Updated.
+        * media/track/track-texttracks.html: Updated.
+
 2012-06-07  Li Yin  <li.yin@intel.com>
 
         FileAPI: Blob should support ArrayBufferView instead of ArrayBuffer for Constructor Parameters

@@ -78,6 +78,7 @@ const AtomicString& TextTrack::metadataKeyword()
 
 TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const String& kind, const String& label, const String& language, TextTrackType type)
     : TrackBase(context, TrackBase::TextTrack)
+    , m_cues(0)
     , m_mediaElement(0)
     , m_label(label)
     , m_language(language)

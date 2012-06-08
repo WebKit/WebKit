@@ -2798,7 +2798,7 @@ PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const S
 
     // 4.8.10.12.4 Text track API
     // The addTextTrack(kind, label, language) method of media elements, when invoked, must run the following steps:
-    
+
     // 1. If kind is not one of the following strings, then throw a SyntaxError exception and abort these steps
     if (!TextTrack::isValidKindKeyword(kind)) {
         ec = SYNTAX_ERR;
@@ -2808,14 +2808,22 @@ PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const S
     // 2. If the label argument was omitted, let label be the empty string.
     // 3. If the language argument was omitted, let language be the empty string.
     // 4. Create a new TextTrack object.
-    RefPtr<TextTrack> textTrack = TextTrack::create(ActiveDOMObject::scriptExecutionContext(), this, kind, label, language);
 
     // 5. Create a new text track corresponding to the new object, and set its text track kind to kind, its text 
-    // track label to label, its text track language to language, its text track readiness state to the text track
-    // loaded state, its text track mode to the text track hidden mode, and its text track list of cues to an empty list.
-    
+    // track label to label, its text track language to language...
+    RefPtr<TextTrack> textTrack = TextTrack::create(ActiveDOMObject::scriptExecutionContext(), this, kind, label, language);
+
+    // Note, due to side effects when changing track parameters, we have to
+    // first append the track to the text track list.
+
     // 6. Add the new text track to the media element's list of text tracks.
     textTracks()->append(textTrack);
+
+    // ... its text track readiness state to the text track loaded state ...
+    textTrack->setReadinessState(TextTrack::Loaded);
+
+    // ... its text track mode to the text track hidden mode, and its text track list of cues to an empty list ...
+    textTrack->setMode(TextTrack::HIDDEN, ec);
 
     return textTrack.release();
 }
