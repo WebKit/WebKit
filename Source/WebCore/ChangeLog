@@ -1,3 +1,24 @@
+2012-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in WebCore::InsertParagraphSeparatorCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=88108
+
+        Reviewed by Levi Weintraub.
+
+        Use NodeVector instead of walking through siblings as we mutate the DOM.
+
+        No new tests are added since there is no reliable reduction.
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveRemainingSiblingsToNewParent):
+        (WebCore):
+        * editing/CompositeEditCommand.h:
+        (CompositeEditCommand):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+
 2012-06-08  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: rename some instances of open to registerFrontendCallbacks

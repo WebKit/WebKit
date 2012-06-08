@@ -376,12 +376,7 @@ void InsertParagraphSeparatorCommand::doApply()
             }
         }
 
-        while (n && n != blockToInsert) {
-            Node *next = n->nextSibling();
-            removeNode(n);
-            appendNode(n, blockToInsert);
-            n = next;
-        }
+        moveRemainingSiblingsToNewParent(n, blockToInsert.get(), blockToInsert);
     }            
 
     // Handle whitespace that occurs after the split
