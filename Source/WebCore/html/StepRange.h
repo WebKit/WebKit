@@ -56,17 +56,6 @@ public:
         }
     };
 
-    struct NumberWithDecimalPlacesOrMissing {
-        bool hasValue;
-        NumberWithDecimalPlaces value;
-
-        NumberWithDecimalPlacesOrMissing(NumberWithDecimalPlaces value, bool hasValue = true)
-            : hasValue(hasValue)
-            , value(value)
-        {
-        }
-    };
-
     enum StepValueShouldBe {
         StepValueShouldBeReal,
         ParsedStepValueShouldBeInteger,
@@ -103,14 +92,14 @@ public:
 
     StepRange();
     StepRange(const StepRange&);
-    StepRange(const NumberWithDecimalPlaces& stepBase, const InputNumber& minimum, const InputNumber& maximum, const NumberWithDecimalPlacesOrMissing& step, const StepDescription&);
+    StepRange(const NumberWithDecimalPlaces& stepBase, const InputNumber& minimum, const InputNumber& maximum, const NumberWithDecimalPlaces& step, const StepDescription&);
     InputNumber acceptableError() const;
     InputNumber alignValueForStep(const InputNumber& currentValue, unsigned currentDecimalPlaces, const InputNumber& newValue) const;
     InputNumber clampValue(const InputNumber& value) const;
     bool hasStep() const { return m_hasStep; }
     InputNumber maximum() const { return m_maximum; }
     InputNumber minimum() const { return m_minimum; }
-    static NumberWithDecimalPlacesOrMissing parseStep(AnyStepHandling, const StepDescription&, const String&);
+    static NumberWithDecimalPlaces parseStep(AnyStepHandling, const StepDescription&, const String&);
     InputNumber step() const { return m_step; }
     InputNumber stepBase() const { return m_stepBase; }
     unsigned stepBaseDecimalPlaces() const { return m_stepBaseDecimalPlaces; }

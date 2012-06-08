@@ -76,7 +76,7 @@ StepRange DateInputType::createStepRange(AnyStepHandling anyStepHandling) const
     const InputNumber stepBase = parseToNumber(element()->fastGetAttribute(minAttr), 0);
     const InputNumber minimum = parseToNumber(element()->fastGetAttribute(minAttr), convertDoubleToInputNumber(DateComponents::minimumDate()));
     const InputNumber maximum = parseToNumber(element()->fastGetAttribute(maxAttr), convertDoubleToInputNumber(DateComponents::maximumDate()));
-    StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    const StepRange::NumberWithDecimalPlaces step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 

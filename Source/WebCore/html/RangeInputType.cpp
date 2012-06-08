@@ -104,11 +104,11 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 
     const AtomicString& precisionValue = element()->fastGetAttribute(precisionAttr);
     if (!precisionValue.isNull()) {
-        StepRange::NumberWithDecimalPlacesOrMissing step(1, !equalIgnoringCase(precisionValue, "float"));
+        const StepRange::NumberWithDecimalPlaces step(equalIgnoringCase(precisionValue, "float") ? std::numeric_limits<double>::quiet_NaN() : 1);
         return StepRange(minimum, minimum, maximum, step, stepDescription);
     }
 
-    StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    const StepRange::NumberWithDecimalPlaces step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(minimum, minimum, maximum, step, stepDescription);
 }
 

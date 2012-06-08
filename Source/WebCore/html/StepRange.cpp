@@ -55,15 +55,15 @@ StepRange::StepRange(const StepRange& stepRange)
 {
 }
 
-StepRange::StepRange(const NumberWithDecimalPlaces& stepBase, const InputNumber& minimum, const InputNumber& maximum, const NumberWithDecimalPlacesOrMissing& step, const StepDescription& stepDescription)
+StepRange::StepRange(const NumberWithDecimalPlaces& stepBase, const InputNumber& minimum, const InputNumber& maximum, const NumberWithDecimalPlaces& step, const StepDescription& stepDescription)
     : m_maximum(maximum)
     , m_minimum(minimum)
-    , m_step(step.value.value)
-    , m_stepBase(stepBase.value)
+    , m_step(isfinite(step.value) ? step.value : 1)
+    , m_stepBase(isfinite(stepBase.value) ? stepBase.value : 1)
     , m_stepDescription(stepDescription)
     , m_stepBaseDecimalPlaces(stepBase.decimalPlaces)
-    , m_stepDecimalPlaces(step.value.decimalPlaces)
-    , m_hasStep(step.hasValue)
+    , m_stepDecimalPlaces(step.decimalPlaces)
+    , m_hasStep(isfinite(step.value))
 {
     ASSERT(isfinite(m_maximum));
     ASSERT(isfinite(m_minimum));
@@ -106,46 +106,46 @@ InputNumber StepRange::clampValue(const InputNumber& value) const
     return clampedValue;
 }
 
-StepRange::NumberWithDecimalPlacesOrMissing StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescription& stepDescription, const String& stepString)
+StepRange::NumberWithDecimalPlaces StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescription& stepDescription, const String& stepString)
 {
     if (stepString.isEmpty())
-        return NumberWithDecimalPlacesOrMissing(stepDescription.defaultValue());
+        return NumberWithDecimalPlaces(stepDescription.defaultValue());
 
     if (equalIgnoringCase(stepString, "any")) {
         switch (anyStepHandling) {
         case RejectAny:
-            return NumberWithDecimalPlacesOrMissing(NumberWithDecimalPlaces(1), false);
+            return NumberWithDecimalPlaces(std::numeric_limits<double>::quiet_NaN());
         case AnyIsDefaultStep:
-            return NumberWithDecimalPlacesOrMissing(stepDescription.defaultValue());
+            return NumberWithDecimalPlaces(stepDescription.defaultValue());
         default:
             ASSERT_NOT_REACHED();
         }
     }
 
-    NumberWithDecimalPlacesOrMissing step(0);
-    step.value.value = parseToDoubleForNumberTypeWithDecimalPlaces(stepString, &step.value.decimalPlaces);
-    if (!isfinite(step.value.value) || step.value.value <= 0.0)
-        return NumberWithDecimalPlacesOrMissing(stepDescription.defaultValue());
+    NumberWithDecimalPlaces step(0);
+    step.value = parseToDoubleForNumberTypeWithDecimalPlaces(stepString, &step.decimalPlaces);
+    if (!isfinite(step.value) || step.value <= 0.0)
+        return NumberWithDecimalPlaces(stepDescription.defaultValue());
 
     switch (stepDescription.stepValueShouldBe) {
     case StepValueShouldBeReal:
-        step.value.value *= stepDescription.stepScaleFactor;
+        step.value *= stepDescription.stepScaleFactor;
         break;
     case ParsedStepValueShouldBeInteger:
         // For date, month, and week, the parsed value should be an integer for some types.
-        step.value.value = max(round(step.value.value), 1.0);
-        step.value.value *= stepDescription.stepScaleFactor;
+        step.value = max(round(step.value), 1.0);
+        step.value *= stepDescription.stepScaleFactor;
         break;
     case ScaledStepValueShouldBeInteger:
         // For datetime, datetime-local, time, the result should be an integer.
-        step.value.value *= stepDescription.stepScaleFactor;
-        step.value.value = max(round(step.value.value), 1.0);
+        step.value *= stepDescription.stepScaleFactor;
+        step.value = max(round(step.value), 1.0);
         break;
     default:
         ASSERT_NOT_REACHED();
     }
 
-    ASSERT(step.value.value > 0);
+    ASSERT(step.value > 0);
     return step;
 }
 

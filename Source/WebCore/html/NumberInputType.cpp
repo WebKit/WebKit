@@ -137,8 +137,7 @@ StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) cons
     const InputNumber floatMax = convertDoubleToInputNumber(numeric_limits<float>::max());
     const InputNumber minimum = parseToNumber(element()->fastGetAttribute(minAttr), -floatMax);
     const InputNumber maximum = parseToNumber(element()->fastGetAttribute(maxAttr), floatMax);
-
-    StepRange::NumberWithDecimalPlacesOrMissing step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    const StepRange::NumberWithDecimalPlaces step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 
