@@ -75,6 +75,7 @@ class DatabaseThread;
 class DocumentFragment;
 class DocumentLoader;
 class DocumentMarkerController;
+class DocumentParser;
 class DocumentType;
 class DocumentWeakReference;
 class EditingText;
@@ -131,8 +132,8 @@ class StyleSheetContents;
 class StyleSheetList;
 class Text;
 class TextResourceDecoder;
-class DocumentParser;
 class TreeWalker;
+class UndoManager;
 class WebKitNamedFlow;
 class XMLHttpRequest;
 class XPathEvaluator;
@@ -1102,6 +1103,10 @@ public:
     void removeCachedMicroDataItemList(MicroDataItemList*, const String&);
 #endif
     
+#if ENABLE(UNDO_MANAGER)
+    PassRefPtr<UndoManager> undoManager();
+#endif
+    
     bool isInDocumentWrite() { return m_writeRecursionDepth > 0; }
 
     void suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension);
@@ -1450,6 +1455,10 @@ private:
     
     unsigned m_wheelEventHandlerCount;
     unsigned m_touchEventHandlerCount;
+    
+#if ENABLE(UNDO_MANAGER)
+    RefPtr<UndoManager> m_undoManager;
+#endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     RefPtr<ScriptedAnimationController> m_scriptedAnimationController;

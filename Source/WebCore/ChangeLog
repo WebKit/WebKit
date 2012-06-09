@@ -1,3 +1,45 @@
+2012-06-09  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        Add UNDO_MANAGER flag
+        https://bugs.webkit.org/show_bug.cgi?id=87908
+
+        Reviewed by Tony Chang.
+
+        Add undoManager property to document behind the UNDO_MANAGER flag and
+        add placeholders for some methods of undoManager.
+
+        Test: editing/undomanager/document-has-undomanager.html
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore):
+        (WebCore::Document::undoManager):
+        * dom/Document.h:
+        (WebCore):
+        (Document):
+        * dom/Document.idl:
+        * editing/UndoManager.cpp: Added.
+        (WebCore):
+        (WebCore::UndoManager::create):
+        (WebCore::UndoManager::UndoManager):
+        (WebCore::UndoManager::undo):
+        (WebCore::UndoManager::redo):
+        (WebCore::UndoManager::clearUndo):
+        (WebCore::UndoManager::clearRedo):
+        * editing/UndoManager.h: Added.
+        (WebCore):
+        (UndoManager):
+        * editing/UndoManager.idl: Added.
+
 2012-06-08  Levi Weintraub  <leviw@chromium.org>
 
         RenderLayer::paintChildLayerIntoColumns doesn't properly pixel snap

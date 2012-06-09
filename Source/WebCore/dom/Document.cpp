@@ -150,6 +150,7 @@
 #include "Timer.h"
 #include "TransformSource.h"
 #include "TreeWalker.h"
+#include "UndoManager.h"
 #include "UserContentURLPattern.h"
 #include "WebKitNamedFlow.h"
 #include "XMLDocumentParser.h"
@@ -483,6 +484,9 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_writeRecursionDepth(0)
     , m_wheelEventHandlerCount(0)
     , m_touchEventHandlerCount(0)
+#if ENABLE(UNDO_MANAGER)
+    , m_undoManager(0)
+#endif
     , m_pendingTasksTimer(this, &Document::pendingTasksTimerFired)
     , m_scheduledTasksAreSuspended(false)
     , m_visualUpdatesAllowed(true)
@@ -629,6 +633,11 @@ Document::~Document()
 
     clearStyleResolver(); // We need to destory CSSFontSelector before destroying m_cachedResourceLoader.
     m_cachedResourceLoader.clear();
+
+#if ENABLE(UNDO_MANAGER)
+    if (m_undoManager)
+        m_undoManager->undoScopeHostDestroyed();
+#endif
 
     // We must call clearRareData() here since a Document class inherits TreeScope
     // as well as Node. See a comment on TreeScope.h for the reason.
@@ -5962,5 +5971,14 @@ void Document::adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect& r
     if (inverseFrameScale != 1)
         rect.scale(inverseFrameScale);
 }
+
+#if ENABLE(UNDO_MANAGER)
+PassRefPtr<UndoManager> Document::undoManager()
+{
+    if (!m_undoManager)
+        m_undoManager = UndoManager::create(this);
+    return m_undoManager;
+}
+#endif
 
 } // namespace WebCore

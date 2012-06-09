@@ -124,6 +124,9 @@ BUGWKEFL : fast/forms/textarea/textarea-placeholder-paint-order.html = MISSING
 // Implementing copy{En,De}codedHostName only to test them does not make sense
 BUGWK86080 SKIP : fast/encoding/idn-security.html = TEXT
 
+// UndoManager is not yet enabled.
+BUGWK87908 SKIP : editing/undomanager = PASS
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////

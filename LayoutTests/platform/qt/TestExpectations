@@ -75,6 +75,9 @@ BUGWK88198 : svg/stroke/non-scaling-stroke-pattern.svg = PASS IMAGE
 // CSS Variables are not yet enabled.
 BUGWK85580 SKIP : fast/css/variables = PASS
 
+// UndoManager is not yet enabled.
+BUGWK87908 SKIP : editing/undomanager = PASS
+
 // Needs rebaseline after bug 86441
 // failing new tests
 BUGWK86441 SKIP : fast/borders/border-antialiasing.html = IMAGE

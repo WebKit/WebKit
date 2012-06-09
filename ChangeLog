@@ -1,3 +1,12 @@
+2012-06-09  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        Add UNDO_MANAGER flag
+        https://bugs.webkit.org/show_bug.cgi?id=87908
+
+        Reviewed by Tony Chang.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2012-06-08  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the GTK+ build when OpenGL is enabled.

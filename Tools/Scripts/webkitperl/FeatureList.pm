@@ -117,6 +117,7 @@ my (
     $tiledBackingStoreSupport,
     $touchEventsSupport,
     $touchIconLoadingSupport,
+    $undoManagerSupport,
     $vibrationSupport,
     $videoSupport,
     $videoTrackSupport,
@@ -350,6 +351,9 @@ my @features = (
 
     { option => "touch-icon-loading", desc => "Toggle Touch Icon Loading Support",
       define => "ENABLE_TOUCH_ICON_LOADING", default => 0, value => \$touchIconLoadingSupport },
+
+    { option => "undo-manager", desc => "Toggle Undo Manager support",
+      define => "ENABLE_UNDO_MANAGER", default => 0, value => \$undoManagerSupport },
 
     { option => "vibration", desc => "Toggle Vibration support",
       define => "ENABLE_VIBRATION", default => (isEfl() || isBlackBerry()), value => \$vibrationSupport },

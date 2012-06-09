@@ -982,6 +982,7 @@
             'dom/WebKitNamedFlow.idl',
             'dom/WebKitTransitionEvent.idl',
             'dom/WheelEvent.idl',
+            'editing/UndoManager.idl',
             'fileapi/Blob.idl',
             'fileapi/File.idl',
             'fileapi/FileError.idl',

@@ -1,3 +1,12 @@
+2012-06-09  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        Add UNDO_MANAGER flag
+        https://bugs.webkit.org/show_bug.cgi?id=87908
+
+        Reviewed by Tony Chang.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-06-08  Brent Fulgham  <bfulgham@webkit.org>
         [WinCairo] Build fix after Windows export definition file change.
 
