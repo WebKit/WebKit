@@ -37,11 +37,11 @@
 #include "TextResourceDecoder.h"
 
 namespace {
-// 10MB
-static int maximumResourcesContentSize = 10 * 1000 * 1000;
+// 100MB
+static int maximumResourcesContentSize = 100 * 1000 * 1000;
 
-// 1MB
-static int maximumSingleResourceContentSize = 1000 * 1000;
+// 10MB
+static int maximumSingleResourceContentSize = 10 * 1000 * 1000;
 }
 
 namespace WebCore {
