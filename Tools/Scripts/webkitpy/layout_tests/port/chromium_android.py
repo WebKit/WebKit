@@ -152,6 +152,12 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def __init__(self, host, port_name, **kwargs):
         chromium.ChromiumPort.__init__(self, host, port_name, **kwargs)
 
+        # FIXME: Stop using test_shell mode: https://bugs.webkit.org/show_bug.cgi?id=88542
+        if not hasattr(self._options, 'additional_drt_flag'):
+            self._options.additional_drt_flag = []
+        if not '--test-shell' in self._options.additional_drt_flag:
+            self._options.additional_drt_flag.append('--test-shell')
+
         # The Chromium port for Android always uses the hardware GPU path.
         self._options.enable_hardware_gpu = True
 
@@ -267,7 +273,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def _path_to_driver(self, configuration=None):
         if not configuration:
             configuration = self.get_option('configuration')
-        return self._build_path(configuration, 'DumpRenderTree_apk/ChromeNativeTests-debug.apk')
+        return self._build_path(configuration, 'DumpRenderTree_apk/DumpRenderTree-debug.apk')
 
     def _path_to_helper(self):
         return self._build_path(self.get_option('configuration'), 'forwarder')

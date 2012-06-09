@@ -408,33 +408,44 @@
         }],
         ['OS=="android"', {
             # Wrap libDumpRenderTree.so into an android apk for execution.
-            # See <(chromium_src_dir)/base/base.gyp for TODO(jrg)s about this strategy.
             'targets': [{
                 'target_name': 'DumpRenderTree_apk',
                 'type': 'none',
                 'dependencies': [
+                    '<(chromium_src_dir)/base/base.gyp:base_java',
+                    '<(chromium_src_dir)/net/net.gyp:net_java',
+                    '<(chromium_src_dir)/media/media.gyp:media_java',
                     'DumpRenderTree',
                 ],
+                'variables': {
+                    'input_shlib_path': '<(SHARED_LIB_DIR)/<(SHARED_LIB_PREFIX)DumpRenderTree<(SHARED_LIB_SUFFIX)',
+                    'input_jars_paths': [
+                        '<(PRODUCT_DIR)/lib.java/chromium_base.jar',
+                        '<(PRODUCT_DIR)/lib.java/chromium_net.jar',
+                        '<(PRODUCT_DIR)/lib.java/chromium_media.jar',
+                    ],
+                },
+                # Part of the following was copied from <(chromium_src_dir)/build/apk_test.gpyi.
+                # Not including it because gyp include doesn't support variable in path or under
+                # conditions. And we also have some different requirements.
                 'actions': [{
-                    # Generate apk files (including source and antfile) from
-                    # a template, and builds them.
-                    'action_name': 'generate_and_build',
+                    'action_name': 'apk_DumpRenderTree',
+                    'message': 'Building DumpRenderTree test apk.',
                     'inputs': [
+                        '<(chromium_src_dir)/testing/android/AndroidManifest.xml',
                         '<(chromium_src_dir)/testing/android/generate_native_test.py',
-                        '<(SHARED_LIB_DIR)/<(SHARED_LIB_PREFIX)DumpRenderTree<(SHARED_LIB_SUFFIX)',
-                        # FIXME: Build the jar for native tests with SDK.
-                        # For now we are using Android.mk to build the apk.
+                        '<(input_shlib_path)',
+                        '<@(input_jars_paths)',
                     ],
                     'outputs': [
-                        '<(PRODUCT_DIR)/DumpRenderTree_apk/ChromeNativeTests-debug.apk',
+                        '<(PRODUCT_DIR)/DumpRenderTree_apk/DumpRenderTree-debug.apk',
                     ],
                     'action': [
                         '<(chromium_src_dir)/testing/android/generate_native_test.py',
                         '--native_library',
-                        '<(SHARED_LIB_DIR)/<(SHARED_LIB_PREFIX)DumpRenderTree<(SHARED_LIB_SUFFIX)',
-                        # FIXME: Build the jar for native tests with SDK.
-                        # '--jar',
-                        # 'foo/bar.jar',
+                        '<(input_shlib_path)',
+                        '--jars',
+                        '"<@(input_jars_paths)"',
                         '--output',
                         '<(PRODUCT_DIR)/DumpRenderTree_apk',
                         '--ant-args',
