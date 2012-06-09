@@ -1,3 +1,23 @@
+2012-06-09  Huang Dongsung  <luxtella@company100.net>
+
+        [Qt][Texmap] All layers with backingStore are opaque when using TextureMapperGL.
+        https://bugs.webkit.org/show_bug.cgi?id=88703
+
+        The bug originated from StillImage that is not override
+        Image::currentFrameHasAlpha(), so it always returns false.
+        StillImage is used by ImageBuffer, and if Texmap draws contents on ImageBuffer,
+        TextureMapperBackingStore thinks contents does not have alpha.
+
+        Covered by existing compositing tests.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/qt/StillImageQt.cpp:
+        (WebCore::StillImage::currentFrameHasAlpha):
+        (WebCore):
+        * platform/graphics/qt/StillImageQt.h:
+        (StillImage):
+
 2012-06-09  Victor Carbune  <victor@rosedu.org>
 
         Basic support for timestamps within a TextTrackCue
