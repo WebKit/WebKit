@@ -1,5 +1,12 @@
 2012-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Spring CRASH cleanup of Chromium test expectations.
+        Removed a whole bunch of bogus CRASH test expectations.
+
+        * platform/chromium/TestExpectations:
+
+2012-06-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove bogus CRASH expectations from skipped tests.
         There's no point in specifying test expectation when tests are skipped.
 
