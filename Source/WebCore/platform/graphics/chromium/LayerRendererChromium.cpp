@@ -402,15 +402,14 @@ void LayerRendererChromium::viewportChanged()
     m_currentRenderPass = 0;
 }
 
-void LayerRendererChromium::clearRenderPass(const CCRenderPass* renderPass, const CCRenderPass* rootRenderPass, const FloatRect& framebufferDamageRect)
+void LayerRendererChromium::clearRenderPass(const CCRenderPass* renderPass, const FloatRect& framebufferDamageRect)
 {
-    // Non-root layers should clear their entire contents to transparent. On DEBUG builds, the root layer
-    // is cleared to blue to easily see regions that were not drawn on the screen. If we
+    // On DEBUG builds, opaque render passes are cleared to blue to easily see regions that were not drawn on the screen. If we
     // are using partial swap / scissor optimization, then the surface should only
     // clear the damaged region, so that we don't accidentally clear un-changed portions
     // of the screen.
 
-    if (renderPass != rootRenderPass)
+    if (renderPass->hasTransparentBackground())
         GLC(m_context, m_context->clearColor(0, 0, 0, 0));
     else
         GLC(m_context, m_context->clearColor(0, 0, 1, 1));
@@ -421,7 +420,7 @@ void LayerRendererChromium::clearRenderPass(const CCRenderPass* renderPass, cons
         GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
 
 #if defined(NDEBUG)
-    if (renderPass != rootRenderPass)
+    if (renderPass->hasTransparentBackground())
 #endif
         m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
 
@@ -475,7 +474,7 @@ void LayerRendererChromium::drawRenderPass(const CCRenderPass* renderPass, const
     if (!useRenderPass(renderPass))
         return;
 
-    clearRenderPass(renderPass, m_defaultRenderPass, framebufferDamageRect);
+    clearRenderPass(renderPass, framebufferDamageRect);
 
     const CCQuadList& quadList = renderPass->quadList();
     for (CCQuadList::constBackToFrontIterator it = quadList.backToFrontBegin(); it != quadList.backToFrontEnd(); ++it)
@@ -615,10 +614,11 @@ void LayerRendererChromium::drawBackgroundFilters(const CCRenderPassDrawQuad* qu
     if (quad->backgroundFilters().isEmpty())
         return;
 
-    // FIXME: We only allow background filters on the root render surface because other surfaces may contain
+    // FIXME: We only allow background filters on an opaque render surface because other surfaces may contain
     // translucent pixels, and the contents behind those translucent pixels wouldn't have the filter applied.
-    if (!isCurrentRenderPass(m_defaultRenderPass))
+    if (m_currentRenderPass->hasTransparentBackground())
         return;
+    ASSERT(!m_currentManagedTexture);
 
     // FIXME: Do a single readback for both the surface and replica and cache the filtered results (once filter textures are not reused).
     IntRect deviceRect = enclosingIntRect(CCMathUtil::mapClippedRect(contentsDeviceTransform, sharedGeometryQuad().boundingBox()));

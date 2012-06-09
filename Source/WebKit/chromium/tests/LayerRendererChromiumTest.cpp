@@ -357,3 +357,58 @@ TEST(LayerRendererChromiumTest2, initializationWithoutGpuMemoryManagerExtensionS
 
     EXPECT_GT(mockClient.memoryAllocationLimitBytes(), 0ul);
 }
+
+class ClearCountingContext : public FakeWebGraphicsContext3D {
+public:
+    ClearCountingContext() : m_clear(0) { }
+
+    virtual void clear(WGC3Dbitfield)
+    {
+        m_clear++;
+    }
+
+    int clearCount() const { return m_clear; }
+
+private:
+    int m_clear;
+};
+
+TEST(LayerRendererChromiumTest2, opaqueBackground)
+{
+    FakeCCRendererClient mockClient;
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new ClearCountingContext), GraphicsContext3D::RenderDirectlyToHostWindow);
+    FakeLayerRendererChromium layerRendererChromium(&mockClient, context);
+
+    mockClient.rootRenderPass()->setHasTransparentBackground(false);
+
+    EXPECT_TRUE(layerRendererChromium.initialize());
+
+    layerRendererChromium.beginDrawingFrame(mockClient.rootRenderPass());
+    layerRendererChromium.drawRenderPass(mockClient.rootRenderPass(), FloatRect());
+    layerRendererChromium.finishDrawingFrame();
+
+    // On DEBUG builds, render passes with opaque background clear to blue to
+    // easily see regions that were not drawn on the screen.
+#if defined(NDEBUG)
+    EXPECT_EQ(0, static_cast<ClearCountingContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(context.get()))->clearCount());
+#else
+    EXPECT_EQ(1, static_cast<ClearCountingContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(context.get()))->clearCount());
+#endif
+}
+
+TEST(LayerRendererChromiumTest2, transparentBackground)
+{
+    FakeCCRendererClient mockClient;
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new ClearCountingContext), GraphicsContext3D::RenderDirectlyToHostWindow);
+    FakeLayerRendererChromium layerRendererChromium(&mockClient, context);
+
+    mockClient.rootRenderPass()->setHasTransparentBackground(true);
+
+    EXPECT_TRUE(layerRendererChromium.initialize());
+
+    layerRendererChromium.beginDrawingFrame(mockClient.rootRenderPass());
+    layerRendererChromium.drawRenderPass(mockClient.rootRenderPass(), FloatRect());
+    layerRendererChromium.finishDrawingFrame();
+
+    EXPECT_EQ(1, static_cast<ClearCountingContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(context.get()))->clearCount());
+}

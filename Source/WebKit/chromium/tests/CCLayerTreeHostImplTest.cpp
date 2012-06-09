@@ -1775,4 +1775,39 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     m_hostImpl->swapBuffers();
 }
 
+class MockDrawQuadsToFillScreenContext : public FakeWebGraphicsContext3D {
+public:
+    MOCK_METHOD1(useProgram, void(WebGLId program));
+    MOCK_METHOD4(drawElements, void(WGC3Denum mode, WGC3Dsizei count, WGC3Denum type, WGC3Dintptr offset));
+};
+
+TEST_F(CCLayerTreeHostImplTest, hasTransparentBackground)
+{
+    MockDrawQuadsToFillScreenContext* mockContext = new MockDrawQuadsToFillScreenContext();
+    RefPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(mockContext), GraphicsContext3D::RenderDirectlyToHostWindow));
+
+    // Run test case
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = createLayerTreeHost(false, context, CCLayerImpl::create(1));
+    myHostImpl->setBackgroundColor(Color::white);
+
+    // Verify one quad is drawn when transparent background set is not set.
+    myHostImpl->setHasTransparentBackground(false);
+    EXPECT_CALL(*mockContext, useProgram(_))
+        .Times(1);
+    EXPECT_CALL(*mockContext, drawElements(_, _, _, _))
+        .Times(1);
+    CCLayerTreeHostImpl::FrameData frame;
+    EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+    myHostImpl->drawLayers(frame);
+    myHostImpl->didDrawAllLayers(frame);
+    Mock::VerifyAndClearExpectations(&mockContext);
+
+    // Verify no quads are drawn when transparent background is set.
+    myHostImpl->setHasTransparentBackground(true);
+    EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+    myHostImpl->drawLayers(frame);
+    myHostImpl->didDrawAllLayers(frame);
+    Mock::VerifyAndClearExpectations(&mockContext);
+}
+
 } // namespace

@@ -56,6 +56,7 @@ public:
 
     void invalidateRect(const WebCore::IntRect&);
     void setBackgroundColor(const WebCore::Color&);
+    void setOpaque(bool);
     void setScrollLayer(WebCore::GraphicsLayer*);
     void setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, float deviceScale, int layerAdjustX);
     WebCore::GraphicsLayer* topLevelRootLayer() const { return m_graphicsLayer.get(); }

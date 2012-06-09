@@ -231,6 +231,8 @@ public:
 
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
 
+    void setHasTransparentBackground(bool transparent) { m_hasTransparentBackground = transparent; }
+
     TextureManager* contentsTextureManager() const;
     void setContentsMemoryAllocationLimitBytes(size_t);
 
@@ -309,6 +311,7 @@ private:
     float m_minPageScaleFactor, m_maxPageScaleFactor;
     bool m_triggerIdlePaints;
     Color m_backgroundColor;
+    bool m_hasTransparentBackground;
 
     TextureList m_deleteTextureAfterCommitList;
     size_t m_partialTextureUpdateRequests;

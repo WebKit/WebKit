@@ -3026,6 +3026,11 @@ void WebViewImpl::setIsTransparent(bool isTransparent)
 
     // Future frames check this to know whether to be transparent.
     m_isTransparent = isTransparent;
+
+    if (m_nonCompositedContentHost)
+        m_nonCompositedContentHost->setOpaque(!isTransparent);
+
+    m_layerTreeView.setHasTransparentBackground(isTransparent);
 }
 
 bool WebViewImpl::isTransparent() const
@@ -3475,6 +3480,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
         m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());
+        m_nonCompositedContentHost->setOpaque(!isTransparent());
 
         if (m_webSettings->applyDefaultDeviceScaleFactorInCompositor() && page()->deviceScaleFactor() != 1) {
             ASSERT(page()->deviceScaleFactor());
@@ -3489,6 +3495,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
             m_layerTreeView.setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
             if (m_compositorSurfaceReady)
                 m_layerTreeView.setSurfaceReady();
+            m_layerTreeView.setHasTransparentBackground(isTransparent());
             updateLayerTreeViewport();
             m_client->didActivateCompositor(m_layerTreeView.compositorIdentifier());
             m_isAcceleratedCompositingActive = true;

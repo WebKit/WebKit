@@ -88,8 +88,9 @@ void BitmapCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect
     // Assumption: if a tiler is using border texels, then it is because the
     // layer is likely to be filtered or transformed. Because of it might be
     // transformed, draw the text in grayscale instead of subpixel antialiasing.
+    bool useGrayscaleText = borderTexels || !layerIsOpaque;
     PlatformCanvas::Painter::TextOption textOption =
-        borderTexels ? PlatformCanvas::Painter::GrayscaleText : PlatformCanvas::Painter::SubpixelText;
+        useGrayscaleText ? PlatformCanvas::Painter::GrayscaleText : PlatformCanvas::Painter::SubpixelText;
     PlatformCanvas::Painter canvasPainter(&m_canvas, textOption);
     canvasPainter.skiaContext()->setTrackOpaqueRegion(!layerIsOpaque);
     paintContents(*canvasPainter.context(), *canvasPainter.skiaContext(), contentRect, contentsScale, resultingOpaqueRect);

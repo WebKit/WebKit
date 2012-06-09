@@ -58,7 +58,8 @@ void SkPictureCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentR
     // layer is likely to be filtered or transformed. Because it might be
     // transformed, set image buffer flag to draw the text in grayscale
     // instead of using subpixel antialiasing.
-    platformContext.setDrawingToImageBuffer(borderTexels ? true : false);
+    bool useGrayscaleText = borderTexels || !m_layerIsOpaque;
+    platformContext.setDrawingToImageBuffer(useGrayscaleText);
     GraphicsContext graphicsContext(&platformContext);
     paintContents(graphicsContext, platformContext, contentRect, contentsScale, resultingOpaqueRect);
     m_picture.endRecording();

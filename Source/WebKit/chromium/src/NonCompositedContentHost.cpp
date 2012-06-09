@@ -62,6 +62,11 @@ void NonCompositedContentHost::setBackgroundColor(const WebCore::Color& color)
     m_graphicsLayer->platformLayer()->setBackgroundColor(color);
 }
 
+void NonCompositedContentHost::setOpaque(bool opaque)
+{
+    m_graphicsLayer->platformLayer()->setOpaque(opaque);
+}
+
 void NonCompositedContentHost::setScrollLayer(WebCore::GraphicsLayer* layer)
 {
     m_graphicsLayer->setNeedsDisplay();

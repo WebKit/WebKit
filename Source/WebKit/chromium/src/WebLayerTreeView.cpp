@@ -107,6 +107,11 @@ void WebLayerTreeView::setBackgroundColor(WebColor color)
     m_private->layerTreeHost()->setBackgroundColor(color);
 }
 
+void WebLayerTreeView::setHasTransparentBackground(bool transparent)
+{
+    m_private->layerTreeHost()->setHasTransparentBackground(transparent);
+}
+
 void WebLayerTreeView::setVisible(bool visible)
 {
     m_private->layerTreeHost()->setVisible(visible);

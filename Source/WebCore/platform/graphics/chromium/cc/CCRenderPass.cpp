@@ -45,6 +45,7 @@ PassOwnPtr<CCRenderPass> CCRenderPass::create(CCRenderSurface* targetSurface)
 CCRenderPass::CCRenderPass(CCRenderSurface* targetSurface)
     : m_targetSurface(targetSurface)
     , m_framebufferOutputRect(targetSurface->contentRect())
+    , m_hasTransparentBackground(true)
 {
     ASSERT(m_targetSurface);
 }

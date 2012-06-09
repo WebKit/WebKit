@@ -124,6 +124,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_sentPageScaleDelta(1)
     , m_minPageScale(0)
     , m_maxPageScale(0)
+    , m_hasTransparentBackground(false)
     , m_needsAnimateLayers(false)
     , m_pinchGestureActive(false)
     , m_fpsCounter(CCFrameRateCounter::create())
@@ -321,7 +322,10 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         occlusionTracker.leaveLayer(it);
     }
 
-    passes.last()->appendQuadsToFillScreen(m_rootLayerImpl.get(), m_backgroundColor, occlusionTracker);
+    if (!m_hasTransparentBackground) {
+        passes.last()->setHasTransparentBackground(false);
+        passes.last()->appendQuadsToFillScreen(m_rootLayerImpl.get(), m_backgroundColor, occlusionTracker);
+    }
 
     if (drawFrame)
         occlusionTracker.overdrawMetrics().recordMetrics(this);

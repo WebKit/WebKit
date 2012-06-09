@@ -152,7 +152,7 @@ private:
 
     bool bindFramebufferToTexture(ManagedTexture*, const IntRect& viewportRect);
 
-    void clearRenderPass(const CCRenderPass*, const CCRenderPass* rootRenderPass, const FloatRect& framebufferDamageRect);
+    void clearRenderPass(const CCRenderPass*, const FloatRect& framebufferDamageRect);
 
     void releaseRenderPassTextures();
 

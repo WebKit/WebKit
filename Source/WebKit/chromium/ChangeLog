@@ -1,3 +1,29 @@
+2012-06-08  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Compositor doesn't support translucent root layers.
+        https://bugs.webkit.org/show_bug.cgi?id=87821
+
+        Reviewed by James Robinson.
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::setOpaque):
+        (WebKit):
+        * src/NonCompositedContentHost.h:
+        (NonCompositedContentHost):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::setHasTransparentBackground):
+        (WebKit):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsTransparent):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/LayerRendererChromiumTest.cpp:
+        (ClearCountingContext):
+        (ClearCountingContext::ClearCountingContext):
+        (ClearCountingContext::clear):
+        (ClearCountingContext::clearCount):
+        (TEST):
+
 2012-06-08  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Single thread proxy's animation timer should short circuit if the layer renderer has not been initialized

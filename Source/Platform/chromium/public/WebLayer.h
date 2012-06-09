@@ -116,9 +116,9 @@ public:
 
     // Apply filters to pixels that show through the background of this layer.
     // Note: These filters are only possible on layers that are drawn directly
-    // to the root render surface. This means if an ancestor of the background-
-    // filtered layer sets certain properties (opacity, transforms), it may
-    // conflict and hide the background filters.
+    // to a root render surface with an opaque background. This means if an
+    // ancestor of the background-filtered layer sets certain properties
+    // (opacity, transforms), it may conflict and hide the background filters.
     WEBKIT_EXPORT void setBackgroundFilters(const WebFilterOperations&);
 
     WEBKIT_EXPORT void setDebugBorderColor(const WebColor&);

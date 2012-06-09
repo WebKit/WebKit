@@ -160,6 +160,9 @@ public:
     const Color& backgroundColor() const { return m_backgroundColor; }
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
 
+    bool hasTransparentBackground() const { return m_hasTransparentBackground; }
+    void setHasTransparentBackground(bool transparent) { m_hasTransparentBackground = transparent; }
+
     bool needsAnimateLayers() const { return m_needsAnimateLayers; }
     void setNeedsAnimateLayers() { m_needsAnimateLayers = true; }
 
@@ -228,6 +231,7 @@ private:
     float m_minPageScale, m_maxPageScale;
 
     Color m_backgroundColor;
+    bool m_hasTransparentBackground;
 
     // If this is true, it is necessary to traverse the layer tree ticking the animators.
     bool m_needsAnimateLayers;
