@@ -672,6 +672,23 @@ BUGWK86633 : editing/spelling/spelling-insert-html.html = TEXT
 BUGWK86633 : editing/spelling/spelling-linebreak.html = TEXT
 BUGWK86633 : editing/spelling/spelling-unified-emulation.html = TEXT
 
+// Tests that rely on pathToLocalResource are failing after r119788
+BUGWK88661 SKIP : fast/loader/local-CSS-from-local.html = FAIL
+BUGWK88661 SKIP : fast/loader/local-JavaScript-from-local.html = FAIL
+BUGWK88661 SKIP : fast/loader/local-iFrame-source-from-local.html = FAIL
+BUGWK88661 SKIP : fast/loader/local-image-from-local.html = FAIL
+BUGWK88661 SKIP : http/tests/plugins/post-url-file.html = FAIL
+BUGWK88661 SKIP : http/tests/security/frame-loading-via-document-write.html = FAIL
+BUGWK88661 SKIP : http/tests/security/local-CSS-from-remote.html = FAIL
+BUGWK88661 SKIP : http/tests/security/local-JavaScript-from-remote.html = FAIL
+BUGWK88661 SKIP : http/tests/security/local-iFrame-from-remote.html = FAIL
+BUGWK88661 SKIP : http/tests/security/local-image-from-remote-whitelisted.html = FAIL
+BUGWK88661 SKIP : http/tests/security/local-image-from-remote.html = FAIL
+BUGWK88661 SKIP : http/tests/security/local-user-CSS-from-remote.html = FAIL
+BUGWK88661 SKIP : http/tests/security/local-video-poster-from-remote.html = FAIL
+BUGWK88661 SKIP : http/tests/security/local-video-source-from-remote.html = FAIL
+BUGWK88661 SKIP : http/tests/security/local-video-src-from-remote.html = FAIL
+
 // Failing after r119268 on GTK and EFL
 BUGWK88138 : http/tests/media/video-buffered.html = TEXT
 

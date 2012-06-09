@@ -1,3 +1,13 @@
+2012-06-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Skip tests that rely on pathToLocalResource() due to regression in r119788
+        https://bugs.webkit.org/show_bug.cgi?id=88714
+
+        Unreviewed EFL gardening. Skip tests that rely on pathToLocalResource()
+        due to regression in r119788.
+
+        * platform/efl/TestExpectations:
+
 2012-06-09  Victor Carbune  <victor@rosedu.org>
 
         Basic support for timestamps within a TextTrackCue
