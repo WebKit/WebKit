@@ -301,27 +301,21 @@ PassRefPtr<SearchPopupMenu> ChromeClientBlackBerry::createSearchPopupMenu(PopupM
 
 PagePopup* ChromeClientBlackBerry::openPagePopup(PagePopupClient* client, const IntRect& originBoundsInRootView)
 {
-    PagePopupBlackBerry* webPopup;
+    closePagePopup(0);
 
-    if (!hasOpenedPopup()) {
-        webPopup = new PagePopupBlackBerry(m_webPagePrivate, client,
-                rootViewToScreen(originBoundsInRootView));
-        m_webPagePrivate->m_webPage->popupOpened(webPopup);
-    } else
-        webPopup = m_webPagePrivate->m_webPage->popup();
-
+    PagePopupBlackBerry* webPopup = new PagePopupBlackBerry(m_webPagePrivate, client, rootViewToScreen(originBoundsInRootView));
+    m_webPagePrivate->m_webPage->popupOpened(webPopup);
     webPopup->sendCreatePopupWebViewRequest();
     return webPopup;
 }
 
-void ChromeClientBlackBerry::closePagePopup(PagePopup* popup)
+void ChromeClientBlackBerry::closePagePopup(PagePopup*)
 {
-    if (!popup)
-        return;
-
-    PagePopupBlackBerry* webPopup = m_webPagePrivate->m_webPage->popup();
-    webPopup->closePopup();
-    m_webPagePrivate->m_webPage->popupClosed();
+    if (hasOpenedPopup()) {
+        PagePopupBlackBerry* webPopup = m_webPagePrivate->m_webPage->popup();
+        webPopup->closePopup();
+        m_webPagePrivate->m_webPage->popupClosed();
+    }
 }
 
 void ChromeClientBlackBerry::setToolbarsVisible(bool)

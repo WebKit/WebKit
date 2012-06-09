@@ -37,7 +37,6 @@ class HTMLInputElement;
 class HTMLSelectElement;
 class IntRect;
 class Node;
-class SelectPopupClient;
 }
 
 namespace BlackBerry {
@@ -193,8 +192,6 @@ private:
 
     PendingKeyboardStateChange m_pendingKeyboardVisibilityChange;
     bool m_delayKeyboardVisibilityChange;
-
-    WebCore::SelectPopupClient* m_selectClient;
 };
 
 }

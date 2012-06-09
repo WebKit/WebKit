@@ -1,3 +1,26 @@
+2012-06-08  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Fix crash on PagePopupChromeClient
+        https://bugs.webkit.org/show_bug.cgi?id=88675
+
+        Reviewed by Antonio Gomes.
+
+        PR 163672.
+
+        Actually it's the bug inside InputHandler, should delete the old popup and create a new one,
+        because update() is problematic. Also no need to save pointer in InputHandler.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::openPagePopup):
+        (WebCore::ChromeClientBlackBerry::closePagePopup):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::InputHandler):
+        (BlackBerry::WebKit::InputHandler::~InputHandler):
+        (BlackBerry::WebKit::InputHandler::openSelectPopup):
+        * WebKitSupport/InputHandler.h:
+        (WebCore):
+        (InputHandler):
+
 2012-06-08  Eli Fidler  <efidler@rim.com>
 
         [BlackBerry] Default font settings are getting deleted
