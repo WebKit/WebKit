@@ -1,3 +1,22 @@
+2012-06-08  Levi Weintraub  <leviw@chromium.org>
+
+        RenderLayer::paintChildLayerIntoColumns doesn't properly pixel snap
+        https://bugs.webkit.org/show_bug.cgi?id=88554
+
+        Reviewed by Darin Adler.
+
+        Column handling code in RenderLayer and RenderBlock was improperly clipping and translating
+        using floats derived from FractionalLayoutUnits without pixel snapping. RenderLayer also
+        improperly stored render tree offsets in ints instead of LayoutUnits. This corrects this
+        issue.
+
+        Test: fast/sub-pixel/column-clipping.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnContents):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintChildLayerIntoColumns):
+
 2012-06-08  Rakesh KN  <rakesh.kn@motorola.com>
 
         REGRESSION(r116487?): HTMLFormElement::elements['name'] is empty if the form is detached from the document tree

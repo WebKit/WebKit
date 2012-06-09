@@ -3222,12 +3222,12 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
 
     ColumnInfo* colInfo = columnBlock->columnInfo();
     unsigned colCount = columnBlock->columnCount(colInfo);
-    int currLogicalTopOffset = 0;
+    LayoutUnit currLogicalTopOffset = 0;
     for (unsigned i = 0; i < colCount; i++) {
         // For each rect, we clip to the rect, and then we adjust our coords.
         LayoutRect colRect = columnBlock->columnRectAt(colInfo, i);
         columnBlock->flipForWritingMode(colRect);
-        int logicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - columnBlock->logicalLeftOffsetForContent();
+        LayoutUnit logicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - columnBlock->logicalLeftOffsetForContent();
         LayoutSize offset;
         if (isHorizontal) {
             if (colInfo->progressionAxis() == ColumnInfo::InlineAxis)
@@ -3251,7 +3251,7 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
             
             // Each strip pushes a clip, since column boxes are specified as being
             // like overflow:hidden.
-            context->clip(colRect);
+            context->clip(pixelSnappedIntRect(colRect));
 
             if (!colIndex) {
                 // Apply a translation transform to change where the layer paints.
@@ -3260,7 +3260,7 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
                 if (oldHasTransform)
                     oldTransform = *childLayer->transform();
                 TransformationMatrix newTransform(oldTransform);
-                newTransform.translateRight(offset.width(), offset.height());
+                newTransform.translateRight(roundToInt(offset.width()), roundToInt(offset.height()));
                 
                 childLayer->m_transform = adoptPtr(new TransformationMatrix(newTransform));
                 childLayer->paintLayer(rootLayer, context, localDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
@@ -3274,7 +3274,7 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
                 LayoutPoint childOffset;
                 columnLayers[colIndex - 1]->convertToLayerCoords(rootLayer, childOffset);
                 TransformationMatrix transform;
-                transform.translateRight(childOffset.x() + offset.width(), childOffset.y() + offset.height());
+                transform.translateRight(roundToInt(childOffset.x() + offset.width()), roundToInt(childOffset.y() + offset.height()));
                 
                 // Apply the transform.
                 context->concatCTM(transform.toAffineTransform());
@@ -3287,7 +3287,7 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
         }
 
         // Move to the next position.
-        int blockDelta = isHorizontal ? colRect.height() : colRect.width();
+        LayoutUnit blockDelta = isHorizontal ? colRect.height() : colRect.width();
         if (columnBlock->style()->isFlippedBlocksWritingMode())
             currLogicalTopOffset += blockDelta;
         else

@@ -2744,7 +2744,7 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, const LayoutPoint& p
             // like overflow:hidden.
             // FIXME: Content and column rules that extend outside column boxes at the edges of the multi-column element
             // are clipped according to the 'overflow' property.
-            context->clip(clipRect);
+            context->clip(pixelSnappedIntRect(clipRect));
 
             // Adjust our x and y when painting.
             LayoutPoint adjustedPaintOffset = paintOffset + offset;

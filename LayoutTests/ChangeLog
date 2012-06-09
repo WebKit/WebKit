@@ -1,3 +1,18 @@
+2012-06-08  Levi Weintraub  <leviw@chromium.org>
+
+        RenderLayer::paintChildLayerIntoColumns doesn't properly pixel snap
+        https://bugs.webkit.org/show_bug.cgi?id=88554
+
+        Reviewed by Darin Adler.
+
+        * fast/sub-pixel/column-clipping-expected.html: Added.
+        * fast/sub-pixel/column-clipping.html: Added.
+        * platform/chromium-mac-snowleopard/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/chromium-mac/fast/borders/border-antialiasing-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove FAIL test expectations from EFL, Mac, and Qt ports' test expectations.

@@ -3770,6 +3770,10 @@ BUGWK88593 : fast/table/multiple-captions-display.xhtml = PASS IMAGE IMAGE+TEXT
 // Needs rebaseline after the bots cycle.
 BUG_OJAN WIN MAC : tables/mozilla/bugs/bug131020.html = PASS IMAGE IMAGE+TEXT
 BUGLEVIW LEOPARD LION WIN LINUX : fast/sub-pixel/file-upload-control-at-fractional-offset.html = PASS FAIL MISSING
+BUGLEVIW LEOPARD LION WIN LINUX : fast/borders/border-antialiasing.html = PASS FAIL
+BUGLEVIW LEOPARD LION WIN LINUX : fast/multicol/nested-columns.html = PASS FAIL
+BUGLEVIW LEOPARD LION WIN LINUX : fast/multicol/vertical-lr/nested-columns.html = PASS FAIL
+BUGLEVIW LEOPARD LION WIN LINUX : fast/multicol/vertical-rl/nested-columns.html = PASS FAIL
 
 BUGCR131187 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGCR131187 : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
