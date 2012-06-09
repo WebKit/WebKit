@@ -1,3 +1,28 @@
+2012-06-09  Florin Malita  <fmalita@chromium.org>
+
+        Fixed-position foreignObject descendants should be relative to the foreignObject viewport
+        https://bugs.webkit.org/show_bug.cgi?id=88547
+
+        Reviewed by Abhishek Arya.
+
+        Tests: svg/foreignObject/fO-fixed-position-crash.html
+               svg/foreignObject/fixed-position-expected.svg
+               svg/foreignObject/fixed-position.svg
+
+        Fixed position elements are currently registered with the top level
+        RenderView even when embedded within an SVG foreignOject. This patch
+        changes containingBlock() & container() to return the containing
+        foreignObject renderer instead.
+
+        The new foreignObject fixed position behavior matches that of current
+        FireFox and Opera versions and is consistent with the spec:
+        http://www.w3.org/TR/CSS2/visuren.html#fixed-positioning
+        http://www.w3.org/TR/SVG/coords.html#EstablishingANewViewport
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+        (WebCore::RenderObject::container):
+
 2012-06-09  Adam Barth  <abarth@webkit.org>
 
         Can't use eval in iframes sanbdoxed via CSP header

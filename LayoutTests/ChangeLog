@@ -1,3 +1,15 @@
+2012-06-09  Florin Malita  <fmalita@chromium.org>
+
+        Fixed-position foreignObject descendants should be relative to the foreignObject viewport
+        https://bugs.webkit.org/show_bug.cgi?id=88547
+
+        Reviewed by Abhishek Arya.
+
+        * svg/foreignObject/fO-fixed-position-crash-expected.txt: Added.
+        * svg/foreignObject/fO-fixed-position-crash.html: Added.
+        * svg/foreignObject/fixed-position-expected.svg: Added.
+        * svg/foreignObject/fixed-position.svg: Added.
+
 2012-06-09  Adam Barth  <abarth@webkit.org>
 
         Can't use eval in iframes sanbdoxed via CSP header
