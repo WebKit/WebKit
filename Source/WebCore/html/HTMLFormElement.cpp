@@ -165,6 +165,8 @@ void HTMLFormElement::removedFrom(ContainerNode* insertionPoint)
     HTMLElement::removedFrom(insertionPoint);
     if (insertionPoint->inDocument() && hasID())
         document()->formController()->resetFormElementsOwner();
+    if (!inDocument())
+        resetCachedRadioNodeListRootNode();
 }
 
 void HTMLFormElement::handleLocalEvents(Event* event)

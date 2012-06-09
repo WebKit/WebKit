@@ -2930,6 +2930,17 @@ void Node::removeCachedRadioNodeList(RadioNodeList* list, const AtomicString& na
     data->m_radioNodeListCache.remove(name);
 }
 
+void Node::resetCachedRadioNodeListRootNode()
+{
+    ASSERT(hasTagName(formTag));
+    if (!hasRareData() || !rareData()->nodeLists())
+        return;
+
+    NodeListsNodeData::RadioNodeListCache cache = rareData()->nodeLists()->m_radioNodeListCache;
+    for (NodeListsNodeData::RadioNodeListCache::iterator it = cache.begin(); it != cache.end(); ++it)
+        it->second->setRootElement(toElement(this));
+}
+
 } // namespace WebCore
 
 #ifndef NDEBUG

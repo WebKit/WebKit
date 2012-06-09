@@ -578,6 +578,7 @@ public:
 
     PassRefPtr<RadioNodeList> radioNodeList(const AtomicString&);
     void removeCachedRadioNodeList(RadioNodeList*, const AtomicString&);
+    void resetCachedRadioNodeListRootNode();
 
     PassRefPtr<NodeList> getElementsByTagName(const AtomicString&);
     PassRefPtr<NodeList> getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName);

@@ -1,3 +1,13 @@
+2012-06-08  Rakesh KN  <rakesh.kn@motorola.com>
+
+        REGRESSION(r116487?): HTMLFormElement::elements['name'] is empty if the form is detached from the document tree
+        https://bugs.webkit.org/show_bug.cgi?id=88632
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/forms/radionodelist-whose-form-element-detached-from-domtree-expected.txt: Added.
+        * fast/forms/radionodelist-whose-form-element-detached-from-domtree.html: Added.
+
 2012-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove all uses of FAIL test expectation from Chromium test expectations.

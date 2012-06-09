@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<form id="testform">
+    Radio button array:
+    <input type="radio" name="type1" value="value1">
+    <input type="radio" name="type1" value="value2">
+    <input type="radio" name="type1" value="value3">
+    <input type="radio" name="type2" value="value4">
+    <input type="radio" name="type2" value="value5">
+    <input type="radio" name="type2" value="value6">
+    <br>
+    Single checkbox:
+    <input type="checkbox" name="chkbox" value="chkboxvalue">
+    <br>
+</form>
+<div id="console"></div>
+<script>
+
+description("RadioNodeList should be rooted at form itself if detached from dom tree");
+debug("");
+var owner = document.getElementById('testform');
+var radioNodeList1 = owner.elements['type1'];
+var radioNodeList2 = owner.elements['type2'];
+
+function testRadioNodeList() {
+    shouldBe('radioNodeList1.length', '3');
+    shouldBe('radioNodeList2.length', '3');
+
+    shouldBe('radioNodeList1[0].value', "'value1'");
+    shouldBe('radioNodeList1[1].value', "'value2'");
+    shouldBe('radioNodeList1[2].value', "'value3'");
+    shouldBe('radioNodeList2[0].value', "'value4'");
+    shouldBe('radioNodeList2[1].value', "'value5'");
+    shouldBe('radioNodeList2[2].value', "'value6'");
+}
+debug("form in dom tree");
+testRadioNodeList();
+
+debug("Check RadioNodeList.value");
+shouldBe('radioNodeList1.value', '""');
+shouldBe('radioNodeList2.value', '""');
+shouldBe('radioNodeList1[2].checked = true; radioNodeList1.value', "'value3'");
+
+owner.parentNode.removeChild(owner);
+
+debug("");
+debug("form detached from dom tree");
+testRadioNodeList();
+
+debug("Check RadioNodeList.value");
+shouldBe('radioNodeList1[2].checked = true; radioNodeList1.value', "'value3'");
+
+document.body.appendChild(owner);
+debug("");
+debug("form again added to dom tree");
+testRadioNodeList();
+
+owner.parentNode.removeChild(owner);
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -45,6 +45,7 @@ public:
 
     String value() const;
     void setValue(const String&);
+    void setRootElement(Element* baseElement);
 
 protected:
     virtual bool nodeMatches(Element*) const;

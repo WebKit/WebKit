@@ -112,5 +112,9 @@ bool RadioNodeList::nodeMatches(Element* testElement) const
     return checkElementMatchesRadioNodeListFilter(testElement);
 }
 
+void RadioNodeList::setRootElement(Element* baseElement)
+{
+    m_node = baseElement->toNode();
+}
 } // namspace
 
