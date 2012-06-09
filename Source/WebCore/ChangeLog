@@ -1,5 +1,17 @@
 2012-06-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Only expand root domain in Sources/Scripts panel
+        https://bugs.webkit.org/show_bug.cgi?id=88135
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/NavigatorView.js:
+        (WebInspector.NavigatorTreeOutline._treeElementsCompare.compare.typeWeight):
+        (WebInspector.NavigatorTreeOutline._treeElementsCompare):
+        (WebInspector.NavigatorFolderTreeElement.prototype.onattach):
+
+2012-06-09  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Pretty print should respect text editor indent setting.
         https://bugs.webkit.org/show_bug.cgi?id=88713
 

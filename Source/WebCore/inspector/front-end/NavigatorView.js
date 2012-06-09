@@ -377,11 +377,14 @@ WebInspector.NavigatorTreeOutline._treeElementsCompare = function compare(treeEl
     function typeWeight(treeElement)
     {
         if (treeElement instanceof WebInspector.NavigatorFolderTreeElement) {
-            if (treeElement.isDomain)
-                return 1;
-            return 2;
+            if (treeElement.isDomain) {
+                if (treeElement.titleText === WebInspector.inspectedPageDomain)
+                    return 1;
+                return 2;
+            }
+            return 3;
         }
-        return 3;
+        return 4;
     }
 
     var typeWeight1 = typeWeight(treeElement1);
@@ -546,7 +549,7 @@ WebInspector.NavigatorFolderTreeElement.prototype = {
     onattach: function()
     {
         WebInspector.BaseNavigatorTreeElement.prototype.onattach.call(this);
-        if (this._isDomain)
+        if (this.isDomain && this.titleText != WebInspector.inspectedPageDomain)
             this.collapse();
         else
             this.expand();
