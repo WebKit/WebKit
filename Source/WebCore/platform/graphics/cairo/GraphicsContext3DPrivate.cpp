@@ -69,11 +69,11 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
 
     if (m_context->m_attrs.antialias && m_context->m_boundFBO == m_context->m_multisampleFBO) {
         GLContext* previousActiveContext = GLContext::getCurrent();
-
         if (previousActiveContext != m_glContext)
             m_context->makeContextCurrent();
 
         m_context->resolveMultisamplingIfNecessary();
+        glBindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_context->m_boundFBO);
 
         if (previousActiveContext && previousActiveContext != m_glContext)
             previousActiveContext->makeContextCurrent();
