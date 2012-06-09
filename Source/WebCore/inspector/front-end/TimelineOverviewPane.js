@@ -70,7 +70,7 @@ WebInspector.TimelineOverviewPane = function(model)
     topPaneSidebarTree.appendChild(memoryOverviewItem);
     memoryOverviewItem.onselect = this._showMemoryGraph.bind(this);
 
-    this._currentMode = WebInspector.TimelineOverviewPane.Mode.EventsHorizontal;
+    this._currentMode = WebInspector.TimelineOverviewPane.Mode.Events;
 
     this._overviewContainer = this.element.createChild("div", "fill");
     this._overviewContainer.id = "timeline-overview-container";
@@ -113,8 +113,8 @@ WebInspector.TimelineOverviewPane.WindowScrollSpeedFactor = .3;
 WebInspector.TimelineOverviewPane.ResizerOffset = 3.5; // half pixel because offset values are not rounded but ceiled
 
 WebInspector.TimelineOverviewPane.Mode = {
-    EventsVertical: "EventsVertical",
-    EventsHorizontal: "EventsHorizontal",
+    Events: "Events",
+    Frames: "Frames",
     Memory: "Memory"
 };
 
@@ -136,29 +136,29 @@ WebInspector.TimelineOverviewPane.prototype = {
 
     _showEvents: function()
     {
-        if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.EventsHorizontal)
+        if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.Events)
             return;
         this._heapGraph.hide();
-        this._setVerticalOverview(false);
+        this._setFrameMode(false);
         this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
-        this._setMode(WebInspector.TimelineOverviewPane.Mode.EventsHorizontal);
+        this._setMode(WebInspector.TimelineOverviewPane.Mode.Events);
     },
 
     _showFrames: function()
     {
-        if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.EventsVertical)
+        if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.Frames)
             return;
         this._heapGraph.hide();
-        this._setVerticalOverview(true);
+        this._setFrameMode(true);
         this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
-        this._setMode(WebInspector.TimelineOverviewPane.Mode.EventsVertical);
+        this._setMode(WebInspector.TimelineOverviewPane.Mode.Frames);
     },
 
     _showMemoryGraph: function()
     {
         if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.Memory)
             return;
-        this._setVerticalOverview(false);
+        this._setFrameMode(false);
         this._overviewGrid.itemsGraphsElement.addStyleClass("hidden");
         this._heapGraph.show();
         this._setMode(WebInspector.TimelineOverviewPane.Mode.Memory);
@@ -171,16 +171,16 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._update();
     },
 
-    _setVerticalOverview: function(enabled)
+    _setFrameMode: function(enabled)
     {
-        if (!enabled === !this._verticalOverview)
+        if (!enabled === !this._frameOverview)
             return;
         if (enabled) {
-            this._verticalOverview = new WebInspector.TimelineVerticalOverview(this._model);
-            this._verticalOverview.show(this._overviewContainer);
+            this._frameOverview = new WebInspector.TimelineFrameOverview(this._model);
+            this._frameOverview.show(this._overviewContainer);
         } else {
-            this._verticalOverview.detach();
-            this._verticalOverview = null;
+            this._frameOverview.detach();
+            this._frameOverview = null;
             this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
             this._categoryStrips.update();
         }
@@ -188,7 +188,7 @@ WebInspector.TimelineOverviewPane.prototype = {
 
     _onCategoryVisibilityChanged: function(event)
     {
-        if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.EventsHorizontal)
+        if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.Events)
             this._categoryStrips.update();
     },
 
@@ -201,8 +201,8 @@ WebInspector.TimelineOverviewPane.prototype = {
 
         if (this._heapGraph.visible)
             this._heapGraph.update();
-        else if (this._verticalOverview)
-            this._verticalOverview.update();
+        else if (this._frameOverview)
+            this._frameOverview.update();
         else
             this._categoryStrips.update();
 
@@ -239,7 +239,7 @@ WebInspector.TimelineOverviewPane.prototype = {
      */
     addFrame: function(frame)
     {
-        this._verticalOverview.addFrame(frame);
+        this._frameOverview.addFrame(frame);
         this._scheduleRefresh();
     },
 
@@ -248,7 +248,7 @@ WebInspector.TimelineOverviewPane.prototype = {
      */
     zoomToFrame: function(frame)
     {
-        var window = this._verticalOverview.framePosition(frame);
+        var window = this._frameOverview.framePosition(frame);
         if (!window)
             return;
 
@@ -276,8 +276,8 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._overviewCalculator.reset();
         this._eventDividers = [];
         this._overviewGrid.updateDividers(this._overviewCalculator);
-        if (this._verticalOverview)
-            this._verticalOverview.reset();
+        if (this._frameOverview)
+            this._frameOverview.reset();
         this._update();
     },
 
@@ -311,8 +311,8 @@ WebInspector.TimelineOverviewPane.prototype = {
 
     _onWindowChanged: function()
     {
-        if (this._verticalOverview) {
-            var times = this._verticalOverview.getWindowTimes(this.windowLeft(), this.windowRight());
+        if (this._frameOverview) {
+            var times = this._frameOverview.getWindowTimes(this.windowLeft(), this.windowRight());
             this._windowStartTime = times.startTime;
             this._windowEndTime = times.endTime;
         } else {
@@ -907,11 +907,11 @@ WebInspector.TimelineCategoryStrips.prototype = {
  * @extends {WebInspector.View}
  * @param {WebInspector.TimelineModel} model
  */
-WebInspector.TimelineVerticalOverview = function(model)
+WebInspector.TimelineFrameOverview = function(model)
 {
     WebInspector.View.call(this);
     this.element = document.createElement("canvas");
-    this.element.className = "timeline-vertical-overview-bars fill";
+    this.element.className = "timeline-frame-overview-bars fill";
     this._model = model;
     this.reset();
 
@@ -930,7 +930,7 @@ WebInspector.TimelineVerticalOverview = function(model)
         this._fillStyles[category] = WebInspector.TimelinePresentationModel.createFillStyleForCategory(this._context, this._maxInnerBarWidth, 0, categories[category]);
 }
 
-WebInspector.TimelineVerticalOverview.prototype = {
+WebInspector.TimelineFrameOverview.prototype = {
     reset: function()
     {
         this._recordsPerBar = 1;
@@ -1145,4 +1145,4 @@ WebInspector.TimelineVerticalOverview.prototype = {
     }
 }
 
-WebInspector.TimelineVerticalOverview.prototype.__proto__ = WebInspector.View.prototype;
+WebInspector.TimelineFrameOverview.prototype.__proto__ = WebInspector.View.prototype;

@@ -1,3 +1,42 @@
+2012-06-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [refactoring] rename TimelineVerticalOverview into TimelineFrameOverview
+        https://bugs.webkit.org/show_bug.cgi?id=88708
+
+        Reviewed by Vsevolod Vlasov.
+
+        - rename TimelineVerticalOverview to TimelineFrameOverview;
+        - rename associated fields, parameters, CSS classes etc;
+        - rename overview mode designators to match the UI;
+        - drop unused CSS rules for old-style mode selector;
+
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane):
+        (WebInspector.TimelineOverviewPane.prototype._showEvents):
+        (WebInspector.TimelineOverviewPane.prototype._showFrames):
+        (WebInspector.TimelineOverviewPane.prototype._showMemoryGraph):
+        (WebInspector.TimelineOverviewPane.prototype._setFrameMode):
+        (WebInspector.TimelineOverviewPane.prototype._onCategoryVisibilityChanged):
+        (WebInspector.TimelineOverviewPane.prototype._update):
+        (WebInspector.TimelineOverviewPane.prototype.addFrame):
+        (WebInspector.TimelineOverviewPane.prototype.zoomToFrame):
+        (WebInspector.TimelineOverviewPane.prototype._reset):
+        (WebInspector.TimelineOverviewPane.prototype._onWindowChanged):
+        (WebInspector.TimelineFrameOverview):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._shouldShowFrames):
+        (WebInspector.TimelinePanel.prototype.revealRecordAt):
+        * inspector/front-end/timelinePanel.css:
+        (.timeline-frame-overview #timeline-overview-grid):
+        (.timeline-frame-overview .timeline-overview-window):
+        (.timeline-frame-overview .timeline-overview-dividers-background):
+        (.timeline-frame-overview #timeline-overview-memory):
+        (.timeline-frame-overview-status-bar-item.toggled-on .glyph):
+        (.timeline-frame-overview-bars):
+        (.timeline.timeline-frame-overview .resources-divider):
+        (.sidebar-tree-item .timeline-frame-overview-status-bar-item):
+
 2012-06-08  Vsevolod Vlasov  <vsevik@chromium.org>
 
         IndexedDB: Inspector should handle null, string, and array keyPaths

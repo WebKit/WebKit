@@ -100,7 +100,7 @@ WebInspector.TimelinePanel = function()
     this._hideShortRecordsTitleText = WebInspector.UIString("Hide the records that are shorter than %s", shortRecordThresholdTitle);
     this._createStatusbarButtons();
 
-    this._verticalOverview = false;
+    this._frameMode = false;
     this._boundariesAreValid = true;
     this._scrollTop = 0;
 
@@ -346,7 +346,7 @@ WebInspector.TimelinePanel.prototype = {
 
     _shouldShowFrames: function()
     {
-        return this._verticalOverview && this._presentationModel.frames().length > 0 && this.calculator.boundarySpan < 1.0;
+        return this._frameMode && this._presentationModel.frames().length > 0 && this.calculator.boundarySpan < 1.0;
     },
 
     _updateFrames: function()
@@ -405,20 +405,20 @@ WebInspector.TimelinePanel.prototype = {
     _timelinesOverviewModeChanged: function(event)
     {
         var shouldShowMemory = event.data === WebInspector.TimelineOverviewPane.Mode.Memory;
-        var verticalOverview = event.data === WebInspector.TimelineOverviewPane.Mode.EventsVertical;
-        if (verticalOverview !== this._verticalOverview) {
-            this._verticalOverview = verticalOverview;
-            this._glueParentButton.disabled = verticalOverview;
-            this._presentationModel.setGlueRecords(this._glueParentButton.toggled && !verticalOverview);
+        var frameMode = event.data === WebInspector.TimelineOverviewPane.Mode.Frames;
+        if (frameMode !== this._frameMode) {
+            this._frameMode = frameMode;
+            this._glueParentButton.disabled = frameMode;
+            this._presentationModel.setGlueRecords(this._glueParentButton.toggled && !frameMode);
             this._repopulateRecords();
 
-            if (verticalOverview) {
-                this.element.addStyleClass("timeline-vertical-overview");
+            if (frameMode) {
+                this.element.addStyleClass("timeline-frame-overview");
                 this._frameController = new WebInspector.TimelineFrameController(this._model, this._overviewPane, this._presentationModel);
             } else {
                 this._frameController.dispose();
                 this._frameController = null;
-                this.element.removeStyleClass("timeline-vertical-overview");
+                this.element.removeStyleClass("timeline-frame-overview");
             }
         }
         if (shouldShowMemory === this._memoryStatistics.visible())
@@ -608,8 +608,6 @@ WebInspector.TimelinePanel.prototype = {
 
     revealRecordAt: function(time)
     {
-        if (this._verticalOverview)
-            return;
         var recordsInWindow = this._presentationModel.filteredRecords();
         var recordToReveal;
         for (var i = 0; i < recordsInWindow.length; ++i) {
