@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<iframe></iframe>
+<p>
+  This tests that blob URLs created in a secure context are treated as secure
+  origins. This test passes if the iframe renders PASS correctly, and no
+  console warning appears.
+</p>
+
+<script>
+if (location.protocol != 'https:')
+    location = 'https://127.0.0.1:8443/security/mixedContent/blob-url-in-iframe.html';
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+    layoutTestController.waitUntilDone();
+}
+var iframe = document.querySelector('iframe');
+var bb = new WebKitBlobBuilder();
+bb.append('<h1>PASS (1/1)</h1>');
+bb.getBlob('text/html');
+iframe.onload = function () {
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+};
+iframe.src = webkitURL.createObjectURL(bb.getBlob('text/html'));
+</script>
+</body>
+</html>

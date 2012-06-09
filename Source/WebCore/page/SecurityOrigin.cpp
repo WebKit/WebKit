@@ -209,6 +209,19 @@ void SecurityOrigin::setDomainFromDOM(const String& newDomain)
     m_domain = newDomain.lower();
 }
 
+bool SecurityOrigin::isSecure(const KURL& url)
+{
+    // Invalid URLs are secure, as are URLs which have a secure protocol.
+    if (!url.isValid() || SchemeRegistry::shouldTreatURLSchemeAsSecure(url.protocol()))
+        return true;
+
+    // URLs that wrap inner URLs are secure if those inner URLs are secure.
+    if (shouldUseInnerURL(url) && SchemeRegistry::shouldTreatURLSchemeAsSecure(extractInnerURL(url).protocol()))
+        return true;
+
+    return false;
+}
+
 bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
 {
     if (m_universalAccess)

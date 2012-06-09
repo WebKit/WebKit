@@ -67,6 +67,11 @@ public:
     String domain() const { return m_domain; }
     unsigned short port() const { return m_port; }
 
+    // Returns true if a given URL is secure, based either directly on its
+    // own protocol, or, when relevant, on the protocol of its "inner URL"
+    // Protocols like blob: and filesystem: fall into this latter category.
+    static bool isSecure(const KURL&);
+
     // Returns true if this SecurityOrigin can script objects in the given
     // SecurityOrigin. For example, call this function before allowing
     // script from one security origin to read or write objects from

@@ -1,3 +1,28 @@
+2012-06-08  Mike West  <mkwst@chromium.org>
+
+        Treat blob: and filesystem: URLs generated via secure origins as secure.
+        https://bugs.webkit.org/show_bug.cgi?id=84054
+
+        Loading a blob: or filesystem: URL into an iframe or image that's
+        contained on an HTTPS page shouldn't generate a mixed content warning.
+        This change adds a SecurityOrigin::isSecure to check both against a
+        URLs protocol, and the protocol of it's so-called "inner URL" if it's
+        the type of URL that has such a thing. These sorts of URLs which are
+        generated from secure sources will themselves be treated as secure.
+
+        Reviewed by Adam Barth.
+
+        Tests: http/tests/security/mixedContent/blob-url-in-iframe.html
+               http/tests/security/mixedContent/filesystem-url-in-iframe.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::isMixedContent):
+        * page/SecurityOrigin.cpp:
+        (WebCore):
+        (WebCore::SecurityOrigin::isSecure):
+        * page/SecurityOrigin.h:
+        (SecurityOrigin):
+
 2012-06-08  Martin Robinson  <mrobinson@igalia.com>
 
         [Cairo] [TextureMapperGL] Nvidia card does not update WebGL texture when interacting with canvas

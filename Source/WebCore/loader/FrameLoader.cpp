@@ -869,10 +869,8 @@ bool FrameLoader::isMixedContent(SecurityOrigin* context, const KURL& url)
     if (context->protocol() != "https")
         return false;  // We only care about HTTPS security origins.
 
-    if (!url.isValid() || SchemeRegistry::shouldTreatURLSchemeAsSecure(url.protocol()))
-        return false;  // Loading these protocols is secure.
-
-    return true;
+    // We're in a secure context, so |url| is mixed content if it's insecure.
+    return !SecurityOrigin::isSecure(url);
 }
 
 bool FrameLoader::checkIfDisplayInsecureContent(SecurityOrigin* context, const KURL& url)
