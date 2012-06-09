@@ -1,3 +1,16 @@
+2012-06-08  Ojan Vafai  <ojan@chromium.org>
+
+        Last set of chromium rebaselines missed in r119875.
+
+        * platform/chromium-linux/svg/custom/js-repaint-rect-on-path-with-stroke-expected.png: Added.
+        * platform/chromium-linux/svg/custom/js-update-container-expected.png: Added.
+        * platform/chromium-linux/svg/custom/js-update-polygon-changes-expected.png: Added.
+        * platform/chromium-linux/svg/custom/js-update-polygon-removal-expected.png: Added.
+        * platform/chromium-linux/svg/custom/js-update-transform-addition-expected.png: Added.
+        * platform/chromium-linux/svg/custom/js-update-transform-changes-expected.png: Added.
+        * platform/chromium-linux/svg/custom/marker-referencePoint-expected.png: Added.
+        * platform/chromium-linux/svg/custom/non-scaling-stroke-markers-expected.png: Added.
+
 2012-06-08  Shezan Baig  <shezbaig.wk@gmail.com>
 
         Caret is not rendered in empty inline contenteditable elements
