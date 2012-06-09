@@ -83,6 +83,8 @@ public:
     static double animationTimerDelay();
 
 private:
+    friend class CCSingleThreadProxyAnimationTimer;
+
     explicit CCSingleThreadProxy(CCLayerTreeHost*);
 
     bool commitAndComposite();

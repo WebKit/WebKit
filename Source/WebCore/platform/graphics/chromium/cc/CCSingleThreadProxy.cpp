@@ -44,7 +44,8 @@ public:
 
     virtual void onTimerFired() OVERRIDE
     {
-        m_proxy->compositeImmediately();
+        if (m_proxy->m_layerRendererInitialized)
+            m_proxy->compositeImmediately();
     }
 
 private:

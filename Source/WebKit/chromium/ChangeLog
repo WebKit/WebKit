@@ -1,3 +1,137 @@
+2012-06-08  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Single thread proxy's animation timer should short circuit if the layer renderer has not been initialized
+        https://bugs.webkit.org/show_bug.cgi?id=88668
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestWriteLayersRedraw::beginTest):
+        (WTF::CCLayerTreeHostTestWriteLayersAfterVisible::commitCompleteOnCCThread):
+        (WTF):
+        (WTF::CCLayerTreeHostTestLayerAddedWithAnimation::CCLayerTreeHostTestLayerAddedWithAnimation):
+        (WTF::CCLayerTreeHostTestLayerAddedWithAnimation::beginTest):
+        (WTF::CCLayerTreeHostTestLayerAddedWithAnimation::didAddAnimation):
+        (CCLayerTreeHostTestLayerAddedWithAnimation):
+        * tests/CCSingleThreadProxyTest.cpp: Added.
+        (FakeWebGraphicsContext3DMakeCurrentFails):
+        (FakeWebGraphicsContext3DMakeCurrentFails::makeContextCurrent):
+        (CCSingleThreadProxyTestInitializeLayerRendererFailsAfterAddAnimation):
+        (CCSingleThreadProxyTestInitializeLayerRendererFailsAfterAddAnimation::CCSingleThreadProxyTestInitializeLayerRendererFailsAfterAddAnimation):
+        (CCSingleThreadProxyTestInitializeLayerRendererFailsAfterAddAnimation::beginTest):
+        (CCSingleThreadProxyTestInitializeLayerRendererFailsAfterAddAnimation::animateLayers):
+        (CCSingleThreadProxyTestInitializeLayerRendererFailsAfterAddAnimation::didRecreateContext):
+        (CCSingleThreadProxyTestInitializeLayerRendererFailsAfterAddAnimation::afterTest):
+        (TEST_F):
+        (CCSingleThreadProxyTestDidAddAnimationBeforeInitializingLayerRenderer):
+        (CCSingleThreadProxyTestDidAddAnimationBeforeInitializingLayerRenderer::CCSingleThreadProxyTestDidAddAnimationBeforeInitializingLayerRenderer):
+        (CCSingleThreadProxyTestDidAddAnimationBeforeInitializingLayerRenderer::beginTest):
+        (CCSingleThreadProxyTestDidAddAnimationBeforeInitializingLayerRenderer::animateLayers):
+        (CCSingleThreadProxyTestDidAddAnimationBeforeInitializingLayerRenderer::didRecreateContext):
+        (CCSingleThreadProxyTestDidAddAnimationBeforeInitializingLayerRenderer::didAddAnimation):
+        (CCSingleThreadProxyTestDidAddAnimationBeforeInitializingLayerRenderer::afterTest):
+        * tests/CCThreadedTest.cpp: Added.
+        (WebKitTests):
+        (WebKitTests::CompositorFakeWebGraphicsContext3DWithTextureTracking::create):
+        (WebKitTests::CompositorFakeWebGraphicsContext3DWithTextureTracking::createTexture):
+        (WebKitTests::CompositorFakeWebGraphicsContext3DWithTextureTracking::deleteTexture):
+        (WebKitTests::CompositorFakeWebGraphicsContext3DWithTextureTracking::bindTexture):
+        (WebKitTests::CompositorFakeWebGraphicsContext3DWithTextureTracking::numTextures):
+        (WebKitTests::CompositorFakeWebGraphicsContext3DWithTextureTracking::texture):
+        (WebKitTests::CompositorFakeWebGraphicsContext3DWithTextureTracking::resetTextures):
+        (WebKitTests::CompositorFakeWebGraphicsContext3DWithTextureTracking::numUsedTextures):
+        (WebKitTests::CompositorFakeWebGraphicsContext3DWithTextureTracking::usedTexture):
+        (WebKitTests::CompositorFakeWebGraphicsContext3DWithTextureTracking::resetUsedTextures):
+        (WebKitTests::CompositorFakeWebGraphicsContext3DWithTextureTracking::CompositorFakeWebGraphicsContext3DWithTextureTracking):
+        (WebKitTests::TestHooks::createContext):
+        (WebKitTests::MockLayerTreeHostImpl::create):
+        (WebKitTests::MockLayerTreeHostImpl::beginCommit):
+        (WebKitTests::MockLayerTreeHostImpl::commitComplete):
+        (WebKitTests::MockLayerTreeHostImpl::prepareToDraw):
+        (WebKitTests::MockLayerTreeHostImpl::drawLayers):
+        (WebKitTests::MockLayerTreeHostImpl::animateLayers):
+        (WebKitTests::MockLayerTreeHostImpl::lowFrequencyAnimationInterval):
+        (WebKitTests::MockLayerTreeHostImpl::MockLayerTreeHostImpl):
+        (MockLayerTreeHost):
+        (WebKitTests::MockLayerTreeHost::create):
+        (WebKitTests::MockLayerTreeHost::createLayerTreeHostImpl):
+        (WebKitTests::MockLayerTreeHost::MockLayerTreeHost):
+        (MockLayerTreeHostClient):
+        (WebKitTests::MockLayerTreeHostClient::create):
+        (WebKitTests::MockLayerTreeHostClient::MockLayerTreeHostClient):
+        (TimeoutTask):
+        (WebKitTests::TimeoutTask::TimeoutTask):
+        (WebKitTests::TimeoutTask::clearTest):
+        (WebKitTests::TimeoutTask::~TimeoutTask):
+        (WebKitTests::TimeoutTask::run):
+        (BeginTask):
+        (WebKitTests::BeginTask::BeginTask):
+        (WebKitTests::BeginTask::~BeginTask):
+        (WebKitTests::BeginTask::run):
+        (EndTestTask):
+        (WebKitTests::EndTestTask::EndTestTask):
+        (WebKitTests::EndTestTask::~EndTestTask):
+        (WebKitTests::EndTestTask::clearTest):
+        (WebKitTests::EndTestTask::run):
+        (WebKitTests::CCThreadedTest::CCThreadedTest):
+        (WebKitTests::CCThreadedTest::endTest):
+        (WebKitTests::CCThreadedTest::endTestAfterDelay):
+        (WebKitTests::CCThreadedTest::postSetNeedsAnimateToMainThread):
+        (WebKitTests::CCThreadedTest::postAddAnimationToMainThread):
+        (WebKitTests::CCThreadedTest::postAddInstantAnimationToMainThread):
+        (WebKitTests::CCThreadedTest::postSetNeedsCommitToMainThread):
+        (WebKitTests::CCThreadedTest::postAcquireLayerTextures):
+        (WebKitTests::CCThreadedTest::postSetNeedsRedrawToMainThread):
+        (WebKitTests::CCThreadedTest::postSetNeedsAnimateAndCommitToMainThread):
+        (WebKitTests::CCThreadedTest::postSetVisibleToMainThread):
+        (WebKitTests::CCThreadedTest::postDidAddAnimationToMainThread):
+        (WebKitTests::CCThreadedTest::doBeginTest):
+        (WebKitTests::CCThreadedTest::timeout):
+        (WebKitTests::CCThreadedTest::scheduleComposite):
+        (WebKitTests::CCThreadedTest::onEndTest):
+        (WebKitTests::CCThreadedTest::dispatchSetNeedsAnimate):
+        (WebKitTests::CCThreadedTest::dispatchAddInstantAnimation):
+        (WebKitTests::CCThreadedTest::dispatchAddAnimation):
+        (WebKitTests::CCThreadedTest::dispatchSetNeedsAnimateAndCommit):
+        (WebKitTests::CCThreadedTest::dispatchSetNeedsCommit):
+        (WebKitTests::CCThreadedTest::dispatchAcquireLayerTextures):
+        (WebKitTests::CCThreadedTest::dispatchSetNeedsRedraw):
+        (WebKitTests::CCThreadedTest::dispatchSetVisible):
+        (WebKitTests::CCThreadedTest::dispatchSetInvisible):
+        (WebKitTests::CCThreadedTest::dispatchComposite):
+        (WebKitTests::CCThreadedTest::dispatchDidAddAnimation):
+        (WebKitTests::CCThreadedTest::runTest):
+        * tests/CCThreadedTest.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebKitTests):
+        (TestHooks):
+        (WebKitTests::TestHooks::beginCommitOnCCThread):
+        (WebKitTests::TestHooks::commitCompleteOnCCThread):
+        (WebKitTests::TestHooks::prepareToDrawOnCCThread):
+        (WebKitTests::TestHooks::drawLayersOnCCThread):
+        (WebKitTests::TestHooks::animateLayers):
+        (WebKitTests::TestHooks::willAnimateLayers):
+        (WebKitTests::TestHooks::applyScrollAndScale):
+        (WebKitTests::TestHooks::updateAnimations):
+        (WebKitTests::TestHooks::layout):
+        (WebKitTests::TestHooks::didRecreateContext):
+        (WebKitTests::TestHooks::didAddAnimation):
+        (WebKitTests::TestHooks::didCommit):
+        (WebKitTests::TestHooks::didCommitAndDrawFrame):
+        (WebKitTests::TestHooks::scheduleComposite):
+        (WebKitTests::TestHooks::notifyAnimationStarted):
+        (WebKitTests::TestHooks::notifyAnimationFinished):
+        (CCThreadedTest):
+        (WebKitTests::CCThreadedTest::clearTimeout):
+        (WebKitTests::CCThreadedTest::clearEndTestTask):
+        (WebKitTests::CCThreadedTest::layerTreeHost):
+        (CCThreadedTestThreadOnly):
+        (WebKitTests::CCThreadedTestThreadOnly::runTestThreaded):
+        (MockLayerTreeHostImpl):
+        (CompositorFakeWebGraphicsContext3DWithTextureTracking):
+
 2012-06-08  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: rename some instances of open to registerFrontendCallbacks
