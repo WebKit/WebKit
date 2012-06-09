@@ -1,3 +1,9 @@
+2012-06-09  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build after r119895.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-06-09  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [refactoring] rename TimelineVerticalOverview into TimelineFrameOverview

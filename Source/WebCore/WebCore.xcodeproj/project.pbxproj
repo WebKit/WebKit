@@ -9003,9 +9003,9 @@
 		7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugListener.h; sourceTree = "<group>"; };
 		7B1EA0CC1576C5B50060177D /* JSUndoManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUndoManager.cpp; sourceTree = "<group>"; };
 		7B1EA0CD1576C5B50060177D /* JSUndoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSUndoManager.h; sourceTree = "<group>"; };
-		7B9184CF15758E420092AA93 /* UndoManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UndoManager.cpp; path = ../../../webkit/Source/WebCore/editing/UndoManager.cpp; sourceTree = SOURCE_ROOT; };
-		7B9184D015758E420092AA93 /* UndoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UndoManager.h; path = ../../../webkit/Source/WebCore/editing/UndoManager.h; sourceTree = SOURCE_ROOT; };
-		7B9184D115758E420092AA93 /* UndoManager.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = UndoManager.idl; path = ../../../webkit/Source/WebCore/editing/UndoManager.idl; sourceTree = SOURCE_ROOT; };
+		7B9184CF15758E420092AA93 /* UndoManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UndoManager.cpp; sourceTree = "<group>"; };
+		7B9184D015758E420092AA93 /* UndoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoManager.h; sourceTree = "<group>"; };
+		7B9184D115758E420092AA93 /* UndoManager.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.webkit-idl"; path = UndoManager.idl; sourceTree = "<group>"; };
 		7C60128060078BB70E367A95 /* DNSResolveQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DNSResolveQueue.cpp; sourceTree = "<group>"; };
 		7E33CD00127F340D00BE8F17 /* PurgePriority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgePriority.h; sourceTree = "<group>"; };
 		7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SubresourceLoaderCF.cpp; path = cf/SubresourceLoaderCF.cpp; sourceTree = "<group>"; };
