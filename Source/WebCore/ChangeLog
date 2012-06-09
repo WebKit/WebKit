@@ -1,3 +1,23 @@
+2012-06-08  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: optimize timeline's frame mode overview appearance for 30fps
+        https://bugs.webkit.org/show_bug.cgi?id=88556
+
+        Reviewed by Vsevolod Vlasov.
+
+        - adjust frame overview scale to 30fps == full height by default;
+        - provide a fall-back auto-scale mode when median frame is longer than 1/30s;
+        - add horizontal lines for 30 and 60fps;
+        - drive-by fix: always use same order of categories in frame bars.
+
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineVerticalOverview.prototype.update):
+        (WebInspector.TimelineVerticalOverview.prototype._aggregateFrames):
+        (WebInspector.TimelineVerticalOverview.prototype._renderBars):
+        (WebInspector.TimelineVerticalOverview.prototype._drawFPSMarks):
+        (WebInspector.TimelineVerticalOverview.prototype._renderBar):
+
+
 2012-06-09  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         Add UNDO_MANAGER flag

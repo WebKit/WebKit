@@ -946,8 +946,15 @@ WebInspector.TimelineVerticalOverview.prototype = {
         var visibleFrames = this._aggregateFrames(this._framesPerBar);
 
         const paddingTop = 4;
-        var scale = (this.element.clientHeight - paddingTop) / this._normalBarLength;
 
+        // Optimize appearance for 30fps. However, if at least half frames won't fit at this scale,
+        // fall back to using autoscale.
+        const targetFPS = 30;
+        var fullBarLength = 1.0 / targetFPS;
+        if (fullBarLength < this._medianFrameLength)
+            fullBarLength = Math.min(this._medianFrameLength * 2, this._maxFrameLength);
+
+        var scale = (this.element.clientHeight - paddingTop) / fullBarLength;
         this._renderBars(visibleFrames, scale);
     },
 
@@ -980,7 +987,8 @@ WebInspector.TimelineVerticalOverview.prototype = {
     {
         var visibleFrames = [];
         var durations = [];
-        var longestFrameTime = 0;
+
+        this._maxFrameLength = 0;
 
         for (var barNumber = 0, currentFrame = 0; currentFrame < this._frames.length; ++barNumber) {
             var barStartTime = this._frames[currentFrame].startTime;
@@ -993,17 +1001,20 @@ WebInspector.TimelineVerticalOverview.prototype = {
             }
             var barEndTime = this._frames[currentFrame - 1].endTime;
             if (longestFrame) {
-                longestFrameTime = Math.max(longestFrameTime, longestFrame.duration);
+                this._maxFrameLength = Math.max(this._maxFrameLength, longestFrame.duration);
                 visibleFrames.push(longestFrame);
                 this._barTimes.push({ startTime: barStartTime, endTime: barEndTime });
                 durations.push(longestFrame.duration);
             }
         }
-        // Do not let occasional very long frames to dwarf the majority -- use at most 3 * median frame length for scale.
-        this._normalBarLength = Math.min(longestFrameTime, 3 * durations.qselect(Math.floor(durations.length / 2)));
+        this._medianFrameLength = durations.qselect(Math.floor(durations.length / 2));
         return visibleFrames;
     },
 
+    /**
+     * @param {Array.<WebInspector.TimelineFrame>} frames
+     * @param {number} scale
+     */
     _renderBars: function(frames, scale)
     {
         // Use real world, 1:1 coordinates in canvas. This will also take care of clearing it.
@@ -1014,20 +1025,71 @@ WebInspector.TimelineVerticalOverview.prototype = {
         this._actualOuterBarWidth = Math.min((this.element.width - 2 * this._outerPadding) / frames.length, this._maxInnerBarWidth + maxPadding);
         this._actualPadding = Math.min(Math.floor(this._actualOuterBarWidth / 3), maxPadding);
 
-        for (var i = 0; i < frames.length; ++i) {
-            var width = this._actualOuterBarWidth - this._actualPadding;
-            this._renderBar(this._barNumberToScreenPosition(i), width, frames[i], scale);
-        }
+        var barWidth = this._actualOuterBarWidth - this._actualPadding;
+        for (var i = 0; i < frames.length; ++i)
+            this._renderBar(this._barNumberToScreenPosition(i), barWidth, frames[i], scale);
+
+        this._drawFPSMarks(scale);
     },
 
+    /**
+     * @param {number} n
+     */
     _barNumberToScreenPosition: function(n)
     {
         return this._outerPadding + this._actualOuterBarWidth * n;
     },
 
+    /**
+     * @param {number} scale
+     */
+    _drawFPSMarks: function(scale)
+    {
+        const fpsMarks = [30, 60];
+
+        this._context.save();
+        this._context.beginPath();
+        this._context.font = "9px monospace";
+        this._context.textAlign = "right";
+        this._context.textBaseline = "top";
+
+        const labelPadding = 2;
+        var lineHeight = 12;
+        var labelTopMargin = 0;
+
+        for (var i = 0; i < fpsMarks.length; ++i) {
+            var fps = fpsMarks[i];
+            // Draw lines one pixel above they need to be, so 60pfs line does not cross most of the frames tops.
+            var y = this.element.height - Math.floor(1.0 / fps * scale) - 0.5;
+            var label = fps + " FPS ";
+            var labelWidth = this._context.measureText(label).width;
+            var labelX = this.element.width;
+            var labelY;
+
+            if (labelTopMargin < y - lineHeight)
+                labelY = y - lineHeight;
+            else if (y + lineHeight < this.element.height)
+                labelY = y;
+            else
+                break; // No space for the label, so no line as well.
+
+            this._context.moveTo(0, y);
+            this._context.lineTo(this.element.width, y);
+
+            this._context.fillStyle = "rgba(255, 255, 255, 0.75)";
+            this._context.fillRect(labelX - labelWidth - labelPadding, labelY, labelWidth + 2 * labelPadding, lineHeight);
+            this._context.fillStyle = "rgb(0, 0, 0)";
+            this._context.fillText(label, labelX, labelY);
+            labelTopMargin = labelY + lineHeight;
+        }
+        this._context.strokeStyle = "rgb(51, 51, 51)";
+        this._context.stroke();
+        this._context.restore();
+    },
+
     _renderBar: function(left, width, frame, scale)
     {
-        var categories = Object.keys(frame.timeByCategory);
+        var categories = Object.keys(WebInspector.TimelinePresentationModel.categories());
         if (!categories.length)
             return;
         var x = Math.floor(left) + 0.5;
