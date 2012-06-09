@@ -1,3 +1,14 @@
+2012-06-09  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Gardening failure case on EFL build bot
+        https://bugs.webkit.org/show_bug.cgi?id=88656
+
+        Unreviewed EFL gardening after r119795. jquery/core.html test
+        is crashing on debug bot and failing with a text diff on
+        release bot.
+
+        * platform/efl/TestExpectations:
+
 2012-05-25  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Limit DebuggerAgent.Location use to DebuggerModel only, introduce WebInspector.RawLocation to be used elsewhere.
