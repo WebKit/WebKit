@@ -1,5 +1,11 @@
 2012-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix Chromium test expectations after my previous commit (r119916).
+
+        * platform/chromium/TestExpectations:
+
+2012-06-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         Spring CRASH cleanup of Chromium test expectations.
         Removed a whole bunch of bogus CRASH test expectations.
 
