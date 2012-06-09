@@ -1,3 +1,10 @@
+2012-06-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove bogus CRASH expectations from skipped tests.
+        There's no point in specifying test expectation when tests are skipped.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-09  Florin Malita  <fmalita@chromium.org>
 
         Fixed-position foreignObject descendants should be relative to the foreignObject viewport

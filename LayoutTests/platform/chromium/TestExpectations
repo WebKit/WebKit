@@ -510,12 +510,12 @@ WONTFIX SKIP : http/tests/security/contentSecurityPolicy/shared-worker-connect-s
 WONTFIX SKIP : storage/indexeddb/basics-shared-workers.html = PASS
 
 // test_shell does not support message ports
-BUGWK74459 SKIP : fast/workers/termination-with-port-messages.html = CRASH
-BUGWK74459 SKIP : fast/workers/worker-cloneport.html = CRASH
-BUGWK74459 SKIP : fast/workers/worker-context-multi-port.html = CRASH
-BUGWK74459 SKIP : fast/workers/worker-messageport-gc.html = CRASH
-BUGWK74459 SKIP : fast/workers/worker-messageport.html = CRASH
-BUGWK74459 SKIP : fast/workers/worker-multi-port.html = CRASH
+BUGWK74459 SKIP : fast/workers/termination-with-port-messages.html = PASS
+BUGWK74459 SKIP : fast/workers/worker-cloneport.html = PASS
+BUGWK74459 SKIP : fast/workers/worker-context-multi-port.html = PASS
+BUGWK74459 SKIP : fast/workers/worker-messageport-gc.html = PASS
+BUGWK74459 SKIP : fast/workers/worker-messageport.html = PASS
+BUGWK74459 SKIP : fast/workers/worker-multi-port.html = PASS
 
 BUGCR108798 LINUX WIN : fast/filesystem/workers/file-writer-events.html = CRASH PASS
 
@@ -719,7 +719,7 @@ WONTFIX SKIP : http/tests/xmlhttprequest/re-login-async.html = TEXT
 WONTFIX SKIP : http/tests/xmlhttprequest/re-login.html = TEXT
 
 // This test relies on code in the test plugin that only exists in Apple's Mac port.
-WONTFIX SKIP : platform/mac/plugins/convert-point.html = CRASH
+WONTFIX SKIP : platform/mac/plugins/convert-point.html = PASS
 
 // This checks the IDN behavior of WebKit/WebKit on Mac, not WebKit/WebCore or
 // WebKit/JavaScriptCore. Chrome doesn't use WebKit/WebKit, and Chrome's IDN
@@ -848,7 +848,7 @@ WONTFIX SKIP : platform/blackberry = PASS
 // -----------------------------------------------------------------
 
 // LightTPD doesn't accept unknown HTTP methods
-BUGCR30536 SKIP WIN : http/tests/xmlhttprequest/methods-lower-case.html = CRASH TIMEOUT
+BUGCR30536 SKIP WIN : http/tests/xmlhttprequest/methods-lower-case.html = PASS
 BUGCR30536 WIN : http/tests/xmlhttprequest/methods-async.html = TIMEOUT
 BUGCR30536 SLOW WIN : http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html = TEXT
 // LightTPD doesn't accept unknown HTTP methods and passes CGIs a Content-Type
@@ -1074,7 +1074,7 @@ BUGCR31342 WIN RELEASE : security/block-test-no-port.html = PASS TEXT
 
 BUGCR21841 MAC WIN DEBUG : plugins/destroy-during-npp-new.html = PASS CRASH
 
-BUGCR61799 BUGWK64319 SKIP : plugins/evaluate-js-after-removing-plugin-element.html = CRASH TIMEOUT TEXT
+BUGCR61799 BUGWK64319 SKIP : plugins/evaluate-js-after-removing-plugin-element.html = PASS
 BUGCR37962 MAC : plugins/iframe-shims.html = PASS TIMEOUT TEXT
 // Object.keys on an NPObject produces the wrong output.
 BUGCR21901 : plugins/npruntime/enumerate.html = TEXT
@@ -2103,7 +2103,7 @@ BUGWK63057 RELEASE : perf/adding-radio-buttons.html = TEXT PASS
 // Failing after http://trac.webkit.org/changeset/65665/
 
 // new or failing since WebKit rev. 65740:65800
-BUGCR53073 SKIP DEBUG : storage/websql/change-version.html = PASS CRASH
+BUGCR53073 SKIP DEBUG : storage/websql/change-version.html = PASS
 
 // r66144 added tests to test user scripts on special documents, and Linux can't
 // pass them because they rely on QuickTime being installed. We wontfix these
@@ -2227,15 +2227,15 @@ BUGWK61161 LINUX WIN : fast/writing-mode/border-image-vertical-rl.html = IMAGE+T
 BUGWK61161 LINUX WIN : fast/writing-mode/border-image-vertical-lr.html = IMAGE+TEXT
 
 // New test; was added in http://trac.webkit.org/changeset/68520
-BUGWK46735 SKIP WONTFIX WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = CRASH TEXT
+BUGWK46735 SKIP WONTFIX WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = PASS
 // Added in WebKit r70265
-BUGWK48034 SKIP WONTFIX WIN : platform/win/plugins/npn-invalidate-rect-invalidates-window.html = CRASH TEXT
+BUGWK48034 SKIP WONTFIX WIN : platform/win/plugins/npn-invalidate-rect-invalidates-window.html = PASS
 // Added in WK r71416, doesn't look like it's applicable to Chromium
-WONTFIX SKIP WIN : platform/win/plugins/window-region-is-set-to-clip-rect.html = TEXT CRASH
+WONTFIX SKIP WIN : platform/win/plugins/window-region-is-set-to-clip-rect.html = PASS
 // Added in WK r71418, doesn't look like it's applicable to Chromium
-WONTFIX SKIP WIN : platform/win/plugins/draws-gradient.html = IMAGE+TEXT CRASH
+WONTFIX SKIP WIN : platform/win/plugins/draws-gradient.html = PASS
 // Doesn't look like it's applicable to Chromium
-WONTFIX SKIP WIN : platform/win/plugins/get-value-netscape-window.html = TEXT CRASH
+WONTFIX SKIP WIN : platform/win/plugins/get-value-netscape-window.html = PASS
 
 // Added in WK r71424
 // We should probably just skip this test, everyone else has since
@@ -2286,7 +2286,7 @@ BUG_DRT : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE
 // This test needs enhanced eventSender.contextMenu() return value.
 // See https://bugs.webkit.org/show_bug.cgi?id=45021 for more info.
 // UNIMPLEMENTED for chrome
-BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = PASS CRASH TIMEOUT
+BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = PASS
 
 // Occasionally times out with, only under the DRT for Linux
 BUGCR58212 LINUX : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT
@@ -2321,7 +2321,7 @@ BUGCR66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
 
 // Needs V8 investigation.  Skipped due to concern that this may be corrupting
 // memory and thus leading to unpredictable results.
-BUGCR66099 SKIP : fast/js/array-sort-modifying-tostring.html = CRASH TIMEOUT TEXT
+BUGCR66099 SKIP : fast/js/array-sort-modifying-tostring.html = PASS
 
 BUGCR66683 LINUX WIN : fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
 BUGCR66683 : platform/chromium/virtual/gpu/fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
@@ -3066,7 +3066,7 @@ BUGWK77136 DEBUG : fast/workers/storage/interrupt-database.html = PASS CRASH TIM
 BUGWK77136 WIN RELEASE : fast/workers/storage/interrupt-database.html = PASS TIMEOUT
 
 // Crashes due to an OOM error on V8.
-BUGCR108832 SKIP : fast/js/array-splice.html = CRASH
+BUGCR108832 SKIP : fast/js/array-splice.html = PASS
 
 BUGWK75430 MAC : plugins/iframe-plugin-bgcolor.html = TEXT TIMEOUT
 BUGWK75468 : fast/js/kde/GlobalObject.html = TEXT
