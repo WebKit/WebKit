@@ -141,13 +141,11 @@ WebInspector.IDBDataView.prototype = {
 
         var keyPath = this._isIndex ? this._index.keyPath : this._objectStore.keyPath;
         columns["key"] = {};
-        var keyColumnTitle = WebInspector.UIString("Key") + this._keyPathHeader(keyPath);
-        columns["key"].title = keyColumnTitle;
-
+        columns["key"].titleDOMFragment = this._keyColumnHeaderFragment(WebInspector.UIString("Key"), keyPath);
+        
         if (this._isIndex) {
             columns["primaryKey"] = {};
-            var primaryKeyColumnTitle = WebInspector.UIString("Primary key") + this._keyPathHeader(this._objectStore.keyPath);
-            columns["primaryKey"].title = primaryKeyColumnTitle;
+            columns["primaryKey"].titleDOMFragment = this._keyColumnHeaderFragment(WebInspector.UIString("Primary key"), this._objectStore.keyPath);
         }
 
         columns["value"] = {};
@@ -158,13 +156,46 @@ WebInspector.IDBDataView.prototype = {
     },
 
     /**
-     * @return {string}
+     * @param {string} prefix
+     * @param {*} keyPath
+     * @return {DocumentFragment}
      */
-    _keyPathHeader: function(keyPath)
+    _keyColumnHeaderFragment: function(prefix, keyPath)
     {
-        if (!keyPath)
-            return "";
-        return " (" + WebInspector.UIString("keyPath") + ": \"" + keyPath + "\")";
+        var keyColumnHeaderFragment = document.createDocumentFragment();
+        keyColumnHeaderFragment.appendChild(document.createTextNode(prefix));
+        if (keyPath === null)
+            return keyColumnHeaderFragment;
+        
+        keyColumnHeaderFragment.appendChild(document.createTextNode(" (" + WebInspector.UIString("Key path: ")));
+        if (keyPath instanceof Array) {
+            keyColumnHeaderFragment.appendChild(document.createTextNode("["));
+            for (var i = 0; i < keyPath.length; ++i) {
+                if (i != 0)
+                    keyColumnHeaderFragment.appendChild(document.createTextNode(", "));
+                keyColumnHeaderFragment.appendChild(this._keyPathStringFragment(keyPath[i]));
+            }
+            keyColumnHeaderFragment.appendChild(document.createTextNode("]"));
+        } else {
+            var keyPathString = /** @type {string} */ keyPath;
+            keyColumnHeaderFragment.appendChild(this._keyPathStringFragment(keyPathString));
+        }
+        keyColumnHeaderFragment.appendChild(document.createTextNode(")"));
+        return keyColumnHeaderFragment;
+    },
+
+    /**
+     * @param {string} keyPathString
+     * @return {DocumentFragment}
+     */
+    _keyPathStringFragment: function(keyPathString)
+    {
+        var keyPathStringFragment = document.createDocumentFragment();
+        keyPathStringFragment.appendChild(document.createTextNode("\""));
+        var keyPathSpan = keyPathStringFragment.createChild("span", "source-code console-formatted-string");
+        keyPathSpan.textContent = keyPathString;
+        keyPathStringFragment.appendChild(document.createTextNode("\""));
+        return keyPathStringFragment;
     },
 
     /**
@@ -358,7 +389,7 @@ WebInspector.IDBDataGridNode.prototype = {
     {
         var cell = WebInspector.DataGridNode.prototype.createCell.call(this, columnIdentifier);
         var value = this.data[columnIdentifier];
-        
+
         switch (columnIdentifier) {
         case "value":
             cell.removeChildren();

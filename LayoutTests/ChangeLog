@@ -1,3 +1,13 @@
+2012-06-08  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        IndexedDB: Inspector should handle null, string, and array keyPaths
+        https://bugs.webkit.org/show_bug.cgi?id=84303
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/indexeddb/database-structure-expected.txt:
+        * http/tests/inspector/indexeddb/database-structure.html:
+
 2012-06-09  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Gardening failure case on EFL build bot

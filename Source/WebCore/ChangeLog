@@ -1,5 +1,34 @@
 2012-06-08  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        IndexedDB: Inspector should handle null, string, and array keyPaths
+        https://bugs.webkit.org/show_bug.cgi?id=84303
+
+        Reviewed by Pavel Feldman.
+
+        Supported different key path types and updated tests to cover each case.
+        Key path strings are now highlighted in the DataGrid column headers.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+        * inspector/front-end/IndexedDBModel.js:
+        (WebInspector.IndexedDBModel.idbKeyPathFromKeyPath):
+        (WebInspector.IndexedDBModel.keyPathStringFromIDBKeyPath):
+        (WebInspector.IndexedDBModel.prototype._loadDatabase.callback):
+        (WebInspector.IndexedDBModel.prototype._loadDatabase):
+        (WebInspector.IndexedDBModel.ObjectStore.prototype.get keyPathString):
+        (WebInspector.IndexedDBModel.Index.prototype.get keyPathString):
+        * inspector/front-end/IndexedDBViews.js:
+        (WebInspector.IDBDataView.prototype._createDataGrid):
+        (WebInspector.IDBDataView.prototype._keyColumnHeaderFragment):
+        (WebInspector.IDBDataView.prototype._keyPathStringFragment):
+        (WebInspector.IDBDataGridNode.prototype.createCell):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.IDBObjectStoreTreeElement.prototype._updateTooltip):
+        (WebInspector.IDBIndexTreeElement.prototype._updateTooltip):
+
+2012-06-08  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Increase size limits for resource content cached in InspectorResourceAgent.
         https://bugs.webkit.org/show_bug.cgi?id=88674
 

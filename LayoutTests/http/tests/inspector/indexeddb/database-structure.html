@@ -27,7 +27,7 @@ function test()
         for (var i = 0; i < objectStoreNames.length; ++i) {
             var objectStore = database.objectStores[objectStoreNames[i]];
             InspectorTest.addResult("    " + objectStore.name);
-            InspectorTest.addResult("        keyPath: " + objectStore.keyPath);
+            InspectorTest.addResult("        keyPath: " + JSON.stringify(objectStore.keyPath));
             InspectorTest.addResult("        indexes: ");
             var indexNames = [];
             for (var indexName in objectStore.indexes)
@@ -36,7 +36,7 @@ function test()
             for (var j = 0; j < indexNames.length; ++j) {
                 var index = objectStore.indexes[indexNames[j]];
                 InspectorTest.addResult("        " + index.name);
-                InspectorTest.addResult("            keyPath: " + index.keyPath);
+                InspectorTest.addResult("            keyPath: " + JSON.stringify(index.keyPath));
                 InspectorTest.addResult("            unique: " + index.unique);
                 InspectorTest.addResult("            multiEntry: " + index.multiEntry);
             }
@@ -82,7 +82,7 @@ function test()
     {
         dumpDatabase();
 
-        InspectorTest.createObjectStore(mainFrameId, databaseName, "testObjectStore2", "", false, step8);
+        InspectorTest.createObjectStore(mainFrameId, databaseName, "testObjectStore2", null, false, step8);
     }
 
     function step8()
@@ -95,7 +95,7 @@ function test()
     {
         dumpDatabase();
 
-        InspectorTest.createObjectStoreIndex(mainFrameId, databaseName, "testObjectStore2", "testIndexName1", "key.path1", false, true, step10);
+        InspectorTest.createObjectStoreIndex(mainFrameId, databaseName, "testObjectStore2", "testIndexName1", "", false, true, step10);
     }
 
     function step10()
@@ -108,7 +108,7 @@ function test()
     {
         dumpDatabase();
 
-        InspectorTest.createObjectStoreIndex(mainFrameId, databaseName, "testObjectStore2", "testIndexName2", "key.path2", true, false, step12);
+        InspectorTest.createObjectStoreIndex(mainFrameId, databaseName, "testObjectStore2", "testIndexName2", ["key.path1", "key.path2"], true, false, step12);
     }
 
     function step12()

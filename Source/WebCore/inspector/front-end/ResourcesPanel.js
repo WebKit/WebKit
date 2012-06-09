@@ -1723,7 +1723,8 @@ WebInspector.IDBObjectStoreTreeElement.prototype = {
 
     _updateTooltip: function()
     {
-        this.tooltip = this._objectStore.keyPath ? (WebInspector.UIString("Key path") + ": " + this._objectStore.keyPath) : "";
+        var keyPathString = this._objectStore.keyPathString;
+        this.tooltip = keyPathString !== null ? (WebInspector.UIString("Key path: ") + keyPathString) : "";
     },
 
     onselect: function()
@@ -1797,7 +1798,8 @@ WebInspector.IDBIndexTreeElement.prototype = {
     _updateTooltip: function()
     {
         var tooltipLines = [];
-        tooltipLines.push(WebInspector.UIString("Key path") + ": " + this._index.keyPath);
+        var keyPathString = this._index.keyPathString;
+        tooltipLines.push(WebInspector.UIString("Key path: ") + keyPathString);
         if (this._index.unique)
             tooltipLines.push(WebInspector.UIString("unique"));
         if (this._index.multiEntry)

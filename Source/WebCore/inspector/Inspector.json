@@ -1096,7 +1096,7 @@
                 "description": "Object store.",
                 "properties": [
                     { "name": "name", "type": "string", "description": "Object store name." },
-                    { "name": "keyPath", "type": "string", "description": "Object store key path." },
+                    { "name": "keyPath", "$ref": "KeyPath", "description": "Object store key path." },
                     { "name": "indexes", "type": "array", "items": { "$ref": "ObjectStoreIndex" }, "description": "Indexes in this object store." }
                 ]
             },
@@ -1106,7 +1106,7 @@
                 "description": "Object store index.",
                 "properties": [
                     { "name": "name", "type": "string", "description": "Index name." },
-                    { "name": "keyPath", "type": "string", "description": "Index key path." },
+                    { "name": "keyPath", "$ref": "KeyPath", "description": "Index key path." },
                     { "name": "unique", "type": "boolean", "description": "If true, index is unique." },
                     { "name": "multiEntry", "type": "boolean", "description": "If true, index allows multiple entries for a key." }
                 ]
@@ -1137,11 +1137,21 @@
             {
                 "id": "DataEntry",
                 "type": "object",
-                "description": "Key.",
+                "description": "Data entry.",
                 "properties": [
                     { "name": "key", "$ref": "Key", "description": "Key." },
                     { "name": "primaryKey", "$ref": "Key", "description": "Primary key." },
                     { "name": "value", "$ref": "Runtime.RemoteObject", "description": "Value." }
+                ]
+            },
+            {
+                "id": "KeyPath",
+                "type": "object",
+                "description": "Key path.",
+                "properties": [
+                    { "name": "type", "type": "string", "enum": ["null", "string", "array"], "description": "Key path type." },
+                    { "name": "string", "type": "string", "optional": true, "description": "String value." },
+                    { "name": "array", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Array value." }
                 ]
             }
         ],

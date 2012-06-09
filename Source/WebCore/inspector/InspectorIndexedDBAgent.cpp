@@ -70,6 +70,7 @@ using WebCore::TypeBuilder::IndexedDB::SecurityOriginWithDatabaseNames;
 using WebCore::TypeBuilder::IndexedDB::DatabaseWithObjectStores;
 using WebCore::TypeBuilder::IndexedDB::DataEntry;
 using WebCore::TypeBuilder::IndexedDB::Key;
+using WebCore::TypeBuilder::IndexedDB::KeyPath;
 using WebCore::TypeBuilder::IndexedDB::KeyRange;
 using WebCore::TypeBuilder::IndexedDB::ObjectStore;
 using WebCore::TypeBuilder::IndexedDB::ObjectStoreIndex;
@@ -226,23 +227,31 @@ static PassRefPtr<IDBIndexBackendInterface> indexForObjectStore(IDBObjectStoreBa
     return idbIndex;
 }
 
-static String keyPathToString(const IDBKeyPath& keyPath)
+static PassRefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
 {
-    // FIXME: Replace with handlers for null/string/array types.
-    // https://bugs.webkit.org/show_bug.cgi?id=84303
-    switch (keyPath.type()) {
+    RefPtr<KeyPath> keyPath;
+    switch (idbKeyPath.type()) {
     case IDBKeyPath::NullType:
-        return "(none)";
+        keyPath = KeyPath::create().setType(KeyPath::Type::Null);
         break;
     case IDBKeyPath::StringType:
-        return keyPath.string();
+        keyPath = KeyPath::create().setType(KeyPath::Type::String);
+        keyPath->setString(idbKeyPath.string());
         break;
-    case IDBKeyPath::ArrayType:
-        return "[...]";
+    case IDBKeyPath::ArrayType: {
+        keyPath = KeyPath::create().setType(KeyPath::Type::Array);
+        RefPtr<TypeBuilder::Array<String> > array = TypeBuilder::Array<String>::create();
+        const Vector<String>& stringArray = idbKeyPath.array();
+        for (size_t i = 0; i < stringArray.size(); ++i)
+            array->addItem(stringArray[i]);
+        keyPath->setArray(array);
         break;
     }
-    ASSERT_NOT_REACHED();
-    return String();
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    return keyPath.release();
 }
 
 class DatabaseLoaderCallback : public ExecutableWithDatabase {
@@ -280,7 +289,7 @@ public:
 
                 RefPtr<ObjectStoreIndex> objectStoreIndex = ObjectStoreIndex::create()
                     .setName(idbIndex->name())
-                    .setKeyPath(keyPathToString(idbIndex->keyPath()))
+                    .setKeyPath(keyPathFromIDBKeyPath(idbIndex->keyPath()))
                     .setUnique(idbIndex->unique())
                     .setMultiEntry(idbIndex->multiEntry());
                 indexes->addItem(objectStoreIndex);
@@ -288,7 +297,7 @@ public:
 
             RefPtr<ObjectStore> objectStore = ObjectStore::create()
                 .setName(idbObjectStore->name())
-                .setKeyPath(keyPathToString(idbObjectStore->keyPath()))
+                .setKeyPath(keyPathFromIDBKeyPath(idbObjectStore->keyPath()))
                 .setIndexes(indexes);
             objectStores->addItem(objectStore);
         }
