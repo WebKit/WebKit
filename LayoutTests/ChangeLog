@@ -1,3 +1,13 @@
+2012-06-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] skip new tests added in r119883
+        https://bugs.webkit.org/show_bug.cgi?id=88716
+
+        Unreviewed EFL gardening. Skip new tests added in r119883.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+
 2012-06-09  Pablo Flouret  <pablof@motorola.com>
 
         The value in Access-Control-Allow-Origin is not being matched correctly for CORS-enabled requests

@@ -224,12 +224,6 @@ fast/dom/HTMLAnchorElement/anchor-download.html
 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
 fast/dom/HTMLAnchorElement/anchor-nodownload.html
 
-# The EFL port has no support for the FileSystem API
-fast/filesystem
-http/tests/filesystem
-http/tests/security/filesystem-iframe-from-remote.html
-fast/mutation/filesystem-callback-delivery.html
-
 # The EFL port has no support for Geolocation
 fast/dom/Geolocation
 fast/dom/Window/window-properties-geolocation.html
