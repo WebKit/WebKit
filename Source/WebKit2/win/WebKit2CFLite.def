@@ -108,7 +108,6 @@ EXPORTS
         ??1ThreadCondition@WTF@@QAE@XZ
         ?broadcast@ThreadCondition@WTF@@QAEXXZ
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
-        ?callRemovedLastRef@WebCore@@YAXPAV?$TreeShared@VContainerNode@WebCore@@@1@@Z
         ?consoleMessageArgumentCounts@InspectorConsoleAgent@WebCore@@QAE?AV?$Vector@I$0A@@WTF@@XZ
         ?counterValue@InspectorCounters@WebCore@@SAHW4CounterType@12@@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
@@ -155,6 +154,7 @@ EXPORTS
         ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBE@Z
         ?addSlowCase@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PAVStringImpl@2@@Z
         ?cacheDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PAV23@PBUClassInfo@3@@Z
+        ?callRemovedLastRef@WebCore@@YAXPAV?$TreeShared@VContainerNode@WebCore@@@1@@Z
         ?create@HTMLContentElement@WebCore@@SA?AV?$PassRefPtr@VHTMLContentElement@WebCore@@@WTF@@PAVDocument@2@@Z
         ?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@V?$PassRefPtr@VDocument@WebCore@@@4@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z
         ?create@ShadowRoot@WebCore@@SA?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@PAVElement@2@AAH@Z
@@ -245,4 +245,7 @@ EXPORTS
         ?isPageBoxVisible@Document@WebCore@@QAE_NH@Z
         ?suspendAnimations@AnimationController@WebCore@@QAEXXZ
         ?resumeAnimations@AnimationController@WebCore@@QAEXXZ
+        ?setAllowsRoundingHacks@TextRun@WebCore@@SAX_N@Z
+        ?profilerEnabled@InspectorController@WebCore@@QAE_NXZ
+        ?setProfilerEnabled@InspectorController@WebCore@@QAEX_N@Z
         ?jsStringSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@U?$PtrHash@PAVStringImpl@WTF@@@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
