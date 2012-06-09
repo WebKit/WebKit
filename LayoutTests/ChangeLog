@@ -1,3 +1,15 @@
+2012-06-09  Pablo Flouret  <pablof@motorola.com>
+
+        The value in Access-Control-Allow-Origin is not being matched correctly for CORS-enabled requests
+        https://bugs.webkit.org/show_bug.cgi?id=88139
+
+        Reviewed by Adam Barth.
+
+        * http/tests/xmlhttprequest/origin-exact-matching-expected.txt: Added.
+        * http/tests/xmlhttprequest/origin-exact-matching.html: Added.
+        * http/tests/xmlhttprequest/resources/basic-auth/access-control-auth-basic.php: Get rid of a trailing slash in the origin.
+        * http/tests/xmlhttprequest/resources/origin-exact-matching-iframe.html: Added.
+
 2012-06-09  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Skip tests that rely on pathToLocalResource() due to regression in r119788
