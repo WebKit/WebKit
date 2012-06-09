@@ -1101,7 +1101,9 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
         if (!currentCues.contains(previousCues[i]) && previousCues[i].data()->isActive())
             activeSetChanged = true;
 
-    for (size_t i = 0; !activeSetChanged && i < currentCuesSize; ++i) {
+    for (size_t i = 0; i < currentCuesSize; ++i) {
+        currentCues[i].data()->updateDisplayTree(movieTime);
+
         if (!currentCues[i].data()->isActive())
             activeSetChanged = true;
     }

@@ -1,3 +1,44 @@
+2012-06-09  Victor Carbune  <victor@rosedu.org>
+
+        Basic support for timestamps within a TextTrackCue
+        https://bugs.webkit.org/show_bug.cgi?id=88187
+
+        Implemented support for timestamps within a TextTrackCue.
+        This enables rendering functionality for Karaoke and Paint-on captions.
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/track-cue-rendering-inner-timestamps.html
+
+        * css/mediaControls.css: Remove the background shadow pseudo-id and
+        added two others, which can be further used for styling past / future
+        contents of the cue.
+        (video::-webkit-media-text-track-past-nodes): Used to style elements
+        within the cue that are before the current movie time.
+        (video::-webkit-media-text-track-future-nodes): Used to style elements
+        within the cue that are after the current movie time.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): Regardless of whether
+        the active set changed or not, the current cues need to be informed of the current
+        movie time.
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::TextTrackCue): Initiliazed past and future containers.
+        (WebCore::TextTrackCue::getCueAsHTML): Checked whether the current cue text has
+        inner timestamps or not, in order to render faster if no timestamps are there.
+        (WebCore::TextTrackCue::updateDisplayTree): Added method that keeps the past and future
+        containers up to date, given a current movie time.
+        (WebCore):
+        (WebCore::TextTrackCue::getDisplayTree): Replaced the cue background container with the
+        past cues container. The *internal* display tree of the cue now has two containers,
+        representing past and future elements.
+        * html/track/TextTrackCue.h: Added several variables to support the new functionality.
+        (TextTrackCue):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::constructTreeFromToken): Updated representation for this patch.
+        * html/track/WebVTTParser.h:
+        (WebVTTParser): Made public the collectTimeStamp method, as this is required for
+        parsing timestamps within a cue as well.
+
 2012-06-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Open links in Sources panel by default and fallback to Resources and Network panel otherwise.

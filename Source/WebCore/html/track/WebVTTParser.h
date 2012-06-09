@@ -94,6 +94,7 @@ public:
     void getNewCues(Vector<RefPtr<TextTrackCue> >&);
 
     PassRefPtr<DocumentFragment> createDocumentFragmentFromCueText(const String&);
+    double collectTimeStamp(const String&, unsigned*);
 
 protected:
     WebVTTParser(WebVTTParserClient*, ScriptExecutionContext*);
@@ -110,7 +111,7 @@ private:
 
     void createNewCue();
     void resetCueValues();
-    double collectTimeStamp(const String&, unsigned*);
+
     void skipWhiteSpace(const String&, unsigned*);
     static void skipLineTerminator(const char* data, unsigned length, unsigned*);
     static String collectNextLine(const char* data, unsigned length, unsigned*);

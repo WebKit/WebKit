@@ -40,6 +40,7 @@
 #include "DocumentFragment.h"
 #include "Event.h"
 #include "HTMLDivElement.h"
+#include "HTMLMediaElement.h"
 #include "Text.h"
 #include "TextTrack.h"
 #include "TextTrackCueList.h"
@@ -99,10 +100,14 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, const String& id, do
     , m_cueIndex(invalidCueIndex)
     , m_writingDirection(Horizontal)
     , m_cueAlignment(Middle)
+    , m_documentFragment(0)
     , m_scriptExecutionContext(context)
     , m_isActive(false)
     , m_pauseOnExit(pauseOnExit)
     , m_snapToLines(true)
+    , m_hasInnerTimestamps(false)
+    , m_pastDocumentNodes(HTMLDivElement::create(static_cast<Document*>(context)))
+    , m_futureDocumentNodes(HTMLDivElement::create(static_cast<Document*>(context)))
     , m_displayTreeShouldChange(true)
     , m_displayTree(HTMLDivElement::create(static_cast<Document*>(context)))
     , m_displayXPosition(undefinedPosition)
@@ -372,8 +377,15 @@ PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
     RefPtr<DocumentFragment> clonedFragment;
     Document* document;
 
-    if (!m_documentFragment)
+    if (!m_documentFragment) {
+        m_hasInnerTimestamps = false;
         m_documentFragment = WebVTTParser::create(0, m_scriptExecutionContext)->createDocumentFragmentFromCueText(m_content);
+
+        for (Node *child = m_documentFragment->firstChild(); !m_hasInnerTimestamps && child; child = child->nextSibling()) {
+            if (child->nodeName() == "timestamp")
+                m_hasInnerTimestamps = true;
+        }
+    }
 
     document = static_cast<Document*>(m_scriptExecutionContext);
 
@@ -528,9 +540,53 @@ void TextTrackCue::calculateDisplayParameters()
     // FIXME(Bug 79916): CSS top and left properties need to be applied.
 }
 
+void TextTrackCue::updateDisplayTree(float movieTime)
+{
+    // The display tree may contain WebVTT timestamp objects representing
+    // timestamps (processing instructions), along with displayable nodes.
+    DEFINE_STATIC_LOCAL(const String, timestampTag, ("timestamp"));
+
+    DEFINE_STATIC_LOCAL(const AtomicString, trackPastNodesShadowPseudoId, ("-webkit-media-text-track-past-nodes"));
+    DEFINE_STATIC_LOCAL(const AtomicString, trackFutureNodesShadowPseudoId, ("-webkit-media-text-track-future-nodes"));
+
+    bool isPastNode = true;
+
+    // Clear the contents of the two sets.
+    m_futureDocumentNodes->removeChildren();
+    m_futureDocumentNodes->setShadowPseudoId(trackFutureNodesShadowPseudoId);
+
+    m_pastDocumentNodes->removeChildren();
+    m_pastDocumentNodes->setShadowPseudoId(trackPastNodesShadowPseudoId);
+
+    // Update the two sets containing past and future WebVTT objects.
+    RefPtr<DocumentFragment> referenceTree = getCueAsHTML();
+
+    if (!m_hasInnerTimestamps) {
+        m_pastDocumentNodes->appendChild(referenceTree);
+        return;
+    }
+
+    for (Node *child = referenceTree->firstChild(); child; child = child->nextSibling()) {
+        if (child->nodeName() == timestampTag) {
+            unsigned int position = 0;
+            String timestamp = child->nodeValue();
+
+            double timestampTime = WebVTTParser::create(0, m_scriptExecutionContext)->collectTimeStamp(timestamp, &position);
+            ASSERT(timestampTime != -1);
+
+            if (timestampTime > movieTime)
+                isPastNode = false;
+        }
+
+        if (isPastNode)
+            m_pastDocumentNodes->appendChild(child->cloneNode(true), ASSERT_NO_EXCEPTION, false);
+        else
+            m_futureDocumentNodes->appendChild(child->cloneNode(true), ASSERT_NO_EXCEPTION, false);
+    }
+}
+
 PassRefPtr<HTMLDivElement> TextTrackCue::getDisplayTree()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, trackBackgroundShadowPseudoId, ("-webkit-media-text-track-background"));
     DEFINE_STATIC_LOCAL(const AtomicString, trackDisplayBoxShadowPseudoId, ("-webkit-media-text-track-display"));
 
     if (!m_displayTreeShouldChange)
@@ -542,6 +598,7 @@ PassRefPtr<HTMLDivElement> TextTrackCue::getDisplayTree()
     // 10.11. Apply the terms of the CSS specifications to nodes within the
     // following constraints, thus obtaining a set of CSS boxes positioned
     // relative to an initial containing block:
+    m_displayTree->setShadowPseudoId(trackDisplayBoxShadowPseudoId, ASSERT_NO_EXCEPTION);
     m_displayTree->removeChildren();
 
     // The document tree is the tree of WebVTT Node Objects rooted at nodes.
@@ -549,13 +606,10 @@ PassRefPtr<HTMLDivElement> TextTrackCue::getDisplayTree()
     // The children of the nodes must be wrapped in an anonymous box whose
     // 'display' property has the value 'inline'. This is the WebVTT cue
     // background box.
-    RefPtr<HTMLDivElement> cueBackgroundBox = HTMLDivElement::create(static_cast<Document*>(m_scriptExecutionContext));
 
-    cueBackgroundBox->setShadowPseudoId(trackBackgroundShadowPseudoId);
-    cueBackgroundBox->appendChild(getCueAsHTML(), ASSERT_NO_EXCEPTION, true);
-
-    m_displayTree->setShadowPseudoId(trackDisplayBoxShadowPseudoId, ASSERT_NO_EXCEPTION);
-    m_displayTree->appendChild(cueBackgroundBox, ASSERT_NO_EXCEPTION, true);
+    // Note: This is contained by default in m_pastDocumentNodes.
+    m_displayTree->appendChild(m_pastDocumentNodes, ASSERT_NO_EXCEPTION, true);
+    m_displayTree->appendChild(m_futureDocumentNodes, ASSERT_NO_EXCEPTION, true);
 
     // FIXME(BUG 79916): Runs of children of WebVTT Ruby Objects that are not
     // WebVTT Ruby Text Objects must be wrapped in anonymous boxes whose
@@ -600,6 +654,9 @@ PassRefPtr<HTMLDivElement> TextTrackCue::getDisplayTree()
         m_displayTree->setInlineStyleProperty(CSSPropertyWhiteSpace,
                                               CSSValuePre);
     }
+
+    if (m_hasInnerTimestamps)
+        updateDisplayTree(track()->mediaElement()->currentTime());
 
     m_displayTreeShouldChange = false;
 

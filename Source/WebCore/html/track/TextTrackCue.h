@@ -102,6 +102,7 @@ public:
     void setIsActive(bool);
 
     PassRefPtr<HTMLDivElement> getDisplayTree();
+    void updateDisplayTree(float);
     void removeDisplayTree();
 
     virtual const AtomicString& interfaceName() const;
@@ -166,6 +167,10 @@ private:
     bool m_isActive;
     bool m_pauseOnExit;
     bool m_snapToLines;
+
+    bool m_hasInnerTimestamps;
+    RefPtr<HTMLDivElement> m_pastDocumentNodes;
+    RefPtr<HTMLDivElement> m_futureDocumentNodes;
 
     bool m_displayTreeShouldChange;
     RefPtr<HTMLDivElement> m_displayTree;

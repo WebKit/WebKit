@@ -1,3 +1,17 @@
+2012-06-09  Victor Carbune  <victor@rosedu.org>
+
+        Basic support for timestamps within a TextTrackCue
+        https://bugs.webkit.org/show_bug.cgi?id=88187
+
+        Implemented support for timestamps within a TextTrackCue.
+        This enables rendering functionality for Karaoke and Paint-on captions.
+
+        Reviewed by Eric Carlson.
+
+        * media/track/captions-webvtt/captions-inner-timestamps.vtt: Added.
+        * media/track/track-cue-rendering-inner-timestamps-expected.txt: Added.
+        * media/track/track-cue-rendering-inner-timestamps.html: Added.
+
 2012-06-08  Vsevolod Vlasov  <vsevik@chromium.org>
 
         IndexedDB: Inspector should handle null, string, and array keyPaths
