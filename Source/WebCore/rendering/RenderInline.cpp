@@ -233,6 +233,30 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
     }
 }
 
+LayoutRect RenderInline::localCaretRect(InlineBox* inlineBox, int, LayoutUnit* extraWidthToEndOfLine)
+{
+    if (firstChild()) {
+        // This condition is possible if the RenderInline is at an editing boundary,
+        // i.e. the VisiblePosition is:
+        //   <RenderInline editingBoundary=true>|<RenderText> </RenderText></RenderInline>
+        // FIXME: need to figure out how to make this return a valid rect, note that
+        // there are no line boxes created in the above case.
+        return LayoutRect();
+    }
+
+    ASSERT_UNUSED(inlineBox, !inlineBox);
+
+    if (extraWidthToEndOfLine)
+        *extraWidthToEndOfLine = 0;
+
+    LayoutRect caretRect = localCaretRectForEmptyElement(borderAndPaddingWidth(), 0);
+
+    if (InlineBox* firstBox = firstLineBox())
+        caretRect.moveBy(roundedLayoutPoint(firstBox->topLeft()));
+
+    return caretRect;
+}
+
 void RenderInline::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (continuation())

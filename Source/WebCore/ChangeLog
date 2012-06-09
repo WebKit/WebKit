@@ -1,3 +1,36 @@
+2012-06-08  Shezan Baig  <shezbaig.wk@gmail.com>
+
+        Caret is not rendered in empty inline contenteditable elements
+        https://bugs.webkit.org/show_bug.cgi?id=85793
+
+        Reviewed by Ryosuke Niwa.
+
+        Override localCaretRect in RenderInline. The implementation was almost
+        identical to localCaretRect in RenderBlock for empty block elements, so
+        I refactored RenderBlock::localCaretRect and moved the logic to a new
+        method 'localCaretRectForEmptyElement' in RenderBoxModelObject. The
+        implementation of 'localCaretRect' in RenderBlock and RenderInline both
+        use this helper method in RenderBoxModelObject.
+
+        Tests: editing/selection/caret-in-empty-inline-1.html
+               editing/selection/caret-in-empty-inline-2.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::localCaretRect):
+        Modified to use RenderBoxModelObject::localCaretRectForEmptyElement.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::localCaretRectForEmptyElement):
+        (WebCore):
+        * rendering/RenderBoxModelObject.h:
+        (RenderBoxModelObject):
+        Add localCaretRectForEmptyElement helper method.
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::localCaretRect):
+        (WebCore):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        Override localCaretRect using localCaretRectForEmptyElement.
+
 2012-06-08  Mike West  <mkwst@chromium.org>
 
         Treat blob: and filesystem: URLs generated via secure origins as secure.

@@ -1,3 +1,17 @@
+2012-06-08  Shezan Baig  <shezbaig.wk@gmail.com>
+
+        Caret is not rendered in empty inline contenteditable elements
+        https://bugs.webkit.org/show_bug.cgi?id=85793
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test cases for caret in empty inline.
+
+        * editing/selection/caret-in-empty-inline-1-expected.txt: Added.
+        * editing/selection/caret-in-empty-inline-1.html: Added.
+        * editing/selection/caret-in-empty-inline-2-expected.txt: Added.
+        * editing/selection/caret-in-empty-inline-2.html: Added.
+
 2012-06-08  Mike West  <mkwst@chromium.org>
 
         Excluding blob: and filesystem: schemes from the mixed content check.

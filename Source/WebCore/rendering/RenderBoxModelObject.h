@@ -237,6 +237,8 @@ protected:
     RenderBoxModelObject* continuation() const;
     void setContinuation(RenderBoxModelObject*);
 
+    LayoutRect localCaretRectForEmptyElement(LayoutUnit width, LayoutUnit textIndentOffset);
+
     static bool shouldAntialiasLines(GraphicsContext*);
 
 public:
