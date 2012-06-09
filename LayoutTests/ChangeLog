@@ -1,3 +1,15 @@
+2012-06-08  Eli Fidler  <efidler@rim.com>
+
+        [BlackBerry] Default font settings are getting deleted
+        https://bugs.webkit.org/show_bug.cgi?id=88670
+
+        Reviewed by Rob Buis.
+
+        This test crashes if -webkit-body (i.e.  WebCore::Settings::standardFontFamily())
+        is not a valid font family.
+
+        * fonts/valid-standard-font.html: Added.
+
 2012-06-08  Ojan Vafai  <ojan@chromium.org>
 
         Final set of chromium rebaselines for skia change. See crbug.com/131829.

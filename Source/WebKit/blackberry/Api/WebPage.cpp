@@ -6206,10 +6206,14 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setDefaultFixedFontSize(webSettings->defaultFixedFontSize());
     coreSettings->setDefaultFontSize(webSettings->defaultFontSize());
     coreSettings->setMinimumLogicalFontSize(webSettings->minimumFontSize());
-    coreSettings->setSerifFontFamily(webSettings->serifFontFamily().impl());
-    coreSettings->setFixedFontFamily(webSettings->fixedFontFamily().impl());
-    coreSettings->setSansSerifFontFamily(webSettings->sansSerifFontFamily().impl());
-    coreSettings->setStandardFontFamily(webSettings->standardFontFamily().impl());
+    if (!webSettings->serifFontFamily().isEmpty())
+        coreSettings->setSerifFontFamily(webSettings->serifFontFamily().impl());
+    if (!webSettings->fixedFontFamily().isEmpty())
+        coreSettings->setFixedFontFamily(webSettings->fixedFontFamily().impl());
+    if (!webSettings->sansSerifFontFamily().isEmpty())
+        coreSettings->setSansSerifFontFamily(webSettings->sansSerifFontFamily().impl());
+    if (!webSettings->standardFontFamily().isEmpty())
+        coreSettings->setStandardFontFamily(webSettings->standardFontFamily().impl());
     coreSettings->setJavaScriptCanOpenWindowsAutomatically(webSettings->canJavaScriptOpenWindowsAutomatically());
     coreSettings->setAllowScriptsToCloseWindows(webSettings->canJavaScriptOpenWindowsAutomatically()); // Why are we using the same value as setJavaScriptCanOpenWindowsAutomatically()?
     coreSettings->setPluginsEnabled(webSettings->arePluginsEnabled());

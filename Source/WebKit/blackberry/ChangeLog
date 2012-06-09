@@ -1,3 +1,17 @@
+2012-06-08  Eli Fidler  <efidler@rim.com>
+
+        [BlackBerry] Default font settings are getting deleted
+        https://bugs.webkit.org/show_bug.cgi?id=88670
+
+        Reviewed by Rob Buis.
+
+        RIM PR: 163720
+
+        WebSettings is overriding the default font settings with "", which deletes them.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+
 2012-06-07  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Should Use the WebPage Already Created by Client, No Need to Create New One.
