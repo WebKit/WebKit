@@ -1,3 +1,16 @@
+2012-06-08  Dirk Pranke  <dpranke@chromium.org>
+
+        remove obsolete NewRunWebKitTests buildbot master factory classes
+        https://bugs.webkit.org/show_bug.cgi?id=88693
+
+        Reviewed by Ryosuke Niwa.
+
+        I believe these aren't used any more ...
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests.getText2):
+        (BuildAndTestLeaksFactory):
+
 2012-06-08  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Build DumpRenderTree with Android SDK
