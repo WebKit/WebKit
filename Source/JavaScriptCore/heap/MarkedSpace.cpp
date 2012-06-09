@@ -77,10 +77,6 @@ struct ReapWeakSet : MarkedBlock::VoidFunctor {
     void operator()(MarkedBlock* block) { block->reapWeakSet(); }
 };
 
-struct SweepWeakSet : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock* block) { block->sweepWeakSet(); }
-};
-
 MarkedSpace::MarkedSpace(Heap* heap)
     : m_heap(heap)
 {
@@ -134,11 +130,6 @@ void MarkedSpace::visitWeakSets(HeapRootVisitor& heapRootVisitor)
 void MarkedSpace::reapWeakSets()
 {
     forEachBlock<ReapWeakSet>();
-}
-
-void MarkedSpace::sweepWeakSets()
-{
-    forEachBlock<SweepWeakSet>();
 }
 
 void MarkedSpace::canonicalizeCellLivenessData()
