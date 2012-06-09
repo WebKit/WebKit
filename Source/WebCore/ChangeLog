@@ -1,3 +1,55 @@
+2012-05-25  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Limit DebuggerAgent.Location use to DebuggerModel only, introduce WebInspector.RawLocation to be used elsewhere.
+        https://bugs.webkit.org/show_bug.cgi?id=87270
+
+        Reviewed by Pavel Feldman.
+
+        Introduced WebInspector.RawLocation interface, a generic raw location independent from concrete domain (Styles, Debugger).
+        Made WebInspector.DebuggerModel.Location implement it and switched all debugger related methods to it.
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype._breakpointResolved):
+        * inspector/front-end/CompilerScriptMapping.js:
+        (WebInspector.CompilerScriptMapping.prototype.rawLocationToUILocation):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.Location):
+        (WebInspector.DebuggerModel.prototype.continueToLocation):
+        (WebInspector.DebuggerModel.prototype.setBreakpointByScriptLocation):
+        (WebInspector.DebuggerModel.prototype.setBreakpoint.didSetBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpointBySourceId):
+        (WebInspector.DebuggerModel.prototype._breakpointResolved):
+        (WebInspector.DebuggerModel.prototype.createRawLocation):
+        (WebInspector.DebuggerModel.prototype.createRawLocationByURL):
+        (WebInspector.DebuggerModel.prototype.setSelectedCallFrame):
+        (WebInspector.DebuggerModel.prototype.createLiveLocation):
+        (WebInspector.DebuggerModel.CallFrame.prototype.get location):
+        (WebInspector.DebuggerModel.CallFrame.prototype.createLiveLocation):
+        * inspector/front-end/DebuggerResourceBinding.js:
+        (WebInspector.DebuggerResourceBinding.setScriptSource.didEditScriptSource):
+        (WebInspector.DebuggerResourceBinding.setScriptSource):
+        (WebInspector.DebuggerResourceBinding.prototype.setContent.get if):
+        (WebInspector.DebuggerResourceBinding.prototype.setContent):
+        (WebInspector.DebuggerResourceBinding.prototype._setContentWithInitialContent):
+        * inspector/front-end/JavaScriptSource.js:
+        (WebInspector.JavaScriptSource.prototype.uiLocationToRawLocation):
+        * inspector/front-end/Linkifier.js:
+        * inspector/front-end/ObjectPopoverHelper.js:
+        (WebInspector.ObjectPopoverHelper.prototype._showObjectPopover.showObjectPopover.):
+        (WebInspector.ObjectPopoverHelper.prototype._showObjectPopover):
+        * inspector/front-end/PresentationConsoleMessageHelper.js:
+        * inspector/front-end/RawSourceCode.js:
+        * inspector/front-end/ResourceScriptMapping.js:
+        (WebInspector.ResourceScriptMapping.prototype.rawLocationToUILocation):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.rawLocationToUILocation):
+        * inspector/front-end/ScriptSnippetModel.js:
+        (WebInspector.SnippetScriptMapping.prototype.rawLocationToUILocation):
+        * inspector/front-end/SourceMapping.js:
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.RawLocation):
+
 2012-06-09  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Add message loop instrumentation to public API and timeline agent

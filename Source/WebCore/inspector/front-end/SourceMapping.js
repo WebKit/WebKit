@@ -37,7 +37,7 @@ WebInspector.SourceMapping = function()
 
 WebInspector.SourceMapping.prototype = {
     /**
-     * @param {DebuggerAgent.Location} rawLocation
+     * @param {WebInspector.RawLocation} rawLocation
      * @return {WebInspector.UILocation}
      */
     rawLocationToUILocation: function(rawLocation) { },
@@ -46,7 +46,7 @@ WebInspector.SourceMapping.prototype = {
      * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {number} lineNumber
      * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
+     * @return {WebInspector.RawLocation}
      */
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber) { }
 }

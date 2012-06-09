@@ -76,7 +76,7 @@ WebInspector.RawSourceCode.prototype = {
     },
 
     /**
-     * @param {DebuggerAgent.Location} rawLocation
+     * @param {WebInspector.DebuggerModel.Location} rawLocation
      * @return {WebInspector.UILocation}
      */
     rawLocationToUILocation: function(rawLocation)
@@ -114,7 +114,7 @@ WebInspector.RawSourceCode.prototype = {
      * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {number} lineNumber
      * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
+     * @return {WebInspector.RawLocation}
      */
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
     {

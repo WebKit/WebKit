@@ -16,7 +16,7 @@ function test()
 
         uiLocationToRawLocation: function(uiSourceCode, lineNumber)
         {
-            return { scriptId: uiSourceCode.url, lineNumber: lineNumber, columnNumber: 0 };
+            return new WebInspector.DebuggerModel.Location(uiSourceCode.url, lineNumber, 0);
         }
     };
 
@@ -28,7 +28,7 @@ function test()
 
         uiLocationToRawLocation: function(uiSourceCode, lineNumber)
         {
-            return { scriptId: uiSourceCode.url, lineNumber: lineNumber - 10, columnNumber: 0 };
+            return new WebInspector.DebuggerModel.Location(uiSourceCode.url, lineNumber - 10, 0);
         }
     };
 

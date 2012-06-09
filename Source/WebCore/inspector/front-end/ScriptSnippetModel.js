@@ -133,7 +133,7 @@ WebInspector.ScriptSnippetModel.prototype = {
     },
 
     /**
-     * @param {DebuggerAgent.Location} rawLocation
+     * @param {WebInspector.DebuggerModel.Location} rawLocation
      * @return {WebInspector.UILocation}
      */
     _rawLocationToUILocation: function(rawLocation)
@@ -151,7 +151,7 @@ WebInspector.ScriptSnippetModel.prototype = {
      * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {number} lineNumber
      * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
+     * @return {WebInspector.DebuggerModel.Location}
      */
     _uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
     {
@@ -350,19 +350,20 @@ WebInspector.SnippetScriptMapping = function(scriptSnippetModel)
 
 WebInspector.SnippetScriptMapping.prototype = {
     /**
-     * @param {DebuggerAgent.Location} rawLocation
+     * @param {WebInspector.RawLocation} rawLocation
      * @return {WebInspector.UILocation}
      */
     rawLocationToUILocation: function(rawLocation)
     {
-        return this._scriptSnippetModel._rawLocationToUILocation(rawLocation);
+        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ rawLocation;
+        return this._scriptSnippetModel._rawLocationToUILocation(debuggerModelLocation);
     },
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {number} lineNumber
      * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
+     * @return {WebInspector.DebuggerModel.Location}
      */
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
     {

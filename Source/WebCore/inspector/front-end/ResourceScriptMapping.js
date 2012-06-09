@@ -45,20 +45,21 @@ WebInspector.ResourceScriptMapping = function()
 
 WebInspector.ResourceScriptMapping.prototype = {
     /**
-     * @param {DebuggerAgent.Location} rawLocation
+     * @param {WebInspector.RawLocation} rawLocation
      * @return {WebInspector.UILocation}
      */
     rawLocationToUILocation: function(rawLocation)
     {
-        var rawSourceCode = this._rawSourceCodeForScriptId[rawLocation.scriptId];
-        return rawSourceCode.rawLocationToUILocation(rawLocation);
+        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ rawLocation;
+        var rawSourceCode = this._rawSourceCodeForScriptId[debuggerModelLocation.scriptId];
+        return rawSourceCode.rawLocationToUILocation(debuggerModelLocation);
     },
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {number} lineNumber
      * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
+     * @return {WebInspector.DebuggerModel.Location}
      */
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
     {

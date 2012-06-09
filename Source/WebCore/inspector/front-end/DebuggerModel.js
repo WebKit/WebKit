@@ -49,14 +49,15 @@ WebInspector.DebuggerModel = function()
 
 /**
  * @constructor
+ * @implements {WebInspector.RawLocation}
  * @extends {DebuggerAgent.Location}
- * @param {WebInspector.Script} script
+ * @param {string} scriptId
  * @param {number} lineNumber
  * @param {number} columnNumber
  */
-WebInspector.DebuggerModel.Location = function(script, lineNumber, columnNumber)
+WebInspector.DebuggerModel.Location = function(scriptId, lineNumber, columnNumber)
 {
-    this.scriptId = script.scriptId;
+    this.scriptId = scriptId;
     this.lineNumber = lineNumber;
     this.columnNumber = columnNumber;
 }
@@ -118,25 +119,25 @@ WebInspector.DebuggerModel.prototype = {
     },
 
     /**
-     * @param {DebuggerAgent.Location} location
+     * @param {WebInspector.DebuggerModel.Location} rawLocation
      */
-    continueToLocation: function(location)
+    continueToLocation: function(rawLocation)
     {
-        DebuggerAgent.continueToLocation(location);
+        DebuggerAgent.continueToLocation(rawLocation);
     },
 
     /**
-     * @param {DebuggerAgent.Location} location
+     * @param {WebInspector.DebuggerModel.Location} rawLocation
      * @param {string} condition
-     * @param {function(?DebuggerAgent.BreakpointId, Array.<DebuggerAgent.Location>):void=} callback
+     * @param {function(?DebuggerAgent.BreakpointId, Array.<WebInspector.DebuggerModel.Location>):void=} callback
      */
-    setBreakpointByScriptLocation: function(location, condition, callback)
+    setBreakpointByScriptLocation: function(rawLocation, condition, callback)
     {
-        var script = this.scriptForId(location.scriptId);
+        var script = this.scriptForId(rawLocation.scriptId);
         if (script.sourceURL)
-            this.setBreakpoint(script.sourceURL, location.lineNumber, location.columnNumber, condition, callback);
+            this.setBreakpoint(script.sourceURL, rawLocation.lineNumber, rawLocation.columnNumber, condition, callback);
         else
-            this.setBreakpointBySourceId(location, condition, callback);
+            this.setBreakpointBySourceId(rawLocation, condition, callback);
     },
 
     /**
@@ -144,7 +145,7 @@ WebInspector.DebuggerModel.prototype = {
      * @param {number} lineNumber
      * @param {number=} columnNumber
      * @param {string=} condition
-     * @param {function(?DebuggerAgent.BreakpointId, Array.<DebuggerAgent.Location>)=} callback
+     * @param {function(?DebuggerAgent.BreakpointId, Array.<WebInspector.DebuggerModel.Location>)=} callback
      */
     setBreakpoint: function(url, lineNumber, columnNumber, condition, callback)
     {
@@ -166,19 +167,21 @@ WebInspector.DebuggerModel.prototype = {
          */
         function didSetBreakpoint(error, breakpointId, locations)
         {
-            if (callback)
-                callback(error ? null : breakpointId, locations);
+            if (callback) {
+                var rawLocations = /** @type {Array.<WebInspector.DebuggerModel.Location>} */ locations;
+                callback(error ? null : breakpointId, rawLocations);
+            }
         }
         DebuggerAgent.setBreakpointByUrl(lineNumber, url, undefined, columnNumber, condition, didSetBreakpoint.bind(this));
         WebInspector.userMetrics.ScriptsBreakpointSet.record();
     },
 
     /**
-     * @param {DebuggerAgent.Location} location
+     * @param {WebInspector.DebuggerModel.Location} rawLocation
      * @param {string} condition
-     * @param {function(?DebuggerAgent.BreakpointId, Array.<DebuggerAgent.Location>)=} callback
+     * @param {function(?DebuggerAgent.BreakpointId, Array.<WebInspector.DebuggerModel.Location>)=} callback
      */
-    setBreakpointBySourceId: function(location, condition, callback)
+    setBreakpointBySourceId: function(rawLocation, condition, callback)
     {
         /**
          * @this {WebInspector.DebuggerModel}
@@ -188,10 +191,12 @@ WebInspector.DebuggerModel.prototype = {
          */
         function didSetBreakpoint(error, breakpointId, actualLocation)
         {
-            if (callback)
-                callback(error ? null : breakpointId, [actualLocation]);
+            if (callback) {
+                var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ actualLocation;
+                callback(error ? null : breakpointId, [rawLocation]);
+            }
         }
-        DebuggerAgent.setBreakpoint(location, condition, didSetBreakpoint.bind(this));
+        DebuggerAgent.setBreakpoint(rawLocation, condition, didSetBreakpoint.bind(this));
         WebInspector.userMetrics.ScriptsBreakpointSet.record();
     },
 
@@ -367,20 +372,20 @@ WebInspector.DebuggerModel.prototype = {
      * @param {WebInspector.Script} script
      * @param {number} lineNumber
      * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
+     * @return {WebInspector.DebuggerModel.Location}
      */
     createRawLocation: function(script, lineNumber, columnNumber)
     {
         if (script.sourceURL)
             return this.createRawLocationByURL(script.sourceURL, lineNumber, columnNumber)
-        return new WebInspector.DebuggerModel.Location(script, lineNumber, columnNumber);
+        return new WebInspector.DebuggerModel.Location(script.scriptId, lineNumber, columnNumber);
     },
 
     /**
      * @param {string} sourceURL
      * @param {number} lineNumber
      * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
+     * @return {WebInspector.DebuggerModel.Location}
      */
     createRawLocationByURL: function(sourceURL, lineNumber, columnNumber)
     {
@@ -397,7 +402,7 @@ WebInspector.DebuggerModel.prototype = {
             closestScript = script;
             break;
         }
-        return closestScript ? new WebInspector.DebuggerModel.Location(closestScript, lineNumber, columnNumber) : null;
+        return closestScript ? new WebInspector.DebuggerModel.Location(closestScript.scriptId, lineNumber, columnNumber) : null;
     },
 
     /**
@@ -427,7 +432,7 @@ WebInspector.DebuggerModel.prototype = {
         {
             this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.ExecutionLineChanged, uiLocation);
         }
-        this._executionLineLiveLocation = callFrame.script.createLiveLocation(callFrame._payload.location, updateExecutionLine.bind(this));
+        this._executionLineLiveLocation = callFrame.script.createLiveLocation(callFrame.location, updateExecutionLine.bind(this));
     },
 
     /**
@@ -516,18 +521,18 @@ WebInspector.DebuggerModel.prototype = {
     },
 
     /**
-     * @param {DebuggerAgent.Location} location
+     * @param {WebInspector.DebuggerModel.Location} rawLocation
      * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate
      * @return {WebInspector.Script.Location}
      */
-    createLiveLocation: function(location, updateDelegate)
+    createLiveLocation: function(rawLocation, updateDelegate)
     {
-        var script = this._scripts[location.scriptId];
-        return script.createLiveLocation(location, updateDelegate);
+        var script = this._scripts[rawLocation.scriptId];
+        return script.createLiveLocation(rawLocation, updateDelegate);
     },
 
     /**
-     * @param {DebuggerAgent.Location} rawLocation
+     * @param {WebInspector.DebuggerModel.Location} rawLocation
      * @return {?WebInspector.UILocation}
      */
     rawLocationToUILocation: function(rawLocation)
@@ -668,11 +673,12 @@ WebInspector.DebuggerModel.CallFrame.prototype = {
     },
 
     /**
-     * @return {DebuggerAgent.Location}
+     * @return {WebInspector.DebuggerModel.Location}
      */
     get location()
     {
-        return this._payload.location;
+        var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ this._payload.location;
+        return rawLocation;
     },
 
     /**
@@ -708,7 +714,7 @@ WebInspector.DebuggerModel.CallFrame.prototype = {
      */
     createLiveLocation: function(updateDelegate)
     {
-        var location = this._script.createLiveLocation(this._payload.location, updateDelegate);
+        var location = this._script.createLiveLocation(this.location, updateDelegate);
         this._locations.push(location);
         return location;
     },

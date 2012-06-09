@@ -1,3 +1,13 @@
+2012-05-25  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Limit DebuggerAgent.Location use to DebuggerModel only, introduce WebInspector.RawLocation to be used elsewhere.
+        https://bugs.webkit.org/show_bug.cgi?id=87270
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/breakpoint-manager.html:
+        * inspector/debugger/pause-in-inline-script.html:
+
 2012-06-08  Levi Weintraub  <leviw@chromium.org>
 
         RenderLayer::paintChildLayerIntoColumns doesn't properly pixel snap

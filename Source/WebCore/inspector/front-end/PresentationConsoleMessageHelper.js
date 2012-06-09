@@ -65,7 +65,7 @@ WebInspector.PresentationConsoleMessageHelper.prototype = {
 
     /**
      * @param {WebInspector.ConsoleMessage} message
-     * @param {DebuggerAgent.Location} rawLocation
+     * @param {WebInspector.DebuggerModel.Location} rawLocation
      */
     _addConsoleMessageToScript: function(message, rawLocation)
     {
@@ -130,7 +130,7 @@ WebInspector.PresentationConsoleMessageHelper.prototype = {
 /**
  * @constructor
  * @param {WebInspector.ConsoleMessage} message
- * @param {DebuggerAgent.Location} rawLocation
+ * @param {WebInspector.DebuggerModel.Location} rawLocation
  */
 WebInspector.PresentationConsoleMessage = function(message, rawLocation)
 {

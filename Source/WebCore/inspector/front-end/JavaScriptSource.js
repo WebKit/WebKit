@@ -142,12 +142,14 @@ WebInspector.JavaScriptSource.prototype = {
     /**
      * @param {number} lineNumber
      * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
+     * @return {WebInspector.DebuggerModel.Location}
      */
     uiLocationToRawLocation: function(lineNumber, columnNumber)
     {
         var location = this._formatterMapping.formattedToOriginal(lineNumber, columnNumber);
-        return WebInspector.UISourceCode.prototype.uiLocationToRawLocation.call(this, location[0], location[1]);
+        var rawLocation = WebInspector.UISourceCode.prototype.uiLocationToRawLocation.call(this, location[0], location[1]);
+        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ rawLocation;
+        return debuggerModelLocation;
     },
 
     /**

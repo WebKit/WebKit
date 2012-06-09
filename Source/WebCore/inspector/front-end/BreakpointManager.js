@@ -186,7 +186,7 @@ WebInspector.BreakpointManager.prototype = {
     _breakpointResolved: function(event)
     {
         var breakpointId = /** @type {DebuggerAgent.BreakpointId} */ event.data.breakpointId;
-        var location = /** @type {DebuggerAgent.Location} */ event.data.location;
+        var location = /** @type {WebInspector.DebuggerModel.Location} */ event.data.location;
         var breakpoint = this._breakpointForDebuggerId[breakpointId];
         if (!breakpoint || breakpoint._isProvisional)
             return;
@@ -282,7 +282,7 @@ WebInspector.BreakpointManager.Breakpoint.prototype = {
     },
 
     /**
-     * @param {DebuggerAgent.Location} location
+     * @param {WebInspector.DebuggerModel.Location} location
      */
     _addResolvedLocation: function(location)
     {
@@ -290,7 +290,7 @@ WebInspector.BreakpointManager.Breakpoint.prototype = {
     },
 
     /**
-     * @param {DebuggerAgent.Location} location
+     * @param {WebInspector.DebuggerModel.Location} location
      * @param {WebInspector.UILocation} uiLocation
      */
     _locationUpdated: function(location, uiLocation)
@@ -368,11 +368,12 @@ WebInspector.BreakpointManager.Breakpoint.prototype = {
     _setInDebugger: function()
     {
         var rawLocation = this._primaryUILocation.uiLocationToRawLocation();
-        this._breakpointManager._debuggerModel.setBreakpointByScriptLocation(rawLocation, this._condition, didSetBreakpoint.bind(this));
+        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ rawLocation;
+        this._breakpointManager._debuggerModel.setBreakpointByScriptLocation(debuggerModelLocation, this._condition, didSetBreakpoint.bind(this));
         /**
          * @this {WebInspector.BreakpointManager.Breakpoint}
          * @param {?DebuggerAgent.BreakpointId} breakpointId
-         * @param {Array.<DebuggerAgent.Location>} locations
+         * @param {Array.<WebInspector.DebuggerModel.Location>} locations
          */
         function didSetBreakpoint(breakpointId, locations)
         {

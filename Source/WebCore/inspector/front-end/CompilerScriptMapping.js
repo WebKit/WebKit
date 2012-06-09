@@ -45,13 +45,14 @@ WebInspector.CompilerScriptMapping = function()
 
 WebInspector.CompilerScriptMapping.prototype = {
     /**
-     * @param {DebuggerAgent.Location} rawLocation
+     * @param {WebInspector.RawLocation} rawLocation
      * @return {WebInspector.UILocation}
      */
     rawLocationToUILocation: function(rawLocation)
     {
-        var sourceMap = this._sourceMapForScriptId[rawLocation.scriptId];
-        var entry = sourceMap.findEntry(rawLocation.lineNumber, rawLocation.columnNumber || 0);
+        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ rawLocation;
+        var sourceMap = this._sourceMapForScriptId[debuggerModelLocation.scriptId];
+        var entry = sourceMap.findEntry(debuggerModelLocation.lineNumber, debuggerModelLocation.columnNumber || 0);
         return new WebInspector.UILocation(this._uiSourceCodeByURL[entry[2]], entry[3], entry[4]);
     },
 
@@ -59,7 +60,7 @@ WebInspector.CompilerScriptMapping.prototype = {
      * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {number} lineNumber
      * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
+     * @return {WebInspector.DebuggerModel.Location}
      */
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
     {

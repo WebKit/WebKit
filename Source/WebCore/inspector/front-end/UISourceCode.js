@@ -287,7 +287,7 @@ WebInspector.UISourceCode.prototype = {
     /**
      * @param {number} lineNumber
      * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
+     * @return {WebInspector.RawLocation}
      */
     uiLocationToRawLocation: function(lineNumber, columnNumber)
     {
@@ -420,10 +420,17 @@ WebInspector.UILocation = function(uiSourceCode, lineNumber, columnNumber)
 
 WebInspector.UILocation.prototype = {
     /**
-     * @return {DebuggerAgent.Location}
+     * @return {WebInspector.RawLocation}
      */
     uiLocationToRawLocation: function()
     {
         return this.uiSourceCode.uiLocationToRawLocation(this.lineNumber, this.columnNumber);
     }
+}
+
+/**
+ * @interface
+ */
+WebInspector.RawLocation = function()
+{
 }

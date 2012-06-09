@@ -69,7 +69,7 @@ WebInspector.Linkifier.prototype = {
     },
 
     /**
-     * @param {DebuggerAgent.Location} rawLocation
+     * @param {WebInspector.DebuggerModel.Location} rawLocation
      * @param {string=} classes
      */
     linkifyRawLocation: function(rawLocation, classes)

@@ -49,7 +49,7 @@ var test = function()
         for (var scriptId in WebInspector.debuggerModel.scripts) {
             var script = WebInspector.debuggerModel.scripts[scriptId];
             if (script.sourceURL && script.sourceURL.indexOf(testName) !== -1 && script.lineOffset == 6) {
-                var location = new WebInspector.DebuggerModel.Location(script, 6, 0);
+                var location = new WebInspector.DebuggerModel.Location(script.scriptId, 6, 0);
                 var uiLocation = WebInspector.debuggerModel.rawLocationToUILocation(location);
                 WebInspector.panels.scripts.showUISourceCode(uiLocation.uiSourceCode);
                 var sourceFrame = WebInspector.panels.scripts.visibleView;
