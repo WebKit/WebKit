@@ -515,10 +515,21 @@ class Bugzilla(object):
                 self.authenticated = True
                 self.username = username
 
+    # FIXME: Use enum instead of two booleans
     def _commit_queue_flag(self, mark_for_landing, mark_for_commit_queue):
         if mark_for_landing:
+            user = self.committers.account_by_email(self.username)
+            mark_for_commit_queue = True
+            if not user:
+                log("Your Bugzilla login is not listed in committers.py. Uploading with cq? instead of cq+")
+                mark_for_landing = False
+            elif not user.can_commit:
+                log("You're not a committer yet or haven't updated committers.py yet. Uploading with cq? instead of cq+")
+                mark_for_landing = False
+
+        if mark_for_landing:
             return '+'
-        elif mark_for_commit_queue:
+        if mark_for_commit_queue:
             return '?'
         return 'X'
 

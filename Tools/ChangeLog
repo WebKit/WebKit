@@ -1,3 +1,21 @@
+2012-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        webkit-patch land-safely should set cq? if the patch author is not in committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=88689
+
+        Reviewed by Dirk Pranke.
+
+        When posting a patch on Bugzilla, trun cq+ into cq? if the Bugzilla login is not listed
+        in committers.py or the contributor cannot commit. If anything, the contributor can still
+        set cq+ on thier patches manually so I don't think this will be an issue for people who
+        don't list their Bugzille email on committers.py.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla._commit_queue_flag):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        (test_commit_queue_flag):
+        (test_commit_queue_flag.assert_commit_queue_flag):
+
 2012-06-08  Dirk Pranke  <dpranke@chromium.org>
 
         remove obsolete NewRunWebKitTests buildbot master factory classes

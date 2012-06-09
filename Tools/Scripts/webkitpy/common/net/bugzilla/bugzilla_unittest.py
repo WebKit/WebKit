@@ -33,6 +33,7 @@ import StringIO
 from .bugzilla import Bugzilla, BugzillaQueries, EditUsersParser
 
 from webkitpy.common.config import urls
+from webkitpy.common.config.committers import Reviewer, Committer, Contributor, CommitterList
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.net.web_mock import MockBrowser
 from webkitpy.thirdparty.mock import Mock
@@ -298,6 +299,43 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
         mock_timestamp = lambda: "now"
         filename = bugzilla._filename_for_upload(StringIO.StringIO(), 1234, extension="patch", timestamp=mock_timestamp)
         self.assertEqual(filename, "bug-1234-now.patch")
+
+    def test_commit_queue_flag(self):
+        bugzilla = Bugzilla()
+
+        bugzilla.committers = CommitterList(reviewers=[Reviewer("WebKit Reviewer", "reviewer@webkit.org")],
+            committers=[Committer("WebKit Committer", "committer@webkit.org")],
+            contributors=[Contributor("WebKit Contributor", "contributor@webkit.org")],
+            watchers=[])
+
+        def assert_commit_queue_flag(mark_for_landing, mark_for_commit_queue, expected, username=None):
+            bugzilla.username = username
+            capture = OutputCapture()
+            capture.capture_output()
+            try:
+                self.assertEqual(bugzilla._commit_queue_flag(mark_for_landing=mark_for_landing, mark_for_commit_queue=mark_for_commit_queue), expected)
+            finally:
+                capture.restore_output()
+
+        assert_commit_queue_flag(mark_for_landing=False, mark_for_commit_queue=False, expected='X', username='unknown@webkit.org')
+        assert_commit_queue_flag(mark_for_landing=False, mark_for_commit_queue=True, expected='?', username='unknown@webkit.org')
+        assert_commit_queue_flag(mark_for_landing=False, mark_for_commit_queue=True, expected='?', username='unknown@webkit.org')
+        assert_commit_queue_flag(mark_for_landing=True, mark_for_commit_queue=True, expected='?', username='unknown@webkit.org')
+
+        assert_commit_queue_flag(mark_for_landing=False, mark_for_commit_queue=False, expected='X', username='contributor@webkit.org')
+        assert_commit_queue_flag(mark_for_landing=False, mark_for_commit_queue=True, expected='?', username='contributor@webkit.org')
+        assert_commit_queue_flag(mark_for_landing=True, mark_for_commit_queue=False, expected='?', username='contributor@webkit.org')
+        assert_commit_queue_flag(mark_for_landing=True, mark_for_commit_queue=True, expected='?', username='contributor@webkit.org')
+
+        assert_commit_queue_flag(mark_for_landing=False, mark_for_commit_queue=False, expected='X', username='committer@webkit.org')
+        assert_commit_queue_flag(mark_for_landing=False, mark_for_commit_queue=True, expected='?', username='committer@webkit.org')
+        assert_commit_queue_flag(mark_for_landing=True, mark_for_commit_queue=False, expected='+', username='committer@webkit.org')
+        assert_commit_queue_flag(mark_for_landing=True, mark_for_commit_queue=True, expected='+', username='committer@webkit.org')
+
+        assert_commit_queue_flag(mark_for_landing=False, mark_for_commit_queue=False, expected='X', username='reviewer@webkit.org')
+        assert_commit_queue_flag(mark_for_landing=False, mark_for_commit_queue=True, expected='?', username='reviewer@webkit.org')
+        assert_commit_queue_flag(mark_for_landing=True, mark_for_commit_queue=False, expected='+', username='reviewer@webkit.org')
+        assert_commit_queue_flag(mark_for_landing=True, mark_for_commit_queue=True, expected='+', username='reviewer@webkit.org')
 
 
 class BugzillaQueriesTest(unittest.TestCase):
