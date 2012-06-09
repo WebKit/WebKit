@@ -1,3 +1,11 @@
+2012-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove FAIL test expectations from EFL, Mac, and Qt ports' test expectations.
+
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-06-08  Rakesh KN  <rakesh.kn@motorola.com>
 
         REGRESSION(r116487?): HTMLFormElement::elements['name'] is empty if the form is detached from the document tree

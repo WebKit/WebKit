@@ -15,7 +15,7 @@ BUGWK69511 SLOW : svg/as-image/svg-nested.html = PASS
 
 BUGWK62662 DEBUG : inspector/cookie-parser.html = CRASH PASS
 
-BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
+BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = IMAGE
 
 // Web Inspector: Implement support for InspectorClient::overrideDeviceMetrics() in platforms other than Chromium
 // https://bugs.webkit.org/show_bug.cgi?id=82886
@@ -73,7 +73,7 @@ BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 BUGWK88198 : svg/stroke/non-scaling-stroke-pattern.svg = PASS IMAGE
 
 // CSS Variables are not yet enabled.
-BUGWK85580 SKIP : fast/css/variables = PASS FAIL
+BUGWK85580 SKIP : fast/css/variables = PASS
 
 // Needs rebaseline after bug 86441
 // failing new tests
@@ -84,10 +84,10 @@ BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE
 BUGWK85405 SKIP: tables/mozilla/bugs/bug10296-1.html = TEXT
 
 // Paletted PNG with ICC color profiles not working.
-BUGWK86722 SKIP : fast/images/paletted-png-with-color-profile.html = FAIL MISSING
+BUGWK86722 SKIP : fast/images/paletted-png-with-color-profile.html = PASS
 
 // Needs rebaseline after the bots cycle.
-BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS FAIL
+BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS TEXT IMAGE IMAGE+TEXT
 
 // LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
-BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = FAIL
+BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = PASS

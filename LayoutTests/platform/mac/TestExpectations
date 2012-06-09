@@ -10,7 +10,7 @@ BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = TEXT
 BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = TEXT
 
 // CSS Variables are not yet enabled.
-BUGWK85580 SKIP : fast/css/variables = PASS FAIL
+BUGWK85580 SKIP : fast/css/variables = PASS
 
 // Our slow tests, in alphabetical order.
 BUGWK57672 : http/tests/local/fileapi/send-sliced-dragged-file.html = TEXT PASS
@@ -38,7 +38,7 @@ BUGWK58192 : svg/dom/SVGScriptElement/script-set-href.svg = TEXT PASS
 
 BUGWK69999 RELEASE : http/tests/security/contentSecurityPolicy/media-src-allowed.html = TEXT PASS
 
-BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
+BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = IMAGE
 
 // Need rebaselining after 71244. Also needs rebaseline after 86441.
 BUGWK74432 : fast/borders/border-antialiasing.html = IMAGE
@@ -245,7 +245,7 @@ BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE
 BUGWK85405 : tables/mozilla/bugs/bug10296-1.html = TEXT
 
 // Needs rebaseline after the bots cycle.
-BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS FAIL
+BUG_OJAN : tables/mozilla/bugs/bug131020.html = TEXT IMAGE IMAGE+TEXT
 
 // Safari needs to be fixed after bug 84195 updated the layout tests
 BUGWK85918 : compositing/backface-visibility/backface-visibility-3d.html = IMAGE

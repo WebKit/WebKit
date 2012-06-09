@@ -33,18 +33,18 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 
 // These tests require DASHBOARD_SUPPORT but this feature is specific to Mac port.
-BUGWKEFL SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
-BUGWKEFL SKIP : fast/canvas/fill-stroke-clip-reset-path.html = FAIL
-BUGWKEFL SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = FAIL
+BUGWKEFL SKIP : fast/canvas/canvas-gradient-addStop-error.html = PASS
+BUGWKEFL SKIP : fast/canvas/fill-stroke-clip-reset-path.html = PASS
+BUGWKEFL SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = PASS
 
 // Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
-BUGWK35824 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
+BUGWK35824 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = PASS
 
 // CSS Regions support not yet enabled, tracking in a separate EFL bug.
-BUGWK83897 SKIP : fast/regions = FAIL
+BUGWK83897 SKIP : fast/regions = PASS
 
 // Exclusions implementation not complete yet.
-BUGWK83898 SKIP : fast/exclusions = FAIL
+BUGWK83898 SKIP : fast/exclusions = PASS
 
 // CSS Regions & Exclusions implementation not complete yet.
 BUGWK83898 : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
@@ -57,23 +57,23 @@ BUGWK85465 SKIP : fast/css/getComputedStyle/computed-style.html = TEXT
 BUGWKEFL SKIP : media/unsupported-rtsp.html = TIMEOUT
 
 // Link prefetch is disabled by default
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-beforeload.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-detached.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-onerror.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-onload.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-too-many-clients.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/subresource.html = FAIL
-BUGWKEFL SKIP : http/tests/misc/link-rel-prefetch-and-subresource.html = FAIL
-BUGWKEFL SKIP : http/tests/misc/prefetch-purpose.html = FAIL
-BUGWKEFL SKIP : loader/reload-subresource-when-type-changes.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html = PASS
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test.html = PASS
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-beforeload.html = PASS
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-detached.html = PASS
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-onerror.html = PASS
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-onload.html = PASS
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-too-many-clients.html = PASS
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch.html = PASS
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/subresource.html = PASS
+BUGWKEFL SKIP : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS
+BUGWKEFL SKIP : http/tests/misc/prefetch-purpose.html = PASS
+BUGWKEFL SKIP : loader/reload-subresource-when-type-changes.html = PASS
 
 // Perf tests are way too slow and some may fail due to timeout.
-WONTFIX : perf/adding-radio-buttons.html = FAIL PASS
-WONTFIX : perf/array-binary-search.html = FAIL PASS
-WONTFIX : perf/mouse-event.html = FAIL PASS
+WONTFIX : perf/adding-radio-buttons.html = TEXT PASS TIMEOUT
+WONTFIX : perf/array-binary-search.html = TEXT PASS TIMEOUT
+WONTFIX : perf/mouse-event.html = TEXT PASS TIMEOUT
 
 // Newly added test which fails on other bots too
 BUGWK85969 : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT
@@ -106,16 +106,16 @@ BUGWK86623 : editing/pasteboard/smart-drag-drop.html = MISSING
 BUGWK86623 : editing/pasteboard/subframe-dragndrop-1.html = MISSING
 
 // The EFL port has no support for webarchives.
-BUGWKEFL SKIP : webarchive = FAIL
-BUGWKEFL SKIP : http/tests/webarchive = FAIL
-BUGWKEFL SKIP : svg/webarchive = FAIL
-BUGWKEFL SKIP : svg/custom/image-with-prefix-in-webarchive.svg = FAIL
+BUGWKEFL SKIP : webarchive = PASS
+BUGWKEFL SKIP : http/tests/webarchive = PASS
+BUGWKEFL SKIP : svg/webarchive = PASS
+BUGWKEFL SKIP : svg/custom/image-with-prefix-in-webarchive.svg = PASS
 
 // Feature not mature yet and disabled by default on WebCore
 BUGWK87088 : fast/js/names.html = TEXT
 
 // The EFL port uses different keyboard accelerators than Safari (via Chromium).
-BUGWKEFL SKIP : fast/events/option-tab.html = FAIL
+BUGWKEFL SKIP : fast/events/option-tab.html = PASS
 
 // These tests are valid for ports where RenderTheme::shouldShowPlaceholderWhenFocused() returns true.
 BUGWKEFL : fast/forms/input-placeholder-paint-order.html = MISSING
@@ -133,10 +133,10 @@ BUGWK86080 SKIP : fast/encoding/idn-security.html = TEXT
 //////////////////////////////////////////////////////////////////////////////////////////
 
 BUGWK85603 : fast/forms/textarea-placeholder-set-attribute.html = TEXT IMAGE PASS
-BUGWK59801 : fast/workers/storage/use-same-database-in-page-and-workers.html = FAIL PASS
+BUGWK59801 : fast/workers/storage/use-same-database-in-page-and-workers.html = TEXT PASS
 BUGWK83878 : media/track/track-mode.html = TEXT PASS
 BUGWK85180 : media/audio-delete-while-step-button-clicked.html = TEXT PASS
-BUGWK86072 : media/sources-fallback-codecs.html = FAIL PASS
+BUGWK86072 : media/sources-fallback-codecs.html = TEXT PASS
 BUGWK86073 : ietestcenter/css3/flexbox/flexbox-layout-001.htm = IMAGE PASS
 BUGWK86073 : ietestcenter/css3/flexbox/flexbox-layout-003.htm = IMAGE PASS
 BUGWK86074 : media/svg-as-image-with-media-blocked.html = CRASH PASS
@@ -162,13 +162,13 @@ BUGWK87619 : fast/forms/number/input-appearance-spinbutton-disabled-readonly.htm
 BUGWK87619 : fast/forms/number/input-appearance-spinbutton-layer.html = TEXT
 BUGWK87619 : fast/forms/number/input-number-size.html = TEXT
 
-BUGWK83007 : fast/repaint/region-painting-invalidation.html = FAIL MISSING
+BUGWK83007 : fast/repaint/region-painting-invalidation.html = TEXT IMAGE IMAGE+TEXT MISSING
 
 // Needs to have PNG generated, which currently fails for this case.
 BUGWK83274 : fast/repaint/transform-rotate-and-remove.html = PASS
 
 // Not able to generate a meaningful expected result, since complex font rendering fails.
-BUGWK83275 : fast/text/international/text-spliced-font.html = FAIL MISSING
+BUGWK83275 : fast/text/international/text-spliced-font.html = TEXT IMAGE IMAGE+TEXT MISSING
 
 BUGWK83906 : ietestcenter/css3/grid/grid-column-001.htm = IMAGE
 BUGWK83907 : ietestcenter/css3/grid/grid-column-002.htm = IMAGE
@@ -177,7 +177,7 @@ BUGWK83912 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
 BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 
 // Font feature settings is not implemented.
-BUGWK84239 : css3/font-feature-settings-rendering.html = FAIL
+BUGWK84239 : css3/font-feature-settings-rendering.html = TEXT IMAGE IMAGE+TEXT
 
 // EventSender.beginDragWithFiles is not implemented
 BUGWK84333 : editing/pasteboard/data-transfer-items-drag-drop-entry.html = TEXT
@@ -308,33 +308,33 @@ BUGWK84592 : animations/stop-animation-on-suspend.html = TEXT
 BUGWK84593 : animations/animation-api-1.html = TEXT
 
 // IndexedDB is not yet enabled.
-BUGWKEFL SKIP : storage/indexeddb = FAIL
-BUGWKEFL SKIP : http/tests/inspector/indexeddb = FAIL
+BUGWKEFL SKIP : storage/indexeddb = PASS
+BUGWKEFL SKIP : http/tests/inspector/indexeddb = PASS
 
 // Quota API is not supported.
-BUGWKEFL SKIP : storage/storageinfo-missing-arguments.html = FAIL
-BUGWKEFL SKIP : storage/storageinfo-no-callbacks.html = FAIL
-BUGWKEFL SKIP : storage/storageinfo-query-usage.html = FAIL
-BUGWKEFL SKIP : storage/storageinfo-request-quota.html = FAIL
+BUGWKEFL SKIP : storage/storageinfo-missing-arguments.html = PASS
+BUGWKEFL SKIP : storage/storageinfo-no-callbacks.html = PASS
+BUGWKEFL SKIP : storage/storageinfo-query-usage.html = PASS
+BUGWKEFL SKIP : storage/storageinfo-request-quota.html = PASS
 
 // EFL's LayoutTestController does not implement originsWithLocalStorage.
-BUGWKEFL SKIP : storage/domstorage/localstorage/storagetracker = FAIL
+BUGWKEFL SKIP : storage/domstorage/localstorage/storagetracker = PASS
 
 // JSC does not support setIsolatedWorldSecurityOrigin.
-BUGWK61540 : http/tests/security/isolatedWorld/cross-origin-xhr.html = FAIL
+BUGWK61540 : http/tests/security/isolatedWorld/cross-origin-xhr.html = TEXT
 
 //__worldID is undefined in isolated world
-BUGWKEFL SKIP : http/tests/security/isolatedWorld/didClearWindowObject.html = FAIL
+BUGWKEFL SKIP : http/tests/security/isolatedWorld/didClearWindowObject.html = PASS
 
 // Needs custom policy delegate enhancement to log downloads - EFL port is missing api for getting header fields from HTTP responses. 
-BUGWK87974 : http/tests/download = FAIL
+BUGWK87974 : http/tests/download = TEXT IMAGE IMAGE+TEXT
 
 // Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
-BUGWK87972 : fast/loader/stop-provisional-loads.html = FAIL
-BUGWK87972 : fast/loader/policy-delegate-action-hit-test-zoomed.html = FAIL
-BUGWK87972 : fast/encoding/mailto-always-utf-8.html = FAIL
-BUGWK87972 : fast/forms/mailto/formenctype-attribute-button-html.html = FAIL
-BUGWK87972 : fast/forms/mailto/formenctype-attribute-input-html.html = FAIL
+BUGWK87972 : fast/loader/stop-provisional-loads.html = TEXT
+BUGWK87972 : fast/loader/policy-delegate-action-hit-test-zoomed.html = TEXT
+BUGWK87972 : fast/encoding/mailto-always-utf-8.html = TEXT
+BUGWK87972 : fast/forms/mailto/formenctype-attribute-button-html.html = TEXT
+BUGWK87972 : fast/forms/mailto/formenctype-attribute-input-html.html = TEXT
 
 // EFL's LayoutTestController does not implement layerTreeAsText
 BUGWK82294 : compositing/animation/animation-compositing.html = TEXT
@@ -458,10 +458,10 @@ BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMA
 BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 
 // Expose title direction in WebKit API
-BUGWK58845 : fast/dom/title-directionality.html = FAIL
-BUGWK58845 : fast/dom/title-directionality-removeChild.html = FAIL
+BUGWK58845 : fast/dom/title-directionality.html = TEXT
+BUGWK58845 : fast/dom/title-directionality-removeChild.html = TEXT
 
-BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = FAIL
+BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = TEXT
 
 // Expando properties on attribute nodes disappear
 BUGWK88045 : fast/dom/gc-attribute-node.html = TEXT
@@ -469,14 +469,14 @@ BUGWK88045 : fast/dom/gc-attribute-node.html = TEXT
 BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
 
 // Requires WebP support.
-BUGWKEFL SKIP : fast/canvas/canvas-toDataURL-webp.html = FAIL
-BUGWKEFL SKIP : fast/images/webp-image-decoding.html = FAIL
+BUGWKEFL SKIP : fast/canvas/canvas-toDataURL-webp.html = PASS
+BUGWKEFL SKIP : fast/images/webp-image-decoding.html = PASS
 
 // This tests fails by one on 32 bits machines due to rounding issues.
 BUGWKEFL : fast/css/percentage-non-integer.html = TEXT PASS
 
 // Test is timeouting, passes in all other platforms.
-BUGWKEFL SKIP : fast/css/device-aspect-ratio.html = FAIL
+BUGWKEFL SKIP : fast/css/device-aspect-ratio.html = PASS
 
 // These test -apple- prefixed CSS properties, which we don't support.
 WONTFIX SKIP : fast/css/apple-prefix.html = TEXT
@@ -503,7 +503,7 @@ BUGWK85493 : fast/css/square-button-appearance.html = TEXT
 
 BUGWK85494 : fast/css/button-height.html = TEXT
 
-BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
+BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = IMAGE IMAGE+TEXT
 
 BUGWK85466 : css3/images/cross-fade-background-size.html = TEXT
 
@@ -517,7 +517,7 @@ BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
 BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
 
 // Issue related to hit testing
-BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = FAIL
+BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = TEXT
 
 // Issue related to battery status and vibration API
 BUGWK85594 : fast/dom/navigator-detached-no-crash.html = TEXT
@@ -566,7 +566,7 @@ BUGWK84678 : fast/spatial-navigation/snav-iframe-no-scrollable-content.html = TE
 BUGWK85606 : fast/text/font-variant-ligatures.html = IMAGE
 
 // Off-by-few-pixels issue for this selection reftest, fails on GTK as well.
-BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = FAIL
+BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = TEXT IMAGE IMAGE+TEXT
 
 // Times-out with debug build during heavy cpu loads
 BUGWK85902 SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
@@ -625,7 +625,7 @@ BUGWK86187 : media/media-fullscreen-not-in-document.html = TEXT
 BUGWK86187 SKIP : media/media-fullscreen-inline.html = PASS
 
 // This test is specific to QuickTime media engine.
-BUGWKEFL SKIP : media/video-does-not-loop.html = FAIL
+BUGWKEFL SKIP : media/video-does-not-loop.html = PASS
 
 // This test fails if mixer is not at 100%
 BUGWK83704 : media/event-attributes.html = TEXT
@@ -642,7 +642,7 @@ BUGWK84167 : editing/selection/table-caret-3.html = IMAGE+TEXT
 BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = IMAGE+TEXT
 
 // EFL's LayoutTestController does not implement setAutomaticLinkDetectionEnabled
-BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = FAIL
+BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = PASS
 
 // Missing deletebutton controller implementation.
 BUGWK86615 : editing/deleting/5408255.html = TEXT
@@ -689,10 +689,10 @@ BUGWK85977 : fast/css/font-face-download-error.html = TIMEOUT
 BUGWK86445 : fast/multicol/split-in-top-margin.html = IMAGE
 
 // Paletted PNG with ICC color profiles not working.
-BUGWK86722 SKIP : fast/images/paletted-png-with-color-profile.html = FAIL MISSING
+BUGWK86722 SKIP : fast/images/paletted-png-with-color-profile.html = PASS
 
 // Needs rebaseline after the bots cycle.
-BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS FAIL
+BUG_OJAN : tables/mozilla/bugs/bug131020.html = TEXT IMAGE IMAGE+TEXT
 
 // These tests do not seem to fail anywhere else.
 BUGWK88030 : fast/multicol/column-break-with-balancing.html = IMAGE
