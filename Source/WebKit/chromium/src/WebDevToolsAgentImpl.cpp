@@ -549,6 +549,28 @@ void WebDevToolsAgentImpl::clearBrowserCookies()
     m_client->clearBrowserCookies();
 }
 
+void WebDevToolsAgentImpl::startMessageLoopMonitoring()
+{
+    m_client->startMessageLoopMonitoring();
+}
+
+void WebDevToolsAgentImpl::stopMessageLoopMonitoring()
+{
+    m_client->stopMessageLoopMonitoring();
+}
+
+void WebDevToolsAgentImpl::instrumentWillProcessTask()
+{
+    if (Page* page = m_webViewImpl->page())
+        InspectorInstrumentation::willProcessTask(page);
+}
+
+void WebDevToolsAgentImpl::instrumentDidProcessTask()
+{
+    if (Page* page = m_webViewImpl->page())
+        InspectorInstrumentation::didProcessTask(page);
+}
+
 void WebDevToolsAgentImpl::setProcessId(long processId)
 {
     inspectorController()->setProcessId(processId);

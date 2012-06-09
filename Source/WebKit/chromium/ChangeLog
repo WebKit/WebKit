@@ -1,3 +1,42 @@
+2012-06-09  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Add message loop instrumentation to public API and timeline agent
+        https://bugs.webkit.org/show_bug.cgi?id=88639
+
+        Reviewed by Vsevolod Vlasov.
+
+        Message loop instrumentation will show when the render thread is busy.
+        That way developer can discover if a render thread business causes low fps, or not.
+
+        * public/WebDevToolsAgent.h:
+        (WebDevToolsAgent):
+        * public/WebDevToolsAgentClient.h:
+        (WebDevToolsAgentClient):
+        (WebKit::WebDevToolsAgentClient::startMessageLoopMonitoring):
+        Request message loop notifications.
+        (WebKit::WebDevToolsAgentClient::stopMessageLoopMonitoring):
+        Cancel message loop notifications.
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::startMessageLoopMonitoring):
+        Request message loop notifications.
+        (WebKit):
+        (WebKit::InspectorClientImpl::stopMessageLoopMonitoring):
+        Cancel message loop notifications.
+        * src/InspectorClientImpl.h:
+        (InspectorClientImpl):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::startMessageLoopMonitoring):
+        Request message loop notifications.
+        (WebKit):
+        (WebKit::WebDevToolsAgentImpl::stopMessageLoopMonitoring):
+        Cancel message loop notifications.
+        (WebKit::WebDevToolsAgentImpl::instrumentWillProcessTask):
+        Message loop notification.
+        (WebKit::WebDevToolsAgentImpl::instrumentDidProcessTask):
+        Ditto.
+        * src/WebDevToolsAgentImpl.h:
+        (WebDevToolsAgentImpl):
+
 2012-06-08  David Reveman  <reveman@chromium.org>
 
         [Chromium] Compositor doesn't support translucent root layers.

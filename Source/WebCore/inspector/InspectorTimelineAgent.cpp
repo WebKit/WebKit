@@ -154,6 +154,10 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
         m_maxCallStackDepth = 5;
     m_state->setLong(TimelineAgentState::timelineMaxCallStackDepth, m_maxCallStackDepth);
     m_timestampOffset = currentTime() - monotonicallyIncreasingTime();
+
+    if (m_client)
+        m_client->startMessageLoopMonitoring();
+
     m_instrumentingAgents->setInspectorTimelineAgent(this);
     ScriptGCEvent::addEventListener(this);
     m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, true);
@@ -163,6 +167,10 @@ void InspectorTimelineAgent::stop(ErrorString*)
 {
     if (!m_state->getBoolean(TimelineAgentState::timelineAgentEnabled))
         return;
+
+    if (m_client)
+        m_client->stopMessageLoopMonitoring();
+
     m_instrumentingAgents->setInspectorTimelineAgent(0);
     ScriptGCEvent::removeEventListener(this);
 
@@ -179,7 +187,7 @@ void InspectorTimelineAgent::setIncludeMemoryDetails(ErrorString*, bool value)
 
 void InspectorTimelineAgent::supportsFrameInstrumentation(ErrorString*, bool* result)
 {
-    *result = m_frameInstrumentationSupport == FrameInstrumentationSupported;
+    *result = m_client && m_client->supportsFrameInstrumentation();
 }
 
 void InspectorTimelineAgent::didBeginFrame()
@@ -405,6 +413,16 @@ void InspectorTimelineAgent::didFireAnimationFrame()
     didCompleteCurrentRecord(TimelineRecordType::FireAnimationFrame);
 }
 
+void InspectorTimelineAgent::willProcessTask()
+{
+    // TODO: Record task processing start time.
+}
+
+void InspectorTimelineAgent::didProcessTask()
+{
+    // TODO: Record task processing end time.
+}
+
 void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> record, const String& type, const String& frameId)
 {
     commitCancelableRecords();
@@ -462,7 +480,7 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
     }
 }
 
-InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state, InspectorType type, FrameInstrumentationSupport frameInstrumentationSupport)
+InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state, InspectorType type, InspectorClient* client)
     : InspectorBaseAgent<InspectorTimelineAgent>("Timeline", instrumentingAgents, state)
     , m_pageAgent(pageAgent)
     , m_frontend(0)
@@ -470,7 +488,7 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     , m_id(1)
     , m_maxCallStackDepth(5)
     , m_inspectorType(type)
-    , m_frameInstrumentationSupport(frameInstrumentationSupport)
+    , m_client(client)
 {
 }
 

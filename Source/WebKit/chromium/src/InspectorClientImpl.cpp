@@ -128,6 +128,18 @@ void InspectorClientImpl::clearBrowserCookies()
         agent->clearBrowserCookies();
 }
 
+void InspectorClientImpl::startMessageLoopMonitoring()
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->startMessageLoopMonitoring();
+}
+
+void InspectorClientImpl::stopMessageLoopMonitoring()
+{
+    if (WebDevToolsAgentImpl* agent = devToolsAgent())
+        agent->stopMessageLoopMonitoring();
+}
+
 bool InspectorClientImpl::canOverrideDeviceMetrics()
 {
     return true;

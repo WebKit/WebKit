@@ -1,3 +1,54 @@
+2012-06-09  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Add message loop instrumentation to public API and timeline agent
+        https://bugs.webkit.org/show_bug.cgi?id=88639
+
+        Reviewed by Vsevolod Vlasov.
+
+        Message loop instrumentation will show when the render thread is busy.
+        That way developer can discover if a render thread business causes low fps, or not.
+
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::startMessageLoopMonitoring): Starts observer.
+        (WebCore::InspectorClient::stopMessageLoopMonitoring): Stops observer.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        Changed timeline agent constructor parameters.
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willProcessTaskImpl):
+        Forwards observer notification.
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didProcessTaskImpl):
+        Ditto.
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::willProcessTask):
+        Ditto.
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didProcessTask):
+        Ditto.
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::start):
+        Starts observer.
+        (WebCore::InspectorTimelineAgent::stop):
+        Stops observer.
+        (WebCore::InspectorTimelineAgent::supportsFrameInstrumentation):
+        Changed result origin.
+        (WebCore::InspectorTimelineAgent::willProcessTask):
+        Noop implementqation.
+        (WebCore):
+        (WebCore::InspectorTimelineAgent::didProcessTask):
+        Noop implementqation.
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        Changed constructor parameters.
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::create):
+        Ditto.
+        (InspectorTimelineAgent):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        Changed timeline agent constructor parameters.
+
 2012-06-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: optimize timeline's frame mode overview appearance for 30fps

@@ -60,11 +60,10 @@ class InspectorTimelineAgent : public InspectorBaseAgent<InspectorTimelineAgent>
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
     enum InspectorType { PageInspector, WorkerInspector };
-    enum FrameInstrumentationSupport { FrameInstrumentationNotSupported, FrameInstrumentationSupported };
 
-    static PassOwnPtr<InspectorTimelineAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state, InspectorType type, FrameInstrumentationSupport frameInstrumentationSupport)
+    static PassOwnPtr<InspectorTimelineAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state, InspectorType type, InspectorClient* client)
     {
-        return adoptPtr(new InspectorTimelineAgent(instrumentingAgents, pageAgent, state, type, frameInstrumentationSupport));
+        return adoptPtr(new InspectorTimelineAgent(instrumentingAgents, pageAgent, state, type, client));
     }
 
     ~InspectorTimelineAgent();
@@ -141,6 +140,9 @@ public:
 
     virtual void didGC(double, double, size_t);
 
+    void willProcessTask();
+    void didProcessTask();
+
 private:
     struct TimelineRecordEntry {
         TimelineRecordEntry(PassRefPtr<InspectorObject> record, PassRefPtr<InspectorObject> data, PassRefPtr<InspectorArray> children, const String& type, const String& frameId, bool cancelable = false)
@@ -155,7 +157,7 @@ private:
         bool cancelable;
     };
         
-    InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*, InspectorType, FrameInstrumentationSupport);
+    InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*, InspectorType, InspectorClient*);
 
     void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*);
     void setHeapSizeStatistic(InspectorObject* record);
@@ -195,7 +197,7 @@ private:
     GCEvents m_gcEvents;
     int m_maxCallStackDepth;
     InspectorType m_inspectorType;
-    FrameInstrumentationSupport m_frameInstrumentationSupport;
+    InspectorClient* m_client;
 };
 
 } // namespace WebCore
