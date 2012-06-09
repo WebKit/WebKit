@@ -1,3 +1,10 @@
+2012-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove all uses of FAIL test expectation from Chromium test expectations.
+
+        * platform/chromium/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2012-06-08  Ojan Vafai  <ojan@chromium.org>
 
         Last set of chromium rebaselines missed in r119875.
