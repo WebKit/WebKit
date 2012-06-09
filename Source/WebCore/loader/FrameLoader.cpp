@@ -540,6 +540,8 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
     if (clearScriptObjects)
         m_frame->script()->clearScriptObjects();
 
+    m_frame->script()->enableEval();
+
     m_frame->navigationScheduler()->clear();
 
     m_checkTimer.stop();

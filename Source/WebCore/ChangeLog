@@ -1,3 +1,40 @@
+2012-06-09  Adam Barth  <abarth@webkit.org>
+
+        Can't use eval in iframes sanbdoxed via CSP header
+        https://bugs.webkit.org/show_bug.cgi?id=88450
+
+        Reviewed by Mihai Parparita.
+
+        The initial empty document in a frame inherits the security context of
+        its parent (including the CSP policy).  When we load the real document,
+        in some cases we'll do a "secure transition" to the new document.  That
+        means that we leave the global object in place in case the parent
+        document has created any properties that it expects will be visible to
+        the new document.
+
+        If the parent document has a CSP policy that blocks eval, the "no eval"
+        bit will be set on the global object of the initial document.  When we
+        perform a "secure transition" to the new document, we'll keep the bit,
+        which is wrong.  In this patch, we reset the bit by always enabling
+        eval when clearing the context, regardless of whether we're performing
+        a "secure transition".
+
+        Test: http/tests/security/contentSecurityPolicy/iframe-inside-csp.html
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::enableEval):
+        (WebCore):
+        * bindings/js/ScriptController.h:
+        (ScriptController):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::enableEval):
+        (WebCore):
+        (WebCore::ScriptController::disableEval):
+        * bindings/v8/ScriptController.h:
+        (ScriptController):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+
 2012-06-09  Pablo Flouret  <pablof@motorola.com>
 
         The value in Access-Control-Allow-Origin is not being matched correctly for CORS-enabled requests

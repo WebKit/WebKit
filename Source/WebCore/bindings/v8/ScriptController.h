@@ -126,6 +126,7 @@ public:
     // Check if the javascript engine has been initialized.
     bool haveInterpreter() const;
 
+    void enableEval();
     void disableEval();
 
     static bool canAccessFromCurrentOrigin(Frame*);

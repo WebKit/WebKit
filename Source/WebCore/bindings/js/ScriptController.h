@@ -104,6 +104,7 @@ public:
 
     WTF::TextPosition eventHandlerPosition() const;
 
+    void enableEval();
     void disableEval();
 
     static bool processingUserGesture();

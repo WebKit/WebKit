@@ -233,6 +233,14 @@ TextPosition ScriptController::eventHandlerPosition() const
     return TextPosition::minimumPosition();
 }
 
+void ScriptController::enableEval()
+{
+    JSDOMWindowShell* windowShell = existingWindowShell(mainThreadNormalWorld());
+    if (!windowShell)
+        return; // Eval is enabled by default.
+    windowShell->window()->setEvalEnabled(true);
+}
+
 void ScriptController::disableEval()
 {
     windowShell(mainThreadNormalWorld())->window()->setEvalEnabled(false);
