@@ -1,3 +1,19 @@
+2012-06-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118618 and r119353.
+        http://trac.webkit.org/changeset/118618
+        http://trac.webkit.org/changeset/119353
+        https://bugs.webkit.org/show_bug.cgi?id=88720
+
+        Caused at least 30 different crashes on ClusterFuzz (Requested
+        by inferno-sec on #webkit).
+
+        * http/tests/cache/cancel-in-progress-load-expected.txt: Removed.
+        * http/tests/cache/cancel-in-progress-load.html: Removed.
+        * http/tests/misc/write-while-waiting.html:
+        * svg/as-image/svg-image-leak-cached-data-expected.txt: Removed.
+        * svg/as-image/svg-image-leak-cached-data.html: Removed.
+
 2012-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix Chromium test expectations after my previous commit (r119916).

@@ -92,6 +92,15 @@ void CachedImage::load(CachedResourceLoader* cachedResourceLoader, const Resourc
         setLoading(false);
 }
 
+void CachedImage::removeClientForRenderer(RenderObject* renderer)
+{
+#if ENABLE(SVG)
+    if (m_svgImageCache)
+        m_svgImageCache->removeRendererFromCache(renderer);
+#endif
+    removeClient(renderer);
+}
+
 void CachedImage::didAddClient(CachedResourceClient* c)
 {
     if (m_decodedDataDeletionTimer.isActive())
@@ -109,24 +118,12 @@ void CachedImage::didAddClient(CachedResourceClient* c)
     CachedResource::didAddClient(c);
 }
 
-void CachedImage::didRemoveClient(CachedResourceClient* c)
-{
-    ASSERT(c->resourceClientType() == CachedImageClient::expectedType());
-#if ENABLE(SVG)
-    if (m_svgImageCache)
-        m_svgImageCache->removeClientFromCache(static_cast<CachedImageClient*>(c));
-#endif
-
-    CachedResource::didRemoveClient(c);
-}
-
 void CachedImage::allClientsRemoved()
 {
     if (m_image && !errorOccurred())
         m_image->resetAnimation();
     if (double interval = memoryCache()->deadDecodedDataDeletionInterval())
         m_decodedDataDeletionTimer.startOneShot(interval);
-    CachedResource::allClientsRemoved();
 }
 
 pair<Image*, float> CachedImage::brokenImage(float deviceScaleFactor) const
@@ -152,7 +149,7 @@ inline Image* CachedImage::lookupOrCreateImageForRenderer(const RenderObject* re
         return 0;
     if (!m_image->isSVGImage())
         return m_image.get();
-    Image* useImage = m_svgImageCache->lookupOrCreateBitmapImageForClient(renderer);
+    Image* useImage = m_svgImageCache->lookupOrCreateBitmapImageForRenderer(renderer);
     if (useImage == Image::nullImage())
         return m_image.get();
     return useImage;

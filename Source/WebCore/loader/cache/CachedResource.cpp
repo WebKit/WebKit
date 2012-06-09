@@ -387,12 +387,6 @@ void CachedResource::didAddClient(CachedResourceClient* c)
         c->notifyFinished(this);
 }
 
-void CachedResource::allClientsRemoved()
-{
-    if (m_loader)
-        m_loader->cancelIfNotFinishing();
-}
-
 bool CachedResource::addClientToSet(CachedResourceClient* client)
 {
     ASSERT(!isPurgeable());
@@ -432,7 +426,6 @@ void CachedResource::removeClient(CachedResourceClient* client)
     } else {
         ASSERT(m_clients.contains(client));
         m_clients.remove(client);
-        didRemoveClient(client);
     }
 
     if (canDelete() && !inCache())

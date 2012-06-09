@@ -1,3 +1,61 @@
+2012-06-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r118618 and r119353.
+        http://trac.webkit.org/changeset/118618
+        http://trac.webkit.org/changeset/119353
+        https://bugs.webkit.org/show_bug.cgi?id=88720
+
+        Caused at least 30 different crashes on ClusterFuzz (Requested
+        by inferno-sec on #webkit).
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::checkForHTTPStatusCodeError):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::allClientsRemoved):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::allClientsRemoved):
+        * loader/cache/CachedFont.h:
+        (WebCore::CachedFontClient::resourceClientType):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::removeClientForRenderer):
+        (WebCore):
+        (WebCore::CachedImage::allClientsRemoved):
+        (WebCore::CachedImage::lookupOrCreateImageForRenderer):
+        * loader/cache/CachedImage.h:
+        (CachedImage):
+        (WebCore::CachedImageClient::resourceClientType):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::allClientsRemoved):
+        (WebCore):
+        * loader/cache/CachedRawResource.h:
+        (CachedRawResource):
+        (WebCore::CachedRawResourceClient::resourceClientType):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::removeClient):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::allClientsRemoved):
+        * loader/cache/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::resourceClientType):
+        * loader/cache/CachedSVGDocument.h:
+        (WebCore::CachedSVGDocumentClient::resourceClientType):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::allClientsRemoved):
+        * loader/cache/CachedStyleSheetClient.h:
+        (WebCore::CachedStyleSheetClient::resourceClientType):
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::removeClient):
+        * rendering/style/StyleCachedImageSet.cpp:
+        (WebCore::StyleCachedImageSet::removeClient):
+        * svg/graphics/SVGImageCache.cpp:
+        (WebCore::SVGImageCache::~SVGImageCache):
+        (WebCore::SVGImageCache::removeRendererFromCache):
+        (WebCore::SVGImageCache::setRequestedSizeAndScales):
+        (WebCore::SVGImageCache::requestedSizeAndScales):
+        (WebCore::SVGImageCache::lookupOrCreateBitmapImageForRenderer):
+        * svg/graphics/SVGImageCache.h:
+        (WebCore):
+        (SVGImageCache):
+
 2012-06-09  Florin Malita  <fmalita@chromium.org>
 
         Fixed-position foreignObject descendants should be relative to the foreignObject viewport

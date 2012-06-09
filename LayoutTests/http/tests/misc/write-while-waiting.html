@@ -2,12 +2,10 @@
 <body>
 FAIL
 <script>
-if (window.layoutTestController) {
+if (window.layoutTestController)
     layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-}
 
-setTimeout("document.write('PASS');document.close(); if (window.layoutTestController) layoutTestController.notifyDone();", 100);
+setTimeout("document.write('PASS');document.close();", 100);
 </script>
 <script src="resources/script-slow1.pl"></script>
 </body>

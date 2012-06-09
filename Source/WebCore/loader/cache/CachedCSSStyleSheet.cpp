@@ -66,7 +66,6 @@ void CachedCSSStyleSheet::allClientsRemoved()
 {
     if (!MemoryCache::shouldMakeResourcePurgeableOnEviction() && isSafeToMakePurgeable())
         makePurgeable(true);
-    CachedResource::allClientsRemoved();
 }
 
 void CachedCSSStyleSheet::setEncoding(const String& chs)

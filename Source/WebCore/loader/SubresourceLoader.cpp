@@ -234,8 +234,8 @@ bool SubresourceLoader::checkForHTTPStatusCodeError()
     if (m_resource->response().httpStatusCode() < 400 || m_resource->shouldIgnoreHTTPStatusCodeErrors())
         return false;
 
-    m_state = Finishing;
     m_resource->error(CachedResource::LoadError);
+    m_state = Finishing;
     cancel();
     return true;
 }
