@@ -636,7 +636,7 @@ WebInspector.documentClick = function(event)
             return;
         }
 
-        WebInspector.showPanel("resources");
+        InspectorFrontendHost.openInNewTab(anchor.href);
     }
 
     if (WebInspector.followLinkTimeout)
@@ -967,11 +967,19 @@ WebInspector._showAnchorLocation = function(anchor)
 {
     if (WebInspector.openAnchorLocationRegistry.dispatch({ url: anchor.href, lineNumber: anchor.lineNumber}))
         return true;
-    var preferedPanel = this.panels[anchor.preferredPanel || "resources"];
-    if (WebInspector._showAnchorLocationInPanel(anchor, preferedPanel))
-        return true;
-    if (preferedPanel !== this.panels.resources && WebInspector._showAnchorLocationInPanel(anchor, this.panels.resources))
-        return true;
+    var preferredPanels = [];
+    if (this.panels[anchor.preferredPanel])
+        preferredPanels.push(this.panels[anchor.preferredPanel]);
+    if (this.panels.scripts)
+        preferredPanels.push(this.panels.scripts);
+    if (this.panels.resources)
+        preferredPanels.push(this.panels.resources);
+    if (this.panels.network)
+        preferredPanels.push(this.panels.network);
+    for (var i = 0; i < preferredPanels.length; ++i) {
+        if (WebInspector._showAnchorLocationInPanel(anchor, preferredPanels[i]))
+            return true;
+    }
     return false;
 }
 

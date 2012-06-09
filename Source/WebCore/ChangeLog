@@ -1,5 +1,17 @@
 2012-06-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Open links in Sources panel by default and fallback to Resources and Network panel otherwise.
+        https://bugs.webkit.org/show_bug.cgi?id=88710
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentClick.followLink):
+        (WebInspector.documentClick):
+        (WebInspector._showAnchorLocation):
+
+2012-06-09  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Only expand root domain in Sources/Scripts panel
         https://bugs.webkit.org/show_bug.cgi?id=88135
 
