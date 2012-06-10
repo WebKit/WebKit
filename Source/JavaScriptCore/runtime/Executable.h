@@ -176,11 +176,13 @@ namespace JSC {
                 return intrinsic();
             return NoIntrinsic;
         }
+#endif
 
     protected:
         ExecutableBase* m_prev;
         ExecutableBase* m_next;
 
+#if ENABLE(JIT)
         JITCode m_jitCodeForCall;
         JITCode m_jitCodeForConstruct;
         MacroAssemblerCodePtr m_jitCodeForCallWithArityCheck;
@@ -732,6 +734,7 @@ namespace JSC {
         return function->nativeFunction() == nativeFunction;
     }
 
+#if ENABLE(JIT)
     inline void ExecutableBase::clearCodeVirtual(ExecutableBase* executable)
     {
         switch (executable->structure()->typeInfo().type()) {
@@ -745,6 +748,7 @@ namespace JSC {
             return jsCast<NativeExecutable*>(executable)->clearCode();
         }
     }
+#endif
 
     inline void ScriptExecutable::unlinkCalls()
     {

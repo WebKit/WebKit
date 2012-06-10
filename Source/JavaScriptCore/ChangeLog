@@ -1,3 +1,11 @@
+2012-06-10  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Build fix for !ENABLE(JIT) after r119844.
+
+        * runtime/Executable.h:
+        (ExecutableBase):
+        (JSC):
+
 2012-06-09  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Remove JavaScriptCore dependencies from gyp
