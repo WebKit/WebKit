@@ -1,5 +1,15 @@
 2012-06-10  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] skip userscripts/window-onerror-for-isolated-world-*.html tests
+        https://bugs.webkit.org/show_bug.cgi?id=88730
+
+        Unreviewed EFL gardening. Skip a few tests causing flakiness.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+
+2012-06-10  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][GTK] Skip media/track/track-cue-rendering-inner-timestamps.html added in r119907
         https://bugs.webkit.org/show_bug.cgi?id=88726
 
