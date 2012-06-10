@@ -717,7 +717,7 @@ float MediaPlayerPrivateQTKit::duration() const
     if (!metaDataAvailable())
         return 0;
 
-    if (m_cachedDuration != -1.0f)
+    if (m_cachedDuration != MediaPlayer::invalidTime())
         return m_cachedDuration;
 
     QTTime time = [m_qtMovie.get() duration];
@@ -1049,9 +1049,9 @@ void MediaPlayerPrivateQTKit::updateStates()
     }
     
     // If this movie is reloading and we mean to restore the current time/rate, this might be the right time to do it.
-    if (loadState >= QTMovieLoadStateLoaded && oldNetworkState < MediaPlayer::Loaded && m_timeToRestore != -1.0f) {
+    if (loadState >= QTMovieLoadStateLoaded && oldNetworkState < MediaPlayer::Loaded && m_timeToRestore != MediaPlayer::invalidTime()) {
         QTTime qttime = createQTTime(m_timeToRestore);
-        m_timeToRestore = -1.0f;
+        m_timeToRestore = MediaPlayer::invalidTime();
             
         // Disable event callbacks from setCurrentTime for restoring time in a recreated video
         [m_objcObserver.get() setDelayCallbacks:YES];
@@ -1128,7 +1128,7 @@ void MediaPlayerPrivateQTKit::updateStates()
     if (loadState >= QTMovieLoadStateLoaded) {
         float dur = duration();
         if (dur != m_reportedDuration) {
-            if (m_reportedDuration != -1.0f)
+            if (m_reportedDuration != MediaPlayer::invalidTime())
                 m_player->durationChanged();
             m_reportedDuration = dur;
         }
@@ -1167,7 +1167,7 @@ void MediaPlayerPrivateQTKit::timeChanged()
     if (m_seekTo != -1)
         m_seekTo = currentTime();
 
-    m_timeToRestore = -1.0f;
+    m_timeToRestore = MediaPlayer::invalidTime();
     updateStates();
     m_player->timeChanged();
 }

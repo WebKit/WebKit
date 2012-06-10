@@ -122,8 +122,6 @@ static const char *boolString(bool val)
 }
 #endif
 
-static const float invalidTime = -1.0f;
-
 PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateAVFoundationObjC::create(MediaPlayer* player)
 { 
     return adoptPtr(new MediaPlayerPrivateAVFoundationObjC(player));
@@ -416,7 +414,7 @@ float MediaPlayerPrivateAVFoundationObjC::platformDuration() const
     // Do not ask the asset for duration before it has been loaded or it will fetch the
     // answer synchronously.
     if (!m_avAsset || assetStatus() < MediaPlayerAVAssetStatusLoaded)
-         return invalidTime();
+         return MediaPlayer::invalidTime();
     
     CMTime cmDuration;
     
@@ -436,8 +434,8 @@ float MediaPlayerPrivateAVFoundationObjC::platformDuration() const
             return numeric_limits<float>::infinity();
     }
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::platformDuration(%p) - invalid duration, returning %.0f", this, invalidTime());
-    return invalidTime();
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::platformDuration(%p) - invalid duration, returning %.0f", this, MediaPlayer::invalidTime());
+    return MediaPlayer::invalidTime();
 }
 
 float MediaPlayerPrivateAVFoundationObjC::currentTime() const

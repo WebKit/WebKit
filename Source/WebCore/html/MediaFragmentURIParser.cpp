@@ -30,6 +30,7 @@
 #include "MediaFragmentURIParser.h"
 
 #include "HTMLElement.h"
+#include "MediaPlayer.h"
 #include "ProcessingInstruction.h"
 #include "SegmentedString.h"
 #include "Text.h"
@@ -41,7 +42,6 @@ namespace WebCore {
 
 const int secondsPerHour = 3600;
 const int secondsPerMinute = 60;
-const double invalidMediaTime = -1;
 const unsigned nptIdentiferLength = 4; // "npt:"
 
 static String collectDigits(const LChar* input, unsigned length, unsigned& position)
@@ -72,21 +72,21 @@ static String collectFraction(const LChar* input, unsigned length, unsigned& pos
 
 double MediaFragmentURIParser::invalidTimeValue()
 {
-    return invalidMediaTime;
+    return MediaPlayer::invalidTime();
 }
 
 MediaFragmentURIParser::MediaFragmentURIParser(const KURL& url)
     : m_url(url)
     , m_timeFormat(None)
-    , m_startTime(invalidMediaTime)
-    , m_endTime(invalidMediaTime)
+    , m_startTime(MediaPlayer::invalidTime())
+    , m_endTime(MediaPlayer::invalidTime())
 {
 }
 
 double MediaFragmentURIParser::startTime()
 {
     if (!m_url.isValid())
-        return invalidMediaTime;
+        return MediaPlayer::invalidTime();
     if (m_timeFormat == None)
         parseTimeFragment();
     return m_startTime;
@@ -95,7 +95,7 @@ double MediaFragmentURIParser::startTime()
 double MediaFragmentURIParser::endTime()
 {
     if (!m_url.isValid())
-        return invalidMediaTime;
+        return MediaPlayer::invalidTime();
     if (m_timeFormat == None)
         parseTimeFragment();
     return m_endTime;
@@ -184,8 +184,8 @@ void MediaFragmentURIParser::parseTimeFragment()
         // in the same format. The format is specified by name, followed by a colon (:), with npt: being
         // the default.
         
-        double start = invalidMediaTime;
-        double end = invalidMediaTime;
+        double start = MediaPlayer::invalidTime();
+        double end = MediaPlayer::invalidTime();
         if (parseNPTFragment(fragment.second.characters8(), fragment.second.length(), start, end)) {
             m_startTime = start;
             m_endTime = end;

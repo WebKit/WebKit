@@ -1,3 +1,47 @@
+2012-06-07  Jer Noble  <jer.noble@apple.com>
+
+        WebCore should use a single definition of an invalid media time.
+        https://bugs.webkit.org/show_bug.cgi?id=88572
+
+        Reviewed by Eric Carlson.
+
+        No new tests; no change in functionality, so covered by existing tests.
+
+        Add a new, universal definition for an invalid media time:
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayer::invalidTime):
+
+        Use this new definition instead of the hodge podge of (identical) local
+        definitions for an invalid media time:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::invalidateCachedTime):
+        (WebCore::HTMLMediaElement::currentTime):
+        (WebCore::HTMLMediaElement::initialTime):
+        (WebCore::HTMLMediaElement::playbackProgressTimerFired):
+        (WebCore::HTMLMediaElement::prepareMediaFragmentURI):
+        (WebCore::HTMLMediaElement::applyMediaFragmentURI):
+        * html/MediaFragmentURIParser.cpp:
+        (WebCore::MediaFragmentURIParser::invalidTimeValue):
+        (WebCore::MediaFragmentURIParser::MediaFragmentURIParser):
+        (WebCore::MediaFragmentURIParser::startTime):
+        (WebCore::MediaFragmentURIParser::endTime):
+        (WebCore::MediaFragmentURIParser::parseTimeFragment):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+        (WebCore::MediaPlayerPrivateAVFoundation::duration):
+        (WebCore::MediaPlayerPrivateAVFoundation::seeking):
+        (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted):
+        (WebCore::MediaPlayerPrivateAVFoundation::invalidateCachedDuration):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (MediaPlayerPrivateAVFoundation):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformDuration):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::duration):
+        (WebCore::MediaPlayerPrivateQTKit::updateStates):
+        (WebCore::MediaPlayerPrivateQTKit::timeChanged):
+
 2012-06-10  Darin Adler  <darin@apple.com>
 
         Remove unneeded callRemovedLastRef function from TreeShared refactoring

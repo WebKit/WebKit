@@ -237,7 +237,6 @@ protected:
 
     static void mainThreadCallback(void*);
     
-    float invalidTime() const { return -1.0f; }
     void invalidateCachedDuration();
 
     const String& assetURL() const { return m_assetURL; }

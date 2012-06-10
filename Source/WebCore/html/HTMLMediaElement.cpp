@@ -143,8 +143,6 @@ static const char* boolString(bool val)
 #define LOG_CACHED_TIME_WARNINGS 0
 #endif
 
-static const float invalidMediaTime = -1;
-
 #if ENABLE(MEDIA_SOURCE)
 // URL protocol used to signal that the media source API is being used.
 static const char* mediaSourceURLProtocol = "x-media-source";
@@ -224,11 +222,11 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
 #if ENABLE(MEDIA_SOURCE)      
     , m_sourceState(SOURCE_CLOSED)
 #endif
-    , m_cachedTime(invalidMediaTime)
+    , m_cachedTime(MediaPlayer::invalidTime())
     , m_cachedTimeWallClockUpdateTime(0)
     , m_minimumWallClockTimeToCacheMediaTime(0)
-    , m_fragmentStartTime(invalidMediaTime)
-    , m_fragmentEndTime(invalidMediaTime)
+    , m_fragmentStartTime(MediaPlayer::invalidTime())
+    , m_fragmentEndTime(MediaPlayer::invalidTime())
     , m_pendingLoadFlags(0)
     , m_playing(false)
     , m_isWaitingUntilMediaCanStart(false)
@@ -2048,7 +2046,7 @@ void HTMLMediaElement::invalidateCachedTime()
     static const double minimumTimePlayingBeforeCacheSnapshot = 0.5;
 
     m_minimumWallClockTimeToCacheMediaTime = WTF::currentTime() + minimumTimePlayingBeforeCacheSnapshot;
-    m_cachedTime = invalidMediaTime;
+    m_cachedTime = MediaPlayer::invalidTime();
 }
 
 // playback state
@@ -2066,7 +2064,7 @@ float HTMLMediaElement::currentTime() const
         return m_lastSeekTime;
     }
 
-    if (m_cachedTime != invalidMediaTime && m_paused) {
+    if (m_cachedTime != MediaPlayer::invalidTime() && m_paused) {
 #if LOG_CACHED_TIME_WARNINGS
         float delta = m_cachedTime - m_player->currentTime();
         if (delta > minCachedDeltaForWarning)
@@ -2079,7 +2077,7 @@ float HTMLMediaElement::currentTime() const
     double now = WTF::currentTime();
     double maximumDurationToCacheMediaTime = m_player->maximumDurationToCacheMediaTime();
 
-    if (maximumDurationToCacheMediaTime && m_cachedTime != invalidMediaTime && !m_paused && now > m_minimumWallClockTimeToCacheMediaTime) {
+    if (maximumDurationToCacheMediaTime && m_cachedTime != MediaPlayer::invalidTime() && !m_paused && now > m_minimumWallClockTimeToCacheMediaTime) {
         double wallClockDelta = now - m_cachedTimeWallClockUpdateTime;
 
         // Not too soon, use the cached time only if it hasn't expired.
@@ -2096,7 +2094,7 @@ float HTMLMediaElement::currentTime() const
     }
 
 #if LOG_CACHED_TIME_WARNINGS
-    if (maximumDurationToCacheMediaTime && now > m_minimumWallClockTimeToCacheMediaTime && m_cachedTime != invalidMediaTime) {
+    if (maximumDurationToCacheMediaTime && now > m_minimumWallClockTimeToCacheMediaTime && m_cachedTime != MediaPlayer::invalidTime()) {
         double wallClockDelta = now - m_cachedTimeWallClockUpdateTime;
         float delta = m_cachedTime + (m_playbackRate * wallClockDelta) - m_player->currentTime();
         LOG(Media, "HTMLMediaElement::currentTime - cached time was %f seconds off of media time when it expired", delta);
@@ -2126,7 +2124,7 @@ float HTMLMediaElement::startTime() const
 
 double HTMLMediaElement::initialTime() const
 {
-    if (m_fragmentStartTime != invalidMediaTime)
+    if (m_fragmentStartTime != MediaPlayer::invalidTime())
         return m_fragmentStartTime;
 
     if (!m_player)
@@ -2726,8 +2724,8 @@ void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>*)
 {
     ASSERT(m_player);
 
-    if (m_fragmentEndTime != invalidMediaTime && currentTime() >= m_fragmentEndTime && m_playbackRate > 0) {
-        m_fragmentEndTime = invalidMediaTime;
+    if (m_fragmentEndTime != MediaPlayer::invalidTime() && currentTime() >= m_fragmentEndTime && m_playbackRate > 0) {
+        m_fragmentEndTime = MediaPlayer::invalidTime();
         if (!m_mediaController && !m_paused) {
             // changes paused to true and fires a simple event named pause at the media element.
             pauseInternal();
@@ -4409,7 +4407,7 @@ void HTMLMediaElement::prepareMediaFragmentURI()
         if (m_fragmentStartTime > dur)
             m_fragmentStartTime = dur;
     } else
-        m_fragmentStartTime = invalidMediaTime;
+        m_fragmentStartTime = MediaPlayer::invalidTime();
     
     double end = fragmentParser.endTime();
     if (end != MediaFragmentURIParser::invalidTimeValue() && end > 0 && end > m_fragmentStartTime) {
@@ -4417,15 +4415,15 @@ void HTMLMediaElement::prepareMediaFragmentURI()
         if (m_fragmentEndTime > dur)
             m_fragmentEndTime = dur;
     } else
-        m_fragmentEndTime = invalidMediaTime;
+        m_fragmentEndTime = MediaPlayer::invalidTime();
     
-    if (m_fragmentStartTime != invalidMediaTime && m_readyState < HAVE_FUTURE_DATA)
+    if (m_fragmentStartTime != MediaPlayer::invalidTime() && m_readyState < HAVE_FUTURE_DATA)
         prepareToPlay();
 }
 
 void HTMLMediaElement::applyMediaFragmentURI()
 {
-    if (m_fragmentStartTime != invalidMediaTime) {
+    if (m_fragmentStartTime != MediaPlayer::invalidTime()) {
         ExceptionCode ignoredException;
         m_sentEndEvent = false;
         seek(m_fragmentStartTime, ignoredException);

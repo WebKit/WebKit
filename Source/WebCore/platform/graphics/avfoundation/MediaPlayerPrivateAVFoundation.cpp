@@ -55,10 +55,10 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_preload(MediaPlayer::Auto)
     , m_cachedMaxTimeLoaded(0)
     , m_cachedMaxTimeSeekable(0)
-    , m_cachedDuration(invalidTime())
-    , m_reportedDuration(invalidTime())
-    , m_maxTimeLoadedAtLastDidLoadingProgress(invalidTime())
-    , m_seekTo(invalidTime())
+    , m_cachedDuration(MediaPlayer::invalidTime())
+    , m_reportedDuration(MediaPlayer::invalidTime())
+    , m_maxTimeLoadedAtLastDidLoadingProgress(MediaPlayer::invalidTime())
+    , m_seekTo(MediaPlayer::invalidTime())
     , m_requestedRate(1)
     , m_delayCallbacks(0)
     , m_mainThreadCallPending(false)
@@ -234,11 +234,11 @@ void MediaPlayerPrivateAVFoundation::pause()
 
 float MediaPlayerPrivateAVFoundation::duration() const
 {
-    if (m_cachedDuration != invalidTime())
+    if (m_cachedDuration != MediaPlayer::invalidTime())
         return m_cachedDuration;
 
     float duration = platformDuration();
-    if (!duration || duration == invalidTime())
+    if (!duration || duration == MediaPlayer::invalidTime())
         return 0;
 
     m_cachedDuration = duration;
@@ -284,7 +284,7 @@ bool MediaPlayerPrivateAVFoundation::seeking() const
     if (!metaDataAvailable())
         return false;
 
-    return m_seekTo != invalidTime();
+    return m_seekTo != MediaPlayer::invalidTime();
 }
 
 IntSize MediaPlayerPrivateAVFoundation::naturalSize() const
@@ -565,7 +565,7 @@ void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
     LOG(Media, "MediaPlayerPrivateAVFoundation::seekCompleted(%p) - finished = %d", this, finished);
     UNUSED_PARAM(finished);
     
-    m_seekTo = invalidTime();
+    m_seekTo = MediaPlayer::invalidTime();
     updateStates();
     m_player->timeChanged();
 }
@@ -586,13 +586,13 @@ void MediaPlayerPrivateAVFoundation::invalidateCachedDuration()
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::invalidateCachedDuration(%p)", this);
     
-    m_cachedDuration = invalidTime();
+    m_cachedDuration = MediaPlayer::invalidTime();
 
     // For some media files, reported duration is estimated and updated as media is loaded
     // so report duration changed when the estimate is upated.
     float duration = this->duration();
     if (duration != m_reportedDuration) {
-        if (m_reportedDuration != invalidTime())
+        if (m_reportedDuration != MediaPlayer::invalidTime())
             m_player->durationChanged();
         m_reportedDuration = duration;
     }

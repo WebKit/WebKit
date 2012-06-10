@@ -263,6 +263,7 @@ public:
     bool paused() const;
     bool seeking() const;
 
+    static float invalidTime() { return -1.0f;}
     float duration() const;
     float currentTime() const;
     void seek(float time);
