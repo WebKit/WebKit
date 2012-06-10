@@ -1,3 +1,7 @@
+2012-06-10  Darin Adler  <darin@apple.com>
+
+        * WebCore.exp.in: Re-sorted and alphabetized the file.
+
 2012-06-10  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][Win] Fix building Source/WebCore/plugins/win/PluginViewWin.cpp
