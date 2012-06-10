@@ -1,3 +1,12 @@
+2012-06-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Skip fast/dom/frame-loading-via-document-write.html
+        https://bugs.webkit.org/show_bug.cgi?id=88737
+
+        Unreviewed EFL gardening. Skipping test that is flaky after r119788.
+
+        * platform/efl/TestExpectations:
+
 2012-06-06  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION: Setting invalid media "src" does not cause "error" event

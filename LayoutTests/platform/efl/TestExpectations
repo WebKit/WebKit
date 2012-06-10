@@ -685,6 +685,7 @@ BUGWK86633 : editing/spelling/spelling-linebreak.html = TEXT
 BUGWK86633 : editing/spelling/spelling-unified-emulation.html = TEXT
 
 // Tests that rely on pathToLocalResource are failing after r119788
+BUGWK88661 SKIP : fast/dom/frame-loading-via-document-write.html = FAIL
 BUGWK88661 SKIP : fast/loader/local-CSS-from-local.html = FAIL
 BUGWK88661 SKIP : fast/loader/local-JavaScript-from-local.html = FAIL
 BUGWK88661 SKIP : fast/loader/local-iFrame-source-from-local.html = FAIL
