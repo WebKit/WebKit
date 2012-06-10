@@ -1,3 +1,13 @@
+2012-06-10  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][GTK] Skip media/track/track-cue-rendering-inner-timestamps.html added in r119907
+        https://bugs.webkit.org/show_bug.cgi?id=88726
+
+        Unreviewed gardening. Skip test added in r119907 for GTK and EFL ports.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2012-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove a Chromium test expectation for the test that has been rolled out in r119918.

@@ -702,6 +702,9 @@ BUGWK88661 SKIP : http/tests/security/local-video-src-from-remote.html = FAIL
 // Failing after r119268 on GTK and EFL
 BUGWK88138 : http/tests/media/video-buffered.html = TEXT
 
+// Test introduced in r119907 fails on GTK and EFL
+BUGWK88725 : media/track/track-cue-rendering-inner-timestamps.html = TEXT
+
 // EFL's LayoutTestController does not implement setAsynchronousSpellCheckingEnabled
 BUGWK86637 : editing/spelling/spellcheck-async.html = TEXT
 BUGWK86637 : editing/spelling/spellcheck-async-mutation.html = TEXT
