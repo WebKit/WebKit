@@ -34,9 +34,8 @@ window.webkitRequestFileSystem(TEMPORARY, 1024*1024 /*1MB*/, function(fs) {
             };
 
             // Create a new Blob and write it to log.txt.
-            var bb = new WebKitBlobBuilder();
-            bb.append('PASS (2/2): File displayed');
-            fileWriter.write(bb.getBlob('text/html'));
+            var b = new Blob(['PASS (2/2): File displayed'], { type: 'text/html' });
+            fileWriter.write(b);
         });
     });
 });

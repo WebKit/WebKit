@@ -18,14 +18,13 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 var iframe = document.querySelector('iframe');
-var bb = new WebKitBlobBuilder();
-bb.append('<h1>PASS (1/1)</h1>');
-bb.getBlob('text/html');
 iframe.onload = function () {
     if (window.layoutTestController)
         layoutTestController.notifyDone();
 };
-iframe.src = webkitURL.createObjectURL(bb.getBlob('text/html'));
+
+var b = new Blob(['<h1>PASS (1/1)</h1>'], { type: 'text/html' });
+iframe.src = webkitURL.createObjectURL(b);
 </script>
 </body>
 </html>

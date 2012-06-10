@@ -1,3 +1,23 @@
+2012-06-10  Mike West  <mkwst@chromium.org>
+
+        Removing mixed content tests' dependency on WebKitBlobBuilder:
+        https://bugs.webkit.org/show_bug.cgi?id=88736
+
+        http/tests/security/mixedContent/blob-url-in-iframe.html and
+        http/tests/security/mixedContent/filesystem-url-in-iframe.html both
+        relied on WebKitBlobBuilder, which is disabled on some builds. `new
+        Blob()` is the new hotness that these tests should be using instead. This
+        patch migrates both tests to the new API.
+        
+        It also reenables blob-url-in-iframe.html on mac (filesystem-url-in-iframe.html
+        remains disabled, as the filesystem APIs are disabled entirely).
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/mixedContent/blob-url-in-iframe.html:
+        * http/tests/security/mixedContent/filesystem-url-in-iframe.html:
+        * platform/mac/Skipped:
+
 2012-06-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][GTK] media/track/track-cue-rendering-inner-timestamps.html is failing
