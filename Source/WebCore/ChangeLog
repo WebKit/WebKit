@@ -1,3 +1,55 @@
+2012-06-06  Jer Noble  <jer.noble@apple.com>
+
+        Add logging functions to MediaPlayerPrivateQTKit.
+        https://bugs.webkit.org/show_bug.cgi?id=88425
+
+        Reviewed by Eric Carlson.
+
+        No new tests; adds logging functions to aide debugging.
+
+        MediaPlayerPrivateQTKit should emit the same kind of logging messages as 
+        other MediaPlayerPrivate engines to aide in debugging.
+
+        Distinguish between loadedRangesChanged() and loadStateChanged() for logging
+        purposes:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::loadedRangesChanged):
+        (-[WebCoreMovieObserver loadedRangesChanged:]):
+
+        Add LOG messages for each of the following functions:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::~MediaPlayerPrivateQTKit):
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovie):
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovieView):
+        (WebCore::MediaPlayerPrivateQTKit::detachQTMovieView):
+        (WebCore::MediaPlayerPrivateQTKit::createQTVideoRenderer):
+        (WebCore::MediaPlayerPrivateQTKit::destroyQTVideoRenderer):
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovieLayer):
+        (WebCore::MediaPlayerPrivateQTKit::destroyQTMovieLayer):
+        (WebCore::MediaPlayerPrivateQTKit::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivateQTKit::tearDownVideoRendering):
+        (WebCore::MediaPlayerPrivateQTKit::load):
+        (WebCore::MediaPlayerPrivateQTKit::prepareToPlay):
+        (WebCore::MediaPlayerPrivateQTKit::play):
+        (WebCore::MediaPlayerPrivateQTKit::pause):
+        (WebCore::MediaPlayerPrivateQTKit::seek):
+        (WebCore::MediaPlayerPrivateQTKit::cancelSeek):
+        (WebCore::MediaPlayerPrivateQTKit::setVolume):
+        (WebCore::MediaPlayerPrivateQTKit::setRate):
+        (WebCore::MediaPlayerPrivateQTKit::setPreservesPitch):
+        (WebCore::MediaPlayerPrivateQTKit::cancelLoad):
+        (WebCore::MediaPlayerPrivateQTKit::prepareForRendering):
+        (WebCore::MediaPlayerPrivateQTKit::updateStates):
+        (WebCore::MediaPlayerPrivateQTKit::loadStateChanged):
+        (WebCore::MediaPlayerPrivateQTKit::rateChanged):
+        (WebCore::MediaPlayerPrivateQTKit::sizeChanged):
+        (WebCore::MediaPlayerPrivateQTKit::timeChanged):
+        (WebCore::MediaPlayerPrivateQTKit::didEnd):
+        (WebCore::MediaPlayerPrivateQTKit::clearMediaCache):
+        (WebCore::MediaPlayerPrivateQTKit::clearMediaCacheForSite):
+        (WebCore::MediaPlayerPrivateQTKit::disableUnsupportedTracks):
+
 2012-06-07  Jer Noble  <jer.noble@apple.com>
 
         WebCore should use a single definition of an invalid media time.

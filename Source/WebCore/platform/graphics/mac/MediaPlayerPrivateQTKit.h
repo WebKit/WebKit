@@ -60,6 +60,7 @@ public:
 
     void repaint();
     void loadStateChanged();
+    void loadedRangesChanged();
     void rateChanged();
     void sizeChanged();
     void timeChanged();
