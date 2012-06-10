@@ -1,3 +1,13 @@
+2012-06-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening. Updating a few animations tests baselines,
+        adding test expectations for one FileSystem test.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/animations/3d/change-transform-in-end-event-expected.txt:
+        * platform/gtk/animations/3d/matrix-transform-type-animation-expected.txt: Added.
+        * platform/gtk/animations/3d/state-at-end-event-transform-expected.txt:
+
 2012-06-10  Dan Bernstein  <mitz@apple.com>
 
         Temporarily added http/tests/security/mixedContent/blob-url-in-iframe.html to the Mac skip
