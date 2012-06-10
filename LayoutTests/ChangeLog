@@ -1,5 +1,15 @@
 2012-06-10  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] 2 fast/multicol/span tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=88734
+
+        Unreviewed EFL gardening. Move to TestExpectations 2 tests that
+        are flaky on the bot.
+
+        * platform/efl/TestExpectations:
+
+2012-06-10  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][GTK] Skip http/tests/xmlhttprequest/origin-exact-matching.html added in r119911
         https://bugs.webkit.org/show_bug.cgi?id=88728
 

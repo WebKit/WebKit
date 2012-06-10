@@ -465,6 +465,10 @@ BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 BUGWK58845 : fast/dom/title-directionality.html = TEXT
 BUGWK58845 : fast/dom/title-directionality-removeChild.html = TEXT
 
+// Tests that sometimes fail on the bot (for GTK and Chromium ports as well)
+BUGWK77631 : fast/multicol/span/span-as-immediate-child-property-removal.html = TEXT PASS
+BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = TEXT PASS
+
 BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = TEXT
 
 // Expando properties on attribute nodes disappear
