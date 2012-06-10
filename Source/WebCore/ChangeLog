@@ -1,5 +1,21 @@
 2012-06-10  Balazs Kelemen  <kbalazs@webkit.org>
 
+        [Qt][Win] Fix building Source/WebCore/plugins/win/PluginViewWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=88308
+
+        Reviewed by Simon Hausmann.
+
+        No new tests, just a build fix.
+
+        Use ownerWindow() from page client. It has been
+        introduced for x11 plugins to solve exactly the
+        same problem.
+
+        * plugins/win/PluginViewWin.cpp:
+        (windowHandleForPageClient):
+
+2012-06-10  Balazs Kelemen  <kbalazs@webkit.org>
+
         [Qt][Win] Fix building ImageQt.cpp
         https://bugs.webkit.org/show_bug.cgi?id=88306
 

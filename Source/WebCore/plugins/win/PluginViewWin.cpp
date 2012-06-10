@@ -88,7 +88,11 @@
 
 #if PLATFORM(QT)
 #include "QWebPageClient.h"
+#if HAVE(QT5)
+#include <QWindow>
+#else
 #include <QWidget>
+#endif
 #endif
 
 #if PLATFORM(WX)
@@ -101,8 +105,13 @@ static inline HWND windowHandleForPageClient(PlatformPageClient client)
 #if PLATFORM(QT)
     if (!client)
         return 0;
+#if HAVE(QT5)
+    if (QWindow* window = client->ownerWindow())
+        return reinterpret_cast<HWND>(window->winId());
+#else
     if (QWidget* pluginParent = qobject_cast<QWidget*>(client->pluginParent()))
         return pluginParent->winId();
+#endif
     return 0;
 #elif PLATFORM(WX)
     if (!client)
