@@ -1,3 +1,16 @@
+2012-06-09  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Remove JavaScriptCore dependencies from gyp
+        https://bugs.webkit.org/show_bug.cgi?id=88510
+
+        Reviewed by Adam Barth.
+
+        Chromium doesn't support JSC any more and there doesn't seem to be
+        a strong interest in using GYP as the common build system in other
+        ports.
+
+        * WTF.gyp/WTF.gyp:
+
 2012-06-08  Andy Wingo  <wingo@igalia.com>
 
         Explictly mark stubs called by JIT as being internal

@@ -100,7 +100,6 @@
       'type': 'static_library',
       'include_dirs': [
         '../',
-        '../../JavaScriptCore',
         '../wtf',
         '../wtf/unicode',
       ],

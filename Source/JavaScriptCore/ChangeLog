@@ -1,3 +1,19 @@
+2012-06-09  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Remove JavaScriptCore dependencies from gyp
+        https://bugs.webkit.org/show_bug.cgi?id=88510
+
+        Reviewed by Adam Barth.
+
+        Chromium doesn't support JSC any more and there doesn't seem to be
+        a strong interest in using GYP as the common build system in other
+        ports.
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp: WebCore still depends on YARR interpreter.
+        * JavaScriptCore.gypi: Only include YARR source.
+        * gyp/JavaScriptCore.gyp: Removed.
+        * gyp/gtk.gyp: Removed.
+
 2012-06-09  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling back in part2 of r118646.

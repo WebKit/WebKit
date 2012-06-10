@@ -96,7 +96,6 @@
             'include_dirs': [
                 '<(chromium_src_dir)',
                 '<(source_dir)/WebKit/chromium/public',
-                '<(source_dir)/JavaScriptCore',
                 '<(DEPTH)',
             ],
             'defines': [

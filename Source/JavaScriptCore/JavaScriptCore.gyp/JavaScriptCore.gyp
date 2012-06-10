@@ -84,15 +84,7 @@
         '../runtime',
       ],
       'sources': [
-        '<@(javascriptcore_files)',
-      ],
-      'sources/': [
-        # First exclude everything ...
-        ['exclude', '../'],
-        # ... Then include what we want.
-        ['include', '../yarr/'],
-        # The Yarr JIT isn't used in WebCore.
-        ['exclude', '../yarr/YarrJIT\\.(h|cpp)$'],
+        '<@(javascriptcore_yarr_files)',
       ],
       'export_dependent_settings': [
         '../../WTF/WTF.gyp/WTF.gyp:wtf',

@@ -1,3 +1,26 @@
+2012-06-09  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Remove JavaScriptCore dependencies from gyp
+        https://bugs.webkit.org/show_bug.cgi?id=88510
+
+        Reviewed by Adam Barth.
+
+        Chromium doesn't support JSC any more and there doesn't seem to be
+        a strong interest in using GYP as the common build system in other
+        ports.
+
+        No new functionality => No new tests.
+
+        * gyp/WebCore.gyp: Removed.
+        * gyp/copy-forwarding-and-icu-headers.sh: Removed.
+        * gyp/copy-inspector-resources.sh: Removed.
+        * gyp/generate-derived-sources.sh: Removed.
+        * gyp/generate-webcore-export-file-generator.sh: Removed.
+        * gyp/gtk.gyp: Removed.
+        * gyp/run-if-exists.sh: Removed.
+        * gyp/streamline-inspector-source.sh: Removed.
+        * gyp/update-info-plist.sh: Removed.
+
 2012-06-07  Darin Adler  <darin@apple.com>
 
         Refactor and improve code style in TextResourceDecoder to prepare for buffering improvement
