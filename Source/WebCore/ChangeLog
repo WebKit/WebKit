@@ -1,3 +1,17 @@
+2012-06-10  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][Win] Fix building ImageQt.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=88306
+
+        Reviewed by Simon Hausmann.
+
+        No new tests, this is just a build fix.
+
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore):
+        (WebCore::BitmapImage::create):
+        Adapt to the "API" changes in Qt.
+
 2012-06-09  Gregg Tavares  <gman@google.com>
 
         Make WebGL mark draws for compositing even if the draw count is zero
