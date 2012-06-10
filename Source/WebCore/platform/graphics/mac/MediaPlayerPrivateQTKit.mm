@@ -97,6 +97,7 @@ SOFT_LINK_POINTER(QTKit, QTVideoRendererWebKitOnlyNewImageAvailableNotification,
 SOFT_LINK_POINTER(QTKit, QTMovieApertureModeClean, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieApertureModeAttribute, NSString *)
 
+SOFT_LINK_POINTER_OPTIONAL(QTKit, QTMovieOpenAsyncRequiredAttribute, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(QTKit, QTSecurityPolicyNoLocalToRemoteSiteAttribute, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(QTKit, QTSecurityPolicyNoRemoteToLocalSiteAttribute, NSString *)
 
@@ -122,6 +123,7 @@ SOFT_LINK_POINTER_OPTIONAL(QTKit, QTSecurityPolicyNoRemoteToLocalSiteAttribute, 
 #define QTMovieLoadStateAttribute getQTMovieLoadStateAttribute()
 #define QTMovieLoadStateDidChangeNotification getQTMovieLoadStateDidChangeNotification()
 #define QTMovieNaturalSizeAttribute getQTMovieNaturalSizeAttribute()
+#define QTMovieOpenAsyncRequiredAttribute getQTMovieOpenAsyncRequiredAttribute()
 #define QTMovieCurrentSizeAttribute getQTMovieCurrentSizeAttribute()
 #define QTMoviePreventExternalURLLinksAttribute getQTMoviePreventExternalURLLinksAttribute()
 #define QTMovieRateChangesPreservePitchAttribute getQTMovieRateChangesPreservePitchAttribute()
@@ -253,6 +255,9 @@ NSMutableDictionary *MediaPlayerPrivateQTKit::commonMovieAttributes()
         [movieAttributes setValue:[NSNumber numberWithBool:YES] forKey:QTSecurityPolicyNoLocalToRemoteSiteAttribute];
     } else
         [movieAttributes setValue:[NSNumber numberWithBool:YES] forKey:QTSecurityPolicyNoCrossSiteAttribute];
+
+    if (QTMovieOpenAsyncRequiredAttribute)
+        [movieAttributes setValue:[NSNumber numberWithBool:YES] forKey:QTMovieOpenAsyncRequiredAttribute];
 
     if (m_preload < MediaPlayer::Auto)
         [movieAttributes setValue:[NSNumber numberWithBool:YES] forKey:@"QTMovieLimitReadAheadAttribute"];

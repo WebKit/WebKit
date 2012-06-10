@@ -1,0 +1,8 @@
+Test that changing 'src' attribute to an invalid URL results in an error event.
+
+RUN(video.setAttribute('src', 'invalid-url'))
+
+EVENT(error)
+EXPECTED (video.error.code == '4') OK
+END OF TEST
+

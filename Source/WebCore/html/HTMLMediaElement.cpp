@@ -665,7 +665,7 @@ void HTMLMediaElement::prepareForLoad()
 
     // Perform the cleanup required for the resource load algorithm to run.
     stopPeriodicTimers();
-    m_loadTimer.stop();
+    stopLoadTimer(MediaResource);
     m_sentEndEvent = false;
     m_sentStalledEvent = false;
     m_haveFiredLoadedData = false;
@@ -3715,6 +3715,14 @@ void HTMLMediaElement::stopPeriodicTimers()
     m_playbackProgressTimer.stop();
 }
 
+void HTMLMediaElement::stopLoadTimer(PendingLoadFlags flags)
+{
+    m_pendingLoadFlags &= ~flags;
+
+    if (!m_pendingLoadFlags)
+        m_loadTimer.stop();
+}
+
 void HTMLMediaElement::userCancelledLoad()
 {
     LOG(Media, "HTMLMediaElement::userCancelledLoad");
@@ -3729,9 +3737,8 @@ void HTMLMediaElement::userCancelledLoad()
     m_player.clear();
 #endif
     stopPeriodicTimers();
-    m_loadTimer.stop();
+    stopLoadTimer(MediaResource | TextTrackResource);
     m_loadState = WaitingForSource;
-    m_pendingLoadFlags = 0;
 
     // 2 - Set the error attribute to a new MediaError object whose code attribute is set to MEDIA_ERR_ABORTED.
     m_error = MediaError::create(MediaError::MEDIA_ERR_ABORTED);

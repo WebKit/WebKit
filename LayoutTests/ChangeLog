@@ -1,3 +1,13 @@
+2012-06-06  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION: Setting invalid media "src" does not cause "error" event
+        https://bugs.webkit.org/show_bug.cgi?id=88423
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/video-src-invalid-error-expected.txt: Added.
+        * http/tests/media/video-src-invalid-error.html: Added.
+
 2012-06-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening. Updating a few animations tests baselines,

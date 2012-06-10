@@ -439,6 +439,9 @@ private:
     void startProgressEventTimer();
     void stopPeriodicTimers();
 
+    typedef unsigned PendingLoadFlags;
+    void stopLoadTimer(PendingLoadFlags);
+
     void seek(float time, ExceptionCode&);
     void finishSeek();
     void checkIfSeekNeeded();
@@ -600,7 +603,6 @@ private:
     double m_fragmentStartTime;
     double m_fragmentEndTime;
 
-    typedef unsigned PendingLoadFlags;
     PendingLoadFlags m_pendingLoadFlags;
 
     bool m_playing : 1;

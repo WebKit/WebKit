@@ -1,5 +1,41 @@
 2012-06-06  Jer Noble  <jer.noble@apple.com>
 
+        REGRESSION: Setting invalid media "src" does not cause "error" event
+        https://bugs.webkit.org/show_bug.cgi?id=88423
+
+        Reviewed by Eric Carlson.
+
+        Test: http/tests/media/video-src-invalid-error.html
+
+        Two problems here.  When the loadTimer is scheduled, the m_pendingLoadFlags
+        variable is set to specify what type of load is scheduled.  It is cleared
+        when the loadTimer fires. But, when prepareForLoad() stops the loadTimer,
+        it does not clear the m_pendingLoadFlags variable, so the next time
+        scheduleLoad() is called (when the src is changed to an invalid URL)
+        prepareForLoad() is not called again.
+
+        Second problem: Due to a bug in QTKit (<rdar://problem/11606415>), the
+        QTMovieLoadStateChangedNotification is never fired for an invalid http
+        URL if QTMovieOpenAsyncRequiredAttribute:YES is not passed when creating
+        the QTMovie.
+
+        Add a new utility method which both stops the m_loadTimer and clears the 
+        m_pendingLoadFlags, and use it in all the places where m_loadTimer was 
+        stopped explicitly:
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::stopLoadTimer): Added
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+        * html/HTMLMediaElement.h:
+
+        And pass QTMovieOpenAsyncRequiredAttribute:YES when creating the QTMovie:
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::commonMovieAttributes):
+
+2012-06-06  Jer Noble  <jer.noble@apple.com>
+
         Add logging functions to MediaPlayerPrivateQTKit.
         https://bugs.webkit.org/show_bug.cgi?id=88425
 

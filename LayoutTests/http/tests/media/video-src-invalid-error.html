@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+
+        <script>
+            function stalled()
+            {
+                failTest("stalled but should not");
+                consoleWrite("");
+            }
+
+            function errorEvent()
+            {
+                testExpected("video.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+                endTest();
+            }
+
+            function setup()
+            {
+                findMediaElement();
+                waitForEvent('stalled', stalled);
+                waitForEvent('error', errorEvent);
+                run("video.setAttribute('src', 'invalid-url')");
+                consoleWrite("");
+            }
+
+        </script>
+    </head>
+<body onload="setup()">
+
+    <video controls></video>
+
+    <p>Test that changing 'src' attribute to an invalid URL results in an error event.</p>
+
+</body>
+</html>
