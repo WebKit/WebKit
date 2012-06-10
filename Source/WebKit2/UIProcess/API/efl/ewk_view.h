@@ -17,11 +17,18 @@
     Boston, MA 02110-1301, USA.
 */
 
+/**
+ * @file    ewk_view.h
+ * @brief   WebKit main smart object.
+ *
+ * This object provides view related APIs of WebKit2 to EFL object.
+ */
+
 #ifndef ewk_view_h
 #define ewk_view_h
 
+#include "ewk_context.h"
 #include <Evas.h>
-#include <WebKit2/WKBase.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -117,24 +124,45 @@ struct _Ewk_View_Smart_Data {
 };
 
 /**
- * Creates a new EFL WebKit View object.
+ * Creates a new EFL WebKit view object.
  *
  * @param e canvas object where to create the view object
- * @param context WKContext's Reference pointer
- * @param page_group WKPageGroup's Reference pointer
  *
  * @return view object on success or @c 0 on failure
  */
-EAPI Evas_Object* ewk_view_add(Evas* e, WKContextRef context, WKPageGroupRef page_group);
+EAPI Evas_Object *ewk_view_add(Evas *e);
 
 /**
- * Gets the WKPageRef of this view.
+ * Creates a new EFL WebKit view object based on specific Ewk_Context.
  *
- * @param o the view object to get the WKPageRef
+ * @param e canvas object where to create the view object
+ * @param context Ewk_Context object to declare process model
  *
- * @return the WKPageRef of this view
+ * @return view object on success or @c 0 on failure
  */
-EAPI WKPageRef ewk_view_page_get(Evas_Object* o);
+EAPI Evas_Object *ewk_view_add_with_context(Evas *e, Ewk_Context *context);
+
+/**
+ * Asks the object to load the given URI.
+ *
+ * @param o view object to load @a URI
+ * @param uri uniform resource identifier to load
+ *
+ * @return @c EINA_TRUE is returned if @a o is valid, irrespective of load.
+ */
+EAPI Eina_Bool ewk_view_uri_set(Evas_Object *o, const char *uri);
+
+/**
+ * Returns the current URI string of view object.
+ *
+ * It returns an internal string and should not
+ * be modified. The string is guaranteed to be stringshared.
+ *
+ * @param o view object to get current URI
+ *
+ * @return current URI on success or @c 0 on failure
+ */
+EAPI const char *ewk_view_uri_get(const Evas_Object *o);
 
 #ifdef __cplusplus
 }

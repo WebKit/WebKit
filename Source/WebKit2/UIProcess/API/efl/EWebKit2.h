@@ -6,33 +6,28 @@
  * License as published by the Free Software Foundation; either
  * version 2 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIB.  If not, write to
+ * along with this program; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
-#ifndef ewk_view_private_h
-#define ewk_view_private_h
+/**
+ * @file    EWebKit2.h
+ * @brief   Contains the header files that are required by WebKit2-EFL.
+ *
+ * It includes the all header files that are exported to public API.
+ */
 
-#include "WebPageProxy.h"
-#include <Evas.h>
-#include <WebKit2/WKBase.h>
+#ifndef EWebKit2_h
+#define EWebKit2_h
 
-namespace WebCore {
-class IntRect;
-class IntSize;
-}
+#include "ewk_context.h"
+#include "ewk_view.h"
 
-void ewk_view_display(Evas_Object* ewkView, const WebCore::IntRect& rect);
-void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const WebCore::IntSize& size);
-
-Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef, WKPageGroupRef);
-
-#endif // ewk_view_private_h
+#endif // EWebKit2_h

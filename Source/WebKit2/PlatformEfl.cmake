@@ -29,6 +29,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/C/soup/WKSoupRequestManager.cpp
 
     UIProcess/API/efl/PageClientImpl.cpp
+    UIProcess/API/efl/ewk_context.cpp
     UIProcess/API/efl/ewk_view.cpp
 
     UIProcess/cairo/BackingStoreCairo.cpp

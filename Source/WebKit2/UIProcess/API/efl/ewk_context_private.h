@@ -15,24 +15,15 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
-#ifndef ewk_view_private_h
-#define ewk_view_private_h
+#ifndef ewk_context_private_h
+#define ewk_context_private_h
 
-#include "WebPageProxy.h"
-#include <Evas.h>
 #include <WebKit2/WKBase.h>
 
-namespace WebCore {
-class IntRect;
-class IntSize;
-}
+typedef struct _Ewk_Context Ewk_Context;
 
-void ewk_view_display(Evas_Object* ewkView, const WebCore::IntRect& rect);
-void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const WebCore::IntSize& size);
+WKContextRef ewk_context_WKContext_get(const Ewk_Context*);
 
-Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef, WKPageGroupRef);
-
-#endif // ewk_view_private_h
+#endif // ewk_context_private_h

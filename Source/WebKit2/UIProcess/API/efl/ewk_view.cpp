@@ -25,6 +25,12 @@
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
 #include "WKAPICast.h"
+#include "WKRetainPtr.h"
+#include "WKURL.h"
+#include "ewk_context.h"
+#include "ewk_context_private.h"
+#include "ewk_view_private.h"
+#include <wtf/text/CString.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -33,6 +39,7 @@ static const char EWK_VIEW_TYPE_STR[] = "EWK2_View";
 
 struct _Ewk_View_Private_Data {
     OwnPtr<PageClientImpl> pageClient;
+    const char* uri;
 };
 
 #define EWK_VIEW_TYPE_CHECK(ewkView, result)                                   \
@@ -259,6 +266,7 @@ static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
         return;
 
     priv->pageClient = nullptr;
+    eina_stringshare_del(priv->uri);
     free(priv);
 }
 
@@ -461,7 +469,7 @@ static inline Evas_Smart* _ewk_view_smart_class_new(void)
     return smart;
 }
 
-Evas_Object* ewk_view_add(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
     Evas_Object* ewkView = evas_object_smart_add(canvas, _ewk_view_smart_class_new());
     if (!ewkView)
@@ -484,12 +492,35 @@ Evas_Object* ewk_view_add(Evas* canvas, WKContextRef contextRef, WKPageGroupRef 
     return ewkView;
 }
 
-WKPageRef ewk_view_page_get(Evas_Object* ewkView)
+Evas_Object* ewk_view_add_with_context(Evas* canvas, Ewk_Context* context)
+{
+    return ewk_view_base_add(canvas, ewk_context_WKContext_get(context), 0);
+}
+
+Evas_Object* ewk_view_add(Evas* canvas)
+{
+    return ewk_view_add_with_context(canvas, ewk_context_default_get());
+}
+
+Eina_Bool ewk_view_uri_set(Evas_Object* ewkView, const char* uri)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
 
-    return toAPI(priv->pageClient->page());
+    WKRetainPtr<WKURLRef> url(AdoptWK, WKURLCreateWithUTF8CString(uri));
+    WKPageLoadURL(toAPI(priv->pageClient->page()), url.get());
+
+    eina_stringshare_replace(&priv->uri, uri);
+
+    return true;
+}
+
+const char* ewk_view_uri_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+
+    return priv->uri;
 }
 
 void ewk_view_display(Evas_Object* ewkView, const IntRect& rect)
