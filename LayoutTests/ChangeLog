@@ -1,5 +1,17 @@
 2012-06-10  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][GTK] media/track/track-cue-rendering-inner-timestamps.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=88725
+
+        Reviewed by Eric Carlson.
+
+        * media/track/track-cue-rendering-inner-timestamps.html: Round the timestamp values
+        so that the test passes for EFL and GTK ports.
+        * platform/efl/TestExpectations: Unskip test.
+        * platform/gtk/TestExpectations: Unskip test.
+
+2012-06-10  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Skip fast/dom/frame-loading-via-document-write.html
         https://bugs.webkit.org/show_bug.cgi?id=88737
 

@@ -48,7 +48,7 @@
                 consoleWrite("");
                 consoleWrite("* Cue " + i + " *");
 
-                consoleWrite("Current time: " + video.currentTime);
+                consoleWrite("Current time: " + Math.round(video.currentTime * 100) / 100);
                 consoleWrite("Past: " + cueDisplayElement.childNodes[0].innerHTML);
                 consoleWrite("Future: " + cueDisplayElement.childNodes[1].innerHTML);
 
