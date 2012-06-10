@@ -109,8 +109,8 @@ public:
 
     static HTMLFormControlElement* enclosingFormControlElement(Node*);
 
-    using TreeShared<ContainerNode>::ref;
-    using TreeShared<ContainerNode>::deref;
+    using Node::ref;
+    using Node::deref;
 
 protected:
     HTMLFormControlElement(const QualifiedName& tagName, Document*, HTMLFormElement*);

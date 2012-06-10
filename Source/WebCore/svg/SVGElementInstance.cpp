@@ -72,9 +72,14 @@ SVGElementInstance::~SVGElementInstance()
     m_element = 0;
 }
 
-void callRemovedLastRef(TreeShared<SVGElementInstance>* self)
+// It's important not to inline removedLastRef, because we don't want to inline the code to
+// delete an SVGElementInstance at each deref call site.
+void SVGElementInstance::removedLastRef()
 {
-    static_cast<SVGElementInstance*>(self)->removedLastRef();
+#ifndef NDEBUG
+    m_deletionHasBegun = true;
+#endif
+    delete this;
 }
 
 void SVGElementInstance::detach()

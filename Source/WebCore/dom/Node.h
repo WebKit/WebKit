@@ -104,7 +104,7 @@ enum StyleChangeType {
     SyntheticStyleChange = 3 << nodeStyleChangeShift
 };
 
-class Node : public EventTarget, public ScriptWrappable, public TreeShared<ContainerNode> {
+class Node : public EventTarget, public ScriptWrappable, public TreeShared<Node, ContainerNode> {
     friend class Document;
     friend class TreeScope;
     friend class TreeScopeAdopter;
@@ -146,13 +146,6 @@ public:
     static StyleChange diff(const RenderStyle*, const RenderStyle*, Document*);
 
     virtual ~Node();
-    virtual void removedLastRef()
-    {
-#ifndef NDEBUG
-        m_deletionHasBegun = true;
-#endif
-        delete this;
-    }
 
     // DOM methods & attributes for Node
 
@@ -636,8 +629,8 @@ public:
     // to event listeners, and prevents DOMActivate events from being sent at all.
     virtual bool disabled() const;
 
-    using TreeShared<ContainerNode>::ref;
-    using TreeShared<ContainerNode>::deref;
+    using TreeShared<Node, ContainerNode>::ref;
+    using TreeShared<Node, ContainerNode>::deref;
 
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
@@ -748,6 +741,10 @@ protected:
     void setHasCustomCallbacks() { setFlag(true, HasCustomCallbacksFlag); }
 
 private:
+    friend class TreeShared<Node, ContainerNode>;
+
+    void removedLastRef();
+
     // These API should be only used for a tree scope migration.
     // setTreeScope() returns NodeRareData to save extra nodeRareData() invocations on the caller site.
     NodeRareData* setTreeScope(TreeScope*);
@@ -783,8 +780,8 @@ private:
     // Use Node::parentNode as the consistent way of querying a parent node.
     // This method is made private to ensure a compiler error on call sites that
     // don't follow this rule.
-    using TreeShared<ContainerNode>::parent;
-    using TreeShared<ContainerNode>::setParent;
+    using TreeShared<Node, ContainerNode>::parent;
+    using TreeShared<Node, ContainerNode>::setParent;
 
     void trackForDebugging();
 

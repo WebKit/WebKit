@@ -1,5 +1,51 @@
 2012-06-10  Darin Adler  <darin@apple.com>
 
+        Remove unneeded callRemovedLastRef function from TreeShared refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=88653
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in: Updated to remove callRemovedLastRef and add removedLastRef.
+
+        * dom/ContainerNode.cpp: Removed callRemovedLastRef, which is no longer
+        needed and also had a bad cast in it.
+
+        * dom/Document.h: Made removedLastRef private and non-virtual and made Node
+        a friend so it can call the private function.
+
+        * dom/Node.cpp:
+        (WebCore::Node::removedLastRef): Moved here. This should not be an inline
+        function. Added comments explaining why it should not be inlined. Also added
+        explicit code to call to Document::removedLastRef, and added a comment why
+        that's the right thing to do here.
+        * dom/Node.h: Inherit from TreeShared<Node, ContainerNode>. Made the
+        removedLastRef function non-virtual and removed it from the header file.
+        Updated TreeShared using statements. Made the TreeShared template class a
+        friend so it can call the private removedLastRef.
+
+        * html/HTMLFormControlElement.h: Updated TreeShared using statements to specify
+        Node instead, which accomplishes the same thing.
+        * html/HTMLObjectElement.h: Ditto.
+
+        * platform/TreeShared.h: Made TreeShared take two template arguments for the
+        node type and the parent node type. Removed the callRemovedLastRef functions and
+        the extra forward declarations it required. Removed the private unused
+        removedLastRef function; not sure why it was left in here at all.
+        (WebCore::TreeShared::deref): Call removedLastRef instead of callRemovedLastRef.
+        (WebCore::TreeShared::setParent): Use ParentNodeType.
+        (WebCore::TreeShared::parent): Ditto.
+        (WebCore::adopted): Updated to have both template arguments.
+
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::removedLastRef): Replaced callRemovedLastRef with
+        this. Moved the body out of the header and added a comment explaining why the
+        function should not be inlined.
+        * svg/SVGElementInstance.h: Made removedLastRef non-virtual, non-inline, and
+        private. Made TreeShared a friend so it can call the private removedLastRef.
+        Updated TreeShared using statements.
+
+2012-06-10  Darin Adler  <darin@apple.com>
+
         * WebCore.exp.in: Re-sorted and alphabetized the file.
 
 2012-06-10  Balazs Kelemen  <kbalazs@webkit.org>

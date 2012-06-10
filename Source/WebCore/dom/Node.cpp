@@ -2941,6 +2941,23 @@ void Node::resetCachedRadioNodeListRootNode()
         it->second->setRootElement(toElement(this));
 }
 
+// It's important not to inline removedLastRef, because we don't want to inline the code to
+// delete a Node at each deref call site.
+void Node::removedLastRef()
+{
+    // An explicit check for Document here is better than a virtual function since it is
+    // faster for non-Document nodes, and because the call to removedLastRef that is inlined
+    // at all deref call sites is smaller if it's a non-virtual function.
+    if (isDocumentNode()) {
+        static_cast<Document*>(this)->removedLastRef();
+        return;
+    }
+#ifndef NDEBUG
+    m_deletionHasBegun = true;
+#endif
+    delete this;
+}
+
 } // namespace WebCore
 
 #ifndef NDEBUG

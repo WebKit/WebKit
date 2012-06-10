@@ -58,8 +58,8 @@ public:
     bool checkValidity() { return true; }
     virtual void setCustomValidity(const String&) OVERRIDE { }
 
-    using TreeShared<ContainerNode>::ref;
-    using TreeShared<ContainerNode>::deref;
+    using Node::ref;
+    using Node::deref;
 
     virtual bool canContainRangeEndPoint() const { return useFallbackContent(); }
 

@@ -1,3 +1,13 @@
+2012-06-10  Darin Adler  <darin@apple.com>
+
+        Remove unneeded callRemovedLastRef function from TreeShared refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=88653
+
+        Reviewed by Sam Weinig.
+
+        * Source/autotools/symbols.filter: Filter removedLastRef instead of
+        callRemovedLastRef.
+
 2012-06-09  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         Add UNDO_MANAGER flag

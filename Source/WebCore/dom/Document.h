@@ -220,8 +220,6 @@ public:
         }
     }
 
-    virtual void removedLastRef();
-
     Element* getElementById(const AtomicString& id) const;
 
     virtual bool canContainRangeEndPoint() const { return true; }
@@ -1129,8 +1127,11 @@ protected:
     void clearXMLVersion() { m_xmlVersion = String(); }
 
 private:
+    friend class Node;
     friend class IgnoreDestructiveWriteCountIncrementer;
 
+    void removedLastRef();
+    
     void detachParser();
 
     typedef void (*ArgumentsCallback)(const String& keyString, const String& valueString, Document*, void* data);
