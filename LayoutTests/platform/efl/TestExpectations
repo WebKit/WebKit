@@ -605,6 +605,9 @@ BUGWK68591 SKIP : http/tests/filesystem = FAIL
 BUGWK68591 SKIP : http/tests/security/filesystem-iframe-from-remote.html = FAIL
 BUGWK68591 SKIP : http/tests/security/mixedContent/filesystem-url-in-iframe.html = FAIL
 
+// New test introduced in r119911 failing on GTK and EFL ports
+BUGWK88727 : http/tests/xmlhttprequest/origin-exact-matching.html = TEXT
+
 // EFL's EventSender does not implement contextClick yet
 BUGWK86091 : editing/pasteboard/copy-standalone-image-crash.html = TEXT
 BUGWK86091 : editing/selection/5354455-1.html = TEXT
