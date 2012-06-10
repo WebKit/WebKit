@@ -1,3 +1,22 @@
+2012-06-07  Darin Adler  <darin@apple.com>
+
+        Refactor and improve code style in TextResourceDecoder to prepare for buffering improvement
+        https://bugs.webkit.org/show_bug.cgi?id=88566
+
+        Reviewed by Alexey Proskuryakov.
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::bytesEqual): Added helper function to make comparing against sequences of bytes
+        easier to read at the call site.
+        (WebCore::KanjiCode::judge): Changed to use bytesEqual in a few places, merged multiple if
+        statements, got rid of else after goto.
+        (WebCore::TextResourceDecoder::checkForCSSCharset): Changed to use early return instead of
+        nesting the whole function. Changed to use bytesEqual.
+        (WebCore::skipComment): Changed to use early return for more cases. Changed to use bytesEqual.
+        (WebCore::TextResourceDecoder::checkForHeadCharset): Changed to use bytesEqual.
+        (WebCore::TextResourceDecoder::decode): Changed to use emptyString() instead of "", since
+        the former is more efficient.
+
 2012-06-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r118618 and r119353.

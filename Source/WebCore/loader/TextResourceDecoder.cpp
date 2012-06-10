@@ -1,6 +1,6 @@
 /*
     Copyright (C) 1999 Lars Knoll (knoll@mpi-hd.mpg.de)
-    Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+    Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
     Copyright (C) 2005, 2006, 2007 Alexey Proskuryakov (ap@nypop.com)
 
     This library is free software; you can redistribute it and/or
@@ -38,6 +38,31 @@ using namespace WTF;
 namespace WebCore {
 
 using namespace HTMLNames;
+
+static inline bool bytesEqual(const char* p, char b0, char b1)
+{
+    return p[0] == b0 && p[1] == b1;
+}
+
+static inline bool bytesEqual(const char* p, char b0, char b1, char b2)
+{
+    return p[0] == b0 && p[1] == b1 && p[2] == b2;
+}
+
+static inline bool bytesEqual(const char* p, char b0, char b1, char b2, char b3, char b4)
+{
+    return p[0] == b0 && p[1] == b1 && p[2] == b2 && p[3] == b3 && p[4] == b4;
+}
+
+static inline bool bytesEqual(const char* p, char b0, char b1, char b2, char b3, char b4, char b5)
+{
+    return p[0] == b0 && p[1] == b1 && p[2] == b2 && p[3] == b3 && p[4] == b4 && p[5] == b5;
+}
+
+static inline bool bytesEqual(const char* p, char b0, char b1, char b2, char b3, char b4, char b5, char b6, char b7)
+{
+    return p[0] == b0 && p[1] == b1 && p[2] == b2 && p[3] == b3 && p[4] == b4 && p[5] == b5 && p[6] == b6 && p[7] == b7;
+}
 
 // You might think we should put these find functions elsewhere, perhaps with the
 // similar functions that operate on UChar, but arguably only the decoder has
@@ -145,18 +170,14 @@ enum KanjiCode::Type KanjiCode::judge(const char* str, int size)
     i = 0;
     while (i < size) {
         if (ptr[i] == ESC && (size - i >= 3)) {
-            if ((ptr[i + 1] == '$' && ptr[i + 2] == 'B')
-            || (ptr[i + 1] == '(' && ptr[i + 2] == 'B')) {
+            if (bytesEqual(str + i + 1, '$', 'B')
+                    || bytesEqual(str + i + 1, '(', 'B')
+                    || bytesEqual(str + i + 1, '$', '@')
+                    || bytesEqual(str + i + 1, '(', 'J')) {
                 code = JIS;
                 goto breakBreak;
-            } else if ((ptr[i + 1] == '$' && ptr[i + 2] == '@')
-                    || (ptr[i + 1] == '(' && ptr[i + 2] == 'J')) {
-                code = JIS;
-                goto breakBreak;
-            } else if (ptr[i + 1] == '(' && ptr[i + 2] == 'I') {
-                code = JIS;
-                i += 3;
-            } else if (ptr[i + 1] == ')' && ptr[i + 2] == 'I') {
+            }
+            if (bytesEqual(str + i + 1, '(', 'I') || bytesEqual(str + i + 1, ')', 'I')) {
                 code = JIS;
                 i += 3;
             } else {
@@ -444,42 +465,41 @@ bool TextResourceDecoder::checkForCSSCharset(const char* data, size_t len, bool&
 
     movedDataToBuffer = true;
 
-    if (m_buffer.size() > 8) { // strlen("@charset") == 8
-        const char* dataStart = m_buffer.data();
-        const char* dataEnd = dataStart + m_buffer.size();
+    if (m_buffer.size() <= 8) // strlen("@charset") == 8
+        return false;
 
-        if (dataStart[0] == '@' && dataStart[1] == 'c' && dataStart[2] == 'h' && dataStart[3] == 'a' && dataStart[4] == 'r' && 
-            dataStart[5] == 's' && dataStart[6] == 'e' && dataStart[7] == 't') {
-    
-            dataStart += 8;
-            const char* pos = dataStart;
+    const char* dataStart = m_buffer.data();
+    const char* dataEnd = dataStart + m_buffer.size();
+
+    if (bytesEqual(dataStart, '@', 'c', 'h', 'a', 'r', 's', 'e', 't')) {
+        dataStart += 8;
+        const char* pos = dataStart;
+        if (!skipWhitespace(pos, dataEnd))
+            return false;
+
+        if (*pos == '"' || *pos == '\'') {
+            char quotationMark = *pos;
+            ++pos;
+            dataStart = pos;
+        
+            while (pos < dataEnd && *pos != quotationMark)
+                ++pos;
+            if (pos == dataEnd)
+                return false;
+
+            int encodingNameLength = pos - dataStart;
+            
+            ++pos;
             if (!skipWhitespace(pos, dataEnd))
                 return false;
 
-            if (*pos == '"' || *pos == '\'') {
-                char quotationMark = *pos;
-                ++pos;
-                dataStart = pos;
-            
-                while (pos < dataEnd && *pos != quotationMark)
-                    ++pos;
-                if (pos == dataEnd)
-                    return false;
-
-                int encodingNameLength = pos - dataStart;
-                
-                ++pos;
-                if (!skipWhitespace(pos, dataEnd))
-                    return false;
-
-                if (*pos == ';')
-                    setEncoding(findTextEncoding(dataStart, encodingNameLength), EncodingFromCSSCharset);
-            }
+            if (*pos == ';')
+                setEncoding(findTextEncoding(dataStart, encodingNameLength), EncodingFromCSSCharset);
         }
-        m_checkedForCSSCharset = true;
-        return true;
     }
-    return false;
+
+    m_checkedForCSSCharset = true;
+    return true;
 }
 
 // Other browsers allow comments in the head section, so we need to also.
@@ -488,26 +508,28 @@ static inline void skipComment(const char*& ptr, const char* pEnd)
 {
     const char* p = ptr;
     if (p == pEnd)
-      return;
+        return;
+
     // Allow <!-->; other browsers do.
     if (*p == '>') {
-        p++;
-    } else {
-        while (p + 2 < pEnd) {
-            if (*p == '-') {
-                // This is the real end of comment, "-->".
-                if (p[1] == '-' && p[2] == '>') {
-                    p += 3;
-                    break;
-                }
-                // This is the incorrect end of comment that other browsers allow, "--!>".
-                if (p + 3 < pEnd && p[1] == '-' && p[2] == '!' && p[3] == '>') {
-                    p += 4;
-                    break;
-                }
+        ptr = p + 1;
+        return;
+    }
+
+    while (p + 2 < pEnd) {
+        if (*p == '-') {
+            // This is the real end of comment, "-->".
+            if (bytesEqual(p + 1, '-', '>')) {
+                p += 3;
+                break;
             }
-            p++;
+            // This is the incorrect end of comment that other browsers allow, "--!>".
+            if (p + 3 < pEnd && bytesEqual(p + 1, '-', '!', '>')) {
+                p += 4;
+                break;
+            }
         }
+        p++;
     }
     ptr = p;
 }
@@ -541,7 +563,7 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
 
     // Handle XML declaration, which can have encoding in it. This encoding is honored even for HTML documents.
     // It is an error for an XML declaration not to be at the start of an XML document, and it is ignored in HTML documents in such case.
-    if (ptr[0] == '<' && ptr[1] == '?' && ptr[2] == 'x' && ptr[3] == 'm' && ptr[4] == 'l') {
+    if (bytesEqual(ptr, '<', '?', 'x', 'm', 'l')) {
         const char* xmlDeclarationEnd = ptr;
         while (xmlDeclarationEnd != pEnd && *xmlDeclarationEnd != '>')
             ++xmlDeclarationEnd;
@@ -553,16 +575,16 @@ bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool
         if (pos != -1)
             setEncoding(findTextEncoding(ptr + pos, len), EncodingFromXMLHeader);
         // continue looking for a charset - it may be specified in an HTTP-Equiv meta
-    } else if (ptr[0] == '<' && ptr[1] == 0 && ptr[2] == '?' && ptr[3] == 0 && ptr[4] == 'x' && ptr[5] == 0) {
+    } else if (bytesEqual(ptr, '<', 0, '?', 0, 'x', 0)) {
         setEncoding(UTF16LittleEndianEncoding(), AutoDetectedEncoding);
         return true;
-    } else if (ptr[0] == 0 && ptr[1] == '<' && ptr[2] == 0 && ptr[3] == '?' && ptr[4] == 0 && ptr[5] == 'x') {
+    } else if (bytesEqual(ptr, 0, '<', 0, '?', 0, 'x')) {
         setEncoding(UTF16BigEndianEncoding(), AutoDetectedEncoding);
         return true;
-    } else if (ptr[0] == '<' && ptr[1] == 0 && ptr[2] == 0 && ptr[3] == 0 && ptr[4] == '?' && ptr[5] == 0 && ptr[6] == 0 && ptr[7] == 0) {
+    } else if (bytesEqual(ptr, '<', 0, 0, 0, '?', 0, 0, 0)) {
         setEncoding(UTF32LittleEndianEncoding(), AutoDetectedEncoding);
         return true;
-    } else if (ptr[0] == 0 && ptr[1] == 0 && ptr[2] == 0 && ptr[3] == '<' && ptr[4] == 0 && ptr[5] == 0 && ptr[6] == 0 && ptr[7] == '?') {
+    } else if (bytesEqual(ptr, 0, 0, 0, '<', 0, 0, 0, '?')) {
         setEncoding(UTF32BigEndianEncoding(), AutoDetectedEncoding);
         return true;
     }
@@ -632,11 +654,11 @@ String TextResourceDecoder::decode(const char* data, size_t len)
 
     if (m_contentType == CSS && !m_checkedForCSSCharset)
         if (!checkForCSSCharset(data, len, movedDataToBuffer))
-            return "";
+            return emptyString();
 
     if ((m_contentType == HTML || m_contentType == XML) && !m_checkedForHeadCharset) // HTML and XML
         if (!checkForHeadCharset(data, len, movedDataToBuffer))
-            return "";
+            return emptyString();
 
     // FIXME: It is wrong to change the encoding downstream after we have already done some decoding.
     if (shouldAutoDetect()) {
