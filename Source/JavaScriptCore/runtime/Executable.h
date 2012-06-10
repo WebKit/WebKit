@@ -103,10 +103,10 @@ namespace JSC {
         int m_numParametersForCall;
         int m_numParametersForConstruct;
 
-#if ENABLE(JIT)
     public:
         static void clearCodeVirtual(ExecutableBase*);
 
+#if ENABLE(JIT)
         JITCode& generatedJITCodeForCall()
         {
             ASSERT(m_jitCodeForCall);
@@ -734,7 +734,6 @@ namespace JSC {
         return function->nativeFunction() == nativeFunction;
     }
 
-#if ENABLE(JIT)
     inline void ExecutableBase::clearCodeVirtual(ExecutableBase* executable)
     {
         switch (executable->structure()->typeInfo().type()) {
@@ -748,7 +747,6 @@ namespace JSC {
             return jsCast<NativeExecutable*>(executable)->clearCode();
         }
     }
-#endif
 
     inline void ScriptExecutable::unlinkCalls()
     {

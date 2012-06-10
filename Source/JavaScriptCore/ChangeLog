@@ -1,5 +1,13 @@
 2012-06-10  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed. Build fix for !ENABLE(JIT) after r119844 and r119925.
+
+        * runtime/Executable.h:
+        (ExecutableBase):
+        (JSC::ExecutableBase::clearCodeVirtual):
+
+2012-06-10  Patrick Gansterer  <paroga@webkit.org>
+
         Unreviewed. Build fix for !ENABLE(JIT) after r119844.
 
         * runtime/Executable.h:
