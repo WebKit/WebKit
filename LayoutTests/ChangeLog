@@ -1,3 +1,14 @@
+2012-06-10  Pablo Flouret  <pablof@motorola.com>
+
+        Access control allow lists starting with a comma are parsed incorrectly (CORS)
+        https://bugs.webkit.org/show_bug.cgi?id=88461
+
+        Reviewed by Adam Barth.
+
+        * http/tests/xmlhttprequest/access-control-allow-lists-starting-with-comma-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-allow-lists-starting-with-comma.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-allow-lists.php: Added.
+
 2012-06-10  Mike West  <mkwst@chromium.org>
 
         Removing mixed content tests' dependency on WebKitBlobBuilder:

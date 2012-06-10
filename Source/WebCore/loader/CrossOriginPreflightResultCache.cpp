@@ -77,10 +77,8 @@ static bool parseAccessControlAllowList(const String& string, HashSet<String, Ha
     unsigned start = 0;
     size_t end;
     while ((end = string.find(',', start)) != notFound) {
-        if (start == end)
-            return false;
-
-        addToAccessControlAllowList(string, start, end - 1, set);
+        if (start != end)
+            addToAccessControlAllowList(string, start, end - 1, set);
         start = end + 1;
     }
     if (start != string.length())
