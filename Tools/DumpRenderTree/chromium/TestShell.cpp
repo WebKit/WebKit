@@ -726,6 +726,7 @@ void TestShell::bindJSObjectsToWindow(WebFrame* frame)
     m_accessibilityController->bindToJavascript(frame, WebString::fromUTF8("accessibilityController"));
     m_gamepadController->bindToJavascript(frame, WebString::fromUTF8("gamepadController"));
     m_layoutTestController->bindToJavascript(frame, WebString::fromUTF8("layoutTestController"));
+    m_layoutTestController->bindToJavascript(frame, WebString::fromUTF8("testRunner"));
     m_eventSender->bindToJavascript(frame, WebString::fromUTF8("eventSender"));
     m_textInputController->bindToJavascript(frame, WebString::fromUTF8("textInputController"));
 }

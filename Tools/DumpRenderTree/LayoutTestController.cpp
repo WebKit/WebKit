@@ -2244,6 +2244,8 @@ static void layoutTestControllerObjectFinalize(JSObjectRef object)
 void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
     JSRetainPtr<JSStringRef> layoutTestContollerStr(Adopt, JSStringCreateWithUTF8CString("layoutTestController"));
+    JSRetainPtr<JSStringRef> testRunnerStr(Adopt, JSStringCreateWithUTF8CString("testRunner"));
+    ref();
     ref();
 
     JSClassRef classRef = getJSClass();
@@ -2251,6 +2253,7 @@ void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef wi
     JSClassRelease(classRef);
 
     JSObjectSetProperty(context, windowObject, layoutTestContollerStr.get(), layoutTestContollerObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
+    JSObjectSetProperty(context, windowObject, testRunnerStr.get(), layoutTestContollerObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
 }
 
 JSClassRef LayoutTestController::getJSClass()

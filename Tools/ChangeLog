@@ -1,3 +1,19 @@
+2012-06-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Expose layoutTestController as testRunner
+        https://bugs.webkit.org/show_bug.cgi?id=88210
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::makeWindowObject):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::bindJSObjectsToWindow):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::initJSObjects):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::makeWindowObject):
+
 2012-06-09  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Remove JavaScriptCore dependencies from gyp
