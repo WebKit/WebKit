@@ -1,5 +1,13 @@
 2012-06-10  Dan Bernstein  <mitz@apple.com>
 
+        Temporarily added http/tests/security/mixedContent/blob-url-in-iframe.html to the Mac skip
+        list. <http://webkit.org/b/88736> tracks moving this test off of the legacy
+        WebKitBlobBuilder API.
+
+        * platform/mac/Skipped:
+
+2012-06-10  Dan Bernstein  <mitz@apple.com>
+
         Added http/tests/security/mixedContent/filesystem-url-in-iframe.html to the Mac skip list,
         because FILE_SYSTEM is not enabled.
 
