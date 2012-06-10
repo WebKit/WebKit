@@ -1,3 +1,17 @@
+2012-06-09  Gregg Tavares  <gman@google.com>
+
+        Make WebGL mark draws for compositing even if the draw count is zero
+        https://bugs.webkit.org/show_bug.cgi?id=88718
+
+        Reviewed by Kenneth Russell.
+
+        No new tests as no new functionality.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::drawArrays):
+        (WebCore::WebGLRenderingContext::drawElements):
+
 2012-06-09  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Remove JavaScriptCore dependencies from gyp

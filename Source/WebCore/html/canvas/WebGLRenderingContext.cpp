@@ -1865,8 +1865,10 @@ void WebGLRenderingContext::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei c
         return;
     }
 
-    if (!count)
+    if (!count) {
+        cleanupAfterGraphicsCall(true);
         return;
+    }
 
     if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
         // Ensure we have a valid rendering state
@@ -1929,8 +1931,10 @@ void WebGLRenderingContext::drawElements(GC3Denum mode, GC3Dsizei count, GC3Denu
         return;
     }
 
-    if (!count)
+    if (!count) {
+        cleanupAfterGraphicsCall(true);
         return;
+    }
 
     if (!m_boundVertexArrayObject->getElementArrayBuffer()) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawElements", "no ELEMENT_ARRAY_BUFFER bound");
