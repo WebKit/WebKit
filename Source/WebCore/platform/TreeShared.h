@@ -34,7 +34,7 @@ template<typename NodeType, typename ParentNodeType> void adopted(TreeShared<Nod
 
 template<typename NodeType, typename ParentNodeType> class TreeShared {
     WTF_MAKE_NONCOPYABLE(TreeShared);
-public:
+protected:
     TreeShared()
         : m_parent(0)
         , m_refCount(1)
@@ -49,16 +49,15 @@ public:
 #endif
     }
 
-#ifndef NDEBUG
-    virtual ~TreeShared()
+    ~TreeShared()
     {
         ASSERT(isMainThread());
         ASSERT(!m_refCount);
         ASSERT(m_deletionHasBegun);
         ASSERT(!m_adoptionIsRequired);
     }
-#endif
 
+public:
     void ref()
     {
         ASSERT(isMainThread());

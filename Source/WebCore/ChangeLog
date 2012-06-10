@@ -1,3 +1,18 @@
+2012-06-10  Darin Adler  <darin@apple.com>
+
+        Some additional tweaks to keep TreeShared code simple/clean
+        https://bugs.webkit.org/show_bug.cgi?id=88738
+
+        Reviewed by Adam Barth.
+
+        * platform/TreeShared.h: Make constructor and destructor both protected.
+        It's slightly dangerous to have a public non-virtual destructor, and there
+        is no reason it needs to be public.
+        (WebCore::TreeShared::~TreeShared): Make debug-only destructor non-virtual;
+        we were getting no value from it being virtual. Now that it's non-virtual,
+        there is no need to use an #if on it since it's an empty inline destructor
+        in non-debug builds.
+
 2012-06-06  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION: Setting invalid media "src" does not cause "error" event
