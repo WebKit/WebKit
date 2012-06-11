@@ -34,6 +34,11 @@
 
 namespace WebCore {
 
+enum CookieFilter {
+    NoHttpOnlyCookie,
+    WithHttpOnlyCookies,
+};
+
 class ParsedCookie;
 
 /* A cookie map is a node in the tree held by CookieManager that represents
@@ -54,11 +59,11 @@ public:
     unsigned int count() const { return m_cookieVector.size(); }
     const String& getName() const { return m_name; }
 
-    // Returning the original cookie object so manager can keep a reference to the updates in the database queue.
-    ParsedCookie* addOrReplaceCookie(ParsedCookie*);
+    // Return false if the candidateCookie is rejected.
+    bool addOrReplaceCookie(ParsedCookie* candidateCookie, ParsedCookie** replacedCookie, CookieFilter = WithHttpOnlyCookies);
 
     // Need to return the reference to the removed cookie so manager can deal with it (garbage collect).
-    ParsedCookie* removeCookie(const ParsedCookie*);
+    ParsedCookie* removeCookie(const ParsedCookie*, CookieFilter = WithHttpOnlyCookies);
 
     // Returns a map with that given subdomain.
     CookieMap* getSubdomainMap(const String&);

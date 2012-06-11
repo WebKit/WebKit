@@ -1,3 +1,14 @@
+2012-06-10  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        [BlackBerry] Possible to clobber httponly cookie.
+        https://bugs.webkit.org/show_bug.cgi?id=86067
+
+        Reviewed by Rob Buis.
+
+        * http/tests/cookies/js-get-and-set-http-only-cookie-expected.txt: Added.
+        * http/tests/cookies/js-get-and-set-http-only-cookie.html: Added.
+        * platform/chromium/http/tests/cookies/js-get-and-set-http-only-cookie-expected.txt: Added.
+
 2012-06-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Expose layoutTestController as testRunner
