@@ -599,9 +599,6 @@ BUGWK88191 : fast/viewport/viewport-legacy-ordering-5.html = TEXT
 BUGWK88191 : fast/viewport/viewport-legacy-ordering-6.html = TEXT
 BUGWK88191 : fast/viewport/viewport-legacy-xhtmlmp.html = TEXT
 
-// LEGACY_WEBKIT_BLOB_BUILDER flag is disabled for EFL port
-BUGWK88715 : http/tests/security/mixedContent/blob-url-in-iframe.html = TEXT
-
 // The EFL port has no support for the FileSystem API
 BUGWK68591 SKIP : fast/filesystem = FAIL
 BUGWK68591 SKIP : fast/mutation/filesystem-callback-delivery.html = FAIL

@@ -1,3 +1,13 @@
+2012-06-11  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Unskip http/tests/security/mixedContent/blob-url-in-iframe.html
+        https://bugs.webkit.org/show_bug.cgi?id=88752
+
+        Unreviewed EFL gardening. Unskip http/tests/security/mixedContent/blob-url-in-iframe.html
+        now that it no longer depends on the legacy blob builder (r119944).
+
+        * platform/efl/TestExpectations:
+
 2012-06-08  Kinuko Yasuda  <kinuko@chromium.org>
 
         Using BlobBuilder should show a deprecation warning message (if it is enabled)
