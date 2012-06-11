@@ -1,3 +1,14 @@
+2012-06-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] REGRESSION (r119788): tests rely on pathToLocalResource are failing after r119788
+        https://bugs.webkit.org/show_bug.cgi?id=88661
+
+        Reviewed by Dirk Pranke.
+
+        Unskip test cases which rely on pathToLocalResource().
+
+        * platform/efl/TestExpectations:
+
 2012-06-11  Pravin D  <pravind.2k4@gmail.com>
 
         Relative pos. input fields in columns vanish when you start typing in them

@@ -178,7 +178,7 @@ void LayoutTestController::notifyDone()
 
 JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef url)
 {
-    String requestedUrl(url->characters());
+    String requestedUrl(url->characters(), url->length());
     String resourceRoot;
     String requestedRoot;
 

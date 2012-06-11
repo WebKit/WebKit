@@ -1,3 +1,16 @@
+2012-06-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] REGRESSION (r119788): tests rely on pathToLocalResource are failing after r119788
+        https://bugs.webkit.org/show_bug.cgi?id=88661
+
+        Reviewed by Dirk Pranke.
+
+        Pass string length explicitly when creating String object from
+        non-null-terminated UChar* returned by characters().
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::pathToLocalResource):
+
 2012-06-11  David Dorwin  <ddorwin@chromium.org>
 
         [chromium] Provide access to the WebPlugin created by the helper plugin widget
