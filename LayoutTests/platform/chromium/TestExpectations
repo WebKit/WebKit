@@ -1262,6 +1262,7 @@ BUGWK83303 WIN LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
 BUGWK83303 LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = PASS IMAGE
 BUGWK83303 WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
 BUGWK83303 WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
+BUGWK83303 WIN : svg/as-background-image/svg-as-background-6.html = PASS IMAGE
 BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container-standalone.svg = IMAGE PASS
 BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container.xhtml = IMAGE PASS
 BUGWK83303 WIN : svg/custom/mouse-move-on-svg-root-standalone.svg = IMAGE PASS

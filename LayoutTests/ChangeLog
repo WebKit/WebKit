@@ -1,5 +1,15 @@
 2012-06-10  Dominic Cooney  <dominicc@chromium.org>
 
+        [Chromium] Unreviewed: Add expectations for svg-as-background-6.html
+
+        Like other SVG tests noted in bug 83303, this test fails on
+        Windows because it uses a sans-serif font where a serif font is
+        expected.
+
+        * platform/chromium/TestExpectations:
+
+2012-06-10  Dominic Cooney  <dominicc@chromium.org>
+
         [Chromium] Unreviewed: Rebaseline fixed-position-transform-composited-page-scale on Linux, Win
 
         These differ in antialiasing only, where there are already
