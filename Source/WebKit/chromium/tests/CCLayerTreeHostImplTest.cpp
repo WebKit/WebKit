@@ -31,6 +31,7 @@
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerRendererChromium.h"
+#include "cc/CCIOSurfaceLayerImpl.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTilingData.h"
 #include "cc/CCQuadCuller.h"
@@ -1724,6 +1725,38 @@ private:
     Client* m_client;
 };
 
+class StrictWebGraphicsContext3DWithIOSurface : public StrictWebGraphicsContext3D {
+public:
+    virtual WebString getString(WGC3Denum name) OVERRIDE
+    {
+        if (name == WebCore::GraphicsContext3D::EXTENSIONS)
+            return WebString("GL_CHROMIUM_iosurface GL_ARB_texture_rectangle");
+
+        return WebString();
+    }
+
+    static PassRefPtr<GraphicsContext3D> createGraphicsContext()
+    {
+        return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new StrictWebGraphicsContext3DWithIOSurface()), GraphicsContext3D::RenderDirectlyToHostWindow);
+    }
+};
+
+class FakeWebGraphicsContext3DWithIOSurface : public FakeWebGraphicsContext3D {
+public:
+    virtual WebString getString(WGC3Denum name) OVERRIDE
+    {
+        if (name == WebCore::GraphicsContext3D::EXTENSIONS)
+            return WebString("GL_CHROMIUM_iosurface GL_ARB_texture_rectangle");
+
+        return WebString();
+    }
+
+    static PassRefPtr<GraphicsContext3D> createGraphicsContext()
+    {
+        return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3DWithIOSurface()), GraphicsContext3D::RenderDirectlyToHostWindow);
+    }
+};
+
 TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
 {
     OwnPtr<CCLayerImpl> rootLayer(CCLayerImpl::create(0));
@@ -1758,6 +1791,18 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     videoLayer->setDrawsContent(true);
     rootLayer->addChild(videoLayer.release());
 
+    OwnPtr<CCIOSurfaceLayerImpl> ioSurfaceLayer = CCIOSurfaceLayerImpl::create(4);
+    ioSurfaceLayer->setBounds(IntSize(10, 10));
+    ioSurfaceLayer->setAnchorPoint(FloatPoint(0, 0));
+    ioSurfaceLayer->setContentBounds(IntSize(10, 10));
+    ioSurfaceLayer->setDrawsContent(true);
+    ioSurfaceLayer->setIOSurfaceProperties(1, IntSize(10, 10));
+    ioSurfaceLayer->setLayerTreeHostImpl(m_hostImpl.get());
+    rootLayer->addChild(ioSurfaceLayer.release());
+
+    // Use a context that supports IOSurfaces
+    m_hostImpl->initializeLayerRenderer(CCGraphicsContext::create3D(FakeWebGraphicsContext3DWithIOSurface::createGraphicsContext()), UnthrottledUploader);
+
     m_hostImpl->setRootLayer(rootLayer.release());
 
     CCLayerTreeHostImpl::FrameData frame;
@@ -1766,13 +1811,129 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     m_hostImpl->didDrawAllLayers(frame);
     m_hostImpl->swapBuffers();
 
-    // Lose the context, replacing it with a StrictWebGraphicsContext3D, that
-    // will warn if any resource from the previous context gets used.
-    m_hostImpl->initializeLayerRenderer(CCGraphicsContext::create3D(StrictWebGraphicsContext3D::createGraphicsContext()), UnthrottledUploader);
+    // Lose the context, replacing it with a StrictWebGraphicsContext3DWithIOSurface,
+    // that will warn if any resource from the previous context gets used.
+    m_hostImpl->initializeLayerRenderer(CCGraphicsContext::create3D(StrictWebGraphicsContext3DWithIOSurface::createGraphicsContext()), UnthrottledUploader);
     EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);
     m_hostImpl->didDrawAllLayers(frame);
     m_hostImpl->swapBuffers();
+}
+
+// Fake WebGraphicsContext3D that tracks the number of textures in use.
+class TrackingWebGraphicsContext3D : public FakeWebGraphicsContext3D {
+public:
+    TrackingWebGraphicsContext3D()
+        : m_nextTextureId(1)
+        , m_numTextures(0)
+    { }
+
+    virtual WebGLId createTexture() OVERRIDE
+    {
+        WebGLId id = m_nextTextureId;
+        ++m_nextTextureId;
+
+        m_textures.set(id, true);
+        ++m_numTextures;
+        return id;
+    }
+
+    virtual void deleteTexture(WebGLId id) OVERRIDE
+    {
+        if (!m_textures.get(id))
+            return;
+
+        m_textures.set(id, false);
+        --m_numTextures;
+    }
+
+    virtual WebString getString(WGC3Denum name) OVERRIDE
+    {
+        if (name == WebCore::GraphicsContext3D::EXTENSIONS)
+            return WebString("GL_CHROMIUM_iosurface GL_ARB_texture_rectangle");
+
+        return WebString();
+    }
+
+    PassRefPtr<GraphicsContext3D> createGraphicsContext()
+    {
+        return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(this), GraphicsContext3D::RenderDirectlyToHostWindow);
+    }
+
+    unsigned numTextures() const { return m_numTextures; }
+
+private:
+    WebGLId m_nextTextureId;
+    HashMap<WebGLId, bool> m_textures;
+    unsigned m_numTextures;
+};
+
+TEST_F(CCLayerTreeHostImplTest, layersFreeTextures)
+{
+    OwnPtr<CCLayerImpl> rootLayer(CCLayerImpl::create(1));
+    rootLayer->setBounds(IntSize(10, 10));
+    rootLayer->setAnchorPoint(FloatPoint(0, 0));
+
+    OwnPtr<CCTiledLayerImpl> tileLayer = CCTiledLayerImpl::create(2);
+    tileLayer->setBounds(IntSize(10, 10));
+    tileLayer->setAnchorPoint(FloatPoint(0, 0));
+    tileLayer->setContentBounds(IntSize(10, 10));
+    tileLayer->setDrawsContent(true);
+    tileLayer->setSkipsDraw(false);
+    OwnPtr<CCLayerTilingData> tilingData(CCLayerTilingData::create(IntSize(10, 10), CCLayerTilingData::NoBorderTexels));
+    tilingData->setBounds(IntSize(10, 10));
+    tileLayer->setTilingData(*tilingData);
+    tileLayer->pushTileProperties(0, 0, 1, IntRect(0, 0, 10, 10));
+    rootLayer->addChild(tileLayer.release());
+
+    OwnPtr<CCTextureLayerImpl> textureLayer = CCTextureLayerImpl::create(3);
+    textureLayer->setBounds(IntSize(10, 10));
+    textureLayer->setAnchorPoint(FloatPoint(0, 0));
+    textureLayer->setContentBounds(IntSize(10, 10));
+    textureLayer->setDrawsContent(true);
+    textureLayer->setTextureId(1);
+    rootLayer->addChild(textureLayer.release());
+
+    FakeVideoFrameProvider provider;
+    OwnPtr<CCVideoLayerImpl> videoLayer = CCVideoLayerImpl::create(4, &provider);
+    videoLayer->setBounds(IntSize(10, 10));
+    videoLayer->setAnchorPoint(FloatPoint(0, 0));
+    videoLayer->setContentBounds(IntSize(10, 10));
+    videoLayer->setDrawsContent(true);
+    videoLayer->setLayerTreeHostImpl(m_hostImpl.get());
+    rootLayer->addChild(videoLayer.release());
+
+    OwnPtr<CCIOSurfaceLayerImpl> ioSurfaceLayer = CCIOSurfaceLayerImpl::create(5);
+    ioSurfaceLayer->setBounds(IntSize(10, 10));
+    ioSurfaceLayer->setAnchorPoint(FloatPoint(0, 0));
+    ioSurfaceLayer->setContentBounds(IntSize(10, 10));
+    ioSurfaceLayer->setDrawsContent(true);
+    ioSurfaceLayer->setIOSurfaceProperties(1, IntSize(10, 10));
+    ioSurfaceLayer->setLayerTreeHostImpl(m_hostImpl.get());
+    rootLayer->addChild(ioSurfaceLayer.release());
+
+    // Lose the context, replacing it with a TrackingWebGraphicsContext3D, that
+    // tracks the number of textures allocated. This pointer is owned by its
+    // GraphicsContext3D.
+    TrackingWebGraphicsContext3D* trackingWebGraphicsContext = new TrackingWebGraphicsContext3D();
+    m_hostImpl->initializeLayerRenderer(CCGraphicsContext::create3D(trackingWebGraphicsContext->createGraphicsContext()), UnthrottledUploader);
+
+    m_hostImpl->setRootLayer(rootLayer.release());
+
+    CCLayerTreeHostImpl::FrameData frame;
+    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
+    m_hostImpl->drawLayers(frame);
+    m_hostImpl->didDrawAllLayers(frame);
+    m_hostImpl->swapBuffers();
+
+    EXPECT_GT(trackingWebGraphicsContext->numTextures(), 0u);
+
+    // Kill the layer tree.
+    m_hostImpl->setRootLayer(CCLayerImpl::create(100));
+    // FIXME: Remove this when we don't use ManagedTextures in impl layers.
+    m_hostImpl->layerRenderer()->implTextureManager()->deleteEvictedTextures(m_hostImpl->layerRenderer()->implTextureAllocator());
+    // There should be no textures left in use after.
+    EXPECT_EQ(0u, trackingWebGraphicsContext->numTextures());
 }
 
 class MockDrawQuadsToFillScreenContext : public FakeWebGraphicsContext3D {
