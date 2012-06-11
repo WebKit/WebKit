@@ -20,26 +20,24 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
 #include "SharedTimer.h"
-
-#include "PlatformSupport.h"
 
 #include <public/Platform.h>
 
 namespace WebCore {
 
 void setSharedTimerFiredFunction(void (*f)())
-{                   
-    PlatformSupport::setSharedTimerFiredFunction(f);
+{
+    WebKit::Platform::current()->setSharedTimerFiredFunction(f);
 }
 
 void setSharedTimerFireInterval(double fireTime)
 {
-    PlatformSupport::setSharedTimerFireInterval(fireTime);
+    WebKit::Platform::current()->setSharedTimerFireInterval(fireTime);
 }
 
 void stopSharedTimer()

@@ -1,3 +1,18 @@
+2012-06-11  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Call shared timer functions directly
+        https://bugs.webkit.org/show_bug.cgi?id=88781
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * platform/chromium/PlatformSupport.h:
+        (PlatformSupport):
+        * platform/chromium/SharedTimerChromium.cpp:
+        (WebCore::setSharedTimerFiredFunction):
+        (WebCore::setSharedTimerFireInterval):
+
 2012-06-11  Pravin D  <pravind.2k4@gmail.com>
 
         Relative pos. input fields in columns vanish when you start typing in them

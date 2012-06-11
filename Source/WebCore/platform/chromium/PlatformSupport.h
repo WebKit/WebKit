@@ -167,10 +167,6 @@ public:
     static IntRect screenRect(Widget*);
     static IntRect screenAvailableRect(Widget*);
 
-    // SharedTimers -------------------------------------------------------
-    static void setSharedTimerFiredFunction(void (*func)());
-    static void setSharedTimerFireInterval(double);
-
     // Returns private and shared usage, in bytes. Private bytes is the amount of
     // memory currently allocated to this process that cannot be shared. Returns
     // false on platform specific error conditions.

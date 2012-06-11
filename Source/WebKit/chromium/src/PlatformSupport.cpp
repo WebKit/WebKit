@@ -371,18 +371,6 @@ PassOwnPtr<AudioBus> PlatformSupport::decodeAudioFileData(const char* data, size
 
 #endif // ENABLE(WEB_AUDIO)
 
-// SharedTimers ---------------------------------------------------------------
-
-void PlatformSupport::setSharedTimerFiredFunction(void (*func)())
-{
-    webKitPlatformSupport()->setSharedTimerFiredFunction(func);
-}
-
-void PlatformSupport::setSharedTimerFireInterval(double interval)
-{
-    webKitPlatformSupport()->setSharedTimerFireInterval(interval);
-}
-
 // Theming --------------------------------------------------------------------
 
 #if OS(WINDOWS)
