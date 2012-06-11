@@ -121,6 +121,9 @@ private:
     MediaControlPanelMuteButtonElement* m_panelMuteButton;
     MediaControlVolumeSliderElement* m_volumeSlider;
     MediaControlVolumeSliderContainerElement* m_volumeSliderContainer;
+#if ENABLE(FULLSCREEN_MEDIA_CONTROLS)
+    MediaControlFullscreenButtonElement* m_fullscreenButton;
+#endif
     MediaControlPanelElement* m_panel;
 #if ENABLE(VIDEO_TRACK)
     MediaControlTextTrackContainerElement* m_textDisplayContainer;

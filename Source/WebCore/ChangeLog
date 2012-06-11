@@ -1,3 +1,26 @@
+2012-06-11  Min Qin  <qinmin@google.com>
+
+        Adding a flag to show fullscreen media controls in chromium
+        https://bugs.webkit.org/show_bug.cgi?id=88266
+
+        Reviewed by Adam Barth.
+
+        The default chromium shadow DOM for media element does not contain fullscreen button.
+        This change adds a flag to display the fullscreen button.
+        It will be used by the android port.
+
+        No new tests needed. We will use the same layout tests as desktop chromium.
+        However, new test result expections will be added later.
+
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::MediaControlRootElementChromium):
+        (WebCore::MediaControlRootElementChromium::create):
+        (WebCore::MediaControlRootElementChromium::setMediaController):
+        (WebCore::MediaControlRootElementChromium::reset):
+        (WebCore::MediaControlRootElementChromium::reportedError):
+        * html/shadow/MediaControlRootElementChromium.h:
+        (MediaControlRootElementChromium):
+
 2012-06-11  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Compute and set cache capacities using the current CacheModel

@@ -134,6 +134,7 @@
         'feature_defines': [
           'ENABLE_CALENDAR_PICKER=0',
           'ENABLE_FONT_BOOSTING=1',
+          'ENABLE_FULLSCREEN_MEDIA_CONTROLS=1',
           'ENABLE_INPUT_SPEECH=0',
           'ENABLE_INPUT_TYPE_DATETIME=1',
           'ENABLE_INPUT_TYPE_DATETIMELOCAL=1',
@@ -159,6 +160,7 @@
         'feature_defines': [
           'ENABLE_CALENDAR_PICKER=1',
           'ENABLE_FONT_BOOSTING=0',
+          'ENABLE_FULLSCREEN_MEDIA_CONTROLS=0',
           'ENABLE_INPUT_SPEECH=1',
           'ENABLE_INPUT_TYPE_DATETIME=0',
           'ENABLE_INPUT_TYPE_DATETIMELOCAL=0',
