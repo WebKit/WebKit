@@ -301,6 +301,12 @@ base.AsynchronousCache.prototype.get = function(key, callback)
     });
 };
 
+base.AsynchronousCache.prototype.clear = function()
+{
+    this._dataCache = {};
+    this._callbackCache = {};
+}
+
 /*
     Maintains a dictionary of items, tracking their updates and removing items that haven't been updated.
     An "update" is a call to the "update" method.

@@ -47,7 +47,7 @@ function didFail(step)
         // run-webkit-tests fails to generate test coverage when it crashes or hangs.
         return step.text.indexOf(kCrashedOrHungOutputMarker) != -1;
     }
-    return step.results[0] > 0;
+    return step.results[0] > 0 && step.text.indexOf('warning') == -1;
 }
 
 function failingSteps(buildInfo)
@@ -73,6 +73,11 @@ var g_buildInfoCache = new base.AsynchronousCache(function(key, callback) {
     var explodedKey = key.split('\n');
     net.get(urlForBuildInfo(explodedKey[0], explodedKey[1]), callback);
 });
+
+builders.clearBuildInfoCache = function()
+{
+    g_buildInfoCache.clear();
+}
 
 function fetchMostRecentBuildInfoByBuilder(callback)
 {
