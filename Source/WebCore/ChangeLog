@@ -1,3 +1,13 @@
+2012-06-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Win] Fix UString related build problem in Source/WebCore/bridge/qt/qt_instance.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=88310
+
+        Reviewed by Simon Hausmann.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::getPropertyNames):
+
 2012-06-11  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Compute and set cache capacities using the current CacheModel

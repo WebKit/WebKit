@@ -223,8 +223,8 @@ void QtInstance::getPropertyNames(ExecState* exec, PropertyNameArray& array)
             QMetaMethod method = meta->method(i);
             if (method.access() != QMetaMethod::Private) {
 #if HAVE(QT5)
-                QString sig = QString::fromLatin1(method.methodSignature());
-                array.add(Identifier(exec, UString(sig.utf16(), sig.length())));
+                QByteArray sig = method.methodSignature();
+                array.add(Identifier(exec, UString(sig.constData(), sig.length())));
 #else
                 array.add(Identifier(exec, method.signature()));
 #endif
