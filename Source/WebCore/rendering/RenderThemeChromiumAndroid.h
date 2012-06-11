@@ -41,7 +41,7 @@ public:
 
     virtual bool delegatesMenuListRendering() const OVERRIDE { return true; }
 
-    virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
 
 #if ENABLE(VIDEO)
     virtual String extraMediaControlsStyleSheet() OVERRIDE;
@@ -54,10 +54,19 @@ public:
     }
 #endif
 
+    virtual Color platformActiveSelectionBackgroundColor() const OVERRIDE
+    {
+        return RenderThemeChromiumAndroid::defaultActiveSelectionBackgroundColor;
+    }
+
+protected:
+    virtual int menuListArrowPadding() const OVERRIDE;
+
 private:
     virtual ~RenderThemeChromiumAndroid();
 
     static const RGBA32 defaultTapHighlightColor = 0x6633b5e5;
+    static const RGBA32 defaultActiveSelectionBackgroundColor = 0x6633b5e5;
 };
 
 } // namespace WebCore

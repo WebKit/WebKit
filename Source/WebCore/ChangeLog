@@ -1,3 +1,33 @@
+2012-06-11  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Theme updates for Android in menu list rendering and selection backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=88775
+
+        Reviewed by Adam Barth.
+
+        For Chrome on Android, use the width of the scrollbar down arrow instead
+        of the scrollbar's width for determining the arrow padding to apply for
+        menu list rendering, as WebKit isn't drawing a scrollbar (thus width=0).
+
+        Furthermore, change the default active selection background color to be
+        equal to the tap highlighting color.
+
+        These changes should be covered by existing layout tests.
+
+        * rendering/RenderThemeChromiumAndroid.cpp:
+        (WebCore::RenderThemeChromiumAndroid::menuListArrowPadding):
+        (WebCore): Retrieve the scrollbar down arrow's size via PlatformSupport.
+        * rendering/RenderThemeChromiumAndroid.h: Override the menuListArrowPadding
+            and platformActiveSelectionBackgroundColor methods, and add a static
+            static RGBA32 color for the default active selection bg color.
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::menuListArrowPadding): Default to
+            the scrollbar thickness, not changing behavior for non-Android.
+        (WebCore::RenderThemeChromiumSkia::menuListInternalPadding): Instead
+            of polling the scrollbar thickness, call menuListArrowPadding().
+        * rendering/RenderThemeChromiumSkia.h: 
+        (RenderThemeChromiumSkia): Add the menuListArrowPadding() as a protected method.
+
 2012-06-11  David Barr  <davidbarr@chromium.org>
 
         Add css3-images image-resolution (dppx only)

@@ -99,4 +99,12 @@ bool RenderThemeChromiumAndroid::paintMediaFullscreenButton(RenderObject* object
 #endif
 }
 
+int RenderThemeChromiumAndroid::menuListArrowPadding() const
+{
+    // We cannot use the scrollbar thickness here, as it's width is 0 on Android.
+    // Instead, use the width of the scrollbar down arrow.
+    IntSize scrollbarSize = PlatformSupport::getThemePartSize(PlatformSupport::PartScrollbarDownArrow);
+    return scrollbarSize.width();
+}
+
 } // namespace WebCore

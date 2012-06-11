@@ -146,6 +146,8 @@ class RenderThemeChromiumSkia : public RenderTheme {
 
         virtual double caretBlinkIntervalInternal() const;
 
+        virtual int menuListArrowPadding() const;
+
         static void setSizeIfAuto(RenderStyle*, const IntSize&);
 
 #if ENABLE(PROGRESS_TAG)
