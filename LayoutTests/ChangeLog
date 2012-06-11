@@ -1,3 +1,11 @@
+2012-06-11  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] Gardening, skip new failing tests.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+
 2012-06-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] skip http/tests/cookies/js-get-and-set-http-only-cookie.html test case
