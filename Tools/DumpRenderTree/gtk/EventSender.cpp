@@ -205,8 +205,10 @@ static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef functio
 {
     GdkEvent* pressEvent = gdk_event_new(GDK_BUTTON_PRESS);
 
-    if (!prepareMouseButtonEvent(pressEvent, 2, 0))
+    if (!prepareMouseButtonEvent(pressEvent, 2, 0)) {
+        gdk_event_free(pressEvent);
         return JSObjectMakeArray(context, 0, 0, 0);
+    }
 
     GdkEvent* releaseEvent = gdk_event_copy(pressEvent);
     sendOrQueueEvent(pressEvent);
@@ -315,12 +317,16 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
     guint modifiers = argumentCount >= 2 ? gdkModifersFromJSValue(context, arguments[1]) : 0;
 
     GdkEvent* event = gdk_event_new(GDK_BUTTON_PRESS);
-    if (!prepareMouseButtonEvent(event, button, modifiers))
+    if (!prepareMouseButtonEvent(event, button, modifiers)) {
+        gdk_event_free(event);
         return JSValueMakeUndefined(context);
+    }
 
     // If the same mouse button is already in the down position don't send another event as it may confuse Xvfb.
-    if (buttonCurrentlyDown == event->button.button)
+    if (buttonCurrentlyDown == event->button.button) {
+        gdk_event_free(event);
         return JSValueMakeUndefined(context);
+    }
 
     buttonCurrentlyDown = event->button.button;
 
@@ -363,8 +369,10 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
     guint modifiers = argumentCount >= 2 ? gdkModifersFromJSValue(context, arguments[1]) : 0;
 
     GdkEvent* event = gdk_event_new(GDK_BUTTON_RELEASE);
-    if (!prepareMouseButtonEvent(event, button, modifiers))
+    if (!prepareMouseButtonEvent(event, button, modifiers)) {
+        gdk_event_free(event);
         return JSValueMakeUndefined(context);
+    }
 
     lastClickPositionX = lastMousePositionX;
     lastClickPositionY = lastMousePositionY;
