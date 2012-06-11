@@ -29,18 +29,20 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCVideoDrawQuad> CCVideoDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCVideoLayerImpl::Texture* textures, WebKit::WebVideoFrame* frame, GC3Denum format)
+PassOwnPtr<CCVideoDrawQuad> CCVideoDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCVideoLayerImpl::FramePlane planes[WebKit::WebVideoFrame::maxPlanes], unsigned frameProviderTextureId, GC3Denum format, const WebKit::WebTransformationMatrix& matrix)
 {
-    return adoptPtr(new CCVideoDrawQuad(sharedQuadState, quadRect, textures, frame, format));
+    return adoptPtr(new CCVideoDrawQuad(sharedQuadState, quadRect, planes, frameProviderTextureId, format, matrix));
 }
 
-CCVideoDrawQuad::CCVideoDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCVideoLayerImpl::Texture* textures, WebKit::WebVideoFrame* frame, GC3Denum format)
+CCVideoDrawQuad::CCVideoDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCVideoLayerImpl::FramePlane planes[WebKit::WebVideoFrame::maxPlanes], unsigned frameProviderTextureId, GC3Denum format, const WebKit::WebTransformationMatrix& matrix)
     : CCDrawQuad(sharedQuadState, CCDrawQuad::VideoContent, quadRect)
-    , m_textures(textures)
-    , m_frame(frame)
+    , m_frameProviderTextureId(frameProviderTextureId)
     , m_format(format)
-    , m_matrix(0)
+    , m_matrix(matrix)
 {
+    for (size_t i = 0; i < WebKit::WebVideoFrame::maxPlanes; ++i)
+      m_planes[i] = planes[i];
+
 }
 
 }

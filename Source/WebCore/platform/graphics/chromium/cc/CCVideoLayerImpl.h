@@ -26,8 +26,10 @@
 #ifndef CCVideoLayerImpl_h
 #define CCVideoLayerImpl_h
 
-#include "ManagedTexture.h"
+#include "GraphicsContext3D.h"
+#include "IntSize.h"
 #include "cc/CCLayerImpl.h"
+#include <public/WebTransformationMatrix.h>
 #include <public/WebVideoFrameProvider.h>
 
 namespace WebKit {
@@ -65,15 +67,17 @@ public:
 
     void setNeedsRedraw();
 
-    static const float yuv2RGB[9];
-    static const float yuvAdjust[3];
-    static const float flipTransform[16];
+    struct FramePlane {
+        unsigned textureId;
+        IntSize size;
+        GC3Denum format;
+        IntSize visibleSize;
 
-    struct Texture {
-        OwnPtr<ManagedTexture> m_texture;
-        IntSize m_visibleSize;
+        FramePlane() : textureId(0) { }
+
+        bool allocateData(CCRenderer*);
+        void freeData(CCRenderer*);
     };
-    enum { MaxPlanes = 3 };
 
 private:
     CCVideoLayerImpl(int, WebKit::WebVideoFrameProvider*);
@@ -81,19 +85,23 @@ private:
     static IntSize computeVisibleSize(const WebKit::WebVideoFrame&, unsigned plane);
     virtual const char* layerTypeAsString() const OVERRIDE { return "VideoLayer"; }
 
-    void willDrawInternal(CCRenderer*);
-    bool reserveTextures(const WebKit::WebVideoFrame&, GC3Denum format, CCRenderer*);
+    void willDrawInternal(CCRenderer*, CCGraphicsContext*);
+    bool allocatePlaneData(CCRenderer*);
+    bool copyPlaneData(CCRenderer*, CCGraphicsContext*);
+    void freePlaneData(CCRenderer*);
+    void freeUnusedPlaneData(CCRenderer*);
 
     // Guards the destruction of m_provider and the frame that it provides
     Mutex m_providerMutex;
     WebKit::WebVideoFrameProvider* m_provider;
 
-    Texture m_textures[MaxPlanes];
-
-    float m_streamTextureMatrix[16];
+    WebKit::WebTransformationMatrix m_streamTextureMatrix;
 
     WebKit::WebVideoFrame* m_frame;
     GC3Denum m_format;
+
+    // Each index in this array corresponds to a plane in WebKit::WebVideoFrame.
+    FramePlane m_framePlanes[WebKit::WebVideoFrame::maxPlanes];
 };
 
 }

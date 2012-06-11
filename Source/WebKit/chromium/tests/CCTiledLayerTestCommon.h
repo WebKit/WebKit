@@ -157,6 +157,7 @@ public:
 class FakeTextureCopier : public WebCore::TextureCopier {
 public:
     virtual void copyTexture(WebCore::CCGraphicsContext*, unsigned, unsigned, const WebCore::IntSize&) { }
+    virtual void copyToTexture(WebCore::CCGraphicsContext*, const void*, unsigned, const WebCore::IntSize&, GC3Denum) { }
 };
 
 class FakeTextureUploader : public WebCore::TextureUploader {

@@ -131,7 +131,6 @@
             'chromium/src/WebFloatQuad.cpp',
             'chromium/src/WebPrerenderingSupport.cpp',
             'chromium/src/WebString.cpp',
-            'chromium/src/WebVideoFrame.cpp',
         ]
     }
 }

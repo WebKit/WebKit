@@ -29,33 +29,29 @@
 #include "GraphicsTypes3D.h"
 #include "cc/CCDrawQuad.h"
 #include "cc/CCVideoLayerImpl.h"
+#include <public/WebTransformationMatrix.h>
 #include <wtf/PassOwnPtr.h>
-
-namespace WebKit {
-class WebVideoFrame;
-}
 
 namespace WebCore {
 
 class CCVideoDrawQuad : public CCDrawQuad {
     WTF_MAKE_NONCOPYABLE(CCVideoDrawQuad);
 public:
-    static PassOwnPtr<CCVideoDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCVideoLayerImpl::Texture* textures, WebKit::WebVideoFrame*, GC3Denum format);
+    static PassOwnPtr<CCVideoDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCVideoLayerImpl::FramePlane planes[WebKit::WebVideoFrame::maxPlanes], unsigned frameProviderTextureId, GC3Denum format, const WebKit::WebTransformationMatrix&);
 
-    CCVideoLayerImpl::Texture* textures() const { return m_textures; }
-    WebKit::WebVideoFrame* frame() const { return m_frame; }
+    // Each index in this array corresponds to a plane in WebKit::WebVideoFrame.
+    const CCVideoLayerImpl::FramePlane* planes() const { return m_planes; }
+    unsigned frameProviderTextureId() const { return m_frameProviderTextureId; }
     GC3Denum format() const { return m_format; }
-    const float* matrix() const { return m_matrix; }
-
-    void setMatrix(const float* matrix) { m_matrix = matrix; }
+    const WebKit::WebTransformationMatrix& matrix() const { return m_matrix; }
 
 private:
-    CCVideoDrawQuad(const CCSharedQuadState*, const IntRect&, CCVideoLayerImpl::Texture* textures, WebKit::WebVideoFrame*, GC3Denum format);
+    CCVideoDrawQuad(const CCSharedQuadState*, const IntRect&, CCVideoLayerImpl::FramePlane planes[WebKit::WebVideoFrame::maxPlanes], unsigned frameProviderTextureId, GC3Denum format, const WebKit::WebTransformationMatrix&);
 
-    CCVideoLayerImpl::Texture* m_textures;
-    WebKit::WebVideoFrame* m_frame;
+    CCVideoLayerImpl::FramePlane m_planes[WebKit::WebVideoFrame::maxPlanes];
+    unsigned m_frameProviderTextureId;
     GC3Denum m_format;
-    const float* m_matrix;
+    WebKit::WebTransformationMatrix m_matrix;
 };
 
 }

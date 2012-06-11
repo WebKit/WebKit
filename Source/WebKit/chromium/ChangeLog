@@ -1,3 +1,15 @@
+2012-06-11  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Separate CCVideoDrawQuad and from the layer tree and video provider by removing ManagedTexture and WebVideoFrame pointers from the quad
+        https://bugs.webkit.org/show_bug.cgi?id=88363
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCTiledLayerTestCommon.h:
+        (WebKitTests::FakeTextureCopier::copyToTexture):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+
 2012-06-11  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Object stores are not successfully deleted

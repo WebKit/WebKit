@@ -1,3 +1,64 @@
+2012-06-11  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Separate CCVideoDrawQuad and from the layer tree and video provider by removing ManagedTexture and WebVideoFrame pointers from the quad
+        https://bugs.webkit.org/show_bug.cgi?id=88363
+
+        Reviewed by Adrienne Walker.
+
+        CCVideoDrawQuad should not contain any pointers to data in the layer
+        tree so we are able to serialize it across process boundaries. This
+        patch removes the ManagedTexture pointers from the quad class,
+        replacing them with texture ids. It removes the WebVideoFrame* from
+        the quad, replacing it with the frame provider's texture id included
+        in the WebVideoFrame structure. And it uses a WebTransformationMatrix
+        instead of a pointer to an array of floats.
+
+        Texture allocation is done in CCVideoLayerImpl via the
+        contentsTextureAllocator, so that the memory usage can be tracked.
+
+        We move the copyPlaneToTextures() method back from LayerRendererChromium
+        to CCVideoLayerImpl, as this method uses the texture data pointer in the
+        WebVideoFrame, and we do not want to give this pointer to the quad
+        class. Instead, this method makes use of the LayerTextureSubImage class
+        to copy the pixel data into the texture.
+
+        LayerTextureSubImage is updated to allow non-4byte texture formats.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawYUV):
+        (WebCore::LayerRendererChromium::drawRGBA):
+        (WebCore::LayerRendererChromium::drawNativeTexture2D):
+        (WebCore::LayerRendererChromium::drawStreamTexture):
+        (WebCore::LayerRendererChromium::drawVideoQuad):
+        * platform/graphics/chromium/LayerTextureSubImage.cpp:
+        (WebCore::LayerTextureSubImage::uploadWithTexSubImage):
+        (WebCore::LayerTextureSubImage::uploadWithMapTexSubImage):
+        * platform/graphics/chromium/TextureCopier.cpp:
+        * platform/graphics/chromium/cc/CCVideoDrawQuad.cpp:
+        (WebCore::CCVideoDrawQuad::create):
+        (WebCore::CCVideoDrawQuad::CCVideoDrawQuad):
+        * platform/graphics/chromium/cc/CCVideoDrawQuad.h:
+        (CCVideoDrawQuad):
+        (WebCore::CCVideoDrawQuad::planes):
+        (WebCore::CCVideoDrawQuad::frameProviderTextureId):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::~CCVideoLayerImpl):
+        (WebCore::CCVideoLayerImpl::willDraw):
+        (WebCore::CCVideoLayerImpl::willDrawInternal):
+        (WebCore::CCVideoLayerImpl::appendQuads):
+        (WebCore::CCVideoLayerImpl::didDraw):
+        (WebCore::CCVideoLayerImpl::FramePlane::allocateData):
+        (WebCore):
+        (WebCore::CCVideoLayerImpl::FramePlane::freeData):
+        (WebCore::CCVideoLayerImpl::allocatePlaneData):
+        (WebCore::CCVideoLayerImpl::copyPlaneData):
+        (WebCore::CCVideoLayerImpl::freePlaneData):
+        (WebCore::CCVideoLayerImpl::freeUnusedPlaneData):
+        (WebCore::CCVideoLayerImpl::didLoseContext):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+        (FramePlane):
+        (WebCore::CCVideoLayerImpl::FramePlane::FramePlane):
+
 2012-06-11  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Object stores are not successfully deleted

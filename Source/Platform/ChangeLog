@@ -1,3 +1,14 @@
+2012-06-11  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Separate CCVideoDrawQuad and from the layer tree and video provider by removing ManagedTexture and WebVideoFrame pointers from the quad
+        https://bugs.webkit.org/show_bug.cgi?id=88363
+
+        Reviewed by Adrienne Walker.
+
+        * Platform.gypi:
+        * chromium/public/WebVideoFrame.h:
+        * chromium/src/WebVideoFrame.cpp: Removed.
+
 2012-06-08  David Reveman  <reveman@chromium.org>
 
         [Chromium] Compositor doesn't support translucent root layers.

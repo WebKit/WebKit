@@ -38,13 +38,17 @@ namespace WebKit {
 // Keep in sync with chromium's media::VideoFrame::Format.
 class WebVideoFrame {
 public:
-    static const unsigned maxPlanes;
-    static const unsigned numRGBPlanes;
-    static const unsigned rgbPlane;
-    static const unsigned numYUVPlanes;
-    static const unsigned yPlane;
-    static const unsigned uPlane;
-    static const unsigned vPlane;
+    enum {
+        rgbPlane = 0,
+        numRGBPlanes = 1
+    };
+    enum {
+        yPlane = 0,
+        uPlane = 1,
+        vPlane = 2,
+        numYUVPlanes = 3
+    };
+    enum { maxPlanes = 3 };
 
     enum Format {
         FormatInvalid = 0,
