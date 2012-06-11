@@ -45,6 +45,7 @@
 #include "V8GCController.h"
 #endif
 #include "GraphicsContext.h"
+#include "HTMLFormElement.h"
 #include "HTMLMetaElement.h"
 #include "HitTestResult.h"
 #include "HTTPParsers.h"

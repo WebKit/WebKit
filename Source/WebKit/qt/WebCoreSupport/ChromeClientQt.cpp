@@ -44,6 +44,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayer.h"
 #endif
+#include "HTMLFormElement.h"
 #include "HitTestResult.h"
 #include "Icon.h"
 #include "NavigationAction.h"

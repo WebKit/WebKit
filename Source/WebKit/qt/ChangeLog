@@ -1,3 +1,16 @@
+2012-06-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Win] Add missing includes to fix the build
+        https://bugs.webkit.org/show_bug.cgi?id=88538
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebframe.cpp:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        * WebCoreSupport/GeolocationClientQt.cpp:
+        * WebCoreSupport/IconDatabaseClientQt.cpp:
+
 2012-06-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed, fix file permissions.

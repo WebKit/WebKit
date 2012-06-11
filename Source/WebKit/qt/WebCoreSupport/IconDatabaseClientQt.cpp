@@ -29,6 +29,7 @@
 #include "IconDatabaseClientQt.h"
 
 #include "FrameLoaderClientQt.h"
+#include "HTMLFormElement.h"
 #include "IconDatabaseBase.h"
 #include <wtf/text/CString.h>
 

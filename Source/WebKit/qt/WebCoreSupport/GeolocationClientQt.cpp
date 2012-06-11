@@ -31,6 +31,7 @@
 #include "GeolocationError.h"
 #include "GeolocationPermissionClientQt.h"
 #include "GeolocationPosition.h"
+#include "HTMLFormElement.h"
 #include "Page.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
