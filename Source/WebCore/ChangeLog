@@ -1,3 +1,19 @@
+2012-06-11  MORITA Hajime  <morrita@google.com>
+
+        Spellchecker crash in async scenario.
+        https://bugs.webkit.org/show_bug.cgi?id=88617
+
+        Reviewed by Tony Chang.
+
+        SpellCheckRequest::invokeRequest() can be reached after the frame is detached.
+        SpellCheckRequest should ignore such a request since TextCheckerClient is not available
+        for detached Frames.
+
+        No new tests. It's hard to reproduce this.
+
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::invokeRequest):
+
 2012-06-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Extract CursorMap from WidgetEfl.cpp.
