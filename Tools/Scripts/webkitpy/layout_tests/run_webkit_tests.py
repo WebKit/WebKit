@@ -383,11 +383,11 @@ def parse_args(args=None):
         # FIXME: Display default number of child processes that will run.
         optparse.make_option("-f", "--fully-parallel", action="store_true",
             help="run all tests in parallel"),
-        optparse.make_option("--exit-after-n-failures", type="int", default=500,
+        optparse.make_option("--exit-after-n-failures", type="int", default=None,
             help="Exit after the first N failures instead of running all "
             "tests"),
         optparse.make_option("--exit-after-n-crashes-or-timeouts", type="int",
-            default=20, help="Exit after the first N crashes instead of "
+            default=None, help="Exit after the first N crashes instead of "
             "running all tests"),
         optparse.make_option("--iterations", type="int", help="Number of times to run the set of tests (e.g. ABCABCABC)"),
         optparse.make_option("--repeat-each", type="int", help="Number of times to run each test (e.g. AAABBBCCC)"),

@@ -1,3 +1,31 @@
+2012-06-11  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt exits early too frequently
+        https://bugs.webkit.org/show_bug.cgi?id=73843
+
+        Reviewed by Ryosuke Niwa.
+
+        Change the defaults for new-run-webkit-tests for both
+        --exit-after-n-failures and --exit-after-n-crashes-or-timeouts
+        to zero (i.e., we will never exit early by default).
+
+        If people want their buildbots to exit early it is their
+        responsibility to update their buildbot configs appropriately.
+
+        Note that we have tests that ensure that these flags work for
+        non-zero numbers, but we don't have tests that either test the
+        default or ensure that zero means "run all of the tests". I
+        think that's okay but can add tests if others disagree.
+
+        Also note that it looks like no changes on the build.webkit.org
+        master.cfg are necessary; all of the bots seem to be using the
+        RunWebKitTests wrapper which is already setting the flags. There
+        is a NewRunWebKitTests wrapper, but that looks to be unused; I
+        will delete that in a separate patch.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2012-06-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Reset CacheModel before running each test
