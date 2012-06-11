@@ -1,3 +1,15 @@
+2012-06-11  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Add config tests for WEBP imagedecoder library, modify HAVE(decoderlibrary) to USE(...)
+        https://bugs.webkit.org/show_bug.cgi?id=87841
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/config.tests/libwebp/libwebp.cpp: Added.
+        (main):
+        * qmake/config.tests/libwebp/libwebp.pro: Added.
+        * qmake/sync.profile:
+
 2012-06-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Expose layoutTestController as testRunner

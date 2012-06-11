@@ -4,6 +4,7 @@
     gccdepends => {},
     libpng => {},
     libjpeg => {},
+    libwebp => {},
     libxml2 => {},
     libxslt => {},
 );

@@ -4076,17 +4076,16 @@ contains(DEFINES, ENABLE_MHTML=1) {
         page/PageSerializer.cpp
 }
 
-contains(DEFINES, HAVE_LIBPNG=1) {
+contains(DEFINES, WTF_USE_LIBPNG=1) {
     SOURCES += platform/image-decoders/ico/ICOImageDecoder.cpp \
                platform/image-decoders/png/PNGImageDecoder.cpp
 }
 
-contains(DEFINES, HAVE_LIBJPEG=1) {
+contains(DEFINES, WTF_USE_LIBJPEG=1) {
     SOURCES += platform/image-decoders/jpeg/JPEGImageDecoder.cpp
 }
 
 contains(DEFINES, WTF_USE_WEBP=1) {
-    INCLUDEPATH += platform/image-decoders/webp
     HEADERS += platform/image-decoders/webp/WEBPImageDecoder.h
     SOURCES += platform/image-decoders/webp/WEBPImageDecoder.cpp
 }

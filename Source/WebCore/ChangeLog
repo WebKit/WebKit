@@ -1,3 +1,17 @@
+2012-06-11  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Add config tests for WEBP imagedecoder library, modify HAVE(decoderlibrary) to USE(...)$
+        https://bugs.webkit.org/show_bug.cgi?id=87841
+
+        Reviewed by Simon Hausmann.
+
+        No new tests were needed.
+
+        * Target.pri:
+        * WebCore.pri:
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+
 2012-06-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Add QML api for setting device width and height

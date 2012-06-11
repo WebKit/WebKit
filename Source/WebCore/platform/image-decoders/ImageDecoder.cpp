@@ -109,7 +109,7 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data, ImageSource::AlphaO
     if (matchesGIFSignature(contents))
         return new GIFImageDecoder(alphaOption, gammaAndColorProfileOption);
 
-#if !PLATFORM(QT) || (PLATFORM(QT) && HAVE(LIBPNG))
+#if !PLATFORM(QT) || (PLATFORM(QT) && USE(LIBPNG))
     if (matchesPNGSignature(contents))
         return new PNGImageDecoder(alphaOption, gammaAndColorProfileOption);
 
@@ -117,7 +117,7 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data, ImageSource::AlphaO
         return new ICOImageDecoder(alphaOption, gammaAndColorProfileOption);
 #endif
 
-#if !PLATFORM(QT) || (PLATFORM(QT) && HAVE(LIBJPEG))
+#if !PLATFORM(QT) || (PLATFORM(QT) && USE(LIBJPEG))
     if (matchesJPEGSignature(contents))
         return new JPEGImageDecoder(alphaOption, gammaAndColorProfileOption);
 #endif
