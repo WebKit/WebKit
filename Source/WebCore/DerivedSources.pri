@@ -130,6 +130,11 @@ IDL_BINDINGS += \
     $$PWD/Modules/indexeddb/IDBRequest.idl \
     $$PWD/Modules/indexeddb/IDBTransaction.idl \
     $$PWD/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
+    $$PWD/Modules/quota/DOMWindowQuota.idl \
+    $$PWD/Modules/quota/StorageInfo.idl \
+    $$PWD/Modules/quota/StorageInfoErrorCallback.idl \
+    $$PWD/Modules/quota/StorageInfoQuotaCallback.idl \
+    $$PWD/Modules/quota/StorageInfoUsageCallback.idl \
     $$PWD/Modules/webaudio/AudioBuffer.idl \
     $$PWD/Modules/webaudio/AudioBufferSourceNode.idl \
     $$PWD/Modules/webaudio/AudioChannelMerger.idl \
@@ -434,10 +439,6 @@ IDL_BINDINGS += \
     $$PWD/plugins/DOMMimeTypeArray.idl \
     $$PWD/storage/Storage.idl \
     $$PWD/storage/StorageEvent.idl \
-    $$PWD/storage/StorageInfo.idl \
-    $$PWD/storage/StorageInfoErrorCallback.idl \
-    $$PWD/storage/StorageInfoQuotaCallback.idl \
-    $$PWD/storage/StorageInfoUsageCallback.idl \
     $$PWD/testing/Internals.idl \
     $$PWD/testing/InternalSettings.idl \
     $$PWD/workers/AbstractWorker.idl \
@@ -709,6 +710,7 @@ generateBindings.commands = perl -I$$PWD/bindings/scripts $$generateBindings.scr
                             --include $$PWD/Modules/filesystem \
                             --include $$PWD/Modules/geolocation \
                             --include $$PWD/Modules/indexeddb \
+                            --include $$PWD/Modules/quota \
                             --include $$PWD/Modules/webaudio \
                             --include $$PWD/Modules/webdatabase \
                             --include $$PWD/Modules/websockets \

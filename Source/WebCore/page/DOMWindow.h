@@ -66,7 +66,6 @@ namespace WebCore {
     class SecurityOrigin;
     class SerializedScriptValue;
     class Storage;
-    class StorageInfo;
     class StyleMedia;
     class WebKitPoint;
 
@@ -360,10 +359,6 @@ namespace WebCore {
         Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
         Storage* optionalLocalStorage() const { return m_localStorage.get(); }
 
-#if ENABLE(QUOTA)
-        StorageInfo* webkitStorageInfo() const;
-#endif
-
         DOMApplicationCache* applicationCache() const;
         DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
 
@@ -456,10 +451,6 @@ namespace WebCore {
 
 #if ENABLE(BLOB)
         mutable RefPtr<DOMURL> m_domURL;
-#endif
-
-#if ENABLE(QUOTA)
-        mutable RefPtr<StorageInfo> m_storageInfo;
 #endif
     };
 

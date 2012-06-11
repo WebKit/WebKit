@@ -115,7 +115,6 @@
 #include "JSEvent.cpp"
 #include "JSEventException.cpp"
 #include "JSEventSource.cpp"
-#include "JSEventTarget.cpp"
 #include "JSFile.cpp"
 #include "JSFileCallback.cpp"
 #include "JSFileEntry.cpp"

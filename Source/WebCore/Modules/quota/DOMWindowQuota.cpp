@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,39 +29,49 @@
  */
 
 #include "config.h"
+#include "DOMWindowQuota.h"
 
 #if ENABLE(QUOTA)
 
+#include "DOMWindow.h"
 #include "StorageInfo.h"
-
-#include "NotImplemented.h"
-#include "StorageInfoErrorCallback.h"
-#include "StorageInfoQuotaCallback.h"
-#include "StorageInfoUsageCallback.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-
-StorageInfo::StorageInfo()
+DOMWindowQuota::DOMWindowQuota(DOMWindow* window)
+    : DOMWindowProperty(window->frame())
 {
 }
 
-StorageInfo::~StorageInfo()
+DOMWindowQuota::~DOMWindowQuota()
 {
 }
 
-#if !PLATFORM(CHROMIUM)
-void StorageInfo::queryUsageAndQuota(ScriptExecutionContext*, int, PassRefPtr<StorageInfoUsageCallback>, PassRefPtr<StorageInfoErrorCallback>)
+// static
+DOMWindowQuota* DOMWindowQuota::from(DOMWindow* window)
 {
-    notImplemented();
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowQuota"));
+    DOMWindowQuota* supplement = static_cast<DOMWindowQuota*>(Supplement<DOMWindow>::from(window, name));
+    if (!supplement) {
+        supplement = new DOMWindowQuota(window);
+        provideTo(window, name, adoptPtr(supplement));
+    }
+    return supplement;
 }
 
-void StorageInfo::requestQuota(ScriptExecutionContext*, int, unsigned long long, PassRefPtr<StorageInfoQuotaCallback>, PassRefPtr<StorageInfoErrorCallback>)
+// static
+StorageInfo* DOMWindowQuota::webkitStorageInfo(DOMWindow* window)
 {
-    notImplemented();
+    return DOMWindowQuota::from(window)->webkitStorageInfo();
 }
-#endif
+
+StorageInfo* DOMWindowQuota::webkitStorageInfo() const
+{
+    if (!m_storageInfo && frame())
+        m_storageInfo = StorageInfo::create();
+    return m_storageInfo.get();
+}
 
 } // namespace WebCore
 

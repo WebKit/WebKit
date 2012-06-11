@@ -3255,13 +3255,15 @@ contains(DEFINES, ENABLE_SCRIPTED_SPEECH=1) {
 
 contains(DEFINES, ENABLE_QUOTA=1) {
     HEADERS += \
-        storage/StorageInfo.h \
-        storage/StorageInfoErrorCallback.h \
-        storage/StorageInfoQuotaCallback.h \
-        storage/StorageInfoUsageCallback.h
+        Modules/quota/DOMWindowQuota.idl \
+        Modules/quota/StorageInfo.h \
+        Modules/quota/StorageInfoErrorCallback.h \
+        Modules/quota/StorageInfoQuotaCallback.h \
+        Modules/quota/StorageInfoUsageCallback.h
 
     SOURCES += \
-        storage/StorageInfo.cpp
+        Modules/quota/DOMWindowQuota.cpp
+        Modules/quota/StorageInfo.cpp
 }
 
 contains(DEFINES, ENABLE_VIDEO=1) {

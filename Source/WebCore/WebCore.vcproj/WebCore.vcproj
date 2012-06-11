@@ -24927,6 +24927,38 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="quota"
+				>
+				<File
+					RelativePath="..\Modules\quota\DOMWindowQuota.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\quota\DOMWindowQuota.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\quota\StorageInfo.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\quota\StorageInfo.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\quota\StorageInfoErrorCallback.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\quota\StorageInfoQuotaCallback.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\quota\StorageInfoUsageCallback.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="webdatabase"
 				>
 				<File

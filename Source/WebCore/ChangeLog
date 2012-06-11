@@ -1,3 +1,40 @@
+2012-06-07  Kinuko Yasuda  <kinuko@google.com>
+
+        Move Quota related code out of DOMWindow and into the quota/ folder
+        https://bugs.webkit.org/show_bug.cgi?id=88512
+
+        Reviewed by Adam Barth.
+
+        No new tests: no visible changes.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * Modules/quota/DOMWindowQuota.cpp: Added.
+        * Modules/quota/DOMWindowQuota.h: Added.
+        * Modules/quota/DOMWindowQuota.idl: Added.
+        * Modules/quota/StorageInfo.cpp: Renamed from Source/WebCore/storage/StorageInfo.cpp.
+        * Modules/quota/StorageInfo.h: Renamed from Source/WebCore/storage/StorageInfo.h.
+        * Modules/quota/StorageInfo.idl: Renamed from Source/WebCore/storage/StorageInfo.idl.
+        * Modules/quota/StorageInfoErrorCallback.h: Renamed from Source/WebCore/storage/StorageInfoErrorCallback.h.
+        * Modules/quota/StorageInfoErrorCallback.idl: Renamed from Source/WebCore/storage/StorageInfoErrorCallback.idl.
+        * Modules/quota/StorageInfoQuotaCallback.h: Renamed from Source/WebCore/storage/StorageInfoQuotaCallback.h.
+        * Modules/quota/StorageInfoQuotaCallback.idl: Renamed from Source/WebCore/storage/StorageInfoQuotaCallback.idl.
+        * Modules/quota/StorageInfoUsageCallback.h: Renamed from Source/WebCore/storage/StorageInfoUsageCallback.h.
+        * Modules/quota/StorageInfoUsageCallback.idl: Renamed from Source/WebCore/storage/StorageInfoUsageCallback.idl.
+        * Target.pri:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DOMWindow.cpp:
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2012-06-10  Hayato Ito  <hayato@chromium.org>
 
         An inheritance of '-webkit-user-modify' does not stop at shadow boundary.

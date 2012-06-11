@@ -510,10 +510,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSStorage.h \
 	DerivedSources/WebCore/JSStorageEvent.cpp \
 	DerivedSources/WebCore/JSStorageEvent.h \
-	DerivedSources/WebCore/JSStorageInfo.h \
-	DerivedSources/WebCore/JSStorageInfoErrorCallback.h \
-	DerivedSources/WebCore/JSStorageInfoQuotaCallback.h \
-	DerivedSources/WebCore/JSStorageInfoUsageCallback.h \
 	DerivedSources/WebCore/JSStyleMedia.cpp \
 	DerivedSources/WebCore/JSStyleMedia.h \
 	DerivedSources/WebCore/JSStyleSheet.cpp \
@@ -4168,11 +4164,6 @@ webcore_sources += \
 	Source/WebCore/storage/StorageEvent.h \
 	Source/WebCore/storage/StorageEventDispatcher.cpp \
 	Source/WebCore/storage/StorageEventDispatcher.h \
-	Source/WebCore/storage/StorageInfo.cpp \
-	Source/WebCore/storage/StorageInfo.h \
-	Source/WebCore/storage/StorageInfoErrorCallback.h \
-	Source/WebCore/storage/StorageInfoQuotaCallback.h \
-	Source/WebCore/storage/StorageInfoUsageCallback.h \
 	Source/WebCore/storage/StorageMap.cpp \
 	Source/WebCore/storage/StorageMap.h \
 	Source/WebCore/storage/StorageNamespace.cpp \
@@ -6110,3 +6101,36 @@ dom_binding_idls += \
 	$(WebCore)/html/shadow/HTMLShadowElement.idl
 
 endif  # END ENABLE_SHADOW_DOM
+
+# ----
+# Quota support
+# ----
+if ENABLE_QUOTA
+webcore_sources += \
+	Source/WebCore/Modules/quota/DOMWindowQuota.cpp \
+	Source/WebCore/Modules/quota/DOMWindowQuota.h \
+	Source/WebCore/Modules/quota/StorageInfo.cpp \
+	Source/WebCore/Modules/quota/StorageInfo.h \
+	Source/WebCore/Modules/quota/StorageInfoErrorCallback.h \
+	Source/WebCore/Modules/quota/StorageInfoQuotaCallback.h \
+	Source/WebCore/Modules/quota/StorageInfoUsageCallback.h
+
+webcore_built_sources += \
+	DerivedSources/WebCore/JSStorageInfo.cpp \
+	DerivedSources/WebCore/JSStorageInfo.h \
+	DerivedSources/WebCore/JSStorageInfoErrorCallback.cpp \
+	DerivedSources/WebCore/JSStorageInfoErrorCallback.h \
+	DerivedSources/WebCore/JSStorageInfoQuotaCallback.cpp \
+	DerivedSources/WebCore/JSStorageInfoQuotaCallback.h \
+	DerivedSources/WebCore/JSStorageInfoUsageCallback.cpp \
+	DerivedSources/WebCore/JSStorageInfoUsageCallback.h
+
+dom_binding_idls += \
+	$(WebCore)/Modules/quota/DOMWindowQuota.idl \
+	$(WebCore)/Modules/quota/StorageInfo.idl \
+	$(WebCore)/Modules/quota/StorageInfoErrorCallback.idl \
+	$(WebCore)/Modules/quota/StorageInfoQuotaCallback.idl \
+	$(WebCore)/Modules/quota/StorageInfoUsageCallback.idl
+
+endif  # END ENABLE_QUOTA
+

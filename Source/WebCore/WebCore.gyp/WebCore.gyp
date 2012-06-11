@@ -59,6 +59,7 @@
       '../Modules/intents',
       '../Modules/indexeddb',
       '../Modules/mediastream',
+      '../Modules/quota',
       '../Modules/speech',
       '../Modules/webaudio',
       '../Modules/webdatabase',

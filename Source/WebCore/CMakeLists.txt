@@ -4,6 +4,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/intents"
+    "${WEBCORE_DIR}/Modules/quota"
     "${WEBCORE_DIR}/Modules/webaudio"
     "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/Modules/websockets"
@@ -96,6 +97,7 @@ SET(WebCore_IDL_INCLUDES
     Modules/filesystem
     Modules/geolocation
     Modules/indexeddb
+    Modules/quota
     Modules/webaudio
     Modules/webdatabase
     Modules/websockets
@@ -409,10 +411,6 @@ SET(WebCore_IDL_FILES
 
     storage/Storage.idl
     storage/StorageEvent.idl
-    storage/StorageInfo.idl
-    storage/StorageInfoErrorCallback.idl
-    storage/StorageInfoQuotaCallback.idl
-    storage/StorageInfoUsageCallback.idl
 
     xml/DOMParser.idl
     xml/XMLHttpRequest.idl
@@ -1444,7 +1442,6 @@ SET(WebCore_SOURCES
     storage/StorageAreaSync.cpp
     storage/StorageEvent.cpp
     storage/StorageEventDispatcher.cpp
-    storage/StorageInfo.cpp
     storage/StorageMap.cpp
     storage/StorageNamespace.cpp
     storage/StorageNamespaceImpl.cpp
@@ -2542,6 +2539,20 @@ IF (ENABLE_WEB_INTENTS)
        Modules/intents/Intent.cpp
        Modules/intents/IntentRequest.cpp
        Modules/intents/NavigatorIntents.cpp
+    )
+ENDIF ()
+
+if (ENABLE_QUOTA)
+    LIST(APPEND WebCore_SOURCES
+        Modules/quota/DOMWindowQuota.cpp
+        Modules/quota/StorageInfo.cpp
+    )
+    LIST(APPEND WebCore_IDL_FILES
+        Modules/quota/DOMWindowQuota.idl
+        Modules/quota/StorageInfo.idl
+        Modules/quota/StorageInfoErrorCallback.idl
+        Modules/quota/StorageInfoQuotaCallback.idl
+        Modules/quota/StorageInfoUsageCallback.idl
     )
 ENDIF ()
 
