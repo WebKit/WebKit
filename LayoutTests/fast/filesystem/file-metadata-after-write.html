@@ -48,9 +48,7 @@ function writeTextToFile(entry, contents, successCallback)
     log('Writing ' + contents + ' to the file...');
     entry.createWriter(function(writer) {
         log('Created a writer.');
-        var builder = new WebKitBlobBuilder();
-        builder.append(contents);
-        writer.write(builder.getBlob('plain/text'));
+        writer.write(new Blob([contents], {type:'plain/text'}));
         writer.onwriteend = successCallback;
         writer.onerror = onError;
     });

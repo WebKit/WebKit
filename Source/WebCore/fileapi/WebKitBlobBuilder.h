@@ -45,6 +45,10 @@ typedef int ExceptionCode;
 
 class WebKitBlobBuilder : public RefCounted<WebKitBlobBuilder> {
 public:
+    // Called when BlobBuilder is instantiated in JS API. We show deprecate warning message.
+    static PassRefPtr<WebKitBlobBuilder> create(ScriptExecutionContext*);
+
+    // Called by Blob constructor.
     static PassRefPtr<WebKitBlobBuilder> create() { return adoptRef(new WebKitBlobBuilder()); }
 
     void append(Blob*);

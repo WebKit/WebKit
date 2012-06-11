@@ -33,7 +33,8 @@ module html {
         Conditional=LEGACY_WEBKIT_BLOB_BUILDER,
         Constructor,
         JSGenerateToNativeObject,
-        JSNoStaticTables
+        JSNoStaticTables,
+        CallWith=ScriptExecutionContext
     ] WebKitBlobBuilder {
 #if !defined(LANGUAGE_OBJECTIVE_C)
         Blob getBlob(in [Optional, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString contentType);

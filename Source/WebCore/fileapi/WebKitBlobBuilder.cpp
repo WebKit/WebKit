@@ -47,6 +47,15 @@
 
 namespace WebCore {
 
+// static
+PassRefPtr<WebKitBlobBuilder> WebKitBlobBuilder::create(ScriptExecutionContext* context)
+{
+    String message("BlobBuilder is deprecated. Use \"Blob\" constructor instead.");
+    context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, message);
+
+    return adoptRef(new WebKitBlobBuilder());
+}
+
 WebKitBlobBuilder::WebKitBlobBuilder()
     : m_size(0)
 {
