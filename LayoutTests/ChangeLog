@@ -1,5 +1,15 @@
 2012-06-10  Dominic Cooney  <dominicc@chromium.org>
 
+        [Chromium] Unreviewed: Rebaseline fixed-position-transform-composited-page-scale on Linux, Win
+
+        These differ in antialiasing only, where there are already
+        platform differences antialiasing.
+
+        * platform/chromium-linux/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png:
+        * platform/chromium-win/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png:
+
+2012-06-10  Dominic Cooney  <dominicc@chromium.org>
+
         [Chromium] Unreviewed: Update
         css3/font-feature-settings-rendering.html again -- actually it may
         pass if a particular DLL is installed. So expect PASS or
