@@ -1,5 +1,32 @@
 2012-06-11  Dominic Cooney  <dominicc@chromium.org>
 
+        [Chromium] Unreviewed: Rebaselines and updated expectations for media tests
+
+        Pixel differences are due to antialiasing and different rounded
+        corners on the media progress bar. The difference is not
+        noticeable.
+
+        * platform/chromium-win/media/audio-controls-rendering-expected.png:
+        * platform/chromium-win/media/audio-repaint-expected.png:
+        * platform/chromium-win/media/controls-after-reload-expected.png:
+        * platform/chromium-win/media/controls-layout-direction-expected.png:
+        * platform/chromium-win/media/controls-strict-expected.png:
+        * platform/chromium-win/media/controls-styling-expected.png:
+        * platform/chromium-win/media/controls-without-preload-expected.png:
+        * platform/chromium-win/media/media-controls-clone-expected.png:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-win/media/video-controls-rendering-expected.png:
+        * platform/chromium-win/media/video-display-toggle-expected.png:
+        * platform/chromium-win/media/video-layer-crash-expected.png:
+        * platform/chromium-win/media/video-no-audio-expected.png:
+        * platform/chromium-win/media/video-playing-and-pause-expected.png:
+        * platform/chromium-win/media/video-transformed-expected.png:
+        * platform/chromium-win/media/video-volume-slider-expected.png:
+        * platform/chromium-win/media/video-zoom-controls-expected.png:
+        * platform/chromium/TestExpectations:
+
+2012-06-11  Dominic Cooney  <dominicc@chromium.org>
+
         [Chromium] Unreviewed: Mark track-cue-rendering-inner-timestamps.html failing on Vista
 
         * platform/chromium/TestExpectations:

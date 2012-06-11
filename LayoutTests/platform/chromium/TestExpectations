@@ -3677,4 +3677,11 @@ BUGLEVIW LEOPARD LION WIN LINUX : fast/multicol/vertical-rl/nested-columns.html 
 BUGCR131187 : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGCR131187 : fast/canvas/canvas-currentColor.html = TEXT
 
+// Apparently never passing on Vista.
 BUG_DOMINICC VISTA : media/track/track-cue-rendering-inner-timestamps.html = TEXT
+
+// Timing out in debug. The test has its own notion of timeouts.
+BUG_DOMINICC WIN DEBUG : media/video-played-collapse.html = PASS TEXT
+
+BUG_DOMINICC WIN DEBUG : media/track/track-kind.html = PASS TIMEOUT
+BUG_DOMINICC : http/tests/media/video-play-progress.html = PASS TIMEOUT
