@@ -1,3 +1,13 @@
+2012-06-11  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] skip http/tests/cookies/js-get-and-set-http-only-cookie.html test case
+        https://bugs.webkit.org/show_bug.cgi?id=88751
+
+        Unreviewed EFL gardening. Skip newly introduced test case that is failing
+        on most ports.
+
+        * platform/efl/TestExpectations:
+
 2012-06-11  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed: Remove expectations for passing tests
