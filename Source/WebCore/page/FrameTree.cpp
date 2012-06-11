@@ -58,8 +58,10 @@ void FrameTree::clearName()
     m_uniqueName = AtomicString();
 }
 
-Frame* FrameTree::parent() const 
+Frame* FrameTree::parent(bool checkForDisconnectedFrame) const 
 { 
+    if (checkForDisconnectedFrame && m_thisFrame->isDisconnected())
+        return 0;
     return m_parent;
 }
 
@@ -381,11 +383,14 @@ Frame* FrameTree::deepLastChild() const
     return result;
 }
 
-Frame* FrameTree::top() const
+Frame* FrameTree::top(bool checkForDisconnectedFrame) const
 {
     Frame* frame = m_thisFrame;
-    for (Frame* parent = m_thisFrame; parent; parent = parent->tree()->parent())
+    for (Frame* parent = m_thisFrame; parent; parent = parent->tree()->parent()) {
         frame = parent;
+        if (checkForDisconnectedFrame && frame->isDisconnected())
+            return frame;
+    }
     return frame;
 }
 

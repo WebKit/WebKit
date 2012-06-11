@@ -910,6 +910,16 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return _private->coreFrame->domWindow()->pendingUnloadEventListeners();
 }
 
+- (void)_setIsDisconnected:(bool)isDisconnected
+{
+    _private->coreFrame->setIsDisconnected(isDisconnected);
+}
+
+- (void)_setExcludeFromTextSearch:(bool)exclude
+{
+    _private->coreFrame->setExcludeFromTextSearch(exclude);
+}
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins
 {

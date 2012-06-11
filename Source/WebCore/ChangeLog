@@ -1,3 +1,49 @@
+2012-06-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r119955.
+        http://trac.webkit.org/changeset/119955
+        https://bugs.webkit.org/show_bug.cgi?id=88758
+
+        Breaks Chromium compile - Chromium depends on removed API
+        (Requested by dominicc on #webkit).
+
+        * WebCore.exp.in:
+        * editing/Editor.cpp:
+        (WebCore::Editor::insideVisibleArea):
+        (WebCore):
+        (WebCore::Editor::firstVisibleRange):
+        (WebCore::Editor::lastVisibleRange):
+        (WebCore::Editor::nextVisibleRange):
+        (WebCore::Editor::rangeOfString):
+        (WebCore::Editor::countMatchesForText):
+        * editing/Editor.h:
+        (Editor):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::findFrameForNavigation):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::parent):
+        (WebCore::DOMWindow::top):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/Frame.h:
+        (Frame):
+        (WebCore::Frame::isDisconnected):
+        (WebCore):
+        (WebCore::Frame::setIsDisconnected):
+        (WebCore::Frame::excludeFromTextSearch):
+        (WebCore::Frame::setExcludeFromTextSearch):
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::parent):
+        (WebCore::FrameTree::top):
+        * page/FrameTree.h:
+        (FrameTree):
+        * page/Location.cpp:
+        (WebCore::Location::ancestorOrigins):
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::hasNoStyleInformation):
+
 2012-06-08  Kinuko Yasuda  <kinuko@chromium.org>
 
         Using BlobBuilder should show a deprecation warning message (if it is enabled)

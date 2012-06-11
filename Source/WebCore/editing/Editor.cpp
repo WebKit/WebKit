@@ -2414,6 +2414,144 @@ void Editor::dismissCorrectionPanelAsIgnored()
     m_alternativeTextController->dismiss(ReasonForDismissingAlternativeTextIgnored);
 }
 
+bool Editor::insideVisibleArea(const LayoutPoint& point) const
+{
+    if (m_frame->excludeFromTextSearch())
+        return false;
+    
+    // Right now, we only check the visibility of a point for disconnected frames. For all other
+    // frames, we assume visibility.
+    Frame* frame = m_frame->isDisconnected() ? m_frame : m_frame->tree()->top(true);
+    if (!frame->isDisconnected())
+        return true;
+    
+    RenderPart* renderer = frame->ownerRenderer();
+    if (!renderer)
+        return false;
+
+    RenderBlock* container = renderer->containingBlock();
+    if (!(container->style()->overflowX() == OHIDDEN || container->style()->overflowY() == OHIDDEN))
+        return true;
+
+    LayoutRect rectInPageCoords = container->overflowClipRect(IntPoint(), 0); // FIXME: Incorrect for CSS regions.
+    LayoutRect rectInFrameCoords = LayoutRect(renderer->x() * -1, renderer->y() * -1,
+                                              rectInPageCoords.width(), rectInPageCoords.height());
+
+    return rectInFrameCoords.contains(point);
+}
+
+bool Editor::insideVisibleArea(Range* range) const
+{
+    if (!range)
+        return true;
+
+    if (m_frame->excludeFromTextSearch())
+        return false;
+    
+    // Right now, we only check the visibility of a range for disconnected frames. For all other
+    // frames, we assume visibility.
+    Frame* frame = m_frame->isDisconnected() ? m_frame : m_frame->tree()->top(true);
+    if (!frame->isDisconnected())
+        return true;
+    
+    RenderPart* renderer = frame->ownerRenderer();
+    if (!renderer)
+        return false;
+
+    RenderBlock* container = renderer->containingBlock();
+    if (!(container->style()->overflowX() == OHIDDEN || container->style()->overflowY() == OHIDDEN))
+        return true;
+
+    LayoutRect rectInPageCoords = container->overflowClipRect(LayoutPoint(), 0); // FIXME: Incorrect for CSS regions.
+    LayoutRect rectInFrameCoords = LayoutRect(renderer->x() * -1, renderer->y() * -1,
+                                    rectInPageCoords.width(), rectInPageCoords.height());
+    LayoutRect resultRect = range->boundingBox();
+    
+    return rectInFrameCoords.contains(resultRect);
+}
+
+PassRefPtr<Range> Editor::firstVisibleRange(const String& target, FindOptions options)
+{
+    RefPtr<Range> searchRange(rangeOfContents(m_frame->document()));
+    RefPtr<Range> resultRange = findPlainText(searchRange.get(), target, options & ~Backwards);
+    ExceptionCode ec = 0;
+
+    while (!insideVisibleArea(resultRange.get())) {
+        searchRange->setStartAfter(resultRange->endContainer(), ec);
+        if (searchRange->startContainer() == searchRange->endContainer())
+            return Range::create(m_frame->document());
+        resultRange = findPlainText(searchRange.get(), target, options & ~Backwards);
+    }
+    
+    return resultRange;
+}
+
+PassRefPtr<Range> Editor::lastVisibleRange(const String& target, FindOptions options)
+{
+    RefPtr<Range> searchRange(rangeOfContents(m_frame->document()));
+    RefPtr<Range> resultRange = findPlainText(searchRange.get(), target, options | Backwards);
+    ExceptionCode ec = 0;
+
+    while (!insideVisibleArea(resultRange.get())) {
+        searchRange->setEndBefore(resultRange->startContainer(), ec);
+        if (searchRange->startContainer() == searchRange->endContainer())
+            return Range::create(m_frame->document());
+        resultRange = findPlainText(searchRange.get(), target, options | Backwards);
+    }
+    
+    return resultRange;
+}
+
+PassRefPtr<Range> Editor::nextVisibleRange(Range* currentRange, const String& target, FindOptions options)
+{
+    if (m_frame->excludeFromTextSearch())
+        return Range::create(m_frame->document());
+
+    RefPtr<Range> resultRange = currentRange;
+    RefPtr<Range> searchRange(rangeOfContents(m_frame->document()));
+    ExceptionCode ec = 0;
+    bool forward = !(options & Backwards);
+    for ( ; !insideVisibleArea(resultRange.get()); resultRange = findPlainText(searchRange.get(), target, options)) {
+        if (resultRange->collapsed(ec)) {
+            if (!resultRange->startContainer()->isInShadowTree())
+                break;
+            searchRange = rangeOfContents(m_frame->document());
+            if (forward)
+                searchRange->setStartAfter(resultRange->startContainer()->shadowAncestorNode(), ec);
+            else
+                searchRange->setEndBefore(resultRange->startContainer()->shadowAncestorNode(), ec);
+            continue;
+        }
+
+        if (forward)
+            searchRange->setStartAfter(resultRange->endContainer(), ec);
+        else
+            searchRange->setEndBefore(resultRange->startContainer(), ec);
+
+        ShadowRoot* shadowRoot = searchRange->shadowRoot();
+        if (searchRange->collapsed(ec) && shadowRoot) {
+            if (forward)
+                searchRange->setEnd(shadowRoot, shadowRoot->childNodeCount(), ec);
+            else
+                searchRange->setStartBefore(shadowRoot, ec);
+        }
+        
+        if (searchRange->startContainer()->isDocumentNode() && searchRange->endContainer()->isDocumentNode())
+            break;
+    }
+    
+    if (insideVisibleArea(resultRange.get()))
+        return resultRange;
+    
+    if (!(options & WrapAround))
+        return Range::create(m_frame->document());
+
+    if (options & Backwards)
+        return lastVisibleRange(target, options);
+
+    return firstVisibleRange(target, options);
+}
+
 void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, bool closeTyping, bool clearTypingStyle)
 {
     // If the new selection is orphaned, then don't update the selection.
@@ -2612,6 +2750,9 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
     if (target.isEmpty())
         return 0;
 
+    if (m_frame->excludeFromTextSearch())
+        return 0;
+
     // Start from an edge of the reference range, if there's a reference range that's not in shadow content. Which edge
     // is used depends on whether we're searching forward or backward, and whether startInSelection is set.
     RefPtr<Range> searchRange(rangeOfContents(m_frame->document()));
@@ -2663,6 +2804,12 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
             searchRange->setEndBefore(shadowTreeRoot->shadowAncestorNode());
 
         resultRange = findPlainText(searchRange.get(), target, options);
+    }
+
+    if (!insideVisibleArea(resultRange.get())) {
+        resultRange = nextVisibleRange(resultRange.get(), target, options);
+        if (!resultRange)
+            return 0;
     }
 
     // If we didn't find anything and we're wrapping, search again in the entire document (this will
@@ -2727,9 +2874,12 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
             continue;
         }
 
-        ++matchCount;
-        if (markMatches)
-            m_frame->document()->markers()->addMarker(resultRange.get(), DocumentMarker::TextMatch);
+        // Only treat the result as a match if it is visible
+        if (insideVisibleArea(resultRange.get())) {
+            ++matchCount;
+            if (markMatches)
+                m_frame->document()->markers()->addMarker(resultRange.get(), DocumentMarker::TextMatch);
+        }
 
         // Stop looking if we hit the specified limit. A limit of 0 means no limit.
         if (limit > 0 && matchCount >= limit)

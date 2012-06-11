@@ -1079,7 +1079,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, bool 
     Frame* resultFrame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : 0;
     if (Page* page = m_frame->page()) {
         Frame* mainFrame = page->mainFrame();
-        if (m_frame != mainFrame && resultFrame && resultFrame != mainFrame) {
+        if (m_frame != mainFrame && resultFrame && resultFrame != mainFrame && !resultFrame->editor()->insideVisibleArea(result.point())) {
             FrameView* resultView = resultFrame->view();
             FrameView* mainView = mainFrame->view();
             if (resultView && mainView) {

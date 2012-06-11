@@ -62,7 +62,7 @@ bool XMLTreeViewer::hasNoStyleInformation() const
     if (!m_document->frame()->page()->settings()->developerExtrasEnabled())
         return false;
 
-    if (m_document->frame()->tree()->parent())
+    if (m_document->frame()->tree()->parent(true))
         return false; // This document is not in a top frame
 
     return true;

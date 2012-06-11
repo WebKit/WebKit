@@ -87,6 +87,9 @@ typedef enum {
 
 - (unsigned)_pendingFrameUnloadEventCount;
 
+- (void)_setIsDisconnected:(bool)isDisconnected;
+- (void)_setExcludeFromTextSearch:(bool)exclude;
+
 #if ENABLE_NETSCAPE_PLUGIN_API
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins;
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins;

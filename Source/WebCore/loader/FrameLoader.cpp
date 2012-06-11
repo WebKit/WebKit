@@ -2933,7 +2933,7 @@ Frame* FrameLoader::findFrameForNavigation(const AtomicString& name, Document* a
     // browsing context flag set, and continue these steps as if that
     // browsing context was the one that was going to be navigated instead.
     if (frame == m_frame && name != "_self" && m_frame->document()->shouldDisplaySeamlesslyWithParent()) {
-        for (Frame* ancestor = m_frame; ancestor; ancestor = ancestor->tree()->parent()) {
+        for (Frame* ancestor = m_frame; ancestor; ancestor = ancestor->tree()->parent(true)) {
             if (!ancestor->document()->shouldDisplaySeamlesslyWithParent()) {
                 frame = ancestor;
                 break;
