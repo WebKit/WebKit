@@ -42,17 +42,17 @@
     
     function startTest()
     {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         
         setTimeout(suspend, 40);
         setTimeout(resume, 100);
         setTimeout(function()
         {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, 350);
     }
     

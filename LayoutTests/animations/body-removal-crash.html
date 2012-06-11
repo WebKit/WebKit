@@ -39,13 +39,13 @@ function crash() {
 function cleanup() {
   document.getElementById("b").parentNode.insertBefore(element, document.getElementById("b").nextSibling);
   
-  if (window.layoutTestController)
-      layoutTestController.notifyDone();
+  if (window.testRunner)
+      testRunner.notifyDone();
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 crash();

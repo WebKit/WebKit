@@ -1,3 +1,65 @@
+2012-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use testRunner instead of layoutTestController in animations tests
+        https://bugs.webkit.org/show_bug.cgi?id=88757
+
+        Reviewed by Tony Chang.
+
+        * animations/3d/change-transform-in-end-event.html:
+        * animations/3d/replace-filling-transform.html:
+        * animations/3d/state-at-end-event-transform.html:
+        * animations/3d/transform-origin-vs-functions.html:
+        * animations/animation-add-events-in-handler.html:
+        * animations/animation-border-overflow.html:
+        * animations/animation-controller-drt-api.html:
+        * animations/animation-direction-reverse-fill-mode-hardware.html:
+        * animations/animation-direction-reverse-fill-mode.html:
+        * animations/animation-drt-api-multiple-keyframes.html:
+        * animations/animation-drt-api.html:
+        * animations/animation-end-event-destroy-renderer.html:
+        * animations/animation-end-event-short-iterations.html:
+        * animations/animation-hit-test-transform.html:
+        * animations/animation-hit-test.html:
+        * animations/animation-iteration-event-destroy-renderer.html:
+        * animations/animation-matrix-negative-scale-unmatrix.html:
+        * animations/animation-on-inline-crash.html:
+        * animations/animation-shorthand-overriding.html:
+        * animations/animation-shorthand-removed.html:
+        * animations/animation-shorthand.html:
+        * animations/animation-start-event-destroy-renderer.html:
+        * animations/animation-welcome-safari.html:
+        * animations/body-removal-crash.html:
+        * animations/change-keyframes-name.html:
+        * animations/change-transform-style-during-animation.html:
+        * animations/combo-transform-translate+scale.html:
+        * animations/empty-keyframes.html:
+        * animations/fill-mode-forwards.html:
+        * animations/fill-mode-iteration-count-non-integer.html:
+        * animations/fill-mode-missing-from-to-keyframes.html:
+        * animations/fill-mode-multiple-keyframes.html:
+        * animations/fill-mode-removed.html:
+        * animations/fill-mode-reverse.html:
+        * animations/fill-mode-transform.html:
+        * animations/fill-mode.html:
+        * animations/fill-unset-properties.html:
+        * animations/font-size-using-ems.html-disabled:
+        * animations/import-crash.html:
+        * animations/keyframe-timing-functions-transform.html:
+        * animations/keyframe-timing-functions2.html:
+        * animations/keyframes-iteration-count-non-integer.html:
+        * animations/longhand-timing-function.html:
+        * animations/missing-from-to-transforms.html:
+        * animations/missing-from-to.html:
+        * animations/pause-crash.html:
+        * animations/resources/animation-test-helpers.js:
+        (checkExpectedValue):
+        (endTest):
+        * animations/state-at-end-event.html:
+        * animations/suspend-resume-animation-events.html:
+        * animations/suspend-transform-animation.html:
+        * animations/transition-and-animation-3.html:
+        * animations/unanimated-style.html:
+
 2012-06-11  David Barr  <davidbarr@chromium.org>
 
         Add css3-images image-resolution (dppx only)

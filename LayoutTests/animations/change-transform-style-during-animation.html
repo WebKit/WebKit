@@ -37,9 +37,9 @@
 
    <script src="resources/animation-test-helpers.js"></script>
    <script>
-     if (window.layoutTestController) {
-       layoutTestController.dumpAsText();
-       layoutTestController.waitUntilDone();
+     if (window.testRunner) {
+       testRunner.dumpAsText();
+       testRunner.waitUntilDone();
      }
 
      function animationDone()
@@ -54,7 +54,7 @@
          result = "FAIL - Computed final position is incorrect. Expected " + expected + ", got " + computed;
        }
        document.getElementById('result').innerHTML = result;
-       layoutTestController.notifyDone();
+       testRunner.notifyDone();
      }
 
      function animationStarted()

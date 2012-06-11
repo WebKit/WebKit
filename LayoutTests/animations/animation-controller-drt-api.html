@@ -50,7 +50,7 @@
    
     function sample0() {
       var expected = 4;
-      var current = layoutTestController.numberOfActiveAnimations();
+      var current = testRunner.numberOfActiveAnimations();
       if (current == expected)
         document.getElementById('result0').innerHTML = "Number of active animations at 0s is (" + current + ") as expected";
       else
@@ -59,19 +59,19 @@
     
     function sample1() {
       var expected = 4;
-      var current = layoutTestController.numberOfActiveAnimations();
+      var current = testRunner.numberOfActiveAnimations();
       if (current == expected)
         document.getElementById('result1').innerHTML = "Number of active animations at 1s is (" + current + ") as expected";
       else
         document.getElementById('result1').innerHTML = "Number of active animations at 1s is (" + current + ") but was expecting (" + expected + ")";
       
-      layoutTestController.notifyDone();
+      testRunner.notifyDone();
     }
     
     function startTest() {
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
         
         var target = document.getElementById('target');
         target.style.top = '200px';

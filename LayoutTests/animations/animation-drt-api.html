@@ -25,15 +25,15 @@
 
   <script src="resources/animation-test-helpers.js"></script>
   <script>
-    if (window.layoutTestController) {
-      layoutTestController.waitUntilDone();
-      layoutTestController.dumpAsText();
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
     }
 
     function animationStarted()
     {
-      if (window.layoutTestController) {
-        var paused = layoutTestController.pauseAnimationAtTimeOnElementWithId("bounce", 1.0, "target");
+      if (window.testRunner) {
+        var paused = testRunner.pauseAnimationAtTimeOnElementWithId("bounce", 1.0, "target");
         var result = "";
         if (paused)
           result = "PASS: correctly paused animation";
@@ -41,7 +41,7 @@
           result = "FAIL: failed to pause animation";
 
         document.getElementById('results').innerText = result;
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
       } else
         document.getElementById('results').innerText = "This test requires DRT";
     }

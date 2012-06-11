@@ -11,9 +11,9 @@
 @-webkit-keyframes anim1 { }
 </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     const kProperties = [
@@ -90,8 +90,8 @@
 
       var results = document.getElementById('result');
       results.innerHTML = resultsString;
-      if (window.layoutTestController)
-          layoutTestController.notifyDone();
+      if (window.testRunner)
+          testRunner.notifyDone();
     }
 
     window.addEventListener('load', start, false);

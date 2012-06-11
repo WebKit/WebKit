@@ -36,14 +36,14 @@
    <script type="text/javascript">
     function testEnded()
     {
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
     
     function startTest()
     {
-      if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+      if (window.testRunner)
+        testRunner.waitUntilDone();
 
       document.getElementById('tester').addEventListener('webkitAnimationEnd', testEnded, false);
       document.getElementById('container').className = 'moved';

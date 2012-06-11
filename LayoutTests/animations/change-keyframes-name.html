@@ -57,10 +57,10 @@
     
     function setup()
     {
-        if (window.layoutTestController) {
-          layoutTestController.dumpAsText();
-          layoutTestController.waitUntilDone();
-          if (layoutTestController.pauseAnimationAtTimeOnElementWithId("bar", 0.5, "box"))
+        if (window.testRunner) {
+          testRunner.dumpAsText();
+          testRunner.waitUntilDone();
+          if (testRunner.pauseAnimationAtTimeOnElementWithId("bar", 0.5, "box"))
               document.getElementById("pre-result").innerHTML = "FAIL: animation is running";
           else
               document.getElementById("pre-result").innerHTML = "PASS: animation is not running";

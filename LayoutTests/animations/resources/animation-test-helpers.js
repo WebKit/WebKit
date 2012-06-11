@@ -155,12 +155,12 @@ function checkExpectedValue(expected, index)
         }
     }
 
-    if (animationName && hasPauseAnimationAPI && !layoutTestController.pauseAnimationAtTimeOnElementWithId(animationName, time, elementId)) {
+    if (animationName && hasPauseAnimationAPI && !testRunner.pauseAnimationAtTimeOnElementWithId(animationName, time, elementId)) {
         result += "FAIL - animation \"" + animationName + "\" is not running" + "<br>";
         return;
     }
     
-    if (compareElements && !element2Static && animationName && hasPauseAnimationAPI && !layoutTestController.pauseAnimationAtTimeOnElementWithId(animationName, time, elementId2)) {
+    if (compareElements && !element2Static && animationName && hasPauseAnimationAPI && !testRunner.pauseAnimationAtTimeOnElementWithId(animationName, time, elementId2)) {
         result += "FAIL - animation \"" + animationName + "\" is not running" + "<br>";
         return;
     }
@@ -272,8 +272,8 @@ function endTest()
 {
     document.getElementById('result').innerHTML = result;
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function checkExpectedValueCallback(expected, index)
@@ -319,14 +319,14 @@ var hasPauseAnimationAPI;
 
 function runAnimationTest(expected, callback, event, disablePauseAnimationAPI, doPixelTest)
 {
-    hasPauseAnimationAPI = ('layoutTestController' in window) && ('pauseAnimationAtTimeOnElementWithId' in layoutTestController);
+    hasPauseAnimationAPI = ('testRunner' in window) && ('pauseAnimationAtTimeOnElementWithId' in testRunner);
     if (disablePauseAnimationAPI)
         hasPauseAnimationAPI = false;
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         if (!doPixelTest)
-            layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+            testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     if (!expected)

@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var pulsingSquareAnimationEnded = false;
@@ -26,8 +26,8 @@
             else
                 result.innerHTML = "PASS - Test working";
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     }
 

@@ -94,9 +94,9 @@ body.go #blue {
 </style>
 
 <script type="text/javascript" charset="utf-8">
-   if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+   if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var animationStarted = false;
@@ -116,8 +116,8 @@ body.go #blue {
     }, false);
 
     document.addEventListener("webkitAnimationEnd", function(event) {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, false);
 
     window.addEventListener("load", function () {

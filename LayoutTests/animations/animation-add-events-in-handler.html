@@ -1,7 +1,7 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function touchElement(evt) {
@@ -10,8 +10,8 @@ function touchElement(evt) {
     total++;
     if (total == 500) {
         document.getElementById("results").innerHTML = "PASS: Adding animation events in the handler did not crash.";
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
     }
 }
 

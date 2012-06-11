@@ -56,8 +56,8 @@
             else
                 result.innerHTML = "FAIL - final state was " + computedValue + " expected " + expectedValue;
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
 
         function swapAnim()
@@ -76,9 +76,9 @@
             document.addEventListener("webkitAnimationEnd", swapAnim, false);
         }
         
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText(true);
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText(true);
+            testRunner.waitUntilDone();
         }
 
         window.addEventListener("load", setup, false);

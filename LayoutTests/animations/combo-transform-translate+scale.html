@@ -20,9 +20,9 @@
     }
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
     }
     
     result = "";
@@ -51,8 +51,8 @@
         numSnapshots++;
         if (numSnapshots == 2) {
             document.getElementById('result').innerHTML = result || "PASS";
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     }
 

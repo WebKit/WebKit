@@ -55,9 +55,9 @@
     </style>
     
     <script type="text/javascript" charset="utf-8">
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
       }
 
       resultEntries = [];
@@ -99,8 +99,8 @@
           if (numSnapshots == 2) {
               resultEntries.sort();
               document.getElementById('result').innerHTML = resultEntries.join("");
-              if (window.layoutTestController)
-                  layoutTestController.notifyDone();
+              if (window.testRunner)
+                  testRunner.notifyDone();
           }
       }
       

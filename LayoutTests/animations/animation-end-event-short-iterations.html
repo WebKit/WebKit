@@ -20,17 +20,17 @@
     }
   </style>
   <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
   
     onload = function()
     {
         document.addEventListener('webkitAnimationEnd', function() {
             document.getElementById('result').innerHTML = 'PASS: got webkitAnimationEnd event';      
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, false);
         
         // Animation begins once we append the DOM node to the document.

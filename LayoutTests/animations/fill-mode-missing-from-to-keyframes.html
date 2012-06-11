@@ -103,9 +103,9 @@
     ];
     var result = "";
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function animationEnded(event) {
@@ -130,8 +130,8 @@
         }
         document.getElementById('result').innerHTML = result;
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     window.onload = function () {

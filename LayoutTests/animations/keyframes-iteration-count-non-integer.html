@@ -30,9 +30,9 @@
     <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     document.addEventListener("webkitAnimationEnd", function(event){
@@ -43,8 +43,8 @@
             result = "FAIL end of animation";
         document.getElementById('result').innerHTML = result;
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, false);
     
   </script>
