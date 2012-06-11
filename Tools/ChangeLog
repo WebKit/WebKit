@@ -1,5 +1,20 @@
 2012-06-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
+        [EFL] [DRT] Reset CacheModel before running each test
+        https://bugs.webkit.org/show_bug.cgi?id=87534
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Reset cache model to default before running each test to fix some
+        flaky tests on EFL build bots. Also fix case value in setCacheModel.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setCacheModel):
+
+2012-06-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
         [GTK] Memory leaks in DRT EventSender.cpp
         https://bugs.webkit.org/show_bug.cgi?id=88774
 

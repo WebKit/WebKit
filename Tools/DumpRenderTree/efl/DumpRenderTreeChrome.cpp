@@ -272,7 +272,12 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::setDefersLoading(mainView(), false);
     DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(mainView(), false);
     DumpRenderTreeSupportEfl::setSerializeHTTPLoads(false);
+
+    // Reset capacities for the memory cache for dead objects.
+    static const unsigned cacheTotalCapacity =  8192 * 1024;
+    ewk_settings_object_cache_capacity_set(0, cacheTotalCapacity, cacheTotalCapacity);
     DumpRenderTreeSupportEfl::setDeadDecodedDataDeletionInterval(0);
+    ewk_settings_page_cache_capacity_set(3);
 
     if (m_currentIntentRequest) {
         ewk_intent_request_unref(m_currentIntentRequest);

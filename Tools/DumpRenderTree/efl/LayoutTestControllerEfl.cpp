@@ -55,6 +55,13 @@
 #include <stdio.h>
 #include <wtf/text/WTFString.h>
 
+// Same as Mac cache model enum in Source/WebKit/mac/WebView/WebPreferences.h.
+enum {
+    WebCacheModelDocumentViewer = 0,
+    WebCacheModelDocumentBrowser = 1,
+    WebCacheModelPrimaryWebBrowser = 2
+};
+
 LayoutTestController::~LayoutTestController()
 {
 }
@@ -548,21 +555,21 @@ void LayoutTestController::setCacheModel(int cacheModel)
 
     // These constants are derived from the Mac cache model enum in Source/WebKit/mac/WebView/WebPreferences.h.
     switch (cacheModel) {
-    case 0: // WebCacheModelDocumentViewer
+    case WebCacheModelDocumentViewer:
         pageCacheCapacity = 0;
         cacheTotalCapacity = 0;
         cacheMinDeadCapacity = 0;
         cacheMaxDeadCapacity = 0;
         deadDecodedDataDeletionInterval = 0;
         break;
-    case 1: // WebCacheModelDocumentBrowser
+    case WebCacheModelDocumentBrowser:
         pageCacheCapacity = 2;
         cacheTotalCapacity = 16 * 1024 * 1024;
         cacheMinDeadCapacity = cacheTotalCapacity / 8;
         cacheMaxDeadCapacity = cacheTotalCapacity / 4;
         deadDecodedDataDeletionInterval = 0;
         break;
-    case 3: // WebCacheModelPrimaryWebBrowser
+    case WebCacheModelPrimaryWebBrowser:
         pageCacheCapacity = 3;
         cacheTotalCapacity = 32 * 1024 * 1024;
         cacheMinDeadCapacity = cacheTotalCapacity / 4;
