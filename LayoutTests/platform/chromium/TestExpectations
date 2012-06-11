@@ -155,6 +155,9 @@ BUGGBILLOCK SKIP : webintents/intent-tag.html = PASS
 // CSS Variables are not yet enabled.
 BUGWK85580 SKIP : fast/css/variables = PASS
 
+// CSS image-resolution is not yet enabled.
+BUGWK85262 SKIP : fast/css/image-resolution = PASS FAIL
+
 // Chromium needs larger media files to test buffering this way.
 BUGWK88172 SKIP : http/tests/media/video-buffered.html = PASS
 

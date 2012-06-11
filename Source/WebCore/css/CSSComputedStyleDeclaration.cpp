@@ -125,6 +125,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyFontWeight,
     CSSPropertyHeight,
     CSSPropertyImageRendering,
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    CSSPropertyImageResolution,
+#endif
     CSSPropertyLeft,
     CSSPropertyLetterSpacing,
     CSSPropertyLineHeight,
@@ -1767,6 +1770,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return cssValuePool().createIdentifierValue(CSSValueLines);
         case CSSPropertyImageRendering:
             return CSSPrimitiveValue::create(style->imageRendering());
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+        case CSSPropertyImageResolution:
+            return cssValuePool().createValue(style->imageResolution(), CSSPrimitiveValue::CSS_DPPX);
+#endif
         case CSSPropertyLeft:
             return getPositionOffsetValue(style.get(), CSSPropertyLeft, m_node->document()->renderView());
         case CSSPropertyLetterSpacing:

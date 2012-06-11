@@ -78,6 +78,9 @@ BUGWK85580 SKIP : fast/css/variables = PASS
 // UndoManager is not yet enabled.
 BUGWK87908 SKIP : editing/undomanager = PASS
 
+// CSS image-resolution is not yet enabled.
+BUGWK85262 SKIP : fast/css/image-resolution = PASS FAIL
+
 // Needs rebaseline after bug 86441
 // failing new tests
 BUGWK86441 SKIP : fast/borders/border-antialiasing.html = IMAGE

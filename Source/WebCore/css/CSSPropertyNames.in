@@ -104,6 +104,9 @@ float
 font-stretch
 height
 image-rendering
+#if defined(ENABLE_CSS_IMAGE_RESOLUTION) && ENABLE_CSS_IMAGE_RESOLUTION
+image-resolution
+#endif
 left
 letter-spacing
 list-style

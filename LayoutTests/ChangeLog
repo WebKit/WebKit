@@ -1,3 +1,21 @@
+2012-06-11  David Barr  <davidbarr@chromium.org>
+
+        Add css3-images image-resolution (dppx only)
+        https://bugs.webkit.org/show_bug.cgi?id=85332
+
+        Reviewed by Tony Chang.
+
+        The css3-images module is at candidate recommendation.
+        http://www.w3.org/TR/2012/CR-css3-images-20120417/#image-resolution
+
+        * fast/css/image-resolution/image-resolution-expected.txt: Added.
+        * fast/css/image-resolution/image-resolution.html: Added.
+        * platform/chromium/TestExpectations: Skip tests until image-resolution implementation lands.
+        * platform/efl/TestExpectations: Skip tests until image-resolution implementation lands.
+        * platform/gtk/TestExpectations: Skip tests until image-resolution implementation lands.
+        * platform/mac/TestExpectations: Skip tests until image-resolution implementation lands.
+        * platform/qt/TestExpectations: Skip tests until image-resolution implementation lands.
+
 2012-06-11  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed: Rebaseline more SVG tests on Windows.

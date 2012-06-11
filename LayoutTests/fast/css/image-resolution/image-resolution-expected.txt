@@ -1,0 +1,29 @@
+Apply image-resolution property to a fixed image (16x16@0.75dppx).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+TEST "0dppx"
+PASS img.style.cssText is ""
+TEST "1dppx"
+PASS img.style.cssText is "image-resolution: 1dppx; "
+PASS img.offsetWidth is 16
+PASS img.offsetHeight is 16
+TEST "2dppx"
+PASS img.style.cssText is "image-resolution: 2dppx; "
+PASS img.offsetWidth is 8
+PASS img.offsetHeight is 8
+TEST "3dppx"
+PASS img.style.cssText is "image-resolution: 3dppx; "
+PASS img.offsetWidth is 5
+PASS img.offsetHeight is 5
+TEST "4dppx"
+PASS img.style.cssText is "image-resolution: 4dppx; "
+PASS img.offsetWidth is 4
+PASS img.offsetHeight is 4
+TEST ""
+PASS img.style.cssText is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

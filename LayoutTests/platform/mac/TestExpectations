@@ -15,6 +15,9 @@ BUGWK85580 SKIP : fast/css/variables = PASS
 // UndoManager is not yet enabled.
 BUGWK87908 SKIP : editing/undomanager = PASS
 
+// CSS image-resolution is not yet enabled.
+BUGWK85262 SKIP : fast/css/image-resolution = PASS FAIL
+
 // Our slow tests, in alphabetical order.
 BUGWK57672 : http/tests/local/fileapi/send-sliced-dragged-file.html = TEXT PASS
 

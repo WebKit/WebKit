@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style src="../../js/resources/js-test-style.css"></style>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+}
+
+function testCompleted()
+{
+    var scriptElement = document.createElement("script")
+    scriptElement.src = '../../js/resources/js-test-post-async.js'
+    document.body.appendChild(scriptElement);
+}
+
+function computeResolution(resolution, imgResolutionDppx)
+{
+    if (!resolution)
+        return;
+    var fromImage = /from-image/.test(resolution);
+    var snap = /snap/.test(resolution);
+    var explicit = /(-?\d*(\.\d+)?)(dp(px|i|cm))/.exec(resolution);
+    var value = explicit && explicit[1] * 1;
+    var unit = explicit && explicit[3];
+    var dppx = 1;
+    if (unit && value <= 0)
+        return;
+    if (unit && value) {
+        var cssPxPerIn = 96;
+        var cmPerIn = 2.54;
+        if (unit == 'dppx')
+            dppx = value;
+        else if (unit === 'dpi')
+            dppx = value / cssPxPerIn;
+        else if (unit === 'dpcm')
+            dppx = value / (cssPxPerIn / cmPerIn);
+    }
+    if (fromImage)
+        dppx = imgResolutionDppx;
+    if (snap)
+        dppx = Math.floor(dppx);
+    if (dppx <= 0)
+        dppx = 1;
+    return dppx;
+}
+
+var imgUrl = '../../images/resources/green.jpg';
+var imgWidthPx = 16;
+var imgHeightPx = 16;
+var imgResolutionDppx = 72 / 96;
+var dimensions = imgWidthPx + 'x' + imgHeightPx + '@' + imgResolutionDppx + 'dppx';
+
+description('Apply image-resolution property to a fixed image (' + dimensions + ').');
+
+var img = document.createElement('img');
+img.src = imgUrl;
+
+var resolutions = ['0dppx', '1dppx', '2dppx', '3dppx', '4dppx', ''];
+
+img.onload = function() {
+    resolutions.forEach(function(test) {
+        var dppx = computeResolution(test, imgResolutionDppx);
+        img.style.imageResolution = '';
+        img.style.imageResolution = test;
+        debug('<span class="pass">TEST</span> "' + test + '"');
+        if (!dppx) {
+            shouldBe('img.style.cssText', '""');
+            return;
+        }
+        shouldBe('img.style.cssText', '"image-resolution: ' + test + '; "');
+        var expectedWidth = Math.floor(imgWidthPx / dppx);
+        var expectedHeight = Math.floor(imgHeightPx / dppx);
+        shouldBe('img.offsetWidth', stringify(expectedWidth));
+        shouldBe('img.offsetHeight', stringify(expectedHeight));
+    });
+    document.body.removeChild(img);
+    testCompleted();
+};
+
+document.body.appendChild(img);
+</script>
+</body>
+</html>

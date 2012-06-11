@@ -1335,6 +1335,11 @@ bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, CSSParserMode 
     case CSSPrimitiveValue::CSS_TURN:
         b = (unitflags & FAngle);
         break;
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    case CSSPrimitiveValue::CSS_DPPX:
+        b = (unitflags & FResolution);
+        break;
+#endif
     case CSSPrimitiveValue::CSS_HZ:
     case CSSPrimitiveValue::CSS_KHZ:
     case CSSPrimitiveValue::CSS_DIMENSION:
@@ -1353,9 +1358,16 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveNumericValue(CSSP
         return CSSPrimitiveValue::create(m_parsedCalculation.release());
     }
                
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    ASSERT((value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
+           || (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS)
+           || (value->unit >= CSSPrimitiveValue::CSS_VW && value->unit <= CSSPrimitiveValue::CSS_VMIN)
+           || (value->unit == CSSPrimitiveValue::CSS_DPPX));
+#else
     ASSERT((value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
            || (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS)
            || (value->unit >= CSSPrimitiveValue::CSS_VW && value->unit <= CSSPrimitiveValue::CSS_VMIN));
+#endif
     return cssValuePool().createValue(value->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit));
 }
 
@@ -1410,6 +1422,10 @@ static int unitFromString(CSSParserValue* value)
         return CSSPrimitiveValue::CSS_VH;
     if (equal(value->string, "vmin"))
         return CSSPrimitiveValue::CSS_VMIN;
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    if (equal(value->string, "dppx"))
+        return CSSPrimitiveValue::CSS_DPPX;
+#endif
 
     return 0;
 }
@@ -1463,6 +1479,10 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(int identifi
         return createPrimitiveNumericValue(value);
     if (value->unit >= CSSPrimitiveValue::CSS_VW && value->unit <= CSSPrimitiveValue::CSS_VMIN)
         return createPrimitiveNumericValue(value);
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    if (value->unit == CSSPrimitiveValue::CSS_DPPX)
+        return createPrimitiveNumericValue(value);
+#endif
     if (value->unit >= CSSParserValue::Q_EMS)
         return CSSPrimitiveValue::createAllowingMarginQuirk(value->fValue, CSSPrimitiveValue::CSS_EMS);
     if (isCalculation(value))
@@ -2494,6 +2514,14 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
     case CSSPropertyWebkitWrap:
         return RuntimeEnabledFeatures::cssExclusionsEnabled() && parseShorthand(propId, webkitWrapShorthand(), important);
+#endif
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    case CSSPropertyImageResolution:
+        parsedValue = parseImageResolution(m_valueList.get());
+        if (!parsedValue)
+            return false;
+        m_valueList->next();
+        break;
 #endif
     case CSSPropertyBorderBottomStyle:
     case CSSPropertyBorderCollapse:
@@ -6786,6 +6814,27 @@ bool CSSParser::parseCanvas(CSSParserValueList* valueList, RefPtr<CSSValue>& can
     return true;
 }
 
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+PassRefPtr<CSSValue> CSSParser::parseImageResolution(CSSParserValueList* valueList)
+{
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    bool haveResolution = false;
+
+    CSSParserValue* value = valueList->current();
+    while (value) {
+        if (!haveResolution && validUnit(value, FResolution | FNonNeg) && value->fValue > 0) {
+            list->append(createPrimitiveNumericValue(value));
+            haveResolution = true;
+        } else
+            return 0;
+        value = m_valueList->next();
+    }
+    if (!list->length())
+        return 0;
+    return list;
+}
+#endif
+
 #if ENABLE(CSS_IMAGE_SET)
 PassRefPtr<CSSValue> CSSParser::parseImageSet(CSSParserValueList* valueList)
 {
@@ -8263,6 +8312,14 @@ inline void CSSParser::detectNumberToken(UChar* type, int length)
     case 'd':
         if (length == 3 && isASCIIAlphaCaselessEqual(type[1], 'e') && isASCIIAlphaCaselessEqual(type[2], 'g'))
             m_token = DEGS;
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+        // There is a discussion about the name of this unit on www-style.
+        // Keep this compile time guard in place until that is resolved.
+        // http://lists.w3.org/Archives/Public/www-style/2012May/0915.html
+        else if (length == 4 && isASCIIAlphaCaselessEqual(type[1], 'p')
+                 && isASCIIAlphaCaselessEqual(type[2], 'p') && isASCIIAlphaCaselessEqual(type[3], 'x'))
+            m_token = DPPX;
+#endif
         return;
 
     case 'e':

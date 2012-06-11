@@ -195,6 +195,10 @@ public:
 
     bool parseCrossfade(CSSParserValueList*, RefPtr<CSSValue>&);
 
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    PassRefPtr<CSSValue> parseImageResolution(CSSParserValueList*);
+#endif
+
 #if ENABLE(CSS_IMAGE_SET)
     PassRefPtr<CSSValue> parseImageSet(CSSParserValueList*);
 #endif
@@ -436,7 +440,10 @@ private:
         FTime      = 0x0020,
         FFrequency = 0x0040,
         FRelative  = 0x0100,
-        FNonNeg    = 0x0200
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+        FResolution= 0x0200,
+#endif
+        FNonNeg    = 0x0400
     };
 
     friend inline Units operator|(Units a, Units b)

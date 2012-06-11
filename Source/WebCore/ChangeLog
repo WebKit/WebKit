@@ -1,3 +1,61 @@
+2012-06-11  David Barr  <davidbarr@chromium.org>
+
+        Add css3-images image-resolution (dppx only)
+        https://bugs.webkit.org/show_bug.cgi?id=85332
+
+        Reviewed by Tony Chang.
+
+        The css3-images module is at candidate recommendation.
+        http://www.w3.org/TR/2012/CR-css3-images-20120417/#image-resolution
+
+        Test: fast/css/image-resolution.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validUnit):
+        (WebCore::CSSParser::createPrimitiveNumericValue):
+        (WebCore::unitFromString):
+        (WebCore::CSSParser::parseValidPrimitive):
+        (WebCore::CSSParser::parseValue):
+        (WebCore):
+        (WebCore::CSSParser::parseImageResolution):
+        (WebCore::CSSParser::detectNumberToken):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::unitCategory):
+        (WebCore::CSSPrimitiveValue::canonicalUnitTypeForCategory):
+        (WebCore::CSSPrimitiveValue::customCssText):
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilder.cpp:
+        (WebCore):
+        (ApplyPropertyImageResolution):
+        (WebCore::ApplyPropertyImageResolution::applyInheritValue):
+        (WebCore::ApplyPropertyImageResolution::applyInitialValue):
+        (WebCore::ApplyPropertyImageResolution::applyValue):
+        (WebCore::ApplyPropertyImageResolution::createHandler):
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::styleDidChange):
+        (WebCore::RenderImage::imageDimensionsChanged):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        (StyleRareInheritedData):
+
 2012-06-05  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Free texture from CCIOSurfaceLayerImpl when it is destroyed

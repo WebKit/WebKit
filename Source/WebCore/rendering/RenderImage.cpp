@@ -137,6 +137,10 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
             imageDimensionsChanged(true /* imageSizeChanged */);
         m_needsToSetSizeForAltText = false;
     }
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    if (diff == StyleDifferenceLayout && oldStyle->imageResolution() != style()->imageResolution())
+        imageDimensionsChanged(true /* imageSizeChanged */);
+#endif
 }
 
 void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
@@ -191,7 +195,11 @@ bool RenderImage::updateIntrinsicSizeIfNeeded(const IntSize& newSize, bool image
 
 void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* rect)
 {
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    bool intrinsicSizeChanged = updateIntrinsicSizeIfNeeded(m_imageResource->imageSize(style()->effectiveZoom() / style()->imageResolution()), imageSizeChanged);
+#else
     bool intrinsicSizeChanged = updateIntrinsicSizeIfNeeded(m_imageResource->imageSize(style()->effectiveZoom()), imageSizeChanged);
+#endif
 
     // In the case of generated image content using :before/:after/content, we might not be
     // in the render tree yet. In that case, we just need to update our intrinsic size.

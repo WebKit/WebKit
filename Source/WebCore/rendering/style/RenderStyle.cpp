@@ -473,6 +473,9 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             || rareInheritedData->m_tabSize != other->rareInheritedData->m_tabSize
             || rareInheritedData->m_lineBoxContain != other->rareInheritedData->m_lineBoxContain
             || rareInheritedData->m_lineGrid != other->rareInheritedData->m_lineGrid
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+            || rareInheritedData->m_imageResolution != other->rareInheritedData->m_imageResolution
+#endif
             || rareInheritedData->m_lineSnap != other->rareInheritedData->m_lineSnap
             || rareInheritedData->m_lineAlign != other->rareInheritedData->m_lineAlign)
             return StyleDifferenceLayout;

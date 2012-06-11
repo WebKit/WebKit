@@ -53,6 +53,9 @@ BUGWK83898 : fast/css/getComputedStyle/computed-style-without-renderer.html = TE
 BUGWK85465 SKIP : css3/filters = TEXT
 BUGWK85465 SKIP : fast/css/getComputedStyle/computed-style.html = TEXT
 
+// CSS image-resolution is not yet enabled.
+BUGWK85262 SKIP : fast/css/image-resolution = PASS FAIL
+
 // This test assumes we cannot play RTSP, but we can.
 BUGWKEFL SKIP : media/unsupported-rtsp.html = TIMEOUT
 

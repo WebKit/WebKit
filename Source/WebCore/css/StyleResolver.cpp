@@ -4024,6 +4024,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
     case CSSPropertyFontWeight:
     case CSSPropertyHeight:
     case CSSPropertyImageRendering:
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    case CSSPropertyImageResolution:
+#endif
     case CSSPropertyLeft:
     case CSSPropertyLetterSpacing:
     case CSSPropertyLineHeight:

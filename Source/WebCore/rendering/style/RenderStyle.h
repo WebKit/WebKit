@@ -973,6 +973,10 @@ public:
     bool isFlippedBlocksWritingMode() const { return writingMode() == RightToLeftWritingMode || writingMode() == BottomToTopWritingMode; }
 
     EImageRendering imageRendering() const { return static_cast<EImageRendering>(rareInheritedData->m_imageRendering); }
+
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    float imageResolution() const { return rareInheritedData->m_imageResolution; }
+#endif
     
     ESpeak speak() const { return static_cast<ESpeak>(rareInheritedData->speak); }
 
@@ -1139,6 +1143,10 @@ public:
     void setZoomWithoutReturnValue(float f) { setZoom(f); }
     bool setEffectiveZoom(float);
     void setImageRendering(EImageRendering v) { SET_VAR(rareInheritedData, m_imageRendering, v) }
+
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    void setImageResolution(float f) { SET_VAR(rareInheritedData, m_imageResolution, f) }
+#endif
 
     void setWhiteSpace(EWhiteSpace v) { inherited_flags._white_space = v; }
 
@@ -1647,6 +1655,7 @@ public:
     static TextEmphasisPosition initialTextEmphasisPosition() { return TextEmphasisPositionOver; }
     static LineBoxContain initialLineBoxContain() { return LineBoxContainBlock | LineBoxContainInline | LineBoxContainReplaced; }
     static EImageRendering initialImageRendering() { return ImageRenderingAuto; }
+    static float initialImageResolution() { return 1; }
     static StyleImage* initialBorderImageSource() { return 0; }
     static StyleImage* initialMaskBoxImageSource() { return 0; }
     static PrintColorAdjust initialPrintColorAdjust() { return PrintColorAdjustEconomy; }

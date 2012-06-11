@@ -1767,6 +1767,40 @@ private:
 
 };
 
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+class ApplyPropertyImageResolution {
+public:
+    static void applyInheritValue(StyleResolver* styleResolver)
+    {
+        ApplyPropertyDefaultBase<float, &RenderStyle::imageResolution, float, &RenderStyle::setImageResolution, float, &RenderStyle::initialImageResolution>::applyInheritValue(styleResolver);
+    }
+
+    static void applyInitialValue(StyleResolver* styleResolver)
+    {
+        ApplyPropertyDefaultBase<float, &RenderStyle::imageResolution, float, &RenderStyle::setImageResolution, float, &RenderStyle::initialImageResolution>::applyInitialValue(styleResolver);
+    }
+
+    static void applyValue(StyleResolver* styleResolver, CSSValue* value)
+    {
+        if (!value->isValueList())
+            return;
+        CSSValueList* valueList = static_cast<CSSValueList*>(value);
+        for (size_t i = 0; i < valueList->length(); i++) {
+            CSSValue* item = valueList->itemWithoutBoundsCheck(i);
+            if (!item->isPrimitiveValue())
+                continue;
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
+            styleResolver->style()->setImageResolution(primitiveValue->getDoubleValue(CSSPrimitiveValue::CSS_DPPX));
+        }
+    }
+
+    static PropertyHandler createHandler()
+    {
+        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
+    }
+};
+#endif
+
 const StyleBuilder& StyleBuilder::sharedStyleBuilder()
 {
     DEFINE_STATIC_LOCAL(StyleBuilder, styleBuilderInstance, ());
@@ -1843,6 +1877,9 @@ StyleBuilder::StyleBuilder()
     setPropertyHandler(CSSPropertyFontWeight, ApplyPropertyFontWeight::createHandler());
     setPropertyHandler(CSSPropertyHeight, ApplyPropertyLength<&RenderStyle::height, &RenderStyle::setHeight, &RenderStyle::initialSize, AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneDisabled, UndefinedDisabled>::createHandler());
     setPropertyHandler(CSSPropertyImageRendering, ApplyPropertyDefault<EImageRendering, &RenderStyle::imageRendering, EImageRendering, &RenderStyle::setImageRendering, EImageRendering, &RenderStyle::initialImageRendering>::createHandler());
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    setPropertyHandler(CSSPropertyImageResolution, ApplyPropertyImageResolution::createHandler());
+#endif
     setPropertyHandler(CSSPropertyLeft, ApplyPropertyLength<&RenderStyle::left, &RenderStyle::setLeft, &RenderStyle::initialOffset, AutoEnabled>::createHandler());
     setPropertyHandler(CSSPropertyLetterSpacing, ApplyPropertyComputeLength<int, &RenderStyle::letterSpacing, &RenderStyle::setLetterSpacing, &RenderStyle::initialLetterWordSpacing, NormalEnabled, ThicknessDisabled, SVGZoomEnabled>::createHandler());
     setPropertyHandler(CSSPropertyLineHeight, ApplyPropertyLineHeight::createHandler());

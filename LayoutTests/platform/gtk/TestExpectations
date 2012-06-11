@@ -317,6 +317,9 @@ BUGWK79203 SKIP : fast/mediastream = FAIL
 // CSS Variables are not yet enabled.
 BUGWK85580 SKIP : fast/css/variables = PASS FAIL
 
+// CSS image-resolution is not yet enabled.
+BUGWK85262 SKIP : fast/css/image-resolution = PASS FAIL
+
 // No CORS support for media elements is implemented yet.
 BUGWKGTK SKIP : http/tests/security/video-cross-origin-readback.html = FAIL
 
