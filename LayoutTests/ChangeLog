@@ -1,3 +1,9 @@
+2012-06-11  Ojan Vafai  <ojan@chromium.org>
+
+        Large slew of Chromium windows png rebaselines. See http://crbug.com/131829 for more information.
+
+        List of rebaselined files excluded because it's too long.
+
 2012-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in css 1, css 2.1, and css3 tests
