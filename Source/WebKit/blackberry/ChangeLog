@@ -1,3 +1,17 @@
+2012-06-10  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Make media (<video> and <audio>) slide draggable again
+        https://bugs.webkit.org/show_bug.cgi?id=88742
+        PR #158199
+
+        Reviewed by George Staikos.
+
+        First check if the element is a range type then gets its
+        shadow DOM ancestor.
+
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::shouldConvertTouchToMouse):
+
 2012-06-08  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Fix crash on PagePopupChromeClient

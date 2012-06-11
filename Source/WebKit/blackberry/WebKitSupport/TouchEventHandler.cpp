@@ -94,9 +94,9 @@ static bool shouldConvertTouchToMouse(Element* element)
     // won't operate on the shadow node of other element type, because the webpages
     // aren't able to attach listeners to shadow content.
     do {
-        element = toElement(element->shadowAncestorNode()); // If an element is not in shadow tree, shadowAncestorNode returns itself.
         if (isRangeControlElement(element))
             return true;
+        element = toElement(element->shadowAncestorNode()); // If an element is not in shadow tree, shadowAncestorNode returns itself.
     } while (element->isInShadowTree());
 
     // Check if the element has a mouse listener and no touch listener. If so,
