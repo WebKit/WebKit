@@ -1,3 +1,20 @@
+2012-06-11  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] [BlackBerry] browser video player fullscreen mode (portrait) does not play well with rotation
+        https://bugs.webkit.org/show_bug.cgi?id=88809
+
+        Reviewed by Rob Buis.
+
+        Adjust the media container dimensions, whenever the FrameView::frameRect
+        (aka viewport rect) changes
+
+        Reviewed internally by Jacky Jiang.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::updateViewportSize):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::fullScreenRendererChanged):
+
 2012-06-09  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] browser video player fullscreen mode (portrait) does not play well with viewport metatag - Controls are off screen so cannot exit fullscreen

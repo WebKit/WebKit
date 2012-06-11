@@ -736,9 +736,6 @@ void ChromeClientBlackBerry::fullScreenRendererChanged(RenderBox* fullScreenRend
     // Once we go fullscreen using the new FULLSCREEN_API code path, we have to take into account
     // our port specific page scaling.
     if (fullScreenRenderer) {
-        // FIXME: Since we are setting an absolute width value here, it won't work for cases
-        // where we change the viewport size as we go. For example, rotate the device while
-        // in fullscreen mode.
         int width = m_webPagePrivate->m_mainFrame->view()->visibleContentRect().size().width();
         fullScreenRenderer->style()->setWidth(Length(width, Fixed));
     }
