@@ -1,3 +1,9 @@
+2012-06-11  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed: Mark track-cue-rendering-inner-timestamps.html failing on Vista
+
+        * platform/chromium/TestExpectations:
+
 2012-06-11  Mike West  <mkwst@chromium.org>
 
         [Qt] Skipping http/tests/security/mixedContent/filesystem-url-in-iframe.html
