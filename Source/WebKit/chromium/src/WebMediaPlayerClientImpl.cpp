@@ -267,11 +267,23 @@ void WebMediaPlayerClientImpl::keyNeeded(const WebString& keySystem, const WebSt
 #endif
 }
 
-void WebMediaPlayerClientImpl::createHelperPlugin(const WebString& pluginType, WebFrame* frame)
+WebPlugin* WebMediaPlayerClientImpl::createHelperPlugin(const WebString& pluginType, WebFrame* frame)
 {
     ASSERT(!m_helperPlugin);
     WebViewImpl* webView = static_cast<WebViewImpl*>(frame->view());
     m_helperPlugin = webView->createHelperPlugin(pluginType);
+    if (!m_helperPlugin)
+        return 0;
+
+    WebPlugin* plugin = m_helperPlugin->getPlugin();
+    if (!plugin) {
+        // There is no need to keep the helper plugin around and the caller
+        // should not be expected to call close after a failure (null pointer).
+        closeHelperPlugin();
+        return 0;
+    }
+
+    return plugin;
 }
 
 void WebMediaPlayerClientImpl::closeHelperPlugin()

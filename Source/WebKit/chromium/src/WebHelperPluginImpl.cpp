@@ -31,15 +31,18 @@
 #include "config.h"
 #include "WebHelperPluginImpl.h"
 
-#include "Chrome.h"
 #include "DocumentLoader.h"
 #include "EmptyClients.h"
 #include "FocusController.h"
 #include "FrameView.h"
+#include "HTMLPlugInElement.h"
+#include "NodeList.h"
 #include "Page.h"
 #include "PageWidgetDelegate.h"
 #include "Settings.h"
 #include "WebFrameImpl.h"
+#include "WebPlugin.h"
+#include "WebPluginContainerImpl.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include "WebWidgetClient.h"
@@ -99,6 +102,7 @@ private:
 
 WebHelperPluginImpl::WebHelperPluginImpl(WebWidgetClient* client)
     : m_widgetClient(client)
+    , m_webView(0)
 {
     ASSERT(client);
 }
@@ -143,6 +147,31 @@ void WebHelperPluginImpl::initializeFrame(WebFrameClient* client)
     frame->initializeAsMainFrame(m_page.get());
 }
 
+// Returns a pointer to the WebPlugin by finding the single <object> tag in the page.
+WebPlugin* WebHelperPluginImpl::getPlugin()
+{
+    ASSERT(m_page);
+
+    RefPtr<NodeList> objectElements = m_page->mainFrame()->document()->getElementsByTagName(WebCore::HTMLNames::objectTag.localName());
+    ASSERT(objectElements && objectElements->length() == 1);
+    if (!objectElements || objectElements->length() < 1)
+        return 0;
+    Node* node = objectElements->item(0);
+    ASSERT(node->hasTagName(WebCore::HTMLNames::objectTag));
+    WebCore::Widget* widget = static_cast<HTMLPlugInElement*>(node)->pluginWidget();
+    if (!widget)
+        return 0;
+    WebPlugin* plugin = static_cast<WebPluginContainerImpl*>(widget)->plugin();
+    ASSERT(plugin);
+    // If the plugin is a placeholder, it is not useful to the caller, and it
+    // could be replaced at any time. Therefore, do not return it.
+    if (plugin->isPlaceholder())
+        return 0;
+
+    // The plugin was instantiated and will outlive this object.
+    return plugin;
+}
+
 bool WebHelperPluginImpl::initPage(WebKit::WebViewImpl* webView, const String& pluginType)
 {
     Page::PageClients pageClients;
@@ -157,7 +186,7 @@ bool WebHelperPluginImpl::initPage(WebKit::WebViewImpl* webView, const String& p
 
     webView->client()->initializeHelperPluginWebFrame(this);
 
-    // The page's main frame was set in initializeMainFrame() as a result of the above call.
+    // The page's main frame was set in initializeFrame() as a result of the above call.
     Frame* frame = m_page->mainFrame();
     ASSERT(frame);
     frame->setView(FrameView::create(frame));
@@ -193,7 +222,17 @@ void WebHelperPluginImpl::setFocus(bool enable)
 
 void WebHelperPluginImpl::close()
 {
-    m_page.clear();
+    RefPtr<WebFrameImpl> mainFrameImpl;
+
+    if (m_page) {
+        // Initiate shutdown. This will cause a lot of notifications to be sent.
+        if (m_page->mainFrame()) {
+            mainFrameImpl = WebFrameImpl::fromFrame(m_page->mainFrame());
+            m_page->mainFrame()->loader()->frameDetached();
+        }
+        m_page.clear();
+    }
+
     m_widgetClient = 0;
     deref();
 }

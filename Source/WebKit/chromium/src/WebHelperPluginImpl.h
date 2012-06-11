@@ -42,7 +42,6 @@ class Page;
 namespace WebKit {
 
 class HelperPluginChromeClient;
-class WebFrameImpl;
 class WebViewImpl;
 class WebWidgetClient;
 
@@ -60,6 +59,7 @@ public:
 
     // WebHelperPlugin methods:
     virtual void initializeFrame(WebFrameClient*) OVERRIDE;
+    virtual WebPlugin* getPlugin() OVERRIDE;
 
 private:
     explicit WebHelperPluginImpl(WebWidgetClient*);

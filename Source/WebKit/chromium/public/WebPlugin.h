@@ -139,6 +139,8 @@ public:
     // Rotates the plugin's view of its content.
     virtual void rotateView(RotationType type) { }
 
+    virtual bool isPlaceholder() { return true; }
+
 protected:
     ~WebPlugin() { }
 };

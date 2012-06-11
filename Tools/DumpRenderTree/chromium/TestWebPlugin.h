@@ -68,6 +68,7 @@ public:
     virtual void didFailLoading(const WebKit::WebURLError&) { }
     virtual void didFinishLoadingFrameRequest(const WebKit::WebURL&, void* notifyData) { }
     virtual void didFailLoadingFrameRequest(const WebKit::WebURL&, void* notifyData, const WebKit::WebURLError&) { }
+    virtual bool isPlaceholder() { return false; }
 
 private:
     enum Primitive {

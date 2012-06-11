@@ -37,6 +37,7 @@
 namespace WebKit {
 
 class WebFrameClient;
+class WebPlugin;
 class WebWidgetClient;
 
 class WebHelperPlugin : public WebWidget {
@@ -44,6 +45,11 @@ public:
     WEBKIT_EXPORT static WebHelperPlugin* create(WebWidgetClient*);
 
     virtual void initializeFrame(WebFrameClient*) = 0;
+
+    // The returned pointer may be 0 even if initialization was successful.
+    // For example, if the plugin cannot be found or the plugin is disabled.
+    // If not 0, the returned pointer is valid for the lifetime of this object.
+    virtual WebPlugin* getPlugin() = 0;
 
 protected:
     ~WebHelperPlugin() { }

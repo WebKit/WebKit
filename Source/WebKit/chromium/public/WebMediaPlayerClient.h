@@ -36,6 +36,7 @@
 namespace WebKit {
 
 class WebFrame;
+class WebPlugin;
 class WebRequest;
 class WebURL;
 
@@ -76,7 +77,9 @@ public:
     virtual void keyError(const WebString&, const WebString&, MediaKeyErrorCode, unsigned short systemCode) = 0;
     virtual void keyMessage(const WebString&, const WebString&, const unsigned char*, unsigned) = 0;
     virtual void keyNeeded(const WebString&, const WebString&, const unsigned char* initData, unsigned initDataLength) = 0;
-    virtual void createHelperPlugin(const WebString& pluginType, WebFrame*) = 0;
+    // The returned pointer is valid until closeHelperPlugin() is called.
+    // Returns 0 if the plugin could not be instantiated.
+    virtual WebPlugin* createHelperPlugin(const WebString& pluginType, WebFrame*) = 0;
     virtual void closeHelperPlugin() = 0;
     virtual void disableAcceleratedCompositing() = 0;
 protected:

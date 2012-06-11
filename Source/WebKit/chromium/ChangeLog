@@ -1,3 +1,36 @@
+2012-06-11  David Dorwin  <ddorwin@chromium.org>
+
+        [chromium] Provide access to the WebPlugin created by the helper plugin widget
+        https://bugs.webkit.org/show_bug.cgi?id=88028
+
+        Reviewed by Adam Barth.
+
+        A WebPlugin is created when the document created by createHelperPlugin() is laid out.
+        Expose it so the embedder can interact with the plugin instance.
+
+        * public/WebHelperPlugin.h:
+        (WebKit):
+        (WebHelperPlugin):
+        * public/WebMediaPlayerClient.h:
+        (WebKit):
+        * public/WebPlugin.h:
+        (WebKit::WebPlugin::isPlaceholder):
+        (WebPlugin):
+        * src/WebHelperPluginImpl.cpp:
+        (WebKit::WebHelperPluginImpl::WebHelperPluginImpl):
+        (WebKit):
+        (WebKit::WebHelperPluginImpl::getPlugin):
+        (WebKit::WebHelperPluginImpl::initPage):
+        (WebKit::WebHelperPluginImpl::close):
+        * src/WebHelperPluginImpl.h:
+        (WebKit):
+        (WebHelperPluginImpl):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::createHelperPlugin):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+        * src/WebPagePopupImpl.cpp:
+
 2012-06-05  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Free texture from CCIOSurfaceLayerImpl when it is destroyed
