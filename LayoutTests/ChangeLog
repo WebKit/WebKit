@@ -1,3 +1,15 @@
+2012-06-11  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        SVGImageCache leaks image data
+        https://bugs.webkit.org/show_bug.cgi?id=87792
+
+        Reviewed by Nikolas Zimmermann.
+
+        New test case.
+
+        * svg/as-image/svg-image-leak-cached-data-expected.txt: Added.
+        * svg/as-image/svg-image-leak-cached-data.html: Added.
+
 2012-06-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] REGRESSION (r119788): tests rely on pathToLocalResource are failing after r119788

@@ -67,9 +67,9 @@ public:
     IntSize imageSizeForRenderer(const RenderObject*, float multiplier); // returns the size of the complete image.
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
-    void removeClientForRenderer(RenderObject*);
     virtual void didAddClient(CachedResourceClient*);
-    
+    virtual void didRemoveClient(CachedResourceClient*);
+
     virtual void allClientsRemoved();
     virtual void destroyDecodedData();
 
@@ -118,7 +118,7 @@ class CachedImageClient : public CachedResourceClient {
 public:
     virtual ~CachedImageClient() { }
     static CachedResourceClientType expectedType() { return ImageType; }
-    virtual CachedResourceClientType resourceClientType() { return expectedType(); }
+    virtual CachedResourceClientType resourceClientType() const { return expectedType(); }
 
     // Called whenever a frame of an image changes, either because we got more data from the network or
     // because we are animating. If not null, the IntRect is the changed rect of the image.
