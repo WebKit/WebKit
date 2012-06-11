@@ -120,6 +120,7 @@ struct WebProcessCreationParameters {
 #endif // PLATFORM(WIN)
 #if PLATFORM(QT)
     String cookieStorageDirectory;
+    String diskCacheDirectory;
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

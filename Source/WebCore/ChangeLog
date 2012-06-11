@@ -1,3 +1,21 @@
+2012-06-11  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] Compute and set cache capacities using the current CacheModel
+        https://bugs.webkit.org/show_bug.cgi?id=73918
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new tests needed / applicable (using operating system functionality).
+
+        Added method to read free file system space for a path to support cache model
+        implementation in Qt WK 2.
+
+        * platform/FileSystem.h:
+        (WebCore):
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::getVolumeFreeSizeForPath): Added for Qt ports.
+        (WebCore):
+
 2012-06-11  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         [JSC] Web Inspector: implement breaking from native callback

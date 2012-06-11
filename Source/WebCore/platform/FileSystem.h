@@ -205,6 +205,8 @@ String filenameToString(const char*);
 String filenameForDisplay(const String&);
 CString applicationDirectoryPath();
 CString sharedResourcesPath();
+#endif
+#if PLATFORM(GTK) || PLATFORM(QT)
 uint64_t getVolumeFreeSizeForPath(const char*);
 #endif
 

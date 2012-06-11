@@ -40,6 +40,9 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTemporaryFile>
+#if !defined(Q_OS_WINDOWS)
+#include <sys/statvfs.h>
+#endif
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -201,6 +204,24 @@ long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin o
 
     return -1;
 }
+
+uint64_t getVolumeFreeSizeForPath(const char* path)
+{
+#if defined(Q_OS_WIN)
+    ULARGE_INTEGER freeBytesToCaller;
+    BOOL result = GetDiskFreeSpaceExW((LPCWSTR)path, &freeBytesToCaller, 0, 0);
+    if (!result)
+        return 0;
+    return static_cast<uint64_t>(freeBytesToCaller.QuadPart);
+#else
+    struct statvfs volumeInfo;
+    if (statvfs(path, &volumeInfo))
+        return 0;
+
+    return static_cast<uint64_t>(volumeInfo.f_bavail) * static_cast<uint64_t>(volumeInfo.f_frsize);
+#endif
+}
+
 
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
