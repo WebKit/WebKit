@@ -1,3 +1,15 @@
+2012-06-11  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed: Rebaselines for svg/as-background-image tests on Windows.
+
+        * platform/chromium-linux/svg/as-background-image/svg-as-background-2-expected.png: Removed.
+        * platform/chromium-win/svg/as-background-image/svg-as-background-2-expected.png:
+        * platform/chromium-win/svg/as-background-image/svg-as-background-4-expected.png:
+        * platform/chromium-win/svg/as-background-image/svg-as-background-5-expected.png:
+        * platform/chromium-win/svg/as-background-image/svg-as-background-with-relative-size-expected.png:
+        * platform/chromium-win/svg/as-background-image/svg-background-partial-redraw-expected.png:
+        * platform/chromium-win/svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size-expected.png:
+
 2012-06-11  Dan Bernstein  <mitz@apple.com>
 
         Reverted r119940 because it caused multiple media tests to fail on Lion.
