@@ -739,7 +739,8 @@ void ChromeClientBlackBerry::fullScreenRendererChanged(RenderBox* fullScreenRend
         // FIXME: Since we are setting an absolute width value here, it won't work for cases
         // where we change the viewport size as we go. For example, rotate the device while
         // in fullscreen mode.
-        fullScreenRenderer->style()->setWidth(Length(m_webPagePrivate->viewportSize().width(), Fixed));
+        int width = m_webPagePrivate->m_mainFrame->view()->visibleContentRect().size().width();
+        fullScreenRenderer->style()->setWidth(Length(width, Fixed));
     }
 }
 #endif

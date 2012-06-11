@@ -1,3 +1,22 @@
+2012-06-09  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] browser video player fullscreen mode (portrait) does not play well with viewport metatag - Controls are off screen so cannot exit fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=88719
+        PR #164026
+
+        Reviewed by Rob Buis.
+
+        Instead of using WebPage's viewport size, which suffers from
+        dealing with transformed coordinates, viewport metatag changes,
+        etc, lets use WebCore::FrameView's visibleContentRect::Size::Width,
+        which abstract all these variations.
+
+        It fixes an overscale issue we were having when video player entered
+        fullscreen, and webpage had viewport metatag set.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::fullScreenRendererChanged):
+
 2012-06-11  Sam Weinig  <sam@webkit.org>
 
         Remove support for disconnected/excluded from search frames, they are not used by Safari anymore
