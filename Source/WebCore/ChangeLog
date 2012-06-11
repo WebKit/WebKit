@@ -1,3 +1,19 @@
+2012-06-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Add QML api for setting device width and height
+        https://bugs.webkit.org/show_bug.cgi?id=88777
+
+        Reviewed by Simon Hausmann.
+
+        Change the default values for deviceWidth/Height to be 0 (unset). The
+        original values were introduced by Qt and 0 makes it possible to
+        detect if a value has never been set and therefore fall back.
+
+        Only Qt depended on the former values.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+
 2012-06-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Win] Fix UString related build problem in Source/WebCore/bridge/qt/qt_instance.cpp

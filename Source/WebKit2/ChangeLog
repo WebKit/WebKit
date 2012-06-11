@@ -1,3 +1,26 @@
+2012-06-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Add QML api for setting device width and height
+        https://bugs.webkit.org/show_bug.cgi?id=88777
+
+        Reviewed by Simon Hausmann.
+
+        Add the new API and set the default values to 0 (unset). The
+        current values were introduced by Qt and only Qt depends on them.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewExperimental::deviceWidth):
+        (QQuickWebViewExperimental::setDeviceWidth):
+        (QQuickWebViewExperimental::deviceHeight):
+        (QQuickWebViewExperimental::setDeviceHeight):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/qt/QtViewportHandler.cpp:
+        (WebKit::QtViewportHandler::viewportItemSizeChanged):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged):
+
 2012-06-11  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Compute and set cache capacities using the current CacheModel

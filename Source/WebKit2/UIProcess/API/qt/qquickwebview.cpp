@@ -1195,7 +1195,7 @@ void QQuickWebViewExperimental::setUserAgent(const QString& userAgent)
 
     If the above is used on a device with device pixel ratio of 1.5, it will be scaled
     down but still provide a better looking image.
- */
+*/
 
 double QQuickWebViewExperimental::devicePixelRatio() const
 {
@@ -1211,6 +1211,54 @@ void QQuickWebViewExperimental::setDevicePixelRatio(double devicePixelRatio)
 
     d->webPageProxy->pageGroup()->preferences()->setDevicePixelRatio(devicePixelRatio);
     emit devicePixelRatioChanged();
+}
+
+/*!
+    \internal
+
+    \qmlproperty int WebViewExperimental::deviceWidth
+    \brief The device width used by the viewport calculations.
+
+    The value used when calculation the viewport, eg. what is used for 'device-width' when
+    used in the viewport meta tag. If unset (zero or negative width), the width of the
+    actual viewport is used instead.
+*/
+
+int QQuickWebViewExperimental::deviceWidth() const
+{
+    Q_D(const QQuickWebView);
+    return d->webPageProxy->pageGroup()->preferences()->deviceWidth();
+}
+
+void QQuickWebViewExperimental::setDeviceWidth(int value)
+{
+    Q_D(QQuickWebView);
+    d->webPageProxy->pageGroup()->preferences()->setDeviceWidth(qMax(0, value));
+    emit deviceWidthChanged();
+}
+
+/*!
+    \internal
+
+    \qmlproperty int WebViewExperimental::deviceHeight
+    \brief The device width used by the viewport calculations.
+
+    The value used when calculation the viewport, eg. what is used for 'device-height' when
+    used in the viewport meta tag. If unset (zero or negative height), the height of the
+    actual viewport is used instead.
+*/
+
+int QQuickWebViewExperimental::deviceHeight() const
+{
+    Q_D(const QQuickWebView);
+    return d->webPageProxy->pageGroup()->preferences()->deviceHeight();
+}
+
+void QQuickWebViewExperimental::setDeviceHeight(int value)
+{
+    Q_D(QQuickWebView);
+    d->webPageProxy->pageGroup()->preferences()->setDeviceHeight(qMax(0, value));
+    emit deviceHeightChanged();
 }
 
 /*!

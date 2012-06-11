@@ -722,11 +722,6 @@ void QtViewportHandler::viewportItemSizeChanged()
     if (viewportSize.isEmpty())
         return;
 
-    // FIXME: This is wrong, add QML api!
-    WebPreferences* wkPrefs = m_webPageProxy->pageGroup()->preferences();
-    wkPrefs->setDeviceWidth(viewportSize.width());
-    wkPrefs->setDeviceHeight(viewportSize.height());
-
     // Let the WebProcess know about the new viewport size, so that
     // it can resize the content accordingly.
     m_webPageProxy->setViewportSize(viewportSize);
