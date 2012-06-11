@@ -130,6 +130,12 @@ public:
     void setPosition(const FloatPoint&);
     FloatPoint position() const { return m_position; }
 
+    void setIsContainerForFixedPositionLayers(bool isContainerForFixedPositionLayers) { m_isContainerForFixedPositionLayers = isContainerForFixedPositionLayers; }
+    bool isContainerForFixedPositionLayers() const { return m_isContainerForFixedPositionLayers; }
+
+    void setFixedToContainerLayerVisibleRect(bool fixedToContainerLayerVisibleRect) { m_fixedToContainerLayerVisibleRect = fixedToContainerLayerVisibleRect; setNeedsCommit(); }
+    bool fixedToContainerLayerVisibleRect() const { return m_fixedToContainerLayerVisibleRect; }
+
     void setSublayerTransform(const WebKit::WebTransformationMatrix&);
     const WebKit::WebTransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
@@ -334,6 +340,8 @@ private:
     WebKit::WebFilterOperations m_filters;
     WebKit::WebFilterOperations m_backgroundFilters;
     float m_anchorPointZ;
+    bool m_isContainerForFixedPositionLayers;
+    bool m_fixedToContainerLayerVisibleRect;
     bool m_isDrawable;
     bool m_masksToBounds;
     bool m_opaque;

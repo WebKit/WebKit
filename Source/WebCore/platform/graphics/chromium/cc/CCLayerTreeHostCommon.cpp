@@ -313,10 +313,95 @@ static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlig
     return false;
 }
 
+WebTransformationMatrix computeScrollCompensationForThisLayer(CCLayerImpl* scrollingLayer, const WebTransformationMatrix& parentMatrix)
+{
+    // For every layer that has non-zero scrollDelta, we have to compute a transform that can undo the
+    // scrollDelta translation. In particular, we want this matrix to premultiply a fixed-position layer's
+    // parentMatrix, so we design this transform in three steps as follows. The steps described here apply
+    // from right-to-left, so Step 1 would be the right-most matrix:
+    //
+    //     Step 1. transform from target surface space to the exact space where scrollDelta is actually applied.
+    //           -- this is inverse of the matrix in step 3
+    //     Step 2. undo the scrollDelta
+    //           -- this is just a translation by scrollDelta.
+    //     Step 3. transform back to target surface space.
+    //           -- this transform is the "partialLayerOriginTransform" = (parentMatrix * scale(layer->pageScaleDelta()));
+    //
+    // These steps create a matrix that both start and end in targetSurfaceSpace. So this matrix can
+    // pre-multiply any fixed-position layer's drawTransform to undo the scrollDeltas -- as long as
+    // that fixed position layer is fixed onto the same targetRenderSurface as this scrollingLayer.
+    //
+
+    WebTransformationMatrix partialLayerOriginTransform = parentMatrix;
+    partialLayerOriginTransform.scale(scrollingLayer->pageScaleDelta());
+
+    WebTransformationMatrix scrollCompensationForThisLayer = partialLayerOriginTransform; // Step 3
+    scrollCompensationForThisLayer.translate(scrollingLayer->scrollDelta().width(), scrollingLayer->scrollDelta().height()); // Step 2
+    scrollCompensationForThisLayer.multiply(partialLayerOriginTransform.inverse()); // Step 1
+    return scrollCompensationForThisLayer;
+}
+
+WebTransformationMatrix computeScrollCompensationMatrixForChildren(LayerChromium* currentLayer, const WebTransformationMatrix& currentParentMatrix, const WebTransformationMatrix& currentScrollCompensation)
+{
+    // The main thread (i.e. LayerChromium) does not need to worry about scroll compensation.
+    // So we can just return an identity matrix here.
+    return WebTransformationMatrix();
+}
+
+WebTransformationMatrix computeScrollCompensationMatrixForChildren(CCLayerImpl* layer, const WebTransformationMatrix& parentMatrix, const WebTransformationMatrix& currentScrollCompensationMatrix)
+{
+    // "Total scroll compensation" is the transform needed to cancel out all scrollDelta translations that
+    // occurred since the nearest container layer, even if there are renderSurfaces in-between.
+    //
+    // There are some edge cases to be aware of, that are not explicit in the code:
+    //  - A layer that is both a fixed-position and container should not be its own container, instead, that means
+    //    it is fixed to an ancestor, and is a container for any fixed-position descendants.
+    //  - A layer that is a fixed-position container and has a renderSurface should behave the same as a container
+    //    without a renderSurface, the renderSurface is irrelevant in that case.
+    //  - A layer that does not have an explicit container is simply fixed to the viewport
+    //    (i.e. the root renderSurface, and it would still compensate for root layer's scrollDelta).
+    //  - If the fixed-position layer has its own renderSurface, then the renderSurface is
+    //    the one who gets fixed.
+    //
+    // This function needs to be called AFTER layers create their own renderSurfaces.
+    //
+
+    // Avoid the overheads (including stack allocation and matrix initialization/copy) if we know that the scroll compensation doesn't need to be reset or adjusted.
+    if (!layer->isContainerForFixedPositionLayers() && layer->scrollDelta().isZero() && !layer->renderSurface())
+        return currentScrollCompensationMatrix;
+
+    // Start as identity matrix.
+    WebTransformationMatrix nextScrollCompensationMatrix;
+
+    // If this layer is not a container, then it inherits the existing scroll compensations.
+    if (!layer->isContainerForFixedPositionLayers())
+        nextScrollCompensationMatrix = currentScrollCompensationMatrix;
+
+    // If the current layer has a non-zero scrollDelta, then we should compute its local scrollCompensation
+    // and accumulate it to the nextScrollCompensationMatrix.
+    if (!layer->scrollDelta().isZero()) {
+        WebTransformationMatrix scrollCompensationForThisLayer = computeScrollCompensationForThisLayer(layer, parentMatrix);
+        nextScrollCompensationMatrix.multiply(scrollCompensationForThisLayer);
+    }
+
+    // If the layer created its own renderSurface, we have to adjust nextScrollCompensationMatrix.
+    // The adjustment allows us to continue using the scrollCompensation on the next surface.
+    //  Step 1 (right-most in the math): transform from the new surface to the original ancestor surface
+    //  Step 2: apply the scroll compensation
+    //  Step 3: transform back to the new surface.
+    if (layer->renderSurface() && !nextScrollCompensationMatrix.isIdentity())
+        nextScrollCompensationMatrix = layer->renderSurface()->originTransform().inverse() * nextScrollCompensationMatrix * layer->renderSurface()->originTransform();
+
+    return nextScrollCompensationMatrix;
+}
+
 // Recursively walks the layer tree starting at the given node and computes all the
 // necessary transformations, clipRects, render surfaces, etc.
 template<typename LayerType, typename LayerList, typename RenderSurfaceType, typename LayerSorter>
-static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLayer, const WebTransformationMatrix& parentMatrix, const WebTransformationMatrix& fullHierarchyMatrix, RenderSurfaceType* nearestAncestorThatMovesPixels, LayerList& renderSurfaceLayerList, LayerList& layerList, LayerSorter* layerSorter, int maxTextureSize)
+static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLayer, const WebTransformationMatrix& parentMatrix,
+                                            const WebTransformationMatrix& fullHierarchyMatrix, const WebTransformationMatrix& currentScrollCompensationMatrix,
+                                            RenderSurfaceType* nearestAncestorThatMovesPixels, LayerList& renderSurfaceLayerList, LayerList& layerList,
+                                            LayerSorter* layerSorter, int maxTextureSize)
 {
     // This function computes the new matrix transformations recursively for this
     // layer and all its descendants. It also computes the appropriate render surfaces.
@@ -443,8 +528,17 @@ static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     // LT = Tr[origin] * S[pageScaleDelta] * Tr[origin2anchor] * M[layer] * Tr[anchor2center]
     layerLocalTransform.translate3d(centerOffsetX, centerOffsetY, -layer->anchorPointZ());
 
+    // The combinedTransform that gets computed below is effectively the layer's drawTransform, unless
+    // the layer itself creates a renderSurface. In that case, the renderSurface re-parents the transforms.
     WebTransformationMatrix combinedTransform = parentMatrix;
     combinedTransform.multiply(layerLocalTransform);
+
+    if (layer->fixedToContainerLayerVisibleRect()) {
+        // Special case: this layer is a composited fixed-position layer; we need to
+        // explicitly compensate for all ancestors' nonzero scrollDeltas to keep this layer
+        // fixed correctly.
+        combinedTransform = currentScrollCompensationMatrix * combinedTransform;
+    }
 
     bool animatingTransformToTarget = layer->transformIsAnimating();
     bool animatingTransformToScreen = animatingTransformToTarget;
@@ -602,9 +696,11 @@ static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     if (!layerShouldBeSkipped(layer))
         descendants.append(layer);
 
+    WebTransformationMatrix nextScrollCompensationMatrix = computeScrollCompensationMatrixForChildren(layer, parentMatrix, currentScrollCompensationMatrix);;
+
     for (size_t i = 0; i < layer->children().size(); ++i) {
         LayerType* child = layer->children()[i].get();
-        bool drawsContent = calculateDrawTransformsInternal<LayerType, LayerList, RenderSurfaceType, LayerSorter>(child, rootLayer, sublayerMatrix, nextHierarchyMatrix, nearestAncestorThatMovesPixels, renderSurfaceLayerList, descendants, layerSorter, maxTextureSize);
+        bool drawsContent = calculateDrawTransformsInternal<LayerType, LayerList, RenderSurfaceType, LayerSorter>(child, rootLayer, sublayerMatrix, nextHierarchyMatrix, nextScrollCompensationMatrix, nearestAncestorThatMovesPixels, renderSurfaceLayerList, descendants, layerSorter, maxTextureSize);
 
         if (drawsContent) {
             if (child->renderSurface()) {
@@ -750,12 +846,14 @@ static void calculateVisibleAndScissorRectsInternal(const LayerList& renderSurfa
 
 void CCLayerTreeHostCommon::calculateDrawTransforms(LayerChromium* layer, LayerChromium* rootLayer, const WebTransformationMatrix& parentMatrix, const WebTransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, Vector<RefPtr<LayerChromium> >& layerList, int maxTextureSize)
 {
-    WebCore::calculateDrawTransformsInternal<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, void>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, 0, renderSurfaceLayerList, layerList, 0, maxTextureSize);
+    WebTransformationMatrix scrollCompensationMatrix;
+    WebCore::calculateDrawTransformsInternal<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, void>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, scrollCompensationMatrix, 0, renderSurfaceLayerList, layerList, 0, maxTextureSize);
 }
 
 void CCLayerTreeHostCommon::calculateDrawTransforms(CCLayerImpl* layer, CCLayerImpl* rootLayer, const WebTransformationMatrix& parentMatrix, const WebTransformationMatrix& fullHierarchyMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList, CCLayerSorter* layerSorter, int maxTextureSize)
 {
-    WebCore::calculateDrawTransformsInternal<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerSorter>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, 0, renderSurfaceLayerList, layerList, layerSorter, maxTextureSize);
+    WebTransformationMatrix scrollCompensationMatrix;
+    WebCore::calculateDrawTransformsInternal<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerSorter>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, scrollCompensationMatrix, 0, renderSurfaceLayerList, layerList, layerSorter, maxTextureSize);
 }
 
 void CCLayerTreeHostCommon::calculateVisibleAndScissorRects(Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, const FloatRect& rootScissorRect)

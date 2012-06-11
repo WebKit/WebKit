@@ -1,3 +1,63 @@
+2012-06-11  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Implement position:fixed in compositor thread
+        https://bugs.webkit.org/show_bug.cgi?id=70103
+
+        Reviewed by Adrienne Walker.
+
+        Significant contributions to this patch by Alpha Lam and Sami Kyostila.
+
+        This patch is the compositor-side change that adds support for
+        fixed-position layers to be composited layers. Before this patch,
+        fixed-position elements were positioned only by WebCore (i.e. main
+        thread when painting), and the compositor did not have enough
+        knowledge on its own to position it properly. This patch adds the
+        necessary math and plumbs the necessary layer information so that
+        the impl thread can properly position fixed-position elements on
+        its own. This support is necessary for correctness of composited
+        fixed-position elements, which can greatly help to avoid
+        repainting container layers when scrolling with a fixed-position
+        layer.
+
+        There also needs to be WebCore-side support for this, which is
+        addressed in https://bugs.webkit.org/show_bug.cgi?id=78864
+
+        Unit tests added to CCLayerTreeHostCommonTest:
+          CCLayerTreeHostCommonTest.verifyScrollCompensationForFixedPositionLayerWithDirectContainer
+          CCLayerTreeHostCommonTest.verifyScrollCompensationForFixedPositionLayerWithTransformedDirectContainer
+          CCLayerTreeHostCommonTest.verifyScrollCompensationForFixedPositionLayerWithDistantContainer
+          CCLayerTreeHostCommonTest.verifyScrollCompensationForFixedPositionLayerWithDistantContainerAndTransforms
+          CCLayerTreeHostCommonTest.verifyScrollCompensationForFixedPositionLayerWithMultipleScrollDeltas
+          CCLayerTreeHostCommonTest.verifyScrollCompensationForFixedPositionLayerWithIntermediateSurfaceAndTransforms
+          CCLayerTreeHostCommonTest.verifyScrollCompensationForFixedPositionLayerWithMultipleIntermediateSurfaces
+          CCLayerTreeHostCommonTest.verifyScrollCompensationForFixedPositionLayerWithContainerLayerThatHasSurface
+          CCLayerTreeHostCommonTest.verifyScrollCompensationForFixedPositionLayerThatIsAlsoFixedPositionContainer
+          CCLayerTreeHostCommonTest.verifyScrollCompensationForFixedPositionLayerThatHasNoContainer
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::setIsContainerForFixedPositionLayers):
+        (WebCore::LayerChromium::isContainerForFixedPositionLayers):
+        (LayerChromium):
+        (WebCore::LayerChromium::setFixedToContainerLayerVisibleRect):
+        (WebCore::LayerChromium::fixedToContainerLayerVisibleRect):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::setIsContainerForFixedPositionLayers):
+        (WebCore::CCLayerImpl::isContainerForFixedPositionLayers):
+        (CCLayerImpl):
+        (WebCore::CCLayerImpl::setFixedToContainerLayerVisibleRect):
+        (WebCore::CCLayerImpl::fixedToContainerLayerVisibleRect):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::computeScrollCompensationForThisLayer):
+        (WebCore):
+        (WebCore::computeScrollCompensationMatrixForChildren):
+        (WebCore::calculateDrawTransformsInternal):
+        (WebCore::CCLayerTreeHostCommon::calculateDrawTransforms):
+
 2012-06-11  Sam Weinig  <sam@webkit.org>
 
         Remove support for disconnected/excluded from search frames, they are not used by Safari anymore

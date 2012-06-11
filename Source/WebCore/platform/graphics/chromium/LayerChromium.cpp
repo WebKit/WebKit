@@ -73,6 +73,8 @@ LayerChromium::LayerChromium()
     , m_debugBorderWidth(0)
     , m_opacity(1.0)
     , m_anchorPointZ(0)
+    , m_isContainerForFixedPositionLayers(false)
+    , m_fixedToContainerLayerVisibleRect(false)
     , m_isDrawable(false)
     , m_masksToBounds(false)
     , m_opaque(false)
@@ -507,6 +509,8 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     if (!opacityIsAnimating())
         layer->setOpacity(m_opacity);
     layer->setPosition(m_position);
+    layer->setIsContainerForFixedPositionLayers(m_isContainerForFixedPositionLayers);
+    layer->setFixedToContainerLayerVisibleRect(m_fixedToContainerLayerVisibleRect);
     layer->setPreserves3D(preserves3D());
     layer->setScrollPosition(m_scrollPosition);
     layer->setSublayerTransform(m_sublayerTransform);

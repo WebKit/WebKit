@@ -48,7 +48,8 @@ using WebKit::WebTransformationMatrix;
 
 namespace {
 
-void setLayerPropertiesForTesting(LayerChromium* layer, const WebTransformationMatrix& transform, const WebTransformationMatrix& sublayerTransform, const FloatPoint& anchor, const FloatPoint& position, const IntSize& bounds, bool preserves3D)
+template<typename LayerType>
+void setLayerPropertiesForTesting(LayerType* layer, const WebTransformationMatrix& transform, const WebTransformationMatrix& sublayerTransform, const FloatPoint& anchor, const FloatPoint& position, const IntSize& bounds, bool preserves3D)
 {
     layer->setTransform(transform);
     layer->setSublayerTransform(sublayerTransform);
@@ -58,6 +59,16 @@ void setLayerPropertiesForTesting(LayerChromium* layer, const WebTransformationM
     layer->setPreserves3D(preserves3D);
 }
 
+void setLayerPropertiesForTesting(LayerChromium* layer, const WebTransformationMatrix& transform, const WebTransformationMatrix& sublayerTransform, const FloatPoint& anchor, const FloatPoint& position, const IntSize& bounds, bool preserves3D)
+{
+    setLayerPropertiesForTesting<LayerChromium>(layer, transform, sublayerTransform, anchor, position, bounds, preserves3D);
+}
+
+void setLayerPropertiesForTesting(CCLayerImpl* layer, const WebTransformationMatrix& transform, const WebTransformationMatrix& sublayerTransform, const FloatPoint& anchor, const FloatPoint& position, const IntSize& bounds, bool preserves3D)
+{
+    setLayerPropertiesForTesting<CCLayerImpl>(layer, transform, sublayerTransform, anchor, position, bounds, preserves3D);
+}
+
 void executeCalculateDrawTransformsAndVisibility(LayerChromium* rootLayer)
 {
     WebTransformationMatrix identityMatrix;
@@ -65,6 +76,17 @@ void executeCalculateDrawTransformsAndVisibility(LayerChromium* rootLayer)
     Vector<RefPtr<LayerChromium> > dummyLayerList;
     int dummyMaxTextureSize = 512;
     CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer, rootLayer, identityMatrix, identityMatrix, dummyRenderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(dummyRenderSurfaceLayerList, rootLayer->renderSurface()->contentRect());
+}
+
+void executeCalculateDrawTransformsAndVisibility(CCLayerImpl* rootLayer)
+{
+    // Note: this version skips layer sorting.
+    WebTransformationMatrix identityMatrix;
+    Vector<CCLayerImpl*> dummyRenderSurfaceLayerList;
+    Vector<CCLayerImpl*> dummyLayerList;
+    int dummyMaxTextureSize = 512;
+    CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer, rootLayer, identityMatrix, identityMatrix, dummyRenderSurfaceLayerList, dummyLayerList, 0, dummyMaxTextureSize);
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(dummyRenderSurfaceLayerList, rootLayer->renderSurface()->contentRect());
 }
 
@@ -79,6 +101,30 @@ WebTransformationMatrix remove3DComponentOfMatrix(const WebTransformationMatrix&
     ret.setM34(0);
     ret.setM43(0);
     return ret;
+}
+
+PassOwnPtr<CCLayerImpl> createTreeForFixedPositionTests()
+{
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    OwnPtr<CCLayerImpl> child = CCLayerImpl::create(2);
+    OwnPtr<CCLayerImpl> grandChild = CCLayerImpl::create(3);
+    OwnPtr<CCLayerImpl> greatGrandChild = CCLayerImpl::create(4);
+
+    WebTransformationMatrix IdentityMatrix;
+    FloatPoint anchor(0, 0);
+    FloatPoint position(0, 0);
+    IntSize bounds(100, 100);
+    setLayerPropertiesForTesting(root.get(), IdentityMatrix, IdentityMatrix, anchor, position, bounds, false);
+    setLayerPropertiesForTesting(child.get(), IdentityMatrix, IdentityMatrix, anchor, position, bounds, false);
+    setLayerPropertiesForTesting(grandChild.get(), IdentityMatrix, IdentityMatrix, anchor, position, bounds, false);
+    setLayerPropertiesForTesting(greatGrandChild.get(), IdentityMatrix, IdentityMatrix, anchor, position, bounds, false);
+
+    grandChild->addChild(greatGrandChild.release());
+    child->addChild(grandChild.release());
+    root->addChild(child.release());
+    root->createRenderSurface();
+
+    return root.release();
 }
 
 class LayerChromiumWithForcedDrawsContent : public LayerChromium {
@@ -1174,6 +1220,600 @@ TEST(CCLayerTreeHostCommonTest, verifyForceRenderSurface)
     CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
     EXPECT_FALSE(renderSurface1->renderSurface());
     EXPECT_EQ(renderSurfaceLayerList.size(), 0U);
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWithDirectContainer)
+{
+    // This test checks for correct scroll compensation when the fixed-position container
+    // is the direct parent of the fixed-position layer.
+
+    DebugScopedSetImplThread scopedImplThread;
+    OwnPtr<CCLayerImpl> root = createTreeForFixedPositionTests();
+    CCLayerImpl* child = root->children()[0].get();
+    CCLayerImpl* grandChild = child->children()[0].get();
+
+    child->setIsContainerForFixedPositionLayers(true);
+    grandChild->setFixedToContainerLayerVisibleRect(true);
+
+    // Case 1: scrollDelta of 0, 0
+    child->setScrollDelta(IntSize(0, 0));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // The expected drawTransforms without any scroll should still include a translation to the center of the layer (i.e. translation by 50, 50).
+    WebTransformationMatrix expectedChildTransform;
+    expectedChildTransform.translate(50, 50);
+
+    WebTransformationMatrix expectedGrandChildTransform = expectedChildTransform;
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+
+    // Case 2: scrollDelta of 10, 10
+    child->setScrollDelta(IntSize(10, 10));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // Here the child is affected by scrollDelta, but the fixed position grandChild should not be affected.
+    expectedChildTransform.makeIdentity();
+    expectedChildTransform.translate(40, 40);
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWithTransformedDirectContainer)
+{
+    // This test checks for correct scroll compensation when the fixed-position container
+    // is the direct parent of the fixed-position layer, but that container is transformed.
+    // In this case, the fixed position element inherits the container's transform,
+    // but the scrollDelta that has to be undone should not be affected by that transform.
+    //
+    // Transforms are in general non-commutative; using something like a non-uniform scale
+    // helps to verify that translations and non-uniform scales are applied in the correct
+    // order.
+
+    DebugScopedSetImplThread scopedImplThread;
+    OwnPtr<CCLayerImpl> root = createTreeForFixedPositionTests();
+    CCLayerImpl* child = root->children()[0].get();
+    CCLayerImpl* grandChild = child->children()[0].get();
+
+    // This scale will cause child and grandChild to be effectively 200 x 800 with respect to the targetRenderSurface.
+    WebTransformationMatrix nonUniformScale;
+    nonUniformScale.scaleNonUniform(2, 8);
+    child->setTransform(nonUniformScale);
+
+    child->setIsContainerForFixedPositionLayers(true);
+    grandChild->setFixedToContainerLayerVisibleRect(true);
+
+    // Case 1: scrollDelta of 0, 0
+    child->setScrollDelta(IntSize(0, 0));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // The expected drawTransforms without any scroll should still include a translation to the center of the layer (i.e. translation by 50, 50).
+    WebTransformationMatrix expectedChildTransform;
+    expectedChildTransform.multiply(nonUniformScale);
+    expectedChildTransform.translate(50, 50);
+
+    WebTransformationMatrix expectedGrandChildTransform = expectedChildTransform;
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+
+    // Case 2: scrollDelta of 10, 20
+    child->setScrollDelta(IntSize(10, 20));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // The child should be affected by scrollDelta, but the fixed position grandChild should not be affected.
+    expectedChildTransform.makeIdentity();
+    expectedChildTransform.translate(-10, -20); // scrollDelta
+    expectedChildTransform.multiply(nonUniformScale);
+    expectedChildTransform.translate(50, 50);
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWithDistantContainer)
+{
+    // This test checks for correct scroll compensation when the fixed-position container
+    // is NOT the direct parent of the fixed-position layer.
+    DebugScopedSetImplThread scopedImplThread;
+
+    OwnPtr<CCLayerImpl> root = createTreeForFixedPositionTests();
+    CCLayerImpl* child = root->children()[0].get();
+    CCLayerImpl* grandChild = child->children()[0].get();
+    CCLayerImpl* greatGrandChild = grandChild->children()[0].get();
+
+    child->setIsContainerForFixedPositionLayers(true);
+    grandChild->setPosition(FloatPoint(8, 6));
+    greatGrandChild->setFixedToContainerLayerVisibleRect(true);
+
+    // Case 1: scrollDelta of 0, 0
+    child->setScrollDelta(IntSize(0, 0));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    WebTransformationMatrix expectedChildTransform;
+    expectedChildTransform.translate(50, 50);
+
+    WebTransformationMatrix expectedGrandChildTransform;
+    expectedGrandChildTransform.translate(58, 56);
+
+    WebTransformationMatrix expectedGreatGrandChildTransform = expectedGrandChildTransform;
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGreatGrandChildTransform, greatGrandChild->drawTransform());
+
+    // Case 2: scrollDelta of 10, 10
+    child->setScrollDelta(IntSize(10, 10));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // Here the child and grandChild are affected by scrollDelta, but the fixed position greatGrandChild should not be affected.
+    expectedChildTransform.makeIdentity();
+    expectedChildTransform.translate(40, 40);
+    expectedGrandChildTransform.makeIdentity();
+    expectedGrandChildTransform.translate(48, 46);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGreatGrandChildTransform, greatGrandChild->drawTransform());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWithDistantContainerAndTransforms)
+{
+    // This test checks for correct scroll compensation when the fixed-position container
+    // is NOT the direct parent of the fixed-position layer, and the hierarchy has various
+    // transforms that have to be processed in the correct order.
+    DebugScopedSetImplThread scopedImplThread;
+
+    OwnPtr<CCLayerImpl> root = createTreeForFixedPositionTests();
+    CCLayerImpl* child = root->children()[0].get();
+    CCLayerImpl* grandChild = child->children()[0].get();
+    CCLayerImpl* greatGrandChild = grandChild->children()[0].get();
+
+    WebTransformationMatrix rotationAboutZ;
+    rotationAboutZ.rotate3d(0, 0, 90);
+    
+    child->setIsContainerForFixedPositionLayers(true);
+    child->setTransform(rotationAboutZ);
+    grandChild->setPosition(FloatPoint(8, 6));
+    grandChild->setTransform(rotationAboutZ);
+    greatGrandChild->setFixedToContainerLayerVisibleRect(true); // greatGrandChild is positioned upside-down with respect to the targetRenderSurface
+
+    // Case 1: scrollDelta of 0, 0
+    child->setScrollDelta(IntSize(0, 0));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    WebTransformationMatrix expectedChildTransform;
+    expectedChildTransform.multiply(rotationAboutZ);
+    expectedChildTransform.translate(50, 50);
+
+    WebTransformationMatrix expectedGrandChildTransform;
+    expectedGrandChildTransform.multiply(rotationAboutZ); // child's local transform is inherited
+    expectedGrandChildTransform.translate(8, 6); // translation because of position occurs before layer's local transform.
+    expectedGrandChildTransform.multiply(rotationAboutZ); // grandChild's local transform
+    expectedGrandChildTransform.translate(50, 50); // translation because of half-width half-height occurs after layer's local transform
+
+    WebTransformationMatrix expectedGreatGrandChildTransform = expectedGrandChildTransform;
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGreatGrandChildTransform, greatGrandChild->drawTransform());
+
+    // Case 2: scrollDelta of 10, 20
+    child->setScrollDelta(IntSize(10, 20));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // Here the child and grandChild are affected by scrollDelta, but the fixed position greatGrandChild should not be affected.
+    expectedChildTransform.makeIdentity();
+    expectedChildTransform.translate(-10, -20); // scrollDelta
+    expectedChildTransform.multiply(rotationAboutZ);
+    expectedChildTransform.translate(50, 50);
+
+    expectedGrandChildTransform.makeIdentity();
+    expectedGrandChildTransform.translate(-10, -20); // child's scrollDelta is inherited
+    expectedGrandChildTransform.multiply(rotationAboutZ); // child's local transform is inherited
+    expectedGrandChildTransform.translate(8, 6); // translation because of position occurs before layer's local transform.
+    expectedGrandChildTransform.multiply(rotationAboutZ); // grandChild's local transform
+    expectedGrandChildTransform.translate(50, 50); // translation because of half-width half-height occurs after layer's local transform
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGreatGrandChildTransform, greatGrandChild->drawTransform());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWithMultipleScrollDeltas)
+{
+    // This test checks for correct scroll compensation when the fixed-position container
+    // has multiple ancestors that have nonzero scrollDelta before reaching the space where the layer is fixed.
+    // In this test, each scrollDelta occurs in a different space because of each layer's local transform.
+    // This test checks for correct scroll compensation when the fixed-position container
+    // is NOT the direct parent of the fixed-position layer, and the hierarchy has various
+    // transforms that have to be processed in the correct order.
+    DebugScopedSetImplThread scopedImplThread;
+
+    OwnPtr<CCLayerImpl> root = createTreeForFixedPositionTests();
+    CCLayerImpl* child = root->children()[0].get();
+    CCLayerImpl* grandChild = child->children()[0].get();
+    CCLayerImpl* greatGrandChild = grandChild->children()[0].get();
+
+    WebTransformationMatrix rotationAboutZ;
+    rotationAboutZ.rotate3d(0, 0, 90);
+    
+    child->setIsContainerForFixedPositionLayers(true);
+    child->setTransform(rotationAboutZ);
+    grandChild->setPosition(FloatPoint(8, 6));
+    grandChild->setTransform(rotationAboutZ);
+    greatGrandChild->setFixedToContainerLayerVisibleRect(true); // greatGrandChild is positioned upside-down with respect to the targetRenderSurface
+
+    // Case 1: scrollDelta of 0, 0
+    child->setScrollDelta(IntSize(0, 0));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    WebTransformationMatrix expectedChildTransform;
+    expectedChildTransform.multiply(rotationAboutZ);
+    expectedChildTransform.translate(50, 50);
+
+    WebTransformationMatrix expectedGrandChildTransform;
+    expectedGrandChildTransform.multiply(rotationAboutZ); // child's local transform is inherited
+    expectedGrandChildTransform.translate(8, 6); // translation because of position occurs before layer's local transform.
+    expectedGrandChildTransform.multiply(rotationAboutZ); // grandChild's local transform
+    expectedGrandChildTransform.translate(50, 50); // translation because of half-width half-height occurs after layer's local transform
+
+    WebTransformationMatrix expectedGreatGrandChildTransform = expectedGrandChildTransform;
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGreatGrandChildTransform, greatGrandChild->drawTransform());
+
+    // Case 2: scrollDelta of 10, 20
+    child->setScrollDelta(IntSize(10, 0));
+    grandChild->setScrollDelta(IntSize(5, 0));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // Here the child and grandChild are affected by scrollDelta, but the fixed position greatGrandChild should not be affected.
+    expectedChildTransform.makeIdentity();
+    expectedChildTransform.translate(-10, 0); // scrollDelta
+    expectedChildTransform.multiply(rotationAboutZ);
+    expectedChildTransform.translate(50, 50);
+
+    expectedGrandChildTransform.makeIdentity();
+    expectedGrandChildTransform.translate(-10, 0); // child's scrollDelta is inherited
+    expectedGrandChildTransform.multiply(rotationAboutZ); // child's local transform is inherited
+    expectedGrandChildTransform.translate(-5, 0); // grandChild's scrollDelta
+    expectedGrandChildTransform.translate(8, 6); // translation because of position occurs before layer's local transform.
+    expectedGrandChildTransform.multiply(rotationAboutZ); // grandChild's local transform
+    expectedGrandChildTransform.translate(50, 50); // translation because of half-width half-height occurs after layer's local transform
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGreatGrandChildTransform, greatGrandChild->drawTransform());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWithIntermediateSurfaceAndTransforms)
+{
+    // This test checks for correct scroll compensation when the fixed-position container
+    // contributes to a different renderSurface than the fixed-position layer. In this
+    // case, the surface originTransforms also have to be accounted for when checking the
+    // scrollDelta.
+    DebugScopedSetImplThread scopedImplThread;
+
+    OwnPtr<CCLayerImpl> root = createTreeForFixedPositionTests();
+    CCLayerImpl* child = root->children()[0].get();
+    CCLayerImpl* grandChild = child->children()[0].get();
+    CCLayerImpl* greatGrandChild = grandChild->children()[0].get();
+
+    child->setIsContainerForFixedPositionLayers(true);
+    grandChild->setPosition(FloatPoint(8, 6));
+    grandChild->setForceRenderSurface(true);
+    greatGrandChild->setFixedToContainerLayerVisibleRect(true);
+    greatGrandChild->setDrawsContent(true);
+
+    WebTransformationMatrix rotationAboutZ;
+    rotationAboutZ.rotate3d(0, 0, 90);
+    grandChild->setTransform(rotationAboutZ);
+    
+    // Case 1: scrollDelta of 0, 0
+    child->setScrollDelta(IntSize(0, 0));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+        
+    WebTransformationMatrix expectedChildTransform;
+    expectedChildTransform.translate(50, 50);
+    WebTransformationMatrix expectedSurfaceOriginTransform;
+    expectedSurfaceOriginTransform.translate(8, 6);
+    expectedSurfaceOriginTransform.multiply(rotationAboutZ);
+    WebTransformationMatrix expectedGrandChildTransform;
+    expectedGrandChildTransform.translate(50, 50);
+    WebTransformationMatrix expectedGreatGrandChildTransform;
+    expectedGreatGrandChildTransform.translate(50, 50);
+    ASSERT_TRUE(grandChild->renderSurface());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedSurfaceOriginTransform, grandChild->renderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGreatGrandChildTransform, greatGrandChild->drawTransform());
+
+    // Case 2: scrollDelta of 10, 30
+    child->setScrollDelta(IntSize(10, 30));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+        
+    // Here the grandChild remains unchanged, because it scrolls along with the
+    // renderSurface, and the translation is actually in the renderSurface. But, the fixed
+    // position greatGrandChild is more awkward: its actually being drawn with respect to
+    // the renderSurface, but it needs to remain fixed with resepct to a container beyond
+    // that surface. So, the net result is that, unlike previous tests where the fixed
+    // position layer's transform remains unchanged, here the fixed position layer's
+    // transform explicitly contains the translation that cancels out the scroll.
+    expectedChildTransform.makeIdentity();
+    expectedChildTransform.translate(-10, -30); // scrollDelta
+    expectedChildTransform.translate(50, 50);
+
+    expectedSurfaceOriginTransform.makeIdentity();
+    expectedSurfaceOriginTransform.translate(-10, -30); // scrollDelta
+    expectedSurfaceOriginTransform.translate(8, 6);
+    expectedSurfaceOriginTransform.multiply(rotationAboutZ);
+
+    // The rotation and its inverse are needed to place the scrollDelta compensation in
+    // the correct space. This test will fail if the rotation/inverse are backwards, too,
+    // so it requires perfect order of operations.
+    expectedGreatGrandChildTransform.makeIdentity();
+    expectedGreatGrandChildTransform.multiply(rotationAboutZ.inverse());
+    expectedGreatGrandChildTransform.translate(10, 30); // explicit canceling out the scrollDelta that gets embedded in the fixed position layer's surface.
+    expectedGreatGrandChildTransform.multiply(rotationAboutZ);
+    expectedGreatGrandChildTransform.translate(50, 50);
+
+    ASSERT_TRUE(grandChild->renderSurface());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedSurfaceOriginTransform, grandChild->renderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGreatGrandChildTransform, greatGrandChild->drawTransform());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWithMultipleIntermediateSurfaces)
+{
+    // This test checks for correct scroll compensation when the fixed-position container
+    // contributes to a different renderSurface than the fixed-position layer, with
+    // additional renderSurfaces in-between. This checks that the conversion to ancestor
+    // surfaces is accumulated properly in the final matrix transform.
+    DebugScopedSetImplThread scopedImplThread;
+
+    OwnPtr<CCLayerImpl> root = createTreeForFixedPositionTests();
+    CCLayerImpl* child = root->children()[0].get();
+    CCLayerImpl* grandChild = child->children()[0].get();
+    CCLayerImpl* greatGrandChild = grandChild->children()[0].get();
+
+    // Add one more layer to the test tree for this scenario.
+    {
+        WebTransformationMatrix identity;
+        OwnPtr<CCLayerImpl> fixedPositionChild = CCLayerImpl::create(5);
+        setLayerPropertiesForTesting(fixedPositionChild.get(), identity, identity, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
+        greatGrandChild->addChild(fixedPositionChild.release());
+    }
+    CCLayerImpl* fixedPositionChild = greatGrandChild->children()[0].get();
+
+    // Actually set up the scenario here.
+    child->setIsContainerForFixedPositionLayers(true);
+    grandChild->setPosition(FloatPoint(8, 6));
+    grandChild->setForceRenderSurface(true);
+    greatGrandChild->setPosition(FloatPoint(140, 120));
+    greatGrandChild->setForceRenderSurface(true);
+    fixedPositionChild->setFixedToContainerLayerVisibleRect(true);
+    fixedPositionChild->setDrawsContent(true);
+
+    // The additional rotations, which are non-commutative with translations, help to
+    // verify that we have correct order-of-operations in the final scroll compensation.
+    WebTransformationMatrix rotationAboutZ;
+    rotationAboutZ.rotate3d(0, 0, 90);
+    grandChild->setTransform(rotationAboutZ);
+    greatGrandChild->setTransform(rotationAboutZ);
+
+    // Case 1: scrollDelta of 0, 0
+    child->setScrollDelta(IntSize(0, 0));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    WebTransformationMatrix expectedChildTransform;
+    expectedChildTransform.translate(50, 50);
+
+    WebTransformationMatrix expectedGrandChildSurfaceOriginTransform;
+    expectedGrandChildSurfaceOriginTransform.translate(8, 6);
+    expectedGrandChildSurfaceOriginTransform.multiply(rotationAboutZ);
+
+    WebTransformationMatrix expectedGrandChildTransform;
+    expectedGrandChildTransform.translate(50, 50);
+
+    WebTransformationMatrix expectedGreatGrandChildSurfaceOriginTransform;
+    expectedGreatGrandChildSurfaceOriginTransform.translate(140, 120);
+    expectedGreatGrandChildSurfaceOriginTransform.multiply(rotationAboutZ);
+
+    WebTransformationMatrix expectedGreatGrandChildTransform;
+    expectedGreatGrandChildTransform.translate(50, 50);
+
+    WebTransformationMatrix expectedFixedPositionChildTransform;
+    expectedFixedPositionChildTransform.translate(50, 50);
+
+    ASSERT_TRUE(grandChild->renderSurface());
+    ASSERT_TRUE(greatGrandChild->renderSurface());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildSurfaceOriginTransform, grandChild->renderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGreatGrandChildSurfaceOriginTransform, greatGrandChild->renderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGreatGrandChildTransform, greatGrandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedFixedPositionChildTransform, fixedPositionChild->drawTransform());
+
+    // Case 2: scrollDelta of 10, 30
+    child->setScrollDelta(IntSize(10, 30));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    expectedChildTransform.makeIdentity();
+    expectedChildTransform.translate(-10, -30); // scrollDelta
+    expectedChildTransform.translate(50, 50);
+
+    expectedGrandChildSurfaceOriginTransform.makeIdentity();
+    expectedGrandChildSurfaceOriginTransform.translate(-10, -30); // scrollDelta
+    expectedGrandChildSurfaceOriginTransform.translate(8, 6);
+    expectedGrandChildSurfaceOriginTransform.multiply(rotationAboutZ);
+
+    // grandChild, greatGrandChild, and greatGrandChild's surface are not expected to
+    // change, since they are all not fixed, and they are all drawn with respect to
+    // grandChild's surface that already has the scrollDelta accounted for.
+
+    // But the great-great grandchild, "fixedPositionChild", should have a transform that explicitly cancels out the scrollDelta.
+    // The expected transform is:
+    //   compoundOriginTransform.inverse() * translate(positive scrollDelta) * compoundOriginTransform * half-width-half-height translation
+    WebTransformationMatrix compoundOriginTransform; // transform from greatGrandChildSurface's origin to the root surface.
+    compoundOriginTransform.translate(8, 6); // origin translation of grandChild
+    compoundOriginTransform.multiply(rotationAboutZ); // rotation of grandChild
+    compoundOriginTransform.translate(140, 120); // origin translation of greatGrandChild
+    compoundOriginTransform.multiply(rotationAboutZ); // rotation of greatGrandChild
+
+    expectedFixedPositionChildTransform.makeIdentity();
+    expectedFixedPositionChildTransform.multiply(compoundOriginTransform.inverse());
+    expectedFixedPositionChildTransform.translate(10, 30); // explicit canceling out the scrollDelta that gets embedded in the fixed position layer's surface.
+    expectedFixedPositionChildTransform.multiply(compoundOriginTransform);
+    expectedFixedPositionChildTransform.translate(50, 50);
+
+    ASSERT_TRUE(grandChild->renderSurface());
+    ASSERT_TRUE(greatGrandChild->renderSurface());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildSurfaceOriginTransform, grandChild->renderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGreatGrandChildSurfaceOriginTransform, greatGrandChild->renderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGreatGrandChildTransform, greatGrandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedFixedPositionChildTransform, fixedPositionChild->drawTransform());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWithContainerLayerThatHasSurface)
+{
+    // This test checks for correct scroll compensation when the fixed-position container
+    // itself has a renderSurface. In this case, the container layer should be treated
+    // like a layer that contributes to a targetRenderSurface, and that targetRenderSurface
+    // is completely irrelevant; it should not affect the scroll compensation.
+    DebugScopedSetImplThread scopedImplThread;
+
+    OwnPtr<CCLayerImpl> root = createTreeForFixedPositionTests();
+    CCLayerImpl* child = root->children()[0].get();
+    CCLayerImpl* grandChild = child->children()[0].get();
+
+    child->setIsContainerForFixedPositionLayers(true);
+    child->setForceRenderSurface(true);
+    grandChild->setFixedToContainerLayerVisibleRect(true);
+    grandChild->setDrawsContent(true);
+
+    // Case 1: scrollDelta of 0, 0
+    child->setScrollDelta(IntSize(0, 0));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // The expected draw transforms without any scroll should still include a translation to the center of the layer (i.e. translation by 50, 50).
+    WebTransformationMatrix expectedSurfaceOriginTransform;
+    expectedSurfaceOriginTransform.translate(0, 0);
+    WebTransformationMatrix expectedChildTransform;
+    expectedChildTransform.translate(50, 50);
+    WebTransformationMatrix expectedGrandChildTransform;
+    expectedGrandChildTransform.translate(50, 50);
+    ASSERT_TRUE(child->renderSurface());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedSurfaceOriginTransform, child->renderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+
+    // Case 2: scrollDelta of 10, 10
+    child->setScrollDelta(IntSize(10, 10));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // The surface is translated by scrollDelta, the child transform doesn't change
+    // because it scrolls along with the surface, but the fixed position grandChild
+    // needs to compensate for the scroll translation.
+    expectedSurfaceOriginTransform.makeIdentity();
+    expectedSurfaceOriginTransform.translate(-10, -10);
+    expectedGrandChildTransform.makeIdentity();
+    expectedGrandChildTransform.translate(60, 60);
+    ASSERT_TRUE(child->renderSurface());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedSurfaceOriginTransform, child->renderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerThatIsAlsoFixedPositionContainer)
+{
+    // This test checks the scenario where a fixed-position layer also happens to be a
+    // container itself for a descendant fixed position layer. In particular, the layer
+    // should not accidentally be fixed to itself.
+    DebugScopedSetImplThread scopedImplThread;
+
+    OwnPtr<CCLayerImpl> root = createTreeForFixedPositionTests();
+    CCLayerImpl* child = root->children()[0].get();
+    CCLayerImpl* grandChild = child->children()[0].get();
+
+    child->setIsContainerForFixedPositionLayers(true);
+    grandChild->setFixedToContainerLayerVisibleRect(true);
+
+    // This should not confuse the grandChild. If correct, the grandChild would still be considered fixed to its container (i.e. "child").
+    grandChild->setIsContainerForFixedPositionLayers(true);
+
+    // Case 1: scrollDelta of 0, 0
+    child->setScrollDelta(IntSize(0, 0));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // The expected draw transforms without any scroll should still include a translation to the center of the layer (i.e. translation by 50, 50).
+    WebTransformationMatrix expectedChildTransform;
+    expectedChildTransform.translate(50, 50);
+    WebTransformationMatrix expectedGrandChildTransform;
+    expectedGrandChildTransform.translate(50, 50);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+
+    // Case 2: scrollDelta of 10, 10
+    child->setScrollDelta(IntSize(10, 10));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // Here the child is affected by scrollDelta, but the fixed position grandChild should not be affected.
+    expectedChildTransform.makeIdentity();
+    expectedChildTransform.translate(40, 40);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerThatHasNoContainer)
+{
+    // This test checks scroll compensation when a fixed-position layer does not find any
+    // ancestor that is a "containerForFixedPositionLayers". In this situation, the layer should
+    // be fixed to the viewport -- not the rootLayer, which may have transforms of its own.
+    DebugScopedSetImplThread scopedImplThread;
+
+    OwnPtr<CCLayerImpl> root = createTreeForFixedPositionTests();
+    CCLayerImpl* child = root->children()[0].get();
+    CCLayerImpl* grandChild = child->children()[0].get();
+
+    WebTransformationMatrix rotationByZ;
+    rotationByZ.rotate3d(0, 0, 90);
+
+    root->setTransform(rotationByZ);
+    grandChild->setFixedToContainerLayerVisibleRect(true);
+
+    // Case 1: root scrollDelta of 0, 0
+    root->setScrollDelta(IntSize(0, 0));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // The expected draw transforms without any scroll should still include a translation to the center of the layer (i.e. translation by 50, 50).
+    WebTransformationMatrix expectedChildTransform;
+    expectedChildTransform.multiply(rotationByZ);
+    expectedChildTransform.translate(50, 50);
+
+    WebTransformationMatrix expectedGrandChildTransform;
+    expectedGrandChildTransform.multiply(rotationByZ);
+    expectedGrandChildTransform.translate(50, 50);
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
+
+    // Case 2: root scrollDelta of 10, 10
+    root->setScrollDelta(IntSize(10, 10));
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // Here the child is affected by scrollDelta, but the fixed position grandChild should not be affected.
+    expectedChildTransform.makeIdentity();
+    expectedChildTransform.translate(-10, -10); // the scrollDelta
+    expectedChildTransform.multiply(rotationByZ);
+    expectedChildTransform.translate(50, 50);
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
 }
 
 TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)

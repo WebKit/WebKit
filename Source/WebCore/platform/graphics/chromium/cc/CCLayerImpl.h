@@ -131,6 +131,12 @@ public:
     void setPosition(const FloatPoint&);
     const FloatPoint& position() const { return m_position; }
 
+    void setIsContainerForFixedPositionLayers(bool isContainerForFixedPositionLayers) { m_isContainerForFixedPositionLayers = isContainerForFixedPositionLayers; }
+    bool isContainerForFixedPositionLayers() const { return m_isContainerForFixedPositionLayers; }
+
+    void setFixedToContainerLayerVisibleRect(bool fixedToContainerLayerVisibleRect = true) { m_fixedToContainerLayerVisibleRect = fixedToContainerLayerVisibleRect;}
+    bool fixedToContainerLayerVisibleRect() const { return m_fixedToContainerLayerVisibleRect; }
+
     void setPreserves3D(bool);
     bool preserves3D() const { return m_preserves3D; }
 
@@ -322,6 +328,11 @@ private:
 
     bool m_drawsContent;
     bool m_forceRenderSurface;
+
+    // Set for the layer that other layers are fixed to.
+    bool m_isContainerForFixedPositionLayers;
+    // This is true if the layer should be fixed to the closest ancestor container.
+    bool m_fixedToContainerLayerVisibleRect;
 
     FloatSize m_scrollDelta;
     IntSize m_sentScrollDelta;
