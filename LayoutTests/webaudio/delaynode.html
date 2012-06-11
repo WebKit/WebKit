@@ -3,6 +3,7 @@
 <html>
 <head>
 <script src="../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/audio-testing.js"></script>
 <script src="resources/delay-testing.js"></script>
 </head>
 
@@ -16,7 +17,6 @@ description("Tests basic functionality of DelayNode.");
 
 function runTest() {
     if (window.layoutTestController) {
-        layoutTestController.overridePreference("WebKitWebAudioEnabled", "1");
         layoutTestController.dumpAsText();
         layoutTestController.waitUntilDone();
     }

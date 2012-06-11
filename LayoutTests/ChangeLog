@@ -1,3 +1,23 @@
+2012-06-11  Dongwoo Im  <dw.im@samsung.com>
+
+        WebAudio tests need to set WebKitWebAudioEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=88624
+
+        Reviewed by Chris Rogers.
+
+        * webaudio/audiochannelmerger-basic.html: Set WebKitWebAudioEnabled by including 'audio-testing.js'.
+        * webaudio/audionode-connect-order.html: ditto.
+        * webaudio/biquadfilternode-basic.html: ditto.
+        * webaudio/delaynode-maxdelay.html: ditto.
+        * webaudio/delaynode-scheduling.html: ditto.
+        * webaudio/delaynode.html: ditto.
+        * webaudio/javascriptaudionode-downmix8-2channel-input.html: ditto.
+        * webaudio/javascriptaudionode-upmix2-8channel-input.html: ditto.
+        * webaudio/mediaelementaudiosourcenode-gc.html: ditto.
+        * webaudio/mediaelementaudiosourcenode.html: ditto.
+        * webaudio/realtimeanalyser-fft-sizing.html: ditto.
+        * webaudio/stereo2mono-down-mixing.html: ditto.
+
 2012-06-11  Ojan Vafai  <ojan@chromium.org>
 
         Last large slew of Chromium windows png rebaselines. See  http://crbug.com/131829 for more information.

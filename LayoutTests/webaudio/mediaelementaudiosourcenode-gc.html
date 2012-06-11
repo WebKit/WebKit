@@ -3,6 +3,7 @@
 <html>
 <head>
 <script src="../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/audio-testing.js"></script>
 </head>
 
 <body>
@@ -14,7 +15,6 @@ description("Tests garbage collection of MediaElementAudioSourceNode.");
 
 function runTest() {
     if (window.layoutTestController) {
-        layoutTestController.overridePreference("WebKitWebAudioEnabled", "1");
         layoutTestController.dumpAsText();
     }
 
