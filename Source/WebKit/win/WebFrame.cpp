@@ -298,22 +298,12 @@ HRESULT STDMETHODCALLTYPE WebFrame::allowsScrolling(
 HRESULT STDMETHODCALLTYPE WebFrame::setIsDisconnected(
     /* [in] */ BOOL flag)
 {
-    if (Frame* frame = core(this)) {
-        frame->setIsDisconnected(flag);
-        return S_OK;
-    }
-
     return E_FAIL;
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::setExcludeFromTextSearch(
     /* [in] */ BOOL flag)
 {
-    if (Frame* frame = core(this)) {
-        frame->setExcludeFromTextSearch(flag);
-        return S_OK;
-    }
-
     return E_FAIL;
 }
 

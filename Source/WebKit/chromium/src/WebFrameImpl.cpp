@@ -1733,43 +1733,40 @@ void WebFrameImpl::scopeStringMatches(int identifier,
             continue;
         }
 
-        // Only treat the result as a match if it is visible
-        if (frame()->editor()->insideVisibleArea(resultRange.get())) {
-            ++matchCount;
+        ++matchCount;
 
-            // Catch a special case where Find found something but doesn't know what
-            // the bounding box for it is. In this case we set the first match we find
-            // as the active rect.
-            IntRect resultBounds = resultRange->boundingBox();
-            IntRect activeSelectionRect;
-            if (m_locatingActiveRect) {
-                activeSelectionRect = m_activeMatch.get() ?
-                    m_activeMatch->boundingBox() : resultBounds;
-            }
-
-            // If the Find function found a match it will have stored where the
-            // match was found in m_activeSelectionRect on the current frame. If we
-            // find this rect during scoping it means we have found the active
-            // tickmark.
-            bool foundActiveMatch = false;
-            if (m_locatingActiveRect && (activeSelectionRect == resultBounds)) {
-                // We have found the active tickmark frame.
-                mainFrameImpl->m_currentActiveMatchFrame = this;
-                foundActiveMatch = true;
-                // We also know which tickmark is active now.
-                m_activeMatchIndexInCurrentFrame = matchCount - 1;
-                // To stop looking for the active tickmark, we set this flag.
-                m_locatingActiveRect = false;
-
-                // Notify browser of new location for the selected rectangle.
-                reportFindInPageSelection(
-                    frameView()->contentsToWindow(resultBounds),
-                    m_activeMatchIndexInCurrentFrame + 1,
-                    identifier);
-            }
-
-            addMarker(resultRange.get(), foundActiveMatch);
+        // Catch a special case where Find found something but doesn't know what
+        // the bounding box for it is. In this case we set the first match we find
+        // as the active rect.
+        IntRect resultBounds = resultRange->boundingBox();
+        IntRect activeSelectionRect;
+        if (m_locatingActiveRect) {
+            activeSelectionRect = m_activeMatch.get() ?
+                m_activeMatch->boundingBox() : resultBounds;
         }
+
+        // If the Find function found a match it will have stored where the
+        // match was found in m_activeSelectionRect on the current frame. If we
+        // find this rect during scoping it means we have found the active
+        // tickmark.
+        bool foundActiveMatch = false;
+        if (m_locatingActiveRect && (activeSelectionRect == resultBounds)) {
+            // We have found the active tickmark frame.
+            mainFrameImpl->m_currentActiveMatchFrame = this;
+            foundActiveMatch = true;
+            // We also know which tickmark is active now.
+            m_activeMatchIndexInCurrentFrame = matchCount - 1;
+            // To stop looking for the active tickmark, we set this flag.
+            m_locatingActiveRect = false;
+
+            // Notify browser of new location for the selected rectangle.
+            reportFindInPageSelection(
+                frameView()->contentsToWindow(resultBounds),
+                m_activeMatchIndexInCurrentFrame + 1,
+                identifier);
+        }
+
+        addMarker(resultRange.get(), foundActiveMatch);
 
         // Set the new start for the search range to be the end of the previous
         // result range. There is no need to use a VisiblePosition here,

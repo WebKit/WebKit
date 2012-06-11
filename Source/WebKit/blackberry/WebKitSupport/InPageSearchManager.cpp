@@ -279,17 +279,16 @@ void InPageSearchManager::scopeStringMatches(const String& text, bool reset, Fra
             continue;
         }
 
-        if (scopingFrame->editor()->insideVisibleArea(resultRange.get())) {
-            ++matchCount;
-            bool foundActiveMatch = false;
-            if (m_locatingActiveMatch && areRangesEqual(resultRange.get(), m_activeMatch.get())) {
-                foundActiveMatch = true;
-                m_locatingActiveMatch = false;
-                m_activeMatchIndex = m_activeMatchCount + matchCount;
-                // FIXME: We need to notify client with m_activeMatchIndex.
-            }
-            resultRange->ownerDocument()->markers()->addTextMatchMarker(resultRange.get(), foundActiveMatch);
+        ++matchCount;
+        bool foundActiveMatch = false;
+        if (m_locatingActiveMatch && areRangesEqual(resultRange.get(), m_activeMatch.get())) {
+            foundActiveMatch = true;
+            m_locatingActiveMatch = false;
+            m_activeMatchIndex = m_activeMatchCount + matchCount;
+            // FIXME: We need to notify client with m_activeMatchIndex.
         }
+        resultRange->ownerDocument()->markers()->addTextMatchMarker(resultRange.get(), foundActiveMatch);
+
         searchRange->setStart(resultRange->endContainer(ec), resultRange->endOffset(ec), ec);
         Node* shadowTreeRoot = searchRange->shadowTreeRootNode();
         if (searchRange->collapsed(ec) && shadowTreeRoot)

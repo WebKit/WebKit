@@ -1,3 +1,15 @@
+2012-06-11  Sam Weinig  <sam@webkit.org>
+
+        Remove support for disconnected/excluded from search frames, they are not used by Safari anymore
+        https://bugs.webkit.org/show_bug.cgi?id=88723
+
+        Reviewed by Dan Bernstein.
+
+        * WebFrame.cpp:
+        (WebFrame::setIsDisconnected):
+        (WebFrame::setExcludeFromTextSearch):
+        Stop doing anything in these functions.
+
 2012-06-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r119955.

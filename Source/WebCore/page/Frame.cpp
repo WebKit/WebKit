@@ -164,8 +164,6 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     , m_orientation(0)
 #endif
     , m_inViewSourceMode(false)
-    , m_isDisconnected(false)
-    , m_excludeFromTextSearch(false)
     , m_activeDOMObjectsAndAnimationsSuspendedCount(0)
 {
     ASSERT(page);

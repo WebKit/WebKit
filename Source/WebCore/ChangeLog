@@ -1,3 +1,39 @@
+2012-06-11  Sam Weinig  <sam@webkit.org>
+
+        Remove support for disconnected/excluded from search frames, they are not used by Safari anymore
+        https://bugs.webkit.org/show_bug.cgi?id=88723
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.exp.in:
+        Update export.
+        * editing/Editor.cpp:
+        (WebCore::Editor::rangeOfString):
+        (WebCore::Editor::countMatchesForText):
+        * editing/Editor.h:
+        (Editor):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::findFrameForNavigation):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::parent):
+        (WebCore::DOMWindow::top):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/Frame.h:
+        (Frame):
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::parent):
+        (WebCore::FrameTree::top):
+        * page/FrameTree.h:
+        (FrameTree):
+        * page/Location.cpp:
+        (WebCore::Location::ancestorOrigins):
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::hasNoStyleInformation):
+        Update for the removal of disconnected frames and text search exclusions concepts.
+
 2012-06-11  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         SVGImageCache leaks image data
