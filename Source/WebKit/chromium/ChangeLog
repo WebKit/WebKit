@@ -1,3 +1,13 @@
+2012-06-11  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Object stores are not successfully deleted
+        https://bugs.webkit.org/show_bug.cgi?id=88788
+
+        Reviewed by Tony Chang.
+
+        * tests/IDBLevelDBCodingTest.cpp:
+        (IDBLevelDBCoding::TEST):
+
 2012-06-11  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Implement position:fixed in compositor thread

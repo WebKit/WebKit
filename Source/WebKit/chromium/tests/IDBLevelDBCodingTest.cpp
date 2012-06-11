@@ -620,10 +620,17 @@ TEST(IDBLevelDBCodingTest, ComparisonTest)
     keys.append(DatabaseNameKey::encode("a", "a"));
     keys.append(DatabaseMetaDataKey::encode(1, DatabaseMetaDataKey::kOriginName));
     keys.append(ObjectStoreMetaDataKey::encode(1, 1, 0));
+    keys.append(ObjectStoreMetaDataKey::encode(1, 1, 1));
+    keys.append(ObjectStoreMetaDataKey::encodeMaxKey(1, 1));
+    keys.append(ObjectStoreMetaDataKey::encodeMaxKey(1, 2));
     keys.append(ObjectStoreMetaDataKey::encodeMaxKey(1));
     keys.append(IndexMetaDataKey::encode(1, 1, 30, 0));
     keys.append(IndexMetaDataKey::encode(1, 1, 31, 0));
     keys.append(IndexMetaDataKey::encode(1, 1, 31, 1));
+    keys.append(IndexMetaDataKey::encodeMaxKey(1, 1, 31));
+    keys.append(IndexMetaDataKey::encodeMaxKey(1, 1, 32));
+    keys.append(IndexMetaDataKey::encodeMaxKey(1, 1));
+    keys.append(IndexMetaDataKey::encodeMaxKey(1, 2));
     keys.append(ObjectStoreFreeListKey::encode(1, 1));
     keys.append(ObjectStoreFreeListKey::encodeMaxKey(1));
     keys.append(IndexFreeListKey::encode(1, 1, kMinimumIndexId));

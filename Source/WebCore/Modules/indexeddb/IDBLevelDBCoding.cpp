@@ -1113,7 +1113,10 @@ int ObjectStoreMetaDataKey::compare(const ObjectStoreMetaDataKey& other)
     ASSERT(m_metaDataType >= 0);
     if (int x = compareInts(m_objectStoreId, other.m_objectStoreId))
         return x;
-    return m_metaDataType - other.m_metaDataType;
+    int64_t result = m_metaDataType - other.m_metaDataType;
+    if (result < 0)
+        return -1;
+    return (result > 0) ? 1 : result;
 }
 
 IndexMetaDataKey::IndexMetaDataKey()

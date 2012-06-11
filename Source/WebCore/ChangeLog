@@ -1,3 +1,21 @@
+2012-06-11  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Object stores are not successfully deleted
+        https://bugs.webkit.org/show_bug.cgi?id=88788
+
+        Reviewed by Tony Chang.
+
+        Discovered while working on http://webkit.org/b/83074 - object stores are not
+        being deleted from the backing store. Deletion would succeed in the in-memory
+        data structures, but after closing/re-opening the backing store the object store
+        (but not its indexes/data) would reappear. Due to 83074, this isn't detectable
+        by DRT without a full restart.
+
+        Test: [chromium] webkit_unit_tests --gtest_filter='IDBLevelDBCodingTest.ComparisonTest'
+
+        * Modules/indexeddb/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::ObjectStoreMetaDataKey::compare):
+
 2012-06-05  Eric Uhrhane <ericu@chromium.org>
 
         Crash in fast/files/read tests during Garbage Collection
