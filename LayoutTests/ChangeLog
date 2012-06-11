@@ -1,6 +1,15 @@
 2012-06-10  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed: Update
+        css3/font-feature-settings-rendering.html again -- actually it may
+        pass if a particular DLL is installed. So expect PASS or
+        IMAGE+TEXT failure from this test.
+
+        * platform/chromium/TestExpectations:
+
+2012-06-10  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed: Update
         css3/font-feature-settings-rendering.html expectations to fail on
         XP.
 
