@@ -19,7 +19,13 @@
 #ifndef EflScreenUtilities_h
 #define EflScreenUtilities_h
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
+
+#ifdef HAVE_ECORE_X
+int getEcoreCursor(const String& cursorString);
+#endif
 
 int getDPI();
 

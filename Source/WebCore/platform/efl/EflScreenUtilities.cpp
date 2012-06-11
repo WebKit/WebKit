@@ -21,9 +21,86 @@
 
 #ifdef HAVE_ECORE_X
 #include <Ecore_X.h>
+#include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 #endif
 
 namespace WebCore {
+
+#ifdef HAVE_ECORE_X
+class CursorMap {
+private:
+    HashMap<String, unsigned short> m_cursorStringMap;
+
+public:
+    CursorMap();
+    int cursor(const String&);
+};
+
+int CursorMap::cursor(const String& cursorGroup)
+{
+    int ret = m_cursorStringMap.get(cursorGroup);
+
+    if (ret < ECORE_X_CURSOR_X || ret > ECORE_X_CURSOR_XTERM)
+        ret = ECORE_X_CURSOR_LEFT_PTR;
+
+    return ret;
+}
+
+CursorMap::CursorMap()
+{
+    m_cursorStringMap.set("cursor/pointer", ECORE_X_CURSOR_LEFT_PTR);
+    m_cursorStringMap.set("cursor/move", ECORE_X_CURSOR_FLEUR);
+    m_cursorStringMap.set("cursor/cross", ECORE_X_CURSOR_CROSS);
+    m_cursorStringMap.set("cursor/hand", ECORE_X_CURSOR_HAND2);
+    m_cursorStringMap.set("cursor/i_beam", ECORE_X_CURSOR_XTERM);
+    m_cursorStringMap.set("cursor/wait", ECORE_X_CURSOR_WATCH);
+    m_cursorStringMap.set("cursor/help", ECORE_X_CURSOR_QUESTION_ARROW);
+    m_cursorStringMap.set("cursor/east_resize", ECORE_X_CURSOR_RIGHT_SIDE);
+    m_cursorStringMap.set("cursor/north_resize", ECORE_X_CURSOR_TOP_SIDE);
+    m_cursorStringMap.set("cursor/north_east_resize", ECORE_X_CURSOR_TOP_RIGHT_CORNER);
+    m_cursorStringMap.set("cursor/north_west_resize", ECORE_X_CURSOR_TOP_LEFT_CORNER);
+    m_cursorStringMap.set("cursor/south_resize", ECORE_X_CURSOR_BOTTOM_SIDE);
+    m_cursorStringMap.set("cursor/south_east_resize", ECORE_X_CURSOR_BOTTOM_RIGHT_CORNER);
+    m_cursorStringMap.set("cursor/south_west_resize", ECORE_X_CURSOR_BOTTOM_LEFT_CORNER);
+    m_cursorStringMap.set("cursor/west_resize", ECORE_X_CURSOR_LEFT_SIDE);
+    m_cursorStringMap.set("cursor/north_south_resize", ECORE_X_CURSOR_SB_H_DOUBLE_ARROW);
+    m_cursorStringMap.set("cursor/east_west_resize", ECORE_X_CURSOR_SB_V_DOUBLE_ARROW);
+    m_cursorStringMap.set("cursor/north_east_south_west_resize", ECORE_X_CURSOR_SIZING);
+    m_cursorStringMap.set("cursor/north_west_south_east_resize", ECORE_X_CURSOR_SIZING);
+    m_cursorStringMap.set("cursor/column_resize", ECORE_X_CURSOR_SB_V_DOUBLE_ARROW);
+    m_cursorStringMap.set("cursor/row_resize", ECORE_X_CURSOR_SB_H_DOUBLE_ARROW);
+    m_cursorStringMap.set("cursor/middle_panning",  ECORE_X_CURSOR_CROSS_REVERSE);
+    m_cursorStringMap.set("cursor/east_panning", ECORE_X_CURSOR_CROSS_REVERSE);
+    m_cursorStringMap.set("cursor/north_panning", ECORE_X_CURSOR_CROSS_REVERSE);
+    m_cursorStringMap.set("cursor/north_east_panning", ECORE_X_CURSOR_CROSS_REVERSE);
+    m_cursorStringMap.set("cursor/north_west_panning", ECORE_X_CURSOR_CROSS_REVERSE);
+    m_cursorStringMap.set("cursor/south_panning", ECORE_X_CURSOR_CROSS_REVERSE);
+    m_cursorStringMap.set("cursor/south_east_panning", ECORE_X_CURSOR_CROSS_REVERSE);
+    m_cursorStringMap.set("cursor/south_west_panning", ECORE_X_CURSOR_CROSS_REVERSE);
+    m_cursorStringMap.set("cursor/west_panning", ECORE_X_CURSOR_CROSS_REVERSE);
+    m_cursorStringMap.set("cursor/vertical_text", ECORE_X_CURSOR_SB_DOWN_ARROW);
+    m_cursorStringMap.set("cursor/cell", ECORE_X_CURSOR_ICON);
+    m_cursorStringMap.set("cursor/context_menu", ECORE_X_CURSOR_HAND2);
+    m_cursorStringMap.set("cursor/no_drop", ECORE_X_CURSOR_DOT_BOX_MASK);
+    m_cursorStringMap.set("cursor/copy", ECORE_X_CURSOR_ICON);
+    m_cursorStringMap.set("cursor/progress", ECORE_X_CURSOR_WATCH);
+    m_cursorStringMap.set("cursor/alias", ECORE_X_CURSOR_MAN);
+    m_cursorStringMap.set("cursor/none", ECORE_X_CURSOR_X);
+    m_cursorStringMap.set("cursor/not_allowed", ECORE_X_CURSOR_X);
+    m_cursorStringMap.set("cursor/zoom_in", ECORE_X_CURSOR_DIAMOND_CROSS);
+    m_cursorStringMap.set("cursor/zoom_out", ECORE_X_CURSOR_DIAMOND_CROSS);
+    m_cursorStringMap.set("cursor/grab", ECORE_X_CURSOR_HAND2);
+    m_cursorStringMap.set("cursor/grabbing", ECORE_X_CURSOR_HAND2);
+}
+
+int getEcoreCursor(const String& cursorString)
+{
+    DEFINE_STATIC_LOCAL(CursorMap, cursorStringMap, ());
+
+    return cursorStringMap.cursor(cursorString);
+}
+#endif
 
 int getDPI()
 {
