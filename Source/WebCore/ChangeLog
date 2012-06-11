@@ -1,3 +1,16 @@
+2012-06-11  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Remove some dead code in PasteboardChromium
+        https://bugs.webkit.org/show_bug.cgi?id=88782
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+        Leftover detritus from bug 88038.
+
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::documentFragment):
+
 2012-06-11  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Theme updates for Android in menu list rendering and selection backgrounds
