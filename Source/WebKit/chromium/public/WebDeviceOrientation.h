@@ -35,19 +35,6 @@ namespace WebKit {
 
 class WebDeviceOrientation {
 public:
-    // FIXME: Remove once Chromium is updated.
-    WebDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute = false, bool absolute = false)
-        : m_isNull(false)
-        , m_canProvideAlpha(canProvideAlpha)
-        , m_alpha(alpha)
-        , m_canProvideBeta(canProvideBeta)
-        , m_beta(beta)
-        , m_canProvideGamma(canProvideGamma)
-        , m_gamma(gamma)
-        , m_canProvideAbsolute(canProvideAbsolute)
-        , m_absolute(absolute)
-    {
-    }
     WebDeviceOrientation()
         : m_isNull(true)
         , m_canProvideAlpha(false)

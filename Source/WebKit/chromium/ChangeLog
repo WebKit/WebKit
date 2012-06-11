@@ -1,3 +1,16 @@
+2012-06-11  Amy Ousterhout  <aousterh@chromium.org>
+
+        [Chromium] Removing long WebDeviceOrientation constructor
+        https://bugs.webkit.org/show_bug.cgi?id=88779
+
+        Reviewed by Adam Barth.
+
+        Removing the WebDeviceOrientation constructor with nine parameters.
+        Chromium has been changed to use the default constructor and setter
+        functions instead (see https://chromiumcodereview.appspot.com/10542025/).
+
+        * public/WebDeviceOrientation.h:
+
 2012-06-11  David Dorwin  <ddorwin@chromium.org>
 
         [chromium] Provide access to the WebPlugin created by the helper plugin widget
