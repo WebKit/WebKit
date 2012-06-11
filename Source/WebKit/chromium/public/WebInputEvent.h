@@ -209,6 +209,7 @@ public:
             || type == GestureTap
             || type == GestureTapDown
             || type == GestureDoubleTap
+            || type == GestureTwoFingerTap
             || type == GestureLongPress
             || type == GesturePinchBegin
             || type == GesturePinchEnd
