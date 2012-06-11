@@ -1,3 +1,16 @@
+2012-06-11  Dan Bernstein  <mitz@apple.com>
+
+        Reverted r119940 because it caused multiple media tests to fail on Lion.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore):
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::commonMovieAttributes):
+
 2012-06-11  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Add config tests for WEBP imagedecoder library, modify HAVE(decoderlibrary) to USE(...)$

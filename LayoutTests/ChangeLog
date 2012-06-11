@@ -1,3 +1,10 @@
+2012-06-11  Dan Bernstein  <mitz@apple.com>
+
+        Reverted r119940 because it caused multiple media tests to fail on Lion.
+
+        * http/tests/media/video-src-invalid-error-expected.txt: Removed.
+        * http/tests/media/video-src-invalid-error.html: Removed.
+
 2012-06-11  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Gardening after r119962. Four inspector/debugger tests still fail after they have been re-enabled.
