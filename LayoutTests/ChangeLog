@@ -1,3 +1,17 @@
+2012-06-05  Eric Uhrhane <ericu@chromium.org>
+
+        Crash in fast/files/read tests during Garbage Collection
+        https://bugs.webkit.org/show_bug.cgi?id=87165
+
+        Reviewed by Michael Saboff
+
+        Simplify file-writer-abort-continue.js a bit, and add a new test case
+        for a write that gets aborted in the final progress event, which
+        previously would have hung the FileWriter.
+
+        * fast/filesystem/file-writer-abort-continue-expected.txt:
+        * fast/filesystem/resources/file-writer-abort-continue.js:
+
 2012-06-11  Dongwoo Im  <dw.im@samsung.com>
 
         WebAudio tests need to set WebKitWebAudioEnabled.

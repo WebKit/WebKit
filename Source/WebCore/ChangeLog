@@ -1,3 +1,25 @@
+2012-06-05  Eric Uhrhane <ericu@chromium.org>
+
+        Crash in fast/files/read tests during Garbage Collection
+        https://bugs.webkit.org/show_bug.cgi?id=87165
+
+        Reviewed by Michael Saboff
+
+        Fix previous fix for hasPendingActivity, and fix a bug in a complex
+        abort case as well--abort during the final progress event of a write
+        would hang the writer.
+
+        * Modules/filesystem/FileWriter.cpp:
+        (WebCore::FileWriter::stop):
+        (WebCore::FileWriter::write):
+        (WebCore::FileWriter::truncate):
+        (WebCore::FileWriter::didWrite):
+        (WebCore::FileWriter::didTruncate):
+        (WebCore::FileWriter::didFail):
+        (WebCore::FileWriter::completeAbort):
+        (WebCore::FileWriter::doOperation):
+        (WebCore::FileWriter::signalCompletion):
+
 2012-06-11  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Implement position:fixed in compositor thread

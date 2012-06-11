@@ -11,42 +11,88 @@ var sawAbort;
 var sawWriteEnd;
 var writer;
 var expectedLength;
-var truncateLength = 7;
+var truncateLength;
 var blobSize = 1100000;
+var currentTest = 0;
+var blob = getBlob();
 
 var methodSet = [
   {  // Setup method set that writes, then aborts that write before completion.
     action : startWrite,
     verifyLength : 0,
     onwritestart : abortWrite,
+    onprogress : nop,
     onwrite : onError,
     onabort : logAbort,
-    onwriteend : checkLengthAndCallFollowOnAction
+    onwriteend : checkLengthAndStartNextTest
   },
   {  // Method set that does a complete write.
     action : startWrite,
     verifyLength : blobSize,
     onwritestart : nop,
+    onprogress : nop,
     onwrite : nop,
     onabort : onError,
     onwriteend : checkLengthAndStartNextTest
   },
-  {  // Setup method set that writes, then aborts that write before completion.
+  { // Method set that does a complete truncate, just to clean up.
+    action : startTruncate,
+    truncateLength : 0,
+    verifyLength : 0,
+    onwritestart : nop,
+    onprogress : nop,
+    onwrite : nop,
+    onabort : onError,
+    onwriteend : checkLengthAndStartNextTest
+  },
+  {  // Setup method set that writes, then aborts that write just at completion.
     action : startWrite,
-    verifyLength : blobSize,  // Left over from the previous test.
+    verifyLength : blobSize,
+    onwritestart : nop,
+    onprogress : abortOnComplete,
+    onwrite : nop,
+    onabort : logAbort,
+    onwriteend : checkLengthAndStartNextTest
+  },
+  {  // Method set that does a complete write.
+    action : startWrite,
+    verifyLength : blobSize * 2, // Add in leftovers from previous method.
+    onwritestart : nop,
+    onprogress : nop,
+    onwrite : nop,
+    onabort : onError,
+    onwriteend : checkLengthAndStartNextTest
+  },
+  { // Method set that does a complete truncate, just to clean up.
+    action : startTruncate,
+    truncateLength : 0,
+    verifyLength : 0,
+    onwritestart : nop,
+    onprogress : nop,
+    onwrite : nop,
+    onabort : onError,
+    onwriteend : checkLengthAndStartNextTest
+  },
+  {  // Setup method set that writes, then aborts that write as it starts.
+    action : startWrite,
+    verifyLength : 0,
     onwritestart : abortWrite,
+    onprogress : nop,
     onwrite : onError,
     onabort : logAbort,
-    onwriteend : checkLengthAndCallFollowOnAction
+    onwriteend : checkLengthAndStartNextTest
   },
   { // Method set that does a complete truncate.
     action : startTruncate,
-    verifyLength : truncateLength,
+    truncateLength : 7,
+    verifyLength : 7,
     onwritestart : nop,
+    onprogress : nop,
     onwrite : nop,
     onabort : onError,
-    onwriteend : checkLengthAndCompleteTest
-  }];
+    onwriteend : checkLengthAndStartNextTest
+  }
+];
 
 function nop() {
 }
@@ -59,37 +105,7 @@ function tenXBlob(blob) {
     return new Blob(bb);
 }
 
-// These methods set up a write, abort it as soon as it starts, then initiate
-// the follow on action.
-function abortWrite(e) {
-    testPassed("Calling abort");
-    writer.abort();
-}
-
-function logAbort(e) {
-    testPassed("Saw abort");
-}
-
-function checkLengthAndCallFollowOnAction(e) {
-    testPassed("Saw writeend 0.");
-    shouldBe("writer.length", "" + expectedLength);
-    doFollowOnAction();
-}
-
-// For the second method set, verify completion and move on to the next test.
-function checkLengthAndStartNextTest(e) {
-    shouldBe("writer.length", "" + expectedLength);
-    testPassed("Saw writeend 1.");
-    runTest(2, 3);
-}
-
-function checkLengthAndCompleteTest(e) {
-    shouldBe("writer.length", "" + expectedLength);
-    testPassed("All tests complete.");
-    cleanUp();
-}
-
-function startWrite() {
+function getBlob() {
     // Let's make it about a megabyte.
     var blob = tenXBlob(new Blob(["lorem ipsum"]));
     blob = tenXBlob(blob);
@@ -98,10 +114,44 @@ function startWrite() {
     blob = tenXBlob(blob);
     var size = blob.size;
     shouldBe("" + size, "blobSize");
+    return blob;
+}
+
+function abortWrite(e) {
+    testPassed("Calling abort");
+    writer.abort();
+}
+
+function abortOnComplete(e) {
+    if (e.loaded == e.total) {
+        testPassed("Calling abort at the end of the write");
+        writer.abort();
+    }
+}
+
+function logAbort(e) {
+    testPassed("Saw abort");
+}
+
+function checkLengthAndStartNextTest(e) {
+    shouldBe("writer.length", "" + expectedLength);
+    testPassed("Saw writeend " + currentTest + ".");
+    ++currentTest;
+    if (currentTest < methodSet.length)
+        runTest();
+    else {
+        testPassed("All tests complete.");
+        cleanUp();
+    }
+}
+
+function startWrite() {
+    testPassed("Calling write.");
     writer.write(blob);
 }
 
 function startTruncate() {
+    testPassed("Calling truncate.");
     writer.truncate(truncateLength);
 }
 
@@ -111,20 +161,16 @@ function setupWriter(methodSetIndex, writer) {
     var methods = methodSet[methodSetIndex];
     writer.onabort = methods.onabort;
     writer.onwritestart = methods.onwritestart;
+    writer.onprogress = methods.onprogress;
     writer.onwrite = methods.onwrite;
     writer.onwriteend = methods.onwriteend;
     expectedLength = methods.verifyLength;
+    truncateLength = methods.truncateLength;
     methods.action();
 }
 
-function runTest(initIndex, testIndex) {
-    followOnAction = testIndex;
-    setupWriter(initIndex, writer);
-}
-
-function doFollowOnAction() {
-    shouldBeTrue("followOnAction == 1 || followOnAction == 3");
-    setupWriter(followOnAction, writer);
+function runTest() {
+    setupWriter(currentTest, writer);
 }
 
 var jsTestIsAsync = true;
@@ -132,5 +178,5 @@ setupAndRunTest(2*1024*1024, 'file-writer-abort',
                 function (fileEntry, fileWriter) {
                     fileEntryForCleanup = fileEntry;
                     writer = fileWriter;
-                    runTest(0, 1);
+                    runTest();
                 });
