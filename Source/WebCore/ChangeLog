@@ -1,3 +1,26 @@
+2012-06-10  Hayato Ito  <hayato@chromium.org>
+
+        An inheritance of '-webkit-user-modify' does not stop at shadow boundary.
+        https://bugs.webkit.org/show_bug.cgi?id=88514
+
+        Reviewed by Ryosuke Niwa.
+
+        In StyleResolver::styleForElement(), we reset '-webkit-user-modify'
+        CSS property after inheriting a parent style, but that is not
+        enough.  We also have to reset '-webkit-user-modify' when we use a
+        cached result in applying matched properties.
+
+        Test: fast/dom/shadow/user-modify-inheritance.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::styleForElement):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::inheritFrom):
+        * rendering/style/RenderStyle.h:
+
 2012-06-10  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Introduce Decimal behind the InputNumber type

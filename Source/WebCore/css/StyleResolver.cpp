@@ -1619,7 +1619,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForDocument(Document* document, CSSF
     return documentStyle.release();
 }
 
-static inline bool isAtShadowBoundary(Element* element)
+static inline bool isAtShadowBoundary(const Element* element)
 {
     if (!element)
         return false;
@@ -1654,7 +1654,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     m_style = RenderStyle::create();
 
     if (m_parentStyle)
-        m_style->inheritFrom(m_parentStyle);
+        m_style->inheritFrom(m_parentStyle, isAtShadowBoundary(element) ? RenderStyle::AtShadowBoundary : RenderStyle::NotAtShadowBoundary);
     else {
         m_parentStyle = style();
         // Make sure our fonts are initialized if we don't inherit them from our parent style.
@@ -1664,10 +1664,6 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
         } else
             m_style->font().update(0);
     }
-
-    // Even if surrounding content is user-editable, shadow DOM should act as a single unit, and not necessarily be editable
-    if (isAtShadowBoundary(element))
-        m_style->setUserModify(RenderStyle::initialUserModify());
 
     if (element->isLink()) {
         m_style->setIsLink(true);
@@ -1682,7 +1678,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     else
         matchAllRules(matchResult, matchingBehavior != MatchAllRulesExcludingSMIL);
 
-    applyMatchedProperties(matchResult);
+    applyMatchedProperties(matchResult, element);
 
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style(), m_parentStyle, element);
@@ -1843,7 +1839,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(PseudoId pseudo, El
 
     m_style->setStyleType(pseudo);
 
-    applyMatchedProperties(matchResult);
+    applyMatchedProperties(matchResult, e);
 
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style(), parentStyle, 0);
@@ -2823,8 +2819,9 @@ static bool isCacheableInMatchedPropertiesCache(const Element* element, const Re
     return true;
 }
 
-void StyleResolver::applyMatchedProperties(const MatchResult& matchResult)
+void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const Element* element)
 {
+    ASSERT(element);
     unsigned cacheHash = matchResult.isCacheable ? computeMatchedPropertiesHash(matchResult.matchedProperties.data(), matchResult.matchedProperties.size()) : 0;
     bool applyInheritedOnly = false;
     const MatchedPropertiesCacheItem* cacheItem = 0;
@@ -2837,7 +2834,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult)
             EInsideLink linkStatus = m_style->insideLink();
             // If the cache item parent style has identical inherited properties to the current parent style then the
             // resulting style will be identical too. We copy the inherited properties over from the cache and are done.
-            m_style->inheritFrom(cacheItem->renderStyle.get());
+            m_style->inheritFrom(cacheItem->renderStyle.get(), isAtShadowBoundary(element) ? RenderStyle::AtShadowBoundary : RenderStyle::NotAtShadowBoundary);
             // Unfortunately the link status is treated like an inherited property. We need to explicitly restore it.
             m_style->setInsideLink(linkStatus);
             return;

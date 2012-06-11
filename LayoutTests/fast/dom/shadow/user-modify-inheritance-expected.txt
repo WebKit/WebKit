@@ -1,0 +1,15 @@
+Tests to ensure that a '-webkit-user-modify' CSS porperty is not inherited across shadow boundaries.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS computedStyle(prepareNodeInShadowRoot(document.getElementById("contenteditable-host1"), null), userModifyPropertyName) is "read-only"
+PASS computedStyle(prepareNodeInShadowRoot(document.getElementById("contenteditable-host2"), "false"), userModifyPropertyName) is "read-only"
+PASS computedStyle(prepareNodeInShadowRoot(document.getElementById("contenteditable-host3"), "true"), userModifyPropertyName) is "read-write"
+PASS computedStyle(prepareNodeInShadowRoot(document.getElementById("non-contenteditable-host1"), null), userModifyPropertyName) is "read-only"
+PASS computedStyle(prepareNodeInShadowRoot(document.getElementById("non-contenteditable-host2"), "false"), userModifyPropertyName) is "read-only"
+PASS computedStyle(prepareNodeInShadowRoot(document.getElementById("non-contenteditable-host3"), "true"), userModifyPropertyName) is "read-write"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

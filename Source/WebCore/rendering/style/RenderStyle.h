@@ -390,7 +390,12 @@ public:
     static PassRefPtr<RenderStyle> createAnonymousStyleWithDisplay(const RenderStyle* parentStyle, EDisplay);
     static PassRefPtr<RenderStyle> clone(const RenderStyle*);
 
-    void inheritFrom(const RenderStyle* inheritParent);
+    enum IsAtShadowBoundary {
+        AtShadowBoundary,
+        NotAtShadowBoundary,
+    };
+
+    void inheritFrom(const RenderStyle* inheritParent, IsAtShadowBoundary = NotAtShadowBoundary);
     void copyNonInheritedFrom(const RenderStyle*);
 
     PseudoId styleType() const { return static_cast<PseudoId>(noninherited_flags._styleType); }

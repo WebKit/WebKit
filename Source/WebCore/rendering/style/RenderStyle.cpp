@@ -162,9 +162,15 @@ ALWAYS_INLINE RenderStyle::RenderStyle(const RenderStyle& o)
 {
 }
 
-void RenderStyle::inheritFrom(const RenderStyle* inheritParent)
+void RenderStyle::inheritFrom(const RenderStyle* inheritParent, IsAtShadowBoundary isAtShadowBoundary)
 {
-    rareInheritedData = inheritParent->rareInheritedData;
+    if (isAtShadowBoundary == AtShadowBoundary) {
+        // Even if surrounding content is user-editable, shadow DOM should act as a single unit, and not necessarily be editable
+        EUserModify currentUserModify = userModify();
+        rareInheritedData = inheritParent->rareInheritedData;
+        setUserModify(currentUserModify);
+    } else
+        rareInheritedData = inheritParent->rareInheritedData;
     inherited = inheritParent->inherited;
     inherited_flags = inheritParent->inherited_flags;
 #if ENABLE(SVG)

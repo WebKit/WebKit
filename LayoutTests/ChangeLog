@@ -1,3 +1,13 @@
+2012-06-10  Hayato Ito  <hayato@chromium.org>
+
+        An inheritance of '-webkit-user-modify' does not stop at shadow boundary.
+        https://bugs.webkit.org/show_bug.cgi?id=88514
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/shadow/user-modify-inheritance-expected.txt: Added.
+        * fast/dom/shadow/user-modify-inheritance.html: Added.
+
 2012-06-10  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Introduce Decimal behind the InputNumber type

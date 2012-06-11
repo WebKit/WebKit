@@ -353,7 +353,7 @@ private:
 
     bool checkSelector(const RuleData&, const ContainerNode* scope = 0);
     bool checkRegionSelector(CSSSelector* regionSelector, Element* regionElement);
-    void applyMatchedProperties(const MatchResult&);
+    void applyMatchedProperties(const MatchResult&, const Element*);
     enum StyleApplicationPass {
         HighPriorityProperties,
         LowPriorityProperties
