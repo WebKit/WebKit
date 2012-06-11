@@ -1,3 +1,15 @@
+2012-06-11  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Rect-based hittesting doesn't work in tables.
+        https://bugs.webkit.org/show_bug.cgi?id=86605
+
+        Reviewed by Julien Chaffraix.
+
+        Test nodesFromRect on tables.
+
+        * fast/dom/nodesFromRect-table-expected.txt: Added.
+        * fast/dom/nodesFromRect-table.html: Added.
+
 2012-06-11  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         [Qt] Gardening, skip new failing tests.

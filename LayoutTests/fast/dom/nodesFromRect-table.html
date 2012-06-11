@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Document::nodesFromRect : Rect-based hit-testing on tables - bug 86605</title>
+<style type="text/css">
+    #sandbox {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 600px;
+        height: 800px;
+    }
+    #testtable {
+        margin: 100px;
+        width: 200px;
+        height: 200px;
+    }
+    .rtl {
+        direction: rtl;
+    }
+    .tblr {
+        -webkit-writing-mode: vertical-lr;
+    }
+</style>
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/nodesFromRect.js"></script>
+</head>
+
+<body>
+    <div id=sandbox>
+        <table id=testtable>
+            <tr id=tr1>
+                <td id=td11>
+                <td id=td12>
+                <td id=td13>
+                <td id=td14>
+            <tr id=tr2>
+                <td id=td21>
+                <td id=td22>
+                <td id=td23>
+                <td id=td24>
+            <tr id=tr3>
+                <td id=td31>
+                <td id=td32>
+                <td id=td33>
+                <td id=td34>
+            <tr id=tr4>
+                <td id=td41>
+                <td id=td42>
+                <td id=td43>
+                <td id=td44>
+        </table>
+    </div>
+
+    <script>
+        function runTest()
+        {
+            description(document.title);
+            var e = {};
+
+            // Set up shortcut access to elements
+            ['sandbox', 'testtable', 'tr1', 'tr2', 'tr3', 'tr4',
+             'td11', 'td12', 'td13', 'td14',
+             'td21', 'td22', 'td23', 'td24',
+             'td31', 'td32', 'td33', 'td34',
+             'td41', 'td42', 'td43', 'td44'].forEach(function(a) {
+                e[a] = document.getElementById(a);
+            });
+
+            window.scrollTo(0, 0);
+            debug('Check area hits fully inside table cells');
+            check(125, 125, 10, 10, 10, 10, [e.td11]);
+            check(275, 125, 10, 10, 10, 10, [e.td14]);
+            check(175, 175, 10, 10, 10, 10, [e.td22]);
+            check(125, 275, 10, 10, 10, 10, [e.td41]);
+
+            debug('Check area hits across table border');
+            check(90, 125, 10, 20, 10, 20, [e.td11, e.testtable, e.sandbox]);
+            check(275, 90, 20, 10, 20, 10, [e.td14, e.testtable, e.sandbox]);
+            check(310, 310, 20, 20, 20, 20, [e.td44, e.testtable, e.sandbox]);
+
+            debug('Check area hits crossing neighbouring table cells');
+            check(190, 175, 10, 20, 10, 20, [e.td22, e.td23, e.testtable]);
+            check(260, 275, 10, 20, 10, 20, [e.td43, e.td44, e.testtable]);
+            check(175, 190, 20, 10, 20, 10, [e.td22, e.td32, e.testtable]);
+            check(275, 260, 20, 10, 20, 10, [e.td34, e.td44, e.testtable]);
+            check(190, 190, 20, 20, 20, 20, [e.td22, e.td23, e.td32, e.td33, e.testtable]);
+
+            debug('Check area hits crossing entire table cells');
+            check(200, 175, 10, 90, 10, 90, [e.td21, e.td22, e.td23, e.td24, e.testtable]);
+            check(175, 200, 90, 10, 90, 10, [e.td12, e.td22, e.td32, e.td42, e.testtable]);
+            check(150, 150, 60, 60, 60, 60, [e.td11, e.td12, e.td13,
+                                             e.td21, e.td22, e.td23, 
+                                             e.td31, e.td32, e.td33, 
+                                             e.testtable, e.sandbox]);
+            check(125, 350, 120, 10, 10, 10, [e.td31, e.td41, e.testtable, e.sandbox]);
+            check(350, 150, 10, 10, 10, 120, [e.td13, e.td14, e.td23, e.td24, e.testtable, e.sandbox]);
+
+            debug('Check area hits on right-to-left table');
+            e['testtable'].setAttribute('class', 'rtl');
+            check(275, 125, 10, 10, 10, 10, [e.td11]);
+            check(175, 175, 10, 10, 10, 10, [e.td23]);
+            check(175, 190, 20, 10, 20, 10, [e.td23, e.td33, e.testtable]);
+
+            debug('Check area hits on flipped (tb-lr) table');
+            e['testtable'].setAttribute('class', 'tblr');
+            check(275, 125, 10, 10, 10, 10, [e.td41]);
+            check(125, 275, 10, 10, 10, 10, [e.td14]);
+            check(200, 175, 10, 90, 10, 90, [e.td12, e.td22, e.td32, e.td42, e.testtable]);
+
+        }
+
+        window.onload = runTest;
+    </script>
+
+    <p id='description'></p>
+    <span id="console"></span>
+    <script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

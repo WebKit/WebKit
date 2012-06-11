@@ -227,8 +227,16 @@ private:
     CellSpan fullTableRowSpan() const { return CellSpan(0, m_grid.size()); }
     CellSpan fullTableColumnSpan() const { return CellSpan(0, table()->columns().size()); }
 
+    // Flip the rect so it aligns with the coordinates used by the rowPos and columnPos vectors.
+    LayoutRect logicalRectForWritingModeAndDirection(const LayoutRect&) const;
+
     CellSpan dirtiedRows(const LayoutRect& repaintRect) const;
     CellSpan dirtiedColumns(const LayoutRect& repaintRect) const;
+
+    // These two functions take a rectangle as input that has been flipped by logicalRectForWritingModeAndDirection.
+    // The returned span of rows or columns is end-exclusive, and empty if start==end.
+    CellSpan spannedRows(const LayoutRect& flippedRect) const;
+    CellSpan spannedColumns(const LayoutRect& flippedRect) const;
 
     void setLogicalPositionForCell(RenderTableCell*, unsigned effectiveColumn) const;
 

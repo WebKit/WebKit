@@ -1026,6 +1026,23 @@ void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, 
         cell->paint(paintInfo, cellPoint);
 }
 
+LayoutRect RenderTableSection::logicalRectForWritingModeAndDirection(const LayoutRect& rect) const
+{
+    LayoutRect tableAlignedRect(rect);
+
+    flipForWritingMode(tableAlignedRect);
+
+    if (!style()->isHorizontalWritingMode())
+        tableAlignedRect = tableAlignedRect.transposedRect();
+
+    const Vector<int>& columnPos = table()->columnPositions();
+    if (!style()->isLeftToRightDirection())
+        tableAlignedRect.setX(columnPos[columnPos.size() - 1] - tableAlignedRect.maxX());
+
+    return tableAlignedRect;
+}
+
+// FIXME: Use spannedRows internally, see https://bugs.webkit.org/show_bug.cgi?id=88066
 CellSpan RenderTableSection::dirtiedRows(const LayoutRect& damageRect) const
 {
     if (m_forceSlowPaintPathWithOverflowingCell) 
@@ -1054,6 +1071,7 @@ CellSpan RenderTableSection::dirtiedRows(const LayoutRect& damageRect) const
 }
 
 
+// FIXME: Use spannedColumns internally, see https://bugs.webkit.org/show_bug.cgi?id=88066
 CellSpan RenderTableSection::dirtiedColumns(const LayoutRect& damageRect) const
 {
     if (m_forceSlowPaintPathWithOverflowingCell) 
@@ -1079,6 +1097,57 @@ CellSpan RenderTableSection::dirtiedColumns(const LayoutRect& damageRect) const
 
     return CellSpan(startCol, endCol);
 }
+
+CellSpan RenderTableSection::spannedRows(const LayoutRect& flippedRect) const
+{
+    // Find the first row that starts after rect top.
+    // FIXME: Upper_bound might not be the correct algorithm here since it might skip empty rows, but it is
+    // consistent with behavior in the former point based hit-testing (but inconsistent with spannedColumns).
+    unsigned nextRow = std::upper_bound(m_rowPos.begin(), m_rowPos.end(), flippedRect.y()) - m_rowPos.begin();
+
+    if (nextRow == m_rowPos.size())
+        return CellSpan(m_rowPos.size() - 1, m_rowPos.size() - 1); // After all rows.
+
+    unsigned startRow = nextRow > 0 ? nextRow - 1 : 0;
+
+    // Find the first row that starts after rect bottom.
+    unsigned endRow;
+    if (m_rowPos[nextRow] >= flippedRect.maxY())
+        endRow = nextRow;
+    else {
+        endRow = std::upper_bound(m_rowPos.begin() + nextRow, m_rowPos.end(), flippedRect.maxY()) - m_rowPos.begin();
+        if (endRow == m_rowPos.size())
+            endRow = m_rowPos.size() - 1;
+    }
+
+    return CellSpan(startRow, endRow);
+}
+
+CellSpan RenderTableSection::spannedColumns(const LayoutRect& flippedRect) const
+{
+    const Vector<int>& columnPos = table()->columnPositions();
+
+    // Find the first columnt that starts after rect left.
+    unsigned nextColumn = std::lower_bound(columnPos.begin(), columnPos.end(), flippedRect.x()) - columnPos.begin();
+
+    if (nextColumn == columnPos.size())
+        return CellSpan(columnPos.size() - 1, columnPos.size() - 1); // After all columns.
+
+    unsigned startColumn = nextColumn > 0 ? nextColumn - 1 : 0;
+
+    // Find the first row that starts after rect right.
+    unsigned endColumn;
+    if (columnPos[nextColumn] >= flippedRect.maxX())
+        endColumn = nextColumn;
+    else {
+        endColumn = std::lower_bound(columnPos.begin() + nextColumn, columnPos.end(), flippedRect.maxX()) - columnPos.begin();
+        if (endColumn == columnPos.size())
+            endColumn = columnPos.size() - 1;
+    }
+
+    return CellSpan(startColumn, endColumn);
+}
+
 
 void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
@@ -1344,52 +1413,41 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
         return false;
     }
 
-    LayoutPoint location = pointInContainer - toLayoutSize(adjustedLocation);
-    if (style()->isFlippedBlocksWritingMode()) {
-        if (style()->isHorizontalWritingMode())
-            location.setY(height() - location.y());
-        else
-            location.setX(width() - location.x());
-    }
-
-    LayoutUnit offsetInColumnDirection = style()->isHorizontalWritingMode() ? location.y() : location.x();
-    
     recalcCellsIfNeeded();
 
-    // Find the first row that starts after offsetInColumnDirection.
-    unsigned nextRow = std::upper_bound(m_rowPos.begin(), m_rowPos.end(), offsetInColumnDirection) - m_rowPos.begin();
-    if (nextRow == m_rowPos.size())
-        return false;
-    // Now set hitRow to the index of the hit row, or 0.
-    unsigned hitRow = nextRow > 0 ? nextRow - 1 : 0;
+    LayoutRect hitTestRect = result.rectForPoint(pointInContainer);
+    hitTestRect.moveBy(-adjustedLocation);
 
-    Vector<int>& columnPos = table()->columnPositions();
-    LayoutUnit offsetInRowDirection = style()->isHorizontalWritingMode() ? location.x() : location.y();
-    if (!style()->isLeftToRightDirection())
-        offsetInRowDirection = columnPos[columnPos.size() - 1] - offsetInRowDirection;
+    LayoutRect tableAlignedRect = logicalRectForWritingModeAndDirection(hitTestRect);
+    CellSpan rowSpan = spannedRows(tableAlignedRect);
+    CellSpan columnSpan = spannedColumns(tableAlignedRect);
 
-    unsigned nextColumn = std::lower_bound(columnPos.begin(), columnPos.end(), offsetInRowDirection) - columnPos.begin();
-    if (nextColumn == columnPos.size())
-        return false;
-    unsigned hitColumn = nextColumn > 0 ? nextColumn - 1 : 0;
+    // Now iterate over the spanned rows and columns.
+    for (unsigned hitRow = rowSpan.start(); hitRow < rowSpan.end(); ++hitRow) {
+        for (unsigned hitColumn = columnSpan.start(); hitColumn < columnSpan.end(); ++hitColumn) {
+            CellStruct& current = cellAt(hitRow, hitColumn);
 
-    CellStruct& current = cellAt(hitRow, hitColumn);
+            // If the cell is empty, there's nothing to do
+            if (!current.hasCells())
+                continue;
 
-    // If the cell is empty, there's nothing to do
-    if (!current.hasCells())
-        return false;
-
-    for (unsigned i = current.cells.size() ; i; ) {
-        --i;
-        RenderTableCell* cell = current.cells[i];
-        LayoutPoint cellPoint = flipForWritingModeForChild(cell, adjustedLocation);
-        if (static_cast<RenderObject*>(cell)->nodeAtPoint(request, result, pointInContainer, cellPoint, action)) {
-            updateHitTestResult(result, toLayoutPoint(pointInContainer - cellPoint));
-            return true;
+            for (unsigned i = current.cells.size() ; i; ) {
+                --i;
+                RenderTableCell* cell = current.cells[i];
+                LayoutPoint cellPoint = flipForWritingModeForChild(cell, adjustedLocation);
+                if (static_cast<RenderObject*>(cell)->nodeAtPoint(request, result, pointInContainer, cellPoint, action)) {
+                    updateHitTestResult(result, toLayoutPoint(pointInContainer - cellPoint));
+                    return true;
+                }
+            }
+            if (!result.isRectBasedTest())
+                break;
         }
+        if (!result.isRectBasedTest())
+            break;
     }
-    return false;
 
+    return false;
 }
 
 void RenderTableSection::removeCachedCollapsedBorders(const RenderTableCell* cell)

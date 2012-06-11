@@ -1,3 +1,32 @@
+2012-06-11  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Rect-based hittesting doesn't work in tables.
+        https://bugs.webkit.org/show_bug.cgi?id=86605
+
+        Reviewed by Julien Chaffraix.
+
+        The existing code only performed a single binary lookup for the central
+        hit-test point. This meant area-based hit-testing did not work across
+        table-cell borders. All cells spanned by a hit-test area must be hit
+        tested.
+
+        This patch introduces three auxilary functions to help calculate rows
+        and columns spanned by an rect. These are intended to also be used by
+        repaint logic in a later patch.
+
+        For point-based hit-testing we maintain unchanged behavior and still
+        only hit test a single column in a single row.
+
+        Test: fast/dom/nodesFromRect-table.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::logicalRectForWritingModeAndDirection):
+        (WebCore::RenderTableSection::spannedRows):
+        (WebCore::RenderTableSection::spannedColumns):
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTableSection.h:
+        (RenderTableSection):
+
 2012-06-11  Min Qin  <qinmin@google.com>
 
         Adding a flag to show fullscreen media controls in chromium
