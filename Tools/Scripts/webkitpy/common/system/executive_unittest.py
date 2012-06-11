@@ -220,6 +220,7 @@ class ExecutiveTest(unittest.TestCase):
     def test_run_in_parallel(self):
         if sys.platform in ("win32", "cygwin"):
             return  # This function isn't implemented properly on windows yet.
+        import multiprocessing
 
         NUM_PROCESSES = 4
         DELAY_SECS = 0.25
@@ -231,6 +232,7 @@ class ExecutiveTest(unittest.TestCase):
         done = time.time()
         self.assertTrue(done - start < NUM_PROCESSES * DELAY_SECS)
         self.assertEquals([output[1] for output in command_outputs], ["hello\n"] * NUM_PROCESSES)
+        self.assertEquals([],  multiprocessing.active_children())
 
 
 def main(platform, stdin, stdout, cmd, args):
