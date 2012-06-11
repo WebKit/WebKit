@@ -1,3 +1,15 @@
+2012-06-10  Sam Weinig  <sam@webkit.org>
+
+        Remove support for disconnected/excluded from search frames, they are not used by Safari anymore
+        https://bugs.webkit.org/show_bug.cgi?id=88723
+
+        Reviewed by Dan Bernstein.
+
+        * WebFrame.cpp:
+        (WebFrame::setIsDisconnected):
+        (WebFrame::setExcludeFromTextSearch):
+        Stop doing anything in these functions.
+
 2012-05-31  Hajime Morrita  <morrita@chromium.org>
 
         REGRESSION(r117572): editing/spelling/spellcheck-async-remove-frame.html crashes on Mac

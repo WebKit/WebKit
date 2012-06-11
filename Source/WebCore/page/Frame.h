@@ -119,10 +119,6 @@ namespace WebCore {
 
     // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 
-        bool isDisconnected() const;
-        void setIsDisconnected(bool);
-        bool excludeFromTextSearch() const;
-        void setExcludeFromTextSearch(bool);
         bool inScope(TreeScope*) const;
 
         void injectUserScripts(UserScriptInjectionTime);
@@ -237,8 +233,6 @@ namespace WebCore {
 #endif
 
         bool m_inViewSourceMode;
-        bool m_isDisconnected;
-        bool m_excludeFromTextSearch;
 
 #if USE(TILED_BACKING_STORE)
     // FIXME: The tiled backing store belongs in FrameView, not Frame.
@@ -310,26 +304,6 @@ namespace WebCore {
     inline HTMLFrameOwnerElement* Frame::ownerElement() const
     {
         return m_ownerElement;
-    }
-
-    inline bool Frame::isDisconnected() const
-    {
-        return m_isDisconnected;
-    }
-
-    inline void Frame::setIsDisconnected(bool isDisconnected)
-    {
-        m_isDisconnected = isDisconnected;
-    }
-
-    inline bool Frame::excludeFromTextSearch() const
-    {
-        return m_excludeFromTextSearch;
-    }
-
-    inline void Frame::setExcludeFromTextSearch(bool exclude)
-    {
-        m_excludeFromTextSearch = exclude;
     }
 
     inline bool Frame::inViewSourceMode() const

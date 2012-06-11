@@ -1280,7 +1280,7 @@ DOMWindow* DOMWindow::parent() const
     if (!m_frame)
         return 0;
 
-    Frame* parent = m_frame->tree()->parent(true);
+    Frame* parent = m_frame->tree()->parent();
     if (parent)
         return parent->domWindow();
 
@@ -1296,7 +1296,7 @@ DOMWindow* DOMWindow::top() const
     if (!page)
         return 0;
 
-    return m_frame->tree()->top(true)->domWindow();
+    return m_frame->tree()->top()->domWindow();
 }
 
 Document* DOMWindow::document() const

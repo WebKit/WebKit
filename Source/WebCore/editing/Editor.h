@@ -322,10 +322,6 @@ public:
 
     PassRefPtr<Range> selectedRange();
     
-    // We should make these functions private when their callers in Frame are moved over here to Editor
-    bool insideVisibleArea(const LayoutPoint&) const;
-    bool insideVisibleArea(Range*) const;
-
     void addToKillRing(Range*, bool prepend);
 
     void startAlternativeTextUITimer();
@@ -432,10 +428,6 @@ private:
     void selectComposition();
     enum SetCompositionMode { ConfirmComposition, CancelComposition };
     void setComposition(const String&, SetCompositionMode);
-
-    PassRefPtr<Range> firstVisibleRange(const String&, FindOptions);
-    PassRefPtr<Range> lastVisibleRange(const String&, FindOptions);
-    PassRefPtr<Range> nextVisibleRange(Range*, const String&, FindOptions);
 
     void changeSelectionAfterCommand(const VisibleSelection& newSelection, bool closeTyping, bool clearTypingStyle);
 

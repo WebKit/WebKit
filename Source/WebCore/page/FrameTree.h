@@ -48,7 +48,7 @@ namespace WebCore {
         const AtomicString& uniqueName() const { return m_uniqueName; }
         void setName(const AtomicString&);
         void clearName();
-        Frame* parent(bool checkForDisconnectedFrame = false) const;
+        Frame* parent() const;
         void setParent(Frame* parent) { m_parent = parent; }
         
         Frame* nextSibling() const { return m_nextSibling.get(); }
@@ -73,7 +73,7 @@ namespace WebCore {
 
         AtomicString uniqueChildName(const AtomicString& requestedName) const;
 
-        Frame* top(bool checkForDisconnectedFrame = false) const;
+        Frame* top() const;
 
         Frame* scopedChild(unsigned index) const;
         Frame* scopedChild(const AtomicString& name) const;
