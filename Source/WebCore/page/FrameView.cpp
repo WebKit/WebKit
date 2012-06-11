@@ -122,6 +122,16 @@ static inline RenderView* rootRenderer(const FrameView* view)
     return view->frame() ? view->frame()->contentRenderer() : 0;
 }
 
+static RenderLayer::UpdateLayerPositionsFlags updateLayerPositionFlags(RenderLayer* layer, bool isRelayoutingSubtree, bool didFullRepaint)
+{
+    RenderLayer::UpdateLayerPositionsFlags flags = RenderLayer::defaultFlags;
+    if (didFullRepaint)
+        flags &= ~RenderLayer::CheckForRepaint;
+    if (isRelayoutingSubtree && layer->isPaginated())
+        flags |= RenderLayer::UpdatePagination;
+    return flags;
+}
+
 FrameView::FrameView(Frame* frame)
     : m_frame(frame)
     , m_canHaveScrollbars(true)
@@ -1117,10 +1127,8 @@ void FrameView::layout(bool allowSubtree)
     if (m_doFullRepaint)
         root->view()->repaint(); // FIXME: This isn't really right, since the RenderView doesn't fully encompass the visibleContentRect(). It just happens
                                  // to work out most of the time, since first layouts and printing don't have you scrolled anywhere.
-    layer->updateLayerPositions(hasLayerOffset ? &offsetFromRoot : 0,
-                                (m_doFullRepaint ? 0 : RenderLayer::CheckForRepaint)
-                                | RenderLayer::IsCompositingUpdateRoot
-                                | RenderLayer::UpdateCompositingLayers);
+
+    layer->updateLayerPositions(hasLayerOffset ? &offsetFromRoot : 0, updateLayerPositionFlags(layer, subtree, m_doFullRepaint));
     endDeferredRepaints();
 
 #if USE(ACCELERATED_COMPOSITING)

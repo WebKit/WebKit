@@ -393,6 +393,8 @@ public:
     // Providing |cachedOffset| prevents a outlineBoxForRepaint from walking back to the root for each layer in our subtree.
     // This is an optimistic optimization that is not guaranteed to succeed.
     void updateLayerPositions(LayoutPoint* offsetFromRoot, UpdateLayerPositionsFlags = defaultFlags);
+    
+    bool isPaginated() const { return m_isPaginated; }
 
     void updateTransform();
 
@@ -813,8 +815,7 @@ private:
     void drawPlatformResizerImage(GraphicsContext*, IntRect resizerCornerRect);
 
     void updatePagination();
-    bool isPaginated() const { return m_isPaginated; }
-
+    
 #if USE(ACCELERATED_COMPOSITING)    
     bool hasCompositingDescendant() const { return m_hasCompositingDescendant; }
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }

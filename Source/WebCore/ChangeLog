@@ -1,3 +1,28 @@
+2012-06-11  Pravin D  <pravind.2k4@gmail.com>
+
+        Relative pos. input fields in columns vanish when you start typing in them
+        https://bugs.webkit.org/show_bug.cgi?id=76834
+
+        Reviewed by Julien Chaffraix.
+
+        Test: fast/multicol/multicol-with-child-renderLayer-for-input.html
+
+        * page/FrameView.cpp:
+        (WebCore::updateLayerPositionFlags):
+        Helper function to prepare the UpdateLayerPositionsFlags based on the input parameters.
+        If didFullRepaint flag is set, then CheckForRepaints flag is removed from the default flags.
+        Also during a relayout of a subtree, if the RenderLayer of the subtree root is paginated then updatePagination flag is
+        included in the flags. 
+
+        (WebCore):
+        (WebCore::FrameView::layout):
+        Now uses the helper function updateLayerPositionFlags() to get the final set of UpdateLayerPositionsFlags.
+
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::isPaginated):
+        (RenderLayer):
+        isPaginated function is made public so that FrameView class can use it prepare UpdateLayerPositionsFlags.
+
 2012-06-11  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove some dead code in PasteboardChromium

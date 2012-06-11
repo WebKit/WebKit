@@ -1,3 +1,13 @@
+2012-06-11  Pravin D  <pravind.2k4@gmail.com>
+
+        Relative pos. input fields in columns vanish when you start typing in them
+        https://bugs.webkit.org/show_bug.cgi?id=76834
+
+        Reviewed by Julien Chaffraix.
+
+        * fast/multicol/multicol-with-child-renderLayer-for-input-expected.html: Added.
+        * fast/multicol/multicol-with-child-renderLayer-for-input.html: Added.
+
 2012-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in compositing tests
