@@ -1,4 +1,4 @@
-AC_PREREQ(2.59)
+AC_PREREQ(2.60)
 
 m4_define([webkit_major_version], [1])
 m4_define([webkit_minor_version], [9])

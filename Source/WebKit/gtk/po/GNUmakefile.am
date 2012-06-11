@@ -140,13 +140,13 @@ DISTCLEANFILES += \
 	$(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot
 
 po-install-data-local: all
-	$(mkdir_p) $(DESTDIR)$(datadir)
+	$(MKDIR_P) $(DESTDIR)$(datadir)
 	@catalogs='$(MOFILES)'; \
 	for cat in $$catalogs; do \
 	  cat=`basename $$cat`; \
 	  lang=`echo $$cat | sed -e 's/\.mo$$//'`; \
 	  dir=$(localedir)/$$lang/LC_MESSAGES; \
-	  $(mkdir_p) $(DESTDIR)$$dir; \
+	  $(MKDIR_P) $(DESTDIR)$$dir; \
 	  if test -r Source/WebKit/gtk/po/$$cat; then realcat=Source/WebKit/gtk/po/$$cat; else realcat=$(srcdir)/$$cat; fi; \
 	  $(INSTALL_DATA) $$realcat $(DESTDIR)$$dir/$(DOMAIN).mo; \
 	  echo "installing $$realcat as $(DESTDIR)$$dir/$(DOMAIN).mo"; \
@@ -181,13 +181,13 @@ po-install-data-local: all
 	done
 
 po-installdirs-data-local:
-	$(mkdir_p) $(DESTDIR)$(datadir)
+	$(MKDIR_P) $(DESTDIR)$(datadir)
 	@catalogs='$(MOFILES)'; \
 	for cat in $$catalogs; do \
 	  cat=`basename $$cat`; \
 	  lang=`echo $$cat | sed -e 's/\.gmo$$//'`; \
 	  dir=$(localedir)/$$lang/LC_MESSAGES; \
-	  $(mkdir_p) $(DESTDIR)$$dir; \
+	  $(MKDIR_P) $(DESTDIR)$$dir; \
 	  for lc in '' $(EXTRA_LOCALE_CATEGORIES); do \
 	    if test -n "$$lc"; then \
 	      if (cd $(DESTDIR)$(localedir)/$$lang && LC_ALL=C ls -l -d $$lc 2>/dev/null) | grep ' -> ' >/dev/null; then \
