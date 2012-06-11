@@ -1,3 +1,15 @@
+2012-06-11  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed: Remove expectations for passing tests
+
+        The flakiness dashboard indicates that
+        platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html
+        and
+        platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html
+        are passing on all platforms now.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Unskip http/tests/security/mixedContent/blob-url-in-iframe.html

@@ -3674,8 +3674,6 @@ BUGLEVIW LEOPARD LION WIN LINUX : fast/multicol/nested-columns.html = PASS FAIL
 BUGLEVIW LEOPARD LION WIN LINUX : fast/multicol/vertical-lr/nested-columns.html = PASS FAIL
 BUGLEVIW LEOPARD LION WIN LINUX : fast/multicol/vertical-rl/nested-columns.html = PASS FAIL
 
-BUGCR131187 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
-BUGCR131187 : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
 BUGCR131187 : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGCR131187 : fast/canvas/canvas-currentColor.html = TEXT
 
