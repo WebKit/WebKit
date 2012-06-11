@@ -25,10 +25,10 @@
   </style>
   <script src="../../fast/repaint/resources/repaint.js"></script>
   <script>
-      if (window.layoutTestController) {
-          layoutTestController.dumpAsText(true);
+      if (window.testRunner) {
+          testRunner.dumpAsText(true);
           // Force software rendering mode.
-          window.layoutTestController.overridePreference("WebKitAcceleratedCompositingEnabled", "0");
+          window.testRunner.overridePreference("WebKitAcceleratedCompositingEnabled", "0");
       }
 
       function repaintTest()

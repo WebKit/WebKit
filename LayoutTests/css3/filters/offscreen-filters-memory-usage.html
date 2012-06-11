@@ -21,8 +21,8 @@
                 return el;
             }
 
-            if (window.layoutTestController)
-                window.layoutTestController.dumpAsText(false);
+            if (window.testRunner)
+                window.testRunner.dumpAsText(false);
             for (var i = 0; i < 2000; ++i)
                 document.body.appendChild(createLayer());
         </script>

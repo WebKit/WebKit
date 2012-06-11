@@ -25,12 +25,12 @@
     }
   </style>
   <script>
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText(true);
+    if (window.testRunner)
+      testRunner.dumpAsText(true);
 
     window.addEventListener('load', function () {
-      if (window.layoutTestController)
-        document.getElementById('layer-tree').innerText = layoutTestController.layerTreeAsText();
+      if (window.testRunner)
+        document.getElementById('layer-tree').innerText = testRunner.layerTreeAsText();
     }, false);
   </script>
 </head>

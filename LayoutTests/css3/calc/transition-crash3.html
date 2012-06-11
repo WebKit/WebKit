@@ -11,9 +11,9 @@
 This tests transitioning of elements containing a calc expression. The test passes if it does not crash.
 
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();        
-        layoutTestController.waitUntilDone(); 
+    if (window.testRunner) {
+        testRunner.dumpAsText();        
+        testRunner.waitUntilDone(); 
     }
 
     elementA = document.createElement('a');
@@ -32,8 +32,8 @@ This tests transitioning of elements containing a calc expression. The test pass
             elementSection.appendChild(elementQ); 
         } catch (e) {            
         }
-        if (window.layoutTestController) 
-            layoutTestController.notifyDone(); 
+        if (window.testRunner) 
+            testRunner.notifyDone(); 
     }
     
     setTimeout(boom, 1);

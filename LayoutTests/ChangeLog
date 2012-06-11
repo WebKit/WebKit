@@ -1,5 +1,31 @@
 2012-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Use testRunner instead of layoutTestController in css 1, css 2.1, and css3 tests
+        https://bugs.webkit.org/show_bug.cgi?id=88769
+
+        Reviewed by Tony Chang.
+
+        * css1/units/zero-duration-without-units.html:
+        * css3/calc/:
+        * css3/filters/:
+        * css3/filters/custom/:
+        * css3/filters/resources/:
+        * css3/filters/script-tests/:
+        * css3/flexbox/:
+        * css3/font-feature-settings-rendering.html:
+        * css3/images/cross-fade-invalidation.html:
+        * css3/images/optimize-contrast-canvas.html:
+        * css3/images/optimize-contrast-image.html:
+        * css3/khtml-background-size-0x0-bmp.html:
+        * css3/parsing-css3-nthchild.html:
+        * css3/style-zoomed-image.html:
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-getStyle.html:
+        * css3/zoom-coords.xhtml:
+        * platform/win/css2.1/resources/run-webkit-tests-epilogue.html:
+        * platform/win/css2.1/resources/run-webkit-tests-prologue.html:
+
+2012-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Use testRunner instead of layoutTestController in animations tests
         https://bugs.webkit.org/show_bug.cgi?id=88757
 

@@ -45,7 +45,7 @@
         shouldBeEqualToString('getComputedStyle(document.getElementById("' + test + '"), null).color', getComputedStyle(document.getElementById("control" + test), null).color);
     }
 
-    if (window.layoutTestController)
+    if (window.testRunner)
         document.body.removeChild(document.getElementById("test-container"));
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>

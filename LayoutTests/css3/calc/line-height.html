@@ -17,7 +17,7 @@
     shouldEvaluateTo('getComputedStyle(document.getElementById("calc-percent"), null).lineHeight', 'getComputedStyle(document.getElementById("control"), null).lineHeight');
     shouldEvaluateTo('getComputedStyle(document.getElementById("calc-percent-pixels"), null).lineHeight', 'getComputedStyle(document.getElementById("control"), null).lineHeight');
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var testContainer = document.getElementById("test-container");
         if (testContainer)
             document.body.removeChild(testContainer);   

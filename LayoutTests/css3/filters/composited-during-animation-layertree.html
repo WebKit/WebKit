@@ -68,15 +68,15 @@
 
   </style>
   <script>
-      if (window.layoutTestController) {
-          layoutTestController.waitUntilDone();
-          layoutTestController.dumpAsText();
+      if (window.testRunner) {
+          testRunner.waitUntilDone();
+          testRunner.dumpAsText();
       }
 
       function doTest() {
-          if (window.layoutTestController) {
-              document.getElementById('layer-tree').innerText = layoutTestController.layerTreeAsText()
-              layoutTestController.notifyDone();
+          if (window.testRunner) {
+              document.getElementById('layer-tree').innerText = testRunner.layerTreeAsText()
+              testRunner.notifyDone();
           }
       }
 

@@ -1,14 +1,14 @@
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 window.addEventListener('load', function () {
     setTimeout(function () {
         var el = document.querySelector("div");
         el.className = "";
         setTimeout(function () {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, 0);
     }, 0);
 }, false);

@@ -1,8 +1,8 @@
 description("Test the parsing of custom() function of the -webkit-filter property.");
 
-if (window.layoutTestController) {
-    window.layoutTestController.overridePreference("WebKitCSSCustomFilterEnabled", "1");
-    window.layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+if (window.testRunner) {
+    window.testRunner.overridePreference("WebKitCSSCustomFilterEnabled", "1");
+    window.testRunner.overridePreference("WebKitWebGLEnabled", "1");
 }
 
 // These have to be global for the test helpers to see them.

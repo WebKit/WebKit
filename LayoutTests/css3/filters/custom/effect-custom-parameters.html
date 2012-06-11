@@ -3,18 +3,18 @@
     <head>
         <title>Testing that the custom filter receives the correct number parameters.</title>
         <script>
-            if (window.layoutTestController) {
-                window.layoutTestController.overridePreference("WebKitCSSCustomFilterEnabled", "1");
-                window.layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-                window.layoutTestController.dumpAsText(true);
-                window.layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                window.testRunner.overridePreference("WebKitCSSCustomFilterEnabled", "1");
+                window.testRunner.overridePreference("WebKitWebGLEnabled", "1");
+                window.testRunner.dumpAsText(true);
+                window.testRunner.waitUntilDone();
             }
             
             function runTest()
             {
                 // We need to run the tests after the downloading succeeded.
-                if (window.layoutTestController)
-                    window.layoutTestController.notifyDone();
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
             }
         </script>
         <style>

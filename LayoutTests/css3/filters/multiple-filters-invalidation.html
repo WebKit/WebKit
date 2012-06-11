@@ -19,9 +19,9 @@ function changeBackground() {
     document.getElementById("rect").style.background = "green";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText(true);
-    layoutTestController.display();
+if (window.testRunner) {
+    testRunner.dumpAsText(true);
+    testRunner.display();
     changeBackground();
 } else 
     window.setTimeout(changeBackground, 250);

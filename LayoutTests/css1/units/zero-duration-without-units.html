@@ -17,9 +17,9 @@
     }
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
     }
 
     function test()
@@ -27,8 +27,8 @@
         var box = document.getElementById('box');
         var dur = parseInt(window.getComputedStyle(box).webkitTransitionDuration);
         document.getElementById('result').innerHTML = (dur == 0) ? "PASS" : "FAIL";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     window.addEventListener('load', test, false)
   </script>

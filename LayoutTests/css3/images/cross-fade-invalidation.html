@@ -8,12 +8,12 @@ div
 }
 </style>
 <script>
-if(window.layoutTestController)
-	layoutTestController.waitUntilDone();
+if(window.testRunner)
+	testRunner.waitUntilDone();
 
 setTimeout(function() {
-	if(window.layoutTestController)
-		layoutTestController.notifyDone();
+	if(window.testRunner)
+		testRunner.notifyDone();
 }, 200);
 </script>
 <!--The first cross-fade should appear as a light green square with a darker green circle inside it.-->

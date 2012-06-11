@@ -1,7 +1,7 @@
 description("Test that the custom() function of the -webkit-filter property is not parsed when CSS Custom Filter is disabled.");
 
-if (window.layoutTestController)
-    window.layoutTestController.overridePreference("WebKitCSSCustomFilterEnabled", false);
+if (window.testRunner)
+    window.testRunner.overridePreference("WebKitCSSCustomFilterEnabled", false);
 
 // These have to be global for the test helpers to see them.
 var stylesheet, cssRule, declaration;

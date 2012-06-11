@@ -87,7 +87,7 @@
         shouldBeEqualToString('computedMarginBottom("' + innerElement.id + '")', expectedBottom);
     }
     
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var testContainer = document.getElementById("test-container");
         if (testContainer)
             document.body.removeChild(testContainer);   

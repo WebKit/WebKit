@@ -1,13 +1,13 @@
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 window.addEventListener('load', function () {
     var el = document.querySelector("div");
     el.className = "filtered";
     setTimeout(function () {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 }, false);
 </script>

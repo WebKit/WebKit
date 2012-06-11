@@ -32,8 +32,8 @@
         subTest(object, '-webkit-box-reflect');
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     test('reflectionOffset', 'right -webkit-calc(50%)');
     log('');
     test('reflectionMask', 'below -webkit-calc(5px) -webkit-gradient(linear, 0 0, 0 0) 25 25 25 25 stretch stretch');
