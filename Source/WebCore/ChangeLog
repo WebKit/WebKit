@@ -1,3 +1,14 @@
+2012-06-11  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] Compute and set cache capacities using the current CacheModel
+        https://bugs.webkit.org/show_bug.cgi?id=73918
+
+        Unreviewed build fix.
+
+        No new tests added as this is a build fix.
+
+        * platform/qt/FileSystemQt.cpp:
+
 2012-06-11  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Rect-based hittesting doesn't work in tables.

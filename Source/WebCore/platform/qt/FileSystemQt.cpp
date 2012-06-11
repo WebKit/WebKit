@@ -40,7 +40,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTemporaryFile>
-#if !defined(Q_OS_WINDOWS)
+#if !defined(Q_OS_WIN)
 #include <sys/statvfs.h>
 #endif
 #include <wtf/text/CString.h>
