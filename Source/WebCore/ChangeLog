@@ -1,3 +1,24 @@
+2012-06-11  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Account for margin after when laying out <legend> element
+        https://bugs.webkit.org/show_bug.cgi?id=35981
+
+        Reviewed by Abhishek Arya.
+
+        Tests: fast/forms/legend-after-margin-horizontal-writing-mode.html
+               fast/forms/legend-after-margin-vertical-writing-mode.html
+               fast/forms/legend-after-margin-with-before-border-horizontal-mode.html
+               fast/forms/legend-small-after-margin-before-border-horizontal-mode.html
+
+        The existing code would ignore margin after when layouting out the <legend>. This
+        change only adds the code to handle the margin after, the margin before is still
+        ignored as it's not obvious how it should be working.
+
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::layoutSpecialExcludedChild):
+        Split the code in 2 code paths to reflect how we position and size. Those are covered by the
+        tests above.
+
 2012-06-11  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use WebGraphicsContext3D in rate limiting logic inside compositor

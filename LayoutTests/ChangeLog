@@ -1,3 +1,19 @@
+2012-06-11  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Account for margin after when laying out <legend> element
+        https://bugs.webkit.org/show_bug.cgi?id=35981
+
+        Reviewed by Abhishek Arya.
+
+        * fast/forms/legend-after-margin-horizontal-writing-mode-expected.html: Added.
+        * fast/forms/legend-after-margin-horizontal-writing-mode.html: Added.
+        * fast/forms/legend-after-margin-vertical-writing-mode-expected.html: Added.
+        * fast/forms/legend-after-margin-vertical-writing-mode.html: Added.
+        * fast/forms/legend-after-margin-with-before-border-horizontal-mode-expected.html: Added.
+        * fast/forms/legend-after-margin-with-before-border-horizontal-mode.html: Added.
+        * fast/forms/legend-small-after-margin-before-border-horizontal-mode-expected.html: Added.
+        * fast/forms/legend-small-after-margin-before-border-horizontal-mode.html: Added.
+
 2012-06-05  Eric Uhrhane <ericu@chromium.org>
 
         Crash in fast/files/read tests during Garbage Collection

@@ -101,10 +101,24 @@ RenderObject* RenderFieldset::layoutSpecialExcludedChild(bool relayoutChildren)
 
         setLogicalLeftForChild(legend, logicalLeft);
 
-        LayoutUnit b = borderBefore();
-        LayoutUnit h = logicalHeightForChild(legend);
-        setLogicalTopForChild(legend, max<LayoutUnit>((b - h) / 2, 0));
-        setLogicalHeight(max(b, h) + paddingBefore());
+        LayoutUnit fieldsetBorderBefore = borderBefore();
+        LayoutUnit legendLogicalHeight = logicalHeightForChild(legend);
+
+        LayoutUnit legendLogicalTop;
+        LayoutUnit collapsedLegendExtent;
+        // FIXME: We need to account for the legend's margin before too.
+        if (fieldsetBorderBefore > legendLogicalHeight) {
+            // The <legend> is smaller than the associated fieldset before border
+            // so the latter determines positioning of the <legend>. The sizing depends
+            // on the legend's margins as we want to still follow the author's cues.
+            // Firefox completely ignores the margins in this case which seems wrong.
+            legendLogicalTop = (fieldsetBorderBefore - legendLogicalHeight) / 2;
+            collapsedLegendExtent = max<LayoutUnit>(fieldsetBorderBefore, legendLogicalTop + legendLogicalHeight + marginAfterForChild(legend));
+        } else
+            collapsedLegendExtent = legendLogicalHeight + marginAfterForChild(legend);
+
+        setLogicalTopForChild(legend, legendLogicalTop);
+        setLogicalHeight(paddingBefore() + collapsedLegendExtent);
     }
     return legend;
 }
