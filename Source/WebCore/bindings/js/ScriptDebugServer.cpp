@@ -152,7 +152,11 @@ void ScriptDebugServer::setPauseOnNextStatement(bool pause)
 
 void ScriptDebugServer::breakProgram()
 {
-    // FIXME(WK43332): implement this.
+    if (m_paused || !m_currentCallFrame)
+        return;
+
+    m_pauseOnNextStatement = true;
+    pauseIfNeeded(m_currentCallFrame->dynamicGlobalObject());
 }
 
 void ScriptDebugServer::continueProgram()

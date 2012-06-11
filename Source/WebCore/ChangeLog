@@ -1,3 +1,21 @@
+2012-06-11  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        [JSC] Web Inspector: implement breaking from native callback
+        https://bugs.webkit.org/show_bug.cgi?id=43332
+
+        Reviewed by Pavel Feldman.
+
+        These test cases were enabled:
+        LayoutTests/inspector/debugger/dom-breakpoints.html
+        LayoutTests/inspector/debugger/event-listener-breakpoints.html
+        LayoutTests/inspector/debugger/step-through-event-listeners.html
+        LayoutTests/inspector/debugger/xhr-breakpoints.html
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::breakProgram):
+        * bindings/js/ScriptDebugServer.h:
+        (WebCore::supportsNativeBreakpoints):
+
 2012-06-11  MORITA Hajime  <morrita@google.com>
 
         Spellchecker crash in async scenario.
