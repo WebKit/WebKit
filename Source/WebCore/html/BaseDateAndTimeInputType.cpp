@@ -136,7 +136,7 @@ bool BaseDateAndTimeInputType::parseToDateComponents(const String& source, DateC
 
 String BaseDateAndTimeInputType::serialize(const InputNumber& value) const
 {
-    if (!isfinite(value))
+    if (!value.isFinite())
         return String();
     DateComponents date;
     if (!setMillisecondToDateComponents(convertInputNumberToDouble(value), &date))
@@ -149,9 +149,9 @@ String BaseDateAndTimeInputType::serializeWithComponents(const DateComponents& d
     InputNumber step;
     if (!element()->getAllowedValueStep(&step))
         return date.toString();
-    if (!fmod(step, msecPerMinute))
+    if (step.remainder(msecPerMinute).isZero())
         return date.toString(DateComponents::None);
-    if (!fmod(step, msecPerSecond))
+    if (step.remainder(msecPerSecond).isZero())
         return date.toString(DateComponents::Second);
     return date.toString(DateComponents::Millisecond);
 }

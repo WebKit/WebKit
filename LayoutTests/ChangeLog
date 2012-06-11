@@ -1,3 +1,13 @@
+2012-06-10  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Introduce Decimal behind the InputNumber type
+        https://bugs.webkit.org/show_bug.cgi?id=88383
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/range/range-value-rounding-expected.txt: Added.
+        * fast/forms/range/range-value-rounding.html: Added.
+
 2012-06-10  Jason Liu  <jason.liu@torchmobile.com.cn>
 
         [BlackBerry] Possible to clobber httponly cookie.

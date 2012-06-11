@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLParserIdioms.h"
 
+#include "Decimal.h"
 #include <limits>
 #include <wtf/MathExtras.h>
 #include <wtf/dtoa.h>
@@ -58,12 +59,50 @@ String stripLeadingAndTrailingHTMLSpaces(const String& string)
     return string.substring(numLeadingSpaces, length - (numLeadingSpaces + numTrailingSpaces));
 }
 
+String serializeForNumberType(const Decimal& number)
+{
+    if (number.isZero()) {
+        // Decimal::toString appends exponent, e.g. "0e-18"
+        return number.isNegative() ? "-0" : "0";
+    }
+    return number.toString();
+}
+
 String serializeForNumberType(double number)
 {
     // According to HTML5, "the best representation of the number n as a floating
     // point number" is a string produced by applying ToString() to n.
     NumberToStringBuffer buffer;
     return String(numberToString(number, buffer));
+}
+
+Decimal parseToDecimalForNumberType(const String& string, const Decimal& fallbackValue)
+{
+    // See HTML5 2.5.4.3 `Real numbers.' and parseToDoubleForNumberType
+
+    // String::toDouble() accepts leading + and whitespace characters, which are not valid here.
+    const UChar firstCharacter = string[0];
+    if (firstCharacter != '-' && firstCharacter != '.' && !isASCIIDigit(firstCharacter))
+        return fallbackValue;
+
+    const Decimal value = Decimal::fromString(string);
+    if (!value.isFinite())
+        return fallbackValue;
+
+    // Numbers are considered finite IEEE 754 single-precision floating point values.
+    // See HTML5 2.5.4.3 `Real numbers.'
+    // FIXME: We should use numeric_limits<double>::max for number input type.
+    const Decimal floatMax = Decimal::fromDouble(std::numeric_limits<float>::max());
+    if (value < -floatMax || value > floatMax)
+        return fallbackValue;
+
+    // We return +0 for -0 case.
+    return value.isZero() ? Decimal(0) : value;
+}
+
+Decimal parseToDecimalForNumberType(const String& string)
+{
+    return parseToDecimalForNumberType(string, Decimal::nan());
 }
 
 double parseToDoubleForNumberType(const String& string, double fallbackValue)

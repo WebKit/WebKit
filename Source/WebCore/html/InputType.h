@@ -266,11 +266,6 @@ public:
     // return NaN or Infinity only if defaultValue is NaN or Infinity.
     virtual InputNumber parseToNumber(const String&, const InputNumber& defaultValue) const;
 
-    // Parses the specified string for the type as parseToNumber() does.
-    // In addition, it stores the number of digits after the decimal point
-    // into *decimalPlaces.
-    virtual InputNumber parseToNumberWithDecimalPlaces(const String&, const InputNumber& defaultValue, unsigned* decimalPlaces) const;
-
     // Parses the specified string for this InputType, and returns true if it
     // is successfully parsed. An instance pointed by the DateComponents*
     // parameter will have parsed values and be modified even if the parsing

@@ -54,7 +54,7 @@ namespace WebCore {
 inline static InputNumber sliderPosition(HTMLInputElement* element)
 {
     const StepRange stepRange(element->createStepRange(RejectAny));
-    const double oldValue = parseToDoubleForNumberType(element->value(), stepRange.defaultValue());
+    const InputNumber oldValue = parseToDecimalForNumberType(element->value(), stepRange.defaultValue());
     return stepRange.proportionFromValue(stepRange.clampValue(oldValue));
 }
 

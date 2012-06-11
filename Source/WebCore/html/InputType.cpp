@@ -257,7 +257,7 @@ bool InputType::rangeUnderflow(const String& value) const
         return false;
 
     const InputNumber numericValue = parseToNumberOrNaN(value);
-    if (isnan(numericValue))
+    if (!numericValue.isFinite())
         return false;
 
     return numericValue < createStepRange(RejectAny).minimum();
@@ -269,7 +269,7 @@ bool InputType::rangeOverflow(const String& value) const
         return false;
 
     const InputNumber numericValue = parseToNumberOrNaN(value);
-    if (isnan(numericValue))
+    if (!numericValue.isFinite())
         return false;
 
     return numericValue > createStepRange(RejectAny).maximum();
@@ -302,7 +302,7 @@ bool InputType::isInRange(const String& value) const
         return false;
 
     const InputNumber numericValue = parseToNumberOrNaN(value);
-    if (isnan(numericValue))
+    if (!numericValue.isFinite())
         return true;
 
     StepRange stepRange(createStepRange(RejectAny));
@@ -315,7 +315,7 @@ bool InputType::isOutOfRange(const String& value) const
         return false;
 
     const InputNumber numericValue = parseToNumberOrNaN(value);
-    if (isnan(numericValue))
+    if (!numericValue.isFinite())
         return true;
 
     StepRange stepRange(createStepRange(RejectAny));
@@ -328,7 +328,7 @@ bool InputType::stepMismatch(const String& value) const
         return false;
 
     const InputNumber numericValue = parseToNumberOrNaN(value);
-    if (isnan(numericValue))
+    if (!numericValue.isFinite())
         return false;
 
     return createStepRange(RejectAny).stepMismatch(numericValue);
@@ -366,7 +366,7 @@ String InputType::validationMessage() const
         return emptyString();
 
     const InputNumber numericValue = parseToNumberOrNaN(value);
-    if (isnan(numericValue))
+    if (!numericValue.isFinite())
         return emptyString();
 
     StepRange stepRange(createStepRange(RejectAny));
@@ -466,14 +466,7 @@ InputNumber InputType::parseToNumber(const String&, const InputNumber& defaultVa
 
 InputNumber InputType::parseToNumberOrNaN(const String& string) const
 {
-    return parseToNumber(string, numeric_limits<InputNumber>::quiet_NaN());
-}
-
-InputNumber InputType::parseToNumberWithDecimalPlaces(const String& src, const InputNumber& defaultValue, unsigned *decimalPlaces) const
-{
-    if (decimalPlaces)
-        *decimalPlaces = 0;
-    return parseToNumber(src, defaultValue);
+    return parseToNumber(string, Decimal::nan());
 }
 
 bool InputType::parseToDateComponents(const String&, DateComponents*) const
@@ -886,15 +879,13 @@ void InputType::applyStep(int count, AnyStepHandling anyStepHandling, TextFieldE
         return;
     }
 
-    const double nan = numeric_limits<double>::quiet_NaN();
-    unsigned currentDecimalPlaces;
-    const InputNumber current = parseToNumberWithDecimalPlaces(element()->value(), nan, &currentDecimalPlaces);
-    if (!isfinite(current)) {
+    const InputNumber current = parseToNumberOrNaN(element()->value());
+    if (!current.isFinite()) {
         ec = INVALID_STATE_ERR;
         return;
     }
     InputNumber newValue = current + stepRange.step() * count;
-    if (isinf(newValue)) {
+    if (!newValue.isFinite()) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -909,7 +900,7 @@ void InputType::applyStep(int count, AnyStepHandling anyStepHandling, TextFieldE
 
     const AtomicString& stepString = element()->fastGetAttribute(stepAttr);
     if (!equalIgnoringCase(stepString, "any"))
-        newValue = stepRange.alignValueForStep(current, currentDecimalPlaces, newValue);
+        newValue = stepRange.alignValueForStep(current, newValue);
 
     if (newValue - stepRange.maximum() > acceptableErrorValue) {
         ec = INVALID_STATE_ERR;
@@ -1009,7 +1000,7 @@ void InputType::stepUpFromRenderer(int n)
 
     String currentStringValue = element()->value();
     InputNumber current = parseToNumberOrNaN(currentStringValue);
-    if (!isfinite(current)) {
+    if (!current.isFinite()) {
         ExceptionCode ec;
         current = defaultValueForStepUp();
         const InputNumber nextDiff = step * n;
@@ -1025,15 +1016,13 @@ void InputType::stepUpFromRenderer(int n)
     } else {
         ExceptionCode ec;
         if (stepMismatch(element()->value())) {
-            ASSERT(step);
-            const InputNumber scale = pow(10.0, static_cast<InputNumber>(max(stepRange.stepDecimalPlaces(), stepRange.stepBaseDecimalPlaces())));
-            const InputNumber base = stepRange.stepBase();
-
-            InputNumber newValue;
+            ASSERT(!step.isZero());
+            const Decimal base = stepRange.stepBase();
+            Decimal newValue;
             if (sign < 0)
-                newValue = round((base + floor((current - base) / step) * step) * scale) / scale;
+                newValue = base + ((current - base) / step).floor() * step;
             else if (sign > 0)
-                newValue = round((base + ceil((current - base) / step) * step) * scale) / scale;
+                newValue = base + ((current - base) / step).ceiling() * step;
             else
                 newValue = current;
 

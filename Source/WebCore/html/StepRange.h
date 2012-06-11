@@ -21,6 +21,7 @@
 #ifndef StepRange_h
 #define StepRange_h
 
+#include "Decimal.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
@@ -30,32 +31,21 @@ class HTMLInputElement;
 
 enum AnyStepHandling { RejectAny, AnyIsDefaultStep };
 
-// FIXME: The type InputNumber will be replaced with Decimal.
-typedef double InputNumber;
+// FIXME: We should rename InputNumber to Decimal in all places.
+typedef Decimal InputNumber;
 
 inline InputNumber convertDoubleToInputNumber(double doubleValue)
 {
-    return doubleValue;
+    return Decimal::fromDouble(doubleValue);
 }
 
 inline double convertInputNumberToDouble(const InputNumber& numericValue)
 {
-    return numericValue;
+    return numericValue.toDouble();
 }
 
 class StepRange {
 public:
-    struct NumberWithDecimalPlaces {
-        unsigned decimalPlaces;
-        InputNumber value;
-
-        NumberWithDecimalPlaces(InputNumber value = 0, unsigned decimalPlaces = 0)
-            : decimalPlaces(decimalPlaces)
-            , value(value)
-        {
-        }
-    };
-
     enum StepValueShouldBe {
         StepValueShouldBeReal,
         ParsedStepValueShouldBeInteger,
@@ -92,18 +82,16 @@ public:
 
     StepRange();
     StepRange(const StepRange&);
-    StepRange(const NumberWithDecimalPlaces& stepBase, const InputNumber& minimum, const InputNumber& maximum, const NumberWithDecimalPlaces& step, const StepDescription&);
+    StepRange(const InputNumber& stepBase, const InputNumber& minimum, const InputNumber& maximum, const InputNumber& step, const StepDescription&);
     InputNumber acceptableError() const;
-    InputNumber alignValueForStep(const InputNumber& currentValue, unsigned currentDecimalPlaces, const InputNumber& newValue) const;
+    InputNumber alignValueForStep(const InputNumber& currentValue, const InputNumber& newValue) const;
     InputNumber clampValue(const InputNumber& value) const;
     bool hasStep() const { return m_hasStep; }
     InputNumber maximum() const { return m_maximum; }
     InputNumber minimum() const { return m_minimum; }
-    static NumberWithDecimalPlaces parseStep(AnyStepHandling, const StepDescription&, const String&);
+    static InputNumber parseStep(AnyStepHandling, const StepDescription&, const String&);
     InputNumber step() const { return m_step; }
     InputNumber stepBase() const { return m_stepBase; }
-    unsigned stepBaseDecimalPlaces() const { return m_stepBaseDecimalPlaces; }
-    unsigned stepDecimalPlaces() const { return m_stepDecimalPlaces; }
     int stepScaleFactor() const { return m_stepDescription.stepScaleFactor; }
     bool stepMismatch(const InputNumber&) const;
 
@@ -137,8 +125,6 @@ private:
     const InputNumber m_step;
     const InputNumber m_stepBase;
     const StepDescription m_stepDescription;
-    const unsigned m_stepBaseDecimalPlaces;
-    const unsigned m_stepDecimalPlaces;
     const bool m_hasStep;
 };
 

@@ -68,7 +68,7 @@ StepRange WeekInputType::createStepRange(AnyStepHandling anyStepHandling) const
     const InputNumber stepBase = parseToNumber(element()->fastGetAttribute(minAttr), weekDefaultStepBase);
     const InputNumber minimum = parseToNumber(element()->fastGetAttribute(minAttr), convertDoubleToInputNumber(DateComponents::minimumWeek()));
     const InputNumber maximum = parseToNumber(element()->fastGetAttribute(maxAttr), convertDoubleToInputNumber(DateComponents::maximumWeek()));
-    const StepRange::NumberWithDecimalPlaces step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    const InputNumber step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 

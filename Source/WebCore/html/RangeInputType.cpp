@@ -104,11 +104,11 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 
     const AtomicString& precisionValue = element()->fastGetAttribute(precisionAttr);
     if (!precisionValue.isNull()) {
-        const StepRange::NumberWithDecimalPlaces step(equalIgnoringCase(precisionValue, "float") ? std::numeric_limits<double>::quiet_NaN() : 1);
+        const InputNumber step = equalIgnoringCase(precisionValue, "float") ? Decimal::nan() : 1;
         return StepRange(minimum, minimum, maximum, step, stepDescription);
     }
 
-    const StepRange::NumberWithDecimalPlaces step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    const InputNumber step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(minimum, minimum, maximum, step, stepDescription);
 }
 
@@ -142,7 +142,7 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
     const String& key = event->keyIdentifier();
 
     const InputNumber current = parseToNumberOrNaN(element()->value());
-    ASSERT(isfinite(current));
+    ASSERT(current.isFinite());
 
     StepRange stepRange(createStepRange(RejectAny));
 
@@ -215,12 +215,12 @@ RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) c
 
 InputNumber RangeInputType::parseToNumber(const String& src, const InputNumber& defaultValue) const
 {
-    return convertDoubleToInputNumber(parseToDoubleForNumberType(src, defaultValue));
+    return parseToDecimalForNumberType(src, defaultValue);
 }
 
 String RangeInputType::serialize(const InputNumber& value) const
 {
-    if (!isfinite(value))
+    if (!value.isFinite())
         return String();
     return serializeForNumberType(value);
 }

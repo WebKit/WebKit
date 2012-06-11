@@ -53,7 +53,6 @@ private:
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual void handleWheelEvent(WheelEvent*) OVERRIDE;
     virtual InputNumber parseToNumber(const String&, const InputNumber&) const OVERRIDE;
-    virtual InputNumber parseToNumberWithDecimalPlaces(const String&, const InputNumber&, unsigned*) const OVERRIDE;
     virtual String serialize(const InputNumber&) const OVERRIDE;
     virtual void handleBlurEvent() OVERRIDE;
     virtual String localizeValue(const String&) const OVERRIDE;
