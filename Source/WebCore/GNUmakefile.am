@@ -1010,6 +1010,7 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/websockets/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/css/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/dom/*.idl) \
+	$(shell ls $(srcdir)/Source/WebCore/editing/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/fileapi/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/html/canvas/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/html/shadow/*.idl) \

@@ -133,6 +133,7 @@ wtf_sources += \
     Source/WTF/wtf/StackBounds.h \
     Source/WTF/wtf/StaticConstructors.h \
     Source/WTF/wtf/StdLibExtras.h \
+    Source/WTF/wtf/StreamBuffer.h \
     Source/WTF/wtf/StringExtras.h \
     Source/WTF/wtf/StringHasher.h \
     Source/WTF/wtf/TCPackedCache.h \

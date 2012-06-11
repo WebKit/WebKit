@@ -641,12 +641,12 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/ExecutableAllocatorFixedVMPool.cpp
 endif
 
-llint_nosources = \
+llint_nosources += \
 	Source/JavaScriptCore/llint/LowLevelInterpreter32_64.asm \
 	Source/JavaScriptCore/llint/LowLevelInterpreter64.asm \
 	Source/JavaScriptCore/llint/LowLevelInterpreter.asm
 
-offlineasm_nosources = \
+offlineasm_nosources += \
 	Source/JavaScriptCore/offlineasm/armv7.rb \
 	Source/JavaScriptCore/offlineasm/asm.rb \
 	Source/JavaScriptCore/offlineasm/ast.rb \
@@ -675,8 +675,7 @@ Programs_minidom_SOURCES = \
 	Source/JavaScriptCore/API/tests/minidom.c
 
 Programs_LLIntOffsetsExtractor_SOURCES = \
-	Source/JavaScriptCore/llint/LLIntOffsetsExtractor.cpp \
-	Source/JavaScriptCore/llint/LLIntOffsetsExtractor.h
+	Source/JavaScriptCore/llint/LLIntOffsetsExtractor.cpp
 
 Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_SOURCES = \
 	Source/JavaScriptCore/JSCTypedArrayStubs.h \
