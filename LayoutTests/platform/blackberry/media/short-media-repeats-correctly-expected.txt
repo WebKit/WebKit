@@ -1,0 +1,22 @@
+Test that a very short audio file does not repeat unintentionally.
+
+EVENT(canplaythrough)
+EVENT(playing)
+EVENT(ended)
+EVENT(playing)
+EVENT(ended)
+EVENT(progress)
+EVENT(playing)
+EVENT(ended)
+EVENT(progress)
+EVENT(playing)
+EVENT(ended)
+EVENT(progress)
+EVENT(playing)
+EVENT(ended)
+EVENT(progress)
+EVENT(playing)
+EVENT(ended)
+EVENT(progress)
+EXPECTED(progressCount == '5') OK
+END OF TEST

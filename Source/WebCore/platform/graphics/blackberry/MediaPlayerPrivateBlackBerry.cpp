@@ -226,12 +226,16 @@ float MediaPlayerPrivate::duration() const
     return m_platformPlayer->duration();
 }
 
+static const double SeekSubmissionDelay = 0.1; // Reasonable throttling value.
+static const double ShortMediaThreshold = SeekSubmissionDelay * 2.0;
+
 float MediaPlayerPrivate::currentTime() const
 {
-    return m_userDrivenSeekTimer.isActive() ? m_lastSeekTime: m_platformPlayer->currentTime();
+    // For very short media on the order of SeekSubmissionDelay we get
+    // unwanted repeats if we don't return the most up-to-date currentTime().
+    bool shortMedia = m_platformPlayer->duration() < ShortMediaThreshold;
+    return m_userDrivenSeekTimer.isActive() && !shortMedia ? m_lastSeekTime: m_platformPlayer->currentTime();
 }
-
-static const double SeekSubmissionDelay = 0.1; // Reasonable throttling value.
 
 void MediaPlayerPrivate::seek(float time)
 {

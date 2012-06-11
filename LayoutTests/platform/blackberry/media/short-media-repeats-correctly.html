@@ -1,0 +1,72 @@
+<html>
+    <meta name="viewport" content="width=device-width">
+    <title>Short Media Repeats Correctly</title>
+    <body>
+    <p>Test that a very short audio file does not repeat unintentionally.</p>
+
+    <script src=../../../media/video-test.js></script>
+    <script src=../../../media/media-file.js></script>
+    <script>
+        function errorListener(event)
+        {
+            logResult(false, "Caught 'error' event, media.error.code = " + this.error.code);
+            endTest();
+        }
+
+        function canplaythroughListener(event)
+        {
+            consoleWrite("EVENT(canplaythrough)");
+            this.play();
+        }
+
+        function playingListener(event)
+        {
+            consoleWrite("EVENT(playing)");
+        }
+
+        function progressListener(event)
+        {
+            // If the media repeats more often than intended there will be too
+            // many progress events received, in this case one progress
+            // event per play. I tried listening for other more intuitive
+            // events but nothing else is being triggered when the repeated
+            // plays in question occur.
+            consoleWrite("EVENT(progress)");
+            ++progressCount;
+        }
+
+        function endedListener(event)
+        {
+            consoleWrite("EVENT(ended)");
+            if (++endedCount <= 5) // Set total number of repeats here
+                setTimeout("continueTest()", 100); // Give events time to come
+            else
+                setTimeout("concludeTest()", 100); // Give events time to come
+        }
+
+        function continueTest()
+        {
+            if (++repeatCount == 1)
+                audioElement.addEventListener('progress', progressListener);
+            audioElement.play();
+        }
+
+        function concludeTest()
+        {
+            testExpected("progressCount", repeatCount);
+            endTest();
+        }
+
+        document.write("<audio controls></audio>");
+        var audioElement = document.getElementsByTagName('audio')[0];
+        var endedCount = 0;
+        var repeatCount = 0;
+        var progressCount = 0;
+        audioElement.addEventListener('error', errorListener);
+        audioElement.addEventListener('canplaythrough', canplaythroughListener);
+        audioElement.addEventListener('playing', playingListener);
+        audioElement.addEventListener('ended', endedListener);
+        audioElement.src = findMediaFile("audio", "../../../media/content/short");
+    </script>
+</body>
+</html>
