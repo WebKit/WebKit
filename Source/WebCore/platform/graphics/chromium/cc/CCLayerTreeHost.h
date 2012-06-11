@@ -242,8 +242,9 @@ public:
     void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec);
 
     void applyScrollAndScale(const CCScrollAndScaleSet&);
-    void startRateLimiter(GraphicsContext3D*);
-    void stopRateLimiter(GraphicsContext3D*);
+
+    void startRateLimiter(WebKit::WebGraphicsContext3D*);
+    void stopRateLimiter(WebKit::WebGraphicsContext3D*);
 
     // RateLimitClient implementation
     virtual void rateLimit() OVERRIDE;
@@ -304,7 +305,7 @@ private:
     size_t m_memoryAllocationBytes;
     bool m_memoryAllocationIsForDisplay;
 
-    typedef HashMap<GraphicsContext3D*, RefPtr<RateLimiter> > RateLimiterMap;
+    typedef HashMap<WebKit::WebGraphicsContext3D*, RefPtr<RateLimiter> > RateLimiterMap;
     RateLimiterMap m_rateLimiters;
 
     float m_pageScaleFactor;

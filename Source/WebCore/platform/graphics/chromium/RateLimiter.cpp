@@ -28,26 +28,22 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "RateLimiter.h"
-
-#include "Extensions3DChromium.h"
-#include "GraphicsContext3D.h"
 #include "TraceEvent.h"
+#include <public/WebGraphicsContext3D.h>
 
 namespace WebCore {
 
-PassRefPtr<RateLimiter> RateLimiter::create(GraphicsContext3D* context, RateLimiterClient *client)
+PassRefPtr<RateLimiter> RateLimiter::create(WebKit::WebGraphicsContext3D* context, RateLimiterClient *client)
 {
     return adoptRef(new RateLimiter(context, client));
 }
 
-RateLimiter::RateLimiter(GraphicsContext3D* context, RateLimiterClient *client)
+RateLimiter::RateLimiter(WebKit::WebGraphicsContext3D* context, RateLimiterClient *client)
     : m_context(context)
     , m_timer(this, &RateLimiter::rateLimitContext)
     , m_client(client)
 {
     ASSERT(context);
-    ASSERT(context->getExtensions());
-    m_contextSupportsRateLimitingExtension = context->getExtensions()->supports("GL_CHROMIUM_rate_limit_offscreen_context");
 }
 
 RateLimiter::~RateLimiter()
@@ -56,7 +52,7 @@ RateLimiter::~RateLimiter()
 
 void RateLimiter::start()
 {
-    if (m_contextSupportsRateLimitingExtension && !m_timer.isActive())
+    if (!m_timer.isActive())
         m_timer.startOneShot(0);
 }
 
@@ -67,12 +63,10 @@ void RateLimiter::stop()
 
 void RateLimiter::rateLimitContext(Timer<RateLimiter>*)
 {
-    TRACE_EVENT("RateLimiter::rateLimitContext", this, 0);
-
-    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(m_context->getExtensions());
+    TRACE_EVENT0("cc", "RateLimiter::rateLimitContext");
 
     m_client->rateLimit();
-    extensions->rateLimitOffscreenContextCHROMIUM();
+    m_context->rateLimitOffscreenContextCHROMIUM();
 }
 
 }

@@ -1,3 +1,39 @@
+2012-06-11  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use WebGraphicsContext3D in rate limiting logic inside compositor
+        https://bugs.webkit.org/show_bug.cgi?id=86259
+
+        Reviewed by Adrienne Walker.
+
+        This refactors the compositor's rate limiting implementation to use the Platform API's WebGraphicsContext3D
+        directly instead of WebCore::GraphicsContext3D to cut down on the number of spurious WebCore dependencies in the
+        compositor.  The one change in contract is that the caller to CCLayerTreeHost::startRateLimit() now has to call
+        CCLayerTreeHost::stopRateLimit() before allowing the referenced context to go away since CCLayerTreeHost no
+        longer retains a reference, but this was always happening already.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::~Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::setNeedsDisplayRect):
+        * platform/graphics/chromium/RateLimiter.cpp:
+        (WebCore::RateLimiter::create):
+        (WebCore::RateLimiter::RateLimiter):
+        (WebCore::RateLimiter::start):
+        (WebCore::RateLimiter::rateLimitContext):
+        * platform/graphics/chromium/RateLimiter.h:
+        (WebKit):
+        (RateLimiter):
+        * platform/graphics/chromium/TextureLayerChromium.cpp:
+        (WebCore::TextureLayerChromium::~TextureLayerChromium):
+        (WebCore::TextureLayerChromium::setRateLimitContext):
+        (WebCore::TextureLayerChromium::setNeedsDisplayRect):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::startRateLimiter):
+        (WebCore::CCLayerTreeHost::stopRateLimiter):
+        (WebCore::CCLayerTreeHost::rateLimit):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+
 2012-06-11  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Separate CCVideoDrawQuad and from the layer tree and video provider by removing ManagedTexture and WebVideoFrame pointers from the quad

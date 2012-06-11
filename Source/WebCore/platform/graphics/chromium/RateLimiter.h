@@ -32,9 +32,11 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore {
+namespace WebKit {
+class WebGraphicsContext3D;
+}
 
-class GraphicsContext3D;
+namespace WebCore {
 
 class RateLimiterClient {
 public:
@@ -44,16 +46,16 @@ public:
 // A class containing a timer, which calls rateLimitCHROMIUM on expiry
 class RateLimiter : public RefCounted<RateLimiter> {
 public:
-    static PassRefPtr<RateLimiter> create(GraphicsContext3D*, RateLimiterClient*);
+    static PassRefPtr<RateLimiter> create(WebKit::WebGraphicsContext3D*, RateLimiterClient*);
     ~RateLimiter();
 
     void start();
     void stop();
 
 private:
-    RateLimiter(GraphicsContext3D*, RateLimiterClient*);
-    RefPtr<GraphicsContext3D> m_context;
-    bool m_contextSupportsRateLimitingExtension;
+    RateLimiter(WebKit::WebGraphicsContext3D*, RateLimiterClient*);
+
+    WebKit::WebGraphicsContext3D* m_context;
     Timer<RateLimiter> m_timer;
     void rateLimitContext(Timer<RateLimiter>*);
     RateLimiterClient *m_client;

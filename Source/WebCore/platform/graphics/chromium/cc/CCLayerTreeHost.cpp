@@ -633,10 +633,11 @@ void CCLayerTreeHost::applyScrollAndScale(const CCScrollAndScaleSet& info)
     m_client->applyScrollAndScale(scrollDelta, info.pageScaleDelta);
 }
 
-void CCLayerTreeHost::startRateLimiter(GraphicsContext3D* context)
+void CCLayerTreeHost::startRateLimiter(WebKit::WebGraphicsContext3D* context)
 {
     if (m_animating)
         return;
+
     ASSERT(context);
     RateLimiterMap::iterator it = m_rateLimiters.find(context);
     if (it != m_rateLimiters.end())
@@ -648,20 +649,20 @@ void CCLayerTreeHost::startRateLimiter(GraphicsContext3D* context)
     }
 }
 
-void CCLayerTreeHost::rateLimit()
-{
-    // Force a no-op command on the compositor context, so that any ratelimiting commands will wait for the compositing
-    // context, and therefore for the SwapBuffers.
-    m_proxy->forceSerializeOnSwapBuffers();
-}
-
-void CCLayerTreeHost::stopRateLimiter(GraphicsContext3D* context)
+void CCLayerTreeHost::stopRateLimiter(WebKit::WebGraphicsContext3D* context)
 {
     RateLimiterMap::iterator it = m_rateLimiters.find(context);
     if (it != m_rateLimiters.end()) {
         it->second->stop();
         m_rateLimiters.remove(it);
     }
+}
+
+void CCLayerTreeHost::rateLimit()
+{
+    // Force a no-op command on the compositor context, so that any ratelimiting commands will wait for the compositing
+    // context, and therefore for the SwapBuffers.
+    m_proxy->forceSerializeOnSwapBuffers();
 }
 
 bool CCLayerTreeHost::bufferedUpdates()

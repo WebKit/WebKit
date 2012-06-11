@@ -30,6 +30,7 @@
 #include "TextureLayerChromium.h"
 
 #include "Extensions3D.h"
+#include "GraphicsContext3DPrivate.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCTextureLayerImpl.h"
 
@@ -58,7 +59,7 @@ TextureLayerChromium::~TextureLayerChromium()
         if (m_textureId)
             layerTreeHost()->acquireLayerTextures();
         if (m_rateLimitContext && m_client)
-            layerTreeHost()->stopRateLimiter(m_client->context());
+            layerTreeHost()->stopRateLimiter(GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_client->context()));
     }
 }
 
@@ -88,7 +89,7 @@ void TextureLayerChromium::setPremultipliedAlpha(bool premultipliedAlpha)
 void TextureLayerChromium::setRateLimitContext(bool rateLimit)
 {
     if (!rateLimit && m_rateLimitContext && m_client && layerTreeHost())
-        layerTreeHost()->stopRateLimiter(m_client->context());
+        layerTreeHost()->stopRateLimiter(GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_client->context()));
 
     m_rateLimitContext = rateLimit;
 }
@@ -114,7 +115,7 @@ void TextureLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
     LayerChromium::setNeedsDisplayRect(dirtyRect);
 
     if (m_rateLimitContext && m_client && layerTreeHost())
-        layerTreeHost()->startRateLimiter(m_client->context());
+        layerTreeHost()->startRateLimiter(GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_client->context()));
 }
 
 void TextureLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
