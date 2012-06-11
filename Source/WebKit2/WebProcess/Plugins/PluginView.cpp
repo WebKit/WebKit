@@ -1079,8 +1079,10 @@ NPObject* PluginView::windowScriptNPObject()
     if (!frame())
         return 0;
 
-    // FIXME: Handle JavaScript being disabled.
-    ASSERT(frame()->script()->canExecuteScripts(NotAboutToExecuteScript));
+    if (!frame()->script()->canExecuteScripts(NotAboutToExecuteScript)) {
+        // FIXME: Investigate if other browsers allow plug-ins to access JavaScript objects even if JavaScript is disabled.
+        return 0;
+    }
 
     return m_npRuntimeObjectMap.getOrCreateNPObject(*pluginWorld()->globalData(), frame()->script()->windowShell(pluginWorld())->window());
 }
@@ -1090,7 +1092,11 @@ NPObject* PluginView::pluginElementNPObject()
     if (!frame())
         return 0;
 
-    // FIXME: Handle JavaScript being disabled.
+    if (!frame()->script()->canExecuteScripts(NotAboutToExecuteScript)) {
+        // FIXME: Investigate if other browsers allow plug-ins to access JavaScript objects even if JavaScript is disabled.
+        return 0;
+    }
+
     JSObject* object = frame()->script()->jsObjectForPluginElement(m_pluginElement.get());
     ASSERT(object);
 

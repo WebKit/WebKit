@@ -1,3 +1,25 @@
+2012-06-11  Anders Carlsson  <andersca@apple.com>
+
+        Crash when a plug-in tries to use the NPRuntime API with JavaScript disabled
+        https://bugs.webkit.org/show_bug.cgi?id=88797
+        <rdar://problem/11574844>
+
+        Reviewed by Brady Eidson.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::initialize):
+        Handle the windowNPObjectID being 0.
+
+        (WebKit::PluginControllerProxy::windowScriptNPObject):
+        Handle m_windownPObject being null.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::windowScriptNPObject):
+        Return null if JavaScript is disabled.
+
+        (WebKit::PluginView::pluginElementNPObject):
+        Ditto.
+
 2012-06-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Add QML api for setting device width and height

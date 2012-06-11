@@ -102,8 +102,8 @@ bool PluginControllerProxy::initialize(const PluginCreationParameters& creationP
         return false;
     }
 
-    m_windowNPObject = m_connection->npRemoteObjectMap()->createNPObjectProxy(creationParameters.windowNPObjectID, m_plugin.get());
-    ASSERT(m_windowNPObject);
+    if (creationParameters.windowNPObjectID)
+        m_windowNPObject = m_connection->npRemoteObjectMap()->createNPObjectProxy(creationParameters.windowNPObjectID, m_plugin.get());
 
     bool returnValue = m_plugin->initialize(this, creationParameters.parameters);
 
@@ -246,6 +246,9 @@ void PluginControllerProxy::cancelManualStreamLoad()
 
 NPObject* PluginControllerProxy::windowScriptNPObject()
 {
+    if (!m_windowNPObject)
+        return 0;
+
     retainNPObject(m_windowNPObject);
     return m_windowNPObject;
 }
