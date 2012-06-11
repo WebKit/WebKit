@@ -4,8 +4,8 @@
     <head>
         <script type="text/javascript">
             function horiz_scroll() {
-                if (window.layoutTestController)
-                    layoutTestController.waitUntilDone();
+                if (window.testRunner)
+                    testRunner.waitUntilDone();
 
                 var pos = 0;
                 var inner = function () {
@@ -13,8 +13,8 @@
                     pos += 15;
                     if (pos < 2047)
                         setTimeout(inner, 0);
-                    else if (window.layoutTestController)
-                        layoutTestController.notifyDone();
+                    else if (window.testRunner)
+                        testRunner.notifyDone();
                 };
                 inner();
             }

@@ -38,9 +38,9 @@
 </style>
 <script>
     function doTest() {
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
-            layoutTestController.dumpAsText(true);
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText(true);
         }
 
         // The far left coordinate of the document varies by window width.
@@ -50,10 +50,10 @@
 
         window.setTimeout(function() {
             window.scrollTo(offset, 0);
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 if (top == self)
-                    document.getElementById('layertree').innerText = layoutTestController.layerTreeAsText();
-                layoutTestController.notifyDone();
+                    document.getElementById('layertree').innerText = testRunner.layerTreeAsText();
+                testRunner.notifyDone();
             }
         }, 0);
     }

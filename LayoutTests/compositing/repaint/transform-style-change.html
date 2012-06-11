@@ -2,15 +2,15 @@
 <!-- Tests that an element composited with transform-style: preserve-3d still renders when switched to transform-style: flat -->
 <div id="box" style="width:100px; height:100px; background-color: green; -webkit-transform: translateZ(0); -webkit-transform-style: preserve-3d"></div>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText(true); // Only pixel results are useful
+if (window.testRunner)
+    testRunner.dumpAsText(true); // Only pixel results are useful
 
 function test() {
     document.getElementById("box").style.webkitTransformStyle = "flat";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.display(); // Force one composite with preserve-3d
+if (window.testRunner) {
+    testRunner.display(); // Force one composite with preserve-3d
     test();
 } else
     window.setTimeout(test, 0);

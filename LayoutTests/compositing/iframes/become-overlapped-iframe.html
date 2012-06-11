@@ -26,9 +26,9 @@
     }
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function doTest()
@@ -36,10 +36,10 @@
         // Need to wait for compositing layers to be updated.
         window.setTimeout(function() {
           document.getElementById('overlay').style.height = '150px';
-            if (window.layoutTestController) {
-                layoutTestController.display(); // Painting has to happen to detect overlap.
-                document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
-                layoutTestController.notifyDone();
+            if (window.testRunner) {
+                testRunner.display(); // Painting has to happen to detect overlap.
+                document.getElementById('layers').innerHTML = testRunner.layerTreeAsText();
+                testRunner.notifyDone();
             }
         }, 0);
     }

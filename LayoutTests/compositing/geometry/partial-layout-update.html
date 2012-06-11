@@ -41,15 +41,15 @@
   }
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
+    if (window.testRunner)
+      testRunner.waitUntilDone();
 
     function startProgram()
     {
       var panel = document.getElementById("panel");
       panel.addEventListener('webkitTransitionEnd', function() {
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }, false);
       panel.style.left = "0";
     }

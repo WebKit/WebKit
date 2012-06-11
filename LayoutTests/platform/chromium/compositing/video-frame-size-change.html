@@ -5,8 +5,8 @@
         <video width=320></video>
         <video width=320></video>
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
             }
 
             function load() {
@@ -16,8 +16,8 @@
                         return;
                     }
                     // Make sure we render the first frame.
-                    if (window.layoutTestController) {
-                        layoutTestController.display();
+                    if (window.testRunner) {
+                        testRunner.display();
                     }
                     video.play();
                 };
@@ -44,8 +44,8 @@
                 video.addEventListener('pause', function() {
                     // Now seek back to a point where resolution should be different.
                     video.addEventListener('seeked', function() {
-                        if (window.layoutTestController) {
-                            layoutTestController.notifyDone();
+                        if (window.testRunner) {
+                            testRunner.notifyDone();
                         }
                     });
 

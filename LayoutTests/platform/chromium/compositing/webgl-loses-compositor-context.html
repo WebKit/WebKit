@@ -7,10 +7,10 @@
     }
   </style>
   <script>
-  if (window.layoutTestController) {
-      layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-      layoutTestController.waitUntilDone();
-      layoutTestController.dumpAsText(true);
+  if (window.testRunner) {
+      testRunner.overridePreference("WebKitWebGLEnabled", "1");
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText(true);
   }
 
   window.setTimeout(function() {
@@ -19,17 +19,17 @@
       // force a switch from the integrated to the discrete GPU 
       // and the loss of the compositor's context.
       var gl = c.getContext("experimental-webgl");
-      if (window.layoutTestController) {
+      if (window.testRunner) {
           // This unfortunately doesn't provoke the failure in DRT.
           // It seems that the implementation of loseCompositorContext
           // would need to invalidate the context at a lower level.
-          layoutTestController.loseCompositorContext(1);
+          testRunner.loseCompositorContext(1);
       }
       gl.clearColor(0, 1, 0, 1);
       gl.clear(gl.COLOR_BUFFER_BIT);
-      if (window.layoutTestController) {
+      if (window.testRunner) {
           window.setTimeout(function() {
-              window.layoutTestController.notifyDone();
+              window.testRunner.notifyDone();
           }, 0);
       }
   }, 0);

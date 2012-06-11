@@ -26,13 +26,13 @@
     
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
+    if (window.testRunner)
+      testRunner.waitUntilDone();
 
     function doTest()
     {
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
 
     window.addEventListener('load', doTest, false);

@@ -30,15 +30,15 @@
   }
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
+    if (window.testRunner)
+      testRunner.waitUntilDone();
 
     function doTest()
     {
       window.setTimeout(function() {
         document.getElementById('inner').className = 'inner composited bigger';
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }, 0);
     }
     window.addEventListener('load', doTest, false);

@@ -6,9 +6,9 @@
         window.internals.settings.setEnableCompositingForScrollableFrames(true);
       }
       function doTest() {
-        if (window.layoutTestController) {
-          document.getElementById("layertree").innerText = layoutTestController.layerTreeAsText();
-          layoutTestController.dumpAsText();
+        if (window.testRunner) {
+          document.getElementById("layertree").innerText = testRunner.layerTreeAsText();
+          testRunner.dumpAsText();
         }
       }
       window.addEventListener("load", doTest, false);

@@ -22,9 +22,9 @@
 </style>
 <script>
     function doTest() {
-        if (window.layoutTestController) {
-            document.getElementById('layertree').innerText = layoutTestController.layerTreeAsText();
-            layoutTestController.dumpAsText(true);
+        if (window.testRunner) {
+            document.getElementById('layertree').innerText = testRunner.layerTreeAsText();
+            testRunner.dumpAsText(true);
         }
     }
     window.addEventListener('load', doTest, false);

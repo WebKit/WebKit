@@ -24,9 +24,9 @@
     
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     // Called from subframe.
@@ -34,12 +34,12 @@
     {
       document.getElementById('parent-iframe').contentDocument.body.offsetWidth; // work around bug 41999.
 
-      if (window.layoutTestController)
-        layoutTestController.display();
+      if (window.testRunner)
+        testRunner.display();
 
-      if (window.layoutTestController) {
-        document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
-        layoutTestController.notifyDone();
+      if (window.testRunner) {
+        document.getElementById('layers').innerText = testRunner.layerTreeAsText();
+        testRunner.notifyDone();
       }
     }
   </script>

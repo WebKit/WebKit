@@ -11,13 +11,13 @@
 </style>
 <script type="text/javascript">
   function setBlur() {
-    layoutTestController.display(); // Force compositor to start.
+    testRunner.display(); // Force compositor to start.
     var blurNode = window.document.getElementById('blur');
     window.internals.setBackgroundBlurOnNode(blurNode, 5);
   }
 
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText(true);
+  if (window.testRunner) {
+    testRunner.dumpAsText(true);
     if (window.internals)
       window.onload = setBlur;
   }

@@ -35,16 +35,16 @@
     }
   </style>
   <script>
-      if (window.layoutTestController) {
-          layoutTestController.dumpAsText();
-          layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+          testRunner.dumpAsText();
+          testRunner.waitUntilDone();
       }
 
       function doTest()
       {
-          if (window.layoutTestController) {
-              document.getElementById('layertree').innerText = layoutTestController.layerTreeAsText();
-              layoutTestController.notifyDone();
+          if (window.testRunner) {
+              document.getElementById('layertree').innerText = testRunner.layerTreeAsText();
+              testRunner.notifyDone();
           }
       }
 

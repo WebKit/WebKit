@@ -47,13 +47,13 @@
 
   </style>
   <script>
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText(true);
+    if (window.testRunner)
+      testRunner.dumpAsText(true);
 
     function doTest()
     {
-      if (window.layoutTestController)
-        layoutTestController.display();
+      if (window.testRunner)
+        testRunner.display();
 
       document.getElementById("stretch").style.left = "-100px";
     }

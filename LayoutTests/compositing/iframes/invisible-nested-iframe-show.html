@@ -25,9 +25,9 @@
   </style>
   <script type="text/javascript" charset="utf-8">
     
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
     }
 
     function doTest()
@@ -35,10 +35,10 @@
       window.setTimeout(function() {
         var div = document.getElementById('invisible');
         div.style.cssText = "";
-        if (window.layoutTestController) {
-          layoutTestController.display();
-          document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
-          layoutTestController.notifyDone();
+        if (window.testRunner) {
+          testRunner.display();
+          document.getElementById('layers').innerHTML = testRunner.layerTreeAsText();
+          testRunner.notifyDone();
         }
       }, 0)
     }

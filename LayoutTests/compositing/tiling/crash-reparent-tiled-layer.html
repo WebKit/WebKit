@@ -24,9 +24,9 @@
     }
     </style>
     <script type="text/javascript" charset="utf-8">
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         
         result = "";
@@ -38,9 +38,9 @@
                 
                 // Let it render
                 window.setTimeout(function() {
-                    if (window.layoutTestController) {
-                        document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
-                        layoutTestController.notifyDone();
+                    if (window.testRunner) {
+                        document.getElementById('layers').innerHTML = testRunner.layerTreeAsText();
+                        testRunner.notifyDone();
                     }
                 }, 0);
             }, 0);

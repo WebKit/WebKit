@@ -24,19 +24,19 @@
   <script>
     if (window.internals)
       window.internals.settings.setMockScrollbarsEnabled(true);
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText(true);
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText(true);
+      testRunner.waitUntilDone();
     }
 
     function doTest()
     {
-      if (window.layoutTestController)
-        layoutTestController.display();
+      if (window.testRunner)
+        testRunner.display();
       // Scroll red box off screen and scroll green box into same place.
       window.scrollTo(0, 400);
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
 
     window.addEventListener('load', doTest, false);

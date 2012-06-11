@@ -61,9 +61,9 @@
     
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText(true);
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText(true);
+      testRunner.waitUntilDone();
     }
 
     function repaint()
@@ -74,8 +74,8 @@
         currImage.style.backgroundColor = 'orange';
       }
 
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
     
     window.addEventListener('load', function() {

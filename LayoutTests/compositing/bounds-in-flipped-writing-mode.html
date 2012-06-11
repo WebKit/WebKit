@@ -5,9 +5,9 @@
     </div>
     <pre id="console"></pre>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            document.getElementById("console").appendChild(document.createTextNode(layoutTestController.layerTreeAsText()));
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            document.getElementById("console").appendChild(document.createTextNode(testRunner.layerTreeAsText()));
         }
     </script>
 </body>

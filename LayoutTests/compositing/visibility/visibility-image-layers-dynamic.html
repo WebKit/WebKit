@@ -46,30 +46,30 @@
     }
   </style>
   <script>
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
     }
 
     function doTest()
     {
-      if (window.layoutTestController)
-        document.getElementById('layers1').innerText = layoutTestController.layerTreeAsText();
+      if (window.testRunner)
+        document.getElementById('layers1').innerText = testRunner.layerTreeAsText();
 
       window.setTimeout(function() {
         var firstImage = document.querySelectorAll('img')[0];
         firstImage.style.visibility = 'visible';
 
-        if (window.layoutTestController)
-          document.getElementById('layers2').innerText = layoutTestController.layerTreeAsText();
+        if (window.testRunner)
+          document.getElementById('layers2').innerText = testRunner.layerTreeAsText();
 
           window.setTimeout(function() {
             var secondContainer = document.querySelectorAll('.container')[1];
             secondContainer.style.visibility = 'visible';
 
-            if (window.layoutTestController) {
-              document.getElementById('layers3').innerText = layoutTestController.layerTreeAsText();
-              layoutTestController.notifyDone();
+            if (window.testRunner) {
+              document.getElementById('layers3').innerText = testRunner.layerTreeAsText();
+              testRunner.notifyDone();
             }
           }, 0);
       }, 0);

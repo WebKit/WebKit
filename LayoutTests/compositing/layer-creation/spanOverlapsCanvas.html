@@ -11,10 +11,10 @@
 	        ctx.fillStyle = "red";
 	        ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
 	        
-            if (window.layoutTestController) {
-                window.layoutTestController.dumpAsText(true);
+            if (window.testRunner) {
+                window.testRunner.dumpAsText(true);
                 var console = document.getElementById("layeroutput");
-                console.innerHTML = window.layoutTestController.layerTreeAsText();
+                console.innerHTML = window.testRunner.layerTreeAsText();
             }
 	    }
 	</script>

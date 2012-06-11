@@ -18,16 +18,16 @@
         #target3 { display: none; clear: both; height: 20px; background: green; }
     </style>
     <script>
-        if (window.layoutTestController)
-          layoutTestController.waitUntilDone();
+        if (window.testRunner)
+          testRunner.waitUntilDone();
 
         function repaintTest()
         {
             document.getElementById('target1').style.width = '';
             document.getElementById('target2').style.height = '';
             document.getElementById('target3').style.display = '';
-            if (window.layoutTestController)
-              layoutTestController.notifyDone();
+            if (window.testRunner)
+              testRunner.notifyDone();
         }
         function runRepaintTest()
         {

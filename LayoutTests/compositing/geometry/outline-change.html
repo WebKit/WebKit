@@ -32,15 +32,15 @@
     
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
+    if (window.testRunner)
+      testRunner.waitUntilDone();
     
     function test()
     {
       window.setTimeout(function() {
         document.getElementById('tester').style.outline = '5px solid green';
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }, 0);
     }
     window.addEventListener('load', test, false);

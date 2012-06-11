@@ -1,3 +1,38 @@
+2012-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use testRunner instead of layoutTestController in compositing tests
+        https://bugs.webkit.org/show_bug.cgi?id=88766
+
+        Reviewed by Tony Chang.
+
+        * compositing/:
+        * compositing/animation/:
+        * compositing/backface-visibility/:
+        * compositing/backing/:
+        * compositing/culling/:
+        * compositing/geometry/:
+        * compositing/iframes/:
+        * compositing/iframes/resources/:
+        * compositing/images/:
+        * compositing/layer-creation/:
+        * compositing/masks/:
+        * compositing/overflow/:
+        * compositing/plugins/:
+        * compositing/reflections/:
+        * compositing/repaint/:
+        * compositing/resources/:
+        * compositing/rtl/:
+        * compositing/scaling/:
+        * compositing/tiling/:
+        * compositing/transitions/:
+        * compositing/video/:
+        * compositing/visibility/:
+        * compositing/webgl/:
+        * platform/chromium/compositing/:
+        * platform/chromium/compositing/force-compositing-mode/:
+        * platform/chromium/compositing/rubberbanding/:
+        * platform/mac/compositing/canvas/:
+
 2012-06-11  Ojan Vafai  <ojan@chromium.org>
 
         Large slew of Chromium windows png rebaselines. See http://crbug.com/131829 for more information.

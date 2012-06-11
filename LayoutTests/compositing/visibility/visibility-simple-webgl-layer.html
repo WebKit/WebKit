@@ -16,9 +16,9 @@
     </style>
 
     <script>
-      if (window.layoutTestController) {
-          layoutTestController.dumpAsText(true);
-          layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+      if (window.testRunner) {
+          testRunner.dumpAsText(true);
+          testRunner.overridePreference("WebKitWebGLEnabled", "1");
       }
 
       function drawCanvas(canvasID, clearColor)

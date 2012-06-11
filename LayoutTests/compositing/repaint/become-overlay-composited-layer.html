@@ -43,8 +43,8 @@
     }
     </style>
     <script type="text/javascript" charset="utf-8">
-      if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+      if (window.testRunner)
+        testRunner.waitUntilDone();
 
       function runTest()
       {
@@ -52,8 +52,8 @@
         window.setTimeout(function() {
           document.getElementById("container").className = "";
           window.setTimeout(function() {
-            if (window.layoutTestController)
-              layoutTestController.notifyDone();
+            if (window.testRunner)
+              testRunner.notifyDone();
           }, 250);
         }, 250);
       }

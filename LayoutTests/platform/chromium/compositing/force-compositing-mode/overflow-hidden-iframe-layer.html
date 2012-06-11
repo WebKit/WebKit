@@ -13,14 +13,14 @@
     }
     function doTest()
     {
-      if (window.layoutTestController)
-        layoutTestController.display();
+      if (window.testRunner)
+        testRunner.display();
       var iframe = document.getElementById("parent-iframe");
       iframe.contentDocument.body.setAttribute("style", "overflow:hidden");
       iframe.contentDocument.body.offsetWidth; // See bug 41999
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText(false);
-        document.getElementById('layertree').innerText = layoutTestController.layerTreeAsText();
+      if (window.testRunner) {
+        testRunner.dumpAsText(false);
+        document.getElementById('layertree').innerText = testRunner.layerTreeAsText();
       }
     }
     window.addEventListener("load", doTest, false);

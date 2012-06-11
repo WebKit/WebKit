@@ -16,14 +16,14 @@
     }
   </style>
   <script type="text/javascript" charset="utf-8">
-   if (window.layoutTestController)
-     layoutTestController.dumpAsText();
+   if (window.testRunner)
+     testRunner.dumpAsText();
 
    function doTest()
    {
-       if (window.layoutTestController) {
-         document.getElementById('results').innerText = window.layoutTestController.layerTreeAsText();
-         layoutTestController.notifyDone();
+       if (window.testRunner) {
+         document.getElementById('results').innerText = window.testRunner.layerTreeAsText();
+         testRunner.notifyDone();
        }
    }
    

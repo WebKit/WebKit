@@ -30,14 +30,14 @@
     }
   </style>
   <script>
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText(true);
+    if (window.testRunner) {
+      testRunner.dumpAsText(true);
     }
 
     function doTest()
     {
-      if (window.layoutTestController)
-        layoutTestController.display();
+      if (window.testRunner)
+        testRunner.display();
 
       // Any scroll should keep the fixed-position element where it is.
       // If it stutters or disappears incorrectly, then the red background will be revealed.

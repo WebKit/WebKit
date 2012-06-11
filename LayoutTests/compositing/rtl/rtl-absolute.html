@@ -39,10 +39,10 @@
 </style>
 <script>
     function doTest() {
-        if (window.layoutTestController) {
+        if (window.testRunner) {
             if (top == self)
-                document.getElementById('layertree').innerText = layoutTestController.layerTreeAsText();
-            layoutTestController.dumpAsText(true);
+                document.getElementById('layertree').innerText = testRunner.layerTreeAsText();
+            testRunner.dumpAsText(true);
         }
     }
     window.addEventListener('load', doTest, false);

@@ -53,16 +53,16 @@
     </style>
     <script type="text/javascript" charset="utf-8">
       
-      if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+      if (window.testRunner)
+        testRunner.waitUntilDone();
 
       function startTest()
       {
         document.getElementById('container').className = 'over';
         window.setTimeout(function() {
           document.getElementById('container').className = '';
-          if (window.layoutTestController)
-            layoutTestController.notifyDone();
+          if (window.testRunner)
+            testRunner.notifyDone();
         }, 150);
       }
       window.addEventListener('load', startTest, false);

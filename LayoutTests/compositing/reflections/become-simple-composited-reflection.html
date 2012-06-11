@@ -26,17 +26,17 @@
   </style>
   <script>
     
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText(true);
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText(true);
+      testRunner.waitUntilDone();
     }
     
     function doTest()
     {
       window.setTimeout(function() {
         document.getElementById('test').style.backgroundColor = 'transparent';
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }, 0);
     }
     window.addEventListener('load', doTest, false);

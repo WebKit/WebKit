@@ -19,24 +19,24 @@
     }
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function doTest()
     {
       var box = document.getElementById('box');
       box.addEventListener('webkitAnimationStart', function() {
-        if (window.layoutTestController) {
-            var layers = layoutTestController.layerTreeAsText();
+        if (window.testRunner) {
+            var layers = testRunner.layerTreeAsText();
             var result;
             if (layers != "")
               result = "PASS: created compositing layers when animating transform.";
             else
               result = "FAIL: no layers found";
             document.getElementById('result').innerHTML = result;
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
       }, false);
       document.getElementById('box').className = 'spinning';

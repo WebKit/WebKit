@@ -25,13 +25,13 @@
     }
   </style>
   <script>
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+    if (window.testRunner)
+      testRunner.dumpAsText();
       
     function testDone()
     {
-      if (window.layoutTestController)
-        document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
+      if (window.testRunner)
+        document.getElementById('layers').innerText = testRunner.layerTreeAsText();
     }
     window.addEventListener('load', testDone, false);
   </script>

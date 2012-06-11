@@ -9,9 +9,9 @@
   <script>
     function doTest()
     {
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText(false);
-        document.getElementById('layertree').innerText = layoutTestController.layerTreeAsText();
+      if (window.testRunner) {
+        testRunner.dumpAsText(false);
+        document.getElementById('layertree').innerText = testRunner.layerTreeAsText();
       }
     }
     window.addEventListener("load", doTest, false);

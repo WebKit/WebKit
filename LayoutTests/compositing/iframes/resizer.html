@@ -7,9 +7,9 @@
 </style>
 <script>
 function test() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        document.getElementById('layers').innerHTML = testRunner.layerTreeAsText();
     }
 }
 </script>

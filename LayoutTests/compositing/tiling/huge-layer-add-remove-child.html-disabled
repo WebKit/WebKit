@@ -27,9 +27,9 @@
     
     </style>
     <script type="text/javascript" charset="utf-8">
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         
         result = "";
@@ -38,8 +38,8 @@
         {
             // First with no kids
             window.setTimeout(function() {
-                if (window.layoutTestController)
-                    result = "First (no children):<br>" + layoutTestController.layerTreeAsText();
+                if (window.testRunner)
+                    result = "First (no children):<br>" + testRunner.layerTreeAsText();
             }, 0);
             
             // Second add kid
@@ -50,8 +50,8 @@
                 
                 // Let it render
                 window.setTimeout(function() {
-                    if (window.layoutTestController)
-                        result += "<br><br>Second (child added):<br>" + layoutTestController.layerTreeAsText();
+                    if (window.testRunner)
+                        result += "<br><br>Second (child added):<br>" + testRunner.layerTreeAsText();
                 }, 0);
             }, 100);
             
@@ -62,10 +62,10 @@
                 
                 // Let it render
                 window.setTimeout(function() {
-                    if (window.layoutTestController) {
-                        result += "<br><br>Third (child removed):<br>" + layoutTestController.layerTreeAsText();
+                    if (window.testRunner) {
+                        result += "<br><br>Third (child removed):<br>" + testRunner.layerTreeAsText();
                         document.getElementById('layers').innerHTML = result;
-                        layoutTestController.notifyDone();
+                        testRunner.notifyDone();
                     }
                 }, 0);
             }, 200);

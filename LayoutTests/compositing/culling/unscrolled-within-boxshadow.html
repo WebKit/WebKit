@@ -33,14 +33,14 @@ body {
 }
 </style>
 <script type="text/javascript">
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText(true);
-    layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+    testRunner.dumpAsText(true);
+    testRunner.waitUntilDone();
   }
 
   window.onload = function() { setTimeout(function() {
-    if (window.layoutTestController) {
-      layoutTestController.notifyDone();
+    if (window.testRunner) {
+      testRunner.notifyDone();
     }
   }, 0); };
 </script>

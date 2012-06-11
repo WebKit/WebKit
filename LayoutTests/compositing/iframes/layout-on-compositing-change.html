@@ -43,9 +43,9 @@
     }
   </style>
   <script type="text/javascript">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     // Called from subframe.
@@ -57,8 +57,8 @@
             eventSender.mouseUp();
         }
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     
     function nodeClicked(node)

@@ -17,9 +17,9 @@
     }
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-      layoutTestController.waitUntilDone();
-      layoutTestController.dumpAsText();
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
     }
 
     function startFade()
@@ -33,9 +33,9 @@
     
     function fadeDone()
     {
-      if (window.layoutTestController) {
-        document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
-        layoutTestController.notifyDone();
+      if (window.testRunner) {
+        document.getElementById('layers').innerText = testRunner.layerTreeAsText();
+        testRunner.notifyDone();
       }
     }
   </script>

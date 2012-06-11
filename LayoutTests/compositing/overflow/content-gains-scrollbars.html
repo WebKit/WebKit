@@ -48,15 +48,15 @@ function finishTest() {
     document.getElementById("both").classList.add("wide"); // third div gets both
     document.getElementById("both").classList.add("tall"); // vertical and horizontal scrollbars
     document.getElementById("corner").classList.add("resizeWidget"); // bottom div gets a resize corner but no scrollbars
-    if (window.layoutTestController) {
-        layoutTestController.display(); // Ensure compositor tree is up to date.
-        document.getElementById("layerTree").innerText = layoutTestController.layerTreeAsText();
+    if (window.testRunner) {
+        testRunner.display(); // Ensure compositor tree is up to date.
+        document.getElementById("layerTree").innerText = testRunner.layerTreeAsText();
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.display(); // Force compositor state to be updated before the container needs any overflow controls
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.display(); // Force compositor state to be updated before the container needs any overflow controls
     finishTest();
 } else
     window.setTimeout(finishTest, 0);

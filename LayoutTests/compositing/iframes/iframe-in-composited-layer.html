@@ -14,12 +14,12 @@
     "></iframe>
 </div>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     setTimeout(function() {
         document.getElementById("frame").contentWindow.scrollTo(600, 600);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 200);
 </script>

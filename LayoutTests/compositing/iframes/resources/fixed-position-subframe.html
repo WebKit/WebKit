@@ -23,11 +23,11 @@
 </head>
 <script>
     function doTest() {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText(true);
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
         window.scrollTo(0, 2000);
-        if (window.layoutTestController)
-            layoutTestController.display();
+        if (window.testRunner)
+            testRunner.display();
         window.scrollTo(0, 1800);
     }
     window.addEventListener("load", doTest, false);

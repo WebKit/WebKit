@@ -11,8 +11,8 @@
     }
   </style>
   <script>
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+    if (window.testRunner)
+      testRunner.dumpAsText();
 
     function dumpResults()
     {
@@ -22,8 +22,8 @@
       results.innerText = window.getComputedStyle(document.getElementById('box1')).webkitTransformStyle + '\n';
       results.innerText += window.getComputedStyle(document.getElementById('box2')).webkitTransformStyle + '\n';
       
-      if (window.layoutTestController)
-        results.innerText += layoutTestController.layerTreeAsText();
+      if (window.testRunner)
+        results.innerText += testRunner.layerTreeAsText();
     }
     window.addEventListener('load', dumpResults, false);
   </script>

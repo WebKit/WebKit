@@ -18,8 +18,8 @@
       window.internals.settings.setEnableCompositingForFixedPosition(true);
       window.internals.settings.setPageScaleFactor(2, 0, 0);
     }
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText(true);
+    if (window.testRunner)
+      testRunner.dumpAsText(true);
 
     var d = document.getElementById('frame').contentDocument.open();
     d.write("<div style='position:fixed; z-index: 1; left; 10px;'>TEST</div>");

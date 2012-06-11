@@ -26,8 +26,8 @@
     }
     </style>
     <script type="text/javascript" charset="utf-8">
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         
         function testOnLoad()
         {
@@ -47,15 +47,15 @@
 
         function recordLayerTree(messagePrefix)
         {
-            if (!window.layoutTestController)
+            if (!window.testRunner)
                 return "";
 
             // Force a layout and a paint to make sure the compositing layers
             // have been updated.
             document.body.offsetLeft;
-            layoutTestController.display();
+            testRunner.display();
 
-            return messagePrefix + layoutTestController.layerTreeAsText();
+            return messagePrefix + testRunner.layerTreeAsText();
         }
       
         window.addEventListener('load', testOnLoad, false);

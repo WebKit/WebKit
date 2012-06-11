@@ -23,9 +23,9 @@
     
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function doTest()
@@ -34,16 +34,16 @@
         window.setTimeout(function() {
             var hadLayersBefore = false;
             var hadLayersAfter = false;
-            if (window.layoutTestController) {
-                layoutTestController.display(); // Need to paint for overlap testing.
-                hadLayersBefore = layoutTestController.layerTreeAsText() != "";
+            if (window.testRunner) {
+                testRunner.display(); // Need to paint for overlap testing.
+                hadLayersBefore = testRunner.layerTreeAsText() != "";
             }
 
             document.getElementById('parent-iframe').src = "about:blank";
             
             window.setTimeout(function() {
-                if (window.layoutTestController) {
-                    hadLayersAfter = layoutTestController.layerTreeAsText() != "";
+                if (window.testRunner) {
+                    hadLayersAfter = testRunner.layerTreeAsText() != "";
 
                     var results = document.getElementById('results');
                     if (hadLayersBefore && !hadLayersAfter)
@@ -53,7 +53,7 @@
                     else if (hadLayersAfter)
                         results.innerText = "FAIL: layers did not disappear when iframe source changed."
 
-                    layoutTestController.notifyDone();
+                    testRunner.notifyDone();
                 }
             }, 0);
         }, 0);

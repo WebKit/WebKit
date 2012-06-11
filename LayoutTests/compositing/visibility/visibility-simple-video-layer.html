@@ -31,14 +31,14 @@
     <script src="../resources/media-testing.js"></script>
     <script src="../../media/media-file.js"></script>
     <script type="text/javascript" charset="utf-8">
-      if (window.layoutTestController)
-          layoutTestController.dumpAsText(true);
+      if (window.testRunner)
+          testRunner.dumpAsText(true);
 
       var counter = 0;
       function notifyVideoDone() {
           counter = counter + 1;
-          if ((counter === 3) && (window.layoutTestController))
-              layoutTestController.notifyDone();
+          if ((counter === 3) && (window.testRunner))
+              testRunner.notifyDone();
       }
 
       function doTest()

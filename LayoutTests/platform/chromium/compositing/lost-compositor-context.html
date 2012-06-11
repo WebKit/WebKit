@@ -28,10 +28,10 @@
   </div>
   <p>
   <script>
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText(true);  // This is only useful as a pixel test.
-    layoutTestController.display();
-    layoutTestController.loseCompositorContext(1);
+  if (window.testRunner) {
+    testRunner.dumpAsText(true);  // This is only useful as a pixel test.
+    testRunner.display();
+    testRunner.loseCompositorContext(1);
   }
   var target = document.getElementById("target");
   target.classList.remove("red");

@@ -25,18 +25,18 @@
     
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     var text = "";
     function showTree(which)
     {
         setTimeout(function() {
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 text += "\n" + which + " dump layer tree:\n";
-                text += layoutTestController.layerTreeAsText();
+                text += testRunner.layerTreeAsText();
                 document.getElementById('layers').innerText = text;
             }
         }, 0);
@@ -44,7 +44,7 @@
 
     function doTest()
     {
-        if (window.layoutTestController)
+        if (window.testRunner)
             //document.getElementById('layers').innerText = "";
         showTree("First");
             
@@ -59,7 +59,7 @@
                 showTree("Third");
                 
                 setTimeout(function() {
-                    layoutTestController.notifyDone();
+                    testRunner.notifyDone();
                 }, 0);
             }, 100);
         }, 100);

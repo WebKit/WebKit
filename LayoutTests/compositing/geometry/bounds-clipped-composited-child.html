@@ -36,13 +36,13 @@
     }
   </style>
   <script>
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText(true);
+    if (window.testRunner)
+      testRunner.dumpAsText(true);
 
     function dumpLayers()
     {
-      if (window.layoutTestController)
-        document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
+      if (window.testRunner)
+        document.getElementById('layers').innerText = testRunner.layerTreeAsText();
     }
 
     window.addEventListener('load', dumpLayers, false);

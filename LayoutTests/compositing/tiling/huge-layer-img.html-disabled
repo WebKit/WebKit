@@ -14,9 +14,9 @@
     }
     </style>
     <script type="text/javascript" charset="utf-8">
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText(true);
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText(true);
+            testRunner.waitUntilDone();
         }
 
         function testOnLoad()
@@ -33,9 +33,9 @@
             img.src = canvas.toDataURL();
 
             window.setTimeout(function() {
-                if (window.layoutTestController) {
-                    document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
-                    layoutTestController.notifyDone();
+                if (window.testRunner) {
+                    document.getElementById('layers').innerHTML = testRunner.layerTreeAsText();
+                    testRunner.notifyDone();
                 }
             }, 0);
         }

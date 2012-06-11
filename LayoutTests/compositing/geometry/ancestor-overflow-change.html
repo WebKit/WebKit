@@ -35,20 +35,20 @@
     }
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText(true);
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText(true);
+      testRunner.waitUntilDone();
     }
 
     function changeOverflow()
     {
       document.getElementById('container').className = 'changed';
 
-      if (window.layoutTestController)
-        document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
+      if (window.testRunner)
+        document.getElementById('layers').innerText = testRunner.layerTreeAsText();
       
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
     
     window.addEventListener('load', function() {

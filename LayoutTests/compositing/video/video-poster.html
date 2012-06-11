@@ -12,8 +12,8 @@
 
             function hasLayers()
             {
-                if (window.layoutTestController)
-                    return layoutTestController.layerTreeAsText() != "";
+                if (window.testRunner)
+                    return testRunner.layerTreeAsText() != "";
                 return false;
             }
 
@@ -41,15 +41,15 @@
                         break;
                     case "seeked":
                         checkLayers("Displaying movie", true);
-                        if (window.layoutTestController)
-                            layoutTestController.notifyDone();
+                        if (window.testRunner)
+                            testRunner.notifyDone();
                         break;
                 }
             }
 
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
             window.addEventListener('load', layerTest, false);
         </script>
@@ -59,7 +59,7 @@
         <video oncanplaythrough="layerTest()" onseeked="layerTest()"></video>
         
         <p>A &lt;video&gt; should not have a layer until playback begins.<br>
-        This test can not be run manually, it requires layoutTestController.layerTreeAsText.</p>
+        This test can not be run manually, it requires testRunner.layerTreeAsText.</p>
         <p id="result"></p>
     
     </body>

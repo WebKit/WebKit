@@ -1,6 +1,6 @@
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function ensureFrameVisible(video, videoRenderedCallback)
 {

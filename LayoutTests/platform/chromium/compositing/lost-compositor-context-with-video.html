@@ -4,19 +4,19 @@
 <head>
 <script src="../../../media/media-file.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText(true);  // This is only useful as a pixel test.
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText(true);  // This is only useful as a pixel test.
+    testRunner.waitUntilDone();
 }
 
 function test() {
     var v = document.querySelector('video');
     v.addEventListener("seeked", function() {
-        if (window.layoutTestController) {
-            layoutTestController.display();
-            layoutTestController.loseCompositorContext(1);
-            layoutTestController.display();
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.display();
+            testRunner.loseCompositorContext(1);
+            testRunner.display();
+            testRunner.notifyDone();
         }
     }, false);
     v.currentTime = 0;

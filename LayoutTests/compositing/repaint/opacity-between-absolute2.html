@@ -40,8 +40,8 @@
     }
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
+    if (window.testRunner)
+      testRunner.waitUntilDone();
 
     function runTest()
     {
@@ -52,8 +52,8 @@
         // Now test redraw on .inner
         var inner = document.querySelectorAll('.inner')[0];
         inner.style.backgroundColor = 'green';
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }, 0);
     }
 

@@ -4,20 +4,20 @@
 <script src="../../../compositing/resources/mock_scrollbars.js"></script>
 <script type="text/javascript" charset="utf-8">
 
-  if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText(true); // This is only useful as a pixel test.
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText(true); // This is only useful as a pixel test.
   }
 
   function doTest()
   {
     div = document.getElementById("div");
-    if (window.layoutTestController)
-      layoutTestController.display();
+    if (window.testRunner)
+      testRunner.display();
     window.setTimeout(function() {
       div.style.height = "1600px";
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }, 0);
   }
 

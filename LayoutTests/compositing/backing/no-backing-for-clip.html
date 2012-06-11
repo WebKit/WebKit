@@ -28,14 +28,14 @@
   </style>
 
   <script>
-  if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+  if (window.testRunner)
+    testRunner.dumpAsText();
     
   function dumpLayers()
   {
     var layersResult = document.getElementById('layers');
-    if (window.layoutTestController)
-      layersResult.innerText = layoutTestController.layerTreeAsText();
+    if (window.testRunner)
+      layersResult.innerText = testRunner.layerTreeAsText();
     
   }
   window.addEventListener('load', dumpLayers, false)

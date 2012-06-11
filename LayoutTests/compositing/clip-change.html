@@ -22,11 +22,11 @@
     }
   </style>
   <script>
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText(true);
+    if (window.testRunner)
+      testRunner.dumpAsText(true);
     function doTest() {
-      if (window.layoutTestController)
-        layoutTestController.display();
+      if (window.testRunner)
+        testRunner.display();
       // The change in clip style should be reflected immediately in the size
       // of the composited clipper layer. After changing the clip, it should
       // entirely cover the indicator.

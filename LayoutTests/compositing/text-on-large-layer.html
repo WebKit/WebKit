@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.waitUntilDone();
   // The mac port renders tiled layers asynchronously, so we have to wait a bit to get the actual rendering result.
   window.setTimeout(function() {
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
   }, 100);
 }
 </script>

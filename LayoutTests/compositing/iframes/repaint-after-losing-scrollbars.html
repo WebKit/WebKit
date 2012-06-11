@@ -33,9 +33,9 @@ function test() {
     document.getElementById("horizontal").contentDocument.body.classList.add("wide"); // middle iframe starts with a horizontal scrollbar
     document.getElementById("both").contentDocument.body.classList.add("wide"); // bottom iframe starts with both
     document.getElementById("both").contentDocument.body.classList.add("tall"); // vertical and horizontal scrollbars
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText(true);
-        layoutTestController.display(); // Paint once with all overflow controls visible.
+    if (window.testRunner) {
+        testRunner.dumpAsText(true);
+        testRunner.display(); // Paint once with all overflow controls visible.
         finishTest();
     } else
         window.setTimeout(finishTest, 5000);

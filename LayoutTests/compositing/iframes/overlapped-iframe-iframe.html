@@ -24,9 +24,9 @@
     }
   </style>
   <script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 
     function doTest()
@@ -34,10 +34,10 @@
         // For some reason this delay is required for AppKit to not short-circuit the display which is required
         // for overlap testing to kick in.
         window.setTimeout(function() {
-            if (window.layoutTestController) {
-                layoutTestController.display();
-                document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
-                layoutTestController.notifyDone();
+            if (window.testRunner) {
+                testRunner.display();
+                document.getElementById('layers').innerHTML = testRunner.layerTreeAsText();
+                testRunner.notifyDone();
             }
         }, 0);
     }

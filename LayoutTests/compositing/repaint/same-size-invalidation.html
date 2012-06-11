@@ -27,12 +27,12 @@
     }
     function changeBackground2() {
         document.getElementById('tester').style.backgroundColor = 'green';
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
     }
-    if (window.layoutTestController) {
-      layoutTestController.waitUntilDone();
-      layoutTestController.dumpAsText(true);
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText(true);
     }
     window.addEventListener('load', doTest, false);
   </script>

@@ -33,16 +33,16 @@
     </style>
     <script src="../../fast/repaint/resources/repaint.js"></script>
     <script type="text/javascript" charset="utf-8">
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText(true);
-        layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+        testRunner.dumpAsText(true);
+        testRunner.waitUntilDone();
       }
 
       function repaintTest()
       {
         window.scrollBy(0,-96);
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }
 
       function doTest()

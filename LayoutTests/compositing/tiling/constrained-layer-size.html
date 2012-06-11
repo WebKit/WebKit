@@ -15,15 +15,15 @@
         }
     </style>
     <script type="text/javascript" charset="utf-8">
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
 
         function testOnLoad()
         {
             // Wait for a layer update and the tiled layer to fill in.
             window.setTimeout(function() {
                 window.setTimeout(function() {
-                    layoutTestController.notifyDone();
+                    testRunner.notifyDone();
                 }, 0);
             }, 0);
         }

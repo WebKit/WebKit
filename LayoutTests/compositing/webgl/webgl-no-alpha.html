@@ -21,9 +21,9 @@
       }
     </style>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-            layoutTestController.dumpAsText(true);
+        if (window.testRunner) {
+            testRunner.overridePreference("WebKitWebGLEnabled", "1");
+            testRunner.dumpAsText(true);
         }
 
         function initWebGL(canvasName, vshader, fshader, attribs, clearColor, clearDepth)

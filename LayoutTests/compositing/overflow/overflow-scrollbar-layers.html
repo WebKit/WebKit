@@ -42,9 +42,9 @@ resize: both;
   <div class="content"></div>
 </div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.display(); // Ensure compositor tree is up to date.
-    document.getElementById("layerTree").innerText = layoutTestController.layerTreeAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.display(); // Ensure compositor tree is up to date.
+    document.getElementById("layerTree").innerText = testRunner.layerTreeAsText();
 }
 </script>

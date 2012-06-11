@@ -24,9 +24,9 @@
   }
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText(true);
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText(true);
     }
     function doTest()
     {
@@ -38,9 +38,9 @@
       window.setTimeout(function() {
          panel.className += " composited"
          container.style.height = "300";
-         if (window.layoutTestController) {
+         if (window.testRunner) {
             window.setTimeout(function() {
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }, 20);
          }
       }, 20);

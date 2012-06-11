@@ -21,8 +21,8 @@
     }
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
+    if (window.testRunner)
+      testRunner.waitUntilDone();
   </script>
 </head>
 <body>
@@ -38,8 +38,8 @@
     var video = document.getElementsByTagName('video')[0];
     video.src = '../resources/alpha-gradient-small.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mov');
     video.addEventListener('canplaythrough', function() {
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }, false);
   </script>
 

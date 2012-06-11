@@ -59,9 +59,9 @@ function finishTest() {
     document.getElementById("corner").classList.remove("resizeWidget"); // bottom div loses a resize corner but no scrollbars
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText(true);
-    layoutTestController.display(); // Paint once with all overflow controls visible.
+if (window.testRunner) {
+    testRunner.dumpAsText(true);
+    testRunner.display(); // Paint once with all overflow controls visible.
     finishTest();
 } else
     window.setTimeout(finishTest, 0);

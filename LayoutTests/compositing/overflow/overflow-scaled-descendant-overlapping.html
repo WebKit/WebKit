@@ -5,8 +5,8 @@
     https://bugs.webkit.org/show_bug.cgi?id=76850 -->
     <script>
         window.onload = function() {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText(true);
+            if (window.testRunner)
+                testRunner.dumpAsText(true);
             if (window.internals)
                 window.internals.settings.setPageScaleFactor(0.5, 0, 0);
         }

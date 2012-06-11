@@ -40,16 +40,16 @@
     }
   </style>
   <script type="text/javascript" charset="utf-8">
-  if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+  if (window.testRunner)
+    testRunner.waitUntilDone();
 
   function startTest()
   {
     window.setTimeout(function() {
       document.documentElement.style.width = '800px'
       window.setTimeout(function() {
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }, 0);
     }, 0);
   }

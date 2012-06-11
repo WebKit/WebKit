@@ -19,8 +19,8 @@
         var iframe = document.getElementsByTagName("iframe")[0];
         iframe.contentWindow.scrollTo(0, 250);
       }
-      if (window.layoutTestController)
-        layoutTestController.dumpAsText(true);
+      if (window.testRunner)
+        testRunner.dumpAsText(true);
       window.addEventListener("load", runTest, false);
     </script>
   </head>

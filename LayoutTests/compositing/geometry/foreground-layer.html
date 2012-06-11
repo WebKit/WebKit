@@ -56,13 +56,13 @@
     
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText(true);
+    if (window.testRunner)
+      testRunner.dumpAsText(true);
 
     function dumpLayerTree()
     {
-      if (window.layoutTestController)
-        document.getElementById('layer-tree').innerText = layoutTestController.layerTreeAsText();
+      if (window.testRunner)
+        document.getElementById('layer-tree').innerText = testRunner.layerTreeAsText();
     }
     
     window.addEventListener('load', dumpLayerTree, false);

@@ -19,13 +19,13 @@
   }
   </style>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function doTest()
     {
-        if (window.layoutTestController)
-          document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
+        if (window.testRunner)
+          document.getElementById('layers').innerText = testRunner.layerTreeAsText();
     }
     
     window.addEventListener('load', doTest, false);

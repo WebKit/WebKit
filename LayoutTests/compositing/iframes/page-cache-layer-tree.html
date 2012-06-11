@@ -46,18 +46,18 @@
     <pre id="output"></pre>
 
     <script>
-    if (window.layoutTestController) {
-        window.layoutTestController.dumpAsText();
-        window.layoutTestController.waitUntilDone();
-        window.layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
+        window.testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
 
     function finishTest() {
         var output = document.getElementById("output");
-        output.innerText = layoutTestController.layerTreeAsText();
+        output.innerText = testRunner.layerTreeAsText();
 
-        if (window.layoutTestController)
-            window.layoutTestController.notifyDone();        
+        if (window.testRunner)
+            window.testRunner.notifyDone();        
     }
 
     window.addEventListener("pageshow", function(event) {
