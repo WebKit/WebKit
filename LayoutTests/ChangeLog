@@ -1,3 +1,30 @@
+2012-06-12  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=88928
+        [WK2] New http/tests/loading/* tests fail
+
+        There's some latent timing issue with WK2 tests that prevents us from getting the last load delegate callback
+        before finishing the test.
+
+        Fortunately for the sake of these tests the load delegate dumps are entirely irrelevant.
+        Moving them from http/tests/loading to http/tests/misc and getting new, cleaner results fixes this.
+
+        Rubberstamped by Darin Adler.
+
+        * http/tests/misc/embed-image-load-outlives-gc-without-crashing-expected.txt: Renamed from LayoutTests/http/tests/loading/embed-image-load-outlives-gc-without-crashing-expected.txt.
+        * http/tests/misc/embed-image-load-outlives-gc-without-crashing.html: Renamed from LayoutTests/http/tests/loading/embed-image-load-outlives-gc-without-crashing.html.
+        * http/tests/misc/image-input-type-outlives-gc-without-crashing-expected.txt: Renamed from LayoutTests/http/tests/loading/image-input-type-outlives-gc-without-crashing-expected.txt.
+        * http/tests/misc/image-input-type-outlives-gc-without-crashing.html: Renamed from LayoutTests/http/tests/loading/image-input-type-outlives-gc-without-crashing.html.
+        * http/tests/misc/image-load-outlives-gc-without-crashing-expected.txt: Renamed from LayoutTests/http/tests/loading/image-load-outlives-gc-without-crashing-expected.txt.
+        * http/tests/misc/image-load-outlives-gc-without-crashing.html: Renamed from LayoutTests/http/tests/loading/image-load-outlives-gc-without-crashing.html.
+        * http/tests/misc/object-image-load-outlives-gc-without-crashing-expected.txt: Renamed from LayoutTests/http/tests/loading/object-image-load-outlives-gc-without-crashing-expected.txt.
+        * http/tests/misc/object-image-load-outlives-gc-without-crashing.html: Renamed from LayoutTests/http/tests/loading/object-image-load-outlives-gc-without-crashing.html.
+        * http/tests/misc/resources/slowimage.php: Renamed from LayoutTests/http/tests/loading/resources/slowimage.php.
+        * http/tests/misc/svg-image-load-outlives-gc-without-crashing-expected.txt: Renamed from LayoutTests/http/tests/loading/svg-image-load-outlives-gc-without-crashing-expected.txt.
+        * http/tests/misc/svg-image-load-outlives-gc-without-crashing.html: Renamed from LayoutTests/http/tests/loading/svg-image-load-outlives-gc-without-crashing.html.
+        * http/tests/misc/video-poster-image-load-outlives-gc-without-crashing-expected.txt: Renamed from LayoutTests/http/tests/loading/video-poster-image-load-outlives-gc-without-crashing-expected.txt.
+        * http/tests/misc/video-poster-image-load-outlives-gc-without-crashing.html: Renamed from LayoutTests/http/tests/loading/video-poster-image-load-outlives-gc-without-crashing.html.
+
 2012-06-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not ASSERT if you have a double use of a variable that is not revealed to be a double
