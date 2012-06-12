@@ -86,6 +86,7 @@
     <file>JavaScriptFormatter.js</file>
     <file>JavaScriptSource.js</file>
     <file>JavaScriptSourceFrame.js</file>
+    <file>jsdifflib.js</file>
     <file>KeyboardShortcut.js</file>
     <file>Linkifier.js</file>
     <file>MemoryStatistics.js</file>

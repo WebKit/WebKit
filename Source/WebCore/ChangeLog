@@ -1,3 +1,49 @@
+2012-06-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: use jsdifflib for revision diff calculation.
+        https://bugs.webkit.org/show_bug.cgi?id=88791
+
+        Reviewed by Vsevolod Vlasov.
+
+        Present diff calculation is incomplete, it does not properly handle the following case:
+            [a, b, c, d, e, f, g, h] => [c, d, e, f, g, h, a, b]
+        We should not be implementing diff by ourselves. I imported jsdifflib from
+        https://github.com/cemerick/jsdifflib. It has BSD license that is compatible with WebKit.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/RevisionHistoryView.js:
+        (WebInspector.RevisionHistoryTreeElement.prototype.onexpand.step2):
+        (WebInspector.RevisionHistoryTreeElement.prototype.onexpand):
+        (WebInspector.RevisionHistoryTreeElement.prototype._createLine.appendLineNumber):
+        (WebInspector.RevisionHistoryTreeElement.prototype._createLine):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/externs.js:
+        (difflib.stringAsLines):
+        (difflib.SequenceMatcher):
+        (difflib.SequenceMatcher.prototype.get_opcodes):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/jsdifflib.js: Added.
+        (difflib.defaultJunkFunction):
+        (difflib.stripLinebreaks):
+        (difflib.stringAsLines):
+        (difflib.__reduce):
+        (difflib.__ntuplecomp):
+        (difflib.__calculate_ratio):
+        (difflib.__dictget):
+        (difflib.SequenceMatcher.this.set_seqs):
+        (difflib.SequenceMatcher.this.set_seq1):
+        (difflib.SequenceMatcher.this.set_seq2):
+        (difflib.SequenceMatcher.this.__chain_b):
+        (difflib.SequenceMatcher.this.find_longest_match):
+        (difflib.SequenceMatcher.this.get_matching_blocks):
+        (difflib.SequenceMatcher.this.get_opcodes):
+        (difflib.SequenceMatcher.this.get_grouped_opcodes):
+        (difflib.SequenceMatcher.this.quick_ratio):
+        (difflib.SequenceMatcher.this.real_quick_ratio):
+        * inspector/front-end/revisionHistory.css:
+        (.revision-history-line-separator .webkit-line-number):
+
 2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [GStreamer] http/tests/media/video-buffered-range-contains-currentTime.html is failing

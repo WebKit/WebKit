@@ -65,7 +65,6 @@
 }
 
 .revision-history-drawer .webkit-line-number {
-    margin-right: 5px;
     border-right: 1px solid #BBB;
     background-color: #F0F0F0;    
 }
@@ -76,4 +75,8 @@
 
 .revision-history-line-removed {
     background-color: rgb(255, 221, 221);
+}
+
+.revision-history-line-separator .webkit-line-number {
+    color: transparent;
 }

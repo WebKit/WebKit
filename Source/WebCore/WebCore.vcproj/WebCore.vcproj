@@ -74790,6 +74790,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\jsdifflib.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\KeyboardShortcut.js"
 					>
 				</File>

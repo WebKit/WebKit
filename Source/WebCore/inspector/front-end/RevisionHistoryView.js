@@ -161,104 +161,79 @@ WebInspector.RevisionHistoryTreeElement.prototype = {
             this._revision.requestContent(step2.bind(this, baseContent));
         }
 
-        function step2(baseContent, revisionContent)
+        function step2(baseContent, newContent)
         {
-            var oldLines = baseContent.split(/\r?\n/);
-            var newLines = revisionContent.split(/\r?\n/);
-            var diffData = this._diff(oldLines, newLines);
+            var baseLines = difflib.stringAsLines(baseContent);
+            var newLines = difflib.stringAsLines(newContent);
+            var sm = new difflib.SequenceMatcher(baseLines, newLines);
+            var opcodes = sm.get_opcodes();
+            var lastWasSeparator = false;
 
-            for (var i = 0; i < diffData.added.length; ++i) {
-                var lineNumber = diffData.added[i];
-                this._createLine(lineNumber, newLines[lineNumber], "added");
-            }
+            for (var idx = 0; idx < opcodes.length; idx++) {
+                var code = opcodes[idx];
+                var change = code[0];
+                var b = code[1];
+                var be = code[2];
+                var n = code[3];
+                var ne = code[4];
+                var rowCount = Math.max(be - b, ne - n);
+                var topRows = [];
+                var bottomRows = [];
+                for (var i = 0; i < rowCount; i++) {
+                    if (change === "delete" || (change === "replace" && b < be)) {
+                        var lineNumber = b++;
+                        this._createLine(lineNumber, null, baseLines[lineNumber], "removed");
+                        lastWasSeparator = false;
+                    }
 
-            for (var i = 0; i < diffData.removed.length; ++i) {
-                var lineNumber = diffData.removed[i];
-                this._createLine(lineNumber, oldLines[lineNumber], "removed");
+                    if (change === "insert" || (change === "replace" && n < ne)) {
+                        var lineNumber = n++;
+                        this._createLine(null, lineNumber, newLines[lineNumber], "added");
+                        lastWasSeparator = false;
+                    }
+
+                    if (change === "equal") {
+                        b++;
+                        n++;
+                        if (!lastWasSeparator)
+                            this._createLine(null, null, "    \u2026", "separator");
+                        lastWasSeparator = true;
+                    }
+                }
             }
         }
     },
 
     /**
-     * @param {number} lineNumber
+     * @param {?number} baseLineNumber
+     * @param {?number} newLineNumber
      * @param {string} lineContent
      * @param {string} changeType
      */
-    _createLine: function(lineNumber, lineContent, changeType)
+    _createLine: function(baseLineNumber, newLineNumber, lineContent, changeType)
     {
         var child = new TreeElement("", null, false);
         child.selectable = false;
         this.appendChild(child);
         var lineElement = document.createElement("span");
-        var numberString = numberToStringWithSpacesPadding(lineNumber + 1, 4);
-        var lineNumberSpan = document.createElement("span");
-        lineNumberSpan.addStyleClass("webkit-line-number");
-        lineNumberSpan.textContent = numberString;
-        child.listItemElement.appendChild(lineNumberSpan);
+
+        function appendLineNumber(lineNumber)
+        {
+            var numberString = lineNumber !== null ? numberToStringWithSpacesPadding(lineNumber + 1, 4) : "    ";
+            var lineNumberSpan = document.createElement("span");
+            lineNumberSpan.addStyleClass("webkit-line-number");
+            lineNumberSpan.textContent = numberString;
+            child.listItemElement.appendChild(lineNumberSpan);
+        }
+
+        appendLineNumber(baseLineNumber);
+        appendLineNumber(newLineNumber);
 
         var contentSpan = document.createElement("span");
         contentSpan.textContent = lineContent;
         child.listItemElement.appendChild(contentSpan);
         child.listItemElement.addStyleClass("revision-history-line");
         child.listItemElement.addStyleClass("revision-history-line-" + changeType);
-    },
-
-    _diff: function(x, y)
-    {
-        var symbols = {};
-        var r = 0, p = 0;
-        var result = [];
-
-        var p1 = popsym(0);
-        for (var i = 0; i < x.length; i++) {
-            p = r === p ? p1 : popsym(i);
-            p1 = popsym(i + 1);
-
-            var idx;
-            if (p > p1) {
-                i++;
-                idx = p1;
-                delete symbols[y[p]];
-            } else
-                idx = p;
-
-            if (idx === y.length)
-                p = popsym(i);
-            else {
-                r = idx;
-                result.push([i, r]);
-            }
-        }
-
-        var removed = [];
-        var added = [];
-        var ix = 0;
-        var iy = 0;
-        for (var i = 0; i < result.length; ++i) {
-            for (var j = ix; j < result[i][0]; ++j)
-                removed.push(j);
-            ix = result[i][0] + 1;
-            for (var j = iy; j < result[i][1]; ++j)
-                added.push(j);
-            iy = result[i][1] + 1;
-        }
-        for (var j = ix + 1; j < x.length; ++j)
-            removed.push(j);
-        for (var j = iy + 1; j < y.length; ++j)
-            added.push(j);
-
-        return { removed: removed, added: added };
-
-        function popsym(index)
-        {
-            var s = x[index];
-            var pos = symbols[s] + 1;
-            pos = y.indexOf(s, pos > r ? pos : r);
-            if (pos === -1)
-                pos = y.length;
-            symbols[s] = pos;
-            return pos;
-        }
     }
 }
 

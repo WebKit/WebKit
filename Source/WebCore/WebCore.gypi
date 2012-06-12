@@ -6436,6 +6436,7 @@
             'inspector/front-end/JavaScriptFormatter.js',
             'inspector/front-end/JavaScriptSource.js',
             'inspector/front-end/JavaScriptSourceFrame.js',
+            'inspector/front-end/jsdifflib.js',
             'inspector/front-end/KeyboardShortcut.js',
             'inspector/front-end/Linkifier.js',
             'inspector/front-end/MemoryStatistics.js',
