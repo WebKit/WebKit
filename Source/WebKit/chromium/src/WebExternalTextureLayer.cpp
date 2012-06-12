@@ -27,6 +27,8 @@
 #include <public/WebExternalTextureLayer.h>
 
 #include "TextureLayerChromium.h"
+#include "cc/CCTextureUpdater.h"
+#include <public/WebExternalTextureLayerClient.h>
 #include <public/WebFloatRect.h>
 #include <public/WebSize.h>
 
@@ -34,11 +36,55 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebExternalTextureLayer WebExternalTextureLayer::create()
+class WebTextureUpdaterImpl : public WebTextureUpdater {
+public:
+    explicit WebTextureUpdaterImpl(CCTextureUpdater& updater)
+        : m_updater(updater)
+    {
+    }
+
+    virtual void appendCopy(unsigned sourceTexture, unsigned destinationTexture, WebSize size) OVERRIDE
+    {
+        m_updater.appendCopy(sourceTexture, destinationTexture, size);
+    }
+
+private:
+    CCTextureUpdater& m_updater;
+};
+
+class WebExternalTextureLayerImpl : public TextureLayerChromiumClient, public TextureLayerChromium {
+public:
+    explicit WebExternalTextureLayerImpl(WebExternalTextureLayerClient* client)
+        : TextureLayerChromium(client ? this : 0)
+        , m_client(client)
+    {
+    }
+
+    virtual unsigned prepareTexture(CCTextureUpdater& updater) OVERRIDE
+    {
+        WebTextureUpdaterImpl updaterImpl(updater);
+        return m_client->prepareTexture(updaterImpl);
+    }
+
+    virtual WebKit::WebGraphicsContext3D* context() OVERRIDE
+    {
+        return m_client->context();
+    }
+
+private:
+    WebExternalTextureLayerClient* m_client;
+};
+
+WebExternalTextureLayer WebExternalTextureLayer::create(WebExternalTextureLayerClient* client)
 {
-    RefPtr<TextureLayerChromium> layer = TextureLayerChromium::create(0);
+    RefPtr<TextureLayerChromium> layer = adoptRef(new WebExternalTextureLayerImpl(client));
     layer->setIsDrawable(true);
     return WebExternalTextureLayer(layer.release());
+}
+
+void WebExternalTextureLayer::clearClient()
+{
+    unwrap<TextureLayerChromium>()->clearClient();
 }
 
 void WebExternalTextureLayer::setTextureId(unsigned id)
@@ -54,6 +100,16 @@ void WebExternalTextureLayer::setFlipped(bool flipped)
 void WebExternalTextureLayer::setUVRect(const WebFloatRect& rect)
 {
     unwrap<TextureLayerChromium>()->setUVRect(rect);
+}
+
+void WebExternalTextureLayer::setOpaque(bool opaque)
+{
+    unwrap<TextureLayerChromium>()->setOpaque(opaque);
+}
+
+void WebExternalTextureLayer::setPremultipliedAlpha(bool premultipliedAlpha)
+{
+    unwrap<TextureLayerChromium>()->setPremultipliedAlpha(premultipliedAlpha);
 }
 
 WebExternalTextureLayer::WebExternalTextureLayer(PassRefPtr<TextureLayerChromium> layer)

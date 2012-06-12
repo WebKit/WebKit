@@ -36,6 +36,8 @@ class TextureLayerChromium;
 
 namespace WebKit {
 
+class WebExternalTextureLayerClient;
+
 // This class represents a layer that renders a texture that is generated
 // externally (not managed by the WebLayerTreeView).
 // The texture will be used by the WebLayerTreeView during compositing passes.
@@ -44,7 +46,14 @@ namespace WebKit {
 // the WebLayerTreeView is destroyed.
 class WebExternalTextureLayer : public WebLayer {
 public:
-    WEBKIT_EXPORT static WebExternalTextureLayer create();
+    // The owner of this layer may optionally provide a client. This client will
+    // be called whenever the compositor wishes to produce a new frame and can
+    // provide a new front buffer texture ID. This is useful if the client wants to
+    // implement a double-buffering scheme that is synchronized with the compositor, for instance.
+    WEBKIT_EXPORT static WebExternalTextureLayer create(WebExternalTextureLayerClient* = 0);
+
+    // Indicates that the client for this layer is going away and shouldn't be used.
+    WEBKIT_EXPORT void clearClient();
 
     WebExternalTextureLayer() { }
     virtual ~WebExternalTextureLayer() { }
@@ -60,6 +69,12 @@ public:
     // Sets the rect in UV space of the texture that is mapped to the layer
     // bounds.
     WEBKIT_EXPORT void setUVRect(const WebFloatRect&);
+
+    // Sets whether every pixel in this layer is opaque. Defaults to false.
+    WEBKIT_EXPORT void setOpaque(bool);
+
+    // Sets whether this layer's texture has premultiplied alpha or not. Defaults to true.
+    WEBKIT_EXPORT void setPremultipliedAlpha(bool);
 
 private:
 #if WEBKIT_IMPLEMENTATION

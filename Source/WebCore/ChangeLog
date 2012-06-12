@@ -1,3 +1,28 @@
+2012-06-11  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Port DrawingBufferChromium from TextureLayerChromium over to WebExternalTextureLayer
+        https://bugs.webkit.org/show_bug.cgi?id=86273
+
+        Reviewed by Adrienne Walker.
+
+        This converts more WebCore code over to using public APIs instead of internal compositor layer types.
+
+        Refactor only, no change in behavior thus no new tests.
+
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBufferPrivate::DrawingBufferPrivate):
+        (WebCore::DrawingBufferPrivate::~DrawingBufferPrivate):
+        (WebCore::DrawingBufferPrivate::layer):
+        (DrawingBufferPrivate):
+        * platform/graphics/chromium/TextureLayerChromium.cpp:
+        (WebCore::TextureLayerChromium::~TextureLayerChromium):
+        (WebCore::TextureLayerChromium::setRateLimitContext):
+        (WebCore::TextureLayerChromium::setNeedsDisplayRect):
+        (WebCore::TextureLayerChromium::update):
+        * platform/graphics/chromium/TextureLayerChromium.h:
+        (WebKit):
+        (TextureLayerChromiumClient):
+
 2012-06-11  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Seek calls are being unnecessarily delayed

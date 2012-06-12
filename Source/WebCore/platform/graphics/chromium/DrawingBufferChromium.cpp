@@ -35,10 +35,13 @@
 #include "CanvasRenderingContext.h"
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
-#include "TextureLayerChromium.h"
+#include "GraphicsContext3DPrivate.h"
 #include "cc/CCProxy.h"
 #include "cc/CCTextureUpdater.h"
 #include <algorithm>
+#include <public/WebExternalTextureLayer.h>
+#include <public/WebExternalTextureLayerClient.h>
+#include <public/WebGraphicsContext3D.h>
 
 using namespace std;
 
@@ -149,29 +152,29 @@ unsigned DrawingBuffer::frontColorBuffer() const
 }
 #endif
 
-class DrawingBufferPrivate : public TextureLayerChromiumClient {
+class DrawingBufferPrivate : public WebKit::WebExternalTextureLayerClient {
     WTF_MAKE_NONCOPYABLE(DrawingBufferPrivate);
 public:
     explicit DrawingBufferPrivate(DrawingBuffer* drawingBuffer)
         : m_drawingBuffer(drawingBuffer)
-        , m_layer(TextureLayerChromium::create(this))
+        , m_layer(WebKit::WebExternalTextureLayer::create(this))
     {
         GraphicsContext3D::Attributes attributes = m_drawingBuffer->graphicsContext3D()->getContextAttributes();
-        m_layer->setOpaque(!attributes.alpha);
-        m_layer->setPremultipliedAlpha(attributes.premultipliedAlpha);
+        m_layer.setOpaque(!attributes.alpha);
+        m_layer.setPremultipliedAlpha(attributes.premultipliedAlpha);
     }
 
     virtual ~DrawingBufferPrivate()
     {
-        m_layer->clearClient();
+        m_layer.clearClient();
     }
 
-    virtual unsigned prepareTexture(CCTextureUpdater& updater) OVERRIDE
+    virtual unsigned prepareTexture(WebKit::WebTextureUpdater& updater) OVERRIDE
     {
         m_drawingBuffer->prepareBackBuffer();
 
-        context()->flush();
-        context()->markLayerComposited();
+        m_drawingBuffer->graphicsContext3D()->flush();
+        m_drawingBuffer->graphicsContext3D()->markLayerComposited();
 
         unsigned textureId = m_drawingBuffer->frontColorBuffer();
         if (m_drawingBuffer->requiresCopyFromBackToFrontBuffer())
@@ -180,16 +183,16 @@ public:
         return textureId;
     }
 
-    virtual GraphicsContext3D* context() OVERRIDE
+    virtual WebKit::WebGraphicsContext3D* context() OVERRIDE
     {
-        return m_drawingBuffer->graphicsContext3D();
+        return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_drawingBuffer->graphicsContext3D());
     }
 
-    LayerChromium* layer() const { return m_layer.get(); }
+    LayerChromium* layer() const { return m_layer.unwrap<LayerChromium>(); }
 
 private:
     DrawingBuffer* m_drawingBuffer;
-    RefPtr<TextureLayerChromium> m_layer;
+    WebKit::WebExternalTextureLayer m_layer;
 };
 
 #if USE(ACCELERATED_COMPOSITING)

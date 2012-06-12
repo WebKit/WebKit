@@ -1,3 +1,21 @@
+2012-06-11  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Port DrawingBufferChromium from TextureLayerChromium over to WebExternalTextureLayer
+        https://bugs.webkit.org/show_bug.cgi?id=86273
+
+        Reviewed by Adrienne Walker.
+
+        * Platform.gypi:
+        * chromium/public/WebExternalTextureLayer.h:
+        (WebKit):
+        (WebExternalTextureLayer):
+        * chromium/public/WebExternalTextureLayerClient.h: Copied from Source/WebKit/chromium/src/WebExternalTextureLayer.cpp.
+        (WebKit):
+        (WebTextureUpdater):
+        (WebKit::WebTextureUpdater::~WebTextureUpdater):
+        (WebExternalTextureLayerClient):
+        (WebKit::WebExternalTextureLayerClient::~WebExternalTextureLayerClient):
+
 2012-06-11  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Separate CCVideoDrawQuad and from the layer tree and video provider by removing ManagedTexture and WebVideoFrame pointers from the quad

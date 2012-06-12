@@ -23,58 +23,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Canvas2DLayerBridge_h
-#define Canvas2DLayerBridge_h
+#ifndef WebExternalTextureLayerClient_h
+#define WebExternalTextureLayerClient_h
 
-#include "ImageBuffer.h" // For DeferralMode enum.
-#include "IntSize.h"
-#include "TextureLayerChromium.h"
-#include <wtf/PassOwnPtr.h>
-#include <wtf/RefPtr.h>
-
-class SkCanvas;
-class SkDevice;
+#include "WebCommon.h"
+#include "WebSize.h"
 
 namespace WebKit {
+
 class WebGraphicsContext3D;
-}
 
-namespace WebCore {
-
-class LayerChromium;
-class TextureLayerChromium;
-
-class Canvas2DLayerBridge : public TextureLayerChromiumClient {
-    WTF_MAKE_NONCOPYABLE(Canvas2DLayerBridge);
+class WebTextureUpdater {
 public:
-    static PassOwnPtr<Canvas2DLayerBridge> create(PassRefPtr<GraphicsContext3D> context, const IntSize& size, DeferralMode deferralMode, unsigned textureId)
-    {
-        return adoptPtr(new Canvas2DLayerBridge(context, size, deferralMode, textureId));
-    }
+    virtual void appendCopy(unsigned sourceTexture, unsigned destinationTexture, WebSize) = 0;
 
-    virtual ~Canvas2DLayerBridge();
-
-    // TextureLayerChromiumClient implementation.
-    virtual unsigned prepareTexture(CCTextureUpdater&) OVERRIDE;
-    virtual WebKit::WebGraphicsContext3D* context() OVERRIDE;
-
-    SkCanvas* skCanvas(SkDevice*);
-    LayerChromium* layer() const;
-    void contextAcquired();
-
-private:
-    Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D>, const IntSize&, DeferralMode, unsigned textureId);
-
-    DeferralMode m_deferralMode;
-    bool m_useDoubleBuffering;
-    unsigned m_frontBufferTexture;
-    unsigned m_backBufferTexture;
-    IntSize m_size;
-    SkCanvas* m_canvas;
-    RefPtr<TextureLayerChromium> m_layer;
-    RefPtr<GraphicsContext3D> m_context;
+protected:
+    virtual ~WebTextureUpdater() { }
 };
 
-}
+class WebExternalTextureLayerClient {
+public:
+    virtual unsigned prepareTexture(WebTextureUpdater&) = 0;
+    virtual WebGraphicsContext3D* context() = 0;
 
-#endif
+protected:
+    virtual ~WebExternalTextureLayerClient() { }
+};
+
+} // namespace WebKit
+
+#endif // WebExternalTextureLayerClient_h

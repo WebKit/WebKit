@@ -29,6 +29,7 @@
 
 #include "GrContext.h"
 #include "GraphicsContext3D.h"
+#include "GraphicsContext3DPrivate.h"
 #include "LayerRendererChromium.h" // For GLC() macro.
 #include "SkCanvas.h"
 #include "SkDeferredCanvas.h"
@@ -138,9 +139,9 @@ unsigned Canvas2DLayerBridge::prepareTexture(CCTextureUpdater& updater)
     return m_backBufferTexture;
 }
 
-GraphicsContext3D* Canvas2DLayerBridge::context()
+WebKit::WebGraphicsContext3D* Canvas2DLayerBridge::context()
 {
-    return m_context.get();
+    return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_context.get());
 }
 
 LayerChromium* Canvas2DLayerBridge::layer() const
