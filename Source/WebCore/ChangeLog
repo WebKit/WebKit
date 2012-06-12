@@ -1,3 +1,14 @@
+2012-06-12  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the notification-enabled build after r120044.
+
+        * notifications/NotificationController.cpp:
+        (WebCore::NotificationController::NotificationController):
+        (WebCore::NotificationController::create):
+        (WebCore::provideNotification):
+        * notifications/NotificationController.h:
+        (NotificationController):
+
 2012-06-12  Huang Dongsung  <luxtella@company100.net>
 
         [Qt][Texmap] Falling leaves demo missing clipping.

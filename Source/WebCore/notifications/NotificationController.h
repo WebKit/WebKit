@@ -41,7 +41,7 @@ class NotificationController : public Supplement<Page> {
 public:
     ~NotificationController();
 
-    static PassOwnPtr<NotificationController> create(Page*, NotificationClient*);
+    static PassOwnPtr<NotificationController> create(NotificationClient*);
     static const AtomicString& supplementName();
     static NotificationController* from(Page* page) { return static_cast<NotificationController*>(Supplement<Page>::from(page, supplementName())); }
     static NotificationClient* clientFrom(Page*);
@@ -49,7 +49,7 @@ public:
     NotificationClient* client() { return m_client; }
     
 private:
-    NotificationController(Page*, NotificationClient*);
+    NotificationController(NotificationClient*);
 
     NotificationClient* m_client;
 };
