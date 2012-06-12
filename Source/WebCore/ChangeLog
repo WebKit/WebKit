@@ -1,3 +1,20 @@
+2012-06-12  Tony Chang  <tony@chromium.org>
+
+        Replaced items in a flexbox should be coerced to display:block
+        https://bugs.webkit.org/show_bug.cgi?id=87068
+
+        Reviewed by Ojan Vafai.
+
+        The flexbox spec lists HTML tags that should automatically be converted
+        to display:block when a flex child. It also says that atomic inline-level
+        children should become block (e.g., inline-table should be treated as table).
+        http://dev.w3.org/csswg/css3-flexbox/#flex-items
+
+        Test: css3/flexbox/flexitem.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-06-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: ObjectStore/Index shouldn't hold reference to backing store

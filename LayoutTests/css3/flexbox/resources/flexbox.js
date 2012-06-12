@@ -65,6 +65,13 @@ function checkExpectedValues(node, failures)
         if (totalTop != parseInt(expectedOffset))
             failures.push("Expected " + expectedOffset + " for clientTop+offsetTop, but got " + totalTop + ", clientTop: " + node.clientTop + ", + offsetTop: " + node.offsetTop + ". ");
     }
+
+    var expectedDisplay = node.getAttribute && node.getAttribute("data-expected-display");
+    if (expectedDisplay) {
+        var actualDisplay = getComputedStyle(node).display;
+        if (actualDisplay != expectedDisplay)
+            failures.push("Expected " + expectedDisplay + " for display, but got " + actualDisplay + ". ");
+    }
 }
 
 function checkFlexBoxen()

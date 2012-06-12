@@ -1,3 +1,15 @@
+2012-06-12  Tony Chang  <tony@chromium.org>
+
+        Replaced items in a flexbox should be coerced to display:block
+        https://bugs.webkit.org/show_bug.cgi?id=87068
+
+        Reviewed by Ojan Vafai.
+
+        * css3/flexbox/flexitem-expected.txt: Added.
+        * css3/flexbox/flexitem.html: Added.
+        * css3/flexbox/resources/flexbox.js:
+        (checkExpectedValues):
+
 2012-06-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: ObjectStore/Index shouldn't hold reference to backing store
