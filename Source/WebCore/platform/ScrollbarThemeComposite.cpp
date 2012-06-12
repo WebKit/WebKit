@@ -271,6 +271,20 @@ void ScrollbarThemeComposite::paintScrollCorner(ScrollView*, GraphicsContext* co
     context->fillRect(cornerRect, Color::white, ColorSpaceDeviceRGB);
 }
 
+IntRect ScrollbarThemeComposite::thumbRect(ScrollbarThemeClient* scrollbar)
+{
+    if (!hasThumb(scrollbar))
+        return IntRect();
+
+    IntRect track = trackRect(scrollbar);
+    IntRect startTrackRect;
+    IntRect thumbRect;
+    IntRect endTrackRect;
+    splitTrack(scrollbar, track, startTrackRect, thumbRect, endTrackRect);
+
+    return thumbRect;
+}
+
 void ScrollbarThemeComposite::paintOverhangAreas(ScrollView*, GraphicsContext* context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect& dirtyRect)
 {    
     context->setFillColor(Color::white, ColorSpaceDeviceRGB);

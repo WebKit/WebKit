@@ -1584,26 +1584,6 @@ private:
     ScrollbarLayerFakePaint(int id) : CCScrollbarLayerImpl(id) { }
 };
 
-TEST_F(CCLayerTreeHostImplTest, scrollbarLayerLostContext)
-{
-    m_hostImpl->setRootLayer(ScrollbarLayerFakePaint::create(0));
-    ScrollbarLayerFakePaint* scrollbar = static_cast<ScrollbarLayerFakePaint*>(m_hostImpl->rootLayer());
-    scrollbar->setBounds(IntSize(1, 1));
-    scrollbar->setContentBounds(IntSize(1, 1));
-    scrollbar->setDrawsContent(true);
-
-    for (int i = 0; i < 2; ++i) {
-        CCLayerTreeHostImpl::FrameData frame;
-        EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
-        ASSERT(frame.renderPasses.size() == 1);
-        CCRenderPass* renderPass = frame.renderPasses[0].get();
-        // Scrollbar layer should always generate quads, even after lost context
-        EXPECT_GT(renderPass->quadList().size(), 0u);
-        m_hostImpl->didDrawAllLayers(frame);
-        m_hostImpl->initializeLayerRenderer(createContext(), UnthrottledUploader);
-    }
-}
-
 // Fake WebGraphicsContext3D that will cause a failure if trying to use a
 // resource that wasn't created by it (resources created by
 // FakeWebGraphicsContext3D have an id of 1).

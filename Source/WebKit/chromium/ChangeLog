@@ -1,3 +1,16 @@
+2012-06-12  Adrienne Walker  <enne@google.com>
+
+        [chromium] Paint scrollbars on WebKit thread and composite those textures
+        https://bugs.webkit.org/show_bug.cgi?id=88145
+
+        Reviewed by James Robinson.
+
+        Remove scrollbarLayerLostContext test that no longer makes sense. The
+        compositor won't draw at all after a lost context if it has no
+        contents.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-06-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: ObjectStore/Index shouldn't hold reference to backing store

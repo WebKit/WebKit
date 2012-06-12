@@ -1,3 +1,64 @@
+2012-06-12  Adrienne Walker  <enne@google.com>
+
+        [chromium] Paint scrollbars on WebKit thread and composite those textures
+        https://bugs.webkit.org/show_bug.cgi?id=88145
+
+        Reviewed by James Robinson.
+
+        Scrollbars were previously painted and uploaded on the compositor
+        thread. This isn't possible to do for many scrollbar themes. This
+        patch changes ScrollbarLayerChromium to paint the scrollbar into two
+        parts: the thumb, and everything else. These are uploaded into
+        textures and synced over to the CCScrollbarImpl where they are
+        composited and drawn.
+
+        Mac and overlay scrollbars are still not enabled to have compositor
+        thread-updated scrollbars.
+
+        As a bonus, fix LayerRendererChromium::drawTextureQuad to draw quads
+        that do not fill the entire layer bounds.
+
+        Tested by existing layout and unit tests by removing the condition
+        that these scrollbar layers are only created when the threaded proxy
+        exists.
+
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::scrollbarLayerDidChange):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::thumbRect):
+        (WebCore):
+        * platform/ScrollbarThemeComposite.h:
+        (ScrollbarThemeComposite):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawTextureQuad):
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+        (WebCore::ScrollbarLayerChromium::ScrollbarLayerChromium):
+        (WebCore::ScrollbarLayerChromium::theme):
+        (WebCore):
+        (WebCore::ScrollbarLayerChromium::pushPropertiesTo):
+        (ScrollbarBackgroundPainter):
+        (WebCore::ScrollbarBackgroundPainter::create):
+        (WebCore::ScrollbarBackgroundPainter::paint):
+        (WebCore::ScrollbarBackgroundPainter::ScrollbarBackgroundPainter):
+        (ScrollbarThumbPainter):
+        (WebCore::ScrollbarThumbPainter::create):
+        (WebCore::ScrollbarThumbPainter::paint):
+        (WebCore::ScrollbarThumbPainter::ScrollbarThumbPainter):
+        (WebCore::ScrollbarLayerChromium::setLayerTreeHost):
+        (WebCore::ScrollbarLayerChromium::createTextureUpdaterIfNeeded):
+        (WebCore::ScrollbarLayerChromium::updatePart):
+        (WebCore::ScrollbarLayerChromium::update):
+        * platform/graphics/chromium/ScrollbarLayerChromium.h:
+        (WebCore):
+        (ScrollbarLayerChromium):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.cpp:
+        (WebCore::CCScrollbarLayerImpl::CCScrollbarLayerImpl):
+        (WebCore::CCScrollbarLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.h:
+        (WebCore::CCScrollbarLayerImpl::setBackgroundTextureId):
+        (WebCore::CCScrollbarLayerImpl::setThumbTextureId):
+        (CCScrollbarLayerImpl):
+
 2012-06-12  Tony Chang  <tony@chromium.org>
 
         Replaced items in a flexbox should be coerced to display:block

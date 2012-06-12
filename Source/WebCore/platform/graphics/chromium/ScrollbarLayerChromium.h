@@ -29,18 +29,24 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "LayerChromium.h"
+#include "LayerTextureUpdater.h"
 #include "ScrollTypes.h"
 
 namespace WebCore {
 
 class Scrollbar;
+class ScrollbarThemeComposite;
+class CCTextureUpdater;
 
 class ScrollbarLayerChromium : public LayerChromium {
 public:
     virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
     static PassRefPtr<ScrollbarLayerChromium> create(Scrollbar*, int scrollLayerId);
 
-    virtual void pushPropertiesTo(CCLayerImpl*);
+    // LayerChromium interface
+    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
+    virtual void setLayerTreeHost(CCLayerTreeHost*) OVERRIDE;
+    virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
 
     int scrollLayerId() const { return m_scrollLayerId; }
     void setScrollLayerId(int id) { m_scrollLayerId = id; }
@@ -51,8 +57,21 @@ protected:
     ScrollbarLayerChromium(Scrollbar*, int scrollLayerId);
 
 private:
+    ScrollbarThemeComposite* theme() const;
+    void updatePart(LayerTextureUpdater*, LayerTextureUpdater::Texture*, const IntRect&, CCTextureUpdater&);
+    void createTextureUpdaterIfNeeded();
+
     RefPtr<Scrollbar> m_scrollbar;
     int m_scrollLayerId;
+
+    GC3Denum m_textureFormat;
+
+    RefPtr<LayerTextureUpdater> m_backgroundUpdater;
+    RefPtr<LayerTextureUpdater> m_thumbUpdater;
+
+    // All the parts of the scrollbar except the thumb
+    OwnPtr<LayerTextureUpdater::Texture> m_background;
+    OwnPtr<LayerTextureUpdater::Texture> m_thumb;
 
     ScrollbarOverlayStyle m_scrollbarOverlayStyle;
     bool m_isScrollableAreaActive;

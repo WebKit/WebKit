@@ -32,27 +32,24 @@ namespace WebCore {
 
 class ScrollbarThemeComposite : public ScrollbarTheme {
 public:
+    // Implement ScrollbarTheme interface
     virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& damageRect);
-
     virtual ScrollbarPart hitTest(ScrollbarThemeClient*, const PlatformMouseEvent&);
-
     virtual void invalidatePart(ScrollbarThemeClient*, ScrollbarPart);
-
     virtual int thumbPosition(ScrollbarThemeClient*);
     virtual int thumbLength(ScrollbarThemeClient*);
     virtual int trackPosition(ScrollbarThemeClient*);
     virtual int trackLength(ScrollbarThemeClient*);
-
     virtual void paintScrollCorner(ScrollView*, GraphicsContext*, const IntRect& cornerRect);
     virtual void paintOverhangAreas(ScrollView*, GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
 
-protected:
     virtual bool hasButtons(ScrollbarThemeClient*) = 0;
     virtual bool hasThumb(ScrollbarThemeClient*) = 0;
 
     virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) = 0;
     virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) = 0;
     virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false) = 0;
+    virtual IntRect thumbRect(ScrollbarThemeClient*);
 
     virtual void splitTrack(ScrollbarThemeClient*, const IntRect& track, IntRect& startTrack, IntRect& thumb, IntRect& endTrack);
     

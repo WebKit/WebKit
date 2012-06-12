@@ -29,12 +29,13 @@
 
 #include "CCScrollbarLayerImpl.h"
 
-#include "CCTileDrawQuad.h"
 #include "LayerRendererChromium.h"
 #include "ManagedTexture.h"
 #include "PlatformCanvas.h"
 #include "ScrollbarTheme.h"
+#include "ScrollbarThemeComposite.h"
 #include "cc/CCQuadCuller.h"
+#include "cc/CCTextureDrawQuad.h"
 
 namespace WebCore {
 
@@ -47,73 +48,31 @@ CCScrollbarLayerImpl::CCScrollbarLayerImpl(int id)
     : CCLayerImpl(id)
     , m_scrollLayer(0)
     , m_scrollbar(this)
+    , m_backgroundTextureId(0)
+    , m_thumbTextureId(0)
 {
-}
-
-void CCScrollbarLayerImpl::willDraw(CCRenderer* layerRenderer, CCGraphicsContext* context)
-{
-    CCLayerImpl::willDraw(layerRenderer, context);
-
-    if (bounds().isEmpty() || contentBounds().isEmpty())
-        return;
-
-    if (!m_texture)
-        m_texture = ManagedTexture::create(layerRenderer->implTextureManager());
-
-    // The context could have been lost since the last frame and the old texture
-    // manager may no longer be valid.
-    m_texture->setTextureManager(layerRenderer->implTextureManager());
-
-    IntSize textureSize = contentBounds();
-    if (!m_texture->reserve(textureSize, GraphicsContext3D::RGBA))
-        return;
-
-    PlatformCanvas canvas;
-    canvas.resize(textureSize);
-    {
-        PlatformCanvas::Painter painter(&canvas, PlatformCanvas::Painter::GrayscaleText);
-        paint(painter.context());
-    }
-
-    {
-        PlatformCanvas::AutoLocker locker(&canvas);
-        m_texture->bindTexture(context, layerRenderer->implTextureAllocator());
-
-        // FIXME: Skia uses BGRA actually, we correct that with the swizzle pixel shader.
-        GraphicsContext3D* context3d = context->context3D();
-        if (!context3d) {
-            // FIXME: Implement this path for software compositing.
-            return;
-        }
-
-        GLC(context3d, context3d->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, m_texture->format(), canvas.size().width(), canvas.size().height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, locker.pixels()));
-    }
 }
 
 void CCScrollbarLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
-    if (!m_texture->isReserved())
+    ScrollbarThemeComposite* theme = static_cast<ScrollbarThemeComposite*>(ScrollbarTheme::theme());
+    if (!theme)
         return;
 
-    IntRect quadRect(IntPoint(), bounds());
-    quadList.append(CCTileDrawQuad::create(sharedQuadState, quadRect, quadRect, m_texture->textureId(), IntPoint(), m_texture->size(), GraphicsContext3D::NEAREST, true, true, true, true, true));
+    bool premultipledAlpha = false;
+    FloatRect uvRect(0, 0, 1, 1);
+    bool flipped = false;
+
+    IntRect thumbRect = theme->thumbRect(&m_scrollbar);
+    thumbRect.move(-m_scrollbar.x(), -m_scrollbar.y());
+    if (m_thumbTextureId && theme->hasThumb(&m_scrollbar) && !thumbRect.isEmpty())
+        quadList.append(CCTextureDrawQuad::create(sharedQuadState, thumbRect, m_thumbTextureId, premultipledAlpha, uvRect, flipped));
+    if (!m_backgroundTextureId)
+        return;
+
+    IntRect backgroundRect(IntPoint(), contentBounds());
+    quadList.append(CCTextureDrawQuad::create(sharedQuadState, backgroundRect, m_backgroundTextureId, premultipledAlpha, uvRect, flipped));
 }
-
-void CCScrollbarLayerImpl::didDraw()
-{
-    CCLayerImpl::didDraw();
-
-    m_texture->unreserve();
-}
-
-void CCScrollbarLayerImpl::paint(GraphicsContext* context)
-{
-    ScrollbarTheme* theme = ScrollbarTheme::theme(); // FIXME: should make impl-side clone if needed
-
-    context->clearRect(IntRect(IntPoint(), contentBounds()));
-    theme->paint(&m_scrollbar, context, IntRect(IntPoint(), contentBounds()));
-}
-
 
 int CCScrollbarLayerImpl::CCScrollbar::x() const
 {

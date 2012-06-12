@@ -1130,9 +1130,11 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
     if (!quad->premultipliedAlpha())
         GLC(context(), context()->blendFunc(GraphicsContext3D::SRC_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
 
-    const IntSize& bounds = quad->quadRect().size();
+    WebTransformationMatrix quadTransform = quad->quadTransform();
+    IntRect quadRect = quad->quadRect();
+    quadTransform.translate(quadRect.x() + quadRect.width() / 2.0, quadRect.y() + quadRect.height() / 2.0);
 
-    drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), sharedGeometryQuad(), binding.matrixLocation, binding.alphaLocation, -1);
+    drawTexturedQuad(quadTransform, quadRect.width(), quadRect.height(), quad->opacity(), sharedGeometryQuad(), binding.matrixLocation, binding.alphaLocation, -1);
 
     if (!quad->premultipliedAlpha())
         GLC(m_context, m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));

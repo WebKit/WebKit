@@ -120,14 +120,13 @@ static PassRefPtr<ScrollbarLayerChromium> createScrollbarLayer(Scrollbar* scroll
     if (!scrollbarGraphicsLayer->contentsOpaque())
         scrollbarGraphicsLayer->setContentsOpaque(isOpaqueRootScrollbar);
 
-    // Only certain platforms support the way that scrollbars are currently
-    // being painted on the impl thread. For example, Cocoa is not threadsafe.
-    bool platformSupported = false;
-#if OS(LINUX)
-    platformSupported = true;
+    // FIXME: Mac scrollbar themes are not thread-safe.
+    bool platformSupported = true;
+#if OS(DARWIN)
+    platformSupported = false;
 #endif
 
-    if (scrollbar->isCustomScrollbar() || !CCProxy::hasImplThread() || !platformSupported) {
+    if (!platformSupported || scrollbar->isOverlayScrollbar()) {
         scrollbarGraphicsLayer->setContentsToMedia(0);
         scrollbarGraphicsLayer->setDrawsContent(true);
         return 0;
