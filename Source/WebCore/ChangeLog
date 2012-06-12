@@ -1,3 +1,18 @@
+2012-06-12  Huang Dongsung  <luxtella@company100.net>
+
+        [Qt][Texmap] Falling leaves demo missing clipping.
+        https://bugs.webkit.org/show_bug.cgi?id=88704
+
+        The bug originated from begining native painting mode of QPainter after enabling
+        scissor test, because begining native painting mode disables scissor test.
+
+        Covered by existing compositing tests.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::beginPainting):
+
 2012-06-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Win] Buildfix related to fromWinHBITMAP

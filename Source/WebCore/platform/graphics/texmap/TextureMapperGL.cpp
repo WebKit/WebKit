@@ -259,8 +259,6 @@ void TextureMapperGL::beginPainting(PaintFlags flags)
     GL_CMD(glGetIntegerv(GL_CURRENT_PROGRAM, &data().previousProgram));
     data().previousScissorState = glIsEnabled(GL_SCISSOR_TEST);
     data().previousDepthState = glIsEnabled(GL_DEPTH_TEST);
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_SCISSOR_TEST);
 #if PLATFORM(QT)
     if (m_context) {
         QPainter* painter = m_context->platformContext();
@@ -268,6 +266,8 @@ void TextureMapperGL::beginPainting(PaintFlags flags)
         painter->beginNativePainting();
     }
 #endif
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_SCISSOR_TEST);
     data().didModifyStencil = false;
     GL_CMD(glDepthMask(0));
     GL_CMD(glGetIntegerv(GL_VIEWPORT, data().viewport));
