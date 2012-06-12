@@ -58,7 +58,7 @@ public:
     void setBackgroundColor(const WebCore::Color&);
     void setOpaque(bool);
     void setScrollLayer(WebCore::GraphicsLayer*);
-    void setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, float deviceScale, int layerAdjustX);
+    void setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, float deviceScale);
     WebCore::GraphicsLayer* topLevelRootLayer() const { return m_graphicsLayer.get(); }
 
     void setShowDebugBorders(bool);
@@ -84,7 +84,8 @@ private:
     OwnPtr<WebCore::GraphicsLayer> m_graphicsLayer;
     OwnPtr<WebCore::LayerPainterChromium> m_contentPaint;
     WebCore::IntSize m_viewportSize;
-    int m_layerAdjustX;
+    WebCore::IntSize m_layerAdjust;
+
     bool m_showDebugBorders;
     float m_deviceScaleFactor;
 };

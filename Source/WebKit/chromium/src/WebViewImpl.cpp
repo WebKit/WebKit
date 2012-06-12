@@ -3637,15 +3637,10 @@ void WebViewImpl::updateLayerTreeViewport()
     IntRect visibleRect = view->visibleContentRect(true /* include scrollbars */);
     IntPoint scroll(view->scrollX(), view->scrollY());
 
-    // In RTL-style pages, the origin of the initial containing block for the
-    // root layer may be positive; translate the layer to avoid negative
-    // coordinates.
-    int layerAdjustX = -view->scrollOrigin().x();
-
     // This part of the deviceScale will be used to scale the contents of
     // the NCCH's GraphicsLayer.
     float deviceScale = m_deviceScaleInCompositor;
-    m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, deviceScale, layerAdjustX);
+    m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, view->scrollOrigin(), deviceScale);
 
     m_layerTreeView.setViewportSize(size());
     m_layerTreeView.setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);

@@ -98,7 +98,7 @@ static void reserveScrollbarLayers(WebCore::LayerChromium* layer, WebCore::Layer
         layer->setAlwaysReserveTextures(true);
 }
 
-void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, float deviceScale, int layerAdjustX)
+void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, float deviceScale)
 {
     if (!scrollLayer())
         return;
@@ -106,7 +106,8 @@ void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize,
     bool visibleRectChanged = m_viewportSize != viewportSize;
 
     m_viewportSize = viewportSize;
-    scrollLayer()->setScrollPosition(scrollPosition);
+
+    scrollLayer()->setScrollPosition(scrollPosition + toSize(scrollOrigin));
     scrollLayer()->setPosition(-scrollPosition);
     // Due to the possibility of pinch zoom, the noncomposited layer is always
     // assumed to be scrollable.
@@ -115,10 +116,14 @@ void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize,
     m_graphicsLayer->deviceOrPageScaleFactorChanged();
     m_graphicsLayer->setSize(contentsSize);
 
-    m_layerAdjustX = layerAdjustX;
-    if (m_graphicsLayer->transform().m41() != m_layerAdjustX) {
+    // In RTL-style pages, the origin of the initial containing block for the
+    // root layer may be positive; translate the layer to avoid negative
+    // coordinates.
+    m_layerAdjust = -toSize(scrollOrigin);
+    if (m_graphicsLayer->transform().m41() != m_layerAdjust.width() || m_graphicsLayer->transform().m42() != m_layerAdjust.height()) {
         WebCore::TransformationMatrix transform = m_graphicsLayer->transform();
-        transform.setM41(m_layerAdjustX);
+        transform.setM41(m_layerAdjust.width());
+        transform.setM42(m_layerAdjust.height());
         m_graphicsLayer->setTransform(transform);
 
         // If a tiled layer is shifted left or right, the content that goes into
@@ -160,9 +165,9 @@ void NonCompositedContentHost::notifySyncRequired(const WebCore::GraphicsLayer*)
 
 void NonCompositedContentHost::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& context, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect)
 {
-    context.translate(-m_layerAdjustX, 0);
+    context.translate(-m_layerAdjust);
     WebCore::IntRect adjustedClipRect = clipRect;
-    adjustedClipRect.move(m_layerAdjustX, 0);
+    adjustedClipRect.move(m_layerAdjust);
     m_contentPaint->paint(context, adjustedClipRect);
 }
 

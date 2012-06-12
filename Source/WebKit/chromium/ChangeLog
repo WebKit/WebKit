@@ -1,3 +1,29 @@
+2012-06-12  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix incorrect LayerChromium scroll position for RTL overflow pages
+        https://bugs.webkit.org/show_bug.cgi?id=88887
+
+        Reviewed by James Robinson.
+
+        The scroll position on layers needs to take into account the scroll
+        origin, since RTL pages start scrolled all the way to the right.
+        Otherwise, when scrolling left the scroll position incorrectly will go
+        negative, causing havok in scrollbar theme code that just assumes that
+        it's always scrolled all the way to the left.
+
+        Also, now that the scroll origin is passed into NCCH, handle
+        scrollOrigin.y() for layer adjusting. This is always zero in practice,
+        but it seemed awkward to just drop it and that assumption could always
+        change in the future.
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::setViewport):
+        (WebKit::NonCompositedContentHost::paintContents):
+        * src/NonCompositedContentHost.h:
+        (NonCompositedContentHost):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::updateLayerTreeViewport):
+
 2012-06-12  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Make damage tracking more robust to early exits
