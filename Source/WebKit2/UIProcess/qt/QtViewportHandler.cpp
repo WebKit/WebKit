@@ -78,6 +78,11 @@ public:
 
     ~ViewportUpdateDeferrer()
     {
+        // We are calling setInitialScaleIfNeeded() here as it requires a
+        // possitive m_suspendCount due to the assert in setPageItemRectVisible().
+        if (handler->m_suspendCount == 1)
+            handler->setInitialScaleIfNeeded();
+
         if (--(handler->m_suspendCount))
             return;
 
@@ -195,51 +200,37 @@ qreal QtViewportHandler::outerBoundedCSSScale(qreal cssScale) const
     return innerBoundedCSSScale(cssScale);
 }
 
+void QtViewportHandler::setInitialScaleIfNeeded()
+{
+    if (m_rawAttributes.initialScale < 0)
+        return;
+
+    m_zoomOutScale = 0.0;
+    m_scaleStack.clear();
+
+    m_hadUserInteraction = false;
+
+    // We must not animate here as the new contents size might be very different
+    // than the current one.
+    setPageItemRectVisible(initialRect());
+
+    m_rawAttributes.initialScale = -1; // Mark used.
+}
+
 void QtViewportHandler::viewportAttributesChanged(const WebCore::ViewportAttributes& newAttributes)
 {
     m_rawAttributes = newAttributes;
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
-
-    {
-        // FIXME: Resetting here is wrong, it should happen only for the first
-        // viewport change for a given page and first when we paint the page for
-        // the first time.
-
-        m_hadUserInteraction = false;
-
-        m_zoomOutScale = 0.0;
-        m_scaleStack.clear();
-
-        // This part below should go fully away when the above plan is implemented.
-
-        m_viewportItem->cancelFlick();
-        m_scaleAnimation->stop();
-
-        m_scaleUpdateDeferrer.clear();
-        m_scrollUpdateDeferrer.clear();
-        m_touchUpdateDeferrer.clear();
-        m_animationUpdateDeferrer.clear();
-        ASSERT(!m_suspendCount);
-        ASSERT(!m_hasSuspendedContent);
-    }
 
     m_devicePixelRatio = m_rawAttributes.devicePixelRatio; // Should return value from the webPageProxy.
     m_allowsUserScaling = !!m_rawAttributes.userScalable;
     m_minimumScale = m_rawAttributes.minimumScale;
     m_maximumScale = m_rawAttributes.maximumScale;
 
-    if (!m_hadUserInteraction && !m_hasSuspendedContent) {
-        ASSERT(m_pinchStartScale == -1);
-        // Emits contentsScaleChanged();
-        setCSSScale(m_rawAttributes.initialScale);
-    }
+    // Make sure we apply the new initial scale when deferring ends.
+    ViewportUpdateDeferrer guard(this);
 
     emit m_viewportItem->experimental()->test()->viewportChanged();
-
-    // If the web app successively changes the viewport on purpose
-    // it wants to be in control and we should disable animations.
-    ViewportUpdateDeferrer guard(this);
-    setPageItemRectVisible(nearestValidBounds());
 }
 
 void QtViewportHandler::pageContentsSizeChanged(const QSize& newSize, const QSize& viewportSize)
@@ -260,8 +251,10 @@ void QtViewportHandler::pageContentsSizeChanged(const QSize& newSize, const QSiz
     // we didn't do scale adjustment.
     emit m_viewportItem->experimental()->test()->contentsScaleCommitted();
 
-    ViewportUpdateDeferrer guard(this);
-    setPageItemRectVisible(nearestValidBounds());
+    if (!m_hasSuspendedContent) {
+        ViewportUpdateDeferrer guard(this);
+        setPageItemRectVisible(nearestValidBounds());
+    }
 }
 
 void QtViewportHandler::setPageItemRectVisible(const QRectF& itemRect)
@@ -520,6 +513,16 @@ void QtViewportHandler::zoomToAreaGestureEnded(const QPointF& touchPoint, const 
     }
 
     animatePageItemRectVisible(endVisibleContentRect);
+}
+
+QRectF QtViewportHandler::initialRect() const
+{
+    ASSERT(m_rawAttributes.initialScale > 0);
+
+    qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(m_rawAttributes.initialScale));
+    QRectF endVisibleContentRect(QPointF(0, 0), viewportRect.size() / endItemScale);
+
+    return endVisibleContentRect;
 }
 
 QRectF QtViewportHandler::nearestValidBounds() const

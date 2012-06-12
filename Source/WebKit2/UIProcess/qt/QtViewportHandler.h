@@ -107,6 +107,8 @@ private:
     qreal innerBoundedCSSScale(qreal) const;
     qreal outerBoundedCSSScale(qreal) const;
 
+    void setInitialScaleIfNeeded();
+
     void setCSSScale(qreal);
     qreal currentCSSScale() const;
 
@@ -114,6 +116,7 @@ private:
     void animatePageItemRectVisible(const QRectF&);
 
     QRect visibleContentsRect() const;
+    QRectF initialRect() const;
     QRectF nearestValidBounds() const;
 
     QRectF computePosRangeForPageItemAtScale(qreal itemScale) const;

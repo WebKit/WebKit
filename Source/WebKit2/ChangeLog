@@ -1,3 +1,26 @@
+2012-06-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Do not move/scale content while the user is interacting with it
+        https://bugs.webkit.org/show_bug.cgi?id=88872
+
+        Reviewed by Simon Hausmann.
+
+        Don't try moving content into valid bounds when the content
+        size changes and the user is interacting with the content.
+
+        Only apply the viewport initial scale after user interaction
+        has ended.
+
+        * UIProcess/qt/QtViewportHandler.cpp:
+        (WebKit::ViewportUpdateDeferrer::~ViewportUpdateDeferrer):
+        (WebKit::QtViewportHandler::setInitialScaleIfNeeded):
+        (WebKit::QtViewportHandler::viewportAttributesChanged):
+        (WebKit::QtViewportHandler::pageContentsSizeChanged):
+        (WebKit::QtViewportHandler::initialRect):
+        (WebKit):
+        * UIProcess/qt/QtViewportHandler.h:
+        (QtViewportHandler):
+
 2012-06-11  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: counterValueForElementById() could be moved to Internals.
