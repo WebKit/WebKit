@@ -86,6 +86,7 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         if (!changed)
             break;
         dfg.resetExitStates();
+        performFixup(dfg);
     }
     performCSE(dfg, FixpointConverged);
 #if DFG_ENABLE(DEBUG_VERBOSE)

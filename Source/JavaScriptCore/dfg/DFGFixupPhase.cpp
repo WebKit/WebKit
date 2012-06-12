@@ -150,7 +150,8 @@ private:
         }
             
         case ValueToInt32: {
-            if (m_graph[node.child1()].shouldSpeculateNumber()) {
+            if (m_graph[node.child1()].shouldSpeculateNumber()
+                && node.mustGenerate()) {
                 node.clearFlags(NodeMustGenerate);
                 m_graph.deref(m_compileIndex);
             }

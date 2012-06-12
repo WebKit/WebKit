@@ -1,5 +1,26 @@
 2012-06-12  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should not ASSERT if you have a double use of a variable that is not revealed to be a double
+        until after CFG simplification
+        https://bugs.webkit.org/show_bug.cgi?id=88927
+        <rdar://problem/11513971>
+
+        Reviewed by Geoffrey Garen.
+        
+        Speculation fixup needs to run if simplification did things, because simplification can change
+        predictions - particularly if you had a control flow path that stored weird things into a
+        variable, but that path got axed by the simplifier.
+        
+        Running fixup in the fixpoint requires making it idempotent, which it previously wasn't. Only
+        one place needed to be changed, namely the un-MustGenerate-ion of ValueToInt32.
+
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+2012-06-12  Filip Pizlo  <fpizlo@apple.com>
+
         REGRESSION (r119779): Javascript TypeError: 'undefined' is not an object
         https://bugs.webkit.org/show_bug.cgi?id=88783
         <rdar://problem/11640299>
