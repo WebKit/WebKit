@@ -704,17 +704,8 @@ void FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad(const ResourceE
     }
 }
 
-void FrameLoaderClientBlackBerry::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState> formState)
+void FrameLoaderClientBlackBerry::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState>)
 {
-    if (!m_webPagePrivate->m_webSettings->isPrivateBrowsingEnabled()) {
-        if (m_webPagePrivate->m_webSettings->isFormAutofillEnabled())
-            m_webPagePrivate->m_autofillManager->saveTextFields(formState->form());
-#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
-        if (m_webPagePrivate->m_webSettings->isCredentialAutofillEnabled())
-            credentialManager().saveCredentialIfConfirmed(m_webPagePrivate, CredentialTransformData(formState->form()));
-#endif
-    }
-
     // FIXME: Stub.
     (m_frame->loader()->policyChecker()->*function)(PolicyUse);
 }
