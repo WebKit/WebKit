@@ -45,7 +45,7 @@ using namespace std;
 
 namespace WebCore {
 
-class SameSizeAsInlineFlowBox : public InlineBox {
+struct SameSizeAsInlineFlowBox : public InlineBox {
     void* pointers[5];
     uint32_t bitfields : 24;
 };

@@ -147,7 +147,6 @@ private:
     MediaControlChromiumEnclosureElement* m_enclosure;
 #if ENABLE(VIDEO_TRACK)
     MediaControlTextTrackContainerElement* m_textDisplayContainer;
-    MediaControlTextTrackDisplayElement* m_textTrackDisplay;
 #endif
 
     bool m_opaque;

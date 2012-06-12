@@ -178,9 +178,6 @@ private:
     // Set when the main thread is waiting on a readback.
     ReadbackRequest* m_readbackRequestOnImplThread;
 
-    // Set when the main thread is waiting on a finishAllRendering call.
-    CCCompletionEvent* m_finishAllRenderingCompletionEventOnImplThread;
-
     // Set when the main thread is waiting on a commit to complete.
     CCCompletionEvent* m_commitCompletionEventOnImplThread;
 

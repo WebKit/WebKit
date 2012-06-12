@@ -506,7 +506,6 @@ private:
     WebPluginContainerImpl* m_plugin;
     int m_pageCount;
     WebPrintParams m_printParams;
-    WebPrintScalingOption m_printScalingOption;
 
 };
 

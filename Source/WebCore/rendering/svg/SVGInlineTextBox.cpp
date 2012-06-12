@@ -44,7 +44,7 @@ using namespace std;
 
 namespace WebCore {
 
-class ExpectedSVGInlineTextBoxSize : public InlineTextBox {
+struct ExpectedSVGInlineTextBoxSize : public InlineTextBox {
     float float1;
     uint32_t bitfields : 5;
     void* pointer;

@@ -65,7 +65,6 @@ private:
 
     void timerFired(Timer<DeviceOrientationController>*);
 
-    Page* m_page;
     DeviceOrientationClient* m_client;
     typedef HashCountedSet<RefPtr<DOMWindow> > ListenersCountedSet;
     ListenersCountedSet m_listeners;

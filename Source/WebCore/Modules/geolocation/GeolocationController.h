@@ -67,7 +67,6 @@ public:
 private:
     GeolocationController(Page*, GeolocationClient*);
 
-    Page* m_page;
     GeolocationClient* m_client;
 
     RefPtr<GeolocationPosition> m_lastPosition;

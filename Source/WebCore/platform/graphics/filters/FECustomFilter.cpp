@@ -84,7 +84,6 @@ FECustomFilter::FECustomFilter(Filter* filter, HostWindow* hostWindow, PassRefPt
     , m_parameters(parameters)
     , m_meshRows(meshRows)
     , m_meshColumns(meshColumns)
-    , m_meshBoxType(meshBoxType)
     , m_meshType(meshType)
 {
 }

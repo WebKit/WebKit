@@ -28,8 +28,8 @@
 
 namespace WebCore {
 
-class ExpectedTextRunSize {
-    const void* pointer;;
+struct ExpectedTextRunSize {
+    const void* pointer;
     int integers[2];
     float float1;
 #if ENABLE(SVG)

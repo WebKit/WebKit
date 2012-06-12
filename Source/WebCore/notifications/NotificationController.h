@@ -51,7 +51,6 @@ public:
 private:
     NotificationController(Page*, NotificationClient*);
 
-    Page* m_page;
     NotificationClient* m_client;
 };
 

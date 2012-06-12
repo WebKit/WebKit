@@ -53,7 +53,7 @@ using namespace Unicode;
 
 namespace WebCore {
 
-class SameSizeAsRenderText : public RenderObject {
+struct SameSizeAsRenderText : public RenderObject {
     uint32_t bitfields : 16;
     float widths[4];
     String text;

@@ -1,3 +1,124 @@
+2012-06-11  Nico Weber  <thakis@chromium.org>
+
+        Remove unused member variables found by clang's -Wunused-private-field
+        https://bugs.webkit.org/show_bug.cgi?id=88812
+
+        Reviewed by Anders Carlsson.
+
+        Change a few |class|s that were used only to pin down the size of
+        existing classes to |struct|, so that clang doesn't warn about these
+        memvars.
+
+        No intended behavior change.
+
+        * Modules/geolocation/GeolocationController.cpp:
+        (WebCore::GeolocationController::GeolocationController):
+        * Modules/geolocation/GeolocationController.h:
+        (GeolocationController):
+        * Modules/webaudio/AudioContext.h:
+        (AudioContext):
+        * Modules/webaudio/AudioParamTimeline.h:
+        (AudioParamTimeline):
+        * accessibility/AccessibilityScrollbar.h:
+        (AccessibilityScrollbar):
+        * bindings/v8/ScriptScope.cpp:
+        (WebCore::ScriptScope::ScriptScope):
+        * bindings/v8/ScriptScope.h:
+        (ScriptScope):
+        * css/CSSValue.cpp:
+        * css/StylePropertySet.cpp:
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        * dom/DeviceOrientationController.h:
+        (DeviceOrientationController):
+        * editing/ReplaceSelectionCommand.cpp:
+        (ReplacementFragment):
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        * editing/TextIterator.h:
+        (SimplifiedBackwardsTextIterator):
+        (BackwardsCharacterIterator):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::HTMLFormCollection):
+        * html/HTMLFormCollection.h:
+        (HTMLFormCollection):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement):
+        * html/shadow/MediaControlElements.h:
+        (MediaControlFullscreenButtonElement):
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::MediaControlRootElementChromium):
+        * html/shadow/MediaControlRootElementChromium.h:
+        (MediaControlRootElementChromium):
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::LoadableTextTrack):
+        * html/track/LoadableTextTrack.h:
+        (LoadableTextTrack):
+        * inspector/CodeGeneratorInspector.py:
+        (Generator.go):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::InspectorCSSAgent):
+        * inspector/InspectorCSSAgent.h:
+        (InspectorCSSAgent):
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent):
+        * inspector/InspectorDOMDebuggerAgent.h:
+        (InspectorDOMDebuggerAgent):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::InspectorMemoryAgent):
+        * inspector/InspectorMemoryAgent.h:
+        (InspectorMemoryAgent):
+        * notifications/NotificationController.cpp:
+        (WebCore::NotificationController::NotificationController):
+        * notifications/NotificationController.h:
+        (NotificationController):
+        * page/animation/CompositeAnimation.h:
+        (WebCore::CompositeAnimation::CompositeAnimation):
+        (CompositeAnimation):
+        * platform/Length.cpp:
+        * platform/audio/ReverbConvolver.cpp:
+        (WebCore::ReverbConvolver::ReverbConvolver):
+        * platform/audio/ReverbConvolver.h:
+        (ReverbConvolver):
+        * platform/audio/ReverbConvolverStage.cpp:
+        (WebCore::ReverbConvolverStage::ReverbConvolverStage):
+        * platform/audio/ReverbConvolverStage.h:
+        (ReverbConvolverStage):
+        * platform/graphics/TextRun.cpp:
+        (ExpectedTextRunSize):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::FECustomFilter):
+        * platform/graphics/filters/FECustomFilter.h:
+        (FECustomFilter):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (JPEGImageReader):
+        * platform/leveldb/LevelDBTransaction.cpp:
+        (WebCore::LevelDBTransaction::TreeIterator::next):
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::TextCodecICU):
+        * platform/text/TextCodecICU.h:
+        (TextCodecICU):
+        * rendering/InlineBox.cpp:
+        * rendering/InlineFlowBox.cpp:
+        * rendering/RenderText.cpp:
+        * rendering/style/KeyframeList.h:
+        (WebCore::KeyframeList::KeyframeList):
+        (KeyframeList):
+        * rendering/svg/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::RenderSVGTextPath):
+        * rendering/svg/RenderSVGTextPath.h:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        * svg/SVGPathByteStreamSource.cpp:
+        * svg/SVGPathByteStreamSource.h:
+        * svg/SVGPathTraversalStateBuilder.cpp:
+        (WebCore::SVGPathTraversalStateBuilder::SVGPathTraversalStateBuilder):
+        * svg/SVGPathTraversalStateBuilder.h:
+        (SVGPathTraversalStateBuilder):
+        * xml/XSLStyleSheet.h:
+
 2012-06-11  Kinuko Yasuda  <kinuko@chromium.org>
 
         XHR returns size==0 Blob

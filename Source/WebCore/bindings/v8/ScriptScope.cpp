@@ -40,7 +40,6 @@ namespace WebCore {
 ScriptScope::ScriptScope(ScriptState* scriptState, bool reportExceptions)
     : m_context(scriptState->context())
     , m_scope(m_context)
-    , m_scriptState(scriptState)
 {
     m_exceptionCatcher.SetVerbose(reportExceptions);
     ASSERT(!m_context.IsEmpty());

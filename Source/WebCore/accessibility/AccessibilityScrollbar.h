@@ -61,7 +61,6 @@ private:
     virtual float valueForRange() const;
 
     RefPtr<Scrollbar> m_scrollbar;
-    AccessibilityOrientation m_orientation;
 };
 
 } // namespace WebCore

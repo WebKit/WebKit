@@ -1,3 +1,31 @@
+2012-06-11  Nico Weber  <thakis@chromium.org>
+
+        Remove unused member variables found by clang's -Wunused-private-field
+        https://bugs.webkit.org/show_bug.cgi?id=88812
+
+        Reviewed by Anders Carlsson.
+
+        * src/AudioDestinationChromium.cpp:
+        (WebCore::AudioDestinationChromium::AudioDestinationChromium):
+        * src/AudioDestinationChromium.h:
+        (AudioDestinationChromium):
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::InspectorFrontendClientImpl):
+        * src/InspectorFrontendClientImpl.h:
+        (InspectorFrontendClientImpl):
+        * src/WebFrameImpl.cpp:
+        (ChromePluginPrintContext):
+        * src/WebInputEvent.cpp:
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        (WebCore::WorkerAsyncFileSystemChromium::createWorkerFileSystemCallbacksBridge):
+        * src/WorkerAsyncFileWriterChromium.cpp:
+        (WebCore::WorkerAsyncFileWriterChromium::WorkerAsyncFileWriterChromium):
+        * src/WorkerAsyncFileWriterChromium.h:
+        (WorkerAsyncFileWriterChromium):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestSetVisible::CCLayerTreeHostTestSetVisible):
+        (CCLayerTreeHostTestSetVisible):
+
 2012-06-11  Vincent Scheib  <scheib@chromium.org>
 
         Consolidate Pointer Lock runtime enabled flags to just one.

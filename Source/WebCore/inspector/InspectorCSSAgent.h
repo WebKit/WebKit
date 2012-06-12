@@ -170,8 +170,6 @@ private:
     unsigned m_lastPseudoState;
 
     int m_lastStyleSheetId;
-    int m_lastRuleId;
-    int m_lastStyleId;
 
     OwnPtr<SelectorProfile> m_currentSelectorProfile;
 };

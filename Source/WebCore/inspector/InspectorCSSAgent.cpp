@@ -463,8 +463,6 @@ InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, I
     , m_domAgent(domAgent)
     , m_lastPseudoState(0)
     , m_lastStyleSheetId(1)
-    , m_lastRuleId(1)
-    , m_lastStyleId(1)
 {
     m_domAgent->setDOMListener(this);
     m_instrumentingAgents->setInspectorCSSAgent(this);

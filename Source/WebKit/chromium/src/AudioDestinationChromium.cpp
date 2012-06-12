@@ -58,8 +58,7 @@ PassOwnPtr<AudioDestination> AudioDestination::create(AudioSourceProvider& provi
 }
 
 AudioDestinationChromium::AudioDestinationChromium(AudioSourceProvider& provider, float sampleRate)
-    : m_provider(provider)
-    , m_renderBus(numberOfChannels, renderBufferSize, false)
+    : m_renderBus(numberOfChannels, renderBufferSize, false)
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
 {

@@ -93,7 +93,6 @@ private:
         return FloatPoint(x, y);
     }
 
-    SVGPathByteStream* m_stream;
     SVGPathByteStream::DataIterator m_streamCurrent;
     SVGPathByteStream::DataIterator m_streamEnd;
 };

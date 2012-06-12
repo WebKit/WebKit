@@ -75,8 +75,6 @@ private:
 
     AudioFloatArray m_temporaryBuffer;
 
-    size_t m_impulseResponseLength;
-
     bool m_directMode;
     OwnPtr<AudioFloatArray> m_directKernel;
     OwnPtr<DirectConvolver> m_directConvolver;

@@ -93,7 +93,6 @@ private:
 
     RefPtr<Document> m_document;
     RefPtr<DocumentFragment> m_fragment;
-    bool m_matchStyle;
     bool m_hasInterchangeNewlineAtStart;
     bool m_hasInterchangeNewlineAtEnd;
 };
@@ -135,10 +134,9 @@ static Position positionAvoidingPrecedingNodes(Position pos)
     return pos;
 }
 
-ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* fragment, bool matchStyle, const VisibleSelection& selection)
+ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* fragment, bool, const VisibleSelection& selection)
     : m_document(document),
       m_fragment(fragment),
-      m_matchStyle(matchStyle), 
       m_hasInterchangeNewlineAtStart(false), 
       m_hasInterchangeNewlineAtEnd(false)
 {

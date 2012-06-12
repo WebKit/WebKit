@@ -199,7 +199,6 @@ void TextCodecICU::registerCodecs(TextCodecRegistrar registrar)
 
 TextCodecICU::TextCodecICU(const TextEncoding& encoding)
     : m_encoding(encoding)
-    , m_numBufferedBytes(0)
     , m_converterICU(0)
     , m_needsGBKFallbacks(false)
 {

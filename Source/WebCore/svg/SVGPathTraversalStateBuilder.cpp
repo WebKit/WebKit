@@ -29,7 +29,6 @@ namespace WebCore {
 
 SVGPathTraversalStateBuilder::SVGPathTraversalStateBuilder()
     : m_traversalState(0)
-    , m_desiredLength(0)
 {
 }
 

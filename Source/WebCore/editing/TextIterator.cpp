@@ -1066,8 +1066,7 @@ Node* TextIterator::node() const
 // --------
 
 SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator()
-    : m_behavior(TextIteratorDefaultBehavior)
-    , m_node(0)
+    : m_node(0)
     , m_offset(0)
     , m_handledNode(false)
     , m_handledChildren(false)
@@ -1091,8 +1090,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator()
 }
 
 SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r, TextIteratorBehavior behavior)
-    : m_behavior(behavior)
-    , m_node(0)
+    : m_node(0)
     , m_offset(0)
     , m_handledNode(false)
     , m_handledChildren(false)
@@ -1113,7 +1111,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r,
     , m_stopsOnFormControls(behavior & TextIteratorStopsOnFormControls)
     , m_shouldStop(false)
 {
-    ASSERT(m_behavior == TextIteratorDefaultBehavior || m_behavior == TextIteratorStopsOnFormControls);
+    ASSERT(behavior == TextIteratorDefaultBehavior || behavior == TextIteratorStopsOnFormControls);
 
     if (!r)
         return;

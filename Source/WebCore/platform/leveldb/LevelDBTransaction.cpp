@@ -192,6 +192,7 @@ void LevelDBTransaction::TreeIterator::next()
     ++m_iterator;
     if (isValid()) {
         ASSERT(m_transaction->m_comparator->compare((*m_iterator)->key, m_key) > 0);
+        (void)m_transaction;
         m_key = (*m_iterator)->key;
     }
 }

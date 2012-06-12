@@ -33,9 +33,8 @@
 
 namespace WebCore {
 
-GeolocationController::GeolocationController(Page* page, GeolocationClient* client)
-    : m_page(page)
-    , m_client(client)
+GeolocationController::GeolocationController(Page*, GeolocationClient* client)
+    : m_client(client)
 {
 }
 

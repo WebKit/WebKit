@@ -119,7 +119,6 @@ private:
 
     Vector<OwnPtr<XSLImportRule> > m_children;
 
-    Document* m_ownerDocument;
     bool m_embedded;
     bool m_processed;
 

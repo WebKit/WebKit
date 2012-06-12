@@ -37,7 +37,7 @@ using namespace std;
 
 namespace WebCore {
 
-class SameSizeAsInlineBox {
+struct SameSizeAsInlineBox {
     virtual ~SameSizeAsInlineBox() { }
     void* a[4];
     FloatPoint b;

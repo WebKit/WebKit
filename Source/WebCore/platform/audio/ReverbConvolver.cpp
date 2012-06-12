@@ -63,7 +63,6 @@ ReverbConvolver::ReverbConvolver(AudioChannel* impulseResponse, size_t renderSli
     : m_impulseResponseLength(impulseResponse->length())
     , m_accumulationBuffer(impulseResponse->length() + renderSliceSize)
     , m_inputBuffer(InputBufferSize)
-    , m_renderSliceSize(renderSliceSize)
     , m_minFFTSize(MinFFTSize) // First stage will have this size - successive stages will double in size each time
     , m_maxFFTSize(maxFFTSize) // until we hit m_maxFFTSize
     , m_useBackgroundThreads(useBackgroundThreads)

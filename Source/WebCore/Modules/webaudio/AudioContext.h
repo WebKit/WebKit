@@ -256,7 +256,6 @@ private:
     
     bool m_isInitialized;
     bool m_isAudioThreadFinished;
-    bool m_isAudioThreadShutdown;
 
     Document* m_document;
 

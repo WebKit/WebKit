@@ -217,7 +217,6 @@ private:
     void emitCharacter(UChar, Node*, int startOffset, int endOffset);
     bool advanceRespectingRange(Node*);
 
-    TextIteratorBehavior m_behavior;
     // Current position, not necessarily of the text being returned, but position
     // as we walk through the DOM tree.
     Node* m_node;
@@ -299,7 +298,6 @@ public:
     PassRefPtr<Range> range() const;
 
 private:
-    TextIteratorBehavior m_behavior;
     int m_offset;
     int m_runOffset;
     bool m_atBreak;

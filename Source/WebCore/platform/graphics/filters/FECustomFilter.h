@@ -97,7 +97,6 @@ private:
 
     unsigned m_meshRows;
     unsigned m_meshColumns;
-    CustomFilterOperation::MeshBoxType m_meshBoxType;
     CustomFilterOperation::MeshType m_meshType;
 };
 

@@ -32,9 +32,8 @@
 
 namespace WebCore {
 
-DeviceOrientationController::DeviceOrientationController(Page* page, DeviceOrientationClient* client)
-    : m_page(page)
-    , m_client(client)
+DeviceOrientationController::DeviceOrientationController(Page*, DeviceOrientationClient* client)
+    : m_client(client)
     , m_timer(this, &DeviceOrientationController::timerFired)
 {
     ASSERT(m_client);

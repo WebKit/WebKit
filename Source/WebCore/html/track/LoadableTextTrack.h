@@ -76,7 +76,6 @@ private:
     Timer<LoadableTextTrack> m_loadTimer;
     OwnPtr<TextTrackLoader> m_loader;
     KURL m_url;
-    bool m_isDefault;
 };
 } // namespace WebCore
 

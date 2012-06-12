@@ -973,9 +973,8 @@ const AtomicString& MediaControlFullscreenVolumeSliderElement::shadowPseudoId() 
 
 // ----------------------------
 
-inline MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(Document* document, MediaControls* controls)
+inline MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(Document* document, MediaControls*)
     : MediaControlInputElement(document, MediaEnterFullscreenButton)
-    , m_controls(controls)
 {
 }
 

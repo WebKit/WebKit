@@ -58,8 +58,6 @@ namespace WebCore {
             const char* sourceLimit, int32_t* offsets, bool flush, UErrorCode& err);
 
         TextEncoding m_encoding;
-        unsigned m_numBufferedBytes;
-        unsigned char m_bufferedBytes[16]; // bigger than any single multi-byte character
         mutable UConverter* m_converterICU;
         mutable bool m_needsGBKFallbacks;
     };

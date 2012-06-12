@@ -410,8 +410,6 @@ private:
     MediaControlFullscreenButtonElement(Document*, MediaControls*);
 
     virtual const AtomicString& shadowPseudoId() const;
-
-    MediaControls* m_controls;
 };
 
 // ----------------------------

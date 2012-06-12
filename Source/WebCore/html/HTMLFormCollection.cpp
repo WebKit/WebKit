@@ -38,7 +38,6 @@ using namespace HTMLNames;
 
 HTMLFormCollection::HTMLFormCollection(HTMLElement* base)
     : HTMLCollection(base, FormControls)
-    , currentPos(0)
 {
 }
 

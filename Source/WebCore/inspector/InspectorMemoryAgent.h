@@ -65,7 +65,6 @@ public:
 private:
     InspectorMemoryAgent(InstrumentingAgents*, InspectorState*, Page*, InspectorDOMAgent* domAgent);
     Page* m_page;
-    InspectorDOMAgent* m_domAgent;
 };
 
 } // namespace WebCore

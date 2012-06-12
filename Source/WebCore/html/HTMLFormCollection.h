@@ -57,8 +57,6 @@ private:
     const Vector<FormAssociatedElement*>& formControlElements() const;
     const Vector<HTMLImageElement*>& formImageElements() const;
     unsigned numberOfFormControlElements() const;
-
-    mutable int currentPos;
 };
 
 } //namespace

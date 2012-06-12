@@ -86,7 +86,6 @@ public:
 private:
     CompositeAnimation(AnimationControllerPrivate* animationController)
         : m_animationController(animationController)
-        , m_numStyleAvailableWaiters(0)
         , m_suspended(false)
     {
     }
@@ -101,7 +100,6 @@ private:
     CSSPropertyTransitionsMap m_transitions;
     AnimationNameMap m_keyframeAnimations;
     Vector<AtomicStringImpl*> m_keyframeAnimationOrderMap;
-    unsigned m_numStyleAvailableWaiters;
     bool m_suspended;
 };
 

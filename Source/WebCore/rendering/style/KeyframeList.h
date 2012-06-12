@@ -62,9 +62,8 @@ private:
 
 class KeyframeList {
 public:
-    KeyframeList(RenderObject* renderer, const AtomicString& animationName)
+    KeyframeList(RenderObject*, const AtomicString& animationName)
         : m_animationName(animationName)
-        , m_renderer(renderer)
     {
         insert(KeyframeValue(0, 0));
         insert(KeyframeValue(1, 0));
@@ -92,7 +91,6 @@ private:
     AtomicString m_animationName;
     Vector<KeyframeValue> m_keyframes; // Kept sorted by key.
     HashSet<CSSPropertyID> m_properties; // The properties being animated.
-    RenderObject* m_renderer;
 };
 
 } // namespace WebCore

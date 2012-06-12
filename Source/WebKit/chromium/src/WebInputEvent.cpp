@@ -43,27 +43,27 @@ using namespace WebCore;
 
 namespace WebKit {
 
-class SameSizeAsWebInputEvent {
+struct SameSizeAsWebInputEvent {
     int inputData[5];
 };
 
-class SameSizeAsWebKeyboardEvent : public SameSizeAsWebInputEvent {
+struct SameSizeAsWebKeyboardEvent : public SameSizeAsWebInputEvent {
     int keyboardData[12];
 };
 
-class SameSizeAsWebMouseEvent : public SameSizeAsWebInputEvent {
+struct SameSizeAsWebMouseEvent : public SameSizeAsWebInputEvent {
     int mouseData[10];
 };
 
-class SameSizeAsWebMouseWheelEvent : public SameSizeAsWebMouseEvent {
+struct SameSizeAsWebMouseWheelEvent : public SameSizeAsWebMouseEvent {
     int mousewheelData[8];
 };
 
-class SameSizeAsWebGestureEvent : public SameSizeAsWebInputEvent {
+struct SameSizeAsWebGestureEvent : public SameSizeAsWebInputEvent {
     int gestureData[6];
 };
 
-class SameSizeAsWebTouchEvent : public SameSizeAsWebInputEvent {
+struct SameSizeAsWebTouchEvent : public SameSizeAsWebInputEvent {
     WebTouchPoint touchPoints[3 * WebTouchEvent::touchesLengthCap];
     int touchData[3];
 };

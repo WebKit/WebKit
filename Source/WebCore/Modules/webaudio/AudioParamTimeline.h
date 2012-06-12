@@ -41,8 +41,6 @@ namespace WebCore {
 class AudioParamTimeline {
 public:
     AudioParamTimeline()
-        : m_currentEventIndex(0)
-        , m_value(0)
     {
     }
 
@@ -108,8 +106,6 @@ private:
     float valuesForTimeRangeImpl(float startTime, float endTime, float defaultValue, float* values, unsigned numberOfValues, float sampleRate, float controlRate);
 
     Vector<ParamEvent> m_events;
-    unsigned m_currentEventIndex;
-    float m_value;
 
     Mutex m_eventsLock;
 };

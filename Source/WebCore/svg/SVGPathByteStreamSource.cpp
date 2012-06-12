@@ -25,7 +25,6 @@
 namespace WebCore {
 
 SVGPathByteStreamSource::SVGPathByteStreamSource(SVGPathByteStream* stream)
-    : m_stream(stream)
 {
     ASSERT(stream);
     m_streamCurrent = stream->begin();

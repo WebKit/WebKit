@@ -48,7 +48,6 @@ namespace WebCore {
         v8::Local<v8::Context> m_context;
         v8::Context::Scope m_scope;
         v8::TryCatch m_exceptionCatcher;
-        ScriptState* m_scriptState;
     };
 
 }

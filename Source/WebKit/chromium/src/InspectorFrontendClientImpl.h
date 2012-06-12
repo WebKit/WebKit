@@ -79,7 +79,6 @@ public:
 private:
     WebCore::Page* m_frontendPage;
     WebDevToolsFrontendClient* m_client;
-    WebDevToolsFrontendImpl* m_frontend;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
 };
 

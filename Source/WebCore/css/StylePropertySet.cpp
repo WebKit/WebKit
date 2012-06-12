@@ -1066,7 +1066,7 @@ unsigned StylePropertySet::averageSizeInBytes()
 }
 
 // See the function above if you need to update this.
-class SameSizeAsStylePropertySet : public RefCounted<SameSizeAsStylePropertySet> {
+struct SameSizeAsStylePropertySet : public RefCounted<SameSizeAsStylePropertySet> {
     unsigned bitfield;
     void* properties;
 };

@@ -59,7 +59,6 @@ private:
     virtual void arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) { ASSERT_NOT_REACHED(); }
 
     PathTraversalState* m_traversalState;
-    float m_desiredLength;
 };
 
 } // namespace WebCore

@@ -80,7 +80,6 @@ MediaControlRootElementChromium::MediaControlRootElementChromium(Document* docum
     , m_enclosure(0)
 #if ENABLE(VIDEO_TRACK)
     , m_textDisplayContainer(0)
-    , m_textTrackDisplay(0)
 #endif
     , m_opaque(true)
     , m_isMouseOverControls(false)

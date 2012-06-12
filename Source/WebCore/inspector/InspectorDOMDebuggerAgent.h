@@ -103,7 +103,6 @@ private:
 
     InspectorDOMAgent* m_domAgent;
     InspectorDebuggerAgent* m_debuggerAgent;
-    InspectorAgent* m_inspectorAgent;
     HashMap<Node*, uint32_t> m_domBreakpoints;
 };
 

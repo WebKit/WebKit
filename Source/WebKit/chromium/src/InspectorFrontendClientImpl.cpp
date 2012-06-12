@@ -50,7 +50,6 @@ namespace WebKit {
 InspectorFrontendClientImpl::InspectorFrontendClientImpl(Page* frontendPage, WebDevToolsFrontendClient* client, WebDevToolsFrontendImpl* frontend)
     : m_frontendPage(frontendPage)
     , m_client(client)
-    , m_frontend(frontend)
 {
 }
 

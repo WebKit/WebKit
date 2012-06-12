@@ -58,7 +58,6 @@ public:
     virtual void render(const WebKit::WebVector<float*>& audioData, size_t numberOfFrames);
 
 private:
-    AudioSourceProvider& m_provider;
     AudioBus m_renderBus;
     float m_sampleRate;
     bool m_isPlaying;

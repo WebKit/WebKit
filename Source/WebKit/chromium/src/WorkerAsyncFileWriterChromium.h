@@ -79,7 +79,6 @@ private:
 
     WorkerAsyncFileWriterChromium(WebKit::WebFileSystem*, const WebKit::WebURL& path, WorkerContext*, AsyncFileWriterClient*, WriterType);
     RefPtr<WebKit::WorkerFileWriterCallbacksBridge> m_bridge;
-    WriterType m_type;
 };
 
 } // namespace

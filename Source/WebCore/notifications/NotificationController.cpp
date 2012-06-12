@@ -34,8 +34,7 @@
 namespace WebCore {
 
 NotificationController::NotificationController(Page* page, NotificationClient* client)
-    : m_page(page)
-    , m_client(client)
+    : m_client(client)
 {
 }
 
