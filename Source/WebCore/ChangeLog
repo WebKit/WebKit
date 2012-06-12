@@ -1,3 +1,17 @@
+2012-06-12  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Support !ENABLE(VIDEO) builds with horizontally layed out video controls.
+        https://bugs.webkit.org/show_bug.cgi?id=88881
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests as this is a regression from WK87835.
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::hasVerticalAppearance):
+        Ifdef out video related functionality, since usesVerticalVolumeSlider
+        does not exist in that case.
+
 2012-06-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: allow clearing revision history.
