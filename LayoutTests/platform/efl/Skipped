@@ -1200,3 +1200,6 @@ fast/profiler/dead-time.html
 # http://webkit.org/b/35981
 # Needs a text rebaseline: 30px height difference.
 fast/block/basic/fieldset-stretch-to-legend.html
+
+# Fail until ENABLE_XHR_RESPONSE_BLOB is enabled.
+http/tests/xmlhttprequest/response-blob-size.html

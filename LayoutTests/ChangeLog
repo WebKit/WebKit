@@ -1,3 +1,15 @@
+2012-06-12  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed; skipping the new XHR blob test on the platforms where XHR_RESPONSE_BLOB is not enabled.
+        http/tests/xmlhttprequest/response-blob-size.html
+
+        * platform/efl/Skipped:
+        * platform/gtk/TestExpectations:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-06-11  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: counterValueForElementById() could be moved to Internals.

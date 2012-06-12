@@ -2371,3 +2371,6 @@ svg/css/composite-shadow-example.html
 svg/css/composite-shadow-text.svg
 svg/css/composite-shadow-with-opacity.html
 svg/css/css-box-min-width.html
+
+# Fail until ENABLE_XHR_RESPONSE_BLOB is enabled.
+http/tests/xmlhttprequest/response-blob-size.html
