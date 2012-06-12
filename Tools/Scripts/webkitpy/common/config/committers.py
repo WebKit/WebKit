@@ -160,6 +160,7 @@ contributors_who_are_not_committers = [
     Contributor("Tom Hudson", "tomhudson@google.com"),
     Contributor("WebKit Review Bot", "webkit.review.bot@gmail.com", "sheriff-bot"),
     Contributor("Wyatt Carss", ["wcarss@chromium.org", "wcarss@google.com"], "wcarss"),
+    Contributor("Zeev Lieber", "zlieber@chromium.org"),
     Contributor("Zoltan Arvai", "zarvai@inf.u-szeged.hu", "azbest_hu"),
     Contributor("Zsolt Feher", "feherzs@inf.u-szeged.hu", "Smith"),
 ]
