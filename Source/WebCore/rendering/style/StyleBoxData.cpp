@@ -27,6 +27,14 @@
 
 namespace WebCore {
 
+struct SameSizeAsStyleBoxData : public RefCounted<SameSizeAsStyleBoxData> {
+    Length length[7];
+    int m_zIndex;
+    uint32_t bitfields;
+};
+
+COMPILE_ASSERT(sizeof(StyleBoxData) == sizeof(SameSizeAsStyleBoxData), StyleBoxData_should_not_grow);
+
 StyleBoxData::StyleBoxData()
     : m_minWidth(RenderStyle::initialMinSize())
     , m_maxWidth(RenderStyle::initialMaxSize())

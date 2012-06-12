@@ -1,3 +1,21 @@
+2012-06-12  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Fix packing in StyleBoxData for Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=88858
+
+        Reviewed by Tony Chang.
+
+        MSVC doesn't pack bitfields if the types are mixed.
+        We can safely change the bool type to an unsigned so
+        the packing will happen. I have added a compile assert
+        for future regressions.
+
+        No new tests : we should not see any regressions.
+
+        * rendering/style/StyleBoxData.h:
+        * rendering/style/StyleBoxData.cpp:
+        (StyleBoxData):
+
 2012-06-12  Adrienne Walker  <enne@google.com>
 
         [chromium] Paint scrollbars on WebKit thread and composite those textures

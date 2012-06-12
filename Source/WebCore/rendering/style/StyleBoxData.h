@@ -80,7 +80,7 @@ private:
     Length m_verticalAlign;
 
     int m_zIndex;
-    bool m_hasAutoZIndex : 1;
+    unsigned m_hasAutoZIndex : 1;
     unsigned m_boxSizing : 1; // EBoxSizing
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
     unsigned m_boxDecorationBreak : 1; // EBoxDecorationBreak
