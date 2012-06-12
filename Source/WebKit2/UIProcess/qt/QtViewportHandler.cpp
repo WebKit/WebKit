@@ -520,6 +520,7 @@ QRectF QtViewportHandler::initialRect() const
     ASSERT(m_rawAttributes.initialScale > 0);
 
     qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(m_rawAttributes.initialScale));
+    const QRectF viewportRect = m_viewportItem->boundingRect();
     QRectF endVisibleContentRect(QPointF(0, 0), viewportRect.size() / endItemScale);
 
     return endVisibleContentRect;

@@ -1,3 +1,10 @@
+2012-06-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed build fix.
+
+        * UIProcess/qt/QtViewportHandler.cpp:
+        (WebKit::QtViewportHandler::initialRect):
+
 2012-06-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Using extrernal ICU library on case unsensitive drives will not work
