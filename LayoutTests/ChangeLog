@@ -1,5 +1,12 @@
 2012-06-11  Dan Bernstein  <mitz@apple.com>
 
+        Updated expected results for this test after r120017.
+
+        * platform/mac/fast/block/basic/fieldset-stretch-to-legend-expected.png:
+        * platform/mac/fast/block/basic/fieldset-stretch-to-legend-expected.txt:
+
+2012-06-11  Dan Bernstein  <mitz@apple.com>
+
         Added http/tests/security/mixedContent/blob-url-in-iframe.html back to the Mac skip list, as
         it is still failing intermittently. <http://webkit.org/b/88736> will track this.
 
