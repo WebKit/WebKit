@@ -143,8 +143,9 @@ public:
 private:
     CCLayerIterator(const LayerList* renderSurfaceLayerList, bool start)
         : m_renderSurfaceLayerList(renderSurfaceLayerList)
+        , m_targetRenderSurfaceLayerIndex(0)
     {
-        if (start && !renderSurfaceLayerList->isEmpty())
+        if (start && !renderSurfaceLayerList->isEmpty() && targetRenderSurface())
             m_actions.begin(*this);
         else
             m_actions.end(*this);

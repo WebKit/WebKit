@@ -1,3 +1,19 @@
+2012-06-12  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Don't crash in CCLayerIterator if the root layer doesn't have a render surface
+        https://bugs.webkit.org/show_bug.cgi?id=88886
+
+        Reviewed by James Robinson.
+
+        If we are iterating over a render render surface layer list where the
+        root layer does not have a render surface, fail gracefully instead of
+        crashing.
+
+        Tests: CCLayerIteratorTest.{emptyTree,rootLayerWithoutRenderSurface}
+
+        * platform/graphics/chromium/cc/CCLayerIterator.h:
+        (WebCore::CCLayerIterator::CCLayerIterator):
+
 2012-06-06  Ojan Vafai  <ojan@chromium.org>
 
         Change default for flex-grow back to 0

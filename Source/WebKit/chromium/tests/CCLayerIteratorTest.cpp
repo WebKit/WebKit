@@ -82,6 +82,8 @@ void resetCounts(Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList)
         renderSurfaceLayer->m_countRepresentingContributingSurface = -1;
         renderSurfaceLayer->m_countRepresentingItself = -1;
 
+        if (!renderSurface)
+            continue;
         for (unsigned layerIndex = 0; layerIndex < renderSurface->layerList().size(); ++layerIndex) {
             TestLayerChromium* layer = static_cast<TestLayerChromium*>(renderSurface->layerList()[layerIndex].get());
 
@@ -120,6 +122,14 @@ void iterateBackToFront(Vector<RefPtr<LayerChromium> >* renderSurfaceLayerList)
         if (it.representsItself())
             layer->m_countRepresentingItself = count;
     }
+}
+
+TEST(CCLayerIteratorTest, emptyTree)
+{
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+
+    iterateBackToFront(&renderSurfaceLayerList);
+    iterateFrontToBack(&renderSurfaceLayerList);
 }
 
 TEST(CCLayerIteratorTest, simpleTree)
@@ -275,6 +285,19 @@ TEST(CCLayerIteratorTest, complexTreeMultiSurface)
     EXPECT_COUNT(root23, 3, 4, 2);
     EXPECT_COUNT(root231, -1, -1, 1);
     EXPECT_COUNT(root3, -1, -1, 0);
+}
+
+TEST(CCLayerIteratorTest, rootLayerWithoutRenderSurface)
+{
+    RefPtr<TestLayerChromium> rootLayer = TestLayerChromium::create();
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    renderSurfaceLayerList.append(rootLayer.get());
+
+    iterateBackToFront(&renderSurfaceLayerList);
+    EXPECT_COUNT(rootLayer, -1, -1, -1);
+
+    iterateFrontToBack(&renderSurfaceLayerList);
+    EXPECT_COUNT(rootLayer, -1, -1, -1);
 }
 
 } // namespace
