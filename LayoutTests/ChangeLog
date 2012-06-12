@@ -1,3 +1,9 @@
+2012-06-12  Ojan Vafai  <ojan@chromium.org>
+
+        Update some tests to better match actual results on the bots.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-12  Mike West  <mkwst@chromium.org>
 
         Make document.documentURI readonly from JavaScript
