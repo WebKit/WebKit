@@ -2940,6 +2940,7 @@ BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order.html = MISSI
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order2.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-nonexistence-form-id.html = MISSING PASS
 BUGWK72039 DEBUG : http/tests/multipart/policy-ignore-crash.php = MISSING PASS
+BUGWK72039 MAC : http/tests/loading/empty-subframe.html = MISSING PASS
 BUGWK78620 : fast/forms/formaction-attribute.html = MISSING PASS
 BUGWK78620 LINUX : fast/forms/formmethod-attribute-button-html.html = MISSING PASS
 BUGWK78620 LINUX : fast/forms/formmethod-attribute-input-html.html = MISSING PASS
@@ -3705,6 +3706,8 @@ BUGLEVIW LEOPARD LION WIN LINUX : fast/borders/border-antialiasing.html = PASS F
 BUGLEVIW LEOPARD LION WIN LINUX : fast/multicol/nested-columns.html = PASS FAIL
 BUGLEVIW LEOPARD LION WIN LINUX : fast/multicol/vertical-lr/nested-columns.html = PASS FAIL
 BUGLEVIW LEOPARD LION WIN LINUX : fast/multicol/vertical-rl/nested-columns.html = PASS FAIL
+
+BUGWK88900 MAC : http/tests/loading/embed-image-load-outlives-gc-without-crashing.html = TEXT
 
 BUGCR131187 : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGCR131187 : fast/canvas/canvas-currentColor.html = TEXT
