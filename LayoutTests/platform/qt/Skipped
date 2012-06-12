@@ -2509,3 +2509,7 @@ fast/frames/flattening/iframe-tiny.html
 # most likely related to https://bugs.webkit.org/show_bug.cgi?id=84102
 fast/profiler/stop-profiling-after-setTimeout.html
 fast/profiler/dead-time.html
+
+# http://webkit.org/b/35981
+# Needs a text rebaseline: 30px height difference.
+fast/block/basic/fieldset-stretch-to-legend.html

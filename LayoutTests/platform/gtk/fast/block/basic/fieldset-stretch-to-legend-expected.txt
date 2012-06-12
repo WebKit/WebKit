@@ -1,8 +1,8 @@
-layer at (0,0) size 785x859
+layer at (0,0) size 785x889
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x859
-  RenderBlock {HTML} at (0,0) size 785x859
-    RenderBody {BODY} at (8,8) size 769x841
+layer at (0,0) size 785x889
+  RenderBlock {HTML} at (0,0) size 785x889
+    RenderBody {BODY} at (8,8) size 769x871
       RenderFieldSet {FIELDSET} at (2,0) size 140x35 [border: (8px double #000000)]
         RenderBlock {LEGEND} at (20,0) size 54x12 [bgcolor=#0080004C]
       RenderFieldSet {FIELDSET} at (2,45) size 140x35 [border: (8px double #000000)]
@@ -27,34 +27,34 @@ layer at (0,0) size 785x859
         RenderBlock {LEGEND} at (140,0) size 54x12 [bgcolor=#0080004C]
       RenderFieldSet {FIELDSET} at (2,495) size 184x29 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (14,0) size 156x12 [border: (1px solid #0000FF)]
-      RenderFieldSet {FIELDSET} at (2,534) size 184x29 [border: (2px groove #C0C0C0)]
+      RenderFieldSet {FIELDSET} at (2,534) size 184x59 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (44,0) size 96x12 [border: (1px solid #0000FF)]
-      RenderBlock (anonymous) at (0,773) size 769x39
+      RenderBlock (anonymous) at (0,803) size 769x39
         RenderFieldSet {FIELDSET} at (2,0) size 184x29 [border: (2px groove #C0C0C0)]
           RenderBlock {LEGEND} at (14,0) size 156x12 [border: (1px solid #0000FF)]
         RenderText {#text} at (0,0) size 0x0
-      RenderFieldSet {FIELDSET} at (2,812) size 128x29 [border: (2px groove #C0C0C0)]
+      RenderFieldSet {FIELDSET} at (2,842) size 128x29 [border: (2px groove #C0C0C0)]
         RenderBlock {LEGEND} at (14,0) size 156x12 [border: (1px solid #0000FF)]
-layer at (8,581) size 100x40
-  RenderBlock (relative positioned) {DIV} at (0,573) size 100x40
+layer at (8,611) size 100x40
+  RenderBlock (relative positioned) {DIV} at (0,603) size 100x40
     RenderFieldSet {FIELDSET} at (2,0) size 184x29 [border: (2px groove #C0C0C0)]
       RenderBlock {LEGEND} at (14,0) size 156x12 [border: (1px solid #0000FF)]
-layer at (8,621) size 300x40
-  RenderBlock (relative positioned) {DIV} at (0,613) size 300x40
+layer at (8,651) size 300x40
+  RenderBlock (relative positioned) {DIV} at (0,643) size 300x40
     RenderFieldSet {FIELDSET} at (58,0) size 184x29 [border: (2px groove #C0C0C0)]
       RenderBlock {LEGEND} at (14,0) size 156x12 [border: (1px solid #0000FF)]
-layer at (8,661) size 100x40
-  RenderBlock (relative positioned) {DIV} at (0,653) size 100x40
-layer at (10,661) size 184x29
+layer at (8,691) size 100x40
+  RenderBlock (relative positioned) {DIV} at (0,683) size 100x40
+layer at (10,691) size 184x29
   RenderFieldSet {FIELDSET} at (2,0) size 184x29 [border: (2px groove #C0C0C0)]
     RenderBlock {LEGEND} at (14,0) size 156x12 [border: (1px solid #0000FF)]
-layer at (8,701) size 769x40
-  RenderBlock (relative positioned) {DIV} at (0,693) size 769x40
-layer at (10,701) size 184x29
+layer at (8,731) size 769x40
+  RenderBlock (relative positioned) {DIV} at (0,723) size 769x40
+layer at (10,731) size 184x29
   RenderFieldSet {FIELDSET} at (2,0) size 184x29 [border: (2px groove #C0C0C0)]
     RenderBlock {LEGEND} at (14,0) size 156x12 [border: (1px solid #0000FF)]
-layer at (8,741) size 300x40
-  RenderBlock (relative positioned) {DIV} at (0,733) size 300x40
-layer at (110,741) size 184x29
+layer at (8,771) size 300x40
+  RenderBlock (relative positioned) {DIV} at (0,763) size 300x40
+layer at (110,771) size 184x29
   RenderFieldSet {FIELDSET} at (102,0) size 184x29 [border: (2px groove #C0C0C0)]
     RenderBlock {LEGEND} at (14,0) size 156x12 [border: (1px solid #0000FF)]

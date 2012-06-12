@@ -1,3 +1,15 @@
+2012-06-11  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed expected result update after r120017.
+
+        * platform/gtk/fast/block/basic/fieldset-stretch-to-legend-expected.txt:
+        Rebaselined gtk.
+
+        * platform/efl/Skipped:
+        * platform/qt/Skipped:
+        Skipped the test with some explanation on those platforms as I couldn't get
+        the new baseline.
+
 2012-06-11  Dan Bernstein  <mitz@apple.com>
 
         Updated expected results for this test after r120017.
