@@ -1,3 +1,13 @@
+2012-06-11  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed: Rebaseline gradients tests
+
+        r120033 added IMAGE failures for bunch of gradient tests that will
+        need rebaselining as a result of that change. This is that
+        rebaseline.
+
+        (File list elided because it is too long.)
+
 2012-06-11  Kinuko Yasuda  <kinuko@chromium.org>
 
         XHR returns size==0 Blob
