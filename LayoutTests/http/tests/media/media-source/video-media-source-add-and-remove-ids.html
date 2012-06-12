@@ -107,24 +107,53 @@
                 runNextTestCase();
             }
 
-            function testRemoveIdFailureCases(runNextTestCase, videoTag)
+            function testRemoveEmptyId(runNextTestCase, videoTag)
             {
                 consoleWrite("Test empty ID case");
                 expectExceptionOnRemoveId(videoTag, "", DOMException.INVALID_ACCESS_ERR);
 
+                runNextTestCase();
+            }
+
+            function testRemoveNonexistentId(runNextTestCase, videoTag)
+            {
                 consoleWrite("Test removing an ID that was never added.");
                 expectExceptionOnRemoveId(videoTag, "345", DOMException.SYNTAX_ERR);
 
+                runNextTestCase();
+            }
+
+            function testRemoveAgain(runNextTestCase, videoTag)
+            {
+                consoleWrite("Test removing an ID that was already removed.");
                 videoTag.webkitSourceAddId("123", defaultSourceMimetype);
                 videoTag.webkitSourceRemoveId("123");
                 expectExceptionOnRemoveId(videoTag, "123", DOMException.SYNTAX_ERR);
 
-                consoleWrite("Test adding the same ID again.");
-                videoTag.webkitSourceAddId("123", defaultSourceMimetype);
+                runNextTestCase();
+            }
 
+            function testRemoveIdAfterEnded(runNextTestCase, videoTag)
+            {
                 consoleWrite("Test that an ID can be removed while in the ended state.");
+                videoTag.webkitSourceAddId("123", defaultSourceMimetype);
                 videoTag.webkitSourceEndOfStream(videoTag.EOS_NO_ERROR);
                 videoTag.webkitSourceRemoveId("123");
+
+                runNextTestCase();
+            }
+
+            function testAddIdAfterRemoving(runNextTestCase, videoTag)
+            {
+                consoleWrite("Test that an ID can be added again after it is removed.");
+                videoTag.webkitSourceAddId("123", defaultSourceMimetype);
+                videoTag.webkitSourceRemoveId("123");
+
+                try {
+                    videoTag.webkitSourceAddId("123", defaultSourceMimetype);
+                } catch (e) {
+                    consoleWrite("Unexpected exception: " + e);
+                }
 
                 runNextTestCase();
             }
@@ -172,7 +201,11 @@
 
                     var testCases = [
                         testAddIdFailureCases,
-                        testRemoveIdFailureCases,
+                        testRemoveEmptyId,
+                        testRemoveNonexistentId,
+                        testRemoveAgain,
+                        testRemoveIdAfterEnded,
+                        testAddIdAfterRemoving,
                         testAppendFailureCases,
                     ];
 

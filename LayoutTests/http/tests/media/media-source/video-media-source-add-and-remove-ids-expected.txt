@@ -20,16 +20,34 @@ Test reaching sourceID limit.
 Test that SourceIDs can't be added while in the ended state.
 Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
 
-running testRemoveIdFailureCases
+running testRemoveEmptyId
 EVENT(loadstart)
 EVENT(webkitsourceopen)
 Test empty ID case
 Got expected exception Error: INVALID_ACCESS_ERR: DOM Exception 15
+
+running testRemoveNonexistentId
+EVENT(loadstart)
+EVENT(webkitsourceopen)
 Test removing an ID that was never added.
 Got expected exception Error: SYNTAX_ERR: DOM Exception 12
+
+running testRemoveAgain
+EVENT(loadstart)
+EVENT(webkitsourceopen)
+Test removing an ID that was already removed.
 Got expected exception Error: SYNTAX_ERR: DOM Exception 12
-Test adding the same ID again.
+
+running testRemoveIdAfterEnded
+EVENT(loadstart)
+EVENT(webkitsourceopen)
 Test that an ID can be removed while in the ended state.
+
+running testAddIdAfterRemoving
+EVENT(loadstart)
+EVENT(webkitsourceopen)
+Test that an ID can be added again after it is removed.
+Unexpected exception: Error: QUOTA_EXCEEDED_ERR: DOM Exception 22
 
 running testAppendFailureCases
 EVENT(loadstart)
