@@ -583,16 +583,12 @@ void CCLayerTreeHost::paintMasksForRenderSurface(LayerChromium* renderSurfaceLay
     // mask and replica should be painted.
 
     LayerChromium* maskLayer = renderSurfaceLayer->maskLayer();
-    if (maskLayer) {
-        maskLayer->setVisibleLayerRect(IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
+    if (maskLayer)
         update(maskLayer, paintType, updater, 0);
-    }
 
     LayerChromium* replicaMaskLayer = renderSurfaceLayer->replicaLayer() ? renderSurfaceLayer->replicaLayer()->maskLayer() : 0;
-    if (replicaMaskLayer) {
-        replicaMaskLayer->setVisibleLayerRect(IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
+    if (replicaMaskLayer)
         update(replicaMaskLayer, paintType, updater, 0);
-    }
 }
 
 void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList, PaintType paintType, CCTextureUpdater& updater)

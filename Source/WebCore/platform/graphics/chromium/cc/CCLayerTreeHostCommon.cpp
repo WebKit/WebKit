@@ -830,11 +830,17 @@ static void calculateVisibleAndScissorRectsInternal(const LayerList& renderSurfa
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
-        if (!it.representsTargetRenderSurface()) {
+        if (it.representsTargetRenderSurface()) {
+            LayerType* maskLayer = it->maskLayer();
+            if (maskLayer)
+                maskLayer->setVisibleLayerRect(IntRect(IntPoint(), it->contentBounds()));
+            LayerType* replicaMaskLayer = it->replicaLayer() ? it->replicaLayer()->maskLayer() : 0;
+            if (replicaMaskLayer)
+                replicaMaskLayer->setVisibleLayerRect(IntRect(IntPoint(), it->contentBounds()));
+        } else if (it.representsItself()) {
             IntRect visibleLayerRect = calculateVisibleLayerRect(*it);
             it->setVisibleLayerRect(visibleLayerRect);
-        }
-        if (it.representsItself()) {
+
             IntRect scissorRect = calculateLayerScissorRect<LayerType, RenderSurfaceType>(*it, rootScissorRect);
             it->setScissorRect(scissorRect);
         } else if (it.representsContributingRenderSurface()) {
