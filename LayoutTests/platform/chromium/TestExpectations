@@ -2970,6 +2970,26 @@ BUGWK73865 : media/track/text-track-is-reachable.html = TEXT
 BUGWK81402 WIN : media/track/track-active-cues.html = PASS TIMEOUT
 BUGWK83882 : media/track/track-mode.html = PASS TEXT TIMEOUT
 
+// Need rebaseline.
+BUGWK87683 : fast/layers/video-layer.html = FAIL
+BUGWK87683 : media/audio-controls-rendering.html = FAIL
+BUGWK87683 : media/audio-repaint.html = FAIL
+BUGWK87683 : media/controls-after-reload.html = FAIL
+BUGWK87683 : media/controls-strict.html = FAIL
+BUGWK87683 : media/controls-styling.html = FAIL
+BUGWK87683 : media/controls-without-preload.html = FAIL
+BUGWK87683 : media/media-controls-clone.html = FAIL
+BUGWK87683 : media/media-document-audio-repaint.html = FAIL
+BUGWK87683 : media/video-controls-rendering.html = FAIL
+BUGWK87683 : media/video-display-toggle.html = FAIL
+BUGWK87683 : media/video-empty-source.html = FAIL
+BUGWK87683 : media/video-no-audio.html = FAIL
+BUGWK87683 : media/video-playing-and-pause.html = FAIL
+BUGWK87683 : media/video-zoom-controls.html = FAIL
+BUGWK87683 : media/video-volume-slider.html = FAIL
+
+BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
+
 BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
 
 // Animations tests use an inherently-flaky timer-based design.

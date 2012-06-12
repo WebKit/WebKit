@@ -3,6 +3,7 @@
     <head>
         <script src=media-file.js></script>
         <script src=video-test.js></script>
+        <script src=media-controls.js></script>
         <script>
             var video;
 
@@ -18,29 +19,15 @@
 
             function getTimeLineValue()
             {
-                var timelineContainer;
-                var timelineValue;
+                var timeline;
+                var shadowRoot = internals.shadowRoot(video);
 
-                var controlsShadow = internals.shadowRoot(video).firstChild.firstChild;
-                for (child = controlsShadow.firstChild; child; child = child.nextSibling)
-                    if (internals.shadowPseudoId(child) == "-webkit-media-controls-timeline-container") {
-                        timelineContainer = child;
-                        break;
-                    }
+                timeline = mediaControlsElement(shadowRoot.firstChild.firstChild, '-webkit-media-controls-timeline');
 
-                if(!timelineContainer)
-                    throw "Faild to find -webkit-media-controls-timeline-container";
-
-                for (child = timelineContainer.firstChild; child; child = child.nextSibling)
-                    if (internals.shadowPseudoId(child) == "-webkit-media-controls-timeline") {
-                        timelineValue = child.value;
-                        break;
-                    }
-
-                if(!timelineContainer)
+                if(!timeline)
                     throw "Faild to find -webkit-media-controls-timeline";
 
-                return timelineValue;
+                return timeline.value;
             }
 
             function error()

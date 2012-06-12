@@ -89,7 +89,10 @@
             findMediaElement();
             testTrack = document.querySelector('track');
             video.src = findMediaFile('video', '../content/test');
-            controlsPanelElement = mediaControlsElement(internals.shadowRoot(video).firstChild, '-webkit-media-controls-panel');
+
+            // In Chromium it is the enclosure element, which provides the controls height, otherwise the panel;
+            // both are the second child in the shadow DOM.
+            controlsPanelElement = internals.shadowRoot(video).firstChild.firstChild;
 
             waitForEvent('canplaythrough', function() {
                 cueDisplayContainer = textTrackDisplayElement(video);

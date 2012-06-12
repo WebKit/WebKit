@@ -49,6 +49,7 @@ class MediaControlMuteButtonElement;
 class MediaControlVolumeSliderElement;
 class MediaControlVolumeSliderContainerElement;
 class MediaControlPanelElement;
+class MediaControlChromiumEnclosureElement;
 class MediaControllerInterface;
 class MediaPlayer;
 
@@ -59,6 +60,24 @@ class RenderMedia;
 class MediaControlTextTrackContainerElement;
 class MediaControlTextTrackDisplayElement;
 #endif
+
+class MediaControlChromiumEnclosureElement : public HTMLDivElement {
+public:
+    static PassRefPtr<MediaControlChromiumEnclosureElement> create(Document*);
+
+    virtual const AtomicString& shadowPseudoId() const;
+
+    void setMediaController(MediaControllerInterface* controller) { m_mediaController = controller; }
+    MediaControllerInterface* mediaController() const { return m_mediaController; }
+
+protected:
+    MediaControlChromiumEnclosureElement(Document*);
+
+private:
+    virtual bool isMediaControlElement() const { return true; }
+
+    MediaControllerInterface* m_mediaController;
+};
 
 class MediaControlRootElementChromium : public MediaControls {
 public:
@@ -125,6 +144,7 @@ private:
     MediaControlFullscreenButtonElement* m_fullscreenButton;
 #endif
     MediaControlPanelElement* m_panel;
+    MediaControlChromiumEnclosureElement* m_enclosure;
 #if ENABLE(VIDEO_TRACK)
     MediaControlTextTrackContainerElement* m_textDisplayContainer;
     MediaControlTextTrackDisplayElement* m_textTrackDisplay;

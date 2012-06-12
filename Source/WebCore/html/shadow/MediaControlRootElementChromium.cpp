@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 #include "MediaControlRootElementChromium.h"
 
+#include "HTMLDivElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
@@ -45,6 +46,23 @@ using namespace std;
 
 namespace WebCore {
 
+MediaControlChromiumEnclosureElement::MediaControlChromiumEnclosureElement(Document* document)
+    : HTMLDivElement(HTMLNames::divTag, document->document())
+    , m_mediaController(0)
+{
+}
+
+PassRefPtr<MediaControlChromiumEnclosureElement> MediaControlChromiumEnclosureElement::create(Document* document)
+{
+    return adoptRef(new MediaControlChromiumEnclosureElement(document));
+}
+
+const AtomicString& MediaControlChromiumEnclosureElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-enclosure"));
+    return id;
+}
+
 MediaControlRootElementChromium::MediaControlRootElementChromium(Document* document)
     : MediaControls(document)
     , m_mediaController(0)
@@ -59,6 +77,7 @@ MediaControlRootElementChromium::MediaControlRootElementChromium(Document* docum
     , m_fullscreenButton(0)
 #endif
     , m_panel(0)
+    , m_enclosure(0)
 #if ENABLE(VIDEO_TRACK)
     , m_textDisplayContainer(0)
     , m_textTrackDisplay(0)
@@ -79,6 +98,9 @@ PassRefPtr<MediaControlRootElementChromium> MediaControlRootElementChromium::cre
         return 0;
 
     RefPtr<MediaControlRootElementChromium> controls = adoptRef(new MediaControlRootElementChromium(document));
+
+    // Create an enclosing element for the panel so we can visually offset the controls correctly.
+    RefPtr<MediaControlChromiumEnclosureElement> enclosure = MediaControlChromiumEnclosureElement::create(document);
 
     RefPtr<MediaControlPanelElement> panel = MediaControlPanelElement::create(document);
 
@@ -143,7 +165,12 @@ PassRefPtr<MediaControlRootElementChromium> MediaControlRootElementChromium::cre
 #endif
 
     controls->m_panel = panel.get();
-    controls->appendChild(panel.release(), ec, true);
+    enclosure->appendChild(panel.release(), ec, true);
+    if (ec)
+        return 0;
+
+    controls->m_enclosure = enclosure.get();
+    controls->appendChild(enclosure.release(), ec, true);
     if (ec)
         return 0;
 
@@ -176,6 +203,8 @@ void MediaControlRootElementChromium::setMediaController(MediaControllerInterfac
 #endif
     if (m_panel)
         m_panel->setMediaController(controller);
+    if (m_enclosure)
+        m_enclosure->setMediaController(controller);
 #if ENABLE(VIDEO_TRACK)
     if (m_textDisplayContainer)
         m_textDisplayContainer->setMediaController(controller);
@@ -365,8 +394,7 @@ void MediaControlRootElementChromium::createTextTrackDisplay()
     m_textDisplayContainer = textDisplayContainer.get();
 
     // Insert it before the first controller element so it always displays behind the controls.
-    ExceptionCode ec;
-    insertBefore(textDisplayContainer.release(), m_panel, ec, true);
+    insertBefore(textDisplayContainer.release(), m_enclosure, ASSERT_NO_EXCEPTION, true);
 }
 
 void MediaControlRootElementChromium::showTextTrackDisplay()

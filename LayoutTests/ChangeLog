@@ -1,3 +1,22 @@
+2012-06-11  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Introduce an Enclosure Element for Chromium video controls.
+        https://bugs.webkit.org/show_bug.cgi?id=87683
+
+        Reviewed by Eric Carlson.
+
+        Change fullscreen/video-controls-override.html, media/media-controls-invalid-url.html and
+        media/track/track-cue-rendering-snap-to-lines-not-set.html to deal with the new enclosure
+        div in Chromium controls and use the mediaControlsElement() helper function to find elements
+        inside the controls.
+        Fail video controls tests in test expectations.
+
+        * fullscreen/video-controls-override-expected.txt: Updated.
+        * fullscreen/video-controls-override.html: Use mediaControlsElement helper function.
+        * media/media-controls-invalid-url.html: Use mediaControlsElement helper function.
+        * media/track/track-cue-rendering-snap-to-lines-not-set.html: Height is provided by enclosure element.
+        * platform/chromium/TestExpectations: Fail video controls tests.
+
 2012-06-11  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed: Expectations for track-cues-cuechange.html

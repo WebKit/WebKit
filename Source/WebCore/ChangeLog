@@ -1,3 +1,44 @@
+2012-06-11  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Introduce an Enclosure Element for Chromium video controls.
+        https://bugs.webkit.org/show_bug.cgi?id=87683
+
+        Reviewed by Eric Carlson.
+
+        Updated tests.
+
+        The Chrome video controls are receiving a visual update. A new enclosure div is required
+        to provide for a offset space from the video's boundaries. The visual update itself is in
+        a separate patch.
+
+        * css/mediaControlsChromium.css:
+        (video::-webkit-media-controls-enclosure):
+        Introduce CSS for enclosure div so it doesn't show yet.
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlChromiumEnclosureElement::MediaControlChromiumEnclosureElement):
+        Definition of the new enclosure element.
+        (WebCore::MediaControlChromiumEnclosureElement::create):
+        Definition of a create operator for the new enclosure element.
+        (WebCore::MediaControlChromiumEnclosureElement::shadowPseudoId):
+        Definition of the shadowPseudoId of -webkit-media-controls-enclosure for the enclosure div.
+        (WebCore::MediaControlRootElementChromium::MediaControlRootElementChromium):
+        Initialize member element for enclosure div.
+        (WebCore::MediaControlRootElementChromium::create):
+        Instantiate enclosure div and add into DOM between controls and panel elements.
+        (WebCore::MediaControlRootElementChromium::setMediaController):
+        Set media controller for enclosure div.
+        (WebCore::MediaControlRootElementChromium::createTextTrackDisplay):
+        Insert text track display container to enclosure rather than panel.
+        * html/shadow/MediaControlRootElementChromium.h:
+        (WebCore):
+        (MediaControlChromiumEnclosureElement):
+        (WebCore::MediaControlChromiumEnclosureElement::setMediaController):
+        (WebCore::MediaControlChromiumEnclosureElement::mediaController):
+        (WebCore::MediaControlChromiumEnclosureElement::isMediaControlElement):
+        Add declaration of the new enclosure element and its member functions.
+        (MediaControlRootElementChromium):
+        Add member variable to controls root element to hold the enclosure element.
+
 2012-06-11  Elliott Sprehn  <esprehn@gmail.com>
 
         WebKit doesn't allow replacing the document element with a DocumentFragment containing one element
