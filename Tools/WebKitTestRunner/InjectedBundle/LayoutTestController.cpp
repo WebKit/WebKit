@@ -52,40 +52,6 @@ namespace WTR {
 // Eventually it should be changed to match.
 const double LayoutTestController::waitToDumpWatchdogTimerInterval = 6;
 
-static JSValueRef propertyValue(JSContextRef context, JSObjectRef object, const char* propertyName)
-{
-    if (!object)
-        return 0;
-    JSRetainPtr<JSStringRef> propertyNameString(Adopt, JSStringCreateWithUTF8CString(propertyName));
-    JSValueRef exception;
-    return JSObjectGetProperty(context, object, propertyNameString.get(), &exception);
-}
-
-static JSObjectRef propertyObject(JSContextRef context, JSObjectRef object, const char* propertyName)
-{
-    JSValueRef value = propertyValue(context, object, propertyName);
-    if (!value || !JSValueIsObject(context, value))
-        return 0;
-    return const_cast<JSObjectRef>(value);
-}
-
-static JSObjectRef getElementById(WKBundleFrameRef frame, JSStringRef elementId)
-{
-    JSContextRef context = WKBundleFrameGetJavaScriptContext(frame);
-    JSObjectRef document = propertyObject(context, JSContextGetGlobalObject(context), "document");
-    if (!document)
-        return 0;
-    JSValueRef getElementById = propertyObject(context, document, "getElementById");
-    if (!getElementById || !JSValueIsObject(context, getElementById))
-        return 0;
-    JSValueRef elementIdValue = JSValueMakeString(context, elementId);
-    JSValueRef exception;
-    JSValueRef element = JSObjectCallAsFunction(context, const_cast<JSObjectRef>(getElementById), document, 1, &elementIdValue, &exception);
-    if (!element || !JSValueIsObject(context, element))
-        return 0;
-    return const_cast<JSObjectRef>(element);
-}
-
 PassRefPtr<LayoutTestController> LayoutTestController::create()
 {
     return adoptRef(new LayoutTestController);
