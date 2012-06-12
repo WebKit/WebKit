@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-DeviceOrientationController::DeviceOrientationController(Page*, DeviceOrientationClient* client)
+DeviceOrientationController::DeviceOrientationController(DeviceOrientationClient* client)
     : m_client(client)
     , m_timer(this, &DeviceOrientationController::timerFired)
 {
@@ -45,9 +45,9 @@ DeviceOrientationController::~DeviceOrientationController()
     m_client->deviceOrientationControllerDestroyed();
 }
 
-PassOwnPtr<DeviceOrientationController> DeviceOrientationController::create(Page* page, DeviceOrientationClient* client)
+PassOwnPtr<DeviceOrientationController> DeviceOrientationController::create(DeviceOrientationClient* client)
 {
-    return adoptPtr(new DeviceOrientationController(page, client));
+    return adoptPtr(new DeviceOrientationController(client));
 }
 
 void DeviceOrientationController::timerFired(Timer<DeviceOrientationController>* timer)
@@ -151,7 +151,7 @@ bool DeviceOrientationController::isActiveAt(Page* page)
 
 void provideDeviceOrientationTo(Page* page, DeviceOrientationClient* client)
 {
-    DeviceOrientationController::provideTo(page, DeviceOrientationController::supplementName(), DeviceOrientationController::create(page, client));
+    DeviceOrientationController::provideTo(page, DeviceOrientationController::supplementName(), DeviceOrientationController::create(client));
 }
 
 } // namespace WebCore

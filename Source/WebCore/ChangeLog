@@ -1,3 +1,25 @@
+2012-06-12  Amy Ousterhout  <aousterh@chromium.org>
+
+        Removing unused parameter Page
+        https://bugs.webkit.org/show_bug.cgi?id=88848
+
+        Reviewed by Kentaro Hara.
+
+        Removed the unused parameter Page* supplied to the create function
+        and constructor in DeviceOrientationController.
+
+        The parameter Page* was previously stored in an instance variable
+        m_page, but this was removed (see https://bugs.webkit.org/show_bug.cgi?id=88812).
+
+        No new tests because the removed parameter was unused and untested.
+
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        (WebCore::DeviceOrientationController::create):
+        (WebCore::provideDeviceOrientationTo):
+        * dom/DeviceOrientationController.h:
+        (DeviceOrientationController):
+
 2012-06-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120051.
