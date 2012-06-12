@@ -47,6 +47,7 @@ class BeforeTextInsertedEvent;
 class Chrome;
 class Color;
 class DateComponents;
+class DragData;
 class Event;
 class FileList;
 class FormDataList;
@@ -231,7 +232,8 @@ public:
     virtual bool shouldRespectAlignAttribute();
     virtual FileList* files();
     virtual void setFiles(PassRefPtr<FileList>);
-    virtual void receiveDroppedFiles(const Vector<String>&);
+    // Should return true if the given DragData has more than one dropped files.
+    virtual bool receiveDroppedFiles(const DragData*);
     virtual Icon* icon() const;
     // Should return true if the corresponding renderer for a type can display a suggested value.
     virtual bool canSetSuggestedValue();

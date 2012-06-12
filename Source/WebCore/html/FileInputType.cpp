@@ -23,6 +23,7 @@
 #include "FileInputType.h"
 
 #include "Chrome.h"
+#include "DragData.h"
 #include "ElementShadow.h"
 #include "Event.h"
 #include "File.h"
@@ -389,13 +390,18 @@ void FileInputType::updateRendering(PassRefPtr<Icon> icon)
         element()->renderer()->repaint();
 }
 
-void FileInputType::receiveDroppedFiles(const Vector<String>& paths)
+bool FileInputType::receiveDroppedFiles(const DragData* dragData)
 {
+    Vector<String> paths;
+    dragData->asFilenames(paths);
+    if (paths.isEmpty())
+        return false;
+
     HTMLInputElement* input = element();
 #if ENABLE(DIRECTORY_UPLOAD)
     if (input->fastHasAttribute(webkitdirectoryAttr)) {
         receiveDropForDirectoryUpload(paths);
-        return;
+        return true;
     }
 #endif
 
@@ -410,6 +416,7 @@ void FileInputType::receiveDroppedFiles(const Vector<String>& paths)
         firstFileOnly.append(files[0]);
         filesChosen(firstFileOnly);
     }
+    return true;
 }
 
 Icon* FileInputType::icon() const

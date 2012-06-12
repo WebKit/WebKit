@@ -1,3 +1,28 @@
+2012-06-12  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Refactor InputType::receiveDroppedFiles to take DragData
+        https://bugs.webkit.org/show_bug.cgi?id=88860
+
+        Reviewed by Kent Tamura.
+
+        So that we can centralize the file paths related code into FileInputType
+        and makes it easier to extract more data from DragData for
+        <input type=file> (like bug 88293 for directory drag-and-drop).
+
+        No new tests as this has no behavioral changes.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::receiveDroppedFiles):
+        * html/FileInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::receiveDroppedFiles):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::receiveDroppedFiles):
+        * html/InputType.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+
 2012-06-12  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Generate -webkit-box-decoration-break property only when the feature is enabled

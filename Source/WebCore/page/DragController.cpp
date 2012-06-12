@@ -469,13 +469,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         if (fileInput->disabled())
             return false;
 
-        Vector<String> filenames;
-        dragData->asFilenames(filenames);
-        if (filenames.isEmpty())
-            return false;
-
-        fileInput->receiveDroppedFiles(filenames);
-        return true;
+        return fileInput->receiveDroppedFiles(dragData);
     }
 
     if (!m_page->dragController()->canProcessDrag(dragData)) {

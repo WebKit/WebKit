@@ -1226,9 +1226,9 @@ void HTMLInputElement::setFiles(PassRefPtr<FileList> files)
     m_inputType->setFiles(files);
 }
 
-void HTMLInputElement::receiveDroppedFiles(const Vector<String>& filenames)
+bool HTMLInputElement::receiveDroppedFiles(const DragData* dragData)
 {
-    m_inputType->receiveDroppedFiles(filenames);
+    return m_inputType->receiveDroppedFiles(dragData);
 }
 
 Icon* HTMLInputElement::icon() const

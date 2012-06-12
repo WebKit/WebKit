@@ -667,9 +667,10 @@ bool InputType::hasUnacceptableValue()
     return false;
 }
 
-void InputType::receiveDroppedFiles(const Vector<String>&)
+bool InputType::receiveDroppedFiles(const DragData*)
 {
     ASSERT_NOT_REACHED();
+    return false;
 }
 
 Icon* InputType::icon() const
