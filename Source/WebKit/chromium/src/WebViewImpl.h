@@ -86,6 +86,7 @@ namespace WebKit {
 class AutocompletePopupMenuClient;
 class AutofillPopupMenuClient;
 class BatteryClientImpl;
+class ContextFeaturesClientImpl;
 class ContextMenuClientImpl;
 class DeviceOrientationClientProxy;
 class DragScrollTimer;
@@ -732,6 +733,9 @@ private:
     // When not equal to DragOperationNone, the drag data can be dropped onto the
     // current drop target in this WebView (the drop target can accept the drop).
     WebDragOperation m_dragOperation;
+
+    // Context-based feature switches.
+    OwnPtr<ContextFeaturesClientImpl> m_featureSwitchClient;
 
     // Whether an Autofill popup is currently showing.
     bool m_autofillPopupShowing;

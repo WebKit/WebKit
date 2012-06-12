@@ -63210,14 +63210,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\generic\ContextEnabledFeatures.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\generic\ContextEnabledFeatures.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\generic\GenericBinding.h"
 					>
 				</File>

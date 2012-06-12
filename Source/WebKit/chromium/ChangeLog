@@ -1,3 +1,39 @@
+2012-06-12  MORITA Hajime  <morrita@google.com>
+
+        REGRESSION(r118098): <content> element does not render distributed children when cloned from another document
+        https://bugs.webkit.org/show_bug.cgi?id=88148
+
+        Reviewed by Dimitri Glazkov.
+
+        - Added ContextFeaturesClientImpl which implements WebCore::ContextFeaturesClient.
+        - Replaced PagePopupFrameLoaderClient with PagePopupFeaturesClient.
+
+        * WebKit.gyp:
+        * public/WebPermissionClient.h:
+        (WebKit):
+        (WebKit::WebPermissionClient::allowWebComponents):
+        * src/ContextFeaturesClientImpl.cpp: Renamed from Source/WebCore/bindings/generic/ContextEnabledFeatures.cpp.
+        (WebKit):
+        (WebKit::ContextFeaturesClientImpl::isEnabled):
+        * src/ContextFeaturesClientImpl.h: Renamed from Source/WebCore/bindings/generic/ContextEnabledFeatures.h.
+        (WebKit):
+        (ContextFeaturesClientImpl):
+        (WebKit::ContextFeaturesClientImpl::ContextFeaturesClientImpl):
+        (WebKit::ContextFeaturesClientImpl::setPermissionClient):
+        * src/FrameLoaderClientImpl.cpp:
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+        * src/WebPagePopupImpl.cpp:
+        (PagePopupFeaturesClient):
+        (WebKit::PagePopupFeaturesClient::isEnabled):
+        (WebKit):
+        (WebKit::WebPagePopupImpl::initPage):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setPermissionClient):
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+        (WebKit):
+
 2012-06-11  Nico Weber  <thakis@chromium.org>
 
         Remove unused member variables found by clang's -Wunused-private-field

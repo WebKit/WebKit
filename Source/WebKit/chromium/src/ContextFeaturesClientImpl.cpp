@@ -29,48 +29,26 @@
  */
 
 #include "config.h"
-#include "ContextEnabledFeatures.h"
+#include "ContextFeaturesClientImpl.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
-#include "Frame.h"
-#include "FrameLoader.h"
-#include "FrameLoaderClient.h"
-#include "RuntimeEnabledFeatures.h"
+#include "WebDocument.h"
+#include "WebPermissionClient.h"
 
-namespace WebCore {
+namespace WebKit {
 
-#if ENABLE(SHADOW_DOM)
-bool ContextEnabledFeatures::shadowDOMEnabled(DOMWindow* window)
+bool ContextFeaturesClientImpl::isEnabled(WebCore::Document* document, WebCore::ContextFeatures::FeatureType type, bool defaultValue)
 {
-    if (!window)
-        return false;
-    if (Frame* frame = window->frame())
-        return frame->loader()->client()->allowShadowDOM(RuntimeEnabledFeatures::shadowDOMEnabled());
-    return false;
-}
-#endif
+    if (!m_client)
+        return defaultValue;
 
-#if ENABLE(STYLE_SCOPED)
-bool ContextEnabledFeatures::styleScopedEnabled(Document* document)
-{
-    if (!document)
-        return false;
-    if (Frame* frame = document->frame())
-        return frame->loader()->client()->allowStyleScoped(RuntimeEnabledFeatures::styleScopedEnabled());
-    return false;
+    switch (type) {
+    case WebCore::ContextFeatures::ShadowDOM:
+    case WebCore::ContextFeatures::StyleScoped:
+        return m_client->allowWebComponents(WebDocument(document), defaultValue);
+    default:
+        return defaultValue;
+    }
 }
-#endif   
 
-#if ENABLE(PAGE_POPUP)
-bool ContextEnabledFeatures::pagePopupEnabled(DOMWindow* window)
-{
-    if (!window)
-        return false;
-    if (Frame* frame = window->frame())
-        return frame->loader()->client()->allowPagePopup();
-    return false;
-}
-#endif
-
-} // namespace WebCore
+} // namespace WebKit

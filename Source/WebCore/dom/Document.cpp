@@ -44,6 +44,7 @@
 #include "Comment.h"
 #include "Console.h"
 #include "ContentSecurityPolicy.h"
+#include "ContextFeatures.h"
 #include "CookieJar.h"
 #include "DOMImplementation.h"
 #include "DOMSelection.h"
@@ -428,6 +429,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     : ContainerNode(0, CreateDocument)
     , TreeScope(this)
     , m_guardRefCount(0)
+    , m_contextFeatures(ContextFeatures::defaultSwitch())
     , m_compatibilityMode(NoQuirksMode)
     , m_compatibilityModeLocked(false)
     , m_domTreeVersion(++s_globalTreeVersion)
@@ -506,6 +508,8 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     m_ignoreAutofocus = false;
 
     m_frame = frame;
+    if (m_frame)
+        provideContextFeaturesToDocumentFrom(this, m_frame->page());
 
     // We depend on the url getting immediately set in subframes, but we
     // also depend on the url NOT getting immediately set in opened windows.
@@ -5978,6 +5982,11 @@ void Document::adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect& r
     adjustFloatRectForAbsoluteZoom(rect, renderer);
     if (inverseFrameScale != 1)
         rect.scale(inverseFrameScale);
+}
+
+void Document::setContextFeatures(PassRefPtr<ContextFeatures> features)
+{
+    m_contextFeatures = features;
 }
 
 #if ENABLE(UNDO_MANAGER)

@@ -1,3 +1,113 @@
+2012-06-12  MORITA Hajime  <morrita@google.com>
+
+        REGRESSION(r118098): <content> element does not render distributed children when cloned from another document
+        https://bugs.webkit.org/show_bug.cgi?id=88148
+
+        Reviewed by Dimitri Glazkov.
+
+        The shadow DOM availability was decided through FrameLoaderClient.
+        But there are documents which don't have any associated frames, in
+        which any shadow DOM related elements cannot be constructed.  That
+        resulsted the regression.
+
+        This change introduces a Page-based client called
+        ContextFeaturesClient which takes the role from FrameLoaderClient
+        to decide the feature availability, and ContextFeatures which is a
+        proxy of ContextFeaturesClient.  ContextEnabledFeatures is is
+        replaced with ContextFeatures.
+
+        Each ContextFeatures object is owned by a Page, and is attached to
+        each Document in the page even if the page itself has no referenct
+        to Frames or Pages. With ContextFeatures, each Document can decide
+        the feature availability even if it cannot reach Page or Frame.
+
+        On RefCountedSupplement: Document instance can live longer than a
+        Page where it is shwon. This means that ContextFeatures instance
+        needs to survive after owner Page destruction because it's
+        referenced from possibly surviving Documents. RefCountedSupplement
+        is introduced to cover this scenario: It allows supplement classes
+        to live after Page's destruction.
+
+        RefCountedSupplement::hostDestroyed() is notified when the hosting
+        page is gone. ContextFeatures clears its reference to the client
+        using this notification.
+
+        Test: fast/dom/shadow/elements-in-frameless-document.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateImplementation):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::determineScope):
+        * dom/ContextFeatures.cpp: Added.
+        (WebCore):
+        (WebCore::ContextFeaturesClient::empty):
+        (WebCore::ContextFeatures::supplementName):
+        (WebCore::ContextFeatures::defaultSwitch):
+        (WebCore::ContextFeatures::shadowDOMEnabled):
+        (WebCore::ContextFeatures::styleScopedEnabled):
+        (WebCore::ContextFeatures::pagePopupEnabled):
+        (WebCore::provideContextFeaturesTo):
+        (WebCore::provideContextFeaturesToDocumentFrom):
+        * dom/ContextFeatures.h: Added.
+        (WebCore):
+        (ContextFeatures):
+        (WebCore::ContextFeatures::ContextFeatures):
+        (WebCore::ContextFeatures::hostDestroyed):
+        (ContextFeaturesClient):
+        (WebCore::ContextFeaturesClient::~ContextFeaturesClient):
+        (WebCore::ContextFeaturesClient::isEnabled):
+        (WebCore::ContextFeatures::create):
+        (WebCore::ContextFeatures::isEnabled):
+        * dom/DOMAllInOne.cpp:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/Document.h:
+        (WebCore::Document::contextFeatures):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::setContextFeatures):
+        * dom/Position.cpp:
+        (WebCore::Position::Position):
+        (WebCore::Position::findParent):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getSelection):
+        * dom/make_names.pl:
+        (printConstructorInterior):
+        (printFactoryCppFile):
+        (printWrapperFunctions):
+        (printWrapperFactoryCppFile):
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromMarkupWithContext):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::registerWithScopingNode):
+        (WebCore::HTMLStyleElement::unregisterWithScopingNode):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::contentTagName):
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::patchDocument):
+        * loader/FrameLoaderClient.h:
+        * platform/RefCountedSupplement.h: Copied from Source/WebCore/platform/Supplementable.h.
+        (WebCore):
+        (RefCountedSupplement):
+        (WebCore::RefCountedSupplement::hostDestroyed):
+        (Wrapper):
+        (WebCore::RefCountedSupplement::Wrapper::Wrapper):
+        (WebCore::RefCountedSupplement::Wrapper::~Wrapper):
+        (WebCore::RefCountedSupplement::Wrapper::wrapped):
+        (WebCore::RefCountedSupplement::provideTo):
+        (WebCore::RefCountedSupplement::from):
+        * platform/Supplementable.h:
+        (WebCore::Supplement::isRefCountedWrapper):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML):
+
 2012-06-12  Kent Tamura  <tkent@chromium.org>
 
         Remove unnecessary functions: setName() and formControlName()

@@ -36,6 +36,7 @@
 
 #include "Attribute.h"
 #include "Base64.h"
+#include "ContextFeatures.h"
 #include "DOMEditor.h"
 #include "Document.h"
 #include "DocumentFragment.h"
@@ -89,6 +90,7 @@ DOMPatchSupport::~DOMPatchSupport() { }
 void DOMPatchSupport::patchDocument(const String& markup)
 {
     RefPtr<HTMLDocument> newDocument = HTMLDocument::create(0, KURL());
+    newDocument->setContextFeatures(m_document->contextFeatures());
     RefPtr<DocumentParser> parser = HTMLDocumentParser::create(newDocument.get(), false);
     parser->insert(markup); // Use insert() so that the parser will not yield.
     parser->finish();

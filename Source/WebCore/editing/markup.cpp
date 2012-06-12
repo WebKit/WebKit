@@ -39,6 +39,7 @@
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
 #include "ChildListMutationScope.h"
+#include "ContextFeatures.h"
 #include "DeleteButtonController.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
@@ -730,6 +731,7 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkupWithContext(Document* docum
 
     RefPtr<DocumentFragment> taggedFragment = createFragmentFromMarkup(document, taggedMarkup.toString(), baseURL, scriptingPermission);
     RefPtr<Document> taggedDocument = Document::create(0, KURL());
+    taggedDocument->setContextFeatures(document->contextFeatures());
     taggedDocument->takeAllChildrenFrom(taggedFragment.get());
 
     RefPtr<Node> nodeBeforeContext;

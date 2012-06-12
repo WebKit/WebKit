@@ -27,7 +27,7 @@
 #include "Position.h"
 
 #include "CSSComputedStyleDeclaration.h"
-#include "ContextEnabledFeatures.h"
+#include "ContextFeatures.h"
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "Logging.h"
@@ -82,7 +82,7 @@ Position::Position(PassRefPtr<Node> anchorNode, LegacyEditingOffset offset)
     , m_isLegacyEditingPosition(true)
 {
 #if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && ContextEnabledFeatures::shadowDOMEnabled(m_anchorNode->document()->domWindow()))
+    ASSERT((m_anchorNode && ContextFeatures::shadowDOMEnabled(m_anchorNode->document()))
            || !m_anchorNode || !m_anchorNode->isShadowRoot());
 #else
     ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot());
@@ -96,7 +96,7 @@ Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
     , m_isLegacyEditingPosition(false)
 {
 #if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && ContextEnabledFeatures::shadowDOMEnabled(m_anchorNode->document()->domWindow()))
+    ASSERT((m_anchorNode && ContextFeatures::shadowDOMEnabled(m_anchorNode->document()))
            || !m_anchorNode || !m_anchorNode->isShadowRoot());
 #else
     ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot());
@@ -114,7 +114,7 @@ Position::Position(PassRefPtr<Node> anchorNode, int offset, AnchorType anchorTyp
     , m_isLegacyEditingPosition(false)
 {
 #if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && ContextEnabledFeatures::shadowDOMEnabled(m_anchorNode->document()->domWindow()))
+    ASSERT((m_anchorNode && ContextFeatures::shadowDOMEnabled(m_anchorNode->document()))
            || !m_anchorNode || !editingIgnoresContent(m_anchorNode.get()) || !m_anchorNode->isShadowRoot());
 #else
     ASSERT(!m_anchorNode || !editingIgnoresContent(m_anchorNode.get()) || !m_anchorNode->isShadowRoot());
@@ -857,7 +857,7 @@ ContainerNode* Position::findParent(const Node* node)
     // FIXME: See http://web.ug/82697
 
 #if ENABLE(SHADOW_DOM)
-    if (ContextEnabledFeatures::shadowDOMEnabled(node->document()->domWindow()))
+    if (ContextFeatures::shadowDOMEnabled(node->document()))
         return node->parentNode();
 #endif
 

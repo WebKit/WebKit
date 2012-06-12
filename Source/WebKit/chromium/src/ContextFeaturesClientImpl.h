@@ -28,31 +28,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContextEnabledFeatures_h
-#define ContextEnabledFeatures_h
+#ifndef ContextFeaturesClientImpl_h
+#define ContextFeaturesClientImpl_h
 
-namespace WebCore {
+#include "ContextFeatures.h"
 
-class DOMWindow;
-class Document;
+namespace WebKit {
 
-// A class that stores static enablers for all experimental features. Note that
-// the method names must line up with the JavaScript method they enable for code
-// generation to work properly.
+class WebPermissionClient;
 
-class ContextEnabledFeatures {
+class ContextFeaturesClientImpl : public WebCore::ContextFeaturesClient {
 public:
-#if ENABLE(SHADOW_DOM)
-    static bool shadowDOMEnabled(DOMWindow*);
-#endif
-#if ENABLE(STYLE_SCOPED)
-    static bool styleScopedEnabled(Document*);
-#endif
-#if ENABLE(PAGE_POPUP)
-    static bool pagePopupEnabled(DOMWindow*);
-#endif
+    ContextFeaturesClientImpl()
+        : m_client(0)
+    { }
+
+    virtual bool isEnabled(WebCore::Document*, WebCore::ContextFeatures::FeatureType, bool defaultValue) OVERRIDE;
+    void setPermissionClient(WebPermissionClient* client) { m_client = client; }
+
+private:
+    WebPermissionClient* m_client;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif // ContextEnabledFeatures_h
+#endif // ContextFeaturesClientImpl_h

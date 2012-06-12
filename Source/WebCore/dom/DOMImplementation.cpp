@@ -27,6 +27,7 @@
 
 #include "ContentType.h"
 #include "CSSStyleSheet.h"
+#include "ContextFeatures.h"
 #include "DocumentType.h"
 #include "Element.h"
 #include "ExceptionCode.h"
@@ -295,6 +296,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
         doc = Document::create(0, KURL());
 
     doc->setSecurityOrigin(m_document->securityOrigin());
+    doc->setContextFeatures(m_document->contextFeatures());
 
     RefPtr<Node> documentElement;
     if (!qualifiedName.isEmpty()) {
@@ -372,6 +374,7 @@ PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& tit
     d->write("<!doctype html><html><body></body></html>");
     d->setTitle(title);
     d->setSecurityOrigin(m_document->securityOrigin());
+    d->setContextFeatures(m_document->contextFeatures());
     return d.release();
 }
 

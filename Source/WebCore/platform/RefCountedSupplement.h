@@ -23,57 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Supplementable_h
-#define Supplementable_h
+#ifndef RefCountedSupplement_h
+#define RefCountedSupplement_H
 
-#include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringHash.h>
+#include "Supplementable.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-template<typename T>
-class Supplementable;
-
-template<typename T>
-class Supplement {
+template<class T, class S>
+class RefCountedSupplement : public RefCounted<S> {
 public:
-    virtual ~Supplement() { }
+    typedef RefCountedSupplement<T, S> ThisType;
+
+    virtual ~RefCountedSupplement() { }
+    virtual void hostDestroyed() { }
+
+    class Wrapper : public Supplement<T> {
+    public:
+        explicit Wrapper(PassRefPtr<ThisType> wrapped) : m_wrapped(wrapped) { }
+        virtual ~Wrapper() { m_wrapped->hostDestroyed();  }
 #if !ASSERT_DISABLED
-    virtual bool isRefCountedWrapper() const { return false; }
+        virtual bool isRefCountedWrapper() const OVERRIDE { return true; }
 #endif
+        ThisType* wrapped() const { return m_wrapped.get(); }
+    private:
 
-    static void provideTo(Supplementable<T>* host, const AtomicString& key, PassOwnPtr<Supplement<T> > supplement)
+        RefPtr<ThisType> m_wrapped;
+    };
+
+    static void provideTo(Supplementable<T>* host, const AtomicString& key, PassRefPtr<ThisType> supplement)
     {
-        host->provideSupplement(key, supplement);
+        host->provideSupplement(key, adoptPtr(new Wrapper(supplement)));
     }
 
-    static Supplement<T>* from(Supplementable<T>* host, const AtomicString& key)
+    static ThisType* from(Supplementable<T>* host, const AtomicString& key)
     {
-        return host ? host->requireSupplement(key) : 0;
+        Supplement<T>* found = host->requireSupplement(key);
+        if (!found)
+            return 0;
+        ASSERT(found->isRefCountedWrapper());
+        return static_cast<Wrapper*>(found)->wrapped();
     }
-};
-
-template<typename T>
-class Supplementable {
-public:
-    void provideSupplement(const AtomicString& key, PassOwnPtr<Supplement<T> > supplement)
-    {
-        ASSERT(!m_supplements.get(key.impl()));
-        m_supplements.set(key, supplement);
-    }
-
-    Supplement<T>* requireSupplement(const AtomicString& key)
-    {
-        return m_supplements.get(key);
-    }
-
-private:
-    typedef HashMap<AtomicString, OwnPtr<Supplement<T> > > SupplementMap;
-    SupplementMap m_supplements;
 };
 
 } // namespace WebCore
 
-#endif // Supplementable_h
+#endif // RefCountedSupplement_h
