@@ -12,6 +12,8 @@ CONFIG += staticlib
 
 VPATH += $$PWD/wtf
 
+INCLUDEPATH += $$PWD/wtf
+
 HEADERS += \
     Alignment.h \
     AlwaysInline.h \

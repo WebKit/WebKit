@@ -7,17 +7,8 @@
 
 load(features)
 
-SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/WTF
-
-# FIXME: Including the root directory is a bad idea, likewise
-# no other project besides WTF should need to include WTF sub directories to build!
-INCLUDEPATH += \
-    $$SOURCE_DIR/.. \
-    $$SOURCE_DIR \
-    $$SOURCE_DIR/gobject \
-    $$SOURCE_DIR/qt \
-    $$SOURCE_DIR/unicode \
-    $$SOURCE_DIR/wtf
+# All external modules should include WTF headers by prefixing with "wtf" (#include <wtf/some/thing.h>).
+INCLUDEPATH += $$PWD
 
 haveQt(5) {
     mac {

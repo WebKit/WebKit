@@ -24,7 +24,7 @@
 
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "MathExtras.h"
+#include <wtf/MathExtras.h>
 using namespace WebCore;
 
 namespace WebKit {

@@ -22,10 +22,10 @@
 
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "OwnPtr.h"
-#include "PassOwnPtr.h"
-#include "RefCounted.h"
-#include "RefPtr.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 #if USE(GRAPHICS_SURFACE)
 

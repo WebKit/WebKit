@@ -1,3 +1,25 @@
+2012-06-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Using extrernal ICU library on case unsensitive drives will not work
+        https://bugs.webkit.org/show_bug.cgi?id=70913
+
+        Reviewed by Csaba Osztrogonác.
+
+        Properly set the include path for the WTF module and for modules using it.
+        The path should include Source/WTF/wtf only when building WTF itself. Other
+        modules are expected to include the headers as #include <wtf/Header.h>, so
+        only add Source/WTF to their include path.
+
+        "unicode/utf8.h" should now then always reference to ICU in the include path
+        and "wtf/unicode/UTF8.h" reference to the WTF version.
+        This will work as long as WTF object files don't depend on ICU themselves.
+
+        Removed gobject, qt and unicode from the include path as those directories
+        don't exist anymore.
+
+        * WTF.pri:
+        * WTF.pro:
+
 2012-06-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck issues.

@@ -1,3 +1,12 @@
+2012-06-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Using extrernal ICU library on case unsensitive drives will not work
+        https://bugs.webkit.org/show_bug.cgi?id=70913
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/graphics/surfaces/GraphicsSurface.h:
+
 2012-06-11  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Use TextureDrawQuad for video layer output when it produces a single GL texture

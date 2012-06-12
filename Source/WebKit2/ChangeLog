@@ -1,3 +1,12 @@
+2012-06-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Using extrernal ICU library on case unsensitive drives will not work
+        https://bugs.webkit.org/show_bug.cgi?id=70913
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WebProcess/WebPage/UpdateAtlas.cpp:
+
 2012-06-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Do not move/scale content while the user is interacting with it
