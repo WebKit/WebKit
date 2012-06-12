@@ -824,10 +824,7 @@ void FrameLoaderClientBlackBerry::dispatchDidFirstVisuallyNonEmptyLayout()
 
     readyToRender(true);
 
-    // FIXME: We shouldn't be getting here if we are not in the Committed state but we are
-    // so we can not assert on that right now. But we only want to do this on load.
-    // RIM Bug #555
-    if (m_webPagePrivate->loadState() == WebPagePrivate::Committed) {
+    if (m_webPagePrivate->shouldZoomToInitialScaleOnLoad()) {
         m_webPagePrivate->zoomToInitialScaleOnLoad(); // Set the proper zoom level first.
         m_webPagePrivate->m_backingStore->d->clearVisibleZoom(); // Clear the visible zoom since we're explicitly rendering+blitting below.
         m_webPagePrivate->m_backingStore->d->renderVisibleContents();

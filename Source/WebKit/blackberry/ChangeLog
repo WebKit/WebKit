@@ -1,3 +1,28 @@
+2012-06-12  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Scale was incorrect when reloading a simple web page after initial load
+        https://bugs.webkit.org/show_bug.cgi?id=88889
+
+        Reviewed by Adam Treat.
+        Patch by Jacky Jiang <zhajiang@rim.com>
+
+        PR: 164442
+        When we were reloading a web page with the load type FrameLoadTypeSame
+        after the initial load, the first layout timer was fired after the load
+        Finished state, in which case the web page would have no chance to zoom
+        to the initial scale during the layout as it was only for load
+        Committed state. This patch takes care of it.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::layoutFinished):
+        (BlackBerry::WebKit::WebPagePrivate::shouldZoomToInitialScaleOnLoad):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::zoomToInitialScaleOnLoad):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFirstVisuallyNonEmptyLayout):
+
 2012-06-12  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Fix crash in InputHandler

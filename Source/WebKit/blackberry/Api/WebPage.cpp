@@ -1554,7 +1554,7 @@ void WebPagePrivate::layoutFinished()
 
     m_nestedLayoutFinishedCount++;
 
-    if (loadState() == Committed)
+    if (shouldZoomToInitialScaleOnLoad())
         zoomToInitialScaleOnLoad();
     else if (loadState() != None)
         notifyTransformedContentsSizeChanged();
@@ -1589,6 +1589,18 @@ void WebPagePrivate::layoutFinished()
             }
         }
     }
+}
+
+bool WebPagePrivate::shouldZoomToInitialScaleOnLoad() const
+{
+    // For FrameLoadTypeSame load, the first layout timer can be fired after the load Finished state. We should
+    // zoom to initial scale for this case as well, otherwise the scale of the web page can be incorrect.
+    FrameLoadType frameLoadType = FrameLoadTypeStandard;
+    if (m_mainFrame && m_mainFrame->loader())
+        frameLoadType = m_mainFrame->loader()->loadType();
+    if (m_loadState == Committed || (m_loadState == Finished && frameLoadType == FrameLoadTypeSame))
+        return true;
+    return false;
 }
 
 void WebPagePrivate::zoomToInitialScaleOnLoad()
@@ -1628,7 +1640,7 @@ void WebPagePrivate::zoomToInitialScaleOnLoad()
     if (m_mainFrame && m_mainFrame->loader() && m_mainFrame->loader()->shouldRestoreScrollPositionAndViewState())
         shouldZoom = false;
 
-    if (shouldZoom && loadState() == Committed) {
+    if (shouldZoom && shouldZoomToInitialScaleOnLoad()) {
         // Preserve at top and at left position, to avoid scrolling
         // to a non top-left position for web page with viewport meta tag
         // that specifies an initial-scale that is zoomed in.

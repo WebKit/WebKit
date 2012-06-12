@@ -204,6 +204,7 @@ public:
     void notifyPopupAutofillDialog(const Vector<String>&, const WebCore::IntRect&);
     void notifyDismissAutofillDialog();
 
+    bool shouldZoomToInitialScaleOnLoad() const;
     // Called according to our heuristic or from setLoadState depending on whether we have a virtual viewport.
     void zoomToInitialScaleOnLoad();
 
