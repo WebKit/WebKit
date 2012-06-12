@@ -261,7 +261,7 @@ my @features = (
       define => "ENABLE_LEGACY_NOTIFICATIONS", default => isBlackBerry(), value => \$legacyNotificationsSupport },
 
     { option => "legacy-webkit-blob-builder", desc => "Toggle Legacy WebKit Blob Builder support",
-      define => "ENABLE_LEGACY_WEBKIT_BLOB_BUILDER", default => (isGtk() || isChromium() || isBlackBerry()), value => \$legacyWebKitBlobBuilderSupport },
+      define => "ENABLE_LEGACY_WEBKIT_BLOB_BUILDER", default => (isGtk() || isChromium() || isBlackBerry() || isEfl()), value => \$legacyWebKitBlobBuilderSupport },
 
     { option => "link-prefetch", desc => "Toggle Link Prefetch support",
       define => "ENABLE_LINK_PREFETCH", default => 0, value => \$linkPrefetchSupport },

@@ -1,3 +1,14 @@
+2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] enable LEGACY_WEBKIT_BLOB_BUILDER flag
+        https://bugs.webkit.org/show_bug.cgi?id=88715
+
+        Reviewed by Noam Rosenthal.
+
+        Enable LEGACY_WEBKIT_BLOB_BUILDER flag by default on EFL port.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-06-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Fix -Werror for the buildbots

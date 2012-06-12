@@ -829,7 +829,6 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 fast/events/pointer-events-2.html
 fast/events/remove-target-with-shadow-in-drag.html
-fast/files/blob-builder-crash.html
 fast/forms/001.html
 fast/forms/float-before-fieldset.html
 fast/forms/form-element-geometry.html
