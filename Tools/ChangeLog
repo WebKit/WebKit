@@ -1,3 +1,14 @@
+2012-06-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Fix -Werror for the buildbots
+        https://bugs.webkit.org/show_bug.cgi?id=88223
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Revert a part of r119269 to enable Werror again for non qt-developer-builds. (for bots for example)
+
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2012-06-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         [REGRESSION][WTR] Build fail with werror after r120054
