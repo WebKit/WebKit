@@ -1,3 +1,10 @@
+2012-06-11  Dan Bernstein  <mitz@apple.com>
+
+        Added http/tests/security/mixedContent/blob-url-in-iframe.html back to the Mac skip list, as
+        it is still failing intermittently. <http://webkit.org/b/88736> will track this.
+
+        * platform/mac/Skipped:
+
 2012-06-11  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Unexpected repeats of short media
