@@ -76,15 +76,22 @@ private:
     virtual const AtomicString& media() const;
     virtual const AtomicString& type() const;
 
-    void registerWithScopingNode();
-    void unregisterWithScopingNode() { unregisterWithScopingNode(parentNode()); }
-    void unregisterWithScopingNode(ContainerNode* scope);
+#if ENABLE(STYLE_SCOPED)
+    void scopedAttributeChanged(bool);
+    void registerWithScopingNode(bool);
+    void unregisterWithScopingNode(ContainerNode*);
+#endif
 
     bool m_firedLoad;
     bool m_loadedSheet;
 
 #if ENABLE(STYLE_SCOPED)
-    bool m_isRegisteredWithScopingNode;
+    enum ScopedStyleRegistrationState {
+        NotRegistered,
+        RegisteredAsScoped,
+        RegisteredInShadowRoot
+    };
+    ScopedStyleRegistrationState m_scopedStyleRegistrationState;
 #endif
 };
 

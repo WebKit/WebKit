@@ -500,7 +500,7 @@ const ContainerNode* StyleResolver::determineScope(const CSSStyleSheet* sheet)
 
     HTMLStyleElement* styleElement = static_cast<HTMLStyleElement*>(ownerNode);
     if (!styleElement->scoped())
-        return 0;
+        return styleElement->isInShadowTree()? styleElement->shadowRoot() : 0;
 
     ContainerNode* parent = styleElement->parentNode();
     if (!parent)

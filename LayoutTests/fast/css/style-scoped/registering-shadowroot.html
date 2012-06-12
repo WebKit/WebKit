@@ -48,7 +48,7 @@
             debug("--- Unsetting @scoped ---");
             style.scoped = false;
             shouldBe("internals.numberOfScopedHTMLStyleChildren(host)", "0");
-            shouldBe("internals.numberOfScopedHTMLStyleChildren(sr)", "0"); /* <style> in shadow, not scoped */
+            shouldBe("internals.numberOfScopedHTMLStyleChildren(sr)", "1"); /* <style> in shadow, not scoped */
 
             debug("--- Setting @scoped ---");
             style.scoped = true;

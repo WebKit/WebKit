@@ -14,7 +14,7 @@ PASS internals.numberOfScopedHTMLStyleChildren(host) is 0
 PASS internals.numberOfScopedHTMLStyleChildren(sr) is 1
 --- Unsetting @scoped ---
 PASS internals.numberOfScopedHTMLStyleChildren(host) is 0
-PASS internals.numberOfScopedHTMLStyleChildren(sr) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(sr) is 1
 --- Setting @scoped ---
 PASS internals.numberOfScopedHTMLStyleChildren(host) is 0
 PASS internals.numberOfScopedHTMLStyleChildren(sr) is 1

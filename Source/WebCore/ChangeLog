@@ -1,3 +1,63 @@
+2012-06-12  Takashi Sakamoto  <tasak@google.com>
+
+        [Shadow DOM] <style> inside Shadow subtree should be scoped inside the subtree.
+        https://bugs.webkit.org/show_bug.cgi?id=87805
+
+        Modified HTMLStyleElement to be treated as a scoped style independent
+        of its "scoped" attribute's value if HTMLStyleElement is in shadow
+        subtree. HTMLStyleElement has the following four cases talking about
+        "scoped" attribute and whether is in shadow subtree or not:
+        1, HTMLStyleElement is "scoped" and is in document tree,
+        2, HTMLStyleElement is "scoped" and is in shadow subtree,
+        3, HTMLStyleElement is not "scoped" and is in document tree, and
+        4, HTMLStyleElement is not "scoped" and is in shadow subtree.
+        The case 1 and 2 are not changed. This patch affected the case 4.
+        At the case 4, the HTMLStyleElement's scoping node is the shadow root.
+        This change is the first step for fixing style scope bug,
+        i.e. HTMLStyleElements in shadow subtree are applied to any element
+        in document tree.
+
+        Reviewed by Dimitri Glazkov.
+
+        Test: fast/css/style-scoped/style-scoped-change-scoped-in-shadow.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::determineScope):
+        Modified to return a shadow root if a targeted stylesheet owner node is
+        not scoped but in some shadow DOM subtree.
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement):
+        (WebCore::HTMLStyleElement::parseAttribute):
+        Modified to use the below scopedAttributeChanged when a changed
+        attribute's name is "scoped".
+        (WebCore::HTMLStyleElement::scopedAttributeChanged):
+        Newly added. According to new scoped value and isInShadowTree,
+        add or remove style rules to/from scopedAuthorRules via
+        registerWithScopingNode or unregisterWithScopingNode.
+        (WebCore::HTMLStyleElement::registerWithScopingNode):
+        Added one boolean argument to determine whether HTMLStyleElement is
+        scoped or not. The reason why not using scoped() is the comment:
+        "We cannot rely on the scoped element already being present when this
+        method is invoked. Therefore we cannot rely on scoped()"
+        (WebCore::HTMLStyleElement::unregisterWithScopingNode):
+        Changed the code for updating m_isRegisteredWithScopingNode. Now
+        set m_scopedStyleRegistrationState to be NotRegistered.
+        (WebCore::HTMLStyleElement::insertedInto):
+        Modified to invoke registerWithScopingNode when an element is not
+        scoped but in some shadow subtree.
+        (WebCore::HTMLStyleElement::removedFrom):
+        Modified to invoke unregisterWithScopingNode when an element is not
+        scoped but in some shadow subtree.
+        * html/HTMLStyleElement.h:
+        (HTMLStyleElement):
+        Modified the type of m_isRegisteredWithScopingNode from bool to
+        enum and renamed to m_scopedStyleRegistrationState. Now the member
+        variable keeps what HTMLStyleElement's scoping node is, i.e.
+        none (this means, not in shadow subtree and not scoped), shadow root or
+        parent node.
+        Added one new method scopedAttributeChanged's declaration and
+        modified the declaration of registerWithScopingNode.
+
 2012-06-12  Amy Ousterhout  <aousterh@chromium.org>
 
         Removing unused parameter Page

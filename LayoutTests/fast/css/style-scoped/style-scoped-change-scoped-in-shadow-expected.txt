@@ -1,0 +1,64 @@
+PASS window.internals is defined.
+PASS window.internals.ensureShadowRoot is defined.
+PASS WebKitShadowRoot is defined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+test a scoped style in shadow subtree.
+E: rgb(255, 0, 0)
+F: rgb(0, 0, 0)
+test a style in shadow subtree.
+E: rgb(255, 0, 0)
+F: rgb(255, 0, 0)
+test styles in multiple shadow subtrees.
+E: rgb(255, 0, 0)
+F: rgb(255, 0, 0)
+G: rgb(0, 0, 255)
+test a scoped style in nested shadow subtree.
+E: rgb(255, 0, 0)
+F: rgb(0, 0, 0)
+G: rgb(0, 0, 255)
+H: rgb(255, 0, 0)
+test a style in nested shadow subtree.
+E: rgb(255, 0, 0)
+F: rgb(255, 0, 0)
+G: rgb(0, 0, 255)
+H: rgb(0, 0, 255)
+test changing a style in shadow subtree from scoped to scoped.
+E: rgb(255, 0, 0)
+F: rgb(0, 0, 0)
+E: rgb(255, 0, 0)
+F: rgb(0, 0, 0)
+test changing a style in shadow subtree from scoped to not-scoped.
+E: rgb(255, 0, 0)
+F: rgb(0, 0, 0)
+E: rgb(255, 0, 0)
+F: rgb(255, 0, 0)
+test changing a style in shadow subtree from not-scoped to scoped.
+E: rgb(255, 0, 0)
+F: rgb(255, 0, 0)
+E: rgb(255, 0, 0)
+F: rgb(0, 0, 0)
+test removing a scoped style from shadow subtree.
+E: rgb(255, 0, 0)
+F: rgb(0, 0, 0)
+E: rgb(0, 0, 0)
+F: rgb(0, 0, 0)
+test removing a style from shadow subtree.
+E: rgb(255, 0, 0)
+F: rgb(255, 0, 0)
+E: rgb(0, 0, 0)
+F: rgb(0, 0, 0)
+test inserting a scoped style into shadow subtree.
+E: rgb(255, 0, 0)
+F: rgb(0, 0, 0)
+test inserting a style into shadow subtree.
+E: rgb(255, 0, 0)
+F: rgb(255, 0, 0)
+test re-inserting a style after changing scoped to not scoped offline.
+E: rgb(255, 0, 0)
+F: rgb(255, 0, 0)
+test re-inserting a style after changing not scoped to scoped offline.
+E: rgb(255, 0, 0)
+F: rgb(0, 0, 0)
+

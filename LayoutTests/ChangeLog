@@ -1,3 +1,15 @@
+2012-06-12  Takashi Sakamoto  <tasak@google.com>
+
+        [Shadow DOM] <style> inside Shadow subtree should be scoped inside the subtree.
+        https://bugs.webkit.org/show_bug.cgi?id=87805
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/css/style-scoped/registering-shadowroot-expected.txt:
+        * fast/css/style-scoped/registering-shadowroot.html:
+        * fast/css/style-scoped/style-scoped-change-scoped-in-shadow-expected.txt: Added.
+        * fast/css/style-scoped/style-scoped-change-scoped-in-shadow.html: Added.
+
 2012-06-12  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed. Add reference to bug 88859 for test skipped in r120055.
