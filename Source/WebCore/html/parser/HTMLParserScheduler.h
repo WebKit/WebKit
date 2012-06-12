@@ -47,12 +47,14 @@ public:
         , processedTokens(INT_MAX)
         , startTime(0)
         , needsYield(false)
+        , didSeeScript(false)
     {
     }
 
     int processedTokens;
     double startTime;
     bool needsYield;
+    bool didSeeScript;
 };
 
 class HTMLParserScheduler {
@@ -67,13 +69,15 @@ public:
     // Inline as this is called after every token in the parser.
     void checkForYieldBeforeToken(PumpSession& session)
     {
-        if (session.processedTokens > m_parserChunkSize) {
+        if (session.processedTokens > m_parserChunkSize || session.didSeeScript) {
             // currentTime() can be expensive.  By delaying, we avoided calling
             // currentTime() when constructing non-yielding PumpSessions.
             if (!session.startTime)
                 session.startTime = currentTime();
 
             session.processedTokens = 0;
+            session.didSeeScript = false;
+
             double elapsedTime = currentTime() - session.startTime;
             if (elapsedTime > m_parserTimeLimit)
                 session.needsYield = true;

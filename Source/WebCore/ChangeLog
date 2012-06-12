@@ -1,3 +1,25 @@
+2012-06-12  Shrey Banga  <banga@chromium.org>
+
+        HTML parser should yield more to improve perceived page load time
+        https://bugs.webkit.org/show_bug.cgi?id=86165
+
+        Reviewed by Tony Gentilcore.
+
+        Test: fast/events/event-yield-timing.html
+
+        We want the parser to yield at least every 500ms to keep the page somewhat responsive and allow painting.
+        Since it would be too expensive to check the time after each token, the previous heuristic was to check every 4,096 tokens.
+        That works fine for most tokens, but a script may spend an arbitrary amount of time executing.
+
+        This patch fixes the issue by causing the parser to check the elapsed time immediately after executing a script.
+
+        * html/parser/HTMLParserScheduler.cpp:
+        (WebCore::HTMLParserScheduler::checkForYieldBeforeScript):
+        * html/parser/HTMLParserScheduler.h:
+        (WebCore::PumpSession::PumpSession):
+        (PumpSession):
+        (WebCore::HTMLParserScheduler::checkForYieldBeforeToken):
+
 2012-06-12  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Don't crash in CCLayerIterator if the root layer doesn't have a render surface

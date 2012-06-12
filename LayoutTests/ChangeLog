@@ -1,3 +1,26 @@
+2012-06-12  Shrey Banga  <banga@chromium.org>
+
+        HTML parser should yield more to improve perceived page load time
+        https://bugs.webkit.org/show_bug.cgi?id=86165
+
+        Added test for parser yield times after seeing a script
+
+        Reviewed by Tony Gentilcore.
+
+        * fast/parser/parser-yield-timing-expected.txt: Added.
+        * fast/parser/parser-yield-timing.html: Added.
+        * http/tests/loading/gmail-assert-on-load-expected.txt: The test was added
+        for an assert that failed on debug builds when an iframe removed itself 
+        from its parent window after blocking for 1 second. In previous builds,
+        the destroyIt() function was called without yielding to the event loop,
+        which lead to didFailLoadWithError being called. The fix for bug 86165
+        ensures that we yield after executing the script, which leads to 
+        didHandleOnloadEventsForFrame being called instead. This is the cause
+        of the change in output of the test. The test still successfully removes
+        the iframe and since no asserts fail in the debug build, we should consider
+        it as passing.
+
+
 2012-06-12  Pablo Flouret  <pablof@motorola.com>
 
         LayoutTests/http/tests/xmlhttprequest/origin-exact-matching.html is giving trouble due to too many redirects

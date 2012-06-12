@@ -95,6 +95,7 @@ void HTMLParserScheduler::checkForYieldBeforeScript(PumpSession& session)
     bool needsFirstPaint = document->view() && !document->view()->hasEverPainted();
     if (needsFirstPaint && document->isLayoutTimerActive())
         session.needsYield = true;
+    session.didSeeScript = true;
 }
 
 void HTMLParserScheduler::scheduleForResume()
