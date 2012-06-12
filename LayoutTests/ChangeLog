@@ -1,3 +1,12 @@
+2012-06-12  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed: Add expectations for speech-recognition-event-constructor
+
+        This looks like it was failing as it was added in r120053. Filed
+        bug 88856.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120051.
