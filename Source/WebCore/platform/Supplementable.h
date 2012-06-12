@@ -40,9 +40,6 @@ template<typename T>
 class Supplement {
 public:
     virtual ~Supplement() { }
-#if !ASSERT_DISABLED
-    virtual bool isRefCountedWrapper() const { return false; }
-#endif
 
     static void provideTo(Supplementable<T>* host, const AtomicString& key, PassOwnPtr<Supplement<T> > supplement)
     {

@@ -41,7 +41,6 @@
 #include "Color.h"
 #include "ColorSpace.h"
 #include "CompositionUnderlineVectorBuilder.h"
-#include "ContextFeaturesClientImpl.h"
 #include "ContextMenu.h"
 #include "ContextMenuController.h"
 #include "ContextMenuItem.h"
@@ -338,7 +337,6 @@ void WebViewImpl::setDevToolsAgentClient(WebDevToolsAgentClient* devToolsClient)
 void WebViewImpl::setPermissionClient(WebPermissionClient* permissionClient)
 {
     m_permissionClient = permissionClient;
-    m_featureSwitchClient->setPermissionClient(permissionClient);
 }
 
 void WebViewImpl::setPrerendererClient(WebPrerendererClient* prerendererClient)
@@ -394,7 +392,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_imeAcceptEvents(true)
     , m_operationsAllowed(WebDragOperationNone)
     , m_dragOperation(WebDragOperationNone)
-    , m_featureSwitchClient(adoptPtr(new ContextFeaturesClientImpl()))
     , m_autofillPopupShowing(false)
     , m_autofillPopup(0)
     , m_isTransparent(false)
@@ -454,7 +451,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     provideNotification(m_page.get(), notificationPresenterImpl());
 #endif
 
-    provideContextFeaturesTo(m_page.get(), m_featureSwitchClient.get());
     provideDeviceOrientationTo(m_page.get(), m_deviceOrientationClientProxy.get());
     provideGeolocationTo(m_page.get(), m_geolocationClientProxy.get());
     m_geolocationClientProxy->setController(GeolocationController::from(m_page.get()));

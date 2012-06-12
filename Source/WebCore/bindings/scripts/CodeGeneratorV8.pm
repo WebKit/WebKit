@@ -2417,7 +2417,7 @@ sub GenerateImplementation
     push(@implFixedHeader, GenerateImplementationContentHeader($dataNode));
 
     AddToImplIncludes("RuntimeEnabledFeatures.h");
-    AddToImplIncludes("ContextFeatures.h");
+    AddToImplIncludes("ContextEnabledFeatures.h");
     AddToImplIncludes("V8Proxy.h");
     AddToImplIncludes("V8Binding.h");
     AddToImplIncludes("V8BindingState.h");
@@ -2866,7 +2866,7 @@ END
             my $enableFunction = GetContextEnableFunction($runtimeAttr->signature);
             my $conditionalString = $codeGenerator->GenerateConditionalString($runtimeAttr->signature);
             push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
-            push(@implContent, "    if (ContextFeatures::${enableFunction}(impl->document())) {\n");
+            push(@implContent, "    if (ContextEnabledFeatures::${enableFunction}(impl)) {\n");
             push(@implContent, "        static const BatchedAttribute attrData =\\\n");
             GenerateSingleBatchedAttribute($interfaceName, $runtimeAttr, ";", "    ");
             push(@implContent, <<END);

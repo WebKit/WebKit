@@ -1,3 +1,14 @@
+2012-06-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r120051.
+        http://trac.webkit.org/changeset/120051
+        https://bugs.webkit.org/show_bug.cgi?id=88852
+
+        some tests are crashing (Requested by morrita on #webkit).
+
+        * fast/dom/shadow/elements-in-frameless-document-expected.txt: Removed.
+        * fast/dom/shadow/elements-in-frameless-document.html: Removed.
+
 2012-06-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Diverging test results on 32/64 bit architectures

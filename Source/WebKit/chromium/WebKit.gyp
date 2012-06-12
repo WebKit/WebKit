@@ -371,8 +371,6 @@
                 'src/CompositionUnderlineBuilder.h',
                 'src/CompositionUnderlineVectorBuilder.cpp',
                 'src/CompositionUnderlineVectorBuilder.h',
-                'src/ContextFeaturesClientImpl.cpp',
-                'src/ContextFeaturesClientImpl.h',
                 'src/ContextMenuClientImpl.cpp',
                 'src/ContextMenuClientImpl.h',
                 'src/DatabaseObserver.cpp',

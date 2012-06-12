@@ -1,3 +1,69 @@
+2012-06-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r120051.
+        http://trac.webkit.org/changeset/120051
+        https://bugs.webkit.org/show_bug.cgi?id=88852
+
+        some tests are crashing (Requested by morrita on #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/ContextEnabledFeatures.cpp: Renamed from Source/WebKit/chromium/src/ContextFeaturesClientImpl.cpp.
+        (WebCore):
+        (WebCore::ContextEnabledFeatures::shadowDOMEnabled):
+        (WebCore::ContextEnabledFeatures::styleScopedEnabled):
+        (WebCore::ContextEnabledFeatures::pagePopupEnabled):
+        * bindings/generic/ContextEnabledFeatures.h: Renamed from Source/WebKit/chromium/src/ContextFeaturesClientImpl.h.
+        (WebCore):
+        (ContextEnabledFeatures):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateImplementation):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::determineScope):
+        * dom/ContextFeatures.cpp: Removed.
+        * dom/ContextFeatures.h: Removed.
+        * dom/DOMAllInOne.cpp:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore):
+        (Document):
+        * dom/Position.cpp:
+        (WebCore::Position::Position):
+        (WebCore::Position::findParent):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getSelection):
+        * dom/make_names.pl:
+        (printConstructorInterior):
+        (printFactoryCppFile):
+        (printWrapperFunctions):
+        (printWrapperFactoryCppFile):
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromMarkupWithContext):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::registerWithScopingNode):
+        (WebCore::HTMLStyleElement::unregisterWithScopingNode):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::contentTagName):
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::patchDocument):
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::allowShadowDOM):
+        (WebCore::FrameLoaderClient::allowStyleScoped):
+        (FrameLoaderClient):
+        (WebCore::FrameLoaderClient::allowPagePopup):
+        * platform/RefCountedSupplement.h: Removed.
+        * platform/Supplementable.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML):
+
 2012-06-11  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: counterValueForElementById() could be moved to Internals.

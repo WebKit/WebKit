@@ -52,7 +52,7 @@
 #include "CachedImage.h"
 #include "CalculationValue.h"
 #include "ContentData.h"
-#include "ContextFeatures.h"
+#include "ContextEnabledFeatures.h"
 #include "Counter.h"
 #include "CounterContent.h"
 #include "CursorList.h"
@@ -491,7 +491,7 @@ const ContainerNode* StyleResolver::determineScope(const CSSStyleSheet* sheet)
 {
     ASSERT(sheet);
 
-    if (!ContextFeatures::styleScopedEnabled(document()))
+    if (!ContextEnabledFeatures::styleScopedEnabled(document()))
         return 0;
 
     Node* ownerNode = sheet->ownerNode();
