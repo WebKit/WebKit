@@ -1,3 +1,17 @@
+2012-06-12  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Fix crash in InputHandler
+        https://bugs.webkit.org/show_bug.cgi?id=88808
+
+        Reviewed by Antonio Gomes.
+
+        m_page is destroyed before InputHandler, so should move the call to destroy popup to chromeDestroyed().
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::chromeDestroyed():
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::~InputHandler):
+
 2012-06-12  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Use a safer way to shrink JS memory usage

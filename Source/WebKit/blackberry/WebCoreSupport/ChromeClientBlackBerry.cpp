@@ -148,6 +148,8 @@ bool ChromeClientBlackBerry::runJavaScriptPrompt(Frame* frame, const String& mes
 
 void ChromeClientBlackBerry::chromeDestroyed()
 {
+    // Destroy popup if we have.
+    closePagePopup(0);
     delete this;
 }
 

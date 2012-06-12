@@ -125,7 +125,6 @@ InputHandler::InputHandler(WebPagePrivate* page)
 
 InputHandler::~InputHandler()
 {
-    m_webPage->m_page->chrome()->client()->closePagePopup(0);
 }
 
 static BlackBerryInputType convertInputType(const HTMLInputElement* inputElement)
