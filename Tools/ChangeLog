@@ -1,3 +1,9 @@
+2012-06-12  Helder Correia  <helder.correia@nokia.com>
+
+        Unreviewed. Update my email address in committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-06-12  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Resolve CMake warnings on overlapping search paths for EFL jhbuild-enabled build
