@@ -1,3 +1,19 @@
+2012-06-12  Igor Oliveira  <igor.o@sisa.samsung.com>
+
+        Apply animations and transitions for first-letter element
+        https://bugs.webkit.org/show_bug.cgi?id=85253
+
+        Reviewed by Simon Fraser.
+
+        * animations/first-letter-animation-expected.txt: Added.
+        * animations/first-letter-animation.html: Added.
+        * animations/first-letter-play-state-expected.txt: Added.
+        * animations/first-letter-play-state.html: Added.
+        * transitions/first-letter-color-transition-expected.txt: Added.
+        * transitions/first-letter-color-transition.html: Added.
+        * transitions/first-letter-transition-expected.txt: Added.
+        * transitions/first-letter-transition.html: Added.
+
 2012-06-12  Kent Tamura  <tkent@chromium.org>
 
         Checking a radio button doesn't uncheck other buttons in the same group in some cases.

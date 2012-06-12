@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<style type="text/css" media="screen">
+    .box {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      background: blue;
+      -webkit-animation: boxAnimation 0.1s 0.1s linear;
+    }
+
+    .box::first-letter {
+      color: black;
+      -webkit-animation: firstLetterAnimation 0.1s 0.2s forwards ease-out;
+    }
+
+    @-webkit-keyframes firstLetterAnimation {
+      from { font-size: 24pt;}
+      to { font-size: 40pt;}
+    }
+
+    @-webkit-keyframes boxAnimation {
+      from { 
+             font-size: 40pt;
+             -webkit-transform: rotate(0deg);
+      }
+      to {
+           font-size: 2pt;
+           -webkit-transform: rotate(360deg);
+      }
+    }
+
+</style>
+<script type="text/javascript" charset="utf-8">
+   if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var result = "Animations test result: <br><br>";
+    var animations = 0;
+    function animationEnded(event)
+    {
+        if ((event.animationName == "firstLetterAnimation" || event.animationName == "boxAnimation") &&
+            parseFloat(event.elapsedTime).toFixed(2) == 0.1)
+           result += "PASS<br>";
+        else
+           result += "FAIL<br>";
+
+        ++animations;
+        if (animations == 2) {
+            document.getElementById('result').innerHTML = result;
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    }
+
+    window.addEventListener("webkitAnimationEnd", animationEnded, false );
+</script>
+</head>
+<body>
+  <div class="box">
+    Lorem ipsum dolor sit amet.
+  </div>
+  <div id="result" style="position:absolute; top:150px">
+  </div>
+</body>
+</html>

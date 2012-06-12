@@ -1,3 +1,52 @@
+2012-06-12  Igor Oliveira  <igor.o@sisa.samsung.com>
+
+        Apply animations and transitions for first-letter element
+        https://bugs.webkit.org/show_bug.cgi?id=85253
+
+        Add animations and transitions support for the first-letter
+        pseudo element.
+        Instead of calling RenderOject::node() in the animations code,
+        now we need to call RenderObject::styledGeneratingNode() because
+        pseudo elements does not have a Node associated with the
+        RenderObject.
+
+        Initial patch by Simon Fraser
+
+        Reviewed by Simon Fraser.
+
+        Tests: animations/first-letter-animation.html
+               animations/first-letter-play-state.html
+               transitions/first-letter-color-transition.html
+               transitions/first-letter-transition.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateAnimations):
+        (WebCore::AnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::AnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::AnimationController::cancelAnimations):
+        (WebCore::AnimationController::updateAnimations):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::pauseAnimation):
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::pauseAnimation):
+        (WebCore::KeyframeAnimation::endAnimation):
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetterStyle):
+        (WebCore::RenderBlock::createFirstLetterRenderer):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setAnimatableStyle):
+        (WebCore::RenderObject::styledGeneratingNode):
+        (WebCore):
+        * rendering/RenderObject.h:
+        (RenderObject):
+
 2012-06-12  Kent Tamura  <tkent@chromium.org>
 
         Checking a radio button doesn't uncheck other buttons in the same group in some cases.

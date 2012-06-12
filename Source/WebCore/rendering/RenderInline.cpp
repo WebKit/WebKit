@@ -953,8 +953,8 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
 
 LayoutRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
 {
-    // Only run-ins are allowed in here during layout.
-    ASSERT(!view() || !view()->layoutStateEnabled() || isRunIn());
+    // Only run-ins and first-letter elements are allowed in here during layout.
+    ASSERT(!view() || !view()->layoutStateEnabled() || isRunIn() || style()->styleType() == FIRST_LETTER);
 
     if (!firstLineBoxIncludingCulling() && !continuation())
         return LayoutRect();

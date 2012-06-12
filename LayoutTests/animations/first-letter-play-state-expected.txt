@@ -1,0 +1,6 @@
+This tests the operation of -webkit-animation-play-state. After 100 milliseconds the box should stop and after 150 milliseconds it should start again. We test it both while in motion and when stopped.
+
+Lorem ipsum dolor sit amet.
+PASS - "left" property for "box1" element at 0.1s saw something close to: 200
+PASS - "left" property for "box1" element at 0.13s saw something close to: 200
+

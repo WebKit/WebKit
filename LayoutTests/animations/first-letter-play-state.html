@@ -1,0 +1,92 @@
+<html>
+<head>
+  <title>Test of -webkit-animation-play-state with first-letter pseudo element</title>
+  <style type="text/css" media="screen">
+    #box1 {
+      position: absolute;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      color: red;
+      -webkit-animation: move1 0.2s linear;
+    }
+    #box1::first-letter {
+      color: white;
+      -webkit-animation: firstLetterAnimation 0.21s linear;
+    }
+    #box1.paused::first-letter {
+      -webkit-animation-play-state: paused;
+    }
+    #box1.running::first-letter {
+      -webkit-animation-play-state: running;
+    }
+    @-webkit-keyframes move1 {
+        from { left: 0px ; color: red;}
+        to   { left: 400px; color: black;}
+    }
+    @-webkit-keyframes firstLetterAnimation {
+        from { color: white; }
+        to { color: green; }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["move1", 0.1, "box1", "left", 200, 20],
+      ["move1", 0.13, "box1", "left", 200, 20]
+    ];
+    
+    function stop()
+    {
+        box1Element = document.getElementById("box1");
+        box1Element.className = "paused";
+        box1Element.style.webkitAnimationPlayState = "paused";
+    }
+
+    function start()
+    {
+        box1Element = document.getElementById("box1");
+        box1Element.className = "running";
+        box1Element.style.webkitAnimationPlayState = "running";
+    }
+
+    function setTimers()
+    {
+        setTimeout(stop, 100);
+        setTimeout(start, 150);
+    }
+
+    var move1AnimationEnded = false;
+    function animationEnded(event)
+    {
+        if (event.animationName == "move1")
+            move1AnimationEnded = true;
+
+        if (event.animationName == "firstLetterAnimation" && move1AnimationEnded) {
+            document.getElementById('resultFirstLetter').innerHTML = "Test Failed: firstLetterAnimation should end before move1 animation<br>";
+        }
+    }
+
+    window.addEventListener("webkitAnimationEnd", animationEnded, false );
+    
+    runAnimationTest(expectedValues, setTimers, null, true);
+    
+  </script>
+</head>
+<body>
+<p>
+This tests the operation of -webkit-animation-play-state. After 100 milliseconds the box should stop and after 150 milliseconds
+it should start again. We test it both while in motion and when stopped.
+<div id="box1">
+    Lorem ipsum dolor sit amet.
+</div>
+<div id="box2">
+</div>
+<div id="result">
+</div>
+<div id="resultFirstLetter">
+</div>
+</body>
+</html>

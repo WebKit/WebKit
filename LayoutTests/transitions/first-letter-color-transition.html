@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<style type="text/css" media="screen">
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: blue;
+    }
+    
+    .box::first-letter {
+      font-size: 24pt;
+      color: black;
+      -webkit-transition: color 0.1s;
+    }
+
+    body.go .box::first-letter {
+      color: white;
+    }
+
+</style>
+<script  type="text/javascript" charset="utf-8">
+   if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var result = "";
+    function transitionEnded(event)
+    {   
+        if (event.propertyName == "color")
+           result += "PASS";
+        else
+           result += "FAIL";
+
+        document.getElementById('result').innerHTML = result;
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
+    window.addEventListener('webkitTransitionEnd', transitionEnded, false);
+
+    window.addEventListener('load', function () {
+        document.body.className = "go";
+    }, false);
+</script>
+</head>
+<body>
+  <div class="box">
+    Lorem ipsum dolor sit amet.
+  </div>
+  <div id="result">
+  </div>
+</body>
+</html>

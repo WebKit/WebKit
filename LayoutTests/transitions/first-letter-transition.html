@@ -1,0 +1,85 @@
+<html>
+<head>
+<style type="text/css" media="screen">
+    .box {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      left: 100px;
+      background-color: blue;
+    }
+
+    .box::first-letter {
+      font-size: 24pt;
+      color: black;
+      -webkit-transition: color 0.1s 0.1s;
+    }
+
+    #first {
+      -webkit-transition: left 0.1s 0.15s;
+    }
+
+    #second {
+      -webkit-transition: all 0.1s 0.2s;
+    }
+
+    .animating #first {
+      left: 400px;
+    }
+
+    .animating #second {
+      -webkit-transform: rotate(360deg);
+      color: purple;
+    }
+
+    .animating *::first-letter {
+      color: white;
+    }
+
+
+</style>
+<script src="resources/transition-test-helpers.js"></script>
+<script  type="text/javascript" charset="utf-8">
+   if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var result = "Transtions test result: <br><br>";
+    var transitions = 0;
+    function transitionEnded(event)
+    {
+        if ((event.propertyName == "color") || (event.propertyName == "left") || (event.propertyName == "-webkit-transform"))
+           result += "PASS <br>";
+        else
+           result += "FAIL <br>";
+
+        ++transitions;
+
+        if (transitions == 5) {
+            document.getElementById('result').innerHTML = result;
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    }
+
+    window.addEventListener( 'webkitTransitionEnd', transitionEnded, false );
+
+    window.addEventListener("load", function () {
+        document.getElementById('container').className = 'animating';
+    }, false);
+</script>
+</head>
+<body>
+<div id="container">
+  <div id="first" class="box">
+      Box One
+  </div>
+  <div id="second" class="box">
+      Box two
+  </div>
+</div>
+  <div id="result">
+  </div>
+</body>
+</html>

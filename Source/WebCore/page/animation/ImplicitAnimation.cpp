@@ -129,7 +129,7 @@ void ImplicitAnimation::pauseAnimation(double timeOffset)
 #endif
     // Restore the original (unanimated) style
     if (!paused())
-        setNeedsStyleRecalc(m_object->node());
+        setNeedsStyleRecalc(m_object->styledGeneratingNode());
 }
 
 void ImplicitAnimation::endAnimation()
@@ -165,8 +165,8 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
                 
             // Dispatch the event
             RefPtr<Element> element = 0;
-            if (m_object->node() && m_object->node()->isElementNode())
-                element = static_cast<Element*>(m_object->node());
+            if (m_object->styledGeneratingNode() && m_object->styledGeneratingNode()->isElementNode())
+                element = static_cast<Element*>(m_object->styledGeneratingNode());
 
             ASSERT(!element || (element->document() && !element->document()->inPageCache()));
             if (!element)

@@ -563,10 +563,16 @@ public:
 
     Node* node() const { return isAnonymous() ? 0 : m_node; }
 
-    // Returns the styled node that caused the generation of this renderer.
-    // This is the same as node() except for renderers of :before and :after
+    // This is the same as node() except for renderers of :before. :after and first-letter
     // pseudo elements for which their parent node is returned.
     Node* generatingNode() const { return m_node == document() ? 0 : m_node; }
+
+    // Returns the styled node that caused the generation of this renderer.
+    // This is the same as node() except for anonymous renderers, for which
+    // it returns the node whose style caused the generation of this renderer.
+    // FIXME: merge with generatingNode()
+    Node* styledGeneratingNode() const;
+
     void setNode(Node* node) { m_node = node; }
 
     Document* document() const { return m_node->document(); }
@@ -648,8 +654,6 @@ public:
     virtual void dirtyLinesFromChangedChild(RenderObject*);
 
     // Called to update a style that is allowed to trigger animations.
-    // FIXME: Right now this will typically be called only when updating happens from the DOM on explicit elements.
-    // We don't yet handle generated content animation such as first-letter or before/after (we'll worry about this later).
     void setAnimatableStyle(PassRefPtr<RenderStyle>);
 
     // Set the style of the object and update the state of the object accordingly.
