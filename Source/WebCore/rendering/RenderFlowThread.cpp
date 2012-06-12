@@ -51,7 +51,7 @@ RenderFlowThread::RenderFlowThread(Node* node)
     , m_regionsInvalidated(false)
     , m_regionsHaveUniformLogicalWidth(true)
     , m_regionsHaveUniformLogicalHeight(true)
-    , m_overset(false)
+    , m_overset(true)
     , m_regionLayoutUpdateEventTimer(this, &RenderFlowThread::regionLayoutUpdateEventTimerFired)
 {
     ASSERT(node->document()->cssRegionsEnabled());
@@ -717,9 +717,10 @@ void RenderFlowThread::computeOverflowStateForRegions(LayoutUnit oldClientAfterE
             region->setDispatchRegionLayoutUpdateEvent(true);
     }
 
-    // With the regions overflow state computed we can also set the overflow for the named flow.
+    // With the regions overflow state computed we can also set the overset flag for the named flow.
+    // If there are no valid regions in the chain, overset is true
     RenderRegion* lastReg = lastRegion();
-    m_overset = lastReg && (lastReg->regionState() == RenderRegion::RegionOverflow);
+    m_overset = lastReg ? lastReg->regionState() == RenderRegion::RegionOverflow : true;
 }
 
 void RenderFlowThread::regionLayoutUpdateEventTimerFired(Timer<RenderFlowThread>*)

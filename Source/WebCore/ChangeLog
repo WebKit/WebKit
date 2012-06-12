@@ -1,3 +1,22 @@
+2012-06-12  Andrei Bucur  <abucur@adobe.com>
+
+        [CSSRegions]NamedFlow::overset should return true when there's no region chain attached
+        https://bugs.webkit.org/show_bug.cgi?id=88515
+
+        The CSS Regions specifies that the "overset" attribute needs to return true if the content overflows, there's no region attached to the flow
+        or if the NamedFlow is in the NULL state:
+        http://www.w3.org/TR/css3-regions/#dom-named-flow-overset
+
+        This patch updates WebKit's behavior in the last two situations to match the one in the spec.
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/regions/webkit-named-flow-overset.html was updated
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::computeOverflowStateForRegions): If the last valid region is null, the flow has not region chain attached or it's in the NULL state.
+
 2012-06-12  Rahul Tiwari  <rahultiwari.cse.iitr@gmail.com>
 
         Web Inspector: Provide context menu for deleting recorded profile on Profiles Panel

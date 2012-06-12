@@ -1,3 +1,19 @@
+2012-06-12  Andrei Bucur  <abucur@adobe.com>
+
+        [CSSRegions]NamedFlow::overset should return true when there's no region chain attached
+        https://bugs.webkit.org/show_bug.cgi?id=88515
+
+        The CSS Regions specifies that the "overset" attribute needs to return true if the content overflows, there's no region attached to the flow
+        or if the NamedFlow is in the NULL state:
+        http://www.w3.org/TR/css3-regions/#dom-named-flow-overset
+
+        The overset test was updated to cover the attribute value in case of a flow in the NULL state.
+
+        Reviewed by Andreas Kling.
+
+        * fast/regions/webkit-named-flow-overset-expected.txt:
+        * fast/regions/webkit-named-flow-overset.html:
+
 2012-06-12  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed gardening. Skip test failing randomly in GTK bots after r120040.

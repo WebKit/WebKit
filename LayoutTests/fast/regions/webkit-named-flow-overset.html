@@ -26,61 +26,67 @@
     // Flow article does not have any regions yet
     var namedFlow = document.webkitGetFlowByName("flow");
 
-    // Overflow should be false for a flow without regions
-    shouldBe("namedFlow.overset", "false");
+    // Overset should be false for a flow without regions
+    shouldBe("namedFlow.overset", "true");
 
-    // Add a region to take the content, overflow should be false since the content first the regions.
+    // Add a region to take the content, overset should be false since the content first the regions.
     var region = document.createElement("div");
     document.body.appendChild(region);
     region.id = "region";
     region.className = "region";
 
-    // Overflow should be false since the content fits the regions
+    // Overset should be false since the content fits the regions
     shouldBe("namedFlow.overset", "false");
 
-    // Add more content to the flow, overflow should be true.
+    // Add more content to the flow, overset should be true.
     var p = document.createElement("p");
     p.appendChild(document.createTextNode("Content inside article"));
     document.getElementById("article").appendChild(p);
 
-    // Overflow should be true since the content does not fit the regions
+    // Overset should be true since the content does not fit the regions
     shouldBe("namedFlow.overset", "true");
 
-    // Add another region, overflow should be false
+    // Add another region, overset should be false
     var region2 = document.createElement("div");
     document.body.appendChild(region2);
     region2.id = "region2";
     region2.className = "region";
 
-    // Overflow should be false since the content fits in the regions
+    // Overset should be false since the content fits in the regions
     shouldBe("namedFlow.overset", "false");
 
-    // Add visual overflow, overflow should be true.
+    // Add visual overset, overset should be true.
     document.getElementById("article").style.webkitBoxShadow="0px 50px lime";
 
-    // Overflow should be true since the content does not fit in regions
+    // Overset should be true since the content does not fit in regions
     shouldBe("namedFlow.overset", "true");
 
-    // Add the third region, overflow should be false.
+    // Add the third region, overset should be false.
     var region3 = document.createElement("div");
     document.body.appendChild(region3);
     region3.id = "region3";
     region3.className = "region";
 
-    // Overflow should be false since the content fits in regions
+    // Overset should be false since the content fits in regions
     shouldBe("namedFlow.overset", "false");
 
-    // Remove the first region from the flow, overflow should be true.
+    // Remove the first region from the flow, overset should be true.
     region.className = "";
 
-    // Overflow should be true since the content does not fit the regions
+    // Overset should be true since the content does not fit the regions
     shouldBe("namedFlow.overset", "true");
 
-    // Remove the content from the flow, overflow should be false.
+    // Remove the content from the flow, overset should be false.
     document.getElementById("article").className = "";
 
-    // Overflow should be false since the flow does not have any content
+    // Overset should be false since the flow does not have any content
     shouldBe("namedFlow.overset", "false");
+
+    // Remove all the regions from the flow
+    region2.className = region3.className = "";
+
+    // Overset should be true since the flow does not have any region chain
+    shouldBe("namedFlow.overset", "true");
 
     document.getElementById("article").style.display = "none";
     region.style.display = "none";
