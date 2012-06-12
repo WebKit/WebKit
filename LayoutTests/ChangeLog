@@ -1,3 +1,19 @@
+2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [GStreamer] http/tests/media/video-buffered-range-contains-currentTime.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=87575
+
+        Reviewed by Philippe Normand.
+
+        Unskip http/tests/media/video-buffered-range-contains-currentTime.html for both
+        GTK and EFL ports now that MediaPlayerPrivateGStreamer correctly reports EOS and
+        now that the "ended" event is properly fired.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/http/tests/media/video-buffered-range-contains-currentTime-expected.png: Added.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/media/video-buffered-range-contains-currentTime-expected.png: Added.
+
 2012-06-12  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt

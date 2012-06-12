@@ -1,3 +1,19 @@
+2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [GStreamer] http/tests/media/video-buffered-range-contains-currentTime.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=87575
+
+        Reviewed by Philippe Normand.
+
+        When EOS is reached in forward playback, the position does not necessarily
+        match the duration. This confuses HTMLMediaElement and causes the "ended"
+        event not to be fired. To avoid this, we synchronize position and duration
+        values in this case.
+
+        Test: http/tests/media/video-buffered-range-contains-currentTime.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+
 2012-06-12  Kinuko Yasuda  <kinuko@chromium.org>
 
         Refactor InputType::receiveDroppedFiles to take DragData
