@@ -334,8 +334,8 @@ module core {
         attribute [NotEnumerable,Conditional=TOUCH_EVENTS,V8EnabledAtRuntime] EventListener ontouchcancel;
         attribute [NotEnumerable, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenchange;
         attribute [NotEnumerable, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenerror;
-        attribute [NotEnumerable, Conditional=POINTER_LOCK] EventListener onwebkitpointerlockchange;
-        attribute [NotEnumerable, Conditional=POINTER_LOCK] EventListener onwebkitpointerlockerror;
+        attribute [NotEnumerable, Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] EventListener onwebkitpointerlockchange;
+        attribute [NotEnumerable, Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] EventListener onwebkitpointerlockerror;
 #endif
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS

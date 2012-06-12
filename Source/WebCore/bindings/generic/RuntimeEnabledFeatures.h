@@ -96,11 +96,8 @@ public:
 #endif
 
 #if ENABLE(POINTER_LOCK)
-    static bool webkitPointerLockEnabled() { return isPointerLockEnabled; }
-    static void setWebkitPointerLockEnabled(bool isEnabled) { isPointerLockEnabled = isEnabled; }
-    static bool webkitPointerEnabled() { return isPointerLockEnabled; }
-    static bool webkitMovementXEnabled() { return isPointerLockEnabled; }
-    static bool webkitMovementYEnabled() { return isPointerLockEnabled; }
+    static bool pointerLockEnabled() { return isPointerLockEnabled; }
+    static void setPointerLockEnabled(bool isEnabled) { isPointerLockEnabled = isEnabled; }
 #endif
 
 #if ENABLE(VIDEO)

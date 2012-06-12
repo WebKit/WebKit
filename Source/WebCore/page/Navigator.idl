@@ -40,8 +40,8 @@ module window {
 
         readonly attribute boolean onLine;
 
-#if defined(ENABLE_POINTER_LOCK) && ENABLE_POINTER_LOCK
-        readonly attribute [V8EnabledAtRuntime] PointerLock webkitPointer;
+#if defined(ENABLE_POINTER_LOCK) && ENABLE_POINTER_LOCK // FIXME: Remove reliance on PointerLock.idl when removing old Pointer Lock API. (https://bugs.webkit.org/show_bug.cgi?id=84402)
+        readonly attribute [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] PointerLock webkitPointer;
 #endif
 
         void getStorageUpdates(); // FIXME: Remove this method or rename to yieldForStorageUpdates.

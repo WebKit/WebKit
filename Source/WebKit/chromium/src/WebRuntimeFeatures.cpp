@@ -397,7 +397,7 @@ bool WebRuntimeFeatures::isFullScreenAPIEnabled()
 void WebRuntimeFeatures::enablePointerLock(bool enable)
 {
 #if ENABLE(POINTER_LOCK)
-    RuntimeEnabledFeatures::setWebkitPointerLockEnabled(enable);
+    RuntimeEnabledFeatures::setPointerLockEnabled(enable);
 #else
     UNUSED_PARAM(enable);
 #endif
@@ -406,7 +406,7 @@ void WebRuntimeFeatures::enablePointerLock(bool enable)
 bool WebRuntimeFeatures::isPointerLockEnabled()
 {
 #if ENABLE(POINTER_LOCK)
-    return RuntimeEnabledFeatures::webkitPointerLockEnabled();
+    return RuntimeEnabledFeatures::pointerLockEnabled();
 #else
     return false;
 #endif

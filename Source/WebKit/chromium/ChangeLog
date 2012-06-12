@@ -1,3 +1,14 @@
+2012-06-11  Vincent Scheib  <scheib@chromium.org>
+
+        Consolidate Pointer Lock runtime enabled flags to just one.
+        https://bugs.webkit.org/show_bug.cgi?id=88810
+
+        Reviewed by Dimitri Glazkov.
+
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enablePointerLock):
+        (WebKit::WebRuntimeFeatures::isPointerLockEnabled):
+
 2012-06-11  Alexis Menard  <alexis.menard@openbossa.org>
 
         [CSS3 Backgrounds and Borders] Protect box-decoration-break behind a feature flag.
