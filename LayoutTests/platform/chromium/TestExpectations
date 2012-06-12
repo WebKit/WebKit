@@ -3688,3 +3688,4 @@ BUG_DOMINICC WIN DEBUG : media/video-played-collapse.html = PASS TEXT
 
 BUG_DOMINICC WIN DEBUG : media/track/track-kind.html = PASS TIMEOUT
 BUG_DOMINICC : http/tests/media/video-play-progress.html = PASS TIMEOUT
+BUG_DOMINICC XP : http/tests/xmlhttprequest/origin-exact-matching.html = PASS TIMEOUT

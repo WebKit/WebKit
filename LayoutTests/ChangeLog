@@ -1,3 +1,9 @@
+2012-06-11  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed: http/tests/xmlhttprequest/origin-exact-matching.html is timing out on XP about half the time
+
+        * platform/chromium/TestExpectations:
+
 2012-06-11  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed expected result update after r120017.
