@@ -1,3 +1,16 @@
+2012-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE][EFL] Remove duplicated executable output path
+        https://bugs.webkit.org/show_bug.cgi?id=88765
+
+        Reviewed by Daniel Bates.
+
+        CMake files for EFL port have redefined executable output path. However, EFL port doesn't
+        need to define again because it is already defined in top-level CMake file.
+
+        * DumpRenderTree/efl/CMakeLists.txt:
+        * EWebLauncher/CMakeLists.txt:
+
 2012-06-11  Ojan Vafai  <ojan@chromium.org>
 
         Don't consider show warnings in the garden-o-matic UI for non-layout test failures

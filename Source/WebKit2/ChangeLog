@@ -1,3 +1,15 @@
+2012-06-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE][EFL] Remove duplicated executable output path
+        https://bugs.webkit.org/show_bug.cgi?id=88765
+
+        Reviewed by Daniel Bates.
+
+        CMake files for EFL port have redefined executable output path. However, EFL port doesn't
+        need to define again because it is already defined in top-level CMake file.
+
+        * CMakeLists.txt:
+
 2012-06-11  Anders Carlsson  <andersca@apple.com>
 
         Pass the right color space over to the web process so we can set it on our CA context
