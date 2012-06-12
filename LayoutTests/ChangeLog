@@ -1,3 +1,9 @@
+2012-06-12  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening after r120099, fix two incorrect text expectations.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-06  Ojan Vafai  <ojan@chromium.org>
 
         Change default for flex-grow back to 0
