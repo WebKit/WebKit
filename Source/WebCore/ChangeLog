@@ -1,3 +1,28 @@
+2012-06-12  Adrienne Walker  <enne@google.com>
+
+        [chromium] ScrollingCoordinator::setScrollLayer should update scroll layer ids
+        https://bugs.webkit.org/show_bug.cgi?id=88882
+
+        Reviewed by James Robinson.
+
+        Tested manually, as scrollbar layers are currently only created when
+        threaded compositing is enabled and none of those layout tests trigger
+        this bug.
+
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::ScrollingCoordinatorPrivate::setScrollLayer):
+        (ScrollingCoordinatorPrivate):
+        (WebCore::ScrollingCoordinatorPrivate::setHorizontalScrollbarLayer):
+        (WebCore::ScrollingCoordinatorPrivate::setVerticalScrollbarLayer):
+        (WebCore::createScrollbarLayer):
+        (WebCore::ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange):
+        * platform/graphics/chromium/ScrollbarLayerChromium.h:
+        (WebCore::ScrollbarLayerChromium::setScrollLayerId):
+        (ScrollbarLayerChromium):
+        * platform/graphics/chromium/TreeSynchronizer.cpp:
+        (WebCore::TreeSynchronizer::updateScrollbarLayerPointersRecursive):
+
 2012-06-12  Mark Mentovai  <mark@chromium.org>
 
         [chromium mac] Don't include things in subframeworks of

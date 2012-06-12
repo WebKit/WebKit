@@ -43,6 +43,8 @@ public:
     virtual void pushPropertiesTo(CCLayerImpl*);
 
     int scrollLayerId() const { return m_scrollLayerId; }
+    void setScrollLayerId(int id) { m_scrollLayerId = id; }
+
     virtual ScrollbarLayerChromium* toScrollbarLayerChromium() { return this; }
 
 protected:

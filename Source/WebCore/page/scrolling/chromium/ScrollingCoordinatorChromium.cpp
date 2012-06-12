@@ -45,11 +45,33 @@ public:
     ScrollingCoordinatorPrivate() { }
     ~ScrollingCoordinatorPrivate() { }
 
-    void setScrollLayer(LayerChromium* layer) { m_scrollLayer = layer; }
+    void setScrollLayer(LayerChromium* layer)
+    {
+        m_scrollLayer = layer;
+
+        int id = layer ? layer->id() : 0;
+        if (m_horizontalScrollbarLayer)
+            m_horizontalScrollbarLayer->setScrollLayerId(id);
+        if (m_verticalScrollbarLayer)
+            m_verticalScrollbarLayer->setScrollLayerId(id);
+    }
+
+    void setHorizontalScrollbarLayer(PassRefPtr<ScrollbarLayerChromium> layer)
+    {
+        m_horizontalScrollbarLayer = layer;
+    }
+
+    void setVerticalScrollbarLayer(PassRefPtr<ScrollbarLayerChromium> layer)
+    {
+        m_verticalScrollbarLayer = layer;
+    }
+
     LayerChromium* scrollLayer() const { return m_scrollLayer.get(); }
 
 private:
     RefPtr<LayerChromium> m_scrollLayer;
+    RefPtr<ScrollbarLayerChromium> m_horizontalScrollbarLayer;
+    RefPtr<ScrollbarLayerChromium> m_verticalScrollbarLayer;
 };
 
 PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
@@ -81,7 +103,7 @@ static GraphicsLayer* scrollLayerForFrameView(FrameView* frameView)
 #endif
 }
 
-static void scrollbarLayerDidChange(Scrollbar* scrollbar, LayerChromium* scrollLayer, GraphicsLayer* scrollbarGraphicsLayer, FrameView* frameView)
+static PassRefPtr<ScrollbarLayerChromium> createScrollbarLayer(Scrollbar* scrollbar, LayerChromium* scrollLayer, GraphicsLayer* scrollbarGraphicsLayer, FrameView* frameView)
 {
     ASSERT(scrollbar);
     ASSERT(scrollbarGraphicsLayer);
@@ -108,13 +130,15 @@ static void scrollbarLayerDidChange(Scrollbar* scrollbar, LayerChromium* scrollL
     if (scrollbar->isCustomScrollbar() || !CCProxy::hasImplThread() || !platformSupported) {
         scrollbarGraphicsLayer->setContentsToMedia(0);
         scrollbarGraphicsLayer->setDrawsContent(true);
-        return;
+        return 0;
     }
 
     RefPtr<ScrollbarLayerChromium> scrollbarLayer = ScrollbarLayerChromium::create(scrollbar, scrollLayer->id());
     scrollbarGraphicsLayer->setContentsToMedia(scrollbarLayer.get());
     scrollbarGraphicsLayer->setDrawsContent(false);
     scrollbarLayer->setOpaque(scrollbarGraphicsLayer->contentsOpaque());
+
+    return scrollbarLayer.release();
 }
 
 void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer* horizontalScrollbarLayer)
@@ -122,7 +146,7 @@ void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView*
     if (!horizontalScrollbarLayer || !coordinatesScrollingForFrameView(frameView))
         return;
 
-    scrollbarLayerDidChange(frameView->horizontalScrollbar(), m_private->scrollLayer(), horizontalScrollbarLayer, frameView);
+    m_private->setHorizontalScrollbarLayer(createScrollbarLayer(frameView->horizontalScrollbar(), m_private->scrollLayer(), horizontalScrollbarLayer, frameView));
 }
 
 void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer* verticalScrollbarLayer)
@@ -130,7 +154,7 @@ void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView* f
     if (!verticalScrollbarLayer || !coordinatesScrollingForFrameView(frameView))
         return;
 
-    scrollbarLayerDidChange(frameView->verticalScrollbar(), m_private->scrollLayer(), verticalScrollbarLayer, frameView);
+    m_private->setVerticalScrollbarLayer(createScrollbarLayer(frameView->verticalScrollbar(), m_private->scrollLayer(), verticalScrollbarLayer, frameView));
 }
 
 void ScrollingCoordinator::setScrollLayer(GraphicsLayer* scrollLayer)

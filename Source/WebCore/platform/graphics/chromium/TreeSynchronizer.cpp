@@ -114,6 +114,9 @@ void TreeSynchronizer::updateScrollbarLayerPointersRecursive(const RawPtrCCLayer
     CCScrollbarLayerImpl* ccScrollbarLayerImpl = static_cast<CCScrollbarLayerImpl*>(newLayers.get(scrollbarLayer->id()));
     ASSERT(ccScrollbarLayerImpl);
     ccScrollbarLayerImpl->setScrollLayer(newLayers.get(scrollbarLayer->scrollLayerId()));
+
+    // Scrollbar layers in the tree should always point to a valid scroll layer
+    ASSERT(newLayers.get(scrollbarLayer->scrollLayerId()));
 }
 
 } // namespace WebCore
