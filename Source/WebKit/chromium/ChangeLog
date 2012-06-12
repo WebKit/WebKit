@@ -1,3 +1,15 @@
+2012-06-12  James Robinson  <jamesr@chromium.org>
+
+        [chromium] REGRESSION(119769): Canvas2DLayerBridge may go away before its TextureLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=88910
+
+        Reviewed by Adrienne Walker.
+
+        New unit test to verify that we can still update a TextureLayerChromium after the bridge owning it has gone
+        away.
+
+        * tests/Canvas2DLayerBridgeTest.cpp:
+
 2012-06-12  Adrienne Walker  <enne@google.com>
 
         [chromium] Fix incorrect LayerChromium scroll position for RTL overflow pages

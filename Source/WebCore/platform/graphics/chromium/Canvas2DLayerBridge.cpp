@@ -106,6 +106,7 @@ Canvas2DLayerBridge::~Canvas2DLayerBridge()
         GLC(m_context.get(), m_context->deleteTexture(m_frontBufferTexture));
         m_context->flush();
     }
+    m_layer->clearClient();
 }
 
 SkCanvas* Canvas2DLayerBridge::skCanvas(SkDevice* device)

@@ -152,5 +152,17 @@ TEST_F(Canvas2DLayerBridgeTest, testFullLifecycleThreadedDeferred)
     fullLifecycleTest(Threaded, Deferred);
 }
 
+TEST(Canvas2DLayerBridgeTest2, testClearClient)
+{
+    GraphicsContext3D::Attributes attrs;
+
+    RefPtr<GraphicsContext3D> mainContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext()), GraphicsContext3D::RenderDirectlyToHostWindow);
+    OwnPtr<Canvas2DLayerBridge> bridge = Canvas2DLayerBridge::create(mainContext.get(), IntSize(100, 100), Deferred, 1);
+    RefPtr<LayerChromium> layer = bridge->layer();
+    bridge.clear();
+    CCTextureUpdater updater;
+    layer->update(updater, 0);
+}
+
 } // namespace
 
