@@ -43,7 +43,7 @@
     description("This tests the ability to search for accessible elements by key or text.");
     
     if (window.accessibilityController) {
-        window.layoutTestController.keepWebHistory();
+        window.testRunner.keepWebHistory();
         
         document.getElementById("body").focus();
         var containerElement = accessibilityController.focusedElement;

@@ -24,12 +24,12 @@
 
         if (valueChangeCount == 2) {
            range.removeNotificationListener();
-           window.layoutTestController.notifyDone();
+           window.testRunner.notifyDone();
         }
     }
 
     if (window.accessibilityController) {
-        window.layoutTestController.waitUntilDone();
+        window.testRunner.waitUntilDone();
 
         document.getElementById("range1").focus();
         range = accessibilityController.focusedElement;

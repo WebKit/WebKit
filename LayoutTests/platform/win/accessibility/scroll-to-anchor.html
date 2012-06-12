@@ -3,14 +3,14 @@
         <script>
             function test()
             {
-                if (!window.layoutTestController || !window.accessibilityController)
+                if (!window.testRunner || !window.accessibilityController)
                     return;
 
                 document.getElementById("notDRT").style.visibility = "hidden";
 
                 accessibilityController.logScrollingStartEvents();
-                layoutTestController.waitUntilDone();
-                layoutTestController.dumpAsText();
+                testRunner.waitUntilDone();
+                testRunner.dumpAsText();
                 setTimeout(scrollToAnchor, 0);
             }
 
@@ -25,7 +25,7 @@
                     eventSender.mouseUp();
                 }
 
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
         </script>
     </head>

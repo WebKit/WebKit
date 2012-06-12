@@ -17,7 +17,7 @@ var successfullyParsed = false;
 <div id="console"></div>
 
 <script>
-    window.layoutTestController.waitUntilDone();
+    window.testRunner.waitUntilDone();
 
     // We have to play some games to get these frames to load their sources in a timely fashion.
     document.getElementById("frame1").src = "data:text/html,<body id='body1'><button id=button1>button1</button><BR><BR><BR></body>";
@@ -101,7 +101,7 @@ function runTest() {
     }
 
     successfullyParsed = true;
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 
 </script>

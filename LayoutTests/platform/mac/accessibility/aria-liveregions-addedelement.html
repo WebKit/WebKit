@@ -23,12 +23,12 @@
         if (notification == "AXLiveRegionChanged") {
            document.getElementById("notifications").innerHTML += "Successfully received " + notification;
            liveRegion.removeNotificationListener();
-           window.layoutTestController.notifyDone();
+           window.testRunner.notifyDone();
         }
     }
 
     if (window.accessibilityController) {
-        window.layoutTestController.waitUntilDone();
+        window.testRunner.waitUntilDone();
 
         document.getElementById("liveregion").focus();
         liveRegion = window.accessibilityController.focusedElement;

@@ -15,8 +15,8 @@ focus and selection events for the selected option element.</p>
 <p id="notDRT">This test should only be run inside of DumpRenderTree.</p>
 
 <script>
-    if (window.layoutTestController && window.accessibilityController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner && window.accessibilityController) {
+        testRunner.dumpAsText();
         document.getElementById("select").focus();
         accessibilityController.logAccessibilityEvents();
 

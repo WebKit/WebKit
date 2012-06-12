@@ -8,9 +8,9 @@
 <script>
 description("This tests that the AXSelection property is correctly reported for non-native text boxes.");
 
-if (window.layoutTestController && window.accessibilityController) {
+if (window.testRunner && window.accessibilityController) {
 
-    window.layoutTestController.dumpAsText();
+    window.testRunner.dumpAsText();
     var ariaTextBox = document.getElementById("ariaTextBox");
     ariaTextBox.focus();
     var axElement = accessibilityController.focusedElement;

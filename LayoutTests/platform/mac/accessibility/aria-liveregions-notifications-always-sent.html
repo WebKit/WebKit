@@ -17,7 +17,7 @@ Test
     description("This tests that ARIA live region notifications are sent even when an assistive technology is not accessing them directly on each update.");
 
     if (window.accessibilityController) {
-        window.layoutTestController.waitUntilDone();
+        window.testRunner.waitUntilDone();
 
         document.getElementById("liveregion").focus();
         liveRegion = window.accessibilityController.focusedElement;
@@ -28,7 +28,7 @@ Test
                liveRegionChangeCount++;
                if (liveRegionChangeCount == 3) {
                    liveRegion.removeNotificationListener();
-                   window.layoutTestController.notifyDone();
+                   window.testRunner.notifyDone();
                }
            }
         }

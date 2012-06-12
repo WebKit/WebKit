@@ -3,8 +3,8 @@
 <link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
 <script src="../fast/js/resources/js-test-pre.js"></script>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     function runTest() {
         description("This tests that navigating in a multiselect list updates selection and the active selected option and sends a notification.");
@@ -59,8 +59,8 @@
             debug('<br /><span class="pass">TEST COMPLETE</span>');
             if (window.accessibilityController)
                 accessibleMenulist.removeNotificationListener();
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, 10);
     }
 

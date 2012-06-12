@@ -3,7 +3,7 @@
     <script>
         function runTest()
         {
-            if (!window.accessibilityController || !window.layoutTestController)
+            if (!window.accessibilityController || !window.testRunner)
                 return;
             shouldBe('accessibilityController.focusedElement.parentElement().role', '"document"');
             shouldBeTrue('accessibilityController.focusedElement.parentElement().isEnabled');

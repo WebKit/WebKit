@@ -1,3 +1,18 @@
+2012-06-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use testRunner in accessibility tests instead of layoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=88755
+
+        Reviewed by Tony Chang.
+
+        Replaced all instances of layoutTestController in accessibility tests by testRunner.
+
+        * accessibility/:
+        * platform/chromium/accessibility/:
+        * platform/gtk/accessibility/:
+        * platform/mac/accessibility/:
+        * platform/win/accessibility/:
+
 2012-06-12  Shrey Banga  <banga@chromium.org>
 
         HTML parser should yield more to improve perceived page load time

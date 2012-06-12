@@ -9,7 +9,7 @@ Textbox content.
 <script>
 
 if (window.accessibilityController) {
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     var textbox = document.getElementById("textbox");
     textbox.focus();
     var textboxAXElement = accessibilityController.focusedElement;

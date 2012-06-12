@@ -3,8 +3,8 @@
 <link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
 <script src="../fast/js/resources/js-test-pre.js"></script>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     function walkAccessibilityTree(accessibilityObject) {
         var count = accessibilityObject.childrenCount;
@@ -19,11 +19,11 @@
         walkAccessibilityTree(root);
 
         debug('<br /><span class="pass">TEST COMPLETE</span>');
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
-    if (window.layoutTestController && window.accessibilityController) {
+    if (window.testRunner && window.accessibilityController) {
         window.addEventListener('load', function() {
             setTimeout(runTest, 10);
         }, false);

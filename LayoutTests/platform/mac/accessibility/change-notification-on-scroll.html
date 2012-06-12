@@ -8,8 +8,8 @@ hello hello hello hello hello hello hello hello hello hello hello hello hello he
 
 <script>
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var textarea = 0;
     function ariaCallback(notification) {
@@ -17,12 +17,12 @@ hello hello hello hello hello hello hello hello hello hello hello hello hello he
             var result = document.getElementById("result");
             result.innerHTML = "Success!"; 
             textarea.removeNotificationListener();
-            window.layoutTestController.notifyDone();
+            window.testRunner.notifyDone();
         }
     }
 
     if (window.accessibilityController) {
-        window.layoutTestController.waitUntilDone();
+        window.testRunner.waitUntilDone();
         document.getElementById("textarea").focus();
         textarea = window.accessibilityController.focusedElement;
         

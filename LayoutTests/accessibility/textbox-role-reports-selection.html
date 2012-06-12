@@ -35,8 +35,8 @@ This tests that the AXSelection property is correctly reported for non-native te
         assertEvaluatesTo("axSelection", selection, message);
     }
 
-    if (window.layoutTestController && window.accessibilityController) {
-        window.layoutTestController.dumpAsText();
+    if (window.testRunner && window.accessibilityController) {
+        window.testRunner.dumpAsText();
         var ariaTextBox = document.getElementById("ariaTextBox");
         var textLength = ariaTextBox.textContent.length;
 

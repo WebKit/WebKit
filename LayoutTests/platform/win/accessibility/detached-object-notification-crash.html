@@ -22,13 +22,13 @@ not cause a crash.</p>
             return;
 
         debug("PASS: Didn't crash.");
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
-    if (window.layoutTestController && window.accessibilityController) {
+    if (window.testRunner && window.accessibilityController) {
         document.getElementById("notDRT").style.visibility = "hidden";
 
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
 
         var element = document.getElementById("avnElement");
         element.focus();

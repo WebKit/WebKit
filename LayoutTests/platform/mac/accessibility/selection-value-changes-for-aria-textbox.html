@@ -22,7 +22,7 @@ content inside
         if (notification == "AXValueChanged") {
            document.getElementById("notifications").innerHTML += "Successfully received " + notification + "<br>";
            axTextbox.removeNotificationListener();
-           window.layoutTestController.notifyDone();
+           window.testRunner.notifyDone();
         }
         else if (notification == "AXSelectedTextChanged") {
            document.getElementById("notifications").innerHTML += "Successfully received " + notification + "<br>";
@@ -30,7 +30,7 @@ content inside
     }
 
     if (window.accessibilityController) {
-        window.layoutTestController.waitUntilDone();
+        window.testRunner.waitUntilDone();
 
         textbox = document.getElementById("textbox");
         textbox.focus();

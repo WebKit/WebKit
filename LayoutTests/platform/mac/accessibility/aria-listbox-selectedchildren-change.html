@@ -27,13 +27,13 @@
             // We should get a total of 4 live region changes.
             if (notificationCount == 2) {
                window.accessibilityController.removeNotificationListener();
-               window.layoutTestController.notifyDone();
+               window.testRunner.notifyDone();
             }
         }
     }
 
     if (window.accessibilityController) {
-        window.layoutTestController.waitUntilDone();
+        window.testRunner.waitUntilDone();
 
         document.getElementById("listbox").focus();
         listbox = window.accessibilityController.focusedElement;

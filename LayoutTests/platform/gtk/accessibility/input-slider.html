@@ -5,10 +5,10 @@
             var thumbAXObject;
             var valueDiv;
 
-            if (window.layoutTestController) 
+            if (window.testRunner) 
             {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             function consoleWrite(text)
@@ -123,7 +123,7 @@
                 run("sliderInput.value = 850");
                 testDecrement();
 
-                layoutTestController.notifyDone();     
+                testRunner.notifyDone();     
             }
 
             function update(obj)

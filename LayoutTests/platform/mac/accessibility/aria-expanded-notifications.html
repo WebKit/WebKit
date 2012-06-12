@@ -34,13 +34,13 @@
         document.getElementById("notifications").innerHTML += "Notification: " + notifyName + "<br>";
         if (notifyCount == 3) {
             accessibilityController.removeNotificationListener();
-            window.layoutTestController.notifyDone();
+            window.testRunner.notifyDone();
         }
         notifyCount++;
     }
 
     if (window.accessibilityController) {
-        window.layoutTestController.waitUntilDone();
+        window.testRunner.waitUntilDone();
 
         var domTree = document.getElementById("tree0");
         domTree.focus();

@@ -12,8 +12,8 @@
 <script>
 description("This tests that the text of a button is exposed to Assistive Technologies.");
 
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 
 if (window.accessibilityController) {
   button = document.getElementById("button");

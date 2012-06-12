@@ -8,10 +8,10 @@
 <div id="console"></div>
 <script>
 description("This test just prints the name of the current platform.");
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
+if (window.testRunner) {
+  testRunner.dumpAsText();
 
-  debug("Platform name: " + layoutTestController.platformName);
+  debug("Platform name: " + testRunner.platformName);
 }
 </script>
 <script src="../fast/js/resources/js-test-post.js"></script>

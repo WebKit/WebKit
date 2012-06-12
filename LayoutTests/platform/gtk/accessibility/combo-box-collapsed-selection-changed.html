@@ -7,8 +7,8 @@
 function runTest() {
   description("This tests that the 'state-changed:selected' signal is emitted when arrowing through the options of a combobox while collapsed.");
 
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+  if (window.testRunner) {
+    testRunner.dumpAsText();
   }
 
   if (window.accessibilityController) {

@@ -29,8 +29,8 @@
         results.appendChild(li);
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     if (window.accessibilityController) {
         var usingNone = getAccessibilityObject("using-none");

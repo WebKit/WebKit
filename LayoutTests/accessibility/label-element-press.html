@@ -16,12 +16,12 @@
     description("This tests that a label element without a corresponding control will perform a press action on itself instead of nothing.");
  
     function performEvent() {
-       layoutTestController.notifyDone();
+       testRunner.notifyDone();
     }
 
     if (window.accessibilityController) {
  
-        layoutTestController.waitUntilDone();
+        testRunner.waitUntilDone();
         document.getElementById("body").focus();
         var body = accessibilityController.focusedElement;
         var label = body.childAtIndex(0).childAtIndex(0);

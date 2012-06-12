@@ -34,10 +34,10 @@
         debug("");
     }
 
-    if (window.layoutTestController && window.accessibilityController) {
+    if (window.testRunner && window.accessibilityController) {
         document.getElementById("notDRT").style.visibility = "hidden";
 
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
         
         document.body.focus();
         shouldBe('accessibilityController.focusedElement.role', '"document"');

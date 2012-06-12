@@ -3,8 +3,8 @@
 <script src="../fast/js/resources/js-test-pre.js"></script>
 <script>
     function runTest() {
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
 
         description("This tests that checking of an aria checkbox sends a notification.");
         window.root = accessibilityController.rootElement;
@@ -21,8 +21,8 @@
 
             if (notificationCount == 2) {
                 accessibleCheckbox.removeNotificationListener(listener);
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         }
         accessibleCheckbox.addNotificationListener(listener);

@@ -25,7 +25,7 @@
 <script>
     description("This tests the exposure of Atk object attributes.");
     if (window.accessibilityController) {
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
         document.getElementById("body").focus();
         var webArea = accessibilityController.focusedElement;
         var child = webArea.childAtIndex(0);

@@ -11,9 +11,9 @@
 <script>
 description("This tests the FOCUSABLE and FOCUSED states for text objects.");
 
-if (window.layoutTestController) {
-  layoutTestController.overridePreference("WebKitEnableCaretBrowsing", true);
-  layoutTestController.dumpAsText();
+if (window.testRunner) {
+  testRunner.overridePreference("WebKitEnableCaretBrowsing", true);
+  testRunner.dumpAsText();
 
   if (window.accessibilityController) {
 

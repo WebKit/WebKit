@@ -24,12 +24,12 @@
         if (notification == "AXInvalidStatusChanged") {
             document.getElementById("notifications").innerHTML += "Notification received successfully.";
             notificationElement.removeNotificationListener();
-            window.layoutTestController.notifyDone();
+            window.testRunner.notifyDone();
         }
     }
 
     if (window.accessibilityController) {
-        window.layoutTestController.waitUntilDone();
+        window.testRunner.waitUntilDone();
 
         document.getElementById("text1").focus();
         shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'true'");

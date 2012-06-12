@@ -4,8 +4,8 @@
 
 <script>
 
-if (window.layoutTestController)
-  layoutTestController.waitUntilDone();
+if (window.testRunner)
+  testRunner.waitUntilDone();
 
 function buildAccessibilityTree(accessibilityObject, indent) {
     var count = accessibilityObject.childrenCount;
@@ -30,8 +30,8 @@ function runAXTest() {
    // Now verify we haven't crashed.
    buildAccessibilityTree(accessibilityController.rootElement, 0);
 
-   if (window.layoutTestController)
-       layoutTestController.notifyDone();
+   if (window.testRunner)
+       testRunner.notifyDone();
 }
 </script>
 

@@ -18,12 +18,12 @@
     function ariaCallback(notification) {
         if (notification == "AXLiveRegionChanged") {
             image.removeNotificationListener();
-            window.layoutTestController.notifyDone();
+            window.testRunner.notifyDone();
         }
     }
 
     if (window.accessibilityController) {
-        window.layoutTestController.waitUntilDone();
+        window.testRunner.waitUntilDone();
 
         document.getElementById("image").focus();
         image = window.accessibilityController.focusedElement;

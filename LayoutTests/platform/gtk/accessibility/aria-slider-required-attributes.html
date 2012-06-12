@@ -5,7 +5,7 @@
 
 function finishTest()
 {
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function runTest()
@@ -41,8 +41,8 @@ function runTest()
 description("This tests the exposure of attributes for an ARIA slider.");
 
 if (window.accessibilityController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 if (window.accessibilityController) {

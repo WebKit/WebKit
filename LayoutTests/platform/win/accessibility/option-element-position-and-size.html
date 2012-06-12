@@ -17,10 +17,10 @@
 <p id="console"></p>
 
 <script>
-    if (window.layoutTestController && window.accessibilityController) {
+    if (window.testRunner && window.accessibilityController) {
         document.getElementById("notDRT").style.visibility = "hidden";
 
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
 
         document.getElementById("selectElement").focus();
 

@@ -10,11 +10,11 @@ This tests that the AXValueChanged notification is correctly reported for non-na
 <div id="notifications"></div>
 <script>
     var textboxAxElement;
-    if (window.layoutTestController && window.accessibilityController) {
-        window.layoutTestController.waitUntilDone();
+    if (window.testRunner && window.accessibilityController) {
+        window.testRunner.waitUntilDone();
 
         accessibilityController.logAccessibilityEvents();
-        window.layoutTestController.dumpAsText();
+        window.testRunner.dumpAsText();
 
         var ariaTextBox = document.getElementById("ariaTextBox");
         ariaTextBox.focus();
@@ -32,7 +32,7 @@ This tests that the AXValueChanged notification is correctly reported for non-na
             pendingNotifications--;
             if (pendingNotifications == 0) {
                 textboxAxElement.removeNotificationListener();
-                window.layoutTestController.notifyDone();
+                window.testRunner.notifyDone();
             }
         }
     }

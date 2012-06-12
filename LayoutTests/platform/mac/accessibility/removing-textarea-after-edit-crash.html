@@ -30,7 +30,7 @@ text
             document.getElementById("div").style.display = "NONE";
 
             // we now have to wait for the value change to be propagated to trigger the crash.
-            setTimeout("window.layoutTestController.notifyDone();", 1);
+            setTimeout("window.testRunner.notifyDone();", 1);
         }
     }
 </script>
@@ -38,7 +38,7 @@ text
 <script>
     var req = 0;
     if (window.accessibilityController) {  
-        window.layoutTestController.waitUntilDone();
+        window.testRunner.waitUntilDone();
         document.getElementById("body").focus();
         body = accessibilityController.focusedElement;
 

@@ -3,8 +3,8 @@
 <script src="../fast/js/resources/js-test-pre.js"></script>
 
   <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     function runTest()
     {
@@ -32,8 +32,8 @@
             }
 
             debug('<br /><span class="pass">TEST COMPLETE</span>');
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, false);
 
         // Load content into the iframe. This will trigger the event

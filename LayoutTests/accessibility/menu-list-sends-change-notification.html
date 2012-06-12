@@ -2,8 +2,8 @@
 <head>
 <script src="../fast/js/resources/js-test-pre.js"></script>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     function runTest() {
         description("This tests that changing the value of a menu list sends a notification even when it's not popped open.");
@@ -16,8 +16,8 @@
             document.getElementById("console").innerText += "Got notification: " + notification + "\n";
             accessibleMenulist.removeNotificationListener(listener);
             debug('<br /><span class="pass">TEST COMPLETE</span>');
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
         accessibleMenulist.addNotificationListener(listener);
 
@@ -26,12 +26,12 @@
 
         // Make the test finish quickly whether we get the notification or not.
         window.setTimeout(function() {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, 10);
     }
 
-    if (window.layoutTestController && window.accessibilityController) {
+    if (window.testRunner && window.accessibilityController) {
         window.addEventListener('load', function() {
             setTimeout(runTest, 10);
         }, false);

@@ -25,8 +25,8 @@
   function startTest() {
     description("This tests that AtkObjects derive their names from associated labels.");
 
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
     }
 
     document.getElementById("body").focus();
