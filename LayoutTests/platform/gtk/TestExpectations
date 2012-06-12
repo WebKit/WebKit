@@ -1264,6 +1264,9 @@ BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 // New test introduced in r119911 failing on GTK and EFL ports
 BUGWK88727 : http/tests/xmlhttprequest/origin-exact-matching.html = TEXT
 
+// New test introduced in r119947 failing on GTK port
+BUGWK88760 : http/tests/cookies/js-get-and-set-http-only-cookie.html = TEXT
+
 // Started failing after it was added in r116473
 BUGWK85969 : http/tests/loading/post-in-iframe-with-back-navigation.html = FAIL
 

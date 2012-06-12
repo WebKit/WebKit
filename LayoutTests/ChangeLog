@@ -1,3 +1,9 @@
+2012-06-12  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed gardening. Skip test failing on GTK bots after r119947.
+
+        * platform/gtk/TestExpectations: Skip test.
+
 2012-06-12  Hajime Morrita  <morrita@chromium.org>
 
         REGRESSION(r118098): <content> element does not render distributed children when cloned from another document
