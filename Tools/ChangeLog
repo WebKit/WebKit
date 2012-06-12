@@ -1,3 +1,21 @@
+2012-06-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Add MiniBrowserEfl.
+        https://bugs.webkit.org/show_bug.cgi?id=61850
+
+        Reviewed by Chang Shu.
+
+        Implement MiniBrowser for EFL.
+
+        * CMakeLists.txt:
+        * MiniBrowser/efl/CMakeLists.txt: Added.
+        * MiniBrowser/efl/main.c: Added.
+        (_MiniBrowser):
+        (main_signal_exit):
+        (on_ecore_evas_resize):
+        (browserCreate):
+        (main):
+
 2012-06-12  Helder Correia  <helder.correia@nokia.com>
 
         Unreviewed. Update my email address in committers.py.
