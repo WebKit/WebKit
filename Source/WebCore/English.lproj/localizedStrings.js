@@ -506,7 +506,6 @@ localizedStrings["No requests captured. Reload the page to see detailed informat
 localizedStrings["This request has no cookies."] = "This request has no cookies.";
 localizedStrings["(original)"] = "(original)";
 localizedStrings["(%d, %d)"] = "(%d, %d)";
-localizedStrings["Revert to this revision"] = "Revert to this revision";
 localizedStrings["WebSockets"] = "WebSockets";
 localizedStrings["Frames"] = "Frames";
 localizedStrings["Text"] = "Text";
@@ -699,3 +698,6 @@ localizedStrings["Hide debugger"] = "Hide debugger";
 localizedStrings["Clipboard access is denied"] = "Clipboard access is denied";
 localizedStrings["Go to source"] = "Go to source";
 localizedStrings["Delete profile"] = "Delete profile";
+localizedStrings["Local modifications..."] = "Local modifications...";
+localizedStrings["revert to original"] = "revert to original";
+localizedStrings["revert and clear history"] = "revert and clear history";

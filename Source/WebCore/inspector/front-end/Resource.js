@@ -152,6 +152,25 @@ WebInspector.Resource.persistRevision = function(revision)
     setTimeout(persist, 0);
 }
 
+/**
+ * @param {WebInspector.Resource} resource
+ */
+WebInspector.Resource._clearResourceHistory = function(resource)
+{
+    if (!window.localStorage)
+        return;
+
+    if (resource.url.startsWith("inspector://"))
+        return;
+
+    var registry = WebInspector.Resource._resourceRevisionRegistry();
+    var historyItems = registry[resource.url];
+    for (var i = 0; historyItems && i < historyItems.length; ++i)
+        delete window.localStorage[historyItems[i].key];
+    delete registry[resource.url];
+    window.localStorage["resource-history"] = JSON.stringify(registry);
+}
+
 WebInspector.Resource.Events = {
     RevisionAdded: "revision-added",
     MessageAdded: "message-added",
@@ -467,6 +486,17 @@ WebInspector.Resource.prototype = {
         function revert(content)
         {
             this.setContent(content, true, function() {});
+        }
+        this.requestContent(revert.bind(this));
+    },
+
+    revertAndClearHistory: function()
+    {
+        function revert(content)
+        {
+            this.setContent(content, true, function() {});
+            WebInspector.Resource._clearResourceHistory(this);
+            this.history = [];
         }
         this.requestContent(revert.bind(this));
     },

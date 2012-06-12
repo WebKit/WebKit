@@ -55,7 +55,7 @@ WebInspector.RevisionHistoryView = function(uiSourceCode)
 
         for (var i = revisionCount - 1; i >= 0; --i) {
             var revision = this._resource.history[i];
-            var historyItem = new WebInspector.RevisionHistoryTreeElement(revision, this._resource.history[i - 1]);
+            var historyItem = new WebInspector.RevisionHistoryTreeElement(revision, this._resource.history[i - 1], i !== revisionCount - 1);
             this._treeOutline.appendChild(historyItem);
         }
 
@@ -66,6 +66,16 @@ WebInspector.RevisionHistoryView = function(uiSourceCode)
         var revertToOriginal = baseItem.listItemElement.createChild("span", "revision-history-link");
         revertToOriginal.textContent = WebInspector.UIString("revert to original");
         revertToOriginal.addEventListener("click", this._resource.revertToOriginal.bind(this._resource));
+
+        function clearHistory()
+        {
+            this._resource.revertAndClearHistory();
+            WebInspector.RevisionHistoryView.showHistory(uiSourceCode);
+        }
+
+        var clearHistoryElement = baseItem.listItemElement.createChild("span", "revision-history-link");
+        clearHistoryElement.textContent = WebInspector.UIString("revert and clear history");
+        clearHistoryElement.addEventListener("click", clearHistory.bind(this));
     }
 
     this._statusElement = document.createElement("span");
@@ -107,7 +117,9 @@ WebInspector.RevisionHistoryView.prototype = {
             return;
         }
         var historyLength = this._resource.history.length;
-        var historyItem = new WebInspector.RevisionHistoryTreeElement(this._resource.history[historyLength - 1], this._resource.history[historyLength - 2]);
+        var historyItem = new WebInspector.RevisionHistoryTreeElement(this._resource.history[historyLength - 1], this._resource.history[historyLength - 2], false);
+        if (this._treeOutline.children.length)
+            this._treeOutline.children[0].allowRevert();
         this._treeOutline.insertChild(historyItem, 0);
     },
 
@@ -125,9 +137,10 @@ WebInspector.RevisionHistoryView.prototype.__proto__ = WebInspector.View.prototy
  * @constructor
  * @extends {TreeElement}
  * @param {WebInspector.ResourceRevision} revision
- * @param {WebInspector.ResourceRevision=} baseRevision
+ * @param {WebInspector.ResourceRevision} baseRevision
+ * @param {boolean} allowRevert
  */
-WebInspector.RevisionHistoryTreeElement = function(revision, baseRevision)
+WebInspector.RevisionHistoryTreeElement = function(revision, baseRevision, allowRevert)
 {
     var titleElement = document.createElement("span");
     titleElement.textContent = revision.timestamp.toLocaleTimeString();
@@ -138,9 +151,11 @@ WebInspector.RevisionHistoryTreeElement = function(revision, baseRevision)
     this._revision = revision;
     this._baseRevision = baseRevision;
 
-    var revertElement = titleElement.createChild("span", "revision-history-link");
-    revertElement.textContent = WebInspector.UIString("revert to this");
-    revertElement.addEventListener("click", this._revision.revertToThis.bind(this._revision), false);
+    this._revertElement = titleElement.createChild("span", "revision-history-link");
+    this._revertElement.textContent = WebInspector.UIString("revert to this");
+    this._revertElement.addEventListener("click", this._revision.revertToThis.bind(this._revision), false);
+    if (!allowRevert)
+        this._revertElement.addStyleClass("hidden");
 }
 
 WebInspector.RevisionHistoryTreeElement.prototype = {
@@ -234,6 +249,11 @@ WebInspector.RevisionHistoryTreeElement.prototype = {
         child.listItemElement.appendChild(contentSpan);
         child.listItemElement.addStyleClass("revision-history-line");
         child.listItemElement.addStyleClass("revision-history-line-" + changeType);
+    },
+
+    allowRevert: function()
+    {
+        this._revertElement.removeStyleClass("hidden");
     }
 }
 
