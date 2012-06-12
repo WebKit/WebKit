@@ -1,3 +1,19 @@
+2012-06-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Diverging test results on 32/64 bit architectures
+        https://bugs.webkit.org/show_bug.cgi?id=82601
+
+        Unreviewed gardening, update expected files.
+
+        * platform/qt/Skipped: Unskip svg/transforms/transform-origin-css-property.xhtml, because it passes now.
+        * platform/qt/fast/repaint/moving-shadow-on-container-expected.png:
+        * platform/qt/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/paths-data-03-f-expected.png:
+        * platform/qt/svg/custom/use-on-symbol-inside-pattern-expected.png:
+        * platform/qt/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/qt/svg/transforms/transform-origin-css-property-expected.png: Removed, because it is a reftest.
+        * platform/qt/svg/transforms/transform-origin-css-property-expected.txt: Removed, because it is a reftest.
+
 2012-06-12  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed; skipping the new XHR blob test on the platforms where XHR_RESPONSE_BLOB is not enabled.
