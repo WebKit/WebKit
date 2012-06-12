@@ -56,7 +56,7 @@
 #include <wtf/UnusedParam.h>
 
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
-#include <CoreGraphics/CGColorSpace.h>
+#include <ApplicationServices/ApplicationServices.h>
 #endif
 
 using namespace std;

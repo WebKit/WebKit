@@ -1,3 +1,19 @@
+2012-06-12  Mark Mentovai  <mark@chromium.org>
+
+        [chromium mac] Don't #include things in subframeworks of
+        ApplicationServices.framework.
+
+        #including the umbrella <ApplicatonServices/ApplicationServices.h>
+        exposed an ambiguous name, FontMetrics, that needs to be fully
+        qualified as WebCore::FontMetrics.
+
+        https://bugs.webkit.org/show_bug.cgi?id=88569
+
+        Reviewed by Stephen White.
+
+        * src/WebFontImpl.cpp:
+        (WebKit::WebFontImpl::estimateTextBounds):
+
 2012-06-12  James Robinson  <jamesr@chromium.org>
 
         [chromium] REGRESSION(119769): Canvas2DLayerBridge may go away before its TextureLayerChromium

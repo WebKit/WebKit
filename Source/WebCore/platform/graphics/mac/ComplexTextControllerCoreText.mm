@@ -33,7 +33,7 @@
 #include "TextRun.h"
 #include "WebCoreSystemInterface.h"
 
-#if PLATFORM(WX)
+#if PLATFORM(WX) || PLATFORM(CHROMIUM)
 #include <ApplicationServices/ApplicationServices.h>
 #else
 #include <CoreText/CoreText.h>

@@ -148,7 +148,7 @@ WebRect WebFontImpl::estimateTextBounds(const WebTextRun& run, const WebFloatPoi
 {
     FontCachePurgePreventer fontCachePurgePreventer;
     int totalWidth = m_font.width(run, 0);
-    const FontMetrics& fontMetrics = m_font.fontMetrics();
+    const WebCore::FontMetrics& fontMetrics = m_font.fontMetrics();
     return WebRect(leftBaseline.x - (fontMetrics.ascent() + fontMetrics.descent()) / 2,
                    leftBaseline.y - fontMetrics.ascent() - fontMetrics.lineGap(),
                    totalWidth + fontMetrics.ascent() + fontMetrics.descent(),
