@@ -1,3 +1,14 @@
+2012-06-11  Jin Yang  <jin.a.yang@intel.com>
+
+        GeneratorGeneratedImage should cache images for the non-tiled case
+        https://bugs.webkit.org/show_bug.cgi?id=87094
+
+        Reviewed by Simon Fraser.
+
+        Update expectations: added failures for baselines to come.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-11  Vincent Scheib  <scheib@chromium.org>
 
         Add new Pointer Lock spec attribute webkitPointerLockElement.

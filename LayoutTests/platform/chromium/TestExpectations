@@ -3604,6 +3604,17 @@ BUGWK87075 : svg/animations/svgnumberoptionalnumber-animation-3.html = PASS TIME
 BUGWK87075 : svg/animations/animate-path-animation-qQ-tT-inverse.html = PASS TIMEOUT
 BUGWK87075 : svg/animations/svgnumberoptionalnumber-animation-4.html = PASS TIMEOUT
 
+BUGWK87094 : fast/borders/border-image-scaled-gradient.html = IMAGE
+BUGWK87094 : fast/css/transformed-mask.html = IMAGE
+BUGWK87094 : fast/gradients/border-image-gradient-sides-and-corners.html = IMAGE
+BUGWK87094 : fast/gradients/css3-linear-angle-gradients.html = IMAGE
+BUGWK87094 : fast/gradients/css3-linear-right-angle-gradients.html = IMAGE
+BUGWK87094 : fast/gradients/css3-radial-gradients.html = IMAGE
+BUGWK87094 : fast/gradients/css3-radial-gradients2.html = IMAGE
+BUGWK87094 : fast/gradients/css3-repeating-linear-gradients.html = IMAGE
+BUGWK87094 : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
+BUGWK87094 : fast/reflections/reflection-with-zoom.html = IMAGE
+
 // Ref-tests can't have platform specific results.
 BUGWK87175 SKIP : fast/regions/floats-basic-in-variable-width-regions.html = PASS
 BUGWK87175 SKIP : fast/regions/overflow-in-uniform-regions.html = PASS
