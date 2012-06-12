@@ -1,3 +1,12 @@
+2012-06-12  Anna Cavender  <annacc@chromium.org>
+
+        [Chromium] video-media-source-add-and-remove-ids.html needs to be skipped
+        until a chromium patch lands that will cause different expectations.
+
+        Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-12  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed: Rebaseline gradients tests
