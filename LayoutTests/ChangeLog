@@ -1,3 +1,12 @@
+2012-06-12  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed: Rebaseline gradient-after-transparent-border
+
+        Font antialiasing differences are causing this to fail after
+        rebaseline in r120043.
+
+        * platform/chromium-linux/fast/gradients/gradient-after-transparent-border-expected.png:
+
 2012-06-12  Kent Tamura  <tkent@chromium.org>
 
         Remove unnecessary functions: setName() and formControlName()
