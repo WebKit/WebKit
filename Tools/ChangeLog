@@ -1,3 +1,13 @@
+2012-06-11  Ojan Vafai  <ojan@chromium.org>
+
+        Don't show the ASAN builders in garden-o-matic since they don't get block WebKit rolls.
+        https://bugs.webkit.org/show_bug.cgi?id=88836
+
+        Reviewed by Dirk Pranke.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders_unittests.js:
+
 2012-06-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Remove CMakeCache.txt before building

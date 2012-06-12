@@ -46,6 +46,15 @@ var kExampleBuilderStatusJSON =  {
         "slaves": ["vm124-m1"],
         "state": "building"
     },
+    "Webkit ASAN": {
+        "basedir": "Webkit_Linux",
+        "cachedBuilds": [11459, 11460, 11461, 11462],
+        "category": "6webkit linux latest",
+        "currentBuilds": [11461, 11462],
+        "pendingBuilds": 0,
+        "slaves": ["vm124-m1"],
+        "state": "building"
+    },
 };
 
 var kExampleBuildInfoJSON = {
@@ -953,6 +962,8 @@ test("buildersFailing", 3, function() {
             else if (/Webkit%20Linux/.exec(url))
                 callback(kExampleBuildInfoJSON);
             else if (/Webkit%20Mac10\.6/.exec(url))
+                callback(failingBuildInfoJSON);
+            else if (/Webkit%20ASAN/.exec(url))
                 callback(failingBuildInfoJSON);
             else {
                 ok(false, "Unexpected URL: " + url);
