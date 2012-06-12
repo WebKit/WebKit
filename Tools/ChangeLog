@@ -1,3 +1,14 @@
+2012-06-12  Lucas Forschler  <lforschler@apple.com>
+
+        Rename Apple bots to a standard convention.
+        https://bugs.webkit.org/show_bug.cgi?id=88893
+        
+        Note: This has the side effect of grouping all of the Apple bots together in the waterfall.
+
+        Reviewed by Simon Fraser.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-06-12  Mike West  <mkwst@chromium.org>
 
         Make document.documentURI readonly from JavaScript

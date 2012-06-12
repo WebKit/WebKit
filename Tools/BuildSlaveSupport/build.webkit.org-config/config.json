@@ -66,70 +66,70 @@
                     { "name": "hfreyther-sh4-linux1", "platform": "qt"}
                   ],
 
-    "builders":   [ { "name": "SnowLeopard Intel Release (Build)", "type": "Build", "builddir": "snowleopard-intel-release",
+    "builders":   [ { "name": "Apple SnowLeopard Release Build", "type": "Build", "builddir": "snowleopard-release",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["apple-xserve-4", "test-slave"]
+                      "slavenames": ["apple-xserve-4"]
                     },
-                    { "name": "SnowLeopard Intel Debug (Build)", "type": "Build", "builddir": "snowleopard-intel-debug",
+                    { "name": "Apple SnowLeopard Debug Build", "type": "Build", "builddir": "snowleopard-debug",
                       "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-xserve-9"]
                     },
-                    { "name": "Lion Leaks", "type": "BuildAndTestLeaks", "builddir": "lion-intel-leaks",
+                    { "name": "Apple Lion Leaks", "type": "BuildAndTestLeaks", "builddir": "lion-leaks",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-3"]
                     },
-                    { "name": "Lion Debug (Build)", "type": "Build", "builddir": "lion-intel-debug",
+                    { "name": "Apple Lion Debug Build", "type": "Build", "builddir": "lion-debug",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["lion-intel-debug-tests", "lion-intel-debug-tests-wk2"],
+                      "triggers": ["lion-debug-tests-wk1", "lion-debug-tests-wk2"],
                       "slavenames": ["apple-xserve-2", "apple-xserve-10"]
                     },
-                    { "name": "Lion Release (Build)", "type": "Build", "builddir": "lion-intel-release",
+                    { "name": "Apple Lion Release Build", "type": "Build", "builddir": "lion-release",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["lion-intel-release-tests", "lion-intel-release-tests-wk2", "lion-intel-release-perf"],
+                      "triggers": ["lion-release-tests-wk1", "lion-release-tests-wk2", "lion-release-perf"],
                       "slavenames": ["apple-xserve-3"]
                     },
-                    { "name": "Lion Debug (Tests)", "type": "Test", "builddir": "lion-intel-debug-tests",
+                    { "name": "Apple Lion Debug WK1 Tests", "type": "Test", "builddir": "lion-debug-tests-wk1",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-4"]
                     },
-                    { "name": "Lion Debug (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "lion-intel-debug-tests-wk2",
+                    { "name": "Apple Lion Debug WK2 Tests", "type": "TestWebKit2", "builddir": "lion-debug-tests-wk2",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-8", "apple-xserve-1"]
                     },
-                    { "name": "Lion Release (Tests)", "type": "Test", "builddir": "lion-intel-release-tests",
+                    { "name": "Apple Lion Release WK1 Tests", "type": "Test", "builddir": "lion-release-tests-wk1",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-5"]
                     },
-                    { "name": "Lion Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "lion-intel-release-tests-wk2",
+                    { "name": "Apple Lion Release WK2 Tests", "type": "TestWebKit2", "builddir": "lion-release-tests-wk2",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-6"]
                     },
                     {
-                      "name": "Lion Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "lion-release-perf-tests",
+                      "name": "Apple Lion Release Perf", "type": "DownloadAndPerfTest", "builddir": "lion-release-perf-tests",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-xserve-11"]
                     },
                     {
-                      "name": "Windows Release (Build)", "type": "Build", "builddir": "win-release",
+                      "name": "Apple Win Release Build", "type": "Build", "builddir": "win-release",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
                       "triggers": ["win-release-tests"],
-                      "slavenames": ["apple-windows-2", "test-slave"]
+                      "slavenames": ["apple-windows-2"]
                     },
                     {
-                      "name": "Windows 7 Release (Tests)", "type": "Test", "builddir": "win-release-tests",
+                      "name": "Apple Win 7 Release Tests", "type": "Test", "builddir": "win-release-tests",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["apple-windows-5", "apple-windows-6", "test-slave"]
+                      "slavenames": ["apple-windows-5", "apple-windows-6"]
                     },
                     {
-                      "name": "Windows Debug (Build)", "type": "Build", "builddir": "win-debug",
+                      "name": "Apple Win Debug Build", "type": "Build", "builddir": "win-debug",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
                       "triggers": ["win-debug-tests"],
-                      "slavenames": ["apple-windows-1", "test-slave"]
+                      "slavenames": ["apple-windows-1"]
                     },
                     {
-                      "name": "Windows XP Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
+                      "name": "Apple Win XP Debug Tests", "type": "Test", "builddir": "win-debug-tests",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
-                      "slavenames": ["apple-windows-3", "apple-windows-4", "apple-windows-13", "apple-windows-14", "apple-windows-15", "test-slave"]
+                      "slavenames": ["apple-windows-3", "apple-windows-4", "apple-windows-13", "apple-windows-14", "apple-windows-15"]
                     },
                     {
                       "name": "GTK Linux 32-bit Release", "type": "BuildAndTest", "builddir": "gtk-linux-32-release",
@@ -288,34 +288,34 @@
                                        "WinCairo Release", "WinCE Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-snowleopard", "branch": "trunk", "treeStableTimer": 45.0, 
-                      "builderNames": ["SnowLeopard Intel Release (Build)", "SnowLeopard Intel Debug (Build)"] 
+                      "builderNames": ["Apple SnowLeopard Release Build", "Apple SnowLeopard Debug Build"] 
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-lion", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Lion Release (Build)", "Lion Debug (Build)", "Lion Leaks"]
+                      "builderNames": ["Apple Lion Release Build", "Apple Lion Debug Build", "Apple Lion Leaks"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Windows Release (Build)", "Windows Debug (Build)"]
+                      "builderNames": ["Apple Win Release Build", "Apple Win Debug Build"]
                     },
-                    { "type": "Triggerable", "name": "lion-intel-release-tests",
-                      "builderNames": ["Lion Release (Tests)"]
+                    { "type": "Triggerable", "name": "lion-release-tests-wk1",
+                      "builderNames": ["Apple Lion Release WK1 Tests"]
                     },
-                    { "type": "Triggerable", "name": "lion-intel-release-tests-wk2",
-                      "builderNames": ["Lion Release (WebKit2 Tests)"]
+                    { "type": "Triggerable", "name": "lion-release-tests-wk2",
+                      "builderNames": ["Apple Lion Release WK2 Tests"]
                     },
-                    { "type": "Triggerable", "name": "lion-intel-release-perf",
-                      "builderNames": ["Lion Release (Perf)"]
+                    { "type": "Triggerable", "name": "lion-release-perf",
+                      "builderNames": ["Apple Lion Release Perf"]
                     },
-                    { "type": "Triggerable", "name": "lion-intel-debug-tests",
-                      "builderNames": ["Lion Debug (Tests)"]
+                    { "type": "Triggerable", "name": "lion-debug-tests-wk1",
+                      "builderNames": ["Apple Lion Debug WK1 Tests"]
                     },
-                    { "type": "Triggerable", "name": "lion-intel-debug-tests-wk2",
-                      "builderNames": ["Lion Debug (WebKit2 Tests)"]
+                    { "type": "Triggerable", "name": "lion-debug-tests-wk2",
+                      "builderNames": ["Apple Lion Debug WK2 Tests"]
                     },
                     { "type": "Triggerable", "name": "win-release-tests",
-                      "builderNames": ["Windows 7 Release (Tests)"]
+                      "builderNames": ["Apple Win 7 Release Tests"]
                     },
                     { "type": "Triggerable", "name": "win-debug-tests",
-                      "builderNames": ["Windows XP Debug (Tests)"]
+                      "builderNames": ["Apple Win XP Debug Tests"]
                     },
                     { "type": "Triggerable", "name": "chromium-win-release-tests",
                       "builderNames": ["Chromium Win Release (Tests)"]
