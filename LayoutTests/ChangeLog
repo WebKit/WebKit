@@ -1,3 +1,14 @@
+2012-06-12  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed. Add reference to bug 88859 for test skipped in r120055.
+
+        * platform/efl/Skipped:
+        * platform/gtk/TestExpectations:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-06-12  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed: Add expectations for speech-recognition-event-constructor

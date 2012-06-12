@@ -2117,5 +2117,6 @@ editing/undomanager
 # https://bugs.webkit.org/show_bug.cgi?id=86000
 http/tests/security/referrer-policy-redirect-link.html
 
-# Fail until ENABLE_XHR_RESPONSE_BLOB is enabled.
+# Fail until ENABLE_XHR_RESPONSE_BLOB is enabled after r120042
+# https://bugs.webkit.org/show_bug.cgi?id=88859
 http/tests/xmlhttprequest/response-blob-size.html

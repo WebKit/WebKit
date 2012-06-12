@@ -326,8 +326,9 @@ BUGWKGTK SKIP : http/tests/security/video-cross-origin-readback.html = FAIL
 // UndoManager is not yet enabled.
 BUGWK87908 SKIP : editing/undomanager = PASS
 
-// ENABLE_XHR_RESPONSE_BLOB is not yet enabled.
-BUGWKGTK SKIP : http/tests/xmlhttprequest/response-blob-size.html = TEXT
+// Fail until ENABLE_XHR_RESPONSE_BLOB is enabled after r120042
+// https://bugs.webkit.org/show_bug.cgi?id=88859
+BUGWK88859 : http/tests/xmlhttprequest/response-blob-size.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
