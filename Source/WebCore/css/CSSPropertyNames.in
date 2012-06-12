@@ -256,7 +256,9 @@ z-index
 -webkit-column-span
 -webkit-column-width
 -webkit-columns
+#if defined(ENABLE_CSS_BOX_DECORATION_BREAK) && ENABLE_CSS_BOX_DECORATION_BREAK
 -webkit-box-decoration-break
+#endif
 #if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
 -webkit-filter
 #endif
