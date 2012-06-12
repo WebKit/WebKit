@@ -142,6 +142,20 @@ exit:
     return 0;
 }
 
+HRESULT STDMETHODCALLTYPE WinLauncherWebHost::didFailProvisionalLoadWithError(IWebView*, IWebError *error, IWebFrame*)
+{
+    BSTR errorDescription = 0;
+    HRESULT hr = error->localizedDescription(&errorDescription);
+    if (FAILED(hr))
+        errorDescription = L"Failed to load page and to localize error description.";
+
+    ::MessageBoxW(0, static_cast<LPCWSTR>(errorDescription), L"Error", MB_APPLMODAL | MB_OK);
+    if (SUCCEEDED(hr))
+        SysFreeString(errorDescription);
+
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WinLauncherWebHost::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;

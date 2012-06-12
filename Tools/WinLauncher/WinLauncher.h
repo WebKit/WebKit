@@ -50,7 +50,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE didFailProvisionalLoadWithError( 
         /* [in] */ IWebView *webView,
         /* [in] */ IWebError *error,
-        /* [in] */ IWebFrame *frame) { return S_OK; }
+        /* [in] */ IWebFrame*);
     
     virtual HRESULT STDMETHODCALLTYPE didCommitLoadForFrame( 
         /* [in] */ IWebView *webView,

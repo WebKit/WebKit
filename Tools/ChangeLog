@@ -1,3 +1,16 @@
+2012-06-12  Ashod Nakashian  <ashodnakashian@yahoo.com>
+
+        WinLauncher should show loading errors
+        https://bugs.webkit.org/show_bug.cgi?id=80760
+
+        Reviewed by Brent Fulgham.
+
+        * WinLauncher/WinLauncher.cpp: Added load-fail handler to show messagebox with error.
+        (WinLauncherWebHost::didFailProvisionalLoadWithError):
+        * WinLauncher/WinLauncher.h:
+        (WinLauncherWebHost::didFailProvisionalLoadWithError):
+        (WinLauncherWebHost):
+
 2012-06-12  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Add MiniBrowserEfl.
