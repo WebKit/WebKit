@@ -1,3 +1,14 @@
+2012-06-12  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed: Rebaseline gradients tests
+
+        Rebaseline two gradients tests after r120033 that I missed in
+        rebaselines in r120043.
+
+        * platform/chromium-linux-x86/fast/gradients/css3-radial-gradients2-expected.png: Removed.
+        * platform/chromium-linux/fast/gradients/css3-radial-gradients2-expected.png:
+        * platform/chromium-linux/fast/gradients/gradient-after-transparent-border-expected.png:
+
 2012-06-12  Hojong Han  <hojong.han@samsung.com>
 
         Property names of the built-in object cannot be retrieved 
