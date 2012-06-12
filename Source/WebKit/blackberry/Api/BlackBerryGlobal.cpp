@@ -105,11 +105,7 @@ void clearMemoryCaches()
     BlackBerry::Platform::userInterfaceThreadMessageClient()->dispatchMessage(BlackBerry::Platform::createFunctionCallMessage(clearMemoryCachesInCompositingThread));
 #endif
 
-    {
-        JSC::JSLock lock(JSC::SilenceAssertionsOnly);
-        // This function also performs a GC.
-        JSC::releaseExecutableMemory(*JSDOMWindow::commonJSGlobalData());
-    }
+    collectJavascriptGarbageNow();
 
     // Clean caches after JS garbage collection because JS GC can
     // generate more dead resources.
