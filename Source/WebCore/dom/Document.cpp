@@ -1316,6 +1316,7 @@ void Document::setXMLStandalone(bool standalone, ExceptionCode& ec)
 
 void Document::setDocumentURI(const String& uri)
 {
+    // This property is read-only from JavaScript, but writable from Objective-C.
     m_documentURI = uri;
     updateBaseURL();
 }
@@ -2688,8 +2689,9 @@ void Document::updateBaseURL()
     else if (!m_baseURLOverride.isEmpty())
         m_baseURL = m_baseURLOverride;
     else {
-        // The documentURI attribute is an arbitrary string. DOM 3 Core does not specify how it should be resolved,
-        // so we use a null base URL.
+        // The documentURI attribute is read-only from JavaScript, but writable from Objective C, so we need to retain
+        // this fallback behavior. We use a null base URL, since the documentURI attribute is an arbitrary string
+        // and DOM 3 Core does not specify how it should be resolved.
         m_baseURL = KURL(KURL(), documentURI());
     }
     selectorQueryCache()->invalidate();

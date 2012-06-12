@@ -1232,6 +1232,8 @@ private:
     // string by content.  Document.documentURI affects m_baseURL unless the
     // document contains a <base> element, in which case the <base> element
     // takes precedence.
+    //
+    // This property is read-only from JavaScript, but writable from Objective C.
     String m_documentURI;
 
     String m_baseTarget;

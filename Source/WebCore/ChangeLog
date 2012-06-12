@@ -1,3 +1,41 @@
+2012-06-12  Mike West  <mkwst@chromium.org>
+
+        Make document.documentURI readonly from JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=65187
+
+        Reviewed by Alexey Proskuryakov.
+
+        The DOM4 working draft marks the documentURI attribute as read only
+        (http://www.w3.org/TR/dom/#document). Firefox has shipped with this
+        behavior since https://hg.mozilla.org/mozilla-central/rev/3bc751906409
+        landed in October 2011, IE9 doesn't support the property, and
+        Opera throws a NO_MODIFICATION_ALLOWED_ERR. This patch changes WebKit
+        to silently fail (matching Firefox's behavior) by setting the property
+        to readonly in the IDL.
+
+        Document::setDocumentURI and the m_documentURI property are retained
+        for compatibility with ObjC clients, and the readonly attribute is
+        ifdeffed out for ObjC.
+
+        This patch adds a single test to verify the behavior, and removes a
+        variety of tests that depended on the writable behavior. In particular,
+        potential security issues involving the document.baseURL property are
+        avoided completely as long as this property can't be changed.
+
+        Test: fast/dom/documenturi-readonly.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setDocumentURI):
+            Adds a comment explaining that the fallback is necessary only to
+            support ObjC, not for JS calls.
+        * dom/Document.cpp:
+        (WebCore::Document::updateBaseURL):
+            Ditto.
+        (Document):
+        * dom/Document.idl:
+            Add readonly to the attribute and drop null value when not in
+            LANGUAGE_OBJECTIVE_C.
+
 2012-06-12  Silvia Pfeiffer  <silviapf@chromium.org>
 
         Support !ENABLE(VIDEO) builds with horizontally layed out video controls.

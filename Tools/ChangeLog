@@ -1,3 +1,17 @@
+2012-06-12  Mike West  <mkwst@chromium.org>
+
+        Make document.documentURI readonly from JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=65187
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/SetDocumentURI.html: Added.
+        * TestWebKitAPI/Tests/mac/SetDocumentURI.mm: Added.
+        (-[SetDocumentURITest webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] enable LEGACY_WEBKIT_BLOB_BUILDER flag
