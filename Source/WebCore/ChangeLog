@@ -1,3 +1,21 @@
+2012-06-12  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Return empty visibleLayerRect for layers with empty content bounds
+        https://bugs.webkit.org/show_bug.cgi?id=88901
+
+        Reviewed by Adrienne Walker.
+
+        This change should only affect tests. Currently if you set up a
+        CCLayerImpl with some bounds, but don't set the contentBounds, then
+        they are empty by default. In this case the visibleLayerRect gets
+        set inappropriately to the layer's target surface contentRect which
+        in a completely different coordinate space.
+
+        Fixed up tests that were passing bogusly and failed after this change.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateVisibleLayerRect):
+
 2012-06-12  Adrienne Walker  <enne@google.com>
 
         [chromium] ScrollingCoordinator::setScrollLayer should update scroll layer ids

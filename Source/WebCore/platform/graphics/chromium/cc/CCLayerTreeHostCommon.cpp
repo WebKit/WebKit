@@ -165,7 +165,7 @@ static IntRect calculateVisibleLayerRect(LayerType* layer)
         targetSurfaceRect.intersect(layer->clipRect());
 
     if (targetSurfaceRect.isEmpty() || layer->contentBounds().isEmpty())
-        return targetSurfaceRect;
+        return IntRect();
 
     // Note carefully these are aliases
     const IntSize& bounds = layer->bounds();

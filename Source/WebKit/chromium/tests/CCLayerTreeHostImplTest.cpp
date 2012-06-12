@@ -95,6 +95,7 @@ public:
         root->setAnchorPoint(FloatPoint(0, 0));
         root->setPosition(FloatPoint(0, 0));
         root->setBounds(IntSize(10, 10));
+        root->setContentBounds(IntSize(10, 10));
         root->setVisibleLayerRect(IntRect(0, 0, 10, 10));
         root->setDrawsContent(true);
         myHostImpl->setRootLayer(root.release());
@@ -722,6 +723,7 @@ private:
     {
         setAnchorPoint(FloatPoint(0, 0));
         setBounds(IntSize(10, 10));
+        setContentBounds(IntSize(10, 10));
         setDrawsContent(true);
     }
 
@@ -742,6 +744,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
         OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
         root->setAnchorPoint(FloatPoint(0, 0));
         root->setBounds(IntSize(10, 10));
+        root->setContentBounds(root->bounds());
         root->setDrawsContent(false);
         m_hostImpl->setRootLayer(root.release());
     }
@@ -1393,6 +1396,7 @@ static PassOwnPtr<CCLayerTreeHostImpl> setupLayersForOpacity(bool partialSwap, C
     root->setAnchorPoint(FloatPoint(0, 0));
     root->setPosition(FloatPoint(rootRect.x(), rootRect.y()));
     root->setBounds(IntSize(rootRect.width(), rootRect.height()));
+    root->setContentBounds(root->bounds());
     root->setVisibleLayerRect(rootRect);
     root->setDrawsContent(false);
     root->renderSurface()->setContentRect(IntRect(IntPoint(), IntSize(rootRect.width(), rootRect.height())));
@@ -1401,12 +1405,14 @@ static PassOwnPtr<CCLayerTreeHostImpl> setupLayersForOpacity(bool partialSwap, C
     child->setPosition(FloatPoint(childRect.x(), childRect.y()));
     child->setOpacity(0.5f);
     child->setBounds(IntSize(childRect.width(), childRect.height()));
+    child->setContentBounds(child->bounds());
     child->setVisibleLayerRect(childRect);
     child->setDrawsContent(false);
 
     grandChild->setAnchorPoint(FloatPoint(0, 0));
     grandChild->setPosition(IntPoint(grandChildRect.x(), grandChildRect.y()));
     grandChild->setBounds(IntSize(grandChildRect.width(), grandChildRect.height()));
+    grandChild->setContentBounds(grandChild->bounds());
     grandChild->setVisibleLayerRect(grandChildRect);
     grandChild->setDrawsContent(true);
 

@@ -1,3 +1,12 @@
+2012-06-12  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Return empty visibleLayerRect for layers with empty content bounds
+        https://bugs.webkit.org/show_bug.cgi?id=88901
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-06-12  Mark Mentovai  <mark@chromium.org>
 
         [chromium mac] Don't #include things in subframeworks of
