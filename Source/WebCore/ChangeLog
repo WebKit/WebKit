@@ -1,3 +1,9 @@
+2012-06-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: removed svn:mime-type property from English.lproj/localizedStrings.js
+
+        * English.lproj/localizedStrings.js
+
 2012-06-12  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the notification-enabled build after r120044.
