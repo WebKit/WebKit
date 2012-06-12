@@ -43,7 +43,7 @@
             for (var i = 0; i < spanList.length; ++i ) {
                 var divItem = spanList.item(i);
                 counters += '-';
-                counters += layoutTestController.counterValueForElementById(divItem.getAttribute("id"));
+                counters += window.internals.counterValue(document.getElementById(divItem.getAttribute("id")));
                 counters += divItem.textContent;
             }
             document.getElementById("container").innerHTML = counters;

@@ -105,7 +105,6 @@ public slots:
     void setCanOpenWindows() { m_canOpenWindows = true; }
     void setPrinting() { m_isPrinting = true; }
     void waitUntilDone();
-    QString counterValueForElementById(const QString& id);
     int webHistoryItemCount();
     void keepWebHistory();
     void notifyDone();

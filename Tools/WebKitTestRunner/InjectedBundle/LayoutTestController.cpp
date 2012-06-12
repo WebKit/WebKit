@@ -254,16 +254,6 @@ JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSValueRef el
     return value;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef elementId)
-{
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
-    JSObjectRef element = getElementById(mainFrame, elementId);
-    if (!element)
-        return 0;
-    WKRetainPtr<WKStringRef> value(AdoptWK, WKBundleFrameCopyCounterValue(mainFrame, const_cast<JSObjectRef>(element)));
-    return toJS(value);
-}
-
 JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSValueRef element)
 {
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());

@@ -1,3 +1,14 @@
+2012-06-11  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        [DRT] LTC:: counterValueForElementById() could be moved to Internals.
+        https://bugs.webkit.org/show_bug.cgi?id=84406
+
+        Reviewed by Hajime Morita.
+
+        Exporting Internals::counterValueForElement symbols for the Gtk build.
+
+        * Source/autotools/symbols.filter:
+
 2012-06-11  Alexis Menard  <alexis.menard@openbossa.org>
 
         [CSS3 Backgrounds and Borders] Protect box-decoration-break behind a feature flag.

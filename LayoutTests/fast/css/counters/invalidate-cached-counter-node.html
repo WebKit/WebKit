@@ -22,7 +22,7 @@
         if (window.layoutTestController) {
             layoutTestController.dumpAsText();
             var testResult;
-            var counterValue = layoutTestController.counterValueForElementById("keep-me");
+            var counterValue = window.internals.counterValue(document.getElementById("keep-me"));
             if (counterValue == "1")
                 testResult = "PASS";
             else

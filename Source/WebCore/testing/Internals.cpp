@@ -1058,6 +1058,14 @@ void Internals::allowRoundingHacks() const
     TextRun::setAllowsRoundingHacks(true);
 }
 
+String Internals::counterValue(Element* element)
+{
+    if (!element)
+        return String();
+
+    return counterValueForElement(element);
+}
+
 #if ENABLE(FULLSCREEN_API)
 void Internals::webkitWillEnterFullScreenForElement(Document* document, Element* element)
 {

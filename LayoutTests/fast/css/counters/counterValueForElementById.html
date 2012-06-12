@@ -14,7 +14,7 @@
     <script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body>
-    <div>This is the test for layoutTestController.counterValueForElementById</div>
+    <div>This is the test for window.internals.counterValueForElementById</div>
 
     <div class="reset"><span id="before" class="show-before"></span></div>
     <div class="reset"><span id="after" class="show-after"></span></div>
@@ -35,14 +35,14 @@
         if (window.layoutTestController) {
             layoutTestController.dumpAsText();
 
-            shouldBe("layoutTestController.counterValueForElementById('before')", "'0'");
-            shouldBe("layoutTestController.counterValueForElementById('after')", "'0'");
-            shouldBe("layoutTestController.counterValueForElementById('before_after')", "'0 0'");
-            shouldBe("layoutTestController.counterValueForElementById('twice')", "'0 0'");
-            shouldBe("layoutTestController.counterValueForElementById('point')", "'0.1'");
-            shouldBe("layoutTestController.counterValueForElementById('two-points')", "'0.1.2'");
-            shouldBe("layoutTestController.counterValueForElementById('greek')", "'0.\u03b1.\u03b2'");
-            shouldBe("layoutTestController.counterValueForElementById('three-greeks')", "'0.\u03b1.\u03b2 0.\u03b1.\u03b2 0.\u03b1.\u03b2'");
+            shouldBe("window.internals.counterValue(document.getElementById('before'))", "'0'");
+            shouldBe("window.internals.counterValue(document.getElementById('after'))", "'0'");
+            shouldBe("window.internals.counterValue(document.getElementById('before_after'))", "'0 0'");
+            shouldBe("window.internals.counterValue(document.getElementById('twice'))", "'0 0'");
+            shouldBe("window.internals.counterValue(document.getElementById('point'))", "'0.1'");
+            shouldBe("window.internals.counterValue(document.getElementById('two-points'))", "'0.1.2'");
+            shouldBe("window.internals.counterValue(document.getElementById('greek'))", "'0.\u03b1.\u03b2'");
+            shouldBe("window.internals.counterValue(document.getElementById('three-greeks'))", "'0.\u03b1.\u03b2 0.\u03b1.\u03b2 0.\u03b1.\u03b2'");
         }
     </script>
 </body>

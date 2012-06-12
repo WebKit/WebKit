@@ -96,8 +96,6 @@ interface IWebFramePrivate : IUnknown
 
     [local] JSGlobalContextRef globalContextForScriptWorld([in] IWebScriptWorld*);
 
-    HRESULT counterValueForElementById([in] BSTR id, [out, retval] BSTR* result);
-
     HRESULT visibleContentRect([out, retval] RECT*);
 
     HRESULT pageNumberForElementById([in] BSTR id, [in] float pageWidthInPixels, [in] float pageHeightInPixels, [out, retval] int* pageNumber);

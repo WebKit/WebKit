@@ -18,17 +18,17 @@
   function checkCounterValuesBeforeChange()
   {
       debug('Before the dynamic change:');
-      shouldBe("layoutTestController.counterValueForElementById('one')", "'1'");
-      shouldBe("layoutTestController.counterValueForElementById('two')", "'3'");
-      shouldBe("layoutTestController.counterValueForElementById('three')", "'4'");
+      shouldBe("window.internals.counterValue(document.getElementById('one'))", "'1'");
+      shouldBe("window.internals.counterValue(document.getElementById('two'))", "'3'");
+      shouldBe("window.internals.counterValue(document.getElementById('three'))", "'4'");
   }
 
   function checkCounterValuesAfterChange()
   {
       debug('After the dynamic change:');
-      shouldBe("layoutTestController.counterValueForElementById('one')", "'1'");
-      shouldBe("layoutTestController.counterValueForElementById('two')", "'2'");
-      shouldBe("layoutTestController.counterValueForElementById('three')", "'3'");
+      shouldBe("window.internals.counterValue(document.getElementById('one'))", "'1'");
+      shouldBe("window.internals.counterValue(document.getElementById('two'))", "'2'");
+      shouldBe("window.internals.counterValue(document.getElementById('three'))", "'3'");
 
       debug('');
       debug('TEST COMPLETE');

@@ -56,7 +56,6 @@ public:
     bool callShouldCloseOnWebView();
     JSStringRef copyDecodedHostName(JSStringRef name);
     JSStringRef copyEncodedHostName(JSStringRef name);
-    JSRetainPtr<JSStringRef> counterValueForElementById(JSStringRef id);
     void deliverWebIntent(JSStringRef action, JSStringRef type, JSStringRef data);
     void disableImageLoading();
     void dispatchPendingLoadRequests();

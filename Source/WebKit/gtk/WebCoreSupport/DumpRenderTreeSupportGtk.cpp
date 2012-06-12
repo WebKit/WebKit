@@ -189,28 +189,6 @@ CString DumpRenderTreeSupportGtk::dumpRenderTree(WebKitWebFrame* frame)
 }
 
 /**
- * counterValueForElementById:
- * @frame: a #WebKitWebFrame
- * @id: an element ID string
- *
- * Return value: The counter value of element @id in @frame
- */
-CString DumpRenderTreeSupportGtk::counterValueForElementById(WebKitWebFrame* frame, const char* id)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), CString());
-
-    Frame* coreFrame = core(frame);
-    if (!coreFrame)
-        return CString();
-
-    Element* coreElement = coreFrame->document()->getElementById(AtomicString(id));
-    if (!coreElement)
-        return CString();
-
-    return counterValueForElement(coreElement).utf8();
-}
-
-/**
  * numberForElementById
  * @frame: a #WebKitWebFrame
  * @id: an element ID string

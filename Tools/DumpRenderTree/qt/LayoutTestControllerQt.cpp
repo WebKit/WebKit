@@ -155,11 +155,6 @@ void LayoutTestController::waitUntilDone()
     m_timeoutTimer.start(m_timeout, this);
 }
 
-QString LayoutTestController::counterValueForElementById(const QString& id)
-{
-    return DumpRenderTreeSupportQt::counterValueForElementById(m_drt->webPage()->mainFrame(), id);
-}
-
 void LayoutTestController::setViewModeMediaFeature(const QString& mode)
 {
     m_drt->webPage()->setProperty("_q_viewMode", mode);

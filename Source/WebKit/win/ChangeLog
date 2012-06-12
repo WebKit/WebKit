@@ -1,3 +1,17 @@
+2012-06-11  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        [DRT] LTC:: counterValueForElementById() could be moved to Internals.
+        https://bugs.webkit.org/show_bug.cgi?id=84406
+
+        Reviewed by Hajime Morita.
+
+        Move the counterValueForElementById from LayoutTestCotroller to Internals and
+        remove the old platform specific implementations as it exclusively tests WebCore functionality.
+
+        * Interfaces/IWebFramePrivate.idl:
+        * WebFrame.cpp:
+        * WebFrame.h:
+
 2012-06-11  Sam Weinig  <sam@webkit.org>
 
         Remove support for disconnected/excluded from search frames, they are not used by Safari anymore

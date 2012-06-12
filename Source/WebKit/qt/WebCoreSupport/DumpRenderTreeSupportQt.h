@@ -135,7 +135,6 @@ public:
     static void webInspectorClose(QWebPage* page);
 
     static QString webPageGroupName(QWebPage *page);
-    static QString counterValueForElementById(QWebFrame* frame, const QString& id);
     static void webPageSetGroupName(QWebPage* page, const QString& groupName);
     static void clearFrameName(QWebFrame* frame);
     static void overwritePluginDirectories();

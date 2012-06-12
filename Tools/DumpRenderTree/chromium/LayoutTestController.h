@@ -324,9 +324,6 @@ public:
     // Resets between tests.
     void setPOSIXLocale(const CppArgumentList&, CppVariant*);
 
-    // Gets the value of the counter in the element specified by its ID.
-    void counterValueForElementById(const CppArgumentList&, CppVariant*);
-
     // Causes layout to happen as if targetted to printed pages.
     void setPrinting(const CppArgumentList&, CppVariant*);
 

@@ -28,8 +28,8 @@
   {
       if (!window.layoutTestController)
           return;
-      shouldBe("layoutTestController.counterValueForElementById('div1')", "'0'");
-      shouldBe("layoutTestController.counterValueForElementById('div2')", "'0.0'");
+      shouldBe("window.internals.counterValue(document.getElementById('div1'))", "'0'");
+      shouldBe("window.internals.counterValue(document.getElementById('div2'))", "'0.0'");
 
       debug('');
       debug('TEST COMPLETE');

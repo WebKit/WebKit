@@ -26,7 +26,7 @@
   {
       if (!window.layoutTestController)
           return;
-      shouldBe("layoutTestController.counterValueForElementById('div1')", "'0'");
+      shouldBe("window.internals.counterValue(document.getElementById('div1'))", "'0'");
 
       debug('');
       debug('TEST COMPLETE');

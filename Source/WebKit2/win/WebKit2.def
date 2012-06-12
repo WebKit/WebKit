@@ -117,6 +117,7 @@ EXPORTS
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
         ?consoleMessageArgumentCounts@InspectorConsoleAgent@WebCore@@QAE?AV?$Vector@I$0A@@WTF@@XZ
         ?counterValue@InspectorCounters@WebCore@@SAHW4CounterType@12@@Z
+        ?counterValueForElement@WebCore@@YA?AVString@WTF@@PAVElement@1@@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
         ?createThread@WTF@@YAIP6AXPAX@Z0PBD@Z
         ?currentThread@WTF@@YAIXZ

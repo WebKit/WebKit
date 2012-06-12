@@ -102,17 +102,6 @@ void LayoutTestController::display()
     displayWebView();
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef id)
-{
-    gchar* idGChar = JSStringCopyUTF8CString(id);
-    CString counterValueGChar = DumpRenderTreeSupportGtk::counterValueForElementById(mainFrame, idGChar);
-    g_free(idGChar);
-    if (counterValueGChar.isNull())
-        return 0;
-    JSRetainPtr<JSStringRef> counterValue(Adopt, JSStringCreateWithUTF8CString(counterValueGChar.data()));
-    return counterValue;
-}
-
 void LayoutTestController::keepWebHistory()
 {
     // FIXME: implement

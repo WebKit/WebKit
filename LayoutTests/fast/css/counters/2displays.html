@@ -31,7 +31,7 @@ function run()
     document.getElementById("testView").setAttribute("class", "counter1000");
     if (!window.layoutTestController)
         return;
-    shouldBe("layoutTestController.counterValueForElementById('testView')", "'1000 1000'");
+    shouldBe("window.internals.counterValue(document.getElementById('testView'))", "'1000 1000'");
 
     if (window.layoutTestController)
         layoutTestController.notifyDone();

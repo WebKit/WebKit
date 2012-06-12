@@ -1,3 +1,41 @@
+2012-06-11  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        [DRT] LTC:: counterValueForElementById() could be moved to Internals.
+        https://bugs.webkit.org/show_bug.cgi?id=84406
+
+        Reviewed by Hajime Morita.
+
+        Move the counterValueForElementById from LayoutTestCotroller to Internals and
+        remove the old platform specific implementations as it exclusively tests WebCore functionality.
+
+        * fast/css/counters/2displays-expected.txt:
+        * fast/css/counters/2displays.html:
+        * fast/css/counters/adding-nodes.html:
+        * fast/css/counters/after-continuation-expected.txt:
+        * fast/css/counters/after-continuation.html:
+        * fast/css/counters/content-021-expected.txt:
+        * fast/css/counters/content-021.html:
+        * fast/css/counters/counter-before-content-not-incremented.html:
+        * fast/css/counters/counter-increment-000-expected.txt:
+        * fast/css/counters/counter-increment-000.html:
+        * fast/css/counters/counter-increment-001-expected.txt:
+        * fast/css/counters/counter-increment-001.html:
+        * fast/css/counters/counter-increment-002.html:
+        * fast/css/counters/counter-increment-inherit-expected.txt:
+        * fast/css/counters/counter-increment-inherit.htm:
+        * fast/css/counters/counter-increment-overflow.html:
+        * fast/css/counters/counter-increment-tests-expected.txt:
+        * fast/css/counters/counter-increment-tests.htm:
+        * fast/css/counters/counter-reset-000.html:
+        * fast/css/counters/counter-reset-001.html:
+        * fast/css/counters/counter-reset-002.html:
+        * fast/css/counters/counterValueForElementById-expected.txt:
+        * fast/css/counters/counterValueForElementById.html:
+        * fast/css/counters/deep-before-expected.txt:
+        * fast/css/counters/deep-before.html:
+        * fast/css/counters/invalidate-cached-counter-node.html:
+        * fast/css/counters/nesting.html:
+
 2012-06-11  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Make SpeechRecognitionError an Event

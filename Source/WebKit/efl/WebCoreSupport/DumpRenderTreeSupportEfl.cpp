@@ -97,21 +97,6 @@ void DumpRenderTreeSupportEfl::clearOpener(Evas_Object* ewkFrame)
         frame->loader()->setOpener(0);
 }
 
-String DumpRenderTreeSupportEfl::counterValueByElementId(const Evas_Object* ewkFrame, const char* elementId)
-{
-    WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);
-
-    if (!frame)
-        return String();
-
-    WebCore::Element* element = frame->document()->getElementById(elementId);
-
-    if (!element)
-        return String();
-
-    return WebCore::counterValueForElement(element);
-}
-
 bool DumpRenderTreeSupportEfl::elementDoesAutoCompleteForElementWithId(const Evas_Object* ewkFrame, const String& elementId)
 {
     WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);

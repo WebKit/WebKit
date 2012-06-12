@@ -151,6 +151,8 @@ module window {
         [Conditional=INSPECTOR] unsigned long numberOfLiveDocuments();
         [Conditional=INSPECTOR] sequence<String> consoleMessageArgumentCounts(in Document document);
 
+        DOMString counterValue(in Element element);
+
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
         void webkitWillEnterFullScreenForElement(in Document document, in Element element);
         void webkitDidEnterFullScreenForElement(in Document document, in Element element);

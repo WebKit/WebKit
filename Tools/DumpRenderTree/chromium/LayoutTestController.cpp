@@ -125,7 +125,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("addUserStyleSheet", &LayoutTestController::addUserStyleSheet);
     bindMethod("clearAllDatabases", &LayoutTestController::clearAllDatabases);
     bindMethod("closeWebInspector", &LayoutTestController::closeWebInspector);
-    bindMethod("counterValueForElementById", &LayoutTestController::counterValueForElementById);
 #if ENABLE(POINTER_LOCK)
     bindMethod("didLosePointerLock", &LayoutTestController::didLosePointerLock);
 #endif
@@ -1657,20 +1656,6 @@ void LayoutTestController::setPOSIXLocale(const CppArgumentList& arguments, CppV
     result->setNull();
     if (arguments.size() == 1 && arguments[0].isString())
         setlocale(LC_ALL, arguments[0].toString().c_str());
-}
-
-void LayoutTestController::counterValueForElementById(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() < 1 || !arguments[0].isString())
-        return;
-    WebFrame* frame = m_shell->webView()->mainFrame();
-    if (!frame)
-        return;
-    WebString counterValue = frame->counterValueForElementById(cppVariantToWebString(arguments[0]));
-    if (counterValue.isNull())
-        return;
-    result->set(counterValue.utf8());
 }
 
 // Parse a single argument. The method returns true if there is an argument that

@@ -100,7 +100,6 @@ public:
 
     // Special DOM functions.
     JSValueRef computedStyleIncludingVisitedInfo(JSValueRef element);
-    JSRetainPtr<JSStringRef> counterValueForElementById(JSStringRef elementId);
     void clearBackForwardList();
     void execCommand(JSStringRef name, JSStringRef argument);
     bool isCommandEnabled(JSStringRef name);

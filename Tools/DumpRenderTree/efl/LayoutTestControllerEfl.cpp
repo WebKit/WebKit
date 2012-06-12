@@ -107,13 +107,6 @@ void LayoutTestController::display()
     displayWebView();
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef id)
-{
-    const Evas_Object* mainFrame = browser->mainFrame();
-    const String counterValue(DumpRenderTreeSupportEfl::counterValueByElementId(mainFrame, id->ustring().utf8().data()));
-    return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString(counterValue.utf8().data()));
-}
-
 void LayoutTestController::keepWebHistory()
 {
     notImplemented();

@@ -429,21 +429,6 @@ void LayoutTestController::disableImageLoading()
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setLoadsImagesAutomatically(false);
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef id)
-{
-    String idStr = jsStringRefToWebCoreString(id);
-    WebCore::Element* coreElement = mainFrame->document()->getElementById(AtomicString(idStr));
-    if (!coreElement)
-        return 0;
-
-    CString counterValueStr = counterValueForElement(coreElement).utf8();
-    if (counterValueStr.isNull())
-        return 0;
-
-    JSRetainPtr<JSStringRef> counterValue(Adopt, JSStringCreateWithUTF8CString(counterValueStr.data()));
-    return counterValue;
-}
-
 void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value)
 {
     if (!mainFrame)

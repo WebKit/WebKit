@@ -249,19 +249,6 @@ void LayoutTestController::display()
     displayWebView();
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef id)
-{
-    RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, id));
-    NSString *idNS = (NSString *)idCF.get();
-
-    DOMElement *element = [[mainFrame DOMDocument] getElementById:idNS];
-    if (!element)
-        return 0;
-
-    JSRetainPtr<JSStringRef> counterValue(Adopt, JSStringCreateWithCFString((CFStringRef)[mainFrame counterValueForElement:element]));
-    return counterValue;
-}
-
 void LayoutTestController::keepWebHistory()
 {
     if (![WebHistory optionalSharedHistory]) {

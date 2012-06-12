@@ -34,7 +34,7 @@
                     newSpanElement = document.createElement("span");
                     id = spanList.item(i).getAttribute("id");
                     if (id != null)
-                        newSpanElement.innerText = layoutTestController.counterValueForElementById(id);
+                        newSpanElement.innerText = window.internals.counterValue(document.getElementById(id));
                     if (newSpanElement.innerText.length)
                         newSpanElement.innerText = newSpanElement.innerText + "-";
                     console.appendChild(newSpanElement);

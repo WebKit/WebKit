@@ -472,11 +472,6 @@ void LayoutTestController::setScrollbarPolicy(JSStringRef orientation, JSStringR
     // FIXME: implement
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::counterValueForElementById(JSStringRef id)
-{
-    return 0;
-}
-
 int LayoutTestController::pageNumberForElementById(JSStringRef, float, float)
 {
     // FIXME: implement

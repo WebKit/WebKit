@@ -13,12 +13,12 @@
             function run()
             {
                 // Some extra WebKit testing for counter-increment inherit
-                shouldBe("layoutTestController.counterValueForElementById('wrapper90')", "'5'");
-                shouldBe("layoutTestController.counterValueForElementById('test90')", "'10'");
-                shouldBe("layoutTestController.counterValueForElementById('test90a')", "'15'");
-                shouldBe("layoutTestController.counterValueForElementById('wrapper91')", "'10'");
-                shouldBe("layoutTestController.counterValueForElementById('test91')", "'20'");
-                shouldBe("layoutTestController.counterValueForElementById('test91a')", "'30'");
+                shouldBe("window.internals.counterValue(document.getElementById('wrapper90'))", "'5'");
+                shouldBe("window.internals.counterValue(document.getElementById('test90'))", "'10'");
+                shouldBe("window.internals.counterValue(document.getElementById('test90a'))", "'15'");
+                shouldBe("window.internals.counterValue(document.getElementById('wrapper91'))", "'10'");
+                shouldBe("window.internals.counterValue(document.getElementById('test91'))", "'20'");
+                shouldBe("window.internals.counterValue(document.getElementById('test91a'))", "'30'");
                 if (window.layoutTestController)
                     layoutTestController.notifyDone();
             }

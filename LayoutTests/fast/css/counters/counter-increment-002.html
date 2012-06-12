@@ -32,7 +32,7 @@
                 for (i = 0; i < spanList.length; ++i ) {
                     newSpanElement = document.createElement("span");
                     newSpanElement.innerText =
-                    layoutTestController.counterValueForElementById(spanList.item(i).getAttribute("id"));
+                    window.internals.counterValue(document.getElementById(spanList.item(i).getAttribute("id")));
                     if (newSpanElement.innerText.length)
                         newSpanElement.innerText = newSpanElement.innerText + "-";
                     console.appendChild(newSpanElement);

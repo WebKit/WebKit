@@ -176,6 +176,8 @@ public:
     Vector<String> consoleMessageArgumentCounts(Document*) const;
 #endif
 
+    String counterValue(Element*);
+
 #if ENABLE(FULLSCREEN_API)
     void webkitWillEnterFullScreenForElement(Document*, Element*);
     void webkitDidEnterFullScreenForElement(Document*, Element*);
