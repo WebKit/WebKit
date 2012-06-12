@@ -1,3 +1,49 @@
+2012-06-12  Kent Tamura  <tkent@chromium.org>
+
+        Checking a radio button doesn't uncheck other buttons in the same group in some cases.
+        https://bugs.webkit.org/show_bug.cgi?id=88835
+
+        Reviewed by Ryosuke Niwa.
+
+        This change fixes a bug that checking a radio button in a radio button
+        group in a form detached from a document tree doesn't uncheck another
+        checked radio button in the radio button group.
+
+        A radio button participates in a radio button group in the following
+        conditions:
+        - If it is owned by a form element regardless of the form is in a
+        document tree or not, or
+
+        - If it is not owned by any form elements and it is in a document tree.
+        A radio button group for the radio button is owned by the document.
+
+        For HTMLInputElement::removedFrom():
+        The old code always unregistered the radio button if it was removed from
+        the document tree. It was incorrect because we don't need to unregister
+        it if it has an owner form and the owner form is not changed by
+        removedFrom().
+        If the owner form is cleared by removedFrom(), willChangeForm()
+        unregisters the radio button. So what we should do in removedFrom() is
+        to unregister the radio button only if the radio button group is owned
+        by the document.
+
+        For HTMLInputElement::insertedInto():
+        The old code always registered the radio button if it is inserted into
+        the document tree. It was incorrect because we don't need to register it
+        if it has an owner form and the owner form is not changed by
+        insertedInto().
+        If the owner form is changed by insertedInto(), didChangeForm()
+        registers the radio button. So We should register the radio button only
+        if its radio button group will be owned by the document.
+
+        Test: Add test cases to fast/forms/radio/radio-group.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::insertedInto):
+        Register this to CheckedRadioButtons only if new group owner is Document.
+        (WebCore::HTMLInputElement::removedFrom):
+        Unregister this from CheckedRadioButtons only if old group owner was Document.
+
 2012-06-12  James Robinson  <jamesr@chromium.org>
 
         [chromium] REGRESSION(119769): Canvas2DLayerBridge may go away before its TextureLayerChromium

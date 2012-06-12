@@ -35,6 +35,17 @@ shouldBeTrue('$("radio1-2").checked');
 $('radio1-2').name = 'name1';
 shouldBeFalse('$("radio1-1").checked');
 shouldBeTrue('$("radio1-2").checked');
+shouldBeTrue('$("radio1-1").checked = true; $("radio1-1").checked');
+shouldBeFalse('$("radio1-2").checked');
+
+debug('\nDetach the from from the document tree:');
+var orphanForm = parent.firstChild;
+parent.removeChild(orphanForm);
+var radioButtons = orphanForm.getElementsByTagName('input');
+shouldBeTrue('radioButtons[0].checked');
+shouldBeFalse('radioButtons[1].checked');
+shouldBeFalse('radioButtons[1].checked = true; radioButtons[0].checked');
+shouldBeTrue('radioButtons[1].checked');
 
 debug('');
 debug('Changing the type of an input element to radio:');

@@ -8,6 +8,14 @@ PASS $("radio1-1").checked is true
 PASS $("radio1-2").checked is true
 PASS $("radio1-1").checked is false
 PASS $("radio1-2").checked is true
+PASS $("radio1-1").checked = true; $("radio1-1").checked is true
+PASS $("radio1-2").checked is false
+
+Detach the from from the document tree:
+PASS radioButtons[0].checked is true
+PASS radioButtons[1].checked is false
+PASS radioButtons[1].checked = true; radioButtons[0].checked is false
+PASS radioButtons[1].checked is true
 
 Changing the type of an input element to radio:
 PASS $("radio1-1").checked is true

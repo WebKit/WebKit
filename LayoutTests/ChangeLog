@@ -1,3 +1,13 @@
+2012-06-12  Kent Tamura  <tkent@chromium.org>
+
+        Checking a radio button doesn't uncheck other buttons in the same group in some cases.
+        https://bugs.webkit.org/show_bug.cgi?id=88835
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/forms/radio/radio-group-expected.txt:
+        * fast/forms/radio/radio-group.html: Add test cases.
+
 2012-06-12  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Error codes, phase two
