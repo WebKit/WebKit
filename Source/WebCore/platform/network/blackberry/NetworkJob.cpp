@@ -385,9 +385,12 @@ void NetworkJob::handleNotifyDataReceived(const char* buf, size_t len)
     if ((!m_isFile && !m_statusReceived) || m_cancelled)
         return;
 
-    if (!buf || !len)
+    if (!buf || !len) {
+        sendResponseIfNeeded();
+        if (isClientAvailable())
+            m_handle->client()->didReceiveData(m_handle.get(), 0, 0, 0);
         return;
-
+    }
     // The loadFile API sets the override content type,
     // this will always be used as the content type and should not be overridden.
     if (!m_dataReceived && !m_isOverrideContentType) {

@@ -1,5 +1,24 @@
 2012-06-11  Mary Wu  <mary.wu@torchmobile.com.cn>
 
+        [BlackBerry] Add handling of notifyDataReceived in NetworkJob even there's no data inside
+        https://bugs.webkit.org/show_bug.cgi?id=88773
+
+        Reviewed by Rob Buis.
+
+        Handling notifyDataReceived event even if there is no data inside.
+        This event was critical because it gives downloadFilterStream a chance
+        to follow up NetworkStream close event, and it also make pluginView in
+        FrameLoaderBlackBerry return normal logic.
+
+        RIM PR# 164563
+
+        Reviewed internally by Leo Yang.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::handleNotifyDataReceived):
+
+2012-06-11  Mary Wu  <mary.wu@torchmobile.com.cn>
+
         [BlackBerry] Wrong mimetype for empty file link
         https://bugs.webkit.org/show_bug.cgi?id=88642
 
