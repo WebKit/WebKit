@@ -1,3 +1,13 @@
+2012-06-12  Kent Tamura  <tkent@chromium.org>
+
+        Remove unnecessary functions: setName() and formControlName()
+        https://bugs.webkit.org/show_bug.cgi?id=88392
+
+        Reviewed by Kentaro Hara.
+
+        * fast/forms/name-attribute-expected.txt: Added.
+        * fast/forms/name-attribute.html: Added.
+
 2012-06-12  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed gardening. Skip test crashing on GTK debug bots.

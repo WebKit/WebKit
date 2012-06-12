@@ -254,6 +254,8 @@ public:
     void setHeight(unsigned);
     void setWidth(unsigned);
 
+    virtual const AtomicString& name() const OVERRIDE;
+
 protected:
     HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
     void createShadowSubtree();
@@ -275,8 +277,6 @@ private:
     virtual void updateFocusAppearance(bool restorePreviousSelection);
     virtual void aboutToUnload();
     virtual bool shouldUseInputMethod();
-
-    virtual const AtomicString& formControlName() const;
 
     virtual bool isTextFormControl() const { return isTextField(); }
 

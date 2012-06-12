@@ -28,7 +28,7 @@ module html {
         attribute [Reflect] boolean disabled;
         readonly attribute HTMLFormElement form;
         attribute boolean multiple;
-        attribute [TreatNullAs=NullString] DOMString name;
+        attribute [Reflect] DOMString name;
         attribute [Reflect] boolean required;
         attribute long size;
 

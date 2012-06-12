@@ -28,7 +28,7 @@ module html {
         attribute [Reflect] boolean disabled;
         readonly attribute HTMLFormElement form;
         attribute long maxLength setter raises(DOMException);
-        attribute [TreatNullAs=NullString] DOMString name;
+        attribute [Reflect] DOMString name;
         attribute [Reflect] DOMString placeholder;
         attribute [Reflect] boolean readOnly;
         attribute [Reflect] boolean required;

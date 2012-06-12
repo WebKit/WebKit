@@ -48,7 +48,10 @@ public:
     virtual bool isFormControlElement() const = 0;
     virtual bool isEnumeratable() const = 0;
 
-    const AtomicString& name() const { return formControlName(); }
+    // Returns the 'name' attribute value. If this element has no name
+    // attribute, it returns an empty string instead of null string.
+    // Note that the 'name' IDL attribute doesn't use this function.
+    virtual const AtomicString& name() const;
 
     // Override in derived classes to get the encoded name=value pair for submitting.
     // Return true for a successful control (see HTML4-17.13.2).
@@ -95,8 +98,6 @@ protected:
     String customValidationMessage() const;
 
 private:
-    virtual const AtomicString& formControlName() const = 0;
-
     virtual void refFormAssociatedElement() = 0;
     virtual void derefFormAssociatedElement() = 0;
 

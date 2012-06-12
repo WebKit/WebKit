@@ -964,7 +964,7 @@ void HTMLSelectElement::parseMultipleAttribute(const Attribute& attribute)
 
 bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
 {
-    const AtomicString& name = formControlName();
+    const AtomicString& name = this->name();
     if (name.isEmpty())
         return false;
 

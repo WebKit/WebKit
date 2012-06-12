@@ -101,8 +101,6 @@ private:
     virtual void derefFormAssociatedElement() { deref(); }
     virtual HTMLFormElement* virtualForm() const;
 
-    virtual const AtomicString& formControlName() const;
-
 #if ENABLE(MICRODATA)
     virtual String itemValueText() const OVERRIDE;
     virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;

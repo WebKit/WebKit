@@ -48,7 +48,7 @@ Vector<String> FormController::formElementsState() const
         String value;
         if (!elementWithState->saveFormControlState(value))
             continue;
-        stateVector.append(elementWithState->formControlName().string());
+        stateVector.append(elementWithState->name().string());
         stateVector.append(elementWithState->formControlType().string());
         stateVector.append(value);
     }

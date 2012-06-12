@@ -1,3 +1,54 @@
+2012-06-12  Kent Tamura  <tkent@chromium.org>
+
+        Remove unnecessary functions: setName() and formControlName()
+        https://bugs.webkit.org/show_bug.cgi?id=88392
+
+        Reviewed by Kentaro Hara.
+
+        'name' IDL attributes of form-related elements should be [Reflected],
+        and we don't need to have setName(). We used formControlName() for
+        name() implementation, and formControlName() is not needed because it
+        just converts a null attribute to an empty string. Our binding code does it.
+
+        We don't remove FormAssociatedElement::name() because many C++ code use it.
+
+        FormAssociatedElement::name() is virtual, and HTMLInputElement overrides
+        it so that it returns a cache of the name attribtue value because
+        CheckedRadioButtons class needs to know an old name attribute value when
+        the name attribtue is changed.
+
+        References:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/the-iframe-element.html#dom-object-name
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#dom-form-name
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/association-of-controls-and-forms.html#dom-fe-name
+
+        Test: fast/forms/name-attribute.html
+
+        * dom/Element.h: Remove formControlName().
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::name):
+        Copied from formControlName() implementation of HTMLFormControlElement.
+        * html/FormAssociatedElement.h:
+        (FormAssociatedElement): Make name() virtual, remove formControlName().
+        * html/FormController.cpp:
+        (WebCore::FormController::formElementsState):
+        Use name() instead of formControlName().
+        * html/HTMLFormControlElement.cpp:
+        Remove formControlName() and setName().
+        * html/HTMLFormControlElement.h: ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::name): Renamed from formControlName().
+        * html/HTMLInputElement.h:
+        (HTMLInputElement): Renamed formControlName() to name(), and make it public.
+        * html/HTMLKeygenElement.idl: Make 'name' [Reflected].
+        * html/HTMLObjectElement.cpp: Remove formControlName().
+        * html/HTMLObjectElement.h: ditto.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::appendFormData):
+        Use name() instead of formControlName().
+        * html/HTMLSelectElement.idl: Make 'name' [Reflected].
+        * html/HTMLTextAreaElement.idl: Make 'name' [Reflected].
+
 2012-06-11  Nico Weber  <thakis@chromium.org>
 
         Remove unused member variables found by clang's -Wunused-private-field

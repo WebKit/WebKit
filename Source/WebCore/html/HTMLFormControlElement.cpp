@@ -241,17 +241,6 @@ void HTMLFormControlElement::removedFrom(ContainerNode* insertionPoint)
     FormAssociatedElement::removedFrom(insertionPoint);
 }
 
-const AtomicString& HTMLFormControlElement::formControlName() const
-{
-    const AtomicString& name = getNameAttribute();
-    return name.isNull() ? emptyAtom : name;
-}
-
-void HTMLFormControlElement::setName(const AtomicString& value)
-{
-    setAttribute(nameAttr, value);
-}
-
 bool HTMLFormControlElement::wasChangedSinceLastFormControlChangeEvent() const
 {
     return m_wasChangedSinceLastFormControlChangeEvent;

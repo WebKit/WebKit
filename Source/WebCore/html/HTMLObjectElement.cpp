@@ -501,12 +501,6 @@ bool HTMLObjectElement::appendFormData(FormDataList& encoding, bool)
     return true;
 }
 
-const AtomicString& HTMLObjectElement::formControlName() const
-{
-    const AtomicString& name = getNameAttribute();
-    return name.isNull() ? emptyAtom : name;
-}
-
 HTMLFormElement* HTMLObjectElement::virtualForm() const
 {
     return FormAssociatedElement::form();

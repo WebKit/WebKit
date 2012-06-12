@@ -131,7 +131,7 @@ HTMLInputElement::~HTMLInputElement()
         document()->formController()->checkedRadioButtons().removeButton(this);
 }
 
-const AtomicString& HTMLInputElement::formControlName() const
+const AtomicString& HTMLInputElement::name() const
 {
     return m_name.isNull() ? emptyAtom : m_name;
 }

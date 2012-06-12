@@ -1,0 +1,279 @@
+Check behavior of name attribute for various form elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test cases for button
+Initial value:
+PASS element.name is ""
+PASS element.getAttribute("name") is null
+Setting a value via the IDL attribute:
+PASS element.name = "foo"; element.name is "foo"
+PASS element.getAttribute("name") is "foo"
+Setting a value via the content attribute:
+PASS element.setAttribute("name", " bar\n"); element.name is " bar\n"
+PASS element.getAttribute("name") is " bar\n"
+Setting null via the IDL attribute:
+PASS element.name = null; element.name is ""
+PASS element.getAttribute("name") is null
+Setting null via the content attribute:
+PASS element.setAttribute("name", null); element.name is "null"
+PASS element.getAttribute("name") is "null"
+Setting undefined via the IDL attribute:
+PASS element.name = undefined; element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting undefined via the content attribute:
+PASS element.setAttribute("name", undefined); element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting non-string via the IDL attribute:
+PASS element.name = 123; element.name is "123"
+PASS element.getAttribute("name") is "123"
+Setting non-string via the content attribute:
+PASS element.setAttribute("name", 456); element.name is "456"
+PASS element.getAttribute("name") is "456"
+
+
+Test cases for fieldset
+Initial value:
+PASS element.name is ""
+PASS element.getAttribute("name") is null
+Setting a value via the IDL attribute:
+PASS element.name = "foo"; element.name is "foo"
+PASS element.getAttribute("name") is "foo"
+Setting a value via the content attribute:
+PASS element.setAttribute("name", " bar\n"); element.name is " bar\n"
+PASS element.getAttribute("name") is " bar\n"
+Setting null via the IDL attribute:
+PASS element.name = null; element.name is ""
+PASS element.getAttribute("name") is null
+Setting null via the content attribute:
+PASS element.setAttribute("name", null); element.name is "null"
+PASS element.getAttribute("name") is "null"
+Setting undefined via the IDL attribute:
+PASS element.name = undefined; element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting undefined via the content attribute:
+PASS element.setAttribute("name", undefined); element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting non-string via the IDL attribute:
+PASS element.name = 123; element.name is "123"
+PASS element.getAttribute("name") is "123"
+Setting non-string via the content attribute:
+PASS element.setAttribute("name", 456); element.name is "456"
+PASS element.getAttribute("name") is "456"
+
+
+Test cases for form
+Initial value:
+PASS element.name is ""
+PASS element.getAttribute("name") is null
+Setting a value via the IDL attribute:
+PASS element.name = "foo"; element.name is "foo"
+PASS element.getAttribute("name") is "foo"
+Setting a value via the content attribute:
+PASS element.setAttribute("name", " bar\n"); element.name is " bar\n"
+PASS element.getAttribute("name") is " bar\n"
+Setting null via the IDL attribute:
+PASS element.name = null; element.name is ""
+PASS element.getAttribute("name") is null
+Setting null via the content attribute:
+PASS element.setAttribute("name", null); element.name is "null"
+PASS element.getAttribute("name") is "null"
+Setting undefined via the IDL attribute:
+PASS element.name = undefined; element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting undefined via the content attribute:
+PASS element.setAttribute("name", undefined); element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting non-string via the IDL attribute:
+PASS element.name = 123; element.name is "123"
+PASS element.getAttribute("name") is "123"
+Setting non-string via the content attribute:
+PASS element.setAttribute("name", 456); element.name is "456"
+PASS element.getAttribute("name") is "456"
+
+
+Test cases for input
+Initial value:
+PASS element.name is ""
+PASS element.getAttribute("name") is null
+Setting a value via the IDL attribute:
+PASS element.name = "foo"; element.name is "foo"
+PASS element.getAttribute("name") is "foo"
+Setting a value via the content attribute:
+PASS element.setAttribute("name", " bar\n"); element.name is " bar\n"
+PASS element.getAttribute("name") is " bar\n"
+Setting null via the IDL attribute:
+PASS element.name = null; element.name is ""
+PASS element.getAttribute("name") is null
+Setting null via the content attribute:
+PASS element.setAttribute("name", null); element.name is "null"
+PASS element.getAttribute("name") is "null"
+Setting undefined via the IDL attribute:
+PASS element.name = undefined; element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting undefined via the content attribute:
+PASS element.setAttribute("name", undefined); element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting non-string via the IDL attribute:
+PASS element.name = 123; element.name is "123"
+PASS element.getAttribute("name") is "123"
+Setting non-string via the content attribute:
+PASS element.setAttribute("name", 456); element.name is "456"
+PASS element.getAttribute("name") is "456"
+
+
+Test cases for keygen
+Initial value:
+PASS element.name is ""
+PASS element.getAttribute("name") is null
+Setting a value via the IDL attribute:
+PASS element.name = "foo"; element.name is "foo"
+PASS element.getAttribute("name") is "foo"
+Setting a value via the content attribute:
+PASS element.setAttribute("name", " bar\n"); element.name is " bar\n"
+PASS element.getAttribute("name") is " bar\n"
+Setting null via the IDL attribute:
+PASS element.name = null; element.name is ""
+PASS element.getAttribute("name") is null
+Setting null via the content attribute:
+PASS element.setAttribute("name", null); element.name is "null"
+PASS element.getAttribute("name") is "null"
+Setting undefined via the IDL attribute:
+PASS element.name = undefined; element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting undefined via the content attribute:
+PASS element.setAttribute("name", undefined); element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting non-string via the IDL attribute:
+PASS element.name = 123; element.name is "123"
+PASS element.getAttribute("name") is "123"
+Setting non-string via the content attribute:
+PASS element.setAttribute("name", 456); element.name is "456"
+PASS element.getAttribute("name") is "456"
+
+
+Test cases for object
+Initial value:
+PASS element.name is ""
+PASS element.getAttribute("name") is null
+Setting a value via the IDL attribute:
+PASS element.name = "foo"; element.name is "foo"
+PASS element.getAttribute("name") is "foo"
+Setting a value via the content attribute:
+PASS element.setAttribute("name", " bar\n"); element.name is " bar\n"
+PASS element.getAttribute("name") is " bar\n"
+Setting null via the IDL attribute:
+PASS element.name = null; element.name is ""
+PASS element.getAttribute("name") is null
+Setting null via the content attribute:
+PASS element.setAttribute("name", null); element.name is "null"
+PASS element.getAttribute("name") is "null"
+Setting undefined via the IDL attribute:
+PASS element.name = undefined; element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting undefined via the content attribute:
+PASS element.setAttribute("name", undefined); element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting non-string via the IDL attribute:
+PASS element.name = 123; element.name is "123"
+PASS element.getAttribute("name") is "123"
+Setting non-string via the content attribute:
+PASS element.setAttribute("name", 456); element.name is "456"
+PASS element.getAttribute("name") is "456"
+
+
+Test cases for output
+Initial value:
+PASS element.name is ""
+PASS element.getAttribute("name") is null
+Setting a value via the IDL attribute:
+PASS element.name = "foo"; element.name is "foo"
+PASS element.getAttribute("name") is "foo"
+Setting a value via the content attribute:
+PASS element.setAttribute("name", " bar\n"); element.name is " bar\n"
+PASS element.getAttribute("name") is " bar\n"
+Setting null via the IDL attribute:
+PASS element.name = null; element.name is ""
+PASS element.getAttribute("name") is null
+Setting null via the content attribute:
+PASS element.setAttribute("name", null); element.name is "null"
+PASS element.getAttribute("name") is "null"
+Setting undefined via the IDL attribute:
+PASS element.name = undefined; element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting undefined via the content attribute:
+PASS element.setAttribute("name", undefined); element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting non-string via the IDL attribute:
+PASS element.name = 123; element.name is "123"
+PASS element.getAttribute("name") is "123"
+Setting non-string via the content attribute:
+PASS element.setAttribute("name", 456); element.name is "456"
+PASS element.getAttribute("name") is "456"
+
+
+Test cases for select
+Initial value:
+PASS element.name is ""
+PASS element.getAttribute("name") is null
+Setting a value via the IDL attribute:
+PASS element.name = "foo"; element.name is "foo"
+PASS element.getAttribute("name") is "foo"
+Setting a value via the content attribute:
+PASS element.setAttribute("name", " bar\n"); element.name is " bar\n"
+PASS element.getAttribute("name") is " bar\n"
+Setting null via the IDL attribute:
+PASS element.name = null; element.name is ""
+PASS element.getAttribute("name") is null
+Setting null via the content attribute:
+PASS element.setAttribute("name", null); element.name is "null"
+PASS element.getAttribute("name") is "null"
+Setting undefined via the IDL attribute:
+PASS element.name = undefined; element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting undefined via the content attribute:
+PASS element.setAttribute("name", undefined); element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting non-string via the IDL attribute:
+PASS element.name = 123; element.name is "123"
+PASS element.getAttribute("name") is "123"
+Setting non-string via the content attribute:
+PASS element.setAttribute("name", 456); element.name is "456"
+PASS element.getAttribute("name") is "456"
+
+
+Test cases for textarea
+Initial value:
+PASS element.name is ""
+PASS element.getAttribute("name") is null
+Setting a value via the IDL attribute:
+PASS element.name = "foo"; element.name is "foo"
+PASS element.getAttribute("name") is "foo"
+Setting a value via the content attribute:
+PASS element.setAttribute("name", " bar\n"); element.name is " bar\n"
+PASS element.getAttribute("name") is " bar\n"
+Setting null via the IDL attribute:
+PASS element.name = null; element.name is ""
+PASS element.getAttribute("name") is null
+Setting null via the content attribute:
+PASS element.setAttribute("name", null); element.name is "null"
+PASS element.getAttribute("name") is "null"
+Setting undefined via the IDL attribute:
+PASS element.name = undefined; element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting undefined via the content attribute:
+PASS element.setAttribute("name", undefined); element.name is "undefined"
+PASS element.getAttribute("name") is "undefined"
+Setting non-string via the IDL attribute:
+PASS element.name = 123; element.name is "123"
+PASS element.getAttribute("name") is "123"
+Setting non-string via the content attribute:
+PASS element.setAttribute("name", 456); element.name is "456"
+PASS element.getAttribute("name") is "456"
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

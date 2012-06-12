@@ -378,7 +378,6 @@ public:
 
     virtual bool canContainRangeEndPoint() const { return true; }
 
-    virtual const AtomicString& formControlName() const { return nullAtom; }
     virtual const AtomicString& formControlType() const { return nullAtom; }
 
     virtual bool wasChangedSinceLastFormControlChangeEvent() const;
