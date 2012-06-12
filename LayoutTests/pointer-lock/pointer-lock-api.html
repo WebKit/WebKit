@@ -4,14 +4,43 @@
 <script src="../fast/js/resources/js-test-pre.js"></script>
 </head>
 <body>
+<button onclick="doNextStep('manual');">doNextStep for manual testing</button>
 <script>
-    shouldBeDefined("navigator.webkitPointer");
-    shouldEvaluateTo("navigator.webkitPointer.isLocked", false);
-    shouldThrow("navigator.webkitPointer.lock()", "'TypeError: Not enough arguments'");
-    shouldEvaluateTo("navigator.webkitPointer.lock(document)", "undefined");
-    shouldEvaluateTo("navigator.webkitPointer.unlock()", "undefined");
-    shouldBeDefined("document.onwebkitpointerlockchange");
-    shouldBeDefined("document.onwebkitpointerlockerror");
+    description("Basic API existence test for Pointer Lock.")
+    window.jsTestIsAsync = true;
+
+    currentStep = 0;
+    function doNextStep(manual)
+    {
+        if (!window.layoutTestController && !manual)
+            return;
+        if (currentStep < todo.length)
+            setTimeout(function () { todo[currentStep++](); }, 0);
+        else if (currentStep++ == todo.length)
+            setTimeout(function () { finishJSTest(); }, 0);
+    }
+    todo = [
+        function () {
+            shouldBeDefined("navigator.webkitPointer");
+            shouldEvaluateTo("navigator.webkitPointer.isLocked", false);
+            shouldThrow("navigator.webkitPointer.lock()", "'TypeError: Not enough arguments'");
+            shouldEvaluateTo("navigator.webkitPointer.lock(document.body)", "undefined");
+            // Exit call stack to allow lock to take effect.
+            doNextStep();
+        },
+        function () {
+            shouldEvaluateTo("navigator.webkitPointer.unlock()", "undefined");
+            // Exit call stack to allow unlock to take effect.
+            doNextStep();
+        },
+        function () {
+            shouldBeDefined("document.onwebkitpointerlockchange");
+            shouldBeDefined("document.onwebkitpointerlockerror");
+            shouldEvaluateTo("document.webkitPointerLockElement", null);
+            doNextStep();
+        },
+    ];
+    doNextStep();
 </script>
 <script src="../fast/js/resources/js-test-post.js"></script>
 </body>

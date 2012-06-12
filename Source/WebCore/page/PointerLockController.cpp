@@ -91,6 +91,11 @@ bool PointerLockController::isLocked()
     return m_page->chrome()->client()->isPointerLocked();
 }
 
+Element* PointerLockController::element() const
+{
+    return m_element.get();
+}
+
 void PointerLockController::didAcquirePointerLock()
 {
     // FIXME: Keep enqueueEvent usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)

@@ -16,8 +16,12 @@
     targetdiv2 = document.getElementById("target2");
 
     // Expect change event only for all transitions below.
-    document.onwebkitpointerlockchange =
-        function () { testPassed("document.onwebkitpointerlockchange event received."); };
+    expectedTargetToBeLockedString = "";
+    document.onwebkitpointerlockchange = function ()
+        {
+            testPassed("document.onwebkitpointerlockchange event received.");
+            shouldBe("document.webkitPointerLockElement", expectedTargetToBeLockedString);
+        };
     document.onwebkitpointerlockerror =
         function () { testFailed("document.onwebkitpointerlockerror event received."); finishJSTest(); };
 
@@ -45,6 +49,7 @@
                     testFailed("Lock failed.");
                     finishJSTest();
                 });
+            expectedTargetToBeLockedString = "targetdiv1";
         },
         function () {
             navigator.webkitPointer.lock(targetdiv1,
@@ -57,7 +62,7 @@
                     testFailed("Lock failed.");
                     finishJSTest();
                 });
-
+            expectedTargetToBeLockedString = "targetdiv1";
         },
         function () {
             expectTarget1Unlock = true;
@@ -71,7 +76,7 @@
                     testFailed("Lock failed.");
                     finishJSTest();
                 });
-
+            expectedTargetToBeLockedString = "targetdiv2";
         },
         finishJSTest
     ];

@@ -120,6 +120,7 @@
 #include "PageTransitionEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PluginDocument.h"
+#include "PointerLockController.h"
 #include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
 #include "RegisteredEventListener.h"
@@ -5728,6 +5729,13 @@ void Document::addDocumentToFullScreenChangeEventQueue(Document* doc)
     if (!target)
         target = doc;
     m_fullScreenChangeEventTargetQueue.append(target);
+}
+#endif
+
+#if ENABLE(POINTER_LOCK)
+Element* Document::webkitPointerLockElement() const
+{
+    return page() ? page()->pointerLockController()->element() : 0;
 }
 #endif
 

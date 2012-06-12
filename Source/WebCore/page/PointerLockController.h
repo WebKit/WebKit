@@ -46,6 +46,7 @@ public:
     void requestPointerLock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback);
     void requestPointerUnlock();
     bool isLocked();
+    Element* element() const;
 
     void didAcquirePointerLock();
     void didNotAcquirePointerLock();

@@ -1,3 +1,24 @@
+2012-06-11  Vincent Scheib  <scheib@chromium.org>
+
+        Add new Pointer Lock spec attribute webkitPointerLockElement.
+        https://bugs.webkit.org/show_bug.cgi?id=88799
+
+        Part of a series of refactoring changes to update pointer lock API to
+        the fullscreen locking style. https://bugs.webkit.org/show_bug.cgi?id=84402
+
+        New attribute webkitPointerLockElement added. Follow up patches
+        will remove the previous isLocked attribute. Tests updated to use
+        the new attribute.
+
+        Reviewed by Dimitri Glazkov.
+
+        * pointer-lock/lock-already-locked-expected.txt:
+        * pointer-lock/lock-already-locked.html:
+        * pointer-lock/pointer-lock-api-expected.txt:
+        * pointer-lock/pointer-lock-api.html:
+        * pointer-lock/pointerlocklost-event-expected.txt:
+        * pointer-lock/pointerlocklost-event.html:
+
 2012-06-11  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed: http/tests/xmlhttprequest/origin-exact-matching.html is timing out on XP about half the time

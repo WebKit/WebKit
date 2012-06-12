@@ -1064,6 +1064,10 @@ public:
     void webkitExitFullscreen();
 #endif
 
+#if ENABLE(POINTER_LOCK)
+    Element* webkitPointerLockElement() const;
+#endif
+
     // Used to allow element that loads data without going through a FrameLoader to delay the 'load' event.
     void incrementLoadEventDelayCount() { ++m_loadEventDelayCount; }
     void decrementLoadEventDelayCount();

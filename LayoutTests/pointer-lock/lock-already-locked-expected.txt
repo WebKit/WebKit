@@ -7,14 +7,18 @@ PASS navigator.webkitPointer.isLocked is false
 PASS Lock target1 succeeded.
 PASS navigator.webkitPointer.isLocked is true
 PASS document.onwebkitpointerlockchange event received.
+PASS document.webkitPointerLockElement is targetdiv1
 PASS Lock target1 succeeded again.
 PASS navigator.webkitPointer.isLocked is true
 PASS document.onwebkitpointerlockchange event received.
+PASS document.webkitPointerLockElement is targetdiv1
 PASS expectTarget1Unlock is true
 PASS Lock target2 succeeded.
 PASS navigator.webkitPointer.isLocked is true
 PASS document.onwebkitpointerlockchange event received.
+PASS document.webkitPointerLockElement is targetdiv2
 PASS document.onwebkitpointerlockchange event received.
+PASS document.webkitPointerLockElement is targetdiv2
 PASS successfullyParsed is true
 
 TEST COMPLETE

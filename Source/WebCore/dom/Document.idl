@@ -257,6 +257,8 @@ module core {
         [V8EnabledAtRuntime] void webkitExitFullscreen();
 #endif
 
+        readonly attribute [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] Element webkitPointerLockElement;
+
 #if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
         WebKitNamedFlow webkitGetFlowByName(in DOMString name);
 #endif

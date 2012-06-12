@@ -5,14 +5,17 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS window.layoutTestController is defined.
 PASS navigator.webkitPointer.isLocked is true
+PASS document.webkitPointerLockElement is targetdiv
 JavaScript initiated unlock.
 PASS webkitpointerlocklost handler call 0
 PASS webkitpointerlocklost handler call 1
 PASS All expected webkitpointerlocklost events received.
 PASS onwebkitpointerlockchange received.
 PASS All expected onwebkitpointerlockchange events received.
+PASS document.webkitPointerLockElement is null
 PASS navigator.webkitPointer.isLocked is false
 PASS navigator.webkitPointer.isLocked is true
+PASS document.webkitPointerLockElement is targetdiv
 Host initiated unlock.
 PASS webkitpointerlocklost handler call 0
 PASS webkitpointerlocklost handler call 1
@@ -20,6 +23,7 @@ PASS All expected webkitpointerlocklost events received.
 PASS onwebkitpointerlockchange received.
 PASS All expected onwebkitpointerlockchange events received.
 PASS navigator.webkitPointer.isLocked is false
+PASS document.webkitPointerLockElement is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,5 +1,30 @@
 2012-06-11  Vincent Scheib  <scheib@chromium.org>
 
+        Add new Pointer Lock spec attribute webkitPointerLockElement.
+        https://bugs.webkit.org/show_bug.cgi?id=88799
+
+        Reviewed by Dimitri Glazkov.
+
+        Part of a series of refactoring changes to update pointer lock API to
+        the fullscreen locking style. https://bugs.webkit.org/show_bug.cgi?id=84402
+
+        New attribute webkitPointerLockElement added. Follow up patches
+        will remove the previous isLocked attribute. Tests updated to use
+        the new attribute.
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webkitPointerLockElementEnabled):
+        * dom/Document.cpp:
+        (WebCore):
+        (WebCore::Document::webkitPointerLockElement):
+        * dom/Document.h:
+        (Document):
+        * dom/Document.idl:
+        * page/PointerLockController.h:
+        (WebCore::PointerLockController::element):
+
+2012-06-11  Vincent Scheib  <scheib@chromium.org>
+
         Consolidate Pointer Lock runtime enabled flags to just one.
         https://bugs.webkit.org/show_bug.cgi?id=88810
 

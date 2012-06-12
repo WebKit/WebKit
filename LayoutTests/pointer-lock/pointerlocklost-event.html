@@ -65,12 +65,14 @@
                 });
         },
         function () {
+            shouldBe("document.webkitPointerLockElement", "targetdiv");
             debug("JavaScript initiated unlock.")
             locklostreceipts = 0;
             navigator.webkitPointer.unlock();
         },
         function () {
             // locklostHandler will catch unlocks and call doNextStep to bring us here.
+            shouldBe("document.webkitPointerLockElement", "null");
             shouldBe("navigator.webkitPointer.isLocked", "false");
             doNextStep();
         },
@@ -86,6 +88,7 @@
                 });
         },
         function () {
+            shouldBe("document.webkitPointerLockElement", "targetdiv");
             debug("Host initiated unlock.")
             lockchangeToUnlockedReceipts = 0;
             locklostreceipts = 0;
@@ -94,6 +97,7 @@
         function () {
             // locklostHandler will catch unlocks and call doNextStep to bring us here.
             shouldBe("navigator.webkitPointer.isLocked", "false");
+            shouldBe("document.webkitPointerLockElement", "null");
             doNextStep();
         },
         finishJSTest
