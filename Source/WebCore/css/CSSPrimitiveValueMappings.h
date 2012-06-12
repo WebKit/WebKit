@@ -743,6 +743,7 @@ template<> inline CSSPrimitiveValue::operator EBoxAlignment() const
     }
 }
 
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxDecorationBreak e)
     : CSSValue(PrimitiveClass)
 {
@@ -769,6 +770,7 @@ template<> inline CSSPrimitiveValue::operator EBoxDecorationBreak() const
         return DSLICE;
     }
 }
+#endif
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxSizing e)
     : CSSValue(PrimitiveClass)

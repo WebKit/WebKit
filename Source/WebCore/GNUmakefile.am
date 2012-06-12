@@ -459,6 +459,15 @@ endif
 endif # END ENABLE_FILTERS
 
 # ----
+# CSS box decoration break
+# ----
+if ENABLE_CSS_BOX_DECORATION_BREAK
+FEATURE_DEFINES += ENABLE_CSS_BOX_DECORATION_BREAK=1
+webcore_cppflags += -DENABLE_CSS_BOX_DECORATION_BREAK=1
+
+endif # END ENABLE_CSS_BOX_DECORATION_BREAK
+
+# ----
 # Regions
 # ----
 if ENABLE_CSS_REGIONS

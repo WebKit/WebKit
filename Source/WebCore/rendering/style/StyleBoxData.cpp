@@ -35,7 +35,9 @@ StyleBoxData::StyleBoxData()
     , m_zIndex(0)
     , m_hasAutoZIndex(true)
     , m_boxSizing(CONTENT_BOX)
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
     , m_boxDecorationBreak(DSLICE)
+#endif
 {
 }
 
@@ -51,7 +53,9 @@ StyleBoxData::StyleBoxData(const StyleBoxData& o)
     , m_zIndex(o.m_zIndex)
     , m_hasAutoZIndex(o.m_hasAutoZIndex)
     , m_boxSizing(o.m_boxSizing)
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
     , m_boxDecorationBreak(o.m_boxDecorationBreak)
+#endif
 {
 }
 
@@ -67,7 +71,10 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
            && m_zIndex == o.m_zIndex
            && m_hasAutoZIndex == o.m_hasAutoZIndex
            && m_boxSizing == o.m_boxSizing
-           && m_boxDecorationBreak == o.m_boxDecorationBreak;
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
+           && m_boxDecorationBreak == o.m_boxDecorationBreak
+#endif
+            ;
 }
 
 } // namespace WebCore

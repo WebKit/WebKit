@@ -463,9 +463,11 @@ end
 //center
 //baseline
 
+#if defined(ENABLE_CSS_BOX_DECORATION_BREAK) && ENABLE_CSS_BOX_DECORATION_BREAK
 // CSS_PROP_BOX_DECORATION_BREAK
 clone
 slice
+#endif
 
 // CSS_PROP_BOX_DIRECTION
 // normal

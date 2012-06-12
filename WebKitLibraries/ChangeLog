@@ -1,3 +1,15 @@
+2012-06-11  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [CSS3 Backgrounds and Borders] Protect box-decoration-break behind a feature flag.
+        https://bugs.webkit.org/show_bug.cgi?id=88804
+
+        Reviewed by Tony Chang.
+
+        Protect box-decoration-break behind a feature flag enabled by default.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2012-06-11  Anders Carlsson  <andersca@apple.com>
 
         Pass the right color space over to the web process so we can set it on our CA context

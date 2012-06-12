@@ -835,7 +835,9 @@ public:
     void getBoxShadowInlineDirectionExtent(LayoutUnit& logicalLeft, LayoutUnit& logicalRight) { getShadowInlineDirectionExtent(boxShadow(), logicalLeft, logicalRight); }
     void getBoxShadowBlockDirectionExtent(LayoutUnit& logicalTop, LayoutUnit& logicalBottom) { getShadowBlockDirectionExtent(boxShadow(), logicalTop, logicalBottom); }
 
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
     EBoxDecorationBreak boxDecorationBreak() const { return m_box->boxDecorationBreak(); }
+#endif
     StyleReflection* boxReflect() const { return rareNonInheritedData->m_boxReflect.get(); }
     EBoxSizing boxSizing() const { return m_box->boxSizing(); }
     Length marqueeIncrement() const { return rareNonInheritedData->m_marquee->increment; }
@@ -1248,7 +1250,9 @@ public:
     void setAppearance(ControlPart a) { SET_VAR(rareNonInheritedData, m_appearance, a); }
     // For valid values of box-align see http://www.w3.org/TR/2009/WD-css3-flexbox-20090723/#alignment
     void setBoxAlign(EBoxAlignment a) { SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, align, a); }
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
     void setBoxDecorationBreak(EBoxDecorationBreak b) { SET_VAR(m_box, m_boxDecorationBreak, b); }
+#endif
     void setBoxDirection(EBoxDirection d) { inherited_flags._box_direction = d; }
     void setBoxFlex(float f) { SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, flex, f); }
     void setBoxFlexGroup(unsigned int fg) { SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, flex_group, fg); }

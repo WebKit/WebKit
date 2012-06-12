@@ -516,7 +516,9 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitBorderStartStyle:
     case CSSPropertyWebkitBorderStartWidth:
     case CSSPropertyWebkitBoxAlign:
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
     case CSSPropertyWebkitBoxDecorationBreak:
+#endif
     case CSSPropertyWebkitBoxFlex:
     case CSSPropertyWebkitBoxFlexGroup:
     case CSSPropertyWebkitBoxLines:

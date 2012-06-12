@@ -887,6 +887,14 @@ if test "$enable_svg" = "no"; then
    enable_svg_fonts=no
 fi
 
+# check whether to enable support for CSS box-decoration-break
+AC_MSG_CHECKING([whether to enable support for CSS box-decoration-break])
+AC_ARG_ENABLE(css_box_decoration_break,
+              AC_HELP_STRING([--enable-css-box-decoration-break],
+                             [enable support for CSS box-decoration-break (experimental) [default=yes]]),
+              [],[enable_css_box_decoration_break="yes"])
+AC_MSG_RESULT([$enable_css_box_decoration_break])
+
 # check whether to enable support for filters
 AC_MSG_CHECKING([whether to enable support for filters])
 AC_ARG_ENABLE(filters,
@@ -1398,6 +1406,7 @@ AM_CONDITIONAL([ENABLE_INPUT_TYPE_COLOR],[test "$enable_input_type_color" = "yes
 AM_CONDITIONAL([ENABLE_INPUT_SPEECH],[test "$enable_input_speech" = "yes"])
 AM_CONDITIONAL([ENABLE_SCRIPTED_SPEECH],[test "$enable_scripted_speech" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
+AM_CONDITIONAL([ENABLE_CSS_BOX_DECORATION_BREAK],[test "$enable_css_box_decoration_break" = "yes"])
 AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
 AM_CONDITIONAL([ENABLE_MATHML], [test "$enable_mathml" = "yes"])
@@ -1496,6 +1505,7 @@ Features:
  Blob support                                             : $enable_blob
  Color input support                                      : $enable_input_type_color
  CSS3 Flexbox support                                     : $enable_css3_flexbox
+ CSS box-decoration-break support                         : $enable_css_box_decoration_break
  CSS Exclusions support                                   : $enable_css_exclusions
  CSS Regions support                                      : $enable_css_regions
  DeviceOrientation support                                : $enable_device_orientation

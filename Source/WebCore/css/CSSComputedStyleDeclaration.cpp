@@ -202,7 +202,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitBorderImage,
     CSSPropertyWebkitBorderVerticalSpacing,
     CSSPropertyWebkitBoxAlign,
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
     CSSPropertyWebkitBoxDecorationBreak,
+#endif
     CSSPropertyWebkitBoxDirection,
     CSSPropertyWebkitBoxFlex,
     CSSPropertyWebkitBoxFlexGroup,
@@ -1546,10 +1548,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return getPositionOffsetValue(style.get(), CSSPropertyBottom, m_node->document()->renderView());
         case CSSPropertyWebkitBoxAlign:
             return cssValuePool().createValue(style->boxAlign());
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
         case CSSPropertyWebkitBoxDecorationBreak:
             if (style->boxDecorationBreak() == DSLICE)
                 return cssValuePool().createIdentifierValue(CSSValueSlice);
         return cssValuePool().createIdentifierValue(CSSValueClone);
+#endif
         case CSSPropertyWebkitBoxDirection:
             return cssValuePool().createValue(style->boxDirection());
         case CSSPropertyWebkitBoxFlex:
