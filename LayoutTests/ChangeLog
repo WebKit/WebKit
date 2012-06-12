@@ -1,3 +1,15 @@
+2012-06-12  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=85591
+
+        Reviewed by Martin Robinson.
+
+        Remove FAIL text expectations for sputnik tests that have been
+        consistently passing on all the Gtk builders.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-12  Silvia Pfeiffer  <silviapf@chromium.org>
 
         Change the volume slider to horizontal rendering for Chrome video controls.
