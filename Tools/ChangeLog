@@ -1,3 +1,17 @@
+2012-06-11  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Remove CMakeCache.txt before building
+        https://bugs.webkit.org/show_bug.cgi?id=88717
+
+        Reviewed by Antonio Gomes.
+
+        Remove CMake cache file before every build to avoid using outdated
+        build flags when new features get enabled. This will avoid unexpected
+        failures on the bots due to outdated build flags.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2012-06-11  Vincent Scheib  <scheib@chromium.org>
 
         Add new Pointer Lock spec attribute webkitPointerLockElement.

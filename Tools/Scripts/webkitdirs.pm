@@ -2095,6 +2095,12 @@ sub generateBuildSystemFromCMakeProject
         $ENV{'CXXFLAGS'} = "-march=pentium4 -msse2 -mfpmath=sse " . ($ENV{'CXXFLAGS'} || "");
     }
 
+    # Remove CMakeCache.txt to avoid using outdated build flags
+    if (isEfl()) {
+        my $cacheFilePath = File::Spec->catdir($buildPath, "CMakeCache.txt");
+        unlink($cacheFilePath) if -e $cacheFilePath;
+    }
+
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters.
     my $wrapper = jhbuildWrapperPrefixIfNeeded() . " ";
