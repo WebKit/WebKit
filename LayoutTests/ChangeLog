@@ -1,3 +1,9 @@
+2012-06-12  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed gardening. Skip test crashing on GTK debug bots.
+
+        * platform/gtk/TestExpectations: Skip test.
+
 2012-06-12  Anna Cavender  <annacc@chromium.org>
 
         [Chromium] video-media-source-add-and-remove-ids.html needs to be skipped
