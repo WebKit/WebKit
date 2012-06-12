@@ -1,3 +1,33 @@
+2012-06-12  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Make damage tracking more robust to early exits
+        https://bugs.webkit.org/show_bug.cgi?id=84803
+
+        Reviewed by James Robinson.
+
+        All CCDamageTrackerTest unit tests updated;
+        One new unit test added:
+           CCDamageTrackerTest.verifyDamageAccumulatesUntilReset
+
+        Damage tracking inherently needs to be aware of all changes that
+        occur for every frame. Before this patch, anyone modifying details
+        of CCLayerTreeHostImpl and the drawing phases of the compositor
+        needed to be careful to avoid early exiting once draw is
+        initiated, otherwise running the risk of damage tracking's state
+        getting out-of-sync from actual changes. This patch makes the
+        damage tracker API more asynchronous-like, so that damage will
+        continue to accumulate until it is explicitly notified that
+        damaged areas have been drawn. This will allow more freedom in
+        designing and restructuing drawing code in the compositor, without
+        worrying as much about damage tracking getting out-of-sync.
+
+        * platform/graphics/chromium/cc/CCDamageTracker.h:
+        (WebCore::CCDamageTracker::didDrawDamagedArea):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+
 2012-06-12  Mike West  <mkwst@chromium.org>
 
         Make document.documentURI readonly from JavaScript

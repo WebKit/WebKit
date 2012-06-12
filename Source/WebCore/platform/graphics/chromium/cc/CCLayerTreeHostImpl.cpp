@@ -420,6 +420,8 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
 
         FloatRect rootScissorRectInCurrentSurface = renderPass->targetSurface()->computeRootScissorRectInCurrentSurface(m_rootScissorRect);
         m_layerRenderer->drawRenderPass(renderPass, rootScissorRectInCurrentSurface);
+
+        renderPass->targetSurface()->damageTracker()->didDrawDamagedArea();
     }
 
     if (m_debugRectHistory->enabled(settings()))

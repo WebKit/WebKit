@@ -62,6 +62,16 @@ void executeCalculateDrawTransformsAndVisibility(CCLayerImpl* root, Vector<CCLay
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, root->renderSurface()->contentRect());
 }
 
+void clearDamageForAllSurfaces(CCLayerImpl* layer)
+{
+    if (layer->renderSurface())
+        layer->renderSurface()->damageTracker()->didDrawDamagedArea();
+
+    // Recursively clear damage for any existing surface.
+    for (size_t i = 0; i < layer->children().size(); ++i)
+        clearDamageForAllSurfaces(layer->children()[i].get());
+}
+
 void emulateDrawingOneFrame(CCLayerImpl* root)
 {
     // This emulates only the steps that are relevant to testing the damage tracker:
@@ -222,6 +232,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForUpdateRects)
 
     // CASE 1: Setting the update rect should cause the corresponding damage to the surface.
     //
+    clearDamageForAllSurfaces(root.get());
     child->setUpdateRect(FloatRect(10, 11, 12, 13));
     emulateDrawingOneFrame(root.get());
 
@@ -231,6 +242,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForUpdateRects)
 
     // CASE 2: The same update rect twice in a row still produces the same damage.
     //
+    clearDamageForAllSurfaces(root.get());
     child->setUpdateRect(FloatRect(10, 11, 12, 13));
     emulateDrawingOneFrame(root.get());
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
@@ -238,6 +250,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForUpdateRects)
 
     // CASE 3: Setting a different update rect should cause damage on the new update region, but no additional exposed old region.
     //
+    clearDamageForAllSurfaces(root.get());
     child->setUpdateRect(FloatRect(20, 25, 1, 2));
     emulateDrawingOneFrame(root.get());
 
@@ -253,6 +266,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForPropertyChanges)
 
     // CASE 1: The layer's property changed flag takes priority over update rect.
     //
+    clearDamageForAllSurfaces(root.get());
     child->setUpdateRect(FloatRect(10, 11, 12, 13));
     child->setOpacity(0.5);
     emulateDrawingOneFrame(root.get());
@@ -271,10 +285,12 @@ TEST_F(CCDamageTrackerTest, verifyDamageForPropertyChanges)
     //         not just the updateRect.
 
     // Cycle one frame of no change, just to sanity check that the next rect is not because of the old damage state.
+    clearDamageForAllSurfaces(root.get());
     emulateDrawingOneFrame(root.get());
     EXPECT_TRUE(root->renderSurface()->damageTracker()->currentDamageRect().isEmpty());
 
     // Then, test the actual layer movement.
+    clearDamageForAllSurfaces(root.get());
     child->setPosition(FloatPoint(200, 230));
     emulateDrawingOneFrame(root.get());
 
@@ -298,6 +314,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForTransformedLayer)
     // Note carefully, the anchor is actually part of layer->position(). By setting anchor
     // to (0.5, 0.5), the layer's position (100, 100) now refers to the center of the
     // layer, not the corner. This means the layer has actually changed position.
+    clearDamageForAllSurfaces(root.get());
     child->setAnchorPoint(FloatPoint(0.5, 0.5));
     emulateDrawingOneFrame(root.get());
 
@@ -307,6 +324,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForTransformedLayer)
 
     // With the anchor on the layer's center, now we can test the rotation more
     // intuitively, since it applies about the layer's anchor.
+    clearDamageForAllSurfaces(root.get());
     child->setTransform(rotation);
     emulateDrawingOneFrame(root.get());
 
@@ -355,6 +373,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForPerspectiveClippedLayer)
     EXPECT_TRUE(clipped);
 
     // Damage the child without moving it.
+    clearDamageForAllSurfaces(root.get());
     child->setOpacity(0.5);
     emulateDrawingOneFrame(root.get());
 
@@ -374,12 +393,14 @@ TEST_F(CCDamageTrackerTest, verifyDamageForBlurredSurface)
     filters.append(WebFilterOperation::createBlurFilter(5));
     int outsetTop, outsetRight, outsetBottom, outsetLeft;
     filters.getOutsets(outsetTop, outsetRight, outsetBottom, outsetLeft);
-    root->setFilters(filters);
 
     // Setting the filter will damage the whole surface.
+    clearDamageForAllSurfaces(root.get());
+    root->setFilters(filters);
     emulateDrawingOneFrame(root.get());
 
     // Setting the update rect should cause the corresponding damage to the surface, blurred based on the size of the blur filter.
+    clearDamageForAllSurfaces(root.get());
     child->setUpdateRect(FloatRect(10, 11, 12, 13));
     emulateDrawingOneFrame(root.get());
 
@@ -404,16 +425,17 @@ TEST_F(CCDamageTrackerTest, verifyDamageForBackgroundBlurredChild)
     filters.append(WebFilterOperation::createBlurFilter(2));
     int outsetTop, outsetRight, outsetBottom, outsetLeft;
     filters.getOutsets(outsetTop, outsetRight, outsetBottom, outsetLeft);
-    child1->setBackgroundFilters(filters);
 
     // Setting the filter will damage the whole surface.
+    clearDamageForAllSurfaces(root.get());
+    child1->setBackgroundFilters(filters);
     emulateDrawingOneFrame(root.get());
 
     // CASE 1: Setting the update rect should cause the corresponding damage to
     // the surface, blurred based on the size of the child's background blur
     // filter.
+    clearDamageForAllSurfaces(root.get());
     root->setUpdateRect(FloatRect(297, 297, 2, 2));
-
     emulateDrawingOneFrame(root.get());
 
     FloatRect rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
@@ -428,8 +450,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForBackgroundBlurredChild)
     // the surface, blurred based on the size of the child's background blur
     // filter. Since the damage extends to the right/bottom outside of the
     // blurred layer, only the left/top should end up expanded.
+    clearDamageForAllSurfaces(root.get());
     root->setUpdateRect(FloatRect(297, 297, 30, 30));
-
     emulateDrawingOneFrame(root.get());
 
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
@@ -443,8 +465,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForBackgroundBlurredChild)
 
     // CASE 3: Setting this update rect outside the blurred contentBounds of the blurred
     // child1 will not cause it to be expanded.
+    clearDamageForAllSurfaces(root.get());
     root->setUpdateRect(FloatRect(30, 30, 2, 2));
-
     emulateDrawingOneFrame(root.get());
 
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
@@ -455,8 +477,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForBackgroundBlurredChild)
 
     // CASE 4: Setting this update rect inside the blurred contentBounds but outside the
     // original contentBounds of the blurred child1 will cause it to be expanded.
+    clearDamageForAllSurfaces(root.get());
     root->setUpdateRect(FloatRect(99, 99, 1, 1));
-
     emulateDrawingOneFrame(root.get());
 
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
@@ -470,8 +492,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForBackgroundBlurredChild)
 
     // CASE 5: Setting the update rect on child2, which is above child1, will
     // not get blurred by child1, so it does not need to get expanded.
+    clearDamageForAllSurfaces(root.get());
     child2->setUpdateRect(FloatRect(0, 0, 1, 1));
-
     emulateDrawingOneFrame(root.get());
 
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
@@ -481,8 +503,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForBackgroundBlurredChild)
 
     // CASE 6: Setting the update rect on child1 will also blur the damage, so
     // that any pixels needed for the blur are redrawn in the current frame.
+    clearDamageForAllSurfaces(root.get());
     child1->setUpdateRect(FloatRect(0, 0, 1, 1));
-
     emulateDrawingOneFrame(root.get());
 
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
@@ -498,6 +520,9 @@ TEST_F(CCDamageTrackerTest, verifyDamageForAddingAndRemovingLayer)
     OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();
     CCLayerImpl* child1 = root->children()[0].get();
 
+    // CASE 1: Adding a new layer should cause the appropriate damage.
+    //
+    clearDamageForAllSurfaces(root.get());
     {
         OwnPtr<CCLayerImpl> child2 = CCLayerImpl::create(3);
         child2->setPosition(FloatPoint(400, 380));
@@ -506,9 +531,6 @@ TEST_F(CCDamageTrackerTest, verifyDamageForAddingAndRemovingLayer)
         child2->setDrawsContent(true);
         root->addChild(child2.release());
     }
-
-    // CASE 1: Adding a new layer should cause the appropriate damage.
-    //
     emulateDrawingOneFrame(root.get());
 
     // Sanity check - all 3 layers should be on the same render surface; render surfaces are tested elsewhere.
@@ -521,6 +543,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForAddingAndRemovingLayer)
     //         last update rect.
 
     // Advance one frame without damage so that we know the damage rect is not leftover from the previous case.
+    clearDamageForAllSurfaces(root.get());
     emulateDrawingOneFrame(root.get());
     EXPECT_TRUE(root->renderSurface()->damageTracker()->currentDamageRect().isEmpty());
 
@@ -538,6 +561,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForNewUnchangedLayer)
 
     OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();
 
+    clearDamageForAllSurfaces(root.get());
     {
         OwnPtr<CCLayerImpl> child2 = CCLayerImpl::create(3);
         child2->setPosition(FloatPoint(400, 380));
@@ -551,7 +575,6 @@ TEST_F(CCDamageTrackerTest, verifyDamageForNewUnchangedLayer)
         ASSERT_TRUE(child2->updateRect().isEmpty());
         root->addChild(child2.release());
     }
-
     emulateDrawingOneFrame(root.get());
 
     // Sanity check - all 3 layers should be on the same render surface; render surfaces are tested elsewhere.
@@ -566,6 +589,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForMultipleLayers)
     OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();
     CCLayerImpl* child1 = root->children()[0].get();
 
+    // In this test we don't want the above tree manipulation to be considered part of the same frame.
+    clearDamageForAllSurfaces(root.get());
     {
         OwnPtr<CCLayerImpl> child2 = CCLayerImpl::create(3);
         child2->setPosition(FloatPoint(400, 380));
@@ -575,13 +600,12 @@ TEST_F(CCDamageTrackerTest, verifyDamageForMultipleLayers)
         root->addChild(child2.release());
     }
     CCLayerImpl* child2 = root->children()[1].get();
-
-    // In this test we don't want the above tree manipulation to be considered part of the same frame.
     emulateDrawingOneFrame(root.get());
 
     // Damaging two layers simultaneously should cause combined damage.
     // - child1 update rect in surface space: FloatRect(100, 100, 1, 2);
     // - child2 update rect in surface space: FloatRect(400, 380, 3, 4);
+    clearDamageForAllSurfaces(root.get());
     child1->setUpdateRect(FloatRect(0, 0, 1, 2));
     child2->setUpdateRect(FloatRect(0, 0, 3, 4));
     emulateDrawingOneFrame(root.get());
@@ -600,6 +624,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForNestedSurfaces)
 
     // CASE 1: Damage to a descendant surface should propagate properly to ancestor surface.
     //
+    clearDamageForAllSurfaces(root.get());
     grandChild1->setOpacity(0.5);
     emulateDrawingOneFrame(root.get());
     childDamageRect = child1->renderSurface()->damageTracker()->currentDamageRect();
@@ -610,6 +635,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForNestedSurfaces)
     // CASE 2: Same as previous case, but with additional damage elsewhere that should be properly unioned.
     // - child1 surface damage in root surface space: FloatRect(300, 300, 6, 8);
     // - child2 damage in root surface space: FloatRect(11, 11, 18, 18);
+    clearDamageForAllSurfaces(root.get());
     grandChild1->setOpacity(0.7f);
     child2->setOpacity(0.7f);
     emulateDrawingOneFrame(root.get());
@@ -634,6 +660,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForSurfaceChangeFromDescendantLayer)
     FloatRect childDamageRect;
     FloatRect rootDamageRect;
 
+    clearDamageForAllSurfaces(root.get());
     grandChild1->setPosition(FloatPoint(195, 205));
     emulateDrawingOneFrame(root.get());
     childDamageRect = child1->renderSurface()->damageTracker()->currentDamageRect();
@@ -665,6 +692,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForSurfaceChangeFromAncestorLayer)
     FloatRect childDamageRect;
     FloatRect rootDamageRect;
 
+    clearDamageForAllSurfaces(root.get());
     child1->setPosition(FloatPoint(50, 50));
     emulateDrawingOneFrame(root.get());
     childDamageRect = child1->renderSurface()->damageTracker()->currentDamageRect();
@@ -688,6 +716,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForAddingAndRemovingRenderSurfaces)
 
     // CASE 1: If a descendant surface disappears, its entire old area becomes exposed.
     //
+    clearDamageForAllSurfaces(root.get());
     child1->setOpacity(1);
     emulateDrawingOneFrame(root.get());
 
@@ -701,11 +730,13 @@ TEST_F(CCDamageTrackerTest, verifyDamageForAddingAndRemovingRenderSurfaces)
     // CASE 2: If a descendant surface appears, its entire old area becomes exposed.
 
     // Cycle one frame of no change, just to sanity check that the next rect is not because of the old damage state.
+    clearDamageForAllSurfaces(root.get());
     emulateDrawingOneFrame(root.get());
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
     EXPECT_TRUE(rootDamageRect.isEmpty());
 
     // Then change the tree so that the render surface is added back.
+    clearDamageForAllSurfaces(root.get());
     child1->setOpacity(0.5);
     emulateDrawingOneFrame(root.get());
 
@@ -729,6 +760,7 @@ TEST_F(CCDamageTrackerTest, verifyNoDamageWhenNothingChanged)
 
     // CASE 1: If nothing changes, the damage rect should be empty.
     //
+    clearDamageForAllSurfaces(root.get());
     emulateDrawingOneFrame(root.get());
     childDamageRect = child1->renderSurface()->damageTracker()->currentDamageRect();
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
@@ -737,6 +769,7 @@ TEST_F(CCDamageTrackerTest, verifyNoDamageWhenNothingChanged)
 
     // CASE 2: If nothing changes twice in a row, the damage rect should still be empty.
     //
+    clearDamageForAllSurfaces(root.get());
     emulateDrawingOneFrame(root.get());
     childDamageRect = child1->renderSurface()->damageTracker()->currentDamageRect();
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
@@ -753,6 +786,7 @@ TEST_F(CCDamageTrackerTest, verifyNoDamageForUpdateRectThatDoesNotDrawContent)
 
     // In our specific tree, the update rect of child1 should not cause any damage to any
     // surface because it does not actually draw content.
+    clearDamageForAllSurfaces(root.get());
     child1->setUpdateRect(FloatRect(0, 0, 1, 2));
     emulateDrawingOneFrame(root.get());
     childDamageRect = child1->renderSurface()->damageTracker()->currentDamageRect();
@@ -788,6 +822,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplica)
 
     // CASE 1: adding a reflection about the left edge of grandChild1.
     //
+    clearDamageForAllSurfaces(root.get());
     {
         OwnPtr<CCLayerImpl> grandChild1Replica = CCLayerImpl::create(7);
         grandChild1Replica->setPosition(FloatPoint::zero());
@@ -811,6 +846,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplica)
 
     // CASE 2: moving the descendant surface should cause both the original and reflected
     //         areas to be damaged on the target.
+    clearDamageForAllSurfaces(root.get());
     IntRect oldContentRect = child1->renderSurface()->contentRect();
     grandChild1->setPosition(FloatPoint(195.0, 205.0));
     emulateDrawingOneFrame(root.get());
@@ -830,6 +866,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplica)
 
     // CASE 3: removing the reflection should cause the entire region including reflection
     //         to damage the target surface.
+    clearDamageForAllSurfaces(root.get());
     grandChild1->setReplicaLayer(nullptr);
     emulateDrawingOneFrame(root.get());
     ASSERT_EQ(oldContentRect.width(), child1->renderSurface()->contentRect().width());
@@ -850,6 +887,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForMask)
 
     // In the current implementation of the damage tracker, changes to mask layers should
     // damage the entire corresponding surface.
+
+    clearDamageForAllSurfaces(root.get());
 
     // Set up the mask layer.
     {
@@ -878,6 +917,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForMask)
 
     // CASE 1: the updateRect on a mask layer should damage the entire target surface.
     //
+    clearDamageForAllSurfaces(root.get());
     maskLayer->setUpdateRect(FloatRect(1, 2, 3, 4));
     emulateDrawingOneFrame(root.get());
     FloatRect childDamageRect = child->renderSurface()->damageTracker()->currentDamageRect();
@@ -887,11 +927,13 @@ TEST_F(CCDamageTrackerTest, verifyDamageForMask)
     //
 
     // Advance one frame without damage so that we know the damage rect is not leftover from the previous case.
+    clearDamageForAllSurfaces(root.get());
     emulateDrawingOneFrame(root.get());
     childDamageRect = child->renderSurface()->damageTracker()->currentDamageRect();
     EXPECT_TRUE(childDamageRect.isEmpty());
 
     // Then test the property change.
+    clearDamageForAllSurfaces(root.get());
     maskLayer->setOpacity(0.5);
     emulateDrawingOneFrame(root.get());
     childDamageRect = child->renderSurface()->damageTracker()->currentDamageRect();
@@ -901,11 +943,13 @@ TEST_F(CCDamageTrackerTest, verifyDamageForMask)
     //
 
     // Advance one frame without damage so that we know the damage rect is not leftover from the previous case.
+    clearDamageForAllSurfaces(root.get());
     emulateDrawingOneFrame(root.get());
     childDamageRect = child->renderSurface()->damageTracker()->currentDamageRect();
     EXPECT_TRUE(childDamageRect.isEmpty());
 
     // Then test mask removal.
+    clearDamageForAllSurfaces(root.get());
     child->setMaskLayer(nullptr);
     ASSERT_TRUE(child->layerPropertyChanged());
     emulateDrawingOneFrame(root.get());
@@ -925,6 +969,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMask)
 
     // Changes to a replica's mask should not damage the original surface, because it is
     // not masked. But it does damage the ancestor target surface.
+
+    clearDamageForAllSurfaces(root.get());
 
     // Create a reflection about the left edge of grandChild1.
     {
@@ -954,6 +1000,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMask)
     ASSERT_TRUE(grandChild1->renderSurface());
 
     // CASE 1: a property change on the mask should damage only the reflected region on the target surface.
+    clearDamageForAllSurfaces(root.get());
     replicaMaskLayer->setOpacity(0.6f);
     emulateDrawingOneFrame(root.get());
 
@@ -965,6 +1012,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMask)
 
     // CASE 2: removing the replica mask damages only the reflected region on the target surface.
     //
+    clearDamageForAllSurfaces(root.get());
     grandChild1Replica->setMaskLayer(nullptr);
     emulateDrawingOneFrame(root.get());
 
@@ -984,6 +1032,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMaskWithAnchor)
     // Verify that the correct replicaOriginTransform is used for the replicaMask; the
     // incorrect old code incorrectly accounted for the anchor for the replica. A
     // non-zero anchor point should not affect the replica reflection.
+
+    clearDamageForAllSurfaces(root.get());
 
     grandChild1->setAnchorPoint(FloatPoint(1.0, 0.0)); // This is the anchor being tested.
 
@@ -1014,6 +1064,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMaskWithAnchor)
     ASSERT_TRUE(grandChild1->renderSurface());
 
     // A property change on the replicaMask should damage the reflected region on the target surface.
+    clearDamageForAllSurfaces(root.get());
     replicaMaskLayer->setOpacity(0.6f);
     emulateDrawingOneFrame(root.get());
 
@@ -1029,6 +1080,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageWhenForcedFullDamage)
     // Case 1: This test ensures that when the tracker is forced to have full damage, that
     //         it takes priority over any other partial damage.
     //
+    clearDamageForAllSurfaces(root.get());
     child->setUpdateRect(FloatRect(10, 11, 12, 13));
     root->renderSurface()->damageTracker()->forceFullDamageNextUpdate();
     emulateDrawingOneFrame(root.get());
@@ -1038,6 +1090,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageWhenForcedFullDamage)
     // Case 2: An additional sanity check that forcing full damage works even when nothing
     //         on the layer tree changed.
     //
+    clearDamageForAllSurfaces(root.get());
     root->renderSurface()->damageTracker()->forceFullDamageNextUpdate();
     emulateDrawingOneFrame(root.get());
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
@@ -1059,6 +1112,38 @@ TEST_F(CCDamageTrackerTest, verifyDamageForEmptyLayerList)
 
     FloatRect damageRect = targetSurface->damageTracker()->currentDamageRect();
     EXPECT_TRUE(damageRect.isEmpty());
+}
+
+TEST_F(CCDamageTrackerTest, verifyDamageAccumulatesUntilReset)
+{
+    // If damage is not cleared, it should accumulate.
+
+    OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();
+    CCLayerImpl* child = root->children()[0].get();
+
+    clearDamageForAllSurfaces(root.get());
+    child->setUpdateRect(FloatRect(10, 11, 1, 2));
+    emulateDrawingOneFrame(root.get());
+
+    // Sanity check damage after the first frame; this isnt the actual test yet.
+    FloatRect rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
+    EXPECT_FLOAT_RECT_EQ(FloatRect(110, 111, 1, 2), rootDamageRect);
+
+    // New damage, without having cleared the previous damage, should be unioned to the previous one.
+    child->setUpdateRect(FloatRect(20, 25, 1, 2));
+    emulateDrawingOneFrame(root.get());
+    rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
+    EXPECT_FLOAT_RECT_EQ(FloatRect(110, 111, 11, 16), rootDamageRect);
+
+    // If we notify the damage tracker that we drew the damaged area, then damage should be emptied.
+    root->renderSurface()->damageTracker()->didDrawDamagedArea();
+    rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
+    EXPECT_TRUE(rootDamageRect.isEmpty());
+
+    // Damage should remain empty even after one frame, since there's yet no new damage
+    emulateDrawingOneFrame(root.get());
+    rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
+    EXPECT_TRUE(rootDamageRect.isEmpty());
 }
 
 } // namespace

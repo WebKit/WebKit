@@ -151,20 +151,27 @@ void CCDamageTracker::updateDamageTrackingState(const Vector<CCLayerImpl*>& laye
     FloatRect damageFromSurfaceMask = trackDamageFromSurfaceMask(targetSurfaceMaskLayer);
     FloatRect damageFromLeftoverRects = trackDamageFromLeftoverRects();
 
+    FloatRect damageRectForThisUpdate;
+
     if (m_forceFullDamageNextUpdate || targetSurfacePropertyChangedOnlyFromDescendant) {
-        m_currentDamageRect = targetSurfaceContentRect;
+        damageRectForThisUpdate = targetSurfaceContentRect;
         m_forceFullDamageNextUpdate = false;
     } else {
         // FIXME: can we clamp this damage to the surface's content rect? (affects performance, but not correctness)
-        m_currentDamageRect = damageFromActiveLayers;
-        m_currentDamageRect.uniteIfNonZero(damageFromSurfaceMask);
-        m_currentDamageRect.uniteIfNonZero(damageFromLeftoverRects);
+        damageRectForThisUpdate = damageFromActiveLayers;
+        damageRectForThisUpdate.uniteIfNonZero(damageFromSurfaceMask);
+        damageRectForThisUpdate.uniteIfNonZero(damageFromLeftoverRects);
 
         if (filters.hasFilterThatMovesPixels())
-            expandRectWithFilters(m_currentDamageRect, filters);
+            expandRectWithFilters(damageRectForThisUpdate, filters);
     }
 
-    // The next history map becomes the current map for the next frame.
+    // Damage accumulates until we are notified that we actually did draw on that frame.
+    m_currentDamageRect.uniteIfNonZero(damageRectForThisUpdate);
+
+    // The next history map becomes the current map for the next frame. Note this must
+    // happen every frame to correctly track changes, even if damage accumulates over
+    // multiple frames before actually being drawn.
     swap(m_currentRectHistory, m_nextRectHistory);
 }
 

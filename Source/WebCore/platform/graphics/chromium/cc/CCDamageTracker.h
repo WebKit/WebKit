@@ -47,8 +47,10 @@ public:
     static PassOwnPtr<CCDamageTracker> create();
     ~CCDamageTracker();
 
+    void didDrawDamagedArea() { m_currentDamageRect = FloatRect(); }
     void forceFullDamageNextUpdate() { m_forceFullDamageNextUpdate = true; }
     void updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, bool targetSurfacePropertyChangedOnlyFromDescendant, const IntRect& targetSurfaceContentRect, CCLayerImpl* targetSurfaceMaskLayer, const WebKit::WebFilterOperations&);
+
     const FloatRect& currentDamageRect() { return m_currentDamageRect; }
 
 private:
