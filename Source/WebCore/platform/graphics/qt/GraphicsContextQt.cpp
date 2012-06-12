@@ -38,7 +38,7 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#ifdef Q_WS_WIN
+#if OS(WINDOWS)
 #include <windows.h>
 #endif
 
@@ -65,6 +65,16 @@
 #include <QStack>
 #include <QVector>
 #include <wtf/MathExtras.h>
+
+#if OS(WINDOWS) && HAVE(QT5)
+Q_GUI_EXPORT QPixmap qt_pixmapFromWinHBITMAP(HBITMAP, int hbitmapFormat = 0);
+
+enum HBitmapFormat {
+    HBitmapNoAlpha,
+    HBitmapPremultipliedAlpha,
+    HBitmapAlpha
+};
+#endif
 
 namespace WebCore {
 
@@ -1403,7 +1413,7 @@ void GraphicsContext::setPlatformShouldAntialias(bool enable)
     m_data->p()->setRenderHint(QPainter::Antialiasing, enable);
 }
 
-#ifdef Q_WS_WIN
+#if OS(WINDOWS)
 
 HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
@@ -1478,7 +1488,11 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
             GetObject(bitmap, sizeof(info), &info);
             ASSERT(info.bmBitsPixel == 32);
 
+#if HAVE(QT5)
+            QPixmap pixmap = qt_pixmapFromWinHBITMAP(bitmap, supportAlphaBlend ? HBitmapPremultipliedAlpha : HBitmapNoAlpha);
+#else
             QPixmap pixmap = QPixmap::fromWinHBITMAP(bitmap, supportAlphaBlend ? QPixmap::PremultipliedAlpha : QPixmap::NoAlpha);
+#endif
             m_data->p()->drawPixmap(dstRect, pixmap);
 
             ::DeleteObject(bitmap);
