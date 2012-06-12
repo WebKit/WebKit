@@ -1,131 +1,80 @@
-<html>
+<!DOCTYPE html>
+<script src="../../js/resources/js-test-pre.js"></script>
 <script>
     var parser = new DOMParser();
     var serializer = new XMLSerializer();
-    var successCount = 0;
-    
-    function debug(str) {
-        var console = document.getElementById('console');
-        var li = document.createElement('li');
-        li.appendChild(document.createTextNode(str));
-        console.appendChild(li);
-    }
-    
-    // Replacing element tests
-    function replaceElementWithElement() {
-        debug('replacing element with element')
-        try {
-            var doc = parser.parseFromString('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><foo/>', "text/xml")
-            var newChild = doc.createElement('bar');
-            doc.replaceChild(newChild, doc.documentElement)
-        } catch (ex) {
-            debug('FAILED: ' + ex)
-            return;
-        }
-        debug('SUCCESS: ' + serializer.serializeToString(doc));
-        successCount++;
+    var doc, newChild, fragment;
+
+    function dumpDocument() {
+        debug(escapeHTML(serializer.serializeToString(doc)) + '<br>');
     }
 
-    function replaceElementWithDoctype() {
-        debug('replacing element with doctype')
-        try {
-            var doc = parser.parseFromString('<foo/>', "text/xml")
-            var newChild = doc.implementation.createDocumentType('svg', '-//W3C//DTD SVG 1.1//EN', 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd')
-            doc.replaceChild(newChild, doc.documentElement)
-        } catch (ex) {
-            debug('FAILED: ' + ex)
-            return;
-        }
-        debug('SUCCESS: ' + serializer.serializeToString(doc));
-        successCount++;
+    function test(name, fn) {
+        debug(name);
+        fn();
+        dumpDocument();
     }
 
-    function replaceElementWithDoctypeWhenDoctypeAlreadyExists() {
-        debug('replacing element with doctype when a doctype already exists')
-        try {
-            var doc = parser.parseFromString('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><foo/>',    "text/xml")
-            var newChild = doc.implementation.createDocumentType('svg', '-//W3C//DTD SVG 1.1//EN', 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd')
-            doc.replaceChild(newChild, doc.documentElement)        
-        } catch (ex) {
-            debug('SUCCESS: failed with exception ' + ex)
-            successCount++;
-            return;
-        }
-        debug('FAILED: succeeded when test should have failed ' + serializer.serializeToString(doc));
-    }
+    description('This tests that various combinations of replaceChild on the document works as specified.');
 
-    function replaceDoctypeWithDoctype() {
-        debug('replacing doctype with doctype')
-        try {
-            var doc = parser.parseFromString('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><foo/>', "text/xml")
-            var newChild = doc.implementation.createDocumentType('svg', '-//W3C//DTD SVG 1.1//EN', 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd')
-            doc.replaceChild(newChild, doc.doctype)                
-        } catch (ex) {
-            debug('FAILED: ' + ex)
-            return;
-        }
-        debug('SUCCESS: ' + serializer.serializeToString(doc));
-        successCount++;
-    }
-    
-    function replaceDoctypeWithElement() {
-         debug('replacing doctype with element')
-         try {
-             var doc = parser.parseFromString('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><foo/>', "text/xml")
-             
-             // Remove the document element
-             doc.removeChild(doc.documentElement);
-             
-             var newChild = doc.createElement('bar');
-             alert(serializer.serializeToString(doc))
-             doc.replaceChild(newChild, doc.doctype)                
-         } catch (ex) {
-             debug('FAILED: ' + ex)
-             return;
-         }
-         debug('SUCCESS: ' + serializer.serializeToString(doc));
-         successCount++;
-     }
-    
-     function replaceDoctypeWithElementWhenElementAlreadyExists() {
-         debug('replacing element with doctype when an element already exists')
-         try {
-             var doc = parser.parseFromString('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><foo/>',    "text/xml")
-             alert(serializer.serializeToString(doc));
-             var newChild = doc.implementation.createDocumentType('svg', '-//W3C//DTD SVG 1.1//EN', 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd')
-             doc.replaceChild(newChild, doc.documentElement)
-         } catch (ex) {
-             debug('SUCCESS: failed with exception ' + ex)
-             successCount++;
-             return;
-         }
-         debug('FAILED: succeeded when test should have failed ' + serializer.serializeToString(doc));
-     }
-   
-    function runTest() {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
-
-        replaceElementWithElement();
-        replaceElementWithDoctype();
+    test('replacing element with element', function() {
+        doc = parser.parseFromString('<!DOCTYPE html><body/>', 'text/xml');
+        newChild = doc.createElement('div');
         
-        // FIXME: Once DocumentType nodes are exposed as children of the document we can add these checks back.
-        // See http://bugs.webkit.org/show_bug.cgi?id=12751
-        if (0) {
-        replaceElementWithDoctypeWhenDoctypeAlreadyExists();        
-        replaceDoctypeWithDoctype();
-        replaceDoctypeWithElement();
-        }
+        shouldNotThrow('doc.replaceChild(newChild, doc.documentElement)');
+    });
 
-        if (successCount == 2)
-            debug('SUCCESS - All tests succeeded!')
-        else
-            debug('FAILED - One or more tests failed')
-    }
+    test('replacing element with element in fragment', function() {        
+        doc = parser.parseFromString('<!DOCTYPE html><body/>', 'text/xml');
+        fragment = doc.createDocumentFragment();
+        fragment.appendChild(doc.createElement('div'));
+
+        shouldNotThrow('doc.replaceChild(fragment, doc.documentElement);');
+    });
+
+    test('replacing element with multiple elements in fragment', function() {
+        doc = parser.parseFromString('<!DOCTYPE html><body/>', 'text/xml');
+        fragment = doc.createDocumentFragment();
+        fragment.appendChild(doc.createElement('div'));
+        fragment.appendChild(doc.createElement('span'));
+        
+        shouldThrow('doc.replaceChild(fragment, doc.documentElement);');
+    });
+
+    test('replacing element with doctype', function() {
+        doc = parser.parseFromString('<body/>', 'text/xml');
+        newChild = doc.implementation.createDocumentType('svg', '-//W3C//DTD SVG 1.1//EN', 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd');
+        
+        shouldNotThrow('doc.replaceChild(newChild, doc.documentElement)');
+    });
+
+    test('replacing element with doctype when a doctype already exists', function() {
+        doc = parser.parseFromString('<!DOCTYPE html><body/>', 'text/xml');
+        newChild = doc.implementation.createDocumentType('svg', '-//W3C//DTD SVG 1.1//EN', 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd');
+        
+        shouldThrow('doc.replaceChild(newChild, doc.documentElement)');
+    });
+
+    test('replacing doctype with doctype', function() {
+        doc = parser.parseFromString('<!DOCTYPE html><body/>', 'text/xml');
+        newChild = doc.implementation.createDocumentType('svg', '-//W3C//DTD SVG 1.1//EN', 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd');
+        
+        shouldNotThrow('doc.replaceChild(newChild, doc.doctype)');
+    });
+    
+    test('replacing doctype with element', function() {
+        doc = parser.parseFromString('<!DOCTYPE html><body/>', 'text/xml');
+        doc.removeChild(doc.documentElement);             
+        newChild = doc.createElement('bar');
+
+        shouldNotThrow('doc.replaceChild(newChild, doc.doctype)'); 
+    });
+    
+    test('replacing element with doctype when an element already exists', function() {
+        doc = parser.parseFromString('<!DOCTYPE html><body/>', 'text/xml');
+        newChild = doc.implementation.createDocumentType('svg', '-//W3C//DTD SVG 1.1//EN', 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd');
+
+        shouldThrow('doc.replaceChild(newChild, doc.documentElement)');
+    });
 </script>
-<body onload="runTest();">
-    This tests that various combinations of replaceChild on the document works as specified. If this test succeeds, there will be a number of "SUCCESS" lines below followed by "SUCCESS - All tests succeeded".
-    <ul id="console">
-    </ul>
-</body>
-</html>
+<script src="../../js/resources/js-test-post.js"></script>

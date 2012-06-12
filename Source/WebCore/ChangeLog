@@ -1,3 +1,21 @@
+2012-06-11  Elliott Sprehn  <esprehn@gmail.com>
+
+        WebKit doesn't allow replacing the document element with a DocumentFragment containing one element
+        https://bugs.webkit.org/show_bug.cgi?id=88681
+
+        Reviewed by Ojan Vafai.
+
+        Fix bug where replacing an immediate child of a Document with a DocumentFragment
+        would throw a HIERARCHY_REQUEST_ERR instead of replacing the node as required by DOM4.
+        http://www.w3.org/TR/domcore/#mutation-algorithms
+
+        * dom/Document.cpp:
+        (WebCore::Document::canReplaceChild):
+            When the newChild was a DocumentFragment we incorrectly
+            iterated over the document's children twice instead of the
+            fragment when counting the total number of elements and
+            doctypes to enfoce that there's only one of each.
+
 2012-06-11  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         [BlackBerry] Add handling of notifyDataReceived in NetworkJob even there's no data inside

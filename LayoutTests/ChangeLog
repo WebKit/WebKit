@@ -1,3 +1,17 @@
+2012-06-11  Elliott Sprehn  <esprehn@gmail.com>
+
+        WebKit doesn't allow replacing the document element with a DocumentFragment containing one element
+        https://bugs.webkit.org/show_bug.cgi?id=88681
+
+        Reviewed by Ojan Vafai.
+
+        Re-enables a bunch of disabled tests that are long since fixed and rewrites
+        the tests to use a more modern js-test-pre.js style.
+        https://bugs.webkit.org/show_bug.cgi?id=12751
+
+        * fast/dom/Document/replace-child-expected.txt:
+        * fast/dom/Document/replace-child.html:
+
 2012-06-11  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed: Update test expectations with bugs for media test timeouts
