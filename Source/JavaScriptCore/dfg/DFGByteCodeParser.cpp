@@ -1562,6 +1562,8 @@ void ByteCodeParser::handleGetById(
     // execution if it doesn't have a prediction, so we do it manually.
     if (prediction == SpecNone)
         addToGraph(ForceOSRExit);
+    
+    NodeIndex originalBaseForBaselineJIT = base;
                 
     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(getByIdStatus.structureSet())), base);
     
@@ -1579,8 +1581,18 @@ void ByteCodeParser::handleGetById(
     } else
         useInlineStorage = getByIdStatus.structureSet().allAreUsingInlinePropertyStorage();
     
+    // Unless we want bugs like https://bugs.webkit.org/show_bug.cgi?id=88783, we need to
+    // ensure that the base of the original get_by_id is kept alive until we're done with
+    // all of the speculations. We only insert the Phantom if there had been a CheckStructure
+    // on something other than the base following the CheckStructure on base, or if the
+    // access was compiled to a WeakJSConstant specific value, in which case we might not
+    // have any explicit use of the base at all.
+    if (getByIdStatus.specificValue() || originalBaseForBaselineJIT != base)
+        addToGraph(Phantom, originalBaseForBaselineJIT);
+    
     if (getByIdStatus.specificValue()) {
         ASSERT(getByIdStatus.specificValue().isCell());
+        
         set(destinationOperand,
             addToGraph(WeakJSConstant, OpInfo(getByIdStatus.specificValue().asCell())));
         return;

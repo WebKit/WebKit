@@ -1,3 +1,17 @@
+2012-06-12  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r119779): Javascript TypeError: 'undefined' is not an object
+        https://bugs.webkit.org/show_bug.cgi?id=88783
+        <rdar://problem/11640299>
+
+        Reviewed by Geoffrey Garen.
+        
+        If you don't keep alive the base of an object access over the various checks
+        you do for the prototype chain, you're going to have a bad time.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+
 2012-06-12  Hojong Han  <hojong.han@samsung.com>
 
         Property names of the built-in object cannot be retrieved 

@@ -1,3 +1,17 @@
+2012-06-12  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r119779): Javascript TypeError: 'undefined' is not an object
+        https://bugs.webkit.org/show_bug.cgi?id=88783
+        <rdar://problem/11640299>
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/js/dfg-proto-access-inline-osr-exit-expected.txt: Added.
+        * fast/js/dfg-proto-access-inline-osr-exit.html: Added.
+        * fast/js/script-tests/dfg-proto-access-inline-osr-exit.js: Added.
+        (foo):
+        (Thingy):
+
 2012-06-12  Igor Oliveira  <igor.o@sisa.samsung.com>
 
         Apply animations and transitions for first-letter element
