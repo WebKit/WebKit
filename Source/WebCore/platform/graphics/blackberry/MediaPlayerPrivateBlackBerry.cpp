@@ -110,6 +110,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
 #endif
     , m_userDrivenSeekTimer(this, &MediaPlayerPrivate::userDrivenSeekTimerFired)
     , m_lastSeekTime(0)
+    , m_lastSeekTimePending(false)
     , m_waitMetadataTimer(this, &MediaPlayerPrivate::waitMetadataTimerFired)
     , m_waitMetadataPopDialogCounter(0)
 {
@@ -240,13 +241,18 @@ float MediaPlayerPrivate::currentTime() const
 void MediaPlayerPrivate::seek(float time)
 {
     m_lastSeekTime = time;
+    m_lastSeekTimePending = true;
     if (!m_userDrivenSeekTimer.isActive())
-        m_userDrivenSeekTimer.startOneShot(SeekSubmissionDelay);
+        userDrivenSeekTimerFired(0);
 }
 
 void MediaPlayerPrivate::userDrivenSeekTimerFired(Timer<MediaPlayerPrivate>*)
 {
-    m_platformPlayer->seek(m_lastSeekTime);
+    if (m_lastSeekTimePending) {
+        m_platformPlayer->seek(m_lastSeekTime);
+        m_lastSeekTimePending = false;
+        m_userDrivenSeekTimer.startOneShot(SeekSubmissionDelay);
+    }
 }
 
 bool MediaPlayerPrivate::seeking() const

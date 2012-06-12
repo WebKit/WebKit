@@ -1,5 +1,45 @@
 2012-06-11  Max Feil  <mfeil@rim.com>
 
+        [BlackBerry] Seek calls are being unnecessarily delayed
+        https://bugs.webkit.org/show_bug.cgi?id=88732
+
+        Reviewed by Antonio Gomes.
+
+        There is a problem with the way the m_userDrivenSeekTimer is
+        implemented. When MediaPlayerPrivate::seek() is called, there
+        is always a 100ms delay even if the timer is not running. The
+        timer is supposed to space out (i.e. throttle) repeated seeks
+        that come in too soon after a previous seek, but currently it
+        is slowing down even single seeks and seeks that come in with
+        adequate delay after a previous seek. I fixed this in my patch
+        by improving the way the timer fired function is called.
+        
+        A note on the new m_lastSeekTimePending flag: This flag is
+        needed so that userDrivenSeekTimerFired() knows whether or not
+        to perform the seek. The only case where this flag will not be
+        set is if no MediaPlayerPrivate::seek() call came in while the
+        timer was active, in which case it's important to do nothing.
+        I could encode this flag's information into the m_lastSeekTime
+        float, for example by initializing it and resetting it to NAN
+        and using isnan(). But I feel that using a separate bool is a
+        more portable approach.
+
+        No new tests. I would like to propose not including a layout test
+        with this fix. Doing timing tests for 100ms delays is tricky
+        from Javascript, and I don't think the benefit of such a test
+        outweighs the extra time it would take to develop one. The test
+        would also be a problem to maintain as it may give different
+        results over different runs and across different target hardware.
+
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::seek):
+        (WebCore::MediaPlayerPrivate::userDrivenSeekTimerFired):
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.h:
+        (MediaPlayerPrivate):
+
+2012-06-11  Max Feil  <mfeil@rim.com>
+
         [BlackBerry] Unexpected repeats of short media
         https://bugs.webkit.org/show_bug.cgi?id=88733
 

@@ -166,6 +166,7 @@ private:
     void userDrivenSeekTimerFired(Timer<MediaPlayerPrivate>*);
     Timer<MediaPlayerPrivate> m_userDrivenSeekTimer;
     float m_lastSeekTime;
+    bool m_lastSeekTimePending;
     void waitMetadataTimerFired(Timer<MediaPlayerPrivate>*);
     Timer<MediaPlayerPrivate> m_waitMetadataTimer;
     int m_waitMetadataPopDialogCounter;
