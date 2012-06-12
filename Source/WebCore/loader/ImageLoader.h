@@ -75,6 +75,8 @@ private:
     virtual void dispatchLoadEvent() = 0;
     virtual String sourceURI(const AtomicString&) const = 0;
 
+    void updatedHasPendingLoadEvent();
+
     void dispatchPendingBeforeLoadEvent();
     void dispatchPendingLoadEvent();
     void dispatchPendingErrorEvent();
@@ -90,6 +92,7 @@ private:
     bool m_hasPendingErrorEvent : 1;
     bool m_imageComplete : 1;
     bool m_loadManually : 1;
+    bool m_elementIsProtected : 1;
 };
 
 }

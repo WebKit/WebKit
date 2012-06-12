@@ -1,3 +1,36 @@
+2012-06-12  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11593686> and https://bugs.webkit.org/show_bug.cgi?id=88683
+        Garbage collection of an <img> element can cause reentrant event dispatch.
+
+        Reviewed by Darin Adler.
+
+        The most straightforward solution is for ImageLoader to keep its Element alive
+        with ref/deref any time the Image is actually loading.
+
+        ImageLoader should always do this for all Elements, and if those Elements want/need
+        different behavior for when they are detached then they need to manually stop their
+        loads.
+
+        Tests: http/tests/loading/embed-image-load-outlives-gc-without-crashing.html
+               http/tests/loading/image-input-type-outlives-gc-without-crashing.html
+               http/tests/loading/image-load-outlives-gc-without-crashing.html
+               http/tests/loading/object-image-load-outlives-gc-without-crashing.html
+               http/tests/loading/svg-image-load-outlives-gc-without-crashing.html
+               http/tests/loading/video-poster-image-load-outlives-gc-without-crashing.html
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::ImageLoader):
+        (WebCore::ImageLoader::~ImageLoader):
+        (WebCore::ImageLoader::setImage):
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::notifyFinished):
+        (WebCore::ImageLoader::updatedHasPendingLoadEvent):
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent):
+        (WebCore::ImageLoader::dispatchPendingLoadEvent):
+        * loader/ImageLoader.h:
+        (ImageLoader):
+
 2012-06-12  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Make damage tracking more robust to early exits

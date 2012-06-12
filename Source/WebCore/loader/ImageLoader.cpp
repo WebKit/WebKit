@@ -89,6 +89,7 @@ ImageLoader::ImageLoader(Element* element)
     , m_hasPendingErrorEvent(false)
     , m_imageComplete(true)
     , m_loadManually(false)
+    , m_elementIsProtected(false)
 {
 }
 
@@ -108,6 +109,11 @@ ImageLoader::~ImageLoader()
     ASSERT(m_hasPendingErrorEvent || !errorEventSender().hasPendingEvents(this));
     if (m_hasPendingErrorEvent)
         errorEventSender().cancelEvent(this);
+
+    // If the ImageLoader is being destroyed but it is still protecting its image-loading Element,
+    // remove that protection here.
+    if (m_elementIsProtected)
+        m_element->deref();
 }
 
 void ImageLoader::setImage(CachedImage* newImage)
@@ -137,6 +143,10 @@ void ImageLoader::setImage(CachedImage* newImage)
 
     if (RenderImageResource* imageResource = renderImageResource())
         imageResource->resetAnimation();
+
+    // Only consider updating the protection ref-count of the Element immediately before returning
+    // from this function as doing so might result in the destruction of this ImageLoader.
+    updatedHasPendingLoadEvent();
 }
 
 void ImageLoader::updateFromElement()
@@ -218,6 +228,10 @@ void ImageLoader::updateFromElement()
 
     if (RenderImageResource* imageResource = renderImageResource())
         imageResource->resetAnimation();
+
+    // Only consider updating the protection ref-count of the Element immediately before returning
+    // from this function as doing so might result in the destruction of this ImageLoader.
+    updatedHasPendingLoadEvent();
 }
 
 void ImageLoader::updateFromElementIgnoringPreviousError()
@@ -257,6 +271,9 @@ void ImageLoader::notifyFinished(CachedResource* resource)
 
     if (resource->wasCanceled()) {
         m_hasPendingLoadEvent = false;
+        // Only consider updating the protection ref-count of the Element immediately before returning
+        // from this function as doing so might result in the destruction of this ImageLoader.
+        updatedHasPendingLoadEvent();
         return;
     }
 
@@ -303,6 +320,24 @@ void ImageLoader::updateRenderer()
         imageResource->setCachedImage(m_image.get());
 }
 
+void ImageLoader::updatedHasPendingLoadEvent()
+{
+    // If an Element that does image loading is removed from the DOM the load event for the image is still observable.
+    // As long as the ImageLoader is actively loading, the Element itself needs to be ref'ed to keep it from being
+    // destroyed by DOM manipulation or garbage collection.
+    // If such an Element wishes for the load to stop when removed from the DOM it needs to stop the ImageLoader explicitly.
+
+    if (m_hasPendingLoadEvent == m_elementIsProtected)
+        return;
+
+    m_elementIsProtected = m_hasPendingLoadEvent;
+
+    if (m_elementIsProtected)
+        m_element->ref();
+    else
+        m_element->deref();
+}
+
 void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender)
 {
     ASSERT(eventSender == &beforeLoadEventSender() || eventSender == &loadEventSender() || eventSender == &errorEventSender());
@@ -338,6 +373,10 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
     
     if (m_element->hasTagName(HTMLNames::objectTag))
         static_cast<HTMLObjectElement*>(m_element)->renderFallbackContent();
+
+    // Only consider updating the protection ref-count of the Element immediately before returning
+    // from this function as doing so might result in the destruction of this ImageLoader.
+    updatedHasPendingLoadEvent();
 }
 
 void ImageLoader::dispatchPendingLoadEvent()
@@ -350,6 +389,10 @@ void ImageLoader::dispatchPendingLoadEvent()
         return;
     m_hasPendingLoadEvent = false;
     dispatchLoadEvent();
+
+    // Only consider updating the protection ref-count of the Element immediately before returning
+    // from this function as doing so might result in the destruction of this ImageLoader.
+    updatedHasPendingLoadEvent();
 }
 
 void ImageLoader::dispatchPendingErrorEvent()

@@ -1,3 +1,28 @@
+2012-06-12  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11593686> and https://bugs.webkit.org/show_bug.cgi?id=88683
+        Garbage collection of an <img> element can cause reentrant event dispatch.
+
+        Reviewed by Darin Adler.
+
+        New tests for all users of ImageLoader:
+        * http/tests/loading/embed-image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * http/tests/loading/embed-image-load-outlives-gc-without-crashing.html: Added.
+        * http/tests/loading/image-input-type-outlives-gc-without-crashing-expected.txt: Added.
+        * http/tests/loading/image-input-type-outlives-gc-without-crashing.html: Added.
+        * http/tests/loading/image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * http/tests/loading/image-load-outlives-gc-without-crashing.html: Added.
+        * http/tests/loading/object-image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * http/tests/loading/object-image-load-outlives-gc-without-crashing.html: Added.
+        * http/tests/loading/resources/slowimage.php: Added.
+        * http/tests/loading/svg-image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * http/tests/loading/svg-image-load-outlives-gc-without-crashing.html: Added.
+        * http/tests/loading/video-poster-image-load-outlives-gc-without-crashing-expected.txt: Added.
+        * http/tests/loading/video-poster-image-load-outlives-gc-without-crashing.html: Added.
+
+        Shared sub resource for all of those tests:
+        * http/tests/loading/resources/slowimage.php: Added.
+
 2012-06-12  Ojan Vafai  <ojan@chromium.org>
 
         Update some tests to better match actual results on the bots.
