@@ -65,6 +65,10 @@ class WebPopupMenuProxy;
 struct WindowGeometry;
 #endif
 
+#if PLATFORM(MAC)
+struct ColorSpaceData;
+#endif
+
 class PageClient {
 public:
     virtual ~PageClient() { }
@@ -192,7 +196,9 @@ public:
     virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText) = 0;
     virtual void recordAutocorrectionResponse(WebCore::AutocorrectionResponseType, const String& replacedString, const String& replacementString) = 0;
     virtual void recommendedScrollbarStyleDidChange(int32_t newStyle) = 0;
-    
+
+    virtual ColorSpaceData colorSpace() = 0;
+
 #if USE(APPKIT)
     virtual WKView* wkView() const = 0;
 #endif

@@ -27,6 +27,7 @@
 #import "WKView.h"
 
 #import "AttributedString.h"
+#import "ColorSpaceData.h"
 #import "DataReference.h"
 #import "DrawingAreaProxyImpl.h"
 #import "EditorState.h"
@@ -201,6 +202,9 @@ struct WKViewInterpretKeyEventsParameters {
     // We use this flag to determine when we need to paint the background (white or clear)
     // when the web process is unresponsive or takes too long to paint.
     BOOL _windowHasValidBackingStore;
+
+    RetainPtr<NSColorSpace> _colorSpace;
+
     RefPtr<WebCore::Image> _promisedImage;
     String _promisedFilename;
     String _promisedURL;
@@ -1987,9 +1991,9 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowDidChangeBackingProperties:(NSNotification *)notification
 {
-    CGFloat oldBackingScaleFactor = [[notification.userInfo objectForKey:backingPropertyOldScaleFactorKey] doubleValue]; 
+    CGFloat oldBackingScaleFactor = [[notification.userInfo objectForKey:backingPropertyOldScaleFactorKey] doubleValue];
     CGFloat newBackingScaleFactor = [self _intrinsicDeviceScaleFactor]; 
-    if (oldBackingScaleFactor == newBackingScaleFactor) 
+    if (oldBackingScaleFactor == newBackingScaleFactor)
         return; 
 
     _data->_windowHasValidBackingStore = NO;
@@ -2072,6 +2076,17 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (void)viewDidUnhide
 {
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+}
+
+- (void)viewDidChangeBackingProperties
+{
+    NSColorSpace *colorSpace = [[self window] colorSpace];
+    if ([colorSpace isEqualTo:_data->_colorSpace.get()])
+        return;
+
+    _data->_colorSpace = nullptr;
+    if (DrawingAreaProxy *drawingArea = _data->_page->drawingArea())
+        drawingArea->colorSpaceDidChange();
 }
 
 - (void)_accessibilityRegisterUIProcessTokens
@@ -2227,6 +2242,21 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     if (_data->_inResignFirstResponder)
         return NO;
     return [[self window] firstResponder] == self;
+}
+
+- (WebKit::ColorSpaceData)_colorSpace
+{
+    if (!_data->_colorSpace) {
+        if ([self window])
+            _data->_colorSpace = [[self window] colorSpace];
+        else
+            _data->_colorSpace = [[NSScreen mainScreen] colorSpace];
+    }
+        
+    ColorSpaceData colorSpaceData;
+    colorSpaceData.cgColorSpace = [_data->_colorSpace.get() CGColorSpace];
+
+    return colorSpaceData;    
 }
 
 - (void)_processDidCrash

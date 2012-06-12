@@ -33,6 +33,10 @@
 #include <WebCore/IntSize.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(MAC)
+#include "ColorSpaceData.h"
+#endif
+
 namespace CoreIPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
@@ -83,6 +87,7 @@ struct WebPageCreationParameters {
 #if PLATFORM(MAC)
     bool isSmartInsertDeleteEnabled;
     LayerHostingMode layerHostingMode;
+    ColorSpaceData colorSpace;
 #endif
 
 #if PLATFORM(WIN)

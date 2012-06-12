@@ -1,3 +1,17 @@
+2012-06-11  Anders Carlsson  <andersca@apple.com>
+
+        Pass the right color space over to the web process so we can set it on our CA context
+        https://bugs.webkit.org/show_bug.cgi?id=88819
+        <rdar://problem/11629050>
+
+        Reviewed by John Sullivan.
+
+        Add WKCAContextSetColorSpace and WKCAContextGetColorSpace.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2012-06-09  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         Add UNDO_MANAGER flag

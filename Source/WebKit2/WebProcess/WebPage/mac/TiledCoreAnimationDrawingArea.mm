@@ -28,6 +28,7 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
+#import "ColorSpaceData.h"
 #import "DrawingAreaProxyMessages.h"
 #import "EventDispatcher.h"
 #import "LayerHostingContext.h"
@@ -85,7 +86,8 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     m_rootLayer.get().geometryFlipped = YES;
 
     updateLayerHostingContext();
-    
+    setColorSpace(parameters.colorSpace);
+
     LayerTreeContext layerTreeContext;
     layerTreeContext.contextID = m_layerHostingContext->contextID();
     m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
@@ -365,10 +367,18 @@ void TiledCoreAnimationDrawingArea::setLayerHostingMode(uint32_t opaqueLayerHost
     m_webPage->send(Messages::DrawingAreaProxy::UpdateAcceleratedCompositingMode(0, layerTreeContext));
 }
 
+void TiledCoreAnimationDrawingArea::setColorSpace(const ColorSpaceData& colorSpace)
+{
+    m_layerHostingContext->setColorSpace(colorSpace.cgColorSpace.get());
+}
+
 void TiledCoreAnimationDrawingArea::updateLayerHostingContext()
 {
+    RetainPtr<CGColorSpaceRef> colorSpace;
+
     // Invalidate the old context.
     if (m_layerHostingContext) {
+        colorSpace = m_layerHostingContext->colorSpace();
         m_layerHostingContext->invalidate();
         m_layerHostingContext = nullptr;
     }
@@ -386,6 +396,8 @@ void TiledCoreAnimationDrawingArea::updateLayerHostingContext()
     }
 
     m_layerHostingContext->setRootLayer(m_rootLayer.get());
+    if (colorSpace)
+        m_layerHostingContext->setColorSpace(colorSpace.get());
 }
 
 void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)

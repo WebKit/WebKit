@@ -26,6 +26,7 @@
 #import "config.h"
 #import "LayerHostingContext.h"
 
+#import <wtf/OwnPtr.h>
 #import <wtf/PassOwnPtr.h>
 #import <WebKitSystemInterface.h>
 
@@ -33,27 +34,29 @@ namespace WebKit {
 
 PassOwnPtr<LayerHostingContext> LayerHostingContext::createForPort(mach_port_t serverPort)
 {
-    return adoptPtr(new LayerHostingContext(serverPort));
-}
+    OwnPtr<LayerHostingContext> layerHostingContext = adoptPtr(new LayerHostingContext);
 
-LayerHostingContext::LayerHostingContext(mach_port_t serverPort)
-{
-    m_layerHostingMode = LayerHostingModeDefault;
-    m_context = WKCAContextMakeRemoteWithServerPort(serverPort);
+    layerHostingContext->m_layerHostingMode = LayerHostingModeDefault;
+    layerHostingContext->m_context = WKCAContextMakeRemoteWithServerPort(serverPort);
+
+    return layerHostingContext.release();
 }
 
 #if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
 PassOwnPtr<LayerHostingContext> LayerHostingContext::createForWindowServer()
 {
-    return adoptPtr(new LayerHostingContext);
+    OwnPtr<LayerHostingContext> layerHostingContext = adoptPtr(new LayerHostingContext);
+
+    layerHostingContext->m_layerHostingMode = LayerHostingModeInWindowServer;
+    layerHostingContext->m_context = WKCAContextMakeRemoteForWindowServer();
+
+    return layerHostingContext.release();
 }
+#endif
 
 LayerHostingContext::LayerHostingContext()
 {
-    m_layerHostingMode = LayerHostingModeInWindowServer;
-    m_context = WKCAContextMakeRemoteForWindowServer();
 }
-#endif
 
 LayerHostingContext::~LayerHostingContext()
 {
@@ -77,6 +80,16 @@ uint32_t LayerHostingContext::contextID() const
 void LayerHostingContext::invalidate()
 {
     WKCAContextInvalidate(m_context.get());
+}
+
+void LayerHostingContext::setColorSpace(CGColorSpaceRef colorSpace)
+{
+    WKCAContextSetColorSpace(m_context.get(), colorSpace);
+}
+
+CGColorSpaceRef LayerHostingContext::colorSpace() const
+{
+    return WKCAContextGetColorSpace(m_context.get());
 }
 
 } // namespace WebKit

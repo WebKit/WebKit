@@ -140,6 +140,7 @@ class WebProcessProxy;
 class WebURLRequest;
 class WebWheelEvent;
 struct AttributedString;
+struct ColorSpaceData;
 struct DictionaryPopupInfo;
 struct EditorState;
 struct PlatformPopupMenuData;
@@ -479,6 +480,8 @@ public:
     String stringSelectionForPasteboard();
     PassRefPtr<WebCore::SharedBuffer> dataSelectionForPasteboard(const String& pasteboardType);
     void makeFirstResponder();
+
+    ColorSpaceData colorSpace();
 #endif
 
     void pageScaleFactorDidChange(double);

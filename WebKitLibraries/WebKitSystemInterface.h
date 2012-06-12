@@ -348,6 +348,8 @@ void WKCAContextInvalidate(WKCAContextRef);
 uint32_t WKCAContextGetContextId(WKCAContextRef);
 void WKCAContextSetLayer(WKCAContextRef, CALayer *);
 CALayer *WKCAContextGetLayer(WKCAContextRef);
+void WKCAContextSetColorSpace(WKCAContextRef, CGColorSpaceRef);
+CGColorSpaceRef WKCAContextGetColorSpace(WKCAContextRef);
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 void WKCALayerEnumerateRectsBeingDrawnWithBlock(CALayer *layer, CGContextRef context, void (^block)(CGRect rect));
@@ -502,6 +504,10 @@ void WKFilterRelease(WebFilterEvaluator *);
 BOOL WKFilterWasBlocked(WebFilterEvaluator *);
 const char* WKFilterAddData(WebFilterEvaluator *, const char* data, int* length);
 const char* WKFilterDataComplete(WebFilterEvaluator *, int* length);
+
+CGFloat WKNSElasticDeltaForTimeDelta(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);
+CGFloat WKNSElasticDeltaForReboundDelta(CGFloat delta);
+CGFloat WKNSReboundDeltaForElasticDelta(CGFloat delta);
 #endif
 
 #ifdef __cplusplus

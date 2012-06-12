@@ -85,6 +85,7 @@ private:
     virtual void updateGeometry(const WebCore::IntSize& viewSize) OVERRIDE;
     virtual void setDeviceScaleFactor(float) OVERRIDE;
     virtual void setLayerHostingMode(uint32_t) OVERRIDE;
+    virtual void setColorSpace(const ColorSpaceData&) OVERRIDE;
 
     void updateLayerHostingContext();
 
@@ -97,7 +98,7 @@ private:
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
 
     OwnPtr<LayerHostingContext> m_layerHostingContext;
-    
+
     RetainPtr<CALayer> m_rootLayer;
     RetainPtr<CALayer> m_pendingRootCompositingLayer;
 

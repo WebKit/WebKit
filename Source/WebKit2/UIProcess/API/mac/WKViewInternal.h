@@ -43,6 +43,7 @@ namespace WebKit {
     class DrawingAreaProxy;
     class FindIndicator;
     class LayerTreeContext;
+    struct ColorSpaceData;
     struct EditorState;
 }
 
@@ -87,6 +88,8 @@ namespace WebKit {
 
 - (void)_didChangeScrollbarsForMainFrame;
 
+- (WebKit::ColorSpaceData)_colorSpace;
+
 #if ENABLE(FULLSCREEN_API)
 - (BOOL)hasFullScreenWindowController;
 - (WKFullScreenWindowController*)fullScreenWindowController;
@@ -97,5 +100,4 @@ namespace WebKit {
 
 - (NSInteger)spellCheckerDocumentTag;
 - (void)handleCorrectionPanelResult:(NSString*)result;
-
 @end

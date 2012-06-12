@@ -47,6 +47,7 @@ private:
     virtual void visibilityDidChange() OVERRIDE;
     virtual void sizeDidChange() OVERRIDE;
     virtual void waitForPossibleGeometryUpdate() OVERRIDE;
+    virtual void colorSpaceDidChange() OVERRIDE;
 
     virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) OVERRIDE;
     virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) OVERRIDE;

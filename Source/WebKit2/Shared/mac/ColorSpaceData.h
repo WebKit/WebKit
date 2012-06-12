@@ -23,46 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerHostingContext_h
-#define LayerHostingContext_h
+#ifndef ColorSpaceData_h
+#define ColorSpaceData_h
 
-#include "LayerTreeContext.h"
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 
-OBJC_CLASS CALayer;
-typedef struct __WKCAContextRef *WKCAContextRef;
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
+}
 
 namespace WebKit {
 
-class LayerHostingContext {
-    WTF_MAKE_NONCOPYABLE(LayerHostingContext);
-public:
-    static PassOwnPtr<LayerHostingContext> createForPort(mach_port_t serverPort);
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    static PassOwnPtr<LayerHostingContext> createForWindowServer();
-#endif
-    ~LayerHostingContext();
+struct ColorSpaceData {
+    void encode(CoreIPC::ArgumentEncoder*) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, ColorSpaceData&);
 
-    void setRootLayer(CALayer *);
-    CALayer *rootLayer() const;
-
-    uint32_t contextID() const;
-    void invalidate();
-
-    LayerHostingMode layerHostingMode() { return m_layerHostingMode; }
-
-    void setColorSpace(CGColorSpaceRef);
-    CGColorSpaceRef colorSpace() const;
-
-private:
-    LayerHostingContext();
-
-    LayerHostingMode m_layerHostingMode;
-    RetainPtr<WKCAContextRef> m_context;
+    RetainPtr<CGColorSpaceRef> cgColorSpace;
 };
 
 } // namespace WebKit
 
-#endif // LayerHostingContext_h
+#endif // ColorSpaceData_h

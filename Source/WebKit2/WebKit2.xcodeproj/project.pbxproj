@@ -77,6 +77,8 @@
 		1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24B5F111F531E800C38269 /* MachUtilities.h */; };
 		1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24BED3120894D100FBB059 /* SharedMemory.h */; };
 		1A24BF3A120896A600FBB059 /* SharedMemoryMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */; };
+		1A2A4B00158693920090C9E9 /* ColorSpaceData.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A2A4AFE158693920090C9E9 /* ColorSpaceData.h */; };
+		1A2A4B0E1586A2240090C9E9 /* ColorSpaceData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2A4AFD158693920090C9E9 /* ColorSpaceData.mm */; };
 		1A2BB6D014117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2BB6CE14117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp */; };
 		1A2BB6D114117B4D000F35D4 /* PluginProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2BB6CF14117B4D000F35D4 /* PluginProcessConnectionMessages.h */; };
 		1A2D82A4127F4EAB001EB962 /* NPObjectMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA35C127A45BF0050E709 /* NPObjectMessageReceiver.cpp */; };
@@ -988,6 +990,7 @@
 			files = (
 				BCDE0ABF13272708001259FB /* PluginProcess.app in CopyFiles */,
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
+				1A2A4B00158693920090C9E9 /* ColorSpaceData.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1073,6 +1076,8 @@
 		1A24B5F111F531E800C38269 /* MachUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachUtilities.h; sourceTree = "<group>"; };
 		1A24BED3120894D100FBB059 /* SharedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedMemory.h; sourceTree = "<group>"; };
 		1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryMac.cpp; sourceTree = "<group>"; };
+		1A2A4AFD158693920090C9E9 /* ColorSpaceData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ColorSpaceData.mm; sourceTree = "<group>"; };
+		1A2A4AFE158693920090C9E9 /* ColorSpaceData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSpaceData.h; sourceTree = "<group>"; };
 		1A2BB6CC14117A5F000F35D4 /* PluginProcessConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PluginProcessConnection.messages.in; sourceTree = "<group>"; };
 		1A2BB6CE14117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A2BB6CF14117B4D000F35D4 /* PluginProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessConnectionMessages.h; sourceTree = "<group>"; };
@@ -3156,6 +3161,8 @@
 				E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */,
 				E1A31731134CEA6C007C9A4F /* AttributedString.h */,
 				E1A31734134CEA80007C9A4F /* AttributedString.mm */,
+				1A2A4AFE158693920090C9E9 /* ColorSpaceData.h */,
+				1A2A4AFD158693920090C9E9 /* ColorSpaceData.mm */,
 				1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */,
 				5112CB071385B97B0030867D /* KeychainAttribute.cpp */,
 				5112CB051385B8D90030867D /* KeychainAttribute.h */,
@@ -4931,6 +4938,7 @@
 				E19582D6153CC05400B60875 /* PDFKitImports.mm in Sources */,
 				51FA2D7415212DF100C1BA0B /* InjectedBundleDOMWindowExtension.cpp in Sources */,
 				51FA2D7715212E2600C1BA0B /* WKBundleDOMWindowExtension.cpp in Sources */,
+				1A2A4B0E1586A2240090C9E9 /* ColorSpaceData.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

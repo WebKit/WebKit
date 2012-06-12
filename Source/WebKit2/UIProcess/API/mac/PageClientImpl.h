@@ -56,6 +56,7 @@ private:
     virtual bool isViewVisible();
     virtual bool isViewInWindow();
     virtual LayerHostingMode viewLayerHostingMode() OVERRIDE;
+    virtual ColorSpaceData colorSpace() OVERRIDE;
 
     virtual void processDidCrash();
     virtual void pageClosed();

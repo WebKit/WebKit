@@ -26,6 +26,7 @@
 #import "config.h"
 #import "PageClientImpl.h"
 
+#import "ColorSpaceData.h"
 #import "DataReference.h"
 #import "DictionaryPopupInfo.h"
 #import "FindIndicator.h"
@@ -203,6 +204,11 @@ LayerHostingMode PageClientImpl::viewLayerHostingMode()
 #else
     return LayerHostingModeDefault;
 #endif
+}
+
+ColorSpaceData PageClientImpl::colorSpace()
+{
+    return [m_wkView _colorSpace];
 }
 
 void PageClientImpl::processDidCrash()

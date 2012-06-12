@@ -86,6 +86,8 @@ public:
     virtual void pageCustomRepresentationChanged() { }
     virtual void waitForPossibleGeometryUpdate() { }
 
+    virtual void colorSpaceDidChange() { }
+
 #if USE(UI_SIDE_COMPOSITING)
     virtual void updateViewport();
     virtual WebCore::IntRect viewportVisibleRect() const { return contentsRect(); }

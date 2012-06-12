@@ -28,6 +28,7 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
+#import "ColorSpaceData.h"
 #import "DrawingAreaMessages.h"
 #import "DrawingAreaProxyMessages.h"
 #import "LayerTreeContext.h"
@@ -95,6 +96,11 @@ void TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate()
     // The timeout, in seconds, we use when waiting for a DidUpdateGeometry message.
     static const double didUpdateBackingStoreStateTimeout = 0.5;
     m_webPageProxy->process()->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateGeometry>(m_webPageProxy->pageID(), didUpdateBackingStoreStateTimeout);
+}
+
+void TiledCoreAnimationDrawingAreaProxy::colorSpaceDidChange()
+{
+    m_webPageProxy->process()->send(Messages::DrawingArea::SetColorSpace(m_webPageProxy->colorSpace()), m_webPageProxy->pageID());
 }
 
 void TiledCoreAnimationDrawingAreaProxy::enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)

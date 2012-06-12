@@ -27,6 +27,7 @@
 #import "WebPageProxy.h"
 
 #import "AttributedString.h"
+#import "ColorSpaceData.h"
 #import "DataReference.h"
 #import "DictionaryPopupInfo.h"
 #import "EditorState.h"
@@ -381,7 +382,12 @@ void WebPageProxy::makeFirstResponder()
 {
     m_pageClient->makeFirstResponder();
 }
-    
+
+ColorSpaceData WebPageProxy::colorSpace()
+{
+    return m_pageClient->colorSpace();
+}
+
 void WebPageProxy::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elementToken, const CoreIPC::DataReference& windowToken)
 {
     if (!isValid())

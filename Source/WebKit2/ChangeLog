@@ -1,5 +1,91 @@
 2012-06-11  Anders Carlsson  <andersca@apple.com>
 
+        Pass the right color space over to the web process so we can set it on our CA context
+        https://bugs.webkit.org/show_bug.cgi?id=88819
+        <rdar://problem/11629050>
+
+        Reviewed by John Sullivan.
+
+        * Platform/mac/LayerHostingContext.h:
+        (LayerHostingContext):
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createForPort):
+        (WebKit::LayerHostingContext::createForWindowServer):
+        Use a single constructor and explicitly set up the parameters of the constructed object.
+
+        (WebKit::LayerHostingContext::setColorSpace):
+        (WebKit::LayerHostingContext::colorSpace):
+        Add getter and setter.
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        WebKit::ColorSpaceData is a struct.
+
+        * Shared/WebPageCreationParameters.cpp:
+        Encode and decode the color space parameter.
+
+        * Shared/WebPageCreationParameters.h:
+        Add the color space.
+
+        * Shared/mac/ColorSpaceData.h: Added.
+        * Shared/mac/ColorSpaceData.mm: Added.
+        Add a new class that represents a color space that can be sent over the wire.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::colorSpace):
+        Call through to the WKView.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _windowDidChangeBackingProperties:]):
+        Fix whitespace.
+
+        (-[WKView viewDidChangeBackingProperties]):
+        Check if our new color space is different from the current one and null the current one out if that is the case,
+        it will be reinitialized by the next call to -[WKView _colorSpace].
+        
+        (-[WKView _colorSpace:]):
+        Compute the color space. If we're not in a window we'll get the main screen's color space.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::colorSpaceDidChange):
+        Add empty stub.
+
+        * UIProcess/PageClient.h:
+        Add colorSpace getter.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        Initialize the color space.
+
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::colorSpaceDidChange):
+        Send the new color space over to the web process.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::colorSpace):
+        Call through to the page client.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add ColorSpaceData.h and ColorSpaceData.mm.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        Add SetColorSpace message.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        Set the color space from the creation parameters.
+
+        (WebKit::TiledCoreAnimationDrawingArea::setColorSpace):
+        Set the color space on the layer hosting context.
+
+        (WebKit::TiledCoreAnimationDrawingArea::updateLayerHostingContext):
+        Make sure we apply the color space from the previous layer hosting context if one exists.
+
+2012-06-11  Anders Carlsson  <andersca@apple.com>
+
         Crash when a plug-in tries to use the NPRuntime API with JavaScript disabled
         https://bugs.webkit.org/show_bug.cgi?id=88797
         <rdar://problem/11574844>
