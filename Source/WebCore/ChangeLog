@@ -1,3 +1,87 @@
+2012-06-12  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: ObjectStore/Index shouldn't hold reference to backing store
+        https://bugs.webkit.org/show_bug.cgi?id=83074
+
+        Reviewed by Tony Chang.
+
+        We should be able to collect and close the leveldb backing store as soon as the database
+        connection is closed, but the IDBObjectStoreBackendImpl and IDBIndexBackendImpl were
+        holding RefPtrs, and those objects are kept alive by script references.
+
+        Replaced RefPtrs to the IDBBackingStore with pointers to the IDBDatabase. On the back end,
+        IDBDatabaseBackendImpl maintains a RefPtr to the IDBObjectStoreBackendImpl object, so
+        a raw pointer back is safe. On the front end, the IDBObjectStore maintains a RefPtr to
+        the IDBDatabase so script can navigate upwards. Ditto on both ends for the ObjectStore/Index
+        relationship. The frontend objects maintain RefPtrs to the backend objects, so the backend
+        objects and their owners are maintained as long as there's a script reference. To ensure
+        that all LevelDB objects are destructed in the right order, transactions indirectly track all
+        open cursors and ensure they are closed when the transaction finishes, and database closing
+        is explicitly prevented from occurring until transactions are complete.
+
+        Also made IDBDatabaseBackendImpl handle a null IDBFactoryBackendImpl pointer, for testing.
+
+        Tests: storage/indexeddb/database-close.html
+               storage/indexeddb/persistence.html
+               [Chromium] webkit_unit_tests --gtest_filter=IDBDatabaseBackendTest.BackingStoreRetention
+
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::close): Release LevelDB resources when closed to allow backing store to close.
+        * Modules/indexeddb/IDBCursorBackendImpl.h:
+        (WebCore):
+        * Modules/indexeddb/IDBDatabase.cpp: Ensure connection close deferred until all transactions are finished.
+        (WebCore::IDBDatabase::transactionCreated): Accounting.
+        (WebCore::IDBDatabase::transactionFinished): Accounting.
+        (WebCore::IDBDatabase::close):
+        (WebCore):
+        (WebCore::IDBDatabase::closeConnection):
+        * Modules/indexeddb/IDBDatabase.h:
+        (IDBDatabase):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp: Track outstanding transactions for forced-close scenarios.
+        (WebCore::IDBDatabaseBackendImpl::~IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore): Don't pass in backing store reference.
+        (WebCore::IDBDatabaseBackendImpl::setVersion): Use transaction() for consistent accounting.
+        (WebCore::IDBDatabaseBackendImpl::transactionFinished): Accounting.
+        (WebCore::IDBDatabaseBackendImpl::transaction): Accounting.
+        (WebCore::IDBDatabaseBackendImpl::close): Unregister from factory when last connection is closed.
+        (WebCore::IDBDatabaseBackendImpl::loadObjectStores): Don't pass in backing store reference.
+        (WebCore::IDBDatabaseBackendImpl::removeObjectStoreFromMap):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (WebCore):
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::deleteDatabase): Don't hang on to deleted databases eternally.
+        * Modules/indexeddb/IDBFactoryBackendImpl.h: Backend map controls IDBDatabaseBackend lifetimes.
+        (IDBFactoryBackendImpl):
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp: Don't hold backing store references.
+        (WebCore::IDBIndexBackendImpl::IDBIndexBackendImpl):
+        * Modules/indexeddb/IDBIndexBackendImpl.h:
+        (WebCore::IDBIndexBackendImpl::create):
+        (IDBIndexBackendImpl):
+        (WebCore::IDBIndexBackendImpl::backingStore):
+        (WebCore::IDBIndexBackendImpl::databaseId):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp: Don't hold backing store references.
+        (WebCore::IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::loadIndexes):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h:
+        (WebCore::IDBObjectStoreBackendImpl::create):
+        (IDBObjectStoreBackendImpl):
+        (WebCore::IDBObjectStoreBackendImpl::backingStore):
+        (WebCore::IDBObjectStoreBackendImpl::databaseId):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction): For IDBDatabase accounting, allow ref during ctor.
+        (WebCore::IDBTransaction::onAbort): Accounting.
+        (WebCore::IDBTransaction::onComplete): Accounting.
+        * Modules/indexeddb/IDBTransaction.h:
+        (WebCore::IDBTransaction::isVersionChange): Convenience function.
+        (IDBTransaction):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::abort): Cleanup ordering to allow backing store to close.
+        (WebCore::IDBTransactionBackendImpl::commit): Cleanup ordering to allow backing store to close.
+
 2012-06-12  Adrienne Walker  <enne@google.com>
 
         [chromium] Don't set visible layer rect in CCLayerTreeHost paint iteration

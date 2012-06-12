@@ -41,6 +41,7 @@ class IDBBackingStore;
 class IDBDatabase;
 class IDBFactoryBackendImpl;
 class IDBObjectStoreBackendImpl;
+class IDBTransactionBackendInterface;
 class IDBTransactionCoordinator;
 
 class IDBDatabaseBackendImpl : public IDBDatabaseBackendInterface {
@@ -102,6 +103,9 @@ private:
 
     RefPtr<IDBTransactionCoordinator> m_transactionCoordinator;
     RefPtr<IDBTransactionBackendInterface> m_runningVersionChangeTransaction;
+
+    typedef HashSet<IDBTransactionBackendInterface*> TransactionSet;
+    TransactionSet m_transactions;
 
     class PendingSetVersionCall;
     Deque<RefPtr<PendingSetVersionCall> > m_pendingSetVersionCalls;

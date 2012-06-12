@@ -68,7 +68,7 @@ protected:
 private:
     void openInternal(const String& name, IDBCallbacks*, PassRefPtr<SecurityOrigin>, const String& dataDir);
 
-    typedef HashMap<String, IDBDatabaseBackendImpl*> IDBDatabaseBackendMap;
+    typedef HashMap<String, RefPtr<IDBDatabaseBackendImpl> > IDBDatabaseBackendMap;
     IDBDatabaseBackendMap m_databaseBackendMap;
 
     typedef HashMap<String, IDBBackingStore*> IDBBackingStoreMap;

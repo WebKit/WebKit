@@ -1,3 +1,34 @@
+2012-06-12  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: ObjectStore/Index shouldn't hold reference to backing store
+        https://bugs.webkit.org/show_bug.cgi?id=83074
+
+        Reviewed by Tony Chang.
+
+        The storage/indexeddb/persistence.html test verifies http://webkit.org/b/88788 which
+        was revealed by this patch set. The storage/indexeddb/database-close.html test verifies
+        the precise database connection closing semantics defined in the IDB spec.
+
+        * storage/indexeddb/database-close-expected.txt: Added.
+        * storage/indexeddb/database-close.html: Added.
+        * storage/indexeddb/persistence-expected.txt: Added.
+        * storage/indexeddb/persistence.html: Added.
+        * storage/indexeddb/resources/database-close.js: Added.
+        (test):
+        (openConnection.request.onsuccess.request.onsuccess):
+        (openConnection.request.onsuccess):
+        (openConnection):
+        (openVersionChangeConnection.request2.onsuccess):
+        (openVersionChangeConnection):
+        (testClose.transactionCompleted):
+        (testClose.request.onsuccess):
+        (testClose):
+        * storage/indexeddb/resources/persistence.js: Added.
+        (test):
+        (openAndChangeVersion.request.onsuccess.request.onsuccess.trans.oncomplete):
+        (openAndChangeVersion.request.onsuccess.request.onsuccess):
+        (openAndChangeVersion.request.onsuccess):
+
 2012-06-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviwed nightly gardening.

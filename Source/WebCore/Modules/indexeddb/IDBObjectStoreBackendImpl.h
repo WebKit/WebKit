@@ -26,6 +26,7 @@
 #ifndef IDBObjectStoreBackendImpl_h
 #define IDBObjectStoreBackendImpl_h
 
+#include "IDBDatabaseBackendImpl.h"
 #include "IDBKeyPath.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include <wtf/HashMap.h>
@@ -35,7 +36,6 @@
 
 namespace WebCore {
 
-class IDBBackingStore;
 class IDBDatabaseBackendImpl;
 class IDBIndexBackendImpl;
 class IDBTransactionBackendInterface;
@@ -43,13 +43,13 @@ class ScriptExecutionContext;
 
 class IDBObjectStoreBackendImpl : public IDBObjectStoreBackendInterface {
 public:
-    static PassRefPtr<IDBObjectStoreBackendImpl> create(IDBBackingStore* backingStore, int64_t databaseId, int64_t id, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
+    static PassRefPtr<IDBObjectStoreBackendImpl> create(const IDBDatabaseBackendImpl* database, int64_t id, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
     {
-        return adoptRef(new IDBObjectStoreBackendImpl(backingStore, databaseId, id, name, keyPath, autoIncrement));
+        return adoptRef(new IDBObjectStoreBackendImpl(database, id, name, keyPath, autoIncrement));
     }
-    static PassRefPtr<IDBObjectStoreBackendImpl> create(IDBBackingStore* backingStore, int64_t databaseId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
+    static PassRefPtr<IDBObjectStoreBackendImpl> create(const IDBDatabaseBackendImpl* database, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
     {
-        return adoptRef(new IDBObjectStoreBackendImpl(backingStore, databaseId, name, keyPath, autoIncrement));
+        return adoptRef(new IDBObjectStoreBackendImpl(database, name, keyPath, autoIncrement));
     }
     virtual ~IDBObjectStoreBackendImpl();
 
@@ -82,8 +82,8 @@ public:
     static bool populateIndex(IDBBackingStore&, int64_t databaseId, int64_t objectStoreId, PassRefPtr<IDBIndexBackendImpl>);
 
 private:
-    IDBObjectStoreBackendImpl(IDBBackingStore*, int64_t databaseId, int64_t id, const String& name, const IDBKeyPath&, bool autoIncrement);
-    IDBObjectStoreBackendImpl(IDBBackingStore*, int64_t databaseId, const String& name, const IDBKeyPath&, bool autoIncrement);
+    IDBObjectStoreBackendImpl(const IDBDatabaseBackendImpl*, int64_t databaseId, const String& name, const IDBKeyPath&, bool autoIncrement);
+    IDBObjectStoreBackendImpl(const IDBDatabaseBackendImpl*, const String& name, const IDBKeyPath&, bool autoIncrement);
 
     void loadIndexes();
     PassRefPtr<IDBKey> genAutoIncrementKey();
@@ -103,12 +103,10 @@ private:
     static void addIndexToMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>);
     static void revertAutoIncrementKeyCache(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>);
 
-    PassRefPtr<IDBBackingStore> backingStore() const { return m_backingStore; }
-    int64_t databaseId() const { return m_databaseId; }
+    PassRefPtr<IDBBackingStore> backingStore() const { return m_database->backingStore(); }
+    int64_t databaseId() const { return m_database->id(); }
 
-    RefPtr<IDBBackingStore> m_backingStore;
-
-    int64_t m_databaseId;
+    const IDBDatabaseBackendImpl* m_database;
     int64_t m_id;
     String m_name;
     IDBKeyPath m_keyPath;

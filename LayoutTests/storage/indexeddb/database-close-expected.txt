@@ -1,0 +1,69 @@
+Test IndexedDB 'steps for closing a database connection'
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = self.location.pathname
+indexedDB.deleteDatabase(dbname)
+
+openConnection():
+request = indexedDB.open(dbname)
+connection = request.result
+request = connection.setVersion('1')
+store = connection.createObjectStore('store')
+store.put('value1', 'key1')
+store.put('value2', 'key2')
+
+openVersionChangeConnection():
+request = indexedDB.open(dbname)
+version_change_connection = request.result
+
+testClose():
+Create transactions using connection:
+trans1 = connection.transaction('store')
+trans2 = connection.transaction('store')
+
+Close the connection:
+connection.close()
+Step 1: Set the internal closePending flag of connection to true. [Verified via side effects, below.]
+
+Step 2: Wait for all transactions created using connection to complete. Once they are complete, connection is closed.
+awaiting_transaction_count = 2
+trans1.objectStore('store').get('key1')
+trans2.objectStore('store').get('key2')
+
+NOTE: Once the closePending flag has been set to true no new transactions can be created using connection. All functions that create transactions first check the closePending flag first and throw an exception if it is true.
+
+Expecting exception from trans3 = connection.transaction('store')
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+
+NOTE: Once the connection is closed, this can unblock the steps for running a "versionchange" transaction, and the steps for deleting a database, which both wait for connections to a given database to be closed before continuing.
+
+version_change_connection.setVersion('2')
+indexedDB.deleteDatabase(dbname)
+
+transaction #1 request successful
+PASS event.target.result is "value1"
+awaiting_transaction_count -= 1
+
+transaction #2 request successful
+PASS event.target.result is "value2"
+awaiting_transaction_count -= 1
+
+All transactions completed - version changes / database deletes should now be unblocked.
+
+version change transaction unblocked
+PASS awaiting_transaction_count is 0
+PASS version_change_connection.version is "2"
+version_change_connection.close()
+
+delete database unblocked
+PASS awaiting_transaction_count is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -250,6 +250,8 @@ void IDBCursorBackendImpl::close()
     m_closed = true;
     if (m_cursor)
         m_cursor->close();
+    m_cursor.clear();
+    m_savedCursor.clear();
 }
 
 } // namespace WebCore

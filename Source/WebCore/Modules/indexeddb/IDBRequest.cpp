@@ -287,8 +287,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBTransactionBackendInterface> prpBackend
     m_transaction = frontend;
 
     ASSERT(m_source->type() == IDBAny::IDBDatabaseType);
-    ASSERT(m_transaction->mode() == IDBTransaction::modeVersionChange());
-    m_source->idbDatabase()->setVersionChangeTransaction(frontend.get());
+    ASSERT(m_transaction->isVersionChange());
 
     IDBPendingTransactionMonitor::removePendingTransaction(m_transaction->backend());
 

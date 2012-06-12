@@ -42,7 +42,6 @@ class IDBDatabaseBackendImpl;
 class IDBIndexBackendImpl;
 class IDBKeyRange;
 class IDBObjectStoreBackendInterface;
-class IDBBackingStore;
 class IDBTransactionBackendInterface;
 class SerializedScriptValue;
 

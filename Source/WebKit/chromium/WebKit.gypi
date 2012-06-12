@@ -113,6 +113,7 @@
             'tests/GraphicsLayerChromiumTest.cpp',
             'tests/IDBAbortOnCorruptTest.cpp',
             'tests/IDBBindingUtilitiesTest.cpp',
+            'tests/IDBDatabaseBackendTest.cpp',
             'tests/IDBFakeBackingStore.h',
             'tests/IDBKeyPathTest.cpp',
             'tests/IDBLevelDBCodingTest.cpp',

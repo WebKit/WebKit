@@ -120,7 +120,6 @@ void IDBTransactionBackendImpl::abort()
     m_taskTimer.stop();
     m_taskEventTimer.stop();
 
-    closeOpenCursors();
     if (wasRunning)
         m_transaction->rollback();
 
@@ -131,11 +130,21 @@ void IDBTransactionBackendImpl::abort()
         task->performTask(0);
     }
 
-    if (m_callbacks)
-        m_callbacks->onAbort();
+    // Backing store resources (held via cursors) must be released before script callbacks
+    // are fired, as the script callbacks may release references and allow the backing store
+    // itself to be released, and order is critical.
+    closeOpenCursors();
+    m_transaction = 0;
+
+    // Transactions must also be marked as completed before the front-end is notified, as
+    // the transaction completion unblocks operations like closing connections.
     m_database->transactionCoordinator()->didFinishTransaction(this);
     ASSERT(!m_database->transactionCoordinator()->isActive(this));
     m_database->transactionFinished(this);
+
+    if (m_callbacks)
+        m_callbacks->onAbort();
+
     m_database = 0;
 }
 
@@ -196,13 +205,25 @@ void IDBTransactionBackendImpl::commit()
     ASSERT(m_taskQueue.isEmpty());
 
     m_state = Finished;
+
+    bool committed = m_transaction->commit();
+
+    // Backing store resources (held via cursors) must be released before script callbacks
+    // are fired, as the script callbacks may release references and allow the backing store
+    // itself to be released, and order is critical.
     closeOpenCursors();
-    if (m_transaction->commit())
+    m_transaction = 0;
+
+    // Transactions must also be marked as completed before the front-end is notified, as
+    // the transaction completion unblocks operations like closing connections.
+    m_database->transactionCoordinator()->didFinishTransaction(this);
+    m_database->transactionFinished(this);
+
+    if (committed)
         m_callbacks->onComplete();
     else
         m_callbacks->onAbort();
-    m_database->transactionCoordinator()->didFinishTransaction(this);
-    m_database->transactionFinished(this);
+
     m_database = 0;
 }
 

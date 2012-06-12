@@ -41,9 +41,8 @@
 
 namespace WebCore {
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, IDBObjectStoreBackendImpl* objectStoreBackend, int64_t id, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
-    : m_backingStore(backingStore)
-    , m_databaseId(databaseId)
+IDBIndexBackendImpl::IDBIndexBackendImpl(const IDBDatabaseBackendImpl* database, IDBObjectStoreBackendImpl* objectStoreBackend, int64_t id, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
+    : m_database(database)
     , m_objectStoreBackend(objectStoreBackend)
     , m_id(id)
     , m_name(name)
@@ -53,9 +52,8 @@ IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t 
 {
 }
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
-    : m_backingStore(backingStore)
-    , m_databaseId(databaseId)
+IDBIndexBackendImpl::IDBIndexBackendImpl(const IDBDatabaseBackendImpl* database, IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
+    : m_database(database)
     , m_objectStoreBackend(objectStoreBackend)
     , m_id(InvalidId)
     , m_name(name)

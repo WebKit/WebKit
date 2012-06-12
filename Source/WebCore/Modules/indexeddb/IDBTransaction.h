@@ -68,7 +68,9 @@ public:
 
     IDBTransactionBackendInterface* backend() const;
     bool isFinished() const;
+    bool isVersionChange() const { return m_mode == VERSION_CHANGE; }
 
+    // Implement the IDBTransaction IDL
     const String& mode() const;
     bool isReadOnly() const { return m_mode == READ_ONLY; }
     IDBDatabase* db() const;

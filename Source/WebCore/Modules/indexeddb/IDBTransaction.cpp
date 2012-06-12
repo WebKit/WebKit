@@ -89,6 +89,9 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTr
 {
     ASSERT(m_backend);
     IDBPendingTransactionMonitor::addPendingTransaction(m_backend.get());
+    // We pass a reference of this object before it can be adopted.
+    relaxAdoptionRequirement();
+    m_database->transactionCreated(this);
 }
 
 IDBTransaction::~IDBTransaction()
@@ -230,9 +233,8 @@ void IDBTransaction::onAbort()
         request->abort();
     }
 
-    if (m_mode == IDBTransaction::VERSION_CHANGE)
-        m_database->clearVersionChangeTransaction(this);
     closeOpenCursors();
+    m_database->transactionFinished(this);
 
     if (m_contextStopped || !scriptExecutionContext())
         return;
@@ -243,9 +245,8 @@ void IDBTransaction::onAbort()
 void IDBTransaction::onComplete()
 {
     ASSERT(!m_transactionFinished);
-    if (m_mode == IDBTransaction::VERSION_CHANGE)
-        m_database->clearVersionChangeTransaction(this);
     closeOpenCursors();
+    m_database->transactionFinished(this);
 
     if (m_contextStopped || !scriptExecutionContext())
         return;

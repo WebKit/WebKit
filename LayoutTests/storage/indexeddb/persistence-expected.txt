@@ -1,0 +1,78 @@
+Test IndexedDB persistence
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = self.location.pathname
+
+request = indexedDB.open('dbname')
+db = request.result
+PASS db is non-null.
+db.setVersion("1")
+PASS db.version is "1"
+PASS db.name is "dbname"
+PASS db.objectStoreNames.length is 0
+db.createObjectStore('store1')
+PASS db.objectStoreNames.length is 1
+db.close()
+
+request = indexedDB.open('dbname')
+db = request.result
+PASS db is non-null.
+db.setVersion("2")
+PASS db.version is "2"
+PASS db.name is "dbname"
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('store1') is true
+db.createObjectStore('store2')
+PASS db.objectStoreNames.length is 2
+PASS db.objectStoreNames.contains('store1') is true
+PASS db.objectStoreNames.contains('store2') is true
+db.close()
+
+request = indexedDB.open('dbname')
+db = request.result
+PASS db is non-null.
+db.setVersion("3")
+PASS db.version is "3"
+PASS db.name is "dbname"
+PASS db.objectStoreNames.length is 2
+PASS db.objectStoreNames.contains('store1') is true
+PASS db.objectStoreNames.contains('store2') is true
+db.deleteObjectStore('store1')
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('store1') is false
+PASS db.objectStoreNames.contains('store2') is true
+db.close()
+
+request = indexedDB.open('dbname')
+db = request.result
+PASS db is non-null.
+db.setVersion("4")
+PASS db.version is "4"
+PASS db.name is "dbname"
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('store1') is false
+PASS db.objectStoreNames.contains('store2') is true
+db.deleteObjectStore('store2')
+PASS db.objectStoreNames.length is 0
+PASS db.objectStoreNames.contains('store1') is false
+PASS db.objectStoreNames.contains('store2') is false
+db.close()
+
+request = indexedDB.open('dbname')
+db = request.result
+PASS db is non-null.
+db.setVersion("5")
+PASS db.version is "5"
+PASS db.name is "dbname"
+PASS db.objectStoreNames.length is 0
+PASS db.objectStoreNames.contains('store1') is false
+PASS db.objectStoreNames.contains('store2') is false
+db.close()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -73,16 +73,31 @@ IDBDatabase::~IDBDatabase()
     m_databaseCallbacks->unregisterDatabase(this);
 }
 
-void IDBDatabase::setVersionChangeTransaction(IDBTransaction* transaction)
+void IDBDatabase::transactionCreated(IDBTransaction* transaction)
 {
-    ASSERT(!m_versionChangeTransaction);
-    m_versionChangeTransaction = transaction;
+    ASSERT(transaction);
+    ASSERT(!m_transactions.contains(transaction));
+    m_transactions.add(transaction);
+
+    if (transaction->isVersionChange()) {
+        ASSERT(!m_versionChangeTransaction);
+        m_versionChangeTransaction = transaction;
+    }
 }
 
-void IDBDatabase::clearVersionChangeTransaction(IDBTransaction* transaction)
+void IDBDatabase::transactionFinished(IDBTransaction* transaction)
 {
-    ASSERT_UNUSED(transaction, m_versionChangeTransaction == transaction);
-    m_versionChangeTransaction = 0;
+    ASSERT(transaction);
+    ASSERT(m_transactions.contains(transaction));
+    m_transactions.remove(transaction);
+
+    if (transaction->isVersionChange()) {
+        ASSERT(m_versionChangeTransaction == transaction);
+        m_versionChangeTransaction = 0;
+    }
+
+    if (m_closePending && m_transactions.isEmpty())
+        closeConnection();
 }
 
 PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const Dictionary& options, ExceptionCode& ec)
@@ -206,13 +221,22 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
     return transaction(context, prpStoreNames, modeString, ec);
 }
 
-
 void IDBDatabase::close()
 {
     if (m_closePending)
         return;
 
     m_closePending = true;
+
+    if (m_transactions.isEmpty())
+        closeConnection();
+}
+
+void IDBDatabase::closeConnection()
+{
+    ASSERT(m_closePending);
+    ASSERT(m_transactions.isEmpty());
+
     m_backend->close(m_databaseCallbacks);
 
     if (m_contextStopped || !scriptExecutionContext())

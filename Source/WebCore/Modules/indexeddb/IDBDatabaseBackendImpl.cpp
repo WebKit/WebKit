@@ -126,7 +126,6 @@ bool IDBDatabaseBackendImpl::openInternal()
 
 IDBDatabaseBackendImpl::~IDBDatabaseBackendImpl()
 {
-    m_factory->removeIDBDatabaseBackend(m_identifier);
 }
 
 PassRefPtr<IDBBackingStore> IDBDatabaseBackendImpl::backingStore() const
@@ -151,7 +150,7 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectS
         return 0;
     }
 
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(m_backingStore.get(), m_id, name, keyPath, autoIncrement);
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(this, name, keyPath, autoIncrement);
     ASSERT(objectStore->name() == name);
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
@@ -236,8 +235,10 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
     }
 
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
+    RefPtr<IDBTransactionBackendInterface> transaction = this->transaction(objectStoreNames.get(), IDBTransaction::VERSION_CHANGE, ec);
+    ASSERT(!ec);
+
     RefPtr<IDBDatabaseBackendImpl> database = this;
-    RefPtr<IDBTransactionBackendInterface> transaction = IDBTransactionBackendImpl::create(objectStoreNames.get(), IDBTransaction::VERSION_CHANGE, this);
     if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::setVersionInternal, database, version, callbacks, transaction),
                                    createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version))) {
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
@@ -268,6 +269,8 @@ void IDBDatabaseBackendImpl::transactionStarted(PassRefPtr<IDBTransactionBackend
 void IDBDatabaseBackendImpl::transactionFinished(PassRefPtr<IDBTransactionBackendInterface> prpTransaction)
 {
     RefPtr<IDBTransactionBackendInterface> transaction = prpTransaction;
+    ASSERT(m_transactions.contains(transaction.get()));
+    m_transactions.remove(transaction.get());
     if (transaction->mode() == IDBTransaction::VERSION_CHANGE) {
         ASSERT(transaction.get() == m_runningVersionChangeTransaction.get());
         m_runningVersionChangeTransaction.clear();
@@ -316,8 +319,9 @@ PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(D
         }
     }
 
-    // FIXME: Return not allowed err if close has been called.
-    return IDBTransactionBackendImpl::create(objectStoreNames, mode, this);
+    RefPtr<IDBTransactionBackendInterface> transaction = IDBTransactionBackendImpl::create(objectStoreNames, mode, this);
+    m_transactions.add(transaction.get());
+    return transaction.release();
 }
 
 void IDBDatabaseBackendImpl::registerFrontendCallbacks(PassRefPtr<IDBDatabaseCallbacks> callbacks)
@@ -376,6 +380,18 @@ void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks
         return;
 
     processPendingCalls();
+
+    if (!m_databaseCallbacksSet.size()) {
+        TransactionSet transactions(m_transactions);
+        for (TransactionSet::const_iterator it = transactions.begin(); it != transactions.end(); ++it)
+            (*it)->abort();
+        ASSERT(m_transactions.isEmpty());
+
+        m_backingStore.clear();
+        // This check should only be false in tests.
+        if (m_factory)
+            m_factory->removeIDBDatabaseBackend(m_identifier);
+    }
 }
 
 void IDBDatabaseBackendImpl::loadObjectStores()
@@ -391,11 +407,12 @@ void IDBDatabaseBackendImpl::loadObjectStores()
     ASSERT(autoIncrementFlags.size() == ids.size());
 
     for (size_t i = 0; i < ids.size(); i++)
-        m_objectStores.set(names[i], IDBObjectStoreBackendImpl::create(m_backingStore.get(), m_id, ids[i], names[i], keyPaths[i], autoIncrementFlags[i]));
+        m_objectStores.set(names[i], IDBObjectStoreBackendImpl::create(this, ids[i], names[i], keyPaths[i], autoIncrementFlags[i]));
 }
 
-void IDBDatabaseBackendImpl::removeObjectStoreFromMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore)
+void IDBDatabaseBackendImpl::removeObjectStoreFromMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> prpObjectStore)
 {
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = prpObjectStore;
     ASSERT(database->m_objectStores.contains(objectStore->name()));
     database->m_objectStores.remove(objectStore->name());
 }
