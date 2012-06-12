@@ -1,3 +1,12 @@
+2012-06-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE][WK2] Make WebProcess target name more clear.
+        https://bugs.webkit.org/show_bug.cgi?id=88767
+
+        Reviewed by Ryosuke Niwa.
+
+        * CMakeLists.txt: Change WebProcess_NAME to WebProcess_EXECUTABLE_NAME.
+
 2012-06-11  Alexis Menard  <alexis.menard@openbossa.org>
 
         [CSS3 Backgrounds and Borders] Protect box-decoration-break behind a feature flag.
