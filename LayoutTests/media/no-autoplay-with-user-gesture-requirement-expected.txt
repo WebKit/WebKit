@@ -1,0 +1,7 @@
+Test that media autoplay should not work if user gesture is required for playback.
+
+EXPECTED (video.paused == 'true') OK
+EVENT(canplaythrough)
+EXPECTED (video.paused == 'true') OK
+END OF TEST
+

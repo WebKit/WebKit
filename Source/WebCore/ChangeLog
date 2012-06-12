@@ -1,3 +1,17 @@
+2012-06-12  Min Qin  <qinmin@google.com>
+
+        Disable autoplay when user gesture is required for media playback
+        https://bugs.webkit.org/show_bug.cgi?id=88897
+
+        Reviewed by Adam Barth.
+
+        When user gesture is required for media playback, we should block autoplay.
+        Otherwise, people will use autoplay instead of video.play() to bypass the gesture requirement.
+        Test: media/no-autoplay-with-user-gesture-requirement.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState):
+
 2012-06-12  Shrey Banga  <banga@chromium.org>
 
         HTML parser should yield more to improve perceived page load time
