@@ -116,7 +116,7 @@ void WebPageCompositorPrivate::render(const IntRect& targetRect, const IntRect& 
     // For thread safety, we have to do it using a round-trip to the WebKit thread, so the
     // embedder might call this before the round-trip to WebPagePrivate::setCompositor() is
     // done.
-    if (m_webPage->compositor() != this)
+    if (!m_webPage || m_webPage->compositor() != this)
         return;
 
     m_layerRenderer->setClearSurfaceOnDrawLayers(false);

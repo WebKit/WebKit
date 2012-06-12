@@ -1,3 +1,18 @@
+2012-06-12  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Crash when rendering web page that's being destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=88915
+
+        Reviewed by Rob Buis.
+
+        PR #164943
+
+        This was a null pointer dereference that happened when the compositor
+        was asked to render after being disconnected from its web page.
+
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::render):
+
 2012-06-12  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Scale was incorrect when reloading a simple web page after initial load
