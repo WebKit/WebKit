@@ -1,5 +1,19 @@
 2012-06-12  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Set contentBounds() on impl layers in CCLayerTreeHostCommonTests
+        https://bugs.webkit.org/show_bug.cgi?id=88903
+
+        Reviewed by Adrienne Walker.
+
+        Without setting the contentBounds() on impl layers, the visibleLayerRect
+        will be wrong. This is not the case for main-thread layers, which most
+        of the tests in this file use. But this is a potential serious confusion
+        for future test implementors so I'd like to make it explicit now.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+
+2012-06-12  Dana Jansens  <danakj@chromium.org>
+
         [chromium] Return empty visibleLayerRect for layers with empty content bounds
         https://bugs.webkit.org/show_bug.cgi?id=88901
 

@@ -67,6 +67,7 @@ void setLayerPropertiesForTesting(LayerChromium* layer, const WebTransformationM
 void setLayerPropertiesForTesting(CCLayerImpl* layer, const WebTransformationMatrix& transform, const WebTransformationMatrix& sublayerTransform, const FloatPoint& anchor, const FloatPoint& position, const IntSize& bounds, bool preserves3D)
 {
     setLayerPropertiesForTesting<CCLayerImpl>(layer, transform, sublayerTransform, anchor, position, bounds, preserves3D);
+    layer->setContentBounds(bounds);
 }
 
 void executeCalculateDrawTransformsAndVisibility(LayerChromium* rootLayer)
