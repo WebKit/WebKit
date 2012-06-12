@@ -1,3 +1,26 @@
+2012-06-11  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Use TextureDrawQuad for video layer output when it produces a single GL texture
+        https://bugs.webkit.org/show_bug.cgi?id=88814
+
+        Reviewed by Adrienne Walker.
+
+        When a CCVideLayerImpl produces quads for a frame that is contained
+        in a single GL texture, then use the TextureDrawQuad instead of the
+        VideoDrawQuad. Moves the computation for the RGBA(software) and
+        NativeTexture (hardware) cases from LayerRendererChromium into
+        CCVideoLayerImpl, so it can embed these values in the TextureDrawQuad.
+
+        No new tests, behaviour should be the same.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawStreamTexture):
+        (WebCore::LayerRendererChromium::drawVideoQuad):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::appendQuads):
+
 2012-06-12  Silvia Pfeiffer  <silviapf@chromium.org>
 
         Change the volume slider to horizontal rendering for Chrome video controls.

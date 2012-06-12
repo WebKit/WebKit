@@ -137,10 +137,7 @@ private:
 
     void copyPlaneToTexture(const CCVideoDrawQuad*, const void* plane, int index);
     bool copyFrameToTextures(const CCVideoDrawQuad*);
-    template<class Program> void drawSingleTextureVideoQuad(const CCVideoDrawQuad*, Program*, float widthScaleFactor, Platform3DObject textureId, GC3Denum target);
-    void drawNativeTexture2D(const CCVideoDrawQuad*);
     void drawStreamTexture(const CCVideoDrawQuad*);
-    void drawRGBA(const CCVideoDrawQuad*);
     void drawYUV(const CCVideoDrawQuad*);
 
     void setDrawFramebufferRect(const IntRect&, bool flipY);

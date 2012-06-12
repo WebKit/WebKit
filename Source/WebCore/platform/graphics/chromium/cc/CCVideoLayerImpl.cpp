@@ -39,6 +39,7 @@
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCProxy.h"
 #include "cc/CCQuadCuller.h"
+#include "cc/CCTextureDrawQuad.h"
 #include "cc/CCVideoDrawQuad.h"
 #include <public/WebVideoFrame.h>
 #include <wtf/text/WTFString.h>
@@ -183,12 +184,44 @@ void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
     IntRect quadRect(IntPoint(), bounds());
     WebKit::WebTransformationMatrix matrix;
 
-    if (m_format == Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES)
+    switch (m_format) {
+    case GraphicsContext3D::LUMINANCE: {
+        // YUV software decoder.
+        OwnPtr<CCVideoDrawQuad> videoQuad = CCVideoDrawQuad::create(sharedQuadState, quadRect, m_framePlanes, 0, m_format, matrix);
+        quadList.append(videoQuad.release());
+        break;
+    }
+    case GraphicsContext3D::RGBA: {
+        // RGBA software decoder.
+        const FramePlane& plane = m_framePlanes[WebKit::WebVideoFrame::rgbPlane];
+        float widthScaleFactor = static_cast<float>(plane.visibleSize.width()) / plane.size.width();
+
+        bool premultipliedAlpha = true;
+        FloatRect uvRect(0, 0, widthScaleFactor, 1);
+        bool flipped = false;
+        OwnPtr<CCTextureDrawQuad> textureQuad = CCTextureDrawQuad::create(sharedQuadState, quadRect, plane.textureId, premultipliedAlpha, uvRect, flipped);
+        quadList.append(textureQuad.release());
+        break;
+    }
+    case GraphicsContext3D::TEXTURE_2D: {
+        // NativeTexture hardware decoder.
+        bool premultipliedAlpha = true;
+        FloatRect uvRect(0, 0, 1, 1);
+        bool flipped = false;
+        OwnPtr<CCTextureDrawQuad> textureQuad = CCTextureDrawQuad::create(sharedQuadState, quadRect, m_frame->textureId(), premultipliedAlpha, uvRect, flipped);
+        quadList.append(textureQuad.release());
+        break;
+    }
+    case Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES: {
+        // StreamTexture hardware decoder.
         matrix = m_streamTextureMatrix;
-
-    OwnPtr<CCVideoDrawQuad> videoQuad = CCVideoDrawQuad::create(sharedQuadState, quadRect, m_framePlanes, m_frame->textureId(), m_format, matrix);
-
-    quadList.append(videoQuad.release());
+        OwnPtr<CCVideoDrawQuad> videoQuad = CCVideoDrawQuad::create(sharedQuadState, quadRect, m_framePlanes, m_frame->textureId(), m_format, matrix);
+        quadList.append(videoQuad.release());
+        break;
+    }
+    default:
+        CRASH(); // Someone updated convertVFCFormatToGC3DFormat above but update this!
+    }
 }
 
 void CCVideoLayerImpl::didDraw()

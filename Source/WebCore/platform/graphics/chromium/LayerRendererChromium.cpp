@@ -1038,38 +1038,6 @@ void LayerRendererChromium::drawYUV(const CCVideoDrawQuad* quad)
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
 }
 
-template<class Program>
-void LayerRendererChromium::drawSingleTextureVideoQuad(const CCVideoDrawQuad* quad, Program* program, float widthScaleFactor, Platform3DObject textureId, GC3Denum target)
-{
-    ASSERT(program && program->initialized());
-
-    GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
-    GLC(context(), context()->bindTexture(target, textureId));
-
-    GLC(context(), context()->useProgram(program->program()));
-    GLC(context(), context()->uniform4f(program->vertexShader().texTransformLocation(), 0, 0, widthScaleFactor, 1));
-    GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
-
-    const IntSize& bounds = quad->quadRect().size();
-    drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), sharedGeometryQuad(),
-                                    program->vertexShader().matrixLocation(),
-                                    program->fragmentShader().alphaLocation(),
-                                    -1);
-}
-
-void LayerRendererChromium::drawRGBA(const CCVideoDrawQuad* quad)
-{
-    const TextureProgram* program = textureProgram();
-    const CCVideoLayerImpl::FramePlane& plane = quad->planes()[WebKit::WebVideoFrame::rgbPlane];
-    float widthScaleFactor = static_cast<float>(plane.visibleSize.width()) / plane.size.width();
-    drawSingleTextureVideoQuad(quad, program, widthScaleFactor, plane.textureId, GraphicsContext3D::TEXTURE_2D);
-}
-
-void LayerRendererChromium::drawNativeTexture2D(const CCVideoDrawQuad* quad)
-{
-    drawSingleTextureVideoQuad(quad, textureProgram(), 1, quad->frameProviderTextureId(), GraphicsContext3D::TEXTURE_2D);
-}
-
 void LayerRendererChromium::drawStreamTexture(const CCVideoDrawQuad* quad)
 {
     static float glMatrix[16];
@@ -1082,7 +1050,17 @@ void LayerRendererChromium::drawStreamTexture(const CCVideoDrawQuad* quad)
     toGLMatrix(&glMatrix[0], quad->matrix());
     GLC(context(), context()->uniformMatrix4fv(program->vertexShader().texMatrixLocation(), 1, false, glMatrix));
 
-    drawSingleTextureVideoQuad(quad, program, 1, quad->frameProviderTextureId(), Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES);
+    GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
+    GLC(context(), context()->bindTexture(Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES, quad->frameProviderTextureId()));
+
+    GLC(context(), context()->uniform4f(program->vertexShader().texTransformLocation(), 0, 0, 1, 1));
+    GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
+
+    const IntSize& bounds = quad->quadRect().size();
+    drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), sharedGeometryQuad(),
+                     program->vertexShader().matrixLocation(),
+                     program->fragmentShader().alphaLocation(),
+                     -1);
 }
 
 void LayerRendererChromium::drawVideoQuad(const CCVideoDrawQuad* quad)
@@ -1092,12 +1070,6 @@ void LayerRendererChromium::drawVideoQuad(const CCVideoDrawQuad* quad)
     switch (quad->format()) {
     case GraphicsContext3D::LUMINANCE:
         drawYUV(quad);
-        break;
-    case GraphicsContext3D::RGBA:
-        drawRGBA(quad);
-        break;
-    case GraphicsContext3D::TEXTURE_2D:
-        drawNativeTexture2D(quad);
         break;
     case Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES:
         drawStreamTexture(quad);
