@@ -1,3 +1,9 @@
+2012-06-11  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed: Update test expectations with bugs for media test timeouts
+
+        * platform/chromium/TestExpectations:
+
 2012-06-11  Jin Yang  <jin.a.yang@intel.com>
 
         GeneratorGeneratedImage should cache images for the non-tiled case
