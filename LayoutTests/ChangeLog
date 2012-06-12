@@ -2,6 +2,12 @@
 
         [Qt] Unreviwed nightly gardening.
 
+        * platform/qt/Skipped:
+
+2012-06-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviwed nightly gardening.
+
         * platform/qt/Skipped: Remove rolled out tests.
         * platform/qt/fast/multicol/span/clone-flexbox-expected.txt: Updated after r120100.
 
