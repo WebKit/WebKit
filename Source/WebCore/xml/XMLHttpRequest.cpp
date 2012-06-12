@@ -273,7 +273,7 @@ Blob* XMLHttpRequest::responseBlob(ExceptionCode& ec)
     if (m_state != DONE)
         return 0;
 
-    if (!m_responseBlob.get()) {
+    if (!m_responseBlob) {
         // FIXME: This causes two (or more) unnecessary copies of the data.
         // Chromium stores blob data in the browser process, so we're pulling the data
         // from the network only to copy it into the renderer to copy it back to the browser.
@@ -283,15 +283,16 @@ Blob* XMLHttpRequest::responseBlob(ExceptionCode& ec)
         // a SharedBuffer, even if they don't get the Blob from the network layer directly.
         OwnPtr<BlobData> blobData = BlobData::create();
         // If we errored out or got no data, we still return a blob, just an empty one.
-        if (m_binaryResponseBuilder.get()) {
+        size_t size = 0;
+        if (m_binaryResponseBuilder) {
             RefPtr<RawData> rawData = RawData::create();
-            size_t size = m_binaryResponseBuilder->size();
+            size = m_binaryResponseBuilder->size();
             rawData->mutableData()->append(m_binaryResponseBuilder->data(), size);
             blobData->appendData(rawData, 0, BlobDataItem::toEndOfFile);
             blobData->setContentType(responseMIMEType()); // responseMIMEType defaults to text/xml which may be incorrect.
             m_binaryResponseBuilder.clear();
         }
-        m_responseBlob = Blob::create(blobData.release(), m_binaryResponseBuilder.get() ? m_binaryResponseBuilder->size() : 0);
+        m_responseBlob = Blob::create(blobData.release(), size);
     }
 
     return m_responseBlob.get();

@@ -1,3 +1,13 @@
+2012-06-11  Kinuko Yasuda  <kinuko@chromium.org>
+
+        XHR returns size==0 Blob
+        https://bugs.webkit.org/show_bug.cgi?id=88750
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/xmlhttprequest/response-blob-size-expected.txt: Added.
+        * http/tests/xmlhttprequest/response-blob-size.html: Added.
+
 2012-06-11  Silvia Pfeiffer  <silviapf@chromium.org>
 
         Introduce an Enclosure Element for Chromium video controls.
