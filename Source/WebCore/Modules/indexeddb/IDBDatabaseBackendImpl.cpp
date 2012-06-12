@@ -249,7 +249,6 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
     int64_t databaseId = database->id();
     database->m_version = version;
     if (!database->m_backingStore->updateIDBDatabaseMetaData(databaseId, database->m_version)) {
-        // FIXME: The Indexed Database specification does not have an error code dedicated to I/O errors.
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
         transaction->abort();
         return;

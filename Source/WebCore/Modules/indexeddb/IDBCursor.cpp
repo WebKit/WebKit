@@ -205,6 +205,11 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursor::delete");
+    if (m_transaction->isReadOnly()) {
+        ec = IDBDatabaseException::READ_ONLY_ERR;
+        return 0;
+    }
+
     if (!m_gotValue) {
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;

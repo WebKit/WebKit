@@ -70,6 +70,7 @@ public:
     bool isFinished() const;
 
     const String& mode() const;
+    bool isReadOnly() const { return m_mode == READ_ONLY; }
     IDBDatabase* db() const;
     PassRefPtr<DOMError> error(ExceptionCode&) const;
     void setError(PassRefPtr<DOMError>);

@@ -76,7 +76,7 @@ private:
     void closeOpenCursors();
 
     RefPtr<DOMStringList> m_objectStoreNames;
-    unsigned short m_mode;
+    const unsigned short m_mode;
 
     State m_state;
     RefPtr<IDBTransactionCallbacks> m_callbacks;

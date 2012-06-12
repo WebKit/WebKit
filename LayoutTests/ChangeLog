@@ -1,3 +1,26 @@
+2012-06-12  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Error codes, phase two
+        https://bugs.webkit.org/show_bug.cgi?id=88690
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/cursor-advance-expected.txt:
+        * storage/indexeddb/index-unique-expected.txt:
+        * storage/indexeddb/mozilla/index-prev-no-duplicate-expected.txt:
+        * storage/indexeddb/mozilla/index-prev-no-duplicate.html:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics-workers-expected.txt:
+        * storage/indexeddb/resources/cursor-advance.js:
+        (openSuccess):
+        (createObjectStore.trans.oncomplete):
+        (createObjectStore):
+        (populateObjectStore):
+        * storage/indexeddb/resources/index-unique.js:
+        (addMoreDataFailed):
+        * storage/indexeddb/resources/objectstore-basics.js:
+        (addAgainFailure):
+
 2012-06-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner in accessibility tests instead of layoutTestController

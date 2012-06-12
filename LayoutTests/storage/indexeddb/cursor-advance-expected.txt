@@ -10,7 +10,14 @@ openSuccess():
 db = event.target.result
 request = db.setVersion('1')
 Deleted all object stores.
+trans = request.result
 objectStore = db.createObjectStore(objectStoreName);
+Now create the indexes.
+objectStore.createIndex(indexData[i].name, indexData[i].keyPath, indexData[i].options);
+objectStore.createIndex(indexData[i].name, indexData[i].keyPath, indexData[i].options);
+objectStore.createIndex(indexData[i].name, indexData[i].keyPath, indexData[i].options);
+trans = db.transaction(objectStoreName, 'readwrite')
+objectStore = trans.objectStore(objectStoreName)
 First, add all our data to the object store.
 request = objectStore.add(objectStoreData[i].value, objectStoreData[i].key);
 request = objectStore.add(objectStoreData[i].value, objectStoreData[i].key);
@@ -25,11 +32,6 @@ request = objectStore.add(objectStoreData[i].value, objectStoreData[i].key);
 request = objectStore.add(objectStoreData[i].value, objectStoreData[i].key);
 request = objectStore.add(objectStoreData[i].value, objectStoreData[i].key);
 request = objectStore.add(objectStoreData[i].value, objectStoreData[i].key);
-Now create the indexes.
-objectStore.createIndex(indexData[i].name, indexData[i].keyPath, indexData[i].options);
-objectStore.createIndex(indexData[i].name, indexData[i].keyPath, indexData[i].options);
-objectStore.createIndex(indexData[i].name, indexData[i].keyPath, indexData[i].options);
-testAll()
 testSimple()
 trans = db.transaction(objectStoreName)
 store = trans.objectStore(objectStoreName)

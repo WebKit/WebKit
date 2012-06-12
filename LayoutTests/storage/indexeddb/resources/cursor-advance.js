@@ -44,24 +44,32 @@ function openSuccess()
     objectStoreName = "People";
 
     request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = createAndPopulateObjectStore;
+    request.onsuccess = createObjectStore;
     request.onerror = unexpectedErrorCallback;
 }
 
-function createAndPopulateObjectStore()
+function createObjectStore(request)
 {
     deleteAllObjectStores(db);
-
+    trans = evalAndLog("trans = request.result");
     objectStore = evalAndLog("objectStore = db.createObjectStore(objectStoreName);");
+    createIndexes();
+    trans.oncomplete = function() {
+        evalAndLog("trans = db.transaction(objectStoreName, 'readwrite')");
+        evalAndLog("objectStore = trans.objectStore(objectStoreName)");
+        populateObjectStore();
+    };
+}
 
+function populateObjectStore()
+{
     debug("First, add all our data to the object store.");
     addedData = 0;
     for (i in objectStoreData) {
         request = evalAndLog("request = objectStore.add(objectStoreData[i].value, objectStoreData[i].key);");
         request.onerror = unexpectedErrorCallback;
     }
-    createIndexes();
-    request.onsuccess = testAll;
+    request.onsuccess = testSimple;
 }
 
 function createIndexes()
@@ -140,11 +148,6 @@ function runTest(cursor, expectedValue)
     shouldBeEqualToString("expected", JSON.stringify(simplifyCursor(cursor)));
 }
 
-function testAll()
-{
-    debug("testAll()");
-    testSimple();
-}
 
 function testSimple()
 {
