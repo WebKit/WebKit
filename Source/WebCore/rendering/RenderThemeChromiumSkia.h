@@ -127,6 +127,7 @@ class RenderThemeChromiumSkia : public RenderTheme {
 #if ENABLE(VIDEO)
         // Media controls
         virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const { return true; }
+        virtual bool usesVerticalVolumeSlider() const { return false; }
 #endif
 
         // Provide a way to pass the default font size from the Settings object

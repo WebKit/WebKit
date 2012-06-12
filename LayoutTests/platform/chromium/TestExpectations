@@ -774,6 +774,11 @@ WONTFIX SKIP : media/video-size-intrinsic-scale.html = PASS
 // Doesn't apply to Chromium (QuickTime-specific behavior)
 WONTFIX SKIP : media/video-does-not-loop.html = TIMEOUT
 
+// Doesn't apply to Chromium any longer - volume slider is inline with video controls.
+WONTFIX SKIP : media/video-volume-slider.html = FAIL
+WONTFIX SKIP : media/media-volume-slider-rendered-below.html = FAIL
+WONTFIX SKIP : media/media-volume-slider-rendered-normal.html = FAIL
+
 // QuickTime reference movies not supported.
 WONTFIX SKIP : http/tests/media/video-cross-site.html = PASS
 
@@ -2972,9 +2977,11 @@ BUGWK83882 : media/track/track-mode.html = PASS TEXT TIMEOUT
 
 // Need rebaseline.
 BUGWK87683 : fast/layers/video-layer.html = FAIL
+BUGWK87683 : fullscreen/full-screen-stacking-context.html = FAIL
 BUGWK87683 : media/audio-controls-rendering.html = FAIL
 BUGWK87683 : media/audio-repaint.html = FAIL
 BUGWK87683 : media/controls-after-reload.html = FAIL
+BUGWK87683 : media/controls-layout-direction.html = FAIL
 BUGWK87683 : media/controls-strict.html = FAIL
 BUGWK87683 : media/controls-styling.html = FAIL
 BUGWK87683 : media/controls-without-preload.html = FAIL
@@ -2986,7 +2993,7 @@ BUGWK87683 : media/video-empty-source.html = FAIL
 BUGWK87683 : media/video-no-audio.html = FAIL
 BUGWK87683 : media/video-playing-and-pause.html = FAIL
 BUGWK87683 : media/video-zoom-controls.html = FAIL
-BUGWK87683 : media/video-volume-slider.html = FAIL
+BUGWK87835 : http/tests/media/video-buffered-range-contains-currentTime.html = FAIL
 
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
 

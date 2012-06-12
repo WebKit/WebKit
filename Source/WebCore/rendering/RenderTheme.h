@@ -198,6 +198,7 @@ public:
     virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const { return false; }
     virtual bool usesMediaControlStatusDisplay() { return false; }
     virtual bool usesMediaControlVolumeSlider() const { return true; }
+    virtual bool usesVerticalVolumeSlider() const { return true; }
     virtual double mediaControlsFadeInDuration() { return 0.1; }
     virtual double mediaControlsFadeOutDuration() { return 0.3; }
     virtual String formatMediaControlsTime(float time) const;

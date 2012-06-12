@@ -200,8 +200,8 @@ static bool paintMediaVolumeSlider(RenderObject* object, const PaintInfo& paintI
     if (originalColor != Color::white)
         context->setStrokeColor(Color::white, ColorSpaceDeviceRGB);
 
-    int x = rect.x() + rect.width() / 2;
-    context->drawLine(IntPoint(x, rect.y()),  IntPoint(x, rect.y() + rect.height()));
+    int y = rect.y() + rect.height() / 2;
+    context->drawLine(IntPoint(rect.x(), y),  IntPoint(rect.x() + rect.width(), y));
 
     if (originalColor != Color::white)
         context->setStrokeColor(originalColor, ColorSpaceDeviceRGB);

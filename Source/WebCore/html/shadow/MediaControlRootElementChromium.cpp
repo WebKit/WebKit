@@ -72,7 +72,6 @@ MediaControlRootElementChromium::MediaControlRootElementChromium(Document* docum
     , m_timelineContainer(0)
     , m_panelMuteButton(0)
     , m_volumeSlider(0)
-    , m_volumeSliderContainer(0)
 #if ENABLE(FULLSCREEN_MEDIA_CONTROLS)
     , m_fullscreenButton(0)
 #endif
@@ -130,28 +129,15 @@ PassRefPtr<MediaControlRootElementChromium> MediaControlRootElementChromium::cre
     if (ec)
         return 0;
 
-    RefPtr<HTMLDivElement> panelVolumeControlContainer = HTMLDivElement::create(document);
-
-    RefPtr<MediaControlVolumeSliderContainerElement> volumeSliderContainer = MediaControlVolumeSliderContainerElement::create(document);
+    RefPtr<MediaControlPanelMuteButtonElement> panelMuteButton = MediaControlPanelMuteButtonElement::create(document, controls.get());
+    controls->m_panelMuteButton = panelMuteButton.get();
+    panel->appendChild(panelMuteButton.release(), ec, true);
+    if (ec)
+        return 0;
 
     RefPtr<MediaControlVolumeSliderElement> slider = MediaControlVolumeSliderElement::create(document);
     controls->m_volumeSlider = slider.get();
-    volumeSliderContainer->appendChild(slider.release(), ec, true);
-    if (ec)
-        return 0;
-
-    controls->m_volumeSliderContainer = volumeSliderContainer.get();
-    panelVolumeControlContainer->appendChild(volumeSliderContainer.release(), ec, true);
-    if (ec)
-        return 0;
-
-    RefPtr<MediaControlPanelMuteButtonElement> panelMuteButton = MediaControlPanelMuteButtonElement::create(document, controls.get());
-    controls->m_panelMuteButton = panelMuteButton.get();
-    panelVolumeControlContainer->appendChild(panelMuteButton.release(), ec, true);
-    if (ec)
-        return 0;
-
-    panel->appendChild(panelVolumeControlContainer, ec, true);
+    panel->appendChild(slider.release(), ec, true);
     if (ec)
         return 0;
 
@@ -194,8 +180,6 @@ void MediaControlRootElementChromium::setMediaController(MediaControllerInterfac
         m_panelMuteButton->setMediaController(controller);
     if (m_volumeSlider)
         m_volumeSlider->setMediaController(controller);
-    if (m_volumeSliderContainer)
-        m_volumeSliderContainer->setMediaController(controller);
 #if ENABLE(FULLSCREEN_MEDIA_CONTROLS)
     if (m_fullscreenButton)
         m_fullscreenButton->setMediaController(controller);
@@ -221,7 +205,6 @@ void MediaControlRootElementChromium::hide()
 {
     m_panel->setIsDisplayed(false);
     m_panel->hide();
-    m_volumeSliderContainer->hide();
 }
 
 void MediaControlRootElementChromium::makeOpaque()
@@ -232,7 +215,6 @@ void MediaControlRootElementChromium::makeOpaque()
 void MediaControlRootElementChromium::makeTransparent()
 {
     m_panel->makeTransparent();
-    m_volumeSliderContainer->hide();
 }
 
 void MediaControlRootElementChromium::reset()
@@ -307,10 +289,10 @@ void MediaControlRootElementChromium::reportedError()
 
     m_timelineContainer->hide();
     m_panelMuteButton->hide();
-    m_volumeSliderContainer->hide();
 #if ENABLE(FULLSCREEN_MEDIA_CONTROLS)
     m_fullscreenButton->hide();
 #endif
+    m_volumeSlider->hide();
 }
 
 void MediaControlRootElementChromium::updateStatusDisplay()
@@ -380,7 +362,7 @@ void MediaControlRootElementChromium::showVolumeSlider()
     if (!m_mediaController->hasAudio())
         return;
 
-    m_volumeSliderContainer->show();
+    m_volumeSlider->show();
 }
 
 #if ENABLE(VIDEO_TRACK)

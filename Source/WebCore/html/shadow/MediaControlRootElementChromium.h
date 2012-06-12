@@ -47,7 +47,6 @@ class MediaControlTimeDisplayElement;
 class MediaControlTimelineContainerElement;
 class MediaControlMuteButtonElement;
 class MediaControlVolumeSliderElement;
-class MediaControlVolumeSliderContainerElement;
 class MediaControlPanelElement;
 class MediaControlChromiumEnclosureElement;
 class MediaControllerInterface;
@@ -139,7 +138,6 @@ private:
     MediaControlTimelineContainerElement* m_timelineContainer;
     MediaControlPanelMuteButtonElement* m_panelMuteButton;
     MediaControlVolumeSliderElement* m_volumeSlider;
-    MediaControlVolumeSliderContainerElement* m_volumeSliderContainer;
 #if ENABLE(FULLSCREEN_MEDIA_CONTROLS)
     MediaControlFullscreenButtonElement* m_fullscreenButton;
 #endif

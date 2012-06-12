@@ -1,3 +1,17 @@
+2012-06-12  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Change the volume slider to horizontal rendering for Chrome video controls.
+        https://bugs.webkit.org/show_bug.cgi?id=87835
+
+        Reviewed by Eric Carlson.
+
+        The Chrome video controls are receiving a visual update. The volume slider is included into
+        the controls with horizontal rendering, the volume slider container is removed. The visual
+        update itself is in a separate patch.
+
+        * platform/chromium/TestExpectations:
+        Temporarily skip tests related to volume controls rendering for Chromium.
+
 2012-06-12  Andrei Bucur  <abucur@adobe.com>
 
         [CSSRegions]NamedFlow::overset should return true when there's no region chain attached

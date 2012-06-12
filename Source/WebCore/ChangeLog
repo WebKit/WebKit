@@ -1,3 +1,63 @@
+2012-06-12  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Change the volume slider to horizontal rendering for Chrome video controls.
+        https://bugs.webkit.org/show_bug.cgi?id=87835
+
+        Reviewed by Eric Carlson.
+
+        No new tests - final patch in the Chrome controls update series will contain rebaselined tests.
+
+        The Chrome video controls are receiving a visual update. The volume slider is moved into
+        the controls with horizontal rendering, the volume slider container is removed. The visual
+        update itself is in a separate patch.
+
+        * css/mediaControlsChromium.css:
+        (audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button):
+        Removed relative positioning to render all controls elements equally in DOM order.
+        (audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button):
+        Removed absolute positioning to render all controls elements equally in DOM order.
+        (audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container):
+        Removed absolute positioning to render all controls elements equally in DOM order.
+        (audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container):
+        Removed volume slider container - it's not necessary any more.
+        (audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display):
+        Remove flexbox and introduce inline display to always display this field.
+        (audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider):
+        Removed absolute positioning to render all controls elements equally in DOM order.
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::MediaControlRootElementChromium):
+        Removed volume slider container - it's not necessary any more.
+        (WebCore::MediaControlRootElementChromium::create):
+        Appended the volume slider and the mute button directly to the panel, removed volume slider container.
+        (WebCore::MediaControlRootElementChromium::setMediaController):
+        Removed volume slider container.
+        (WebCore::MediaControlRootElementChromium::reportedError):
+        Removed volume slider container.
+        (WebCore::MediaControlRootElementChromium::showVolumeSlider):
+        Removed volume slider container.
+        * html/shadow/MediaControlRootElementChromium.h:
+        (WebCore):
+        (MediaControlRootElementChromium):
+        Removed volume slider container.
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::hasVerticalAppearance):
+        Allow use of horizontal media volume slider.
+        (WebCore::RenderSliderThumb::layout):
+        Reuse hasVerticalAppearance function.
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::RenderMediaControlsChromium::paintMediaVolumeSlider):
+        Change line drawing from vertical to horizontal.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::usesVerticalVolumeSlider):
+        Add usesVerticalVolumeSlider function to allow horizontal volume sliders.
+        * rendering/RenderThemeChromiumMac.h:
+        (WebCore::RenderThemeChromiumMac::usesVerticalVolumeSlider):
+        Add usesVerticalVolumeSlider function to allow horizontal volume sliders.
+        Add usesVerticalVolumeSlider function to allow horizontal volume sliders.
+        * rendering/RenderThemeChromiumSkia.h:
+        (WebCore::RenderThemeChromiumSkia::usesVerticalVolumeSlider):
+        Add usesVerticalVolumeSlider function to allow horizontal volume sliders.
+
 2012-06-12  Andrei Bucur  <abucur@adobe.com>
 
         [CSSRegions]NamedFlow::overset should return true when there's no region chain attached

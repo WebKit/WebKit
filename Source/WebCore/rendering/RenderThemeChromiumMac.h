@@ -55,6 +55,7 @@ protected:
     virtual IntPoint volumeSliderOffsetFromMuteButton(RenderBox*, const IntSize&) const OVERRIDE;
     virtual bool usesMediaControlStatusDisplay() { return false; }
     virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const { return true; }
+    virtual bool usesVerticalVolumeSlider() const { return false; }
 #endif
 
     virtual bool usesTestModeFocusRingColor() const;

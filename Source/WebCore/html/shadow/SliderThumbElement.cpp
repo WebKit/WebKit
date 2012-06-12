@@ -62,7 +62,10 @@ inline static bool hasVerticalAppearance(HTMLInputElement* input)
 {
     ASSERT(input->renderer());
     RenderStyle* sliderStyle = input->renderer()->style();
-    return sliderStyle->appearance() == SliderVerticalPart || sliderStyle->appearance() == MediaVolumeSliderPart;
+    RenderTheme* sliderTheme = input->renderer()->theme();
+
+    return sliderStyle->appearance() == SliderVerticalPart
+        || (sliderStyle->appearance() == MediaVolumeSliderPart && sliderTheme->usesVerticalVolumeSlider());
 }
 
 SliderThumbElement* sliderThumbElementOf(Node* node)
@@ -108,7 +111,7 @@ void RenderSliderThumb::layout()
     // Do not cast node() to SliderThumbElement. This renderer is used for
     // TrackLimitElement too.
     HTMLInputElement* input = node()->shadowAncestorNode()->toInputElement();
-    bool isVertical = style()->appearance() == SliderThumbVerticalPart || style()->appearance() == MediaVolumeSliderThumbPart;
+    bool isVertical = hasVerticalAppearance(input);
 
     double fraction = convertInputNumberToDouble(sliderPosition(input) * 100);
     if (isVertical)
