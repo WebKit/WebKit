@@ -85,6 +85,23 @@ public:
     virtual void runIfValid() OVERRIDE { m_object->client()->didReceiveNoMatch(m_object->handle(), WebSpeechRecognitionResult()); }
 };
 
+// Task for delivering an error event.
+class ErrorTask : public MethodTask<MockWebSpeechRecognizer> {
+public:
+    ErrorTask(MockWebSpeechRecognizer* mock, int code, const WebString& message)
+        : MethodTask<MockWebSpeechRecognizer>(mock)
+        , m_code(code)
+        , m_message(message)
+    {
+    }
+
+    virtual void runIfValid() OVERRIDE { m_object->client()->didReceiveError(m_object->handle(), m_message, static_cast<WebSpeechRecognizerClient::ErrorCode>(m_code)); }
+
+private:
+    int m_code;
+    WebString m_message;
+};
+
 } // namespace
 
 PassOwnPtr<MockWebSpeechRecognizer> MockWebSpeechRecognizer::create()
@@ -135,6 +152,19 @@ void MockWebSpeechRecognizer::abort(const WebSpeechRecognitionHandle& handle, We
 
     // FIXME: Implement.
     ASSERT_NOT_REACHED();
+}
+
+void MockWebSpeechRecognizer::addMockResult(const WebString& transcript, float confidence)
+{
+    m_mockTranscripts.append(transcript);
+    m_mockConfidences.append(confidence);
+}
+
+void MockWebSpeechRecognizer::setError(int code, const WebString& message)
+{
+    m_taskList.revokeAll();
+    postTask(new ErrorTask(this, code, message));
+    postTask(new ClientCallTask(this, &WebSpeechRecognizerClient::didEnd));
 }
 
 MockWebSpeechRecognizer::MockWebSpeechRecognizer()

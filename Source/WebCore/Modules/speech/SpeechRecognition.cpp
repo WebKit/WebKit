@@ -110,7 +110,7 @@ void SpeechRecognition::didDeleteResult(unsigned resultIndex, PassRefPtr<SpeechR
 
 void SpeechRecognition::didReceiveError(PassRefPtr<SpeechRecognitionError> error)
 {
-    dispatchEvent(SpeechRecognitionEvent::createError(error));
+    dispatchEvent(error);
 }
 
 void SpeechRecognition::didStart()

@@ -51,11 +51,8 @@ public:
     virtual void abort(const WebKit::WebSpeechRecognitionHandle&, WebKit::WebSpeechRecognizerClient*) OVERRIDE;
 
     // Methods accessed by layout tests:
-    void addMockResult(const WebKit::WebString& transcript, float confidence)
-    {
-        m_mockTranscripts.append(transcript);
-        m_mockConfidences.append(confidence);
-    }
+    void addMockResult(const WebKit::WebString& transcript, float confidence);
+    void setError(int code, const WebKit::WebString& message);
 
     TaskList* taskList() { return &m_taskList; }
     WebKit::WebSpeechRecognizerClient* client() { return m_client; }

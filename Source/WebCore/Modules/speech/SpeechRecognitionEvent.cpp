@@ -61,11 +61,6 @@ PassRefPtr<SpeechRecognitionEvent> SpeechRecognitionEvent::createResultDeleted(s
     return adoptRef(new SpeechRecognitionEvent(eventNames().resultdeletedEvent, 0, resultIndex, resultHistory));
 }
 
-PassRefPtr<SpeechRecognitionEvent> SpeechRecognitionEvent::createError(PassRefPtr<SpeechRecognitionError> error)
-{
-    return adoptRef(new SpeechRecognitionEvent(error));
-}
-
 const AtomicString& SpeechRecognitionEvent::interfaceName() const
 {
     return eventNames().interfaceForSpeechRecognitionEvent;
@@ -79,7 +74,6 @@ SpeechRecognitionEvent::SpeechRecognitionEvent()
 SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomicString& eventName, const SpeechRecognitionEventInit& initializer)
     : Event(eventName, initializer)
     , m_result(initializer.result)
-    , m_error(initializer.error)
     , m_resultIndex(initializer.resultIndex)
     , m_resultHistory(initializer.resultHistory)
 {
@@ -88,16 +82,8 @@ SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomicString& eventName, co
 SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomicString& eventName, PassRefPtr<SpeechRecognitionResult> result, short resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory)
     : Event(eventName, /*canBubble=*/false, /*cancelable=*/false)
     , m_result(result)
-    , m_error(0)
     , m_resultIndex(resultIndex)
     , m_resultHistory(resultHistory)
-{
-}
-
-SpeechRecognitionEvent::SpeechRecognitionEvent(PassRefPtr<SpeechRecognitionError> error)
-    : Event(eventNames().errorEvent, /*canBubble=*/false, /*cancelable=*/false) // FIXME: The spec should say whether these bubble or not.
-    , m_error(error)
-    , m_resultIndex(0)
 {
 }
 

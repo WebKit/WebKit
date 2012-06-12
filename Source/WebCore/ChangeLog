@@ -1,3 +1,34 @@
+2012-06-11  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: Make SpeechRecognitionError an Event
+        https://bugs.webkit.org/show_bug.cgi?id=88784
+
+        Reviewed by Adam Barth.
+
+        Make SpeechRecognitionError an Event. The spec was updated to make it
+        an event in its own right, rather than an attribute of
+        SpeechRecognitionEvent.
+
+        Test: fast/speech/scripted/speechrecognition-errors.html
+
+        * Modules/speech/SpeechRecognition.cpp:
+        (WebCore::SpeechRecognition::didReceiveError):
+        * Modules/speech/SpeechRecognitionError.cpp:
+        (WebCore::SpeechRecognitionError::SpeechRecognitionError):
+        (WebCore::SpeechRecognitionError::interfaceName):
+        (WebCore):
+        * Modules/speech/SpeechRecognitionError.h:
+        (WebCore::SpeechRecognitionError::create):
+        (SpeechRecognitionError):
+        * Modules/speech/SpeechRecognitionError.idl:
+        * Modules/speech/SpeechRecognitionEvent.cpp:
+        (WebCore::SpeechRecognitionEvent::SpeechRecognitionEvent):
+        * Modules/speech/SpeechRecognitionEvent.h:
+        (SpeechRecognitionEventInit):
+        (SpeechRecognitionEvent):
+        * Modules/speech/SpeechRecognitionEvent.idl:
+        * dom/EventNames.in:
+
 2012-06-12  MORITA Hajime  <morrita@google.com>
 
         REGRESSION(r118098): <content> element does not render distributed children when cloned from another document

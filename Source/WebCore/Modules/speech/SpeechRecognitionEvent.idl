@@ -29,7 +29,6 @@ module events {
         ConstructorTemplate=Event
     ] SpeechRecognitionEvent : Event {
         readonly attribute [InitializedByEventConstructor] SpeechRecognitionResult result;
-        readonly attribute [InitializedByEventConstructor] SpeechRecognitionError error;
         readonly attribute [InitializedByEventConstructor] short resultIndex;
         readonly attribute [InitializedByEventConstructor] SpeechRecognitionResultList resultHistory;
     };

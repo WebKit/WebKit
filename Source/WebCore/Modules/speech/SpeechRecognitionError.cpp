@@ -37,9 +37,15 @@ PassRefPtr<SpeechRecognitionError> SpeechRecognitionError::create(Code code, con
 }
 
 SpeechRecognitionError::SpeechRecognitionError(Code code, const String& message)
-    : m_code(code)
+    : Event(eventNames().errorEvent, /*canBubble=*/false, /*cancelable=*/false) // FIXME: Spec should say whether it bubbles and is cancelable.
+    , m_code(code)
     , m_message(message)
 {
+}
+
+const AtomicString& SpeechRecognitionError::interfaceName() const
+{
+    return eventNames().interfaceForSpeechRecognitionError;
 }
 
 } // namespace WebCore

@@ -44,7 +44,6 @@ struct SpeechRecognitionEventInit : public EventInit {
     SpeechRecognitionEventInit();
 
     RefPtr<SpeechRecognitionResult> result;
-    RefPtr<SpeechRecognitionError> error;
     short resultIndex;
     RefPtr<SpeechRecognitionResultList> resultHistory;
 };
@@ -57,10 +56,8 @@ public:
     static PassRefPtr<SpeechRecognitionEvent> createResult(PassRefPtr<SpeechRecognitionResult>, short resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
     static PassRefPtr<SpeechRecognitionEvent> createNoMatch(PassRefPtr<SpeechRecognitionResult>);
     static PassRefPtr<SpeechRecognitionEvent> createResultDeleted(short resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
-    static PassRefPtr<SpeechRecognitionEvent> createError(PassRefPtr<SpeechRecognitionError>);
 
     SpeechRecognitionResult* result() const { return m_result.get(); }
-    SpeechRecognitionError* error() const { return m_error.get(); }
     short resultIndex() const { return m_resultIndex; } // FIXME: Spec says this should be short, but other indices are unsigned ints.
     SpeechRecognitionResultList* resultHistory() const { return m_resultHistory.get(); }
 
@@ -74,7 +71,6 @@ private:
     SpeechRecognitionEvent(PassRefPtr<SpeechRecognitionError>);
 
     RefPtr<SpeechRecognitionResult> m_result;
-    RefPtr<SpeechRecognitionError> m_error;
     short m_resultIndex;
     RefPtr<SpeechRecognitionResultList> m_resultHistory;
 };
