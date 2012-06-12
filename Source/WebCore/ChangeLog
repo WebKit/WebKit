@@ -1,3 +1,20 @@
+2012-06-11  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        [BlackBerry] Wrong mimetype for empty file link
+        https://bugs.webkit.org/show_bug.cgi?id=88642
+
+        Reviewed by Rob Buis.
+
+        RIM PR# 164164
+
+        For empty file link, we shouldn't give "application/octet-stream"
+        which will lead to download.
+
+        Reviewed internally by Charles Wei.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::sendResponseIfNeeded):
+
 2012-06-11  Jin Yang  <jin.a.yang@intel.com>
 
         GeneratorGeneratedImage should cache images for the non-tiled case

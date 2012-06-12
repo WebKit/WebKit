@@ -618,10 +618,15 @@ void NetworkJob::sendResponseIfNeeded()
     String mimeType = m_sniffedMimeType;
     if (m_isFTP && m_isFTPDir)
         mimeType = "application/x-ftp-directory";
-    if (mimeType.isNull())
+    else if (mimeType.isNull())
         mimeType = extractMIMETypeFromMediaType(m_contentType);
-    if (mimeType.isNull())
-        mimeType = MIMETypeRegistry::getMIMETypeForPath(urlFilename);
+    if (mimeType.isNull()) {
+        if (m_dataReceived)
+            mimeType = MIMETypeRegistry::getMIMETypeForPath(urlFilename);
+        else
+            // For empty content, we shouldn't download.
+            mimeType = "text/plain";
+    }
     m_response.setMimeType(mimeType);
 
     // Set encoding from Content-Type header.
