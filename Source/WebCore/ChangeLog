@@ -1,3 +1,11 @@
+2012-06-12  Darin Adler  <darin@apple.com>
+
+        Tweaked the Mac export file a bit more, adding more-correct iOS cases.
+
+        Reviewed by David Kilzer.
+
+        * WebCore.exp.in: Rearrangement.
+
 2012-06-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Using extrernal ICU library on case unsensitive drives will not work
