@@ -72,3 +72,23 @@ shouldBe("RegExp.prototype.test", "null");
 delete Object.prototype.__defineSetter__;
 shouldBe("Object.getOwnPropertyNames(Object.prototype).indexOf('__defineSetter__')", "-1");
 
+delete navigator.appCodeName;
+var navigatorPropertyNames = Object.getOwnPropertyNames(navigator);
+var expectedPropertyNames = [
+    "appName",
+    "appVersion",
+    "language",
+    "userAgent",
+    "platform",
+    "plugins",
+    "mimeTypes",
+    "product",
+    "productSub",
+    "vendor",
+    "vendorSub",
+    "cookieEnabled",
+    "onLine"
+];
+
+for (var i = 0; i < expectedPropertyNames.length; ++i)
+    shouldBeTrue("navigatorPropertyNames.indexOf('" + expectedPropertyNames[i] +"') != -1");

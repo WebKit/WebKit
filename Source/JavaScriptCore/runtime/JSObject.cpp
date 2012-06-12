@@ -56,7 +56,7 @@ const ClassInfo JSObject::s_info = { "Object", 0, 0, 0, CREATE_METHOD_TABLE(JSOb
 
 const ClassInfo JSFinalObject::s_info = { "Object", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSFinalObject) };
 
-static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode)
+static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode, bool didReify)
 {
     // Add properties from the static hashtables of properties
     for (; classInfo; classInfo = classInfo->parentClass) {
@@ -69,7 +69,7 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
         int hashSizeMask = table->compactSize - 1;
         const HashEntry* entry = table->table;
         for (int i = 0; i <= hashSizeMask; ++i, ++entry) {
-            if (entry->key() && (!(entry->attributes() & DontEnum) || (mode == IncludeDontEnumProperties)))
+            if (entry->key() && (!(entry->attributes() & DontEnum) || (mode == IncludeDontEnumProperties)) && !((entry->attributes() & Function) && didReify))
                 propertyNames.add(entry->key());
         }
     }
@@ -417,8 +417,7 @@ void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameA
 
 void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    if (!object->staticFunctionsReified())
-        getClassPropertyNames(exec, object->classInfo(), propertyNames, mode);
+    getClassPropertyNames(exec, object->classInfo(), propertyNames, mode, object->staticFunctionsReified());
     object->structure()->getPropertyNamesFromStructure(exec->globalData(), propertyNames, mode);
 }
 

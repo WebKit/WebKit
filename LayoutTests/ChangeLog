@@ -1,3 +1,14 @@
+2012-06-12  Hojong Han  <hojong.han@samsung.com>
+
+        Property names of the built-in object cannot be retrieved 
+        after trying to delete one of its properties
+        https://bugs.webkit.org/show_bug.cgi?id=86461
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/delete-syntax-expected.txt:
+        * fast/js/script-tests/delete-syntax.js:
+
 2012-06-11  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed: Rebaseline gradients tests
