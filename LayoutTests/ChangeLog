@@ -1,3 +1,9 @@
+2012-06-12  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed gardening. Skip test failing randomly in GTK bots after r120040.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-12  Takashi Sakamoto  <tasak@google.com>
 
         [Shadow DOM] <style> inside Shadow subtree should be scoped inside the subtree.

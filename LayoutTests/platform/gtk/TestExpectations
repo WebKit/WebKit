@@ -488,6 +488,8 @@ BUGWK84859 : fast/workers/storage/use-same-database-in-page-and-workers.html = P
 
 BUGWK83878 : media/track/track-mode.html = PASS TEXT
 
+BUGWK88867 : media/track/track-cue-rendering-snap-to-lines-not-set.html is flaky = PASS TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
 //////////////////////////////////////////////////////////////////////////////////////////
