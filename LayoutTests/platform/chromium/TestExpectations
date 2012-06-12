@@ -3696,4 +3696,6 @@ BUGWK88833 DEBUG : media/video-played-collapse.html = PASS TEXT
 
 BUGWK88833 WIN DEBUG : media/track/track-kind.html = PASS TIMEOUT
 BUGWK88833 : http/tests/media/video-play-progress.html = PASS TIMEOUT
+BUGWK88833 MAC DEBUG : media/track/track-cues-cuechange.html = PASS TIMEOUT
+
 BUGWK88832 XP : http/tests/xmlhttprequest/origin-exact-matching.html = PASS TIMEOUT
