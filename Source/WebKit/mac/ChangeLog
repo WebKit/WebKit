@@ -1,5 +1,17 @@
 2012-06-12  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 119543
+
+    2012-06-05  Anders Carlsson  <andersca@apple.com>
+
+            Build fix.
+
+            * WebCoreSupport/WebFrameLoaderClient.mm:
+            (WebFrameLoaderClient::createPlugin):
+            The error constant has been renamed.
+
+2012-06-12  Lucas Forschler  <lforschler@apple.com>
+
     Merge 119542
 
     2012-06-05  Anders Carlsson  <andersca@apple.com>

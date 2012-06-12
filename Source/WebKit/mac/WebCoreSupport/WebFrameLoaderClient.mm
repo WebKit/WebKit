@@ -1686,7 +1686,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
             }
 #endif
         } else {
-            errorCode = WebKitErrorInsecurePlugInVersion;
+            errorCode = WebKitErrorBlockedPlugInVersion;
             if (element->renderer()->isEmbeddedObject())
                 toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
         }
