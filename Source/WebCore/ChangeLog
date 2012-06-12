@@ -1,3 +1,18 @@
+2012-06-12  Rahul Tiwari  <rahultiwari.cse.iitr@gmail.com>
+
+        Web Inspector: Provide context menu for deleting recorded profile on Profiles Panel
+        https://bugs.webkit.org/show_bug.cgi?id=88286
+
+        Added the context menu to delete the selected profile.
+
+        Reviewed by Pavel Feldman.
+
+        No new tests required as UI related change
+
+        * English.lproj/localizedStrings.js: Removed property svn:mime-type.
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfileSidebarTreeElement.prototype.handleContextMenuEvent):
+
 2012-06-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: removed svn:mime-type property from English.lproj/localizedStrings.js

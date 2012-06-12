@@ -698,3 +698,4 @@ localizedStrings["Show debugger"] = "Show debugger";
 localizedStrings["Hide debugger"] = "Hide debugger";
 localizedStrings["Clipboard access is denied"] = "Clipboard access is denied";
 localizedStrings["Go to source"] = "Go to source";
+localizedStrings["Delete profile"] = "Delete profile";
