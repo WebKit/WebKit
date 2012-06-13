@@ -554,7 +554,7 @@ void HTMLInputElement::collectStyleForAttribute(const Attribute& attribute, Styl
     } else if (attribute.name() == borderAttr && isImageButton())
         applyBorderAttributeToStyle(attribute, style);
     else
-        return HTMLTextFormControlElement::collectStyleForAttribute(attribute, style);
+        HTMLTextFormControlElement::collectStyleForAttribute(attribute, style);
 }
 
 void HTMLInputElement::parseAttribute(const Attribute& attribute)

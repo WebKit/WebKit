@@ -1,3 +1,13 @@
+2012-06-13  Konrad Piascik  <kpiascik@rim.com>
+
+        Remove return statement in void method
+        https://bugs.webkit.org/show_bug.cgi?id=88998
+
+        Reviewed by Andreas Kling
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::collectStyleForAttribute):
+
 2012-06-13  Benjamin Poulain  <benjamin@webkit.org>
 
         Implement the simple constructors WTFURL's KURL
