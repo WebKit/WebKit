@@ -1,3 +1,23 @@
+2012-06-12  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Dynamic hash table in DOMObjectHashTableMap is wrong in multiple threads
+        https://bugs.webkit.org/show_bug.cgi?id=87334
+
+        Reviewed by Geoffrey Garen.
+
+        Adapt to JSC::HashTable::copy to avoid copy dynamic table member of a HashTable.
+        The dynamic table may be allocated on other thread and contains thread specific
+        identifiers. For example, a hash table of JSEntryArray was first initialized on a
+        worker thread, and then the user reloaded the page, another worker thread is
+        created due to reload, the dynamic allocated table in *staticTable* is specific
+        to the first worker thread which has died. If the user reload the page again,
+        the dynamic table will be freed and memory corruption will occur.
+
+        No functionalities changed, no new tests.
+
+        * bindings/js/DOMObjectHashTableMap.h:
+        (WebCore::DOMObjectHashTableMap::get):
+
 2012-06-12  James Robinson  <jamesr@chromium.org>
 
         [chromium] Port Canvas2DLayerBridge over to WebExternalTextureLayer

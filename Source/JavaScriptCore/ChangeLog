@@ -1,3 +1,19 @@
+2012-06-12  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Dynamic hash table in DOMObjectHashTableMap is wrong in multiple threads
+        https://bugs.webkit.org/show_bug.cgi?id=87334
+
+        Reviewed by Geoffrey Garen.
+
+        Add a copy member function to JSC::HasTable. This function will copy all data
+        members except for *table* which contains thread specific data that prevents
+        up copying it. When you want to copy a JSC::HashTable that was constructed
+        on another thread you should call JSC::HashTable::copy().
+
+        * runtime/Lookup.h:
+        (JSC::HashTable::copy):
+        (HashTable):
+
 2012-06-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not ASSERT if you have a double use of a variable that is not revealed to be a double
