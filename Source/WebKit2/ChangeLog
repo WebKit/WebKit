@@ -1,3 +1,9 @@
+2012-06-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Build fix after Windows export definition file change.
+
+        * win/WebKit2CFLite.def: Add missing symbol exports.
+
 2012-06-13  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Fixed visible content rect lost during page-load
