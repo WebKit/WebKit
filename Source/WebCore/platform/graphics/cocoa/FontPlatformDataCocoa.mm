@@ -92,6 +92,7 @@ void FontPlatformData::platformDataInit(const FontPlatformData& f)
 
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
     m_inMemoryFont = f.m_inMemoryFont;
+    m_harfbuzzFace = f.m_harfbuzzFace;
 #endif
 }
 
@@ -108,6 +109,7 @@ const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformD
     m_CTFont = f.m_CTFont;
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
     m_inMemoryFont = f.m_inMemoryFont;
+    m_harfbuzzFace = f.m_harfbuzzFace;
 #endif
     return *this;
 }
@@ -296,6 +298,37 @@ CTFontRef FontPlatformData::ctFont() const
 
     return m_CTFont.get();
 }
+
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+static bool isAATFont(CTFontRef ctFont)
+{
+    CFDataRef table = CTFontCopyTable(ctFont, kCTFontTableMort, 0);
+    if (table) {
+        CFRelease(table);
+        return true;
+    }
+    table = CTFontCopyTable(ctFont, kCTFontTableMorx, 0);
+    if (table) {
+        CFRelease(table);
+        return true;
+    }
+    return false;
+}
+
+HarfBuzzFace* FontPlatformData::harfbuzzFace()
+{
+    CTFontRef font = ctFont();
+    // HarfBuzz can't handle AAT font
+    if (isAATFont(font))
+        return 0;
+
+    if (!m_harfbuzzFace) {
+        uint64_t uniqueID = reinterpret_cast<uintptr_t>(font);
+        m_harfbuzzFace = HarfBuzzFace::create(const_cast<FontPlatformData*>(this), uniqueID);
+    }
+    return m_harfbuzzFace.get();
+}
+#endif
 
 #ifndef NDEBUG
 String FontPlatformData::description() const

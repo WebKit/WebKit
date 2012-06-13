@@ -2833,6 +2833,7 @@ BUGCR97716 : fast/clip/overflow-border-radius-combinations.html = IMAGE
 // Caused by r92618
 BUGWK65874 : fast/js/preventExtensions.html = TEXT
 
+// Need rebaseline
 BUGWK63796 MAC : css3/font-feature-settings-rendering.html = MISSING
 
 BUGWK66417 WIN LINUX : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
