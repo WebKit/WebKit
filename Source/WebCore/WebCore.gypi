@@ -2127,6 +2127,7 @@
             'bindings/v8/DateExtension.h',
             'bindings/v8/IDBBindingUtilities.cpp',
             'bindings/v8/IDBBindingUtilities.h',
+            'bindings/v8/IDBCustomBindings.cpp',
             'bindings/v8/IntrusiveDOMWrapperMap.h',
             'bindings/v8/IsolatedWorld.cpp',
             'bindings/v8/IsolatedWorld.h',

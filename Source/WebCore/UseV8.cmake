@@ -22,6 +22,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/DOMWrapperWorld.cpp
     bindings/v8/DateExtension.cpp
     bindings/v8/IDBBindingUtilities.cpp
+    bindings/v8/IDBCustomBindings.cpp
     bindings/v8/IsolatedWorld.cpp
     bindings/v8/Dictionary.cpp
     bindings/v8/PageScriptDebugServer.cpp

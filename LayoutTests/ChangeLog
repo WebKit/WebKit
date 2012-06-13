@@ -1,3 +1,21 @@
+2012-06-13  Alec Flett  <alecflett@chromium.org>
+
+        [V8] IndexedDB: Cursor value modifications should be preserved until cursor iterates
+        https://bugs.webkit.org/show_bug.cgi?id=83526
+
+        Reviewed by Kentaro Hara.
+
+        * storage/indexeddb/cursor-value-expected.txt: Added.
+        * storage/indexeddb/cursor-value.html: Added.
+        * storage/indexeddb/resources/cursor-value.js: Added.
+        (openDatabase.request.onsuccess.request.onsuccess):
+        (openDatabase.request.onsuccess):
+        (openDatabase):
+        (testCursor.request.onsuccess):
+        (testCursor):
+        (ensureModificationsNotPersisted.request.onsuccess):
+        (ensureModificationsNotPersisted):
+
 2012-06-13  Shrey Banga  <banga@chromium.org>
 
         REGRESSION(r120108): It made http/tests/loading/gmail-assert-on-load.html fail

@@ -1,3 +1,31 @@
+2012-06-13  Alec Flett  <alecflett@chromium.org>
+
+        [V8] IndexedDB: Cursor value modifications should be preserved until cursor iterates
+        https://bugs.webkit.org/show_bug.cgi?id=83526
+
+        Reviewed by Kentaro Hara.
+
+        Cache the 'value' attribute of IDBCursorWithValue with policy
+        determined by IDBCursor.cpp, to follow spec behavior of keeping a
+        consistent script object until the cursor advances. See
+        http://www.w3.org/TR/IndexedDB/#widl-IDBCursorWithValueSync-value
+        for details.
+
+        Test: storage/indexeddb/cursor-value.html
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::IDBCursor):
+        (WebCore::IDBCursor::value):
+        (WebCore::IDBCursor::setValueReady):
+        * Modules/indexeddb/IDBCursor.h:
+        (IDBCursor):
+        (WebCore::IDBCursor::valueIsDirty):
+        * Modules/indexeddb/IDBCursorWithValue.idl:
+        * WebCore.gypi:
+        * bindings/v8/IDBCustomBindings.cpp: Added.
+        (WebCore):
+        (WebCore::V8IDBCursorWithValue::valueAccessorGetter):
+
 2012-06-13  Silvia Pfeiffer  <silviapf@chromium.org>
 
         Code cleanup from bug 88881 to share the SliderVerticalPart code.

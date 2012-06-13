@@ -77,6 +77,7 @@ IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* 
     , m_transaction(transaction)
     , m_transactionNotifier(transaction, this)
     , m_gotValue(false)
+    , m_valueIsDirty(true)
 {
     ASSERT(m_backend);
     ASSERT(m_request);
@@ -109,9 +110,10 @@ PassRefPtr<IDBKey> IDBCursor::primaryKey() const
     return m_currentPrimaryKey;
 }
 
-PassRefPtr<IDBAny> IDBCursor::value() const
+PassRefPtr<IDBAny> IDBCursor::value()
 {
     IDB_TRACE("IDBCursor::value");
+    m_valueIsDirty = false;
     return m_currentValue;
 }
 
@@ -241,6 +243,7 @@ void IDBCursor::setValueReady()
     m_currentPrimaryKey = m_backend->primaryKey();
     m_currentValue = IDBAny::create(m_backend->value());
     m_gotValue = true;
+    m_valueIsDirty = true;
 }
 
 unsigned short IDBCursor::stringToDirection(const String& directionString, ExceptionCode& ec)
