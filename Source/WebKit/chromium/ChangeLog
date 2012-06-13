@@ -1,3 +1,20 @@
+2012-06-13  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Fix Clang build with USE(NATIVE_FULLSCREEN_VIDEO)=1
+        https://bugs.webkit.org/show_bug.cgi?id=88987
+
+        Reviewed by Simon Hausmann.
+
+        The enterFullscreen method is declared as const by MediaPlayerPrivateInterface,
+        so this one should be declared as such as well.
+
+        Patch by Evgeniy Stepanov <eugenis@google.com>
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::enterFullscreen):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+
 2012-06-13  MORITA Hajime  <morrita@google.com>
 
         REGRESSION(r118098): <content> element does not render distributed children when cloned from another document
