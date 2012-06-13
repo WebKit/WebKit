@@ -11,11 +11,11 @@
 
 <body>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
     document.onreadystatechange = function() {
         if (document.readyState === 'complete')
-            setTimeout(function() {layoutTestController.notifyDone();}, 100);
+            setTimeout(function() {testRunner.notifyDone();}, 100);
     };
 }
 </script>

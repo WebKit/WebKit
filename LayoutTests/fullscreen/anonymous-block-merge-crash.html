@@ -8,7 +8,7 @@
     document.onwebkitfullscreenchange = function(event) {
       document.body.appendChild(document.createElement('div'));
       document.webkitCancelFullScreen();
-      layoutTestController.notifyDone();
+      testRunner.notifyDone();
     };
 
     runWithKeyDown(function(){span.webkitRequestFullScreen()});

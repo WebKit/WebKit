@@ -32,8 +32,8 @@ display: none;
 <p>Script did not run</p>
 <iframe></iframe>
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 Markup.noAutoDump();
 Markup.useHTML5libOutputFormat();
 
@@ -101,8 +101,8 @@ function run()
         }
         xhr.send(null);
     } else {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

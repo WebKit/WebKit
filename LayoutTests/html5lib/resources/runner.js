@@ -30,8 +30,8 @@ document.writeln("</style>");
 document.writeln("<p>Script did not run</p>");
 document.writeln("<iframe></iframe>");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 Markup.noAutoDump();
 Markup.useHTML5libOutputFormat();
@@ -77,8 +77,8 @@ function run()
         }
         xhr.send(null);
     } else {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

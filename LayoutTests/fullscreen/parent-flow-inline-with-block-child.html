@@ -12,8 +12,8 @@ body {
 
 <script>
     if ("webkitRequestFullScreen" in Element.prototype) {
-        if (window.layoutTestController) 
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) 
+            testRunner.waitUntilDone();
 
         var callback;
         var fullscreenChanged = function(event)
@@ -31,8 +31,8 @@ body {
             setTimeout(function () {
                 span.appendChild(document.createElement('div'));
                 callback = function() {
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
+                    if (window.testRunner)
+                        testRunner.notifyDone();
                 }
                 document.webkitCancelFullScreen();
             }, 0);

@@ -7,8 +7,8 @@ body {
 <summary>a<span>b<div>c</div>d</span>e</summary>
 <script>
     if ("webkitRequestFullScreen" in Element.prototype) {
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         document.body.offsetTop;
         var span = document.getElementsByTagName('span')[0];
 
@@ -18,8 +18,8 @@ body {
                     document.webkitCancelFullScreen();
                 }, 0)
             } else {
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         };
 

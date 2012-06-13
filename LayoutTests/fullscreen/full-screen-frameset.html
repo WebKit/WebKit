@@ -1,7 +1,7 @@
 <script src="full-screen-test.js"></script>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpChildFramesAsText();
+if (window.testRunner)
+    testRunner.dumpChildFramesAsText();
 
 var waitingFor = 2;
 function runTest() {
@@ -12,8 +12,8 @@ function runTest() {
     waitForEvent(frame.contentDocument, 'webkitfullscreenchange', function() { 
             consoleWrite("FAIL - entered full screen!");
             endTest(); 
-            if (layoutTestController)
-                layoutTestController.notifyDone();     
+            if (testRunner)
+                testRunner.notifyDone();     
     });
 
     runWithKeyDown(function() {
@@ -21,8 +21,8 @@ function runTest() {
         setTimeout(function() { 
             consoleWrite("SUCCEED - did not enter full screen!"); 
             endTest();
-            if (layoutTestController)
-                layoutTestController.notifyDone();     
+            if (testRunner)
+                testRunner.notifyDone();     
         }, 50);
 
         frame.contentDocument.documentElement.webkitRequestFullScreen();

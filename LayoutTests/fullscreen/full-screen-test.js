@@ -4,16 +4,16 @@ var runPixelTests;
 
 logConsole();
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText(runPixelTests);
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText(runPixelTests);
+    testRunner.waitUntilDone();
 }
 
 function runWithKeyDown(fn) 
 {
     // FIXME: WKTR does not yet support the keyDown() message.  Do a mouseDown here
     // instead until keyDown support is added.
-    var eventName = !window.layoutTestController || eventSender.keyDown ? 'keypress' : 'mousedown'
+    var eventName = !window.testRunner || eventSender.keyDown ? 'keypress' : 'mousedown'
 
     function thunk() {
         document.removeEventListener(eventName, thunk, false);
@@ -21,7 +21,7 @@ function runWithKeyDown(fn)
     }
     document.addEventListener(eventName, thunk, false);
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         if (eventSender.keyDown)
             eventSender.keyDown(" ", []);
         else
@@ -145,8 +145,8 @@ function endTest()
 {
     consoleWrite("END OF TEST");
     testEnded = true;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();     
+    if (window.testRunner)
+        testRunner.notifyDone();     
 }
 
 function logResult(success, text)

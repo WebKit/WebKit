@@ -11,8 +11,8 @@
            logResult("Entered full screen.", false); 
            endTest();
         });
-        if (layoutTestController)
-            layoutTestController.setPopupBlockingEnabled(true);
+        if (testRunner)
+            testRunner.setPopupBlockingEnabled(true);
         waitForEventAndEnd(document, 'webkitfullscreenerror');
         document.documentElement.webkitRequestFullScreen();
     }

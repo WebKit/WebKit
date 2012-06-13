@@ -1,14 +1,14 @@
 <script src="../fast/js/resources/js-test-pre.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function runWithKeyDown(fn)
 {
     document.addEventListener('keydown', function() { fn(); }, false);
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         eventSender.keyDown('a');
     }
 }
@@ -29,8 +29,8 @@ function goFullScreen() {
         iframe.parentNode.removeChild(iframe);
         gc();
         setTimeout(function () {
-            if (window.layoutTestController) {
-                layoutTestController.notifyDone();
+            if (window.testRunner) {
+                testRunner.notifyDone();
             }
         }, 0);
     }, 0);

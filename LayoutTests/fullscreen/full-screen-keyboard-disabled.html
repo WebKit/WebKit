@@ -19,7 +19,7 @@
         var spanEnteredFullScreen = function() {
             callback = null;
             testExpected("document.webkitIsFullScreen", true);
-            if (window.layoutTestController && eventSender.keyDown) {
+            if (window.testRunner && eventSender.keyDown) {
                 waitForEvent(document, 'keypress', keyPressed);
                 eventSender.keyDown('a', []);
                 eventSender.keyDown(' ', []);

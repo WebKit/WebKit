@@ -33,10 +33,10 @@
         };
 
         var cancelledFullScreen = function() {
-            if (window.layoutTestController)
+            if (window.testRunner)
                 testExpected("document.defaultView.getComputedStyle(panel)['display']", 'none');
             else
-                logResult(false, "window.layoutTestController == undefined");
+                logResult(false, "window.testRunner == undefined");
 
             endTest();
         };

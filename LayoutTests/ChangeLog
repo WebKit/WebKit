@@ -1,3 +1,40 @@
+2012-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fonts, fullscreen, gamepad, and html5lib tests should use testRunner instead of layoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=88959
+
+        Reviewed by Darin Adler.
+
+        * fonts/valid-standard-font.html:
+        * fullscreen/anonymous-block-merge-crash.html:
+        * fullscreen/full-screen-element-stack.html:
+        * fullscreen/full-screen-frameset.html:
+        * fullscreen/full-screen-iframe-zIndex.html:
+        * fullscreen/full-screen-keyboard-disabled.html:
+        * fullscreen/full-screen-keyboard-enabled.html:
+        * fullscreen/full-screen-remove-ancestor-during-transition.html:
+        * fullscreen/full-screen-remove-sibling.html:
+        * fullscreen/full-screen-render-inline.html:
+        * fullscreen/full-screen-request-rejected.html:
+        * fullscreen/full-screen-request-removed.html:
+        * fullscreen/full-screen-restrictions.html:
+        * fullscreen/full-screen-stacking-context.html:
+        * fullscreen/full-screen-test.js:
+        (runWithKeyDown):
+        (endTest):
+        * fullscreen/full-screen-zIndex-after.html:
+        * fullscreen/full-screen-zIndex.html:
+        * fullscreen/non-ancestor-iframe.html:
+        * fullscreen/parent-flow-inline-with-block-child.html:
+        * fullscreen/video-controls-override.html:
+        * html5lib/resources/runner.js:
+        (run):
+        * html5lib/webkit-resumer.html:
+        * platform/gtk/fonts/custom-font-missing-glyphs.html:
+        * platform/gtk/fonts/font-face-with-complex-text.html:
+        * platform/gtk/fonts/font-family-fallback.html:
+        * platform/gtk/fonts/synthetic-oblique-positioning.html:
+
 2012-06-13  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip new failing tests.
