@@ -2000,7 +2000,6 @@
       'target_name': 'webcore',
       'type': 'none',
       'dependencies': [
-        'webcore_arm_neon',
         'webcore_dom',
         'webcore_html',
         'webcore_platform',
@@ -2028,6 +2027,11 @@
         ],
       },
       'conditions': [
+        ['target_arch=="arm"', {
+          'dependencies': [
+            'webcore_arm_neon',
+          ],
+        }],
         ['OS=="mac"', {
           'direct_dependent_settings': {
             'include_dirs': [

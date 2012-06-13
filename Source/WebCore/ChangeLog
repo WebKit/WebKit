@@ -1,3 +1,12 @@
+2012-06-12  Wei James  <james.wei@intel.com>
+
+        webcore should depend on webcore_arm_neon for only arm target_arch
+        https://bugs.webkit.org/show_bug.cgi?id=88839
+
+        Reviewed by Adam Barth.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2012-06-12  Edaena Salinas Jasso  <edaena@apple.com>
 
         Can't set el.type on a <button> element
