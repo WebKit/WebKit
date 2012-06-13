@@ -155,3 +155,6 @@ fast/text/zero-width-characters.html
 
 # Fail with QtXmlPatterns (used by Qt 4.8 buid), but pass with libxslt (used by Qt 5 build)
 fast/parser/innerhtml-with-prefixed-elements.xhtml
+
+# [Qt] REGRESSION(r96779): It made svg/as-image/svg-nested.html timeout
+svg/as-image/svg-nested.html

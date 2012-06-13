@@ -1,3 +1,12 @@
+2012-06-13  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        Skip svg/as-image/svg-nested.html which is timeout only on Qt-4.8.
+
+        * platform/qt-4.8/Skipped: skip svg/as-image/svg-nested.html
+        * platform/qt/TestExpectations: removed the slow marker from this test
+
 2012-06-13  Hajime Morrita  <morrita@chromium.org>
 
         REGRESSION(r118098): <content> element does not render distributed children when cloned from another document
