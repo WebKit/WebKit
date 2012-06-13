@@ -46,13 +46,13 @@ function testSlicing(start, end)
     var message = "Slicing ";
     if (start == undefined && end == undefined) {
         message += "without parameters";
-        subBlob = blob.webkitSlice();
+        subBlob = blob.slice();
     } else if (end == undefined) {
         message += "from " + start;
-        subBlob = blob.webkitSlice(start);
+        subBlob = blob.slice(start);
     } else {
         message += "from " + start + " to " + end;
-        subBlob = blob.webkitSlice(start, end);
+        subBlob = blob.slice(start, end);
     }
     message += ": ";
     reader.onload = function(event) {

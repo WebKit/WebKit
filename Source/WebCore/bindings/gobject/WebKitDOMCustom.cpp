@@ -44,9 +44,9 @@ gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement* inpu
 
 /* Compatibility */
 WebKitDOMBlob*
-webkit_dom_blob_slice(WebKitDOMBlob* self, gint64 start, gint64 end, const gchar* content_type)
+webkit_dom_blob_webkit_slice(WebKitDOMBlob* self, gint64 start, gint64 end, const gchar* content_type)
 {
-    return webkit_dom_blob_webkit_slice(self, start, end, content_type);
+    return webkit_dom_blob_slice(self, start, end, content_type);
 }
 
 void
@@ -60,5 +60,3 @@ webkit_dom_html_form_element_dispatch_form_input(WebKitDOMHTMLFormElement* self)
 {
     g_warning("The onforminput functionality has been removed from the DOM spec, this function does nothing.");
 }
-
-

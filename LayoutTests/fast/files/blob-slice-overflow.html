@@ -14,7 +14,7 @@ for (var i = 0; i < 2000; ++i)
     text += 'A';
 
 blob = new Blob([text]);
-slicedBlob = blob.webkitSlice(1999, 9223372036854775000);
+slicedBlob = blob.slice(1999, 9223372036854775000);
 
 document.getElementById('console').appendChild(document.createTextNode('Blob slice length: ' + slicedBlob.size));
 if (slicedBlob.size != 1) {

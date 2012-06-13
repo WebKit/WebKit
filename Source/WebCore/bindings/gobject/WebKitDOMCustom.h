@@ -29,7 +29,7 @@ WEBKIT_API gboolean webkit_dom_html_text_area_element_is_edited(WebKitDOMHTMLTex
 WEBKIT_API gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement*);
 
 /* Compatibility */
-WEBKIT_API WebKitDOMBlob* webkit_dom_blob_slice(WebKitDOMBlob* self, gint64 start, gint64 end, const gchar* content_type);
+WEBKIT_API WebKitDOMBlob* webkit_dom_blob_webkit_slice(WebKitDOMBlob* self, gint64 start, gint64 end, const gchar* content_type);
 WEBKIT_API void webkit_dom_html_form_element_dispatch_form_change(WebKitDOMHTMLFormElement* self);
 WEBKIT_API void webkit_dom_html_form_element_dispatch_form_input(WebKitDOMHTMLFormElement* self);
 

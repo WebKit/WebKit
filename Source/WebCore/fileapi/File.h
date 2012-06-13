@@ -56,7 +56,7 @@ public:
 #if ENABLE(FILE_SYSTEM)
     // If filesystem files live in the remote filesystem, the port might pass the valid metadata (whose length field is non-negative) and cache in the File object.
     //
-    // Otherwise calling size(), lastModifiedTime() and webkitSlice() will synchronously query the file metadata.
+    // Otherwise calling size(), lastModifiedTime() and slice() will synchronously query the file metadata.
     static PassRefPtr<File> createForFileSystemFile(const String& name, const FileMetadata& metadata)
     {
         return adoptRef(new File(name, metadata));

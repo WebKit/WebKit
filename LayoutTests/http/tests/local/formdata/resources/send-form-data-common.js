@@ -70,7 +70,7 @@ function testSendingFormData(dataList, sendAsAsync, addEventHandlers)
                     var file = files[j];
                     if (dataList[i]['start'] && dataList[i]['length']) {
                         fileSliced = true;
-                        file = file.webkitSlice(dataList[i]['start'], dataList[i]['start'] + dataList[i]['length']);
+                        file = file.slice(dataList[i]['start'], dataList[i]['start'] + dataList[i]['length']);
                     }
                     formDataList.push({'name': dataList[i]['name'], 'value': file, 'filename': dataList[i]['filename']});
                     break;

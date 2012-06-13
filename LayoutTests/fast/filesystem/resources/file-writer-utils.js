@@ -72,7 +72,7 @@ function verifyByteRangeIsZeroesHelper(file, start, length, onSuccess)
                 assert(result.charCodeAt(i) == 0);
             onSuccess();
         };
-    fileReader.readAsBinaryString(file.webkitSlice(start, start + length));
+    fileReader.readAsBinaryString(file.slice(start, start + length));
 }
 
 // Verifies that fileEntry, at offset, is all zeroes for length bytes.
@@ -91,7 +91,7 @@ function verifyByteRangeAsStringHelper(file, start, data, onSuccess)
             assert(fileReader.result == data);
             onSuccess();
         };
-    fileReader.readAsText(file.webkitSlice(start, start + data.length));
+    fileReader.readAsText(file.slice(start, start + data.length));
 }
 
 // Verifies that the contents of fileEntry, at offset, match contents [a string].

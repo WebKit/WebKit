@@ -89,9 +89,8 @@ function test()
             var fileMock = {
                 name: "mock.heapsnapshot",
                 size: sourceStringified.length,
-                webkitSlice: function(begin, end) {
-                    return this;
-                }
+                slice: function(begin, end) { return this; },
+                webkitSlice: function(begin, end) { return this; }
             };
 
             WebInspector.HeapProfileHeader.prototype._createFileReader = function() {

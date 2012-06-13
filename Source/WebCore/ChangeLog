@@ -1,3 +1,27 @@
+2012-06-11  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unprefix Blob.webkitSlice
+        https://bugs.webkit.org/show_bug.cgi?id=78111
+
+        Reviewed by Adam Barth.
+
+        Add unprefixed Blob.slice and start showing a deprecation message when webkitSlice is called.
+
+        No new tests: existing tests that call webkitSlice() are converted to slice(). They should keep running.
+
+        * bindings/gobject/WebKitDOMCustom.cpp:
+        (webkit_dom_blob_slice): Removed.
+        (webkit_dom_blob_webkit_slice): Added.
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::slice):
+        (WebCore):
+        (WebCore::Blob::webkitSlice):
+        (WebCore::Blob::sliceInternal): Added.
+        * fileapi/Blob.h:
+        (WebCore):
+        (Blob):
+        * fileapi/Blob.idl:
+
 2012-06-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120036.

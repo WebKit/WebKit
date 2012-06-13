@@ -7,7 +7,7 @@ function runSliceTest(appendItems, ranges)
     var blob = util.appendAndCreateBlob(appendItems);
     var range = {'start':0, 'length':-1};
     for (var i = 0; i < ranges.length; ++i) {
-        blob = blob.webkitSlice(ranges[i].start, ranges[i].start + ranges[i].length);
+        blob = blob.slice(ranges[i].start, ranges[i].start + ranges[i].length);
         range.start += ranges[i].start;
     }
     range.length = ranges[ranges.length - 1].length;

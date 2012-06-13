@@ -17,7 +17,7 @@ function runHybridBlobTest(fileIndexOrStrings, opt_range)
     var blob = util.appendAndCreateBlob(fileIndexOrStrings);
     var urlParameter = util.createUrlParameter(fileIndexOrStrings, opt_range);
     if (opt_range)
-        blob = blob.webkitSlice(opt_range.start, opt_range.start + opt_range.length);
+        blob = blob.slice(opt_range.start, opt_range.start + opt_range.length);
     util.uploadBlob(blob, urlParameter);
 }
 
