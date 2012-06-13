@@ -1,3 +1,20 @@
+2012-06-13  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Store and compare md5sum of jhbuild files to trigger cleaning Dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=85790
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add md5 checks for jhbuild configuration for EFL, reusing the gtk jhbuild related
+        code in webkitdirs.pm.
+
+        * Scripts/webkitdirs.pm:
+        (jhbuildConfigurationChanged):
+        (saveJhbuildMd5):
+        (cleanJhbuild):
+        (buildAutotoolsProject):
+        (generateBuildSystemFromCMakeProject):
+
 2012-06-13  Qi Zhang  <qi.2.zhang@nokia.com>
 
         [Qt] Add configure test for zlib and set WTF_USE_ZLIB if found

@@ -1892,9 +1892,10 @@ sub jhbuildConfigurationChanged()
             return 1;
         }
 
-        # Get the md5 sum of the file we're testing.
+        # Get the md5 sum of the file we're testing, look in the right platform directory.
         $file =~ m/(.+)\.md5sum/;
-        my $actualFile = join('/', $sourceDir, 'Tools', 'gtk', $1);
+        my $platformDir = isEfl() ? 'efl' : 'gtk';
+        my $actualFile = join('/', $sourceDir, 'Tools', $platformDir, $1);
         my $currentSum = getMD5HashForFile($actualFile);
 
         # Get our previous record.
@@ -1906,6 +1907,33 @@ sub jhbuildConfigurationChanged()
             return 1;
         }
     }
+}
+
+sub saveJhbuildMd5() {
+    my $platform = isEfl() ? 'efl' : 'gtk';
+    # Save md5sum for jhbuild-related files.
+    foreach my $file (qw(jhbuildrc jhbuild.modules)) {
+        my $source = join('/', $sourceDir, "Tools", $platform, $file);
+        my $destination = join('/', getJhbuildPath(), $file);
+        open(SUM, ">$destination" . ".md5sum");
+        print SUM getMD5HashForFile($source);
+        close(SUM);
+    }
+}
+
+sub cleanJhbuild() {
+        # If the configuration changed, dependencies may have been removed.
+        # Since we lack a granular way of uninstalling those we wipe out the
+        # jhbuild root and start from scratch.
+        my $jhbuildPath = getJhbuildPath();
+        if (system("rm -rf $jhbuildPath/Root") ne 0) {
+            die "Cleaning jhbuild root failed!";
+        }
+
+        my $platform = isEfl() ? 'efl' : 'gtk';
+        if (system("perl $sourceDir/Tools/jhbuild/jhbuild-wrapper --$platform clean") ne 0) {
+            die "Cleaning jhbuild modules failed!";
+        }
 }
 
 sub mustReRunAutogen($@)
@@ -1997,18 +2025,7 @@ sub buildAutotoolsProject($@)
     # We might need to update jhbuild dependencies.
     my $needUpdate = 0;
     if (jhbuildConfigurationChanged()) {
-        # If the configuration changed, dependencies may have been removed.
-        # Since we lack a granular way of uninstalling those we wipe out the
-        # jhbuild root and start from scratch.
-        my $jhbuildPath = getJhbuildPath();
-        if (system("rm -rf $jhbuildPath/Root") ne 0) {
-            die "Cleaning jhbuild root failed!";
-        }
-
-        if (system("perl $sourceDir/Tools/jhbuild/jhbuild-wrapper --gtk clean") ne 0) {
-            die "Cleaning jhbuild modules failed!";
-        }
-
+        cleanJhbuild();
         $needUpdate = 1;
     }
 
@@ -2023,14 +2040,7 @@ sub buildAutotoolsProject($@)
         system("perl", "$sourceDir/Tools/Scripts/update-webkitgtk-libs") == 0 or die $!;
     }
 
-    # Save md5sum for jhbuild-related files.
-    foreach my $file (qw(jhbuildrc jhbuild.modules)) {
-        my $source = join('/', $sourceDir, "Tools", "gtk", $file);
-        my $destination = join('/', getJhbuildPath(), $file);
-        open(SUM, ">$destination" . ".md5sum");
-        print SUM getMD5HashForFile($source);
-        close(SUM);
-    }
+    saveJhbuildMd5();
 
     # If GNUmakefile exists, don't run autogen.sh unless its arguments
     # have changed. The makefile should be smart enough to track autotools
@@ -2093,6 +2103,15 @@ sub generateBuildSystemFromCMakeProject
     determineArchitecture();
     if ($architecture ne "x86_64" && !isARM()) {
         $ENV{'CXXFLAGS'} = "-march=pentium4 -msse2 -mfpmath=sse " . ($ENV{'CXXFLAGS'} || "");
+    }
+
+    if (isEfl() && jhbuildConfigurationChanged()) {
+        cleanJhbuild();
+        system("perl", "$sourceDir/Tools/Scripts/update-webkitefl-libs") == 0 or die $!;
+    }
+
+    if (isEfl()) {
+        saveJhbuildMd5();
     }
 
     # Remove CMakeCache.txt to avoid using outdated build flags
