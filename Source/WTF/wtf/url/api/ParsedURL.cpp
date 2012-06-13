@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,18 +29,63 @@
 
 #if USE(WTFURL)
 
-#include "URLComponent.h"
-#include "URLParser.h"
+#include <wtf/DataLog.h>
+#include <wtf/RawURLBuffer.h>
+#include <wtf/URLComponent.h>
+#include <wtf/URLParser.h>
 
 namespace WTF {
 
 ParsedURL::ParsedURL(const String& urlString)
-    : m_spec(urlString)
 {
-    // FIXME: Handle non-standard URLs.
-    if (urlString.isEmpty())
+    if (urlString.isEmpty()) {
+        m_spec = URLString();
         return;
-    URLParser<UChar>::parseStandardURL(urlString.characters(), urlString.length(), m_segments);
+    }
+
+    // FIXME: handle invalid urlString.
+    m_spec = URLString(urlString);
+    if (urlString.is8Bit())
+        URLParser<LChar>::parseStandardURL(urlString.characters8(), urlString.length(), m_segments);
+    else
+        URLParser<UChar>::parseStandardURL(urlString.characters16(), urlString.length(), m_segments);
+}
+
+ParsedURL::ParsedURL(const ParsedURL& base, const String& relative)
+{
+    if (!base.isValid())
+        return;
+
+    if (relative.isEmpty()) {
+        *this = base.withoutFragment();
+        return;
+    }
+
+    // FIXME: handle invalid URLs.
+    const String& baseString = base.m_spec.string();
+    RawURLBuffer<char, 1024> outputBuffer;
+    if (relative.is8Bit()) {
+        if (baseString.is8Bit()) {
+            URLParser<LChar, LChar>::parseURLWithBase(relative.characters8(), relative.length(),
+                                                      baseString.characters8(), baseString.length(), base.m_segments,
+                                                      outputBuffer, m_segments);
+        } else {
+            URLParser<LChar, UChar>::parseURLWithBase(relative.characters8(), relative.length(),
+                                                      baseString.characters16(), baseString.length(), base.m_segments,
+                                                      outputBuffer, m_segments);
+        }
+    } else {
+        if (baseString.is8Bit()) {
+            URLParser<UChar, LChar>::parseURLWithBase(relative.characters16(), relative.length(),
+                                                      baseString.characters8(), baseString.length(), base.m_segments,
+                                                      outputBuffer, m_segments);
+        } else {
+            URLParser<UChar, UChar>::parseURLWithBase(relative.characters16(), relative.length(),
+                                                      baseString.characters16(), baseString.length(), base.m_segments,
+                                                      outputBuffer, m_segments);
+        }
+    }
+    m_spec = URLString(String(outputBuffer.data(), outputBuffer.length()));
 }
 
 ParsedURL ParsedURL::isolatedCopy() const
@@ -85,9 +131,29 @@ String ParsedURL::query() const
     return segment(m_segments.query);
 }
 
+bool ParsedURL::hasFragment() const
+{
+    return m_segments.fragment.isValid();
+}
+
 String ParsedURL::fragment() const
 {
     return segment(m_segments.fragment);
+}
+
+ParsedURL ParsedURL::withoutFragment() const
+{
+    if (!hasFragment())
+        return *this;
+
+    ParsedURL newURL;
+
+    int charactersBeforeFragemnt = m_segments.charactersBefore(URLSegments::Fragment, URLSegments::DelimiterExcluded);
+    newURL.m_spec = URLString(m_spec.string().substringSharingImpl(0, charactersBeforeFragemnt));
+
+    newURL.m_segments = m_segments;
+    newURL.m_segments.fragment = URLComponent();
+    return newURL;
 }
 
 String ParsedURL::baseAsString() const
@@ -107,6 +173,36 @@ String ParsedURL::segment(const URLComponent& component) const
     ASSERT_WITH_MESSAGE(!segment.isEmpty(), "A valid URL component should not be empty.");
     return segment;
 }
+
+#ifndef NDEBUG
+
+#define SHOW_COMPONENT(parsedURL, componentName) \
+    if (!parsedURL->componentName().isNull()) { \
+        dataLog("    " #componentName " = "); \
+        parsedURL->componentName().show(); \
+    }
+
+void ParsedURL::print() const
+{
+    if (!isValid()) {
+        dataLog("Invalid ParsedURL.\n");
+        return;
+    }
+
+    dataLog("Valid ParsedURL with:\n");
+    dataLog("    m_spec = ");
+    m_spec.print();
+
+    SHOW_COMPONENT(this, scheme);
+    SHOW_COMPONENT(this, username);
+    SHOW_COMPONENT(this, password);
+    SHOW_COMPONENT(this, host);
+    SHOW_COMPONENT(this, port);
+    SHOW_COMPONENT(this, path);
+    SHOW_COMPONENT(this, query);
+    SHOW_COMPONENT(this, fragment);
+}
+#endif
 
 }
 

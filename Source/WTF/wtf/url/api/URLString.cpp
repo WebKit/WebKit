@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
  * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,41 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef URLString_h
-#define URLString_h
+#include "config.h"
+#include "URLString.h"
 
 #if USE(WTFURL)
 
-#include <wtf/text/WTFString.h>
-
 namespace WTF {
 
-// URLString represents a string that's a canonicalized URL.
-class URLString {
-public:
-    URLString() { }
-
-    const String& string() const { return m_string;}
-
 #ifndef NDEBUG
-    WTF_EXPORT_PRIVATE void print() const;
-#endif
-
-private:
-    friend class ParsedURL;
-
-    // URLString can only be constructed by a ParsedURL.
-    explicit URLString(const String& string)
-        : m_string(string)
-    {
-    }
-
-    String m_string;
-};
+void URLString::print() const
+{
+    m_string.show();
+}
+#endif // ndef NDEBUG
 
 }
 
 #endif // USE(WTFURL)
-
-#endif
-

@@ -29,9 +29,9 @@
 #import "FoundationExtras.h"
 #import <CoreFoundation/CFURL.h>
 
-namespace WebCore {
+using namespace WTF;
 
-#if !USE(WTFURL)
+namespace WebCore {
 
 typedef Vector<char, 512> CharBuffer;
 extern CFURLRef createCFURLFromBuffer(const CharBuffer& buffer);
@@ -39,7 +39,7 @@ extern CFURLRef createCFURLFromBuffer(const CharBuffer& buffer);
 KURL::KURL(NSURL *url)
 {
     if (!url) {
-        parse(0);
+        invalidate();
         return;
     }
 
@@ -48,7 +48,15 @@ KURL::KURL(NSURL *url)
     char* bytes = &buffer[0];
     CFURLGetBytes(reinterpret_cast<CFURLRef>(url), reinterpret_cast<UInt8*>(bytes), bytesLength);
     bytes[bytesLength] = '\0';
+#if !USE(WTFURL)
     parse(bytes);
+#else
+    m_urlImpl = adoptRef(new KURLWTFURLImpl());
+    String urlString(bytes, bytesLength);
+    m_urlImpl->m_parsedURL = ParsedURL(urlString);
+    if (!m_urlImpl->m_parsedURL.isValid())
+        m_urlImpl->m_invalidUrlString = urlString;
+#endif // USE(WTFURL)
 }
 
 KURL::operator NSURL *() const
@@ -67,24 +75,18 @@ CFURLRef KURL::createCFURL() const
         return reinterpret_cast<CFURLRef>([[NSURL alloc] initWithString:@""]);
 
     CharBuffer buffer;
+#if !USE(WTFURL)
     copyToBuffer(buffer);
+#else
+    String urlString = string();
+    buffer.resize(urlString.length());
+    size_t length = urlString.length();
+    for (size_t i = 0; i < length; i++)
+        buffer[i] = static_cast<char>(urlString[i]);
+#endif
     return createCFURLFromBuffer(buffer);
 }
 
-#else
 
-KURL::KURL(NSURL *)
-{
-    // FIXME: Add WTFURL Implementation.
-    invalidate();
-}
-
-KURL::operator NSURL *() const
-{
-    // FIXME: Add WTFURL Implementation.
-    return nil;
-}
-
-#endif
 
 }

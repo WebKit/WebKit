@@ -415,7 +415,7 @@ public:
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
 
 #ifndef NDEBUG
-    void show() const;
+    WTF_EXPORT_PRIVATE void show() const;
 #endif
 
 private:

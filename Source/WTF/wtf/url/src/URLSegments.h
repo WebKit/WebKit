@@ -1,4 +1,5 @@
 // Copyright 2007, Google Inc. All rights reserved.
+// Copyright 2012 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -51,6 +52,10 @@ public:
         Query,
         Fragment,
     };
+    enum DelimiterInclusion {
+        DelimiterExcluded,
+        DelimiterIncluded
+    };
 
     URLSegments() { }
 
@@ -88,7 +93,7 @@ public:
     //      *Query: 14                   15 <-
     //        *Fragment: 20                   20
     //
-    int charactersBefore(ComponentType, bool includeDelimiter) const;
+    int charactersBefore(ComponentType, DelimiterInclusion) const;
 
     // Each component excludes the related delimiters and has a length of -1
     // if that component is absent but 0 if the component exists but is empty.

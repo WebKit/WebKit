@@ -1,3 +1,42 @@
+2012-06-13  Benjamin Poulain  <benjamin@webkit.org>
+
+        Implement the simple constructors WTFURL's KURL
+        https://bugs.webkit.org/show_bug.cgi?id=85724
+
+        Reviewed by Adam Barth.
+
+        This patch extends WTFURL with:
+        -support basic debugging using print() methods
+        -parsing in the incomming string character set (8bits or 16bits)
+        -add a function for parsing of relative URL (but no implementation yet)
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/text/WTFString.h:
+        (String):
+        * wtf/url/api/ParsedURL.cpp:
+        (WTF::ParsedURL::ParsedURL):
+        (WTF):
+        (WTF::ParsedURL::hasFragment): Add this method to query the framgent availability without
+        allocating a new String.
+        (WTF::ParsedURL::withoutFragment): This method is added to implement KURL::removeFragmentIdentifier() and
+        the parsing of empty relative URL (where we return the base without fragment).
+        (WTF::ParsedURL::print):
+        * wtf/url/api/ParsedURL.h:
+        (ParsedURL):
+        (WTF::ParsedURL::spec):
+        * wtf/url/api/URLString.h:
+        (URLString):
+        * wtf/url/src/URLParser.h:
+        (WTF):
+        (URLParser):
+        (WTF::URLParser::parseURLWithBase):
+        * wtf/url/src/URLSegments.cpp:
+        (WTF::URLSegments::length):
+        (WTF::URLSegments::charactersBefore):
+        * wtf/url/src/URLSegments.h:
+        (URLSegments):
+        Change the boolean argument includeDelimiter in favor of an enum to improve readability.
+
 2012-06-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to set watchpoints on global variables

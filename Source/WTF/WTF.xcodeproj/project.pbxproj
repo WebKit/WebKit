@@ -10,6 +10,7 @@
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
 		143F61201565F0F900DB514A /* RAMSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 143F611E1565F0F900DB514A /* RAMSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD81AC5154FB22E00983E72 /* FastBitVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD81AC4154FB22E00983E72 /* FastBitVector.h */; settings = {ATTRIBUTES = (); }; };
+		4330F38F15745B0500AAFA8F /* URLString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4330F38E15745B0500AAFA8F /* URLString.cpp */; };
 		4F0321BC156AA8D1006EBAF6 /* BitArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F0321BB156AA8D1006EBAF6 /* BitArray.h */; };
 		A876DBD8151816E500DADB95 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = A876DBD7151816E500DADB95 /* Platform.h */; };
 		A8A4737F151A825B004123FF /* Alignment.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47254151A825A004123FF /* Alignment.h */; };
@@ -247,6 +248,7 @@
 		143F611D1565F0F900DB514A /* RAMSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RAMSize.cpp; sourceTree = "<group>"; };
 		143F611E1565F0F900DB514A /* RAMSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAMSize.h; sourceTree = "<group>"; };
 		0FD81AC4154FB22E00983E72 /* FastBitVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastBitVector.h; sourceTree = "<group>"; };
+		4330F38E15745B0500AAFA8F /* URLString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLString.cpp; sourceTree = "<group>"; };
 		4F0321BB156AA8D1006EBAF6 /* BitArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitArray.h; sourceTree = "<group>"; };
 		5D247B6214689B8600E78B76 /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D247B6E14689C4700E78B76 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
@@ -832,6 +834,7 @@
 			children = (
 				A8A47360151A825B004123FF /* ParsedURL.cpp */,
 				A8A47361151A825B004123FF /* ParsedURL.h */,
+				4330F38E15745B0500AAFA8F /* URLString.cpp */,
 				A8A47362151A825B004123FF /* URLString.h */,
 			);
 			path = api;
@@ -1169,6 +1172,7 @@
 				A8A4743C151A825B004123FF /* StringBuilder.cpp in Sources */,
 				A8A47440151A825B004123FF /* StringImpl.cpp in Sources */,
 				A8A47443151A825B004123FF /* StringStatics.cpp in Sources */,
+				4330F38F15745B0500AAFA8F /* URLString.cpp in Sources */,
 				A8A47445151A825B004123FF /* WTFString.cpp in Sources */,
 				A8A47448151A825B004123FF /* ThreadIdentifierDataPthreads.cpp in Sources */,
 				A8A4744A151A825B004123FF /* Threading.cpp in Sources */,

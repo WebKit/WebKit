@@ -1,6 +1,7 @@
 /* Based on nsURLParsers.cc from Mozilla
  * -------------------------------------
  * Copyright (C) 1998 Netscape Communications Corporation.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Other contributors:
  *   Darin Fisher (original author)
@@ -39,12 +40,13 @@
 
 #include "URLComponent.h"
 #include "URLSegments.h"
+#include "UnusedParam.h"
 
 #if USE(WTFURL)
 
 namespace WTF {
 
-template<typename CharacterType>
+template<typename CharacterType, typename BaseCharacterType = CharacterType>
 class URLParser {
 public:
     enum SpecialPort {
@@ -166,6 +168,21 @@ public:
             afterScheme = begin;
         }
         parseAfterScheme(spec, specLength, afterScheme, parsed);
+    }
+
+    // The main parsing function for (may be) relative URLs.
+    static void parseURLWithBase(const CharacterType* spec, int specLength,
+                                 const BaseCharacterType* baseStringSpec, int baseStringSpecLength, const URLSegments& baseStringSegments,
+                                 URLBuffer<char>&outputBuffer, URLSegments& parsed)
+    {
+        UNUSED_PARAM(baseStringSpec);
+        UNUSED_PARAM(baseStringSpecLength);
+        UNUSED_PARAM(baseStringSegments);
+        UNUSED_PARAM(spec);
+        UNUSED_PARAM(specLength);
+        UNUSED_PARAM(outputBuffer);
+        UNUSED_PARAM(parsed);
+        // FIXME: To implement.
     }
 
     static void parsePath(const CharacterType* spec, const URLComponent& path, URLComponent& filepath, URLComponent& query, URLComponent& fragment)

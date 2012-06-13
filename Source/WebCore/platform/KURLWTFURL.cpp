@@ -26,6 +26,8 @@
 #include "config.h"
 #include "KURL.h"
 
+#include <wtf/DataLog.h>
+
 #if USE(WTFURL)
 
 using namespace WTF;
@@ -50,12 +52,23 @@ KURL::KURL(ParsedURLStringTag, const String& urlString)
     : m_urlImpl(adoptRef(new KURLWTFURLImpl()))
 {
     m_urlImpl->m_parsedURL = ParsedURL(urlString);
-    ASSERT(m_urlImpl->m_parsedURL.isValid());
+
+    // FIXME: Frame::init() actually create empty URL, investigate why not just null URL.
+    // ASSERT(m_urlImpl->m_parsedURL.isValid());
 }
 
-KURL::KURL(const KURL&, const String&)
+KURL::KURL(const KURL& baseURL, const String& relative)
+    : m_urlImpl(adoptRef(new KURLWTFURLImpl()))
 {
-    // FIXME: Add WTFURL Implementation.
+    // FIXME: the case with a null baseURL is common. We should have a separate constructor in KURL.
+    // FIXME: the case of an empty Base is useless, we should get rid of empty URLs.
+    if (baseURL.isEmpty())
+        m_urlImpl->m_parsedURL = ParsedURL(relative);
+    else
+        m_urlImpl->m_parsedURL = ParsedURL(baseURL.m_urlImpl->m_parsedURL, relative);
+
+    if (!m_urlImpl->m_parsedURL.isValid())
+        m_urlImpl->m_invalidUrlString = relative;
 }
 
 KURL::KURL(const KURL&, const String&, const TextEncoding&)
@@ -92,7 +105,7 @@ bool KURL::isValid() const
     bool isParsedURLValid = m_urlImpl->m_parsedURL.isValid();
 #ifndef NDEBUG
     if (isParsedURLValid)
-        ASSERT_WITH_MESSAGE(m_urlImpl->m_invalidUrlString.isNull(), "A valid URL should never have a valid invalidUrlString.");
+        ASSERT_WITH_MESSAGE(m_urlImpl->m_invalidUrlString.isNull(), "A valid URL must have a null invalidUrlString.");
 #endif
     return isParsedURLValid;
 }
@@ -104,24 +117,27 @@ const String &KURL::string() const
         return nullString;
     }
 
-    if (!m_urlImpl->m_invalidUrlString.isNull()) {
-        ASSERT(!isValid());
-        return m_urlImpl->m_invalidUrlString;
-    }
+    if (isValid())
+        return m_urlImpl->m_parsedURL.spec().string();
 
-    ASSERT(isValid());
-    return m_urlImpl->m_parsedURL.spec().string();
+    return m_urlImpl->m_invalidUrlString;
 }
 
 String KURL::protocol() const
 {
-    ASSERT(isValid());
+    // Skip the ASSERT for now, SubframeLoader::requestFrame() does not check the validity of URLs.
+    // ASSERT(isValid());
+    if (!isValid())
+        return String();
     return m_urlImpl->m_parsedURL.scheme();
 }
 
 String KURL::host() const
 {
-    ASSERT(isValid());
+    // Skip the ASSERT for now, HTMLAnchorElement::parseAttribute() does not check the validity of URLs.
+    // ASSERT(isValid());
+    if (!isValid())
+        return String();
     return m_urlImpl->m_parsedURL.host();
 }
 
@@ -136,6 +152,9 @@ unsigned short KURL::port() const
     ASSERT(isValid());
 
     String portString = m_urlImpl->m_parsedURL.port();
+    if (portString.isNull())
+        return 0;
+
     bool ok = false;
     unsigned portValue = portString.toUIntStrict(&ok);
 
@@ -190,13 +209,20 @@ String KURL::query() const
 
 bool KURL::hasFragmentIdentifier() const
 {
-    ASSERT(isValid());
-    return !fragmentIdentifier().isNull();
+    // Skip the ASSERT for now, ScriptElement::requestScript() create requests for invalid URLs.
+    // ASSERT(isValid());
+    if (!isValid())
+        return false;
+
+    return m_urlImpl->m_parsedURL.hasFragment();
 }
 
 String KURL::fragmentIdentifier() const
 {
-    ASSERT(isValid());
+    // Skip the ASSERT for now, ScriptElement::requestScript() create requests for invalid URLs.
+    // ASSERT(isValid());
+    if (!isValid())
+        return String();
     return m_urlImpl->m_parsedURL.fragment();
 }
 
@@ -215,7 +241,8 @@ String KURL::fileSystemPath() const
 
 bool KURL::protocolIs(const char* testProtocol) const
 {
-    ASSERT(isValid());
+    if (!isValid())
+        return false;
     return WebCore::protocolIs(protocol(), testProtocol);
 }
 
@@ -287,8 +314,11 @@ void KURL::setFragmentIdentifier(const String&)
 
 void KURL::removeFragmentIdentifier()
 {
+    if (!hasFragmentIdentifier())
+        return;
+
     detach(m_urlImpl);
-    // FIXME: Add WTFURL Implementation.
+    m_urlImpl->m_parsedURL = m_urlImpl->m_parsedURL.withoutFragment();
 }
 
 unsigned KURL::hostStart() const
@@ -320,6 +350,24 @@ unsigned KURL::pathAfterLastSlash() const
     // FIXME: Add WTFURL Implementation.
     return 0;
 }
+
+#ifndef NDEBUG
+void KURL::print() const
+{
+    if (isValid())
+        m_urlImpl->m_parsedURL.print();
+    else {
+        if (isNull())
+            dataLog("Null KURL");
+        else if (isEmpty())
+            dataLog("Empty KURL");
+        else {
+            dataLog("Invalid KURL from string =");
+            m_urlImpl->m_invalidUrlString.show();
+        }
+    }
+}
+#endif
 
 void KURL::invalidate()
 {

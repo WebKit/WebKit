@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,9 +39,9 @@ class URLComponent;
 // ParsedURL represents a valid URL decomposed by components.
 class ParsedURL {
 public:
-    // FIXME: Add a method for parsing non-canonicalized URLs.
     ParsedURL() { };
     WTF_EXPORT_PRIVATE explicit ParsedURL(const String&);
+    WTF_EXPORT_PRIVATE explicit ParsedURL(const ParsedURL& base, const String& relative);
 
     WTF_EXPORT_PRIVATE ParsedURL isolatedCopy() const;
 
@@ -54,11 +55,18 @@ public:
     WTF_EXPORT_PRIVATE String port() const;
     WTF_EXPORT_PRIVATE String path() const;
     WTF_EXPORT_PRIVATE String query() const;
+
+    WTF_EXPORT_PRIVATE bool hasFragment() const;
     WTF_EXPORT_PRIVATE String fragment() const;
+    WTF_EXPORT_PRIVATE ParsedURL withoutFragment() const;
 
     WTF_EXPORT_PRIVATE String baseAsString() const;
 
-    URLString spec() { return m_spec; }
+    const URLString& spec() { return m_spec; }
+
+#ifndef NDEBUG
+    WTF_EXPORT_PRIVATE void print() const;
+#endif
 
 private:
     inline String segment(const URLComponent&) const;

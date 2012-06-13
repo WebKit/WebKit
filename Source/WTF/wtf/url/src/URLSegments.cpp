@@ -1,6 +1,7 @@
 /* Based on nsURLParsers.cc from Mozilla
  * -------------------------------------
  * Copyright (C) 1998 Netscape Communications Corporation.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Other contributors:
  *   Darin Fisher (original author)
@@ -45,10 +46,10 @@ int URLSegments::length() const
 {
     if (fragment.isValid())
         return fragment.end();
-    return charactersBefore(Fragment, false);
+    return charactersBefore(Fragment, DelimiterExcluded);
 }
 
-int URLSegments::charactersBefore(ComponentType type, bool includeDelimiter) const
+int URLSegments::charactersBefore(ComponentType type, DelimiterInclusion includeDelimiter) const
 {
     if (type == Scheme)
         return scheme.begin();
@@ -76,7 +77,7 @@ int URLSegments::charactersBefore(ComponentType type, bool includeDelimiter) con
     }
 
     if (port.isValid()) {
-        if (type < Port || (type == Port && includeDelimiter))
+        if (type < Port || (type == Port && includeDelimiter == DelimiterIncluded))
             return port.begin() - 1; // Back over delimiter.
         if (type == Port)
             return port.begin(); // Don't want delimiter counted.
@@ -90,7 +91,7 @@ int URLSegments::charactersBefore(ComponentType type, bool includeDelimiter) con
     }
 
     if (query.isValid()) {
-        if (type < Query || (type == Query && includeDelimiter))
+        if (type < Query || (type == Query && includeDelimiter == DelimiterIncluded))
             return query.begin() - 1; // Back over delimiter.
         if (type == Query)
             return query.begin(); // Don't want delimiter counted.
@@ -98,7 +99,7 @@ int URLSegments::charactersBefore(ComponentType type, bool includeDelimiter) con
     }
 
     if (fragment.isValid()) {
-        if (type == Fragment && !includeDelimiter)
+        if (type == Fragment && includeDelimiter == DelimiterExcluded)
             return fragment.begin(); // Back over delimiter.
 
         // When there is a fragment and we get here, the component we wanted was before
