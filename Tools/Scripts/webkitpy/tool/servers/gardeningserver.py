@@ -69,7 +69,7 @@ class GardeningExpectationsUpdater(BugManager):
         return "BUG_NEW"
 
     def update_expectations(self, failure_info_list):
-        expectation_lines = self._parser.parse(self._tool.filesystem.read_text_file(self._path_to_test_expectations_file))
+        expectation_lines = self._parser.parse(self._path_to_test_expectations_file, self._tool.filesystem.read_text_file(self._path_to_test_expectations_file))
         editor = TestExpectationsEditor(expectation_lines, self)
         updated_expectation_lines = []
         # FIXME: Group failures by testName+failureTypeList.

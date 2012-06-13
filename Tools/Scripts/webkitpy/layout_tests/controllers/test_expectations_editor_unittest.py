@@ -77,7 +77,7 @@ class TestExpectationEditorTests(unittest.TestCase):
 
     def make_parsed_expectation_lines(self, in_string):
         parser = TestExpectationParser(self.test_port, self.full_test_list, allow_rebaseline_modifier=False)
-        expectation_lines = parser.parse(in_string)
+        expectation_lines = parser.parse('path', in_string)
         for expectation_line in expectation_lines:
             self.assertFalse(expectation_line.is_invalid())
         return expectation_lines
