@@ -95,7 +95,7 @@ function printProfileNodeWithoutTime(preElement, node, indentLevel)
     var line = space + node.functionName + " " + strippedURL + " (line " + node.lineNumber + ")\n";
     preElement.appendChild(document.createTextNode(line));
 
-    var children = node.children;
+    var children = node.children();
     for (var i = 0; i < children.length; ++i)
         printProfileNodeWithoutTime(preElement, children[i], indentLevel);
 }
