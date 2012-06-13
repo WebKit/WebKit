@@ -1,3 +1,15 @@
+2012-06-13  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        [Qt] Add configure test for zlib and set WTF_USE_ZLIB if found
+        https://bugs.webkit.org/show_bug.cgi?id=88763
+
+        Move failed websocket extension test case to qt-4.8 after enable it in qt5
+
+        Reviewed by Simon Hausmann.
+
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+
 2012-06-13  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] http/tests/xmlhttprequest/origin-exact-matching.html can be unskipped

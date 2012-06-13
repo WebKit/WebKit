@@ -7,4 +7,5 @@
     libwebp => {},
     libxml2 => {},
     libxslt => {},
+    libzlib => {},
 );

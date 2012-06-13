@@ -47,6 +47,17 @@ editing/selection/click-left-of-rtl-wrapping-text.html
 #################################################
 
 #################################################
+# Moved from qt/Skipped after:
+# [Qt] Add configure test for zlib and set WTF_USE_ZLIB if found
+# USE(ZLIB) is disabled.
+http/tests/websocket/tests/hybi/compressed-control-frame.html
+http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter.html
+http/tests/websocket/tests/hybi/deflate-frame-parameter.html
+http/tests/websocket/tests/hybi/extensions.html
+http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header.html
+#################################################
+
+#################################################
 # Tests failing on WK1 only (working on WK2) - copied from the old qt-wk1/Skipped list
 
 # New test introduced in r102048 fails on Qt-WK1

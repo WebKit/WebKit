@@ -136,6 +136,10 @@ contains(DEFINES, WTF_USE_LIBXML2=1) {
     PKGCONFIG += libxml-2.0
 }
 
+contains(DEFINES, WTF_USE_ZLIB=1) {
+    LIBS += -lz
+}
+
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
     unix {
         mac {

@@ -73,6 +73,11 @@ haveQt(5) {
     haveQt(5):contains(config_test_libxslt, yes): DEFINES += ENABLE_XSLT=1
 }
 
+# We need libzlib config test to determine to use enable websocket extension or not
+!contains(DEFINES, WTF_USE_ZLIB=.) {
+    haveQt(5):contains(config_test_libzlib, yes): DEFINES += WTF_USE_ZLIB=1
+}
+
 !contains(DEFINES, WTF_USE_QT_IMAGE_DECODER=.): DEFINES += WTF_USE_QT_IMAGE_DECODER=1
 
 # Tiled Backing Store support

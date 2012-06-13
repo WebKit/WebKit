@@ -1,3 +1,20 @@
+2012-06-13  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        [Qt] Add configure test for zlib and set WTF_USE_ZLIB if found
+        https://bugs.webkit.org/show_bug.cgi?id=88763
+
+        Add configure test for zlib and set WTF_USE_ZLIB if found to enable websocket
+        extension.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/config.tests/libzlib: Added.
+        * qmake/config.tests/libzlib/libzlib.cpp: Added.
+        (main):
+        * qmake/config.tests/libzlib/libzlib.pro: Added.
+        * qmake/mkspecs/features/features.prf:
+        * qmake/sync.profile:
+
 2012-06-13  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Enable MEDIA_STREAM by default

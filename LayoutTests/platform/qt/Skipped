@@ -332,13 +332,6 @@ fast/mutation/shadow-dom.html
 fast/mutation/takeRecords.html
 fast/mutation/transient-gc-crash.html
 
-# USE(ZLIB) is disabled.
-http/tests/websocket/tests/hybi/compressed-control-frame.html
-http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter.html
-http/tests/websocket/tests/hybi/deflate-frame-parameter.html
-http/tests/websocket/tests/hybi/extensions.html
-http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header.html
-
 # Disable private names by default in WebCore
 # https://bugs.webkit.org/show_bug.cgi?id=87088
 fast/js/names.html
