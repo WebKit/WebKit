@@ -43,13 +43,6 @@
 #include <machine/ieee.h>
 #endif
 
-#if COMPILER(MSVC)
-#if OS(WINCE)
-#include <stdlib.h>
-#endif
-#include <limits>
-#endif
-
 #if OS(QNX)
 // FIXME: Look into a way to have cmath import its functions into both the standard and global
 // namespace. For now, we include math.h since the QNX cmath header only imports its functions

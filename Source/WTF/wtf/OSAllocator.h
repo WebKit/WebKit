@@ -29,7 +29,6 @@
 #include <algorithm>
 #include <wtf/UnusedParam.h>
 #include <wtf/VMTags.h>
-#include <wtf/VMTags.h>
 
 namespace WTF {
 
