@@ -369,11 +369,12 @@ WebInspector.ScriptsPanel.prototype = {
         this._navigator.reset();
         this._editorContainer.reset();
         this._updateScriptViewStatusBarItems();
-
         this.sidebarPanes.jsBreakpoints.reset();
         this.sidebarPanes.watchExpressions.reset();
         if (!preserveItems && this.sidebarPanes.workers)
             this.sidebarPanes.workers.reset();
+        WebInspector.RevisionHistoryView.reset();
+
         this._loadUISourceCodes();
     },
 
@@ -580,7 +581,6 @@ WebInspector.ScriptsPanel.prototype = {
     _editorSelected: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
-        WebInspector.RevisionHistoryView.uiSourceCodeSelected(uiSourceCode);
         this._showFile(uiSourceCode);
         this._navigatorController.hideNavigatorOverlay();
     },

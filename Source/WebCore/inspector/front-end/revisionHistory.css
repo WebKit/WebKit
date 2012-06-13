@@ -59,6 +59,10 @@
     padding: 0 4px;
 }
 
+.revision-history-link-row {
+    padding-left: 16px;
+}
+
 .outline-disclosure.revision-history-drawer .revision-history-line {
     padding-left: 0;
     -webkit-user-select: text;
@@ -67,6 +71,10 @@
 .revision-history-drawer .webkit-line-number {
     border-right: 1px solid #BBB;
     background-color: #F0F0F0;    
+}
+
+.revision-history-drawer li.revision-history-revision {
+    padding-left: 16px;
 }
 
 .revision-history-line-added {
