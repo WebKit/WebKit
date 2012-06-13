@@ -27,5 +27,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-// FIXME: Remove once http://codereview.chromium.org/10544103/ is landed.
-#include "../linuxish/WebFontRendering.h"
+
+#ifndef WebFontRendering_h
+#define WebFontRendering_h
+
+#include "../platform/WebCommon.h"
+#include <SkFontHost.h>
+#include <SkPaint.h>
+
+namespace WebKit {
+
+class WebFontRendering {
+public:
+    // Set global font renderering preferences.
+
+    WEBKIT_EXPORT static void setHinting(SkPaint::Hinting);
+    WEBKIT_EXPORT static void setAntiAlias(bool);
+    WEBKIT_EXPORT static void setSubpixelGlyphs(bool); // DEPRECATED: use setSubpixelRendering instead
+    WEBKIT_EXPORT static void setSubpixelRendering(bool);
+    WEBKIT_EXPORT static void setSubpixelPositioning(bool);
+    WEBKIT_EXPORT static void setLCDOrder(SkFontHost::LCDOrder);
+    WEBKIT_EXPORT static void setLCDOrientation(SkFontHost::LCDOrientation);
+};
+
+} // namespace WebKit
+
+#endif

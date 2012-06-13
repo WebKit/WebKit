@@ -1,3 +1,27 @@
+2012-06-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r120220.
+        http://trac.webkit.org/changeset/120220
+        https://bugs.webkit.org/show_bug.cgi?id=89021
+
+        The patch broke build Chromium Win Release (Requested by
+        wangxianzhu on #webkit).
+
+        * WebKit.gyp:
+        * public/linux/WebFontRendering.h:
+        (WebKit):
+        (WebFontRendering):
+        * public/linuxish/WebFontRendering.h: Removed.
+        * src/linux/WebFontRendering.cpp: Renamed from Source/WebKit/chromium/src/linuxish/WebFontRendering.cpp.
+        (WebKit):
+        (WebKit::WebFontRendering::setHinting):
+        (WebKit::WebFontRendering::setAntiAlias):
+        (WebKit::WebFontRendering::setSubpixelGlyphs):
+        (WebKit::WebFontRendering::setSubpixelRendering):
+        (WebKit::WebFontRendering::setSubpixelPositioning):
+        (WebKit::WebFontRendering::setLCDOrder):
+        (WebKit::WebFontRendering::setLCDOrientation):
+
 2012-06-13  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Let Android and Linux share WebFontRendering decl/impl.
