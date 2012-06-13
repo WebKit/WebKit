@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 
+# Copyright (C) 2012 Brent Fulgham <bfulgham@webkit.org>.  All rights reserved.
 # Copyright (C) 2011 Carl Lobo.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,8 +34,8 @@ use warnings;
 use FindBin;
 
 my $file = "WinCairoRequirements";
-my $zipFile = "$file.zip"; 
-my $winCairoLibsURL = "http://idisk.mac.com/bfulgham-Public/$zipFile";
+my $zipFile = "$file.zip";
+my $winCairoLibsURL = "http://dl.dropbox.com/u/39598926/$zipFile";
 my $command = "$FindBin::Bin/update-webkit-dependency";
 
 system("perl", $command, $winCairoLibsURL, ".") == 0 or die;

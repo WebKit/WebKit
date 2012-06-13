@@ -1,3 +1,16 @@
+2012-06-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Update URL of WinCairoRequirements.zip download.
+        https://bugs.webkit.org/show_bug.cgi?id=89009
+
+        Reviewed by Martin Robinson.
+
+        * Tools/Scripts/update-webkit-dependency: Put fallback code
+        to download a "last update" time from servers that don't properly
+        report Last-Modified in their HTTP header.
+        * Tools/Scripts/update-webkit-wincairo-libs: Change download link
+        for the WinCairo build requirements bundle.
+
 2012-06-13  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: preliminary cleanup before supporting cascading expectations files
