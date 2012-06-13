@@ -42,6 +42,8 @@ public:
     virtual void layout() = 0;
 
 protected:
+    const static int tableMaxWidth = 15000;
+
     RenderTable* m_table;
 };
 

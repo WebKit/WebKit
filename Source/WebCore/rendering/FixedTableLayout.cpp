@@ -166,11 +166,6 @@ int FixedTableLayout::calcWidthArray(int)
     return usedWidth;
 }
 
-// Use a very large value (in effect infinite). But not too large!
-// numeric_limits<int>::max() will too easily overflow widths.
-// Keep this in synch with BLOCK_MAX_WIDTH in RenderBlock.cpp
-#define TABLE_MAX_WIDTH 15000
-
 void FixedTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth)
 {
     // FIXME: This entire calculation is incorrect for both minwidth and maxwidth.
@@ -204,8 +199,8 @@ void FixedTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, Layou
     // In this example, the two inner tables should be as large as the outer table. 
     // We can achieve this effect by making the maxwidth of fixed tables with percentage
     // widths be infinite.
-    if (m_table->document()->inQuirksMode() && m_table->style()->logicalWidth().isPercent() && maxWidth < TABLE_MAX_WIDTH)
-        maxWidth = TABLE_MAX_WIDTH;
+    if (m_table->document()->inQuirksMode() && m_table->style()->logicalWidth().isPercent() && maxWidth < tableMaxWidth)
+        maxWidth = tableMaxWidth;
 }
 
 void FixedTableLayout::layout()

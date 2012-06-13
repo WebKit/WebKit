@@ -1,3 +1,23 @@
+2012-06-13  Jeffrey Pfau  <jpfau@apple.com>
+
+        Padding and borders can cause integer overflow in block layouts
+        https://bugs.webkit.org/show_bug.cgi?id=88820
+        <rdar://problem/11328762>
+
+        Reviewed by Tony Chang.
+
+        Tests: fast/block/block-size-integer-overflow.html
+               fast/flexbox/box-size-integer-overflow.html
+               fast/table/table-size-integer-overflow.html
+
+        * rendering/AutoTableLayout.cpp: Decreased max int.
+        (WebCore::AutoTableLayout::computePreferredLogicalWidths):
+        * rendering/FixedTableLayout.cpp: Use shared constant.
+        (WebCore::FixedTableLayout::computePreferredLogicalWidths):
+        * rendering/RenderBlock.cpp: Removed unused constant.
+        * rendering/TableLayout.h: Add shared constant.
+        (TableLayout):
+
 2012-06-13  Gregg Tavares  <gman@google.com>
 
         Refactor WebGLFramebuffer to handle texture attachments

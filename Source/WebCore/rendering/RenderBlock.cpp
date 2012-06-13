@@ -5693,9 +5693,6 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
     updatePreferredWidth(m_maxPreferredLogicalWidth, inlineMax);
 }
 
-// Use a very large value (in effect infinite).
-#define BLOCK_MAX_WIDTH 15000
-
 void RenderBlock::computeBlockPreferredLogicalWidths()
 {
     RenderStyle* styleToUse = style();
