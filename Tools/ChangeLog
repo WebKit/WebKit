@@ -1,3 +1,20 @@
+2012-06-13  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Handle multiple held buttons in touch mocking.
+        https://bugs.webkit.org/show_bug.cgi?id=88865
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add handling for multiple held mouse-buttons in the appropiate places.
+        To do this last-pos and start-pos are now also read from the last recorded
+        touch-point instead from object-global variables.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::notify):
+        (MiniBrowserApplication::updateTouchPoint):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        (MiniBrowserApplication):
+
 2012-06-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Make it possible to disable -Werror in production builds
