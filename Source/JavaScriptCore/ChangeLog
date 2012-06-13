@@ -1,3 +1,10 @@
+2012-06-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed build fix for ARMv7 debug builds.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+
 2012-06-12  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix for case-sensitive file systems: use the right case.
