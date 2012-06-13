@@ -1,3 +1,18 @@
+2012-06-13  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Let Android and Linux share WebFontRendering decl/impl.
+        https://bugs.webkit.org/show_bug.cgi?id=88802
+
+        Reviewed by Adam Barth.
+
+        * WebKit.gyp:
+        * public/linux/WebFontRendering.h: Temporarily forwards to the new file under linuxish.
+        * public/linuxish: Added.
+        * public/linuxish/WebFontRendering.h: Copied from chromium/public/linux/WebFontRendering.h.
+        * src/linux/WebFontRendering.cpp: Removed.
+        * src/linuxish: Added.
+        * src/linuxish/WebFontRendering.cpp: Copied from chromium/src/linux/WebFontRendering.cpp.
+
 2012-06-13  Martin Kosiba  <mkosiba@google.com>
 
         [Chromium] WebFrameImpl::find doesn't work for searching from a selection.

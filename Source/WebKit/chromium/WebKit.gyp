@@ -284,8 +284,8 @@
                 'public/android/WebSandboxSupport.h',
                 'public/gtk/WebInputEventFactory.h',
                 'public/linux/WebFontRenderStyle.h',
-                'public/linux/WebFontRendering.h',
                 'public/linux/WebRenderTheme.h',
+                'public/linuxish/WebFontRendering.h',
                 'public/mac/WebInputEventFactory.h',
                 'public/mac/WebSandboxSupport.h',
                 'public/mac/WebScreenInfoFactory.h',
@@ -428,9 +428,9 @@
                 'src/PrerendererClientImpl.cpp',
                 'src/android/WebInputEventFactory.cpp',
                 'src/linux/WebFontInfo.cpp',
-                'src/linux/WebFontRendering.cpp',
                 'src/linux/WebFontRenderStyle.cpp',
                 'src/linux/WebRenderTheme.cpp',
+                'src/linuxish/WebFontRendering.cpp',
                 'src/x11/WebScreenInfoFactory.cpp',
                 'src/mac/WebInputEventFactory.mm',
                 'src/mac/WebScreenInfoFactory.mm',
@@ -776,11 +776,12 @@
                     'include_dirs': [
                         'public/x11',
                         'public/linux',
+                        'public/linuxish',
                     ],
                 }, { # else: use_x11 != 1
                     'sources/': [
+                        # FIXME: Put this rule in Chromium's build/filename_rules.gypi.
                         ['exclude', '/x11/'],
-                        ['exclude', '/linux/'],
                     ],
                 }],
                 ['toolkit_uses_gtk == 1', {
@@ -790,18 +791,11 @@
                     'include_dirs': [
                         'public/gtk',
                     ],
-                }, { # else: toolkit_uses_gtk != 1
-                    'sources/': [
-                        ['exclude', '/gtk/'],
-                    ],
                 }],
                 ['OS=="android"', {
                     'include_dirs': [
                         'public/android',
-                    ],
-                }, { # else: OS!="android"
-                    'sources/': [
-                        ['exclude', '/android/'],
+                        'public/linuxish',
                     ],
                 }],
                 # TODO: we exclude CG.cpp on both sides of the below conditional. Move elsewhere?
@@ -814,7 +808,6 @@
                     ],
                 }, { # else: OS!="mac"
                     'sources/': [
-                        ['exclude', '/mac/'],
                         ['exclude', 'CG\\.cpp$'],
                     ],
                 }],
@@ -823,7 +816,6 @@
                         'public/win',
                     ],
                 }, { # else: OS!="win"
-                    'sources/': [['exclude', '/win/']],
                     'variables': {
                         # FIXME: Turn on warnings on Windows.
                         'chromium_code': 1,
