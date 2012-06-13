@@ -1,3 +1,38 @@
+2012-06-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: show revisions of all modified files in local modifications view
+        https://bugs.webkit.org/show_bug.cgi?id=88864
+
+        Reviewed by Vsevolod Vlasov.
+
+        This change allows all local modifications to be seen in a single view. View is now
+        singleton, listening to all revisions being added. Revert captions were reworked
+        (see the screenshot).
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/Resource.js:
+        * inspector/front-end/RevisionHistoryView.js:
+        (WebInspector.RevisionHistoryView.populateRevisions):
+        (WebInspector.RevisionHistoryView):
+        (WebInspector.RevisionHistoryView.showHistory):
+        (WebInspector.RevisionHistoryView.reset):
+        (WebInspector.RevisionHistoryView.prototype._createResourceItem.clearHistory):
+        (WebInspector.RevisionHistoryView.prototype._createResourceItem):
+        (WebInspector.RevisionHistoryView.prototype._revisionAdded.get if):
+        (WebInspector.RevisionHistoryView.prototype._revisionAdded):
+        (WebInspector.RevisionHistoryView.prototype._revealResource.get if):
+        (WebInspector.RevisionHistoryView.prototype._revealResource):
+        (WebInspector.RevisionHistoryView.prototype._reset):
+        (WebInspector.RevisionHistoryTreeElement):
+        (WebInspector.RevisionHistoryTreeElement.prototype.onattach):
+        (WebInspector.RevisionHistoryTreeElement.prototype.oncollapse):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._reset):
+        (WebInspector.ScriptsPanel.prototype._editorSelected):
+        * inspector/front-end/revisionHistory.css:
+        (.revision-history-link-row):
+        (.revision-history-drawer li.revision-history-revision):
+
 2012-06-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: Make "Go to source and line" possible with "go to file" dialog
