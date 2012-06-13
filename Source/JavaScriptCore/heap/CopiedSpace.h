@@ -37,6 +37,7 @@
 #include <wtf/PageAllocationAligned.h>
 #include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TCSpinLock.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace JSC {
@@ -100,7 +101,7 @@ private:
     TinyBloomFilter m_blockFilter;
     HashSet<CopiedBlock*> m_blockSet;
 
-    Mutex m_toSpaceLock;
+    SpinLock m_toSpaceLock;
 
     DoublyLinkedList<HeapBlock>* m_toSpace;
     DoublyLinkedList<HeapBlock>* m_fromSpace;

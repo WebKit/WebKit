@@ -89,9 +89,6 @@ double doubleVoteRatioForDoubleFormat;
 
 unsigned minimumNumberOfScansBetweenRebalance;
 unsigned gcMarkStackSegmentSize;
-unsigned minimumNumberOfCellsToKeep;
-unsigned maximumNumberOfSharedSegments;
-unsigned sharedStackWakeupThreshold;
 unsigned numberOfGCMarkers;
 unsigned opaqueRootMergeThreshold;
 
@@ -145,6 +142,22 @@ void setHeuristic(T& variable, const char* name, U value)
 #define SET(variable, value) variable = value
 #endif
 
+static unsigned computeNumberOfGCMarkers(int maxNumberOfGCMarkers)
+{
+    int cpusToUse = 1;
+
+#if ENABLE(PARALLEL_GC)
+    cpusToUse = std::min(WTF::numberOfProcessorCores(), maxNumberOfGCMarkers);
+
+    // Be paranoid, it is the OS we're dealing with, after all.
+    ASSERT(cpusToUse >= 1);
+    if (cpusToUse < 1)
+        cpusToUse = 1;
+#endif
+
+    return cpusToUse;
+}
+
 void initializeOptions()
 {
     SET(useJIT, true);
@@ -188,25 +201,10 @@ void initializeOptions()
     
     SET(doubleVoteRatioForDoubleFormat, 2);
     
-    SET(minimumNumberOfScansBetweenRebalance, 10000);
+    SET(minimumNumberOfScansBetweenRebalance, 100);
     SET(gcMarkStackSegmentSize,               pageSize());
-    SET(minimumNumberOfCellsToKeep,           10);
-    SET(maximumNumberOfSharedSegments,        3);
-    SET(sharedStackWakeupThreshold,           1);
     SET(opaqueRootMergeThreshold,             1000);
-
-    int cpusToUse = 1;
-#if ENABLE(PARALLEL_GC)
-    cpusToUse = WTF::numberOfProcessorCores();
-#endif
-    // We don't scale so well beyond 4.
-    if (cpusToUse > 4)
-        cpusToUse = 4;
-    // Be paranoid, it is the OS we're dealing with, after all.
-    if (cpusToUse < 1)
-        cpusToUse = 1;
-    
-    SET(numberOfGCMarkers, cpusToUse);
+    SET(numberOfGCMarkers, computeNumberOfGCMarkers(7)); // We don't scale so well beyond 7.
 
     ASSERT(thresholdForOptimizeAfterLongWarmUp >= thresholdForOptimizeAfterWarmUp);
     ASSERT(thresholdForOptimizeAfterWarmUp >= thresholdForOptimizeSoon);

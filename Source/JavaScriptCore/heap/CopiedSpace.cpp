@@ -38,6 +38,7 @@ CopiedSpace::CopiedSpace(Heap* heap)
     , m_inCopyingPhase(false)
     , m_numberOfLoanedBlocks(0)
 {
+    m_toSpaceLock.Init();
 }
 
 CopiedSpace::~CopiedSpace()
@@ -168,7 +169,7 @@ void CopiedSpace::doneFillingBlock(CopiedBlock* block)
     }
 
     {
-        MutexLocker locker(m_toSpaceLock);
+        SpinLockHolder locker(&m_toSpaceLock);
         m_toSpace->push(block);
         m_blockSet.add(block);
         m_blockFilter.add(reinterpret_cast<Bits>(block));

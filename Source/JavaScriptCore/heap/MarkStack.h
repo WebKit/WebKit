@@ -28,8 +28,8 @@
 
 #include "CopiedSpace.h"
 #include "HandleTypes.h"
-#include "Options.h"
 #include "JSValue.h"
+#include "Options.h"
 #include "Register.h"
 #include "UnconditionalFinalizer.h"
 #include "VTableSpectrum.h"
@@ -38,11 +38,12 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/Vector.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OSAllocator.h>
 #include <wtf/PageBlock.h>
+#include <wtf/TCSpinLock.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/Vector.h>
 
 #if ENABLE(OBJECT_MARK_LOGGING)
 #define MARK_LOG_MESSAGE0(message) dataLog(message)
@@ -112,7 +113,7 @@ namespace JSC {
         void shrinkReserve();
         
     private:
-        Mutex m_lock;
+        SpinLock m_lock;
         MarkStackSegment* m_nextFreeSegment;
     };
 
@@ -129,10 +130,9 @@ namespace JSC {
         
         bool isEmpty();
         
-        bool canDonateSomeCells(); // Returns false if you should definitely not call doanteSomeCellsTo().
-        bool donateSomeCellsTo(MarkStackArray& other); // Returns true if some cells were donated.
+        void donateSomeCellsTo(MarkStackArray& other);
         
-        void stealSomeCellsFrom(MarkStackArray& other);
+        void stealSomeCellsFrom(MarkStackArray& other, size_t idleThreadCount);
 
         size_t size();
 
@@ -411,22 +411,6 @@ namespace JSC {
             ASSERT(m_topSegment->m_previous->m_top == m_segmentCapacity);
             return false;
         }
-        return true;
-    }
-
-    inline bool MarkStackArray::canDonateSomeCells()
-    {
-        size_t numberOfCellsToKeep = Options::minimumNumberOfCellsToKeep;
-        // Another check: see if we have enough cells to warrant donation.
-        if (m_top <= numberOfCellsToKeep) {
-            // This indicates that we might not want to donate anything; check if we have
-            // another full segment. If not, then don't donate.
-            if (!m_topSegment->m_previous)
-                return false;
-            
-            ASSERT(m_topSegment->m_previous->m_top == m_segmentCapacity);
-        }
-        
         return true;
     }
 

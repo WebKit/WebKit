@@ -30,6 +30,7 @@
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
 #include <wtf/PageAllocationAligned.h>
+#include <wtf/TCSpinLock.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
@@ -58,19 +59,22 @@ private:
     size_t m_numberOfFreeBlocks;
     bool m_isCurrentlyAllocating;
     bool m_blockFreeingThreadShouldQuit;
-    Mutex m_freeBlockLock;
+    SpinLock m_freeBlockLock;
+    Mutex m_freeBlockConditionLock;
     ThreadCondition m_freeBlockCondition;
     ThreadIdentifier m_blockFreeingThread;
 };
 
 inline PageAllocationAligned BlockAllocator::allocate()
 {
-    MutexLocker locker(m_freeBlockLock);
-    m_isCurrentlyAllocating = true;
-    if (m_numberOfFreeBlocks) {
-        ASSERT(!m_freeBlocks.isEmpty());
-        m_numberOfFreeBlocks--;
-        return m_freeBlocks.removeHead()->m_allocation;
+    {
+        SpinLockHolder locker(&m_freeBlockLock);
+        m_isCurrentlyAllocating = true;
+        if (m_numberOfFreeBlocks) {
+            ASSERT(!m_freeBlocks.isEmpty());
+            m_numberOfFreeBlocks--;
+            return m_freeBlocks.removeHead()->m_allocation;
+        }
     }
 
     ASSERT(m_freeBlocks.isEmpty());
@@ -82,7 +86,7 @@ inline PageAllocationAligned BlockAllocator::allocate()
 
 inline void BlockAllocator::deallocate(PageAllocationAligned allocation)
 {
-    MutexLocker locker(m_freeBlockLock);
+    SpinLockHolder locker(&m_freeBlockLock);
     HeapBlock* heapBlock = new(NotNull, allocation.base()) HeapBlock(allocation);
     m_freeBlocks.push(heapBlock);
     m_numberOfFreeBlocks++;

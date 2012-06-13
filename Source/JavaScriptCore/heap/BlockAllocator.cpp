@@ -37,13 +37,15 @@ BlockAllocator::BlockAllocator()
     , m_blockFreeingThread(createThread(blockFreeingThreadStartFunc, this, "JavaScriptCore::BlockFree"))
 {
     ASSERT(m_blockFreeingThread);
+    m_freeBlockLock.Init();
 }
 
 BlockAllocator::~BlockAllocator()
 {
     releaseFreeBlocks();
     {
-        MutexLocker locker(m_freeBlockLock);
+        MutexLocker locker(m_freeBlockConditionLock);
+
         m_blockFreeingThreadShouldQuit = true;
         m_freeBlockCondition.broadcast();
     }
@@ -55,7 +57,7 @@ void BlockAllocator::releaseFreeBlocks()
     while (true) {
         HeapBlock* block;
         {
-            MutexLocker locker(m_freeBlockLock);
+            SpinLockHolder locker(&m_freeBlockLock);
             if (!m_numberOfFreeBlocks)
                 block = 0;
             else {
@@ -76,7 +78,8 @@ void BlockAllocator::waitForRelativeTimeWhileHoldingLock(double relative)
 {
     if (m_blockFreeingThreadShouldQuit)
         return;
-    m_freeBlockCondition.timedWait(m_freeBlockLock, currentTime() + relative);
+
+    m_freeBlockCondition.timedWait(m_freeBlockConditionLock, currentTime() + relative);
 }
 
 void BlockAllocator::waitForRelativeTime(double relative)
@@ -85,7 +88,7 @@ void BlockAllocator::waitForRelativeTime(double relative)
     // frequently. It would only be a bug if this function failed to return
     // when it was asked to do so.
     
-    MutexLocker locker(m_freeBlockLock);
+    MutexLocker locker(m_freeBlockConditionLock);
     waitForRelativeTimeWhileHoldingLock(relative);
 }
 
@@ -120,7 +123,7 @@ void BlockAllocator::blockFreeingThreadMain()
         while (!m_blockFreeingThreadShouldQuit) {
             HeapBlock* block;
             {
-                MutexLocker locker(m_freeBlockLock);
+                SpinLockHolder locker(&m_freeBlockLock);
                 if (m_numberOfFreeBlocks <= desiredNumberOfFreeBlocks)
                     block = 0;
                 else {

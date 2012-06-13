@@ -24,6 +24,7 @@
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadingPrimitives.h>
+#include <wtf/TCSpinlock.h>
 
 namespace JSC {
 
@@ -60,15 +61,12 @@ private:
         List()
             : m_first(0)
         {
+            m_lock.Init();
         }
         
         void addThreadSafe(T* handler)
         {
-            // NOTE: If we ever want this to be faster, we could turn it into
-            // a CAS loop, since this is a singly-linked-list that, in parallel
-            // tracing mode, can only grow. I.e. we don't have to worry about
-            // any ABA problems.
-            MutexLocker locker(m_lock);
+            SpinLockHolder locker(&m_lock);
             addNotThreadSafe(handler);
         }
         
@@ -106,7 +104,7 @@ private:
             m_first = handler;
         }
         
-        Mutex m_lock;
+        SpinLock m_lock;
         T* m_first;
     };
     

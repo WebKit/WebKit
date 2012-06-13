@@ -1,3 +1,91 @@
+2012-06-11  Geoffrey Garen  <ggaren@apple.com>
+
+        GC should be 1.7X faster
+        https://bugs.webkit.org/show_bug.cgi?id=88840
+
+        Reviewed by Oliver Hunt.
+
+        I profiled, and removed anything that showed up as a concurrency
+        bottleneck. Then, I added 3 threads to our max thread count, since we
+        can scale up to more threads now.
+
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::BlockAllocator):
+        (JSC::BlockAllocator::~BlockAllocator):
+        (JSC::BlockAllocator::releaseFreeBlocks):
+        (JSC::BlockAllocator::waitForRelativeTimeWhileHoldingLock):
+        (JSC::BlockAllocator::waitForRelativeTime):
+        (JSC::BlockAllocator::blockFreeingThreadMain):
+        * heap/BlockAllocator.h:
+        (BlockAllocator):
+        (JSC::BlockAllocator::allocate):
+        (JSC::BlockAllocator::deallocate): Use a spin lock for the common case
+        where we're just popping a linked list. (A pthread mutex would sleep our
+        thread even if the lock were only contended for a microsecond.) 
+
+        Scope the lock to avoid holding it while allocating VM, since that's a
+        slow activity and it doesn't modify any of our data structures.
+
+        We still use a pthread mutex to handle our condition variable since we
+        have to, and it's not a hot path.
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::CopiedSpace):
+        (JSC::CopiedSpace::doneFillingBlock):
+        * heap/CopiedSpace.h:
+        (JSC::CopiedSpace::CopiedSpace): Use a spin lock for the to space lock,
+        since it just guards linked list and hash table manipulation.
+
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackSegmentAllocator::MarkStackSegmentAllocator):
+        (JSC::MarkStackSegmentAllocator::allocate):
+        (JSC::MarkStackSegmentAllocator::release):
+        (JSC::MarkStackSegmentAllocator::shrinkReserve): Use a spin lock, since
+        we're just managing a linked list.
+
+        (JSC::MarkStackArray::donateSomeCellsTo): Changed donation to be proportional
+        to our current stack size. This fixes cases where we used to donate too
+        much. Interestingly, donating too much was starving the donor (when it
+        ran out of work later) *and* the recipient (since it had to wait on a
+        long donation operation to complete before it could acquire the lock).
+
+        In the worst case, we're still guaranteed to donate N cells in roughly log N time.
+
+        This change also fixes cases where we used to donate too little, since
+        we would always keep a fixed minimum number of cells. In the worst case,
+        with N marking threads, would could have N large object graph roots in
+        our stack for the duration of GC, and scale to only 1 thread.
+
+        It's an interesting observation that a single object in the mark stack
+        might represent an arbitrarily large object graph -- and only the act
+        of marking can find out.
+
+        (JSC::MarkStackArray::stealSomeCellsFrom): Steal in proportion to idle
+        threads. Once again, this fixes cases where constants could cause us
+        to steal too much or too little.
+
+        (JSC::SlotVisitor::donateKnownParallel): Always wake up other threads
+        if they're idle. We can afford to do this because we're conservative
+        about when we donate.
+
+        (JSC::SlotVisitor::drainFromShared):
+        * heap/MarkStack.h:
+        (MarkStackSegmentAllocator):
+        (MarkStackArray):
+        (JSC):
+        * heap/SlotVisitor.h: Merged the "should I donate?" decision into a
+        single function, for simplicity.
+
+        * runtime/Options.cpp:
+        (minimumNumberOfScansBetweenRebalance): Reduced the delay before donation
+        a lot. We can afford to do this because, in the common case, donation is
+        a single branch that decides not to donate. 
+
+        (cpusToUse): Use more CPUs now, since we scale better now.
+
+        * runtime/Options.h:
+        (Options): Removed now-unused variables.
+
 2012-06-12  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(120121): inspector tests crash in DFG

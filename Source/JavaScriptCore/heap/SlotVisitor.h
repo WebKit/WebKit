@@ -68,15 +68,8 @@ public:
 private:
     void* allocateNewSpace(void*, size_t);
 
-    void donateSlow();
-    
-    void donateKnownParallel()
-    {
-        if (!m_stack.canDonateSomeCells())
-            return;
-        donateSlow();
-    }
-    
+    void donateKnownParallel();
+
     CopiedBlock* m_copyBlock;
 };
 
