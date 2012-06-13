@@ -24,7 +24,7 @@
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadingPrimitives.h>
-#include <wtf/TCSpinlock.h>
+#include <wtf/TCSpinLock.h>
 
 namespace JSC {
 

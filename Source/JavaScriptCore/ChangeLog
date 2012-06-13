@@ -1,3 +1,9 @@
+2012-06-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Build fix for case-sensitive file systems: use the right case.
+
+        * heap/ListableHandler.h:
+
 2012-06-11  Geoffrey Garen  <ggaren@apple.com>
 
         GC should be 1.7X faster
