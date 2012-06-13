@@ -1,3 +1,10 @@
+2012-06-13  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations changes.
+
+        * platform/chromium-win/http/tests/misc/location-replace-crossdomain-expected.txt:
+        * platform/chromium/fast/events/constructors/speech-recognition-error-constructor-expected.txt: Added.
+
 2012-06-12  Vincent Scheib  <scheib@chromium.org>
 
         Remove duplicate webkitpointerlockchange events when unlocking.
