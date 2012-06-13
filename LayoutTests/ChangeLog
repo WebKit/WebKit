@@ -1,3 +1,13 @@
+2012-06-12  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed: Update expectations for http/tests/media/media-source/webm/video-media-source-seek.html
+
+        This test has racy events (seeked and webkitsourceended) so is
+        flaky on Linux Dbg. Updated bug 85952 that is tracking flakiness
+        in these tests.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-12  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Implement font shaping with font-feature-settings on Mac

@@ -3577,7 +3577,7 @@ BUGWK85951 WIN DEBUG : fast/css/hover-update.html = TEXT PASS
 BUGWK85958 : fast/forms/file/file-input-capture.html = TEXT
 
 BUGWK85952 : http/tests/media/media-source/video-media-source-play.html = PASS TIMEOUT
-BUGWK85952 : http/tests/media/media-source/video-media-source-seek.html = PASS TIMEOUT
+BUGWK85952 : http/tests/media/media-source/video-media-source-seek.html = PASS TEXT TIMEOUT
 BUGWK85952 : http/tests/media/media-source/video-media-source-state-changes.html = PASS TIMEOUT TEXT CRASH
 
 BUGWK88949 : http/tests/media/media-source/video-media-source-add-and-remove-ids.html = TEXT
