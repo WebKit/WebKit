@@ -101,9 +101,9 @@ class WebKitPortTest(port_testcase.PortTestCase):
         self.assertEqual(port.path_to_test_expectations_file(), '/mock-checkout/LayoutTests/platform/testwebkitport/TestExpectations')
 
         port = TestWebKitPort()
-        port.host.filesystem.files['/mock-checkout/LayoutTests/platform/testwebkitport/test_expectations.txt'] = 'some content'
+        port.host.filesystem.files['/mock-checkout/LayoutTests/platform/testwebkitport/TestExpectations'] = 'some content'
         port._options = MockOptions(webkit_test_runner=False)
-        self.assertEqual(port.path_to_test_expectations_file(), '/mock-checkout/LayoutTests/platform/testwebkitport/test_expectations.txt')
+        self.assertEqual(port.path_to_test_expectations_file(), '/mock-checkout/LayoutTests/platform/testwebkitport/TestExpectations')
 
     def test_skipped_directories_for_symbols(self):
         # This first test confirms that the commonly found symbols result in the expected skipped directories.
@@ -174,16 +174,6 @@ class WebKitPortTest(port_testcase.PortTestCase):
         host = MockSystemHost()
         host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/testwebkitport/TestExpectations',
             'BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL\n')
-        port = TestWebKitPort(host=host)
-        self.assertEqual(''.join(port.expectations_dict().values()), 'BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL\n')
-
-    def test_legacy_test_expectations(self):
-        # Check that we read the legacy test_expectations.txt file
-        host = MockSystemHost()
-        host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/testwebkitport/test_expectations.txt',
-            'BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL\n')
-        host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/testwebkitport/TestExpectations',
-            'BUG_BADEXPECTATION SKIP : fast/html/article-element.html = FAIL\n')
         port = TestWebKitPort(host=host)
         self.assertEqual(''.join(port.expectations_dict().values()), 'BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL\n')
 

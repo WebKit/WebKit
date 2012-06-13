@@ -54,11 +54,7 @@ class Commit(AbstractStep):
                 error.num_local_commits, working_directory_message))
 
     def _check_test_expectations(self, changed_files):
-        test_expectations_files = []
-        for filename in changed_files:
-            if filename.endswith('test_expectations.txt') or filename.endswith('TestExpectations'):
-                test_expectations_files.append(filename)
-
+        test_expectations_files = [filename for filename in changed_files if filename.endswith('TestExpectations')]
         if not test_expectations_files:
             return
 

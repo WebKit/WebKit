@@ -1,3 +1,28 @@
+2012-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove webkitpy code to support legacy test_expectations.txt files
+        https://bugs.webkit.org/show_bug.cgi?id=89038
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.path_to_test_expectations_file):
+        (Port.expectations_dict):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_uses_test_expectations_file):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (WebKitPortTest.test_path_to_test_expectations_file):
+        (test_test_expectations):
+        * Scripts/webkitpy/style/checker.py:
+        (CheckerDispatcher.should_skip_without_warning):
+        (CheckerDispatcher._create_checker):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase._expect_port_for_expectations_path):
+        * Scripts/webkitpy/tool/steps/commit.py:
+        (Commit._check_test_expectations):
+        * Scripts/webkitpy/tool/steps/commit_unittest.py:
+        (CommitTest.test_check_test_expectations):
+
 2012-06-13  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: remove port.test_expectations() and port.test_expectations_overrides()

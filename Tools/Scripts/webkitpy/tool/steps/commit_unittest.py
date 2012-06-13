@@ -63,6 +63,3 @@ class CommitTest(unittest.TestCase):
 
     def test_check_test_expectations(self):
         self._test_check_test_expectations('TestExpectations')
-
-    def test_check_legacy_test_expectations(self):
-        self._test_check_test_expectations('test_expectations.txt')

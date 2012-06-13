@@ -530,7 +530,7 @@ class CheckerDispatcher(object):
         basename = os.path.basename(file_path)
         if basename.startswith('ChangeLog'):
             return False
-        elif basename == 'test_expectations.txt' or basename == 'TestExpectations':
+        elif basename == 'TestExpectations':
             return False
         for skipped_file in _SKIPPED_FILES_WITHOUT_WARNING:
             if self._should_skip_file_path(file_path, skipped_file):
@@ -598,7 +598,7 @@ class CheckerDispatcher(object):
             checker = PNGChecker(file_path, handle_style_error)
         elif file_type == FileType.TEXT:
             basename = os.path.basename(file_path)
-            if basename == 'test_expectations.txt' or basename == 'drt_expectations.txt':
+            if basename == 'TestExpectations':
                 checker = TestExpectationsChecker(file_path, handle_style_error)
             else:
                 checker = TextChecker(file_path, handle_style_error)

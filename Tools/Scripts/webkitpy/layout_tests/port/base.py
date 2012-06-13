@@ -696,11 +696,7 @@ class Port(object):
         if port_name.startswith('chromium') or port_name.startswith('google-chrome'):
             port_name = 'chromium'
 
-        baseline_path = self._webkit_baseline_path(port_name)
-        old_expectations_file = self._filesystem.join(baseline_path, 'test_expectations.txt')
-        if self._filesystem.exists(old_expectations_file):
-            return old_expectations_file
-        return self._filesystem.join(baseline_path, 'TestExpectations')
+        return self._filesystem.join(self._webkit_baseline_path(port_name), 'TestExpectations')
 
     def relative_test_filename(self, filename):
         """Returns a test_name a realtive unix-style path for a filename under the LayoutTests
@@ -897,14 +893,13 @@ class Port(object):
         return self._filesystem.exists(self.path_to_test_expectations_file())
 
     def expectations_dict(self):
-        """Returns an OrderedDict of name -> expectations strings. The names
-        are expected to be (but not required to be) paths in the filesystem.
-        If the name is a path, the file can be considered updatable for things
-        like rebaselining, so don't use names that are paths if they're not paths.
-        Generally speaking the ordering should be files in the filesystem in
-        cascade order (test_expectations.txt followed by Skipped, if the port
-        honors both formats), then any built-in expectations (e.g., from compile-time
-        exclusions), then --additional-expectations options."""
+        """Returns an OrderedDict of name -> expectations strings.
+        The names are expected to be (but not required to be) paths in the filesystem.
+        If the name is a path, the file can be considered updatable for things like rebaselining,
+        so don't use names that are paths if they're not paths.
+        Generally speaking the ordering should be files in the filesystem in cascade order
+        (TestExpectations followed by Skipped, if the port honors both formats),
+        then any built-in expectations (e.g., from compile-time exclusions), then --additional-expectations options."""
         # FIXME: rename this to test_expectations() once all the callers are updated to know about the ordered dict.
         expectations = OrderedDict()
 
