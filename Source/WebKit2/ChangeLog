@@ -1,3 +1,16 @@
+2012-06-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Do not set contents pos to the current position
+        https://bugs.webkit.org/show_bug.cgi?id=88990
+
+        Reviewed by Laszlo Gombos.
+
+        This is basically an optimization but it also solves flickering
+        in some cases.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::setContentPos):
+
 2012-06-12  MORITA Hajime  <morrita@google.com>
 
         Shadow Pseudo ID should be able to nest to point nested shadow DOM.
