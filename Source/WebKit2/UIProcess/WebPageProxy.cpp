@@ -33,6 +33,7 @@
 #include "DrawingAreaProxy.h"
 #include "EventDispatcherMessages.h"
 #include "FindIndicator.h"
+#include "IntentData.h"
 #include "Logging.h"
 #include "MessageID.h"
 #include "NativeWebKeyboardEvent.h"
@@ -61,6 +62,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebInspectorProxy.h"
+#include "WebIntentData.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageCreationParameters.h"
@@ -2135,6 +2137,17 @@ void WebPageProxy::didDetectXSSForFrame(uint64_t frameID, CoreIPC::ArgumentDecod
 
     m_loaderClient.didDetectXSSForFrame(this, frame, userData.get());
 }
+
+#if ENABLE(WEB_INTENTS)
+void WebPageProxy::didReceiveIntentForFrame(uint64_t frameID, const IntentData& intentData)
+{
+    WebFrameProxy* frame = process()->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+
+    RefPtr<WebIntentData> webIntentData = WebIntentData::create(intentData);
+    m_loaderClient.didReceiveIntentForFrame(this, frame, webIntentData.get());
+}
+#endif
 
 void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 {

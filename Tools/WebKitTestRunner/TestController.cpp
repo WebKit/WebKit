@@ -409,6 +409,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // willGoToBackForwardListItem
         0, // interactionOccurredWhileProcessUnresponsive
         0, // pluginDidFail
+        0, // didReceiveIntentForFrame
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
 }
