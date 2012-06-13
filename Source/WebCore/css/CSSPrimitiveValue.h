@@ -96,6 +96,7 @@ public:
         CSS_VH = 27,
         CSS_VMIN = 28,
         CSS_DPPX = 29,
+        CSS_DPI = 30,
         CSS_PAIR = 100, // We envision this being exposed as a means of getting computed style values for pairs (border-spacing/radius, background-position, etc.)
         CSS_DASHBOARD_REGION = 101, // FIXME: Dashboard region should not be a primitive value.
         CSS_UNICODE_RANGE = 102,

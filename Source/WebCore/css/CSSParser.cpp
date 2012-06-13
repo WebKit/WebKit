@@ -1369,6 +1369,7 @@ bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, CSSParserMode 
         break;
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     case CSSPrimitiveValue::CSS_DPPX:
+    case CSSPrimitiveValue::CSS_DPI:
         b = (unitflags & FResolution);
         break;
 #endif
@@ -1399,7 +1400,7 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveNumericValue(CSSP
     ASSERT((value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
            || (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS)
            || (value->unit >= CSSPrimitiveValue::CSS_VW && value->unit <= CSSPrimitiveValue::CSS_VMIN)
-           || (value->unit == CSSPrimitiveValue::CSS_DPPX));
+           || (value->unit >= CSSPrimitiveValue::CSS_DPPX && value->unit <= CSSPrimitiveValue::CSS_DPI));
 #else
     ASSERT((value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
            || (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS)
@@ -1462,6 +1463,8 @@ static int unitFromString(CSSParserValue* value)
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     if (equal(value->string, "dppx"))
         return CSSPrimitiveValue::CSS_DPPX;
+    if (equal(value->string, "dpi"))
+        return CSSPrimitiveValue::CSS_DPI;
 #endif
 
     return 0;
@@ -1517,7 +1520,7 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(int identifi
     if (value->unit >= CSSPrimitiveValue::CSS_VW && value->unit <= CSSPrimitiveValue::CSS_VMIN)
         return createPrimitiveNumericValue(value);
 #if ENABLE(CSS_IMAGE_RESOLUTION)
-    if (value->unit == CSSPrimitiveValue::CSS_DPPX)
+    if (value->unit >= CSSPrimitiveValue::CSS_DPPX && value->unit <= CSSPrimitiveValue::CSS_DPI)
         return createPrimitiveNumericValue(value);
 #endif
     if (value->unit >= CSSParserValue::Q_EMS)
@@ -8373,12 +8376,15 @@ inline void CSSParser::detectNumberToken(UChar* type, int length)
         if (length == 3 && isASCIIAlphaCaselessEqual(type[1], 'e') && isASCIIAlphaCaselessEqual(type[2], 'g'))
             m_token = DEGS;
 #if ENABLE(CSS_IMAGE_RESOLUTION)
-        // There is a discussion about the name of this unit on www-style.
-        // Keep this compile time guard in place until that is resolved.
-        // http://lists.w3.org/Archives/Public/www-style/2012May/0915.html
-        else if (length == 4 && isASCIIAlphaCaselessEqual(type[1], 'p')
-                 && isASCIIAlphaCaselessEqual(type[2], 'p') && isASCIIAlphaCaselessEqual(type[3], 'x'))
-            m_token = DPPX;
+        else if (length > 2 && isASCIIAlphaCaselessEqual(type[1], 'p')) {
+            // There is a discussion about the name of this unit on www-style.
+            // Keep this compile time guard in place until that is resolved.
+            // http://lists.w3.org/Archives/Public/www-style/2012May/0915.html
+            if (length == 4 && isASCIIAlphaCaselessEqual(type[2], 'p') && isASCIIAlphaCaselessEqual(type[3], 'x'))
+                m_token = DPPX;
+            else if (length == 3 && isASCIIAlphaCaselessEqual(type[2], 'i'))
+                m_token = DPI;
+        }
 #endif
         return;
 

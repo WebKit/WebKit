@@ -21,6 +21,40 @@ TEST "4dppx"
 PASS img.style.cssText is "image-resolution: 4dppx; "
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
+TEST "0dpi"
+PASS img.style.cssText is ""
+TEST "96dpi"
+PASS img.style.cssText is "image-resolution: 96dpi; "
+PASS img.offsetWidth is 16
+PASS img.offsetHeight is 16
+TEST "192dpi"
+PASS img.style.cssText is "image-resolution: 192dpi; "
+PASS img.offsetWidth is 8
+PASS img.offsetHeight is 8
+TEST "288dpi"
+PASS img.style.cssText is "image-resolution: 288dpi; "
+PASS img.offsetWidth is 5
+PASS img.offsetHeight is 5
+TEST "384dpi"
+PASS img.style.cssText is "image-resolution: 384dpi; "
+PASS img.offsetWidth is 4
+PASS img.offsetHeight is 4
+TEST "150dpi"
+PASS img.style.cssText is "image-resolution: 150dpi; "
+PASS img.offsetWidth is 10
+PASS img.offsetHeight is 10
+TEST "300dpi"
+PASS img.style.cssText is "image-resolution: 300dpi; "
+PASS img.offsetWidth is 5
+PASS img.offsetHeight is 5
+TEST "450dpi"
+PASS img.style.cssText is "image-resolution: 450dpi; "
+PASS img.offsetWidth is 3
+PASS img.offsetHeight is 3
+TEST "600dpi"
+PASS img.style.cssText is "image-resolution: 600dpi; "
+PASS img.offsetWidth is 2
+PASS img.offsetHeight is 2
 TEST ""
 PASS img.style.cssText is ""
 PASS successfullyParsed is true

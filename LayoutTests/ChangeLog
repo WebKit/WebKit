@@ -1,3 +1,13 @@
+2012-06-13  David Barr  <davidbarr@chromium.org>
+
+        Add dpi to css3-images image-resolution
+        https://bugs.webkit.org/show_bug.cgi?id=85439
+
+        Reviewed by Tony Chang.
+
+        * fast/css/image-resolution/image-resolution-expected.txt:
+        * fast/css/image-resolution/image-resolution.html:
+
 2012-06-13  Qi Zhang  <qi.2.zhang@nokia.com>
 
         [Qt] Add configure test for zlib and set WTF_USE_ZLIB if found

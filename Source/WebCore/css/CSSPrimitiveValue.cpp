@@ -62,6 +62,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue:: CSS_DIMENSION:
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     case CSSPrimitiveValue:: CSS_DPPX:
+    case CSSPrimitiveValue:: CSS_DPI:
 #endif
     case CSSPrimitiveValue:: CSS_EMS:
     case CSSPrimitiveValue:: CSS_EXS:
@@ -90,6 +91,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue:: CSS_DASHBOARD_REGION:
 #if !ENABLE(CSS_IMAGE_RESOLUTION)
     case CSSPrimitiveValue:: CSS_DPPX:
+    case CSSPrimitiveValue:: CSS_DPI:
 #endif
     case CSSPrimitiveValue:: CSS_IDENT:
     case CSSPrimitiveValue:: CSS_PAIR:
@@ -148,6 +150,7 @@ static CSSPrimitiveValue::UnitCategory unitCategory(CSSPrimitiveValue::UnitTypes
         return CSSPrimitiveValue::UViewportPercentageLength;
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     case CSSPrimitiveValue:: CSS_DPPX:
+    case CSSPrimitiveValue:: CSS_DPI:
         return CSSPrimitiveValue::UResolution;
 #endif
     default:
@@ -570,6 +573,9 @@ static double conversionToCanonicalUnitsScaleFactor(unsigned short unitType)
         case CSSPrimitiveValue::CSS_IN:
             factor = cssPixelsPerInch;
             break;
+        case CSSPrimitiveValue::CSS_DPI:
+            factor = 1 / cssPixelsPerInch;
+            break;
         case CSSPrimitiveValue::CSS_PT:
             factor = cssPixelsPerInch / 72.0;
             break;
@@ -854,6 +860,9 @@ String CSSPrimitiveValue::customCssText() const
 #if ENABLE(CSS_IMAGE_RESOLUTION)
         case CSS_DPPX:
             text = formatNumber(m_value.num) + "dppx";
+            break;
+        case CSS_DPI:
+            text = formatNumber(m_value.num) + "dpi";
             break;
 #endif
         case CSS_MM:
@@ -1197,6 +1206,7 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
     case CSS_VMIN:
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     case CSS_DPPX:
+    case CSS_DPI:
 #endif
         result = CSSPrimitiveValue::create(m_value.num, static_cast<UnitTypes>(m_primitiveUnitType));
         break;

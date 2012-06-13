@@ -59,7 +59,9 @@ description('Apply image-resolution property to a fixed image (' + dimensions + 
 var img = document.createElement('img');
 img.src = imgUrl;
 
-var resolutions = ['0dppx', '1dppx', '2dppx', '3dppx', '4dppx', ''];
+var resolutions = ['0dppx', '1dppx', '2dppx', '3dppx', '4dppx',
+                   '0dpi', '96dpi', '192dpi', '288dpi', '384dpi',
+                   '150dpi', '300dpi', '450dpi', '600dpi', ''];
 
 img.onload = function() {
     resolutions.forEach(function(test) {
