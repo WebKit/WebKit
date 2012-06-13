@@ -1,3 +1,13 @@
+2012-06-13  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Enable MEDIA_STREAM by default
+        https://bugs.webkit.org/show_bug.cgi?id=88849
+
+        Reviewed by Antonio Gomes.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2012-06-12  MORITA Hajime  <morrita@google.com>
 
         Shadow Pseudo ID should be able to nest to point nested shadow DOM.

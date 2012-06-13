@@ -279,7 +279,7 @@ my @features = (
       define => "ENABLE_MEDIA_STATISTICS", default => 0, value => \$mediaStatisticsSupport },
 
     { option => "media-stream", desc => "Toggle Media Stream support",
-      define => "ENABLE_MEDIA_STREAM", default => (isChromium() || isGtk()), value => \$mediaStreamSupport },
+      define => "ENABLE_MEDIA_STREAM", default => (isChromium() || isGtk() || isBlackBerry()), value => \$mediaStreamSupport },
 
     { option => "meter-tag", desc => "Toggle Meter Tag support",
       define => "ENABLE_METER_TAG", default => !isAppleWinWebKit(), value => \$meterTagSupport },

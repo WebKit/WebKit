@@ -1,3 +1,24 @@
+2012-06-13  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Enable MEDIA_STREAM by default
+        https://bugs.webkit.org/show_bug.cgi?id=88849
+
+        Reviewed by Antonio Gomes.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        * WebCoreSupport/UserMediaClientImpl.cpp: Added.
+        (WebCore):
+        (WebCore::UserMediaClientImpl::UserMediaClientImpl):
+        (WebCore::UserMediaClientImpl::~UserMediaClientImpl):
+        (WebCore::UserMediaClientImpl::pageDestroyed):
+        (WebCore::UserMediaClientImpl::requestUserMedia):
+        (WebCore::UserMediaClientImpl::cancelUserMediaRequest):
+        * WebCoreSupport/UserMediaClientImpl.h: Added.
+        (WebKit):
+        (WebCore):
+        (UserMediaClientImpl):
+
 2012-06-12  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Crash when rendering web page that's being destroyed

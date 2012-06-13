@@ -1,3 +1,12 @@
+2012-06-13  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Enable MEDIA_STREAM by default
+        https://bugs.webkit.org/show_bug.cgi?id=88849
+
+        Reviewed by Antonio Gomes.
+
+        * PlatformBlackBerry.cmake:
+
 2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Enable SHADOW_DOM flag

@@ -2447,6 +2447,56 @@ IF (ENABLE_BATTERY_STATUS)
     )
 ENDIF ()
 
+IF (ENABLE_MEDIA_STREAM)
+    LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+        ${WEBCORE_DIR}/Modules/mediastream
+        ${WEBCORE_DIR}/platform/mediastream
+    )
+    LIST(APPEND WebCore_IDL_FILES
+        Modules/mediastream/DeprecatedPeerConnection.idl
+        Modules/mediastream/DOMWindowMediaStream.idl
+        Modules/mediastream/IceCallback.idl
+        Modules/mediastream/IceCandidate.idl
+        Modules/mediastream/LocalMediaStream.idl
+        Modules/mediastream/MediaStream.idl
+        Modules/mediastream/MediaStreamEvent.idl
+        Modules/mediastream/MediaStreamList.idl
+        Modules/mediastream/MediaStreamTrack.idl
+        Modules/mediastream/MediaStreamTrackList.idl
+        Modules/mediastream/NavigatorMediaStream.idl
+        Modules/mediastream/NavigatorUserMediaError.idl
+        Modules/mediastream/NavigatorUserMediaErrorCallback.idl
+        Modules/mediastream/NavigatorUserMediaSuccessCallback.idl
+        Modules/mediastream/PeerConnection00.idl
+        Modules/mediastream/SessionDescription.idl
+        Modules/mediastream/SignalingCallback.idl
+    )
+    LIST(APPEND WebCore_SOURCES
+        Modules/mediastream/DeprecatedPeerConnection.cpp
+        Modules/mediastream/IceCandidate.cpp
+        Modules/mediastream/LocalMediaStream.cpp
+        Modules/mediastream/MediaStream.cpp
+        Modules/mediastream/MediaStreamEvent.cpp
+        Modules/mediastream/MediaStreamList.cpp
+        Modules/mediastream/MediaStreamRegistry.cpp
+        Modules/mediastream/MediaStreamTrack.cpp
+        Modules/mediastream/MediaStreamTrackList.cpp
+        Modules/mediastream/NavigatorMediaStream.cpp
+        Modules/mediastream/PeerConnection00.cpp
+        Modules/mediastream/SessionDescription.cpp
+        Modules/mediastream/UserMediaController.cpp
+        Modules/mediastream/UserMediaRequest.cpp
+
+        bindings/js/JSDeprecatedPeerConnectionCustom.cpp
+        platform/mediastream/IceCandidateDescriptor.cpp
+        platform/mediastream/IceOptions.cpp
+        platform/mediastream/MediaHints.cpp
+        platform/mediastream/MediaStreamCenter.cpp
+        platform/mediastream/PeerConnection00Handler.cpp
+        platform/mediastream/SessionDescriptionDescriptor.cpp
+    )
+ENDIF ()
+
 IF (ENABLE_WEB_AUDIO)
     LIST(APPEND WebCore_SOURCES
         Modules/webaudio/AsyncAudioDecoder.cpp

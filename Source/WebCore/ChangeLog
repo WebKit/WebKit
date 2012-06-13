@@ -1,3 +1,39 @@
+2012-06-13  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Enable MEDIA_STREAM by default
+        https://bugs.webkit.org/show_bug.cgi?id=88849
+
+        Reviewed by Antonio Gomes.
+
+        Covered by existing test cases.
+
+        * CMakeLists.txt:
+        * PlatformBlackBerry.cmake:
+        * platform/mediastream/blackberry/DeprecatedPeerConnectionHandler.cpp: Added.
+        (WebCore):
+        (WebCore::DeprecatedPeerConnectionHandler::create):
+        (WebCore::DeprecatedPeerConnectionHandler::DeprecatedPeerConnectionHandler):
+        (WebCore::DeprecatedPeerConnectionHandler::~DeprecatedPeerConnectionHandler):
+        (WebCore::DeprecatedPeerConnectionHandler::produceInitialOffer):
+        (WebCore::DeprecatedPeerConnectionHandler::handleInitialOffer):
+        (WebCore::DeprecatedPeerConnectionHandler::processSDP):
+        (WebCore::DeprecatedPeerConnectionHandler::processPendingStreams):
+        (WebCore::DeprecatedPeerConnectionHandler::sendDataStreamMessage):
+        (WebCore::DeprecatedPeerConnectionHandler::stop):
+        * platform/mediastream/blackberry/MediaStreamCenterBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::MediaStreamCenter::instance):
+        (WebCore::MediaStreamCenterBlackBerry::MediaStreamCenterBlackBerry):
+        (WebCore::MediaStreamCenterBlackBerry::~MediaStreamCenterBlackBerry):
+        (WebCore::MediaStreamCenterBlackBerry::queryMediaStreamSources):
+        (WebCore::MediaStreamCenterBlackBerry::didSetMediaStreamTrackEnabled):
+        (WebCore::MediaStreamCenterBlackBerry::didStopLocalMediaStream):
+        (WebCore::MediaStreamCenterBlackBerry::didCreateMediaStream):
+        (WebCore::MediaStreamCenterBlackBerry::constructSDP):
+        * platform/mediastream/blackberry/MediaStreamCenterBlackBerry.h: Added.
+        (WebCore):
+        (MediaStreamCenterBlackBerry):
+
 2012-06-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: working copy should be committed even if domain binding returns error.

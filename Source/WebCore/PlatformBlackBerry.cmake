@@ -229,6 +229,13 @@ if (ENABLE_WEBGL)
     )
 ENDIF ()
 
+if (ENABLE_MEDIA_STREAM)
+    LIST(APPEND WebCore_SOURCES
+        platform/mediastream/blackberry/DeprecatedPeerConnectionHandler.cpp
+        platform/mediastream/blackberry/MediaStreamCenterBlackBerry.cpp
+    )
+ENDIF ()
+
 IF (ENABLE_NETSCAPE_PLUGIN_API)
     LIST(APPEND WebCore_SOURCES
         plugins/PluginDatabase.cpp

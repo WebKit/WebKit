@@ -114,6 +114,9 @@
 #include "ThreadCheck.h"
 #include "TouchEventHandler.h"
 #include "TransformationMatrix.h"
+#if ENABLE(MEDIA_STREAM)
+#include "UserMediaClientImpl.h"
+#endif
 #if ENABLE(VIBRATION)
 #include "VibrationClientBlackBerry.h"
 #endif
@@ -508,6 +511,10 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 
 #if ENABLE(BATTERY_STATUS)
     WebCore::provideBatteryTo(m_page, new WebCore::BatteryClientBlackBerry);
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    WebCore::provideUserMediaTo(m_page, new UserMediaClientImpl(m_webPage));
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

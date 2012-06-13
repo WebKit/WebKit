@@ -42,6 +42,16 @@ IF (ENABLE_BATTERY_STATUS)
     LIST(APPEND WebKit_SOURCES blackberry/WebCoreSupport/BatteryClientBlackBerry.cpp)
 ENDIF ()
 
+IF (ENABLE_MEDIA_STREAM)
+    LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/Modules/mediastream"
+        "${WEBCORE_DIR}/platform/mediastream"
+    )
+    LIST(APPEND WebKit_SOURCES
+        blackberry/WebCoreSupport/UserMediaClientImpl.cpp
+    )
+ENDIF ()
+
 ADD_DEFINITIONS(-DUSER_PROCESSES)
 
 LIST(APPEND WebKit_SOURCES
