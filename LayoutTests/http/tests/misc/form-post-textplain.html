@@ -14,9 +14,9 @@ forms POSTed with a content-type of text/plain actually send data in text/plain
     <input type="submit" value="press me">
 </form>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 document.f.submit();

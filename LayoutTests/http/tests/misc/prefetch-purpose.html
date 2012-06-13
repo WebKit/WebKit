@@ -6,10 +6,10 @@ function finishUp() {
     window.location = 'resources/prefetch-purpose.php';
 }
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpResourceResponseMIMETypes();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpResourceResponseMIMETypes();
 }
 </script>
 <link href="resources/prefetch-purpose.php" rel="prefetch" onload="finishUp()">

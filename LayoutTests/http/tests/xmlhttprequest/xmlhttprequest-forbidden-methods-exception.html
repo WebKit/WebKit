@@ -25,8 +25,8 @@ function testException(method)
     }
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var xhr;
 
@@ -52,8 +52,8 @@ log("CONNECT : ");
 testException("CONNECT");
 insertNewLine();
 
-if (window.layoutTestController)
-    layoutTestController.notifyDone();
+if (window.testRunner)
+    testRunner.notifyDone();
 
 </script>
 

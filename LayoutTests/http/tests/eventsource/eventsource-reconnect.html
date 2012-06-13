@@ -20,9 +20,9 @@ function checkReadyState(es, desiredState) {
         log("FAIL: bad state (" + stateNames[currState] + ", should be " + stateNames[desiredState] + ")");
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var errCount = 0;
@@ -71,8 +71,8 @@ function end() {
         log("DONE");
     }
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </body>

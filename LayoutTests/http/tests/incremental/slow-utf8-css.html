@@ -2,8 +2,8 @@
 <link rel="stylesheet" href="resources/slow-utf8-css.pl" type="text/css" charset="utf-8">
 <script>
 function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     document.getElementById("result").innerHTML = 
         (document.styleSheets.item(0).cssRules.item(0).selectorText == "#result") ? "PASS" : "FAIL";
 }

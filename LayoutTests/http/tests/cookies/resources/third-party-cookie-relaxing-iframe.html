@@ -3,8 +3,8 @@
 <script>
 resetCookies();
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 window.onmessage = function(evt)
 {
@@ -48,8 +48,8 @@ function sendXHR(queryCommand)
 function resetCookiesAndNotifyDone()
 {
     resetCookies();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

@@ -8,9 +8,9 @@
 
 <body>
 <script>
-   if (window.layoutTestController) {
-       layoutTestController.waitUntilDone();
-       layoutTestController.dumpAsText();
+   if (window.testRunner) {
+       testRunner.waitUntilDone();
+       testRunner.dumpAsText();
    }
 </script>
    

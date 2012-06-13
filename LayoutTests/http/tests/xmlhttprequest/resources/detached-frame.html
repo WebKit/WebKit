@@ -10,8 +10,8 @@ function test() {
             var parentWindow = window.parent;
             parentWindow.document.body.removeChild(parentWindow.document.getElementsByTagName("iframe")[0]);
             parentWindow.document.body.innerHTML += "<p>PASS: No crash.</p>";
-            if (parentWindow.layoutTestController)
-                parentWindow.layoutTestController.notifyDone();
+            if (parentWindow.testRunner)
+                parentWindow.testRunner.notifyDone();
         }
     }
 }

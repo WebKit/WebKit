@@ -6,9 +6,9 @@
 GMAIL: XMLHttpRequest does not correctly report "Interactive" state on receipt of load data.</p>
 <script>
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var console_messages = document.createElement("ol");
@@ -51,8 +51,8 @@ GMAIL: XMLHttpRequest does not correctly report "Interactive" state on receipt o
             ++count;
         else if (req.readyState == 4) {
             log((count > 1) ? "SUCCESS" : "FAILURE (count = " + count + ")");
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     }
     

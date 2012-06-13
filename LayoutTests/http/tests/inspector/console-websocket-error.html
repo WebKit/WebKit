@@ -8,8 +8,8 @@ var nextTestIndex = 0;
 
 function onload()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
     if (!window.WebSocket) {
         console.log("WebSocket is not supported."); return;
     }

@@ -52,7 +52,7 @@ xhr.onreadystatechange = function() {
                 else //savedHeader == header here; no need to reprint header
                     log3("PASSED", rState, headerName);
             else {//first header value retrieved
-                if (window.layoutTestController)
+                if (window.testRunner)
 //do not print the header's value for automated tests to avoid false failures.
                     log3("PASSED", rState, "ResponseHeader(" + headerName + ") returned a value.");
                 else
@@ -81,13 +81,13 @@ xhr.onreadystatechange = function() {
         else
             log3("FAILED", rState, "exception thrown: " + e.message + ".");
     }
-    if ((rState == 4) && (window.layoutTestController))
-            layoutTestController.notifyDone();
+    if ((rState == 4) && (window.testRunner))
+            testRunner.notifyDone();
 }
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function test() {
@@ -103,8 +103,8 @@ function test() {
         xhr.send(null);
     } catch(e) {
         log3("FAILED", "open/send", "exception thrown: " + e.message +".");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 </script>
@@ -126,7 +126,7 @@ and <a href="http://bugs.webkit.org/show_bug.cgi?id=29121">bug 29121</a></p>
 <li>3b. The parameter is "Content-Type:" (it is not a valid header name).</li>
 
 <script>
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         document.write("<p>If the test passes one should see \
 below the ruler the text \"passed\" in all capital letters, once for every ready state &lt; 2, \
 followed each time by a space and the readyState number and 6 times for every ready state >= 2.</p>\n\

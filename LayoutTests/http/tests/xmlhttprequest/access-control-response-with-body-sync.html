@@ -5,8 +5,8 @@ Body from cross origin preflight response is prepended to the actual response bo
 <div id=result>Running test...</div>
 <script>
 
-  if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+  if (window.testRunner)
+    testRunner.dumpAsText();
 
   window.onload = function() {
       var xhr = new XMLHttpRequest();

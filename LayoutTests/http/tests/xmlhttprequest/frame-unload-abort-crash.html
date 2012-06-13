@@ -6,17 +6,17 @@
     var consoleMessages = document.createElement("ul");
     document.body.appendChild(consoleMessages);
 
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 
     function subframeLoaded()
     {
         var frameDiv = document.getElementById('framediv');
         frameDiv.innerHTML = 'PASSED';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     function dumpRequestStatus(request)

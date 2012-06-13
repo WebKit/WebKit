@@ -6,9 +6,9 @@
 }
 </style>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var filename = 'filename=webfontRequestCount.txt';
@@ -19,8 +19,8 @@ function startTest() {
     xhr = new XMLHttpRequest;
     xhr.onerror = function() {
         document.getElementById('result').innerText = 'FAIL: Network error.';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     };
     xhr.onreadystatechange = function() {
         if (xhr.readyState == xhr.DONE)
@@ -53,8 +53,8 @@ function checkRequestCount() {
         result.innerHTML += 'SUCCESS';
     else
         result.innerHTML += 'FAIL';
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 };
 </script>
 </head>

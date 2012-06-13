@@ -69,8 +69,8 @@ XMLHttpRequest should force to send content-type as charset equals UTF-8.</p>
             document.getElementById("result4").firstChild.data += " FAILURE: '" + req.responseText + "'";
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     test1();
     test2();

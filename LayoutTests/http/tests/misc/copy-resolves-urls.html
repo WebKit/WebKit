@@ -15,10 +15,10 @@ function test()
     var test = document.getElementById("test");
     s.selectAllChildren(test);
 
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     document.execCommand("Copy");
     // It looks like on a mac, URLs are resolved only if the page we're pasting
@@ -43,8 +43,8 @@ function afterPaste()
     var pasteHere = document.getElementById("pastehere");
     var results = document.getElementById("results");
     results.appendChild(document.createTextNode(pasteHere.innerHTML));
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 if (document.location.search == "?paste")

@@ -12,8 +12,8 @@ print "\n";
 
 print "<body>\n";
 print "<script>\n";
-print "    if (window.layoutTestController)\n";
-print "        layoutTestController.dumpAsText();\n";
+print "    if (window.testRunner)\n";
+print "        testRunner.dumpAsText();\n";
 print "</script>\n";
 print "<p>Test for <a href=\"http://bugzilla.opendarwin.org/show_bug.cgi?id=4820\">bug 4820</a>: hexadecimal HTML entities split across TCP packets are not parsed correctly.</p>";
 print "<p>Should be a blank page (except for this description).</p>";

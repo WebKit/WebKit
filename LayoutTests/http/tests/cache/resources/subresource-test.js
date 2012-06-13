@@ -1,6 +1,6 @@
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var currentTest;
@@ -69,8 +69,8 @@ function nextTest()
     uniqueId = Math.floor(100000000 * Math.random());
     now = new Date();
     if (!testSpec) {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
     loadTestFrame(frame1, testSpec);

@@ -15,8 +15,8 @@ print "<p>This tests that the line numbers associated with a script element are 
 print "interrupted mid way through the script element</p>\n";
 print "<pre id=log></pre>\n";
 print "<script>\n";
-print "if (window.layoutTestController)\n";
-print "    layoutTestController.dumpAsText();\n";
+print "if (window.testRunner)\n";
+print "    testRunner.dumpAsText();\n";
 for ($count=1; $count<4000; $count++) {
     print "\n";
 }

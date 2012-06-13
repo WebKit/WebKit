@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function log(text)
@@ -23,7 +23,7 @@ function log(text)
         readyState = document.readyState;
         if (readyState == 'complete') {
             log("Success")
-            layoutTestController.notifyDone()
+            testRunner.notifyDone()
         } else if (readyState == 'loading' || readyState == 'interactive') {
             x = e.offsetLeft + e.offsetWidth / 2;
             y = e.offsetTop + e.offsetHeight / 2;

@@ -15,8 +15,8 @@ foreach ($sortedKeys as $value) {
 }
 ?>
 <script>
-if (window.layoutTestController)
-   layoutTestController.notifyDone();
+if (window.testRunner)
+   testRunner.notifyDone();
 </script>
 </body>
 </html>

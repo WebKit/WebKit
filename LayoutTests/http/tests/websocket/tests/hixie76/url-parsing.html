@@ -9,8 +9,8 @@
 <script type="text/javascript">
 description("Test WebSocket URL parsing.");
 
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 // Not enough arguments.
 shouldThrow('new WebSocket()');

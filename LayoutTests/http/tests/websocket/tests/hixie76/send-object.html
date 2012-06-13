@@ -10,8 +10,8 @@
 description("WebSocket: send(object) should be interpreted as send(object.toString()).");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 function createEmptyBlob()
 {

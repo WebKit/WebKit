@@ -2,10 +2,10 @@
 
 <pre id="console"></pre>
 <script>
-layoutTestController.dumpAsText();
-layoutTestController.waitUntilDone();
-layoutTestController.addOriginAccessWhitelistEntry("http://127.0.0.1:8000", "http", "", true);
-layoutTestController.addOriginAccessWhitelistEntry("http://localhost:8000", "http", "", true);
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+testRunner.addOriginAccessWhitelistEntry("http://127.0.0.1:8000", "http", "", true);
+testRunner.addOriginAccessWhitelistEntry("http://localhost:8000", "http", "", true);
 
 function log(message)
 {
@@ -46,7 +46,7 @@ function testIPAddress()
     iframe.src = "http://localhost:8000/xmlhttprequest/resources/origin-whitelisting-ip-address-test.html";
     window.addEventListener("message", function(e) {
         if (e.data == "DONE")
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         else
             log(e.data);
     }, false);

@@ -2,8 +2,8 @@
 <p>Test that accessing a detached iframe's applicationCache window property doesn't assert. If you don't see an assert, it passed.</p>
 <iframe src="about:blank"></iframe>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function test()
 {

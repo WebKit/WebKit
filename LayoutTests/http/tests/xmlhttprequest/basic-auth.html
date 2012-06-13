@@ -2,9 +2,9 @@
 <body>
 <p>Tests for XMLHttpRequest authentication.
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     var console_messages = document.createElement("ol");
@@ -101,8 +101,8 @@
             req.send("");
           } else if (asyncStep == 7) {
             log('async7: ' + req.responseText);
-            if (window.layoutTestController)
-              layoutTestController.notifyDone();
+            if (window.testRunner)
+              testRunner.notifyDone();
           }
         } else {
             log("async" + asyncStep + " failed with unexpected status: " + req.status);

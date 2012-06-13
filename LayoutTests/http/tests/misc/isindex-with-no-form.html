@@ -5,9 +5,9 @@ function test()
 {
     var isindexElm = document.getElementById("isindex");
     if (!location.search.length) {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         isindexElm.value = "This is a test";
@@ -22,8 +22,8 @@ function test()
         else
             log("PASS");
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

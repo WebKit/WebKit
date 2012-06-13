@@ -10,8 +10,8 @@
 description("Test if Web Socket opened in iframe but referred in parent document is closed on unloading the frame.");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 var frameDiv;
 var closedSocket;

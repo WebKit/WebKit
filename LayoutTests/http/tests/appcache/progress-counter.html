@@ -1,16 +1,16 @@
 <html manifest="resources/progress-counter.manifest">
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText()
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText()
+    testRunner.waitUntilDone();
 }
 
 var expectedTotal = 2
 var eventsReceived = 0;
 
 function done() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function progress(event)

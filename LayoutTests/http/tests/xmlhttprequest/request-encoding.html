@@ -7,8 +7,8 @@ XMLHttpRequest shouldn't honor a charset specified via setRequestHeader.</p>
 <div id=result>FAIL: script didn't run to completion.</div>
 <script>
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     req = new XMLHttpRequest;
     req.open("POST", "resources/post-echo-as-utf-8.cgi", false);

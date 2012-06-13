@@ -13,8 +13,8 @@ print "\n";
 print "\xef\xbb\xbf<body><p>Test for bug 10697: Errors in incremental decoding of UTF-8.</p>\n";
 print "<p>Should be a blank page (except for this description).</p>\n";
 print "<script>\n";
-print "if (window.layoutTestController)\n";
-print "	layoutTestController.dumpAsText();\n";
+print "if (window.testRunner)\n";
+print "	testRunner.dumpAsText();\n";
 print "</script>\n";
 
 # U+2003 = UTF-8 E28083 = EM SPACE

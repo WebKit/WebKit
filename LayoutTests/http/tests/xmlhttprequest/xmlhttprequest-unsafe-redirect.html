@@ -4,8 +4,8 @@
 function didReadFile()
 {
     document.getElementById('result').innerHTML = 'FAILURE: ' + req.responseText;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();    
+    if (window.testRunner)
+        testRunner.notifyDone();    
 }
 
 function log(message)
@@ -33,14 +33,14 @@ function onSyncReqError()
 function onReqError(e)
 {
     document.getElementById('result').innerHTML = 'SUCCESS: Error handler was called with readyState ' + req.readyState;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     // First, make a sync request.

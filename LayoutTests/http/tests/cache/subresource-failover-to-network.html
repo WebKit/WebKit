@@ -1,7 +1,7 @@
 <body>
 <script>
-  if ("layoutTestController" in window) {
-    layoutTestController.dumpAsText();
+  if ("testRunner" in window) {
+    testRunner.dumpAsText();
 
     document.cookie = "result=FAIL"
 
@@ -10,9 +10,9 @@
     // sync XHR request to still succeed.  This relies on it loading from the
     // network and not being restricted to loading from the cache (as the main
     // page is).
-    layoutTestController.queueLoadingScript("document.forms[0].submit()");
-    layoutTestController.queueBackNavigation(1);
-    layoutTestController.queueForwardNavigation(1);
+    testRunner.queueLoadingScript("document.forms[0].submit()");
+    testRunner.queueBackNavigation(1);
+    testRunner.queueForwardNavigation(1);
   }
 </script>
 <form method="POST" action="resources/subresource-failover-to-network.cgi" enctype="multipart/form-data">

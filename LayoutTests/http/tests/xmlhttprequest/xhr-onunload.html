@@ -9,8 +9,8 @@ REGRESSION: Reproducible crash in XMLHttpRequest::abort().
 <!-- When running as an automated test, crashes when loading the next test case. -->
 <script>
     
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function test(url)
     {

@@ -10,8 +10,8 @@
 description("Test if Web Socket opened in iframe, referred in parent document is, and try to send() returns false.");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var frameDiv;
 var closedSocket;

@@ -2,8 +2,8 @@
 <body>
 <iframe id="slowToLoad" name="slowToLoad" src="slow-utf8-text.pl" style="visibility:hidden"></iframe>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
     
 slowToLoad.focus();
 slowToLoad.blur();

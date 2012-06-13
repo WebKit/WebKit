@@ -6,7 +6,7 @@ function done() {
     var img = document.getElementsByTagName("img")[0];
     var result = document.getElementById("result");
     result.innerHTML = img.width == 128 ? "PASS" : "FAIL - image not loaded";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>

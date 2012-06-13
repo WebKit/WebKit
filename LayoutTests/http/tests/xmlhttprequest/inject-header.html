@@ -2,8 +2,8 @@
 <body>
 <p>Test that setRequestHeader properly checks for line feeds in header values.</p>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function test(val) {
     var req = new XMLHttpRequest;

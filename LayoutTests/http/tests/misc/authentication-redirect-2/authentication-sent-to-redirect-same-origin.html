@@ -10,21 +10,21 @@ redirectCodes[3] = "307";
 function frameLoaded()
 {
     if (++framesLoaded == 4) {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
     
     appendFrame(redirectCodes[framesLoaded]);
 }
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.setHandlesAuthenticationChallenges(true);
-    layoutTestController.setAuthenticationUsername("testUser");
-    layoutTestController.setAuthenticationPassword("testPassword");
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.setHandlesAuthenticationChallenges(true);
+    testRunner.setAuthenticationUsername("testUser");
+    testRunner.setAuthenticationPassword("testPassword");
 }
 
 function appendFrame(code)

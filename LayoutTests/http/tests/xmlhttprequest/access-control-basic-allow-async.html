@@ -7,25 +7,25 @@ function log(message)
     document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function processStateChange()
 {
     if (xhr.readyState == xhr.DONE) {
         log(xhr.responseText);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 
 function errorHandler()
 {
     log("FAIL: Network error.");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 var xhr = new XMLHttpRequest;

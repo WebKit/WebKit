@@ -5,10 +5,10 @@
 <script>
 var maxLength = 1025;
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 }
 
 function log(message)
@@ -36,8 +36,8 @@ ws.onmessage = function(msg) {
             log("PASS");
         ws.send("Goodbye");
         ws.onmessage = null;
-        if (window.layoutTestController)
-            setTimeout("layoutTestController.notifyDone()", 0);
+        if (window.testRunner)
+            setTimeout("testRunner.notifyDone()", 0);
     } else {
         lastString += "*";
         ws.send(lastString);

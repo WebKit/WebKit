@@ -12,14 +12,14 @@ function runTest() {
     console_messages = document.createElement("ul");
     document.body.appendChild(console_messages);
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpResourceLoadCallbacks();
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpResourceLoadCallbacks();
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
     
     f();
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function log(message)

@@ -4,9 +4,9 @@
 var time1 = 0;
 var time2 = 0;
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -37,8 +37,8 @@ function test()
     else
         log("PASS: First script ran before second script was loaded.");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <body onload="test()">

@@ -10,9 +10,9 @@ function log(text) {
     document.body.appendChild(document.createElement('br'));
 }
 function onload() {
-  if (window.layoutTestController) {
-      layoutTestController.waitUntilDone();
-      layoutTestController.showWebInspector();
+  if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.showWebInspector();
   }
 
   var id = setInterval("log('FAIL')", 0);

@@ -3,11 +3,11 @@
 <script>
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpResourceLoadCallbacks();
-        layoutTestController.setIconDatabaseEnabled(true);
-        layoutTestController.queueReload();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpResourceLoadCallbacks();
+        testRunner.setIconDatabaseEnabled(true);
+        testRunner.queueReload();
     }
 }
 </script>

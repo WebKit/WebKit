@@ -11,9 +11,9 @@
 <div id=result></div>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -84,8 +84,8 @@ function test4()
 function test5()
 {
     log("SUCCESS");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function resetManifest()

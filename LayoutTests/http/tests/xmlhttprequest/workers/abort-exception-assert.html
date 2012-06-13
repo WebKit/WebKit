@@ -4,9 +4,9 @@
 <p>On success, you should see a single PASS below.</p>
 <script src="../../workers/resources/worker-util.js"></script>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var console_messages = document.createElement("ol");
@@ -36,8 +36,8 @@
     function doneWithTest()
     {
         log("PASS");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 </body>

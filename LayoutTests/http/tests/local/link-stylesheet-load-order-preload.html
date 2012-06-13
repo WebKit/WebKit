@@ -2,12 +2,12 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
         // Prevent networking layer from reordering loads.
-        if (layoutTestController.setSerializeHTTPLoads)
-            layoutTestController.setSerializeHTTPLoads();
+        if (testRunner.setSerializeHTTPLoads)
+            testRunner.setSerializeHTTPLoads();
     }
 
     function CallCommand(cmd)
@@ -27,8 +27,8 @@
         getResourceLog();
         CallCommand("clear-resource-request-log");
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     function getResourceLog()

@@ -5,8 +5,8 @@
 <span>Re-login: </span><span id="relogin">FAIL - Test not run</span><br>
 <span>New default: </span><span id="newdefault">FAIL - Test not run</span>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var xhr = new XMLHttpRequest;
 // "?login1" is only here for ease of debugging; it doesn't affect behavior.

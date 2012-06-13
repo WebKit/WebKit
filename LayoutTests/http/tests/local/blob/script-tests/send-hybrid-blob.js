@@ -83,11 +83,11 @@ function runTests()
                         F('abe.png') ],
                       { 'start': 20, 'length': 3000 });
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 if (window.eventSender) {
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
     util.runTests();
 } else
     testFailed("This test is not interactive, please run using DumpRenderTree");

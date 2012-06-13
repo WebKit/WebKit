@@ -7,13 +7,13 @@
 <p> This test verifies that an XHR content with no Content-Type set does not crash the browser. </p>
 <body>
 <script type="text/javascript">
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function checkDone() {
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 var req = new XMLHttpRequest();

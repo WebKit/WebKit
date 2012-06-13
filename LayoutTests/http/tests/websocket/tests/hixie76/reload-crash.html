@@ -10,8 +10,8 @@
 description("Test if it doesn't crash when reloading while Web Socket is busy");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var frameDiv;
 var reloadCount = 0;

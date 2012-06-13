@@ -5,8 +5,8 @@ Fire an error event for empty 404 script.</p>
 <p>Should say SUCCESS:</p>
 <p id=result></p>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 <script
   src="resources/404-with-empty-body.cgi"

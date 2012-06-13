@@ -4,9 +4,9 @@
 <p>The order of the error events should be onerror and then error event, and this test should be improved to verify that when bug https://bugs.webkit.org/show_bug.cgi?id=62485 is fixed.</p>
 <div id=result></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 function log(message)
 {
@@ -16,8 +16,8 @@ function log(message)
 function done()
 {
     log("DONE");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 var eventCount = 0;

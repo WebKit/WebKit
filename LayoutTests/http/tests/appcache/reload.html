@@ -5,9 +5,9 @@
 <div id=result></div>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -27,8 +27,8 @@ function receivedMessage(message)
         state = 2;
         setTimeout("frames[0].test()", 0);
     } else if (state == 2) {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

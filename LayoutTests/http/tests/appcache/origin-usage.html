@@ -13,20 +13,20 @@ function log(message) {
 // Start and end.
 
 function startTest() {
-    if (window.layoutTestController) {
-        layoutTestController.clearAllApplicationCaches();
+    if (window.testRunner) {
+        testRunner.clearAllApplicationCaches();
         log("Cleared application cache");
-        layoutTestController.dumpApplicationCacheDelegateCallbacks();
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+        testRunner.dumpApplicationCacheDelegateCallbacks();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     addFirstIFrame();
 }
 
 function finishTest() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 // Stages.
@@ -42,7 +42,7 @@ function addFirstIFrame() {
     // Expected to succeed.
     addIFrameWithContinuation("resources/origin-usage-iframe-1.html", function(event) {
         log(event.data);
-        var usage = layoutTestController.applicationCacheDiskUsageForOrigin(drtURL);
+        var usage = testRunner.applicationCacheDiskUsageForOrigin(drtURL);
         log("Usage for " + drtURL + " after first frame is between 15000 and 16000 bytes: " + ((usage > 15000) && (usage < 16000)));
         addSecondIFrame();
     });
@@ -51,13 +51,13 @@ function addFirstIFrame() {
 function addSecondIFrame() {
     addIFrameWithContinuation("resources/origin-usage-iframe-2.html", function(event) {
         log(event.data);
-        var usage = layoutTestController.applicationCacheDiskUsageForOrigin(drtURL);
+        var usage = testRunner.applicationCacheDiskUsageForOrigin(drtURL);
         log("Usage for " + drtURL + " after second frame is between 30000 and 32000 bytes: " + ((usage > 30000) && (usage < 32000)));
 
         log("Removing Application Cache for " + drtURL);
-        layoutTestController.clearApplicationCacheForOrigin(drtURL);
+        testRunner.clearApplicationCacheForOrigin(drtURL);
 
-        log("Usage for " + drtURL + ": " + layoutTestController.applicationCacheDiskUsageForOrigin(drtURL));
+        log("Usage for " + drtURL + ": " + testRunner.applicationCacheDiskUsageForOrigin(drtURL));
 
         finishTest();
     });

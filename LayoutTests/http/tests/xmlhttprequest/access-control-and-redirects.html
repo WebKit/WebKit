@@ -3,9 +3,9 @@
 
 <pre id="console"></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -55,8 +55,8 @@ var currentTest = 0;
 function nextTest() {
     if (currentTest < tests.length)
         runTest.apply(null, tests[currentTest++]);
-    else if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    else if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 nextTest();

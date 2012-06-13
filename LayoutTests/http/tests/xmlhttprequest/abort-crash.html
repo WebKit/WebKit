@@ -11,9 +11,9 @@ function f() {
 }
 
 function runTest() {
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
     
     f();
@@ -27,8 +27,8 @@ function runTest() {
     }
      
      // Add a small timeout to give the callbacks a chance to fire
-     if (window.layoutTestController)
-        setTimeout("layoutTestController.notifyDone()", 100)
+     if (window.testRunner)
+        setTimeout("testRunner.notifyDone()", 100)
 }         
 </script>
 </head>

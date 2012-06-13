@@ -10,8 +10,8 @@
 description("Test whether WebSocket rejects interleaved fragmented frames.");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 var url = "ws://localhost:8880/websocket/tests/hybi/interleaved-fragments";
 var ws = new WebSocket(url);

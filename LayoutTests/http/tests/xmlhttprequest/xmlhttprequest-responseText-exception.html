@@ -37,8 +37,8 @@ function test(num)
             }
         }
         
-        if (finishedTests == 4 && window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (finishedTests == 4 && window.testRunner)
+            testRunner.notifyDone();
     }
 
     xhr.open("GET", "resources/1251.html", true);
@@ -46,9 +46,9 @@ function test(num)
         xhr.send(null);
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var finishedTests = 0;

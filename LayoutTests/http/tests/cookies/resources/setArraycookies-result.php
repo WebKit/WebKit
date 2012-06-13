@@ -19,8 +19,8 @@
         } else
             document.getElementById("test").innerHTML = "<b>Failed</b>";    
     }
-if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+if (window.testRunner)
+        testRunner.dumpAsText();
 
 </script>
 </head>

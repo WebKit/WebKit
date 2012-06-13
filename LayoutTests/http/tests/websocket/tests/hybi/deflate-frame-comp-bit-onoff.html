@@ -10,8 +10,8 @@
 description("Test compression enabled/disabled frame receiving.");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 var closeEvent;
 var ws;

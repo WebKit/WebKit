@@ -37,8 +37,8 @@ function processReqChange()
             alert('There was a problem retrieving the XML data: ' + rq.statusText);
         }
         
-        if (window.layoutTestController) {
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.notifyDone();
         }
     }
 }
@@ -49,9 +49,9 @@ function processReqChange()
 <p>Test for <a href="rdar://problem/4298052">rdar://problem/4298052</a>: Crash in KWQCheckIfReloading at http://www.inquisitorx.com/beta/</p>
 <p id="result"></p>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 </script>
 </body>

@@ -3,8 +3,8 @@
 <p>Test that setRequestHeader can be used to set headers that have a name, but no value.</p>
 <pre id=result>FAIL: script didn't run or raised an unexpected exception.</pre>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     
     req = new XMLHttpRequest;
     req.open("GET", "resources/print-headers.cgi", false);

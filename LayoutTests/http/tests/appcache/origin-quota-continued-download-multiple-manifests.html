@@ -11,20 +11,20 @@ function log(message) {
 // Start and end.
 
 function startTest() {
-    if (window.layoutTestController) {
-        layoutTestController.clearAllApplicationCaches();
-        layoutTestController.dumpApplicationCacheDelegateCallbacks();
-        layoutTestController.setApplicationCacheOriginQuota(20*1024);
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearAllApplicationCaches();
+        testRunner.dumpApplicationCacheDelegateCallbacks();
+        testRunner.setApplicationCacheOriginQuota(20*1024);
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     addFirstIFrame();
 }
 
 function finishTest() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 // Stages.

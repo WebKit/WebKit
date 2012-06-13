@@ -3,9 +3,9 @@
 <p>Test that application cache is consulted again after a redirect response.</p>
 <div id="result">Testing...</div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function setNetworkEnabled(state)
@@ -27,9 +27,9 @@ function test()
 
 function done()
 {
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         applicationCache.onerror = null;
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
     setNetworkEnabled(true);
 }

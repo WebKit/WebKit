@@ -4,8 +4,8 @@
 - posting data via XMLHttpRequest doesn't work (wrong Content-Type).</p>
 <p>Should be application/xml:</p>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     objXmlHttp = new XMLHttpRequest;
     objXmlHttp.open("POST", "print-content-type.cgi", false);

@@ -3,8 +3,8 @@
 <p>Test that getResponseHeader and getAllResponseHeaders cannot be used to get the cookie header fields.</p>
 <pre id="result">FAIL: Script didn't run or raised an unexpected exception.</pre>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     req = new XMLHttpRequest;
     req.open("POST", "resources/get-set-cookie.cgi", false);

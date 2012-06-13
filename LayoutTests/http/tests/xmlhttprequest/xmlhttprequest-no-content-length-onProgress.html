@@ -10,15 +10,15 @@
 <p id="shouldBeCalled"> FAILED </p>
 <p id="shouldNotBeCalled"> PASSED </p>
 <script type="text/javascript">
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var count = 0;
 function checkDone() {
-    if (++count == 2 && window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (++count == 2 && window.testRunner)
+        testRunner.notifyDone();
 }
 
 function onProgressPassed(e) {

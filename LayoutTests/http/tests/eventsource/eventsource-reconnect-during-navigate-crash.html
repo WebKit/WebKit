@@ -2,9 +2,9 @@
 <body>
 <p>Navigate while an EventSource reconnect timer is waiting, then have the reconnect timer trigger before the page unloads. We pass if we don't crash.
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function navigate() {

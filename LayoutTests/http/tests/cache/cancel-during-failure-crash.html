@@ -1,9 +1,9 @@
 <html>
 <body>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var img = new Image();
@@ -11,7 +11,7 @@ img.onerror = function() {
     // cancel resource load within didFail()
     window.stop();
     document.body.appendChild(document.createTextNode("PASS"));
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 // Port 7 will likely refuse the connection, causing a didFail()

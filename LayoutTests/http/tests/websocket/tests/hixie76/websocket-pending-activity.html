@@ -1,10 +1,10 @@
 <body onload="test()">
 <p>Should alert "PASS".</p>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 }
 
 function gc()
@@ -25,8 +25,8 @@ function test()
     }
     ws.onmessage = function(msg) {
         alert(msg.data);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     ws = null;
     gc();

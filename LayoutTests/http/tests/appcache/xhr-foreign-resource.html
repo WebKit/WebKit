@@ -5,9 +5,9 @@
 <div id=result></div>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -68,8 +68,8 @@ function test(evt)
     } else 
         log("FAIL: subframe didn't get a correct cache");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 window.addEventListener("message", frameMessageReceived, false);

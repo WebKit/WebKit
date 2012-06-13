@@ -1,8 +1,8 @@
 <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=15555">bug 15555</a>:
 XMLHttpRequest does not support charset "x-user-defined", which can facilitate loading of binary data.</p>
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 
 try {
   req = new XMLHttpRequest;

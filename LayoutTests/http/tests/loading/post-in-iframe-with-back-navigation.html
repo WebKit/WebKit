@@ -16,13 +16,13 @@ To test manually, click on the navigation links in the iframe. When going back f
 var loaded = false;
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     loaded = true;
-    setTimeout(function() { layoutTestController.notifyDone(); }, 200);
+    setTimeout(function() { testRunner.notifyDone(); }, 200);
 }
 
 function clickLink()
@@ -67,8 +67,8 @@ function nextStep()
     case 3:
         shouldBeEqualToString("getTitle()", "Page 2");
         shouldBe("window.frames[0].document.getElementById('submissionTime').innerText", "step2output");
-        if (window.layoutTestController);
-            layoutTestController.notifyDone();
+        if (window.testRunner);
+            testRunner.notifyDone();
         break;
     }
 }

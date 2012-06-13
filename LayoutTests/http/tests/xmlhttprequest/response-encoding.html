@@ -7,9 +7,9 @@
 - correctly determine the encoding of XMLHttpRequest responses.</p>
 <script>
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var console_messages = document.createElement("ol");
@@ -119,8 +119,8 @@
              get('resources/utf-8-no-charset.html', true);
            } else if (asyncStep == 11) {
              log("Async: HTML, UTF-8 as default: " + req.responseText.replace(/\s/g, "").replace(/.*<body>(.*)<\/body>.*/, "$1"));
-             if (window.layoutTestController)
-                 layoutTestController.notifyDone();
+             if (window.testRunner)
+                 testRunner.notifyDone();
            }
         } else {
            log("Error loading URL: status " + req.status);

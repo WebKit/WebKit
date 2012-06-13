@@ -2,9 +2,9 @@
 
 <pre id="console"></pre>
 <script>
-layoutTestController.dumpAsText();
-layoutTestController.waitUntilDone();
-layoutTestController.addOriginAccessWhitelistEntry("http://127.0.0.1:8000", "http", "localhost", false);
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+testRunner.addOriginAccessWhitelistEntry("http://127.0.0.1:8000", "http", "localhost", false);
 
 function log(message)
 {
@@ -53,7 +53,7 @@ function nextTest()
     if (currentTest < tests.length)
         test.apply(null, tests[currentTest++]);
     else
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
 }
 
 nextTest();

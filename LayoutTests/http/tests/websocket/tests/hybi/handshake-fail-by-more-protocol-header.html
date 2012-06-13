@@ -10,8 +10,8 @@
 description("Test that WebSocket handshake fails if there are more than one Sec-WebSocket-Protocol header field in the response.");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 function endTest()
 {

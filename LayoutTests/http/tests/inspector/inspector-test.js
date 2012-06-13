@@ -375,7 +375,7 @@ function closeFrontend(callback)
     // Do this asynchronously to allow InspectorBackendDispatcher to send response
     // back to the frontend before it's destroyed.
     setTimeout(function() {
-        layoutTestController.closeWebInspector();
+        testRunner.closeWebInspector();
         callback();
     }, 0);
 }
@@ -383,14 +383,14 @@ function closeFrontend(callback)
 function openFrontendAndIncrement()
 {
     frontendReopeningCount++;
-    layoutTestController.showWebInspector();
+    testRunner.showWebInspector();
     runTest();
 }
 
 function runAfterIframeIsLoaded()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
     function step()
     {
         if (!window.iframeLoaded)
@@ -403,11 +403,11 @@ function runAfterIframeIsLoaded()
 
 function runTest(enableWatchDogWhileDebugging)
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     function runTestInFrontend(initializationFunctions, testFunction, completeTestCallId)
     {
@@ -444,7 +444,7 @@ function runTest(enableWatchDogWhileDebugging)
     }
     var parameters = ["[" + initializationFunctions + "]", test, completeTestCallId];
     var toEvaluate = "(" + runTestInFrontend + ")(" + parameters.join(", ") + ");";
-    layoutTestController.evaluateInWebInspector(runTestCallId, toEvaluate);
+    testRunner.evaluateInWebInspector(runTestCallId, toEvaluate);
 
     if (enableWatchDogWhileDebugging) {
         function watchDog()
@@ -471,9 +471,9 @@ function closeInspectorAndNotifyDone()
     if (window._watchDogTimer)
         clearTimeout(window._watchDogTimer);
 
-    layoutTestController.closeWebInspector();
+    testRunner.closeWebInspector();
     setTimeout(function() {
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }, 0);
 }
 

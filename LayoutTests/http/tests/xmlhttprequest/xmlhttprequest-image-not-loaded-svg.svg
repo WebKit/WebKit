@@ -18,13 +18,13 @@
             else
                 console.appendChild(document.createTextNode("FAILED"));
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
 
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         xhr.open('GET', 'resources/load-icon.svg');

@@ -9,8 +9,8 @@ print "
 <body>
     PASS.
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.notifyDone();
         }
     </script>
 </body>

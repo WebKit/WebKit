@@ -3,9 +3,9 @@
 <p>Test that a cross-origin redirect to a server that responds is indistinguishable from one that does not. Should say PASS:</p>
 <pre id='console'></pre>
 <script type="text/javascript">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function log(message)
@@ -51,8 +51,8 @@
             log("Non-existent server:");
             document.getElementById('console').innerHTML += logMissing;
         }
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     xhr = new XMLHttpRequest;

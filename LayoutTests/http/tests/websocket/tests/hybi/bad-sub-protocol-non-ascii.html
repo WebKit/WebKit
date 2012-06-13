@@ -9,8 +9,8 @@
 <script type="text/javascript">
 description("Test WebSocket bad sub-protocol names by non-ASCII chars.");
 
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 // Fails if protocol contains an character greater than U+007E.
 shouldThrow('new WebSocket("ws://127.0.0.1:8880/simple", "\u007F")');

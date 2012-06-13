@@ -3,9 +3,9 @@
 <p>No authentication dialogs should appear, and the below line should say "PASS".</p>
 <div id=result>Test didn't run.</div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function step1()
@@ -37,8 +37,8 @@ function step3()
     req.open("GET", "resources/basic-auth-default/dir2/catch.php", true);
     req.onload = function() {
         document.getElementById("result").innerHTML = req.status == 200 ? "PASS" : "FAIL";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     document.getElementById("result").innerHTML = "Testing, step 3...";
     req.send();

@@ -4,8 +4,8 @@
 <p>Test the behavior of a sync XMLHttpRequest that encounters an infinite redirection loop.</p>
 <script>
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     try {
         if (window.XMLHttpRequest) {

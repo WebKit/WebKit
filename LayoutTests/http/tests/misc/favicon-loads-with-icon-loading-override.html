@@ -3,13 +3,13 @@
 <script>
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpResourceLoadCallbacks();
-        layoutTestController.setIconDatabaseEnabled(true);
-        layoutTestController.disableImageLoading();
-        layoutTestController.overridePreference("WebKitLoadSiteIconsKey", 1);
-        layoutTestController.queueReload();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpResourceLoadCallbacks();
+        testRunner.setIconDatabaseEnabled(true);
+        testRunner.disableImageLoading();
+        testRunner.overridePreference("WebKitLoadSiteIconsKey", 1);
+        testRunner.queueReload();
     }
 }
 </script>

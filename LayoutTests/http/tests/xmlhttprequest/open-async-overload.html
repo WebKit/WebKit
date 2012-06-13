@@ -25,8 +25,8 @@
           log("FAIL: " + description + " (expected:" + expectedState + ", actual:" + req.readyState +")");
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     req = new XMLHttpRequest();
     req.open("GET", "methods.cgi", true);

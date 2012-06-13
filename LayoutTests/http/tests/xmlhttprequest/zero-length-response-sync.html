@@ -7,8 +7,8 @@
 - zero-length responses to XMLHTTPRequest mishandled.</p>
 <script>
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var console_messages = document.createElement("ul");
     document.body.appendChild(console_messages);

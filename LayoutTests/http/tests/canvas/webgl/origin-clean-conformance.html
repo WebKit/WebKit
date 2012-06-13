@@ -102,10 +102,10 @@ function init() {
   assertMsg(videoFile, "Playable video format found");
 
   if (videoFile) {
-    if (window.layoutTestController) {
-      layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.overridePreference("WebKitWebGLEnabled", "1");
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
     }
     video.src = videoFile;
     video.addEventListener("playing", runTests);
@@ -199,10 +199,10 @@ function runTests() {
   }
 
   debug('<br /><span class="pass">TEST COMPLETE</span>');
-  if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
-  if (window.layoutTestController) {
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.waitUntilDone();
+  if (window.testRunner) {
+    testRunner.notifyDone();
   }
 }
 </script>

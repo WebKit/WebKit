@@ -10,8 +10,8 @@
 description("WebSocket should fail if subprotocol contains a forbidden character.");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 function escapeUnicodeCharacter(codePoint)
 {

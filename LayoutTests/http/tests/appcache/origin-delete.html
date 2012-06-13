@@ -11,19 +11,19 @@ function log(message) {
 // Start and end.
 
 function startTest() {
-    if (window.layoutTestController) {
-        layoutTestController.clearAllApplicationCaches();
-        layoutTestController.dumpApplicationCacheDelegateCallbacks();
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearAllApplicationCaches();
+        testRunner.dumpApplicationCacheDelegateCallbacks();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     addIFrameWithAppCache();
 }
 
 function finishTest() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function addIFrameWithAppCache() {
@@ -36,7 +36,7 @@ function addIFrameWithAppCache() {
         log(event.data);
         if (event.data === "PASS - cached iframe-1") {
             log("clearing cache for origin");
-            layoutTestController.clearApplicationCacheForOrigin("http://127.0.0.1:8000");
+            testRunner.clearApplicationCacheForOrigin("http://127.0.0.1:8000");
             var frame = document.getElementById('cachedFrame');
             frame.contentWindow.postMessage("appcache_status", "*");
         } else if (event.data === "appcache_status=5"){

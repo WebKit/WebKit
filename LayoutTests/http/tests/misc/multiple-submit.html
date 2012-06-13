@@ -14,9 +14,9 @@ function clickf()
     return true;
 }
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 setTimeout(function() { document.getElementById('sub').click(); }, 0);

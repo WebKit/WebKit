@@ -6,10 +6,10 @@
         <script>
             var loadCount = 0;
 
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
-                layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+                testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
             }
 
             function logEvent(event) 

@@ -1,11 +1,11 @@
 <button onclick="testSyncCookiesNoCredentials();">Start</button>
 <pre id="console"></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.setAlwaysAcceptCookies(1);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+    testRunner.setAlwaysAcceptCookies(1);
 }
 
 function log(message)
@@ -30,8 +30,8 @@ function clearCookies()
 function endTesting()
 {
     clearCookies();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function checkForCookie()
@@ -105,7 +105,7 @@ function testSyncCookiesWithCredentials()
     endTesting();
 }
 
-if (window.layoutTestController)
+if (window.testRunner)
     testSyncCookiesNoCredentials();
 </script>
 

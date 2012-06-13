@@ -2,9 +2,9 @@
     <script>
         var failed = false;
 
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         function iframeNotLoaded()
@@ -12,9 +12,9 @@
             if (failed)
                 return;
 
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 document.getElementById("result").innerText = "Binary data not loaded as text. Maybe PASS.";
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             } else
                 document.getElementById("result").innerText = "If Safari downloaded binaryData.sitx, then it passed the test.";
         }
@@ -29,8 +29,8 @@
         {
             document.getElementById("result").innerText = "FAIL";
             failed = true;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>

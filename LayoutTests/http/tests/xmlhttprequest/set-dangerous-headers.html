@@ -3,8 +3,8 @@
 <p>Test that setRequestHeader cannot be used to alter security-sensitive headers.</p>
 <pre id=result>FAIL: script didn't run or raised an unexpected exception.</pre>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     
     req = new XMLHttpRequest;
     req.open("GET", "resources/print-headers.cgi", false);

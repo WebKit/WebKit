@@ -8,12 +8,12 @@ object {
 }
 </style>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     function finished() {
-        if (window.layoutTestController)
-            setTimeout(function() { layoutTestController.notifyDone(); }, 0);
+        if (window.testRunner)
+            setTimeout(function() { testRunner.notifyDone(); }, 0);
     }
 </script>
 </head>

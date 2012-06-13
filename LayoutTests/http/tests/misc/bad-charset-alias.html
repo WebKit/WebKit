@@ -4,9 +4,9 @@
 (we should fall back to parent frame charset).</p>
 <p id=result>Testing...</p>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 var aliases = [
@@ -45,8 +45,8 @@ function frameLoaded()
         }
         document.getElementById("result").innerHTML = !failures.length ? "SUCCESS" : 
             ("FAIL: " + failures);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 </script>

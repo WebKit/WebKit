@@ -3,8 +3,8 @@
 <p>Tests for <a href="https://bugs.webkit.org/show_bug.cgi?id=11053"> bug 11053</a> - 
 XMLHttpRequest should be an EventTarget.</p>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     
     var console_messages = document.createElement("ul");
     document.body.appendChild(console_messages);

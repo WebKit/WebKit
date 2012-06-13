@@ -5,8 +5,8 @@
 <script>
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     document.getElementById('result').innerHTML = getComputedStyle(document.documentElement, null).getPropertyValue("background-color");
 }
 </script>

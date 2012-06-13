@@ -9,8 +9,8 @@
 <script type="text/javascript">
 description("Test WebSocket attributes which should not be defined when hixie-76 protocol is used.");
 
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hixie76/simple");
 

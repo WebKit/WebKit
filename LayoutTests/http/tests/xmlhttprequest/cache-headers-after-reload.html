@@ -9,9 +9,9 @@ could load the resource without contacting the server.<br>
 The test passes if there is no HTTP_CACHE_CONTROL header displayed below.<br>
 <div id="console"></div>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function log(message) {
@@ -36,8 +36,8 @@ The test passes if there is no HTTP_CACHE_CONTROL header displayed below.<br>
     
     function finish() {
         log(xhr.responseText);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 </body>

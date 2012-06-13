@@ -6,13 +6,13 @@
 
 function onload()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     window.sessionStorage["inspector"] = "true";
 
-    if (window.layoutTestController)
-        layoutTestController.showWebInspector();
+    if (window.testRunner)
+        testRunner.showWebInspector();
     runTest();
 }
 

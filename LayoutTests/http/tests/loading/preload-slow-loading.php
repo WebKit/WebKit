@@ -6,9 +6,9 @@ header("Content-Type: text/html; charset=utf-8");
 print str_repeat("A", 2048);
 ?> -->
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpResourceResponseMIMETypes();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpResourceResponseMIMETypes();
 }
 </script>
 <script src="non-existant-1"></script>

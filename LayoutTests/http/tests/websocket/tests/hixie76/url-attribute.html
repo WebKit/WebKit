@@ -10,8 +10,8 @@
 
 description("Both .URL and .url attributes should work (for compatibility reasons).");
 
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var url = "ws://127.0.0.1:8880/";
 var ws = new WebSocket(url);

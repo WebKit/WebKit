@@ -6,10 +6,10 @@
 <script src=../../media-resources/video-test.js></script>
 <script src=../../media-resources/media-file.js></script>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.setAlwaysAcceptCookies(true);
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setAlwaysAcceptCookies(true);
+        testRunner.waitUntilDone();
     }
 
     function loadCookie () {
@@ -29,8 +29,8 @@
     }
 
     waitForEvent("canplay", function () {
-        if (window.layoutTestController)
-            window.layoutTestController.notifyDone();
+        if (window.testRunner)
+            window.testRunner.notifyDone();
     } );
 </script>
 Tests that the media player will send the relevant cookies when requesting the media file.<br/>

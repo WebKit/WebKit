@@ -8,10 +8,10 @@
 <pre id=log>
 </pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 }
 
 function log(message)
@@ -22,8 +22,8 @@ function log(message)
 function endTest()
 {
     log("TEST COMPLETE");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 var worker = new Worker('resources/worker-simple.js');
 worker.onmessage = function (evt) {

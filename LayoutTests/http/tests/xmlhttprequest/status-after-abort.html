@@ -6,9 +6,9 @@ REGRESSION: XMLHttpRequest.abort() resets response status.
 
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var req = null;
@@ -66,8 +66,8 @@ function callBackFunction()
         req.onreadystatechange = null;
         req.abort();
         log("Done.");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

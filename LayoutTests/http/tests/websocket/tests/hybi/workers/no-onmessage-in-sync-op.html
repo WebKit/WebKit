@@ -10,8 +10,8 @@
 description("WebSocket's message event should not be invoked while we are waiting for the result of a synchronous operation (such as WebSocket.send()) on workers.");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 function startsWith(str, prefix)
 {

@@ -2,21 +2,21 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 window.onmessage = function(evt)
 {
     if (evt.data != "done") {
         alert("Unexpected message: " + evt.data);
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
         return;
     }
 
     alert("Child window's history object after attempt to clear: " + window.frames[0].history);
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function setHistoryLength()

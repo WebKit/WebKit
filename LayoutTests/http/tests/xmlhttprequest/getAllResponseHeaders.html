@@ -47,7 +47,7 @@ xhr.onreadystatechange = function() {
                 if (/^Set-Cookie:|^Set-Cookie2:/im.test(header))
                     log("FAILED " + rState +
 ": /^Set-Cookie:|^Set-Cookie2:/ matches. getAllResponseHeaders returned:\n" + header);
-                else if (window.layoutTestController)
+                else if (window.testRunner)
 //do not print list for automated tests to avoid false failures.
                     log("PASSED " + rState +
 ": getAllResponseHeaders returned what looks like a conforming headerlist.");
@@ -65,14 +65,14 @@ xhr.onreadystatechange = function() {
             log("FAILED " + rState + ": EXCEPTION THROWN: " + e.message + ".");
         }
     }
-    if ((rState == 4) && (window.layoutTestController))
-            layoutTestController.notifyDone();
+    if ((rState == 4) && (window.testRunner))
+            testRunner.notifyDone();
 }
 
 function test() {
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
     // Test for readyState = 0
     try {
@@ -86,8 +86,8 @@ function test() {
         xhr.send(null);
     } catch(e) {
         log("FAILED open/send: EXCEPTION THROWN: " + e.message +".");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 </script>
@@ -99,7 +99,7 @@ and <a href="http://bugs.webkit.org/show_bug.cgi?id=29121">bug 29121</a></p>
 <p>Assertion: Invoking getAllResponseHeaders method when readyState >= 2
 (HEADERS_RECEIVED) should return a conforming list of headers.</p>
 <script>
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         document.write("<p>If the test passes one should see \
 below the ruler the text \"passed\" in all capital letters, 5 times, \
 followed each time by a space and the readyState number.</p>\n\

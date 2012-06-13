@@ -4,9 +4,9 @@
 Application Cache crash when a fallback document has a manifest URL.</p>
 <div id="result">Testing...</div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 
@@ -34,8 +34,8 @@ function frameDone()
         else
             throw "Try again";
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } catch (ex) {
         // Not done yet.
         setTimeout(frameDone, 100);

@@ -2,9 +2,9 @@
 <body>
 <p>Test Range support in XMLHttpRequest</p>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var console_messages = document.createElement("ul");
@@ -80,8 +80,8 @@
         // Next test w/ a query parameter appended so that each XHR
         // has a unique URL.
         runRangeTest(true, function() {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
 
         });
     });

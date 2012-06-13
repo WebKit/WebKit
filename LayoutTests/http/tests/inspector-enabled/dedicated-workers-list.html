@@ -6,8 +6,8 @@
 <script>
 function handleLoad()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     var worker1 = new Worker("resources/dedicated-worker.js?id=1");
     worker1.onmessage = handleMessageFromWorker;
@@ -19,8 +19,8 @@ function handleLoad()
         messageCount++;
         console.log("Received message from worker " + messageCount);
         if (messageCount === 2) {
-            if (window.layoutTestController)
-                layoutTestController.showWebInspector();
+            if (window.testRunner)
+                testRunner.showWebInspector();
             runTest();
         }
     }

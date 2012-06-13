@@ -1,15 +1,15 @@
 <html>
 <body>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 window.addEventListener("message", function(e) {
     document.getElementById("result").innerHTML = e.data; 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }, false);
 </script>
 <p>Test that a resource from a different https origin is not cached.</p>

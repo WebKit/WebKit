@@ -1,10 +1,10 @@
 <p>Test that WebSocket is not subject to HTTP connection limit. Should say PASS:</p>
 <p id=result>Running...</p>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 }
 
 var socketCount = 50;
@@ -26,8 +26,8 @@ for (i = 0; i < socketCount; ++i) {
                 sockets[j].onclose = null;
                 sockets[j].close();
             }
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     }
     ws.onclose = function() { alert("FAIL: unexpected close event") }

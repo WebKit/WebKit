@@ -32,14 +32,14 @@ function onReadyStateChange() {
     if (req.readyState == 4) {
         // Compare last position with the known resource size.
         log((lastPosition == resourceSize) ? "PASSED" : ("FAILED: expected " + resourceSize + ", actual " + lastPosition));
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var req = new XMLHttpRequest();

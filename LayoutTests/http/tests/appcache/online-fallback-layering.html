@@ -2,9 +2,9 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message) {
@@ -13,8 +13,8 @@ function log(message) {
 
 function testComplete(result) {
     log(result);
-    if (window.layoutTestController)
-       layoutTestController.notifyDone();
+    if (window.testRunner)
+       testRunner.notifyDone();
 }
 
 function syncGet(url) {

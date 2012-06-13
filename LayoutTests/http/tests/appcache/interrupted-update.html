@@ -2,9 +2,9 @@
 <p>Test that an application cache update works again after interruption.</p>
 <pre id=log></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(msg)
@@ -43,24 +43,24 @@ function onnoupdate()
 {
     log("NOUPDATE");
     log("\nFAIL - the cache was already present, so we couldn't test initial loading");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function oncached()
 {
     log("CACHED");
     log("\nPASS");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function onerror()
 {
     log("ERROR");
     log("\nFAIL");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 

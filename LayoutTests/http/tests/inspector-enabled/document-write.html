@@ -10,8 +10,8 @@
 
 function onload()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var script = document.createElement("script");
     script.textContent = "console.log(\"script element\")";

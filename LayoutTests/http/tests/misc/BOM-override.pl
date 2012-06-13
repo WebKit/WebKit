@@ -7,4 +7,4 @@ print "\r\n";
 
 print "\xef\xbb\xbf";
 print "SUССESS";
-print "<script>if (window.layoutTestController) layoutTestController.dumpAsText();</script>";
+print "<script>if (window.testRunner) testRunner.dumpAsText();</script>";

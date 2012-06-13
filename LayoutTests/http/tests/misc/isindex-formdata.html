@@ -2,15 +2,15 @@
 function test()
 {
     if (!location.search.length) {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         if (!document.getElementById("isindex")) {
             log("Could not find isindex element");
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
             return;
         }
         document.getElementById("isindex").value = "This is a test";
@@ -22,8 +22,8 @@ function test()
         else
             log("PASS");
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

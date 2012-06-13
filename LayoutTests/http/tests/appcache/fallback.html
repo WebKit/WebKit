@@ -5,9 +5,9 @@
 <div id=result></div>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var hadError = false;
@@ -142,8 +142,8 @@ function test6()
     }
 
     log(hadError ? "FAILURE" : "SUCCESS");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 applicationCache.onnoupdate = function() { test() }

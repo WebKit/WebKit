@@ -10,8 +10,8 @@
 description("Test that WebSocket handshake fails if Upgrade header field isn't reflected by the server.");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 function endTest()
 {

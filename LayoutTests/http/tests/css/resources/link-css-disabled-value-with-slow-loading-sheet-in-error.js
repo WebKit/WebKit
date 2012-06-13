@@ -1,7 +1,7 @@
 description("Test that HTMLLinkElement's disabled attribute is properly cached while set when loading a stylesheet.");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 window.jsTestIsAsync = true;
 

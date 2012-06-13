@@ -2,9 +2,9 @@
 <head>
 <script src="resources/console-clear-arguments-test.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function removeIFrame()
@@ -16,8 +16,8 @@ function removeIFrame()
         child = container.firstChild;
     }
     dumpConsoleMessageArgumentCounts();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function createIFrame()

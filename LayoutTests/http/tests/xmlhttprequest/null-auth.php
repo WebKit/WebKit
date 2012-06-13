@@ -2,8 +2,8 @@
 <p>No auth tokens should be sent with this request.</p>
 <pre id='syncResult'> </pre>
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 
 req = new XMLHttpRequest;
 req.open('POST', '<?php echo 'http://foo:bar@' . $_SERVER['HTTP_HOST'] . '/xmlhttprequest/resources/echo-auth.php' ?>', false, null, null);

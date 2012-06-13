@@ -4,10 +4,10 @@
 var w1, w2;
 var iframeXHRCount = 0;
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.setCanOpenWindows(true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows(true);
 }
 
 function log(message)
@@ -54,8 +54,8 @@ function notifyDone()
     w1.close();
     w2.close();
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function test()

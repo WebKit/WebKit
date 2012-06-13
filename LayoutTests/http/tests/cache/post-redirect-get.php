@@ -21,9 +21,9 @@ if ($_POST["submit"] == "redirect") {
 <body>
 <div id="result"></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
     
 function logAndFinish(message)
@@ -32,8 +32,8 @@ function logAndFinish(message)
     var xhr = new XMLHttpRequest;
     xhr.open("GET", "../resources/reset-temp-file.php?filename=post.tmp", false);
     xhr.send(null);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <?php

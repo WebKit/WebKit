@@ -10,8 +10,8 @@
 description("Make sure WebSocket transfer null character");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo");
 // \xff in string would be \xc3\xbf on websocket connection (UTF-8)

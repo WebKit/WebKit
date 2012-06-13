@@ -4,9 +4,9 @@
 (i.e. if the listener is set after calling send(), and there are no other reasons to make a preflight request).</p>
 <pre id="console"></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -103,8 +103,8 @@ function test3()
     xhr.upload.onload = function() { log("FAIL: upload.onload") }
     xhr.upload.onerror = function() { 
         log("upload.onerror (expected)")
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     xhr.onerror = function() {
         log("onerror (expected)");

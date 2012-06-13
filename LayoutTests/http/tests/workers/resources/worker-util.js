@@ -31,12 +31,12 @@ function waitUntilWorkerThreadsExit(callback)
 function waitUntilThreadCountMatches(callback, count)
 {
     // When running in a browser, just wait for one second then call the callback.
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         setTimeout(function() { gc(true); callback(); }, 1000);
         return;
     }
 
-    if (layoutTestController.workerThreadCount == count) {
+    if (testRunner.workerThreadCount == count) {
         // Worker threads have exited.
         callback();
     } else {
@@ -64,7 +64,7 @@ function done()
 
     // Call notifyDone via the queue so any pending console messages/exceptions are written out first.
     setTimeout(function() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 }

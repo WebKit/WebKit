@@ -11,8 +11,8 @@ function noupdate()
 {
     window.opener.document.getElementById('result').innerHTML = 'SUCCESS';
     window.close();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 applicationCache.addEventListener('cached', cached, false);

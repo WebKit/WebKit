@@ -5,9 +5,9 @@ Body from cross origin preflight response is prepended to the actual response bo
 <div id=result>Running test...</div>
 <script>
 
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
   }
 
   window.onload = function() {
@@ -15,8 +15,8 @@ Body from cross origin preflight response is prepended to the actual response bo
       xhr.onreadystatechange=function() {
         if (xhr.readyState==4) {
           document.getElementById("result").innerHTML = (xhr.responseText == "echo") ? "PASS" : ("FAIL: " + xhr.responseText);
-          if (window.layoutTestController)
-            layoutTestController.notifyDone();
+          if (window.testRunner)
+            testRunner.notifyDone();
         }
        };
 

@@ -10,8 +10,8 @@
 description("Test WebSocket handshake success without protocol and ignore WebSocket-Protocol from server.");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var protocol;
 

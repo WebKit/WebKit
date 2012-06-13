@@ -1,8 +1,8 @@
 <html manifest="resources/document-write-html-element.manifest">
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function test()
@@ -10,8 +10,8 @@ function test()
     document.write("SUCCESS, no assertion failure");
     document.write("<br>applicationCache.status == " + applicationCache.status);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 applicationCache.oncached = test;

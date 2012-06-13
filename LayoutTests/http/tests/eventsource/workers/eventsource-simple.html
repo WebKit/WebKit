@@ -7,9 +7,9 @@ function log(msg) {
     document.getElementById("result").innerHTML += msg + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var worker = new Worker("resources/simple-worker.js");
@@ -28,8 +28,8 @@ worker.onerror = function () {
 }
 
 function end() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

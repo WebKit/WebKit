@@ -4,12 +4,12 @@
 function test()
 {    
     window.frames['crossDomainFrame'].location.replace("http://127.0.0.1:8000/misc/resources/success.html");
-    if (window.layoutTestController)
-        setTimeout("layoutTestController.notifyDone()", 1);
+    if (window.testRunner)
+        setTimeout("testRunner.notifyDone()", 1);
 }
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
     
 </script>
 </head>

@@ -44,8 +44,8 @@ function testDragEventBubbling(dragTargetId, dragTargetParentId)
 
 window.onload = function ()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText(); 
+    if (window.testRunner)
+        testRunner.dumpAsText(); 
 
     log("Tests that we don't bubble up the events if we drag something to an iframe that has an invalid source");
     testDragEventBubbling("invalidIframeDragTargetParent", "invalidIframeDragTarget");
@@ -56,7 +56,7 @@ window.onload = function ()
     log("Tests that we bubble up the events if we drag something to a non-iframe target");
     testDragEventBubbling("validSpanDragTargetParent", "validSpanDragTarget");
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 </head>

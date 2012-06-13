@@ -8,9 +8,9 @@
 <p>PASS should appear below:</p>
 <p id=console></p>
 <script type="text/javascript">
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -35,8 +35,8 @@ function logUnexpectedProgressEvent(e) {
 function completeTest()
 {
     log(results == expected ? "PASS" : "FAILED results : '" + results + "', expected : '" + expected + "'");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function test()

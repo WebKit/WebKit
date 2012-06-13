@@ -4,9 +4,9 @@
 <p id="result">FAILURE</p>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText()
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText()
+    testRunner.waitUntilDone();
 }
 
 function canLoad(url)
@@ -35,8 +35,8 @@ function cached()
         
     document.getElementById('result').innerHTML = "SUCCESS"
     
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 applicationCache.addEventListener('cached', cached, false);

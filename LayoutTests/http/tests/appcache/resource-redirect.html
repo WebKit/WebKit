@@ -4,9 +4,9 @@
 <p>Should say SUCCESS:</p>
 <div id=result></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText()
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText()
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -27,8 +27,8 @@ function test()
     else
         log("SUCCESS");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 applicationCache.addEventListener('cached', function() { log("cached"); cacheCallback() }, false);

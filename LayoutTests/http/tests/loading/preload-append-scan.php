@@ -7,8 +7,8 @@ print str_repeat("A", 2048);
 ?> -->
 <body>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function checkForPreload() {
     var result;

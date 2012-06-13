@@ -1,10 +1,10 @@
 <button onclick="presetAuthorization()">Start</button>
 <pre id="console"></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.setCanOpenWindows();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
 }
 
 function log(message)
@@ -14,8 +14,8 @@ function log(message)
 
 function presetAuthorization()
 {
-    if (window.layoutTestController)
-        layoutTestController.authenticateSession("http://localhost:8000/xmlhttprequest/resources/cross-origin-authorization.php", "test", "test");
+    if (window.testRunner)
+        testRunner.authenticateSession("http://localhost:8000/xmlhttprequest/resources/cross-origin-authorization.php", "test", "test");
 
     test();
 }
@@ -32,11 +32,11 @@ function test()
         log("PASS");
     }
     log("DONE");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 
-if (window.layoutTestController)
+if (window.testRunner)
     presetAuthorization();
 </script>

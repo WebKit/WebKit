@@ -12,9 +12,9 @@ function CallCommand(cmd)
 
 function startTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
  
     window.setTimeout(endTest, 0);
@@ -25,8 +25,8 @@ function endTest()
     getResourceLog();
     CallCommand("clear-resource-request-log");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function getResourceLog()

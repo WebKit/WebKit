@@ -3,8 +3,8 @@ header("Content-Type: TEXT/HTML");
 ?>
 <html>
 <script>
-if (window.layoutTestController)
-   layoutTestController.notifyDone();
+if (window.testRunner)
+   testRunner.notifyDone();
 
 </script>
 <body>

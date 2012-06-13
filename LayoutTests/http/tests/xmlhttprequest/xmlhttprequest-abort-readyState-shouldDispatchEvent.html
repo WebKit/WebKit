@@ -47,8 +47,8 @@ function testAbortWithReadyStateEventLoading()
     else
         log("FAILED");
 
-    if (finishedTests == abortToDo.length && window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (finishedTests == abortToDo.length && window.testRunner)
+        testRunner.notifyDone();
 }
 
 // Called with num != 1
@@ -77,17 +77,17 @@ function testAbortWithReadyStateEvent(num)
                 log("FAILED");
         }
 
-        if (finishedTests == abortToDo.length && window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (finishedTests == abortToDo.length && window.testRunner)
+            testRunner.notifyDone();
     }
 
     xhr.open("GET", "resources/1251.html", true);
     xhr.send(null);
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var finishedTests = 0;

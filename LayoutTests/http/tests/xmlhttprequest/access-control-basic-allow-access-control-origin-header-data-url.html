@@ -7,14 +7,14 @@ function log(message)
     document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 window.addEventListener("message", function(evt) {
     if (evt.data == "done") {
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
         return;
     }
 

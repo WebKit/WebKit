@@ -6,9 +6,9 @@
 
 function openWebInspector()
 {
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.showWebInspector();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.showWebInspector();
         runTest();
     }
 }
@@ -16,9 +16,9 @@ function openWebInspector()
 function reopenWebInspector(objectId)
 {
     window.objectId = unescape(objectId);
-    layoutTestController.closeWebInspector();
+    testRunner.closeWebInspector();
     setTimeout(function() {
-      layoutTestController.showWebInspector();
+      testRunner.showWebInspector();
       runTest();
     }, 0);
 }

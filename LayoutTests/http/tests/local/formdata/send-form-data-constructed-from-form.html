@@ -30,8 +30,8 @@ function onInputFileChange()
     log("Response: " + xhr.responseText);
 
     log("DONE");
-    if (layoutTestController.notifyDone)
-        layoutTestController.notifyDone();
+    if (testRunner.notifyDone)
+        testRunner.notifyDone();
 }
 
 function moveMouseToCenterOfElement(element)
@@ -49,8 +49,8 @@ function runTests()
 }
 
 if (window.eventSender) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     window.onload = runTests;
 }
 </script>

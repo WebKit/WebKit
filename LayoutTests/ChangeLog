@@ -1,3 +1,184 @@
+2012-06-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTTP tests should use testRunner instead of layoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=88969
+
+        Reviewed by Darin Adler.
+
+        * http/tests/appcache/:
+        * http/tests/cache/cancel-during-failure-crash.html:
+        * http/tests/cache/cancel-during-revalidation-succeeded.html:
+        * http/tests/cache/history-only-cached-subresource-loads-max-age-https.html:
+        * http/tests/cache/history-only-cached-subresource-loads.html:
+        * http/tests/cache/loaded-from-cache-after-reload-within-iframe.html:
+        * http/tests/cache/loaded-from-cache-after-reload.html:
+        * http/tests/cache/post-redirect-get.php:
+        * http/tests/cache/post-with-cached-subresources.php:
+        * http/tests/cache/resources/stopped-revalidation-result.html:
+        * http/tests/cache/resources/subresource-test.js:
+        (nextTest):
+        * http/tests/cache/stopped-revalidation.html:
+        * http/tests/cache/subresource-failover-to-network.html:
+        * http/tests/cache/subresource-fragment-identifier.html:
+        * http/tests/cache/subresource-multiple-instances.html:
+        * http/tests/cache/xhr-body.html:
+        * http/tests/cache/zero-length-xhr.html:
+        * http/tests/canvas/philip/tests.js:
+        (_addTest.endTest):
+        (_addTest.window.onload):
+        (_addTest):
+        * http/tests/canvas/webgl/origin-clean-conformance.html:
+        * http/tests/cookies/resources/cookies-test-pre.js:
+        * http/tests/cookies/resources/resetCookies.js:
+        (resetCookies):
+        * http/tests/cookies/resources/setArraycookies-result.php:
+        * http/tests/cookies/resources/setUtf8Cookies-result.php:
+        * http/tests/cookies/resources/third-party-cookie-relaxing-iframe.html:
+        * http/tests/cookies/third-party-cookie-relaxing.html:
+        * http/tests/css/cross-fade-reload.html:
+        * http/tests/css/css-imports-redirect-cycle.html:
+        * http/tests/css/font-face-src-loading.html:
+        * http/tests/css/resources/link-css-disabled-value-with-slow-loading-sheet-in-error.js:
+        * http/tests/css/resources/link-css-disabled-value-with-slow-loading-sheet.js:
+        * http/tests/css/resources/request-logging.js:
+        (startTest):
+        (endTest):
+        * http/tests/download/basic-ascii.html:
+        * http/tests/download/default-encoding.html:
+        * http/tests/download/inherited-encoding-form-submission-result.html:
+        * http/tests/download/inherited-encoding.html:
+        * http/tests/download/literal-utf-8.html:
+        * http/tests/eventsource/eventsource-bad-mime-type.html:
+        * http/tests/eventsource/eventsource-content-type-charset.html:
+        * http/tests/eventsource/eventsource-eof.html:
+        * http/tests/eventsource/eventsource-parse-event-stream.html:
+        * http/tests/eventsource/eventsource-reconnect-during-navigate-crash.html:
+        * http/tests/eventsource/eventsource-reconnect.html:
+        * http/tests/eventsource/eventsource-status-code-states.html:
+        * http/tests/eventsource/existent-eventsource-status-error-iframe-crash.html:
+        * http/tests/eventsource/non-existent-eventsource-status-error-iframe-crash.html:
+        * http/tests/eventsource/resources/wait-then-notify-done.php:
+        * http/tests/eventsource/workers/eventsource-simple.html:
+        * http/tests/fileapi/create-blob-url-from-data-url.html:
+        * http/tests/filesystem/no-cache-filesystem-url.html:
+        * http/tests/globalhistory/history-delegate-basic-302-redirect.html:
+        * http/tests/globalhistory/history-delegate-basic-refresh-redirect.html:
+        * http/tests/globalhistory/history-delegate-basic-title.html:
+        * http/tests/globalhistory/history-delegate-basic-visited-links.html:
+        * http/tests/history/:
+        * http/tests/incremental/frame-focus-before-load.html:
+        * http/tests/incremental/partial-jpeg.html:
+        * http/tests/incremental/pause-in-script-element.pl:
+        * http/tests/incremental/slow-utf8-css.html:
+        * http/tests/incremental/slow-utf8-html.pl:
+        * http/tests/incremental/split-hex-entities.pl:
+        * http/tests/inspector-enabled/console-clear-arguments-on-frame-navigation.html:
+        * http/tests/inspector-enabled/console-clear-arguments-on-frame-remove.html:
+        * http/tests/inspector-enabled/console-log-before-frame-navigation.html:
+        * http/tests/inspector-enabled/contentSecurityPolicy-blocks-setInterval.html:
+        * http/tests/inspector-enabled/contentSecurityPolicy-blocks-setTimeout.html:
+        * http/tests/inspector-enabled/database-open.html:
+        * http/tests/inspector-enabled/dedicated-workers-list.html:
+        * http/tests/inspector-enabled/document-write.html:
+        * http/tests/inspector-enabled/dom-storage-open.html:
+        * http/tests/inspector-enabled/injected-script-discard.html:
+        * http/tests/inspector-enabled/resources/console-clear-arguments-iframe.html:
+        * http/tests/inspector/console-resource-errors.html:
+        * http/tests/inspector/console-websocket-error.html:
+        * http/tests/inspector/indexeddb/resources/without-indexed-db.html:
+        * http/tests/inspector/inspector-test.js:
+        * http/tests/inspector/network/ping.html:
+        * http/tests/inspector/resource-tree/resources/script-initial.js:
+        (foo):
+        * http/tests/inspector/resource-tree/resources/script-navigated.js:
+        (foo):
+        * http/tests/inspector/web-socket-frame-error.html:
+        * http/tests/inspector/web-socket-frame.html:
+        * http/tests/loading/:
+        * http/tests/local/absolute-url-strip-whitespace.html:
+        * http/tests/local/blob/script-tests/send-hybrid-blob.js:
+        (runTests):
+        * http/tests/local/drag-over-remote-content.html:
+        * http/tests/local/fail.css:
+        (#pass):
+        * http/tests/local/formdata/send-form-data-constructed-from-form.html:
+        * http/tests/local/link-stylesheet-load-order-preload.html:
+        * http/tests/local/link-stylesheet-load-order.html:
+        * http/tests/local/link-stylesheet-preferred.html:
+        * http/tests/local/style-access-before-stylesheet-loaded.html:
+        * http/tests/local/stylesheet-and-script-load-order-http.html:
+        * http/tests/local/stylesheet-and-script-load-order-media-print.html:
+        * http/tests/local/stylesheet-and-script-load-order.html:
+        * http/tests/media/reload-after-dialog.html:
+        * http/tests/media/resources/test.txt:
+        * http/tests/media/video-buffered-range-contains-currentTime.html:
+        * http/tests/media/video-cancel-load.html:
+        * http/tests/media/video-cookie.html:
+        * http/tests/media/video-error-abort.html:
+        * http/tests/messaging/cross-domain-message-event-dispatch.html:
+        * http/tests/messaging/cross-domain-message-send.html:
+        * http/tests/mime/quoted-charset.php:
+        * http/tests/mime/resources/uppercase-mime-type.php:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-and-css-extension.html:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain.html:
+        * http/tests/mime/standard-mode-loads-stylesheet-with-charset-and-css-extension.html:
+        * http/tests/mime/standard-mode-loads-stylesheet-with-charset.html:
+        * http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type.html:
+        * http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.html:
+        * http/tests/mime/uppercase-mime-type.html:
+        * http/tests/misc/:
+        * http/tests/websocket/tests/:
+        * http/tests/workers/resources/worker-redirect.js:
+        (runNextTest):
+        * http/tests/workers/resources/worker-util.js:
+        (waitUntilThreadCountMatches.return):
+        (waitUntilThreadCountMatches):
+        (done):
+        * http/tests/workers/shared-worker-importScripts.html:
+        * http/tests/workers/shared-worker-invalid-url.html:
+        * http/tests/workers/terminate-during-sync-operation.html:
+        * http/tests/workers/text-encoding.html:
+        * http/tests/workers/worker-document-domain-security.html:
+        * http/tests/workers/worker-importScripts.html:
+        * http/tests/workers/worker-importScriptsOnError.html:
+        * http/tests/workers/worker-invalid-url.html:
+        * http/tests/workers/worker-workerScriptNotThere.html:
+        * http/tests/xmlhttprequest/:
+        * http/tests/xmlviewer/dumpAsText/frames.html:
+        * http/tests/xmlviewer/dumpAsText/xhtml-tag.xml:
+        * http/tests/xmlviewer/extensions-api.html:
+        * platform/chromium-win/http/tests/websocket/tests/hixie76/bad-sub-protocol-control-chars-expected.txt:
+        * platform/chromium/http/tests/misc/execute-and-return-value.html:
+        * platform/chromium/http/tests/misc/selectionAsMarkup.html:
+        * platform/chromium/http/tests/permissionclient/image-permissions.html:
+        * platform/chromium/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * platform/chromium/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * platform/chromium/http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-subframe-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-2-level-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-to-data-url-sub-frame-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-to-data-url-from-data-url-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level-expected.txt:
+        * platform/chromium/http/tests/security/dataURL/xss-DENIED-to-data-url-window-open-expected.txt:
+        * platform/chromium/http/tests/security/mixedContent/insecure-iframe-in-main-frame-allowed.html:
+        * platform/chromium/http/tests/security/mixedContent/insecure-iframe-in-main-frame-blocked.html:
+        * platform/chromium/http/tests/security/mixedContent/insecure-image-in-main-frame-allowed.html:
+        * platform/chromium/http/tests/security/mixedContent/insecure-image-in-main-frame-blocked.html:
+        * platform/chromium/http/tests/security/mixedContent/insecure-script-in-main-frame-allowed.html:
+        * platform/chromium/http/tests/security/mixedContent/insecure-script-in-main-frame-blocked.html:
+        * platform/chromium/http/tests/security/window-named-proto-expected.txt:
+        * platform/qt/http/tests/cookies/strict-third-party-cookie-blocking.html:
+        * platform/qt/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * platform/qt/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * platform/qt/http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt:
+
 2012-06-11  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unprefix Blob.webkitSlice

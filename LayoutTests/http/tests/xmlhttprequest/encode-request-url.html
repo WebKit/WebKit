@@ -10,8 +10,8 @@
         document.getElementById("result").appendChild(item);
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var req = new XMLHttpRequest;
     req.open("GET", "/xmlhttprequest/resources/print-query.cgi?Проверка", false);

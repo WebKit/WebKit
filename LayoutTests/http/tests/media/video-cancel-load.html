@@ -18,8 +18,8 @@
     var video = window.opener.video;
     window.setTimeout(function () {
         var d = video.duration;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 50);
     window.opener.blank();
     </script>
@@ -27,8 +27,8 @@
   </textarea>
 
   <script>
-  if (window.layoutTestController) {
-      layoutTestController.setCanOpenWindows();
+  if (window.testRunner) {
+      testRunner.setCanOpenWindows();
   }
 
   var video = document.getElementById("video");

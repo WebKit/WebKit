@@ -23,8 +23,8 @@ XMLHttpRequest does not handle set-cookie headers.</p>
         document.getElementById("result").firstChild.data = result;
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     try {
         clearCookies();
         var response = getAndSetCookies();

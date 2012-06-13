@@ -10,7 +10,7 @@ function log(message) {
 
 function handleMessage(event) {
     if (event.data === "created_cache") {
-        log("Origins with application cache after frame was cached: " + layoutTestController.originsWithApplicationCache());
+        log("Origins with application cache after frame was cached: " + testRunner.originsWithApplicationCache());
     } else {
         log("received invalid message from frame '" + event.data + "'");
     }
@@ -28,12 +28,12 @@ function addIFrameWithCache()
 // Start and end.
 
 function startTest() {
-    if (window.layoutTestController) {
-        layoutTestController.clearAllApplicationCaches();
-        log("Origins with application cache after deletion: " + layoutTestController.originsWithApplicationCache());
-        layoutTestController.dumpApplicationCacheDelegateCallbacks();
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearAllApplicationCaches();
+        log("Origins with application cache after deletion: " + testRunner.originsWithApplicationCache());
+        testRunner.dumpApplicationCacheDelegateCallbacks();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     window.onmessage = handleMessage;
@@ -42,8 +42,8 @@ function startTest() {
 }
 
 function finishTest() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

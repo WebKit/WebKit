@@ -5,10 +5,10 @@
 <script>
 var numSmallMessages = 1000;
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 }
 
 function log(message)
@@ -46,8 +46,8 @@ function testLargeString()
         log(msg.data.length == str.length ? "PASS" : "FAIL - wrong response length");
         ws.send("Goodbye");
         ws.onmessage = null;
-        if (window.layoutTestController)
-            setTimeout("layoutTestController.notifyDone()", 0);
+        if (window.testRunner)
+            setTimeout("testRunner.notifyDone()", 0);
     }
 }
 </script>

@@ -10,8 +10,8 @@
 description("Test whether WebSocket rejects a fragmented control frame and aborts the connection.");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 var url = "ws://localhost:8880/websocket/tests/hybi/fragmented-control-frame";
 var ws = new WebSocket(url);

@@ -5,9 +5,9 @@
 // loaded from the cache.
 
 if (!sessionStorage.lastRandom) {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 }
 
@@ -17,8 +17,8 @@ function done(result)
 
     document.body.innerText = result;
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function scriptLoaded()

@@ -2,16 +2,16 @@
 <div>This tests that a manifest that contains an empty file will not crash the browser.</div>
 <div id="result">FAILURE</div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function cached()
 {
     document.getElementById('result').innerHTML = 'SUCCESS';
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 applicationCache.addEventListener('cached', cached, false);

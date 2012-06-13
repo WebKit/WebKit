@@ -17,8 +17,8 @@ function runNextTest()
         window[testCases[testIndex - 1]]();
     } else {
         log("DONE");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 
@@ -58,9 +58,9 @@ function testCrossOriginRedirectedLoad()
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 runNextTest();

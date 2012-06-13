@@ -9,8 +9,8 @@
 <script type="text/javascript">
 description("WebSocket should fail if invalid subprotocols are specified");
 
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 var url = "ws://127.0.0.1:8880/websocket/tests/simple";
 shouldThrow("new WebSocket(url, 'a b')", "'Error: SYNTAX_ERR: DOM Exception 12'");

@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var expectedPasses = 6;
@@ -26,8 +26,8 @@ function logPass(message, messageNumber)
     }
 
     expectedPasses--;
-    if (expectedPasses == 0 && window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (expectedPasses == 0 && window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <link rel="icon" src="" href="" onerror="log('FAIL: link rel=icon onerror fired')"></link>

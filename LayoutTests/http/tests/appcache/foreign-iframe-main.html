@@ -5,9 +5,9 @@
 <div id=result></div>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -32,7 +32,7 @@ applicationCache.addEventListener('obsolete', function() { log("obsolete") }, fa
 applicationCache.addEventListener('noupdate', function() { log("noupdate"); test() }, false);
 applicationCache.addEventListener('cached', function() { log("cached"); test() }, false);
 
-window.addEventListener("message", function() { log("SUCCESS"); if (window.layoutTestController) layoutTestController.notifyDone() }, false);
+window.addEventListener("message", function() { log("SUCCESS"); if (window.testRunner) testRunner.notifyDone() }, false);
 
 </script>
 </body>

@@ -11,9 +11,9 @@ print <<HERE_DOC_END
 <head>
 <title>200 Refresh Redirect</title>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.clearBackForwardList();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.clearBackForwardList();
+    testRunner.waitUntilDone();
 }
 </script>
 

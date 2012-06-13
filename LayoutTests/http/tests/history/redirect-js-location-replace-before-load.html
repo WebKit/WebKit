@@ -3,9 +3,9 @@
 <title>JavaScript Redirect</title>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.clearBackForwardList();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.clearBackForwardList();
+    testRunner.waitUntilDone();
 }
 location.replace("resources/redirect-target.html#1");
 </script>

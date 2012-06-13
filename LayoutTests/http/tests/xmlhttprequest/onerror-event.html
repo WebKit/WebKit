@@ -3,9 +3,9 @@
 <p>This test that the error event is fired for XMLHttpRequests</p>
 <pre id='console'></pre>
 <script type="text/javascript">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function log(message)
@@ -18,8 +18,8 @@
     function errorHandler(evt)
     {
         log("PASS: error event fired.");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     xhr = new XMLHttpRequest;

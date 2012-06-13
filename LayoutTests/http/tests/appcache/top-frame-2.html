@@ -6,9 +6,9 @@ contains its resource.</p>
 <div id=result></div>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -19,7 +19,7 @@ function log(message)
 function debug(message)
 {
     // If running manually in the browser, print the sequence of events.
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         log(message);
 }
 
@@ -31,8 +31,8 @@ function checkDone()
 {
     if (receivedExpectedMessage && receivedCheckingEvent && receivedNoupdateEvent) {
         log("SUCCESS");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

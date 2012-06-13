@@ -6,9 +6,9 @@ REGRESSION: No http referer header sent on XMLHttpRequest.</p>
 <div id=async>async: </div>
 
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 
 req = new XMLHttpRequest;
@@ -29,8 +29,8 @@ function processStateChange() {
       document.getElementById("async").firstChild.data += "OK";
     else
       document.getElementById("async").firstChild.data += req.responseText;
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   }
 }
 

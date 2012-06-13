@@ -6,9 +6,9 @@ window.onload = function()
     {
         InspectorTest.pageLoaded();
     }
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.evaluateInWebInspector(0, "(" + notifyFrontend + ")()");
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.evaluateInWebInspector(0, "(" + notifyFrontend + ")()");
 }
 </script>
 <p>Page without Indexed DB.</p>

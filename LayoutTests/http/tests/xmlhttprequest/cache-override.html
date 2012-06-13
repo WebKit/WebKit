@@ -3,9 +3,9 @@
 <p>Tests for <a href="https://bugs.webkit.org/show_bug.cgi?id=8210"> bug 8210</a> - 
 Conditional XMLHttpRequest gets should pass 304 responses unchanged.</p>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     var console_messages = document.createElement("ul");
@@ -211,8 +211,8 @@ Conditional XMLHttpRequest gets should pass 304 responses unchanged.</p>
             req.send(null);
           } else if (asyncStep == 12) {
             log("async: If-Modified-Since override (uncached response): status = " + req.status);
-            if (window.layoutTestController)
-              layoutTestController.notifyDone();
+            if (window.testRunner)
+              testRunner.notifyDone();
           }
         }
     }

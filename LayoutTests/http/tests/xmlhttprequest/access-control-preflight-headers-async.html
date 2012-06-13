@@ -1,8 +1,8 @@
 <p>Test that custom headers are not sent with OPTIONS preflight request.</p>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function resetStatus()
@@ -19,13 +19,13 @@ function sendRequest()
     req.setRequestHeader("X-Custom-Header", "foobar");
     req.onerror = function() {
         document.body.appendChild(document.createTextNode("FAIL: onerror called"));
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     req.onload = function() {
         document.body.appendChild(document.createTextNode(req.responseText));
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     req.send();
 }

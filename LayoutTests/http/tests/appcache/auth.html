@@ -1,9 +1,9 @@
 <body>
 <p>Test that appcache works with authentication. Should say SUCCESS:</p>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 // Store authentication credentials.
@@ -21,8 +21,8 @@ function success()
     text.appendChild(document.createTextNode("SUCCESS"));
     document.body.replaceChild(text, document.getElementsByTagName("iframe")[0]);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </body>

@@ -1,18 +1,18 @@
 <html manifest="resources/maxsize.manifest">
 <body>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.setAppCacheMaximumSize(10 * 1024);
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.setAppCacheMaximumSize(10 * 1024);
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function log(message)
     {
         document.getElementById("result").innerHTML += message + "<br>";
-        if (window.layoutTestController) {
-            layoutTestController.setAppCacheMaximumSize(100 * 1024 * 1024);
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.setAppCacheMaximumSize(100 * 1024 * 1024);
+            testRunner.notifyDone();
         }
     }
 

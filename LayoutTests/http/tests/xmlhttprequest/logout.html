@@ -5,9 +5,9 @@
 <span>Async request sent before logout: </span><span id="async">FAIL - Test not run</span><br>
 <span>Logout: </span><span id="logout">FAIL - Test not run</span>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function login()
@@ -45,8 +45,8 @@ r.open("GET", "resources/logout/resource.php?isAuthenticated", true);
 r.onload = function() {
     document.getElementById("async").innerHTML = r.status == 200 ? "PASS" : "FAIL";
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 r.send("");
 

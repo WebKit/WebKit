@@ -66,9 +66,9 @@ function closeWorker()
 function runTest()
 {
     log('Starting test run.');
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     startNextTest();
 }

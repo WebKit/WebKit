@@ -1,10 +1,10 @@
 <button onclick="presetAuthorization()">Start</button>
 <pre id="console"></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.setCanOpenWindows();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
 }
 
 function log(message)
@@ -127,17 +127,17 @@ function test_async_auth_explicit()
         else
             log("FAIL: Wrong status code " + req.status);
         log("DONE");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     req.onerror = function() {
         log("FAIL: Received error event.");
         log("DONE");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 
-if (window.layoutTestController)
+if (window.testRunner)
     presetAuthorization();
 </script>

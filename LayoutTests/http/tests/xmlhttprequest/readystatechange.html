@@ -4,8 +4,8 @@
 XMLHttpRequest should dispatch readystatechange event.</p>
 <p>If this passes you should see alerts for onreadystatechange and for a readystatechange listener.</p>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function called1(evt) {
         alert("onreadystatechange called");

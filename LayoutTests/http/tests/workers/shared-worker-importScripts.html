@@ -7,17 +7,17 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var worker = new SharedWorker('resources/worker-importScripts.js', 'importScripts');
 
 worker.port.onmessage = function(evt) {
     log(evt.data);
-    if (evt.data == "DONE" && window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (evt.data == "DONE" && window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </body>

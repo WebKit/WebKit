@@ -6,7 +6,7 @@
 select (STDOUT);
 $| = 1;
 
-print "Refresh: 0;url=data:text/html,<body onload='if (window.layoutTestController) layoutTestController.notifyDone();'>You should have seen an alert.\r\n";
+print "Refresh: 0;url=data:text/html,<body onload='if (window.testRunner) testRunner.notifyDone();'>You should have seen an alert.\r\n";
 print "Content-Type: text/html\r\n";
 print "\r\n";
 
@@ -14,12 +14,12 @@ print << "EOF";
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 </script>
-<meta http-equiv="refresh" content="0;url=data:text/html,%3Cbody%20onload='if(window.layoutTestController)layoutTestController.notifyDone();'%3EYou%20should%20have%20seen%20an%20alert.">
+<meta http-equiv="refresh" content="0;url=data:text/html,%3Cbody%20onload='if(window.testRunner)testRunner.notifyDone();'%3EYou%20should%20have%20seen%20an%20alert.">
 </head>
 EOF
 

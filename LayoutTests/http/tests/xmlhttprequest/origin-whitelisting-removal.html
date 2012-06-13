@@ -2,7 +2,7 @@
 
 <pre id="console"></pre>
 <script>
-layoutTestController.dumpAsText();
+testRunner.dumpAsText();
 
 function log(message)
 {
@@ -29,11 +29,11 @@ function test(origin, protocol, host, subdomains, url)
 
     loadURL(url, false);
 
-    layoutTestController.addOriginAccessWhitelistEntry(origin, protocol.toLowerCase(), host.toLowerCase(), subdomains);
+    testRunner.addOriginAccessWhitelistEntry(origin, protocol.toLowerCase(), host.toLowerCase(), subdomains);
 
     loadURL(url, true);
 
-    layoutTestController.removeOriginAccessWhitelistEntry(origin, protocol, host, subdomains);
+    testRunner.removeOriginAccessWhitelistEntry(origin, protocol, host, subdomains);
 
     loadURL(url, false);
 

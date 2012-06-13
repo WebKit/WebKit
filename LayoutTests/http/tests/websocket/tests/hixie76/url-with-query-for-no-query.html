@@ -10,8 +10,8 @@
 description("Make sure handshake with URL with query components fails against server that doesn't support query component.");
 
 window.jsTestIsAsync = true;
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
+if (window.testRunner)
+    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 1);
 
 var url = "ws://127.0.0.1:8880/websocket/tests/hixie76/no-query?";
 var handshake_success = false;

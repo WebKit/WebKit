@@ -7,9 +7,9 @@ function log(msg) {
     document.getElementById("result").innerHTML += msg + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var count = 1;
@@ -19,8 +19,8 @@ var es = new EventSource("resources/es-eof.php");
 es.onerror = function () {
     if (count++ == 3) {
         es.close();
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 };
 

@@ -15,10 +15,10 @@
     <pre id="console"></pre>
     <script>
     // Asynchronous test because this requires a new window to perform multiple navigations.
-    if (window.layoutTestController) {
-        window.layoutTestController.dumpAsText();
-        window.layoutTestController.waitUntilDone();
-        window.layoutTestController.setCanOpenWindows();
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
+        window.testRunner.setCanOpenWindows();
     }
 
     // Values to check.
@@ -77,8 +77,8 @@
 
         // Test completed.
         target.close();
-        if (window.layoutTestController)
-            window.layoutTestController.notifyDone();
+        if (window.testRunner)
+            window.testRunner.notifyDone();
 
     }, false);
 

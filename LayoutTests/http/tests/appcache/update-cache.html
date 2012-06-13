@@ -4,9 +4,9 @@
 <div id=result></div>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -54,8 +54,8 @@ function test3()
     log((applicationCache.status == applicationCache.IDLE) ? "Cache status is IDLE" : ("FAIL: Incorrect cache status, " + applicationCache.status));
 
     log("DONE");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 applicationCache.oncached = test;

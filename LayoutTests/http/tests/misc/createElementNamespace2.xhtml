@@ -2,8 +2,8 @@
 <script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript" src="../security/resources/cross-frame-access.js"></script>
 <pre xmlns="http://www.w3.org/1999/xhtml" id="console"></pre>
 <script xmlns="http://www.w3.org/1999/xhtml" id="scriptTag">
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     log("This test was written to address rdar://problem/4976879.  And tests how namespaceURI's are assigned.");
     log("");

@@ -1,8 +1,8 @@
 <body>
 <p>Test that setting a document.cookie to an empty value has no effect</p>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.cookie = "";
 document.write(document.cookie ? "FAILURE" : "SUCCESS");

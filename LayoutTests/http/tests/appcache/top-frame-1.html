@@ -8,9 +8,9 @@ anyway, so it can also pass if the UA fails to reject loads for cache misses.</p
 <div id=result></div>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -31,7 +31,7 @@ applicationCache.addEventListener('cached', function() { test() }, false);
 applicationCache.onupdateready = function() { log("FAIL: received unexpected updateready event") }
 applicationCache.onerror = function() { log("FAIL: received unexpected error event") }
 
-window.addEventListener("message", function() { log("SUCCESS"); if (window.layoutTestController) layoutTestController.notifyDone() }, false);
+window.addEventListener("message", function() { log("SUCCESS"); if (window.testRunner) testRunner.notifyDone() }, false);
 
 </script>
 </body>

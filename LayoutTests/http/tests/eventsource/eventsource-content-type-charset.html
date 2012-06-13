@@ -9,9 +9,9 @@ function log(msg) {
     document.getElementById("result").innerHTML += msg + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function shouldGetMessage(es)
@@ -83,8 +83,8 @@ function next() {
 }
 
 function end() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 startRequest();
 </script>

@@ -56,8 +56,8 @@
                 }
             } catch (e) {
             }
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     }
 </script>
@@ -68,10 +68,10 @@
 <div id="targetDiv"></div>
 <pre id="console"></pre>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.setUseDashboardCompatibilityMode(true);
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.setUseDashboardCompatibilityMode(true);
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 </script>
 </body>

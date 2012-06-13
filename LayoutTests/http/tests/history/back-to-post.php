@@ -21,13 +21,13 @@ function submitForm()
     setTimeout(function() {document.forms[0].submit()}, 0);
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 // Disable b/f cache (not necessary in DRT since the b/f cache is disabled by default).
-if (!window.layoutTestController)
+if (!window.testRunner)
     window.onunload = function() {}
 
 if (document.location.search == "") {
@@ -37,8 +37,8 @@ if (document.location.search == "") {
     if (window.name == "finish") {
         window.name = "";
         document.getElementById("result").innerHTML = 'PASS';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } else {
         document.forms[0].action = "?2";
         submitForm();

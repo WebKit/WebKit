@@ -4,8 +4,8 @@
 
 function onload()
 {
-    if (window.layoutTestController)
-        window.layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        window.testRunner.waitUntilDone();
 }
 
 var iframesOpened = 0;
@@ -13,10 +13,10 @@ var iframesOpened = 0;
 function iframeLoaded()
 {
     if (++iframesOpened === 2) {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.dumpChildFramesAsText();
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.notifyDone();
         }
     }
 }

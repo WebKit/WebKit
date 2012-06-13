@@ -5,6 +5,6 @@ else
 	echo "Authenticated as {$_SERVER['PHP_AUTH_USER']} with password {$_SERVER['PHP_AUTH_PW']}<br>";
 ?>
 <script>
-if (window.layoutTestController)
-	layoutTestController.notifyDone();
+if (window.testRunner)
+	testRunner.notifyDone();
 </script>

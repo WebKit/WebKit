@@ -15,9 +15,9 @@ This should submit _charset_=iso8559-1.  Note that this _charset_ input has a va
 </form>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 document.testForm.submit();

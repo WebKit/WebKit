@@ -18,9 +18,9 @@ function log(n, message) {
 }
 
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 } else {
     alert("Please cancel all authentication dialogs that will appear");
 }
@@ -65,13 +65,13 @@ function test4() {
         r.onreadystatechange = function() {
           if (r.readyState == 4) {
             checkResult(4, r.status);
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
           }
         };
         r.send();
     } catch (ex) {
         log(4, ex);
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 }
 </script>

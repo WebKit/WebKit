@@ -4,9 +4,9 @@
 
 <div id="result"></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText()
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText()
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -65,8 +65,8 @@ function test()
 
     log(hadError ? "FAIL" : "PASS");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 applicationCache.addEventListener('cached', test, false);

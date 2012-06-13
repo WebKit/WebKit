@@ -4,10 +4,10 @@
     <script>
     function test(frame)
     {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.dumpChildFramesAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
         }
         var client = frame.contentWindow.client();
         client.send("");

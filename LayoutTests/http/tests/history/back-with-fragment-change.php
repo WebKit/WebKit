@@ -10,18 +10,18 @@ header("Pragma: no-cache");
 ?>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpBackForwardList();
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpBackForwardList();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 onload = function() {
     if (sessionStorage.didNavigate) {
         console.log('Should not have ended up back at the test start page');
         delete sessionStorage.didNavigate;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
 
@@ -38,5 +38,5 @@ onunload = function() { };
 <p>
 Tests that a history navigation that is aborted by a fragment change doesn't
 update the provisional history item. This test relies on
-<code>layoutTestController.dumpBackForwardList</code> to verify correctness
+<code>testRunner.dumpBackForwardList</code> to verify correctness
 and thus can only be run via DumpRenderTree.</p>

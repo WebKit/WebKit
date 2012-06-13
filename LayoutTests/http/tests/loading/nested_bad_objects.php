@@ -6,8 +6,8 @@ if (isset($_GET['object'])) {
 ?>
 <html>
     <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     </script>
     <object type="image/jpeg" data="nested_bad_objects.php?object">
         <object type="image/jpeg" data="nested_bad_objects.php?object" />

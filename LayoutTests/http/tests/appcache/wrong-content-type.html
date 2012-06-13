@@ -4,9 +4,9 @@
 <p>Should say SUCCESS:</p>
 <div id=result></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText()
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText()
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -17,8 +17,8 @@ function log(message)
 function errorEventListener()
 {
     log("FAILURE: An error event was dispatched on window.applicationCache.");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function verifyStatus()
@@ -28,8 +28,8 @@ function verifyStatus()
     else
         log("SUCCESS");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 applicationCache.addEventListener('cached', verifyStatus, false);

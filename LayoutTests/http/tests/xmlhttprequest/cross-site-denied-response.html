@@ -2,9 +2,9 @@
 <pre id=preOnerror>FAIL: onerror was not called.</pre>
 <pre id=console></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -49,8 +49,8 @@ function checkResponse()
     } catch (ex) {
         log(ex);
     }
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 var req = new XMLHttpRequest;

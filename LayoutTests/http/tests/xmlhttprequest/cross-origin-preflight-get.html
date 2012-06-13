@@ -3,9 +3,9 @@
 <p>The "Origin" header must be sent with a "non-simple" cross-origin resource sharing request that uses the GET method.</p>
 <pre id="console"></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -23,8 +23,8 @@ function test()
     xhr.onerror = function() { log("onerror") }
     xhr.onload = function() {
         log(xhr.responseText);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     xhr.send(null);
 }

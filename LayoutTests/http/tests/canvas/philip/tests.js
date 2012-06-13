@@ -216,8 +216,8 @@ function _addTest(test)
             document.documentElement.className += ' pass';
             window._testStatus = ['pass', document.getElementById('d').innerHTML];
         }
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     window.endTest = endTest;
     window.wrapFunction = function (f)
@@ -238,9 +238,9 @@ function _addTest(test)
 
     window.onload = function ()
     {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         try
         {

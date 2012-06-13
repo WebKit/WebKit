@@ -5,15 +5,15 @@
     var isParentFrame = window == window.top;
 
     if (isParentFrame) {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText()
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText()
+            testRunner.waitUntilDone();
         }
 
         window.onmessage = function() {
             document.getElementById('result').innerHTML = "SUCCESS";
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     } else {
         window.applicationCache.onchecking = function() {

@@ -17,8 +17,8 @@ onhashchange = function() {
 function done() {
     delete sessionStorage.didNavigate;
     console.log('Visited fragment and waited.');
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.testRunner) {
+        testRunner.notifyDone();
     }
 }
 </script>

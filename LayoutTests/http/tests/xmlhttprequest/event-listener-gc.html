@@ -22,16 +22,16 @@ function processStateChange(e)
     if (didCollect)
         write("PASS: event handler fired after garbage collection.\n");
     if (e.target.readyState == 4) {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 
 function test() 
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
         
     var request = new XMLHttpRequest();

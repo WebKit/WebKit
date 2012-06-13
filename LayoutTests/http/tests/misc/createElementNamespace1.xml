@@ -4,8 +4,8 @@
 <pre id="console"></pre>
 
 <script id="scriptTag">
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     log("This test was written to address rdar://problem/4976879.  And tests how namespaceURI's are assigned.");
     log("");

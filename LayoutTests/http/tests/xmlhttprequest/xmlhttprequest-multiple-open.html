@@ -21,9 +21,9 @@ Array.prototype.isEqual = function(expected)
     return true;
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var xhr;
@@ -54,8 +54,8 @@ xhr.open("GET", "resources/print-headers.cgi", true);
 
 log(results.isEqual(expected) ? "PASS" : "FAILED results : " + results + " expected : " + expected);
 
-if (window.layoutTestController)
-    layoutTestController.notifyDone();
+if (window.testRunner)
+    testRunner.notifyDone();
 
 </script>
 </body></html>

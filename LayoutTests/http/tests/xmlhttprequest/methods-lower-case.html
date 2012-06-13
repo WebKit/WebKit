@@ -3,9 +3,9 @@
 <p>Tests for <a href="https://bugs.webkit.org/show_bug.cgi?id=8099"> bug 8099</a> - 
 XMLHttpRequest lowercase post requests broken.</p>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     var console_messages = document.createElement("ol");
@@ -59,8 +59,8 @@ XMLHttpRequest lowercase post requests broken.</p>
             req.send("");
           } else if (asyncStep == 3) {
             log('DoIt(""): ' + req.getResponseHeader("REQMETHOD") + "(" + req.getResponseHeader("REQLENGTH") + " bytes), Content-Type: " + req.getResponseHeader("REQTYPE"));
-            if (window.layoutTestController)
-              layoutTestController.notifyDone();
+            if (window.testRunner)
+              testRunner.notifyDone();
           }
         }
       }

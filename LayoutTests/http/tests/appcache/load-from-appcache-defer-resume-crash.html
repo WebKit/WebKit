@@ -1,16 +1,16 @@
 <html manifest="resources/load-from-appcache-defer-resume-crash.manifest">
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.setUseDeferredFrameLoading(true)
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.setUseDeferredFrameLoading(true)
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 function finishIfNeeded() {
     if (window.location.hash) {
         document.getElementById('result').innerText = "SUCCESS";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 function run() {

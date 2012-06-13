@@ -3,9 +3,9 @@
 <script src="resources/console-clear-arguments-test.js"></script>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 var loadCount = 0;
@@ -17,8 +17,8 @@ function frameLoaded(event) {
     }
 
     dumpConsoleMessageArgumentCounts();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

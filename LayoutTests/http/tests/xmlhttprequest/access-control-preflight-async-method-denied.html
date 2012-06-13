@@ -7,9 +7,9 @@ function log(message)
     document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 (function() {
@@ -47,8 +47,8 @@ if (window.layoutTestController) {
         }
 
         log(xhr.responseText);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     xhr.onreadystatechange = function() {

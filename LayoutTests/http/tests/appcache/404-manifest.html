@@ -1,8 +1,8 @@
 <html manifest="does-not-exist.manifest">
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText()
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText()
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -43,8 +43,8 @@ function test()
         log("FAILURE: Could not load data.");
     }
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 var gotCheckingEvent = false;

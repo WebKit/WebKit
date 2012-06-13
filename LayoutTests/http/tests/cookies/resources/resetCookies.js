@@ -1,7 +1,7 @@
 function resetCookies()
 {
-    if (window.layoutTestController)
-        layoutTestController.setAlwaysAcceptCookies(true);
+    if (window.testRunner)
+        testRunner.setAlwaysAcceptCookies(true);
 
     // Due to cross-origin restrictions, we can only (simply) reset cookies for our current origin.
     var url = "http://" + window.location.hostname +":8000/cookies/resources/cookie-utility.php?queryfunction=deleteCookies";
@@ -13,6 +13,6 @@ function resetCookies()
         alert("Attempt to clear " + url + " cookies might have failed.  Test results might be off from here on out. (" + e + ")");
     }
     
-    if (window.layoutTestController)
-        layoutTestController.setAlwaysAcceptCookies(false);
+    if (window.testRunner)
+        testRunner.setAlwaysAcceptCookies(false);
 }

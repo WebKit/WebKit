@@ -18,8 +18,8 @@ function finish()
         for (var i = 0; i < 10000; ++i)
             new Object;
     }
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();    
+    if (window.testRunner)
+        testRunner.notifyDone();    
 }
 
 function loadSecond()
@@ -27,9 +27,9 @@ function loadSecond()
     document.getElementById("ad").src = "javascript: '<!DOCTYPE html><script>window.parent.finish();<" + "/script>'";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 setTimeout("loadFirst();", 0);

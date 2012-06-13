@@ -7,9 +7,9 @@ function log(msg) {
     document.getElementById("result").innerHTML += msg + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var count = -1;
@@ -70,8 +70,8 @@ es.onerror = function () {
     else
         log("DONE");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 };
 </script>
 </body>

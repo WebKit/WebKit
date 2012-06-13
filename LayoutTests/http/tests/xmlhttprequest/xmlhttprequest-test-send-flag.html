@@ -13,8 +13,8 @@ function log(message) {
     document.getElementById("ans").appendChild(document.createElement("br"));
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var xhr;
 
@@ -56,8 +56,8 @@ try {
     log("PASS");
 }
 
-if (window.layoutTestController)
-    layoutTestController.notifyDone();
+if (window.testRunner)
+    testRunner.notifyDone();
 
 </script>
 </body>

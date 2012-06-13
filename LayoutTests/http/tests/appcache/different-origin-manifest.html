@@ -2,9 +2,9 @@
 <p>Test that a different origin manifest is completely ignored.</p>
 <div id=result></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 var result = document.getElementById("result");
@@ -27,8 +27,8 @@ function done()
     if (result.innerHTML == originalResult)
         result.innerHTML = applicationCache.status == applicationCache.UNCACHED ? "PASS" : "FAIL: cache status in not UNCACHED";
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 setTimeout(done, 100);

@@ -2,9 +2,9 @@
 <body>
 <p>Test that online whitelist wildcard flag is implemented.</p>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function test()
@@ -17,8 +17,8 @@ function test()
     } catch (ex) {
         document.body.appendChild(document.createTextNode(ex));
     }
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 applicationCache.oncached = test;

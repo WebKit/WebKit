@@ -1,8 +1,8 @@
 <html>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 t = 0;
@@ -15,8 +15,8 @@ function runTest(f) {
             if (f.contentWindow.ranScript != true) {
                 result.innerHTML = 'FAILURE - did not run script first time'
 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
                 return;
             }
             f.contentWindow.location.href='about:blank';
@@ -25,8 +25,8 @@ function runTest(f) {
             if (f.contentWindow.ranScript != undefined) {
                 result.innerHTML = 'FAILURE - ranScript variable is not undefined'
 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
                 return;                
             }
             f.contentWindow.location.href='resources/cached-scripts-subframe.html';
@@ -37,8 +37,8 @@ function runTest(f) {
             else
                 result.innerHTML = 'SUCCESS';
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
                 
             break;
     }

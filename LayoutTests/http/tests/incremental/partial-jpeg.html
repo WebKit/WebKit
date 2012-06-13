@@ -3,17 +3,17 @@
 <head>
   <script type="text/javascript">
     function forceDisplay() {
-      window.layoutTestController.display();
+      window.testRunner.display();
       setTimeout(stopLoading, 0);
     }
 
     function stopLoading() {
       window.stop();
-      window.layoutTestController.notifyDone();
+      window.testRunner.notifyDone();
     }
 
-    if (window.layoutTestController) {
-      window.layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      window.testRunner.waitUntilDone();
       setTimeout(forceDisplay, 0);
     }
   </script>

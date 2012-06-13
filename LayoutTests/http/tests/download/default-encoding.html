@@ -1,10 +1,10 @@
 <meta charset="utf-8">
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.overridePreference("WebKitDefaultTextEncodingName", "koi8-r");
-    layoutTestController.setCustomPolicyDelegate(true, true);
-    layoutTestController.waitForPolicyDelegate();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.overridePreference("WebKitDefaultTextEncodingName", "koi8-r");
+    testRunner.setCustomPolicyDelegate(true, true);
+    testRunner.waitForPolicyDelegate();
 }
 </script>
 <p>Downloaded file name should be "SUССЕSS.txt" (letters "CCE" are Cyrillic).</p>

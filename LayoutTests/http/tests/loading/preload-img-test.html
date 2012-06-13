@@ -16,9 +16,9 @@
    
    function test()
    {
-       if (window.layoutTestController) {
-           layoutTestController.waitUntilDone();
-           layoutTestController.dumpAsText();
+       if (window.testRunner) {
+           testRunner.waitUntilDone();
+           testRunner.dumpAsText();
        }
    }
 
@@ -40,8 +40,8 @@
    }
 
    function checkNotifyDone() {
-       if (window.layoutTestController)
-           layoutTestController.notifyDone();
+       if (window.testRunner)
+           testRunner.notifyDone();
    }
    // Reset resource count   
    CallCommand("reset-resource-count");

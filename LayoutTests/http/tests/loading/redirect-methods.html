@@ -1,9 +1,9 @@
 <html>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpResourceLoadCallbacks();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpResourceLoadCallbacks();
+    testRunner.waitUntilDone();
 }
 
 function startTest()
@@ -32,8 +32,8 @@ function iframeLoaded(frameID)
     var iframe = document.getElementById(frameID);
     if (iframe.hasAttribute("submitted")) {
         if (++frameID == testCodes.length) {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
             return;
         }
         createFrame(frameID);

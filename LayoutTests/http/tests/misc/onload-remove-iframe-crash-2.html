@@ -2,9 +2,9 @@
 <head>
     <title>http://bugs.webkit.org/show_bug.cgi?id=9929</title>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
         }
 
         var reloaded = false;
@@ -14,9 +14,9 @@
                 reloaded = true;
                 frames[0].location.reload();
             } else {
-                if (window.layoutTestController) {
+                if (window.testRunner) {
                     alert("SUCCESS");
-                    layoutTestController.notifyDone();
+                    testRunner.notifyDone();
                 }
             }
         }

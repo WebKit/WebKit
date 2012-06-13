@@ -2,9 +2,9 @@
 <body onload="test()">
 <p><a href="https://bugs.webkit.org/show_bug.cgi?id=25420">bug 25240</a></p>
 <script>
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText()
-    layoutTestController.waitUntilDone()
+  if (window.testRunner) {
+    testRunner.dumpAsText()
+    testRunner.waitUntilDone()
   }
 
  function test() {
@@ -23,8 +23,8 @@
      }
      // FAIL if loaded data from another domain.
      document.getElementById("result").innerHTML = (client && client.responseText.match(/localhost/)) ? "FAIL" : "PASS"
-     if (window.layoutTestController)
-        layoutTestController.notifyDone()
+     if (window.testRunner)
+        testRunner.notifyDone()
    }
    frames[0].location = frames[0].location.toString().replace("127.0.0.1", "localhost")
  }

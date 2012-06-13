@@ -2,9 +2,9 @@
 <pre id=preOnerror>FAIL: onerror was not called.</pre>
 <pre id=console></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -23,8 +23,8 @@ function checkResponse()
 {
     if (req.responseText.length) {
         error("responseText is not empty");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone()
+        if (window.testRunner)
+            testRunner.notifyDone()
     }
 }
 
@@ -39,8 +39,8 @@ function stealResponse()
         checkResponse();
         if (!hadError)
             log("PASS");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone()
+        if (window.testRunner)
+            testRunner.notifyDone()
     }, 100);
 }
 

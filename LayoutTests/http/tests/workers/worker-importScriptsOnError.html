@@ -7,9 +7,9 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var worker = new Worker('resources/worker-importScripts-error.js');
@@ -25,10 +25,10 @@ worker.onerror = function(error)
     properties.sort();
     log(properties);
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         // Allow the console message to be dumped out.
         setTimeout(function() {
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }, 0);
     }
 }

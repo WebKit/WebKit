@@ -9,8 +9,8 @@
                 document.getElementById('log').appendChild(item);
             }
 
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
                 log = alert;
             }
 

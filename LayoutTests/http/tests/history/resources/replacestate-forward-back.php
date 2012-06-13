@@ -9,8 +9,8 @@ function test()
         history.go(-1);
     } else {
         sessionStorage.removeItem("state");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 </script>

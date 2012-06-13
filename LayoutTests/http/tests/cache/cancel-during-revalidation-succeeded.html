@@ -7,9 +7,9 @@ It's possible for a successful revalidation to cause events to fire synchronousl
 We shouldn't crash if one of those events stops the load.
 See https://bugs.webkit.org/show_bug.cgi?id=72762.
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function obl(e) {
@@ -24,8 +24,8 @@ function obl(e) {
 }
 
 function finish() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <object type="application/x-no-such-mime" onbeforeload="obl();"></embed>

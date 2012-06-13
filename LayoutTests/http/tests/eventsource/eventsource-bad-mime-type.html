@@ -7,9 +7,9 @@ function log(msg) {
     document.getElementById("result").innerHTML += msg + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var es = new EventSource("resources/bad-mime-type.asis");
@@ -34,8 +34,8 @@ es.onerror = function () {
 
 function end() {
     es.close();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

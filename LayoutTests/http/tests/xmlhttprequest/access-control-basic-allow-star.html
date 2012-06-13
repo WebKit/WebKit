@@ -7,8 +7,8 @@ function log(message)
     document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 (function() {
     var xhr = new XMLHttpRequest;
@@ -30,8 +30,8 @@ if (window.layoutTestController)
     log(xhr.responseText);
 })();
 
-if (window.layoutTestController)
-    layoutTestController.notifyDone();  
+if (window.testRunner)
+    testRunner.notifyDone();  
 </script>
 </body>
 </html>

@@ -4,8 +4,8 @@
    header('HTTP/1.0 401 Unauthorized');
    header('Content-Type: text/html');
    echo '<script>';
-   echo '   if (window.layoutTestController)';
-   echo '       layoutTestController.dumpAsText();';
+   echo '   if (window.testRunner)';
+   echo '       testRunner.dumpAsText();';
    echo '</script>';
    echo 'PASS';
    exit;

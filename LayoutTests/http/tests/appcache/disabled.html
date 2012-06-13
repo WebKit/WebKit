@@ -3,9 +3,9 @@
 <p>Test to ensure the the window.applicationCache attribute is defined but non-functional with the feature disabled.</p>
 <div id=result></div>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.overridePreference("WebKitOfflineWebApplicationCacheEnabled", false);
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.overridePreference("WebKitOfflineWebApplicationCacheEnabled", false);
+        testRunner.dumpAsText();
     }
 
     function log(message)

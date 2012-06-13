@@ -11,21 +11,21 @@ function log(message) {
 // Start and end.
 
 function startTest() {
-    if (window.layoutTestController) {
-        layoutTestController.clearAllApplicationCaches();
-        layoutTestController.dumpApplicationCacheDelegateCallbacks();
-        layoutTestController.disallowIncreaseForApplicationCacheQuota();
-        layoutTestController.setApplicationCacheOriginQuota(20*1024);
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearAllApplicationCaches();
+        testRunner.dumpApplicationCacheDelegateCallbacks();
+        testRunner.disallowIncreaseForApplicationCacheQuota();
+        testRunner.setApplicationCacheOriginQuota(20*1024);
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     addFirstIFrame();
 }
 
 function finishTest() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 // Stages.
@@ -49,7 +49,7 @@ function addSecondIFrame() {
     // Expected to fail, then increase the quota.
     addIFrameWithContinuation("resources/quota-origin-iframe-2.html", function(event) {
         log(event.data);
-        layoutTestController.setApplicationCacheOriginQuota(100*1024);
+        testRunner.setApplicationCacheOriginQuota(100*1024);
         addThirdIFrame();
     });
 }
