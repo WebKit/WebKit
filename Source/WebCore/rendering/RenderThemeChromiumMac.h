@@ -42,7 +42,6 @@ protected:
     virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintMediaControlsBackground(RenderObject*, const PaintInfo&, const IntRect&);
     virtual String extraMediaControlsStyleSheet();
 #if ENABLE(FULLSCREEN_API)
     virtual String extraFullScreenStyleSheet();

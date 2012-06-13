@@ -91,7 +91,6 @@ class RenderThemeChromiumSkia : public RenderTheme {
         virtual void adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
         virtual bool paintSearchFieldResultsButton(RenderObject*, const PaintInfo&, const IntRect&);
 
-        virtual bool paintMediaControlsBackground(RenderObject*, const PaintInfo&, const IntRect&);
         virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
         virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
         virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;

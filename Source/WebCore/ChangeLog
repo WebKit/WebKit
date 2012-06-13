@@ -1,3 +1,79 @@
+2012-06-13  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Change the styling of the Chromium video controls.
+        https://bugs.webkit.org/show_bug.cgi?id=88297
+
+        Reviewed by Eric Carlson.
+
+        No new tests, final patch will contain the rebaselined tests.
+
+        The Chrome video controls are receiving a visual update. This patch includes CSS changes,
+        the removal of the now no longer needed controls background div, and the introduction of
+        new images for the buttons.
+
+        * css/mediaControlsChromium.css:
+        (audio):
+        Adjust height of audio controls.
+        (::-webkit-media-controls):
+        Use flexbox on media controls shadow DOM.
+        (audio::-webkit-media-controls-enclosure, video::-webkit-media-controls-enclosure):
+        Adjust height, max-width, text-indent and box-sizing, and reset padding to 0.
+        (video::-webkit-media-controls-enclosure):
+        Use 5px padding only for video controls and adjust height accordingly.
+        (audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel):
+        Use flexbox on panel, adjust bottom alignment, height, background color and border radius.
+        (audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button):
+        Display buttons inline with fixed width and height, vertically centered, no padding and
+        6px space to next controls element (this will be 15px incl the space in the image).
+        (audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button):
+        Display buttons inline with fixed width and height, vertically centered, no padding and
+        9px space to next controls element (this will be 15px incl the space in the image).
+        (audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display):
+        Display text as block, without broder, adjusted height, font-family, font-size and 9px space
+        to next controls element (this will be 15px incl the space in the image).
+        (audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline):
+        Adjust height, padding, background-color, min-wdith and 15px space to next controls element.
+        (audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider):
+        Adjust height, max- and min-width, background-color and 15px space to next controls element.
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::MediaControlRootElementChromium):
+        Remove timeline container, which is not necessary any longer because of the use of flexbox.
+        (WebCore::MediaControlRootElementChromium::create):
+        Remove timeline container, which is not necessary any longer because of the use of flexbox.
+        (WebCore::MediaControlRootElementChromium::setMediaController):
+        Remove timeline container, which is not necessary any longer because of the use of flexbox.
+        (WebCore::MediaControlRootElementChromium::reset):
+        Show the timeline instead of the timeline container when resetting.
+        (WebCore::MediaControlRootElementChromium::reportedError):
+        Hide the timeline instead of the timeline container when running into an error.
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaMuteButton):
+        Introduce new image resources for the mute button and adjust it based on volume levels.
+        (WebCore::paintMediaPlayButton):
+        Introduce new image resources for the play button.
+        (WebCore::getMediaSliderThumb):
+        Introduce new image resources for the position slider thumb.
+        (WebCore::paintMediaVolumeSliderThumb):
+        Introduce new image resources for the volume slider thumb.
+        Remove timeline container rendering.
+        (WebCore::RenderMediaControlsChromium::paintMediaControlsPart):
+        Add timeline container painting to the "not reached" elements.
+        (WebCore):
+        Provide size settings for the position and volume sliders.
+        (WebCore::RenderMediaControlsChromium::adjustMediaSliderThumbSize):
+        Calculate correct width and height settings for the new image resources of the position and volume
+        slider thumbs.
+        * rendering/RenderThemeChromiumMac.h:
+        (RenderThemeChromiumMac):
+        Remove timeline container rendering (i.e. the media controls background).
+        * rendering/RenderThemeChromiumMac.mm:
+        Remove timeline container rendering (i.e. the media controls background).
+        * rendering/RenderThemeChromiumSkia.cpp:
+        Remove timeline container rendering (i.e. the media controls background).
+        * rendering/RenderThemeChromiumSkia.h:
+        (RenderThemeChromiumSkia):
+        Remove timeline container rendering (i.e. the media controls background).
+
 2012-06-13  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed, fixing English nits suggested by review for r120165.

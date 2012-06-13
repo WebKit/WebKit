@@ -378,18 +378,6 @@ bool RenderThemeChromiumSkia::paintSearchFieldResultsButton(RenderObject* magnif
     return false;
 }
 
-bool RenderThemeChromiumSkia::paintMediaControlsBackground(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
-{
-#if ENABLE(VIDEO)
-    return RenderMediaControlsChromium::paintMediaControlsPart(MediaTimelineContainer, object, paintInfo, rect);
-#else
-    UNUSED_PARAM(object);
-    UNUSED_PARAM(paintInfo);
-    UNUSED_PARAM(rect);
-    return false;
-#endif
-}
-
 bool RenderThemeChromiumSkia::paintMediaSliderTrack(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)

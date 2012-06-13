@@ -69,7 +69,6 @@ MediaControlRootElementChromium::MediaControlRootElementChromium(Document* docum
     , m_playButton(0)
     , m_currentTimeDisplay(0)
     , m_timeline(0)
-    , m_timelineContainer(0)
     , m_panelMuteButton(0)
     , m_volumeSlider(0)
 #if ENABLE(FULLSCREEN_MEDIA_CONTROLS)
@@ -110,22 +109,15 @@ PassRefPtr<MediaControlRootElementChromium> MediaControlRootElementChromium::cre
     if (ec)
         return 0;
 
-    RefPtr<MediaControlTimelineContainerElement> timelineContainer = MediaControlTimelineContainerElement::create(document);
-
     RefPtr<MediaControlTimelineElement> timeline = MediaControlTimelineElement::create(document, controls.get());
     controls->m_timeline = timeline.get();
-    timelineContainer->appendChild(timeline.release(), ec, true);
+    panel->appendChild(timeline.release(), ec, true);
     if (ec)
         return 0;
 
     RefPtr<MediaControlCurrentTimeDisplayElement> currentTimeDisplay = MediaControlCurrentTimeDisplayElement::create(document);
     controls->m_currentTimeDisplay = currentTimeDisplay.get();
-    timelineContainer->appendChild(currentTimeDisplay.release(), ec, true);
-    if (ec)
-        return 0;
-
-    controls->m_timelineContainer = timelineContainer.get();
-    panel->appendChild(timelineContainer.release(), ec, true);
+    panel->appendChild(currentTimeDisplay.release(), ec, true);
     if (ec)
         return 0;
 
@@ -174,8 +166,6 @@ void MediaControlRootElementChromium::setMediaController(MediaControllerInterfac
         m_currentTimeDisplay->setMediaController(controller);
     if (m_timeline)
         m_timeline->setMediaController(controller);
-    if (m_timelineContainer)
-        m_timelineContainer->setMediaController(controller);
     if (m_panelMuteButton)
         m_panelMuteButton->setMediaController(controller);
     if (m_volumeSlider)
@@ -227,7 +217,7 @@ void MediaControlRootElementChromium::reset()
 
     float duration = m_mediaController->duration();
     m_timeline->setDuration(duration);
-    m_timelineContainer->show();
+    m_timeline->show();
     m_timeline->setPosition(m_mediaController->currentTime());
     updateTimeDisplay();
 
@@ -287,12 +277,12 @@ void MediaControlRootElementChromium::reportedError()
     if (!page)
         return;
 
-    m_timelineContainer->hide();
+    m_timeline->hide();
     m_panelMuteButton->hide();
+    m_volumeSlider->hide();
 #if ENABLE(FULLSCREEN_MEDIA_CONTROLS)
     m_fullscreenButton->hide();
 #endif
-    m_volumeSlider->hide();
 }
 
 void MediaControlRootElementChromium::updateStatusDisplay()

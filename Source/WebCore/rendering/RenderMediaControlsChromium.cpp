@@ -74,14 +74,21 @@ static bool paintMediaMuteButton(RenderObject* object, const PaintInfo& paintInf
     if (!mediaElement)
       return false;
 
-    static Image* soundFull = platformResource("mediaSoundFull");
-    static Image* soundNone = platformResource("mediaSoundNone");
-    static Image* soundDisabled = platformResource("mediaSoundDisabled");
+    static Image* soundLevel3 = platformResource("mediaplayerSoundLevel3");
+    static Image* soundLevel2 = platformResource("mediaplayerSoundLevel2");
+    static Image* soundLevel1 = platformResource("mediaplayerSoundLevel1");
+    static Image* soundDisabled = platformResource("mediaplayerSoundDisabled");
 
-    if (!hasSource(mediaElement) || !mediaElement->hasAudio())
+    if (!hasSource(mediaElement) || !mediaElement->hasAudio() || mediaElement->muted() || mediaElement->volume() <= 0)
         return paintMediaButton(paintInfo.context, rect, soundDisabled);
 
-    return paintMediaButton(paintInfo.context, rect, mediaElement->muted() ? soundNone: soundFull);
+    if (mediaElement->volume() <= 0.33)
+        return paintMediaButton(paintInfo.context, rect, soundLevel1);
+
+    if (mediaElement->volume() <= 0.66)
+        return paintMediaButton(paintInfo.context, rect, soundLevel2);
+
+    return paintMediaButton(paintInfo.context, rect, soundLevel3);
 }
 
 static bool paintMediaPlayButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
@@ -90,9 +97,9 @@ static bool paintMediaPlayButton(RenderObject* object, const PaintInfo& paintInf
     if (!mediaElement)
         return false;
 
-    static Image* mediaPlay = platformResource("mediaPlay");
-    static Image* mediaPause = platformResource("mediaPause");
-    static Image* mediaPlayDisabled = platformResource("mediaPlayDisabled");
+    static Image* mediaPlay = platformResource("mediaplayerPlay");
+    static Image* mediaPause = platformResource("mediaplayerPause");
+    static Image* mediaPlayDisabled = platformResource("mediaplayerPlayDisabled");
 
     if (!hasSource(mediaElement))
         return paintMediaButton(paintInfo.context, rect, mediaPlayDisabled);
@@ -102,7 +109,7 @@ static bool paintMediaPlayButton(RenderObject* object, const PaintInfo& paintInf
 
 static Image* getMediaSliderThumb()
 {
-    static Image* mediaSliderThumb = platformResource("mediaSliderThumb");
+    static Image* mediaSliderThumb = platformResource("mediaplayerSliderThumb");
     return mediaSliderThumb;
 }
 
@@ -210,41 +217,8 @@ static bool paintMediaVolumeSlider(RenderObject* object, const PaintInfo& paintI
 
 static bool paintMediaVolumeSliderThumb(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    static Image* mediaVolumeSliderThumb = platformResource("mediaVolumeSliderThumb");
+    static Image* mediaVolumeSliderThumb = platformResource("mediaplayerVolumeSliderThumb");
     return paintMediaButton(paintInfo.context, rect, mediaVolumeSliderThumb);
-}
-
-static bool paintMediaTimelineContainer(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    HTMLMediaElement* mediaElement = toParentMediaElement(object);
-    if (!mediaElement)
-        return false;
-
-    if (!rect.isEmpty()) {
-        GraphicsContext* context = paintInfo.context;
-        Color originalColor = context->strokeColor();
-        float originalThickness = context->strokeThickness();
-        StrokeStyle originalStyle = context->strokeStyle();
-
-        context->setStrokeStyle(SolidStroke);
-
-        // Draw the left border using CSS defined width and color.
-        context->setStrokeThickness(object->style()->borderLeftWidth());
-        context->setStrokeColor(object->style()->visitedDependentColor(CSSPropertyBorderLeftColor).rgb(), ColorSpaceDeviceRGB);
-        context->drawLine(IntPoint(rect.x() + 1, rect.y()),
-                          IntPoint(rect.x() + 1, rect.y() + rect.height()));
-
-        // Draw the right border using CSS defined width and color.
-        context->setStrokeThickness(object->style()->borderRightWidth());
-        context->setStrokeColor(object->style()->visitedDependentColor(CSSPropertyBorderRightColor).rgb(), ColorSpaceDeviceRGB);
-        context->drawLine(IntPoint(rect.x() + rect.width() - 1, rect.y()),
-                          IntPoint(rect.x() + rect.width() - 1, rect.y() + rect.height()));
-
-        context->setStrokeColor(originalColor, ColorSpaceDeviceRGB);
-        context->setStrokeThickness(originalThickness);
-        context->setStrokeStyle(originalStyle);
-    }
-    return true;
 }
 
 static bool paintMediaFullscreenButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
@@ -274,8 +248,6 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
         return paintMediaVolumeSlider(object, paintInfo, rect);
     case MediaVolumeSliderThumb:
         return paintMediaVolumeSliderThumb(object, paintInfo, rect);
-    case MediaTimelineContainer:
-        return paintMediaTimelineContainer(object, paintInfo, rect);
     case MediaEnterFullscreenButton:
     case MediaExitFullscreenButton:
         return paintMediaFullscreenButton(object, paintInfo, rect);
@@ -283,6 +255,7 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
     case MediaSeekBackButton:
     case MediaSeekForwardButton:
     case MediaVolumeSliderContainer:
+    case MediaTimelineContainer:
     case MediaCurrentTimeDisplay:
     case MediaTimeRemainingDisplay:
     case MediaControlsPanel:
@@ -301,21 +274,33 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
     return false;
 }
 
+const int mediaSliderThumbWidth = 32;
+const int mediaSliderThumbHeight = 24;
+const int mediaVolumeSliderThumbWidth = 24;
+const int mediaVolumeSliderThumbHeight = 24;
+
 void RenderMediaControlsChromium::adjustMediaSliderThumbSize(RenderStyle* style)
 {
-    static Image* mediaSliderThumb = platformResource("mediaSliderThumb");
-    static Image* mediaVolumeSliderThumb = platformResource("mediaVolumeSliderThumb");
+    static Image* mediaSliderThumb = platformResource("mediaplayerSliderThumb");
+    static Image* mediaVolumeSliderThumb = platformResource("mediaplayerVolumeSliderThumb");
+    int width = 0;
+    int height = 0;
 
     Image* thumbImage = 0;
-    if (style->appearance() == MediaSliderThumbPart)
+    if (style->appearance() == MediaSliderThumbPart) {
         thumbImage = mediaSliderThumb;
-    else if (style->appearance() == MediaVolumeSliderThumbPart)
+        width = mediaSliderThumbWidth;
+        height = mediaSliderThumbHeight;
+    } else if (style->appearance() == MediaVolumeSliderThumbPart) {
         thumbImage = mediaVolumeSliderThumb;
+        width = mediaVolumeSliderThumbWidth;
+        height = mediaVolumeSliderThumbHeight;
+    }
 
     float zoomLevel = style->effectiveZoom();
     if (thumbImage) {
-        style->setWidth(Length(static_cast<int>(thumbImage->width() * zoomLevel), Fixed));
-        style->setHeight(Length(static_cast<int>(thumbImage->height() * zoomLevel), Fixed));
+        style->setWidth(Length(static_cast<int>(width * zoomLevel), Fixed));
+        style->setHeight(Length(static_cast<int>(height * zoomLevel), Fixed));
     }
 }
 

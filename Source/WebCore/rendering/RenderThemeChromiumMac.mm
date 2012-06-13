@@ -173,11 +173,6 @@ bool RenderThemeChromiumMac::paintMediaSliderTrack(RenderObject* object, const P
     return RenderMediaControlsChromium::paintMediaControlsPart(MediaSlider, object, paintInfo, rect);
 }
 
-bool RenderThemeChromiumMac::paintMediaControlsBackground(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    return RenderMediaControlsChromium::paintMediaControlsPart(MediaTimelineContainer, object, paintInfo, rect);
-}
-
 String RenderThemeChromiumMac::extraMediaControlsStyleSheet()
 {
     return String(mediaControlsChromiumUserAgentStyleSheet, sizeof(mediaControlsChromiumUserAgentStyleSheet));
