@@ -27,9 +27,8 @@
 #include "WebLoaderClient.h"
 
 #include "ImmutableArray.h"
-#include "WKAPICast.h"
 #include "WebBackForwardListItem.h"
-#include "WebIntentData.h"
+#include "WKAPICast.h"
 #include <string.h>
 
 using namespace WebCore;
@@ -163,16 +162,6 @@ void WebLoaderClient::didDetectXSSForFrame(WebPageProxy* page, WebFrameProxy* fr
 
     m_client.didDetectXSSForFrame(toAPI(page), toAPI(frame), toAPI(userData), m_client.clientInfo);
 }
-
-#if ENABLE(WEB_INTENTS)
-void WebLoaderClient::didReceiveIntentForFrame(WebPageProxy* page, WebFrameProxy* frame, WebIntentData* intentData)
-{
-    if (!m_client.didReceiveIntentForFrame)
-        return;
-
-    m_client.didReceiveIntentForFrame(toAPI(page), toAPI(frame), toAPI(intentData), m_client.clientInfo);
-}
-#endif
 
 bool WebLoaderClient::canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy* page, WebFrameProxy* frame, WebProtectionSpace* protectionSpace)
 {

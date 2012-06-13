@@ -89,11 +89,6 @@ messages -> WebPageProxy {
     DecidePolicyForNewWindowAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WebCore::ResourceRequest request, WTF::String frameName, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData)
     UnableToImplementPolicy(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)
 
-    # Intent messages
-#if ENABLE(WEB_INTENTS)
-    DidReceiveIntentForFrame(uint64_t frameID, WebKit::IntentData intent)
-#endif
-
     # Progress messages
     DidChangeProgress(double value)
     DidFinishProgress()

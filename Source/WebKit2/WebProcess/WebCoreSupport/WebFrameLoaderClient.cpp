@@ -33,7 +33,6 @@
 #include "InjectedBundleDOMWindowExtension.h"
 #include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleUserMessageCoders.h"
-#include "IntentData.h"
 #include "PlatformCertificateInfo.h"
 #include "PluginView.h"
 #include "StringPairVector.h"
@@ -1539,22 +1538,9 @@ bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader*, unsigned long id
 #endif // PLATFORM(WIN) && USE(CFNETWORK)
 
 #if ENABLE(WEB_INTENTS)
-void WebFrameLoaderClient::dispatchIntent(PassRefPtr<IntentRequest> request)
+void WebFrameLoaderClient::dispatchIntent(PassRefPtr<IntentRequest>)
 {
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    IntentData intentData;
-    Intent* coreIntent = request->intent();
-    ASSERT(coreIntent);
-    intentData.action = coreIntent->action();
-    intentData.type = coreIntent->type();
-    intentData.data = coreIntent->data()->data();
-    intentData.extras = coreIntent->extras();
-    intentData.suggestions = coreIntent->suggestions();
-
-    webPage->send(Messages::WebPageProxy::DidReceiveIntentForFrame(m_frame->frameID(), intentData));
+    notImplemented();
 }
 #endif
 
