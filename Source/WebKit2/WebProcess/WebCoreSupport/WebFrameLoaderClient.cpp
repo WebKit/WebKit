@@ -1219,6 +1219,8 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     m_frame->coreFrame()->createView(webPage->size(), backgroundColor, /* transparent */ false, IntSize(), shouldUseFixedLayout);
     m_frame->coreFrame()->view()->setTransparent(!webPage->drawsBackground());
+    if (shouldUseFixedLayout)
+        m_frame->coreFrame()->view()->setFixedVisibleContentRect(webPage->bounds());
 }
 
 void WebFrameLoaderClient::didSaveToPageCache()
