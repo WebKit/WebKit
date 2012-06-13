@@ -56,6 +56,9 @@ public:
 
     // Server operations.
     bool listen(const String& bindAddress, unsigned short port);
+    String bindAddress() const { return m_bindAddress; };
+    unsigned short port() const { return m_port; };
+    ServerState serverState() const { return m_state; };
     void close();
 
     void didAcceptConnection(PassRefPtr<WebCore::SocketStreamHandle>);
@@ -70,6 +73,8 @@ private:
     ServerState m_state;
     Deque<OwnPtr<WebSocketServerConnection> > m_connections;
     WebSocketServerClient* m_client;
+    String m_bindAddress;
+    unsigned short m_port;
 #if PLATFORM(QT)
     OwnPtr<QtTcpServerHandler> m_tcpServerHandler;
 #endif

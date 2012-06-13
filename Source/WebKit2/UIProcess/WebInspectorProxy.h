@@ -135,6 +135,7 @@ public:
     void remoteFrontendConnected();
     void remoteFrontendDisconnected();
     void dispatchMessageFromRemoteFrontend(const String& message);
+    int remoteInspectionPageID() const { return m_remoteInspectionPageId; }
 #endif
 
 private:

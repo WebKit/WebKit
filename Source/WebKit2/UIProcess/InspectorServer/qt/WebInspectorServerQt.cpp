@@ -31,6 +31,12 @@
 
 namespace WebKit {
 
+static String remoteInspectorPagePath()
+{
+    DEFINE_STATIC_LOCAL(String, pagePath, ("/webkit/inspector/inspector.html?page="));
+    return pagePath;
+}
+
 bool WebInspectorServer::platformResourceForPath(const String& path, Vector<char>& data, String& contentType)
 {
     // The page list contains an unformated list of pages that can be inspected with a link to open a session.
@@ -56,6 +62,20 @@ bool WebInspectorServer::platformResourceForPath(const String& path, Vector<char
     return false;
 }
 
+String WebInspectorServer::inspectorUrlForPageID(int pageId)
+{
+    if (pageId <= 0 || serverState() == Closed)
+        return String();
+    StringBuilder builder;
+    builder.append("http://");
+    builder.append(bindAddress());
+    builder.append(":");
+    builder.append(String::number(port()));
+    builder.append(remoteInspectorPagePath());
+    builder.append(String::number(pageId));
+    return builder.toString();
+}
+
 void WebInspectorServer::buildPageList(Vector<char>& data, String& contentType)
 {
     StringBuilder builder;
@@ -71,7 +91,7 @@ void WebInspectorServer::buildPageList(Vector<char>& data, String& contentType)
         builder.append("\", \"url\": \"");
         builder.append(webPage->activeURL());
         builder.append("\", \"inspectorUrl\": \"");
-        builder.append("/webkit/inspector/inspector.html?page=" + String::number(it->first));
+        builder.append(remoteInspectorPagePath() + String::number(it->first));
         builder.append("\" }");
     }
     builder.append(" ]");

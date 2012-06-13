@@ -1,3 +1,39 @@
+2012-06-13  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Web Inspector: add a way to get the remote inspector url for a given page.
+        https://bugs.webkit.org/show_bug.cgi?id=88902
+
+        Reviewed by Jocelyn Turcotte.
+
+        Expose the remote inspector url for a given page in the API. If you want
+        to create a web view and load directly the inspector for the page you want to inspect,
+        it helps to get the url as it is impossible to figure it out from the API layer.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewExperimental::remoteInspectorUrl):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/InspectorServer/WebInspectorServer.cpp:
+        (WebKit):
+        (WebKit::WebInspectorServer::inspectorUrlForPageID):
+        * UIProcess/InspectorServer/WebInspectorServer.h:
+        (WebInspectorServer):
+        * UIProcess/InspectorServer/WebSocketServer.cpp:
+        (WebKit::WebSocketServer::WebSocketServer):
+        (WebKit::WebSocketServer::listen):
+        (WebKit::WebSocketServer::close):
+        * UIProcess/InspectorServer/WebSocketServer.h:
+        (WebKit::WebSocketServer::bindAddress):
+        (WebKit::WebSocketServer::port):
+        (WebKit::WebSocketServer::serverState):
+        (WebSocketServer):
+        * UIProcess/InspectorServer/qt/WebInspectorServerQt.cpp:
+        (WebKit::remoteInspectorPagePath):
+        (WebKit):
+        (WebKit::WebInspectorServer::inspectorUrlForPageID):
+        (WebKit::WebInspectorServer::buildPageList):
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::remoteInspectionPageID):
+
 2012-06-13  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add implementation for dispatchIntent in WebFrameLoaderClient

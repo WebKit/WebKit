@@ -94,6 +94,13 @@ void WebInspectorServer::unregisterPage(int pageId)
         closeConnection(0, connection);
 }
 
+#if !PLATFORM(QT)
+String WebInspectorServer::inspectorUrlForPageID(int)
+{
+    return String();
+}
+#endif
+
 void WebInspectorServer::sendMessageOverConnection(unsigned pageIdForConnection, const String& message)
 {
     WebSocketServerConnection* connection = m_connectionMap.get(pageIdForConnection);

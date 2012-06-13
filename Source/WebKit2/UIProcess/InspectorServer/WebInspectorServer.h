@@ -46,6 +46,7 @@ public:
     // Page registry to manage known pages.
     int registerPage(WebInspectorProxy* client);
     void unregisterPage(int pageId);
+    String inspectorUrlForPageID(int pageId);
     void sendMessageOverConnection(unsigned pageIdForConnection, const String& message);
 
 private:

@@ -45,6 +45,7 @@ namespace WebKit {
 WebSocketServer::WebSocketServer(WebSocketServerClient* client)
     : m_state(Closed)
     , m_client(client)
+    , m_port(0)
 {
     platformInitialize();
 }
@@ -62,7 +63,11 @@ bool WebSocketServer::listen(const String& bindAddress, unsigned short port)
         return false;
 
     bool isNowListening = platformListen(bindAddress, port);
-    m_state = isNowListening ? Listening : Closed;
+    if (isNowListening) {
+        m_bindAddress = bindAddress;
+        m_port = port;
+        m_state = Listening;
+    }
     return isNowListening;
 }
 
@@ -72,6 +77,9 @@ void WebSocketServer::close()
         return;
 
     platformClose();
+
+    m_port = 0;
+    m_bindAddress = String();
 }
 
 void WebSocketServer::didAcceptConnection(PassRefPtr<SocketStreamHandle> socketHandle)
