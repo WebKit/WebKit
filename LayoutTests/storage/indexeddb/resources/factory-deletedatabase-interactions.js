@@ -17,6 +17,7 @@ function Connection(id) {
             self.steps.push(evalAndLog("'" + id + ".open.onsuccess'"));
             that.handle.onversionchange = function(e) {
                 self.steps.push(evalAndLog("'" + id + ".onversionchange'"));
+                debug("    in versionchange, old = " + JSON.stringify(e.target.version) + " new = " + JSON.stringify(e.version));
                 if (opts && opts.onversion) { opts.onversion.call(that); }
             };
             if (opts && opts.onsuccess) { opts.onsuccess.call(that); }
@@ -179,6 +180,53 @@ function test3() {
                                "h.close",
                                "deleteDatabase().onsuccess"
                                ].toString());
+        test4();
+    }
+}
+
+function test4() {
+    debug("");
+    debug("TEST: Correct order when there are pending setVersion, delete and open calls.");
+    evalAndLog("self.dbname = 'test4'; self.ver = 1; self.steps = []");
+    var h = new Connection("h");
+    var h2 = new Connection("h2");
+    var h3 = new Connection("h3");
+    runSteps([function(doNext) { h.open({onsuccess: doNext,
+                                         onversion: function() {
+                                             debug("    h closing, but not immediately");
+                                             setTimeout(function() { h.close(); }, 0);
+                                         }});
+                               },
+              function(doNext) { h2.open({onsuccess: doNext}); },
+              function(doNext) { h.setVersion({onblocked: function() {
+                                               h3.open({onsuccess: finishTest});
+                                               h2.close();
+                                           }});
+                                 doNext();
+                               },
+              function(doNext) { deleteDatabase("", self.dbname); },
+              ]);
+
+    function finishTest() {
+        shouldBeEqualToString("self.steps.toString()",
+                              ["h.open",
+                               "h.open.onsuccess",
+                               "h2.open",
+                               "h2.open.onsuccess",
+                               "h.setVersion",
+                               "deleteDatabase()",
+                               "h2.onversionchange",
+                               "h.setVersion.onblocked",
+                               "h3.open",
+                               "h2.close",
+                               "h.setVersion.onsuccess",
+                               "h.setVersion.transaction-complete",
+                               "h.onversionchange",
+                               "deleteDatabase().onblocked",
+                               "h.close",
+                               "deleteDatabase().onsuccess",
+                               "h3.open.onsuccess"
+                              ].toString());
         finishJSTest();
     }
 }

@@ -280,6 +280,8 @@ void IDBDatabaseBackendImpl::transactionFinished(PassRefPtr<IDBTransactionBacken
 
 void IDBDatabaseBackendImpl::processPendingCalls()
 {
+    ASSERT(m_databaseCallbacksSet.size() <= 1);
+
     // Pending calls may be requeued or aborted
     Deque<RefPtr<PendingSetVersionCall> > pendingSetVersionCalls;
     m_pendingSetVersionCalls.swap(pendingSetVersionCalls);
@@ -290,6 +292,17 @@ void IDBDatabaseBackendImpl::processPendingCalls()
         ASSERT(!ec);
     }
 
+    // If there were any pending set version calls, we better have started one.
+    ASSERT(m_pendingSetVersionCalls.isEmpty() || m_runningVersionChangeTransaction);
+
+    // m_pendingSetVersionCalls is non-empty in two cases:
+    // 1) When two versionchange transactions are requested while another
+    //    version change transaction is running.
+    // 2) When three versionchange transactions are requested in a row, before
+    //    any of their event handlers are run.
+    // Note that this check is only an optimization to reduce queue-churn and
+    // not necessary for correctness; deleteDatabase and openConnection will
+    // requeue their calls if this condition is true.
     if (m_runningVersionChangeTransaction || !m_pendingSetVersionCalls.isEmpty())
         return;
 
@@ -301,13 +314,19 @@ void IDBDatabaseBackendImpl::processPendingCalls()
         deleteDatabase(pendingDeleteCall->callbacks());
     }
 
+    // This check is also not really needed, openConnection would just requeue its calls.
     if (m_runningVersionChangeTransaction || !m_pendingSetVersionCalls.isEmpty() || !m_pendingDeleteCalls.isEmpty())
         return;
 
-    while (!m_pendingOpenCalls.isEmpty()) {
-        RefPtr<PendingOpenCall> pendingOpenCall = m_pendingOpenCalls.takeFirst();
+    // Given the check above, it appears that calls cannot be requeued by
+    // openConnection, but use a different queue for iteration to be safe.
+    Deque<RefPtr<PendingOpenCall> > pendingOpenCalls;
+    m_pendingOpenCalls.swap(pendingOpenCalls);
+    while (!pendingOpenCalls.isEmpty()) {
+        RefPtr<PendingOpenCall> pendingOpenCall = pendingOpenCalls.takeFirst();
         openConnection(pendingOpenCall->callbacks());
     }
+    ASSERT(m_pendingOpenCalls.isEmpty());
 }
 
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(DOMStringList* objectStoreNames, unsigned short mode, ExceptionCode& ec)

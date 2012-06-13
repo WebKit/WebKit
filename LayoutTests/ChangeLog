@@ -1,3 +1,28 @@
+2012-06-13  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Add tests, an assert, and some comments around open/close/setVersion call sequencing
+        https://bugs.webkit.org/show_bug.cgi?id=88829
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/factory-deletedatabase-interactions-expected.txt:
+        * storage/indexeddb/resources/factory-deletedatabase-interactions.js:
+        (Connection.this.open.req.onsuccess.that.handle.onversionchange):
+        (Connection.this.open.req.onsuccess):
+        (Connection.this.open):
+        (test3):
+        (test4.runSteps.):
+        (test4):
+        (test4.):
+        * storage/indexeddb/resources/three-setversion-calls.js: Added.
+        (test):
+        (openDBConnection):
+        (successHandler.return.trans.oncomplete):
+        (openSuccess1.deleteRequest.onsuccess):
+        (openSuccess1):
+        * storage/indexeddb/three-setversion-calls-expected.txt: Added.
+        * storage/indexeddb/three-setversion-calls.html: Added.
+
 2012-06-13  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed Chromium test expectation update after r119893.

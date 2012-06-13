@@ -12,6 +12,7 @@ self.dbname = 'test1'; self.ver = 1; self.steps = []
 'h.open.onsuccess'
 'deleteDatabase()'
 'h.onversionchange'
+    in versionchange, old = "" new = ""
     h closing, but not immediately
 'deleteDatabase().onblocked'
 'h.close'
@@ -24,6 +25,7 @@ self.dbname = 'test2'; self.ver = 1; self.steps = []
 'h.open.onsuccess'
 'deleteDatabase()'
 'h.onversionchange'
+    in versionchange, old = "" new = ""
     h closing immediately
 'h.close'
 'deleteDatabase().onblocked'
@@ -40,11 +42,36 @@ self.dbname = 'test3'; self.ver = 1; self.steps = []
 'h.setVersion.onsuccess'
 'h.setVersion.transaction-complete'
 'h.onversionchange'
+    in versionchange, old = "1" new = ""
     h closing, but not immediately
 'deleteDatabase().onblocked'
 'h.close'
 'deleteDatabase().onsuccess'
 PASS self.steps.toString() is "h.open,h.open.onsuccess,h.setVersion,deleteDatabase(),h.setVersion.onsuccess,h.setVersion.transaction-complete,h.onversionchange,deleteDatabase().onblocked,h.close,deleteDatabase().onsuccess"
+
+TEST: Correct order when there are pending setVersion, delete and open calls.
+self.dbname = 'test4'; self.ver = 1; self.steps = []
+'h.open'
+'h.open.onsuccess'
+'h2.open'
+'h2.open.onsuccess'
+'h.setVersion'
+'deleteDatabase()'
+'h2.onversionchange'
+    in versionchange, old = "" new = "1"
+'h.setVersion.onblocked'
+'h3.open'
+'h2.close'
+'h.setVersion.onsuccess'
+'h.setVersion.transaction-complete'
+'h.onversionchange'
+    in versionchange, old = "1" new = ""
+    h closing, but not immediately
+'deleteDatabase().onblocked'
+'h.close'
+'deleteDatabase().onsuccess'
+'h3.open.onsuccess'
+PASS self.steps.toString() is "h.open,h.open.onsuccess,h2.open,h2.open.onsuccess,h.setVersion,deleteDatabase(),h2.onversionchange,h.setVersion.onblocked,h3.open,h2.close,h.setVersion.onsuccess,h.setVersion.transaction-complete,h.onversionchange,deleteDatabase().onblocked,h.close,deleteDatabase().onsuccess,h3.open.onsuccess"
 PASS successfullyParsed is true
 
 TEST COMPLETE
