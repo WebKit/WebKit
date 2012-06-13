@@ -206,8 +206,7 @@ WebInspector.UISourceCode.prototype = {
         function innerCallback(error)
         {
             delete this._committingWorkingCopy;
-            if (!error)
-                this.contentChanged(newContent, this._mimeType);
+            this.contentChanged(newContent, this._mimeType);
             callback(error);
         }
 

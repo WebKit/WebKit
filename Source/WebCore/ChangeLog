@@ -1,3 +1,15 @@
+2012-06-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: working copy should be committed even if domain binding returns error.
+        https://bugs.webkit.org/show_bug.cgi?id=88884
+
+        Reviewed by Vsevolod Vlasov.
+
+        Committing working copy is about saving file. It should always succeed.
+
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype.commitWorkingCopy):
+
 2012-06-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: show revisions of all modified files in local modifications view
