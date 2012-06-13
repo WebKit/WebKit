@@ -288,7 +288,7 @@ private:
         if (child.op() != GetLocal)
             return;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("    Considering GetLocal at @%u.\n", edge.index());
+        dataLog("    Considering GetLocal at @%u, local r%d.\n", edge.index(), child.local());
 #endif
         if (child.variableAccessData()->isCaptured()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -302,6 +302,10 @@ private:
 #endif
         ASSERT(originalNodeIndex != NoNode);
         Node* originalNode = &m_graph[originalNodeIndex];
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        dataLog("        Original has local r%d.\n", originalNode->local());
+#endif
+        ASSERT(child.local() == originalNode->local());
         if (changeRef)
             ASSERT(originalNode->shouldGenerate());
         // Possibilities:
@@ -600,6 +604,8 @@ private:
             NodeIndex nodeIndex = secondBlock->at(i);
             Node& node = m_graph[nodeIndex];
             
+            bool childrenAlreadyFixed = false;
+            
             switch (node.op()) {
             case Phantom: {
                 if (!node.child1())
@@ -611,8 +617,12 @@ private:
                     NodeIndex setLocalIndex =
                         firstBlock->variablesAtTail.operand(possibleLocalOp.local());
                     Node& setLocal = m_graph[setLocalIndex];
-                    if (setLocal.op() == SetLocal)
+                    if (setLocal.op() == SetLocal) {
                         m_graph.changeEdge(node.children.child1(), setLocal.child1());
+                        ASSERT(!node.child2());
+                        ASSERT(!node.child3());
+                        childrenAlreadyFixed = true;
+                    }
                 }
                 break;
             }
@@ -632,6 +642,7 @@ private:
                 
                 NodeIndex atFirstIndex = firstBlock->variablesAtTail.operand(node.local());
                 m_graph.changeEdge(node.children.child1(), Edge(skipGetLocal(atFirstIndex)), node.shouldGenerate());
+                childrenAlreadyFixed = true;
                 
                 if (node.op() != GetLocal)
                     break;
@@ -651,20 +662,22 @@ private:
                 break;
             }
             
-            bool changeRef = node.shouldGenerate();
+            if (!childrenAlreadyFixed) {
+                bool changeRef = node.shouldGenerate();
             
-            // If the child is a GetLocal, then we might like to fix it.
-            if (node.flags() & NodeHasVarArgs) {
-                for (unsigned childIdx = node.firstChild();
-                     childIdx < node.firstChild() + node.numChildren();
-                     ++childIdx)
-                    fixPossibleGetLocal(firstBlock, m_graph.m_varArgChildren[childIdx], changeRef);
-            } else if (!!node.child1()) {
-                fixPossibleGetLocal(firstBlock, node.children.child1(), changeRef);
-                if (!!node.child2()) {
-                    fixPossibleGetLocal(firstBlock, node.children.child2(), changeRef);
-                    if (!!node.child3())
-                        fixPossibleGetLocal(firstBlock, node.children.child3(), changeRef);
+                // If the child is a GetLocal, then we might like to fix it.
+                if (node.flags() & NodeHasVarArgs) {
+                    for (unsigned childIdx = node.firstChild();
+                         childIdx < node.firstChild() + node.numChildren();
+                         ++childIdx)
+                        fixPossibleGetLocal(firstBlock, m_graph.m_varArgChildren[childIdx], changeRef);
+                } else if (!!node.child1()) {
+                    fixPossibleGetLocal(firstBlock, node.children.child1(), changeRef);
+                    if (!!node.child2()) {
+                        fixPossibleGetLocal(firstBlock, node.children.child2(), changeRef);
+                        if (!!node.child3())
+                            fixPossibleGetLocal(firstBlock, node.children.child3(), changeRef);
+                    }
                 }
             }
 

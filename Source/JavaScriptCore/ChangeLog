@@ -1,3 +1,19 @@
+2012-06-12  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(120121): inspector tests crash in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=88941
+
+        Reviewed by Geoffrey Garen.
+        
+        The CFG simplifier has two different ways of fixing up GetLocal, Phantom, and Flush. If we've
+        already fixed up the node one way, we shouldn't try the other way. The reason why we shouldn't
+        is that the second way depends on the node referring to other nodes in the to-be-jettisoned
+        block. After fixup they potentially will refer to nodes in the block being merged to.
+
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::fixPossibleGetLocal):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+
 2012-06-12  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Dynamic hash table in DOMObjectHashTableMap is wrong in multiple threads
