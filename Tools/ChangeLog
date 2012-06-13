@@ -1,3 +1,27 @@
+2012-06-13  Joel Dillon  <joel.dillon@codethink.co.uk>
+
+        [Qt][Win]QtTestBrowser somehow picks up DumpRenderTree's main.cpp, causing a failure to link
+        https://bugs.webkit.org/show_bug.cgi?id=88874
+
+        Reviewed by Simon Hausmann.
+
+        Rename main.cpp in QtTestBrowser because on Windows
+        it conflicts with main.cpp from DumpRenderTree.
+
+        * QtTestBrowser/QtTestBrowser.pro:
+        * QtTestBrowser/qttestbrowser.cpp: Renamed from Tools/QtTestBrowser/main.cpp.
+        (launcherMain):
+        (LauncherApplication):
+        (LauncherApplication::urls):
+        (LauncherApplication::isRobotized):
+        (LauncherApplication::robotTimeout):
+        (LauncherApplication::robotExtraTime):
+        (LauncherApplication::applyDefaultSettings):
+        (LauncherApplication::LauncherApplication):
+        (requiresGraphicsView):
+        (LauncherApplication::handleUserOptions):
+        (main):
+
 2012-06-12  Lucas Forschler  <lforschler@apple.com>
 
         Wrap bot types inside ().

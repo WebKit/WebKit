@@ -17,7 +17,7 @@ SOURCES += \
     $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/QtInitializeTestFonts.cpp \
     locationedit.cpp \
     launcherwindow.cpp \
-    main.cpp \
+    qttestbrowser.cpp \
     mainwindow.cpp \
     urlloader.cpp \
     utils.cpp \

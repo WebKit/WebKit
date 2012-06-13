@@ -318,4 +318,4 @@ int main(int argc, char **argv)
     return launcherMain(app);
 }
 
-#include "main.moc"
+#include "qttestbrowser.moc"
