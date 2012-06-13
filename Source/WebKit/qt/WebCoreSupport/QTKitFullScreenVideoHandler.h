@@ -21,7 +21,7 @@
 #ifndef QTKitFullScreenVideoHandler_h
 #define QTKitFullScreenVideoHandler_h
 
-#include <OwnPtr.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
