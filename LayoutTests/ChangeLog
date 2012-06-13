@@ -1,3 +1,13 @@
+2012-06-12  Edaena Salinas Jasso  <edaena@apple.com>
+
+        Can't set el.type on a <button> element
+        https://bugs.webkit.org/show_bug.cgi?id=14439
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/HTMLButtonElement/change-type-expected.txt: Added.
+        * fast/dom/HTMLButtonElement/change-type.html: Added.
+
 2012-06-12  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed: Update expectations for http/tests/media/media-source/webm/video-media-source-seek.html

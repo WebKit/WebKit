@@ -410,7 +410,7 @@
 @property(readonly, retain) DOMHTMLFormElement *form;
 @property BOOL disabled;
 @property(copy) NSString *name;
-@property(readonly, copy) NSString *type;
+@property(copy) NSString *type;
 @property(copy) NSString *value;
 @property BOOL autofocus AVAILABLE_IN_WEBKIT_VERSION_4_0;
 @property(readonly) BOOL willValidate AVAILABLE_IN_WEBKIT_VERSION_4_0;

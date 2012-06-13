@@ -30,7 +30,7 @@ module html {
         attribute [Reflect] boolean formNoValidate;
         attribute [Reflect] DOMString formTarget;
         attribute [Reflect] DOMString name;
-        readonly attribute DOMString type;
+        attribute DOMString type;
         attribute [Reflect] DOMString value;
 
         readonly attribute boolean willValidate;
