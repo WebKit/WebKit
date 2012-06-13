@@ -2511,10 +2511,6 @@ fast/block/basic/fieldset-stretch-to-legend.html
 # https://bugs.webkit.org/show_bug.cgi?id=88859
 http/tests/xmlhttprequest/response-blob-size.html
 
-# REGRESSION(r120108): It made http/tests/loading/gmail-assert-on-load.html fail
-# https://bugs.webkit.org/show_bug.cgi?id=88923
-http/tests/loading/gmail-assert-on-load.html
-
 # [Qt]REGRESSION(r120107): It made http/tests/xmlhttprequest/origin-exact-matching.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=88913
 http/tests/xmlhttprequest/origin-exact-matching.html
