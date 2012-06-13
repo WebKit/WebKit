@@ -143,3 +143,29 @@ audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volum
     background-color: transparent;
     min-width: 15px;
 }
+
+/* FIXME these shouldn't use special pseudoShadowIds, but nicer rules.
+   https://code.google.com/p/chromium/issues/detail?id=112508
+   https://bugs.webkit.org/show_bug.cgi?id=62218
+*/
+input[type="range"]::-webkit-media-slider-container {
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-orient: horizontal; /* This property is updated by C++ code. */
+    -webkit-box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    border: 1px solid rgb(130, 130, 130);
+    border-radius: 4px;
+    background-color: transparent; /* Background drawing is managed by C++ code to draw ranges. */
+}
+
+input[type="range"]::-webkit-media-slider-thumb {
+    display: block;
+    -webkit-appearance: sliderthumb-horizontal;
+    -webkit-box-sizing: border-box;
+    position: relative;
+    bottom: 1px;
+    margin-left: -7px;
+    margin-right: -7px;
+}

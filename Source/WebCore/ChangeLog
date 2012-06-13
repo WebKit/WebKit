@@ -1,3 +1,46 @@
+2012-06-13  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Update range sliders rendering for volume and playback position of new Chrome video controls.
+        https://bugs.webkit.org/show_bug.cgi?id=88623
+
+        Reviewed by Eric Carlson.
+
+        No new tests, final patch will contain the rebaselined tests.
+
+        The Chrome video controls are receiving a visual update. This patch contains updates to the
+        rendering of the range sliders for the playback position and the volume. This includes the
+        creation of a shadowPseudoId to be able to style the range sliders via CSS, the rendering
+        of the slider background and the highlighted ranges.
+
+        * css/mediaControlsChromium.css:
+        (input[type="range"]::-webkit-media-slider-container):
+        Adjust the styling of the slider container backgrounds.
+        (input[type="range"]::-webkit-media-slider-thumb):
+        Adjust the styling of the slider thumbs.
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::sliderThumbShadowPseudoId):
+        Add an accessor function for the slider thumb shadowPseudoId.
+        (WebCore::mediaSliderThumbShadowPseudoId):
+        Add an accessor function for the media slider thumb shadowPseudoId.
+        (WebCore::SliderThumbElement::shadowPseudoId):
+        Add a different CSS pseudo-class name to the media slider thumbs.
+        (WebCore::TrackLimiterElement::shadowPseudoId):
+        Add a different CSS pseudo-class name to the media slider thumbs.
+        (WebCore::SliderContainerElement::shadowPseudoId):
+        Add a different CSS pseudo-class name to the media slider background container.
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintRoundedSliderBackground):
+        Add function to draw rounded background of sliders in a dark color.
+        (WebCore::paintSliderRangeHighlight):
+        Add function to draw a highlighted grey region on the sliders, which is rounded only at
+        its ends.
+        (WebCore::paintMediaSlider):
+        Update the background and buffered range renderings on the playback position slider by making
+        use of the new helper functions.
+        (WebCore::paintMediaVolumeSlider):
+        Update the background and buffered range renderings on the volume slider by making
+        use of the new helper functions.
+
 2012-06-13  Christopher Hutten-Czapski  <chutten@rim.com>
 
         2012-06-13  Christopher Hutten-Czapski  <chutten@rim.com>

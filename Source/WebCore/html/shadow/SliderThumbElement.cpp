@@ -327,10 +327,36 @@ HTMLInputElement* SliderThumbElement::hostInput() const
     return shadowAncestorNode()->toInputElement();
 }
 
+static const AtomicString& sliderThumbShadowPseudoId()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, sliderThumb, ("-webkit-slider-thumb"));
+    return sliderThumb;
+}
+
+static const AtomicString& mediaSliderThumbShadowPseudoId()
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, mediaSliderThumb, ("-webkit-media-slider-thumb"));
+    return mediaSliderThumb;
+}
+
 const AtomicString& SliderThumbElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, sliderThumb, ("-webkit-slider-thumb"));
-    return sliderThumb;
+    HTMLInputElement* input = hostInput();
+    if (!input)
+        return sliderThumbShadowPseudoId();
+
+    RenderStyle* sliderStyle = input->renderer()->style();
+    switch (sliderStyle->appearance()) {
+    case MediaSliderPart:
+    case MediaSliderThumbPart:
+    case MediaVolumeSliderPart:
+    case MediaVolumeSliderThumbPart:
+    case MediaFullScreenVolumeSliderPart:
+    case MediaFullScreenVolumeSliderThumbPart:
+        return mediaSliderThumbShadowPseudoId();
+    default:
+        return sliderThumbShadowPseudoId();
+    }
 }
 
 // --------------------------------
@@ -357,8 +383,22 @@ RenderObject* TrackLimiterElement::createRenderer(RenderArena* arena, RenderStyl
 
 const AtomicString& TrackLimiterElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, sliderThumb, ("-webkit-slider-thumb"));
-    return sliderThumb;
+    HTMLInputElement* input = shadowAncestorNode()->toInputElement();
+    if (!input)
+        return sliderThumbShadowPseudoId();
+
+    RenderStyle* sliderStyle = input->renderer()->style();
+    switch (sliderStyle->appearance()) {
+    case MediaSliderPart:
+    case MediaSliderThumbPart:
+    case MediaVolumeSliderPart:
+    case MediaVolumeSliderThumbPart:
+    case MediaFullScreenVolumeSliderPart:
+    case MediaFullScreenVolumeSliderThumbPart:
+        return mediaSliderThumbShadowPseudoId();
+    default:
+        return sliderThumbShadowPseudoId();
+    }
 }
 
 TrackLimiterElement* trackLimiterElementOf(Node* node)
@@ -391,8 +431,25 @@ RenderObject* SliderContainerElement::createRenderer(RenderArena* arena, RenderS
 
 const AtomicString& SliderContainerElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, sliderThumb, ("-webkit-slider-container"));
-    return sliderThumb;
+    DEFINE_STATIC_LOCAL(const AtomicString, mediaSliderContainer, ("-webkit-media-slider-container"));
+    DEFINE_STATIC_LOCAL(const AtomicString, sliderContainer, ("-webkit-slider-container"));
+
+    HTMLInputElement* input = shadowAncestorNode()->toInputElement();
+    if (!input)
+        return sliderContainer;
+
+    RenderStyle* sliderStyle = input->renderer()->style();
+    switch (sliderStyle->appearance()) {
+    case MediaSliderPart:
+    case MediaSliderThumbPart:
+    case MediaVolumeSliderPart:
+    case MediaVolumeSliderThumbPart:
+    case MediaFullScreenVolumeSliderPart:
+    case MediaFullScreenVolumeSliderThumbPart:
+        return mediaSliderContainer;
+    default:
+        return sliderContainer;
+    }
 }
 
 }
