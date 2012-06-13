@@ -1,3 +1,10 @@
+2012-06-12  Ojan Vafai  <ojan@chromium.org>
+
+        Chromium rebaselines after r120135. The new results are clearly more correct.
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-expected.png:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png:
+
 2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [soup] Prevent setting or editing httpOnly cookies from JavaScript
