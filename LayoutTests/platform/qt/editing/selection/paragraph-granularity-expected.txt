@@ -16,13 +16,13 @@ layer at (0,0) size 800x600
           text run at (0,0) width 408: "This tests modifying a selection created with a triple click. "
           text run at (408,0) width 372: "The new selection should use paragraph granularity."
       RenderBlock {P} at (0,37) size 784x63 [color=#008000]
-        RenderText {#text} at (0,0) size 773x63
+        RenderText {#text} at (0,0) size 780x63
           text run at (0,0) width 249: "This test does not run interactively. "
-          text run at (249,0) width 466: "It uses the testRunners eventSender to do mouse clicks. "
-          text run at (715,0) width 58: "To run it"
-          text run at (0,21) width 475: "manually, double click on the blue 'g', then drag down to the red 'g'. "
-          text run at (475,21) width 275: "As you drag, watch the selection that is"
-          text run at (0,42) width 458: "created, it should always start and end on paragraph boundaries."
+          text run at (249,0) width 400: "It uses the testRunners eventSender to do mouse clicks. "
+          text run at (649,0) width 131: "To run it manually,"
+          text run at (0,21) width 402: "double click on the blue 'g', then drag down to the red 'g'. "
+          text run at (402,21) width 348: "As you drag, watch the selection that is created, it"
+          text run at (0,42) width 385: "should always start and end on paragraph boundaries."
       RenderBlock {DIV} at (0,116) size 784x126
         RenderText {#text} at (0,0) size 96x21
           text run at (0,0) width 96: "This is a para"

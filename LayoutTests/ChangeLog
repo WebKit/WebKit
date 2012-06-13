@@ -1,3 +1,16 @@
+2012-06-13  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        Rebaseline updated tests to green Qt bots.
+
+        * platform/qt/editing/pasteboard/4641033-expected.txt:
+        * platform/qt/editing/selection/mixed-editability-1-expected.txt:
+        * platform/qt/editing/selection/paragraph-granularity-expected.txt:
+        * platform/qt/editing/selection/triple-click-in-pre-expected.txt:
+        * platform/qt/editing/selection/word-granularity-expected.txt:
+        * platform/qt/http/tests/misc/location-replace-crossdomain-expected.txt:
+
 2012-06-13  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL][DRT] Gardening for a greener bot

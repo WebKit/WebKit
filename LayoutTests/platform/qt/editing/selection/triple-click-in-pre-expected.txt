@@ -14,13 +14,13 @@ layer at (0,0) size 800x600
           text run at (0,0) width 422: "This tests modifying a selection created with a double click. "
           text run at (422,0) width 334: "The new selection should use word granularity."
       RenderBlock {P} at (0,37) size 784x63 [color=#008000]
-        RenderText {#text} at (0,0) size 773x63
+        RenderText {#text} at (0,0) size 780x63
           text run at (0,0) width 249: "This test does not run interactively. "
-          text run at (249,0) width 466: "It uses the testRunners eventSender to do mouse clicks. "
-          text run at (715,0) width 58: "To run it"
-          text run at (0,21) width 649: "manually, triple click on the second line in the box below (anywhere after \"whitespace:pre\"). "
-          text run at (649,21) width 103: "The triple click"
-          text run at (0,42) width 198: "should select the entire line."
+          text run at (249,0) width 400: "It uses the testRunners eventSender to do mouse clicks. "
+          text run at (649,0) width 131: "To run it manually,"
+          text run at (0,21) width 576: "triple click on the second line in the box below (anywhere after \"whitespace:pre\"). "
+          text run at (576,21) width 201: "The triple click should select"
+          text run at (0,42) width 100: "the entire line."
       RenderBlock {DIV} at (0,116) size 784x62
         RenderBlock {DIV} at (0,0) size 784x62 [border: (1px solid #0000FF)]
           RenderBlock {PRE} at (1,14) size 782x34

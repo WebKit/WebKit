@@ -17,5 +17,6 @@ layer at (0,0) size 800x600
         text run at (536,0) width 230: "To run this test manually, double"
         text run at (766,0) width 4: " "
         text run at (0,21) width 484: "click between the first two letters of the first word of the first sentence."
+      RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of body
 selection end:   position 2 of child 0 {#text} of child 0 {SPAN} of body
