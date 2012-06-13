@@ -1,5 +1,14 @@
 2012-06-13  Zan Dobersek  <zandobersek@gmail.com>
 
+        Skip the isolated world tests for Gtk - the infrastructure is missing
+        and they take too long to fail by timing out, lengthening the bot cycles.
+
+        Rubber-stamped by Philippe Normand.
+
+        * platform/gtk/TestExpectations:
+
+2012-06-13  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening after r120100, r120167, r120173 and r120181.
 
         * fast/events/constructors/speech-recognition-error-constructor-expected.txt:

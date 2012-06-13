@@ -207,9 +207,6 @@ BUGWKGTK SKIP : fast/events/page-visibility-iframe-move-test.html = TEXT
 BUGWKGTK SKIP : fast/events/page-visibility-iframe-propagation-test.html = TEXT
 BUGWKGTK SKIP : fast/events/page-visibility-transition-test.html = TEXT
 
-// JSC does not support setIsolatedWorldSecurityOrigin.
-BUGWK61540 : http/tests/security/isolatedWorld/cross-origin-xhr.html = TEXT
-
 // GTK doesn't support smart replace.
 BUGWK61661 : editing/pasteboard/drag-drop-list.html = TEXT
 
@@ -330,6 +327,16 @@ BUGWK87908 SKIP : editing/undomanager = PASS
 // Fail until ENABLE_XHR_RESPONSE_BLOB is enabled after r120042
 // https://bugs.webkit.org/show_bug.cgi?id=88859
 BUGWK88859 : http/tests/xmlhttprequest/response-blob-size.html = TEXT
+
+// New test infrastructure required -- need isolated worlds
+BUGWK31508 SKIP : http/tests/security/isolatedWorld = TEXT
+BUGWK31508 BUGWK61540 SKIP : http/tests/security/isolatedWorld/cross-origin-xhr.html = TEXT
+BUGWK31508 SKIP : storage/websql/open-database-creation-callback-isolated-world.html = TEXT
+BUGWK31508 SKIP : storage/websql/statement-error-callback-isolated-world.html = TEXT
+BUGWK31508 SKIP : storage/websql/statement-success-callback-isolated-world.html = TEXT
+BUGWK31508 SKIP : storage/websql/transaction-callback-isolated-world.html = TEXT
+BUGWK31508 SKIP : storage/websql/transaction-error-callback-isolated-world.html = TEXT
+BUGWK31508 SKIP : storage/websql/transaction-success-callback-isolated-world.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
@@ -671,16 +678,6 @@ BUGWKGTK : http/tests/plugins/plugin-document-has-focus.html = TEXT
 
 // Missing resource load callback ability in DRT
 BUGWK27905 : http/tests/loading/redirect-methods.html = TEXT
-
-// New test infrastructure required -- need isolated worlds
-BUGWK31508 : http/tests/security/isolatedWorld = TEXT
-BUGWK31508 : http/tests/security/isolatedWorld/context-destroy.html = PASS
-BUGWK31508 : storage/websql/open-database-creation-callback-isolated-world.html = TEXT
-BUGWK31508 : storage/websql/statement-error-callback-isolated-world.html = TEXT
-BUGWK31508 : storage/websql/statement-success-callback-isolated-world.html = TEXT
-BUGWK31508 : storage/websql/transaction-callback-isolated-world.html = TEXT
-BUGWK31508 : storage/websql/transaction-error-callback-isolated-world.html = TEXT
-BUGWK31508 : storage/websql/transaction-success-callback-isolated-world.html = TEXT
 
 BUGWK30577 : editing/selection/move-left-right.html = TEXT
 
