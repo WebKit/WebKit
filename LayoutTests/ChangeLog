@@ -1,3 +1,45 @@
+2012-06-13  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed Chromium test expectation update after r119893.
+
+        * fast/multicol/nested-columns-expected.txt: Added.
+        * fast/multicol/vertical-lr/nested-columns-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/borders: Removed.
+        * platform/chromium-linux-x86/fast/multicol/vertical-rl: Added.
+        * platform/chromium-linux-x86/fast/multicol/vertical-rl/nested-columns-expected.png: Added.
+        * platform/chromium-linux/fast/borders/border-antialiasing-expected.png:
+        * platform/chromium-linux/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/chromium-linux/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Added.
+        * platform/chromium-linux/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/borders/border-antialiasing-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-mac-leopard/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Removed.
+        * platform/chromium-mac/fast/borders/border-antialiasing-expected.png:
+        * platform/chromium-mac/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/chromium-mac/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Added.
+        * platform/chromium-mac/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Added.
+        * platform/chromium-win-vista/fast/borders: Removed.
+        * platform/chromium-win-vista/fast/multicol: Added.
+        * platform/chromium-win-vista/fast/multicol/vertical-rl: Added.
+        * platform/chromium-win-vista/fast/multicol/vertical-rl/nested-columns-expected.png: Added.
+        * platform/chromium-win-xp/fast/borders: Removed.
+        * platform/chromium-win/fast/borders/border-antialiasing-expected.png:
+        * platform/chromium-win/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/chromium-win/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.png: Added.
+        * platform/chromium-win/fast/sub-pixel/file-upload-control-at-fractional-offset-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/fast/multicol/nested-columns-expected.txt: Removed.
+        * platform/efl/fast/multicol/vertical-lr/nested-columns-expected.txt: Removed.
+        * platform/gtk/fast/multicol/nested-columns-expected.txt: Removed.
+        * platform/gtk/fast/multicol/vertical-lr/nested-columns-expected.txt: Removed.
+
 2012-06-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Skip the isolated world tests for Gtk - the infrastructure is missing
