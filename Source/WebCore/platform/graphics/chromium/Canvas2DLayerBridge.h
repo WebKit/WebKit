@@ -28,7 +28,8 @@
 
 #include "ImageBuffer.h" // For DeferralMode enum.
 #include "IntSize.h"
-#include "TextureLayerChromium.h"
+#include <public/WebExternalTextureLayer.h>
+#include <public/WebExternalTextureLayerClient.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -42,9 +43,8 @@ class WebGraphicsContext3D;
 namespace WebCore {
 
 class LayerChromium;
-class TextureLayerChromium;
 
-class Canvas2DLayerBridge : public TextureLayerChromiumClient {
+class Canvas2DLayerBridge : public WebKit::WebExternalTextureLayerClient {
     WTF_MAKE_NONCOPYABLE(Canvas2DLayerBridge);
 public:
     static PassOwnPtr<Canvas2DLayerBridge> create(PassRefPtr<GraphicsContext3D> context, const IntSize& size, DeferralMode deferralMode, unsigned textureId)
@@ -54,8 +54,8 @@ public:
 
     virtual ~Canvas2DLayerBridge();
 
-    // TextureLayerChromiumClient implementation.
-    virtual unsigned prepareTexture(CCTextureUpdater&) OVERRIDE;
+    // WebKit::WebExternalTextureLayerClient implementation.
+    virtual unsigned prepareTexture(WebKit::WebTextureUpdater&) OVERRIDE;
     virtual WebKit::WebGraphicsContext3D* context() OVERRIDE;
 
     SkCanvas* skCanvas(SkDevice*);
@@ -71,7 +71,7 @@ private:
     unsigned m_backBufferTexture;
     IntSize m_size;
     SkCanvas* m_canvas;
-    RefPtr<TextureLayerChromium> m_layer;
+    WebKit::WebExternalTextureLayer m_layer;
     RefPtr<GraphicsContext3D> m_context;
 };
 

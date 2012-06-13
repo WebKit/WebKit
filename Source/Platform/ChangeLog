@@ -1,3 +1,25 @@
+2012-06-12  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Port Canvas2DLayerBridge over to WebExternalTextureLayer
+        https://bugs.webkit.org/show_bug.cgi?id=88597
+
+        Reviewed by Adrienne Walker.
+
+        This adds two new APIs to WebExternalTextureLayer that are used by the accelerated 2d canvas path:
+        - willModifyTexture() is called to indicate that a system outside the compositor's control is about to modify
+        the texture backing the WebExternalTextureLayer. This indicates to the compositor that it needs to avoid
+        producing more frames using this texture until it can do a full commit - either by double buffering or
+        appropriate flow control.
+
+        - setRateLimitContext() is called to enable rate limiting for this texture. The rate limiting logic blocks if
+        too many invalidate() or invalidateRect() calls are made on the texture outside of the context of a
+        WebLayerTreeViewClient::updateAnimations() call to prevent a non-vsynced producer from getting too far ahead of
+        the compositor.
+
+        * chromium/public/WebExternalTextureLayer.h:
+        (WebKit::WebExternalTextureLayer::WebExternalTextureLayer):
+        (WebExternalTextureLayer):
+
 2012-06-11  James Robinson  <jamesr@chromium.org>
 
         [chromium] Port DrawingBufferChromium from TextureLayerChromium over to WebExternalTextureLayer

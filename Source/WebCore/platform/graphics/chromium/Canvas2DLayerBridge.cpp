@@ -33,34 +33,38 @@
 #include "LayerRendererChromium.h" // For GLC() macro.
 #include "SkCanvas.h"
 #include "SkDeferredCanvas.h"
-#include "TextureLayerChromium.h"
 #include "cc/CCProxy.h"
 #include "cc/CCTextureUpdater.h"
+#include <public/WebGraphicsContext3D.h>
+
+using WebKit::WebExternalTextureLayer;
+using WebKit::WebGraphicsContext3D;
+using WebKit::WebTextureUpdater;
 
 namespace WebCore {
 
 class AcceleratedDeviceContext : public SkDeferredCanvas::DeviceContext {
 public:
-    AcceleratedDeviceContext(GraphicsContext3D* context, TextureLayerChromium* layer, bool useDoubleBuffering)
+    AcceleratedDeviceContext(WebGraphicsContext3D* context, WebExternalTextureLayer layer, bool useDoubleBuffering)
         : m_layer(layer)
         , m_context()
         , m_useDoubleBuffering(useDoubleBuffering)
     {
         ASSERT(context);
-        ASSERT(layer);
+        ASSERT(!layer.isNull());
         m_context = context;
     }
 
     virtual void prepareForDraw()
     {
         if (!m_useDoubleBuffering)
-            m_layer->willModifyTexture();
+            m_layer.willModifyTexture();
         m_context->makeContextCurrent();
     }
 
 private:
-    TextureLayerChromium* m_layer;
-    GraphicsContext3D* m_context;
+    WebExternalTextureLayer m_layer;
+    WebGraphicsContext3D* m_context;
     bool m_useDoubleBuffering;
 };
 
@@ -92,27 +96,27 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
             grContext->resetContext();
     }
 
-    m_layer = TextureLayerChromium::create(this);
-    m_layer->setTextureId(textureId);
-    m_layer->setRateLimitContext(!CCProxy::hasImplThread() || m_useDoubleBuffering);
+    m_layer = WebExternalTextureLayer::create(this);
+    m_layer.setTextureId(textureId);
+    m_layer.setRateLimitContext(!CCProxy::hasImplThread() || m_useDoubleBuffering);
 }
 
 
 Canvas2DLayerBridge::~Canvas2DLayerBridge()
 {
-    m_layer->setTextureId(0);
+    m_layer.setTextureId(0);
     if (m_useDoubleBuffering) {
         m_context->makeContextCurrent();
         GLC(m_context.get(), m_context->deleteTexture(m_frontBufferTexture));
         m_context->flush();
     }
-    m_layer->clearClient();
+    m_layer.clearClient();
 }
 
 SkCanvas* Canvas2DLayerBridge::skCanvas(SkDevice* device)
 {
     if (m_deferralMode == Deferred) {
-        SkAutoTUnref<AcceleratedDeviceContext> deviceContext(new AcceleratedDeviceContext(m_context.get(), m_layer.get(), m_useDoubleBuffering));
+        SkAutoTUnref<AcceleratedDeviceContext> deviceContext(new AcceleratedDeviceContext(context(), m_layer, m_useDoubleBuffering));
         m_canvas = new SkDeferredCanvas(device, deviceContext.get());
     } else
         m_canvas = new SkCanvas(device);
@@ -121,7 +125,7 @@ SkCanvas* Canvas2DLayerBridge::skCanvas(SkDevice* device)
 }
 
 
-unsigned Canvas2DLayerBridge::prepareTexture(CCTextureUpdater& updater)
+unsigned Canvas2DLayerBridge::prepareTexture(WebTextureUpdater& updater)
 {
     m_context->makeContextCurrent();
 
@@ -140,20 +144,20 @@ unsigned Canvas2DLayerBridge::prepareTexture(CCTextureUpdater& updater)
     return m_backBufferTexture;
 }
 
-WebKit::WebGraphicsContext3D* Canvas2DLayerBridge::context()
+WebGraphicsContext3D* Canvas2DLayerBridge::context()
 {
     return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_context.get());
 }
 
 LayerChromium* Canvas2DLayerBridge::layer() const
 {
-    return m_layer.get();
+    return m_layer.unwrap<LayerChromium>();
 }
 
 void Canvas2DLayerBridge::contextAcquired()
 {
     if (m_deferralMode == NonDeferred && !m_useDoubleBuffering)
-        m_layer->willModifyTexture();
+        m_layer.willModifyTexture();
 }
 
 }

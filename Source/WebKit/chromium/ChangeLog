@@ -1,3 +1,19 @@
+2012-06-12  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Port Canvas2DLayerBridge over to WebExternalTextureLayer
+        https://bugs.webkit.org/show_bug.cgi?id=88597
+
+        Reviewed by Adrienne Walker.
+
+        Implementations for new WebExternalTextureLayer APIs, updates test.
+
+        * src/WebExternalTextureLayer.cpp:
+        (WebKit::WebExternalTextureLayer::willModifyTexture):
+        (WebKit):
+        (WebKit::WebExternalTextureLayer::setRateLimitContext):
+        * tests/Canvas2DLayerBridgeTest.cpp:
+        (Canvas2DLayerBridgeTest::fullLifecycleTest):
+
 2012-06-12  Adrienne Walker  <enne@google.com>
 
         [chromium] Paint scrollbars on WebKit thread and composite those textures

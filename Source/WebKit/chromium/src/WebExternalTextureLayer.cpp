@@ -112,6 +112,16 @@ void WebExternalTextureLayer::setPremultipliedAlpha(bool premultipliedAlpha)
     unwrap<TextureLayerChromium>()->setPremultipliedAlpha(premultipliedAlpha);
 }
 
+void WebExternalTextureLayer::willModifyTexture()
+{
+    unwrap<TextureLayerChromium>()->willModifyTexture();
+}
+
+void WebExternalTextureLayer::setRateLimitContext(bool rateLimit)
+{
+    unwrap<TextureLayerChromium>()->setRateLimitContext(rateLimit);
+}
+
 WebExternalTextureLayer::WebExternalTextureLayer(PassRefPtr<TextureLayerChromium> layer)
     : WebLayer(layer)
 {

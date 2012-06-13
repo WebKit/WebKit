@@ -29,7 +29,7 @@
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "ImageBuffer.h"
-#include "TextureCopier.h"
+#include "LayerChromium.h"
 #include "TextureManager.h"
 #include "WebCompositor.h"
 #include "WebKit.h"
@@ -59,9 +59,9 @@ public:
     virtual GrGLInterface* onCreateGrGLInterface() OVERRIDE { return 0; }
 };
 
-class MockTextureCopier : public TextureCopier {
+class MockWebTextureUpdater : public WebTextureUpdater {
 public:
-    MOCK_METHOD4(copyTexture, void(CCGraphicsContext*, unsigned, unsigned, const IntSize&));
+    MOCK_METHOD3(appendCopy, void(unsigned, unsigned, WebSize));
 };
 
 } // namespace
@@ -84,8 +84,7 @@ protected:
         MockCanvasContext& mainMock = *static_cast<MockCanvasContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(mainContext.get()));
         MockCanvasContext& implMock = *static_cast<MockCanvasContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(implContext.get()));
 
-        MockTextureCopier copierMock;
-        CCTextureUpdater updater;
+        MockWebTextureUpdater updater;
 
         const IntSize size(300, 150);
 
@@ -109,15 +108,11 @@ protected:
         ::testing::Mock::VerifyAndClearExpectations(&mainMock);
 
         EXPECT_CALL(mainMock, flush());
+        if (threadMode == Threaded && deferralMode == NonDeferred)
+            EXPECT_CALL(updater, appendCopy(backTextureId, frontTextureId, WebSize(300, 150)));
         EXPECT_EQ(frontTextureId, bridge->prepareTexture(updater));
         ::testing::Mock::VerifyAndClearExpectations(&mainMock);
-
-        if (threadMode == Threaded && deferralMode == NonDeferred) {
-            EXPECT_CALL(copierMock, copyTexture(ccImplContext.get(), backTextureId, frontTextureId, size));
-            EXPECT_CALL(implMock, flush());
-        }
-        updater.update(ccImplContext.get(), 0, &copierMock, 0, 100);
-        ::testing::Mock::VerifyAndClearExpectations(&implMock);
+        ::testing::Mock::VerifyAndClearExpectations(&updater);
 
         if (threadMode == Threaded && deferralMode == NonDeferred) {
             EXPECT_CALL(mainMock, deleteTexture(frontTextureId));

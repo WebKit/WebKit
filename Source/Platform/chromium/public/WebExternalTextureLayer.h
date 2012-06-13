@@ -76,6 +76,13 @@ public:
     // Sets whether this layer's texture has premultiplied alpha or not. Defaults to true.
     WEBKIT_EXPORT void setPremultipliedAlpha(bool);
 
+    // Indicates that the most recently provided texture ID is about to be modified externally.
+    WEBKIT_EXPORT void willModifyTexture();
+
+    // Sets whether this context should be rate limited by the compositor. Rate limiting works by blocking
+    // invalidate() and invalidateRect() calls if the compositor is too many frames behind.
+    WEBKIT_EXPORT void setRateLimitContext(bool);
+
 private:
 #if WEBKIT_IMPLEMENTATION
     explicit WebExternalTextureLayer(PassRefPtr<WebCore::TextureLayerChromium>);
