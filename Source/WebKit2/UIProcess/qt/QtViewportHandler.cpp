@@ -202,7 +202,7 @@ qreal QtViewportHandler::outerBoundedCSSScale(qreal cssScale) const
 
 void QtViewportHandler::setInitialScaleIfNeeded()
 {
-    if (m_rawAttributes.initialScale < 0)
+    if (m_rawAttributes.layoutSize.isEmpty() || m_rawAttributes.initialScale < 0)
         return;
 
     m_zoomOutScale = 0.0;
@@ -219,6 +219,9 @@ void QtViewportHandler::setInitialScaleIfNeeded()
 
 void QtViewportHandler::viewportAttributesChanged(const WebCore::ViewportAttributes& newAttributes)
 {
+    if (newAttributes.layoutSize.isEmpty())
+        return;
+
     m_rawAttributes = newAttributes;
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
 

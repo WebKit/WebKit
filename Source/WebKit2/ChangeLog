@@ -1,3 +1,16 @@
+2012-06-13  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] ASSERT(m_rawAttributes.initialScale > 0) in QtViewportHandler::initialRect()
+        https://bugs.webkit.org/show_bug.cgi?id=89026
+
+        Reviewed by Csaba Osztrogonác.
+
+        Only act on viewport attribute changes if the layout size is valid.
+
+        * UIProcess/qt/QtViewportHandler.cpp:
+        (WebKit::QtViewportHandler::setInitialScaleIfNeeded):
+        (WebKit::QtViewportHandler::viewportAttributesChanged):
+
 2012-06-13  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Build fix after Windows export definition file change.
