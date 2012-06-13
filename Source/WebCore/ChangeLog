@@ -1,3 +1,12 @@
+2012-06-13  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed, fixing English nits suggested by review for r120165.
+
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::webkitSlice):
+        * fileapi/Blob.h:
+        (Blob):
+
 2012-06-13  MORITA Hajime  <morrita@google.com>
 
         REGRESSION(r118098): <content> element does not render distributed children when cloned from another document

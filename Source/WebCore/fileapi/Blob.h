@@ -72,7 +72,7 @@ public:
 #if ENABLE(BLOB)
     PassRefPtr<Blob> slice(long long start = 0, long long end = std::numeric_limits<long long>::max(), const String& contentType = String()) const;
 
-    // Prefixed version is going to be deprecated. This internally calls sliceInternal() (as slice() does) after showing a deprecation message.
+    // Prefixed version is deprecated. This internally calls sliceInternal() (as slice() does) after showing a deprecation message.
     PassRefPtr<Blob> webkitSlice(ScriptExecutionContext*, long long start = 0, long long end = std::numeric_limits<long long>::max(), const String& contentType = String()) const;
 
 #endif

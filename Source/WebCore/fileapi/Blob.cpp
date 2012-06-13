@@ -94,7 +94,7 @@ PassRefPtr<Blob> Blob::slice(long long start, long long end, const String& conte
 
 PassRefPtr<Blob> Blob::webkitSlice(ScriptExecutionContext* context, long long start, long long end, const String& contentType) const
 {
-    String message("Blob.webkitSlice() is deprecated. Use Blob.slice() instead .");
+    String message("Blob.webkitSlice() is deprecated. Use Blob.slice() instead.");
     context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, message);
 
     HistogramSupport::histogramEnumeration("WebCore.Blob.slice", SliceWithPrefix, SliceHistogramEnumMax);
