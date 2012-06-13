@@ -1,3 +1,9 @@
+2012-06-13  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip new failing tests.
+
+        * platform/qt/Skipped:
+
 2012-06-13  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed gardening. Removed some tests passing in all the GTK
