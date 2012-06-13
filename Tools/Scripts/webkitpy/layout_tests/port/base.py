@@ -689,6 +689,8 @@ class Port(object):
         This is used by the rebaselining tool. Raises NotImplementedError
         if the port does not use expectations files."""
 
+        # FIXME: We need to remove this when we make rebaselining work with multiple files and just generalize expectations_files().
+
         # test_expectations are always in mac/ not mac-leopard/ by convention, hence we use port_name instead of name().
         port_name = self.port_name
         if port_name.startswith('chromium') or port_name.startswith('google-chrome'):
@@ -919,27 +921,8 @@ class Port(object):
         return expectations
 
     def expectations_files(self):
+        # FIXME: see comment in path_to_expectations_file().
         return [self.path_to_test_expectations_file()]
-
-    def test_expectations(self):
-        """Returns the test expectations for this port.
-
-        Basically this string should contain the equivalent of a
-        test_expectations file. See test_expectations.py for more details."""
-        # FIXME: remove this when the cascade works fully.
-        return self.expectations_dict().values()[0]
-
-    def test_expectations_overrides(self):
-        """Returns an optional set of overrides for the test_expectations.
-
-        This is used by ports that have code in two repositories, and where
-        it is possible that you might need "downstream" expectations that
-        temporarily override the "upstream" expectations until the port can
-        sync up the two repos."""
-        # FIXME: remove this when the cascade works fully.
-        if len(self.expectations_dict()) > 1:
-            return ''.join(self.expectations_dict().values()[1:])
-        return None
 
     def repository_paths(self):
         """Returns a list of (repository_name, repository_path) tuples of its depending code base.

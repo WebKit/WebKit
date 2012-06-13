@@ -282,25 +282,24 @@ class PortTest(unittest.TestCase):
         port = self.make_port(port_name='foo')
         port.port_name = 'foo'
         port._filesystem.write_text_file('/mock-checkout/LayoutTests/platform/foo/TestExpectations', '')
-
         port._filesystem.write_text_file(
             '/tmp/additional-expectations-1.txt', 'content1\n')
         port._filesystem.write_text_file(
             '/tmp/additional-expectations-2.txt', 'content2\n')
 
-        self.assertEquals(None, port.test_expectations_overrides())
+        self.assertEquals('\n'.join(port.expectations_dict().values()), '')
 
         port._options.additional_expectations = [
             '/tmp/additional-expectations-1.txt']
-        self.assertEquals('content1\n', port.test_expectations_overrides())
+        self.assertEquals('\n'.join(port.expectations_dict().values()), '\ncontent1\n')
 
         port._options.additional_expectations = [
             '/tmp/nonexistent-file', '/tmp/additional-expectations-1.txt']
-        self.assertEquals('content1\n', port.test_expectations_overrides())
+        self.assertEquals('\n'.join(port.expectations_dict().values()), '\ncontent1\n')
 
         port._options.additional_expectations = [
             '/tmp/additional-expectations-1.txt', '/tmp/additional-expectations-2.txt']
-        self.assertEquals('content1\ncontent2\n', port.test_expectations_overrides())
+        self.assertEquals('\n'.join(port.expectations_dict().values()), '\ncontent1\n\ncontent2\n')
 
     def test_uses_test_expectations_file(self):
         port = self.make_port(port_name='foo')

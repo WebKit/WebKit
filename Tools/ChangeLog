@@ -1,5 +1,36 @@
 2012-06-13  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: remove port.test_expectations() and port.test_expectations_overrides()
+        https://bugs.webkit.org/show_bug.cgi?id=88948
+
+        Reviewed by Ojan Vafai.
+
+        In the final patch of this run, we remove the
+        test_expectations() and test_expectation_overrides() methods
+        from the Port class - callers must now use just
+        expectations_dict().
+
+        Note that support for the cascade in new-run-webkit-tests is
+        complete but only Chromium uses it; webkit-patch
+        rebaseline-expectations still does not support updating entries
+        in any file other than the first expectations file, however.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.path_to_test_expectations_file):
+        (Port.uses_test_expectations_file):
+        (Port.expectations_files):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_additional_expectations):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumPortTest.test_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        (TestGoogleChromePort.test_get_google_chrome_port):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (test_test_expectations):
+        (test_legacy_test_expectations):
+
+2012-06-13  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: implement the actual cascade of TestExpectations
         https://bugs.webkit.org/show_bug.cgi?id=88947
 
