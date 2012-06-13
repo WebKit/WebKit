@@ -32,6 +32,7 @@
 #include "WebPagePopupImpl.h"
 
 #include "Chrome.h"
+#include "ContextFeatures.h"
 #include "DOMWindowPagePopup.h"
 #include "DocumentLoader.h"
 #include "EmptyClients.h"
@@ -125,9 +126,16 @@ private:
     WebPagePopupImpl* m_popup;
 };
 
-class PagePopupFrameLoaderClient : public EmptyFrameLoaderClient {
-    virtual bool allowPagePopup() OVERRIDE { return true; }
+class PagePopupFeaturesClient : public ContextFeaturesClient {
+    virtual bool isEnabled(Document*, ContextFeatures::FeatureType, bool) OVERRIDE;
 };
+
+bool PagePopupFeaturesClient::isEnabled(Document*, ContextFeatures::FeatureType type, bool defaultValue)
+{
+    if (type == ContextFeatures::PagePopup)
+        return true;
+    return defaultValue;
+}
 
 // WebPagePopupImpl ----------------------------------------------------------------
 
@@ -183,8 +191,10 @@ bool WebPagePopupImpl::initPage()
     m_page->settings()->setScriptEnabled(true);
     m_page->settings()->setAllowScriptsToCloseWindows(true);
 
-    static FrameLoaderClient* pagePopupFrameLoaderClient =  new PagePopupFrameLoaderClient;
-    RefPtr<Frame> frame = Frame::create(m_page.get(), 0, pagePopupFrameLoaderClient);
+    static ContextFeaturesClient* pagePopupFeaturesClient =  new PagePopupFeaturesClient();
+    provideContextFeaturesTo(m_page.get(), pagePopupFeaturesClient);
+    static FrameLoaderClient* emptyFrameLoaderClient =  new EmptyFrameLoaderClient();
+    RefPtr<Frame> frame = Frame::create(m_page.get(), 0, emptyFrameLoaderClient);
     frame->setView(FrameView::create(frame.get()));
     frame->init();
     frame->view()->resize(m_popupClient->contentSize());

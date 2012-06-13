@@ -459,7 +459,6 @@ SET(WebCore_SOURCES
     bindings/ScriptControllerBase.cpp
 
     bindings/generic/ActiveDOMCallback.cpp
-    bindings/generic/ContextEnabledFeatures.cpp
     bindings/generic/RuntimeEnabledFeatures.cpp
 
     css/CSSAspectRatioValue.cpp
@@ -559,6 +558,7 @@ SET(WebCore_SOURCES
     dom/ContainerNode.cpp
     dom/ContainerNodeAlgorithms.cpp
     dom/ContextDestructionObserver.cpp
+    dom/ContextFeatures.cpp
     dom/CustomEvent.cpp
     dom/DatasetDOMStringMap.cpp
     dom/DecodedDataDocumentParser.cpp

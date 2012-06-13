@@ -25,7 +25,7 @@
 #include "HTMLStyleElement.h"
 
 #include "Attribute.h"
-#include "ContextEnabledFeatures.h"
+#include "ContextFeatures.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventSender.h"
@@ -131,7 +131,7 @@ void HTMLStyleElement::registerWithScopingNode(bool scoped)
     ASSERT(inDocument());
     if (m_scopedStyleRegistrationState != NotRegistered)
         return;
-    if (!ContextEnabledFeatures::styleScopedEnabled(document()))
+    if (!ContextFeatures::styleScopedEnabled(document()))
         return;
 
     ContainerNode* scope = scoped ? parentNode() : shadowRoot();
@@ -156,10 +156,10 @@ void HTMLStyleElement::unregisterWithScopingNode(ContainerNode* scope)
 {
     // Note: We cannot rely on the 'scoped' element still being present when this method is invoked.
     // Therefore we cannot rely on scoped()!
-    ASSERT(m_scopedStyleRegistrationState != NotRegistered || !ContextEnabledFeatures::styleScopedEnabled(document()));
+    ASSERT(m_scopedStyleRegistrationState != NotRegistered || !ContextFeatures::styleScopedEnabled(document()));
     if (m_scopedStyleRegistrationState == NotRegistered)
         return;
-    if (!ContextEnabledFeatures::styleScopedEnabled(document()))
+    if (!ContextFeatures::styleScopedEnabled(document()))
         return;
 
     ASSERT(scope);

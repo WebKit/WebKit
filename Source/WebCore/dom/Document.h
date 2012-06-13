@@ -67,6 +67,7 @@ class CachedScript;
 class CanvasRenderingContext;
 class CharacterData;
 class Comment;
+class ContextFeatures;
 class DOMImplementation;
 class DOMSelection;
 class DOMWindow;
@@ -1123,6 +1124,9 @@ public:
     void adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<FloatQuad>&, RenderObject*);
     void adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect&, RenderObject*);
 
+    void setContextFeatures(PassRefPtr<ContextFeatures>);
+    ContextFeatures* contextFeatures() { return m_contextFeatures.get(); }
+
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 
@@ -1217,6 +1221,8 @@ private:
     Frame* m_frame;
     OwnPtr<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
+    RefPtr<ContextFeatures> m_contextFeatures;
+
     bool m_wellFormed;
 
     // Document URLs.

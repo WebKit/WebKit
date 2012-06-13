@@ -1,3 +1,13 @@
+2012-06-13  Hajime Morrita  <morrita@chromium.org>
+
+        REGRESSION(r118098): <content> element does not render distributed children when cloned from another document
+        https://bugs.webkit.org/show_bug.cgi?id=88148
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/elements-in-frameless-document-expected.txt: Added.
+        * fast/dom/shadow/elements-in-frameless-document.html: Added.
+
 2012-06-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTTP tests should use testRunner instead of layoutTestController

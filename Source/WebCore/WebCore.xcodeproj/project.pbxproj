@@ -3753,12 +3753,11 @@
 		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A723F77B1484CA4C008C6DBE /* PlatformExportMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A723F77A1484CA4C008C6DBE /* PlatformExportMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A72EA3BB1585CF55004FAA26 /* RefCountedSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = A72EA3BA1585CF55004FAA26 /* RefCountedSupplement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A73F95FE12C97BFE0031AAF9 /* RoundedRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */; };
 		A73F95FF12C97BFE0031AAF9 /* RoundedRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A740B5A514C935AB00A77FA4 /* JSInternalSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B4EA7914C9348400C8F5BF /* JSInternalSettings.h */; };
 		A740B5A714C935AF00A77FA4 /* JSInternalSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7B4EA7814C9348400C8F5BF /* JSInternalSettings.cpp */; };
-		A747A07F156B286900243EED /* ContextEnabledFeatures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A747A07D156B286900243EED /* ContextEnabledFeatures.cpp */; };
-		A747A080156B286900243EED /* ContextEnabledFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = A747A07E156B286900243EED /* ContextEnabledFeatures.h */; };
 		A74BB76B13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A75E497610752ACB00C9B896 /* SerializedScriptValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E497410752ACB00C9B896 /* SerializedScriptValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A75E497710752ACB00C9B896 /* SerializedScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E497510752ACB00C9B896 /* SerializedScriptValue.cpp */; };
@@ -3810,6 +3809,8 @@
 		A7D20F62107F406900A80392 /* JSWebGLActiveInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D20F60107F406900A80392 /* JSWebGLActiveInfo.cpp */; };
 		A7D20F63107F406900A80392 /* JSWebGLActiveInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D20F61107F406900A80392 /* JSWebGLActiveInfo.h */; };
 		A7D20F6D107F438B00A80392 /* WebGLActiveInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D20F6B107F438B00A80392 /* WebGLActiveInfo.h */; };
+		A7D3CA10157DF8E900860A97 /* ContextFeatures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D3CA0E157DF8E900860A97 /* ContextFeatures.cpp */; };
+		A7D3CA11157DF8E900860A97 /* ContextFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D3CA0F157DF8E900860A97 /* ContextFeatures.h */; };
 		A7D6B3490F61104500B79FD1 /* WorkerScriptLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D6B3470F61104500B79FD1 /* WorkerScriptLoader.h */; };
 		A7D6B34A0F61104500B79FD1 /* WorkerScriptLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D6B3480F61104500B79FD1 /* WorkerScriptLoader.cpp */; };
 		A7DBF8DD1276919C006B6008 /* TextCheckingHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7DBF8DB1276919C006B6008 /* TextCheckingHelper.cpp */; };
@@ -10855,10 +10856,9 @@
 		A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragControllerMac.mm; sourceTree = "<group>"; };
 		A71A70C911AFB02000989D6D /* HTMLMeterElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMeterElement.idl; sourceTree = "<group>"; };
 		A723F77A1484CA4C008C6DBE /* PlatformExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformExportMacros.h; sourceTree = "<group>"; };
+		A72EA3BA1585CF55004FAA26 /* RefCountedSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCountedSupplement.h; sourceTree = "<group>"; };
 		A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RoundedRect.cpp; sourceTree = "<group>"; };
 		A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoundedRect.h; sourceTree = "<group>"; };
-		A747A07D156B286900243EED /* ContextEnabledFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContextEnabledFeatures.cpp; path = generic/ContextEnabledFeatures.cpp; sourceTree = "<group>"; };
-		A747A07E156B286900243EED /* ContextEnabledFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContextEnabledFeatures.h; path = generic/ContextEnabledFeatures.h; sourceTree = "<group>"; };
 		A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCodePlaceholder.h; sourceTree = "<group>"; };
 		A75E497410752ACB00C9B896 /* SerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedScriptValue.h; sourceTree = "<group>"; };
 		A75E497510752ACB00C9B896 /* SerializedScriptValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializedScriptValue.cpp; sourceTree = "<group>"; };
@@ -10916,6 +10916,8 @@
 		A7D20F60107F406900A80392 /* JSWebGLActiveInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLActiveInfo.cpp; sourceTree = "<group>"; };
 		A7D20F61107F406900A80392 /* JSWebGLActiveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLActiveInfo.h; sourceTree = "<group>"; };
 		A7D20F6B107F438B00A80392 /* WebGLActiveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLActiveInfo.h; path = canvas/WebGLActiveInfo.h; sourceTree = "<group>"; };
+		A7D3CA0E157DF8E900860A97 /* ContextFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextFeatures.cpp; sourceTree = "<group>"; };
+		A7D3CA0F157DF8E900860A97 /* ContextFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextFeatures.h; sourceTree = "<group>"; };
 		A7D6B3470F61104500B79FD1 /* WorkerScriptLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerScriptLoader.h; path = workers/WorkerScriptLoader.h; sourceTree = "<group>"; };
 		A7D6B3480F61104500B79FD1 /* WorkerScriptLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerScriptLoader.cpp; path = workers/WorkerScriptLoader.cpp; sourceTree = "<group>"; };
 		A7DB418114CE1F0A00A2E316 /* ShadowRoot.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShadowRoot.idl; sourceTree = "<group>"; };
@@ -19767,8 +19769,6 @@
 				A622A8F5122C44A600A785B3 /* BindingSecurity.h */,
 				A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */,
 				A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */,
-				A747A07D156B286900243EED /* ContextEnabledFeatures.cpp */,
-				A747A07E156B286900243EED /* ContextEnabledFeatures.h */,
 				A622A8F9122C44A600A785B3 /* GenericBinding.h */,
 			);
 			name = generic;
@@ -20485,6 +20485,7 @@
 				BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */,
 				E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */,
 				7E33CD00127F340D00BE8F17 /* PurgePriority.h */,
+				A72EA3BA1585CF55004FAA26 /* RefCountedSupplement.h */,
 				9831AE49154225A200FE2644 /* ReferrerPolicy.h */,
 				BC0B358514C4F9830055E22A /* RunLoop.cpp */,
 				BC0B358614C4F9830055E22A /* RunLoop.h */,
@@ -21207,6 +21208,8 @@
 				E1A1470711102B1500EEC0F3 /* ContainerNodeAlgorithms.h */,
 				97627B8B14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp */,
 				97627B8C14FB3CEE002CDCA1 /* ContextDestructionObserver.h */,
+				A7D3CA0E157DF8E900860A97 /* ContextFeatures.cpp */,
+				A7D3CA0F157DF8E900860A97 /* ContextFeatures.h */,
 				2E3FAA0811A36BF100576624 /* CrossThreadTask.h */,
 				62CD32561157E57C0063B0A7 /* CustomEvent.cpp */,
 				62CD32571157E57C0063B0A7 /* CustomEvent.h */,
@@ -22060,7 +22063,7 @@
 				41D015CA0F4B5C71004A662F /* ContentType.h in Headers */,
 				370D6EDB138454550044103E /* ContentTypeParser.h in Headers */,
 				97627B8E14FB3CEE002CDCA1 /* ContextDestructionObserver.h in Headers */,
-				A747A080156B286900243EED /* ContextEnabledFeatures.h in Headers */,
+				A7D3CA11157DF8E900860A97 /* ContextFeatures.h in Headers */,
 				93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */,
 				065AD4F50B0C2EDA005A2B1D /* ContextMenuClient.h in Headers */,
 				065AD4F70B0C2EDA005A2B1D /* ContextMenuController.h in Headers */,
@@ -24170,6 +24173,7 @@
 				FD31603C12B0267600C1A359 /* RealtimeAnalyser.h in Headers */,
 				FD31603E12B0267600C1A359 /* RealtimeAnalyserNode.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
+				A72EA3BB1585CF55004FAA26 /* RefCountedSupplement.h in Headers */,
 				9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */,
 				BCAB418213E356E800D8AAF3 /* Region.h in Headers */,
 				85031B4C0A44EFC700F992E0 /* RegisteredEventListener.h in Headers */,
@@ -25583,7 +25587,7 @@
 				41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */,
 				370D6EDA138454550044103E /* ContentTypeParser.cpp in Sources */,
 				97627B8D14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp in Sources */,
-				A747A07F156B286900243EED /* ContextEnabledFeatures.cpp in Sources */,
+				A7D3CA10157DF8E900860A97 /* ContextFeatures.cpp in Sources */,
 				065AD4F60B0C2EDA005A2B1D /* ContextMenuController.cpp in Sources */,
 				06027CB30B1CC03D00884B2D /* ContextMenuItemMac.mm in Sources */,
 				93B6A0EA0B0BCA8400F5027A /* ContextMenuMac.mm in Sources */,
