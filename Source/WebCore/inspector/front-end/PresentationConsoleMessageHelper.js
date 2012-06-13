@@ -34,6 +34,9 @@
  */
 WebInspector.PresentationConsoleMessageHelper = function(uiSourceCodeProvider)
 {
+    /**
+     * @type {Object.<string, Array.<WebInspector.ConsoleMessage>>}
+     */
     this._pendingConsoleMessages = {};
     this._presentationConsoleMessages = [];
     this._uiSourceCodeProvider = uiSourceCodeProvider;
@@ -77,6 +80,8 @@ WebInspector.PresentationConsoleMessageHelper.prototype = {
      */
     _addPendingConsoleMessage: function(message)
     {
+        if (!message.url)
+            return;
         if (!this._pendingConsoleMessages[message.url])
             this._pendingConsoleMessages[message.url] = [];
         this._pendingConsoleMessages[message.url].push(message);
@@ -98,7 +103,7 @@ WebInspector.PresentationConsoleMessageHelper.prototype = {
             var message = messages[i];
             var rawLocation = message.location();
             if (script.scriptId === rawLocation.scriptId)
-                this._addConsoleMessageToScript(messages, rawLocation);
+                this._addConsoleMessageToScript(message, rawLocation);
             else
                 pendingMessages.push(message);
         }
