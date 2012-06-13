@@ -14,13 +14,13 @@ layer at (0,0) size 800x600
           text run at (0,0) width 359: "This tests modifying a selection created with a double click. "
           text run at (359,0) width 281: "The new selection should use word granularity."
       RenderBlock {P} at (0,36) size 784x60 [color=#008000]
-        RenderText {#text} at (0,0) size 773x59
+        RenderText {#text} at (0,0) size 780x59
           text run at (0,0) width 212: "This test does not run interactively. "
-          text run at (212,0) width 398: "It uses the testRunners eventSender to do mouse clicks. "
-          text run at (610,0) width 156: "To run it manually, double"
-          text run at (0,20) width 304: "click on the blue 'g', then drag down to the red 'g'. "
-          text run at (304,20) width 469: "As you drag, watch the selection that is created, it should always start and end"
-          text run at (0,40) width 125: "on word boundaries."
+          text run at (212,0) width 339: "It uses the testRunners eventSender to do mouse clicks. "
+          text run at (551,0) width 229: "To run it manually, double click on the"
+          text run at (0,20) width 231: "blue 'g', then drag down to the red 'g'. "
+          text run at (231,20) width 524: "As you drag, watch the selection that is created, it should always start and end on word"
+          text run at (0,40) width 70: "boundaries."
       RenderBlock {DIV} at (0,112) size 784x120
         RenderText {#text} at (0,0) size 80x19
           text run at (0,0) width 80: "This is a para"

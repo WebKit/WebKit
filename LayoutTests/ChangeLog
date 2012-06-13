@@ -1,5 +1,33 @@
 2012-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium rebaseline after r120173.
+
+        * platform/chromium-linux/editing/pasteboard/4641033-expected.txt:
+        * platform/chromium-linux/editing/selection/paragraph-granularity-expected.png:
+        * platform/chromium-linux/editing/selection/triple-click-in-pre-expected.png:
+        * platform/chromium-linux/editing/selection/word-granularity-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/paragraph-granularity-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/triple-click-in-pre-expected.png:
+        * platform/chromium-mac-leopard/editing/selection/word-granularity-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/paragraph-granularity-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/triple-click-in-pre-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/word-granularity-expected.png:
+        * platform/chromium-mac/editing/selection/paragraph-granularity-expected.png:
+        * platform/chromium-mac/editing/selection/triple-click-in-pre-expected.png:
+        * platform/chromium-mac/editing/selection/word-granularity-expected.png:
+        * platform/chromium-win/editing/inserting/editable-html-element-expected.txt:
+        * platform/chromium-win/editing/pasteboard/4641033-expected.png:
+        * platform/chromium-win/editing/pasteboard/4641033-expected.txt:
+        * platform/chromium-win/editing/selection/mixed-editability-1-expected.txt:
+        * platform/chromium-win/editing/selection/paragraph-granularity-expected.png:
+        * platform/chromium-win/editing/selection/paragraph-granularity-expected.txt:
+        * platform/chromium-win/editing/selection/triple-click-in-pre-expected.png:
+        * platform/chromium-win/editing/selection/triple-click-in-pre-expected.txt:
+        * platform/chromium-win/editing/selection/word-granularity-expected.png:
+        * platform/chromium-win/editing/selection/word-granularity-expected.txt:
+
+2012-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix a wrong rebaseline in r120178.
 
         * editing/pasteboard/file-input-files-access-expected.txt:
