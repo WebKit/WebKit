@@ -1,3 +1,10 @@
+2012-06-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed gardening. Removed some tests passing in all the GTK
+        bots from the test expectations file.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-12  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Add test for constructing SpeechRecognitionError events
