@@ -39,6 +39,26 @@ class WebGLTexture;
 
 class WebGLFramebuffer : public WebGLContextObject {
 public:
+    class WebGLAttachment : public RefCounted<WebGLAttachment> {
+    public:
+        virtual ~WebGLAttachment();
+
+        virtual GC3Dsizei getWidth() const = 0;
+        virtual GC3Dsizei getHeight() const = 0;
+        virtual GC3Denum getFormat() const = 0;
+        virtual WebGLSharedObject* getObject() const = 0;
+        virtual bool isSharedObject(WebGLSharedObject*) const = 0;
+        virtual bool isValid() const = 0;
+        virtual bool isInitialized() const = 0;
+        virtual void setInitialized() = 0;
+        virtual void onDetached(GraphicsContext3D*) = 0;
+        virtual void attach(GraphicsContext3D*, GC3Denum attachment) = 0;
+        virtual void unattach(GraphicsContext3D*, GC3Denum attachment) = 0;
+
+    protected:
+        WebGLAttachment();
+    };
+
     virtual ~WebGLFramebuffer();
 
     static PassRefPtr<WebGLFramebuffer> create(WebGLRenderingContext*);
@@ -49,7 +69,10 @@ public:
     void removeAttachmentFromBoundFramebuffer(WebGLSharedObject*);
     // If a given attachment point for the currently bound framebuffer is not null, remove the attached object.
     void removeAttachmentFromBoundFramebuffer(GC3Denum);
-    WebGLSharedObject* getAttachment(GC3Denum) const;
+    WebGLSharedObject* getAttachmentObject(GC3Denum) const;
+
+    // attach 'attachment' at 'attachmentPoint'.
+    void attach(GC3Denum attachment, GC3Denum attachmentPoint);
 
     GC3Denum getColorBufferFormat() const;
     GC3Dsizei getColorBufferWidth() const;
@@ -60,8 +83,8 @@ public:
     // currently bound.
     // Return false if the framebuffer is incomplete; otherwise initialize
     // the buffers if they haven't been initialized and
-    // needToInitializeRenderbuffers is true.
-    bool onAccess(GraphicsContext3D*, bool needToInitializeRenderbuffers, const char** reason);
+    // needToInitializeAttachments is true.
+    bool onAccess(GraphicsContext3D*, bool needToInitializeAttachments, const char** reason);
 
     // Software version of glCheckFramebufferStatus(), except that when
     // FRAMEBUFFER_COMPLETE is returned, it is still possible for
@@ -83,26 +106,19 @@ protected:
 private:
     virtual bool isFramebuffer() const { return true; }
 
+    WebGLAttachment* getAttachment(GC3Denum) const;
+
     // Return false if framebuffer is incomplete.
-    bool initializeRenderbuffers(GraphicsContext3D*, const char** reason);
+    bool initializeAttachments(GraphicsContext3D*, const char** reason);
 
     // Check if the framebuffer is currently bound.
     bool isBound() const;
 
-    bool isColorAttached() const { return (m_colorAttachment && m_colorAttachment->object()); }
-    bool isDepthAttached() const { return (m_depthAttachment && m_depthAttachment->object()); }
-    bool isStencilAttached() const { return (m_stencilAttachment && m_stencilAttachment->object()); }
-    bool isDepthStencilAttached() const { return (m_depthStencilAttachment && m_depthStencilAttachment->object()); }
+    typedef WTF::HashMap<GC3Denum, RefPtr<WebGLAttachment> > AttachmentMap;
 
-    RefPtr<WebGLSharedObject> m_colorAttachment;
-    RefPtr<WebGLSharedObject> m_depthAttachment;
-    RefPtr<WebGLSharedObject> m_stencilAttachment;
-    RefPtr<WebGLSharedObject> m_depthStencilAttachment;
+    AttachmentMap m_attachments;
 
     bool m_hasEverBeenBound;
-
-    GC3Denum m_texTarget;
-    GC3Dint m_texLevel;
 };
 
 } // namespace WebCore

@@ -2073,41 +2073,34 @@ void WebGLRenderingContext::framebufferRenderbuffer(GC3Denum target, GC3Denum at
         }
         break;
     case GraphicsContext3D::DEPTH_ATTACHMENT:
-        m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, objectOrZero(buffer));
+        m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, bufferObject);
         if (!bufferObject)
             reattachDepthStencilDepth = true;
         break;
     case GraphicsContext3D::STENCIL_ATTACHMENT:
-        m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, objectOrZero(buffer));
+        m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, bufferObject);
         if (!bufferObject)
             reattachDepthStencilStencil = true;
         break;
     default:
-        m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, objectOrZero(buffer));
+        m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, bufferObject);
     }
     m_framebufferBinding->setAttachmentForBoundFramebuffer(attachment, buffer);
-    if (reattachDepth) {
-        Platform3DObject object = objectOrZero(m_framebufferBinding->getAttachment(GraphicsContext3D::DEPTH_ATTACHMENT));
-        if (object)
-            m_context->framebufferRenderbuffer(target, GraphicsContext3D::DEPTH_ATTACHMENT, renderbuffertarget, object);
-    }
-    if (reattachStencil) {
-        Platform3DObject object = objectOrZero(m_framebufferBinding->getAttachment(GraphicsContext3D::STENCIL_ATTACHMENT));
-        if (object)
-            m_context->framebufferRenderbuffer(target, GraphicsContext3D::STENCIL_ATTACHMENT, renderbuffertarget, object);
-    }
-    if (reattachDepthStencilDepth) {
-        Platform3DObject object = objectOrZero(m_framebufferBinding->getAttachment(GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT));
-        if (object)
-            m_context->framebufferRenderbuffer(target, GraphicsContext3D::DEPTH_ATTACHMENT, renderbuffertarget, object);
-    }
-    if (reattachDepthStencilStencil) {
-        Platform3DObject object = objectOrZero(m_framebufferBinding->getAttachment(GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT));
-        if (object)
-            m_context->framebufferRenderbuffer(target, GraphicsContext3D::STENCIL_ATTACHMENT, renderbuffertarget, object);
-    }
+    reattachDepthStencilAttachments(reattachDepth, reattachStencil, reattachDepthStencilDepth, reattachDepthStencilStencil);
     applyStencilTest();
     cleanupAfterGraphicsCall(false);
+}
+
+void WebGLRenderingContext::reattachDepthStencilAttachments(bool reattachDepth, bool reattachStencil, bool reattachDepthStencilDepth, bool reattachDepthStencilStencil)
+{
+    if (reattachDepth)
+        m_framebufferBinding->attach(GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::DEPTH_ATTACHMENT);
+    if (reattachStencil)
+        m_framebufferBinding->attach(GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::STENCIL_ATTACHMENT);
+    if (reattachDepthStencilDepth)
+        m_framebufferBinding->attach(GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT, GraphicsContext3D::DEPTH_ATTACHMENT);
+    if (reattachDepthStencilStencil)
+        m_framebufferBinding->attach(GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT, GraphicsContext3D::STENCIL_ATTACHMENT);
 }
 
 void WebGLRenderingContext::framebufferTexture2D(GC3Denum target, GC3Denum attachment, GC3Denum textarget, WebGLTexture* texture, GC3Dint level, ExceptionCode& ec)
@@ -2130,8 +2123,36 @@ void WebGLRenderingContext::framebufferTexture2D(GC3Denum target, GC3Denum attac
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "framebufferTexture2D", "no framebuffer bound");
         return;
     }
-    m_context->framebufferTexture2D(target, attachment, textarget, objectOrZero(texture), level);
+    Platform3DObject textureObject = objectOrZero(texture);
+    bool reattachDepth = false;
+    bool reattachStencil = false;
+    bool reattachDepthStencilDepth = false;
+    bool reattachDepthStencilStencil = false;
+    switch (attachment) {
+    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+        m_context->framebufferTexture2D(target, GraphicsContext3D::DEPTH_ATTACHMENT, textarget, textureObject, level);
+        m_context->framebufferTexture2D(target, GraphicsContext3D::STENCIL_ATTACHMENT, textarget, textureObject, level);
+        if (!textureObject) {
+            reattachDepth = true;
+            reattachStencil = true;
+        }
+        break;
+    case GraphicsContext3D::DEPTH_ATTACHMENT:
+        m_context->framebufferTexture2D(target, attachment, textarget, textureObject, level);
+        if (!textureObject)
+            reattachDepthStencilDepth = true;
+        break;
+    case GraphicsContext3D::STENCIL_ATTACHMENT:
+        m_context->framebufferTexture2D(target, attachment, textarget, textureObject, level);
+        if (!textureObject)
+            reattachDepthStencilStencil = true;
+        break;
+    default:
+        m_context->framebufferTexture2D(target, attachment, textarget, textureObject, level);
+    }
     m_framebufferBinding->setAttachmentForBoundFramebuffer(attachment, textarget, texture, level);
+    reattachDepthStencilAttachments(reattachDepth, reattachStencil, reattachDepthStencilDepth, reattachDepthStencilStencil);
+    applyStencilTest();
     cleanupAfterGraphicsCall(false);
 }
 
@@ -2358,7 +2379,7 @@ WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum t
         return WebGLGetInfo();
     }
 
-    WebGLSharedObject* object = m_framebufferBinding->getAttachment(attachment);
+    WebGLSharedObject* object = m_framebufferBinding->getAttachmentObject(attachment);
     if (!object) {
         if (pname == GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
             return WebGLGetInfo(GraphicsContext3D::NONE);

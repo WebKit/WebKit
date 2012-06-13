@@ -1,3 +1,45 @@
+2012-06-13  Gregg Tavares  <gman@google.com>
+
+        Refactor WebGLFramebuffer to handle texture attachments
+        https://bugs.webkit.org/show_bug.cgi?id=88697
+
+        Reviewed by Adrienne Walker.
+        
+        In order to add support for depth textures WebGLFramebuffer
+        needed to be refactored to handle textures as attachments.
+
+        No new tests as no new functionality. 
+
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::WebGLAttachment::WebGLAttachment):
+        (WebCore):
+        (WebCore::WebGLFramebuffer::WebGLAttachment::~WebGLAttachment):
+        (WebCore::WebGLFramebuffer::WebGLFramebuffer):
+        (WebCore::WebGLFramebuffer::setAttachmentForBoundFramebuffer):
+        (WebCore::WebGLFramebuffer::attach):
+        (WebCore::WebGLFramebuffer::getAttachmentObject):
+        (WebCore::WebGLFramebuffer::getAttachment):
+        (WebCore::WebGLFramebuffer::removeAttachmentFromBoundFramebuffer):
+        (WebCore::WebGLFramebuffer::getColorBufferWidth):
+        (WebCore::WebGLFramebuffer::getColorBufferHeight):
+        (WebCore::WebGLFramebuffer::getColorBufferFormat):
+        (WebCore::WebGLFramebuffer::checkStatus):
+        (WebCore::WebGLFramebuffer::onAccess):
+        (WebCore::WebGLFramebuffer::hasStencilBuffer):
+        (WebCore::WebGLFramebuffer::deleteObjectImpl):
+        (WebCore::WebGLFramebuffer::initializeAttachments):
+        * html/canvas/WebGLFramebuffer.h:
+        (WebGLAttachment):
+        (WebGLFramebuffer):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::framebufferRenderbuffer):
+        (WebCore::WebGLRenderingContext::reattachDepthStencilAttachments):
+        (WebCore::WebGLRenderingContext::framebufferTexture2D):
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebGLRenderingContext):
+
 2012-06-13  Konrad Piascik  <kpiascik@rim.com>
 
         Remove return statement in void method
