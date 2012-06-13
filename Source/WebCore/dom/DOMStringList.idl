@@ -26,7 +26,8 @@
 module core {
 
     interface [
-        IndexedGetter
+        IndexedGetter,
+        JSCustomToNativeObject
     ] DOMStringList {
         readonly attribute unsigned long length;
         [TreatReturnedNullStringAs=Null] DOMString item(in [IsIndex,Optional=DefaultIsUndefined] unsigned long index);

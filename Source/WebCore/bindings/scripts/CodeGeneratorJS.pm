@@ -201,7 +201,7 @@ sub IndexGetterReturnsStrings
 {
     my $type = shift;
 
-    return 1 if $type eq "CSSStyleDeclaration" or $type eq "MediaList" or $type eq "DOMStringList" or $type eq "DOMTokenList" or $type eq "DOMSettableTokenList";
+    return 1 if $type eq "CSSStyleDeclaration" or $type eq "MediaList" or $type eq "DOMStringList" or $type eq "DOMString[]"  or $type eq "DOMTokenList" or $type eq "DOMSettableTokenList";
     return 0;
 }
 
@@ -1020,6 +1020,8 @@ sub GenerateHeader
     if (!$hasParent || $dataNode->extendedAttributes->{"JSGenerateToNativeObject"}) {
         if ($interfaceName eq "NodeFilter") {
             push(@headerContent, "PassRefPtr<NodeFilter> toNodeFilter(JSC::JSGlobalData&, JSC::JSValue);\n");
+        } elsif ($interfaceName eq "DOMStringList") {
+            push(@headerContent, "PassRefPtr<DOMStringList> toDOMStringList(JSC::ExecState*, JSC::JSValue);\n");
         } else {
             push(@headerContent, "$implType* to${interfaceName}(JSC::JSValue);\n");
         }
@@ -2826,7 +2828,7 @@ my %nativeType = (
     "CompareHow" => "Range::CompareHow",
     "DOMString" => "const String&",
     # FIXME: Add proper support for T[], T[]?, sequence<T>
-    "DOMString[]" => "DOMStringList*",
+    "DOMString[]" => "RefPtr<DOMStringList>",
     "DOMObject" => "ScriptValue",
     "NodeFilter" => "RefPtr<NodeFilter>",
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
@@ -2852,6 +2854,7 @@ sub GetNativeType
 
     my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
     return "${svgNativeType}*" if $svgNativeType;
+    return "RefPtr<DOMStringList>" if $type eq "DOMStringList" or $type eq "DOMString[]";
     return $nativeType{$type} if exists $nativeType{$type};
 
     my $sequenceType = $codeGenerator->GetSequenceType($type);
@@ -2865,6 +2868,7 @@ sub GetNativeTypeForCallbacks
 {
     my $type = shift;
     return "SerializedScriptValue*" if $type eq "SerializedScriptValue";
+    return "PassRefPtr<DOMStringList>" if $type eq "DOMStringList" or $type eq "DOMString[]";
 
     return GetNativeType($type);
 }
@@ -2983,9 +2987,9 @@ sub JSValueToNative
         return "exec, $value";
     }
 
-    if ($type eq "DOMString[]") {
+    if ($type eq "DOMString[]" or $type eq "DOMStringList" ) {
         AddToImplIncludes("JSDOMStringList.h", $conditional);
-        return "toDOMStringList($value)";
+        return "toDOMStringList(exec, $value)";
     }
 
     if ($type eq "unsigned long[]") {

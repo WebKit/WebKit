@@ -45,7 +45,7 @@ public:
     virtual bool callbackWithClass2Param(Class2* class2Param, const String& strArg);
     COMPILE_ASSERT(false)    virtual int callbackWithNonBoolReturnType(Class3* class3Param);
     virtual int customCallback(Class5* class5Param, Class6* class6Param);
-    virtual bool callbackWithStringList(DOMStringList* listParam);
+    virtual bool callbackWithStringList(PassRefPtr<DOMStringList> listParam);
     virtual bool callbackWithBoolean(bool boolParam);
     virtual bool callbackRequiresThisToPass(Class8* class8Param, ThisClass* thisClassParam);
 

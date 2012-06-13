@@ -274,6 +274,7 @@ v8 {
         bindings/js/JSDOMMimeTypeArrayCustom.cpp \
         bindings/js/JSDOMPluginArrayCustom.cpp \
         bindings/js/JSDOMPluginCustom.cpp \
+        bindings/js/JSDOMStringListCustom.cpp \
         bindings/js/JSDOMStringMapCustom.cpp \
         bindings/js/JSDOMTokenListCustom.cpp \
         bindings/js/JSDOMWindowBase.cpp \

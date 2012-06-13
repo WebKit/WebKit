@@ -112,7 +112,7 @@ bool JSTestCallback::callbackWithClass2Param(Class2* class2Param, const String& 
     return !raisedException;
 }
 
-bool JSTestCallback::callbackWithStringList(DOMStringList* listParam)
+bool JSTestCallback::callbackWithStringList(PassRefPtr<DOMStringList> listParam)
 {
     if (!canInvokeCallback())
         return true;

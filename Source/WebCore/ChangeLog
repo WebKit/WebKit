@@ -1,3 +1,44 @@
+2012-06-13  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Need customized toDOMStringList for IndexedDB JSC binding.
+        https://bugs.webkit.org/show_bug.cgi?id=87965
+
+        Reviewed by Kentaro Hara.
+
+        IndexedDB database interface uses DOMStringList as the input parameter.
+        The generated toDOMStringList() can't convert an JSArray of Strings to
+        native DOMStringList. We need a custom function to do this.
+
+        Because this patch adds one new file (JSDOMStringList.cpp), all build systems
+        are updated accordingly to pick up this file.
+
+         Tests: Corresponding bindings/scripts/test/JS files have been updated accordingly.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMStringListCustom.cpp: Added.
+        (WebCore):
+        (WebCore::toDOMStringList):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (IndexGetterReturnsStrings):
+        (GenerateHeader):
+        (GetNativeType):
+        (GetNativeTypeForCallbacks):
+        (JSValueToNative):
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::callbackWithStringList):
+        * bindings/scripts/test/JS/JSTestCallback.h:
+        (JSTestCallback):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod6):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod7):
+        * dom/DOMStringList.idl:
+
 2012-06-13  Jeffrey Pfau  <jpfau@apple.com>
 
         Padding and borders can cause integer overflow in block layouts
