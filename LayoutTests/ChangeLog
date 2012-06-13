@@ -1,3 +1,8 @@
+2012-06-12  Ojan Vafai  <ojan@chromium.org>
+
+        Add some expecations to green the chromium tree while the bugs are resolved.
+        * platform/chromium/TestExpectations:
+
 2012-06-12  Brady Eidson  <beidson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=88928

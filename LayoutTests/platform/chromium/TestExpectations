@@ -3707,7 +3707,12 @@ BUGLEVIW LEOPARD LION WIN LINUX : fast/multicol/nested-columns.html = PASS FAIL
 BUGLEVIW LEOPARD LION WIN LINUX : fast/multicol/vertical-lr/nested-columns.html = PASS FAIL
 BUGLEVIW LEOPARD LION WIN LINUX : fast/multicol/vertical-rl/nested-columns.html = PASS FAIL
 
-BUGWK88900 MAC : http/tests/loading/embed-image-load-outlives-gc-without-crashing.html = TEXT
+BUGWK88900 MAC : http/tests/misc/embed-image-load-outlives-gc-without-crashing.html = TEXT
+
+BUGWK88939 DEBUG : fast/events/before-unload-adopt-subframe-to-outside.html = TEXT
+
+BUGWK88937 DEBUG LINUX MAC : animations/first-letter-play-state.html = TEXT
+BUGWK88937 WIN : animations/first-letter-play-state.html = TEXT
 
 BUGCR131187 : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGCR131187 : fast/canvas/canvas-currentColor.html = TEXT
