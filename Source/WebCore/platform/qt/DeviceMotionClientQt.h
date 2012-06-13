@@ -43,7 +43,7 @@ private:
     virtual void startUpdating();
     virtual void stopUpdating();
 
-    virtual DeviceMotionData* currentDeviceMotion() const;
+    virtual DeviceMotionData* lastMotion() const;
 
     virtual void setController(DeviceMotionController*);
 

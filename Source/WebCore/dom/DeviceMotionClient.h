@@ -38,7 +38,7 @@ public:
     virtual void setController(DeviceMotionController*) = 0;
     virtual void startUpdating() = 0;
     virtual void stopUpdating() = 0;
-    virtual DeviceMotionData* currentDeviceMotion() const = 0;
+    virtual DeviceMotionData* lastMotion() const = 0;
     virtual void deviceMotionControllerDestroyed() = 0;
 };
 

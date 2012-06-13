@@ -64,7 +64,7 @@ void DeviceMotionClientBlackBerry::stopUpdating()
         m_tracker->suspend();
 }
 
-DeviceMotionData* DeviceMotionClientBlackBerry::currentDeviceMotion() const
+DeviceMotionData* DeviceMotionClientBlackBerry::lastMotion() const
 {
     return m_currentMotion.get();
 }
@@ -81,5 +81,5 @@ void DeviceMotionClientBlackBerry::onMotion(const BlackBerry::Platform::DeviceMo
     if (!m_controller)
         return;
 
-    m_controller->didChangeDeviceMotion(currentDeviceMotion());
+    m_controller->didChangeDeviceMotion(lastMotion());
 }

@@ -47,7 +47,7 @@ public:
 
     void start();
     void stop();
-    DeviceMotionData* currentDeviceMotion() const { return m_motion.get(); }
+    DeviceMotionData* lastMotion() const { return m_motion.get(); }
 
 private:
     RefPtr<DeviceMotionData> m_motion;

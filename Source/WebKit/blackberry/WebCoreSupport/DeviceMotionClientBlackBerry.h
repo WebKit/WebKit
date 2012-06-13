@@ -46,7 +46,7 @@ public:
     virtual void setController(DeviceMotionController*);
     virtual void startUpdating();
     virtual void stopUpdating();
-    virtual DeviceMotionData* currentDeviceMotion() const;
+    virtual DeviceMotionData* lastMotion() const;
     virtual void deviceMotionControllerDestroyed();
     virtual void onMotion(const BlackBerry::Platform::DeviceMotionEvent*);
 

@@ -62,7 +62,7 @@ void DeviceMotionClientEfl::stopUpdating()
     notImplemented();
 }
 
-DeviceMotionData* DeviceMotionClientEfl::currentDeviceMotion() const
+DeviceMotionData* DeviceMotionClientEfl::lastMotion() const
 {
     notImplemented();
     return 0;

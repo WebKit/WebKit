@@ -53,10 +53,10 @@ PassOwnPtr<DeviceMotionController> DeviceMotionController::create(DeviceMotionCl
 void DeviceMotionController::timerFired(Timer<DeviceMotionController>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_timer);
-    ASSERT(m_client->currentDeviceMotion());
+    ASSERT(m_client->lastMotion());
     m_timer.stop();
     
-    RefPtr<DeviceMotionData> deviceMotionData = m_client->currentDeviceMotion();
+    RefPtr<DeviceMotionData> deviceMotionData = m_client->lastMotion();
     RefPtr<DeviceMotionEvent> event = DeviceMotionEvent::create(eventNames().devicemotionEvent, deviceMotionData.get());
  
     Vector<RefPtr<DOMWindow> > listenersVector;
@@ -70,7 +70,7 @@ void DeviceMotionController::addListener(DOMWindow* window)
 {
     // If the client already has motion data,
     // immediately trigger an asynchronous response.
-    if (m_client->currentDeviceMotion()) {
+    if (m_client->lastMotion()) {
         m_newListeners.add(window);
         if (!m_timer.isActive())
             m_timer.startOneShot(0);

@@ -34,7 +34,7 @@ public:
     virtual void setController(WebCore::DeviceMotionController*);
     virtual void startUpdating();
     virtual void stopUpdating();
-    virtual WebCore::DeviceMotionData* currentDeviceMotion() const;
+    virtual WebCore::DeviceMotionData* lastMotion() const;
     virtual void deviceMotionControllerDestroyed();
 
 private:

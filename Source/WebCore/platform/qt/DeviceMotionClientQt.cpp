@@ -59,9 +59,9 @@ void DeviceMotionClientQt::stopUpdating()
         m_provider->stop();
 }
 
-DeviceMotionData* DeviceMotionClientQt::currentDeviceMotion() const
+DeviceMotionData* DeviceMotionClientQt::lastMotion() const
 {
-    return m_provider->currentDeviceMotion();
+    return m_provider->lastMotion();
 }
 
 } // namespace WebCore

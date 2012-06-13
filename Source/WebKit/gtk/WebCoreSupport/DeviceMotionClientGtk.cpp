@@ -58,7 +58,7 @@ void DeviceMotionClientGtk::stopUpdating()
     notImplemented();
 }
 
-DeviceMotionData* DeviceMotionClientGtk::currentDeviceMotion() const
+DeviceMotionData* DeviceMotionClientGtk::lastMotion() const
 {
     notImplemented();
     return 0;
