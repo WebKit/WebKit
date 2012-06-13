@@ -51,6 +51,7 @@ OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAVal
     , m_codeOrigin(jit->m_codeOriginForOSR)
     , m_codeOriginForExitProfile(m_codeOrigin)
     , m_recoveryIndex(recoveryIndex)
+    , m_watchpointIndex(std::numeric_limits<unsigned>::max())
     , m_kind(kind)
     , m_count(0)
     , m_arguments(jit->m_arguments.size())

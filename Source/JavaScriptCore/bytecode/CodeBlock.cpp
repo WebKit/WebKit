@@ -228,6 +228,7 @@ void CodeBlock::printGetByIdOp(ExecState* exec, int location, Vector<Instruction
     it += 5;
 }
 
+#if ENABLE(JIT) || ENABLE(LLINT) // unused in some configurations
 static void dumpStructure(const char* name, ExecState* exec, Structure* structure, Identifier& ident)
 {
     if (!structure)
@@ -239,7 +240,9 @@ static void dumpStructure(const char* name, ExecState* exec, Structure* structur
     if (offset != notFound)
         dataLog(" (offset = %lu)", static_cast<unsigned long>(offset));
 }
+#endif
 
+#if ENABLE(JIT) // unused when not ENABLE(JIT), leading to silly warnings
 static void dumpChain(ExecState* exec, StructureChain* chain, Identifier& ident)
 {
     dataLog("chain = %p: [", chain);
@@ -255,6 +258,7 @@ static void dumpChain(ExecState* exec, StructureChain* chain, Identifier& ident)
     }
     dataLog("]");
 }
+#endif
 
 void CodeBlock::printGetByIdCacheStatus(ExecState* exec, int location)
 {
@@ -264,6 +268,8 @@ void CodeBlock::printGetByIdCacheStatus(ExecState* exec, int location)
         instruction++;
     
     Identifier& ident = identifier(instruction[3].u.operand);
+    
+    UNUSED_PARAM(ident); // tell the compiler to shut up in certain platform configurations.
     
 #if ENABLE(LLINT)
     Structure* structure = instruction[4].u.structure.get();
@@ -928,10 +934,26 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             it++;
             break;
         }
+        case op_get_global_var_watchable: {
+            int r0 = (++it)->u.operand;
+            WriteBarrier<Unknown>* registerPointer = (++it)->u.registerPointer;
+            dataLog("[%4d] get_global_var_watchable\t %s, g%d(%p)\n", location, registerName(exec, r0).data(), m_globalObject->findRegisterIndex(registerPointer), registerPointer);
+            it++;
+            it++;
+            break;
+        }
         case op_put_global_var: {
             WriteBarrier<Unknown>* registerPointer = (++it)->u.registerPointer;
             int r0 = (++it)->u.operand;
             dataLog("[%4d] put_global_var\t g%d(%p), %s\n", location, m_globalObject->findRegisterIndex(registerPointer), registerPointer, registerName(exec, r0).data());
+            break;
+        }
+        case op_put_global_var_check: {
+            WriteBarrier<Unknown>* registerPointer = (++it)->u.registerPointer;
+            int r0 = (++it)->u.operand;
+            dataLog("[%4d] put_global_var_check\t g%d(%p), %s\n", location, m_globalObject->findRegisterIndex(registerPointer), registerPointer, registerName(exec, r0).data());
+            it++;
+            it++;
             break;
         }
         case op_resolve_base: {
@@ -1306,7 +1328,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_call_put_result: {
             int r0 = (++it)->u.operand;
-            dataLog("[%4d] op_call_put_result\t\t %s\n", location, registerName(exec, r0).data());
+            dataLog("[%4d] call_put_result\t\t %s\n", location, registerName(exec, r0).data());
             it++;
             break;
         }

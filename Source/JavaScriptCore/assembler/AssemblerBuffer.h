@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,11 @@
 
 #if ENABLE(ASSEMBLER)
 
+#include "ExecutableAllocator.h"
 #include "JITCompilationEffort.h"
 #include "JSGlobalData.h"
 #include "stdint.h"
 #include <string.h>
-#include <jit/ExecutableAllocator.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>

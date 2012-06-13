@@ -1234,6 +1234,9 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     // Does the code block's size match the heuristics/requirements for being
     // an inline candidate?
     CodeBlock* profiledBlock = executable->profiledCodeBlockFor(kind);
+    if (!profiledBlock)
+        return false;
+    
     if (!mightInlineFunctionFor(profiledBlock, kind))
         return false;
     
@@ -2251,12 +2254,60 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_get_global_var: {
             SpeculatedType prediction = getPrediction();
             
+            JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
+
             NodeIndex getGlobalVar = addToGraph(
                 GetGlobalVar,
-                OpInfo(m_inlineStackTop->m_codeBlock->globalObject()->assertRegisterIsInThisObject(currentInstruction[2].u.registerPointer)),
+                OpInfo(globalObject->assertRegisterIsInThisObject(currentInstruction[2].u.registerPointer)),
                 OpInfo(prediction));
             set(currentInstruction[1].u.operand, getGlobalVar);
             NEXT_OPCODE(op_get_global_var);
+        }
+                    
+        case op_get_global_var_watchable: {
+            SpeculatedType prediction = getPrediction();
+            
+            JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
+            
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
+            Identifier identifier = m_codeBlock->identifier(identifierNumber);
+            SymbolTableEntry entry = globalObject->symbolTable().get(identifier.impl());
+            if (!entry.couldBeWatched()) {
+                NodeIndex getGlobalVar = addToGraph(
+                    GetGlobalVar,
+                    OpInfo(globalObject->assertRegisterIsInThisObject(currentInstruction[2].u.registerPointer)),
+                    OpInfo(prediction));
+                set(currentInstruction[1].u.operand, getGlobalVar);
+                NEXT_OPCODE(op_get_global_var_watchable);
+            }
+            
+            // The watchpoint is still intact! This means that we will get notified if the
+            // current value in the global variable changes. So, we can inline that value.
+            // Moreover, currently we can assume that this value is a JSFunction*, which
+            // implies that it's a cell. This simplifies things, since in general we'd have
+            // to use a JSConstant for non-cells and a WeakJSConstant for cells. So instead
+            // of having both cases we just assert that the value is a cell.
+            
+            // NB. If it wasn't for CSE, GlobalVarWatchpoint would have no need for the
+            // register pointer. But CSE tracks effects on global variables by comparing
+            // register pointers. Because CSE executes multiple times while the backend
+            // executes once, we use the following performance trade-off:
+            // - The node refers directly to the register pointer to make CSE super cheap.
+            // - To perform backend code generation, the node only contains the identifier
+            //   number, from which it is possible to get (via a few average-time O(1)
+            //   lookups) to the WatchpointSet.
+            
+            addToGraph(
+                GlobalVarWatchpoint,
+                OpInfo(globalObject->assertRegisterIsInThisObject(currentInstruction[2].u.registerPointer)),
+                OpInfo(identifierNumber));
+            
+            JSValue specificValue = globalObject->registerAt(entry.getIndex()).get();
+            ASSERT(specificValue.isCell());
+            set(currentInstruction[1].u.operand,
+                addToGraph(WeakJSConstant, OpInfo(specificValue.asCell())));
+            
+            NEXT_OPCODE(op_get_global_var_watchable);
         }
 
         case op_put_global_var: {
@@ -2266,6 +2317,28 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 OpInfo(m_inlineStackTop->m_codeBlock->globalObject()->assertRegisterIsInThisObject(currentInstruction[1].u.registerPointer)),
                 value);
             NEXT_OPCODE(op_put_global_var);
+        }
+
+        case op_put_global_var_check: {
+            NodeIndex value = get(currentInstruction[2].u.operand);
+            CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
+            JSGlobalObject* globalObject = codeBlock->globalObject();
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[4].u.operand];
+            Identifier identifier = m_codeBlock->identifier(identifierNumber);
+            SymbolTableEntry entry = globalObject->symbolTable().get(identifier.impl());
+            if (!entry.couldBeWatched()) {
+                addToGraph(
+                    PutGlobalVar,
+                    OpInfo(globalObject->assertRegisterIsInThisObject(currentInstruction[1].u.registerPointer)),
+                    value);
+                NEXT_OPCODE(op_put_global_var_check);
+            }
+            addToGraph(
+                PutGlobalVarCheck,
+                OpInfo(codeBlock->globalObject()->assertRegisterIsInThisObject(currentInstruction[1].u.registerPointer)),
+                OpInfo(identifierNumber),
+                value);
+            NEXT_OPCODE(op_put_global_var_check);
         }
 
         // === Block terminators. ===

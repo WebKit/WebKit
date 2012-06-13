@@ -1149,6 +1149,13 @@ public:
         return branchTest32(cond, dataTempRegister, mask);
     }
 
+    Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        move(TrustedImmPtr(address.m_ptr), dataTempRegister);
+        load8(Address(dataTempRegister), dataTempRegister);
+        return branchTest32(cond, dataTempRegister, mask);
+    }
+
     Jump jump()
     {
         return branchEqual(MIPSRegisters::zero, MIPSRegisters::zero);
@@ -1866,6 +1873,17 @@ public:
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
         return FunctionPtr(reinterpret_cast<void(*)()>(MIPSAssembler::readCallTarget(call.dataLocation())));
+    }
+
+    static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
+    {
+        ASSERT_NOT_REACHED();
+    }
+    
+    static ptrdiff_t maxJumpReplacementSize()
+    {
+        ASSERT_NOT_REACHED();
+        return 0;
     }
 
 private:

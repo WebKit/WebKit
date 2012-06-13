@@ -141,6 +141,8 @@ namespace JSC { namespace DFG {
     macro(PutScopedVar, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetGlobalVar, NodeResultJS | NodeMustGenerate) \
     macro(PutGlobalVar, NodeMustGenerate) \
+    macro(GlobalVarWatchpoint, NodeMustGenerate) \
+    macro(PutGlobalVarCheck, NodeMustGenerate) \
     macro(CheckFunction, NodeMustGenerate) \
     \
     /* Optimizations for array mutation. */\

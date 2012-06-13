@@ -96,6 +96,7 @@ struct OSRExit {
     CodeOrigin m_codeOriginForExitProfile;
     
     unsigned m_recoveryIndex;
+    unsigned m_watchpointIndex;
     
     ExitKind m_kind;
     uint32_t m_count;

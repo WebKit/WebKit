@@ -514,6 +514,13 @@ public:
         return branchTest32(cond, ARMRegisters::S1, mask);
     }
 
+    Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        move(TrustedImmPtr(address.m_ptr), ARMRegisters::S1);
+        load8(Address(ARMRegisters::S1), ARMRegisters::S1);
+        return branchTest32(cond, ARMRegisters::S1, mask);
+    }
+
     Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         ASSERT((cond == Zero) || (cond == NonZero));
@@ -1008,6 +1015,17 @@ public:
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
         return FunctionPtr(reinterpret_cast<void(*)()>(ARMAssembler::readCallTarget(call.dataLocation())));
+    }
+
+    static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
+    {
+        ASSERT_NOT_REACHED();
+    }
+    
+    static ptrdiff_t maxJumpReplacementSize()
+    {
+        ASSERT_NOT_REACHED();
+        return 0;
     }
 
 protected:

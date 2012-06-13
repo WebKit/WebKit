@@ -1293,6 +1293,16 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         return jmp;
     }
 
+    Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        RegisterID addressTempRegister = claimScratch();
+        move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+        load8(Address(addressTempRegister), addressTempRegister);
+        Jump jmp = branchTest32(cond, addressTempRegister, mask);
+        releaseScratch(addressTempRegister);
+        return jmp;
+    }
+
     void signExtend32ToPtr(RegisterID src, RegisterID dest)
     {
         if (src != dest)
@@ -1969,6 +1979,17 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     static FunctionPtr readCallTarget(CodeLocationCall call)
     {
         return FunctionPtr(reinterpret_cast<void(*)()>(SH4Assembler::readCallTarget(call.dataLocation())));
+    }
+
+    static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
+    {
+        ASSERT_NOT_REACHED();
+    }
+    
+    static ptrdiff_t maxJumpReplacementSize()
+    {
+        ASSERT_NOT_REACHED();
+        return 0;
     }
 
 protected:

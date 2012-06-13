@@ -483,6 +483,12 @@ public:
         JumpLinkType m_linkType : 8;
         Condition m_condition : 16;
     };
+    
+    ARMv7Assembler()
+        : m_indexOfLastWatchpoint(INT_MIN)
+        , m_indexOfTailOfLastWatchpoint(INT_MIN)
+    {
+    }
 
 private:
 
@@ -1820,10 +1826,25 @@ public:
     {
         m_formatter.oneWordOp8Imm8(OP_NOP_T1, 0);
     }
+    
+    AssemblerLabel labelForWatchpoint()
+    {
+        AssemblerLabel result = m_formatter.label();
+        if (static_cast<int>(result.m_offset) != m_indexOfLastWatchpoint)
+            result = label();
+        m_indexOfLastWatchpoint = result.m_offset;
+        m_indexOfTailOfLastWatchpoint = result.m_offset + maxJumpReplacementSize();
+        return result;
+    }
 
     AssemblerLabel label()
     {
-        return m_formatter.label();
+        AssemblerLabel result = m_formatter.label();
+        while (UNLIKELY(static_cast<int>(result.m_offset) < m_indexOfTailOfLastWatchpoint)) {
+            nop();
+            result = m_formatter.label();
+        }
+        return result;
     }
     
     AssemblerLabel align(int alignment)
@@ -2066,6 +2087,30 @@ public:
     static void* readPointer(void* where)
     {
         return reinterpret_cast<void*>(readInt32(where));
+    }
+    
+    static void replaceWithJump(void* instructionStart, void* to)
+    {
+        ASSERT(!(bitwise_cast<uintptr_t>(instructionStart) & 1));
+        ASSERT(!(bitwise_cast<uintptr_t>(to) & 1));
+        uint16_t* ptr = reinterpret_cast<uint16_t*>(instructionStart) + 2;
+        
+        // Ensure that we're not in one of those errata-triggering thingies. If we are, then
+        // prepend a nop.
+        bool spansTwo4K = ((reinterpret_cast<intptr_t>(ptr) & 0xfff) == 0x002);
+        
+        if (spansTwo4K) {
+            ptr[-2] = OP_NOP_T1;
+            ptr++;
+        }
+
+        linkJumpT4(ptr, to);
+        cacheFlush(ptr - 2, sizeof(uint16_t) * 2);
+    }
+    
+    static ptrdiff_t maxJumpReplacementSize()
+    {
+        return 6;
     }
 
     unsigned debugOffset() { return m_formatter.debugOffset(); }
@@ -2604,6 +2649,8 @@ private:
 
     Vector<LinkRecord> m_jumpsToLink;
     Vector<int32_t> m_offsets;
+    int m_indexOfLastWatchpoint;
+    int m_indexOfTailOfLastWatchpoint;
 };
 
 } // namespace JSC

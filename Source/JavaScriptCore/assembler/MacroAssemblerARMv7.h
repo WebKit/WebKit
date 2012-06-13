@@ -608,7 +608,7 @@ public:
 
     void load8Signed(ImplicitAddress, RegisterID)
     {
-        unreachableForPlatform();
+        UNREACHABLE_FOR_PLATFORM();
     }
 
     void load8(BaseIndex address, RegisterID dest)
@@ -674,7 +674,7 @@ public:
     
     void load16Signed(ImplicitAddress, RegisterID)
     {
-        unreachableForPlatform();
+        UNREACHABLE_FOR_PLATFORM();
     }
 
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
@@ -1186,6 +1186,16 @@ public:
     {
         m_assembler.nop();
     }
+    
+    static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
+    {
+        ARMv7Assembler::replaceWithJump(instructionStart.dataLocation(), destination.dataLocation());
+    }
+    
+    static ptrdiff_t maxJumpReplacementSize()
+    {
+        return ARMv7Assembler::maxJumpReplacementSize();
+    }
 
     // Forwards / external control flow operations:
     //
@@ -1353,6 +1363,14 @@ public:
     {
         // use addressTempRegister incase the branchTest8 we call uses dataTempRegister. :-/
         load8(address, addressTempRegister);
+        return branchTest32(cond, addressTempRegister, mask);
+    }
+
+    Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        // use addressTempRegister incase the branchTest8 we call uses dataTempRegister. :-/
+        move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+        load8(Address(addressTempRegister), addressTempRegister);
         return branchTest32(cond, addressTempRegister, mask);
     }
 
@@ -1679,12 +1697,14 @@ public:
 protected:
     ALWAYS_INLINE Jump jump()
     {
+        m_assembler.label(); // Force nop-padding if we're in the middle of a watchpoint.
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
         return Jump(m_assembler.bx(dataTempRegister), m_makeJumpPatchable ? ARMv7Assembler::JumpNoConditionFixedSize : ARMv7Assembler::JumpNoCondition);
     }
 
     ALWAYS_INLINE Jump makeBranch(ARMv7Assembler::Condition cond)
     {
+        m_assembler.label(); // Force nop-padding if we're in the middle of a watchpoint.
         m_assembler.it(cond, true, true);
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
         return Jump(m_assembler.bx(dataTempRegister), m_makeJumpPatchable ? ARMv7Assembler::JumpConditionFixedSize : ARMv7Assembler::JumpCondition, cond);

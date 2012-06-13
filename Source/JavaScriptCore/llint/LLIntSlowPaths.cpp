@@ -475,8 +475,10 @@ LLINT_SLOW_PATH_DECL(slow_path_convert_this)
     LLINT_BEGIN();
     JSValue v1 = LLINT_OP(1).jsValue();
     ASSERT(v1.isPrimitive());
+#if ENABLE(VALUE_PROFILER)
     pc[OPCODE_LENGTH(op_convert_this) - 1].u.profile->m_buckets[0] =
         JSValue::encode(v1.structureOrUndefined());
+#endif
     LLINT_RETURN(v1.toThisObject(exec));
 }
 
@@ -853,6 +855,14 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve_with_this)
     LLINT_CHECK_EXCEPTION();
     LLINT_OP(2) = result;
     // FIXME: technically should have profiling, but we don't do it because the DFG won't use it.
+    LLINT_END();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_put_global_var_check)
+{
+    LLINT_BEGIN();
+    CodeBlock* codeBlock = exec->codeBlock();
+    symbolTablePut(codeBlock->globalObject(), exec, codeBlock->identifier(pc[4].u.operand), LLINT_OP_C(2).jsValue(), true);
     LLINT_END();
 }
 

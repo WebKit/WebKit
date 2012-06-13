@@ -2871,6 +2871,18 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         vPC += OPCODE_LENGTH(op_get_global_var);
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_get_global_var_watchable) {
+        /* get_global_var_watchable dst(r) globalObject(c) registerPointer(n)
+
+           Gets the global var at global slot index and places it in register dst.
+         */
+        int dst = vPC[1].u.operand;
+        WriteBarrier<Unknown>* registerPointer = vPC[2].u.registerPointer;
+
+        callFrame->uncheckedR(dst) = registerPointer->get();
+        vPC += OPCODE_LENGTH(op_get_global_var_watchable);
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_put_global_var) {
         /* put_global_var globalObject(c) registerPointer(n) value(r)
          
@@ -2883,6 +2895,22 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         
         registerPointer->set(*globalData, scope, callFrame->r(value).jsValue());
         vPC += OPCODE_LENGTH(op_put_global_var);
+        NEXT_INSTRUCTION();
+    }
+    DEFINE_OPCODE(op_put_global_var_check) {
+        /* put_global_var_check globalObject(c) registerPointer(n) value(r)
+         
+           Puts value into global slot index. In JIT configurations this will
+           perform a watchpoint check. If we're running with the old interpreter,
+           this is not necessary; the interpreter never uses these watchpoints.
+         */
+        JSGlobalObject* scope = codeBlock->globalObject();
+        ASSERT(scope->isGlobalObject());
+        WriteBarrier<Unknown>* registerPointer = vPC[1].u.registerPointer;
+        int value = vPC[2].u.operand;
+        
+        registerPointer->set(*globalData, scope, callFrame->r(value).jsValue());
+        vPC += OPCODE_LENGTH(op_put_global_var_check);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_get_scoped_var) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@ namespace JSC {
 
 class LinkBuffer;
 class RepatchBuffer;
+class Watchpoint;
 namespace DFG {
 class CorrectableJumpPoint;
 }
@@ -69,7 +70,6 @@ public:
     //
     // The following types are used as operands to MacroAssembler operations,
     // describing immediate  and memory operands to the instructions to be planted.
-
 
     enum Scale {
         TimesOne,
@@ -279,6 +279,7 @@ public:
         friend class Jump;
         friend class MacroAssemblerCodeRef;
         friend class LinkBuffer;
+        friend class Watchpoint;
 
     public:
         Label()
@@ -559,6 +560,13 @@ public:
         return Label(this);
     }
     
+    Label watchpointLabel()
+    {
+        Label result;
+        result.m_label = m_assembler.labelForWatchpoint();
+        return result;
+    }
+    
     Label align()
     {
         m_assembler.align(16);
@@ -654,18 +662,6 @@ protected:
     static void* readPointer(CodeLocationDataLabelPtr dataLabelPtr)
     {
         return AssemblerType::readPointer(dataLabelPtr.dataLocation());
-    }
-    
-    static void unreachableForPlatform()
-    {
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-        ASSERT_NOT_REACHED();
-#pragma clang diagnostic pop
-#else
-        ASSERT_NOT_REACHED();
-#endif
     }
 };
 

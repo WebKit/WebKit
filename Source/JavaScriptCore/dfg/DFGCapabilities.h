@@ -123,7 +123,9 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
     case op_put_by_id_transition_direct:
     case op_put_by_id_transition_normal:
     case op_get_global_var:
+    case op_get_global_var_watchable:
     case op_put_global_var:
+    case op_put_global_var_check:
     case op_jmp:
     case op_loop:
     case op_jtrue:

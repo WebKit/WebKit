@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -512,6 +512,12 @@ public:
         TrustedImmPtr addr(reinterpret_cast<void*>(address.offset));
         MacroAssemblerX86Common::move(addr, scratchRegister);
         return MacroAssemblerX86Common::branchTest8(cond, BaseIndex(scratchRegister, address.base, TimesOne), mask);
+    }
+    
+    Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        MacroAssemblerX86Common::move(TrustedImmPtr(address.m_ptr), scratchRegister);
+        return MacroAssemblerX86Common::branchTest8(cond, Address(scratchRegister), mask);
     }
 
     static bool supportsFloatingPoint() { return true; }

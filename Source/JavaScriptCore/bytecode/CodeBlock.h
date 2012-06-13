@@ -62,6 +62,7 @@
 #include "UString.h"
 #include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
+#include "Watchpoint.h"
 #include <wtf/RefCountedArray.h>
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
@@ -273,10 +274,12 @@ namespace JSC {
             return result;
         }
         
-        void appendOSRExit(const DFG::OSRExit& osrExit)
+        unsigned appendOSRExit(const DFG::OSRExit& osrExit)
         {
             createDFGDataIfNecessary();
+            unsigned result = m_dfgData->osrExit.size();
             m_dfgData->osrExit.append(osrExit);
+            return result;
         }
         
         DFG::OSRExit& lastOSRExit()
@@ -284,10 +287,20 @@ namespace JSC {
             return m_dfgData->osrExit.last();
         }
         
-        void appendSpeculationRecovery(const DFG::SpeculationRecovery& recovery)
+        unsigned appendSpeculationRecovery(const DFG::SpeculationRecovery& recovery)
         {
             createDFGDataIfNecessary();
+            unsigned result = m_dfgData->speculationRecovery.size();
             m_dfgData->speculationRecovery.append(recovery);
+            return result;
+        }
+        
+        unsigned appendWatchpoint(const Watchpoint& watchpoint)
+        {
+            createDFGDataIfNecessary();
+            unsigned result = m_dfgData->watchpoints.size();
+            m_dfgData->watchpoints.append(watchpoint);
+            return result;
         }
         
         unsigned numberOfOSRExits()
@@ -304,6 +317,13 @@ namespace JSC {
             return m_dfgData->speculationRecovery.size();
         }
         
+        unsigned numberOfWatchpoints()
+        {
+            if (!m_dfgData)
+                return 0;
+            return m_dfgData->watchpoints.size();
+        }
+        
         DFG::OSRExit& osrExit(unsigned index)
         {
             return m_dfgData->osrExit[index];
@@ -312,6 +332,11 @@ namespace JSC {
         DFG::SpeculationRecovery& speculationRecovery(unsigned index)
         {
             return m_dfgData->speculationRecovery[index];
+        }
+        
+        Watchpoint& watchpoint(unsigned index)
+        {
+            return m_dfgData->watchpoints[index];
         }
         
         void appendWeakReference(JSCell* target)
@@ -1238,6 +1263,7 @@ namespace JSC {
             Vector<DFG::OSREntryData> osrEntry;
             SegmentedVector<DFG::OSRExit, 8> osrExit;
             Vector<DFG::SpeculationRecovery> speculationRecovery;
+            SegmentedVector<Watchpoint, 1, 0> watchpoints;
             Vector<WeakReferenceTransition> transitions;
             Vector<WriteBarrier<JSCell> > weakReferences;
             bool mayBeExecuting;

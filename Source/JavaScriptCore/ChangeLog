@@ -1,3 +1,325 @@
+2012-06-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to set watchpoints on global variables
+        https://bugs.webkit.org/show_bug.cgi?id=88692
+
+        Reviewed by Geoffrey Garen.
+        
+        Rolling back in after fixing Windows build issues, and implementing
+        branchTest8 for the Qt port's strange assemblers.
+        
+        This implements global variable constant folding by allowing the optimizing
+        compiler to set a "watchpoint" on globals that it wishes to constant fold.
+        If the watchpoint fires, then an OSR exit is forced by overwriting the
+        machine code that the optimizing compiler generated with a jump.
+        
+        As such, this patch is adding quite a bit of stuff:
+        
+        - Jump replacement on those hardware targets supported by the optimizing
+          JIT. It is now possible to patch in a jump instruction over any recorded
+          watchpoint label. The jump must be "local" in the sense that it must be
+          within the range of the largest jump distance supported by a one
+          instruction jump.
+          
+        - WatchpointSets and Watchpoints. A Watchpoint is a doubly-linked list node
+          that records the location where a jump must be inserted and the
+          destination to which it should jump. Watchpoints can be added to a
+          WatchpointSet. The WatchpointSet can be fired all at once, which plants
+          all jumps. WatchpointSet also remembers if it had ever been invalidated,
+          which allows for monotonicity: we typically don't want to optimize using
+          watchpoints on something for which watchpoints had previously fired. The
+          act of notifying a WatchpointSet has a trivial fast path in case no
+          Watchpoints are registered (one-byte load+branch).
+        
+        - SpeculativeJIT::speculationWatchpoint(). It's like speculationCheck(),
+          except that you don't have to emit branches. But, you need to know what
+          WatchpointSet to add the resulting Watchpoint to. Not everything that
+          you could write a speculationCheck() for will have a WatchpointSet that
+          would get notified if the condition you were speculating against became
+          invalid.
+          
+        - SymbolTableEntry now has the ability to refer to a WatchpointSet. It can
+          do so without incurring any space overhead for those entries that don't
+          have WatchpointSets.
+          
+        - The bytecode generator infers all global function variables to be
+          watchable, and makes all stores perform the WatchpointSet's write check,
+          and marks all loads as being potentially watchable (i.e. you can compile
+          them to a watchpoint and a constant).
+        
+        Put together, this allows for fully sleazy inlining of calls to globally
+        declared functions. The inline prologue will no longer contain the load of
+        the function, or any checks of the function you're calling. I.e. it's
+        pretty much like the kind of inlining you would see in Java or C++.
+        Furthermore, the watchpointing functionality is built to be fairly general,
+        and should allow setting watchpoints on all sorts of interesting things
+        in the future.
+        
+        The sleazy inlining means that we will now sometimes inline in code paths
+        that have never executed. Previously, to inline we would have either had
+        to have executed the call (to read the call's inline cache) or have
+        executed the method check (to read the method check's inline cache). Now,
+        we might inline when the callee is a watched global variable. This
+        revealed some humorous bugs. First, constant folding disagreed with CFA
+        over what kinds of operations can clobber (example: code path A is dead
+        but stores a String into variable X, all other code paths store 0 into
+        X, and then you do CompareEq(X, 0) - CFA will say that this is a non-
+        clobbering constant, but constant folding thought it was clobbering
+        because it saw the String prediction). Second, inlining would crash if
+        the inline callee had not been compiled. This patch fixes both bugs,
+        since otherwise run-javascriptcore-tests would report regressions.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler):
+        (JSC::ARMv7Assembler::ARMv7Assembler):
+        (JSC::ARMv7Assembler::labelForWatchpoint):
+        (JSC::ARMv7Assembler::label):
+        (JSC::ARMv7Assembler::replaceWithJump):
+        (JSC::ARMv7Assembler::maxJumpReplacementSize):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC):
+        (AbstractMacroAssembler):
+        (Label):
+        (JSC::AbstractMacroAssembler::watchpointLabel):
+        (JSC::AbstractMacroAssembler::readPointer):
+        * assembler/AssemblerBuffer.h:
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branchTest8):
+        (MacroAssemblerARM):
+        (JSC::MacroAssemblerARM::replaceWithJump):
+        (JSC::MacroAssemblerARM::maxJumpReplacementSize):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load8Signed):
+        (JSC::MacroAssemblerARMv7::load16Signed):
+        (MacroAssemblerARMv7):
+        (JSC::MacroAssemblerARMv7::replaceWithJump):
+        (JSC::MacroAssemblerARMv7::maxJumpReplacementSize):
+        (JSC::MacroAssemblerARMv7::branchTest8):
+        (JSC::MacroAssemblerARMv7::jump):
+        (JSC::MacroAssemblerARMv7::makeBranch):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchTest8):
+        (MacroAssemblerMIPS):
+        (JSC::MacroAssemblerMIPS::replaceWithJump):
+        (JSC::MacroAssemblerMIPS::maxJumpReplacementSize):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::branchTest8):
+        (MacroAssemblerSH4):
+        (JSC::MacroAssemblerSH4::replaceWithJump):
+        (JSC::MacroAssemblerSH4::maxJumpReplacementSize):
+        * assembler/MacroAssemblerX86.h:
+        (MacroAssemblerX86):
+        (JSC::MacroAssemblerX86::branchTest8):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::replaceWithJump):
+        (MacroAssemblerX86Common):
+        (JSC::MacroAssemblerX86Common::maxJumpReplacementSize):
+        * assembler/MacroAssemblerX86_64.h:
+        (MacroAssemblerX86_64):
+        (JSC::MacroAssemblerX86_64::branchTest8):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::X86Assembler):
+        (X86Assembler):
+        (JSC::X86Assembler::cmpb_im):
+        (JSC::X86Assembler::testb_im):
+        (JSC::X86Assembler::labelForWatchpoint):
+        (JSC::X86Assembler::label):
+        (JSC::X86Assembler::replaceWithJump):
+        (JSC::X86Assembler::maxJumpReplacementSize):
+        (JSC::X86Assembler::X86InstructionFormatter::memoryModRM):
+        * bytecode/CodeBlock.cpp:
+        (JSC):
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        (JSC::CodeBlock::dump):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::appendOSRExit):
+        (JSC::CodeBlock::appendSpeculationRecovery):
+        (CodeBlock):
+        (JSC::CodeBlock::appendWatchpoint):
+        (JSC::CodeBlock::numberOfWatchpoints):
+        (JSC::CodeBlock::watchpoint):
+        (DFGData):
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::exitKindToString):
+        (JSC::DFG::exitKindIsCountable):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForChain):
+        * bytecode/Instruction.h:
+        (Instruction):
+        (JSC::Instruction::Instruction):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecode/Watchpoint.cpp: Added.
+        (JSC):
+        (JSC::Watchpoint::~Watchpoint):
+        (JSC::Watchpoint::correctLabels):
+        (JSC::Watchpoint::fire):
+        (JSC::WatchpointSet::WatchpointSet):
+        (JSC::WatchpointSet::~WatchpointSet):
+        (JSC::WatchpointSet::add):
+        (JSC::WatchpointSet::notifyWriteSlow):
+        (JSC::WatchpointSet::fireAllWatchpoints):
+        * bytecode/Watchpoint.h: Added.
+        (JSC):
+        (Watchpoint):
+        (JSC::Watchpoint::Watchpoint):
+        (JSC::Watchpoint::setDestination):
+        (WatchpointSet):
+        (JSC::WatchpointSet::isStillValid):
+        (JSC::WatchpointSet::hasBeenInvalidated):
+        (JSC::WatchpointSet::startWatching):
+        (JSC::WatchpointSet::notifyWrite):
+        (JSC::WatchpointSet::addressOfIsWatched):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::ResolveResult::checkValidity):
+        (JSC::BytecodeGenerator::addGlobalVar):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::resolve):
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+        (JSC::BytecodeGenerator::emitResolveWithThis):
+        (JSC::BytecodeGenerator::emitGetStaticVar):
+        (JSC::BytecodeGenerator::emitPutStaticVar):
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::PostfixResolveNode::emitBytecode):
+        (JSC::PrefixResolveNode::emitBytecode):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::clobberStructures):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+        (JSC::DFG::AbstractState::didClobber):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCCallHelpers.h:
+        (CCallHelpers):
+        (JSC::DFG::CCallHelpers::setupArguments):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::globalVarWatchpointElimination):
+        (CSEPhase):
+        (JSC::DFG::CSEPhase::globalVarStoreElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::run):
+        * dfg/DFGCorrectableJumpPoint.h:
+        (JSC::DFG::CorrectableJumpPoint::isSet):
+        (CorrectableJumpPoint):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasIdentifierNumberForCheck):
+        (Node):
+        (JSC::DFG::Node::identifierNumberForCheck):
+        (JSC::DFG::Node::hasRegisterPointer):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        * dfg/DFGOSRExit.h:
+        (OSRExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::appendCall):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::speculationWatchpoint):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_global_var_check):
+        (JSC):
+        (JSC::JIT::emitSlow_op_put_global_var_check):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_global_var_check):
+        (JSC):
+        (JSC::JIT::emitSlow_op_put_global_var_check):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC):
+        * jit/JITStubs.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (LLInt):
+        * llint/LLIntSlowPaths.h:
+        (LLInt):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::removeDirect):
+        * runtime/JSObject.h:
+        (JSObject):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutWithAttributes):
+        * runtime/SymbolTable.cpp: Added.
+        (JSC):
+        (JSC::SymbolTableEntry::copySlow):
+        (JSC::SymbolTableEntry::freeFatEntrySlow):
+        (JSC::SymbolTableEntry::couldBeWatched):
+        (JSC::SymbolTableEntry::attemptToWatch):
+        (JSC::SymbolTableEntry::addressOfIsWatched):
+        (JSC::SymbolTableEntry::addWatchpoint):
+        (JSC::SymbolTableEntry::notifyWriteSlow):
+        (JSC::SymbolTableEntry::inflateSlow):
+        * runtime/SymbolTable.h:
+        (JSC):
+        (SymbolTableEntry):
+        (Fast):
+        (JSC::SymbolTableEntry::Fast::Fast):
+        (JSC::SymbolTableEntry::Fast::isNull):
+        (JSC::SymbolTableEntry::Fast::getIndex):
+        (JSC::SymbolTableEntry::Fast::isReadOnly):
+        (JSC::SymbolTableEntry::Fast::getAttributes):
+        (JSC::SymbolTableEntry::Fast::isFat):
+        (JSC::SymbolTableEntry::SymbolTableEntry):
+        (JSC::SymbolTableEntry::~SymbolTableEntry):
+        (JSC::SymbolTableEntry::operator=):
+        (JSC::SymbolTableEntry::isNull):
+        (JSC::SymbolTableEntry::getIndex):
+        (JSC::SymbolTableEntry::getFast):
+        (JSC::SymbolTableEntry::getAttributes):
+        (JSC::SymbolTableEntry::isReadOnly):
+        (JSC::SymbolTableEntry::watchpointSet):
+        (JSC::SymbolTableEntry::notifyWrite):
+        (FatEntry):
+        (JSC::SymbolTableEntry::FatEntry::FatEntry):
+        (JSC::SymbolTableEntry::isFat):
+        (JSC::SymbolTableEntry::fatEntry):
+        (JSC::SymbolTableEntry::inflate):
+        (JSC::SymbolTableEntry::bits):
+        (JSC::SymbolTableEntry::freeFatEntry):
+        (JSC::SymbolTableEntry::pack):
+        (JSC::SymbolTableEntry::isValidIndex):
+
 2012-06-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120172.

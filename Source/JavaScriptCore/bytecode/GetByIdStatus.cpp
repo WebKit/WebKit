@@ -98,7 +98,7 @@ void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBl
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(ident);
     UNUSED_PARAM(structure);
-    ASSERT_NOT_REACHED();
+    UNREACHABLE_FOR_PLATFORM();
 #endif
 }
 
