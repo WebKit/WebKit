@@ -11,9 +11,9 @@ body[style] { }
 <pre id="console"></pre>
 <script>
 document.getElementById("target").addEventListener("textInput", function (evt) { evt.target.style.width = 100; });
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     window.target = document.getElementById("target");
     window.setTimeout(function() {
         window.target.focus();

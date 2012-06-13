@@ -20,8 +20,8 @@
         document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var fail = false;
     var pie = document.getElementById("pie");

@@ -10,11 +10,11 @@ in an editable area in an xhtml document and verifies that no script, handlers o
 <div id="pastehere" contenteditable="true"></div>
 <ul id="console"></ul>
 <script>
-if (window.layoutTestController)
-     window.layoutTestController.dumpAsText();
+if (window.testRunner)
+     window.testRunner.dumpAsText();
 
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
 
 function foo() {
     var frame = frames[0];
@@ -30,8 +30,8 @@ function foo() {
     document.execCommand("Paste");
     log(document.getElementById("pastehere").innerHTML);
 
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 
 function log(str) {

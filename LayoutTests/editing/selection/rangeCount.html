@@ -12,8 +12,8 @@ function log(str) {
 function runTest() {
     
     try {
-        if (window.layoutTestController)
-            window.layoutTestController.dumpAsText();
+        if (window.testRunner)
+            window.testRunner.dumpAsText();
             
         var div = document.getElementById("div");
         var text = div.firstChild;

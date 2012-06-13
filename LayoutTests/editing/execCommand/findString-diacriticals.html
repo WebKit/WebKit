@@ -10,8 +10,8 @@
     FAIL
 </p>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     if (document.execCommand("FindString", false, "Sel" + String.fromCharCode(0x00CB) + "ct"))
         document.getElementById("result").innerText = "PASS";
 </script>

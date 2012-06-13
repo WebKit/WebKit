@@ -16,14 +16,14 @@ function handleMouseUp() {
     log("Success!");
 }
 
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
     
 input = document.getElementById("input");
 input.setSelectionRange(0, 1);
 input.style.display = "none";
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     eventSender.mouseMoveTo(50, 50);
     eventSender.mouseDown();
     eventSender.mouseUp();

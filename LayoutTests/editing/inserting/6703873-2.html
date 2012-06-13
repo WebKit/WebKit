@@ -23,8 +23,8 @@
         window.getSelection().setPosition(test, 0);
         document.execCommand("InsertNewlineInQuotedContent");
     
-        if (window.layoutTestController) {
-            window.layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            window.testRunner.dumpAsText();
             div = document.getElementById("div");
             div.innerText = div.innerHTML;
         }

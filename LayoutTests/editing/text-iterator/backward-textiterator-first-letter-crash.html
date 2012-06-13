@@ -2,14 +2,14 @@
 div:first-letter { margin-top: 0em; }
 </style>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 function done() {
     document.body.innerHTML = 'PASS if WebKit did not hit assertions';
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <body onload="setTimeout(done, 100);"><div>AB<select autofocus contenteditable>

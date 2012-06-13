@@ -6,8 +6,8 @@
 </div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    window.testRunner.dumpEditingCallbacks();
 var selection = window.getSelection();
 var above = document.getElementById("above").firstChild;
 selection.setPosition(above, 0);

@@ -1,16 +1,16 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 
 <script>
 
 function runTest() {
-    if (window.layoutTestController) {
-        window.layoutTestController.setWindowIsKey(false);
-        window.layoutTestController.setMainFrameIsFirstResponder(false);
+    if (window.testRunner) {
+        window.testRunner.setWindowIsKey(false);
+        window.testRunner.setMainFrameIsFirstResponder(false);
     }
     var s = window.getSelection();
     var e = document.getElementById("selectme");

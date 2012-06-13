@@ -33,10 +33,10 @@ function assertEqual(actual, expected) {
     log += '\n';
 }
  
-if (!window.layoutTestController || !window.eventSender)
+if (!window.testRunner || !window.eventSender)
     document.writeln("This test requires eventSender since the bug does not reproduce reliably when tested manually.");
 else {
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     var description = document.getElementById('description');
     description.style.display = 'none';
  

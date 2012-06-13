@@ -7,8 +7,8 @@
 <div id="target">foo</div>
 <div id="b">baz</div>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var sel = getSelection();
     var start = document.getElementById("target").firstChild;

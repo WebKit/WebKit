@@ -5,8 +5,8 @@
 <form><textarea oninput="this.value == 'ab' ? this.value = '' : null">a</textarea></form>
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var text = document.forms[0].elements[0];
 text.focus();

@@ -3,9 +3,9 @@
         <script>
             function test()
             {
-                if (window.layoutTestController) {
-                    layoutTestController.dumpAsText();
-                    layoutTestController.dumpEditingCallbacks();
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
+                    testRunner.dumpEditingCallbacks();
                 }
                 var ta = document.getElementById('ta');
                 ta.focus();

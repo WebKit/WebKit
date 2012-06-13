@@ -4,9 +4,9 @@
 <script>
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.setAutomaticLinkDetectionEnabled(true);
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setAutomaticLinkDetectionEnabled(true);
     }
 
     var targetDiv = document.getElementById('test');
@@ -20,8 +20,8 @@ function runTest()
     else
         document.getElementById('log').textContent = "Failed: the expected content was '" + expectedContents + "', but the actual result was '" + targetDiv.innerHTML + "'."
 
-    if (window.layoutTestController)
-        layoutTestController.setAutomaticLinkDetectionEnabled(false);
+    if (window.testRunner)
+        testRunner.setAutomaticLinkDetectionEnabled(false);
 }
 
 function pressKey(key)

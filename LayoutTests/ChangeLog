@@ -1,3 +1,32 @@
+2012-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Editing tests should use testRunner instead of layoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=88955
+
+        Reviewed by Darin Adler.
+
+        * editing/:
+        * platform/blackberry/editing/text-iterator/findString-markers.html:
+        * platform/chromium-linux/editing/selection/linux_selection_color.html:
+        * platform/chromium-win/editing/selection/paragraph-granularity-expected.txt:
+        * platform/chromium-win/editing/selection/triple-click-in-pre-expected.txt:
+        * platform/chromium-win/editing/selection/word-granularity-expected.txt:
+        * platform/chromium/editing/spelling/delete-misspelled-word.html:
+        * platform/chromium/editing/spelling/move-cursor-to-misspelled-word.html:
+        * platform/gtk/editing/pasteboard/middle-button-paste.html:
+        * platform/gtk/editing/pasteboard/script-tests/middle-click-onpaste.js:
+        * platform/gtk/editing/selection/caret-mode-document-begin-end.html:
+        * platform/gtk/editing/selection/paragraph-granularity-expected.txt:
+        * platform/gtk/editing/selection/triple-click-in-pre-expected.txt:
+        * platform/gtk/editing/selection/word-granularity-expected.txt:
+        * platform/mac/editing/:
+        * platform/qt/editing/selection/paragraph-granularity-expected.txt:
+        * platform/qt/editing/selection/triple-click-in-pre-expected.txt:
+        * platform/qt/editing/selection/word-granularity-expected.txt:
+        * platform/win/editing/deleting/delete-start-block-expected.txt:
+        * platform/win/editing/pasteboard/pasting-crlf-isnt-translated-to-crcrlf-win.html:
+        * platform/win/editing/selection/shift-page-up-down.html:
+
 2012-06-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to set watchpoints on global variables

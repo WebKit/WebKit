@@ -4,8 +4,8 @@
     <meter id="root" contenteditable><span id="wrapper">xxx</span></meter>
 
     <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var originalContent = root.outerHTML;
     var sel = window.getSelection();

@@ -1,10 +1,10 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-     layoutTestController.dumpAsText();
-     layoutTestController.setSmartInsertDeleteEnabled(false);
-     layoutTestController.setSelectTrailingWhitespaceEnabled(true);
+if (window.testRunner) {
+     testRunner.dumpAsText();
+     testRunner.setSmartInsertDeleteEnabled(false);
+     testRunner.setSelectTrailingWhitespaceEnabled(true);
 }
 
 function getPositionOfNode(id)
@@ -140,7 +140,7 @@ function runTests()
 {
     initConstants();
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         doTest("totest_minimum", "select1");
         // We may have to make EditorClient::isSelectTrailingWhitespaceEnabled false on
         // DumpRenderTree to clarify cases...

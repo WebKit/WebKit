@@ -10,8 +10,8 @@
 <address id="item3">Attempt to apply the current formatting here</address>
 </div>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
 
 Markup.description("This test uses FormatBlock to modify three of the paragraphs below");
 Markup.dump("test", "Before FormatBlock");

@@ -12,8 +12,8 @@
     <script src="resources/paste-blockquote-before-blockquote.js"></script>
     <script>
         function test() {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             copyAndPasteNode("singleNestedNodeToCopy");
         }

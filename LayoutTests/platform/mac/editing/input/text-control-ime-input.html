@@ -41,8 +41,8 @@ function insertText(textarea, text) {
 
 var textarea = document.getElementById('textarea');
 textarea.focus();
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     setMarkedText(textarea, '\u314E', 0, 1);
     setMarkedText(textarea, '\uD638', 0, 1);
     setMarkedText(textarea, '\uD64D', 0, 1);

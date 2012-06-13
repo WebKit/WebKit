@@ -27,8 +27,8 @@ function test(platform, result) {
     document.getElementById(result).innerHTML = window.getSelection().type;
 }
 
-if (window.eventSender && window.layoutTestController && window.internals) {
-    layoutTestController.dumpAsText();
+if (window.eventSender && window.testRunner && window.internals) {
+    testRunner.dumpAsText();
 
     test('mac', 'resultmac');
     test('win', 'resultwin');

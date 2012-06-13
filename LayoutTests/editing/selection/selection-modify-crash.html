@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function test()
@@ -24,8 +24,8 @@ function test()
     // Recreate the HTML element to show 'PASS'.
     document.appendChild(document.createElement('html'));
     document.firstChild.innerHTML = '<body>PASS</body>';
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </head>

@@ -22,8 +22,8 @@ function getPositionOfNode(id)
 }
 
 function runTest() {
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText()
+  if (window.testRunner) {
+    testRunner.dumpAsText()
     var pos = getPositionOfNode("clickTarget");
     // Repeat the test for better reproducability
     var i;

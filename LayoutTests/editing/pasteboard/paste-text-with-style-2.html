@@ -6,8 +6,8 @@ To manually test, copy and paste "hello world" below. WebKit should not nest b, 
 <div id="test" contenteditable><b><i><u><font color="red">hello world</font></u></i></b></div>
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpAsText();
+if (window.testRunner)
+     testRunner.dumpAsText();
 
 Markup.description(document.getElementById('description').textContent);
 

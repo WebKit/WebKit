@@ -7,8 +7,8 @@ WebKit should not crash.</p>
 <span id="test">start<input type=file>end</span>
 <script>
 
-if (window.layoutTestController && window.eventSender) {
-    layoutTestController.dumpAsText();
+if (window.testRunner && window.eventSender) {
+    testRunner.dumpAsText();
 
     var test = document.getElementById('test');
     var input = test.getElementsByTagName('input')[0];

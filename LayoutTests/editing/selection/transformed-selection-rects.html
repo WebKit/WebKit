@@ -17,8 +17,8 @@
 <script src="../editing.js" language="JavaScript" type="text/JavaScript" ></script>
 <script>
 function editingTest() {
-    if (window.layoutTestController)
-        window.layoutTestController.dumpSelectionRect();
+    if (window.testRunner)
+        window.testRunner.dumpSelectionRect();
         
     var testNode = document.getElementById('test');
     setSelectionCommand(testNode, 0, testNode, 0);

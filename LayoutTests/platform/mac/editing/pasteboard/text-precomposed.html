@@ -10,8 +10,8 @@
             document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
         }
 
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
 
             document.body.addEventListener("copy", function(event) {
                 event.preventDefault();

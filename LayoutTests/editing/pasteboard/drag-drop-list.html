@@ -17,10 +17,10 @@ function log(str) {
 }
 
 function runTest() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         log("This can only be run automatically using the layout test engine.  To run it manually, drag 'Dragme' and drop it above 'DropAboveMe'.");
     
-    window.layoutTestController.waitUntilDone();
+    window.testRunner.waitUntilDone();
 
     var drag = document.getElementById("drag");
     var dragx = drag.offsetParent.offsetLeft + drag.offsetLeft + drag.offsetWidth / 2;
@@ -46,7 +46,7 @@ function runTest() {
     eventSender.mouseMoveTo(dropx, dropy);
     eventSender.mouseUp();
     
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
     Markup.description("This tests dropping content onto a list items content when the content is wrapped in a span.  You should see 'DropAboveMe DragMe'. "
         + "See <rdar://4861080>, but note that the expected behavior is different than what's described there, since the rendering bug <rdar://4907469> has been fixed.");
     Markup.dump(editable);

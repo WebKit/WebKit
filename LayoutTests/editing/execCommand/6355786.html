@@ -4,8 +4,8 @@
 over
 newlines</pre>
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 if (!document.execCommand("FindString", false, "test\nover\nbrs"))
     document.body.innerText = "Find with line breaks failed over brs.";
 if (!document.execCommand("FindString", false, "test\nover\ndivs"))

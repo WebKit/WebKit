@@ -2,8 +2,8 @@
 <head>
 <script>
 function editingTest() {
-    if (window.layoutTestController)
-        layoutTestController.dumpEditingCallbacks();
+    if (window.testRunner)
+        testRunner.dumpEditingCallbacks();
 
     var elem = document.getElementById("test").firstChild;
     var selection = window.getSelection();

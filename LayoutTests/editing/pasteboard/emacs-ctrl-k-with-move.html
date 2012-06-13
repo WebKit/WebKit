@@ -20,17 +20,17 @@ Expected result:
 </div>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     document.getElementById("ce").focus();
-    layoutTestController.execCommand("moveDown");
-    layoutTestController.execCommand("deleteToEndOfParagraph");
-    layoutTestController.execCommand("deleteToEndOfParagraph");
-    layoutTestController.execCommand("moveDown");
-    layoutTestController.execCommand("deleteToEndOfParagraph");
-    layoutTestController.execCommand("deleteToEndOfParagraph");
-    layoutTestController.execCommand("moveDown");
-    layoutTestController.execCommand("yank");
+    testRunner.execCommand("moveDown");
+    testRunner.execCommand("deleteToEndOfParagraph");
+    testRunner.execCommand("deleteToEndOfParagraph");
+    testRunner.execCommand("moveDown");
+    testRunner.execCommand("deleteToEndOfParagraph");
+    testRunner.execCommand("deleteToEndOfParagraph");
+    testRunner.execCommand("moveDown");
+    testRunner.execCommand("yank");
 } else
     document.write("This test only runs in automatic mode");
 </script>

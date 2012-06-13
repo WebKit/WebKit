@@ -6,9 +6,9 @@
 <script>
     log("BEFORE: " + document.getElementById("test").innerHTML);
     document.body.focus()
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.execCommand("DeleteForward");
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.execCommand("DeleteForward");
     }
     log("AFTER: " + document.getElementById("test").innerHTML);
     function log(str) {

@@ -9,8 +9,8 @@ after you've made a selection in another frame.</p>
 <div>
 <script>
 window.onload = function() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
         
     var div = frames[0].document.getElementById('input');
     frames[0].getSelection().setBaseAndExtent(div, 0, div, 1);

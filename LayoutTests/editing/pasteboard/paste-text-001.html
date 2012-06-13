@@ -12,8 +12,8 @@ var test = document.getElementById('test');
 test.focus();
 window.getSelection().setPosition(root, 0);
 
-if (window.layoutTestController)
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
 
 for (i = 0; i < 4; i++)
     moveSelectionForwardByCharacterCommand();

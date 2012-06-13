@@ -32,7 +32,7 @@ function runTest(platform, expectedText)
     eventSender.mouseUp();
     // Extending this 5 character selection will select 6 characters on mac,
     // but shrink the selection on win/linux.
-    layoutTestController.execCommand("MoveForwardAndModifySelection");
+    testRunner.execCommand("MoveForwardAndModifySelection");
     // Extending it in this way flips the anchor and the focus on Mac.
     var selectedText = window.getSelection().toString();
     if (selectedText != expectedText)
@@ -41,8 +41,8 @@ function runTest(platform, expectedText)
         log("Success");
 }
 
-if (window.layoutTestController && window.internals) {
-    layoutTestController.dumpAsText()
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText()
     runTest('mac', 'should be s');
     runTest('win', 'hould be ');
 } else {

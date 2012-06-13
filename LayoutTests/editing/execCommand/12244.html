@@ -22,9 +22,9 @@ function runTest() {
     assert(window.find("now we are"), true, "'now we are' wasn't found");
         assert(window.find(), true, "'now we are' wasn't found");
 }
-if (window.layoutTestController) {
-    window.layoutTestController.dumpEditingCallbacks();
-    window.layoutTestController.dumpAsText();
+if (window.testRunner) {
+    window.testRunner.dumpEditingCallbacks();
+    window.testRunner.dumpAsText();
 }
 window.setTimeout(runTest, 100);
 </script>

@@ -2,8 +2,8 @@
 span { display: none }
 </style>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 <body contenteditable>
 <p>Editing code creates temporary SPANs in some situations. Check we don't crash if we have style span { display: none }

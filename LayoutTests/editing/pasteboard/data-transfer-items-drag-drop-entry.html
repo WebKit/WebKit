@@ -41,10 +41,10 @@ function startTest()
     destination.addEventListener('dragover', handleDragOver, false);
     destination.addEventListener('drop', handleDrop, false);
 
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 
     var files = [];
     for (var i = 0; i < testFiles.length; ++i) {
@@ -93,8 +93,8 @@ function handleDrop(e)
             entry.getMetadata(function(metadata) {
                 if (!expected.directory)
                     test(expected.size, metadata.size);
-                if (last && window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (last && window.testRunner)
+                    testRunner.notifyDone();
             });
         }
     }

@@ -22,7 +22,7 @@ function clearDivDuringInsertion()
 divForDrop.addEventListener("DOMNodeInserted", clearDivDuringInsertion, true);
 
 if (window.eventSender) {
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     var startDiv = document.getElementById("dragstart");
     startDiv.focus();

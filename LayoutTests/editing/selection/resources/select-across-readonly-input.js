@@ -11,7 +11,7 @@ for (var i = 0; i < inputs.length; i++)
     inputs[i].style.width = '7ex';
 }
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     if (!window.eventSender)
         document.writeln('This test requires eventSender');
     else {

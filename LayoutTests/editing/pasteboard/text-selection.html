@@ -22,9 +22,9 @@ function copy(ev)
 }
 
 function runTest() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     log("Selecting text with mouse, no copy events should occur:");
     log("Event count: " + oncopyCounter)

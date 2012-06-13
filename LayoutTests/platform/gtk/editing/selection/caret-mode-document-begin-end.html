@@ -15,22 +15,22 @@
 <script>
 description("This tests direct navigation to the begin and end of the document in caret mode.");
 
-if (window.layoutTestController) {
-  layoutTestController.overridePreference("WebKitEnableCaretBrowsing", true);
-  layoutTestController.dumpAsText();
-  layoutTestController.dumpEditingCallbacks();
+if (window.testRunner) {
+  testRunner.overridePreference("WebKitEnableCaretBrowsing", true);
+  testRunner.dumpAsText();
+  testRunner.dumpEditingCallbacks();
 
   startPoint = document.getElementById("startHere");
   window.getSelection().setPosition(startPoint.childNodes.item(0), 5);
 
   // Move to the beginning and the end of the document.
-  layoutTestController.execCommand("MoveToBeginningOfDocument");
-  layoutTestController.execCommand("MoveToEndOfDocument");
+  testRunner.execCommand("MoveToBeginningOfDocument");
+  testRunner.execCommand("MoveToEndOfDocument");
 
   // Try the same commands modifying the selection.
-  layoutTestController.execCommand("MoveToBeginningOfDocumentAndModifySelection");
+  testRunner.execCommand("MoveToBeginningOfDocumentAndModifySelection");
   window.getSelection().setPosition(startPoint.childNodes.item(0), 5);
-  layoutTestController.execCommand("MoveToEndOfDocumentAndModifySelection");
+  testRunner.execCommand("MoveToEndOfDocumentAndModifySelection");
 }
 
 </script>

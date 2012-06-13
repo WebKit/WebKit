@@ -24,8 +24,8 @@ document.execCommand("copy");
 paste = document.getElementById("paste");
 paste.focus();
 document.execCommand("paste");
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
     document.body.innerText = document.getElementById("description").innerText + "\n\n" + copy.innerHTML;
 }
 </script>

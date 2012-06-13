@@ -19,8 +19,8 @@
     <div><br></div>
 </div>
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 indent = document.getElementById("secondrow");
 window.getSelection().setBaseAndExtent(document.getElementById('start'), 0, indent, 0);
 document.execCommand("indent");

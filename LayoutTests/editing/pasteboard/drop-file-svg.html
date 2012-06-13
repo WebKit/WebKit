@@ -11,8 +11,8 @@ function moveMouseToCenterOfElement(element)
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     eventSender.beginDragWithFiles(["fakefile"]);
     moveMouseToCenterOfElement(document.getElementById("target"));
     eventSender.mouseUp();

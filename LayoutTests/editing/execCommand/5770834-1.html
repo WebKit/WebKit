@@ -11,8 +11,8 @@ edit = document.getElementById("edit");
 edit.focus();
 document.execCommand("SelectAll");
 document.execCommand("RemoveFormat");
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
     document.body.innerText = description.innerText + "\n\n" + edit.innerHTML;
 }
 </script>

@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 <p>This tests for a bug when creating markup for a selection that contained unrendered nodes with children.  You should see a picture of abe followed by a select box.</p>
 <div id="paste" contenteditable="true"></div>
@@ -21,12 +21,12 @@ function runTest() {
     s.setPosition(document.getElementById("paste"), 0);
     document.execCommand("Paste");
     
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();    
+    if (window.testRunner)
+        window.testRunner.notifyDone();    
     
 }
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
 window.setTimeout(runTest, 100);
 
 </script>

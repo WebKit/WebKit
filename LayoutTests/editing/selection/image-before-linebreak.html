@@ -1,14 +1,14 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 <p>Only the line break after the image should be selected.</p>
 <hr>
 <div contenteditable="true" id="div"><img src="../resources/abe.png"><br>foo</div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpSelectionRect();
+if (window.testRunner)
+    window.testRunner.dumpSelectionRect();
     
 var e = document.getElementById("div");
 var s = window.getSelection();

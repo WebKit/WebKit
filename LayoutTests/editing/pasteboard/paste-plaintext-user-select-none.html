@@ -16,8 +16,8 @@
     <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
     <script>
         function editingTest() {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
             
             document.getElementById('tf').focus();
             copyCommand();

@@ -2,8 +2,8 @@
 <head>
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 
 <script>
@@ -17,8 +17,8 @@ function log(message) {
 }
 
 function runTest() {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
     // Let the subframe come into being.
     window.setTimeout(step2, 100);
     e = document.getElementById("dragme");
@@ -27,7 +27,7 @@ function runTest() {
 
 function step2() 
 {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         log("This test uses the eventSender.  To run it manually, drag the selected image into the editable div and drop it.  It should appear inside the editable div.");
         return;
     }
@@ -47,7 +47,7 @@ function step2()
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
     
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 </head>

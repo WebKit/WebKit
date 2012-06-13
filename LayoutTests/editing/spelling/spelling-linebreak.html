@@ -17,8 +17,8 @@ function log(msg) {
 
 function editingTest() {
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var elem = document.getElementById("test");
     var selection = window.getSelection();
     selection.setPosition(elem, 6);
@@ -32,7 +32,7 @@ function editingTest() {
     moveSelectionBackwardByWordCommand();
     insertLineBreakCommand();
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         selection.setPosition(elem, 0);
         if (internals.hasSpellingMarker(document, 6, 2))
            log("PASS");

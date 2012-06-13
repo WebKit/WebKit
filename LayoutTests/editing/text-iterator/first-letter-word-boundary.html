@@ -16,8 +16,8 @@ This test also demonstrates a bug that word position is incorrectly reported.</p
 <pre id="console"></pre>
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function runTest(actor, expectedOffset) {
     window.getSelection().setPosition(test.firstChild, 4);

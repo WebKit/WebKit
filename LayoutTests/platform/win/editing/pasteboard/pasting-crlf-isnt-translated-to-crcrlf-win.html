@@ -12,9 +12,9 @@ function handlePaste(event)
 
 function runTest()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    window.layoutTestController.dumpAsText();
+    window.testRunner.dumpAsText();
 
     document.body.addEventListener('paste', handlePaste);
     var sourceElement = document.getElementById('source');

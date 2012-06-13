@@ -2,9 +2,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var step = 0;
@@ -19,8 +19,8 @@ onscroll = function() {
             break;
     case 1:
         document.getElementById('results').innerText = 'PASS';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         break;
     }
     

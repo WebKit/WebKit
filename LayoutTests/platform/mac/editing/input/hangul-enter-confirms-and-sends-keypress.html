@@ -10,7 +10,7 @@
 <script>
     var shouldBeCompositionEvent = false;
     function keyDown() {
-        if (!window.layoutTestController) {
+        if (!window.testRunner) {
             log("keydown : keyCode == " + event.keyCode);
             return;
         }
@@ -23,7 +23,7 @@
     }
     
     function keyPress() {
-        if (!window.layoutTestController) {
+        if (!window.testRunner) {
             log("keypress : keyCode == " + event.keyCode);
             return;
         }
@@ -36,8 +36,8 @@
 
     var targetInput = document.getElementById('targetInput');
     targetInput.focus();
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         textInputController.setInputMethodHandler(hangul);
         shouldBeCompositionEvent = true;
         eventSender.keyDown('t');

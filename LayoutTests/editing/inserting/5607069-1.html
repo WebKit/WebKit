@@ -2,8 +2,8 @@
 <div id="div" contenteditable="true"><input type="text"><input type="text"></div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 div = document.getElementById("div");
 window.getSelection().setPosition(div, 1);
 document.execCommand("InsertParagraph");

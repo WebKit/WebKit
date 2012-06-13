@@ -1,7 +1,7 @@
 <head>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 
 <style>
@@ -42,8 +42,8 @@ function assert(bool) {
 </body>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
     
 var s = window.getSelection();
 var e1 = document.getElementById("e1");

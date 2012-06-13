@@ -1,7 +1,7 @@
 description('Tests to ensure MakeTextWritingDirection* modifies the direction of text and embed texts properly.');
 
-if (!window.layoutTestController)
-    testFailed('This test requires layoutTestController');
+if (!window.testRunner)
+    testFailed('This test requires testRunner');
 
 var testContainer = document.createElement("div");
 testContainer.contentEditable = true;
@@ -20,12 +20,12 @@ function recursivelyRemoveExtraenousSpan(node) {
 
 function modifyWritingDirection(content, selector, command, expected)
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     testContainer.innerHTML = content;
     var selected = selector(testContainer);
-    window.layoutTestController.execCommand('MakeTextWritingDirection' + command);
+    window.testRunner.execCommand('MakeTextWritingDirection' + command);
 
     // Remove Apple-style-span because it does not need to be tested here.
     var actual = testContainer.innerHTML.replace(/ class="Apple-style-span"/g, '');

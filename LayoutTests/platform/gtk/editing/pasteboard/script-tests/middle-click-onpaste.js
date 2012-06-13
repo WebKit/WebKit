@@ -10,9 +10,9 @@ function handlePaste(eventObj)
 var target = document.getElementById("description");
 target.onpaste = handlePaste;
 
-if (window.layoutTestController)
+if (window.testRunner)
 {
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     var x = target.offsetParent.offsetLeft + target.offsetLeft + 
         target.offsetWidth / 2;
     var y = target.offsetParent.offsetTop + target.offsetTop + 

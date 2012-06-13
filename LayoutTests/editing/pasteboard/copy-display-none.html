@@ -2,8 +2,8 @@
 <script>
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var paragraph = document.getElementById("paragraph");
     var textNode = paragraph.firstChild;
     var range = document.createRange();

@@ -1,7 +1,7 @@
 <html>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpAsText();
+if (window.testRunner)
+     testRunner.dumpAsText();
 </script>
 <div>This test checks that the plain text dropped into a styled text region will acquire the appropriate style.</div>
 <p>To run this test manually, drag the text in the input element below into the bold text region.  The dropped text should be bold.
@@ -27,7 +27,7 @@ function runTest() {
     var textToDrag = document.getElementById("grabme");
     textToDrag.focus();
 
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     
     var x = textToDrag.offsetLeft + textToDrag.offsetWidth / 2;

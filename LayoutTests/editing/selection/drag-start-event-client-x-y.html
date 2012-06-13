@@ -53,8 +53,8 @@
                 if (!window.eventSender)
                     return;
 
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
                 
                 var element = document.getElementById("draggable");
                 var dragStart = { x: element.offsetLeft + element.offsetWidth / 2, y:  element.offsetTop + 1.0 };

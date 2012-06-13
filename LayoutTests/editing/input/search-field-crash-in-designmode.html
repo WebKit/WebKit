@@ -6,8 +6,8 @@ WebKit should not crash and you should see PASS below:</p>
 <input type="search">
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.designMode = 'on';
 document.getElementsByTagName('input')[0].focus();

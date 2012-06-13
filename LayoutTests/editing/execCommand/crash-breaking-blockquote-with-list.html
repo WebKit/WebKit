@@ -14,7 +14,7 @@
     document.execCommand("InsertNewlineInQuotedContent");
     var div = document.getElementById("container");
     div.parentNode.removeChild(div);
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 </script>
 </body>

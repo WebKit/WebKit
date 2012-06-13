@@ -2,8 +2,8 @@
 <div id="div" contenteditable="true">foo<hr>bar<hr></div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 document.getElementById("div").focus();
 document.execCommand("SelectAll");
 document.execCommand("InsertUnorderedList");

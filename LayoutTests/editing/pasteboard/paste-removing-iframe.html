@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function test()
@@ -14,8 +14,8 @@ function test()
     var textarea = childDocument.getElementById("target");
     textarea.addEventListener("input", function(evt) {
         toRemove.parentNode.removeChild(toRemove);
-        if (window.layoutTestController)
-            window.layoutTestController.notifyDone();
+        if (window.testRunner)
+            window.testRunner.notifyDone();
     });
 
     var selection = childDocument.getSelection();

@@ -23,10 +23,10 @@
       }
 
       function runTest1() {
-        if (!window.layoutTestController)
+        if (!window.testRunner)
           return;
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
 
         e = document.getElementById("mouse_target");
         r = getAbsolutePosition(e);
@@ -47,7 +47,7 @@
 
       function runTest3() {
         copyCommand();
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
       }
 
       function MPP_bind(fn, self, var_args) {

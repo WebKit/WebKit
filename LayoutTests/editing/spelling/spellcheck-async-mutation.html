@@ -30,9 +30,9 @@ description(
 
 var jsTestIsAsync = true;
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.setAsynchronousSpellCheckingEnabled(true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setAsynchronousSpellCheckingEnabled(true);
 }
 
 if (window.internals)
@@ -79,8 +79,8 @@ function doTestIfAny() {
     if (window.internals)
         internals.settings.setUnifiedTextCheckingEnabled(false);
 
-    if (window.layoutTestController) {
-        layoutTestController.setAsynchronousSpellCheckingEnabled(false);
+    if (window.testRunner) {
+        testRunner.setAsynchronousSpellCheckingEnabled(false);
         finishJSTest();
     }
 }

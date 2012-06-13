@@ -48,7 +48,7 @@ function run(tests, testIdx)
     }
     testIdx++;
     if (testIdx >= tests.length) {
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
         return;
     }
 
@@ -76,9 +76,9 @@ function run(tests, testIdx)
 
 function init(tests)
 {
-    if (window.layoutTestController && window.textInputController && window.eventSender) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner && window.textInputController && window.eventSender) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
         if (window.internals) {
             window.internals.settings.setPasswordEchoEnabled(true);
             window.internals.settings.setPasswordEchoDurationInSeconds(0.1);

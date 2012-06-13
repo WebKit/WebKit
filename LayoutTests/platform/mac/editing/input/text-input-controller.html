@@ -1,8 +1,8 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 
 <style>
@@ -13,11 +13,11 @@ body { margin: 0; padding: 0 }
 <div id="test" contenteditable>FAILURE</div>
 <script type="text/javascript">
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         
         try {
         
-            layoutTestController.dumpAsText();
+            testRunner.dumpAsText();
             document.getElementById("test").focus();
             document.execCommand("SelectAll");
         

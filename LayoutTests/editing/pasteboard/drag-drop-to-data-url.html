@@ -8,13 +8,13 @@ var framey;
 
 function editingTest() {
   
-    if (!window.layoutTestController) {
-        alert('This test requires layoutTestController to run!');
+    if (!window.testRunner) {
+        alert('This test requires testRunner to run!');
         return;
     }
 
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 
     var t = document.getElementById("targetframe");
     framex = t.offsetLeft + 10;
@@ -42,8 +42,8 @@ function dropIt() {
 
     // Drop it off to the frame
     eventSender.mouseUp();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 

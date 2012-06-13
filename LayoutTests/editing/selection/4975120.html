@@ -1,7 +1,7 @@
 <head>
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
 
 function runTest() {
     var input = document.getElementById("input");
@@ -10,12 +10,12 @@ function runTest() {
     frame.focus();
     frame.getSelection().setPosition(frame.document.body, 0);
     
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     
-    window.layoutTestController.setWindowIsKey(false);
-    window.layoutTestController.setWindowIsKey(true);
-    window.layoutTestController.notifyDone();
+    window.testRunner.setWindowIsKey(false);
+    window.testRunner.setWindowIsKey(true);
+    window.testRunner.notifyDone();
 }
 </script>
 </head>

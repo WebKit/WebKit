@@ -2,7 +2,7 @@
 function runTest() {
     var div = document.getElementsByTagName('div')[0];
 
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     if (clickOn == 'left')

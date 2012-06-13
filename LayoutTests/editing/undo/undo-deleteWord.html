@@ -35,8 +35,8 @@ function undoNow()
 {
     document.execCommand("Undo");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function editingTest() {
@@ -81,9 +81,9 @@ Undo a delete word after a series of insertText does not wipe out the entire con
 </div>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var selection = window.getSelection();

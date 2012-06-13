@@ -23,8 +23,8 @@ function shouldBe(expr, expected) {
         log("Success: " + expr + " is " + expected + ".");
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var r = document.createRange();
 

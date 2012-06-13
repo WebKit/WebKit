@@ -6,9 +6,9 @@
     height: 1;
 </style>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function crash(){
@@ -23,7 +23,7 @@ function crash(){
     document.body.offsetTop;
     setTimeout(function () {
         document.body.innerHTML = "PASS. WebKit didn't crash.";
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }, 0);
 }
 window.scrollTop;

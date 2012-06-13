@@ -6,8 +6,8 @@
 <p>This test checks how backspacing works with regional indicator characters.</p>
 <div contenteditable id="test">🇯🇵🇯🇵🇯🇵</div> <!-- (j)(p)(j)(p)(j)(p) -->
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var div = document.getElementById("test");
 var afterLastIndicator = document.createRange();

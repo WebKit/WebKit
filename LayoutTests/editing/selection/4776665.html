@@ -1,7 +1,7 @@
 <script>
-if (window.layoutTestController) {
-     layoutTestController.dumpEditingCallbacks();
-     window.layoutTestController.waitUntilDone();
+if (window.testRunner) {
+     testRunner.dumpEditingCallbacks();
+     window.testRunner.waitUntilDone();
 }
     
 function runTest() {
@@ -10,8 +10,8 @@ function runTest() {
     var body = doc.body;
     var sel = frame.getSelection();
     sel.setPosition(body, 0);
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 </script>
 <p>This tests for a caret painting bug.  You should not see a caret in the editable subframe below.</p>

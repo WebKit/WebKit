@@ -28,8 +28,8 @@
                 log("Failed. Actual: \"" + testarea.value + "\", Expected: \"\u0E27\u0E31\"");
         }
         function editingTest() {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
             runTestOn("mac");
             runTestOn("win");
             runTestOn("unix");

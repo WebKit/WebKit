@@ -11,12 +11,12 @@ function log(message) {
 }
 
 function runTest() {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         log("To run this test manually attempt to drag and drop Abe after the broken image in the editable div");
         return;
     }
 
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
 
     //find abe
     var dragme = document.getElementById("dragme");
@@ -35,7 +35,7 @@ function runTest() {
     eventSender.mouseMoveTo(x2, y2);
     eventSender.mouseUp();
     
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 </script>

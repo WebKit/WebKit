@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function log(message) {
@@ -21,7 +21,7 @@ function step1() {
 }
 
 function step2() {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         log("This test uses eventSender. To run it manually, drag the selected image to another position in the editable div and drop it. It should not disappear.");
         return;
     }
@@ -47,7 +47,7 @@ function step2() {
     else
         document.write("<p>FAILURE</p>");
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 </head>

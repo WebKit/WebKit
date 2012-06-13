@@ -31,7 +31,7 @@ function runTest()
         // Don't remove the editable node, since we want to make sure there no stray file URLs were
         // inserted during the drop.
 
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
 
         window.onbeforeunload = null;
     };

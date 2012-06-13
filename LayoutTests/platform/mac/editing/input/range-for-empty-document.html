@@ -1,8 +1,8 @@
 <HTML>
 <HEAD>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -18,11 +18,11 @@ if (window.layoutTestController)
         console_messages.appendChild(item);
     }
     
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         
         try {
         
-            layoutTestController.dumpAsText();
+            testRunner.dumpAsText();
         
             window.getSelection().setPosition(document.body, 0);
 

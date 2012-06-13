@@ -6,8 +6,8 @@
 <div id="log"></div>
 <input id="text" type="text" value="hello world" />
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
     var text = document.getElementById("text");
     text.setSelectionRange(0, 5);

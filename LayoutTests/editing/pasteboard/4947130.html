@@ -6,10 +6,10 @@ xxxxxxxxxx<img id="img" src="../resources/abe.png">
 <script>
 
 function runTest() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     
-    window.layoutTestController.waitUntilDone();  
+    window.testRunner.waitUntilDone();  
     
     window.setTimeout(step2, 200);
 }
@@ -29,7 +29,7 @@ function step2() {
     eventSender.mouseMoveTo(left - 28, y);
     eventSender.mouseUp();
 
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 
 runTest();

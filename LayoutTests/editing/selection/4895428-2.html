@@ -15,7 +15,7 @@ function handleBlur() {
 }
 function runTest() {
     var blurred = false;
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     var cell = document.getElementById("cell");
     cell.addEventListener(handleBlur, "DOMBlurEvent");

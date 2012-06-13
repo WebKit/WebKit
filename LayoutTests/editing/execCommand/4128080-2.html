@@ -4,8 +4,8 @@
 
 <script>
 
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 
 // Test 2: Verify that a header at the end of inserted content is preserved.
 copy = document.getElementById("copy");
@@ -19,7 +19,7 @@ document.execCommand("Paste");
 expected = "<h1>foo</h1>";
 actual = paste.innerHTML;
 
-if (window.layoutTestController && actual == expected)
+if (window.testRunner && actual == expected)
     document.body.innerText = "Success";
 else
     document.body.innerText = "Failure.  Found: " + actual + ", but expected: " + expected;

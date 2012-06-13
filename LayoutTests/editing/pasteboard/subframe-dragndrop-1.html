@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
      
 function runTest() {
     var frame = frames[0];
@@ -9,7 +9,7 @@ function runTest() {
     sel.setPosition(doc.body, 0);
     doc.execCommand("InsertText", false, "foo bar baz");
     
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         // Attempt to put the mouse over the word 'bar'.  The proper way to do this 
         // would be to put 'bar' inside an id'd span so that we'd know it's coordinates exactly.
         var x = 50;
@@ -33,11 +33,11 @@ function runTest() {
         eventSender.mouseMoveTo(x, y);
         eventSender.mouseUp();
         
-        window.layoutTestController.notifyDone();
+        window.testRunner.notifyDone();
     }
 }
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();         
+if (window.testRunner)
+    window.testRunner.waitUntilDone();         
 </script>
 <body style="margin: 0px; padding: 0px;">
 <iframe style="margin: 0; padding: 0; height: 300px; width: 300px;" src="../resources/contenteditable-iframe-src.html" onload="runTest();"></iframe>

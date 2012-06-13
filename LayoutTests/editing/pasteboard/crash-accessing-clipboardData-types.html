@@ -6,8 +6,8 @@
 <div contenteditable id=d>Test</div>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.body.addEventListener("paste", function(e){ e.clipboardData.types }, true);
 

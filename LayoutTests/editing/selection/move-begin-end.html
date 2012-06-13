@@ -1,7 +1,7 @@
 <script>
-if (window.layoutTestController) {
-     layoutTestController.dumpEditingCallbacks();
-     layoutTestController.dumpAsText();
+if (window.testRunner) {
+     testRunner.dumpEditingCallbacks();
+     testRunner.dumpAsText();
 }
 
 var sel = window.getSelection();
@@ -13,7 +13,7 @@ function logResult(str) {
 }
 
 function runTest() {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         log('This test must be run by DumpRenderTree!') 
         return;
     }

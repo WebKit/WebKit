@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 
 function foo() {
     var frame = frames[0];
@@ -12,11 +12,11 @@ function foo() {
     sel.modify("extend", "backward", "word");
     doc.execCommand("Cut");
     doc.execCommand("Paste");
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
 </script>
 
 <p>This tests cut/paste inside an editable iframe.  You should see 'foo bar baz' below.</p>

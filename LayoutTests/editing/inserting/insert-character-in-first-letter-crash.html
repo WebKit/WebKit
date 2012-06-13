@@ -26,8 +26,8 @@
 
         document.body.appendChild(document.createTextNode("PASS if no assert or crash in debug."));
 
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
      }
     </script>
   </head>

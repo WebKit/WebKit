@@ -15,10 +15,10 @@ function getXY(e)
 }
 function runTest()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
         
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
     setTimeout(stepOne, 0);
 }
 function stepOne()
@@ -39,7 +39,7 @@ function stepOne()
 function stepTwo()
 {
     eventSender.mouseUp();
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 <style type="text/css">

@@ -11,9 +11,9 @@ function log(message) {
 }
 
 function runTest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     } else
         return;
 
@@ -37,7 +37,7 @@ function runTest() {
 
     log("Number of selected ranges: " + window.getSelection().rangeCount);
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function selectSelection() {

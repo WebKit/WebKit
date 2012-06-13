@@ -18,8 +18,8 @@ function log(str) {
 var test = document.getElementById('test');
 test.focus();
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
     // Compose text.
     textInputController.setMarkedText('5', 5, 1);

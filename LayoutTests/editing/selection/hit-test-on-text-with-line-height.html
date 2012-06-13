@@ -51,10 +51,10 @@ function clickBetweenEachLetterAndVerify(y) {
     }
 }
 
-if (window.layoutTestController && !window.eventSender)
+if (window.testRunner && !window.eventSender)
     testFailed('This test requires eventSender');
-else if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+else if (window.testRunner) {
+    testRunner.dumpAsText();
     clickAndVerify('Click after hello', test.offsetLeft + test.offsetWidth - 5, test.offsetTop + test.offsetHeight / 2, 5);
     clickAndVerify('Click after hello (top)', test.offsetLeft + test.offsetWidth - 5, test.offsetTop + 1, 5);
     clickAndVerify('Click after hello (bottom)', test.offsetLeft + test.offsetWidth - 5, test.offsetTop + test.offsetHeight - 1, 5);

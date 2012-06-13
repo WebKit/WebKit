@@ -13,8 +13,8 @@
                 eventSender.keyDown(String.fromCharCode(0x0008), null);
         }
         function editingTest() {
-            if (window.layoutTestController)
-                window.layoutTestController.dumpAsText();
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
             var textarea = document.getElementById("test");
             textarea.focus();
             typeCharacterCommand(String.fromCharCode(0x0E27));

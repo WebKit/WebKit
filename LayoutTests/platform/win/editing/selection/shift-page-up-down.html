@@ -28,8 +28,8 @@ function logSelection() {
     log('Selected text:\n' + window.getSelection());
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 if (window.eventSender) {
     var area = document.getElementById('a');

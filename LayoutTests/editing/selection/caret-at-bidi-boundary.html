@@ -84,8 +84,8 @@ function runTest(target, expectations) {
         testFailed('caret never reached offset' + expectations[j]);
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
     var tests = document.getElementById('tests').getElementsByTagName('dt');
     var testExpectations = document.getElementById('tests').getElementsByTagName('dd');

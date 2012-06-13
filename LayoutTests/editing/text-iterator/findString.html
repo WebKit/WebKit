@@ -19,7 +19,7 @@
 
         var expectedRange;
         while (expectedRange = expectedRanges.shift()) {
-            var found = layoutTestController.findString(target, options);
+            var found = testRunner.findString(target, options);
             if (found) {
                 var actualRange = [selection.baseOffset, selection.extentOffset];
                 if (expectedRange[0] !== actualRange[0] || expectedRange[1] !== actualRange[1])
@@ -35,7 +35,7 @@
         log("");
     }
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     testFindString("Lorem ipsum dolor sit amet", "o", [], [[1, 2], [13, 14], [15, 16], []]);
     testFindString("Lorem ipsum dolor sit amet", "o", ["WrapAround"], [[1, 2], [13, 14], [15, 16], [1, 2]]);

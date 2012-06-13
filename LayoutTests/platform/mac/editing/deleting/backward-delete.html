@@ -16,17 +16,17 @@
 <tr><td>Test:</td><td><div contenteditable>𐐀</div></td><td>Expected</td><td></td></tr>
 </table>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function test()
     {
         var node = document.evaluate("//*[@contenteditable]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
         if (!node) {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
             else
                 document.getElementById("status").innerHTML = "DONE"
             return;

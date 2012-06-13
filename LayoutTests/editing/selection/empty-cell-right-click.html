@@ -9,8 +9,8 @@
 <ul id="console"></ul>
 </body>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     var elem = document.getElementById("first");
     x = elem.offsetLeft + elem.offsetWidth / 2;
     y = elem.offsetTop + elem.offsetHeight / 2;

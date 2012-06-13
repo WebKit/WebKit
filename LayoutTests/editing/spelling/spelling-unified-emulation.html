@@ -26,8 +26,8 @@ function removeChildren(node) {
         node.removeChild(node.firstChild);
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 }
 
 if (window.internals)

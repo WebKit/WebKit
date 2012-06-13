@@ -4,8 +4,8 @@
 <div id="test" contenteditable="true">xx</div>
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
 
 Markup.description('There is an interchange newline at the end of the incoming fragment. "bar" and "x" should be in separate paragraphs\n'
 + 'The paragraph "bar" is inside a div wrapped in a span, and the old paste code that handled interchange newlines did not handle this case.');

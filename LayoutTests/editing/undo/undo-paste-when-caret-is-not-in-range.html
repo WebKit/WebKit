@@ -1,7 +1,7 @@
 <div id="edit" contentEditable="true">abc </div>
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 edit = document.getElementById("edit");
 var s = window.getSelection();
 s.setPosition(edit, 3);

@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 
 <script>
@@ -27,8 +27,8 @@ var s = window.getSelection();
 var e = document.getElementById("test");
 var r;
 
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 
 // The textnode
 s.setBaseAndExtent(e, 0, e, 1);

@@ -2,13 +2,13 @@
 <div id="div" contenteditable="true"></div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
     
 var div = document.getElementById("div");
 var sel = window.getSelection();
 
 sel.setPosition(div, 0);
-if (window.layoutTestController)
-    layoutTestController.execCommand("SelectLine");
+if (window.testRunner)
+    testRunner.execCommand("SelectLine");
 </script>

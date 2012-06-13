@@ -49,8 +49,8 @@ function testTextIndentWhenTextAlignsToCenter(textIndent)
         return "Failure. The caret's x position of input field was " + caretXPosition_withTextIndent + ", should have been " + desiredCaretXPosition + ".\n";
 }
 
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 
 var output = "";
 output += testTextIndent("<input id='textIndentTest' type='text' style='text-indent:30px;'></input>", 0);

@@ -1,7 +1,7 @@
 <head>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 
 <script>
@@ -25,8 +25,8 @@ function assert(bool) {
 <div id="div" contenteditable="true">foo</div>
 <ol id="console"></ol>
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 var sel = window.getSelection();
 var div = document.getElementById("div");
 sel.setPosition(div, 0);

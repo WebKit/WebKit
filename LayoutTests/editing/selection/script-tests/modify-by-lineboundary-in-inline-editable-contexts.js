@@ -27,7 +27,7 @@ var name = "adjacent, editable spans";
 testModifyByLine(container.firstChild, "forward", 17, name);
 testModifyByLine(container.firstChild, "backward", 0, name);
 
-if (window.layoutTestController)
+if (window.testRunner)
     container.innerHTML = '';
 
 container = document.createElement('div')
@@ -39,7 +39,7 @@ var root = document.getElementById('root');
 testModifyByLine(root, "forward", 16, name);
 testModifyByLine(root, "backward", 0, name);
 
-if (window.layoutTestController)
+if (window.testRunner)
     container.innerHTML = '';
 
 var successfullyParsed = true;

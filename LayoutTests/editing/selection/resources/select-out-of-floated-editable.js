@@ -2,8 +2,8 @@ function log(msg) {
     document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
 }
 
-if (window.layoutTestController && window.eventSender) {
-    layoutTestController.dumpAsText();
+if (window.testRunner && window.eventSender) {
+    testRunner.dumpAsText();
 
     var x = floatedEditable.offsetLeft + (floatedEditable.offsetWidth / 2);
     var y = floatedEditable.offsetTop + (floatedEditable.offsetHeight / 2);

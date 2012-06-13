@@ -4,8 +4,8 @@
 <span id="test" contenteditable><br></span>
 <script type="text/javascript">
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 window.getSelection().setPosition(document.getElementById('test').firstChild, 0);
 document.execCommand('bold', false, null);

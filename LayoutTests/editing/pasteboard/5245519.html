@@ -6,8 +6,8 @@ edit = document.getElementById("edit");
 description = document.getElementById("description");
 edit.focus();
 document.execCommand("InsertHTML", false, "Hello <span style='display:none;' class='Apple-style-span'></span>World!");
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
     document.body.innerText = description.innerText + "\n" + edit.innerHTML;
 }
 </script>

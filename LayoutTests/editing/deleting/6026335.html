@@ -5,14 +5,14 @@
 </div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 start = document.getElementById("start");
 end = document.getElementById("end");
 s = window.getSelection();
 s.setBaseAndExtent(start, 0, end, 0);
 document.execCommand("Delete");
 document.execCommand("InsertText", false, "Text");
-if (window.layoutTestController)
+if (window.testRunner)
     document.body.innerText = document.getElementById("description").innerText + "\n" + document.getElementById("edit").innerHTML;
 </script>

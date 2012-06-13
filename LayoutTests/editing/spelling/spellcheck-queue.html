@@ -10,9 +10,9 @@
 <script>
 description('For Bug 72939: Asynchronous SpellChecker should consider multiple requests.');
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.setAsynchronousSpellCheckingEnabled(true);
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.setAsynchronousSpellCheckingEnabled(true);
 }
 
 var testRoot = document.createElement("div");
@@ -80,9 +80,9 @@ function verifyIfAny()
     }
 
     testRoot.style.display = "none";
-    if (window.layoutTestController) {
-        layoutTestController.setAsynchronousSpellCheckingEnabled(false);
-        layoutTestController.notifyDone();
+    if (window.testRunner) {
+        testRunner.setAsynchronousSpellCheckingEnabled(false);
+        testRunner.notifyDone();
     }
 }
 
@@ -112,7 +112,7 @@ function findFirstTextNode(node)
 
 function verifyMarker(node, expectedMarked)
 {
-    if (!window.layoutTestController || !window.internals)
+    if (!window.testRunner || !window.internals)
         return false;
 
     var textNode = findFirstTextNode(node);

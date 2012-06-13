@@ -87,8 +87,8 @@ testTypingInvalidWord('test4_4', false);
 testTypingInvalidWord('test4_5', true);
 testTypingInvalidWord('test4_6', false);
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     // Cleaning up for expeation text if running on DRT.
     document.getElementById("testRoot").style.display = "none";
 }

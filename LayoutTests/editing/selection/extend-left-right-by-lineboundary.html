@@ -72,9 +72,9 @@ var testContainers = document.getElementsByTagName("div");
 for (var i = 0; i < testContainers.length; i++)
     runTestForContainer(testContainers[i]);
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     while (testContainers.length > 0)
         document.body.removeChild(testContainers[0]);
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 }
 </script>

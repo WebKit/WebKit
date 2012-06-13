@@ -9,15 +9,15 @@ function log(str) {
     console.appendChild(li);
     li.appendChild(text);
 }
-if (window.layoutTestController) {
-    window.layoutTestController.dumpEditingCallbacks();
+if (window.testRunner) {
+    window.testRunner.dumpEditingCallbacks();
     var text = document.getElementById("div").firstChild;
     var selection = window.getSelection();
     selection.setBaseAndExtent(text, 0, text, 0);
-    layoutTestController.execCommand("MoveForwardAndModifySelection");
-    layoutTestController.execCommand("MoveForwardAndModifySelection");
-    layoutTestController.execCommand("MoveForwardAndModifySelection");
-    layoutTestController.execCommand("MoveBackwardAndModifySelection");
+    testRunner.execCommand("MoveForwardAndModifySelection");
+    testRunner.execCommand("MoveForwardAndModifySelection");
+    testRunner.execCommand("MoveForwardAndModifySelection");
+    testRunner.execCommand("MoveBackwardAndModifySelection");
 } else {
     log("Failure: This test cannot be run manually.")
 }

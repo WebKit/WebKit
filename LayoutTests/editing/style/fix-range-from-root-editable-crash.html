@@ -2,9 +2,9 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function go() {
@@ -12,7 +12,7 @@ function go() {
     document.execCommand("SelectAll",         false, null);
     document.execCommand("strikethrough",     false, null);
     document.body.innerHTML = 'This tests ApplyStyleCommand::fixRangeAndApplyInlineStyle does not crash when startNode is body.<br>PASS';
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 </head>

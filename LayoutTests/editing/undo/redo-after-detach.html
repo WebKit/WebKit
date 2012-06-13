@@ -12,8 +12,8 @@
         This tests that we don't crash when redoing an editing command after the search field has been detached and reattached.<br>
         <input type="search" id="tf"><br>
         <script>
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
             
             document.getElementById("tf").focus();
             document.execCommand("InsertText", false, "test");

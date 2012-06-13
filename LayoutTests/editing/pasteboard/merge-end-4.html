@@ -7,8 +7,8 @@
 <script src="../editing.js"></script>
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
 
 Markup.description("Tests for a case where paste's end merge was failing. You should see xfoo\nbar\nbazx.");
 

@@ -1,8 +1,8 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 <script>
 function log(str) {
@@ -20,8 +20,8 @@ function runTest() {
     var elem = document.getElementById("test");
     var sel = window.getSelection();
     
-    if (window.layoutTestController)
-        window.layoutTestController.dumpAsText();
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
 
     try {
         sel.setBaseAndExtent(elem, 0, elem, 1);

@@ -10,8 +10,8 @@ not to the center to avoid undesirable content view jumping.</div>
   <textarea rows="50" cols="20" id="input"></textarea>
 </div>
 <script>
-if (window.layoutTestController)
-   layoutTestController.dumpAsText();
+if (window.testRunner)
+   testRunner.dumpAsText();
 
 performJumpAtTheEdgeTest(false);
 

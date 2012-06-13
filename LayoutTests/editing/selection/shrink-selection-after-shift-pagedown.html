@@ -3,8 +3,8 @@
 <script>
     function runTest()
     {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         
         var ta = document.getElementById('ta');
         ta.setSelectionRange(4, 16);

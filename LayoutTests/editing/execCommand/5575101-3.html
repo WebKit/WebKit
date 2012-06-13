@@ -8,8 +8,8 @@
 </div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 outdent = document.getElementById("outdent");
 window.getSelection().setPosition(outdent, 0);
 document.execCommand("Outdent");

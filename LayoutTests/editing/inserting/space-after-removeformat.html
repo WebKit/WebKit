@@ -1,7 +1,7 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpEditingCallbacks();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpEditingCallbacks();
+    testRunner.dumpAsText();
 } 
 </script>
 <p>This is a test for execCommand("RemoveFormat").  You should see Some%20text before and after RemoveFormat is executed.  This test case is due to the WebKit bug 14062, regression (r21212).</p>

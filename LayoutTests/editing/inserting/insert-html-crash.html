@@ -4,8 +4,8 @@
 <script>
 window.jsTestIsAsync = true;
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 document.addEventListener("DOMCharacterDataModified", function() {
     document.body.innerHTML = "PASS. WebKit didn't crash."; 

@@ -18,9 +18,9 @@
 
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function createPlainTextElement(id, text, parent) {
@@ -57,14 +57,14 @@ function checkTextMatchMarker(index, findOptions) {
             index = 0;
             findOptions.push("CaseInsensitive");
         } else {
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
             return;
         }
     }
     var str = 'ABCdefTUVxyz.';
     var char = str.charAt(index);
     var caseSensitive = findOptions.indexOf("CaseInsensitive") == -1;
-    layoutTestController.findString(char, findOptions);
+    testRunner.findString(char, findOptions);
     // Start the function later to allow marking process to finish.
     setTimeout(function() {
         var count = occurrences(text, char, caseSensitive);
@@ -91,7 +91,7 @@ var id = 'id1'
 var text = 'The quick brown fox jumps over the lazy dog.';
 var e = createPlainTextElement(id, text, container);
 
-if (window.internals && window.layoutTestController)
+if (window.internals && window.testRunner)
     checkTextMatchMarker(0, []);
 
 var successfullyParsed = true;

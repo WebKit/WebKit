@@ -6,8 +6,8 @@ function log(str) {
   document.getElementById("console").innerHTML += str + "<br>";
 }
 
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
 
     var text = document.getElementById("div").firstChild;
     var selection = window.getSelection();
@@ -17,7 +17,7 @@ if (window.layoutTestController) {
     
     selection.setBaseAndExtent(text, 5 + 7, text, 5);
     // Extending this 5 character selection will select 6 characters.
-    layoutTestController.execCommand("MoveForwardAndModifySelection");
+    testRunner.execCommand("MoveForwardAndModifySelection");
     var selectedText = selection.toString();
     var expectedText = "should";
     if (selectedText != expectedText)

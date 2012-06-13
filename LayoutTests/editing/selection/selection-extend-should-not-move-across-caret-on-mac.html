@@ -15,8 +15,8 @@ of the word (which is windows/unix behavior).
 
 <script>
 function editingTest(behavior) {
-    if (window.layoutTestController && window.internals) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner && window.internals) {
+        testRunner.dumpAsText();
         internals.settings.setEditingBehavior(behavior);
     }
 

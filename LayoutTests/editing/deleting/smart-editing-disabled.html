@@ -2,9 +2,9 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.setSmartInsertDeleteEnabled(false);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setSmartInsertDeleteEnabled(false);
 }
 
 function editingTest() {
@@ -15,7 +15,7 @@ function editingTest() {
     sel.modify("move", "forward", "word");
     sel.modify("move", "forward", "word");
     sel.modify("extend", "backward", "word");
-    layoutTestController.execCommand("DeleteForward");
+    testRunner.execCommand("DeleteForward");
 }
 
 </script>

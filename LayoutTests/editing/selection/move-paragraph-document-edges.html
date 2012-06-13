@@ -29,8 +29,8 @@
     }
     function runTest()
     {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         getSelection().setPosition(document.getElementById("first").firstChild, 4);
         if (checkSelection(1, "(text in first, 4), (text in first, 4)"))
             return;

@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 
 function runTest() {
     var frame = frames[0];
@@ -13,12 +13,12 @@ function runTest() {
     doc.execCommand("Copy");
     doc.execCommand("Delete");
     doc.execCommand("Paste");
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
 </script>
 <p>This tests copy/delete/paste inside an editable iframe.  You should see 'foo bar baz' below.</p>
 <iframe src="../resources/contenteditable-iframe-src.html" onload="runTest();"></iframe>

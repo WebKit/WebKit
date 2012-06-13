@@ -12,11 +12,11 @@
 <script>
 (function runTest()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     var sourceInput = document.getElementById("src");
     sourceInput.focus();
@@ -35,7 +35,7 @@
     sourceInput.parentNode.removeChild(sourceInput);
     destinationInput.parentNode.removeChild(destinationInput);
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 })();
 </script>
 </svg>

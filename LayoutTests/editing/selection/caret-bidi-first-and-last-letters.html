@@ -17,8 +17,8 @@ This tests that clicking in a contenteditable div will set the caret in the righ
 <script src="resources/caret-edge-shared.js"></script>
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function runTest(div, clickOn, expectedOffset) {
     var elementToCalulateTextWidth = document.createElement('span');
@@ -48,7 +48,7 @@ function runTest(div, clickOn, expectedOffset) {
         return log(div, 'PASS');
     }
 
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         div.addEventListener('mouseup', verify);
         return;
     }

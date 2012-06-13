@@ -3,24 +3,24 @@
 
 <script>
 
-if (window.layoutTestController) {
+if (window.testRunner) {
 
-    window.layoutTestController.dumpEditingCallbacks();
+    window.testRunner.dumpEditingCallbacks();
     
     var div = document.getElementById("div");
     var text = div.firstChild;
     var sel = window.getSelection();
     
     sel.setPosition(text, text.length);
-    layoutTestController.execCommand("MoveToBeginningOfLineAndModifySelection");
+    testRunner.execCommand("MoveToBeginningOfLineAndModifySelection");
     
     sel.setPosition(text, 0);
-    layoutTestController.execCommand("MoveToEndOfLineAndModifySelection");
+    testRunner.execCommand("MoveToEndOfLineAndModifySelection");
 
     sel.setPosition(text, text.length);
-    layoutTestController.execCommand("MoveToBeginningOfParagraphAndModifySelection");
+    testRunner.execCommand("MoveToBeginningOfParagraphAndModifySelection");
     
     sel.setPosition(text, 0);
-    layoutTestController.execCommand("MoveToEndOfParagraphAndModifySelection");
+    testRunner.execCommand("MoveToEndOfParagraphAndModifySelection");
 }
 </script>

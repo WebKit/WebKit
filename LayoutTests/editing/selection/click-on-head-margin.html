@@ -17,8 +17,8 @@ head.appendChild(longLine);
 while (longLine.offsetWidth < head.offsetWidth + 200)
     longLine.lastChild.textContent += ' some text';
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
     eventSender.mouseMoveTo(firstLine.offsetLeft + head.offsetWidth + 10,
         100 + firstLine.offsetHeight / 2);

@@ -27,21 +27,21 @@
 <div contenteditable id="root10" class="editing">a&#x2003E;&#x2003E;a</div>
 
 <script>
-if (window.layoutTestController) {
+if (window.testRunner) {
     var pos = [4, 1, 1, 2, 1, 2, 1, 2, 3, 2, 3];
     for (var i = 0; i < 11; ++i) {
         var div = document.getElementById("root" + i);
 
         div.focus();
         for (var j = 0; j < pos[i]; ++j)
-            layoutTestController.execCommand("MoveForward");
+            testRunner.execCommand("MoveForward");
 
-        layoutTestController.execCommand("DeleteBackward");
+        testRunner.execCommand("DeleteBackward");
     }
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 } else {
-    document.write("This test requires layoutTestController.<br>");
+    document.write("This test requires testRunner.<br>");
     document.write("When doing manually, try to delete the above strings by hitting backspace key.");
 }
 

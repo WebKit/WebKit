@@ -1,14 +1,14 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 </script>
 <script src="../editing.js"></script>
@@ -27,8 +27,8 @@ document.execCommand("Delete");
 </script>
 <div>SUCCESS if the test didn't crash and you see this message.</div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.notifyDone()
+if (window.testRunner) {
+    testRunner.notifyDone()
 }
 </script>
 <body>

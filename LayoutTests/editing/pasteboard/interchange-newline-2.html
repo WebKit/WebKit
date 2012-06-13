@@ -4,8 +4,8 @@
 <div id="test" contenteditable="true"><div>foo</div>bar</div>
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
 
 Markup.description('This demonstrates a bug in interchange newline handling during paste.\n'
 + 'The selection being pasted into contain multiple blocks, which breaks the old code in paste that handled interchange newlines.')

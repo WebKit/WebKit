@@ -64,8 +64,8 @@ function runTest(x, y, elem, offset, refpos) {
 }
 
 function automaticTest() {
-    if (window.layoutTestController) {   
-        window.layoutTestController.dumpAsText();
+    if (window.testRunner) {   
+        window.testRunner.dumpAsText();
             
         var elem;
         

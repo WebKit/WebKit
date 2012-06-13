@@ -10,8 +10,8 @@ not to the center to avoid undesirable content view jumping.</div>
   <div style="overflow:visible; height:100px;" contenteditable="true" id="input"></div>
 </div>
 <script>
-if (window.layoutTestController)
-   layoutTestController.dumpAsText();
+if (window.testRunner)
+   testRunner.dumpAsText();
 
 performJumpAtTheEdgeTest(false);
 

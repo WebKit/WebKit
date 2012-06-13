@@ -40,10 +40,10 @@ function test(platform, selectionExpected, result)
 
 function load()
 {
-    if (!window.eventSender || !window.layoutTestController || !window.internals)
+    if (!window.eventSender || !window.testRunner || !window.internals)
         return;
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     test('mac', true, 'resultmac');
     test('win', false, 'resultwin');

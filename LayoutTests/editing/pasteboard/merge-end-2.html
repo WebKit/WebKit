@@ -6,8 +6,8 @@
 <script src="../editing.js"></script>
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
 
 Markup.description('This tests the last paragraph in the pasted fragment is merged with the content after the insertion position\n'
 + '"baz" and "oobar" should be in the same paragraph below');

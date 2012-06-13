@@ -8,12 +8,12 @@
     <script>
         function test()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
 
                 // We make the WebView editable here so that the code path responsible for
                 // <http://webkit.org/b/37115> / <rdar://problem/7829331> is exercised.
-                layoutTestController.setWebViewEditable(true);
+                testRunner.setWebViewEditable(true);
             }
 
             determineDeletionUIExistence("dontDeleteMeA");

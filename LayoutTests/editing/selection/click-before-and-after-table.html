@@ -7,8 +7,8 @@ td {
 <body style="border: 1px solid red;" contenteditable="true"><table id="table" style="margin: 25px; border:10px solid #ccc; padding: 10px;"><tr><td>cell one</td><td>cell two</td></tr></table>
 <ul id="console"></ul>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 
 function log(message) {
     var console = document.getElementById("console");
@@ -20,7 +20,7 @@ function log(message) {
 }
 
 function runAutomatedTest() {
-    window.layoutTestController.dumpAsText();
+    window.testRunner.dumpAsText();
     var s, x, y, e, top, bottom, left, right;
     table = document.getElementById("table");
 
@@ -70,7 +70,7 @@ function runAutomatedTest() {
         log("Failure: Clicking @ " + x + ", " + y + " inside the table put the caret before or after it.  Instead: " + s.anchorNode + ", " + s.anchorOffset);
 }
 
-if (window.layoutTestController)
+if (window.testRunner)
     runAutomatedTest();
 else {
     log("This test uses the eventSender to do mouse clicks.  To run it manually, click after the table, the caret should appear there (and not inside the table).  Then click inside the table.  The caret should appear inside it.");

@@ -6,13 +6,13 @@ With Pinyin Simplified IM, a wrong character is deleted from google.com suggesti
 <textarea id="test"></textarea>
 <script type="text/javascript">
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var testInput = document.getElementById("test");
     testInput.focus();
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         
         try {
             textInputController.setMarkedText("P", 1, 0);

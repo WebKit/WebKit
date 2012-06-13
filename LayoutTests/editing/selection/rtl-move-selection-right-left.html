@@ -68,8 +68,8 @@ function runTests()
 {
     testSelectionChange(setSelection, "move", "right", 0, -3, "Move selection right");
     testSelectionChange(setSelection, "move", "left", 3, 0, "Move selection left");
-    if (window.layoutTestController && window.internals) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner && window.internals) {
+        testRunner.dumpAsText();
         internals.settings.setEditingBehavior("mac");
         testSelectionChange(dragSelection, "extend", "right", 0, 0, "Extend dragged selection right (Mac)");
         testSelectionChange(dragSelection, "extend", "left", 0, 0, "Extend dragged selection left (Mac)");

@@ -1,7 +1,7 @@
 <!DOCTYPE html><html><body><br><label style="margin-left: inherit;"></label><script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 getSelection().setPosition(document.querySelector('br'), 0);
 getSelection().modify("move","forward","paragraph");

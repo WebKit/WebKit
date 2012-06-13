@@ -1,8 +1,8 @@
 <p>This tests to make sure that a selection inside a textarea is updated when the textarea is removed from the document.</p>
 <textarea id="textarea"></textarea>
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 textarea = document.getElementById("textarea");
 textarea.setSelectionRange(0, 0);
 textarea.parentNode.removeChild(textarea);

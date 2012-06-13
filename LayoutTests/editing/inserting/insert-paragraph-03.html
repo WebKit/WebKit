@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 <p>This tests inserting a paragraph separator before a horizontal rule.  You should see 'foo', empty paragraph, horizontal rule, 'bar', and the caret should be just before the horizontal rule.</p>
 <div contenteditable="true" id="div">foo<hr>bar</div>

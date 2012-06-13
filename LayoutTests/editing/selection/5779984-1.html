@@ -2,8 +2,8 @@
 <div contenteditable="true" id="test">This text should not be selectable.</div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 div = document.getElementById("test");
 text = div.firstChild;
 if (div.style.WebkitUserSelect == undefined)

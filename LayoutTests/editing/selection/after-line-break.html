@@ -12,9 +12,9 @@
 
 ipsum</div>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpEditingCallbacks();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpEditingCallbacks();
         var target = document.getElementById("target");
         var x = target.offsetParent.offsetLeft + target.offsetLeft;
         var y = target.offsetParent.offsetTop + target.offsetTop;

@@ -14,8 +14,8 @@ document.getElementsByTagName('input')[0].value = 'hello';
 document.getElementsByTagName('textarea')[0].value = 'world';
 document.execCommand('Undo', false, null);
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 </script>
 </body>

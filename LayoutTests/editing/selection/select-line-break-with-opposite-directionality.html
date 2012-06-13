@@ -59,8 +59,8 @@ function selectLineSafely(test, lineTop) {
     eventSender.mouseUp();
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
     if (!window.eventSender)
         document.writeln('This test requires eventSender');

@@ -5,8 +5,8 @@ div:last-child {}
 </style>
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 // The bug only reproduces when input is the last element in body
 // So we have no choice but to run the test on page load.
@@ -18,7 +18,7 @@ function runTest() {
     document.execCommand('InsertHTML', false, '<div> world</div>');
     var result = input.value == 'hello world' ? 'PASS' : 'FAIL';
     input.parentNode.insertBefore(document.createTextNode(result), input);
-    if (window.layoutTestController)
+    if (window.testRunner)
         input.parentNode.removeChild(input);
 }
 

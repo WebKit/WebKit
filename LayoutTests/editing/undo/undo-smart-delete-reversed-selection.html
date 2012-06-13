@@ -3,8 +3,8 @@
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function getStringForNode(node) {
     return node + "(" + node.data + ")";
@@ -59,10 +59,10 @@ foo b<span id="end">a</span>r b<span id="start" style="color:green">a</span>z bi
 
 <div id="result"></div>
 <script>
-layoutTestController.waitUntilDone();
+testRunner.waitUntilDone();
 setTimeout(function() {
     editingTest();
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }, 1000);
 </script>
 

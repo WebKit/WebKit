@@ -12,8 +12,8 @@
 </div>
 <script type="text/javascript"> 
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 window.getSelection().selectAllChildren(document.getElementById('test'))
 document.execCommand('InsertOrderedList', false, null);

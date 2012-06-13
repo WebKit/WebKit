@@ -31,7 +31,7 @@ shouldBeTrue('internals.hasSpellingMarker(document, 0, 2)');
 window.getSelection().selectAllChildren(srcNode);
 document.execCommand('Copy');
 
-layoutTestController.setAsynchronousSpellCheckingEnabled(true);
+testRunner.setAsynchronousSpellCheckingEnabled(true);
 
 var dstNode = document.getElementById('dst');
 dstNode.focus();
@@ -51,7 +51,7 @@ function verifyMarker() {
         testFailed('The destination node should not have a marker.');
     else
         testPassed('The destination node does not have any markers.');
-    layoutTestController.setAsynchronousSpellCheckingEnabled(false);
+    testRunner.setAsynchronousSpellCheckingEnabled(false);
     finishJSTest();
 }
 window.setTimeout(verifyMarker, sleepPeriod);

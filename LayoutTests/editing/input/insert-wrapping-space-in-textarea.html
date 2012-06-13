@@ -16,9 +16,9 @@ document.execCommand('InsertText', false, ' ');
 
 document.writeln(originalLength < textarea.value.length ? 'PASS' : 'FAIL');
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     textarea.parentNode.removeChild(textarea);
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 }
 
 </script>

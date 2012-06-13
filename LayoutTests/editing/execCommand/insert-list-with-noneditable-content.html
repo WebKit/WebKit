@@ -16,7 +16,7 @@ var div = document.getElementById("test");
 s.setPosition(div.childNodes[0], 10);
 s.modify("extend", "forward", "line");
 
-if (window.layoutTestController) {
+if (window.testRunner) {
   insertList();
   Markup.description(document.getElementById('description').innerText);
   Markup.dump(div);

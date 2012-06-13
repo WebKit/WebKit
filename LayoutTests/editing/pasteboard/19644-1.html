@@ -3,9 +3,9 @@
 function runTest() {
     document.body.focus();
     document.execCommand("SelectAll");
-    if (!layoutTestController)
+    if (!testRunner)
         return;
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     document.execCommand("Cut");
     document.execCommand("Paste");
     document.body.innerText = document.body.innerHTML;

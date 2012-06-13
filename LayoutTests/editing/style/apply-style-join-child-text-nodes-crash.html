@@ -12,8 +12,8 @@ document.addEventListener("DOMCharacterDataModified",function(){
 <script>
 window.jsTestIsAsync = true;
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 var scriptElement = document.getElementById('script1');
 scriptElement.parentNode.appendChild(scriptElement.firstChild);

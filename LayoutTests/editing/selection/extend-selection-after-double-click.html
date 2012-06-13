@@ -25,10 +25,10 @@
 
     function runTests()
     {
-        if (!window.eventSender || !window.layoutTestController || !window.internals)
+        if (!window.eventSender || !window.testRunner || !window.internals)
             return;
 
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
 
         runTest("mac", "a paragraph");
         runTest("win", "paragra");

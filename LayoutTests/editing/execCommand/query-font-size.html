@@ -68,8 +68,8 @@ function testManualFontSize(size)
     reportSizeForSpan(editableDiv.firstChild, "manual CSS font-size: " + size);
 }
 
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 
 var editableDiv = document.createElement("div");
 editableDiv.contentEditable = true;

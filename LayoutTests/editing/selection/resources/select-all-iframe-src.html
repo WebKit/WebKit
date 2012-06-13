@@ -1,10 +1,10 @@
 <script src="../../editing.js" language="JavaScript" type="text/JavaScript"></script>
 <script>
 function editingTest() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     
-    window.layoutTestController.waitUntilDone();
+    window.testRunner.waitUntilDone();
     
     // Give focus to the subframe so that Select All will operate on it, and not the main frame.
     eventSender.mouseMoveTo(100, 50);
@@ -14,7 +14,7 @@ function editingTest() {
     selectAllCommand();
     deleteCommand();
     
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 </script>
 <body bgcolor="lightyellow" contenteditable="true">

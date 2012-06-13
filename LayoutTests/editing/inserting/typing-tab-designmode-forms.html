@@ -11,8 +11,8 @@ function log(msg)
     document.getElementById("console").appendChild(document.createTextNode(msg + "\n"));
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.designMode="on";
 

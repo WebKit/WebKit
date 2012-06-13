@@ -23,8 +23,8 @@ document.getElementById('test').focus();
 for (var i = 0; i < 6; i++)
     execMoveSelectionForwardByCharacterCommand();
 
-if (window.layoutTestController)
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
 
 Markup.dump('test', 'Initial condition');
 for (var i = 0; i < 3; i++) {

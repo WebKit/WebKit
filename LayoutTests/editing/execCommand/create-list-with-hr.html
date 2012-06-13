@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 <p>This test pushes a horizontal rule into an unordered list with InsertUnorderedList. <b>This demonstrates what might be a bug:</b> the horizontal rule appears before the list marker in the render tree.</p>
 <div contenteditable="true" id="div"><hr></div>

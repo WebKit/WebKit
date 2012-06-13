@@ -2,8 +2,8 @@
 <div id="div" contenteditable="true">The caret should be <img src="../resources/abe.png">at the beginning of this sentence.</div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    window.testRunner.dumpEditingCallbacks();
 var sel = window.getSelection();
 var div = document.getElementById("div");
 sel.setPosition(div, 0);

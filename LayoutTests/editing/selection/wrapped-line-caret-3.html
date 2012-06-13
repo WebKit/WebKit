@@ -4,8 +4,8 @@
 
 <div id="edit" contentEditable="true" style="width: 350px; height: 100px; border: 1px solid blue;">a <span style=color:blue;">xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span></div>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var edit = document.getElementById("edit");
 window.getSelection().setPosition(edit.childNodes.item(1).childNodes.item(0), 2);

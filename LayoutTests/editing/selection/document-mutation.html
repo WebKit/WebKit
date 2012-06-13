@@ -10,8 +10,8 @@
 var test = document.getElementById('test');
 test.focus();
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var baseIsFirst = true;
 var selection = window.getSelection();

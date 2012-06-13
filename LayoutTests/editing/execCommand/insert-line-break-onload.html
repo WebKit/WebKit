@@ -10,9 +10,9 @@ function go() {
     document.execCommand("InsertLineBreak");
 
     var result = "PASS";
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         document.write("<html>" + result + "<html>");
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
     } else
         document.write("<html>" + result + "<html>");
 }

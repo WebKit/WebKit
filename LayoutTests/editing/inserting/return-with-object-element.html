@@ -5,8 +5,8 @@
     </style>
     <script>
         function runTest() {
-            if (window.layoutTestController)
-                window.layoutTestController.dumpAsText();
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
 
             var obj = document.getElementById("objectInQuestion");
             var s = window.getSelection();

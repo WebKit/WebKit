@@ -5,8 +5,8 @@
 <div>bar</div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 document.getElementById("div").focus();
 span = document.getElementById("span");
 window.getSelection().setPosition(span, 0);

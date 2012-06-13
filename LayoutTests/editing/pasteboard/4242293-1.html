@@ -2,8 +2,8 @@
 <div id="copy" contenteditable="true"><div><div>foo</div>bar</div>baz</div>
 <div id="paste" contenteditable="true">foo</div>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 
 var sel = window.getSelection();
 var e = document.getElementById("copy");

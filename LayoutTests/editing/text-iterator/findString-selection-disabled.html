@@ -29,14 +29,14 @@ function testFindString(text, target, disableSelection, expected)
 
     container.className = disableSelection ? "selectionDisabled" : "selectionEnabled";
 
-    shouldBe("layoutTestController.findString('" + target + "', [])", expected);
+    shouldBe("testRunner.findString('" + target + "', [])", expected);
 
     container.innerText = "";
     log("");
 }
 
-if (!window.layoutTestController)
-    testFailed('This test requires the layoutTestController object');
+if (!window.testRunner)
+    testFailed('This test requires the testRunner object');
 else {
     for (i = 0; i < 2; i++) {
         var disableSelection = (i == 1);

@@ -20,10 +20,10 @@
 <script>
 description("Test for Unified Spell Checker & Async Spell Checker.");
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.setAsynchronousSpellCheckingEnabled(true);
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setAsynchronousSpellCheckingEnabled(true);
+    testRunner.waitUntilDone();
 }
 
 if (window.internals)
@@ -59,9 +59,9 @@ function doTestIfAny() {
     if (window.internals)
         internals.settings.setUnifiedTextCheckingEnabled(false);
 
-    if (window.layoutTestController) {
-        layoutTestController.setAsynchronousSpellCheckingEnabled(false);
-        layoutTestController.notifyDone();
+    if (window.testRunner) {
+        testRunner.setAsynchronousSpellCheckingEnabled(false);
+        testRunner.notifyDone();
     }
 }
 

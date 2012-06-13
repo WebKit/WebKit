@@ -1,8 +1,8 @@
 <html> 
 <head>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 
 
@@ -24,24 +24,24 @@ function editingTest() {
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
     
-    layoutTestController.execCommand("MoveBackward");
-    layoutTestController.execCommand("MoveDown");
-    layoutTestController.execCommand("MoveForward");
-    layoutTestController.execCommand("MoveLeft");
-    layoutTestController.execCommand("MoveRight");
-    layoutTestController.execCommand("MoveToBeginningOfDocument");
-    layoutTestController.execCommand("MoveToBeginningOfLine");
-    layoutTestController.execCommand("MoveToBeginningOfParagraph");
-    layoutTestController.execCommand("MoveToEndOfDocument");
-    layoutTestController.execCommand("MoveToEndOfLine");
-    layoutTestController.execCommand("MoveToEndOfParagraph");
-    layoutTestController.execCommand("MoveUp");
-    layoutTestController.execCommand("MoveWordBackward");
-    layoutTestController.execCommand("MoveWordForward");
-    layoutTestController.execCommand("MoveWordLeft");
-    layoutTestController.execCommand("MoveWordRight");
-    layoutTestController.execCommand("PageDown");
-    layoutTestController.execCommand("PageUp");
+    testRunner.execCommand("MoveBackward");
+    testRunner.execCommand("MoveDown");
+    testRunner.execCommand("MoveForward");
+    testRunner.execCommand("MoveLeft");
+    testRunner.execCommand("MoveRight");
+    testRunner.execCommand("MoveToBeginningOfDocument");
+    testRunner.execCommand("MoveToBeginningOfLine");
+    testRunner.execCommand("MoveToBeginningOfParagraph");
+    testRunner.execCommand("MoveToEndOfDocument");
+    testRunner.execCommand("MoveToEndOfLine");
+    testRunner.execCommand("MoveToEndOfParagraph");
+    testRunner.execCommand("MoveUp");
+    testRunner.execCommand("MoveWordBackward");
+    testRunner.execCommand("MoveWordForward");
+    testRunner.execCommand("MoveWordLeft");
+    testRunner.execCommand("MoveWordRight");
+    testRunner.execCommand("PageDown");
+    testRunner.execCommand("PageUp");
 }
 
 </script>

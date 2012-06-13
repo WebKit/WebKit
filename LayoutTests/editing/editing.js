@@ -868,8 +868,8 @@ function forwardDeleteCommand() {
 //-------------------------------------------------------------------------------------------------------
 
 function runEditingTest() {
-    if (window.layoutTestController)
-        layoutTestController.dumpEditingCallbacks();
+    if (window.testRunner)
+        testRunner.dumpEditingCallbacks();
 
     var elem = document.getElementById("test");
     var selection = window.getSelection();
@@ -881,10 +881,10 @@ var dumpAsText = false;
 var markupResultList = document.createElement('ol');
 
 function runDumpAsTextEditingTest(enableCallbacks) {
-    if (window.layoutTestController) {
-         layoutTestController.dumpAsText();
+    if (window.testRunner) {
+         testRunner.dumpAsText();
          if (enableCallbacks)
-            layoutTestController.dumpEditingCallbacks();
+            testRunner.dumpEditingCallbacks();
      }
 
     dumpAsText = true;

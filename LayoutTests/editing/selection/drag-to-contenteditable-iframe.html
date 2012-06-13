@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-     layoutTestController.dumpEditingCallbacks();
-     layoutTestController.waitUntilDone();
+if (window.testRunner) {
+     testRunner.dumpEditingCallbacks();
+     testRunner.waitUntilDone();
 }
 
 function log(message) {
@@ -16,7 +16,7 @@ function log(message) {
 }
 
 function runTest() {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         log("This test uses the eventSender.  To run it manually, drag the image into the editable frame and drop it.  It should appear inside the editable frame.");
         return;
     }
@@ -38,7 +38,7 @@ function runTest() {
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
     
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 window.onload = runTest;

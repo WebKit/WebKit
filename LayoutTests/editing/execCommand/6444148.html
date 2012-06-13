@@ -2,14 +2,14 @@
 <div id="edit" contentEditable="true"><blockquote id="blockquote" type="cite">hello</blockquote>world</div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 blockquote = document.getElementById("blockquote");
 edit = document.getElementById("edit");
 description = document.getElementById("description");
 
 window.getSelection().setBaseAndExtent(blockquote, 0, edit, 1);
 document.execCommand("Bold");
-if (window.layoutTestController)
+if (window.testRunner)
     document.body.innerText = description.innerText + "\n\n" + edit.innerHTML;
 </script>

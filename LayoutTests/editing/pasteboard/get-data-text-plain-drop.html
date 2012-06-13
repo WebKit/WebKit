@@ -3,9 +3,9 @@
 <head>
 <script src="../editing.js" type="text/javascript"></script>
 <script type="text/javascript">
-if (window.layoutTestController) {  
-    window.layoutTestController.waitUntilDone(); 
-    layoutTestController.dumpAsText();
+if (window.testRunner) {  
+    window.testRunner.waitUntilDone(); 
+    testRunner.dumpAsText();
 }
 
 var handleDrop = function(e) {
@@ -35,7 +35,7 @@ function runTest() {
     selection.setPosition(editDiv, 0);
     extendSelectionForwardByWordCommand(); 
 
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     
     // Now, drag foo.
@@ -52,7 +52,7 @@ function runTest() {
     y = drop.offsetTop + drop.offsetHeight / 2;
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 
 </script>

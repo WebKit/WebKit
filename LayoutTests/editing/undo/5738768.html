@@ -2,8 +2,8 @@
 <input type="text" id="input">
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 document.getElementById("input").focus();
 document.execCommand("InsertText", false, "x");
 document.execCommand("Undo");

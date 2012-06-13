@@ -6,8 +6,8 @@
 <p id="result">FAIL: Test did not run</p>
 <div id="target" style="font: 20px Ahem; width: 320px; -webkit-user-modify: read-write;">Text and text<!-- --> more <!-- -->text</div>
 <script>
-    if ("layoutTestController" in window)
-        layoutTestController.dumpAsText();
+    if ("testRunner" in window)
+        testRunner.dumpAsText();
 
     var target = document.getElementById("target");
     var selection = getSelection();

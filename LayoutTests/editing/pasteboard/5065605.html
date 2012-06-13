@@ -7,8 +7,8 @@
 var div = document.getElementById("div");
 div.focus();
 
-if (window.layoutTestController)
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
 
 document.execCommand("InsertText", false, "This text should be red.");
 document.execCommand("InsertParagraph");

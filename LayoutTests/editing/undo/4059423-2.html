@@ -1,8 +1,8 @@
 <head>
 <script>
 function runTest() {
-    if (window.layoutTestController)
-        window.layoutTestController.dumpAsText();
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
     window.getSelection().setPosition(document.body, 0);
     document.execCommand("InsertText", false, "foo");
     div = document.createElement("div");

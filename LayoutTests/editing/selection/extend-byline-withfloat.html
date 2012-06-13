@@ -39,8 +39,8 @@ a.subtle{text-decoration:none;color:inherit}
     </p>
 </body>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     document.execCommand("FindString", false, "populist");
     var sel = getSelection();

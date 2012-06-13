@@ -9,8 +9,8 @@ div {
 <div id="test" contenteditable="true"><br></div>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
 
 var s = window.getSelection();
 var e = document.getElementById("test");

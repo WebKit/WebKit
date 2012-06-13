@@ -9,8 +9,8 @@
 <div><dl><dd id="dd" contenteditable="true" style="-webkit-user-select:text;">Hello</dd></dl></div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 dd = document.getElementById("dd");
 dd.focus();
 document.execCommand("SelectAll");

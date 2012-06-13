@@ -1,8 +1,8 @@
 <html> 
 <head>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 
 <script>
@@ -50,10 +50,10 @@ function manualTest() {
 
 function automaticTest() {
     try {
-        if (!window.layoutTestController)
-            throw("This test uses the layoutTestController's eventSender to do mouse clicks.  To run it manually, from left to right, select 'text' in the box below, then click the 'Run Test' button.");
+        if (!window.testRunner)
+            throw("This test uses the testRunner's eventSender to do mouse clicks.  To run it manually, from left to right, select 'text' in the box below, then click the 'Run Test' button.");
         
-        window.layoutTestController.dumpAsText();
+        window.testRunner.dumpAsText();
         
         var elem = document.getElementById("test");
     

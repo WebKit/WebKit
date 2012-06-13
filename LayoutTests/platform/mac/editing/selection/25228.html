@@ -1,9 +1,9 @@
 <head>
 <script>
 function runTest() {
-    if (!layoutTestController)
+    if (!testRunner)
         return;
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
     window.setTimeout(afterDelay, 20);
 }
 
@@ -12,7 +12,7 @@ function afterDelay() {
     edit.focus();
     window.scrollTo(0, 0);
     textInputController.doCommand("moveBackward:");
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 </head>

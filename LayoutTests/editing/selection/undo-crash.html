@@ -11,8 +11,8 @@ To run this test manually, type some text in the input field, then click the "Cr
 function load()
 {
     document.getElementById('testinput').focus();
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     document.execCommand('InsertText', false, 'b');
     document.execCommand('InsertText', false, 'l');
     document.execCommand('InsertText', false, 'a');

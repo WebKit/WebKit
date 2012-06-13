@@ -10,7 +10,7 @@ description('Test if Chrome WebKit does not remove a misspelled marker when movi
             'To test manually, type a misspelled word "zz " and type a left-arrow key to move the cursor on it.' +
             'This test succeeds when "zz" is marked as misspelled.');
 
-layoutTestController.setAsynchronousSpellCheckingEnabled(true);
+testRunner.setAsynchronousSpellCheckingEnabled(true);
 var node = document.getElementById('src');
 node.focus();
 document.execCommand("InsertText", false, 'z');
@@ -18,7 +18,7 @@ document.execCommand("InsertText", false, 'z');
 document.execCommand("InsertText", false, ' ');
 window.getSelection().modify('move', 'backward', 'character');
 shouldBeTrue('internals.hasSpellingMarker(document, 0, 2)');
-layoutTestController.setAsynchronousSpellCheckingEnabled(false);
+testRunner.setAsynchronousSpellCheckingEnabled(false);
 </script>
 <script src="../../../../fast/js/resources/js-test-post.js"></script>
 </body>

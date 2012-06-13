@@ -4,12 +4,12 @@
 <script>
 function editingTest() {
   
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
         
     extendSelectionForwardByWordCommand();
     
-    window.layoutTestController.waitUntilDone();
+    window.testRunner.waitUntilDone();
     
     // Drag 'hello'
     var e = document.getElementById("dragme");
@@ -22,7 +22,7 @@ function editingTest() {
     eventSender.mouseMoveTo(x + 300, y);
     eventSender.mouseUp();
 
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 </script>
 <title>Drag and drop within a text input field modifies page</title> 

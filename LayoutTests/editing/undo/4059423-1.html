@@ -1,8 +1,8 @@
 <div id="edit" contentEditable="true">foo<br>bar</div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 edit = document.getElementById("edit");
 window.getSelection().setPosition(edit, 0);
 document.execCommand("SelectAll");

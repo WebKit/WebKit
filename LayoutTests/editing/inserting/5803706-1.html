@@ -2,12 +2,12 @@
 <div id="edit" contentEditable="true"><h2 id="h2">foo</h2></div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 h2 = document.getElementById("h2");
 text = h2.firstChild;
 window.getSelection().setPosition(text, text.length);
 document.execCommand("InsertParagraph");
-if (window.layoutTestController)
+if (window.testRunner)
     document.body.innerText = document.getElementById("description").innerText + "\n\n" + document.getElementById("edit").innerHTML;
 </script>

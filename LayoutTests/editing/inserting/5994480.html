@@ -2,13 +2,13 @@
 <div id="edit" contentEditable="true"><div id="paragraphOne">Paragraph One</div>Paragraph two.</div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 paragraphOne = document.getElementById("paragraphOne");
 // Place the caret at the end of the block that contains the first paragraph.
 window.getSelection().setPosition(paragraphOne, paragraphOne.childNodes.length);
 
 document.execCommand("InsertHTML", false, ".");
-if (window.layoutTestController)
+if (window.testRunner)
     document.body.innerText = document.getElementById("description").innerText + "\n" + document.getElementById("edit").innerHTML;
 </script>

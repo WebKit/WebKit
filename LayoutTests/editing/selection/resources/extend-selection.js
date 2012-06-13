@@ -277,12 +277,12 @@ function createAllNodes()
            createHomeEndNodes());
 }
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     var originalOnload = window.onload;
     window.onload = function() {
         if (originalOnload)
             originalOnload();
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
         document.body.removeChild(getTestNodeContainer());
     };
 }

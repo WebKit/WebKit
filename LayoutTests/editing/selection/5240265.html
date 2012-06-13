@@ -7,7 +7,7 @@ div = document.getElementById("div");
 sel = window.getSelection();
 sel.setPosition(div, 0);
 document.execCommand("SelectAll");
-if (window.layoutTestController) {
+if (window.testRunner) {
     button = document.getElementById("button");
     x = button.offsetParent.offsetLeft + button.offsetLeft + button.offsetWidth / 2;
     y = button.offsetParent.offsetTop + button.offsetTop + button.offsetHeight / 2;

@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpEditingCallbacks();
 }
 </script>
 
@@ -14,7 +14,7 @@ body { margin: 0; padding: 0; }
 function step7()
 {
     eventSender.mouseUp();
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function step6()
@@ -61,7 +61,7 @@ function step0()
 }
 
 step0();
-layoutTestController.waitUntilDone();
+testRunner.waitUntilDone();
 </script>
 </head>
 <body>

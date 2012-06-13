@@ -2,10 +2,10 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
-    layoutTestController.setAsynchronousSpellCheckingEnabled(true);
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.setAsynchronousSpellCheckingEnabled(true);
     internals.settings.setUnifiedTextCheckingEnabled(true);
 }
 
@@ -17,8 +17,8 @@ function runTest() {
     frame.contentDocument.execCommand("InsertText", false, textToSelect);
     frame.parentNode.removeChild(frame);
     window.setTimeout(function() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 50);
 }
 </script>

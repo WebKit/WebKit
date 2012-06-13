@@ -2,8 +2,8 @@
 <div id="div" contenteditable="true">foo<blockquote id="blockquote" class="webkit-indent-blockquote">bar</blockquote>baz</div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
     
 var blockquote = document.getElementById("blockquote");
 var sel = window.getSelection();

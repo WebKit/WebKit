@@ -7,8 +7,8 @@ To manually test, copy "hello world" below and paste it in the box below. WebKit
 <div id="destination" style="border: solid 1px block;" contenteditable><font size=5><u><br></u></font></div>
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpAsText();
+if (window.testRunner)
+     testRunner.dumpAsText();
 
 Markup.description(document.getElementById('description').textContent);
 

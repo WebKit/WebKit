@@ -8,8 +8,8 @@ var text = anchor.firstChild;
 sel.setPosition(text, 3);
 
 document.execCommand("InsertHTML", false, "bar");
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     document.body.innerText = document.getElementById("description").innerText + "\n" + document.getElementById("edit").innerHTML;
 }
 </script>

@@ -5,8 +5,8 @@
 
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
 
 Markup.description('Pasting a paragraph or less into a selection that spans multiple blocks should insert content into the block containing the start of the selection.');
 

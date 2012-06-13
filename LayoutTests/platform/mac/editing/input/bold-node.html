@@ -6,8 +6,8 @@
 var div = document.getElementById("div");
 div.focus();
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
     textInputController.insertText("a");
     textInputController.doCommand("toggleBold:");

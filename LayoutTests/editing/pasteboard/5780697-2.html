@@ -23,8 +23,8 @@ copy = document.getElementById("copy");
 copy.focus();
 document.execCommand("selectall");
 document.execCommand("copy");
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
     paste = document.getElementById("paste");
     description = document.getElementById("description");
     document.getElementById("paste").focus();

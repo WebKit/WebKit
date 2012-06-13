@@ -4,8 +4,8 @@
             var onPasteEventFired = false;
 
             function test() {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
 
                 var result = document.getElementById("result");
                 window.getSelection().setBaseAndExtent(result, 0, result, 7);

@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 <div>This test checks that links dragged into editable regions preserve their title and URL.</div>
 
@@ -27,9 +27,9 @@ function log(message) {
 }
 
 function runTest() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     dragLink('grabme', 'destination');
     dragLink('grabme2', 'destination2');

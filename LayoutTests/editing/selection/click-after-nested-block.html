@@ -4,10 +4,10 @@
 
 function runTest()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     var target = document.getElementById("test");
     

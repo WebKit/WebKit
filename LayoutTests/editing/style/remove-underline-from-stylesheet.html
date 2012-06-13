@@ -13,8 +13,8 @@
 <script>
 
 function editingTest() {
-    if (window.layoutTestController)
-         layoutTestController.dumpAsText();
+    if (window.testRunner)
+         testRunner.dumpAsText();
     for (i = 0; i < 6; i++)
         typeCharacterCommand();
     typeCharacterCommand(' ');

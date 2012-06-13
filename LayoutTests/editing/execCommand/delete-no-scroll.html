@@ -2,9 +2,9 @@
 <div contenteditable>ab</div>
 <div style="height:10000"></div>
 <script>
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
   }
 
   var textDiv = document.getElementsByTagName('div')[0];
@@ -25,8 +25,8 @@
     document.execCommand("Delete");
 
     var result = (document.body.scrollTop == 1000) ? "SUCCESS" : "FAILURE";
-    if (window.layoutTestController) {
-      layoutTestController.notifyDone();
+    if (window.testRunner) {
+      testRunner.notifyDone();
       document.write(result);
     } else
       alert(result);

@@ -1,8 +1,8 @@
 <html> 
 <head>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 
 
@@ -32,7 +32,7 @@ function editingTest() {
 </head>
 <body>
 <p>This tests modifying a selection created with a double click.  The new selection should use word granularity.</p>
-<p style="color:green">This test does not run interactively.  It uses the layoutTestControllers eventSender to do mouse clicks.  To run it manually, double click on the blue 'g', then drag down to the red 'g'.  As you drag, watch the selection that is created, it should always start and end on word boundaries.</p>
+<p style="color:green">This test does not run interactively.  It uses the testRunners eventSender to do mouse clicks.  To run it manually, double click on the blue 'g', then drag down to the red 'g'.  As you drag, watch the selection that is created, it should always start and end on word boundaries.</p>
 <div>
 This is a para<span style="color:blue;" id="start">g</span>raph.<br>
 Some text<br>

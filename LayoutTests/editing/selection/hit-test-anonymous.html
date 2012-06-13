@@ -36,8 +36,8 @@ span:after {
     }
     function runTest()
     {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         var block = document.getElementById("block");
         var x = block.offsetLeft + 5;

@@ -18,15 +18,15 @@ function part1() {
 
     if (frames['iframe'].document.body.innerText != 'c') {
         log("FAIL: could not insert text.");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
 
     if (!document.queryCommandEnabled('Undo')) {
         log("FAIL: Undo is not enabled after text insertion.");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
 
@@ -42,8 +42,8 @@ function part2() {
     else
         log("Failure, Undo was still enabled after the location changed (but at least we didn't crash!)");
         
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest() {
@@ -54,9 +54,9 @@ function runTest() {
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 </script>

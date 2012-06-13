@@ -4,8 +4,8 @@ This is a crash test when executing backColor on a node where all of its ancesto
 <div id="test" contenteditable></div>
 <script>
 
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 
 window.getSelection().setPosition(test, 0);
 var color = document.queryCommandValue('backColor', false, null);

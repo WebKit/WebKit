@@ -2,9 +2,9 @@
 <div id="div">This should not be selected.</div>
 
 <script>
-if (window.layoutTestController) {
-    window.layoutTestController.dumpEditingCallbacks();
-    window.layoutTestController.dumpAsText();
+if (window.testRunner) {
+    window.testRunner.dumpEditingCallbacks();
+    window.testRunner.dumpAsText();
 }
 var sel = window.getSelection();
 var div = document.getElementById("div");

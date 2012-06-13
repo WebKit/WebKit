@@ -30,9 +30,9 @@ function runTest(elem, node)
     document.getElementById(elem).appendChild(document.createTextNode(((before == afterundo) && (after == e.innerHTML))? "PASSED": "FAILED"));
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpEditingCallbacks();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpEditingCallbacks();
+    testRunner.dumpAsText();
 }
 
 var s = window.getSelection();

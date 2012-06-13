@@ -51,8 +51,8 @@
 
             function runTests()
             {
-                if (window.layoutTestController)
-                     layoutTestController.dumpAsText();
+                if (window.testRunner)
+                     testRunner.dumpAsText();
 
                 // Test with 1 argument.
                 test('document.execCommand("InsertHorizontalRule")', '<hr>');

@@ -24,7 +24,7 @@ This tests to make sure that right clicking non-editable content only creates a 
 </body>
 
 <script>
-if (window.layoutTestController) {
+if (window.testRunner) {
     // Make sure that right click is not a no-op (selects a word).
     word = document.getElementById("word");
     x = word.offsetParent.offsetLeft + word.offsetLeft + word.offsetWidth / 2;

@@ -21,8 +21,8 @@ Input methods do not work after switching to a password field and back.</p>
         console_messages.appendChild(item);
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
 
         var textInput = document.getElementsByTagName("input")[0];
         var passwordInput = document.getElementsByTagName("input")[1];

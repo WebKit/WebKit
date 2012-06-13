@@ -12,7 +12,7 @@ window.getSelection().modify("move", "right", "character");
 document.execCommand("delete");
 if (target.childNodes.length == 2)
     document.getElementById("result").innerHTML = "PASS";
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 </script> 
 </html>

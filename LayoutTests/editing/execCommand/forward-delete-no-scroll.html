@@ -9,8 +9,8 @@
   document.execCommand("ForwardDelete");
 
   var result = (window.pageYOffset == 1000) ? "SUCCESS" : "FAILURE";
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+  if (window.testRunner) {
+    testRunner.dumpAsText();
     document.write(result);
   } else
     alert(result);

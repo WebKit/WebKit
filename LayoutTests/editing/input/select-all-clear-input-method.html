@@ -8,7 +8,7 @@ WebKit should not delete contents.</p>
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     var container = document.getElementById('container');
     container.firstChild.focus();
     getSelection().setPosition(container.firstChild.firstChild, 5);

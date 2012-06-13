@@ -1,13 +1,13 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 <p>This tests for a crash on paste inside removeRedundantStyles.  You should see 'foo bar' below.</p>
 <div id="div" contenteditable="true"></div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
     
 var div = document.getElementById("div");
 var sel = window.getSelection();

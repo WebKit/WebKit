@@ -2,8 +2,8 @@
 <head>
 <script>
 function runTest() {
-    if (window.layoutTestController)
-        window.layoutTestController.dumpAsText();
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
     div = document.getElementById("div");
     div.focus();
     document.execCommand("SelectAll");

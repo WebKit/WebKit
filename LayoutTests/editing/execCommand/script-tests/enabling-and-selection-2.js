@@ -24,14 +24,14 @@ function enabled(command, element, selectionStart, selectionEnd)
         range.setEnd(element.firstChild, selectionEnd);
         selection.addRange(range);
     }
-    var result = layoutTestController.isCommandEnabled(command);
+    var result = testRunner.isCommandEnabled(command);
     selection.removeAllRanges();
     return result;
 }
 
 function whenEnabled(command)
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return "no layout test controller";
 
     var enabledWithNoSelection = enabled(command);

@@ -12,8 +12,8 @@
 <div contenteditable>hello wo<span id="target">r</span>ld WebKit</div>
 <script>
 
-if (window.layoutTestController && window.internals) {
-    layoutTestController.dumpAsText();
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText();
 
     if (!window.eventSender)
         document.writeln('FAIL - this test requires eventSender');

@@ -5,8 +5,8 @@
 <script>
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     window.getSelection().setBaseAndExtent(
         document.getElementById("h2").firstChild, 9,

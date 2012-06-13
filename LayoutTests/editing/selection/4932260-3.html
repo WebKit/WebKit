@@ -2,8 +2,8 @@
 <div id="div" contenteditable="true">The caret should be just before the second to last word in this<img src="../resources/abe.png">sentence.</div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    window.testRunner.dumpEditingCallbacks();
 var sel = window.getSelection();
 var div = document.getElementById("div");
 sel.setPosition(div, div.childNodes.length);

@@ -19,12 +19,12 @@ function runTest() {
 
     document.body.innerHTML = 'This test ensures WebKit does not crash when intending.<br>PASS';
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 </script>

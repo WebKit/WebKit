@@ -7,8 +7,8 @@
 <script src="resources/polyfill.js"></script>
 <script src="../../../editing/editing.js"></script>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function contextClick(x, y) {
     eventSender.mouseMoveTo(x, y);

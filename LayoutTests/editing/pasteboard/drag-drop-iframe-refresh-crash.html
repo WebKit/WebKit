@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function log(message) {
@@ -29,7 +29,7 @@ function runTest() {
                                 window.frames[0].location = "../resources/drag-drop.html";
                             }, 100);
 
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         log("This test uses eventSender. To run it manually, drag the selected image to another position in the editable div and drop it. Renderer should not crash.");
         return;
     }
@@ -47,7 +47,7 @@ function runTest() {
     document.write("<p>Bug 37618: Crash when an image drag-drop operation happens inside a continuously refreshing iframe.</p>");
     document.write("<p>SUCCESS</p>");
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 </head>

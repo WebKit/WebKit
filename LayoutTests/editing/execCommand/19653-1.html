@@ -17,8 +17,8 @@
 <div id="edit6" contentEditable="true"></div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 edit1 = document.getElementById("edit1");
 edit1.focus();
 document.execCommand("InsertUnorderedList");
@@ -52,7 +52,7 @@ document.execCommand("Bold");
 document.execCommand("Outdent");
 document.execCommand("InsertText", false, "Bold");
 
-if (window.layoutTestController)
+if (window.testRunner)
     document.body.innerText = document.getElementById("description1").innerText + "\n" + edit1.innerHTML + "\n\n" +
                               document.getElementById("description2").innerText + "\n" + edit2.innerHTML + "\n\n" +
                               document.getElementById("description3").innerText + "\n" + edit3.innerHTML + "\n\n" +

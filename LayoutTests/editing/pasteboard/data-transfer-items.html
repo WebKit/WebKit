@@ -29,7 +29,7 @@ function handleEvent(data)
 {
     log(data);
     if (--pendingCallbacks == 0) {
-        window.layoutTestController.notifyDone();
+        window.testRunner.notifyDone();
     }
 }
 
@@ -88,10 +88,10 @@ function paste(ev)
 }
 
 function runTest() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 
     eventSender.mouseMoveTo(0, 0);
     for (var i = 0; i < 3; i++) {

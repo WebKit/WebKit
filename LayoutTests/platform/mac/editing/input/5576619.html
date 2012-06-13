@@ -3,8 +3,8 @@
 
 <script>
 document.getElementById("div").focus();
-if (window.layoutTestController) {
-    window.layoutTestController.dumpEditingCallbacks();
+if (window.testRunner) {
+    window.testRunner.dumpEditingCallbacks();
     var markedText = textInputController.makeAttributedString("a");
     markedText.addAttribute("NSUnderline", 2);
     textInputController.setMarkedText(markedText, 1, 0);

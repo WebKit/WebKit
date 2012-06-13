@@ -13,8 +13,8 @@ To run this test manually, click the "Crash me" button.
 function load()
 {
     document.getElementById('testframe').contentWindow.document.body.focus();
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     if (eventSender) {
         var button = document.getElementById('testbutton');

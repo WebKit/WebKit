@@ -1,13 +1,13 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 <p>This tests to see if Find will get stuck when searching for a word that is currently selected, and was selected with a double click.</p>
 
 <div>foo <span id="selectme">bar</span> baz foo bar baz</div>
 
 <script>
-if (window.layoutTestController) {
+if (window.testRunner) {
     var e = document.getElementById("selectme");
     var x = e.offsetLeft + e.offsetWidth / 2;
     var y = e.offsetTop + e.offsetHeight / 2;

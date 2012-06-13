@@ -38,10 +38,10 @@ function startTest()
     destination.addEventListener('dragover', handleDragOver, false);
     destination.addEventListener('drop', handleDrop, false);
 
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 
     var files = [];
     for (var i = 0; i < testFiles.length; ++i) {
@@ -88,7 +88,7 @@ function handleDrop(e)
         test(name, file.name);
     }
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 startTest();

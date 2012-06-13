@@ -8,8 +8,8 @@
         output += window.getSelection().anchorNode.parentNode.id + ' ';   
       }
 
-      if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+      if (window.testRunner)
+        testRunner.dumpAsText();
 
       function doIt() {
         try {

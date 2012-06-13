@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 <p>This tests copy/paste of styled elements, like images.  The image in the region below should be centered after its copied and pasted.</p>
 <p><b>This demonstrates a bug: createMarkup puts the text-align property on the image, which doesn't center it, so its left aligned on paste.</b></p>

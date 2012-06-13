@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 <p>This tests for a bug in createMarkup (markup for ancestors of the start of the selection wasn't being added to the pasteboard).  You should see the same thing in both regions below.</p>
 <p><b>This demonstrates a bug: 'foo' is pulled out of its bordered block.</b></p>

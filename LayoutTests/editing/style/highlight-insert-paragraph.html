@@ -23,8 +23,8 @@ function pressKey( key ) {
     }
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var e = document.getElementById('test');
 var s = window.getSelection();

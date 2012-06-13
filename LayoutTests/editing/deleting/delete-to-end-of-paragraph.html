@@ -14,15 +14,15 @@
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
 
-if (!window.layoutTestController)
+if (!window.testRunner)
     document.write("(cannot run interactively)");
 else {
-    layoutTestController.dumpEditingCallbacks();
+    testRunner.dumpEditingCallbacks();
 
     getSelection().setPosition(document.getElementById('test'), 0);
     // test for 4570218 by using double deleteToEndOfParagraph
-    layoutTestController.execCommand("DeleteToEndOfParagraph");
-    layoutTestController.execCommand("DeleteToEndOfParagraph");
+    testRunner.execCommand("DeleteToEndOfParagraph");
+    testRunner.execCommand("DeleteToEndOfParagraph");
     Markup.dump('test');
 }
 

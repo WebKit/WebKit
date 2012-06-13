@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 <body onload="runTest()">
 <p>
@@ -18,10 +18,10 @@ if (window.layoutTestController)
 <script>
 
 function runTest() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
-    window.layoutTestController.waitUntilDone();
+    window.testRunner.waitUntilDone();
 
     var link = document.getElementById("link");
 
@@ -40,7 +40,7 @@ function runTest() {
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
 
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 
 </script>

@@ -7,9 +7,9 @@
 </body>
 <script>
 function test() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     var result = document.getElementById("result");
     var container = document.getElementById("container");
     var middleX = container.offsetLeft + (container.offsetWidth / 2);

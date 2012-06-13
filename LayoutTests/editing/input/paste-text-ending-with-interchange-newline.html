@@ -8,8 +8,8 @@ def
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.querySelector('textarea').focus();
 document.execCommand('SelectAll', false, null);

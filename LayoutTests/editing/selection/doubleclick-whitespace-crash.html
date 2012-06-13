@@ -1,10 +1,10 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-     layoutTestController.dumpAsText();
-     layoutTestController.setSmartInsertDeleteEnabled(false);
-     layoutTestController.setSelectTrailingWhitespaceEnabled(true);
+if (window.testRunner) {
+     testRunner.dumpAsText();
+     testRunner.setSmartInsertDeleteEnabled(false);
+     testRunner.setSelectTrailingWhitespaceEnabled(true);
 }
 </script>
 </head>
@@ -14,7 +14,7 @@ Double-click in the white space below this text block -- should not crash.
 <a href="https://bugs.webkit.org/show_bug.cgi?id=23232">BUG 23232</a>.
 </pre> 
 <script type="text/javascript">
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         // Double click at the end of the body.
         eventSender.mouseMoveTo(10, 100);
         eventSender.mouseDown();

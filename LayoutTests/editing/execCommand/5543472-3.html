@@ -7,8 +7,8 @@ td = document.getElementById("td");
 window.getSelection().setBaseAndExtent(td, 0, div, 1);
 document.execCommand("InsertUnorderedList");
 
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
     div = document.getElementById("div");
     p = document.getElementById("p");
     document.body.innerText = p.innerText + "\n\nDOM:\n" + div.innerHTML;

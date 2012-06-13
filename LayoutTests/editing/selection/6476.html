@@ -1,14 +1,14 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
 </script>
 
 <title>An upstream caret can be impossible to create</title>
 <script>
 function runTest() {
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var e = document.getElementById("clickme");
         var x = e.offsetLeft + e.offsetWidth + 15;
         var y = e.offsetTop + e.offsetHeight / 2;

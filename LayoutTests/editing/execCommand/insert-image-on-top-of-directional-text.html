@@ -4,8 +4,8 @@
 <div dir='ltr' id='ltr1' style='white-space:pre' contentEditable>the </div>
 <div dir='ltr' id='ltr2' style='white-space:pre' contentEditable>אחת </div>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpAsText();
+if (window.testRunner)
+     testRunner.dumpAsText();
 
 // Select only "the", not the space, LTR text in RTL region.
 document.getSelection().setBaseAndExtent(rtl1.firstChild, 0, rtl1.firstChild, 3);

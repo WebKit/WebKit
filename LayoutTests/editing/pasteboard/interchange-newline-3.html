@@ -4,8 +4,8 @@
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
 
 function runTest() {
     Markup.description('This demonstrates a bug in interchange newline handling during paste.\n'

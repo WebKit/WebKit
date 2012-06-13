@@ -6,8 +6,8 @@ To manually test, copy and paste "hello world" below. The pasted text should be 
 <div id="test" contenteditable><b style="font-weight: normal">hello world</b></div>
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpAsText();
+if (window.testRunner)
+     testRunner.dumpAsText();
 
 Markup.description(document.getElementById('description').textContent);
 

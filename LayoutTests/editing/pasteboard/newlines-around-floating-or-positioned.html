@@ -19,8 +19,8 @@
             log(id + " FAIL: innerText is " + actual + " instead of " + expected);
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     test("test1", "Lorem-ipsum");
     test("test2", "Loremipsum");

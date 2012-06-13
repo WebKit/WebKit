@@ -11,12 +11,12 @@ blockquote {
 <div id="div" contentEditable="true"><blockquote type="cite"><pre id="pre">line one
 line two</pre></blockquote></div>
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 text = document.getElementById("pre").firstChild;
 window.getSelection().setPosition(text, 8);
 document.execCommand("InsertNewlineInQuotedContent");
-if (window.layoutTestController) {
+if (window.testRunner) {
     div = document.getElementById("div");
     div.innerText = div.innerHTML;
 }

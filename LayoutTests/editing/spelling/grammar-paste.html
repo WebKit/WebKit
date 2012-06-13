@@ -10,7 +10,7 @@
 <script>
 description('Grammar checking for pasted text.');
 
-layoutTestController.waitUntilDone();
+testRunner.waitUntilDone();
 
 var testRoot = document.createElement("div");
 document.body.insertBefore(testRoot, document.body.firstChild);
@@ -49,8 +49,8 @@ function done()
         return window.setTimeout(next, 0);
     testRoot.style.display = "none";
 
-    layoutTestController.setAsynchronousSpellCheckingEnabled(false);
-    layoutTestController.notifyDone();
+    testRunner.setAsynchronousSpellCheckingEnabled(false);
+    testRunner.notifyDone();
 }
 
 function findFirstTextNode(node)
@@ -136,8 +136,8 @@ function pasteAndVerify(source, dest, expectedMarked)
     trial();
 };
 
-if (window.layoutTestController) {
-    layoutTestController.setAsynchronousSpellCheckingEnabled(true);
+if (window.testRunner) {
+    testRunner.setAsynchronousSpellCheckingEnabled(true);
 }
 
 tests.push(function() { pasteAndVerify(testSourcePlain, testEditable, ["has"]); });

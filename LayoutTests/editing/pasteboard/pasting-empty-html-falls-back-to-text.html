@@ -10,9 +10,9 @@ function handleCopy(event)
 
 function runTest()
 {
-  if (!window.layoutTestController)
+  if (!window.testRunner)
     return;
-  layoutTestController.dumpAsText();
+  testRunner.dumpAsText();
 
   document.body.addEventListener('copy', handleCopy);
   document.execCommand('copy');

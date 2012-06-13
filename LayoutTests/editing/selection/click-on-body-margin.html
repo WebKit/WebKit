@@ -10,8 +10,8 @@ var longLine = document.getElementById('longLine');
 while (longLine.offsetWidth < document.body.offsetWidth + 200)
     longLine.lastChild.textContent += ' some text';
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
     var firstLine = document.getElementById('firstLine');
     eventSender.mouseMoveTo(firstLine.offsetLeft + document.body.offsetWidth + 10,

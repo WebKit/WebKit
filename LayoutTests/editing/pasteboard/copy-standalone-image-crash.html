@@ -5,9 +5,9 @@
 
 var actionitems;
 
-if (window.layoutTestController) {
-     window.layoutTestController.dumpAsText();
-     window.layoutTestController.waitUntilDone();
+if (window.testRunner) {
+     window.testRunner.dumpAsText();
+     window.testRunner.waitUntilDone();
 }
 
 function doClick() {
@@ -28,7 +28,7 @@ function doClick() {
 
     document.body.innerHTML = "PASS";
 
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 
 function hideDiv() {
@@ -36,7 +36,7 @@ function hideDiv() {
 }
 
 function doTest() {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         document.body.addEventListener('mousedown', function () {setTimeout(hideDiv, 100)}, false);
         return;
     }

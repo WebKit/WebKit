@@ -16,8 +16,8 @@ function insertHeaderForTest(testContent, expected)
     return "Failure. Result was: " + actual + ", should have been: " + expected + "\n";
 }
 
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 
 // Test 1: Verify that a header at the beginning of inserted content is preserved.
 output = "Test 1: Verify that a header at the beginning of inserted content is preserved.\n";

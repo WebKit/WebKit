@@ -23,7 +23,7 @@ sel = window.getSelection();
 td = document.getElementById("td");
 sel.setPosition(td, td.textContent.length);
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     for (i = 0; i < 5; i++)
         document.execCommand("Delete");
 }

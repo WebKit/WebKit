@@ -4,8 +4,8 @@
 <p>This test verifies that selection begins at the mouse-down position. Select rapidly inside the box blow. The first letter should be selected.</p>
 <div id='text' style="border: solid 1px; padding: 10px;">The first part of this text should be selected.</div>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 if (window.eventSender) {
     var div = document.getElementById('text');

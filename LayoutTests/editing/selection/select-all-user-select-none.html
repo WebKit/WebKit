@@ -7,8 +7,8 @@
         </style>
         <script>
             function test() {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
                 document.execCommand('SelectAll');
                 if (window.getSelection().toString() == "")
                     document.body.innerHTML = "Test Passed";

@@ -7,8 +7,8 @@ To manually test, copy "hello world" below and paste it in the box below. The bl
 <div id="destination" style="padding:20px;" contenteditable><b style="border: solid 5px blue;padding: 5px;"><br></b></font></div>
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpAsText();
+if (window.testRunner)
+     testRunner.dumpAsText();
 
 Markup.description(document.getElementById('description').textContent);
 

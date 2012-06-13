@@ -1,10 +1,10 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-     layoutTestController.dumpAsText();
-     layoutTestController.setSmartInsertDeleteEnabled(false);
-     layoutTestController.setSelectTrailingWhitespaceEnabled(true);
+if (window.testRunner) {
+     testRunner.dumpAsText();
+     testRunner.setSmartInsertDeleteEnabled(false);
+     testRunner.setSelectTrailingWhitespaceEnabled(true);
 }
 
 function getPositionOfNode(id)
@@ -54,7 +54,7 @@ function doTest(testId, expectedText)
 
 function runTests()
 {
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         doTest("test1", "Doubleclickme \u00a0\u00a0\u00a0 ");
         doTest("test2", "Doubleclickme");
         doTest("test3", "Doubleclickme \u00a0\u00a0 ");

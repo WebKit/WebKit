@@ -7,8 +7,8 @@ WebKit should still be able to paste text with line breaks.</p>
 <div id="log"></div>
 <script type="text/javascript">
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var textarea = document.querySelector('textarea');
 textarea.value = "\nwebkit";

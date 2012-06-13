@@ -9,8 +9,8 @@ function run() {
     document.execCommand('findString', false, '!ABC');
     document.body.innerHTML = '<br>This test ensures WebKit does not crash when first-letter rule is applied to LTR letters that ' +
     ' are not visually contiguous to each other.<br>PASS';
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 }
 
 </script>

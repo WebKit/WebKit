@@ -5,8 +5,8 @@
 <div id="div" contenteditable="true"><b>This</b> text should look the same as the text above.</div>
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
 
 var sel = window.getSelection();
 var div = document.getElementById("div");

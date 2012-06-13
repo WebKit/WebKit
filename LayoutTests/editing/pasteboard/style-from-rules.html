@@ -30,7 +30,7 @@ document.execCommand('SelectAll', false, null);
 
 function dump() { Markup.dump('paste', 'Pasted'); }
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     document.execCommand('Copy', false, null);
     document.getElementById('paste').focus();
     document.execCommand('Paste', false, null);

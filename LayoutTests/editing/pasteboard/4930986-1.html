@@ -18,8 +18,8 @@ edit = document.getElementById("edit");
 description = document.getElementById("description");
 edit.focus();
 document.execCommand("InsertHTML", false, "<blockquote class='Apple-paste-as-quotation'><span class='Apple-style-span' style='color: black;'>This text should be blue (it should not be wrapped in a style span).</span></blockquote>");
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
     document.body.innerText = description.innerText + "\n" + edit.innerHTML;
 }
 </script>

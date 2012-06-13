@@ -22,8 +22,8 @@ function test()
     setSelectionCommand(e, 0, e, 0);
     execPasteCommand();
     
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 }
 
 </script>

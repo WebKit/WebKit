@@ -1,9 +1,9 @@
 <head>
     <script>
         function runTest() {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
             window.setTimeout(afterDelay, 20);
         }
@@ -12,9 +12,9 @@
             forCaret = document.getElementById("forCaret");
             window.getSelection().setPosition(forCaret, 0);
             document.execCommand("Delete");            
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 document.body.innerText = document.getElementById("description").innerText + "\n\n" + document.getElementById("edit").innerHTML;
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
         }
     </script>

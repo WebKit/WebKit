@@ -1,7 +1,7 @@
 <script>
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
 }
 
 function verifyResults(inputElement, selectedText) {
@@ -32,8 +32,8 @@ function runTest() {
 
     verifyResults(inputElement, textToSelect);
 
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 </script>
 <p>This tests to make sure that a selection in one frame isn't cleared when focusing a node in a different frame.</p>

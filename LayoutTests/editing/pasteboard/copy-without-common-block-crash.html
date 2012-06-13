@@ -4,8 +4,8 @@
 <span id="test" contenteditable>hello</span>
 <script type="text/javascript">
 
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 
 var test = document.getElementById('test');
 document.getSelection().selectAllChildren(test);

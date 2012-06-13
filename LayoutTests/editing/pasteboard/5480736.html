@@ -13,15 +13,15 @@ blockquote {
 <div id="edit" contentEditable="true"><blockquote id="blockquote" class="webkit-indent-blockquote">hd</blockquote></div>
 
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
     
 blockquote = document.getElementById("blockquote");
 text = blockquote.firstChild;
 
 window.getSelection().setPosition(text, 1);
 document.execCommand("InsertHTML", false, "ello worl");
-if (window.layoutTestController)
+if (window.testRunner)
     document.body.innerText = document.getElementById("description").innerText + "\n" + document.getElementById("edit").innerHTML;
 </script>
 </body>
