@@ -106,7 +106,12 @@ class AutoinstallImportHook(object):
         installer.install(url="http://pypi.python.org/packages/source/J/Jinja2/Jinja2-2.6.tar.gz#md5=1c49a8825c993bfdcf55bb36897d28a2",
                           url_subpath="Jinja2-2.6/jinja2")
 
-        self._install("http://pypi.python.org/packages/source/b/buildbot/buildbot-0.8.4p2.tar.gz#md5=7597d945724c80c0ab476e833a1026cb", "buildbot-0.8.4p2/buildbot")
+        SQLAlchemy_dir = self._fs.join(_AUTOINSTALLED_DIR, "sqlalchemy")
+        installer = AutoInstaller(append_to_search_path=True, target_dir=SQLAlchemy_dir)
+        installer.install(url="http://pypi.python.org/packages/source/S/SQLAlchemy/SQLAlchemy-0.7.7.tar.gz#md5=ddf6df7e014cea318fa981364f3f93b9",
+                          url_subpath="SQLAlchemy-0.7.7/lib/sqlalchemy")
+
+        self._install("http://pypi.python.org/packages/source/b/buildbot/buildbot-0.8.6p1.tar.gz#md5=b6727d2810c692062c657492bcbeac6a", "buildbot-0.8.6p1/buildbot")
 
     def _install_coverage(self):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
