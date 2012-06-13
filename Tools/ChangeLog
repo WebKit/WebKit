@@ -1,5 +1,20 @@
 2012-06-13  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: rework the TestExpectations style checker in preparation for the cascade
+        https://bugs.webkit.org/show_bug.cgi?id=88945
+
+        Reviewed by Ojan Vafai.
+
+        This patch changes the style checker to call the
+        TestExpectations parser directly and be oblivious as to what the
+        port's actual expectations are.
+
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker.__init__):
+        (TestExpectationsChecker.check_test_expectations):
+
+2012-06-13  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: restructure the port classes to handle multiple expectations files
         https://bugs.webkit.org/show_bug.cgi?id=88944
 

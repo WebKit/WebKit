@@ -35,7 +35,7 @@ import sys
 
 from common import TabChecker
 from webkitpy.common.host import Host
-from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.models.test_expectations import TestExpectationParser
 from webkitpy.layout_tests.port.base import DummyOptions
 
 
@@ -61,7 +61,6 @@ class TestExpectationsChecker(object):
         self._handle_style_error = handle_style_error
         self._handle_style_error.turn_off_line_filtering()
         self._tab_checker = TabChecker(file_path, handle_style_error)
-        self._output_regex = re.compile('.*(TestExpectations|test_expectations.txt):(?P<line>\d+)\s*(?P<message>.+)')
 
         # FIXME: host should be a required parameter, not an optional one.
         host = host or Host()
@@ -77,32 +76,17 @@ class TestExpectationsChecker(object):
         pass
 
     def check_test_expectations(self, expectations_str, tests=None, overrides=None):
-        err = None
-        expectations = None
-        # FIXME: We need to rework how we lint strings so that we can do it independently of what a
-        # port's existing expectations are. Linting should probably just call the parser directly.
-        # For now we override the port hooks. This will also need to be reworked when expectations
-        # can cascade arbitrarily, rather than just have expectations and overrides.
-        orig_expectations = self._port_obj.test_expectations
-        orig_overrides = self._port_obj.test_expectations_overrides
-        try:
-            self._port_obj.test_expectations = lambda: expectations_str
-            self._port_obj.test_expectations_overrides = lambda: overrides
-            expectations = test_expectations.TestExpectations(self._port_obj, tests, True)
-        except test_expectations.ParseError, error:
-            err = error
-        finally:
-            self._port_obj.text_expectations = orig_expectations
-            self._port_obj.text_expectations_overrides = orig_overrides
+        # FIXME: we should pass in the filenames here if possible, and ensure
+        # that this works with with cascading expectations files and remove the overrides param.
+        parser = TestExpectationParser(self._port_obj, tests, False)
+        expectations = parser.parse('expectations', expectations_str)
+        if overrides:
+            expectations += parser.parse('overrides', overrides)
 
-        if err:
-            level = 5
-            for warning in err.warnings:
-                matched = self._output_regex.match(warning)
-                if matched:
-                    lineno, message = matched.group('line', 'message')
-                    self._handle_style_error(int(lineno), 'test/expectations', level, message)
-
+        level = 5
+        for expectation_line in expectations:
+            for warning in expectation_line.warnings:
+                self._handle_style_error(expectation_line.line_number, 'test/expectations', level, warning)
 
     def check_tabs(self, lines):
         self._tab_checker.check(lines)
