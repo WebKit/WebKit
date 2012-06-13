@@ -37,7 +37,7 @@ module core {
         readonly attribute double totalTime;
         readonly attribute double selfTime;
         readonly attribute unsigned long numberOfCalls;
-        readonly attribute sequence<ScriptProfileNode> children;
+        sequence<ScriptProfileNode> children();
         readonly attribute boolean visible;
         readonly attribute [CustomGetter] unsigned long callUID;
     };

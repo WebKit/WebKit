@@ -15,15 +15,15 @@
         
             function runTest()
             {
-                var languages = internals.userPreferredLanguages;
+                var languages = internals.userPreferredLanguages();
 
                 test('internals.userPreferredLanguages returns a non-empty array', languages.length);
 
                 languages.unshift("first-language");
                 languages.push("last-language");
-                internals.userPreferredLanguages = languages;
+                internals.setUserPreferredLanguages(languages);
 
-                var newLanguages = internals.userPreferredLanguages;
+                var newLanguages = internals.userPreferredLanguages();
                 var sameContents = newLanguages.length == languages.length;
                 if (sameContents) {
                     for (var i = 0; i < newLanguages.length; i++) {

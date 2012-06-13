@@ -200,8 +200,12 @@ sub SkipFunction
         return 1;
     }
 
+    if ($codeGenerator->GetSequenceType($function->signature->type)) {
+        return 1;
+    }
+
     foreach my $param (@{$function->parameters}) {
-        return 1 if $codeGenerator->GetArrayType($param->type);
+        return 1 if $codeGenerator->GetSequenceType($param->type);
     }
 
     # FIXME: This is typically used to add script execution state arguments to the method.
@@ -219,7 +223,7 @@ sub SkipAttribute
 
     return 1 if $attribute->signature->type =~ /Constructor$/;
 
-    return 1 if $codeGenerator->GetArrayType($attribute->signature->type);
+    $codeGenerator->AssertNotSequenceType($attribute->signature->type);
 
     # FIXME: This is typically used to add script execution state arguments to the method.
     # These functions will not compile with the C++ bindings as is, so disable them
@@ -285,6 +289,7 @@ sub AddIncludesForType
 {
     my $type = $codeGenerator->StripModule(shift);
 
+    return if $codeGenerator->GetSequenceType($type);
     return if $codeGenerator->GetArrayType($type);
     return if $codeGenerator->IsNonPointerType($type);
     return if $type =~ /Constructor/;

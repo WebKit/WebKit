@@ -46,7 +46,10 @@ module window {
         [CallWith=ScriptArguments|CallStack] void markTimeline();
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        readonly attribute sequence<ScriptProfile> profiles;
+        // As per spec: http://www.w3.org/TR/WebIDL/#idl-sequence
+        // "Sequences must not be used as the type of an attribute, constant or exception field."
+        // FIXME: this will lead to BUG console.profiles !== console.profiles as profile will always returns new array.
+        readonly attribute ScriptProfile[] profiles;
         [Custom] void profile(in DOMString title);
         [Custom] void profileEnd(in DOMString title);
 #endif

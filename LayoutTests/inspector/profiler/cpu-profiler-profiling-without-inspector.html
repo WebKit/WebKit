@@ -55,7 +55,7 @@ function printProfileNodeWithoutTime(preElement, node, space)
     var line = space + node.functionName + " (line " + node.lineNumber + ")\n";
     preElement.appendChild(document.createTextNode(line));
 
-    var children = node.children;
+    var children = node.children();
     for (var i = 0; i < children.length; ++i)
         printProfileNodeWithoutTime(preElement, children[i], space + "   ");
 }
@@ -64,7 +64,7 @@ function findFunctionInProfile(node, functionName)
 {
     if (node.functionName === functionName)
         return true;
-    var children = node.children;
+    var children = node.children();
     for (var i = 0; i < children.length; ++i)
         if (findFunctionInProfile(children[i], functionName))
             return true;

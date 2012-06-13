@@ -449,13 +449,29 @@ sub IsSVGAnimatedType
     return 0;
 }
 
-sub GetArrayType
+sub GetSequenceType
 {
     my $object = shift;
     my $type = shift;
 
     return $1 if $type =~ /^sequence<([\w\d_\s]+)>.*/;
     return "";
+}
+
+sub GetArrayType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return $1 if $type =~ /^([\w\d_\s]+)\[\]/;
+    return "";
+}
+
+sub AssertNotSequenceType
+{
+    my $object = shift;
+    my $type = shift;
+    die "Sequences must not be used as the type of an attribute, constant or exception field." if $object->GetSequenceType($type);
 }
 
 # Uppercase the first letter while respecting WebKit style guidelines.

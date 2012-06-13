@@ -768,6 +768,7 @@ sub GenerateNormalAttrGetter
     my $attrExt = $attribute->signature->extendedAttributes;
     my $attrName = $attribute->signature->name;
     my $attrType = GetTypeFromSignature($attribute->signature);
+    $codeGenerator->AssertNotSequenceType($attrType);
     my $nativeType = GetNativeTypeFromSignature($attribute->signature, -1);
 
     my $getterStringUsesImp = $implClassName ne "SVGNumber";
@@ -3469,6 +3470,9 @@ sub GetNativeType
         }
     }
 
+    my $sequenceType = $codeGenerator->GetSequenceType($type);
+    return "Vector<${sequenceType}>" if $sequenceType;
+
     if ($type eq "float" or $type eq "double") {
         return $type;
     }
@@ -3628,6 +3632,11 @@ sub JSValueToNative
         return "toNativeArray<$arrayType>($value)";
     }
 
+    my $sequenceType = $codeGenerator->GetSequenceType($type);
+    if ($sequenceType) {
+        return "toNativeArray<$sequenceType>($value)";
+    }
+
     AddIncludesForType($type);
 
     if (IsDOMNodeType($type)) {
@@ -3675,9 +3684,13 @@ sub CreateCustomSignature
                 $result .= "v8::Handle<v8::FunctionTemplate>()";
             } else {
                 my $type = $parameter->type;
-                my $arrayType = $codeGenerator->GetArrayType($type);
-                if ($arrayType) {
-                    AddToImplIncludes("$arrayType.h");
+                my $sequenceType = $codeGenerator->GetSequenceType($type);
+                if ($sequenceType) {
+                    if ($codeGenerator->SkipIncludeHeader($sequenceType)) {
+                        $result .= "v8::Handle<v8::FunctionTemplate>()";
+                        next;
+                    }
+                    AddToImplIncludes("$sequenceType.h");
                 } else {
                     my $header = GetV8HeaderName($type);
                     AddToImplIncludes($header);
@@ -3856,6 +3869,15 @@ sub NativeToJSValue
             AddToImplIncludes("$arrayType.h");
         }
         return "v8Array($value$getIsolateArg)";
+    }
+
+    my $sequenceType = $codeGenerator->GetSequenceType($type);
+    if ($sequenceType) {
+        if (!$codeGenerator->SkipIncludeHeader($sequenceType)) {
+            AddToImplIncludes("V8$sequenceType.h");
+            AddToImplIncludes("$sequenceType.h");
+        }
+        return "v8Array($value, $getIsolate)";
     }
 
     AddIncludesForType($type);

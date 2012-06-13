@@ -1,3 +1,65 @@
+2012-06-13  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
+
+        REGRESSION:Bindings sequence<T> in Console.idl, Internals.idl and ScriptProfileNode.idl should be T[]
+        https://bugs.webkit.org/show_bug.cgi?id=84863
+
+        Reviewed by Kentaro Hara.
+
+        With reference to http://www.w3.org/TR/WebIDL/#idl-sequence
+        "Sequences must not be used as the type of an attribute, constant or exception field."
+        So we should use T[] instead of sequence<T>.
+
+        Tests: bindings/scripts/test/TestObj.idl
+               fast/harness/user-preferred-language.html
+               inspector/profiler/cpu-profiler-profiling-without-inspector.html
+               media/track/track-language-preference.html
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GetSequenceType): Getter for getting sequence type.
+        (GetArrayType): Getter for getting array type.
+        (AssertNotSequenceType): Check sequences must not be used as the type of an attribute,
+        constant or exception field.
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (SkipFunction): Exclude bindings code for type sequence.
+        (SkipAttribute): Check for sequences must not be used as the type of an attribute,
+        constant or exception field.
+        (AddIncludesForType): Exclude header inclusion code for type array/sequence.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipAttribute): Check for sequences must not be used as the type of an attribute,
+        constant or exception field.
+        (SkipFunction): Exclude bindings code for type sequence.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddIncludesForType): Exclude header inclusion code for type array/sequence.
+        (GenerateImplementation):  Check for sequences must not be used as the type of an attribute,
+        constant or exception field.
+        (GetNativeType):
+        (JSValueToNative):
+        (NativeToJSValue):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (SkipFunction): Exclude bindings code for type sequence.
+        (SkipAttribute): Exclude bindings code for type array.
+        (AddForwardDeclarationsForType):
+        (AddIncludesForType):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrGetter):
+        (GetNativeType):
+        (JSValueToNative):
+        (CreateCustomSignature):
+        (NativeToJSValue):
+        * bindings/scripts/test/JS/JSTestObj.cpp: Updated code from run-bindings-tests.
+        (WebCore):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithSequenceArg):
+        * bindings/scripts/test/JS/JSTestObj.h: Updated code from run-bindings-tests.
+        (WebCore):
+        * bindings/scripts/test/TestObj.idl: Tests.
+        * bindings/scripts/test/V8/V8TestObj.cpp:  Updated code from run-bindings-tests.
+        (TestObjV8Internal):
+        (WebCore::TestObjV8Internal::methodWithSequenceArgCallback):
+        (WebCore):
+        * inspector/ScriptProfileNode.idl: Using sequence<T> for children().
+        * page/Console.idl: Using Array[T] for profiles attribute.
+        * testing/Internals.idl: Using sequence<T> for userPreferredLanguages().
+
 2012-06-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove dependency to QtScript for the Qt 5 build

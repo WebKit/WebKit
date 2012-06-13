@@ -179,6 +179,8 @@ sub SkipAttribute {
         return 1;
     }
 
+    $codeGenerator->AssertNotSequenceType($propType);
+
     if ($codeGenerator->GetArrayType($propType)) {
         return 1;
     }
@@ -235,7 +237,7 @@ sub SkipFunction {
         return 1;
     }
 
-    if ($codeGenerator->GetArrayType($functionReturnType)) {
+    if ($codeGenerator->GetSequenceType($functionReturnType)) {
         return 1;
     }
 
@@ -246,7 +248,7 @@ sub SkipFunction {
     foreach my $param (@{$function->parameters}) {
         if ($param->extendedAttributes->{"Callback"} ||
             $param->type eq "MediaQueryListListener" ||
-            $codeGenerator->GetArrayType($param->type)) {
+            $codeGenerator->GetSequenceType($param->type)) {
             return 1;
         }
     }
