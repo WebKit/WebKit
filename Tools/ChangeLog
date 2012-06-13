@@ -1,3 +1,14 @@
+2012-06-13  Zoltan Horvath  <zoltan@webkit.org>
+
+        check-webkit-style needs to respect Qt API coding style
+        https://bugs.webkit.org/show_bug.cgi?id=88995
+
+        Reviewed by Csaba Osztrogonác.
+
+        Add -whitespace/declaration exception to Qt API files.
+
+        * Scripts/webkitpy/style/checker.py:
+
 2012-06-13  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add implementation for dispatchIntent in WebFrameLoaderClient
