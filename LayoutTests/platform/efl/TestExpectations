@@ -685,6 +685,9 @@ BUGWK86633 : editing/spelling/spelling-unified-emulation.html = TEXT
 // Failing after r119268 on GTK and EFL
 BUGWK88138 : http/tests/media/video-buffered.html = TEXT
 
+// Failing after r120145 on both GTK and EFL
+BUGWK88961 : http/tests/misc/redirect-to-about-blank.html = TEXT
+
 // EFL's LayoutTestController does not implement setAsynchronousSpellCheckingEnabled
 BUGWK86637 : editing/spelling/spellcheck-async.html = TEXT
 BUGWK86637 : editing/spelling/spellcheck-async-mutation.html = TEXT

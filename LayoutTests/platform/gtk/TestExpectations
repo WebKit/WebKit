@@ -1272,6 +1272,9 @@ BUGWK86722 SKIP : fast/images/paletted-png-with-color-profile.html = TEXT MISSIN
 // This test is affecting other tests and seems to be behaving incorrectly itself
 BUGWK86771 SKIP : fast/dom/gc-10.html = TEXT
 
+// Failing after r120145 on both GTK and EFL
+BUGWK88961 : http/tests/misc/redirect-to-about-blank.html = TEXT
+
 BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = TEXT
 BUGWK86971 : svg/custom/non-scaling-stroke-markers.svg = TEXT PASS
 

@@ -1,3 +1,14 @@
+2012-06-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [GTK][EFL] Skip http/tests/misc/redirect-to-about-blank.html
+        https://bugs.webkit.org/show_bug.cgi?id=88962
+
+        Unreviewed gardening. Skip http/tests/misc/redirect-to-about-blank.html
+        for both EFL and GTK ports. The test is failing after r120145.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2012-06-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, clean up the crashing tests, either removing
