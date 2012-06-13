@@ -244,6 +244,12 @@ SKIP : failures/expected/image.html""", is_lint_mode=True)
                        "BUG_OVERRIDE : failures/expected/text.html = IMAGE")
         self.assert_exp('failures/expected/text.html', IMAGE)
 
+    def test_overrides__directory(self):
+        self.parse_exp("BUG_EXP: failures/expected/text.html = TEXT",
+                       "BUG_OVERRIDE: failures/expected = CRASH")
+        self.assert_exp('failures/expected/text.html', CRASH)
+        self.assert_exp('failures/expected/image.html', CRASH)
+
     def test_overrides__duplicate(self):
         self.assert_bad_expectations("BUG_EXP: failures/expected/text.html = TEXT",
                                      "BUG_OVERRIDE : failures/expected/text.html = IMAGE\n"

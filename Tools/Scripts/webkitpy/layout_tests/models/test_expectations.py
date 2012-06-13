@@ -446,13 +446,6 @@ class TestExpectationsModel(object):
         # Maps a test to a TestExpectationLine instance.
         self._test_to_expectation_line = {}
 
-        # List of tests that are in the overrides file (used for checking for
-        # duplicates inside the overrides file itself). Note that just because
-        # a test is in this set doesn't mean it's necessarily overridding a
-        # expectation in the regular expectations; the test might not be
-        # mentioned in the regular expectations file at all.
-        self._overridding_tests = set()
-
         self._modifier_to_tests = self._dict_of_sets(TestExpectations.MODIFIERS)
         self._expectation_to_tests = self._dict_of_sets(TestExpectations.EXPECTATIONS)
         self._timeline_to_tests = self._dict_of_sets(TestExpectations.TIMELINES)
@@ -524,31 +517,26 @@ class TestExpectationsModel(object):
     def get_expectations(self, test):
         return self._test_to_expectations[test]
 
-    def add_expectation_line(self, expectation_line, in_overrides=False, in_skipped=False):
+    def add_expectation_line(self, expectation_line, in_skipped=False):
         """Returns a list of warnings encountered while matching modifiers."""
 
         if expectation_line.is_invalid():
             return
 
         for test in expectation_line.matching_tests:
-            if not in_skipped and self._already_seen_better_match(test, expectation_line, in_overrides):
+            if not in_skipped and self._already_seen_better_match(test, expectation_line):
                 continue
 
             self._clear_expectations_for_test(test, expectation_line)
             self._test_to_expectation_line[test] = expectation_line
-            self._add_test(test, expectation_line, in_overrides)
+            self._add_test(test, expectation_line)
 
-    def _add_test(self, test, expectation_line, in_overrides):
+    def _add_test(self, test, expectation_line):
         """Sets the expected state for a given test.
 
         This routine assumes the test has not been added before. If it has,
         use _clear_expectations_for_test() to reset the state prior to
-        calling this.
-
-        Args:
-          test: test to add
-          expectation_line: expectation to add
-          in_overrides: whether we're parsing the regular expectations or the overridding expectations"""
+        calling this."""
         self._test_to_expectations[test] = expectation_line.parsed_expectations
         for expectation in expectation_line.parsed_expectations:
             self._expectation_to_tests[expectation].add(test)
@@ -572,9 +560,6 @@ class TestExpectationsModel(object):
         else:
             self._result_type_to_tests[FAIL].add(test)
 
-        if in_overrides:
-            self._overridding_tests.add(test)
-
     def _clear_expectations_for_test(self, test, expectation_line):
         """Remove prexisting expectations for this test.
         This happens if we are seeing a more precise path
@@ -597,7 +582,7 @@ class TestExpectationsModel(object):
             if test in set_of_tests:
                 set_of_tests.remove(test)
 
-    def _already_seen_better_match(self, test, expectation_line, in_overrides):
+    def _already_seen_better_match(self, test, expectation_line):
         """Returns whether we've seen a better match already in the file.
 
         Returns True if we've already seen a expectation_line.name that matches more of the test
@@ -610,6 +595,10 @@ class TestExpectationsModel(object):
 
         prev_expectation_line = self._test_to_expectation_line[test]
 
+        if prev_expectation_line.filename != expectation_line.filename:
+            # We've moved on to a new expectation file, which overrides older ones.
+            return False
+
         if len(prev_expectation_line.path) > len(expectation_line.path):
             # The previous path matched more of the test.
             return True
@@ -618,19 +607,8 @@ class TestExpectationsModel(object):
             # This path matches more of the test.
             return False
 
-        if in_overrides and test not in self._overridding_tests:
-            # We have seen this path, but that's okay because it is
-            # in the overrides and the earlier path was in the
-            # expectations (not the overrides).
-            return False
-
         # At this point we know we have seen a previous exact match on this
         # base path, so we need to check the two sets of modifiers.
-
-        if in_overrides:
-            expectation_source = "override"
-        else:
-            expectation_source = "expectation"
 
         # FIXME: This code was originally designed to allow lines that matched
         # more modifiers to override lines that matched fewer modifiers.
@@ -760,13 +738,13 @@ class TestExpectations(object):
 
         expectations_dict = port.expectations_dict()
         self._expectations = self._parser.parse(expectations_dict.keys()[0], expectations_dict.values()[0])
-        self._add_expectations(self._expectations, in_overrides=False)
+        self._add_expectations(self._expectations)
 
         if len(expectations_dict) > 1 and include_overrides:
-            overrides = ''.join(expectations_dict.values()[1:])
-            overrides_expectations = self._parser.parse('overrides', overrides)
-            self._add_expectations(overrides_expectations, in_overrides=True)
-            self._expectations += overrides_expectations
+            for name in expectations_dict.keys()[1:]:
+                expectations = self._parser.parse(name, expectations_dict[name])
+                self._add_expectations(expectations)
+                self._expectations += expectations
 
         # FIXME: move ignore_tests into port.skipped_layout_tests()
         self._add_skipped_tests(port.skipped_layout_tests(tests).union(set(port.get_option('ignore_tests', []))))
@@ -896,13 +874,13 @@ class TestExpectations(object):
 
         return TestExpectationSerializer.list_to_string(filter(without_rebaseline_modifier, self._expectations))
 
-    def _add_expectations(self, expectation_list, in_overrides):
+    def _add_expectations(self, expectation_list):
         for expectation_line in expectation_list:
             if not expectation_line.expectations:
                 continue
 
             if self._is_lint_mode or self._test_config in expectation_line.matching_configurations:
-                self._model.add_expectation_line(expectation_line, in_overrides)
+                self._model.add_expectation_line(expectation_line)
 
     def _add_skipped_tests(self, tests_to_skip):
         if not tests_to_skip:

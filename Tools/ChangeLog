@@ -1,5 +1,33 @@
 2012-06-13  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: implement the actual cascade of TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=88947
+
+        Reviewed by Ojan Vafai.
+
+        This change implements the actual cascade by removing the
+        concept of 'overrides' from the TestExpectations object and
+        parsing each file separately.
+
+        There is an actual semantic change in this patch, in that
+        setting an expectation on a directory in one file will override
+        the expectations on any individual tests set in prior files. The
+        test_overrides__directory() unit test verifies this.
+
+        Otherwise, this patch mostly consists of deleting code :).
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationsModel.__init__):
+        (TestExpectationsModel.add_expectation_line):
+        (TestExpectationsModel._add_test):
+        (TestExpectationsModel._already_seen_better_match):
+        (TestExpectations.__init__):
+        (TestExpectations._add_expectations):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (test_overrides__directory):
+
+2012-06-13  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: update callers to use port.expectation_dict() instead of test_expectations() and test_expectations_overrides()
         https://bugs.webkit.org/show_bug.cgi?id=88946
 
