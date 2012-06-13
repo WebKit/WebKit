@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2009-2010 ProFUSION embedded systems
     Copyright (C) 2009-2010 Samsung Electronics
+    Copyright (C) 2012 Intel Corporation
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -33,6 +34,7 @@
 #include "KURL.h"
 #include "MemoryCache.h"
 #include "PageCache.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "ewk_private.h"
 #include "ewk_util_private.h"
@@ -246,6 +248,26 @@ Eina_Bool ewk_settings_object_cache_enable_get()
 void ewk_settings_object_cache_enable_set(Eina_Bool enable)
 {
     WebCore::memoryCache()->setDisabled(!enable);
+}
+
+Eina_Bool ewk_settings_shadow_dom_enable_get()
+{
+#if ENABLE(SHADOW_DOM)
+    return WebCore::RuntimeEnabledFeatures::shadowDOMEnabled();
+#else
+    return false;
+#endif
+}
+
+Eina_Bool ewk_settings_shadow_dom_enable_set(Eina_Bool enable)
+{
+#if ENABLE(SHADOW_DOM)
+    enable = !!enable;
+    WebCore::RuntimeEnabledFeatures::setShadowDOMEnabled(enable);
+    return true;
+#else
+    return false;
+#endif
 }
 
 unsigned ewk_settings_page_cache_capacity_get()

@@ -96,6 +96,8 @@ BUGWK86623 : editing/pasteboard/drop-inputtext-acquires-style.html = TEXT
 BUGWK86623 : editing/pasteboard/drop-link.html = TEXT
 BUGWK86623 : editing/pasteboard/drop-text-events.html = TEXT
 BUGWK86623 : editing/pasteboard/get-data-text-plain-drop.html = TEXT
+BUGWK86623 : fast/dom/shadow/drop-event-for-input-in-shadow.html = TEXT
+BUGWK86623 : fast/dom/shadow/drop-event-in-shadow.html = TEXT
 BUGWK86623 : http/tests/local/fileapi/file-last-modified-after-delete.html = TEXT
 
 BUGWK88198 : svg/stroke/non-scaling-stroke-pattern.svg = PASS IMAGE
@@ -158,10 +160,6 @@ BUGWK60103 : fast/replaced/border-radius-clip.html = TEXT PASS
 //////////////////////////////////////////////////////////////////////////////////////////
 // FAILING TESTS
 //////////////////////////////////////////////////////////////////////////////////////////
-
-// Needs ENABLE_SHADOW_DOM
-BUGWK76439 DEBUG : fast/dom/shadow/content-element-api.html = TEXT
-BUGWK76439 DEBUG : fast/dom/shadow/content-element-outside-shadow.html = TEXT
 
 // Needs inner spin button to respect -webkit-inner-spin-button style
 BUGWK87619 : fast/forms/number/input-appearance-number-rtl.html = TEXT
@@ -549,8 +547,6 @@ BUGWK84835 : editing/execCommand/copy-without-selection.html = TEXT
 BUGWK84835 : editing/execCommand/findString-diacriticals.html = TEXT
 BUGWK84835 : editing/execCommand/indent-paragraphs.html = TEXT
 
-BUGWK86961 : editing/execCommand/paste-and-match-style-event.html = CRASH
-
 // DRT doesn't check for isPrinting().
 BUGWK87226 : printing/iframe-print.html = TEXT
 BUGWK87226 : printing/media-queries-print.html = MISSING
@@ -627,6 +623,7 @@ BUGWK86091 : fast/events/right-click-focus.html = TEXT
 BUGWK86091 : fast/events/selectstart-prevent-selection-on-right-click.html = TEXT
 BUGWK86091 : media/context-menu-actions.html = TEXT
 BUGWK86091 : media/controls-right-click-on-timebar.html = TEXT
+BUGWK86091 : editing/shadow/rightclick-on-meter-in-shadow-crash.html = TEXT
 
 // EFL's EventSender contextClick, needs baselines
 BUGWK86091 : editing/selection/5354455-2.html = MISSING
@@ -644,6 +641,13 @@ BUGWK86310 : media/media-continues-playing-after-replace-source.html = TEXT
 BUGWK86597 : fullscreen/video-controls-drag.html = TEXT
 BUGWK86187 : media/media-fullscreen-not-in-document.html = TEXT
 BUGWK86187 SKIP : media/media-fullscreen-inline.html = PASS
+
+// ecore_x library is not initialized and calls to it cause crashes
+BUGWK86961 : editing/execCommand/paste-and-match-style-event.html = CRASH
+BUGWK86961 : fast/dom/shadow/cppevent-in-shadow.html = CRASH
+
+// Selection problem in Shadow DOM test (passes on GTK)
+BUGWKEFL : fast/dom/shadow/selections-in-shadow.html = TEXT
 
 // This test is specific to QuickTime media engine.
 BUGWKEFL SKIP : media/video-does-not-loop.html = PASS

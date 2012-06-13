@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2009-2010 ProFUSION embedded systems
     Copyright (C) 2009-2010 Samsung Electronics
+    Copyright (C) 2012 Intel Corporation
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -276,6 +277,34 @@ EAPI Eina_Bool        ewk_settings_object_cache_enable_get(void);
  * @param set @c EINA_TRUE to enable memory cache, @c EINA_FALSE to disable
  */
 EAPI void             ewk_settings_object_cache_enable_set(Eina_Bool set);
+
+/**
+ * Returns whether Shadow DOM is enabled.
+ *
+ * Shadow DOM is a method of establishing and maintaining functional boundaries between
+ * DOM subtrees and how these subtrees interact with each other within a document tree,
+ * thus enabling better functional encapsulation within DOM.
+ *
+ * By default, Shadow DOM is disabled.
+ *
+ * @return @c EINA_TRUE if Shadow DOM is enabled or @c EINA_FALSE if not
+ *
+ * @sa ewk_settings_shadow_dom_enable_set
+ */
+EAPI Eina_Bool    ewk_settings_shadow_dom_enable_get(void);
+
+/**
+ * Enables/disables Shadow DOM functionality.
+ *
+ * Shadow DOM is a method of establishing and maintaining functional boundaries between
+ * DOM subtrees and how these subtrees interact with each other within a document tree,
+ * thus enabling better functional encapsulation within DOM.
+ *
+ * By default, Shadow DOM is disabled.
+ *
+ * @param set @c EINA_TRUE to enable Shadow DOM, @c EINA_FALSE to disable
+ */
+EAPI Eina_Bool    ewk_settings_shadow_dom_enable_set(Eina_Bool enable);
 
 /**
  * Defines the capacities for the in-memory object cache.

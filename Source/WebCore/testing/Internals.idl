@@ -34,7 +34,7 @@ module window {
 
         unsigned long numberOfScopedHTMLStyleChildren(in Node scope) raises(DOMException);
 
-#if defined(ENABLE_SHADOW_DOM)
+#if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM
         ShadowRoot ensureShadowRoot(in Element host) raises (DOMException);
         ShadowRoot shadowRoot(in Element host) raises (DOMException);
         ShadowRoot youngestShadowRoot(in Element host) raises (DOMException);

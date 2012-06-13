@@ -217,6 +217,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
 
     ewk_settings_memory_cache_clear();
     ewk_settings_application_cache_clear();
+    ewk_settings_shadow_dom_enable_set(EINA_TRUE);
 
     ewk_view_setting_private_browsing_set(mainView(), EINA_FALSE);
     ewk_view_setting_spatial_navigation_set(mainView(), EINA_FALSE);

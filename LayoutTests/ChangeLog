@@ -1,3 +1,18 @@
+2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Enable SHADOW_DOM flag
+        https://bugs.webkit.org/show_bug.cgi?id=87732
+
+        Reviewed by Kentaro Hara.
+
+        Unskip most of the test cases associated to Shadow DOM now that the
+        feature is enabled by default for EFL's DRT.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/dom/shadow/form-in-shadow-expected.txt: Added.
+        * platform/efl/fast/dom/shadow/tab-order-iframe-and-shadow-expected.txt: Added.
+
 2012-06-12  Ojan Vafai  <ojan@chromium.org>
 
         Add some expecations to green the chromium tree while the bugs are resolved.

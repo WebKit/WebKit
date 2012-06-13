@@ -29,7 +29,8 @@ module core {
     interface [
         Conditional=SHADOW_DOM,
         Constructor(in Element host),
-        ConstructorRaisesException
+        ConstructorRaisesException,
+        JSGenerateToJSObject
     ] ShadowRoot : DocumentFragment {
         readonly attribute Element host;
         readonly attribute Element activeElement;
