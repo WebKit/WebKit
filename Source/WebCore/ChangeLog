@@ -1,3 +1,19 @@
+2012-06-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Breakpoint's _uiLocationRemoved() method is never called.
+        https://bugs.webkit.org/show_bug.cgi?id=89003
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.breakpointLocationsForUISourceCode):
+        (WebInspector.BreakpointManager.Breakpoint):
+        (WebInspector.BreakpointManager.Breakpoint.prototype._locationUpdated):
+        (WebInspector.BreakpointManager.Breakpoint.prototype._resetLocations):
+        (WebInspector.BreakpointManager.Breakpoint.prototype._fakeBreakpointAtPrimaryLocation):
+        * inspector/front-end/FileSystemModel.js: Drive by compilation fix.
+        (WebInspector.FileSystemModel):
+
 2012-06-13  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Add tests, an assert, and some comments around open/close/setVersion call sequencing

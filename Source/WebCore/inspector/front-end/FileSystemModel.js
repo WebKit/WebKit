@@ -31,7 +31,6 @@
 /**
  * @constructor
  * @extends {WebInspector.Object}
- * @implements {FileSystemAgent.Dispatcher}
  */
 WebInspector.FileSystemModel = function()
 {
@@ -45,7 +44,6 @@ WebInspector.FileSystemModel = function()
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
 
-    InspectorBackend.registerFileSystemDispatcher(this);
     FileSystemAgent.enable();
 
     if (WebInspector.resourceTreeModel.mainFrame)
