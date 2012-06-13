@@ -1,3 +1,18 @@
+2012-06-13  Taiju Tsuiki  <tzik@chromium.org>
+
+        Implement InspectorFileSystemAgent::readDirectory for FileSystem support.
+        https://bugs.webkit.org/show_bug.cgi?id=87724
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/filesystem/filesystem-test.js: Added.
+        * http/tests/inspector/filesystem/read-directory-expected.txt: Added.
+        * http/tests/inspector/filesystem/read-directory.html: Added.
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert the removal of 2 editing tests in r120173.

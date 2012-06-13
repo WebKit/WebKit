@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -40,8 +40,10 @@
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
+
 class DOMFileSystem;
 class InspectorFrontend;
+class InspectorPageAgent;
 class InspectorState;
 class InstrumentingAgents;
 
@@ -49,18 +51,21 @@ class InspectorFileSystemAgent : public InspectorBaseAgent<InspectorFileSystemAg
 public:
     class FrontendProvider;
 
-    static PassOwnPtr<InspectorFileSystemAgent> create(InstrumentingAgents*, InspectorState*);
+    static PassOwnPtr<InspectorFileSystemAgent> create(InstrumentingAgents*, InspectorPageAgent*, InspectorState*);
     virtual ~InspectorFileSystemAgent();
 
-    virtual void enable(ErrorString*);
-    virtual void disable(ErrorString*);
+    virtual void enable(ErrorString*) OVERRIDE;
+    virtual void disable(ErrorString*) OVERRIDE;
 
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
-    virtual void restore();
+    virtual void readDirectory(ErrorString*, int requestId, const String& frameId, const String& url) OVERRIDE;
+
+    virtual void setFrontend(InspectorFrontend*) OVERRIDE;
+    virtual void clearFrontend() OVERRIDE;
+    virtual void restore() OVERRIDE;
 private:
-    InspectorFileSystemAgent(InstrumentingAgents*, InspectorState*);
+    InspectorFileSystemAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*);
 
+    InspectorPageAgent* m_pageAgent;
     RefPtr<FrontendProvider> m_frontendProvider;
     bool m_enabled;
 };

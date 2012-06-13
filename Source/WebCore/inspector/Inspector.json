@@ -1403,6 +1403,19 @@
     {
         "domain": "FileSystem",
         "hidden": true,
+        "types": [
+            {
+                "id": "Entry",
+                "type": "object",
+                "properties": [
+                    { "name": "url", "type": "string", "description": "filesystem: URL for the entry." },
+                    { "name": "name", "type": "string" },
+                    { "name": "isDirectory", "type": "boolean", "description": "True if the entry is a directory." },
+                    { "name": "mimeType", "type": "string", "optional": true, "description": "MIME type of the entry, available for a file only." },
+                    { "name": "resourceType", "$ref": "Page.ResourceType", "optional": true, "description": "ResourceType of the entry, available for a file only." }
+                ]
+            }
+        ],
         "commands": [
             {
                 "name": "enable",
@@ -1410,10 +1423,27 @@
             },
             {
                 "name": "disable",
-                "description": "Disables events from backend.."
+                "description": "Disables events from backend."
+            },
+            {
+                "name": "readDirectory",
+                "description": "Requests to read the directory content. Result should return on didReadDirectory event with request id.",
+                "parameters": [
+                    { "name": "requestId", "type": "integer" },
+                    { "name": "frameId", "type": "string" },
+                    { "name": "url", "type": "string" }
+                ]
             }
         ],
         "events": [
+            {
+                "name": "didReadDirectory",
+                "parameters": [
+                    { "name": "requestId", "type": "integer" },
+                    { "name": "errorCode", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value.", "type": "integer" },
+                    { "name": "entries", "type": "array", "items": { "$ref": "FileSystem.Entry" }, "optional": true, "description": "Entries of the directory." }
+                ]
+            }
         ]
     },
     {

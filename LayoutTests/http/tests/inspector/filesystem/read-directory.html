@@ -1,0 +1,60 @@
+<!DOCTYPE html><meta charset="UTF-8">
+<script src="../inspector-test.js"></script>
+<script src="filesystem-test.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", runTest);
+function test()
+{
+    // FIXME: Replace FileSystemDispatcher with FileSystemDispatcher implementation after it landed.
+    function FileSystemDispatcher() {}
+    FileSystemDispatcher.prototype = {
+        didReadDirectory: function(requestId, errorCode, entries)
+        {
+        }
+    };
+
+    InspectorBackend.registerFileSystemDispatcher(new FileSystemDispatcher());
+    FileSystemAgent.enable();
+
+    step1();
+
+    function step1()
+    {
+        InspectorTest.createDirectory("/hoge", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.createDirectory("/hoge/fuga", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.createFile("/hoge/piyo.html", step4);
+    }
+
+    function step4()
+    {
+        InspectorTest.addSniffer(FileSystemDispatcher.prototype, "didReadDirectory", step5, false);
+        // FIXME: Call FileSystemDispatcher through FileSystemDispatcher implementation after it landed.
+        FileSystemAgent.readDirectory(1, WebInspector.resourceTreeModel.mainFrame.id, "filesystem:http://127.0.0.1/temporary/hoge");
+    }
+
+    function step5(requestId, errorCode, entries)
+    {
+        InspectorTest.dumpReadDirectoryResult(requestId, errorCode, entries);
+
+        InspectorTest.addSniffer(FileSystemDispatcher.prototype, "didReadDirectory", step6, false);
+        // FIXME: Call FileSystemDispatcher through FileSystemDispatcher implementation after it landed.
+        FileSystemAgent.readDirectory(1, WebInspector.resourceTreeModel.mainFrame.id, "filesystem:http://127.0.0.1/temporary/foo");
+    }
+
+    function step6(requestId, errorCode, entries) {
+        InspectorTest.dumpReadDirectoryResult(requestId, errorCode, entries);
+
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+<p>Tests readDirectory.</p>

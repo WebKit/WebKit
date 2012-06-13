@@ -1,3 +1,25 @@
+2012-06-13  Taiju Tsuiki  <tzik@chromium.org>
+
+        Implement InspectorFileSystemAgent::readDirectory for FileSystem support.
+        https://bugs.webkit.org/show_bug.cgi?id=87724
+
+        Reviewed by Vsevolod Vlasov.
+
+        Test: http/tests/inspector/filesystem/read-directory.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorFileSystemAgent.cpp:
+        (InspectorFileSystemAgent::FrontendProvider):
+        (WebCore):
+        (WebCore::InspectorFileSystemAgent::create):
+        (WebCore::InspectorFileSystemAgent::readDirectory):
+        (WebCore::InspectorFileSystemAgent::InspectorFileSystemAgent):
+        * inspector/InspectorFileSystemAgent.h:
+        (WebCore):
+        (InspectorFileSystemAgent):
+
 2012-06-13  Silvia Pfeiffer  <silviapf@chromium.org>
 
         Change the styling of the Chromium video controls.
