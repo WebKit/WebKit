@@ -1,3 +1,9 @@
+2012-06-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed morning gardening, skip new failing tests.
+
+        * platform/qt/Skipped:
+
 2012-06-12  Edaena Salinas Jasso  <edaena@apple.com>
 
         Can't set el.type on a <button> element

@@ -202,6 +202,7 @@ fast/dom/shadow/shadow-disable.html
 fast/dom/shadow/shadow-element.html
 fast/dom/shadow/shadow-element-rendering-single.html
 fast/dom/shadow/shadow-element-rendering-multiple.html
+fast/dom/shadow/shadow-nested-pseudo-id.html
 fast/dom/shadow/shadow-on-image.html
 fast/dom/shadow/shadow-root-activeElement.html
 fast/dom/shadow/shadow-root-append.html
@@ -1451,6 +1452,10 @@ css3/filters/effect-contrast-hw.html
 # [Qt] new test css3/flexbox/line-wrapping.html failing
 # https://bugs.webkit.org/show_bug.cgi?id=72490
 css3/flexbox/line-wrapping.html
+
+# [Qt] New css3/flexbox/flexitem.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=88963
+css3/flexbox/flexitem.html
 
 # Stuff Kling broke while happy-hacking DRT (r84010, r84012)
 fast/css/font-face-repeated-url.html
