@@ -717,5 +717,10 @@ BUGWK88729 SKIP : userscripts/window-onerror-for-isolated-world-2.html = FAIL
 BUG_OJAN : tables/mozilla/bugs/bug131020.html = TEXT IMAGE IMAGE+TEXT
 
 // These tests do not seem to fail anywhere else.
-BUGWK88030 : fast/multicol/column-break-with-balancing.html = IMAGE
 BUGWK88031 : fast/multicol/span/generated-child-split-flow-crash.html = TEXT
+
+// Flexbox test failing on EFL.
+BUGWK88984 : css3/flexbox/flexitem.html = TEXT
+
+// Animation timing inaccurate.
+BUGWK88986 : animations/first-letter-play-state.html = TEXT

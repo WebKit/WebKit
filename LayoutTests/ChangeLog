@@ -1,3 +1,14 @@
+2012-06-13  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL][DRT] Gardening for a greener bot
+        https://bugs.webkit.org/show_bug.cgi?id=88971
+
+        Unreviewed, EFL gardening.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/multicol/span/clone-flexbox-expected.txt: rebaselined after r120100.
+        * platform/efl/http/tests/loading/gmail-assert-on-load-expected.txt: Added, we print more verbosely.
+
 2012-06-13  Christophe Dumez  <christophe.dumez@intel.com>
 
         [GTK][EFL] Skip http/tests/misc/redirect-to-about-blank.html
