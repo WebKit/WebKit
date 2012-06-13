@@ -1,3 +1,12 @@
+2012-06-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, clean up the crashing tests, either removing
+        their expectations completely or expanding them to avoid false 'newly-passing'
+        reports. Also split some expectations as some tests are failing differently in
+        debug and release builds.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-13  David Barr  <davidbarr@chromium.org>
 
         Add dpi to css3-images image-resolution

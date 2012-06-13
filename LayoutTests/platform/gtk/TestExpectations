@@ -339,23 +339,16 @@ BUGWK88859 : http/tests/xmlhttprequest/response-blob-size.html = TEXT
 // Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWK76814 DEBUG : fast/xmlhttprequest/xmlhttprequest-get.xhtml = CRASH
+BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = CRASH PASS
 
-BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS CRASH
+BUGWK63611 DEBUG : editing/pasteboard/interchange-newline-2.html = CRASH PASS
 
-// Crashes due to debug assert until we fix issues with style elements in SVG
-BUGWKGTK DEBUG : svg/custom/use-referencing-style-crash.svg = CRASH
-
-BUGWK63611 DEBUG : editing/pasteboard/interchange-newline-3.html = CRASH
-
-BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH
+BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH PASS
 
 BUGWK86443 : plugins/npruntime/delete-plugin-within-getProperty.html = CRASH
 BUGWK86443 : plugins/npruntime/delete-plugin-within-invoke.html = CRASH
 
-BUGWK86875 : ietestcenter/css3/valuesandunits/units-000.htm = CRASH IMAGE
-
-BUGWK88643 DEBUG : jquery/core.html = CRASH
+BUGWK86176 DEBUG : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
@@ -490,6 +483,8 @@ BUGWK84859 : fast/workers/storage/use-same-database-in-page-and-workers.html = P
 BUGWK83878 : media/track/track-mode.html = PASS TEXT
 
 BUGWK88867 : media/track/track-cue-rendering-snap-to-lines-not-set.html is flaky = PASS TEXT
+
+BUGWK63611 DEBUG : editing/pasteboard/interchange-newline-3.html = TEXT PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
@@ -1252,6 +1247,7 @@ BUGWK85969 : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT
 // Started failing after it was added in r116563
 BUGWK86061 : http/tests/security/referrer-policy-redirect-link.html = TEXT
 
+BUGWK85308 RELEASE : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
 // IETC namespace failures
