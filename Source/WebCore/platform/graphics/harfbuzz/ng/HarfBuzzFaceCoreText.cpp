@@ -31,12 +31,12 @@
 #include "config.h"
 #include "HarfBuzzFace.h"
 
-#include "CoreText/CoreText.h"
 #include "FontPlatformData.h"
 #include "HarfBuzzShaper.h"
 #include "SimpleFontData.h"
 
 #include "hb.h"
+#include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
 

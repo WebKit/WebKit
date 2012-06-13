@@ -1,3 +1,19 @@
+2012-06-13  Mark Mentovai  <mark@chromium.org>
+
+        [chromium mac] Don't include things in subframeworks of
+        ApplicationServices.framework.
+
+        A CoreText #include (with quotes instead of brackets, even) sprung up
+        in r120506, bug 69826.
+
+        https://bugs.webkit.org/show_bug.cgi?id=88569
+
+        Reviewed by Stephen White.
+
+        No new tests.
+
+        * platform/graphics/harfbuzz/ng/HarfBuzzFaceCoreText.cpp:
+
 2012-06-13  Eriq Augustine  <eaugusti@chromium.org>
 
         Removing an extra HandleScope in V8Proxy::evaluateInIsolatedWorld
