@@ -29,12 +29,23 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "ProcessExecutablePath.h"
+#include "QtDefaultDataLocation.h"
 #include <QByteArray>
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QDir>
 #include <QEventLoop>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QMap>
 #include <QProcess>
-#include <QString>
+#include <QStringBuilder>
+#include <QVariant>
+#include <WebCore/FileSystem.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
@@ -44,35 +55,181 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
 {
 }
 
+static PassOwnPtr<QFile> cacheFile()
+{
+    static QString cacheFilePath = defaultDataLocation() % QStringLiteral("plugin_meta_data.json");
+    return adoptPtr(new QFile(cacheFilePath));
+}
+
+struct ReadResult {
+    enum Tag {
+        Empty,
+        Error,
+        Success
+    };
+};
+
+static ReadResult::Tag readMetaDataFromCacheFile(QJsonDocument& result)
+{
+    OwnPtr<QFile> file = cacheFile();
+    if (!file->open(QFile::ReadOnly))
+        return ReadResult::Empty;
+    QByteArray data = file->readAll();
+    if (data.isEmpty())
+        return ReadResult::Empty;
+
+    QJsonParseError error;
+    result = QJsonDocument::fromJson(data, &error);
+    if (error.error != QJsonParseError::NoError || !result.isArray()) {
+        // Corrupted file.
+        file->remove();
+        return ReadResult::Error;
+    }
+
+    return ReadResult::Success;
+}
+
+static void writeToCacheFile(const QJsonArray& array)
+{
+    OwnPtr<QFile> file = cacheFile();
+    if (!file->open(QFile::WriteOnly | QFile::Truncate)) {
+        // It should never but let's be pessimistic, it is the file system after all.
+        qWarning("Cannot write into plugin meta data cache file: %s\n", qPrintable(file->fileName()));
+        return;
+    }
+
+    // Don't care about write error here. We will detect it later.
+    file->write(QJsonDocument(array).toJson());
+}
+
+static void appendToCacheFile(const QJsonObject& object)
+{
+    QJsonDocument jsonDocument;
+    ReadResult::Tag result = readMetaDataFromCacheFile(jsonDocument);
+    if (result == ReadResult::Error)
+        return;
+    if (result == ReadResult::Empty)
+        jsonDocument.setArray(QJsonArray());
+
+    QJsonArray array = jsonDocument.array();
+    array.append(object);
+    writeToCacheFile(array);
+}
+
+struct MetaDataResult {
+    enum Tag {
+        NotAvailable,
+        Unloadable,
+        Available
+    };
+};
+
+static MetaDataResult::Tag tryReadPluginMetaDataFromCacheFile(const QString& canonicalPluginPath, RawPluginMetaData& result)
+{
+    QJsonDocument jsonDocument;
+    if (readMetaDataFromCacheFile(jsonDocument) != ReadResult::Success)
+        return MetaDataResult::NotAvailable;
+
+    QJsonArray array = jsonDocument.array();
+    QDateTime pluginLastModified = QFileInfo(canonicalPluginPath).lastModified();
+    for (QJsonArray::const_iterator i = array.constBegin(); i != array.constEnd(); ++i) {
+        QJsonValue item = *i;
+        if (!item.isObject()) {
+            cacheFile()->remove();
+            return MetaDataResult::NotAvailable;
+        }
+
+        QJsonObject object = item.toObject();
+        if (object.value(QStringLiteral("path")).toString() == canonicalPluginPath) {
+            QString timestampString = object.value(QStringLiteral("timestamp")).toString();
+            if (timestampString.isEmpty()) {
+                cacheFile()->remove();
+                return MetaDataResult::NotAvailable;
+            }
+            QDateTime timestamp = QDateTime::fromString(timestampString);
+            if (timestamp < pluginLastModified) {
+                // Out of date data for this plugin => remove it from the file.
+                array.removeAt(i.i);
+                writeToCacheFile(array);
+                return MetaDataResult::NotAvailable;
+            }
+
+            if (object.contains(QLatin1String("unloadable")))
+                return MetaDataResult::Unloadable;
+
+            // Match.
+            result.name = object.value(QStringLiteral("name")).toString();
+            result.description = object.value(QStringLiteral("description")).toString();
+            result.mimeDescription = object.value(QStringLiteral("mimeDescription")).toString();
+            if (result.mimeDescription.isEmpty()) {
+                // Only the mime description is mandatory.
+                // Don't trust in the cache file if it is empty.
+                cacheFile()->remove();
+                return MetaDataResult::NotAvailable;
+            }
+
+            return MetaDataResult::Available;
+        }
+    }
+
+    return MetaDataResult::NotAvailable;
+}
+
 bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData& result)
 {
-    QString commandLine = QLatin1String("%1 %2 %3");
-    commandLine = commandLine.arg(executablePathOfPluginProcess());
-    commandLine = commandLine.arg(QStringLiteral("-scanPlugin")).arg(static_cast<QString>(pluginPath));
+    QFileInfo pluginFileInfo(pluginPath);
+    if (!pluginFileInfo.exists())
+        return false;
 
+    MetaDataResult::Tag metaDataResult = tryReadPluginMetaDataFromCacheFile(pluginFileInfo.canonicalFilePath(), result);
+    if (metaDataResult == MetaDataResult::Available)
+        return true;
+    if (metaDataResult == MetaDataResult::Unloadable)
+        return false;
+
+    // Scan the plugin via the plugin process.
+    QString commandLine = QString(executablePathOfPluginProcess()) % QLatin1Char(' ')
+                          % QStringLiteral("-scanPlugin") % QLatin1Char(' ') % pluginFileInfo.canonicalFilePath();
     QProcess process;
     process.setReadChannel(QProcess::StandardOutput);
     process.start(commandLine);
 
-    if (!process.waitForFinished()
-        || process.exitStatus() != QProcess::NormalExit
-        || process.exitCode() != EXIT_SUCCESS) {
+    bool ranSuccessfully = process.waitForFinished()
+                           && process.exitStatus() == QProcess::NormalExit
+                           && process.exitCode() == EXIT_SUCCESS;
+    if (ranSuccessfully) {
+        QByteArray outputBytes = process.readAll();
+        ASSERT(!(outputBytes.size() % sizeof(UChar)));
+
+        String output(reinterpret_cast<const UChar*>(outputBytes.constData()), outputBytes.size() / sizeof(UChar));
+        Vector<String> lines;
+        output.split(UChar('\n'), lines);
+        ASSERT(lines.size() == 3);
+
+        result.name.swap(lines[0]);
+        result.description.swap(lines[1]);
+        result.mimeDescription.swap(lines[2]);
+    } else
         process.kill();
+
+    QVariantMap map;
+    map[QStringLiteral("path")] = QString(pluginFileInfo.canonicalFilePath());
+    map[QStringLiteral("timestamp")] = QDateTime::currentDateTime().toString();
+
+    if (!ranSuccessfully || result.mimeDescription.isEmpty()) {
+        // We failed getting the meta data in some way. Cache this information, so we don't
+        // need to rescan such plugins every time. We will retry it once the plugin is updated.
+
+        map[QStringLiteral("unloadable")] = QStringLiteral("true");
+        appendToCacheFile(QJsonObject::fromVariantMap(map));
         return false;
     }
 
-    QByteArray outputBytes = process.readAll();
-    ASSERT(!(outputBytes.size() % sizeof(UChar)));
-
-    String output(reinterpret_cast<const UChar*>(outputBytes.constData()), outputBytes.size() / sizeof(UChar));
-    Vector<String> lines;
-    output.split(UChar('\n'), lines);
-    ASSERT(lines.size() == 3);
-
-    result.name.swap(lines[0]);
-    result.description.swap(lines[1]);
-    result.mimeDescription.swap(lines[2]);
-    return !result.mimeDescription.isEmpty();
+    map[QStringLiteral("name")] = QString(result.name);
+    map[QStringLiteral("description")] = QString(result.description);
+    map[QStringLiteral("mimeDescription")] = QString(result.mimeDescription);
+    appendToCacheFile(QJsonObject::fromVariantMap(map));
+    return true;
 }
 
 } // namespace WebKit

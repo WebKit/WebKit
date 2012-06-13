@@ -1,3 +1,35 @@
+2012-06-13  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Scanning plugins blocks the UI for a long time
+        https://bugs.webkit.org/show_bug.cgi?id=88535
+
+        Reviewed by Simon Hausmann.
+
+        Implement a persistent cache for the meta data of plugins.
+        This way the UI process will not block for too long when
+        it's time to scan the plugins (except the first time).
+        The cache is a json file stored in a standard hidden cache
+        directory.
+
+        * Shared/qt/QtDefaultDataLocation.cpp: Added.
+        (WebKit):
+        (WebKit::defaultDataLocation):
+        * Shared/qt/QtDefaultDataLocation.h: Added.
+        (WebKit):
+        Added a common helper for the path we use to
+        put stuff into.
+
+        * Target.pri:
+        * UIProcess/Plugins/qt/PluginProcessProxyQt.cpp:
+        (WebKit::cacheFile):
+        (WebKit):
+        (WebKit::readMetaDataFromCacheFile):
+        (WebKit::writeToCacheFile):
+        (WebKit::appendToCacheFile):
+        (WebKit::tryReadPluginMetaDataFromCacheFile):
+        (WebKit::PluginProcessProxy::scanPlugin):
+        * UIProcess/qt/WebContextQt.cpp:
+
 2012-06-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Do not set contents pos to the current position
