@@ -34,12 +34,12 @@
 namespace WTF {
 
     // An iterator for SegmentedVector. It supports only the pre ++ operator
-    template <typename T, size_t SegmentSize = 8, size_t InlineCapacity = 32> class SegmentedVector;
-    template <typename T, size_t SegmentSize = 8, size_t InlineCapacity = 32> class SegmentedVectorIterator {
+    template <typename T, size_t SegmentSize> class SegmentedVector;
+    template <typename T, size_t SegmentSize> class SegmentedVectorIterator {
     private:
-        friend class SegmentedVector<T, SegmentSize, InlineCapacity>;
+        friend class SegmentedVector<T, SegmentSize>;
     public:
-        typedef SegmentedVectorIterator<T, SegmentSize, InlineCapacity> Iterator;
+        typedef SegmentedVectorIterator<T, SegmentSize> Iterator;
 
         ~SegmentedVectorIterator() { }
 
@@ -75,7 +75,7 @@ namespace WTF {
             return m_index != other.m_index || m_segment != other.m_segment || &m_vector != &other.m_vector;
         }
 
-        SegmentedVectorIterator& operator=(const SegmentedVectorIterator<T, SegmentSize, InlineCapacity>& other)
+        SegmentedVectorIterator& operator=(const SegmentedVectorIterator<T, SegmentSize>& other)
         {
             m_vector = other.m_vector;
             m_segment = other.m_segment;
@@ -84,28 +84,25 @@ namespace WTF {
         }
 
     private:
-        SegmentedVectorIterator(SegmentedVector<T, SegmentSize, InlineCapacity>& vector, size_t segment, size_t index)
+        SegmentedVectorIterator(SegmentedVector<T, SegmentSize>& vector, size_t segment, size_t index)
             : m_vector(vector)
             , m_segment(segment)
             , m_index(index)
         {
         }
 
-        SegmentedVector<T, SegmentSize, InlineCapacity>& m_vector;
+        SegmentedVector<T, SegmentSize>& m_vector;
         size_t m_segment;
         size_t m_index;
     };
 
     // SegmentedVector is just like Vector, but it doesn't move the values
     // stored in its buffer when it grows. Therefore, it is safe to keep
-    // pointers into a SegmentedVector. The default tuning values are
-    // optimized for segmented vectors that get large; you may want to use
-    // SegmentedVector<thingy, 1, 0> if you don't expect a lot of entries.
-    template <typename T, size_t SegmentSize, size_t InlineCapacity>
-    class SegmentedVector {
-        friend class SegmentedVectorIterator<T, SegmentSize, InlineCapacity>;
+    // pointers into a SegmentedVector.
+    template <typename T, size_t SegmentSize> class SegmentedVector {
+        friend class SegmentedVectorIterator<T, SegmentSize>;
     public:
-        typedef SegmentedVectorIterator<T, SegmentSize, InlineCapacity> Iterator;
+        typedef SegmentedVectorIterator<T, SegmentSize> Iterator;
 
         SegmentedVector()
             : m_size(0)
@@ -253,7 +250,7 @@ namespace WTF {
 
         size_t m_size;
         Segment m_inlineSegment;
-        Vector<Segment*, InlineCapacity> m_segments;
+        Vector<Segment*, 32> m_segments;
     };
 
 } // namespace WTF

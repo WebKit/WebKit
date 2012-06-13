@@ -1027,29 +1027,6 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
         emitWriteBarrier(globalObject, regT0, regT2, ShouldFilterImmediates, WriteBarrierForVariableAccess);
 }
 
-void JIT::emit_op_put_global_var_check(Instruction* currentInstruction)
-{
-    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-    
-    addSlowCase(branchTest8(NonZero, AbsoluteAddress(currentInstruction[3].u.predicatePointer)));
-
-    JSGlobalObject* globalObject = m_codeBlock->globalObject();
-    
-    storePtr(regT0, currentInstruction[1].u.registerPointer);
-    if (Heap::isWriteBarrierEnabled())
-        emitWriteBarrier(globalObject, regT0, regT2, ShouldFilterImmediates, WriteBarrierForVariableAccess);
-}
-
-void JIT::emitSlow_op_put_global_var_check(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter);
-    
-    JITStubCall stubCall(this, cti_op_put_global_var_check);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(TrustedImm32(currentInstruction[4].u.operand));
-    stubCall.call();
-}
-
 void JIT::resetPatchGetById(RepatchBuffer& repatchBuffer, StructureStubInfo* stubInfo)
 {
     repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_get_by_id);

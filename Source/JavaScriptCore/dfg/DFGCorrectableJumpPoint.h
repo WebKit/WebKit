@@ -66,11 +66,6 @@ public:
 #endif
     }
     
-    bool isSet()
-    {
-        return m_codeOffset != std::numeric_limits<uint32_t>::max();
-    }
-    
     void switchToLateJump(MacroAssembler::PatchableJump check)
     {
 #ifndef NDEBUG

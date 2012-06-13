@@ -2377,15 +2377,6 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_array_buffer)
     return constructArray(stackFrame.callFrame, stackFrame.callFrame->codeBlock()->constantBuffer(stackFrame.args[0].int32()), stackFrame.args[1].int32());
 }
 
-DEFINE_STUB_FUNCTION(void, op_put_global_var_check)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    
-    CallFrame* callFrame = stackFrame.callFrame;
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    symbolTablePut(codeBlock->globalObject(), callFrame, codeBlock->identifier(stackFrame.args[1].int32()), stackFrame.args[0].jsValue(), true);
-}
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

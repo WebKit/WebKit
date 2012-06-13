@@ -94,12 +94,6 @@ public:
         addCallArgument(arg1);
         addCallArgument(arg2);
     }
-    
-    ALWAYS_INLINE void setupArguments(TrustedImmPtr arg1)
-    {
-        resetCallArguments();
-        addCallArgument(arg1);
-    }
 
     ALWAYS_INLINE void setupArgumentsExecState()
     {
@@ -438,11 +432,6 @@ public:
     ALWAYS_INLINE void setupArguments(GPRReg arg1, GPRReg arg2)
     {
         setupTwoStubArgs<GPRInfo::argumentGPR0, GPRInfo::argumentGPR1>(arg1, arg2);
-    }
-    
-    ALWAYS_INLINE void setupArguments(TrustedImmPtr arg1)
-    {
-        move(arg1, GPRInfo::argumentGPR0);
     }
 
     ALWAYS_INLINE void setupArgumentsExecState()

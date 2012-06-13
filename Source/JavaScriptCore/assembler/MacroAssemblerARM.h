@@ -1010,17 +1010,6 @@ public:
         return FunctionPtr(reinterpret_cast<void(*)()>(ARMAssembler::readCallTarget(call.dataLocation())));
     }
 
-    static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
-    {
-        ASSERT_NOT_REACHED();
-    }
-    
-    static ptrdiff_t maxJumpReplacementSize()
-    {
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-
 protected:
     ARMAssembler::Condition ARMCondition(RelationalCondition cond)
     {

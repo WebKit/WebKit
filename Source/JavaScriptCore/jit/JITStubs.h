@@ -445,7 +445,6 @@ extern "C" {
     void JIT_STUB cti_op_put_by_index(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     void JIT_STUB cti_op_put_by_val(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     void JIT_STUB cti_op_put_getter_setter(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-    void JIT_STUB cti_op_put_global_var_check(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     void JIT_STUB cti_op_tear_off_activation(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     void JIT_STUB cti_op_tear_off_arguments(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     void JIT_STUB cti_op_throw_reference_error(STUB_ARGS_DECLARATION) WTF_INTERNAL;

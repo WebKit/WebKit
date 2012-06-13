@@ -430,20 +430,9 @@ struct Node {
         return m_opInfo;
     }
     
-    bool hasIdentifierNumberForCheck()
-    {
-        return op() == GlobalVarWatchpoint || op() == PutGlobalVarCheck;
-    }
-    
-    unsigned identifierNumberForCheck()
-    {
-        ASSERT(hasIdentifierNumberForCheck());
-        return m_opInfo2;
-    }
-    
     bool hasRegisterPointer()
     {
-        return op() == GetGlobalVar || op() == PutGlobalVar || op() == GlobalVarWatchpoint || op() == PutGlobalVarCheck;
+        return op() == GetGlobalVar || op() == PutGlobalVar;
     }
     
     WriteBarrier<Unknown>* registerPointer()

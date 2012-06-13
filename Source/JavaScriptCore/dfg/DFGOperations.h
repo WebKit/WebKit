@@ -100,7 +100,6 @@ typedef void DFG_OPERATION (*V_DFGOperation_EJCI)(ExecState*, EncodedJSValue, JS
 typedef void DFG_OPERATION (*V_DFGOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_EJPP)(ExecState*, EncodedJSValue, EncodedJSValue, void*);
 typedef void DFG_OPERATION (*V_DFGOperation_EPZJ)(ExecState*, void*, int32_t, EncodedJSValue);
-typedef void DFG_OPERATION (*V_DFGOperation_W)(WatchpointSet*);
 typedef void* DFG_OPERATION (*P_DFGOperation_E)(ExecState*);
 
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
@@ -117,7 +116,6 @@ EncodedJSValue DFG_OPERATION operationGetByIdProtoBuildList(ExecState*, EncodedJ
 EncodedJSValue DFG_OPERATION operationGetByIdOptimize(ExecState*, EncodedJSValue, Identifier*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationCallCustomGetter(ExecState*, JSCell*, PropertySlot::GetValueFunc, Identifier*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationCallGetter(ExecState*, JSCell*, JSCell*) WTF_INTERNAL;
-void DFG_OPERATION operationNotifyGlobalVarWrite(WatchpointSet* watchpointSet) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationResolve(ExecState*, Identifier*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationResolveBase(ExecState*, Identifier*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState*, Identifier*) WTF_INTERNAL;

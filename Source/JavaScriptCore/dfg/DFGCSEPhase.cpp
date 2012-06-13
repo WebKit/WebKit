@@ -217,29 +217,6 @@ private:
         return NoNode;
     }
     
-    bool globalVarWatchpointElimination(WriteBarrier<Unknown>* registerPointer)
-    {
-        for (unsigned i = m_indexInBlock; i--;) {
-            NodeIndex index = m_currentBlock->at(i);
-            Node& node = m_graph[index];
-            switch (node.op()) {
-            case GlobalVarWatchpoint:
-                if (node.registerPointer() == registerPointer)
-                    return true;
-                break;
-            case PutGlobalVar:
-                if (node.registerPointer() == registerPointer)
-                    return false;
-                break;
-            default:
-                break;
-            }
-            if (m_graph.clobbersWorld(index))
-                break;
-        }
-        return false;
-    }
-    
     NodeIndex globalVarStoreElimination(WriteBarrier<Unknown>* registerPointer)
     {
         for (unsigned i = m_indexInBlock; i--;) {
@@ -249,7 +226,6 @@ private:
                 continue;
             switch (node.op()) {
             case PutGlobalVar:
-            case PutGlobalVarCheck:
                 if (node.registerPointer() == registerPointer)
                     return index;
                 break;
@@ -1009,13 +985,7 @@ private:
             setReplacement(globalVarLoadElimination(node.registerPointer()));
             break;
             
-        case GlobalVarWatchpoint:
-            if (globalVarWatchpointElimination(node.registerPointer()))
-                eliminate();
-            break;
-            
         case PutGlobalVar:
-        case PutGlobalVarCheck:
             if (m_fixpointState == FixpointNotConverged)
                 break;
             eliminate(globalVarStoreElimination(node.registerPointer()));

@@ -504,25 +504,22 @@ void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
     structure()->setStaticFunctionsReified();
 }
 
-bool JSObject::removeDirect(JSGlobalData& globalData, PropertyName propertyName)
+void JSObject::removeDirect(JSGlobalData& globalData, PropertyName propertyName)
 {
     if (structure()->get(globalData, propertyName) == WTF::notFound)
-        return false;
+        return;
 
     size_t offset;
     if (structure()->isUncacheableDictionary()) {
         offset = structure()->removePropertyWithoutTransition(globalData, propertyName);
-        if (offset == WTF::notFound)
-            return false;
-        putUndefinedAtDirectOffset(offset);
-        return true;
+        if (offset != WTF::notFound)
+            putUndefinedAtDirectOffset(offset);
+        return;
     }
 
     setStructure(globalData, Structure::removePropertyTransition(globalData, structure(), propertyName, offset));
-    if (offset == WTF::notFound)
-        return false;
-    putUndefinedAtDirectOffset(offset);
-    return true;
+    if (offset != WTF::notFound)
+        putUndefinedAtDirectOffset(offset);
 }
 
 NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, WriteBarrierBase<Unknown>* location)

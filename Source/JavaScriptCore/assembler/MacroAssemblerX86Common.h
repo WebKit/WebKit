@@ -1408,16 +1408,6 @@ public:
         m_assembler.nop();
     }
 
-    static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
-    {
-        X86Assembler::replaceWithJump(instructionStart.executableAddress(), destination.executableAddress());
-    }
-    
-    static ptrdiff_t maxJumpReplacementSize()
-    {
-        return X86Assembler::maxJumpReplacementSize();
-    }
-
 protected:
     X86Assembler::Condition x86Condition(RelationalCondition cond)
     {

@@ -1,3 +1,153 @@
+2012-06-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r120172.
+        http://trac.webkit.org/changeset/120172
+        https://bugs.webkit.org/show_bug.cgi?id=88976
+
+        The patch causes compilation failures on Gtk, Qt and Apple Win
+        bots (Requested by zdobersek on #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::nop):
+        (JSC::ARMv7Assembler::label):
+        (JSC::ARMv7Assembler::readPointer):
+        (ARMv7Assembler):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC):
+        (AbstractMacroAssembler):
+        (Label):
+        * assembler/AssemblerBuffer.h:
+        * assembler/MacroAssemblerARM.h:
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::nop):
+        (JSC::MacroAssemblerARMv7::jump):
+        (JSC::MacroAssemblerARMv7::makeBranch):
+        * assembler/MacroAssemblerMIPS.h:
+        * assembler/MacroAssemblerSH4.h:
+        * assembler/MacroAssemblerX86.h:
+        (MacroAssemblerX86):
+        (JSC::MacroAssemblerX86::moveWithPatch):
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branchTest8):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cmpb_im):
+        (JSC::X86Assembler::codeSize):
+        (JSC::X86Assembler::label):
+        (JSC::X86Assembler::X86InstructionFormatter::memoryModRM):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::appendOSRExit):
+        (JSC::CodeBlock::appendSpeculationRecovery):
+        (DFGData):
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::exitKindToString):
+        (JSC::DFG::exitKindIsCountable):
+        * bytecode/Instruction.h:
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecode/Watchpoint.cpp: Removed.
+        * bytecode/Watchpoint.h: Removed.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::ResolveResult::checkValidity):
+        (JSC::BytecodeGenerator::addGlobalVar):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::resolve):
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+        (JSC::BytecodeGenerator::emitResolveWithThis):
+        (JSC::BytecodeGenerator::emitGetStaticVar):
+        (JSC::BytecodeGenerator::emitPutStaticVar):
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::PostfixResolveNode::emitBytecode):
+        (JSC::PrefixResolveNode::emitBytecode):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::clobberStructures):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArguments):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::globalVarStoreElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::run):
+        * dfg/DFGCorrectableJumpPoint.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasRegisterPointer):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        * dfg/DFGOSRExit.h:
+        (OSRExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::appendCallSetResult):
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        * jit/JITPropertyAccess32_64.cpp:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LLIntSlowPaths.h:
+        (LLInt):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::removeDirect):
+        * runtime/JSObject.h:
+        (JSObject):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutWithAttributes):
+        * runtime/SymbolTable.cpp: Removed.
+        * runtime/SymbolTable.h:
+        (JSC):
+        (JSC::SymbolTableEntry::isNull):
+        (JSC::SymbolTableEntry::getIndex):
+        (SymbolTableEntry):
+        (JSC::SymbolTableEntry::getAttributes):
+        (JSC::SymbolTableEntry::isReadOnly):
+        (JSC::SymbolTableEntry::pack):
+        (JSC::SymbolTableEntry::isValidIndex):
+
 2012-06-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to set watchpoints on global variables

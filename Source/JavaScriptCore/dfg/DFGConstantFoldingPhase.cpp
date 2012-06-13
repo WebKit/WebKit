@@ -56,9 +56,6 @@ public:
                 continue;
             if (!block->cfaFoundConstants)
                 continue;
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("Constant folding considering Block #%u.\n", blockIndex);
-#endif
             state.beginBasicBlock(block);
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
                 if (!state.isValid())
@@ -93,7 +90,7 @@ public:
                 
                 state.execute(indexInBlock);
                 if (!node.shouldGenerate()
-                    || state.didClobber()
+                    || m_graph.clobbersWorld(node)
                     || node.hasConstant())
                     continue;
                 JSValue value = state.forNode(nodeIndex).value();

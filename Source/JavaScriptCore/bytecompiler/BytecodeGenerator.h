@@ -111,9 +111,7 @@ namespace JSC {
             // The resolved binding is immutable.
             ReadOnlyFlag = 0x20,
             // The base object is the global object.
-            GlobalFlag = 0x40,
-            // The property is being watched, so writes should be special.
-            WatchedFlag = 0x80
+            GlobalFlag = 0x40
         };
         enum Type {
             // The property is local, and stored in a register.
@@ -133,8 +131,6 @@ namespace JSC {
             // binding created with "var" at the top level. At runtime we'll
             // just index into the global object.
             IndexedGlobal = IndexedFlag | GlobalFlag | StaticFlag,
-            // Like IndexedGlobal, but the property is being watched.
-            WatchedIndexedGlobal = IndexedFlag | GlobalFlag | StaticFlag | WatchedFlag,
             // Like IndexedGlobal, but the property is also read-only, like NaN,
             // Infinity, or undefined.
             ReadOnlyIndexedGlobal = IndexedFlag | ReadOnlyFlag | GlobalFlag | StaticFlag,
@@ -445,8 +441,8 @@ namespace JSC {
         RegisterID* emitTypeOf(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_typeof, dst, src); }
         RegisterID* emitIn(RegisterID* dst, RegisterID* property, RegisterID* base) { return emitBinaryOp(op_in, dst, property, base, OperandTypes()); }
 
-        RegisterID* emitGetStaticVar(RegisterID* dst, const ResolveResult&, const Identifier&);
-        RegisterID* emitPutStaticVar(const ResolveResult&, const Identifier&, RegisterID* value);
+        RegisterID* emitGetStaticVar(RegisterID* dst, const ResolveResult&);
+        RegisterID* emitPutStaticVar(const ResolveResult&, RegisterID* value);
 
         RegisterID* emitResolve(RegisterID* dst, const ResolveResult&, const Identifier& property);
         RegisterID* emitResolveBase(RegisterID* dst, const ResolveResult&, const Identifier& property);
@@ -578,9 +574,7 @@ namespace JSC {
         }
 
         // Returns the index of the added var.
-        enum ConstantMode { IsConstant, IsVariable };
-        enum FunctionMode { IsFunctionToSpecialize, NotFunctionOrNotSpecializable };
-        int addGlobalVar(const Identifier&, ConstantMode, FunctionMode);
+        int addGlobalVar(const Identifier&, bool isConstant);
 
         void addParameter(const Identifier&, int parameterIndex);
         

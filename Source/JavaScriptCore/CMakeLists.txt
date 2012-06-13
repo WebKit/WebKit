@@ -53,7 +53,6 @@ SET(JavaScriptCore_SOURCES
     bytecode/PutByIdStatus.cpp
     bytecode/SamplingTool.cpp
     bytecode/StructureStubInfo.cpp
-    bytecode/Watchpoint.cpp
 
     bytecompiler/BytecodeGenerator.cpp
     bytecompiler/NodesCodegen.cpp
@@ -232,7 +231,6 @@ SET(JavaScriptCore_SOURCES
     runtime/StringRecursionChecker.cpp
     runtime/Structure.cpp
     runtime/StructureChain.cpp
-    runtime/SymbolTable.cpp
     runtime/TimeoutChecker.cpp
     runtime/UString.cpp
 

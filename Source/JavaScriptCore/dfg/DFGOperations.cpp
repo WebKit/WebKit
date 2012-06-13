@@ -924,11 +924,6 @@ void* DFG_OPERATION operationVirtualConstruct(ExecState* execCallee)
     return virtualFor(execCallee, CodeForConstruct);
 }
 
-void DFG_OPERATION operationNotifyGlobalVarWrite(WatchpointSet* watchpointSet)
-{
-    watchpointSet->notifyWrite();
-}
-
 EncodedJSValue DFG_OPERATION operationResolve(ExecState* exec, Identifier* propertyName)
 {
     JSGlobalData* globalData = &exec->globalData();

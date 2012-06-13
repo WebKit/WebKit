@@ -3596,62 +3596,6 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
-    case PutGlobalVarCheck: {
-        JSValueOperand value(this, node.child1());
-        
-        WatchpointSet* watchpointSet =
-            m_jit.globalObjectFor(node.codeOrigin)->symbolTable().get(
-                identifier(node.identifierNumberForCheck())->impl()).watchpointSet();
-        addSlowPathGenerator(
-            slowPathCall(
-                m_jit.branchTest8(
-                    JITCompiler::NonZero,
-                    JITCompiler::AbsoluteAddress(watchpointSet->addressOfIsWatched())),
-                this, operationNotifyGlobalVarWrite, NoResult, watchpointSet));
-        
-        if (Heap::isWriteBarrierEnabled()) {
-            GPRTemporary scratch(this);
-            GPRReg scratchReg = scratch.gpr();
-            
-            writeBarrier(m_jit.globalObjectFor(node.codeOrigin), value.tagGPR(), node.child1(), WriteBarrierForVariableAccess, scratchReg);
-        }
-
-        // FIXME: if we happen to have a spare register - and _ONLY_ if we happen to have
-        // a spare register - a good optimization would be to put the register pointer into
-        // a register and then do a zero offset store followed by a four-offset store (or
-        // vice-versa depending on endianness).
-        m_jit.store32(value.tagGPR(), node.registerPointer()->tagPointer());
-        m_jit.store32(value.payloadGPR(), node.registerPointer()->payloadPointer());
-
-        noResult(m_compileIndex);
-        break;
-    }
-        
-    case GlobalVarWatchpoint: {
-        m_jit.globalObjectFor(node.codeOrigin)->symbolTable().get(
-            identifier(node.identifierNumberForCheck())->impl()).addWatchpoint(
-                speculationWatchpoint());
-        
-#if DFG_ENABLE(JIT_ASSERT)
-        GPRTemporary scratch(this);
-        GPRReg scratchGPR = scratch.gpr();
-        m_jit.load32(node.registerPointer()->tagPointer(), scratchGPR);
-        JITCompiler::Jump notOK = m_jit.branch32(
-            JITCompiler::NotEqual, scratchGPR,
-            TrustedImm32(node.registerPointer()->get().tag()));
-        m_jit.load32(node.registerPointer()->payloadPointer(), scratchGPR);
-        JITCompiler::Jump ok = m_jit.branch32(
-            JITCompiler::Equal, scratchGPR,
-            TrustedImm32(node.registerPointer()->get().payload()));
-        notOK.link(&m_jit);
-        m_jit.breakpoint();
-        ok.link(&m_jit);
-#endif
-        
-        noResult(m_compileIndex);
-        break;
-    }
-
     case CheckHasInstance: {
         SpeculateCellOperand base(this, node.child1());
         GPRTemporary structure(this);

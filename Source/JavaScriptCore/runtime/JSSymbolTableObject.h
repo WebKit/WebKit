@@ -72,12 +72,9 @@ template<typename SymbolTableObjectType>
 inline bool symbolTableGet(
     SymbolTableObjectType* object, PropertyName propertyName, PropertySlot& slot)
 {
-    SymbolTable& symbolTable = object->symbolTable();
-    SymbolTable::iterator iter = symbolTable.find(propertyName.publicName());
-    if (iter == symbolTable.end())
+    SymbolTableEntry entry = object->symbolTable().inlineGet(propertyName.publicName());
+    if (entry.isNull())
         return false;
-    SymbolTableEntry::Fast entry = iter->second;
-    ASSERT(!entry.isNull());
     slot.setValue(object->registerAt(entry.getIndex()).get());
     return true;
 }
@@ -86,12 +83,9 @@ template<typename SymbolTableObjectType>
 inline bool symbolTableGet(
     SymbolTableObjectType* object, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
-    SymbolTable& symbolTable = object->symbolTable();
-    SymbolTable::iterator iter = symbolTable.find(propertyName.publicName());
-    if (iter == symbolTable.end())
+    SymbolTableEntry entry = object->symbolTable().inlineGet(propertyName.publicName());
+    if (entry.isNull())
         return false;
-    SymbolTableEntry::Fast entry = iter->second;
-    ASSERT(!entry.isNull());
     descriptor.setDescriptor(
         object->registerAt(entry.getIndex()).get(), entry.getAttributes() | DontDelete);
     return true;
@@ -102,12 +96,9 @@ inline bool symbolTableGet(
     SymbolTableObjectType* object, PropertyName propertyName, PropertySlot& slot,
     bool& slotIsWriteable)
 {
-    SymbolTable& symbolTable = object->symbolTable();
-    SymbolTable::iterator iter = symbolTable.find(propertyName.publicName());
-    if (iter == symbolTable.end())
+    SymbolTableEntry entry = object->symbolTable().inlineGet(propertyName.publicName());
+    if (entry.isNull())
         return false;
-    SymbolTableEntry::Fast entry = iter->second;
-    ASSERT(!entry.isNull());
     slot.setValue(object->registerAt(entry.getIndex()).get());
     slotIsWriteable = !entry.isReadOnly();
     return true;
@@ -121,21 +112,15 @@ inline bool symbolTablePut(
     JSGlobalData& globalData = exec->globalData();
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(object));
     
-    SymbolTable& symbolTable = object->symbolTable();
-    SymbolTable::iterator iter = symbolTable.find(propertyName.publicName());
-    if (iter == symbolTable.end())
+    SymbolTableEntry entry = object->symbolTable().inlineGet(propertyName.publicName());
+    if (entry.isNull())
         return false;
-    bool wasFat;
-    SymbolTableEntry::Fast fastEntry = iter->second.getFast(wasFat);
-    ASSERT(!fastEntry.isNull());
-    if (fastEntry.isReadOnly()) {
+    if (entry.isReadOnly()) {
         if (shouldThrow)
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return true;
     }
-    if (UNLIKELY(wasFat))
-        iter->second.notifyWrite();
-    object->registerAt(fastEntry.getIndex()).set(globalData, object, value);
+    object->registerAt(entry.getIndex()).set(globalData, object, value);
     return true;
 }
 
@@ -151,7 +136,6 @@ inline bool symbolTablePutWithAttributes(
         return false;
     SymbolTableEntry& entry = iter->second;
     ASSERT(!entry.isNull());
-    entry.notifyWrite();
     entry.setAttributes(attributes);
     object->registerAt(entry.getIndex()).set(globalData, object, value);
     return true;

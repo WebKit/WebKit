@@ -1254,10 +1254,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\SymbolTable.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\SymbolTable.h"
 				>
 			</File>
@@ -1683,14 +1679,6 @@
 			</File>
 			<File
 				RelativePath="..\..\bytecode\ValueProfile.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bytecode\Watchpoint.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bytecode\Watchpoint.h"
 				>
 			</File>
 		</Filter>

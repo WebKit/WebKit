@@ -219,9 +219,7 @@ bool AbstractState::execute(unsigned indexInBlock)
 {
     ASSERT(m_block);
     ASSERT(m_isValid);
-    
-    m_didClobber = false;
-    
+        
     NodeIndex nodeIndex = m_block->at(indexInBlock);
     Node& node = m_graph[nodeIndex];
         
@@ -239,12 +237,8 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case GetLocal: {
         VariableAccessData* variableAccessData = node.variableAccessData();
-        if (variableAccessData->prediction() == SpecNone) {
-            m_isValid = false;
-            node.setCanExit(true);
-            break;
-        }
         bool canExit = false;
+        canExit |= variableAccessData->prediction() == SpecNone;
         AbstractValue value = m_variables.operand(variableAccessData->local());
         if (!variableAccessData->isCaptured()) {
             if (value.isClear())
@@ -1482,7 +1476,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         forNode(node.child1()).filter(SpecFunction);
         // FIXME: Should be able to propagate the fact that we know what the function is.
         break;
-        
+            
     case PutById:
     case PutByIdDirect:
         node.setCanExit(true);
@@ -1494,13 +1488,8 @@ bool AbstractState::execute(unsigned indexInBlock)
         node.setCanExit(false);
         forNode(nodeIndex).makeTop();
         break;
-        
-    case GlobalVarWatchpoint:
-        node.setCanExit(true);
-        break;
             
     case PutGlobalVar:
-    case PutGlobalVarCheck:
         node.setCanExit(false);
         break;
             
@@ -1589,7 +1578,6 @@ inline void AbstractState::clobberStructures(unsigned indexInBlock)
     for (size_t i = m_variables.numberOfLocals(); i--;)
         m_variables.local(i).clobberStructures();
     m_haveStructures = false;
-    m_didClobber = true;
 }
 
 inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, NodeIndex nodeIndex)

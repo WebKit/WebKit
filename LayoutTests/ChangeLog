@@ -1,3 +1,17 @@
+2012-06-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r120172.
+        http://trac.webkit.org/changeset/120172
+        https://bugs.webkit.org/show_bug.cgi?id=88976
+
+        The patch causes compilation failures on Gtk, Qt and Apple Win
+        bots (Requested by zdobersek on #webkit).
+
+        * fast/js/dfg-call-function-hit-watchpoint-expected.txt: Removed.
+        * fast/js/dfg-call-function-hit-watchpoint.html: Removed.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-call-function-hit-watchpoint.js: Removed.
+
 2012-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Commit the rest of changes for r120167.

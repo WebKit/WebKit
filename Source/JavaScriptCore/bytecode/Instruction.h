@@ -193,8 +193,6 @@ namespace JSC {
         Instruction(ValueProfile* profile) { u.profile = profile; }
         
         Instruction(WriteBarrier<Unknown>* registerPointer) { u.registerPointer = registerPointer; }
-        
-        Instruction(bool* predicatePointer) { u.predicatePointer = predicatePointer; }
 
         union {
             Opcode opcode;
@@ -207,7 +205,6 @@ namespace JSC {
             LLIntCallLinkInfo* callLinkInfo;
             ValueProfile* profile;
             void* pointer;
-            bool* predicatePointer;
         } u;
         
     private:

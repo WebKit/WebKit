@@ -193,9 +193,6 @@ public:
     // of Throw.
     bool execute(unsigned);
     
-    // Did the last executed node clobber the world?
-    bool didClobber() const { return m_didClobber; }
-    
     // Is the execution state still valid? This will be false if execute() has
     // returned false previously.
     bool isValid() const { return m_isValid; }
@@ -277,7 +274,6 @@ private:
     bool m_foundConstants;
     
     bool m_isValid;
-    bool m_didClobber;
     
     BranchDirection m_branchDirection; // This is only set for blocks that end in Branch and that execute to completion (i.e. m_isValid == true).
 };
