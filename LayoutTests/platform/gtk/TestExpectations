@@ -638,9 +638,7 @@ BUGWKGTK : http/tests/media/video-play-stall-seek.html = TEXT
 BUGWKGTK : http/tests/media/video-play-stall.html = TEXT
 
 BUGWKGTK : http/tests/misc/acid3.html = TEXT
-BUGWKGTK : http/tests/misc/link-rel-prefetch-and-subresource.html = TEXT
 BUGWKGTK : http/tests/misc/policy-delegate-called-twice.html = TEXT
-BUGWKGTK : http/tests/misc/prefetch-purpose.html = TEXT
 BUGWKGTK : http/tests/misc/redirect-to-external-url.html = TEXT
 BUGWKGTK : http/tests/misc/window-dot-stop.html = TEXT
 BUGWKGTK : http/tests/multipart/policy-ignore-crash.php = TEXT
@@ -818,15 +816,6 @@ BUGWK39102 : editing/spelling/context-menu-suggestions.html = TEXT
 BUGWKGTK : fast/forms/range/slider-mouse-events.html = TEXT
 BUGWKGTK : fast/forms/range/slider-zoomed.html = TEXT
 
-// Link prefetch is disabled by default
-BUGWKGTK : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT
-BUGWKGTK : fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html = TEXT
-BUGWKGTK : fast/dom/HTMLLinkElement/prefetch.html = TEXT
-BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-beforeload.html = TEXT
-BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-onerror.html = TEXT
-BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-onload.html = TEXT
-BUGWKGTK : fast/dom/HTMLLinkElement/subresource.html = TEXT
-
 // Tests failing because the context menu is grabbing mouse events.
 BUGWK40601 : fast/events/mouse-click-events.html = TEXT
 BUGWK40601 : fast/events/mouseup-from-button2.html = TEXT
@@ -834,10 +823,14 @@ BUGWK40601 : fast/events/right-click-focus.html = TEXT
 BUGWK40601 : editing/selection/5354455-1.html = TEXT
 
 // Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the preloader tests.
+BUGWK58222 : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT
+BUGWK58222 : fast/dom/HTMLLinkElement/prefetch.html = TEXT
+BUGWK58222 : fast/dom/HTMLLinkElement/subresource.html = TEXT
 BUGWK58222 : fast/preloader = TEXT
 BUGWK58222 : fast/preloader/scan-body-from-head-import.html = PASS
 BUGWK58222 : fast/preloader/scan-body-from-head-script.html = PASS
 BUGWK58222 : http/tests/mime/uppercase-mime-type.html = TEXT
+BUGWK58222 : http/tests/misc/prefetch-purpose.html = PASS
 
 // The middle circle on both rectangles is missing in the pixel output.
 BUGWKGTK : svg/custom/circular-marker-reference-2.svg = TEXT

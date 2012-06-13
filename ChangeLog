@@ -1,3 +1,15 @@
+2012-06-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Enable link prefetch support in the developer builds
+        https://bugs.webkit.org/show_bug.cgi?id=89011
+
+        Reviewed by Martin Robinson.
+
+        Rather export an automake conditional than define a preprocessor
+        macro for enabling link prefetch support.
+
+        * configure.ac:
+
 2012-06-13  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Enable MEDIA_STREAM by default

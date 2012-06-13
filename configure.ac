@@ -1041,10 +1041,6 @@ AC_ARG_ENABLE([link-prefetch],
   [],[enable_link_prefetch=no])
 AC_MSG_RESULT([$enable_link_prefetch])
 
-if test "$enable_link_prefetch" = "yes"; then 
-  AC_DEFINE([ENABLE_LINK_PREFETCH], [1], [Define to enable link prefetch support])
-fi
-
 # GObject Introspection
 AC_MSG_CHECKING([whether to enable GObject introspection support])
 AC_ARG_ENABLE([introspection],
@@ -1437,6 +1433,7 @@ AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
 AM_CONDITIONAL([ENABLE_PLUGIN_PROCESS],[test "$enable_plugin_process" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
+AM_CONDITIONAL([ENABLE_LINK_PREFETCH],[test "$enable_link_prefetch" = "yes"])
 AM_CONDITIONAL([ENABLE_ANIMATION_API],[test "$enable_animation_api" = "yes"])
 AM_CONDITIONAL([ENABLE_REQUEST_ANIMATION_FRAME],[test "$enable_request_animation_frame" = "yes"])
 AM_CONDITIONAL([ENABLE_TOUCH_ICON_LOADING],[test "$enable_touch_icon_loading" = "yes"])

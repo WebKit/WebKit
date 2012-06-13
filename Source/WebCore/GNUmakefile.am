@@ -707,6 +707,14 @@ FEATURE_DEFINES += ENABLE_CSS3_FLEXBOX=1
 webcore_cppflags += -DENABLE_CSS3_FLEXBOX=1
 endif  # END ENABLE_CSS3_FLEXBOX
 
+# ---
+# Link prefetch support
+# ---
+if ENABLE_LINK_PREFETCH
+FEATURE_DEFINES += ENABLE_LINK_PREFETCH=1
+webcore_cppflags += -DENABLE_LINK_PREFETCH=1
+endif  # END ENABLE_LINK_PREFETCH
+
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	$(AM_V_GEN)
