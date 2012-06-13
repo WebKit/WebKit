@@ -17,8 +17,6 @@ PASS Lock target2 succeeded.
 PASS navigator.webkitPointer.isLocked is true
 PASS document.onwebkitpointerlockchange event received.
 PASS document.webkitPointerLockElement is targetdiv2
-PASS document.onwebkitpointerlockchange event received.
-PASS document.webkitPointerLockElement is targetdiv2
 PASS successfullyParsed is true
 
 TEST COMPLETE

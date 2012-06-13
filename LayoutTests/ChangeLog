@@ -1,3 +1,19 @@
+2012-06-12  Vincent Scheib  <scheib@chromium.org>
+
+        Remove duplicate webkitpointerlockchange events when unlocking.
+        https://bugs.webkit.org/show_bug.cgi?id=88917
+
+        Reviewed by Dimitri Glazkov.
+
+        Part of a series of refactoring changes to update pointer lock API to
+        the fullscreen locking style. https://bugs.webkit.org/show_bug.cgi?id=84402
+
+        Tests simplified by removing the duplicate change events.
+
+        * pointer-lock/lock-already-locked-expected.txt:
+        * pointer-lock/pointerlockchange-pointerlockerror-events-expected.txt:
+        * pointer-lock/pointerlockchange-pointerlockerror-events.html:
+
 2012-06-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to set watchpoints on global variables

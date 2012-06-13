@@ -1,3 +1,23 @@
+2012-06-12  Vincent Scheib  <scheib@chromium.org>
+
+        Remove duplicate webkitpointerlockchange events when unlocking.
+        https://bugs.webkit.org/show_bug.cgi?id=88917
+
+        Reviewed by Dimitri Glazkov.
+
+        Subsequent patches adding the new API for entering and exiting
+        pointer lock would be burdened by handling multiple change events
+        when the lock target is changed. This change introduces
+        temporary code to suppress duplicate change events.
+
+        Existing tests simplified by removing the duplicate change events.
+
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::requestPointerLock):
+        (WebCore::PointerLockController::didLosePointerLock):
+        * page/PointerLockController.h:
+        (PointerLockController):
+
 2012-06-13  Silvia Pfeiffer  <silviapf@chromium.org>
 
         Update range sliders rendering for volume and playback position of new Chrome video controls.

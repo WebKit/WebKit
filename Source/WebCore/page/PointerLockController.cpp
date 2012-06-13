@@ -62,7 +62,7 @@ void PointerLockController::requestPointerLock(Element* target, PassRefPtr<VoidC
             if (successCallback)
                 successCallback->handleEvent();
         } else {
-            didLosePointerLock();
+            didLosePointerLock(false);
             m_element = target;
             if (successCallback)
                 successCallback->handleEvent();
@@ -127,10 +127,11 @@ void PointerLockController::didNotAcquirePointerLock()
         callbackToIssue->handleEvent();
 }
 
-void PointerLockController::didLosePointerLock()
+void PointerLockController::didLosePointerLock(bool sendChangeEvent)
 {
     // FIXME: Keep enqueueEvent usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
-    enqueueEvent(eventNames().webkitpointerlockchangeEvent, m_element.get());
+    if (sendChangeEvent)
+        enqueueEvent(eventNames().webkitpointerlockchangeEvent, m_element.get());
 
     // FIXME: Remove callback usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
     RefPtr<Element> elementToNotify(m_element);
