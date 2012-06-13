@@ -164,6 +164,9 @@ namespace WebCore {
 
 enum CSSPropertyID {
     CSSPropertyInvalid = 0,
+#if ENABLE(CSS_VARIABLES)
+    CSSPropertyVariable = 1,
+#endif
 EOF
 
 my $first = 1001;

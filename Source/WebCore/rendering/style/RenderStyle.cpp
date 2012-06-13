@@ -139,7 +139,6 @@ ALWAYS_INLINE RenderStyle::RenderStyle(bool)
     rareNonInheritedData.access()->m_gridItem.init();
     rareInheritedData.init();
     inherited.init();
-
 #if ENABLE(SVG)
     m_svgStyle.init();
 #endif

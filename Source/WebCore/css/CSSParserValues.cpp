@@ -25,6 +25,9 @@
 #include "CSSFunctionValue.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
+#if ENABLE(CSS_VARIABLES)
+#include "CSSVariableValue.h"
+#endif
 
 namespace WebCore {
 
@@ -75,7 +78,12 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
         parsedValue = primitiveValue;
     } else if (unit == CSSParserValue::Function)
         parsedValue = CSSFunctionValue::create(function);
-    else if (unit == CSSPrimitiveValue::CSS_STRING || unit == CSSPrimitiveValue::CSS_URI || unit == CSSPrimitiveValue::CSS_PARSER_HEXCOLOR)
+    else if (unit == CSSPrimitiveValue::CSS_STRING
+             || unit == CSSPrimitiveValue::CSS_URI
+#if ENABLE(CSS_VARIABLES)
+             || unit == CSSPrimitiveValue::CSS_VARIABLE_NAME
+#endif
+             || unit == CSSPrimitiveValue::CSS_PARSER_HEXCOLOR)
         parsedValue = CSSPrimitiveValue::create(string, (CSSPrimitiveValue::UnitTypes)unit);
     else if (unit >= CSSPrimitiveValue::CSS_NUMBER && unit <= CSSPrimitiveValue::CSS_KHZ)
         parsedValue = CSSPrimitiveValue::create(fValue, (CSSPrimitiveValue::UnitTypes)unit);

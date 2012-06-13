@@ -36851,6 +36851,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSVariableValue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSWrapShapes.cpp"
 				>
 				<FileConfiguration
@@ -45842,6 +45846,10 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\rendering\style\StyleVariableData.h"
+					>
 				</File>
 				<File
 					RelativePath="..\rendering\style\StyleVisualData.h"

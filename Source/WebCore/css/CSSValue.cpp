@@ -47,6 +47,9 @@
 #include "CSSTimingFunctionValue.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueList.h"
+#if ENABLE(CSS_VARIABLES)
+#include "CSSVariableValue.h"
+#endif
 #include "FontValue.h"
 #include "FontFeatureValue.h"
 #include "ShadowValue.h"
@@ -185,6 +188,10 @@ String CSSValue::cssText() const
         return static_cast<const WebKitCSSShaderValue*>(this)->customCssText();
 #endif
 #endif
+#if ENABLE(CSS_VARIABLES)
+    case VariableClass:
+        return static_cast<const CSSVariableValue*>(this)->value();
+#endif
 #if ENABLE(SVG)
     case SVGColorClass:
         return static_cast<const SVGColor*>(this)->customCssText();
@@ -195,6 +202,22 @@ String CSSValue::cssText() const
     ASSERT_NOT_REACHED();
     return String();
 }
+
+#if ENABLE(CSS_VARIABLES)
+String CSSValue::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+{
+    switch (classType()) {
+    case PrimitiveClass:
+        return static_cast<const CSSPrimitiveValue*>(this)->customSerializeResolvingVariables(variables);
+    case ValueListClass:
+        return static_cast<const CSSValueList*>(this)->customSerializeResolvingVariables(variables);
+    case WebKitCSSTransformClass:
+        return static_cast<const WebKitCSSTransformValue*>(this)->customSerializeResolvingVariables(variables);
+    default:
+        return cssText();
+    }
+}
+#endif
 
 void CSSValue::destroy()
 {
@@ -295,6 +318,11 @@ void CSSValue::destroy()
         delete static_cast<WebKitCSSShaderValue*>(this);
         return;
 #endif
+#endif
+#if ENABLE(CSS_VARIABLES)
+    case VariableClass:
+        delete static_cast<CSSVariableValue*>(this);
+        return;
 #endif
 #if ENABLE(SVG)
     case SVGColorClass:

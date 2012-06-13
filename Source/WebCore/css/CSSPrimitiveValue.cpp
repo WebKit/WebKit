@@ -105,6 +105,9 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue:: CSS_UNICODE_RANGE:
     case CSSPrimitiveValue:: CSS_UNKNOWN:
     case CSSPrimitiveValue:: CSS_URI:
+#if ENABLE(CSS_VARIABLES)
+    case CSSPrimitiveValue:: CSS_VARIABLE_NAME:
+#endif
         return false;
     }
 
@@ -711,6 +714,9 @@ String CSSPrimitiveValue::getStringValue(ExceptionCode& ec) const
         case CSS_STRING:
         case CSS_ATTR:
         case CSS_URI:
+#if ENABLE(CSS_VARIABLES)
+        case CSS_VARIABLE_NAME:
+#endif
             return m_value.string;
         case CSS_IDENT:
             return valueOrPropertyName(m_value.ident);
@@ -728,7 +734,10 @@ String CSSPrimitiveValue::getStringValue() const
         case CSS_STRING:
         case CSS_ATTR:
         case CSS_URI:
-             return m_value.string;
+#if ENABLE(CSS_VARIABLES)
+        case CSS_VARIABLE_NAME:
+#endif
+            return m_value.string;
         case CSS_IDENT:
             return valueOrPropertyName(m_value.ident);
         default:
@@ -1075,6 +1084,13 @@ String CSSPrimitiveValue::customCssText() const
         case CSS_VMIN:
             text = formatNumber(m_value.num) + "vmin";
             break;
+#if ENABLE(CSS_VARIABLES)
+        case CSS_VARIABLE_NAME:
+            text = "-webkit-var(";
+            text += m_value.string;
+            text += ")";
+            break;
+#endif
     }
 
     ASSERT(!cssTextCache().contains(this));
@@ -1082,6 +1098,15 @@ String CSSPrimitiveValue::customCssText() const
     m_hasCachedCSSText = true;
     return text;
 }
+
+#if ENABLE(CSS_VARIABLES)
+String CSSPrimitiveValue::customSerializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+{
+    if (m_primitiveUnitType == CSS_VARIABLE_NAME && variables.contains(m_value.string))
+        return variables.get(m_value.string);
+    return customCssText();
+}
+#endif
 
 void CSSPrimitiveValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet) const
 {

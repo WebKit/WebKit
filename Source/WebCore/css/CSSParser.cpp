@@ -51,6 +51,9 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#if ENABLE(CSS_VARIABLES)
+#include "CSSVariableValue.h"
+#endif
 #include "CSSWrapShapes.h"
 #include "Counter.h"
 #include "Document.h"
@@ -1181,13 +1184,27 @@ PassOwnPtr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
     return m_mediaQuery.release();
 }
 
+#if ENABLE(CSS_VARIABLES)
+static inline void filterProperties(bool important, const CSSParser::ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, BitArray<numCSSProperties>& seenProperties, HashSet<AtomicString>& seenVariables)
+#else
 static inline void filterProperties(bool important, const CSSParser::ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, BitArray<numCSSProperties>& seenProperties)
+#endif
 {
     // Add properties in reverse order so that highest priority definitions are reached first. Duplicate definitions can then be ignored when found.
     for (int i = input.size() - 1; i >= 0; --i) {
         const CSSProperty& property = input[i];
         if (property.isImportant() != important)
             continue;
+#if ENABLE(CSS_VARIABLES)
+        if (property.id() == CSSPropertyVariable) {
+            const AtomicString& name = static_cast<CSSVariableValue*>(property.value())->name();
+            if (seenVariables.contains(name))
+                continue;
+            seenVariables.add(name);
+            output[--unusedEntries] = property;
+            continue;
+        }
+#endif
         const unsigned propertyIDIndex = property.id() - firstCSSProperty;
         if (seenProperties.get(propertyIDIndex))
             continue;
@@ -1203,9 +1220,14 @@ PassRefPtr<StylePropertySet> CSSParser::createStylePropertySet()
     Vector<CSSProperty, 256> results(unusedEntries);
 
     // Important properties have higher priority, so add them first. Duplicate definitions can then be ignored when found.
+#if ENABLE(CSS_VARIABLES)
+    HashSet<AtomicString> seenVariables;
+    filterProperties(true, m_parsedProperties, results, unusedEntries, seenProperties, seenVariables);
+    filterProperties(false, m_parsedProperties, results, unusedEntries, seenProperties, seenVariables);
+#else
     filterProperties(true, m_parsedProperties, results, unusedEntries, seenProperties);
     filterProperties(false, m_parsedProperties, results, unusedEntries, seenProperties);
-
+#endif
     if (unusedEntries)
         results.remove(0, unusedEntries);
 
@@ -1301,6 +1323,12 @@ bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, CSSParserMode 
         
     bool b = false;
     switch (value->unit) {
+#if ENABLE(CSS_VARIABLES)
+    case CSSPrimitiveValue::CSS_VARIABLE_NAME:
+        // Variables are checked at the point they are dereferenced because unit type is not available here.
+        b = true;
+        break;
+#endif
     case CSSPrimitiveValue::CSS_NUMBER:
         b = (unitflags & FNumber);
         if (!b && shouldAcceptUnitLessValues(value, unitflags, cssParserMode)) {
@@ -1357,6 +1385,11 @@ bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, CSSParserMode 
 
 inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveNumericValue(CSSParserValue* value)
 {
+#if ENABLE(CSS_VARIABLES)
+    if (value->unit == CSSPrimitiveValue::CSS_VARIABLE_NAME)
+        return CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_VARIABLE_NAME);
+#endif
+
     if (m_parsedCalculation) {
         ASSERT(isCalculation(value));
         return CSSPrimitiveValue::create(m_parsedCalculation.release());
@@ -1529,6 +1562,14 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         addProperty(propId, cssValuePool().createExplicitInitialValue(), important);
         return true;
     }
+
+#if ENABLE(CSS_VARIABLES)
+    if (!id && value->unit == CSSPrimitiveValue::CSS_VARIABLE_NAME && num == 1) {
+        addProperty(propId, CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_VARIABLE_NAME), important);
+        m_valueList->next();
+        return true;
+    }
+#endif
 
     if (isKeywordPropertyID(propId)) {
         if (!isValidKeywordPropertyAndValue(propId, id, m_context))
@@ -2826,6 +2867,19 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
 
     return true;
 }
+
+#if ENABLE(CSS_VARIABLES)
+void CSSParser::storeVariableDeclaration(const CSSParserString& name, PassOwnPtr<CSSParserValueList> value, bool important)
+{
+    StringBuilder builder;
+    for (unsigned i = 0, size = value->size(); i < size; i++) {
+        if (i)
+            builder.append(' ');
+        builder.append(value->valueAt(i)->createCSSValue()->cssText());
+    }
+    addProperty(CSSPropertyVariable, CSSVariableValue::create(name, builder.toString()), important, false);
+}
+#endif
 
 void CSSParser::addAnimationValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval)
 {
@@ -8427,6 +8481,10 @@ inline void CSSParser::detectDashToken(int length)
             m_token = MINFUNCTION;
         else if (isASCIIAlphaCaselessEqual(name[10], 'x') && isEqualToCSSIdentifier(name + 1, "webkit-ma"))
             m_token = MAXFUNCTION;
+#if ENABLE(CSS_VARIABLES)
+        else if (isASCIIAlphaCaselessEqual(name[10], 'r') && isEqualToCSSIdentifier(name + 1, "webkit-va"))
+            m_token = VARFUNCTION;
+#endif
     } else if (length == 12 && isEqualToCSSIdentifier(name + 1, "webkit-calc"))
         m_token = CALCFUNCTION;
 }
@@ -8765,6 +8823,16 @@ restartAfterComment:
     }
 
     case CharacterDash:
+#if ENABLE(CSS_VARIABLES)
+        if (m_currentCharacter[10] == '-' && isEqualToCSSIdentifier(m_currentCharacter, "webkit-var") && isIdentifierStartAfterDash(m_currentCharacter + 11)) {
+            // handle variable declarations
+            m_currentCharacter += 11;
+            parseIdentifier(result, hasEscape);
+            m_token = VAR_DEFINITION;
+            yylval->string.characters = m_tokenStart;
+            yylval->string.length = result - m_tokenStart;
+        } else
+#endif
         if (isIdentifierStartAfterDash(m_currentCharacter)) {
             --m_currentCharacter;
             parseIdentifier(result, hasEscape);

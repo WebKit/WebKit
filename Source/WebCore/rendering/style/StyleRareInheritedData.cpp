@@ -70,6 +70,9 @@ StyleRareInheritedData::StyleRareInheritedData()
     , tapHighlightColor(RenderStyle::initialTapHighlightColor())
 #endif    
 {
+#if ENABLE(CSS_VARIABLES)
+    m_variables.init();
+#endif
 }
 
 StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
@@ -123,6 +126,9 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
 #endif
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(o.tapHighlightColor)
+#endif
+#if ENABLE(CSS_VARIABLES)
+    , m_variables(o.m_variables)
 #endif
 {
 }
@@ -192,6 +198,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && m_imageResolution == o.m_imageResolution
 #endif
         && m_lineSnap == o.m_lineSnap
+#if ENABLE(CSS_VARIABLES)
+        && m_variables == o.m_variables
+#endif
         && m_lineAlign == o.m_lineAlign;
 }
 

@@ -5344,6 +5344,7 @@
 		BC5EB67B0E81D3BE00B25965 /* StyleBoxData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB67A0E81D3BE00B25965 /* StyleBoxData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB67D0E81D42000B25965 /* StyleBoxData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB67C0E81D42000B25965 /* StyleBoxData.cpp */; };
 		BC5EB67F0E81D4A700B25965 /* StyleDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB67E0E81D4A700B25965 /* StyleDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5EB69A0E81DA6300B25966 /* StyleVariableData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB6980E81DA6300B25966 /* StyleVariableData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB6990E81DA6300B25965 /* StyleVisualData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB6970E81DA6300B25965 /* StyleVisualData.cpp */; };
 		BC5EB69A0E81DA6300B25965 /* StyleVisualData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB6980E81DA6300B25965 /* StyleVisualData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB69E0E81DAEB00B25965 /* FillLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5EB69C0E81DAEB00B25965 /* FillLayer.cpp */; };
@@ -5761,6 +5762,7 @@
 		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */; };
 		CAE9F910146441F000C245B0 /* CSSAspectRatioValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CAE9F90E146441F000C245B0 /* CSSAspectRatioValue.h */; };
+		CAE9F910146441F000C245B1 /* CSSVariableValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CAE9F90E146441F000C245B1 /* CSSVariableValue.h */; };
 		CD127DED14F3097D00E84779 /* WebCoreFullScreenWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD127DEB14F3097900E84779 /* WebCoreFullScreenWindow.mm */; };
 		CD127DEE14F3098400E84779 /* WebCoreFullScreenWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = CD127DEA14F3097900E84779 /* WebCoreFullScreenWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD27F6E51457685A0078207D /* JSMediaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD27F6E2145767580078207D /* JSMediaController.cpp */; };
@@ -12489,6 +12491,7 @@
 		BC5EB67A0E81D3BE00B25965 /* StyleBoxData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleBoxData.h; path = style/StyleBoxData.h; sourceTree = "<group>"; };
 		BC5EB67C0E81D42000B25965 /* StyleBoxData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleBoxData.cpp; path = style/StyleBoxData.cpp; sourceTree = "<group>"; };
 		BC5EB67E0E81D4A700B25965 /* StyleDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleDashboardRegion.h; path = style/StyleDashboardRegion.h; sourceTree = "<group>"; };
+		BC5EB6980E81DA6300B25966 /* StyleVariableData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleVariableData.h; path = style/StyleVariableData.h; sourceTree = "<group>"; };
 		BC5EB6970E81DA6300B25965 /* StyleVisualData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleVisualData.cpp; path = style/StyleVisualData.cpp; sourceTree = "<group>"; };
 		BC5EB6980E81DA6300B25965 /* StyleVisualData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleVisualData.h; path = style/StyleVisualData.h; sourceTree = "<group>"; };
 		BC5EB69C0E81DAEB00B25965 /* FillLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FillLayer.cpp; path = style/FillLayer.cpp; sourceTree = "<group>"; };
@@ -12943,6 +12946,7 @@
 		CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimator.h; sourceTree = "<group>"; };
 		CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSAspectRatioValue.cpp; sourceTree = "<group>"; };
 		CAE9F90E146441F000C245B0 /* CSSAspectRatioValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSAspectRatioValue.h; sourceTree = "<group>"; };
+		CAE9F90E146441F000C245B1 /* CSSVariableValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSVariableValue.h; sourceTree = "<group>"; };
 		CD127DEA14F3097900E84779 /* WebCoreFullScreenWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreFullScreenWindow.h; sourceTree = "<group>"; };
 		CD127DEB14F3097900E84779 /* WebCoreFullScreenWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreFullScreenWindow.mm; sourceTree = "<group>"; };
 		CD27F6E014575C1B0078207D /* MediaController.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaController.idl; sourceTree = "<group>"; };
@@ -20158,6 +20162,7 @@
 				BC5EB5E40E81BF6D00B25965 /* StyleSurroundData.h */,
 				BC5EB80D0E81F2CE00B25965 /* StyleTransformData.cpp */,
 				BC5EB80E0E81F2CE00B25965 /* StyleTransformData.h */,
+				BC5EB6980E81DA6300B25966 /* StyleVariableData.h */,
 				BC5EB6970E81DA6300B25965 /* StyleVisualData.cpp */,
 				BC5EB6980E81DA6300B25965 /* StyleVisualData.h */,
 				BC2274740E8366E200E7F975 /* SVGRenderStyle.cpp */,
@@ -20817,6 +20822,7 @@
 				A8D0651C0A23C1FE005E7203 /* CSSValueList.idl */,
 				E49BDA0A131FD3E5003C56F0 /* CSSValuePool.cpp */,
 				E49BD9F9131FD2ED003C56F0 /* CSSValuePool.h */,
+				CAE9F90E146441F000C245B1 /* CSSVariableValue.h */,
 				501BAAB11395114B00F7ACEB /* CSSWrapShapes.cpp */,
 				501BA9E11393CEA000F7ACEB /* CSSWrapShapes.h */,
 				A80E6CE10A1989CA007FB8C5 /* DashboardRegion.h */,
@@ -22137,6 +22143,7 @@
 				6565815109D13043000E61D7 /* CSSValueKeywords.h in Headers */,
 				A80E6CE90A1989CA007FB8C5 /* CSSValueList.h in Headers */,
 				E49BD9FA131FD2ED003C56F0 /* CSSValuePool.h in Headers */,
+				CAE9F910146441F000C245B1 /* CSSVariableValue.h in Headers */,
 				501BA9E21393CEA000F7ACEB /* CSSWrapShapes.h in Headers */,
 				93F1992F08245E59001E9ABC /* Cursor.h in Headers */,
 				BC2272A20E82E87C00E7F975 /* CursorData.h in Headers */,
@@ -24534,6 +24541,7 @@
 				A8EA800A0A19516E00A8EF5F /* StyleSheetList.h in Headers */,
 				BC5EB5E50E81BF6D00B25965 /* StyleSurroundData.h in Headers */,
 				BC5EB8100E81F2CE00B25965 /* StyleTransformData.h in Headers */,
+				BC5EB69A0E81DA6300B25966 /* StyleVariableData.h in Headers */,
 				BC5EB69A0E81DA6300B25965 /* StyleVisualData.h in Headers */,
 				D000ED2811C1B9CD00C47726 /* SubframeLoader.h in Headers */,
 				F55B3DD41251F12D003EF269 /* SubmitInputType.h in Headers */,

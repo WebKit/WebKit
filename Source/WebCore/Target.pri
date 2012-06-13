@@ -1652,6 +1652,7 @@ HEADERS += \
     css/CSSValue.h \
     css/CSSValueList.h \
     css/CSSValuePool.h \
+    css/CSSVariableValue.h \
     css/CSSWrapShapes.h \
     css/FontFeatureValue.h \
     css/FontValue.h \
@@ -2565,6 +2566,7 @@ HEADERS += \
     rendering/style/StyleShader.h \
     rendering/style/StyleSurroundData.h \
     rendering/style/StyleTransformData.h \
+    rendering/style/StyleVariableData.h \
     rendering/style/StyleVisualData.h \
     rendering/style/SVGRenderStyleDefs.h \
     rendering/style/SVGRenderStyle.h \

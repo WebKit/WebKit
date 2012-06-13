@@ -1362,6 +1362,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
 
     switch (propertyID) {
         case CSSPropertyInvalid:
+#if ENABLE(CSS_VARIABLES)
+        case CSSPropertyVariable:
+#endif
             break;
 
         case CSSPropertyBackgroundColor:

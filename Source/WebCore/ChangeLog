@@ -1,3 +1,98 @@
+2012-06-12  Luke Macpherson  <macpherson@chromium.org>
+
+        WIP: Implement CSS Variables Standard.
+        https://bugs.webkit.org/show_bug.cgi?id=85580
+
+        Reviewed by Ojan Vafai.
+
+        Implement CSS Variables Module Level 1. (See http://www.w3.org/TR/css-variables/)
+
+        A HashMap of properties is referenced by RenderStyle, and used to store variables as strings.
+        That HashMap is copy-on-write, and unless new variables are defined is simply a pointer to the
+        parent's definitions. At usage time the variable's value is parsed according to the CSS property
+        where it is used.
+        Variables can:
+               Define lists of values (ie. entire shorthand values).
+               Define individual values.
+               Refer to other variables. (Cycle detection is implemented).
+        Please see the supplied test cases for example usage.
+
+        Missing features:
+               CSS variables cannot yet be used inside some functions such as -webkit-calc.
+
+        Covered by existing test suite under fast/css/variables.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore):
+        (WebCore::filterProperties):
+        (WebCore::CSSParser::createStylePropertySet):
+        (WebCore::CSSParser::validUnit):
+        (WebCore::CSSParser::createPrimitiveNumericValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::storeVariableDeclaration):
+        (WebCore::CSSParser::detectDashToken):
+        (WebCore::CSSParser::lex):
+        * css/CSSParser.h:
+        (CSSParser):
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValue::createCSSValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::CSSPrimitiveValue::getStringValue):
+        (WebCore::CSSPrimitiveValue::customSerializeResolvingVariables):
+        (WebCore):
+        * css/CSSPrimitiveValue.h:
+        (CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::isVariableName):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::serializeResolvingVariables):
+        (WebCore):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (CSSValue):
+        (WebCore::CSSValue::isVariableValue):
+        * css/CSSValueList.cpp:
+        (WebCore):
+        (WebCore::CSSValueList::customSerializeResolvingVariables):
+        * css/CSSValueList.h:
+        (CSSValueList):
+        * css/CSSVariableValue.h: Added.
+        (WebCore):
+        (CSSVariableValue):
+        (WebCore::CSSVariableValue::create):
+        (WebCore::CSSVariableValue::name):
+        (WebCore::CSSVariableValue::value):
+        (WebCore::CSSVariableValue::CSSVariableValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleResolver.h:
+        * css/WebKitCSSTransformValue.cpp:
+        (WebCore):
+        (WebCore::WebKitCSSTransformValue::customSerializeResolvingVariables):
+        * css/WebKitCSSTransformValue.h:
+        (WebKitCSSTransformValue):
+        * css/makeprop.pl:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleVariableData.h: Added.
+        (WebCore):
+        (StyleVariableData):
+        (WebCore::StyleVariableData::create):
+        (WebCore::StyleVariableData::copy):
+        (WebCore::StyleVariableData::operator==):
+        (WebCore::StyleVariableData::operator!=):
+        (WebCore::StyleVariableData::setVariable):
+        (WebCore::StyleVariableData::StyleVariableData):
+
 2012-06-12  MORITA Hajime  <morrita@google.com>
 
         Shadow Pseudo ID should be able to nest to point nested shadow DOM.

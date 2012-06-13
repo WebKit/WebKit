@@ -91,6 +91,10 @@ public:
     bool parseContent(CSSPropertyID, bool important);
     bool parseQuotes(CSSPropertyID, bool important);
 
+#if ENABLE(CSS_VARIABLES)
+    void storeVariableDeclaration(const CSSParserString&, PassOwnPtr<CSSParserValueList>, bool important);
+#endif
+
     PassRefPtr<CSSValue> parseAttr(CSSParserValueList* args);
 
     PassRefPtr<CSSValue> parseBackgroundColor();

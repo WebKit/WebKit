@@ -59,6 +59,9 @@ public:
 
     String cssText() const;
     void setCssText(const String&, ExceptionCode&) { } // FIXME: Not implemented.
+#if ENABLE(CSS_VARIABLES)
+    String serializeResolvingVariables(const HashMap<AtomicString, String>&) const;
+#endif
 
     bool isPrimitiveValue() const { return m_classType == PrimitiveClass; }
     bool isValueList() const { return m_classType >= ValueListClass; }
@@ -90,6 +93,9 @@ public:
     bool isWebKitCSSShaderValue() const { return m_classType == WebKitCSSShaderClass; }
 #endif
 #endif // ENABLE(CSS_FILTERS)
+#if ENABLE(CSS_VARIABLES)
+    bool isVariableValue() const { return m_classType == VariableClass; }
+#endif
 #if ENABLE(SVG)
     bool isSVGColor() const { return m_classType == SVGColorClass || m_classType == SVGPaintClass; }
     bool isSVGPaint() const { return m_classType == SVGPaintClass; }
@@ -148,6 +154,9 @@ protected:
         CalculationClass,
 #if ENABLE(CSS_FILTERS) && ENABLE(CSS_SHADERS)
         WebKitCSSShaderClass,
+#endif
+#if ENABLE(CSS_VARIABLES)
+        VariableClass,
 #endif
 #if ENABLE(SVG)
         SVGColorClass,

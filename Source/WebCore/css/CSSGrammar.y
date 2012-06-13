@@ -101,7 +101,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 59
+%expect 61
 
 %nonassoc LOWEST_PREC
 
@@ -135,6 +135,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token FONT_FACE_SYM
 %token CHARSET_SYM
 %token NAMESPACE_SYM
+%token VARFUNCTION
 %token WEBKIT_RULE_SYM
 %token WEBKIT_DECLS_SYM
 %token WEBKIT_KEYFRAME_RULE_SYM
@@ -202,6 +203,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token <string> CALCFUNCTION
 %token <string> MINFUNCTION
 %token <string> MAXFUNCTION
+%token <string> VAR_DEFINITION
 
 %token <string> UNICODERANGE
 
@@ -1297,6 +1299,17 @@ decl_list:
     ;
 
 declaration:
+    VAR_DEFINITION ':' maybe_space expr prio {
+#if ENABLE(CSS_VARIABLES)
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->storeVariableDeclaration($1, p->sinkFloatingValueList($4), $5);
+        $$ = true;
+        p->markPropertyEnd($5, $$);
+#else
+        $$ = false;
+#endif
+    }
+    |
     property ':' maybe_space expr prio {
         $$ = false;
         CSSParser* p = static_cast<CSSParser*>(parser);
@@ -1429,6 +1442,13 @@ term:
   | UNICODERANGE maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_UNICODE_RANGE; }
   | HEX maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; }
   | '#' maybe_space { $$.id = 0; $$.string = CSSParserString(); $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; } /* Handle error case: "color: #;" */
+  | VARFUNCTION maybe_space IDENT ')' maybe_space {
+#if ENABLE(CSS_VARIABLES)
+      $$.id = 0;
+      $$.string = $3;
+      $$.unit = CSSPrimitiveValue::CSS_VARIABLE_NAME;
+#endif
+  }
   /* FIXME: according to the specs a function can have a unary_operator in front. I know no case where this makes sense */
   | function {
       $$ = $1;

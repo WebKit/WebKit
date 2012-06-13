@@ -78,6 +78,21 @@ String WebKitCSSTransformValue::customCssText() const
     return result.toString();
 }
 
+#if ENABLE(CSS_VARIABLES)
+String WebKitCSSTransformValue::customSerializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+{
+    StringBuilder result;
+    if (m_type != UnknownTransformOperation) {
+        ASSERT(static_cast<size_t>(m_type) < WTF_ARRAY_LENGTH(transformName));
+        result.append(transformName[m_type]);
+        result.append('(');
+        result.append(CSSValueList::customSerializeResolvingVariables(variables));
+        result.append(')');
+    }
+    return result.toString();
+}
+#endif
+
 WebKitCSSTransformValue::WebKitCSSTransformValue(const WebKitCSSTransformValue& cloneFrom)
     : CSSValueList(cloneFrom)
     , m_type(cloneFrom.m_type)
