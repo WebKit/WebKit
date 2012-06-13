@@ -1868,6 +1868,17 @@ public:
         return FunctionPtr(reinterpret_cast<void(*)()>(MIPSAssembler::readCallTarget(call.dataLocation())));
     }
 
+    static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
+    {
+        ASSERT_NOT_REACHED();
+    }
+    
+    static ptrdiff_t maxJumpReplacementSize()
+    {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
 private:
     // If m_fixedWidth is true, we will generate a fixed number of instructions.
     // Otherwise, we can emit any number of instructions.

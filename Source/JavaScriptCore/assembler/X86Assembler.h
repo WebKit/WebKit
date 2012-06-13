@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -247,6 +247,8 @@ private:
 public:
 
     X86Assembler()
+        : m_indexOfLastWatchpoint(INT_MIN)
+        , m_indexOfTailOfLastWatchpoint(INT_MIN)
     {
     }
 
@@ -798,6 +800,14 @@ public:
         m_formatter.oneByteOp(OP_GROUP1_EbIb, GROUP1_OP_CMP, base, index, scale, offset);
         m_formatter.immediate8(imm);
     }
+    
+#if CPU(X86)
+    void cmpb_im(int imm, const void* addr)
+    {
+        m_formatter.oneByteOp(OP_GROUP1_EbIb, GROUP1_OP_CMP, addr);
+        m_formatter.immediate8(imm);
+    }
+#endif
 
     void cmpl_im(int imm, int offset, RegisterID base, RegisterID index, int scale)
     {
@@ -947,6 +957,14 @@ public:
         m_formatter.oneByteOp(OP_GROUP3_EbIb, GROUP3_OP_TEST, base, index, scale, offset);
         m_formatter.immediate8(imm);
     }
+
+#if CPU(X86)
+    void testb_im(int imm, const void* addr)
+    {
+        m_formatter.oneByteOp(OP_GROUP3_EbIb, GROUP3_OP_TEST, addr);
+        m_formatter.immediate8(imm);
+    }
+#endif
 
     void testl_i32m(int imm, int offset, RegisterID base, RegisterID index, int scale)
     {
@@ -1702,10 +1720,25 @@ public:
     {
         return m_formatter.codeSize();
     }
+    
+    AssemblerLabel labelForWatchpoint()
+    {
+        AssemblerLabel result = m_formatter.label();
+        if (static_cast<int>(result.m_offset) != m_indexOfLastWatchpoint)
+            result = label();
+        m_indexOfLastWatchpoint = result.m_offset;
+        m_indexOfTailOfLastWatchpoint = result.m_offset + maxJumpReplacementSize();
+        return result;
+    }
 
     AssemblerLabel label()
     {
-        return m_formatter.label();
+        AssemblerLabel result = m_formatter.label();
+        while (UNLIKELY(static_cast<int>(result.m_offset) < m_indexOfTailOfLastWatchpoint)) {
+            nop();
+            result = m_formatter.label();
+        }
+        return result;
     }
 
     AssemblerLabel align(int alignment)
@@ -1787,6 +1820,20 @@ public:
         return reinterpret_cast<void**>(where)[-1];
     }
 
+    static void replaceWithJump(void* instructionStart, void* to)
+    {
+        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
+        uint8_t* dstPtr = reinterpret_cast<uint8_t*>(to);
+        intptr_t distance = (intptr_t)(dstPtr - (ptr + 5));
+        ptr[0] = static_cast<uint8_t>(OP_JMP_rel32);
+        *reinterpret_cast<int32_t*>(ptr + 1) = static_cast<int32_t>(distance);
+    }
+    
+    static ptrdiff_t maxJumpReplacementSize()
+    {
+        return 5;
+    }
+    
     static unsigned getCallReturnOffset(AssemblerLabel call)
     {
         ASSERT(call.isSet());
@@ -2339,6 +2386,8 @@ private:
 
         AssemblerBuffer m_buffer;
     } m_formatter;
+    int m_indexOfLastWatchpoint;
+    int m_indexOfTailOfLastWatchpoint;
 };
 
 } // namespace JSC

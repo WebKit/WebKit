@@ -463,7 +463,7 @@ namespace JSC {
         bool isMapped(int virtualRegisterIndex);
         bool getMappedPayload(int virtualRegisterIndex, RegisterID& payload);
         bool getMappedTag(int virtualRegisterIndex, RegisterID& tag);
-
+        
         void emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex);
         void emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex, RegisterID tag);
 
@@ -599,6 +599,7 @@ namespace JSC {
         void emit_op_get_argument_by_val(Instruction*);
         void emit_op_get_by_pname(Instruction*);
         void emit_op_get_global_var(Instruction*);
+        void emit_op_get_global_var_watchable(Instruction* instruction) { emit_op_get_global_var(instruction); }
         void emit_op_get_scoped_var(Instruction*);
         void emit_op_init_lazy_reg(Instruction*);
         void emit_op_check_has_instance(Instruction*);
@@ -662,6 +663,7 @@ namespace JSC {
         void emit_op_put_by_val(Instruction*);
         void emit_op_put_getter_setter(Instruction*);
         void emit_op_put_global_var(Instruction*);
+        void emit_op_put_global_var_check(Instruction*);
         void emit_op_put_scoped_var(Instruction*);
         void emit_op_resolve(Instruction*);
         void emit_op_resolve_base(Instruction*);
@@ -739,6 +741,7 @@ namespace JSC {
         void emitSlow_op_pre_inc(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_global_var_check(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_resolve_global(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_resolve_global_dynamic(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_rshift(Instruction*, Vector<SlowCaseEntry>::iterator&);

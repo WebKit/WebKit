@@ -41,6 +41,7 @@ enum ExitKind {
     InadequateCoverage, // We exited because we ended up in code that didn't have profiling coverage.
     ArgumentsEscaped, // We exited because arguments escaped but we didn't expect them to.
     Uncountable, // We exited for none of the above reasons, and we should not count it. Most uses of this should be viewed as a FIXME.
+    UncountableWatchpoint // We exited because of a watchpoint, which isn't counted because watchpoints do tracking themselves.
 };
 
 inline const char* exitKindToString(ExitKind kind)
@@ -58,6 +59,12 @@ inline const char* exitKindToString(ExitKind kind)
         return "NegativeZero";
     case InadequateCoverage:
         return "InadequateCoverage";
+    case ArgumentsEscaped:
+        return "ArgumentsEscaped";
+    case Uncountable:
+        return "Uncountable";
+    case UncountableWatchpoint:
+        return "UncountableWatchpoint";
     default:
         return "Unknown";
     }
@@ -70,6 +77,7 @@ inline bool exitKindIsCountable(ExitKind kind)
         ASSERT_NOT_REACHED();
     case BadType:
     case Uncountable:
+    case UncountableWatchpoint:
         return false;
     default:
         return true;

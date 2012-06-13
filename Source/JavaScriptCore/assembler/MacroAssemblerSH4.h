@@ -1971,6 +1971,17 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         return FunctionPtr(reinterpret_cast<void(*)()>(SH4Assembler::readCallTarget(call.dataLocation())));
     }
 
+    static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
+    {
+        ASSERT_NOT_REACHED();
+    }
+    
+    static ptrdiff_t maxJumpReplacementSize()
+    {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
 protected:
     SH4Assembler::Condition SH4Condition(RelationalCondition cond)
     {

@@ -246,6 +246,7 @@ EXPORTS
     ?name@JSFunction@JSC@@QAEABVUString@2@PAVExecState@2@@Z
     ?neuter@ArrayBufferView@WTF@@MAEXXZ
     ?newUninitialized@CString@WTF@@SA?AV12@IAAPAD@Z
+    ?notifyWriteSlow@SymbolTableEntry@JSC@@AAEXXZ
     ?nullptr@@3Vnullptr_t@std@@A
     ?number@String@WTF@@SA?AV12@NII@Z
     ?number@UString@JSC@@SA?AV12@H@Z

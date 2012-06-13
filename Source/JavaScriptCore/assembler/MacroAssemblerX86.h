@@ -51,6 +51,7 @@ public:
     using MacroAssemblerX86Common::loadDouble;
     using MacroAssemblerX86Common::storeDouble;
     using MacroAssemblerX86Common::convertInt32ToDouble;
+    using MacroAssemblerX86Common::branchTest8;
 
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
@@ -164,6 +165,16 @@ public:
     {
         m_assembler.movl_i32r(initialValue.asIntptr(), dest);
         return DataLabelPtr(this);
+    }
+    
+    Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
+        if (mask.m_value == -1)
+            m_assembler.cmpb_im(0, address.m_ptr);
+        else
+            m_assembler.testb_im(mask.m_value, address.m_ptr);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchPtrWithPatch(RelationalCondition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))

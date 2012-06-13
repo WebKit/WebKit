@@ -176,7 +176,7 @@ namespace JSC {
 
         void transitionTo(JSGlobalData&, Structure*);
 
-        void removeDirect(JSGlobalData&, PropertyName);
+        bool removeDirect(JSGlobalData&, PropertyName); // Return true if anything is removed.
         bool hasCustomProperties() { return structure()->didTransition(); }
         bool hasGetterSetterProperties() { return structure()->hasGetterSetterProperties(); }
 

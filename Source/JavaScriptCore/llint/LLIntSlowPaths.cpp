@@ -856,6 +856,14 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve_with_this)
     LLINT_END();
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_put_global_var_check)
+{
+    LLINT_BEGIN();
+    CodeBlock* codeBlock = exec->codeBlock();
+    symbolTablePut(codeBlock->globalObject(), exec, codeBlock->identifier(pc[4].u.operand), LLINT_OP_C(2).jsValue(), true);
+    LLINT_END();
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
 {
     LLINT_BEGIN();

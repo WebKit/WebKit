@@ -1090,6 +1090,37 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
     map(m_bytecodeOffset + OPCODE_LENGTH(op_put_global_var), value, regT1, regT0);
 }
 
+void JIT::emit_op_put_global_var_check(Instruction* currentInstruction)
+{
+    WriteBarrier<Unknown>* registerPointer = currentInstruction[1].u.registerPointer;
+    int value = currentInstruction[2].u.operand;
+    
+    JSGlobalObject* globalObject = m_codeBlock->globalObject();
+    
+    emitLoad(value, regT1, regT0);
+    
+    addSlowCase(branchTest8(NonZero, AbsoluteAddress(currentInstruction[3].u.predicatePointer)));
+    
+    if (Heap::isWriteBarrierEnabled()) {
+        move(TrustedImmPtr(globalObject), regT2);
+        emitWriteBarrier(globalObject, regT1, regT3, ShouldFilterImmediates, WriteBarrierForVariableAccess);
+    }
+    
+    store32(regT1, registerPointer->tagPointer());
+    store32(regT0, registerPointer->payloadPointer());
+    unmap();
+}
+
+void JIT::emitSlow_op_put_global_var_check(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
+    
+    JITStubCall stubCall(this, cti_op_put_global_var_check);
+    stubCall.addArgument(regT1, regT0);
+    stubCall.addArgument(TrustedImm32(currentInstruction[4].u.operand));
+    stubCall.call();
+}
+
 void JIT::resetPatchGetById(RepatchBuffer& repatchBuffer, StructureStubInfo* stubInfo)
 {
     repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_get_by_id);

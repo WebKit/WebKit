@@ -44,7 +44,11 @@ void JITCompiler::linkOSRExits()
 {
     for (unsigned i = 0; i < codeBlock()->numberOfOSRExits(); ++i) {
         OSRExit& exit = codeBlock()->osrExit(i);
-        exit.m_check.initialJump().link(this);
+        ASSERT(!exit.m_check.isSet() == (exit.m_watchpointIndex != std::numeric_limits<unsigned>::max()));
+        if (exit.m_watchpointIndex == std::numeric_limits<unsigned>::max())
+            exit.m_check.initialJump().link(this);
+        else
+            codeBlock()->watchpoint(exit.m_watchpointIndex).setDestination(label());
         jitAssertHasValidCallFrame();
         store32(TrustedImm32(i), &globalData()->osrExitIndex);
         exit.m_check.switchToLateJump(patchableJump());
@@ -190,6 +194,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         OSRExit& exit = codeBlock()->osrExit(i);
         linkBuffer.link(exit.m_check.lateJump(), target);
         exit.m_check.correctLateJump(linkBuffer);
+        if (exit.m_watchpointIndex != std::numeric_limits<unsigned>::max())
+            codeBlock()->watchpoint(exit.m_watchpointIndex).correctLabels(linkBuffer);
     }
     
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
