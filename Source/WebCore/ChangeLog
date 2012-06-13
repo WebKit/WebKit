@@ -1,3 +1,35 @@
+2012-06-13  Christopher Hutten-Czapski  <chutten@rim.com>
+
+        2012-06-13  Christopher Hutten-Czapski  <chutten@rim.com>
+
+        [BlackBerry] Update Select Popup's styling
+        https://bugs.webkit.org/show_bug.cgi?id=89005
+
+        Reviewed by Rob Buis.
+
+        Add in some nicely-styled CSS and JS for the BlackBerry port's <select>
+
+        * Resources/blackberry/popupControlBlackBerry.css:
+        (body):
+        (.popup-area):
+        (.popup-area>:first-child):
+        (.popup-buttons):
+        (.popup-button-divider):
+        (.popup-button):
+        (.popup-button:active):
+        (.popup-button:first-child:active):
+        (.popup-button:last-child:active):
+        (.popup-button:only-child:active):
+        * Resources/blackberry/selectControlBlackBerry.css: Added.
+        (.select-area):
+        (.select-area:last-child):
+        (.option):
+        (.optgroup:last-child):
+        (.selected):
+        (.optgroup):
+        (.optgroup .option):
+        * Resources/blackberry/selectControlBlackBerry.js: Added.
+
 2012-06-13  Alec Flett  <alecflett@chromium.org>
 
         [V8] IndexedDB: Cursor value modifications should be preserved until cursor iterates
