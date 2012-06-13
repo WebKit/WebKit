@@ -81,7 +81,7 @@ QtRuntimeObject::QtRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, 
 }
 
 // QtInstance
-QtInstance::QtInstance(QObject* o, PassRefPtr<RootObject> rootObject, QScriptEngine::ValueOwnership ownership)
+QtInstance::QtInstance(QObject* o, PassRefPtr<RootObject> rootObject, ValueOwnership ownership)
     : Instance(rootObject)
     , m_class(0)
     , m_object(o)
@@ -104,20 +104,20 @@ QtInstance::~QtInstance()
 
     if (m_object) {
         switch (m_ownership) {
-        case QScriptEngine::QtOwnership:
+        case QtOwnership:
             break;
-        case QScriptEngine::AutoOwnership:
+        case AutoOwnership:
             if (m_object.data()->parent())
                 break;
             // fall through!
-        case QScriptEngine::ScriptOwnership:
+        case ScriptOwnership:
             delete m_object.data();
             break;
         }
     }
 }
 
-PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObject> rootObject, QScriptEngine::ValueOwnership ownership)
+PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObject> rootObject, ValueOwnership ownership)
 {
     JSLock lock(SilenceAssertionsOnly);
 

@@ -897,7 +897,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         QObject* obj = variant.value<QObject*>();
         if (!obj)
             return jsNull();
-        return QtInstance::getQtInstance(obj, root, QScriptEngine::QtOwnership)->createRuntimeObject(exec);
+        return QtInstance::getQtInstance(obj, root, QtInstance::QtOwnership)->createRuntimeObject(exec);
     }
 
     if (QtPixmapInstance::canHandle(static_cast<QMetaType::Type>(variant.type())))

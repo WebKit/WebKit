@@ -1,3 +1,23 @@
+2012-06-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove dependency to QtScript for the Qt 5 build
+        https://bugs.webkit.org/show_bug.cgi?id=88993
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        When building against Qt 5, replace the use of QScriptEngine::ValueOwnership with
+        a (compatible) QWebFrame::ValueOwnership enum.
+
+        * Api/qwebframe.cpp:
+        (qtSenderCallback):
+        (QWebFrame::addToJavaScriptWindowObject):
+        * Api/qwebframe.h:
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (tst_QObjectBridge::arrayObjectEnumerable):
+        (tst_QObjectBridge::ownership):
+        (tst_QObjectBridge::qObjectWrapperWithSameIdentity):
+
+
 2012-06-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Unreviewed buildfix after r120076.
