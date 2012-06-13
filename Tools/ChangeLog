@@ -1,3 +1,35 @@
+2012-06-13  Dirk Pranke  <dpranke@chromium.org>
+
+        new-run-webkit-tests does not support --32-bit like ORWT did
+        https://bugs.webkit.org/show_bug.cgi?id=71634
+
+        Reviewed by Ojan Vafai.
+
+        This patch adds support for 32-bit apple mac builds, adding the
+        --32-bit flag for compatibility with ORWT and fixing the port
+        architecture() definition to actually return the correct values.
+
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort._generate_all_test_configurations):
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (port_options):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort):
+        (MacPort.__init__):
+        (MacPort._build_driver_flags):
+        (MacPort.setup_environ_for_server):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (test_sample_process_throws_exception):
+        (test_32bit):
+        (test_32bit.run_script):
+        (test_64bit):
+        (test_64bit.run_script):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._build_driver):
+        (WebKitPort._build_driver_flags):
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        (WinPort):
+
 2012-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove webkitpy code to support legacy test_expectations.txt files

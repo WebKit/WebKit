@@ -49,13 +49,19 @@ class MacPort(ApplePort):
     # and the order of fallback between them.  Matches ORWT.
     VERSION_FALLBACK_ORDER = ["mac-leopard", "mac-snowleopard", "mac-lion", "mac"]
 
+    ARCHITECTURES = ['x86_64', 'x86']
+
     def __init__(self, host, port_name, **kwargs):
         ApplePort.__init__(self, host, port_name, **kwargs)
+        self._architecture = self.get_option('architecture', 'x86_64')
         self._leak_detector = LeakDetector(self)
         if self.get_option("leaks"):
             # DumpRenderTree slows down noticably if we run more than about 1000 tests in a batch
             # with MallocStackLogging enabled.
             self.set_option_default("batch_size", 1000)
+
+    def _build_driver_flags(self):
+        return ['ARCHS=i386'] if self.architecture() == 'x86' else []
 
     def _most_recent_version(self):
         # This represents the most recently-shipping version of the operating system.

@@ -53,7 +53,9 @@ def port_options(**help_strings):
         optparse.make_option('--gtk', action='store_const', const='gtk', dest="platform",
             help='Alias for --platform=gtk'),
         optparse.make_option('--qt', action='store_const', const='qt', dest="platform",
-            help='Alias for --platform=qt')]
+            help='Alias for --platform=qt'),
+        optparse.make_option('--32-bit', action='store_const', const='x86', default=None, dest="architecture",
+            help='use 32-bit binaries by default (x86 instead of x86_64)')]
 
 
 class BuilderOptions(object):

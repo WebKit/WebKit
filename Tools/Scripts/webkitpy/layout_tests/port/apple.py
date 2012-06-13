@@ -90,6 +90,6 @@ class ApplePort(WebKitPort):
                 version = self.FUTURE_VERSION
 
             for build_type in self.ALL_BUILD_TYPES:
-                # But at some later point we may need to make these configurable by the MacPort and WinPort subclasses.
-                configurations.append(TestConfiguration(version=version, architecture='x86', build_type=build_type))
+                for architecture in self.ARCHITECTURES:
+                    configurations.append(TestConfiguration(version=version, architecture=architecture, build_type=build_type))
         return configurations

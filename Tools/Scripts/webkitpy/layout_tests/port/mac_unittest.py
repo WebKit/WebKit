@@ -253,3 +253,26 @@ java/
         port = self.make_port()
         port._executive = MockExecutive2(run_command_fn=throwing_run_command)
         OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42])
+
+    def test_32bit(self):
+        port = self.make_port(options=MockOptions(architecture='x86'))
+
+        def run_script(script, args=None, env=None):
+            self.args = args
+
+        port._run_script = run_script
+        self.assertEquals(port.architecture(), 'x86')
+        port._build_driver()
+        self.assertEquals(self.args, ['ARCHS=i386'])
+
+    def test_64bit(self):
+        # Apple Mac port is 64-bit by default
+        port = self.make_port()
+        self.assertEquals(port.architecture(), 'x86_64')
+
+        def run_script(script, args=None, env=None):
+            self.args = args
+
+        port._run_script = run_script
+        port._build_driver()
+        self.assertEquals(self.args, [])
