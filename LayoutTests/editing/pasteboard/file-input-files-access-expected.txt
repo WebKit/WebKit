@@ -39,7 +39,7 @@ PASS fileInput.files[1].type is "image/gif"
 PASS fileInput.files[1].size is 2593
 PASS fileInput.files[2].name is "file.invalidext"
 PASS fileInput.files[2].type is ""
-FAIL fileInput.files[2].size should be 10. Was 11.
+PASS fileInput.files[2].size is 10
 Dragging a file and a directory onto a mutli-file input control:
 FAIL fileInput.value should be . Was C:\fakepath\apple.gif.
 FAIL fileInput.files.length should be 0. Was 2.
