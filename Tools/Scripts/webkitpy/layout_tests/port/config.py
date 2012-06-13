@@ -78,7 +78,7 @@ class Config(object):
 
         if not self._build_directories.get(configuration):
             args = ["perl", self.script_path("webkit-build-directory")] + flags
-            output = self._executive.run_command(args, cwd=self.webkit_base_dir()).rstrip()
+            output = self._executive.run_command(args, cwd=self.webkit_base_dir(), return_stderr=False).rstrip()
             parts = output.split("\n")
             self._build_directories[configuration] = parts[0]
 

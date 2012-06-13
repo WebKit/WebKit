@@ -1,3 +1,17 @@
+2012-06-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Prevent stderr output from messing up detection of build path
+
+        https://bugs.webkit.org/show_bug.cgi?id=88075
+
+        Warnings such as 'perl: warning: Setting locale failed' will otherwise
+        end up as the build path when calling out to webkit-build-directory.
+
+        Reviewed by Ojan Vafai.
+
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        (Config.build_directory):
+
 2012-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update the builder name for Apple Lion builders.
