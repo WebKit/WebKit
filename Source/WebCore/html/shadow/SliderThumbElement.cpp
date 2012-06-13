@@ -64,13 +64,11 @@ inline static bool hasVerticalAppearance(HTMLInputElement* input)
     RenderStyle* sliderStyle = input->renderer()->style();
 
 #if ENABLE(VIDEO)
-    RenderTheme* sliderTheme = input->renderer()->theme();
-
-    return sliderStyle->appearance() == SliderVerticalPart
-        || (sliderStyle->appearance() == MediaVolumeSliderPart && sliderTheme->usesVerticalVolumeSlider());
-#else
-    return sliderStyle->appearance() == SliderVerticalPart;
+    if (sliderStyle->appearance() == MediaVolumeSliderPart && input->renderer()->theme()->usesVerticalVolumeSlider())
+        return true;
 #endif
+
+    return sliderStyle->appearance() == SliderVerticalPart;
 }
 
 SliderThumbElement* sliderThumbElementOf(Node* node)

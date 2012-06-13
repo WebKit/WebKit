@@ -1,3 +1,16 @@
+2012-06-13  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Code cleanup from bug 88881 to share the SliderVerticalPart code.
+        https://bugs.webkit.org/show_bug.cgi?id=88930
+
+        Reviewed by Eric Carlson.
+
+        No new tests - this is just code cleanup.
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::hasVerticalAppearance):
+        Avoid having two ifdef-ed returns in the code depending on ENABLE(VIDEO).
+
 2012-06-13  Mark Mentovai  <mark@chromium.org>
 
         [chromium mac] Don't include things in subframeworks of
