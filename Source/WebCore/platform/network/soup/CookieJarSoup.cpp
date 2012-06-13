@@ -72,6 +72,20 @@ void setSoupCookieJar(SoupCookieJar* jar)
     defaultCookieJar() = jar;
 }
 
+static inline bool httpOnlyCookieExists(const GSList* cookies, const gchar* name, const gchar* path)
+{
+    for (const GSList* iter = cookies; iter; iter = g_slist_next(iter)) {
+        SoupCookie* cookie = static_cast<SoupCookie*>(iter->data);
+        if (!strcmp(soup_cookie_get_name(cookie), name)
+            && !g_strcmp0(soup_cookie_get_path(cookie), path)) {
+            if (soup_cookie_get_http_only(cookie))
+                return true;
+            break;
+        }
+    }
+    return false;
+}
+
 void setCookies(Document* document, const KURL& url, const String& value)
 {
     SoupCookieJar* jar = cookieJarForDocument(document);
@@ -80,7 +94,30 @@ void setCookies(Document* document, const KURL& url, const String& value)
 
     GOwnPtr<SoupURI> origin(soup_uri_new(url.string().utf8().data()));
     GOwnPtr<SoupURI> firstParty(soup_uri_new(document->firstPartyForCookies().string().utf8().data()));
-    soup_cookie_jar_set_cookie_with_first_party(jar, origin.get(), firstParty.get(), value.utf8().data());
+
+    // Get existing cookies for this origin.
+    GSList* existingCookies = soup_cookie_jar_get_cookie_list(jar, origin.get(), TRUE);
+
+    Vector<String> cookies;
+    value.split('\n', cookies);
+    const size_t cookiesCount = cookies.size();
+    for (size_t i = 0; i < cookiesCount; ++i) {
+        GOwnPtr<SoupCookie> cookie(soup_cookie_parse(cookies[i].utf8().data(), origin.get()));
+        if (!cookie)
+            continue;
+
+        // Make sure the cookie is not httpOnly since such cookies should not be set from JavaScript.
+        if (soup_cookie_get_http_only(cookie.get()))
+            continue;
+
+        // Make sure we do not overwrite httpOnly cookies from JavaScript.
+        if (httpOnlyCookieExists(existingCookies, soup_cookie_get_name(cookie.get()), soup_cookie_get_path(cookie.get())))
+            continue;
+
+        soup_cookie_jar_add_cookie_with_first_party(jar, firstParty.get(), cookie.release());
+    }
+
+    soup_cookies_free(existingCookies);
 }
 
 static String cookiesForDocument(const Document* document, const KURL& url, bool forHTTPHeader)

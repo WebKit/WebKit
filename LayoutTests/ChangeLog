@@ -1,5 +1,19 @@
 2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [soup] Prevent setting or editing httpOnly cookies from JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=88760
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Unskip http/tests/cookies/js-get-and-set-http-only-cookie.html for
+        both GTK and EFL ports now that that we don't allow overwriting
+        httpOnly cookies from JavaScript anymore.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Enable SHADOW_DOM flag
         https://bugs.webkit.org/show_bug.cgi?id=87732
 

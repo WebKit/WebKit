@@ -1,5 +1,18 @@
 2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [soup] Prevent setting or editing httpOnly cookies from JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=88760
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update libsoup to v2.39.2, glib to v2.33.2 and glib-networking
+        to v2.33.2 for both GTK and EFL ports.
+
+        * efl/jhbuild.modules:
+        * gtk/jhbuild.modules:
+
+2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Enable SHADOW_DOM flag
         https://bugs.webkit.org/show_bug.cgi?id=87732
 

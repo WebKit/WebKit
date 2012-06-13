@@ -1,5 +1,23 @@
 2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [soup] Prevent setting or editing httpOnly cookies from JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=88760
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Prevent setting or overwriting httpOnly cookies from JavaScript.
+        Fix setCookies() so that it parses all the cookies and not just
+        the first one.
+
+        Test: http/tests/cookies/js-get-and-set-http-only-cookie.html
+
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::httpOnlyCookieExists):
+        (WebCore):
+        (WebCore::setCookies):
+
+2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Enable SHADOW_DOM flag
         https://bugs.webkit.org/show_bug.cgi?id=87732
 

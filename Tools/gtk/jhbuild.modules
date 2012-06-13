@@ -131,10 +131,10 @@
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib/2.32/glib-2.32.0.tar.xz" version="2.32.0"
+    <branch module="/pub/GNOME/sources/glib/2.33/glib-2.33.2.tar.xz" version="2.33.2"
             repo="ftp.gnome.org"
-            hash="sha256:cde9d9f25ed648069c547e323897ad9379974e1f936b4477fa51bcf1bb261ae4"
-            md5sum="c5fa76fbf9184d20dfb04af66b598190"/>
+            hash="sha256:b7163e9f159775d13ecfb433d67c3f0883e0e518e85b2e970d4ad9773d7cd0b4"
+            md5sum="06ef0099fed22afcf34ade39ddff9a5b"/>
   </autotools>
 
   <autotools id="glib-networking">
@@ -142,10 +142,10 @@
       <dep package="glib"/>
       <dep package="gnutls"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib-networking/2.31/glib-networking-2.31.2.tar.xz" version="2.31.2"
+    <branch module="/pub/GNOME/sources/glib-networking/2.33/glib-networking-2.33.2.tar.xz" version="2.33.2"
             repo="ftp.gnome.org"
-            hash="sha256:03e3a2881d2626d1206e72972531661037fe0d32e745bf9b2f63c0d6f5e32a9c"
-            md5sum="b649b457bd9fd5e0e9b9c4dcb1a74a37"/>
+            hash="sha256:e298cff3935eb752be290bbf734e457f1870bdb5370ee292606e6040a82074e7"
+            md5sum="5abb364f2a0babe2ec1e3a6d59f69043"/>
   </autotools>
 
   <autotools id="gnutls"
@@ -161,9 +161,9 @@
     <dependencies>
       <dep package="glib-networking"/>
     </dependencies>
-    <branch module="libsoup" version="2.38.1"
+    <branch module="libsoup" version="2.39.2"
             repo="git.gnome.org"
-            tag="LIBSOUP_2_38_1"/>
+            tag="LIBSOUP_2_39_2"/>
   </autotools>
 
   <autotools id="fontconfig" autogen-sh="configure">
