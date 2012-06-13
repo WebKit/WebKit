@@ -60,6 +60,7 @@ shouldBeTrue("(new Blob([], function () {})) instanceof window.Blob");
 // Test that the type/size is correctly added to the Blob
 shouldBe("(new Blob([], {type:'text/html'})).type", "'text/html'");
 shouldBe("(new Blob([], {type:'text/html'})).size", "0");
+shouldBe("(new Blob([], {type:'text/plain;charset=UTF-8'})).type", "'text/plain;charset=utf-8'");
 
 // Odds and ends
 shouldBe("window.Blob.length", "2");

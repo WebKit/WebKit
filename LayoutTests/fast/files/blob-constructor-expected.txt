@@ -42,6 +42,7 @@ PASS (new Blob([], /abc/)) instanceof window.Blob is true
 PASS (new Blob([], function () {})) instanceof window.Blob is true
 PASS (new Blob([], {type:'text/html'})).type is 'text/html'
 PASS (new Blob([], {type:'text/html'})).size is 0
+PASS (new Blob([], {type:'text/plain;charset=UTF-8'})).type is 'text/plain;charset=utf-8'
 PASS window.Blob.length is 2
 PASS new Blob([new DataView(new ArrayBuffer(100))]).size is 100
 PASS new Blob([new Uint8Array(100)]).size is 100

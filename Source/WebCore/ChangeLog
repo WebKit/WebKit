@@ -1,3 +1,21 @@
+2012-06-13  Li Yin  <li.yin@intel.com>
+
+        FileAPI: type should be converted to be lower case in Blob constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=88696
+
+        Reviewed by Kentaro Hara.
+
+        Spec: http://dev.w3.org/2006/webapi/FileAPI/#dfn-BlobPropertyBag
+        Spec: http://dev.w3.org/2006/webapi/FileAPI/#attributes-blob
+        The ASCII-encoded string in lower case representing the media type of the Blob.
+
+        Test: fast/files/blob-constructor.html
+
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::JSBlobConstructor::constructJSBlob):
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::V8Blob::constructorCallback):
+
 2012-06-13  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Enable MEDIA_STREAM by default
