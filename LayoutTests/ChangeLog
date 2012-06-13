@@ -1,5 +1,23 @@
 2012-06-12  Dominic Cooney  <dominicc@chromium.org>
 
+        [Chromium] Unreviewed: Update expectations
+
+        fast/forms/datetimelocal/input-valueasdate-datetimelocal.html is
+        passing, so I expanded fast/forms/datetimelocal to TEXT failures
+        for all other tests. See bug 29359.
+
+        Likewise for
+        fast/forms/color/input-value-sanitization-color.html. See bug
+        88951.
+
+        fast/js/integer-division-neg2tothe32-by-neg1.html is passing on
+        Chromium WebKit waterfall, so updating CRASH to PASS CRASH. See
+        bug 81732.
+
+        * platform/chromium/TestExpectations:
+
+2012-06-12  Dominic Cooney  <dominicc@chromium.org>
+
         [Chromium] Unreviewed: Update expectations for video-media-source-add-and-remove-ids.html
         https://bugs.webkit.org/show_bug.cgi?id=88949
 

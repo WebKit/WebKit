@@ -1105,7 +1105,15 @@ BUGCR27697 SKIP : storage/websql/hash-change-with-xhr.html = PASS
 // Implementation of Date/time input types are incomplete and
 // ENABLE_INPUT_TYPE_* flags are not enabled.
 BUGWK29359 : fast/forms/datetime = TEXT
-BUGWK29359 : fast/forms/datetimelocal = TEXT
+BUGWK29359 : fast/forms/datetimelocal/ValidityState-rangeOverflow-datetimelocal.html = TEXT
+BUGWK29359 : fast/forms/datetimelocal/ValidityState-rangeUnderflow-datetimelocal.html = TEXT
+BUGWK29359 : fast/forms/datetimelocal/ValidityState-stepMismatch-datetimelocal.html = TEXT
+BUGWK29359 : fast/forms/datetimelocal/ValidityState-typeMismatch-datetimelocal.html = TEXT
+BUGWK29359 : fast/forms/datetimelocal/datetimelocal-input-type.html = TEXT
+BUGWK29359 : fast/forms/datetimelocal/datetimelocal-input-visible-string.html = TEXT
+BUGWK29359 : fast/forms/datetimelocal/datetimelocal-stepup-stepdown-from-renderer.html = TEXT
+BUGWK29359 : fast/forms/datetimelocal/datetimelocal-stepup-stepdown.html = TEXT
+BUGWK29359 : fast/forms/datetimelocal/input-valueasnumber-datetimelocal.html = TEXT
 BUGWK29359 : fast/forms/month = TEXT
 BUGWK29359 : fast/forms/time = TEXT
 BUGWK29359 : fast/forms/week = TEXT
@@ -2687,8 +2695,8 @@ BUGCR83504 MAC : fast/css/custom-font-xheight.html = PASS TEXT
 BUGWK61169 LINUX WIN : css3/images/optimize-contrast-canvas.html = IMAGE
 BUGWK61169 LINUX WIN : css3/images/optimize-contrast-image.html = IMAGE
 
-// New tests added in r87274
-BUGCR83865 : fast/forms/color = TEXT IMAGE+TEXT
+BUGWK88951 : fast/forms/color/input-appearance-color.html = IMAGE+TEXT
+BUGWK88951 : fast/forms/color/input-color-onchange-event.html = TEXT
 
 // New test added in r87324
 BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html = TEXT
@@ -3206,7 +3214,7 @@ BUGWK81697 : fast/notifications/notifications-check-permission.html = TEXT
 BUGWK81697 : fast/notifications/notifications-request-permission.html = TEXT
 BUGWK81697 : fast/notifications/notifications-without-permission.html = TEXT
 
-BUGWK81732 : fast/js/integer-division-neg2tothe32-by-neg1.html = CRASH
+BUGWK81732 : fast/js/integer-division-neg2tothe32-by-neg1.html = PASS CRASH
 
 // Old test, has been flaky on and off on all platforms since at least r111389
 BUGWK81801 : fast/forms/basic-textareas.html = PASS TEXT IMAGE+TEXT
