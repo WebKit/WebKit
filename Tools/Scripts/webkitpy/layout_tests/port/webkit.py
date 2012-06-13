@@ -356,15 +356,6 @@ class WebKitPort(Port):
 
         return search_paths
 
-    def test_expectations(self):
-        # This allows ports to use a combination of TestExpectations files and Skipped lists.
-        expectations = ''
-        expectations_path = self.path_to_test_expectations_file()
-        if self._filesystem.exists(expectations_path):
-            _log.debug("Using test expectations: %s" % expectations_path)
-            expectations = self._filesystem.read_text_file(expectations_path)
-        return expectations
-
     def skipped_layout_tests(self, test_list):
         tests_to_skip = set(self._expectations_from_skipped_files(self._skipped_file_search_paths()))
         tests_to_skip.update(self._tests_for_other_platforms())

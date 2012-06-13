@@ -280,6 +280,8 @@ class PortTest(unittest.TestCase):
 
     def test_additional_expectations(self):
         port = self.make_port(port_name='foo')
+        port.port_name = 'foo'
+        port._filesystem.write_text_file('/mock-checkout/LayoutTests/platform/foo/TestExpectations', '')
 
         port._filesystem.write_text_file(
             '/tmp/additional-expectations-1.txt', 'content1\n')
@@ -302,6 +304,7 @@ class PortTest(unittest.TestCase):
 
     def test_uses_test_expectations_file(self):
         port = self.make_port(port_name='foo')
+        port.port_name = 'foo'
         port.path_to_test_expectations_file = lambda: '/mock-results/test_expectations.txt'
         self.assertFalse(port.uses_test_expectations_file())
         port._filesystem = MockFileSystem({'/mock-results/test_expectations.txt': ''})

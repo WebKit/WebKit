@@ -341,20 +341,20 @@ class PortTestCase(unittest.TestCase):
 
     def test_expectations_ordering(self):
         port = self.make_port()
-        path = port.path_to_test_expectations_file()
-        if not port._filesystem.exists(path):
+        for path in port.expectations_files():
             port._filesystem.write_text_file(path, '')
-        ordered_dict = port._expectations_dict()
-        self.assertEquals(path, ordered_dict.keys()[0])
+        ordered_dict = port.expectations_dict()
+        self.assertEquals(port.path_to_test_expectations_file(), ordered_dict.keys()[0])
 
-    def test_expectations_overrides_ordering(self):
         options = MockOptions(additional_expectations=['/tmp/foo', '/tmp/bar'])
         port = self.make_port(options=options)
+        for path in port.expectations_files():
+            port._filesystem.write_text_file(path, '')
         port._filesystem.write_text_file('/tmp/foo', 'foo')
         port._filesystem.write_text_file('/tmp/bar', 'bar')
-        ordered_dict = port._expectations_overrides_dict()
-        self.assertEquals(ordered_dict.keys(), options.additional_expectations)
-        self.assertEquals(ordered_dict.values(), ['foo', 'bar'])
+        ordered_dict = port.expectations_dict()
+        self.assertEquals(ordered_dict.keys()[-2:], options.additional_expectations)
+        self.assertEquals(ordered_dict.values()[-2:], ['foo', 'bar'])
 
 
 # FIXME: This class and main() should be merged into test-webkitpy.

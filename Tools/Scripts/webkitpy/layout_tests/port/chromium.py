@@ -310,14 +310,6 @@ class ChromiumPort(Port):
     def all_baseline_variants(self):
         return self.ALL_BASELINE_VARIANTS
 
-    def test_expectations(self):
-        """Returns the test expectations for this port.
-
-        Basically this string should contain the equivalent of a
-        test_expectations file. See test_expectations.py for more details."""
-        expectations_path = self.path_to_test_expectations_file()
-        return self._filesystem.read_text_file(expectations_path)
-
     def _generate_all_test_configurations(self):
         """Returns a sequence of the TestConfigurations the port supports."""
         # By default, we assume we want to test every graphics type in
@@ -337,37 +329,12 @@ class ChromiumPort(Port):
         'win_layout_rel',
     ])
 
-    def _expectations_file_contents(self, filetype, filepath):
-        if self._filesystem.exists(filepath):
-            _log.debug(
-                "reading %s test_expectations overrides from file '%s'" %
-                (filetype, filepath))
-            return (self._filesystem.read_text_file(filepath) or '')
-        else:
-            # FIXME: This allows this to work with mock checkouts;
-            # This probably shouldn't be used with a mock checkout, though.
-            if not 'mock-checkout' in filepath:
-                _log.warning(
-                    "%s test_expectations overrides file '%s' does not exist" %
-                    (filetype, filepath))
-            return ''
-
-    def test_expectations_overrides(self):
-        combined_overrides = ''
-        combined_overrides += self._expectations_file_contents(
-            'skia', self.path_from_chromium_base(
-                'skia', 'skia_test_expectations.txt'))
-        # FIXME: It seems bad that run_webkit_tests.py uses a hardcoded dummy
-        # builder string instead of just using None.
+    def expectations_files(self):
+        paths = [self.path_to_test_expectations_file(), self.path_from_chromium_base('skia', 'skia_test_expectations.txt')]
         builder_name = self.get_option('builder_name', 'DUMMY_BUILDER_NAME')
         if builder_name == 'DUMMY_BUILDER_NAME' or '(deps)' in builder_name or builder_name in self.try_builder_names:
-            combined_overrides += self._expectations_file_contents(
-                'chromium', self.path_from_chromium_base(
-                    'webkit', 'tools', 'layout_tests', 'test_expectations.txt'))
-
-        base_overrides = super(ChromiumPort, self).test_expectations_overrides()
-        combined_overrides += (base_overrides or '')
-        return combined_overrides
+            paths.append(self.path_from_chromium_base('webkit', 'tools', 'layout_tests', 'test_expectations.txt'))
+        return paths
 
     def repository_paths(self):
         repos = super(ChromiumPort, self).repository_paths()

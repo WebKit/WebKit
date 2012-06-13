@@ -894,7 +894,7 @@ class Port(object):
         # some ports have Skipped files which are returned as part of test_expectations().
         return self._filesystem.exists(self.path_to_test_expectations_file())
 
-    def _expectations_dict(self):
+    def expectations_dict(self):
         """Returns an OrderedDict of name -> expectations strings. The names
         are expected to be (but not required to be) paths in the filesystem.
         If the name is a path, the file can be considered updatable for things
@@ -904,29 +904,30 @@ class Port(object):
         honors both formats), then any built-in expectations (e.g., from compile-time
         exclusions), then --additional-expectations options."""
         # FIXME: rename this to test_expectations() once all the callers are updated to know about the ordered dict.
-        overrides = OrderedDict()
-        path = self.path_to_test_expectations_file()
-        overrides[path] = self._filesystem.read_text_file(path)
-        return overrides
+        expectations = OrderedDict()
+
+        for path in self.expectations_files():
+            expectations[path] = self._filesystem.read_text_file(path)
+
+        for path in self.get_option('additional_expectations', []):
+            expanded_path = self._filesystem.expanduser(path)
+            if self._filesystem.exists(expanded_path):
+                _log.debug("reading additional_expectations from path '%s'" % path)
+                expectations[path] = self._filesystem.read_text_file(expanded_path)
+            else:
+                _log.warning("additional_expectations path '%s' does not exist" % path)
+        return expectations
+
+    def expectations_files(self):
+        return [self.path_to_test_expectations_file()]
 
     def test_expectations(self):
         """Returns the test expectations for this port.
 
         Basically this string should contain the equivalent of a
         test_expectations file. See test_expectations.py for more details."""
-        return ''.join(self._expectations_dict().values())
-
-    def _expectations_overrides_dict(self):
-        # FIXME: merge this into test_expectations() when _expectations_dict() is renamed.
-        overrides = OrderedDict()
-        for path in self.get_option('additional_expectations', []):
-            expanded_path = self._filesystem.expanduser(path)
-            if self._filesystem.exists(expanded_path):
-                _log.debug("reading additional_expectations from path '%s'" % path)
-                overrides[path] = self._filesystem.read_text_file(path)
-            else:
-                _log.warning("additional_expectations path '%s' does not exist" % path)
-        return overrides
+        # FIXME: remove this when the cascade works fully.
+        return self.expectations_dict().values()[0]
 
     def test_expectations_overrides(self):
         """Returns an optional set of overrides for the test_expectations.
@@ -935,9 +936,9 @@ class Port(object):
         it is possible that you might need "downstream" expectations that
         temporarily override the "upstream" expectations until the port can
         sync up the two repos."""
-        overrides = self._expectations_overrides_dict()
-        if overrides:
-            return ''.join(overrides.values())
+        # FIXME: remove this when the cascade works fully.
+        if len(self.expectations_dict()) > 1:
+            return ''.join(self.expectations_dict().values()[1:])
         return None
 
     def repository_paths(self):

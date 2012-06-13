@@ -294,8 +294,11 @@ class ChromiumPortTest(port_testcase.PortTestCase):
 
     def test_overrides_and_builder_names(self):
         port = self.make_port()
+        port.port_name = 'chromium'
 
         filesystem = MockFileSystem()
+        filesystem.write_text_file('/mock-checkout/LayoutTests/platform/chromium/TestExpectations', '')
+
         port._filesystem = filesystem
         port.path_from_chromium_base = lambda *comps: '/' + '/'.join(comps)
 

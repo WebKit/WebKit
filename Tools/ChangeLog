@@ -1,3 +1,61 @@
+2012-06-13  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: restructure the port classes to handle multiple expectations files
+        https://bugs.webkit.org/show_bug.cgi?id=88944
+
+        Reviewed by Ojan Vafai.
+
+        This patch restructures the Port classes so that each port
+        returns a list of TestExpectations files to be used (in a new, public,
+        expectations_files() method), and the base implementation rolls them
+        up into the ordered expectations_dict(), which becomes a public
+        method.
+
+        port.path_to_test_expectations_file(), port.test_expectations(),
+        and port.test_expectations_overrides() are then reimplemented as
+        wrappers around port.expectations_dict().
+        port.test_expectations() and port.test_expectations_overrides()
+        will eventually be removed when the cascade is fully completed,
+        and port.path_to_test_expectations_file() will be removed when
+        the rebaselining tool supports the cascade
+        (expectations_files() may also become private at that point).
+
+        There should be no functional changes in this patch, but a bunch
+        of custom logic gets deleted!
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.expectations_dict):
+        (Port):
+        (Port.expectations_files):
+        (Port.test_expectations):
+        (Port.test_expectations_overrides):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_additional_expectations):
+        (PortTest.test_uses_test_expectations_file):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.all_baseline_variants):
+        (ChromiumPort.expectations_files):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumPortTest.test_overrides_and_builder_names):
+        * Scripts/webkitpy/layout_tests/port/google_chrome.py:
+        (_expectations_files):
+        (GoogleChromeLinux32Port.expectations_files):
+        (GoogleChromeLinux64Port.expectations_files):
+        (GoogleChromeMacPort.expectations_files):
+        (GoogleChromeWinPort.expectations_files):
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        (TestGoogleChromePort._verify_expectations_overrides):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_expectations_ordering):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._skipped_file_search_paths):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_rebaseline_updates_expectations_file_noop):
+        (test_rebaseline_updates_expectations_file):
+        (test_rebaseline_does_not_include_overrides):
+        (test_rebaseline_expectations):
+        (test_overrides_are_included_correctly):
+
 2012-06-13  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Update URL of WinCairoRequirements.zip download.

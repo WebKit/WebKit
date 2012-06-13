@@ -236,6 +236,7 @@ class TestExpectationParser(object):
         expectation_line.original_string = test_name
         expectation_line.modifiers = [TestExpectationParser.DUMMY_BUG_MODIFIER, TestExpectationParser.SKIP_MODIFIER]
         expectation_line.name = test_name
+        # FIXME: we should pass in a more descriptive string here.
         expectation_line.filename = '<Skipped file>'
         expectation_line.line_number = 0
         expectation_line.expectations = [TestExpectationParser.PASS_EXPECTATION]
