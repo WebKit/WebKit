@@ -1,3 +1,16 @@
+2012-06-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening after r120100, r120167, r120173 and r120181.
+
+        * fast/events/constructors/speech-recognition-error-constructor-expected.txt:
+        * platform/gtk/editing/pasteboard/4641033-expected.txt:
+        * platform/gtk/editing/selection/mixed-editability-1-expected.txt:
+        * platform/gtk/editing/selection/paragraph-granularity-expected.txt:
+        * platform/gtk/editing/selection/triple-click-in-pre-expected.txt:
+        * platform/gtk/editing/selection/word-granularity-expected.txt:
+        * platform/gtk/fast/multicol/span/clone-flexbox-expected.txt:
+        * platform/gtk/http/tests/misc/location-replace-crossdomain-expected.txt:
+
 2012-06-13  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Support user attributes in DOMNode
