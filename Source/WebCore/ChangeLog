@@ -1,3 +1,28 @@
+2012-06-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: Make "Go to source and line" possible with "go to file" dialog
+        https://bugs.webkit.org/show_bug.cgi?id=88740
+
+        Reviewed by Vsevolod Vlasov.
+
+        Selection dialog now allows search query rewrite and uses line number
+        suffix to go to a particular line.
+
+        * inspector/front-end/FilteredItemSelectionDialog.js:
+        (WebInspector.FilteredItemSelectionDialog.prototype.onEnter):
+        (WebInspector.FilteredItemSelectionDialog.prototype._createSearchRegExp):
+        (WebInspector.SelectionDialogContentProvider.prototype.selectItem):
+        (WebInspector.SelectionDialogContentProvider.prototype.rewriteQuery):
+        (WebInspector.JavaScriptOutlineDialog.prototype.selectItem):
+        (WebInspector.JavaScriptOutlineDialog.prototype.rewriteQuery):
+        (WebInspector.OpenResourceDialog.prototype.selectItem):
+        (WebInspector.OpenResourceDialog.prototype.rewriteQuery):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.showUISourceCode):
+        * inspector/front-end/StylesPanel.js:
+        (WebInspector.StyleSheetOutlineDialog.prototype.selectItem):
+        (WebInspector.StyleSheetOutlineDialog.prototype.rewriteQuery):
+
 2012-06-12  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Add test for constructing SpeechRecognitionError events

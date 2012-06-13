@@ -8,7 +8,7 @@ function test()
     function checkQuery(title, query, input)
     {
         var output = [];
-        var regex = WebInspector.FilteredItemSelectionDialog.prototype._createSearchRegExp(query);
+        var regex = WebInspector.FilteredItemSelectionDialog.prototype._innerCreateSearchRegExp(query);
 
         for (var i = 0; i < input.length; ++i) {
             var item = input[i];

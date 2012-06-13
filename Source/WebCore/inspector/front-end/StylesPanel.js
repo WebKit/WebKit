@@ -248,6 +248,15 @@ WebInspector.StyleSheetOutlineDialog.prototype = {
         return this._rules[itemIndex].selectorText;
     },
 
+    /*
+     * @param {number} itemIndex
+     * @return {string}
+     */
+    itemSubtitleAt: function(itemIndex)
+    {
+        return "";
+    },
+
     /**
      * @param {number} itemIndex
      * @return {string}
@@ -306,13 +315,23 @@ WebInspector.StyleSheetOutlineDialog.prototype = {
 
     /**
      * @param {number} itemIndex
+     * @param {string} promptValue
      */
-    selectItem: function(itemIndex)
+    selectItem: function(itemIndex, promptValue)
     {
         var lineNumber = this._rules[itemIndex].sourceLine;
         if (!isNaN(lineNumber) && lineNumber >= 0)
             this._view.highlightLine(lineNumber);
         this._view.focus();
+    },
+
+    /**
+     * @param {string} query
+     * @return {string}
+     */
+    rewriteQuery: function(query)
+    {
+        return query;
     }
 }
 

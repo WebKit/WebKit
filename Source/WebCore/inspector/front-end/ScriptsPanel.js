@@ -420,9 +420,13 @@ WebInspector.ScriptsPanel.prototype = {
         this._showSourceLine(uiLocation.uiSourceCode, uiLocation.lineNumber);
     },
 
-    showUISourceCode: function(uiSourceCode)
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {number} lineNumber
+     */
+    showUISourceCode: function(uiSourceCode, lineNumber)
     {
-        this._showSourceLine(uiSourceCode);
+        this._showSourceLine(uiSourceCode, lineNumber);
     },
 
     /**
