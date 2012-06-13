@@ -1,3 +1,16 @@
+2012-06-13  Martin Kosiba  <mkosiba@google.com>
+
+        [Chromium] WebFrameImpl::find doesn't work for searching from a selection.
+        https://bugs.webkit.org/show_bug.cgi?id=88885
+
+        Reviewed by Adam Barth.
+
+        Remember the active match not just until the seatchText changes but for the entire find session.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::find):
+        (WebKit::WebFrameImpl::setFindEndstateFocusAndSelection):
+
 2012-06-13  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Fix Clang build with USE(NATIVE_FULLSCREEN_VIDEO)=1

@@ -1572,11 +1572,13 @@ bool WebFrameImpl::find(int identifier,
 {
     WebFrameImpl* mainFrameImpl = viewImpl()->mainFrameImpl();
 
-    if (!options.findNext) {
+    if (!options.findNext)
         frame()->page()->unmarkAllTextMatches();
-        m_activeMatch = 0;
-    } else
+    else
         setMarkerActive(m_activeMatch.get(), false);
+
+    if (m_activeMatch && m_activeMatch->ownerDocument() != frame()->document())
+        m_activeMatch = 0;
 
     // If the user has selected something since the last Find operation we want
     // to start from there. Otherwise, we start searching from where the last Find
@@ -2220,6 +2222,14 @@ void WebFrameImpl::setFindEndstateFocusAndSelection()
         // a link focused, which is weird).
         frame()->selection()->setSelection(m_activeMatch.get());
         frame()->document()->setFocusedNode(0);
+
+        // Finally clear the active match, for two reasons:
+        // We just finished the find 'session' and we don't want future (potentially
+        // unrelated) find 'sessions' operations to start at the same place.
+        // The WebFrameImpl could get reused and the m_activeMatch could end up pointing
+        // to a document that is no longer valid. Keeping an invalid reference around
+        // is just asking for trouble.
+        m_activeMatch = 0;
     }
 }
 
