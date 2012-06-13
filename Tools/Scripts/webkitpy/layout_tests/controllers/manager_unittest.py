@@ -280,7 +280,7 @@ class ManagerTest(unittest.TestCase):
         host = MockHost()
         port = host.port_factory.get('test-win-xp')
         test = 'failures/expected/reftest.html'
-        port.test_expectations = lambda: 'WONTFIX : failures/expected/reftest.html = IMAGE'
+        port.expectations_dict = lambda: {'': 'WONTFIX : failures/expected/reftest.html = IMAGE'}
         expectations = TestExpectations(port, tests=[test])
         # Reftests expected to be image mismatch should be respected when pixel_tests=False.
         manager = Manager(port=port, options=MockOptions(pixel_tests=False, exit_after_n_failures=None, exit_after_n_crashes_or_timeouts=None), printer=Mock())
@@ -422,7 +422,7 @@ class ResultSummaryTest(unittest.TestCase):
         return test_results.TestResult(test_name, failures=failures, test_run_time=run_time)
 
     def get_result_summary(self, port, test_names, expectations_str):
-        port.test_expectations = lambda: expectations_str
+        port.expectations_dict = lambda: {'': expectations_str}
         expectations = test_expectations.TestExpectations(port, test_names)
         return test_names, result_summary.ResultSummary(expectations, test_names), expectations
 

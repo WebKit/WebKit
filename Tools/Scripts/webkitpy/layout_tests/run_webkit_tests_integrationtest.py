@@ -197,18 +197,15 @@ class LintTest(unittest.TestCase, StreamTestingMixin):
                 self.name = name
                 self.path = path
 
-            def test_expectations(self):
-                self.host.ports_parsed.append(self.name)
-                return ''
-
             def path_to_test_expectations_file(self):
                 return self.path
 
             def test_configuration(self):
                 return None
 
-            def test_expectations_overrides(self):
-                return None
+            def expectations_dict(self):
+                self.host.ports_parsed.append(self.name)
+                return {self.path: ''}
 
             def skipped_layout_tests(self, tests):
                 return set([])
@@ -261,7 +258,7 @@ class LintTest(unittest.TestCase, StreamTestingMixin):
         options, parsed_args = parse_args(['--lint-test-files'])
         host = MockHost()
         port_obj = host.port_factory.get(options.platform, options=options)
-        port_obj.test_expectations = lambda: "# syntax error"
+        port_obj.expectations_dict = lambda: {'': '# syntax error'}
         res, out, err = run_and_capture(port_obj, options, parsed_args)
 
         self.assertEqual(res, -1)

@@ -254,12 +254,16 @@ MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Webkit Win',
 
         # This tests that the any tests marked as REBASELINE in the overrides are found, but
         # that the overrides do not get written into the main file.
-        self.overrides = ('BUGX REBASELINE : userscripts/another-test.html = TEXT\n'
-                          'BUGY : userscripts/test.html = CRASH\n')
+        expectations_path = port.expectations_files()[0]
+        expectations_contents = ''
+        port._filesystem.write_text_file(expectations_path, expectations_contents)
+        port.expectations_dict = lambda: {
+            expectations_path: expectations_contents,
+            'overrides': ('BUGX REBASELINE : userscripts/another-test.html = TEXT\n'
+                          'BUGY : userscripts/test.html = CRASH\n')}
 
         for path in port.expectations_files():
             port._filesystem.write_text_file(path, '')
         port._filesystem.write_text_file(port.layout_tests_dir() + '/userscripts/another-test.html', '')
-        port.test_expectations_overrides = lambda: self.overrides
         self.assertEquals(command._tests_to_rebaseline(port), {'userscripts/another-test.html': set(['txt'])})
-        self.assertEquals(port._filesystem.read_text_file(port.path_to_test_expectations_file()), '')
+        self.assertEquals(port._filesystem.read_text_file(expectations_path), expectations_contents)

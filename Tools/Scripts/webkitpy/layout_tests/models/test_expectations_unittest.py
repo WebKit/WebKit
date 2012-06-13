@@ -35,6 +35,12 @@ from webkitpy.layout_tests.models.test_configuration import *
 from webkitpy.layout_tests.models.test_expectations import *
 from webkitpy.layout_tests.models.test_configuration import *
 
+try:
+    from collections import OrderedDict
+except ImportError:
+    # Needed for Python < 2.7
+    from webkitpy.thirdparty.ordered_dict import OrderedDict
+
 
 class MockBugManager(object):
     def close_bug(self, bug_id, reference_bug_id=None):
@@ -128,8 +134,11 @@ BUG_TEST WONTFIX MAC : failures/expected/image.html = IMAGE
 """
 
     def parse_exp(self, expectations, overrides=None, is_lint_mode=False):
-        self._port.test_expectations = lambda: expectations
-        self._port.test_expectations_overrides = lambda: overrides
+        self._expectations_dict = OrderedDict()
+        self._expectations_dict['expectations'] = expectations
+        if overrides:
+            self._expectations_dict['overrides'] = overrides
+        self._port.expectations_dict = lambda: self._expectations_dict
         self._exp = TestExpectations(self._port, self.get_basic_tests(), is_lint_mode)
 
     def assert_exp(self, test, result):
@@ -206,17 +215,17 @@ BUGX WONTFIX : failures/expected = IMAGE
 SKIP : failures/expected/image.html""", is_lint_mode=True)
             self.assertFalse(True, "ParseError wasn't raised")
         except ParseError, e:
-            warnings = [u":1 Test lacks BUG modifier. failures/expected/text.html",
-                        u":1 Unrecognized modifier 'foo' failures/expected/text.html",
-                        u":2 Missing expectations SKIP : failures/expected/image.html"]
-            self.assertEqual(str(e), '\n'.join(self._port.path_to_test_expectations_file() + str(warning) for warning in warnings))
+            warnings = ("expectations:1 Test lacks BUG modifier. failures/expected/text.html\n"
+                        "expectations:1 Unrecognized modifier 'foo' failures/expected/text.html\n"
+                        "expectations:2 Missing expectations SKIP : failures/expected/image.html")
+            self.assertEqual(str(e), warnings)
 
         try:
             self.parse_exp('SKIP : failures/expected/text.html = TEXT', is_lint_mode=True)
             self.assertFalse(True, "ParseError wasn't raised")
         except ParseError, e:
-            warnings = [u':1 Test lacks BUG modifier. failures/expected/text.html']
-            self.assertEqual(str(e), '\n'.join(self._port.path_to_test_expectations_file() + str(warning) for warning in warnings))
+            warnings = u'expectations:1 Test lacks BUG modifier. failures/expected/text.html'
+            self.assertEqual(str(e), warnings)
 
     def test_error_on_different_platform(self):
         # parse_exp uses a Windows port. Assert errors on Mac show up in lint mode.
@@ -270,8 +279,11 @@ class SkippedTests(Base):
     def check(self, expectations, overrides, skips, lint=False):
         port = MockHost().port_factory.get('qt')
         port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html'), 'foo')
-        port.test_expectations = lambda: expectations
-        port.test_expectations_overrides = lambda: overrides
+        self._expectations_dict = OrderedDict()
+        self._expectations_dict['expectations'] = expectations
+        if overrides:
+            self._expectations_dict['overrides'] = overrides
+        port.expectations_dict = lambda: self._expectations_dict
         port.skipped_layout_tests = lambda tests: set(skips)
         exp = TestExpectations(port, ['failures/expected/text.html'], lint)
 
@@ -416,9 +428,9 @@ class RemoveConfigurationsTest(Base):
         test_port.test_isfile = lambda test: True
 
         test_config = test_port.test_configuration()
-        test_port.test_expectations = lambda: """BUGX LINUX WIN RELEASE : failures/expected/foo.html = TEXT
+        test_port.expectations_dict = lambda: {"expectations": """BUGX LINUX WIN RELEASE : failures/expected/foo.html = TEXT
 BUGY WIN MAC DEBUG : failures/expected/foo.html = CRASH
-"""
+"""}
         expectations = TestExpectations(test_port, self.get_basic_tests())
 
         actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', test_config)
@@ -434,9 +446,9 @@ BUGY WIN MAC DEBUG : failures/expected/foo.html = CRASH
         test_port.test_isfile = lambda test: True
 
         test_config = test_port.test_configuration()
-        test_port.test_expectations = lambda: """BUGX WIN RELEASE : failures/expected/foo.html = TEXT
+        test_port.expectations_dict = lambda: {'expectations': """BUGX WIN RELEASE : failures/expected/foo.html = TEXT
 BUGY WIN DEBUG : failures/expected/foo.html = CRASH
-"""
+"""}
         expectations = TestExpectations(test_port)
 
         actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', test_config)

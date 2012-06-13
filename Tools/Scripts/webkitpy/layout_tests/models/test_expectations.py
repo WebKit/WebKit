@@ -758,11 +758,12 @@ class TestExpectations(object):
         self._port = port
         self._skipped_tests_warnings = []
 
-        self._expectations = self._parser.parse(port.path_to_test_expectations_file(), port.test_expectations())
+        expectations_dict = port.expectations_dict()
+        self._expectations = self._parser.parse(expectations_dict.keys()[0], expectations_dict.values()[0])
         self._add_expectations(self._expectations, in_overrides=False)
 
-        overrides = port.test_expectations_overrides()
-        if overrides and include_overrides:
+        if len(expectations_dict) > 1 and include_overrides:
+            overrides = ''.join(expectations_dict.values()[1:])
             overrides_expectations = self._parser.parse('overrides', overrides)
             self._add_expectations(overrides_expectations, in_overrides=True)
             self._expectations += overrides_expectations

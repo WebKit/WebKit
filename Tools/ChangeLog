@@ -1,5 +1,34 @@
 2012-06-13  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: update callers to use port.expectation_dict() instead of test_expectations() and test_expectations_overrides()
+        https://bugs.webkit.org/show_bug.cgi?id=88946
+
+        Reviewed by Ojan Vafai.
+
+        In preparation for fully supporting cascading expectations files
+        and removing the 'overrides' concept.
+
+        There should be no functional changes in this patch.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_update_summary_with_result):
+        (ResultSummaryTest.get_result_summary):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.__init__):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (parse_exp):
+        (SkippedTests.check):
+        (RemoveConfigurationsTest.test_remove):
+        (test_remove_line):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (LintTest.test_all_configurations.FakePort.__init__):
+        (LintTest.test_all_configurations.FakePort.expectations_dict):
+        (LintTest.test_lint_test_files__errors):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_overrides_are_included_correctly):
+
+2012-06-13  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: rework the TestExpectations style checker in preparation for the cascade
         https://bugs.webkit.org/show_bug.cgi?id=88945
 
