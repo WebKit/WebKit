@@ -30,7 +30,7 @@
             }
 
             message = String(message).replace(/\n/g, "");
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 alert(message);
             } else {
                 log(message);

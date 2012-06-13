@@ -3,8 +3,8 @@
 <script>
 function runTest() {
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     <?php if (isset($_COOKIE['one_cookie']))
               echo 'document.write("FAIL: Cookies with a wrong domain should be rejected in user agent.");';

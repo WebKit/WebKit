@@ -11,9 +11,9 @@ window.targetWindow = frames[0];
 
 window.onload = function()
 {
-    if (window.layoutTestController) {
-        layoutTestController.setCanOpenWindows(true);
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.setCanOpenWindows(true);
+        testRunner.dumpAsText();
     }
 
     log("\n----- tests for calling methods of another frame using Function.call -----\n");

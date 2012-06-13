@@ -2,10 +2,10 @@
 <div>DIV</div>
 <iframe src="http://localhost:8000/security/resources/cross-origin-getMatchedCSSRules-frame.html"></iframe>
 <script>
-    if (window.layoutTestController)
+    if (window.testRunner)
     {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     window.onload = function()
@@ -19,8 +19,8 @@
         else 
         {
             alert("PASS");
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
    }
 </script>

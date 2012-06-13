@@ -8,7 +8,7 @@ print "Cache-Control: no-store\n\n";
 print "HTTP_ORIGIN: " . $ENV{"HTTP_ORIGIN"} . "\n";
 print <<DONE
 <script>
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 </script>
 DONE

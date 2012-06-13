@@ -1,9 +1,9 @@
 <body>
 This test passes if alert() is not called.
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 i = document.body.appendChild(document.createElement("iframe"));
@@ -11,7 +11,7 @@ f = frames[0].eval('(function(){location="javascript:alert(location)"})');
 i.src = "http://localhost:8000/security/resources/innocent-victim.html";
 i.addEventListener("load", f);
 i.addEventListener("load", function() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 });
 </script>

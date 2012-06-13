@@ -17,8 +17,8 @@ function runTest() {
     else
         log("Referrer is " + document.referrer);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </head>

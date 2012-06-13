@@ -5,7 +5,7 @@
         window.onload = function()
         {
             document.getElementsByTagName('h4')[0].innerHTML = document.domain;
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 setTimeout(pollForTest, 1);
             } else {
                 log("Click the link to run the test.");
@@ -14,7 +14,7 @@
 
         pollForTest = function()
         {
-            if (!layoutTestController.globalFlag) {
+            if (!testRunner.globalFlag) {
                 setTimeout(pollForTest, 1);
                 return;
             }
@@ -23,7 +23,7 @@
 
         runTest = function()
         {
-            if (!window.layoutTestController)
+            if (!window.testRunner)
                 return;
 
             var event = document.createEvent('MouseEvent');
@@ -36,16 +36,16 @@
 
         checkIfDone = function()
         {
-            var numOpenWindows = layoutTestController.windowCount();
+            var numOpenWindows = testRunner.windowCount();
             var now = new Date();
             if (numOpenWindows == 2) {
                 log("Test PASSED");
                 clearInterval(myInterval);
-                layoutTestController.notifyDone();            
+                testRunner.notifyDone();            
             } else if (now - start > 10000) {
                 log('TEST FAILED: Window count ' + numOpenWindows);
                 clearInterval(myInterval);
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
         }
     </script>

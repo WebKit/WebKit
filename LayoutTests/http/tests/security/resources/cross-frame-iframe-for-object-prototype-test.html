@@ -39,8 +39,8 @@
             shouldBe("window.injectedGetter", "undefined");
             shouldBe("window.injectedSetter = 1", "1");
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>

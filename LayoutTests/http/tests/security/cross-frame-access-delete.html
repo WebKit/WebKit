@@ -2,10 +2,10 @@
 <head>
     <script src="resources/cross-frame-access.js"></script>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.dumpChildFramesAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
         }
 
         receiver = function(e)

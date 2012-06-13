@@ -1,9 +1,9 @@
 <html>
 <head>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         function onloadForButtonChild() { 
@@ -16,8 +16,8 @@
             var buttonChild = window.frames[1];
             buttonChild.document.getElementById('button').click();
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
         function log(msg) {
             document.getElementById('result').innerHTML = msg;

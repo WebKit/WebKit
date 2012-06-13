@@ -1,14 +1,14 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function loaded() {
     var image = document.body.getElementsByTagName('img')[0];
     alert(image.width > 0 ? 'PASS' : 'FAIL');
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 This image should load:<br>

@@ -1,9 +1,9 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
 }
 </script>
 <body>
@@ -24,8 +24,8 @@ window.onload = function()
                 alert(obj.valueOf.constructor("return document.body.innerHTML")());
             } catch(ex) {
             }
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         } + ")()</scr" + "ipt>";
     }
 }

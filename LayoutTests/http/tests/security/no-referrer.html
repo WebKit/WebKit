@@ -1,8 +1,8 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
-    layoutTestController.setWillSendRequestClearHeader("Referer");
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.setWillSendRequestClearHeader("Referer");
 }
 </script>
 <div id=log></div>

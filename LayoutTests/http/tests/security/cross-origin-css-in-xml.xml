@@ -3,9 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.waitUntilDone();
-  layoutTestController.dumpAsText();
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
 }
 
 window.onload = function() {
@@ -14,8 +14,8 @@ window.onload = function() {
   // strict mode. It doesn't matter if we test same-origin or cross-origin.
   ele.innerText = "XML CSS Same-origin, HTML, valid: " + window.getComputedStyle(ele, null).getPropertyValue('background-color');
 
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 </script>
 </head>

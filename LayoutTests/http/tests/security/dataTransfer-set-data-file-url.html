@@ -18,15 +18,15 @@ function onImgDragStart() {
         // If there is no objCPlugin, then we are not on OS-X WebKit, and hence
         // we don't worry about checking for NSFilenamesPboardType type data.
     }
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function runTest() {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         return;
     }
 
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
 
     // Find abe
     var dragme = document.getElementById("dragme");

@@ -3,19 +3,19 @@
     <script src="resources/cross-frame-access.js"></script>
     <script>
         function loaded() {
-            if (!window.layoutTestController) {
+            if (!window.testRunner) {
                 log("This test must be run in the DumpRenderTree to work.");
                 return;
             }
 
-            layoutTestController.dumpAsText();
-            layoutTestController.dumpChildFramesAsText();
-            layoutTestController.waitUntilDone();
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
 
             // Poll until the subframe has finished loading.
             setTimeout(waitForFlag, 1);
             function waitForFlag() {
-                if (!layoutTestController.globalFlag) {
+                if (!testRunner.globalFlag) {
                     setTimeout(waitForFlag, 1);
                     return;
                 }
@@ -25,7 +25,7 @@
 
         function runTest() {
             var subFrame = window.frames[0];
-            layoutTestController.setPrivateBrowsingEnabled(true);
+            testRunner.setPrivateBrowsingEnabled(true);
 
             try {
                 log("Attempting to violate the same-origin policy with private browsing enabled.  If this succeeds the console should not log the violation.");
@@ -34,7 +34,7 @@
             } catch(e) {
             }
 
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     </script>
 </head>

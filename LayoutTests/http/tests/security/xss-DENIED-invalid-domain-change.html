@@ -5,9 +5,9 @@
 <div id="console"></div>
 </body>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 try {
@@ -27,8 +27,8 @@ function cross_frame_access() {
     document.getElementById("console").innerHTML = "PASS: cross-site not access allowed";
   }
 
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 </script>
 </html>

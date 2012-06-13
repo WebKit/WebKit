@@ -1,7 +1,7 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 window.onload = function()
@@ -14,8 +14,8 @@ window.onload = function()
         frame.contentWindow[0].location = "data:text/html,<script>(" + function() {
 
             setTimeout(function() {
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }, 0);
 
             window.name = "alert";

@@ -1,9 +1,9 @@
 function checkIfFrameLocationMatchesURLAndCallDone(frameId, expectedURL)
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     if (document.getElementById(frameId).contentWindow.location == expectedURL)
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
 }
 
 function sendRequestFromIFrame(url, params, HTTPMethod, callbackWhenDone)
@@ -47,7 +47,7 @@ function notifyDoneAfterReceivingBeforeloadFromIds(ids)
 
         loadAttempted = loadAttempted | (1 << index);
         if (loadAttempted == (1 << ids.length) - 1)
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
     }, false);
 }
 

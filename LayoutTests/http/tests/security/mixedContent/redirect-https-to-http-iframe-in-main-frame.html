@@ -1,17 +1,17 @@
 <html>
 <body>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpFrameLoadCallbacks();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpFrameLoadCallbacks();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
 }
 
 window.addEventListener("message", function (e) {
-  if (window.layoutTestController)
-      layoutTestController.notifyDone();
+  if (window.testRunner)
+      testRunner.notifyDone();
 }, false);
 
 </script>

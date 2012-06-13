@@ -2,15 +2,15 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.setXSSAuditorEnabled(true);
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setXSSAuditorEnabled(true);
+    testRunner.waitUntilDone();
 }
 
 window.onload = function() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 };
 </script>
 </head>

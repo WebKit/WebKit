@@ -6,8 +6,8 @@ var parentWindow = window.parent;
 parentWindow.testFunction = function()
 {
     shouldBeFalse("canGet('parentWindow.location.href')");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 var func = parentWindow.testFunction;
 document.domain = document.domain; // after this window.parent properties are inaccessible

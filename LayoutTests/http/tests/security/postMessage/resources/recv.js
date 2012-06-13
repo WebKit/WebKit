@@ -9,7 +9,7 @@ function recv(e) {
 
     log(msg);
 
-    if (e.data.match(/data="done"/) && window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (e.data.match(/data="done"/) && window.testRunner)
+        testRunner.notifyDone();
 }
 

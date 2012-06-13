@@ -6,15 +6,15 @@
 
         window.onload = function()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
-                layoutTestController.setCanOpenWindows();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+                testRunner.setCanOpenWindows();
             }
 
             openedWindow = window.open("http://localhost:8000/security/dataURL/resources/foreign-domain-data-url-accessee-opened-frame.html");
 
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 setTimeout(pollForTest, 1);
             } else {
                 log("To run the test, click the button below when the opened window finishes loading.");
@@ -27,7 +27,7 @@
 
         pollForTest = function()
         {
-            if (!layoutTestController.globalFlag) {
+            if (!testRunner.globalFlag) {
                 setTimeout(pollForTest, 1);
                 return;
             }

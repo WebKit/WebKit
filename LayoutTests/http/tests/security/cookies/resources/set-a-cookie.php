@@ -12,8 +12,8 @@ function checkCookie()
         document.getElementById("log").innerHTML += "Cookie is set";
     document.cookie = "test_cookie=0; path=/; expires=Thu, 01-Jan-1970 00:00:01 GMT";
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <body onload="checkCookie()">

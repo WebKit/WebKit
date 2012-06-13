@@ -2,12 +2,12 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.setXSSAuditorEnabled(true);
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setXSSAuditorEnabled(true);
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    testRunner.waitUntilDone();
 }
 </script>
 </head>
@@ -18,8 +18,8 @@ if (window.layoutTestController) {
 function finish()
 {
     document.getElementById("console").innerText = "PASSED";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest()

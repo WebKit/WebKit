@@ -21,13 +21,13 @@ var tests = [
     },
     function() {
         debug('XHR from isolated world with same security origin as XHR target');
-        layoutTestController.setIsolatedWorldSecurityOrigin(1, 'http://localhost:8000');
+        testRunner.setIsolatedWorldSecurityOrigin(1, 'http://localhost:8000');
         runTestInWorld(1, 'xhr');
     },
     function() {
         debug('XHR from isolated world with security origin that is whitelisted for XHR target');
-        layoutTestController.setIsolatedWorldSecurityOrigin(2, 'chrome-extension://123');
-        layoutTestController.addOriginAccessWhitelistEntry('chrome-extension://123', 'http', 'localhost', false);
+        testRunner.setIsolatedWorldSecurityOrigin(2, 'chrome-extension://123');
+        testRunner.addOriginAccessWhitelistEntry('chrome-extension://123', 'http', 'localhost', false);
         runTestInWorld(2, 'xhr');
     },
     function() {
@@ -37,8 +37,8 @@ var tests = [
 ];
 var currentTest = 0;
 
-// This test is meaningless without layoutTestController.
-if (window.layoutTestController) {
+// This test is meaningless without testRunner.
+if (window.testRunner) {
     window.addEventListener(
         'message',
         function(event) {
@@ -68,7 +68,7 @@ if (window.layoutTestController) {
 
 function runTestInWorld(worldId, funcName)
 {
-    layoutTestController.evaluateScriptInIsolatedWorld(
+    testRunner.evaluateScriptInIsolatedWorld(
         worldId, String(eval(funcName)) + "\n" + funcName + "();");
 }
 

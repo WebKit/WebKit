@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 
 document.cookie = 'cookie=parent';
@@ -70,7 +70,7 @@ function continueTest() {
   log('document.cookie = ' + frames[0].frames[1].document.cookie + '\n');
   log('--- Test ends ---\n');
 
-  layoutTestController.notifyDone();
+  testRunner.notifyDone();
 }
 </script>
 </head>

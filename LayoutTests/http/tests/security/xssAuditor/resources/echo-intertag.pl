@@ -40,8 +40,8 @@ if ($cgi->param('q2')) {
 }
 if ($cgi->param('notifyDone')) {
     print "<script>\n";
-    print "if (window.layoutTestController)\n";
-    print "    layoutTestController.notifyDone();\n";
+    print "if (window.testRunner)\n";
+    print "    testRunner.notifyDone();\n";
     print "</script>\n";
 }
 if ($cgi->param('enable-full-block')) {

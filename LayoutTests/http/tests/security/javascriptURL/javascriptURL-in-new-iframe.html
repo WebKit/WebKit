@@ -1,9 +1,9 @@
 <body>
 <p>Test that a freshly created iframe's src can be set to any javascript URL.</p>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function test()
@@ -41,8 +41,8 @@ function success()
         document.body.replaceChild(document.createTextNode("SUCCESS"), document.getElementsByTagName("iframe")[0]);
         while (ifr = document.getElementsByTagName("iframe")[0])
             document.body.removeChild(ifr);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

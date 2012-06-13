@@ -50,8 +50,8 @@
             shouldBe("window.history.length", "lengthOld", true);
             shouldBe("window.history.customAttribute", "customAttributeOld");
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>

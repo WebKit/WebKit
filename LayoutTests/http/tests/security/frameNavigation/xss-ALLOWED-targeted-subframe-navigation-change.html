@@ -4,24 +4,24 @@
         iframe { width: 400px; height: 200px;}
     </style>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.dumpChildFramesAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
         }
 
         function loaded()
         {
             document.getElementsByTagName('h4')[0].innerHTML = document.domain;
 
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 function waitForFlag() {
-                    if (!layoutTestController.globalFlag) {
+                    if (!testRunner.globalFlag) {
                         setTimeout(waitForFlag, 1);
                         return;
                     }
 
-                    layoutTestController.globalFlag = false;
+                    testRunner.globalFlag = false;
                     performTest();
                 }
                 setTimeout(waitForFlag, 1);

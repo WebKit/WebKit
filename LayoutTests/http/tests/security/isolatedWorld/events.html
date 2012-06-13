@@ -3,18 +3,18 @@
 <title>Test how event handlers work with isolated Worlds</title>
 <script>
 
-// This test is meaningless without layoutTestController.
-if (window.layoutTestController && window.eventSender) {
+// This test is meaningless without testRunner.
+if (window.testRunner && window.eventSender) {
 
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     window.textAttributeEventsCount = 0;
     window.xhrEventsCount = 0;
     window.functionAttributeEventsCount = 0;
     window.addEventListener("message", function(message)
     {
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }, false);
 
     window.textAttributeEventsCallback = function()
@@ -75,7 +75,7 @@ if (window.layoutTestController && window.eventSender) {
 
     function runTestInWorld(worldId, funcName)
     {
-        layoutTestController.evaluateScriptInIsolatedWorld(worldId, String(eval(funcName)) + "\n" + funcName + "();");
+        testRunner.evaluateScriptInIsolatedWorld(worldId, String(eval(funcName)) + "\n" + funcName + "();");
     }
 
     function runTest() 

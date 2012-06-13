@@ -4,10 +4,10 @@
 
 <script>
 
-layoutTestController.dumpAsText();
-layoutTestController.addOriginAccessWhitelistEntry('http://127.0.0.1:8000', 'file', '', true);
+testRunner.dumpAsText();
+testRunner.addOriginAccessWhitelistEntry('http://127.0.0.1:8000', 'file', '', true);
 
-var localImageLocation = layoutTestController.pathToLocalResource('file:///tmp/LayoutTests/http/tests/security/resources/compass.jpg');
+var localImageLocation = testRunner.pathToLocalResource('file:///tmp/LayoutTests/http/tests/security/resources/compass.jpg');
 
 var localImageElement = document.createElement('img');
 localImageElement.src = localImageLocation;

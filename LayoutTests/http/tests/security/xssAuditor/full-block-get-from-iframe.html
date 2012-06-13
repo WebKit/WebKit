@@ -3,16 +3,16 @@
 <head>
 <script src="http://localhost:8000/security/xssAuditor/resources/utilities.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.setXSSAuditorEnabled(true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+    testRunner.setXSSAuditorEnabled(true);
 }
 function done()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 window.onload = function()
 {

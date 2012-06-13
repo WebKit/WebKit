@@ -9,10 +9,10 @@
             var video = null;
 
             var localImageLocation = "file:///tmp/LayoutTests/http/tests/security/resources/compass.jpg";
-            if (window.layoutTestController) {
-                localImageLocation = layoutTestController.pathToLocalResource(localImageLocation);
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                localImageLocation = testRunner.pathToLocalResource(localImageLocation);
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             function logConsole()
@@ -47,8 +47,8 @@
                 else
                     logResult("Local image loaded from remote page.", false);
 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();     
+                if (window.testRunner)
+                    testRunner.notifyDone();     
             }
 
             function test() {

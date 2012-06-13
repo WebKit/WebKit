@@ -13,14 +13,14 @@
             {
                 consoleWrite("<br>END OF TEST");
                 testEnded = true;
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();     
+                if (window.testRunner)
+                    testRunner.notifyDone();     
             }
             function hanged()
             {
                 consoleWrite("FAIL: timed out");
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();  
+                if (window.testRunner)
+                    testRunner.notifyDone();  
             }
 
             function logConsole()
@@ -77,11 +77,11 @@
                 endTest();
             }
 
-            if (window.layoutTestController) 
+            if (window.testRunner) 
             {
-                localMovie = layoutTestController.pathToLocalResource(localMovie);
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+                localMovie = testRunner.pathToLocalResource(localMovie);
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
             setTimeout(hanged, 10000);
 

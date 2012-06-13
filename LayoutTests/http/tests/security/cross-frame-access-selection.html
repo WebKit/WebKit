@@ -9,9 +9,9 @@
             document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
         }
     
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         var targetWindow = frames[0];
@@ -27,8 +27,8 @@
 
         setTimeout(function() {
             log("FAIL: Tested timed-out.");
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, 5000);
 
         function test() {
@@ -48,8 +48,8 @@
             } catch (e) {
                 log("PASS: Cross-site access denied.");
             }
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </body>

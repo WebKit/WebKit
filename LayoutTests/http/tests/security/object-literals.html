@@ -2,9 +2,9 @@
 <body>
 <head>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 
 function log(msg) {
@@ -20,8 +20,8 @@ window.addEventListener('message', function (e) {
     setTimeout(ready_callback, 0);
     break;
    case 'done':
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
     break;
    default:
     log(e.data);

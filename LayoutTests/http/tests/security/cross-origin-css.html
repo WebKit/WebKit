@@ -10,9 +10,9 @@
 <link rel="stylesheet"
       href="resources/xorigincss3.html"></link>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.waitUntilDone();
-  layoutTestController.dumpAsText();
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
 }
 
 window.onload = function() {
@@ -31,8 +31,8 @@ window.onload = function() {
   ele = document.getElementById("id7");
   ele.innerText = "IMPORT Same-origin, HTML, invalid: " + window.getComputedStyle(ele, null).getPropertyValue('background-color');
 
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 </script>
 <style>

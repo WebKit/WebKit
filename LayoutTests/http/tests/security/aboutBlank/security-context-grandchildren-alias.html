@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 
 function log(msg) {
@@ -45,7 +45,7 @@ function doTest() {
   log('document.domain = ' + doc1.domain + '\n');
   log('--- Test ends ---\n');
 
-  layoutTestController.notifyDone();
+  testRunner.notifyDone();
 }
 </script>
 </head>

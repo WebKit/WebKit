@@ -6,8 +6,8 @@
 <p>The child frame will get a function from the parent frame, set the document.domain property 
 and then try to use the function. The function should still be able to access parent frame properties.
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 window.thisIsTopFrame = true;
 
@@ -15,8 +15,8 @@ window.testFunction = function()
 {
     shouldBeTrue("canGet('window.location.href')");
     shouldBeTrue("window.thisIsTopFrame");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <iframe src="resources/cross-frame-iframe-callback-explicit-domain-ALLOW.html" style=""></iframe>

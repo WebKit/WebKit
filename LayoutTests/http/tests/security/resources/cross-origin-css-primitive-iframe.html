@@ -22,6 +22,6 @@ for(i = 0 ; i < rules.length; ++i) {
     values.push(val);
     document.write(val.foo ? "FAILED<br>" : "PASSED<br>");
 }
-if (window.layoutTestController)
-    layoutTestController.notifyDone();
+if (window.testRunner)
+    testRunner.notifyDone();
 </script>

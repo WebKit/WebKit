@@ -12,10 +12,10 @@ var pre = document.createElement("pre");
 pre.appendChild(document.createTextNode(message));
 document.getElementById("console").appendChild(pre);
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     var worldID = 1;
-    layoutTestController.evaluateScriptInIsolatedWorld(
+    testRunner.evaluateScriptInIsolatedWorld(
         worldID,
         '\
             var message; \

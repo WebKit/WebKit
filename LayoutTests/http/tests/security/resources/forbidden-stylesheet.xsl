@@ -4,8 +4,8 @@
 <html>
 <body>
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 </script>
 FAIL: Forbidden XML stylesheet did run.
 </body>

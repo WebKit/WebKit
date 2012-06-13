@@ -1,8 +1,8 @@
 <html>
 <body>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 <p>This test loads a secure iframe that loads an insecure script.  We should
 trigger a mixed content callback even though the main frame is HTTP because the

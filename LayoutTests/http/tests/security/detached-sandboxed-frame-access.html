@@ -3,9 +3,9 @@
 <div id=result>Testing...</div>
 <iframe src="does-not-exist.html" sandbox=""></iframe>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function gc()
@@ -29,8 +29,8 @@ function test()
         try { w.XMLHttpRequest; } catch (ex) { }
         try { w.top; } catch (ex) { }
         document.getElementById("result").innerHTML = "PASS";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 }
 

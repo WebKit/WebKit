@@ -4,10 +4,10 @@
     <iframe id="firstSubFrame" name="firstSubFrame"></iframe>
     <iframe id="secondSubFrame" name="secondSubFrame"></iframe>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.dumpChildFramesAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
         }
 
         var firstURL = "javascript:\"<html>"
@@ -25,8 +25,8 @@
             +     "<p>Inner iframe.</p>"
             +     "<scr" + "ipt>"
             +         "parent.frames['firstSubFrame'].document.getElementById('accessMe').innerHTML = 'PASS: Cross frame access from a sibling javascript: URL was allowed!';"
-            +         'if (parent.layoutTestController)'
-            +             'parent.layoutTestController.notifyDone();'
+            +         'if (parent.testRunner)'
+            +             'parent.testRunner.notifyDone();'
             +     "</scri" + "pt>"
             + "</body>"
             + "</html>\"";

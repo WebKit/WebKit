@@ -6,8 +6,8 @@ window.addEventListener("message", receiveMessage, false);
 
 function receiveMessage(evt) {
     if (evt.data == "done") {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } else if (typeof(evt.data) == "object" && evt.data.action == "click")  {
         var link = document.getElementById("link");
         eventSender.mouseMoveTo(link.offsetLeft + evt.data.offsetLeft + 2,

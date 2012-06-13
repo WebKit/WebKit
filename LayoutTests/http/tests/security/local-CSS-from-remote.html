@@ -2,14 +2,14 @@
 <head>
 <script>
     function test() {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         var localStyleSheetLocation = "file:///tmp/LayoutTests/http/tests/security/resources/cssStyle.css";
-        if (window.layoutTestController)
-            localStyleSheetLocation = layoutTestController.pathToLocalResource(localStyleSheetLocation);
+        if (window.testRunner)
+            localStyleSheetLocation = testRunner.pathToLocalResource(localStyleSheetLocation);
 
         var localLinkElement = document.createElement("link");
         localLinkElement.setAttribute("type", "text/css");
@@ -21,8 +21,8 @@
         // Unfortunately link tags do not have load events, so we cannot simply make a load handler.
         window.setTimeout(backgroundCheck, 1);
         window.setTimeout(function() {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, 5000);
     }
 
@@ -36,8 +36,8 @@
             window.setTimeout(backgroundCheck, 1);
         } else {
             result.innerHTML = "Test Passed: Local CSS not remotely loaded.";
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     }
 </script>

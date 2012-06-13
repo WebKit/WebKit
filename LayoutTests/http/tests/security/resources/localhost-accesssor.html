@@ -4,9 +4,9 @@
     <script>
         function loaded()
         {
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 function waitForFlag() {
-                    if (!layoutTestController.globalFlag) {
+                    if (!testRunner.globalFlag) {
                         setTimeout(waitForFlag, 1);
                         return;
                     }
@@ -26,8 +26,8 @@
                 log("FAIL: An error occurred during testing.")
             }
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>

@@ -5,9 +5,9 @@
 </head>
 <pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var id = setTimeout("alert('PASS 1 of 2')", 0);
@@ -16,8 +16,8 @@ if (id == 0)
 
 var id = setTimeout(function() {
   alert('PASS 2 of 2');
-  if (window.layoutTestController)
-      layoutTestController.notifyDone();
+  if (window.testRunner)
+      testRunner.notifyDone();
 }, 0);
 if (id == 0)
     document.write('FAIL: Return value for function (should not be 0): ' + id);

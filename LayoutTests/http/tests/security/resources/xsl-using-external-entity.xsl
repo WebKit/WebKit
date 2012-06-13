@@ -5,8 +5,8 @@
 <html>
 <body>
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 </script>
 <div>This test includes a cross-origin external entity.  It passes if the load
 fails and thus there is no text below this line.</div>

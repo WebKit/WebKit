@@ -16,8 +16,8 @@
             log("PASS: Cross origin direct document access denied.");
         }
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, false);
 </script>
 <pre id="console"></pre>

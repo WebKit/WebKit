@@ -25,8 +25,8 @@
                 log("FAIL: document.domain should be " + expected + " but is " + actual);
         }
 
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         else
             log("This test can be run meaningfully only in DumpRenderTree");
 
@@ -36,8 +36,8 @@
 
         log("Forbidding domain relaxation for the http: scheme");
 
-        if (window.layoutTestController)
-            layoutTestController.setDomainRelaxationForbiddenForURLScheme(true, "http");
+        if (window.testRunner)
+            testRunner.setDomainRelaxationForbiddenForURLScheme(true, "http");
 
         var exception;
         try {
@@ -53,8 +53,8 @@
 
         domainShouldBe("0.0.1");
 
-        if (window.layoutTestController)
-            layoutTestController.setDomainRelaxationForbiddenForURLScheme(false, "http");
+        if (window.testRunner)
+            testRunner.setDomainRelaxationForbiddenForURLScheme(false, "http");
 
         log("Allowing domain relaxation for the http: scheme");
 
@@ -63,16 +63,16 @@
 
         log("Forbidding domain relaxation for the not-http: scheme");
 
-        if (window.layoutTestController)
-            layoutTestController.setDomainRelaxationForbiddenForURLScheme(true, "not-http");
+        if (window.testRunner)
+            testRunner.setDomainRelaxationForbiddenForURLScheme(true, "not-http");
 
         document.domain = "1";
         domainShouldBe("1");
 
         log("Allowing domain relaxation for the not-http: scheme");
 
-        if (window.layoutTestController)
-            layoutTestController.setDomainRelaxationForbiddenForURLScheme(false, "not-http");
+        if (window.testRunner)
+            testRunner.setDomainRelaxationForbiddenForURLScheme(false, "not-http");
     </script>
 </body>
 </html>

@@ -7,9 +7,9 @@
  }
 ?>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function log(message)
@@ -32,8 +32,8 @@ function onXHRLoad(evt)
 {
     log("Async XHR: " + (evt.target.responseText.match(/FAIL/) ? "FAIL" : "PASS"));
     log("DONE");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <script src="credentials-in-referer.php"></script>

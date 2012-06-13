@@ -4,9 +4,9 @@
         first javascript: URL loaded iframe.</p>
     <iframe id="aFrame" style="width: 500px; height: 300px;"></iframe>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.dumpChildFramesAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
         }
 
         var innerURL = 'javascript:\\\"<html>'

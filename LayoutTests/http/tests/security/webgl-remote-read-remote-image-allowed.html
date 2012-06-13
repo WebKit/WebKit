@@ -1,9 +1,9 @@
 <pre id="console"></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitWebGLEnabled", "1");
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 log = function(msg)
@@ -93,8 +93,8 @@ image.onload = function() {
 
     test(canvas, "CORS-untained canvas");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 image.crossOrigin = "anonymous";
 image.src = "http://localhost:8000/security/resources/abe-allow-star.php";

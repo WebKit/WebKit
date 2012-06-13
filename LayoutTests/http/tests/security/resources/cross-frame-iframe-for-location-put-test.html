@@ -47,8 +47,8 @@
             shouldBe("window.location.toString", "toStringOld");
             shouldBe("window.location.customAttribute", "customAttributeOld");
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>

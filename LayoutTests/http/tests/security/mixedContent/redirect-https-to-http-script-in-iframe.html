@@ -1,9 +1,9 @@
 <html>
 <body>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpFrameLoadCallbacks();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpFrameLoadCallbacks();
 }
 </script>
 <p>This test loads a secure iframe that loads an insecure script (but with a

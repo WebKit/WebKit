@@ -2,15 +2,15 @@
 <p>This test passes if the script loads correctly.</p>
 <pre></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function done(msg) {
     document.querySelector("pre").innerHTML = msg;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 var script = document.createElement("script");

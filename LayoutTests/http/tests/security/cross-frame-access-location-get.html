@@ -4,12 +4,12 @@
     <script>
         window.onload = function()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 setTimeout(pollForTest, 1);
             } else {
                 log("To run the test, click the button below when the frame window finishes loading.");
@@ -22,12 +22,12 @@
 
         pollForTest = function()
         {
-            if (!layoutTestController.globalFlag) {
+            if (!testRunner.globalFlag) {
                 setTimeout(pollForTest, 1);
                 return;
             }
             runTest();
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
 
         runTest = function()

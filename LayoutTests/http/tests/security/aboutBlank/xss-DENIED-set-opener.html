@@ -8,11 +8,11 @@
 
     window.onload = function()
     {
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
-            layoutTestController.setCanOpenWindows();
-            layoutTestController.dumpAsText();
-            layoutTestController.dumpChildFramesAsText();
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.setCanOpenWindows();
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
         }
 
         var message_fail = 'FAIL: XSS was allowed.';
@@ -26,14 +26,14 @@
         var try_control = 'write(window.opener.top.frames[1], ' + libwrapjs.in_string(message_success) + ');';
         var control = 'setTimeout(function() {' + try_control + '}, 200);\n';
 
-        var sigDone = 'setTimeout(function() { if (window.layoutTestController) layoutTestController.globalFlag = true; }, 300);';
+        var sigDone = 'setTimeout(function() { if (window.testRunner) testRunner.globalFlag = true; }, 300);';
 
         var payload = write_func + attack + control + sigDone;
         code = libwrapjs.in_script_tag(payload);
         log("Code injected into window:");
         log(code);
 
-        if (window.layoutTestController) {
+        if (window.testRunner) {
             runTest();
         } else {
             log("To run the test, click the button below when the frames finish loading.");
@@ -57,7 +57,7 @@
 
     pollForDone = function()
     {
-        if (!layoutTestController.globalFlag) {
+        if (!testRunner.globalFlag) {
             setTimeout(pollForDone, 1);
             return;
         }

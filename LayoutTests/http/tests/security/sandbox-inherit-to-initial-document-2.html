@@ -3,9 +3,9 @@
 <div id="result">Running...</div>
 <iframe src="resources/iframe-no-src.html" sandbox="allow-same-origin"></iframe>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 var timeoutId;
@@ -13,16 +13,16 @@ var timeoutId;
 function scriptWorked()
 {
     document.getElementById("result").innerHTML = "FAIL";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
     clearTimeout(timeoutId);
 }
 
 function timedOut()
 {
     document.getElementById("result").innerHTML = "PASS";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function test()
@@ -35,7 +35,7 @@ function test()
         doc.body.appendChild(scr);
     } else {
         document.getElementById("result").innerHTML = "FAIL: no inner frame";
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 }
 </script>

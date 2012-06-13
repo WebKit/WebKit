@@ -1,11 +1,11 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-	layoutTestController.dumpAsText();
-	layoutTestController.waitUntilDone();
-	layoutTestController.setCanOpenWindows();
-	layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.waitUntilDone();
+	testRunner.setCanOpenWindows();
+	testRunner.setCloseRemainingWindowsWhenComplete(true);
 }
 
 window.onload = function()
@@ -27,8 +27,8 @@ window.onload = function()
 				return "<script>(" + function() {
 					opener.location = "javascript:alert(document.body.innerHTML)";
 
-					if (window.layoutTestController)
-						setTimeout("layoutTestController.notifyDone()", 0);
+					if (window.testRunner)
+						setTimeout("testRunner.notifyDone()", 0);
 				} + ")()<\/script>";
 			} + ")()";
 		} + ")()");

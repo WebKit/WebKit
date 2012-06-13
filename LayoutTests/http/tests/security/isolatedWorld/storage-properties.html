@@ -7,9 +7,9 @@ localStorage.clear();
 localStorage.foo = "Visible";
 sessionStorage.clear();
 sessionStorage.foo = "Visible";
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.evaluateScriptInIsolatedWorld(
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.evaluateScriptInIsolatedWorld(
     0,
     "document.getElementById('console').innerHTML = localStorage.foo + ' and ' + sessionStorage.foo");
 }

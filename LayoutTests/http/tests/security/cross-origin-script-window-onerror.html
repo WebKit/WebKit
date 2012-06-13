@@ -7,15 +7,15 @@ Test that window.onerror won't reveal any potentially sensitive script content i
 </p>
 <div id="result"></div>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.waitUntilDone();
-  layoutTestController.dumpAsText();
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
 }
 
 window.onerror = function(message, url, line) {
   document.getElementById("result").textContent = "window.onerror message: " + message + " at " + url + ": " + line;
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
   return true;
 }
 </script>

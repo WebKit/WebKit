@@ -6,10 +6,10 @@
     <iframe src="http://localhost:8000/security/javascriptURL/resources/foreign-domain-javascript-url-accessor-iframe.html" style="width: 400px; height:200px;"></iframe>
     <p id='accessMe'>Pass: Cross frame access from a javascript: URL on a different domain was denied.</p>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
-            layoutTestController.dumpChildFramesAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            testRunner.dumpChildFramesAsText();
         }
     </script>
 </body>

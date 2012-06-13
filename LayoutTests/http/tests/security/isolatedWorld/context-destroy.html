@@ -11,17 +11,17 @@ window.onunload = function() {
 <script>
 
 window.onload = function() {
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
 
         var iframeElement = document.querySelector('iframe');
         iframeElement.focus();
-        layoutTestController.evaluateScriptInIsolatedWorld(0, document.querySelector('#s1').textContent);
+        testRunner.evaluateScriptInIsolatedWorld(0, document.querySelector('#s1').textContent);
 
         iframeElement.onload = function() {
             document.body.textContent = 'PASS';
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         };
         iframeElement.src = 'data:text/html,PASS';
     }

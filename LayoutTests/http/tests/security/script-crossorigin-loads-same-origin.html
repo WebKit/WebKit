@@ -1,15 +1,15 @@
 <p>Test that a script element with a crossorigin attribute loads same-origin scripts correctly when there's no access control headers in the response.</p>
 <pre>FAIL</pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function loaded() {
     document.querySelector("pre").innerHTML = "PASS";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <!-- This script should load -->

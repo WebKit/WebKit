@@ -7,9 +7,9 @@
             var shouldLoad = false;
             var counter = 0;
 
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             function log(msg)
@@ -39,8 +39,8 @@
 
                 case 3:
                     log("END OF TEST");
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
+                    if (window.testRunner)
+                        testRunner.notifyDone();
                 }
             }
 

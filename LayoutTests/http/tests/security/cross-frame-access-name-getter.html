@@ -11,8 +11,8 @@ window.targetWindow = frames[0];
 
 window.onload = function()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     log("\n----- tests for getting properties by name -----\n");
 

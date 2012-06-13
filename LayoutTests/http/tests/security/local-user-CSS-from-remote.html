@@ -2,15 +2,15 @@
 <head>
 <title>User Stylesheet Test</title>
 <script type="text/javascript">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
 
         // This won't work outside of DRT!
         if (window.location.hash == '') {
-            layoutTestController.waitUntilDone();
-            var stylesheetLocation = layoutTestController.pathToLocalResource("file:///tmp/LayoutTests/http/tests/security/resources/cssStyle.css");
-            layoutTestController.setUserStyleSheetLocation(stylesheetLocation);
-            layoutTestController.setUserStyleSheetEnabled(true);
+            testRunner.waitUntilDone();
+            var stylesheetLocation = testRunner.pathToLocalResource("file:///tmp/LayoutTests/http/tests/security/resources/cssStyle.css");
+            testRunner.setUserStyleSheetLocation(stylesheetLocation);
+            testRunner.setUserStyleSheetEnabled(true);
             location += '?#done';
         }
     }
@@ -27,9 +27,9 @@
             result.innerHTML = "Test Failed: Local user stylesheet not loaded into remote document.";
         }
 
-        if (window.layoutTestController) {
-            layoutTestController.setUserStyleSheetEnabled(false);
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.setUserStyleSheetEnabled(false);
+            testRunner.notifyDone();
         }
     }
 </script>

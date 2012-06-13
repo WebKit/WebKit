@@ -21,7 +21,7 @@ function lastTest()
 {
     didImageLoad();
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 

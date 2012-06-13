@@ -6,9 +6,9 @@
 <iframe style="width:0; height: 0" src="resources/xss-eval2.html"></iframe>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(s)
@@ -46,7 +46,7 @@ addEventListener("message", function()
 
     shouldBe("childLocalEvalCaller('document')", (function() { try { return childLocalEvalCaller('document'); } catch(e) { return e.name; } })(), "EvalError");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }, false);
 </script>

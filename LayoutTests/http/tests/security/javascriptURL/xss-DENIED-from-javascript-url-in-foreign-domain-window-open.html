@@ -6,22 +6,22 @@
 
         window.onload = function()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.setCanOpenWindows();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.setCanOpenWindows();
+                testRunner.waitUntilDone();
             }
 
             openedWindow = window.open("http://localhost:8000/security/javascriptURL/resources/foreign-domain-javascript-url-accessor-opened-frame.html");
 
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 setTimeout(pollUntilDone, 1);
             }
         }
 
         pollUntilDone = function()
         {
-            if (!layoutTestController.globalFlag) {
+            if (!testRunner.globalFlag) {
                 setTimeout(pollUntilDone, 1);
                 return;
             }

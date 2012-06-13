@@ -41,12 +41,12 @@ function listener(evt)
 
 document.body.addEventListener("MessageEvent", listener, false);
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     // setup common functions in worlds
     for (var world  = 0; world < 2; ++world) {
         var script = log.toString() + sendMessage.toString() + document.getElementById("isolatedScript" + world).innerHTML;
-        layoutTestController.evaluateScriptInIsolatedWorld(world, script);
+        testRunner.evaluateScriptInIsolatedWorld(world, script);
     }
     log("Sending from main world...");
     sendMessage();

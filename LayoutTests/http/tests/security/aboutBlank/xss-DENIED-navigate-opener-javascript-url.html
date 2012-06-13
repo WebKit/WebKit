@@ -8,11 +8,11 @@
 
     window.onload = function()
     {
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
-            layoutTestController.setCanOpenWindows();
-            layoutTestController.dumpAsText();
-            layoutTestController.dumpChildFramesAsText();
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.setCanOpenWindows();
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
         }
 
         var message_fail = 'FAIL: XSS was allowed.';
@@ -26,14 +26,14 @@
         var try_control = 'write(window.opener.top.frames[1], ' + libwrapjs.in_string(message_success) + ');';
         var control = 'setTimeout(function() {' + try_control + '}, 200);';
 
-        var sigDone = 'setTimeout(function() { if (window.layoutTestController) layoutTestController.globalFlag = true; }, 300);';
+        var sigDone = 'setTimeout(function() { if (window.testRunner) testRunner.globalFlag = true; }, 300);';
 
         var payload = 'window.location = ' + libwrapjs.in_javascript_document(write_func + attack + control + sigDone);
         code = libwrapjs.in_script_tag(payload);
         log("Code injected into window:");
         log(code);
 
-        if (window.layoutTestController) {
+        if (window.testRunner) {
             setTimeout(pollForTest1, 1);
         } else {
             log("To run the test, click the button below when the frames finish loading.");
@@ -46,7 +46,7 @@
     
     pollForTest1 = function()
     {
-        if (!layoutTestController.globalFlag) {
+        if (!testRunner.globalFlag) {
             setTimeout(pollForTest1, 1);
             return;
         }
@@ -57,8 +57,8 @@
         frames[0].openWindow();
         openedWindow = frames[0].openedWindow;
 
-        if (window.layoutTestController)
-            layoutTestController.globalFlag = false;
+        if (window.testRunner)
+            testRunner.globalFlag = false;
 
         frames[0].location = 'http://localhost:8000/security/resources/innocent-victim-with-notify.html';
 
@@ -67,7 +67,7 @@
 
     pollForTest2 = function()
     {
-        if (!layoutTestController.globalFlag) {
+        if (!testRunner.globalFlag) {
             setTimeout(pollForTest2, 1);
             return;
         }
@@ -78,15 +78,15 @@
     {
         openedWindow.document.write(code);
         openedWindow.document.close();
-        if (window.layoutTestController) {
-            layoutTestController.globalFlag = false;
+        if (window.testRunner) {
+            testRunner.globalFlag = false;
             setTimeout(pollForDone, 1);
         }
     }
 
     pollForDone = function()
     {
-        if (!layoutTestController.globalFlag) {
+        if (!testRunner.globalFlag) {
             setTimeout(pollForDone, 1);
             return;
         }

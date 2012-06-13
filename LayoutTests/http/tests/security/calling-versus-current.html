@@ -1,8 +1,8 @@
 <iframe src="resources/innocent-victim.html"></iframe>
 <div id="console">FAIL</div>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 window.onload = function() {
     window.f = frames[0].atob;

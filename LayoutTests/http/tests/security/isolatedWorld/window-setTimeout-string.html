@@ -4,18 +4,18 @@
 <div id="console"></div>
 <script>
 function done() {
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 window.func = function () {
   alert("FAIL: Wrong function.");
   done();
 };
 document.foo = "FAIL: Wrong wrappers.";
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
-  layoutTestController.evaluateScriptInIsolatedWorld(
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+  testRunner.evaluateScriptInIsolatedWorld(
     0,
     "document.foo = 'PASS';\n" +
     "window.func = function () {\n" +

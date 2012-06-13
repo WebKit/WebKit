@@ -3,12 +3,12 @@
 <title>Event handlers in isolated worlds for user gesture generated events should should the same permissions as handlers within the page</title>
 <script>
 
-// This test is meaningless without a layoutTestController.
-if (window.layoutTestController && window.eventSender) {
+// This test is meaningless without a testRunner.
+if (window.testRunner && window.eventSender) {
 
-    layoutTestController.setCanOpenWindows(true);
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+    testRunner.setCanOpenWindows(true);
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 
     function newTest(title)
     {
@@ -18,7 +18,7 @@ if (window.layoutTestController && window.eventSender) {
     function pass()
     {
         document.getElementById("log").innerHTML += "PASS\n";
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 
     // (This function is run within an isolated world)
@@ -33,7 +33,7 @@ if (window.layoutTestController && window.eventSender) {
 
     function runTestInWorld(worldId, funcName)
     {
-        layoutTestController.evaluateScriptInIsolatedWorld(worldId, String(eval(funcName)) + "\n" + funcName + "();");
+        testRunner.evaluateScriptInIsolatedWorld(worldId, String(eval(funcName)) + "\n" + funcName + "();");
     }
 
     function runTest() 

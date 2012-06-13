@@ -4,9 +4,9 @@
 window.onerror should print exactly one line.</p>
 <div id="result"></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(msg) {
@@ -23,8 +23,8 @@ window.onerror = function(msg, url, line)
 function receiveMessage(event) {
     if (event.data === "IFrameLoaded") {
         log("DONE");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } else
         log("FAIL " + event.data);
 }

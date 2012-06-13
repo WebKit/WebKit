@@ -1,7 +1,7 @@
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
 }
 
 function test() {
@@ -20,8 +20,8 @@ function test() {
 }
 
 function finishTesting() {
-    if (window.layoutTestController) {
-        setTimeout("layoutTestController.notifyDone()", 0);
+    if (window.testRunner) {
+        setTimeout("testRunner.notifyDone()", 0);
     }
     return true;
 }

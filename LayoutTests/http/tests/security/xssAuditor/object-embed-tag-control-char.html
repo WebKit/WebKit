@@ -3,10 +3,10 @@
 <head>
 <script src='resources/utilities.js'></script>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.setXSSAuditorEnabled(true);
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setXSSAuditorEnabled(true);
+  testRunner.waitUntilDone();
   notifyDoneAfterReceivingBeforeloadFromIds(["object", "embed"]);
 }
 </script>

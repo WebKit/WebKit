@@ -9,8 +9,8 @@
     event.initEvent('click', true, true);
     document.getElementById('anchorLink').dispatchEvent(event);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 </script>
 </body>
 </html>

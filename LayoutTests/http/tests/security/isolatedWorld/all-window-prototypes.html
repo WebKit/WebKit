@@ -12,9 +12,9 @@ for (p in window) {
   }
 }
 
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.evaluateScriptInIsolatedWorld(
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.evaluateScriptInIsolatedWorld(
     0,
     "(function() {\n" +
     "  for (p in window) {\n" +

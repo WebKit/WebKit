@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(msg) {
@@ -14,8 +14,8 @@ function log(msg) {
 
 function fail() {
     log("FAIL: The origin of the document was mutated.");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function pass() {
@@ -30,8 +30,8 @@ window.addEventListener("message", function (evt) {
     } else if (evt.data == "step1-done")
         fr.src = "resources/sandboxed-iframe-origin-remove-step2.html";
     else if (evt.data == "step2-done") {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }, false);
 

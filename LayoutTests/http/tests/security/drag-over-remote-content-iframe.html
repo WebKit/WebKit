@@ -6,8 +6,8 @@ function log(s) {
 }
 
 window.onload = function () {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText(); 
+    if (window.testRunner)
+        testRunner.dumpAsText(); 
 
     var dragTarget = document.getElementById("dragTarget");
 

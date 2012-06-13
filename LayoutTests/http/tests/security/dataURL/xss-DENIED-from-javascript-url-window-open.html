@@ -2,10 +2,10 @@
 <head>
     <script src="../resources/cross-frame-access.js"></script>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.setCanOpenWindows();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setCanOpenWindows();
+            testRunner.waitUntilDone();
         }
         function loaded() {
             var url = "data:text/html,<html>"
@@ -16,8 +16,8 @@
                 +                 "opener.document.getElementById(\"accessMe\").innerHTML = \"FAIL: Access from a window opened with a data: URL was allowed!\";"
                 +             "} catch (e) {"
                 +             "}"
-                +             "if (window.layoutTestController)"
-                +                 "layoutTestController.globalFlag = true;" // Flag that the test has completed and we can close the window now
+                +             "if (window.testRunner)"
+                +                 "testRunner.globalFlag = true;" // Flag that the test has completed and we can close the window now
                 +         "}"
                 +     "</scri" + "pt>"
                 + "</head>"
@@ -28,10 +28,10 @@
 
             var openedWindow = window.open(url);
 
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 setTimeout(waitForFlag, 1);
                 function waitForFlag() {
-                    if (!layoutTestController.globalFlag) {
+                    if (!testRunner.globalFlag) {
                         setTimeout(waitForFlag, 1);
                         return;
                     }

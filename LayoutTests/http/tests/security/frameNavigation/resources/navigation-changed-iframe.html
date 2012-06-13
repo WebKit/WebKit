@@ -4,8 +4,8 @@
         function fireSentinel()
         {
             document.getElementsByTagName('h4')[0].innerHTML = document.domain;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>

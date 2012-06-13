@@ -6,11 +6,11 @@ header("X-XSS-Protection: full-block");
 <head>
 <script src="http://127.0.0.1:8000/security/xssAuditor/resources/utilities.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.setXSSAuditorEnabled(true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+    testRunner.setXSSAuditorEnabled(true);
 }
 function checkIfDone()
 {

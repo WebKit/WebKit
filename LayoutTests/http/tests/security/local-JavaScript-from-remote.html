@@ -4,12 +4,12 @@
         var secretness = 0;
 
         function test() {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             var localScriptLocation = "file:///tmp/LayoutTests/http/tests/security/resources/localScript.js";
-            if (window.layoutTestController)
-                localScriptLocation = layoutTestController.pathToLocalResource(localScriptLocation);
+            if (window.testRunner)
+                localScriptLocation = testRunner.pathToLocalResource(localScriptLocation);
 
             var localScriptElement = document.createElement("script");
             localScriptElement.setAttribute("src", localScriptLocation);

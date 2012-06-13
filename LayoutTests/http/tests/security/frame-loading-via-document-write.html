@@ -6,10 +6,10 @@
 
 function buildFrameset()
 {
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpChildFramesAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
     }
 
     var outHTML="<frameset rows=\"33%, 33%, 33%\">"+
@@ -33,8 +33,8 @@ function buildFrameset()
     frames['topRow'].document.close();
 
     var localImageLocation = "file:///tmp/LayoutTests/fast/dom/resources/abe.png";
-    if (window.layoutTestController)
-        localImageLocation = layoutTestController.pathToLocalResource(localImageLocation);
+    if (window.testRunner)
+        localImageLocation = testRunner.pathToLocalResource(localImageLocation);
 
     outHTML = "<html><head><scr" + "ipt language=\"JavaScript\" src=\"resources/frame-loading-via-document-write.js\">"+
               "</scr" + "ipt></head><body onLoad=\"didImageLoad()\"><table><tr><td>"+

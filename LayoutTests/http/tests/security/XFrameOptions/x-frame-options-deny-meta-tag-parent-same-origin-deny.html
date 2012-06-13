@@ -1,15 +1,15 @@
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpChildFramesAsText();
-        layoutTestController.dumpResourceLoadCallbacks();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
+        testRunner.dumpResourceLoadCallbacks();
+        testRunner.waitUntilDone();
     }
 
     function checkIfDone()
     {
         if (document.getElementsByTagName("iframe")[0].contentWindow.location == "about:blank")
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
     }
 </script>
 

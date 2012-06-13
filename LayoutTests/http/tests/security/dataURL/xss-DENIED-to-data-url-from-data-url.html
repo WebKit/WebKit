@@ -1,10 +1,10 @@
 <html>
 <head>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.dumpChildFramesAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
         }
 
         window.onload = function()
@@ -17,8 +17,8 @@
                 +                 "parent.document.getElementById(\"accessMe\").innerHTML = \"FAIL: Cross frame access from a data: URL was allowed.\";"
                 +             "} catch (e) {"
                 +             "}"
-                +             "if (window.layoutTestController)"
-                +                 "layoutTestController.notifyDone();"
+                +             "if (window.testRunner)"
+                +                 "testRunner.notifyDone();"
                 +         "}"
                 +     "</scr" + "ipt>"
                 + "</head>"        

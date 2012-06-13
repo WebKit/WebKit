@@ -4,11 +4,11 @@
 if (location.hash == "#stop")
     return;
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
 }
 
 blankWindow = open(location + "#stop");
@@ -19,8 +19,8 @@ blankWindow.onload = function() {
 
     setTimeout(function() {
         blankFunc = blankFunc("return window.Function")();
-        if (!blankFunc && window.layoutTestController) {
-            layoutTestController.notifyDone()
+        if (!blankFunc && window.testRunner) {
+            testRunner.notifyDone()
             return;
         }
         blankFunc("alertFunc", "(" + function() {
@@ -37,8 +37,8 @@ blankWindow.onload = function() {
 
 window.addEventListener('message', function(evt) {
     if (evt.data == 'done') {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 });
 

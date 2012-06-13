@@ -1,8 +1,8 @@
 <html>
 <body>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 <p>This test loads a secure iframe that loads an insecure plugin.  We should
 get a mixed content callback because the insecure plug-in can script the secure

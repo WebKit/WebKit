@@ -1,13 +1,13 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function beginTests() {
-    if (window.layoutTestController) {    // Totaly different test in DRT (see feed.html)
+    if (window.testRunner) {    // Totaly different test in DRT (see feed.html)
         var result = document.getElementById("result");
         result.innerHTML = "Test Finished.";
         done();
@@ -41,8 +41,8 @@ function checkFeedLinkFollowed() {
 var finished = false;
 function done() {
     finished = true;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

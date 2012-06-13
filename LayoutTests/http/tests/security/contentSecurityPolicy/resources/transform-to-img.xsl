@@ -5,8 +5,8 @@
       <head>
         <script>
 //<![CDATA[
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 //]]>
         </script>
       </head>

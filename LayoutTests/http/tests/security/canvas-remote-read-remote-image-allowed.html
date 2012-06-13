@@ -1,8 +1,8 @@
 <pre id="console"></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 log = function(msg)
@@ -100,8 +100,8 @@ image.onload = function() {
 
     test(canvas, "CORS-untainted canvas pattern");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 image.crossOrigin = "anonymous";
 image.src = "http://localhost:8000/security/resources/abe-allow-star.php";

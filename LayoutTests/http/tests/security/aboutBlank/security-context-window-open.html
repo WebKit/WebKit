@@ -1,10 +1,10 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
-  layoutTestController.setCanOpenWindows();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+  testRunner.setCanOpenWindows();
 }
 
 document.cookie = 'cookie=parent';
@@ -52,7 +52,7 @@ function doTest() {
   log('document.cookie = ' + wnd1.document.cookie + '\n');
   log('--- Test ends ---\n');
 
-  layoutTestController.notifyDone();
+  testRunner.notifyDone();
 }
 </script>
 </head>

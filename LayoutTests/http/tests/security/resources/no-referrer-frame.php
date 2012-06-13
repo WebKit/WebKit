@@ -32,8 +32,8 @@ function onXHRLoad(evt)
 {
     log("ASync XHR: " + (evt.target.responseText.match(/HTTP.*FAIL/) ? "FAIL" : "PASS"));
     log("DONE");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <script src="no-referrer.php"></script>

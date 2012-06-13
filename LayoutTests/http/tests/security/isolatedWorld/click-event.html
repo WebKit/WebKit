@@ -13,9 +13,9 @@ bt.click();
 </script>
 <script>
 document.body.world = 'Main';
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.evaluateScriptInIsolatedWorld(0, document.getElementById('isolatedScript').innerHTML);
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.evaluateScriptInIsolatedWorld(0, document.getElementById('isolatedScript').innerHTML);
 }
 </script>
 </body>

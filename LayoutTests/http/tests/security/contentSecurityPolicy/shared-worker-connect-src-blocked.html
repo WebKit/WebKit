@@ -3,9 +3,9 @@
 <head>
 <meta http-equiv="X-WebKit-CSP" content="connect-src 'none'"/>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 </script>
 </head>
@@ -15,13 +15,13 @@ try {
     var worker = new SharedWorker('http://127.0.0.1:8000/security/contentSecurityPolicy/resources/shared-worker-make-xhr.js');
     worker.port.onmessage = function (event) {
         alert(event.data);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     };
 } catch (e) {
     alert(e);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </body>

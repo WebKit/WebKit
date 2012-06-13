@@ -11,8 +11,8 @@ echo '<?xml-stylesheet type="text/xsl" href="resources/style.xsl"?>';
 <head>
 <script>
 //<![CDATA[
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 //]]>
 </script>
 </head>

@@ -3,14 +3,14 @@
 <script>
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         var frame = document.getElementById("frame");
         frame.contentWindow.focus();
-        layoutTestController.evaluateScriptInIsolatedWorld(0, "alert('PASS');");
+        testRunner.evaluateScriptInIsolatedWorld(0, "alert('PASS');");
     } else {
         var msg = document.createElement("p");
-        msg.innerText = "FAIL: Test requires layoutTestController to run.";
+        msg.innerText = "FAIL: Test requires testRunner to run.";
         document.body.appendChild(msg);
     }
 }

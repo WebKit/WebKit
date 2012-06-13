@@ -2,10 +2,10 @@
 <head>
     <script src="../resources/cross-frame-access.js"></script>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
-            layoutTestController.setCanOpenWindows();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            testRunner.setCanOpenWindows();
         }
 
         var openedWindow;
@@ -15,8 +15,8 @@
                 + "<head>"
                 +     "<scr" + "ipt>"
                 +         "function fireSentinel() {"
-                +             "if (window.layoutTestController)"
-                +                 "layoutTestController.globalFlag = true;"
+                +             "if (window.testRunner)"
+                +                 "testRunner.globalFlag = true;"
                 +         "}"
                 +     "</scr" + "ipt>"
                 + "</head>"
@@ -28,10 +28,10 @@
     
             openedWindow = window.open(url);
 
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 setTimeout(waitForFlag, 1);
                 function waitForFlag() {
-                    if (!layoutTestController.globalFlag) {
+                    if (!testRunner.globalFlag) {
                         setTimeout(waitForFlag, 1);
                         return;
                     }
@@ -48,7 +48,7 @@
             } catch (e) {
             }
 
-            if (window.layoutTestController)
+            if (window.testRunner)
                 closeWindowAndNotifyDone(openedWindow);
         }    
     </script>

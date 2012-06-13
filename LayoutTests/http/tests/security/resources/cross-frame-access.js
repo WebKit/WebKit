@@ -114,10 +114,10 @@ function toString(expression, valueForException)
 
 function canAccessFrame(iframeURL, iframeId, passMessage, failMessage)
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpChildFramesAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
+        testRunner.waitUntilDone();
     }
 
     window.addEventListener("message", function(event) {
@@ -139,8 +139,8 @@ function canAccessFrame(iframeURL, iframeId, passMessage, failMessage)
             if (targetWindow.document && targetWindow.document.getElementById('accessMe')) {
                 targetWindow.document.getElementById('accessMe').innerHTML = passMessage;
                 log(passMessage);
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
                 return;
             }
         } catch (e) {
@@ -148,17 +148,17 @@ function canAccessFrame(iframeURL, iframeId, passMessage, failMessage)
         }
 
         log(failMessage);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 
 function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage)
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpChildFramesAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
+        testRunner.waitUntilDone();
     }
 
     window.addEventListener("message", function(event) {
@@ -180,16 +180,16 @@ function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage)
             if (targetWindow.document && targetWindow.document.getElementById('accessMe')) {
                 targetWindow.document.getElementById('accessMe').innerHTML = failMessage;
                 log(failMessage);
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
                 return;
             }
         } catch (e) {
         }
 
         log(passMessage);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 
@@ -199,8 +199,8 @@ function closeWindowAndNotifyDone(win)
     setTimeout(doneHandler, 5);
     function doneHandler() {
         if (win.closed) {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
             return;
         }
 

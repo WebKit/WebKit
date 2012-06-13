@@ -32,8 +32,8 @@
             shouldBe("window.location.existingProperty", "'test value'");
             shouldBe("window.location[1]", "'test value'");
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>

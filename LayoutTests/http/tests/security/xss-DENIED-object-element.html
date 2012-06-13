@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 window.onload = function()
@@ -16,8 +16,8 @@ window.onload = function()
         object.data = "javascript:alert(document.body.innerHTML)";
         object.innerHTML = "foo";
 
-        if (window.layoutTestController)
-            setTimeout("layoutTestController.notifyDone()", 50);
+        if (window.testRunner)
+            setTimeout("testRunner.notifyDone()", 50);
     }
 }
 </script>
