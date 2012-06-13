@@ -1,3 +1,14 @@
+2012-06-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Make it possible to disable -Werror in production builds
+
+        Reviewed by Tor Arne Vestbø.
+
+        Don't do -Werror if build-webkit is called with --qmakearg=CONFIG+=production_build,
+        something qt5.git's qtwebkit.pri will soon do.
+
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2012-06-13  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Store and compare md5sum of jhbuild files to trigger cleaning Dependencies
