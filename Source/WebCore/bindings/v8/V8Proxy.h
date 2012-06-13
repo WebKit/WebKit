@@ -148,7 +148,7 @@ namespace WebCore {
         // global scope, its own prototypes for intrinsic JavaScript objects (String,
         // Array, and so-on), and its own wrappers for all DOM nodes and DOM
         // constructors.
-        void evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup, WTF::Vector<v8::Local<v8::Value> >* result);
+        v8::Local<v8::Array> evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup);
 
         void setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin>);
 

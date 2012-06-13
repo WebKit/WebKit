@@ -1,3 +1,19 @@
+2012-06-13  Eriq Augustine  <eaugusti@chromium.org>
+
+        Removing an extra HandleScope in V8Proxy::evaluateInIsolatedWorld
+        https://bugs.webkit.org/show_bug.cgi?id=88451
+
+        Reviewed by Adam Barth.
+
+        Any values retuned by the evaluation will get destroyed with the extra
+        HandleScope.
+
+        I was unable to cause a test failure, however this feature is tested by:
+        platform/chromium/http/tests/misc/execute-and-return-value.html
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluateInIsolatedWorld):
+
 2012-06-13  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Enable link prefetch support in the developer builds

@@ -218,11 +218,11 @@ bool V8Proxy::handleOutOfMemory()
     return true;
 }
 
-void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup, WTF::Vector<v8::Local<v8::Value> >* results)
+v8::Local<v8::Array> V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup)
 {
     // FIXME: This will need to get reorganized once we have a windowShell for the isolated world.
     if (!windowShell()->initContextIfNeeded())
-        return;
+        return v8::Local<v8::Array>();
 
     v8::HandleScope handleScope;
     V8IsolatedContext* isolatedContext = 0;
@@ -235,7 +235,7 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
             isolatedContext = new V8IsolatedContext(this, extensionGroup, worldID);
             if (isolatedContext->context().IsEmpty()) {
                 delete isolatedContext;
-                return;
+                return v8::Local<v8::Array>();
             }
 
             // FIXME: We should change this to using window shells to match JSC.
@@ -249,23 +249,25 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
         isolatedContext = new V8IsolatedContext(this, extensionGroup, worldID);
         if (isolatedContext->context().IsEmpty()) {
             delete isolatedContext;
-            return;
+            return v8::Local<v8::Array>();
         }
     }
 
     v8::Local<v8::Context> context = v8::Local<v8::Context>::New(isolatedContext->context());
     v8::Context::Scope context_scope(context);
+    v8::Local<v8::Array> results = v8::Array::New(sources.size());
 
-    if (results) {
-        for (size_t i = 0; i < sources.size(); ++i)
-            results->append(evaluate(sources[i], 0));
-    } else {
-        for (size_t i = 0; i < sources.size(); ++i)
-            evaluate(sources[i], 0);
+    for (size_t i = 0; i < sources.size(); ++i) {
+        v8::Local<v8::Value> evaluationResult = evaluate(sources[i], 0);
+        if (evaluationResult.IsEmpty())
+            evaluationResult = v8::Local<v8::Value>::New(v8::Undefined());
+        results->Set(i, evaluationResult);
     }
 
     if (worldID == 0)
         isolatedContext->destroy();
+
+    return handleScope.Close(results);
 }
 
 void V8Proxy::setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin> prpSecurityOriginIn)
