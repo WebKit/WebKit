@@ -1,3 +1,24 @@
+2012-06-13  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Support user attributes in DOMNode
+        https://bugs.webkit.org/show_bug.cgi?id=88706
+
+        Reviewed by Pavel Feldman.
+
+        This change allows clients to store arbitrary properties on DOMNodes and know if there are descendants
+        (and how many of them) having a certain property set.
+
+        Test: inspector/elements/user-attributes.html
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype._removeChild):
+        (WebInspector.DOMNode.prototype._updateChildUserPropertyCountsOnRemoval):
+        (WebInspector.DOMNode.prototype._updateDescendantUserPropertyCount):
+        (WebInspector.DOMNode.prototype.setUserProperty):
+        (WebInspector.DOMNode.prototype.removeUserProperty):
+        (WebInspector.DOMNode.prototype.getUserProperty):
+        (WebInspector.DOMNode.prototype.descendantUserPropertyCount):
+
 2012-06-13  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
 
         REGRESSION:Bindings sequence<T> in Console.idl, Internals.idl and ScriptProfileNode.idl should be T[]

@@ -55,6 +55,9 @@ WebInspector.DOMNode = function(domAgent, doc, isInShadowTree, payload) {
     if (payload.attributes)
         this._setAttributesPayload(payload.attributes);
 
+    this._userProperties = {};
+    this._descendantUserPropertyCounters = {};
+
     this._childNodeCount = payload.childNodeCount;
     this.children = null;
 
@@ -458,6 +461,7 @@ WebInspector.DOMNode.prototype = {
     {
         this.children.splice(this.children.indexOf(node), 1);
         node.parentNode = null;
+        node._updateChildUserPropertyCountsOnRemoval(this);
         this._renumber();
     },
 
@@ -669,6 +673,69 @@ WebInspector.DOMNode.prototype = {
             }
         }
         return -1; // An error occurred: |this| not found in parent's children.
+    },
+
+    _updateChildUserPropertyCountsOnRemoval: function(parentNode)
+    {
+        var result = {};
+        if (this._userProperties) {
+            for (var name in this._userProperties)
+                result[name] = (result[name] || 0) + 1;
+        }
+
+        if (this._descendantUserPropertyCounters) {
+            for (var name in this._descendantUserPropertyCounters) {
+                var counter = this._descendantUserPropertyCounters[name];
+                result[name] = (result[name] || 0) + counter;
+            }
+        }
+
+        for (var name in result)
+            parentNode._updateDescendantUserPropertyCount(name, -result[name]);
+    },
+
+    _updateDescendantUserPropertyCount: function(name, delta)
+    {
+        if (!this._descendantUserPropertyCounters.hasOwnProperty(name))
+            this._descendantUserPropertyCounters[name] = 0;
+        this._descendantUserPropertyCounters[name] += delta;
+        if (!this._descendantUserPropertyCounters[name])
+            delete this._descendantUserPropertyCounters[name];
+        if (this.parentNode)
+            this.parentNode._updateDescendantUserPropertyCount(name, delta);
+    },
+
+    setUserProperty: function(name, value)
+    {
+        if (value === null) {
+            this.removeUserProperty(name);
+            return;
+        }
+
+        if (this.parentNode && !this._userProperties.hasOwnProperty(name))
+            this.parentNode._updateDescendantUserPropertyCount(name, 1);
+
+        this._userProperties[name] = value;
+    },
+
+    removeUserProperty: function(name)
+    {
+        if (!this._userProperties.hasOwnProperty(name))
+            return;
+
+        delete this._userProperties[name];
+        if (this.parentNode)
+            this.parentNode._updateDescendantUserPropertyCount(name, -1);
+    },
+
+    getUserProperty: function(name)
+    {
+        return this._userProperties ? this._userProperties[name] : null;
+    },
+
+    descendantUserPropertyCount: function(name)
+    {
+        return this._descendantUserPropertyCounters && this._descendantUserPropertyCounters[name] ? this._descendantUserPropertyCounters[name] : 0;
     }
 }
 

@@ -318,6 +318,37 @@ InspectorTest.dumpElementsTree = function(rootNode, depth)
         return element.textContent.replace(/\u200b/g, "").replace(/\n/g, "").trim();
     }
 
+    function dumpMap(name, map)
+    {
+        var result = [];
+        for (var id in map)
+            result.push(id + "=" + map[id]);
+        if (!result.length)
+            return "";
+        return name + ":[" + result.join(",") + "]";
+    }
+
+    function userPropertyDataDump(treeItem)
+    {
+        if (treeItem._elementCloseTag)
+            return "";
+
+        var userProperties = "";
+        var node = treeItem.representedObject;
+        if (node) {
+            userProperties += dumpMap("userProperties", node._userProperties);
+            var dump = dumpMap("descendantUserAttributeCounters", node._descendantUserPropertyCounters);
+            if (dump) {
+                if (userProperties)
+                    userProperties += ", ";
+                userProperties += dump;
+            }
+            if (userProperties)
+                userProperties = " [" + userProperties + "]";
+        }
+        return userProperties;
+    }
+
     function print(treeItem, prefix, depth)
     {
         if (treeItem.listItemElement) {
@@ -330,7 +361,8 @@ InspectorTest.dumpElementsTree = function(rootNode, depth)
             } else
                 expander = "  ";
 
-            InspectorTest.addResult(prefix + expander + beautify(treeItem.listItemElement));
+            var userProperties = userPropertyDataDump(treeItem);
+            InspectorTest.addResult(prefix + expander + beautify(treeItem.listItemElement) + userProperties);
         }
 
         if (!treeItem.expanded)

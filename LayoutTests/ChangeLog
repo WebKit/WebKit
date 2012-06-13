@@ -1,3 +1,23 @@
+2012-06-13  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Support user attributes in DOMNode
+        https://bugs.webkit.org/show_bug.cgi?id=88706
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.dumpElementsTree.dumpMap):
+        (initialize_ElementTest.InspectorTest.dumpElementsTree.userPropertyDataDump):
+        (initialize_ElementTest.InspectorTest.dumpElementsTree.print):
+        (initialize_ElementTest.InspectorTest.dumpElementsTree):
+        * inspector/elements/resources/user-properties.js: Added.
+        (test.step0):
+        (test.step1):
+        (test.step2):
+        (test):
+        * inspector/elements/user-properties-expected.txt: Added.
+        * inspector/elements/user-properties.html: Added.
+
 2012-06-13  Vineet Chaudhary  <vineet.chaudhary@motorola.com>
 
         REGRESSION:Bindings sequence<T> in Console.idl, Internals.idl and ScriptProfileNode.idl should be T[]
