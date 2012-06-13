@@ -1,3 +1,14 @@
+2012-06-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the build.
+
+        Maybe don't export inlined functions.
+
+        * wtf/ThreadingPrimitives.h:
+        (WTF::MutexTryLocker::MutexTryLocker):
+        (WTF::MutexTryLocker::~MutexTryLocker):
+        (WTF::MutexTryLocker::locked):
+
 2012-06-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Using extrernal ICU library on case unsensitive drives will not work

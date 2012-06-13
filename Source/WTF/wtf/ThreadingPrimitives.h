@@ -100,14 +100,14 @@ typedef Locker<Mutex> MutexLocker;
 class MutexTryLocker {
     WTF_MAKE_NONCOPYABLE(MutexTryLocker);
 public:
-    WTF_EXPORT_PRIVATE MutexTryLocker(Mutex& mutex) : m_mutex(mutex), m_locked(mutex.tryLock()) { }
-    WTF_EXPORT_PRIVATE ~MutexTryLocker()
+    MutexTryLocker(Mutex& mutex) : m_mutex(mutex), m_locked(mutex.tryLock()) { }
+    ~MutexTryLocker()
     {
         if (m_locked)
             m_mutex.unlock();
     }
 
-    WTF_EXPORT_PRIVATE bool locked() const { return m_locked; }
+    bool locked() const { return m_locked; }
 
 private:
     Mutex& m_mutex;
