@@ -2351,7 +2351,6 @@ BUGWK52082 LINUX WIN : fast/text/basic/014.html = IMAGE+TEXT
 BUGWK52082 LINUX WIN : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
 
 // These have been flaky for as long as we have test history.
-BUGWK52064 DEBUG : fast/events/overflow-events.html = PASS TEXT
 BUGWK52063 WIN : http/tests/navigation/ping-cross-origin.html = PASS TIMEOUT
 BUGWK52063 SLOW MAC : http/tests/navigation/ping-cross-origin.html = PASS
 
