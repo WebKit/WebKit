@@ -1,3 +1,21 @@
+2012-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac rebaseline after r120167 and r120173.
+
+        Also revert an inadvertent change to file.invalidext.
+
+        * editing/pasteboard/file-input-files-access-expected.txt:
+        * editing/pasteboard/paste-sanitize-crash-2-expected.txt:
+        * editing/pasteboard/resources/file.invalidext:
+        * editing/selection/blockquote-crash-expected.txt:
+        * editing/style/4230923-expected.txt:
+        * platform/mac/editing/pasteboard/4641033-expected.txt:
+        * platform/mac/editing/selection/mixed-editability-1-expected.txt:
+        * platform/mac/editing/selection/paragraph-granularity-expected.txt:
+        * platform/mac/editing/selection/triple-click-in-pre-expected.txt:
+        * platform/mac/editing/selection/word-granularity-expected.txt:
+        * platform/mac/http/tests/misc/location-replace-crossdomain-expected.txt:
+
 2012-06-13  Taiju Tsuiki  <tzik@chromium.org>
 
         Implement InspectorFileSystemAgent::readDirectory for FileSystem support.

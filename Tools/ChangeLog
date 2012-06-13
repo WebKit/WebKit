@@ -1,3 +1,9 @@
+2012-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update the builder name for Apple Lion builders.
+
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+
 2012-06-13  Joel Dillon  <joel.dillon@codethink.co.uk>
 
         [Qt][Win]QtTestBrowser somehow picks up DumpRenderTree's main.cpp, causing a failure to link

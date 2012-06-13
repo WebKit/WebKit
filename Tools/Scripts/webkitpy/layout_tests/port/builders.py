@@ -67,7 +67,7 @@ _exact_matches = {
 _fuzzy_matches = {
     # These builders are on build.webkit.org.
     r"SnowLeopard": "mac-snowleopard",
-    r"Lion": "mac-lion",
+    r"Apple Lion": "mac-lion",
     r"Leopard": "mac-leopard",
     r"Windows": "win",
     r"GTK": "gtk",
