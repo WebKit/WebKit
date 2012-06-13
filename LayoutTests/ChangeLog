@@ -1,3 +1,9 @@
+2012-06-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening after r120228, fix an incorrect test expectation.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-13  Alec Flett  <alecflett@chromium.org>
 
         [V8] IndexedDB: Cursor value modifications should be preserved until cursor iterates

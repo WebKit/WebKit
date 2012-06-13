@@ -830,7 +830,7 @@ BUGWK58222 : fast/preloader = TEXT
 BUGWK58222 : fast/preloader/scan-body-from-head-import.html = PASS
 BUGWK58222 : fast/preloader/scan-body-from-head-script.html = PASS
 BUGWK58222 : http/tests/mime/uppercase-mime-type.html = TEXT
-BUGWK58222 : http/tests/misc/prefetch-purpose.html = PASS
+BUGWK58222 : http/tests/misc/prefetch-purpose.html = TEXT
 
 // The middle circle on both rectangles is missing in the pixel output.
 BUGWKGTK : svg/custom/circular-marker-reference-2.svg = TEXT
