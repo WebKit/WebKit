@@ -25,7 +25,8 @@
 
 module core {
     interface [
-        Conditional=SCRIPTED_SPEECH
+        Conditional=SCRIPTED_SPEECH,
+        ConstructorTemplate=Event
     ] SpeechRecognitionError : Event {
         const unsigned short OTHER = 0;
         const unsigned short NO_SPEECH = 1;
@@ -37,7 +38,7 @@ module core {
         const unsigned short BAD_GRAMMAR = 7;
         const unsigned short LANGUAGE_NOT_SUPPORTED = 8;
 
-        readonly attribute unsigned short code;
-        readonly attribute DOMString message;
+        readonly attribute [InitializedByEventConstructor] unsigned short code;
+        readonly attribute [InitializedByEventConstructor] DOMString message;
     };
 }

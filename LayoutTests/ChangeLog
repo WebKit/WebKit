@@ -1,3 +1,15 @@
+2012-06-12  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: Add test for constructing SpeechRecognitionError events
+        https://bugs.webkit.org/show_bug.cgi?id=88868
+
+        Reviewed by Adam Barth.
+
+        Add a layout test for constructing SpeechRecognitionError events.
+
+        * fast/events/constructors/speech-recognition-error-constructor-expected.txt: Added.
+        * fast/events/constructors/speech-recognition-error-constructor.html: Added.
+
 2012-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaseline after r120173.

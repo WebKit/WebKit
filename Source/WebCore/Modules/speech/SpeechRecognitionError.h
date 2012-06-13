@@ -34,6 +34,13 @@
 
 namespace WebCore {
 
+struct SpeechRecognitionErrorInit : public EventInit {
+    SpeechRecognitionErrorInit();
+
+    unsigned short code;
+    String message;
+};
+
 class SpeechRecognitionError : public Event {
 public:
     enum Code {
@@ -50,16 +57,18 @@ public:
 
     static PassRefPtr<SpeechRecognitionError> create(Code, const String&);
     static PassRefPtr<SpeechRecognitionError> create() { return create(OTHER, emptyString()); }
+    static PassRefPtr<SpeechRecognitionError> create(const AtomicString&, const SpeechRecognitionErrorInit&);
 
-    Code code() { return m_code; }
+    unsigned short code() { return m_code; }
     const String& message() { return m_message; }
 
     virtual const AtomicString& interfaceName() const OVERRIDE;
 
 private:
     SpeechRecognitionError(Code, const String&);
+    SpeechRecognitionError(const AtomicString&, const SpeechRecognitionErrorInit&);
 
-    Code m_code;
+    unsigned short m_code;
     String m_message;
 };
 

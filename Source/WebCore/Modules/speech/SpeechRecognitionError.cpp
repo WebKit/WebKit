@@ -36,16 +36,33 @@ PassRefPtr<SpeechRecognitionError> SpeechRecognitionError::create(Code code, con
     return adoptRef(new SpeechRecognitionError(code, message));
 }
 
+PassRefPtr<SpeechRecognitionError> SpeechRecognitionError::create(const AtomicString& eventName, const SpeechRecognitionErrorInit& initializer)
+{
+    return adoptRef(new SpeechRecognitionError(eventName, initializer));
+}
+
 SpeechRecognitionError::SpeechRecognitionError(Code code, const String& message)
     : Event(eventNames().errorEvent, /*canBubble=*/false, /*cancelable=*/false) // FIXME: Spec should say whether it bubbles and is cancelable.
-    , m_code(code)
+    , m_code(static_cast<unsigned short>(code))
     , m_message(message)
+{
+}
+
+SpeechRecognitionError::SpeechRecognitionError(const AtomicString& eventName, const SpeechRecognitionErrorInit& initializer)
+    : Event(eventName, initializer)
+    , m_code(initializer.code)
+    , m_message(initializer.message)
 {
 }
 
 const AtomicString& SpeechRecognitionError::interfaceName() const
 {
     return eventNames().interfaceForSpeechRecognitionError;
+}
+
+SpeechRecognitionErrorInit::SpeechRecognitionErrorInit()
+    : code(0)
+{
 }
 
 } // namespace WebCore

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests the constructor for the SpeechRecognitionError DOM class.");
+
+// Test constructor without initializer.
+shouldBe("new webkitSpeechRecognitionError('eventType').bubbles", "false");
+shouldBe("new webkitSpeechRecognitionError('eventType').cancelable", "false");
+shouldBe("new webkitSpeechRecognitionError('eventType').code", "0");
+shouldBeEqualToString("new webkitSpeechRecognitionError('eventType').message", "");
+
+// Test passing bubbles in the initializer.
+shouldBe("new webkitSpeechRecognitionError('eventType', { bubbles: false }).bubbles", "false");
+shouldBe("new webkitSpeechRecognitionError('eventType', { bubbles: true }).bubbles", "true");
+
+// Test passing cancelable in the initializer.
+shouldBe("new webkitSpeechRecognitionError('eventType', { cancelable: false }).cancelable", "false");
+shouldBe("new webkitSpeechRecognitionError('eventType', { cancelable: true }).cancelable", "true");
+
+// Test passing code in the initializer.
+shouldBe("new webkitSpeechRecognitionError('eventType', { code: 1 }).code", "1");
+shouldBe("new webkitSpeechRecognitionError('eventType', { code: 12345 }).code", "12345");
+
+// Test passing message in the initializer.
+shouldBeEqualToString("new webkitSpeechRecognitionError('eventType', { message: 'foo' }).message", "foo");
+
+</script>
+<script src="../../js/resource/js-test-post.js"></script>
+</body>
+</html>
+
+
