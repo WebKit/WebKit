@@ -381,6 +381,16 @@ String Internals::shadowPseudoId(Element* element, ExceptionCode& ec)
     return element->shadowPseudoId().string();
 }
 
+void Internals::setShadowPseudoId(Element* element, const String& id, ExceptionCode& ec)
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    return element->setShadowPseudoId(id, ec);
+}
+
 String Internals::visiblePlaceholder(Element* element)
 {
     HTMLTextFormControlElement* textControl = toTextFormControl(element);

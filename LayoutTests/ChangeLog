@@ -1,3 +1,13 @@
+2012-06-12  MORITA Hajime  <morrita@google.com>
+
+        Shadow Pseudo ID should be able to nest to point nested shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=62218
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/shadow-nested-pseudo-id-expected.txt: Added.
+        * fast/dom/shadow/shadow-nested-pseudo-id.html: Added.
+
 2012-06-12  Ojan Vafai  <ojan@chromium.org>
 
         Chromium rebaselines after r120135. The new results are clearly more correct.

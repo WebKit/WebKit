@@ -1,3 +1,13 @@
+2012-06-12  MORITA Hajime  <morrita@google.com>
+
+        Shadow Pseudo ID should be able to nest to point nested shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=62218
+
+        Reviewed by Dimitri Glazkov.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-06-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed build fix.

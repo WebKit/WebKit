@@ -215,6 +215,7 @@ EXPORTS
         ?setDelegatesScrolling@ScrollView@WebCore@@QAEX_N@Z
         ?setScrollOffsetFromInternals@ScrollableArea@WebCore@@QAEXABVIntPoint@2@@Z
         ?setSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
+        ?setShadowPseudoId@Element@WebCore@@QAEXABVAtomicString@WTF@@AAH@Z
         ?setStandardFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setSuggestedValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
         ?setEditingValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z

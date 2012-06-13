@@ -1177,13 +1177,13 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
         return false;
     }
     if (selector->m_match == CSSSelector::PseudoElement) {
-        if ((!context.elementStyle && m_mode == ResolvingStyle) || m_mode == QueryingRules)
-            return false;
-
         if (selector->isUnknownPseudoElement()) {
             m_hasUnknownPseudoElements = true;
             return element->shadowPseudoId() == selector->value();
         }
+
+        if ((!context.elementStyle && m_mode == ResolvingStyle) || m_mode == QueryingRules)
+            return false;
 
         PseudoId pseudoId = CSSSelector::pseudoId(selector->pseudoType());
         if (pseudoId == FIRST_LETTER) {

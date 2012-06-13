@@ -1,3 +1,12 @@
+2012-06-12  MORITA Hajime  <morrita@google.com>
+
+        Shadow Pseudo ID should be able to nest to point nested shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=62218
+
+        Reviewed by Dimitri Glazkov.
+
+        * Source/autotools/symbols.filter:
+
 2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Enable SHADOW_DOM flag

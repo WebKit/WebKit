@@ -9269,7 +9269,7 @@ void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePre
     CSSParserSelector* history = specifiers;
     while (history->tagHistory()) {
         history = history->tagHistory();
-        if (history->hasShadowDescendant())
+        if (history->isUnknownPseudoElement() || history->hasShadowDescendant())
             lastShadowDescendant = history;
     }
 

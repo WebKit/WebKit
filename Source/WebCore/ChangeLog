@@ -1,3 +1,40 @@
+2012-06-12  MORITA Hajime  <morrita@google.com>
+
+        Shadow Pseudo ID should be able to nest to point nested shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=62218
+
+        Reviewed by Dimitri Glazkov.
+
+        - updateSpecifiersWithElementName() didn't take nesting into account.
+          tag history can contain selector entries which isn't marked as ShadowDescendant yet.
+          such entry can be found by investigating isUnknownPseudoElement().
+        - SelectorChecker::checkSelector() was too strict. Unknown pseudo elements are essentially a kind of class or id
+          in implementation perspective. For such, rejecting by missing elementStyle doesn't make sense:
+          It isn't a pseudo but a real element for WebCore after all.
+        - Added Internals::setShadowPseudoId() to create a test harness whose DOM tree contains pseudo shadow ids.
+
+        Before this change, following selecdtor chain is created for "p::-shadow-child::-nested-shadow-child":
+
+          [both tag name and -shadow-id are set] <-(ShadowDescendant)- [-nested-shadow-id]
+
+        What we want, which is created by this change is:
+
+          [tag] <-(ShadowDescendant)- [-shadow-id is set] <-(ShadowdescenDant)- [-nested-shadow-id]
+
+        Test: fast/dom/shadow/shadow-nested-pseudo-id.html
+
+        * WebCore.exp.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::updateSpecifiersWithElementName):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setShadowPseudoId):
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-06-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [soup] Prevent setting or editing httpOnly cookies from JavaScript
