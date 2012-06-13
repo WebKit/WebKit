@@ -1,3 +1,15 @@
+2012-06-13  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Crash when WebViewImpl::setIsTransparent is called before the WebLayerTreeView has been initialized.
+        https://bugs.webkit.org/show_bug.cgi?id=89013
+
+        Reviewed by James Robinson.
+
+        Add !m_layerTreeView.isNull() check to WebViewImpl::setIsTransparent.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsTransparent):
+
 2012-06-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120220.

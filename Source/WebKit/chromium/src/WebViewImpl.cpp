@@ -3034,7 +3034,8 @@ void WebViewImpl::setIsTransparent(bool isTransparent)
     if (m_nonCompositedContentHost)
         m_nonCompositedContentHost->setOpaque(!isTransparent);
 
-    m_layerTreeView.setHasTransparentBackground(isTransparent);
+    if (!m_layerTreeView.isNull())
+        m_layerTreeView.setHasTransparentBackground(isTransparent);
 }
 
 bool WebViewImpl::isTransparent() const
