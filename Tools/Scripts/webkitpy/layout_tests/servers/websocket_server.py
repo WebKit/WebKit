@@ -51,6 +51,7 @@ _DEFAULT_WSS_PORT = 9323
 class PyWebSocket(http_server.Lighttpd):
     def __init__(self, port_obj, output_dir, port=_DEFAULT_WS_PORT,
                  root=None, use_tls=False,
+                 private_key=None, certificate=None, ca_certificate=None,
                  pidfile=None):
         """Args:
           output_dir: the absolute path to the layout test result directory
@@ -70,8 +71,15 @@ class PyWebSocket(http_server.Lighttpd):
         if self._use_tls:
             self._name = 'pywebsocket_secure'
 
-        self._private_key = self._pem_file
-        self._certificate = self._pem_file
+        if private_key:
+            self._private_key = private_key
+        else:
+            self._private_key = self._pem_file
+        if certificate:
+            self._certificate = certificate
+        else:
+            self._certificate = self._pem_file
+        self._ca_certificate = ca_certificate
         if self._port:
             self._port = int(self._port)
         self._wsin = None
@@ -137,6 +145,9 @@ class PyWebSocket(http_server.Lighttpd):
         if self._use_tls:
             start_cmd.extend(['-t', '-k', self._private_key,
                               '-c', self._certificate])
+            if self._ca_certificate:
+                start_cmd.append('--ca-certificate')
+                start_cmd.append(self._ca_certificate)
 
         self._start_cmd = start_cmd
         server_name = self._filesystem.basename(pywebsocket_script)

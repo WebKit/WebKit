@@ -1,3 +1,20 @@
+2012-06-14  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        new-run-webkit-websocketserver must handle TLS related arguments
+        https://bugs.webkit.org/show_bug.cgi?id=89079
+
+        Reviewed by Dirk Pranke.
+
+        PyWebSocket class must accept private_key, certificate, and
+        ca_certificate arguments and pass them to launching pywebsocket.
+        Also add ca_certificate handling to new-run-webkit-websocketserver.
+
+        * Scripts/new-run-webkit-websocketserver:
+        (main):
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        (PyWebSocket.__init__):
+        (PyWebSocket._prepare_config):
+
 2012-06-14  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Unreviewed. Update my email.

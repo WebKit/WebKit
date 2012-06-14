@@ -55,6 +55,9 @@ def main():
                              default='', help='TLS private key file.')
     option_parser.add_option('-c', '--certificate', dest='certificate',
                              default='', help='TLS certificate file.')
+    option_parser.add_option('--ca-certificate', dest='ca_certificate',
+                             default='', help='TLS CA certificate file for '
+                                              'client authentication.')
     option_parser.add_option('--chromium', action='store_true',
                              dest='chromium',
                              default=False,
@@ -88,6 +91,8 @@ def main():
         kwds['private_key'] = options.private_key
     if options.certificate:
         kwds['certificate'] = options.certificate
+    if options.ca_certificate:
+        kwds['ca_certificate'] = options.ca_certificate
     if options.pidfile:
         kwds['pidfile'] = options.pidfile
 
