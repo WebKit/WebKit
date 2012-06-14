@@ -357,6 +357,9 @@ BUGWK86443 : plugins/npruntime/delete-plugin-within-invoke.html = CRASH
 
 BUGWK86176 DEBUG : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
 
+BUGWK89104 DEBUG : svg/batik/text/textDecoration.svg = CRASH
+BUGWK89104 DEBUG : svg/batik/text/textEffect3.svg = CRASH
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////

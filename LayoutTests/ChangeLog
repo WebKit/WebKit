@@ -1,5 +1,17 @@
 2012-06-14  Simon Pena  <spena@igalia.com>
 
+        [GTK] Update TestExpectations with tests crashing in 64bits Debug build
+        https://bugs.webkit.org/show_bug.cgi?id=89105
+
+        Unreviewed gardening.
+
+        Mark svg/batik/text/textDecoration.svg and
+        svg/batik/text/textEffect3.svg as crashing in DEBUG.
+
+        * platform/gtk/TestExpectations:
+
+2012-06-14  Simon Pena  <spena@igalia.com>
+
         [GTK] Update TestExpectations with non-passing tests
         https://bugs.webkit.org/show_bug.cgi?id=89100
 
