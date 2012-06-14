@@ -1,3 +1,18 @@
+2012-06-14  Min Qin  <qinmin@google.com>
+
+        Remove the const keyword from MediaPlayerPrivate::enterFullscreen()
+        https://bugs.webkit.org/show_bug.cgi?id=89044
+
+        Reviewed by Adam Barth.
+
+        enterFullscreen() and exitFullscreen() could both modify the player state.
+        This change reverts the change we made in r120213.
+
+        Just function declaration change, no test needed.
+
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::enterFullscreen):
+
 2012-06-14  Edaena Salinas Jasso  <edaena@apple.com>
 
         el.getAttribute('type') returns 'null' when setting el.type to null

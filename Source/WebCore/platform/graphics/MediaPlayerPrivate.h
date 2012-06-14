@@ -118,7 +118,7 @@ public:
 #endif
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO) || USE(NATIVE_FULLSCREEN_VIDEO)
-    virtual void enterFullscreen() const { }
+    virtual void enterFullscreen() { }
     virtual void exitFullscreen() { }
 #endif
 
