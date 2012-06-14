@@ -124,10 +124,10 @@ void NumberInputType::setValueAsDouble(double newValue, TextFieldEventBehavior e
     element()->setValue(serializeForNumberType(newValue), eventBehavior);
 }
 
-void NumberInputType::setValueAsInputNumber(const InputNumber& newValue, TextFieldEventBehavior eventBehavior, ExceptionCode& ec) const
+void NumberInputType::setValueAsDecimal(const Decimal& newValue, TextFieldEventBehavior eventBehavior, ExceptionCode& ec) const
 {
     // FIXME: We should use numeric_limits<double>::max for number input type.
-    const InputNumber floatMax = convertDoubleToInputNumber(numeric_limits<float>::max());
+    const Decimal floatMax = Decimal::fromDouble(numeric_limits<float>::max());
     if (newValue < -floatMax) {
         ec = INVALID_STATE_ERR;
         return;
@@ -153,12 +153,12 @@ bool NumberInputType::typeMismatch() const
 StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (numberDefaultStep, numberDefaultStepBase, numberStepScaleFactor));
-    const InputNumber stepBase = parseToDecimalForNumberType(element()->fastGetAttribute(minAttr), numberDefaultStepBase);
+    const Decimal stepBase = parseToDecimalForNumberType(element()->fastGetAttribute(minAttr), numberDefaultStepBase);
     // FIXME: We should use numeric_limits<double>::max for number input type.
-    const InputNumber floatMax = convertDoubleToInputNumber(numeric_limits<float>::max());
-    const InputNumber minimum = parseToNumber(element()->fastGetAttribute(minAttr), -floatMax);
-    const InputNumber maximum = parseToNumber(element()->fastGetAttribute(maxAttr), floatMax);
-    const InputNumber step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    const Decimal floatMax = Decimal::fromDouble(numeric_limits<float>::max());
+    const Decimal minimum = parseToNumber(element()->fastGetAttribute(minAttr), -floatMax);
+    const Decimal maximum = parseToNumber(element()->fastGetAttribute(maxAttr), floatMax);
+    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 
@@ -205,12 +205,12 @@ void NumberInputType::handleWheelEvent(WheelEvent* event)
     handleWheelEventForSpinButton(event);
 }
 
-InputNumber NumberInputType::parseToNumber(const String& src, const InputNumber& defaultValue) const
+Decimal NumberInputType::parseToNumber(const String& src, const Decimal& defaultValue) const
 {
     return parseToDecimalForNumberType(src, defaultValue);
 }
 
-String NumberInputType::serialize(const InputNumber& value) const
+String NumberInputType::serialize(const Decimal& value) const
 {
     if (!value.isFinite())
         return String();

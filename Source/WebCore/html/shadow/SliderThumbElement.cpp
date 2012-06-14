@@ -51,10 +51,10 @@ using namespace std;
 
 namespace WebCore {
 
-inline static InputNumber sliderPosition(HTMLInputElement* element)
+inline static Decimal sliderPosition(HTMLInputElement* element)
 {
     const StepRange stepRange(element->createStepRange(RejectAny));
-    const InputNumber oldValue = parseToDecimalForNumberType(element->value(), stepRange.defaultValue());
+    const Decimal oldValue = parseToDecimalForNumberType(element->value(), stepRange.defaultValue());
     return stepRange.proportionFromValue(stepRange.clampValue(oldValue));
 }
 
@@ -116,7 +116,7 @@ void RenderSliderThumb::layout()
     HTMLInputElement* input = node()->shadowAncestorNode()->toInputElement();
     bool isVertical = hasVerticalAppearance(input);
 
-    double fraction = convertInputNumberToDouble(sliderPosition(input) * 100);
+    double fraction = (sliderPosition(input) * 100).toDouble();
     if (isVertical)
         style()->setTop(Length(100 - fraction, Percent));
     else if (style()->isLeftToRightDirection())
@@ -242,10 +242,10 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
     if (position == currentPosition)
         return;
 
-    const InputNumber ratio = convertDoubleToInputNumber(static_cast<double>(position) / trackSize);
-    const InputNumber fraction = isVertical || !renderBox()->style()->isLeftToRightDirection() ? InputNumber(1) - ratio : ratio;
+    const Decimal ratio = Decimal::fromDouble(static_cast<double>(position) / trackSize);
+    const Decimal fraction = isVertical || !renderBox()->style()->isLeftToRightDirection() ? Decimal(1) - ratio : ratio;
     StepRange stepRange(input->createStepRange(RejectAny));
-    const InputNumber value = stepRange.clampValue(stepRange.valueFromProportion(fraction));
+    const Decimal value = stepRange.clampValue(stepRange.valueFromProportion(fraction));
 
     // FIXME: This is no longer being set from renderer. Consider updating the method name.
     input->setValueFromRenderer(serializeForNumberType(value));

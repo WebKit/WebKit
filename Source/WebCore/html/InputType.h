@@ -140,7 +140,7 @@ public:
     virtual void setValueAsDate(double, ExceptionCode&) const;
     virtual double valueAsDouble() const;
     virtual void setValueAsDouble(double, TextFieldEventBehavior, ExceptionCode&) const;
-    virtual void setValueAsInputNumber(const InputNumber&, TextFieldEventBehavior, ExceptionCode&) const;
+    virtual void setValueAsDecimal(const Decimal&, TextFieldEventBehavior, ExceptionCode&) const;
 
     // Validation functions
     virtual String validationMessage() const;
@@ -157,12 +157,12 @@ public:
     bool rangeOverflow(const String&) const;
     bool isInRange(const String&) const;
     bool isOutOfRange(const String&) const;
-    virtual InputNumber defaultValueForStepUp() const;
+    virtual Decimal defaultValueForStepUp() const;
     double minimum() const;
     double maximum() const;
     virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const;
     bool stepMismatch(const String&) const;
-    virtual bool getAllowedValueStep(InputNumber*) const;
+    virtual bool getAllowedValueStep(Decimal*) const;
     virtual StepRange createStepRange(AnyStepHandling) const;
     virtual void stepUp(int, ExceptionCode&);
     virtual void stepUpFromRenderer(int);
@@ -263,10 +263,10 @@ public:
     virtual String defaultToolTip() const;
 
     // Parses the specified string for the type, and return
-    // the InputNumber value for the parsing result if the parsing
+    // the Decimal value for the parsing result if the parsing
     // succeeds; Returns defaultValue otherwise. This function can
     // return NaN or Infinity only if defaultValue is NaN or Infinity.
-    virtual InputNumber parseToNumber(const String&, const InputNumber& defaultValue) const;
+    virtual Decimal parseToNumber(const String&, const Decimal& defaultValue) const;
 
     // Parses the specified string for this InputType, and returns true if it
     // is successfully parsed. An instance pointed by the DateComponents*
@@ -274,10 +274,10 @@ public:
     // fails. The DateComponents* parameter may be 0.
     virtual bool parseToDateComponents(const String&, DateComponents*) const;
 
-    // Create a string representation of the specified InputNumber value for the
+    // Create a string representation of the specified Decimal value for the
     // input type. If NaN or Infinity is specified, this returns an empty
     // string. This should not be called for types without valueAsNumber.
-    virtual String serialize(const InputNumber&) const;
+    virtual String serialize(const Decimal&) const;
 
     virtual bool supportsIndeterminateAppearance() const;
 
@@ -291,7 +291,7 @@ protected:
     HTMLInputElement* element() const { return m_element; }
     void dispatchSimulatedClickIfActive(KeyboardEvent*) const;
     Chrome* chrome() const;
-    InputNumber parseToNumberOrNaN(const String&) const;
+    Decimal parseToNumberOrNaN(const String&) const;
 
 private:
     // Helper for stepUp()/stepDown(). Adds step value * count to the current value.

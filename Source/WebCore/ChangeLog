@@ -1,3 +1,114 @@
+2012-06-14  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Form] Replace InputNumber type to Decimal type and drop InputNumber
+        https://bugs.webkit.org/show_bug.cgi?id=88746
+
+        Reviewed by Kent Tamura.
+
+        This patch removes InputNumber introduced by r119540 by replacing
+        InputNumber type to Decimal type and changing convertDoubleToDecimal
+        and convertDecimalToDouble to Decimal::fromDouble and
+        Decimal::toDouble, respectively.
+
+        No new tests. This patch doesn't change behavior.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::setValueAsDecimal):
+        (WebCore::BaseDateAndTimeInputType::defaultValueForStepUp):
+        (WebCore::BaseDateAndTimeInputType::parseToNumber):
+        (WebCore::BaseDateAndTimeInputType::serialize):
+        (WebCore::BaseDateAndTimeInputType::serializeWithComponents):
+        (WebCore::BaseDateAndTimeInputType::serializeWithMilliseconds):
+        * html/BaseDateAndTimeInputType.h:
+        (BaseDateAndTimeInputType):
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::createStepRange):
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::defaultValueForStepUp):
+        (WebCore::DateTimeInputType::createStepRange):
+        * html/DateTimeInputType.h:
+        (DateTimeInputType):
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::createStepRange):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::getAllowedValueStep):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/InputType.cpp:
+        (WebCore::InputType::setValueAsDouble):
+        (WebCore::InputType::setValueAsDecimal):
+        (WebCore::InputType::rangeUnderflow):
+        (WebCore::InputType::rangeOverflow):
+        (WebCore::InputType::defaultValueForStepUp):
+        (WebCore::InputType::minimum):
+        (WebCore::InputType::maximum):
+        (WebCore::InputType::isInRange):
+        (WebCore::InputType::isOutOfRange):
+        (WebCore::InputType::stepMismatch):
+        (WebCore::InputType::validationMessage):
+        (WebCore::InputType::parseToNumber):
+        (WebCore::InputType::parseToNumberOrNaN):
+        (WebCore::InputType::serialize):
+        (WebCore::InputType::applyStep):
+        (WebCore::InputType::getAllowedValueStep):
+        (WebCore::InputType::stepUpFromRenderer):
+        * html/InputType.h:
+        (InputType):
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::defaultValueForStepUp):
+        (WebCore::MonthInputType::createStepRange):
+        (WebCore::MonthInputType::parseToNumber):
+        * html/MonthInputType.h:
+        (MonthInputType):
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::setValueAsDecimal):
+        (WebCore::NumberInputType::createStepRange):
+        (WebCore::NumberInputType::parseToNumber):
+        (WebCore::NumberInputType::serialize):
+        * html/NumberInputType.h:
+        (NumberInputType):
+        * html/RangeInputType.cpp:
+        (WebCore::ensureMaximum):
+        (WebCore::RangeInputType::setValueAsDecimal):
+        (WebCore::RangeInputType::createStepRange):
+        (WebCore::RangeInputType::handleKeydownEvent):
+        (WebCore::RangeInputType::parseToNumber):
+        (WebCore::RangeInputType::serialize):
+        (WebCore::RangeInputType::sanitizeValue):
+        * html/RangeInputType.h:
+        (RangeInputType):
+        * html/StepRange.cpp:
+        (WebCore::StepRange::StepRange):
+        (WebCore::StepRange::acceptableError):
+        (WebCore::StepRange::alignValueForStep):
+        (WebCore::StepRange::clampValue):
+        (WebCore::StepRange::parseStep):
+        (WebCore::StepRange::roundByStep):
+        (WebCore::StepRange::stepMismatch):
+        * html/StepRange.h:
+        (WebCore::StepRange::StepDescription::defaultValue):
+        (StepRange):
+        (WebCore::StepRange::maximum):
+        (WebCore::StepRange::minimum):
+        (WebCore::StepRange::step):
+        (WebCore::StepRange::stepBase):
+        (WebCore::StepRange::defaultValue):
+        (WebCore::StepRange::proportionFromValue):
+        (WebCore::StepRange::valueFromProportion):
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::defaultValueForStepUp):
+        (WebCore::TimeInputType::createStepRange):
+        * html/TimeInputType.h:
+        (TimeInputType):
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::createStepRange):
+        * html/shadow/CalendarPickerElement.cpp:
+        (WebCore::CalendarPickerElement::writeDocument):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::sliderPosition):
+        (WebCore::RenderSliderThumb::layout):
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+
 2012-06-14  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: Implement ExtensionPanel.show() method

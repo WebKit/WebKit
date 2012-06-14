@@ -208,7 +208,7 @@ void CalendarPickerElement::writeDocument(DocumentWriter& writer)
     String minString = date.toString();
     date.setMillisecondsSinceEpochForDate(input->maximum());
     String maxString = date.toString();
-    InputNumber step;
+    Decimal step;
     String stepString = input->fastGetAttribute(stepAttr);
     if (stepString.isEmpty() || !input->getAllowedValueStep(&step))
         stepString = "1";

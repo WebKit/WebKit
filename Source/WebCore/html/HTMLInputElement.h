@@ -67,7 +67,7 @@ public:
     double maximum() const;
     // Sets the "allowed value step" defined in the HTML spec to the specified double pointer.
     // Returns false if there is no "allowed value step."
-    bool getAllowedValueStep(InputNumber*) const;
+    bool getAllowedValueStep(Decimal*) const;
     StepRange createStepRange(AnyStepHandling) const;
 
     // Implementations of HTMLInputElement::stepUp() and stepDown().

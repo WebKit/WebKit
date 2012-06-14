@@ -82,7 +82,7 @@ String MonthInputType::serializeWithMilliseconds(double value) const
     return serializeWithComponents(date);
 }
 
-InputNumber MonthInputType::defaultValueForStepUp() const
+Decimal MonthInputType::defaultValueForStepUp() const
 {
     double current = currentTimeMS();
     double utcOffset = calculateUTCOffset();
@@ -94,28 +94,28 @@ InputNumber MonthInputType::defaultValueForStepUp() const
     date.setMillisecondsSinceEpochForMonth(current);
     double months = date.monthsSinceEpoch();
     ASSERT(isfinite(months));
-    return convertDoubleToInputNumber(months);
+    return Decimal::fromDouble(months);
 }
 
 StepRange MonthInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (monthDefaultStep, monthDefaultStepBase, monthStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
 
-    const InputNumber stepBase = parseToNumber(element()->fastGetAttribute(minAttr), convertDoubleToInputNumber(DateComponents::minimumMonth()));
-    const InputNumber minimum = parseToNumber(element()->fastGetAttribute(minAttr), convertDoubleToInputNumber(DateComponents::minimumMonth()));
-    const InputNumber maximum = parseToNumber(element()->fastGetAttribute(maxAttr), convertDoubleToInputNumber(DateComponents::maximumMonth()));
-    const InputNumber step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    const Decimal stepBase = parseToNumber(element()->fastGetAttribute(minAttr), Decimal::fromDouble(DateComponents::minimumMonth()));
+    const Decimal minimum = parseToNumber(element()->fastGetAttribute(minAttr), Decimal::fromDouble(DateComponents::minimumMonth()));
+    const Decimal maximum = parseToNumber(element()->fastGetAttribute(maxAttr), Decimal::fromDouble(DateComponents::maximumMonth()));
+    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 
-InputNumber MonthInputType::parseToNumber(const String& src, const InputNumber& defaultValue) const
+Decimal MonthInputType::parseToNumber(const String& src, const Decimal& defaultValue) const
 {
     DateComponents date;
     if (!parseToDateComponents(src, &date))
         return defaultValue;
     double months = date.monthsSinceEpoch();
     ASSERT(isfinite(months));
-    return convertDoubleToInputNumber(months);
+    return Decimal::fromDouble(months);
 }
 
 bool MonthInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const

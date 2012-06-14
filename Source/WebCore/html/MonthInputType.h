@@ -47,8 +47,8 @@ private:
     virtual DateComponents::Type dateType() const OVERRIDE;
     virtual double valueAsDate() const OVERRIDE;
     virtual String serializeWithMilliseconds(double) const OVERRIDE;
-    virtual InputNumber parseToNumber(const String&, const InputNumber&) const OVERRIDE;
-    virtual InputNumber defaultValueForStepUp() const OVERRIDE;
+    virtual Decimal parseToNumber(const String&, const Decimal&) const OVERRIDE;
+    virtual Decimal defaultValueForStepUp() const OVERRIDE;
     virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const OVERRIDE;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;

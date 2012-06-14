@@ -51,7 +51,7 @@ StepRange::StepRange(const StepRange& stepRange)
 {
 }
 
-StepRange::StepRange(const InputNumber& stepBase, const InputNumber& minimum, const InputNumber& maximum, const InputNumber& step, const StepDescription& stepDescription)
+StepRange::StepRange(const Decimal& stepBase, const Decimal& minimum, const Decimal& maximum, const Decimal& step, const StepDescription& stepDescription)
     : m_maximum(maximum)
     , m_minimum(minimum)
     , m_step(step.isFinite() ? step : 1)
@@ -65,14 +65,14 @@ StepRange::StepRange(const InputNumber& stepBase, const InputNumber& minimum, co
     ASSERT(m_stepBase.isFinite());
 }
 
-InputNumber StepRange::acceptableError() const
+Decimal StepRange::acceptableError() const
 {
     // FIXME: We should use DBL_MANT_DIG instead of FLT_MANT_DIG regarding to HTML5 specification.
     DEFINE_STATIC_LOCAL(const Decimal, twoPowerOfFloatMantissaBits, (Decimal::Positive, 0, UINT64_C(1) << FLT_MANT_DIG));
     return m_step / twoPowerOfFloatMantissaBits;
 }
 
-InputNumber StepRange::alignValueForStep(const InputNumber& currentValue, const InputNumber& newValue) const
+Decimal StepRange::alignValueForStep(const Decimal& currentValue, const Decimal& newValue) const
 {
     DEFINE_STATIC_LOCAL(const Decimal, tenPowerOf21, (Decimal::Positive, 21, 1));
     if (newValue >= tenPowerOf21)
@@ -81,20 +81,20 @@ InputNumber StepRange::alignValueForStep(const InputNumber& currentValue, const 
     return stepMismatch(currentValue) ? newValue : roundByStep(newValue, m_stepBase);
 }
 
-InputNumber StepRange::clampValue(const InputNumber& value) const
+Decimal StepRange::clampValue(const Decimal& value) const
 {
-    const InputNumber inRangeValue = max(m_minimum, min(value, m_maximum));
+    const Decimal inRangeValue = max(m_minimum, min(value, m_maximum));
     if (!m_hasStep)
         return inRangeValue;
     // Rounds inRangeValue to minimum + N * step.
-    const InputNumber roundedValue = roundByStep(inRangeValue, m_minimum);
-    const InputNumber clampedValue = roundedValue > m_maximum ? roundedValue - m_step : roundedValue;
+    const Decimal roundedValue = roundByStep(inRangeValue, m_minimum);
+    const Decimal clampedValue = roundedValue > m_maximum ? roundedValue - m_step : roundedValue;
     ASSERT(clampedValue >= m_minimum);
     ASSERT(clampedValue <= m_maximum);
     return clampedValue;
 }
 
-InputNumber StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescription& stepDescription, const String& stepString)
+Decimal StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescription& stepDescription, const String& stepString)
 {
     if (stepString.isEmpty())
         return stepDescription.defaultValue();
@@ -136,21 +136,21 @@ InputNumber StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDesc
     return step;
 }
 
-InputNumber StepRange::roundByStep(const InputNumber& value, const InputNumber& base) const
+Decimal StepRange::roundByStep(const Decimal& value, const Decimal& base) const
 {
     return base + ((value - base) / m_step).round() * m_step;
 }
 
-bool StepRange::stepMismatch(const InputNumber& valueForCheck) const
+bool StepRange::stepMismatch(const Decimal& valueForCheck) const
 {
     if (!m_hasStep)
         return false;
     if (!valueForCheck.isFinite())
         return false;
-    const InputNumber value = (valueForCheck - m_stepBase).abs();
+    const Decimal value = (valueForCheck - m_stepBase).abs();
     if (!value.isFinite())
         return false;
-    // InputNumber's fractional part size is DBL_MAN_DIG-bit. If the current value
+    // Decimal's fractional part size is DBL_MAN_DIG-bit. If the current value
     // is greater than step*2^DBL_MANT_DIG, the following computation for
     // remainder makes no sense.
     DEFINE_STATIC_LOCAL(const Decimal, twoPowerOfDoubleMantissaBits, (Decimal::Positive, 0, UINT64_C(1) << DBL_MANT_DIG));
@@ -159,10 +159,10 @@ bool StepRange::stepMismatch(const InputNumber& valueForCheck) const
     // The computation follows HTML5 4.10.7.2.10 `The step attribute' :
     // ... that number subtracted from the step base is not an integral multiple
     // of the allowed value step, the element is suffering from a step mismatch.
-    const InputNumber remainder = (value - m_step * (value / m_step).round()).abs();
+    const Decimal remainder = (value - m_step * (value / m_step).round()).abs();
     // Accepts erros in lower fractional part which IEEE 754 single-precision
     // can't represent.
-    const InputNumber computedAcceptableError = acceptableError();
+    const Decimal computedAcceptableError = acceptableError();
     return computedAcceptableError < remainder && remainder < (m_step - computedAcceptableError);
 }
 

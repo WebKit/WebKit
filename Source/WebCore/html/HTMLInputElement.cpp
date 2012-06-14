@@ -274,7 +274,7 @@ bool HTMLInputElement::stepMismatch() const
     return willValidate() && m_inputType->stepMismatch(value());
 }
 
-bool HTMLInputElement::getAllowedValueStep(InputNumber* step) const
+bool HTMLInputElement::getAllowedValueStep(Decimal* step) const
 {
     return m_inputType->getAllowedValueStep(step);
 }

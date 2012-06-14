@@ -62,19 +62,19 @@ DateComponents::Type DateTimeInputType::dateType() const
     return DateComponents::DateTime;
 }
 
-InputNumber DateTimeInputType::defaultValueForStepUp() const
+Decimal DateTimeInputType::defaultValueForStepUp() const
 {
-    return convertDoubleToInputNumber(currentTimeMS());
+    return Decimal::fromDouble(currentTimeMS());
 }
 
 StepRange DateTimeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (dateTimeDefaultStep, dateTimeDefaultStepBase, dateTimeStepScaleFactor, StepRange::ScaledStepValueShouldBeInteger));
 
-    const InputNumber stepBase = parseToNumber(element()->fastGetAttribute(minAttr), 0);
-    const InputNumber minimum = parseToNumber(element()->fastGetAttribute(minAttr), convertDoubleToInputNumber(DateComponents::minimumDateTime()));
-    const InputNumber maximum = parseToNumber(element()->fastGetAttribute(maxAttr), convertDoubleToInputNumber(DateComponents::maximumDateTime()));
-    const InputNumber step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    const Decimal stepBase = parseToNumber(element()->fastGetAttribute(minAttr), 0);
+    const Decimal minimum = parseToNumber(element()->fastGetAttribute(minAttr), Decimal::fromDouble(DateComponents::minimumDateTime()));
+    const Decimal maximum = parseToNumber(element()->fastGetAttribute(maxAttr), Decimal::fromDouble(DateComponents::maximumDateTime()));
+    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 

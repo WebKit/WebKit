@@ -42,7 +42,7 @@ class BaseDateAndTimeInputType : public TextFieldInputType {
 protected:
     BaseDateAndTimeInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
-    virtual InputNumber parseToNumber(const String&, const InputNumber&) const OVERRIDE;
+    virtual Decimal parseToNumber(const String&, const Decimal&) const OVERRIDE;
     virtual bool parseToDateComponents(const String&, DateComponents*) const OVERRIDE;
     String serializeWithComponents(const DateComponents&) const;
 
@@ -53,13 +53,13 @@ private:
     virtual double valueAsDate() const OVERRIDE;
     virtual void setValueAsDate(double, ExceptionCode&) const OVERRIDE;
     virtual double valueAsDouble() const OVERRIDE;
-    virtual void setValueAsInputNumber(const InputNumber&, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
+    virtual void setValueAsDecimal(const Decimal&, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
     virtual bool typeMismatchFor(const String&) const OVERRIDE;
     virtual bool typeMismatch() const OVERRIDE;
-    virtual InputNumber defaultValueForStepUp() const OVERRIDE;
+    virtual Decimal defaultValueForStepUp() const OVERRIDE;
     virtual bool isSteppable() const OVERRIDE;
     virtual void handleWheelEvent(WheelEvent*) OVERRIDE;
-    virtual String serialize(const InputNumber&) const OVERRIDE;
+    virtual String serialize(const Decimal&) const OVERRIDE;
     virtual String serializeWithMilliseconds(double) const;
     virtual String localizeValue(const String&) const OVERRIDE;
     virtual String visibleValue() const OVERRIDE;
