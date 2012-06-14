@@ -1,3 +1,14 @@
+2012-06-13  Kinuko Yasuda  <kinuko@chromium.org>
+
+        [Chromium] Unreviewed: Add rebaseline and update expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=87356
+
+        Patch by Eric Uhrhane <ericu@chromium.org>
+
+        * platform/chromium/fast/files/read-blob-async-expected.txt: Added.
+        * platform/chromium/fast/files/workers/worker-read-blob-async-expected.txt: Added.
+        * platform/chromium/fast/files/workers/worker-read-blob-sync-expected.txt: Added.
+
 2012-06-13  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Unreviewed: Rebaseline for Mac
