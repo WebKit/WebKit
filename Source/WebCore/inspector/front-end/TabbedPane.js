@@ -373,7 +373,8 @@ WebInspector.TabbedPane.prototype = {
         for (var tabId in this._tabs)
             measuredWidths.push(this._tabs[tabId].measuredWidth);
         
-        var maxWidth = this._calculateMaxWidth(measuredWidths, this._headerContentsElement.offsetWidth);
+        const roundingError = 5;
+        var maxWidth = this._calculateMaxWidth(measuredWidths, this._headerContentsElement.offsetWidth - 5);
         
         for (var tabId in this._tabs) {
             var tab = this._tabs[tabId];

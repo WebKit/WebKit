@@ -584,6 +584,7 @@ WebInspector.windowResize = function(event)
     WebInspector.inspectorView.doResize();
     WebInspector.drawer.resize();
     WebInspector.toolbar.resize();
+    WebInspector.settingsController.resize();
 }
 
 WebInspector.setDockingUnavailable = function(unavailable)

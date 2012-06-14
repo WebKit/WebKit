@@ -85,7 +85,6 @@ body.compact .help-window-main {
     border-radius: 8px;
     height: 16px;
     width: 16px;
-    margin: 10px 0;
 }
 
 body.compact .help-content {
@@ -126,12 +125,12 @@ body.platform-mac .help-block {
     width: 330px;
 }
 
-#settings.help-container {
-    -webkit-column-width: 240px;
+.settings-tab.help-container {
+    -webkit-column-width: 410px;
 }
 
-#settings .help-block {
-    width: 240px;
+.settings-tab .help-block {
+    width: 410px;
 }
 
 .help-line {
@@ -185,7 +184,7 @@ body.platform-mac .help-key {
 
 .help-content fieldset {
     border: none;
-    margin-left: 9px;
+    margin-left: 7px;
 }
 
 .help-content fieldset p {
@@ -259,7 +258,7 @@ body:not(.compact) #settings-screen .tabbed-pane {
 }
 
 #settings-screen .tabbed-pane-header-tabs {
-    padding-top: 9px;
+    padding-top: 6px;
 }
 
 #settings-screen .tabbed-pane-header-tab {
@@ -268,15 +267,16 @@ body:not(.compact) #settings-screen .tabbed-pane {
     top: 1px;
     text-shadow: none;
     color: rgb(255, 255, 255);
-    height: 19px;
+    height: 22px;
     font-size: 13px;
-    padding: 0 4px;
+    padding: 1px 10px;
     margin: 0;
 }
 
 #settings-screen .help-close-button {
-    margin-top: 6px;
-    margin-bottom: 6px;
+    position: absolute;
+    top: 6px;
+    right: 6px;
 }
 
 #settings-screen .tabbed-pane-header-tab.selected {

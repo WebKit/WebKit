@@ -45,7 +45,7 @@ WebInspector.ShortcutsScreen.prototype = {
         return section;
     },
 
-    _createShortcutsTabView: function()
+    createShortcutsTabView: function()
     {
         var orderedSections = [];
         for (var section in this._sections)

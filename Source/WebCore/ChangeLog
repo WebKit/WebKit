@@ -1,3 +1,45 @@
+2012-06-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: refactor settings screen to move user agent and experiments out of general tab.
+        https://bugs.webkit.org/show_bug.cgi?id=89101
+
+        Reviewed by Vsevolod Vlasov.
+
+        See image attached to the bug.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen.prototype.selectTab):
+        (WebInspector.SettingsScreen.prototype._tabSelected):
+        (WebInspector.SettingsScreen.prototype.set wasShown):
+        (WebInspector.SettingsScreen.prototype.willHide):
+        (WebInspector.SettingsTab):
+        (WebInspector.SettingsTab.prototype._appendSection):
+        (WebInspector.SettingsTab.prototype._createCustomSetting):
+        (WebInspector.GenericSettingsTab):
+        (WebInspector.GenericSettingsTab.prototype._showPaintRectsChanged):
+        (WebInspector.GenericSettingsTab.prototype.get _updateScriptDisabledCheckbox):
+        (WebInspector.GenericSettingsTab.prototype._javaScriptDisabledChanged):
+        (WebInspector.UserAgentSettingsTab):
+        (WebInspector.UserAgentSettingsTab.prototype._createUserAgentSelectRowElement.get const):
+        (WebInspector.UserAgentSettingsTab.prototype._createUserAgentSelectRowElement.textDoubleClicked):
+        (WebInspector.UserAgentSettingsTab.prototype._createUserAgentSelectRowElement.textChanged):
+        (WebInspector.UserAgentSettingsTab.prototype._createUserAgentSelectRowElement.set checkboxClicked):
+        (WebInspector.UserAgentSettingsTab.prototype._createDeviceMetricsElement):
+        (WebInspector.ExperimentsSettingsTab):
+        (WebInspector.ExperimentsSettingsTab.prototype._createExperimentsWarningSubsection):
+        (WebInspector.ExperimentsSettingsTab.prototype._createExperimentCheckbox.listener):
+        (WebInspector.ExperimentsSettingsTab.prototype._createExperimentCheckbox):
+        * inspector/front-end/ShortcutsScreen.js:
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane.prototype.get headerContentsElement):
+        * inspector/front-end/helpScreen.css:
+        (.settings-tab.help-container):
+        (.settings-tab .help-block):
+        (.help-content fieldset):
+        (#settings-screen .tabbed-pane-header-tabs):
+        (#settings-screen .tabbed-pane-header-tab):
+
 2012-06-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Worker tear-down can re-enter JSC during GC finalization pt. 2
