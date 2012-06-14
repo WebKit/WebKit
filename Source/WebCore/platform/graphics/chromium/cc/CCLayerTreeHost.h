@@ -74,8 +74,8 @@ protected:
     virtual ~CCLayerTreeHostClient() { }
 };
 
-struct CCSettings {
-    CCSettings()
+struct CCLayerTreeSettings {
+    CCLayerTreeSettings()
             : acceleratePainting(false)
             , forceSoftwareCompositing(false)
             , showFPSCounter(false)
@@ -84,9 +84,6 @@ struct CCSettings {
             , showPropertyChangedRects(false)
             , showSurfaceDamageRects(false)
             , refreshRate(0)
-            , perTilePainting(false)
-            , partialSwapEnabled(false)
-            , threadedAnimationEnabled(false)
             , maxPartialTextureUpdates(std::numeric_limits<size_t>::max())
             , defaultTileSize(IntSize(256, 256))
             , maxUntiledLayerSize(IntSize(512, 512))
@@ -101,9 +98,6 @@ struct CCSettings {
     bool showPropertyChangedRects;
     bool showSurfaceDamageRects;
     double refreshRate;
-    bool perTilePainting;
-    bool partialSwapEnabled;
-    bool threadedAnimationEnabled;
     size_t maxPartialTextureUpdates;
     IntSize defaultTileSize;
     IntSize maxUntiledLayerSize;
@@ -143,7 +137,7 @@ struct LayerRendererCapabilities {
 class CCLayerTreeHost : public RateLimiterClient {
     WTF_MAKE_NONCOPYABLE(CCLayerTreeHost);
 public:
-    static PassOwnPtr<CCLayerTreeHost> create(CCLayerTreeHostClient*, const CCSettings&);
+    static PassOwnPtr<CCLayerTreeHost> create(CCLayerTreeHostClient*, const CCLayerTreeSettings&);
     virtual ~CCLayerTreeHost();
 
     void setSurfaceReady();
@@ -219,7 +213,7 @@ public:
     const LayerChromium* rootLayer() const { return m_rootLayer.get(); }
     void setRootLayer(PassRefPtr<LayerChromium>);
 
-    const CCSettings& settings() const { return m_settings; }
+    const CCLayerTreeSettings& settings() const { return m_settings; }
 
     void setViewportSize(const IntSize&);
 
@@ -254,7 +248,7 @@ public:
     void deleteTextureAfterCommit(PassOwnPtr<ManagedTexture>);
 
 protected:
-    CCLayerTreeHost(CCLayerTreeHostClient*, const CCSettings&);
+    CCLayerTreeHost(CCLayerTreeHostClient*, const CCLayerTreeSettings&);
     bool initialize();
 
 private:
@@ -295,7 +289,7 @@ private:
     RefPtr<LayerChromium> m_rootLayer;
     OwnPtr<TextureManager> m_contentsTextureManager;
 
-    CCSettings m_settings;
+    CCLayerTreeSettings m_settings;
 
     IntSize m_viewportSize;
     IntSize m_deviceViewportSize;

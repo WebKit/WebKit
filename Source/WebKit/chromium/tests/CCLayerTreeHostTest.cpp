@@ -32,6 +32,7 @@
 #include "ContentLayerChromium.h"
 #include "GraphicsContext3DPrivate.h"
 #include "cc/CCLayerTreeHostImpl.h"
+#include "cc/CCSettings.h"
 #include "cc/CCTextureUpdater.h"
 #include "cc/CCTimingFunction.h"
 #include "platform/WebThread.h"
@@ -56,6 +57,25 @@ namespace {
 
 class CCLayerTreeHostTest : public CCThreadedTest { };
 class CCLayerTreeHostTestThreadOnly : public CCThreadedTestThreadOnly { };
+
+// Shortlived layerTreeHosts shouldn't die.
+class CCLayerTreeHostTestShortlived1 : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestShortlived1() { }
+
+    virtual void beginTest()
+    {
+        // Kill the layerTreeHost immediately.
+        m_layerTreeHost->setRootLayer(0);
+        m_layerTreeHost.clear();
+
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+};
 
 // Shortlived layerTreeHosts shouldn't die with a commit in flight.
 class CCLayerTreeHostTestShortlived2 : public CCLayerTreeHostTest {

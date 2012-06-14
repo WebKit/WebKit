@@ -536,12 +536,6 @@ namespace WebCore {
         bool shouldDisplayTextDescriptions() const { return m_shouldDisplayTextDescriptions; }
 #endif
 
-        void setPerTileDrawingEnabled(bool enabled) { m_perTileDrawingEnabled = enabled; }
-        bool perTileDrawingEnabled() const { return m_perTileDrawingEnabled; }
-
-        void setPartialSwapEnabled(bool enabled) { m_partialSwapEnabled = enabled; }
-        bool partialSwapEnabled() const { return m_partialSwapEnabled; }
-
         void setScrollingCoordinatorEnabled(bool enabled) { m_scrollingCoordinatorEnabled = enabled; }
         bool scrollingCoordinatorEnabled() const { return m_scrollingCoordinatorEnabled; }
 
@@ -556,9 +550,6 @@ namespace WebCore {
         void setTouchEventEmulationEnabled(bool enabled) { m_touchEventEmulationEnabled = enabled; }
         bool isTouchEventEmulationEnabled() const { return m_touchEventEmulationEnabled; }
 #endif
-
-        void setThreadedAnimationEnabled(bool enabled) { m_threadedAnimationEnabled = enabled; }
-        bool threadedAnimationEnabled() const { return m_threadedAnimationEnabled; }
 
         void setShouldRespectImageOrientation(bool enabled) { m_shouldRespectImageOrientation = enabled; }
         bool shouldRespectImageOrientation() const { return m_shouldRespectImageOrientation; }
@@ -746,9 +737,6 @@ namespace WebCore {
         bool m_shouldDisplayCaptions : 1;
         bool m_shouldDisplayTextDescriptions : 1;
 #endif
-        bool m_perTileDrawingEnabled : 1;
-        bool m_partialSwapEnabled : 1;
-
         bool m_scrollingCoordinatorEnabled : 1;
 
         bool m_notificationsEnabled : 1;
@@ -757,7 +745,6 @@ namespace WebCore {
 #if ENABLE(TOUCH_EVENTS)
         bool m_touchEventEmulationEnabled : 1;
 #endif
-        bool m_threadedAnimationEnabled : 1;
         bool m_shouldRespectImageOrientation : 1;
         bool m_wantsBalancedSetDefersLoadingBehavior : 1;
         bool m_requestAnimationFrameEnabled : 1;

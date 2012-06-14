@@ -28,6 +28,7 @@
 
 #include "CCAnimationTestCommon.h"
 #include "CCLayerTestCommon.h"
+#include "CCTestCommon.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerRendererChromium.h"
@@ -36,6 +37,7 @@
 #include "cc/CCLayerTilingData.h"
 #include "cc/CCQuadCuller.h"
 #include "cc/CCScrollbarLayerImpl.h"
+#include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCTextureLayerImpl.h"
@@ -66,7 +68,7 @@ public:
         : m_didRequestCommit(false)
         , m_didRequestRedraw(false)
     {
-        CCSettings settings;
+        CCLayerTreeSettings settings;
         m_hostImpl = CCLayerTreeHostImpl::create(settings, this);
         m_hostImpl->initializeLayerRenderer(createContext(), UnthrottledUploader);
         m_hostImpl->setViewportSize(IntSize(10, 10));
@@ -81,10 +83,9 @@ public:
 
     PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHost(bool partialSwap, PassRefPtr<CCGraphicsContext> graphicsContext, PassOwnPtr<CCLayerImpl> rootPtr)
     {
-        CCSettings settings;
+        CCSettings::setPartialSwapEnabled(partialSwap);
 
-        settings.partialSwapEnabled = partialSwap;
-
+        CCLayerTreeSettings settings;
         OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
 
         myHostImpl->initializeLayerRenderer(graphicsContext, UnthrottledUploader);
@@ -150,6 +151,7 @@ protected:
     OwnPtr<CCLayerTreeHostImpl> m_hostImpl;
     bool m_didRequestCommit;
     bool m_didRequestRedraw;
+    CCScopedSettings m_scopedSettings;
 };
 
 TEST_F(CCLayerTreeHostImplTest, scrollDeltaNoLayers)
@@ -1115,8 +1117,8 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
 
     // This test creates its own CCLayerTreeHostImpl, so
     // that we can force partial swap enabled.
-    CCSettings settings;
-    settings.partialSwapEnabled = true;
+    CCLayerTreeSettings settings;
+    CCSettings::setPartialSwapEnabled(true);
     OwnPtr<CCLayerTreeHostImpl> layerTreeHostImpl = CCLayerTreeHostImpl::create(settings, this);
     layerTreeHostImpl->initializeLayerRenderer(ccContext, UnthrottledUploader);
     layerTreeHostImpl->setViewportSize(IntSize(500, 500));
@@ -1322,7 +1324,7 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapNoUpdate)
     harness.mustSetScissor(0, 0, 10, 10);
 
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = createLayerTreeHost(true, context, FakeLayerWithQuads::create(1));
-    
+
     // Draw once to make sure layer is not new
     CCLayerTreeHostImpl::FrameData frame;
     EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
@@ -1349,7 +1351,7 @@ public:
             return WebString("GL_CHROMIUM_post_sub_buffer");
         return WebString();
     }
-    
+
     WebString getRequestableExtensionsCHROMIUM()
     {
         return WebString("GL_CHROMIUM_post_sub_buffer");
@@ -1358,10 +1360,11 @@ public:
 
 static PassOwnPtr<CCLayerTreeHostImpl> setupLayersForOpacity(bool partialSwap, CCLayerTreeHostImplClient* client)
 {
-    CCSettings settings;
-    settings.partialSwapEnabled = partialSwap;
+    CCSettings::setPartialSwapEnabled(partialSwap);
 
     RefPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new PartialSwapContext()), GraphicsContext3D::RenderDirectlyToHostWindow));
+
+    CCLayerTreeSettings settings;
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, client);
     myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
     myHostImpl->setViewportSize(IntSize(100, 100));
@@ -1467,8 +1470,8 @@ TEST_F(CCLayerTreeHostImplTest, contributingLayerEmptyScissorNoPartialSwap)
 
 TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnScissoredLayer)
 {
-    CCSettings settings;
-    settings.partialSwapEnabled = true;
+    CCLayerTreeSettings settings;
+    CCSettings::setPartialSwapEnabled(true);
 
     RefPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new PartialSwapContext()), GraphicsContext3D::RenderDirectlyToHostWindow));
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);

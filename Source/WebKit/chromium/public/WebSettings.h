@@ -147,9 +147,6 @@ public:
     virtual void setHixie76WebSocketProtocolEnabled(bool) = 0;
     virtual void setVisualWordMovementEnabled(bool) = 0;
     virtual void setAcceleratedPaintingEnabled(bool) = 0;
-    virtual void setPerTilePaintingEnabled(bool) = 0;
-    virtual void setPartialSwapEnabled(bool) = 0;
-    virtual void setThreadedAnimationEnabled(bool) = 0;
     virtual void setViewportEnabled(bool) = 0;
     virtual void setMediaPlaybackRequiresUserGesture(bool) = 0;
     virtual bool viewportEnabled() const = 0;

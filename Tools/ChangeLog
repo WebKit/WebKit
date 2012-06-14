@@ -1,3 +1,13 @@
+2012-06-13  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Certain settings in CCSettings could be global
+        https://bugs.webkit.org/show_bug.cgi?id=88384
+
+        Reviewed by James Robinson.
+
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::applyTo):
+
 2012-06-13  Dirk Pranke  <dpranke@chromium.org>
 
         new-run-webkit-tests does not support --32-bit like ORWT did

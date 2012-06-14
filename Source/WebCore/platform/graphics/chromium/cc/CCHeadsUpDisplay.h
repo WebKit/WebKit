@@ -36,7 +36,7 @@ class CCFrameRateCounter;
 class CCLayerTreeHostImpl;
 class GraphicsContext;
 class ManagedTexture;
-struct CCSettings;
+struct CCLayerTreeSettings;
 
 // Class that handles drawing of composited render layers using GL.
 class CCHeadsUpDisplay {
@@ -51,19 +51,19 @@ public:
 
     void setFontAtlas(PassOwnPtr<CCFontAtlas>);
 
-    bool enabled(const CCSettings&) const;
+    bool enabled(const CCLayerTreeSettings&) const;
     void draw(CCLayerTreeHostImpl*);
 
 private:
     CCHeadsUpDisplay() { };
 
-    void drawHudContents(GraphicsContext*, CCLayerTreeHostImpl*, const CCSettings&, const IntSize& hudSize);
+    void drawHudContents(GraphicsContext*, CCLayerTreeHostImpl*, const CCLayerTreeSettings&, const IntSize& hudSize);
     void drawFPSCounter(GraphicsContext*, CCFrameRateCounter*, int top, int height);
     void drawFPSCounterText(GraphicsContext*, CCFrameRateCounter*, int top, int width, int height);
-    void drawDebugRects(GraphicsContext*, CCDebugRectHistory*, const CCSettings&);
+    void drawDebugRects(GraphicsContext*, CCDebugRectHistory*, const CCLayerTreeSettings&);
 
-    bool showPlatformLayerTree(const CCSettings&) const;
-    bool showDebugRects(const CCSettings&) const;
+    bool showPlatformLayerTree(const CCLayerTreeSettings&) const;
+    bool showDebugRects(const CCLayerTreeSettings&) const;
 
     OwnPtr<ManagedTexture> m_hudTexture;
     OwnPtr<CCFontAtlas> m_fontAtlas;

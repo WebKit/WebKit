@@ -64,6 +64,7 @@
 #include "cc/CCRenderPass.h"
 #include "cc/CCRenderPassDrawQuad.h"
 #include "cc/CCRenderSurfaceFilters.h"
+#include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCStreamVideoDrawQuad.h"
@@ -292,7 +293,7 @@ bool LayerRendererChromium::initialize()
     if (m_capabilities.contextHasCachedFrontBuffer)
         extensions->ensureEnabled("GL_CHROMIUM_front_buffer_cached");
 
-    m_capabilities.usingPartialSwap = settings().partialSwapEnabled && extensions->supports("GL_CHROMIUM_post_sub_buffer");
+    m_capabilities.usingPartialSwap = CCSettings::partialSwapEnabled() && extensions->supports("GL_CHROMIUM_post_sub_buffer");
     if (m_capabilities.usingPartialSwap)
         extensions->ensureEnabled("GL_CHROMIUM_post_sub_buffer");
 

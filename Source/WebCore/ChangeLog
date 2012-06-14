@@ -1,3 +1,76 @@
+2012-06-13  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Certain settings in CCSettings could be global
+        https://bugs.webkit.org/show_bug.cgi?id=88384
+
+        Reviewed by James Robinson.
+
+        No new tests. No new functionality.
+
+        * WebCore.gypi:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (Settings):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::createTextureUpdaterIfNeeded):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::addAnimation):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateTileSizeAndTilingOption):
+        * platform/graphics/chromium/cc/CCDebugRectHistory.cpp:
+        (WebCore::CCDebugRectHistory::enabled):
+        (WebCore::CCDebugRectHistory::saveDebugRectsForCurrentFrame):
+        * platform/graphics/chromium/cc/CCDebugRectHistory.h:
+        (WebCore):
+        (CCDebugRectHistory):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::enabled):
+        (WebCore::CCHeadsUpDisplay::showPlatformLayerTree):
+        (WebCore::CCHeadsUpDisplay::showDebugRects):
+        (WebCore::CCHeadsUpDisplay::draw):
+        (WebCore::CCHeadsUpDisplay::drawHudContents):
+        (WebCore::CCHeadsUpDisplay::drawDebugRects):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.h:
+        (WebCore):
+        (CCHeadsUpDisplay):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::create):
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::animateLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeSettings::CCLayerTreeSettings):
+        (CCLayerTreeSettings):
+        (CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::settings):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::create):
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::calculateRenderSurfaceLayerList):
+        (WebCore::CCLayerTreeHostImpl::animateLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (CCRendererClient):
+        (WebCore::CCRenderer::settings):
+        * platform/graphics/chromium/cc/CCSettings.cpp: Added.
+        (WebCore):
+        (WebCore::CCSettings::perTilePaintingEnabled):
+        (WebCore::CCSettings::setPerTilePaintingEnabled):
+        (WebCore::CCSettings::partialSwapEnabled):
+        (WebCore::CCSettings::setPartialSwapEnabled):
+        (WebCore::CCSettings::acceleratedAnimationEnabled):
+        (WebCore::CCSettings::setAcceleratedAnimationEnabled):
+        (WebCore::CCSettings::reset):
+        * platform/graphics/chromium/cc/CCSettings.h: Added.
+        (WebCore):
+        (CCSettings):
+        * testing/InternalSettings.cpp:
+        * testing/InternalSettings.h:
+        (InternalSettings):
+
 2012-06-13  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Apply New Style and JS for Select Popup
