@@ -248,6 +248,8 @@ static bool paintMediaVolumeSlider(RenderObject* object, const PaintInfo& paintI
         return true;
     if (volume > 1)
         volume = 1;
+    if (mediaElement->muted())
+        volume = 0;
 
     // Calculate the position relative to the center of the thumb.
     float thumbCenter = mediaVolumeSliderThumbWidth / 2;

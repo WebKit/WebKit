@@ -1,3 +1,37 @@
+2012-06-14  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Change mute button and volume slider behaviour for new Chromium video controls.
+        https://bugs.webkit.org/show_bug.cgi?id=88743
+
+        Reviewed by Eric Carlson.
+
+        No new tests, final patch will contain the rebaselined tests.
+
+        The Chrome video controls are receiving a visual update. This patch makes the mute button and
+        the volume slider interact with each other. When the user mutes the video through clicking the
+        mute button, the volume slider animates to 0% volume. Upon unmute, the previous volume level
+        is restored. Further, when the user drags the volume slider thumb or clicks on the slider and
+        the video is muted, the video unmutes and sets the volume to the user's chosen level.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlVolumeSliderElement::MediaControlVolumeSliderElement):
+        Add a member field to the volume slider to allow user interaction to unmute the video.
+        (WebCore::MediaControlVolumeSliderElement::defaultEventHandler):
+        Add the logic to unmute the video if the m_clearMutedOnUserInteraction member field is true.
+        (WebCore::MediaControlVolumeSliderElement::setClearMutedOnUserInteraction):
+        Add a member function to change the value of the m_clearMutedOnUserInteraction member field.
+        * html/shadow/MediaControlElements.h:
+        (MediaControlVolumeSliderElement):
+        Add the setClearMutedOnUserInteraction member function and the m_clearMutedOnUserInteraction member field.
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::create):
+        Activate unmute on user interaction on the Chromium video volume slider.
+        (WebCore::MediaControlRootElementChromium::changedMute):
+        Add logic to set volume slider to 0 when muted and reset to volume when unmuted.
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaVolumeSlider):
+        Add logic to paint the volume slider active area as 0 when muted.
+
 2012-06-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Breakpoints should not be set when UISourceCode content is diverged from VM version of the script.

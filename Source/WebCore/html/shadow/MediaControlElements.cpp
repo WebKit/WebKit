@@ -901,6 +901,7 @@ const AtomicString& MediaControlTimelineElement::shadowPseudoId() const
 
 inline MediaControlVolumeSliderElement::MediaControlVolumeSliderElement(Document* document)
     : MediaControlInputElement(document, MediaVolumeSlider)
+    , m_clearMutedOnUserInteraction(false)
 {
 }
 
@@ -934,12 +935,19 @@ void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)
         mediaController()->setVolume(volume, ec);
         ASSERT(!ec);
     }
+    if (m_clearMutedOnUserInteraction)
+        mediaController()->setMuted(false);
 }
 
 void MediaControlVolumeSliderElement::setVolume(float volume)
 {
     if (value().toFloat() != volume)
         setValue(String::number(volume));
+}
+
+void MediaControlVolumeSliderElement::setClearMutedOnUserInteraction(bool clearMute)
+{
+    m_clearMutedOnUserInteraction = clearMute;
 }
 
 const AtomicString& MediaControlVolumeSliderElement::shadowPseudoId() const

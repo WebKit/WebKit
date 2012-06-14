@@ -389,12 +389,14 @@ public:
 
     virtual void defaultEventHandler(Event*);
     void setVolume(float);
+    void setClearMutedOnUserInteraction(bool);
 
 protected:
     MediaControlVolumeSliderElement(Document*);
 
 private:
     virtual const AtomicString& shadowPseudoId() const;
+    bool m_clearMutedOnUserInteraction;
 };
 
 // ----------------------------

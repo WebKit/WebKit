@@ -137,6 +137,7 @@ PassRefPtr<MediaControlRootElementChromium> MediaControlRootElementChromium::cre
 
     RefPtr<MediaControlVolumeSliderElement> slider = MediaControlVolumeSliderElement::create(document);
     controls->m_volumeSlider = slider.get();
+    controls->m_volumeSlider->setClearMutedOnUserInteraction(true);
     panel->appendChild(slider.release(), ec, true);
     if (ec)
         return 0;
@@ -354,6 +355,11 @@ void MediaControlRootElementChromium::changedClosedCaptionsVisibility()
 void MediaControlRootElementChromium::changedMute()
 {
     m_panelMuteButton->changedMute();
+
+    if (m_mediaController->muted())
+        m_volumeSlider->setVolume(0);
+    else
+        m_volumeSlider->setVolume(m_mediaController->volume());
 }
 
 void MediaControlRootElementChromium::changedVolume()
