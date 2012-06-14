@@ -398,9 +398,9 @@ public:
         WebDOMMessageEvent) { return false; }
 
     // Asks the embedder if a specific user agent should be used for the given
-    // URL. Returns true if it should, along with the user agent. If false,
+    // URL. Non-empty strings indicate an override should be used. Otherwise,
     // WebKitPlatformSupport::userAgent() will be called to provide one.
-    virtual bool userAgent(const WebURL& url, WebString* userAgent) { return false; }
+    virtual WebString userAgentOverride(const WebURL& url) { return WebString(); }
 
 protected:
     ~WebFrameClient() { }

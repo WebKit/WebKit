@@ -46,13 +46,12 @@ namespace {
 
 class TestWebFrameClient : public WebFrameClient {
 public:
-    bool userAgent(const WebURL& url, WebString* userAgent) OVERRIDE
+    WebString userAgentOverride(const WebURL& url) OVERRIDE
     {
         if (m_userAgentOverride.isEmpty())
-            return false;
+            return WebString();
 
-        *userAgent = m_userAgentOverride;
-        return true;
+        return m_userAgentOverride;
     }
 
     void setUserAgentOverride(const WebString& userAgent)
