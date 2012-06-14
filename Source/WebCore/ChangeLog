@@ -1,3 +1,18 @@
+2012-06-14  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: DebuggerModel should support setting breakpoints without script by sourceURL only.
+        https://bugs.webkit.org/show_bug.cgi?id=88988
+
+        Reviewed by Pavel Feldman.
+
+        This change allows setting all saved breakpoints in debugger model by url before the site
+        with corresponding scripts was loaded (allows breaking in onload handler on first load).
+        This change also simplifies implementation of snippets debugging.
+
+        * inspector/front-end/BreakpointManager.js:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.setBreakpointByScriptLocation):
+
 2012-06-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: refactor settings screen to move user agent and experiments out of general tab.

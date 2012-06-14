@@ -135,7 +135,7 @@ WebInspector.DebuggerModel.prototype = {
     {
         var script = this.scriptForId(rawLocation.scriptId);
         if (script.sourceURL)
-            this.setBreakpoint(script.sourceURL, rawLocation.lineNumber, rawLocation.columnNumber, condition, callback);
+            this.setBreakpointByURL(script.sourceURL, rawLocation.lineNumber, rawLocation.columnNumber, condition, callback);
         else
             this.setBreakpointBySourceId(rawLocation, condition, callback);
     },
@@ -147,7 +147,7 @@ WebInspector.DebuggerModel.prototype = {
      * @param {string=} condition
      * @param {function(?DebuggerAgent.BreakpointId, Array.<WebInspector.DebuggerModel.Location>)=} callback
      */
-    setBreakpoint: function(url, lineNumber, columnNumber, condition, callback)
+    setBreakpointByURL: function(url, lineNumber, columnNumber, condition, callback)
     {
         // Adjust column if needed.
         var minColumnNumber = 0;

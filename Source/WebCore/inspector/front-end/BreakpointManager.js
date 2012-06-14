@@ -375,7 +375,11 @@ WebInspector.BreakpointManager.Breakpoint.prototype = {
     {
         var rawLocation = this._primaryUILocation.uiLocationToRawLocation();
         var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ rawLocation;
-        this._breakpointManager._debuggerModel.setBreakpointByScriptLocation(debuggerModelLocation, this._condition, didSetBreakpoint.bind(this));
+        if (debuggerModelLocation)
+            this._breakpointManager._debuggerModel.setBreakpointByScriptLocation(debuggerModelLocation, this._condition, didSetBreakpoint.bind(this));
+        else
+            this._breakpointManager._debuggerModel.setBreakpointByURL(this._primaryUILocation.uiSourceCode.url, this._primaryUILocation.lineNumber, 0, this._condition, didSetBreakpoint.bind(this));
+        
         /**
          * @this {WebInspector.BreakpointManager.Breakpoint}
          * @param {?DebuggerAgent.BreakpointId} breakpointId
