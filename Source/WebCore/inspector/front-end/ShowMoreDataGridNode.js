@@ -136,6 +136,10 @@ WebInspector.ShowMoreDataGridNode.prototype = {
     nodeHeight: function()
     {
         return 32;
+    },
+
+    dispose: function()
+    {
     }
 };
 

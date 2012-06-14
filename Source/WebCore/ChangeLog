@@ -1,3 +1,16 @@
+2012-06-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: REGRESSION HeapProfiler can't remove heap snapshot from the list if Dominators view has been opened.
+        https://bugs.webkit.org/show_bug.cgi?id=89080
+
+        There was no dispose method on artificial ShowMoreDataGrid node.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ShowMoreDataGridNode.js:
+        (WebInspector.ShowMoreDataGridNode.prototype.nodeHeight):
+        (WebInspector.ShowMoreDataGridNode.prototype.dispose):
+
 2012-06-14  Kent Tamura  <tkent@chromium.org>
 
         [JSC/V8] Improve DOMString[] support
