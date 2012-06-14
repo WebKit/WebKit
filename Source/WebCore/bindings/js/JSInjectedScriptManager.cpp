@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
- * Copyright (C) 2010-2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -37,11 +37,11 @@
 #include "InjectedScriptManager.h"
 
 #include "ExceptionCode.h"
-#include "InjectedScript.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowCustom.h"
 #include "JSInjectedScriptHost.h"
 #include "JSMainThreadExecState.h"
+#include "ScriptObject.h"
 #include <parser/SourceCode.h>
 #include <runtime/JSLock.h>
 
@@ -49,7 +49,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-static ScriptObject injectAndExecuteFunction(const String& source, ScriptState* scriptState, const MarkedArgumentBuffer& args)
+ScriptObject InjectedScriptManager::createInjectedScript(const String& source, ScriptState* scriptState, int id)
 {
     JSLock lock(SilenceAssertionsOnly);
 
@@ -68,59 +68,15 @@ static ScriptObject injectAndExecuteFunction(const String& source, ScriptState* 
     if (callType == CallTypeNone)
         return ScriptObject();
 
-    JSValue result = JSC::call(scriptState, functionValue, callType, callData, globalThisValue, args);
-    if (result.isObject())
-        return ScriptObject(scriptState, result.getObject());
-    return ScriptObject();
-}
-
-ScriptObject InjectedScriptManager::createInjectedScript(const String& source, ScriptState* scriptState, int id)
-{
-    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
-    JSValue globalThisValue = scriptState->globalThisValue();
-
     MarkedArgumentBuffer args;
     args.append(toJS(scriptState, globalObject, m_injectedScriptHost.get()));
     args.append(globalThisValue);
     args.append(jsNumber(id));
 
-    return injectAndExecuteFunction(source, scriptState, args);
-}
-
-#if ENABLE(WEBGL)
-ScriptObject InjectedScriptManager::injectWebGLScript(const String& source, const ScriptObject& glContext)
-{
-    ScriptState* scriptState = glContext.scriptState();
-
-    MarkedArgumentBuffer args;
-    args.append(glContext.jsValue());
-
-    return injectAndExecuteFunction(source, scriptState, args);
-}
-#endif
-
-void InjectedScriptManager::discardInjectedScript(ScriptState* scriptState)
-{
-    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
-    globalObject->setInjectedScript(0);
-}
-
-InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState* scriptState)
-{
-    JSLock lock(SilenceAssertionsOnly);
-    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
-    JSObject* injectedScript = globalObject->injectedScript();
-    if (injectedScript)
-        return InjectedScript(ScriptObject(scriptState, injectedScript), m_inspectedStateAccessCheck);
-
-    if (!m_inspectedStateAccessCheck(scriptState))
-        return InjectedScript();
-
-    pair<int, ScriptObject> injectedScriptObject = injectScript(injectedScriptSource(), scriptState);
-    globalObject->setInjectedScript(injectedScriptObject.second.jsObject());
-    InjectedScript result(injectedScriptObject.second, m_inspectedStateAccessCheck);
-    m_idToInjectedScript.set(injectedScriptObject.first, result);
-    return result;
+    JSValue result = JSC::call(scriptState, functionValue, callType, callData, globalThisValue, args);
+    if (result.isObject())
+        return ScriptObject(scriptState, result.getObject());
+    return ScriptObject();
 }
 
 bool InjectedScriptManager::canAccessInspectedWindow(ScriptState* scriptState)

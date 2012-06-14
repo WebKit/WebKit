@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
@@ -93,9 +93,6 @@ void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSDOMConstructorMap::iterator end2 = thisObject->constructors().end();
     for (JSDOMConstructorMap::iterator it2 = thisObject->constructors().begin(); it2 != end2; ++it2)
         visitor.append(&it2->second);
-
-    if (thisObject->m_injectedScript)
-        visitor.append(&thisObject->m_injectedScript);
 }
 
 void JSDOMGlobalObject::setCurrentEvent(Event* currentEvent)
@@ -106,16 +103,6 @@ void JSDOMGlobalObject::setCurrentEvent(Event* currentEvent)
 Event* JSDOMGlobalObject::currentEvent() const
 {
     return m_currentEvent;
-}
-
-void JSDOMGlobalObject::setInjectedScript(JSObject* injectedScript)
-{
-    m_injectedScript.setMayBeNull(globalData(), this, injectedScript);
-}
-
-JSObject* JSDOMGlobalObject::injectedScript() const
-{
-    return m_injectedScript.get();
 }
 
 JSDOMGlobalObject* toJSDOMGlobalObject(Document* document, JSC::ExecState* exec)

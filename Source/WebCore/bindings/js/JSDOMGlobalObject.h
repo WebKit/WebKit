@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
@@ -68,9 +68,6 @@ namespace WebCore {
         void setCurrentEvent(Event*);
         Event* currentEvent() const;
 
-        void setInjectedScript(JSObject*);
-        JSObject* injectedScript() const;
-
         static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
 
         DOMWrapperWorld* world() { return m_world.get(); }
@@ -88,7 +85,6 @@ namespace WebCore {
 
         Event* m_currentEvent;
         RefPtr<DOMWrapperWorld> m_world;
-        JSC::WriteBarrier<JSObject> m_injectedScript;
     };
 
     template<class ConstructorClass>

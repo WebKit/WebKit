@@ -1,3 +1,32 @@
+2012-06-14  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: Remove devtoolsInjectedScript hidden property
+        https://bugs.webkit.org/show_bug.cgi?id=89087
+
+        We use the devtoolsInjectedScript hidden property to reference a InjectedScript object
+        for a given ScriptState, but we also have the same reference in the InjectedScriptManager's
+        hash maps. Just use the hash maps and remove the hidden property from the global object.
+
+        Reviewed by Pavel Feldman.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::visitChildren):
+        * bindings/js/JSDOMGlobalObject.h:
+        (JSDOMGlobalObject):
+        * bindings/js/JSInjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::createInjectedScript):
+        * bindings/v8/V8HiddenPropertyName.h:
+        (WebCore):
+        * bindings/v8/custom/V8InjectedScriptManager.cpp:
+        * inspector/InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::discardInjectedScripts):
+        (WebCore::InjectedScriptManager::discardInjectedScriptsFor):
+        (WebCore::InjectedScriptManager::injectedScriptFor):
+        (WebCore):
+        (WebCore::InjectedScriptManager::wrapWebGLRenderingContextForInstrumentation):
+        * inspector/InjectedScriptManager.h:
+        (InjectedScriptManager):
+
 2012-06-14  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move opaque rectangle tracking logic out of compositor core

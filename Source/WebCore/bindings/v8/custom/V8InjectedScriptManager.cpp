@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,16 +33,13 @@
 #include "InjectedScriptManager.h"
 
 #include "DOMWindow.h"
-#include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "SafeAllocation.h"
-#include "ScriptValue.h"
+#include "ScriptObject.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8DOMWindow.h"
-#include "V8HiddenPropertyName.h"
 #include "V8InjectedScriptHost.h"
-#include "V8Proxy.h"
 #include "V8RecursionScope.h"
 #include <wtf/RefPtr.h>
 
@@ -111,72 +108,6 @@ ScriptObject InjectedScriptManager::createInjectedScript(const String& scriptSou
     };
     v8::Local<v8::Value> injectedScriptValue = v8::Function::Cast(*v)->Call(windowGlobal, 3, args);
     return ScriptObject(inspectedScriptState, v8::Handle<v8::Object>::Cast(injectedScriptValue));
-}
-
-#if ENABLE(WEBGL)
-ScriptObject InjectedScriptManager::injectWebGLScript(const String& scriptSource, const ScriptObject& glContext)
-{
-    v8::HandleScope scope;
-
-    ScriptState* inspectedScriptState = glContext.scriptState();
-    v8::Local<v8::Context> inspectedContext = inspectedScriptState->context();
-    v8::Context::Scope contextScope(inspectedContext);
-
-    v8::Local<v8::Object> windowGlobal = inspectedContext->Global();
-
-    v8::Local<v8::Script> script = v8::Script::Compile(v8String(scriptSource));
-    V8RecursionScope::MicrotaskSuppression recursionScope;
-    v8::Local<v8::Value> v = script->Run();
-    ASSERT(!v.IsEmpty());
-    ASSERT(v->IsFunction());
-
-    v8::Handle<v8::Value> args[] = {
-        glContext.v8Value(),
-    };
-    v8::Local<v8::Value> injectedScriptValue = v8::Function::Cast(*v)->Call(windowGlobal, 1, args);
-    return ScriptObject(inspectedScriptState, v8::Handle<v8::Object>::Cast(injectedScriptValue));
-}
-#endif
-
-void InjectedScriptManager::discardInjectedScript(ScriptState* inspectedScriptState)
-{
-    v8::HandleScope handleScope;
-    v8::Local<v8::Context> context = inspectedScriptState->context();
-    v8::Context::Scope contextScope(context);
-
-    v8::Local<v8::Object> global = context->Global();
-    // Skip proxy object. The proxy object will survive page navigation while we need
-    // an object whose lifetime coincides with that of the inspected context.
-    global = v8::Local<v8::Object>::Cast(global->GetPrototype());
-
-    v8::Handle<v8::String> key = V8HiddenPropertyName::devtoolsInjectedScript();
-    global->DeleteHiddenValue(key);
-}
-
-InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState* inspectedScriptState)
-{
-    v8::HandleScope handleScope;
-    v8::Local<v8::Context> context = inspectedScriptState->context();
-    v8::Context::Scope contextScope(context);
-
-    v8::Local<v8::Object> global = context->Global();
-    // Skip proxy object. The proxy object will survive page navigation while we need
-    // an object whose lifetime coincides with that of the inspected context.
-    global = v8::Local<v8::Object>::Cast(global->GetPrototype());
-
-    v8::Handle<v8::String> key = V8HiddenPropertyName::devtoolsInjectedScript();
-    v8::Local<v8::Value> val = global->GetHiddenValue(key);
-    if (!val.IsEmpty() && val->IsObject())
-        return InjectedScript(ScriptObject(inspectedScriptState, v8::Local<v8::Object>::Cast(val)), m_inspectedStateAccessCheck);
-
-    if (!m_inspectedStateAccessCheck(inspectedScriptState))
-        return InjectedScript();
-
-    pair<int, ScriptObject> injectedScript = injectScript(injectedScriptSource(), inspectedScriptState);
-    InjectedScript result(injectedScript.second, m_inspectedStateAccessCheck);
-    m_idToInjectedScript.set(injectedScript.first, result);
-    global->SetHiddenValue(key, injectedScript.second.v8Object());
-    return result;
 }
 
 bool InjectedScriptManager::canAccessInspectedWindow(ScriptState* scriptState)
