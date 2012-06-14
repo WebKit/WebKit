@@ -434,6 +434,7 @@ public:
     virtual void enableContinuousSpellChecking(bool) = 0;
     virtual bool isContinuousSpellCheckingEnabled() const = 0;
     virtual void requestTextChecking(const WebElement&) = 0;
+    virtual void replaceMisspelledRange(const WebString&) = 0;
 
     // Selection -----------------------------------------------------------
 

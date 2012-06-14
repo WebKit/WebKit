@@ -1,3 +1,22 @@
+2012-06-13  Hironori Bono  <hbono@chromium.org>
+
+        [chromium] Add WebFrame::replaceMisspelledRange
+        https://bugs.webkit.org/show_bug.cgi?id=88618
+
+        Reviewed by Kent Tamura.
+
+        This change adds WebFrame::replaceMisspelledRange, which replaces the range of a
+        misspelled marker with text so Chromium can use it for replacing misspelled
+        words with suggetions.
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::replaceMisspelledRange):
+        (WebKit):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
 2012-06-13  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Let Android and Linux share WebFontRendering decl/impl.
