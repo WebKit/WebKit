@@ -1,3 +1,17 @@
+2012-06-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline some Mac results after r120246.
+
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/controls-after-reload-expected.txt:
+        * platform/mac/media/controls-strict-expected.txt:
+        * platform/mac/media/video-colorspace-yuv420-expected.txt:
+        * platform/mac/media/video-colorspace-yuv422-expected.txt:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-no-audio-expected.txt:
+        * platform/mac/media/video-playing-and-pause-expected.txt:
+
 2012-06-14  Justin Novosad  <junov@chromium.org>
 
         [Chromium] webkitImageSmoothingEnabled canvas property does not work on redraw
