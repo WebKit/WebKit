@@ -24,7 +24,7 @@
  */
 
 #ifndef RefCountedSupplement_h
-#define RefCountedSupplement_H
+#define RefCountedSupplement_h
 
 #include "Supplementable.h"
 #include <wtf/RefCounted.h>
