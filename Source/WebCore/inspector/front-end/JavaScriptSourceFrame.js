@@ -166,6 +166,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
                 // Re-adding decoration only.
                 this._addBreakpointDecoration(breakpointLocations[i].uiLocation.lineNumber, breakpoint.condition(), breakpoint.enabled(), true);
             }
+            this.clearExecutionLine();
         }
 
         WebInspector.SourceFrame.prototype.beforeTextChanged.call(this);
@@ -440,7 +441,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     clearExecutionLine: function()
     {
-        if (this.loaded)
+        if (this.loaded && typeof this._executionLineNumber === "number")
             this.textViewer.removeDecoration(this._executionLineNumber, "webkit-execution-line");
         delete this._executionLineNumber;
     },
