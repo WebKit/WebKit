@@ -2199,7 +2199,9 @@ ENDIF ()
 
 IF (ENABLE_SMOOTH_SCROLLING)
     LIST(APPEND WebCore_SOURCES
+        platform/ActivePlatformGestureAnimation.cpp
         platform/ScrollAnimatorNone.cpp
+        platform/TouchpadFlingPlatformGestureCurve.cpp
     )
 ENDIF ()
 
