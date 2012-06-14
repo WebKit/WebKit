@@ -397,6 +397,7 @@ BUGWK37560 : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
 
 BUGWK37562 : plugins/update-widgets-crash.html = PASS TEXT
 BUGWK37572 : plugins/open-and-close-window-with-plugin.html = PASS TEXT
+BUGWK89097 : plugins/plugin-initiate-popup-window.html = PASS TEXT
 
 BUGWK53995 : editing/selection/end-of-document.html = PASS TEXT
 BUGWK51325 : editing/selection/extend-by-character-003.html = PASS TEXT
@@ -1268,6 +1269,7 @@ BUGWK88961 : http/tests/misc/redirect-to-about-blank.html = TEXT
 
 BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = TEXT
 BUGWK86971 : svg/custom/non-scaling-stroke-markers.svg = TEXT PASS
+BUGWK89099 : svg/transforms/transformed-text-fill-pattern.html = IMAGE
 
 BUGWK87088 : fast/js/names.html = TEXT
 
