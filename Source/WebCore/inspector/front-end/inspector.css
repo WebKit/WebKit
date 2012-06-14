@@ -568,12 +568,17 @@ select.status-bar-item:active {
     -webkit-mask-image: url(Images/statusbarButtonGlyphs.png);
 }
 
-button.dock-status-bar-item.status-bar-item .glyph {
+button.dock-status-bar-item.status-bar-item.toggled-undock .glyph {
     -webkit-mask-position: 0 -48px;
 }
 
-button.dock-status-bar-item.status-bar-item.toggled-on .glyph {
+button.dock-status-bar-item.status-bar-item.toggled-bottom .glyph {
     -webkit-mask-position: -32px -24px;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+button.dock-status-bar-item.status-bar-item.toggled-right .glyph {
+    -webkit-mask-position: -256px -48px;
     background-color: rgba(0, 0, 0, 0.75);
 }
 

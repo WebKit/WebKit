@@ -1,5 +1,25 @@
 2012-06-14  Pavel Feldman  <pfeldman@chromium.org>
 
+        Web Inspector: render dock-to-right icon in status bar.
+        https://bugs.webkit.org/show_bug.cgi?id=89040
+
+        Reviewed by Vsevolod Vlasov.
+
+        Today we render dock to bottom icon for both actions (dock to bottom and dock to right).
+
+        * inspector/front-end/Images/statusbarButtonGlyphs.png:
+        * inspector/front-end/inspector.css:
+        (button.dock-status-bar-item.status-bar-item.toggled-undock .glyph):
+        (button.dock-status-bar-item.status-bar-item.toggled-bottom .glyph):
+        (button.dock-status-bar-item.status-bar-item.toggled-right .glyph):
+        * inspector/front-end/inspector.js:
+        (WebInspector._createGlobalStatusBarItems):
+        (WebInspector._installDockToRight.listener):
+        (windowLoaded):
+        (WebInspector.setDockingUnavailable):
+
+2012-06-14  Pavel Feldman  <pfeldman@chromium.org>
+
         Web Inspector: clear execution live before the text edit.
         https://bugs.webkit.org/show_bug.cgi?id=89016
 
