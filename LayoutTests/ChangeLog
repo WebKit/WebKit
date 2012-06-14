@@ -1,3 +1,13 @@
+2012-06-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Device Metrics] "Fit window" results in duplicate rescaling in WebDevToolsAgentImpl::autoZoomPageToFitWidth()
+        https://bugs.webkit.org/show_bug.cgi?id=89092
+
+        Reviewed by Pavel Feldman.
+
+        * platform/chromium/inspector/styles/device-metrics-fit-window-expected.txt:
+        * platform/chromium/inspector/styles/device-metrics-fit-window.html:
+
 2012-06-14  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening after r120314.

@@ -1,3 +1,16 @@
+2012-06-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Device Metrics] "Fit window" results in duplicate rescaling in WebDevToolsAgentImpl::autoZoomPageToFitWidth()
+        https://bugs.webkit.org/show_bug.cgi?id=89092
+
+        Reviewed by Pavel Feldman.
+
+        Do not apply the sizeRatio after it has been applied in scaledEmulatedFrameSize().
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::DeviceMetricsSupport::autoZoomPageToFitWidth):
+        (WebKit::DeviceMetricsSupport::ensureOriginalZoomFactor):
+
 2012-06-14  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Chromium][Forms] We should remove ENABLE_INPUT_TYPE_TIME=0 and so on to allows us to override them by ~/.gyp/include.gypi
