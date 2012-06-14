@@ -1,3 +1,9 @@
+2012-06-14  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r120314.
+
+        * platform/qt/Skipped: skip svg/transforms/transformed-text-fill-gradient.html
+
 2012-06-14  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [svg] SVGResources applied to Text with Incorrect Transformations in non-CG Implementations
