@@ -1,3 +1,15 @@
+2012-06-14  Tony Chang  <tony@chromium.org>
+
+        [Qt] New css3/flexbox/flexitem.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=88963
+
+        Reviewed by Hajime Morita.
+
+        * css3/flexbox/flexitem.html: The height of the alt text was taller
+        than the height of the missing image placeholder graphic on Qt. To
+        get the same results, force the font size to something small.
+        The test still fails on Qt so leaving it in the Skipped file for now.
+
 2012-06-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Selector list start position is not extracted for style rules inside @media rules
