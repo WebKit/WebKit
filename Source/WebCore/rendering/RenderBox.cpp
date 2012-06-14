@@ -142,7 +142,7 @@ void RenderBox::willBeDestroyed()
         if (RenderView* view = this->view()) {
             if (FrameView* frameView = view->frameView()) {
                 if (styleToUse->position() == FixedPosition)
-                    frameView->removeFixedObject();
+                    frameView->removeFixedObject(this);
             }
         }
     }
@@ -221,9 +221,9 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
         bool oldStyleIsFixed = oldStyle && oldStyle->position() == FixedPosition;
         if (newStyleIsFixed != oldStyleIsFixed) {
             if (newStyleIsFixed)
-                frameView->addFixedObject();
+                frameView->addFixedObject(this);
             else
-                frameView->removeFixedObject();
+                frameView->removeFixedObject(this);
         }
     }
 

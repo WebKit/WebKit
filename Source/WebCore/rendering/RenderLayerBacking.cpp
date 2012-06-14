@@ -51,6 +51,7 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
+#include "ScrollingCoordinator.h"
 #include "StyleResolver.h"
 #include "TiledBacking.h"
 
@@ -434,6 +435,20 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     m_graphicsLayer->setPreserves3D(style->transformStyle3D() == TransformStyle3DPreserve3D && !renderer()->hasReflection());
     m_graphicsLayer->setBackfaceVisibility(style->backfaceVisibility() == BackfaceVisibilityVisible);
 
+    // Register fixed position layers and their containers with the scrolling coordinator.
+    if (Page* page = renderer()->frame()->page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
+            if (style->position() == FixedPosition || compositor()->fixedPositionedByAncestor(m_owningLayer))
+                scrollingCoordinator->setLayerIsFixedToContainerLayer(childForSuperlayers(), true);
+            else {
+                if (m_ancestorClippingLayer)
+                    scrollingCoordinator->setLayerIsFixedToContainerLayer(m_ancestorClippingLayer.get(), false);
+                scrollingCoordinator->setLayerIsFixedToContainerLayer(m_graphicsLayer.get(), false);
+            }
+            bool isContainer = m_owningLayer->hasTransform();
+            scrollingCoordinator->setLayerIsContainerForFixedPositionLayers(childForSuperlayers(), isContainer);
+        }
+    }
     RenderLayer* compAncestor = m_owningLayer->ancestorCompositingLayer();
     
     // We compute everything relative to the enclosing compositing layer.
@@ -1564,4 +1579,3 @@ double RenderLayerBacking::backingStoreArea() const
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)
-

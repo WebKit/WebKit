@@ -190,7 +190,7 @@ void ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange(FrameView* fr
     updateShouldUpdateScrollLayerPositionOnMainThread();
 }
 
-void ScrollingCoordinator::frameViewHasFixedObjectsDidChange(FrameView* frameView)
+void ScrollingCoordinator::frameViewFixedObjectsDidChange(FrameView* frameView)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
@@ -337,12 +337,36 @@ void ScrollingCoordinator::recomputeWheelEventHandlerCount()
     setWheelEventHandlerCount(wheelEventHandlerCount);
 }
 
+bool ScrollingCoordinator::hasNonLayerFixedObjects(FrameView* frameView)
+{
+    const FrameView::FixedObjectSet* fixedObjects = frameView->fixedObjects();
+    if (!fixedObjects)
+        return false;
+
+#if USE(ACCELERATED_COMPOSITING)
+    for (FrameView::FixedObjectSet::const_iterator it = fixedObjects->begin(), end = fixedObjects->end(); it != end; ++it) {
+        RenderObject* fixedObject = *it;
+        if (!fixedObject->isBoxModelObject() || !fixedObject->hasLayer())
+            return true;
+        RenderBoxModelObject* fixedBoxModelObject = toRenderBoxModelObject(fixedObject);
+        if (!fixedBoxModelObject->layer()->backing())
+            return true;
+    }
+    return false;
+#else
+    return fixedObjects->size();
+#endif
+}
+
 void ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread()
 {
     FrameView* frameView = m_page->mainFrame()->view();
 
-    // FIXME: Having fixed objects on the page should not trigger the slow path.
-    setShouldUpdateScrollLayerPositionOnMainThread(m_forceMainThreadScrollLayerPositionUpdates || frameView->hasSlowRepaintObjects() || frameView->hasFixedObjects() || m_page->mainFrame()->document()->isImageDocument());
+    setShouldUpdateScrollLayerPositionOnMainThread(m_forceMainThreadScrollLayerPositionUpdates
+        || frameView->hasSlowRepaintObjects()
+        || (!supportsFixedPositionLayers() && frameView->hasFixedObjects())
+        || (supportsFixedPositionLayers() && hasNonLayerFixedObjects(frameView))
+        || m_page->mainFrame()->document()->isImageDocument());
 }
 
 void ScrollingCoordinator::setForceMainThreadScrollLayerPositionUpdates(bool forceMainThreadScrollLayerPositionUpdates)
@@ -427,6 +451,21 @@ void ScrollingCoordinator::commitTreeState()
     OwnPtr<ScrollingTreeState> treeState = m_scrollingTreeState->commit();
     ScrollingThread::dispatch(bind(&ScrollingTree::commitNewTreeState, m_scrollingTree.get(), treeState.release()));
 }
-#endif
+
+bool ScrollingCoordinator::supportsFixedPositionLayers() const
+{
+    return false;
+}
+
+void ScrollingCoordinator::setLayerIsContainerForFixedPositionLayers(GraphicsLayer*, bool)
+{
+    // FIXME: Implement!
+}
+
+void ScrollingCoordinator::setLayerIsFixedToContainerLayer(GraphicsLayer*, bool)
+{
+    // FIXME: Implement!
+}
+#endif // !ENABLE(THREADED_SCROLLING)
 
 } // namespace WebCore

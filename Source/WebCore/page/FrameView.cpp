@@ -136,7 +136,6 @@ FrameView::FrameView(Frame* frame)
     : m_frame(frame)
     , m_canHaveScrollbars(true)
     , m_slowRepaintObjectCount(0)
-    , m_fixedObjectCount(0)
     , m_layoutTimer(this, &FrameView::layoutTimerFired)
     , m_layoutRoot(0)
     , m_inSynchronousPostLayout(false)
@@ -1265,7 +1264,7 @@ void FrameView::adjustMediaTypeForPrinting(bool printing)
 
 bool FrameView::useSlowRepaints(bool considerOverlap) const
 {
-    bool mustBeSlow = m_slowRepaintObjectCount > 0 || (platformWidget() && m_fixedObjectCount > 0);
+    bool mustBeSlow = m_slowRepaintObjectCount > 0 || (platformWidget() && hasFixedObjects());
 
     // FIXME: WidgetMac.mm makes the assumption that useSlowRepaints ==
     // m_contentIsOpaque, so don't take the fast path for composited layers
@@ -1350,28 +1349,32 @@ void FrameView::removeSlowRepaintObject()
     }
 }
 
-void FrameView::addFixedObject()
+void FrameView::addFixedObject(RenderObject* object)
 {
-    if (!m_fixedObjectCount++) {
+    if (!m_fixedObjects)
+        m_fixedObjects = adoptPtr(new FixedObjectSet);
+
+    if (!m_fixedObjects->contains(object)) {
+        m_fixedObjects->add(object);
         if (platformWidget())
             updateCanBlitOnScrollRecursively();
 
         if (Page* page = m_frame->page()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingCoordinator->frameViewHasFixedObjectsDidChange(this);
+                scrollingCoordinator->frameViewFixedObjectsDidChange(this);
         }
     }
 }
 
-void FrameView::removeFixedObject()
+void FrameView::removeFixedObject(RenderObject* object)
 {
-    ASSERT(m_fixedObjectCount > 0);
-    --m_fixedObjectCount;
+    ASSERT(hasFixedObjects());
 
-    if (!m_fixedObjectCount) {
+    if (m_fixedObjects->contains(object)) {
+        m_fixedObjects->remove(object);
         if (Page* page = m_frame->page()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingCoordinator->frameViewHasFixedObjectsDidChange(this);
+                scrollingCoordinator->frameViewFixedObjectsDidChange(this);
         }
 
         // FIXME: In addFixedObject() we only call this if there's a platform widget,

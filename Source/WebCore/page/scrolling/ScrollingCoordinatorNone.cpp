@@ -71,7 +71,18 @@ void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool)
 {
 }
 
+bool ScrollingCoordinator::supportsFixedPositionLayers() const
+{
+    return false;
+}
+
+void ScrollingCoordinator::setLayerIsContainerForFixedPositionLayers(GraphicsLayer*, bool)
+{
+}
+
+void ScrollingCoordinator::setLayerIsFixedToContainerLayer(GraphicsLayer*, bool)
+{
+}
 #endif // !ENABLE(THREADED_SCROLLING)
 
 }
-

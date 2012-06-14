@@ -80,11 +80,8 @@ public:
     // Should be called whenever the slow repaint objects counter changes between zero and one.
     void frameViewHasSlowRepaintObjectsDidChange(FrameView*);
 
-    // Should be called whenever the fixed objects counter changes between zero and one.
-    // FIXME: This is a temporary workaround so that we'll fall into main thread scrolling mode
-    // if a page has fixed elements. The scrolling tree should know about the fixed elements
-    // so it can make sure they stay fixed even when we scroll on the scrolling thread.
-    void frameViewHasFixedObjectsDidChange(FrameView*);
+    // Should be called whenever the set of fixed objects changes.
+    void frameViewFixedObjectsDidChange(FrameView*);
 
     // Should be called whenever the root layer for the given frame view changes.
     void frameViewRootLayerDidChange(FrameView*);
@@ -116,10 +113,21 @@ public:
     // Force all scroll layer position updates to happen on the main thread.
     void setForceMainThreadScrollLayerPositionUpdates(bool);
 
+    // Return whether this scrolling coordinator can keep fixed position layers fixed to their
+    // containers while scrolling.
+    bool supportsFixedPositionLayers() const;
+
+    // Mark/unmark a layer as a container for fixed position layers.
+    void setLayerIsContainerForFixedPositionLayers(GraphicsLayer*, bool);
+
+    // Attach/detach layer position to ancestor fixed position container.
+    void setLayerIsFixedToContainerLayer(GraphicsLayer*, bool);
+
 private:
     explicit ScrollingCoordinator(Page*);
 
     void recomputeWheelEventHandlerCount();
+    bool hasNonLayerFixedObjects(FrameView*);
     void updateShouldUpdateScrollLayerPositionOnMainThread();
 
     void setScrollLayer(GraphicsLayer*);

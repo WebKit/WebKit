@@ -547,6 +547,11 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
     if (layerChanged)
         layer->clearClipRectsIncludingDescendants(PaintingClipRects);
 
+    // If a fixed position layer gained/lost a backing, the scrolling coordinator needs to recalculate whether it can do fast scrolling.
+    if (layerChanged && layer->renderer()->style()->position() == FixedPosition) {
+        if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+            scrollingCoordinator->frameViewFixedObjectsDidChange(m_renderView->frameView());
+    }
     return layerChanged;
 }
 
@@ -1611,6 +1616,31 @@ bool RenderLayerCompositor::clipsCompositingDescendants(const RenderLayer* layer
            (layer->renderer()->hasOverflowClip() || layer->renderer()->hasClip());
 }
 
+// Return true if there is an ancestor layer that is fixed positioned to the view.
+// Note that if the ancestor has a stacking context and is fixed position then this method
+// will return false.
+bool RenderLayerCompositor::fixedPositionedByAncestor(const RenderLayer* layer) const
+{
+    if (!layer->isComposited() || !layer->parent())
+        return false;
+
+    const RenderLayer* compositingAncestor = layer->ancestorCompositingLayer();
+    if (!compositingAncestor)
+        return false;
+
+    const RenderLayer* curr = layer;
+    while (curr) {
+        const RenderLayer* next = curr->parent();
+        if (next == compositingAncestor)
+            return false;
+
+        if (next && next->renderer()->style()->position() == FixedPosition)
+            return true;
+        curr = next;
+    }
+    return false;
+}
+
 bool RenderLayerCompositor::requiresCompositingForScrollableFrame() const
 {
     // Need this done first to determine overflow.
@@ -2158,6 +2188,8 @@ void RenderLayerCompositor::ensureRootLayer()
 #ifndef NDEBUG
             m_scrollLayer->setName("frame scrolling");
 #endif
+            if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+                scrollingCoordinator->setLayerIsContainerForFixedPositionLayers(m_scrollLayer.get(), true);
 
             // Hook them up
             m_overflowControlsHostLayer->addChild(m_clipLayer.get());

@@ -1,3 +1,56 @@
+2012-06-14  Sami Kyostila  <skyostil@chromium.org>
+
+        Register fixed position layers with ScrollingCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=78864
+
+        Reviewed by James Robinson.
+
+        This patch makes ScrollingCoordinator aware of page elements that are
+        either fixed positioned directly or through their ancestors and that
+        also have their own composited backing layers. This allows the
+        ScrollingCoordinator implementation to potentially enable fast
+        scrolling even if there are fixed elements on the page, because the
+        compositor can automatically reposition the fixed element layers after
+        scrolling.
+
+        Since fixed position layers need to be explicitly supported by the
+        ScrollingCoordinator implementation, we add a new
+        supportsFixedPositionLayers() query for checking this.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::useSlowRepaints):
+        (WebCore::FrameView::addFixedObject):
+        (WebCore::FrameView::removeFixedObject):
+        * page/FrameView.h:
+        (FrameView):
+        (WebCore::FrameView::fixedObjects):
+        (WebCore::FrameView::hasFixedObjects):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::frameViewFixedObjectsDidChange):
+        (WebCore::ScrollingCoordinator::hasNonLayerFixedObjects):
+        (WebCore):
+        (WebCore::ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread):
+        (WebCore::ScrollingCoordinator::setLayerIsContainerForFixedPosition):
+        (WebCore::ScrollingCoordinator::setLayerIsFixedToContainerLayer):
+        * page/scrolling/ScrollingCoordinator.h:
+        (ScrollingCoordinator):
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::ScrollingCoordinator::setLayerIsContainerForFixedPosition):
+        (WebCore):
+        (WebCore::ScrollingCoordinator::setLayerIsFixedToContainerLayer):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed):
+        (WebCore::RenderBox::styleWillChange):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore):
+        (WebCore::RenderLayerCompositor::fixedPositionedByAncestor):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        * rendering/RenderLayerCompositor.h:
+
 2012-06-14  Alexey Proskuryakov  <ap@apple.com>
 
         [CFNetwork] XMLHttpRequest incorrectly returns cached responses even when there is a Vary header field

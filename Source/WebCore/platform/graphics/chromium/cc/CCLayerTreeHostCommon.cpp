@@ -533,7 +533,7 @@ static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     WebTransformationMatrix combinedTransform = parentMatrix;
     combinedTransform.multiply(layerLocalTransform);
 
-    if (layer->fixedToContainerLayerVisibleRect()) {
+    if (layer->fixedToContainerLayer()) {
         // Special case: this layer is a composited fixed-position layer; we need to
         // explicitly compensate for all ancestors' nonzero scrollDeltas to keep this layer
         // fixed correctly.

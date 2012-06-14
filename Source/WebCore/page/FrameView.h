@@ -194,9 +194,11 @@ public:
     void removeSlowRepaintObject();
     bool hasSlowRepaintObjects() const { return m_slowRepaintObjectCount; }
 
-    void addFixedObject();
-    void removeFixedObject();
-    bool hasFixedObjects() const { return m_fixedObjectCount > 0; }
+    typedef HashSet<RenderObject*> FixedObjectSet;
+    void addFixedObject(RenderObject*);
+    void removeFixedObject(RenderObject*);
+    const FixedObjectSet* fixedObjects() const { return m_fixedObjects.get(); }
+    bool hasFixedObjects() const { return m_fixedObjects && m_fixedObjects->size() > 0; }
 
     // Functions for querying the current scrolled position, negating the effects of overhang
     // and adjusting for page scale.
@@ -443,7 +445,6 @@ private:
     bool m_isOverlapped;
     bool m_contentIsOpaque;
     unsigned m_slowRepaintObjectCount;
-    unsigned m_fixedObjectCount;
     int m_borderX;
     int m_borderY;
 
@@ -521,6 +522,7 @@ private:
     IntSize m_maxAutoSize;
 
     OwnPtr<ScrollableAreaSet> m_scrollableAreas;
+    OwnPtr<FixedObjectSet> m_fixedObjects;
 
     static double s_deferredRepaintDelay;
     static double s_initialDeferredRepaintDelayDuringLoading;

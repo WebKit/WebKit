@@ -184,4 +184,21 @@ void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool s
         layer->setShouldScrollOnMainThread(should);
 }
 
+bool ScrollingCoordinator::supportsFixedPositionLayers() const
+{
+    return true;
+}
+
+void ScrollingCoordinator::setLayerIsContainerForFixedPositionLayers(GraphicsLayer* layer, bool enable)
+{
+    if (LayerChromium* platformLayer = layer->platformLayer())
+        platformLayer->setIsContainerForFixedPositionLayers(enable);
+}
+
+void ScrollingCoordinator::setLayerIsFixedToContainerLayer(GraphicsLayer* layer, bool enable)
+{
+    if (LayerChromium* platformLayer = layer->platformLayer())
+        platformLayer->setFixedToContainerLayer(enable);
+}
+
 }

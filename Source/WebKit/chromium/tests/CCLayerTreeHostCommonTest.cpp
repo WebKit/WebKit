@@ -1234,7 +1234,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     CCLayerImpl* grandChild = child->children()[0].get();
 
     child->setIsContainerForFixedPositionLayers(true);
-    grandChild->setFixedToContainerLayerVisibleRect(true);
+    grandChild->setFixedToContainerLayer(true);
 
     // Case 1: scrollDelta of 0, 0
     child->setScrollDelta(IntSize(0, 0));
@@ -1283,7 +1283,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     child->setTransform(nonUniformScale);
 
     child->setIsContainerForFixedPositionLayers(true);
-    grandChild->setFixedToContainerLayerVisibleRect(true);
+    grandChild->setFixedToContainerLayer(true);
 
     // Case 1: scrollDelta of 0, 0
     child->setScrollDelta(IntSize(0, 0));
@@ -1326,7 +1326,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
 
     child->setIsContainerForFixedPositionLayers(true);
     grandChild->setPosition(FloatPoint(8, 6));
-    greatGrandChild->setFixedToContainerLayerVisibleRect(true);
+    greatGrandChild->setFixedToContainerLayer(true);
 
     // Case 1: scrollDelta of 0, 0
     child->setScrollDelta(IntSize(0, 0));
@@ -1377,7 +1377,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     child->setTransform(rotationAboutZ);
     grandChild->setPosition(FloatPoint(8, 6));
     grandChild->setTransform(rotationAboutZ);
-    greatGrandChild->setFixedToContainerLayerVisibleRect(true); // greatGrandChild is positioned upside-down with respect to the targetRenderSurface
+    greatGrandChild->setFixedToContainerLayer(true); // greatGrandChild is positioned upside-down with respect to the targetRenderSurface
 
     // Case 1: scrollDelta of 0, 0
     child->setScrollDelta(IntSize(0, 0));
@@ -1443,7 +1443,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     child->setTransform(rotationAboutZ);
     grandChild->setPosition(FloatPoint(8, 6));
     grandChild->setTransform(rotationAboutZ);
-    greatGrandChild->setFixedToContainerLayerVisibleRect(true); // greatGrandChild is positioned upside-down with respect to the targetRenderSurface
+    greatGrandChild->setFixedToContainerLayer(true); // greatGrandChild is positioned upside-down with respect to the targetRenderSurface
 
     // Case 1: scrollDelta of 0, 0
     child->setScrollDelta(IntSize(0, 0));
@@ -1505,7 +1505,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     child->setIsContainerForFixedPositionLayers(true);
     grandChild->setPosition(FloatPoint(8, 6));
     grandChild->setForceRenderSurface(true);
-    greatGrandChild->setFixedToContainerLayerVisibleRect(true);
+    greatGrandChild->setFixedToContainerLayer(true);
     greatGrandChild->setDrawsContent(true);
 
     WebTransformationMatrix rotationAboutZ;
@@ -1595,7 +1595,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     grandChild->setForceRenderSurface(true);
     greatGrandChild->setPosition(FloatPoint(140, 120));
     greatGrandChild->setForceRenderSurface(true);
-    fixedPositionChild->setFixedToContainerLayerVisibleRect(true);
+    fixedPositionChild->setFixedToContainerLayer(true);
     fixedPositionChild->setDrawsContent(true);
 
     // The additional rotations, which are non-commutative with translations, help to
@@ -1694,7 +1694,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
 
     child->setIsContainerForFixedPositionLayers(true);
     child->setForceRenderSurface(true);
-    grandChild->setFixedToContainerLayerVisibleRect(true);
+    grandChild->setFixedToContainerLayer(true);
     grandChild->setDrawsContent(true);
 
     // Case 1: scrollDelta of 0, 0
@@ -1742,7 +1742,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerTha
     CCLayerImpl* grandChild = child->children()[0].get();
 
     child->setIsContainerForFixedPositionLayers(true);
-    grandChild->setFixedToContainerLayerVisibleRect(true);
+    grandChild->setFixedToContainerLayer(true);
 
     // This should not confuse the grandChild. If correct, the grandChild would still be considered fixed to its container (i.e. "child").
     grandChild->setIsContainerForFixedPositionLayers(true);
@@ -1785,7 +1785,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerTha
     rotationByZ.rotate3d(0, 0, 90);
 
     root->setTransform(rotationByZ);
-    grandChild->setFixedToContainerLayerVisibleRect(true);
+    grandChild->setFixedToContainerLayer(true);
 
     // Case 1: root scrollDelta of 0, 0
     root->setScrollDelta(IntSize(0, 0));
