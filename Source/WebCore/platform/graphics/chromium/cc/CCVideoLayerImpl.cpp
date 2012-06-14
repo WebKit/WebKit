@@ -39,6 +39,7 @@
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCProxy.h"
 #include "cc/CCQuadCuller.h"
+#include "cc/CCStreamVideoDrawQuad.h"
 #include "cc/CCTextureDrawQuad.h"
 #include "cc/CCVideoDrawQuad.h"
 #include <public/WebVideoFrame.h>
@@ -182,12 +183,11 @@ void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
     // otherwise synchonize use of all textures in the quad.
 
     IntRect quadRect(IntPoint(), bounds());
-    WebKit::WebTransformationMatrix matrix;
 
     switch (m_format) {
     case GraphicsContext3D::LUMINANCE: {
         // YUV software decoder.
-        OwnPtr<CCVideoDrawQuad> videoQuad = CCVideoDrawQuad::create(sharedQuadState, quadRect, m_framePlanes, 0, m_format, matrix);
+        OwnPtr<CCVideoDrawQuad> videoQuad = CCVideoDrawQuad::create(sharedQuadState, quadRect, m_framePlanes, 0, m_format, WebKit::WebTransformationMatrix());
         quadList.append(videoQuad.release());
         break;
     }
@@ -214,9 +214,8 @@ void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
     }
     case Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES: {
         // StreamTexture hardware decoder.
-        matrix = m_streamTextureMatrix;
-        OwnPtr<CCVideoDrawQuad> videoQuad = CCVideoDrawQuad::create(sharedQuadState, quadRect, m_framePlanes, m_frame->textureId(), m_format, matrix);
-        quadList.append(videoQuad.release());
+        OwnPtr<CCStreamVideoDrawQuad> streamVideoQuad = CCStreamVideoDrawQuad::create(sharedQuadState, quadRect, m_frame->textureId(), m_streamTextureMatrix);
+        quadList.append(streamVideoQuad.release());
         break;
     }
     default:

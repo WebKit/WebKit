@@ -1,3 +1,52 @@
+2012-06-13  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Create a CCStreamVideoDrawQuad used for StreamTexture video output
+        https://bugs.webkit.org/show_bug.cgi?id=88826
+
+        Reviewed by Adrienne Walker.
+
+        Remove the matrix from the CCVideoDrawQuad, and create a new quad
+        specifically for StreamTexture video decoder output. This quad
+        contains only the fields needed for display - textureId and the
+        matrix to be applied to texture coords.
+
+        Removes the (0, 0, 1, 1) "transform" from the shader used for these
+        quads, as it was a no-op.
+
+        No new tests, no change in behaviour.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawQuad):
+        (WebCore::LayerRendererChromium::drawStreamVideoQuad):
+        (WebCore::LayerRendererChromium::drawVideoQuad):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore):
+        (LayerRendererChromium):
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::VertexShaderVideoTransform::VertexShaderVideoTransform):
+        (WebCore::VertexShaderVideoTransform::init):
+        (WebCore::VertexShaderVideoTransform::getShaderString):
+        * platform/graphics/chromium/ShaderChromium.h:
+        (VertexShaderVideoTransform):
+        * platform/graphics/chromium/cc/CCDrawQuad.cpp:
+        (WebCore::CCDrawQuad::toStreamVideoDrawQuad):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCDrawQuad.h:
+        (WebCore):
+        (CCDrawQuad):
+        * platform/graphics/chromium/cc/CCStreamVideoDrawQuad.cpp: Added.
+        (WebCore):
+        (WebCore::CCStreamVideoDrawQuad::create):
+        (WebCore::CCStreamVideoDrawQuad::CCStreamVideoDrawQuad):
+        * platform/graphics/chromium/cc/CCStreamVideoDrawQuad.h: Added.
+        (WebCore):
+        (CCStreamVideoDrawQuad):
+        (WebCore::CCStreamVideoDrawQuad::textureId):
+        (WebCore::CCStreamVideoDrawQuad::matrix):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::appendQuads):
+
 2012-06-13  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add an accelerated compositing implementation for WebKit2

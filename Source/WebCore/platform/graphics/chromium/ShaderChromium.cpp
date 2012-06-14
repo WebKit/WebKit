@@ -238,7 +238,6 @@ String VertexShaderTile::getShaderString() const
 
 VertexShaderVideoTransform::VertexShaderVideoTransform()
     : m_matrixLocation(-1)
-    , m_texTransformLocation(-1)
     , m_texMatrixLocation(-1)
 {
 }
@@ -246,9 +245,8 @@ VertexShaderVideoTransform::VertexShaderVideoTransform()
 bool VertexShaderVideoTransform::init(GraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
-    m_texTransformLocation = context->getUniformLocation(program, "texTransform");
     m_texMatrixLocation = context->getUniformLocation(program, "texMatrix");
-    return m_matrixLocation != -1 && m_texTransformLocation != -1 && m_texMatrixLocation != -1;
+    return m_matrixLocation != -1 && m_texMatrixLocation != -1;
 }
 
 String VertexShaderVideoTransform::getShaderString() const
@@ -257,14 +255,12 @@ String VertexShaderVideoTransform::getShaderString() const
         attribute vec4 a_position;
         attribute vec2 a_texCoord;
         uniform mat4 matrix;
-        uniform vec4 texTransform;
         uniform mat4 texMatrix;
         varying vec2 v_texCoord;
         void main()
         {
             gl_Position = matrix * a_position;
-            vec2 texCoord = vec2(texMatrix * vec4(a_texCoord.x, 1.0 - a_texCoord.y, 0.0, 1.0));
-            v_texCoord = texCoord * texTransform.zw + texTransform.xy;
+            v_texCoord = vec2(texMatrix * vec4(a_texCoord.x, 1.0 - a_texCoord.y, 0.0, 1.0));
         }
     );
 }

@@ -35,6 +35,7 @@ class CCDebugBorderDrawQuad;
 class CCIOSurfaceDrawQuad;
 class CCRenderPassDrawQuad;
 class CCSolidColorDrawQuad;
+class CCStreamVideoDrawQuad;
 class CCTextureDrawQuad;
 class CCTileDrawQuad;
 class CCVideoDrawQuad;
@@ -72,6 +73,7 @@ public:
         SolidColor,
         TiledContent,
         VideoContent,
+        StreamVideoContent,
     };
 
     Material material() const { return m_material; }
@@ -82,6 +84,7 @@ public:
     const CCIOSurfaceDrawQuad* toIOSurfaceDrawQuad() const;
     const CCRenderPassDrawQuad* toRenderPassDrawQuad() const;
     const CCSolidColorDrawQuad* toSolidColorDrawQuad() const;
+    const CCStreamVideoDrawQuad* toStreamVideoDrawQuad() const;
     const CCTextureDrawQuad* toTextureDrawQuad() const;
     const CCTileDrawQuad* toTileDrawQuad() const;
     const CCVideoDrawQuad* toVideoDrawQuad() const;

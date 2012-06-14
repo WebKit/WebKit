@@ -139,12 +139,10 @@ public:
     String getShaderString() const;
 
     int matrixLocation() const { return m_matrixLocation; }
-    int texTransformLocation() const { return m_texTransformLocation; }
     int texMatrixLocation() const { return m_texMatrixLocation; }
 
 private:
     int m_matrixLocation;
-    int m_texTransformLocation;
     int m_texMatrixLocation;
 };
 

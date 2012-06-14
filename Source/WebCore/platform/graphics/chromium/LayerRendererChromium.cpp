@@ -66,6 +66,7 @@
 #include "cc/CCRenderSurfaceFilters.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCSolidColorDrawQuad.h"
+#include "cc/CCStreamVideoDrawQuad.h"
 #include "cc/CCTextureDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
 #include "cc/CCVideoDrawQuad.h"
@@ -514,6 +515,9 @@ void LayerRendererChromium::drawQuad(const CCDrawQuad* quad)
         break;
     case CCDrawQuad::SolidColor:
         drawSolidColorQuad(quad->toSolidColorDrawQuad());
+        break;
+    case CCDrawQuad::StreamVideoContent:
+        drawStreamVideoQuad(quad->toStreamVideoDrawQuad());
         break;
     case CCDrawQuad::TextureContent:
         drawTextureQuad(quad->toTextureDrawQuad());
@@ -1038,7 +1042,7 @@ void LayerRendererChromium::drawYUV(const CCVideoDrawQuad* quad)
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
 }
 
-void LayerRendererChromium::drawStreamTexture(const CCVideoDrawQuad* quad)
+void LayerRendererChromium::drawStreamVideoQuad(const CCStreamVideoDrawQuad* quad)
 {
     static float glMatrix[16];
 
@@ -1051,9 +1055,8 @@ void LayerRendererChromium::drawStreamTexture(const CCVideoDrawQuad* quad)
     GLC(context(), context()->uniformMatrix4fv(program->vertexShader().texMatrixLocation(), 1, false, glMatrix));
 
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
-    GLC(context(), context()->bindTexture(Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES, quad->frameProviderTextureId()));
+    GLC(context(), context()->bindTexture(Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES, quad->textureId()));
 
-    GLC(context(), context()->uniform4f(program->vertexShader().texTransformLocation(), 0, 0, 1, 1));
     GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
     const IntSize& bounds = quad->quadRect().size();
@@ -1070,9 +1073,6 @@ void LayerRendererChromium::drawVideoQuad(const CCVideoDrawQuad* quad)
     switch (quad->format()) {
     case GraphicsContext3D::LUMINANCE:
         drawYUV(quad);
-        break;
-    case Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES:
-        drawStreamTexture(quad);
         break;
     default:
         CRASH(); // Someone updated convertVFCFormatToGC3DFormat above but update this!

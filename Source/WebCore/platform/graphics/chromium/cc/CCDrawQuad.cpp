@@ -33,6 +33,7 @@
 #include "cc/CCLayerImpl.h"
 #include "cc/CCRenderPassDrawQuad.h"
 #include "cc/CCSolidColorDrawQuad.h"
+#include "cc/CCStreamVideoDrawQuad.h"
 #include "cc/CCTextureDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
 #include "cc/CCVideoDrawQuad.h"
@@ -94,6 +95,12 @@ const CCSolidColorDrawQuad* CCDrawQuad::toSolidColorDrawQuad() const
 {
     ASSERT(m_material == SolidColor);
     return static_cast<const CCSolidColorDrawQuad*>(this);
+}
+
+const CCStreamVideoDrawQuad* CCDrawQuad::toStreamVideoDrawQuad() const
+{
+    ASSERT(m_material == StreamVideoContent);
+    return static_cast<const CCStreamVideoDrawQuad*>(this);
 }
 
 const CCTextureDrawQuad* CCDrawQuad::toTextureDrawQuad() const

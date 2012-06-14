@@ -48,6 +48,7 @@ class CCDrawQuad;
 class CCIOSurfaceDrawQuad;
 class CCRenderPassDrawQuad;
 class CCSolidColorDrawQuad;
+class CCStreamVideoDrawQuad;
 class CCTextureDrawQuad;
 class CCTileDrawQuad;
 class CCVideoDrawQuad;
@@ -130,6 +131,7 @@ private:
     void drawBackgroundFilters(const CCRenderPassDrawQuad*, const WebKit::WebTransformationMatrix& deviceTransform);
     void drawRenderPassQuad(const CCRenderPassDrawQuad*);
     void drawSolidColorQuad(const CCSolidColorDrawQuad*);
+    void drawStreamVideoQuad(const CCStreamVideoDrawQuad*);
     void drawTextureQuad(const CCTextureDrawQuad*);
     void drawIOSurfaceQuad(const CCIOSurfaceDrawQuad*);
     void drawTileQuad(const CCTileDrawQuad*);

@@ -3761,6 +3761,8 @@
             'platform/graphics/chromium/cc/CCSolidColorDrawQuad.h',
             'platform/graphics/chromium/cc/CCSolidColorLayerImpl.cpp',
             'platform/graphics/chromium/cc/CCSolidColorLayerImpl.h',
+            'platform/graphics/chromium/cc/CCStreamVideoDrawQuad.cpp',
+            'platform/graphics/chromium/cc/CCStreamVideoDrawQuad.h',
             'platform/graphics/chromium/cc/CCTextureDrawQuad.cpp',
             'platform/graphics/chromium/cc/CCTextureDrawQuad.h',
             'platform/graphics/chromium/cc/CCTextureLayerImpl.cpp',
