@@ -1,3 +1,16 @@
+2012-06-14  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Chromium][Forms] We should remove ENABLE_INPUT_TYPE_TIME=0 and so on to allows us to override them by ~/.gyp/include.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=89062
+
+        Reviewed by Kent Tamura.
+
+        This patch removes ENABLE_INPUT_TYPE_*=0 from default entry of feature_defines to
+        allows us overriding by ~/.gyp/include.gypi
+
+        * features.gypi: Remove ENABLE_INPUT_TYPE_DATETIME=0, ENABLE_INPUT_TYPE_DATETIMELOCAL=0,
+        and so on.
+
 2012-06-14  Min Qin  <qinmin@google.com>
 
         Remove the const keyword from MediaPlayerPrivate::enterFullscreen()
