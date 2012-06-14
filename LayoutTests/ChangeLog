@@ -1,3 +1,9 @@
+2012-06-14  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed update of chromium TestExpectations to mark hybi/workers/close.html as failing.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Get rid of FAIL test expectation

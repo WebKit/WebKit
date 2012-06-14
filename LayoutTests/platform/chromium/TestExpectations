@@ -3729,4 +3729,4 @@ BUGWK88832 XP : http/tests/xmlhttprequest/origin-exact-matching.html = PASS TIME
 
 BUGWK88856 : fast/events/constructors/speech-recognition-event-constructor.html = TEXT
 
-// Need rebaselining because of text gradient fill rendering fix.
+BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = TEXT
