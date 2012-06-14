@@ -98,6 +98,9 @@ class RenderThemeChromiumSkia : public RenderTheme {
         virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
         virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);
         virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&);
+        virtual String formatMediaControlsTime(float time) const;
+        virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
+        virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
 
         // MenuList refers to an unstyled menulist (meaning a menulist without
         // background-color or border set) and MenuListButton refers to a styled

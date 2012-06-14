@@ -55,6 +55,9 @@ protected:
     virtual bool usesMediaControlStatusDisplay() { return false; }
     virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const { return true; }
     virtual bool usesVerticalVolumeSlider() const { return false; }
+    virtual String formatMediaControlsTime(float time) const;
+    virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
+    virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
 #endif
 
     virtual bool usesTestModeFocusRingColor() const;

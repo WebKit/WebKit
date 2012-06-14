@@ -1,3 +1,67 @@
+2012-06-14  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Update the time display of the new Chromium media controls.
+        https://bugs.webkit.org/show_bug.cgi?id=88724
+
+        Reviewed by Eric Carlson.
+
+        No new tests, final patch will contain the rebaselined tests.
+
+        The Chrome video controls are receiving a visual update. This patch changes
+        the format of the time digits that are displayed. They are different for media
+        files of different duration. For non-autoplaying videos, the duration is shown
+        before playback is started.
+
+        * css/mediaControlsChromium.css:
+        (audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display):
+        Format the new duration display the same as the current time display.
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::MediaControlRootElementChromium):
+        Add a member field for the duration display.
+        (WebCore::MediaControlRootElementChromium::create):
+        Add an element for the duration display and initially hide the current time display.
+        (WebCore::MediaControlRootElementChromium::setMediaController):
+        Add the duration display to the controller.
+        (WebCore::MediaControlRootElementChromium::reset):
+        Add reset functionality for the duration display.
+        (WebCore::MediaControlRootElementChromium::playbackStarted):
+        Show the current time display and hide the duration display upon playback start.
+        (WebCore::MediaControlRootElementChromium::updateTimeDisplay):
+        Show the current time display and hide the duration display when current time is non-zero.
+        * html/shadow/MediaControlRootElementChromium.h:
+        (WebCore):
+        Add the MediaControlTimeRemainingDisplayElement which provides use with the duration display.
+        (MediaControlRootElementChromium):
+        Add a duration member field, reusing the existing MediaControlTimeRemainingDisplayElement.
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::formatChromiumMediaControlsTime):
+        Formats a given time under the condition of a given duration.
+        (WebCore::RenderMediaControlsChromium::formatMediaControlsTime):
+        When formatting a single time, assume it to also provide the duration conditions.
+        (WebCore::RenderMediaControlsChromium::formatMediaControlsCurrentTime):
+        Format the current time given the duration.
+        (WebCore::RenderMediaControlsChromium::formatMediaControlsRemainingTime):
+        Format the remaining time from the current time given the duration.
+        * rendering/RenderMediaControlsChromium.h:
+        (RenderMediaControlsChromium):
+        Declare the time formatting member functions.
+        * rendering/RenderThemeChromiumMac.h:
+        (RenderThemeChromiumMac):
+        Declare the time formatting member functions for Chromium on the Mac.
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::formatMediaControlsTime):
+        (WebCore::RenderThemeChromiumMac::formatMediaControlsCurrentTime):
+        (WebCore::RenderThemeChromiumMac::formatMediaControlsRemainingTime):
+        Call the time formatting member functions of RenderMediaControlsChromium on the Mac.
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::formatMediaControlsTime):
+        (WebCore::formatMediaControlsCurrentTime):
+        (WebCore::formatMediaControlsRemainingTime):
+        Call the time formatting member functions of RenderMediaControlsChromium on Skia.
+        * rendering/RenderThemeChromiumSkia.h:
+        (RenderThemeChromiumSkia):
+        Declare the time formatting member functions for Chromium Skia.
+
 2012-06-14  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Refactor message loop instrumentation.

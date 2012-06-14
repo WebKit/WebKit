@@ -38,6 +38,9 @@ class RenderMediaControlsChromium {
 public:
     static bool paintMediaControlsPart(MediaControlElementType, RenderObject*, const PaintInfo&, const IntRect&);
     static void adjustMediaSliderThumbSize(RenderStyle*);
+    static String formatMediaControlsTime(float time);
+    static String formatMediaControlsCurrentTime(float currentTime, float duration);
+    static String formatMediaControlsRemainingTime(float currentTime, float duration);
 };
 
 } // namespace WebCore

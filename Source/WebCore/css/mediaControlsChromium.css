@@ -97,7 +97,8 @@ audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-bu
     padding: 0;
 }
 
-audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
+audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
     -webkit-appearance: media-current-time-display;
     -webkit-user-select: none;
     display: block;
@@ -111,6 +112,7 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
     line-height: 30px;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 13px;
+    font-weight: bold;
     color: white;
 
     letter-spacing: normal;

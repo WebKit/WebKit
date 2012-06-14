@@ -223,6 +223,21 @@ IntPoint RenderThemeChromiumMac::volumeSliderOffsetFromMuteButton(RenderBox* mut
 {
     return RenderTheme::volumeSliderOffsetFromMuteButton(muteButtonBox, size);
 }
+
+String RenderThemeChromiumMac::formatMediaControlsTime(float time) const
+{
+    return RenderMediaControlsChromium::formatMediaControlsTime(time);
+}
+
+String RenderThemeChromiumMac::formatMediaControlsCurrentTime(float currentTime, float duration) const
+{
+    return RenderMediaControlsChromium::formatMediaControlsCurrentTime(currentTime, duration);
+}
+
+String RenderThemeChromiumMac::formatMediaControlsRemainingTime(float currentTime, float duration) const
+{
+    return RenderThemeChromiumMac::formatMediaControlsRemainingTime(currentTime, duration);
+}
 #endif
 
 } // namespace WebCore

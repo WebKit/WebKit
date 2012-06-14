@@ -68,6 +68,7 @@ MediaControlRootElementChromium::MediaControlRootElementChromium(Document* docum
     , m_mediaController(0)
     , m_playButton(0)
     , m_currentTimeDisplay(0)
+    , m_durationDisplay(0)
     , m_timeline(0)
     , m_panelMuteButton(0)
     , m_volumeSlider(0)
@@ -117,7 +118,14 @@ PassRefPtr<MediaControlRootElementChromium> MediaControlRootElementChromium::cre
 
     RefPtr<MediaControlCurrentTimeDisplayElement> currentTimeDisplay = MediaControlCurrentTimeDisplayElement::create(document);
     controls->m_currentTimeDisplay = currentTimeDisplay.get();
+    controls->m_currentTimeDisplay->hide();
     panel->appendChild(currentTimeDisplay.release(), ec, true);
+    if (ec)
+        return 0;
+
+    RefPtr<MediaControlTimeRemainingDisplayElement> durationDisplay = MediaControlTimeRemainingDisplayElement::create(document);
+    controls->m_durationDisplay = durationDisplay.get();
+    panel->appendChild(durationDisplay.release(), ec, true);
     if (ec)
         return 0;
 
@@ -164,6 +172,8 @@ void MediaControlRootElementChromium::setMediaController(MediaControllerInterfac
         m_playButton->setMediaController(controller);
     if (m_currentTimeDisplay)
         m_currentTimeDisplay->setMediaController(controller);
+    if (m_durationDisplay)
+        m_durationDisplay->setMediaController(controller);
     if (m_timeline)
         m_timeline->setMediaController(controller);
     if (m_panelMuteButton)
@@ -218,6 +228,10 @@ void MediaControlRootElementChromium::reset()
     float duration = m_mediaController->duration();
     m_timeline->setDuration(duration);
     m_timeline->show();
+
+    m_durationDisplay->setInnerText(page->theme()->formatMediaControlsTime(duration), ASSERT_NO_EXCEPTION);
+    m_durationDisplay->setCurrentValue(duration);
+
     m_timeline->setPosition(m_mediaController->currentTime());
     updateTimeDisplay();
 
@@ -236,6 +250,8 @@ void MediaControlRootElementChromium::playbackStarted()
 {
     m_playButton->updateDisplayType();
     m_timeline->setPosition(m_mediaController->currentTime());
+    m_currentTimeDisplay->show();
+    m_durationDisplay->hide();
     updateTimeDisplay();
 }
 
@@ -264,6 +280,12 @@ void MediaControlRootElementChromium::updateTimeDisplay()
     Page* page = document()->page();
     if (!page)
         return;
+
+    // After seek, hide duration display and show current time.
+    if (now > 0) {
+        m_currentTimeDisplay->show();
+        m_durationDisplay->hide();
+    }
 
     // Allow the theme to format the time.
     ExceptionCode ec;

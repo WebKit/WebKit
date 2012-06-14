@@ -459,6 +459,38 @@ bool RenderThemeChromiumSkia::paintMediaMuteButton(RenderObject* object, const P
 #endif
 }
 
+String RenderThemeChromiumSkia::formatMediaControlsTime(float time) const
+{
+#if ENABLE(VIDEO)
+    return RenderMediaControlsChromium::formatMediaControlsTime(time);
+#else
+    UNUSED_PARAM(time);
+    return 0;
+#endif
+}
+
+String RenderThemeChromiumSkia::formatMediaControlsCurrentTime(float currentTime, float duration) const
+{
+#if ENABLE(VIDEO)
+    return RenderMediaControlsChromium::formatMediaControlsCurrentTime(currentTime, duration);
+#else
+    UNUSED_PARAM(currentTime);
+    UNUSED_PARAM(duration);
+    return 0;
+#endif
+}
+
+String RenderThemeChromiumSkia::formatMediaControlsRemainingTime(float currentTime, float duration) const
+{
+#if ENABLE(VIDEO)
+    return RenderMediaControlsChromium::formatMediaControlsRemainingTime(currentTime, duration);
+#else
+    UNUSED_PARAM(currentTime);
+    UNUSED_PARAM(duration);
+    return 0;
+#endif
+}
+
 void RenderThemeChromiumSkia::adjustMenuListStyle(StyleResolver*, RenderStyle* style, WebCore::Element*) const
 {
     // Height is locked to auto on all browsers.

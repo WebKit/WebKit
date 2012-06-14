@@ -40,6 +40,7 @@ class Event;
 class MediaControlPanelMuteButtonElement;
 class MediaControlPlayButtonElement;
 class MediaControlCurrentTimeDisplayElement;
+class MediaControlTimeRemainingDisplayElement;
 class MediaControlTimelineElement;
 class MediaControlVolumeSliderElement;
 class MediaControlFullscreenButtonElement;
@@ -134,6 +135,7 @@ private:
 
     MediaControlPlayButtonElement* m_playButton;
     MediaControlCurrentTimeDisplayElement* m_currentTimeDisplay;
+    MediaControlTimeRemainingDisplayElement* m_durationDisplay;
     MediaControlTimelineElement* m_timeline;
     MediaControlTimelineContainerElement* m_timelineContainer;
     MediaControlPanelMuteButtonElement* m_panelMuteButton;

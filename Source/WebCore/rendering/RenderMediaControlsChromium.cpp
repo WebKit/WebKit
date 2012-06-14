@@ -348,6 +348,45 @@ void RenderMediaControlsChromium::adjustMediaSliderThumbSize(RenderStyle* style)
     }
 }
 
+static String formatChromiumMediaControlsTime(float time, float duration)
+{
+    if (!isfinite(time))
+        time = 0;
+    if (!isfinite(duration))
+        duration = 0;
+    int seconds = static_cast<int>(fabsf(time));
+    int hours = seconds / (60 * 60);
+    int minutes = (seconds / 60) % 60;
+    seconds %= 60;
+
+    // duration defines the format of how the time is rendered
+    int durationSecs = static_cast<int>(fabsf(duration));
+    int durationHours = durationSecs / (60 * 60);
+    int durationMins = (durationSecs / 60) % 60;
+
+    if (durationHours || hours)
+        return String::format("%s%01d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
+    if (durationMins > 9)
+        return String::format("%s%02d:%02d", (time < 0 ? "-" : ""), minutes, seconds);
+
+    return String::format("%s%01d:%02d", (time < 0 ? "-" : ""), minutes, seconds);
+}
+
+String RenderMediaControlsChromium::formatMediaControlsTime(float time)
+{
+    return formatChromiumMediaControlsTime(time, time);
+}
+
+String RenderMediaControlsChromium::formatMediaControlsCurrentTime(float currentTime, float duration)
+{
+    return formatChromiumMediaControlsTime(currentTime, duration);
+}
+
+String RenderMediaControlsChromium::formatMediaControlsRemainingTime(float currentTime, float duration)
+{
+    return formatChromiumMediaControlsTime(currentTime - duration, duration);
+}
+
 #endif  // #if ENABLE(VIDEO)
 
 } // namespace WebCore
