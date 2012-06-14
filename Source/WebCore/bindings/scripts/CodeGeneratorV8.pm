@@ -3867,7 +3867,7 @@ sub NativeToJSValue
     if ($arrayType) {
         if ($type eq "DOMString[]") {
             AddToImplIncludes("V8DOMStringList.h");
-            AddToImplIncludes("DOMStrignList.h");
+            AddToImplIncludes("DOMStringList.h");
         } elsif (!$codeGenerator->SkipIncludeHeader($arrayType)) {
             AddToImplIncludes("V8$arrayType.h");
             AddToImplIncludes("$arrayType.h");

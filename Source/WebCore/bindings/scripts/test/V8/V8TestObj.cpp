@@ -22,7 +22,7 @@
 #include "V8TestObj.h"
 
 #include "ContextFeatures.h"
-#include "DOMStrignList.h"
+#include "DOMStringList.h"
 #include "Dictionary.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
