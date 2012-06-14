@@ -54,6 +54,8 @@ void WebPage::platformInitialize()
     m_accessibilityObject = webPageAccessibilityObjectNew(this);
     GOwnPtr<gchar> plugID(atk_plug_get_id(ATK_PLUG(m_accessibilityObject)));
     send(Messages::WebPageProxy::BindAccessibilityTree(String(plugID.get())));
+
+    m_nativeWindowHandle = 0;
 }
 
 void WebPage::updateAccessibilityTree()
@@ -149,5 +151,13 @@ PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const KURL&)
     notImplemented();
     return 0;
 }
+
+#if USE(TEXTURE_MAPPER_GL)
+void WebPage::widgetMapped(int64_t nativeWindowHandle)
+{
+    m_nativeWindowHandle = nativeWindowHandle;
+}
+
+#endif
 
 } // namespace WebKit

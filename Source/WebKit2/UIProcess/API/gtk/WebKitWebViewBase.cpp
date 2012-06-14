@@ -65,6 +65,10 @@
 #include "WebFullScreenManagerProxy.h"
 #endif
 
+#if USE(TEXTURE_MAPPER_GL) && defined(GDK_WINDOWING_X11)
+#include <gdk/gdkx.h>
+#endif
+
 using namespace WebKit;
 using namespace WebCore;
 
@@ -154,6 +158,9 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     gint attributesMask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL;
 
     GdkWindow* window = gdk_window_new(gtk_widget_get_parent_window(widget), &attributes, attributesMask);
+#if USE(TEXTURE_MAPPER_GL)
+    gdk_window_ensure_native(window);
+#endif
     gtk_widget_set_window(widget, window);
     gdk_window_set_user_data(window, widget);
 
@@ -339,6 +346,13 @@ static void webkitWebViewBaseMap(GtkWidget* widget)
     GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->map(widget);
 
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
+#if USE(TEXTURE_MAPPER_GL) && defined(GDK_WINDOWING_X11)
+    GdkWindow* gdkWindow = gtk_widget_get_window(widget);
+    ASSERT(gdkWindow);
+    if (gdk_window_has_native(gdkWindow))
+        webViewBase->priv->pageProxy->widgetMapped(GDK_WINDOW_XID(gdkWindow));
+#endif
+
     if (!webViewBase->priv->needsResizeOnMap)
         return;
 

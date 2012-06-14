@@ -31,6 +31,8 @@
 #include "NotImplemented.h"
 #include "PageClientImpl.h"
 #include "WebKitWebViewBasePrivate.h"
+#include "WebPageMessages.h"
+#include "WebProcessProxy.h"
 #include <gtk/gtkx.h>
 
 namespace WebKit {
@@ -106,5 +108,12 @@ void WebPageProxy::windowedPluginGeometryDidChange(const WebCore::IntRect& frame
 
     webkitWebViewBaseChildMoveResize(WEBKIT_WEB_VIEW_BASE(viewWidget()), plugin, frameRect);
 }
+
+#if USE(TEXTURE_MAPPER_GL)
+void WebPageProxy::widgetMapped(uint64_t nativeWindowId)
+{
+    process()->send(Messages::WebPage::WidgetMapped(nativeWindowId), m_pageID);
+}
+#endif
 
 } // namespace WebKit

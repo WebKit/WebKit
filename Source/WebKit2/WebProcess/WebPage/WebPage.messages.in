@@ -273,4 +273,8 @@ messages -> WebPage {
 #if ENABLE(PAGE_VISIBILITY_API)
     SetVisibilityState(int visibilityState, bool isInitialState);
 #endif
+
+#if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
+    WidgetMapped(int64_t id)
+#endif
 }

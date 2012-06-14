@@ -668,6 +668,10 @@ public:
     // WebPopupMenuProxy::Client
     virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent();
 
+#if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
+    void widgetMapped(uint64_t nativeWindowId);
+#endif
+
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
 

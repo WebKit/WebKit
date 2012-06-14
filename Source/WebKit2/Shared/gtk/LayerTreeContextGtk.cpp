@@ -24,50 +24,41 @@
  */
 
 #include "config.h"
-#include "LayerTreeHost.h"
+#include "LayerTreeContext.h"
 
-#if USE(CA)
-#if PLATFORM(MAC)
-#include "LayerTreeHostCAMac.h"
-#elif PLATFORM(WIN)
-#include "LayerTreeHostCAWin.h"
-#endif
-#endif
-
-#if PLATFORM(QT)
-#include "qt/LayerTreeHostQt.h"
-#endif
-
-#if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
-#include "LayerTreeHostGtk.h"
-#endif
-
-using namespace WebCore;
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
 
 namespace WebKit {
 
-PassRefPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage)
-{
-#if PLATFORM(MAC)
-    return LayerTreeHostCAMac::create(webPage);
-#elif PLATFORM(WIN) && HAVE(WKQCA)
-    return LayerTreeHostCAWin::create(webPage);
-#elif PLATFORM(QT)
-    return LayerTreeHostQt::create(webPage);
-#elif PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
-    return LayerTreeHostGtk::create(webPage);
-#else
-    return 0;
-#endif
-}
-
-LayerTreeHost::LayerTreeHost(WebPage* webPage)
-    : m_webPage(webPage)
+LayerTreeContext::LayerTreeContext()
+    : windowHandle(0)
 {
 }
 
-LayerTreeHost::~LayerTreeHost()
+LayerTreeContext::~LayerTreeContext()
 {
+}
+
+void LayerTreeContext::encode(CoreIPC::ArgumentEncoder* encoder) const
+{
+    encoder->encode(windowHandle);
+}
+
+bool LayerTreeContext::decode(CoreIPC::ArgumentDecoder* decoder, LayerTreeContext& context)
+{
+    return decoder->decode(context.windowHandle);
+}
+
+bool LayerTreeContext::isEmpty() const
+{
+    return !windowHandle;
+}
+
+bool operator==(const LayerTreeContext& a, const LayerTreeContext& b)
+{
+    return a.windowHandle == b.windowHandle;
 }
 
 } // namespace WebKit
+

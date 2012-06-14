@@ -262,6 +262,20 @@ bool GLContextGLX::canRenderToDefaultFramebuffer()
     return m_window;
 }
 
+IntSize GLContextGLX::defaultFrameBufferSize()
+{
+    if (!canRenderToDefaultFramebuffer() || !m_window)
+        return IntSize();
+
+    int x, y;
+    Window rootWindow;
+    unsigned int width, height, borderWidth, depth;
+    if (!XGetGeometry(sharedDisplay(), m_window, &rootWindow, &x, &y, &width, &height, &borderWidth, &depth))
+        return IntSize();
+
+    return IntSize(width, height);
+}
+
 bool GLContextGLX::makeContextCurrent()
 {
     ASSERT(m_context && (m_window || m_pbuffer || m_glxPixmap));

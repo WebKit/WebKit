@@ -432,6 +432,9 @@ public:
 
 #elif PLATFORM(GTK)
     void updateAccessibilityTree();
+#if USE(TEXTURE_MAPPER_GL)
+    void widgetMapped(int64_t nativeWindowHandle);
+#endif
 #endif
 
     void setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length);
@@ -537,6 +540,10 @@ public:
 
 #if ENABLE(PAGE_VISIBILITY_API)
     void setVisibilityState(int visibilityState, bool isInitialState);
+#endif
+
+#if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
+    uint64_t nativeWindowHandle() { return m_nativeWindowHandle; }
 #endif
 
 private:
@@ -753,6 +760,11 @@ private:
     RefPtr<WebCore::Node> m_gestureTargetNode;
 #elif PLATFORM(GTK)
     WebPageAccessibilityObject* m_accessibilityObject;
+
+#if USE(TEXTURE_MAPPER_GL)
+    // Our view's window in the UI process.
+    uint64_t m_nativeWindowHandle;
+#endif
 #endif
     
     WebCore::RunLoop::Timer<WebPage> m_setCanStartMediaTimer;

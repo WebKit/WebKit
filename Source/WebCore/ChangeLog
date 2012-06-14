@@ -1,3 +1,22 @@
+2012-06-13  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add an accelerated compositing implementation for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=86037
+
+        Reviewed by Alejandro G. Castro.
+
+        No new tests. These changes are covered by the compositing tests, which
+        we will gradually try to turn on for the bots.
+
+        Add a new GLContext method for getting to current default framebuffer size, which
+        is quite useful for preventing composited content quivering while resizing.
+
+        * platform/graphics/cairo/GLContext.h:
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore::GLContextGLX::defaultFrameBufferSize): Added this implementation for X11
+        which asks the X server for the window size.
+        * platform/graphics/glx/GLContextGLX.h:
+
 2012-06-13  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Implement hit-testing for impl-side input handling in accelerated compositor

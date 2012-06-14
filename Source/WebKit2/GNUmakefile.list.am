@@ -344,10 +344,10 @@ webkit2_sources += \
 	Source/WebKit2/Shared/EditorState.h \
 	Source/WebKit2/Shared/FontSmoothingLevel.h \
 	Source/WebKit2/Shared/ProcessExecutablePath.h \
-	Source/WebKit2/Shared/cairo/LayerTreeContextCairo.cpp \
 	Source/WebKit2/Shared/cairo/ShareableBitmapCairo.cpp \
 	Source/WebKit2/Shared/gtk/ArgumentCodersGtk.h \
 	Source/WebKit2/Shared/gtk/ArgumentCodersGtk.cpp \
+	Source/WebKit2/Shared/gtk/LayerTreeContextGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebKeyboardEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebMouseEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebWheelEventGtk.cpp \
@@ -1058,6 +1058,12 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebConnectionToUIProcess.h \
 	Source/WebKit2/WebProcess/WebProcess.cpp \
 	Source/WebKit2/WebProcess/WebProcess.h
+
+if USE_TEXTURE_MAPPER_GL
+webkit2_sources += \
+   Source/WebKit2/WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp \
+   Source/WebKit2/WebProcess/WebPage/gtk/LayerTreeHostGtk.h
+endif # END USE_TEXTURE_MAPPER_GL
 
 if ENABLE_PLUGIN_PROCESS
 

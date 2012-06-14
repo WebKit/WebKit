@@ -46,6 +46,7 @@ public:
     virtual bool makeContextCurrent();
     virtual void swapBuffers();
     virtual bool canRenderToDefaultFramebuffer();
+    virtual IntSize defaultFrameBufferSize();
 
 #if ENABLE(WEBGL)
     virtual PlatformGraphicsContext3D platformContext();
