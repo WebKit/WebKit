@@ -1,3 +1,11 @@
+2012-06-14  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Remove USE(QT_IMAGE_DECODER) macro, since we don't use it anymore
+
+        Reviewed by Noam Rosenthal.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-06-14  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add implementation for registerIntentService in WebFrameLoaderClient

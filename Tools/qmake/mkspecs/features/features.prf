@@ -78,8 +78,6 @@ haveQt(5) {
     haveQt(5):contains(config_test_libzlib, yes): DEFINES += WTF_USE_ZLIB=1
 }
 
-!contains(DEFINES, WTF_USE_QT_IMAGE_DECODER=.): DEFINES += WTF_USE_QT_IMAGE_DECODER=1
-
 # Tiled Backing Store support
 !contains(DEFINES, WTF_USE_TILED_BACKING_STORE=.): DEFINES += WTF_USE_TILED_BACKING_STORE=1
 
