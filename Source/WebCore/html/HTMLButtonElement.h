@@ -32,7 +32,7 @@ class HTMLButtonElement : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLButtonElement> create(const QualifiedName&, Document*, HTMLFormElement*);
 
-    void setType(const String&);
+    void setType(const AtomicString&);
     
     String value() const;
 

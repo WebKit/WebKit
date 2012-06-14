@@ -1,3 +1,20 @@
+2012-06-14  Edaena Salinas Jasso  <edaena@apple.com>
+
+        el.getAttribute('type') returns 'null' when setting el.type to null
+        https://bugs.webkit.org/show_bug.cgi?id=89030
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: fast/dom/HTMLButtonElement/change-type.html
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::setType): Changed parameter to be AtomicString to 
+        address an unrelated review comment from bug 14439 for slightly better performance.
+        * html/HTMLButtonElement.h:
+        (HTMLButtonElement): Changed parameter to be AtomicString to address an unrelated 
+        review comment from bug 14439 for slightly better performance.
+        * html/HTMLButtonElement.idl: Specified TreatNullAs NullString for the type attribute.
+
 2012-06-14  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Creating a transaction from within a transaction callback should fail

@@ -1,3 +1,16 @@
+2012-06-14  Edaena Salinas Jasso  <edaena@apple.com>
+
+        el.getAttribute('type') returns 'null' when setting el.type to null
+        https://bugs.webkit.org/show_bug.cgi?id=89030
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/dom/HTMLButtonElement/change-type-expected.txt: Updated the expected output
+        so that it matches the null return type of getAttribute('type').
+        * fast/dom/HTMLButtonElement/change-type.html: Change test of getAttribute('type')
+        to be null instead of 'null'. Addressed and unrelated review comment from bug 14439
+        about how 'undefined' is specified in the shouldBe function.
+
 2012-06-14  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Creating a transaction from within a transaction callback should fail

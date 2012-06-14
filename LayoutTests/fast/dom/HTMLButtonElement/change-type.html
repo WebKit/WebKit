@@ -58,10 +58,10 @@ function testTypeValue()
     shouldBe("btn.getAttribute('type')", "' b u t t o n '");
     
     shouldBe("btn.type = null; btn.type", "'submit'");
-    shouldBe("btn.getAttribute('type')", "null + ''");
+    shouldBe("btn.getAttribute('type')", "null");
     
     shouldBe("btn.type = undefined; btn.type", "'submit'");
-    shouldBe("btn.getAttribute('type')", "undefined + ''");
+    shouldBe("btn.getAttribute('type')", "'undefined'");
 }
 
 function testTypeBehavior()

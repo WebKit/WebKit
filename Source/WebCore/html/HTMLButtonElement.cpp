@@ -53,7 +53,7 @@ PassRefPtr<HTMLButtonElement> HTMLButtonElement::create(const QualifiedName& tag
     return adoptRef(new HTMLButtonElement(tagName, document, form));
 }
 
-void HTMLButtonElement::setType(const String& type)
+void HTMLButtonElement::setType(const AtomicString& type)
 {
     setAttribute(typeAttr, type);
 }
