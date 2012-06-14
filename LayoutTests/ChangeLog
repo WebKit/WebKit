@@ -1,3 +1,15 @@
+2012-06-13  Min Qin  <qinmin@google.com>
+
+        Address some feedbacks in layout test
+        https://bugs.webkit.org/show_bug.cgi?id=88909
+
+        Reviewed by Eric Carlson.
+
+        Fixed some comments in https://bugs.webkit.org/show_bug.cgi?id=88897.
+        Reduced the timeout to 100 ms and fixed the function definition.
+        
+        * media/no-autoplay-with-user-gesture-requirement.html:
+
 2012-06-13  Jeffrey Pfau  <jpfau@apple.com>
 
         Padding and borders can cause integer overflow in block layouts

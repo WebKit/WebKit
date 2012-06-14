@@ -7,7 +7,8 @@
             if (window.internals) 
                 window.internals.settings.setMediaPlaybackRequiresUserGesture(true);
 
-            function cleanGestureRequirement() {
+            function cleanGestureRequirement()
+            {
                 if (window.internals) 
                     window.internals.settings.setMediaPlaybackRequiresUserGesture(false);
             }
@@ -27,7 +28,7 @@
 
             function canplaythrough()
             {
-                 setTimeout(testPaused, 500);
+                 setTimeout(testPaused, 100);
             }
 
             function start()
