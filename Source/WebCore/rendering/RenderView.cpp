@@ -945,20 +945,4 @@ void RenderView::setFixedPositionedObjectsNeedLayout()
     }
 }
 
-void RenderView::insertFixedPositionedObject(RenderBox* object)
-{
-    if (!m_positionedObjects)
-        m_positionedObjects = adoptPtr(new PositionedObjectsListHashSet);
-
-    m_positionedObjects->add(object);
-}
-
-void RenderView::removeFixedPositionedObject(RenderBox* object)
-{
-    if (!m_positionedObjects)
-        return;
-
-    m_positionedObjects->remove(object);
-}
-
 } // namespace WebCore

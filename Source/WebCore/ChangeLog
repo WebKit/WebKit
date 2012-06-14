@@ -1,3 +1,22 @@
+2012-06-13  Yael Aharon  <yael.aharon@nokia.com>
+
+        Remove redundant code from RenderView and RenderBlock
+        https://bugs.webkit.org/show_bug.cgi?id=89019
+
+        Reviewed by Abhishek Arya.
+
+        As pointed out in https://bugs.webkit.org/show_bug.cgi?id=83981#c7 , RenderView::insertFixedPositionedObject()
+        is redundant and should be removed.
+        No new tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::insertPositionedObject):
+        (WebCore::RenderBlock::removePositionedObject):
+        * rendering/RenderView.cpp:
+        (WebCore):
+        * rendering/RenderView.h:
+        (RenderView):
+
 2012-06-13  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Create a CCStreamVideoDrawQuad used for StreamTexture video output
