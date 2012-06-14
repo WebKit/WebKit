@@ -139,6 +139,20 @@ WebNodeCollection WebDocument::all()
     return WebNodeCollection(unwrap<Document>()->all());
 }
 
+void WebDocument::images(WebVector<WebElement>& results)
+{
+    RefPtr<HTMLCollection> images = unwrap<Document>()->images();
+    size_t sourceLength = images->length();
+    Vector<WebElement> temp;
+    temp.reserveCapacity(sourceLength);
+    for (size_t i = 0; i < sourceLength; ++i) {
+        Node* node = images->item(i);
+        if (node && node->isHTMLElement())
+            temp.append(WebElement(static_cast<Element*>(node)));
+    }
+    results.assign(temp);
+}
+
 void WebDocument::forms(WebVector<WebFormElement>& results) const
 {
     RefPtr<HTMLCollection> forms = const_cast<Document*>(constUnwrap<Document>())->forms();

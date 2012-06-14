@@ -1,3 +1,19 @@
+2012-06-13  Jesse Greenwald  <jgreenwald@google.com>
+
+        [Chromium] Add WebDocument.images
+        https://bugs.webkit.org/show_bug.cgi?id=88837
+
+        Reviewed by Adam Barth.
+
+        This method is needed on Android to support the existing
+        WebView.documentHasImages Java API.
+
+        * public/WebDocument.h:
+        (WebDocument):
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::images):
+        (WebKit):
+
 2012-06-13  Dominic Cooney  <dominicc@chromium.org>
 
         Unreviewed: Disable verifyHitTestingForSingleLayer.

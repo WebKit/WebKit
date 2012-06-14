@@ -95,6 +95,7 @@ public:
     WEBKIT_EXPORT WebString title() const;
     WEBKIT_EXPORT WebNodeCollection all();
     WEBKIT_EXPORT void forms(WebVector<WebFormElement>&) const;
+    WEBKIT_EXPORT void images(WebVector<WebElement>&);
     WEBKIT_EXPORT WebURL completeURL(const WebString&) const;
     WEBKIT_EXPORT WebElement getElementById(const WebString&) const;
     WEBKIT_EXPORT WebNode focusedNode() const;
