@@ -43,6 +43,8 @@ WK_EXPORT WKURLRef WKHitTestResultCopyAbsoluteMediaURL(WKHitTestResultRef hitTes
 WK_EXPORT WKStringRef WKHitTestResultCopyLinkLabel(WKHitTestResultRef hitTestResult);
 WK_EXPORT WKStringRef WKHitTestResultCopyLinkTitle(WKHitTestResultRef hitTestResult);
 
+WK_EXPORT bool WKHitTestResultIsContentEditable(WKHitTestResultRef hitTestResult);
+
 #ifdef __cplusplus
 }
 #endif

@@ -417,6 +417,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
         " <img style='position:absolute; left:1; top:10' src='0xdeadbeef' width=5 height=5></img>"
         " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
         " <video style='position:absolute; left:1; top:30' width=10 height=10 controls='controls'><source src='movie.ogg' type='video/ogg' /></video>"
+        " <input style='position:absolute; left:1; top:50' size='10'></input>"
         "</body></html>";
 
     test->loadHtml(linksHoveredHTML, "file:///");
@@ -427,6 +428,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(webkit_hit_test_result_context_is_link(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
     g_assert_cmpstr(webkit_hit_test_result_get_link_uri(hitTestResult), ==, "http://www.webkitgtk.org/");
     g_assert_cmpstr(webkit_hit_test_result_get_link_title(hitTestResult), ==, "WebKitGTK+ Title");
     g_assert_cmpstr(webkit_hit_test_result_get_link_label(hitTestResult), ==, "WebKitGTK+ Website");
@@ -437,6 +439,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
     g_assert(!test->m_mouseTargetModifiers);
 
     // Move over image with GDK_CONTROL_MASK.
@@ -444,6 +447,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
     g_assert(webkit_hit_test_result_context_is_image(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
     g_assert_cmpstr(webkit_hit_test_result_get_image_uri(hitTestResult), ==, "file:///0xdeadbeef");
     g_assert(test->m_mouseTargetModifiers & GDK_CONTROL_MASK);
 
@@ -452,6 +456,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(webkit_hit_test_result_context_is_link(hitTestResult));
     g_assert(webkit_hit_test_result_context_is_image(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
     g_assert_cmpstr(webkit_hit_test_result_get_link_uri(hitTestResult), ==, "http://www.webkitgtk.org/logo");
     g_assert_cmpstr(webkit_hit_test_result_get_image_uri(hitTestResult), ==, "file:///0xdeadbeef");
     g_assert_cmpstr(webkit_hit_test_result_get_link_title(hitTestResult), ==, "WebKitGTK+ Logo");
@@ -463,7 +468,16 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
     g_assert(webkit_hit_test_result_context_is_media(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
     g_assert_cmpstr(webkit_hit_test_result_get_media_uri(hitTestResult), ==, "file:///movie.ogg");
+    g_assert(!test->m_mouseTargetModifiers);
+
+    // Mover over input.
+    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(5, 55);
+    g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
+    g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
+    g_assert(webkit_hit_test_result_context_is_editable(hitTestResult));
     g_assert(!test->m_mouseTargetModifiers);
 }
 

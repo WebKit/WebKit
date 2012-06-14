@@ -46,6 +46,7 @@ typedef struct _WebKitHitTestResultPrivate WebKitHitTestResultPrivate;
  * @WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK: a hyperlink element.
  * @WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE: an image element.
  * @WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA: a video or audio element.
+ * @WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE: an editable element
  *
  * Enum values with flags representing the context of a #WebKitHitTestResult.
  */
@@ -54,7 +55,8 @@ typedef enum
     WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT = 1 << 1,
     WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK     = 1 << 2,
     WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE    = 1 << 3,
-    WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA    = 1 << 4
+    WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA    = 1 << 4,
+    WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE = 1 << 5
 } WebKitHitTestResultContext;
 
 struct _WebKitHitTestResult {
@@ -81,6 +83,9 @@ webkit_hit_test_result_context_is_image     (WebKitHitTestResult *hit_test_resul
 
 WEBKIT_API gboolean
 webkit_hit_test_result_context_is_media     (WebKitHitTestResult *hit_test_result);
+
+WEBKIT_API gboolean
+webkit_hit_test_result_context_is_editable  (WebKitHitTestResult *hit_test_result);
 
 WEBKIT_API const gchar *
 webkit_hit_test_result_get_link_uri         (WebKitHitTestResult *hit_test_result);

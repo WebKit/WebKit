@@ -48,6 +48,7 @@ public:
         String absoluteMediaURL;
         String linkLabel;
         String linkTitle;
+        bool isContentEditable;
 
         Data()
         {
@@ -60,6 +61,7 @@ public:
             , absoluteMediaURL(hitTestResult.absoluteMediaURL().string())
             , linkLabel(hitTestResult.textContent())
             , linkTitle(hitTestResult.titleDisplayString())
+            , isContentEditable(hitTestResult.isContentEditable())
         {
         }
 
@@ -76,6 +78,8 @@ public:
 
     String linkLabel() const { return m_data.linkLabel; }
     String linkTitle() const { return m_data.linkTitle; }
+
+    bool isContentEditable() const { return m_data.isContentEditable; }
 
 private:
     explicit WebHitTestResult(const WebHitTestResult::Data& hitTestResultData)

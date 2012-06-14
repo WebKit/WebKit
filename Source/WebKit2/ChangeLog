@@ -1,3 +1,36 @@
+2012-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WK2] Add WKHitTestResultIsContentEditable()
+        https://bugs.webkit.org/show_bug.cgi?id=80597
+
+        Reviewed by Martin Robinson.
+
+        * Shared/WebHitTestResult.cpp:
+        (WebKit::WebHitTestResult::Data::encode): Encode isContentEditable.
+        (WebKit::WebHitTestResult::Data::decode): Decode isContentEditable.
+        * Shared/WebHitTestResult.h:
+        (Data): Add isContentEditable.
+        (WebKit::WebHitTestResult::Data::Data): Initialize
+        isContentEditable.
+        (WebKit::WebHitTestResult::isContentEditable): Returns whether
+        hit test result target is editable content.
+        * UIProcess/API/C/WKHitTestResult.cpp:
+        (WKHitTestResultIsContentEditable): C API to get whether hit test
+        result target is editable content.
+        * UIProcess/API/C/WKHitTestResult.h:
+        * UIProcess/API/gtk/WebKitHitTestResult.cpp:
+        (webkitHitTestResultCreate): Add
+        WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE flags to the context if
+        hit test result target is editable content.
+        (webkit_hit_test_result_context_is_editable): Returns TRUE if
+        WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE flags is present in
+        context.
+        * UIProcess/API/gtk/WebKitHitTestResult.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewMouseTarget): Add tests for
+        WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE.
+
 2012-06-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [WK2] Fix client interface size for WKPageLoaderClient.

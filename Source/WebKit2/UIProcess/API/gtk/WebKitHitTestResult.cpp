@@ -253,6 +253,9 @@ WebKitHitTestResult* webkitHitTestResultCreate(WKHitTestResultRef wkHitTestResul
     if (!mediaURL.isEmpty())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA;
 
+    if (WKHitTestResultIsContentEditable(wkHitTestResult))
+        context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE;
+
     const String& linkTitle = toImpl(wkHitTestResult)->linkTitle();
     const String& linkLabel = toImpl(wkHitTestResult)->linkLabel();
 
@@ -345,6 +348,23 @@ gboolean webkit_hit_test_result_context_is_media(WebKitHitTestResult* hitTestRes
     g_return_val_if_fail(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult), FALSE);
 
     return hitTestResult->priv->context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA;
+}
+
+/**
+ * webkit_hit_test_result_context_is_editable:
+ * @hit_test_result: a #WebKitHitTestResult
+ *
+ * Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE flag is present in
+ * #WebKitHitTestResult:context.
+ *
+ * Returns: %TRUE if there's an editable element at the coordinates of the @hit_test_result,
+ *    or %FALSE otherwise
+ */
+gboolean webkit_hit_test_result_context_is_editable(WebKitHitTestResult* hitTestResult)
+{
+    g_return_val_if_fail(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult), FALSE);
+
+    return hitTestResult->priv->context & WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE;
 }
 
 /**
