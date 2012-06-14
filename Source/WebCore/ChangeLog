@@ -1,3 +1,27 @@
+2012-06-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Move cursor related code from WidgetEfl to ewk_view and EflScreenUtilities.
+        https://bugs.webkit.org/show_bug.cgi?id=88803
+
+        Reviewed by Chang Shu.
+
+        Because WebProcess can not control cursor,
+        setCursor should be passed to ChromeClient like other ports.
+
+        * platform/Widget.h:
+        (Widget):
+        * platform/efl/EflScreenUtilities.cpp:
+        (WebCore::applyFallbackCursor): Moved from WidgetEfl.cpp.
+        (WebCore):
+        (WebCore::isUsingEcoreX): Moved from WidgetEfl.cpp.
+        * platform/efl/EflScreenUtilities.h:
+        (WebCore):
+        * platform/efl/WidgetEfl.cpp: Removes cursor related codes.
+        (WebCore::WidgetPrivate::WidgetPrivate):
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::setCursor): Redirect to HostWindow.
+        (WebCore::Widget::setEvasObject):
+
 2012-06-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Radio node lists do not get updated when inserted back into a document

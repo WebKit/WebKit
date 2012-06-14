@@ -271,14 +271,6 @@ private:
 
     IntRect m_frame; // Not used when a native widget exists.
 
-#if PLATFORM(EFL)
-    // FIXME: Please see the previous #if PLATFORM(EFL) block.
-    Ecore_Evas* ecoreEvas() const;
-
-    void applyFallbackCursor();
-    void applyCursor();
-#endif
-
 #if PLATFORM(MAC) || PLATFORM(EFL)
     WidgetPrivate* m_data;
 #endif

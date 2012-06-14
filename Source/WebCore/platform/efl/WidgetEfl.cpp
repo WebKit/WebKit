@@ -3,7 +3,7 @@
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2008 Kenneth Rohde Christiansen
  * Copyright (C) 2009-2010 ProFUSION embedded systems
- * Copyright (C) 2009-2010 Samsung Electronics
+ * Copyright (C) 2009-2012 Samsung Electronics
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,13 +43,7 @@
 #include "Page.h"
 
 #include <Ecore.h>
-#include <Ecore_Evas.h>
-#include <Edje.h>
 #include <Evas.h>
-
-#ifdef HAVE_ECORE_X
-#include <Ecore_X.h>
-#endif
 
 namespace WebCore {
 
@@ -62,19 +56,7 @@ public:
     WidgetPrivate()
         : m_evas(0)
         , m_evasObject(0)
-        , m_cursorObject(0)
-#ifdef HAVE_ECORE_X
-        , m_isUsingEcoreX(false)
-#endif
     { }
-
-    /* cursor */
-    String m_cursorGroup;
-    Evas_Object* m_cursorObject;
-
-#ifdef HAVE_ECORE_X
-    bool m_isUsingEcoreX;
-#endif
 };
 
 Widget::Widget(PlatformWidget widget)
@@ -91,9 +73,6 @@ Widget::Widget(PlatformWidget widget)
 Widget::~Widget()
 {
     ASSERT(!parent());
-
-    if (m_data->m_cursorObject)
-        evas_object_del(m_data->m_cursorObject);
 
     delete m_data;
 }
@@ -132,70 +111,12 @@ void Widget::setFocus(bool focused)
 {
 }
 
-void Widget::applyFallbackCursor()
-{
-#ifdef HAVE_ECORE_X
-    if (m_data->m_isUsingEcoreX && !m_data->m_cursorGroup.isNull()) {
-        int shape = getEcoreCursor(m_data->m_cursorGroup);
-
-        if (shape < ECORE_X_CURSOR_X || shape > ECORE_X_CURSOR_XTERM) {
-            LOG_ERROR("cannot map an equivalent X cursor for"
-                      " c ursor group %s", m_data->m_cursorGroup.utf8().data());
-            shape = ECORE_X_CURSOR_LEFT_PTR;
-        }
-
-        Ecore_X_Window win = ecore_evas_software_x11_window_get(ecoreEvas());
-        Ecore_X_Cursor cur = ecore_x_cursor_shape_get(shape);
-        ecore_x_window_cursor_set(win, cur);
-        return;
-    }
-#endif
-}
-
-void Widget::applyCursor()
-{
-    CString file = edjeThemeRecursive().utf8();
-
-    m_data->m_cursorObject = edje_object_add(evas());
-    if (!file.isNull() && !edje_object_file_set(m_data->m_cursorObject, file.data(), m_data->m_cursorGroup.utf8().data())) {
-        evas_object_del(m_data->m_cursorObject);
-        m_data->m_cursorObject = 0;
-        ecore_evas_object_cursor_set(ecoreEvas(), 0, 0, 0, 0);
-        applyFallbackCursor();
-    } else {
-        Evas_Coord x, y, w, h;
-        const char *d;
-
-        edje_object_size_min_get(m_data->m_cursorObject, &w, &h);
-        if ((w <= 0) || (h <= 0))
-            edje_object_size_min_calc(m_data->m_cursorObject, &w, &h);
-        if ((w <= 0) || (h <= 0))
-            w = h = 16;
-        evas_object_resize(m_data->m_cursorObject, w, h);
-
-        d = edje_object_data_get(m_data->m_cursorObject, "hot.x");
-        x = d ? atoi(d) : 0;
-
-        d = edje_object_data_get(m_data->m_cursorObject, "hot.y");
-        y = d ? atoi(d) : 0;
-
-        ecore_evas_object_cursor_set(ecoreEvas(), m_data->m_cursorObject,
-                                     EVAS_LAYER_MAX, x, y);
-    }
-}
-
 void Widget::setCursor(const Cursor& cursor)
 {
-    if (!evas())
-         return;
-
-    const char* group = cursor.platformCursor();
-    if (!group || String(group) == m_data->m_cursorGroup)
+    ScrollView* view = root();
+    if (!view)
         return;
-
-    m_data->m_cursorGroup = group;
-
-    applyCursor();
+    view->hostWindow()->setCursor(cursor);
 }
 
 void Widget::show()
@@ -252,12 +173,6 @@ Evas* Widget::evas() const
     return m_data->m_evas;
 }
 
-Ecore_Evas* Widget::ecoreEvas() const
-{
-    // FIXME EFL: XXX assume evas was created by ecore_evas
-    return static_cast<Ecore_Evas*>(evas_data_attach_get(evas()));
-}
-
 void Widget::setEvasObject(Evas_Object *object)
 {
     // FIXME: study platformWidget() and use it
@@ -267,21 +182,10 @@ void Widget::setEvasObject(Evas_Object *object)
     m_data->m_evasObject = object;
     if (!object) {
         m_data->m_evas = 0;
-#ifdef HAVE_ECORE_X
-        m_data->m_isUsingEcoreX = false;
-#endif
         return;
     }
 
     m_data->m_evas = evas_object_evas_get(object);
-
-#ifdef HAVE_ECORE_X
-    const char *engine = ecore_evas_engine_name_get(ecoreEvas());
-    m_data->m_isUsingEcoreX = (!strcmp(engine, "software_x11")
-                               || !strcmp(engine, "software_xcb")
-                               || !strcmp(engine, "software_16_x11")
-                               || !strncmp(engine, "xrender", sizeof("xrender") - 1));
-#endif
 
     Widget::frameRectsChanged();
 }

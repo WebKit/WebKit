@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Samsung Electronics
+ * Copyright (C) 2012 Samsung Electronics
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 #include "EflScreenUtilities.h"
 
 #ifdef HAVE_ECORE_X
+#include <Ecore_Evas.h>
 #include <Ecore_X.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
@@ -102,12 +103,41 @@ int getEcoreCursor(const String& cursorString)
 }
 #endif
 
+void applyFallbackCursor(Ecore_Evas* ecoreEvas, const char* cursorString)
+{
+#ifdef HAVE_ECORE_X
+    int shape = getEcoreCursor(cursorString);
+    if (shape < ECORE_X_CURSOR_X || shape > ECORE_X_CURSOR_XTERM) {
+        LOG_ERROR("cannot map an equivalent X cursor for"
+                  " c ursor group %s", cursorString);
+        shape = ECORE_X_CURSOR_LEFT_PTR;
+    }
+    Ecore_X_Window window = ecore_evas_software_x11_window_get(ecoreEvas);
+    Ecore_X_Cursor cursor = ecore_x_cursor_shape_get(shape);
+    ecore_x_window_cursor_set(window, cursor);
+#endif
+}
+
 int getDPI()
 {
 #ifdef HAVE_ECORE_X
     return ecore_x_dpi_get();
 #else
     return 160;
+#endif
+}
+
+bool isUsingEcoreX(const Evas* evas)
+{
+#ifdef HAVE_ECORE_X
+    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(evas);
+    const char* engine = ecore_evas_engine_name_get(ecoreEvas);
+    return !strcmp(engine, "software_x11")
+        || !strcmp(engine, "software_xcb")
+        || !strcmp(engine, "software_16_x11")
+        || !strncmp(engine, "xrender", sizeof("xrender") - 1);
+#else
+    return false;
 #endif
 }
 

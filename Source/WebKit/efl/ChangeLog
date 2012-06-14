@@ -1,3 +1,25 @@
+2012-06-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Move cursor related code from WidgetEfl to ewk_view and EflScreenUtilities.
+        https://bugs.webkit.org/show_bug.cgi?id=88803
+
+        Reviewed by Chang Shu.
+
+        Because WebProcess can not control cursor,
+        setCursor should be passed to ChromeClient like other ports.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::setCursor):
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new): Check whether ecore_x can be used.
+        (_ewk_view_priv_del):
+        (_ewk_view_smart_add):
+        Change order of initialization to use base structure in _ewk_view_priv_new.
+        (ewk_view_cursor_set): Moved from Widget::applyCursor.
+        * ewk/ewk_view_private.h:
+        (WebCore):
+
 2012-06-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Implement setDomainRelaxationForbiddenForURLScheme in EFL DRT

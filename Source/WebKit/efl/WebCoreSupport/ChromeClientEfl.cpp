@@ -4,7 +4,7 @@
  * Copyright (C) 2008 Kenneth Rohde Christiansen
  * Copyright (C) 2008 Diego Gonzalez
  * Copyright (C) 2009-2010 ProFUSION embedded systems
- * Copyright (C) 2009-2010 Samsung Electronics
+ * Copyright (C) 2009-2012 Samsung Electronics
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * All rights reserved.
@@ -499,9 +499,9 @@ void ChromeClientEfl::formStateDidChange(const Node*)
     notImplemented();
 }
 
-void ChromeClientEfl::setCursor(const Cursor&)
+void ChromeClientEfl::setCursor(const Cursor& cursor)
 {
-    notImplemented();
+    ewk_view_cursor_set(m_view, cursor);
 }
 
 void ChromeClientEfl::setCursorHiddenUntilMouseMoves(bool)

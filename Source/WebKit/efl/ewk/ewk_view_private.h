@@ -34,6 +34,7 @@ class Color;
 class ColorChooserClient;
 #endif
 
+class Cursor;
 class PopupMenuClient;
 }
 
@@ -48,6 +49,7 @@ const char ewkViewSingleName[] = "Ewk_View_Single";
         return __VA_ARGS__; \
     }
 
+void ewk_view_cursor_set(Evas_Object* ewkView, const WebCore::Cursor& cursor);
 void ewk_view_ready(Evas_Object* ewkView);
 void ewk_view_input_method_state_set(Evas_Object* ewkView, bool active);
 void ewk_view_title_set(Evas_Object* ewkView, const Ewk_Text_With_Direction* title);
