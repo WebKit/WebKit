@@ -316,6 +316,8 @@ class Manager(object):
 
         # a set of test files, and the same tests as a list
 
+        self._paths = set()
+
         # FIXME: Rename to test_names.
         self._test_files = set()
         self._test_files_list = None
@@ -340,6 +342,7 @@ class Manager(object):
         paths = self._strip_test_dir_prefixes(args)
         if self._options.test_list:
             paths += self._strip_test_dir_prefixes(read_test_files(self._filesystem, self._options.test_list, self._port.TEST_PATH_SEPARATOR))
+        self._paths = set(paths)
         self._test_files = self._port.tests(paths)
 
     def _strip_test_dir_prefixes(self, paths):
@@ -456,24 +459,40 @@ class Manager(object):
 
         # Remove skipped - both fixable and ignored - files from the
         # top-level list of files to test.
+        found_test_files = set(self._test_files)
         num_all_test_files = len(self._test_files)
-        self._printer.print_expected("Found:  %d tests" % (len(self._test_files)))
+
+        skipped = self._expectations.get_tests_with_result_type(test_expectations.SKIP)
+        if not self._options.http:
+            skipped.update(set(self._http_tests()))
+
+        if self._options.skipped == 'only':
+            self._test_files = self._test_files.intersection(skipped)
+        elif self._options.skipped == 'default':
+            self._test_files -= skipped
+        elif self._options.skipped == 'ignore':
+            pass  # just to be clear that we're ignoring the skip list.
+
+        if self._options.skip_failing_tests:
+            self._test_files -= self._expectations.get_tests_with_result_type(test_expectations.FAIL)
+            self._test_files -= self._expectations.get_tests_with_result_type(test_expectations.FLAKY)
+
+        # now make sure we're explicitly running any tests passed on the command line.
+        self._test_files.update(found_test_files.intersection(self._paths))
+
         if not num_all_test_files:
             _log.critical('No tests to run.')
             return None
 
-        skipped = set()
-
-        if not self._options.http:
-            skipped = skipped.union(self._http_tests())
-
-        if num_all_test_files > 1 and not self._options.force:
-            skipped.update(self._expectations.get_tests_with_result_type(test_expectations.SKIP))
-            if self._options.skip_failing_tests:
-                skipped.update(self._expectations.get_tests_with_result_type(test_expectations.FAIL))
-                skipped.update(self._expectations.get_tests_with_result_type(test_expectations.FLAKY))
-
-        self._test_files -= skipped
+        num_skipped = num_all_test_files - len(self._test_files)
+        if num_skipped:
+            self._printer.print_expected("Running %s (found %d, skipping %d)." % (
+                grammar.pluralize('test', num_all_test_files - num_skipped),
+                num_all_test_files, num_skipped))
+        elif len(self._test_files) > 1:
+            self._printer.print_expected("Running all %d tests." % len(self._test_files))
+        else:
+            self._printer.print_expected("Running %1 test.")
 
         # Create a sorted list of test files so the subset chunk,
         # if used, contains alphabetically consecutive tests.
@@ -504,9 +523,7 @@ class Manager(object):
         self._print_expected_results_of_type(result_summary, test_expectations.FLAKY, "flaky")
         self._print_expected_results_of_type(result_summary, test_expectations.SKIP, "skipped")
 
-        if self._options.force:
-            self._printer.print_expected('Running all tests, including skips (--force)')
-        else:
+        if self._options.skipped != 'ignore':
             # Note that we don't actually run the skipped tests (they were
             # subtracted out of self._test_files, above), but we stub out the
             # results here so the statistics can remain accurate.

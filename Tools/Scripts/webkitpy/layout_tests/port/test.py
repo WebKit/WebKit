@@ -174,6 +174,7 @@ layer at (0,0) size 800x34
     tests.add('passes/checksum_in_image.html',
               expected_checksum=None,
               expected_image='tEXtchecksum\x00checksum_in_image-checksum')
+    tests.add('passes/skipped/skip.html')
 
     # Note that here the checksums don't match but the images do, so this test passes "unexpectedly".
     # See https://bugs.webkit.org/show_bug.cgi?id=69444 .
@@ -263,6 +264,7 @@ WONTFIX : failures/expected/timeout.html = TIMEOUT
 WONTFIX SKIP : failures/expected/hang.html = TIMEOUT
 WONTFIX SKIP : failures/expected/keyboard.html = CRASH
 WONTFIX SKIP : failures/expected/exception.html = CRASH
+WONTFIX SKIP : passes/skipped/skip.html = PASS
 """)
 
     filesystem.maybe_make_directory(LAYOUT_TEST_DIR + '/reftests/foo')

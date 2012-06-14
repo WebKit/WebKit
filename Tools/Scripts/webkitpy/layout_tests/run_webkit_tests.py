@@ -157,8 +157,8 @@ def _set_up_derived_options(port, options):
             normalized_platform_directories.append(port.host.filesystem.normpath(path))
         options.additional_platform_directory = normalized_platform_directories
 
-    if not options.http and options.force:
-        warnings.append("--no-http is ignored since --force is also provided")
+    if not options.http and options.skipped in ('ignore', 'only'):
+        warnings.append("--force/--skipped=%s overrides --no-http." % (options.skipped))
         options.http = True
 
     if options.skip_pixel_test_if_no_baseline and not options.pixel_tests:
@@ -347,17 +347,14 @@ def parse_args(args=None):
             help="wrapper command to insert before invocations of "
                  "DumpRenderTree; option is split on whitespace before "
                  "running. (Example: --wrapper='valgrind --smc-check=all')"),
-        # old-run-webkit-tests:
-        # -i|--ignore-tests               Comma-separated list of directories
-        #                                 or tests to ignore
         optparse.make_option("-i", "--ignore-tests", action="append", default=[],
             help="directories or test to ignore (may specify multiple times)"),
         optparse.make_option("--test-list", action="append",
             help="read list of tests to run from file", metavar="FILE"),
-        # old-run-webkit-tests uses --skipped==[default|ignore|only]
-        # instead of --force:
-        optparse.make_option("--force", action="store_true", default=False,
-            help="Run all tests, even those marked SKIP in the test list"),
+        optparse.make_option("--skipped", action="store", default="default",
+            help="control how tests marked SKIP are run. 'default' == Skip, 'ignore' == Run them anyway, 'only' == only run the SKIP tests."),
+        optparse.make_option("--force", dest="skipped", action="store_const", const='ignore',
+            help="Run all tests, even those marked SKIP in the test list (same as --skipped=ignore)"),
         optparse.make_option("--time-out-ms",
             help="Set the timeout for each test"),
         # old-run-webkit-tests calls --randomize-order --random:

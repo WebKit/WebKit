@@ -401,19 +401,29 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         tests_run = get_tests_run(['--skip-pixel-test-if-no-baseline'] + tests_to_run, tests_included=True, flatten_batches=True)
         self.assertEquals(tests_run, ['passes/image.html', 'passes/text.html'])
 
-    def test_ignore_tests(self):
-        def assert_ignored(args, tests_expected_to_run):
-            tests_to_run = ['failures/expected/image.html', 'passes/image.html']
-            tests_run = get_tests_run(args + tests_to_run, tests_included=True, flatten_batches=True)
-            self.assertEquals(tests_run, tests_expected_to_run)
+    def test_ignore_flag(self):
+        # Note that passes/image.html is expected to be run since we specified it directly.
+        tests_run = get_tests_run(['-i', 'passes', 'passes/image.html'], flatten_batches=True, tests_included=True)
+        self.assertFalse('passes/text.html' in tests_run)
+        self.assertTrue('passes/image.html' in tests_run)
 
-        assert_ignored(['-i', 'failures/expected/image.html'], ['passes/image.html'])
-        assert_ignored(['-i', 'passes'], ['failures/expected/image.html'])
+    def test_skipped_flag(self):
+        tests_run = get_tests_run(['passes'], tests_included=True, flatten_batches=True)
+        self.assertFalse('passes/skipped/skip.html' in tests_run)
+        num_tests_run_by_default = len(tests_run)
 
-        # Note here that there is an expectation for failures/expected/image.html already, but
-        # it is overriden by the command line arg. This might be counter-intuitive.
-        # FIXME: This isn't currently working ...
-        # assert_ignored(['-i', 'failures/expected'], ['passes/image.html'])
+        # Check that nothing changes when we specify skipped=default.
+        self.assertEquals(len(get_tests_run(['--skipped=default', 'passes'], tests_included=True, flatten_batches=True)),
+                          num_tests_run_by_default)
+
+        # Now check that we run one more test (the skipped one).
+        tests_run = get_tests_run(['--skipped=ignore', 'passes'], tests_included=True, flatten_batches=True)
+        self.assertTrue('passes/skipped/skip.html' in tests_run)
+        self.assertEquals(len(tests_run), num_tests_run_by_default + 1)
+
+        # Now check that we only run the skipped test.
+        self.assertEquals(get_tests_run(['--skipped=only', 'passes'], tests_included=True, flatten_batches=True),
+                          ['passes/skipped/skip.html'])
 
     def test_iterations(self):
         tests_to_run = ['passes/image.html', 'passes/text.html']
