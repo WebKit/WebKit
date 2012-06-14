@@ -1,3 +1,30 @@
+2012-06-13  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Move isolated file system code out of chromium-specific directory
+        https://bugs.webkit.org/show_bug.cgi?id=88997
+
+        Reviewed by Adam Barth.
+
+        The code does not need to be chromium-specific.  Any platforms that
+        have file system implementation and manage mappings from file system
+        id to a set of files should share the code.
+
+        No new tests as this has no functional/behavioral changes.
+
+        * Modules/filesystem/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::createIsolatedFileSystem):
+        (WebCore):
+        * Modules/filesystem/DOMFileSystem.h:
+        (DOMFileSystem):
+        * Modules/filesystem/DOMFileSystemBase.h:
+        (DOMFileSystemBase):
+        * Modules/filesystem/FileSystemType.h:
+        * Modules/filesystem/chromium/DOMFileSystemChromium.cpp:
+        * Modules/filesystem/chromium/DOMFileSystemChromium.h: Removed.
+        * Modules/filesystem/chromium/DraggedIsolatedFileSystem.cpp:
+        (WebCore::DraggedIsolatedFileSystem::getDOMFileSystem):
+        * WebCore.gypi:
+
 2012-06-07  Kinuko Yasuda  <kinuko@chromium.org>
 
         File::lastModifiedDate should use NaN or separate boolean flag for null Date value

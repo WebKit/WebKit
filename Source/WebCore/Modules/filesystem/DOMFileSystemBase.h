@@ -63,6 +63,8 @@ public:
     static const size_t persistentPathPrefixLength;
     static const char temporaryPathPrefix[];
     static const size_t temporaryPathPrefixLength;
+    static const char isolatedPathPrefix[];
+    static const size_t isolatedPathPrefixLength;
 
     static PassRefPtr<DOMFileSystemBase> create(ScriptExecutionContext* context, const String& name, FileSystemType type, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
     {

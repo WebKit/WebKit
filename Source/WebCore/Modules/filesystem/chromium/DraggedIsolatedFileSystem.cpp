@@ -33,7 +33,7 @@
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "DOMFileSystemChromium.h"
+#include "DOMFileSystem.h"
 #include "PlatformSupport.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -51,7 +51,7 @@ DOMFileSystem* DraggedIsolatedFileSystem::getDOMFileSystem(ScriptExecutionContex
     ASSERT(!m_filesystemId.isEmpty());
     if (!m_filesystem) {
         ASSERT(scriptExecutionContext);
-        m_filesystem = DOMFileSystemChromium::createIsolatedFileSystem(scriptExecutionContext, m_filesystemId);
+        m_filesystem = DOMFileSystem::createIsolatedFileSystem(scriptExecutionContext, m_filesystemId);
     }
     return m_filesystem.get();
 }

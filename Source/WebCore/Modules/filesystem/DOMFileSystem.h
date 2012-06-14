@@ -49,6 +49,9 @@ class DOMFileSystem : public DOMFileSystemBase, public ActiveDOMObject {
 public:
     static PassRefPtr<DOMFileSystem> create(ScriptExecutionContext*, const String& name, FileSystemType, const KURL& rootURL, PassOwnPtr<AsyncFileSystem>);
 
+    // Creates a new isolated file system for the given filesystemId.
+    static PassRefPtr<DOMFileSystem> createIsolatedFileSystem(ScriptExecutionContext*, const String& filesystemId);
+
     PassRefPtr<DirectoryEntry> root();
 
     // ActiveDOMObject methods.

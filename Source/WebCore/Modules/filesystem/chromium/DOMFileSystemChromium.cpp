@@ -29,13 +29,12 @@
  */
 
 #include "config.h"
-#include "DOMFileSystemChromium.h"
+#include "DOMFileSystemBase.h"
 
 #if ENABLE(FILE_SYSTEM)
 
 #include "DOMFilePath.h"
 #include "FileSystemType.h"
-#include "PlatformSupport.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include <wtf/text/StringBuilder.h>
@@ -43,7 +42,6 @@
 
 namespace WebCore {
 
-const char isolatedPathPrefix[] = "isolated";
 const char externalPathPrefix[] = "external";
 
 // static
@@ -102,30 +100,6 @@ KURL DOMFileSystemBase::createFileSystemURL(const String& fullPath) const
     // Remove the extra leading slash.
     url.setPath(url.path() + encodeWithURLEscapeSequences(fullPath.substring(1)));
     return url;
-}
-
-// static
-PassRefPtr<DOMFileSystem> DOMFileSystemChromium::createIsolatedFileSystem(ScriptExecutionContext* context, const String& filesystemId)
-{
-    StringBuilder filesystemName;
-    filesystemName.append(context->securityOrigin()->databaseIdentifier());
-    filesystemName.append(":");
-    filesystemName.append(isolatedPathPrefix);
-    filesystemName.append("_");
-    filesystemName.append(filesystemId);
-
-    // The rootURL created here is going to be attached to each filesystem request and
-    // is to be validated each time the request is being handled.
-    StringBuilder rootURL;
-    rootURL.append("filesystem:");
-    rootURL.append(context->securityOrigin()->toString());
-    rootURL.append("/");
-    rootURL.append(isolatedPathPrefix);
-    rootURL.append("/");
-    rootURL.append(filesystemId);
-    rootURL.append("/");
-
-    return DOMFileSystem::create(context, filesystemName.toString(), FileSystemTypeIsolated, KURL(ParsedURLString, rootURL.toString()), PlatformSupport::createAsyncFileSystem());
 }
 
 } // namespace WebCore

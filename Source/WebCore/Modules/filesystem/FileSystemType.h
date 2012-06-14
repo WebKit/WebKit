@@ -40,10 +40,10 @@ enum FileSystemType {
     FileSystemTypeTemporary,
     FileSystemTypePersistent,
 
-#if PLATFORM(CHROMIUM)
-    // Temporary isolated non-sandbox filesystem.
+    // Transient isolated non-sandboxed filesystem.
     FileSystemTypeIsolated,
 
+#if PLATFORM(CHROMIUM)
     // Non-sandbox filesystem.
     FileSystemTypeExternal,
 #endif

@@ -91,10 +91,14 @@ private:
 
 } // namespace
 
-// static
 bool AsyncFileSystem::isAvailable()
 {
     return true;
+}
+
+PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create()
+{
+    return AsyncFileSystemChromium::create();
 }
 
 AsyncFileSystemChromium::AsyncFileSystemChromium()

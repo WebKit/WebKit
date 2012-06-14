@@ -47,7 +47,10 @@
 #include "FileWriterCallback.h"
 #include "MetadataCallback.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -57,6 +60,29 @@ PassRefPtr<DOMFileSystem> DOMFileSystem::create(ScriptExecutionContext* context,
     RefPtr<DOMFileSystem> fileSystem(adoptRef(new DOMFileSystem(context, name, type, rootURL, asyncFileSystem)));
     fileSystem->suspendIfNeeded();
     return fileSystem.release();
+}
+
+PassRefPtr<DOMFileSystem> DOMFileSystem::createIsolatedFileSystem(ScriptExecutionContext* context, const String& filesystemId)
+{
+    StringBuilder filesystemName;
+    filesystemName.append(context->securityOrigin()->databaseIdentifier());
+    filesystemName.append(":");
+    filesystemName.append(isolatedPathPrefix);
+    filesystemName.append("_");
+    filesystemName.append(filesystemId);
+
+    // The rootURL created here is going to be attached to each filesystem request and
+    // is to be validated each time the request is being handled.
+    StringBuilder rootURL;
+    rootURL.append("filesystem:");
+    rootURL.append(context->securityOrigin()->toString());
+    rootURL.append("/");
+    rootURL.append(isolatedPathPrefix);
+    rootURL.append("/");
+    rootURL.append(filesystemId);
+    rootURL.append("/");
+
+    return DOMFileSystem::create(context, filesystemName.toString(), FileSystemTypeIsolated, KURL(ParsedURLString, rootURL.toString()), AsyncFileSystem::create());
 }
 
 DOMFileSystem::DOMFileSystem(ScriptExecutionContext* context, const String& name, FileSystemType type, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
