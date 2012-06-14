@@ -415,9 +415,7 @@ rule_list:
  ;
 
 valid_rule:
-    before_ruleset ruleset {
-        $$ = $2;
-    }
+    ruleset
   | media
   | page
   | font_face
@@ -845,7 +843,7 @@ maybe_space_before_declaration:
     }
   ;
 
-before_ruleset:
+before_selector_list:
     /* empty */ {
         CSSParser* p = static_cast<CSSParser*>(parser);
         p->markSelectorListStart();
@@ -860,9 +858,9 @@ before_rule_opening_brace:
   ;
 
 ruleset:
-    selector_list before_rule_opening_brace '{' maybe_space_before_declaration declaration_list closing_brace {
+    before_selector_list selector_list before_rule_opening_brace '{' maybe_space_before_declaration declaration_list closing_brace {
         CSSParser* p = static_cast<CSSParser*>(parser);
-        $$ = p->createStyleRule($1);
+        $$ = p->createStyleRule($2);
     }
   ;
 
