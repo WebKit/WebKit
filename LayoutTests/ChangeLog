@@ -1,3 +1,16 @@
+2012-06-14  Emil A Eklund  <eae@chromium.org>
+
+        Change RenderTableSection::calcRowLogicalHeight to round rather than floor height
+        https://bugs.webkit.org/show_bug.cgi?id=88813
+
+        Reviewed by Julien Chaffraix.
+
+        Add new test ensuring that rows are laid out the desired height when
+        given a height that maps to a device pixel value.
+
+        * fast/sub-pixel/table-rows-have-stable-height-expected.txt: Added.
+        * fast/sub-pixel/table-rows-have-stable-height.html: Added.
+
 2012-06-14  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Add support in DumpRenderTree for tracking repaints
