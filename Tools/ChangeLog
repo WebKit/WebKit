@@ -1,3 +1,25 @@
+2012-06-14  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Add support in DumpRenderTree for tracking repaints
+        https://bugs.webkit.org/show_bug.cgi?id=87658
+
+        Reviewed by Martin Robinson.
+
+        Reimplement the displayWebView method in DumpRenderTree - force a
+        repaint before starting tracking repaints and resetting them.
+
+        When gathering pixel output from a web view, if tracking repaints,
+        paint an overlay over the output with the overlay being clear in the
+        areas where the repaints occurred.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (displayWebView):
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/gtk/PixelDumpSupportGtk.cpp:
+        (paintOverlay):
+        (fillRepaintOverlayIntoContext):
+        (createBitmapContextFromWebView):
+
 2012-06-14  Dirk Pranke  <dpranke@chromium.org>
 
         new-run-webkit-tests doesn't find similar platform tests for a keyword

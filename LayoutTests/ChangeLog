@@ -1,3 +1,239 @@
+2012-06-14  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Add support in DumpRenderTree for tracking repaints
+        https://bugs.webkit.org/show_bug.cgi?id=87658
+
+        Reviewed by Martin Robinson.
+
+        Update pixel baselines for all the tests in fast/repaint now that the
+        Gtk's DumpRenderTree properly tracks the repaint rects and displays
+        an appropriate overlay in the pixel results for such tests.
+
+        * platform/gtk/fast/repaint/4774354-expected.png:
+        * platform/gtk/fast/repaint/4776765-expected.png:
+        * platform/gtk/fast/repaint/absolute-position-change-containing-block-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-new-in-block-expected.png.
+        * platform/gtk/fast/repaint/absolute-position-changed-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/layer-visibility-expected.png.
+        * platform/gtk/fast/repaint/absolute-position-moved-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-outer-border-expected.png.
+        * platform/gtk/fast/repaint/background-clip-text-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/selection-clear-expected.png.
+        * platform/gtk/fast/repaint/background-generated-expected.png:
+        * platform/gtk/fast/repaint/background-misaligned-expected.png:
+        * platform/gtk/fast/repaint/background-scaling-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/clip-with-layout-delta-expected.png.
+        * platform/gtk/fast/repaint/backgroundSizeRepaint-expected.png:
+        * platform/gtk/fast/repaint/block-layout-inline-children-float-positioned-expected.png: Added.
+        * platform/gtk/fast/repaint/block-layout-inline-children-replaced-expected.png: Added.
+        * platform/gtk/fast/repaint/block-no-inflow-children-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/slider-thumb-drag-release-expected.png.
+        * platform/gtk/fast/repaint/block-selection-gap-in-composited-layer-expected.png:
+        * platform/gtk/fast/repaint/block-selection-gap-in-table-cell-expected.png:
+        * platform/gtk/fast/repaint/block-selection-gap-stale-cache-2-expected.png:
+        * platform/gtk/fast/repaint/block-selection-gap-stale-cache-expected.png:
+        * platform/gtk/fast/repaint/body-background-image-expected.png:
+        * platform/gtk/fast/repaint/border-fit-lines-expected.png:
+        * platform/gtk/fast/repaint/border-radius-repaint-expected.png:
+        * platform/gtk/fast/repaint/border-repaint-glitch-expected.png:
+        * platform/gtk/fast/repaint/box-shadow-dynamic-expected.png:
+        * platform/gtk/fast/repaint/box-shadow-h-expected.png:
+        * platform/gtk/fast/repaint/box-shadow-v-expected.png:
+        * platform/gtk/fast/repaint/bugzilla-3509-expected.png:
+        * platform/gtk/fast/repaint/bugzilla-5699-expected.png:
+        * platform/gtk/fast/repaint/bugzilla-6278-expected.png:
+        * platform/gtk/fast/repaint/bugzilla-6388-expected.png:
+        * platform/gtk/fast/repaint/bugzilla-6473-expected.png:
+        * platform/gtk/fast/repaint/bugzilla-7235-expected.png:
+        * platform/gtk/fast/repaint/button-spurious-layout-hint-expected.png:
+        * platform/gtk/fast/repaint/canvas-putImageData-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/selection-clear-expected.png.
+        * platform/gtk/fast/repaint/caret-outside-block-expected.png:
+        * platform/gtk/fast/repaint/change-transform-expected.png:
+        * platform/gtk/fast/repaint/clip-with-layout-delta-expected.png:
+        * platform/gtk/fast/repaint/clipped-relative-expected.png:
+        * platform/gtk/fast/repaint/containing-block-position-change-expected.png:
+        * platform/gtk/fast/repaint/content-into-overflow-expected.png:
+        * platform/gtk/fast/repaint/continuation-after-outline-expected.png:
+        * platform/gtk/fast/repaint/control-clip-expected.png:
+        * platform/gtk/fast/repaint/create-layer-repaint-expected.png:
+        * platform/gtk/fast/repaint/delete-into-nested-block-expected.png:
+        * platform/gtk/fast/repaint/dynamic-table-vertical-alignment-change-expected.png:
+        * platform/gtk/fast/repaint/erase-overflow-expected.png:
+        * platform/gtk/fast/repaint/fixed-after-scroll-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-in-new-block-with-layout-delta-expected.png.
+        * platform/gtk/fast/repaint/fixed-and-absolute-position-scrolled-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-outer-border-expected.png.
+        * platform/gtk/fast/repaint/fixed-child-move-after-scroll-expected.png: Added.
+        * platform/gtk/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.png: Added.
+        * platform/gtk/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.png: Added.
+        * platform/gtk/fast/repaint/fixed-expected.png:
+        * platform/gtk/fast/repaint/fixed-in-page-scale-expected.png: Added.
+        * platform/gtk/fast/repaint/fixed-move-after-keyboard-scroll-expected.png: Added.
+        * platform/gtk/fast/repaint/fixed-move-after-scroll-expected.png: Added.
+        * platform/gtk/fast/repaint/fixed-position-transparency-with-overflow-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/button-spurious-layout-hint-expected.png.
+        * platform/gtk/fast/repaint/fixed-right-bottom-in-page-scale-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/slider-thumb-drag-release-expected.png.
+        * platform/gtk/fast/repaint/fixed-right-in-page-scale-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-in-new-block-with-layout-delta-expected.png.
+        * platform/gtk/fast/repaint/fixed-scale-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-outer-border-expected.png.
+        * platform/gtk/fast/repaint/fixed-scroll-simple-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-section-overflow-expected.png.
+        * platform/gtk/fast/repaint/fixed-table-cell-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-outer-border-expected.png.
+        * platform/gtk/fast/repaint/fixed-table-overflow-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-outer-border-expected.png.
+        * platform/gtk/fast/repaint/fixed-table-overflow-zindex-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-outer-border-expected.png.
+        * platform/gtk/fast/repaint/fixed-to-relative-position-with-absolute-child-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-in-new-block-with-layout-delta-expected.png.
+        * platform/gtk/fast/repaint/fixed-tranformed-expected.png: Added.
+        * platform/gtk/fast/repaint/flexible-box-overflow-expected.png:
+        * platform/gtk/fast/repaint/flexible-box-overflow-horizontal-expected.png:
+        * platform/gtk/fast/repaint/float-in-new-block-with-layout-delta-expected.png:
+        * platform/gtk/fast/repaint/float-move-during-layout-expected.png:
+        * platform/gtk/fast/repaint/float-new-in-block-expected.png:
+        * platform/gtk/fast/repaint/float-overflow-expected.png: Added.
+        * platform/gtk/fast/repaint/float-overflow-right-expected.png: Added.
+        * platform/gtk/fast/repaint/focus-layers-expected.png:
+        * platform/gtk/fast/repaint/gradients-em-stops-repaint-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-outer-border-expected.png.
+        * platform/gtk/fast/repaint/iframe-scroll-repaint-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/intermediate-layout-position-clip-expected.png.
+        * platform/gtk/fast/repaint/inline-block-overflow-expected.png:
+        * platform/gtk/fast/repaint/inline-block-resize-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-outer-border-expected.png.
+        * platform/gtk/fast/repaint/inline-color-change-expected.png:
+        * platform/gtk/fast/repaint/inline-horizontal-bt-overflow-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/layer-hide-when-needs-layout-expected.png.
+        * platform/gtk/fast/repaint/inline-outline-repaint-expected.png:
+        * platform/gtk/fast/repaint/inline-overflow-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/layer-hide-when-needs-layout-expected.png.
+        * platform/gtk/fast/repaint/inline-relative-positioned-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/selection-clear-expected.png.
+        * platform/gtk/fast/repaint/inline-vertical-lr-overflow-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/block-selection-gap-in-composited-layer-expected.png.
+        * platform/gtk/fast/repaint/inline-vertical-rl-overflow-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/button-spurious-layout-hint-expected.png.
+        * platform/gtk/fast/repaint/intermediate-layout-position-clip-expected.png:
+        * platform/gtk/fast/repaint/intermediate-layout-position-expected.png:
+        * platform/gtk/fast/repaint/invisible-objects-expected.png:
+        * platform/gtk/fast/repaint/japanese-rl-selection-clear-expected.png: Added.
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-expected.png: Added.
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Added.
+        * platform/gtk/fast/repaint/layer-child-outline-expected.png:
+        * platform/gtk/fast/repaint/layer-full-repaint-expected.png:
+        * platform/gtk/fast/repaint/layer-hide-when-needs-layout-expected.png:
+        * platform/gtk/fast/repaint/layer-outline-expected.png:
+        * platform/gtk/fast/repaint/layer-outline-horizontal-expected.png:
+        * platform/gtk/fast/repaint/layer-visibility-expected.png:
+        * platform/gtk/fast/repaint/layout-state-only-positioned-expected.png:
+        * platform/gtk/fast/repaint/layout-state-relative-expected.png:
+        * platform/gtk/fast/repaint/layout-state-scrolloffset-expected.png: Added.
+        * platform/gtk/fast/repaint/layout-state-scrolloffset2-expected.png: Added.
+        * platform/gtk/fast/repaint/layout-state-scrolloffset3-expected.png: Added.
+        * platform/gtk/fast/repaint/line-flow-with-floats-1-expected.png:
+        * platform/gtk/fast/repaint/line-flow-with-floats-10-expected.png:
+        * platform/gtk/fast/repaint/line-flow-with-floats-2-expected.png:
+        * platform/gtk/fast/repaint/line-flow-with-floats-3-expected.png:
+        * platform/gtk/fast/repaint/line-flow-with-floats-4-expected.png:
+        * platform/gtk/fast/repaint/line-flow-with-floats-5-expected.png:
+        * platform/gtk/fast/repaint/line-flow-with-floats-6-expected.png:
+        * platform/gtk/fast/repaint/line-flow-with-floats-7-expected.png:
+        * platform/gtk/fast/repaint/line-flow-with-floats-8-expected.png:
+        * platform/gtk/fast/repaint/line-flow-with-floats-9-expected.png:
+        * platform/gtk/fast/repaint/line-flow-with-floats-in-regions-expected.png: Added.
+        * platform/gtk/fast/repaint/line-in-scrolled-clipped-block-expected.png:
+        * platform/gtk/fast/repaint/line-overflow-expected.png:
+        * platform/gtk/fast/repaint/lines-with-layout-delta-expected.png:
+        * platform/gtk/fast/repaint/list-marker-2-expected.png:
+        * platform/gtk/fast/repaint/list-marker-expected.png:
+        * platform/gtk/fast/repaint/make-children-non-inline-expected.png:
+        * platform/gtk/fast/repaint/moving-shadow-on-container-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/block-selection-gap-in-composited-layer-expected.png.
+        * platform/gtk/fast/repaint/moving-shadow-on-path-expected.png: Added.
+        * platform/gtk/fast/repaint/multicol-repaint-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/slider-thumb-drag-release-expected.png.
+        * platform/gtk/fast/repaint/nested-iframe-scroll-inner-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/intermediate-layout-position-expected.png.
+        * platform/gtk/fast/repaint/nested-iframe-scroll-outer-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/block-selection-gap-in-table-cell-expected.png.
+        * platform/gtk/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.png:
+        * platform/gtk/fast/repaint/opacity-change-on-overflow-float-expected.png:
+        * platform/gtk/fast/repaint/outline-child-repaint-expected.png:
+        * platform/gtk/fast/repaint/outline-inset-expected.png:
+        * platform/gtk/fast/repaint/outline-repaint-glitch-expected.png:
+        * platform/gtk/fast/repaint/outline-shrinking-expected.png:
+        * platform/gtk/fast/repaint/overflow-auto-in-overflow-auto-scrolled-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-outer-border-expected.png.
+        * platform/gtk/fast/repaint/overflow-clip-subtree-layout-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/block-selection-gap-in-composited-layer-expected.png.
+        * platform/gtk/fast/repaint/overflow-delete-line-expected.png:
+        * platform/gtk/fast/repaint/overflow-flipped-writing-mode-block-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-in-new-block-with-layout-delta-expected.png.
+        * platform/gtk/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/layer-full-repaint-expected.png.
+        * platform/gtk/fast/repaint/overflow-flipped-writing-mode-table-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-in-new-block-with-layout-delta-expected.png.
+        * platform/gtk/fast/repaint/overflow-hidden-in-overflow-hidden-scrolled-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-in-new-block-with-layout-delta-expected.png.
+        * platform/gtk/fast/repaint/overflow-hide-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/layer-hide-when-needs-layout-expected.png.
+        * platform/gtk/fast/repaint/overflow-into-content-expected.png:
+        * platform/gtk/fast/repaint/overflow-outline-repaint-expected.png:
+        * platform/gtk/fast/repaint/overflow-scroll-body-appear-expected.png:
+        * platform/gtk/fast/repaint/overflow-scroll-delete-expected.png:
+        * platform/gtk/fast/repaint/overflow-scroll-in-overflow-scroll-scrolled-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-outer-border-expected.png.
+        * platform/gtk/fast/repaint/overflow-show-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-row-expected.png.
+        * platform/gtk/fast/repaint/reflection-redraw-expected.png:
+        * platform/gtk/fast/repaint/reflection-repaint-test-expected.png:
+        * platform/gtk/fast/repaint/region-painting-invalidation-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-new-in-block-expected.png.
+        * platform/gtk/fast/repaint/region-painting-via-layout-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/selection-clear-expected.png.
+        * platform/gtk/fast/repaint/rel-positioned-inline-with-overflow-expected.png:
+        * platform/gtk/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+        * platform/gtk/fast/repaint/repaint-across-writing-mode-boundary-expected.png: Added.
+        * platform/gtk/fast/repaint/repaint-during-scroll-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-new-in-block-expected.png.
+        * platform/gtk/fast/repaint/repaint-resized-overflow-expected.png:
+        * platform/gtk/fast/repaint/repaint-svg-after-style-change-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-col-background-expected.png.
+        * platform/gtk/fast/repaint/scale-page-shrink-expected.png:
+        * platform/gtk/fast/repaint/scroll-absolute-layer-with-reflection-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-new-in-block-expected.png.
+        * platform/gtk/fast/repaint/scroll-fixed-layer-with-no-visible-content-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-outer-border-expected.png.
+        * platform/gtk/fast/repaint/scroll-fixed-layer-with-reflection-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/erase-overflow-expected.png.
+        * platform/gtk/fast/repaint/scroll-fixed-layer-with-transformed-parent-layer-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/layer-visibility-expected.png.
+        * platform/gtk/fast/repaint/scroll-fixed-reflected-layer-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/erase-overflow-expected.png.
+        * platform/gtk/fast/repaint/scroll-in-clipped-layer-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-outer-border-expected.png.
+        * platform/gtk/fast/repaint/scroll-in-fixed-layer-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-outer-border-expected.png.
+        * platform/gtk/fast/repaint/scroll-in-transformed-layer-expected.png: Added.
+        * platform/gtk/fast/repaint/scroll-inside-table-cell-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/continuation-after-outline-expected.png.
+        * platform/gtk/fast/repaint/scroll-relative-table-inside-table-cell-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/block-selection-gap-in-composited-layer-expected.png.
+        * platform/gtk/fast/repaint/scroll-with-transformed-parent-layer-expected.png: Added.
+        * platform/gtk/fast/repaint/search-field-cancel-expected.png:
+        * platform/gtk/fast/repaint/select-option-background-color-expected.png: Added.
+        * platform/gtk/fast/repaint/selected-replaced-expected.png:
+        * platform/gtk/fast/repaint/selection-after-delete-expected.png:
+        * platform/gtk/fast/repaint/selection-after-remove-expected.png:
+        * platform/gtk/fast/repaint/selection-clear-expected.png:
+        * platform/gtk/fast/repaint/selection-gap-overflow-scroll-2-expected.png: Added.
+        * platform/gtk/fast/repaint/selection-gap-overflow-scroll-expected.png:
+        * platform/gtk/fast/repaint/selection-rl-expected.png: Added.
+        * platform/gtk/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/gtk/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/gtk/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/gtk/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/gtk/fast/repaint/slider-thumb-drag-release-expected.png:
+        * platform/gtk/fast/repaint/slider-thumb-float-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/clip-with-layout-delta-expected.png.
+        * platform/gtk/fast/repaint/stacked-diacritics-expected.png: Added.
+        * platform/gtk/fast/repaint/static-to-positioned-expected.png:
+        * platform/gtk/fast/repaint/subtree-layoutstate-transform-expected.png:
+        * platform/gtk/fast/repaint/subtree-root-clip-2-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-col-background-expected.png.
+        * platform/gtk/fast/repaint/subtree-root-clip-3-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-in-new-block-with-layout-delta-expected.png.
+        * platform/gtk/fast/repaint/subtree-root-clip-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-col-background-expected.png.
+        * platform/gtk/fast/repaint/subtree-root-skipped-expected.png:
+        * platform/gtk/fast/repaint/svg-layout-root-style-attr-update-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/button-spurious-layout-hint-expected.png.
+        * platform/gtk/fast/repaint/table-cell-collapsed-border-expected.png:
+        * platform/gtk/fast/repaint/table-cell-move-expected.png:
+        * platform/gtk/fast/repaint/table-cell-overflow-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/clip-with-layout-delta-expected.png.
+        * platform/gtk/fast/repaint/table-col-background-expected.png:
+        * platform/gtk/fast/repaint/table-collapsed-border-expected.png:
+        * platform/gtk/fast/repaint/table-extra-bottom-grow-expected.png:
+        * platform/gtk/fast/repaint/table-hover-on-link-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/intermediate-layout-position-clip-expected.png.
+        * platform/gtk/fast/repaint/table-outer-border-expected.png:
+        * platform/gtk/fast/repaint/table-overflow-auto-in-overflow-auto-scrolled-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/selection-clear-expected.png.
+        * platform/gtk/fast/repaint/table-overflow-hidden-in-overflow-hidden-scrolled-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-in-new-block-with-layout-delta-expected.png.
+        * platform/gtk/fast/repaint/table-overflow-scroll-in-overflow-scroll-scrolled-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/selection-clear-expected.png.
+        * platform/gtk/fast/repaint/table-row-expected.png:
+        * platform/gtk/fast/repaint/table-section-overflow-expected.png:
+        * platform/gtk/fast/repaint/table-section-repaint-expected.png:
+        * platform/gtk/fast/repaint/table-two-pass-layout-overpaint-expected.png:
+        * platform/gtk/fast/repaint/table-writing-modes-h-expected.png: Added.
+        * platform/gtk/fast/repaint/table-writing-modes-v-expected.png: Added.
+        * platform/gtk/fast/repaint/text-append-dirty-lines-expected.png:
+        * platform/gtk/fast/repaint/text-emphasis-h-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/continuation-after-outline-expected.png.
+        * platform/gtk/fast/repaint/text-emphasis-v-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-in-new-block-with-layout-delta-expected.png.
+        * platform/gtk/fast/repaint/text-in-relative-positioned-inline-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/button-spurious-layout-hint-expected.png.
+        * platform/gtk/fast/repaint/text-selection-rect-in-overflow-2-expected.png:
+        * platform/gtk/fast/repaint/text-selection-rect-in-overflow-expected.png:
+        * platform/gtk/fast/repaint/text-shadow-expected.png:
+        * platform/gtk/fast/repaint/text-shadow-horizontal-expected.png:
+        * platform/gtk/fast/repaint/textarea-set-disabled-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/float-in-new-block-with-layout-delta-expected.png.
+        * platform/gtk/fast/repaint/trailing-floats-root-line-box-overflow-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-row-expected.png.
+        * platform/gtk/fast/repaint/transform-absolute-child-expected.png:
+        * platform/gtk/fast/repaint/transform-absolute-in-positioned-container-expected.png:
+        * platform/gtk/fast/repaint/transform-disable-layoutstate-expected.png:
+        * platform/gtk/fast/repaint/transform-layout-repaint-expected.png:
+        * platform/gtk/fast/repaint/transform-relative-position-expected.png:
+        * platform/gtk/fast/repaint/transform-repaint-descendants-expected.png:
+        * platform/gtk/fast/repaint/transform-replaced-shadows-expected.png:
+        * platform/gtk/fast/repaint/transform-rotate-and-remove-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/table-col-background-expected.png.
+        * platform/gtk/fast/repaint/transform-translate-expected.png:
+        * platform/gtk/fast/repaint/view-background-from-body-1-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/block-selection-gap-stale-cache-expected.png.
+        * platform/gtk/fast/repaint/view-background-from-body-2-expected.png: Copied from LayoutTests/platform/gtk/fast/repaint/invisible-objects-expected.png.
+
 2012-06-14  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaseline some Mac results after r120246.

@@ -129,6 +129,11 @@ public:
     static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const char* urlScheme);
     static void setSerializeHTTPLoads(bool enabled);
 
+    static void setTracksRepaints(WebKitWebFrame*, bool tracks);
+    static bool isTrackingRepaints(WebKitWebFrame*);
+    static GSList* trackedRepaintRects(WebKitWebFrame*);
+    static void resetTrackedRepaints(WebKitWebFrame*);
+
 private:
     static bool s_drtRun;
     static bool s_linksIncludedInTabChain;

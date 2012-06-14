@@ -35,6 +35,41 @@
 #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
 #include <webkit/webkit.h>
 
+static void paintOverlay(cairo_surface_t* surface)
+{
+    cairo_t* context = cairo_create(surface);
+
+    // Paint a transparent black overlay from which the repainted rectangles are then cleared.
+    // The alpha component of the overlay should have a value of 0.66, as on other ports.
+    cairo_set_source_rgba(context, 0.0, 0.0, 0.0, 0.66);
+    cairo_rectangle(context, 0, 0, cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface));
+    cairo_fill(context);
+
+    GSList* trackedRectsList = DumpRenderTreeSupportGtk::trackedRepaintRects(mainFrame);
+    for (GSList* listElement = trackedRectsList; listElement; listElement = g_slist_next(listElement)) {
+        GdkRectangle* rect = static_cast<GdkRectangle*>(listElement->data);
+
+        cairo_set_operator(context, CAIRO_OPERATOR_CLEAR);
+        cairo_rectangle(context, rect->x, rect->y, rect->width, rect->height);
+        cairo_fill(context);
+    }
+
+    g_slist_free_full(trackedRectsList, g_free);
+    cairo_destroy(context);
+}
+
+static void fillRepaintOverlayIntoContext(cairo_t* context, gint width, gint height)
+{
+    cairo_surface_t* overlaySurface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
+    paintOverlay(overlaySurface);
+
+    cairo_set_source_surface(context, overlaySurface, 0, 0);
+    cairo_rectangle(context, 0, 0, width, height);
+    cairo_fill(context);
+
+    cairo_surface_destroy(overlaySurface);
+}
+
 PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool drawSelectionRect)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
@@ -61,6 +96,9 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool 
 #else
     gtk_widget_draw(viewContainer, context);
 #endif
+
+    if (DumpRenderTreeSupportGtk::isTrackingRepaints(mainFrame))
+        fillRepaintOverlayIntoContext(context, width, height);
 
     if (drawSelectionRect) {
         cairo_rectangle_int_t rectangle;

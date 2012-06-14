@@ -1,3 +1,22 @@
+2012-06-14  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Add support in DumpRenderTree for tracking repaints
+        https://bugs.webkit.org/show_bug.cgi?id=87658
+
+        Reviewed by Martin Robinson.
+
+        Add methods to the DumpRenderTreeSupport class for controlling the
+        status of repaint tracking along with retreiving and resetting the
+        tracked repaints.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setTracksRepaints):
+        (DumpRenderTreeSupportGtk::isTrackingRepaints):
+        (DumpRenderTreeSupportGtk::trackedRepaintRects):
+        (DumpRenderTreeSupportGtk::resetTrackedRepaints):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+
 2012-06-13  Amy Ousterhout  <aousterh@chromium.org>
 
         Rename currentDeviceMotion to lastMotion in DeviceMotionClient

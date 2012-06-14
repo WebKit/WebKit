@@ -128,7 +128,9 @@ void dumpFrameScrollPosition(WebKitWebFrame* frame)
 
 void displayWebView()
 {
-    gtk_widget_queue_draw(GTK_WIDGET(webView));
+    DumpRenderTreeSupportGtk::forceWebViewPaint(webView);
+    DumpRenderTreeSupportGtk::setTracksRepaints(mainFrame, true);
+    DumpRenderTreeSupportGtk::resetTrackedRepaints(mainFrame);
 }
 
 static void appendString(gchar*& target, const gchar* string)
@@ -460,6 +462,7 @@ static void resetDefaultsToConsistentValues()
         axController->resetToConsistentState();
 
     DumpRenderTreeSupportGtk::clearOpener(mainFrame);
+    DumpRenderTreeSupportGtk::setTracksRepaints(mainFrame, false);
 
     DumpRenderTreeSupportGtk::resetGeolocationClientMock(webView);
 
