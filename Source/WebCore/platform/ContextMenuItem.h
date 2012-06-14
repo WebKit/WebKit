@@ -134,6 +134,7 @@ namespace WebCore {
         ContextMenuItemTagRightToLeft,
         ContextMenuItemTagPDFSinglePageScrolling,
         ContextMenuItemTagPDFFacingPagesScrolling,
+        ContextMenuItemTagDictationAlternative,
 #if ENABLE(INSPECTOR)
         ContextMenuItemTagInspectElement,
 #endif

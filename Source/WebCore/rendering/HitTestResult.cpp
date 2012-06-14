@@ -710,4 +710,21 @@ HitTestResult::NodeSet& HitTestResult::mutableRectBasedTestResult()
     return *m_rectBasedTestResult;
 }
 
+Vector<String> HitTestResult::dictationAlternatives() const
+{
+    // Return the dictation context handle if the text at this point has DictationAlternative marker, which means this text is
+    if (!m_innerNonSharedNode)
+        return Vector<String>();
+
+    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(hitTestPoint().point(), DocumentMarker::DictationAlternatives);
+    if (!marker)
+        return Vector<String>();
+
+    Frame* frame = innerNonSharedNode()->document()->frame();
+    if (!frame)
+        return Vector<String>();
+
+    return frame->editor()->dictationAlternativesForMarker(marker);
+}
+
 } // namespace WebCore

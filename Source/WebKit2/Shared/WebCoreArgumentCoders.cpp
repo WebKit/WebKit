@@ -31,6 +31,7 @@
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/DatabaseDetails.h>
+#include <WebCore/DictationAlternative.h>
 #include <WebCore/DragSession.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FileChooser.h>
@@ -522,6 +523,24 @@ bool ArgumentCoder<DatabaseDetails>::decode(ArgumentDecoder* decoder, DatabaseDe
         return false;
     
     details = DatabaseDetails(name, displayName, expectedUsage, currentUsage);
+    return true;
+}
+
+void ArgumentCoder<DictationAlternative>::encode(ArgumentEncoder* encoder, const DictationAlternative& dictationAlternative)
+{
+    encoder->encode(dictationAlternative.rangeStart);
+    encoder->encode(dictationAlternative.rangeLength);
+    encoder->encode(dictationAlternative.dictationContext);
+}
+
+bool ArgumentCoder<DictationAlternative>::decode(ArgumentDecoder* decoder, DictationAlternative& dictationAlternative)
+{
+    if (!decoder->decode(dictationAlternative.rangeStart))
+        return false;
+    if (!decoder->decode(dictationAlternative.rangeLength))
+        return false;
+    if (!decoder->decode(dictationAlternative.dictationContext))
+        return false;
     return true;
 }
 

@@ -113,6 +113,7 @@
 #import <WebCore/SimpleFontData.h>
 #import <WebCore/StylePropertySet.h>
 #import <WebCore/Text.h>
+#import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebFontCache.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
@@ -5603,7 +5604,11 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     if (!validAttributes) {
         validAttributes = [[NSArray alloc] initWithObjects:
             NSUnderlineStyleAttributeName, NSUnderlineColorAttributeName,
-            NSMarkedClauseSegmentAttributeName, NSTextInputReplacementRangeAttributeName, nil];
+            NSMarkedClauseSegmentAttributeName, NSTextInputReplacementRangeAttributeName,
+#if USE(DICTATION_ALTERNATIVES)
+                           NSTextAlternativesAttributeName,
+#endif
+                           nil];
         // NSText also supports the following attributes, but it's
         // hard to tell which are really required for text input to
         // work well; I have not seen any input method make use of them yet.
@@ -5923,7 +5928,14 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     NSRange replacementRange = { NSNotFound, 0 };
     bool isFromInputMethod = coreFrame && coreFrame->editor()->hasComposition();
 
+    Vector<DictationAlternative> dictationAlternativeLocations;
     if (isAttributedString) {
+#if USE(DICTATION_ALTERNATIVES)
+        Vector<WebCore::TextAlternativeWithRange> textAlternatives;
+        collectDictationTextAlternatives(string, textAlternatives);
+        if (!textAlternatives.isEmpty())
+            [[self _webView] _getWebCoreDictationAlternatives:dictationAlternativeLocations fromTextAlternatives:textAlternatives];
+#endif
         // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
         // It does not look like any input methods ever use insertText: with attributes other than NSTextInputReplacementRangeAttributeName.
         text = [string string];
@@ -5962,7 +5974,11 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (!coreFrame->editor()->hasComposition()) {
         // An insertText: might be handled by other responders in the chain if we don't handle it.
         // One example is space bar that results in scrolling down the page.
-        eventHandled = coreFrame->editor()->insertText(eventText, event);
+
+        if (!dictationAlternativeLocations.isEmpty())
+            eventHandled = coreFrame->editor()->insertDictatedText(eventText, dictationAlternativeLocations, event);
+        else
+            eventHandled = coreFrame->editor()->insertText(eventText, event);
     } else {
         eventHandled = true;
         coreFrame->editor()->confirmComposition(eventText);

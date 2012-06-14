@@ -50,6 +50,7 @@ namespace WebCore {
     class ResourceRequest;
     class ResourceResponse;
     struct CompositionUnderline;
+    struct DictationAlternative;
     struct DragSession;
     struct FileChooserSettings;
     struct GrammarDetail;
@@ -207,6 +208,11 @@ template<> struct ArgumentCoder<WebCore::CompositionUnderline> {
 template<> struct ArgumentCoder<WebCore::DatabaseDetails> {
     static void encode(ArgumentEncoder*, const WebCore::DatabaseDetails&);
     static bool decode(ArgumentDecoder*, WebCore::DatabaseDetails&);
+};
+
+template<> struct ArgumentCoder<WebCore::DictationAlternative> {
+    static void encode(ArgumentEncoder*, const WebCore::DictationAlternative&);
+    static bool decode(ArgumentDecoder*, WebCore::DictationAlternative&);
 };
 
 template<> struct ArgumentCoder<WebCore::FileChooserSettings> {

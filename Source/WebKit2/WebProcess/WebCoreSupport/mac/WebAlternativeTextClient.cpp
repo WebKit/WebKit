@@ -51,34 +51,51 @@ void WebAlternativeTextClient::pageDestroyed()
     delete this;
 }
 
+#if USE(AUTOCORRECTION_PANEL)
 void WebAlternativeTextClient::showCorrectionAlternative(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
-#if USE(AUTOCORRECTION_PANEL)
     m_page->send(Messages::WebPageProxy::ShowCorrectionPanel(type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings));
-#endif
 }
 
 void WebAlternativeTextClient::dismissAlternative(ReasonForDismissingAlternativeText reason)
 {
-#if USE(AUTOCORRECTION_PANEL)
     m_page->send(Messages::WebPageProxy::DismissCorrectionPanel(reason));
-#endif
 }
 
 String WebAlternativeTextClient::dismissAlternativeSoon(ReasonForDismissingAlternativeText reason)
 {
     String result;
-#if USE(AUTOCORRECTION_PANEL)
     m_page->sendSync(Messages::WebPageProxy::DismissCorrectionPanelSoon(reason), Messages::WebPageProxy::DismissCorrectionPanelSoon::Reply(result));
-#endif
     return result;
 }
 
 void WebAlternativeTextClient::recordAutocorrectionResponse(AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)
 {
-#if USE(AUTOCORRECTION_PANEL)
     m_page->send(Messages::WebPageProxy::RecordAutocorrectionResponse(responseType, replacedString, replacementString));
+}
 #endif
+
+#if USE(DICTATION_ALTERNATIVES)
+void WebAlternativeTextClient::removeDictationAlternatives(uint64_t dictationContext)
+{
+    m_page->send(Messages::WebPageProxy::RemoveDictationAlternatives(dictationContext));
 }
 
+void WebAlternativeTextClient::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext)
+{
+    m_page->send(Messages::WebPageProxy::ShowDictationAlternativeUI(boundingBoxOfDictatedText, dictationContext));
+}
+
+void WebAlternativeTextClient::dismissDictationAlternativeUI()
+{
+    m_page->send(Messages::WebPageProxy::DismissDictationAlternativeUI());
+}
+
+Vector<String> WebAlternativeTextClient::dictationAlternatives(uint64_t dictationContext)
+{
+    Vector<String> result;
+    m_page->sendSync(Messages::WebPageProxy::DictationAlternatives(dictationContext), Messages::WebPageProxy::DictationAlternatives::Reply(result));
+    return result;
+}
+#endif
 }

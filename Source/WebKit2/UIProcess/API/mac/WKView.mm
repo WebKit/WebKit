@@ -26,6 +26,11 @@
 #import "config.h"
 #import "WKView.h"
 
+#if USE(DICTATION_ALTERNATIVES)
+#import <AppKit/NSTextAlternatives.h>
+#import <AppKit/NSAttributedString.h>
+#endif
+
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
@@ -74,6 +79,7 @@
 #import <WebCore/Region.h>
 #import <WebCore/RunLoop.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <WebCore/FileSystem.h>
 #import <WebKitSystemInterface.h>
@@ -1177,7 +1183,12 @@ static const short kIOHIDEventTypeScroll = 6;
     NSString *text;
     bool isFromInputMethod = _data->_page->editorState().hasComposition;
 
+    Vector<TextAlternativeWithRange> dictationAlternatives;
+
     if (isAttributedString) {
+#if USE(DICTATION_ALTERNATIVES)
+        collectDictationTextAlternatives(string, dictationAlternatives);
+#endif
         // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
         text = [string string];
     } else
@@ -1199,7 +1210,11 @@ static const short kIOHIDEventTypeScroll = 6;
 
     String eventText = text;
     eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
-    bool eventHandled = _data->_page->insertText(eventText, replacementRange.location, NSMaxRange(replacementRange));
+    bool eventHandled;
+    if (!dictationAlternatives.isEmpty())
+        eventHandled = _data->_page->insertDictatedText(eventText, replacementRange.location, NSMaxRange(replacementRange), dictationAlternatives);
+    else
+        eventHandled = _data->_page->insertText(eventText, replacementRange.location, NSMaxRange(replacementRange));
 
     if (parameters)
         parameters->eventInterpretationHadSideEffects |= eventHandled;
@@ -1451,7 +1466,11 @@ static const short kIOHIDEventTypeScroll = 6;
     if (!validAttributes) {
         validAttributes = [[NSArray alloc] initWithObjects:
                            NSUnderlineStyleAttributeName, NSUnderlineColorAttributeName,
-                           NSMarkedClauseSegmentAttributeName, nil];
+                           NSMarkedClauseSegmentAttributeName,
+#if USE(DICTATION_ALTERNATIVES)
+                           NSTextAlternativesAttributeName,
+#endif
+                           nil];
         // NSText also supports the following attributes, but it's
         // hard to tell which are really required for text input to
         // work well; I have not seen any input method make use of them yet.
@@ -2906,9 +2925,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_spellCheckerDocumentTag;
 }
 
-- (void)handleCorrectionPanelResult:(NSString*)result
+- (void)handleAcceptedAlternativeText:(NSString*)text
 {
-    _data->_page->handleAlternativeTextUIResult(result);
+    _data->_page->handleAlternativeTextUIResult(text);
 }
 
 @end

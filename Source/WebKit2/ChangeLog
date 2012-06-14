@@ -1,3 +1,61 @@
+2012-06-14  Jia Pu  <jpu@apple.com>
+
+        Mark text with text alternative with blue underline.
+        https://bugs.webkit.org/show_bug.cgi?id=83047
+
+        Reviewed by Enrica Casucci.
+
+        Changes in WebKit2 include implementation of new functions declared in AlternativeTextClient,
+        and logic for calling Editor::insertDictatedText() instead of Editor::insertText() when there's
+        alternatives attached to the input string.
+
+        * Shared/API/c/WKContextMenuItemTypes.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::pageClosed):
+        (WebKit::PageClientImpl::addDictationAlternatives):
+        (WebKit::PageClientImpl::removeDictationAlternatives):
+        (WebKit::PageClientImpl::showDictationAlternativeUI):
+        (WebKit::PageClientImpl::dictationAlternatives):
+        (WebKit::PageClientImpl::dismissDictationAlternativeUI):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView insertText:replacementRange:]):
+        (-[WKView validAttributesForMarkedText]):
+        (-[WKView handleAcceptedAlternativeText:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showDictationAlternativeUI):
+        (WebKit::WebPageProxy::dismissDictationAlternativeUI):
+        (WebKit::WebPageProxy::removeDictationAlternatives):
+        (WebKit::WebPageProxy::dictationAlternatives):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/CorrectionPanel.mm:
+        (correctionIndicatorType):
+        (WebKit::CorrectionPanel::handleAcceptedReplacement):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::insertDictatedText):
+        * WebProcess/WebCoreSupport/WebAlternativeTextClient.h:
+        (WebAlternativeTextClient):
+        * WebProcess/WebCoreSupport/mac/WebAlternativeTextClient.cpp:
+        (WebKit::WebAlternativeTextClient::showCorrectionAlternative):
+        (WebKit::WebAlternativeTextClient::dismissAlternative):
+        (WebKit::WebAlternativeTextClient::dismissAlternativeSoon):
+        (WebKit::WebAlternativeTextClient::recordAutocorrectionResponse):
+        (WebKit::WebAlternativeTextClient::removeDictationAlternatives):
+        (WebKit::WebAlternativeTextClient::showDictationAlternativeUI):
+        (WebKit::WebAlternativeTextClient::dismissDictationAlternativeUI):
+        (WebKit::WebAlternativeTextClient::dictationAlternatives):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::insertDictatedText):
+
 2012-06-13  Andreas Kling  <kling@webkit.org>
 
         Chinese IM receives incorrect/duplicated key events in text fields in webpages in Safari.

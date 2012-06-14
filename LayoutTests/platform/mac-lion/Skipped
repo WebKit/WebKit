@@ -35,6 +35,10 @@ editing/text-iterator/findString-selection-disabled.html
 # Pasting replaces the three periods with an ellipsis on Lion
 editing/pasteboard/5478250.html
 
+# Mountain Lion functionalities
+platform/mac/editing/input/edit-dictated-text-with-alternative.html
+platform/mac/editing/input/insert-dictated-text.html
+
 # --- Media ---
 
 # These need investigation

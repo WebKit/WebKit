@@ -28,6 +28,7 @@
 
 #include "AlternativeTextClient.h"
 #include "DocumentMarker.h"
+#include "FrameSelection.h"
 #include "Range.h"
 #include "TextChecking.h"
 #include "Timer.h"
@@ -108,7 +109,7 @@ public:
     void respondToUnappliedSpellCorrection(const VisibleSelection&, const String& corrected, const String& correction) UNLESS_ENABLED({ UNUSED_PARAM(corrected); UNUSED_PARAM(correction); })
     void respondToAppliedEditing(CompositeEditCommand*) UNLESS_ENABLED({ })
     void respondToUnappliedEditing(EditCommandComposition*) UNLESS_ENABLED({ })
-    void respondToChangedSelection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
+    void respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
 
     void stopPendingCorrection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
     void applyPendingCorrection(const VisibleSelection& selectionAfterTyping) UNLESS_ENABLED({ UNUSED_PARAM(selectionAfterTyping); })
@@ -130,20 +131,21 @@ public:
     void deletedAutocorrectionAtPosition(const Position&, const String& originalString) UNLESS_ENABLED({ UNUSED_PARAM(originalString); })
 
     bool insertDictatedText(const String&, const Vector<DictationAlternative>&, Event*);
+    void removeDictationAlternativesForMarker(const DocumentMarker*);
+    Vector<String> dictationAlternativesForMarker(const DocumentMarker*);
+    void applyDictationAlternative(const String& alternativeString);
 
 private:
 #if USE(AUTOCORRECTION_PANEL)
     String dismissSoon(ReasonForDismissingAlternativeText);
-    void applyAlternativeText(const String& alternative, const Vector<DocumentMarker::MarkerType>&);
+    void applyAlternativeTextToRange(const Range*, const String& alternative, AlternativeTextType, const Vector<DocumentMarker::MarkerType>&);
     void timerFired(Timer<AlternativeTextController>*);
     void recordAutocorrectionResponseReversed(const String& replacedString, const String& replacementString);
     void recordSpellcheckerResponseForModifiedCorrection(Range* rangeOfCorrection, const String& corrected, const String& correction);
+    String markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarker::MarkerType);
 
-    bool shouldStartTimerFor(const DocumentMarker* marker, int endOffset) const
-    {
-        return (((marker->type() == DocumentMarker::Replacement && !marker->description().isNull()) 
-                 || marker->type() == DocumentMarker::Spelling) && static_cast<int>(marker->endOffset()) == endOffset);
-    }
+    bool shouldStartTimerFor(const DocumentMarker&, int endOffset) const;
+    bool respondToMarkerAtEndOfWord(const DocumentMarker&, const Position& endOfWordPosition, FrameSelection::SetSelectionOptions);
 
     AlternativeTextClient* alternativeTextClient();
     EditorClient* editorClient();

@@ -39,7 +39,9 @@
 #import "TextChecker.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
+#import <WebCore/DictationAlternative.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/TextAlternativeWithRange.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/text/StringConcatenate.h>
 
@@ -197,6 +199,35 @@ bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart
     bool handled = true;
     process()->sendSync(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeEnd), Messages::WebPage::InsertText::Reply(handled, m_editorState), m_pageID);
     return handled;
+}
+
+bool WebPageProxy::insertDictatedText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, const Vector<TextAlternativeWithRange>& dictationAlternativesWithRange)
+{
+#if USE(DICTATION_ALTERNATIVES)
+    if (dictationAlternativesWithRange.isEmpty())
+        return insertText(text, replacementRangeStart, replacementRangeEnd);
+
+    if (!isValid())
+        return true;
+
+    Vector<DictationAlternative> dictationAlternatives;
+
+    for (size_t i = 0; i < dictationAlternativesWithRange.size(); ++i) {
+        const TextAlternativeWithRange& alternativeWithRange = dictationAlternativesWithRange[i];
+        uint64_t dictationContext = m_pageClient->addDictationAlternatives(alternativeWithRange.alternatives);
+        if (dictationContext)
+            dictationAlternatives.append(DictationAlternative(alternativeWithRange.range.location, alternativeWithRange.range.length, dictationContext));
+    }
+
+    if (dictationAlternatives.isEmpty())
+        return insertText(text, replacementRangeStart, replacementRangeEnd);
+
+    bool handled = true;
+    process()->sendSync(Messages::WebPage::InsertDictatedText(text, replacementRangeStart, replacementRangeEnd, dictationAlternatives), Messages::WebPage::InsertDictatedText::Reply(handled, m_editorState), m_pageID);
+    return handled;
+#else
+    return insertText(text, replacementRangeStart, replacementRangeEnd);
+#endif
 }
 
 void WebPageProxy::getMarkedRange(uint64_t& location, uint64_t& length)

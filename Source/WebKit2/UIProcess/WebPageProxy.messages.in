@@ -289,6 +289,13 @@ messages -> WebPageProxy {
     RecordAutocorrectionResponse(int32_t responseType, String replacedString, String replacementString);
 #endif
 
+#if USE(DICTATION_ALTERNATIVES)
+    ShowDictationAlternativeUI(WebCore::FloatRect boundingBoxOfDictatedText, uint64_t dictationContext)
+    DismissDictationAlternativeUI()
+    RemoveDictationAlternatives(uint64_t dictationContext)
+    DictationAlternatives(uint64_t dictationContext) -> (Vector<String> alternatives)
+#endif
+
 #if PLATFORM(WIN)
     # Windows 7 Gesture Messages
     SetGestureReachedScrollingLimit(bool limitReached)

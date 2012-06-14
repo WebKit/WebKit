@@ -211,3 +211,7 @@ fast/sub-pixel/file-upload-control-at-fractional-offset.html
 # Frame::findString does nothing on pages that prevent selection
 # https://bugs.webkit.org/show_bug.cgi?id=40361
 editing/text-iterator/findString-selection-disabled.html
+
+# Dictated text input is not supported on this platform
+platform/mac/editing/input/edit-dictated-text-with-alternative.html
+platform/mac/editing/input/insert-dictated-text.html

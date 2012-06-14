@@ -1030,7 +1030,8 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& b
     if (m_truncation != cNoTruncation)
         markerSpansWholeBox = false;
 
-    if (!markerSpansWholeBox || grammar) {
+    bool isDictationMarker = marker->type() == DocumentMarker::DictationAlternatives;
+    if (!markerSpansWholeBox || grammar || isDictationMarker) {
         int startPosition = max<int>(marker->startOffset() - m_start, 0);
         int endPosition = min<int>(marker->endOffset() - m_start, m_len);
         
@@ -1050,7 +1051,7 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& b
         
         // Store rendered rects for bad grammar markers, so we can hit-test against it elsewhere in order to
         // display a toolTip. We don't do this for misspelling markers.
-        if (grammar) {
+        if (grammar || isDictationMarker) {
             markerRect.move(-boxOrigin.x(), -boxOrigin.y());
             markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
             toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);

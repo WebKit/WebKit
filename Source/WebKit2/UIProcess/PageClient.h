@@ -38,6 +38,7 @@
 
 #if USE(APPKIT)
 OBJC_CLASS WKView;
+OBJC_CLASS NSTextAlternatives;
 #endif
 #endif
 
@@ -201,8 +202,15 @@ public:
 
 #if USE(APPKIT)
     virtual WKView* wkView() const = 0;
-#endif
-#endif
+#if USE(DICTATION_ALTERNATIVES)
+    virtual uint64_t addDictationAlternatives(const RetainPtr<NSTextAlternatives>&) = 0;
+    virtual void removeDictationAlternatives(uint64_t dictationContext) = 0;
+    virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) = 0;
+    virtual void dismissDictationAlternativeUI() = 0;
+    virtual Vector<String> dictationAlternatives(uint64_t dictationContext) = 0;
+#endif // USE(DICTATION_ALTERNATIVES)
+#endif // USE(APPKIT)
+#endif // PLATFORM(MAC)
 
     virtual void didChangeScrollbarsForMainFrame() const = 0;
 

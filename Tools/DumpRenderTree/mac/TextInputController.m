@@ -31,6 +31,10 @@
 
 #import "DumpRenderTreeMac.h"
 #import <AppKit/NSInputManager.h>
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#define SUPPORT_DICTATION_ALTERNATIVES
+#import <AppKit/NSTextAlternatives.h>
+#endif
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
@@ -170,7 +174,8 @@
             || aSelector == @selector(characterIndexForPointX:Y:)
             || aSelector == @selector(validAttributesForMarkedText)
             || aSelector == @selector(attributedStringWithString:)
-            || aSelector == @selector(setInputMethodHandler:))
+            || aSelector == @selector(setInputMethodHandler:)
+            || aSelector == @selector(dictatedStringWithPrimaryString:alternative:alternativeOffset:alternativeLength:))
         return NO;
     return YES;
 }
@@ -194,7 +199,9 @@
     else if (aSelector == @selector(attributedStringWithString:))
         return @"makeAttributedString"; // just a factory method, doesn't call into NSTextInput
     else if (aSelector == @selector(setInputMethodHandler:))
-        return @"setInputMethodHandler"; 
+        return @"setInputMethodHandler";
+    else if (aSelector == @selector(dictatedStringWithPrimaryString:alternative:alternativeOffset:alternativeLength:))
+        return @"makeDictatedString";
 
     return nil;
 }
@@ -373,6 +380,27 @@
 - (NSMutableAttributedString *)attributedStringWithString:(NSString *)aString
 {
     return [[[NSMutableAttributedString alloc] initWithString:aString] autorelease];
+}
+
+- (NSMutableAttributedString*)dictatedStringWithPrimaryString:(NSString*)aString alternative:(NSString*)alternative alternativeOffset:(int)offset alternativeLength:(int)length
+{
+#if defined(SUPPORT_DICTATION_ALTERNATIVES)
+    NSMutableAttributedString* dictatedString = [self attributedStringWithString:aString];
+    NSRange rangeWithAlternative = NSMakeRange((NSUInteger)offset, (NSUInteger)length);
+    NSString* subStringWithAlternative = [aString substringWithRange:rangeWithAlternative];
+    if (!subStringWithAlternative)
+        return nil;
+
+    NSTextAlternatives* alternativeObject = [[[NSTextAlternatives alloc] initWithPrimaryString:subStringWithAlternative alternativeStrings:[NSArray arrayWithObject:alternative]] autorelease];
+    if (!alternativeObject)
+        return nil;
+
+    [dictatedString addAttribute:NSTextAlternativesAttributeName value:alternativeObject range:rangeWithAlternative];
+
+    return dictatedString;
+#else
+    return nil;
+#endif
 }
 
 - (void)setInputMethodHandler:(WebScriptObject *)handler

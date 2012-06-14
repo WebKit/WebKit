@@ -3840,6 +3840,29 @@ void WebPageProxy::handleAlternativeTextUIResult(const String& result)
         process()->send(Messages::WebPage::HandleAlternativeTextUIResult(result), m_pageID, 0);
 #endif
 }
+
+#if USE(DICTATION_ALTERNATIVES)
+void WebPageProxy::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext)
+{
+    m_pageClient->showDictationAlternativeUI(boundingBoxOfDictatedText, dictationContext);
+}
+
+void WebPageProxy::dismissDictationAlternativeUI()
+{
+    m_pageClient->dismissDictationAlternativeUI();
+}
+
+void WebPageProxy::removeDictationAlternatives(uint64_t dictationContext)
+{
+    m_pageClient->removeDictationAlternatives(dictationContext);
+}
+
+void WebPageProxy::dictationAlternatives(uint64_t dictationContext, Vector<String>& result)
+{
+    result = m_pageClient->dictationAlternatives(dictationContext);
+}
+#endif
+
 #endif // PLATFORM(MAC)
 
 } // namespace WebKit

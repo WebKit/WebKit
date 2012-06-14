@@ -1,3 +1,44 @@
+2012-06-14  Jia Pu  <jpu@apple.com>
+
+        Mark text with text alternative with blue underline.
+        https://bugs.webkit.org/show_bug.cgi?id=83047
+
+        Reviewed by Enrica Casucci.
+
+        Changes in WebKit include implementation of new functions declared in AlternativeTextClient,
+        and logic for calling Editor::insertDictatedText() instead of Editor::insertText() when there's
+        alternatives attached to the input string.
+
+        * WebCoreSupport/CorrectionPanel.mm:
+        (correctionIndicatorType):
+        (CorrectionPanel::handleAcceptedReplacement):
+        * WebCoreSupport/WebAlternativeTextClient.h:
+        (WebAlternativeTextClient):
+        * WebCoreSupport/WebAlternativeTextClient.mm:
+        (WebAlternativeTextClient::showCorrectionAlternative):
+        (WebAlternativeTextClient::dismissAlternative):
+        (WebAlternativeTextClient::dismissAlternativeSoon):
+        (WebAlternativeTextClient::recordAutocorrectionResponse):
+        (WebAlternativeTextClient::removeDictationAlternatives):
+        (WebAlternativeTextClient::showDictationAlternativeUI):
+        (WebAlternativeTextClient::dismissDictationAlternativeUI):
+        (WebAlternativeTextClient::dictationAlternatives):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validAttributesForMarkedText]):
+        (-[WebHTMLView insertText:]):
+        * WebView/WebView.mm:
+        (-[WebView handleAcceptedAlternativeText:]):
+        (-[WebView _getWebCoreDictationAlternatives:fromTextAlternatives:]):
+        (-[WebView _showDictationAlternativeUI:WebCore::forDictationContext:]):
+        (-[WebView _dismissDictationAlternativeUI]):
+        (-[WebView _removeDictationAlternatives:]):
+        (-[WebView _dictationAlternatives:]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate init]):
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
 2012-06-11  Alexis Menard  <alexis.menard@openbossa.org>
 
         [CSS3 Backgrounds and Borders] Protect box-decoration-break behind a feature flag.

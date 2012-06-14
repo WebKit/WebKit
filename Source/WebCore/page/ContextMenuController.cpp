@@ -481,6 +481,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             page->inspectorController()->inspect(m_hitTestResult.innerNonSharedNode());
         break;
 #endif
+    case ContextMenuItemTagDictationAlternative:
+        frame->editor()->applyDictationAlternativelternative(item->title());
+        break;
     default:
         break;
     }
@@ -896,50 +899,65 @@ void ContextMenuController::populate()
     } else { // Make an editing context menu
         FrameSelection* selection = frame->selection();
         bool inPasswordField = selection->isInPasswordField();
-        bool spellCheckingEnabled = frame->editor()->isSpellCheckingEnabledFor(node);
-
-        if (!inPasswordField && spellCheckingEnabled) {
-            // Consider adding spelling-related or grammar-related context menu items (never both, since a single selected range
-            // is never considered a misspelling and bad grammar at the same time)
-            bool misspelling;
-            bool badGrammar;
-            Vector<String> guesses = frame->editor()->guessesForMisspelledOrUngrammaticalSelection(misspelling, badGrammar);
-            if (misspelling || badGrammar) {
-                size_t size = guesses.size();
-                if (size == 0) {
-                    // If there's bad grammar but no suggestions (e.g., repeated word), just leave off the suggestions
-                    // list and trailing separator rather than adding a "No Guesses Found" item (matches AppKit)
-                    if (misspelling) {
-                        appendItem(NoGuessesItem, m_contextMenu.get());
+        if (!inPasswordField) {
+            bool haveContextMenuItemsForMisspellingOrGrammer = false;
+            bool spellCheckingEnabled = frame->editor()->isSpellCheckingEnabledFor(node);
+            if (spellCheckingEnabled) {
+                // Consider adding spelling-related or grammar-related context menu items (never both, since a single selected range
+                // is never considered a misspelling and bad grammar at the same time)
+                bool misspelling;
+                bool badGrammar;
+                Vector<String> guesses = frame->editor()->guessesForMisspelledOrUngrammaticalSelection(misspelling, badGrammar);
+                if (misspelling || badGrammar) {
+                    size_t size = guesses.size();
+                    if (!size) {
+                        // If there's bad grammar but no suggestions (e.g., repeated word), just leave off the suggestions
+                        // list and trailing separator rather than adding a "No Guesses Found" item (matches AppKit)
+                        if (misspelling) {
+                            appendItem(NoGuessesItem, m_contextMenu.get());
+                            appendItem(*separatorItem(), m_contextMenu.get());
+                        }
+                    } else {
+                        for (unsigned i = 0; i < size; i++) {
+                            const String &guess = guesses[i];
+                            if (!guess.isEmpty()) {
+                                ContextMenuItem item(ActionType, ContextMenuItemTagSpellingGuess, guess);
+                                appendItem(item, m_contextMenu.get());
+                            }
+                        }
                         appendItem(*separatorItem(), m_contextMenu.get());
                     }
-                } else {
-                    for (unsigned i = 0; i < size; i++) {
-                        const String &guess = guesses[i];
-                        if (!guess.isEmpty()) {
-                            ContextMenuItem item(ActionType, ContextMenuItemTagSpellingGuess, guess);
-                            appendItem(item, m_contextMenu.get());
-                        }
-                    }
-                    appendItem(*separatorItem(), m_contextMenu.get());                    
-                }
-                
-                if (misspelling) {
-                    appendItem(IgnoreSpellingItem, m_contextMenu.get());
-                    appendItem(LearnSpellingItem, m_contextMenu.get());
-                } else
-                    appendItem(IgnoreGrammarItem, m_contextMenu.get());
-                appendItem(*separatorItem(), m_contextMenu.get());
+                    if (misspelling) {
+                        appendItem(IgnoreSpellingItem, m_contextMenu.get());
+                        appendItem(LearnSpellingItem, m_contextMenu.get());
+                    } else
+                        appendItem(IgnoreGrammarItem, m_contextMenu.get());
+                    appendItem(*separatorItem(), m_contextMenu.get());
+                    haveContextMenuItemsForMisspellingOrGrammer = true;
 #if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
-            } else {
-                // If the string was autocorrected, generate a contextual menu item allowing it to be changed back.
-                String replacedString = m_hitTestResult.replacedString();
-                if (!replacedString.isEmpty()) {
-                    ContextMenuItem item(ActionType, ContextMenuItemTagChangeBack, contextMenuItemTagChangeBack(replacedString));
-                    appendItem(item, m_contextMenu.get());
+                } else {
+                    // If the string was autocorrected, generate a contextual menu item allowing it to be changed back.
+                    String replacedString = m_hitTestResult.replacedString();
+                    if (!replacedString.isEmpty()) {
+                        ContextMenuItem item(ActionType, ContextMenuItemTagChangeBack, contextMenuItemTagChangeBack(replacedString));
+                        appendItem(item, m_contextMenu.get());
+                        appendItem(*separatorItem(), m_contextMenu.get());
+                        haveContextMenuItemsForMisspellingOrGrammer = true;
+                    }
+#endif
+                }
+            }
+
+            if (!haveContextMenuItemsForMisspellingOrGrammer) {
+                // Spelling and grammar checking is mutually exclusive with dictation alternatives.
+                Vector<String> dictationAlternatives = m_hitTestResult.dictationAlternatives();
+                if (!dictationAlternatives.isEmpty()) {
+                    for (size_t i = 0; i < dictationAlternatives.size(); ++i) {
+                        ContextMenuItem item(ActionType, ContextMenuItemTagDictationAlternative, dictationAlternatives[i]);
+                        appendItem(item, m_contextMenu.get());
+                    }
                     appendItem(*separatorItem(), m_contextMenu.get());
                 }
-#endif
             }
         }
 
@@ -1352,6 +1370,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemCustomTagNoAction:
         case ContextMenuItemLastCustomTag:
         case ContextMenuItemBaseApplicationTag:
+        case ContextMenuItemTagDictationAlternative:
             break;
         case ContextMenuItemTagMediaPlayPause:
             if (m_hitTestResult.mediaPlaying())

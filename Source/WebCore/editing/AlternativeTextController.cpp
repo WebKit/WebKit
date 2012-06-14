@@ -68,6 +68,23 @@ private:
     String m_replacementString;
 };
 
+class DictationAlternativeDetails : public AlternativeTextDetails {
+public:
+    static PassRefPtr<DictationAlternativeDetails> create(uint64_t dictationContext)
+    {
+        return adoptRef(new DictationAlternativeDetails(dictationContext));
+    }
+
+    uint64_t dictationContext() const { return m_dictationContext; }
+
+private:
+    DictationAlternativeDetails(uint64_t dictationContext)
+    : m_dictationContext(dictationContext)
+    { }
+
+    uint64_t m_dictationContext;
+};
+
 #if USE(AUTOCORRECTION_PANEL)
 
 static const Vector<DocumentMarker::MarkerType>& markerTypesForAutocorrection()
@@ -90,6 +107,14 @@ static const Vector<DocumentMarker::MarkerType>& markerTypesForReplacement()
         markerTypesForReplacement.append(DocumentMarker::SpellCheckingExemption);
     }
     return markerTypesForReplacement;
+}
+
+static const Vector<DocumentMarker::MarkerType>& markerTypesForAppliedDictationAlternative()
+{
+    DEFINE_STATIC_LOCAL(Vector<DocumentMarker::MarkerType>, markerTypesForAppliedDictationAlternative, ());
+    if (markerTypesForAppliedDictationAlternative.isEmpty())
+        markerTypesForAppliedDictationAlternative.append(DocumentMarker::SpellCheckingExemption);
+    return markerTypesForAppliedDictationAlternative;
 }
 
 static bool markersHaveIdenticalDescription(const Vector<DocumentMarker*>& markers)
@@ -215,18 +240,18 @@ String AlternativeTextController::dismissSoon(ReasonForDismissingAlternativeText
     return String();
 }
 
-void AlternativeTextController::applyAlternativeText(const String& alternative, const Vector<DocumentMarker::MarkerType>& markerTypesToAdd)
+void AlternativeTextController::applyAlternativeTextToRange(const Range* range, const String& alternative, AlternativeTextType alternativeType, const Vector<DocumentMarker::MarkerType>& markerTypesToAdd)
 {
-    if (!m_alternativeTextInfo.rangeWithAlternative)
+    if (!range)
         return;
 
     ExceptionCode ec = 0;
-    RefPtr<Range> paragraphRangeContainingCorrection = m_alternativeTextInfo.rangeWithAlternative->cloneRange(ec);
+    RefPtr<Range> paragraphRangeContainingCorrection = range->cloneRange(ec);
     if (ec)
         return;
 
-    setStart(paragraphRangeContainingCorrection.get(), startOfParagraph(m_alternativeTextInfo.rangeWithAlternative->startPosition()));
-    setEnd(paragraphRangeContainingCorrection.get(), endOfParagraph(m_alternativeTextInfo.rangeWithAlternative->endPosition()));
+    setStart(paragraphRangeContainingCorrection.get(), startOfParagraph(range->startPosition()));
+    setEnd(paragraphRangeContainingCorrection.get(), endOfParagraph(range->endPosition()));
 
     // After we replace the word at range rangeWithAlternative, we need to add markers to that range.
     // However, once the replacement took place, the value of rangeWithAlternative is not valid anymore.
@@ -238,7 +263,7 @@ void AlternativeTextController::applyAlternativeText(const String& alternative, 
     if (ec)
         return;
 
-    Position startPositionOfrangeWithAlternative = m_alternativeTextInfo.rangeWithAlternative->startPosition();
+    Position startPositionOfrangeWithAlternative = range->startPosition();
     correctionStartOffsetInParagraphAsRange->setEnd(startPositionOfrangeWithAlternative.containerNode(), startPositionOfrangeWithAlternative.computeOffsetInContainerNode(), ec);
     if (ec)
         return;
@@ -247,7 +272,7 @@ void AlternativeTextController::applyAlternativeText(const String& alternative, 
     int correctionStartOffsetInParagraph = TextIterator::rangeLength(correctionStartOffsetInParagraphAsRange.get());
 
     // Clone the range, since the caller of this method may want to keep the original range around.
-    RefPtr<Range> rangeWithAlternative = m_alternativeTextInfo.rangeWithAlternative->cloneRange(ec);
+    RefPtr<Range> rangeWithAlternative = range->cloneRange(ec);
     applyCommand(SpellingCorrectionCommand::create(rangeWithAlternative, alternative));
     setEnd(paragraphRangeContainingCorrection.get(), m_frame->selection()->selection().start());
     RefPtr<Range> replacementRange = TextIterator::subrange(paragraphRangeContainingCorrection.get(), correctionStartOffsetInParagraph, alternative.length());
@@ -259,13 +284,8 @@ void AlternativeTextController::applyAlternativeText(const String& alternative, 
 
     DocumentMarkerController* markers = replacementRange->startContainer()->document()->markers();
     size_t size = markerTypesToAdd.size();
-    for (size_t i = 0; i < size; ++i) {
-        DocumentMarker::MarkerType markerType = markerTypesToAdd[i];
-        String description;
-        if (m_alternativeTextInfo.type != AlternativeTextTypeReversion && (markerType == DocumentMarker::Replacement || markerType == DocumentMarker::Autocorrected))
-            description = m_alternativeTextInfo.originalText;
-        markers->addMarker(replacementRange.get(), markerType, description);
-    }
+    for (size_t i = 0; i < size; ++i)
+        markers->addMarker(replacementRange.get(), markerTypesToAdd[i], markerDescriptionForAppliedAlternativeText(alternativeType, markerTypesToAdd[i]));
 }
 
 bool AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate()
@@ -348,16 +368,32 @@ void AlternativeTextController::timerFired(Timer<AlternativeTextController>*)
         }
     }
         break;
+    case AlternativeTextTypeDictationAlternatives:
+    {
+#if USE(DICTATION_ALTERNATIVES)
+        const Range* rangeWithAlternative = m_alternativeTextInfo.rangeWithAlternative.get();
+        const DictationAlternativeDetails* details = static_cast<const DictationAlternativeDetails*>(m_alternativeTextInfo.details.get());
+        if (!rangeWithAlternative || !details || !details->dictationContext())
+            return;
+        FloatRect boundingBox = rootViewRectForRange(rangeWithAlternative);
+        m_alternativeTextInfo.isActive = true;
+        if (!boundingBox.isEmpty()) {
+            if (AlternativeTextClient* client = alternativeTextClient())
+                client->showDictationAlternativeUI(boundingBox, details->dictationContext());
+        }
+#endif
+    }
+        break;
     }
 }
 
 void AlternativeTextController::handleAlternativeTextUIResult(const String& result)
 {
-    Range* replacedRange = m_alternativeTextInfo.rangeWithAlternative.get();
-    if (!replacedRange || m_frame->document() != replacedRange->ownerDocument())
+    Range* rangeWithAlternative = m_alternativeTextInfo.rangeWithAlternative.get();
+    if (!rangeWithAlternative || m_frame->document() != rangeWithAlternative->ownerDocument())
         return;
 
-    String currentWord = plainText(m_alternativeTextInfo.rangeWithAlternative.get());
+    String currentWord = plainText(rangeWithAlternative);
     // Check to see if the word we are about to correct has been changed between timer firing and callback being triggered.
     if (currentWord != m_alternativeTextInfo.originalText)
         return;
@@ -367,14 +403,18 @@ void AlternativeTextController::handleAlternativeTextUIResult(const String& resu
     switch (m_alternativeTextInfo.type) {
     case AlternativeTextTypeCorrection:
         if (result.length())
-            applyAlternativeText(result, markerTypesForAutocorrection());
+            applyAlternativeTextToRange(rangeWithAlternative, result, m_alternativeTextInfo.type, markerTypesForAutocorrection());
         else if (!m_isDismissedByEditing)
-            replacedRange->startContainer()->document()->markers()->addMarker(replacedRange, DocumentMarker::RejectedCorrection, m_alternativeTextInfo.originalText);
+            rangeWithAlternative->startContainer()->document()->markers()->addMarker(rangeWithAlternative, DocumentMarker::RejectedCorrection, m_alternativeTextInfo.originalText);
         break;
     case AlternativeTextTypeReversion:
     case AlternativeTextTypeSpellingSuggestions:
         if (result.length())
-            applyAlternativeText(result, markerTypesForReplacement());
+            applyAlternativeTextToRange(rangeWithAlternative, result, m_alternativeTextInfo.type, markerTypesForReplacement());
+        break;
+    case AlternativeTextTypeDictationAlternatives:
+        if (result.length())
+            applyAlternativeTextToRange(rangeWithAlternative, result, m_alternativeTextInfo.type, markerTypesForAppliedDictationAlternative());
         break;
     }
 
@@ -400,7 +440,7 @@ FloatRect AlternativeTextController::rootViewRectForRange(const Range* range) co
     return view->contentsToRootView(IntRect(boundingRect));
 }        
 
-void AlternativeTextController::respondToChangedSelection(const VisibleSelection& oldSelection)
+void AlternativeTextController::respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions options)
 {
     VisibleSelection currentSelection(m_frame->selection()->selection());
     // When user moves caret to the end of autocorrected word and pauses, we show the panel
@@ -426,28 +466,15 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
         return;
 
     Node* node = position.containerNode();
-    int endOffset = position.offsetInContainerNode();
     Vector<DocumentMarker*> markers = node->document()->markers()->markersFor(node);
     size_t markerCount = markers.size();
     for (size_t i = 0; i < markerCount; ++i) {
         const DocumentMarker* marker = markers[i];
-        if (!shouldStartTimerFor(marker, endOffset))
-            continue;
-        RefPtr<Range> wordRange = Range::create(m_frame->document(), node, marker->startOffset(), node, marker->endOffset());
-        String currentWord = plainText(wordRange.get());
-        if (!currentWord.length())
+        if (!marker)
             continue;
 
-        m_alternativeTextInfo.rangeWithAlternative = wordRange;
-        m_alternativeTextInfo.originalText = currentWord;
-        if (marker->type() == DocumentMarker::Spelling)
-            startAlternativeTextUITimer(AlternativeTextTypeSpellingSuggestions);
-        else {
-            m_alternativeTextInfo.details = AutocorrectionAlternativeDetails::create(marker->description());
-            startAlternativeTextUITimer(AlternativeTextTypeReversion);
-        }
-
-        break;
+        if (respondToMarkerAtEndOfWord(*marker, position, options))
+            break;
     }
 }
 
@@ -598,7 +625,63 @@ bool AlternativeTextController::processMarkersOnTextToBeReplacedByResult(const T
 
     return true;
 }
-    
+
+bool AlternativeTextController::shouldStartTimerFor(const WebCore::DocumentMarker &marker, int endOffset) const
+{
+    return (((marker.type() == DocumentMarker::Replacement && !marker.description().isNull()) || marker.type() == DocumentMarker::Spelling || marker.type() == DocumentMarker::DictationAlternatives) && static_cast<int>(marker.endOffset()) == endOffset);
+}
+
+bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker& marker, const Position& endOfWordPosition, FrameSelection::SetSelectionOptions options)
+{
+    if (options & FrameSelection::DictationTriggered)
+        return false;
+    if (!shouldStartTimerFor(marker, endOfWordPosition.offsetInContainerNode()))
+        return false;
+    Node* node = endOfWordPosition.containerNode();
+    RefPtr<Range> wordRange = Range::create(m_frame->document(), node, marker.startOffset(), node, marker.endOffset());
+    if (!wordRange)
+        return false;
+    String currentWord = plainText(wordRange.get());
+    if (!currentWord.length())
+        return false;
+    m_alternativeTextInfo.originalText = currentWord;
+    switch (marker.type()) {
+    case DocumentMarker::Spelling:
+        m_alternativeTextInfo.rangeWithAlternative = wordRange;
+        m_alternativeTextInfo.details = AutocorrectionAlternativeDetails::create("");
+        startAlternativeTextUITimer(AlternativeTextTypeSpellingSuggestions);
+        break;
+    case DocumentMarker::Replacement:
+        m_alternativeTextInfo.rangeWithAlternative = wordRange;
+        m_alternativeTextInfo.details = AutocorrectionAlternativeDetails::create(marker.description());
+        startAlternativeTextUITimer(AlternativeTextTypeReversion);
+        break;
+    case DocumentMarker::DictationAlternatives: {
+        const DictationMarkerDetails* markerDetails = static_cast<const DictationMarkerDetails*>(marker.details());
+        if (!markerDetails)
+            return false;
+        if (currentWord != markerDetails->originalText())
+            return false;
+        m_alternativeTextInfo.rangeWithAlternative = wordRange;
+        m_alternativeTextInfo.details = DictationAlternativeDetails::create(markerDetails->dictationContext());
+        startAlternativeTextUITimer(AlternativeTextTypeDictationAlternatives);
+    }
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return true;
+}
+
+String AlternativeTextController::markerDescriptionForAppliedAlternativeText(AlternativeTextType alternativeTextType, DocumentMarker::MarkerType markerType)
+{
+
+    if (alternativeTextType != AlternativeTextTypeReversion && alternativeTextType != AlternativeTextTypeDictationAlternatives && (markerType == DocumentMarker::Replacement || markerType == DocumentMarker::Autocorrected))
+        return m_alternativeTextInfo.originalText;
+    return "";
+}
+
 #endif
 
 bool AlternativeTextController::insertDictatedText(const String& text, const Vector<DictationAlternative>& dictationAlternatives, Event* triggeringEvent)
@@ -622,6 +705,50 @@ bool AlternativeTextController::insertDictatedText(const String& text, const Vec
     ExceptionCode ec;
     target->dispatchEvent(event, ec);
     return event->defaultHandled();
+}
+
+void AlternativeTextController::removeDictationAlternativesForMarker(const DocumentMarker* marker)
+{
+#if USE(DICTATION_ALTERNATIVES)
+    DictationMarkerDetails* details = static_cast<DictationMarkerDetails*>(marker->details());
+    if (AlternativeTextClient* client = alternativeTextClient())
+        client->removeDictationAlternatives(details->dictationContext());
+#else
+    UNUSED_PARAM(marker);
+#endif
+}
+
+Vector<String> AlternativeTextController::dictationAlternativesForMarker(const DocumentMarker* marker)
+{
+#if USE(DICTATION_ALTERNATIVES)
+    ASSERT(marker->type() == DocumentMarker::DictationAlternatives);
+    if (AlternativeTextClient* client = alternativeTextClient()) {
+        DictationMarkerDetails* details = static_cast<DictationMarkerDetails*>(marker->details());
+        return client->dictationAlternatives(details->dictationContext());
+    }
+    return Vector<String>();
+#else
+    UNUSED_PARAM(marker);
+    return Vector<String>();
+#endif
+}
+
+void AlternativeTextController::applyDictationAlternative(const String& alternativeString)
+{
+#if USE(DICTATION_ALTERNATIVES)
+    Editor* editor = m_frame->editor();
+    RefPtr<Range> selection = editor->selectedRange();
+    if (!selection || !editor->shouldInsertText(alternativeString, selection.get(), EditorInsertActionPasted))
+        return;
+    DocumentMarkerController* markers = selection->startContainer()->document()->markers();
+    Vector<DocumentMarker*> dictationAlternativesMarkers = markers->markersInRange(selection.get(), DocumentMarker::DictationAlternatives);
+    for (size_t i = 0; i < dictationAlternativesMarkers.size(); ++i)
+        removeDictationAlternativesForMarker(dictationAlternativesMarkers[i]);
+
+    applyAlternativeTextToRange(selection.get(), alternativeString, AlternativeTextTypeDictationAlternatives, markerTypesForAppliedDictationAlternative());
+#else
+    UNUSED_PARAM(alternativeString);
+#endif
 }
 
 } // namespace WebCore

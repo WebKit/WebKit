@@ -1,3 +1,83 @@
+2012-06-14  Jia Pu  <jpu@apple.com>
+
+        Mark text with text alternative with blue underline.
+        https://bugs.webkit.org/show_bug.cgi?id=83047
+
+        Reviewed by Enrica Casucci.
+
+        Tests: platform/mac/editing/input/edit-dictated-text-with-alternative.html
+               platform/mac/editing/input/insert-dictated-text.html
+
+        This patch implements visual indication on dictated text with alternatives, and provides UI
+        to show alternative text on OS X. Majority of the changes is for generalizing existing AlternativeTextController
+        class to handle dictation alternatives. The two new classes, AlternativeTextUIController and
+        TextAlternativeWithRange, are used by both WebKit and WK2. So WebCore seems to be the natural place
+        for them.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/AlternativeTextController.cpp: Expanded exising class interface to support dictation alternatives.
+        (DictationAlternativeDetails): Marker detail class for dictation alternative mark.
+        (WebCore::DictationAlternativeDetails::create):
+        (WebCore::DictationAlternativeDetails::dictationContext):
+        (WebCore::DictationAlternativeDetails::DictationAlternativeDetails):
+        (WebCore::markerTypesForAppliedDictationAlternative):
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange): Generalized existing applyAlternativeTextToRange() to handle dictation alternatives.
+        (WebCore::AlternativeTextController::timerFired): Expanded existing code to handle dictation alternatives.
+        (WebCore::AlternativeTextController::handleAlternativeTextUIResult): Expanded existing code to handle dictation alternatives.
+        (WebCore::AlternativeTextController::respondToChangedSelection): Moved part of the function into respondToMarkerAtEndOfWord() to improve readability.
+        (WebCore::AlternativeTextController::shouldStartTimerFor):
+        (WebCore::AlternativeTextController::respondToMarkerAtEndOfWord):
+        (WebCore::AlternativeTextController::markerDescriptionForAppliedAlternativeText):
+        (WebCore::AlternativeTextController::removeDictationAlternativesForMarker):
+        (WebCore::AlternativeTextController::dictationAlternativesForMarker):
+        (WebCore::AlternativeTextController::applyDictationAlternative):
+        * editing/AlternativeTextController.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::notifyComponentsOnChangedSelection): Renamed existing respondToChangedSelection() function to avoid naming collision.
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::unappliedEditing):
+        (WebCore::Editor::reappliedEditing):
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing):
+        (WebCore::Editor::changeSelectionAfterCommand):
+        (WebCore::Editor::respondToChangedSelection):
+        (WebCore::Editor::dictationAlternativesForMarker):
+        (WebCore::Editor::applyDictationAlternativelternative):
+        * editing/Editor.h:
+        * editing/FrameSelection.h:
+        * editing/mac/AlternativeTextUIController.h: Added. WK1 and WK2 use this class to keep track of text alternatives objects.
+        (AlternativeTextUIController):
+        (WebCore::AlternativeTextUIController::AlternativeTextUIController):
+        (AlernativeTextContextController):
+        (WebCore::AlternativeTextUIController::AlernativeTextContextController::AlernativeTextContextController):
+        * editing/mac/AlternativeTextUIController.mm: Added.
+        (WebCore::AlternativeTextUIController::AlernativeTextContextController::addAlternatives):
+        (WebCore::AlternativeTextUIController::AlernativeTextContextController::alternativesForContext):
+        (WebCore::AlternativeTextUIController::AlernativeTextContextController::removeAlternativesForContext):
+        (WebCore::AlternativeTextUIController::AlernativeTextContextController::clear):
+        (WebCore::AlternativeTextUIController::addAlternatives):
+        (WebCore::AlternativeTextUIController::alternativesForContext):
+        (WebCore::AlternativeTextUIController::clear):
+        (WebCore::AlternativeTextUIController::showAlternatives):
+        (WebCore::AlternativeTextUIController::handleAcceptedAlternative):
+        (WebCore::AlternativeTextUIController::dismissAlternatives):
+        (WebCore::AlternativeTextUIController::removeAlternatives):
+        * editing/mac/TextAlternativeWithRange.h: Added.  A simple struct to make it easier to pass around a pair of text alternatives object and range.
+        * editing/mac/TextAlternativeWithRange.mm: Added.
+        (WebCore::TextAlternativeWithRange::TextAlternativeWithRange):
+        (WebCore::collectDictationTextAlternatives):
+        * page/AlternativeTextClient.h:
+        * page/ContextMenuController.cpp: Added code to show alternative dictated text in context menu.
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::populate):
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded):
+        * platform/ContextMenuItem.h:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::dictationAlternatives):
+        * rendering/HitTestResult.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDocumentMarker):
+
 2012-06-14  Emil A Eklund  <eae@chromium.org>
 
         Change RenderTableSection::calcRowLogicalHeight to round rather than floor height
