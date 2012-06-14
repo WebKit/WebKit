@@ -34,6 +34,16 @@ Object.isEmpty = function(obj)
     return true;
 }
 
+Object.values = function(obj)
+{
+    var keys = Object.keys(obj);
+    var result = [];
+
+    for (var i = 0; i < keys.length; ++i)
+        result.push(obj[keys[i]]);
+    return result;
+}
+
 String.prototype.hasSubstring = function(string, caseInsensitive)
 {
     if (!caseInsensitive)

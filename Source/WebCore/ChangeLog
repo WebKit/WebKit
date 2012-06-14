@@ -1,3 +1,56 @@
+2012-06-13  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: use CSS gradients instead of images for timeline bars, checkboxes & bullets
+        https://bugs.webkit.org/show_bug.cgi?id=89024
+
+        Reviewed by Pavel Feldman.
+
+        This brings a bunch of UI changes to the way Timeline bars and related controls are rendered:
+
+        - introduce new color palette for categories;
+        - replace images used to render timeline bars, list bullets and categories checkboxes with CSS gradients;
+        - "flatten" timeline bars
+        - make square list bullets, sharpen corners for lower pane bars;
+        - make links on the list sidebar grey
+        - add more space between categories checkboxes, make labels lighter.
+
+        * WebCore.gypi: Remove old images, add tickMark.png.
+        * inspector/front-end/Images/timelineBarBlue.png: Removed.
+        * inspector/front-end/Images/timelineBarDarkGreen.png: Removed.
+        * inspector/front-end/Images/timelineBarGray.png: Removed.
+        * inspector/front-end/Images/timelineBarGreen.png: Removed.
+        * inspector/front-end/Images/timelineBarLightPurple.png: Removed.
+        * inspector/front-end/Images/timelineBarOrange.png: Removed.
+        * inspector/front-end/Images/timelineBarPurple.png: Removed.
+        * inspector/front-end/Images/timelineBarRed.png: Removed.
+        * inspector/front-end/Images/timelineBarYellow.png: Removed.
+        * inspector/front-end/Images/timelineCheckmarks.png: Removed.
+        * inspector/front-end/Images/timelineDots.png: Removed.
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.wasShown): 
+        (WebInspector.TimelinePanel.prototype._closeRecordDetails): Fixed trailing spaces;
+        (WebInspector.TimelinePanel.prototype._injectCategoryStyles): Inject generated styles for categories, if necessary.
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.categories):
+        (WebInspector.TimelinePresentationModel.createFillStyle):
+        (WebInspector.TimelinePresentationModel.createStyleRuleForCategory):
+        * inspector/front-end/WebKit.qrc: Remove old images, add tickMark.png
+        * inspector/front-end/inspector.css:
+        (.sidebar-tree-section):
+        * inspector/front-end/timelinePanel.css:
+        (#timeline-container .webkit-html-resource-link):
+        (.timeline-category-statusbar-item):
+        (.timeline-category-statusbar-item .timeline-category-checkbox):
+        (.timeline-category-statusbar-item .timeline-category-checkbox:checked::before):
+        (.timeline-tree-item):
+        (.timeline-tree-item .timeline-tree-icon):
+        (.timeline-graph-bar):
+        (.timeline-graph-bar.with-children):
+        (.timeline-graph-bar.cpu):
+        (.timeline-aggregated-category):
+        * inspector/front-end/utilities.js:
+        (Object.values): Return an array of object field's values.
+
 2012-06-14  Silvia Pfeiffer  <silviapf@chromium.org>
 
         Change mute button and volume slider behaviour for new Chromium video controls.

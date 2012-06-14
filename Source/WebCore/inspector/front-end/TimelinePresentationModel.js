@@ -47,10 +47,10 @@ WebInspector.TimelinePresentationModel.categories = function()
     if (WebInspector.TimelinePresentationModel._categories)
         return WebInspector.TimelinePresentationModel._categories;
     WebInspector.TimelinePresentationModel._categories = {
-        loading: new WebInspector.TimelineCategory("loading", WebInspector.UIString("Loading"), 0, "rgb(80, 135, 207)", "rgb(191, 214, 243)", "rgb(112, 162, 227)"),
-        scripting: new WebInspector.TimelineCategory("scripting", WebInspector.UIString("Scripting"), 1, "rgb(220, 163, 49)", "rgb(253, 217, 144)", "rgb(253, 191, 68)"),
-        rendering: new WebInspector.TimelineCategory("rendering", WebInspector.UIString("Rendering"), 2, "rgb(148, 88, 199)", "rgb(219, 195, 239)", "rgb(175, 120, 221)"),
-        painting: new WebInspector.TimelineCategory("painting", WebInspector.UIString("Painting"), 2, "rgb(42, 104, 63)", "rgb(62, 169, 97)", "rgb(50, 129, 77)")
+        loading: new WebInspector.TimelineCategory("loading", WebInspector.UIString("Loading"), 0, "#5A8BCC", "#8EB6E9", "#70A2E3"),
+        scripting: new WebInspector.TimelineCategory("scripting", WebInspector.UIString("Scripting"), 1, "#D8AA34", "#F3D07A", "#F1C453"),
+        rendering: new WebInspector.TimelineCategory("rendering", WebInspector.UIString("Rendering"), 2, "#8266CC", "#AF9AEB", "#9A7EE6"),
+        painting: new WebInspector.TimelineCategory("painting", WebInspector.UIString("Painting"), 2, "#5FA050", "#8DC286", "#71B363")
     };
     return WebInspector.TimelinePresentationModel._categories;
 };
@@ -773,8 +773,8 @@ WebInspector.TimelinePresentationModel.createFillStyle = function(context, width
 {
     var gradient = context.createLinearGradient(0, 0, width, height);
     gradient.addColorStop(0, color0);
-    gradient.addColorStop(0.3, color1);
-    gradient.addColorStop(0.7, color1);
+    gradient.addColorStop(0.25, color1);
+    gradient.addColorStop(0.75, color1);
     gradient.addColorStop(1, color2);
     return gradient;
 }
@@ -788,6 +788,22 @@ WebInspector.TimelinePresentationModel.createFillStyle = function(context, width
 WebInspector.TimelinePresentationModel.createFillStyleForCategory = function(context, width, height, category)
 {
     return WebInspector.TimelinePresentationModel.createFillStyle(context, width, height, category.fillColorStop0, category.fillColorStop1, category.borderColor);
+}
+
+/**
+ * @param {WebInspector.TimelineCategory} category
+ */
+WebInspector.TimelinePresentationModel.createStyleRuleForCategory = function(category)
+{
+    var selector = ".timeline-category-" + category.name + " .timeline-graph-bar, " +
+        ".timeline-category-statusbar-item.timeline-category-" + category.name + " .timeline-category-checkbox, " +
+        ".popover .timeline-" + category.name + ", " +
+        ".timeline-category-" + category.name + " .timeline-tree-icon"
+
+    return selector + " { background-image: -webkit-linear-gradient(" +
+       category.fillColorStop0 + ", " + category.fillColorStop1 + " 25%, " + category.fillColorStop1 + " 75%, " + category.borderColor + ");" +
+       " border-color: " + category.borderColor +
+       "}";
 }
 
 /**

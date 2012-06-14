@@ -544,6 +544,10 @@ WebInspector.TimelinePanel.prototype = {
     wasShown: function()
     {
         WebInspector.Panel.prototype.wasShown.call(this);
+        if (!WebInspector.TimelinePanel._categoryStylesInitialized) {
+            WebInspector.TimelinePanel._categoryStylesInitialized = true;
+            this._injectCategoryStyles();
+        }
         this._refresh();
         WebInspector.drawer.currentPanelCounters = this.recordsCounter;
     },
@@ -777,6 +781,15 @@ WebInspector.TimelinePanel.prototype = {
     _closeRecordDetails: function()
     {
         this._popoverHelper.hidePopover();
+    },
+
+    _injectCategoryStyles: function()
+    {
+        var style = document.createElement("style");
+        var categories = WebInspector.TimelinePresentationModel.categories();
+
+        style.textContent = Object.values(categories).map(WebInspector.TimelinePresentationModel.createStyleRuleForCategory).join("\n");
+        document.head.appendChild(style);
     }
 }
 

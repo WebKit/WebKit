@@ -1843,7 +1843,7 @@ button.edit-source-status-bar-item.toggled-on .glyph {
 .sidebar-tree-section {
     position: relative;
     height: 18px;
-    padding: 4px 10px 6px 10px;
+    padding: 1px 10px 6px 10px;
     white-space: nowrap;
     margin-top: 1px;
     color: rgb(92, 110, 129);

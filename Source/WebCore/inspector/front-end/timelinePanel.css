@@ -162,6 +162,11 @@
     z-index: 1;
 }
 
+#timeline-container .webkit-html-external-link,
+#timeline-container .webkit-html-resource-link {
+    color: inherit;
+}
+
 .timeline-category-statusbar-item {
     height: 24px;
     line-height: 24px;
@@ -172,43 +177,33 @@
     font-weight: bold;
 }
 
+.timeline-category-statusbar-item,
+.timeline-records-counter {
+    color: rgb(65, 65, 65);
+}
+
 .timeline-category-statusbar-item .timeline-category-checkbox {
     width: 10px;
     height: 11px;
-    margin: 0 3px 0 5px;
+    margin: 0 3px 0 9px;
     padding: 0;
-    background-image: url(Images/timelineCheckmarks.png);
-    background-repeat: no-repeat;
-    background-position: 0 -66px;
-    vertical-align: -1px;
+    vertical-align: -2px;
+    border-radius: 2px;
+    border: solid 1px;
     -webkit-appearance: none;
 }
 
-.timeline-category-statusbar-item .timeline-category-checkbox:checked {
-    background-position-x: -10px;
-}
-
-.timeline-category-statusbar-item.timeline-category-loading .timeline-category-checkbox {
-    background-position-y: 0;
-}
-
-.timeline-category-statusbar-item.timeline-category-scripting .timeline-category-checkbox {
-    background-position-y: -33px;
-}
-
-.timeline-category-statusbar-item.timeline-category-rendering .timeline-category-checkbox {
-    background-position-y: -11px;
-}
-
-.timeline-category-statusbar-item.timeline-category-painting .timeline-category-checkbox {
-    background-position-y: -88px;
+.timeline-category-statusbar-item .timeline-category-checkbox:checked::before {
+    position: relative;
+    top: -5px;
+    content: url(Images/tickMark.png);
 }
 
 .timeline-tree-item {
     height: 18px;
     line-height: 15px;
     padding-right: 5px;
-    padding-left: 10px;
+    padding-left: 5px;
     padding-top: 2px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -233,7 +228,7 @@
 .timeline-expandable-collapsed {
     background-image: url(Images/disclosureTriangleSmallRightBlack.png);
     background-position-x: 1px;
-    background-position-y: 2px;
+    background-position-y: 3px;
     background-repeat: no-repeat;
 }
 
@@ -254,10 +249,13 @@
 }
 
 .timeline-tree-item .timeline-tree-icon {
-    background-image: url(Images/timelineDots.png);
-    margin-top: 2px;
-    width: 12px;
-    height: 12px;
+    display: block;
+    margin-top: 4px;
+    margin-left: 2px;
+    width: 7px;
+    height: 7px;
+    border-radius: 1px;
+    border: solid 1px;
     position: absolute;
 }
 
@@ -321,44 +319,28 @@
 
 .timeline-graph-bar {
     position: absolute;
-    top: 0;
+    top: -1px;
     bottom: 0;
     margin: auto -2px;
-    border-width: 4px 4px 5px;
     height: 9px;
     min-width: 5px;
-    opacity: 0.8;
-    -webkit-border-image: url(Images/timelineBarGray.png) 4 4 5 4;
     z-index: 180;
     pointer-events: visibleFill;
+    border-radius: 1px;
+    border: 1px solid;
 }
 
 .timeline-graph-bar.with-children {
-    opacity: 0.2;
+    opacity: 0.25;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .timeline-graph-bar.cpu {
-    opacity: 0.6;
+    opacity: 0.7;
 }
 
 .timeline-graph-side.even {
     background-color: rgba(0, 0, 0, 0.05);
-}
-
-.timeline-category-loading .timeline-graph-bar {
-    -webkit-border-image: url(Images/timelineBarBlue.png) 4 4 5 4;
-}
-
-.timeline-category-scripting .timeline-graph-bar {
-    -webkit-border-image: url(Images/timelineBarOrange.png) 4 4 5 4;
-}
-
-.timeline-category-rendering .timeline-graph-bar {
-    -webkit-border-image: url(Images/timelineBarPurple.png) 4 4 5 4;
-}
-
-.timeline-category-painting .timeline-graph-bar {
-    -webkit-border-image: url(Images/timelineBarDarkGreen.png) 4 4 5 4;
 }
 
 .timeline-aggregated-category {
@@ -369,42 +351,11 @@
     position: relative;
     top: 2px;
     width: 10px;
-}
-
-.popover .timeline-loading {
-    -webkit-border-image: url(Images/timelineBarBlue.png) 4 4 5 4;
-}
-
-.popover .timeline-scripting {
-    -webkit-border-image: url(Images/timelineBarOrange.png) 4 4 5 4;
-}
-
-.popover .timeline-rendering {
-    -webkit-border-image: url(Images/timelineBarPurple.png) 4 4 5 4;
-}
-
-.popover .timeline-painting {
-    -webkit-border-image: url(Images/timelineBarDarkGreen.png) 4 4 5 4;
+    border: solid 1px;
 }
 
 .popover .timeline-aggregated-category.timeline-loading {
     margin-left: 0px;
-}
-
-.timeline-category-loading .timeline-tree-icon {
-    background-position-y: 0px;
-}
-
-.timeline-category-scripting .timeline-tree-icon {
-    background-position-y: -36px;
-}
-
-.timeline-category-rendering .timeline-tree-icon {
-    background-position-y: -12px;
-}
-
-.timeline-category-painting .timeline-tree-icon {
-    background-position-y: -96px;
 }
 
 .timeline-details {
@@ -472,7 +423,7 @@
 
 #counters > .timeline-records-counter {
     float: left;
-    margin-top: -2px;
+    margin-top: -1px;
 }
 
 #resources-container-content {
