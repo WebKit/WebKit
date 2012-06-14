@@ -1,3 +1,20 @@
+2012-06-14  Andreas Kling  <kling@webkit.org>
+
+        Crashes below IconDatabase::performPendingRetainAndReleaseOperations().
+        <http://webkit.org/b/88846>
+        <rdar://problem/11629106>
+
+        Reviewed by Brady Eidson.
+
+        Put isolatedCopy() strings in the retain/release operation queues to make sure it's safe
+        for secondary threads to ref/deref them in performPendingRetainAndReleaseOperations().
+        Also added assertions as appropriate.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::retainIconForPageURL):
+        (WebCore::IconDatabase::releaseIconForPageURL):
+        (WebCore::IconDatabase::performPendingRetainAndReleaseOperations):
+
 2012-06-14  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] For hit testing in CCLayerTreeHostCommon, need to check that the transform is invertible before inverting it.
