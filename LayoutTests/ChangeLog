@@ -1,5 +1,15 @@
 2012-06-13  Dominic Cooney  <dominicc@chromium.org>
 
+        [Chromium] Unreviewed: Rebaseline for Mac
+
+        Rebaselining after r119893. There was a rebasline in r120221 but
+        it failed on Chromium WebKit waterfall and canaries after that, so
+        trying again.
+
+        * platform/chromium-mac/fast/borders/border-antialiasing-expected.png:
+
+2012-06-13  Dominic Cooney  <dominicc@chromium.org>
+
         [Chromium] Unreviewed: Update expectations
         https://bugs.webkit.org/show_bug.cgi?id=88949
 
