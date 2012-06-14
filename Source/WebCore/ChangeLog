@@ -1,3 +1,15 @@
+2012-06-14  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Fix some failing tests on Windows by resetting the page scale factor
+        between tests.
+        https://bugs.webkit.org/show_bug.cgi?id=89078
+
+        Reviewed by Dirk Pranke.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::reset):
+        Set the scale factor to 1.0.
+
 2012-06-14  Sami Kyostila  <skyostil@chromium.org>
 
         Register fixed position layers with ScrollingCoordinator

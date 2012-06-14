@@ -597,6 +597,8 @@ void Internals::reset(Document* document)
 
         if (document->frame() == page->mainFrame())
             setUserPreferredLanguages(Vector<String>());
+
+        page->setPageScaleFactor(1, IntPoint(0, 0));
     }
 
     resetDefaultsToConsistentValues();
