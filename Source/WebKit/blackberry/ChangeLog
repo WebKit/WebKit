@@ -1,3 +1,18 @@
+2012-06-14  Genevieve Mak  <gmak@rim.com>
+
+        Always convert touch events to mouse events if the
+        meta-tag TouchEventMode::PureWithMouseConversion is set.
+        Minor style fix.
+        https://bugs.webkit.org/show_bug.cgi?id=89115
+
+        Reviewed by Antonio Gomes.
+
+        Reviewed Internally by Antonio Gomes.
+
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::touchEventCancel):
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
 2012-06-14  Chris Guan  <chris.guan@torchmobile.com.cn>
 
         [Blackberry] add a new Api named setAllowNotification
