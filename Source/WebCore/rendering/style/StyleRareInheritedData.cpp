@@ -30,6 +30,35 @@
 
 namespace WebCore {
 
+struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareInheritedData> {
+    Color firstColor;
+    float firstFloat;
+    Color colors[5];
+    void* ownPtrs[1];
+    AtomicString atomicStrings[5];
+    void* refPtrs[2];
+    Length lengths[1];
+    float secondFloat;
+    unsigned m_bitfields[2];
+    short pagedMediaShorts[2];
+    unsigned unsigneds[1];
+    short hyphenationShorts[3];
+
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    float imageResolutionFloats;
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+    Color touchColors;
+#endif
+
+#if ENABLE(CSS_VARIABLES)
+    void* variableDataRefs[1];
+#endif
+};
+
+COMPILE_ASSERT(sizeof(StyleRareInheritedData) == sizeof(SameSizeAsStyleRareInheritedData), StyleRareInheritedData_should_bit_pack);
+
 StyleRareInheritedData::StyleRareInheritedData()
     : textStrokeWidth(RenderStyle::initialTextStrokeWidth())
     , indent(RenderStyle::initialTextIndent())

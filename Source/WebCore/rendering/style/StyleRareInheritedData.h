@@ -84,7 +84,7 @@ public:
     unsigned wordWrap : 1; // EWordWrap 
     unsigned nbspMode : 1; // ENBSPMode
     unsigned khtmlLineBreak : 1; // EKHTMLLineBreak
-    bool textSizeAdjust : 1; // An Apple extension.
+    unsigned textSizeAdjust : 1; // An Apple extension.
     unsigned resize : 2; // EResize
     unsigned userSelect : 1;  // EUserSelect
     unsigned colorSpace : 1; // ColorSpace

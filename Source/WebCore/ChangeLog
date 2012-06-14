@@ -1,3 +1,20 @@
+2012-06-14  Tony Chang  <tony@chromium.org>
+
+        Fix bit packing of StyleRareInheritedData on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=89112
+
+        Reviewed by Ryosuke Niwa.
+
+        On my machine (64 bit Chromium Linux), StyleRareInheritedData is 168 bytes.
+
+        No new tests, added a compile assert to ensure correctness going forward.
+
+        * rendering/style/StyleRareInheritedData.cpp:
+        (SameSizeAsStyleRareInheritedData):
+        (WebCore):
+        * rendering/style/StyleRareInheritedData.h:
+        (StyleRareInheritedData):
+
 2012-06-14  Andreas Kling  <kling@webkit.org>
 
         Crashes below IconDatabase::performPendingRetainAndReleaseOperations().
