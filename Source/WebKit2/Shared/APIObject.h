@@ -88,6 +88,7 @@ public:
         TypeGrammarDetail,
         TypeIconDatabase,
         TypeInspector,
+        TypeIntentData,
         TypeKeyValueStorageManager,
         TypeMediaCacheManager,
         TypeNavigationData,

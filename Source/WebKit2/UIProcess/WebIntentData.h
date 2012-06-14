@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIClientTraits_h
-#define APIClientTraits_h
+#ifndef WebIntentData_h
+#define WebIntentData_h
 
-#include "WKBundlePage.h"
-#include "WKPage.h"
+#if ENABLE(WEB_INTENTS)
+
+#include "APIObject.h"
+#include "IntentData.h"
+#include "WebSerializedScriptValue.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 
-template <typename ClientInterface> struct APIClientTraits {
-    static const size_t interfaceSizesByVersion[1];
-};
-template <typename ClientInterface> const size_t APIClientTraits<ClientInterface>::interfaceSizesByVersion[] = { sizeof(ClientInterface) };
+class WebIntentData : public APIObject {
+public:
+    static const Type APIType = TypeIntentData;
 
-template<> struct APIClientTraits<WKBundlePageLoaderClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
+    static PassRefPtr<WebIntentData> create(const IntentData& store)
+    {
+        return adoptRef(new WebIntentData(store));
+    }
 
-template<> struct APIClientTraits<WKBundlePageResourceLoadClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
+    virtual ~WebIntentData() { }
 
-template<> struct APIClientTraits<WKBundlePageFullScreenClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
+    const String& action() const { return m_store.action; }
+    const String& payloadType() const { return m_store.type; }
+    PassRefPtr<WebSerializedScriptValue> data() const;
+    const HashMap<String, String>& extras() const { return m_store.extras; }
+    const Vector<WebCore::KURL>& suggestions() const { return m_store.suggestions; }
 
-template<> struct APIClientTraits<WKPageContextMenuClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
+private:
+    WebIntentData(const IntentData&);
 
-template<> struct APIClientTraits<WKPageLoaderClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
+    virtual Type type() const { return APIType; }
 
-template<> struct APIClientTraits<WKPageUIClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKBundlePageFormClient> {
-    static const size_t interfaceSizesByVersion[2];
+    IntentData m_store;
 };
 
 } // namespace WebKit
 
-#endif // APIClientTraits_h
+#endif // ENABLE(WEB_INTENTS)
+
+#endif // WebIntentData_h

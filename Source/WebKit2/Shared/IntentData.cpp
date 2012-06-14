@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIClientTraits_h
-#define APIClientTraits_h
+#include "config.h"
+#include "IntentData.h"
 
-#include "WKBundlePage.h"
-#include "WKPage.h"
+#if ENABLE(WEB_INTENTS)
+
+#include "APIObject.h"
+#include "DataReference.h"
+#include "WebCoreArgumentCoders.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-template <typename ClientInterface> struct APIClientTraits {
-    static const size_t interfaceSizesByVersion[1];
-};
-template <typename ClientInterface> const size_t APIClientTraits<ClientInterface>::interfaceSizesByVersion[] = { sizeof(ClientInterface) };
+void IntentData::encode(CoreIPC::ArgumentEncoder* encoder) const
+{
+    encoder->encode(action);
+    encoder->encode(type);
+    encoder->encode(CoreIPC::DataReference(data));
+    encoder->encode(extras);
+    encoder->encode(suggestions);
+}
 
-template<> struct APIClientTraits<WKBundlePageLoaderClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
+bool IntentData::decode(CoreIPC::ArgumentDecoder* decoder, IntentData& intentData)
+{
+    if (!decoder->decode(intentData.action))
+        return false;
+    if (!decoder->decode(intentData.type))
+        return false;
+    CoreIPC::DataReference data;
+    if (!decoder->decode(data))
+        return false;
+    intentData.data.append(data.data(), data.size());
+    if (!decoder->decode(intentData.extras))
+        return false;
+    if (!decoder->decode(intentData.suggestions))
+        return false;
 
-template<> struct APIClientTraits<WKBundlePageResourceLoadClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKBundlePageFullScreenClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKPageContextMenuClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
-
-template<> struct APIClientTraits<WKPageLoaderClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
-
-template<> struct APIClientTraits<WKPageUIClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKBundlePageFormClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
+    return true;
+}
 
 } // namespace WebKit
 
-#endif // APIClientTraits_h
+#endif // ENABLE(WEB_INTENTS)
+

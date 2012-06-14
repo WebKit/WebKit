@@ -1,3 +1,61 @@
+2012-06-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Add implementation for dispatchIntent in WebFrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=88340
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add implementation for dispatchIntent() in WebFrameLoaderClient.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIClientTraits.h:
+        * Shared/APIObject.h:
+        * Shared/IntentData.cpp: Added.
+        (WebKit):
+        (WebKit::IntentData::encode):
+        (WebKit::IntentData::decode):
+        * Shared/IntentData.h: Added.
+        (CoreIPC):
+        (WebKit):
+        (IntentData):
+        * Target.pri:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (attachLoaderClientToView):
+        * UIProcess/WebIntentData.cpp: Added.
+        (WebKit):
+        (WebKit::WebIntentData::WebIntentData):
+        (WebKit::WebIntentData::data):
+        * UIProcess/WebIntentData.h: Added.
+        (WebKit):
+        (WebIntentData):
+        (WebKit::WebIntentData::create):
+        (WebKit::WebIntentData::~WebIntentData):
+        (WebKit::WebIntentData::action):
+        (WebKit::WebIntentData::payloadType):
+        (WebKit::WebIntentData::extras):
+        (WebKit::WebIntentData::suggestions):
+        (WebKit::WebIntentData::type):
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit):
+        (WebKit::WebLoaderClient::didReceiveIntentForFrame):
+        * UIProcess/WebLoaderClient.h:
+        (WebKit):
+        (WebLoaderClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit):
+        (WebKit::WebPageProxy::didReceiveIntentForFrame):
+        * UIProcess/WebPageProxy.h:
+        (WebKit):
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchIntent):
+
 2012-06-13  Tim Horton  <timothy_horton@apple.com>
 
         Rename _swapView:with: to _replaceView:with:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIClientTraits_h
-#define APIClientTraits_h
+#include "config.h"
+#include "WebIntentData.h"
 
-#include "WKBundlePage.h"
-#include "WKPage.h"
+#if ENABLE(WEB_INTENTS)
 
 namespace WebKit {
 
-template <typename ClientInterface> struct APIClientTraits {
-    static const size_t interfaceSizesByVersion[1];
-};
-template <typename ClientInterface> const size_t APIClientTraits<ClientInterface>::interfaceSizesByVersion[] = { sizeof(ClientInterface) };
+WebIntentData::WebIntentData(const IntentData& store)
+    : m_store(store)
+{
+}
 
-template<> struct APIClientTraits<WKBundlePageLoaderClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
-
-template<> struct APIClientTraits<WKBundlePageResourceLoadClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKBundlePageFullScreenClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKPageContextMenuClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
-
-template<> struct APIClientTraits<WKPageLoaderClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
-
-template<> struct APIClientTraits<WKPageUIClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKBundlePageFormClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
+PassRefPtr<WebSerializedScriptValue> WebIntentData::data() const
+{
+    Vector<uint8_t> dataCopy = m_store.data;
+    return WebSerializedScriptValue::adopt(dataCopy);
+}
 
 } // namespace WebKit
 
-#endif // APIClientTraits_h
+#endif // ENABLE(WEB_INTENTS)
+

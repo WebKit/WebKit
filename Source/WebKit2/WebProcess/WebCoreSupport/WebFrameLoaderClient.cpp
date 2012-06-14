@@ -74,6 +74,7 @@
 #include <WebCore/WindowFeatures.h>
 
 #if ENABLE(WEB_INTENTS)
+#include "IntentData.h"
 #include <WebCore/IntentRequest.h>
 #endif
 
@@ -1540,9 +1541,22 @@ bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader*, unsigned long id
 #endif // PLATFORM(WIN) && USE(CFNETWORK)
 
 #if ENABLE(WEB_INTENTS)
-void WebFrameLoaderClient::dispatchIntent(PassRefPtr<IntentRequest>)
+void WebFrameLoaderClient::dispatchIntent(PassRefPtr<IntentRequest> request)
 {
-    notImplemented();
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    IntentData intentData;
+    Intent* coreIntent = request->intent();
+    ASSERT(coreIntent);
+    intentData.action = coreIntent->action();
+    intentData.type = coreIntent->type();
+    intentData.data = coreIntent->data()->data();
+    intentData.extras = coreIntent->extras();
+    intentData.suggestions = coreIntent->suggestions();
+
+    webPage->send(Messages::WebPageProxy::DidReceiveIntentForFrame(m_frame->frameID(), intentData));
 }
 #endif
 

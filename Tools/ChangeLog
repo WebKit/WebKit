@@ -1,3 +1,17 @@
+2012-06-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Add implementation for dispatchIntent in WebFrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=88340
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update initialization of WKPageLoaderClient.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2012-06-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120268.

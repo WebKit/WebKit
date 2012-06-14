@@ -85,6 +85,11 @@
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
 
+#if ENABLE(WEB_INTENTS)
+#include "IntentData.h"
+#include "WebIntentData.h"
+#endif
+
 #if USE(UI_SIDE_COMPOSITING)
 #include "LayerTreeHostProxyMessages.h"
 #endif
@@ -2135,6 +2140,17 @@ void WebPageProxy::didDetectXSSForFrame(uint64_t frameID, CoreIPC::ArgumentDecod
 
     m_loaderClient.didDetectXSSForFrame(this, frame, userData.get());
 }
+
+#if ENABLE(WEB_INTENTS)
+void WebPageProxy::didReceiveIntentForFrame(uint64_t frameID, const IntentData& intentData)
+{
+    WebFrameProxy* frame = process()->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+
+    RefPtr<WebIntentData> webIntentData = WebIntentData::create(intentData);
+    m_loaderClient.didReceiveIntentForFrame(this, frame, webIntentData.get());
+}
+#endif
 
 void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 {

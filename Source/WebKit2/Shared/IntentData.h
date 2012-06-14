@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIClientTraits_h
-#define APIClientTraits_h
+#ifndef IntentData_h
+#define IntentData_h
 
-#include "WKBundlePage.h"
-#include "WKPage.h"
+#if ENABLE(WEB_INTENTS)
+
+#include "APIObject.h"
+#include "GenericCallback.h"
+#include <wtf/text/WTFString.h>
+
+namespace CoreIPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
 
 namespace WebKit {
 
-template <typename ClientInterface> struct APIClientTraits {
-    static const size_t interfaceSizesByVersion[1];
-};
-template <typename ClientInterface> const size_t APIClientTraits<ClientInterface>::interfaceSizesByVersion[] = { sizeof(ClientInterface) };
+struct IntentData {
+    void encode(CoreIPC::ArgumentEncoder*) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, IntentData&);
 
-template<> struct APIClientTraits<WKBundlePageLoaderClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
-
-template<> struct APIClientTraits<WKBundlePageResourceLoadClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKBundlePageFullScreenClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKPageContextMenuClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
-
-template<> struct APIClientTraits<WKPageLoaderClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
-
-template<> struct APIClientTraits<WKPageUIClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKBundlePageFormClient> {
-    static const size_t interfaceSizesByVersion[2];
+    String action;
+    String type;
+    Vector<uint8_t> data;
+    HashMap<String, String> extras;
+    Vector<WebCore::KURL> suggestions;
 };
 
 } // namespace WebKit
 
-#endif // APIClientTraits_h
+#endif // ENABLE(WEB_INTENTS)
+
+#endif // IntentData_h
