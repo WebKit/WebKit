@@ -106,7 +106,6 @@ LIST(APPEND WebCore_SOURCES
 LIST(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/mediaControlsBlackBerry.css
     ${WEBCORE_DIR}/css/themeBlackBerry.css
-    ${WEBCORE_DIR}/Resources/blackberry/popupControlBlackBerry.css
 )
 
 LIST(APPEND WebCore_INCLUDE_DIRECTORIES
@@ -350,3 +349,18 @@ FOREACH (_file ${WebCore_CPP_IDL_FILES})
         VERBATIM)
     LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WebDOM${_name}.cpp)
 ENDFOREACH ()
+
+# Generate contents for PopupPicker.cpp
+SET(WebCore_POPUP_CSS_AND_JS
+    ${WEBCORE_DIR}/Resources/blackberry/popupControlBlackBerry.css
+    ${WEBCORE_DIR}/Resources/blackberry/selectControlBlackBerry.css
+    ${WEBCORE_DIR}/Resources/blackberry/selectControlBlackBerry.js
+)
+
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/PopupPicker.h ${DERIVED_SOURCES_WEBCORE_DIR}/PopupPicker.cpp
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/make-file-arrays.py
+    DEPENDS ${WebCore_POPUP_CSS_AND_JS}
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/make-file-arrays.py --out-h=${DERIVED_SOURCES_WEBCORE_DIR}/PopupPicker.h --out-cpp=${DERIVED_SOURCES_WEBCORE_DIR}/PopupPicker.cpp ${WebCore_POPUP_CSS_AND_JS}
+)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/PopupPicker.cpp)

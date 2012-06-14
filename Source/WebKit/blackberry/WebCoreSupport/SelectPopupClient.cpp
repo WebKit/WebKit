@@ -28,8 +28,8 @@
 #include "HTMLSelectElement.h"
 #include "Page.h"
 #include "PagePopup.h"
+#include "PopupPicker.h"
 #include "RenderObject.h"
-#include "UserAgentStyleSheets.h"
 #include "WebPage_p.h"
 
 #include <wtf/text/StringBuilder.h>
@@ -65,55 +65,63 @@ void SelectPopupClient::generateHTML(bool multiple, int size, const ScopeArray<B
     const int* itemType, bool* selecteds)
 {
     StringBuilder source;
-    String fullPath(RESOURCE_PATH);
-    String singleSelectImage("singleSelect.png");
-    String multiSelectImage("multiSelect.png");
-    source.append("<head><style>\n");
+    source.append("<html><head><style>\n");
     // Include CSS file.
-    source.append(popupControlBlackBerryUserAgentStyleSheet,
-            sizeof(popupControlBlackBerryUserAgentStyleSheet));
+    source.append(popupControlBlackBerryCss,
+            sizeof(popupControlBlackBerryCss));
+    source.append("</style>\n<style>");
+    source.append(selectControlBlackBerryCss,
+            sizeof(selectControlBlackBerryCss));
     source.append("</style></head><body>\n");
     source.append("<script>\n");
-    source.append("var options=new Array(" + String::number(size) + ");");
-    source.append("for (var i = 0; i < " + String::number(size) + "; i++ )");
-    source.append("{ options[i] = false ;");
-    source.append("var imageid = document.getElementById(\"image\" + parseInt(i)); imageid.style.visibility = false; }");
-    source.append("function Ok() { var selecteds = \"\";");
-    source.append("for (var i = 0; i < " + String::number(size) + "; i++ )");
-    source.append("{  if (options[i]) selecteds += '1'; else selecteds += '0';}");
-    source.append("window.setValueAndClosePopup(selecteds, window.popUp); window.close();}");
-    source.append("function Cancel() { var selecteds = \"\";");
-    source.append("for (var i = 0; i < " + String::number(size) + "; i++ )");
-    source.append("selecteds += '0';");
-    source.append("window.setValueAndClosePopup(selecteds, window.popUp); window.close();}");
+    source.append("window.addEventListener('load', function () {");
     if (m_multiple)
-        source.append("function Select(i) { options[i] = !options[i]; var imageid = document.getElementById(\"image\" + parseInt(i)); imageid.style.visibility = options[i]; }");
-    else {
-        source.append("function Select(i) { for (var j = 0; j < " + String::number(size) + "; j++ )");
-        source.append("{ options[j] = false; ");
-        source.append("var imageid = document.getElementById(\"image\" + parseInt(j)); imageid.style.visibility = false; }");
-        source.append("options[i] = true; ");
-        source.append("var imageid = document.getElementById(\"image\" + parseInt(i)); imageid.style.visibility = true; }");
-    }
-    source.append("</script>\n");
-
-    int tableWidth = contentSize().width();
-    int tableHeight = CELL_HEIGHT * size;
-    source.append("<table width=\"" + String::number(tableWidth) + "\" height=\"" + String::number(tableHeight)
-        + "\" border=\"0\" frame=\"void\" rules=\"rows\"> ");
+        source.append("window.select.show(true, ");
+    else
+        source.append("window.select.show(false, ");
+    // Add labels.
+    source.append("[");
     for (int i = 0; i < size; i++) {
-        source.append(" <tr> <td bgcolor=\"#E2E4E3\" width=\"80%\"><input class=\"tablebutton\" id=\"button" + String::number(i)
-            + "\" type=\"button\" value=\"" + String(labels[i].impl()) + "\" onclick=\"Select(" + String::number(i) + ");\" />");
-        source.append("</td>");
-        source.append("<td bgcolor=\"#E2E4E3\" width=\"20%\"><input type=\"image\" id=\"image" + String::number(i) + "\" src=\" " + fullPath
-            + singleSelectImage + " \" /></td> </tr>");
+        source.append("'" + String(labels[i].impl()) + "'");
+        // Don't append ',' to last element.
+        if (i != size - 1)
+            source.append(", ");
     }
-    source.append("</table>");
-    source.append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"> <tr> <td>");
-    source.append("<input class=\"bottombuttonOK\" name=\"btnOk\" type=\"button\" value=\"Ok\" ");
-    source.append("onclick=\"Ok();\" /></td> <td nowrap=\"nowrap\"> <input class=\"bottombuttonCancel\" type=\"button\" value=\"Cancel\" onclick=\"Cancel();\" />");
-    source.append("</td> </tr></table>");
-    source.append("</body>\n");
+    source.append("], ");
+    // Add enables.
+    source.append("[");
+    for (int i = 0; i < size; i++) {
+        source.append(enableds[i]? "true" : "false");
+        // Don't append ',' to last element.
+        if (i != size - 1)
+            source.append(", ");
+    }
+    source.append("], ");
+    // Add itemType.
+    source.append("[");
+    for (int i = 0; i < size; i++) {
+        source.append(String::number(itemType[i]));
+        // Don't append ',' to last element.
+        if (i != size - 1)
+            source.append(", ");
+    }
+    source.append("], ");
+    // Add selecteds
+    source.append("[");
+    for (int i = 0; i < size; i++) {
+        source.append(selecteds[i]? "true" : "false");
+        // Don't append ',' to last element.
+        if (i != size - 1)
+            source.append(", ");
+    }
+    source.append("] ");
+    // If multi-select, add OK button for confirm.
+    if (m_multiple)
+        source.append(", 'OK'");
+    source.append("); \n }); \n");
+    source.append(selectControlBlackBerryJs, sizeof(selectControlBlackBerryJs));
+    source.append("</script>\n");
+    source.append("</body> </html>\n");
     m_source = source.toString();
 }
 
@@ -144,7 +152,7 @@ void SelectPopupClient::setValueAndClosePopup(int, const String& stringValue)
         for (unsigned i = 0; i < m_size; i++)
             selecteds[i] = stringValue[i] - '0';
 
-        const WTF::Vector<HTMLElement*>& items = m_element->listItems();
+        const Vector<HTMLElement*>& items = m_element->listItems();
 
         if (items.size() != static_cast<unsigned int>(m_size))
             return;

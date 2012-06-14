@@ -1,3 +1,16 @@
+2012-06-13  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Apply New Style and JS for Select Popup
+        https://bugs.webkit.org/show_bug.cgi?id=89020
+
+        Reviewed by Rob Buis.
+
+        PR 162854
+
+        Use new python script for data generating, as the old one is too simple and problematic.
+
+        * PlatformBlackBerry.cmake:
+
 2012-06-13  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Assert if iterating an invalid RenderSurfaceLayerList, where a layer in the list has no RenderSurface

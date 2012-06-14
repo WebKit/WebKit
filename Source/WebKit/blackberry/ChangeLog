@@ -1,3 +1,19 @@
+2012-06-13  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Apply New Style and JS for Select Popup
+        https://bugs.webkit.org/show_bug.cgi?id=89020
+
+        Reviewed by Rob Buis.
+
+        PR 162854
+
+        Use new styled CSS files for select popup, also remove most JS functions
+        to a separate JS file, only pass the parameters to JS, and use new python
+        script for data generating, as the old one is too simple and problematic.
+
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore::SelectPopupClient::generateHTML):
+
 2012-06-13  Amy Ousterhout  <aousterh@chromium.org>
 
         Rename currentDeviceMotion to lastMotion in DeviceMotionClient
