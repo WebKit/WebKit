@@ -1,3 +1,31 @@
+2012-06-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Get rid of FAIL test expectation
+        https://bugs.webkit.org/show_bug.cgi?id=89137
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ResultSummaryTest.test_summarized_results_wontfix):
+        * Scripts/webkitpy/layout_tests/controllers/test_expectations_editor_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        (JSONLayoutResultsGenerator):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (result_was_expected):
+        (suffixes_for_expectations):
+        (TestExpectationsModel._add_test):
+        (TestExpectations):
+        (TestExpectations.get_rebaselining_failures):
+        (TestExpectations.remove_configuration_from_test):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (FunctionsTest.test_result_was_expected):
+        (FunctionsTest.test_suffixes_for_expectations):
+        (TestExpectationSerializerTests.test_parsed_expectations_string):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (test_test_expectations):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase.test_valid_expectations):
+
 2012-06-14  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: remove DummyOptions and clean up the code in Port.get_option() and Port.set_option_default()

@@ -54,7 +54,7 @@ BUGWK85465 SKIP : css3/filters = TEXT
 BUGWK85465 SKIP : fast/css/getComputedStyle/computed-style.html = TEXT
 
 // CSS image-resolution is not yet enabled.
-BUGWK85262 SKIP : fast/css/image-resolution = PASS FAIL
+BUGWK85262 SKIP : fast/css/image-resolution = PASS
 
 // This test assumes we cannot play RTSP, but we can.
 BUGWKEFL SKIP : media/unsupported-rtsp.html = TIMEOUT
@@ -599,11 +599,11 @@ BUGWK88191 : fast/viewport/viewport-legacy-ordering-6.html = TEXT
 BUGWK88191 : fast/viewport/viewport-legacy-xhtmlmp.html = TEXT
 
 // The EFL port has no support for the FileSystem API
-BUGWK68591 SKIP : fast/filesystem = FAIL
-BUGWK68591 SKIP : fast/mutation/filesystem-callback-delivery.html = FAIL
-BUGWK68591 SKIP : http/tests/filesystem = FAIL
-BUGWK68591 SKIP : http/tests/security/filesystem-iframe-from-remote.html = FAIL
-BUGWK68591 SKIP : http/tests/security/mixedContent/filesystem-url-in-iframe.html = FAIL
+BUGWK68591 SKIP : fast/filesystem = PASS
+BUGWK68591 SKIP : fast/mutation/filesystem-callback-delivery.html = PASS
+BUGWK68591 SKIP : http/tests/filesystem = PASS
+BUGWK68591 SKIP : http/tests/security/filesystem-iframe-from-remote.html = PASS
+BUGWK68591 SKIP : http/tests/security/mixedContent/filesystem-url-in-iframe.html = PASS
 
 // EFL's EventSender does not implement contextClick yet
 BUGWK86091 : editing/pasteboard/copy-standalone-image-crash.html = TEXT
@@ -710,8 +710,8 @@ BUGWK86445 : fast/multicol/split-in-top-margin.html = IMAGE
 BUGWK86722 SKIP : fast/images/paletted-png-with-color-profile.html = PASS
 
 // These tests cause flakiness (extra console messages in output)
-BUGWK88729 SKIP : userscripts/window-onerror-for-isolated-world-1.html = FAIL
-BUGWK88729 SKIP : userscripts/window-onerror-for-isolated-world-2.html = FAIL
+BUGWK88729 SKIP : userscripts/window-onerror-for-isolated-world-1.html = PASS
+BUGWK88729 SKIP : userscripts/window-onerror-for-isolated-world-2.html = PASS
 
 // Needs rebaseline after the bots cycle.
 BUG_OJAN : tables/mozilla/bugs/bug131020.html = TEXT IMAGE IMAGE+TEXT

@@ -58,16 +58,6 @@ class FunctionsTest(unittest.TestCase):
         self.assertEquals(result_was_expected(TEXT, set([PASS]),
                                               False, False), False)
 
-        # test handling of FAIL expectations
-        self.assertEquals(result_was_expected(IMAGE_PLUS_TEXT, set([FAIL]),
-                                              False, False), True)
-        self.assertEquals(result_was_expected(IMAGE, set([FAIL]),
-                                              False, False), True)
-        self.assertEquals(result_was_expected(TEXT, set([FAIL]),
-                                              False, False), True)
-        self.assertEquals(result_was_expected(CRASH, set([FAIL]),
-                                              False, False), False)
-
         # test handling of SKIPped tests and results
         self.assertEquals(result_was_expected(SKIP, set([CRASH]),
                                               False, True), True)
@@ -94,11 +84,10 @@ class FunctionsTest(unittest.TestCase):
 
     def test_suffixes_for_expectations(self):
         self.assertEquals(suffixes_for_expectations(set([TEXT])), set(['txt']))
-        self.assertEquals(suffixes_for_expectations(set([FAIL])), set(['txt', 'png']))
         self.assertEquals(suffixes_for_expectations(set([IMAGE_PLUS_TEXT])), set(['txt', 'png']))
         self.assertEquals(suffixes_for_expectations(set([IMAGE])), set(['png']))
         self.assertEquals(suffixes_for_expectations(set([AUDIO])), set(['wav']))
-        self.assertEquals(suffixes_for_expectations(set([TEXT, FAIL, CRASH])), set(['txt', 'png']))
+        self.assertEquals(suffixes_for_expectations(set([TEXT, IMAGE, CRASH])), set(['txt', 'png']))
         self.assertEquals(suffixes_for_expectations(set()), set())
 
 
@@ -621,10 +610,10 @@ class TestExpectationSerializerTests(unittest.TestCase):
         self.assertEqual(self._serializer._parsed_expectations_string(expectation_line), '')
         expectation_line.parsed_expectations = set([IMAGE_PLUS_TEXT])
         self.assertEqual(self._serializer._parsed_expectations_string(expectation_line), 'image+text')
-        expectation_line.parsed_expectations = set([PASS, FAIL])
-        self.assertEqual(self._serializer._parsed_expectations_string(expectation_line), 'pass fail')
-        expectation_line.parsed_expectations = set([FAIL, PASS])
-        self.assertEqual(self._serializer._parsed_expectations_string(expectation_line), 'pass fail')
+        expectation_line.parsed_expectations = set([PASS, IMAGE])
+        self.assertEqual(self._serializer._parsed_expectations_string(expectation_line), 'pass image')
+        expectation_line.parsed_expectations = set([TEXT, PASS])
+        self.assertEqual(self._serializer._parsed_expectations_string(expectation_line), 'pass text')
 
     def test_parsed_modifier_string(self):
         expectation_line = TestExpectationLine()

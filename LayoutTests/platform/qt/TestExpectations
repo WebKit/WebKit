@@ -78,7 +78,7 @@ BUGWK85580 SKIP : fast/css/variables = PASS
 BUGWK87908 SKIP : editing/undomanager = PASS
 
 // CSS image-resolution is not yet enabled.
-BUGWK85262 SKIP : fast/css/image-resolution = PASS FAIL
+BUGWK85262 SKIP : fast/css/image-resolution = PASS
 
 // Needs rebaseline after bug 86441
 // failing new tests

@@ -164,8 +164,8 @@ BUGX2 XP DEBUG : failures/expected/keyboard.html = IMAGE""", 'failures/expected/
 BUGX2 XP DEBUG : failures/expected/keyboard.html = IMAGE""")
 
         self.assert_remove_roundtrip("""
-BUGX1 WIN : failures/expected = FAIL""", 'failures/expected/keyboard.html', """
-BUGX1 WIN : failures/expected = FAIL""")
+BUGX1 WIN : failures/expected = TEXT""", 'failures/expected/keyboard.html', """
+BUGX1 WIN : failures/expected = TEXT""")
 
         self.assert_remove_roundtrip("""
 BUGX1 XP RELEASE : failures/expected/keyboard.html = IMAGE PASS
@@ -326,11 +326,11 @@ BUG_UPDATE2 XP DEBUG : failures/expected/keyboard.html = TEXT
 BUG_UPDATE3 WIN RELEASE : failures/expected/keyboard.html = CRASH
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
-        editor.update_expectation(test, self.RELEASE_CONFIGS, set([FAIL]), ['BUG_UPDATE4'])
+        editor.update_expectation(test, self.RELEASE_CONFIGS, set([IMAGE_PLUS_TEXT]), ['BUG_UPDATE4'])
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 VISTA WIN7 DEBUG : failures/expected/keyboard.html = IMAGE
 BUG_UPDATE2 XP DEBUG : failures/expected/keyboard.html = TEXT
-BUG_UPDATE4 RELEASE : failures/expected/keyboard.html = FAIL
+BUG_UPDATE4 RELEASE : failures/expected/keyboard.html = IMAGE+TEXT
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         editor.update_expectation(test, set(self.test_port.all_test_configurations()), set([TIMEOUT]), ['BUG_UPDATE5'])

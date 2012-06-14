@@ -42,7 +42,6 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
 
     FAILURE_TO_CHAR = {test_expectations.PASS: json_results_generator.JSONResultsGeneratorBase.PASS_RESULT,
                        test_expectations.SKIP: json_results_generator.JSONResultsGeneratorBase.SKIP_RESULT,
-                       test_expectations.FAIL: "Y",
                        test_expectations.CRASH: "C",
                        test_expectations.TIMEOUT: "T",
                        test_expectations.IMAGE: "I",

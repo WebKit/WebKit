@@ -57,8 +57,6 @@ def result_was_expected(result, expected_results, test_needs_rebaselining, test_
         test_is_skipped: whether test was marked as SKIP"""
     if result in expected_results:
         return True
-    if result in (IMAGE, TEXT, IMAGE_PLUS_TEXT) and FAIL in expected_results:
-        return True
     if result == MISSING and test_needs_rebaselining:
         return True
     if result == SKIP and test_is_skipped:
@@ -91,9 +89,9 @@ BASELINE_SUFFIX_LIST = ('png', 'wav', 'txt')
 
 def suffixes_for_expectations(expectations):
     suffixes = set()
-    if expectations.intersection(set([TEXT, IMAGE_PLUS_TEXT, FAIL])):
+    if expectations.intersection(set([TEXT, IMAGE_PLUS_TEXT])):
         suffixes.add('txt')
-    if expectations.intersection(set([IMAGE, IMAGE_PLUS_TEXT, FAIL])):
+    if expectations.intersection(set([IMAGE, IMAGE_PLUS_TEXT])):
         suffixes.add('png')
     if AUDIO in expectations:
         suffixes.add('wav')
@@ -558,6 +556,7 @@ class TestExpectationsModel(object):
         elif expectation_line.is_flaky():
             self._result_type_to_tests[FLAKY].add(test)
         else:
+            # FIXME: What is this?
             self._result_type_to_tests[FAIL].add(test)
 
     def _clear_expectations_for_test(self, test, expectation_line):
@@ -652,9 +651,9 @@ class TestExpectations(object):
     in which case the expectations apply to all test cases in that
     directory and any subdirectory. The format is along the lines of:
 
-      LayoutTests/fast/js/fixme.js = FAIL
-      LayoutTests/fast/js/flaky.js = FAIL PASS
-      LayoutTests/fast/js/crash.js = CRASH TIMEOUT FAIL PASS
+      LayoutTests/fast/js/fixme.js = TEXT
+      LayoutTests/fast/js/flaky.js = TEXT PASS
+      LayoutTests/fast/js/crash.js = CRASH TIMEOUT TEXT PASS
       ...
 
     To add modifiers:
@@ -670,18 +669,13 @@ class TestExpectations(object):
 
     Notes:
       -A test cannot be both SLOW and TIMEOUT
-      -A test should only be one of IMAGE, TEXT, IMAGE+TEXT, AUDIO, or FAIL.
-       FAIL is a legacy value that currently means either IMAGE,
-       TEXT, or IMAGE+TEXT. Once we have finished migrating the expectations,
-       we should change FAIL to have the meaning of IMAGE+TEXT and remove the
-       IMAGE+TEXT identifier.
+      -A test should only be one of IMAGE, TEXT, IMAGE+TEXT, or AUDIO.
       -A test can be included twice, but not via the same path.
       -If a test is included twice, then the more precise path wins.
       -CRASH tests cannot be WONTFIX
     """
 
     EXPECTATIONS = {'pass': PASS,
-                    'fail': FAIL,
                     'text': TEXT,
                     'image': IMAGE,
                     'image+text': IMAGE_PLUS_TEXT,
@@ -692,7 +686,6 @@ class TestExpectations(object):
 
     EXPECTATION_DESCRIPTIONS = {SKIP: ('skipped', 'skipped'),
                                 PASS: ('pass', 'passes'),
-                                FAIL: ('failure', 'failures'),
                                 TEXT: ('text diff mismatch',
                                        'text diff mismatch'),
                                 IMAGE: ('image mismatch', 'image mismatch'),
@@ -704,7 +697,7 @@ class TestExpectations(object):
                                 MISSING: ('no expected result found',
                                           'no expected results found')}
 
-    EXPECTATION_ORDER = (PASS, CRASH, TIMEOUT, MISSING, IMAGE_PLUS_TEXT, TEXT, IMAGE, AUDIO, FAIL, SKIP)
+    EXPECTATION_ORDER = (PASS, CRASH, TIMEOUT, MISSING, IMAGE_PLUS_TEXT, TEXT, IMAGE, AUDIO, SKIP)
 
     BUILD_TYPES = ('debug', 'release')
 
@@ -759,8 +752,7 @@ class TestExpectations(object):
         return self._model
 
     def get_rebaselining_failures(self):
-        return (self._model.get_test_set(REBASELINE, FAIL) |
-                self._model.get_test_set(REBASELINE, IMAGE) |
+        return (self._model.get_test_set(REBASELINE, IMAGE) |
                 self._model.get_test_set(REBASELINE, TEXT) |
                 self._model.get_test_set(REBASELINE, IMAGE_PLUS_TEXT) |
                 self._model.get_test_set(REBASELINE, AUDIO))
@@ -851,7 +843,7 @@ class TestExpectations(object):
         for expectation in self._expectations:
             if expectation.name != test or expectation.is_flaky() or not expectation.parsed_expectations:
                 continue
-            if iter(expectation.parsed_expectations).next() not in (FAIL, TEXT, IMAGE, IMAGE_PLUS_TEXT, AUDIO):
+            if iter(expectation.parsed_expectations).next() not in (TEXT, IMAGE, IMAGE_PLUS_TEXT, AUDIO):
                 continue
             if test_configuration not in expectation.matching_configurations:
                 continue

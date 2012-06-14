@@ -156,7 +156,7 @@ BUGGBILLOCK SKIP : webintents/intent-tag.html = PASS
 BUGWK85580 SKIP : fast/css/variables = PASS
 
 // CSS image-resolution is not yet enabled.
-BUGWK85262 SKIP : fast/css/image-resolution = PASS FAIL
+BUGWK85262 SKIP : fast/css/image-resolution = PASS
 
 // Chromium needs larger media files to test buffering this way.
 BUGWK88172 SKIP : http/tests/media/video-buffered.html = PASS
@@ -465,7 +465,7 @@ WONTFIX SKIP WIN LINUX : fast/encoding/char-encoding-mac.html = PASS
 // These tests are based on the JSC JavaScript profiler. The V8 JavaScript
 // profiler is in development and will use a different approach than JSC and
 // most likely these tests will always be JSC specific.
-WONTFIX SKIP : fast/profiler = FAIL TIMEOUT
+WONTFIX SKIP : fast/profiler = PASS
 
 // StorageTracker isn't used by Chromium and not all requisite platform code
 // is implemented.
@@ -775,9 +775,9 @@ WONTFIX SKIP : media/video-size-intrinsic-scale.html = PASS
 WONTFIX SKIP : media/video-does-not-loop.html = TIMEOUT
 
 // Doesn't apply to Chromium any longer - volume slider is inline with video controls.
-WONTFIX SKIP : media/video-volume-slider.html = FAIL
-WONTFIX SKIP : media/media-volume-slider-rendered-below.html = FAIL
-WONTFIX SKIP : media/media-volume-slider-rendered-normal.html = FAIL
+WONTFIX SKIP : media/video-volume-slider.html = PASS
+WONTFIX SKIP : media/media-volume-slider-rendered-below.html = PASS
+WONTFIX SKIP : media/media-volume-slider-rendered-normal.html = PASS
 
 // QuickTime reference movies not supported.
 WONTFIX SKIP : http/tests/media/video-cross-site.html = PASS
@@ -2988,24 +2988,24 @@ BUGWK81402 WIN : media/track/track-active-cues.html = PASS TIMEOUT
 BUGWK83882 : media/track/track-mode.html = PASS TEXT TIMEOUT
 
 // Need rebaseline.
-BUGWK87683 : fast/layers/video-layer.html = FAIL
-BUGWK87683 : fullscreen/full-screen-stacking-context.html = FAIL
-BUGWK87683 : media/audio-controls-rendering.html = FAIL
-BUGWK87683 : media/audio-repaint.html = FAIL
-BUGWK87683 : media/controls-after-reload.html = FAIL
-BUGWK87683 : media/controls-layout-direction.html = FAIL
-BUGWK87683 : media/controls-strict.html = FAIL
-BUGWK87683 : media/controls-styling.html = FAIL
-BUGWK87683 : media/controls-without-preload.html = FAIL
-BUGWK87683 : media/media-controls-clone.html = FAIL
-BUGWK87683 : media/media-document-audio-repaint.html = FAIL
-BUGWK87683 : media/video-controls-rendering.html = FAIL
-BUGWK87683 : media/video-display-toggle.html = FAIL
-BUGWK87683 : media/video-empty-source.html = FAIL
-BUGWK87683 : media/video-no-audio.html = FAIL
-BUGWK87683 : media/video-playing-and-pause.html = FAIL
-BUGWK87683 : media/video-zoom-controls.html = FAIL
-BUGWK87835 : http/tests/media/video-buffered-range-contains-currentTime.html = FAIL
+BUGWK87683 : fast/layers/video-layer.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : fullscreen/full-screen-stacking-context.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/audio-controls-rendering.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/audio-repaint.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/controls-after-reload.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/controls-layout-direction.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/controls-strict.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/controls-styling.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/controls-without-preload.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/media-controls-clone.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/media-document-audio-repaint.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/video-controls-rendering.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/video-display-toggle.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/video-empty-source.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/video-no-audio.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/video-playing-and-pause.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87683 : media/video-zoom-controls.html = TEXT IMAGE TEXT+IMAGE
+BUGWK87835 : http/tests/media/video-buffered-range-contains-currentTime.html = TEXT IMAGE TEXT+IMAGE
 
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
 
