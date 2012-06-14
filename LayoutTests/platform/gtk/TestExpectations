@@ -440,6 +440,7 @@ BUGWK76831 : svg/custom/use-font-face-crash.svg = PASS TEXT
 BUGWK76831 : svg/hixie/error/012.xml = PASS TEXT
 
 BUGWK77636 : fast/forms/radio/radio-group.html = PASS TEXT
+BUGWK89084 : fast/forms/text-input-event.html = PASS TEXT
 
 BUGWK78344 : fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html = PASS IMAGE
 
