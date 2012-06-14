@@ -1,3 +1,26 @@
+2012-06-14  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] webkitImageSmoothingEnabled canvas property does not work on redraw
+        https://bugs.webkit.org/show_bug.cgi?id=89018
+
+        Reviewed by Stephen White.
+
+        Test: fast/canvas/canvas-imageSmoothingEnabled-repaint.html
+
+        When an accelerated canvas layer prepares its texture for the
+        compositor, it must send a notification to skia to invalidate texture
+        proprties that are cached by skia, since the compositor may modify them.
+        The use case this fixes is when a canvas to canvas copy is performed
+        with webkitImageSmoothingEnabled=false on the destination canvas.
+        The backing texture of the source canvas will be set to "nearest"
+        filtering by skia in order to perform the copy.  Then, the compositor
+        sets filtering back to "linear" when the source canvas is drawn.
+        Skia is designed to only update GL attributes when required, so errors
+        occur when the skia-side GL state cache is out of sync.
+
+        * platform/graphics/chromium/Canvas2DLayerBridge.cpp:
+        (WebCore::Canvas2DLayerBridge::prepareTexture):
+
 2012-06-14  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Fix some failing tests on Windows by resetting the page scale factor

@@ -1,3 +1,22 @@
+2012-06-14  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] webkitImageSmoothingEnabled canvas property does not work on redraw
+        https://bugs.webkit.org/show_bug.cgi?id=89018
+
+        Reviewed by Stephen White.
+
+        New layout test that verifies that disabling image smoothing on a 2d
+        canvas continues to work after multiple paint cycles.
+
+        * fast/canvas/canvas-imageSmoothingEnabled-repaint-expected.txt: Added.
+        * fast/canvas/canvas-imageSmoothingEnabled-repaint.html: Added.
+        * fast/canvas/script-tests/canvas-imageSmoothingEnabled-repaint.js: Added.
+        (draw):
+        (testResult):
+        (TestControllerPaint):
+        (BrowserPaint):
+        (onLoadHandler):
+
 2012-06-14  Stephen Chenney  <schenney@chromium.org>
 
         [svg] SVGResources applied to Text with Incorrect Transformations in non-CG Implementations

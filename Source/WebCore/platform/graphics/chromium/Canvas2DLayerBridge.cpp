@@ -141,6 +141,12 @@ unsigned Canvas2DLayerBridge::prepareTexture(WebTextureUpdater& updater)
         return m_frontBufferTexture;
     }
 
+    if (m_canvas) {
+        // Notify skia that the state of the backing store texture object will be touched by the compositor
+        GrRenderTarget* renderTarget = reinterpret_cast<GrRenderTarget*>(m_canvas->getDevice()->accessRenderTarget());
+        if (renderTarget)
+            renderTarget->asTexture()->invalidateCachedState();
+    }
     return m_backBufferTexture;
 }
 
