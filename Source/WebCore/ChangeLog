@@ -1,3 +1,27 @@
+2012-06-14  Eric Penner  <epenner@google.com>
+
+        [chromium] Fix race condition where animations start, finish and are deleted on the composite thread, all before the start even arrives on the main thread.
+        https://bugs.webkit.org/show_bug.cgi?id=88439
+
+        Reviewed by James Robinson.
+
+        Scheduling behavior covered by existing tests.
+
+        * platform/graphics/chromium/cc/CCActiveAnimation.cpp:
+        (WebCore::CCActiveAnimation::isFinishedAt):
+        * platform/graphics/chromium/cc/CCActiveAnimation.h:
+        (WebCore::CCActiveAnimation::isFinished):
+        * platform/graphics/chromium/cc/CCLayerAnimationController.cpp:
+        (WebCore::CCLayerAnimationController::suspendAnimations):
+        (WebCore::CCLayerAnimationController::pushAnimationUpdatesTo):
+        (WebCore::CCLayerAnimationController::animate):
+        (WebCore::CCLayerAnimationController::hasActiveAnimation):
+        (WebCore):
+        (WebCore::CCLayerAnimationController::markAnimationsForDeletion):
+        (WebCore::CCLayerAnimationController::purgeAnimationsMarkedForDeletion):
+        * platform/graphics/chromium/cc/CCLayerAnimationController.h:
+        (CCLayerAnimationController):
+
 2012-06-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: ConsoleView.evaluateUsingTextPrompt should evaluate without command line API.

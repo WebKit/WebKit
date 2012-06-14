@@ -52,6 +52,7 @@ public:
         WaitingForNextTick = 1,
         WaitingForTargetAvailability,
         WaitingForStartTime,
+        WaitingForDeletion,
         Running,
         Paused,
         Finished,
@@ -95,7 +96,9 @@ public:
     void setAlternatesDirection(bool alternates) { m_alternatesDirection = alternates; }
 
     bool isFinishedAt(double monotonicTime) const;
-    bool isFinished() const { return m_runState == Finished || m_runState == Aborted; }
+    bool isFinished() const { return m_runState == Finished
+                                  || m_runState == Aborted
+                                  || m_runState == WaitingForDeletion; }
 
     CCAnimationCurve* curve() { return m_curve.get(); }
     const CCAnimationCurve* curve() const { return m_curve.get(); }

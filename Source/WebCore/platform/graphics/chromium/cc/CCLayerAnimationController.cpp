@@ -84,7 +84,7 @@ void CCLayerAnimationController::removeAnimation(int animationId, CCActiveAnimat
 void CCLayerAnimationController::suspendAnimations(double monotonicTime)
 {
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
-        if (m_activeAnimations[i]->runState() != CCActiveAnimation::Finished && m_activeAnimations[i]->runState() != CCActiveAnimation::Aborted)
+        if (!m_activeAnimations[i]->isFinished())
             m_activeAnimations[i]->setRunState(CCActiveAnimation::Paused, monotonicTime);
     }
 }
@@ -106,8 +106,14 @@ void CCLayerAnimationController::pushAnimationUpdatesTo(CCLayerAnimationControll
         replaceImplThreadAnimations(controllerImpl);
         m_forceSync = false;
     } else {
+        purgeAnimationsMarkedForDeletion();
         pushNewAnimationsToImplThread(controllerImpl);
+
+        // Remove finished impl side animations only after pushing,
+        // and only after the animations are deleted on the main thread
+        // this insures we will never push an animation twice.
         removeAnimationsCompletedOnMainThread(controllerImpl);
+
         pushPropertiesToImplThread(controllerImpl);
     }
 }
@@ -119,7 +125,7 @@ void CCLayerAnimationController::animate(double monotonicTime, CCAnimationEvents
     startAnimationsWaitingForTargetAvailability(monotonicTime, events);
     resolveConflicts(monotonicTime);
     tickAnimations(monotonicTime);
-    purgeFinishedAnimations(monotonicTime, events);
+    markAnimationsForDeletion(monotonicTime, events);
     startAnimationsWaitingForTargetAvailability(monotonicTime, events);
 }
 
@@ -149,7 +155,7 @@ CCActiveAnimation* CCLayerAnimationController::getActiveAnimation(CCActiveAnimat
 bool CCLayerAnimationController::hasActiveAnimation() const
 {
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
-        if (m_activeAnimations[i]->runState() != CCActiveAnimation::Finished && m_activeAnimations[i]->runState() != CCActiveAnimation::Aborted)
+        if (!m_activeAnimations[i]->isFinished())
             return true;
     }
     return false;
@@ -319,14 +325,14 @@ void CCLayerAnimationController::resolveConflicts(double monotonicTime)
     }
 }
 
-void CCLayerAnimationController::purgeFinishedAnimations(double monotonicTime, CCAnimationEventsVector* events)
+
+void CCLayerAnimationController::markAnimationsForDeletion(double monotonicTime, CCAnimationEventsVector* events)
 {
-    // Each iteration, m_activeAnimations.size() decreases or i increments,
-    // guaranteeing progress towards loop termination.
-    size_t i = 0;
-    while (i < m_activeAnimations.size()) {
+    for (size_t i = 0; i < m_activeAnimations.size(); i++) {
         int groupId = m_activeAnimations[i]->group();
         bool allAnimsWithSameIdAreFinished = false;
+        // If an animation is finished, and not already marked for deletion,
+        // Find out if all other animations in the same group are also finished.
         if (m_activeAnimations[i]->isFinished()) {
             allAnimsWithSameIdAreFinished = true;
             for (size_t j = 0; j < m_activeAnimations.size(); ++j) {
@@ -339,19 +345,23 @@ void CCLayerAnimationController::purgeFinishedAnimations(double monotonicTime, C
         if (allAnimsWithSameIdAreFinished) {
             // We now need to remove all animations with the same group id as groupId
             // (and send along animation finished notifications, if necessary).
-            // Each iteration, m_activeAnimations.size() decreases or j increments,
-            // guaranteeing progress towards loop termination. Also, we are guaranteed
-            // to remove at least one active animation.
-            for (size_t j = i; j < m_activeAnimations.size();) {
-                if (groupId != m_activeAnimations[j]->group())
-                    j++;
-                else {
+            for (size_t j = i; j < m_activeAnimations.size(); j++) {
+                if (groupId == m_activeAnimations[j]->group()) {
                     if (events)
                         events->append(CCAnimationEvent(CCAnimationEvent::Finished, m_client->id(), m_activeAnimations[j]->group(), m_activeAnimations[j]->targetProperty(), monotonicTime));
-                    m_activeAnimations.remove(j);
+                    m_activeAnimations[j]->setRunState(CCActiveAnimation::WaitingForDeletion, monotonicTime);
                 }
             }
-        } else
+        }
+    }
+}
+
+void CCLayerAnimationController::purgeAnimationsMarkedForDeletion()
+{
+    for (size_t i = 0; i < m_activeAnimations.size();) {
+        if (m_activeAnimations[i]->runState() == CCActiveAnimation::WaitingForDeletion)
+            m_activeAnimations.remove(i);
+        else
             i++;
     }
 }

@@ -84,7 +84,7 @@ void CCActiveAnimation::resume(double monotonicTime)
 
 bool CCActiveAnimation::isFinishedAt(double monotonicTime) const
 {
-    if (m_runState == Finished || m_runState == Aborted)
+    if (isFinished())
         return true;
 
     if (m_needsSynchronizedStartTime)

@@ -117,7 +117,8 @@ private:
     void startAnimationsWaitingForStartTime(double monotonicTime, CCAnimationEventsVector*);
     void startAnimationsWaitingForTargetAvailability(double monotonicTime, CCAnimationEventsVector*);
     void resolveConflicts(double monotonicTime);
-    void purgeFinishedAnimations(double monotonicTime, CCAnimationEventsVector*);
+    void markAnimationsForDeletion(double monotonicTime, CCAnimationEventsVector*);
+    void purgeAnimationsMarkedForDeletion();
 
     void tickAnimations(double monotonicTime);
 
