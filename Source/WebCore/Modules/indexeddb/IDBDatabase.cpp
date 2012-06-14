@@ -30,7 +30,6 @@
 
 #include "EventQueue.h"
 #include "ExceptionCode.h"
-#include "EventQueue.h"
 #include "IDBAny.h"
 #include "IDBDatabaseCallbacksImpl.h"
 #include "IDBDatabaseError.h"

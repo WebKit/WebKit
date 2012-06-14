@@ -27,7 +27,6 @@
 #include "GraphicsContext.h"
 #include "InlineTextBox.h"
 #include "HitTestResult.h"
-#include "RootInlineBox.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"

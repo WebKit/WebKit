@@ -28,7 +28,6 @@
 
 #include "HTMLAllCollection.h"
 #include "JSDOMBinding.h"
-#include "JSHTMLAllCollection.h"
 #include "JSNode.h"
 #include "JSNodeList.h"
 #include "Node.h"

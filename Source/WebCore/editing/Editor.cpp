@@ -66,7 +66,6 @@
 #include "NodeList.h"
 #include "Page.h"
 #include "Pasteboard.h"
-#include "TextCheckingHelper.h"
 #include "RemoveFormatCommand.h"
 #include "RenderBlock.h"
 #include "RenderPart.h"

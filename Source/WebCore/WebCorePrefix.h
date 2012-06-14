@@ -121,7 +121,6 @@ _LIBCPP_END_NAMESPACE_STD
 
 #endif
 
-#include <sys/types.h>
 #if defined(__APPLE__)
 #include <sys/param.h>
 #endif
@@ -131,14 +130,11 @@ _LIBCPP_END_NAMESPACE_STD
 #include <sys/resource.h>
 #endif
 
-#include <time.h>
-
 #if !defined(BUILDING_WX__)
 #include <CoreFoundation/CoreFoundation.h>
 #ifdef WTF_PLATFORM_WIN_CAIRO
 #include <ConditionalMacros.h>
 #include <windows.h>
-#include <stdio.h>
 #else
 
 #if defined(WIN32) || defined(_WIN32)

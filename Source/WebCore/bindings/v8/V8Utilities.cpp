@@ -47,7 +47,6 @@
 #include "WorkerContextExecutionProxy.h"
 
 #include <wtf/Assertions.h>
-#include "Frame.h"
 
 #include <v8.h>
 

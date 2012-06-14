@@ -41,7 +41,6 @@
 #include "V8BindingState.h"
 #include "V8DOMWindow.h"
 #include "V8EventListener.h"
-#include "V8Location.h"
 #include "V8Utilities.h"
 #include "V8Proxy.h"
 

@@ -86,7 +86,6 @@
 #include <wtf/text/CString.h>
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "RenderView.h"
 #include "RenderLayerCompositor.h"
 #endif
 

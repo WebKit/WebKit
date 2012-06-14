@@ -28,7 +28,6 @@
 #include "config.h"
 #include "PlatformContextCairo.h"
 
-#include "GraphicsContext.h"
 #include "CairoUtilities.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"

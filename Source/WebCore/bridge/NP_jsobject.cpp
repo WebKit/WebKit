@@ -45,7 +45,6 @@
 #include <runtime/PropertyNameArray.h>
 #include <parser/SourceCode.h>
 #include <runtime/Completion.h>
-#include <runtime/Completion.h>
 
 using namespace JSC;
 using namespace JSC::Bindings;
