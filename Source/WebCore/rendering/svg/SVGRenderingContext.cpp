@@ -167,6 +167,15 @@ static AffineTransform& currentContentTransformation()
     return s_currentContentTransformation;
 }
 
+float SVGRenderingContext::calculateScreenFontSizeScalingFactor(const RenderObject* renderer)
+{
+    ASSERT(renderer);
+
+    AffineTransform ctm;
+    calculateTransformationToOutermostSVGCoordinateSystem(renderer, ctm);
+    return narrowPrecisionToFloat(sqrt((pow(ctm.xScale(), 2) + pow(ctm.yScale(), 2)) / 2));
+}
+
 void SVGRenderingContext::calculateTransformationToOutermostSVGCoordinateSystem(const RenderObject* renderer, AffineTransform& absoluteTransform)
 {
     const RenderObject* current = renderer;

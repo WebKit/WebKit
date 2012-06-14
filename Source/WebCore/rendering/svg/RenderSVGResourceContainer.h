@@ -38,6 +38,7 @@ public:
     virtual bool isSVGResourceContainer() const { return true; }
     virtual RenderSVGResourceContainer* toRenderSVGResourceContainer() { return this; }
 
+    static bool shouldTransformOnTextPainting(RenderObject*, AffineTransform&);
     static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);
 
     void idChanged();

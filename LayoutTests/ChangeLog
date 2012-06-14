@@ -1,3 +1,23 @@
+2012-06-14  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [svg] SVGResources applied to Text with Incorrect Transformations in non-CG Implementations
+        https://bugs.webkit.org/show_bug.cgi?id=64966
+
+        Reviewed by Nikolas Zimmermann.
+
+        For Pattern: RefTest that compare a scaled rectangle with a scaled block of Ahem characters.
+        The pattern or gradient should scale in the same way for the text and the rectangle.
+        This approach needs a clipping path hack to work around micro gaps between Ahem characters
+        due to rounding.
+        For Gradient: Scaling text at two different scale factors and adjusting font size to yield the same effective text size.
+        Gradient fill should be identical in both cases.
+
+        * platform/chromium/TestExpectations: Added 3 tests that need rebaselining for text gradient fills.
+        * svg/transforms/transformed-text-fill-gradient-expected.html: Added.
+        * svg/transforms/transformed-text-fill-gradient.html: Added.
+        * svg/transforms/transformed-text-fill-pattern-expected.html: Added.
+        * svg/transforms/transformed-text-fill-pattern.html: Added.
+
 2012-06-14  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: Implement ExtensionPanel.show() method

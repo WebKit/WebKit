@@ -24,6 +24,7 @@
 
 #include "RenderSVGRoot.h"
 #include "RenderView.h"
+#include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
 #include "SVGStyledTransformableElement.h"
 
@@ -168,6 +169,26 @@ void RenderSVGResourceContainer::registerResource()
         SVGResourcesCache::clientStyleChanged(renderer, StyleDifferenceLayout, renderer->style());
         renderer->setNeedsLayout(true);
     }
+}
+
+bool RenderSVGResourceContainer::shouldTransformOnTextPainting(RenderObject* object, AffineTransform& resourceTransform)
+{
+    ASSERT_UNUSED(object, object);
+#if USE(CG)
+    UNUSED_PARAM(resourceTransform);
+    return false;
+#else
+    ASSERT(object->isSVGText() || object->isSVGTextPath());
+
+    // In text drawing, the scaling part of the graphics context CTM is removed, compare SVGInlineTextBox::paintTextWithShadows.
+    // So, we use that scaling factor here, too, and then push it down to pattern or gradient space
+    // in order to keep the pattern or gradient correctly scaled.
+    float scalingFactor = SVGRenderingContext::calculateScreenFontSizeScalingFactor(object);
+    if (scalingFactor == 1)
+        return false;
+    resourceTransform.scale(scalingFactor);
+    return true;
+#endif
 }
 
 // FIXME: This does not belong here.

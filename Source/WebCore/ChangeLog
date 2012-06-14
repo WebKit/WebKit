@@ -1,3 +1,36 @@
+2012-06-14  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [svg] SVGResources applied to Text with Incorrect Transformations in non-CG Implementations
+        https://bugs.webkit.org/show_bug.cgi?id=64966
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGInlineTextBox::paintTextWithShadows for non-CG implementations resets the scale aspect
+        of the currently applied CTM. This leads to patterns and gradients being incorrectly downscaled.
+        This way of resetting the CTM and drawing fonts "natively" scaled was introduced
+        in r77485 to fix a number of issues with SVG font scaling.
+        Unfortunately, this breaks scaling of patterns and gradients. To fix it,
+        we need to push the transformation back into the pattern/gradient space transformation.
+
+        Tests: svg/transforms/transformed-text-fill-gradient.html
+               svg/transforms/transformed-text-fill-pattern.html
+
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::computeNewScaledFontForStyle): Moving the scaling factor calculation out into SVGRenderingContext.
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::shouldTransformOnTextPainting): Reusing the scaling factor calculation from SVGRenderingContext.
+        (WebCore):
+        * rendering/svg/RenderSVGResourceContainer.h:
+        (RenderSVGResourceContainer):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::RenderSVGResourceGradient::applyResource): If needed, push down transformation into gradient space.
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource): If needed, push transformation into pattern space.
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::calculateScreenFontSizeScalingFactor): Common scaling factor calculation for RenderSVGInlineText and RenderSVGResourceContainer.
+        * rendering/svg/SVGRenderingContext.h:
+        (SVGRenderingContext):
+
 2012-06-14  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Form] Replace InputNumber type to Decimal type and drop InputNumber

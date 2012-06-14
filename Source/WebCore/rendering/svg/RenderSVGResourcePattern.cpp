@@ -133,6 +133,12 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
         if (!patternTransform.isIdentity())
             patternData->transform = patternTransform * patternData->transform;
 
+        // Account for text drawing resetting the context to non-scaled, see SVGInlineTextBox::paintTextWithShadows.
+        if (resourceMode & ApplyToTextMode) {
+            AffineTransform additionalTextTransformation;
+            if (shouldTransformOnTextPainting(object, additionalTextTransformation))
+                patternData->transform *= additionalTextTransformation;
+        }
         patternData->pattern->setPatternSpaceTransform(patternData->transform);
     }
 
