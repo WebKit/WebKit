@@ -35,6 +35,13 @@ void BitmapTextureImageBuffer::updateContents(const void* data, const IntRect& t
     painter->setCompositionMode(QPainter::CompositionMode_Source);
     painter->drawImage(targetRect, image, IntRect(sourceOffset, targetRect.size()));
     painter->restore();
+#elif PLATFORM(CAIRO)
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data()),
+                                                                                   CAIRO_FORMAT_ARGB32,
+                                                                                   targetRect.width(), targetRect.height(),
+                                                                                   bytesPerLine));
+    m_image->context()->platformContext()->drawSurfaceToContext(surface.get(), targetRect,
+                                                                IntRect(sourceOffset, targetRect.size()), m_image->context());
 #endif
 }
 

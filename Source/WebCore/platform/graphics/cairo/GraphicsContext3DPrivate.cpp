@@ -24,10 +24,15 @@
 
 #include "HostWindow.h"
 #include "NotImplemented.h"
+#include "OpenGLShims.h"
+#include "PlatformContextCairo.h"
+#include <wtf/OwnArrayPtr.h>
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER) && USE(TEXTURE_MAPPER_GL)
 #include <texmap/TextureMapperGL.h>
 #endif
+
+using namespace std;
 
 namespace WebCore {
 
@@ -62,11 +67,46 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
     if (!m_glContext)
         return;
 
+    // FIXME: We do not support mask for the moment with TextureMapperImageBuffer.
     if (textureMapper->accelerationMode() != TextureMapper::OpenGLMode) {
-        notImplemented();
+        GraphicsContext* context = textureMapper->graphicsContext();
+        context->save();
+        context->platformContext()->setGlobalAlpha(opacity);
+
+        const int height = m_context->m_currentHeight;
+        const int width = m_context->m_currentWidth;
+        int totalBytes = width * height * 4;
+
+        OwnArrayPtr<unsigned char> pixels = adoptArrayPtr(new unsigned char[totalBytes]);
+        if (!pixels)
+            return;
+
+        // OpenGL keeps the pixels stored bottom up, so we need to flip the image here.
+        context->translate(0, height);
+        context->scale(FloatSize(1, -1));
+
+        context->concatCTM(matrix.toAffineTransform());
+
+        m_context->readRenderingResults(pixels.get(), totalBytes);
+
+        // Premultiply alpha.
+        for (int i = 0; i < totalBytes; i += 4)
+            if (pixels[i + 3] != 255) {
+                pixels[i + 0] = min(255, pixels[i + 0] * pixels[i + 3] / 255);
+                pixels[i + 1] = min(255, pixels[i + 1] * pixels[i + 3] / 255);
+                pixels[i + 2] = min(255, pixels[i + 2] * pixels[i + 3] / 255);
+            }
+
+        RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
+            const_cast<unsigned char*>(pixels.get()), CAIRO_FORMAT_ARGB32, width, height, width * 4));
+
+        context->platformContext()->drawSurfaceToContext(imageSurface.get(), targetRect, IntRect(0, 0, width, height), context);
+
+        context->restore();
         return;
     }
 
+#if USE(TEXTURE_MAPPER_GL)
     if (m_context->m_attrs.antialias && m_context->m_boundFBO == m_context->m_multisampleFBO) {
         GLContext* previousActiveContext = GLContext::getCurrent();
         if (previousActiveContext != m_glContext)
@@ -83,6 +123,7 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
     TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture | (m_context->m_attrs.alpha ? TextureMapperGL::SupportsBlending : 0);
     IntSize textureSize(m_context->m_currentWidth, m_context->m_currentHeight);
     texmapGL->drawTexture(m_context->m_texture, flags, textureSize, targetRect, matrix, opacity, mask);
+#endif // USE(ACCELERATED_COMPOSITING_GL)
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 

@@ -595,7 +595,7 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
 
 #if USE(ACCELERATED_COMPOSITING)
     m_webView->priv->acceleratedCompositingContext->syncLayersNow();
-    m_webView->priv->acceleratedCompositingContext->renderLayersToWindow(rect);
+    m_webView->priv->acceleratedCompositingContext->renderLayersToWindow(0, rect);
 #endif
 
     m_dirtyRegion = Region();

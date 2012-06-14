@@ -677,8 +677,8 @@ static gboolean webkit_web_view_draw(GtkWidget* widget, cairo_t* cr)
         return FALSE;
 
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(widget)->priv;
-#if USE(TEXTURE_MAPPER_GL)
-    if (priv->acceleratedCompositingContext->renderLayersToWindow(clipRect))
+#if USE(TEXTURE_MAPPER)
+    if (priv->acceleratedCompositingContext->renderLayersToWindow(cr, clipRect))
         return FALSE;
 #endif
 

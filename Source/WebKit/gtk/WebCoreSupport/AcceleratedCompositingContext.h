@@ -27,8 +27,10 @@
 #include "webkitwebview.h"
 #include <wtf/PassOwnPtr.h>
 
+#if USE(TEXTURE_MAPPER)
 #if USE(TEXTURE_MAPPER_GL)
 #include "GLContext.h"
+#endif
 #include "TextureMapperLayer.h"
 #endif
 
@@ -51,7 +53,7 @@ public:
     void syncLayersTimeout();
     void syncLayersNow();
     void resizeRootLayer(const WebCore::IntSize&);
-    bool renderLayersToWindow(const WebCore::IntRect& clipRect);
+    bool renderLayersToWindow(cairo_t*, const WebCore::IntRect& clipRect);
     bool enabled();
 
     // GraphicsLayerClient
@@ -68,12 +70,14 @@ private:
 #if USE(CLUTTER)
     WebCore::GraphicsLayer* m_rootGraphicsLayer;
     GtkWidget* m_rootLayerEmbedder;
-#elif USE(TEXTURE_MAPPER_GL)
-    WebCore::GLContext* glContext();
+#elif USE(TEXTURE_MAPPER)
     WebCore::TextureMapperLayer* m_rootTextureMapperLayer;
     OwnPtr<WebCore::GraphicsLayer> m_rootGraphicsLayer;
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
+#if USE(TEXTURE_MAPPER_GL)
+    WebCore::GLContext* glContext();
     OwnPtr<WebCore::GLContext> m_context;
+#endif
 #endif
 
     AcceleratedCompositingContext(WebKitWebView*);

@@ -53,7 +53,7 @@ bool AcceleratedCompositingContext::enabled()
     return m_rootGraphicsLayer;
 }
 
-bool AcceleratedCompositingContext::renderLayersToWindow(const IntRect& clipRect)
+bool AcceleratedCompositingContext::renderLayersToWindow(cairo_t*, const IntRect& clipRect)
 {
     notImplemented();
     return false;
@@ -143,7 +143,7 @@ void AcceleratedCompositingContext::syncLayersTimeout()
     if (!m_rootGraphicsLayer)
         return;
 
-    renderLayersToWindow(IntRect());
+    renderLayersToWindow(0, IntRect());
 }
 
 void AcceleratedCompositingContext::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)

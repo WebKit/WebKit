@@ -1150,18 +1150,18 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 #if ENABLE(3D_RENDERING) && USE(TEXTURE_MAPPER)
 TransformationMatrix GraphicsContext::get3DTransform() const
 {
-    notImplemented();
-    return TransformationMatrix();
+    // FIXME: Can we approximate the transformation better than this?
+    return getCTM().toTransformationMatrix();
 }
 
 void GraphicsContext::concat3DTransform(const TransformationMatrix& transform)
 {
-    notImplemented();
+    concatCTM(transform.toAffineTransform());
 }
 
 void GraphicsContext::set3DTransform(const TransformationMatrix& transform)
 {
-    notImplemented();
+    setCTM(transform.toAffineTransform());
 }
 #endif
 

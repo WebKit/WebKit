@@ -19,7 +19,7 @@
 #include "config.h"
 #include "AcceleratedCompositingContext.h"
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_CAIRO)
 
 #include "CairoUtilities.h"
 #include "Chrome.h"
@@ -27,21 +27,12 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "PlatformContextCairo.h"
-#include "TextureMapperGL.h"
+#include "TextureMapperImageBuffer.h"
 #include "TextureMapperLayer.h"
 #include "webkitwebviewprivate.h"
-#include <GL/gl.h>
 #include <cairo.h>
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
-
-#if defined(GDK_WINDOWING_X11)
-#define Region XRegion
-#define Font XFont
-#define Cursor XCursor
-#define Screen XScreen
-#include <gdk/gdkx.h>
-#endif
 
 using namespace WebCore;
 
@@ -65,42 +56,18 @@ bool AcceleratedCompositingContext::enabled()
     return m_rootTextureMapperLayer && m_textureMapper;
 }
 
-GLContext* AcceleratedCompositingContext::glContext()
+bool AcceleratedCompositingContext::renderLayersToWindow(cairo_t* cr, const IntRect& clipRect)
 {
-    if (m_context)
-        return m_context.get();
-
-#if defined(GDK_WINDOWING_X11)
-    // FIXME: Gracefully account for situations where we do not have a realized window.
-    GdkWindow* gdkWindow = gtk_widget_get_window(GTK_WIDGET(m_webView));
-    if (gdkWindow && gdk_window_has_native(gdkWindow))
-        m_context = GLContext::createContextForWindow(GDK_WINDOW_XID(gdkWindow), GLContext::sharingContext());
-#endif
-
-    return m_context.get();
-}
-
-bool AcceleratedCompositingContext::renderLayersToWindow(cairo_t*, const IntRect& clipRect)
-{
-    if (!enabled())
+    if (!cr || !enabled())
         return false;
 
-    GLContext* context = glContext();
-    if (!context)
-        return false;
-
-    if (!context->makeContextCurrent())
-        return false;
-
-    GtkAllocation allocation;
-    gtk_widget_get_allocation(GTK_WIDGET(m_webView), &allocation);
-    glViewport(0, 0, allocation.width, allocation.height);
+    GraphicsContext context(cr);
+    m_textureMapper->setGraphicsContext(&context);
 
     m_textureMapper->beginPainting();
     m_rootTextureMapperLayer->paint();
     m_textureMapper->endPainting();
 
-    context->swapBuffers();
     return true;
 }
 
@@ -109,7 +76,6 @@ void AcceleratedCompositingContext::attachRootGraphicsLayer(GraphicsLayer* graph
     if (!graphicsLayer) {
         m_rootGraphicsLayer.clear();
         m_rootTextureMapperLayer = 0;
-        m_context.clear();
         return;
     }
 
@@ -121,20 +87,7 @@ void AcceleratedCompositingContext::attachRootGraphicsLayer(GraphicsLayer* graph
     m_rootGraphicsLayer->setNeedsDisplay();
     m_rootGraphicsLayer->setSize(core(m_webView)->mainFrame()->view()->frameRect().size());
 
-    GLContext* context = glContext();
-    if (!context)
-        return;
-
-    // The context needs to be active when creating the texture mapper. It's fine to
-    // avoid calling swapBuffers here, because it will just initialize shaders.
-    if (!context->makeContextCurrent())
-        return;
-
-    GtkAllocation allocation;
-    gtk_widget_get_allocation(GTK_WIDGET(m_webView), &allocation);
-    glViewport(0, 0, allocation.width, allocation.height);
-
-    m_textureMapper = TextureMapperGL::create();
+    m_textureMapper = TextureMapperImageBuffer::create();
     m_rootTextureMapperLayer->setTextureMapper(m_textureMapper.get());
     m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
 }
@@ -148,6 +101,8 @@ void AcceleratedCompositingContext::scheduleRootLayerRepaint(const IntRect& rect
         return;
     }
     m_rootGraphicsLayer->setNeedsDisplayInRect(rect);
+
+    gtk_widget_queue_draw_area(GTK_WIDGET(m_webView), rect.x(), rect.y(), rect.width(), rect.height());
 }
 
 void AcceleratedCompositingContext::resizeRootLayer(const IntSize& size)
@@ -176,6 +131,9 @@ void AcceleratedCompositingContext::markForSync()
 
 void AcceleratedCompositingContext::syncLayersNow()
 {
+    if (core(m_webView)->mainFrame()->view()->needsLayout())
+        core(m_webView)->mainFrame()->view()->layout();
+
     if (m_rootGraphicsLayer)
         m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
 
@@ -189,7 +147,8 @@ void AcceleratedCompositingContext::syncLayersTimeout()
     if (!m_rootGraphicsLayer)
         return;
 
-    renderLayersToWindow(0, IntRect());
+    // FIXME: Invalidate just the animations rectangles.
+    gtk_widget_queue_draw(GTK_WIDGET(m_webView));
 
     if (toTextureMapperLayer(m_rootGraphicsLayer.get())->descendantsOrSelfHaveRunningAnimations())
         m_syncTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 1000.0 / 60.0, reinterpret_cast<GSourceFunc>(syncLayersTimeoutCallback), this, 0);
@@ -207,8 +166,7 @@ void AcceleratedCompositingContext::notifySyncRequired(const GraphicsLayer*)
 void AcceleratedCompositingContext::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& rectToPaint)
 {
     cairo_t* cr = context.platformContext()->cr();
-    copyRectFromCairoSurfaceToContext(m_webView->priv->backingStore->cairoSurface(), cr,
-                                      IntSize(), rectToPaint);
+    copyRectFromCairoSurfaceToContext(m_webView->priv->backingStore->cairoSurface(), cr, IntSize(), rectToPaint);
 }
 
 bool AcceleratedCompositingContext::showDebugBorders(const GraphicsLayer*) const
@@ -223,4 +181,4 @@ bool AcceleratedCompositingContext::showRepaintCounter(const GraphicsLayer*) con
 
 } // namespace WebKit
 
-#endif // USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
+#endif // USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_CAIRO)

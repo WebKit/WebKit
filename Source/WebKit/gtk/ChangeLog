@@ -1,3 +1,33 @@
+2012-06-14  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Add TextureMapper ImageBuffer support as a fallback from the hardware accelerated path
+        https://bugs.webkit.org/show_bug.cgi?id=73634
+
+        Add the new graphics layer client that uses cairo to render the
+        composition. The cairo transformations do not support perspective
+        so in perspective cases we have just a representation not the real
+        perspective transformation.
+
+        This patch adds a new implementation of already tested cases.
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am:
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        (AcceleratedCompositingContext):
+        * WebCoreSupport/AcceleratedCompositingContextCairo.cpp: Added.
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::invalidateWidgetRect): We need to
+        invalidate the widget in this case because we do not directly
+        render to a texture but to the widget surface.
+        (WebKit::ChromeClient::paint): We can not render here, we have to
+        invalidate and wait for the widget rendering.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_draw): In this case the renderLayersToWindow
+        requires the graphics context used to render in the window.
+        (webkit_web_view_realize): Small cleanup of the priv variable
+        definition.
+
 2012-06-14  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Add support in DumpRenderTree for tracking repaints

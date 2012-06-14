@@ -1,3 +1,31 @@
+2012-06-14  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Add TextureMapper ImageBuffer support as a fallback from the hardware accelerated path
+        https://bugs.webkit.org/show_bug.cgi?id=73634
+
+        Remove the TextureMapperCairo classes, now we use
+        TextureMapperImageBuffer to implement the software fallback. Add
+        implementation for the 3D transformations in the 2D cairo graphics
+        context.
+
+        Reviewed by Martin Robinson.
+
+        This patch adds a new implementation of already tested cases.
+
+        * GNUmakefile.list.am:
+        * platform/graphics/cairo/GraphicsContext3DPrivate.cpp:
+        (WebCore):
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+        Required for compilation when WebGL is enabled.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::get3DTransform):
+        (WebCore::GraphicsContext::concat3DTransform):
+        (WebCore::GraphicsContext::set3DTransform):
+        * platform/graphics/cairo/TextureMapperCairo.cpp: Removed.
+        * platform/graphics/cairo/TextureMapperCairo.h: Removed.
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp:
+        (WebCore::BitmapTextureImageBuffer::updateContents):
+
 2012-06-14  Jia Pu  <jpu@apple.com>
 
         Mark text with text alternative with blue underline.
