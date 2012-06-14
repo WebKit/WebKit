@@ -206,6 +206,25 @@ inline bool weakCompareAndSwapUIntPtr(volatile uintptr_t* location, uintptr_t ex
     return weakCompareAndSwap(reinterpret_cast<void*volatile*>(location), reinterpret_cast<void*>(expected), reinterpret_cast<void*>(newValue));
 }
 
+#if CPU(ARM_THUMB2)
+
+inline void memoryBarrierAfterLock()
+{
+    asm volatile("dmb" ::: "memory");
+}
+
+inline void memoryBarrierBeforeUnlock()
+{
+    asm volatile("dmb" ::: "memory");
+}
+
+#else
+
+inline void memoryBarrierAfterLock() { }
+inline void memoryBarrierBeforeUnlock() { }
+
+#endif
+
 } // namespace WTF
 
 #if USE(LOCKFREE_THREADSAFEREFCOUNTED)

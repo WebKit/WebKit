@@ -1,3 +1,31 @@
+2012-06-14  Geoffrey Garen  <ggaren@apple.com>
+
+        ARMv7 should support spinlocks
+        https://bugs.webkit.org/show_bug.cgi?id=88957
+
+        Reviewed by Darin Adler.
+
+        More info @ http://infocenter.arm.com/help/topic/
+        com.arm.doc.genc007826/Barrier_Litmus_Tests_and_Cookbook_A08.pdf
+
+        * wtf/Atomics.h:
+        (WTF::memoryBarrierAfterLock):
+        (WTF::memoryBarrierBeforeUnlock): Added memory barrier primitives since
+        ARMv7 has a weakly ordered memory model.
+
+        * wtf/Platform.h: Enabled compare-and-swap on Windows so our spinlock
+        implementation would continue working on Windows.
+
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SpinLock::Lock):
+        (TCMalloc_SpinLock::Unlock):
+        (TCMalloc_SpinLock): Use our compare-and-swap helper function to avoid
+        rewriting it in assembly here.
+
+        Added memory barriers since ARMv7 needs them.
+
+        Removed PPC support because our helper function doesn't support PPC.
+
 2012-06-13  Arnaud Renevier  <arno@renevier.net>
 
         make sure headers are included only once per file
