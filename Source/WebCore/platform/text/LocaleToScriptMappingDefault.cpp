@@ -44,6 +44,10 @@ UScriptCode scriptNameToCode(const String& scriptName)
         UScriptCode code;
     };
 
+    // This generally maps an ISO 15924 script code to its UScriptCode, but certain families of script codes are
+    // treated as a single script for assigning a per-script font in Settings. For example, "hira" is mapped to
+    // USCRIPT_KATAKANA_OR_HIRAGANA instead of USCRIPT_HIRAGANA, since we want all Japanese scripts to be rendered
+    // using the same font setting.
     static const ScriptNameCode scriptNameCodeList[] = {
         { "zyyy", USCRIPT_COMMON },
         { "qaai", USCRIPT_INHERITED },
@@ -65,9 +69,9 @@ UScriptCode scriptNameToCode(const String& scriptName)
         { "hani", USCRIPT_HAN },
         { "hang", USCRIPT_HANGUL },
         { "hebr", USCRIPT_HEBREW },
-        { "hira", USCRIPT_HIRAGANA },
+        { "hira", USCRIPT_KATAKANA_OR_HIRAGANA },
         { "knda", USCRIPT_KANNADA },
-        { "kana", USCRIPT_KATAKANA },
+        { "kana", USCRIPT_KATAKANA_OR_HIRAGANA },
         { "khmr", USCRIPT_KHMER },
         { "laoo", USCRIPT_LAO },
         { "latn", USCRIPT_LATIN },
@@ -147,6 +151,8 @@ UScriptCode scriptNameToCode(const String& scriptName)
         { "vaii", USCRIPT_VAI },
         { "visp", USCRIPT_VISIBLE_SPEECH },
         { "xsux", USCRIPT_CUNEIFORM },
+        { "jpan", USCRIPT_KATAKANA_OR_HIRAGANA },
+        { "kore", USCRIPT_HANGUL },
         { "zxxx", USCRIPT_UNWRITTEN_LANGUAGES },
         { "zzzz", USCRIPT_UNKNOWN }
     };

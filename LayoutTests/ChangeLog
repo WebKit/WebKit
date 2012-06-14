@@ -1,3 +1,13 @@
+2012-06-14  Matt Falkenhagen  <falken@chromium.org>
+
+        LocaleToScriptMappingDefault.cpp should also do what scriptCodeForFontSelection does in LocaleToScriptMappingICU.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=88845
+
+        Reviewed by Kent Tamura.
+
+        * fast/text/international/jpan-script-equivalence-expected.html: Added.
+        * fast/text/international/jpan-script-equivalence.html: Added.
+
 2012-06-14  Edaena Salinas Jasso  <edaena@apple.com>
 
         el.getAttribute('type') returns 'null' when setting el.type to null
