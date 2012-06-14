@@ -135,8 +135,8 @@ class AutoinstallImportHook(object):
 
     def _install_webpagereplay(self):
         if not self._fs.exists(self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay")):
-            self._install("http://web-page-replay.googlecode.com/files/webpagereplay-1.1.1.tar.gz", "webpagereplay-1.1.1")
-            self._fs.move(self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay-1.1.1"), self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay"))
+            self._install("http://web-page-replay.googlecode.com/files/webpagereplay-1.1.2.tar.gz", "webpagereplay-1.1.2")
+            self._fs.move(self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay-1.1.2"), self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay"))
 
         init_path = self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay", "__init__.py")
         if not self._fs.exists(init_path):
