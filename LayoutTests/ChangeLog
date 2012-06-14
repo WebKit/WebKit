@@ -1,3 +1,9 @@
+2012-06-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed, test rebaseline after r120317.
+
+        * inspector/styles/override-screen-size-expected.txt:
+
 2012-06-14  Simon Pena  <spena@igalia.com>
 
         [GTK] Mark fast/forms/text-input-event.html as flaky in TestExpectations
