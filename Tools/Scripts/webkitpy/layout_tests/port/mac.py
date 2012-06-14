@@ -53,7 +53,11 @@ class MacPort(ApplePort):
 
     def __init__(self, host, port_name, **kwargs):
         ApplePort.__init__(self, host, port_name, **kwargs)
-        self._architecture = self.get_option('architecture', 'x86_64')
+        self._architecture = self.get_option('architecture')
+
+        if not self._architecture:
+            self._architecture = 'x86_64'
+
         self._leak_detector = LeakDetector(self)
         if self.get_option("leaks"):
             # DumpRenderTree slows down noticably if we run more than about 1000 tests in a batch
