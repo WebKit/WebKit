@@ -57,7 +57,7 @@ namespace {
 class MockCCLayerTreeHost : public CCLayerTreeHost {
 public:
     MockCCLayerTreeHost()
-        : CCLayerTreeHost(&m_fakeClient, CCSettings())
+        : CCLayerTreeHost(&m_fakeClient, CCLayerTreeSettings())
     {
         initialize();
     }
@@ -616,7 +616,7 @@ public:
 
 private:
     FakeCCLayerTreeHost()
-        : CCLayerTreeHost(&m_client, CCSettings())
+        : CCLayerTreeHost(&m_client, CCLayerTreeSettings())
     {
     }
 

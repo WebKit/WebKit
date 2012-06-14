@@ -52,17 +52,17 @@ void CCHeadsUpDisplay::setFontAtlas(PassOwnPtr<CCFontAtlas> fontAtlas)
     m_fontAtlas = fontAtlas;
 }
 
-bool CCHeadsUpDisplay::enabled(const CCSettings& settings) const
+bool CCHeadsUpDisplay::enabled(const CCLayerTreeSettings& settings) const
 {
     return showPlatformLayerTree(settings) || settings.showFPSCounter || showDebugRects(settings);
 }
 
-bool CCHeadsUpDisplay::showPlatformLayerTree(const CCSettings& settings) const
+bool CCHeadsUpDisplay::showPlatformLayerTree(const CCLayerTreeSettings& settings) const
 {
     return settings.showPlatformLayerTree;
 }
 
-bool CCHeadsUpDisplay::showDebugRects(const CCSettings& settings) const
+bool CCHeadsUpDisplay::showDebugRects(const CCLayerTreeSettings& settings) const
 {
     return settings.showPaintRects || settings.showPropertyChangedRects || settings.showSurfaceDamageRects;
 }
@@ -78,7 +78,7 @@ void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
     if (!m_hudTexture)
         m_hudTexture = ManagedTexture::create(layerRenderer->implTextureManager());
 
-    const CCSettings& settings = layerTreeHostImpl->settings();
+    const CCLayerTreeSettings& settings = layerTreeHostImpl->settings();
     // Use a fullscreen texture only if we need to...
     IntSize hudSize;
     if (showPlatformLayerTree(settings) || showDebugRects(settings)) {
@@ -128,7 +128,7 @@ void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
     m_hudTexture->unreserve();
 }
 
-void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, CCLayerTreeHostImpl* layerTreeHostImpl, const CCSettings& settings, const IntSize& hudSize)
+void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, CCLayerTreeHostImpl* layerTreeHostImpl, const CCLayerTreeSettings& settings, const IntSize& hudSize)
 {
     if (showPlatformLayerTree(settings)) {
         context->setFillColor(Color(0, 0, 0, 192), ColorSpaceDeviceRGB);
@@ -221,7 +221,7 @@ void CCHeadsUpDisplay::drawFPSCounterText(GraphicsContext* context, CCFrameRateC
         m_fontAtlas->drawText(context, String::format("FPS: %4.1f +/- %3.1f", averageFPS, stdDeviation), IntPoint(10, height / 3), IntSize(width, height));
 }
 
-void CCHeadsUpDisplay::drawDebugRects(GraphicsContext* context, CCDebugRectHistory* debugRectHistory, const CCSettings& settings)
+void CCHeadsUpDisplay::drawDebugRects(GraphicsContext* context, CCDebugRectHistory* debugRectHistory, const CCLayerTreeSettings& settings)
 {
     const Vector<CCDebugRect>& debugRects = debugRectHistory->debugRects();
     for (size_t i = 0; i < debugRects.size(); ++i) {

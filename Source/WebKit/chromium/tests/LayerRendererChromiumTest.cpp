@@ -25,10 +25,12 @@
 #include "config.h"
 #include "LayerRendererChromium.h"
 
+#include "CCTestCommon.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "WebCompositor.h"
+#include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
 
 #include <gmock/gmock.h>
@@ -36,6 +38,7 @@
 
 using namespace WebCore;
 using namespace WebKit;
+using namespace WebKitTests;
 
 class FrameCountingMemoryAllocationSettingContext : public FakeWebGraphicsContext3D {
 public:
@@ -81,7 +84,7 @@ public:
 
     // CCRendererClient methods.
     virtual const IntSize& deviceViewportSize() const OVERRIDE { static IntSize fakeSize; return fakeSize; }
-    virtual const CCSettings& settings() const OVERRIDE { static CCSettings fakeSettings; return fakeSettings; }
+    virtual const CCLayerTreeSettings& settings() const OVERRIDE { static CCLayerTreeSettings fakeSettings; return fakeSettings; }
     virtual void didLoseContext() OVERRIDE { }
     virtual void onSwapBuffersComplete() OVERRIDE { }
     virtual void setFullRootLayerDamage() OVERRIDE { m_setFullRootLayerDamageCount++; }
@@ -147,6 +150,7 @@ protected:
     FrameCountingMemoryAllocationSettingContext& m_mockContext;
     FakeCCRendererClient m_mockClient;
     FakeLayerRendererChromium m_layerRendererChromium;
+    CCScopedSettings m_scopedSettings;
 };
 
 // Test LayerRendererChromium discardFramebuffer functionality:
@@ -198,7 +202,7 @@ TEST_F(LayerRendererChromiumTest, SwapBuffersWhileBackbufferDiscardedShouldIgnor
     swapBuffers();
     EXPECT_EQ(0, m_mockContext.frameCount());
     EXPECT_EQ(2, m_mockClient.setFullRootLayerDamageCount());
-    
+
     swapBuffers();
     EXPECT_EQ(0, m_mockContext.frameCount());
     EXPECT_EQ(3, m_mockClient.setFullRootLayerDamageCount());
@@ -289,6 +293,7 @@ public:
 // This test isn't using the same fixture as LayerRendererChromiumTest, and you can't mix TEST() and TEST_F() with the same name, hence LRC2.
 TEST(LayerRendererChromiumTest2, initializationDoesNotMakeSynchronousCalls)
 {
+    CCScopedSettings scopedSettings;
     FakeCCRendererClient mockClient;
     FakeLayerRendererChromium layerRendererChromium(&mockClient, GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new ForbidSynchronousCallContext), GraphicsContext3D::RenderDirectlyToHostWindow));
 
@@ -330,6 +335,7 @@ private:
 
 TEST(LayerRendererChromiumTest2, initializationWithQuicklyLostContextDoesNotAssert)
 {
+    CCScopedSettings scopedSettings;
     FakeCCRendererClient mockClient;
     FakeLayerRendererChromium layerRendererChromium(&mockClient, GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new LoseContextOnFirstGetContext), GraphicsContext3D::RenderDirectlyToHostWindow));
 

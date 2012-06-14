@@ -142,7 +142,7 @@ public:
     void setAccelerated2dCanvasEnabled(bool enabled) { m_accelerated2dCanvasEnabled = enabled; }
     void setDeferred2dCanvasEnabled(bool enabled) { m_deferred2dCanvasEnabled = enabled; }
     void setAcceleratedPaintingEnabled(bool enabled) { m_acceleratedPaintingEnabled = enabled; }
-    void setPerTilePaintingEnabled(bool enabled) { m_perTilePaintingEnabled = enabled; }
+    void setPerTilePaintingEnabled(bool);
 #if defined(OS_WIN)
     // Access to the finished event. Used by the static WatchDog thread.
     HANDLE finishedEvent() { return m_finishedEvent; }

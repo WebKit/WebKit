@@ -797,7 +797,7 @@ TEST(TiledLayerChromiumTest, skipsDrawGetsReset)
     // Initialize without threading support.
     WebKit::WebCompositor::initialize(0);
     FakeCCLayerTreeHostClient fakeCCLayerTreeHostClient;
-    OwnPtr<CCLayerTreeHost> ccLayerTreeHost = CCLayerTreeHost::create(&fakeCCLayerTreeHostClient, CCSettings());
+    OwnPtr<CCLayerTreeHost> ccLayerTreeHost = CCLayerTreeHost::create(&fakeCCLayerTreeHostClient, CCLayerTreeSettings());
 
     // Create two 300 x 300 tiled layers.
     IntSize contentBounds(300, 300);
@@ -873,10 +873,12 @@ TEST(TiledLayerChromiumTest, hugeLayerUpdateCrash)
 
 TEST(TiledLayerChromiumTest, partialUpdates)
 {
-    CCSettings settings;
-    settings.maxPartialTextureUpdates = 4;
     // Initialize without threading support.
     WebKit::WebCompositor::initialize(0);
+
+    CCLayerTreeSettings settings;
+    settings.maxPartialTextureUpdates = 4;
+
     FakeCCLayerTreeHostClient fakeCCLayerTreeHostClient;
     OwnPtr<CCLayerTreeHost> ccLayerTreeHost = CCLayerTreeHost::create(&fakeCCLayerTreeHostClient, settings);
 

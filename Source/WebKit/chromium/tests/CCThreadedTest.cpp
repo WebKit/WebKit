@@ -113,7 +113,7 @@ PassRefPtr<GraphicsContext3D> TestHooks::createContext()
     return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow);
 }
 
-PassOwnPtr<MockLayerTreeHostImpl> MockLayerTreeHostImpl::create(TestHooks* testHooks, const CCSettings& settings, CCLayerTreeHostImplClient* client)
+PassOwnPtr<MockLayerTreeHostImpl> MockLayerTreeHostImpl::create(TestHooks* testHooks, const CCLayerTreeSettings& settings, CCLayerTreeHostImplClient* client)
 {
     return adoptPtr(new MockLayerTreeHostImpl(testHooks, settings, client));
 }
@@ -155,7 +155,7 @@ double MockLayerTreeHostImpl::lowFrequencyAnimationInterval() const
     return 1.0 / 60;
 }
 
-MockLayerTreeHostImpl::MockLayerTreeHostImpl(TestHooks* testHooks, const CCSettings& settings, CCLayerTreeHostImplClient* client)
+MockLayerTreeHostImpl::MockLayerTreeHostImpl(TestHooks* testHooks, const CCLayerTreeSettings& settings, CCLayerTreeHostImplClient* client)
     : CCLayerTreeHostImpl(settings, client)
     , m_testHooks(testHooks)
 {
@@ -164,13 +164,9 @@ MockLayerTreeHostImpl::MockLayerTreeHostImpl(TestHooks* testHooks, const CCSetti
 // Adapts CCLayerTreeHost for test. Injects MockLayerTreeHostImpl.
 class MockLayerTreeHost : public WebCore::CCLayerTreeHost {
 public:
-    static PassOwnPtr<MockLayerTreeHost> create(TestHooks* testHooks, WebCore::CCLayerTreeHostClient* client, PassRefPtr<WebCore::LayerChromium> rootLayer, const WebCore::CCSettings& settings)
+    static PassOwnPtr<MockLayerTreeHost> create(TestHooks* testHooks, WebCore::CCLayerTreeHostClient* client, PassRefPtr<WebCore::LayerChromium> rootLayer, const WebCore::CCLayerTreeSettings& settings)
     {
-        // For these tests, we will enable threaded animations.
-        CCSettings settingsCopy = settings;
-        settingsCopy.threadedAnimationEnabled = true;
-
-        OwnPtr<MockLayerTreeHost> layerTreeHost(adoptPtr(new MockLayerTreeHost(testHooks, client, settingsCopy)));
+        OwnPtr<MockLayerTreeHost> layerTreeHost(adoptPtr(new MockLayerTreeHost(testHooks, client, settings)));
         bool success = layerTreeHost->initialize();
         EXPECT_TRUE(success);
         layerTreeHost->setRootLayer(rootLayer);
@@ -185,10 +181,7 @@ public:
 
     virtual PassOwnPtr<WebCore::CCLayerTreeHostImpl> createLayerTreeHostImpl(WebCore::CCLayerTreeHostImplClient* client)
     {
-        // For these tests, we will enable threaded animations.
-        CCSettings copySettings = settings();
-        copySettings.threadedAnimationEnabled = true;
-        return MockLayerTreeHostImpl::create(m_testHooks, copySettings, client);
+        return MockLayerTreeHostImpl::create(m_testHooks, settings(), client);
     }
 
     virtual void didAddAnimation() OVERRIDE
@@ -198,7 +191,7 @@ public:
     }
 
 private:
-    MockLayerTreeHost(TestHooks* testHooks, WebCore::CCLayerTreeHostClient* client, const WebCore::CCSettings& settings)
+    MockLayerTreeHost(TestHooks* testHooks, WebCore::CCLayerTreeHostClient* client, const WebCore::CCLayerTreeSettings& settings)
         : CCLayerTreeHost(client, settings)
         , m_testHooks(testHooks)
     {
@@ -615,6 +608,9 @@ void CCThreadedTest::dispatchDidAddAnimation(void* self)
 
 void CCThreadedTest::runTest(bool threaded)
 {
+    // For these tests, we will enable threaded animations.
+    WebCompositor::setAcceleratedAnimationEnabled(true);
+
     if (threaded) {
         m_webThread = adoptPtr(WebKit::Platform::current()->createThread("CCThreadedTest"));
         WebCompositor::initialize(m_webThread.get());

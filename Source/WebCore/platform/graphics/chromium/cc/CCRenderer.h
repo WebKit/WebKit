@@ -43,7 +43,7 @@ class TextureUploader;
 class CCRendererClient {
 public:
     virtual const IntSize& deviceViewportSize() const = 0;
-    virtual const CCSettings& settings() const = 0;
+    virtual const CCLayerTreeSettings& settings() const = 0;
     virtual void didLoseContext() = 0;
     virtual void onSwapBuffersComplete() = 0;
     virtual void setFullRootLayerDamage() = 0;
@@ -57,7 +57,7 @@ public:
 
     virtual const LayerRendererCapabilities& capabilities() const = 0;
 
-    const CCSettings& settings() const { return m_client->settings(); }
+    const CCLayerTreeSettings& settings() const { return m_client->settings(); }
 
     const IntSize& viewportSize() { return m_client->deviceViewportSize(); }
     int viewportWidth() { return viewportSize().width(); }

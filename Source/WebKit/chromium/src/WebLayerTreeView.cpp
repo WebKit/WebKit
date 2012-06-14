@@ -37,18 +37,15 @@
 using namespace WebCore;
 
 namespace WebKit {
-WebLayerTreeView::Settings::operator CCSettings() const
+
+WebLayerTreeView::Settings::operator CCLayerTreeSettings() const
 {
-    CCSettings settings;
-    settings.acceleratePainting = acceleratePainting;
+    CCLayerTreeSettings settings;
     settings.forceSoftwareCompositing = forceSoftwareCompositing;
     settings.showFPSCounter = showFPSCounter;
     settings.showPlatformLayerTree = showPlatformLayerTree;
     settings.showPaintRects = showPaintRects;
     settings.refreshRate = refreshRate;
-    settings.perTilePainting = perTilePainting;
-    settings.partialSwapEnabled = partialSwapEnabled;
-    settings.threadedAnimationEnabled = threadedAnimationEnabled;
     settings.defaultTileSize = defaultTileSize;
     settings.maxUntiledLayerSize = maxUntiledLayerSize;
     settings.deviceScaleFactor = deviceScaleFactor;
