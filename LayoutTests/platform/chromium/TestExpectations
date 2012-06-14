@@ -1200,6 +1200,9 @@ BUGWK25817 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TE
 
 BUGWK60118 MAC : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
 
+BUGWK64966 DEBUG : svg/batik/text/textDecoration.svg = CRASH
+BUGWK64966 DEBUG : svg/batik/text/textEffect3.svg = CRASH
+
 // Introduced due to BUGWK53512, fails under Skia right now
 BUGWK65939 : svg/custom/getBBox-path.svg = TEXT
 

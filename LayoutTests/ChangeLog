@@ -1,3 +1,14 @@
+2012-06-14  Stephen Chenney  <schenney@chromium.org>
+
+        [svg] SVGResources applied to Text with Incorrect Transformations in non-CG Implementations
+        https://bugs.webkit.org/show_bug.cgi?id=64966
+
+        Unreviewed suppression of crashing tests:
+        svg/batik/text/textDecoration.svg
+        svg/batik/text/textEffect3.svg
+
+        * platform/chromium/TestExpectations:
+
 2012-06-14  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Unskip some now-passing tests.
