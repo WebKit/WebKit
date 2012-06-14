@@ -31,6 +31,7 @@
 #ifndef BlobData_h
 #define BlobData_h
 
+#include "FileSystem.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
@@ -59,14 +60,13 @@ private:
 
 struct BlobDataItem {
     static const long long toEndOfFile;
-    static const double doNotCheckFileChange;
 
     // Default constructor.
     BlobDataItem()
         : type(Data)
         , offset(0)
         , length(toEndOfFile)
-        , expectedModificationTime(doNotCheckFileChange)
+        , expectedModificationTime(invalidFileTime())
     {
     }
 
@@ -76,7 +76,7 @@ struct BlobDataItem {
         , data(data)
         , offset(0)
         , length(toEndOfFile)
-        , expectedModificationTime(doNotCheckFileChange)
+        , expectedModificationTime(invalidFileTime())
     {
     }
 
@@ -86,7 +86,7 @@ struct BlobDataItem {
         , path(path)
         , offset(0)
         , length(toEndOfFile)
-        , expectedModificationTime(doNotCheckFileChange)
+        , expectedModificationTime(invalidFileTime())
     {
     }
 
@@ -99,14 +99,14 @@ struct BlobDataItem {
         , expectedModificationTime(expectedModificationTime)
     {
     }
-    
+
     // Constructor for Blob type.
     BlobDataItem(const KURL& url, long long offset, long long length)
         : type(Blob)
         , url(url)
         , offset(offset)
         , length(length)
-        , expectedModificationTime(doNotCheckFileChange)
+        , expectedModificationTime(invalidFileTime())
     {
     }
 
@@ -114,7 +114,7 @@ struct BlobDataItem {
     void detachFromCurrentThread();
 
     enum { Data, File, Blob } type;
-    
+
     // For Data type.
     RefPtr<RawData> data;
 
@@ -137,7 +137,7 @@ private:
         , data(data)
         , offset(offset)
         , length(length)
-        , expectedModificationTime(doNotCheckFileChange)
+        , expectedModificationTime(invalidFileTime())
     {
     }
 };

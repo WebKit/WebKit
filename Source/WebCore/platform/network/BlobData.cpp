@@ -40,7 +40,6 @@
 namespace WebCore {
 
 const long long BlobDataItem::toEndOfFile = -1;
-const double BlobDataItem::doNotCheckFileChange = 0;
 
 RawData::RawData()
 {

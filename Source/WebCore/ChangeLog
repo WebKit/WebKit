@@ -1,3 +1,35 @@
+2012-06-07  Kinuko Yasuda  <kinuko@chromium.org>
+
+        File::lastModifiedDate should use NaN or separate boolean flag for null Date value
+        https://bugs.webkit.org/show_bug.cgi?id=87826
+
+        Reviewed by Kent Tamura.
+
+        Test: http/tests/local/fileapi/file-last-modified-after-delete.html
+
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        (WebCore::File::captureSnapshot):
+        (WebCore::File::lastModifiedDate):
+        (WebCore::File::lastModifiedDateForBinding): Removed.
+        * fileapi/File.h:
+        (File):
+        * fileapi/File.idl:
+        * platform/FileMetadata.h:
+        (WebCore::FileMetadata::FileMetadata):
+        * platform/FileSystem.h:
+        * platform/FileStream.cpp:
+        (WebCore::FileStream::getSize):
+        * platform/chromium/support/WebHTTPBody.cpp:
+        (WebKit::WebHTTPBody::elementAt):
+        * platform/network/BlobData.h:
+        (WebCore::BlobDataItem::doNotCheckFileChange): Removed.
+        * platform/network/BlobData.cpp:
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::advanceCurrentStream):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::blobIsOutOfDate):
+
 2012-06-13  Eli Fidler  <efidler@rim.com>
 
         Fix CMake build with SMOOTH_SCROLLING enabled

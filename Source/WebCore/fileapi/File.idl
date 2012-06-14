@@ -32,7 +32,7 @@ module html {
     ] File : Blob {
         readonly attribute DOMString name;
 #if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
-        readonly attribute [ImplementedAs=lastModifiedDateForBinding] Date lastModifiedDate;
+        readonly attribute Date lastModifiedDate;
 #endif
 #if defined(ENABLE_DIRECTORY_UPLOAD) && ENABLE_DIRECTORY_UPLOAD
         readonly attribute DOMString webkitRelativePath;

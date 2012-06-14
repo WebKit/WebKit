@@ -156,7 +156,7 @@ static bool advanceCurrentStream(FormStreamFields* form)
     } else {
 #if ENABLE(BLOB)
         // Check if the file has been changed or not if required.
-        if (nextInput.m_expectedFileModificationTime != BlobDataItem::doNotCheckFileChange) {
+        if (isValidFileTime(nextInput.m_expectedFileModificationTime)) {
             time_t fileModificationTime;
             if (!getFileModificationTime(nextInput.m_filename, fileModificationTime) || fileModificationTime != static_cast<time_t>(nextInput.m_expectedFileModificationTime))
                 return false;

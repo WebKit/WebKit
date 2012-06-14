@@ -164,7 +164,7 @@ void FormData::appendData(const void* data, size_t size)
 void FormData::appendFile(const String& filename, bool shouldGenerateFile)
 {
 #if ENABLE(BLOB)
-    m_elements.append(FormDataElement(filename, 0, BlobDataItem::toEndOfFile, BlobDataItem::doNotCheckFileChange, shouldGenerateFile));
+    m_elements.append(FormDataElement(filename, 0, BlobDataItem::toEndOfFile, invalidFileTime(), shouldGenerateFile));
 #else
     m_elements.append(FormDataElement(filename, shouldGenerateFile));
 #endif
@@ -355,7 +355,7 @@ static void encode(Encoder& encoder, const FormDataElement& element)
 #else
         encoder.encodeInt64(0);
         encoder.encodeInt64(0);
-        encoder.encodeDouble(0);
+        encoder.encodeDouble(invalidFileTime());
 #endif
         return;
 
