@@ -317,6 +317,16 @@ static void didFail(CFURLConnectionRef conn, CFErrorRef error, const void* clien
 static CFCachedURLResponseRef willCacheResponse(CFURLConnectionRef, CFCachedURLResponseRef cachedResponse, const void* clientInfo)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
+    CFURLResponseRef wrappedResponse = CFCachedURLResponseGetWrappedResponse(cachedResponse);
+
+    // Workaround for <rdar://problem/6300990> Caching does not respect Vary HTTP header.
+    // FIXME: WebCore cache has issues with Vary, too (bug 58797, bug 71509).
+    if (CFHTTPMessageRef httpResponse = CFURLResponseGetHTTPResponse(wrappedResponse)) {
+        ASSERT(CFHTTPMessageIsHeaderComplete(httpResponse));
+        RetainPtr<CFStringRef> varyValue = adoptCF(CFHTTPMessageCopyHeaderFieldValue(httpResponse, CFSTR("Vary")));
+        if (varyValue)
+            return 0;
+    }
 
 #if PLATFORM(WIN)
     if (handle->client() && !handle->client()->shouldCacheResponse(handle, cachedResponse))
@@ -336,13 +346,13 @@ static CFCachedURLResponseRef willCacheResponse(CFURLConnectionRef, CFCachedURLR
 #if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
         RetainPtr<CFArrayRef> receiverData(AdoptCF, CFCachedURLResponseCopyReceiverDataArray(cachedResponse));
         cachedResponse = CFCachedURLResponseCreateWithDataArray(kCFAllocatorDefault,
-                                                                CFCachedURLResponseGetWrappedResponse(cachedResponse),
+                                                                wrappedResponse,
                                                                 receiverData.get(),
                                                                 CFCachedURLResponseGetUserInfo(cachedResponse),
                                                                 static_cast<CFURLCacheStoragePolicy>(policy));
 #else
         cachedResponse = CFCachedURLResponseCreateWithUserInfo(kCFAllocatorDefault, 
-                                                               CFCachedURLResponseGetWrappedResponse(cachedResponse),
+                                                               wrappedResponse,
                                                                CFCachedURLResponseGetReceiverData(cachedResponse),
                                                                CFCachedURLResponseGetUserInfo(cachedResponse), 
                                                                static_cast<CFURLCacheStoragePolicy>(policy));

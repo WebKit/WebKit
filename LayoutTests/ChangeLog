@@ -1,3 +1,15 @@
+2012-06-14  Alexey Proskuryakov  <ap@apple.com>
+
+        [CFNetwork] XMLHttpRequest incorrectly returns cached responses even when there is a Vary header field
+        https://bugs.webkit.org/show_bug.cgi?id=88925
+
+        Reviewed by David Kilzer.
+
+        * http/tests/cache/resources/xhr-vary-header-response.php: Added.
+        * http/tests/cache/resources/xhr-vary-header-subframe.html: Added.
+        * http/tests/cache/xhr-vary-header-expected.txt: Added.
+        * http/tests/cache/xhr-vary-header.html: Added.
+
 2012-06-14  Simon Pena  <spena@igalia.com>
 
         [GTK] Update TestExpectations with tests crashing in 64bits Debug build
