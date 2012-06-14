@@ -1,3 +1,15 @@
+2012-06-14  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [Blackberry] add a new Api named setAllowNotification
+        https://bugs.webkit.org/show_bug.cgi?id=88950
+
+        Reviewed by Antonio Gomes.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::setAllowNotification):
+        (WebKit):
+        * Api/WebPage.h:
+
 2012-06-13  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Apply New Style and JS for Select Popup

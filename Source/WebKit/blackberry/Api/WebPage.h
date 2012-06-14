@@ -266,6 +266,8 @@ public:
 
     WebString textHasAttribute(const WebString& query) const;
 
+    void setAllowNotification(const WebString& domain, bool allow);
+
     Platform::WebContext webContext(TargetDetectionStrategy) const;
 
     typedef intptr_t BackForwardId;

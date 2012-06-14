@@ -1,3 +1,16 @@
+2012-06-14  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [Blackberry] add a new Api named setAllowNotification
+        https://bugs.webkit.org/show_bug.cgi?id=88950
+
+        Reviewed by Antonio Gomes.
+
+        Add a new API named setAllowNotification in webpage class to
+        let client set those allowed domains into notifications.
+
+        Test case:
+        * ManualTests/blackberry/notification.html: Added.
+
 2012-06-13  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Enable link prefetch support in the developer builds

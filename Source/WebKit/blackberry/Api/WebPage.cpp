@@ -6350,6 +6350,16 @@ WebString WebPage::textHasAttribute(const WebString& query) const
     return "";
 }
 
+void WebPage::setAllowNotification(const WebString& domain, bool allow)
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    static_cast<NotificationPresenterImpl*>(NotificationPresenterImpl::instance())->onPermission(domain.utf8(), allow);
+#else
+    UNUSED_PARAM(domain);
+    UNUSED_PARAM(allow);
+#endif
+}
+
 void WebPage::setJavaScriptCanAccessClipboard(bool enabled)
 {
     d->m_page->settings()->setJavaScriptCanAccessClipboard(enabled);

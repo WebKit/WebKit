@@ -1,0 +1,53 @@
+<html>
+<head>
+<script type="text/javascript">
+var n;
+function setNotification()
+{
+    if (window.webkitNotifications.checkPermission() != 0) {
+        alert("you don't have permission to post notifications, please allow notifications by clicking that link");
+        document.getElementById('allowNotificationLink').style.backgroundColor = 'Red';
+        return 0;
+    }
+    n = window.webkitNotifications.createNotification(window.location.href + '/favicon.ico', 'Notify me', 'This is the notification body');
+    log = document.getElementById("place");
+    n.onshow = function()  { log.innerText = "notification showing"; }
+    n.onclick = function() { log.innerText = "notification clicked"; }
+    n.onerror = function() { log.innerText = "notification error"; }
+    n.onclose = function() { log.innerText = "notification closed"; }
+    n.show();
+    log.innerText = "Did you notice the notification ? There are 3 ways the notification will go away:\n 1. It automically goes away in 30 seconds;\n 2. you can click the close button on the notification to close it;\n 3. Click above link 'Click to cancel the notification.\n\n Please verify all work; Whenever the icon is clicked, cancelled, closed, etc. there will be corresponding log is this area, please notice if they show up.";
+
+    setTimeout(timeout, 30000);
+    function timeout() {
+        n.cancel();
+    }
+}
+
+function setAllowNotification()
+{
+    window.webkitNotifications.requestPermission(permissionGranted);
+}
+
+function permissionGranted()
+{
+    if (window.webkitNotifications.checkPermission() == 0)
+        alert("you now have permission to post Notifications");
+    else
+        alert("you don't have permission to post Notifications");
+}
+</script>
+</head>
+
+<body style="font-size:x-large">
+<a style="margin-left: 20px;" id="allowNotificationLink"  onclick="setAllowNotification(); return false;" href="#">Click to set allow notifications first</a> <br>
+
+<a style="margin-left: 20px;" onclick="setNotification(); return false;" href="#">Click to set notification</a> <br>
+<a style="margin-left: 20px;" onclick="n.cancel(); return false;" href="#">Click to cancel the notification</a> <br>
+<br><br>
+<div id="place">
+</div>
+
+</body>
+</html>
+
