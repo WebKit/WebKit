@@ -1,3 +1,25 @@
+2012-06-14  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Tests rebaselining after r120167, r120246
+        https://bugs.webkit.org/show_bug.cgi?id=89069
+
+        Unreviewed EFL gardening after r120246 and r120167, updating baselines.
+
+        * platform/efl/fast/layers/video-layer-expected.txt:
+        * platform/efl/http/tests/misc/location-replace-crossdomain-expected.txt:
+        * platform/efl/media/audio-controls-rendering-expected.txt:
+        * platform/efl/media/audio-repaint-expected.txt:
+        * platform/efl/media/controls-after-reload-expected.txt:
+        * platform/efl/media/controls-strict-expected.txt:
+        * platform/efl/media/controls-styling-expected.txt:
+        * platform/efl/media/controls-without-preload-expected.txt:
+        * platform/efl/media/media-controls-clone-expected.txt:
+        * platform/efl/media/media-document-audio-repaint-expected.txt:
+        * platform/efl/media/video-controls-rendering-expected.txt:
+        * platform/efl/media/video-display-toggle-expected.txt:
+        * platform/efl/media/video-empty-source-expected.txt:
+        * platform/efl/media/video-zoom-controls-expected.txt:
+
 2012-06-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Unreviewed, test rebaseline after r120317.
