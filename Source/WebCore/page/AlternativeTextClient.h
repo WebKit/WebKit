@@ -31,6 +31,11 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+// Some platforms provide UI for suggesting alternative dictation text.
+#define WTF_USE_DICTATION_ALTERNATIVES 1
+#endif // PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+
 namespace WebCore {
 
 enum ReasonForDismissingAlternativeText {
@@ -43,6 +48,7 @@ enum AlternativeTextType {
     AlternativeTextTypeCorrection = 0,
     AlternativeTextTypeReversion,
     AlternativeTextTypeSpellingSuggestions,
+    AlternativeTextTypeDictationAlternatives
 };
 
 enum AutocorrectionResponseType {
@@ -54,11 +60,18 @@ class AlternativeTextClient {
 public:
     virtual ~AlternativeTextClient() { }
     virtual void pageDestroyed() = 0;
-
+#if USE(AUTOCORRECTION_PANEL)
     virtual void showCorrectionAlternative(AlternativeTextType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacmentString, const Vector<String>& alternativeReplacementStrings) = 0;
     virtual void dismissAlternative(ReasonForDismissingAlternativeText) = 0;
     virtual String dismissAlternativeSoon(ReasonForDismissingAlternativeText) = 0;
     virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String& replacedString, const String& replacementString) = 0;
+#endif
+#if USE(DICTATION_ALTERNATIVES)
+    virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) = 0;
+    virtual void dismissDictationAlternativeUI() = 0;
+    virtual void removeDictationAlternatives(uint64_t dictationContext) = 0;
+    virtual Vector<String> dictationAlternatives(uint64_t dictationContext) = 0;
+#endif
 };
     
 }

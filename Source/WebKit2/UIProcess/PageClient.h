@@ -37,6 +37,7 @@
 #include "PluginComplexTextInputState.h"
 
 OBJC_CLASS WKView;
+OBJC_CLASS NSTextAlternatives;
 #endif
 
 namespace WebCore {
@@ -192,7 +193,15 @@ public:
     virtual void recommendedScrollbarStyleDidChange(int32_t newStyle) = 0;
     
     virtual WKView* wkView() const = 0;
-#endif
+
+#if USE(DICTATION_ALTERNATIVES)
+    virtual uint64_t addDictationAlternatives(const RetainPtr<NSTextAlternatives>&) = 0;
+    virtual void removeDictationAlternatives(uint64_t dictationContext) = 0;
+    virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) = 0;
+    virtual void dismissDictationAlternativeUI() = 0;
+    virtual Vector<String> dictationAlternatives(uint64_t dictationContext) = 0;
+#endif // USE(DICTATION_ALTERNATIVES)
+#endif // PLATFORM(MAC)
 
     virtual void didChangeScrollbarsForMainFrame() const = 0;
 

@@ -29,6 +29,7 @@
 
 #import "WebTypesInternal.h"
 #import "WebDelegateImplementationCaching.h"
+#import <WebCore/AlternativeTextClient.h>
 #import <WebCore/LayerFlushScheduler.h>
 #import <WebCore/LayerFlushSchedulerClient.h>
 #import <WebCore/PlatformString.h>
@@ -38,8 +39,9 @@
 #import <wtf/RetainPtr.h>
 
 namespace WebCore {
-    class HistoryItem;
-    class Page;
+class AlternativeTextUIController;
+class HistoryItem;
+class Page;
 }
 
 @class WebInspector;
@@ -200,5 +202,9 @@ private:
     int validationMessageTimerMagnification;
 
     float customDeviceScaleFactor;
+
+#if USE(DICTATION_ALTERNATIVES)
+    OwnPtr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;
+#endif
 }
 @end

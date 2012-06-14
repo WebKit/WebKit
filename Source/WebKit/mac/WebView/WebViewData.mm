@@ -31,6 +31,7 @@
 
 #import "WebKitLogging.h"
 #import "WebPreferenceKeysPrivate.h"
+#import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/RunLoop.h>
@@ -99,6 +100,10 @@ LayerFlushController::LayerFlushController(WebView* webView)
 
 
     pluginDatabaseClientCount++;
+
+#if USE(DICTATION_ALTERNATIVES)
+    m_alternativeTextUIController = adoptPtr(new WebCore::AlternativeTextUIController);
+#endif
 
     return self;
 }

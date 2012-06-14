@@ -88,6 +88,7 @@ enum {
     kWKContextMenuItemTagRightToLeft,
     kWKContextMenuItemTagPDFSinglePageScrolling,
     kWKContextMenuItemTagPDFFacingPagesScrolling,
+    kWKContextMenuItemTagDictationAlternative,
     kWKContextMenuItemTagInspectElement,
     kWKContextMenuItemTagTextDirectionMenu,
     kWKContextMenuItemTagTextDirectionDefault,

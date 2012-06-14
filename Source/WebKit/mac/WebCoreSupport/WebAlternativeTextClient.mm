@@ -25,6 +25,8 @@
 
 #include "WebAlternativeTextClient.h"
 
+#include "WebViewInternal.h"
+
 using namespace WebCore;
 
 WebAlternativeTextClient::WebAlternativeTextClient(WebView* webView)
@@ -44,33 +46,47 @@ void WebAlternativeTextClient::pageDestroyed()
     delete this;
 }
 
+#if USE(AUTOCORRECTION_PANEL)
 void WebAlternativeTextClient::showCorrectionAlternative(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
-#if USE(AUTOCORRECTION_PANEL)
     m_correctionPanel.show(m_webView, type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
-#endif
 }
 
 void WebAlternativeTextClient::dismissAlternative(ReasonForDismissingAlternativeText reason)
 {
-#if USE(AUTOCORRECTION_PANEL)
     m_correctionPanel.dismiss(reason);
-#endif
 }
 
 String WebAlternativeTextClient::dismissAlternativeSoon(ReasonForDismissingAlternativeText reason)
 {
-#if USE(AUTOCORRECTION_PANEL)
     return m_correctionPanel.dismiss(reason);
-#else
-return String();
-#endif
 }
 
 void WebAlternativeTextClient::recordAutocorrectionResponse(AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)
 {
-#if USE(AUTOCORRECTION_PANEL)
     NSCorrectionResponse response = responseType == AutocorrectionReverted ? NSCorrectionResponseReverted : NSCorrectionResponseEdited;
-CorrectionPanel::recordAutocorrectionResponse(m_webView, response, replacedString, replacementString);
-#endif
+    CorrectionPanel::recordAutocorrectionResponse(m_webView, response, replacedString, replacementString);
 }
+#endif
+
+#if USE(DICTATION_ALTERNATIVES)
+void WebAlternativeTextClient::removeDictationAlternatives(uint64_t dictationContext)
+{
+    [m_webView _removeDictationAlternatives:dictationContext];
+}
+
+void WebAlternativeTextClient::showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext)
+{
+    [m_webView _showDictationAlternativeUI:boundingBoxOfDictatedText forDictationContext:dictationContext];
+}
+
+void WebAlternativeTextClient::dismissDictationAlternativeUI()
+{
+    [m_webView _dismissDictationAlternativeUI];
+}
+
+Vector<String> WebAlternativeTextClient::dictationAlternatives(uint64_t dictationContext)
+{
+    return [m_webView _dictationAlternatives:dictationContext];
+}
+#endif

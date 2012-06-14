@@ -133,8 +133,7 @@ public:
     bool shouldShowDeleteInterface(HTMLElement*) const;
     bool shouldDeleteRange(Range*) const;
     bool shouldApplyStyle(StylePropertySet*, Range*);
-    
-    void respondToChangedSelection(const VisibleSelection& oldSelection);
+
     void respondToChangedContents(const VisibleSelection& endingSelection);
 
     bool selectionStartHasStyle(CSSPropertyID, const String& value) const;
@@ -396,7 +395,8 @@ public:
 
     EditorParagraphSeparator defaultParagraphSeparator() const { return m_defaultParagraphSeparator; }
     void setDefaultParagraphSeparator(EditorParagraphSeparator separator) { m_defaultParagraphSeparator = separator; }
-
+    Vector<String> dictationAlternativesForMarker(const DocumentMarker*);
+    void applyDictationAlternativelternative(const String& alternativeString);
 private:
     Frame* m_frame;
     OwnPtr<DeleteButtonController> m_deleteButtonController;
@@ -433,7 +433,8 @@ private:
     PassRefPtr<Range> lastVisibleRange(const String&, FindOptions);
     PassRefPtr<Range> nextVisibleRange(Range*, const String&, FindOptions);
 
-    void changeSelectionAfterCommand(const VisibleSelection& newSelection, bool closeTyping, bool clearTypingStyle);
+    void changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions);
+    void notifyComponentsOnChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions);
 
     Node* findEventTargetFromSelection() const;
 

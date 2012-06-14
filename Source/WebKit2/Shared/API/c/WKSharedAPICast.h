@@ -414,6 +414,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagPDFSinglePageScrolling;
     case WebCore::ContextMenuItemTagPDFFacingPagesScrolling:
         return kWKContextMenuItemTagPDFFacingPagesScrolling;
+    case WebCore::ContextMenuItemTagDictationAlternative:
+        return kWKContextMenuItemTagDictationAlternative;
 #if ENABLE(INSPECTOR)
     case WebCore::ContextMenuItemTagInspectElement:
         return kWKContextMenuItemTagInspectElement;
@@ -592,6 +594,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagPDFSinglePageScrolling;
     case kWKContextMenuItemTagPDFFacingPagesScrolling:
         return WebCore::ContextMenuItemTagPDFFacingPagesScrolling;
+    case kWKContextMenuItemTagDictationAlternative:
+        return WebCore::ContextMenuItemTagDictationAlternative;
 #if ENABLE(INSPECTOR)
     case kWKContextMenuItemTagInspectElement:
         return WebCore::ContextMenuItemTagInspectElement;

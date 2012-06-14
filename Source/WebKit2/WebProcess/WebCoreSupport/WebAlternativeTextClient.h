@@ -38,10 +38,18 @@ public:
     WebAlternativeTextClient(WebPage *);
     virtual ~WebAlternativeTextClient();
     virtual void pageDestroyed() OVERRIDE;
+#if USE(AUTOCORRECTION_PANEL)
     virtual void showCorrectionAlternative(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) OVERRIDE;
     virtual void dismissAlternative(WebCore::ReasonForDismissingAlternativeText) OVERRIDE;
     virtual String dismissAlternativeSoon(WebCore::ReasonForDismissingAlternativeText) OVERRIDE;
     virtual void recordAutocorrectionResponse(WebCore::AutocorrectionResponseType, const String& replacedString, const String& replacementString) OVERRIDE;
+#endif
+#if USE(DICTATION_ALTERNATIVES)
+    virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) OVERRIDE;
+    virtual void dismissDictationAlternativeUI() OVERRIDE;
+    virtual void removeDictationAlternatives(uint64_t dictationContext) OVERRIDE;
+    virtual Vector<String> dictationAlternatives(uint64_t dictationContext) OVERRIDE;
+#endif
 private:
     WebPage *m_page;
 };

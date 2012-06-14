@@ -58,6 +58,7 @@
 #include "WebPopupMenuProxy.h"
 #include "WebResourceLoadClient.h"
 #include "WebUIClient.h"
+#include <WebCore/AlternativeTextClient.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/DragSession.h>
 #include <WebCore/HitTestResult.h>
@@ -91,6 +92,7 @@ namespace WebCore {
     class IntSize;
     class ProtectionSpace;
     struct FileChooserSettings;
+    struct TextAlternativeWithRange;
     struct TextCheckingResult;
     struct ViewportAttributes;
     struct WindowFeatures;
@@ -347,6 +349,7 @@ public:
     void confirmComposition();
     void cancelComposition();
     bool insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
+    bool insertDictatedText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, const Vector<WebCore::TextAlternativeWithRange>& dictationAlternatives);
     void getMarkedRange(uint64_t& location, uint64_t& length);
     void getSelectedRange(uint64_t& location, uint64_t& length);
     void getAttributedSubstringFromRange(uint64_t location, uint64_t length, AttributedString&);
@@ -885,6 +888,13 @@ private:
     void dismissCorrectionPanelSoon(int32_t reason, String& result);
     void recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString);
 #endif // !defined(BUILDING_ON_SNOW_LEOPARD)
+
+#if USE(DICTATION_ALTERNATIVES)
+    void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext);
+    void dismissDictationAlternativeUI();
+    void removeDictationAlternatives(uint64_t dictationContext);
+    void dictationAlternatives(uint64_t dictationContext, Vector<String>& result);
+#endif
 #endif // PLATFORM(MAC)
 
     void clearLoadDependentCallbacks();
