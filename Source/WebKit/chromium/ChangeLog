@@ -1,3 +1,12 @@
+2012-06-13  Dominic Cooney  <dominicc@chromium.org>
+
+        Unreviewed: Disable verifyHitTestingForSingleLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=89065
+
+        It is failing on canary debug bots.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+
 2012-06-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120268.

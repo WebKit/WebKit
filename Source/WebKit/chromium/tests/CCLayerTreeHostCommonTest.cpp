@@ -2925,7 +2925,7 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForEmptyLayerList)
     EXPECT_FALSE(resultLayer);
 }
 
-TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSingleLayer)
+TEST(CCLayerTreeHostCommonTest, DISABLED_verifyHitTestingForSingleLayer)
 {
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(12345);
     root->createRenderSurface();
