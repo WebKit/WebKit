@@ -46,6 +46,7 @@ public:
     class TaskObserver {
     public:
         virtual ~TaskObserver() { }
+        virtual void willProcessTask() = 0;
         virtual void didProcessTask() = 0;
     };
 

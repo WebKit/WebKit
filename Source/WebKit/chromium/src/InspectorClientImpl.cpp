@@ -128,16 +128,16 @@ void InspectorClientImpl::clearBrowserCookies()
         agent->clearBrowserCookies();
 }
 
-void InspectorClientImpl::startMessageLoopMonitoring()
+void InspectorClientImpl::startMainThreadMonitoring()
 {
     if (WebDevToolsAgentImpl* agent = devToolsAgent())
-        agent->startMessageLoopMonitoring();
+        agent->startMainThreadMonitoring();
 }
 
-void InspectorClientImpl::stopMessageLoopMonitoring()
+void InspectorClientImpl::stopMainThreadMonitoring()
 {
     if (WebDevToolsAgentImpl* agent = devToolsAgent())
-        agent->stopMessageLoopMonitoring();
+        agent->stopMainThreadMonitoring();
 }
 
 bool InspectorClientImpl::canOverrideDeviceMetrics()

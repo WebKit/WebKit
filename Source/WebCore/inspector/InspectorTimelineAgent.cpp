@@ -156,7 +156,7 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
     m_timestampOffset = currentTime() - monotonicallyIncreasingTime();
 
     if (m_client)
-        m_client->startMessageLoopMonitoring();
+        m_client->startMainThreadMonitoring();
 
     m_instrumentingAgents->setInspectorTimelineAgent(this);
     ScriptGCEvent::addEventListener(this);
@@ -169,7 +169,7 @@ void InspectorTimelineAgent::stop(ErrorString*)
         return;
 
     if (m_client)
-        m_client->stopMessageLoopMonitoring();
+        m_client->stopMainThreadMonitoring();
 
     m_instrumentingAgents->setInspectorTimelineAgent(0);
     ScriptGCEvent::removeEventListener(this);

@@ -58,13 +58,12 @@ public:
     };
     virtual WebKitClientMessageLoop* createClientMessageLoop() { return 0; }
 
-    // Add task observer to message loop that is responsible for rendering
-    // of instrumented page. Corresponding WebDevToolsAgent should be notified
-    // about beginning and finishing of task processing in message loop.
-    virtual void startMessageLoopMonitoring() { }
+    // Add task observer to main thread. Corresponding WebDevToolsAgent
+    // should be notified about beginning and finishing of task processing.
+    virtual void startMainThreadMonitoring() { }
 
-    // Remove task observer added by "startMessageLoopMonitoring".
-    virtual void stopMessageLoopMonitoring() { }
+    // Remove task observer added by "startMainThreadMonitoring".
+    virtual void stopMainThreadMonitoring() { }
 
     virtual void clearBrowserCache() { }
     virtual void clearBrowserCookies() { }

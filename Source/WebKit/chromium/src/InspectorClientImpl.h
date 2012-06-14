@@ -64,8 +64,8 @@ public:
     virtual bool canClearBrowserCookies();
     virtual void clearBrowserCookies();
 
-    virtual void startMessageLoopMonitoring();
-    virtual void stopMessageLoopMonitoring();
+    virtual void startMainThreadMonitoring();
+    virtual void stopMainThreadMonitoring();
 
     virtual bool canOverrideDeviceMetrics();
     virtual void overrideDeviceMetrics(int, int, float, bool);

@@ -65,6 +65,7 @@
 #include "platform/WebURLResponse.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
+#include <public/Platform.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
@@ -547,23 +548,23 @@ void WebDevToolsAgentImpl::clearBrowserCookies()
     m_client->clearBrowserCookies();
 }
 
-void WebDevToolsAgentImpl::startMessageLoopMonitoring()
+void WebDevToolsAgentImpl::startMainThreadMonitoring()
 {
-    m_client->startMessageLoopMonitoring();
+    WebKit::Platform::current()->currentThread()->addTaskObserver(this);
 }
 
-void WebDevToolsAgentImpl::stopMessageLoopMonitoring()
+void WebDevToolsAgentImpl::stopMainThreadMonitoring()
 {
-    m_client->stopMessageLoopMonitoring();
+    WebKit::Platform::current()->currentThread()->removeTaskObserver(this);
 }
 
-void WebDevToolsAgentImpl::instrumentWillProcessTask()
+void WebDevToolsAgentImpl::willProcessTask()
 {
     if (Page* page = m_webViewImpl->page())
         InspectorInstrumentation::willProcessTask(page);
 }
 
-void WebDevToolsAgentImpl::instrumentDidProcessTask()
+void WebDevToolsAgentImpl::didProcessTask()
 {
     if (Page* page = m_webViewImpl->page())
         InspectorInstrumentation::didProcessTask(page);

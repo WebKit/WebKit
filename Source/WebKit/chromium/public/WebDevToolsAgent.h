@@ -69,14 +69,6 @@ public:
     // Exposed for LayoutTestController.
     virtual void evaluateInWebInspector(long callId, const WebString& script) = 0;
 
-    // Instrumentation method that marks beginning of task processing
-    // in renderer message loop.
-    virtual void instrumentWillProcessTask() = 0;
-
-    // Instrumentation method that marks end of task processing
-    // in renderer message loop.
-    virtual void instrumentDidProcessTask() = 0;
-
     class MessageDescriptor {
     public:
         virtual ~MessageDescriptor() { }

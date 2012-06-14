@@ -55,8 +55,8 @@ public:
     virtual void clearBrowserCache() { }
     virtual bool canClearBrowserCookies() { return false; }
     virtual void clearBrowserCookies() { }
-    virtual void startMessageLoopMonitoring() { }
-    virtual void stopMessageLoopMonitoring() { }
+    virtual void startMainThreadMonitoring() { }
+    virtual void stopMainThreadMonitoring() { }
 
     virtual bool canOverrideDeviceMetrics() { return false; }
 

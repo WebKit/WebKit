@@ -63,6 +63,7 @@ namespace {
 
 class EndOfTaskRunner : public WebThread::TaskObserver {
 public:
+    virtual void willProcessTask() { }
     virtual void didProcessTask()
     {
         WebCore::WebKitMutationObserver::deliverAllMutations();
