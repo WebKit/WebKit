@@ -1,3 +1,9 @@
+2012-06-14  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Updating baseline after r120257.
+
+        * fast/table/max-width-integer-overflow-expected.txt:
+
 2012-06-14  Li Yin  <li.yin@intel.com>
 
         [WebSocket] WebSocket object in Worker Context should fire error event when it fails connection.
