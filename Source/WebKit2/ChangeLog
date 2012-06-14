@@ -1,3 +1,23 @@
+2012-06-13  Andreas Kling  <kling@webkit.org>
+
+        Chinese IM receives incorrect/duplicated key events in text fields in webpages in Safari.
+        <http://webkit.org/b/89048>
+        <rdar://problem/11449702>
+
+        Reviewed by Darin Adler.
+
+        Send the DidReceiveEvent message with the DispatchMessageEvenWhenWaitingForSyncReply flag
+        for keyboard events. This ensures that it always arrives before the corresponding synchronous
+        InterpretQueuedKeyEvent message.
+
+        The problem was that we relied on DidReceiveEvent / InterpretQueuedKeyEvent always arriving in
+        the same order they were sent. This was not always true, since DidReceiveEvent (async) would
+        get deferred during an unrelated waitForSyncReply() whereas InterpretQueuedKeyEvent (sync)
+        gets dispatched right away.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::keyEvent):
+
 2012-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add input methods submenu item to the default context menu for editable content
