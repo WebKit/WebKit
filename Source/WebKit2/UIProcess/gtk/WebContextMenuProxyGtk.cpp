@@ -30,8 +30,8 @@
 
 #include "NativeWebMouseEvent.h"
 #include "WebContextMenuItemData.h"
+#include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
-#include <WebCore/ContextMenu.h>
 #include <WebCore/GtkUtilities.h>
 #include <gtk/gtk.h>
 #include <wtf/text/CString.h>
@@ -53,59 +53,64 @@ static void contextMenuItemActivatedCallback(GtkAction* action, WebPageProxy* pa
     page->contextMenuItemSelected(item);
 }
 
-GtkMenu* WebContextMenuProxyGtk::createGtkMenu(const Vector<WebContextMenuItemData>& items)
+void WebContextMenuProxyGtk::append(ContextMenuItem& menuItem)
 {
-    ContextMenu menu;
-    for (size_t i = 0; i < items.size(); i++) {
-        const WebContextMenuItemData& item = items.at(i);
-        ContextMenuItem menuItem(item.type(), item.action(), item.title(), item.enabled(), item.checked());
-        GtkAction* action = menuItem.gtkAction();
+    GtkAction* action = menuItem.gtkAction();
 
-        if (action && (item.type() == WebCore::ActionType || item.type() == WebCore::CheckableActionType)) {
-            g_object_set_data(G_OBJECT(action), gContextMenuActionId, GINT_TO_POINTER(item.action()));
-            g_signal_connect(action, "activate", G_CALLBACK(contextMenuItemActivatedCallback), m_page);
-        }
-
-        if (item.type() == WebCore::SubmenuType) {
-            ContextMenu subMenu(createGtkMenu(item.submenu()));
-            menuItem.setSubMenu(&subMenu);
-        }
-        menu.appendItem(menuItem);
+    if (action && (menuItem.type() == ActionType || menuItem.type() == CheckableActionType)) {
+        g_object_set_data(G_OBJECT(action), gContextMenuActionId, GINT_TO_POINTER(menuItem.action()));
+        g_signal_connect(action, "activate", G_CALLBACK(contextMenuItemActivatedCallback), m_page);
     }
-    return menu.releasePlatformDescription();
+
+    m_menu.appendItem(menuItem);
+}
+
+void WebContextMenuProxyGtk::populate(Vector<ContextMenuItem>& items)
+{
+    for (size_t i = 0; i < items.size(); i++)
+        append(items.at(i));
+}
+
+void WebContextMenuProxyGtk::populate(const Vector<WebContextMenuItemData>& items)
+{
+    for (size_t i = 0; i < items.size(); i++) {
+        ContextMenuItem menuitem = items.at(i).core();
+        append(menuitem);
+    }
 }
 
 void WebContextMenuProxyGtk::showContextMenu(const WebCore::IntPoint& position, const Vector<WebContextMenuItemData>& items)
 {
-    if (items.isEmpty())
+    if (!items.isEmpty())
+        populate(items);
+
+    if (!m_menu.itemCount())
         return;
 
-    m_popup = createGtkMenu(items);
     m_popupPosition = convertWidgetPointToScreenPoint(m_webView, position);
 
     // Display menu initiated by right click (mouse button pressed = 3).
     NativeWebMouseEvent* mouseEvent = m_page->currentlyProcessedMouseDownEvent();
     const GdkEvent* event = mouseEvent ? mouseEvent->nativeEvent() : 0;
-    gtk_menu_popup(m_popup, 0, 0, reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this,
+    gtk_menu_popup(m_menu.platformDescription(), 0, 0, reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this,
                    event ? event->button.button : 3, event ? event->button.time : GDK_CURRENT_TIME);
 }
 
 void WebContextMenuProxyGtk::hideContextMenu()
 {
-    gtk_menu_popdown(m_popup);
+    gtk_menu_popdown(m_menu.platformDescription());
 }
 
 WebContextMenuProxyGtk::WebContextMenuProxyGtk(GtkWidget* webView, WebPageProxy* page)
     : m_webView(webView)
     , m_page(page)
-    , m_popup(0)
 {
+    webkitWebViewBaseSetActiveContextMenuProxy(WEBKIT_WEB_VIEW_BASE(m_webView), this);
 }
 
 WebContextMenuProxyGtk::~WebContextMenuProxyGtk()
 {
-    if (m_popup)
-        gtk_widget_destroy(GTK_WIDGET(m_popup));
+    webkitWebViewBaseSetActiveContextMenuProxy(WEBKIT_WEB_VIEW_BASE(m_webView), 0);
 }
 
 void WebContextMenuProxyGtk::menuPositionFunction(GtkMenu* menu, gint* x, gint* y, gboolean* pushIn, WebContextMenuProxyGtk* popupMenu)

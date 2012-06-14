@@ -94,6 +94,7 @@ struct _WebKitWebViewBasePrivate {
 #endif
     GtkWidget* inspectorView;
     unsigned inspectorViewHeight;
+    WebContextMenuProxyGtk* activeContextMenuProxy;
 };
 
 G_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
@@ -772,4 +773,14 @@ void webkitWebViewBaseSetInspectorViewHeight(WebKitWebViewBase* webkitWebViewBas
         return;
     webkitWebViewBase->priv->inspectorViewHeight = height;
     gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webkitWebViewBase));
+}
+
+void webkitWebViewBaseSetActiveContextMenuProxy(WebKitWebViewBase* webkitWebViewBase, WebContextMenuProxyGtk* contextMenuProxy)
+{
+    webkitWebViewBase->priv->activeContextMenuProxy = contextMenuProxy;
+}
+
+WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebViewBase* webkitWebViewBase)
+{
+    return webkitWebViewBase->priv->activeContextMenuProxy;
 }

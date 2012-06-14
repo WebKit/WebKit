@@ -21,7 +21,10 @@
 #include "config.h"
 #include "WebKitWebView.h"
 
+#include "WebContextMenuItem.h"
+#include "WebContextMenuItemData.h"
 #include "WebKitBackForwardListPrivate.h"
+#include "WebKitContextMenuClient.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitError.h"
 #include "WebKitFullscreenClient.h"
@@ -295,6 +298,7 @@ static void webkitWebViewConstructed(GObject* object)
     attachPolicyClientToPage(webView);
     attachResourceLoadClientToView(webView);
     attachFullScreenClientToView(webView);
+    attachContextMenuClientToView(webView);
 
     WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);
     priv->backForwardList = adoptGRef(webkitBackForwardListCreate(WKPageGetBackForwardList(toAPI(page))));
@@ -1166,6 +1170,54 @@ void webkitWebViewRunFileChooserRequest(WebKitWebView* webView, WebKitFileChoose
 {
     gboolean returnValue;
     g_signal_emit(webView, signals[RUN_FILE_CHOOSER], 0, request, &returnValue);
+}
+
+static void webkitWebViewCreateAndAppendDefaultMenuItems(WebKitWebView* webView, WKArrayRef wkProposedMenu, Vector<ContextMenuItem>& contextMenuItems)
+{
+    for (size_t i = 0; i < WKArrayGetSize(wkProposedMenu); ++i) {
+        WKContextMenuItemRef wkItem = static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(wkProposedMenu, i));
+        contextMenuItems.append(toImpl(wkItem)->data()->core());
+    }
+}
+
+static bool webkitWebViewShouldShowInputMethodsMenu(WebKitWebView* webView)
+{
+    GtkSettings* settings = gtk_widget_get_settings(GTK_WIDGET(webView));
+    if (!settings)
+        return true;
+
+    gboolean showInputMethodMenu;
+    g_object_get(settings, "gtk-show-input-method-menu", &showInputMethodMenu, NULL);
+    return showInputMethodMenu;
+}
+
+static void webkitWebViewCreateAndAppendInputMethodsMenuItem(WebKitWebView* webView, Vector<ContextMenuItem>& contextMenuItems)
+{
+    if (!webkitWebViewShouldShowInputMethodsMenu(webView))
+        return;
+
+    GtkIMContext* imContext = webkitWebViewBaseGetIMContext(WEBKIT_WEB_VIEW_BASE(webView));
+    GtkMenu* imContextMenu = GTK_MENU(gtk_menu_new());
+    gtk_im_multicontext_append_menuitems(GTK_IM_MULTICONTEXT(imContext), GTK_MENU_SHELL(imContextMenu));
+    ContextMenu subMenu(imContextMenu);
+
+    ContextMenuItem separator(SeparatorType, ContextMenuItemTagNoAction, String());
+    contextMenuItems.append(separator);
+    ContextMenuItem menuItem(SubmenuType, ContextMenuItemTagNoAction, _("Input _Methods"), &subMenu);
+    contextMenuItems.append(menuItem);
+}
+
+void webkitWebViewPopulateContextMenu(WebKitWebView* webView, WKArrayRef wkProposedMenu, WKHitTestResultRef wkHitTestResult)
+{
+    WebContextMenuProxyGtk* contextMenu = webkitWebViewBaseGetActiveContextMenuProxy(WEBKIT_WEB_VIEW_BASE(webView));
+    ASSERT(contextMenu);
+
+    Vector<ContextMenuItem> contextMenuItems;
+    webkitWebViewCreateAndAppendDefaultMenuItems(webView, wkProposedMenu, contextMenuItems);
+    if (WKHitTestResultIsContentEditable(wkHitTestResult))
+        webkitWebViewCreateAndAppendInputMethodsMenuItem(webView, contextMenuItems);
+
+    contextMenu->populate(contextMenuItems);
 }
 
 /**

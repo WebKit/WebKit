@@ -53,5 +53,6 @@ void webkitWebViewRemoveLoadingWebResource(WebKitWebView*, uint64_t resourceIden
 WebKitWebResource* webkitWebViewResourceLoadFinished(WebKitWebView*, uint64_t resourceIdentifier);
 bool webkitWebViewEnterFullScreen(WebKitWebView*);
 bool webkitWebViewLeaveFullScreen(WebKitWebView*);
+void webkitWebViewPopulateContextMenu(WebKitWebView*, WKArrayRef proposedMenu, WKHitTestResultRef);
 
 #endif // WebKitWebViewPrivate_h

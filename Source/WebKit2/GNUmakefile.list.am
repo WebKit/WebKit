@@ -575,6 +575,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuClient.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitCookieManager.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitCookieManager.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitCookieManagerPrivate.h \
