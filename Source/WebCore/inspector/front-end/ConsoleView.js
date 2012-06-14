@@ -733,7 +733,7 @@ WebInspector.ConsoleView.prototype = {
 
             this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage, this._linkifier));
         }
-        this.evalInInspectedWindow(text, "console", true, false, false, printResult.bind(this));
+        this.evalInInspectedWindow(text, "console", useCommandLineAPI, false, false, printResult.bind(this));
 
         WebInspector.userMetrics.ConsoleEvaluated.record();
     },
