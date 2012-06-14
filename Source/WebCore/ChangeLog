@@ -1,3 +1,19 @@
+2012-06-13  Mihai Balan  <mibalan@adobe.com>
+
+        Touched CSSPropertyNames.in to trigger a proper rebuild
+
+        [CSS Regions] Adding feature defines for CSS Regions & exclusions for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=88645
+
+        Reviewed by Sam Weinig.
+
+        Previous work on #87442 added feature defines to allow proper disabling of CSS Regions and
+        exclusions (previously even with the feature disabled, parsing still worked). However, the
+        feature defines were enabled on Mac only - they were broken on Windows. This
+        patch adds the feature defines to (re)enable regions and exclusions on Windows.
+
+        * css/CSSPropertyNames.in: Touched to trigger a proper rebuild. Incremental builds were broken on Windows.
+
 2012-06-13  Arnaud Renevier  <arno@renevier.net>
 
         make sure headers are included only once per file

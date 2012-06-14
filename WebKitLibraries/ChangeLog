@@ -1,3 +1,20 @@
+2012-06-13  Mihai Balan  <mibalan@adobe.com>
+
+        Fix for #88645 - enabling regions on Windows
+
+        [CSS Regions] Adding feature defines for CSS Regions & exclusions for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=88645
+
+        Reviewed by Sam Weinig.
+
+        Previous work on #87442 added feature defines to allow proper disabling of CSS Regions and
+        exclusions (previously even with the feature disabled, parsing still worked). However, the
+        feature defines were enabled on Mac only - they were broken on Windows. This
+        patch adds the feature defines to (re)enable regions and exclusions on Windows.
+
+        * win/tools/vsprops/FeatureDefines.vsprops: Added default value for ENABLE_CSS_EXCLUSIONS and ENABLE_CSS_REGIONS
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops: ditto
+
 2012-06-11  Alexis Menard  <alexis.menard@openbossa.org>
 
         [CSS3 Backgrounds and Borders] Protect box-decoration-break behind a feature flag.
