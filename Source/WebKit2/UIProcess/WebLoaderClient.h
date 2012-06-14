@@ -51,6 +51,10 @@ class WebProtectionSpace;
 class WebIntentData;
 #endif
 
+#if ENABLE(WEB_INTENTS_TAG)
+class WebIntentServiceInfo;
+#endif
+
 class WebLoaderClient : public APIClient<WKPageLoaderClient, kWKPageLoaderClientCurrentVersion> {
 public:
     void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
@@ -70,6 +74,10 @@ public:
     void didDetectXSSForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
 #if ENABLE(WEB_INTENTS)
     void didReceiveIntentForFrame(WebPageProxy*, WebFrameProxy*, WebIntentData*);
+#endif
+
+#if ENABLE(WEB_INTENTS_TAG)
+    void registerIntentServiceForFrame(WebPageProxy*, WebFrameProxy*, WebIntentServiceInfo*);
 #endif
 
     // FIXME: didFirstVisuallyNonEmptyLayoutForFrame and didNewFirstVisuallyNonEmptyLayout should be merged.

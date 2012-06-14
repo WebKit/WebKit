@@ -150,6 +150,7 @@ void attachLoaderClientToView(WebKitWebView* webView)
         0, // interactionOccurredWhileProcessUnresponsive
         0, // pluginDidFail
         0, // didReceiveIntentForFrame
+        0, // registerIntentServiceForFrame
     };
     WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
     WKPageSetPageLoaderClient(wkPage, &wkLoaderClient);

@@ -613,6 +613,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // interactionOccurredWhileProcessUnresponsive
         0, // pluginDidFail
         0, // didReceiveIntentForFrame
+        0, // registerIntentServiceForFrame
     };
     WKPageSetPageLoaderClient(_webView.pageRef, &loadClient);
     

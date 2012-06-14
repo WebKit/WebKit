@@ -1,3 +1,17 @@
+2012-06-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Add implementation for registerIntentService in WebFrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=88399
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update initialization of WKPageLoaderClient.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2012-06-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Implement setDomainRelaxationForbiddenForURLScheme in EFL DRT

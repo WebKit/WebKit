@@ -33,6 +33,7 @@
 
 #if ENABLE(WEB_INTENTS)
 #include "WebIntentData.h"
+#include "WebIntentServiceInfo.h"
 #endif
 
 using namespace WebCore;
@@ -174,6 +175,16 @@ void WebLoaderClient::didReceiveIntentForFrame(WebPageProxy* page, WebFrameProxy
         return;
 
     m_client.didReceiveIntentForFrame(toAPI(page), toAPI(frame), toAPI(intentData), m_client.clientInfo);
+}
+#endif
+
+#if ENABLE(WEB_INTENTS_TAG)
+void WebLoaderClient::registerIntentServiceForFrame(WebPageProxy* page, WebFrameProxy* frame, WebIntentServiceInfo* serviceInfo)
+{
+    if (!m_client.registerIntentServiceForFrame)
+        return;
+
+    m_client.registerIntentServiceForFrame(toAPI(page), toAPI(frame), toAPI(serviceInfo), m_client.clientInfo);
 }
 #endif
 

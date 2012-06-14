@@ -93,6 +93,9 @@ messages -> WebPageProxy {
 #if ENABLE(WEB_INTENTS)
     DidReceiveIntentForFrame(uint64_t frameID, WebKit::IntentData intent)
 #endif
+#if ENABLE(WEB_INTENTS_TAG)
+    RegisterIntentServiceForFrame(uint64_t frameID, WebKit::IntentServiceInfo serviceInfo);
+#endif
 
     # Progress messages
     DidChangeProgress(double value)

@@ -231,6 +231,9 @@ private:
 #if ENABLE(WEB_INTENTS)
     virtual void dispatchIntent(PassRefPtr<WebCore::IntentRequest>) OVERRIDE;
 #endif
+#if ENABLE(WEB_INTENTS_TAG)
+    virtual void registerIntentService(const String& action, const String& type, const WebCore::KURL& href, const String& title, const String& disposition) OVERRIDE;
+#endif
 
     virtual bool shouldUsePluginDocument(const String& /*mimeType*/) const OVERRIDE;
 

@@ -123,6 +123,7 @@ SET(WebKit2_SOURCES
     Shared/ImmutableArray.cpp
     Shared/ImmutableDictionary.cpp
     Shared/IntentData.cpp
+    Shared/IntentServiceInfo.cpp
     Shared/MutableArray.cpp
     Shared/MutableDictionary.cpp
     Shared/OriginAndDatabases.cpp
@@ -238,6 +239,7 @@ SET(WebKit2_SOURCES
     UIProcess/WebIconDatabaseClient.cpp
     UIProcess/WebInspectorProxy.cpp
     UIProcess/WebIntentData.cpp
+    UIProcess/WebIntentServiceInfo.cpp
     UIProcess/WebKeyValueStorageManagerProxy.cpp
     UIProcess/WebLayerTreeRenderer.cpp
     UIProcess/WebLoaderClient.cpp

@@ -160,6 +160,10 @@ class WebGestureEvent;
 struct IntentData;
 #endif
 
+#if ENABLE(WEB_INTENTS_TAG)
+struct IntentServiceInfo;
+#endif
+
 typedef GenericCallback<WKStringRef, StringImpl*> StringCallback;
 typedef GenericCallback<WKSerializedScriptValueRef, WebSerializedScriptValue*> ScriptValueCallback;
 
@@ -720,6 +724,9 @@ private:
 
 #if ENABLE(WEB_INTENTS)
     void didReceiveIntentForFrame(uint64_t frameID, const IntentData&);
+#endif
+#if ENABLE(WEB_INTENTS_TAG)
+    void registerIntentServiceForFrame(uint64_t frameID, const IntentServiceInfo&);
 #endif
     
     void decidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, const WebCore::ResourceRequest&, uint64_t listenerID, CoreIPC::ArgumentDecoder*, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID);

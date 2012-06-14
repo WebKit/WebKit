@@ -74,6 +74,7 @@ typedef void (*WKPageDidNewFirstVisuallyNonEmptyLayoutCallback)(WKPageRef page, 
 typedef void (*WKPageWillGoToBackForwardListItemCallback)(WKPageRef page, WKBackForwardListItemRef item, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPagePluginDidFailCallback)(WKPageRef page, WKErrorCode errorCode, WKStringRef mimeType, WKStringRef pluginIdentifier, WKStringRef pluginVersion, const void* clientInfo);
 typedef void (*WKPageDidReceiveIntentForFrameCallback)(WKPageRef page, WKFrameRef frame, WKIntentDataRef intent, const void *clientInfo);
+typedef void (*WKPageRegisterIntentServiceForFrameCallback)(WKPageRef page, WKFrameRef frame, WKIntentServiceInfoRef serviceInfo, const void *clientInfo);
 
 // Deprecated
 typedef void (*WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef mimeType, const void* clientInfo);
@@ -124,6 +125,7 @@ struct WKPageLoaderClient {
 
     // Version 2
     WKPageDidReceiveIntentForFrameCallback                              didReceiveIntentForFrame;
+    WKPageRegisterIntentServiceForFrameCallback                         registerIntentServiceForFrame;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 

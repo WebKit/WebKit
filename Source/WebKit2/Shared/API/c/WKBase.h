@@ -99,6 +99,7 @@ typedef const struct OpaqueWKHitTestResult* WKHitTestResultRef;
 typedef const struct OpaqueWKIconDatabase* WKIconDatabaseRef;
 typedef const struct OpaqueWKInspector* WKInspectorRef;
 typedef const struct OpaqueWKIntentData* WKIntentDataRef;
+typedef const struct OpaqueWKIntentServiceInfo* WKIntentServiceInfoRef;
 typedef const struct OpaqueWKKeyValueStorageManager* WKKeyValueStorageManagerRef;
 typedef const struct OpaqueWKMediaCacheManager* WKMediaCacheManagerRef;
 typedef const struct OpaqueWKNavigationData* WKNavigationDataRef;

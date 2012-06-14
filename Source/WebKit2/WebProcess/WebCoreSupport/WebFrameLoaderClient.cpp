@@ -75,6 +75,7 @@
 
 #if ENABLE(WEB_INTENTS)
 #include "IntentData.h"
+#include "IntentServiceInfo.h"
 #include <WebCore/IntentRequest.h>
 #endif
 
@@ -1557,6 +1558,24 @@ void WebFrameLoaderClient::dispatchIntent(PassRefPtr<IntentRequest> request)
     intentData.suggestions = coreIntent->suggestions();
 
     webPage->send(Messages::WebPageProxy::DidReceiveIntentForFrame(m_frame->frameID(), intentData));
+}
+#endif
+
+#if ENABLE(WEB_INTENTS_TAG)
+void WebFrameLoaderClient::registerIntentService(const String& action, const String& type, const KURL& href, const String& title, const String& disposition)
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    IntentServiceInfo serviceInfo;
+    serviceInfo.action = action;
+    serviceInfo.type = type;
+    serviceInfo.href = href;
+    serviceInfo.title = title;
+    serviceInfo.disposition = disposition;
+
+    webPage->send(Messages::WebPageProxy::RegisterIntentServiceForFrame(m_frame->frameID(), serviceInfo));
 }
 #endif
 

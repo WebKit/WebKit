@@ -87,7 +87,9 @@
 
 #if ENABLE(WEB_INTENTS)
 #include "IntentData.h"
+#include "IntentServiceInfo.h"
 #include "WebIntentData.h"
+#include "WebIntentServiceInfo.h"
 #endif
 
 #if USE(UI_SIDE_COMPOSITING)
@@ -1870,6 +1872,17 @@ void WebPageProxy::didFinishProgress()
 
     m_loaderClient.didFinishProgress(this);
 }
+
+#if ENABLE(WEB_INTENTS_TAG)
+void WebPageProxy::registerIntentServiceForFrame(uint64_t frameID, const IntentServiceInfo& serviceInfo)
+{
+    WebFrameProxy* frame = process()->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+
+    RefPtr<WebIntentServiceInfo> webIntentServiceInfo = WebIntentServiceInfo::create(serviceInfo);
+    m_loaderClient.registerIntentServiceForFrame(this, frame, webIntentServiceInfo.get());
+}
+#endif
 
 void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const String& url, const String& unreachableURL, CoreIPC::ArgumentDecoder* arguments)
 {
