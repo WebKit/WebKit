@@ -140,7 +140,7 @@ CCLayerTreeHostImpl::~CCLayerTreeHostImpl()
     TRACE_EVENT("CCLayerTreeHostImpl::~CCLayerTreeHostImpl()", this, 0);
 
     if (m_rootLayerImpl)
-        clearRenderSurfacesOnCCLayerImplRecursive(m_rootLayerImpl.get());
+        clearRenderSurfaces();
 }
 
 void CCLayerTreeHostImpl::beginCommit()
@@ -545,7 +545,7 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<CCGraphicsContext> 
     // Since we now have a new context/layerRenderer, we cannot continue to use the old
     // resources (i.e. renderSurfaces and texture IDs).
     if (m_rootLayerImpl) {
-        clearRenderSurfacesOnCCLayerImplRecursive(m_rootLayerImpl.get());
+        clearRenderSurfaces();
         sendDidLoseContextRecursive(m_rootLayerImpl.get());
     }
 
@@ -894,12 +894,18 @@ void CCLayerTreeHostImpl::sendDidLoseContextRecursive(CCLayerImpl* current)
         sendDidLoseContextRecursive(current->children()[i].get());
 }
 
-void CCLayerTreeHostImpl::clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl* current)
+static void clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl* current)
 {
     ASSERT(current);
     for (size_t i = 0; i < current->children().size(); ++i)
         clearRenderSurfacesOnCCLayerImplRecursive(current->children()[i].get());
     current->clearRenderSurface();
+}
+
+void CCLayerTreeHostImpl::clearRenderSurfaces()
+{
+    clearRenderSurfacesOnCCLayerImplRecursive(m_rootLayerImpl.get());
+    // FIXME: If we have any RenderSurfaceLayerList saved, then make the list empty here.
 }
 
 String CCLayerTreeHostImpl::layerTreeAsText() const

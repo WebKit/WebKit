@@ -209,7 +209,7 @@ private:
     void setBackgroundTickingEnabled(bool);
     IntSize contentSize() const;
     void sendDidLoseContextRecursive(CCLayerImpl*);
-    void clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl*);
+    void clearRenderSurfaces();
 
     void dumpRenderSurfaces(TextStream&, int indent, const CCLayerImpl*) const;
 

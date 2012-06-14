@@ -1,3 +1,31 @@
+2012-06-13  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Assert if iterating an invalid RenderSurfaceLayerList, where a layer in the list has no RenderSurface
+        https://bugs.webkit.org/show_bug.cgi?id=89004
+
+        Reviewed by Adrienne Walker.
+
+        A RenderSurfaceLayerList expects that all layers in the list own a
+        RenderSurface. If an invalid RSLL is iterated over, the
+        CCLayerIterator class will now ASSERT in debug mode, as well as
+        considering the list empty in release mode.
+
+        We will be adding code to CCLayerTreeHostImpl to save a RSLL across
+        frames, so adding a clearRenderSurfaces() method with a FIXME comment
+        to make it clear that we should clear the RSLL when we remove
+        RenderSurfaces from the layers in the saved RSLL.
+
+        * platform/graphics/chromium/cc/CCLayerIterator.h:
+        (WebCore::CCLayerIterator::CCLayerIterator):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::~CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::initializeLayerRenderer):
+        (WebCore::clearRenderSurfacesOnCCLayerImplRecursive):
+        (WebCore::CCLayerTreeHostImpl::clearRenderSurfaces):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+
 2012-06-13  Yael Aharon  <yael.aharon@nokia.com>
 
         Remove redundant code from RenderView and RenderBlock
