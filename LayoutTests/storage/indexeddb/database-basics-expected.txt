@@ -8,12 +8,14 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 indexedDB.open('database-basics')
 db = event.target.result
 db.setVersion('new version')
-setVersionSuccess():
-trans = event.target.result
-PASS trans is non-null.
 Deleted all object stores.
+setVersionSuccess():
 Testing setVersion.
-db.setVersion("version a")
+request = db.setVersion("version a")
+Expecting exception from db.setVersion("version b")
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
 db.setVersion("version b")
 PASS db.version is "version b"
 PASS db.name is "database-basics"

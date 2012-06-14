@@ -282,7 +282,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBTransactionBackendInterface> prpBackend
         return;
     }
 
-    RefPtr<IDBTransaction> frontend = IDBTransaction::create(scriptExecutionContext(), backend, m_source->idbDatabase().get());
+    RefPtr<IDBTransaction> frontend = IDBTransaction::create(scriptExecutionContext(), backend, IDBTransaction::VERSION_CHANGE, m_source->idbDatabase().get());
     backend->setCallbacks(frontend.get());
     m_transaction = frontend;
 

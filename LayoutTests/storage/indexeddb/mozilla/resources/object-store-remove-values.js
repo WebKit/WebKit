@@ -71,6 +71,7 @@ function setVersion()
 
 function createObjectStore()
 {
+    transaction = event.target.result;
     deleteAllObjectStores(db);
 
     if (test.keyName) {
@@ -115,7 +116,7 @@ function finalCheck()
 {
     shouldBeTrue("event.target.result === undefined");
     i++;
-    setVersion();
+    transaction.oncomplete = setVersion;
 }
 
 test();

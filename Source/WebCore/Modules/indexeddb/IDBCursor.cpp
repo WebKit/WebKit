@@ -130,6 +130,12 @@ PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRe
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
+
+    if (m_transaction->isReadOnly()) {
+        ec = IDBDatabaseException::READ_ONLY_ERR;
+        return 0;
+    }
+
     RefPtr<SerializedScriptValue> value = prpValue;
     if (value->blobURLs().size() > 0) {
         // FIXME: Add Blob/File/FileList support

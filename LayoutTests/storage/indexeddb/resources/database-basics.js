@@ -19,22 +19,30 @@ function openSuccess()
     self.db = evalAndLog("db = event.target.result");
 
     request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = setVersionSuccess;
+    request.onsuccess = function() {
+        deleteAllObjectStores(db);
+
+        var transaction = event.target.result;
+        transaction.oncomplete = setVersionSuccess;
+        transaction.onabort = unexpectedErrorCallback;
+    };
     request.onerror = unexpectedErrorCallback;
 }
 
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-    trans.onabort = unexpectedAbortCallback;
-
-    deleteAllObjectStores(db);
 
     debug("Testing setVersion.");
-    request = evalAndLog('db.setVersion("version a")');
-    request.onsuccess = setVersionAgain;
+    evalAndLog('request = db.setVersion("version a")');
+    request.onsuccess = function(event) {
+
+        evalAndExpectException('db.setVersion("version b")',
+                               "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+        var transaction = event.target.result;
+        transaction.oncomplete = setVersionAgain;
+        transaction.onabort = unexpectedErrorCallback;
+    };
     request.onerror = unexpectedErrorCallback;
 }
 
@@ -57,7 +65,10 @@ function createObjectStore()
 
     objectStore = evalAndLog('db.createObjectStore("test123")');
     checkObjectStore();
-    commitAndContinue();
+
+    var transaction = event.target.result;
+    transaction.oncomplete = testSetVersionAbort;
+    transaction.onabort = unexpectedAbortCallback;
 }
 
 function checkObjectStore()
@@ -69,10 +80,6 @@ function checkObjectStore()
     shouldBe("db.objectStoreNames.contains('test123')", "true");
 }
 
-function commitAndContinue()
-{
-    self.setTimeout(testSetVersionAbort, 0);
-}
 
 function testSetVersionAbort()
 {

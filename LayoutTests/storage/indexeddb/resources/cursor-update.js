@@ -59,7 +59,7 @@ function openBasicCursor()
     debug("openBasicCursor()");
     evalAndLog("trans = db.transaction(['basicStore', 'autoIncrementStore', 'keyPathStore'], 'readwrite')");
     trans.onabort = unexpectedAbortCallback;
-    trans.oncomplete = transactionComplete;
+    trans.oncomplete = testReadOnly;
 
     keyRange = IDBKeyRange.lowerBound("myKey1");
     self.objectStore = evalAndLog("trans.objectStore('basicStore')");
@@ -200,7 +200,32 @@ function keyCursor()
                            "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
 
     counter++;
-    event.target.result.continue();
+    evalAndLog("event.target.result.continue();");
+}
+
+function testReadOnly()
+{
+    debug("openBasicCursor()");
+    evalAndLog("trans = db.transaction('basicStore')");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = transactionComplete;
+
+    keyRange = IDBKeyRange.lowerBound("myKey1");
+    self.objectStore = evalAndLog("trans.objectStore('basicStore')");
+    request = evalAndLog("objectStore.openCursor(keyRange)");
+    request.onsuccess = attemptUpdate;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function attemptUpdate()
+{
+    debug("attemptUpdate()");
+    self.cursor = event.target.result;
+    if (self.cursor) {
+        evalAndExpectException("cursor.update('myUpdatedValue')",
+                               "IDBDatabaseException.READ_ONLY_ERR", "'ReadOnlyError'");
+        evalAndLog("cursor.continue()");
+    }
 }
 
 function transactionComplete()

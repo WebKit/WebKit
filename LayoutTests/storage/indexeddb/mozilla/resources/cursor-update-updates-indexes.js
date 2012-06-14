@@ -56,6 +56,7 @@ function setVersion()
 
 function setupObjectStoreAndCreateIndexAndAdd()
 {
+    var transaction = event.target.result;
     debug("setupObjectStoreAndCreateIndex():");
     deleteAllObjectStores(db);
 
@@ -68,8 +69,15 @@ function setupObjectStoreAndCreateIndexAndAdd()
     } else {
         request = evalAndLog("request = objectStore.add(info.entry);");
     }
-    request.onsuccess = openCursor;
     request.onerror = unexpectedErrorCallback;
+
+    transaction.oncomplete = function () {
+        evalAndLog("trans = db.transaction(info.name, 'readwrite')");
+        evalAndLog("objectStore = trans.objectStore(info.name)");
+        evalAndLog("index = objectStore.index('data_index')");
+        evalAndLog("uniqueIndex = objectStore.index('unique_data_index')");
+        openCursor();
+    };
 }
 
 function openCursor()

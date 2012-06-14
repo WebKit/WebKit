@@ -41,9 +41,9 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBDatabase* db)
+PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBTransaction::Mode mode, IDBDatabase* db)
 {
-    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, backend, db)));
+    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, backend, mode, db)));
     transaction->suspendIfNeeded();
     return transaction.release();
 }
@@ -79,15 +79,16 @@ const AtomicString& IDBTransaction::modeReadWriteLegacy()
 }
 
 
-IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBDatabase* db)
+IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTransactionBackendInterface> backend, IDBTransaction::Mode mode, IDBDatabase* db)
     : ActiveDOMObject(context, this)
     , m_backend(backend)
     , m_database(db)
-    , m_mode(m_backend->mode())
+    , m_mode(mode)
     , m_transactionFinished(false)
     , m_contextStopped(false)
 {
     ASSERT(m_backend);
+    ASSERT(m_mode == m_backend->mode());
     IDBPendingTransactionMonitor::addPendingTransaction(m_backend.get());
     // We pass a reference of this object before it can be adopted.
     relaxAdoptionRequirement();
@@ -262,7 +263,7 @@ bool IDBTransaction::hasPendingActivity() const
     return !m_transactionFinished || ActiveDOMObject::hasPendingActivity();
 }
 
-unsigned short IDBTransaction::stringToMode(const String& modeString, ExceptionCode& ec)
+IDBTransaction::Mode IDBTransaction::stringToMode(const String& modeString, ExceptionCode& ec)
 {
     if (modeString.isNull()
         || modeString == IDBTransaction::modeReadOnly())
@@ -270,10 +271,10 @@ unsigned short IDBTransaction::stringToMode(const String& modeString, ExceptionC
     if (modeString == IDBTransaction::modeReadWrite())
         return IDBTransaction::READ_WRITE;
     ec = IDBDatabaseException::IDB_TYPE_ERR;
-    return 0;
+    return IDBTransaction::READ_ONLY;
 }
 
-const AtomicString& IDBTransaction::modeToString(unsigned short mode, ExceptionCode& ec)
+const AtomicString& IDBTransaction::modeToString(IDBTransaction::Mode mode, ExceptionCode& ec)
 {
     switch (mode) {
     case IDBTransaction::READ_ONLY:

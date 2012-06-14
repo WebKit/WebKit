@@ -12,7 +12,6 @@ request = db.setVersion('1')
 Deleted all object stores.
 objectStoreName = 'Objects';
 objectStore = db.createObjectStore(objectStoreName, { keyPath: 'foo' });
-addedCount = 0;
 request = objectStore.add({foo: i});
 request = objectStore.add({foo: i});
 request = objectStore.add({foo: i});

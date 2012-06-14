@@ -48,14 +48,14 @@ class IDBObjectStore;
 
 class IDBTransaction : public IDBTransactionCallbacks, public EventTarget, public ActiveDOMObject {
 public:
-    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, IDBDatabase*);
-    virtual ~IDBTransaction();
-
     enum Mode {
         READ_ONLY = 0,
         READ_WRITE = 1,
         VERSION_CHANGE = 2
     };
+
+    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, Mode, IDBDatabase*);
+    virtual ~IDBTransaction();
 
     static const AtomicString& modeReadOnly();
     static const AtomicString& modeReadWrite();
@@ -63,8 +63,8 @@ public:
     static const AtomicString& modeReadOnlyLegacy();
     static const AtomicString& modeReadWriteLegacy();
 
-    static unsigned short stringToMode(const String&, ExceptionCode&);
-    static const AtomicString& modeToString(unsigned short, ExceptionCode&);
+    static Mode stringToMode(const String&, ExceptionCode&);
+    static const AtomicString& modeToString(Mode, ExceptionCode&);
 
     IDBTransactionBackendInterface* backend() const;
     bool isFinished() const;
@@ -117,7 +117,7 @@ public:
     using RefCounted<IDBTransactionCallbacks>::deref;
 
 private:
-    IDBTransaction(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, IDBDatabase*);
+    IDBTransaction(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, Mode, IDBDatabase*);
 
     void enqueueEvent(PassRefPtr<Event>);
     void closeOpenCursors();
@@ -133,7 +133,7 @@ private:
 
     RefPtr<IDBTransactionBackendInterface> m_backend;
     RefPtr<IDBDatabase> m_database;
-    const unsigned short m_mode;
+    const Mode m_mode;
     bool m_transactionFinished; // Is it possible that we'll fire any more events or allow any new requests? If not, we're finished.
     bool m_contextStopped;
     RefPtr<DOMError> m_error;

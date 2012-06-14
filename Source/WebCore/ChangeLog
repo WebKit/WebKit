@@ -1,3 +1,38 @@
+2012-06-14  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Creating a transaction from within a transaction callback should fail
+        https://bugs.webkit.org/show_bug.cgi?id=80547
+
+        Reviewed by Tony Chang.
+
+        Prevent creation of a transaction, via IDBDatabase.transaction()
+        or IDBDatabase.setVersion(), from inside a setVersion()
+        transaction, as per spec. Update many tests to deal with this.
+
+        Test restructuring uncovered some inconsistencies in transaction
+        mode handling. So also do some minor cleanup in the way the
+        transaction mode is passed between the frontend and backend
+        transaction objects, and add additional asserts.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::update):
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::update):
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::setVersion):
+        (WebCore::IDBDatabase::transaction):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::create):
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::stringToMode):
+        (WebCore::IDBTransaction::modeToString):
+        * Modules/indexeddb/IDBTransaction.h:
+        (IDBTransaction):
+
 2012-06-14  Li Yin  <li.yin@intel.com>
 
         [WebSocket] WebSocket object in Worker Context should fire error event when it fails connection.

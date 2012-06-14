@@ -159,6 +159,11 @@ PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionConte
         return 0;
     }
 
+    if (m_versionChangeTransaction) {
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        return 0;
+    }
+
     RefPtr<IDBVersionChangeRequest> request = IDBVersionChangeRequest::create(context, IDBAny::create(this), version);
     m_backend->setVersion(version, request, m_databaseCallbacks, ec);
     return request;
@@ -172,11 +177,11 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
         return 0;
     }
 
-    unsigned short mode = IDBTransaction::stringToMode(modeString, ec);
+    IDBTransaction::Mode mode = IDBTransaction::stringToMode(modeString, ec);
     if (ec)
         return 0;
 
-    if (m_closePending) {
+    if (m_versionChangeTransaction || m_closePending) {
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
@@ -190,7 +195,7 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
         ASSERT(ec);
         return 0;
     }
-    RefPtr<IDBTransaction> transaction = IDBTransaction::create(context, transactionBackend, this);
+    RefPtr<IDBTransaction> transaction = IDBTransaction::create(context, transactionBackend, mode, this);
     transactionBackend->setCallbacks(transaction.get());
     return transaction.release();
 }
@@ -213,7 +218,7 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
 {
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Numeric transaction modes are deprecated in IDBDatabase.transaction. Use \"readonly\" or \"readwrite\"."));
     context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
-    AtomicString modeString = IDBTransaction::modeToString(mode, ec);
+    AtomicString modeString = IDBTransaction::modeToString(IDBTransaction::Mode(mode), ec);
     if (ec)
         return 0;
 

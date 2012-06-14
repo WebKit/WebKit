@@ -211,6 +211,7 @@ void IDBObjectStoreBackendImpl::revertAutoIncrementKeyCache(ScriptExecutionConte
 void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::putInternal");
+    ASSERT(transaction->mode() != IDBTransaction::READ_ONLY);
     RefPtr<SerializedScriptValue> value = prpValue;
     RefPtr<IDBKey> key = prpKey;
 

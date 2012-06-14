@@ -92,6 +92,7 @@ PassRefPtr<SerializedScriptValue> IDBCursorBackendImpl::value() const
 void IDBCursorBackendImpl::update(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursorBackendImpl::update");
+    ASSERT(m_transaction->mode() != IDBTransaction::READ_ONLY);
     if (!m_cursor || m_cursorType == IndexKeyCursor) {
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return;

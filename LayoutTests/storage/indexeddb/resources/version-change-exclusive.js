@@ -5,7 +5,8 @@ if (this.importScripts) {
 
 description("Ensure VERSION_CHANGE transaction doesn't run concurrently with other transactions");
 
-function test() {
+function test()
+{
     removeVendorPrefixes();
     openDBConnection();
 }
@@ -42,10 +43,12 @@ function inSetVersion()
     evalAndLog("self.state = 'VERSION_CHANGE started'");
 
     self.store = evalAndLog("store = db.createObjectStore('test-store')");
+    evalAndExpectException("db.transaction('test-store')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     self.count = 0;
     do_async_puts();
 
-    function do_async_puts() {
+    function do_async_puts()
+    {
         var req = evalAndLog("store.put(" + count + ", " + count + ")");
         req.onerror = unexpectedErrorCallback;
         req.onsuccess = function (e) {

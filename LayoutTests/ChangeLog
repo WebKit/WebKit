@@ -1,3 +1,39 @@
+2012-06-14  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Creating a transaction from within a transaction callback should fail
+        https://bugs.webkit.org/show_bug.cgi?id=80547
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/cursor-update-expected.txt:
+        * storage/indexeddb/database-basics-expected.txt:
+        * storage/indexeddb/mozilla/cursor-update-updates-indexes-expected.txt:
+        * storage/indexeddb/mozilla/resources/cursor-update-updates-indexes.js:
+        (setupObjectStoreAndCreateIndexAndAdd.transaction.oncomplete):
+        (setupObjectStoreAndCreateIndexAndAdd):
+        * storage/indexeddb/mozilla/resources/object-store-remove-values.js:
+        (createObjectStore):
+        (finalCheck):
+        * storage/indexeddb/mozilla/resources/remove-objectstore.js:
+        (createAndPopulateObjectStore):
+        (postSetVersion2.request.onsuccess):
+        (postSetVersion2):
+        (deleteSecondObjectStore):
+        * storage/indexeddb/resources/cursor-update.js:
+        (openBasicCursor):
+        (keyCursor):
+        (testReadOnly):
+        (attemptUpdate):
+        * storage/indexeddb/resources/database-basics.js:
+        (openSuccess.request.onsuccess):
+        (openSuccess):
+        (setVersionSuccess.request.onsuccess):
+        (setVersionSuccess):
+        (createObjectStore):
+        * storage/indexeddb/resources/version-change-exclusive.js:
+        (test):
+        * storage/indexeddb/version-change-exclusive-expected.txt:
+
 2012-06-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Implement setDomainRelaxationForbiddenForURLScheme in EFL DRT
