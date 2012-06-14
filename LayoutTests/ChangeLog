@@ -1,3 +1,14 @@
+2012-06-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Implement setDomainRelaxationForbiddenForURLScheme in EFL DRT
+        https://bugs.webkit.org/show_bug.cgi?id=84577
+
+        Reviewed by Ryosuke Niwa.
+
+        Unskip http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
+
+        * platform/efl/Skipped:
+
 2012-06-14  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Updating baseline after r120257.

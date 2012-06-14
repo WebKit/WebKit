@@ -1,3 +1,16 @@
+2012-06-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Implement setDomainRelaxationForbiddenForURLScheme in EFL DRT
+        https://bugs.webkit.org/show_bug.cgi?id=84577
+
+        Reviewed by Ryosuke Niwa.
+
+        Add missing implementation setDomainRelaxationForbiddenForURLScheme to EFL's
+        LayoutTestController.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setDomainRelaxationForbiddenForURLScheme):
+
 2012-06-13  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add implementation for dispatchIntent in WebFrameLoaderClient

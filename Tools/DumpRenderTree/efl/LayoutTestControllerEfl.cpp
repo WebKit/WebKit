@@ -666,9 +666,9 @@ void LayoutTestController::syncLocalStorage()
     notImplemented();
 }
 
-void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool, JSStringRef)
+void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
 {
-    notImplemented();
+    DumpRenderTreeSupportEfl::setDomainRelaxationForbiddenForURLScheme(forbidden, WTF::String(scheme->ustring().impl()));
 }
 
 void LayoutTestController::goBack()

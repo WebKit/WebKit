@@ -1,3 +1,17 @@
+2012-06-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Implement setDomainRelaxationForbiddenForURLScheme in EFL DRT
+        https://bugs.webkit.org/show_bug.cgi?id=84577
+
+        Reviewed by Ryosuke Niwa.
+
+        Add missing implementation setDomainRelaxationForbiddenForURLScheme to
+        EFL's DumpRenderTreeSupport to allow disabling domain relaxation.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::setDomainRelaxationForbiddenForURLScheme):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2012-06-13  Amy Ousterhout  <aousterh@chromium.org>
 
         Rename currentDeviceMotion to lastMotion in DeviceMotionClient
