@@ -1370,6 +1370,7 @@ bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, CSSParserMode 
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     case CSSPrimitiveValue::CSS_DPPX:
     case CSSPrimitiveValue::CSS_DPI:
+    case CSSPrimitiveValue::CSS_DPCM:
         b = (unitflags & FResolution);
         break;
 #endif
@@ -1400,7 +1401,7 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveNumericValue(CSSP
     ASSERT((value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
            || (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS)
            || (value->unit >= CSSPrimitiveValue::CSS_VW && value->unit <= CSSPrimitiveValue::CSS_VMIN)
-           || (value->unit >= CSSPrimitiveValue::CSS_DPPX && value->unit <= CSSPrimitiveValue::CSS_DPI));
+           || (value->unit >= CSSPrimitiveValue::CSS_DPPX && value->unit <= CSSPrimitiveValue::CSS_DPCM));
 #else
     ASSERT((value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
            || (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS)
@@ -1465,6 +1466,8 @@ static int unitFromString(CSSParserValue* value)
         return CSSPrimitiveValue::CSS_DPPX;
     if (equal(value->string, "dpi"))
         return CSSPrimitiveValue::CSS_DPI;
+    if (equal(value->string, "dpcm"))
+        return CSSPrimitiveValue::CSS_DPCM;
 #endif
 
     return 0;
@@ -1520,7 +1523,7 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(int identifi
     if (value->unit >= CSSPrimitiveValue::CSS_VW && value->unit <= CSSPrimitiveValue::CSS_VMIN)
         return createPrimitiveNumericValue(value);
 #if ENABLE(CSS_IMAGE_RESOLUTION)
-    if (value->unit >= CSSPrimitiveValue::CSS_DPPX && value->unit <= CSSPrimitiveValue::CSS_DPI)
+    if (value->unit >= CSSPrimitiveValue::CSS_DPPX && value->unit <= CSSPrimitiveValue::CSS_DPCM)
         return createPrimitiveNumericValue(value);
 #endif
     if (value->unit >= CSSParserValue::Q_EMS)
@@ -8377,13 +8380,16 @@ inline void CSSParser::detectNumberToken(UChar* type, int length)
             m_token = DEGS;
 #if ENABLE(CSS_IMAGE_RESOLUTION)
         else if (length > 2 && isASCIIAlphaCaselessEqual(type[1], 'p')) {
-            // There is a discussion about the name of this unit on www-style.
-            // Keep this compile time guard in place until that is resolved.
-            // http://lists.w3.org/Archives/Public/www-style/2012May/0915.html
-            if (length == 4 && isASCIIAlphaCaselessEqual(type[2], 'p') && isASCIIAlphaCaselessEqual(type[3], 'x'))
-                m_token = DPPX;
-            else if (length == 3 && isASCIIAlphaCaselessEqual(type[2], 'i'))
-                m_token = DPI;
+            if (length == 4) {
+                // There is a discussion about the name of this unit on www-style.
+                // Keep this compile time guard in place until that is resolved.
+                // http://lists.w3.org/Archives/Public/www-style/2012May/0915.html
+                if (isASCIIAlphaCaselessEqual(type[2], 'p') && isASCIIAlphaCaselessEqual(type[3], 'x'))
+                    m_token = DPPX;
+                else if (isASCIIAlphaCaselessEqual(type[2], 'c') && isASCIIAlphaCaselessEqual(type[3], 'm'))
+                    m_token = DPCM;
+            } else if (length == 3 && isASCIIAlphaCaselessEqual(type[2], 'i'))
+                    m_token = DPI;
         }
 #endif
         return;

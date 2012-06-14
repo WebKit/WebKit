@@ -55,6 +55,24 @@ TEST "600dpi"
 PASS img.style.cssText is "image-resolution: 600dpi; "
 PASS img.offsetWidth is 2
 PASS img.offsetHeight is 2
+TEST "0dpcm"
+PASS img.style.cssText is ""
+TEST "37.7dpcm"
+PASS img.style.cssText is "image-resolution: 37.7dpcm; "
+PASS img.offsetWidth is 16
+PASS img.offsetHeight is 16
+TEST "75.5dpcm"
+PASS img.style.cssText is "image-resolution: 75.5dpcm; "
+PASS img.offsetWidth is 8
+PASS img.offsetHeight is 8
+TEST "113.3dpcm"
+PASS img.style.cssText is "image-resolution: 113.3dpcm; "
+PASS img.offsetWidth is 5
+PASS img.offsetHeight is 5
+TEST "151.1dpcm"
+PASS img.style.cssText is "image-resolution: 151.1dpcm; "
+PASS img.offsetWidth is 4
+PASS img.offsetHeight is 4
 TEST ""
 PASS img.style.cssText is ""
 PASS successfullyParsed is true

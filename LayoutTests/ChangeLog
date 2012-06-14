@@ -1,3 +1,13 @@
+2012-06-14  David Barr  <davidbarr@chromium.org>
+
+        Add dpcm to css3-images image-resolution
+        https://bugs.webkit.org/show_bug.cgi?id=85442
+
+        Reviewed by Tony Chang.
+
+        * fast/css/image-resolution/image-resolution-expected.txt:
+        * fast/css/image-resolution/image-resolution.html:
+
 2012-06-14  Matt Falkenhagen  <falken@chromium.org>
 
         LocaleToScriptMappingDefault.cpp should also do what scriptCodeForFontSelection does in LocaleToScriptMappingICU.cpp

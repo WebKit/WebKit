@@ -101,7 +101,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 62
+%expect 63
 
 %nonassoc LOWEST_PREC
 
@@ -196,6 +196,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token <number> VMIN
 %token <number> DPPX
 %token <number> DPI
+%token <number> DPCM
 
 %token <string> URI
 %token <string> FUNCTION
@@ -1499,6 +1500,7 @@ unary_term:
   | VMIN maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VMIN; }
   | DPPX maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DPPX; }
   | DPI maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DPI; }
+  | DPCM maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_DPCM; }
   ;
 
 function:

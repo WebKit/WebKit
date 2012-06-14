@@ -1,3 +1,30 @@
+2012-06-14  David Barr  <davidbarr@chromium.org>
+
+        Add dpcm to css3-images image-resolution
+        https://bugs.webkit.org/show_bug.cgi?id=85442
+
+        Reviewed by Tony Chang.
+
+        The css3-images module is at candidate recommendation.
+        http://www.w3.org/TR/2012/CR-css3-images-20120417/#the-image-resolution
+
+        No new tests; extended fast/css/image-resolution/image-resolution.html
+
+        * css/CSSGrammar.y: Add DPCM token and unary term.
+        * css/CSSParser.cpp: Extend range of units accepted for resolution and tokenize "dpcm".
+        (WebCore::CSSParser::validUnit): Accept CSSPrimitiveValue::CSS_DPCM.
+        (WebCore::CSSParser::createPrimitiveNumericValue): Accept CSSPrimitiveValue::CSS_DPCM.
+        (WebCore::unitFromString): Map "dpcm" to CSSPrimitiveValue::CSS_DPCM.
+        (WebCore::CSSParser::parseValidPrimitive): Accept CSSPrimitiveValue::CSS_DPCM.
+        (WebCore::CSSParser::detectNumberToken): Map "dpcm" to CSSPrimitiveValue::CSS_DPCM.
+        * css/CSSPrimitiveValue.cpp: Add CSSPrimitiveValue::CSS_DPCM as a numeric unit.
+        (WebCore::isValidCSSUnitTypeForDoubleConversion): Accept CSSPrimitiveValue::CSS_DPCM.
+        (WebCore::unitCategory): Map CSSPrimitiveValue::CSS_DPCM to CSSPrimitiveValue::UResolution.
+        (WebCore::conversionToCanonicalUnitsScaleFactor): Scale CSSPrimitiveValue::CSS_DPCM to CSSPrimitiveValue::CSS_DPPX.
+        (WebCore::CSSPrimitiveValue::customCssText): Format CSSPrimitiveValue::CSS_DPCM as "<num>dpcm".
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM): Accept CSSPrimitiveValue::CSS_DPCM as numeric unit.
+        * css/CSSPrimitiveValue.h: Add CSSPrimitiveValue::CSS_DPCM.
+
 2012-06-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: REGRESSION HeapProfiler can't remove heap snapshot from the list if Dominators view has been opened.
