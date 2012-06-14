@@ -1,3 +1,16 @@
+2012-06-14  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: Implement ExtensionPanel.show() method
+        https://bugs.webkit.org/show_bug.cgi?id=88473
+
+        Add output for ExtensionPanel callbacks, and use ExtensionPanel.show()
+        to show the panel. Fix expected.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/extensions/extensions-panel-expected.txt:
+        * inspector/extensions/extensions-panel.html:
+
 2012-06-14  David Barr  <davidbarr@chromium.org>
 
         Add dpcm to css3-images image-resolution

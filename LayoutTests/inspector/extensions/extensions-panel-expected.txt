@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 8: hello
 Tests WebInspector extension API
 
 Started extension.
@@ -18,8 +19,10 @@ Panel created
         removeListener : <function>
     }
     createStatusBarButton : <function>
+    show : <function>
 }
 Extension panel size correct
+Panel shown
 RUNNING TEST: extension_testStatusBarButtons
 Created a status bar button, dump follows:
 {
@@ -29,6 +32,7 @@ Created a status bar button, dump follows:
     }
     update : <function>
 }
+Panel hidden
 button1 clicked
 Status bar buttons state:
 status bar item 0, icon: .../inspector/resources/button1.png, tooltip: 'Button One tooltip', disabled: false

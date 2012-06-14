@@ -1,3 +1,24 @@
+2012-06-14  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: Implement ExtensionPanel.show() method
+        https://bugs.webkit.org/show_bug.cgi?id=88473
+
+        Implemented ExtensionPanel.show() API method to allow extension
+        developers to show their panel when needed.
+
+        Reviewed by Pavel Feldman.
+
+        Tests for this method are in:
+        LayoutTests/inspector/extensions/extensions-panel.html
+
+        * inspector/front-end/ExtensionAPI.js:
+        (defineCommonExtensionSymbols):
+        (injectedExtensionAPI.ExtensionPanelImpl.prototype.createStatusBarButton):
+        (injectedExtensionAPI.ExtensionPanelImpl.prototype.show):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype._onShowPanel):
+
 2012-06-14  Kent Tamura  <tkent@chromium.org>
 
         Fix a typo in r120304.

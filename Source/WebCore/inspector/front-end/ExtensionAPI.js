@@ -84,6 +84,7 @@ function defineCommonExtensionSymbols(apiPrivate)
         SetSidebarContent: "setSidebarContent",
         SetSidebarHeight: "setSidebarHeight",
         SetSidebarPage: "setSidebarPage",
+        ShowPanel: "showPanel",
         StopAuditCategoryRun: "stopAuditCategoryRun",
         Unsubscribe: "unsubscribe",
         UpdateButton: "updateButton",
@@ -100,6 +101,7 @@ defineCommonExtensionSymbols(apiPrivate);
 
 var commands = apiPrivate.Commands;
 var events = apiPrivate.Events;
+var userAction = false;
 
 // Here and below, all constructors are private to API implementation.
 // For a public type Foo, if internal fields are present, these are on
@@ -305,7 +307,13 @@ Panels.prototype = {
         else {
             function callbackWrapper(message)
             {
-                callback.call(null, new Resource(message.resource), message.lineNumber);
+                // Allow the panel to show itself when handling the event.
+                userAction = true;
+                try {
+                    callback.call(null, new Resource(message.resource), message.lineNumber);
+                } finally {
+                    userAction = false;
+                }
             }
             extensionServer.registerHandler(events.OpenResource, callbackWrapper);
         }
@@ -394,6 +402,18 @@ ExtensionPanelImpl.prototype = {
         };
         extensionServer.sendRequest(request);
         return new Button(id);
+    },
+
+    show: function()
+    {
+        if (!userAction)
+            return;
+
+        var request = {
+            command: commands.ShowPanel,
+            id: this._id
+        };
+        extensionServer.sendRequest(request);
     }
 };
 

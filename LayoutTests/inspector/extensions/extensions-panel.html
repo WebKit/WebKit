@@ -3,6 +3,10 @@
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/extensions-test.js"></script>
 <script type="text/javascript">
+function logMessage()
+{
+    console.log("hello");
+}
 
 function initialize_extensionsPanelTest()
 {
@@ -52,6 +56,16 @@ function initialize_extensionsPanelTest()
         var panel = WebInspector.inspectorView.currentPanel();
         panel.statusBarItems[index].click();
     }
+
+    InspectorTest.clickOnURL = function()
+    {
+        WebInspector.showPanel("console");
+        var xpathResult = document.evaluate("//a[starts-with(., 'extensions-panel.html')]",
+                                            WebInspector.panels.console.element, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null);
+        var click = document.createEvent("MouseEvent");
+        click.initMouseEvent("click", true, true);
+        xpathResult.singleNodeValue.dispatchEvent(click);
+    }
 }
 
 function extension_testCreatePanel(nextTest)
@@ -62,8 +76,27 @@ function extension_testCreatePanel(nextTest)
     {
         output("Panel created");
         dumpObject(panel);
-        // This will force extension iframe to be really loaded and will cause waitForPanel() callback below.
-        extension_showPanel("extension");
+        panel.onHidden.addListener(function() {
+            output("Panel hidden");
+        });
+        panel.onShown.addListener(function(window) {
+            output("Panel shown");
+        });
+
+        // This is not authorized and therefore should not produce any output
+        panel.show();
+        extension_showPanel("console");
+
+        function handleOpenResource(resource, lineNumber)
+        {
+            // This will force extension iframe to be really loaded and will cause waitForPanel() callback below.
+            panel.show();
+        }
+        webInspector.panels.setOpenResourceHandler(handleOpenResource);
+        evaluateOnFrontend("WebInspector.openAnchorLocationRegistry._activeHandler = 'test extension'");
+        webInspector.inspectedWindow.eval("logMessage()", function() {
+            evaluateOnFrontend("InspectorTest.clickOnURL();");
+        });
     }
     // The panel code is expected to report its size via InspectorTest.panelCallback()
     evaluateOnFrontend("InspectorTest.waitForPanel(reply);", nextTest);
