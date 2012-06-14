@@ -44,7 +44,7 @@ void WebFontRenderStyle::toFontRenderStyle(FontRenderStyle* out)
     out->useHinting = useHinting;
     out->hintStyle = hintStyle;
     out->useAntiAlias = useAntiAlias;
-    out->useSubpixelRendering = useSubpixelRendering != 2 ? useSubpixelRendering : useSubpixel;
+    out->useSubpixelRendering = useSubpixelRendering;
     out->useSubpixelPositioning = useSubpixelPositioning;
 }
 
@@ -55,7 +55,6 @@ void WebFontRenderStyle::setDefaults()
     useHinting = 2;
     hintStyle = 0;
     useAntiAlias = 2;
-    useSubpixel = 2;
     useSubpixelRendering = 2;
     useSubpixelPositioning = 2;
 }

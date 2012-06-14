@@ -1,3 +1,25 @@
+2012-06-14  Daniel Erat  <derat@chromium.org>
+
+        [chromium/linux] Drop deprecated WebFontRenderStyle::useSubpixel
+        https://bugs.webkit.org/show_bug.cgi?id=88263
+
+        Reviewed by Adam Barth.
+
+        This removes the useSubpixel member, which was replaced by
+        useSubpixelRendering.  Chrome has been updated to set only the
+        useSubpixelRendering field.
+
+        No test updates since the existing behavior shouldn't change.
+
+        * public/linux/WebFontInfo.h:
+        (WebFontInfo):
+        * public/linux/WebFontRenderStyle.h:
+        * src/linux/WebFontInfo.cpp:
+        (WebKit::WebFontInfo::renderStyleForStrike):
+        * src/linux/WebFontRenderStyle.cpp:
+        (WebKit::WebFontRenderStyle::toFontRenderStyle):
+        (WebKit::WebFontRenderStyle::setDefaults):
+
 2012-06-14  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] For hit testing in CCLayerTreeHostCommon, need to check that the transform is invertible before inverting it.

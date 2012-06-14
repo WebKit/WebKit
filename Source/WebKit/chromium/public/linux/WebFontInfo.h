@@ -60,7 +60,7 @@ public:
     WEBKIT_EXPORT static void familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale, WebFontFamily*);
 
     // Fill out the given WebFontRenderStyle with the user's preferences for
-    // rendering the given font at the given size.
+    // rendering the given font at the given size (in pixels).
     //   family: i.e. "Times New Roman"
     //   sizeAndStyle:
     //      3322222222221111111111
