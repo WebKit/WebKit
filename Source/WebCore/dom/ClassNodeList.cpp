@@ -44,7 +44,7 @@ ClassNodeList::ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames
 
 ClassNodeList::~ClassNodeList()
 {
-    rootNode()->removeCachedClassNodeList(this, m_originalClassNames);
+    node()->removeCachedClassNodeList(this, m_originalClassNames);
 } 
 
 bool ClassNodeList::nodeMatches(Element* testNode) const

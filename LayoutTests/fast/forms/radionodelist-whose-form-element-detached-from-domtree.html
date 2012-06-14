@@ -5,62 +5,89 @@
 <script src="../js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<form id="testform">
+<div id="container">
+<form id="testForm">
     Radio button array:
     <input type="radio" name="type1" value="value1">
     <input type="radio" name="type1" value="value2">
-    <input type="radio" name="type1" value="value3">
     <input type="radio" name="type2" value="value4">
     <input type="radio" name="type2" value="value5">
-    <input type="radio" name="type2" value="value6">
     <br>
     Single checkbox:
     <input type="checkbox" name="chkbox" value="chkboxvalue">
     <br>
 </form>
+<div id="external-elements">
+<input type="radio" form="testForm" name="type1" value="value3">
+<input type="radio" form="testForm" name="type2" value="value6">
+</div>
+</div>
 <div id="console"></div>
 <script>
 
 description("RadioNodeList should be rooted at form itself if detached from dom tree");
 debug("");
-var owner = document.getElementById('testform');
+var owner = document.getElementById('testForm');
 var radioNodeList1 = owner.elements['type1'];
 var radioNodeList2 = owner.elements['type2'];
+var container = document.getElementById('container');
 
-function testRadioNodeList() {
-    shouldBe('radioNodeList1.length', '3');
-    shouldBe('radioNodeList2.length', '3');
+function testRadioNodeList(expectedNumberOfItems) {
+    shouldBe('radioNodeList1.length', expectedNumberOfItems + '');
+    shouldBe('radioNodeList2.length', expectedNumberOfItems + '');
 
     shouldBe('radioNodeList1[0].value', "'value1'");
     shouldBe('radioNodeList1[1].value', "'value2'");
-    shouldBe('radioNodeList1[2].value', "'value3'");
+    if (expectedNumberOfItems == 3)
+        shouldBe('radioNodeList1[2].value', "'value3'");
     shouldBe('radioNodeList2[0].value', "'value4'");
     shouldBe('radioNodeList2[1].value', "'value5'");
-    shouldBe('radioNodeList2[2].value', "'value6'");
+    if (expectedNumberOfItems == 3)
+        shouldBe('radioNodeList2[2].value', "'value6'");
 }
+
 debug("form in dom tree");
-testRadioNodeList();
+testRadioNodeList(3);
 
 debug("Check RadioNodeList.value");
 shouldBe('radioNodeList1.value', '""');
 shouldBe('radioNodeList2.value', '""');
 shouldBe('radioNodeList1[2].checked = true; radioNodeList1.value', "'value3'");
 
-owner.parentNode.removeChild(owner);
+container.removeChild(owner);
 
 debug("");
 debug("form detached from dom tree");
-testRadioNodeList();
+testRadioNodeList(2);
 
 debug("Check RadioNodeList.value");
-shouldBe('radioNodeList1[2].checked = true; radioNodeList1.value', "'value3'");
+shouldBe('radioNodeList1[1].checked = true; radioNodeList1.value', "'value2'");
 
-document.body.appendChild(owner);
+container.appendChild(owner);
+var externalElements = document.getElementById('external-elements');
+externalElements.parentNode.removeChild(externalElements);
+container.appendChild(externalElements);
+
 debug("");
 debug("form again added to dom tree");
-testRadioNodeList();
+testRadioNodeList(3);
 
-owner.parentNode.removeChild(owner);
+container.parentNode.removeChild(container);
+
+debug("");
+debug("form's ancestor detached from dom tree");
+testRadioNodeList(2);
+
+debug("Check RadioNodeList.value");
+shouldBe('radioNodeList1[1].checked = true; radioNodeList1.value', "'value2'");
+
+document.body.appendChild(container);
+
+debug("");
+debug("form again added to dom tree");
+testRadioNodeList(3);
+
+container.parentNode.removeChild(container);
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

@@ -1,3 +1,71 @@
+2012-06-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Radio node lists do not get updated when inserted back into a document
+        https://bugs.webkit.org/show_bug.cgi?id=88825
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by RadioNodeList's m_node not being adjusted back to a document after
+        it was removed from the document and inserted back. While we could be doing this adjustment again
+        when the HTMLFormElement is inserted back into the document, this whole approach is fragile
+        because adds a maintenance burden on root elements of RadioNodeList.
+
+        Change the approach to the problem instead and detect when m_node is detached from the document.
+        Now RadioNodeList and LabelsNodeList will always use its root element as m_node and
+        DynamicSubtreeNodeList's node() will then determine whether it should use its document or not based
+        on the flag (rootedAtDocument) passed by the constructor of the node list and m_node->inDocument().
+
+        Also invalidate node lists rooted at the document level regardless where the DOM mutation took place.
+
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::~ClassNodeList):
+        * dom/Document.cpp:
+        (WebCore::Document::registerDynamicSubtreeNodeList): Moved from Node.
+        (WebCore::Document::unregisterDynamicSubtreeNodeList): Ditto.
+        * dom/Document.h:
+        (Document):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicSubtreeNodeList::DynamicSubtreeNodeList): Takes DynamicNodeListRootType which tell us
+        whether node() should return m_node's document by default or not.
+        (WebCore::DynamicSubtreeNodeList::length): Refactor code to avoid node() multiple times.
+        (WebCore::DynamicSubtreeNodeList::itemForwardsFromCurrent): Ditto.
+        (WebCore::DynamicSubtreeNodeList::itemBackwardsFromCurrent): Ditto.
+        (WebCore::DynamicNodeList::itemWithName): Ditto.
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeList::DynamicNodeList):
+        (WebCore::DynamicNodeList::node): Returns m_node->document() if m_node is still in the document and
+        the node list was rooted at document.
+        (WebCore::DynamicNodeList::Caches::Caches):
+        (Caches):
+        (DynamicNodeList):
+        (DynamicSubtreeNodeList):
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::~NameNodeList):
+        * dom/Node.cpp:
+        (WebCore):
+        (WebCore::Node::invalidateNodeListsCacheAfterAttributeChanged): Invalidate m_listsInvalidatedAtDocument
+        at document instead of trying to invalidate it on every ancestor we traverse.
+        (WebCore::Node::invalidateNodeListsCacheAfterChildrenChanged): Ditto.
+        (WebCore::NodeListsNodeData::invalidateCachesForDocument): Extracted from
+        invalidateCachesThatDependOnAttributes.
+        (WebCore::NodeListsNodeData::invalidateCachesThatDependOnAttributes):
+        (WebCore::Node::radioNodeList):
+        * dom/Node.h:
+        (Node):
+        * dom/NodeRareData.h:
+        (NodeListsNodeData):
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::~TagNodeList):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::removedFrom):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::LabelsNodeList):
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList): Takes Element* first since that's the order we use elsewhere.
+        * html/RadioNodeList.h:
+        (WebCore::RadioNodeList::create):
+        (RadioNodeList):
+
 2012-06-14  Tony Chang  <tony@chromium.org>
 
         Fix bit packing of StyleRareInheritedData on Windows

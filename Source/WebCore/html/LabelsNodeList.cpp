@@ -32,8 +32,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-LabelsNodeList::LabelsNodeList(Node* forNode )
-    : DynamicSubtreeNodeList(forNode->document()) , m_forNode(forNode)
+LabelsNodeList::LabelsNodeList(Node* forNode)
+    : DynamicSubtreeNodeList(forNode, RootedAtDocument)
+    , m_forNode(forNode)
 {
     m_forNode->document()->registerDynamicSubtreeNodeList(this);
 }

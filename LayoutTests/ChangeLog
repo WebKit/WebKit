@@ -1,3 +1,15 @@
+2012-06-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Radio node lists do not get updated when inserted back into a document
+        https://bugs.webkit.org/show_bug.cgi?id=88825
+
+        Reviewed by Darin Adler.
+
+        Add a test case to an existing test.
+
+        * fast/forms/radionodelist-whose-form-element-detached-from-domtree-expected.txt:
+        * fast/forms/radionodelist-whose-form-element-detached-from-domtree.html:
+
 2012-06-14  Jia Pu  <jpu@apple.com>
 
         Mark text with text alternative with blue underline.

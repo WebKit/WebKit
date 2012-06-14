@@ -82,6 +82,7 @@ public:
     }
 
     void invalidateCaches();
+    void invalidateCachesForDocument();
     void invalidateCachesThatDependOnAttributes();
 
     bool isEmpty() const;

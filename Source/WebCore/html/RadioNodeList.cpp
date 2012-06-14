@@ -36,8 +36,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RadioNodeList::RadioNodeList(const AtomicString& name, Element* baseElement)
-    : DynamicSubtreeNodeList(baseElement->hasTagName(formTag) ? static_cast<Node*>(baseElement->document()) : baseElement)
+RadioNodeList::RadioNodeList(Element* baseElement, const AtomicString& name)
+    : DynamicSubtreeNodeList(baseElement, baseElement->hasTagName(formTag) ? RootedAtDocument : RootedAtNode)
     , m_name(name)
     , m_baseElement(baseElement)
 {
@@ -112,9 +112,5 @@ bool RadioNodeList::nodeMatches(Element* testElement) const
     return checkElementMatchesRadioNodeListFilter(testElement);
 }
 
-void RadioNodeList::setRootElement(Element* baseElement)
-{
-    m_node = baseElement->toNode();
-}
 } // namspace
 

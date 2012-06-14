@@ -28,8 +28,8 @@
 
 namespace WebCore {
 
-DynamicSubtreeNodeList::DynamicSubtreeNodeList(PassRefPtr<Node> node)
-    : DynamicNodeList(node)
+DynamicSubtreeNodeList::DynamicSubtreeNodeList(PassRefPtr<Node> node, RootType rootType)
+    : DynamicNodeList(node, rootType)
 {
 }
 
@@ -43,8 +43,9 @@ unsigned DynamicSubtreeNodeList::length() const
         return m_caches.cachedLength;
 
     unsigned length = 0;
+    Node* rootNode = node();
 
-    for (Node* n = node()->firstChild(); n; n = n->traverseNextNode(rootNode()))
+    for (Node* n = rootNode->firstChild(); n; n = n->traverseNextNode(rootNode))
         length += n->isElementNode() && nodeMatches(static_cast<Element*>(n));
 
     m_caches.cachedLength = length;
@@ -56,7 +57,8 @@ unsigned DynamicSubtreeNodeList::length() const
 Node* DynamicSubtreeNodeList::itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
 {
     ASSERT(remainingOffset >= 0);
-    for (Node* n = start; n; n = n->traverseNextNode(rootNode())) {
+    Node* rootNode = node();
+    for (Node* n = start; n; n = n->traverseNextNode(rootNode)) {
         if (n->isElementNode() && nodeMatches(static_cast<Element*>(n))) {
             if (!remainingOffset) {
                 m_caches.lastItem = n;
@@ -74,7 +76,8 @@ Node* DynamicSubtreeNodeList::itemForwardsFromCurrent(Node* start, unsigned offs
 Node* DynamicSubtreeNodeList::itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
 {
     ASSERT(remainingOffset < 0);
-    for (Node* n = start; n; n = n->traversePreviousNode(rootNode())) {
+    Node* rootNode = node();
+    for (Node* n = start; n; n = n->traversePreviousNode(rootNode)) {
         if (n->isElementNode() && nodeMatches(static_cast<Element*>(n))) {
             if (!remainingOffset) {
                 m_caches.lastItem = n;
@@ -109,11 +112,13 @@ Node* DynamicSubtreeNodeList::item(unsigned offset) const
 
 Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
 {
-    if (node()->isDocumentNode() || node()->inDocument()) {
-        Element* node = this->node()->treeScope()->getElementById(elementId);
-        if (node && nodeMatches(node) && node->isDescendantOf(this->node()))
-            return node;
-        if (!node)
+    Node* rootNode = node();
+
+    if (rootNode->inDocument()) {
+        Element* element = rootNode->treeScope()->getElementById(elementId);
+        if (element && nodeMatches(element) && element->isDescendantOf(rootNode))
+            return element;
+        if (!element)
             return 0;
         // In the case of multiple nodes with the same name, just fall through.
     }
