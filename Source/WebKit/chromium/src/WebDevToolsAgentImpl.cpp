@@ -233,7 +233,6 @@ public:
             return;
 
         frame->setTextZoomFactor(m_webView->emulatedTextZoomFactor());
-        WebSize scaledFrameSize = scaledEmulatedFrameSize(frame->view());
         ensureOriginalZoomFactor(frame->view());
         frame->setPageAndTextZoomFactors(m_originalZoomFactor, m_webView->emulatedTextZoomFactor());
         Document* doc = frame->document();

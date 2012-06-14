@@ -1,3 +1,10 @@
+2012-06-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, build fix for Mac 10.5
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::DeviceMetricsSupport::autoZoomPageToFitWidth):
+
 2012-06-14  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Refactor message loop instrumentation.
