@@ -41,7 +41,6 @@
 #include "LayerRendererChromium.h"
 #include "PlatformSupport.h"
 #include "cc/CCLayerTreeHost.h"
-#include "cc/CCSettings.h"
 #include <public/Platform.h>
 #include <wtf/CurrentTime.h>
 
@@ -128,7 +127,7 @@ void ContentLayerChromium::createTextureUpdaterIfNeeded()
         return;
     if (layerTreeHost()->settings().acceleratePainting)
         m_textureUpdater = FrameBufferSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate));
-    else if (CCSettings::perTilePaintingEnabled())
+    else if (layerTreeHost()->settings().perTilePainting)
         m_textureUpdater = BitmapSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate), layerTreeHost()->layerRendererCapabilities().usingMapSub);
     else
         m_textureUpdater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate), layerTreeHost()->layerRendererCapabilities().usingMapSub);

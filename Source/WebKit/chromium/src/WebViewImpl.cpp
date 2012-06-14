@@ -147,7 +147,6 @@
 #include "WebViewClient.h"
 #include "WheelEvent.h"
 #include "cc/CCProxy.h"
-#include "cc/CCSettings.h"
 #include "painting/GraphicsContextBuilder.h"
 #include "platform/WebKitPlatformSupport.h"
 #include "platform/WebString.h"
@@ -463,7 +462,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #if ENABLE(BATTERY_STATUS)
     provideBatteryTo(m_page.get(), m_batteryClient.get());
 #endif
-
+    
     m_page->setGroupName(pageGroupName);
 
 #if ENABLE(PAGE_VISIBILITY_API)
@@ -3476,6 +3475,10 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         layerTreeViewSettings.showPlatformLayerTree = settingsImpl()->showPlatformLayerTree();
         layerTreeViewSettings.showPaintRects = settingsImpl()->showPaintRects();
         layerTreeViewSettings.forceSoftwareCompositing = settings()->forceSoftwareCompositing();
+
+        layerTreeViewSettings.perTilePainting = page()->settings()->perTileDrawingEnabled();
+        layerTreeViewSettings.partialSwapEnabled = page()->settings()->partialSwapEnabled();
+        layerTreeViewSettings.threadedAnimationEnabled = page()->settings()->threadedAnimationEnabled();
 
         layerTreeViewSettings.defaultTileSize = settingsImpl()->defaultTileSize();
         layerTreeViewSettings.maxUntiledLayerSize = settingsImpl()->maxUntiledLayerSize();

@@ -83,7 +83,9 @@ class MockLayerTreeHost : public CCLayerTreeHost {
 public:
     static PassOwnPtr<MockLayerTreeHost> create()
     {
-        CCLayerTreeSettings settings;
+        // For these tests, we will enable threaded animations.
+        CCSettings settings;
+        settings.threadedAnimationEnabled = true;
         OwnPtr<MockLayerTreeHost> layerTreeHost(adoptPtr(new MockLayerTreeHost(new MockLayerTreeHostClient(), settings)));
         bool success = layerTreeHost->initialize();
         EXPECT_TRUE(success);
@@ -94,11 +96,14 @@ public:
 
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient* client)
     {
-        return CCLayerTreeHostImpl::create(settings(), client);
+        // For these tests, we will enable threaded animations.
+        CCSettings copySettings = settings();
+        copySettings.threadedAnimationEnabled = true;
+        return CCLayerTreeHostImpl::create(copySettings, client);
     }
 
 private:
-    MockLayerTreeHost(CCLayerTreeHostClient* client, const CCLayerTreeSettings& settings)
+    MockLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings& settings)
         : CCLayerTreeHost(client, settings)
     {
     }
@@ -108,8 +113,6 @@ class GraphicsLayerChromiumTest : public testing::Test {
 public:
     GraphicsLayerChromiumTest()
     {
-        // For these tests, we will enable threaded animations.
-        WebCompositor::setAcceleratedAnimationEnabled(true);
         WebCompositor::initialize(0);
         m_graphicsLayer = static_pointer_cast<GraphicsLayerChromium>(GraphicsLayer::create(&m_client));
         m_platformLayer = static_cast<LayerChromium*>(m_graphicsLayer->platformLayer());

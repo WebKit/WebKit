@@ -38,7 +38,6 @@
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCOcclusionTracker.h"
-#include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCThread.h"
 #include "cc/CCThreadProxy.h"
@@ -59,7 +58,7 @@ bool CCLayerTreeHost::anyLayerTreeHostInstanceExists()
     return numLayerTreeInstances > 0;
 }
 
-PassOwnPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* client, const CCLayerTreeSettings& settings)
+PassOwnPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* client, const CCSettings& settings)
 {
     OwnPtr<CCLayerTreeHost> layerTreeHost = adoptPtr(new CCLayerTreeHost(client, settings));
     if (!layerTreeHost->initialize())
@@ -67,7 +66,7 @@ PassOwnPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* clien
     return layerTreeHost.release();
 }
 
-CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCLayerTreeSettings& settings)
+CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings& settings)
     : m_compositorIdentifier(-1)
     , m_animating(false)
     , m_needsAnimateLayers(false)
@@ -683,7 +682,7 @@ void CCLayerTreeHost::deleteTextureAfterCommit(PassOwnPtr<ManagedTexture> textur
 
 void CCLayerTreeHost::animateLayers(double monotonicTime)
 {
-    if (!CCSettings::acceleratedAnimationEnabled() || !m_needsAnimateLayers)
+    if (!m_settings.threadedAnimationEnabled || !m_needsAnimateLayers)
         return;
 
     TRACE_EVENT("CCLayerTreeHostImpl::animateLayers", this, 0);

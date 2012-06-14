@@ -34,7 +34,7 @@
 
 namespace WebCore {
 class CCLayerTreeHost;
-struct CCLayerTreeSettings;
+struct CCSettings;
 }
 
 namespace WebKit {
@@ -55,6 +55,9 @@ public:
             , showPlatformLayerTree(false)
             , showPaintRects(false)
             , refreshRate(0)
+            , perTilePainting(false)
+            , partialSwapEnabled(false)
+            , threadedAnimationEnabled(false)
             , defaultTileSize(WebSize(256, 256))
             , maxUntiledLayerSize(WebSize(512, 512))
             , deviceScaleFactor(1)
@@ -67,11 +70,14 @@ public:
         bool showPlatformLayerTree;
         bool showPaintRects;
         double refreshRate;
+        bool perTilePainting;
+        bool partialSwapEnabled;
+        bool threadedAnimationEnabled;
         WebSize defaultTileSize;
         WebSize maxUntiledLayerSize;
         float deviceScaleFactor;
 #if WEBKIT_IMPLEMENTATION
-        operator WebCore::CCLayerTreeSettings() const;
+        operator WebCore::CCSettings() const;
 #endif
     };
 

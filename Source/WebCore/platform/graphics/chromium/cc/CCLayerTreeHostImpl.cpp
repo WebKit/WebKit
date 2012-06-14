@@ -42,7 +42,6 @@
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCMathUtil.h"
 #include "cc/CCPageScaleAnimation.h"
-#include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
@@ -106,12 +105,12 @@ private:
     RefPtr<CCDelayBasedTimeSource> m_timeSource;
 };
 
-PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHostImpl::create(const CCLayerTreeSettings& settings, CCLayerTreeHostImplClient* client)
+PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHostImpl::create(const CCSettings& settings, CCLayerTreeHostImplClient* client)
 {
     return adoptPtr(new CCLayerTreeHostImpl(settings, client));
 }
 
-CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCLayerTreeSettings& settings, CCLayerTreeHostImplClient* client)
+CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTreeHostImplClient* client)
     : m_client(client)
     , m_sourceFrameNumber(-1)
     , m_frameNumber(0)
@@ -258,7 +257,7 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
 
         if (!layerRendererCapabilities().usingPartialSwap)
             m_rootScissorRect = FloatRect(FloatPoint(0, 0), deviceViewportSize());
-
+    
         CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, m_rootScissorRect);
     }
 }
@@ -859,7 +858,7 @@ void CCLayerTreeHostImpl::animatePageScale(double monotonicTime)
 
 void CCLayerTreeHostImpl::animateLayers(double monotonicTime, double wallClockTime)
 {
-    if (!CCSettings::acceleratedAnimationEnabled() || !m_needsAnimateLayers || !m_rootLayerImpl)
+    if (!m_settings.threadedAnimationEnabled || !m_needsAnimateLayers || !m_rootLayerImpl)
         return;
 
     TRACE_EVENT("CCLayerTreeHostImpl::animateLayers", this, 0);

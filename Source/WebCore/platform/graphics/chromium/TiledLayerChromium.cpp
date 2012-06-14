@@ -111,8 +111,9 @@ void TiledLayerChromium::updateTileSizeAndTilingOption()
 {
     ASSERT(layerTreeHost());
 
-    const IntSize& defaultTileSize = layerTreeHost()->settings().defaultTileSize;
-    const IntSize& maxUntiledLayerSize = layerTreeHost()->settings().maxUntiledLayerSize;
+    const CCSettings& settings = layerTreeHost()->settings();
+    const IntSize& defaultTileSize = settings.defaultTileSize;
+    const IntSize& maxUntiledLayerSize = settings.maxUntiledLayerSize;
     int layerWidth = contentBounds().width();
     int layerHeight = contentBounds().height();
 

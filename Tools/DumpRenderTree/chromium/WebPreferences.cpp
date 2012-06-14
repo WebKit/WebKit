@@ -31,7 +31,6 @@
 #include "config.h"
 #include "WebPreferences.h"
 
-#include "WebCompositor.h"
 #include "WebView.h"
 
 using namespace WebKit;
@@ -227,6 +226,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setDeferred2dCanvasEnabled(deferred2dCanvasEnabled);
     settings->setAcceleratedPaintingEnabled(acceleratedPaintingEnabled);
     settings->setHixie76WebSocketProtocolEnabled(hixie76WebSocketProtocolEnabled);
+    settings->setPerTilePaintingEnabled(perTilePaintingEnabled);
     settings->setMockScrollbarsEnabled(mockScrollbarsEnabled);
 
     // Fixed values.
@@ -246,7 +246,4 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setValidationMessageTimerMagnification(-1);
     settings->setVisualWordMovementEnabled(false);
     settings->setPasswordEchoEnabled(false);
-
-    // Apply global WebCompositor settings.
-    WebCompositor::setPerTilePaintingEnabled(perTilePaintingEnabled);
 }

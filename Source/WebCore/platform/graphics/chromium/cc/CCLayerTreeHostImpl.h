@@ -68,7 +68,7 @@ class CCLayerTreeHostImpl : public CCInputHandlerClient, CCRendererClient {
     typedef Vector<CCLayerImpl*> CCLayerList;
 
 public:
-    static PassOwnPtr<CCLayerTreeHostImpl> create(const CCLayerTreeSettings&, CCLayerTreeHostImplClient*);
+    static PassOwnPtr<CCLayerTreeHostImpl> create(const CCSettings&, CCLayerTreeHostImplClient*);
     virtual ~CCLayerTreeHostImpl();
 
     // CCInputHandlerClient implementation
@@ -106,7 +106,7 @@ public:
 
     // CCRendererClient implementation
     virtual const IntSize& deviceViewportSize() const OVERRIDE { return m_deviceViewportSize; }
-    virtual const CCLayerTreeSettings& settings() const OVERRIDE { return m_settings; }
+    virtual const CCSettings& settings() const OVERRIDE { return m_settings; }
     virtual void didLoseContext() OVERRIDE;
     virtual void onSwapBuffersComplete() OVERRIDE;
     virtual void setFullRootLayerDamage() OVERRIDE;
@@ -172,7 +172,7 @@ public:
     CCDebugRectHistory* debugRectHistory() const { return m_debugRectHistory.get(); }
 
 protected:
-    CCLayerTreeHostImpl(const CCLayerTreeSettings&, CCLayerTreeHostImplClient*);
+    CCLayerTreeHostImpl(const CCSettings&, CCLayerTreeHostImplClient*);
 
     void animatePageScale(double monotonicTime);
     void animateGestures(double monotonicTime);
@@ -217,7 +217,7 @@ private:
     OwnPtr<CCRenderer> m_layerRenderer;
     OwnPtr<CCLayerImpl> m_rootLayerImpl;
     CCLayerImpl* m_scrollLayerImpl;
-    CCLayerTreeSettings m_settings;
+    CCSettings m_settings;
     IntSize m_viewportSize;
     IntSize m_deviceViewportSize;
     bool m_visible;

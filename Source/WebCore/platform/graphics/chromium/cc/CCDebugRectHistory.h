@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class CCLayerImpl;
-struct CCLayerTreeSettings;
+struct CCSettings;
 
 // There are currently three types of debug rects:
 //
@@ -63,7 +63,7 @@ struct CCDebugRect {
 
 // This class maintains a history of rects of various types that can be used
 // for debugging purposes. The overhead of collecting rects is performed only if
-// the appropriate CCLayerTreeSettings are enabled.
+// the appropriate CCSettings are enabled.
 class CCDebugRectHistory {
     WTF_MAKE_NONCOPYABLE(CCDebugRectHistory);
 public:
@@ -72,10 +72,10 @@ public:
         return adoptPtr(new CCDebugRectHistory());
     }
 
-    bool enabled(const CCLayerTreeSettings&);
+    bool enabled(const CCSettings&);
 
     // Note: Saving debug rects must happen before layers' change tracking is reset.
-    void saveDebugRectsForCurrentFrame(CCLayerImpl* rootLayer, const Vector<CCLayerImpl*>& renderSurfaceLayerList, const CCLayerTreeSettings&);
+    void saveDebugRectsForCurrentFrame(CCLayerImpl* rootLayer, const Vector<CCLayerImpl*>& renderSurfaceLayerList, const CCSettings&);
 
     const Vector<CCDebugRect>& debugRects() { return m_debugRects; }
 

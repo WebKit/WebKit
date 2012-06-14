@@ -43,7 +43,6 @@
 #include "cc/CCLayerAnimationDelegate.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHost.h"
-#include "cc/CCSettings.h"
 #include "skia/ext/platform_canvas.h"
 
 using namespace std;
@@ -607,14 +606,12 @@ void LayerChromium::setTransformFromAnimation(const WebTransformationMatrix& tra
 
 bool LayerChromium::addAnimation(PassOwnPtr<CCActiveAnimation> animation)
 {
-    if (!CCSettings::acceleratedAnimationEnabled())
+    if (!m_layerTreeHost || !m_layerTreeHost->settings().threadedAnimationEnabled)
         return false;
 
     m_layerAnimationController->addAnimation(animation);
-    if (m_layerTreeHost) {
-        m_layerTreeHost->didAddAnimation();
-        setNeedsCommit();
-    }
+    m_layerTreeHost->didAddAnimation();
+    setNeedsCommit();
     return true;
 }
 

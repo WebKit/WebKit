@@ -61,6 +61,7 @@ public:
     void setUnifiedTextCheckingEnabled(bool, ExceptionCode&);
     bool unifiedTextCheckingEnabled(ExceptionCode&);
     void setPageScaleFactor(float scaleFactor, int x, int y, ExceptionCode&);
+    void setPerTileDrawingEnabled(bool enabled, ExceptionCode&);
     void setTouchEventEmulationEnabled(bool enabled, ExceptionCode&);
     void setDeviceSupportsTouch(bool enabled, ExceptionCode&);
     void setDeviceSupportsMouse(bool enabled, ExceptionCode&);

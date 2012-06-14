@@ -135,7 +135,7 @@ protected:
 
     virtual void runTest(bool threaded);
 
-    WebCore::CCLayerTreeSettings m_settings;
+    WebCore::CCSettings m_settings;
     OwnPtr<MockCCLayerTreeHostClient> m_client;
     OwnPtr<WebCore::CCLayerTreeHost> m_layerTreeHost;
 
@@ -165,7 +165,7 @@ public:
 // Adapts CCLayerTreeHostImpl for test. Runs real code, then invokes test hooks.
 class MockLayerTreeHostImpl : public WebCore::CCLayerTreeHostImpl {
 public:
-    static PassOwnPtr<MockLayerTreeHostImpl> create(TestHooks*, const WebCore::CCLayerTreeSettings&, WebCore::CCLayerTreeHostImplClient*);
+    static PassOwnPtr<MockLayerTreeHostImpl> create(TestHooks*, const WebCore::CCSettings&, WebCore::CCLayerTreeHostImplClient*);
 
     virtual void beginCommit();
     virtual void commitComplete();
@@ -181,7 +181,7 @@ protected:
     virtual double lowFrequencyAnimationInterval() const;
 
 private:
-    MockLayerTreeHostImpl(TestHooks*, const WebCore::CCLayerTreeSettings&, WebCore::CCLayerTreeHostImplClient*);
+    MockLayerTreeHostImpl(TestHooks*, const WebCore::CCSettings&, WebCore::CCLayerTreeHostImplClient*);
 
     TestHooks* m_testHooks;
 };

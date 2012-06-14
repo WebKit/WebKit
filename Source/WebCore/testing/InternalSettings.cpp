@@ -234,6 +234,12 @@ void InternalSettings::setPageScaleFactor(float scaleFactor, int x, int y, Excep
     page()->setPageScaleFactor(scaleFactor, IntPoint(x, y));
 }
 
+void InternalSettings::setPerTileDrawingEnabled(bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setPerTileDrawingEnabled(enabled);
+}
+
 void InternalSettings::setShadowDOMEnabled(bool enabled, ExceptionCode& ec)
 {
 #if ENABLE(SHADOW_DOM)

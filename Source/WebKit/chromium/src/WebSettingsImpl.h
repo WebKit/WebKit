@@ -144,6 +144,9 @@ public:
     virtual void setShouldDisplayCaptions(bool);
     virtual void setShouldDisplayTextDescriptions(bool);
     virtual void setAcceleratedPaintingEnabled(bool);
+    virtual void setPerTilePaintingEnabled(bool);
+    virtual void setPartialSwapEnabled(bool);
+    virtual void setThreadedAnimationEnabled(bool);
     virtual void setFixedPositionCreatesStackingContext(bool);
     virtual void setViewportEnabled(bool);
     virtual void setMediaPlaybackRequiresUserGesture(bool);

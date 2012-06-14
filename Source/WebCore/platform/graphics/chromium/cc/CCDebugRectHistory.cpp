@@ -38,12 +38,12 @@ CCDebugRectHistory::CCDebugRectHistory()
 {
 }
 
-bool CCDebugRectHistory::enabled(const CCLayerTreeSettings& settings)
+bool CCDebugRectHistory::enabled(const CCSettings& settings)
 {
     return settings.showPaintRects || settings.showPropertyChangedRects || settings.showSurfaceDamageRects;
 }
 
-void CCDebugRectHistory::saveDebugRectsForCurrentFrame(CCLayerImpl* rootLayer, const Vector<CCLayerImpl*>& renderSurfaceLayerList, const CCLayerTreeSettings& settings)
+void CCDebugRectHistory::saveDebugRectsForCurrentFrame(CCLayerImpl* rootLayer, const Vector<CCLayerImpl*>& renderSurfaceLayerList, const CCSettings& settings)
 {
     // For now, clear all rects from previous frames. In the future we may want to store
     // all debug rects for a history of many frames.

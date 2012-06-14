@@ -26,8 +26,6 @@
 #ifndef WebCompositor_h
 #define WebCompositor_h
 
-#define WEBCOMPOSITOR_OWNS_SETTINGS 1
-
 #include "platform/WebCommon.h"
 
 namespace WebKit {
@@ -50,11 +48,6 @@ public:
     // types have been deleted. No compositor classes or methods should be used
     // after shutdown.
     WEBKIT_EXPORT static void shutdown();
-
-    // These may only be called before initialize.
-    WEBKIT_EXPORT static void setPerTilePaintingEnabled(bool);
-    WEBKIT_EXPORT static void setPartialSwapEnabled(bool);
-    WEBKIT_EXPORT static void setAcceleratedAnimationEnabled(bool);
 
 protected:
     virtual ~WebCompositor() { }

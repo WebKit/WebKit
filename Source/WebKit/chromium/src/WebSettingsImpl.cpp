@@ -592,6 +592,21 @@ void WebSettingsImpl::setAcceleratedPaintingEnabled(bool enabled)
     m_settings->setAcceleratedDrawingEnabled(enabled);
 }
 
+void WebSettingsImpl::setPerTilePaintingEnabled(bool enabled)
+{
+    m_settings->setPerTileDrawingEnabled(enabled);
+}
+
+void WebSettingsImpl::setPartialSwapEnabled(bool enabled)
+{
+    m_settings->setPartialSwapEnabled(enabled);
+}
+
+void WebSettingsImpl::setThreadedAnimationEnabled(bool enabled)
+{
+    m_settings->setThreadedAnimationEnabled(enabled);
+}
+
 void WebSettingsImpl::setMediaPlaybackRequiresUserGesture(bool required)
 {
     m_settings->setMediaPlaybackRequiresUserGesture(required);

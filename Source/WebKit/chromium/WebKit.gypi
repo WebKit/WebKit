@@ -88,7 +88,6 @@
             'tests/CCSchedulerTest.cpp',
             'tests/CCSingleThreadProxyTest.cpp',
             'tests/CCSolidColorLayerImplTest.cpp',
-            'tests/CCTestCommon.h',
             'tests/CCTiledLayerImplTest.cpp',
             'tests/CCTiledLayerTestCommon.h',
             'tests/CCTiledLayerTestCommon.cpp',

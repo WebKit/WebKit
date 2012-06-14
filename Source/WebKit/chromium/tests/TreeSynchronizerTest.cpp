@@ -163,7 +163,7 @@ TEST(TreeSynchronizerTest, syncSimpleTreeFromEmpty)
 {
     DebugScopedSetImplThread impl;
 
-    CCLayerTreeSettings settings;
+    CCSettings settings;
     OwnPtr<CCLayerTreeHostImpl> hostImpl = CCLayerTreeHostImpl::create(settings, 0);
 
     RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
@@ -181,7 +181,7 @@ TEST(TreeSynchronizerTest, syncSimpleTreeReusingLayers)
     DebugScopedSetImplThread impl;
     Vector<int> ccLayerDestructionList;
 
-    CCLayerTreeSettings settings;
+    CCSettings settings;
     OwnPtr<CCLayerTreeHostImpl> hostImpl = CCLayerTreeHostImpl::create(settings, 0);
 
     RefPtr<LayerChromium> layerTreeRoot = MockLayerChromium::create(&ccLayerDestructionList);
@@ -211,7 +211,7 @@ TEST(TreeSynchronizerTest, syncSimpleTreeAndTrackStackingOrderChange)
     DebugScopedSetImplThread impl;
     Vector<int> ccLayerDestructionList;
 
-    CCLayerTreeSettings settings;
+    CCSettings settings;
     OwnPtr<CCLayerTreeHostImpl> hostImpl = CCLayerTreeHostImpl::create(settings, 0);
 
     // Set up the tree and sync once. child2 needs to be synced here, too, even though we
@@ -240,7 +240,7 @@ TEST(TreeSynchronizerTest, syncSimpleTreeAndProperties)
 {
     DebugScopedSetImplThread impl;
 
-    CCLayerTreeSettings settings;
+    CCSettings settings;
     OwnPtr<CCLayerTreeHostImpl> hostImpl = CCLayerTreeHostImpl::create(settings, 0);
 
     RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
@@ -277,7 +277,7 @@ TEST(TreeSynchronizerTest, reuseCCLayersAfterStructuralChange)
     DebugScopedSetImplThread impl;
     Vector<int> ccLayerDestructionList;
 
-    CCLayerTreeSettings settings;
+    CCSettings settings;
     OwnPtr<CCLayerTreeHostImpl> hostImpl = CCLayerTreeHostImpl::create(settings, 0);
 
     // Set up a tree with this sort of structure:
@@ -327,7 +327,7 @@ TEST(TreeSynchronizerTest, syncSimpleTreeThenDestroy)
     DebugScopedSetImplThread impl;
     Vector<int> ccLayerDestructionList;
 
-    CCLayerTreeSettings settings;
+    CCSettings settings;
     OwnPtr<CCLayerTreeHostImpl> hostImpl = CCLayerTreeHostImpl::create(settings, 0);
 
     RefPtr<LayerChromium> oldLayerTreeRoot = MockLayerChromium::create(&ccLayerDestructionList);
@@ -360,7 +360,7 @@ TEST(TreeSynchronizerTest, syncMaskReplicaAndReplicaMaskLayers)
 {
     DebugScopedSetImplThread impl;
 
-    CCLayerTreeSettings settings;
+    CCSettings settings;
     OwnPtr<CCLayerTreeHostImpl> hostImpl = CCLayerTreeHostImpl::create(settings, 0);
 
     RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
@@ -406,7 +406,7 @@ TEST(TreeSynchronizerTest, synchronizeAnimations)
 {
     DebugScopedSetImplThread impl;
 
-    CCLayerTreeSettings settings;
+    CCSettings settings;
     OwnPtr<CCLayerTreeHostImpl> hostImpl = CCLayerTreeHostImpl::create(settings, 0);
 
     RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
