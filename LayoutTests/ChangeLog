@@ -1,3 +1,33 @@
+2012-06-14  Stephen Chenney  <schenney@chromium.org>
+
+        [svg] SVGResources applied to Text with Incorrect Transformations in non-CG Implementations
+        https://bugs.webkit.org/show_bug.cgi?id=64966
+
+        Unreviewed Chromium test expectations update.
+
+        Bug fixed by Dominik Röttsches.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * platform/chromium-linux/svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * platform/chromium-linux/svg/custom/js-late-gradient-creation-expected.png:
+        * platform/chromium-linux/svg/custom/js-late-pattern-creation-expected.png:
+        * platform/chromium-linux/svg/custom/text-rotated-gradient-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/js-late-gradient-creation-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/js-late-gradient-creation-expected.png: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * platform/chromium-mac/svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * platform/chromium-mac/svg/custom/js-late-gradient-creation-expected.png:
+        * platform/chromium-mac/svg/custom/js-late-pattern-creation-expected.png:
+        * platform/chromium-mac/svg/custom/text-rotated-gradient-expected.png:
+        * platform/chromium-win-vista/svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * platform/chromium-win/svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * platform/chromium-win/svg/custom/js-late-gradient-creation-expected.png:
+        * platform/chromium-win/svg/custom/js-late-pattern-creation-expected.png:
+        * platform/chromium-win/svg/custom/text-rotated-gradient-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-06-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Device Metrics] "Fit window" results in duplicate rescaling in WebDevToolsAgentImpl::autoZoomPageToFitWidth()
