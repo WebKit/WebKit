@@ -21,7 +21,7 @@
 #include "config.h"
 #include "V8TestObj.h"
 
-#include "ContextEnabledFeatures.h"
+#include "ContextFeatures.h"
 #include "Dictionary.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
@@ -2155,13 +2155,13 @@ void V8TestObj::installPerContextProperties(v8::Handle<v8::Object> instance, Tes
     v8::Local<v8::Object> proto = v8::Local<v8::Object>::Cast(instance->GetPrototype());
     // When building QtWebkit with V8 this variable is unused when none of the features are enabled.
     UNUSED_PARAM(proto);
-    if (ContextEnabledFeatures::enabledAtContextAttr1Enabled(impl)) {
+    if (ContextFeatures::enabledAtContextAttr1Enabled(impl->document())) {
         static const BatchedAttribute attrData =\
         // Attribute 'enabledAtContextAttr1' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
         {"enabledAtContextAttr1", TestObjV8Internal::enabledAtContextAttr1AttrGetter, TestObjV8Internal::enabledAtContextAttr1AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
         configureAttribute(instance, proto, attrData);
     }
-    if (ContextEnabledFeatures::featureNameEnabled(impl)) {
+    if (ContextFeatures::featureNameEnabled(impl->document())) {
         static const BatchedAttribute attrData =\
         // Attribute 'enabledAtContextAttr2' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
         {"enabledAtContextAttr2", TestObjV8Internal::enabledAtContextAttr2AttrGetter, TestObjV8Internal::enabledAtContextAttr2AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};

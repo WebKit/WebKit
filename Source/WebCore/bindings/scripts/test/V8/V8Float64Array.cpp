@@ -21,7 +21,7 @@
 #include "config.h"
 #include "V8Float64Array.h"
 
-#include "ContextEnabledFeatures.h"
+#include "ContextFeatures.h"
 #include "ExceptionCode.h"
 #include "RuntimeEnabledFeatures.h"
 #include "V8ArrayBufferView.h"

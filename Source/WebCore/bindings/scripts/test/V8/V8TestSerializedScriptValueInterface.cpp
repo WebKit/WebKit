@@ -23,7 +23,7 @@
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
-#include "ContextEnabledFeatures.h"
+#include "ContextFeatures.h"
 #include "ExceptionCode.h"
 #include "MessagePort.h"
 #include "RuntimeEnabledFeatures.h"

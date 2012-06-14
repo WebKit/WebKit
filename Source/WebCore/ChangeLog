@@ -1,3 +1,21 @@
+2012-06-13  MORITA Hajime <morrita@google.com>
+
+        Unreviewed expectation update.
+
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        * bindings/scripts/test/V8/V8TestException.cpp:
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::V8TestObj::installPerContextProperties):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+
 2012-06-13  Kinuko Yasuda  <kinuko@chromium.org>
 
         Move isolated file system code out of chromium-specific directory

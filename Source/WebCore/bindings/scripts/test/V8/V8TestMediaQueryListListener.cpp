@@ -21,7 +21,7 @@
 #include "config.h"
 #include "V8TestMediaQueryListListener.h"
 
-#include "ContextEnabledFeatures.h"
+#include "ContextFeatures.h"
 #include "ExceptionCode.h"
 #include "MediaQueryListListener.h"
 #include "RuntimeEnabledFeatures.h"
