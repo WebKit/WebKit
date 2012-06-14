@@ -22,6 +22,7 @@
 #include "JSDOMBinding.h"
 
 #include "DOMObjectHashTableMap.h"
+#include "DOMStringList.h"
 #include "ExceptionCode.h"
 #include "ExceptionHeaders.h"
 #include "ExceptionInterfaces.h"
@@ -144,6 +145,16 @@ double valueToDate(ExecState* exec, JSValue value)
     if (!value.inherits(&DateInstance::s_info))
         return std::numeric_limits<double>::quiet_NaN();
     return static_cast<DateInstance*>(value.toObject(exec))->internalNumber();
+}
+
+JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<DOMStringList> stringList)
+{
+    if (!stringList)
+        return jsNull();
+    JSC::MarkedArgumentBuffer list;
+    for (unsigned i = 0; i < stringList->length(); ++i)
+        list.append(jsString(exec, stringList->item(i)));
+    return JSC::constructArray(exec, globalObject, list);
 }
 
 void reportException(ExecState* exec, JSValue exception)

@@ -201,6 +201,9 @@ module test {
 #if defined(TESTING_JS)
         void methodWithUnsignedLongArray(in unsigned long[] unsignedLongArray);
 #endif
+#if defined(TESTING_V8) || defined(TESTING_JS)
+        DOMString[] stringArrayFunction(in DOMString[] values) raises(DOMException);
+#endif
 
         readonly attribute [CheckSecurityForNode] Document contentDocument;
         [CheckSecurityForNode] SVGDocument getSVGDocument()

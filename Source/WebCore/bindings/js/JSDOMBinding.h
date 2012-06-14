@@ -44,6 +44,8 @@
 
 namespace WebCore {
 
+class DOMStringList;
+
 enum ParameterDefaultPolicy {
     DefaultIsUndefined,
     DefaultIsNullString
@@ -290,6 +292,8 @@ enum ParameterDefaultPolicy {
 
         return JSC::constructArray(exec, globalObject, list);
     }
+
+    JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, PassRefPtr<DOMStringList>);
 
     template<>
     inline JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<String>& iterator)

@@ -3072,7 +3072,10 @@ sub NativeToJSValue
 
     my $arrayType = $codeGenerator->GetArrayType($type);
     if ($arrayType) {
-        if (!$codeGenerator->SkipIncludeHeader($arrayType)) {
+        if ($type eq "DOMString[]") {
+            AddToImplIncludes("JSDOMStringList.h", $conditional);
+            AddToImplIncludes("DOMStringList.h", $conditional);
+        } elsif (!$codeGenerator->SkipIncludeHeader($arrayType)) {
             AddToImplIncludes("JS$arrayType.h", $conditional);
             AddToImplIncludes("$arrayType.h", $conditional);
         }

@@ -3506,6 +3506,7 @@ sub GetNativeType
     # necessary as resolvers could be constructed on fly.
     return "RefPtr<XPathNSResolver>" if $type eq "XPathNSResolver";
 
+    return "RefPtr<DOMStringList>" if $type eq "DOMString[]";
     return "RefPtr<${type}>" if IsRefPtrType($type) and not $isParameter;
 
     return "RefPtr<MediaQueryListListener>" if $type eq "MediaQueryListListener";
@@ -3514,7 +3515,6 @@ sub GetNativeType
     return "Vector<float>" if $type eq "float[]";
     return "Vector<double>" if $type eq "double[]";
     return "RefPtr<DOMStringList>" if $type eq "DOMStringList";
-    return "RefPtr<DOMStringList>" if $type eq "DOMString[]";
 
     # Default, assume native type is a pointer with same type name as idl type
     return "${type}*";
@@ -3746,6 +3746,7 @@ my %non_wrapper_types = (
     'CompareHow' => 1,
     'DOMObject' => 1,
     'DOMString' => 1,
+    'DOMString[]' => 1,
     'DOMTimeStamp' => 1,
     'Date' => 1,
     'Dictionary' => 1,
@@ -3864,7 +3865,10 @@ sub NativeToJSValue
 
     my $arrayType = $codeGenerator->GetArrayType($type);
     if ($arrayType) {
-        if (!$codeGenerator->SkipIncludeHeader($arrayType)) {
+        if ($type eq "DOMString[]") {
+            AddToImplIncludes("V8DOMStringList.h");
+            AddToImplIncludes("DOMStrignList.h");
+        } elsif (!$codeGenerator->SkipIncludeHeader($arrayType)) {
             AddToImplIncludes("V8$arrayType.h");
             AddToImplIncludes("$arrayType.h");
         }

@@ -22,6 +22,7 @@
 #include "V8TestObj.h"
 
 #include "ContextFeatures.h"
+#include "DOMStrignList.h"
 #include "Dictionary.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
@@ -38,6 +39,7 @@
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
 #include "V8BindingState.h"
+#include "V8DOMStringList.h"
 #include "V8DOMWrapper.h"
 #include "V8Document.h"
 #include "V8IsolatedContext.h"
@@ -1673,6 +1675,24 @@ static v8::Handle<v8::Value> enabledAtRuntimeMethod2Callback(const v8::Arguments
     return v8::Handle<v8::Value>();
 }
 
+static v8::Handle<v8::Value> stringArrayFunctionCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.stringArrayFunction");
+    if (args.Length() < 1)
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    ExceptionCode ec = 0;
+    {
+    EXCEPTION_BLOCK(RefPtr<DOMStringList>, values, v8ValueToWebCoreDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    RefPtr<DOMStringList> result = imp->stringArrayFunction(values, ec);
+    if (UNLIKELY(ec))
+        goto fail;
+    return v8Array(result.release(), args.GetIsolate());
+    }
+    fail:
+    return V8Proxy::setDOMException(ec, args.GetIsolate());
+}
+
 static v8::Handle<v8::Value> getSVGDocumentCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.getSVGDocument");
@@ -1949,6 +1969,7 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"conditionalMethod3", TestObjV8Internal::conditionalMethod3Callback},
 #endif
     {"overloadedMethod", TestObjV8Internal::overloadedMethodCallback},
+    {"stringArrayFunction", TestObjV8Internal::stringArrayFunctionCallback},
     {"getSVGDocument", TestObjV8Internal::getSVGDocumentCallback},
     {"mutablePointFunction", TestObjV8Internal::mutablePointFunctionCallback},
     {"immutablePointFunction", TestObjV8Internal::immutablePointFunctionCallback},
