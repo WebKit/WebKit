@@ -1,3 +1,33 @@
+2012-06-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Worker tear-down can re-enter JSC during GC finalization pt. 2
+        https://bugs.webkit.org/show_bug.cgi?id=88601
+
+        Reviewed by David Levin.
+
+        No new tests. Current regression tests are sufficient.
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::WorkerMessagingProxy):
+        (WebCore::WorkerMessagingProxy::workerObjectDestroyed): We clear the m_workerObject here because 
+        we don't want anybody else trying to send messages to the Worker now that it has been destroyed.
+        We also queue the asynchronous task for the various other cleanup that still needs to be done. 
+        This allows us to avoid the problem of re-entrant JS code execution during GC.
+        (WebCore):
+        (WebCore::WorkerMessagingProxy::workerObjectDestroyedInternal): Here we set m_mayBeDestroyed to true.
+        This is the point after which deleting the WorkerMessagingProxy in workerContextDestroyedInternal()
+        is okay. It could happen during this function call if the worker thread has been shutdown already, or 
+        it could be called later after we shut down the worker thread.
+        (WebCore::WorkerMessagingProxy::workerContextDestroyedInternal): We check m_mayBeDestroyed here 
+        instead of checking m_workerObject. This change effectively orthogonalizes the roles that m_workerObject 
+        was filling. Since we were eagerly clearing m_workerObject, but we wanted to asynchronously call 
+        workerObjectDestroyed(), we needed to make sure we didn't accidentally try to delete the WorkerMessagingProxy
+        twice (once from destroying the Worker and once from destroying the WorkerContext). This boolean field 
+        should fix that issue--we set it lazily like we wanted to do without being in danger of causing use-after-free
+        issues with m_workerObject.
+        * workers/WorkerMessagingProxy.h: Added the new field and function.
+        (WorkerMessagingProxy):
+
 2012-06-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Selector list start position is not extracted for style rules inside @media rules
