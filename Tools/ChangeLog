@@ -1,5 +1,22 @@
 2012-06-14  Csaba Osztrogonác  <ossy@webkit.org>
 
+        master.cfg cleanup, pass BuildStep instances instead of BuildStep subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=89001
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (Factory.__init__):
+        (BuildFactory.__init__):
+        (TestFactory.__init__):
+        (BuildAndTestFactory.__init__):
+        (BuildAndPerfTestFactory.__init__):
+        (BuildAndPerfTestWebKit2Factory.__init__):
+        (DownloadAndPerfTestFactory.__init__):
+        (DownloadAndPerfTestWebKit2Factory.__init__):
+
+2012-06-14  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unhide login form on the build.webkit.org
         https://bugs.webkit.org/show_bug.cgi?id=88981
 
