@@ -1,5 +1,18 @@
 2012-06-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Breakpoints should not be set when UISourceCode content is diverged from VM version of the script.
+        https://bugs.webkit.org/show_bug.cgi?id=89109
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.Breakpoint.prototype._updateBreakpoint):
+        * inspector/front-end/JavaScriptSource.js:
+        (WebInspector.JavaScriptSource.prototype.isDivergedFromVM):
+        (WebInspector.JavaScriptSource.prototype.workingCopyCommitted):
+
+2012-06-14  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: DebuggerModel should support setting breakpoints without script by sourceURL only.
         https://bugs.webkit.org/show_bug.cgi?id=88988
 

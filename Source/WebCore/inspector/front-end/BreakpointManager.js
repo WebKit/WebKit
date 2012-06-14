@@ -356,7 +356,7 @@ WebInspector.BreakpointManager.Breakpoint.prototype = {
         this._condition = condition;
         this._breakpointManager._storage._updateBreakpoint(this);
 
-        if (this._enabled) {
+        if (this._enabled && !this._primaryUILocation.uiSourceCode.isDivergedFromVM()) {
             this._setInDebugger();
             return;
         }
