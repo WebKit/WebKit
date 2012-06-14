@@ -1,3 +1,16 @@
+2012-06-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2] Fix client interface size for WKPageLoaderClient.
+        https://bugs.webkit.org/show_bug.cgi?id=88764
+
+        Reviewed by Anders Carlsson.
+
+        Fixes offset of WKPageLoaderClient for version 0 by adding didDetectXSSForFrame.
+        The offset should be off the first new callback that was added in the new version.
+
+        * Shared/APIClientTraits.cpp:
+        (WebKit):
+
 2012-06-13  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add implementation for dispatchIntent in WebFrameLoaderClient
