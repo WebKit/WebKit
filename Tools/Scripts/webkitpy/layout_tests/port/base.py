@@ -496,8 +496,22 @@ class Port(object):
         return reftest_list.get(self._filesystem.join(self.layout_tests_dir(), test_name), [])
 
     def tests(self, paths):
-        """Return the list of tests found."""
-        return self._real_tests(paths).union(self._virtual_tests(paths, self.populated_virtual_test_suites()))
+        """Return the list of tests found. Both generic and platform-specific tests matching paths should be returned."""
+        expanded_paths = self._expanded_paths(paths)
+        return self._real_tests(expanded_paths).union(self._virtual_tests(expanded_paths, self.populated_virtual_test_suites()))
+
+    def _expanded_paths(self, paths):
+        expanded_paths = []
+        fs = self._filesystem
+        all_platform_dirs = [path for path in fs.glob(fs.join(self.layout_tests_dir(), 'platform', '*')) if fs.isdir(path)]
+        for path in paths:
+            expanded_paths.append(path)
+            if self.test_isdir(path) and not path.startswith('platform'):
+                for platform_dir in all_platform_dirs:
+                    if fs.isdir(fs.join(platform_dir, path)):
+                        expanded_paths.append(self.relative_test_filename(fs.join(platform_dir, path)))
+
+        return expanded_paths
 
     def _real_tests(self, paths):
         # When collecting test cases, skip these directories

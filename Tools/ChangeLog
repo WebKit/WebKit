@@ -1,5 +1,28 @@
 2012-06-14  Dirk Pranke  <dpranke@chromium.org>
 
+        new-run-webkit-tests doesn't find similar platform tests for a keyword
+        https://bugs.webkit.org/show_bug.cgi?id=37956
+
+        Reviewed by Ryosuke Niwa.
+
+        This patches adds support for NRWT so that if you type
+        "new-run-webkit-tests foo" it will run all the tests in foo as
+        well as platform/foo for all of the platforms that are normally
+        searched (this only applies to directories, not to individual tests).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.collect_tests):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.tests):
+        (Port):
+        (Port._expanded_paths):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_no_http_tests):
+        (MainTest):
+        (MainTest.test_platform_tests_are_found):
+
+2012-06-14  Dirk Pranke  <dpranke@chromium.org>
+
         NRWT should honor --skipped=[default|ignore|only], like ORWT does
         https://bugs.webkit.org/show_bug.cgi?id=66308
 

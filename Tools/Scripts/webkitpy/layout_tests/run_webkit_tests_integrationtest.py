@@ -881,6 +881,10 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(MainTest.has_test_of_type(batch_tests_run_http, 'http'))
         self.assertTrue(MainTest.has_test_of_type(batch_tests_run_http, 'websocket'))
 
+    def test_platform_tests_are_found(self):
+        tests_run = get_tests_run(['http'], tests_included=True, flatten_batches=True)
+        self.assertTrue('platform/test-snow-leopard/http/test.html' in tests_run)
+
 
 class EndToEndTest(unittest.TestCase):
     def parse_full_results(self, full_results_text):
