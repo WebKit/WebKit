@@ -35,7 +35,7 @@ using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
 
-static HomogeneousCoordinate projectPoint(const WebTransformationMatrix& transform, const FloatPoint& p)
+static HomogeneousCoordinate projectHomogeneousPoint(const WebTransformationMatrix& transform, const FloatPoint& p)
 {
     // In this case, the layer we are trying to project onto is perpendicular to ray
     // (point p and z-axis direction) that we are trying to project. This happens when the
@@ -57,7 +57,7 @@ static HomogeneousCoordinate projectPoint(const WebTransformationMatrix& transfo
     return HomogeneousCoordinate(outX, outY, outZ, outW);
 }
 
-static HomogeneousCoordinate mapPoint(const WebTransformationMatrix& transform, const FloatPoint& p)
+static HomogeneousCoordinate mapHomogeneousPoint(const WebTransformationMatrix& transform, const FloatPoint& p)
 {
     double x = p.x();
     double y = p.y();
@@ -130,10 +130,10 @@ FloatRect CCMathUtil::mapClippedRect(const WebTransformationMatrix& transform, c
 
     // Apply the transform, but retain the result in homogeneous coordinates.
     FloatQuad q = FloatQuad(FloatRect(srcRect));
-    HomogeneousCoordinate h1 = mapPoint(transform, q.p1());
-    HomogeneousCoordinate h2 = mapPoint(transform, q.p2());
-    HomogeneousCoordinate h3 = mapPoint(transform, q.p3());
-    HomogeneousCoordinate h4 = mapPoint(transform, q.p4());
+    HomogeneousCoordinate h1 = mapHomogeneousPoint(transform, q.p1());
+    HomogeneousCoordinate h2 = mapHomogeneousPoint(transform, q.p2());
+    HomogeneousCoordinate h3 = mapHomogeneousPoint(transform, q.p3());
+    HomogeneousCoordinate h4 = mapHomogeneousPoint(transform, q.p4());
 
     return computeEnclosingClippedRect(h1, h2, h3, h4);
 }
@@ -142,20 +142,20 @@ FloatRect CCMathUtil::projectClippedRect(const WebTransformationMatrix& transfor
 {
     // Perform the projection, but retain the result in homogeneous coordinates.
     FloatQuad q = FloatQuad(FloatRect(srcRect));
-    HomogeneousCoordinate h1 = projectPoint(transform, q.p1());
-    HomogeneousCoordinate h2 = projectPoint(transform, q.p2());
-    HomogeneousCoordinate h3 = projectPoint(transform, q.p3());
-    HomogeneousCoordinate h4 = projectPoint(transform, q.p4());
+    HomogeneousCoordinate h1 = projectHomogeneousPoint(transform, q.p1());
+    HomogeneousCoordinate h2 = projectHomogeneousPoint(transform, q.p2());
+    HomogeneousCoordinate h3 = projectHomogeneousPoint(transform, q.p3());
+    HomogeneousCoordinate h4 = projectHomogeneousPoint(transform, q.p4());
 
     return computeEnclosingClippedRect(h1, h2, h3, h4);
 }
 
 void CCMathUtil::mapClippedQuad(const WebTransformationMatrix& transform, const FloatQuad& srcQuad, FloatPoint clippedQuad[8], int& numVerticesInClippedQuad)
 {
-    HomogeneousCoordinate h1 = mapPoint(transform, srcQuad.p1());
-    HomogeneousCoordinate h2 = mapPoint(transform, srcQuad.p2());
-    HomogeneousCoordinate h3 = mapPoint(transform, srcQuad.p3());
-    HomogeneousCoordinate h4 = mapPoint(transform, srcQuad.p4());
+    HomogeneousCoordinate h1 = mapHomogeneousPoint(transform, srcQuad.p1());
+    HomogeneousCoordinate h2 = mapHomogeneousPoint(transform, srcQuad.p2());
+    HomogeneousCoordinate h3 = mapHomogeneousPoint(transform, srcQuad.p3());
+    HomogeneousCoordinate h4 = mapHomogeneousPoint(transform, srcQuad.p4());
 
     // The order of adding the vertices to the array is chosen so that clockwise / counter-clockwise orientation is retained.
 
@@ -263,10 +263,10 @@ FloatQuad CCMathUtil::mapQuad(const WebTransformationMatrix& transform, const Fl
         return mappedQuad;
     }
 
-    HomogeneousCoordinate h1 = mapPoint(transform, q.p1());
-    HomogeneousCoordinate h2 = mapPoint(transform, q.p2());
-    HomogeneousCoordinate h3 = mapPoint(transform, q.p3());
-    HomogeneousCoordinate h4 = mapPoint(transform, q.p4());
+    HomogeneousCoordinate h1 = mapHomogeneousPoint(transform, q.p1());
+    HomogeneousCoordinate h2 = mapHomogeneousPoint(transform, q.p2());
+    HomogeneousCoordinate h3 = mapHomogeneousPoint(transform, q.p3());
+    HomogeneousCoordinate h4 = mapHomogeneousPoint(transform, q.p4());
 
     clipped = h1.shouldBeClipped() || h2.shouldBeClipped() || h3.shouldBeClipped() || h4.shouldBeClipped();
 
@@ -289,5 +289,30 @@ FloatQuad CCMathUtil::projectQuad(const WebTransformationMatrix& transform, cons
 
     return projectedQuad;
 }
+
+FloatPoint CCMathUtil::projectPoint(const WebTransformationMatrix& transform, const FloatPoint& p, bool& clipped)
+{
+    HomogeneousCoordinate h = projectHomogeneousPoint(transform, p);
+
+    if (h.w > 0) {
+        // The cartesian coordinates will be valid in this case.
+        clipped = false;
+        return h.cartesianPoint2d();
+    }
+
+    // The cartesian coordinates will be invalid after dividing by w.
+    clipped = true;
+
+    // Avoid dividing by w if w == 0.
+    if (!h.w)
+        return FloatPoint();
+
+    // This return value will be invalid because clipped == true, but (1) users of this
+    // code should be ignoring the return value when clipped == true anyway, and (2) this
+    // behavior is more consistent with existing behavior of WebKit transforms if the user
+    // really does not ignore the return value.
+    return h.cartesianPoint2d();
+}
+
 
 } // namespace WebCore

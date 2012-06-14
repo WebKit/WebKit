@@ -34,7 +34,6 @@ class WebTransformationMatrix;
 namespace WebCore {
 
 class IntRect;
-class FloatPoint;
 class FloatRect;
 class FloatQuad;
 
@@ -99,6 +98,7 @@ public:
     // correctly detect the clipped condition via the boolean clipped.
     static FloatQuad mapQuad(const WebKit::WebTransformationMatrix&, const FloatQuad&, bool& clipped);
     static FloatQuad projectQuad(const WebKit::WebTransformationMatrix&, const FloatQuad&, bool& clipped);
+    static FloatPoint projectPoint(const WebKit::WebTransformationMatrix&, const FloatPoint&, bool& clipped);
 };
 
 } // namespace WebCore

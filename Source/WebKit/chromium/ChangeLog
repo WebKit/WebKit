@@ -1,3 +1,12 @@
+2012-06-13  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Implement hit-testing for impl-side input handling in accelerated compositor
+        https://bugs.webkit.org/show_bug.cgi?id=88972
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+
 2012-06-13  David Reveman  <reveman@chromium.org>
 
         [Chromium] Crash when WebViewImpl::setIsTransparent is called before the WebLayerTreeView has been initialized.

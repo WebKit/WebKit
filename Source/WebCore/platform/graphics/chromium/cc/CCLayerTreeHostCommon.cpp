@@ -872,4 +872,70 @@ void CCLayerTreeHostCommon::calculateVisibleAndScissorRects(Vector<CCLayerImpl*>
     calculateVisibleAndScissorRectsInternal<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface>(renderSurfaceLayerList, rootScissorRect);
 }
 
+static bool pointHitsRect(const IntPoint& viewportPoint, const WebTransformationMatrix& localSpaceToScreenSpaceTransform, FloatRect localSpaceRect)
+{
+    // Transform the hit test point from screen space to the local space of the given rect.
+    bool clipped = false;
+    FloatPoint hitTestPointInLocalSpace = CCMathUtil::projectPoint(localSpaceToScreenSpaceTransform.inverse(), FloatPoint(viewportPoint), clipped);
+
+    // If projectPoint could not project to a valid value, then we assume that this point doesn't hit this rect.
+    if (clipped)
+        return false;
+
+    return localSpaceRect.contains(hitTestPointInLocalSpace);
+}
+
+static bool pointIsClippedBySurfaceOrClipRect(const IntPoint& viewportPoint, CCLayerImpl* layer)
+{
+    CCLayerImpl* currentLayer = layer;
+
+    // Walk up the layer tree and hit-test any renderSurfaces and any layer clipRects that are active.
+    while (currentLayer) {
+        if (currentLayer->renderSurface() && !pointHitsRect(viewportPoint, currentLayer->renderSurface()->screenSpaceTransform(), currentLayer->renderSurface()->contentRect()))
+            return true;
+
+        // Note that clipRects are actually in targetSurface space, so the transform we
+        // have to provide is the target surface's screenSpaceTransform.
+        if (currentLayer->usesLayerClipping() && !pointHitsRect(viewportPoint, currentLayer->targetRenderSurface()->screenSpaceTransform(), currentLayer->clipRect()))
+            return true;
+
+        currentLayer = currentLayer->parent();
+    }
+
+    // If we have finished walking all ancestors without having already exited, then the point is not clipped by any ancestors.
+    return false;
+}
+
+CCLayerImpl* CCLayerTreeHostCommon::findLayerThatIsHitByPoint(const IntPoint& viewportPoint, Vector<CCLayerImpl*>& renderSurfaceLayerList)
+{
+    CCLayerImpl* foundLayer = 0;
+
+    typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
+    CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
+
+    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
+        // We don't want to consider renderSurfaces for hit testing.
+        if (!it.representsItself())
+            continue;
+
+        CCLayerImpl* currentLayer = (*it);
+
+        FloatRect layerRect(FloatPoint::zero(), currentLayer->bounds());
+        if (!pointHitsRect(viewportPoint, currentLayer->screenSpaceTransform(), layerRect))
+            continue;
+
+        // At this point, we think the point does hit the layer, but we need to walk up
+        // the parents to ensure that the layer was not clipped in such a way that the
+        // hit point actually should not hit the layer.
+        if (pointIsClippedBySurfaceOrClipRect(viewportPoint, currentLayer))
+            continue;
+
+        foundLayer = currentLayer;
+        break;
+    }
+
+    // This can potentially return 0, which means the viewportPoint did not successfully hit test any layers, not even the root layer.
+    return foundLayer;
+}
+
 } // namespace WebCore

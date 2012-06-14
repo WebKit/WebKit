@@ -1,3 +1,57 @@
+2012-06-13  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Implement hit-testing for impl-side input handling in accelerated compositor
+        https://bugs.webkit.org/show_bug.cgi?id=88972
+
+        Reviewed by Adrienne Walker.
+
+        The original hit testing code by Sami Kyostila.
+
+        This patch implements a simple impl-side hit-testing helper
+        function. At this time, the main motivation for this is so that
+        composited scrollable layers can be scrolled by the impl thread --
+        and a prerequisite for that is the ability to hit-test on the impl
+        thread, to determine where the scrolling action should be applied.
+
+        To implement the actual hit test, it's possible to compute the hit
+        test in two equivalent ways: (a) inverse-project the point into
+        local space, or (b) forward-transform the rect to screen space
+        It's not obvious which one would perform better, or which one
+        would be more robust to w < 0 homogeneous clipping issues. For
+        this patch, we simply opt for the inverse-projection approach.
+
+        10 unit tests added to CCLayerTreeHostCommonTest.cpp:
+          CCLayerTreeHostCommonTest.verifyHitTestingForEmptyLayerList
+          CCLayerTreeHostCommonTest.verifyHitTestingForSingleLayer
+          CCLayerTreeHostCommonTest.verifyHitTestingForSinglePositionedLayer
+          CCLayerTreeHostCommonTest.verifyHitTestingForSingleRotatedLayer
+          CCLayerTreeHostCommonTest.verifyHitTestingForSinglePerspectiveLayer
+          CCLayerTreeHostCommonTest.verifyHitTestingForSingleLayerWithScaledContents
+          CCLayerTreeHostCommonTest.verifyHitTestingForSimpleClippedLayer
+          CCLayerTreeHostCommonTest.verifyHitTestingForMultiClippedRotatedLayer
+          CCLayerTreeHostCommonTest.verifyHitTestingForMultipleLayers
+          CCLayerTreeHostCommonTest.verifyHitTestingForMultipleLayerLists
+        
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::pointHitsRect):
+        (WebCore):
+        (WebCore::pointIsClippedBySurfaceOrClipRect):
+        (WebCore::CCLayerTreeHostCommon::findLayerThatIsHitByPoint):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.h:
+        (CCLayerTreeHostCommon):
+        * platform/graphics/chromium/cc/CCMathUtil.cpp:
+        (WebCore::projectHomogeneousPoint):
+        (WebCore::mapHomogeneousPoint):
+        (WebCore::CCMathUtil::mapClippedRect):
+        (WebCore::CCMathUtil::projectClippedRect):
+        (WebCore::CCMathUtil::mapClippedQuad):
+        (WebCore::CCMathUtil::mapQuad):
+        (WebCore::CCMathUtil::projectPoint):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCMathUtil.h:
+        (WebCore):
+        (CCMathUtil):
+
 2012-06-13  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Need customized toDOMStringList for IndexedDB JSC binding.
