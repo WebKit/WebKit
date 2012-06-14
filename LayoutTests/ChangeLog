@@ -1,3 +1,15 @@
+2012-06-13  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Unreviewed: Update expectations
+        https://bugs.webkit.org/show_bug.cgi?id=88949
+
+        http/tests/media/media-source/video-media-source-add-and-remove-ids.html
+        is passing on canary bots but producing text diffs on the WebKit
+        waterfall. As noted in the bug, I believe the text diffs are
+        timing-related.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-13  Kinuko Yasuda  <kinuko@chromium.org>
 
         [Chromium] Unreviewed: Add rebaseline and update expectations.
