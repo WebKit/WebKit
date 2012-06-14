@@ -1,3 +1,29 @@
+2012-06-14  Li Yin  <li.yin@intel.com>
+
+        [WebSocket] WebSocket object in Worker Context should fire error event when it fails connection.
+        https://bugs.webkit.org/show_bug.cgi?id=88744
+
+        Reviewed by Kent Tamura.
+
+        Spec:http://dev.w3.org/html5/websockets/#feedback-from-the-protocol
+        The behavior of firing error event in Document has been implemented in Committed r117944.
+        WebSocket in WorkerContext is also required to fire error event.
+
+        Test: http/tests/websocket/tests/hybi/workers/close.html
+
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageError):
+        (WebCore):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageErrorCallback):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        (ThreadableWebSocketChannelClientWrapper):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::workerContextDidReceiveMessageError):
+        (WebCore):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        (Peer):
+
 2012-06-13  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed build fix attempt for r120285

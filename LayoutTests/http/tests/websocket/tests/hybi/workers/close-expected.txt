@@ -45,6 +45,7 @@ PASS PASS: worker: exceptionName is invalidAccessErr
 Invalid code test: 12
 Code NaN must cause INVALID_ACCESS_ERR.
 PASS PASS: worker: exceptionName is invalidAccessErr
+PASS PASS: onerror() was called.
 runCodeTest: onclose().
 PASS PASS: worker: closeEvent.code is abnormalClosure
 Skip invalid string test.
@@ -59,6 +60,7 @@ Reason 1234567890123456789012345678901234567890123456789012345678901234567890123
 PASS PASS: worker: result is false
 PASS PASS: worker: exceptionName is syntaxErr
 Reason test: 2
+PASS PASS: onerror() was called.
 runReasonTest: onclose().
 PASS PASS: worker: closeEvent.code is abnormalClosure
 Code and reason test: 0

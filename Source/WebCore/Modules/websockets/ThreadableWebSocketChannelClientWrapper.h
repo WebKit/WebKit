@@ -88,6 +88,7 @@ public:
     void didUpdateBufferedAmount(unsigned long bufferedAmount);
     void didStartClosingHandshake();
     void didClose(unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
+    void didReceiveMessageError();
 
     void suspend();
     void resume();
@@ -104,6 +105,7 @@ private:
     static void didStartClosingHandshakeCallback(ScriptExecutionContext*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>);
     static void didCloseCallback(ScriptExecutionContext*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
     static void processPendingTasksCallback(ScriptExecutionContext*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>);
+    static void didReceiveMessageErrorCallback(ScriptExecutionContext*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>);
 
     ScriptExecutionContext* m_context;
     WebSocketChannelClient* m_client;

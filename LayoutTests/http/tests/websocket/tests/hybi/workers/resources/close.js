@@ -8,6 +8,11 @@ function postResult(result, actual, expected)
     postMessage(message);
 }
 
+function testPassed(message)
+{
+    postMessage("PASS: " + message);
+}
+
 function testFailed(message)
 {
     postMessage("FAIL: " + message);
@@ -110,6 +115,10 @@ function runCodeTest()
                 if (closeEvent.code == abnormalClosure)
                     runInvalidStringTest();
             };
+            ws.onerror = function ()
+            {
+                testPassed("onerror() was called.");
+            };
         }
         try {
             ws.close(codeTestCodes[id]);
@@ -146,6 +155,10 @@ function runReasonTest()
                 shouldBe("closeEvent.code", "abnormalClosure");
                 if (closeEvent.code == abnormalClosure)
                     runCodeAndReasonTest();
+            };
+            ws.onerror = function ()
+            {
+                testPassed("onerror() was called.");
             };
         }
         try {

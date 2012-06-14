@@ -205,6 +205,13 @@ void ThreadableWebSocketChannelClientWrapper::didClose(unsigned long unhandledBu
         processPendingTasks();
 }
 
+void ThreadableWebSocketChannelClientWrapper::didReceiveMessageError()
+{
+    m_pendingTasks.append(createCallbackTask(&didReceiveMessageErrorCallback, this));
+    if (!m_suspended)
+        processPendingTasks();
+}
+
 void ThreadableWebSocketChannelClientWrapper::suspend()
 {
     m_suspended = true;
@@ -278,6 +285,13 @@ void ThreadableWebSocketChannelClientWrapper::didCloseCallback(ScriptExecutionCo
     ASSERT_UNUSED(context, !context);
     if (wrapper->m_client)
         wrapper->m_client->didClose(unhandledBufferedAmount, closingHandshakeCompletion, code, reason);
+}
+
+void ThreadableWebSocketChannelClientWrapper::didReceiveMessageErrorCallback(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
+{
+    ASSERT_UNUSED(context, !context);
+    if (wrapper->m_client)
+        wrapper->m_client->didReceiveMessageError();
 }
 
 } // namespace WebCore

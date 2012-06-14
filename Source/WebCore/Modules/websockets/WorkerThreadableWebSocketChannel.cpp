@@ -345,6 +345,18 @@ void WorkerThreadableWebSocketChannel::Peer::didClose(unsigned long unhandledBuf
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidClose, m_workerClientWrapper, unhandledBufferedAmount, closingHandshakeCompletion, code, reason), m_taskMode);
 }
 
+static void workerContextDidReceiveMessageError(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper)
+{
+    ASSERT_UNUSED(context, context->isWorkerContext());
+    workerClientWrapper->didReceiveMessageError();
+}
+
+void WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError()
+{
+     ASSERT(isMainThread());
+     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveMessageError, m_workerClientWrapper), m_taskMode);
+}
+
 WorkerThreadableWebSocketChannel::Bridge::Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, PassRefPtr<WorkerContext> workerContext, const String& taskMode)
     : m_workerClientWrapper(workerClientWrapper)
     , m_workerContext(workerContext)

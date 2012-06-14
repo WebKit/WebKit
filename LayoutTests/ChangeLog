@@ -1,3 +1,18 @@
+2012-06-14  Li Yin  <li.yin@intel.com>
+
+        [WebSocket] WebSocket object in Worker Context should fire error event when it fails connection.
+        https://bugs.webkit.org/show_bug.cgi?id=88744
+
+        Reviewed by Kent Tamura.
+
+        * http/tests/websocket/tests/hybi/workers/close-expected.txt:
+        * http/tests/websocket/tests/hybi/workers/resources/close.js:
+        (testPassed):
+        (runCodeTest.else.ws.onerror):
+        (runCodeTest):
+        (runReasonTest.else.ws.onerror):
+        (runReasonTest):
+
 2012-06-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening after r120246 and r120257, updating baselines.

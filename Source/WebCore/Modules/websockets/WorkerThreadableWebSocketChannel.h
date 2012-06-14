@@ -106,6 +106,7 @@ public:
         virtual void didUpdateBufferedAmount(unsigned long bufferedAmount) OVERRIDE;
         virtual void didStartClosingHandshake() OVERRIDE;
         virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) OVERRIDE;
+        virtual void didReceiveMessageError() OVERRIDE;
 
     private:
         Peer(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, WorkerLoaderProxy&, ScriptExecutionContext*, const String& taskMode);
