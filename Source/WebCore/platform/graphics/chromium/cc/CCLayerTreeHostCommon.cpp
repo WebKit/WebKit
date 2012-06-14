@@ -874,6 +874,10 @@ void CCLayerTreeHostCommon::calculateVisibleAndScissorRects(Vector<CCLayerImpl*>
 
 static bool pointHitsRect(const IntPoint& viewportPoint, const WebTransformationMatrix& localSpaceToScreenSpaceTransform, FloatRect localSpaceRect)
 {
+    // If the transform is not invertible, then assume that this point doesn't hit this rect.
+    if (!localSpaceToScreenSpaceTransform.isInvertible())
+        return false;
+
     // Transform the hit test point from screen space to the local space of the given rect.
     bool clipped = false;
     FloatPoint hitTestPointInLocalSpace = CCMathUtil::projectPoint(localSpaceToScreenSpaceTransform.inverse(), FloatPoint(viewportPoint), clipped);

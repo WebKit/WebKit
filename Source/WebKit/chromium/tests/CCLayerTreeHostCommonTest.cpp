@@ -2970,6 +2970,72 @@ TEST(CCLayerTreeHostCommonTest, DISABLED_verifyHitTestingForSingleLayer)
     EXPECT_EQ(12345, resultLayer->id());
 }
 
+TEST(CCLayerTreeHostCommonTest, verifyHitTestingForUninvertibleTransform)
+{
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
+
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(12345);
+    root->createRenderSurface();
+    root->renderSurface()->setContentRect(IntRect(IntPoint::zero(), IntSize(100, 100)));
+
+    WebTransformationMatrix uninvertibleTransform;
+    uninvertibleTransform.setM11(0);
+    uninvertibleTransform.setM22(0);
+    uninvertibleTransform.setM33(0);
+    uninvertibleTransform.setM44(0);
+    ASSERT_FALSE(uninvertibleTransform.isInvertible());
+
+    WebTransformationMatrix identityMatrix;
+    FloatPoint anchor(0, 0);
+    FloatPoint position(0, 0);
+    IntSize bounds(100, 100);
+    setLayerPropertiesForTesting(root.get(), uninvertibleTransform, identityMatrix, anchor, position, bounds, false);
+    root->setDrawsContent(true);
+
+    Vector<CCLayerImpl*> renderSurfaceLayerList;
+    Vector<CCLayerImpl*> dummyLayerList;
+    int dummyMaxTextureSize = 512;
+    renderSurfaceLayerList.append(root.get());
+    CCLayerTreeHostCommon::calculateDrawTransforms(root.get(), root.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, 0, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, FloatRect()); // empty scissorRect will help ensure we're hit testing the correct rect.
+
+    // Sanity check the scenario we just created.
+    ASSERT_EQ(1u, renderSurfaceLayerList.size());
+    ASSERT_EQ(1u, root->renderSurface()->layerList().size());
+    ASSERT_FALSE(root->screenSpaceTransform().isInvertible());
+
+    // Hit testing any point should not hit the layer. If the invertible matrix is
+    // accidentally ignored and treated like an identity, then the hit testing will
+    // incorrectly hit the layer when it shouldn't.
+    IntPoint testPoint(1, 1);
+    CCLayerImpl* resultLayer = CCLayerTreeHostCommon::findLayerThatIsHitByPoint(testPoint, renderSurfaceLayerList);
+    EXPECT_FALSE(resultLayer);
+
+    testPoint = IntPoint(10, 10);
+    resultLayer = CCLayerTreeHostCommon::findLayerThatIsHitByPoint(testPoint, renderSurfaceLayerList);
+    EXPECT_FALSE(resultLayer);
+
+    testPoint = IntPoint(10, 30);
+    resultLayer = CCLayerTreeHostCommon::findLayerThatIsHitByPoint(testPoint, renderSurfaceLayerList);
+    EXPECT_FALSE(resultLayer);
+
+    testPoint = IntPoint(50, 50);
+    resultLayer = CCLayerTreeHostCommon::findLayerThatIsHitByPoint(testPoint, renderSurfaceLayerList);
+    EXPECT_FALSE(resultLayer);
+
+    testPoint = IntPoint(67, 48);
+    resultLayer = CCLayerTreeHostCommon::findLayerThatIsHitByPoint(testPoint, renderSurfaceLayerList);
+    EXPECT_FALSE(resultLayer);
+
+    testPoint = IntPoint(99, 99);
+    resultLayer = CCLayerTreeHostCommon::findLayerThatIsHitByPoint(testPoint, renderSurfaceLayerList);
+    EXPECT_FALSE(resultLayer);
+
+    testPoint = IntPoint(-1, -1);
+    resultLayer = CCLayerTreeHostCommon::findLayerThatIsHitByPoint(testPoint, renderSurfaceLayerList);
+    EXPECT_FALSE(resultLayer);
+}
+
 TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSinglePositionedLayer)
 {
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(12345);
