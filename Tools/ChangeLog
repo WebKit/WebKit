@@ -1,3 +1,9 @@
+2012-06-14  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Unreviewed. Update my email.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-06-14  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Update pywebsocket to 0.7.6 from 0.7.4

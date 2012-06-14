@@ -343,7 +343,7 @@ committers_unable_to_review = [
     Committer("Pierre-Olivier Latour", "pol@apple.com", "pol"),
     Committer("Pierre Rossi", "pierre.rossi@gmail.com", "elproxy"),
     Committer("Pratik Solanki", "psolanki@apple.com", "psolanki"),
-    Committer("Qi Zhang", ["qi.2.zhang@nokia.com", "qi.zhang02180@gmail.com"], "qi"),
+    Committer("Qi Zhang", "qi.zhang02180@gmail.com", "qi"),
     Committer("Rafael Antognolli", "antognolli@profusion.mobi", "antognolli"),
     Committer("Rafael Brandao", "rafael.lobo@openbossa.org", "rafaelbrandao"),
     Committer("Rafael Weinstein", "rafaelw@chromium.org", "rafaelw"),
