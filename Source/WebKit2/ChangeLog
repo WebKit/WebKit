@@ -1,3 +1,18 @@
+2012-06-13  Tim Horton  <timothy_horton@apple.com>
+
+        Rename _swapView:with: to _replaceView:with:
+        https://bugs.webkit.org/show_bug.cgi?id=89037
+
+        Reviewed by Darin Adler.
+        
+        _swapView:with: is a misnomer - after calling it, the first view is no longer
+        contained within the view hierarchy. "Replace" is a more accurate term.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+        (-[WKFullScreenWindowController _replaceView:with:]):
+
 2012-06-13  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add an accelerated compositing implementation for WebKit2

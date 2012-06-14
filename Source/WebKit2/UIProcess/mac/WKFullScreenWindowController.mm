@@ -55,7 +55,7 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 
 @interface WKFullScreenWindowController(Private)<NSAnimationDelegate>
 - (void)_updateMenuAndDockForFullScreen;
-- (void)_swapView:(NSView*)view with:(NSView*)otherView;
+- (void)_replaceView:(NSView*)view with:(NSView*)otherView;
 - (WebPageProxy*)_page;
 - (WebFullScreenManagerProxy*)_manager;
 - (void)_startEnterFullScreenAnimationWithDuration:(NSTimeInterval)duration;
@@ -245,7 +245,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
         [_webViewPlaceholder.get() setWantsLayer:YES];
     }
     [[_webViewPlaceholder.get() layer] setContents:(id)webViewContents.get()];
-    [self _swapView:_webView with:_webViewPlaceholder.get()];
+    [self _replaceView:_webView with:_webViewPlaceholder.get()];
     
     // Then insert the WebView into the full screen window
     NSView* contentView = [[self window] contentView];
@@ -380,7 +380,7 @@ static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void*)
     [[_webViewPlaceholder.get() window] setAutodisplay:NO];
 
     NSResponder *firstResponder = [[self window] firstResponder];
-    [self _swapView:_webViewPlaceholder.get() with:_webView];
+    [self _replaceView:_webViewPlaceholder.get() with:_webView];
     [[_webView window] makeResponder:firstResponder firstResponderIfDescendantOfView:_webView];
 
     NSRect windowBounds = [[self window] frame];
@@ -487,7 +487,7 @@ static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void* 
     return webPage->fullScreenManager();
 }
 
-- (void)_swapView:(NSView*)view with:(NSView*)otherView
+- (void)_replaceView:(NSView*)view with:(NSView*)otherView
 {
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
