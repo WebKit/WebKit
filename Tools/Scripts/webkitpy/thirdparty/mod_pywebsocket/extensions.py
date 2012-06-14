@@ -1,4 +1,4 @@
-# Copyright 2011, Google Inc.
+# Copyright 2012, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@
 
 from mod_pywebsocket import common
 from mod_pywebsocket import util
+from mod_pywebsocket.http_header_util import quote_if_necessary
 
 
 _available_processors = {}
@@ -252,6 +253,96 @@ _available_processors[common.DEFLATE_FRAME_EXTENSION] = (
 # TODO(bashi): Remove this after WebKit stops using vender prefix.
 _available_processors[common.X_WEBKIT_DEFLATE_FRAME_EXTENSION] = (
     DeflateFrameExtensionProcessor)
+
+
+def _parse_compression_method(data):
+    """Parses the value of "method" extension parameter."""
+
+    return common.parse_extensions(data, allow_quoted_string=True)
+
+
+def _create_accepted_method_desc(method_name, method_params):
+    """Creates accepted-method-desc from given method name and parameters"""
+
+    extension = common.ExtensionParameter(method_name)
+    for name, value in method_params:
+        extension.add_parameter(name, value)
+    return common.format_extension(extension)
+
+
+class PerFrameCompressionExtensionProcessor(ExtensionProcessorInterface):
+    """WebSocket Per-frame compression extension processor."""
+
+    _METHOD_PARAM = 'method'
+    _DEFLATE_METHOD = 'deflate'
+
+    def __init__(self, request):
+        self._logger = util.get_class_logger(self)
+        self._request = request
+        self._compression_method_name = None
+        self._compression_processor = None
+
+    def _lookup_compression_processor(self, method_desc):
+        if method_desc.name() == self._DEFLATE_METHOD:
+            return DeflateFrameExtensionProcessor(method_desc)
+        return None
+
+    def _get_compression_processor_response(self):
+        """Looks up the compression processor based on the self._request and
+           returns the compression processor's response.
+        """
+
+        method_list = self._request.get_parameter_value(self._METHOD_PARAM)
+        if method_list is None:
+            return None
+        methods = _parse_compression_method(method_list)
+        if methods is None:
+            return None
+        comression_processor = None
+        # The current implementation tries only the first method that matches
+        # supported algorithm. Following methods aren't tried even if the
+        # first one is rejected.
+        # TODO(bashi): Need to clarify this behavior.
+        for method_desc in methods:
+            compression_processor = self._lookup_compression_processor(
+                method_desc)
+            if compression_processor is not None:
+                self._compression_method_name = method_desc.name()
+                break
+        if compression_processor is None:
+            return None
+        processor_response = compression_processor.get_extension_response()
+        if processor_response is None:
+            return None
+        self._compression_processor = compression_processor
+        return processor_response
+
+    def get_extension_response(self):
+        processor_response = self._get_compression_processor_response()
+        if processor_response is None:
+            return None
+
+        response = common.ExtensionParameter(self._request.name())
+        accepted_method_desc = _create_accepted_method_desc(
+                                   self._compression_method_name,
+                                   processor_response.get_parameters())
+        response.add_parameter(self._METHOD_PARAM, accepted_method_desc)
+        self._logger.debug(
+            'Enable %s extension (method: %s)' %
+            (self._request.name(), self._compression_method_name))
+        return response
+
+    def setup_stream_options(self, stream_options):
+        if self._compression_processor is None:
+            return
+        self._compression_processor.setup_stream_options(stream_options)
+
+    def get_compression_processor(self):
+        return self._compression_processor
+
+
+_available_processors[common.PERFRAME_COMPRESSION_EXTENSION] = (
+    PerFrameCompressionExtensionProcessor)
 
 
 def get_extension_processor(extension_request):

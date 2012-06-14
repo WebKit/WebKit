@@ -28,6 +28,16 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+"""This file must not depend on any module specific to the WebSocket protocol.
+"""
+
+
+from mod_pywebsocket import http_header_util
+
+
+# Additional log level definitions.
+LOGLEVEL_FINE = 9
+
 # Constants indicating WebSocket protocol version.
 VERSION_HIXIE75 = -1
 VERSION_HYBI00 = 0
@@ -93,6 +103,7 @@ SEC_WEBSOCKET_LOCATION_HEADER = 'Sec-WebSocket-Location'
 # Extensions
 DEFLATE_STREAM_EXTENSION = 'deflate-stream'
 DEFLATE_FRAME_EXTENSION = 'deflate-frame'
+PERFRAME_COMPRESSION_EXTENSION = 'perframe-compress'
 X_WEBKIT_DEFLATE_FRAME_EXTENSION = 'x-webkit-deflate-frame'
 
 # Status codes
@@ -174,6 +185,120 @@ class ExtensionParameter(object):
         for param_name, param_value in self._parameters:
             if param_name == name:
                 return param_value
+
+
+class ExtensionParsingException(Exception):
+    def __init__(self, name):
+        super(ExtensionParsingException, self).__init__(name)
+
+
+def _parse_extension_param(state, definition, allow_quoted_string):
+    param_name = http_header_util.consume_token(state)
+
+    if param_name is None:
+        raise ExtensionParsingException('No valid parameter name found')
+
+    http_header_util.consume_lwses(state)
+
+    if not http_header_util.consume_string(state, '='):
+        definition.add_parameter(param_name, None)
+        return
+
+    http_header_util.consume_lwses(state)
+
+    if allow_quoted_string:
+        # TODO(toyoshim): Add code to validate that parsed param_value is token
+        param_value = http_header_util.consume_token_or_quoted_string(state)
+    else:
+        param_value = http_header_util.consume_token(state)
+    if param_value is None:
+        raise ExtensionParsingException(
+            'No valid parameter value found on the right-hand side of '
+            'parameter %r' % param_name)
+
+    definition.add_parameter(param_name, param_value)
+
+
+def _parse_extension(state, allow_quoted_string):
+    extension_token = http_header_util.consume_token(state)
+    if extension_token is None:
+        return None
+
+    extension = ExtensionParameter(extension_token)
+
+    while True:
+        http_header_util.consume_lwses(state)
+
+        if not http_header_util.consume_string(state, ';'):
+            break
+
+        http_header_util.consume_lwses(state)
+
+        try:
+            _parse_extension_param(state, extension, allow_quoted_string)
+        except ExtensionParsingException, e:
+            raise ExtensionParsingException(
+                'Failed to parse parameter for %r (%r)' %
+                (extension_token, e))
+
+    return extension
+
+
+def parse_extensions(data, allow_quoted_string=False):
+    """Parses Sec-WebSocket-Extensions header value returns a list of
+    ExtensionParameter objects.
+
+    Leading LWSes must be trimmed.
+    """
+
+    state = http_header_util.ParsingState(data)
+
+    extension_list = []
+    while True:
+        extension = _parse_extension(state, allow_quoted_string)
+        if extension is not None:
+            extension_list.append(extension)
+
+        http_header_util.consume_lwses(state)
+
+        if http_header_util.peek(state) is None:
+            break
+
+        if not http_header_util.consume_string(state, ','):
+            raise ExtensionParsingException(
+                'Failed to parse Sec-WebSocket-Extensions header: '
+                'Expected a comma but found %r' %
+                http_header_util.peek(state))
+
+        http_header_util.consume_lwses(state)
+
+    if len(extension_list) == 0:
+        raise ExtensionParsingException(
+            'No valid extension entry found')
+
+    return extension_list
+
+
+def format_extension(extension):
+    """Formats an ExtensionParameter object."""
+
+    formatted_params = [extension.name()]
+    for param_name, param_value in extension.get_parameters():
+        if param_value is None:
+            formatted_params.append(param_name)
+        else:
+            quoted_value = http_header_util.quote_if_necessary(param_value)
+            formatted_params.append('%s=%s' % (param_name, quoted_value))
+    return '; '.join(formatted_params)
+
+
+def format_extensions(extension_list):
+    """Formats a list of ExtensionParameter objects."""
+
+    formatted_extension_list = []
+    for extension in extension_list:
+        formatted_extension_list.append(format_extension(extension))
+    return ', '.join(formatted_extension_list)
 
 
 # vi:sts=4 sw=4 et

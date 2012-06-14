@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2011, Google Inc.
+# Copyright 2012, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -53,6 +53,20 @@ handlers. If this path is relative, <document_root> is used as the base.
 
 <scan_dir> is a path under the root directory. If specified, only the
 handlers under scan_dir are scanned. This is useful in saving scan time.
+
+
+SUPPORTING TLS
+
+To support TLS, run standalone.py with -t, -k, and -c options.
+
+
+SUPPORTING CLIENT AUTHENTICATION
+
+To support client authentication with TLS, run standalone.py with -t, -k, -c,
+and --ca-certificate options.
+
+E.g., $./standalone.py -d ../example -p 10443 -t -c ../test/cert/cert.pem -k
+../test/cert/key.pem --ca-certificate=../test/cert/cacert.pem
 
 
 CONFIGURATION FILE
@@ -311,10 +325,16 @@ class WebSocketServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
                 continue
             if self.websocket_server_options.use_tls:
                 if _HAS_SSL:
+                    if self.websocket_server_options.ca_certificate:
+                        client_cert_ = ssl.CERT_REQUIRED
+                    else:
+                        client_cert_ = ssl.CERT_NONE
                     socket_ = ssl.wrap_socket(socket_,
                         keyfile=self.websocket_server_options.private_key,
                         certfile=self.websocket_server_options.certificate,
-                        ssl_version=ssl.PROTOCOL_SSLv23)
+                        ssl_version=ssl.PROTOCOL_SSLv23,
+                        ca_certs=self.websocket_server_options.ca_certificate,
+                        cert_reqs=client_cert_)
                 if _HAS_OPEN_SSL:
                     ctx = OpenSSL.SSL.Context(OpenSSL.SSL.SSLv23_METHOD)
                     ctx.use_privatekey_file(
@@ -601,7 +621,13 @@ class WebSocketRequestHandler(CGIHTTPServer.CGIHTTPRequestHandler):
         return False
 
 
+def _get_logger_from_class(c):
+    return logging.getLogger('%s.%s' % (c.__module__, c.__name__))
+
+
 def _configure_logging(options):
+    logging.addLevelName(common.LOGLEVEL_FINE, 'FINE')
+
     logger = logging.getLogger()
     logger.setLevel(logging.getLevelName(options.log_level.upper()))
     if options.log_file:
@@ -613,6 +639,13 @@ def _configure_logging(options):
             '[%(asctime)s] [%(levelname)s] %(name)s: %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
+
+    deflate_log_level_name = logging.getLevelName(
+        options.deflate_log_level.upper())
+    _get_logger_from_class(util._Deflater).setLevel(
+        deflate_log_level_name)
+    _get_logger_from_class(util._Inflater).setLevel(
+        deflate_log_level_name)
 
 
 def _alias_handlers(dispatcher, websock_handlers_map_file):
@@ -702,13 +735,25 @@ def _build_option_parser():
                       default='', help='TLS private key file.')
     parser.add_option('-c', '--certificate', dest='certificate',
                       default='', help='TLS certificate file.')
+    parser.add_option('--ca-certificate', dest='ca_certificate', default='',
+                      help=('TLS CA certificate file for client '
+                            'authentication.'))
     parser.add_option('-l', '--log-file', '--log_file', dest='log_file',
                       default='', help='Log file.')
+    # Custom log level:
+    # - FINE: Prints status of each frame processing step
     parser.add_option('--log-level', '--log_level', type='choice',
                       dest='log_level', default='warn',
-                      choices=['debug', 'info', 'warning', 'warn', 'error',
+                      choices=['fine',
+                               'debug', 'info', 'warning', 'warn', 'error',
                                'critical'],
                       help='Log level.')
+    parser.add_option('--deflate-log-level', '--deflate_log_level',
+                      type='choice',
+                      dest='deflate_log_level', default='warn',
+                      choices=['debug', 'info', 'warning', 'warn', 'error',
+                               'critical'],
+                      help='Log level for _Deflater and _Inflater.')
     parser.add_option('--thread-monitor-interval-in-sec',
                       '--thread_monitor_interval_in_sec',
                       dest='thread_monitor_interval_in_sec',
@@ -825,12 +870,19 @@ def _main(args=None):
 
     if options.use_tls:
         if not (_HAS_SSL or _HAS_OPEN_SSL):
-            logging.critical('TLS support requires ssl or pyOpenSSL.')
+            logging.critical('TLS support requires ssl or pyOpenSSL module.')
             sys.exit(1)
         if not options.private_key or not options.certificate:
             logging.critical(
                     'To use TLS, specify private_key and certificate.')
             sys.exit(1)
+
+    if options.ca_certificate:
+        if not options.use_tls:
+            logging.critical('TLS must be enabled for client authentication.')
+            sys.exit(1)
+        if not _HAS_SSL:
+            logging.critical('Client authentication requires ssl module.')
 
     if not options.scan_dir:
         options.scan_dir = options.websock_handlers

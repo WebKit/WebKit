@@ -1,4 +1,4 @@
-# Copyright 2011, Google Inc.
+# Copyright 2012, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -214,110 +214,6 @@ def parse_token_list(data):
         raise HandshakeException('No valid token found')
 
     return token_list
-
-
-def _parse_extension_param(state, definition, allow_quoted_string):
-    param_name = http_header_util.consume_token(state)
-
-    if param_name is None:
-        raise HandshakeException('No valid parameter name found')
-
-    http_header_util.consume_lwses(state)
-
-    if not http_header_util.consume_string(state, '='):
-        definition.add_parameter(param_name, None)
-        return
-
-    http_header_util.consume_lwses(state)
-
-    if allow_quoted_string:
-        # TODO(toyoshim): Add code to validate that parsed param_value is token
-        param_value = http_header_util.consume_token_or_quoted_string(state)
-    else:
-        param_value = http_header_util.consume_token(state)
-    if param_value is None:
-        raise HandshakeException(
-            'No valid parameter value found on the right-hand side of '
-            'parameter %r' % param_name)
-
-    definition.add_parameter(param_name, param_value)
-
-
-def _parse_extension(state, allow_quoted_string):
-    extension_token = http_header_util.consume_token(state)
-    if extension_token is None:
-        return None
-
-    extension = common.ExtensionParameter(extension_token)
-
-    while True:
-        http_header_util.consume_lwses(state)
-
-        if not http_header_util.consume_string(state, ';'):
-            break
-
-        http_header_util.consume_lwses(state)
-
-        try:
-            _parse_extension_param(state, extension, allow_quoted_string)
-        except HandshakeException, e:
-            raise HandshakeException(
-                'Failed to parse Sec-WebSocket-Extensions header: '
-                'Failed to parse parameter for %r (%r)' %
-                (extension_token, e))
-
-    return extension
-
-
-def parse_extensions(data, allow_quoted_string=False):
-    """Parses Sec-WebSocket-Extensions header value returns a list of
-    common.ExtensionParameter objects.
-
-    Leading LWSes must be trimmed.
-    """
-
-    state = http_header_util.ParsingState(data)
-
-    extension_list = []
-    while True:
-        extension = _parse_extension(state, allow_quoted_string)
-        if extension is not None:
-            extension_list.append(extension)
-
-        http_header_util.consume_lwses(state)
-
-        if http_header_util.peek(state) is None:
-            break
-
-        if not http_header_util.consume_string(state, ','):
-            raise HandshakeException(
-                'Failed to parse Sec-WebSocket-Extensions header: '
-                'Expected a comma but found %r' %
-                http_header_util.peek(state))
-
-        http_header_util.consume_lwses(state)
-
-    if len(extension_list) == 0:
-        raise HandshakeException(
-            'Sec-WebSocket-Extensions header contains no valid extension')
-
-    return extension_list
-
-
-def format_extensions(extension_list):
-    formatted_extension_list = []
-    for extension in extension_list:
-        formatted_params = [extension.name()]
-        for param_name, param_value in extension.get_parameters():
-            if param_value is None:
-                formatted_params.append(param_name)
-            else:
-                quoted_value = http_header_util.quote_if_necessary(param_value)
-                formatted_params.append('%s=%s' % (param_name, quoted_value))
-
-        formatted_extension_list.append('; '.join(formatted_params))
-
-    return ', '.join(formatted_extension_list)
 
 
 # vi:sts=4 sw=4 et

@@ -1,4 +1,4 @@
-# Copyright 2011, Google Inc.
+# Copyright 2012, Google Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -50,11 +50,9 @@ import re
 from mod_pywebsocket import common
 from mod_pywebsocket.extensions import get_extension_processor
 from mod_pywebsocket.handshake._base import check_request_line
-from mod_pywebsocket.handshake._base import format_extensions
 from mod_pywebsocket.handshake._base import format_header
 from mod_pywebsocket.handshake._base import get_mandatory_header
 from mod_pywebsocket.handshake._base import HandshakeException
-from mod_pywebsocket.handshake._base import parse_extensions
 from mod_pywebsocket.handshake._base import parse_token_list
 from mod_pywebsocket.handshake._base import validate_mandatory_header
 from mod_pywebsocket.handshake._base import validate_subprotocol
@@ -290,8 +288,12 @@ class Handshaker(object):
             allow_quoted_string=False
         else:
             allow_quoted_string=True
-        self._request.ws_requested_extensions = parse_extensions(
-            extensions_header, allow_quoted_string=allow_quoted_string)
+        try:
+            self._request.ws_requested_extensions = common.parse_extensions(
+                extensions_header, allow_quoted_string=allow_quoted_string)
+        except common.ExtensionParsingException, e:
+            raise HandshakeException(
+                'Failed to parse Sec-WebSocket-Extensions header: %r' % e)
 
         self._logger.debug(
             'Extensions requested: %r',
@@ -358,7 +360,7 @@ class Handshaker(object):
             len(self._request.ws_extensions) != 0):
             response.append(format_header(
                 common.SEC_WEBSOCKET_EXTENSIONS_HEADER,
-                format_extensions(self._request.ws_extensions)))
+                common.format_extensions(self._request.ws_extensions)))
         response.append('\r\n')
 
         raw_response = ''.join(response)

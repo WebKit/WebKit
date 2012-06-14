@@ -1,3 +1,56 @@
+2012-06-14  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Update pywebsocket to 0.7.6 from 0.7.4
+        https://bugs.webkit.org/show_bug.cgi?id=88975
+
+        Reviewed by Kent Tamura.
+
+        This new version of pywebsocket introduce following features.
+         - Allow handlers to send a close frame with empty body in response of
+             a client initiated closing handshake
+         - Implement perframe compression extension
+         - Support client certificate authentication
+
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/COPYING:
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/_stream_hybi.py:
+        (_create_control_frame):
+        (Stream._receive_frame):
+        (Stream.send_message):
+        (Stream.receive_message):
+        (Stream._send_closing_handshake):
+        (Stream.close_connection):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/common.py:
+        (ExtensionParsingException):
+        (ExtensionParsingException.__init__):
+        (_parse_extension_param):
+        (_parse_extension):
+        (parse_extensions):
+        (format_extension):
+        (format_extensions):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/extensions.py:
+        (_parse_compression_method):
+        (_create_accepted_method_desc):
+        (PerFrameCompressionExtensionProcessor):
+        (PerFrameCompressionExtensionProcessor.__init__):
+        (PerFrameCompressionExtensionProcessor._lookup_compression_processor):
+        (PerFrameCompressionExtensionProcessor._get_compression_processor_response):
+        (PerFrameCompressionExtensionProcessor.get_extension_response):
+        (PerFrameCompressionExtensionProcessor.setup_stream_options):
+        (PerFrameCompressionExtensionProcessor.get_compression_processor):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/_base.py:
+        (parse_token_list):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/hybi.py:
+        (Handshaker._parse_extensions):
+        (Handshaker._send_handshake):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/standalone.py:
+        (WebSocketServer._create_sockets):
+        (_get_logger_from_class):
+        (_configure_logging):
+        (_build_option_parser):
+        (_main.if):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/util.py:
+        (RepeatedXorMasker.mask):
+
 2012-06-14  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Remove USE(QT_IMAGE_DECODER) macro, since we don't use it anymore
