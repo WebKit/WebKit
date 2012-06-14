@@ -97,8 +97,6 @@ PlatformCanvas::Painter::Painter(PlatformCanvas* canvas, PlatformCanvas::Painter
 {
     m_skiaContext = adoptPtr(new PlatformContextSkia(canvas->m_skiaCanvas.get()));
 
-    m_skiaContext->setDrawingToImageBuffer(option == GrayscaleText);
-
     m_context = adoptPtr(new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(m_skiaContext.get())));
     context()->save();
 }

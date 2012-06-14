@@ -36,6 +36,7 @@
 #include "ContentLayerChromium.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
+#include "OpaqueRectTrackingContentLayerDelegate.h"
 #include "cc/CCLayerAnimationDelegate.h"
 
 #include <public/WebContentLayer.h>
@@ -47,7 +48,7 @@ namespace WebCore {
 class LayerChromium;
 class LinkHighlight;
 
-class GraphicsLayerChromium : public GraphicsLayer, public ContentLayerDelegate, public CCLayerAnimationDelegate {
+class GraphicsLayerChromium : public GraphicsLayer, public GraphicsContextPainter, public CCLayerAnimationDelegate {
 public:
     GraphicsLayerChromium(GraphicsLayerClient*);
     virtual ~GraphicsLayerChromium();
@@ -117,8 +118,8 @@ public:
     virtual void setDebugBorder(const Color&, float borderWidth);
     virtual void deviceOrPageScaleFactorChanged();
 
-    // ContentLayerDelegate implementation.
-    virtual void paintContents(GraphicsContext&, const IntRect& clip);
+    // GraphicsContextPainter implementation.
+    virtual void paint(GraphicsContext&, const IntRect& clip) OVERRIDE;
 
     // CCLayerAnimationDelegate implementation.
     virtual void notifyAnimationStarted(double startTime);
@@ -161,6 +162,8 @@ private:
     WebKit::WebContentLayer m_layer;
     WebKit::WebLayer m_transformLayer;
     WebKit::WebLayer m_contentsLayer;
+
+    OwnPtr<OpaqueRectTrackingContentLayerDelegate> m_opaqueRectTrackingContentLayerDelegate;
 
     enum ContentsLayerPurpose {
         NoContentsLayer = 0,

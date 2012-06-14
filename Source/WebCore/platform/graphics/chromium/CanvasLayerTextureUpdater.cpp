@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "LayerPainterChromium.h"
 #include "PlatformContextSkia.h"
+#include "SkiaUtils.h"
 #include "TraceEvent.h"
 
 namespace WebCore {
@@ -46,38 +47,25 @@ CanvasLayerTextureUpdater::~CanvasLayerTextureUpdater()
 {
 }
 
-void CanvasLayerTextureUpdater::paintContents(GraphicsContext& context, PlatformContextSkia& platformContext, const IntRect& contentRect, float contentsScale, IntRect& resultingOpaqueRect)
+void CanvasLayerTextureUpdater::paintContents(SkCanvas* canvas, const IntRect& contentRect, float contentsScale, IntRect& resultingOpaqueRect)
 {
-    context.translate(-contentRect.x(), -contentRect.y());
-    {
-        TRACE_EVENT("LayerTextureUpdaterCanvas::paint", this, 0);
+    TRACE_EVENT0("cc", "CanvasLayerTextureUpdater::paintContents");
+    canvas->save();
+    canvas->translate(WebCoreFloatToSkScalar(-contentRect.x()), WebCoreFloatToSkScalar(-contentRect.y()));
 
-        IntRect scaledContentRect = contentRect;
+    IntRect scaledContentRect = contentRect;
 
-        if (contentsScale != 1.0) {
-            context.save();
-            context.scale(FloatSize(contentsScale, contentsScale));
+    if (contentsScale != 1.0) {
+        canvas->scale(WebCoreFloatToSkScalar(contentsScale), WebCoreFloatToSkScalar(contentsScale));
 
-            FloatRect rect = contentRect;
-            rect.scale(1 / contentsScale);
-            scaledContentRect = enclosingIntRect(rect);
-        }
-
-        // Record transform prior to painting, as all opaque tracking will be
-        // relative to this current value.
-        AffineTransform canvasToContentTransform = context.getCTM().inverse();
-
-        m_painter->paint(context, scaledContentRect);
-
-        // Transform tracked opaque paints back to our layer's content space.
-        ASSERT(canvasToContentTransform.isInvertible());
-        ASSERT(canvasToContentTransform.preservesAxisAlignment());
-        FloatRect opaqueCanvasRect = platformContext.opaqueRegion().asRect();
-        resultingOpaqueRect = enclosedIntRect(canvasToContentTransform.mapRect(opaqueCanvasRect));
-
-        if (contentsScale != 1.0)
-            context.restore();
+        FloatRect rect = contentRect;
+        rect.scale(1 / contentsScale);
+        scaledContentRect = enclosingIntRect(rect);
     }
+
+    m_painter->paint(canvas, scaledContentRect, resultingOpaqueRect);
+    canvas->restore();
+
     m_contentRect = contentRect;
 }
 

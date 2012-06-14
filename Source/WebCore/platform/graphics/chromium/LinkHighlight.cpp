@@ -28,6 +28,7 @@
 #include "LinkHighlight.h"
 
 #include "GraphicsLayerChromium.h"
+#include "PlatformContextSkia.h"
 #include "cc/CCKeyframedAnimationCurve.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/OwnPtr.h>
@@ -91,8 +92,10 @@ ContentLayerChromium* LinkHighlight::contentLayer()
     return m_contentLayer.get();
 }
 
-void LinkHighlight::paintContents(GraphicsContext& gc, const IntRect&)
+void LinkHighlight::paintContents(SkCanvas* canvas, const IntRect&, IntRect&)
 {
+    PlatformContextSkia platformContext(canvas);
+    GraphicsContext gc(&platformContext);
     // FIXME: make colour configurable?
     gc.setStrokeColor(Color(0, 0, 255, 255), ColorSpaceDeviceRGB);
     gc.setStrokeThickness(2);

@@ -506,6 +506,7 @@ public:
     void scheduleCompositingLayerSync();
     void scrollRootLayerRect(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& clipRect);
     void invalidateRootLayerRect(const WebCore::IntRect&);
+    void paintRootLayer(WebCore::GraphicsContext&, const WebCore::IntRect& contentRect);
     NonCompositedContentHost* nonCompositedContentHost();
     void setBackgroundColor(const WebCore::Color&);
 #endif

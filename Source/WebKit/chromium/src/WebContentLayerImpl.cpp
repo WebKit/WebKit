@@ -53,11 +53,10 @@ WebContentLayerImpl::~WebContentLayerImpl()
     clearDelegate();
 }
 
-void WebContentLayerImpl::paintContents(GraphicsContext& gc, const IntRect& clip)
+void WebContentLayerImpl::paintContents(SkCanvas* canvas, const IntRect& clip, IntRect&)
 {
     if (!m_contentClient)
         return;
-    WebCanvas* canvas = gc.platformContext()->canvas();
     m_contentClient->paintContents(canvas, WebRect(clip));
 }
 

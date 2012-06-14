@@ -31,13 +31,15 @@
 #include "FloatRect.h"
 #include "GraphicsLayer.h"
 #include "LayerChromium.h"
-#include "LayerPainterChromium.h"
+#include "PlatformContextSkia.h"
+#include "WebViewImpl.h"
 #include "cc/CCLayerTreeHost.h"
 
 namespace WebKit {
 
-NonCompositedContentHost::NonCompositedContentHost(PassOwnPtr<WebCore::LayerPainterChromium> contentPaint)
-    : m_contentPaint(contentPaint)
+NonCompositedContentHost::NonCompositedContentHost(WebViewImpl* webView)
+    : m_webView(webView)
+    , m_opaque(true)
     , m_showDebugBorders(false)
     , m_deviceScaleFactor(1.0)
 {
@@ -64,6 +66,7 @@ void NonCompositedContentHost::setBackgroundColor(const WebCore::Color& color)
 
 void NonCompositedContentHost::setOpaque(bool opaque)
 {
+    m_opaque = opaque;
     m_graphicsLayer->platformLayer()->setOpaque(opaque);
 }
 
@@ -165,10 +168,16 @@ void NonCompositedContentHost::notifySyncRequired(const WebCore::GraphicsLayer*)
 
 void NonCompositedContentHost::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& context, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect)
 {
+    // On non-android platforms, we want to render text with subpixel antialiasing on the root layer
+    // so long as the root is opaque. On android all text is grayscale.
+#if !OS(ANDROID)
+    if (m_opaque)
+        context.platformContext()->setDrawingToImageBuffer(false);
+#endif
     context.translate(-m_layerAdjust);
     WebCore::IntRect adjustedClipRect = clipRect;
     adjustedClipRect.move(m_layerAdjust);
-    m_contentPaint->paint(context, adjustedClipRect);
+    m_webView->paintRootLayer(context, adjustedClipRect);
 }
 
 void NonCompositedContentHost::setShowDebugBorders(bool showDebugBorders)

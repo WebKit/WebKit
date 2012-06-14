@@ -47,12 +47,12 @@ class SkPictureCanvasLayerTextureUpdater : public CanvasLayerTextureUpdater {
 public:
     virtual ~SkPictureCanvasLayerTextureUpdater();
 
-    virtual void setOpaque(bool);
+    virtual void setOpaque(bool) OVERRIDE;
 
 protected:
     explicit SkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);
 
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale, IntRect& resultingOpaqueRect);
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, float contentsScale, IntRect& resultingOpaqueRect) OVERRIDE;
     void drawPicture(SkCanvas*);
 
     bool layerIsOpaque() const { return m_layerIsOpaque; }

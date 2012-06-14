@@ -41,7 +41,7 @@ protected:
     virtual ~WebContentLayerImpl();
 
     // ContentLayerDelegate implementation.
-    virtual void paintContents(WebCore::GraphicsContext&, const WebCore::IntRect& clip);
+    virtual void paintContents(SkCanvas*, const WebCore::IntRect& clip, WebCore::IntRect& opaque);
 
     WebContentLayerClient* m_contentClient;
     bool m_drawsContent;

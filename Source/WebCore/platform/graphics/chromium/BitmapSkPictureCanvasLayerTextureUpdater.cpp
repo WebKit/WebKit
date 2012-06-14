@@ -89,10 +89,10 @@ LayerTextureUpdater::SampledTexelFormat BitmapSkPictureCanvasLayerTextureUpdater
             LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
 }
 
-void BitmapSkPictureCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale, IntRect& resultingOpaqueRect)
+void BitmapSkPictureCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, float contentsScale, IntRect& resultingOpaqueRect)
 {
     m_texSubImage.setSubImageSize(tileSize);
-    SkPictureCanvasLayerTextureUpdater::prepareToUpdate(contentRect, tileSize, borderTexels, contentsScale, resultingOpaqueRect);
+    SkPictureCanvasLayerTextureUpdater::prepareToUpdate(contentRect, tileSize, contentsScale, resultingOpaqueRect);
 }
 
 void BitmapSkPictureCanvasLayerTextureUpdater::paintContentsRect(SkCanvas* canvas, const IntRect& sourceRect)

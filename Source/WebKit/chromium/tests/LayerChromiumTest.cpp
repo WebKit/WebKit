@@ -70,7 +70,7 @@ private:
 
 class MockLayerPainterChromium : public LayerPainterChromium {
 public:
-    virtual void paint(GraphicsContext&, const IntRect&) { }
+    virtual void paint(SkCanvas*, const IntRect&, IntRect&) { }
 };
 
 

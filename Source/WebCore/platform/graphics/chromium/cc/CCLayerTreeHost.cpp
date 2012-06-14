@@ -27,7 +27,6 @@
 #include "cc/CCLayerTreeHost.h"
 
 #include "LayerChromium.h"
-#include "LayerPainterChromium.h"
 #include "LayerRendererChromium.h"
 #include "Region.h"
 #include "TraceEvent.h"

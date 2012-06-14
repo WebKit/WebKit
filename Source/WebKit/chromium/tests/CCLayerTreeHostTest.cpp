@@ -1150,7 +1150,7 @@ public:
     {
     }
 
-    virtual void paintContents(GraphicsContext&, const IntRect&)
+    virtual void paintContents(SkCanvas*, const IntRect&, IntRect&)
     {
         // Set layer opacity to 0.
         m_test->layerTreeHost()->rootLayer()->setOpacity(0);
@@ -1244,7 +1244,7 @@ class MockContentLayerDelegate : public ContentLayerDelegate {
 public:
     bool drawsContent() const { return true; }
     MOCK_CONST_METHOD0(preserves3D, bool());
-    void paintContents(GraphicsContext&, const IntRect&) { }
+    void paintContents(SkCanvas*, const IntRect&, IntRect&) { }
     void notifySyncRequired() { }
 };
 

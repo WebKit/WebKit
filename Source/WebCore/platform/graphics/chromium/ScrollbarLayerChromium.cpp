@@ -29,7 +29,9 @@
 #include "ScrollbarLayerChromium.h"
 
 #include "BitmapCanvasLayerTextureUpdater.h"
+#include "GraphicsContext.h"
 #include "LayerPainterChromium.h"
+#include "PlatformContextSkia.h"
 #include "Scrollbar.h"
 #include "ScrollbarThemeComposite.h"
 #include "cc/CCLayerTreeHost.h"
@@ -109,8 +111,14 @@ public:
         return adoptPtr(new ScrollbarBackgroundPainter(scrollbar, theme));
     }
 
-    virtual void paint(GraphicsContext& context, const IntRect& contentRect)
+    virtual void paint(SkCanvas* canvas, const IntRect& contentRect, IntRect&) OVERRIDE
     {
+        PlatformContextSkia platformContext(canvas);
+        platformContext.setDrawingToImageBuffer(true);
+        GraphicsContext context(&platformContext);
+        context.clearRect(contentRect);
+        context.clip(contentRect);
+
         // The following is a simplification of ScrollbarThemeComposite::paint.
         m_theme->paintScrollbarBackground(&context, m_scrollbar);
 
@@ -162,8 +170,12 @@ public:
         return adoptPtr(new ScrollbarThumbPainter(scrollbar, theme));
     }
 
-    virtual void paint(GraphicsContext& context, const IntRect& contentRect)
+    virtual void paint(SkCanvas* canvas, const IntRect& contentRect, IntRect& opaque) OVERRIDE
     {
+        PlatformContextSkia platformContext(canvas);
+        platformContext.setDrawingToImageBuffer(true);
+        GraphicsContext context(&platformContext);
+
         context.clearRect(contentRect);
 
         // Consider the thumb to be at the origin when painting.
@@ -229,7 +241,7 @@ void ScrollbarLayerChromium::updatePart(LayerTextureUpdater* painter, LayerTextu
 
     // Paint and upload the entire part.
     IntRect paintedOpaqueRect;
-    painter->prepareToUpdate(rect, rect.size(), false, 1, paintedOpaqueRect);
+    painter->prepareToUpdate(rect, rect.size(), 1, paintedOpaqueRect);
     texture->prepareRect(rect);
 
     IntRect destRect(IntPoint(), rect.size());

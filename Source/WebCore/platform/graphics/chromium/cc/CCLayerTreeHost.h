@@ -47,7 +47,6 @@ class CCLayerTreeHostImpl;
 class CCLayerTreeHostImplClient;
 class CCTextureUpdater;
 class GraphicsContext3D;
-class LayerPainterChromium;
 class Region;
 class TextureAllocator;
 class TextureManager;

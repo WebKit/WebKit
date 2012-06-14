@@ -40,17 +40,17 @@ class GraphicsContext;
 class IntPoint;
 class IntRect;
 class LayerChromium;
-class LayerPainterChromium;
 }
 
 namespace WebKit {
+class WebViewImpl;
 
 class NonCompositedContentHost : public WebCore::GraphicsLayerClient {
 WTF_MAKE_NONCOPYABLE(NonCompositedContentHost);
 public:
-    static PassOwnPtr<NonCompositedContentHost> create(PassOwnPtr<WebCore::LayerPainterChromium> contentPaint)
+    static PassOwnPtr<NonCompositedContentHost> create(WebViewImpl* webView)
     {
-        return adoptPtr(new NonCompositedContentHost(contentPaint));
+        return adoptPtr(new NonCompositedContentHost(webView));
     }
     virtual ~NonCompositedContentHost();
 
@@ -64,7 +64,7 @@ public:
     void setShowDebugBorders(bool);
 
 protected:
-    explicit NonCompositedContentHost(PassOwnPtr<WebCore::LayerPainterChromium> contentPaint);
+    explicit NonCompositedContentHost(WebViewImpl*);
 
 private:
     // GraphicsLayerClient
@@ -82,10 +82,11 @@ private:
     WebCore::LayerChromium* scrollLayer();
 
     OwnPtr<WebCore::GraphicsLayer> m_graphicsLayer;
-    OwnPtr<WebCore::LayerPainterChromium> m_contentPaint;
+    WebViewImpl* m_webView;
     WebCore::IntSize m_viewportSize;
     WebCore::IntSize m_layerAdjust;
 
+    bool m_opaque;
     bool m_showDebugBorders;
     float m_deviceScaleFactor;
 };

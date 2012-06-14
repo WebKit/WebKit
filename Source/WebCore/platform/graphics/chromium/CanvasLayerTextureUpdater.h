@@ -31,10 +31,11 @@
 
 #include "LayerTextureUpdater.h"
 
+class SkCanvas;
+
 namespace WebCore {
 
 class LayerPainterChromium;
-class PlatformContextSkia;
 
 // Base class for BitmapCanvasLayerTextureUpdater and
 // SkPictureCanvasLayerTextureUpdater that reduces code duplication between
@@ -46,7 +47,7 @@ public:
 protected:
     explicit CanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);
 
-    void paintContents(GraphicsContext&, PlatformContextSkia&, const IntRect& contentRect, float contentsScale, IntRect& resultingOpaqueRect);
+    void paintContents(SkCanvas*, const IntRect& contentRect, float contentsScale, IntRect& resultingOpaqueRect);
     const IntRect& contentRect() const { return m_contentRect; }
 
 private:

@@ -1,3 +1,55 @@
+2012-06-14  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move opaque rectangle tracking logic out of compositor core
+        https://bugs.webkit.org/show_bug.cgi?id=89031
+
+        Reviewed by Adrienne Walker.
+
+        Moves the grayscale/subpixel AA text decision into NonCompositedContentHost and removes one layer of indirection
+        betwen NCCH and WVI that existed only for historical reasons.
+
+        Ports the opaque rect tracking tests that were in LayerTextureUpdaterTest to
+        OpaquerectTrackingContentLayerDelegateTest to reflect the move in responsibilities.
+
+        * WebKit.gypi:
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+        (WebKit::NonCompositedContentHost::setOpaque):
+        (WebKit::NonCompositedContentHost::paintContents):
+        * src/NonCompositedContentHost.h:
+        (WebCore):
+        (WebKit):
+        (WebKit::NonCompositedContentHost::create):
+        (NonCompositedContentHost):
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::paintContents):
+        * src/WebContentLayerImpl.h:
+        (WebContentLayerImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::paintRootLayer):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TestOpacityChangeLayerDelegate::paintContents):
+        (WTF::MockContentLayerDelegate::paintContents):
+        * tests/LayerChromiumTest.cpp:
+        * tests/LayerTextureUpdaterTest.cpp: Removed.
+        * tests/OpaqueRectTrackingContentLayerDelegateTest.cpp: Added.
+        (WebCore):
+        (PaintCallback):
+        (TestLayerPainterChromium):
+        (WebCore::TestLayerPainterChromium::TestLayerPainterChromium):
+        (WebCore::PaintFillAlpha::operator()):
+        (WebCore::PaintFillPartialOpaque::PaintFillPartialOpaque):
+        (PaintFillPartialOpaque):
+        (WebCore::PaintFillPartialOpaque::operator()):
+        (OpaqueRectTrackingContentLayerDelegateTest):
+        (WebCore::OpaqueRectTrackingContentLayerDelegateTest::OpaqueRectTrackingContentLayerDelegateTest):
+        (WebCore::OpaqueRectTrackingContentLayerDelegateTest::skCanvas):
+        (WebCore::OpaqueRectTrackingContentLayerDelegateTest::canvasRect):
+        (WebCore::TEST_F):
+
 2012-06-14  Justin Novosad  <junov@chromium.org>
 
         [Chromium] webkitImageSmoothingEnabled canvas property does not work on redraw

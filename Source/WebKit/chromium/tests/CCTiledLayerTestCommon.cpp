@@ -63,7 +63,7 @@ FakeLayerTextureUpdater::~FakeLayerTextureUpdater()
 {
 }
 
-void FakeLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize&, int, float, IntRect& resultingOpaqueRect)
+void FakeLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize&, float, IntRect& resultingOpaqueRect)
 {
     m_prepareCount++;
     m_lastUpdateRect = contentRect;

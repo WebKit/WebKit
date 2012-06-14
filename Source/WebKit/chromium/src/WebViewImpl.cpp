@@ -3414,38 +3414,20 @@ void WebViewImpl::scheduleAnimation()
 }
 #endif
 
-class WebViewImplContentPainter : public LayerPainterChromium {
-    WTF_MAKE_NONCOPYABLE(WebViewImplContentPainter);
-public:
-    static PassOwnPtr<WebViewImplContentPainter*> create(WebViewImpl* webViewImpl)
-    {
-        return adoptPtr(new WebViewImplContentPainter(webViewImpl));
-    }
+void WebViewImpl::paintRootLayer(GraphicsContext& context, const IntRect& contentRect)
+{
+    double paintStart = currentTime();
+    if (!page())
+        return;
+    FrameView* view = page()->mainFrame()->view();
+    view->paintContents(&context, contentRect);
+    double paintEnd = currentTime();
+    double pixelsPerSec = (contentRect.width() * contentRect.height()) / (paintEnd - paintStart);
+    WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelRootPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
+    WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelRootPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
 
-    virtual void paint(GraphicsContext& context, const IntRect& contentRect)
-    {
-        double paintStart = currentTime();
-        Page* page = m_webViewImpl->page();
-        if (!page)
-            return;
-        FrameView* view = page->mainFrame()->view();
-        view->paintContents(&context, contentRect);
-        double paintEnd = currentTime();
-        double pixelsPerSec = (contentRect.width() * contentRect.height()) / (paintEnd - paintStart);
-        WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelRootPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
-        WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelRootPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
-
-        m_webViewImpl->setBackgroundColor(view->documentBackgroundColor());
-    }
-
-private:
-    explicit WebViewImplContentPainter(WebViewImpl* webViewImpl)
-        : m_webViewImpl(webViewImpl)
-    {
-    }
-
-    WebViewImpl* m_webViewImpl;
-};
+    setBackgroundColor(view->documentBackgroundColor());
+}
 
 void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 {
@@ -3483,7 +3465,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         layerTreeViewSettings.defaultTileSize = settingsImpl()->defaultTileSize();
         layerTreeViewSettings.maxUntiledLayerSize = settingsImpl()->maxUntiledLayerSize();
 
-        m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
+        m_nonCompositedContentHost = NonCompositedContentHost::create(this);
         m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());
         m_nonCompositedContentHost->setOpaque(!isTransparent());
 

@@ -1,3 +1,70 @@
+2012-06-14  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move opaque rectangle tracking logic out of compositor core
+        https://bugs.webkit.org/show_bug.cgi?id=89031
+
+        Reviewed by Adrienne Walker.
+
+        This moves the opaque paint tracking logic from the compositor (specifically CanvasLayerTextureUpdater) out to a
+        dedicated class used by GraphicsLayerChromium for GraphicsContext-painted content. This changes the interface
+        exposed by the compositor to pass a SkCanvas and let the user fill in an opaque rect if needed. Callers that are
+        using GraphicsContext to paint can instantiate a PlatformContextSkia / GraphicsContext around this SkCanvas if
+        they choose to, or use some other strategy, or not fill it in at all. This avoids creating extra wrapper classes
+        if the eventual caller is going to use the underlying SkCanvas anyway (such as WebContentLayer) and breaks the
+        dependency from the compositor code on GraphicsContext / PlatformContextSkia.
+
+        OpaqueRectTrackingContentLayerDelegate is a helper class that wraps a ContentLayerDelegate implementation with
+        PlatformContextSkia's opaque region tracking logic.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapCanvasLayerTextureUpdater::BitmapCanvasLayerTextureUpdater):
+        (WebCore::BitmapCanvasLayerTextureUpdater::prepareToUpdate):
+        (WebCore::BitmapCanvasLayerTextureUpdater::updateTextureRect):
+        (WebCore::BitmapCanvasLayerTextureUpdater::setOpaque):
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h:
+        (WebCore):
+        (BitmapCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.cpp:
+        (WebCore::CanvasLayerTextureUpdater::paintContents):
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.h:
+        (WebCore):
+        (CanvasLayerTextureUpdater):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerPainter::paint):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (ContentLayerDelegate):
+        (WebCore):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::GraphicsLayerChromium):
+        (WebCore::GraphicsLayerChromium::paint):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        (GraphicsLayerChromium):
+        * platform/graphics/chromium/LayerPainterChromium.h:
+        (LayerPainterChromium):
+        * platform/graphics/chromium/LinkHighlight.cpp:
+        (WebCore::LinkHighlight::paintContents):
+        * platform/graphics/chromium/LinkHighlight.h:
+        (LinkHighlight):
+        * platform/graphics/chromium/OpaqueRectTrackingContentLayerDelegate.cpp: Added.
+        (WebCore):
+        (WebCore::OpaqueRectTrackingContentLayerDelegate::OpaqueRectTrackingContentLayerDelegate):
+        (WebCore::OpaqueRectTrackingContentLayerDelegate::~OpaqueRectTrackingContentLayerDelegate):
+        (WebCore::OpaqueRectTrackingContentLayerDelegate::paintContents):
+        * platform/graphics/chromium/OpaqueRectTrackingContentLayerDelegate.h: Added.
+        (WebCore):
+        (GraphicsContextPainter):
+        (WebCore::GraphicsContextPainter::~GraphicsContextPainter):
+        (OpaqueRectTrackingContentLayerDelegate):
+        (WebCore::OpaqueRectTrackingContentLayerDelegate::setOpaque):
+        * platform/graphics/chromium/PlatformCanvas.cpp:
+        (WebCore::PlatformCanvas::Painter::Painter):
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::SkPictureCanvasLayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore):
+
 2012-06-14  Justin Novosad  <junov@chromium.org>
 
         [Chromium] webkitImageSmoothingEnabled canvas property does not work on redraw

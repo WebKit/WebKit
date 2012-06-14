@@ -3624,6 +3624,8 @@
             'platform/graphics/chromium/ManagedTexture.cpp',
             'platform/graphics/chromium/ManagedTexture.h',
             'platform/graphics/chromium/MediaPlayerPrivateChromium.h',
+            'platform/graphics/chromium/OpaqueRectTrackingContentLayerDelegate.cpp',
+            'platform/graphics/chromium/OpaqueRectTrackingContentLayerDelegate.h',
             'platform/graphics/chromium/PlatformCanvas.cpp',
             'platform/graphics/chromium/PlatformCanvas.h',
             'platform/graphics/chromium/PlatformColor.h',

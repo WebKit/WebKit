@@ -54,12 +54,10 @@ public:
         return adoptPtr(new ContentLayerPainter(delegate));
     }
 
-    virtual void paint(GraphicsContext& context, const IntRect& contentRect)
+    virtual void paint(SkCanvas* canvas, const IntRect& contentRect, IntRect& opaque)
     {
         double paintStart = currentTime();
-        context.clearRect(contentRect);
-        context.clip(contentRect);
-        m_delegate->paintContents(context, contentRect);
+        m_delegate->paintContents(canvas, contentRect, opaque);
         double paintEnd = currentTime();
         double pixelsPerSec = (contentRect.width() * contentRect.height()) / (paintEnd - paintStart);
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelContentPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);

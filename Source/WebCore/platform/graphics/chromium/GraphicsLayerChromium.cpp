@@ -50,10 +50,12 @@
 #include "ContentLayerChromium.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
+#include "GraphicsContext.h"
 #include "Image.h"
 #include "ImageLayerChromium.h"
 #include "LayerChromium.h"
 #include "LinkHighlight.h"
+#include "PlatformContextSkia.h"
 #include "PlatformString.h"
 #include "SkMatrix44.h"
 #include "SystemTime.h"
@@ -87,7 +89,8 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     , m_inSetChildren(false)
     , m_pageScaleChanged(false)
 {
-    m_layer = WebContentLayer(ContentLayerChromium::create(this));
+    m_opaqueRectTrackingContentLayerDelegate = adoptPtr(new OpaqueRectTrackingContentLayerDelegate(this));
+    m_layer = WebContentLayer(ContentLayerChromium::create(m_opaqueRectTrackingContentLayerDelegate.get()));
 
     updateDebugIndicators();
 }
@@ -874,8 +877,9 @@ void GraphicsLayerChromium::deviceOrPageScaleFactorChanged()
     m_pageScaleChanged = true;
 }
 
-void GraphicsLayerChromium::paintContents(GraphicsContext& context, const IntRect& clip)
+void GraphicsLayerChromium::paint(GraphicsContext& context, const IntRect& clip)
 {
+    context.platformContext()->setDrawingToImageBuffer(true);
     paintGraphicsLayerContents(context, clip);
 }
 

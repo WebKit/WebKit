@@ -29,15 +29,16 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+class SkCanvas;
+
 namespace WebCore {
 
-class GraphicsContext;
 class IntRect;
 
 class LayerPainterChromium {
 public:
     virtual ~LayerPainterChromium() { }
-    virtual void paint(GraphicsContext&, const IntRect& contentRect) = 0;
+    virtual void paint(SkCanvas*, const IntRect& contentRect, IntRect& opaque) = 0;
 };
 
 } // namespace WebCore
