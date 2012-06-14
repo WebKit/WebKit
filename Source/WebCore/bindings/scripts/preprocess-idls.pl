@@ -32,13 +32,15 @@ my $verbose;
 my $idlFilesList;
 my $idlAttributesFile;
 my $supplementalDependencyFile;
+my $supplementalMakefileDeps;
 
 GetOptions('defines=s' => \$defines,
            'preprocessor=s' => \$preprocessor,
            'verbose' => \$verbose,
            'idlFilesList=s' => \$idlFilesList,
            'idlAttributesFile=s' => \$idlAttributesFile,
-           'supplementalDependencyFile=s' => \$supplementalDependencyFile);
+           'supplementalDependencyFile=s' => \$supplementalDependencyFile,
+           'supplementalMakefileDeps=s' => \$supplementalMakefileDeps);
 
 die('Must specify #define macros using --defines.') unless defined($defines);
 die('Must specify an output file using --supplementalDependencyFile.') unless defined($supplementalDependencyFile);
@@ -56,11 +58,14 @@ close FH;
 # Parse all IDL files.
 my %documents;
 my %interfaceNameToIdlFile;
+my %idlFileToInterfaceName;
 foreach my $idlFile (@idlFiles) {
     my $fullPath = Cwd::realpath($idlFile);
     my $parser = IDLParser->new(!$verbose);
     $documents{$fullPath} = $parser->Parse($idlFile, $defines, $preprocessor);
-    $interfaceNameToIdlFile{fileparse(basename($idlFile), ".idl")} = $fullPath;
+    my $interfaceName = fileparse(basename($idlFile), ".idl");
+    $interfaceNameToIdlFile{$interfaceName} = $fullPath;
+    $idlFileToInterfaceName{$fullPath} = $interfaceName;
 }
 
 # Runs the IDL attribute checker.
@@ -96,11 +101,34 @@ foreach my $idlFile (keys %documents) {
 # The above indicates that DOMWindow.idl is supplemented by P.idl, Q.idl and R.idl,
 # Document.idl is supplemented by S.idl, and Event.idl is supplemented by no IDLs.
 # The IDL that supplements another IDL (e.g. P.idl) never appears in the dependency file.
+
 open FH, "> $supplementalDependencyFile" or die "Cannot open $supplementalDependencyFile\n";
+
 foreach my $idlFile (sort keys %supplementals) {
     print FH $idlFile, " @{$supplementals{$idlFile}}\n";
 }
 close FH;
+
+
+if ($supplementalMakefileDeps) {
+    open MAKE_FH, "> $supplementalMakefileDeps" or die "Cannot open $supplementalMakefileDeps\n";
+    my @all_dependencies = [];
+    foreach my $idlFile (sort keys %supplementals) {
+        my $basename = $idlFileToInterfaceName{$idlFile};
+
+        my @dependencies = map { basename($_) } @{$supplementals{$idlFile}};
+
+        print MAKE_FH "JS${basename}.h: @{dependencies}\n";
+        print MAKE_FH "DOM${basename}.h: @{dependencies}\n";
+        print MAKE_FH "WebDOM${basename}.h: @{dependencies}\n";
+        foreach my $dependency (@dependencies) {
+            print MAKE_FH "${dependency}:\n";
+        }
+    }
+
+    close MAKE_FH;
+}
+
 
 sub loadIDLAttributes
 {
