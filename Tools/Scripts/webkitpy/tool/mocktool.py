@@ -36,8 +36,7 @@ from webkitpy.common.net.irc.irc_mock import MockIRC
 from webkitpy.common.config.ports_mock import MockPort
 
 
-# FIXME: This should be moved somewhere in common and renamed
-# something without Mock in the name.
+# FIXME: We should just replace this with optparse.Values(default=kwargs)
 class MockOptions(object):
     """Mock implementation of optparse.Values."""
 
@@ -52,6 +51,11 @@ class MockOptions(object):
     def update(self, **kwargs):
         self.__dict__.update(**kwargs)
         return self
+
+    def ensure_value(self, key, value):
+        if getattr(self, key, None) == None:
+            self.__dict__[key] = value
+        return self.__dict__[key]
 
 
 # FIXME: This should be renamed MockWebKitPatch.
