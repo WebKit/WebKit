@@ -39,6 +39,11 @@ audio:-webkit-full-page-media, video:-webkit-full-page-media {
     max-width: 100%;
 }
 
+audio:-webkit-full-page-media::-webkit-media-controls-panel,
+video:-webkit-full-page-media::-webkit-media-controls-panel {
+    bottom: 0px;
+}
+
 ::-webkit-media-controls {
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -170,4 +175,17 @@ input[type="range"]::-webkit-media-slider-thumb {
     bottom: 1px;
     margin-left: -7px;
     margin-right: -7px;
+}
+
+audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
+    -webkit-appearance: media-enter-fullscreen-button;
+    display: inline;
+    border: none;
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    margin-left: -5px;
+    margin-right: 9px;
+    padding: 0;
 }

@@ -126,6 +126,9 @@ private:
     MediaControlRootElementChromium(Document*);
 
     virtual void defaultEventHandler(Event*);
+    void hideFullscreenControlsTimerFired(Timer<MediaControlRootElementChromium>*);
+    void startHideFullscreenControlsTimer();
+    void stopHideFullscreenControlsTimer();
 
     virtual const AtomicString& shadowPseudoId() const;
 
@@ -150,7 +153,9 @@ private:
 #endif
 
     bool m_opaque;
+    Timer<MediaControlRootElementChromium> m_hideFullscreenControlsTimer;
     bool m_isMouseOverControls;
+    bool m_isFullscreen;
 };
 
 }

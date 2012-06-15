@@ -46,6 +46,8 @@ using namespace std;
 
 namespace WebCore {
 
+static const double timeWithoutMouseMovementBeforeHidingControls = 2;
+
 MediaControlChromiumEnclosureElement::MediaControlChromiumEnclosureElement(Document* document)
     : HTMLDivElement(HTMLNames::divTag, document->document())
     , m_mediaController(0)
@@ -81,7 +83,9 @@ MediaControlRootElementChromium::MediaControlRootElementChromium(Document* docum
     , m_textDisplayContainer(0)
 #endif
     , m_opaque(true)
+    , m_hideFullscreenControlsTimer(this, &MediaControlRootElementChromium::hideFullscreenControlsTimerFired)
     , m_isMouseOverControls(false)
+    , m_isFullscreen(false)
 {
 }
 
@@ -254,6 +258,9 @@ void MediaControlRootElementChromium::playbackStarted()
     m_currentTimeDisplay->show();
     m_durationDisplay->hide();
     updateTimeDisplay();
+
+    if (m_isFullscreen)
+        startHideFullscreenControlsTimer();
 }
 
 void MediaControlRootElementChromium::playbackProgressed()
@@ -271,6 +278,8 @@ void MediaControlRootElementChromium::playbackStopped()
     m_timeline->setPosition(m_mediaController->currentTime());
     updateTimeDisplay();
     makeOpaque();
+
+    stopHideFullscreenControlsTimer();
 }
 
 void MediaControlRootElementChromium::updateTimeDisplay()
@@ -339,13 +348,53 @@ void MediaControlRootElementChromium::defaultEventHandler(Event* event)
     if (event->type() == eventNames().mouseoverEvent) {
         if (!containsRelatedTarget(event)) {
             m_isMouseOverControls = true;
-            if (!m_mediaController->canPlay())
+            if (!m_mediaController->canPlay()) {
                 makeOpaque();
+                if (shouldHideControls())
+                    startHideFullscreenControlsTimer();
+            }
         }
     } else if (event->type() == eventNames().mouseoutEvent) {
-        if (!containsRelatedTarget(event))
+        if (!containsRelatedTarget(event)) {
             m_isMouseOverControls = false;
+            stopHideFullscreenControlsTimer();
+        }
+    } else if (event->type() == eventNames().mousemoveEvent) {
+        if (m_isFullscreen) {
+            // When we get a mouse move in fullscreen mode, show the media controls, and start a timer
+            // that will hide the media controls after a 2 seconds without a mouse move.
+            makeOpaque();
+            if (shouldHideControls())
+                startHideFullscreenControlsTimer();
+        }
     }
+}
+
+void MediaControlRootElementChromium::startHideFullscreenControlsTimer()
+{
+    if (!m_isFullscreen)
+        return;
+
+    m_hideFullscreenControlsTimer.startOneShot(timeWithoutMouseMovementBeforeHidingControls);
+}
+
+void MediaControlRootElementChromium::hideFullscreenControlsTimerFired(Timer<MediaControlRootElementChromium>*)
+{
+    if (m_mediaController->paused())
+        return;
+
+    if (!m_isFullscreen)
+        return;
+
+    if (!shouldHideControls())
+        return;
+
+    makeTransparent();
+}
+
+void MediaControlRootElementChromium::stopHideFullscreenControlsTimer()
+{
+    m_hideFullscreenControlsTimer.stop();
 }
 
 void MediaControlRootElementChromium::changedClosedCaptionsVisibility()
@@ -369,10 +418,16 @@ void MediaControlRootElementChromium::changedVolume()
 
 void MediaControlRootElementChromium::enteredFullscreen()
 {
+    m_isFullscreen = true;
+    m_fullscreenButton->setIsFullscreen(true);
+    startHideFullscreenControlsTimer();
 }
 
 void MediaControlRootElementChromium::exitedFullscreen()
 {
+    m_isFullscreen = false;
+    m_fullscreenButton->setIsFullscreen(false);
+    stopHideFullscreenControlsTimer();
 }
 
 void MediaControlRootElementChromium::showVolumeSlider()

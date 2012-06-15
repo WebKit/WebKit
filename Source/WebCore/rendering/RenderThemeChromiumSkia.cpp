@@ -491,6 +491,18 @@ String RenderThemeChromiumSkia::formatMediaControlsRemainingTime(float currentTi
 #endif
 }
 
+bool RenderThemeChromiumSkia::paintMediaFullscreenButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
+{
+#if ENABLE(VIDEO)
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaEnterFullscreenButton, object, paintInfo, rect);
+#else
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(paintInfo);
+    UNUSED_PARAM(rect);
+    return false;
+#endif
+}
+
 void RenderThemeChromiumSkia::adjustMenuListStyle(StyleResolver*, RenderStyle* style, WebCore::Element*) const
 {
     // Height is locked to auto on all browsers.

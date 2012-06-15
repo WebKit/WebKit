@@ -20,7 +20,7 @@
     -webkit-transform-style: flat !important;
 }
 
-video:-webkit-full-screen {
+video:-webkit-full-screen, audio:-webkit-full-screen {
     background-color: transparent !important;
     position: static !important;
     margin: 0 !important;

@@ -274,8 +274,8 @@ static bool paintMediaFullscreenButton(RenderObject* object, const PaintInfo& pa
     if (!mediaElement)
         return false;
 
-    DEFINE_STATIC_LOCAL(Image*, mediaFullscreen, (platformResource("mediaFullscreen")));
-    return paintMediaButton(paintInfo.context, rect, mediaFullscreen);
+    static Image* mediaFullscreenButton = platformResource("mediaplayerFullscreen");
+    return paintMediaButton(paintInfo.context, rect, mediaFullscreenButton);
 }
 
 bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType part, RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)

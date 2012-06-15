@@ -1,3 +1,73 @@
+2012-06-15  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Add fullscreen button to Chrome video controls for video.
+        https://bugs.webkit.org/show_bug.cgi?id=88818
+
+        Reviewed by Eric Carlson.
+
+        No new tests, final patch will contain the rebaselined tests.
+
+        The Chrome video controls are receiving a visual update.
+        This patch includes a fullscreen button for video elements and the rendering of the controls
+        in fullscreen including hiding them after 2 seconds when the mouse is out of the controls
+        and not moved.
+
+        * css/fullscreen.css:
+        (video:-webkit-full-screen, audio:-webkit-full-screen):
+        Add audio to the default fullscreen styling rules.
+        * css/mediaControlsChromium.css:
+        (video:-webkit-full-page-media::-webkit-media-controls-panel):
+        Align controls to the bottom of the fullscreen page.
+        (audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button):
+        Include styling for the fullscreen button.
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore):
+        Add a constant for when to hide the controls in fullscreen.
+        (WebCore::MediaControlRootElementChromium::MediaControlRootElementChromium):
+        Add member fields for fullscreen button, hiding timer and tracking of whether we are in fullscreen.
+        (WebCore::MediaControlRootElementChromium::create):
+        Add fullscreen button element to the visual layout.
+        (WebCore::MediaControlRootElementChromium::setMediaController):
+        Add fullscreen button element to the media controller.
+        (WebCore::MediaControlRootElementChromium::reset):
+        Show the fullscreen button if the controller supports fullscreen.
+        (WebCore::MediaControlRootElementChromium::playbackStarted):
+        Start the timer to hide the controls in fullscreen.
+        (WebCore::MediaControlRootElementChromium::playbackStopped):
+        Don't hide the controls when the video is paused in fullscreen.
+        (WebCore::MediaControlRootElementChromium::reportedError):
+        Hide the fullscreen button when we hit an error.
+        (WebCore::MediaControlRootElementChromium::defaultEventHandler):
+        Add logic for mouse events in fullscreen to start/stop the hiding timer.
+        (WebCore::MediaControlRootElementChromium::startHideFullscreenControlsTimer):
+        Start the fullscreen hiding timer.
+        (WebCore::MediaControlRootElementChromium::hideFullscreenControlsTimerFired):
+        Timer fired: hide the video controls in fullscreen.
+        (WebCore::MediaControlRootElementChromium::stopHideFullscreenControlsTimer):
+        Reset the fullscreen hiding timer.
+        (WebCore::MediaControlRootElementChromium::enteredFullscreen):
+        Add logic to enter fullscreen.
+        (WebCore::MediaControlRootElementChromium::exitedFullscreen):
+        Add logic to exit fullscreen.
+        * html/shadow/MediaControlRootElementChromium.h:
+        (MediaControlRootElementChromium):
+        Add declaration of member functions and fields for fullscreen.
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaFullscreenButton):
+        Use the new image for the fullscreen button.
+        * rendering/RenderThemeChromiumMac.h:
+        (RenderThemeChromiumMac):
+        Declare the fullscreen painting function for Chrome Mac.
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::paintMediaFullscreenButton):
+        Hook up the fullscreen paining function for Chrome Mac.
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::paintMediaFullscreenButton):
+        Hook up the fullscreen paining function for Chrome Skia.
+        * rendering/RenderThemeChromiumSkia.h:
+        (RenderThemeChromiumSkia):
+        Declare the fullscreen painting function for Chrome Skia.
+
 2012-06-14  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, rolling out r110340.

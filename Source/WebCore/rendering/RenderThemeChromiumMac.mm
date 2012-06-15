@@ -238,6 +238,11 @@ String RenderThemeChromiumMac::formatMediaControlsRemainingTime(float currentTim
 {
     return RenderThemeChromiumMac::formatMediaControlsRemainingTime(currentTime, duration);
 }
+
+bool RenderThemeChromiumMac::paintMediaFullscreenButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    return RenderMediaControlsChromium::paintMediaControlsPart(MediaEnterFullscreenButton, object, paintInfo, rect);
+}
 #endif
 
 } // namespace WebCore
