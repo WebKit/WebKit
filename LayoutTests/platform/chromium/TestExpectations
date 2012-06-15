@@ -3724,6 +3724,15 @@ BUGWK88833 DEBUG : media/video-played-collapse.html = PASS TEXT
 // HTMLSelectElement::selectedOptions was removed.
 BUGWK89192 : platform/chromium/accessibility/add-to-menu-list-crashes.html = TEXT
 
+// Need rebaseline
+BUGWK89067 WIN LINUX : fast/multicol/client-rects.html = IMAGE+TEXT
+BUGWK89067 WIN : fast/forms/range/input-appearance-range.html = IMAGE+TEXT
+BUGWK89067 WIN : fast/dom/HTMLInputElement/input-slider-update-styled.html = TEXT
+BUGWK89067 WIN : fast/forms/range/range-thumb-height-percentage.html = TEXT
+BUGWK89067 WIN : fast/forms/range/slider-padding.html = TEXT
+BUGWK89067 WIN : fast/forms/range/slider-thumb-shared-style.html = TEXT
+BUGWK89067 WIN : fast/repaint/slider-thumb-float.html = TEXT
+
 BUGWK88833 WIN DEBUG : media/track/track-kind.html = PASS TIMEOUT
 BUGWK88833 : http/tests/media/video-play-progress.html = PASS TIMEOUT
 BUGWK88833 MAC DEBUG : media/track/track-cues-cuechange.html = PASS TIMEOUT

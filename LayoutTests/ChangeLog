@@ -1,5 +1,13 @@
 2012-06-15  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=89067
+
+        * platform/chromium/TestExpectations:
+        Mark some tests for type=range FAIL until all bots have the new results.
+
+2012-06-15  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Fix a syntax error of TestExpectations.
 
         * platform/chromium/TestExpectations:
