@@ -2749,3 +2749,7 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
     border-color: transparent;
     border-width: 0 0 11px 0;
 }
+
+#console-context {
+    max-width: 200px;
+}
