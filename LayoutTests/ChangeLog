@@ -1,3 +1,10 @@
+2012-06-14  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed expectation update.
+        - Marked cross-domain-message-event-dispatch.html and track-cue-rendering-snap-to-lines-not-set.html
+
+        * platform/chromium/TestExpectations:
+
 2012-06-14  Kent Tamura  <tkent@chromium.org>
 
         Validate form state strings in FormController::setStateForNewFormElements()
