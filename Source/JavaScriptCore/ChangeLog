@@ -1,3 +1,27 @@
+2012-06-15  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Put platform-specific GC policy in GCActivityCallback
+        https://bugs.webkit.org/show_bug.cgi?id=89236
+
+        Reviewed by Rob Buis.
+
+        Add GCActivityCallbackBlackBerry.cpp and implement platform-specific
+        low memory GC policy there.
+
+        * PlatformBlackBerry.cmake:
+        * heap/Heap.h:
+        (JSC::Heap::isSafeToCollect): Added.
+        * runtime/GCActivityCallbackBlackBerry.cpp: Added.
+        (JSC):
+        (JSC::DefaultGCActivityCallbackPlatformData::DefaultGCActivityCallbackPlatformData):
+        (DefaultGCActivityCallbackPlatformData):
+        (JSC::DefaultGCActivityCallback::DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::~DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::didAllocate):
+        (JSC::DefaultGCActivityCallback::willCollect):
+        (JSC::DefaultGCActivityCallback::synchronize):
+        (JSC::DefaultGCActivityCallback::cancel):
+
 2012-06-15  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to set watchpoints on structure transitions in the

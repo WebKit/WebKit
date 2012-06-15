@@ -119,6 +119,7 @@ namespace JSC {
         void addCompiledCode(ExecutableBase*);
 
         void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
+        bool isSafeToCollect() const { return m_isSafeToCollect; }
 
         JS_EXPORT_PRIVATE void collectAllGarbage();
         enum SweepToggle { DoNotSweep, DoSweep };
