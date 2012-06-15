@@ -32,23 +32,17 @@
 #define ThreadableBlobRegistry_h
 
 #include <wtf/PassOwnPtr.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class BlobData;
 class KURL;
-class SecurityOrigin;
 
 class ThreadableBlobRegistry {
 public:
     static void registerBlobURL(const KURL&, PassOwnPtr<BlobData>);
-    static void registerBlobURL(SecurityOrigin*, const KURL&, const KURL& srcURL);
+    static void registerBlobURL(const KURL&, const KURL& srcURL);
     static void unregisterBlobURL(const KURL&);
-
-    // Returns the origin for the given blob URL. This is because we are not able to embed the unique security origin or the origin of file URL
-    // in the blob URL.
-    static PassRefPtr<SecurityOrigin> cachedOrigin(const KURL&);
 };
 
 } // namespace WebCore

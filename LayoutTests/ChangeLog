@@ -1,3 +1,16 @@
+2012-06-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r120384.
+        http://trac.webkit.org/changeset/120384
+        https://bugs.webkit.org/show_bug.cgi?id=89157
+
+        breaks create-blob-url-from-data-url.html (Requested by
+        morrita on #webkit).
+
+        * fast/files/file-reader-file-url-expected.txt: Removed.
+        * fast/files/file-reader-file-url.html: Removed.
+        * fast/files/resources/file-reader-file-url-iframe.html: Removed.
+
 2012-06-14  Dale Curtis  <dalecurtis@chromium.org>
 
         Disable click/dbl-click on MediaDocument for Chromium. Fix layout test for all platforms.
