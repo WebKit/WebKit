@@ -55,6 +55,7 @@
 #include "ImageLayerChromium.h"
 #include "LayerChromium.h"
 #include "LinkHighlight.h"
+#include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #include "PlatformString.h"
 #include "SkMatrix44.h"
@@ -464,7 +465,8 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
             childrenChanged = true;
         }
         ImageLayerChromium* imageLayer = static_cast<ImageLayerChromium*>(m_contentsLayer.unwrap<LayerChromium>());
-        imageLayer->setContents(image);
+        NativeImageSkia* nativeImage = image->nativeImageForCurrentFrame();
+        imageLayer->setBitmap(nativeImage->bitmap());
         imageLayer->setOpaque(image->isBitmapImage() && !image->currentFrameHasAlpha());
         updateContentsRect();
     } else {

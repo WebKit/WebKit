@@ -35,11 +35,10 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "ContentLayerChromium.h"
-#include "PlatformImage.h"
+#include "SkBitmap.h"
 
 namespace WebCore {
 
-class Image;
 class ImageLayerTextureUpdater;
 
 // A Layer that contains only an Image element.
@@ -52,7 +51,7 @@ public:
     virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
     virtual bool needsContentsScale() const OVERRIDE;
 
-    void setContents(Image* image);
+    void setBitmap(const SkBitmap& image);
 
 private:
     ImageLayerChromium();
@@ -63,8 +62,7 @@ private:
     virtual void createTextureUpdaterIfNeeded() OVERRIDE;
     virtual IntSize contentBounds() const OVERRIDE;
 
-    NativeImagePtr m_imageForCurrentFrame;
-    RefPtr<Image> m_contents;
+    SkBitmap m_bitmap;
 
     RefPtr<ImageLayerTextureUpdater> m_textureUpdater;
 };

@@ -1,3 +1,38 @@
+2012-06-14  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use SkBitmap in ImageLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=89134
+
+        Reviewed by Adrienne Walker.
+
+        GraphicsLayer::setContentsToImage(Image*) is called whenever an image layer's image is or might have changed.
+        In Chromium, this used to hang on to a RefPtr<WebCore::Image> until the compositor was ready to upload texture contents.
+        This is potentially a bit fishy since the Image itself might not be in exactly the same state when we get around
+        to uploading textures and it also creates a bad dependency from ImageLayerChromium on WebCore::Image.
+
+        This patch grabs the underlying SkBitmap in the setContentsTo call and passes that into ImageLayerChromium
+        instead. I've also removed the venerable but redundant PlatformImage concept since all of chromium's images are
+        skia bitmaps these days.
+
+        Covered by existing tests, particularly compositing/images/ and compositing/color-matching/.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setContentsToImage):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::updateTextureRect):
+        (WebCore::ImageLayerTextureUpdater::setBitmap):
+        (ImageLayerTextureUpdater):
+        (WebCore::ImageLayerChromium::ImageLayerChromium):
+        (WebCore::ImageLayerChromium::setBitmap):
+        (WebCore::ImageLayerChromium::update):
+        (WebCore::ImageLayerChromium::contentBounds):
+        (WebCore::ImageLayerChromium::drawsContent):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        (ImageLayerChromium):
+        * platform/graphics/chromium/PlatformImage.cpp: Removed.
+        * platform/graphics/chromium/PlatformImage.h: Removed.
+
 2012-06-15  Eli Fidler  <efidler@rim.com>
 
         [BlackBerry] Use platform font settings for the standard settings.

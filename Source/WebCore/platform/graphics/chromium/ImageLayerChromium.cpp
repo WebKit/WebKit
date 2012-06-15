@@ -54,7 +54,7 @@ public:
         {
         }
 
-        virtual void updateRect(CCGraphicsContext* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
+        virtual void updateRect(CCGraphicsContext* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect) OVERRIDE
         {
             textureUpdater()->updateTextureRect(context, allocator, texture(), sourceRect, destRect);
         }
@@ -77,41 +77,33 @@ public:
         return adoptPtr(new Texture(this, ManagedTexture::create(manager)));
     }
 
-    virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat)
+    virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) OVERRIDE
     {
         return PlatformColor::sameComponentOrder(textureFormat) ?
                 LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
     }
 
-    virtual void updateLayerRect(const IntRect& contentRect, const IntSize& tileSize, int /* borderTexels */, float /* contentsScale */, IntRect* /* resultingOpaqueRect */)
-    {
-        m_texSubImage.setSubImageSize(tileSize);
-    }
-
-    virtual void updateTextureRect(CCGraphicsContext* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+    void updateTextureRect(CCGraphicsContext* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
     {
         texture->bindTexture(context, allocator);
 
         // Source rect should never go outside the image pixels, even if this
         // is requested because the texture extends outside the image.
         IntRect clippedSourceRect = sourceRect;
-        clippedSourceRect.intersect(imageRect());
+        IntRect imageRect = IntRect(0, 0, m_bitmap.width(), m_bitmap.height());
+        clippedSourceRect.intersect(imageRect);
 
         IntRect clippedDestRect = destRect;
         clippedDestRect.move(clippedSourceRect.location() - sourceRect.location());
         clippedDestRect.setSize(clippedSourceRect.size());
 
-        m_texSubImage.upload(m_image.pixels(), imageRect(), clippedSourceRect, clippedDestRect, texture->format(), context);
+        SkAutoLockPixels lock(m_bitmap);
+        m_texSubImage.upload(static_cast<const uint8_t*>(m_bitmap.getPixels()), imageRect, clippedSourceRect, clippedDestRect, texture->format(), context);
     }
 
-    void updateFromImage(NativeImagePtr nativeImage)
+    void setBitmap(const SkBitmap& bitmap)
     {
-        m_image.updateFromImage(nativeImage);
-    }
-
-    IntSize imageSize() const
-    {
-        return m_image.size();
+        m_bitmap = bitmap;
     }
 
 private:
@@ -120,12 +112,7 @@ private:
     {
     }
 
-    IntRect imageRect() const
-    {
-        return IntRect(IntPoint::zero(), m_image.size());
-    }
-
-    PlatformImage m_image;
+    SkBitmap m_bitmap;
     LayerTextureSubImage m_texSubImage;
 };
 
@@ -136,7 +123,6 @@ PassRefPtr<ImageLayerChromium> ImageLayerChromium::create()
 
 ImageLayerChromium::ImageLayerChromium()
     : TiledLayerChromium()
-    , m_imageForCurrentFrame(0)
 {
 }
 
@@ -144,17 +130,16 @@ ImageLayerChromium::~ImageLayerChromium()
 {
 }
 
-void ImageLayerChromium::setContents(Image* contents)
+void ImageLayerChromium::setBitmap(const SkBitmap& bitmap)
 {
-    // setContents() currently gets called whenever there is any
+    // setBitmap() currently gets called whenever there is any
     // style change that affects the layer even if that change doesn't
     // affect the actual contents of the image (e.g. a CSS animation).
     // With this check in place we avoid unecessary texture uploads.
-    if ((m_contents == contents) && (m_contents->nativeImageForCurrentFrame() == m_imageForCurrentFrame))
+    if (bitmap.pixelRef() && bitmap.pixelRef() == m_bitmap.pixelRef())
         return;
 
-    m_contents = contents;
-    m_imageForCurrentFrame = m_contents->nativeImageForCurrentFrame();
+    m_bitmap = bitmap;
     setNeedsDisplay();
 }
 
@@ -162,7 +147,7 @@ void ImageLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTrac
 {
     createTextureUpdaterIfNeeded();
     if (m_needsDisplay) {
-        m_textureUpdater->updateFromImage(m_contents->nativeImageForCurrentFrame());
+        m_textureUpdater->setBitmap(m_bitmap);
         updateTileSizeAndTilingOption();
         invalidateRect(IntRect(IntPoint(), contentBounds()));
         m_needsDisplay = false;
@@ -189,14 +174,12 @@ LayerTextureUpdater* ImageLayerChromium::textureUpdater() const
 
 IntSize ImageLayerChromium::contentBounds() const
 {
-    if (!m_contents)
-        return IntSize();
-    return m_contents->size();
+    return IntSize(m_bitmap.width(), m_bitmap.height());
 }
 
 bool ImageLayerChromium::drawsContent() const
 {
-    return m_contents && TiledLayerChromium::drawsContent();
+    return !m_bitmap.isNull() && TiledLayerChromium::drawsContent();
 }
 
 bool ImageLayerChromium::needsContentsScale() const
