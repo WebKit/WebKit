@@ -8,8 +8,8 @@
 
         function init()
         {
-            if (window.layoutTestController)
-                layoutTestController.waitUntilDone();
+            if (window.testRunner)
+                testRunner.waitUntilDone();
 
             video = document.getElementsByTagName("video")[0];
             video.src = findMediaFile("video", "content/test");
@@ -24,15 +24,15 @@
                 try {
                     muteCoords = mediaControlsButtonCoordinates(video, "mute-button");
                 } catch (exception) {
-                    layoutTestController.notifyDone();
+                    testRunner.notifyDone();
                     return;
                 }
                 eventSender.mouseMoveTo(muteCoords[0], muteCoords[1]);
             }
 
             video.addEventListener("volumechange", function() {
-                 if (window.layoutTestController)
-                     layoutTestController.notifyDone();
+                 if (window.testRunner)
+                     testRunner.notifyDone();
             });
         }
     </script>

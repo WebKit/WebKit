@@ -4,9 +4,9 @@
 </p>
 <pre id="console"></pre>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function log(message)
@@ -23,8 +23,8 @@
             log("PASS");
         else
             log("FAIL: the video element dimensions are " + elementWidth + " by " + elementHeight);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 <iframe src="content/test.wav" id="fr" width=380 height=330 onload="frameLoaded()"></iframe>

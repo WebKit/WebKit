@@ -12,9 +12,9 @@
     <script>
         var events = [];
 
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.setWillSendRequestReturnsNull(true);
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setWillSendRequestReturnsNull(true);
         } else
             consoleWrite("<b><em>This test can only be run in DumpRenderTree!</em></b><br><br>");
 

@@ -36,9 +36,9 @@ Content-Location: http://localhost/top_frame.html
 <META content=3D"text/html; charset=3Dwindows-1252" =
 http-equiv=3DContent-Type>
 <SCRIPT>=0A=
-if (window.layoutTestController) {=0A=
-  layoutTestController.dumpAsText();=0A=
-  layoutTestController.dumpChildFramesAsText();=0A=
+if (window.testRunner) {=0A=
+  testRunner.dumpAsText();=0A=
+  testRunner.dumpChildFramesAsText();=0A=
 }=0A=
 </SCRIPT>
 

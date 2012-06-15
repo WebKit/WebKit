@@ -6,9 +6,9 @@
 
             function playing()
             {
-                if (window.layoutTestController) {
+                if (window.testRunner) {
                     if (!window.eventSender) {
-                        layoutTestController.dumpAsText();
+                        testRunner.dumpAsText();
                         endTest();
                         return;
                     }
@@ -70,7 +70,7 @@
 
                     // TODO: test copy link location and open in new window.
                  }
-                 layoutTestController.dumpAsText();
+                 testRunner.dumpAsText();
                  endTest();
             }
 

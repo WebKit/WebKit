@@ -13,8 +13,8 @@
             });
             video.addEventListener("seeked", function() {
                 testExpected(video.currentTime, 1);
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             });
         }
         window.addEventListener('load', doSetup, false);

@@ -4,8 +4,8 @@
 
 <title>A simple page</title>
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 </script>
 </head><body>
 <h1>This is a very simple page</h1>

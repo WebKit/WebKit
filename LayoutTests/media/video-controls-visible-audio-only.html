@@ -8,9 +8,9 @@
         <script src=media-file.js></script>
         <script src=media-controls.js></script>
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             var video;
@@ -34,7 +34,7 @@
                 video = document.getElementById("no-video-media");
 
                 testcondition("video.paused");
-                if (!window.layoutTestController)
+                if (!window.testRunner)
                     return;
 
                 // start playback
@@ -43,7 +43,7 @@
                     playCoords = mediaControlsButtonCoordinates(video, "play-button");
                 } catch (exception) {
                     consoleWrite(exception.description);
-                    layoutTestController.notifyDone();
+                    testRunner.notifyDone();
                     return;
                 }
                 var clickX = playCoords[0];
@@ -58,14 +58,14 @@
                 eventSender.mouseMoveTo(target.offsetLeft + 4, target.offsetTop + 4);
 
                 // controller should still be visible after a second
-                setTimeout(function() { layoutTestController.notifyDone(); } , 1000);
+                setTimeout(function() { testRunner.notifyDone(); } , 1000);
             }
 
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 setTimeout(function() { 
                     document.body.appendChild(document.createTextNode('FAIL')); 
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
+                    if (window.testRunner)
+                        testRunner.notifyDone();
                 } , 8000);
             }
 

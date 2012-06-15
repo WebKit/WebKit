@@ -1,14 +1,14 @@
 <html>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 function run() {
     if (history.length > 1) {
         document.body.innerHTML = 'PASS';
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
         return;
     }
     var evt = document.createEvent("MouseEvents"); 
@@ -18,6 +18,6 @@ function run() {
 }
 </script>
 <body onload='run()'>
-    <a id='anchor' href='data:text/html,<script>function deferCallbacks(defer){layoutTestController.setDefersLoading(defer)}</script><body onload="if(window.layoutTestController){deferCallbacks(true);layoutTestController.goBack();deferCallbacks(false)}">FAIL</body>'>go to second page</a>
+    <a id='anchor' href='data:text/html,<script>function deferCallbacks(defer){testRunner.setDefersLoading(defer)}</script><body onload="if(window.testRunner){deferCallbacks(true);testRunner.goBack();deferCallbacks(false)}">FAIL</body>'>go to second page</a>
 </body>
 </html>

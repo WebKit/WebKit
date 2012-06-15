@@ -2,8 +2,8 @@
     <head>
         <script src=media-file.js></script>
         <script>
-            if (window.layoutTestController)
-                layoutTestController.waitUntilDone();
+            if (window.testRunner)
+                testRunner.waitUntilDone();
     
             function start()
             {
@@ -12,8 +12,8 @@
 
             function finish()
             {
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         </script>
     </head>

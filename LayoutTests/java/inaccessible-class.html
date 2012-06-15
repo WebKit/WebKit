@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.overridePreference("WebKitJavaEnabled", "1");
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.overridePreference("WebKitJavaEnabled", "1");
 }
 </script>
 </head>
@@ -27,7 +27,7 @@ try {
     else
         log("FAIL: result is " + result);
 } catch (ex) {
-    if (window.layoutTestController)
+    if (window.testRunner)
         log("FAIL: Exception raised");
     else
         log(ex);

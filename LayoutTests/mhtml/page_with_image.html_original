@@ -4,8 +4,8 @@
 
 <title>Page with square</title>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
+if (window.testRunner) {
+  testRunner.dumpAsText();
 }
 
 </script>

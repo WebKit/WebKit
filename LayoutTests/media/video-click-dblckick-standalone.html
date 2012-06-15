@@ -2,9 +2,9 @@
     <head>
         <script src=media-file.js></script>
         <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         var video;
@@ -45,8 +45,8 @@
             else
                 log("FAIL: video should be playing");
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
         </script>
     </head>

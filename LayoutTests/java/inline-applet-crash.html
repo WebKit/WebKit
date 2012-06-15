@@ -3,10 +3,10 @@
 Test passes if it does not crash.
 <applet code=doesnotexist.class></applet>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.overridePreference("WebKitJavaEnabled", "1");
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitJavaEnabled", "1");
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function walk(arr, currentPrefix, index, domNode) {
@@ -21,8 +21,8 @@ function walk(arr, currentPrefix, index, domNode) {
 function crash() {
     var temp = new Array();
     walk(temp, "", 0, document.documentElement);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
  
 setTimeout("crash();", 0);

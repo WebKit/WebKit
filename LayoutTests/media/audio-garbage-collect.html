@@ -24,8 +24,8 @@ var play_times = 5;
 
 function finish() {
     document.getElementById("result").innerText = "PASS";
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.testRunner) {
+        testRunner.notifyDone();
     }
 }
 

@@ -9,9 +9,9 @@ function getAudioURI(dummy) {
 
 function test(testFunction) {
   description(document.title);
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
   }
   try {
     testFunction();
@@ -20,15 +20,15 @@ function test(testFunction) {
     testFailed('Aborted with exception: ' + e.message);
   }
   debug('<br /><span class="pass">TEST COMPLETE</span>');
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 
 function async_test(title, options) {
   description(title);
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
   }
   var t = {
     step: function(testFunction) {
@@ -42,8 +42,8 @@ function async_test(title, options) {
 
     done: function() {
       debug('<br /><span class="pass">TEST COMPLETE</span>');
-      if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+      if (window.testRunner) {
+        testRunner.notifyDone();
       }
     }
   }

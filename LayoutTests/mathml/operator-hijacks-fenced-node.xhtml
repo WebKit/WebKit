@@ -12,8 +12,8 @@
         <m:math><span><m:mfenced id="target"><m:mo></m:mo></m:mfenced></span></m:math>
     </div>
     <script><![CDATA[
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         document.body.offsetTop;
         document.getElementById("target").parentNode.insertBefore(document.createElement("div"), document.getElementById("target"));

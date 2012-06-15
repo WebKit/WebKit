@@ -13,8 +13,8 @@ function performActions()
         window.webkitCancelRequestAnimationFrame(requestId);
     }
 
-    if (window.layoutTestController)
-        layoutTestController.display();
+    if (window.testRunner)
+        testRunner.display();
 }
 
 function test()
@@ -34,7 +34,7 @@ function test()
     }
 }
 
-if (!window.layoutTestController)
+if (!window.testRunner)
     setTimeout(performActions, 2000);
 
 </script>

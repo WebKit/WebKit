@@ -7,11 +7,11 @@
 <audio controls autoplay onplaying="playing(1)" src="content/silence.wav" style="margin-bottom:25px; -webkit-box-reflect:below;"></audio><br/>
 <audio controls autoplay onplaying="playing(2)" src="content/silence.wav" style="margin:27px 0; -webkit-transform: rotate(15deg);"></audio><br>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
-    if (window.layoutTestController)
-        layoutTestController.display();
+    if (window.testRunner)
+        testRunner.display();
 
     var count = 3;
     var audioElements = document.getElementsByTagName('audio');
@@ -20,8 +20,8 @@
         var audio = audioElements[i];
         audio.pause();
         audio.addEventListener("seeked", function() {
-        if (!--count && window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (!--count && window.testRunner)
+            testRunner.notifyDone();
         }, true);
         audio.currentTime = audio.duration * 0.50;
     }

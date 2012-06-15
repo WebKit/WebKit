@@ -47,9 +47,9 @@
     </head>
     <body>
         <script>
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 // Unfortunately, this needs to be a pixel test
-                window.layoutTestController.waitUntilDone();
+                window.testRunner.waitUntilDone();
             }
         </script>
 
@@ -83,7 +83,7 @@
 
         function finished()
         {
-            window.layoutTestController.notifyDone();
+            window.testRunner.notifyDone();
         }
 
     </script>

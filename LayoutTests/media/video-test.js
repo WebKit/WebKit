@@ -13,9 +13,9 @@ var numberOfTracksLoaded = 0;
 findMediaElement();
 logConsole();
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function disableFullTestDetailsPrinting()
@@ -214,8 +214,8 @@ function endTest()
 {
     consoleWrite("END OF TEST");
     testEnded = true;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function endTestLater()

@@ -39,8 +39,8 @@
                 testMovieWithSource(document.getElementById('video-2'), true, "<br><em>with 'src' attribute.</em>");
                 testMovieWithSource(document.getElementById('video-3'), true, "<br><em>with &lt;source&gt; element.</em>");
 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         </script>
     </head>

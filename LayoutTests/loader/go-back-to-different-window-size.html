@@ -8,8 +8,8 @@
 // 4- loads this page which will restore the timer to check the window width to make sure it's > 300
 function verifyWindowSizeAfterNavigateBackToCachedPage() {
     document.body.innerHTML = (window.innerWidth > 300) ? 'PASS' : 'FAIL';    
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
 }
 
 function navigateAwayAndBack() {
@@ -26,10 +26,10 @@ function navigateAwayAndBack() {
 }
 
 function runTestStep() {
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
-      layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+      testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
     window.resizeTo(300, 300);
     // Wait a bit before navigating away to make sure we have done layout due to the resizing.

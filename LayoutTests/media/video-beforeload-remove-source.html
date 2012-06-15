@@ -3,9 +3,9 @@
     <head>
         <script src=../resources/gc.js></script>
         <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         function removeNodes(start, end) {
@@ -23,8 +23,8 @@
             removeNodes(start, end);
 
             gc();
-            if (window.layoutTestController)
-                setTimeout("layoutTestController.notifyDone()", 0);
+            if (window.testRunner)
+                setTimeout("testRunner.notifyDone()", 0);
         }
 
         document.addEventListener("beforeload", beforeLoadFunc, true);

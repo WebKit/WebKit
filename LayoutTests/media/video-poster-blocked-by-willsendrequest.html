@@ -25,9 +25,9 @@
 
             function start()
             {
-                if (window.layoutTestController) {
-                    layoutTestController.dumpAsText();
-                    layoutTestController.setWillSendRequestReturnsNull(true);
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
+                    testRunner.setWillSendRequestReturnsNull(true);
                 } else
                     consoleWrite("<b>This test can only be run in DumpRenderTree!</b>");
 

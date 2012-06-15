@@ -1,17 +1,17 @@
 <html>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function run() {
     var frameElement = document.createElement('iframe')
     frameElement.setAttribute("src", "resources/images.html");
     document.getElementById("frameDiv").appendChild(frameElement);
-    if (window.layoutTestController) {
-        layoutTestController.setDefersLoading(true);
-        setTimeout("layoutTestController.setDefersLoading(false);layoutTestController.notifyDone();",1000);
+    if (window.testRunner) {
+        testRunner.setDefersLoading(true);
+        setTimeout("testRunner.setDefersLoading(false);testRunner.notifyDone();",1000);
     } else
         alert("Deferring loads");
 }

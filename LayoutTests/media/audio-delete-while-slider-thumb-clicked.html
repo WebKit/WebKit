@@ -5,9 +5,9 @@
         <script src=video-test.js></script>
         <script src=media-controls.js></script>
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             function log(msg)
@@ -29,7 +29,7 @@
                 eventSender.mouseDown();
                 eventSender.mouseUp();
 
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
             
             function deleteAudio()
@@ -46,11 +46,11 @@
             
             function drag()
             {
-                if (!window.layoutTestController)
+                if (!window.testRunner)
                     return;
 
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
 
                 var audio = document.getElementById('audio');
                 var seekCoords;

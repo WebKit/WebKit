@@ -2,10 +2,10 @@
     <body onload="runTest();">
         Test passes if it does not crash.
         <script>
-            if (window.layoutTestController)
+            if (window.testRunner)
             {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             function runTest() {
@@ -16,8 +16,8 @@
                 var clone = node.cloneNode(false);
                 clone.load();
  
-                if (window.layoutTestController)
-                    setTimeout("layoutTestController.notifyDone()", 0);
+                if (window.testRunner)
+                    setTimeout("testRunner.notifyDone()", 0);
             }
         </script>
     </body>

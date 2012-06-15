@@ -1,3 +1,123 @@
+2012-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use testRunner instead of layoutTestController in ietestcenter, inspector, java, jquery, loader, mathml, media, and mhtml tests
+        https://bugs.webkit.org/show_bug.cgi?id=89176
+
+        Reviewed by Kent Tamura.
+
+        * ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm:
+        * inspector/audits/resources/audits-style1.css:
+        * inspector/console/console-long-eval-crash.html:
+        * inspector/extensions/extensions-audits-content-script.html:
+        * inspector/extensions/extensions-eval-content-script.html:
+        * inspector/profiler/cpu-profiler-profiling-without-inspector.html:
+        * inspector/timeline/timeline-animation-frame.html:
+        * inspector/timeline/timeline-paint.html:
+        * inspector/timeline/timeline-receive-response-event.html:
+        * inspector/timeline/timeline-timer.html:
+        * java/argument-to-object-type.html:
+        * java/array-return.html:
+        * java/array-sort.html:
+        * java/embedding-java-with-object.html:
+        * java/inaccessible-class.html:
+        * java/inline-applet-crash.html:
+        * java/java-and-plugins.html:
+        * java/lc3/:
+        * jquery/resources/helper.js:
+        * loader/go-back-to-different-window-size.html:
+        * loader/load-defer-resume-crash.html:
+        * loader/navigation-while-deferring-loads.html:
+        * loader/reload-subresource-when-type-changes.html:
+        * mathml/EmptyMFracCrash.xhtml:
+        * mathml/EmptyMunderOverCrash.xhtml:
+        * mathml/empty-mroot-crash.xhtml:
+        * mathml/empty-msubsup-crash.html:
+        * mathml/fenced-whitespace-separators-crash.html:
+        * mathml/msub-anonymous-child-render-crash.html:
+        * mathml/msubsup-no-grandchild.xhtml:
+        * mathml/msubsup-remove-children.xhtml:
+        * mathml/munderover-remove-children.html:
+        * mathml/operator-hijacks-fenced-node.xhtml:
+        * mathml/wbr-in-mroot-crash.html:
+        * media/W3C/w3cwrapper.js:
+        (test):
+        (async_test.t.done):
+        (async_test):
+        * media/adopt-node-crash.html:
+        * media/audio-controls-do-not-fade-out.html:
+        * media/audio-controls-rendering.html:
+        * media/audio-delete-while-slider-thumb-clicked.html:
+        * media/audio-delete-while-step-button-clicked.html:
+        * media/audio-garbage-collect.html:
+        * media/audio-no-installed-engines.html:
+        * media/audio-only-video-intrinsic-size.html:
+        * media/audio-repaint.html:
+        * media/context-menu-actions.html:
+        * media/controls-after-reload.html:
+        * media/controls-drag-timebar.html:
+        * media/controls-layout-direction.html:
+        * media/controls-right-click-on-timebar.html:
+        * media/controls-without-preload.html:
+        * media/crash-closing-page-with-media-as-plugin-fallback.html:
+        * media/fallback.html:
+        * media/media-blocked-by-beforeload.html:
+        * media/media-blocked-by-willsendrequest.html:
+        * media/media-controls-clone-crash.html:
+        * media/media-controls-invalid-url.html:
+        * media/media-document-audio-repaint.html:
+        * media/media-document-audio-size.html:
+        * media/media-fullscreen.js:
+        (canplaythrough):
+        * media/media-volume-slider-rendered-normal.html:
+        * media/no-auto-play-in-sandbox.html:
+        * media/remove-from-document-before-load.html:
+        * media/resources/foreignobject-media.svg:
+        * media/restore-from-page-cache.html:
+        * media/svg-as-image-with-media-blocked.html:
+        * media/video-beforeload-remove-source.html:
+        * media/video-canvas-alpha.html:
+        * media/video-canvas.html-disabled:
+        * media/video-click-dblckick-standalone.html:
+        * media/video-controls-in-media-document.html:
+        * media/video-controls-no-scripting.html:
+        * media/video-controls-toggling.html:
+        * media/video-controls-visible-audio-only.html:
+        * media/video-controls-with-mutation-event-handler.html:
+        * media/video-delay-load-event.html:
+        * media/video-display-toggle.html:
+        * media/video-document-types.html:
+        * media/video-element-other-namespace-crash.html:
+        * media/video-empty-source.html:
+        * media/video-no-audio.html:
+        * media/video-paint-test.js:
+        (init.waitForMultipleEvents):
+        (initAndPause.waitForMultipleEvents):
+        (initAndPause):
+        * media/video-plays-past-end-of-test.html:
+        * media/video-poster-blocked-by-willsendrequest.html:
+        * media/video-replaces-poster.html:
+        * media/video-source-inserted.html:
+        * media/video-test.js:
+        (endTest):
+        * media/video-volume-slider.html:
+        * media/video-zoom.html:
+        * mhtml/check_domain.mht:
+        * mhtml/multi_frames.html_original:
+        * mhtml/multi_frames_binary.mht:
+        * mhtml/multi_frames_ie.mht:
+        * mhtml/multi_frames_unmht.mht:
+        * mhtml/page_with_css_and_js_ie.mht:
+        * mhtml/page_with_css_and_js_unmht.mht:
+        * mhtml/page_with_image.html_original:
+        * mhtml/page_with_image_ie.mht:
+        * mhtml/page_with_image_unmht.mht:
+        * mhtml/simple_page.html_original:
+        * mhtml/simple_page_ie.mht:
+        * mhtml/simple_page_unmht.mht:
+        * networkinformation/resources/event-after-navigation-new.html:
+        * networkinformation/script-tests/event-after-navigation.js:
+        * platform/chromium/media/video-frame-size-change.html:
+
 2012-06-15  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium win and mac rebaseline for r120403.

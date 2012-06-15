@@ -7,8 +7,8 @@
         <video></video>
 
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
             }
 
             function load() {
@@ -24,8 +24,8 @@
                     }
 
                     // Make sure we render the first frame.
-                    if (window.layoutTestController) {
-                        layoutTestController.display();
+                    if (window.testRunner) {
+                        testRunner.display();
                     }
 
                     video.play();
@@ -64,8 +64,8 @@
                             return;
                         }
 
-                        if (window.layoutTestController) {
-                            layoutTestController.notifyDone();
+                        if (window.testRunner) {
+                            testRunner.notifyDone();
                         }
                     }
 

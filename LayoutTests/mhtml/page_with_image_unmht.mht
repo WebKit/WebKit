@@ -17,8 +17,8 @@ Content-Location: http://localhost/page_with_image.html
 
 <title>Page with square</title>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
+if (window.testRunner) {
+  testRunner.dumpAsText();
 }
 
 </script>

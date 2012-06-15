@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <script src="../../../fast/js/resources/js-test-pre.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.overridePreference("WebKitJavaEnabled", "1");
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitJavaEnabled", "1");
+    testRunner.waitUntilDone();
 }
 </script>
 </head>
@@ -49,7 +49,7 @@ function startTest()
 function shouldBeWithErrorCheck(_a, _b)
 {
     // Don't want full stack traces from Java exceptions.
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         try {
             eval(_a);
         } catch (ex) {

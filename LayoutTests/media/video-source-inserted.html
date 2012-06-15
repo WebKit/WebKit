@@ -21,8 +21,8 @@
             consoleWrite("&lt;source&gt; inserted by script.");
             video.appendChild(document.createElement('source'));
             testExpected("video.networkState", HTMLMediaElement.prototype.NETWORK_NO_SOURCE, "==");
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         </script>
 
     </body>

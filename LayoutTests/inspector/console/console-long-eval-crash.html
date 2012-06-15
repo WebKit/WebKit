@@ -4,13 +4,13 @@
 <script src="../../http/tests/inspector/console-test.js"></script>
 <script>
 
-layoutTestController.setCanOpenWindows();
+testRunner.setCanOpenWindows();
 
 function doDialog()
 {
-    layoutTestController.closeWebInspector();
+    testRunner.closeWebInspector();
     showModalDialog('data:text/html,<script>setTimeout(close, 0);%3c/script>');
-    setTimeout(function(){layoutTestController.notifyDone();}, 0);
+    setTimeout(function(){testRunner.notifyDone();}, 0);
 }
 
 function test()

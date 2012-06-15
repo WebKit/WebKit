@@ -9,8 +9,8 @@
 
 window.whereAmI = "main world";
 
-layoutTestController.setIsolatedWorldSecurityOrigin(632, "file:///");
-layoutTestController.evaluateScriptInIsolatedWorld(632, "window.whereAmI = 'brave new world'");
+testRunner.setIsolatedWorldSecurityOrigin(632, "file:///");
+testRunner.evaluateScriptInIsolatedWorld(632, "window.whereAmI = 'brave new world'");
 
 function extension_testAudits(nextTest)
 {

@@ -20,8 +20,8 @@ Content-Location: http://localhost/page_with_image.html
 <META content=3D"text/html; charset=3Dwindows-1252" =
 http-equiv=3DContent-Type>
 <SCRIPT>=0A=
-if (window.layoutTestController) {=0A=
-  layoutTestController.dumpAsText();=0A=
+if (window.testRunner) {=0A=
+  testRunner.dumpAsText();=0A=
 }=0A=
 =0A=
 </SCRIPT>

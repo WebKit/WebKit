@@ -25,9 +25,9 @@ href=3D"http://localhost/resources/hide_image.css">
 src=3D"http://localhost/resources/remove_image_script.js"></SCRIPT>
 
 <SCRIPT>=0A=
-    if (window.layoutTestController) {=0A=
-      layoutTestController.dumpAsText();=0A=
-      layoutTestController.waitUntilDone();=0A=
+    if (window.testRunner) {=0A=
+      testRunner.dumpAsText();=0A=
+      testRunner.waitUntilDone();=0A=
     }=0A=
   </SCRIPT>
 
@@ -76,7 +76,7 @@ Content-Location: http://localhost/resources/remove_image_script.js
 function onLoad() {=0A=
     divToRemove =3D document.getElementById("thirdDiv");=0A=
     divToRemove.parentNode.removeChild(divToRemove);=0A=
-    if (window.layoutTestController)=0A=
-      layoutTestController.notifyDone();=0A=
+    if (window.testRunner)=0A=
+      testRunner.notifyDone();=0A=
 }
 ------=_NextPart_000_0012_01CC157B.8AA06570--

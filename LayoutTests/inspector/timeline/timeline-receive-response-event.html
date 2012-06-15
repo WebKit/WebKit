@@ -12,7 +12,7 @@ function performActions()
 
     function bar() {
         var image = new Image();
-        image.onload = function() { layoutTestController.evaluateInWebInspector(0, "window.step2()"); }
+        image.onload = function() { testRunner.evaluateInWebInspector(0, "window.step2()"); }
         image.src = "resources/anotherImage.png";
     }
 }
@@ -55,7 +55,7 @@ function test()
     }
 }
 
-if (!window.layoutTestController)
+if (!window.testRunner)
     setTimeout(performActions, 3000);
 
 </script>

@@ -21,18 +21,18 @@ function init()
         }
 
         waitForMultipleEvents("seeked", videos.length, function() {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         });
     });
 }
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
     setTimeout(function() { 
         document.body.appendChild(document.createTextNode('FAIL')); 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } , 8000);
 }
 
@@ -49,8 +49,8 @@ function initAndPause()
         }
 
         waitForMultipleEvents("pause", videos.length, function() {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         });
     });
 
@@ -61,7 +61,7 @@ function initAndSeeked()
     var videos = document.getElementsByTagName('video');
 
     waitForMultipleEvents("seeked", videos.length, function() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     });
 }

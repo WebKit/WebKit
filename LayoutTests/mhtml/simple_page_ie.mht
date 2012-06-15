@@ -13,8 +13,8 @@ X-MimeOLE: Produced By Microsoft MimeOLE V6.1.7600.16776
 <META content=3D"text/html; charset=3Dwindows-1252" =
 http-equiv=3DContent-Type>
 <SCRIPT>=0A=
-if (window.layoutTestController)=0A=
-  layoutTestController.dumpAsText();=0A=
+if (window.testRunner)=0A=
+  testRunner.dumpAsText();=0A=
 </SCRIPT>
 
 <META name=3DGENERATOR content=3D"MSHTML 9.00.8112.16421"></HEAD>

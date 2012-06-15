@@ -10,8 +10,8 @@
         <script>
             function runTest()
             {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
 
                 document.body.addEventListener("DOMSubtreeModified", function () { }, false);
 

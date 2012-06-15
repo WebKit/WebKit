@@ -6,10 +6,10 @@
             var mediaFile = findMediaFile("video", "content/test");
             var loadCount = 0;
 
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
-                layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+                testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
             }
 
             function pageshow(evt) 
@@ -24,7 +24,7 @@
                     
                     // schedule the test to end shortly, but wait long enough for the element to fire loading events
                     //  if that is going to happen
-                    setTimeout(function() { if (window.layoutTestController) layoutTestController.notifyDone(); }, 200);
+                    setTimeout(function() { if (window.testRunner) testRunner.notifyDone(); }, 200);
                 }
             }
                 

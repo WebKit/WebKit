@@ -28,7 +28,7 @@
                     muteButtonCoordinates = mediaControlsButtonCoordinates(video, "mute-button");
                     volumeSliderCoordinates = mediaControlsButtonCoordinates(video, "volume-slider-container");
                 } catch (exception) {
-                    layoutTestController.notifyDone();
+                    testRunner.notifyDone();
                     return;
                 }
             }
@@ -58,7 +58,7 @@
             consoleWrite("** The volume slider should be on top of the mute button **");
             testExpected("volumeSliderElement.offsetTop < muteButtonElement.offsetTop", true);
 
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     </script>
 </head>

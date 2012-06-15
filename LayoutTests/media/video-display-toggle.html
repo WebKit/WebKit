@@ -14,8 +14,8 @@
             }
             function test()
             {
-                if (window.layoutTestController)
-                    layoutTestController.waitUntilDone();
+                if (window.testRunner)
+                    testRunner.waitUntilDone();
                 setSrcById('vid', findMediaFile('video', 'content/test'));
                 var video = document.getElementById('vid');
                 video.addEventListener("canplaythrough", test2);
@@ -28,8 +28,8 @@
             }
             function done()
             {
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         </script>
     </head>

@@ -21,9 +21,9 @@ ss"></link>
   <script src=3D"resources/remove_image_script.js" type=3D"text/javascript"=
 ></script>
   <script>
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
     }
   </script>
 <base href=3D"http://localhost/"></base></head><body onload=3D"onLoad()">
@@ -59,8 +59,8 @@ Content-Location: http://localhost/resources/remove_image_script.js
 function onLoad() {
     divToRemove =3D document.getElementById("thirdDiv");
     divToRemove.parentNode.removeChild(divToRemove);
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
 }
 ------=_NextPart_000_0000_C2ECC76E.5EC79255
 Content-Type: image/png

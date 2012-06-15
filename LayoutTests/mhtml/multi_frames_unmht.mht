@@ -17,9 +17,9 @@ Content-Location: http://localhost/top_frame.html
 
 <title>A page that contains multiple nested frames</title>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.dumpChildFramesAsText();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.dumpChildFramesAsText();
 }
 </script>
 <base href=3D"http://localhost/"></base></head><body>

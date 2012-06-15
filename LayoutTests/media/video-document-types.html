@@ -1,9 +1,9 @@
 <html>
     <head>
         <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         function log(msg)
@@ -19,8 +19,8 @@
             else
                 log("FAIL: <video> NOT used");
 
-            if (window.layoutTestController) {
-                layoutTestController.notifyDone();
+            if (window.testRunner) {
+                testRunner.notifyDone();
             }
         }
         </script>

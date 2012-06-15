@@ -3,8 +3,8 @@
   <script src="media-file.js"></script>
 
   <script>
-    if (window.layoutTestController) {
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
     }
 
     function onLoad() {
@@ -19,8 +19,8 @@
         ctx.globalAlpha = 0.5;
         ctx.drawImage(video, 0, 0);
 
-        if (window.layoutTestController) {
-          layoutTestController.notifyDone();
+        if (window.testRunner) {
+          testRunner.notifyDone();
         }
       }); 
     }

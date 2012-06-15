@@ -12,7 +12,7 @@ function timeupdate(event) {
     var video = event.target;
     controls = internals.shadowRoot(video).firstChild.firstChild;
     testExpected("controls.offsetTop + controls.offsetHeight", video.offsetHeight, "<=");
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 };
 
 function start() {

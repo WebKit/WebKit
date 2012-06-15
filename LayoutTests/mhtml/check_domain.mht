@@ -17,9 +17,9 @@ Content-Location: http://localhost/simple_page.html
 
 <title>A simple page</title>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 
 window.onload = function() {
@@ -33,7 +33,7 @@ window.onload = function() {
   }
 
   document.getElementById('locDiv').appendChild(span);
-  layoutTestController.notifyDone();
+  testRunner.notifyDone();
 }
 
 </script>

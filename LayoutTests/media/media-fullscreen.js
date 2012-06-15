@@ -66,7 +66,7 @@ function canplaythrough()
         testException("mediaElement.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
 
     // Click on the button
-    if (window.layoutTestController)
+    if (window.testRunner)
         setTimeout(clickEnterFullscreenButton, 10);
     else
         openNextMovie();

@@ -1,19 +1,19 @@
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     function onPause()
     {
         var videoElement = document.getElementById("fr").contentDocument.querySelector("video");
-        if (window.layoutTestController)
-            layoutTestController.display();
+        if (window.testRunner)
+            testRunner.display();
         videoElement.currentTime = videoElement.duration * 0.50;
     }
 
     function onSeeked()
     {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     function onPlay()

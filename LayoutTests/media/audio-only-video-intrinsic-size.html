@@ -5,9 +5,9 @@
 </p>
 <pre id="console"></pre>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function log(message)
@@ -21,6 +21,6 @@
     function loadedMetadata()
     {
         log("Dimensions after metadata loaded: " + videoElement.offsetWidth + "\u00d7" + videoElement.offsetHeight);        
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 </script>
