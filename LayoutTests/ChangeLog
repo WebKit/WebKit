@@ -1,3 +1,9 @@
+2012-06-15  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations change.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in sputnik's conformance tests

@@ -3704,6 +3704,7 @@ BUGWK86592 LINUX : http/tests/xmlhttprequest/zero-length-response-sync.html = TI
 // strange "Unexpected no expected results found" on cr-linux ews
 BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload-within-iframe.html = MISSING PASS
 BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload.html = MISSING PASS
+BUGWK88964 MAC : http/tests/misc/embedCrasher.html = MISSING PASS
 
 BUGWK86674 DEBUG : fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml = TIMEOUT PASS
 
