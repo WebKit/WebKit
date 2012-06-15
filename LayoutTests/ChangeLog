@@ -1,3 +1,15 @@
+2012-06-15  Kent Tamura  <tkent@chromium.org>
+
+        A followup for r120413.
+        https://bugs.webkit.org/show_bug.cgi?id=89187
+
+        We need to update fast/dom/htmlcollection-non-html.html for
+        HTMLSelectElement::selectedOptions removal.
+
+        * fast/dom/htmlcollection-non-html-expected.txt:
+        * fast/dom/htmlcollection-non-html.html:
+        * platform/gtk/TestExpectations:
+
 2012-06-15  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding a CRASH PASS expectation for

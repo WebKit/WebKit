@@ -4,7 +4,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS select.options.length is 0
-PASS select.selectedOptions.length is 0
 PASS select.options.length is 1
 PASS document.images.length is 0
 PASS document.images.length is 1
