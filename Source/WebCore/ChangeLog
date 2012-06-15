@@ -1,3 +1,85 @@
+2012-06-14  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Copy RenderTextControlSingleLine.{cpp,h} to RenderSearchFiled.{cpp,h}
+        https://bugs.webkit.org/show_bug.cgi?id=89155
+
+        Reviewed by Kent Tamura.
+
+        This patch copies RenderTextControlSingleLine.cpp and .h into RenderSearchField.cpp
+        and .h with just "cp" code. New files aren't compiled until bug 88980.
+
+        No new tests. This patch doesn't change behavior.
+
+        * rendering/RenderSearchField.cpp: Added.
+        (WebCore::RenderTextControlInnerBlock::positionForPoint):
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::~RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::containerElement):
+        (WebCore::RenderTextControlSingleLine::innerBlockElement):
+        (WebCore::RenderTextControlSingleLine::innerSpinButtonElement):
+        (WebCore::RenderTextControlSingleLine::resultsButtonElement):
+        (WebCore::RenderTextControlSingleLine::cancelButtonElement):
+        (WebCore::RenderTextControlSingleLine::textBaseStyle):
+        (WebCore::RenderTextControlSingleLine::addSearchResult):
+        (WebCore::RenderTextControlSingleLine::showPopup):
+        (WebCore::RenderTextControlSingleLine::hidePopup):
+        (WebCore::RenderTextControlSingleLine::paint):
+        (WebCore::RenderTextControlSingleLine::layout):
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        (WebCore::RenderTextControlSingleLine::capsLockStateMayHaveChanged):
+        (WebCore::RenderTextControlSingleLine::hasControlClip):
+        (WebCore::RenderTextControlSingleLine::controlClipRect):
+        (WebCore::RenderTextControlSingleLine::getAvgCharWidth):
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+        (WebCore::RenderTextControlSingleLine::computeControlHeight):
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+        (WebCore::RenderTextControlSingleLine::createInnerBlockStyle):
+        (WebCore::RenderTextControlSingleLine::updateCancelButtonVisibility):
+        (WebCore::RenderTextControlSingleLine::visibilityForCancelButton):
+        (WebCore::RenderTextControlSingleLine::textShouldBeTruncated):
+        (WebCore::RenderTextControlSingleLine::autosaveName):
+        (WebCore::RenderTextControlSingleLine::valueChanged):
+        (WebCore::RenderTextControlSingleLine::itemText):
+        (WebCore::RenderTextControlSingleLine::itemLabel):
+        (WebCore::RenderTextControlSingleLine::itemIcon):
+        (WebCore::RenderTextControlSingleLine::itemIsEnabled):
+        (WebCore::RenderTextControlSingleLine::itemStyle):
+        (WebCore::RenderTextControlSingleLine::menuStyle):
+        (WebCore::RenderTextControlSingleLine::clientInsetLeft):
+        (WebCore::RenderTextControlSingleLine::clientInsetRight):
+        (WebCore::RenderTextControlSingleLine::clientPaddingLeft):
+        (WebCore::RenderTextControlSingleLine::clientPaddingRight):
+        (WebCore::RenderTextControlSingleLine::listSize):
+        (WebCore::RenderTextControlSingleLine::selectedIndex):
+        (WebCore::RenderTextControlSingleLine::popupDidHide):
+        (WebCore::RenderTextControlSingleLine::itemIsSeparator):
+        (WebCore::RenderTextControlSingleLine::itemIsLabel):
+        (WebCore::RenderTextControlSingleLine::itemIsSelected):
+        (WebCore::RenderTextControlSingleLine::setTextFromItem):
+        (WebCore::RenderTextControlSingleLine::fontSelector):
+        (WebCore::RenderTextControlSingleLine::hostWindow):
+        (WebCore::RenderTextControlSingleLine::autoscroll):
+        (WebCore::RenderTextControlSingleLine::scrollWidth):
+        (WebCore::RenderTextControlSingleLine::scrollHeight):
+        (WebCore::RenderTextControlSingleLine::scrollLeft):
+        (WebCore::RenderTextControlSingleLine::scrollTop):
+        (WebCore::RenderTextControlSingleLine::setScrollLeft):
+        (WebCore::RenderTextControlSingleLine::setScrollTop):
+        (WebCore::RenderTextControlSingleLine::scroll):
+        (WebCore::RenderTextControlSingleLine::logicalScroll):
+        (WebCore::RenderTextControlSingleLine::createScrollbar):
+        (WebCore::RenderTextControlSingleLine::inputElement):
+        * rendering/RenderSearchField.h: Added.
+        (RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::popupIsVisible):
+        (WebCore::RenderTextControlSingleLine::isTextField):
+        (WebCore::toRenderTextControlSingleLine):
+        (RenderTextControlInnerBlock):
+        (WebCore::RenderTextControlInnerBlock::RenderTextControlInnerBlock):
+        (WebCore::RenderTextControlInnerBlock::hasLineIfEmpty):
+
 2012-06-14  Kent Tamura  <tkent@chromium.org>
 
         [JSC/V8] "DOMString[]" for function return values should not be null
