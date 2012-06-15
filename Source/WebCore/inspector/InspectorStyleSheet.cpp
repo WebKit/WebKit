@@ -60,18 +60,18 @@
 #include <wtf/text/StringBuilder.h>
 
 using WebCore::TypeBuilder::Array;
+using WebCore::RuleSourceDataList;
 
 class ParsedStyleSheet {
 public:
-    typedef Vector<RefPtr<WebCore::CSSRuleSourceData> > SourceData;
     ParsedStyleSheet();
 
     WebCore::CSSStyleSheet* cssStyleSheet() const { return m_parserOutput; }
     const String& text() const { return m_text; }
     void setText(const String& text);
     bool hasText() const { return m_hasText; }
-    SourceData* sourceData() const { return m_sourceData.get(); }
-    void setSourceData(PassOwnPtr<SourceData> sourceData);
+    RuleSourceDataList* sourceData() const { return m_sourceData.get(); }
+    void setSourceData(PassOwnPtr<RuleSourceDataList>);
     bool hasSourceData() const { return m_sourceData; }
     RefPtr<WebCore::CSSRuleSourceData> ruleSourceDataAt(unsigned index) const;
 
@@ -81,7 +81,7 @@ private:
     WebCore::CSSStyleSheet* m_parserOutput;
     String m_text;
     bool m_hasText;
-    OwnPtr<SourceData> m_sourceData;
+    OwnPtr<RuleSourceDataList> m_sourceData;
 };
 
 ParsedStyleSheet::ParsedStyleSheet()
@@ -97,7 +97,7 @@ void ParsedStyleSheet::setText(const String& text)
     setSourceData(nullptr);
 }
 
-void ParsedStyleSheet::setSourceData(PassOwnPtr<SourceData> sourceData)
+void ParsedStyleSheet::setSourceData(PassOwnPtr<RuleSourceDataList> sourceData)
 {
     m_sourceData = sourceData;
 }
@@ -316,7 +316,7 @@ bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText,
         RefPtr<StylePropertySet> tempMutableStyle = StylePropertySet::create();
         RefPtr<CSSStyleSourceData> sourceData = CSSStyleSourceData::create();
         CSSParser p(CSSStrictMode);
-        p.parseDeclaration(tempMutableStyle.get(), propertyText + " " + bogusPropertyName + ": none", &sourceData, m_style->parentStyleSheet()->contents());
+        p.parseDeclaration(tempMutableStyle.get(), propertyText + " " + bogusPropertyName + ": none", sourceData, m_style->parentStyleSheet()->contents());
         Vector<CSSPropertySourceData>& propertyData = sourceData->propertyData;
         unsigned propertyCount = propertyData.size();
 
@@ -1098,21 +1098,8 @@ bool InspectorStyleSheet::ensureSourceData()
 
     RefPtr<StyleSheetContents> newStyleSheet = StyleSheetContents::create();
     CSSParser p(CSSStrictMode);
-    StyleRuleRangeMap ruleRangeMap;
-    p.parseSheet(newStyleSheet.get(), m_parsedStyleSheet->text(), 0, &ruleRangeMap);
-    OwnPtr<ParsedStyleSheet::SourceData> rangesVector(adoptPtr(new ParsedStyleSheet::SourceData));
-
-    Vector<CSSStyleRule*> rules;
-    RefPtr<CSSRuleList> ruleList = asCSSRuleList(CSSStyleSheet::create(newStyleSheet).get());
-    collectFlatRules(ruleList, &rules);
-    for (unsigned i = 0, size = rules.size(); i < size; ++i) {
-        StyleRuleRangeMap::iterator it = ruleRangeMap.find(rules.at(i)->styleRule());
-        if (it != ruleRangeMap.end()) {
-            fixUnparsedPropertyRanges(it->second.get(), m_parsedStyleSheet->text());
-            rangesVector->append(it->second);
-        }
-    }
-
+    OwnPtr<RuleSourceDataList> rangesVector(adoptPtr(new RuleSourceDataList()));
+    p.parseSheet(newStyleSheet.get(), m_parsedStyleSheet->text(), 0, rangesVector.get());
     m_parsedStyleSheet->setSourceData(rangesVector.release());
     return m_parsedStyleSheet->hasSourceData();
 }
@@ -1253,51 +1240,6 @@ PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > InspectorStyleSheet::
     return result.release();
 }
 
-void InspectorStyleSheet::fixUnparsedPropertyRanges(CSSRuleSourceData* ruleData, const String& styleSheetText)
-{
-    Vector<CSSPropertySourceData>& propertyData = ruleData->styleSourceData->propertyData;
-    unsigned size = propertyData.size();
-    if (!size)
-        return;
-
-    unsigned styleStart = ruleData->styleSourceData->styleBodyRange.start;
-    const UChar* characters = styleSheetText.characters();
-    CSSPropertySourceData* nextData = &(propertyData.at(0));
-    for (unsigned i = 0; i < size; ++i) {
-        CSSPropertySourceData* currentData = nextData;
-        nextData = i < size - 1 ? &(propertyData.at(i + 1)) : 0;
-
-        if (currentData->parsedOk)
-            continue;
-        if (currentData->range.end > 0 && characters[styleStart + currentData->range.end - 1] == ';')
-            continue;
-
-        unsigned propertyEndInStyleSheet;
-        if (!nextData)
-            propertyEndInStyleSheet = ruleData->styleSourceData->styleBodyRange.end - 1;
-        else
-            propertyEndInStyleSheet = styleStart + nextData->range.start - 1;
-
-        while (isHTMLSpace(characters[propertyEndInStyleSheet]))
-            --propertyEndInStyleSheet;
-
-        // propertyEndInStyleSheet points at the last property text character.
-        unsigned newPropertyEnd = propertyEndInStyleSheet - styleStart + 1; // Exclusive of the last property text character.
-        if (currentData->range.end != newPropertyEnd) {
-            currentData->range.end = newPropertyEnd;
-            unsigned valueStartInStyleSheet = styleStart + currentData->range.start + currentData->name.length();
-            while (valueStartInStyleSheet < propertyEndInStyleSheet && characters[valueStartInStyleSheet] != ':')
-                ++valueStartInStyleSheet;
-            if (valueStartInStyleSheet < propertyEndInStyleSheet)
-                ++valueStartInStyleSheet; // Shift past the ':'.
-            while (valueStartInStyleSheet < propertyEndInStyleSheet && isHTMLSpace(characters[valueStartInStyleSheet]))
-                ++valueStartInStyleSheet;
-            // Need to exclude the trailing ';' from the property value.
-            currentData->value = styleSheetText.substring(valueStartInStyleSheet, propertyEndInStyleSheet - valueStartInStyleSheet + (characters[propertyEndInStyleSheet] == ';' ? 0 : 1));
-        }
-    }
-}
-
 void InspectorStyleSheet::collectFlatRules(PassRefPtr<CSSRuleList> ruleList, Vector<CSSStyleRule*>* result)
 {
     if (!ruleList)
@@ -1423,7 +1365,7 @@ bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(RefPtr<CSSStyleS
 
     RefPtr<StylePropertySet> tempDeclaration = StylePropertySet::create();
     CSSParser p(m_element->document());
-    p.parseDeclaration(tempDeclaration.get(), m_styleText, result, m_element->document()->elementSheet()->contents());
+    p.parseDeclaration(tempDeclaration.get(), m_styleText, *result, m_element->document()->elementSheet()->contents());
     return true;
 }
 

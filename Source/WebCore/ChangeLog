@@ -1,3 +1,47 @@
+2012-06-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: CSSParser::parseSheet() should provide ready-to-use source data
+        https://bugs.webkit.org/show_bug.cgi?id=88646
+
+        Reviewed by Antti Koivisto.
+
+        This change moves the post-processing step from InspectorStyleSheet into CSSParser, so that
+        CSSParser::parseSheet() will return a ready-to-use list with style rule source code data.
+        Also, universal data structures are introduced, which allow for the full rule source data tree building.
+
+        No new tests, as this is a refactoring.
+
+        * css/CSSParser.cpp: Use universal data structures, which can be used for building the full rule tree.
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::setupParser):
+        (WebCore::CSSParser::parseSheet): Return ready-to-use source code data entries rather than an intermediate structure.
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::addNewRuleToSourceTree):
+        (WebCore):
+        (WebCore::CSSParser::popRuleData):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::fixUnparsedPropertyRanges): Moved in from InspectorStyleSheet.
+        (WebCore::CSSParser::markSelectorListStart):
+        (WebCore::CSSParser::markSelectorListEnd):
+        (WebCore::CSSParser::markRuleBodyStart):
+        (WebCore::CSSParser::markRuleBodyEnd):
+        (WebCore::CSSParser::markPropertyEnd):
+        * css/CSSParser.h:
+        (CSSParser):
+        (WebCore::CSSParser::resetPropertyRange): Renamed.
+        (WebCore::CSSParser::isExtractingSourceData): A convenience check.
+        * css/CSSPropertySourceData.h: Introduce the RuleSourceDataList typedef.
+        (WebCore):
+        * inspector/InspectorStyleSheet.cpp: Make use of RuleSourceDataList and follow the CSSParser::parse*() API changes.
+        (ParsedStyleSheet::sourceData):
+        (ParsedStyleSheet):
+        (ParsedStyleSheet::setSourceData):
+        (WebCore::InspectorStyleSheet::ensureSourceData): Remove source data postprocessing, follow the new parseSheet() API.
+        * inspector/InspectorStyleSheet.h:
+        (WebCore::InspectorCSSId::InspectorCSSId): Drive-by: uninitialized field fix.
+        (WebCore::InspectorStyleProperty::InspectorStyleProperty): Ditto.
+        (InspectorStyleSheet):
+
 2012-06-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: Long frame urls make all/errors/warnings/logs buttons inaccessible.

@@ -70,7 +70,7 @@ public:
 
     ~CSSParser();
 
-    void parseSheet(StyleSheetContents*, const String&, int startLineNumber = 0, StyleRuleRangeMap* = 0);
+    void parseSheet(StyleSheetContents*, const String&, int startLineNumber = 0, RuleSourceDataList* = 0);
     PassRefPtr<StyleRuleBase> parseRule(StyleSheetContents*, const String&);
     PassRefPtr<StyleKeyframe> parseKeyframeRule(StyleSheetContents*, const String&);
     static bool parseValue(StylePropertySet*, CSSPropertyID, const String&, bool important, CSSParserMode, StyleSheetContents*);
@@ -78,7 +78,7 @@ public:
     static bool parseSystemColor(RGBA32& color, const String&, Document*);
     static PassRefPtr<CSSValueList> parseFontFaceValue(const AtomicString&);
     PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(int ident, CSSParserValue*);
-    bool parseDeclaration(StylePropertySet*, const String&, RefPtr<CSSStyleSourceData>*, StyleSheetContents* contextStyleSheet);
+    bool parseDeclaration(StylePropertySet*, const String&, PassRefPtr<CSSStyleSourceData>, StyleSheetContents* contextStyleSheet);
     PassOwnPtr<MediaQuery> parseMediaQuery(const String&);
 
     void addProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important, bool implicit = false);
@@ -318,21 +318,30 @@ public:
     AtomicString m_defaultNamespace;
 
     // tokenizer methods and data
+    size_t m_parsedTextPrefixLength;
     bool m_inStyleRuleOrDeclaration;
     SourceRange m_selectorListRange;
     SourceRange m_ruleBodyRange;
     SourceRange m_propertyRange;
-    StyleRuleRangeMap* m_ruleRangeMap;
-    RefPtr<CSSRuleSourceData> m_currentRuleData;
+    OwnPtr<RuleSourceDataList> m_currentRuleDataStack;
+    RuleSourceDataList* m_ruleSourceDataResult;
+
+    void fixUnparsedPropertyRanges(CSSRuleSourceData*);
+    void markStyleRuleHeaderStart();
+    void markRuleHeaderEnd();
+
     void markSelectorListStart();
     void markSelectorListEnd();
     void markRuleBodyStart();
     void markRuleBodyEnd();
     void markPropertyStart();
     void markPropertyEnd(bool isImportantFound, bool isPropertyParsed);
+    void addNewRuleToSourceTree(PassRefPtr<CSSRuleSourceData>);
+    PassRefPtr<CSSRuleSourceData> popRuleData();
     void resetSelectorListMarks() { m_selectorListRange.start = m_selectorListRange.end = 0; }
     void resetRuleBodyMarks() { m_ruleBodyRange.start = m_ruleBodyRange.end = 0; }
-    void resetPropertyMarks() { m_propertyRange.start = m_propertyRange.end = UINT_MAX; }
+    void resetPropertyRange() { m_propertyRange.start = m_propertyRange.end = UINT_MAX; }
+    bool isExtractingSourceData() const { return !!m_currentRuleDataStack; }
     int lex(void* yylval);
     int token() { return m_token; }
 

@@ -59,7 +59,10 @@ typedef String ErrorString;
 
 class InspectorCSSId {
 public:
-    InspectorCSSId() { }
+    InspectorCSSId()
+        : m_ordinal(0)
+    {
+    }
 
     explicit InspectorCSSId(RefPtr<InspectorObject> value)
     {
@@ -102,6 +105,8 @@ private:
 
 struct InspectorStyleProperty {
     InspectorStyleProperty()
+        : hasSource(false)
+        , disabled(false)
     {
     }
 
@@ -219,7 +224,6 @@ protected:
 private:
     friend class InspectorStyle;
 
-    static void fixUnparsedPropertyRanges(CSSRuleSourceData* ruleData, const String& styleSheetText);
     static void collectFlatRules(PassRefPtr<CSSRuleList>, Vector<CSSStyleRule*>* result);
     bool ensureText() const;
     bool ensureSourceData();
