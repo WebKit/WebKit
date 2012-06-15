@@ -1,3 +1,9 @@
+2012-06-15  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Not reviewed: remove redundant Mac-specific style rule from inspector front-end.
+
+        * inspector/front-end/helpScreen.css:
+
 2012-06-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: fix help close button appearance on Mac

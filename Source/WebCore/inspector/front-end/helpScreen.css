@@ -122,10 +122,6 @@ body.platform-mac .help-container {
     padding-bottom: 9px;
 }
 
-body.platform-mac .help-block {
-    width: 330px;
-}
-
 .settings-tab.help-container {
     -webkit-column-width: 410px;
 }
