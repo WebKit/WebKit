@@ -1,3 +1,28 @@
+2012-06-15  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Gardening after r120411
+        https://bugs.webkit.org/show_bug.cgi?id=89194
+
+        Unreviewed EFL gardening, updating baselines after r120411.
+
+        * platform/efl/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/efl/fast/forms/box-shadow-override-expected.png:
+        * platform/efl/fast/forms/box-shadow-override-expected.txt:
+        * platform/efl/fast/forms/input-appearance-height-expected.png:
+        * platform/efl/fast/forms/input-appearance-height-expected.txt:
+        * platform/efl/fast/forms/range/input-appearance-range-expected.png:
+        * platform/efl/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/efl/fast/forms/range/range-thumb-height-percentage-expected.png:
+        * platform/efl/fast/forms/range/range-thumb-height-percentage-expected.txt:
+        * platform/efl/fast/forms/range/slider-padding-expected.png:
+        * platform/efl/fast/forms/range/slider-padding-expected.txt:
+        * platform/efl/fast/forms/range/slider-thumb-shared-style-expected.png:
+        * platform/efl/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/efl/fast/forms/range/slider-thumb-stylability-expected.txt:
+        * platform/efl/fast/multicol/client-rects-expected.png:
+        * platform/efl/fast/multicol/client-rects-expected.txt:
+        * platform/efl/fast/repaint/slider-thumb-drag-release-expected.txt:
+
 2012-06-15  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed expectation rebaselining.
