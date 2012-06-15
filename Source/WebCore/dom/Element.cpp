@@ -57,6 +57,7 @@
 #include "NodeRenderStyle.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
+#include "PointerLockController.h"
 #include "RenderRegion.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -66,6 +67,7 @@
 #include "StyleResolver.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "VoidCallback.h"
 #include "WebKitMutationObserver.h"
 #include "WebKitAnimationList.h"
 #include "XMLNSNames.h"
@@ -1866,6 +1868,13 @@ void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(boo
         element->setContainsFullScreenElement(flag);
 }
 #endif    
+
+#if ENABLE(POINTER_LOCK)
+void Element::webkitRequestPointerLock()
+{
+    document()->frame()->page()->pointerLockController()->requestPointerLock(this, 0, 0);
+}
+#endif
 
 SpellcheckAttributeState Element::spellcheckAttributeState() const
 {

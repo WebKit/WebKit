@@ -36,7 +36,10 @@
         function () {
             shouldBeDefined("document.onwebkitpointerlockchange");
             shouldBeDefined("document.onwebkitpointerlockerror");
+            shouldBeDefined("document.webkitExitPointerLock");
             shouldEvaluateTo("document.webkitPointerLockElement", null);
+            element = document.createElement();
+            shouldBeDefined("element.webkitRequestPointerLock");
             doNextStep();
         },
     ];

@@ -11,7 +11,9 @@ PASS navigator.webkitPointer.lock(document.body) is undefined
 PASS navigator.webkitPointer.unlock() is undefined
 PASS document.onwebkitpointerlockchange is defined.
 PASS document.onwebkitpointerlockerror is defined.
+PASS document.webkitExitPointerLock is defined.
 PASS document.webkitPointerLockElement is null
+PASS element.webkitRequestPointerLock is defined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

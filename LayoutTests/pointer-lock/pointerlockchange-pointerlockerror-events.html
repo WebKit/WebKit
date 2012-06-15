@@ -71,33 +71,28 @@
     todo = [
         function () {
             expectNoEvents("Unlock.");
-            navigator.webkitPointer.unlock();
+            document.webkitExitPointerLock();
             doNextStep();
         },
         function () {
             expectOnlyChangeEvent("Lock targetDiv1.");
-            navigator.webkitPointer.lock(targetDiv1);
+            targetDiv1.webkitRequestPointerLock();
         },
         function () {
             expectOnlyChangeEvent("Unlock again.");
-            navigator.webkitPointer.unlock();
+            document.webkitExitPointerLock();
         },
         function () {
             expectOnlyChangeEvent("Lock targetDiv1 again.");
-            navigator.webkitPointer.lock(targetDiv1);
+            targetDiv1.webkitRequestPointerLock();
         },
         function () {
             expectOnlyChangeEvent("Lock targetDiv2.");
-            navigator.webkitPointer.lock(targetDiv2);
+            targetDiv2.webkitRequestPointerLock();
         },
         function () {
             expectOnlyChangeEvent("Lock targetDiv2 again.");
-            navigator.webkitPointer.lock(targetDiv2);
-        },
-        function () {
-            expectNoEvents("Lock null.");
-            navigator.webkitPointer.lock(null);
-            doNextStep();
+            targetDiv2.webkitRequestPointerLock();
         },
         function () {
             targetIframe1.src = "about:blank";
@@ -110,7 +105,7 @@
         function () {
             expectOnlyChangeEvent("Lock targetIframe1.");
             expectOnlyChangeEvent("Lock targetIframe1 (handler for iframe1).", targetIframe1.contentDocument);
-            navigator.webkitPointer.lock(targetIframe1.contentDocument.body);
+            targetIframe1.contentDocument.body.webkitRequestPointerLock();
         },
         function () {
             // Absorb an extra doNextStep() from previous event handlers.
@@ -119,7 +114,7 @@
             expectNoEvents("Lock targetIframe2.");
             expectOnlyChangeEvent("Lock targetIframe2 (handler for iframe1).", targetIframe1.contentDocument);
             expectOnlyChangeEvent("Lock targetIframe2 (handler for iframe2).", targetIframe2.contentDocument);
-            navigator.webkitPointer.lock(targetIframe2.contentDocument.body);
+            targetIframe2.contentDocument.body.webkitRequestPointerLock();
         },
         function () {
             // Absorb an extra doNextStep() from previous event handlers.
@@ -128,19 +123,19 @@
             expectNoEvents("Unlock targetIframe2.");
             expectNoEvents("Unlock targetIframe2 (handler for iframe1).", targetIframe1.contentDocument);
             expectOnlyChangeEvent("Unlock targetIframe2 (handler for iframe2).", targetIframe2.contentDocument);
-            navigator.webkitPointer.unlock();
+            document.webkitExitPointerLock();
         },
         function () {
             shouldBeDefined("testRunner.setPointerLockWillFailSynchronously");
             testRunner.setPointerLockWillFailSynchronously();
             expectOnlyErrorEvent("Lock with synchronous failure.");
-            navigator.webkitPointer.lock(targetDiv1);
+            targetDiv1.webkitRequestPointerLock();
         },
         function () {
             shouldBeDefined("testRunner.setPointerLockWillFailAsynchronously");
             testRunner.setPointerLockWillFailAsynchronously();
             expectOnlyErrorEvent("Lock with asynchronous failure.");
-            navigator.webkitPointer.lock(targetDiv1);
+            targetDiv1.webkitRequestPointerLock();
         },
     ];
     doNextStep();

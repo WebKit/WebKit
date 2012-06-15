@@ -1,3 +1,28 @@
+2012-06-13  Vincent Scheib  <scheib@chromium.org>
+
+        Add new Pointer Lock spec webkitRequestPointerLock and webkitExitPointerLock methods.
+        https://bugs.webkit.org/show_bug.cgi?id=88891
+
+        Reviewed by Dimitri Glazkov.
+
+        Part of a series of refactoring changes to update pointer lock API to
+        the fullscreen locking style. https://bugs.webkit.org/show_bug.cgi?id=84402
+
+        Entering and exiting mouse lock is provided in the new webkitRequestPointerLock and
+        webkitExitPointerLock methods.
+
+        Existing tests updated to use the new methods. Also, several updated to
+        support manual testing.
+
+        * pointer-lock/lock-already-locked-expected.txt:
+        * pointer-lock/lock-already-locked.html:
+        * pointer-lock/mouse-event-delivery-expected.txt:
+        * pointer-lock/mouse-event-delivery.html:
+        * pointer-lock/pointer-lock-api-expected.txt:
+        * pointer-lock/pointer-lock-api.html:
+        * pointer-lock/pointerlockchange-pointerlockerror-events-expected.txt:
+        * pointer-lock/pointerlockchange-pointerlockerror-events.html:
+
 2012-06-15  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Rebaselines for r120477.

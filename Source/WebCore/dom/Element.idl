@@ -137,6 +137,8 @@ module core {
         [V8EnabledAtRuntime] void webkitRequestFullscreen();
 #endif
 
+        [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] void webkitRequestPointerLock();
+
         // CSS Regions API
         readonly attribute DOMString webkitRegionOverflow;
 

@@ -1,3 +1,30 @@
+2012-06-13  Vincent Scheib  <scheib@chromium.org>
+
+        Add new Pointer Lock spec webkitRequestPointerLock and webkitExitPointerLock methods.
+        https://bugs.webkit.org/show_bug.cgi?id=88891
+
+        Reviewed by Dimitri Glazkov.
+
+        Part of a series of refactoring changes to update pointer lock API to
+        the fullscreen locking style. https://bugs.webkit.org/show_bug.cgi?id=84402
+
+        Entering and exiting mouse lock is provided in the new webkitRequestPointerLock and
+        webkitExitPointerLock methods.
+
+        Existing pointer-lock tests updated to use the new methods.
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitExitPointerLock):
+        (WebCore):
+        * dom/Document.h:
+        (Document):
+        * dom/Document.idl:
+        * dom/Element.cpp:
+        (WebCore):
+        (WebCore::Element::webkitRequestPointerLock):
+        * dom/Element.h:
+        * dom/Element.idl:
+
 2012-06-15  Tony Payne  <tpayne@chromium.org>
 
        [chromium] Add iccjpeg and qcms to chromium port

@@ -5,6 +5,7 @@
 </head>
 <body>
 <div>
+  <button onclick="doNextStep('manual');">doNextStep for manual testing</button>
   <div id="target1"></div>
   <div id="target2"></div>
 </div>
@@ -21,6 +22,7 @@
         {
             testPassed("document.onwebkitpointerlockchange event received.");
             shouldBe("document.webkitPointerLockElement", expectedTargetToBeLockedString);
+            doNextStep();
         };
     document.onwebkitpointerlockerror =
         function () { testFailed("document.onwebkitpointerlockerror event received."); finishJSTest(); };
@@ -29,21 +31,49 @@
     targetdiv1.addEventListener("webkitpointerlocklost",
         function () { shouldBe("expectTarget1Unlock", "true"); });
 
+    var expectTarget2Unlock = false;
     targetdiv2.addEventListener("webkitpointerlocklost",
-        function () { testFailed("Unexpected targetdiv2 pointerlocklost."); });
+        function () { shouldBe("expectTarget2Unlock", "true"); });
 
     currentStep = 0;
-    function doNextStep() {
-      setTimeout(function () { todo[currentStep++](); }, 0);
+    function doNextStep(manual)
+    {
+        if (!window.layoutTestController && !manual)
+            return;
+        if (currentStep < todo.length)
+            setTimeout(function () { todo[currentStep++](); }, 0);
+        else if (currentStep++ == todo.length)
+            setTimeout(function () { finishJSTest(); }, 0);
     }
     todo = [
         function () {
-            shouldBe("navigator.webkitPointer.isLocked", "false");
+            shouldBe("document.webkitPointerLockElement", "null");
+            debug("     Locking targetdiv1.")
+            targetdiv1.webkitRequestPointerLock();
+            expectedTargetToBeLockedString = "targetdiv1";
+            // doNextStep() called by onwebkitpointerlockchange handler.
+        },
+        function () {
+            debug("     Locking targetdiv1, again.")
+            targetdiv1.webkitRequestPointerLock();
+            expectedTargetToBeLockedString = "targetdiv1";
+            // doNextStep() called by onwebkitpointerlockchange handler.
+        },
+        function () {
+            debug("     Locking targetdiv2.")
+            expectTarget1Unlock = true;
+            targetdiv2.webkitRequestPointerLock();
+            expectedTargetToBeLockedString = "targetdiv2";
+            // doNextStep() called by onwebkitpointerlockchange handler.
+        },
+        function () {
+            expectTarget1Unlock = false;
+            expectTarget2Unlock = true;
             navigator.webkitPointer.lock(targetdiv1,
                 function () {
                     testPassed("Lock target1 succeeded.");
                     shouldBe("navigator.webkitPointer.isLocked", "true");
-                    doNextStep();
+                    // doNextStep() called by onwebkitpointerlockchange handler.
                 },
                 function () {
                     testFailed("Lock failed.");
@@ -52,11 +82,12 @@
             expectedTargetToBeLockedString = "targetdiv1";
         },
         function () {
+            expectTarget2Unlock = false;
             navigator.webkitPointer.lock(targetdiv1,
                 function () {
                     testPassed("Lock target1 succeeded again.");
                     shouldBe("navigator.webkitPointer.isLocked", "true");
-                    doNextStep();
+                    // doNextStep() called by onwebkitpointerlockchange handler.
                 },
                 function () {
                     testFailed("Lock failed.");
@@ -70,7 +101,7 @@
                 function () {
                     testPassed("Lock target2 succeeded.");
                     shouldBe("navigator.webkitPointer.isLocked", "true");
-                    doNextStep();
+                    // doNextStep() called by onwebkitpointerlockchange handler.
                 },
                 function () {
                     testFailed("Lock failed.");
@@ -78,7 +109,6 @@
                 });
             expectedTargetToBeLockedString = "targetdiv2";
         },
-        finishJSTest
     ];
     doNextStep();
 </script>

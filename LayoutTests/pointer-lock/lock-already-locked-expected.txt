@@ -3,7 +3,18 @@ Test calling lock when already in a locked state.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS navigator.webkitPointer.isLocked is false
+PASS document.webkitPointerLockElement is null
+     Locking targetdiv1.
+PASS document.onwebkitpointerlockchange event received.
+PASS document.webkitPointerLockElement is targetdiv1
+     Locking targetdiv1, again.
+PASS document.onwebkitpointerlockchange event received.
+PASS document.webkitPointerLockElement is targetdiv1
+     Locking targetdiv2.
+PASS expectTarget1Unlock is true
+PASS document.onwebkitpointerlockchange event received.
+PASS document.webkitPointerLockElement is targetdiv2
+PASS expectTarget2Unlock is true
 PASS Lock target1 succeeded.
 PASS navigator.webkitPointer.isLocked is true
 PASS document.onwebkitpointerlockchange event received.
@@ -20,4 +31,5 @@ PASS document.webkitPointerLockElement is targetdiv2
 PASS successfullyParsed is true
 
 TEST COMPLETE
+doNextStep for manual testing
 

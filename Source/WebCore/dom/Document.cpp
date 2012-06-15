@@ -5753,6 +5753,12 @@ void Document::addDocumentToFullScreenChangeEventQueue(Document* doc)
 #endif
 
 #if ENABLE(POINTER_LOCK)
+void Document::webkitExitPointerLock()
+{
+    if (page())
+        page()->pointerLockController()->requestPointerUnlock();
+}
+
 Element* Document::webkitPointerLockElement() const
 {
     return page() ? page()->pointerLockController()->element() : 0;

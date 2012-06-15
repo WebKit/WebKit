@@ -14,7 +14,6 @@ PASS onwebkitpointerlockchange received after: Lock targetDiv1 again.
 PASS onwebkitpointerlockchange received after: Lock targetDiv2.
      Lock targetDiv2 again.
 PASS onwebkitpointerlockchange received after: Lock targetDiv2 again.
-     Lock null.
      Lock targetIframe1.
      Lock targetIframe1 (handler for iframe1).
 PASS onwebkitpointerlockchange received after: Lock targetIframe1 (handler for iframe1).

@@ -1069,6 +1069,7 @@ public:
 #endif
 
 #if ENABLE(POINTER_LOCK)
+    void webkitExitPointerLock();
     Element* webkitPointerLockElement() const;
 #endif
 
