@@ -1174,6 +1174,10 @@ BUGCR11153 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-incremen
 // test_shell, DRT do not correctly schedule paints when invalidating.
 BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 
+// Implement color profile support.
+BUGCR143 : fast/images/jpeg-with-color-profile.html = MISSING
+BUGCR143 : fast/images/png-with-color-profile.html = MISSING
+
 // -----------------------------------------------------------------
 // SVG TESTS
 // -----------------------------------------------------------------
@@ -3532,98 +3536,6 @@ BUGWK85174 : fast/files/blob-constructor.html = TEXT
 BUGWK85120 : fast/js/toString-number.html = TEXT
 
 BUGWK68744 : fast/block/float/float-not-removed-from-next-sibling4.html = IMAGE
-
-// Needs to be rebaselined.
-BUGWK87761 MAC LINUX WIN : compositing/color-matching/image-color-matching.html = IMAGE
-BUGWK87761 MAC : compositing/masks/direct-image-mask.html = IMAGE
-BUGWK87761 MAC : compositing/reflections/simple-composited-reflections.html = IMAGE
-BUGWK87761 MAC : compositing/visibility/visibility-image-layers.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/crash-filter-change.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/crash-hw-sw-switch.html = IMAGE
-BUGWK87761 LINUX : css3/filters/custom/custom-filter-shader-cache.html = IMAGE
-BUGWK87761 MAC : css3/filters/custom/effect-color-check.html = IMAGE
-BUGWK87761 LINUX : css3/filters/custom/effect-custom-combined-missing.html = IMAGE
-BUGWK87761 LINUX : css3/filters/custom/effect-custom.html = IMAGE
-BUGWK87761 MAC LINUX : css3/filters/custom/missing-custom-filter-shader.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-blur-hw.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-blur.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-brightness-hw.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-brightness.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-combined-hw.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-combined.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-contrast-hw.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-contrast.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-drop-shadow-hw.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-drop-shadow.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-grayscale-hw.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-grayscale.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-hue-rotate-hw.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-hue-rotate.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-invert-hw.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-invert.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-opacity-hw.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-opacity.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-saturate-hw.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-saturate.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-sepia-hw.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/effect-sepia.html = IMAGE
-BUGWK87761 MAC LINUX WIN : css3/filters/regions-expanding.html = IMAGE
-BUGWK87761 MAC : fast/css/background-shorthand-invalid-url.html = IMAGE
-BUGWK87761 MAC : fast/css/color-correction-on-backgrounds.html = IMAGE
-BUGWK87761 MAC : fast/css/color-correction.html = IMAGE
-BUGWK87761 MAC : fast/images/color-jpeg-with-color-profile.html = IMAGE
-BUGWK87761 MAC : fast/media/mq-min-pixel-ratio.html = IMAGE
-BUGWK87761 MAC : fast/reflections/reflection-direction.html = IMAGE
-BUGWK87761 MAC : fast/reflections/reflection-masks-opacity.html = IMAGE
-BUGWK87761 MAC : fast/reflections/reflection-with-zoom.html = IMAGE
-// There is already an entry for MAC DEBUG
-BUGWK87761 MAC RELEASE : fast/reflections/reflection-masks-outset.html = IMAGE
-BUGWK87761 MAC : fast/reflections/reflection-masks.html = IMAGE
-BUGWK87761 MAC LINUX : http/tests/local/file-url-sent-as-referer.html = IMAGE
-BUGWK87761 MAC : platform/chromium/virtual/threaded/compositing/visibility/visibility-image-layers.html = IMAGE
-BUGWK87761 MAC LINUX : scrollbars/listbox-scrollbar-combinations.html = IMAGE
-BUGWK87761 MAC LINUX : scrollbars/overflow-scrollbar-combinations.html = IMAGE
-BUGWK87761 LINUX : svg/as-border-image/svg-as-border-image.html = IMAGE
-BUGWK87761 MAC LINUX : svg/custom/createImageElement.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/custom/createImageElement2.xhtml = IMAGE
-BUGWK87761 MAC LINUX : svg/custom/focus-ring.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/custom/group-opacity.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/custom/image-parent-translation.xhtml = IMAGE
-BUGWK87761 MAC LINUX : svg/custom/image-small-width-height.svg = IMAGE
-BUGWK87761 MAC : svg/custom/image-with-transform-clip-filter.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/custom/js-update-image-and-display.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/custom/js-update-image-and-display2.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/custom/js-update-image-and-display3.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/custom/js-update-image.svg = IMAGE
-BUGWK87761 MAC : svg/custom/pointer-events-image-css-transform.svg = IMAGE
-BUGWK87761 MAC : svg/custom/pointer-events-image.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/custom/text-image-opacity.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/dynamic-updates/SVGImageElement-dom-height-attr.html = IMAGE
-BUGWK87761 MAC LINUX : svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr.html = IMAGE
-BUGWK87761 MAC LINUX : svg/dynamic-updates/SVGImageElement-dom-width-attr.html = IMAGE
-BUGWK87761 MAC LINUX : svg/dynamic-updates/SVGImageElement-dom-x-attr.html = IMAGE
-BUGWK87761 MAC LINUX : svg/dynamic-updates/SVGImageElement-dom-y-attr.html = IMAGE
-BUGWK87761 MAC LINUX : svg/dynamic-updates/SVGImageElement-svgdom-height-prop.html = IMAGE
-BUGWK87761 MAC LINUX : svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop.html = IMAGE
-BUGWK87761 MAC LINUX : svg/dynamic-updates/SVGImageElement-svgdom-width-prop.html = IMAGE
-BUGWK87761 MAC LINUX : svg/dynamic-updates/SVGImageElement-svgdom-x-prop.html = IMAGE
-BUGWK87761 MAC LINUX : svg/dynamic-updates/SVGImageElement-svgdom-y-prop.html = IMAGE
-BUGWK87761 MAC LINUX : svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/filters/feImage-subregions-preseveAspectRatio-none.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/filters/feImage-subregions.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/filters/filter-source-position.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/repaint/image-href-change.svg = IMAGE
-BUGWK87761 MAC LINUX : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
-BUGWK87761 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
-BUGWK87761 MAC LINUX : svg/zoom/page/zoom-background-images.html = IMAGE
-BUGWK87761 MAC LINUX : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE
-BUGWK87761 MAC LINUX : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE
-BUGWK87761 MAC LINUX : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE
-BUGWK87761 MAC : tables/mozilla/bugs/bug82946-2.html = IMAGE
-BUGWK87761 MAC LINUX WIN : fast/images/jpeg-with-color-profile.html = MISSING
-BUGWK87761 MAC LINUX WIN : fast/images/png-with-color-profile.html = MISSING
-
 
 BUGWK83076 SNOWLEOPARD RELEASE : compositing/geometry/outline-change.html = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : css3/selectors3/xml/css3-modsel-161.xml = TIMEOUT PASS
