@@ -45,7 +45,9 @@
 namespace WebCore {
 
 static SkPaint::Hinting skiaHinting = SkPaint::kNormal_Hinting;
-static bool isSkiaAntiAlias = true;
+static bool useSkiaAutoHint = true;
+static bool useSkiaBitmaps = true;
+static bool useSkiaAntiAlias = true;
 static bool useSkiaSubpixelRendering = false;
 static bool useSkiaSubpixelPositioning = false;
 
@@ -54,9 +56,19 @@ void FontPlatformData::setHinting(SkPaint::Hinting hinting)
     skiaHinting = hinting;
 }
 
-void FontPlatformData::setAntiAlias(bool isAntiAlias)
+void FontPlatformData::setAutoHint(bool useAutoHint)
 {
-    isSkiaAntiAlias = isAntiAlias;
+    useSkiaAutoHint = useAutoHint;
+}
+
+void FontPlatformData::setUseBitmaps(bool useBitmaps)
+{
+    useSkiaBitmaps = useBitmaps;
+}
+
+void FontPlatformData::setAntiAlias(bool useAntiAlias)
+{
+    useSkiaAntiAlias = useAntiAlias;
 }
 
 void FontPlatformData::setSubpixelRendering(bool useSubpixelRendering)
@@ -165,7 +177,7 @@ void FontPlatformData::setupPaint(SkPaint* paint) const
 {
     const float ts = m_textSize >= 0 ? m_textSize : 12;
 
-    paint->setAntiAlias(m_style.useAntiAlias == FontRenderStyle::NoPreference ? isSkiaAntiAlias : m_style.useAntiAlias);
+    paint->setAntiAlias(m_style.useAntiAlias == FontRenderStyle::NoPreference ? useSkiaAntiAlias : m_style.useAntiAlias);
     switch (m_style.useHinting) {
     case FontRenderStyle::NoPreference:
         paint->setHinting(skiaHinting);
@@ -178,15 +190,15 @@ void FontPlatformData::setupPaint(SkPaint* paint) const
         break;
     }
 
-    paint->setEmbeddedBitmapText(m_style.useBitmaps);
+    paint->setEmbeddedBitmapText(m_style.useBitmaps == FontRenderStyle::NoPreference ? useSkiaBitmaps : m_style.useBitmaps);
     paint->setTextSize(SkFloatToScalar(ts));
     paint->setTypeface(m_typeface);
     paint->setFakeBoldText(m_fakeBold);
     paint->setTextSkewX(m_fakeItalic ? -SK_Scalar1 / 4 : 0);
-    paint->setAutohinted(m_style.useAutoHint);
+    paint->setAutohinted(m_style.useAutoHint == FontRenderStyle::NoPreference ? useSkiaAutoHint : m_style.useAutoHint);
     paint->setSubpixelText(m_style.useSubpixelPositioning == FontRenderStyle::NoPreference ? useSkiaSubpixelPositioning : m_style.useSubpixelPositioning);
 
-    if (m_style.useAntiAlias == 1 || (m_style.useAntiAlias == FontRenderStyle::NoPreference && isSkiaAntiAlias))
+    if (m_style.useAntiAlias == 1 || (m_style.useAntiAlias == FontRenderStyle::NoPreference && useSkiaAntiAlias))
         paint->setLCDRenderText(m_style.useSubpixelRendering == FontRenderStyle::NoPreference ? useSkiaSubpixelRendering : m_style.useSubpixelRendering);
 }
 

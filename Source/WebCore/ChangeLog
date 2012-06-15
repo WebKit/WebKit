@@ -1,3 +1,21 @@
+2012-06-14  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Add setAutoHint() and setUseBitmaps() in WebFontRendering
+        https://bugs.webkit.org/show_bug.cgi?id=89014
+
+        Reviewed by James Robinson.
+
+        No new tests because of no change of functionality.
+
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.cpp:
+        (WebCore):
+        (WebCore::FontPlatformData::setAutoHint):
+        (WebCore::FontPlatformData::setUseBitmaps):
+        (WebCore::FontPlatformData::setAntiAlias):
+        (WebCore::FontPlatformData::setupPaint):
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.h:
+        (FontPlatformData):
+
 2012-06-14  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Move cursor related code from WidgetEfl to ewk_view and EflScreenUtilities.

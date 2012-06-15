@@ -1,3 +1,18 @@
+2012-06-14  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Add setAutoHint() and setUseBitmaps() in WebFontRendering
+        https://bugs.webkit.org/show_bug.cgi?id=89014
+
+        Reviewed by James Robinson.
+
+        * public/linuxish/WebFontRendering.h:
+        (WebFontRendering):
+        * src/linuxish/WebFontRendering.cpp:
+        (WebKit):
+        (WebKit::WebFontRendering::setAutoHint):
+        (WebKit::WebFontRendering::setUseBitmaps):
+        (WebKit::WebFontRendering::setAntiAlias):
+
 2012-06-14  Daniel Erat  <derat@chromium.org>
 
         [chromium/linux] Drop deprecated WebFontRenderStyle::useSubpixel

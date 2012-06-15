@@ -44,15 +44,21 @@ void WebFontRendering::setHinting(SkPaint::Hinting hinting)
 }
 
 // static
-void WebFontRendering::setAntiAlias(bool isAntiAlias)
+void WebFontRendering::setAutoHint(bool useAutoHint)
 {
-    FontPlatformData::setAntiAlias(isAntiAlias);
+    FontPlatformData::setAutoHint(useAutoHint);
 }
 
 // static
-void WebFontRendering::setSubpixelGlyphs(bool isSubpixelGlyphs)
+void WebFontRendering::setUseBitmaps(bool useBitmaps)
 {
-    FontPlatformData::setSubpixelRendering(isSubpixelGlyphs);
+    FontPlatformData::setUseBitmaps(useBitmaps);
+}
+
+// static
+void WebFontRendering::setAntiAlias(bool useAntiAlias)
+{
+    FontPlatformData::setAntiAlias(useAntiAlias);
 }
 
 // static
