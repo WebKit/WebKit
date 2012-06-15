@@ -380,16 +380,6 @@ bool BackingStoreClient::isFocused() const
         && m_frame->page()->focusController()->focusedFrame() == m_frame;
 }
 
-bool BackingStoreClient::scrollsHorizontally() const
-{
-    return transformedActualVisibleSize().width() < transformedContentsSize().width();
-}
-
-bool BackingStoreClient::scrollsVertically() const
-{
-    return transformedActualVisibleSize().height() < transformedContentsSize().height();
-}
-
 bool BackingStoreClient::isClientGeneratedScroll() const
 {
     return m_isClientGeneratedScroll;

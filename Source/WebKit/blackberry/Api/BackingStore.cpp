@@ -1557,10 +1557,8 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 
 #if ENABLE_SCROLLBARS
     if (isScrollingOrZooming() && m_client->isMainFrame()) {
-        if (m_client->scrollsHorizontally())
-            blitHorizontalScrollbar(origin);
-        if (m_client->scrollsVertically())
-            blitVerticalScrollbar(origin);
+        blitHorizontalScrollbar(origin);
+        blitVerticalScrollbar(origin);
     }
 #endif
 
@@ -1800,8 +1798,6 @@ void BackingStorePrivate::blitHorizontalScrollbar(const Platform::IntPoint& scro
     if (!m_webPage->isVisible())
         return;
 
-    ASSERT(m_client->scrollsHorizontally());
-
     m_webPage->client()->drawHorizontalScrollbar();
 }
 
@@ -1809,8 +1805,6 @@ void BackingStorePrivate::blitVerticalScrollbar(const Platform::IntPoint& scroll
 {
     if (!m_webPage->isVisible())
         return;
-
-    ASSERT(m_client->scrollsVertically());
 
     m_webPage->client()->drawVerticalScrollbar();
 }

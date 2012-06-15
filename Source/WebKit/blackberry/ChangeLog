@@ -1,3 +1,21 @@
+2012-06-15  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Remove BackingStoreClient::scrollsHorizontally/scrollsVeritically()
+        https://bugs.webkit.org/show_bug.cgi?id=89210
+
+        Reviewed by Antonio Gomes.
+
+        Remove BackingStoreClient::scrollsHorizontally()/scrollsVeritically(), because
+        calling them is neither nessary nor safe.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+        (BlackBerry::WebKit::BackingStorePrivate::blitHorizontalScrollbar):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVerticalScrollbar):
+        * WebKitSupport/BackingStoreClient.cpp:
+        * WebKitSupport/BackingStoreClient.h:
+        (BackingStoreClient):
+
 2012-06-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120404.

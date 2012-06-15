@@ -94,9 +94,6 @@ public:
 
     bool isFocused() const;
 
-    bool scrollsHorizontally() const;
-    bool scrollsVertically() const;
-
     bool isClientGeneratedScroll() const;
     void setIsClientGeneratedScroll(bool);
 
