@@ -2515,3 +2515,6 @@ http/tests/xmlhttprequest/response-blob-size.html
 # [Qt]REGRESSION(r120107): It made http/tests/xmlhttprequest/origin-exact-matching.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=88913
 http/tests/xmlhttprequest/origin-exact-matching.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=89149
+http/tests/fileapi/create-blob-url-from-data-url.html

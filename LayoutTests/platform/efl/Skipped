@@ -1179,3 +1179,6 @@ fast/block/basic/fieldset-stretch-to-legend.html
 # Fail until ENABLE_XHR_RESPONSE_BLOB is enabled after r120042
 # https://bugs.webkit.org/show_bug.cgi?id=88859
 http/tests/xmlhttprequest/response-blob-size.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=89149
+http/tests/fileapi/create-blob-url-from-data-url.html
