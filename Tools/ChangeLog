@@ -1,3 +1,11 @@
+2012-06-15  Bill Budge  <bbudge@chromium.org>
+
+        Add bbudge@chromium.org to committers.py
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-06-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed style fix after r120351.
