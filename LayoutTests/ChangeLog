@@ -1,3 +1,18 @@
+2012-06-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, updating baselines after r120411.
+
+        * platform/gtk/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/gtk/fast/forms/box-shadow-override-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-height-expected.txt:
+        * platform/gtk/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/gtk/fast/forms/range/range-thumb-height-percentage-expected.txt:
+        * platform/gtk/fast/forms/range/slider-padding-expected.txt:
+        * platform/gtk/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/gtk/fast/forms/range/slider-thumb-stylability-expected.txt:
+        * platform/gtk/fast/multicol/client-rects-expected.txt:
+        * platform/gtk/fast/repaint/slider-thumb-drag-release-expected.txt:
+
 2012-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in networkinformation, perf, plugins, pointer-lock, printing, scrollbars, and security tests
