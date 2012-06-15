@@ -1,5 +1,18 @@
 2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [WK2][EFL] Implement navigation back/forward in Ewk_View
+        https://bugs.webkit.org/show_bug.cgi?id=89173
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement navigation back / forward in MiniBrowser. Use
+        'F1' to navigate back and 'F2' to navigate forward.
+
+        * MiniBrowser/efl/main.c:
+        (on_key_down):
+
+2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] EFL's LayoutTestController does not support titleTextDirection
         https://bugs.webkit.org/show_bug.cgi?id=86475
 

@@ -1,5 +1,23 @@
 2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [WK2][EFL] Implement navigation back/forward in Ewk_View
+        https://bugs.webkit.org/show_bug.cgi?id=89173
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add API for Ewk_View to ask the main frame to navigate backwards
+        or forwards in history. Also add API to query if such navigation
+        is possible.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_back):
+        (ewk_view_forward):
+        (ewk_view_back_possible):
+        (ewk_view_forward_possible):
+        * UIProcess/API/efl/ewk_view.h:
+
+2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Implement reload / stop in Ewk_View
         https://bugs.webkit.org/show_bug.cgi?id=89168
 

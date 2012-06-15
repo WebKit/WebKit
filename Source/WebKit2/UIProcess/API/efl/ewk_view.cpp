@@ -551,6 +551,48 @@ void ewk_view_display(Evas_Object* ewkView, const IntRect& rect)
     evas_object_image_data_update_add(smartData->image, rect.x(), rect.y(), rect.width(), rect.height());
 }
 
+Eina_Bool ewk_view_back(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    WKPageRef pageRef = toAPI(priv->pageClient->page());
+    if (WKPageCanGoBack(pageRef)) {
+        WKPageGoBack(pageRef);
+        return true;
+    }
+    return false;
+}
+
+Eina_Bool ewk_view_forward(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    WKPageRef pageRef = toAPI(priv->pageClient->page());
+    if (WKPageCanGoForward(pageRef)) {
+        WKPageGoForward(pageRef);
+        return true;
+    }
+    return false;
+}
+
+Eina_Bool ewk_view_back_possible(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    return WKPageCanGoBack(toAPI(priv->pageClient->page()));
+}
+
+Eina_Bool ewk_view_forward_possible(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    return WKPageCanGoForward(toAPI(priv->pageClient->page()));
+}
+
 void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const IntSize& size)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);

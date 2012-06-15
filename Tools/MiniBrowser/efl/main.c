@@ -69,7 +69,15 @@ static void
 on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     Evas_Event_Key_Down *ev = (Evas_Event_Key_Down*) event_info;
-    if (!strcmp(ev->key, "F5")) {
+    if (!strcmp(ev->key, "F1")) {
+        info("Back (F1) was pressed\n");
+        if (!ewk_view_back(obj))
+            info("Back ignored: No back history\n");
+    } else if (!strcmp(ev->key, "F2")) {
+        info("Forward (F2) was pressed\n");
+        if (!ewk_view_forward(obj))
+            info("Forward ignored: No forward history\n");
+    } else if (!strcmp(ev->key, "F5")) {
             info("Reload (F5) was pressed, reloading.\n");
             ewk_view_reload(obj);
     } else if (!strcmp(ev->key, "F6")) {

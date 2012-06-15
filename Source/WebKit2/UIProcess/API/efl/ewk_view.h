@@ -185,6 +185,46 @@ EAPI Eina_Bool    ewk_view_reload(Evas_Object *o);
  */
 EAPI Eina_Bool    ewk_view_stop(Evas_Object *o);
 
+/*
+ * Asks the main frame to navigate back in the history.
+ *
+ * @param o view object to navigate back
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
+ *
+ * @see ewk_frame_back()
+ */
+EAPI Eina_Bool    ewk_view_back(Evas_Object *o);
+
+/**
+ * Asks the main frame to navigate forward in the history.
+ *
+ * @param o view object to navigate forward
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
+ *
+ * @see ewk_frame_forward()
+ */
+EAPI Eina_Bool    ewk_view_forward(Evas_Object *o);
+
+/**
+ * Queries if it is possible to navigate backwards one item in the history.
+ *
+ * @param o view object to query if backward navigation is possible
+ *
+ * @return @c EINA_TRUE if it is possible to navigate backwards in the history, @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool    ewk_view_back_possible(Evas_Object *o);
+
+/**
+ * Queries if it is possible to navigate forwards one item in the history.
+ *
+ * @param o view object to query if forward navigation is possible
+ *
+ * @return @c EINA_TRUE if it is possible to navigate forwards in the history, @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool    ewk_view_forward_possible(Evas_Object *o);
+
 #ifdef __cplusplus
 }
 #endif
