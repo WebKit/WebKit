@@ -1,3 +1,12 @@
+2012-06-14  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r110340.
+        http://trac.webkit.org/changeset/110340
+        https://bugs.webkit.org/show_bug.cgi?id=88749
+
+        * fast/dom/HTMLSelectElement/select-selectedOptions-expected.txt: Removed.
+        * fast/dom/HTMLSelectElement/select-selectedOptions.html: Removed.
+
 2012-06-15  MORITA Hajime  <morrita@google.com>
 
         Unreviewed typo fix for r120405.

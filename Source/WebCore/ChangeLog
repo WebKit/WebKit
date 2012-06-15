@@ -1,3 +1,22 @@
+2012-06-14  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r110340.
+        http://trac.webkit.org/changeset/110340
+        https://bugs.webkit.org/show_bug.cgi?id=88749
+
+        r110340 added a broken implementation of
+        HTMLSelectElement::selectedOptions. This roll out removes
+        HTMLSelectElement::selectedOptions.
+
+        * html/CollectionType.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::shouldIncludeChildren):
+        (WebCore::HTMLCollection::isAcceptableElement):
+        * html/HTMLSelectElement.cpp:
+        * html/HTMLSelectElement.h:
+        (HTMLSelectElement):
+        * html/HTMLSelectElement.idl:
+
 2012-06-14  Keishi Hattori  <keishi@webkit.org>
 
         Add color property to input type=range
