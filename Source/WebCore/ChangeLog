@@ -1,3 +1,15 @@
+2012-06-15  Ami Fischman  <fischman@chromium.org>
+
+        [chromium] Compositor should be aware of |flipped| status of video textures per-platform
+        https://bugs.webkit.org/show_bug.cgi?id=89189
+
+        Reviewed by James Robinson.
+
+        No new tests (sadly HW video decode is still only being tested manually for orientation).
+
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::appendQuads):
+
 2012-06-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         The initial value of text-align should be start instead of -webkit-auto

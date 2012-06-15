@@ -210,7 +210,13 @@ void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
         // NativeTexture hardware decoder.
         bool premultipliedAlpha = true;
         FloatRect uvRect(0, 0, 1, 1);
-        bool flipped = false;
+#if defined(OS_CHROMEOS) && defined(__ARMEL__)
+        bool flipped = true; // Under the covers, implemented by OpenMAX IL.
+#elif defined(OS_WINDOWS)
+        bool flipped = true; // Under the covers, implemented by DXVA.
+#else
+        bool flipped = false; // LibVA (cros/intel), MacOS.
+#endif
         OwnPtr<CCTextureDrawQuad> textureQuad = CCTextureDrawQuad::create(sharedQuadState, quadRect, m_frame->textureId(), premultipliedAlpha, uvRect, flipped);
         quadList.append(textureQuad.release());
         break;
