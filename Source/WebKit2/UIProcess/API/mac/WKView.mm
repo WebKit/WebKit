@@ -2930,6 +2930,16 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_page->handleAlternativeTextUIResult(text);
 }
 
+- (void)_setSuppressVisibilityUpdates:(BOOL)suppressVisibilityUpdates
+{
+    _data->_page->setSuppressVisibilityUpdates(suppressVisibilityUpdates);
+}
+
+- (BOOL)_suppressVisibilityUpdates
+{
+    return _data->_page->suppressVisibilityUpdates();
+}
+
 @end
 
 @implementation WKView (Private)

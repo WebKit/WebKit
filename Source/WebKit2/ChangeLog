@@ -1,3 +1,41 @@
+2012-06-14  Tim Horton  <timothy_horton@apple.com>
+
+        DrawingArea: Painting is being resumed while the view is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=88940
+        <rdar://problem/11652545>
+
+        Reviewed by Dean Jackson.
+
+        Using requestAnimationFrame and the fullscreen API on a DrawingArea-backed window would cause
+        rAF to permanently suspend animations after entering full-screen mode, because of the following:
+
+        0. JavaScript causes fullscreen transition to start.
+        1. Painting (and rAF) are suspended.
+        2. The page changes size.
+            a. DrawingAreaProxyImpl::sizeDidChange() calls DrawingAreaImpl::updateBackingStoreState, which calls DrawingAreaImpl::resumePainting.
+            b. DrawingAreaImpl::resumePainting resumes painting, but does *not* resume rAF, because windowIsVisible is (legitimately) false.
+        3. The view becomes visible, windowIsVisible is updated to true.
+        4. visibilityDidChange() calls resumePainting again, but this time it early exits because painting is not suspended.
+
+        Notice that because of the early exit in 4, rAF is never resumed.
+
+        To solve this and prevent any further bugs caused by these unnecessary calls to resume/suspendPainting,
+        temporarily stop sending SuspendPainting/ResumePainting messages from DrawingAreaProxyImpl::visibilityDidChange
+        during the window animations that occur while entering and exiting full-screen.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setAutomaticallySuspendAndResumePainting:]):
+        (-[WKView automaticallySuspendAndResumePainting]):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::visibilityDidChange):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::setShouldSuspendAndResumePainting):
+        (WebKit::WebPageProxy::shouldSuspendAndResumePainting):
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]):
+
 2012-06-14  Jia Pu  <jpu@apple.com>
 
         Mark text with text alternative with blue underline.
