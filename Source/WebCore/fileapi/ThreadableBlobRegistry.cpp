@@ -34,7 +34,15 @@
 
 #include "BlobData.h"
 #include "BlobRegistry.h"
+#include "BlobURL.h"
+#include "SecurityOrigin.h"
+#include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
+#include <wtf/RefPtr.h>
+#include <wtf/ThreadSpecific.h>
+#include <wtf/text/StringHash.h>
+
+using WTF::ThreadSpecific;
 
 namespace WebCore {
 
@@ -64,6 +72,13 @@ struct BlobRegistryContext {
 
 #if ENABLE(BLOB)
 
+typedef HashMap<String, RefPtr<SecurityOrigin> > BlobUrlOriginMap;
+static ThreadSpecific<BlobUrlOriginMap>& originMap()
+{
+    AtomicallyInitializedStatic(ThreadSpecific<BlobUrlOriginMap>*, map = new ThreadSpecific<BlobUrlOriginMap>);
+    return *map;
+}
+
 static void registerBlobURLTask(void* context)
 {
     OwnPtr<BlobRegistryContext> blobRegistryContext = adoptPtr(static_cast<BlobRegistryContext*>(context));
@@ -86,8 +101,12 @@ static void registerBlobURLFromTask(void* context)
     blobRegistry().registerBlobURL(blobRegistryContext->url, blobRegistryContext->srcURL);
 }
 
-void ThreadableBlobRegistry::registerBlobURL(const KURL& url, const KURL& srcURL)
+void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, const KURL& url, const KURL& srcURL)
 {
+    // If the blob URL contains null origin, as in the context with unique security origin or file URL, save the mapping between url and origin so that the origin can be retrived when doing security origin check.
+    if (origin && BlobURL::getOrigin(url) == "null")
+        originMap()->add(url.string(), origin);
+
     if (isMainThread())
         blobRegistry().registerBlobURL(url, srcURL);
     else {
@@ -104,12 +123,18 @@ static void unregisterBlobURLTask(void* context)
 
 void ThreadableBlobRegistry::unregisterBlobURL(const KURL& url)
 {
-    if (isMainThread())
+    if (isMainThread()) {
+        originMap()->remove(url.string());
         blobRegistry().unregisterBlobURL(url);
-    else {
+    } else {
         OwnPtr<BlobRegistryContext> context = adoptPtr(new BlobRegistryContext(url));
         callOnMainThread(&unregisterBlobURLTask, context.leakPtr());
     }
+}
+
+PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const KURL& url)
+{
+    return originMap()->get(url.string());
 }
 
 #else
@@ -125,6 +150,12 @@ void ThreadableBlobRegistry::registerBlobURL(const KURL&, const KURL&)
 void ThreadableBlobRegistry::unregisterBlobURL(const KURL&)
 {
 }
+
+PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const KURL& url)
+{
+    return 0;
+}
+
 #endif // ENABL(BLOB)
 
 } // namespace WebCore

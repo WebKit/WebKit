@@ -77,7 +77,7 @@ Blob::Blob(const KURL& srcURL, const String& type, long long size)
 {
     // Create a new internal URL and register it with the same blob data as the source URL.
     m_internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, srcURL);
+    ThreadableBlobRegistry::registerBlobURL(0, m_internalURL, srcURL);
 }
 
 Blob::~Blob()

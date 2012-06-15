@@ -1,3 +1,41 @@
+2012-06-15  Jian Li  <jianli@chromium.org>
+
+        FileReader is dysfunctional in documents with "null" origin string
+        https://bugs.webkit.org/show_bug.cgi?id=78648
+
+        Reviewed by Adam Barth.
+
+        The fix is to keep in-memory map from blob URL to SecurityOrigin for the
+        unique origin case.
+
+        Test: fast/files/file-reader-file-url.html
+
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        * fileapi/BlobURL.cpp:
+        (WebCore::BlobURL::getOrigin): Return the origin string embeded in the blob URL.
+        (WebCore):
+        (WebCore::BlobURL::createBlobURL): Remove the check for null origin string since it is handled now.
+        * fileapi/BlobURL.h:
+        (BlobURL):
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::start):
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore):
+        (WebCore::originMap): Thread-specific in-memory map from the blob URL to the origin.
+        (WebCore::ThreadableBlobRegistry::registerBlobURL): Add the map from the blob URL to the origin.
+        (WebCore::ThreadableBlobRegistry::unregisterBlobURL): Remove the map for the unregistered blob URL.
+        (WebCore::ThreadableBlobRegistry::getCachedOrigin): Retrieve the origin associated with the blob URL.
+        * fileapi/ThreadableBlobRegistry.h:
+        (WebCore):
+        (ThreadableBlobRegistry):
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::createObjectURL):
+        * page/SecurityOrigin.cpp:
+        (WebCore::getCachedOrigin): Return the cached origin for the blob URL if it exists.
+        (WebCore):
+        (WebCore::SecurityOrigin::create): Call getCachedOrigin to get the cached origin first.
+
 2012-06-15  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Move search field related code to RenderSearchField from RenderTextControlSingleLine

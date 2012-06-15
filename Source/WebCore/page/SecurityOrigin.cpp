@@ -35,6 +35,7 @@
 #include "KURL.h"
 #include "SchemeRegistry.h"
 #include "SecurityPolicy.h"
+#include "ThreadableBlobRegistry.h"
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -87,6 +88,15 @@ static KURL extractInnerURL(const KURL& url)
     // FIXME: Update this callsite to use the innerURL member function when
     // we finish implementing it.
     return KURL(ParsedURLString, decodeURLEscapeSequences(url.path()));
+}
+
+static PassRefPtr<SecurityOrigin> getCachedOrigin(const KURL& url)
+{
+#if ENABLE(BLOB)
+    if (url.protocolIs("blob"))
+        return ThreadableBlobRegistry::getCachedOrigin(url);
+#endif
+    return 0;
 }
 
 static bool shouldTreatAsUniqueOrigin(const KURL& url)
@@ -171,6 +181,10 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
 
 PassRefPtr<SecurityOrigin> SecurityOrigin::create(const KURL& url)
 {
+    RefPtr<SecurityOrigin> cachedOrigin = getCachedOrigin(url);
+    if (cachedOrigin.get())
+        return cachedOrigin;
+
     if (shouldTreatAsUniqueOrigin(url)) {
         RefPtr<SecurityOrigin> origin = adoptRef(new SecurityOrigin());
 
