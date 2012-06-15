@@ -50,6 +50,7 @@ class BlobURL {
 public:
     static KURL createPublicURL(SecurityOrigin*);
     static KURL createInternalURL();
+    static String getOrigin(const KURL&);
     static String getIdentifier(const KURL&);
     static const char* blobProtocol() { return kBlobProtocol; }
 

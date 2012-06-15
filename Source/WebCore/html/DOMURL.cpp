@@ -78,7 +78,7 @@ String DOMURL::createObjectURL(ScriptExecutionContext* scriptExecutionContext, B
     if (publicURL.isEmpty())
         return String();
 
-    ThreadableBlobRegistry::registerBlobURL(publicURL, blob->url());
+    ThreadableBlobRegistry::registerBlobURL(scriptExecutionContext->securityOrigin(), publicURL, blob->url());
     scriptExecutionContext->publicURLManager().blobURLs().add(publicURL.string());
 
     return publicURL.string();
