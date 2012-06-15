@@ -1,3 +1,9 @@
+2012-06-14  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed rebaseline for mac chromium following r120403.
+
+        * platform/chromium-mac/tables/mozilla/bugs/bug55527-expected.txt: Removed.
+
 2012-06-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in battery status and canvas tests
