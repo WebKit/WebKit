@@ -46,6 +46,7 @@ struct WebURLLoaderOptions {
         , sniffContent(false)
         , allowCredentials(false)
         , forcePreflight(false)
+        , exposeAllResponseHeaders(false)
         , crossOriginRequestPolicy(CrossOriginRequestPolicyDeny)
         { }
 
@@ -53,6 +54,7 @@ struct WebURLLoaderOptions {
     bool sniffContent; // Whether to sniff content.
     bool allowCredentials; // Whether to send HTTP credentials and cookies with the request.
     bool forcePreflight; // If policy is to use access control, whether to force a preflight for GET, HEAD, and POST requests.
+    bool exposeAllResponseHeaders; // If policy is to use access control, whether to expose non-whitelisted response headers to the client.
     CrossOriginRequestPolicy crossOriginRequestPolicy;
 };
 

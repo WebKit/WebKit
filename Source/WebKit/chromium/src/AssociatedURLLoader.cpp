@@ -209,7 +209,9 @@ void AssociatedURLLoader::ClientAdapter::didReceiveResponse(unsigned long, const
     // Try to use the original ResourceResponse if possible.
     WebURLResponse validatedResponse = WrappedResourceResponse(response);
     HTTPResponseHeaderValidator validator(m_options.crossOriginRequestPolicy == WebURLLoaderOptions::CrossOriginRequestPolicyUseAccessControl);
-    validatedResponse.visitHTTPHeaderFields(&validator);
+    if (!m_options.exposeAllResponseHeaders)
+        validatedResponse.visitHTTPHeaderFields(&validator);
+
     // If there are blocked headers, copy the response so we can remove them.
     const HTTPHeaderSet& blockedHeaders = validator.blockedHeaders();
     if (!blockedHeaders.isEmpty()) {

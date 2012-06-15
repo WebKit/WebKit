@@ -1,3 +1,22 @@
+2012-06-15  Bill Budge  <bbudge@chromium.org>
+
+        AssociatedURLLoader should allow trusted clients to read all headers, not just exposed ones.
+        https://bugs.webkit.org/show_bug.cgi?id=89185
+
+        Reviewed by Adam Barth.
+
+        This change adds an option to turn off whitelist filtering of response headers for CORS loads,
+        and modifies AssociatedURLLoader check for that before filtering.
+
+        * public/WebURLLoaderOptions.h:
+        (WebKit::WebURLLoaderOptions::WebURLLoaderOptions):
+        (WebURLLoaderOptions):
+        * src/AssociatedURLLoader.cpp:
+        (WebKit::AssociatedURLLoader::ClientAdapter::didReceiveResponse):
+        * tests/AssociatedURLLoaderTest.cpp:
+        (WebKit):
+        (WebKit::TEST_F):
+
 2012-06-15  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Allow scrolling non-root layers in the compositor thread

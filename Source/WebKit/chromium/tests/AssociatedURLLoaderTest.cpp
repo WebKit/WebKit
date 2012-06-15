@@ -585,4 +585,34 @@ TEST_F(AssociatedURLLoaderTest, CrossOriginHeaderWhitelisting)
     EXPECT_FALSE(CheckAccessControlHeaders("Set-Cookie", true));
 }
 
+// Test that the loader can allow non-whitelisted response headers for trusted CORS loads.
+TEST_F(AssociatedURLLoaderTest, CrossOriginHeaderAllowResponseHeaders)
+{
+    WebURLRequest request;
+    request.initialize();
+    GURL url = GURL("http://www.other.com/CrossOriginHeaderAllowResponseHeaders.html");
+    request.setURL(url);
+
+    WebString headerNameString(WebString::fromUTF8("non-whitelisted"));
+    m_expectedResponse = WebURLResponse();
+    m_expectedResponse.initialize();
+    m_expectedResponse.setMIMEType("text/html");
+    m_expectedResponse.addHTTPHeaderField("Access-Control-Allow-Origin", "*");
+    m_expectedResponse.addHTTPHeaderField(headerNameString, "foo");
+    webkit_support::RegisterMockedURL(url, m_expectedResponse, m_frameFilePath);
+
+    WebURLLoaderOptions options;
+    options.exposeAllResponseHeaders = true; // This turns off response whitelisting.
+    options.crossOriginRequestPolicy = WebURLLoaderOptions::CrossOriginRequestPolicyUseAccessControl;
+    m_expectedLoader = createAssociatedURLLoader(options);
+    EXPECT_TRUE(m_expectedLoader);
+    m_expectedLoader->loadAsynchronously(request, this);
+    serveRequests();
+    EXPECT_TRUE(m_didReceiveResponse);
+    EXPECT_TRUE(m_didReceiveData);
+    EXPECT_TRUE(m_didFinishLoading);
+
+    EXPECT_FALSE(m_actualResponse.httpHeaderField(headerNameString).isEmpty());
+}
+
 }
