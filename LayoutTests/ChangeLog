@@ -1,3 +1,21 @@
+2012-06-15  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: LayoutTest http/tests/inspector/filesystem/* should clean up FileSystem after test.
+        https://bugs.webkit.org/show_bug.cgi?id=89066
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/filesystem/filesystem-test.js:
+        (initialize_FileSystemTest.InspectorTest.clearFileSystem):
+        (dispatchCallback):
+        (createDirectory.gotFileSystem):
+        (createDirectory):
+        (createFile.gotFileSystem):
+        (clearFileSystem.gotRoot):
+        (clearFileSystem.gotRoot.removeAll):
+        (clearFileSystem.onError):
+        * http/tests/inspector/filesystem/read-directory.html:
+
 2012-06-15  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update TestExpectations

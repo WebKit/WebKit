@@ -16,7 +16,7 @@ function test()
     InspectorBackend.registerFileSystemDispatcher(new FileSystemDispatcher());
     FileSystemAgent.enable();
 
-    step1();
+    InspectorTest.clearFileSystem(step1);
 
     function step1()
     {
@@ -52,6 +52,11 @@ function test()
     function step6(requestId, errorCode, entries) {
         InspectorTest.dumpReadDirectoryResult(requestId, errorCode, entries);
 
+        InspectorTest.clearFileSystem(step7);
+    }
+
+    function step7()
+    {
         InspectorTest.completeTest();
     }
 }

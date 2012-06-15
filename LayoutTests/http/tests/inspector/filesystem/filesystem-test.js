@@ -29,6 +29,11 @@ var initialize_FileSystemTest = function()
         InspectorTest.evaluateInPage("createFile(unescape(\"" + escape(path) + "\"), " + InspectorTest.registerCallback(callback) + ")");
     };
 
+    InspectorTest.clearFileSystem = function(callback)
+    {
+        InspectorTest.evaluateInPage("clearFileSystem(" + InspectorTest.registerCallback(callback) + ")");
+    };
+
     InspectorTest.dumpReadDirectoryResult = function(requestId, errorCode, entries)
     {
         InspectorTest.addResult("requestId: " + requestId);
@@ -51,23 +56,71 @@ var initialize_FileSystemTest = function()
 function dispatchCallback()
 {
     var args = JSON.stringify(Array.prototype.slice.call(arguments));
-    layoutTestController.evaluateInWebInspector(0, "InspectorTest.dispatchCallback(unescape(\"" + escape(args) + "\"))");
+    testRunner.evaluateInWebInspector(999, "InspectorTest.dispatchCallback(unescape(\"" + escape(args) + "\"))");
 }
 
 function createDirectory(path, callback)
 {
-    webkitRequestFileSystem(TEMPORARY, 1, function(fs) {
-        fs.root.getDirectory(path, {create:true}, function(entry) {
+    webkitRequestFileSystem(TEMPORARY, 1, gotFileSystem);
+
+    function gotFileSystem(fileSystem)
+    {
+        fileSystem.root.getDirectory(path, {create:true}, function(entry) {
             callback();
         });
-    });
+    }
 }
 
 function createFile(path, callback)
 {
-    webkitRequestFileSystem(TEMPORARY, 1, function(fs) {
-        fs.root.getFile(path, {create:true}, function(entry) {
+    webkitRequestFileSystem(TEMPORARY, 1, gotFileSystem);
+
+    function gotFileSystem(fileSystem)
+    {
+        fileSystem.root.getFile(path, {create:true}, function(entry) {
             callback();
         });
-    });
+    }
+}
+
+function clearFileSystem(callback)
+{
+    webkitResolveLocalFileSystemURL("filesystem:" + location.origin + "/temporary/", gotRoot, onError);
+
+    function gotRoot(root)
+    {
+        var reader = root.createReader();
+        reader.readEntries(didReadEntries);
+
+        var entries = [];
+        function didReadEntries(newEntries)
+        {
+            if (newEntries.length === 0) {
+                removeAll();
+                return;
+            }
+            for (var i = 0; i < newEntries.length; ++i)
+                entries.push(newEntries[i]);
+            reader.readEntries(didReadEntries);
+        }
+
+        function removeAll()
+        {
+            if (entries.length === 0) {
+                callback();
+                return;
+            }
+            var entry = entries.shift();
+            if (entry.isDirectory)
+                entry.removeRecursively(removeAll);
+            else
+                entry.remove(removeAll);
+        }
+    }
+
+    function onError()
+    {
+        // Assume the FileSystem is uninitialized and therefore empty.
+        callback();
+    }
 }
