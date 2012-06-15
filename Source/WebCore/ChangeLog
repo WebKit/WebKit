@@ -1,3 +1,10 @@
+2012-06-15  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Unreviewed debug build fix for r120457
+
+        * platform/graphics/chromium/cc/CCDrawQuad.cpp:
+        (WebCore::CCDrawQuad::toYUVVideoDrawQuad):
+
 2012-06-15  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Not reviewed: remove redundant Mac-specific style rule from inspector front-end.

@@ -116,7 +116,7 @@ const CCTileDrawQuad* CCDrawQuad::toTileDrawQuad() const
 
 const CCYUVVideoDrawQuad* CCDrawQuad::toYUVVideoDrawQuad() const
 {
-    ASSERT(m_material == VideoContent);
+    ASSERT(m_material == YUVVideoContent);
     return static_cast<const CCYUVVideoDrawQuad*>(this);
 }
 
