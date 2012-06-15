@@ -3441,6 +3441,13 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.addWeakReference(node.structure());
         node.structure()->addTransitionWatchpoint(speculationWatchpoint());
         
+#if !ASSERT_DISABLED
+        SpeculateCellOperand op1(this, node.child1());
+        JITCompiler::Jump isOK = m_jit.branchPtr(JITCompiler::Equal, JITCompiler::Address(op1.gpr(), JSCell::structureOffset()), TrustedImmPtr(node.structure()));
+        m_jit.breakpoint();
+        isOK.link(&m_jit);
+#endif
+
         noResult(m_compileIndex);
         break;
     }

@@ -1,3 +1,15 @@
+2012-06-15  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to set watchpoints on structure transitions in the
+        method check prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=89058
+
+        Adding the same assertion to 32-bit that I added to 64-bit. This change
+        does not affect correctness but it's a good thing for assertion coverage.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-06-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to set watchpoints on structure transitions in the
