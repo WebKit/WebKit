@@ -22,6 +22,12 @@
 
 2012-06-14  MORITA Hajime  <morrita@google.com>
 
+        Unreviewed typo fix.
+
+        * platform/chromium/TestExpectations:
+
+2012-06-14  MORITA Hajime  <morrita@google.com>
+
         Unreviewed expectation update.
         - Marked cross-domain-message-event-dispatch.html and track-cue-rendering-snap-to-lines-not-set.html
 

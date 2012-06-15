@@ -3733,9 +3733,12 @@ BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = TEXT
 
 BUGWK89149 : http/tests/fileapi/create-blob-url-from-data-url.html = TEXT
 
-// Flaky
 BUGWK89166 : http/tests/messaging/cross-domain-message-event-dispatch.html : TEXT
 BUGWK89167 : media/track/track-cue-rendering-snap-to-lines-not-set.html : TEXT
+
+// Flaky
+BUGWK89166 : http/tests/messaging/cross-domain-message-event-dispatch.html = TEXT
+BUGWK89167 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT
 
 // Temporarily mark as failing on mac and windows until they can be rebaselined.
 BUG_EAE MAC WIN : LayoutTests/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = PASS IMAGE TEXT IMAGE+TEXT
@@ -3746,3 +3749,4 @@ BUG_EAE MAC WIN : LayoutTests/svg/zoom/page/zoom-svg-through-object-with-percent
 BUG_EAE MAC WIN : LayoutTests/svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = PASS IMAGE TEXT IMAGE+TEXT
 BUG_EAE MAC WIN : tables/mozilla_expected_failures/bugs/bug89315.html = PASS IMAGE TEXT IMAGE+TEXT
 BUG_EAE MAC WIN : tables/mozilla_expected_failures/bugs/bug89315.html = PASS IMAGE TEXT IMAGE+TEXT
+
