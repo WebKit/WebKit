@@ -85,6 +85,9 @@ body.compact .help-window-main {
     border-radius: 8px;
     height: 16px;
     width: 16px;
+    position: absolute;
+    top: 6px;
+    right: 6px;
 }
 
 body.compact .help-content {
@@ -96,13 +99,11 @@ body.compact .help-content {
 }
 
 body.platform-mac .help-close-button {
-    float: left;
-    margin-right: 10px;
-    font-size: 12px;
+    left: 6px;
 }
 
-body:not(.platform-mac) .help-close-button {
-    float: right;
+body.platform-mac .help-window-main .tabbed-pane-header-contents {
+    margin-left: 27px;
 }
 
 .help-container {
@@ -271,12 +272,6 @@ body:not(.compact) #settings-screen .tabbed-pane {
     font-size: 13px;
     padding: 1px 10px;
     margin: 0;
-}
-
-#settings-screen .help-close-button {
-    position: absolute;
-    top: 6px;
-    right: 6px;
 }
 
 #settings-screen .tabbed-pane-header-tab.selected {

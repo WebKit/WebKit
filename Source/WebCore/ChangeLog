@@ -1,3 +1,15 @@
+2012-06-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: fix help close button appearance on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=89208
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/helpScreen.css:
+        (.help-close-button):
+        (body.platform-mac .help-close-button):
+        (body.platform-mac .help-window-main .tabbed-pane-header-contents):
+
 2012-06-11  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Create a CCYUVVideoDrawQuad and remove the now-unused generic CCVideoDrawQuad
