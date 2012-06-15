@@ -374,47 +374,14 @@ BUGWK44199 SKIP : perf = PASS TEXT
 BUGWK47727 : mathml/presentation = PASS TEXT
 
 BUGWK68878 : media/video-playing-and-pause.html = PASS TEXT
-BUGWK54637 : media/video-display-toggle.html = PASS TEXT
-BUGWK54637 : media/video-controls-in-media-document.html = PASS TEXT
-BUGWK54637 : media/controls-after-reload.html = PASS TEXT
 BUGWK55126 : media/video-aspect-ratio.html = PASS TEXT
 
-BUGWK61914 : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = PASS TEXT
-BUGWK61914 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = PASS TEXT
-
-BUGWK68520 : svg/W3C-SVG-1.1-SE/filters-image-05-f.svg = PASS TEXT
-
-BUGWK68516 : fast/workers/shared-worker-lifecycle.html = PASS TEXT
-BUGWK68516 : fast/workers/shared-worker-frame-lifecycle.html = PASS TEXT
-BUGWK68516 : fast/workers/worker-close-more.html = PASS TEXT
-BUGWK68516 : fast/workers/dedicated-worker-lifecycle.html = PASS TEXT
-BUGWK68516 : fast/workers/worker-lifecycle.html = PASS TEXT
-
-BUGWK37550 : fast/dom/Window/HTMLBodyElement-window-eventListener-attributes.html = PASS TEXT
-
-BUGWK37557 : http/tests/misc/image-blocked-src-change.html = PASS TEXT
-BUGWK53428 : http/tests/misc/favicon-as-image.html = PASS TEXT
-
-BUGWK61852 : svg/custom/animate-target-id-changed.svg = PASS TEXT
 BUGWK56561 : svg/custom/clip-path-referencing-use2.svg = PASS TEXT
-BUGWK61914 : svg/custom/object-sizing-explicit-width-height.xhtml = PASS TEXT
-BUGWK37560 : svg/dom/SVGScriptElement/script-set-href.svg = PASS TEXT
 
-BUGWK37562 : plugins/update-widgets-crash.html = PASS TEXT
-BUGWK37572 : plugins/open-and-close-window-with-plugin.html = PASS TEXT
 BUGWK89097 : plugins/plugin-initiate-popup-window.html = PASS TEXT
-
-BUGWK53995 : editing/selection/end-of-document.html = PASS TEXT
-BUGWK51325 : editing/selection/extend-by-character-003.html = PASS TEXT
-BUGWK51699 : editing/selection/extend-by-character-004.html = PASS TEXT
-BUGWK51699 : editing/selection/extend-by-character-005.html = PASS TEXT
-BUGWK53074 : editing/selection/extend-selection-bidi.html = PASS TEXT
 
 BUGWK61932 : jquery/manipulation.html = PASS TEXT
 
-BUGWK37623 : scrollbars/scrollbar-crash-on-refresh.html = PASS TEXT
-
-BUGWK71776 : fast/forms/password-placeholder-text-security.html = PASS IMAGE
 BUGWK71777 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 
 BUGWK71655 : fast/frames/flattening/frameset-flattening-simple.html = PASS TEXT
@@ -427,75 +394,29 @@ BUGWK80129 : fast/frames/flattening/iframe-flattening-out-of-view.html = TEXT PA
 BUGWK72698 : media/audio-garbage-collect.html = PASS TEXT
 BUGWK79760 : media/video-poster-blocked-by-willsendrequest.html = PASS TEXT
 
-BUGWK72694 : fast/canvas/canvas-lineWidth.html = PASS TIMEOUT TEXT
 BUGWK73772 : fast/table/multiple-captions-display.xhtml = PASS TEXT
 
-BUGWK74288 : fast/events/overflow-events.html = PASS TEXT
-
 BUGWK74493 : platform/gtk/accessibility/unknown-roles-not-exposed.html = PASS TEXT
-BUGWK83686 : platform/gtk/accessibility/aria-table-hierarchy.html = PASS TEXT
-BUGWK83686 : platform/gtk/accessibility/input-slider.html = PASS TEXT
-
-BUGWK74710 : editing/pasteboard/paste-text-013.html = PASS TEXT
 
 BUGWK76385 : tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html = PASS TEXT
 
-BUGWK76831 : svg/custom/junk-data.svg = PASS TEXT
-BUGWK76831 : svg/custom/missing-xlink.svg = PASS TEXT
-BUGWK76831 : svg/custom/use-font-face-crash.svg = PASS TEXT
-BUGWK76831 : svg/hixie/error/012.xml = PASS TEXT
-
-BUGWK77636 : fast/forms/radio/radio-group.html = PASS TEXT
-BUGWK89084 : fast/forms/text-input-event.html = PASS TEXT
-
 BUGWK78344 : fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html = PASS IMAGE
 
-BUGWK80246 DEBUG : fast/css/hover-update.html = PASS TEXT
-
-BUGWK83683 : editing/pasteboard/pasting-empty-html-falls-back-to-text.html = PASS TEXT
+BUGWK80246 : fast/css/hover-update.html = PASS TEXT
 
 BUGWK88198 : svg/stroke/non-scaling-stroke-pattern.svg = PASS IMAGE
 
-BUGWK51027 : plugins/refcount-leaks.html = PASS TEXT
 BUGWK80158 : plugins/netscape-plugin-page-cache-works.html = PASS TEXT
-
-BUGWK54194 : fast/text/midword-break-after-breakable-char.html = PASS TEXT
-
-BUGWK54191 : fast/text/capitalize-boundaries.html = PASS TEXT
-
-BUGWK57346 : fast/text/justify-ideograph-leading-expansion.html = PASS TEXT
 
 BUGWK83790 : media/video-duration-known-after-eos.html = PASS TEXT
 BUGWK83790 : media/media-element-play-after-eos.html = PASS TEXT
 
-BUGWK54210 : fast/text/atsui-multiple-renderers.html = PASS TEXT
-BUGWK54210 : fast/text/atsui-negative-spacing-features.html = PASS TEXT
-BUGWK54210 : fast/text/atsui-spacing-features.html = PASS TEXT
-
-BUGWK83800 : plugins/get-url-with-blank-target.html = PASS TEXT
-
-BUGWK83891 : css2.1/20110323/at-import-002.htm = PASS IMAGE
-BUGWK83891 : css2.1/20110323/at-import-004.htm = PASS IMAGE
-BUGWK83891 : css2.1/20110323/at-import-005.htm = PASS IMAGE
-BUGWK83891 : css2.1/20110323/at-import-006.htm = PASS IMAGE
-BUGWK83891 : css2.1/20110323/at-import-007.htm = PASS IMAGE
-BUGWK83891 : css2.1/20110323/at-import-009.htm = PASS IMAGE
-BUGWK83891 : css2.1/20110323/eof-005.htm = PASS IMAGE
-
 BUGWK83704 : media/event-attributes.html = PASS TEXT
-
-BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = PASS TEXT
-
-BUGWK84700 : fast/dom/Window/window-postmessage-clone.html = PASS TEXT
-BUGWK84700 : fast/dom/Window/window-postmessage-clone-frames.html = PASS TEXT
-
-BUGWK84856 : media/media-controller-playback.html = PASS TEXT
 
 // Sometimes asserts in debug builds (cross-platform problem): https://bugs.webkit.org/show_bug.cgi?id=59801
 BUGWK84859 : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TEXT
 
 BUGWK83878 : media/track/track-mode.html = PASS TEXT
-
 BUGWK88867 : media/track/track-cue-rendering-snap-to-lines-not-set.html is flaky = PASS TEXT
 
 BUGWK63611 DEBUG : editing/pasteboard/interchange-newline-3.html = TEXT PASS
@@ -1115,6 +1036,7 @@ BUGWK71465 : http/tests/security/xssAuditor/script-tag-with-callbacks.html = TEX
 BUGWK72248 : editing/spelling/spelling-unified-emulation.html = TEXT
 
 BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = TEXT
+BUGWK84700 : fast/dom/Window/window-postmessage-clone.html = TEXT
 
 BUGWK73003 : editing/spelling/spellcheck-async.html = TEXT
 
@@ -1305,6 +1227,21 @@ BUGWK88138 : http/tests/media/video-buffered.html = TEXT
 BUGWK89149 : http/tests/fileapi/create-blob-url-from-data-url.html = TEXT
 
 BUGWK89205 : editing/spelling/grammar-edit-word.html = TEXT
+
+BUGWK54637 : media/video-display-toggle.html = TEXT
+BUGWK54637 : media/controls-after-reload.html = TEXT
+
+BUGWK89084 : fast/forms/text-input-event.html = PASS TEXT
+
+BUGWK83683 : editing/pasteboard/pasting-empty-html-falls-back-to-text.html = PASS TEXT
+
+BUGWK51027 RELEASE : plugins/refcount-leaks.html = TEXT
+
+BUGWK57346 : fast/text/justify-ideograph-leading-expansion.html = TEXT
+
+BUGWK83800 : plugins/get-url-with-blank-target.html = TEXT
+
+BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
