@@ -29,7 +29,6 @@
 """Checks WebKit style for test_expectations files."""
 
 import logging
-import optparse
 import os
 import re
 import sys
@@ -37,6 +36,7 @@ import sys
 from common import TabChecker
 from webkitpy.common.host import Host
 from webkitpy.layout_tests.models.test_expectations import TestExpectationParser
+from webkitpy.layout_tests.port.base import DummyOptions
 
 
 _log = logging.getLogger(__name__)
@@ -49,7 +49,7 @@ class TestExpectationsChecker(object):
 
     def _determine_port_from_expectations_path(self, host, expectations_path):
         # Pass a configuration to avoid calling default_configuration() when initializing the port (takes 0.5 seconds on a Mac Pro!).
-        options = optparse.Values({'configuration': 'Release'})
+        options = DummyOptions(configuration='Release')
         for port_name in host.port_factory.all_port_names():
             port = host.port_factory.get(port_name, options=options)
             if port.path_to_test_expectations_file().replace(port.path_from_webkit_base() + host.filesystem.sep, '') == expectations_path:
