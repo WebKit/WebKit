@@ -12,8 +12,8 @@ font-family: CanvasTest;
 </applet>
 <ul id="d"></ul>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 _addTest(function(canvas, ctx) {
 
@@ -25,8 +25,8 @@ deferTest();
 setTimeout(wrapFunction(function () {
     ctx.fillText('AA', 0, 50);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }), 500);
 
 });
