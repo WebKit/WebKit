@@ -47,11 +47,7 @@ WebInspector.JavaScriptSource = function(url, resource, contentProvider, sourceM
         if (!this._formatted)
             WebInspector.breakpointManager.restoreBreakpoints(this);
     }.bind(this), 0);
-    if (resource)
-        WebInspector.JavaScriptSource.javaScriptSourceForResource.put(resource, this);
 }
-
-WebInspector.JavaScriptSource.javaScriptSourceForResource = new Map();
 
 WebInspector.JavaScriptSource.prototype = {
     /**

@@ -76,7 +76,7 @@ WebInspector.DebuggerResourceBinding.prototype = {
      */
     canSetContent: function(resource)
     {
-        var uiSourceCode = WebInspector.JavaScriptSource.javaScriptSourceForResource.get(resource);
+        var uiSourceCode = resource.uiSourceCode();
         return !!uiSourceCode && uiSourceCode.isEditable();
     },
 
@@ -91,7 +91,7 @@ WebInspector.DebuggerResourceBinding.prototype = {
         if (!majorChange)
             return;
 
-        var javaScriptSource = WebInspector.JavaScriptSource.javaScriptSourceForResource.get(resource);
+        var javaScriptSource = /** @type {WebInspector.JavaScriptSource} */ resource.uiSourceCode();
         if (!javaScriptSource) {
             userCallback("Resource is not editable");
             return;

@@ -474,7 +474,7 @@ WebInspector.ExtensionServer.prototype = {
         var resource = WebInspector.resourceTreeModel.resourceForURL(message.url);
         if (!resource)
             return this._status.E_NOTFOUND(message.url);
-        this._getResourceContent(resource, message, port);
+        this._getResourceContent(resource.uiSourceCode() || resource, message, port);
     },
 
     _onSetResourceContent: function(message, port)

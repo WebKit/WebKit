@@ -87,7 +87,6 @@ WebInspector.DebuggerScriptMapping.prototype = {
 
     _debuggerReset: function()
     {
-        WebInspector.JavaScriptSource.javaScriptSourceForResource.clear();
         for (var i = 0; i < this._mappings.length; ++i)
             this._mappings[i].reset();
     }

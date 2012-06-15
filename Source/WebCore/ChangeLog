@@ -1,3 +1,28 @@
+2012-06-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: extension's Resource.getContent always returns original revision.
+        https://bugs.webkit.org/show_bug.cgi?id=89219
+
+        Reviewed by Vsevolod Vlasov.
+
+        Fetching proper content from the UISourceCode now.
+
+        * inspector/front-end/DebuggerResourceBinding.js:
+        (WebInspector.DebuggerResourceBinding.prototype.canSetContent):
+        (WebInspector.DebuggerResourceBinding.prototype.setContent):
+        * inspector/front-end/DebuggerScriptMapping.js:
+        (WebInspector.DebuggerScriptMapping.prototype._debuggerReset):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onGetResourceContent):
+        * inspector/front-end/JavaScriptSource.js:
+        (WebInspector.JavaScriptSource):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.isHidden):
+        (WebInspector.Resource.prototype.uiSourceCode):
+        (WebInspector.Resource.prototype.setUISourceCode):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode):
+
 2012-06-15  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: CRASH when DebuggerAgent.setBreakpoint was called twice for the same location.

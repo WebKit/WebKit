@@ -91,7 +91,10 @@ function extension_testOnContentCommitted(nextTest)
         if (!/audits-style1\.css$/.test(resource.url) || content !== expected_content)
             output("FAIL: stray onContentEdited event");
         webInspector.inspectedWindow.onResourceContentCommitted.removeListener(onContentCommitted);
-        nextTest();
+        resource.getContent(function(content) {
+            output("Revision content: " + content);
+            nextTest();
+        });
     }
     webInspector.inspectedWindow.onResourceContentCommitted.addListener(onContentCommitted);
     extension_runWithResource(/audits-style1\.css$/, function(resource) {
