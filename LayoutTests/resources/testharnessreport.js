@@ -13,8 +13,8 @@
  */
 
 // Setup for WebKit JavaScript tests
-if (self.layoutTestController)
-    layoutTestController.dumpAsText();
+if (self.testRunner)
+    testRunner.dumpAsText();
 
 // Function used to convert the test status code into
 // the corresponding string

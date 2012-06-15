@@ -13,8 +13,8 @@
 // -test is the code whose runtime is being tests. It also takes a magnitude argument.
 // -expected is one of the run-time constants listed below (e.g. Magnitude.CONSTANT).
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 // Namespace.
 var Magnitude = {};
@@ -100,7 +100,7 @@ Magnitude._run = function(setup, test, expected, milliseconds, runsPerIteration,
 
         // By default don't log detailed information to layout test results to keep expected results
         // consistent from run to run.
-        if (!window.layoutTestController || bigO != expected)
+        if (!window.testRunner || bigO != expected)
             Magnitude._log(Magnitude._debugLog);
     } else {
         Magnitude._debug("numTriesLeft: " + numTriesLeft);
@@ -222,7 +222,7 @@ Magnitude._runIteration = function(setup, test, magnitude, milliseconds, runsPer
     var iterations = 0;
     if (window.chromium) {
       // FIXME: If using microseconds turns out to be less flaky, expose microseconds
-      // from JSC or layoutTestController and use them. Otherwise, get rid of this block.
+      // from JSC or testRunner and use them. Otherwise, get rid of this block.
       var microseconds = milliseconds * 1000;
       var interval = new chromium.Interval();
       interval.start();
@@ -249,7 +249,7 @@ Magnitude._runIteration = function(setup, test, magnitude, milliseconds, runsPer
 
 window.addEventListener('load', function() {
     // FIXME: Add Magnitude.waitUntilDone/notifyDone for tests that need to operate after the load event has fired.
-    if (window.layoutTestController)
+    if (window.testRunner)
         document.body.innerHTML = '';
     document.body.appendChild(Magnitude._container);
 }, false);

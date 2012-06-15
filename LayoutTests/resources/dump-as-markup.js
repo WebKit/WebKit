@@ -14,8 +14,8 @@
  *    Optionally specify the node to dump and the description for each call of dump.
  */
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 // Namespace
 // FIXME: Rename dump-as-markup.js to dump-dom.js and Markup to DOM.
@@ -61,7 +61,7 @@ Markup.dump = function(opt_node, opt_description)
         wrapper.insertBefore(document.createTextNode('\nDump of markup 1:\n'), wrapper.firstChild);
     }
 
-    // FIXME: Have this respect layoutTestController.dumpChildFramesAsText?
+    // FIXME: Have this respect testRunner.dumpChildFramesAsText?
     // FIXME: Should we care about framesets?
     // DocumentFragment doesn't have a getElementsByTagName method.
     if (node.getElementsByTagName) {
@@ -92,16 +92,16 @@ Markup.noAutoDump = function()
 
 Markup.waitUntilDone = function()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
     Markup.noAutoDump();
 }
 
 Markup.notifyDone = function()
 {
     // Need to waitUntilDone or some tests won't finish appending the markup before the text is dumped.
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     // If dump has already been called, don't bother to dump again
     if (!Markup._dumpCalls)
@@ -110,13 +110,13 @@ Markup.notifyDone = function()
     // In non-layout test mode, append the results in a pre so that we don't
     // clobber the test itself. But when in layout test mode, we don't want
     // side effects from the test to be included in the results.
-    if (window.layoutTestController)
+    if (window.testRunner)
         document.body.innerHTML = '';
 
     document.body.appendChild(Markup._container);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 Markup.useHTML5libOutputFormat = function()
