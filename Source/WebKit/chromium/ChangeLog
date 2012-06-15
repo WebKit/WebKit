@@ -1,3 +1,18 @@
+2012-06-14  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] CCLayerTreeHostCommonTest.verifyHitTestingForSingleLayer failing in debug
+        https://bugs.webkit.org/show_bug.cgi?id=89065
+
+        Reviewed by James Robinson.
+
+        A debug assertion was being triggered in the hit-testing unit
+        tests because I accidentally forgot to set the
+        DebugScopedSetImplThread for the tests.
+
+        This patch also re-enables the disabled broken test.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+
 2012-06-14  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Add setAutoHint() and setUseBitmaps() in WebFontRendering

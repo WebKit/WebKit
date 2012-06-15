@@ -2913,6 +2913,7 @@ TEST(CCLayerTreeHostCommonTest, verifyBackFaceCullingWithPreserves3dForFlattenin
 TEST(CCLayerTreeHostCommonTest, verifyHitTestingForEmptyLayerList)
 {
     // Hit testing on an empty renderSurfaceLayerList should return a null pointer.
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
 
     Vector<CCLayerImpl*> renderSurfaceLayerList;
 
@@ -2925,8 +2926,10 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForEmptyLayerList)
     EXPECT_FALSE(resultLayer);
 }
 
-TEST(CCLayerTreeHostCommonTest, DISABLED_verifyHitTestingForSingleLayer)
+TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSingleLayer)
 {
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
+
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(12345);
     root->createRenderSurface();
     root->renderSurface()->setContentRect(IntRect(IntPoint::zero(), IntSize(100, 100)));
@@ -3038,6 +3041,8 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForUninvertibleTransform)
 
 TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSinglePositionedLayer)
 {
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
+
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(12345);
     root->createRenderSurface();
     root->renderSurface()->setContentRect(IntRect(IntPoint::zero(), IntSize(100, 100)));
@@ -3084,6 +3089,8 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSinglePositionedLayer)
 
 TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSingleRotatedLayer)
 {
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
+
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(12345);
     root->createRenderSurface();
     root->renderSurface()->setContentRect(IntRect(IntPoint::zero(), IntSize(100, 100)));
@@ -3138,6 +3145,8 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSingleRotatedLayer)
 
 TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSinglePerspectiveLayer)
 {
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
+
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(12345);
     root->createRenderSurface();
     root->renderSurface()->setContentRect(IntRect(IntPoint::zero(), IntSize(100, 100)));
@@ -3204,6 +3213,7 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSingleLayerWithScaledContents
     // contentsScale is ignored, then hit testing will mis-interpret the visibleLayerRect
     // as being larger than the actual bounds of the layer.
     //
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(12345);
     root->createRenderSurface();
@@ -3258,6 +3268,7 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSimpleClippedLayer)
 {
     // Test that hit-testing will only work for the visible portion of a layer, and not
     // the entire layer bounds. Here we just test the simple axis-aligned case.
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(123);
     root->createRenderSurface();
@@ -3325,6 +3336,7 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForMultiClippedRotatedLayer)
     // combined create a triangle. The rotatedLeaf will only be visible where it overlaps
     // this triangle.
     //
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(123);
     root->createRenderSurface();
@@ -3427,6 +3439,8 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForMultiClippedRotatedLayer)
 
 TEST(CCLayerTreeHostCommonTest, verifyHitTestingForMultipleLayers)
 {
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
+
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     root->createRenderSurface();
     root->renderSurface()->setContentRect(IntRect(IntPoint::zero(), IntSize(100, 100)));
@@ -3535,6 +3549,7 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForMultipleLayerLists)
     // The geometry is set up similarly to the previous case, but
     // all layers are forced to be renderSurfaces now.
     //
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     root->createRenderSurface();
