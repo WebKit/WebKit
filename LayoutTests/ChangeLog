@@ -1,3 +1,45 @@
+2012-06-15  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. Rebaselines for r120477.
+
+        * fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/chromium-mac-leopard/fast/forms/formmove3-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/forms/preserveFormDuringResidualStyle-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/other/wa_table_tr_align-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/formmove3-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/preserveFormDuringResidualStyle-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla/other/wa_table_tr_align-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/formmove3-expected.txt:
+        * platform/chromium-mac/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/chromium-mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/chromium-mac/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/efl/TestExpectations:
+        * platform/gtk/editing/deleting/delete-3800834-fix-expected.txt:
+        * platform/gtk/fast/dynamic/011-expected.txt:
+        * platform/gtk/fast/forms/formmove3-expected.txt:
+        * platform/gtk/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/gtk/fast/invalid/001-expected.txt:
+        * platform/gtk/fast/invalid/003-expected.txt:
+        * platform/gtk/fast/invalid/004-expected.txt:
+        * platform/gtk/fast/invalid/007-expected.txt:
+        * platform/gtk/fast/invalid/019-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug647-expected.txt:
+        * platform/gtk/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/qt/editing/deleting/delete-3800834-fix-expected.txt:
+        * platform/qt/fast/dynamic/011-expected.txt:
+        * platform/qt/fast/forms/formmove3-expected.txt:
+        * platform/qt/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/qt/fast/invalid/001-expected.txt:
+        * platform/qt/fast/invalid/003-expected.txt:
+        * platform/qt/fast/invalid/004-expected.txt:
+        * platform/qt/fast/invalid/007-expected.txt:
+        * platform/qt/fast/invalid/019-expected.txt:
+        * platform/qt/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug647-expected.txt:
+        * platform/qt/tables/mozilla/other/wa_table_tr_align-expected.txt:
+
 2012-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaseline some tests after r120411.

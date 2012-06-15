@@ -237,8 +237,6 @@ layer at (0,0) size 784x1523
                         text run at (0,21) width 333: "special effect on the row data since it simply"
                         text run at (0,42) width 267: "reiterates the default horizontal row"
                         text run at (0,63) width 80: "alignment!"
-                RenderBlock (anonymous) at (2,86) size 335x0 [color=#FF0000]
-                RenderBlock (anonymous) at (2,86) size 335x0
                   RenderInline {B} at (0,0) size 0x0
                     RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
                 RenderBlock {P} at (2,102) size 335x0
@@ -286,8 +284,6 @@ layer at (0,0) size 784x1523
                         text run at (0,21) width 284: "special effect on the row head since it"
                         text run at (0,42) width 321: "simply reiterates the default horizontal row"
                         text run at (0,63) width 80: "alignment!"
-                RenderBlock (anonymous) at (2,86) size 335x0 [color=#FF0000]
-                RenderBlock (anonymous) at (2,86) size 335x0
                   RenderInline {B} at (0,0) size 0x0
                     RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
                 RenderBlock {P} at (2,102) size 335x0
