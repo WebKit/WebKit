@@ -52,6 +52,7 @@
 #include "KURL.h"
 #include "LocalFileSystem.h"
 #include "MIMETypeRegistry.h"
+#include "SecurityOrigin.h"
 
 using WebCore::TypeBuilder::Array;
 
@@ -308,19 +309,16 @@ void InspectorFileSystemAgent::disable(ErrorString*)
     m_state->setBoolean(FileSystemAgentState::fileSystemAgentEnabled, m_enabled);
 }
 
-void InspectorFileSystemAgent::readDirectory(ErrorString*, int requestId, const String& frameId, const String& url)
+void InspectorFileSystemAgent::readDirectory(ErrorString*, int requestId, const String& url)
 {
     if (!m_enabled || !m_frontendProvider)
         return;
     ASSERT(m_frontendProvider->frontend());
 
-    Frame* frame = m_pageAgent->frameForId(frameId);
-    if (!frame) {
+    if (ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextForOrigin(SecurityOrigin::createFromString(url).get()))
+        ReadDirectoryTask::create(m_frontendProvider, requestId, url)->start(scriptExecutionContext);
+    else
         m_frontendProvider->frontend()->didReadDirectory(requestId, static_cast<int>(FileError::ABORT_ERR), 0);
-        return;
-    }
-
-    ReadDirectoryTask::create(m_frontendProvider, requestId, url)->start(frame->document());
 }
 
 void InspectorFileSystemAgent::setFrontend(InspectorFrontend* frontend)
@@ -351,7 +349,17 @@ InspectorFileSystemAgent::InspectorFileSystemAgent(InstrumentingAgents* instrume
 {
     ASSERT(instrumentingAgents);
     ASSERT(state);
+    ASSERT(m_pageAgent);
     m_instrumentingAgents->setInspectorFileSystemAgent(this);
+}
+
+ScriptExecutionContext* InspectorFileSystemAgent::scriptExecutionContextForOrigin(SecurityOrigin* origin)
+{
+    for (Frame* frame = m_pageAgent->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->document() && frame->document()->securityOrigin()->isSameSchemeHostPort(origin))
+            return frame->document();
+    }
+    return 0;
 }
 
 } // namespace WebCore

@@ -37,7 +37,7 @@ function test()
     {
         InspectorTest.addSniffer(FileSystemDispatcher.prototype, "didReadDirectory", step5, false);
         // FIXME: Call FileSystemDispatcher through FileSystemDispatcher implementation after it landed.
-        FileSystemAgent.readDirectory(1, WebInspector.resourceTreeModel.mainFrame.id, "filesystem:http://127.0.0.1/temporary/hoge");
+        FileSystemAgent.readDirectory(1, "filesystem:http://127.0.0.1:8000/temporary/hoge");
     }
 
     function step5(requestId, errorCode, entries)
@@ -46,7 +46,7 @@ function test()
 
         InspectorTest.addSniffer(FileSystemDispatcher.prototype, "didReadDirectory", step6, false);
         // FIXME: Call FileSystemDispatcher through FileSystemDispatcher implementation after it landed.
-        FileSystemAgent.readDirectory(1, WebInspector.resourceTreeModel.mainFrame.id, "filesystem:http://127.0.0.1/temporary/foo");
+        FileSystemAgent.readDirectory(1, "filesystem:http://127.0.0.1:8000/temporary/foo");
     }
 
     function step6(requestId, errorCode, entries) {

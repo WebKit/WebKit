@@ -1430,7 +1430,6 @@
                 "description": "Requests to read the directory content. Result should return on didReadDirectory event with request id.",
                 "parameters": [
                     { "name": "requestId", "type": "integer" },
-                    { "name": "frameId", "type": "string" },
                     { "name": "url", "type": "string" }
                 ]
             }
