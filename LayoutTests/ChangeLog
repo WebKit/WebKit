@@ -1,3 +1,12 @@
+2012-06-15  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] Gardening. Skip a failing test. After r120423.
+        https://bugs.webkit.org/show_bug.cgi?id=89199
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+
 2012-06-15  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Gardening after r120411

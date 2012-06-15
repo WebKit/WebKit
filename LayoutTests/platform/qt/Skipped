@@ -869,6 +869,10 @@ editing/spelling/spelling-insert-html.html
 # https://bugs.webkit.org/show_bug.cgi?id=72251
 editing/spelling/spelling-unified-emulation.html
 
+# [Qt] new editing/spelling/grammar-edit-word.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=89199
+editing/spelling/grammar-edit-word.html
+
 # =========================================================================== #
 #       Failing plugins tests.                                                #
 # =========================================================================== #
