@@ -121,6 +121,13 @@ static inline void updateObjectBoundingBox(FloatRect& objectBoundingBox, bool& o
 
 void SVGRenderSupport::computeContainerBoundingBoxes(const RenderObject* container, FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, FloatRect& strokeBoundingBox, FloatRect& repaintBoundingBox)
 {
+    objectBoundingBox = FloatRect();
+    objectBoundingBoxValid = false;
+    strokeBoundingBox = FloatRect();
+
+    // When computing the strokeBoundingBox, we use the repaintRects of the container's children so that the container's stroke includes
+    // the resources applied to the children (such as clips and filters). This allows filters applied to containers to correctly bound
+    // the children, and also improves inlining of SVG content, as the stroke bound is used in that situation also.
     for (RenderObject* current = container->firstChild(); current; current = current->nextSibling()) {
         if (current->isSVGHiddenContainer())
             continue;
@@ -128,14 +135,14 @@ void SVGRenderSupport::computeContainerBoundingBoxes(const RenderObject* contain
         const AffineTransform& transform = current->localToParentTransform();
         if (transform.isIdentity()) {
             updateObjectBoundingBox(objectBoundingBox, objectBoundingBoxValid, current, current->objectBoundingBox());
-            strokeBoundingBox.unite(current->strokeBoundingBox());
-            repaintBoundingBox.unite(current->repaintRectInLocalCoordinates());
+            strokeBoundingBox.unite(current->repaintRectInLocalCoordinates());
         } else {
             updateObjectBoundingBox(objectBoundingBox, objectBoundingBoxValid, current, transform.mapRect(current->objectBoundingBox()));
-            strokeBoundingBox.unite(transform.mapRect(current->strokeBoundingBox()));
-            repaintBoundingBox.unite(transform.mapRect(current->repaintRectInLocalCoordinates()));
+            strokeBoundingBox.unite(transform.mapRect(current->repaintRectInLocalCoordinates()));
         }
     }
+
+    repaintBoundingBox = strokeBoundingBox;
 }
 
 bool SVGRenderSupport::paintInfoIntersectsRepaintRect(const FloatRect& localRepaintRect, const AffineTransform& localTransform, const PaintInfo& paintInfo)

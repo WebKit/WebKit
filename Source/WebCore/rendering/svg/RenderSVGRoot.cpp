@@ -404,11 +404,6 @@ const RenderObject* RenderSVGRoot::pushMappingToContainer(const RenderBoxModelOb
 
 void RenderSVGRoot::updateCachedBoundaries()
 {
-    m_objectBoundingBox = FloatRect();
-    m_objectBoundingBoxValid = false;
-    m_strokeBoundingBox = FloatRect();
-    m_repaintBoundingBox = FloatRect();
-
     SVGRenderSupport::computeContainerBoundingBoxes(this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBox);
     SVGRenderSupport::intersectRepaintRectWithResources(this, m_repaintBoundingBox);
     m_repaintBoundingBox.inflate(borderAndPaddingWidth());

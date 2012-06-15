@@ -1,3 +1,13 @@
+2012-06-15  Stephen Chenney  <schenney@chromium.org>
+
+        SVG Composite of Offset filters incorrectly clips
+        https://bugs.webkit.org/show_bug.cgi?id=77660
+
+        Reviewed by Dirk Schulze.
+
+        * svg/filters/container-with-filters-expected.svg: Added.
+        * svg/filters/container-with-filters.svg: Added.
+
 2012-06-15  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: CRASH: getProfile is crashing for unknown profiles.

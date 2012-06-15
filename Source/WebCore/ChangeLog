@@ -1,3 +1,40 @@
+2012-06-15  Stephen Chenney  <schenney@chromium.org>
+
+        SVG Composite of Offset filters incorrectly clips
+        https://bugs.webkit.org/show_bug.cgi?id=77660
+
+        Reviewed by Dirk Schulze.
+
+        Prior to this patch, when a group of filtered objects was used as input to another filter,
+        the filter only operated on the stroke boundary of the group, and hence excluded the results
+        of filtering elements within the group, or extraneously included regions clipped from the
+        elements in the group.
+
+        This patch modifies the strokeBoundingBox of SVG container elements to
+        be the union of the repaint rects for the children. This modifes the
+        results returned for sizing filters and for absoluteRects, which will cause
+        inline layout around the group to factor in the resources applied to
+        the group's children.
+
+        The relevant spec entry is this, in Section 3.7 of the SVG 1.1 spec: "...the result must be
+        as though the paint operations had been applied to an intermediate canvas initialized to
+        transparent black, of a size determined by the rules given in Filter Effects then filtered
+        by the processes defined in Filter Effects." In this case the "paint operations" is implied
+        to include the result of applying "paint" but no resources to the group, which in turn would
+        have resources applied to the children of the group. This makes the most sense, as the current,
+        incorrect behavior makes it extremely diffucult to understand the actions of filters on
+        groups of filtered content.
+
+        Tests: svg/filters/container-with-filters-expected.svg
+               svg/filters/container-with-filters.svg
+
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::updateCachedBoundaries):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::updateCachedBoundaries):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::computeContainerBoundingBoxes):
+
 2012-06-15  David Kilzer  <ddkilzer@apple.com>
 
         Sort ENABLE(INSPECTOR) section of WebCore.exp.in
