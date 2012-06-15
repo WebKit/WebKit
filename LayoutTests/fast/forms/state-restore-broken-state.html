@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe name="subframe" src="resources/state-restore-broken-state-1.html">
+</iframe>
+
+<script>
+var jsTestIsAsync = true;
+var isGoingBack = false;
+
+function didLoadAnotherDocument() {
+    isGoingBack = true;
+    history.back();
+}
+
+function didSecondLoad() {
+    description('The value was modified in the first load of state-restore-broken-state-1.html, but it should not be restored because the state-restore-broken-state-2.html breaks the state.');
+    shouldBe('document.getElementsByTagName("iframe")[0].contentDocument.f.name1.value', '"unmodified"');
+    finishJSTest();
+}
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>

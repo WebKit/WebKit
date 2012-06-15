@@ -31,6 +31,7 @@
 #include "ClientRectList.h"
 #include "ComposedShadowTreeWalker.h"
 #include "DOMNodeHighlighter.h"
+#include "DOMStringList.h"
 #include "Document.h"
 #include "DocumentMarker.h"
 #include "DocumentMarkerController.h"
@@ -43,6 +44,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
+#include "HistoryItem.h"
 #include "InspectorConsoleAgent.h"
 #include "InspectorController.h"
 #include "InspectorCounters.h"
@@ -410,6 +412,41 @@ void Internals::selectColorInColorChooser(Element* element, const String& colorV
     inputElement->selectColorInColorChooser(Color(colorValue));
 }
 #endif
+
+PassRefPtr<DOMStringList> Internals::formControlStateOfPreviousHistoryItem(ExceptionCode& ec)
+{
+    HistoryItem* mainItem = frame()->loader()->history()->previousItem();
+    if (!mainItem) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+    String uniqueName = frame()->tree()->uniqueName();
+    if (mainItem->target() != uniqueName && !mainItem->childItemWithTarget(uniqueName)) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+    const Vector<String>& state = mainItem->target() == uniqueName ? mainItem->documentState() : mainItem->childItemWithTarget(uniqueName)->documentState();
+    RefPtr<DOMStringList> stringList = DOMStringList::create();
+    for (unsigned i = 0; i < state.size(); ++i)
+        stringList->append(state[i]);
+    return stringList.release();
+}
+
+void Internals::setFormControlStateOfPreviousHistoryItem(PassRefPtr<DOMStringList> state, ExceptionCode& ec)
+{
+    HistoryItem* mainItem = frame()->loader()->history()->previousItem();
+    if (!state || !mainItem) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    String uniqueName = frame()->tree()->uniqueName();
+    if (mainItem->target() == uniqueName)
+        mainItem->setDocumentState(*state.get());
+    else if (HistoryItem* subItem = mainItem->childItemWithTarget(uniqueName))
+        subItem->setDocumentState(*state.get());
+    else
+        ec = INVALID_ACCESS_ERR;
+}
 
 PassRefPtr<ClientRect> Internals::absoluteCaretBounds(Document* document, ExceptionCode& ec)
 {

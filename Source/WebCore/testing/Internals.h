@@ -37,6 +37,7 @@ namespace WebCore {
 
 class ClientRect;
 class ClientRectList;
+class DOMStringList;
 class Document;
 class DocumentMarker;
 class Element;
@@ -97,6 +98,8 @@ public:
 #if ENABLE(INPUT_TYPE_COLOR)
     void selectColorInColorChooser(Element*, const String& colorValue);
 #endif
+    PassRefPtr<DOMStringList> formControlStateOfPreviousHistoryItem(ExceptionCode&);
+    void setFormControlStateOfPreviousHistoryItem(PassRefPtr<DOMStringList>, ExceptionCode&);
 
     PassRefPtr<ClientRect> absoluteCaretBounds(Document*, ExceptionCode&);
 

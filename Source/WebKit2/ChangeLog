@@ -1,3 +1,13 @@
+2012-06-14  Kent Tamura  <tkent@chromium.org>
+
+        Validate form state strings in FormController::setStateForNewFormElements()
+        https://bugs.webkit.org/show_bug.cgi?id=88768
+
+        Reviewed by Hajime Morita.
+
+        * win/WebKit2.def: Expose some symbols used by Internals.cpp.
+        * win/WebKit2CFLite.def: ditto.
+
 2012-06-14  Tim Horton  <timothy_horton@apple.com>
 
         DrawingArea: Painting is being resumed while the view is not visible

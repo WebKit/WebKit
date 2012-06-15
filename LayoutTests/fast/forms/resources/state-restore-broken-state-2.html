@@ -1,0 +1,9 @@
+<script>
+setTimeout(function() {
+    console.log('Generated state: [' + internals.formControlStateOfPreviousHistoryItem() + ']');
+
+    internals.setFormControlStateOfPreviousHistoryItem(['name1', 'text', 'modified', '***broken***']);
+    parent.didLoadAnotherDocument();
+}, 0);
+</script>
+

@@ -162,10 +162,12 @@ EXPORTS
         ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBE@Z
         ?addSlowCase@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PAVStringImpl@2@@Z
         ?cacheDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PAV23@PBUClassInfo@3@@Z
+        ?childItemWithTarget@HistoryItem@WebCore@@QBEPAV12@ABVString@WTF@@@Z
         ?create@HTMLContentElement@WebCore@@SA?AV?$PassRefPtr@VHTMLContentElement@WebCore@@@WTF@@PAVDocument@2@@Z
         ?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@V?$PassRefPtr@VDocument@WebCore@@@4@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z
         ?create@ShadowRoot@WebCore@@SA?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@PAVElement@2@AAH@Z
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
+        ?documentState@HistoryItem@WebCore@@QBEABV?$Vector@VString@WTF@@$0A@@WTF@@XZ
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
         ?equal@WTF@@YA_NPBVStringImpl@1@0@Z
         ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBE@Z
@@ -184,6 +186,7 @@ EXPORTS
         ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPAVInstrumentingAgents@2@PAVPage@2@@Z
         ?isCSSExclusionsEnabled@RuntimeEnabledFeatures@WebCore@@0_NA
         ?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z
+        ?jsArray@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z
         ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ
         ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@@WTF@@PAVNode@2@VMarkerTypes@DocumentMarker@2@@Z
         ?nextSibling@ComposedShadowTreeWalker@WebCore@@QAEXXZ
@@ -210,6 +213,7 @@ EXPORTS
         ?scrollElementToRect@FrameView@WebCore@@QAEXPAVElement@2@ABVIntRect@2@@Z
         ?setCursiveFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setDeviceScaleFactor@Page@WebCore@@QAEXM@Z
+        ?setDocumentState@HistoryItem@WebCore@@QAEXABV?$Vector@VString@WTF@@$0A@@WTF@@@Z
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
         ?setFantasyFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setFixedFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
@@ -233,9 +237,11 @@ EXPORTS
         ?shadow@Element@WebCore@@QBEPAVElementShadow@2@XZ
         ?substring@String@WTF@@QBE?AV12@II@Z
         ?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ
+        ?target@HistoryItem@WebCore@@QBEABVString@WTF@@XZ
         ?text@Range@WebCore@@QBE?AVString@WTF@@XZ
         ?textContent@Node@WebCore@@QBE?AVString@WTF@@_N@Z
         ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
+        ?toDOMStringList@WebCore@@YA?AV?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@5@@Z
         ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRect@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRectList@1@@Z
