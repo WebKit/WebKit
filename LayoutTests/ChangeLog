@@ -1,3 +1,10 @@
+2012-06-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding TEXT expectation for
+        editing/spelling/grammar-edit-word.html after r120423.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-15  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Rebaseline for type=range tests.
