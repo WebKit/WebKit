@@ -273,8 +273,10 @@ void InspectorDebuggerAgent::setBreakpoint(ErrorString* errorString, const RefPt
     String condition = optionalCondition ? *optionalCondition : emptyString();
 
     String breakpointId = scriptId + ':' + String::number(lineNumber) + ':' + String::number(columnNumber);
-    if (m_breakpointIdToDebugServerBreakpointIds.find(breakpointId) != m_breakpointIdToDebugServerBreakpointIds.end())
+    if (m_breakpointIdToDebugServerBreakpointIds.find(breakpointId) != m_breakpointIdToDebugServerBreakpointIds.end()) {
+        *errorString = "Breakpoint at specified location already exists.";
         return;
+    }
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, condition);
     actualLocation = resolveBreakpoint(breakpointId, scriptId, breakpoint);
     if (actualLocation)

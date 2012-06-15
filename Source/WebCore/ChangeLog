@@ -1,3 +1,13 @@
+2012-06-15  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: CRASH when DebuggerAgent.setBreakpoint was called twice for the same location.
+        https://bugs.webkit.org/show_bug.cgi?id=89225
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+
 2012-06-08  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: CSSParser::parseSheet() should provide ready-to-use source data
