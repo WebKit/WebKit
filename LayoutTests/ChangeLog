@@ -1,3 +1,25 @@
+2012-06-14  Emil A Eklund  <eae@chromium.org>
+
+        Cast paddings to int in RenderTableCell
+        https://bugs.webkit.org/show_bug.cgi?id=88918
+
+        Reviewed by Levi Weintraub.
+
+        Add test ensuring that table cells does not wrap when using fractional
+        paddings.
+
+        * fast/sub-pixel/table-cells-with-padding-do-not-wrap-expected.txt: Added.
+        * fast/sub-pixel/table-cells-with-padding-do-not-wrap.html: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+        * platform/chromium/TestExpectations:
+
 2012-06-14  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectation update.
