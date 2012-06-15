@@ -83,7 +83,7 @@ struct CSSStyleSourceData : public RefCounted<CSSStyleSourceData> {
     Vector<CSSPropertySourceData> propertyData;
 };
 
-class CSSRuleSourceData;
+struct CSSRuleSourceData;
 typedef Vector<RefPtr<CSSRuleSourceData> > RuleSourceDataList;
 
 struct CSSRuleSourceData : public RefCounted<CSSRuleSourceData> {

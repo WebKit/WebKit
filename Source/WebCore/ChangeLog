@@ -1,3 +1,10 @@
+2012-06-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed, build fix after r120469.
+
+        * css/CSSPropertySourceData.h:
+        (WebCore):
+
 2012-06-15  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Add FileSystemRequestManager and FileSystemDispatcher
