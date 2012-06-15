@@ -1977,18 +1977,6 @@ WebString WebFrameImpl::renderTreeAsText(RenderAsTextControls toShow) const
     return externalRepresentation(m_frame, behavior);
 }
 
-WebString WebFrameImpl::counterValueForElementById(const WebString& id) const
-{
-    if (!m_frame)
-        return WebString();
-
-    Element* element = m_frame->document()->getElementById(id);
-    if (!element)
-        return WebString();
-
-    return counterValueForElement(element);
-}
-
 WebString WebFrameImpl::markerTextForListItem(const WebElement& webElement) const
 {
     return WebCore::markerTextForListItem(const_cast<Element*>(webElement.constUnwrap<Element>()));

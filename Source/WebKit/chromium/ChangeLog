@@ -1,3 +1,20 @@
+2012-06-14  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        Remove support for counterValueForElementById from chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=88851
+
+        Reviewed by Adam Barth.
+
+        Moved the counterValueForElementById from LayoutTestCotroller to Internals so
+        remove the old platform specific implementations as it exclusively tests WebCore functionality.
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * src/WebFrameImpl.cpp:
+        (WebKit):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
 2012-06-14  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Initialize font rendering in DumpRenderTree
