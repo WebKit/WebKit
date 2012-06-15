@@ -1,3 +1,9 @@
+2012-06-15  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Fix a syntax error of TestExpectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-15  Jian Li  <jianli@chromium.org>
 
         FileReader is dysfunctional in documents with "null" origin string
