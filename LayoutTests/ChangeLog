@@ -1,3 +1,11 @@
+2012-06-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding a CRASH PASS expectation for
+        storage/websql/quota-tracking.html which crashes intermittently
+        on release builds.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-15  Hironori Bono  <hbono@chromium.org>
 
         Allow platforms to choose whether to remove markers on editing
