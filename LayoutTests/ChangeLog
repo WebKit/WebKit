@@ -1,3 +1,10 @@
+2012-06-15  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Rebaseline for type=range tests.
+        https://bugs.webkit.org/show_bug.cgi?id=89067
+
+        * platform/chromium-linux/fast/forms/range/input-appearance-range-expected.txt: Added.
+
 2012-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in layout test resources
