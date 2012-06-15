@@ -467,6 +467,32 @@ void WebViewHost::spellCheck(const WebString& text, int& misspelledOffset, int& 
     m_spellcheck.spellCheckWord(text, &misspelledOffset, &misspelledLength);
 }
 
+void WebViewHost::checkTextOfParagraph(const WebString& text, WebTextCheckingTypeMask mask, WebVector<WebTextCheckingResult>* webResults)
+{
+    Vector<WebTextCheckingResult> results;
+    if (mask & WebTextCheckingTypeSpelling) {
+        size_t offset = 0;
+        size_t length = text.length();
+        const WebUChar* data = text.data();
+        while (offset < length) {
+            int misspelledPosition = 0;
+            int misspelledLength = 0;
+            m_spellcheck.spellCheckWord(WebString(&data[offset], length - offset), &misspelledPosition, &misspelledLength);
+            if (!misspelledLength)
+                break;
+            WebTextCheckingResult result;
+            result.type = WebTextCheckingTypeSpelling;
+            result.location = offset + misspelledPosition;
+            result.length = misspelledLength;
+            results.append(result);
+            offset += misspelledPosition + misspelledLength;
+        }
+    }
+    if (mask & WebTextCheckingTypeGrammar)
+        MockGrammarCheck::checkGrammarOfString(text, &results);
+    webResults->assign(results);
+}
+
 void WebViewHost::requestCheckingOfText(const WebString& text, WebTextCheckingCompletion* completion)
 {
     if (text.isEmpty()) {

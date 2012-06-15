@@ -1,3 +1,18 @@
+2012-06-15  Hironori Bono  <hbono@chromium.org>
+
+        Allow platforms to choose whether to remove markers on editing
+        https://bugs.webkit.org/show_bug.cgi?id=88838
+
+        Reviewed by Hajime Morita.
+
+        This change implements EditorClientImpl::checkGrammarOfString so
+        DumpRenderTree can run grammar tests.
+
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::isGrammarCheckingEnabled): Return true also when unified text-checking is enabled.
+        (WebKit::EditorClientImpl::shouldEraseMarkersAfterChangeSelection): ditto.
+        (WebKit::EditorClientImpl::checkGrammarOfString): Implement this function with our unified text-checker.
+
 2012-06-14  Kent Tamura  <tkent@chromium.org>
 
         Support file extensions in HTMLInputElement::accept

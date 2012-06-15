@@ -1,3 +1,24 @@
+2012-06-15  Hironori Bono  <hbono@chromium.org>
+
+        Allow platforms to choose whether to remove markers on editing
+        https://bugs.webkit.org/show_bug.cgi?id=88838
+
+        Reviewed by Hajime Morita.
+
+        This change allows platforms to choose whether to remove markers on a word being
+        edited. WebKit does not remove markers when we move a selection to a markered
+        word on platforms that shouldEraseMarkersAfterChangeSelection returns false.
+        On such platforms, WebKit expects to set WTF_USE_MARKER_REMOVAL_UPON_EDITING to
+        1 so Editor::updateMarkersForWordsAffectedByEditing can remove markers. This
+        change also checks the return value of shouldEraseMarkersAfterChangeSelection so
+        platform can choose it. This change also adds grammar markers so it can also
+        remove grammar markers.
+
+        Test: editing/spelling/grammar-edit-word.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing):
+
 2012-06-15  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [WebGL] Simple implementation of the InjectedWebGLScriptSource to support capturing WebGL calls for a frame

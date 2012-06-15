@@ -1,3 +1,16 @@
+2012-06-15  Hironori Bono  <hbono@chromium.org>
+
+        Allow platforms to choose whether to remove markers on editing
+        https://bugs.webkit.org/show_bug.cgi?id=88838
+
+        Reviewed by Hajime Morita.
+
+        This change adds a test that verifies WebKit removes a grammar marker from a
+        grammatically-incorrect word when editing the word.
+
+        * editing/spelling/grammar-edit-word-expected.txt: Added.
+        * editing/spelling/grammar-edit-word.html: Added.
+
 2012-06-15  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding test expectation for
