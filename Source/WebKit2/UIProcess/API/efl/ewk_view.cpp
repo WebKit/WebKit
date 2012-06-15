@@ -30,6 +30,7 @@
 #include "WKURL.h"
 #include "ewk_context.h"
 #include "ewk_context_private.h"
+#include "ewk_view_loader_client_private.h"
 #include "ewk_view_private.h"
 #include <wtf/text/CString.h>
 
@@ -41,6 +42,7 @@ static const char EWK_VIEW_TYPE_STR[] = "EWK2_View";
 struct _Ewk_View_Private_Data {
     OwnPtr<PageClientImpl> pageClient;
     const char* uri;
+    const char* title;
 };
 
 #define EWK_VIEW_TYPE_CHECK(ewkView, result)                                   \
@@ -268,6 +270,7 @@ static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
 
     priv->pageClient = nullptr;
     eina_stringshare_del(priv->uri);
+    eina_stringshare_del(priv->title);
     free(priv);
 }
 
@@ -489,6 +492,7 @@ Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGrou
     }
 
     priv->pageClient = PageClientImpl::create(toImpl(contextRef), toImpl(pageGroupRef), ewkView);
+    ewk_view_loader_client_attach(toAPI(priv->pageClient->page()), ewkView);
 
     return ewkView;
 }
@@ -540,6 +544,28 @@ Eina_Bool ewk_view_stop(Evas_Object* ewkView)
 
     WKPageStopLoading(toAPI(priv->pageClient->page()));
     return true;
+}
+
+const char* ewk_view_title_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+
+    CString title = priv->pageClient->page()->pageTitle().utf8();
+    eina_stringshare_replace(&priv->title, title.data());
+
+    return priv->title;
+}
+
+/**
+ * @internal
+ * The view title was changed by the frame loader.
+ *
+ * Emits signal: "title,changed" with pointer to new title string.
+ */
+void ewk_view_title_changed(Evas_Object* ewkView, const char* title)
+{
+    evas_object_smart_callback_call(ewkView, "title,changed", const_cast<char*>(title));
 }
 
 void ewk_view_display(Evas_Object* ewkView, const IntRect& rect)

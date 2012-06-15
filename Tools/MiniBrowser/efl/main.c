@@ -86,6 +86,15 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
     }
 }
 
+static void
+on_title_changed(void *user_data, Evas_Object *webview, void *event_info)
+{
+    MiniBrowser *app = (MiniBrowser *)user_data;
+    const char *title = (const char *)event_info;
+
+    ecore_evas_title_set(app->ee, title);
+}
+
 static MiniBrowser *browserCreate(const char *url)
 {
     MiniBrowser *app = malloc(sizeof(MiniBrowser));
@@ -111,6 +120,8 @@ static MiniBrowser *browserCreate(const char *url)
     /* Create webview */
     app->browser = ewk_view_add(app->evas);
     evas_object_name_set(app->browser, "browser");
+
+    evas_object_smart_callback_add(app->browser, "title,changed", on_title_changed, app);
 
     evas_object_event_callback_add(app->browser, EVAS_CALLBACK_KEY_DOWN, on_key_down, app);
 

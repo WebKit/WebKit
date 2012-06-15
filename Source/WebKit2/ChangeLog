@@ -1,5 +1,31 @@
 2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Add title support to Ewk_View
+        https://bugs.webkit.org/show_bug.cgi?id=89095
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add a method to get the title of the main frame in
+        an Ewk_View. A "title,changed" signal is now emitted
+        on the view to notify clients that the main frame
+        title was changed.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_del):
+        (ewk_view_base_add):
+        (ewk_view_title_get):
+        (ewk_view_title_changed):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_loader_client.cpp: Added.
+        (didReceiveTitleForFrame):
+        (ewk_view_loader_client_attach):
+        * UIProcess/API/efl/ewk_view_loader_client_private.h: Added.
+        * UIProcess/API/efl/ewk_view_private.h:
+
+2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
+
         [WK2][EFL] Implement navigation back/forward in Ewk_View
         https://bugs.webkit.org/show_bug.cgi?id=89173
 

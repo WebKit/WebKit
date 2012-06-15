@@ -23,6 +23,10 @@
  * @brief   WebKit main smart object.
  *
  * This object provides view related APIs of WebKit2 to EFL object.
+ *
+ * The following signals (see evas_object_smart_callback_add()) are emitted:
+ *
+ * - "title,changed", const char*: title of the main frame was changed.
  */
 
 #ifndef ewk_view_h
@@ -224,6 +228,18 @@ EAPI Eina_Bool    ewk_view_back_possible(Evas_Object *o);
  * @return @c EINA_TRUE if it is possible to navigate forwards in the history, @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    ewk_view_forward_possible(Evas_Object *o);
+
+/**
+ * Gets the current title of the main frame.
+ *
+ * It returns an internal string and should not
+ * be modified. The string is guaranteed to be stringshared.
+ *
+ * @param o view object to get current title
+ *
+ * @return current title on success or @c 0 on failure
+ */
+EAPI const char *ewk_view_title_get(const Evas_Object *o);
 
 #ifdef __cplusplus
 }

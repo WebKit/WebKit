@@ -1,5 +1,20 @@
 2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Add title support to Ewk_View
+        https://bugs.webkit.org/show_bug.cgi?id=89095
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update the MiniBrowser so it listens for the "title,change"
+        signal on the view and keeps the browser window title
+        up-to-date.
+
+        * MiniBrowser/efl/main.c:
+        (on_title_changed):
+        (browserCreate):
+
+2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
+
         [WK2][EFL] Implement navigation back/forward in Ewk_View
         https://bugs.webkit.org/show_bug.cgi?id=89173
 
