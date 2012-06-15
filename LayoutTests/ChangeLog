@@ -1,3 +1,27 @@
+2012-06-15  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium win and mac rebaseline for r120403.
+
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/chromium/TestExpectations:
+
 2012-06-14  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, rolling out r110340.
