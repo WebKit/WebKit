@@ -1,3 +1,22 @@
+2012-06-14  Adrienne Walker  <enne@google.com>
+
+        [chromium] Make TiledLayerChromium robust to unexpected null tiles
+        https://bugs.webkit.org/show_bug.cgi?id=89143
+
+        Reviewed by James Robinson.
+
+        Although there shouldn't ever be null tiles in the map, it appears to
+        be occurring frequently enough to show up in crash reports. In the
+        short term, be robust to this so the tiler doesn't crash. This should
+        eventually be reverted.
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore::TiledLayerChromium::setLayerTreeHost):
+        (WebCore::TiledLayerChromium::invalidateRect):
+        (WebCore::TiledLayerChromium::updateTiles):
+        (WebCore::TiledLayerChromium::resetUpdateState):
+
 2012-06-14  Kent Tamura  <tkent@chromium.org>
 
         Validate form state strings in FormController::setStateForNewFormElements()
