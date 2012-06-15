@@ -123,10 +123,12 @@ static void unregisterBlobURLTask(void* context)
 
 void ThreadableBlobRegistry::unregisterBlobURL(const KURL& url)
 {
-    if (isMainThread()) {
+    if (BlobURL::getOrigin(url) == "null")
         originMap()->remove(url.string());
+
+    if (isMainThread())
         blobRegistry().unregisterBlobURL(url);
-    } else {
+    else {
         OwnPtr<BlobRegistryContext> context = adoptPtr(new BlobRegistryContext(url));
         callOnMainThread(&unregisterBlobURLTask, context.leakPtr());
     }

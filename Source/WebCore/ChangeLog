@@ -1,3 +1,17 @@
+2012-06-15  Jian Li  <jianli@chromium.org>
+
+        [File API] FileReader should work in sandbox iframe
+        https://bugs.webkit.org/show_bug.cgi?id=89242
+
+        Reviewed by Adam Barth.
+
+        Test: fast/files/file-reader-sandbox-iframe.html
+
+        * fileapi/ThreadableBlobRegistry.cpp: Should remove from map for all threads.
+        (WebCore::ThreadableBlobRegistry::unregisterBlobURL):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canRequest): Check and use cached origin for blob URL first.
+
 2012-06-15  David Barton  <dbarton@mathscribe.com>
 
         Inherit style changes in MathML anonymous renderers

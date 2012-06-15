@@ -299,6 +299,9 @@ bool SecurityOrigin::canRequest(const KURL& url) const
     if (m_universalAccess)
         return true;
 
+    if (getCachedOrigin(url) == this)
+        return true;
+
     if (isUnique())
         return false;
 

@@ -10,8 +10,8 @@ if (window.layoutTestController) {
 </script>
 </head>
 <body>
-<iframe src="resources/file-reader-real.html"></iframe>
+<iframe src="resources/file-reader-real.html" sandbox="allow-scripts"></iframe>
 <div id="results"></div>
-Test that FileReader works under the file URL with file path separation enforced.
+Test that FileReader works under the sandboxed iframe.
 </body>
 </html>

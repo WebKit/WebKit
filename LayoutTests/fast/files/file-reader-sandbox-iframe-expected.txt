@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 9: Received data: 0123456789
+
+Test that FileReader works under the sandboxed iframe.
