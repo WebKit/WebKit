@@ -72,6 +72,9 @@ public:
     bool isPrivateBrowsingEnabled() const;
     void setPrivateBrowsingEnabled(bool);
 
+    void setDeviceSupportsMouse(bool);
+    bool deviceSupportsMouse() const;
+
     int defaultFixedFontSize() const;
     void setDefaultFixedFontSize(int);
 

@@ -1,3 +1,27 @@
+2012-06-15  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Disable WebCore::EventHandler synthesized mouse events during touch scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=89227
+        PR #146642
+
+        Reviewed by Rob Buis.
+
+        Make use of the Settings::supportsMouseDevice setting in order to
+        prevent mouse move event to fire as a response to a scroll action.
+        We might still want to dynamically toggle this setting ON, in case for
+        example of a mouse wheel driven scroll action, but we can revisit it
+        when it becomes a fully supported/primary use case.
+
+        Internally reviewed by Eli Fidler.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+        * Api/WebSettings.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebSettings::isDeviceSupportsMouseEnabled):
+        (BlackBerry::WebKit::WebSettings::setDeviceSupportsMouseEnabled):
+        * Api/WebSettings.h:
+
 2012-06-15  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Certain web pages (i.e., http://www.cloudtweaks.com/) are allowed to be wider than the screen

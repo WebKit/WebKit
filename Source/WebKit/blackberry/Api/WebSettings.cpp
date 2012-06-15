@@ -82,6 +82,7 @@ DEFINE_STATIC_LOCAL(String, WebKitOfflineWebApplicationCachePath, ("WebKitOfflin
 DEFINE_STATIC_LOCAL(String, WebKitPageGroupName, ("WebKitPageGroupName"));
 DEFINE_STATIC_LOCAL(String, WebKitPluginsEnabled, ("WebKitPluginsEnabled"));
 DEFINE_STATIC_LOCAL(String, WebKitPrivateBrowsingEnabled, ("WebKitPrivateBrowsingEnabled"));
+DEFINE_STATIC_LOCAL(String, WebKitDeviceSupportsMouse, ("WebKitDeviceSupportsMouse"));
 DEFINE_STATIC_LOCAL(String, WebKitSansSeriffFontFamily, ("WebKitSansSeriffFontFamily"));
 DEFINE_STATIC_LOCAL(String, WebKitSeriffFontFamily, ("WebKitSeriffFontFamily"));
 DEFINE_STATIC_LOCAL(String, WebKitStandardFontFamily, ("WebKitStandardFontFamily"));
@@ -262,6 +263,16 @@ bool WebSettings::isPrivateBrowsingEnabled() const
 void WebSettings::setPrivateBrowsingEnabled(bool enabled)
 {
     m_private->setBoolean(WebKitPrivateBrowsingEnabled, enabled);
+}
+
+bool WebSettings::deviceSupportsMouse() const
+{
+    return m_private->getBoolean(WebKitDeviceSupportsMouse);
+}
+
+void WebSettings::setDeviceSupportsMouse(bool enabled)
+{
+    m_private->setBoolean(WebKitDeviceSupportsMouse, enabled);
 }
 
 int WebSettings::defaultFixedFontSize() const
