@@ -1,3 +1,12 @@
+2012-06-15  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium mac rebaseline.
+
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+
 2012-06-15  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, updating baselines after r120411.
