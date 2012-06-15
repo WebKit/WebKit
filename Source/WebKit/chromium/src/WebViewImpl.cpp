@@ -1572,7 +1572,7 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
 #endif
     } else {
         double paintStart = currentTime();
-        PageWidgetDelegate::paint(m_page.get(), pageOverlays(), canvas, rect);
+        PageWidgetDelegate::paint(m_page.get(), pageOverlays(), canvas, rect, isTransparent() ? PageWidgetDelegate::Translucent : PageWidgetDelegate::Opaque);
         double paintEnd = currentTime();
         double pixelsPerSec = (rect.width * rect.height) / (paintEnd - paintStart);
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.SoftwarePaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);

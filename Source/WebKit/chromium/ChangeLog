@@ -1,3 +1,22 @@
+2012-06-14  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Sub-pixel text rendering is incorrectly used for WebView with transparent background.
+        https://bugs.webkit.org/show_bug.cgi?id=89033
+
+        Reviewed by James Robinson.
+
+        Add canvas background argument to PageWidgetDelegate::paint and call
+        PlatformCanvasSkia::setDrawingToImageBuffer to ensure that sub-pixel
+        rendering is only used when WebView has opaque background.
+
+        * src/PageWidgetDelegate.cpp:
+        (WebKit::PageWidgetDelegate::paint):
+        * src/PageWidgetDelegate.h:
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::WebPagePopupImpl::paint):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::paint):
+
 2012-06-14  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] CCLayerTreeHostCommonTest.verifyHitTestingForSingleLayer failing in debug

@@ -82,12 +82,13 @@ void PageWidgetDelegate::layout(Page* page)
     view->updateLayoutAndStyleIfNeededRecursive();
 }
 
-void PageWidgetDelegate::paint(Page* page, PageOverlayList* overlays, WebCanvas* canvas, const WebRect& rect)
+void PageWidgetDelegate::paint(Page* page, PageOverlayList* overlays, WebCanvas* canvas, const WebRect& rect, CanvasBackground background)
 {
     if (rect.isEmpty())
         return;
     GraphicsContextBuilder builder(canvas);
     GraphicsContext& gc = builder.context();
+    gc.platformContext()->setDrawingToImageBuffer(background == Opaque ? false : true);
     gc.applyDeviceScaleFactor(page->deviceScaleFactor());
     IntRect dirtyRect(rect);
     gc.save();
