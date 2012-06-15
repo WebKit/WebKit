@@ -1,3 +1,15 @@
+2012-06-14  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove unused CanvasLayerChromium.h/cpp from the tree
+        https://bugs.webkit.org/show_bug.cgi?id=89152
+
+        Reviewed by Adrienne Walker.
+
+        These files have been unused and not in the build system since r119769
+
+        * platform/graphics/chromium/CanvasLayerChromium.cpp: Removed.
+        * platform/graphics/chromium/CanvasLayerChromium.h: Removed.
+
 2012-06-14  Emil A Eklund  <eae@chromium.org>
 
         Cast paddings to int in RenderTableCell
