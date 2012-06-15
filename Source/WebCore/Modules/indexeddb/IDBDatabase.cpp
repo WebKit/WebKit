@@ -149,7 +149,8 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
     }
 
     m_backend->deleteObjectStore(name, m_versionChangeTransaction->backend(), ec);
-    m_versionChangeTransaction->objectStoreDeleted(name);
+    if (!ec)
+        m_versionChangeTransaction->objectStoreDeleted(name);
 }
 
 PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, const String& version, ExceptionCode& ec)

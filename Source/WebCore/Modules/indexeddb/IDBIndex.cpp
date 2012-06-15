@@ -46,6 +46,7 @@ IDBIndex::IDBIndex(PassRefPtr<IDBIndexBackendInterface> backend, IDBObjectStore*
     : m_backend(backend)
     , m_objectStore(objectStore)
     , m_transaction(transaction)
+    , m_deleted(false)
 {
     ASSERT(m_backend);
     ASSERT(m_objectStore);
@@ -59,6 +60,10 @@ IDBIndex::~IDBIndex()
 PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, const String& directionString, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::openCursor");
+    if (m_deleted) {
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        return 0;
+    }
     unsigned short direction = IDBCursor::stringToDirection(directionString, ec);
     if (ec)
         return 0;
@@ -105,6 +110,10 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, Pas
 PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::count");
+    if (m_deleted) {
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        return 0;
+    }
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->count(keyRange, request, m_transaction->backend(), ec);
     if (ec) {
@@ -126,6 +135,10 @@ PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, PassRefP
 PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, const String& directionString, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::openKeyCursor");
+    if (m_deleted) {
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        return 0;
+    }
 
     unsigned short direction = IDBCursor::stringToDirection(directionString, ec);
     if (ec)
@@ -173,6 +186,10 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
 PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::get");
+    if (m_deleted) {
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        return 0;
+    }
     if (key && (key->type() == IDBKey::InvalidType)) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
@@ -188,6 +205,10 @@ PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, PassRefPtr
 PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::get");
+    if (m_deleted) {
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        return 0;
+    }
     if (!keyRange) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
@@ -205,6 +226,10 @@ PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, PassRefPtr
 PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::getKey");
+    if (m_deleted) {
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        return 0;
+    }
     if (key && (key->type() == IDBKey::InvalidType)) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
@@ -220,6 +245,10 @@ PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, PassRef
 PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::getKey");
+    if (m_deleted) {
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        return 0;
+    }
     if (!keyRange) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;

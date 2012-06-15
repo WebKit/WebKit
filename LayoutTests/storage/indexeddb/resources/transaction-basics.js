@@ -48,7 +48,7 @@ function addRemoveIDBObjects()
     var index = evalAndLog("index = store.createIndex('indexFail', 'x')");
 
     evalAndLog("db.deleteObjectStore('storeFail')");
-    evalAndLog("store.deleteIndex('indexFail')");
+    evalAndExpectException("store.deleteIndex('indexFail')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
 
     trans.abort();
 }
@@ -74,7 +74,7 @@ function addRemoveAddIDBObjects()
     var index = evalAndLog("index = store.createIndex('indexFail', 'x')");
 
     evalAndLog("db.deleteObjectStore('storeFail')");
-    evalAndLog("store.deleteIndex('indexFail')");
+    evalAndExpectException("store.deleteIndex('indexFail')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
 
     var store = evalAndLog("store = db.createObjectStore('storeFail', null)");
     var index = evalAndLog("index = store.createIndex('indexFail', 'x')");

@@ -80,12 +80,15 @@ public:
     PassRefPtr<IDBRequest> getKey(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
     PassRefPtr<IDBRequest> getKey(ScriptExecutionContext*, PassRefPtr<IDBKey>, ExceptionCode&);
 
+    void markDeleted() { m_deleted = true; }
+
 private:
     IDBIndex(PassRefPtr<IDBIndexBackendInterface>, IDBObjectStore*, IDBTransaction*);
 
     RefPtr<IDBIndexBackendInterface> m_backend;
     RefPtr<IDBObjectStore> m_objectStore;
     RefPtr<IDBTransaction> m_transaction;
+    bool m_deleted;
 };
 
 } // namespace WebCore

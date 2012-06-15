@@ -1,0 +1,64 @@
+if (this.importScripts) {
+    importScripts('../../../fast/js/resources/js-test-pre.js');
+    importScripts('shared.js');
+}
+
+description("Test that IndexedDB objects that have been deleted throw exceptions");
+
+function test()
+{
+    removeVendorPrefixes();
+    evalAndLog("dbname = self.location.pathname");
+    evalAndLog("request = indexedDB.deleteDatabase(dbname)");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = openDatabase;
+}
+
+function openDatabase()
+{
+    debug("");
+    debug("openDatabase():");
+    evalAndLog("request = indexedDB.open(dbname)");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function() {
+        evalAndLog("connection = request.result");
+        evalAndLog("request = connection.setVersion('1')");
+        request.onerror = unexpectedErrorCallback;
+        request.onsuccess = function() {
+            trans = request.result;
+
+            debug("");
+            evalAndLog("deletedStore = connection.createObjectStore('deletedStore')");
+            evalAndLog("store = connection.createObjectStore('store')");
+            evalAndLog("deletedIndex = store.createIndex('deletedIndex', 'path')");
+
+            debug("");
+            evalAndLog("connection.deleteObjectStore('deletedStore')");
+            evalAndLog("store.deleteIndex('deletedIndex')");
+
+            debug("");
+            evalAndExpectException("deletedStore.put(0, 0)", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+            evalAndExpectException("deletedStore.add(0, 0)", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+            evalAndExpectException("deletedStore.delete(0)", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+            evalAndExpectException("deletedStore.get(0)", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+            evalAndExpectException("deletedStore.clear()", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+            evalAndExpectException("deletedStore.openCursor()", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+            evalAndExpectException("deletedStore.createIndex('name', 'path')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+            evalAndExpectException("deletedStore.index('name')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+            evalAndExpectException("deletedStore.deleteIndex('name')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+            evalAndExpectException("deletedStore.count()", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+
+            debug("");
+            evalAndExpectException("deletedIndex.openCursor()", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+            evalAndExpectException("deletedIndex.openKeyCursor()", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+            evalAndExpectException("deletedIndex.get(0)", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+            evalAndExpectException("deletedIndex.getKey(0)", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+            evalAndExpectException("deletedIndex.count()", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+
+            trans.onabort = unexpectedAbortCallback;
+            trans.oncomplete = finishJSTest;
+        };
+    };
+}
+
+test();

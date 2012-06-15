@@ -20,7 +20,10 @@ PASS trans is non-null.
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x')
 db.deleteObjectStore('storeFail')
-store.deleteIndex('indexFail')
+Expecting exception from store.deleteIndex('indexFail')
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
 
 testSetVersionAbort2():
 PASS self.db.objectStoreNames is []
@@ -33,7 +36,10 @@ PASS trans is non-null.
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x')
 db.deleteObjectStore('storeFail')
-store.deleteIndex('indexFail')
+Expecting exception from store.deleteIndex('indexFail')
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
 store = db.createObjectStore('storeFail', null)
 index = store.createIndex('indexFail', 'x')
 

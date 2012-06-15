@@ -94,6 +94,7 @@ public:
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKey>, ExceptionCode&);
 
+    void markDeleted() { m_deleted = true; }
     void transactionFinished();
 
 private:
@@ -102,6 +103,7 @@ private:
 
     RefPtr<IDBObjectStoreBackendInterface> m_backend;
     RefPtr<IDBTransaction> m_transaction;
+    bool m_deleted;
 
     typedef HashMap<String, RefPtr<IDBIndex> > IDBIndexMap;
     IDBIndexMap m_indexMap;

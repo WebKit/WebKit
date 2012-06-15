@@ -1,3 +1,23 @@
+2012-06-15  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Raise exceptions when methods are called on deleted objects
+        https://bugs.webkit.org/show_bug.cgi?id=89243
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/deleted-objects-expected.txt: Added.
+        * storage/indexeddb/deleted-objects.html: Added.
+        * storage/indexeddb/resources/deleted-objects.js: Added.
+        (test):
+        (openDatabase.request.onsuccess.request.onsuccess):
+        (openDatabase.request.onsuccess):
+        (openDatabase):
+        * storage/indexeddb/resources/transaction-basics.js: Fix test that relied on
+        non-compliant behavior.
+        (addRemoveIDBObjects):
+        (addRemoveAddIDBObjects):
+        * storage/indexeddb/transaction-basics-expected.txt:
+
 2012-06-15  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Forgot a rebaseline for r120477.

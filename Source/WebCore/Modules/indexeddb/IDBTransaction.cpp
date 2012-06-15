@@ -154,10 +154,10 @@ PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, Excep
         return it->second;
 
     RefPtr<IDBObjectStoreBackendInterface> objectStoreBackend = m_backend->objectStore(name, ec);
-    if (!objectStoreBackend) {
-        ASSERT(ec);
+    ASSERT(!objectStoreBackend != !ec); // If we didn't get a store, we should have gotten an exception code. And vice versa.
+    if (ec)
         return 0;
-    }
+
     RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(objectStoreBackend, this);
     objectStoreCreated(name, objectStore);
     return objectStore.release();
@@ -172,7 +172,12 @@ void IDBTransaction::objectStoreCreated(const String& name, PassRefPtr<IDBObject
 void IDBTransaction::objectStoreDeleted(const String& name)
 {
     ASSERT(!m_transactionFinished);
-    m_objectStoreMap.remove(name);
+    IDBObjectStoreMap::iterator it = m_objectStoreMap.find(name);
+    if (it != m_objectStoreMap.end()) {
+        RefPtr<IDBObjectStore> objectStore = it->second;
+        m_objectStoreMap.remove(name);
+        objectStore->markDeleted();
+    }
 }
 
 void IDBTransaction::abort()
