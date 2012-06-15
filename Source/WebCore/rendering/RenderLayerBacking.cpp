@@ -424,7 +424,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     updateLayerFilters(renderer()->style());
 #endif
     
-    m_owningLayer->updateVisibilityStatus();
+    m_owningLayer->updateDescendantDependentFlags();
 
     // m_graphicsLayer is the corresponding GraphicsLayer for this RenderLayer and its non-compositing
     // descendants. So, the visibility flag for m_graphicsLayer should be true if there are any

@@ -1,3 +1,59 @@
+2012-06-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderLayer subtrees without any self-painting layer shouldn't be walked during painting
+        https://bugs.webkit.org/show_bug.cgi?id=88888
+
+        Reviewed by Simon Fraser.
+
+        Performance optimization, covered by existing tests.
+
+        The gist of this change is to add a has-self-painting-layer-descendant flag (including an
+        invalidation logic) that is used to avoid walking subtrees without any self-painting layer.
+
+        On http://dglazkov.github.com/performance-tests/biggrid.html with a 100,000 rows
+        by 100 columns table, it brings the paint time during scrolling from ~45ms to ~6ms
+        on my machine. The test case is a pathologic example here but the optimization should
+        apply in other cases.
+
+        The new update logic piggy-backs on top of the existing updateVisibilityStatus() one that
+        got repurposed and renamed as part of this change.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::styleChanged):
+        These functions were updated to dirty / set the new flag.
+
+        (WebCore::RenderLayer::dirtyAncestorChainHasSelfPaintingLayerDescendantStatus):
+        (WebCore::RenderLayer::setAncestorChainHasSelfPaintingLayerDescendant):
+        Added those functions to handle setting / invalidating the new flag.
+
+        (WebCore::RenderLayer::updateSelfPaintingLayerAfterStyleChange):
+        Added this function to handle style update.
+
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintLayerContentsAndReflection):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintList):
+        Changed this logic to bail out if we have no self-painting descendants. This is what
+        is giving the performance improvement. Also added some performance ASSERTs to ensure
+        the methods are not called when they shouldn't.
+
+        (WebCore::RenderLayer::updateDescendantDependentFlags):
+        Renamed from updateVisibilityStatus to account for the new usage.
+
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll):
+        (WebCore::RenderLayer::collectLayers):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        Updated after updateVisibilityStatus rename.
+
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::hasSelfPaintingLayerDescendant):
+        Added the declaration of the new functions as well as the new flag and dirty bit.
+
 2012-06-14  Tony Payne  <tpayne@chromium.org>
 
        [chromium] Add iccjpeg and qcms to chromium port
