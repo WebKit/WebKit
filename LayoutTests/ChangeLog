@@ -1,3 +1,20 @@
+2012-06-15  Jian Li  <jianli@chromium.org>
+
+        http/tests/fileapi/create-blob-url-from-data-url.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=89149
+
+        Reviewed by Adam Barth.
+
+        Convert the test to check if blob URL can be created in a data iframe.
+
+        * http/tests/fileapi/create-blob-url-from-data-url-expected.txt:
+        * http/tests/fileapi/create-blob-url-from-data-url.html:
+        * platform/chromium/TestExpectations:
+        * platform/efl/Skipped:
+        * platform/gtk/TestExpectations:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
 2012-06-15  David Barton  <dbarton@mathscribe.com>
 
         Inherit style changes in MathML anonymous renderers

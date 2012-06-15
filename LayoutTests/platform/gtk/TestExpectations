@@ -1224,8 +1224,6 @@ BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS TEXT
 
 BUGWK88138 : http/tests/media/video-buffered.html = TEXT
 
-BUGWK89149 : http/tests/fileapi/create-blob-url-from-data-url.html = TEXT
-
 BUGWK89205 : editing/spelling/grammar-edit-word.html = TEXT
 
 BUGWK54637 : media/video-display-toggle.html = TEXT

@@ -3823,8 +3823,6 @@ BUGWK88856 : fast/events/constructors/speech-recognition-event-constructor.html 
 
 BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = TEXT
 
-BUGWK89149 : http/tests/fileapi/create-blob-url-from-data-url.html = TEXT
-
 // Flaky
 BUGWK89166 : http/tests/messaging/cross-domain-message-event-dispatch.html = TEXT
 BUGWK89167 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT
