@@ -188,6 +188,7 @@ void FileInputType::handleDOMActivateEvent(Event* event)
         settings.allowsMultipleFiles = input->fastHasAttribute(multipleAttr);
 #endif
         settings.acceptMIMETypes = input->acceptMIMETypes();
+        settings.acceptFileExtensions = input->acceptFileExtensions();
         settings.selectedFiles = m_fileList->paths();
 #if ENABLE(MEDIA_CAPTURE)
         settings.capture = input->capture();
@@ -375,6 +376,7 @@ void FileInputType::receiveDropForDirectoryUpload(const Vector<String>& paths)
         settings.allowsMultipleFiles = true;
         settings.selectedFiles.append(paths[0]);
         settings.acceptMIMETypes = input->acceptMIMETypes();
+        settings.acceptFileExtensions = input->acceptFileExtensions();
         chrome->enumerateChosenDirectory(newFileChooser(settings));
     }
 }

@@ -99,4 +99,13 @@ void FileChooser::chooseFiles(const Vector<FileChooserFileInfo>& files)
         m_client->filesChosen(files);
 }
 
+Vector<String> FileChooserSettings::acceptTypes() const
+{
+    Vector<String> acceptTypes;
+    acceptTypes.reserveCapacity(acceptMIMETypes.size() + acceptFileExtensions.size());
+    acceptTypes.append(acceptMIMETypes);
+    acceptTypes.append(acceptFileExtensions);
+    return acceptTypes;
+}
+
 }

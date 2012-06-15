@@ -55,10 +55,14 @@ struct FileChooserSettings {
     bool allowsDirectoryUpload;
 #endif
     Vector<String> acceptMIMETypes;
+    Vector<String> acceptFileExtensions;
     Vector<String> selectedFiles;
 #if ENABLE(MEDIA_CAPTURE)
     String capture;
 #endif
+
+    // Returns a combined vector of acceptMIMETypes and acceptFileExtensions.
+    Vector<String> acceptTypes() const;
 };
 
 class FileChooserClient {

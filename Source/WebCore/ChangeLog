@@ -1,3 +1,40 @@
+2012-06-14  Kent Tamura  <tkent@chromium.org>
+
+        Support file extensions in HTMLInputElement::accept
+        https://bugs.webkit.org/show_bug.cgi?id=88298
+
+        Reviewed by Hajime Morita.
+
+        The WHATWG specification added file extensions supoprt for
+        HTMLInputElement::accept recently.
+
+        In the WebCore FileChooser interface, we rejected invalid MIME type
+        strings in HTMLInputElement::acceptMIMETypes(), and platform file
+        choosers don't expect that it containts file extensions. So, this patch
+        introduces additional member "acceptFileExtensions" to
+        FileChooserSettings, and it contains only file extensions specified by
+        an accept attribute.
+
+        * html/FileInputType.cpp:
+        Sets HTMLInputElement::acceptFileExtensions() to
+        FileChooserSettings::acceptFileExtensions.
+        (WebCore::FileInputType::handleDOMActivateEvent):
+        (WebCore::FileInputType::receiveDropForDirectoryUpload):
+        * html/HTMLInputElement.cpp:
+        (WebCore::isValidFileExtension): Added.
+        (WebCore::parseAcceptAttribute):
+        Common part for acceptMIMETyps() and acceptFileExtensions().
+        (WebCore::HTMLInputElement::acceptMIMETypes):
+        Uses parseAcceptAttribute() with isValidMIMEType().
+        (WebCore::HTMLInputElement::acceptFileExtensions):
+        Added. Uses parseAcceptAttribute() with isValidFileExtension().
+        * html/HTMLInputElement.h:
+        (HTMLInputElement): Add acceptFileExtensions().
+        * platform/FileChooser.h:
+        (FileChooserSettings): Add acceptFileExtensions and acceptTypes().
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooserSettings::acceptTypes): Added.
+
 2012-06-14  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unused CanvasLayerChromium.h/cpp from the tree

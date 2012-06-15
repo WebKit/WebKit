@@ -1135,7 +1135,7 @@ static inline bool isRFC2616TokenCharacter(UChar ch)
     return isASCII(ch) && ch > ' ' && ch != '"' && ch != '(' && ch != ')' && ch != ',' && ch != '/' && (ch < ':' || ch > '@') && (ch < '[' || ch > ']') && ch != '{' && ch != '}' && ch != 0x7f;
 }
 
-static inline bool isValidMIMEType(const String& type)
+static bool isValidMIMEType(const String& type)
 {
     size_t slashPosition = type.find('/');
     if (slashPosition == notFound || !slashPosition || slashPosition == type.length() - 1)
@@ -1147,26 +1147,41 @@ static inline bool isValidMIMEType(const String& type)
     return true;
 }
 
-Vector<String> HTMLInputElement::acceptMIMETypes()
+static bool isValidFileExtension(const String& type)
 {
-    Vector<String> mimeTypes;
+    if (type.length() < 2)
+        return false;
+    return type[0] == '.';
+}
 
-    String acceptString = accept();
+static Vector<String> parseAcceptAttribute(const String& acceptString, bool (*predicate)(const String&))
+{
+    Vector<String> types;
     if (acceptString.isEmpty())
-        return mimeTypes;
+        return types;
 
     Vector<String> splitTypes;
     acceptString.split(',', false, splitTypes);
     for (size_t i = 0; i < splitTypes.size(); ++i) {
-        String trimmedMimeType = stripLeadingAndTrailingHTMLSpaces(splitTypes[i]);
-        if (trimmedMimeType.isEmpty())
+        String trimmedType = stripLeadingAndTrailingHTMLSpaces(splitTypes[i]);
+        if (trimmedType.isEmpty())
             continue;
-        if (!isValidMIMEType(trimmedMimeType))
+        if (!predicate(trimmedType))
             continue;
-        mimeTypes.append(trimmedMimeType.lower());
+        types.append(trimmedType.lower());
     }
 
-    return mimeTypes;
+    return types;
+}
+
+Vector<String> HTMLInputElement::acceptMIMETypes()
+{
+    return parseAcceptAttribute(fastGetAttribute(acceptAttr), isValidMIMEType);
+}
+
+Vector<String> HTMLInputElement::acceptFileExtensions()
+{
+    return parseAcceptAttribute(fastGetAttribute(acceptAttr), isValidFileExtension);
 }
 
 String HTMLInputElement::accept() const

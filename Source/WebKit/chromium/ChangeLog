@@ -1,3 +1,14 @@
+2012-06-14  Kent Tamura  <tkent@chromium.org>
+
+        Support file extensions in HTMLInputElement::accept
+        https://bugs.webkit.org/show_bug.cgi?id=88298
+
+        Reviewed by Hajime Morita.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::runOpenPanel):
+        Use FileChooserSettings::acceptTypes() to get both of MIME types and file extensions.
+
 2012-06-14  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         Remove support for counterValueForElementById from chromium port

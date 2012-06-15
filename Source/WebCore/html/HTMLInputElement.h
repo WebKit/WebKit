@@ -197,6 +197,7 @@ public:
     void setDefaultValue(const String&);
 
     Vector<String> acceptMIMETypes();
+    Vector<String> acceptFileExtensions();
     String accept() const;
     String alt() const;
 
