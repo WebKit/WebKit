@@ -1,3 +1,23 @@
+2012-06-15  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] media volume slider in wrong position (master_38 regression)
+        https://bugs.webkit.org/show_bug.cgi?id=89165
+
+        Reviewed by Antonio Gomes.
+
+        Due to upstream simplification of the volume slider (webkit.org
+        bug 82150) it now appears in the wrong location below the
+        media controls. The programmatic controls sizing we do in
+        RenderThemeBlackBerry.cpp relies on absolute positioning of the
+        volume slider container, so the best way to fix this is to set
+        the bottom offset.
+
+        No new tests since this is a regression fix. BlackBerry media
+        controls are manually tested.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::RenderThemeBlackBerry::adjustMediaControlStyle):
+
 2012-06-15  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Not reviewed: remove garbage line from inspector view in docked-to-right mode.

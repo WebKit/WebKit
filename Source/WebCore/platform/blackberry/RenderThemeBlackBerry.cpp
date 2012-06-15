@@ -776,6 +776,7 @@ void RenderThemeBlackBerry::adjustMediaControlStyle(StyleResolver*, RenderStyle*
     case MediaVolumeSliderContainerPart:
         style->setWidth(controlsHeight);
         style->setHeight(volumeHeight);
+        style->setBottom(controlsHeight);
         break;
     default:
         break;
