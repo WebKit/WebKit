@@ -288,6 +288,12 @@ public:
         m_codeBlock->appendWeakReference(target);
     }
     
+    void addWeakReferences(const StructureSet& structureSet)
+    {
+        for (unsigned i = structureSet.size(); i--;)
+            addWeakReference(structureSet[i]);
+    }
+    
     void addWeakReferenceTransition(JSCell* codeOrigin, JSCell* from, JSCell* to)
     {
         m_codeBlock->appendWeakReferenceTransition(codeOrigin, from, to);

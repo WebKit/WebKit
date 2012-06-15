@@ -936,6 +936,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
             
             if (slot.type() == PutPropertySlot::NewProperty) {
                 if (!structure->isDictionary() && structure->previousID()->propertyStorageCapacity() == structure->propertyStorageCapacity()) {
+                    ASSERT(structure->previousID()->transitionWatchpointSetHasBeenInvalidated());
+                    
                     // This is needed because some of the methods we call
                     // below may GC.
                     pc[0].u.opcode = bitwise_cast<void*>(&llint_op_put_by_id);

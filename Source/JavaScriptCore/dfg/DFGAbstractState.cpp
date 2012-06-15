@@ -1387,6 +1387,15 @@ bool AbstractState::execute(unsigned indexInBlock)
         m_haveStructures = true;
         break;
     }
+        
+    case StructureTransitionWatchpoint: {
+        // FIXME: Turn CheckStructure into StructureTransitionWatchpoint when possible!
+        AbstractValue& value = forNode(node.child1());
+        ASSERT(isCellSpeculation(value.m_type));
+        value.filter(node.structure());
+        node.setCanExit(true);
+        break;
+    }
             
     case PutStructure:
     case PhantomPutStructure:

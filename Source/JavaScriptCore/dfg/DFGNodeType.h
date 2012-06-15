@@ -118,6 +118,18 @@ namespace JSC { namespace DFG {
     macro(PutById, NodeMustGenerate | NodeClobbersWorld) \
     macro(PutByIdDirect, NodeMustGenerate | NodeClobbersWorld) \
     macro(CheckStructure, NodeMustGenerate) \
+    /* Transition watchpoints are a contract between the party setting the watchpoint */\
+    /* and the runtime system, where the party promises that the child object once had */\
+    /* the structure being watched, and the runtime system in turn promises that the */\
+    /* watchpoint will be turned into an OSR exit if any object with that structure */\
+    /* ever transitions to a different structure. Hence, the child object must have */\
+    /* previously had a CheckStructure executed on it or we're dealing with an object */\
+    /* constant (WeakJSConstant) and the object was known to have that structure at */\
+    /* compile-time. In the latter case this means that no structure checks have to be */\
+    /* performed for this object by JITted code. In the former case this means that*/\
+    /* the object's structure does not need to be rechecked due to side-effecting */\
+    /* (clobbering) operations. */\
+    macro(StructureTransitionWatchpoint, NodeMustGenerate) \
     macro(PutStructure, NodeMustGenerate) \
     macro(PhantomPutStructure, NodeMustGenerate | NodeDoesNotExit) \
     macro(GetPropertyStorage, NodeResultStorage) \

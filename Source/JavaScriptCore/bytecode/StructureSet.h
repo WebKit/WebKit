@@ -90,6 +90,13 @@ public:
         return false;
     }
     
+    bool containsOnly(Structure* structure) const
+    {
+        if (size() != 1)
+            return false;
+        return singletonStructure() == structure;
+    }
+    
     bool isSubsetOf(const StructureSet& other) const
     {
         for (size_t i = 0; i < m_structures.size(); ++i) {

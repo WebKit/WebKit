@@ -37,6 +37,7 @@
 #include "StructureTransitionTable.h"
 #include "JSTypeInfo.h"
 #include "UString.h"
+#include "Watchpoint.h"
 #include "Weak.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -210,6 +211,27 @@ namespace JSC {
             return structure;
         }
         
+        bool transitionWatchpointSetHasBeenInvalidated() const
+        {
+            return m_transitionWatchpointSet.hasBeenInvalidated();
+        }
+        
+        bool transitionWatchpointSetIsStillValid() const
+        {
+            return m_transitionWatchpointSet.isStillValid();
+        }
+        
+        void addTransitionWatchpoint(Watchpoint* watchpoint) const
+        {
+            ASSERT(transitionWatchpointSetIsStillValid());
+            m_transitionWatchpointSet.add(watchpoint);
+        }
+        
+        void notifyTransitionFromThisStructure() const
+        {
+            m_transitionWatchpointSet.notifyWrite();
+        }
+        
         static JS_EXPORTDATA const ClassInfo s_info;
 
     private:
@@ -293,9 +315,11 @@ namespace JSC {
 
         OwnPtr<PropertyTable> m_propertyTable;
 
-        uint32_t m_propertyStorageCapacity;
-
         WriteBarrier<JSString> m_objectToStringValue;
+        
+        mutable InlineWatchpointSet m_transitionWatchpointSet;
+
+        uint32_t m_propertyStorageCapacity;
 
         // m_offset does not account for anonymous slots
         int m_offset;
@@ -365,6 +389,9 @@ namespace JSC {
     {
         ASSERT(structure->typeInfo().overridesVisitChildren() == this->structure()->typeInfo().overridesVisitChildren());
         ASSERT(structure->classInfo() == m_structure->classInfo());
+        ASSERT(!m_structure
+               || m_structure->transitionWatchpointSetHasBeenInvalidated()
+               || m_structure.get() == structure);
         m_structure.set(globalData, this, structure);
     }
 

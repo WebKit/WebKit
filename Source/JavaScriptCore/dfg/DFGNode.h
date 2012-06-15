@@ -651,6 +651,17 @@ struct Node {
         return *reinterpret_cast<StructureSet*>(m_opInfo);
     }
     
+    bool hasStructure()
+    {
+        return op() == StructureTransitionWatchpoint;
+    }
+    
+    Structure* structure()
+    {
+        ASSERT(hasStructure());
+        return reinterpret_cast<Structure*>(m_opInfo);
+    }
+    
     bool hasStorageAccessData()
     {
         return op() == GetByOffset || op() == PutByOffset;

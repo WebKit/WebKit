@@ -750,6 +750,20 @@ private:
         return call;
     }
     
+    void addStructureTransitionCheck(JSCell* object, Structure* structure)
+    {
+        // Add a weak JS constant for the object regardless, since the code should
+        // be jettisoned if the object ever dies.
+        NodeIndex objectIndex = cellConstant(object);
+        
+        if (object->structure() == structure && structure->transitionWatchpointSetIsStillValid()) {
+            addToGraph(StructureTransitionWatchpoint, OpInfo(structure), objectIndex);
+            return;
+        }
+        
+        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(structure)), objectIndex);
+    }
+    
     SpeculatedType getPredictionWithoutOSRExit(NodeIndex nodeIndex, unsigned bytecodeIndex)
     {
         UNUSED_PARAM(nodeIndex);
@@ -2104,9 +2118,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 // but the slow path (i.e. the normal get_by_id) never fired.
 
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(methodCallStatus.structure())), base);
-                if (methodCallStatus.needsPrototypeCheck())
-                    addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(methodCallStatus.prototypeStructure())), cellConstant(methodCallStatus.prototype()));
-                
+                if (methodCallStatus.needsPrototypeCheck()) {
+                    addStructureTransitionCheck(
+                        methodCallStatus.prototype(), methodCallStatus.prototypeStructure());
+                    addToGraph(Phantom, base);
+                }
                 set(getInstruction[1].u.operand, cellConstant(methodCallStatus.function()));
             } else {
                 handleGetById(
@@ -2211,6 +2227,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                             cellConstant(prototype.asCell()));
                     }
                 }
+                ASSERT(putByIdStatus.oldStructure()->transitionWatchpointSetHasBeenInvalidated());
                 addToGraph(
                     PutStructure,
                     OpInfo(

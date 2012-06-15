@@ -1,5 +1,91 @@
 2012-06-13  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should be able to set watchpoints on structure transitions in the
+        method check prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=89058
+
+        Reviewed by Gavin Barraclough.
+        
+        This adds the ability to set watchpoints on Structures, and then does
+        the most modest thing we can do with this ability: the DFG now sets
+        watchpoints on structure transitions in the prototype chain of method
+        checks.
+        
+        This appears to be a >1% speed-up on V8.
+
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/StructureSet.h:
+        (JSC::StructureSet::containsOnly):
+        (StructureSet):
+        * bytecode/Watchpoint.cpp:
+        (JSC::WatchpointSet::WatchpointSet):
+        (JSC::InlineWatchpointSet::add):
+        (JSC):
+        (JSC::InlineWatchpointSet::inflateSlow):
+        (JSC::InlineWatchpointSet::freeFat):
+        * bytecode/Watchpoint.h:
+        (WatchpointSet):
+        (JSC):
+        (InlineWatchpointSet):
+        (JSC::InlineWatchpointSet::InlineWatchpointSet):
+        (JSC::InlineWatchpointSet::~InlineWatchpointSet):
+        (JSC::InlineWatchpointSet::hasBeenInvalidated):
+        (JSC::InlineWatchpointSet::isStillValid):
+        (JSC::InlineWatchpointSet::startWatching):
+        (JSC::InlineWatchpointSet::notifyWrite):
+        (JSC::InlineWatchpointSet::isFat):
+        (JSC::InlineWatchpointSet::fat):
+        (JSC::InlineWatchpointSet::inflate):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addStructureTransitionCheck):
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::structureTransitionWatchpointElimination):
+        (CSEPhase):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCommon.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::isCellConstant):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addWeakReferences):
+        (JITCompiler):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasStructure):
+        (Node):
+        (JSC::DFG::Node::structure):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::emitPutTransitionStub):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/Structure.h:
+        (JSC::Structure::transitionWatchpointSetHasBeenInvalidated):
+        (Structure):
+        (JSC::Structure::transitionWatchpointSetIsStillValid):
+        (JSC::Structure::addTransitionWatchpoint):
+        (JSC::Structure::notifyTransitionFromThisStructure):
+        (JSC::JSCell::setStructure):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTableEntry::attemptToWatch):
+
+2012-06-13  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should be able to set watchpoints on global variables
         https://bugs.webkit.org/show_bug.cgi?id=88692
 

@@ -219,6 +219,10 @@ void Graph::dump(NodeIndex nodeIndex)
             hasPrinted = true;
         }
     }
+    if (node.hasStructure()) {
+        dataLog("%sstruct(%p)", hasPrinted ? ", " : "", node.structure());
+        hasPrinted = true;
+    }
     if (node.hasStructureTransitionData()) {
         dataLog("%sstruct(%p -> %p)", hasPrinted ? ", " : "", node.structureTransitionData().previousStructure, node.structureTransitionData().newStructure);
         hasPrinted = true;

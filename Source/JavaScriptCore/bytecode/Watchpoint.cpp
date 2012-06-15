@@ -63,8 +63,8 @@ void Watchpoint::fire()
 #endif
 }
 
-WatchpointSet::WatchpointSet()
-    : m_isWatched(false)
+WatchpointSet::WatchpointSet(InitialWatchpointSetMode mode)
+    : m_isWatched(mode == InitializedWatching)
     , m_isInvalidated(false)
 {
 }
@@ -98,6 +98,29 @@ void WatchpointSet::fireAllWatchpoints()
 {
     while (!m_set.isEmpty())
         m_set.begin()->fire();
+}
+
+void InlineWatchpointSet::add(Watchpoint* watchpoint)
+{
+    inflate()->add(watchpoint);
+}
+
+WatchpointSet* InlineWatchpointSet::inflateSlow()
+{
+    ASSERT(isThin());
+    WatchpointSet* fat = adoptRef(new WatchpointSet(InitializedBlind)).leakRef();
+    if (m_data & IsInvalidatedFlag)
+        fat->m_isInvalidated = true;
+    if (m_data & IsWatchedFlag)
+        fat->m_isWatched = true;
+    m_data = bitwise_cast<uintptr_t>(fat);
+    return fat;
+}
+
+void InlineWatchpointSet::freeFat()
+{
+    ASSERT(isFat());
+    fat()->deref();
 }
 
 } // namespace JSC

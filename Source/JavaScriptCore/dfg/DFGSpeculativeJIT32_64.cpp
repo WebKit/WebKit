@@ -3437,7 +3437,16 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
+    case StructureTransitionWatchpoint: {
+        m_jit.addWeakReference(node.structure());
+        node.structure()->addTransitionWatchpoint(speculationWatchpoint());
+        
+        noResult(m_compileIndex);
+        break;
+    }
+        
     case PhantomPutStructure: {
+        ASSERT(node.structureTransitionData().previousStructure->transitionWatchpointSetHasBeenInvalidated());
         m_jit.addWeakReferenceTransition(
             node.codeOrigin.codeOriginOwner(),
             node.structureTransitionData().previousStructure,
@@ -3447,6 +3456,8 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case PutStructure: {
+        ASSERT(node.structureTransitionData().previousStructure->transitionWatchpointSetHasBeenInvalidated());
+
         SpeculateCellOperand base(this, node.child1());
         GPRReg baseGPR = base.gpr();
         

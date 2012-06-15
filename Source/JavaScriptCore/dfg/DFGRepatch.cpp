@@ -649,6 +649,8 @@ static void emitPutTransitionStub(
         needToRestoreScratch = true;
     }
     
+    ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
+    
     failureCases.append(stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(oldStructure)));
             
     testPrototype(stubJit, scratchGPR, oldStructure->storedPrototype(), failureCases);

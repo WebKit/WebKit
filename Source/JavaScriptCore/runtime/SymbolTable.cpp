@@ -59,10 +59,8 @@ bool SymbolTableEntry::couldBeWatched()
 void SymbolTableEntry::attemptToWatch()
 {
     FatEntry* entry = inflate();
-    if (!entry->m_watchpoints) {
-        entry->m_watchpoints = adoptRef(new WatchpointSet());
-        entry->m_watchpoints->startWatching();
-    }
+    if (!entry->m_watchpoints)
+        entry->m_watchpoints = adoptRef(new WatchpointSet(InitializedWatching));
 }
 
 bool* SymbolTableEntry::addressOfIsWatched()

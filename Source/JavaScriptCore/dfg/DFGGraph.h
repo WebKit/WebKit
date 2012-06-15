@@ -258,6 +258,13 @@ public:
     {
         return at(nodeIndex).isBooleanConstant(m_codeBlock);
     }
+    bool isCellConstant(NodeIndex nodeIndex)
+    {
+        if (!isJSConstant(nodeIndex))
+            return false;
+        JSValue value = valueOfJSConstant(nodeIndex);
+        return value.isCell() && !!value;
+    }
     bool isFunctionConstant(NodeIndex nodeIndex)
     {
         if (!isJSConstant(nodeIndex))

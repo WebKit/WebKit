@@ -1077,6 +1077,10 @@ void SpeculativeJIT::compile(BasicBlock& block)
                 break;
             }
                 
+            case WeakJSConstant:
+                m_jit.addWeakReference(node.weakConstant());
+                break;
+                
             default:
                 break;
             }

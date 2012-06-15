@@ -341,6 +341,12 @@ private:
                     return true;
                 break;
                 
+            case StructureTransitionWatchpoint:
+                if (node.child1() == child1
+                    && structureSet.contains(node.structure()))
+                    return true;
+                break;
+                
             case PutStructure:
                 if (node.child1() == child1
                     && structureSet.contains(node.structureTransitionData().newStructure))
@@ -362,6 +368,53 @@ private:
                     break;
                 }
                 return false;
+                
+            default:
+                if (m_graph.clobbersWorld(index))
+                    return false;
+                break;
+            }
+        }
+        return false;
+    }
+    
+    bool structureTransitionWatchpointElimination(Structure* structure, NodeIndex child1)
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            NodeIndex index = m_currentBlock->at(i);
+            if (index == child1) 
+                break;
+
+            Node& node = m_graph[index];
+            switch (node.op()) {
+            case CheckStructure:
+                if (node.child1() == child1
+                    && node.structureSet().containsOnly(structure))
+                    return true;
+                break;
+                
+            case PutStructure:
+                ASSERT(node.structureTransitionData().previousStructure != structure);
+                break;
+                
+            case PutByOffset:
+                // Setting a property cannot change the structure.
+                break;
+                
+            case PutByVal:
+            case PutByValAlias:
+                if (m_graph.byValIsPure(node)) {
+                    // If PutByVal speculates that it's accessing an array with an
+                    // integer index, then it's impossible for it to cause a structure
+                    // change.
+                    break;
+                }
+                return false;
+                
+            case StructureTransitionWatchpoint:
+                if (node.structure() == structure && node.child1() == child1)
+                    return true;
+                break;
                 
             default:
                 if (m_graph.clobbersWorld(index))
@@ -1035,6 +1088,11 @@ private:
             
         case CheckStructure:
             if (checkStructureLoadElimination(node.structureSet(), node.child1().index()))
+                eliminate();
+            break;
+            
+        case StructureTransitionWatchpoint:
+            if (structureTransitionWatchpointElimination(node.structure(), node.child1().index()))
                 eliminate();
             break;
             

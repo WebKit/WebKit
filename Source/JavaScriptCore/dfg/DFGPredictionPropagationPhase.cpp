@@ -664,6 +664,7 @@ private:
         case ForceOSRExit:
         case SetArgument:
         case CheckStructure:
+        case StructureTransitionWatchpoint:
         case CheckFunction:
         case PutStructure:
         case TearOffActivation:

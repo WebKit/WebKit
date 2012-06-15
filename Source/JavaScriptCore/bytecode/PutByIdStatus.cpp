@@ -53,6 +53,8 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
         return PutByIdStatus(SimpleReplace, structure, 0, 0, offset);
     }
     
+    ASSERT(structure->transitionWatchpointSetHasBeenInvalidated());
+    
     ASSERT(instruction[0].u.opcode == llint_op_put_by_id_transition_direct
            || instruction[0].u.opcode == llint_op_put_by_id_transition_normal);
     
@@ -106,6 +108,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
         
     case access_put_by_id_transition_normal:
     case access_put_by_id_transition_direct: {
+        ASSERT(stubInfo.u.putByIdTransition.previousStructure->transitionWatchpointSetHasBeenInvalidated());
         size_t offset = stubInfo.u.putByIdTransition.structure->get(
             *profiledBlock->globalData(), ident);
         if (offset != notFound) {
