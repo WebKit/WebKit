@@ -286,7 +286,7 @@ WebInspector.TimelineOverviewPane.prototype = {
      */
     accept: function(record)
     {
-        return record.endTime >= this._windowStartTime && record.startTime <= this._windowEndTime;
+        return record.lastChildEndTime >= this._windowStartTime && record.startTime <= this._windowEndTime;
     },
 
     windowStartTime: function()
