@@ -1,3 +1,23 @@
+2012-06-15  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Gardening after r120411. Updated baselines of 7 tests because of a color property change.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/fast/dom/HTMLInputElement/input-slider-update-expected.png:
+        * platform/qt/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/qt/fast/forms/box-shadow-override-expected.png:
+        * platform/qt/fast/forms/box-shadow-override-expected.txt:
+        * platform/qt/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/qt/fast/forms/range/range-thumb-height-percentage-expected.png: Added.
+        * platform/qt/fast/forms/range/range-thumb-height-percentage-expected.txt:
+        * platform/qt/fast/forms/range/slider-padding-expected.png:
+        * platform/qt/fast/forms/range/slider-padding-expected.txt:
+        * platform/qt/fast/multicol/client-rects-expected.png: Added.
+        * platform/qt/fast/multicol/client-rects-expected.txt:
+        * platform/qt/fast/repaint/slider-thumb-drag-release-expected.png:
+        * platform/qt/fast/repaint/slider-thumb-drag-release-expected.txt:
+
 2012-06-15  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update TestExpectations
