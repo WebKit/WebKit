@@ -45,12 +45,12 @@ class IntSize;
 class CCInputHandlerClient {
     WTF_MAKE_NONCOPYABLE(CCInputHandlerClient);
 public:
-    enum ScrollStatus { ScrollFailed, ScrollStarted, ScrollIgnored };
+    enum ScrollStatus { ScrollOnMainThread, ScrollStarted, ScrollIgnored };
     enum ScrollInputType { Gesture, Wheel };
 
     // Attempt to start scrolling a layer at a given point in window
     // coordinates. Returns ScrollStarted if the layer at the coordinates can
-    // be scrolled, ScrollFailed if the scroll event should instead be
+    // be scrolled, ScrollOnMainThread if the scroll event should instead be
     // delegated to the main thread, or ScrollIgnored if there is nothing to
     // be scrolled at the given coordinates.
     virtual ScrollStatus scrollBegin(const IntPoint&, ScrollInputType) = 0;

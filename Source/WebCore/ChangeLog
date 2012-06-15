@@ -1,3 +1,109 @@
+2012-06-15  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Allow scrolling non-root layers in the compositor thread
+        https://bugs.webkit.org/show_bug.cgi?id=73350
+
+        Reviewed by James Robinson.
+
+        This patch enables scrolling child layers in the compositor thread.
+        Scroll deltas are accumulated for each scrolled CCLayerImpl and
+        synchronized to the main thread.
+
+        If a layer has no room to scroll in a given direction, one of its
+        ancestor layers is scrolled instead if possible.
+
+        Layer hit testing code by Shawn Singh.
+
+        Added new unit tests to verify layer scrolling behavior:
+
+            CCLayerTreeHostCommonTest.verifySubtreeSearch
+            CCLayerTreeHostImplTest.clearRootRenderSurfaceAndScroll
+            CCLayerTreeHostImplTest.inhibitScrollAndPageScaleUpdatesWhileAnimatingPageScale
+            CCLayerTreeHostImplTest.inhibitScrollAndPageScaleUpdatesWhilePinchZooming
+            CCLayerTreeHostImplTest.replaceTreeWhileScrolling
+            CCLayerTreeHostImplTest.scrollBeforeRedraw
+            CCLayerTreeHostImplTest.scrollBlockedByContentLayer
+            CCLayerTreeHostImplTest.scrollChildAndChangePageScaleOnMainThread
+            CCLayerTreeHostImplTest.scrollChildBeyondLimit
+            CCLayerTreeHostImplTest.scrollChildCallsCommitAndRedraw
+            CCLayerTreeHostImplTest.scrollEventBubbling
+            CCLayerTreeHostImplTest.scrollMissesBackfacingChild
+            CCLayerTreeHostImplTest.scrollMissesChild
+            CCLayerTreeHostImplTest.scrollNonCompositedRoot
+            CCLayerTreeHostImplTest.scrollRootAndChangePageScaleOnImplThread
+            CCLayerTreeHostImplTest.scrollRootAndChangePageScaleOnMainThread
+            CCLayerTreeHostImplTest.scrollRootIgnored
+            CCLayerTreeHostImplTest.scrollWithoutRootLayer
+            CCLayerTreeHostTestScrollChildLayer
+            WebCompositorInputHandlerImplTest.gestureScrollOnMainThread
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::setMaxScrollPosition):
+        (WebCore):
+        (WebCore::LayerChromium::scrollBy):
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore):
+        (LayerChromiumScrollDelegate):
+        (WebCore::LayerChromiumScrollDelegate::~LayerChromiumScrollDelegate):
+        (LayerChromium):
+        (WebCore::LayerChromium::maxScrollPosition):
+        (WebCore::LayerChromium::scrollable):
+        (WebCore::LayerChromium::setLayerScrollDelegate):
+        * platform/graphics/chromium/cc/CCInputHandler.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::tryScroll):
+        (WebCore):
+        (WebCore::sortLayers):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        (WebCore::findFirstScrollableLayer):
+        (WebCore):
+        (WebCore::CCLayerTreeHost::applyScrollAndScale):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.h:
+        (CCLayerTreeHostCommon):
+        (WebCore):
+        (WebCore::CCLayerTreeHostCommon::findLayerInSubtree):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::~CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::startPageScaleAnimation):
+        (WebCore::CCLayerTreeHostImpl::calculateRenderSurfaceLayerList):
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::contentSize):
+        (WebCore::CCLayerTreeHostImpl::prepareToDraw):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        (WebCore::findRootScrollLayer):
+        (WebCore):
+        (WebCore::findScrollLayerForContentLayer):
+        (WebCore::CCLayerTreeHostImpl::setRootLayer):
+        (WebCore::CCLayerTreeHostImpl::detachLayerTree):
+        (WebCore::adjustScrollsForPageScaleChange):
+        (WebCore::applyPageScaleDeltaToScrollLayers):
+        (WebCore::CCLayerTreeHostImpl::setPageScaleFactorAndLimits):
+        (WebCore::CCLayerTreeHostImpl::setPageScaleDelta):
+        (WebCore::CCLayerTreeHostImpl::updateMaxScrollPosition):
+        (WebCore::CCLayerTreeHostImpl::ensureRenderSurfaceLayerList):
+        (WebCore::CCLayerTreeHostImpl::clearCurrentlyScrollingLayer):
+        (WebCore::CCLayerTreeHostImpl::scrollBegin):
+        (WebCore::CCLayerTreeHostImpl::scrollBy):
+        (WebCore::CCLayerTreeHostImpl::scrollEnd):
+        (WebCore::CCLayerTreeHostImpl::pinchGestureUpdate):
+        (WebCore::CCLayerTreeHostImpl::computePinchZoomDeltas):
+        (WebCore::CCLayerTreeHostImpl::makeScrollAndScaleSet):
+        (WebCore::collectScrollDeltas):
+        (WebCore::CCLayerTreeHostImpl::processScrollDeltas):
+        (WebCore::CCLayerTreeHostImpl::animatePageScale):
+        (WebCore::CCLayerTreeHostImpl::animateLayers):
+        (WebCore::CCLayerTreeHostImpl::clearRenderSurfaces):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (FrameData):
+        (CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::rootScrollLayer):
+
 2012-06-15  Jian Li  <jianli@chromium.org>
 
         FileReader is dysfunctional in documents with "null" origin string

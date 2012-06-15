@@ -94,6 +94,7 @@ LayerChromium::LayerChromium()
     , m_screenSpaceTransformIsAnimating(false)
     , m_contentsScale(1.0)
     , m_layerAnimationDelegate(0)
+    , m_layerScrollDelegate(0)
 {
 }
 
@@ -395,6 +396,14 @@ void LayerChromium::setScrollPosition(const IntPoint& scrollPosition)
     setNeedsCommit();
 }
 
+void LayerChromium::setMaxScrollPosition(const IntSize& maxScrollPosition)
+{
+    if (m_maxScrollPosition == maxScrollPosition)
+        return;
+    m_maxScrollPosition = maxScrollPosition;
+    setNeedsCommit();
+}
+
 void LayerChromium::setScrollable(bool scrollable)
 {
     if (m_scrollable == scrollable)
@@ -426,6 +435,13 @@ void LayerChromium::setNonFastScrollableRegion(const Region& region)
     m_nonFastScrollableRegion = region;
     m_nonFastScrollableRegionChanged = true;
     setNeedsCommit();
+}
+
+void LayerChromium::scrollBy(const IntSize& scrollDelta)
+{
+    setScrollPosition(scrollPosition() + scrollDelta);
+    if (m_layerScrollDelegate)
+        m_layerScrollDelegate->didScroll(scrollDelta);
 }
 
 void LayerChromium::setDrawCheckerboardForMissingTiles(bool checkerboard)
@@ -545,6 +561,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setFixedToContainerLayer(m_fixedToContainerLayer);
     layer->setPreserves3D(preserves3D());
     layer->setScrollPosition(m_scrollPosition);
+    layer->setMaxScrollPosition(m_maxScrollPosition);
     layer->setSublayerTransform(m_sublayerTransform);
     if (!transformIsAnimating())
         layer->setTransform(m_transform);

@@ -202,14 +202,14 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureScrollStarted)
     m_inputHandler->handleInputEvent(gesture);
 }
 
-TEST_F(WebCompositorInputHandlerImplTest, gestureScrollFailed)
+TEST_F(WebCompositorInputHandlerImplTest, gestureScrollOnMainThread)
 {
     // We should send all events to the widget for this gesture.
     m_expectedDisposition = DidNotHandle;
     VERIFY_AND_RESET_MOCKS();
 
     EXPECT_CALL(m_mockCCInputHandlerClient, scrollBegin(::testing::_, ::testing::_))
-        .WillOnce(testing::Return(WebCore::CCInputHandlerClient::ScrollFailed));
+        .WillOnce(testing::Return(WebCore::CCInputHandlerClient::ScrollOnMainThread));
 
     gesture.type = WebInputEvent::GestureScrollBegin;
     m_inputHandler->handleInputEvent(gesture);
@@ -306,7 +306,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingFailed)
     VERIFY_AND_RESET_MOCKS();
 
     EXPECT_CALL(m_mockCCInputHandlerClient, scrollBegin(testing::_, testing::_))
-        .WillOnce(testing::Return(WebCore::CCInputHandlerClient::ScrollFailed));
+        .WillOnce(testing::Return(WebCore::CCInputHandlerClient::ScrollOnMainThread));
 
     gesture.type = WebInputEvent::GestureFlingStart;
     m_inputHandler->handleInputEvent(gesture);
@@ -387,7 +387,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingAnimates)
     // transferred to the main thread.
     EXPECT_CALL(m_mockCCInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockCCInputHandlerClient, scrollBegin(testing::_, testing::_))
-        .WillOnce(testing::Return(WebCore::CCInputHandlerClient::ScrollFailed));
+        .WillOnce(testing::Return(WebCore::CCInputHandlerClient::ScrollOnMainThread));
     EXPECT_CALL(m_mockCCInputHandlerClient, scrollBy(testing::_)).Times(0);
     EXPECT_CALL(m_mockCCInputHandlerClient, scrollEnd()).Times(0);
 
@@ -469,7 +469,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResets)
     // transferred to the main thread.
     EXPECT_CALL(m_mockCCInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockCCInputHandlerClient, scrollBegin(testing::_, testing::_))
-        .WillOnce(testing::Return(WebCore::CCInputHandlerClient::ScrollFailed));
+        .WillOnce(testing::Return(WebCore::CCInputHandlerClient::ScrollOnMainThread));
     EXPECT_CALL(m_mockCCInputHandlerClient, scrollBy(testing::_)).Times(0);
     EXPECT_CALL(m_mockCCInputHandlerClient, scrollEnd()).Times(0);
 
@@ -546,7 +546,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResets)
     // Then abort the second fling.
     EXPECT_CALL(m_mockCCInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockCCInputHandlerClient, scrollBegin(testing::_, testing::_))
-        .WillOnce(testing::Return(WebCore::CCInputHandlerClient::ScrollFailed));
+        .WillOnce(testing::Return(WebCore::CCInputHandlerClient::ScrollOnMainThread));
     EXPECT_CALL(m_mockCCInputHandlerClient, scrollBy(testing::_)).Times(0);
     EXPECT_CALL(m_mockCCInputHandlerClient, scrollEnd()).Times(0);
 

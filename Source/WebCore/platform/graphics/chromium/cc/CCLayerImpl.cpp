@@ -33,6 +33,7 @@
 #include "LayerRendererChromium.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerSorter.h"
+#include "cc/CCMathUtil.h"
 #include "cc/CCQuadCuller.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include <wtf/text/WTFString.h>
@@ -186,6 +187,40 @@ void CCLayerImpl::scrollBy(const FloatSize& scroll)
     noteLayerPropertyChangedForSubtree();
 }
 
+CCInputHandlerClient::ScrollStatus CCLayerImpl::tryScroll(const IntPoint& viewportPoint, CCInputHandlerClient::ScrollInputType type) const
+{
+    if (shouldScrollOnMainThread()) {
+        TRACE_EVENT0("cc", "CCLayerImpl::tryScroll: Failed shouldScrollOnMainThread");
+        return CCInputHandlerClient::ScrollOnMainThread;
+    }
+
+    if (!screenSpaceTransform().isInvertible()) {
+        TRACE_EVENT0("cc", "CCLayerImpl::tryScroll: Ignored nonInvertibleTransform");
+        return CCInputHandlerClient::ScrollIgnored;
+    }
+
+    if (!nonFastScrollableRegion().isEmpty()) {
+        bool clipped = false;
+        FloatPoint hitTestPointInLocalSpace = CCMathUtil::projectPoint(screenSpaceTransform().inverse(), FloatPoint(viewportPoint), clipped);
+        if (!clipped && nonFastScrollableRegion().contains(flooredIntPoint(hitTestPointInLocalSpace))) {
+            TRACE_EVENT0("cc", "CCLayerImpl::tryScroll: Failed nonFastScrollableRegion");
+            return CCInputHandlerClient::ScrollOnMainThread;
+        }
+    }
+
+    if (type == CCInputHandlerClient::Wheel && haveWheelEventHandlers()) {
+        TRACE_EVENT0("cc", "CCLayerImpl::tryScroll: Failed wheelEventHandlers");
+        return CCInputHandlerClient::ScrollOnMainThread;
+    }
+
+    if (!scrollable()) {
+        TRACE_EVENT0("cc", "CCLayerImpl::tryScroll: Ignored not scrollable");
+        return CCInputHandlerClient::ScrollIgnored;
+    }
+
+    return CCInputHandlerClient::ScrollStarted;
+}
+
 const IntRect CCLayerImpl::getDrawRect() const
 {
     // Form the matrix used by the shader to map the corners of the layer's
@@ -238,7 +273,7 @@ void CCLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
 
 void sortLayers(Vector<CCLayerImpl*>::iterator first, Vector<CCLayerImpl*>::iterator end, CCLayerSorter* layerSorter)
 {
-    TRACE_EVENT("LayerRendererChromium::sortLayers", 0, 0);
+    TRACE_EVENT0("cc", "LayerRendererChromium::sortLayers");
     layerSorter->sort(first, end);
 }
 

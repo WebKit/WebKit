@@ -65,6 +65,15 @@ class CCLayerTreeHost;
 class CCTextureUpdater;
 class ScrollbarLayerChromium;
 
+// Delegate for handling scroll input for a LayerChromium.
+class LayerChromiumScrollDelegate {
+public:
+    virtual void didScroll(const IntSize&) = 0;
+
+protected:
+    virtual ~LayerChromiumScrollDelegate() { }
+};
+
 // Base class for composited layers. Special layer types are derived from
 // this class.
 class LayerChromium : public RefCounted<LayerChromium>, public CCLayerAnimationControllerClient {
@@ -151,12 +160,18 @@ public:
     void setScrollPosition(const IntPoint&);
     const IntPoint& scrollPosition() const { return m_scrollPosition; }
 
+    void setMaxScrollPosition(const IntSize&);
+    const IntSize& maxScrollPosition() const { return m_maxScrollPosition; }
+
     void setScrollable(bool);
+    bool scrollable() const { return m_scrollable; }
     void setShouldScrollOnMainThread(bool);
     void setHaveWheelEventHandlers(bool);
     const Region& nonFastScrollableRegion() { return m_nonFastScrollableRegion; }
     void setNonFastScrollableRegion(const Region&);
     void setNonFastScrollableRegionChanged() { m_nonFastScrollableRegionChanged = true; }
+    void setLayerScrollDelegate(LayerChromiumScrollDelegate* layerScrollDelegate) { m_layerScrollDelegate = layerScrollDelegate; }
+    void scrollBy(const IntSize&);
 
     void setDrawCheckerboardForMissingTiles(bool);
     bool drawCheckerboardForMissingTiles() const { return m_drawCheckerboardForMissingTiles; }
@@ -326,6 +341,7 @@ private:
     // Uses target surface's space.
     IntRect m_scissorRect;
     IntPoint m_scrollPosition;
+    IntSize m_maxScrollPosition;
     bool m_scrollable;
     bool m_shouldScrollOnMainThread;
     bool m_haveWheelEventHandlers;
@@ -378,6 +394,7 @@ private:
     float m_contentsScale;
 
     CCLayerAnimationDelegate* m_layerAnimationDelegate;
+    LayerChromiumScrollDelegate* m_layerScrollDelegate;
 };
 
 void sortLayers(Vector<RefPtr<LayerChromium> >::iterator, Vector<RefPtr<LayerChromium> >::iterator, void*);

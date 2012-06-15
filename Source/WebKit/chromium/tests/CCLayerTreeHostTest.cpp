@@ -2220,4 +2220,78 @@ private:
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestLayerAddedWithAnimation)
 
+class CCLayerTreeHostTestScrollChildLayer : public CCLayerTreeHostTest, public LayerChromiumScrollDelegate {
+public:
+    CCLayerTreeHostTestScrollChildLayer()
+        : m_scrollAmount(2, 1)
+    {
+    }
+
+    virtual void beginTest() OVERRIDE
+    {
+        m_layerTreeHost->setViewportSize(IntSize(10, 10));
+        m_rootScrollLayer = ContentLayerChromium::create(&m_mockDelegate);
+        m_rootScrollLayer->setBounds(IntSize(10, 10));
+        m_rootScrollLayer->setIsDrawable(true);
+        m_rootScrollLayer->setScrollable(true);
+        m_rootScrollLayer->setMaxScrollPosition(IntSize(100, 100));
+        m_layerTreeHost->rootLayer()->addChild(m_rootScrollLayer);
+        m_childLayer = ContentLayerChromium::create(&m_mockDelegate);
+        m_childLayer->setLayerScrollDelegate(this);
+        m_childLayer->setBounds(IntSize(50, 50));
+        m_childLayer->setIsDrawable(true);
+        m_childLayer->setScrollable(true);
+        m_childLayer->setMaxScrollPosition(IntSize(100, 100));
+        m_rootScrollLayer->addChild(m_childLayer);
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void didScroll(const IntSize& scrollDelta) OVERRIDE
+    {
+        m_reportedScrollAmount = scrollDelta;
+    }
+
+    virtual void applyScrollAndScale(const IntSize& scrollDelta, float) OVERRIDE
+    {
+        IntPoint position = m_rootScrollLayer->scrollPosition();
+        m_rootScrollLayer->setScrollPosition(position + scrollDelta);
+    }
+
+    virtual void beginCommitOnCCThread(CCLayerTreeHostImpl* impl) OVERRIDE
+    {
+        EXPECT_EQ(m_rootScrollLayer->scrollPosition(), IntPoint());
+        if (!m_layerTreeHost->frameNumber())
+            EXPECT_EQ(m_childLayer->scrollPosition(), IntPoint());
+        else
+            EXPECT_EQ(m_childLayer->scrollPosition(), IntPoint() + m_scrollAmount);
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl) OVERRIDE
+    {
+        if (impl->frameNumber() == 1) {
+            EXPECT_EQ(impl->scrollBegin(IntPoint(5, 5), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
+            impl->scrollBy(m_scrollAmount);
+            impl->scrollEnd();
+        } else if (impl->frameNumber() == 2)
+            endTest();
+    }
+
+    virtual void afterTest() OVERRIDE
+    {
+        EXPECT_EQ(m_scrollAmount, m_reportedScrollAmount);
+    }
+
+private:
+    const IntSize m_scrollAmount;
+    IntSize m_reportedScrollAmount;
+    MockContentLayerDelegate m_mockDelegate;
+    RefPtr<LayerChromium> m_childLayer;
+    RefPtr<LayerChromium> m_rootScrollLayer;
+};
+
+TEST_F(CCLayerTreeHostTestScrollChildLayer, runMultiThread)
+{
+    runTest(true);
+}
+
 } // namespace

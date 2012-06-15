@@ -1,3 +1,32 @@
+2012-06-15  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Allow scrolling non-root layers in the compositor thread
+        https://bugs.webkit.org/show_bug.cgi?id=73350
+
+        Reviewed by James Robinson.
+
+        New unit tests to verify layer scrolling behavior and the associated
+        utility functions.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::handleInputEventInternal):
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockContentLayerDelegate::paintContents):
+        (CCLayerTreeHostTestScrollChildLayer):
+        (WTF::CCLayerTreeHostTestScrollChildLayer::CCLayerTreeHostTestScrollChildLayer):
+        (WTF::CCLayerTreeHostTestScrollChildLayer::beginTest):
+        (WTF::CCLayerTreeHostTestScrollChildLayer::applyScrollAndScale):
+        (WTF::CCLayerTreeHostTestScrollChildLayer::beginCommitOnCCThread):
+        (WTF::CCLayerTreeHostTestScrollChildLayer::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestScrollChildLayer::afterTest):
+        (WTF):
+        (WTF::TEST_F):
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+        (WebKit::TEST_F):
+
 2012-06-15  Hironori Bono  <hbono@chromium.org>
 
         Allow platforms to choose whether to remove markers on editing

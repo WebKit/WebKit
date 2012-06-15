@@ -242,7 +242,7 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 {
     ASSERT(CCProxy::isImplThread());
 
-    hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->releaseRootLayer(), hostImpl));
+    hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->detachLayerTree(), hostImpl));
 
     // We may have added an animation during the tree sync. This will cause both layer tree hosts
     // to visit their controllers.
@@ -618,15 +618,42 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
     occlusionTracker.overdrawMetrics().recordMetrics(this);
 }
 
+static LayerChromium* findFirstScrollableLayer(LayerChromium* layer)
+{
+    if (!layer)
+        return 0;
+
+    if (layer->scrollable())
+        return layer;
+
+    for (size_t i = 0; i < layer->children().size(); ++i) {
+        LayerChromium* found = findFirstScrollableLayer(layer->children()[i].get());
+        if (found)
+            return found;
+    }
+
+    return 0;
+}
+
 void CCLayerTreeHost::applyScrollAndScale(const CCScrollAndScaleSet& info)
 {
-    // FIXME: pushing scroll offsets to non-root layers not implemented
-    if (!info.scrolls.size())
+    if (!m_rootLayer)
         return;
 
-    ASSERT(info.scrolls.size() == 1);
-    IntSize scrollDelta = info.scrolls[0].scrollDelta;
-    m_client->applyScrollAndScale(scrollDelta, info.pageScaleDelta);
+    LayerChromium* rootScrollLayer = findFirstScrollableLayer(m_rootLayer.get());
+    IntSize rootScrollDelta;
+
+    for (size_t i = 0; i < info.scrolls.size(); ++i) {
+        LayerChromium* layer = CCLayerTreeHostCommon::findLayerInSubtree(m_rootLayer.get(), info.scrolls[i].layerId);
+        if (!layer)
+            continue;
+        if (layer == rootScrollLayer)
+            rootScrollDelta += info.scrolls[i].scrollDelta;
+        else
+            layer->scrollBy(info.scrolls[i].scrollDelta);
+    }
+    if (!rootScrollDelta.isZero() || info.pageScaleDelta != 1)
+        m_client->applyScrollAndScale(rootScrollDelta, info.pageScaleDelta);
 }
 
 void CCLayerTreeHost::startRateLimiter(WebKit::WebGraphicsContext3D* context)

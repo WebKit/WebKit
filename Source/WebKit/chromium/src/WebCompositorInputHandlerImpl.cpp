@@ -191,7 +191,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
             // FIXME: This should be DropEvent, but in cases where we fail to properly sync scrollability it's safer to send the
             // event to the main thread. Change back to DropEvent once we have synchronization bugs sorted out.
             return DidNotHandle; 
-        case CCInputHandlerClient::ScrollFailed:
+        case CCInputHandlerClient::ScrollOnMainThread:
             return DidNotHandle;
         }
     } else if (event.type == WebInputEvent::GestureScrollBegin) {
@@ -206,7 +206,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
         case CCInputHandlerClient::ScrollStarted:
             m_gestureScrollStarted = true;
             return DidHandle;
-        case CCInputHandlerClient::ScrollFailed:
+        case CCInputHandlerClient::ScrollOnMainThread:
             return DidNotHandle;
         case CCInputHandlerClient::ScrollIgnored:
             return DropEvent;
@@ -278,8 +278,8 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
         m_inputHandlerClient->scheduleAnimation();
         return DidHandle;
     }
-    case CCInputHandlerClient::ScrollFailed: {
-        TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::failed");
+    case CCInputHandlerClient::ScrollOnMainThread: {
+        TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::scrollOnMainThread");
         return DidNotHandle;
     }
     case CCInputHandlerClient::ScrollIgnored: {

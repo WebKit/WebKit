@@ -86,7 +86,7 @@ public:
 
     struct FrameData {
         CCRenderPassList renderPasses;
-        CCLayerList renderSurfaceLayerList;
+        CCLayerList* renderSurfaceLayerList;
         CCLayerList willDrawLayers;
     };
 
@@ -133,10 +133,13 @@ public:
     void readback(void* pixels, const IntRect&);
 
     void setRootLayer(PassOwnPtr<CCLayerImpl>);
-    PassOwnPtr<CCLayerImpl> releaseRootLayer() { return m_rootLayerImpl.release(); }
     CCLayerImpl* rootLayer() { return m_rootLayerImpl.get(); }
 
-    CCLayerImpl* scrollLayer() const { return m_scrollLayerImpl; }
+    // Release ownership of the current layer tree and replace it with an empty
+    // tree. Returns the root layer of the detached tree.
+    PassOwnPtr<CCLayerImpl> detachLayerTree();
+
+    CCLayerImpl* rootScrollLayer() const { return m_rootScrollLayerImpl; }
 
     bool visible() const { return m_visible; }
     void setVisible(bool);
@@ -196,8 +199,6 @@ private:
     void makeScrollAndScaleSet(CCScrollAndScaleSet* scrollInfo, const IntSize& scrollOffset, float pageScale);
 
     void setPageScaleDelta(float);
-    void applyPageScaleDeltaToScrollLayer();
-    void adjustScrollsForPageScaleChange(float);
     void updateMaxScrollPosition();
     void trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
 
@@ -210,13 +211,17 @@ private:
     IntSize contentSize() const;
     void sendDidLoseContextRecursive(CCLayerImpl*);
     void clearRenderSurfaces();
+    bool ensureRenderSurfaceLayerList();
+    void clearCurrentlyScrollingLayer();
 
     void dumpRenderSurfaces(TextStream&, int indent, const CCLayerImpl*) const;
 
     RefPtr<CCGraphicsContext> m_context;
     OwnPtr<CCRenderer> m_layerRenderer;
     OwnPtr<CCLayerImpl> m_rootLayerImpl;
-    CCLayerImpl* m_scrollLayerImpl;
+    CCLayerImpl* m_rootScrollLayerImpl;
+    CCLayerImpl* m_currentlyScrollingLayerImpl;
+    int m_scrollingLayerIdFromPreviousTree;
     CCLayerTreeSettings m_settings;
     IntSize m_viewportSize;
     IntSize m_deviceViewportSize;
@@ -247,6 +252,10 @@ private:
     CCLayerSorter m_layerSorter;
 
     FloatRect m_rootScissorRect;
+
+    // List of visible layers for the most recently prepared frame. Used for
+    // rendering and input event hit testing.
+    CCLayerList m_renderSurfaceLayerList;
 
     OwnPtr<CCFrameRateCounter> m_fpsCounter;
     OwnPtr<CCDebugRectHistory> m_debugRectHistory;
