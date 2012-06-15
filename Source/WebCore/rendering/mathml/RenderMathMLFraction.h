@@ -47,6 +47,9 @@ protected:
     virtual void layout();
     
 private:
+    void fixChildStyle(RenderObject* child);
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+
     virtual const char* renderName() const { return "RenderMathMLFraction"; }
     
     float m_lineThickness;

@@ -70,6 +70,14 @@ void RenderMathMLOperator::stretchToHeight(int height)
     updateFromElement();
 }
 
+void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderMathMLBlock::styleDidChange(diff, oldStyle);
+    
+    if (firstChild())
+        updateFromElement();
+}
+
 void RenderMathMLOperator::computePreferredLogicalWidths() 
 {
     ASSERT(preferredLogicalWidthsDirty());
@@ -150,6 +158,10 @@ int RenderMathMLOperator::lineHeightForCharacter(UChar character)
     return gGlyphLineHeight;
 }
 
+// FIXME: It's cleaner to only call updateFromElement when an attribute has changed. The body of
+// this method should probably be moved to a private stretchHeightChanged or checkStretchHeight
+// method. Probably at the same time, addChild/removeChild methods should be made to work for
+// dynamic DOM changes.
 void RenderMathMLOperator::updateFromElement()
 {
     RenderObject* savedRenderer = node()->renderer();

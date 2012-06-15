@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Alex Milowski (alex@milowski.com). All rights reserved.
+ * Copyright (C) 2012 David Barton (dbarton@mathscribe.com). All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,9 +80,8 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&);
 #endif
     
-    // Create a new RenderBlock, with a new style inheriting from this->style().
-    // FIXME: Create a true anonymous block, like RenderBlock::createAnonymousBlock().
-    RenderMathMLBlock* createAlmostAnonymousBlock(EDisplay = BLOCK);
+    // Create a new RenderMathMLBlock, with a new style inheriting from this->style().
+    RenderMathMLBlock* createAnonymousMathMLBlock(EDisplay = BLOCK);
     
 protected:
     static LayoutUnit getBoxModelObjectHeight(const RenderObject* object)
@@ -104,7 +104,7 @@ protected:
     }
 
 private:
-    virtual const char* renderName() const { return isAnonymous() ? "RenderMathMLBlock (anonymous)" : "RenderMathMLBlock"; }
+    virtual const char* renderName() const OVERRIDE;
     
 protected:
     // Set our logical width to a large value, and compute our children's preferred logical heights.

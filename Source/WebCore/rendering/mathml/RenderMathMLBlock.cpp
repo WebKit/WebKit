@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
+ * Copyright (C) 2012 David Barton (dbarton@mathscribe.com). All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -146,10 +147,10 @@ void RenderMathMLBlock::computePreferredLogicalWidths()
     RenderBlock::computePreferredLogicalWidths();
 }
 
-RenderMathMLBlock* RenderMathMLBlock::createAlmostAnonymousBlock(EDisplay display)
+RenderMathMLBlock* RenderMathMLBlock::createAnonymousMathMLBlock(EDisplay display)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), display);
-    RenderMathMLBlock* newBlock = new (renderArena()) RenderMathMLBlock(node() /* "almost" anonymous block */);
+    RenderMathMLBlock* newBlock = new (renderArena()) RenderMathMLBlock(document() /* is anonymous */);
     newBlock->setStyle(newStyle.release());
     return newBlock;
 }
@@ -194,6 +195,18 @@ LayoutUnit RenderMathMLBlock::preferredLogicalHeightAfterSizing(RenderObject* ch
         return toRenderBox(child)->logicalHeight();
     }
     return child->style()->fontSize();
+}
+
+const char* RenderMathMLBlock::renderName() const
+{
+    EDisplay display = style()->display();
+    if (display == BLOCK)
+        return isAnonymous() ? "RenderMathMLBlock (anonymous, block)" : "RenderMathMLBlock (block)";
+    if (display == INLINE_BLOCK)
+        return isAnonymous() ? "RenderMathMLBlock (anonymous, inline-block)" : "RenderMathMLBlock (inline-block)";
+    // |display| should be one of the above.
+    ASSERT_NOT_REACHED();
+    return isAnonymous() ? "RenderMathMLBlock (anonymous)" : "RenderMathMLBlock";
 }
 
 #if ENABLE(DEBUG_MATH_LAYOUT)

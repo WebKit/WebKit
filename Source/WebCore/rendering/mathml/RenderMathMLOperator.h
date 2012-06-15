@@ -58,6 +58,8 @@ private:
     int glyphHeightForCharacter(UChar);
     int lineHeightForCharacter(UChar);
 
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+
     int m_stretchHeight;
     bool m_isStacked;
     UChar m_operator;

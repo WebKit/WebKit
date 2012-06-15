@@ -41,9 +41,11 @@ public:
 private:
     virtual const char* renderName() const { return "RenderMathMLFenced"; }
 
-    PassRefPtr<RenderStyle> createOperatorStyle();
+    RenderMathMLOperator* createMathMLOperator(UChar);
     void makeFences();
     
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+
     UChar m_open;
     UChar m_close;
     RefPtr<StringImpl> m_separators;

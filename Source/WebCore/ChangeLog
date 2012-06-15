@@ -1,3 +1,60 @@
+2012-06-15  David Barton  <dbarton@mathscribe.com>
+
+        Inherit style changes in MathML anonymous renderers
+        https://bugs.webkit.org/show_bug.cgi?id=88476
+
+        Reviewed by Julien Chaffraix.
+
+        A RenderObject that is not the main renderer() for a DOM node is called "anonymous".
+        Standard WebCore practice is to mark such a renderer as isAnonymous(). For example,
+        RenderBlock::styleDidChange calls propagateStyleToAnonymousChildren to flow style
+        changes to such children, by re-initializing their styles and then inheriting from
+        this->style(). A derived class' styleDidChange() can then set non-default style
+        properties as needed.
+        
+        This patch implements this standard practice for RenderMathMLBlock classes, except
+        RenderMathMLOperator which currently uses a RenderLayer, which reportedly means it
+        should not be isAnonymous(). We also follow common practice and change
+        isAnonymousBlock() to return false for RenderMathMLBlock classes, since
+        isAnonymousBlock() is really used by RenderBlock to detect its own anonymous blocks for
+        wrapping inline children, which RenderBlock then combines or deletes assuming this.
+        
+        Test: mathml/presentation/style-changed.html, also added to mathml/presentation/over.xhtml
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAnonymousBlock):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::createAnonymousMathMLBlock):
+        (WebCore::RenderMathMLBlock::renderName):
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::createMathMLOperator):
+        (WebCore::RenderMathMLFenced::makeFences):
+        (WebCore::RenderMathMLFenced::addChild):
+        (WebCore::RenderMathMLFenced::styleDidChange):
+        * rendering/mathml/RenderMathMLFenced.h:
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::RenderMathMLFraction):
+        (WebCore::RenderMathMLFraction::fixChildStyle):
+        (WebCore::RenderMathMLFraction::addChild):
+        (WebCore::RenderMathMLFraction::styleDidChange):
+        * rendering/mathml/RenderMathMLFraction.h:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::styleDidChange):
+        * rendering/mathml/RenderMathMLOperator.h:
+        * rendering/mathml/RenderMathMLSquareRoot.h:
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::fixScriptsStyle):
+        (WebCore::RenderMathMLSubSup::addChild):
+        (WebCore::RenderMathMLSubSup::styleDidChange):
+        * rendering/mathml/RenderMathMLSubSup.h:
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::addChild):
+        (WebCore::RenderMathMLUnderOver::styleDidChange):
+        * rendering/mathml/RenderMathMLUnderOver.h:
+
 2012-06-13  Vincent Scheib  <scheib@chromium.org>
 
         Add new Pointer Lock spec webkitRequestPointerLock and webkitExitPointerLock methods.

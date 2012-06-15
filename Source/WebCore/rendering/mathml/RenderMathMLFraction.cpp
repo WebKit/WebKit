@@ -50,9 +50,19 @@ RenderMathMLFraction::RenderMathMLFraction(Element* element)
     : RenderMathMLBlock(element)
     , m_lineThickness(gLineMedium)
 {
-    setChildrenInline(false);
 }
 
+void RenderMathMLFraction::fixChildStyle(RenderObject* child)
+{
+    ASSERT(child->isAnonymous() && child->style()->refCount() == 1);
+    child->style()->setTextAlign(CENTER);
+    Length pad(static_cast<int>(style()->fontSize() * gHorizontalPad), Fixed);
+    child->style()->setPaddingLeft(pad);
+    child->style()->setPaddingRight(pad);
+}
+
+// FIXME: It's cleaner to only call updateFromElement when an attribute has changed. Move parts
+// of this to fixChildStyle or other methods, and call them when needed.
 void RenderMathMLFraction::updateFromElement()
 {
     // FIXME: mfrac where bevelled=true will need to reorganize the descendants
@@ -100,20 +110,21 @@ void RenderMathMLFraction::updateFromElement()
 
 void RenderMathMLFraction::addChild(RenderObject* child, RenderObject* beforeChild)
 {
-    RenderBlock* row = createAlmostAnonymousBlock();
-    
-    row->style()->setTextAlign(CENTER);
-    Length pad(static_cast<int>(style()->fontSize() * gHorizontalPad), Fixed);
-    row->style()->setPaddingLeft(pad);
-    row->style()->setPaddingRight(pad);
-    
-    // Only add padding for rows as denominators
-    bool isNumerator = isEmpty();
-    if (!isNumerator) 
-        row->style()->setPaddingTop(Length(2, Fixed));
+    RenderMathMLBlock* row = createAnonymousMathMLBlock();
     
     RenderBlock::addChild(row, beforeChild);
     row->addChild(child);
+    
+    fixChildStyle(row);
+    updateFromElement();
+}
+
+void RenderMathMLFraction::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderMathMLBlock::styleDidChange(diff, oldStyle);
+    
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling())
+        fixChildStyle(child);
     updateFromElement();
 }
 

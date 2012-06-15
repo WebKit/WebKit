@@ -4,12 +4,12 @@ layer at (0,0) size 800x489
   RenderBlock {html} at (0,0) size 800x489
     RenderBody {body} at (8,16) size 784x457
       RenderBlock {p} at (0,0) size 784x19
-        RenderMathMLMath {math} at (0,3) size 27x16
+        RenderMathMLMath {math} at (0,3) size 27x16 [padding: 0 1 0 1]
           RenderInline {mi} at (0,0) size 7x16
             RenderText {#text} at (1,0) size 7x16
               text run at (1,0) width 7: "x"
-          RenderMathMLOperator {mo} at (8,0) size 10x16 [bgcolor=#C8C8C8]
-            RenderMathMLBlock {mo} at (0,0) size 9x16
+          RenderMathMLOperator {mo} at (8,0) size 10x16 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
+            RenderMathMLBlock (inline-block) {mo} at (0,0) size 9x16
               RenderText {mo} at (0,0) size 9x16
                 text run at (0,0) width 9: "+"
           RenderInline {mn} at (0,0) size 8x16
@@ -19,74 +19,74 @@ layer at (0,0) size 800x489
       RenderBlock {p} at (0,35) size 784x20
         RenderText {#text} at (0,0) size 40x18
           text run at (0,0) width 40: "16px: "
-        RenderMathMLMath {math} at (40,1) size 45x19
+        RenderMathMLMath {math} at (40,1) size 45x19 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 43x19
-            RenderMathMLOperator {mo} at (0,0) size 10x19 [bgcolor=#C8C8C8]
-              RenderMathMLBlock {mo} at (0,0) size 9x19
+            RenderMathMLOperator {mo} at (0,0) size 10x19 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
+              RenderMathMLBlock (inline-block) {mo} at (0,0) size 9x19
                 RenderText {mo} at (0,0) size 9x19
                   text run at (0,0) width 9: "{"
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (10,2) size 7x16
                 text run at (10,2) width 7: "x"
             RenderBlock {div} at (17,2) size 16x16 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (33,0) size 10x19 [bgcolor=#C8C8C8]
-              RenderMathMLBlock {mo} at (0,0) size 9x19
+            RenderMathMLOperator {mo} at (33,0) size 10x19 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
+              RenderMathMLBlock (inline-block) {mo} at (0,0) size 9x19
                 RenderText {mo} at (0,0) size 9x19
                   text run at (0,0) width 9: "}"
         RenderText {#text} at (85,0) size 4x18
           text run at (85,0) width 4: " "
-        RenderMathMLMath {math} at (89,1) size 39x19
+        RenderMathMLMath {math} at (89,1) size 39x19 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 37x19
-            RenderMathMLOperator {mo} at (0,0) size 7x19 [bgcolor=#C8C8C8]
-              RenderMathMLBlock {mo} at (0,0) size 6x19
+            RenderMathMLOperator {mo} at (0,0) size 7x19 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
+              RenderMathMLBlock (inline-block) {mo} at (0,0) size 6x19
                 RenderText {mo} at (0,0) size 6x19
                   text run at (0,0) width 6: "["
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (7,2) size 7x16
                 text run at (7,2) width 7: "x"
             RenderBlock {div} at (14,2) size 16x16 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (30,0) size 7x19 [bgcolor=#C8C8C8]
-              RenderMathMLBlock {mo} at (0,0) size 6x19
+            RenderMathMLOperator {mo} at (30,0) size 7x19 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
+              RenderMathMLBlock (inline-block) {mo} at (0,0) size 6x19
                 RenderText {mo} at (0,0) size 6x19
                   text run at (0,0) width 6: "]"
         RenderText {#text} at (128,0) size 4x18
           text run at (128,0) width 4: " "
-        RenderMathMLMath {math} at (132,1) size 39x19
+        RenderMathMLMath {math} at (132,1) size 39x19 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 37x19
-            RenderMathMLOperator {mo} at (0,0) size 7x19 [bgcolor=#C8C8C8]
-              RenderMathMLBlock {mo} at (0,0) size 6x19
+            RenderMathMLOperator {mo} at (0,0) size 7x19 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
+              RenderMathMLBlock (inline-block) {mo} at (0,0) size 6x19
                 RenderText {mo} at (0,0) size 6x19
                   text run at (0,0) width 6: "("
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (7,2) size 7x16
                 text run at (7,2) width 7: "x"
             RenderBlock {div} at (14,2) size 16x16 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (30,0) size 7x19 [bgcolor=#C8C8C8]
-              RenderMathMLBlock {mo} at (0,0) size 6x19
+            RenderMathMLOperator {mo} at (30,0) size 7x19 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
+              RenderMathMLBlock (inline-block) {mo} at (0,0) size 6x19
                 RenderText {mo} at (0,0) size 6x19
                   text run at (0,0) width 6: ")"
         RenderText {#text} at (171,0) size 4x18
           text run at (171,0) width 4: " "
-        RenderMathMLMath {math} at (175,1) size 35x19
+        RenderMathMLMath {math} at (175,1) size 35x19 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 33x19
-            RenderMathMLOperator {mo} at (0,0) size 5x19 [bgcolor=#C8C8C8]
-              RenderMathMLBlock {mo} at (0,0) size 4x19
+            RenderMathMLOperator {mo} at (0,0) size 5x19 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
+              RenderMathMLBlock (inline-block) {mo} at (0,0) size 4x19
                 RenderText {mo} at (0,0) size 4x19
                   text run at (0,0) width 4: "|"
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (5,2) size 7x16
                 text run at (5,2) width 7: "x"
             RenderBlock {div} at (12,2) size 16x16 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (28,0) size 5x19 [bgcolor=#C8C8C8]
-              RenderMathMLBlock {mo} at (0,0) size 4x19
+            RenderMathMLOperator {mo} at (28,0) size 5x19 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
+              RenderMathMLBlock (inline-block) {mo} at (0,0) size 4x19
                 RenderText {mo} at (0,0) size 4x19
                   text run at (0,0) width 4: "|"
         RenderText {#text} at (210,0) size 4x18
           text run at (210,0) width 4: " "
-        RenderMathMLMath {math} at (214,1) size 31x19
+        RenderMathMLMath {math} at (214,1) size 31x19 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 29x19
-            RenderMathMLOperator {mo} at (0,0) size 6x19 [bgcolor=#C8C8C8]
-              RenderMathMLBlock {mo} at (0,0) size 5x19
+            RenderMathMLOperator {mo} at (0,0) size 6x19 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
+              RenderMathMLBlock (inline-block) {mo} at (0,0) size 5x19
                 RenderText {mo} at (0,0) size 5x19
                   text run at (0,0) width 5: "\x{222B}"
             RenderInline {mi} at (0,0) size 7x16
@@ -97,49 +97,49 @@ layer at (0,0) size 800x489
       RenderBlock {p} at (0,71) size 784x31
         RenderText {#text} at (0,3) size 40x18
           text run at (0,3) width 40: "24px: "
-        RenderMathMLMath {math} at (40,0) size 49x31
+        RenderMathMLMath {math} at (40,0) size 49x31 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 47x31
-            RenderMathMLOperator {mo} at (0,1) size 8x30 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,1) size 8x30 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (8,6) size 7x16
                 text run at (8,6) width 7: "x"
             RenderBlock {div} at (15,0) size 24x24 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (39,1) size 8x30 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (39,1) size 8x30 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (89,3) size 4x18
           text run at (89,3) width 4: " "
-        RenderMathMLMath {math} at (93,0) size 45x30
+        RenderMathMLMath {math} at (93,0) size 45x30 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 43x30
-            RenderMathMLOperator {mo} at (0,1) size 6x29 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,1) size 6x29 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (6,6) size 7x16
                 text run at (6,6) width 7: "x"
             RenderBlock {div} at (13,0) size 24x24 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (37,1) size 6x29 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (37,1) size 6x29 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (138,3) size 4x18
           text run at (138,3) width 4: " "
-        RenderMathMLMath {math} at (142,0) size 45x30
+        RenderMathMLMath {math} at (142,0) size 45x30 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 43x30
-            RenderMathMLOperator {mo} at (0,1) size 6x29 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,1) size 6x29 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (6,6) size 7x16
                 text run at (6,6) width 7: "x"
             RenderBlock {div} at (13,0) size 24x24 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (37,1) size 6x29 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (37,1) size 6x29 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (187,3) size 4x18
           text run at (187,3) width 4: " "
-        RenderMathMLMath {math} at (191,0) size 51x30
+        RenderMathMLMath {math} at (191,0) size 51x30 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 49x30
-            RenderMathMLOperator {mo} at (0,1) size 9x29 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,1) size 9x29 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (9,6) size 7x16
                 text run at (9,6) width 7: "x"
             RenderBlock {div} at (16,0) size 24x24 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (40,1) size 9x29 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (40,1) size 9x29 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (242,3) size 4x18
           text run at (242,3) width 4: " "
-        RenderMathMLMath {math} at (246,0) size 44x30
+        RenderMathMLMath {math} at (246,0) size 44x30 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 42x30
-            RenderMathMLOperator {mo} at (0,1) size 11x29 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,1) size 11x29 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (11,6) size 7x16
                 text run at (11,6) width 7: "x"
@@ -148,49 +148,49 @@ layer at (0,0) size 800x489
       RenderBlock {p} at (0,118) size 784x39
         RenderText {#text} at (0,8) size 40x18
           text run at (0,8) width 40: "32px: "
-        RenderMathMLMath {math} at (40,0) size 57x39
+        RenderMathMLMath {math} at (40,0) size 57x39 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 55x39
-            RenderMathMLOperator {mo} at (0,0) size 8x39 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 8x39 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (8,11) size 7x16
                 text run at (8,11) width 7: "x"
             RenderBlock {div} at (15,0) size 32x32 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (47,0) size 8x39 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (47,0) size 8x39 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (97,8) size 4x18
           text run at (97,8) width 4: " "
-        RenderMathMLMath {math} at (101,0) size 53x39
+        RenderMathMLMath {math} at (101,0) size 53x39 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 51x39
-            RenderMathMLOperator {mo} at (0,0) size 6x39 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 6x39 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (6,11) size 7x16
                 text run at (6,11) width 7: "x"
             RenderBlock {div} at (13,0) size 32x32 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (45,0) size 6x39 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (45,0) size 6x39 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (154,8) size 4x18
           text run at (154,8) width 4: " "
-        RenderMathMLMath {math} at (158,0) size 53x39
+        RenderMathMLMath {math} at (158,0) size 53x39 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 51x39
-            RenderMathMLOperator {mo} at (0,0) size 6x39 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 6x39 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (6,11) size 7x16
                 text run at (6,11) width 7: "x"
             RenderBlock {div} at (13,0) size 32x32 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (45,0) size 6x39 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (45,0) size 6x39 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (211,8) size 4x18
           text run at (211,8) width 4: " "
-        RenderMathMLMath {math} at (215,0) size 59x39
+        RenderMathMLMath {math} at (215,0) size 59x39 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 57x39
-            RenderMathMLOperator {mo} at (0,0) size 9x39 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 9x39 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (9,11) size 7x16
                 text run at (9,11) width 7: "x"
             RenderBlock {div} at (16,0) size 32x32 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (48,0) size 9x39 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (48,0) size 9x39 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (274,8) size 4x18
           text run at (274,8) width 4: " "
-        RenderMathMLMath {math} at (278,0) size 52x39
+        RenderMathMLMath {math} at (278,0) size 52x39 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 50x39
-            RenderMathMLOperator {mo} at (0,0) size 11x39 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 11x39 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (11,11) size 7x16
                 text run at (11,11) width 7: "x"
@@ -199,49 +199,49 @@ layer at (0,0) size 800x489
       RenderBlock {p} at (0,173) size 784x58
         RenderText {#text} at (0,19) size 40x18
           text run at (0,19) width 40: "48px: "
-        RenderMathMLMath {math} at (40,0) size 73x58
+        RenderMathMLMath {math} at (40,0) size 73x58 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 71x58
-            RenderMathMLOperator {mo} at (0,0) size 8x58 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 8x58 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (8,22) size 7x16
                 text run at (8,22) width 7: "x"
             RenderBlock {div} at (15,0) size 48x48 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (63,0) size 8x58 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (63,0) size 8x58 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (113,19) size 4x18
           text run at (113,19) width 4: " "
-        RenderMathMLMath {math} at (117,0) size 69x58
+        RenderMathMLMath {math} at (117,0) size 69x58 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 67x58
-            RenderMathMLOperator {mo} at (0,0) size 6x58 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 6x58 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (6,22) size 7x16
                 text run at (6,22) width 7: "x"
             RenderBlock {div} at (13,0) size 48x48 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (61,0) size 6x58 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (61,0) size 6x58 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (186,19) size 4x18
           text run at (186,19) width 4: " "
-        RenderMathMLMath {math} at (190,0) size 69x58
+        RenderMathMLMath {math} at (190,0) size 69x58 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 67x58
-            RenderMathMLOperator {mo} at (0,0) size 6x58 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 6x58 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (6,22) size 7x16
                 text run at (6,22) width 7: "x"
             RenderBlock {div} at (13,0) size 48x48 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (61,0) size 6x58 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (61,0) size 6x58 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (259,19) size 4x18
           text run at (259,19) width 4: " "
-        RenderMathMLMath {math} at (263,0) size 75x58
+        RenderMathMLMath {math} at (263,0) size 75x58 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 73x58
-            RenderMathMLOperator {mo} at (0,0) size 9x58 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 9x58 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (9,22) size 7x16
                 text run at (9,22) width 7: "x"
             RenderBlock {div} at (16,0) size 48x48 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (64,0) size 9x58 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (64,0) size 9x58 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (338,19) size 4x18
           text run at (338,19) width 4: " "
-        RenderMathMLMath {math} at (342,0) size 68x58
+        RenderMathMLMath {math} at (342,0) size 68x58 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 66x58
-            RenderMathMLOperator {mo} at (0,0) size 11x58 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 11x58 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (11,22) size 7x16
                 text run at (11,22) width 7: "x"
@@ -250,974 +250,974 @@ layer at (0,0) size 800x489
       RenderBlock {p} at (0,247) size 784x145
         RenderText {#text} at (0,70) size 48x18
           text run at (0,70) width 48: "120px: "
-        RenderMathMLMath {math} at (48,0) size 73x145
+        RenderMathMLMath {math} at (48,0) size 73x145 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 71x145
-            RenderMathMLOperator {mo} at (0,0) size 8x145 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 8x145 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (8,73) size 7x16
                 text run at (8,73) width 7: "x"
             RenderBlock {div} at (15,3) size 48x120 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (63,0) size 8x145 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (63,0) size 8x145 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (121,70) size 4x18
           text run at (121,70) width 4: " "
-        RenderMathMLMath {math} at (125,0) size 69x145
+        RenderMathMLMath {math} at (125,0) size 69x145 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 67x145
-            RenderMathMLOperator {mo} at (0,0) size 6x145 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 6x145 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (6,73) size 7x16
                 text run at (6,73) width 7: "x"
             RenderBlock {div} at (13,3) size 48x120 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (61,0) size 6x145 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (61,0) size 6x145 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (194,70) size 4x18
           text run at (194,70) width 4: " "
-        RenderMathMLMath {math} at (198,0) size 69x145
+        RenderMathMLMath {math} at (198,0) size 69x145 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 67x145
-            RenderMathMLOperator {mo} at (0,0) size 6x145 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 6x145 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (6,73) size 7x16
                 text run at (6,73) width 7: "x"
             RenderBlock {div} at (13,3) size 48x120 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (61,0) size 6x145 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (61,0) size 6x145 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (267,70) size 4x18
           text run at (267,70) width 4: " "
-        RenderMathMLMath {math} at (271,0) size 75x145
+        RenderMathMLMath {math} at (271,0) size 75x145 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 73x145
-            RenderMathMLOperator {mo} at (0,0) size 9x145 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 9x145 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (9,73) size 7x16
                 text run at (9,73) width 7: "x"
             RenderBlock {div} at (16,3) size 48x120 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (64,0) size 9x145 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (64,0) size 9x145 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (346,70) size 4x18
           text run at (346,70) width 4: " "
-        RenderMathMLMath {math} at (350,0) size 68x145
+        RenderMathMLMath {math} at (350,0) size 68x145 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 66x145
-            RenderMathMLOperator {mo} at (0,0) size 11x145 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 11x145 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (11,73) size 7x16
                 text run at (11,73) width 7: "x"
             RenderBlock {div} at (18,3) size 48x120 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,408) size 784x49
-        RenderMathMLMath {math} at (0,0) size 156x49
+        RenderMathMLMath {math} at (0,0) size 156x49 [padding: 0 1 0 1]
           RenderMathMLRow {mrow} at (1,0) size 154x49
-            RenderMathMLOperator {mo} at (0,0) size 6x49 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (0,0) size 6x49 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (6,17) size 7x16
                 text run at (6,17) width 7: "x"
-            RenderMathMLOperator {mo} at (13,17) size 5x16 [bgcolor=#C8C8C8]
-              RenderMathMLBlock {mo} at (0,0) size 4x16
+            RenderMathMLOperator {mo} at (13,17) size 5x16 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
+              RenderMathMLBlock (inline-block) {mo} at (0,0) size 4x16
                 RenderText {mo} at (0,0) size 4x16
                   text run at (0,0) width 4: ","
             RenderBlock {div} at (18,1) size 40x40 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (58,17) size 5x16 [bgcolor=#C8C8C8]
-              RenderMathMLBlock {mo} at (0,0) size 4x16
+            RenderMathMLOperator {mo} at (58,17) size 5x16 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
+              RenderMathMLBlock (inline-block) {mo} at (0,0) size 4x16
                 RenderText {mo} at (0,0) size 4x16
                   text run at (0,0) width 4: ","
             RenderBlock {div} at (63,1) size 40x40 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (103,17) size 5x16 [bgcolor=#C8C8C8]
-              RenderMathMLBlock {mo} at (0,0) size 4x16
+            RenderMathMLOperator {mo} at (103,17) size 5x16 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
+              RenderMathMLBlock (inline-block) {mo} at (0,0) size 4x16
                 RenderText {mo} at (0,0) size 4x16
                   text run at (0,0) width 4: ","
             RenderBlock {div} at (108,1) size 40x40 [bgcolor=#00FF00]
-            RenderMathMLOperator {mo} at (148,0) size 6x49 [bgcolor=#C8C8C8]
+            RenderMathMLOperator {mo} at (148,0) size 6x49 [bgcolor=#C8C8C8] [padding: 0 1 0 0]
         RenderText {#text} at (0,0) size 0x0
 layer at (49,88) size 7x9 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 7x9
+  RenderMathMLBlock (block) {mo} at (0,0) size 7x9
 layer at (49,97) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,9) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,9) size 7x10
 layer at (49,107) size 7x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,19) size 7x11
+  RenderMathMLBlock (block) {mo} at (0,19) size 7x11
 layer at (88,88) size 7x9 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 7x9
+  RenderMathMLBlock (block) {mo} at (0,0) size 7x9
 layer at (88,97) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,9) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,9) size 7x10
 layer at (88,107) size 7x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,19) size 7x11
+  RenderMathMLBlock (block) {mo} at (0,19) size 7x11
 layer at (102,88) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (102,98) size 5x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x8
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x8
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (102,106) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,18) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,18) size 5x11
 layer at (139,88) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (139,98) size 5x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x8
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x8
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (139,106) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,18) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,18) size 5x11
 layer at (151,88) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (151,98) size 5x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x8
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x8
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (151,106) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,18) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,18) size 5x11
 layer at (188,88) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (188,98) size 5x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x8
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x8
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (188,106) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,18) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,18) size 5x11
 layer at (200,88) size 8x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 8x10
 layer at (200,98) size 8x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 8x8
+  RenderMathMLBlock (block) {mo} at (0,10) size 8x8
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (200,106) size 8x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,18) size 8x11
+  RenderMathMLBlock (block) {mo} at (0,18) size 8x11
 layer at (240,88) size 8x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 8x10
 layer at (240,98) size 8x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 8x8
+  RenderMathMLBlock (block) {mo} at (0,10) size 8x8
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (240,106) size 8x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,18) size 8x11
+  RenderMathMLBlock (block) {mo} at (0,18) size 8x11
 layer at (255,88) size 10x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 10x10
 layer at (255,98) size 10x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 10x8
+  RenderMathMLBlock (block) {mo} at (0,10) size 10x8
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (255,106) size 10x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,18) size 10x11
+  RenderMathMLBlock (block) {mo} at (0,18) size 10x11
 layer at (49,134) size 7x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 7x10
 layer at (49,144) size 7x4 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 7x4
+  RenderMathMLBlock (block) {mo} at (0,10) size 7x4
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (49,148) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,14) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,14) size 7x10
 layer at (49,158) size 7x4 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,24) size 7x4
+  RenderMathMLBlock (block) {mo} at (0,24) size 7x4
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (49,162) size 7x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,28) size 7x11
+  RenderMathMLBlock (block) {mo} at (0,28) size 7x11
 layer at (96,134) size 7x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 7x10
 layer at (96,144) size 7x4 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 7x4
+  RenderMathMLBlock (block) {mo} at (0,10) size 7x4
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (96,148) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,14) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,14) size 7x10
 layer at (96,158) size 7x4 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,24) size 7x4
+  RenderMathMLBlock (block) {mo} at (0,24) size 7x4
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (96,162) size 7x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,28) size 7x11
+  RenderMathMLBlock (block) {mo} at (0,28) size 7x11
 layer at (110,134) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (110,144) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (110,154) size 5x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x8
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x8
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (110,162) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,28) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,28) size 5x11
 layer at (155,134) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (155,144) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (155,154) size 5x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x8
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x8
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (155,162) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,28) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,28) size 5x11
 layer at (167,134) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (167,144) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (167,154) size 5x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x8
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x8
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (167,162) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,28) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,28) size 5x11
 layer at (212,134) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (212,144) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (212,154) size 5x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x8
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x8
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (212,162) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,28) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,28) size 5x11
 layer at (224,134) size 8x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 8x10
 layer at (224,144) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (224,154) size 8x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 8x8
+  RenderMathMLBlock (block) {mo} at (0,20) size 8x8
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (224,162) size 8x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,28) size 8x11
+  RenderMathMLBlock (block) {mo} at (0,28) size 8x11
 layer at (272,134) size 8x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 8x10
 layer at (272,144) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (272,154) size 8x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 8x8
+  RenderMathMLBlock (block) {mo} at (0,20) size 8x8
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (272,162) size 8x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,28) size 8x11
+  RenderMathMLBlock (block) {mo} at (0,28) size 8x11
 layer at (287,134) size 10x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 10x10
 layer at (287,144) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (287,154) size 10x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 10x8
+  RenderMathMLBlock (block) {mo} at (0,20) size 10x8
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (287,162) size 10x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,28) size 10x11
+  RenderMathMLBlock (block) {mo} at (0,28) size 10x11
 layer at (49,189) size 7x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 7x10
 layer at (49,199) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (49,209) size 7x3 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 7x3
+  RenderMathMLBlock (block) {mo} at (0,20) size 7x3
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (49,212) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,23) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,23) size 7x10
 layer at (49,222) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,33) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,33) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (49,232) size 7x4 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,43) size 7x4
+  RenderMathMLBlock (block) {mo} at (0,43) size 7x4
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (49,236) size 7x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,47) size 7x11
+  RenderMathMLBlock (block) {mo} at (0,47) size 7x11
 layer at (112,189) size 7x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 7x10
 layer at (112,199) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (112,209) size 7x3 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 7x3
+  RenderMathMLBlock (block) {mo} at (0,20) size 7x3
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (112,212) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,23) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,23) size 7x10
 layer at (112,222) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,33) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,33) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (112,232) size 7x4 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,43) size 7x4
+  RenderMathMLBlock (block) {mo} at (0,43) size 7x4
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (112,236) size 7x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,47) size 7x11
+  RenderMathMLBlock (block) {mo} at (0,47) size 7x11
 layer at (126,189) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (126,199) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (126,209) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (126,219) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (126,229) size 5x7 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 5x7
+  RenderMathMLBlock (block) {mo} at (0,40) size 5x7
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (126,236) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,47) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,47) size 5x11
 layer at (187,189) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (187,199) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (187,209) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (187,219) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (187,229) size 5x7 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 5x7
+  RenderMathMLBlock (block) {mo} at (0,40) size 5x7
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (187,236) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,47) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,47) size 5x11
 layer at (199,189) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (199,199) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (199,209) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (199,219) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (199,229) size 5x7 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 5x7
+  RenderMathMLBlock (block) {mo} at (0,40) size 5x7
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (199,236) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,47) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,47) size 5x11
 layer at (260,189) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (260,199) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (260,209) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (260,219) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (260,229) size 5x7 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 5x7
+  RenderMathMLBlock (block) {mo} at (0,40) size 5x7
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (260,236) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,47) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,47) size 5x11
 layer at (272,189) size 8x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 8x10
 layer at (272,199) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (272,209) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (272,219) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (272,229) size 8x7 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 8x7
+  RenderMathMLBlock (block) {mo} at (0,40) size 8x7
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (272,236) size 8x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,47) size 8x11
+  RenderMathMLBlock (block) {mo} at (0,47) size 8x11
 layer at (336,189) size 8x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 8x10
 layer at (336,199) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (336,209) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (336,219) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (336,229) size 8x7 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 8x7
+  RenderMathMLBlock (block) {mo} at (0,40) size 8x7
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (336,236) size 8x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,47) size 8x11
+  RenderMathMLBlock (block) {mo} at (0,47) size 8x11
 layer at (351,189) size 10x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 10x10
 layer at (351,199) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (351,209) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (351,219) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (351,229) size 10x7 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 10x7
+  RenderMathMLBlock (block) {mo} at (0,40) size 10x7
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (351,236) size 10x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,47) size 10x11
+  RenderMathMLBlock (block) {mo} at (0,47) size 10x11
 layer at (57,263) size 7x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 7x10
 layer at (57,273) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (57,283) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (57,293) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (57,303) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,40) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (57,313) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,50) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,50) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (57,323) size 7x7 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,60) size 7x7
+  RenderMathMLBlock (block) {mo} at (0,60) size 7x7
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (57,330) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,67) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,67) size 7x10
 layer at (57,340) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,77) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,77) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (57,350) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,87) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,87) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (57,360) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,97) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,97) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (57,370) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,107) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,107) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (57,380) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,117) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,117) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (57,390) size 7x7 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,127) size 7x7
+  RenderMathMLBlock (block) {mo} at (0,127) size 7x7
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (57,397) size 7x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,134) size 7x11
+  RenderMathMLBlock (block) {mo} at (0,134) size 7x11
 layer at (120,263) size 7x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 7x10
 layer at (120,273) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (120,283) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (120,293) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (120,303) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,40) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (120,313) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,50) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,50) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (120,323) size 7x7 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,60) size 7x7
+  RenderMathMLBlock (block) {mo} at (0,60) size 7x7
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (120,330) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,67) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,67) size 7x10
 layer at (120,340) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,77) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,77) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (120,350) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,87) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,87) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (120,360) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,97) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,97) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (120,370) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,107) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,107) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (120,380) size 7x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,117) size 7x10
+  RenderMathMLBlock (block) {mo} at (0,117) size 7x10
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (120,390) size 7x7 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,127) size 7x7
+  RenderMathMLBlock (block) {mo} at (0,127) size 7x7
     RenderText {mo} at (0,-1) size 7x14
       text run at (0,-1) width 7: "\x{23AA}"
 layer at (120,397) size 7x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,134) size 7x11
+  RenderMathMLBlock (block) {mo} at (0,134) size 7x11
 layer at (134,263) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (134,273) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (134,283) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (134,293) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (134,303) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,40) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (134,313) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,50) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,50) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (134,323) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,60) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,60) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (134,333) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,70) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,70) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (134,343) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,80) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,80) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (134,353) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,90) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,90) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (134,363) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,100) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,100) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (134,373) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,110) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,110) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (134,383) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,120) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,120) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (134,393) size 5x4 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,130) size 5x4
+  RenderMathMLBlock (block) {mo} at (0,130) size 5x4
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A2}"
 layer at (134,397) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,134) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,134) size 5x11
 layer at (195,263) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (195,273) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (195,283) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (195,293) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (195,303) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,40) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (195,313) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,50) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,50) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (195,323) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,60) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,60) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (195,333) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,70) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,70) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (195,343) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,80) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,80) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (195,353) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,90) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,90) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (195,363) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,100) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,100) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (195,373) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,110) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,110) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (195,383) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,120) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,120) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (195,393) size 5x4 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,130) size 5x4
+  RenderMathMLBlock (block) {mo} at (0,130) size 5x4
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{23A5}"
 layer at (195,397) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,134) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,134) size 5x11
 layer at (207,263) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (207,273) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (207,283) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (207,293) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (207,303) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,40) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (207,313) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,50) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,50) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (207,323) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,60) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,60) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (207,333) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,70) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,70) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (207,343) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,80) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,80) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (207,353) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,90) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,90) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (207,363) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,100) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,100) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (207,373) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,110) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,110) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (207,383) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,120) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,120) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (207,393) size 5x4 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,130) size 5x4
+  RenderMathMLBlock (block) {mo} at (0,130) size 5x4
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (207,397) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,134) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,134) size 5x11
 layer at (268,263) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (268,273) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (268,283) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (268,293) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (268,303) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,40) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (268,313) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,50) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,50) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (268,323) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,60) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,60) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (268,333) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,70) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,70) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (268,343) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,80) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,80) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (268,353) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,90) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,90) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (268,363) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,100) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,100) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (268,373) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,110) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,110) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (268,383) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,120) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,120) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (268,393) size 5x4 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,130) size 5x4
+  RenderMathMLBlock (block) {mo} at (0,130) size 5x4
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (268,397) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,134) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,134) size 5x11
 layer at (280,263) size 8x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 8x10
 layer at (280,273) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (280,283) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (280,293) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (280,303) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,40) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (280,313) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,50) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,50) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (280,323) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,60) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,60) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (280,333) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,70) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,70) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (280,343) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,80) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,80) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (280,353) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,90) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,90) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (280,363) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,100) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,100) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (280,373) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,110) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,110) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (280,383) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,120) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,120) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (280,393) size 8x4 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,130) size 8x4
+  RenderMathMLBlock (block) {mo} at (0,130) size 8x4
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (280,397) size 8x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,134) size 8x11
+  RenderMathMLBlock (block) {mo} at (0,134) size 8x11
 layer at (344,263) size 8x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 8x10
 layer at (344,273) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (344,283) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (344,293) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (344,303) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,40) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (344,313) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,50) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,50) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (344,323) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,60) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,60) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (344,333) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,70) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,70) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (344,343) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,80) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,80) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (344,353) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,90) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,90) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (344,363) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,100) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,100) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (344,373) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,110) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,110) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (344,383) size 8x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,120) size 8x10
+  RenderMathMLBlock (block) {mo} at (0,120) size 8x10
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (344,393) size 8x4 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,130) size 8x4
+  RenderMathMLBlock (block) {mo} at (0,130) size 8x4
     RenderText {mo} at (0,-1) size 8x14
       text run at (0,-1) width 8: "\x{23D0}"
 layer at (344,397) size 8x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,134) size 8x11
+  RenderMathMLBlock (block) {mo} at (0,134) size 8x11
 layer at (359,263) size 10x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 10x10
 layer at (359,273) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (359,283) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (359,293) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,30) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (359,303) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,40) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,40) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (359,313) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,50) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,50) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (359,323) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,60) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,60) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (359,333) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,70) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,70) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (359,343) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,80) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,80) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (359,353) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,90) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,90) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (359,363) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,100) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,100) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (359,373) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,110) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,110) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (359,383) size 10x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,120) size 10x10
+  RenderMathMLBlock (block) {mo} at (0,120) size 10x10
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (359,393) size 10x4 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,130) size 10x4
+  RenderMathMLBlock (block) {mo} at (0,130) size 10x4
     RenderText {mo} at (0,-1) size 10x14
       text run at (0,-1) width 10: "\x{23AE}"
 layer at (359,397) size 10x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,134) size 10x11
+  RenderMathMLBlock (block) {mo} at (0,134) size 10x11
 layer at (9,424) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (9,434) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (9,444) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (9,454) size 5x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 5x8
+  RenderMathMLBlock (block) {mo} at (0,30) size 5x8
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239C}"
 layer at (9,462) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,38) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,38) size 5x11
 layer at (157,424) size 5x10 scrollHeight 14
-  RenderMathMLBlock {mo} at (0,0) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,0) size 5x10
 layer at (157,434) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,10) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (157,444) size 5x10 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,20) size 5x10
+  RenderMathMLBlock (block) {mo} at (0,20) size 5x10
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (157,454) size 5x8 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,30) size 5x8
+  RenderMathMLBlock (block) {mo} at (0,30) size 5x8
     RenderText {mo} at (0,-1) size 5x14
       text run at (0,-1) width 5: "\x{239F}"
 layer at (157,462) size 5x11 scrollHeight 13
-  RenderMathMLBlock {mo} at (0,38) size 5x11
+  RenderMathMLBlock (block) {mo} at (0,38) size 5x11
 layer at (49,89) size 7x11 backgroundClip at (49,88) size 7x9 clip at (49,88) size 7x9 outlineClip at (49,88) size 7x9
   RenderBlock (relative positioned) {mo} at (0,0) size 7x11
     RenderText {mo} at (0,-1) size 7x14

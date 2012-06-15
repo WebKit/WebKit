@@ -44,6 +44,9 @@ protected:
     virtual void layout();
     
 private:
+    void fixScriptsStyle();
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+
     virtual const char* renderName() const { return "RenderMathMLSubSup"; }
 
     // Omit our subscript and/or superscript. This may return 0 for a non-MathML base (which

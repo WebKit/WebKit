@@ -486,6 +486,9 @@ public:
             && !isRenderFullScreen()
             && !isRenderFullScreenPlaceholder()
 #endif
+#if ENABLE(MATHML)
+            && !isRenderMathMLBlock()
+#endif
             ;
     }
     bool isAnonymousColumnsBlock() const { return style()->specifiesColumns() && isAnonymousBlock(); }

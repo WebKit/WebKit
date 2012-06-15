@@ -81,22 +81,19 @@ void RenderMathMLFenced::updateFromElement()
         makeFences();
 }
 
-PassRefPtr<RenderStyle> RenderMathMLFenced::createOperatorStyle()
+RenderMathMLOperator* RenderMathMLFenced::createMathMLOperator(UChar uChar)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::create();
-    newStyle->inheritFrom(style());
-    newStyle->setDisplay(INLINE_BLOCK);
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), INLINE_BLOCK);
     newStyle->setPaddingRight(Length(static_cast<int>(gOperatorPadding * style()->fontSize()), Fixed));
-    return newStyle.release();
+    RenderMathMLOperator* newOperator = new (renderArena()) RenderMathMLOperator(node() /* "almost anonymous" */, uChar);
+    newOperator->setStyle(newStyle.release());
+    return newOperator;
 }
 
 void RenderMathMLFenced::makeFences()
 {
-    RenderObject* openFence = new (renderArena()) RenderMathMLOperator(node(), m_open);
-    openFence->setStyle(createOperatorStyle());
-    RenderBlock::addChild(openFence, firstChild());
-    m_closeFenceRenderer = new (renderArena()) RenderMathMLOperator(node(), m_close);
-    m_closeFenceRenderer->setStyle(createOperatorStyle());
+    RenderBlock::addChild(createMathMLOperator(m_open), firstChild());
+    m_closeFenceRenderer = createMathMLOperator(m_close);
     RenderBlock::addChild(m_closeFenceRenderer);
 }
 
@@ -131,15 +128,14 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild
             else
                 separator = (*m_separators.get())[count - 1];
                 
-            separatorRenderer = new (renderArena()) RenderMathMLOperator(node(), separator);
-            separatorRenderer->setStyle(createOperatorStyle());
+            separatorRenderer = createMathMLOperator(separator);
         }
     }
     
     // If we have a block, we'll wrap it in an inline-block.
     if (child->isBlockFlow() && child->style()->display() != INLINE_BLOCK) {
         // Block objects wrapper.
-        RenderBlock* block = createAlmostAnonymousBlock(INLINE_BLOCK);
+        RenderMathMLBlock* block = createAnonymousMathMLBlock(INLINE_BLOCK);
         
         block->addChild(child);
         child = block;
@@ -155,6 +151,20 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild
         if (separatorRenderer)
             RenderBlock::addChild(separatorRenderer, m_closeFenceRenderer);
         RenderBlock::addChild(child, m_closeFenceRenderer);
+    }
+}
+
+// FIXME: Change createMathMLOperator() above to create an isAnonymous() operator, and remove this styleDidChange() function.
+void RenderMathMLFenced::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderMathMLBlock::styleDidChange(diff, oldStyle);
+    
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->node() == node()) {
+            ASSERT(child->style()->refCount() == 1);
+            child->style()->inheritFrom(style());
+            child->style()->setPaddingRight(Length(static_cast<int>(gOperatorPadding * style()->fontSize()), Fixed));
+        }
     }
 }
 

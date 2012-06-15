@@ -374,6 +374,23 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 
             ts << "]";
         }
+
+#if ENABLE(MATHML)
+        // We want to show any layout padding, both CSS padding and intrinsic padding, so we can't just check o.style()->hasPadding().
+        if (o.isRenderMathMLBlock() && (box.paddingTop() || box.paddingRight() || box.paddingBottom() || box.paddingLeft())) {
+            ts << " [";
+            LayoutUnit cssTop = box.computedCSSPaddingTop();
+            LayoutUnit cssRight = box.computedCSSPaddingRight();
+            LayoutUnit cssBottom = box.computedCSSPaddingBottom();
+            LayoutUnit cssLeft = box.computedCSSPaddingLeft();
+            if (box.paddingTop() != cssTop || box.paddingRight() != cssRight || box.paddingBottom() != cssBottom || box.paddingLeft() != cssLeft) {
+                ts << "intrinsic ";
+                if (cssTop || cssRight || cssBottom || cssLeft)
+                    ts << "+ CSS ";
+            }
+            ts << "padding: " << roundToInt(box.paddingTop()) << " " << roundToInt(box.paddingRight()) << " " << roundToInt(box.paddingBottom()) << " " << roundToInt(box.paddingLeft()) << "]";
+        }
+#endif
     }
 
     if (o.isTableCell()) {

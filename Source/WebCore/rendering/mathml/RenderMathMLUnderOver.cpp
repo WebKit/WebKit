@@ -66,7 +66,7 @@ RenderBoxModelObject* RenderMathMLUnderOver::base() const
 
 void RenderMathMLUnderOver::addChild(RenderObject* child, RenderObject* beforeChild)
 {    
-    RenderBlock* row = createAnonymousBlock();
+    RenderMathMLBlock* row = createAnonymousMathMLBlock();
     
     // look through the children for rendered elements counting the blocks so we know what child
     // we are adding
@@ -84,7 +84,6 @@ void RenderMathMLUnderOver::addChild(RenderObject* child, RenderObject* beforeCh
         break;
     case 1:
         // the under or over
-        // FIXME: text-align: center does not work
         row->style()->setTextAlign(CENTER);
         if (m_kind == Over) {
             // add the over as first
@@ -96,7 +95,6 @@ void RenderMathMLUnderOver::addChild(RenderObject* child, RenderObject* beforeCh
         break;
     case 2:
         // the under or over
-        // FIXME: text-align: center does not work
         row->style()->setTextAlign(CENTER);
         if (m_kind == UnderOver) {
             // add the over as first
@@ -113,6 +111,18 @@ void RenderMathMLUnderOver::addChild(RenderObject* child, RenderObject* beforeCh
         RenderBlock::addChild(row, beforeChild);
     }
     row->addChild(child);    
+}
+
+void RenderMathMLUnderOver::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderMathMLBlock::styleDidChange(diff, oldStyle);
+    
+    RenderObject* base = this->base();
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        ASSERT(child->isAnonymous() && child->style()->refCount() == 1);
+        if (child->firstChild() != base)
+            child->style()->setTextAlign(CENTER);
+    }
 }
 
 RenderMathMLOperator* RenderMathMLUnderOver::unembellishedOperator()

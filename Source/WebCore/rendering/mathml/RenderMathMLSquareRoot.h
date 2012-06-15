@@ -41,8 +41,6 @@ public:
     
 private:
     virtual const char* renderName() const { return "RenderMathMLSquareRoot"; }
-    
-    virtual bool createsAnonymousWrapper() const OVERRIDE { return true; }
 };
     
 }
