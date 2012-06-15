@@ -1,3 +1,13 @@
+2012-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline some tests after r120411.
+
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/mac/fast/multicol/client-rects-expected.txt:
+        * platform/mac/media/controls-after-reload-expected.txt:
+
 2012-06-15  Florin Malita  <fmalita@chromium.org>
 
         Unreviewed chromium rebaseline for r120467.
