@@ -1,3 +1,13 @@
+2012-06-15  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        Buildfix for !ENABLE(BLOB) platforms after r120433.
+        https://bugs.webkit.org/show_bug.cgi?id=78648
+
+        Reviewed by Csaba Osztrogonác.
+
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+
 2012-06-15  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Allow scrolling non-root layers in the compositor thread

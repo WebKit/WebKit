@@ -143,7 +143,7 @@ void ThreadableBlobRegistry::registerBlobURL(const KURL&, PassOwnPtr<BlobData>)
 {
 }
 
-void ThreadableBlobRegistry::registerBlobURL(const KURL&, const KURL&)
+void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin*, const KURL&, const KURL&)
 {
 }
 
