@@ -1,3 +1,12 @@
+2012-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use testRunner instead of layoutTestController in sputnik's conformance tests
+        https://bugs.webkit.org/show_bug.cgi?id=89184
+
+        Reviewed by Tony Chang.
+
+        * sputnik/Conformance/:
+
 2012-06-15  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Rebaselines for r120477.
