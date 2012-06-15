@@ -193,6 +193,7 @@ public:
     RenderObject* nextInPreOrderAfterChildren() const;
     RenderObject* nextInPreOrderAfterChildren(const RenderObject* stayWithin) const;
     RenderObject* previousInPreOrder() const;
+    RenderObject* previousInPreOrder(const RenderObject* stayWithin) const;
     RenderObject* childAt(unsigned) const;
 
     RenderObject* firstLeafChild() const;

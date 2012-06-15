@@ -1,3 +1,14 @@
+2012-06-15  Abhishek Arya  <inferno@chromium.org>
+
+        Cleanup empty anonymous block continuation.
+        https://bugs.webkit.org/show_bug.cgi?id=74976
+
+        Reviewed by Julien Chaffraix.
+
+        * fast/inline/inline-empty-block-continuation-remove-expected.html: Added.
+        * fast/inline/inline-empty-block-continuation-remove.html: Added.
+        and a bunch of rebaselines in existing tests.
+
 2012-06-15  Zan Dobersek  <zandobersek@gmail.com>
 
         Clean up the flaky tests section in Gtk's TestExpectations file. Remove

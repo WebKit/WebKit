@@ -389,6 +389,14 @@ RenderObject* RenderObject::previousInPreOrder() const
     return parent();
 }
 
+RenderObject* RenderObject::previousInPreOrder(const RenderObject* stayWithin) const
+{
+    if (this == stayWithin)
+        return 0;
+
+    return previousInPreOrder();
+}
+
 RenderObject* RenderObject::childAt(unsigned index) const
 {
     RenderObject* child = firstChild();

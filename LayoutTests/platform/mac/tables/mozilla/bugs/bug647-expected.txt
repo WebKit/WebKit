@@ -18,8 +18,6 @@ layer at (0,0) size 800x600
                         RenderBlock (anonymous) at (2,2) size 90x0
                           RenderInline {FONT} at (0,0) size 0x0
                             RenderText {#text} at (0,0) size 0x0
-                        RenderBlock (anonymous) at (2,2) size 90x0
-                        RenderBlock (anonymous) at (2,2) size 90x0
                           RenderInline {FONT} at (0,0) size 0x0
                         RenderBlock {CENTER} at (2,2) size 90x13
                           RenderInline {FONT} at (0,0) size 24x13

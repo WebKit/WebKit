@@ -1,3 +1,29 @@
+2012-06-15  Abhishek Arya  <inferno@chromium.org>
+
+        Cleanup empty anonymous block continuation.
+        https://bugs.webkit.org/show_bug.cgi?id=74976
+
+        Reviewed by Julien Chaffraix.
+
+        Fix rendering on http://docs.google.com/demo.
+
+        Test: fast/inline/inline-empty-block-continuation-remove.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild): If we are removing our last child,
+        and are an anonymous block which is part of a continuation chain, then
+        we need to first fix our continuation chain by setting our previous
+        continuation renderer to point to the next continuation renderer. Then,
+        we reset our continuation pointer and destroy ourselves. Since we no
+        longer are part of continuation chain, we will be removed and previous
+        and next anonymous block will be merged automatically.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::previousInPreOrder): add an argument to previousInOrder
+        - stayWithin.
+        (WebCore):
+        * rendering/RenderObject.h:
+        (RenderObject):
+
 2012-06-15  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Move FileSystem frame management from frontend to backend

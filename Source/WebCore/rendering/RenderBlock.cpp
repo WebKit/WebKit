@@ -1233,6 +1233,29 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         // If this was our last child be sure to clear out our line boxes.
         if (childrenInline())
             deleteLineBoxTree();
+
+        // If we are an empty anonymous block in the continuation chain,
+        // we need to remove ourself and fix the continuation chain.
+        if (!beingDestroyed() && isAnonymousBlockContinuation()) {
+            for (RenderObject* curr = this; curr; curr = curr->previousInPreOrder(parent())) {
+                if (curr->virtualContinuation() != this)
+                    continue;
+
+                // Found our previous continuation. We just need to point it to
+                // |this|'s next continuation.
+                RenderBoxModelObject* nextContinuation = continuation();
+                if (curr->isRenderInline())
+                    toRenderInline(curr)->setContinuation(nextContinuation);
+                else if (curr->isRenderBlock())
+                    toRenderBlock(curr)->setContinuation(nextContinuation);
+                else
+                    ASSERT_NOT_REACHED();
+
+                break;
+            }
+            setContinuation(0);
+            destroy();
+        }
     }
 }
 
