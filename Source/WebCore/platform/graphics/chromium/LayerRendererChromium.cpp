@@ -70,7 +70,7 @@
 #include "cc/CCStreamVideoDrawQuad.h"
 #include "cc/CCTextureDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
-#include "cc/CCVideoDrawQuad.h"
+#include "cc/CCYUVVideoDrawQuad.h"
 #include <public/WebVideoFrame.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -526,8 +526,8 @@ void LayerRendererChromium::drawQuad(const CCDrawQuad* quad)
     case CCDrawQuad::TiledContent:
         drawTileQuad(quad->toTileDrawQuad());
         break;
-    case CCDrawQuad::VideoContent:
-        drawVideoQuad(quad->toVideoDrawQuad());
+    case CCDrawQuad::YUVVideoContent:
+        drawYUVVideoQuad(quad->toYUVVideoDrawQuad());
         break;
     }
 }
@@ -983,14 +983,14 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
     drawTexturedQuad(quad->quadTransform(), tileRect.width(), tileRect.height(), quad->opacity(), localQuad, uniforms.matrixLocation, uniforms.alphaLocation, uniforms.pointLocation);
 }
 
-void LayerRendererChromium::drawYUV(const CCVideoDrawQuad* quad)
+void LayerRendererChromium::drawYUVVideoQuad(const CCYUVVideoDrawQuad* quad)
 {
     const VideoYUVProgram* program = videoYUVProgram();
     ASSERT(program && program->initialized());
 
-    const CCVideoLayerImpl::FramePlane& yPlane = quad->planes()[WebKit::WebVideoFrame::yPlane];
-    const CCVideoLayerImpl::FramePlane& uPlane = quad->planes()[WebKit::WebVideoFrame::uPlane];
-    const CCVideoLayerImpl::FramePlane& vPlane = quad->planes()[WebKit::WebVideoFrame::vPlane];
+    const CCVideoLayerImpl::FramePlane& yPlane = quad->yPlane();
+    const CCVideoLayerImpl::FramePlane& uPlane = quad->uPlane();
+    const CCVideoLayerImpl::FramePlane& vPlane = quad->vPlane();
 
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE1));
     GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, yPlane.textureId));
@@ -1065,19 +1065,6 @@ void LayerRendererChromium::drawStreamVideoQuad(const CCStreamVideoDrawQuad* qua
                      program->vertexShader().matrixLocation(),
                      program->fragmentShader().alphaLocation(),
                      -1);
-}
-
-void LayerRendererChromium::drawVideoQuad(const CCVideoDrawQuad* quad)
-{
-    ASSERT(CCProxy::isImplThread());
-
-    switch (quad->format()) {
-    case GraphicsContext3D::LUMINANCE:
-        drawYUV(quad);
-        break;
-    default:
-        CRASH(); // Someone updated convertVFCFormatToGC3DFormat above but update this!
-    }
 }
 
 struct TextureProgramBinding {

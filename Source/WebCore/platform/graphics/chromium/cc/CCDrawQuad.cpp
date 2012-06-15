@@ -36,7 +36,7 @@
 #include "cc/CCStreamVideoDrawQuad.h"
 #include "cc/CCTextureDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
-#include "cc/CCVideoDrawQuad.h"
+#include "cc/CCYUVVideoDrawQuad.h"
 
 namespace WebCore {
 
@@ -114,10 +114,10 @@ const CCTileDrawQuad* CCDrawQuad::toTileDrawQuad() const
     return static_cast<const CCTileDrawQuad*>(this);
 }
 
-const CCVideoDrawQuad* CCDrawQuad::toVideoDrawQuad() const
+const CCYUVVideoDrawQuad* CCDrawQuad::toYUVVideoDrawQuad() const
 {
     ASSERT(m_material == VideoContent);
-    return static_cast<const CCVideoDrawQuad*>(this);
+    return static_cast<const CCYUVVideoDrawQuad*>(this);
 }
 
 

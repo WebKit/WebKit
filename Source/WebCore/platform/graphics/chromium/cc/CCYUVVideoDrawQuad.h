@@ -23,35 +23,30 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCVideoDrawQuad_h
-#define CCVideoDrawQuad_h
+#ifndef CCYUVVideoDrawQuad_h
+#define CCYUVVideoDrawQuad_h
 
-#include "GraphicsTypes3D.h"
 #include "cc/CCDrawQuad.h"
 #include "cc/CCVideoLayerImpl.h"
-#include <public/WebTransformationMatrix.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class CCVideoDrawQuad : public CCDrawQuad {
-    WTF_MAKE_NONCOPYABLE(CCVideoDrawQuad);
+class CCYUVVideoDrawQuad : public CCDrawQuad {
+    WTF_MAKE_NONCOPYABLE(CCYUVVideoDrawQuad);
 public:
-    static PassOwnPtr<CCVideoDrawQuad> create(const CCSharedQuadState*, const IntRect&, CCVideoLayerImpl::FramePlane planes[WebKit::WebVideoFrame::maxPlanes], unsigned frameProviderTextureId, GC3Denum format, const WebKit::WebTransformationMatrix&);
+    static PassOwnPtr<CCYUVVideoDrawQuad> create(const CCSharedQuadState*, const IntRect&, const CCVideoLayerImpl::FramePlane& yPlane, const CCVideoLayerImpl::FramePlane& uPlane, const CCVideoLayerImpl::FramePlane& vPlane);
 
-    // Each index in this array corresponds to a plane in WebKit::WebVideoFrame.
-    const CCVideoLayerImpl::FramePlane* planes() const { return m_planes; }
-    unsigned frameProviderTextureId() const { return m_frameProviderTextureId; }
-    GC3Denum format() const { return m_format; }
-    const WebKit::WebTransformationMatrix& matrix() const { return m_matrix; }
+    const CCVideoLayerImpl::FramePlane& yPlane() const { return m_yPlane; }
+    const CCVideoLayerImpl::FramePlane& uPlane() const { return m_uPlane; }
+    const CCVideoLayerImpl::FramePlane& vPlane() const { return m_vPlane; }
 
 private:
-    CCVideoDrawQuad(const CCSharedQuadState*, const IntRect&, CCVideoLayerImpl::FramePlane planes[WebKit::WebVideoFrame::maxPlanes], unsigned frameProviderTextureId, GC3Denum format, const WebKit::WebTransformationMatrix&);
+    CCYUVVideoDrawQuad(const CCSharedQuadState*, const IntRect&, const CCVideoLayerImpl::FramePlane& yPlane, const CCVideoLayerImpl::FramePlane& uPlane, const CCVideoLayerImpl::FramePlane& vPlane);
 
-    CCVideoLayerImpl::FramePlane m_planes[WebKit::WebVideoFrame::maxPlanes];
-    unsigned m_frameProviderTextureId;
-    GC3Denum m_format;
-    WebKit::WebTransformationMatrix m_matrix;
+    CCVideoLayerImpl::FramePlane m_yPlane;
+    CCVideoLayerImpl::FramePlane m_uPlane;
+    CCVideoLayerImpl::FramePlane m_vPlane;
 };
 
 }

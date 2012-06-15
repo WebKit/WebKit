@@ -25,24 +25,21 @@
 
 #include "config.h"
 
-#include "cc/CCVideoDrawQuad.h"
+#include "cc/CCYUVVideoDrawQuad.h"
 
 namespace WebCore {
 
-PassOwnPtr<CCVideoDrawQuad> CCVideoDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCVideoLayerImpl::FramePlane planes[WebKit::WebVideoFrame::maxPlanes], unsigned frameProviderTextureId, GC3Denum format, const WebKit::WebTransformationMatrix& matrix)
+PassOwnPtr<CCYUVVideoDrawQuad> CCYUVVideoDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const CCVideoLayerImpl::FramePlane& yPlane, const CCVideoLayerImpl::FramePlane& uPlane, const CCVideoLayerImpl::FramePlane& vPlane)
 {
-    return adoptPtr(new CCVideoDrawQuad(sharedQuadState, quadRect, planes, frameProviderTextureId, format, matrix));
+    return adoptPtr(new CCYUVVideoDrawQuad(sharedQuadState, quadRect, yPlane, uPlane, vPlane));
 }
 
-CCVideoDrawQuad::CCVideoDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, CCVideoLayerImpl::FramePlane planes[WebKit::WebVideoFrame::maxPlanes], unsigned frameProviderTextureId, GC3Denum format, const WebKit::WebTransformationMatrix& matrix)
-    : CCDrawQuad(sharedQuadState, CCDrawQuad::VideoContent, quadRect)
-    , m_frameProviderTextureId(frameProviderTextureId)
-    , m_format(format)
-    , m_matrix(matrix)
+CCYUVVideoDrawQuad::CCYUVVideoDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const CCVideoLayerImpl::FramePlane& yPlane, const CCVideoLayerImpl::FramePlane& uPlane, const CCVideoLayerImpl::FramePlane& vPlane)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::YUVVideoContent, quadRect)
+    , m_yPlane(yPlane)
+    , m_uPlane(uPlane)
+    , m_vPlane(vPlane)
 {
-    for (size_t i = 0; i < WebKit::WebVideoFrame::maxPlanes; ++i)
-      m_planes[i] = planes[i];
-
 }
 
 }

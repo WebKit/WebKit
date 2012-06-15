@@ -51,7 +51,7 @@ class CCSolidColorDrawQuad;
 class CCStreamVideoDrawQuad;
 class CCTextureDrawQuad;
 class CCTileDrawQuad;
-class CCVideoDrawQuad;
+class CCYUVVideoDrawQuad;
 class GeometryBinding;
 class GraphicsContext3D;
 class LayerRendererGpuMemoryAllocationChangedCallbackAdapter;
@@ -135,12 +135,7 @@ private:
     void drawTextureQuad(const CCTextureDrawQuad*);
     void drawIOSurfaceQuad(const CCIOSurfaceDrawQuad*);
     void drawTileQuad(const CCTileDrawQuad*);
-    void drawVideoQuad(const CCVideoDrawQuad*);
-
-    void copyPlaneToTexture(const CCVideoDrawQuad*, const void* plane, int index);
-    bool copyFrameToTextures(const CCVideoDrawQuad*);
-    void drawStreamTexture(const CCVideoDrawQuad*);
-    void drawYUV(const CCVideoDrawQuad*);
+    void drawYUVVideoQuad(const CCYUVVideoDrawQuad*);
 
     void setDrawFramebufferRect(const IntRect&, bool flipY);
 

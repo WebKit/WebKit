@@ -41,7 +41,7 @@
 #include "cc/CCQuadCuller.h"
 #include "cc/CCStreamVideoDrawQuad.h"
 #include "cc/CCTextureDrawQuad.h"
-#include "cc/CCVideoDrawQuad.h"
+#include "cc/CCYUVVideoDrawQuad.h"
 #include <public/WebVideoFrame.h>
 #include <wtf/text/WTFString.h>
 
@@ -187,8 +187,11 @@ void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
     switch (m_format) {
     case GraphicsContext3D::LUMINANCE: {
         // YUV software decoder.
-        OwnPtr<CCVideoDrawQuad> videoQuad = CCVideoDrawQuad::create(sharedQuadState, quadRect, m_framePlanes, 0, m_format, WebKit::WebTransformationMatrix());
-        quadList.append(videoQuad.release());
+        const FramePlane& yPlane = m_framePlanes[WebKit::WebVideoFrame::yPlane];
+        const FramePlane& uPlane = m_framePlanes[WebKit::WebVideoFrame::uPlane];
+        const FramePlane& vPlane = m_framePlanes[WebKit::WebVideoFrame::vPlane];
+        OwnPtr<CCYUVVideoDrawQuad> yuvVideoQuad = CCYUVVideoDrawQuad::create(sharedQuadState, quadRect, yPlane, uPlane, vPlane);
+        quadList.append(yuvVideoQuad.release());
         break;
     }
     case GraphicsContext3D::RGBA: {

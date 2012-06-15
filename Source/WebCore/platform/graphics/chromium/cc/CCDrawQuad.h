@@ -38,7 +38,7 @@ class CCSolidColorDrawQuad;
 class CCStreamVideoDrawQuad;
 class CCTextureDrawQuad;
 class CCTileDrawQuad;
-class CCVideoDrawQuad;
+class CCYUVVideoDrawQuad;
 
 // CCDrawQuad is a bag of data used for drawing a quad. Because different
 // materials need different bits of per-quad data to render, classes that derive
@@ -72,7 +72,7 @@ public:
         TextureContent,
         SolidColor,
         TiledContent,
-        VideoContent,
+        YUVVideoContent,
         StreamVideoContent,
     };
 
@@ -87,7 +87,7 @@ public:
     const CCStreamVideoDrawQuad* toStreamVideoDrawQuad() const;
     const CCTextureDrawQuad* toTextureDrawQuad() const;
     const CCTileDrawQuad* toTileDrawQuad() const;
-    const CCVideoDrawQuad* toVideoDrawQuad() const;
+    const CCYUVVideoDrawQuad* toYUVVideoDrawQuad() const;
 
     const CCSharedQuadState* sharedQuadState() const { return m_sharedQuadState; }
 
