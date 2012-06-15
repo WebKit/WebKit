@@ -1,3 +1,18 @@
+2012-06-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [CMAKE] Move JSDeprecatedPeerConnectionCustom.cpp from CMakeLists.txt to UseJSC.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=89015
+
+        Reviewed by Antonio Gomes.
+
+        Include JSDeprecatedPeerConnectionCustom.cpp in UseJSC.cmake
+        instead of CMakeLists.txt.
+
+        No change in functionality so no new tests.
+
+        * CMakeLists.txt:
+        * UseJSC.cmake:
+
 2012-06-14  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Add setAutoHint() and setUseBitmaps() in WebFontRendering

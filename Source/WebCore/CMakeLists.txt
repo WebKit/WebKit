@@ -2489,7 +2489,6 @@ IF (ENABLE_MEDIA_STREAM)
         Modules/mediastream/UserMediaController.cpp
         Modules/mediastream/UserMediaRequest.cpp
 
-        bindings/js/JSDeprecatedPeerConnectionCustom.cpp
         platform/mediastream/IceCandidateDescriptor.cpp
         platform/mediastream/IceOptions.cpp
         platform/mediastream/MediaHints.cpp
