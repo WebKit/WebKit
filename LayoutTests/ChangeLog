@@ -1,3 +1,9 @@
+2012-06-15  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. Forgot a rebaseline for r120477.
+
+        * platform/chromium-win/fast/forms/formmove3-expected.txt:
+
 2012-06-15  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to set watchpoints on structure transitions in the
