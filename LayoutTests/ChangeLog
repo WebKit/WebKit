@@ -1,3 +1,9 @@
+2012-06-15  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed typo fix for r120405.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-14  Keishi Hattori  <keishi@webkit.org>
 
         Add color property to input type=range
