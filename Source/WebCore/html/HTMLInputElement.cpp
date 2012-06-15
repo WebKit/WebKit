@@ -457,7 +457,6 @@ void HTMLInputElement::subtreeHasChanged()
 {
     ASSERT(isTextField());
     ASSERT(renderer());
-    RenderTextControlSingleLine* renderTextControl = toRenderTextControlSingleLine(renderer());
 
     bool wasChanged = wasChangedSinceLastFormControlChangeEvent();
     setChangedSinceLastFormControlChangeEvent(true);
@@ -473,12 +472,7 @@ void HTMLInputElement::subtreeHasChanged()
     // Recalc for :invalid and hasUnacceptableValue() change.
     setNeedsStyleRecalc();
 
-    if (cancelButtonElement())
-        renderTextControl->updateCancelButtonVisibility();
-
-    // If the incremental attribute is set, then dispatch the search event
-    if (searchEventsShouldBeDispatched() && isSearchField() && m_inputType)
-        static_cast<SearchInputType*>(m_inputType.get())->startSearchEventTimer();
+    m_inputType->subtreeHasChanged();
 
     if (!wasChanged && focused()) {
         if (Frame* frame = document()->frame())
@@ -972,11 +966,6 @@ void HTMLInputElement::setPlaceholder(const String& value)
     setAttribute(placeholderAttr, value);
 }
 
-bool HTMLInputElement::searchEventsShouldBeDispatched() const
-{
-    return hasAttribute(incrementalAttr);
-}
-
 void HTMLInputElement::setValueFromRenderer(const String& value)
 {
     // File upload controls will never use this.
@@ -1333,9 +1322,7 @@ bool HTMLInputElement::isRequiredFormControl() const
 
 void HTMLInputElement::addSearchResult()
 {
-    ASSERT(isSearchField());
-    if (renderer())
-        toRenderTextControlSingleLine(renderer())->addSearchResult();
+    m_inputType->addSearchResult();
 }
 
 void HTMLInputElement::onSearch()

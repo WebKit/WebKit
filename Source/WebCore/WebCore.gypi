@@ -4902,6 +4902,8 @@
             'rendering/RenderScrollbarPart.h',
             'rendering/RenderScrollbarTheme.cpp',
             'rendering/RenderScrollbarTheme.h',
+            'rendering/RenderSearchField.cpp',
+            'rendering/RenderSearchField.h',
             'rendering/RenderSelectionInfo.h',
             'rendering/RenderSlider.cpp',
             'rendering/RenderSlider.h',

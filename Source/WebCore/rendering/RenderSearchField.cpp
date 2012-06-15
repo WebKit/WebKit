@@ -22,7 +22,7 @@
  */
 
 #include "config.h"
-#include "RenderTextControlSingleLine.h"
+#include "RenderSearchField.h"
 
 #include "CSSFontSelector.h"
 #include "CSSValueKeywords.h"
@@ -51,35 +51,19 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-VisiblePosition RenderTextControlInnerBlock::positionForPoint(const LayoutPoint& point)
-{
-    LayoutPoint contentsPoint(point);
-
-    // Multiline text controls have the scroll on shadowAncestorNode, so we need to take that
-    // into account here.
-    if (m_multiLine) {
-        RenderTextControl* renderer = toRenderTextControl(node()->shadowAncestorNode()->renderer());
-        if (renderer->hasOverflowClip())
-            contentsPoint += renderer->scrolledContentOffset();
-    }
-
-    return RenderBlock::positionForPoint(contentsPoint);
-}
-
 // ----------------------------
 
-RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node)
-    : RenderTextControl(node)
+RenderSearchField::RenderSearchField(Node* node)
+    : RenderTextControlSingleLine(node)
     , m_searchPopupIsVisible(false)
-    , m_shouldDrawCapsLockIndicator(false)
-    , m_desiredInnerTextHeight(-1)
     , m_searchPopup(0)
 {
     ASSERT(node->isHTMLElement());
     ASSERT(node->toInputElement());
+    ASSERT(node->toInputElement()->isSearchField());
 }
 
-RenderTextControlSingleLine::~RenderTextControlSingleLine()
+RenderSearchField::~RenderSearchField()
 {
     if (m_searchPopup) {
         m_searchPopup->popupMenu()->disconnectClient();
@@ -87,38 +71,17 @@ RenderTextControlSingleLine::~RenderTextControlSingleLine()
     }
 }
 
-inline HTMLElement* RenderTextControlSingleLine::containerElement() const
-{
-    return inputElement()->containerElement();
-}
-
-inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
-{
-    return inputElement()->innerBlockElement();
-}
-
-inline HTMLElement* RenderTextControlSingleLine::innerSpinButtonElement() const
-{
-    return inputElement()->innerSpinButtonElement();
-}
-
-inline HTMLElement* RenderTextControlSingleLine::resultsButtonElement() const
+inline HTMLElement* RenderSearchField::resultsButtonElement() const
 {
     return inputElement()->resultsButtonElement();
 }
 
-inline HTMLElement* RenderTextControlSingleLine::cancelButtonElement() const
+inline HTMLElement* RenderSearchField::cancelButtonElement() const
 {
     return inputElement()->cancelButtonElement();
 }
 
-RenderStyle* RenderTextControlSingleLine::textBaseStyle() const
-{
-    HTMLElement* innerBlock = innerBlockElement();
-    return innerBlock ? innerBlock->renderer()->style() : style();
-}
-
-void RenderTextControlSingleLine::addSearchResult()
+void RenderSearchField::addSearchResult()
 {
     HTMLInputElement* input = inputElement();
     if (input->maxResults() <= 0)
@@ -149,7 +112,7 @@ void RenderTextControlSingleLine::addSearchResult()
     m_searchPopup->saveRecentSearches(name, m_recentSearches);
 }
 
-void RenderTextControlSingleLine::showPopup()
+void RenderSearchField::showPopup()
 {
     if (m_searchPopupIsVisible)
         return;
@@ -178,258 +141,13 @@ void RenderTextControlSingleLine::showPopup()
     m_searchPopup->popupMenu()->show(pixelSnappedIntRect(absoluteBoundingBoxRect()), document()->view(), -1);
 }
 
-void RenderTextControlSingleLine::hidePopup()
+void RenderSearchField::hidePopup()
 {
     if (m_searchPopup)
         m_searchPopup->popupMenu()->hide();
 }
 
-void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    RenderTextControl::paint(paintInfo, paintOffset);
-
-    if (paintInfo.phase == PaintPhaseBlockBackground && m_shouldDrawCapsLockIndicator) {
-        LayoutRect contentsRect = contentBoxRect();
-
-        // Center vertically like the text.
-        contentsRect.setY((height() - contentsRect.height()) / 2);
-
-        // Convert the rect into the coords used for painting the content
-        contentsRect.moveBy(paintOffset + location());
-        theme()->paintCapsLockIndicator(this, paintInfo, pixelSnappedIntRect(contentsRect));
-    }
-}
-
-void RenderTextControlSingleLine::layout()
-{
-    // FIXME: We should remove the height-related hacks in layout() and
-    // styleDidChange(). We need them because
-    // - Center the inner elements vertically if the input height is taller than
-    //   the intrinsic height of the inner elements.
-    // - Shrink the inner elment heights if the input height is samller than the
-    //   intrinsic heights of the inner elements.
-
-    // We don't honor paddings and borders for textfields without decorations
-    // and type=search if the text height is taller than the contentHeight()
-    // because of compability.
-
-    RenderBlock::layoutBlock(false);
-
-    RenderBox* innerTextRenderer = innerTextElement()->renderBox();
-    ASSERT(innerTextRenderer);
-    RenderBox* innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : 0;
-    HTMLElement* container = containerElement();
-    RenderBox* containerRenderer = container ? container->renderBox() : 0;
-
-    // Set the text block height
-    LayoutUnit desiredHeight = textBlockHeight();
-    LayoutUnit currentHeight = innerTextRenderer->height();
-
-    LayoutUnit heightLimit = (inputElement()->isSearchField() || !container) ? height() : contentHeight();
-    if (currentHeight > heightLimit) {
-        if (desiredHeight != currentHeight)
-            setNeedsLayout(true, MarkOnlyThis);
-
-        innerTextRenderer->style()->setHeight(Length(desiredHeight, Fixed));
-        m_desiredInnerTextHeight = desiredHeight;
-        if (innerBlockRenderer)
-            innerBlockRenderer->style()->setHeight(Length(desiredHeight, Fixed));
-    }
-    // The container might be taller because of decoration elements.
-    if (containerRenderer) {
-        containerRenderer->layoutIfNeeded();
-        LayoutUnit containerHeight = containerRenderer->height();
-        if (containerHeight > heightLimit) {
-            containerRenderer->style()->setHeight(Length(heightLimit, Fixed));
-            setNeedsLayout(true, MarkOnlyThis);
-        } else if (containerRenderer->height() < contentHeight()) {
-            containerRenderer->style()->setHeight(Length(contentHeight(), Fixed));
-            setNeedsLayout(true, MarkOnlyThis);
-        } else
-            containerRenderer->style()->setHeight(Length(containerHeight, Fixed));
-    }
-
-    // If we need another layout pass, we have changed one of children's height so we need to relayout them.
-    if (needsLayout())
-        RenderBlock::layoutBlock(true);
-
-    // Center the child block vertically
-    currentHeight = innerTextRenderer->height();
-    if (!container && currentHeight != contentHeight()) {
-        LayoutUnit heightDiff = currentHeight - contentHeight();
-        innerTextRenderer->setY(innerTextRenderer->y() - (heightDiff / 2 + layoutMod(heightDiff, 2)));
-    } else if (inputElement()->isSearchField() && containerRenderer && containerRenderer->height() > contentHeight()) {
-        // A quirk for find-in-page box on Safari Windows.
-        // http://webkit.org/b/63157
-        LayoutUnit heightDiff = containerRenderer->height() - contentHeight();
-        containerRenderer->setY(containerRenderer->y() - (heightDiff / 2 + layoutMod(heightDiff, 2)));
-    }
-
-    // Ignores the paddings for the inner spin button.
-    if (RenderBox* innerSpinBox = innerSpinButtonElement() ? innerSpinButtonElement()->renderBox() : 0) {
-        RenderBox* parentBox = innerSpinBox->parentBox();
-        if (containerRenderer && !containerRenderer->style()->isLeftToRightDirection())
-            innerSpinBox->setLocation(LayoutPoint(-paddingLeft(), -paddingTop()));
-        else
-            innerSpinBox->setLocation(LayoutPoint(parentBox->width() - innerSpinBox->width() + paddingRight(), -paddingTop()));
-        innerSpinBox->setHeight(height() - borderTop() - borderBottom());
-    }
-
-    HTMLElement* placeholderElement = inputElement()->placeholderElement();
-    if (RenderBox* placeholderBox = placeholderElement ? placeholderElement->renderBox() : 0) {
-        placeholderBox->style()->setWidth(Length(innerTextRenderer->width() - placeholderBox->borderAndPaddingWidth(), Fixed));
-        placeholderBox->style()->setHeight(Length(innerTextRenderer->height() - placeholderBox->borderAndPaddingHeight(), Fixed));
-        bool placeholderBoxHadLayout = placeholderBox->everHadLayout();
-        placeholderBox->layoutIfNeeded();
-        LayoutPoint textOffset = innerTextRenderer->location();
-        if (innerBlockElement() && innerBlockElement()->renderBox())
-            textOffset += toLayoutSize(innerBlockElement()->renderBox()->location());
-        if (containerRenderer)
-            textOffset += toLayoutSize(containerRenderer->location());
-        placeholderBox->setLocation(textOffset);
-
-        if (!placeholderBoxHadLayout && placeholderBox->checkForRepaintDuringLayout()) {
-            // This assumes a shadow tree without floats. If floats are added, the
-            // logic should be shared with RenderBlock::layoutBlockChild.
-            placeholderBox->repaint();
-        }
-    }
-}
-
-bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
-{
-    if (!RenderTextControl::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, hitTestAction))
-        return false;
-
-    // Say that we hit the inner text element if
-    //  - we hit a node inside the inner text element,
-    //  - we hit the <input> element (e.g. we're over the border or padding), or
-    //  - we hit regions not in any decoration buttons.
-    HTMLElement* container = containerElement();
-    if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == node() || (container && container == result.innerNode())) {
-        LayoutPoint pointInParent = pointInContainer;
-        if (container && innerBlockElement()) {
-            if (innerBlockElement()->renderBox())
-                pointInParent -= toLayoutSize(innerBlockElement()->renderBox()->location());
-            if (container->renderBox())
-                pointInParent -= toLayoutSize(container->renderBox()->location());
-        }
-        hitInnerTextElement(result, pointInParent, accumulatedOffset);
-    }
-    return true;
-}
-
-void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    m_desiredInnerTextHeight = -1;
-    RenderTextControl::styleDidChange(diff, oldStyle);
-
-    // We may have set the width and the height in the old style in layout().
-    // Reset them now to avoid getting a spurious layout hint.
-    HTMLElement* innerBlock = innerBlockElement();
-    if (RenderObject* innerBlockRenderer = innerBlock ? innerBlock->renderer() : 0) {
-        innerBlockRenderer->style()->setHeight(Length());
-        innerBlockRenderer->style()->setWidth(Length());
-    }
-    HTMLElement* container = containerElement();
-    if (RenderObject* containerRenderer = container ? container->renderer() : 0) {
-        containerRenderer->style()->setHeight(Length());
-        containerRenderer->style()->setWidth(Length());
-    }
-    if (HTMLElement* placeholder = inputElement()->placeholderElement())
-        placeholder->setInlineStyleProperty(CSSPropertyTextOverflow, textShouldBeTruncated() ? CSSValueEllipsis : CSSValueClip);
-    setHasOverflowClip(false);
-}
-
-void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
-{
-    if (!node() || !document())
-        return;
-
-    // Only draw the caps lock indicator if these things are true:
-    // 1) The field is a password field
-    // 2) The frame is active
-    // 3) The element is focused
-    // 4) The caps lock is on
-    bool shouldDrawCapsLockIndicator = false;
-
-    if (Frame* frame = document()->frame())
-        shouldDrawCapsLockIndicator = inputElement()->isPasswordField()
-                                      && frame->selection()->isFocusedAndActive()
-                                      && document()->focusedNode() == node()
-                                      && PlatformKeyboardEvent::currentCapsLockState();
-
-    if (shouldDrawCapsLockIndicator != m_shouldDrawCapsLockIndicator) {
-        m_shouldDrawCapsLockIndicator = shouldDrawCapsLockIndicator;
-        repaint();
-    }
-}
-
-bool RenderTextControlSingleLine::hasControlClip() const
-{
-    // Apply control clip for text fields with decorations.
-    return !!containerElement();
-}
-
-LayoutRect RenderTextControlSingleLine::controlClipRect(const LayoutPoint& additionalOffset) const
-{
-    ASSERT(hasControlClip());
-    LayoutRect clipRect = unionRect(contentBoxRect(), containerElement()->renderBox()->frameRect());
-    clipRect.moveBy(additionalOffset);
-    return clipRect;
-}
-
-float RenderTextControlSingleLine::getAvgCharWidth(AtomicString family)
-{
-    // Since Lucida Grande is the default font, we want this to match the width
-    // of MS Shell Dlg, the default font for textareas in Firefox, Safari Win and
-    // IE for some encodings (in IE, the default font is encoding specific).
-    // 901 is the avgCharWidth value in the OS/2 table for MS Shell Dlg.
-    if (family == AtomicString("Lucida Grande"))
-        return scaleEmToUnits(901);
-
-    return RenderTextControl::getAvgCharWidth(family);
-}
-
-LayoutUnit RenderTextControlSingleLine::preferredContentWidth(float charWidth) const
-{
-    int factor;
-    bool includesDecoration = inputElement()->sizeShouldIncludeDecoration(factor);
-    if (factor <= 0)
-        factor = 20;
-
-    LayoutUnit result = static_cast<LayoutUnit>(ceiledLayoutUnit(charWidth * factor));
-
-    float maxCharWidth = 0.f;
-    AtomicString family = style()->font().family().family();
-    // Since Lucida Grande is the default font, we want this to match the width
-    // of MS Shell Dlg, the default font for textareas in Firefox, Safari Win and
-    // IE for some encodings (in IE, the default font is encoding specific).
-    // 4027 is the (xMax - xMin) value in the "head" font table for MS Shell Dlg.
-    if (family == AtomicString("Lucida Grande"))
-        maxCharWidth = scaleEmToUnits(4027);
-    else if (hasValidAvgCharWidth(family))
-        maxCharWidth = roundf(style()->font().primaryFont()->maxCharWidth());
-
-    // For text inputs, IE adds some extra width.
-    if (maxCharWidth > 0.f)
-        result += maxCharWidth - charWidth;
-
-    if (includesDecoration) {
-        HTMLElement* spinButton = innerSpinButtonElement();
-        if (RenderBox* spinRenderer = spinButton ? spinButton->renderBox() : 0) {
-            result += spinRenderer->borderLeft() + spinRenderer->borderRight() +
-                  spinRenderer->paddingLeft() + spinRenderer->paddingRight();
-            // Since the width of spinRenderer is not calculated yet, spinRenderer->width() returns 0.
-            // So computedStyle()->width() is used instead.
-            result += spinButton->computedStyle()->width().value();
-        }
-    }
-
-    return result;
-}
-
-LayoutUnit RenderTextControlSingleLine::computeControlHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const
+LayoutUnit RenderSearchField::computeControlHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const
 {
     HTMLElement* resultsButton = resultsButtonElement();
     if (RenderBox* resultsRenderer = resultsButton ? resultsButton->renderBox() : 0) {
@@ -447,9 +165,9 @@ LayoutUnit RenderTextControlSingleLine::computeControlHeight(LayoutUnit lineHeig
     return lineHeight + nonContentHeight;
 }
 
-void RenderTextControlSingleLine::updateFromElement()
+void RenderSearchField::updateFromElement()
 {
-    RenderTextControl::updateFromElement();
+    RenderTextControlSingleLine::updateFromElement();
 
     if (cancelButtonElement())
         updateCancelButtonVisibility();
@@ -458,45 +176,7 @@ void RenderTextControlSingleLine::updateFromElement()
         m_searchPopup->popupMenu()->updateFromElement();
 }
 
-PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const RenderStyle* startStyle) const
-{
-    RefPtr<RenderStyle> textBlockStyle = RenderStyle::create();   
-    textBlockStyle->inheritFrom(startStyle);
-    adjustInnerTextStyle(startStyle, textBlockStyle.get());
-
-    textBlockStyle->setWhiteSpace(PRE);
-    textBlockStyle->setWordWrap(NormalWordWrap);
-    textBlockStyle->setOverflowX(OHIDDEN);
-    textBlockStyle->setOverflowY(OHIDDEN);
-    textBlockStyle->setTextOverflow(textShouldBeTruncated() ? TextOverflowEllipsis : TextOverflowClip);
-
-    if (m_desiredInnerTextHeight >= 0)
-        textBlockStyle->setHeight(Length(m_desiredInnerTextHeight, Fixed));
-    // Do not allow line-height to be smaller than our default.
-    if (textBlockStyle->fontMetrics().lineSpacing() > lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes))
-        textBlockStyle->setLineHeight(Length(-100.0f, Percent));
-
-    textBlockStyle->setDisplay(BLOCK);
-
-    return textBlockStyle.release();
-}
-
-PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const RenderStyle* startStyle) const
-{
-    RefPtr<RenderStyle> innerBlockStyle = RenderStyle::create();
-    innerBlockStyle->inheritFrom(startStyle);
-
-    innerBlockStyle->setBoxFlex(1);
-    innerBlockStyle->setDisplay(BLOCK);
-    innerBlockStyle->setDirection(LTR);
-
-    // We don't want the shadow dom to be editable, so we set this block to read-only in case the input itself is editable.
-    innerBlockStyle->setUserModify(READ_ONLY);
-
-    return innerBlockStyle.release();
-}
-
-void RenderTextControlSingleLine::updateCancelButtonVisibility() const
+void RenderSearchField::updateCancelButtonVisibility() const
 {
     RenderObject* cancelButtonRenderer = cancelButtonElement()->renderer();
     if (!cancelButtonRenderer)
@@ -512,24 +192,18 @@ void RenderTextControlSingleLine::updateCancelButtonVisibility() const
     cancelButtonRenderer->setStyle(cancelButtonStyle);
 }
 
-EVisibility RenderTextControlSingleLine::visibilityForCancelButton() const
+EVisibility RenderSearchField::visibilityForCancelButton() const
 {
     return (style()->visibility() == HIDDEN || inputElement()->value().isEmpty()) ? HIDDEN : VISIBLE;
 }
 
-bool RenderTextControlSingleLine::textShouldBeTruncated() const
-{
-    return document()->focusedNode() != node()
-        && style()->textOverflow() == TextOverflowEllipsis;
-}
-
-const AtomicString& RenderTextControlSingleLine::autosaveName() const
+const AtomicString& RenderSearchField::autosaveName() const
 {
     return static_cast<Element*>(node())->getAttribute(autosaveAttr);
 }
 
 // PopupMenuClient methods
-void RenderTextControlSingleLine::valueChanged(unsigned listIndex, bool fireEvents)
+void RenderSearchField::valueChanged(unsigned listIndex, bool fireEvents)
 {
     ASSERT(static_cast<int>(listIndex) < listSize());
     HTMLInputElement* input = inputElement();
@@ -551,7 +225,7 @@ void RenderTextControlSingleLine::valueChanged(unsigned listIndex, bool fireEven
     }
 }
 
-String RenderTextControlSingleLine::itemText(unsigned listIndex) const
+String RenderSearchField::itemText(unsigned listIndex) const
 {
     int size = listSize();
     if (size == 1) {
@@ -567,42 +241,42 @@ String RenderTextControlSingleLine::itemText(unsigned listIndex) const
     return m_recentSearches[listIndex - 1];
 }
 
-String RenderTextControlSingleLine::itemLabel(unsigned) const
+String RenderSearchField::itemLabel(unsigned) const
 {
     return String();
 }
 
-String RenderTextControlSingleLine::itemIcon(unsigned) const
+String RenderSearchField::itemIcon(unsigned) const
 {
     return String();
 }
 
-bool RenderTextControlSingleLine::itemIsEnabled(unsigned listIndex) const
+bool RenderSearchField::itemIsEnabled(unsigned listIndex) const
 {
      if (!listIndex || itemIsSeparator(listIndex))
         return false;
     return true;
 }
 
-PopupMenuStyle RenderTextControlSingleLine::itemStyle(unsigned) const
+PopupMenuStyle RenderSearchField::itemStyle(unsigned) const
 {
     return menuStyle();
 }
 
-PopupMenuStyle RenderTextControlSingleLine::menuStyle() const
+PopupMenuStyle RenderSearchField::menuStyle() const
 {
     return PopupMenuStyle(style()->visitedDependentColor(CSSPropertyColor), style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->font(), style()->visibility() == VISIBLE,
         style()->display() == NONE, style()->textIndent(), style()->direction(), isOverride(style()->unicodeBidi()));
 }
 
-int RenderTextControlSingleLine::clientInsetLeft() const
+int RenderSearchField::clientInsetLeft() const
 {
     // Inset the menu by the radius of the cap on the left so that
     // it only runs along the straight part of the bezel.
     return height() / 2;
 }
 
-int RenderTextControlSingleLine::clientInsetRight() const
+int RenderSearchField::clientInsetRight() const
 {
     // Inset the menu by the radius of the cap on the right so that
     // it only runs along the straight part of the bezel (unless it needs
@@ -610,7 +284,7 @@ int RenderTextControlSingleLine::clientInsetRight() const
     return height() / 2;
 }
 
-LayoutUnit RenderTextControlSingleLine::clientPaddingLeft() const
+LayoutUnit RenderSearchField::clientPaddingLeft() const
 {
     LayoutUnit padding = paddingLeft();
     if (RenderBox* box = innerBlockElement() ? innerBlockElement()->renderBox() : 0)
@@ -618,7 +292,7 @@ LayoutUnit RenderTextControlSingleLine::clientPaddingLeft() const
     return padding;
 }
 
-LayoutUnit RenderTextControlSingleLine::clientPaddingRight() const
+LayoutUnit RenderSearchField::clientPaddingRight() const
 {
     LayoutUnit padding = paddingRight();
     if (RenderBox* containerBox = containerElement() ? containerElement()->renderBox() : 0) {
@@ -628,7 +302,7 @@ LayoutUnit RenderTextControlSingleLine::clientPaddingRight() const
     return padding;
 }
 
-int RenderTextControlSingleLine::listSize() const
+int RenderSearchField::listSize() const
 {
     // If there are no recent searches, then our menu will have 1 "No recent searches" item.
     if (!m_recentSearches.size())
@@ -637,111 +311,48 @@ int RenderTextControlSingleLine::listSize() const
     return m_recentSearches.size() + 3;
 }
 
-int RenderTextControlSingleLine::selectedIndex() const
+int RenderSearchField::selectedIndex() const
 {
     return -1;
 }
 
-void RenderTextControlSingleLine::popupDidHide()
+void RenderSearchField::popupDidHide()
 {
     m_searchPopupIsVisible = false;
 }
 
-bool RenderTextControlSingleLine::itemIsSeparator(unsigned listIndex) const
+bool RenderSearchField::itemIsSeparator(unsigned listIndex) const
 {
     // The separator will be the second to last item in our list.
     return static_cast<int>(listIndex) == (listSize() - 2);
 }
 
-bool RenderTextControlSingleLine::itemIsLabel(unsigned listIndex) const
+bool RenderSearchField::itemIsLabel(unsigned listIndex) const
 {
-    return listIndex == 0;
+    return !listIndex;
 }
 
-bool RenderTextControlSingleLine::itemIsSelected(unsigned) const
+bool RenderSearchField::itemIsSelected(unsigned) const
 {
     return false;
 }
 
-void RenderTextControlSingleLine::setTextFromItem(unsigned listIndex)
+void RenderSearchField::setTextFromItem(unsigned listIndex)
 {
     inputElement()->setValue(itemText(listIndex));
 }
 
-FontSelector* RenderTextControlSingleLine::fontSelector() const
+FontSelector* RenderSearchField::fontSelector() const
 {
     return document()->styleResolver()->fontSelector();
 }
 
-HostWindow* RenderTextControlSingleLine::hostWindow() const
+HostWindow* RenderSearchField::hostWindow() const
 {
     return document()->view()->hostWindow();
 }
 
-void RenderTextControlSingleLine::autoscroll()
-{
-    RenderLayer* layer = innerTextElement()->renderBox()->layer();
-    if (layer)
-        layer->autoscroll();
-}
-
-int RenderTextControlSingleLine::scrollWidth() const
-{
-    if (innerTextElement())
-        return innerTextElement()->scrollWidth();
-    return RenderBlock::scrollWidth();
-}
-
-int RenderTextControlSingleLine::scrollHeight() const
-{
-    if (innerTextElement())
-        return innerTextElement()->scrollHeight();
-    return RenderBlock::scrollHeight();
-}
-
-int RenderTextControlSingleLine::scrollLeft() const
-{
-    if (innerTextElement())
-        return innerTextElement()->scrollLeft();
-    return RenderBlock::scrollLeft();
-}
-
-int RenderTextControlSingleLine::scrollTop() const
-{
-    if (innerTextElement())
-        return innerTextElement()->scrollTop();
-    return RenderBlock::scrollTop();
-}
-
-void RenderTextControlSingleLine::setScrollLeft(int newLeft)
-{
-    if (innerTextElement())
-        innerTextElement()->setScrollLeft(newLeft);
-}
-
-void RenderTextControlSingleLine::setScrollTop(int newTop)
-{
-    if (innerTextElement())
-        innerTextElement()->setScrollTop(newTop);
-}
-
-bool RenderTextControlSingleLine::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Node** stopNode)
-{
-    RenderLayer* layer = innerTextElement()->renderBox()->layer();
-    if (layer && layer->scroll(direction, granularity, multiplier))
-        return true;
-    return RenderBlock::scroll(direction, granularity, multiplier, stopNode);
-}
-
-bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Node** stopNode)
-{
-    RenderLayer* layer = innerTextElement()->renderBox()->layer();
-    if (layer && layer->scroll(logicalToPhysical(direction, style()->isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), granularity, multiplier))
-        return true;
-    return RenderBlock::logicalScroll(direction, granularity, multiplier, stopNode);
-}
-
-PassRefPtr<Scrollbar> RenderTextControlSingleLine::createScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
+PassRefPtr<Scrollbar> RenderSearchField::createScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
 {
     RefPtr<Scrollbar> widget;
     bool hasCustomScrollbarStyle = style()->hasPseudoStyle(SCROLLBAR);
@@ -752,9 +363,23 @@ PassRefPtr<Scrollbar> RenderTextControlSingleLine::createScrollbar(ScrollableAre
     return widget.release();
 }
 
-HTMLInputElement* RenderTextControlSingleLine::inputElement() const
+LayoutUnit RenderSearchField::computeHeightLimit() const
 {
-    return node()->toInputElement();
+    return height();
+}
+
+void RenderSearchField::centerContainerIfNeeded(RenderBox* containerRenderer) const
+{
+    if (!containerRenderer)
+        return;
+
+    if (containerRenderer->height() <= contentHeight())
+        return;
+
+    // A quirk for find-in-page box on Safari Windows.
+    // http://webkit.org/b/63157
+    LayoutUnit heightDiff = containerRenderer->height() - contentHeight();
+    containerRenderer->setY(containerRenderer->y() - (heightDiff / 2 + layoutMod(heightDiff, 2)));
 }
 
 }
