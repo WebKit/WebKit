@@ -1,3 +1,23 @@
+2012-06-15  Florin Malita  <fmalita@chromium.org>
+
+        Specular light filters produce dark results
+        https://bugs.webkit.org/show_bug.cgi?id=89116
+
+        Reviewed by Dirk Schulze.
+
+        Tests: svg/filters/feSpecularLight-premultiplied-expected.svg
+               svg/filters/feSpecularLight-premultiplied.svg
+
+        Per spec (http://www.w3.org/TR/SVG/filters.html#feSpecularLightingElement),
+        light filters should operate on pre-multiplied RGBA. Currently, the results
+        are stored in the unmultiplied buffer but the alpha channel is calculated
+        for premultiplied values (which causes a darkening of the result upon the
+        subsequent unmultiplied->premultiplied conversion). This patch updates
+        FELighting to generate premultiplied results.
+
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::platformApplySoftware):
+
 2012-06-15  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: incorrect filtering of async timeline events

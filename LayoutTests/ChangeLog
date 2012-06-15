@@ -1,3 +1,27 @@
+2012-06-15  Florin Malita  <fmalita@chromium.org>
+
+        Specular light filters produce dark results
+        https://bugs.webkit.org/show_bug.cgi?id=89116
+
+        Reviewed by Dirk Schulze.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.png:
+        * platform/chromium-linux/svg/filters/feLighting-crash-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+        * svg/filters/feSpecularLight-premultiplied-expected.svg: Added.
+        * svg/filters/feSpecularLight-premultiplied.svg: Added.
+
 2012-06-15  Stephen Chenney  <schenney@chromium.org>
 
         SVG Composite of Offset filters incorrectly clips

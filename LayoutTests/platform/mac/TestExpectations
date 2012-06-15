@@ -211,6 +211,20 @@ BUGWK85404 : fast/loader/javascript-url-in-embed.html = TEXT PASS
 
 BUGWK85408 : svg/batik/text/longTextOnPath.svg = TEXT PASS
 
+// Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=89116
+BUGWK89116 : svg/W3C-SVG-1.1/filters-specular-01-f.svg = PASS IMAGE
+BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr.html = PASS IMAGE
+BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr.html = PASS IMAGE
+BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr.html = PASS IMAGE
+BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr.html = PASS IMAGE
+BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop.html = PASS IMAGE
+BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop.html = PASS IMAGE
+BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop.html = PASS IMAGE
+BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop.html = PASS IMAGE
+BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop.html = PASS IMAGE
+BUGWK89116 : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop.html = PASS IMAGE
+BUGWK89116 : svg/filters/feLighting-crash.svg = PASS IMAGE
+
 // Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=79682
 BUGWK79682 : svg/repaint/text-mask-update.svg = MISSING IMAGE+TEXT IMAGE TEXT PASS
 
