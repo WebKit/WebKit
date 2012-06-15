@@ -12,7 +12,7 @@
         {
             document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
         }
-        
+
         function test()
         {
             video = document.getElementById('fr').contentDocument.getElementsByTagName('video')[0];
@@ -23,20 +23,27 @@
         }
         function test2()
         {
-            var doubleClick = document.createEvent("MouseEvents");
-            doubleClick.initMouseEvent("dblclick", true, true, window, 2, 0, 0, 0, 0, false, false, false, false, 0, document);
             var click = document.createEvent("MouseEvents");
             click.initMouseEvent("click", true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, document);
+            video.dispatchEvent(click);
+            if (video.paused) {
+                log("PASS: video is paused.");
+                test3();
+            } else {
+                log("FAIL: video should be paused");
+                video.addEventListener('pause', test3);
+                video.pause();
+            }
+        }
+        function test3()
+        {
+            var doubleClick = document.createEvent("MouseEvents");
+            doubleClick.initMouseEvent("dblclick", true, true, window, 2, 0, 0, 0, 0, false, false, false, false, 0, document);
             video.dispatchEvent(doubleClick);
             if (!video.paused)
                 log("PASS: video is playing");
             else
                 log("FAIL: video should be playing");
-            video.dispatchEvent(click);
-            if (video.paused)
-                log("PASS: video is paused");
-            else
-                log("FAIL: video should be paused");
 
             if (window.layoutTestController)
                 layoutTestController.notifyDone();

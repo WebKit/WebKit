@@ -1,3 +1,18 @@
+2012-06-14  Dale Curtis  <dalecurtis@chromium.org>
+
+        Disable click/dbl-click on MediaDocument for Chromium. Fix layout test for all platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=89129
+
+        As titled, click-to-pause and double-click-to-play behavior are unwanted on Chromium.  A
+        long standing issue (~3 years) has been to disable this feature.
+
+        Reviewed by Eric Carlson.
+
+        Uses existing click/double-click test.
+
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocument::defaultEventHandler):
+
 2012-06-14  Jian Li  <jianli@chromium.org>
 
         FileReader is dysfunctional in documents with "null" origin string

@@ -1,3 +1,22 @@
+2012-06-14  Dale Curtis  <dalecurtis@chromium.org>
+
+        Disable click/dbl-click on MediaDocument for Chromium. Fix layout test for all platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=89129
+
+        Fixes layout test to actually test what it says it tests.  Previously it was
+        testing the opposite behavior and passing because MediaDocument auto-plays.
+
+        Additionally failing one half of the test would still allow you to pass the
+        other half.  Both issues have been fixed.
+
+        Updates the test expectations for Chromium to reflect a failure.
+
+        Reviewed by Eric Carlson.
+
+        * media/video-click-dblckick-standalone-expected.txt:
+        * media/video-click-dblckick-standalone.html:
+        * platform/chromium/media/video-click-dblckick-standalone-expected.txt: Copied from LayoutTests/media/video-click-dblckick-standalone-expected.txt.
+
 2012-06-14  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Skip the failed test due to r120384 for future investigation.
