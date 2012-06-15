@@ -41,6 +41,8 @@ public:
     FloatRect uvRect() const { return m_uvRect; }
     bool flipped() const { return m_flipped; }
 
+    void setNeedsBlending();
+
 private:
     CCTextureDrawQuad(const CCSharedQuadState*, const IntRect&, unsigned texture_id, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped);
     

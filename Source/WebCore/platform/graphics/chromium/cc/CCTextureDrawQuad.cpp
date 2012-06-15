@@ -43,4 +43,9 @@ CCTextureDrawQuad::CCTextureDrawQuad(const CCSharedQuadState* sharedQuadState, c
 {
 }
 
+void CCTextureDrawQuad::setNeedsBlending()
+{
+    m_needsBlending = true;
+}
+
 }

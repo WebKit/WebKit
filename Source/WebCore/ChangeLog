@@ -1,3 +1,21 @@
+2012-06-15  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix composited scrollbars with transparent thumbs
+        https://bugs.webkit.org/show_bug.cgi?id=89247
+
+        Reviewed by James Robinson.
+
+        On some platforms, the thumb of a scrollbar can be transparent. Fix by
+        always drawing the thumb quad with blending.
+
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.cpp:
+        (WebCore::CCScrollbarLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCTextureDrawQuad.cpp:
+        (WebCore::CCTextureDrawQuad::setNeedsBlending):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCTextureDrawQuad.h:
+        (CCTextureDrawQuad):
+
 2012-06-14  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use SkBitmap in ImageLayerChromium

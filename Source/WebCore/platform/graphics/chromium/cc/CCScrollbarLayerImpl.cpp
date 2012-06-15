@@ -65,8 +65,12 @@ void CCScrollbarLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQua
 
     IntRect thumbRect = theme->thumbRect(&m_scrollbar);
     thumbRect.move(-m_scrollbar.x(), -m_scrollbar.y());
-    if (m_thumbTextureId && theme->hasThumb(&m_scrollbar) && !thumbRect.isEmpty())
-        quadList.append(CCTextureDrawQuad::create(sharedQuadState, thumbRect, m_thumbTextureId, premultipledAlpha, uvRect, flipped));
+    if (m_thumbTextureId && theme->hasThumb(&m_scrollbar) && !thumbRect.isEmpty()) {
+        OwnPtr<CCTextureDrawQuad> quad = CCTextureDrawQuad::create(sharedQuadState, thumbRect, m_thumbTextureId, premultipledAlpha, uvRect, flipped);
+        quad->setNeedsBlending();
+        quadList.append(quad.release());
+    }
+
     if (!m_backgroundTextureId)
         return;
 
