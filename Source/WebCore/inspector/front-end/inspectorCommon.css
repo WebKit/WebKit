@@ -16,11 +16,11 @@ body {
     -webkit-user-select: none;
 }
 
-body.dock-to-right {
+body.dock-to-right:not(.detached) {
     border-left: 1px solid rgb(80, 80, 80);
 }
 
-body.dock-to-right.inactive {
+body.dock-to-right.inactive:not(.detached) {
     border-left: 1px solid rgb(64%, 64%, 64%);
 }
 

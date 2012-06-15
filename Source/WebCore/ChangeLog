@@ -1,3 +1,11 @@
+2012-06-15  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Not reviewed: remove garbage line from inspector view in docked-to-right mode.
+
+        * inspector/front-end/inspectorCommon.css:
+        (body.docked.dock-to-right.docked):
+        (body.docked.dock-to-right.inactive):
+
 2012-06-15  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         Buildfix for !ENABLE(BLOB) platforms after r120433.
