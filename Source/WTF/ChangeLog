@@ -1,3 +1,13 @@
+2012-06-14  Tony Payne  <tpayne@chromium.org>
+
+        [chromium] Add iccjpeg and qcms to chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=81974
+
+        * wtf/Platform.h: Add Chromium USE defines for ICCJPEG and QCMSLIB
+        to each Chromium platform, excluding Android.
+
+        Reviewed by Adam Barth.
+
 2012-06-14  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Implement computeRAMSize for QNX
