@@ -1,5 +1,11 @@
 2012-06-15  David Kilzer  <ddkilzer@apple.com>
 
+        Sort ENABLE(INSPECTOR) section of WebCore.exp.in
+
+        * WebCore.exp.in: Sort ENABLE(INSPECTOR) symbols.
+
+2012-06-15  David Kilzer  <ddkilzer@apple.com>
+
         Remove duplicate symbol from WebCore.exp.in
 
         * WebCore.exp.in: Remove duplicate symbol for:
