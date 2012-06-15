@@ -1,3 +1,10 @@
+2012-06-15  David Kilzer  <ddkilzer@apple.com>
+
+        Remove duplicate symbol from WebCore.exp.in
+
+        * WebCore.exp.in: Remove duplicate symbol for:
+        WebCore::Range::textQuads(WTF::Vector<WebCore::FloatQuad, 0ul>&, bool, WebCore::Range::RangeInFixedPosition*) const
+
 2012-06-15  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Unreviewed debug build fix for r120457
