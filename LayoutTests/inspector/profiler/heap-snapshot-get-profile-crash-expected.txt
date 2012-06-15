@@ -1,0 +1,6 @@
+This test checks HeapSnapshots module.
+
+
+Running: getHeapSnapshotDoesntCrash
+log: Profile wasn't found
+

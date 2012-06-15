@@ -267,26 +267,30 @@ private:
 
 } // namespace
 
-void InspectorProfilerAgent::getProfile(ErrorString*, const String& type, int rawUid, RefPtr<TypeBuilder::Profiler::Profile>& profileObject)
+void InspectorProfilerAgent::getProfile(ErrorString* errorString, const String& type, int rawUid, RefPtr<TypeBuilder::Profiler::Profile>& profileObject)
 {
     unsigned uid = static_cast<unsigned>(rawUid);
     if (type == CPUProfileType) {
         ProfilesMap::iterator it = m_profiles.find(uid);
-        if (it != m_profiles.end()) {
-            profileObject = TypeBuilder::Profiler::Profile::create();
-            profileObject->setHead(it->second->buildInspectorObjectForHead());
-            if (it->second->bottomUpHead())
-                profileObject->setBottomUpHead(it->second->buildInspectorObjectForBottomUpHead());
+        if (it == m_profiles.end()) {
+            *errorString = "Profile wasn't found";
+            return;
         }
+        profileObject = TypeBuilder::Profiler::Profile::create();
+        profileObject->setHead(it->second->buildInspectorObjectForHead());
+        if (it->second->bottomUpHead())
+            profileObject->setBottomUpHead(it->second->buildInspectorObjectForBottomUpHead());
     } else if (type == HeapProfileType) {
         HeapSnapshotsMap::iterator it = m_snapshots.find(uid);
-        if (it != m_snapshots.end()) {
-            RefPtr<ScriptHeapSnapshot> snapshot = it->second;
-            profileObject = TypeBuilder::Profiler::Profile::create();
-            if (m_frontend) {
-                OutputStream stream(m_frontend, uid);
-                snapshot->writeJSON(&stream);
-            }
+        if (it == m_snapshots.end()) {
+            *errorString = "Profile wasn't found";
+            return;
+        }
+        RefPtr<ScriptHeapSnapshot> snapshot = it->second;
+        profileObject = TypeBuilder::Profiler::Profile::create();
+        if (m_frontend) {
+            OutputStream stream(m_frontend, uid);
+            snapshot->writeJSON(&stream);
         }
     }
 }
