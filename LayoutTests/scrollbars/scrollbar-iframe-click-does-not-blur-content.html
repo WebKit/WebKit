@@ -1,9 +1,9 @@
 <html>
   <head>
     <script>
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
       }
 
       function runTest()
@@ -34,8 +34,8 @@
         else
             document.getElementById('console').innerHTML = "FAIL";
 
-        if (window.layoutTestController)
-          window.layoutTestController.notifyDone();
+        if (window.testRunner)
+          window.testRunner.notifyDone();
       }
 
     </script>

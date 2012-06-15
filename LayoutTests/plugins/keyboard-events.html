@@ -7,10 +7,10 @@
     plg.windowedPlugin = false;
     plg.eventLoggingEnabled = true;
 
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         document.write("This test does not work in manual mode.");
     } else {
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
 
         // Send a mouse-click event to set the input focus to the test plug-in.
         eventSender.mouseMoveTo(0,0);

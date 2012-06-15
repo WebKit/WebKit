@@ -7,7 +7,7 @@
 <script>
 function runTest() 
 {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
         return;
     }
@@ -20,7 +20,7 @@ function runTest()
     shouldBe("plugin1.privateBrowsingEnabled", "false");
 
     // Now enable private browsing
-    layoutTestController.setPrivateBrowsingEnabled(true);
+    testRunner.setPrivateBrowsingEnabled(true);
 
     shouldBe("plugin1.privateBrowsingEnabled", "true");
     
@@ -30,7 +30,7 @@ function runTest()
     document.body.appendChild(plugin2);
     
     shouldBe("plugin2.privateBrowsingEnabled", "true");
-    layoutTestController.setPrivateBrowsingEnabled(false);
+    testRunner.setPrivateBrowsingEnabled(false);
     shouldBe("plugin1.privateBrowsingEnabled", "false");
     shouldBe("plugin2.privateBrowsingEnabled", "false");
 }

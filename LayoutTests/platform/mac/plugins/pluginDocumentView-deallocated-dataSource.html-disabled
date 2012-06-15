@@ -4,15 +4,15 @@
 function finishTest()
 {
     document.getElementById('plugin').src = 'about:blank';
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 
     var i = 0;
@@ -24,8 +24,8 @@ function test()
     }
     if (!found) {
         document.getElementById("result").innerText = "Test cannot run: QuickTime Plugin.webplugin missing.";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
     setTimeout(finishTest, 0);

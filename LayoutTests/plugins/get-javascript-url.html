@@ -3,16 +3,16 @@
 <embed type="application/x-webkit-test-netscape" id="testPlugin" onURLNotify="done()">
 <div id="result">Testing...</div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function done()
 {
     document.getElementById("result").innerHTML = "PASS, no assertion failure.";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 var testPlugin = document.getElementById('testPlugin');

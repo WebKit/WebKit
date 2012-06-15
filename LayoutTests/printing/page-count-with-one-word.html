@@ -4,8 +4,8 @@
 test
 </pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
     var msg = 'A page with only one line should be printed in one page.\n';
     var pass = true;
@@ -13,7 +13,7 @@ if (window.layoutTestController) {
     // Test the range around A4 portrait paper size
     for (var i = 530; i < 560; i++) {
         for (var j = 730; j < 760; j++) {
-            var numberOfPages = layoutTestController.numberOfPages(i, j);
+            var numberOfPages = testRunner.numberOfPages(i, j);
 
             if (numberOfPages != 1) {
                 pass = false;

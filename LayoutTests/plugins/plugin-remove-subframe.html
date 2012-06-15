@@ -18,12 +18,12 @@ function test() {
 }
 
 function done() {
-  layoutTestController.dumpAsText();
-  layoutTestController.notifyDone();
+  testRunner.dumpAsText();
+  testRunner.notifyDone();
 }
 </script>
 </head>
-<body onload="layoutTestController.waitUntilDone(); setTimeout(test, 10)">
+<body onload="testRunner.waitUntilDone(); setTimeout(test, 10)">
 <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=14437">bug 14437</a>:
 RTÉ video crashes Safari.</p>
 <p>Only works with DumpRenderTree.</p>

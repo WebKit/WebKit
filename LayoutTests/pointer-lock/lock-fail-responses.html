@@ -7,7 +7,7 @@
 <script>
     description("Test asynchronous results of calling lock.")
     window.jsTestIsAsync = true;
-    shouldBeDefined("window.layoutTestController");
+    shouldBeDefined("window.testRunner");
 
     currentStep = 0;
     function doNextStep() {
@@ -15,26 +15,26 @@
     }
     todo = [
         function () {
-            layoutTestController.setPointerLockWillFailSynchronously();
+            testRunner.setPointerLockWillFailSynchronously();
             navigator.webkitPointer.lock(document.body,
                 function () {
                     testFailed("Lock succeeded unexpectedly.");
                     finishJSTest();
                 },
                 function () {
-                    testPassed("Lock failed (after we called layoutTestController.setPointerLockWillFailSynchronously)");
+                    testPassed("Lock failed (after we called testRunner.setPointerLockWillFailSynchronously)");
                     doNextStep();
                 });
         },
         function () {
-            layoutTestController.setPointerLockWillFailAsynchronously();
+            testRunner.setPointerLockWillFailAsynchronously();
             navigator.webkitPointer.lock(document.body,
                 function () {
                     testFailed("Lock succeeded unexpectedly.");
                     finishJSTest();
                 },
                 function () {
-                    testPassed("Lock failed (after we called layoutTestController.setPointerLockWillFailAsynchronously)");
+                    testPassed("Lock failed (after we called testRunner.setPointerLockWillFailAsynchronously)");
                     doNextStep();
                 });
         },

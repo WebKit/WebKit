@@ -101,8 +101,8 @@ body {
   }
   
   function doTest() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     if (window.eventSender) {
         eventSender.dragMode = false;

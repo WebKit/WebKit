@@ -40,8 +40,8 @@ function centerMouseOn(elementId)
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     if (!window.eventSender || !window.eventSender.mouseScrollBy) {
         log("This test requires DumpRenderTree with eventSender.mouseScrollBy.");

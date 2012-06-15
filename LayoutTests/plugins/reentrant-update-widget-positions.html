@@ -10,9 +10,9 @@
         }
     </style>
     <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     // This gets called automatically from the test plugin.
     var doingTest = false;
@@ -25,8 +25,8 @@
         victim.parentNode.removeChild(victim);
         document.body.offsetTop;
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     
     function doTest()

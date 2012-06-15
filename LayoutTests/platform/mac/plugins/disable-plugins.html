@@ -1,11 +1,11 @@
 
 <script>
 function runTest() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         alert('this test must be run from DumpRenderTree')
     
-    layoutTestController.dumpAsText();
-    layoutTestController.setPluginsEnabled(false);
+    testRunner.dumpAsText();
+    testRunner.setPluginsEnabled(false);
     
     var pluginElement = document.getElementById('testPlugin');
     pluginElement.parentNode.removeChild(pluginElement);

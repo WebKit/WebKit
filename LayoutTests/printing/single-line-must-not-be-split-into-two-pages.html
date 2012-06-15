@@ -22,8 +22,8 @@ If no lines are split into two pages, the test passes.
 <p>Overflowed lines:</p>
 <pre id="overflowedLines"></pre>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var str = "";
 for (var i = 0; i < 400; i++) {

@@ -5,12 +5,12 @@
 <script>
 function main() 
 {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
         return;
     }
 
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
 }
 main();
 
@@ -27,7 +27,7 @@ function runTest()
     debug("PASS: You didn't crash.\n");
 
     isSuccessfullyParsed();
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 <embed id="plugin" 

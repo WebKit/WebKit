@@ -12,12 +12,12 @@ function callback(result) {
     else
         d.innerHTML = "FAILED - Expected error code 1 but got error code " + result
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     
     plg.getURLNotify("http://www.apple.com", "_blank", "callback");
 } else {

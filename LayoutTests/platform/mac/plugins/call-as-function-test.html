@@ -3,11 +3,11 @@
     <script>
         function doTest()
         {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             // Test calling bridged function with global window as "this"
-            var f = ("layoutTestController" in window) ? objCController.className : console.log;
+            var f = ("testRunner" in window) ? objCController.className : console.log;
             
             var result;
             try {

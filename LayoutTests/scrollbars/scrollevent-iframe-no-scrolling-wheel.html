@@ -1,21 +1,21 @@
 <html>
     <head>
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
             function timeoutFired()
             {
                 document.getElementById('console').innerHTML = "Not scrolled by WheelEvent: SUCCESS";
-                if (window.layoutTestController)
-                    window.layoutTestController.notifyDone();
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
             }
             function scrollEventFired()
             {
                 document.getElementById('console').innerHTML = "Scrolled by WheelEvent: FAILED (Should not be scrolled).";
-                if (window.layoutTestController)
-                    window.layoutTestController.notifyDone();
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
             }
             function runTest()
             {

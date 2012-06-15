@@ -1,10 +1,10 @@
 <html>
 <head>
     <script type="text/javascript">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.setCanOpenWindows();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setCanOpenWindows();
+        testRunner.waitUntilDone();
     }
 
     var newWindow = window.open("data:text/html,Hello world!")
@@ -17,8 +17,8 @@
 
         function doneIfClosed() {
             if (w.closed) {
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
                 return;
             }
             setTimeout(doneIfClosed, 1);

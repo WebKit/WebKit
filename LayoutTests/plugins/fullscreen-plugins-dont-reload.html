@@ -8,13 +8,13 @@ during the transition to fullscreen.
 <embed id="plg" type="application/x-webkit-test-netscape" src="data:application/x-webkit-test-netscape,alertwhenloaded"></iframe>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     var plugin = document.getElementById('plg');
     plugin.addEventListener('webkitfullscreenchange', function () {
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     })
     document.addEventListener('keydown', function () {
         plugin.webkitRequestFullScreen();

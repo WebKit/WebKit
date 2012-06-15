@@ -12,7 +12,7 @@
 
     description("Test that pointerlocklost event is dispatched.")
     window.jsTestIsAsync = true;
-    shouldBeDefined("window.layoutTestController");
+    shouldBeDefined("window.testRunner");
 
     targetdiv = document.getElementById("target");
 
@@ -92,7 +92,7 @@
             debug("Host initiated unlock.")
             lockchangeToUnlockedReceipts = 0;
             locklostreceipts = 0;
-            layoutTestController.didLosePointerLock();
+            testRunner.didLosePointerLock();
         },
         function () {
             // locklostHandler will catch unlocks and call doNextStep to bring us here.

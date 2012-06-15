@@ -7,7 +7,7 @@ function runTest() {
     var textarea = frameDocument.getElementById('textarea');
     textarea.focus();
 
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         output.textContent = "Click on the plugin (the blue rectangle); if the text field turns green the test has passed, otherwise it has failed.";
     } else {
         eventSender.mouseMoveTo(60, 60);
@@ -17,7 +17,7 @@ function runTest() {
         if (frameDocument.activeElement != textarea) {
           document.getElementById('output').textContent = "PASSED";
         }
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
     }
 }
 </script>

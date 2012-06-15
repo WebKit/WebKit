@@ -5,8 +5,8 @@
 is instantiated when accessing properties and methods of its owner element.</p>
 <p>Should alert PASS.</p>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function pluginCallback() { alert("PASS") }
 

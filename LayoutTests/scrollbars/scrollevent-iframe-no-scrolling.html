@@ -1,21 +1,21 @@
 <html>
     <head>
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
             function timeoutFired()
             {
                 document.getElementById('console').innerHTML = "Scrolled by JavaScript scrollTo(): FAILED";
-                if (window.layoutTestController)
-                    window.layoutTestController.notifyDone();
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
             }
             function scrollEventFired()
             {
                 document.getElementById('console').innerHTML = "Scrolled by JavaScript scrollTo(): PASS";
-                if (window.layoutTestController)
-                    window.layoutTestController.notifyDone();
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
             }
             function runTest()
             {

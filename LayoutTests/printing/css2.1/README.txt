@@ -9,9 +9,9 @@ We need the following modifications to add W3C's test into this directory:
 
 - Eliminate tabs.
 - Add dumpAsText() call.
-- Add test() function and implement it using layoutTestController functions.
+- Add test() function and implement it using testRunner functions.
 - Call test() function using runPrintintTest(test) from body's onload.
 - Add id attributes for elements in question.
 
 FIXME: page-margin-* aren't added yet. We may need
-       layoutTestController APIs to test margins.
+       testRunner APIs to test margins.

@@ -15,21 +15,21 @@
         document.getElementById("head_element").appendChild(styleElement);
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
 
         // Page size style tests.
         debug("Test page size: 10in 10in. Page has custom page size style");
         appendStyle("@page {size:10in 10in;}");
-        shouldBe("layoutTestController.hasCustomPageSizeStyle(0)", "true");
+        shouldBe("testRunner.hasCustomPageSizeStyle(0)", "true");
 
         debug("Test page size: auto. Page does not have any custom page size style");
         appendStyle("@page {size:auto;}");
-        shouldBe("layoutTestController.hasCustomPageSizeStyle(0)", "false");
+        shouldBe("testRunner.hasCustomPageSizeStyle(0)", "false");
 
         debug("");
     } else {
-        testFailed("This test can be run only with window.layoutTestController");
+        testFailed("This test can be run only with window.testRunner");
     }
 </script>
 <script src="../../../fast/js/resources/js-test-post.js"></script>

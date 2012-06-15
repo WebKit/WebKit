@@ -1,20 +1,20 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.setPopupBlockingEnabled(true);
-    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.setPopupBlockingEnabled(true);
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    testRunner.waitUntilDone();
 }
 
 function test() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     // Record current window count.
-    window.windowCount = window.layoutTestController.windowCount();
-    console.log("window count: " + window.layoutTestController.windowCount());
+    window.windowCount = window.testRunner.windowCount();
+    console.log("window count: " + window.testRunner.windowCount());
     // Send a mouse-click event to set the input focus to the test plug-in.
     eventSender.mouseMoveTo(0, 0);
     eventSender.mouseMoveTo(20, 20);
@@ -27,8 +27,8 @@ function popup_by_mousedown() {
     // Open a new window.
     window.open("data:text/html\, open new window by mouse down", "_blank");
     // Check the new opened window and logging the result.
-    console.log("window count: " + window.layoutTestController.windowCount());
-    if (window.layoutTestController.windowCount() == (window.windowCount + 1)) {
+    console.log("window count: " + window.testRunner.windowCount());
+    if (window.testRunner.windowCount() == (window.windowCount + 1)) {
         document.getElementById("mousedown_output").innerHTML = "PASSED";
         window.windowCount++;
     }
@@ -49,8 +49,8 @@ function popup_by_keydown() {
     // Open a new window.
     window.open("data:text/html\, open new window by key down", "_blank");
     // Check the new opened window and logging the result.
-    console.log("window count: " + window.layoutTestController.windowCount());
-    if (window.layoutTestController.windowCount() == (window.windowCount + 1))
+    console.log("window count: " + window.testRunner.windowCount());
+    if (window.testRunner.windowCount() == (window.windowCount + 1))
         document.getElementById("keydown_output").innerHTML = "PASSED";
     // Wait for plugin stopping and ending this test.
     setTimeout(end_test, 100);
@@ -60,7 +60,7 @@ function end_test() {
     // Change focus back to window to stop the plugin event logging.
     window.focus();
     // Close the test.
-     setTimeout(function() {layoutTestController.notifyDone();}, 1);
+     setTimeout(function() {testRunner.notifyDone();}, 1);
 }
 </script>
 </head>

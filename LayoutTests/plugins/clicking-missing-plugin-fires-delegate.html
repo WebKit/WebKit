@@ -4,10 +4,10 @@
 <p>This test checks if the missing plug-in button can be clicked. This is a test for <a href="https://bugs.webkit.org/show_bug.cgi?id=41721">Bug 41721</a>.</p>
 <script>
 
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         document.write("This test does not work in manual mode.");
     } else {
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
 
         eventSender.mouseMoveTo(0,0);
         eventSender.mouseMoveTo(105, 105);

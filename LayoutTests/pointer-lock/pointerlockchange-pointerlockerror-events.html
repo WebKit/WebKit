@@ -61,7 +61,7 @@
     currentStep = 0;
     function doNextStep(manual)
     {
-        if (!window.layoutTestController && !manual)
+        if (!window.testRunner && !manual)
             return;
         if (currentStep < todo.length)
             setTimeout(function () { todo[currentStep++](); }, 0);
@@ -131,14 +131,14 @@
             navigator.webkitPointer.unlock();
         },
         function () {
-            shouldBeDefined("layoutTestController.setPointerLockWillFailSynchronously");
-            layoutTestController.setPointerLockWillFailSynchronously();
+            shouldBeDefined("testRunner.setPointerLockWillFailSynchronously");
+            testRunner.setPointerLockWillFailSynchronously();
             expectOnlyErrorEvent("Lock with synchronous failure.");
             navigator.webkitPointer.lock(targetDiv1);
         },
         function () {
-            shouldBeDefined("layoutTestController.setPointerLockWillFailAsynchronously");
-            layoutTestController.setPointerLockWillFailAsynchronously();
+            shouldBeDefined("testRunner.setPointerLockWillFailAsynchronously");
+            testRunner.setPointerLockWillFailAsynchronously();
             expectOnlyErrorEvent("Lock with asynchronous failure.");
             navigator.webkitPointer.lock(targetDiv1);
         },

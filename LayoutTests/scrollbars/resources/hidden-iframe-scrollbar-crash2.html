@@ -21,8 +21,8 @@ function pass()
     var win = window.parent;
     win.document.getElementById("iframe").style.display = "";
     win.document.body.appendChild(document.createTextNode("PASSED"));
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </html>

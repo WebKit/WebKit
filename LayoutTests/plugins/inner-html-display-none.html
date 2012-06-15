@@ -1,17 +1,17 @@
 <html>
 <head>
 <script>
-   if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+   if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
    }
 
    function printResults()
    {
       alert(document.getElementById("plugin").testCallback);
 
-      if (window.layoutTestController)
-          layoutTestController.notifyDone();
+      if (window.testRunner)
+          testRunner.notifyDone();
    }
 
    function setPlugin()

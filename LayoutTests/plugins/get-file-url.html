@@ -13,8 +13,8 @@ function CheckForFinished() {
   if (window.subframe_done == 1) {
     var result = document.getElementById("result");
     result.innerHTML = "SUCCESS";
-    if (layoutTestController) {
-      layoutTestController.notifyDone();
+    if (testRunner) {
+      testRunner.notifyDone();
     }
   } else {
     setTimeout(CheckForFinished, 10);
@@ -30,9 +30,9 @@ function runtest() {
   setTimeout(CheckForFinished, 10);
 }
 
-if (layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 runtest();
 </script>

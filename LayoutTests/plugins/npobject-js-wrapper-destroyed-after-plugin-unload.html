@@ -3,9 +3,9 @@
 <head>
     <script>
         function startTest() {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             // Access all objects/properties that we're going to use later in the test so that JS
@@ -37,8 +37,8 @@
 
             document.body.appendChild(document.createTextNode('PASSED'));
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
 
         addEventListener('load', startTest, false);

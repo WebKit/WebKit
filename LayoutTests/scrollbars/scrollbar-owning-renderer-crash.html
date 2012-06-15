@@ -4,9 +4,9 @@
 ::-webkit-scrollbar { height: 50000; }
  </style>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function runTest() {
@@ -24,8 +24,8 @@ function runTest() {
 function finish() {
     if (window.eventSender)
         eventSender.mouseMoveTo(100, 100);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 setTimeout("if (window.eventSender) eventSender.mouseMoveTo(0, 0);", 0);

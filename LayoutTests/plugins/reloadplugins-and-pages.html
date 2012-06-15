@@ -14,21 +14,21 @@
         }
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     
     if (callReload) {
         try {
-            if (window.layoutTestController)
-                layoutTestController.waitUntilDone();
+            if (window.testRunner)
+                testRunner.waitUntilDone();
             document.getElementById('plg').reloadPluginsAndPages();
         } catch (ex) {
             alert("Exception: " + ex.description + ". Test plugin was not found");
         }
     } else {
         document.getElementById('res').innerHTML="SUCCESS";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 </body>

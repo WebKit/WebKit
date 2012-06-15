@@ -46,9 +46,9 @@ div#styled::-webkit-scrollbar-track:horizontal {
 </style>
 <body style="margin:0">
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 </script>
 <div id="overflow" style="border:2px solid black;overflow:auto;height:200px;width:200px; left: 0px; top: 100px; position: absolute;">
@@ -78,7 +78,7 @@ should be 80, and the horizonta 40.<p/>
 <script>
 function failed() {
     document.getElementById('console').innerHTML = "FAILED";
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 
 if (window.eventSender) {
@@ -154,7 +154,7 @@ function finished()
     // Just to cleanup the test results page
     document.getElementById('styled').style.display = 'none';
 
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 
 </script>

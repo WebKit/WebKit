@@ -5,8 +5,8 @@
 <div id='res'>FAILURE</div>
 <script>
     alert("Page was loaded");
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     try {
         plg.reloadPluginsNoPages();

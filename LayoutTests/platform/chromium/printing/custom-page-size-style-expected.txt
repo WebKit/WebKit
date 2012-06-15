@@ -4,9 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Test page size: 10in 10in. Page has custom page size style
-PASS layoutTestController.hasCustomPageSizeStyle(0) is true
+PASS testRunner.hasCustomPageSizeStyle(0) is true
 Test page size: auto. Page does not have any custom page size style
-PASS layoutTestController.hasCustomPageSizeStyle(0) is false
+PASS testRunner.hasCustomPageSizeStyle(0) is false
 
 PASS successfullyParsed is true
 

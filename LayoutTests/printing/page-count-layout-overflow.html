@@ -13,20 +13,20 @@ p {
 
 function runTest()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     var lines = [ 'line<br>' ];
     for (var i = 0; i < 7; i++)
         lines = lines.concat(lines);
     document.body.innerHTML = '<p>' + lines.join('') + '</p>';
-    document.body.textContent = 'When printing, layout overflow must be cleared after current document size is queried: ' +  (layoutTestController.numberOfPages() > 1 ? 'PASS' : 'FAIL');
+    document.body.textContent = 'When printing, layout overflow must be cleared after current document size is queried: ' +  (testRunner.numberOfPages() > 1 ? 'PASS' : 'FAIL');
 }
 
 </script>
 <head>
 <body onload="runTest()">
-This test needs window.layoutTestController to run.
+This test needs window.testRunner to run.
 </body>
 </html>

@@ -1,10 +1,10 @@
 <html>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-    layoutTestController.overridePreference("WebKitPageCacheSupportsPluginsPreferenceKey", 1);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.overridePreference("WebKitPageCacheSupportsPluginsPreferenceKey", 1);
 }
 
 var savedTestObject = null;
@@ -37,8 +37,8 @@ function runTest()
     if (!hasHidden)
         setTimeout("window.location.href = 'resources/go-back.html'", 0);
     else {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     
 }

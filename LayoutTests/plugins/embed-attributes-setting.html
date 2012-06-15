@@ -29,8 +29,8 @@ var embed;
 
 function test() 
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
         
     embed = document.getElementById('embed');
     print("[Embed is element specified in markup]");

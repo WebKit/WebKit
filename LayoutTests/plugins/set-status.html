@@ -4,9 +4,9 @@
 <embed name="plg" type="application/x-webkit-test-netscape"></embed>
 <p>PASS if status bar says "PASS".</p>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpStatusCallbacks();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpStatusCallbacks();
+        testRunner.dumpAsText();
     }
 
     plg.setStatus(); // Try sending a null string, which used to cause a crash.

@@ -11,14 +11,14 @@ function callback(result) {
     else
         d.innerHTML = "FAILED - got error code " + result
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function runtest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-        layoutTestController.setCanOpenWindows();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.setCanOpenWindows();
         // The new window should close immediately after it opens and finishes
         // loading.  The setTimeout allows NPP_URLNotify to run before the
         // window is closed.

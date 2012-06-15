@@ -12,7 +12,7 @@ function appendResult(result)
 
 function pageNumberForElementShouldBe(id, expectedPageNumber)
 {
-    var actualPageNumber = layoutTestController.pageNumberForElementById(id);
+    var actualPageNumber = testRunner.pageNumberForElementById(id);
     if (actualPageNumber == expectedPageNumber)
         appendResult('PASS: page number of "' + id + '" is ' + actualPageNumber);
     else {
@@ -26,9 +26,9 @@ function numberOfPagesShouldBe(expectedNumberOfPages, pageWidthInPixels, pageHei
     // pageWidthInPixels and pageHeightInPixels can be omitted. If omitted, 800x600 is used.
     var actualNumberOfPages;
     if (pageWidthInPixels && pageHeightInPixels)
-        actualNumberOfPages = layoutTestController.numberOfPages(pageWidthInPixels, pageHeightInPixels);
+        actualNumberOfPages = testRunner.numberOfPages(pageWidthInPixels, pageHeightInPixels);
     else
-        actualNumberOfPages = layoutTestController.numberOfPages();
+        actualNumberOfPages = testRunner.numberOfPages();
 
     if (actualNumberOfPages == expectedNumberOfPages)
         appendResult('PASS: number of pages is ' + actualNumberOfPages);
@@ -40,7 +40,7 @@ function numberOfPagesShouldBe(expectedNumberOfPages, pageWidthInPixels, pageHei
 
 function runPrintingTest(testFunction)
 {
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         try {
             testFunction();
         } catch (err) {
@@ -51,7 +51,7 @@ function runPrintingTest(testFunction)
         if (!_errored)
             _results += '<br>All tests passed';
     } else {
-        _results += 'This test requires layoutTestController. You can test this manually with the above description.';
+        _results += 'This test requires testRunner. You can test this manually with the above description.';
     }
 
     var resultElement = document.createElement('p');

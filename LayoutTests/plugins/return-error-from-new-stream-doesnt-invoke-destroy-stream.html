@@ -10,11 +10,11 @@
             var destroyStreamCalled = false;
 
             function main() {
-                if (!window.layoutTestController) {
+                if (!window.testRunner) {
                     debug("This test can only run from within DumpRenderTree, because it requires TestNetscapePlugin.\n");
                     return;
                 }
-                layoutTestController.waitUntilDone();
+                testRunner.waitUntilDone();
             }
 
             main();
@@ -30,7 +30,7 @@
 
                 debug('<br><span class="pass">TEST COMPLETE</span>');
 
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
         </script>
 

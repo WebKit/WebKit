@@ -10,8 +10,8 @@ function print(message)
 
 function test() 
 { 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
     }
 
     print("plugin <object> with nested plugin <embed>: should have a plugin and does " + (document.getElementById('myO').testCallback ? "" : "not"));

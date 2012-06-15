@@ -8,8 +8,8 @@ function doTest()
 {
     description('This page tests invoking as functions JavaScript objects that are provided by plugins.')
     
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     pluginWithInvokeDefault = document.getElementById('plugin-with-invoke-default');
     

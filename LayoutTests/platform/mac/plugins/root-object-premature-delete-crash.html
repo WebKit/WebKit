@@ -30,7 +30,7 @@ function runTest()
     }
 
     log("PASS: You didn't crash.\n");
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function queueTest()
@@ -43,12 +43,12 @@ function queueTest()
 function timeoutTest()
 {
     log("FAIL: Test timed-out after " + count + " runs.\n");
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 window.onload = function onload()
 {
-    if (!("layoutTestController" in window) || !("objCController" in window)) {
+    if (!("testRunner" in window) || !("objCController" in window)) {
         var errorMessage = "FAIL: This test can only run inside DumpRenderTree on the mac.";
         log(errorMessage);
         throw errorMessage;
@@ -56,8 +56,8 @@ window.onload = function onload()
 
     timeoutIdentifier = setTimeout(timeoutTest, 30000); // timeout after 30 seconds
 
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     queueTest();
 }

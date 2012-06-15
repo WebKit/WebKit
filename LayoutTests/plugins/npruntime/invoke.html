@@ -6,8 +6,8 @@ REGRESSION: Flash callback to JavaScript function not working.</p>
 <div id=res>FAILURE</div>
 <script>
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     
     function MyCallback() {
         document.getElementById('res').innerHTML = 'SUCCESS';

@@ -9,15 +9,15 @@
 
 function runTest()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     var block = document.getElementById('test');
     for (var i = 0; i < 100; i++)
         document.body.appendChild(block.cloneNode(true));
 
-    layoutTestController.dumpAsText();
-    var pages = layoutTestController.numberOfPages();
+    testRunner.dumpAsText();
+    var pages = testRunner.numberOfPages();
     document.body.textContent = 'Document has ' + pages + ' pages.';
 }
 

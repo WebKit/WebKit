@@ -1,10 +1,10 @@
 <html>
 <script>
 function runtest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-        plg.getURLNotify("data:text/html,<body onload='layoutTestController.notifyDone()'></body>", "frame", "callback");
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        plg.getURLNotify("data:text/html,<body onload='testRunner.notifyDone()'></body>", "frame", "callback");
         plg.parentNode.removeChild(plg)
     } else {
         document.write("Cannot run interactively");

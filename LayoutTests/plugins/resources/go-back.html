@@ -8,7 +8,7 @@ function loaded()
 <script>
 if (history.length == 0) {
     document.innerHTML += "<br> But it won't work because there is no back history!";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>

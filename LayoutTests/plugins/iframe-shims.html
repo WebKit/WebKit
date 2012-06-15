@@ -210,9 +210,9 @@
     var nextIdToClick = 0;
 
     function runTest() {
-        if (window.layoutTestController && window.eventSender) {
-            layoutTestController.waitUntilDone();
-            layoutTestController.dumpAsText();
+        if (window.testRunner && window.eventSender) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
             setTimeout(doNextClick, 0);
         }
     }
@@ -239,7 +239,7 @@
             setTimeout(doNextClick, 0);
         } else {
             setTimeout(function() {
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }, 0);
         }
     }

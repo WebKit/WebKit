@@ -16,14 +16,14 @@ function runTest()
 {
     if (document.location.search == "?done") {
         document.body.appendChild(document.createTextNode("PASSED"));
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 
     setTimeout(function() {

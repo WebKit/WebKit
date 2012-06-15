@@ -3,7 +3,7 @@ Test that pointerlocklost event is dispatched.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS window.layoutTestController is defined.
+PASS window.testRunner is defined.
 PASS navigator.webkitPointer.isLocked is true
 PASS document.webkitPointerLockElement is targetdiv
 JavaScript initiated unlock.

@@ -21,8 +21,8 @@ function new_script_object() {
 
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var plugin = document.getElementById("testPlugin");
     var returned_object = plugin.testScriptObjectInvoke("new_script_object", "createObject");

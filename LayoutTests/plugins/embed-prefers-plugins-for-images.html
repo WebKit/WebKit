@@ -1,7 +1,7 @@
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     function runTest()
@@ -12,8 +12,8 @@
         if (plugin && (plugin.testCallback || plugin.GetQuickTimeVersion))
             logSuccess();
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     
     function logSuccess()

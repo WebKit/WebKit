@@ -4,9 +4,9 @@
 <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=7656">bug 7656<a/>:
 Query string always appended to Flash URLs, instead of being replaced</p>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     try {
@@ -24,8 +24,8 @@ Query string always appended to Flash URLs, instead of being replaced</p>
                 document.write(query == "?2" ? 
                     "SUCCESS" : "FAILURE: " + query);
                 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         }
     } catch (ex) {

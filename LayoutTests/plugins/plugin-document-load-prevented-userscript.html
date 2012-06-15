@@ -1,9 +1,9 @@
 <html>
 <head>
     <script>
-        if (window.layoutTestController) {
-            window.layoutTestController.dumpAsText();
-            window.layoutTestController.addUserScript("document.addEventListener('beforeload', function(event) { if (event.url.indexOf('swf') >= 0) event.preventDefault(); }, true);", true, true);
+        if (window.testRunner) {
+            window.testRunner.dumpAsText();
+            window.testRunner.addUserScript("document.addEventListener('beforeload', function(event) { if (event.url.indexOf('swf') >= 0) event.preventDefault(); }, true);", true, true);
         }
     </script>
 </head>

@@ -4,9 +4,9 @@
 </form>
 <div id="console"></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message) {
@@ -25,7 +25,7 @@ if (document.location.href.indexOf('?') == -1) {
         log('PASS: The form value was successfully obtained.');
     else
         log('FAIL: Could not obtain the form value correctly.');
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>

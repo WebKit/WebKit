@@ -12,8 +12,8 @@
                 elementsToShow[i].style.visibility = 'visible';
         }
 
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText(true);
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
         addEventListener('load', loaded, false);
     </script>
     <style>

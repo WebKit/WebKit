@@ -3,8 +3,8 @@
 <head>
     <script>
         function loaded() {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
             var container = document.getElementsByTagName('div')[0];
             container.scrollLeft = 300;
             container.scrollTop = 300;

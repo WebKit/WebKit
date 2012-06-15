@@ -17,8 +17,8 @@ function check(exp, value) {
     print('' + exp + ' == ' + value + ' ? -> ' + result);
 }
 function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     if (!window.objCPlugin)
         return print('FAIL - no objCPlugin');
     objCPlugin.removeBridgeRestrictions_(window);

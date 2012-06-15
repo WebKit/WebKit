@@ -5,8 +5,8 @@
 var methodName = '';
 function doTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     shouldBeEqualToString("objCPlugin['testConversionColon_'](1)", 'testConversionColon:(int)useless');
     shouldBeEqualToString("objCPlugin['testConversionEscapeChar$$a$_b$$$__'](2)", 'testConversionEscapeChar$a_b$_:(int)useless');

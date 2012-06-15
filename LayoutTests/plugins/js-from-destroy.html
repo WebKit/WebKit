@@ -1,9 +1,9 @@
 <html>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.setXSSAuditorEnabled(true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setXSSAuditorEnabled(true);
 }
 
 function runtest()
@@ -12,8 +12,8 @@ function runtest()
 
     location = "data:text/html,PASS if didn't crash." +
         "<script>" + 
-        "if (window.layoutTestController)" +
-        "   layoutTestController.notifyDone();" +
+        "if (window.testRunner)" +
+        "   testRunner.notifyDone();" +
         "</scr" + "ipt>";
 }
 

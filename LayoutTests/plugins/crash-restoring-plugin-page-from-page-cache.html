@@ -1,10 +1,10 @@
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-    layoutTestController.overridePreference("WebKitPageCacheSupportsPluginsPreferenceKey", 1);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.overridePreference("WebKitPageCacheSupportsPluginsPreferenceKey", 1);
 }
 
 function pageShown() {
@@ -16,8 +16,8 @@ function pageShown() {
 
 function testComplete() {
     alert("Made it back!");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function startTest() {

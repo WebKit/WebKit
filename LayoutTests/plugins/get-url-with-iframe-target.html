@@ -11,13 +11,13 @@ function callback(result) {
     else
         d.innerHTML = "FAILED - got error code " + result
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function runtest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
         plg.getURLNotify("data:,hello world", "frame", "callback");
     } else {
         document.write("Cannot run interactively");

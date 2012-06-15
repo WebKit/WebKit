@@ -2,9 +2,9 @@
 <body onpaste="pasteCount++;">
 <script>
 var pasteCount = 0;
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 </script>
 
@@ -30,8 +30,8 @@ function finished()
     } else {
         document.getElementById('console').innerHTML = "FAIL";
     }
-    if (window.layoutTestController) {
-        window.layoutTestController.notifyDone();
+    if (window.testRunner) {
+        window.testRunner.notifyDone();
     }
 }
 </script>

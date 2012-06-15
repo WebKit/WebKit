@@ -8,8 +8,8 @@
   }
 
   function runtest() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var obj = plug.testCallbackReturn("callback");
     if (obj == test_object) {

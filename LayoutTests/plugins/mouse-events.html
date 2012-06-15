@@ -8,10 +8,10 @@ Flash clicks/interactivity not working properly.</p>
     plg.windowedPlugin = false;
     plg.eventLoggingEnabled = true;
 
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         document.write("This test does not work in manual mode.");
     } else {
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
         
         eventSender.mouseMoveTo(0,0);
         eventSender.mouseMoveTo(20,20);

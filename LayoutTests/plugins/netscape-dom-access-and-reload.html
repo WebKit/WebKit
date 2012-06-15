@@ -16,12 +16,12 @@ function runTest()
             window.sessionStorage.netscapeDomAccessAndReloadHasReloaded = 1;
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     
     if (callReload) {
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         location.reload();
     } else {
         window.GCController.collect();
@@ -37,9 +37,9 @@ function runTest()
         } else {
               document.getElementById("result").innerHTML = "FAILED; This test is only valid in DumpRenderTree, and only when the Inspector is enabled.";
         }
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.notifyDone();
         }
     }
 }

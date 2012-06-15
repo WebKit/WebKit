@@ -14,8 +14,8 @@
         target.parentNode.removeChild(target);
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     document.body.offsetTop;
     location.href = "data:text/html,Test for rdar://problem/6937089 PASSED.";

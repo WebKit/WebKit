@@ -1,14 +1,14 @@
 <html>
     <head>
         <script>
-        if (!window.layoutTestController) {
+        if (!window.testRunner) {
             alert('this test can only be run by DumpRenderTree')
         } else {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
-            layoutTestController.setCallCloseOnWebViews(false);
-            layoutTestController.setCanOpenWindows();
-            layoutTestController.setCloseRemainingWindowsWhenComplete(false);
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            testRunner.setCallCloseOnWebViews(false);
+            testRunner.setCanOpenWindows();
+            testRunner.setCloseRemainingWindowsWhenComplete(false);
             window.open("resources/geturlnotify-on-destroy.html");
         }
         </script>

@@ -3,8 +3,8 @@
 <script>
 function doTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     if (window.objCPlugin) {
         // Type should be "object"

@@ -28,10 +28,10 @@ PASS onwebkitpointerlockchange received after: Lock targetIframe2 (handler for i
      Unlock targetIframe2 (handler for iframe1).
      Unlock targetIframe2 (handler for iframe2).
 PASS onwebkitpointerlockchange received after: Unlock targetIframe2 (handler for iframe2).
-PASS layoutTestController.setPointerLockWillFailSynchronously is defined.
+PASS testRunner.setPointerLockWillFailSynchronously is defined.
      Lock with synchronous failure.
 PASS onwebkitpointerlockerror received after: Lock with synchronous failure.
-PASS layoutTestController.setPointerLockWillFailAsynchronously is defined.
+PASS testRunner.setPointerLockWillFailAsynchronously is defined.
      Lock with asynchronous failure.
 PASS onwebkitpointerlockerror received after: Lock with asynchronous failure.
 PASS successfullyParsed is true

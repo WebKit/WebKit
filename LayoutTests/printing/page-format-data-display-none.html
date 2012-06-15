@@ -18,11 +18,11 @@ function testManually() {
     window.print();
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
     // The test passes if the following line doesn't cause a crash.
-    layoutTestController.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4);
+    testRunner.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4);
 
     document.getElementById("output").innerHTML = "PASS";
 }

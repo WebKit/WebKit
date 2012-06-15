@@ -5,12 +5,12 @@
 <script>
 function main() 
 {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
         return;
     }
 
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
 }
 main();
 
@@ -47,7 +47,7 @@ function testNPInvoke()
     shouldBe("typeof(objectArgument)", "'object'");
 
     isSuccessfullyParsed();    
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 description("Tests that the NPRuntime implementation works as expected");

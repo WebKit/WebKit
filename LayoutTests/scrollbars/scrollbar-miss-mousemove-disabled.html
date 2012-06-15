@@ -1,9 +1,9 @@
 <html>
 <body style="margin:0">
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 </script>
 <form name="form1"> 
@@ -139,7 +139,7 @@ function finished()
 {
     document.getElementById('console').innerHTML
         = "Text is \"" + document.form1.text1.value + "\"";
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 </script>
 </body>

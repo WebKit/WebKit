@@ -2,9 +2,9 @@
 <html>
 <head>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         
         window._beforeloadReceivedForEmbed = false;
@@ -25,8 +25,8 @@
             // <embed>'s beforeload event fired.
             window.setTimeout(function() {
                 console.log(_beforeloadReceivedForEmbed ? "PASS" : "FAIL");
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }, 0);
         }
     </script>

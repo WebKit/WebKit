@@ -8,10 +8,10 @@
 </style>
 <script>
 function runTest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         document.body.offsetTop;
-        layoutTestController.display();
+        testRunner.display();
     }
 };
 </script>

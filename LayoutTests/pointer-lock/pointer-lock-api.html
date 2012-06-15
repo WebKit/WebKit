@@ -12,7 +12,7 @@
     currentStep = 0;
     function doNextStep(manual)
     {
-        if (!window.layoutTestController && !manual)
+        if (!window.testRunner && !manual)
             return;
         if (currentStep < todo.length)
             setTimeout(function () { todo[currentStep++](); }, 0);
