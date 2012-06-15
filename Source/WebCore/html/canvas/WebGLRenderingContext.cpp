@@ -4608,20 +4608,9 @@ void WebGLRenderingContext::createFallbackBlackTextures1x1()
 bool WebGLRenderingContext::isTexInternalFormatColorBufferCombinationValid(GC3Denum texInternalFormat,
                                                                            GC3Denum colorBufferFormat)
 {
-    switch (colorBufferFormat) {
-    case GraphicsContext3D::ALPHA:
-        if (texInternalFormat == GraphicsContext3D::ALPHA)
-            return true;
-        break;
-    case GraphicsContext3D::RGB:
-        if (texInternalFormat == GraphicsContext3D::LUMINANCE
-            || texInternalFormat == GraphicsContext3D::RGB)
-            return true;
-        break;
-    case GraphicsContext3D::RGBA:
-        return true;
-    }
-    return false;
+    unsigned need = GraphicsContext3D::getChannelBitsByFormat(texInternalFormat);
+    unsigned have = GraphicsContext3D::getChannelBitsByFormat(colorBufferFormat);
+    return (need & have) == need;
 }
 
 GC3Denum WebGLRenderingContext::getBoundFramebufferColorFormat()

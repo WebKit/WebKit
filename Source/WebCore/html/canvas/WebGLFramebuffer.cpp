@@ -86,15 +86,7 @@ namespace {
 
     GC3Denum WebGLRenderbufferAttachment::getFormat() const
     {
-        unsigned long format = m_renderbuffer->getInternalFormat();
-        switch (format) {
-        case GraphicsContext3D::RGBA4:
-        case GraphicsContext3D::RGB5_A1:
-            return GraphicsContext3D::RGBA;
-        case GraphicsContext3D::RGB565:
-            return GraphicsContext3D::RGB;
-        }
-        return 0;
+        return m_renderbuffer->getInternalFormat();
     }
 
     WebGLSharedObject* WebGLRenderbufferAttachment::getObject() const
@@ -237,52 +229,12 @@ namespace {
         context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, attachment, m_target, 0, m_level);
     }
 
-    unsigned getClearBitsByAttachmentType(GC3Denum attachment)
-    {
-        switch (attachment) {
-        case GraphicsContext3D::COLOR_ATTACHMENT0:
-            return GraphicsContext3D::COLOR_BUFFER_BIT;
-        case GraphicsContext3D::DEPTH_ATTACHMENT:
-            return GraphicsContext3D::DEPTH_BUFFER_BIT;
-        case GraphicsContext3D::STENCIL_ATTACHMENT:
-            return GraphicsContext3D::STENCIL_BUFFER_BIT;
-        case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
-            return GraphicsContext3D::DEPTH_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT;
-        default:
-            return 0;
-        }
-    }
-
-    unsigned getClearBitsByFormat(GC3Denum format)
-    {
-        switch (format) {
-        case GraphicsContext3D::ALPHA:
-        case GraphicsContext3D::LUMINANCE:
-        case GraphicsContext3D::LUMINANCE_ALPHA:
-        case GraphicsContext3D::RGB:
-        case GraphicsContext3D::RGB565:
-        case GraphicsContext3D::RGBA:
-        case GraphicsContext3D::RGBA4:
-        case GraphicsContext3D::RGB5_A1:
-            return GraphicsContext3D::COLOR_BUFFER_BIT;
-        case GraphicsContext3D::DEPTH_COMPONENT16:
-        case GraphicsContext3D::DEPTH_COMPONENT:
-            return GraphicsContext3D::DEPTH_BUFFER_BIT;
-        case GraphicsContext3D::STENCIL_INDEX8:
-            return GraphicsContext3D::STENCIL_BUFFER_BIT;
-        case GraphicsContext3D::DEPTH_STENCIL:
-            return GraphicsContext3D::DEPTH_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT;
-        default:
-            return 0;
-        }
-    }
-
     bool isAttachmentComplete(WebGLFramebuffer::WebGLAttachment* attachedObject, GC3Denum attachment, const char** reason)
     {
         ASSERT(attachedObject && attachedObject->isValid());
         ASSERT(reason);
-        unsigned need = getClearBitsByAttachmentType(attachment);
-        unsigned have = getClearBitsByFormat(attachedObject->getFormat());
+        unsigned need = GraphicsContext3D::getClearBitsByAttachmentType(attachment);
+        unsigned have = GraphicsContext3D::getClearBitsByFormat(attachedObject->getFormat());
 
         if ((need & have) != need) {
             *reason = "attachment type is not correct for attachment";
@@ -529,7 +481,7 @@ bool WebGLFramebuffer::initializeAttachments(GraphicsContext3D* g3d, const char*
         GC3Denum attachmentType = it->first;
         WebGLAttachment* attachment = it->second.get();
         if (!attachment->isInitialized())
-           mask |= getClearBitsByAttachmentType(attachmentType);
+           mask |= GraphicsContext3D::getClearBitsByAttachmentType(attachmentType);
     }
     if (!mask)
         return true;
@@ -600,7 +552,7 @@ bool WebGLFramebuffer::initializeAttachments(GraphicsContext3D* g3d, const char*
     for (AttachmentMap::iterator it = m_attachments.begin(); it != m_attachments.end(); ++it) {
         GC3Denum attachmentType = it->first;
         WebGLAttachment* attachment = it->second.get();
-        GC3Dbitfield bits = getClearBitsByAttachmentType(attachmentType);
+        GC3Dbitfield bits = GraphicsContext3D::getClearBitsByAttachmentType(attachmentType);
         if (bits & mask)
             attachment->setInitialized();
     }

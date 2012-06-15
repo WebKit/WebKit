@@ -1756,6 +1756,75 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
     return true;
 }
 
+unsigned GraphicsContext3D::getClearBitsByAttachmentType(GC3Denum attachment)
+{
+    switch (attachment) {
+    case GraphicsContext3D::COLOR_ATTACHMENT0:
+        return GraphicsContext3D::COLOR_BUFFER_BIT;
+    case GraphicsContext3D::DEPTH_ATTACHMENT:
+        return GraphicsContext3D::DEPTH_BUFFER_BIT;
+    case GraphicsContext3D::STENCIL_ATTACHMENT:
+        return GraphicsContext3D::STENCIL_BUFFER_BIT;
+    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+        return GraphicsContext3D::DEPTH_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT;
+    default:
+        return 0;
+    }
+}
+
+unsigned GraphicsContext3D::getClearBitsByFormat(GC3Denum format)
+{
+    switch (format) {
+    case GraphicsContext3D::ALPHA:
+    case GraphicsContext3D::LUMINANCE:
+    case GraphicsContext3D::LUMINANCE_ALPHA:
+    case GraphicsContext3D::RGB:
+    case GraphicsContext3D::RGB565:
+    case GraphicsContext3D::RGBA:
+    case GraphicsContext3D::RGBA4:
+    case GraphicsContext3D::RGB5_A1:
+        return GraphicsContext3D::COLOR_BUFFER_BIT;
+    case GraphicsContext3D::DEPTH_COMPONENT16:
+    case GraphicsContext3D::DEPTH_COMPONENT:
+        return GraphicsContext3D::DEPTH_BUFFER_BIT;
+    case GraphicsContext3D::STENCIL_INDEX8:
+        return GraphicsContext3D::STENCIL_BUFFER_BIT;
+    case GraphicsContext3D::DEPTH_STENCIL:
+        return GraphicsContext3D::DEPTH_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT;
+    default:
+        return 0;
+    }
+}
+
+unsigned GraphicsContext3D::getChannelBitsByFormat(GC3Denum format)
+{
+    switch (format) {
+    case GraphicsContext3D::ALPHA:
+        return ChannelAlpha;
+    case GraphicsContext3D::LUMINANCE:
+        return ChannelRGB;
+    case GraphicsContext3D::LUMINANCE_ALPHA:
+        return ChannelRGBA;
+    case GraphicsContext3D::RGB:
+    case GraphicsContext3D::RGB565:
+        return ChannelRGB;
+    case GraphicsContext3D::RGBA:
+    case GraphicsContext3D::RGBA4:
+    case GraphicsContext3D::RGB5_A1:
+        return ChannelRGBA;
+    case GraphicsContext3D::DEPTH_COMPONENT16:
+    case GraphicsContext3D::DEPTH_COMPONENT:
+        return ChannelDepth;
+    case GraphicsContext3D::STENCIL_INDEX8:
+        return ChannelStencil;
+    case GraphicsContext3D::DEPTH_STENCIL:
+        return ChannelDepth | ChannelStencil;
+    default:
+        return 0;
+    }
+}
+
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

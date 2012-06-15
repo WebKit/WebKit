@@ -844,6 +844,22 @@ public:
 
     IntSize getInternalFramebufferSize() const;
 
+    static unsigned getClearBitsByAttachmentType(GC3Denum);
+    static unsigned getClearBitsByFormat(GC3Denum);
+
+    enum ChannelBits {
+        ChannelRed = 1,
+        ChannelGreen = 2,
+        ChannelBlue = 4,
+        ChannelAlpha = 8,
+        ChannelDepth = 16,
+        ChannelStencil = 32,
+        ChannelRGB = ChannelRed | ChannelGreen | ChannelBlue,
+        ChannelRGBA = ChannelRGB | ChannelAlpha,
+    };
+
+    static unsigned getChannelBitsByFormat(GC3Denum);
+
   private:
     GraphicsContext3D(Attributes attrs, HostWindow* hostWindow, bool renderDirectlyToHostWindow);
 
