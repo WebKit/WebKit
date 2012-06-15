@@ -1,3 +1,9 @@
+2012-06-15  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium windows rebaseline.
+
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+
 2012-06-15  Kent Tamura  <tkent@chromium.org>
 
         A followup for r120413.
