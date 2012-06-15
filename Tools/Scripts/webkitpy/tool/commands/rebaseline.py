@@ -284,22 +284,22 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
             return
         _log.info("Retrieving results for %s from %s." % (port_name, builder_name))
         for test_name, suffixes in self._tests_to_rebaseline(self._tool.port_factory.get(port_name)).iteritems():
-            self._touched_test_names.add(test_name)
+            self._touched_tests.setdefault(test_name, set()).update(set(suffixes))
             _log.info("    %s (%s)" % (test_name, ','.join(suffixes)))
             # FIXME: we should use executive.run_in_parallel() to speed this up.
             self._run_webkit_patch(['rebaseline-test', '--suffixes', ','.join(suffixes), builder_name, test_name])
 
     def execute(self, options, args, tool):
-        self._touched_test_names = set([])
+        self._touched_tests = {}
         for port_name in tool.port_factory.all_port_names():
             self._rebaseline_port(port_name)
         for port_name in tool.port_factory.all_port_names():
             self._update_expectations_file(port_name)
         if not options.optimize:
             return
-        for test_name in self._touched_test_names:
-            _log.info("Optimizing baselines for %s." % test_name)
-            self._run_webkit_patch(['optimize-baselines', test_name])
+        for test_name, suffixes in self._touched_tests.iteritems():
+            _log.info("Optimizing baselines for %s (%s)." % (test_name, ','.join(suffixes)))
+            self._run_webkit_patch(['optimize-baselines', '--suffixes', ','.join(suffixes), test_name])
 
 
 class Rebaseline(AbstractDeclarativeCommand):

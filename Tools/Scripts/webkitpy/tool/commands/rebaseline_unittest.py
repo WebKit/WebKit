@@ -237,11 +237,11 @@ MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Webkit Win',
         OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=False), [], tool], expected_logs=expected_logs, expected_stderr=expected_stderr)
 
         expected_logs_with_optimize = expected_logs + (
-            "Optimizing baselines for userscripts/another-test.html.\n"
-            "Optimizing baselines for userscripts/images.svg.\n")
+            "Optimizing baselines for userscripts/another-test.html (txt).\n"
+            "Optimizing baselines for userscripts/images.svg (png).\n")
         expected_stderr_with_optimize = expected_stderr + (
-            "MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/another-test.html'], cwd=/mock-checkout\n"
-            "MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/images.svg'], cwd=/mock-checkout\n")
+            "MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt', 'userscripts/another-test.html'], cwd=/mock-checkout\n"
+            "MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'png', 'userscripts/images.svg'], cwd=/mock-checkout\n")
 
         command._tests_to_rebaseline = lambda port: {'userscripts/another-test.html': set(['txt']), 'userscripts/images.svg': set(['png'])}
         OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True), [], tool], expected_logs=expected_logs_with_optimize, expected_stderr=expected_stderr_with_optimize)
