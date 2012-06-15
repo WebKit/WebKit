@@ -41,10 +41,15 @@
 #include "PNGImageDecoder.h"
 
 #include "png.h"
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(CHROMIUM)
 #include "TraceEvent.h"
+#endif
+
+#if USE(QCMSLIB)
+#include "qcms.h"
 #endif
 
 #if defined(PNG_LIBPNG_VER_MAJOR) && defined(PNG_LIBPNG_VER_MINOR) && (PNG_LIBPNG_VER_MAJOR > 1 || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 4))
@@ -107,10 +112,14 @@ class PNGImageReader
 public:
     PNGImageReader(PNGImageDecoder* decoder)
         : m_readOffset(0)
-        , m_decodingSizeOnly(false)
-        , m_interlaceBuffer(0)
-        , m_hasAlpha(false)
         , m_currentBufferSize(0)
+        , m_decodingSizeOnly(false)
+        , m_hasAlpha(false)
+        , m_interlaceBuffer(0)
+#if USE(QCMSLIB)
+        , m_transform(0)
+        , m_rowBuffer()
+#endif
     {
         m_png = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, decodingFailed, decodingWarning);
         m_info = png_create_info_struct(m_png);
@@ -127,12 +136,15 @@ public:
         if (m_png && m_info)
             // This will zero the pointers.
             png_destroy_read_struct(&m_png, &m_info, 0);
+#if USE(QCMSLIB)
+        if (m_transform)
+            qcms_transform_release(m_transform);
+        m_transform = 0;
+#endif
         delete[] m_interlaceBuffer;
         m_interlaceBuffer = 0;
         m_readOffset = 0;
     }
-
-    unsigned currentBufferSize() const { return m_currentBufferSize; }
 
     bool decode(const SharedBuffer& data, bool sizeOnly)
     {
@@ -157,25 +169,57 @@ public:
         return false;
     }
 
-    bool decodingSizeOnly() const { return m_decodingSizeOnly; }
     png_structp pngPtr() const { return m_png; }
     png_infop infoPtr() const { return m_info; }
-    png_bytep interlaceBuffer() const { return m_interlaceBuffer; }
-    bool hasAlpha() const { return m_hasAlpha; }
 
     void setReadOffset(unsigned offset) { m_readOffset = offset; }
-    void setHasAlpha(bool b) { m_hasAlpha = b; }
+    unsigned currentBufferSize() const { return m_currentBufferSize; }
+    bool decodingSizeOnly() const { return m_decodingSizeOnly; }
+    void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
+    bool hasAlpha() const { return m_hasAlpha; }
 
+    png_bytep interlaceBuffer() const { return m_interlaceBuffer; }
     void createInterlaceBuffer(int size) { m_interlaceBuffer = new png_byte[size]; }
+#if USE(QCMSLIB)
+    png_bytep rowBuffer() const { return m_rowBuffer.get(); }
+    void createRowBuffer(int size) { m_rowBuffer = adoptArrayPtr(new png_byte[size]); }
+    qcms_transform* colorTransform() const { return m_transform; }
+
+    void createColorTransform(const ColorProfile& colorProfile, bool hasAlpha)
+    {
+        if (m_transform)
+            qcms_transform_release(m_transform);
+        m_transform = 0;
+
+        if (colorProfile.isEmpty())
+            return;
+        qcms_profile* deviceProfile = ImageDecoder::qcmsOutputDeviceProfile();
+        if (!deviceProfile)
+            return;
+        qcms_profile* inputProfile = qcms_profile_from_memory(colorProfile.data(), colorProfile.size());
+        if (!inputProfile)
+            return;
+        // We currently only support color profiles for RGB and RGBA images.
+        ASSERT(icSigRgbData == qcms_profile_get_color_space(inputProfile));
+        qcms_data_type dataFormat = hasAlpha ? QCMS_DATA_RGBA_8 : QCMS_DATA_RGB_8;
+        // FIXME: Don't force perceptual intent if the image profile contains an intent.
+        m_transform = qcms_transform_create(inputProfile, dataFormat, deviceProfile, dataFormat, QCMS_INTENT_PERCEPTUAL);
+        qcms_profile_release(inputProfile);
+    }
+#endif
 
 private:
-    unsigned m_readOffset;
-    bool m_decodingSizeOnly;
     png_structp m_png;
     png_infop m_info;
-    png_bytep m_interlaceBuffer;
-    bool m_hasAlpha;
+    unsigned m_readOffset;
     unsigned m_currentBufferSize;
+    bool m_decodingSizeOnly;
+    bool m_hasAlpha;
+    png_bytep m_interlaceBuffer;
+#if USE(QCMSLIB)
+    qcms_transform* m_transform;
+    OwnArrayPtr<png_byte> m_rowBuffer;
+#endif
 };
 
 PNGImageDecoder::PNGImageDecoder(ImageSource::AlphaOption alphaOption,
@@ -298,6 +342,10 @@ void PNGImageDecoder::headerAvailable()
         // the color profile or we'd need to decode into a gray-scale image buffer and
         // hand that to CoreGraphics.
         readColorProfile(png, info, m_colorProfile);
+#if USE(QCMSLIB)
+        m_reader->createColorTransform(m_colorProfile, colorType & PNG_COLOR_MASK_ALPHA);
+        m_colorProfile.clear();
+#endif
     }
 
     // The options we set here match what Mozilla does.
@@ -367,8 +415,8 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
             return;
         }
 
+        unsigned colorChannels = m_reader->hasAlpha() ? 4 : 3;
         if (PNG_INTERLACE_ADAM7 == png_get_interlace_type(png, m_reader->infoPtr())) {
-            unsigned colorChannels = m_reader->hasAlpha() ? 4 : 3;
             m_reader->createInterlaceBuffer(colorChannels * size().width() * size().height());
             if (!m_reader->interlaceBuffer()) {
                 longjmp(JMPBUF(png), 1);
@@ -376,6 +424,15 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
             }
         }
 
+#if USE(QCMSLIB)
+        if (m_reader->colorTransform()) {
+            m_reader->createRowBuffer(colorChannels * size().width());
+            if (!m_reader->rowBuffer()) {
+                longjmp(JMPBUF(png), 1);
+                return;
+            }
+        }
+#endif
         buffer.setStatus(ImageFrame::FramePartial);
         buffer.setHasAlpha(false);
         buffer.setColorProfile(m_colorProfile);
@@ -432,6 +489,13 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         row = interlaceBuffer + (rowIndex * colorChannels * size().width());
         png_progressive_combine_row(m_reader->pngPtr(), row, rowBuffer);
     }
+
+#if USE(QCMSLIB)
+    if (qcms_transform* transform = m_reader->colorTransform()) {
+        qcms_transform_data(transform, row, m_reader->rowBuffer(), size().width());
+        row = m_reader->rowBuffer();
+    }
+#endif
 
     // Write the decoded row pixels to the frame buffer.
     int width = scaledSize().width();
