@@ -16,8 +16,7 @@ function test()
     removeVendorPrefixes();
 
     name = self.location.pathname;
-    description = "My Test Database";
-    request = evalAndLog("indexedDB.open(name, description)");
+    request = evalAndLog("indexedDB.open(name)");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -39,7 +38,7 @@ function cleanDatabase()
     objectStoreOptions = { keyPath: 'id', autoIncrement: true };
     evalAndLog("db1.createObjectStore(objectStoreName, objectStoreOptions);");
 
-    request = evalAndLog("indexedDB.open(name, description);");
+    request = evalAndLog("indexedDB.open(name);");
     request.onsuccess = open2Success;
     request.onerror = unexpectedErrorCallback;
 }

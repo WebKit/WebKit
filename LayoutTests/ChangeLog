@@ -1,3 +1,121 @@
+2012-06-15  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Remove obsolete description parameter from factory.open calls
+        https://bugs.webkit.org/show_bug.cgi?id=89047
+
+        Reviewed by Tony Chang.
+
+        This parameter has been obsolete for 18 months and is getting replaced
+        with a version parameter.
+
+        * storage/indexeddb/mozilla/add-twice-failure-expected.txt:
+        * storage/indexeddb/mozilla/autoincrement-indexes-expected.txt:
+        * storage/indexeddb/mozilla/bad-keypath-expected.txt:
+        * storage/indexeddb/mozilla/clear-expected.txt:
+        * storage/indexeddb/mozilla/create-index-unique-expected.txt:
+        * storage/indexeddb/mozilla/create-index-with-integer-keys-expected.txt:
+        * storage/indexeddb/mozilla/create-objectstore-basics-expected.txt:
+        * storage/indexeddb/mozilla/create-objectstore-null-name-expected.txt:
+        * storage/indexeddb/mozilla/cursor-mutation-objectstore-only-expected.txt:
+        * storage/indexeddb/mozilla/cursor-update-updates-indexes-expected.txt:
+        * storage/indexeddb/mozilla/cursors-expected.txt:
+        * storage/indexeddb/mozilla/delete-result-expected.txt:
+        * storage/indexeddb/mozilla/event-source-expected.txt:
+        * storage/indexeddb/mozilla/global-data-expected.txt:
+        * storage/indexeddb/mozilla/index-prev-no-duplicate-expected.txt:
+        * storage/indexeddb/mozilla/index-prev-no-duplicate.html:
+        * storage/indexeddb/mozilla/indexes-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-delete-null-key-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-inline-and-passed-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-put-no-key-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-put-null-key-expected.txt:
+        * storage/indexeddb/mozilla/object-cursors-expected.txt:
+        * storage/indexeddb/mozilla/object-identity-expected.txt:
+        * storage/indexeddb/mozilla/object-store-inline-autoincrement-key-added-on-put-expected.txt:
+        * storage/indexeddb/mozilla/object-store-remove-values-expected.txt:
+        * storage/indexeddb/mozilla/objectstorenames-expected.txt:
+        * storage/indexeddb/mozilla/odd-result-order-expected.txt:
+        * storage/indexeddb/mozilla/put-get-values-expected.txt:
+        * storage/indexeddb/mozilla/readonly-transactions-expected.txt:
+        * storage/indexeddb/mozilla/readwrite-transactions-expected.txt:
+        * storage/indexeddb/mozilla/readyState-expected.txt:
+        * storage/indexeddb/mozilla/remove-index-expected.txt:
+        * storage/indexeddb/mozilla/remove-objectstore-expected.txt:
+        * storage/indexeddb/mozilla/resources/add-twice-failure.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/autoincrement-indexes.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/bad-keypath.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/clear.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/create-index-unique.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/create-index-with-integer-keys.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/create-objectstore-basics.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/create-objectstore-null-name.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/cursor-mutation-objectstore-only.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/cursor-update-updates-indexes.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/cursors.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/delete-result.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/event-source.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/global-data.js:
+        (test):
+        (cleanDatabase):
+        * storage/indexeddb/mozilla/resources/indexes.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/key-requirements-delete-null-key.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/key-requirements-inline-and-passed.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/key-requirements-put-no-key.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/key-requirements-put-null-key.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/key-requirements.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/object-cursors.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/object-identity.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/object-store-inline-autoincrement-key-added-on-put.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/object-store-remove-values.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/objectstorenames.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/odd-result-order.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/put-get-values.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/readonly-transactions.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/readwrite-transactions.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/readyState.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/remove-index.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/remove-objectstore.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/versionchange-abort.js:
+        (test):
+        * storage/indexeddb/mozilla/resources/versionchange.js:
+        (test):
+        (openSuccess):
+        (postSetVersion):
+        * storage/indexeddb/mozilla/versionchange-abort-expected.txt:
+        * storage/indexeddb/mozilla/versionchange-expected.txt:
+
 2012-06-15  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Raise exceptions when methods are called on deleted objects

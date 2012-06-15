@@ -15,7 +15,6 @@ function test()
 {
     removeVendorPrefixes();
 
-    description = "My Test Database";
     request = evalAndLog("indexedDB.open(null);");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;

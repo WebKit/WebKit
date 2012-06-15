@@ -13,7 +13,7 @@ IDBCursor = window.IDBCursor || window.webkitIDBCursor;
 PASS IDBCursor == null is false
 IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
 PASS IDBKeyRange == null is false
-indexedDB.open(name, description)
+indexedDB.open(name)
 openSuccess():
 db = event.target.result
 request = db.setVersion('1')

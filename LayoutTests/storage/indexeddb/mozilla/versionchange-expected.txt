@@ -5,11 +5,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open(name, description)
+indexedDB.open(name)
 db1 = event.target.result
 versionChangeEventCount = 0;
 db1 will be open when we call db2.setVersion, which will trigger versionchange on db1
-indexedDB.open(name, description)
+indexedDB.open(name)
 db2 = event.target.result
 db2 will be open when we call db3.setVersion, which will trigger versionchange on db2
 request = db2.setVersion('1')
@@ -22,7 +22,7 @@ PASS db2 received blocked event
 PASS event.target.result is event.target.transaction
 PASS event.target.transaction.mode is 'versionchange'
 PASS db2.version is '1'
-request = indexedDB.open(name, description);
+request = indexedDB.open(name);
 db3 = event.target.result;
 request = db3.setVersion('2');
 this request will block because db2 is still open
