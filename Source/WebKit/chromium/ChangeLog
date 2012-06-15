@@ -1,3 +1,13 @@
+2012-06-14  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Initialize font rendering in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=89133
+
+        Reviewed by Adam Barth.
+
+        * src/linuxish/WebFontRendering.cpp:
+        (WebKit::WebFontRendering::setSubpixelPositioning): Now calls WebFontInfo::setSubpixelPositioning to avoid API users from calling both and simplify platform differences at call sites.
+
 2012-06-14  Tony Chang  <tony@chromium.org>
 
         [chromium] Port IFrameRedirectTest.Test from test_shell_tests to webkit_unit_tests

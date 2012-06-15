@@ -33,6 +33,10 @@
 
 #include "FontPlatformData.h"
 
+#if OS(LINUX)
+#include "WebFontInfo.h"
+#endif
+
 using WebCore::FontPlatformData;
 
 namespace WebKit {
@@ -71,6 +75,9 @@ void WebFontRendering::setSubpixelRendering(bool useSubpixelRendering)
 void WebFontRendering::setSubpixelPositioning(bool useSubpixelPositioning)
 {
     FontPlatformData::setSubpixelPositioning(useSubpixelPositioning);
+#if OS(LINUX)
+    WebFontInfo::setSubpixelPositioning(useSubpixelPositioning);
+#endif
 }
 
 // static

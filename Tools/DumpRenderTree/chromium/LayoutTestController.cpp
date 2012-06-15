@@ -78,9 +78,8 @@
 #include <wtf/OwnArrayPtr.h>
 #endif
 
-#if OS(LINUX)
-#include "linux/WebFontInfo.h"
-#include "linux/WebFontRendering.h"
+#if OS(LINUX) || OS(ANDROID)
+#include "linuxish/WebFontRendering.h"
 #endif
 
 using namespace WebCore;
@@ -702,8 +701,7 @@ void LayoutTestController::reset()
     m_taskList.revokeAll();
     m_shouldStayOnPageAfterHandlingBeforeUnload = false;
     m_hasCustomFullScreenBehavior = false;
-#if OS(LINUX)
-    WebFontInfo::setSubpixelPositioning(false);
+#if OS(LINUX) || OS(ANDROID)
     WebFontRendering::setSubpixelPositioning(false);
 #endif
 }
@@ -2196,13 +2194,11 @@ void LayoutTestController::deliverWebIntent(const CppArgumentList& arguments, Cp
 
 void LayoutTestController::setTextSubpixelPositioning(const CppArgumentList& arguments, CppVariant* result)
 {
-#if OS(LINUX)
+#if OS(LINUX) || OS(ANDROID)
     // Since FontConfig doesn't provide a variable to control subpixel positioning, we'll fall back
     // to setting it globally for all fonts.
-    if (arguments.size() > 0 && arguments[0].isBool()) {
-        WebFontInfo::setSubpixelPositioning(arguments[0].value.boolValue);
+    if (arguments.size() > 0 && arguments[0].isBool())
         WebFontRendering::setSubpixelPositioning(arguments[0].value.boolValue);
-    }
 #endif
     result->setNull();
 }

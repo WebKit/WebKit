@@ -31,6 +31,7 @@
 #include "config.h"
 #include "TestShell.h"
 
+#include "linuxish/WebFontRendering.h"
 #include <android/log.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -127,4 +128,8 @@ void platformInit(int* argc, char*** argv)
         // Redirect stderr to stdout.
         dup2(1, 2);
     }
+
+    // Disable auto hint and use normal hinting in layout test mode to produce the same font metrics as chromium-linux.
+    WebKit::WebFontRendering::setAutoHint(false);
+    WebKit::WebFontRendering::setHinting(SkPaint::kNormal_Hinting);
 }
