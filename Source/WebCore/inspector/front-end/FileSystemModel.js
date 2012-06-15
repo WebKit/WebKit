@@ -44,7 +44,7 @@ WebInspector.FileSystemModel = function()
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
 
-    FileSystemAgent.enable();
+    this._agentWrapper = new WebInspector.FileSystemRequestManager();
 
     if (WebInspector.resourceTreeModel.mainFrame)
         this._attachFrameRecursively(WebInspector.resourceTreeModel.mainFrame);
@@ -219,5 +219,75 @@ WebInspector.FileSystemModel.FileSystem.prototype = {
     get name()
     {
         return "filesystem:" + this.origin + "/" + this.type;
+    }
+}
+
+/**
+ * @constructor
+ */
+WebInspector.FileSystemRequestManager = function()
+{
+    this._pendingReadDirectoryRequests = {};
+
+    InspectorBackend.registerFileSystemDispatcher(new WebInspector.FileSystemDispatcher(this));
+    FileSystemAgent.enable();
+}
+
+WebInspector.FileSystemRequestManager.nextRequestId = 1;
+
+WebInspector.FileSystemRequestManager.prototype = {
+    /**
+     * @return {number}
+     */
+    _requestId: function()
+    {
+        return WebInspector.FileSystemRequestManager.nextRequestId++;
+    },
+
+    /**
+     * @param {string} url
+     * @param {function(number, Array.<FileSystemAgent.Entry>=)} callback
+     */
+    readDirectory: function(url, callback)
+    {
+        var requestId = this.requestId();
+        this._pendingReadDirectoryRequests[requestId] = callback;
+        FileSystemAgent.readDirectory(requestId, url);
+    },
+
+    /**
+     * @param {number} requestId
+     * @param {number} errorCode
+     * @param {Array.<FileSystemAgent.Entry>=} backendEntries
+     */
+    _didReadDirectory: function(requestId, errorCode, backendEntries)
+    {
+        var callback = /** @type {function(number, Array.<FileSystemAgent.Entry>=)} */ this._pendingReadDirectoryRequests[requestId];
+        if (!callback)
+            return;
+        delete this._pendingReadDirectoryRequests[requestId];
+        callback(errorCode, backendEntries);
+    }
+}
+
+/**
+ * @constructor
+ * @implements {FileSystemAgent.Dispatcher}
+ * @param {WebInspector.FileSystemRequestManager} agentWrapper
+ */
+WebInspector.FileSystemDispatcher = function(agentWrapper)
+{
+    this._agentWrapper = agentWrapper;
+}
+
+WebInspector.FileSystemDispatcher.prototype = {
+    /**
+     * @param {number} requestId
+     * @param {number} errorCode
+     * @param {Array.<FileSystemAgent.Entry>=} backendEntries
+     */
+    didReadDirectory: function(requestId, errorCode, backendEntries)
+    {
+        this._agentWrapper._didReadDirectory(requestId, errorCode, backendEntries);
     }
 }

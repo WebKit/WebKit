@@ -1,3 +1,20 @@
+2012-06-15  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Add FileSystemRequestManager and FileSystemDispatcher
+        https://bugs.webkit.org/show_bug.cgi?id=89191
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/FileSystemModel.js:
+        (WebInspector.FileSystemModel):
+        (WebInspector.FileSystemRequestManager):
+        (WebInspector.FileSystemRequestManager.prototoype._requestId):
+        (WebInspector.FileSystemRequestManager.prototoype.readDirectory):
+        (WebInspector.FileSystemRequestManager.prototoype._didReadDirectory):
+        (WebInspector.FileSystemDispatcher):
+        (WebInspector.FileSystemDispatcher.prototype.gotFileSystemRoot):
+        (WebInspector.FileSystemDispatcher.prototype.didReadDirectory):
+
 2012-06-15  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: extension's Resource.getContent always returns original revision.
