@@ -1,3 +1,16 @@
+2012-06-15  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [WebGL] Simple implementation of the InjectedWebGLScriptSource to support capturing WebGL calls for a frame
+        https://bugs.webkit.org/show_bug.cgi?id=89088
+
+        Simple experimental implementation of the InjectedWebGLScriptSource.js that allows to wrap
+        a WebGL context and capture names (for now) of the WebGL function calls for a frame being captured.
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/InjectedWebGLScriptSource.js:
+        (.):
+
 2012-06-15  Silvia Pfeiffer  <silviapf@chromium.org>
 
         Add fullscreen button to Chrome video controls for video.

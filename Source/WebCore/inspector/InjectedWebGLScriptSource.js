@@ -28,9 +28,118 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-(function(glContext) {
+/**
+ * @param {InjectedScriptHost} InjectedScriptHost
+ */
+(function (InjectedScriptHost, inspectedWindow, injectedScriptId) {
 
-// FIXME: Wrap WebGL context for instrumentation.
-return glContext;
+/**
+ * @constructor
+ */
+var InjectedScript = function()
+{
+    this._lastBoundObjectId = 0;
+    this._idToWrapperProxy = {};
+    this._idToRealWebGLContext = {};
+    this._capturingFrameInfo = null;
+}
+
+InjectedScript.prototype = {
+    wrapWebGLContext: function(glContext)
+    {
+        for (var id in this._idToRealWebGLContext) {
+            if (this._idToRealWebGLContext[id] === glContext)
+                return this._idToWrapperProxy[id];
+        }
+
+        var proxy = {};
+        var nameProcessed = {};
+        nameProcessed.__proto__ = null;
+        nameProcessed.constructor = true;
+
+        function processName(name) {
+            if (nameProcessed[name])
+                return;
+            nameProcessed[name] = true;
+            if (typeof glContext[name] === "function")
+                proxy[name] = injectedScript._wrappedFunction.bind(injectedScript, glContext, name);
+            else
+                Object.defineProperty(proxy, name, {
+                    get: function()
+                    {
+                        return glContext[name];
+                    },
+                    set: function(value)
+                    {
+                        glContext[name] = value;
+                    }
+                });
+        }
+
+        for (var o = glContext; o; o = o.__proto__)
+            Object.getOwnPropertyNames(o).forEach(processName);
+
+        // In order to emulate "instanceof".
+        proxy.__proto__ = glContext.__proto__;
+        proxy.constructor = glContext.constructor;
+
+        var contextId = this._generateObjectId();
+        this._idToWrapperProxy[contextId] = proxy;
+        this._idToRealWebGLContext[contextId] = glContext;
+        InjectedScriptHost.webGLContextCreated(contextId);
+
+        return proxy;
+    },
+
+    _generateObjectId: function()
+    {
+        var id = ++this._lastBoundObjectId;
+        var objectId = "{\"injectedScriptId\":" + injectedScriptId + ",\"webGLId\":" + id + "}";
+        return objectId;
+    },
+
+    captureFrame: function(contextId)
+    {
+        this._capturingFrameInfo = {
+            contextId: contextId,
+            capturedCallsNum: 0
+        };
+    },
+
+    _stopCapturing: function(info)
+    {
+        if (this._capturingFrameInfo === info)
+            this._capturingFrameInfo = null;
+    },
+
+    _wrappedFunction: function(glContext, functionName)
+    {
+        // Call real WebGL function.
+        var args = Array.prototype.slice.call(arguments, 2);
+        var result = glContext[functionName].apply(glContext, args);
+
+        if (this._capturingFrameInfo && this._idToRealWebGLContext[this._capturingFrameInfo.contextId] === glContext) {
+            var capturedCallsNum = ++this._capturingFrameInfo.capturedCallsNum;
+            if (capturedCallsNum === 1)
+                this._setZeroTimeouts(this._stopCapturing.bind(this, this._capturingFrameInfo));
+            InjectedScriptHost.webGLReportFunctionCall(this._capturingFrameInfo.contextId, functionName, "[" + args.join(", ") + "]", result + "");
+        }
+
+        return result;
+    },
+
+    _setZeroTimeouts: function(callback)
+    {
+        // We need a fastest async callback, whatever fires first.
+        // Usually a postMessage should be faster than a setTimeout(0).
+        var channel = new MessageChannel();
+        channel.port1.onmessage = callback;
+        channel.port2.postMessage("");
+        inspectedWindow.setTimeout(callback, 0);
+    }
+};
+
+var injectedScript = new InjectedScript();
+return injectedScript;
 
 })
