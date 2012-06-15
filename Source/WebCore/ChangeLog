@@ -1,3 +1,58 @@
+2012-06-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The initial value of text-align should be start instead of -webkit-auto
+        https://bugs.webkit.org/show_bug.cgi?id=79914
+
+        Reviewed by Tony Chang.
+
+        Change the initial value of text-align CSS property from -webkit-auto to start as specified in
+        http://www.w3.org/TR/css3-text/#text-align
+
+        In editing, we have to coerce start and end to left and right for now because match-parent,
+        which is the text-align value of li in UA stylesheet is going to result in the computed values of
+        left as supposed to start by default, and this causes editing code not being able to remove
+        text-align: left when computing typing styles and preserving styles.
+
+        In the long term, we should detect this specific case and ignore match-parent but that seemed like
+        too much work to be done in a single patch also because the test result improved because of this change.
+
+        This behavior change is covered by existing regression tests.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceText.cpp:
+        (WebCore::getAttributeSetForAccessibilityObject):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): No longer supports TAAUTO since it's identical to TASTART.
+        (WebCore::CSSPrimitiveValue::operator ETextAlign): Ditto. Parse -webkit-auto as start.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList): Replace TAAUTO by TASTART.
+        * editing/EditingStyle.cpp:
+        (WebCore):
+        (WebCore::textAlignResolvingStartAndEnd): Coerce start and end into left and right based on the directionality
+        for editing. Otherwise, we end up adding lots of text-align: left due to li's UA style rule having match-parent
+        as the text alignment and its descendent inherits this style. We need to handle it better in the future
+        since start and left or end and right are semantically different.
+        (WebCore::EditingStyle::prepareToApplyAt):
+        (WebCore::getPropertiesNotIn):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::textAlignmentForLine): Justified text is aligned at start by default.
+        (WebCore::RenderBlock::updateLogicalWidthForAlignment):
+        (WebCore::RenderBlock::startAlignedOffsetForLine):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::localCaretRectForEmptyElement):
+        * rendering/RenderListBox.cpp:
+        (WebCore::itemOffsetForAlignment):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::updateMarqueeStyle):
+        * rendering/RenderRubyText.cpp:
+        (WebCore::RenderRubyText::textAlignmentForLine):
+        (WebCore::RenderRubyText::adjustInlineDirectionLineBounds):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+
 2012-06-15  Jian Li  <jianli@chromium.org>
 
         [File API] FileReader should work in sandbox iframe

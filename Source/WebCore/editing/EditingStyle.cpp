@@ -373,6 +373,34 @@ static inline RGBA32 rgbaBackgroundColorInEffect(Node* node)
     return cssValueToRGBA(backgroundColorInEffect(node).get());
 }
 
+static int textAlignResolvingStartAndEnd(int textAlign, int direction)
+{
+    switch (textAlign) {
+    case CSSValueCenter:
+    case CSSValueWebkitCenter:
+        return CSSValueCenter;
+    case CSSValueJustify:
+        return CSSValueJustify;
+    case CSSValueLeft:
+    case CSSValueWebkitLeft:
+        return CSSValueLeft;
+    case CSSValueRight:
+    case CSSValueWebkitRight:
+        return CSSValueRight;
+    case CSSValueStart:
+        return direction != CSSValueRtl ? CSSValueLeft : CSSValueRight;
+    case CSSValueEnd:
+        return direction == CSSValueRtl ? CSSValueRight : CSSValueLeft;
+    }
+    return CSSValueInvalid;
+}
+
+template<typename T>
+static int textAlignResolvingStartAndEnd(T* style)
+{
+    return textAlignResolvingStartAndEnd(getIdentifierValue(style, CSSPropertyTextAlign), getIdentifierValue(style, CSSPropertyDirection));
+}
+
 void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
 {
     if (isTabSpanTextNode(node))
@@ -874,7 +902,8 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
     // ReplaceSelectionCommand::handleStyleSpans() requires that this function only removes the editing style.
     // If this function was modified in the future to delete all redundant properties, then add a boolean value to indicate
     // which one of editingStyleAtPosition or computedStyle is called.
-    RefPtr<EditingStyle> style = EditingStyle::create(position, EditingPropertiesInEffect);
+    RefPtr<EditingStyle> editingStyleAtPosition = EditingStyle::create(position, EditingPropertiesInEffect);
+    StylePropertySet* styleAtPosition = editingStyleAtPosition->m_mutableStyle.get();
 
     RefPtr<CSSValue> unicodeBidi;
     RefPtr<CSSValue> direction;
@@ -883,9 +912,12 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
         direction = m_mutableStyle->getPropertyCSSValue(CSSPropertyDirection);
     }
 
-    m_mutableStyle->removeEquivalentProperties(style->m_mutableStyle.get());
+    m_mutableStyle->removeEquivalentProperties(styleAtPosition);
 
-    if (getRGBAFontColor(m_mutableStyle.get()) == getRGBAFontColor(style->m_mutableStyle.get()))
+    if (textAlignResolvingStartAndEnd(m_mutableStyle.get()) == textAlignResolvingStartAndEnd(styleAtPosition))
+        m_mutableStyle->removeProperty(CSSPropertyTextAlign);
+
+    if (getRGBAFontColor(m_mutableStyle.get()) == getRGBAFontColor(styleAtPosition))
         m_mutableStyle->removeProperty(CSSPropertyColor);
 
     if (hasTransparentBackgroundColor(m_mutableStyle.get())
@@ -1451,34 +1483,6 @@ static bool fontWeightIsBold(StylePropertySet* style)
     return fontWeightIsBold(fontWeight.get());
 }
 
-static int getTextAlignment(int textAlignIdentifierValue)
-{
-    switch (textAlignIdentifierValue) {
-    case CSSValueCenter:
-    case CSSValueWebkitCenter:
-        return CSSValueCenter;
-    case CSSValueJustify:
-        return CSSValueJustify;
-    case CSSValueLeft:
-    case CSSValueWebkitLeft:
-        return CSSValueLeft;
-    case CSSValueRight:
-    case CSSValueWebkitRight:
-        return CSSValueRight;
-    }
-    return CSSValueInvalid;
-}
-
-static int getTextAlignment(CSSStyleDeclaration* style)
-{
-    return getTextAlignment(getIdentifierValue(style, CSSPropertyTextAlign));
-}
-
-static int getTextAlignment(StylePropertySet* style)
-{
-    return getTextAlignment(getIdentifierValue(style, CSSPropertyTextAlign));
-}
-
 PassRefPtr<StylePropertySet> getPropertiesNotIn(StylePropertySet* styleWithRedundantProperties, CSSStyleDeclaration* baseStyle)
 {
     ASSERT(styleWithRedundantProperties);
@@ -1497,7 +1501,8 @@ PassRefPtr<StylePropertySet> getPropertiesNotIn(StylePropertySet* styleWithRedun
     if (baseStyle->getPropertyCSSValueInternal(CSSPropertyColor) && getRGBAFontColor(result.get()) == getRGBAFontColor(baseStyle))
         result->removeProperty(CSSPropertyColor);
 
-    if (baseStyle->getPropertyCSSValueInternal(CSSPropertyTextAlign) && getTextAlignment(result.get()) == getTextAlignment(baseStyle))
+    if (baseStyle->getPropertyCSSValueInternal(CSSPropertyTextAlign)
+        && textAlignResolvingStartAndEnd(result.get()) == textAlignResolvingStartAndEnd(baseStyle))
         result->removeProperty(CSSPropertyTextAlign);
 
     return result;

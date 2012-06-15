@@ -230,7 +230,7 @@ void RenderMarquee::updateMarqueeStyle()
         // FIXME: Bring these up with the CSS WG.
         if (isHorizontal() && m_layer->renderer()->childrenInline()) {
             s->setWhiteSpace(NOWRAP);
-            s->setTextAlign(TAAUTO);
+            s->setTextAlign(TASTART);
         }
     }
     

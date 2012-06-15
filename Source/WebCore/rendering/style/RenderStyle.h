@@ -1586,7 +1586,7 @@ public:
     static short initialWidows() { return 2; }
     static short initialOrphans() { return 2; }
     static Length initialLineHeight() { return Length(-100.0, Percent); }
-    static ETextAlign initialTextAlign() { return TAAUTO; }
+    static ETextAlign initialTextAlign() { return TASTART; }
     static ETextDecoration initialTextDecoration() { return TDNONE; }
     static float initialZoom() { return 1.0f; }
     static int initialOutlineOffset() { return 0; }

@@ -358,7 +358,8 @@ static LayoutSize itemOffsetForAlignment(TextRun textRun, RenderStyle* itemStyle
 {
     ETextAlign actualAlignment = itemStyle->textAlign();
     // FIXME: Firefox doesn't respect JUSTIFY. Should we?
-    if (actualAlignment == TAAUTO || actualAlignment == JUSTIFY)
+    // FIXME: Handle TAEND here
+    if (actualAlignment == TASTART || actualAlignment == JUSTIFY)
       actualAlignment = itemStyle->isLeftToRightDirection() ? LEFT : RIGHT;
 
     LayoutSize offset = LayoutSize(0, itemFont.fontMetrics().ascent());

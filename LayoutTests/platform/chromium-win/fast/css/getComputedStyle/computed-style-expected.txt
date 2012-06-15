@@ -84,7 +84,7 @@ right: auto;
 speak: normal;
 table-layout: auto;
 tab-size: 8;
-text-align: -webkit-auto;
+text-align: start;
 text-decoration: none;
 text-indent: 0px;
 text-rendering: auto;

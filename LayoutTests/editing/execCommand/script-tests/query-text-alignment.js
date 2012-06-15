@@ -33,12 +33,12 @@ function queryTextAlignment(selector, content, expected)
 function selectFirstPosition(container) {
     while (container.firstChild)
         container = container.firstChild;
-    window.getSelection().setPosition(container, 0);
+    window.getSelection().collapse(container, 0);
     return 'first position';
 }
 
 function selectMiddleOfHelloWorld(container) {
-    window.getSelection().setPosition(container, 0);
+    window.getSelection().collapse(container, 0);
     window.getSelection().modify('move', 'forward', 'character');
     window.getSelection().modify('move', 'forward', 'character');
     window.getSelection().modify('extend', 'forward', 'word');
@@ -50,8 +50,8 @@ function selectMiddleOfHelloWorld(container) {
 
 debug('Caret');
 queryTextAlignment(function () {return 'no selection on'}, 'hello', '');
-queryTextAlignment(selectFirstPosition, 'hello', '');
-queryTextAlignment(selectFirstPosition, '<p>hello</p>', '');
+queryTextAlignment(selectFirstPosition, 'hello', 'left');
+queryTextAlignment(selectFirstPosition, '<p>hello</p>', 'left');
 queryTextAlignment(selectFirstPosition, '<p align="center">hello</p>', 'center');
 queryTextAlignment(selectFirstPosition, '<p align="justify">hello</p>', 'full');
 queryTextAlignment(selectFirstPosition, '<p align="left">hello</p>', 'left');
@@ -67,7 +67,7 @@ queryTextAlignment(selectFirstPosition, '<p align="left" style="text-align: cent
 queryTextAlignment(selectFirstPosition, '<p align="right" style="text-align: left;">hello</p>', 'left');
 queryTextAlignment(selectFirstPosition, '<p align="center" style="text-align: right;">hello</p>', 'right');
 queryTextAlignment(selectFirstPosition, '<p align="left" style="text-align: center;">hello</p>', 'center');
-queryTextAlignment(selectFirstPosition, '<h1>hello</h1>', '');
+queryTextAlignment(selectFirstPosition, '<h1>hello</h1>', 'left');
 queryTextAlignment(selectFirstPosition, '<h1 align="center">hello</h1>', 'center');
 queryTextAlignment(selectFirstPosition, '<h1 align="justify">hello</h1>', 'full');
 queryTextAlignment(selectFirstPosition, '<h2 align="left">hello</h2>', 'left');
@@ -86,9 +86,9 @@ function runRangeTests(editingBehavior)
         internals.settings.setEditingBehavior(editingBehavior);
     debug('Tests for ' + editingBehavior);
 
-    queryTextAlignment(selectMiddleOfHelloWorld, '<p>hello</p><p>world</p>', '');
-    queryTextAlignment(selectMiddleOfHelloWorld, '<p align="left">hello</p><p>world</p>', {'mac': 'left', 'win': ''}[editingBehavior]);
-    queryTextAlignment(selectMiddleOfHelloWorld, '<p>hello</p><p align="left">world</p>', '');
+    queryTextAlignment(selectMiddleOfHelloWorld, '<p>hello</p><p>world</p>', 'left');
+    queryTextAlignment(selectMiddleOfHelloWorld, '<p align="right">hello</p><p>world</p>', {'mac': 'right', 'win': ''}[editingBehavior]);
+    queryTextAlignment(selectMiddleOfHelloWorld, '<p>hello</p><p align="left">world</p>', 'left');
     queryTextAlignment(selectMiddleOfHelloWorld, '<p align="left">hello</p><p align="right">world</p>', {'mac': 'left', 'win': ''}[editingBehavior]);
     queryTextAlignment(selectMiddleOfHelloWorld, '<p align="center">hello</p><p align="center">world</p>', 'center');
     queryTextAlignment(selectMiddleOfHelloWorld, '<p align="justify">hello</p><p align="justify">world</p>', 'full');
@@ -96,7 +96,7 @@ function runRangeTests(editingBehavior)
     queryTextAlignment(selectMiddleOfHelloWorld, '<p align="right">hello</p><p align="right">world</p>', 'right');
     queryTextAlignment(selectMiddleOfHelloWorld, '<div align="right">hello<p align="left">world</p></div>', {'mac': 'right', 'win': ''}[editingBehavior]);
     queryTextAlignment(selectMiddleOfHelloWorld, '<div align="left"><p align="center">world</p>hello</div>', {'mac': 'center', 'win': ''}[editingBehavior]);
-    queryTextAlignment(selectMiddleOfHelloWorld, '<p align="left">hello</p><p>w</p><p align="left">orld</p>', {'mac': 'left', 'win': ''}[editingBehavior]);
+    queryTextAlignment(selectMiddleOfHelloWorld, '<p align="left">hello</p><p>w</p><p align="left">orld</p>', {'mac': 'left', 'win': 'left'}[editingBehavior]);
     queryTextAlignment(selectMiddleOfHelloWorld, '<p align="justify">hello</p><p>w</p><p align="center">orld</p>', {'mac': 'full', 'win': ''}[editingBehavior]);
 }
 

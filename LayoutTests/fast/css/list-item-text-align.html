@@ -9,7 +9,7 @@ The test passes if all the lines containing the text "Left Align" are aligned to
 
 <ul dir=ltr>
   <li dir=ltr class=l><span>Left aligned</span></li>
-  <li dir=rtl class=r><span>Right aligned</span></li>
+  <li dir=rtl class=l><span>Left aligned although this li has dir=rtl because li's text-align is match-parent by default.</span></li>
 </ul>
 
 <ul dir=ltr style="text-align:start">
@@ -55,7 +55,7 @@ function assertAlignment(enclosingListElement, i, expectedAlignment)
     var leftAlign = expectedAlignment == 'left';
 
     if (window.layoutTestController) {
-        if (computedStyle.textAlign == '-webkit-auto') {
+        if (computedStyle.textAlign == 'start') {
             // For the case of -webkit-auto check the offset of the text on screen
             // rather than examining the computed style.
             var elementLeftEdge = enclosingListElement.children[0].offsetLeft;

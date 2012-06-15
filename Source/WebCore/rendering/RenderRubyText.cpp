@@ -54,7 +54,8 @@ bool RenderRubyText::isChildAllowed(RenderObject* child, RenderStyle*) const
 ETextAlign RenderRubyText::textAlignmentForLine(bool endsWithSoftBreak) const
 {
     ETextAlign textAlign = style()->textAlign();
-    if (textAlign != TAAUTO)
+    // FIXME: This check is bogus since user can set the initial value.
+    if (textAlign != RenderStyle::initialTextAlign())
         return RenderBlock::textAlignmentForLine(endsWithSoftBreak);
 
     // The default behavior is to allow ruby text to expand if it is shorter than the ruby base.
@@ -64,7 +65,8 @@ ETextAlign RenderRubyText::textAlignmentForLine(bool endsWithSoftBreak) const
 void RenderRubyText::adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const
 {
     ETextAlign textAlign = style()->textAlign();
-    if (textAlign != TAAUTO)
+    // FIXME: This check is bogus since user can set the initial value.
+    if (textAlign != RenderStyle::initialTextAlign())
         return RenderBlock::adjustInlineDirectionLineBounds(expansionOpportunityCount, logicalLeft, logicalWidth);
 
     int maxPreferredLogicalWidth = this->maxPreferredLogicalWidth();

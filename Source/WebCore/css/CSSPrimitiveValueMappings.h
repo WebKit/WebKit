@@ -2148,9 +2148,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextAlign e)
 {
     m_primitiveUnitType = CSS_IDENT;
     switch (e) {
-    case TAAUTO:
-        m_value.ident = CSSValueWebkitAuto;
-        break;
     case TASTART:
         m_value.ident = CSSValueStart;
         break;
@@ -2184,12 +2181,13 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextAlign e)
 template<> inline CSSPrimitiveValue::operator ETextAlign() const
 {
     switch (m_value.ident) {
-        case CSSValueStart:
-            return TASTART;
-        case CSSValueEnd:
-            return TAEND;
-        default:
-            return static_cast<ETextAlign>(m_value.ident - CSSValueWebkitAuto);
+    case CSSValueWebkitAuto: // Legacy -webkit-auto. Eqiuvalent to start.
+    case CSSValueStart:
+        return TASTART;
+    case CSSValueEnd:
+        return TAEND;
+    default:
+        return static_cast<ETextAlign>(m_value.ident - CSSValueLeft);
     }
 }
 

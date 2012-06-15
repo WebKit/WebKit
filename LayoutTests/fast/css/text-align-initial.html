@@ -5,10 +5,10 @@ function runTest() {
         window.layoutTestController.dumpAsText();
         
     var textAlign = window.getComputedStyle(document.getElementById("div")).textAlign;
-    if (textAlign == "-webkit-auto")
+    if (textAlign == "start")
         document.body.innerText = "SUCCESS";
     else
-        document.body.innerText = "FAILURE.  text-align was " + textAlign + ", it should have been -webkit-auto";   
+        document.body.innerText = "FAILURE.  text-align was " + textAlign + ", it should have been start";
 }
 </script>
 </head>
