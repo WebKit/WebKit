@@ -1,3 +1,20 @@
+2012-06-15  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Remove volume thumb for videos without audio track.
+        https://bugs.webkit.org/show_bug.cgi?id=89093
+
+        Reviewed by Eric Carlson.
+
+        No new tests, since this was already tested in media/video-no-audio.html.
+
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaMuteButton):
+        Change mute button when there is no audio or no source file.
+        (WebCore::paintMediaVolumeSlider):
+        Set volume slider to 0 when there is no audio or no source file.
+        (WebCore::paintMediaVolumeSliderThumb):
+        Don't paint the volume slider thumb when there is no audio or no source file.
+
 2012-06-15  Abhishek Arya  <inferno@chromium.org>
 
         Cleanup empty anonymous block continuation.

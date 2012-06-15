@@ -77,10 +77,14 @@ static bool paintMediaMuteButton(RenderObject* object, const PaintInfo& paintInf
     static Image* soundLevel3 = platformResource("mediaplayerSoundLevel3");
     static Image* soundLevel2 = platformResource("mediaplayerSoundLevel2");
     static Image* soundLevel1 = platformResource("mediaplayerSoundLevel1");
+    static Image* soundLevel0 = platformResource("mediaplayerSoundLevel0");
     static Image* soundDisabled = platformResource("mediaplayerSoundDisabled");
 
-    if (!hasSource(mediaElement) || !mediaElement->hasAudio() || mediaElement->muted() || mediaElement->volume() <= 0)
+    if (!hasSource(mediaElement) || !mediaElement->hasAudio())
         return paintMediaButton(paintInfo.context, rect, soundDisabled);
+
+    if (mediaElement->muted() || mediaElement->volume() <= 0)
+        return paintMediaButton(paintInfo.context, rect, soundLevel0);
 
     if (mediaElement->volume() <= 0.33)
         return paintMediaButton(paintInfo.context, rect, soundLevel1);
@@ -248,14 +252,17 @@ static bool paintMediaVolumeSlider(RenderObject* object, const PaintInfo& paintI
         return true;
     if (volume > 1)
         volume = 1;
-    if (mediaElement->muted())
+    if (!hasSource(mediaElement) || !mediaElement->hasAudio() || mediaElement->muted())
         volume = 0;
 
     // Calculate the position relative to the center of the thumb.
-    float thumbCenter = mediaVolumeSliderThumbWidth / 2;
-    float zoomLevel = style->effectiveZoom();
-    float positionWidth = volume * (rect.width() - (zoomLevel * thumbCenter));
-    float fillWidth = positionWidth + (zoomLevel * thumbCenter / 2);
+    float fillWidth = 0;
+    if (volume > 0) {
+        float thumbCenter = mediaVolumeSliderThumbWidth / 2;
+        float zoomLevel = style->effectiveZoom();
+        float positionWidth = volume * (rect.width() - (zoomLevel * thumbCenter));
+        fillWidth = positionWidth + (zoomLevel * thumbCenter / 2);
+    }
 
     paintSliderRangeHighlight(rect, style, context, 0.0, fillWidth / rect.width());
 
@@ -264,6 +271,16 @@ static bool paintMediaVolumeSlider(RenderObject* object, const PaintInfo& paintI
 
 static bool paintMediaVolumeSliderThumb(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
+    ASSERT(object->node());
+    Node* hostNode = object->node()->shadowAncestorNode();
+    ASSERT(hostNode);
+    HTMLMediaElement* mediaElement = toParentMediaElement(hostNode);
+    if (!mediaElement)
+        return false;
+
+    if (!hasSource(mediaElement) || !mediaElement->hasAudio())
+        return true;
+
     static Image* mediaVolumeSliderThumb = platformResource("mediaplayerVolumeSliderThumb");
     return paintMediaButton(paintInfo.context, rect, mediaVolumeSliderThumb);
 }
