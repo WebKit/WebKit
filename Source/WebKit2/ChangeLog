@@ -1,5 +1,22 @@
 2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [WK2] Add support for explicit intents
+        https://bugs.webkit.org/show_bug.cgi?id=89206
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Expose the service URL of a Web Intent. This URL
+        is set for explicit intents.
+
+        * Shared/IntentData.h:
+        (IntentData):
+        * UIProcess/WebIntentData.h:
+        (WebKit::WebIntentData::service):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchIntent):
+
+2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Add title support to Ewk_View
         https://bugs.webkit.org/show_bug.cgi?id=89095
 

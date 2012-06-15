@@ -48,6 +48,7 @@ public:
 
     const String& action() const { return m_store.action; }
     const String& payloadType() const { return m_store.type; }
+    const WebCore::KURL& service() const { return m_store.service; }
     PassRefPtr<WebSerializedScriptValue> data() const;
     const HashMap<String, String>& extras() const { return m_store.extras; }
     const Vector<WebCore::KURL>& suggestions() const { return m_store.suggestions; }

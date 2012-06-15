@@ -45,6 +45,7 @@ struct IntentData {
 
     String action;
     String type;
+    WebCore::KURL service;
     Vector<uint8_t> data;
     HashMap<String, String> extras;
     Vector<WebCore::KURL> suggestions;

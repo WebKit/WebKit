@@ -1553,6 +1553,7 @@ void WebFrameLoaderClient::dispatchIntent(PassRefPtr<IntentRequest> request)
     ASSERT(coreIntent);
     intentData.action = coreIntent->action();
     intentData.type = coreIntent->type();
+    intentData.service = coreIntent->service();
     intentData.data = coreIntent->data()->data();
     intentData.extras = coreIntent->extras();
     intentData.suggestions = coreIntent->suggestions();
