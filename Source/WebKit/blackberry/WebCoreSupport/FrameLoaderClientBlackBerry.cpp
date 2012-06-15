@@ -369,7 +369,8 @@ void FrameLoaderClientBlackBerry::receivedData(const char* data, int length, con
 void FrameLoaderClientBlackBerry::finishedLoading(DocumentLoader*)
 {
     if (m_pluginView) {
-        m_pluginView->didFinishLoading();
+        if (m_hasSentResponseToPlugin)
+            m_pluginView->didFinishLoading();
         m_pluginView = 0;
         m_hasSentResponseToPlugin = false;
     }
