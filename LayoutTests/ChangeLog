@@ -1,3 +1,19 @@
+2012-06-15  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed expectation rebaselining.
+
+        * platform/chromium-linux-x86/fast/multicol/client-rects-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/multicol/client-rects-expected.png.
+        * platform/chromium-linux-x86/fast/multicol/client-rects-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/multicol/client-rects-expected.txt.
+        * platform/chromium-linux/fast/multicol/client-rects-expected.png:
+        * platform/chromium-linux/fast/multicol/client-rects-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/multicol/client-rects-expected.txt.
+        * platform/chromium-mac-snowleopard/fast/multicol/client-rects-expected.txt: Added.
+        * platform/chromium-win-vista/fast/multicol/client-rects-expected.png: Added.
+        * platform/chromium-win-vista/fast/multicol/client-rects-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/multicol/client-rects-expected.txt.
+        * platform/chromium-win-xp/fast/multicol/client-rects-expected.png: Added.
+        * platform/chromium-win-xp/fast/multicol/client-rects-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/multicol/client-rects-expected.txt.
+        * platform/chromium-win/fast/multicol/client-rects-expected.png:
+        * platform/chromium-win/fast/multicol/client-rects-expected.txt:
+
 2012-06-15  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Rebaseline for type=range tests.
