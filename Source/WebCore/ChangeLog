@@ -1,3 +1,24 @@
+2012-06-14  Kent Tamura  <tkent@chromium.org>
+
+        [JSC/V8] "DOMString[]" for function return values should not be null
+        https://bugs.webkit.org/show_bug.cgi?id=89151
+
+        Reviewed by Kentaro Hara.
+
+        jsArray and v8Array are used for "DOMString[]", not "DOMString[]?". So
+        we should not return JavaScript null object.
+
+        No new tests. We have no plan to use this code in production code for
+        now. It will be used for window.internals functions.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsArray): For null input, returns an empty array, not null.
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::v8Array): Implement DOMStringList -> JavaScript array conversion.
+        Like jsArray(), we don't return null object.
+        * bindings/v8/V8Binding.h:
+        (WebCore): Declare v8Array().
+
 2012-06-14  Dale Curtis  <dalecurtis@chromium.org>
 
         Disable click/dbl-click on MediaDocument for Chromium. Fix layout test for all platforms.

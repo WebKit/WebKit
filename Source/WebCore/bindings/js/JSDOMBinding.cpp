@@ -149,11 +149,11 @@ double valueToDate(ExecState* exec, JSValue value)
 
 JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<DOMStringList> stringList)
 {
-    if (!stringList)
-        return jsNull();
     JSC::MarkedArgumentBuffer list;
-    for (unsigned i = 0; i < stringList->length(); ++i)
-        list.append(jsString(exec, stringList->item(i)));
+    if (stringList) {
+        for (unsigned i = 0; i < stringList->length(); ++i)
+            list.append(jsString(exec, stringList->item(i)));
+    }
     return JSC::constructArray(exec, globalObject, list);
 }
 

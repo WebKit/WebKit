@@ -212,6 +212,16 @@ AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> value)
     return v8NonStringValueToAtomicWebCoreString(value);
 }
 
+v8::Handle<v8::Value> v8Array(PassRefPtr<DOMStringList> stringList, v8::Isolate* isolate)
+{
+    if (!stringList)
+        return v8::Array::New();
+    v8::Local<v8::Array> result = v8::Array::New(stringList->length());
+    for (unsigned i = 0; i < stringList->length(); ++i)
+        result->Set(v8::Integer::New(i), v8String(stringList->item(i), isolate));
+    return result;
+}
+
 int toInt32(v8::Handle<v8::Value> value, bool& ok)
 {
     ok = true;

@@ -315,6 +315,8 @@ namespace WebCore {
         return array;
     }
 
+    v8::Handle<v8::Value> v8Array(PassRefPtr<DOMStringList>, v8::Isolate*);
+
     template <class T>
     Vector<T> toNativeArray(v8::Handle<v8::Value> value)
     {
