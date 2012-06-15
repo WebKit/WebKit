@@ -1,3 +1,27 @@
+2012-06-15  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Fix LayoutTests/platform/chromium/compositing/accelerated-drawing/svg-filters.html
+        https://bugs.webkit.org/show_bug.cgi?id=89126
+
+        Reviewed by Stephen White.
+
+        When drawing an image buffer into a deferred device context, we have to make a deep copy of the source (Skia
+        can't for some reason). Stephen White fixed this in r101325 by adding a bit on PlatformContextSkia indicating if
+        a given context is deferred, but I broke this again in r120346 by refactoring the SkCanvas creation to happen in
+        a different location from the PlatformContextSkia construction.
+
+        This moves the check into ImageBufferSkia and directly queries the state of the destination SkDevice to be more
+        robust and work without needing special PlatformContextSkia setup.
+
+        Covered by LayoutTests/platform/chromium/compositing/accelerated-drawing/svg-filters.html
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::drawNeedsCopy):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::PlatformContextSkia):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (PlatformContextSkia):
+
 2012-06-15  Ami Fischman  <fischman@chromium.org>
 
         [chromium] Compositor should be aware of |flipped| status of video textures per-platform
