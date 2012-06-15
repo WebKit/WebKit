@@ -1,3 +1,21 @@
+2012-06-14  Keishi Hattori  <keishi@webkit.org>
+
+        Add color property to input type=range
+        https://bugs.webkit.org/show_bug.cgi?id=89067
+
+        Reviewed by Kent Tamura.
+
+        Adding color property to input type=range in preparation for
+        supporting tick marks for datalist for input type=range.
+
+        * css/html.css:
+        (input[type="range"]): Setting color property for input type=range.
+        This will set the color of tick mark when we implement <datalist>.
+        * css/themeChromiumLinux.css:
+        (input[type=range]):
+        * css/themeWin.css:
+        (input[type="range"]):
+
 2012-06-14  Kent Tamura  <tkent@chromium.org>
 
         Support file extensions in HTMLInputElement::accept

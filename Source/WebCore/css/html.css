@@ -570,6 +570,7 @@ input[type="range"] {
     padding: initial;
     border: initial;
     margin: 2px;
+    color: #909090;
 }
 
 input[type="range"]::-webkit-slider-container {

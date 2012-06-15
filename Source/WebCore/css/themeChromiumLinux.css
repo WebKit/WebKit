@@ -39,3 +39,7 @@ select[size="0"] option,
 select[size="1"] option {
     background-color: #f7f7f7;
 }
+
+input[type=range] {
+    color: #9d968E;
+}

@@ -61,6 +61,10 @@ input[type="radio"] {
     margin:3px 3px 0 5px;
 }
 
+input[type="range"] {
+    color: #c4c4c4;
+}
+
 /* Not sure this is the right color. #EBEBE4 is what Firefox uses.
    FIXME: Figure out how to support legacy input rendering. 
    FIXME: Add input[type="file"] once we figure out our file inputs.

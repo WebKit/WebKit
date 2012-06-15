@@ -1,3 +1,38 @@
+2012-06-14  Keishi Hattori  <keishi@webkit.org>
+
+        Add color property to input type=range
+        https://bugs.webkit.org/show_bug.cgi?id=89067
+
+        Reviewed by Kent Tamura.
+
+        * fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt:
+        * fast/repaint/slider-thumb-float-expected.txt:
+        * platform/chromium-linux/fast/dom/HTMLInputElement/input-slider-update-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/dom/HTMLInputElement/input-slider-update-expected.txt.
+        * platform/chromium-linux/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt: Copied from LayoutTests/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt.
+        * platform/chromium-linux/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-linux/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-linux/fast/forms/range/slider-thumb-stylability-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/range/slider-thumb-stylability-expected.txt.
+        * platform/chromium-linux/fast/repaint/slider-thumb-drag-release-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/repaint/slider-thumb-drag-release-expected.txt.
+        * platform/chromium-linux/fast/repaint/slider-thumb-float-expected.txt: Copied from LayoutTests/fast/repaint/slider-thumb-float-expected.txt.
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-mac/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/chromium-win/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-win/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/chromium-win/fast/forms/range/range-thumb-height-percentage-expected.txt:
+        * platform/chromium-win/fast/forms/range/slider-padding-expected.txt:
+        * platform/chromium-win/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/chromium-win/fast/forms/range/slider-thumb-stylability-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/range/slider-thumb-stylability-expected.txt.
+        * platform/chromium-win/fast/repaint/slider-thumb-drag-release-expected.txt:
+        * platform/mac/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/mac/fast/forms/range/range-thumb-height-percentage-expected.txt:
+        * platform/mac/fast/forms/range/slider-padding-expected.txt:
+        * platform/mac/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/mac/fast/forms/range/slider-thumb-stylability-expected.txt:
+        * platform/mac/fast/repaint/slider-thumb-drag-release-expected.txt:
+
 2012-06-14  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed rebaseline for mac chromium following r120403.
