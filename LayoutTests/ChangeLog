@@ -1,3 +1,22 @@
+2012-06-14  Mike West  <mkwst@chromium.org>
+
+        Add test cases for header/footer elements' AXRoleDescription
+        https://bugs.webkit.org/show_bug.cgi?id=88911
+
+        Header and footer elements change their accessibility roles depending
+        on the elements which contain them. Specifically, they are described
+        as "banner" or "footer" in the general case, and fall back to
+        generic "group" role descriptions when contained in either article or
+        section elements. This patch simply tests that existing behavior on
+        Mac.
+
+        Reviewed by Chris Fleizach.
+
+        * platform/mac/accessibility/footer-expected.txt: Added.
+        * platform/mac/accessibility/footer.html: Added.
+        * platform/mac/accessibility/header-expected.txt: Added.
+        * platform/mac/accessibility/header.html: Added.
+
 2012-06-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix Chromium test expectation after r120371.
