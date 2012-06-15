@@ -1,3 +1,11 @@
+2012-06-15  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=89192
+
+        * platform/chromium/TestExpectations:
+        Failulre of platform/chromium/accessibility/add-to-menu-list-crashes.html is expected.
+
 2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's LayoutTestController does not support titleTextDirection
