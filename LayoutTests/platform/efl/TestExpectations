@@ -462,10 +462,6 @@ BUGWK84776 : ietestcenter/css3/multicolumn/column-width-applies-to-014.htm = IMA
 BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMAGE
 BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 
-// Expose title direction in WebKit API
-BUGWK58845 : fast/dom/title-directionality.html = TEXT
-BUGWK58845 : fast/dom/title-directionality-removeChild.html = TEXT
-
 // Tests that sometimes fail on the bot (for GTK and Chromium ports as well)
 BUGWK77631 : fast/multicol/span/span-as-immediate-child-property-removal.html = TEXT PASS
 BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = TEXT PASS

@@ -1,3 +1,15 @@
+2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's LayoutTestController does not support titleTextDirection
+        https://bugs.webkit.org/show_bug.cgi?id=86475
+
+        Reviewed by Hajime Morita.
+
+        Unskip title-directionality tests now that EFL's LayoutTestController
+        supports titleTextDirection.
+
+        * platform/efl/TestExpectations:
+
 2012-06-15  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium windows rebaseline.

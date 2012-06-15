@@ -359,6 +359,8 @@ public:
     void setMinimumTimerInterval(double);
 
     void setTextDirection(JSStringRef);
+    const std::string& titleTextDirection() const { return m_titleTextDirection; }
+    void setTitleTextDirection(const std::string& direction) { m_titleTextDirection = direction; }
 
     // Custom full screen behavior.
     void setHasCustomFullScreenBehavior(bool value) { m_customFullScreenBehavior = value; }
@@ -423,6 +425,7 @@ private:
     std::string m_authenticationPassword; 
     std::string m_testPathOrURL;
     std::string m_expectedPixelHash;    // empty string if no hash
+    std::string m_titleTextDirection;
 
     std::set<std::string> m_willSendRequestClearHeaders;
     

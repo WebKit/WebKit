@@ -1616,9 +1616,9 @@ void ewk_frame_contents_size_changed(Evas_Object* ewkFrame, Evas_Coord width, Ev
  */
 void ewk_frame_title_set(Evas_Object* ewkFrame, const Ewk_Text_With_Direction* title)
 {
-    DBG("ewkFrame=%p, title=%s", ewkFrame, title->string ? title->string : "(null)");
+    DBG("ewkFrame=%p, title=%s, direction=%s", ewkFrame, title->string ? title->string : "(null)", title->direction == EWK_TEXT_DIRECTION_LEFT_TO_RIGHT ? "ltr" : "rtl");
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData);
-    if (!eina_stringshare_replace(&smartData->title.string, title->string))
+    if (!eina_stringshare_replace(&smartData->title.string, title->string) && (smartData->title.direction == title->direction))
         return;
     smartData->title.direction = title->direction;
     evas_object_smart_callback_call(ewkFrame, "title,changed", (void*)title);

@@ -469,6 +469,8 @@ void DumpRenderTreeChrome::onFrameTitleChanged(void*, Evas_Object* frame, void* 
     if (!done && gLayoutTestController->dumpHistoryDelegateCallbacks())
         printf("WebView updated the title for history URL \"%s\" to \"%s\".\n", ewk_frame_uri_get(frame)
                , (titleText && titleText->string) ? titleText->string : "");
+
+    gLayoutTestController->setTitleTextDirection(titleText->direction == EWK_TEXT_DIRECTION_LEFT_TO_RIGHT ? "ltr" : "rtl");
 }
 
 void DumpRenderTreeChrome::onDocumentLoadFinished(void*, Evas_Object*, void* eventInfo)

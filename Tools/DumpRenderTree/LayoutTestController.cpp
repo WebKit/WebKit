@@ -96,6 +96,7 @@ LayoutTestController::LayoutTestController(const std::string& testPathOrURL, con
     , m_customFullScreenBehavior(false) 
     , m_testPathOrURL(testPathOrURL)
     , m_expectedPixelHash(expectedPixelHash)
+    , m_titleTextDirection("ltr")
 {
 }
 
@@ -2158,6 +2159,13 @@ static JSValueRef getPlatformNameCallback(JSContextRef context, JSObjectRef this
 }
 #endif
 
+static JSValueRef getTitleTextDirectionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    JSRetainPtr<JSStringRef> titleDirection(Adopt, JSStringCreateWithUTF8CString(controller->titleTextDirection().c_str()));
+    return JSValueMakeString(context, titleDirection.get());
+}
+
 static bool setGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
@@ -2261,6 +2269,7 @@ JSStaticValue* LayoutTestController::staticValues()
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN)
         { "platformName", getPlatformNameCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif
+        { "titleTextDirection", getTitleTextDirectionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };
     return staticValues;

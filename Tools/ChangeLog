@@ -1,5 +1,28 @@
 2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] EFL's LayoutTestController does not support titleTextDirection
+        https://bugs.webkit.org/show_bug.cgi?id=86475
+
+        Reviewed by Hajime Morita.
+
+        Add titleTextDirection getter and setter to LayoutTestController and
+        expose its value to JavaScript.
+        Update the titleTextDirection value from EFL's "title,changed"
+        callback in DumpRenderTree.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (getTitleTextDirectionCallback):
+        (LayoutTestController::staticValues):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::titleTextDirection):
+        (LayoutTestController::setTitleTextDirection):
+        (LayoutTestController):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onFrameTitleChanged):
+
+2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Implement reload / stop in Ewk_View
         https://bugs.webkit.org/show_bug.cgi?id=89168
 

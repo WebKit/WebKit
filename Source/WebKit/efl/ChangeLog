@@ -1,3 +1,16 @@
+2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's LayoutTestController does not support titleTextDirection
+        https://bugs.webkit.org/show_bug.cgi?id=86475
+
+        Reviewed by Hajime Morita.
+
+        Emit the "title,changed" signal even if the title direction has
+        changed but not its text.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_title_set):
+
 2012-06-14  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Move cursor related code from WidgetEfl to ewk_view and EflScreenUtilities.
