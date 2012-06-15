@@ -2,6 +2,7 @@ body > hr { display: none; }
 div.content h1 { display: none; }
 
 body.interface {
+    margin-top: 20px;
     background: url(bg_gradient.jpg) repeat-x;
     font-family: Verdana, Cursor;
     font-size: 10px;
