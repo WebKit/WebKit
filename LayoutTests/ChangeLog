@@ -1,3 +1,10 @@
+2012-06-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding test expectation for
+        fast/dom/htmlcollection-non-html.html after r120413.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-15  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium mac rebaseline.
