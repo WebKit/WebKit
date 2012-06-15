@@ -84,7 +84,10 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font,
         description.setItalic(FontItalicOff);
     }
 
-    FontPlatformData platformData = FontPlatformData(*getCachedFontPlatformData(description, atomicFamily, DoNotRetain));
+    FontPlatformData* substitutePlatformData = getCachedFontPlatformData(description, atomicFamily, DoNotRetain);
+    if (!substitutePlatformData)
+        return 0;
+    FontPlatformData platformData = FontPlatformData(*substitutePlatformData);
     platformData.setFakeBold(shouldSetFakeBold);
     platformData.setFakeItalic(shouldSetFakeItalic);
     return getCachedFontData(&platformData, DoNotRetain);
