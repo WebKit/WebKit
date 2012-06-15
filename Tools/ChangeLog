@@ -1,5 +1,16 @@
 2012-06-15  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Update builder.html template for newer buildmaster
+        https://bugs.webkit.org/show_bug.cgi?id=89207
+
+        Rebasing builder.html template from v0.8.3 to v0.8.6p1.
+
+        Reviewed by Zoltan Herczeg.
+
+        * BuildSlaveSupport/build.webkit.org-config/templates/builder.html:
+
+2012-06-15  Csaba Osztrogonác  <ossy@webkit.org>
+
         Add ForceScheduler to build.webkit.org
         https://bugs.webkit.org/show_bug.cgi?id=88982
 

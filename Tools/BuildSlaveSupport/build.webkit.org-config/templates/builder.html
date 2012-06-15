@@ -21,7 +21,7 @@
 
     {{ b.current_step }}
 
-    {% if authz.advertiseAction('stopBuild') %}
+    {% if authz.advertiseAction('stopBuild', request) %}
       {{ forms.stop_build(b.stop_url, authz, on_all=False, short=True, label='Build') }}
     {% endif %}
     </li>
@@ -37,7 +37,7 @@
   {% for b in pending %}
     <li><small>({{ b.when }}, waiting {{ b.delay }})</small>
 
-    {% if authz.advertiseAction('cancelPendingBuild') %}
+    {% if authz.advertiseAction('cancelPendingBuild', request) %}
       {{ forms.cancel_pending_build(builder_url+"/cancelbuild", authz, short=True, id=b.id) }}
     {% endif %}
 
@@ -49,11 +49,16 @@
         ({{ b.num_changes }} changes)
     {% endif %}
 
+      {% if 'owner' in b.properties %}
+        <b>Forced build</b>
+        by {{b.properties['owner'][0]}}
+        <small>{{b.properties['reason'][0]}}</small>
+      {% endif %}
     </li>
   {% endfor %}
   </ul>
 
-  {% if authz.advertiseAction('cancelPendingBuild') %}
+  {% if authz.advertiseAction('cancelPendingBuild', request) %}
     {{ forms.cancel_pending_build(builder_url+"/cancelbuild", authz, short=False, id='all') }}
   {% endif %}
 
@@ -97,14 +102,14 @@
 {% endfor %}
 </table>
 
-{% if authz.advertiseAction('pingBuilder') %}
+{% if authz.advertiseAction('pingBuilder', request) %}
   <h2>Ping slaves</h2>
   {{ forms.ping_builder(builder_url+"/ping", authz) }}
 {% endif %}
 
-{% if authz.advertiseAction('forceBuild') %}
+{% if authz.advertiseAction('forceBuild', request) and force_schedulers != {} %}
   <h2>Force build</h2>
-  {{ forms.force_build(builder_url+"/force", authz, False) }}
+  {{ forms.force_build(builder_url+"/force", authz, request, False, force_schedulers=force_schedulers,default_props=default_props) }}
 {% endif %}
 
 </div>
