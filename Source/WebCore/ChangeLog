@@ -1,3 +1,16 @@
+2012-06-15  Eli Fidler  <efidler@rim.com>
+
+        [BlackBerry] Use platform font settings for the standard settings.
+        https://bugs.webkit.org/show_bug.cgi?id=89232
+
+        Reviewed by Rob Buis.
+
+        RIM PR 159708
+
+        * page/blackberry/SettingsBlackBerry.cpp:
+        (WebCore):
+        (WebCore::Settings::initializeDefaultFontFamilies):
+
 2012-06-15  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Raise exceptions when methods are called on deleted objects

@@ -19,44 +19,46 @@
 #include "config.h"
 #include "Settings.h"
 
+#include "LocaleToScriptMapping.h"
+
+#include <BlackBerryPlatformFontInfo.h>
+
 namespace WebCore {
+
+static const char* languages[] = {
+    "ar",
+    "bn",
+    "gu",
+    "he",
+    "hi",
+    "ja",
+    "kn",
+    "ko",
+    "ml",
+    "pa",
+    "ta",
+    "te",
+    "th",
+    "zh-CN",
+    "zh-TW",
+};
 
 void Settings::initializeDefaultFontFamilies()
 {
-    setCursiveFontFamily("Comic Sans MS");
-    setFantasyFontFamily("Impact");
-    setFixedFontFamily("Courier New");
-    setSansSerifFontFamily("Arial");
-    setSerifFontFamily("Times New Roman");
-    setStandardFontFamily("Times New Roman");
+    setCursiveFontFamily(BlackBerry::Platform::fontFamily("-webkit-cursive", "").c_str());
+    setFantasyFontFamily(BlackBerry::Platform::fontFamily("-webkit-fantasy", "").c_str());
+    setFixedFontFamily(BlackBerry::Platform::fontFamily("-webkit-monospace", "").c_str());
+    setSansSerifFontFamily(BlackBerry::Platform::fontFamily("-webkit-sans-serif", "").c_str());
+    setSerifFontFamily(BlackBerry::Platform::fontFamily("-webkit-serif", "").c_str());
+    setStandardFontFamily(BlackBerry::Platform::fontFamily("-webkit-standard", "").c_str());
 
-    setStandardFontFamily("Adobe Ming Std L", USCRIPT_TRADITIONAL_HAN);
-
-    setStandardFontFamily("Adobe Heiti Std R", USCRIPT_SIMPLIFIED_HAN);
-
-    setFixedFontFamily("Ryo Gothic PlusN R", USCRIPT_KATAKANA_OR_HIRAGANA);
-    setSansSerifFontFamily("Ryo Gothic PlusN R", USCRIPT_KATAKANA_OR_HIRAGANA);
-    setSerifFontFamily("Ryo Text PlusN L", USCRIPT_KATAKANA_OR_HIRAGANA);
-    setStandardFontFamily("Ryo Gothic PlusN R", USCRIPT_KATAKANA_OR_HIRAGANA);
-
-    setStandardFontFamily("Adobe Gothic Std", USCRIPT_HANGUL);
-
-    setStandardFontFamily("Garuda", USCRIPT_THAI);
-
-    setStandardFontFamily("Tahoma", USCRIPT_ARABIC);
-
-    setStandardFontFamily("Tahoma", USCRIPT_HEBREW);
-
-    setStandardFontFamily("Bengali OTS", USCRIPT_BENGALI);
-    setStandardFontFamily("Devanagari OTS", USCRIPT_DEVANAGARI);
-    setStandardFontFamily("Gujarati OTS", USCRIPT_GUJARATI);
-    setStandardFontFamily("Gurmukhi OTS", USCRIPT_GURMUKHI);
-    setStandardFontFamily("Kannada OTS", USCRIPT_KANNADA);
-    setStandardFontFamily("Malayalam OTS", USCRIPT_MALAYALAM);
-    setStandardFontFamily("Sinhala OTS", USCRIPT_SINHALA);
-    setStandardFontFamily("Tamil OTS", USCRIPT_TAMIL);
-    setStandardFontFamily("Telugu OTS", USCRIPT_TELUGU);
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(languages); ++i) {
+        UScriptCode script = localeToScriptCodeForFontSelection(languages[i]);
+        setFixedFontFamily(BlackBerry::Platform::fontFamily("monospace", languages[i]).c_str(), script);
+        setSansSerifFontFamily(BlackBerry::Platform::fontFamily("sans-serif", languages[i]).c_str(), script);
+        setSerifFontFamily(BlackBerry::Platform::fontFamily("serif", languages[i]).c_str(), script);
+        setStandardFontFamily(BlackBerry::Platform::fontFamily("", languages[i]).c_str(), script);
+    }
 }
-
 
 } // namespace WebCore
