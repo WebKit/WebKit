@@ -207,6 +207,8 @@ const IntSize minimumLayoutSize(10, 10); // Needs to be a small size, greater th
 
 const double minimumExpandingRatio = 0.15;
 
+const double minimumZoomToFitScale = 0.25;
+
 // Helper function to parse a URL and fill in missing parts.
 static KURL parseUrl(const String& url)
 {
@@ -1672,31 +1674,13 @@ void WebPagePrivate::zoomToInitialScaleOnLoad()
 
 double WebPagePrivate::zoomToFitScale() const
 {
-    // We must clamp the contents for this calculation so that we do not allow an
-    // arbitrarily small zoomToFitScale much like we clamp the fixedLayoutSize()
-    // so that we do not have arbitrarily large layout size.
-    // If we have a specified viewport, we may need to be able to zoom out more.
-    int contentWidth = std::min(contentsSize().width(), std::max(m_virtualViewportWidth, static_cast<int>(defaultMaxLayoutSize().width())));
+    int contentWidth = contentsSize().width();
+    int contentHeight = contentsSize().height();
+    double zoomToFitScale = contentWidth > 0.0 ? static_cast<double>(m_actualVisibleWidth) / contentWidth : 1.0;
+    if (contentHeight * zoomToFitScale < static_cast<double>(m_defaultLayoutSize.height()))
+        zoomToFitScale = contentHeight > 0 ? static_cast<double>(m_defaultLayoutSize.height()) / contentHeight : 1.0;
 
-    // defaultMaxLayoutSize().width() is a safeguard for excessively large page layouts that
-    // is too restrictive for image documents. In this case, the document width is sufficient.
-    Document* doc = m_page->mainFrame()->document();
-    if (doc && doc->isImageDocument())
-       contentWidth = contentsSize().width();
-
-    // If we have a virtual viewport and its aspect ratio caused content to layout
-    // wider than the default layout aspect ratio we need to zoom to fit the content height
-    // in order to avoid showing a grey area below the web page.
-    // Without virtual viewport we can never get into this situation.
-    if (hasVirtualViewport()) {
-        int contentHeight = std::min(contentsSize().height(), std::max(m_virtualViewportHeight, static_cast<int>(defaultMaxLayoutSize().height())));
-
-        // Aspect ratio check without division.
-        if (contentWidth * m_defaultLayoutSize.height() > contentHeight * m_defaultLayoutSize.width())
-            return contentHeight > 0 ? static_cast<double>(m_defaultLayoutSize.height()) / contentHeight : 1.0;
-    }
-
-    return contentWidth > 0.0 ? static_cast<double>(m_actualVisibleWidth) / contentWidth : 1.0;
+    return std::max(zoomToFitScale, minimumZoomToFitScale);
 }
 
 double WebPage::zoomToFitScale() const

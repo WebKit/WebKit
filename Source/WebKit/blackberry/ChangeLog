@@ -1,3 +1,30 @@
+2012-06-15  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Certain web pages (i.e., http://www.cloudtweaks.com/) are allowed to be wider than the screen
+        https://bugs.webkit.org/show_bug.cgi?id=89211
+
+        Reviewed by Rob Buis.
+        Patch by Jacky Jiang <zhajiang@rim.com>
+
+        PR: 135215
+        Make simpler rules for zoom to fit scale:
+        - Zoom to fit horizontally first without clamping the contents width.
+        - Zoom to fit vertically instead without clamping the contents height
+          if the horizontal zoom to fit can cause a grey area below the web
+          page. Get rid of the virtual viewport guard as there may be cases
+          that zooming can cause a grey area without a virtual viewport.
+        - Clamp the scale by the minimum zoom to fit scale 0.25 and apply
+          this rule to image documents as well. This minimum scale can be
+          changed if there is a better vaule in the future.
+        In this way, we can get rid of the issue that many web pages don't fit
+        the screen.
+
+        Reviewed internally by Arvid Nilsson.
+
+        * Api/WebPage.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::zoomToFitScale):
+
 2012-06-15  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Remove BackingStoreClient::scrollsHorizontally/scrollsVeritically()
