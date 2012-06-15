@@ -38,11 +38,6 @@ from webkitpy.tool.mocktool import MockOptions
 
 
 class ChromiumWinTest(port_testcase.PortTestCase):
-    class RegisterCygwinOption(object):
-        def __init__(self):
-            self.register_cygwin = True
-            self.results_directory = '/'
-
     port_name = 'chromium-win'
     port_maker = chromium_win.ChromiumWinPort
     os_name = 'win'
@@ -67,7 +62,7 @@ class ChromiumWinTest(port_testcase.PortTestCase):
         self.assertEquals(env['CYGWIN_PATH'], '/mock-checkout/Source/WebKit/chromium/third_party/cygwin/bin')
 
     def test_setup_environ_for_server_register_cygwin(self):
-        port = self.make_port(options=ChromiumWinTest.RegisterCygwinOption())
+        port = self.make_port(options=MockOptions(register_cygwin=True, results_directory='/'))
         port._executive = MockExecutive(should_log=True)
         expected_stderr = "MOCK run_command: ['/mock-checkout/Source/WebKit/chromium/third_party/cygwin/setup_mount.bat'], cwd=None\n"
         output = outputcapture.OutputCapture()

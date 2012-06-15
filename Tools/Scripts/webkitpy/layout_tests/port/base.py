@@ -34,6 +34,7 @@ import cgi
 import difflib
 import errno
 import os
+import optparse
 import re
 
 try:
@@ -59,19 +60,6 @@ from webkitpy.layout_tests.servers import http_server
 from webkitpy.layout_tests.servers import websocket_server
 
 _log = logutils.get_logger(__file__)
-
-
-class DummyOptions(object):
-    """Fake implementation of optparse.Values. Cloned from webkitpy.tool.mocktool.MockOptions."""
-
-    def __init__(self, *args, **kwargs):
-        # The caller can set option values using keyword arguments. We don't
-        # set any values by default because we don't know how this
-        # object will be used. Generally speaking unit tests should
-        # subclass this or provider wrapper functions that set a common
-        # set of options.
-        for key, value in kwargs.items():
-            self.__dict__[key] = value
 
 
 # FIXME: This class should merge with WebKitPort now that Chromium behaves mostly like other webkit ports.
@@ -111,7 +99,7 @@ class Port(object):
         # FIXME: Ideally we'd have a package-wide way to get a
         # well-formed options object that had all of the necessary
         # options defined on it.
-        self._options = options or DummyOptions()
+        self._options = options or optparse.Values()
 
         self.host = host
         self._executive = host.executive
@@ -678,18 +666,10 @@ class Port(object):
         return self._architecture
 
     def get_option(self, name, default_value=None):
-        # FIXME: Eventually we should not have to do a test for
-        # hasattr(), and we should be able to just do
-        # self.options.value. See additional FIXME in the constructor.
-        if hasattr(self._options, name):
-            return getattr(self._options, name)
-        return default_value
+        return getattr(self._options, name, default_value)
 
     def set_option_default(self, name, default_value):
-        # FIXME: Callers could also use optparse_parser.Values.ensure_value,
-        # since this should always be a optparse_parser.Values object.
-        if not hasattr(self._options, name) or getattr(self._options, name) is None:
-            return setattr(self._options, name, default_value)
+        return self._options.ensure_value(name, default_value)
 
     def path_from_webkit_base(self, *comps):
         """Returns the full path to path made by joining the top of the

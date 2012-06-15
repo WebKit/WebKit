@@ -58,10 +58,10 @@ def port_options(**help_strings):
             help='use 32-bit binaries by default (x86 instead of x86_64)')]
 
 
-class BuilderOptions(object):
-    def __init__(self, builder_name):
-        self.configuration = "Debug" if re.search(r"[d|D](ebu|b)g", builder_name) else "Release"
-        self.builder_name = builder_name
+def _builder_options(builder_name):
+    configuration = "Debug" if re.search(r"[d|D](ebu|b)g", builder_name) else "Release"
+    builder_name = builder_name
+    return optparse.Values({'builder_name': builder_name, 'configuration': configuration})
 
 
 class PortFactory(object):
@@ -129,6 +129,6 @@ class PortFactory(object):
     def get_from_builder_name(self, builder_name):
         port_name = builders.port_name_for_builder_name(builder_name)
         assert(port_name)  # Need to update port_name_for_builder_name
-        port = self.get(port_name, BuilderOptions(builder_name))
+        port = self.get(port_name, _builder_options(builder_name))
         assert(port)  # Need to update port_name_for_builder_name
         return port

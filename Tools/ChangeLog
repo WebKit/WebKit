@@ -1,3 +1,28 @@
+2012-06-15  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: remove DummyOptions and clean up the code in Port.get_option() and Port.set_option_default()
+        https://bugs.webkit.org/show_bug.cgi?id=89135
+
+        Re-land change in r120370 with fix in
+        PortFactory.get_from_builder_name() that changes BuilderOptions
+        to an actual optparse.Values object.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.__init__):
+        (Port.get_option):
+        (Port.set_option_default):
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        (ChromiumWinTest.test_setup_environ_for_server_register_cygwin):
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (_builder_options):
+        (PortFactory.get_from_builder_name):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest.test_get_from_builder_name):
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker._determine_port_from_expectations_path):
+        * Scripts/webkitpy/tool/mocktool.py:
+        (MockOptions.ensure_value):
+
 2012-06-15  Bill Budge  <bbudge@chromium.org>
 
         Add bbudge@chromium.org to committers.py
