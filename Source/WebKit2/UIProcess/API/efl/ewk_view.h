@@ -1,5 +1,6 @@
 /*
    Copyright (C) 2011 Samsung Electronics
+   Copyright (C) 2012 Intel Corporation. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -163,6 +164,26 @@ EAPI Eina_Bool ewk_view_uri_set(Evas_Object *o, const char *uri);
  * @return current URI on success or @c 0 on failure
  */
 EAPI const char *ewk_view_uri_get(const Evas_Object *o);
+
+/**
+ * Asks the main frame to reload the current document.
+ *
+ * @param o view object to reload current document
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
+ *
+ * @see ewk_view_reload_full()
+ */
+EAPI Eina_Bool    ewk_view_reload(Evas_Object *o);
+
+/**
+ * Asks the main frame to stop loading.
+ *
+ * @param o view object to stop loading
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool    ewk_view_stop(Evas_Object *o);
 
 #ifdef __cplusplus
 }

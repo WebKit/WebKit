@@ -1,5 +1,6 @@
 /*
    Copyright (C) 2011 Samsung Electronics
+   Copyright (C) 2012 Intel Corporation. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -521,6 +522,24 @@ const char* ewk_view_uri_get(const Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
 
     return priv->uri;
+}
+
+Eina_Bool ewk_view_reload(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    WKPageReload(toAPI(priv->pageClient->page()));
+    return true;
+}
+
+Eina_Bool ewk_view_stop(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    WKPageStopLoading(toAPI(priv->pageClient->page()));
+    return true;
 }
 
 void ewk_view_display(Evas_Object* ewkView, const IntRect& rect)

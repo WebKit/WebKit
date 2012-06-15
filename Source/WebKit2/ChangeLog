@@ -1,3 +1,18 @@
+2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Implement reload / stop in Ewk_View
+        https://bugs.webkit.org/show_bug.cgi?id=89168
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add API on the Ewk_View to reload the main frame
+        and to stop the current load.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_reload):
+        (ewk_view_stop):
+        * UIProcess/API/efl/ewk_view.h:
+
 2012-06-14  Kent Tamura  <tkent@chromium.org>
 
         Validate form state strings in FormController::setStateForNewFormElements()

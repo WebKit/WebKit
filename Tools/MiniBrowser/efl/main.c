@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,6 +26,14 @@
 static const int DEFAULT_WIDTH = 800;
 static const int DEFAULT_HEIGHT = 600;
 static const char DEFAULT_URL[] = "http://www.google.com/";
+
+#define info(format, args...)       \
+    do {                            \
+        if (verbose)                \
+            printf(format, ##args); \
+    } while (0)
+
+static int verbose = 0;
 
 typedef struct _MiniBrowser {
     Ecore_Evas *ee;
@@ -56,6 +65,19 @@ static void on_ecore_evas_resize(Ecore_Evas *ee)
     evas_object_resize(webview, w, h);
 }
 
+static void
+on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+    Evas_Event_Key_Down *ev = (Evas_Event_Key_Down*) event_info;
+    if (!strcmp(ev->key, "F5")) {
+            info("Reload (F5) was pressed, reloading.\n");
+            ewk_view_reload(obj);
+    } else if (!strcmp(ev->key, "F6")) {
+            info("Stop (F6) was pressed, stop loading.\n");
+            ewk_view_stop(obj);
+    }
+}
+
 static MiniBrowser *browserCreate(const char *url)
 {
     MiniBrowser *app = malloc(sizeof(MiniBrowser));
@@ -81,8 +103,10 @@ static MiniBrowser *browserCreate(const char *url)
     /* Create webview */
     app->browser = ewk_view_add(app->evas);
     evas_object_name_set(app->browser, "browser");
-    evas_object_size_hint_weight_set(app->browser, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
+    evas_object_event_callback_add(app->browser, EVAS_CALLBACK_KEY_DOWN, on_key_down, app);
+
+    evas_object_size_hint_weight_set(app->browser, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_resize(app->browser, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     evas_object_show(app->browser);
     evas_object_focus_set(app->browser, EINA_TRUE);

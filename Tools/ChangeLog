@@ -1,3 +1,17 @@
+2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Implement reload / stop in Ewk_View
+        https://bugs.webkit.org/show_bug.cgi?id=89168
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement view reload / stop loading in MiniBrowser.
+        Use 'F5' for reload and 'F6' for stopping the load.
+
+        * MiniBrowser/efl/main.c:
+        (on_key_down):
+        (browserCreate):
+
 2012-06-15  Hironori Bono  <hbono@chromium.org>
 
         Allow platforms to choose whether to remove markers on editing
