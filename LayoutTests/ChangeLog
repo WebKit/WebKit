@@ -1,3 +1,60 @@
+2012-06-15  Florin Malita  <fmalita@chromium.org>
+
+        Unreviewed chromium rebaseline for r120467.
+
+        * platform/chromium-linux-x86/svg/filters/feLighting-crash-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/filters/feLighting-crash-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/filters/feLighting-crash-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.png:
+        * platform/chromium-mac/svg/filters/feLighting-crash-expected.png:
+        * platform/chromium-win-vista/svg/filters/feLighting-crash-expected.png:
+        * platform/chromium-win-xp/svg/filters/feLighting-crash-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-specular-01-f-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.png:
+        * platform/chromium-win/svg/filters/feLighting-crash-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-06-15  Abhishek Arya  <inferno@chromium.org>
 
         Cleanup empty anonymous block continuation.

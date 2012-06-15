@@ -1235,20 +1235,6 @@ BUGWK81217 WIN : svg/custom/use-detach.svg = IMAGE
 BUGWK81217 WIN : svg/carto.net/tabgroup.svg = IMAGE
 BUGWK81217 : svg/hixie/perf/003.xml = PASS IMAGE
 
-// Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=89116
-BUGWK89116 WIN MAC : svg/W3C-SVG-1.1/filters-specular-01-f.svg = PASS IMAGE
-BUGWK89116 WIN MAC : svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr.html = PASS IMAGE
-BUGWK89116 WIN MAC : svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr.html = PASS IMAGE
-BUGWK89116 WIN MAC : svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr.html = PASS IMAGE
-BUGWK89116 WIN MAC : svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr.html = PASS IMAGE
-BUGWK89116 WIN MAC : svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop.html = PASS IMAGE
-BUGWK89116 WIN MAC : svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop.html = PASS IMAGE
-BUGWK89116 WIN MAC : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop.html = PASS IMAGE
-BUGWK89116 WIN MAC : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop.html = PASS IMAGE
-BUGWK89116 WIN MAC : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop.html = PASS IMAGE
-BUGWK89116 WIN MAC : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop.html = PASS IMAGE
-BUGWK89116 WIN MAC : svg/filters/feLighting-crash.svg = PASS IMAGE
-
 BUGWK81240 MAC : svg/text/bidi-reorder-value-lists.svg = PASS IMAGE+TEXT
 
 BUGWK81243 : svg/repaint/repainting-after-animation-element-removal.svg = PASS IMAGE
