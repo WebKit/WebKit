@@ -159,20 +159,6 @@ void PagePopupBlackBerry::installDomFunction(Frame* frame)
     JSClassRelease(clientClass);
 }
 
-bool PagePopupBlackBerry::handleMouseEvent(PlatformMouseEvent& event)
-{
-    switch (event.type()) {
-    case PlatformEvent::MouseMoved:
-        return m_webPagePrivate->mainFrame()->eventHandler()->handleMouseMoveEvent(event);
-    case PlatformEvent::MousePressed:
-        return m_webPagePrivate->mainFrame()->eventHandler()->handleMousePressEvent(event);
-    case PlatformEvent::MouseReleased:
-        return m_webPagePrivate->mainFrame()->eventHandler()->handleMouseReleaseEvent(event);
-    default:
-        return false;
-    }
-}
-
 void PagePopupBlackBerry::closePopup()
 {
     m_client->didClosePopup();

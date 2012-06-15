@@ -1,3 +1,21 @@
+2012-06-15  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Remove touch events handling hook for popup
+        https://bugs.webkit.org/show_bug.cgi?id=89245
+
+        Reviewed by Rob Buis.
+
+        In the old patches we create our own WebPage for popup, so we need to hook up our own
+        touch handling functions, since we don't use our own WebPage any more, no need to keep
+        the touch handling code, because it just does nothing other than passing out the events
+        which might cause the touch events being handled twice.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::handleMouseEvent):
+        * WebCoreSupport/PagePopupBlackBerry.cpp:
+        * WebCoreSupport/PagePopupBlackBerry.h:
+        (PagePopupBlackBerry):
+
 2012-06-15  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Disable WebCore::EventHandler synthesized mouse events during touch scrolling

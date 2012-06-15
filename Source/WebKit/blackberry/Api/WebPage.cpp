@@ -3917,9 +3917,6 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
     if (mouseEvent.type() == WebCore::PlatformEvent::MouseScroll)
         return true;
 
-    if (m_parentPopup)
-        m_parentPopup->handleMouseEvent(mouseEvent);
-
     Node* node = 0;
     if (mouseEvent.inputMethod() == TouchScreen) {
         const FatFingersResult lastFatFingersResult = m_touchEventHandler->lastFatFingersResult();

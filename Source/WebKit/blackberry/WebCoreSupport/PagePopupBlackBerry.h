@@ -47,9 +47,6 @@ public:
     void installDomFunction(Frame*);
     void setRect();
 
-    bool handleMouseEvent(PlatformMouseEvent&);
-
-
 private:
     BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;
     OwnPtr<PagePopupClient> m_client;
