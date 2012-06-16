@@ -1,3 +1,11 @@
+2012-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Test fix attempt after r120516.
+
+        * fast/workers/storage/resources/database-worker-controller.js:
+        (databaseWorker.onmessage):
+        (runTest):
+
 2012-06-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in storage, tables, touchadjustments, and transforms tests
