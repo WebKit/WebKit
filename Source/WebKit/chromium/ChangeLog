@@ -1,3 +1,18 @@
+2012-06-16  Dan Alcantara  <dfalcantara@chromium.org>
+
+        [chromium] WebFrameClient::userAgentOverride() should take in a WebFrame* as its first argument
+        https://bugs.webkit.org/show_bug.cgi?id=89233
+
+        Reviewed by Darin Fisher.
+
+        Adds a WebFrame* to the WebFrameClient::userAgentOverride() function.
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::userAgentOverride):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::userAgent):
+        * tests/FrameLoaderClientImplTest.cpp:
+
 2012-06-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120511.

@@ -1383,7 +1383,7 @@ void FrameLoaderClientImpl::setTitle(const StringWithDirection& title, const KUR
 
 String FrameLoaderClientImpl::userAgent(const KURL& url)
 {
-    WebString override = m_webFrame->client()->userAgentOverride(WebURL(url));
+    WebString override = m_webFrame->client()->userAgentOverride(m_webFrame, WebURL(url));
     if (!override.isEmpty())
         return override;
 
