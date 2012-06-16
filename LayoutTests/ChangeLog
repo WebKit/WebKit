@@ -1,5 +1,16 @@
 2012-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Use testRunner instead of layoutTestController in the rest of sputnik tests
+        https://bugs.webkit.org/show_bug.cgi?id=89262
+
+        Reviewed by Antti Koivisto.
+
+        * sputnik/Implementation_Diagnostics/:
+        * sputnik/Regression/:
+        * sputnik/Unicode/:
+
+2012-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         Test fix attempt after r120516.
 
         * fast/workers/storage/resources/database-worker-controller.js:
