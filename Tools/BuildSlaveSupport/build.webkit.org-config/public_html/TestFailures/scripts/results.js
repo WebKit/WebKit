@@ -444,44 +444,39 @@ function mergeRegressionRanges(regressionRanges)
 
 results.unifyRegressionRanges = function(builderNameList, testName, callback)
 {
-    var queriesInFlight = builderNameList.length;
-    if (!queriesInFlight)
-        callback(0, 0);
-
     var regressionRanges = {};
+
+    var tracker = new base.RequestTracker(builderNameList.length, function() {
+        var mergedRange = mergeRegressionRanges(regressionRanges);
+        callback(mergedRange.oldestFailingRevision, mergedRange.newestPassingRevision);
+    });
+
     $.each(builderNameList, function(index, builderName) {
         results.regressionRangeForFailure(builderName, testName, function(oldestFailingRevision, newestPassingRevision) {
             var range = {};
             range.oldestFailingRevision = oldestFailingRevision;
             range.newestPassingRevision = newestPassingRevision;
             regressionRanges[builderName] = range;
-
-            --queriesInFlight;
-            if (!queriesInFlight) {
-                var mergedRange = mergeRegressionRanges(regressionRanges);
-                callback(mergedRange.oldestFailingRevision, mergedRange.newestPassingRevision);
-            }
+            tracker.requestComplete();
         });
     });
 };
 
 results.countFailureOccurances = function(builderNameList, testName, callback)
 {
-    var queriesInFlight = builderNameList.length;
-    if (!queriesInFlight)
-        callback(0);
-
     var failureCount = 0;
+
+    var tracker = new base.RequestTracker(builderNameList.length, function() {
+        callback(failureCount);
+    });
+
     $.each(builderNameList, function(index, builderName) {
         walkHistory(builderName, testName, function(revision, resultNode) {
             if (isUnexpectedFailure(resultNode)) {
                 ++failureCount;
                 return true;
             }
-
-            --queriesInFlight;
-            if (!queriesInFlight)
-                callback(failureCount);
+            tracker.requestComplete();
             return false;
         });
     });
@@ -538,31 +533,21 @@ results.fetchResultsURLs = function(failureInfo, callback)
 {
     var stem = resultsDirectoryURL(failureInfo.builderName);
     var testNameStem = base.trimExtension(failureInfo.testName);
-
     var suffixList = possibleSuffixListFor(failureInfo.failureTypeList);
-
     var resultURLs = [];
-    var requestsInFlight = suffixList.length;
-
-    if (!requestsInFlight) {
-        callback([]);
-        return;
-    }
-
-    function checkComplete()
-    {
-        if (--requestsInFlight == 0)
-            callback(sortResultURLsBySuffix(resultURLs));
-    }
-
+    var tracker = new base.RequestTracker(suffixList.length, function() {
+        callback(sortResultURLsBySuffix(resultURLs));
+    });
     $.each(suffixList, function(index, suffix) {
         var url = stem + testNameStem + suffix;
         net.probe(url, {
             success: function() {
                 resultURLs.push(url);
-                checkComplete();
+                tracker.requestComplete();
             },
-            error: checkComplete,
+            error: function() {
+                tracker.requestComplete();
+            },
         });
     });
 };
@@ -575,13 +560,13 @@ results.fetchResultsForBuilder = function(builderName, callback)
 results.fetchResultsByBuilder = function(builderNameList, callback)
 {
     var resultsByBuilder = {}
-    var requestsInFlight = builderNameList.length;
+    var tracker = new base.RequestTracker(builderNameList.length, function() {
+        callback(resultsByBuilder);
+    });
     $.each(builderNameList, function(index, builderName) {
         results.fetchResultsForBuilder(builderName, function(resultsTree) {
             resultsByBuilder[builderName] = resultsTree;
-            --requestsInFlight;
-            if (!requestsInFlight)
-                callback(resultsByBuilder);
+            tracker.requestComplete();
         });
     });
 };
