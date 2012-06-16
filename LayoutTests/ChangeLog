@@ -1,3 +1,33 @@
+2012-06-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Rebaseline MathML tests after r120492
+        https://bugs.webkit.org/show_bug.cgi?id=89282
+
+        Unreviewed EFL gardening. Several MathML tests needed
+        rebaselining after r120492.
+
+        * platform/efl/mathml/presentation/attributes-expected.txt:
+        * platform/efl/mathml/presentation/fenced-expected.txt:
+        * platform/efl/mathml/presentation/fenced-mi-expected.txt:
+        * platform/efl/mathml/presentation/fractions-expected.txt:
+        * platform/efl/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/efl/mathml/presentation/mo-stretch-expected.txt:
+        * platform/efl/mathml/presentation/mroot-pref-width-expected.txt:
+        * platform/efl/mathml/presentation/roots-expected.txt:
+        * platform/efl/mathml/presentation/row-alignment-expected.png:
+        * platform/efl/mathml/presentation/row-alignment-expected.txt:
+        * platform/efl/mathml/presentation/sub-expected.txt:
+        * platform/efl/mathml/presentation/subsup-expected.txt:
+        * platform/efl/mathml/presentation/sup-expected.txt:
+        * platform/efl/mathml/presentation/tables-expected.txt:
+        * platform/efl/mathml/presentation/tokenElements-expected.txt:
+        * platform/efl/mathml/presentation/under-expected.png:
+        * platform/efl/mathml/presentation/under-expected.txt:
+        * platform/efl/mathml/presentation/underover-expected.png:
+        * platform/efl/mathml/presentation/underover-expected.txt:
+        * platform/efl/mathml/xHeight-expected.png:
+        * platform/efl/mathml/xHeight-expected.txt:
+
 2012-06-16  Adam Barth  <abarth@webkit.org>
 
         Remove a bunch of 32-bit specific results.  These results are the same
