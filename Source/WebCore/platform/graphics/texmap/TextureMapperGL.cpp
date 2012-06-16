@@ -504,13 +504,21 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
         return;
     }
 
-    // For ES drivers that don't support sub-images, transfer the pixels row-by-row.
+    // For ES drivers that don't support sub-images.
     if (!driverSupportsSubImage()) {
         const char* bits = static_cast<const char*>(data);
+        const char* src = bits + sourceOffset.y() * bytesPerLine + sourceOffset.x() * 4;
+        Vector<char> temporaryData(targetRect.width() * targetRect.height() * 4);
+        char* dst = temporaryData.data();
+
+        const int targetBytesPerLine = targetRect.width() * 4;
         for (int y = 0; y < targetRect.height(); ++y) {
-            const char *row = bits + ((sourceOffset.y() + y) * bytesPerLine + sourceOffset.x() * 4);
-            GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y() + y, targetRect.width(), 1, glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, row));
+            memcpy(dst, src, targetBytesPerLine);
+            src += bytesPerLine;
+            dst += targetBytesPerLine;
         }
+
+        GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, temporaryData.data()));
         return;
     }
 
