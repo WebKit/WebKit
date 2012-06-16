@@ -1,3 +1,276 @@
+2012-06-15  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed baselines for chromium due to color management changes.
+        https://bugs.webkit.org/show_bug.cgi?id=87761
+
+        * platform/chromium-linux-x86/compositing/color-matching/image-color-matching-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/crash-hw-sw-switch-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/custom/custom-filter-shader-cache-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/custom/effect-custom-combined-missing-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/custom/effect-custom-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/custom/missing-custom-filter-shader-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/effect-blur-hw-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/effect-brightness-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/effect-brightness-hw-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/effect-contrast-hw-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/effect-drop-shadow-hw-expected.png: Added.
+        * platform/chromium-linux-x86/fast/images/jpeg-with-color-profile-expected.png: Added.
+        * platform/chromium-linux-x86/fast/images/png-with-color-profile-expected.png: Added.
+        * platform/chromium-linux-x86/http/tests/local/file-url-sent-as-referer-expected.png: Added.
+        * platform/chromium-linux-x86/scrollbars/listbox-scrollbar-combinations-expected.png: Added.
+        * platform/chromium-linux-x86/scrollbars/overflow-scrollbar-combinations-expected.png: Added.
+        * platform/chromium-linux-x86/svg/as-border-image/svg-as-border-image-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/createImageElement-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/createImageElement2-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/focus-ring-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/group-opacity-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/image-parent-translation-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/image-small-width-height-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/js-update-image-and-display-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/js-update-image-and-display2-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/js-update-image-and-display3-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/js-update-image-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/text-image-opacity-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/use-on-g-containing-foreignObject-and-image-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/filters/feImage-subregions-expected.png: Added.
+        * platform/chromium-linux-x86/svg/filters/feImage-subregions-preseveAspectRatio-none-expected.png: Added.
+        * platform/chromium-linux-x86/svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox-expected.png: Added.
+        * platform/chromium-linux-x86/svg/filters/filter-source-position-expected.png: Added.
+        * platform/chromium-linux-x86/svg/repaint/image-href-change-expected.png: Added.
+        * platform/chromium-linux-x86/svg/transforms/animated-path-inside-transformed-html-expected.png: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-background-images-expected.png: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png: Added.
+        * platform/chromium-mac-leopard/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-mac-leopard/compositing/masks/direct-image-mask-expected.png: Added.
+        * platform/chromium-mac-leopard/compositing/reflections/simple-composited-reflections-expected.png:
+        * platform/chromium-mac-leopard/compositing/visibility/visibility-image-layers-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/crash-filter-change-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/custom/effect-color-check-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/custom/missing-custom-filter-shader-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-blur-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-blur-hw-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-brightness-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-brightness-hw-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-combined-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-contrast-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-contrast-hw-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-drop-shadow-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-drop-shadow-hw-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-grayscale-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-hue-rotate-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-invert-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-invert-hw-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-opacity-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-opacity-hw-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-saturate-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/effect-sepia-expected.png:
+        * platform/chromium-mac-leopard/css3/filters/regions-expanding-expected.png:
+        * platform/chromium-mac-leopard/fast/css/background-shorthand-invalid-url-expected.png:
+        * platform/chromium-mac-leopard/fast/css/color-correction-expected.png:
+        * platform/chromium-mac-leopard/fast/css/color-correction-on-backgrounds-expected.png:
+        * platform/chromium-mac-leopard/fast/images/color-jpeg-with-color-profile-expected.png:
+        * platform/chromium-mac-leopard/fast/images/jpeg-with-color-profile-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/images/png-with-color-profile-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/media/mq-min-pixel-ratio-expected.png:
+        * platform/chromium-mac-leopard/fast/reflections/reflection-direction-expected.png:
+        * platform/chromium-mac-leopard/fast/reflections/reflection-masks-expected.png:
+        * platform/chromium-mac-leopard/fast/reflections/reflection-masks-opacity-expected.png:
+        * platform/chromium-mac-leopard/fast/reflections/reflection-masks-outset-expected.png:
+        * platform/chromium-mac-leopard/fast/reflections/reflection-with-zoom-expected.png:
+        * platform/chromium-mac-leopard/platform/chromium/virtual/threaded/compositing/visibility/visibility-image-layers-expected.png: Added.
+        * platform/chromium-mac-leopard/scrollbars/listbox-scrollbar-combinations-expected.png:
+        * platform/chromium-mac-leopard/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/createImageElement-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/createImageElement2-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/focus-ring-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/group-opacity-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/image-parent-translation-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/image-with-transform-clip-filter-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/js-update-image-and-display-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/js-update-image-and-display2-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/js-update-image-and-display3-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/js-update-image-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/pointer-events-image-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/text-image-opacity-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/use-on-g-containing-foreignObject-and-image-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/filters/feImage-subregions-expected.png:
+        * platform/chromium-mac-leopard/svg/filters/feImage-subregions-preseveAspectRatio-none-expected.png:
+        * platform/chromium-mac-leopard/svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox-expected.png:
+        * platform/chromium-mac-leopard/svg/filters/filter-source-position-expected.png:
+        * platform/chromium-mac-leopard/svg/repaint/image-href-change-expected.png:
+        * platform/chromium-mac-leopard/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/chromium-mac-leopard/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-background-images-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug82946-2-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/masks/direct-image-mask-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/reflections/simple-composited-reflections-expected.png:
+        * platform/chromium-mac-snowleopard/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/color-correction-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/color-correction-on-backgrounds-expected.png:
+        * platform/chromium-mac-snowleopard/fast/images/jpeg-with-color-profile-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/images/png-with-color-profile-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/media/mq-min-pixel-ratio-expected.png:
+        * platform/chromium-mac-snowleopard/fast/reflections/reflection-direction-expected.png:
+        * platform/chromium-mac-snowleopard/fast/reflections/reflection-masks-opacity-expected.png:
+        * platform/chromium-mac-snowleopard/fast/reflections/reflection-with-zoom-expected.png:
+        * platform/chromium-mac-snowleopard/scrollbars/listbox-scrollbar-combinations-expected.png:
+        * platform/chromium-mac-snowleopard/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/createImageElement2-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/focus-ring-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/image-parent-translation-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/image-with-transform-clip-filter-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/pointer-events-image-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/text-image-opacity-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/chromium-mac-snowleopard/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug82946-2-expected.png:
+        * platform/chromium-mac/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-mac/compositing/masks/direct-image-mask-expected.png:
+        * platform/chromium-mac/compositing/reflections/simple-composited-reflections-expected.png:
+        * platform/chromium-mac/compositing/visibility/visibility-image-layers-expected.png:
+        * platform/chromium-mac/css3/filters/crash-filter-change-expected.png:
+        * platform/chromium-mac/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-color-check-expected.png:
+        * platform/chromium-mac/css3/filters/custom/missing-custom-filter-shader-expected.png:
+        * platform/chromium-mac/css3/filters/effect-blur-expected.png:
+        * platform/chromium-mac/css3/filters/effect-blur-hw-expected.png:
+        * platform/chromium-mac/css3/filters/effect-brightness-expected.png:
+        * platform/chromium-mac/css3/filters/effect-brightness-hw-expected.png:
+        * platform/chromium-mac/css3/filters/effect-combined-expected.png:
+        * platform/chromium-mac/css3/filters/effect-contrast-expected.png:
+        * platform/chromium-mac/css3/filters/effect-contrast-hw-expected.png:
+        * platform/chromium-mac/css3/filters/effect-drop-shadow-expected.png:
+        * platform/chromium-mac/css3/filters/effect-drop-shadow-hw-expected.png:
+        * platform/chromium-mac/css3/filters/effect-grayscale-expected.png:
+        * platform/chromium-mac/css3/filters/effect-hue-rotate-expected.png:
+        * platform/chromium-mac/css3/filters/effect-invert-expected.png:
+        * platform/chromium-mac/css3/filters/effect-invert-hw-expected.png:
+        * platform/chromium-mac/css3/filters/effect-opacity-expected.png:
+        * platform/chromium-mac/css3/filters/effect-opacity-hw-expected.png:
+        * platform/chromium-mac/css3/filters/effect-saturate-expected.png:
+        * platform/chromium-mac/css3/filters/effect-sepia-expected.png:
+        * platform/chromium-mac/css3/filters/regions-expanding-expected.png:
+        * platform/chromium-mac/fast/css/background-shorthand-invalid-url-expected.png:
+        * platform/chromium-mac/fast/css/color-correction-expected.png:
+        * platform/chromium-mac/fast/css/color-correction-on-backgrounds-expected.png:
+        * platform/chromium-mac/fast/images/color-jpeg-with-color-profile-expected.png:
+        * platform/chromium-mac/fast/images/jpeg-with-color-profile-expected.png: Added.
+        * platform/chromium-mac/fast/images/png-with-color-profile-expected.png: Added.
+        * platform/chromium-mac/fast/media/mq-min-pixel-ratio-expected.png:
+        * platform/chromium-mac/fast/reflections/reflection-direction-expected.png:
+        * platform/chromium-mac/fast/reflections/reflection-masks-expected.png:
+        * platform/chromium-mac/fast/reflections/reflection-masks-opacity-expected.png:
+        * platform/chromium-mac/fast/reflections/reflection-masks-outset-expected.png:
+        * platform/chromium-mac/fast/reflections/reflection-with-zoom-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/threaded/compositing/visibility/visibility-image-layers-expected.png:
+        * platform/chromium-mac/scrollbars/listbox-scrollbar-combinations-expected.png:
+        * platform/chromium-mac/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac/svg/custom/createImageElement-expected.png:
+        * platform/chromium-mac/svg/custom/createImageElement2-expected.png:
+        * platform/chromium-mac/svg/custom/focus-ring-expected.png:
+        * platform/chromium-mac/svg/custom/group-opacity-expected.png:
+        * platform/chromium-mac/svg/custom/image-parent-translation-expected.png:
+        * platform/chromium-mac/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-mac/svg/custom/image-with-transform-clip-filter-expected.png:
+        * platform/chromium-mac/svg/custom/js-update-image-and-display-expected.png:
+        * platform/chromium-mac/svg/custom/js-update-image-and-display2-expected.png:
+        * platform/chromium-mac/svg/custom/js-update-image-and-display3-expected.png:
+        * platform/chromium-mac/svg/custom/js-update-image-expected.png:
+        * platform/chromium-mac/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/chromium-mac/svg/custom/pointer-events-image-expected.png:
+        * platform/chromium-mac/svg/custom/text-image-opacity-expected.png:
+        * platform/chromium-mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.png:
+        * platform/chromium-mac/svg/filters/feImage-subregions-expected.png:
+        * platform/chromium-mac/svg/filters/feImage-subregions-preseveAspectRatio-none-expected.png:
+        * platform/chromium-mac/svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox-expected.png:
+        * platform/chromium-mac/svg/filters/filter-source-position-expected.png:
+        * platform/chromium-mac/svg/repaint/image-href-change-expected.png:
+        * platform/chromium-mac/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/chromium-mac/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-background-images-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug82946-2-expected.png:
+        * platform/chromium-win/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-win/css3/filters/crash-filter-change-expected.png:
+        * platform/chromium-win/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/chromium-win/css3/filters/effect-blur-expected.png:
+        * platform/chromium-win/css3/filters/effect-blur-hw-expected.png:
+        * platform/chromium-win/css3/filters/effect-brightness-expected.png:
+        * platform/chromium-win/css3/filters/effect-brightness-hw-expected.png:
+        * platform/chromium-win/css3/filters/effect-combined-expected.png:
+        * platform/chromium-win/css3/filters/effect-contrast-expected.png:
+        * platform/chromium-win/css3/filters/effect-contrast-hw-expected.png:
+        * platform/chromium-win/css3/filters/effect-drop-shadow-expected.png:
+        * platform/chromium-win/css3/filters/effect-drop-shadow-hw-expected.png:
+        * platform/chromium-win/css3/filters/effect-grayscale-expected.png:
+        * platform/chromium-win/css3/filters/effect-hue-rotate-expected.png:
+        * platform/chromium-win/css3/filters/effect-invert-expected.png:
+        * platform/chromium-win/css3/filters/effect-invert-hw-expected.png:
+        * platform/chromium-win/css3/filters/effect-opacity-expected.png:
+        * platform/chromium-win/css3/filters/effect-opacity-hw-expected.png:
+        * platform/chromium-win/css3/filters/effect-saturate-expected.png:
+        * platform/chromium-win/css3/filters/effect-sepia-expected.png:
+        * platform/chromium-win/css3/filters/regions-expanding-expected.png:
+        * platform/chromium-win/fast/images/jpeg-with-color-profile-expected.png: Added.
+        * platform/chromium-win/fast/images/png-with-color-profile-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-06-15  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Remove obsolete description parameter from factory.open calls
