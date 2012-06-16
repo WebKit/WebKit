@@ -6,8 +6,8 @@
       function buttonClicked() {
         startIntentWithCallbacks();
 
-        if (window.layoutTestController) {
-          window.layoutTestController.sendWebIntentResponse("reply");
+        if (window.testRunner) {
+          window.testRunner.sendWebIntentResponse("reply");
         }
       }
     </script>

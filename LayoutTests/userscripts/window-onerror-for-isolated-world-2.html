@@ -13,8 +13,8 @@ well as for exceptions in the main world.<a href="https://bugs.webkit.org/show_b
 var expectedRecordCount = 10;
 var recordCount = 0;
 document.getElementById("console").addEventListener("DOMNodeInserted", function(e) {
-    if (++recordCount === expectedRecordCount && window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (++recordCount === expectedRecordCount && window.testRunner)
+        testRunner.notifyDone();
 }, false);
 
 var throwExceptions = function(isolatedWorld)
@@ -54,10 +54,10 @@ var errorHandlers = function(isolatedWorld)
     }, false);
 };
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.addUserScript("(" + errorHandlers + ")('user script'); (" + throwExceptions + ")('user script')", false, true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.addUserScript("(" + errorHandlers + ")('user script'); (" + throwExceptions + ")('user script')", false, true);
 }
 
 throwExceptions("main world");

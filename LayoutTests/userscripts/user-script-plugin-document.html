@@ -1,10 +1,10 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
-    window.layoutTestController.addUserScript("console.log('Start Script: ' + document.location.href)", true, true);
-    window.layoutTestController.addUserScript("console.log('End Script: ' + document.location.href)", false, true);
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.addUserScript("console.log('Start Script: ' + document.location.href)", true, true);
+    window.testRunner.addUserScript("console.log('End Script: ' + document.location.href)", false, true);
 }
 </script>
 </head>

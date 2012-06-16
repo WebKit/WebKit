@@ -1,17 +1,17 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpDOMAsWebArchive();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpDOMAsWebArchive();
+    testRunner.waitUntilDone();
 }
 
 function notifyDone()
 {
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         // FIXME: Web fonts are loaded asynchronously, and there is
         // no way to know when they're done, so just wait a bit.
-        setTimeout("layoutTestController.notifyDone()", 1000);
+        setTimeout("testRunner.notifyDone()", 1000);
     }
 }
 </script>

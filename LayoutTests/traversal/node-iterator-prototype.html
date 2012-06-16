@@ -9,8 +9,8 @@ parent frame here.  This test documents the bug so we'll know when we fix
 it.</p>
 <div id="console"></div>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 Node.prototype.foo = "parent";
 

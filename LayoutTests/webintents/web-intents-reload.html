@@ -18,15 +18,15 @@
 
         debug("* loaded replacement page");
 
-        if (window.layoutTestController) {
-          window.layoutTestController.notifyDone();
+        if (window.testRunner) {
+          window.testRunner.notifyDone();
         }
       }
 
       function startTest() {
-        if (window.layoutTestController) {
-          window.layoutTestController.waitUntilDone();
-          window.layoutTestController.dumpChildFramesAsText();
+        if (window.testRunner) {
+          window.testRunner.waitUntilDone();
+          window.testRunner.dumpChildFramesAsText();
         } else {
           alert('This test needs to run in DRT');
         }

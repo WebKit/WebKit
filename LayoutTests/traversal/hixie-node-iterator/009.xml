@@ -5,7 +5,7 @@
     var errors = 0;
     var log = '';
     function doTest() {
-      if (window.layoutTestController) layoutTestController.dumpAsText();
+      if (window.testRunner) testRunner.dumpAsText();
       var iterator = document.createNodeIterator(document.getElementById('root'), NodeFilter.SHOW_ALL, null, false);
       var root = document.getElementById('root');
       var A = document.getElementById('A');

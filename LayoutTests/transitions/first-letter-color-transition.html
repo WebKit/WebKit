@@ -21,9 +21,9 @@
 
 </style>
 <script  type="text/javascript" charset="utf-8">
-   if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+   if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var result = "";
@@ -35,8 +35,8 @@
            result += "FAIL";
 
         document.getElementById('result').innerHTML = result;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     window.addEventListener('webkitTransitionEnd', transitionEnded, false);

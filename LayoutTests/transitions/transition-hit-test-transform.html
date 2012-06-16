@@ -47,12 +47,12 @@
      
         function doTest()
         {
-            if (window.layoutTestController) {
-                if (!layoutTestController.pauseTransitionAtTimeOnElementWithId("-webkit-transform", 2.0, "target"))
+            if (window.testRunner) {
+                if (!testRunner.pauseTransitionAtTimeOnElementWithId("-webkit-transform", 2.0, "target"))
                     throw("Transition is not running");
         
                 checkResults();
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
             else {
                 window.setTimeout("checkResults()", 2000);
@@ -61,9 +61,9 @@
     
         function startTest()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
       
             document.getElementById("target").style.webkitTransform = "translateX(300px)";

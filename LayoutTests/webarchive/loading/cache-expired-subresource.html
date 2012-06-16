@@ -1,13 +1,13 @@
 <html>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpResourceLoadCallbacks();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpResourceLoadCallbacks();
+        testRunner.waitUntilDone();
     }
     
     function frameLoaded() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 <body>

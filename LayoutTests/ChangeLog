@@ -1,5 +1,22 @@
 2012-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Use testRunner instead of layoutTestController in transforms, transitions, traversal, userscripts, webarchive, webaudio, and webintents tests
+        https://bugs.webkit.org/show_bug.cgi?id=89269
+
+        Reviewed by Adam Barth.
+
+        * transitions/:
+        * traversal/:
+        * userscripts/:
+        * webarchive/:
+        * webaudio/:
+        * webintents/web-intents-delivery.html:
+        * webintents/web-intents-failure.html:
+        * webintents/web-intents-reload.html:
+        * webintents/web-intents-reply.html:
+
+2012-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         Use testRunner instead of layoutTestController in the rest of sputnik tests
         https://bugs.webkit.org/show_bug.cgi?id=89262
 

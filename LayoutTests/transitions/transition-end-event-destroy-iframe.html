@@ -6,9 +6,9 @@
     }
   </style>
   <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     function testFinished() {
@@ -19,8 +19,8 @@
             GCController.collect();
         document.getElementById('results').innerHTML = 'Did not crash, so PASSED';
         
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     };
   </script>
 </head>

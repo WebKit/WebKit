@@ -36,8 +36,8 @@ function kid(parent) {
 }
 
 function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var wrapper = document.createElement("div"); // just to have one more level up.
 

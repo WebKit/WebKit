@@ -3,7 +3,7 @@
   <title>DOM Traversal: NodeIterator: Basics Backwards</title>
   <script type="text/javascript"> <![CDATA[
     function doTest() {
-      if (window.layoutTestController) layoutTestController.dumpAsText();
+      if (window.testRunner) testRunner.dumpAsText();
       var iterator = document.createNodeIterator(document, NodeFilter.SHOW_ALL, null, false);
       var expected = new Array(9, // document
                                1, // html

@@ -11,8 +11,8 @@
 &lt;title&gt;Test for Bug 15290: REGRESSION (r14184-r14216): Duplicate DOCTYPE definitions when saving files as webarchives&lt;/title&gt;
 &lt;/head&gt;
 &lt;script&gt;
-    if (window.layoutTestController)
-        layoutTestController.dumpSourceAsWebArchive();
+    if (window.testRunner)
+        testRunner.dumpSourceAsWebArchive();
 &lt;/script&gt;
 &lt;body&gt;
 &lt;div&gt;

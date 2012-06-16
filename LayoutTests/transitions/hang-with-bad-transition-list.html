@@ -11,17 +11,17 @@
   <script>
     function checkRunning()
     {
-      var current = layoutTestController.numberOfActiveAnimations();
+      var current = testRunner.numberOfActiveAnimations();
       if (current == 0)
         document.getElementById('result').innerHTML = "Number of active animations before transition is (0) as expected";
       else
         document.getElementById('result').innerHTML = "Number of active transitions is (" + current + ") but was expecting (0)";
-      layoutTestController.notifyDone();
+      testRunner.notifyDone();
     }
     
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
         window.setTimeout(checkRunning, 300);            
     }
   </script>

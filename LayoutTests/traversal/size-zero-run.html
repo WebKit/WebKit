@@ -3,8 +3,8 @@
 <head>
 <script>
 function test() {
-    if(window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if(window.testRunner)
+        testRunner.dumpAsText();
         
     var textnode1 = document.getElementById("node").firstChild;
     var textnode2 = textnode1.splitText(3);

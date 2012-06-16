@@ -15,9 +15,9 @@
     }
   </style>
   <script>
-    if (window.layoutTestController) {
-      layoutTestController.waitUntilDone();
-      layoutTestController.dumpAsText();
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
     }
 
     function log(s)
@@ -28,14 +28,14 @@
 
     function testTransitions()
     {
-      if (window.layoutTestController) {
-        var numAnims = layoutTestController.numberOfActiveAnimations();
+      if (window.testRunner) {
+        var numAnims = testRunner.numberOfActiveAnimations();
         if (numAnims == 0)
           log('No running transitions: PASS');
         else
           log('Still ' + numAnims + ' transitions running: FAIL')
 
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
       }
     }
     

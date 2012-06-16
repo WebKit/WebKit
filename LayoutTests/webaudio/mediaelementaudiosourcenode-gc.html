@@ -14,8 +14,8 @@
 description("Tests garbage collection of MediaElementAudioSourceNode.");
 
 function runTest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
     }
 
     audioElement = document.createElement("audio");

@@ -14,9 +14,9 @@
     
   </style>
   <script>
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
     }
 
     function test()
@@ -25,8 +25,8 @@
       var result = (c.f < 200) ? 'PASS' : 'FAIL: transition should still be running, so y < 200';
       document.getElementById('result').innerHTML = result;
 
-      if (window.layoutTestController)
-          layoutTestController.notifyDone();
+      if (window.testRunner)
+          testRunner.notifyDone();
     }
     
     function startTest()

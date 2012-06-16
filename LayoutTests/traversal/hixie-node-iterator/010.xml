@@ -3,7 +3,7 @@
   <title>DOM Traversal: NodeIterator: Filters</title>
   <script type="text/javascript"> <![CDATA[
     function doTest() {
-      if (window.layoutTestController) layoutTestController.dumpAsText();
+      if (window.testRunner) testRunner.dumpAsText();
       var iterator = document.createNodeIterator(document, NodeFilter.SHOW_ALL, testFilter, false);
       // skips text nodes and body element
       var expected = new Array(9, // document

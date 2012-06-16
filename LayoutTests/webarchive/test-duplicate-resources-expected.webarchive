@@ -221,8 +221,8 @@
 		</dict>
 		<dict>
 			<key>WebResourceData</key>
-			<string>if (window.layoutTestController)
-    layoutTestController.dumpDOMAsWebArchive();
+			<string>if (window.testRunner)
+    testRunner.dumpDOMAsWebArchive();
 </string>
 			<key>WebResourceMIMEType</key>
 			<string>text/javascript</string>

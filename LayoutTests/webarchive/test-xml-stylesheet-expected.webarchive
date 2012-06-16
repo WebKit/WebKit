@@ -7,8 +7,8 @@
 		<key>WebResourceData</key>
 		<string>&lt;?xml-stylesheet href="resources/test-xml-stylesheet.css" type="text/css"?&gt;&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
   &lt;script&gt;
-    if (window.layoutTestController)
-        layoutTestController.dumpDOMAsWebArchive();
+    if (window.testRunner)
+        testRunner.dumpDOMAsWebArchive();
   &lt;/script&gt;
   &lt;style&gt;
     div { background: red; width: 100px; height: 100px; }

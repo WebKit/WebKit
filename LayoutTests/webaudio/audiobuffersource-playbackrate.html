@@ -67,7 +67,7 @@ function playNote(time, duration, playbackRate) {
 }
 
 function init() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     // Create offline audio context.
@@ -92,7 +92,7 @@ function init() {
     context.oncomplete = finishAudioTest;
     context.startRendering();
 
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
 }
 
 </script>

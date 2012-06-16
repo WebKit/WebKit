@@ -30,9 +30,9 @@
   </style>
   <script>
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     function setupTest()
@@ -52,8 +52,8 @@
         else
             result.innerHTML = 'FAIL: saw ' + shadow.length + ' shadows during the transition';
         
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     
     window.addEventListener('load', setupTest, false);

@@ -14,8 +14,8 @@ var expectedRecordCount = 12;
 var recordCount = 0;
 document.getElementById("console").addEventListener("DOMNodeInserted", function(e) {
     recordCount++;
-    if (recordCount === expectedRecordCount && window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (recordCount === expectedRecordCount && window.testRunner)
+        testRunner.notifyDone();
 }, false);
 
 function log(msg) {
@@ -55,10 +55,10 @@ var exceptions = function(isolatedWorld)
     throw new Error("Error in "+ isolatedWorld + " inline script.");
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.addUserScript("(" + exceptions + ")('user script')", false, true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.addUserScript("(" + exceptions + ")('user script')", false, true);
 }
 
 exceptions("main world");

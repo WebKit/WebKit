@@ -11,8 +11,8 @@
 &lt;head&gt;
 &lt;title&gt;Empty iFrame causes archive exception&lt;/title&gt;
 &lt;script&gt;
-    if (window.layoutTestController)
-        layoutTestController.dumpSourceAsWebArchive();
+    if (window.testRunner)
+        testRunner.dumpSourceAsWebArchive();
 &lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;

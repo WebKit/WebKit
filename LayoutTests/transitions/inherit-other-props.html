@@ -21,9 +21,9 @@
     }
   </style>
   <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var kExpectedProp = [
@@ -75,8 +75,8 @@
 
       document.body.removeChild(document.getElementById('container'));
       document.getElementById('result').innerHTML = result;
-      if (window.layoutTestController)
-          layoutTestController.notifyDone();
+      if (window.testRunner)
+          testRunner.notifyDone();
     }
 
     window.addEventListener('load', testProperties, false);

@@ -22,22 +22,22 @@
    <script src="resources/transition-test-helpers.js"></script>
    <script>
     function endTest() {
-      if (window.layoutTestController) {
-        layoutTestController.pauseTransitionAtTimeOnElementWithId("left", 2.0, "target");
+      if (window.testRunner) {
+        testRunner.pauseTransitionAtTimeOnElementWithId("left", 2.0, "target");
         var left = window.getComputedStyle(document.getElementById('target')).left;
         var result = "PASS";
         if (left != "125px") {
           result = "FAIL - expected 125px got " + left;
         }
         document.getElementById('result').innerHTML = "<p>" + result + "</p>";
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
       }
     }
     
     function startTest() {
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
       }
       
       document.getElementById("target").className = "moved";
@@ -46,7 +46,7 @@
    </script>
 </head>
 <body onload="startTest()">
-  <h1>Test for transition delay on layoutTestController API</h1>
+  <h1>Test for transition delay on testRunner API</h1>
   
   <p>This test works only in DumpRenderTree. It uses an API exposed
     only there to jump to a particular time in a running transition.

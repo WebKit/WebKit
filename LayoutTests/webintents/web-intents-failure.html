@@ -6,9 +6,9 @@
       function buttonClicked() {
         startIntentWithCallbacks();
 
-        if (window.layoutTestController) {
+        if (window.testRunner) {
           // Empty args will send failure message.
-          window.layoutTestController.sendWebIntentResponse();
+          window.testRunner.sendWebIntentResponse();
         }
       }
     </script>

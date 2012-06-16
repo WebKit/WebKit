@@ -38,9 +38,9 @@
         }
     </style>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         result = "<span style='color:red'>CHECK NOT COMPLETED</span>";
@@ -83,8 +83,8 @@
                 result += "<span style='color:green'>PASS</span>";
             
             document.getElementById('result').innerHTML = result;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
 
         function start()

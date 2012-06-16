@@ -47,14 +47,14 @@
       testDiv.style.webkitTransitionDuration = '0';
 
       testDiv.style.webkitTransform = 'translateX(150px)';
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
     
     function startTest()
     {
-      if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+      if (window.testRunner)
+        testRunner.waitUntilDone();
 
       document.getElementById('tester').addEventListener('webkitTransitionEnd', testEnded, false);
       document.getElementById('container').className = 'moved';

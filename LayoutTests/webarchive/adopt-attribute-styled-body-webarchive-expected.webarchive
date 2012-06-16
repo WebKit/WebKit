@@ -9,10 +9,10 @@
 
 &lt;script&gt;
 
-if (window.layoutTestController) {
-    layoutTestController.dumpDOMAsWebArchive();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpDOMAsWebArchive();
+    testRunner.setCanOpenWindows();
+    testRunner.waitUntilDone();
 }
 
 var secondWindow = null;
@@ -53,10 +53,10 @@ function procedeAfterClosedWindow()
     
     if (window.GCController) {
         GCController.collect();
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         else
-            alert("How strange - You have window.GCController, but no window.layoutTestController.  How did this happen?");
+            alert("How strange - You have window.GCController, but no window.testRunner.  How did this happen?");
     }
     else
         alert("Now wait for garbage collection to have occured, then save the current page as a WebArchive.");

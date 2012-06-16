@@ -15,9 +15,9 @@
     }
     </style>
     <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     </script>
 </head>
@@ -31,13 +31,13 @@
     document.getElementById('foo').addEventListener('webkitTransitionEnd', function(evt) {
         if(evt.propertyName == "background-image" && !finished) {
             document.getElementById('result').innerHTML = ("FAIL: saw a background-image transition");
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
             finished = true;
         } else if(evt.propertyName == "top" && !finished) {
             document.getElementById('result').innerHTML = ("PASS: no background-image transition");
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     });
 

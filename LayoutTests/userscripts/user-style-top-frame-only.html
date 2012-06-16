@@ -1,11 +1,11 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
-    window.layoutTestController.dumpChildFramesAsText();
-    layoutTestController.waitUntilDone();
-    window.layoutTestController.addUserStyleSheet("#thinger { display:none; }", false);
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+    window.testRunner.addUserStyleSheet("#thinger { display:none; }", false);
 }
 </script>
 </head>

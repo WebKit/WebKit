@@ -3,10 +3,10 @@
 <script>
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.setIconDatabaseEnabled(true);
-        layoutTestController.dumpDOMAsWebArchive();
-        layoutTestController.queueReload();
+    if (window.testRunner) {
+        testRunner.setIconDatabaseEnabled(true);
+        testRunner.dumpDOMAsWebArchive();
+        testRunner.queueReload();
     }
 }
 </script>

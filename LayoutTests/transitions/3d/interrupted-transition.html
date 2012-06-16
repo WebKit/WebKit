@@ -12,9 +12,9 @@
 </style>
 <script>
 
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
 }
 
 var NUMBER_OF_INTERRUPTIONS = 30;
@@ -34,8 +34,8 @@ function finishTest() {
     var results = document.getElementById("results");
     results.innerText = "The transition completed successfully.";
     
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 
 window.addEventListener("load", function () {

@@ -13,9 +13,9 @@
 <script>
 description("Test that re-sizing the FFT arrays does not fail.");
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var doTest = function(fftSize, illegal) {
@@ -46,8 +46,8 @@ for (var i = 2; i <= 0x20000; i *= 2) {
     doTest(i + 1, true);
 }
 
-if (window.layoutTestController)
-    layoutTestController.notifyDone();
+if (window.testRunner)
+    testRunner.notifyDone();
 testPassed("webkitAudioContext survived multiple invalid FFT array resizings.");
 </script>
 

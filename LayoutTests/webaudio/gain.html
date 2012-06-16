@@ -55,7 +55,7 @@ function playNote(time, gain) {
 }
 
 function init() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     // Create offline audio context.
@@ -75,7 +75,7 @@ function init() {
     context.oncomplete = finishAudioTest;
     context.startRendering();
 
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
 }
 
 </script>

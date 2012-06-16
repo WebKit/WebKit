@@ -58,9 +58,9 @@
   }
   </style>
   <script>
-  if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
   }
 
   function init()
@@ -83,8 +83,8 @@
         else
         log('transform="'+transform+'", expected "matrix(1, 0, 0, 1, 100, 0)": FAIL');
 
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
   }
   </script>
 </head>
