@@ -1,3 +1,107 @@
+2012-06-16  Adam Barth  <abarth@webkit.org>
+
+        Update baselines after http://trac.webkit.org/changeset/120485
+
+        * platform/chromium-linux-x86/http/tests/local: Removed.
+        * platform/chromium-linux-x86/http/tests/local/file-url-sent-as-referer-expected.png: Removed.
+        * platform/chromium-linux-x86/scrollbars: Removed.
+        * platform/chromium-linux-x86/scrollbars/listbox-scrollbar-combinations-expected.png: Removed.
+        * platform/chromium-linux-x86/scrollbars/overflow-scrollbar-combinations-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/as-border-image: Removed.
+        * platform/chromium-linux-x86/svg/as-border-image/svg-as-border-image-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/createImageElement-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/createImageElement2-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/focus-ring-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/group-opacity-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/image-parent-translation-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/image-small-width-height-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/js-update-image-and-display-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/js-update-image-and-display2-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/js-update-image-and-display3-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/js-update-image-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/text-image-opacity-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/use-on-g-containing-foreignObject-and-image-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/filters/feImage-subregions-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/filters/feImage-subregions-preseveAspectRatio-none-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/filters/filter-source-position-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/repaint: Removed.
+        * platform/chromium-linux-x86/svg/repaint/image-href-change-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/transforms/animated-path-inside-transformed-html-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-background-images-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png: Removed.
+        * platform/chromium-linux/http/tests/local/file-url-sent-as-referer-expected.png:
+        * platform/chromium-linux/scrollbars/listbox-scrollbar-combinations-expected.png:
+        * platform/chromium-linux/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-linux/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/chromium-linux/svg/custom/createImageElement2-expected.png:
+        * platform/chromium-linux/svg/custom/focus-ring-expected.png:
+        * platform/chromium-linux/svg/custom/image-parent-translation-expected.png:
+        * platform/chromium-linux/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-linux/svg/custom/text-image-opacity-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.png:
+        * platform/chromium-linux/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-background-images-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-win-vista/http/tests/local: Removed.
+        * platform/chromium-win-vista/svg/dynamic-updates: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png: Added.
+        * platform/chromium-win-xp/svg/dynamic-updates: Removed.
+        * platform/chromium-win/http/tests/local/file-url-sent-as-referer-expected.png:
+        * platform/chromium-win/scrollbars/listbox-scrollbar-combinations-expected.png:
+        * platform/chromium-win/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/chromium-win/svg/custom/createImageElement-expected.png:
+        * platform/chromium-win/svg/custom/createImageElement2-expected.png:
+        * platform/chromium-win/svg/custom/focus-ring-expected.png:
+        * platform/chromium-win/svg/custom/group-opacity-expected.png:
+        * platform/chromium-win/svg/custom/image-parent-translation-expected.png:
+        * platform/chromium-win/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-win/svg/custom/js-update-image-and-display-expected.png:
+        * platform/chromium-win/svg/custom/js-update-image-and-display2-expected.png:
+        * platform/chromium-win/svg/custom/js-update-image-and-display3-expected.png:
+        * platform/chromium-win/svg/custom/js-update-image-expected.png:
+        * platform/chromium-win/svg/custom/text-image-opacity-expected.png:
+        * platform/chromium-win/svg/custom/use-on-g-containing-foreignObject-and-image-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.png:
+        * platform/chromium-win/svg/filters/feImage-subregions-expected.png:
+        * platform/chromium-win/svg/filters/feImage-subregions-preseveAspectRatio-none-expected.png:
+        * platform/chromium-win/svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox-expected.png:
+        * platform/chromium-win/svg/filters/filter-source-position-expected.png:
+        * platform/chromium-win/svg/repaint/image-href-change-expected.png:
+        * platform/chromium-win/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-background-images-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+
 2012-06-16  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, updating baselines
