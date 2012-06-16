@@ -510,14 +510,6 @@ void TextureMapperLayer::syncAnimations()
         setOpacity(m_state.opacity);
 }
 
-void TextureMapperLayer::syncAnimationsRecursively()
-{
-    syncAnimations();
-
-    for (int i = m_children.size() - 1; i >= 0; --i)
-        m_children[i]->syncAnimationsRecursively();
-}
-
 void TextureMapperLayer::syncCompositingState(GraphicsLayerTextureMapper* graphicsLayer, TextureMapper* textureMapper, int options)
 {
     if (!textureMapper)

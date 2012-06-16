@@ -52,7 +52,6 @@ void GraphicsLayerTextureMapper::notifyChange(TextureMapperLayer::ChangeMask cha
 
 void GraphicsLayerTextureMapper::didSynchronize()
 {
-    m_syncQueued = false;
     m_changeMask = 0;
     m_needsDisplay = false;
     m_needsDisplayRect = IntRect();

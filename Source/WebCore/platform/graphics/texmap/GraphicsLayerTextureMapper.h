@@ -105,7 +105,6 @@ private:
     OwnPtr<TextureMapperLayer> m_layer;
     RefPtr<TextureMapperBackingStore> m_compositedImage;
     RefPtr<Image> m_image;
-    bool m_syncQueued;
     int m_changeMask;
     bool m_needsDisplay;
     bool m_fixedToViewport;
