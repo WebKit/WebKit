@@ -2,9 +2,9 @@
 <head>
 <script>
 function runTest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.clearAllDatabases();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.clearAllDatabases();
     }
 
     try {

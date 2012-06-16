@@ -2,9 +2,9 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(a)
@@ -14,8 +14,8 @@ function log(a)
 
 function finish()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone()
+    if (window.testRunner)
+        testRunner.notifyDone()
 }
 
 function runTest()

@@ -17,9 +17,9 @@
     var logMsg = "";
     var failed = false;
 
-    if (window.layoutTestController) {
-        window.layoutTestController.dumpAsText();
-        window.layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
     }
 
     for (var row = 0; row < 10; ++row) {
@@ -59,8 +59,8 @@
         var outline2 = document.getElementById("outline2");
         outline2.style.outline = "none";
         document.body.innerHTML =(failed ? "FAIL!!!<br/>" : "SUCCESS!!!<br/>") +logMsg;
-        if (window.layoutTestController) {
-            window.layoutTestController.notifyDone();
+        if (window.testRunner) {
+            window.testRunner.notifyDone();
         }
     }
 

@@ -3,8 +3,8 @@ var complete = 0;
 function checkCompletion()
 {
     // The test should end after two transactions
-    if (++complete == 2 && window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (++complete == 2 && window.testRunner)
+        testRunner.notifyDone();
 }
 
 // Opens the database used in this test case

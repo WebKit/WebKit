@@ -93,14 +93,14 @@
 
     function runTests()
     {
-        if (window.layoutTestController && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
+        if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
             description('Tests if labels are treated as clickable if the input they control is.');
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
             testDirectTouches();
             testIndirectTouches();
             isSuccessfullyParsed();
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     }
 </script>

@@ -8,12 +8,12 @@
 <script>
 description("StorageTracker test - write local storage for this origin. Should be called after storage-tracker-5-delete-one.html.");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
     
 function finishTest() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function test()
@@ -25,14 +25,14 @@ function test()
     
     debug("This test should have no visible output on success.");
 
-    if (layoutTestController.originsWithLocalStorage().length > 0) {
+    if (testRunner.originsWithLocalStorage().length > 0) {
         // An origin already exists so we can exit.
         testFailed("An origin already existed with local storage.");
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     } else {
-        layoutTestController.syncLocalStorage();
+        testRunner.syncLocalStorage();
         localStorage.someOtherData = 'writemeMore';
-        layoutTestController.observeStorageTrackerNotifications(1);
+        testRunner.observeStorageTrackerNotifications(1);
     }
 }
 

@@ -3,16 +3,16 @@
 <script>
 function finishTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.clearAllDatabases();
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearAllDatabases();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     try {

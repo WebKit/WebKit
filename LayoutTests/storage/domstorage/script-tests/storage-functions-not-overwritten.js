@@ -1,7 +1,7 @@
 description("This test checks to ensure that window.localStorage and window.sessionStorage are not rendered unusable by setting a key with the same name as a storage function such that the function is hidden.");
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function doWedgeThySelf(storage) {
     storage.setItem("clear", "almost");

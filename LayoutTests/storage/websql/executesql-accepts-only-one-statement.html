@@ -13,8 +13,8 @@ function log(message)
 
 function terminateTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function executeStatement(expectedToPass, statement)
@@ -45,10 +45,10 @@ function executeStatement(expectedToPass, statement)
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.clearAllDatabases();
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearAllDatabases();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     db = openDatabase("ExecuteSQLAcceptsOnlyOneStatementTest", "1.0", "", 1);

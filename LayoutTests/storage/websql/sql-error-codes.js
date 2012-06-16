@@ -1,7 +1,7 @@
 function finishTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 var TOTAL_TESTS = 7;
@@ -100,8 +100,8 @@ function testVersionMismatch(db)
 
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.clearAllDatabases();
+    if (window.testRunner)
+        testRunner.clearAllDatabases();
 
     var db = openDatabaseWithSuffix("SQLErrorCodesTest", "1.0", "Tests the error codes.", 1);
     testTransactionThrowsException(db);

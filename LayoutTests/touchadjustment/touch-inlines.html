@@ -90,15 +90,15 @@ hi there <a id="6" href="#6">some link that is breaking multiple lines just for 
 
     function runTests()
     {
-        if (window.layoutTestController && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
+        if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
             description('Test touch-adjustment on inline links. Making sure we can hit over line-breaks, and can miss when tapping between parts of a line-broken link.');
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
             testDirectTouches();
             testDirectMisses();
             testIndirectTouches();
             isSuccessfullyParsed();
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     }
 </script>

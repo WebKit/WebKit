@@ -1,3 +1,130 @@
+2012-06-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use testRunner instead of layoutTestController in storage, tables, touchadjustments, and transforms tests
+        https://bugs.webkit.org/show_bug.cgi?id=89263
+
+        Reviewed by Antti Koivisto.
+
+        * storage/domstorage/events/resources/eventTestHarness.js:
+        (testStorages.allDone):
+        * storage/domstorage/localstorage/delete-removal.html:
+        * storage/domstorage/localstorage/enumerate-storage.html:
+        * storage/domstorage/localstorage/enumerate-with-length-and-key.html:
+        * storage/domstorage/localstorage/index-get-and-set.html:
+        * storage/domstorage/localstorage/private-browsing-affects-storage.html:
+        * storage/domstorage/localstorage/resources/window-open-second.html:
+        * storage/domstorage/localstorage/simple-usage.html:
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html:
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html:
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all-expected.txt:
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html:
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html:
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one-expected.txt:
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html:
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html:
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage-expected.txt:
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html:
+        * storage/domstorage/localstorage/string-conversion.html:
+        * storage/domstorage/localstorage/window-open.html:
+        * storage/domstorage/script-tests/storage-functions-not-overwritten.js:
+        * storage/domstorage/sessionstorage/delete-removal.html:
+        * storage/domstorage/sessionstorage/enumerate-storage.html:
+        * storage/domstorage/sessionstorage/enumerate-with-length-and-key.html:
+        * storage/domstorage/sessionstorage/index-get-and-set.html:
+        * storage/domstorage/sessionstorage/private-browsing-affects-storage.html:
+        * storage/domstorage/sessionstorage/resources/window-open-second.html:
+        * storage/domstorage/sessionstorage/simple-usage.html:
+        * storage/domstorage/sessionstorage/string-conversion.html:
+        * storage/domstorage/sessionstorage/window-open.html:
+        * storage/domstorage/window-attributes-exist.html:
+        * storage/indexeddb/mozilla/index-prev-no-duplicate.html:
+        * storage/indexeddb/tutorial.html:
+        * storage/websql/change-version-handle-reuse.js:
+        (finishTest):
+        * storage/websql/change-version-no-crash-on-preflight-failure.html:
+        * storage/websql/change-version.html:
+        * storage/websql/close-during-stress-test.html:
+        * storage/websql/database-lock-after-reload.html:
+        * storage/websql/empty-statement.html:
+        * storage/websql/execute-sql-args.js:
+        (runTransactionTests):
+        * storage/websql/executesql-accepts-only-one-statement.html:
+        * storage/websql/hash-change-with-xhr.js:
+        (stopTest):
+        * storage/websql/multiple-databases-garbage-collection.js:
+        (checkCompletion):
+        * storage/websql/multiple-transactions-on-different-handles.js:
+        (checkCompletion):
+        * storage/websql/multiple-transactions.js:
+        (checkCompletion):
+        * storage/websql/null-callbacks.html:
+        * storage/websql/open-database-creation-callback-isolated-world.html:
+        * storage/websql/open-database-creation-callback.html:
+        * storage/websql/open-database-empty-version.html:
+        * storage/websql/open-database-over-quota.html:
+        * storage/websql/open-database-set-empty-version.html:
+        * storage/websql/open-database-while-transaction-in-progress.js:
+        (runTest):
+        * storage/websql/private-browsing-noread-nowrite.html:
+        * storage/websql/quota-tracking.html:
+        * storage/websql/read-and-write-transactions-dont-run-together.js:
+        (terminateTest):
+        * storage/websql/read-transactions-running-concurrently.html:
+        * storage/websql/resources/database-common.js:
+        (setupAndRunTest):
+        * storage/websql/resources/database-lock-after-reload-2.html:
+        * storage/websql/sql-data-types.js:
+        (notifyDone):
+        (runTest):
+        * storage/websql/sql-error-codes.js:
+        (finishTest):
+        (runTest):
+        * storage/websql/statement-error-callback-isolated-world.html:
+        * storage/websql/statement-error-callback.html:
+        * storage/websql/statement-success-callback-isolated-world.html:
+        * storage/websql/success-callback.html:
+        * storage/websql/test-authorizer.js:
+        (terminateTest):
+        * storage/websql/transaction-callback-exception-crash.html:
+        * storage/websql/transaction-callback-isolated-world.html:
+        * storage/websql/transaction-error-callback-isolated-world.html:
+        * storage/websql/transaction-error-callback.html:
+        * storage/websql/transaction-success-callback-isolated-world.html:
+        * tables/hittesting/filltable-emptycells.html:
+        * tables/hittesting/filltable-levels.html:
+        * tables/hittesting/filltable-outline.html:
+        * tables/hittesting/filltable-rtl.html:
+        * tables/hittesting/filltable-stress.html:
+        * tables/layering/paint-test-layering-1.html:
+        * tables/layering/paint-test-layering-2.html:
+        * tables/table-section-overflow-clip-crash.html:
+        * touchadjustment/block-testing.html:
+        * touchadjustment/event-triggered-widgets.html:
+        * touchadjustment/html-label.html:
+        * touchadjustment/iframe.html:
+        * touchadjustment/nested-touch.html:
+        * touchadjustment/scroll-delegation/iframe-with-mainframe-scroll-offset.html:
+        * touchadjustment/scroll-offset.html:
+        * touchadjustment/touch-inlines.html:
+        * touchadjustment/zoom-basic.html:
+        * touchadjustment/zoom-fatfinger.html:
+        * transforms/2d/compound-2d-transforms.html:
+        * transforms/2d/cssmatrix-2d-zoom.html:
+        * transforms/2d/set-transform-and-top.html:
+        * transforms/2d/transform-2d.html:
+        * transforms/2d/transform-accuracy.html:
+        * transforms/3d/general/3dtransform-values.html:
+        * transforms/3d/general/cssmatrix-3d-zoom.html:
+        * transforms/3d/general/matrix-with-zoom-3d.html:
+        * transforms/3d/general/transform-origin-z-change.html:
+        * transforms/3d/hit-testing/hit-preserves-3d.html:
+        * transforms/3d/point-mapping/3d-point-mapping-2.html:
+        * transforms/3d/point-mapping/3d-point-mapping-3.html:
+        * transforms/3d/point-mapping/3d-point-mapping-deep.html:
+        * transforms/3d/point-mapping/3d-point-mapping-origins.html:
+        * transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html:
+        * transforms/no_transform_hit_testing.html:
+
 2012-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove empty directories.

@@ -57,13 +57,13 @@
 
     function runTests()
     {
-        if (window.layoutTestController && window.internals && internals.bestZoomableAreaForTouchPoint) {
+        if (window.testRunner && window.internals && internals.bestZoomableAreaForTouchPoint) {
             description('Test basic cases of tap-to-zoom mechanics.');
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
             testDirectTouches();
             isSuccessfullyParsed();
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     }
 </script>

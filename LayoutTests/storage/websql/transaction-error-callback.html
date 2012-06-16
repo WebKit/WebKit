@@ -7,7 +7,7 @@ function log(message)
     document.getElementById("console").innerHTML += message + "<br>";
 }
 
-// signal to layoutTestController when this reaches zero.
+// signal to testRunner when this reaches zero.
 var testCount = 4;
 // we first retrieve and store the number of rows already in our test database.
 // our goal is to keep the number unchanged through the tests.
@@ -22,8 +22,8 @@ function finishTest()
 
     log("All Tests are complete.");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function successCallback()
@@ -67,10 +67,10 @@ function statementCallbackThrowsException(errorCallback)
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.clearAllDatabases();
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearAllDatabases();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     database = openDatabase("ErrorCallbackDatabase", "1.0", "Test for error callback", 1);

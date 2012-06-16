@@ -75,15 +75,15 @@
 
     function runTests()
     {
-        if (window.layoutTestController && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
+        if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
             description('Test touch adjustment when main frame is scroll offset.');
             window.scrollBy(0,400);
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
             testDirectTouches();
             testAdjustedTouches();
             isSuccessfullyParsed();
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     }
 </script>

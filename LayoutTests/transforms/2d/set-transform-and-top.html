@@ -33,9 +33,9 @@ function runTest() {
     checkPosition("a");
     checkPosition("b");
 
-    if (window.layoutTestController) {
-        window.layoutTestController.dumpAsText();
-        window.layoutTestController.notifyDone();
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.notifyDone();
     }
 }
 </script>
@@ -46,8 +46,8 @@ function runTest() {
 <div class="box" id="b">B</div>
 
 <script>
-    if (window.layoutTestController)
-        window.layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        window.testRunner.waitUntilDone();
 
     setTimeout(move, 10);
     function move() {

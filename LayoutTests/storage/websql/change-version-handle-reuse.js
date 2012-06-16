@@ -2,8 +2,8 @@ function finishTest()
 {
     log("TEST COMPLETE.");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest()

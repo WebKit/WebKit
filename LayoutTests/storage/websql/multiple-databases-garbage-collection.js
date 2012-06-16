@@ -18,8 +18,8 @@ var forgottenDB = 0;
 var completed = 0;
 function checkCompletion()
 {
-    if (++completed == 2 && window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (++completed == 2 && window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest()

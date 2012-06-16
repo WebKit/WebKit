@@ -2,8 +2,8 @@
 <head>
 <script>
 function runTest() {
-    if (window.layoutTestController) 
-        layoutTestController.dumpAsText();
+    if (window.testRunner) 
+        testRunner.dumpAsText();
     
     try {    
         var db = openDatabase('5562470Test', '', 'Test for <rdar://problem/5562470> openDatabase does not work when the version string is empty', 1);

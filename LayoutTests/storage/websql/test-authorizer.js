@@ -1,7 +1,7 @@
 function terminateTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function logAndTerminateTest(message, error)

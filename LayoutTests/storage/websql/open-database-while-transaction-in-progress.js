@@ -35,7 +35,7 @@ function runTest()
     }, function(error) {
         log("Transaction failed: " + error.message);
     }, function() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     });
 }

@@ -43,13 +43,13 @@ Some text. <a id=a1 href="#1">A link</a>
     }
     function runTests()
     {
-        if (window.layoutTestController && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
+        if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
             description('Test touch-adjustment on a block where we also touch the inner text and outside link.');
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
             testDirectTouches();
             isSuccessfullyParsed();
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     }
 </script>

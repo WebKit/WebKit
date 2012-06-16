@@ -7,14 +7,14 @@
 <!--
     function Setup() { 
         setTimeout('RepaintBug()', 10);
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
     }
     function RepaintBug() {
         var div1 = document.getElementById("bug2");
         div1.style.color = 'green';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 //-->
 </script>

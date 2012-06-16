@@ -15,9 +15,9 @@ function test()
         return;
     }
 
-    if (layoutTestController.originsWithLocalStorage().length > 0) {
-        shouldBeEqualToString("layoutTestController.originsWithLocalStorage().toString()", "file__0");
-        shouldBeTrue("layoutTestController.localStorageDiskUsageForOrigin('file://') > 6100");
+    if (testRunner.originsWithLocalStorage().length > 0) {
+        shouldBeEqualToString("testRunner.originsWithLocalStorage().toString()", "file__0");
+        shouldBeTrue("testRunner.localStorageDiskUsageForOrigin('file://') > 6100");
     } else {
         testFailed("Ran with no origins with local storage.");
     }

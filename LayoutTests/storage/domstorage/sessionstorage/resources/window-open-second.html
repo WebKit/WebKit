@@ -24,8 +24,8 @@ function runTest()
     
     window.opener.log(secondWindowLog);
     
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

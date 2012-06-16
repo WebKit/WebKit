@@ -13,9 +13,9 @@
     var lastSuccess = 0;
     var failed = false;
 
-   if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        window.layoutTestController.waitUntilDone();
+   if (window.testRunner) {
+        testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
     }
 
     function isEmpty(row, col) {
@@ -47,8 +47,8 @@
         ypos += cellHeight;
       }
       document.body.innerHTML = (failed ? "FAIL!!!<br/>" : "SUCCESS!!!<br/>") +logMsg;
-      if (window.layoutTestController) {
-          window.layoutTestController.notifyDone();
+      if (window.testRunner) {
+          window.testRunner.notifyDone();
       }
     }
   </script>

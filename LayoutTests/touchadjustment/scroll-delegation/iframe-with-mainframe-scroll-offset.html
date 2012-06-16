@@ -56,15 +56,15 @@
 
     function runTests()
     {
-        if (window.layoutTestController && window.internals && internals.touchNodeAdjustedToBestClickableNode && internals.setDelegatesScrolling) {
+        if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode && internals.setDelegatesScrolling) {
             description('Test iframe with main frame scroll offset case of tap-to-zoom mechanics.');
             window.scrollBy(0,500);
             internals.setDelegatesScrolling(true, document);
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
             testDirectTouches();
             isSuccessfullyParsed();
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     }
 </script>

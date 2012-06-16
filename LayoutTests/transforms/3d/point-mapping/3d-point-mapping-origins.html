@@ -14,7 +14,7 @@
       // document.getElementById('overflow').scrollTop = 60;
       
       // In non-test mode, show the mouse coords for testing
-      if (!window.layoutTestController)
+      if (!window.testRunner)
         document.body.addEventListener('mousemove', mousemoved, false);
 
       dispatchEvent(48, 48, 'box1', 6, 6);

@@ -37,13 +37,13 @@
     }
     function runTests()
     {
-        if (window.layoutTestController && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
+        if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
             description('Test touch-adjustment on links in an iframe. Making sure we iframe position is correctly adjusted for.');
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
             testDirectTouches();
             isSuccessfullyParsed();
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     }
 </script>

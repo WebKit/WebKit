@@ -29,8 +29,8 @@ function stopTest(message)
 
     log(message);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
     
 function updateDatabase()

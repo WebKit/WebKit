@@ -7,8 +7,8 @@ This test tests that the statement success callback is called in the right world
 var statementSuccessCallbacksInvoked = 0;
 function done()
 {
-    if ((++statementSuccessCallbacksInvoked == 2) && (window.layoutTestController))
-        layoutTestController.notifyDone();
+    if ((++statementSuccessCallbacksInvoked == 2) && (window.testRunner))
+        testRunner.notifyDone();
 }
 
 function statementSuccessCallback1(tx, data)
@@ -26,11 +26,11 @@ function statementSuccessCallback2(tx, data)
 document.body.foo = "FAIL: document.body.foo visible in isolated world.";
 document.body.bar = "PASS: document.body.bar visible in a callback created in this world.";
 
-if (window.layoutTestController) {
-    layoutTestController.clearAllDatabases();
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.evaluateScriptInIsolatedWorld(
+if (window.testRunner) {
+    testRunner.clearAllDatabases();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.evaluateScriptInIsolatedWorld(
         0,
         "function statementSuccessCallback1(tx, data)\n" +
         "{\n" +

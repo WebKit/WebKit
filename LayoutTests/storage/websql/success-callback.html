@@ -10,8 +10,8 @@ function log(message)
 function finishTest()
 {
     log("Test Complete");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function errorFunction(error)
@@ -31,10 +31,10 @@ function successFunction(message)
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.clearAllDatabases();
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearAllDatabases();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     var database = openDatabase("SuccessCallbackDatabase", "1.0", "Test for success callback <rdar://5737692>", 1);

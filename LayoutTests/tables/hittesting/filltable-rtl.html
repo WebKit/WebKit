@@ -15,9 +15,9 @@
                       [false, false, false],
                       [false, false, false]];
 
-      if (window.layoutTestController) {
-          window.layoutTestController.dumpAsText();
-          window.layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+          window.testRunner.dumpAsText();
+          window.testRunner.waitUntilDone();
       }
 
       function clearHitArray() {
@@ -71,8 +71,8 @@
         ypos += cellHeight;
       }
       document.body.innerHTML =(failed ? "FAIL!!!<br/>" : "SUCCESS!!!<br/>") +logMsg;
-      if (window.layoutTestController) {
-          window.layoutTestController.notifyDone();
+      if (window.testRunner) {
+          window.testRunner.notifyDone();
       }
     }
 

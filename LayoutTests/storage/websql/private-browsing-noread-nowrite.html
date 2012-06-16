@@ -67,8 +67,8 @@ function runPrivateBrowsingTests()
 {
     completed = 0;
 
-    if (window.layoutTestController)
-        layoutTestController.setPrivateBrowsingEnabled(true);
+    if (window.testRunner)
+        testRunner.setPrivateBrowsingEnabled(true);
     
     for (i in privateBrowsingStatements)
         theTransaction.executeSql(privateBrowsingStatements[i], [], privateBrowsingSuccessFunction, privateBrowsingErrorFunction);
@@ -78,15 +78,15 @@ function endTest()
 {
     writeMessageToLog("Test ended");
     
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var database = openDatabase("PrivateBrowsingNoReadNoWriteTest", "1.0", "Test private browsing no read/write safety", 1);

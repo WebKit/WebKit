@@ -7,8 +7,8 @@ This test tests that the openDatabase() creation callback is called in the right
 var creationCallbacksExecuted = 0;
 function done()
 {
-    if ((++creationCallbacksExecuted == 2) && (window.layoutTestController))
-        layoutTestController.notifyDone();
+    if ((++creationCallbacksExecuted == 2) && (window.testRunner))
+        testRunner.notifyDone();
 }
 
 function creationCallback1(db)
@@ -26,11 +26,11 @@ function creationCallback2(db)
 document.body.foo = "FAIL: document.body.foo visible in isolated world.";
 document.body.bar = "PASS: document.body.bar visible in a callback created in this world.";
 
-if (window.layoutTestController) {
-    layoutTestController.clearAllDatabases();
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.evaluateScriptInIsolatedWorld(
+if (window.testRunner) {
+    testRunner.clearAllDatabases();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.evaluateScriptInIsolatedWorld(
         0,
         "function creationCallback1(db)\n" +
         "{\n" +

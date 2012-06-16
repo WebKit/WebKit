@@ -7,8 +7,8 @@ function writeMessageToLog(message)
 
 function notifyDone(str) {
     writeMessageToLog(str);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 var testValues = {
@@ -75,9 +75,9 @@ function createTestDBStmt(tx)
 }
 
 function runTest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     var db = openDatabase("DataTypeTest", "1.0", "Database for sql data type test", 1);
     if (db)

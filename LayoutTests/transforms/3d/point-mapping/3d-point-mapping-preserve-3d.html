@@ -7,7 +7,7 @@
     function test()
     {
       // In non-test mode, show the mouse coords for testing
-      if (!window.layoutTestController)
+      if (!window.testRunner)
         document.body.addEventListener('mousemove', mousemoved, false);
 
       dispatchEvent(44, 44, 'box1', 2, 2);

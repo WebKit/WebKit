@@ -1,6 +1,6 @@
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 iframe = document.createElement("IFRAME");
@@ -49,8 +49,8 @@ function testStorages(testCallback)
         debug("");
         localStorage.clear();
         sessionStorage.clear();
-        if (window.layoutTestController)
-            layoutTestController.notifyDone()
+        if (window.testRunner)
+            testRunner.notifyDone()
     }
 
     // When we're done testing with SessionStorage, this is run.

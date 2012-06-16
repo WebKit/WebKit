@@ -6,14 +6,14 @@
 <!--
     function Setup() { 
         setTimeout('RepaintBug()', 10);
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
     }
     function RepaintBug() {
         var div2 = document.getElementById("bug2");
         div2.style.color = 'green';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 //-->
 </script>

@@ -13,8 +13,8 @@ function log(message)
 function finishTest()
 {
     log("Test Complete");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function statementErrorFunction(tx, error)
@@ -88,12 +88,12 @@ function testDatabase(db)
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.clearAllDatabases();
-        layoutTestController.dumpDatabaseCallbacks();
-        layoutTestController.setDatabaseQuota(40960);
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearAllDatabases();
+        testRunner.dumpDatabaseCallbacks();
+        testRunner.setDatabaseQuota(40960);
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     database1 = openDatabase("QuotaManagementDatabase1", "1.0", "Test for quota management <rdar://5628468>", 1);

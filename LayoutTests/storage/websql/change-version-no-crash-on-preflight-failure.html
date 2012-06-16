@@ -3,8 +3,8 @@
 <script>
 function finishTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function log(message)
@@ -13,9 +13,9 @@ function log(message)
 }
 
 function runTest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var db = window.openDatabase("ChangeVersionFailureTest", "1", "Test the preflight step", 1024);

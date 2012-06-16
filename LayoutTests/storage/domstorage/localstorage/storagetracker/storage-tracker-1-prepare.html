@@ -8,12 +8,12 @@
 <script>
 description("Prepare for StorageTracker tests by ensuring that every origin with local storage is deleted.");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
     
 function finishTest() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function test()
@@ -25,9 +25,9 @@ function test()
     
     debug("This test should have no visible output on success.");
 
-    if (layoutTestController.originsWithLocalStorage().length > 0) {
-        layoutTestController.observeStorageTrackerNotifications(1);
-        layoutTestController.deleteAllLocalStorage();
+    if (testRunner.originsWithLocalStorage().length > 0) {
+        testRunner.observeStorageTrackerNotifications(1);
+        testRunner.deleteAllLocalStorage();
     } else {
         finishTest();
     }

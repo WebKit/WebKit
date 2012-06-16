@@ -8,12 +8,12 @@
 <script>
 description("Test API to view origins that have local storage and to delete local storage by origin.");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
     
 function finishTest() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function test()
@@ -23,15 +23,15 @@ function test()
         return;
     }
 
-    if (layoutTestController.originsWithLocalStorage().length > 0) {
-        shouldBeEqualToString("layoutTestController.originsWithLocalStorage().toString()", "file__0");
+    if (testRunner.originsWithLocalStorage().length > 0) {
+        shouldBeEqualToString("testRunner.originsWithLocalStorage().toString()", "file__0");
         // We're just going to delete the existing origin, so we'll get one origin change notification.
-        layoutTestController.observeStorageTrackerNotifications(1);
+        testRunner.observeStorageTrackerNotifications(1);
         // At this point, we're guaranteed to have one origin with local storage.
-        layoutTestController.deleteLocalStorageForOrigin("file://");
+        testRunner.deleteLocalStorageForOrigin("file://");
     } else {
         testFailed("Ran with no origins with local storage.");
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 
 }

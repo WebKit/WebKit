@@ -2,8 +2,8 @@
 <head>
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function log(a)
 {
@@ -16,14 +16,14 @@ function runTest()
         log("window.localStorage DOES NOT exist");
         return;
     }
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         log("Test only designed to be run under DumpRenderTree");
         return;
     }
     localStorage.clear();
     
     localStorage.setItem("testItem", "InitialValue");    
-    layoutTestController.setPrivateBrowsingEnabled(true);
+    testRunner.setPrivateBrowsingEnabled(true);
     log("Initial value of testItem is: " + localStorage.getItem("testItem"));
 
     try {

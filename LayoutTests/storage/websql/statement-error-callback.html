@@ -10,8 +10,8 @@ function log(message)
 function finishTest()
 {
     log("Test Complete");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 var txCallbackCount = 0;
@@ -55,10 +55,10 @@ function runTransaction(expectedToFail, statementErrorCallback)
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.clearAllDatabases();
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearAllDatabases();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     database = openDatabase("StatementErrorCallbackTest", "1.0", "statement error callback test", 1024);

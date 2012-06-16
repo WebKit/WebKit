@@ -29,8 +29,8 @@ function changeVersionError(error)
 
 function finishTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
     log("TEST COMPLETE");
 }
 
@@ -54,10 +54,10 @@ function runTest()
 }
 
 function testPart1() {
-    if (window.layoutTestController) {
-        layoutTestController.clearAllDatabases();
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearAllDatabases();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     db1 = window.openDatabase("changeversion-test", "1", "Test for the database.changeVersion() function", 1024);

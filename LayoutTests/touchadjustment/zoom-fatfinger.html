@@ -36,13 +36,13 @@ px; width: 200px; height: 20px; }
 
     function runTests()
     {
-        if (window.layoutTestController && window.internals && internals.bestZoomableAreaForTouchPoint) {
+        if (window.testRunner && window.internals && internals.bestZoomableAreaForTouchPoint) {
             description('Test that targetted area is picked even if the touch area is not fully contained.');
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
             testDirectTouches();
             isSuccessfullyParsed();
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     }
 </script>

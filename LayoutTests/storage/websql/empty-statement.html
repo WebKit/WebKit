@@ -12,15 +12,15 @@ function executeEmptyStatement(transaction)
 {
     transaction.executeSql("");
     writeMessageToLog("Executed an empty statement. If you didn't see a crash or assertion, the test passed.");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     var db = openDatabase("EmptyStatementTest", "1.0", "Database for an empty statement test", 1);
     db.transaction(executeEmptyStatement);

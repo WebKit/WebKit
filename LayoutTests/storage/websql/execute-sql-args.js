@@ -74,8 +74,8 @@ function runTransactionTests(transaction)
     for (i in expectException)
         runTransactionTest(transaction, expectException[i], true);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest()

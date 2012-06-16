@@ -8,18 +8,18 @@ function log(message)
 
 function finishTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.clearAllDatabases();
-        layoutTestController.setDatabaseQuota(32768);
-        layoutTestController.dumpDatabaseCallbacks();
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearAllDatabases();
+        testRunner.setDatabaseQuota(32768);
+        testRunner.dumpDatabaseCallbacks();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var transactionsRun = 0;

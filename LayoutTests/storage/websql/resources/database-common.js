@@ -20,9 +20,9 @@ function setLocationHash(hash) {
 
 function setupAndRunTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     document.getElementById("console").innerText = "";
     runTest();
