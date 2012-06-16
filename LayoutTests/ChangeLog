@@ -1,3 +1,12 @@
+2012-06-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, updating baselines
+        after r120492 and r120495.
+
+        * platform/gtk/fast/lists/001-expected.txt:
+        * platform/gtk/fast/lists/001-vertical-expected.txt:
+        * platform/gtk/mathml/xHeight-expected.txt:
+
 2012-06-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed weekend gardening, skip a new failing test.
