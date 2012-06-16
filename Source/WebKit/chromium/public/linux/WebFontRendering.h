@@ -28,4 +28,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 // FIXME: Remove once http://codereview.chromium.org/10544103/ is landed.
-#include "../linuxish/WebFontRendering.h"
+#include "../WebFontRendering.h"

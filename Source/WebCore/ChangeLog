@@ -1,3 +1,20 @@
+2012-06-16  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Move chromium/public/linuxish/WebFontRendering.h out of linuxish directory
+        https://bugs.webkit.org/show_bug.cgi?id=89228
+
+        Reverse the dependency originally from WebKit::WebFontRendering to WebCore::FontPlatformDataHarfBuzz
+        so that WebKit::WebFontRendering can be platform-independent.
+
+        Reviewed by Tony Chang.
+
+        Refactory only. No new tests.
+
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.cpp:
+        (WebCore::FontPlatformData::setupPaint):
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.h:
+        (FontPlatformData):
+
 2012-06-16  Adam Barth  <abarth@webkit.org>
 
         Settings::devicePixelRatio doesn't do anything and is confusing
