@@ -1202,7 +1202,7 @@ void QQuickWebViewExperimental::setUserAgent(const QString& userAgent)
 double QQuickWebViewExperimental::devicePixelRatio() const
 {
     Q_D(const QQuickWebView);
-    return d->webPageProxy->pageGroup()->preferences()->devicePixelRatio();
+    return d->webPageProxy->deviceScaleFactor();
 }
 
 void QQuickWebViewExperimental::setDevicePixelRatio(double devicePixelRatio)
@@ -1211,7 +1211,7 @@ void QQuickWebViewExperimental::setDevicePixelRatio(double devicePixelRatio)
     if (devicePixelRatio == this->devicePixelRatio())
         return;
 
-    d->webPageProxy->pageGroup()->preferences()->setDevicePixelRatio(devicePixelRatio);
+    d->webPageProxy->setCustomDeviceScaleFactor(devicePixelRatio);
     emit devicePixelRatioChanged();
 }
 

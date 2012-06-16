@@ -117,7 +117,6 @@ namespace WebKit {
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
-    macro(DevicePixelRatio, devicePixelRatio, Double, double, 1.0) \
     macro(PDFScaleFactor, pdfScaleFactor, Double, double, 0) \
     \
 
