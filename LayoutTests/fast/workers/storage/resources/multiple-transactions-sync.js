@@ -2,8 +2,8 @@ var complete = 0;
 
 function checkCompletion()
 {
-    if (++complete == 2 && window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (++complete == 2 && window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest()

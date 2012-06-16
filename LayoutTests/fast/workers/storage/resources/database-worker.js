@@ -1,9 +1,9 @@
 var window = {
-    layoutTestController: {
+    testRunner: {
         notifyDone: function() { postMessage("notifyDone"); }
     }
 };
-var layoutTestController = window.layoutTestController;
+var testRunner = window.testRunner;
 
 function log(s) {
     postMessage("log:" + s);
@@ -22,7 +22,7 @@ onmessage = function(event) {
             log("Received unexpected message: " + event.data);
     } catch (ex) {
         log("Worker caught exception: " + ex);
-        window.layoutTestController.notifyDone();
+        window.testRunner.notifyDone();
     }
 };
 

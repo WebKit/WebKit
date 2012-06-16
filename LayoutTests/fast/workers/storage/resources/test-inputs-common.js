@@ -5,8 +5,8 @@ function log(message)
 
 function finishTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest(workerJSFile)
@@ -15,9 +15,9 @@ function runTest(workerJSFile)
         log("FAIL: no JS file specified for the worker.");
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var worker = new Worker(workerJSFile);
