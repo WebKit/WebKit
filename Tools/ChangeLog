@@ -1,3 +1,14 @@
+2012-06-15  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Move chromium/public/linuxish/WebFontRendering.h out of linuxish directory
+        https://bugs.webkit.org/show_bug.cgi?id=89228
+
+        Reviewed by Tony Chang.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::reset):
+        (LayoutTestController::setTextSubpixelPositioning):
+
 2012-06-15  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: remove DummyOptions and clean up the code in Port.get_option() and Port.set_option_default()

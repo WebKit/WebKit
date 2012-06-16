@@ -1,3 +1,38 @@
+2012-06-15  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Move chromium/public/linuxish/WebFontRendering.h out of linuxish directory
+        https://bugs.webkit.org/show_bug.cgi?id=89228
+
+        Reverse dependency originally from WebCore::FontPlatformDataHarfBuzz to WebKit::WebFontRendering
+        so that WebKit::WebFontRendering can be platform-independent.
+
+        This also avoids the ambiguous name 'linuxish'.
+
+        Reviewed by Tony Chang.
+
+        * WebKit.gyp:
+        * public/WebFontRendering.h: Copied from Source/WebKit/chromium/public/linuxish/WebFontRendering.h. Added getters under WEBKIT_IMPLEMENTATION.
+        (WebFontRendering):
+        * public/linux/WebFontRendering.h:
+        * public/linuxish: Removed.
+        * public/linuxish/WebFontRendering.h: Removed.
+        * src/WebFontRendering.cpp: Copied from Source/WebKit/chromium/src/linuxish/WebFontRendering.cpp. Changed setters to be independent of platform-dependent implementation and added getters.
+        (WebKit):
+        (WebKit::WebFontRendering::setHinting):
+        (WebKit::WebFontRendering::hinting):
+        (WebKit::WebFontRendering::setAutoHint):
+        (WebKit::WebFontRendering::autoHint):
+        (WebKit::WebFontRendering::setUseBitmaps):
+        (WebKit::WebFontRendering::useBitmaps):
+        (WebKit::WebFontRendering::setAntiAlias):
+        (WebKit::WebFontRendering::antiAlias):
+        (WebKit::WebFontRendering::setSubpixelRendering):
+        (WebKit::WebFontRendering::subpixelRendering):
+        (WebKit::WebFontRendering::setSubpixelPositioning):
+        (WebKit::WebFontRendering::subpixelPositioning):
+        * src/linuxish: Removed.
+        * src/linuxish/WebFontRendering.cpp: Removed.
+
 2012-06-15  Tony Chang  <tony@chromium.org>
 
         [chromium] Remove WebKit/chromium/public/gtk/WebFontInfo.h since it's no longer referenced.
