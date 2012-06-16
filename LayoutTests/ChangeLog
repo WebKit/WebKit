@@ -1,3 +1,13 @@
+2012-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove empty directories.
+
+        * platform/editing: Removed.
+        * platform/editing/inserting: Removed.
+        * websocket: Removed.
+        * websocket/tests: Removed.
+        * websocket/tests/workers: Removed.
+
 2012-06-15  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed baselines for chromium due to color management changes.
