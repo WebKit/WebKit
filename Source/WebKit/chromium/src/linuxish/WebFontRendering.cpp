@@ -28,40 +28,68 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFontRendering_h
-#define WebFontRendering_h
+#include "config.h"
+#include "WebFontRendering.h"
 
-#include "platform/WebCommon.h"
-#include <SkFontHost.h>
-#include <SkPaint.h>
+#include "FontPlatformData.h"
+
+#if OS(LINUX)
+#include "WebFontInfo.h"
+#endif
+
+using WebCore::FontPlatformData;
 
 namespace WebKit {
 
-class WebFontRendering {
-public:
-    // Set global font renderering preferences.
-    // Whether they work on particular platform depends on the implementation of
-    // Skia on the platform.
+// static
+void WebFontRendering::setHinting(SkPaint::Hinting hinting)
+{
+    FontPlatformData::setHinting(hinting);
+}
 
-    WEBKIT_EXPORT static void setHinting(SkPaint::Hinting);
-    WEBKIT_EXPORT static void setAutoHint(bool);
-    WEBKIT_EXPORT static void setUseBitmaps(bool);
-    WEBKIT_EXPORT static void setAntiAlias(bool);
-    WEBKIT_EXPORT static void setSubpixelRendering(bool);
-    WEBKIT_EXPORT static void setSubpixelPositioning(bool);
-    WEBKIT_EXPORT static void setLCDOrder(SkFontHost::LCDOrder);
-    WEBKIT_EXPORT static void setLCDOrientation(SkFontHost::LCDOrientation);
+// static
+void WebFontRendering::setAutoHint(bool useAutoHint)
+{
+    FontPlatformData::setAutoHint(useAutoHint);
+}
 
-#if WEBKIT_IMPLEMENTATION
-    static SkPaint::Hinting hinting();
-    static bool autoHint();
-    static bool useBitmaps();
-    static bool antiAlias();
-    static bool subpixelRendering();
-    static bool subpixelPositioning();
+// static
+void WebFontRendering::setUseBitmaps(bool useBitmaps)
+{
+    FontPlatformData::setUseBitmaps(useBitmaps);
+}
+
+// static
+void WebFontRendering::setAntiAlias(bool useAntiAlias)
+{
+    FontPlatformData::setAntiAlias(useAntiAlias);
+}
+
+// static
+void WebFontRendering::setSubpixelRendering(bool useSubpixelRendering)
+{
+    FontPlatformData::setSubpixelRendering(useSubpixelRendering);
+}
+
+// static
+void WebFontRendering::setSubpixelPositioning(bool useSubpixelPositioning)
+{
+    FontPlatformData::setSubpixelPositioning(useSubpixelPositioning);
+#if OS(LINUX)
+    WebFontInfo::setSubpixelPositioning(useSubpixelPositioning);
 #endif
-};
+}
+
+// static
+void WebFontRendering::setLCDOrder(SkFontHost::LCDOrder order)
+{
+    SkFontHost::SetSubpixelOrder(order);
+}
+
+// static
+void WebFontRendering::setLCDOrientation(SkFontHost::LCDOrientation orientation)
+{
+    SkFontHost::SetSubpixelOrientation(orientation);
+}
 
 } // namespace WebKit
-
-#endif
