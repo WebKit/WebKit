@@ -16,6 +16,6 @@ layer at (0,0) size 784x600
       RenderBlock {UL} at (125,0) size 146x584
         RenderListItem {LI} at (0,40) size 146x544 [border: (2px solid #FF0000)]
           RenderListMarker at (52,555) size 21x7: bullet
-          RenderText {#text} at (52,81) size 42x411
-            text run at (52,81) width 411: "Foo fofodfosjlkdf dslkdjlk asdlksjald djklsd klasjdkas sdajd"
-            text run at (73,362) width 130: "lsadjkl asjdlksajdk"
+          RenderText {#text} at (52,52) size 42x411
+            text run at (52,52) width 411: "Foo fofodfosjlkdf dslkdjlk asdlksjald djklsd klasjdkas sdajd"
+            text run at (73,52) width 130: "lsadjkl asjdlksajdk"

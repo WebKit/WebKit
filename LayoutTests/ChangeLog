@@ -1,3 +1,17 @@
+2012-06-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed weekend gardening.
+
+        * platform/qt-5.0-wk2/fast/forms/box-shadow-override-expected.png: Updated after after r120411.
+        * platform/qt-5.0-wk2/fast/forms/box-shadow-override-expected.txt: Updated after after r120411.
+        * platform/qt-5.0/fast/forms/box-shadow-override-expected.png: Updated after after r120411.
+        * platform/qt-5.0/fast/forms/box-shadow-override-expected.txt: Updated after after r120411.
+        * platform/qt/editing/pasteboard/paste-4039777-fix-expected.txt: Updated after r120495.
+        * platform/qt/fast/lists/001-expected.png: Updated after r120495.
+        * platform/qt/fast/lists/001-expected.txt: Updated after r120495.
+        * platform/qt/fast/lists/001-vertical-expected.png: Updated after r120495.
+        * platform/qt/fast/lists/001-vertical-expected.txt: Updated after r120495.
+
 2012-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in fast/workers/storage tests
