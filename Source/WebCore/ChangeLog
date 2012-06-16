@@ -1,5 +1,20 @@
 2012-06-16  Huang Dongsung  <luxtella@company100.net>
 
+        [Texmap] SIGSEV in WebCore::TextureMapperGL::drawTexture.
+        https://bugs.webkit.org/show_bug.cgi?id=89113
+
+        TextureMapperTile::m_texture is created lazilly, so we need null check before
+        using it.
+
+        Reviewed by Noam Rosenthal.
+
+        No new tests. This patch doesn't change behavior.
+
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        (WebCore::TextureMapperTile::paint):
+
+2012-06-16  Huang Dongsung  <luxtella@company100.net>
+
         [Texmap] Remove unused code in Texmap.
         https://bugs.webkit.org/show_bug.cgi?id=89265
 
