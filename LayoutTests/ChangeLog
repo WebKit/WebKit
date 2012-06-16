@@ -1,5 +1,40 @@
 2012-06-16  Adam Barth  <abarth@webkit.org>
 
+        Remove a bunch of 32-bit specific results.  These results are the same
+        on 64 bit.
+
+        * platform/chromium-linux-x86/compositing/color-matching: Removed.
+        * platform/chromium-linux-x86/compositing/color-matching/image-color-matching-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/filters/crash-hw-sw-switch-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/filters/custom: Removed.
+        * platform/chromium-linux-x86/css3/filters/custom/custom-filter-shader-cache-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/filters/custom/effect-custom-combined-missing-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/filters/custom/effect-custom-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/filters/custom/missing-custom-filter-shader-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/filters/effect-blur-hw-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/filters/effect-brightness-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/filters/effect-brightness-hw-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/filters/effect-contrast-hw-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/filters/effect-drop-shadow-hw-expected.png: Removed.
+        * platform/chromium-linux-x86/fast/images: Removed.
+        * platform/chromium-linux-x86/fast/images/jpeg-with-color-profile-expected.png: Removed.
+        * platform/chromium-linux-x86/fast/images/png-with-color-profile-expected.png: Removed.
+        * platform/chromium-linux/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-linux/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/chromium-linux/css3/filters/custom/custom-filter-shader-cache-expected.png:
+        * platform/chromium-linux/css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * platform/chromium-linux/css3/filters/custom/effect-custom-expected.png:
+        * platform/chromium-linux/css3/filters/custom/missing-custom-filter-shader-expected.png:
+        * platform/chromium-linux/css3/filters/effect-blur-hw-expected.png:
+        * platform/chromium-linux/css3/filters/effect-brightness-expected.png:
+        * platform/chromium-linux/css3/filters/effect-brightness-hw-expected.png:
+        * platform/chromium-linux/css3/filters/effect-contrast-hw-expected.png:
+        * platform/chromium-linux/css3/filters/effect-drop-shadow-hw-expected.png:
+        * platform/chromium-linux/fast/images/jpeg-with-color-profile-expected.png: Added.
+        * platform/chromium-linux/fast/images/png-with-color-profile-expected.png: Added.
+
+2012-06-16  Adam Barth  <abarth@webkit.org>
+
         Update baselines after http://trac.webkit.org/changeset/120485
 
         * platform/chromium-linux-x86/http/tests/local: Removed.
