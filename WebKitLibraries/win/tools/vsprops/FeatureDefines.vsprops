@@ -43,7 +43,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_CSS_EXCLUSIONS"
-		Value="ENABLE_CSS_EXCLUSIONS"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
@@ -58,7 +58,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_CSS_REGIONS"
-		Value="ENABLE_CSS_REGIONS"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro

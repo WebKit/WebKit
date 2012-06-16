@@ -1,5 +1,5 @@
 //
-// CSS property names 
+// CSS property names
 //
 // Some properties are used internally, but are not part of CSS. They are used to get
 // HTML4 compatibility in the rendering engine.
