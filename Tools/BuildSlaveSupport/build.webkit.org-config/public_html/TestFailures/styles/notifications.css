@@ -89,11 +89,12 @@ ol.notifications>li div.problem {
     }
 
     ol.notifications>li table.failures {
-        visibility: hidden;
+        opacity: 0.2;
+        -webkit-transition: opacity 0.5s;
     }
 
     ol.notifications>li:hover table.failures {
-        visibility: visible;
+        opacity: 1;
     }
 
 ol.notifications>li ul.causes>li>ul.actions {

@@ -436,4 +436,10 @@ base.relativizeTime = function(time)
     return result;
 }
 
+base.getURLParameter = function(name) {
+    return decodeURI(
+        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+    );
+}
+
 })();

@@ -344,7 +344,7 @@ test("walkHistory", 6, function() {
             equals(newestPassingRevision, 90425);
         });
 
-        results.countFailureOccurances(["Mock Builder", "Another Builder"], "userscripts/another-test.html", function(failureCount) {
+        results.countFailureOccurences(["Mock Builder", "Another Builder"], "userscripts/another-test.html", function(failureCount) {
             equals(failureCount, 4);
         });
     });

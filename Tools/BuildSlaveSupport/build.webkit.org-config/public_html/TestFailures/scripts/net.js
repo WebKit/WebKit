@@ -57,7 +57,7 @@ net.jsonp = function(url, callback)
         success: function(jsonp) {
             callback(base.parseJSONP(jsonp));
         },
-        error: function() {
+        error: function(request, textStatus, errorThrown) {
             callback({});
         },
     });

@@ -1,3 +1,50 @@
+2012-06-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make garden-o-matic work for the Apple Mac port
+        https://bugs.webkit.org/show_bug.cgi?id=84642
+
+        Reviewed by Adam Barth.
+        
+        Make garden-o-matic work for the Apple, webkit.org-hosted builders and testers. This involved
+        educating the scripts in various ways:
+        * Wrap up platform-related differences in config.kPlatforms[]
+        * Add a <select> to switch between platforms, and support a url parameter, ?platform=chromium/apple
+        * The webkit.org bots don't accumulate test results into a single directory like the chromium.org ones do,
+          so add config.haveBuilderAccumulatedResults and logic in fetchResultsByBuilder() to find the most
+          recent build with valid results.
+        * The webkit.org bots often generate results directories with no layout test data (e.g. when testers
+          try to test a build that has already been deleted). Make walkHistory() more robust here.
+        * webkit.org uses differently named test result directories, that include the SVN revision as
+          well as the build number. That forces us to fetch more build info before we can get the
+          result directory URL.
+        * chromium.org serves raw directory listings for a builder's results directories. webkit.org serves
+          those with Twisted, so rather than scrape directory listings, we use buildbot JSON to find results
+          dirs.
+        * Various URLs differ between webkit.org and chromium.org
+        * Better UI for the failures info, so that some info is visible even when not hovered.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/LayoutTestResultsLoader.js:
+        (LayoutTestResultsLoader.prototype.set _fetchAndParseNRWTResults):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/model.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/net.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/summary-mock.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/perf.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/notifications.css:
+        (ol.notifications>li table.failures):
+        (ol.notifications>li:hover table.failures):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/onebar.css:
+        (#onebar #platform-picker):
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+
 2012-06-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120536.

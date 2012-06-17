@@ -109,7 +109,8 @@ model.updateRecentCommits = function(callback)
     });
 };
 
-function updateCommitIndex() {
+function updateCommitIndex()
+{
     model.state.recentCommits.forEach(function(commitData) {
         g_commitIndex[commitData.revision] = commitData;
     });
@@ -152,7 +153,8 @@ model.latestRevisionWithNoBuildersInFlight = function()
 
 model.updateResultsByBuilder = function(callback)
 {
-    results.fetchResultsByBuilder(Object.keys(config.kBuilders), function(resultsByBuilder) {
+    var platformBuilders = config.kPlatforms[config.currentPlatform].builders;
+    results.fetchResultsByBuilder(Object.keys(platformBuilders), function(resultsByBuilder) {
         model.state.resultsByBuilder = resultsByBuilder;
         callback();
     });
@@ -189,6 +191,7 @@ model.analyzeUnexpectedFailures = function(callback, completionCallback)
             }
 
             model.state.failureAnalysisByTest[testName] = failureAnalysis;
+            
             callback(failureAnalysis);
             tracker.requestComplete();
         });

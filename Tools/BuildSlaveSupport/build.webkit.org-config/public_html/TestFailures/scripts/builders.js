@@ -27,8 +27,6 @@ var builders = builders || {};
 
 (function() {
 
-var kChromiumBuildBotURL = 'http://build.chromium.org/p/chromium.webkit';
-
 var kUpdateStepName = 'update';
 var kUpdateScriptsStepName = 'update_scripts';
 var kCompileStepName = 'compile';
@@ -36,9 +34,19 @@ var kWebKitTestsStepName = 'webkit_tests';
 
 var kCrashedOrHungOutputMarker = 'crashed or hung';
 
-function urlForBuildInfo(builderName, buildNumber)
+function buildBotURL(platform)
 {
-    return kChromiumBuildBotURL + '/json/builders/' + encodeURIComponent(builderName) + '/builds/' + encodeURIComponent(buildNumber);
+    return config.kPlatforms[platform].buildConsoleURL;
+}
+
+function urlForBuilderInfo(platform, builderName)
+{
+    return buildBotURL(platform) + '/json/builders/' + encodeURIComponent(builderName) + '/';
+}
+
+function urlForBuildInfo(platform, builderName, buildNumber)
+{
+    return buildBotURL(platform) + '/json/builders/' + encodeURIComponent(builderName) + '/builds/' + encodeURIComponent(buildNumber);
 }
 
 function didFail(step)
@@ -71,7 +79,7 @@ function mostRecentCompletedBuildNumber(individualBuilderStatus)
 
 var g_buildInfoCache = new base.AsynchronousCache(function(key, callback) {
     var explodedKey = key.split('\n');
-    net.get(urlForBuildInfo(explodedKey[0], explodedKey[1]), callback);
+    net.get(urlForBuildInfo(explodedKey[0], explodedKey[1], explodedKey[2]), callback);
 });
 
 builders.clearBuildInfoCache = function()
@@ -79,9 +87,9 @@ builders.clearBuildInfoCache = function()
     g_buildInfoCache.clear();
 }
 
-function fetchMostRecentBuildInfoByBuilder(callback)
+function fetchMostRecentBuildInfoByBuilder(platform, callback)
 {
-    net.get(kChromiumBuildBotURL + '/json/builders', function(builderStatus) {
+    net.get(buildBotURL(platform) + '/json/builders', function(builderStatus) {
         var buildInfoByBuilder = {};
         var builderNames = Object.keys(builderStatus);
         var requestTracker = new base.RequestTracker(builderNames.length, callback, [buildInfoByBuilder]);
@@ -101,7 +109,7 @@ function fetchMostRecentBuildInfoByBuilder(callback)
                 return;
             }
 
-            g_buildInfoCache.get(builderName + '\n' + buildNumber, function(buildInfo) {
+            g_buildInfoCache.get(platform + '\n' + builderName + '\n' + buildNumber, function(buildInfo) {
                 buildInfoByBuilder[builderName] = buildInfo;
                 requestTracker.requestComplete();
             });
@@ -109,9 +117,42 @@ function fetchMostRecentBuildInfoByBuilder(callback)
     });
 }
 
+builders.builderInfo = function(platform, builderName, callback)
+{
+    var builderInfoURL = urlForBuilderInfo(platform, builderName);
+    net.get(builderInfoURL, callback);
+};
+
+builders.cachedBuildInfos = function(platform, builderName, callback)
+{
+    var builderInfoURL = urlForBuilderInfo(platform, builderName);
+    net.get(builderInfoURL, function(builderInfo) {
+        var selectURL = urlForBuilderInfo(platform, builderName) + 'builds';
+        // // FIXME: limit to some reasonable number?
+        var selectParams = { select : builderInfo.cachedBuilds };
+        var traditionalEncoding = true;
+        selectURL += '?' + $.param(selectParams, traditionalEncoding);
+        net.get(selectURL, callback);
+    });
+}
+
+builders.recentBuildInfos = function(callback)
+{
+    fetchMostRecentBuildInfoByBuilder(config.currentPlatform, function(buildInfoByBuilder) {
+        var buildInfo = {};
+        $.each(buildInfoByBuilder, function(builderName, thisBuildInfo) {
+            if (!buildInfo)
+                return;
+            
+            buildInfo[builderName] = thisBuildInfo;
+        });
+        callback(buildInfo);
+    });
+};
+
 builders.buildersFailingNonLayoutTests = function(callback)
 {
-    fetchMostRecentBuildInfoByBuilder(function(buildInfoByBuilder) {
+    fetchMostRecentBuildInfoByBuilder(config.currentPlatform, function(buildInfoByBuilder) {
         var failureList = {};
         $.each(buildInfoByBuilder, function(builderName, buildInfo) {
             if (!buildInfo)
@@ -126,11 +167,12 @@ builders.buildersFailingNonLayoutTests = function(callback)
 
 builders.perfBuilders = function(callback)
 {
-    fetchMostRecentBuildInfoByBuilder(function(buildInfoByBuilder) {
+    fetchMostRecentBuildInfoByBuilder(config.currentPlatform, function(buildInfoByBuilder) {
         var perfTestMap = {};
         $.each(buildInfoByBuilder, function(builderName, buildInfo) {
             if (!buildInfo || builderName.indexOf('Perf') == -1)
                 return;
+
             buildInfo.steps.forEach(function(step) {
                 // FIXME: If the compile is broken, grab an older build.
                 // If the compile/update is broken, no steps will have a results url.

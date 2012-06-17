@@ -29,7 +29,7 @@ var ui = ui || {};
 
 ui.displayURLForBuilder = function(builderName)
 {
-    return 'http://build.chromium.org/p/chromium.webkit/waterfall?' + $.param({
+    return config.kPlatforms[config.currentPlatform].waterfallURL + '?' + $.param({
         'builder': builderName
     });
 }
@@ -67,6 +67,7 @@ ui.onebar = base.extends('div', {
     {
         this.id = 'onebar';
         this.innerHTML =
+            '<div><select id="platform-picker"></select></div>' +
             '<ul>' +
                 '<li><a href="#unexpected">Unexpected Failures</a></li>' +
                 '<li><a href="#expected">Expected Failures</a></li>' +
@@ -89,6 +90,29 @@ ui.onebar = base.extends('div', {
             disabled: [2],
             show: function(event, ui) { this._restoreScrollOffset(ui.index); },
         });
+    },
+    _buildPlatformsPopup: function() {
+        // FIXME: find a better place to do this.
+        var urlPlatform = base.getURLParameter('platform');
+        if (urlPlatform)
+            config.setPlatform(urlPlatform);
+        
+        var platformSelect = document.getElementById('platform-picker');
+        var currentPlatformIndex = 0;
+        Object.keys(config.kPlatforms).sort().forEach(function(platformName) {
+            var option = document.createElement('option');
+            option.innerText = config.kPlatforms[platformName].label;
+            option._platform = platformName;
+            if (platformName == config.currentPlatform)
+                currentPlatformIndex = platformSelect.childNodes.length;
+            platformSelect.appendChild(option);
+        });
+        
+        platformSelect.addEventListener('change', function() {
+            window.location.search = '?platform=' + platformSelect.selectedOptions[0]._platform;
+        }, false);
+        
+        platformSelect.selectedIndex = currentPlatformIndex;
     },
     _saveScrollOffset: function() {
         var tabIndex = this._tabs.tabs('option', 'selected');
@@ -131,6 +155,7 @@ ui.onebar = base.extends('div', {
     {
         document.body.insertBefore(this, document.body.firstChild);
         this._setupHistoryHandlers();
+        this._buildPlatformsPopup();
     },
     tabNamed: function(tabName)
     {

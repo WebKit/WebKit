@@ -27,21 +27,59 @@ var config = config || {};
 
 (function() {
 
-config.kBuilders = {
-    'Webkit Win': {version: 'xp'},
-    'Webkit Vista': {version: 'vista'},
-    'Webkit Win7': {version: 'win7'},
-    'Webkit Win (dbg)(1)': {version: 'xp', debug: true},
-    'Webkit Win (dbg)(2)': {version: 'xp', debug: true},
-    'Webkit Linux': {version: 'lucid', is64bit: true},
-    'Webkit Linux 32': {version: 'lucid'},
-    'Webkit Linux (dbg)': {version: 'lucid', is64bit: true, debug: true},
-    'Webkit Mac10.5': {version: 'leopard'},
-    'Webkit Mac10.5 (dbg)(1)': {version: 'leopard', debug: true},
-    'Webkit Mac10.5 (dbg)(2)': {version: 'leopard', debug: true},
-    'Webkit Mac10.6': {version: 'snowleopard'},
-    'Webkit Mac10.6 (dbg)': {version: 'snowleopard', debug: true},
-    'Webkit Mac10.7': {version: 'lion'},
+config.kPlatforms = {
+    'apple' : {
+        label : 'Apple',
+        buildConsoleURL: 'http://build.webkit.org',
+        layoutTestResultsURL: 'http://build.webkit.org/results',
+        waterfallURL: 'http://build.webkit.org/waterfall',
+        builders: {
+            'Apple Lion Release WK1 (Tests)' : {version: 'lion' },
+            'Apple Lion Debug WK1 (Tests)' : {version: 'lion', debug: true},
+            'Apple Lion Release WK2 (Tests)' : {version: 'lion' },
+            'Apple Lion Debug WK2 (Tests)' : {version: 'lion', debug: true},
+            // 'Apple Win XP Debug (Tests)' : {version: 'xp',debug: true},
+            // 'Apple Win 7 Release (Tests)' : {version: 'win7'},
+        },
+        haveBuilderAccumulatedResults : false,
+        useDirectoryListingForOldBuilds: false,
+        resultsDirectoryNameFromBuilderName: function(builderName) {
+            return encodeURIComponent(builderName);
+        },
+        resultsDirectoryForBuildNumber: function(buildNumber, revision) {
+            return encodeURIComponent('r' + revision + ' (' + buildNumber + ')');
+        },
+    },
+    'chromium' : {
+        label : 'Chromium',
+        buildConsoleURL: 'http://build.chromium.org/p/chromium.webkit',
+        layoutTestResultsURL: 'http://build.chromium.org/f/chromium/layout_test_results',
+        waterfallURL: 'http://build.chromium.org/p/chromium.webkit/waterfall',
+        builders: {
+            'Webkit Win': {version: 'xp'},
+            'Webkit Vista': {version: 'vista'},
+            'Webkit Win7': {version: 'win7'},
+            'Webkit Win (dbg)(1)': {version: 'xp', debug: true},
+            'Webkit Win (dbg)(2)': {version: 'xp', debug: true},
+            'Webkit Linux': {version: 'lucid', is64bit: true},
+            'Webkit Linux 32': {version: 'lucid'},
+            'Webkit Linux (dbg)': {version: 'lucid', is64bit: true, debug: true},
+            'Webkit Mac10.5': {version: 'leopard'},
+            'Webkit Mac10.5 (dbg)(1)': {version: 'leopard', debug: true},
+            'Webkit Mac10.5 (dbg)(2)': {version: 'leopard', debug: true},
+            'Webkit Mac10.6': {version: 'snowleopard'},
+            'Webkit Mac10.6 (dbg)': {version: 'snowleopard', debug: true},
+            'Webkit Mac10.7': {version: 'lion'},
+        },
+        haveBuilderAccumulatedResults : true,
+        useDirectoryListingForOldBuilds: true,
+        resultsDirectoryNameFromBuilderName: function(builderName) {
+            return builderName.replace(/[ .()]/g, '_');
+        },
+        resultsDirectoryForBuildNumber: function(buildNumber, revision) {
+            return buildNumber;
+        },
+    }
 };
 
 config.kTracURL = 'http://trac.webkit.org';
@@ -60,5 +98,16 @@ config.kUpdateFrequency = kTenMinutesInMilliseconds;
 config.kRelativeTimeUpdateFrequency = 1000 * 60;
 
 config.kExperimentalFeatures = window.location.search.search('enableExperiments=1') != -1;
+
+config.currentPlatform = 'chromium';
+
+config.setPlatform = function(platform)
+{
+    if (!this.kPlatforms[platform]) {
+        window.console.log(platform + ' is not a recognized platform');
+        return;
+    }
+    config.currentPlatform = platform;
+};
 
 })();

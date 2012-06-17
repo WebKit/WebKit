@@ -91,6 +91,8 @@ ui.perf.View = base.extends('div', {
         if (this._builderPicker)
             this._titleBar.removeChild(this._builderPicker);
 
+        if (!this._suitePicker.length)
+            return;
         var selectedSuite = this._suitePicker[this._suitePicker.selectedIndex].text;
         var builders = [];
         var urls = [];
@@ -117,6 +119,9 @@ ui.perf.View = base.extends('div', {
             graph = document.createElement('iframe');
             this.appendChild(graph);
         }
+
+        if (!this._builderPicker || !this._builderPicker.length)
+            return;
 
         var url = this._builderPicker[this._builderPicker.selectedIndex].value;
         popOutLink.href = url;

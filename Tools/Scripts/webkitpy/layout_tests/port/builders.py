@@ -53,13 +53,16 @@ _exact_matches = {
     "Webkit Mac10.7": {"port_name": "chromium-mac-lion", "specifiers": set(["lion"])},
 
     # These builders are on build.webkit.org.
+    "Apple Lion Release WK1 (Tests)": {"port_name": "mac-lion", "specifiers": set(["lion"])},
+    "Apple Lion Debug WK1 (Tests)": {"port_name": "mac-lion", "specifiers": set(["lion", "debug"])},
+    "Apple Lion Release WK2 (Tests)": {"port_name": "mac-lion", "specifiers": set(["lion", "wk2"])},
+    "Apple Lion Debug WK2 (Tests)": {"port_name": "mac-lion", "specifiers": set(["lion", "wk2", "debug"])},
+
+    "Apple Win XP Debug (Tests)": {"port_name": "win-xp", "specifiers": set(["win", "debug"])},
+    "Apple Win 7 Release (Tests)": {"port_name": "win-xp", "specifiers": set(["win"])},
+
     "GTK Linux 32-bit Debug": {"port_name": "gtk", "specifiers": set(["gtk"])},
-    "Leopard Intel Debug (Tests)": {"port_name": "mac-leopard", "specifiers": set(["leopard"])},
-    "SnowLeopard Intel Release (Tests)": {"port_name": "mac-snowleopard", "specifiers": set(["snowleopard"])},
-    "SnowLeopard Intel Release (WebKit2 Tests)": {"port_name": "mac-snowleopard-wk2", "specifiers": set(["wk2"])},
     "Qt Linux Release": {"port_name": "qt-linux", "specifiers": set(["win", "linux", "mac"])},
-    "Windows XP Debug (Tests)": {"port_name": "win-xp", "specifiers": set(["win"])},
-    "Windows 7 Release (WebKit2 Tests)": {"port_name": "win-future-wk2", "specifiers": set(["wk2"])},
     "EFL Linux Release": {"port_name": "efl", "specifiers": set(["efl"])},
 }
 
