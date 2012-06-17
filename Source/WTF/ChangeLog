@@ -1,3 +1,18 @@
+2012-06-17  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Simplify implementation of currentTime()
+        https://bugs.webkit.org/show_bug.cgi?id=83156
+
+        Reviewed by Brent Fulgham.
+
+        Use GetSystemTimeAsFileTime() instead of ftime().
+        This avoids an unneeded call to the MS CRT and
+        brings the Win/WinCE code closer together.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::lowResUTCTime):
+        (WTF::currentTime):
+
 2012-06-15  Tony Payne  <tpayne@chromium.org>
 
         [chromium] Add iccjpeg and qcms to chromium port.

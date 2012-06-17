@@ -47,15 +47,6 @@
 #include <stdint.h>
 #include <time.h>
 
-#if USE(QUERY_PERFORMANCE_COUNTER)
-#if OS(WINCE)
-extern "C" time_t mktime(struct tm *t);
-#else
-#include <sys/timeb.h>
-#include <sys/types.h>
-#endif
-#endif
-
 #elif PLATFORM(WX)
 #include <wx/datetime.h>
 #elif PLATFORM(EFL)
@@ -74,11 +65,34 @@ extern "C" time_t mktime(struct tm *t);
 
 namespace WTF {
 
-const double msPerSecond = 1000.0;
-
 #if !PLATFORM(CHROMIUM)
 
 #if OS(WINDOWS)
+
+// Number of 100 nanosecond between January 1, 1601 and January 1, 1970.
+static const ULONGLONG epochBias = 116444736000000000ULL;
+static const double nsPerSecond = 1000000000.0;
+
+static double lowResUTCTime()
+{
+    FILETIME fileTime;
+
+#if OS(WINCE)
+    GetCurrentFT(&fileTime);
+#else
+    GetSystemTimeAsFileTime(&fileTime);
+#endif
+
+    // As per Windows documentation for FILETIME, copy the resulting FILETIME structure to a
+    // ULARGE_INTEGER structure using memcpy (using memcpy instead of direct assignment can
+    // prevent alignment faults on 64-bit Windows).
+
+    ULARGE_INTEGER dateTime;
+    memcpy(&dateTime, &fileTime, sizeof(dateTime));
+
+    // Windows file times are in 100s of nanoseconds.
+    return (dateTime.QuadPart - epochBias) / (100 * nsPerSecond);
+}
 
 #if USE(QUERY_PERFORMANCE_COUNTER)
 
@@ -126,28 +140,6 @@ static double highResUpTime()
     tickCountLast = tickCount;
 
     return (1000.0 * qpc.QuadPart) / static_cast<double>(qpcFrequency.QuadPart);
-}
-
-static double lowResUTCTime()
-{
-#if OS(WINCE)
-    SYSTEMTIME systemTime;
-    GetSystemTime(&systemTime);
-    struct tm tmtime;
-    tmtime.tm_year = systemTime.wYear - 1900;
-    tmtime.tm_mon = systemTime.wMonth - 1;
-    tmtime.tm_mday = systemTime.wDay;
-    tmtime.tm_wday = systemTime.wDayOfWeek;
-    tmtime.tm_hour = systemTime.wHour;
-    tmtime.tm_min = systemTime.wMinute;
-    tmtime.tm_sec = systemTime.wSecond;
-    time_t timet = mktime(&tmtime);
-    return timet * msPerSecond + systemTime.wMilliseconds;
-#else
-    struct _timeb timebuffer;
-    _ftime(&timebuffer);
-    return timebuffer.time * msPerSecond + timebuffer.millitm;
-#endif
 }
 
 static bool qpcAvailable()
@@ -208,36 +200,13 @@ double currentTime()
 
 #else
 
-static double currentSystemTime()
-{
-    FILETIME ft;
-    GetCurrentFT(&ft);
-
-    // As per Windows documentation for FILETIME, copy the resulting FILETIME structure to a
-    // ULARGE_INTEGER structure using memcpy (using memcpy instead of direct assignment can
-    // prevent alignment faults on 64-bit Windows).
-
-    ULARGE_INTEGER t;
-    memcpy(&t, &ft, sizeof(t));
-
-    // Windows file times are in 100s of nanoseconds.
-    // To convert to seconds, we have to divide by 10,000,000, which is more quickly
-    // done by multiplying by 0.0000001.
-
-    // Between January 1, 1601 and January 1, 1970, there were 369 complete years,
-    // of which 89 were leap years (1700, 1800, and 1900 were not leap years).
-    // That is a total of 134774 days, which is 11644473600 seconds.
-
-    return t.QuadPart * 0.0000001 - 11644473600.0;
-}
-
 double currentTime()
 {
     static bool init = false;
     static double lastTime;
     static DWORD lastTickCount;
     if (!init) {
-        lastTime = currentSystemTime();
+        lastTime = lowResUTCTime();
         lastTickCount = GetTickCount();
         init = true;
         return lastTime;
