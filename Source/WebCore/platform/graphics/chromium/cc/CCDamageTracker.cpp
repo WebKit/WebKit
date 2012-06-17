@@ -239,18 +239,6 @@ FloatRect CCDamageTracker::trackDamageFromLeftoverRects()
     return damageRect;
 }
 
-static bool layerNeedsToRedrawOntoItsTargetSurface(CCLayerImpl* layer)
-{
-    // If the layer does NOT own a surface but has SurfacePropertyChanged,
-    // this means that its target surface is affected and needs to be redrawn.
-    // However, if the layer DOES own a surface, then the SurfacePropertyChanged 
-    // flag should not be used here, because that flag represents whether the
-    // layer's surface has changed.
-    if (layer->renderSurface())
-        return layer->layerPropertyChanged();
-    return layer->layerPropertyChanged() || layer->layerSurfacePropertyChanged();
-}
-
 void CCDamageTracker::extendDamageForLayer(CCLayerImpl* layer, FloatRect& targetDamageRect)
 {
     // There are two ways that a layer can damage a region of the target surface:
@@ -263,11 +251,6 @@ void CCDamageTracker::extendDamageForLayer(CCLayerImpl* layer, FloatRect& target
     //      region damages the surface.
     //
     // Property changes take priority over update rects.
-    //
-    // This method is called when we want to consider how a layer contributes to its
-    // targetRenderSurface, even if that layer owns the targetRenderSurface itself.
-    // To consider how a layer's targetSurface contributes to the ancestorSurface,
-    // extendDamageForRenderSurface() must be called instead.
 
     // Compute the layer's "originTransform" by translating the drawTransform.
     WebTransformationMatrix originTransform = layer->drawTransform();
@@ -279,7 +262,7 @@ void CCDamageTracker::extendDamageForLayer(CCLayerImpl* layer, FloatRect& target
     FloatRect layerRectInTargetSpace = CCMathUtil::mapClippedRect(originTransform, FloatRect(FloatPoint::zero(), layer->bounds()));
     saveRectForNextFrame(layer->id(), layerRectInTargetSpace);
 
-    if (layerIsNew || layerNeedsToRedrawOntoItsTargetSurface(layer)) {
+    if (layerIsNew || layer->layerPropertyChanged()) {
         // If a layer is new or has changed, then its entire layer rect affects the target surface.
         targetDamageRect.uniteIfNonZero(layerRectInTargetSpace);
 
@@ -317,7 +300,7 @@ void CCDamageTracker::extendDamageForRenderSurface(CCLayerImpl* layer, FloatRect
     saveRectForNextFrame(layer->id(), surfaceRectInTargetSpace);
 
     FloatRect damageRectInLocalSpace;
-    if (surfaceIsNew || renderSurface->surfacePropertyChanged() || layer->layerSurfacePropertyChanged()) {
+    if (surfaceIsNew || renderSurface->surfacePropertyChanged()) {
         // The entire surface contributes damage.
         damageRectInLocalSpace = renderSurface->contentRect();
 

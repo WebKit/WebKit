@@ -42,7 +42,6 @@
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCMathUtil.h"
 #include "cc/CCPageScaleAnimation.h"
-#include "cc/CCRenderPassDrawQuad.h"
 #include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCThreadTask.h"
@@ -267,25 +266,25 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
     }
 }
 
-bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
+bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLayerList& renderSurfaceLayerList, CCLayerList& willDrawLayers)
 {
-    ASSERT(frame.renderPasses.isEmpty());
+    ASSERT(passes.isEmpty());
 
-    calculateRenderSurfaceLayerList(*frame.renderSurfaceLayerList);
+    calculateRenderSurfaceLayerList(renderSurfaceLayerList);
 
-    TRACE_EVENT1("cc", "CCLayerTreeHostImpl::calculateRenderPasses", "renderSurfaceLayerList.size()", static_cast<long long unsigned>(frame.renderSurfaceLayerList->size()));
+    TRACE_EVENT1("cc", "CCLayerTreeHostImpl::calculateRenderPasses", "renderSurfaceLayerList.size()", static_cast<long long unsigned>(renderSurfaceLayerList.size()));
 
     m_rootLayerImpl->setScissorRect(enclosingIntRect(m_rootScissorRect));
 
     // Create the render passes in dependency order.
     HashMap<CCRenderSurface*, CCRenderPass*> surfacePassMap;
-    for (int surfaceIndex = frame.renderSurfaceLayerList->size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
-        CCLayerImpl* renderSurfaceLayer = (*frame.renderSurfaceLayerList)[surfaceIndex];
+    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex];
         CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
 
         OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderSurface);
         surfacePassMap.add(renderSurface, pass.get());
-        frame.renderPasses.append(pass.release());
+        passes.append(pass.release());
     }
 
     bool recordMetricsForFrame = true; // FIXME: In the future, disable this when about:tracing is off.
@@ -300,8 +299,8 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
     // in the future.
     bool drawFrame = true;
 
-    CCLayerIteratorType end = CCLayerIteratorType::end(frame.renderSurfaceLayerList);
-    for (CCLayerIteratorType it = CCLayerIteratorType::begin(frame.renderSurfaceLayerList); it != end; ++it) {
+    CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
+    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
         CCRenderSurface* renderSurface = it.targetRenderSurfaceLayer()->renderSurface();
         CCRenderPass* pass = surfacePassMap.get(renderSurface);
         bool hadMissingTiles = false;
@@ -313,7 +312,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
             pass->appendQuadsForRenderSurfaceLayer(*it, contributingRenderPass, &occlusionTracker);
         } else if (it.representsItself() && !occlusionTracker.occluded(*it, it->visibleLayerRect()) && !it->visibleLayerRect().isEmpty() && !it->scissorRect().isEmpty()) {
             it->willDraw(m_layerRenderer.get(), context());
-            frame.willDrawLayers.append(*it);
+            willDrawLayers.append(*it);
 
             pass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
         }
@@ -328,15 +327,12 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
     }
 
     if (!m_hasTransparentBackground) {
-        frame.renderPasses.last()->setHasTransparentBackground(false);
-        frame.renderPasses.last()->appendQuadsToFillScreen(m_rootLayerImpl.get(), m_backgroundColor, occlusionTracker);
+        passes.last()->setHasTransparentBackground(false);
+        passes.last()->appendQuadsToFillScreen(m_rootLayerImpl.get(), m_backgroundColor, occlusionTracker);
     }
 
     if (drawFrame)
         occlusionTracker.overdrawMetrics().recordMetrics(this);
-
-    removePassesWithCachedTextures(frame.renderPasses, frame.skippedPasses);
-
     return drawFrame;
 }
 
@@ -386,70 +382,6 @@ IntSize CCLayerTreeHostImpl::contentSize() const
     return m_rootScrollLayerImpl->children()[0]->contentBounds();
 }
 
-void CCLayerTreeHostImpl::removeRenderPassesRecursive(CCRenderPassList& passes, size_t bottomPass, const CCRenderPass* firstToRemove, CCRenderPassList& skippedPasses)
-{
-    size_t removeIndex = passes.find(firstToRemove);
-
-    // The pass was already removed by another quad - probably the original, and we are the replica.
-    if (removeIndex == notFound)
-        return;
-
-    OwnPtr<CCRenderPass> removedPass = passes[removeIndex].release();
-    passes.remove(removeIndex);
-
-    // Now follow up for all RenderPass quads and remove their render passes recursively.
-    const CCQuadList& quadList = removedPass->quadList();
-    CCQuadList::constBackToFrontIterator quadListIterator = quadList.backToFrontBegin();
-    for (; quadListIterator != quadList.backToFrontEnd(); ++quadListIterator) {
-        CCDrawQuad* currentQuad = (*quadListIterator).get();
-        if (currentQuad->material() != CCDrawQuad::RenderPass)
-            continue;
-
-        CCRenderPassDrawQuad* renderPassQuad = static_cast<CCRenderPassDrawQuad*>(currentQuad);
-        const CCRenderPass* nextRenderPass = renderPassQuad->renderPass();
-
-        // Our search is now limited up to the pass that we just removed.
-        // Substitute removeIndex for bottomPass now.
-        removeRenderPassesRecursive(passes, removeIndex, nextRenderPass, skippedPasses);
-    }
-    skippedPasses.append(removedPass.release());
-}
-
-void CCLayerTreeHostImpl::removePassesWithCachedTextures(CCRenderPassList& passes, CCRenderPassList& skippedPasses)
-{
-    for (ssize_t passIndex = passes.size() - 1; passIndex >= 0; --passIndex) {
-        CCRenderPass* currentPass = passes[passIndex].get();
-        const CCQuadList& quadList = currentPass->quadList();
-        CCQuadList::constBackToFrontIterator quadListIterator = quadList.backToFrontBegin();
-
-        for (; quadListIterator != quadList.backToFrontEnd(); ++quadListIterator) {
-            CCDrawQuad* currentQuad = quadListIterator->get();
-
-            if (currentQuad->material() != CCDrawQuad::RenderPass)
-                continue;
-
-            CCRenderPassDrawQuad* renderPassQuad = static_cast<CCRenderPassDrawQuad*>(currentQuad);
-            CCRenderSurface* targetSurface = renderPassQuad->renderPass()->targetSurface();
-
-            if (targetSurface->contentsChanged() || !targetSurface->hasCachedContentsTexture())
-                continue;
-
-            // Reserve the texture immediately. We do not need to pass in layer renderer
-            // since the texture already exists, just needs to be reserved.
-            if (!targetSurface->prepareContentsTexture(0))
-                continue;
-
-            // We are changing the vector in the middle of reverse iteration.
-            // We are guaranteed that any data from iterator to the end will not change.
-            // Capture the iterator position from the end, and restore it after the change.
-            int positionFromEnd = passes.size() - passIndex;
-            removeRenderPassesRecursive(passes, passIndex, renderPassQuad->renderPass(), skippedPasses);
-            passIndex = passes.size() - positionFromEnd;
-            ASSERT(passIndex >= 0);
-        }
-    }
-}
-
 bool CCLayerTreeHostImpl::prepareToDraw(FrameData& frame)
 {
     TRACE_EVENT0("cc", "CCLayerTreeHostImpl::prepareToDraw");
@@ -460,7 +392,7 @@ bool CCLayerTreeHostImpl::prepareToDraw(FrameData& frame)
     frame.renderSurfaceLayerList->clear();
     frame.willDrawLayers.clear();
 
-    if (!calculateRenderPasses(frame))
+    if (!calculateRenderPasses(frame.renderPasses, *frame.renderSurfaceLayerList, frame.willDrawLayers))
         return false;
 
     // If we return true, then we expect drawLayers() to be called before this function is called again.
