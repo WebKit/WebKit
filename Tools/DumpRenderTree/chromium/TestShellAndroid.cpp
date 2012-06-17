@@ -31,7 +31,7 @@
 #include "config.h"
 #include "TestShell.h"
 
-#include "WebFontRendering.h"
+#include "linuxish/WebFontRendering.h"
 #include <android/log.h>
 #include <errno.h>
 #include <fcntl.h>

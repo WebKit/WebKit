@@ -130,6 +130,16 @@ public:
 
     HarfbuzzFace* harfbuzzFace() const;
 
+    // -------------------------------------------------------------------------
+    // Global font preferences...
+
+    static void setHinting(SkPaint::Hinting);
+    static void setAutoHint(bool);
+    static void setUseBitmaps(bool);
+    static void setAntiAlias(bool);
+    static void setSubpixelRendering(bool);
+    static void setSubpixelPositioning(bool);
+
 private:
     void querySystemForRenderStyle();
 
