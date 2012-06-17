@@ -1,3 +1,15 @@
+2012-06-17  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix a large number of tests I broke with http://trac.webkit.org/changeset/120547
+
+        We need to reset the device scale facter after each test.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::InternalSettings):
+        (WebCore::InternalSettings::restoreTo):
+        * testing/InternalSettings.h:
+        (InternalSettings):
+
 2012-06-16  Huang Dongsung  <luxtella@company100.net>
 
         [Texmap] Share gaussian formula between shaders in TextureMapperShaderManager.

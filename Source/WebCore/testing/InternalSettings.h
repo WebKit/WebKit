@@ -108,6 +108,7 @@ private:
     bool m_originalWindowFocusRestricted;
     bool m_originalDeviceSupportsTouch;
     bool m_originalDeviceSupportsMouse;
+    float m_originalDeviceScaleFactor;
 };
 
 } // namespace WebCore
