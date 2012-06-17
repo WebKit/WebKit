@@ -1,3 +1,15 @@
+2012-06-16  Mike West  <mkwst@chromium.org>
+
+        Fix test cases for `header`/`footer` AXRoleDescription
+        https://bugs.webkit.org/show_bug.cgi?id=88911
+
+        The relative URLs to js-test-pre.js and js-test-post.js were incorrect.
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac/accessibility/footer.html:
+        * platform/mac/accessibility/header.html:
+
 2012-06-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Rebaseline fast/lists/001*.html tests after r120495
