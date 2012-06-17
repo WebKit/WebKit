@@ -1275,13 +1275,13 @@ public:
         : m_rootLayer(ContentLayerChromium::create(&m_delegate))
         , m_childLayer(ContentLayerChromium::create(&m_delegate))
     {
-        m_settings.deviceScaleFactor = 1.5;
     }
 
     virtual void beginTest()
     {
         // The device viewport should be scaled by the device scale factor.
         m_layerTreeHost->setViewportSize(IntSize(40, 40));
+        m_layerTreeHost->setDeviceScaleFactor(1.5);
         EXPECT_EQ(IntSize(40, 40), m_layerTreeHost->viewportSize());
         EXPECT_EQ(IntSize(60, 60), m_layerTreeHost->deviceViewportSize());
 
@@ -1307,7 +1307,7 @@ public:
         // Should only do one commit.
         EXPECT_EQ(0, impl->sourceFrameNumber());
         // Device scale factor should come over to impl.
-        EXPECT_NEAR(impl->settings().deviceScaleFactor, 1.5, 0.00001);
+        EXPECT_NEAR(impl->deviceScaleFactor(), 1.5, 0.00001);
 
         // Both layers are on impl.
         ASSERT_EQ(1u, impl->rootLayer()->children().size());
@@ -1336,7 +1336,7 @@ public:
         EXPECT_EQ_RECT(IntRect(0, 0, 60, 60), root->renderSurface()->contentRect());
 
         WebTransformationMatrix scaleTransform;
-        scaleTransform.scale(impl->settings().deviceScaleFactor);
+        scaleTransform.scale(impl->deviceScaleFactor());
 
         // The root layer is scaled by 2x.
         WebTransformationMatrix rootScreenSpaceTransform = scaleTransform;

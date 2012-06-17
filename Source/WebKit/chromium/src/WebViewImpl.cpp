@@ -2486,6 +2486,10 @@ void WebViewImpl::setDeviceScaleFactor(float scaleFactor)
         // needs to match the one in the compositor.
         ASSERT(scaleFactor == m_deviceScaleInCompositor);
     }
+    if (!m_layerTreeView.isNull() && m_webSettings->applyDefaultDeviceScaleFactorInCompositor()) {
+        m_deviceScaleInCompositor = page()->deviceScaleFactor();
+        m_layerTreeView.setDeviceScaleFactor(m_deviceScaleInCompositor);
+    }
 }
 
 bool WebViewImpl::isFixedLayoutModeEnabled() const
@@ -3466,16 +3470,15 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());
         m_nonCompositedContentHost->setOpaque(!isTransparent());
 
-        if (m_webSettings->applyDefaultDeviceScaleFactorInCompositor() && page()->deviceScaleFactor() != 1) {
-            ASSERT(page()->deviceScaleFactor());
-
-            m_deviceScaleInCompositor = page()->deviceScaleFactor();
-            layerTreeViewSettings.deviceScaleFactor = m_deviceScaleInCompositor;
-            setDeviceScaleFactor(m_deviceScaleInCompositor);
-        }
-
         m_layerTreeView.initialize(this, m_rootLayer, layerTreeViewSettings);
         if (!m_layerTreeView.isNull()) {
+            if (m_webSettings->applyDefaultDeviceScaleFactorInCompositor() && page()->deviceScaleFactor() != 1) {
+                ASSERT(page()->deviceScaleFactor());
+
+                m_deviceScaleInCompositor = page()->deviceScaleFactor();
+                setDeviceScaleFactor(m_deviceScaleInCompositor);
+            }
+
             m_layerTreeView.setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
             if (m_compositorSurfaceReady)
                 m_layerTreeView.setSurfaceReady();

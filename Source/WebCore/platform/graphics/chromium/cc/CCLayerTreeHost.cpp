@@ -78,6 +78,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCLayerTre
     , m_numTimesRecreateShouldFail(0)
     , m_numFailedRecreateAttempts(0)
     , m_settings(settings)
+    , m_deviceScaleFactor(1)
     , m_visible(true)
     , m_memoryAllocationBytes(0)
     , m_memoryAllocationIsForDisplay(false)
@@ -251,6 +252,7 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 
     hostImpl->setSourceFrameNumber(frameNumber());
     hostImpl->setViewportSize(viewportSize());
+    hostImpl->setDeviceScaleFactor(deviceScaleFactor());
     hostImpl->setPageScaleFactorAndLimits(m_pageScaleFactor, m_minPageScaleFactor, m_maxPageScaleFactor);
     hostImpl->setBackgroundColor(m_backgroundColor);
     hostImpl->setHasTransparentBackground(m_hasTransparentBackground);
@@ -385,7 +387,7 @@ void CCLayerTreeHost::setViewportSize(const IntSize& viewportSize)
     m_viewportSize = viewportSize;
 
     m_deviceViewportSize = viewportSize;
-    m_deviceViewportSize.scale(m_settings.deviceScaleFactor);
+    m_deviceViewportSize.scale(m_deviceScaleFactor);
 
     setNeedsCommit();
 }
@@ -519,7 +521,7 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
         TRACE_EVENT("CCLayerTreeHost::updateLayers::calcDrawEtc", this, 0);
         WebTransformationMatrix identityMatrix;
         WebTransformationMatrix deviceScaleTransform;
-        deviceScaleTransform.scale(m_settings.deviceScaleFactor);
+        deviceScaleTransform.scale(m_deviceScaleFactor);
         CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer, rootLayer, deviceScaleTransform, identityMatrix, updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
 
         FloatRect rootScissorRect(FloatPoint(0, 0), viewportSize());
@@ -705,6 +707,17 @@ bool CCLayerTreeHost::requestPartialTextureUpdate()
 void CCLayerTreeHost::deleteTextureAfterCommit(PassOwnPtr<ManagedTexture> texture)
 {
     m_deleteTextureAfterCommitList.append(texture);
+}
+
+void CCLayerTreeHost::setDeviceScaleFactor(float deviceScaleFactor)
+{
+    if (deviceScaleFactor ==  m_deviceScaleFactor)
+        return;
+    m_deviceScaleFactor = deviceScaleFactor;
+
+    m_deviceViewportSize = m_viewportSize;
+    m_deviceViewportSize.scale(m_deviceScaleFactor);
+    setNeedsCommit();
 }
 
 void CCLayerTreeHost::animateLayers(double monotonicTime)

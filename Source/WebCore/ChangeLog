@@ -1,3 +1,39 @@
+2012-06-16  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] Make the deviceScaleFactor dynamically adjustable.
+        https://bugs.webkit.org/show_bug.cgi?id=88916
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp: Removed use of static
+        deviceScaleFactor from settings with dyanmic m_deviceScaleFactor
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::setViewportSize):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        (WebCore::CCLayerTreeHost::setDeviceScaleFactor): Added function to
+        set deviceScaleFactor.
+        (WebCore):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings): Removed static deviceScaleFactor
+        (CCSettings):
+        (CCLayerTreeHost): Added dynamic m_deviceScaleFactor in its place.
+        (WebCore::CCLayerTreeHost::deviceScaleFactor):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp: Same as above.
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::calculateRenderSurfaceLayerList):
+        (WebCore::CCLayerTreeHostImpl::setViewportSize):
+        (WebCore::CCLayerTreeHostImpl::setDeviceScaleFactor): Added function to
+        set deviceScaleFactor.
+        (WebCore):
+        (WebCore::CCLayerTreeHostImpl::updateMaxScrollPosition):
+        (WebCore::CCLayerTreeHostImpl::scrollBegin):
+        (WebCore::CCLayerTreeHostImpl::computePinchZoomDeltas):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h: Added dynamic
+        m_deviceScaleFactor instance variable.
+        (WebCore::CCLayerTreeHostImpl::deviceScaleFactor):
+        (CCLayerTreeHostImpl):
+
 2012-06-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120536.

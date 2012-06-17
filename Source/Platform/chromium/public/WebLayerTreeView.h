@@ -57,7 +57,6 @@ public:
             , refreshRate(0)
             , defaultTileSize(WebSize(256, 256))
             , maxUntiledLayerSize(WebSize(512, 512))
-            , deviceScaleFactor(1)
         {
         }
 
@@ -69,7 +68,6 @@ public:
         double refreshRate;
         WebSize defaultTileSize;
         WebSize maxUntiledLayerSize;
-        float deviceScaleFactor;
 #if WEBKIT_IMPLEMENTATION
         operator WebCore::CCLayerTreeSettings() const;
 #endif
@@ -108,6 +106,9 @@ public:
 
     WEBKIT_EXPORT void setViewportSize(const WebSize&);
     WEBKIT_EXPORT WebSize viewportSize() const;
+
+    WEBKIT_EXPORT void setDeviceScaleFactor(float);
+    WEBKIT_EXPORT float deviceScaleFactor() const;
 
     // Sets the background color for the viewport.
     WEBKIT_EXPORT void setBackgroundColor(WebColor);

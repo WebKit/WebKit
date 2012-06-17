@@ -86,7 +86,6 @@ struct CCLayerTreeSettings {
             , maxPartialTextureUpdates(std::numeric_limits<size_t>::max())
             , defaultTileSize(IntSize(256, 256))
             , maxUntiledLayerSize(IntSize(512, 512))
-            , deviceScaleFactor(1)
     { }
 
     bool acceleratePainting;
@@ -100,7 +99,6 @@ struct CCLayerTreeSettings {
     size_t maxPartialTextureUpdates;
     IntSize defaultTileSize;
     IntSize maxUntiledLayerSize;
-    float deviceScaleFactor;
 };
 
 // Provides information on an Impl's rendering capabilities back to the CCLayerTreeHost
@@ -246,6 +244,9 @@ public:
     bool requestPartialTextureUpdate();
     void deleteTextureAfterCommit(PassOwnPtr<ManagedTexture>);
 
+    void setDeviceScaleFactor(float);
+    float deviceScaleFactor() const { return m_deviceScaleFactor; }
+
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, const CCLayerTreeSettings&);
     bool initialize();
@@ -292,6 +293,7 @@ private:
 
     IntSize m_viewportSize;
     IntSize m_deviceViewportSize;
+    float m_deviceScaleFactor;
 
     bool m_visible;
 

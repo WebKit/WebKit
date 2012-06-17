@@ -48,7 +48,6 @@ WebLayerTreeView::Settings::operator CCLayerTreeSettings() const
     settings.refreshRate = refreshRate;
     settings.defaultTileSize = defaultTileSize;
     settings.maxUntiledLayerSize = maxUntiledLayerSize;
-    settings.deviceScaleFactor = deviceScaleFactor;
 
     // FIXME: showFPSCounter / showPlatformLayerTree / maxPartialTextureUpdates aren't supported currently.
     return settings;
@@ -97,6 +96,16 @@ void WebLayerTreeView::setViewportSize(const WebSize& viewportSize)
 WebSize WebLayerTreeView::viewportSize() const
 {
     return WebSize(m_private->layerTreeHost()->viewportSize());
+}
+
+void WebLayerTreeView::setDeviceScaleFactor(const float deviceScaleFactor)
+{
+    m_private->layerTreeHost()->setDeviceScaleFactor(deviceScaleFactor);
+}
+
+float WebLayerTreeView::deviceScaleFactor() const
+{
+    return m_private->layerTreeHost()->deviceScaleFactor();
 }
 
 void WebLayerTreeView::setBackgroundColor(WebColor color)

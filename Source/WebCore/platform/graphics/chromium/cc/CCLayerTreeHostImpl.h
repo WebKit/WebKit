@@ -153,6 +153,9 @@ public:
     const IntSize& viewportSize() const { return m_viewportSize; }
     void setViewportSize(const IntSize&);
 
+    float deviceScaleFactor() const { return m_deviceScaleFactor; }
+    void setDeviceScaleFactor(float);
+
     float pageScale() const { return m_pageScale; }
     void setPageScaleFactorAndLimits(float pageScale, float minPageScale, float maxPageScale);
 
@@ -225,6 +228,7 @@ private:
     CCLayerTreeSettings m_settings;
     IntSize m_viewportSize;
     IntSize m_deviceViewportSize;
+    float m_deviceScaleFactor;
     bool m_visible;
     bool m_sourceFrameCanBeDrawn;
 

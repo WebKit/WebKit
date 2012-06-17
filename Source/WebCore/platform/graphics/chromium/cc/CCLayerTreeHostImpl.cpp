@@ -119,6 +119,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCLayerTreeSettings& settings, CC
     , m_currentlyScrollingLayerImpl(0)
     , m_scrollingLayerIdFromPreviousTree(-1)
     , m_settings(settings)
+    , m_deviceScaleFactor(1)
     , m_visible(true)
     , m_sourceFrameCanBeDrawn(true)
     , m_headsUpDisplay(CCHeadsUpDisplay::create())
@@ -252,7 +253,7 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
         TRACE_EVENT0("cc", "CCLayerTreeHostImpl::calcDrawEtc");
         WebTransformationMatrix identityMatrix;
         WebTransformationMatrix deviceScaleTransform;
-        deviceScaleTransform.scale(m_settings.deviceScaleFactor);
+        deviceScaleTransform.scale(m_deviceScaleFactor);
         CCLayerTreeHostCommon::calculateDrawTransforms(m_rootLayerImpl.get(), m_rootLayerImpl.get(), deviceScaleTransform, identityMatrix, renderSurfaceLayerList, m_rootLayerImpl->renderSurface()->layerList(), &m_layerSorter, layerRendererCapabilities().maxTextureSize);
 
         if (layerRendererCapabilities().usingPartialSwap || settings().showSurfaceDamageRects)
@@ -603,7 +604,7 @@ void CCLayerTreeHostImpl::setViewportSize(const IntSize& viewportSize)
     m_viewportSize = viewportSize;
 
     m_deviceViewportSize = viewportSize;
-    m_deviceViewportSize.scale(m_settings.deviceScaleFactor);
+    m_deviceViewportSize.scale(m_deviceScaleFactor);
 
     updateMaxScrollPosition();
 
@@ -638,6 +639,20 @@ static void applyPageScaleDeltaToScrollLayers(CCLayerImpl* layerImpl, float page
     for (size_t i = 0; i < layerImpl->children().size(); ++i)
         applyPageScaleDeltaToScrollLayers(layerImpl->children()[i].get(), pageScaleDelta);
 }
+
+void CCLayerTreeHostImpl::setDeviceScaleFactor(float newDeviceScaleFactor)
+{
+    if (newDeviceScaleFactor == deviceScaleFactor())
+        return;
+    m_deviceScaleFactor = newDeviceScaleFactor;
+
+    m_deviceViewportSize = viewportSize();
+    m_deviceViewportSize.scale(m_deviceScaleFactor);
+    updateMaxScrollPosition();
+    if (m_layerRenderer)
+        m_layerRenderer->viewportChanged();
+}
+
 
 void CCLayerTreeHostImpl::setPageScaleFactorAndLimits(float pageScale, float minPageScale, float maxPageScale)
 {
@@ -691,11 +706,11 @@ void CCLayerTreeHostImpl::updateMaxScrollPosition()
             viewBounds = clipLayer->bounds();
     }
     viewBounds.scale(1 / m_pageScaleDelta);
-    viewBounds.scale(m_settings.deviceScaleFactor);
+    viewBounds.scale(m_deviceScaleFactor);
 
     // maxScroll is computed in physical pixels, but scroll positions are in layout pixels.
     IntSize maxScroll = contentSize() - expandedIntSize(viewBounds);
-    maxScroll.scale(1 / m_settings.deviceScaleFactor);
+    maxScroll.scale(1 / m_deviceScaleFactor);
     // The viewport may be larger than the contents in some cases, such as
     // having a vertical scrollbar but no horizontal overflow.
     maxScroll.clampNegativeToZero();
@@ -738,7 +753,7 @@ CCInputHandlerClient::ScrollStatus CCLayerTreeHostImpl::scrollBegin(const IntPoi
         return ScrollIgnored;
 
     IntPoint deviceViewportPoint = viewportPoint;
-    deviceViewportPoint.scale(m_settings.deviceScaleFactor, m_settings.deviceScaleFactor);
+    deviceViewportPoint.scale(m_deviceScaleFactor, m_deviceScaleFactor);
 
     // First find out which layer was hit from the saved list of visible layers
     // in the most recent frame.
@@ -886,7 +901,7 @@ void CCLayerTreeHostImpl::computePinchZoomDeltas(CCScrollAndScaleSet* scrollInfo
     scrollEnd -= anchor;
     scrollEnd = scrollEnd.shrunkTo(roundedIntSize(scaledContentsSize - m_deviceViewportSize)).expandedTo(FloatSize(0, 0));
     scrollEnd.scale(1 / pageScaleDeltaToSend);
-    scrollEnd.scale(m_settings.deviceScaleFactor);
+    scrollEnd.scale(m_deviceScaleFactor);
 
     makeScrollAndScaleSet(scrollInfo, roundedIntSize(scrollEnd), m_minPageScale);
 }
