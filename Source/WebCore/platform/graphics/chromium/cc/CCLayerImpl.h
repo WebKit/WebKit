@@ -253,6 +253,8 @@ public:
     void setStackingOrderChanged(bool);
 
     bool layerPropertyChanged() const { return m_layerPropertyChanged; }
+    bool layerSurfacePropertyChanged() const;
+
     void resetAllChangeTrackingForSubtree();
 
     CCLayerAnimationController* layerAnimationController() { return m_layerAnimationController.get(); }
@@ -315,6 +317,12 @@ private:
 
     // Tracks if drawing-related properties have changed since last redraw.
     bool m_layerPropertyChanged;
+
+    // Indicates that a property has changed on this layer that would not
+    // affect the pixels on its target surface, but would require redrawing
+    // but would require redrawing the targetSurface onto its ancestor targetSurface.
+    // For layers that do not own a surface this flag acts as m_layerPropertyChanged.
+    bool m_layerSurfacePropertyChanged;
 
     // Uses layer's content space.
     IntRect m_visibleLayerRect;

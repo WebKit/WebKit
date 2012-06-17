@@ -88,10 +88,18 @@ FloatRect CCRenderSurface::drawableContentRect() const
 
 bool CCRenderSurface::prepareContentsTexture(LayerRendererChromium* layerRenderer)
 {
-    TextureManager* textureManager = layerRenderer->implTextureManager();
+    // FIXME: This method should be separated into two: one to reserve an
+    // existing surface, and one to create a new one. That way we will not
+    // need to pass null layerRenderer.
+    if (layerRenderer) {
+        TextureManager* textureManager = layerRenderer->implTextureManager();
+
+        if (!m_contentsTexture)
+            m_contentsTexture = ManagedTexture::create(textureManager);
+    }
 
     if (!m_contentsTexture)
-        m_contentsTexture = ManagedTexture::create(textureManager);
+        return false;
 
     if (m_contentsTexture->isReserved())
         return true;
@@ -112,6 +120,11 @@ void CCRenderSurface::releaseContentsTexture()
 bool CCRenderSurface::hasValidContentsTexture() const
 {
     return m_contentsTexture && m_contentsTexture->isReserved() && m_contentsTexture->isValid(m_contentRect.size(), GraphicsContext3D::RGBA);
+}
+
+bool CCRenderSurface::hasCachedContentsTexture() const
+{
+    return m_contentsTexture && m_contentsTexture->isValid(m_contentRect.size(), GraphicsContext3D::RGBA);
 }
 
 bool CCRenderSurface::prepareBackgroundTexture(LayerRendererChromium* layerRenderer)
@@ -208,6 +221,11 @@ void CCRenderSurface::setClipRect(const IntRect& clipRect)
 
     m_surfacePropertyChanged = true;
     m_clipRect = clipRect;
+}
+
+bool CCRenderSurface::contentsChanged() const
+{
+    return !m_damageTracker->currentDamageRect().isEmpty();
 }
 
 void CCRenderSurface::setContentRect(const IntRect& contentRect)

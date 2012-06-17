@@ -934,7 +934,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForMask)
 
     // Then test the property change.
     clearDamageForAllSurfaces(root.get());
-    maskLayer->setOpacity(0.5);
+    maskLayer->setStackingOrderChanged(true);
+
     emulateDrawingOneFrame(root.get());
     childDamageRect = child->renderSurface()->damageTracker()->currentDamageRect();
     EXPECT_FLOAT_RECT_EQ(FloatRect(0, 0, 30, 30), childDamageRect);
@@ -1001,7 +1002,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMask)
 
     // CASE 1: a property change on the mask should damage only the reflected region on the target surface.
     clearDamageForAllSurfaces(root.get());
-    replicaMaskLayer->setOpacity(0.6f);
+    replicaMaskLayer->setStackingOrderChanged(true);
     emulateDrawingOneFrame(root.get());
 
     FloatRect grandChildDamageRect = grandChild1->renderSurface()->damageTracker()->currentDamageRect();
@@ -1065,7 +1066,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMaskWithAnchor)
 
     // A property change on the replicaMask should damage the reflected region on the target surface.
     clearDamageForAllSurfaces(root.get());
-    replicaMaskLayer->setOpacity(0.6f);
+    replicaMaskLayer->setStackingOrderChanged(true);
+
     emulateDrawingOneFrame(root.get());
 
     FloatRect childDamageRect = child1->renderSurface()->damageTracker()->currentDamageRect();

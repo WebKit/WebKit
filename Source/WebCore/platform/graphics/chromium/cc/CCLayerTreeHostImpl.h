@@ -86,6 +86,7 @@ public:
 
     struct FrameData {
         CCRenderPassList renderPasses;
+        CCRenderPassList skippedPasses;
         CCLayerList* renderSurfaceLayerList;
         CCLayerList willDrawLayers;
     };
@@ -177,6 +178,9 @@ public:
     CCFrameRateCounter* fpsCounter() const { return m_fpsCounter.get(); }
     CCDebugRectHistory* debugRectHistory() const { return m_debugRectHistory.get(); }
 
+    // Removes all render passes for which we have cached textures, and which did not change their content.
+    static void removePassesWithCachedTextures(CCRenderPassList& passes, CCRenderPassList& skippedPasses);
+
 protected:
     CCLayerTreeHostImpl(const CCLayerTreeSettings&, CCLayerTreeHostImplClient*);
 
@@ -208,10 +212,13 @@ private:
     // Returns false if the frame should not be displayed. This function should
     // only be called from prepareToDraw, as didDrawAllLayers must be called
     // if this helper function is called.
-    bool calculateRenderPasses(CCRenderPassList&, CCLayerList& renderSurfaceLayerList, CCLayerList& willDrawLayers);
+    bool calculateRenderPasses(FrameData&);
     void animateLayersRecursive(CCLayerImpl*, double monotonicTime, double wallClockTime, CCAnimationEventsVector*, bool& didAnimate, bool& needsAnimateLayers);
     void setBackgroundTickingEnabled(bool);
     IntSize contentSize() const;
+
+    static void removeRenderPassesRecursive(CCRenderPassList& passes, size_t bottomPass, const CCRenderPass* firstToRemove, CCRenderPassList& skippedPasses);
+
     void sendDidLoseContextRecursive(CCLayerImpl*);
     void clearRenderSurfaces();
     bool ensureRenderSurfaceLayerList();

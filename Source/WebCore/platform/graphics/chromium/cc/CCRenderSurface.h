@@ -51,11 +51,12 @@ class CCRenderSurface {
     WTF_MAKE_NONCOPYABLE(CCRenderSurface);
 public:
     explicit CCRenderSurface(CCLayerImpl*);
-    ~CCRenderSurface();
+    virtual ~CCRenderSurface();
 
-    bool prepareContentsTexture(LayerRendererChromium*);
+    virtual bool prepareContentsTexture(LayerRendererChromium*);
     void releaseContentsTexture();
     bool hasValidContentsTexture() const;
+    virtual bool hasCachedContentsTexture() const;
 
     bool prepareBackgroundTexture(LayerRendererChromium*);
     void releaseBackgroundTexture();
@@ -113,6 +114,8 @@ public:
 
     void setScissorRect(const IntRect& scissorRect) { m_scissorRect = scissorRect; }
     const IntRect& scissorRect() const { return m_scissorRect; }
+
+    virtual bool contentsChanged() const;
 
     void setContentRect(const IntRect&);
     const IntRect& contentRect() const { return m_contentRect; }
