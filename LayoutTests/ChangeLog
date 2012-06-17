@@ -1,3 +1,12 @@
+2012-06-17  Adam Barth  <abarth@webkit.org>
+
+        Update a few more tests to use internals.settings.setDeviceScaleFactor.
+
+        * compositing/tiled-layers-hidpi.html:
+        * fast/canvas/2d.backingStorePixelRatio.html:
+        * fast/canvas/2d.imageDataHD.html:
+        * platform/mac-wk2/plugins/contents-scale-factor.html:
+
 2012-06-16  Adam Barth  <abarth@webkit.org>
 
         layoutTestController.setBackingScaleFactor is redundant with (and less awesome than) internals.settings.setDeviceScaleFactor

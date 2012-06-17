@@ -29,8 +29,8 @@ function runTest()
     shouldBe("plugin1.contentsScaleFactor", "1.0");
     shouldBe("plugin1.cachedContentsScaleFactor", "1.0");
 
-    // Now change the backing scale factor.
-    testRunner.setBackingScaleFactor(2, function() {
+    internals.settings.setDeviceScaleFactor(2);
+    setTimeout(function() {
         shouldBe("plugin1.contentsScaleFactor", "2.0");
         shouldBe("plugin1.cachedContentsScaleFactor", "2.0");
     
@@ -41,7 +41,7 @@ function runTest()
         shouldBe("plugin2.cachedContentsScaleFactor", "2.0");
 
         testRunner.notifyDone();
-    });
+    }, 0);
 }
 </script>
 

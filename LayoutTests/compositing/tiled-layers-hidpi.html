@@ -12,15 +12,12 @@
             if (window.testRunner) {
                 testRunner.waitUntilDone();
                 testRunner.dumpAsText();
-                testRunner.setBackingScaleFactor(2, finishTest);
+                internals.settings.setDeviceScaleFactor(2);
+                setTimeout(function() {
+                    document.getElementById('layer-tree').innerText = window.testRunner.layerTreeAsText();
+                    testRunner.notifyDone();
+                }, 0);
             }
-        }
-        
-        function finishTest() {
-            setTimeout(function() {
-				document.getElementById('layer-tree').innerText = window.testRunner.layerTreeAsText();
-				testRunner.notifyDone();
-			}, 0);
         }
         </script>
     </head>

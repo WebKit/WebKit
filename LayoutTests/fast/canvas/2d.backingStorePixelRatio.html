@@ -11,7 +11,8 @@
         var context1 = canvas1.getContext("2d");
 
         layoutTestController.waitUntilDone();
-        layoutTestController.setBackingScaleFactor(2, function() {
+        internals.settings.setDeviceScaleFactor(2);
+        setTimeout(function() {
             var canvas2 = document.createElement("canvas");
             var context2 = canvas2.getContext("2d");
 
@@ -19,7 +20,7 @@
             log ("context2.webkitBackingStorePixelRatio is " + context2.webkitBackingStorePixelRatio);
 
             layoutTestController.notifyDone();
-        });
+        }, 0);
     } else {
         log ("When not run inside DumpRenderTree or WebKitTestRunner, this test just prints the value of");
         log ("backingStorePixelRatio. Please verify that it matches what you expect, based on the");
