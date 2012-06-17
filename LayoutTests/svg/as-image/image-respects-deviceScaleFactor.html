@@ -2,11 +2,10 @@
 <head>
     <script>
     function init() {
-        if (!window.layoutTestController)
+        if (!window.internals)
             return;
 
-        layoutTestController.waitUntilDone();
-        layoutTestController.setBackingScaleFactor(2, function () { layoutTestController.notifyDone(); });
+        internals.settings.setDeviceScaleFactor(2);
     }
     window.onload = init;
     </script>

@@ -319,8 +319,6 @@ public:
     void removeChromeInputField();
     void focusWebView();
 
-    void setBackingScaleFactor(double);
-
     void setPOSIXLocale(JSStringRef locale);
 
     void setWebViewEditable(bool);

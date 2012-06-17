@@ -972,10 +972,6 @@ void LayoutTestController::focusWebView()
 {
 }
 
-void LayoutTestController::setBackingScaleFactor(double)
-{
-}
-
 void LayoutTestController::simulateDesktopNotificationClick(JSStringRef title)
 {
 }

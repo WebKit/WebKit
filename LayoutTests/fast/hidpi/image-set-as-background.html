@@ -7,7 +7,8 @@
 
         if (!sessionStorage.scaleFactorIsSet) {
             layoutTestController.waitUntilDone();
-            layoutTestController.setBackingScaleFactor(2, scaleFactorIsSet);
+            internals.settings.setDeviceScaleFactor(2);
+            setTimeout(scaleFactorIsSet, 0);
         }
         
         if (sessionStorage.pageReloaded && sessionStorage.scaleFactorIsSet) {

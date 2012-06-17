@@ -1,16 +1,10 @@
 <html>
     <script>
         function startTest() {
-            if (window.layoutTestController) {
-                layoutTestController.waitUntilDone();
-                layoutTestController.setBackingScaleFactor(2, finishTest);
-            }
+            if (window.internals)
+                internals.settings.setDeviceScaleFactor(2);
         }
-        
-        function finishTest() {
-            setTimeout(function() { layoutTestController.notifyDone(); }, 0);
-        }
-        </script>
+    </script>
     </head>
     <body onload="startTest();">
         <div>This test passes if the resize corner icon appears high-resolution in HiDPI.</div>

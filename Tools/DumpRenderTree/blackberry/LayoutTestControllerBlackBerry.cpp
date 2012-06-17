@@ -825,10 +825,6 @@ void LayoutTestController::focusWebView()
 {
 }
 
-void LayoutTestController::setBackingScaleFactor(double)
-{
-}
-
 void LayoutTestController::setMockSpeechInputDumpRect(bool)
 {
 }

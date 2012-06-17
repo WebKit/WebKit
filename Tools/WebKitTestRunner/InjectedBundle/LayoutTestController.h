@@ -192,14 +192,12 @@ public:
     void addChromeInputField(JSValueRef);
     void removeChromeInputField(JSValueRef);
     void focusWebView(JSValueRef);
-    void setBackingScaleFactor(double, JSValueRef);
 
     void setWindowIsKey(bool);
 
     void callAddChromeInputFieldCallback();
     void callRemoveChromeInputFieldCallback();
     void callFocusWebViewCallback();
-    void callSetBackingScaleFactorCallback();
 
     void overridePreference(JSStringRef preference, bool value);
 

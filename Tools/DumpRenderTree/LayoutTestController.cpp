@@ -2107,22 +2107,6 @@ static JSValueRef focusWebViewCallback(JSContextRef context, JSObjectRef, JSObje
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef setBackingScaleFactorCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount != 2)
-        return JSValueMakeUndefined(context);
-
-    double backingScaleFactor = JSValueToNumber(context, arguments[0], exception);
-    ASSERT(!*exception);
-
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->setBackingScaleFactor(backingScaleFactor);
-
-    // The second argument is a callback that is called once the backing scale factor has been set.
-    JSObjectCallAsFunction(context, JSValueToObject(context, arguments[1], 0), thisObject, 0, 0, 0);
-    return JSValueMakeUndefined(context);
-}
-
 static JSValueRef preciseTimeCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     return JSValueMakeNumber(context, WTF::currentTime());
@@ -2442,7 +2426,6 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "addChromeInputField", addChromeInputFieldCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "removeChromeInputField", removeChromeInputFieldCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "focusWebView", focusWebViewCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "setBackingScaleFactor", setBackingScaleFactorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "preciseTime", preciseTimeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setHasCustomFullScreenBehavior", setHasCustomFullScreenBehaviorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
