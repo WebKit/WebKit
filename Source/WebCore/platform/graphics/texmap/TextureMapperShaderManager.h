@@ -92,6 +92,7 @@ private:
 
         struct {
             GLuint radius;
+            GLuint gaussianKernel;
         } blur;
 
         struct {
@@ -99,6 +100,7 @@ private:
             GLuint color;
             GLuint offset;
             GLuint contentTexture;
+            GLuint gaussianKernel;
         } shadow;
     } m_uniformLocations;
 };

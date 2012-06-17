@@ -38,10 +38,12 @@ namespace WebCore {
     "precision mediump float; \n"
 #endif
 
-#define VERTEX_SHADER(src...) OES2_PRECISION_DEFINITIONS#src
+#define STRINGIFY_VAL(src...) #src
+#define VERTEX_SHADER(src...) OES2_PRECISION_DEFINITIONS\
+                              STRINGIFY_VAL(src)
 #define FRAGMENT_SHADER(src...) OES2_PRECISION_DEFINITIONS\
                                 OES2_FRAGMENT_SHADER_DEFAULT_PRECISION\
-                                #src
+                                STRINGIFY_VAL(src)
 
 static const char* fragmentShaderSourceOpacityAndMask =
     FRAGMENT_SHADER(
@@ -352,6 +354,11 @@ TextureMapperShaderManager::~TextureMapperShaderManager()
 }
 
 #if ENABLE(CSS_FILTERS)
+
+// Create a normal distribution of 21 values between -2 and 2.
+#define GAUSSIAN_KERNEL_HALF_WIDTH 11
+#define GAUSSIAN_KERNEL_STEP 0.2
+
 StandardFilterProgram::~StandardFilterProgram()
 {
     glDetachShader(m_id, m_vertexShader);
@@ -475,15 +482,7 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
             varying highp vec2 v_texCoord;
             uniform lowp vec2 u_blurRadius;
             uniform sampler2D u_texture;
-            const float pi = 3.14159;
-            const float e = 2.71828;
-
-            // FIXME: share gaussian formula between shaders.
-            lowp float gaussian(lowp float value)
-            {
-                // Normal distribution formula, when the mean is 0 and the standard deviation is 1.
-                return pow(e, -pow(value, 2.) / 2.) / (sqrt(2. * pi));
-            }
+            uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
 
             lowp vec4 sampleColor(float radius)
             {
@@ -493,16 +492,13 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
 
             vec4 blur()
             {
-                // Create a normal distribution of 20 values between 0. and 2.
-                vec4 total = vec4(0., 0., 0., 0.);
-                float totalWeight = 0.;
-                for (float i = -2.; i <= 2.; i += .2) {
-                    float weight = gaussian(i);
-                    total += sampleColor(i) * weight;
-                    totalWeight += weight;
+                vec4 total = sampleColor(0) * u_gaussianKernel[0];
+                for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
+                    total += sampleColor(float(i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
+                    total += sampleColor(float(-1 * i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
                 }
 
-                return total / totalWeight;
+                return total;
             }
 
             void main(void)
@@ -520,15 +516,7 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
                 uniform lowp float u_shadowBlurRadius;
                 uniform lowp vec2 u_shadowOffset;
                 uniform sampler2D u_texture;
-                const float pi = 3.14159;
-                const float e = 2.71828;
-
-                // FIXME: share gaussian formula between shaders.
-                lowp float gaussian(lowp float value)
-                {
-                    // Normal distribution formula, when the mean is 0 and the standard deviation is 1.
-                    return pow(e, -pow(value, 2.) / 2.) / (sqrt(2. * pi));
-                }
+                uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
 
                 lowp float sampleAlpha(float radius)
                 {
@@ -538,16 +526,13 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
 
                 lowp float shadowBlurHorizontal()
                 {
-                    // Create a normal distribution of 20 values between -2 and 2.
-                    float total = 0.;
-                    float totalWeight = 0.;
-                    for (float i = -2.; i <= 2.; i += .2) {
-                        float weight = gaussian(i);
-                        total += sampleAlpha(i) * weight;
-                        totalWeight += weight;
+                    float total = sampleAlpha(0) * u_gaussianKernel[0];
+                    for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
+                        total += sampleAlpha(float(i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
+                        total += sampleAlpha(float(-1 * i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
                     }
 
-                    return total / totalWeight;
+                    return total;
                 }
 
                 void main(void)
@@ -565,16 +550,7 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
                 uniform lowp vec4 u_shadowColor;
                 uniform sampler2D u_texture;
                 uniform sampler2D u_contentTexture;
-
-                // FIXME: share gaussian formula between shaders.
-                const float pi = 3.14159;
-                const float e = 2.71828;
-
-                lowp float gaussian(float value)
-                {
-                    // Normal distribution formula, when the mean is 0 and the standard deviation is 1.
-                    return pow(e, -pow(value, 2.) / 2.) / (sqrt(2. * pi));
-                }
+                uniform float u_gaussianKernel[GAUSSIAN_KERNEL_HALF_WIDTH];
 
                 lowp float sampleAlpha(float r)
                 {
@@ -584,16 +560,13 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
 
                 lowp float shadowBlurVertical()
                 {
-                    // Create a normal distribution of 20 values between -2 and 2.
-                    float total = 0.;
-                    float totalWeight = 0.;
-                    for (float i = -2.; i <= 2.; i += .2) {
-                        float weight = gaussian(i);
-                        total += sampleAlpha(i) * weight;
-                        totalWeight += weight;
+                    float total = sampleAlpha(0) * u_gaussianKernel[0];
+                    for (int i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; i++) {
+                        total += sampleAlpha(float(i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
+                        total += sampleAlpha(float(-1 * i) * GAUSSIAN_KERNEL_STEP) * u_gaussianKernel[i];
                     }
 
-                    return total / totalWeight;
+                    return total;
                 }
 
                 lowp vec4 sourceOver(lowp vec4 source, lowp vec4 destination)
@@ -650,9 +623,11 @@ StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type
         break;
     case FilterOperation::BLUR:
         m_uniformLocations.blur.radius = glGetUniformLocation(programID, "u_blurRadius");
+        m_uniformLocations.blur.gaussianKernel = glGetUniformLocation(programID, "u_gaussianKernel");
         break;
     case FilterOperation::DROP_SHADOW:
         m_uniformLocations.shadow.blurRadius = glGetUniformLocation(programID, "u_shadowBlurRadius");
+        m_uniformLocations.shadow.gaussianKernel = glGetUniformLocation(programID, "u_gaussianKernel");
         if (!pass)
             m_uniformLocations.shadow.offset = glGetUniformLocation(programID, "u_shadowOffset");
         else {
@@ -676,6 +651,35 @@ PassRefPtr<StandardFilterProgram> StandardFilterProgram::create(FilterOperation:
         return 0;
 
     return program;
+}
+
+static inline float gauss(float x)
+{
+    return exp(-(x * x) / 2.);
+}
+
+static float* gaussianKernel()
+{
+    static bool prepared = false;
+    static float kernel[GAUSSIAN_KERNEL_HALF_WIDTH] = {0, };
+
+    if (prepared)
+        return kernel;
+
+    kernel[0] = gauss(0);
+    float sum = kernel[0];
+    for (unsigned i = 1; i < GAUSSIAN_KERNEL_HALF_WIDTH; ++i) {
+        kernel[i] = gauss(i * GAUSSIAN_KERNEL_STEP);
+        sum += 2 * kernel[i];
+    }
+
+    // Normalize the kernel
+    float scale = 1 / sum;
+    for (unsigned i = 0; i < GAUSSIAN_KERNEL_HALF_WIDTH; ++i)
+        kernel[i] *= scale;
+
+    prepared = true;
+    return kernel;
 }
 
 void StandardFilterProgram::prepare(const FilterOperation& operation, unsigned pass, const IntSize& size, GLuint contentTexture)
@@ -705,6 +709,7 @@ void StandardFilterProgram::prepare(const FilterOperation& operation, unsigned p
             radius.setWidth(floatValueForLength(blur.stdDeviation(), size.width()) / size.width());
 
         glUniform2f(m_uniformLocations.blur.radius, radius.width(), radius.height());
+        glUniform1fv(m_uniformLocations.blur.gaussianKernel, GAUSSIAN_KERNEL_HALF_WIDTH, gaussianKernel());
         break;
     }
     case FilterOperation::DROP_SHADOW: {
@@ -714,10 +719,12 @@ void StandardFilterProgram::prepare(const FilterOperation& operation, unsigned p
             // First pass: vertical alpha blur.
             glUniform2f(m_uniformLocations.shadow.offset, float(shadow.location().x()) / float(size.width()), float(shadow.location().y()) / float(size.height()));
             glUniform1f(m_uniformLocations.shadow.blurRadius, shadow.stdDeviation() / float(size.width()));
+            glUniform1fv(m_uniformLocations.shadow.gaussianKernel, GAUSSIAN_KERNEL_HALF_WIDTH, gaussianKernel());
             break;
         case 1:
             // Second pass: we need the shadow color and the content texture for compositing.
             glUniform1f(m_uniformLocations.shadow.blurRadius, shadow.stdDeviation() / float(size.height()));
+            glUniform1fv(m_uniformLocations.shadow.gaussianKernel, GAUSSIAN_KERNEL_HALF_WIDTH, gaussianKernel());
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, contentTexture);
             glUniform1i(m_uniformLocations.shadow.contentTexture, 1);
