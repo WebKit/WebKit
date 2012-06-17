@@ -1,5 +1,17 @@
 2012-06-16  Mike West  <mkwst@chromium.org>
 
+        Ignore paths in Content Security Policy sources rather than failing to parse them.
+        https://bugs.webkit.org/show_bug.cgi?id=89281
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-05-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-05.html: Added.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-06-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-06.html: Added.
+
+2012-06-16  Mike West  <mkwst@chromium.org>
+
         Fix test cases for `header`/`footer` AXRoleDescription
         https://bugs.webkit.org/show_bug.cgi?id=88911
 

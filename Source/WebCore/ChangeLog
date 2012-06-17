@@ -1,3 +1,32 @@
+2012-06-16  Mike West  <mkwst@chromium.org>
+
+        Ignore paths in Content Security Policy sources rather than failing to parse them.
+        https://bugs.webkit.org/show_bug.cgi?id=89281
+
+        Reviewed by Adam Barth.
+
+        In short: `script-src http://example.com/` should allow scripts from
+        http://example.com. Currently, it allows no scripts at all, as the
+        terminal `/` isn't accepted as part of a hostname.
+
+        This patch adjusts CSPSourceList::parseSource to accept paths (and
+        discard them). Once this lands, the next step will be to keep the
+        path, and use it when comparing source origins in the various
+        allowXXXFromSource methods.
+
+        Tests: http/tests/security/contentSecurityPolicy/source-list-parsing-05.html
+               http/tests/security/contentSecurityPolicy/source-list-parsing-06.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (CSPSourceList):
+        (WebCore):
+        (WebCore::CSPSourceList::parseSource):
+            Reworked this method entirely to support paths.
+        (WebCore::CSPSourceList::parsePath):
+            More or less a no-op at the moment.
+        (WebCore::CSPSourceList::parsePort):
+            Moved the `:` assertion here from parseSource.
+
 2012-06-16  Zeev Lieber  <zlieber@chromium.org>
 
         [Chromium] Compositor should avoid drawing quads when cached textures are available and contents unchanged

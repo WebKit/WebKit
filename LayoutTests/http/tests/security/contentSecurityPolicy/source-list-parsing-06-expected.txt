@@ -1,0 +1,55 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'pathwithasemicolon'.
+
+Paths should be ignored when evaluating sources.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame2-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame3-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame4-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame5-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame6-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame7-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame8-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame9-->-->'
+--------
+PASS
