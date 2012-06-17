@@ -10,4 +10,4 @@ layer at (0,0) size 800x600
           text run at (0,36) width 492: "ensures that the green image loads dynamically when the scale factor changes."
       RenderBlock {DIV} at (0,54) size 100x100
         RenderText {#text} at (0,0) size 8x19
-          text run at (0,0) width 8: "1"
+          text run at (0,0) width 8: "2"

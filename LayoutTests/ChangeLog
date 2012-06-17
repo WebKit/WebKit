@@ -1,3 +1,12 @@
+2012-06-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, updating baselines after r120541.
+
+        * platform/gtk/fast/hidpi/clip-text-in-hidpi-expected.txt:
+        * platform/gtk/fast/hidpi/image-set-background-dynamic-expected.txt:
+        * platform/gtk/fast/hidpi/image-set-border-image-dynamic-expected.txt:
+        * platform/gtk/fast/hidpi/image-set-in-content-dynamic-expected.txt:
+
 2012-06-17  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Skip media/video-seek-past-end-playing.html
