@@ -55,6 +55,7 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_haveWheelEventHandlers(false)
     , m_doubleSided(true)
     , m_layerPropertyChanged(false)
+    , m_layerSurfacePropertyChanged(false)
     , m_masksToBounds(false)
     , m_opaque(false)
     , m_opacity(1.0)
@@ -310,6 +311,26 @@ void CCLayerImpl::setStackingOrderChanged(bool stackingOrderChanged)
         noteLayerPropertyChangedForSubtree();
 }
 
+bool CCLayerImpl::layerSurfacePropertyChanged() const
+{
+    if (m_layerSurfacePropertyChanged)
+        return true;
+
+    // If this layer's surface property hasn't changed, we want to see if
+    // some layer above us has changed this property. This is done for the
+    // case when such parent layer does not draw content, and therefore will
+    // not be traversed by the damage tracker. We need to make sure that
+    // property change on such layer will be caught by its descendants.
+    CCLayerImpl* current = this->m_parent;
+    while (current && !current->m_renderSurface) {
+        if (current->m_layerSurfacePropertyChanged)
+            return true;
+        current = current->m_parent;
+    }
+
+    return false;
+}
+
 void CCLayerImpl::noteLayerPropertyChangedForSubtree()
 {
     m_layerPropertyChanged = true;
@@ -325,6 +346,8 @@ void CCLayerImpl::noteLayerPropertyChangedForDescendants()
 void CCLayerImpl::resetAllChangeTrackingForSubtree()
 {
     m_layerPropertyChanged = false;
+    m_layerSurfacePropertyChanged = false;
+
     m_updateRect = FloatRect();
 
     if (m_renderSurface)
@@ -465,7 +488,7 @@ void CCLayerImpl::setOpacity(float opacity)
         return;
 
     m_opacity = opacity;
-    noteLayerPropertyChangedForSubtree();
+    m_layerSurfacePropertyChanged = true;
 }
 
 bool CCLayerImpl::opacityIsAnimating() const
@@ -507,7 +530,7 @@ void CCLayerImpl::setTransform(const WebTransformationMatrix& transform)
         return;
 
     m_transform = transform;
-    noteLayerPropertyChangedForSubtree();
+    m_layerSurfacePropertyChanged = true;
 }
 
 bool CCLayerImpl::transformIsAnimating() const

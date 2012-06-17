@@ -1,3 +1,53 @@
+2012-06-16  Zeev Lieber  <zlieber@chromium.org>
+
+        [Chromium] Compositor should avoid drawing quads when cached textures are available and contents unchanged
+        https://bugs.webkit.org/show_bug.cgi?id=88482
+
+        Reviewed by Adrienne Walker.
+
+        Post-processing CCRenderPassList after it's been generated and
+        removing all render surface quads for which there are
+        cached textures, and whose content didn't change. Added a new
+        flag to CCLayerImpl to differentiate surface property change and
+        layer property change.
+
+        The changes are covered by new unit tests that check that
+        the removal algorithm functions propertly. No rendering
+        behaviour change, so no new layout tests.
+
+        * platform/graphics/chromium/cc/CCDamageTracker.cpp:
+        (WebCore::layerNeedsToRedrawOntoItsTargetSurface):
+        (WebCore):
+        (WebCore::CCDamageTracker::extendDamageForLayer):
+        (WebCore::CCDamageTracker::extendDamageForRenderSurface):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        (WebCore::CCLayerImpl::layerSurfacePropertyChanged):
+        (WebCore):
+        (WebCore::CCLayerImpl::resetAllChangeTrackingForSubtree):
+        (WebCore::CCLayerImpl::setOpacity):
+        (WebCore::CCLayerImpl::setTransform):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::removeRenderPassesRecursive):
+        (WebCore):
+        (WebCore::CCLayerTreeHostImpl::removePassesWithCachedTextures):
+        (WebCore::CCLayerTreeHostImpl::prepareToDraw):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (FrameData):
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCRenderPass.h:
+        (CCRenderPass):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::prepareContentsTexture):
+        (WebCore::CCRenderSurface::hasCachedContentsTexture):
+        (WebCore):
+        (WebCore::CCRenderSurface::contentsChanged):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (CCRenderSurface):
+
 2012-06-16  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Move chromium/public/linuxish/WebFontRendering.h out of linuxish directory

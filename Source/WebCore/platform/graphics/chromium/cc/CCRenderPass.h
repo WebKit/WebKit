@@ -67,7 +67,7 @@ public:
     bool hasTransparentBackground() const { return m_hasTransparentBackground; }
     void setHasTransparentBackground(bool transparent) { m_hasTransparentBackground = transparent; }
 
-private:
+protected:
     explicit CCRenderPass(CCRenderSurface*);
 
     CCRenderSurface* m_targetSurface;

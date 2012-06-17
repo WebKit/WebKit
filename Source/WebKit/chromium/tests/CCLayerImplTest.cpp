@@ -42,21 +42,33 @@ namespace {
     codeToTest;                                                         \
     EXPECT_TRUE(root->layerPropertyChanged());                          \
     EXPECT_TRUE(child->layerPropertyChanged());                         \
-    EXPECT_TRUE(grandChild->layerPropertyChanged())
+    EXPECT_TRUE(grandChild->layerPropertyChanged());                    \
+    EXPECT_FALSE(root->layerSurfacePropertyChanged())
+
 
 #define EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(codeToTest)           \
     root->resetAllChangeTrackingForSubtree();                           \
     codeToTest;                                                         \
     EXPECT_FALSE(root->layerPropertyChanged());                         \
     EXPECT_FALSE(child->layerPropertyChanged());                        \
-    EXPECT_FALSE(grandChild->layerPropertyChanged())
+    EXPECT_FALSE(grandChild->layerPropertyChanged());                   \
+    EXPECT_FALSE(root->layerSurfacePropertyChanged())
 
 #define EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(codeToTest)               \
     root->resetAllChangeTrackingForSubtree();                           \
     codeToTest;                                                         \
     EXPECT_TRUE(root->layerPropertyChanged());                          \
     EXPECT_FALSE(child->layerPropertyChanged());                        \
-    EXPECT_FALSE(grandChild->layerPropertyChanged())
+    EXPECT_FALSE(grandChild->layerPropertyChanged());                   \
+    EXPECT_FALSE(root->layerSurfacePropertyChanged())
+
+#define EXECUTE_AND_VERIFY_ONLY_SURFACE_CHANGED(codeToTest)             \
+    root->resetAllChangeTrackingForSubtree();                           \
+    codeToTest;                                                         \
+    EXPECT_FALSE(root->layerPropertyChanged());                         \
+    EXPECT_FALSE(child->layerPropertyChanged());                        \
+    EXPECT_FALSE(grandChild->layerPropertyChanged());                   \
+    EXPECT_TRUE(root->layerSurfacePropertyChanged())
 
 TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
 {
@@ -98,11 +110,9 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setMaskLayer(CCLayerImpl::create(4)));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setMasksToBounds(true));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setOpaque(true));
-    EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setOpacity(arbitraryNumber));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setReplicaLayer(CCLayerImpl::create(5)));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setPosition(arbitraryFloatPoint));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setPreserves3D(true));
-    EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setTransform(arbitraryTransform));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setDoubleSided(false)); // constructor initializes it to "true".
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->scrollBy(arbitraryIntSize));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setScrollDelta(arbitraryIntSize));
@@ -116,6 +126,10 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setDrawsContent(true));
     EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setBackgroundColor(Color::gray));
     EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setBackgroundFilters(arbitraryFilters));
+
+    // Changing these properties only affects how render surface is drawn
+    EXECUTE_AND_VERIFY_ONLY_SURFACE_CHANGED(root->setOpacity(arbitraryNumber));
+    EXECUTE_AND_VERIFY_ONLY_SURFACE_CHANGED(root->setTransform(arbitraryTransform));
 
     // Special case: check that sublayer transform changes all layer's descendants, but not the layer itself.
     root->resetAllChangeTrackingForSubtree();
