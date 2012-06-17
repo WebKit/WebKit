@@ -1,3 +1,9 @@
+2012-06-17  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix after r120397.
+
+        * Source/autotools/symbols.filter:
+
 2012-06-14  Kent Tamura  <tkent@chromium.org>
 
         Validate form state strings in FormController::setStateForNewFormElements()
