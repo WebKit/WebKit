@@ -1,3 +1,11 @@
+2012-06-18  Enrica Casucci  <enrica@apple.com>
+
+        Skipping dictation tests on WK2.
+
+        Unreviewed.
+
+        * platform/mac-wk2/Skipped:
+
 2012-06-18  David Barr  <davidbarr@chromium.org>
 
         Add from-image to css3-images image-resolution
