@@ -87,6 +87,9 @@ StyleRareInheritedData::StyleRareInheritedData()
 #if ENABLE(OVERFLOW_SCROLLING)
     , useTouchOverflowScrolling(RenderStyle::initialUseTouchOverflowScrolling())
 #endif
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    , m_imageResolutionSource(RenderStyle::initialImageResolutionSource())
+#endif
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
     , hyphenationLimitLines(-1)
@@ -141,6 +144,9 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , m_lineAlign(o.m_lineAlign)
 #if ENABLE(OVERFLOW_SCROLLING)
     , useTouchOverflowScrolling(o.useTouchOverflowScrolling)
+#endif
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    , m_imageResolutionSource(o.m_imageResolutionSource)
 #endif
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
@@ -224,6 +230,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && m_lineGrid == o.m_lineGrid
         && m_imageRendering == o.m_imageRendering
 #if ENABLE(CSS_IMAGE_RESOLUTION)
+        && m_imageResolutionSource == o.m_imageResolutionSource
         && m_imageResolution == o.m_imageResolution
 #endif
         && m_lineSnap == o.m_lineSnap

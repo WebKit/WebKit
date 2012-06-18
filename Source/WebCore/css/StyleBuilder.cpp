@@ -1772,11 +1772,13 @@ class ApplyPropertyImageResolution {
 public:
     static void applyInheritValue(StyleResolver* styleResolver)
     {
+        ApplyPropertyDefaultBase<ImageResolutionSource, &RenderStyle::imageResolutionSource, ImageResolutionSource, &RenderStyle::setImageResolutionSource, ImageResolutionSource, &RenderStyle::initialImageResolutionSource>::applyInheritValue(styleResolver);
         ApplyPropertyDefaultBase<float, &RenderStyle::imageResolution, float, &RenderStyle::setImageResolution, float, &RenderStyle::initialImageResolution>::applyInheritValue(styleResolver);
     }
 
     static void applyInitialValue(StyleResolver* styleResolver)
     {
+        ApplyPropertyDefaultBase<ImageResolutionSource, &RenderStyle::imageResolutionSource, ImageResolutionSource, &RenderStyle::setImageResolutionSource, ImageResolutionSource, &RenderStyle::initialImageResolutionSource>::applyInitialValue(styleResolver);
         ApplyPropertyDefaultBase<float, &RenderStyle::imageResolution, float, &RenderStyle::setImageResolution, float, &RenderStyle::initialImageResolution>::applyInitialValue(styleResolver);
     }
 
@@ -1785,13 +1787,20 @@ public:
         if (!value->isValueList())
             return;
         CSSValueList* valueList = static_cast<CSSValueList*>(value);
+        ImageResolutionSource source = RenderStyle::initialImageResolutionSource();
+        double resolution = RenderStyle::initialImageResolution();
         for (size_t i = 0; i < valueList->length(); i++) {
             CSSValue* item = valueList->itemWithoutBoundsCheck(i);
             if (!item->isPrimitiveValue())
                 continue;
             CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
-            styleResolver->style()->setImageResolution(primitiveValue->getDoubleValue(CSSPrimitiveValue::CSS_DPPX));
+            if (primitiveValue->getIdent() == CSSValueFromImage)
+                source = ImageResolutionFromImage;
+            else
+                resolution = primitiveValue->getDoubleValue(CSSPrimitiveValue::CSS_DPPX);
         }
+        styleResolver->style()->setImageResolutionSource(source);
+        styleResolver->style()->setImageResolution(resolution);
     }
 
     static PropertyHandler createHandler()

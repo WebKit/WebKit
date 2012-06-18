@@ -1,3 +1,13 @@
+2012-06-18  David Barr  <davidbarr@chromium.org>
+
+        Add from-image to css3-images image-resolution
+        https://bugs.webkit.org/show_bug.cgi?id=85451
+
+        Reviewed by Tony Chang.
+
+        * fast/css/image-resolution/image-resolution-expected.txt:
+        * fast/css/image-resolution/image-resolution.html:
+
 2012-06-18  Igor Oliveira  <igor.o@sisa.samsung.com>
 
         Unreviewed, rolling out r120119.

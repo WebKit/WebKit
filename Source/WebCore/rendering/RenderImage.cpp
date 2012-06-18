@@ -138,7 +138,9 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         m_needsToSetSizeForAltText = false;
     }
 #if ENABLE(CSS_IMAGE_RESOLUTION)
-    if (diff == StyleDifferenceLayout && oldStyle->imageResolution() != style()->imageResolution())
+    if (diff == StyleDifferenceLayout
+        && (oldStyle->imageResolution() != style()->imageResolution()
+            || oldStyle->imageResolutionSource() != style()->imageResolutionSource()))
         imageDimensionsChanged(true /* imageSizeChanged */);
 #endif
 }

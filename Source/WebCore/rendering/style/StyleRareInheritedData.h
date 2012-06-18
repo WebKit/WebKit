@@ -101,6 +101,9 @@ public:
 #if ENABLE(OVERFLOW_SCROLLING)
     unsigned useTouchOverflowScrolling: 1;
 #endif
+#if ENABLE(CSS_IMAGE_RESOLUTION)
+    unsigned m_imageResolutionSource : 1; // ImageResolutionSource
+#endif
 
     AtomicString hyphenationString;
     short hyphenationLimitBefore;

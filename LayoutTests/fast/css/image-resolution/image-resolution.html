@@ -39,7 +39,7 @@ function computeResolution(resolution, imgResolutionDppx)
         else if (unit === 'dpcm')
             dppx = value / (cssPxPerIn / cmPerIn);
     }
-    if (fromImage)
+    if (fromImage && imgResolutionDppx)
         dppx = imgResolutionDppx;
     if (snap)
         dppx = Math.floor(dppx);
@@ -48,11 +48,26 @@ function computeResolution(resolution, imgResolutionDppx)
     return dppx;
 }
 
+function permute2(rule) {
+    var s = rule.trim().split(' ');
+    if (s.length == 1)
+        return s;
+    return [s.join(' '), [s[1], s[0]].join(' ')];
+}
+
+function generateTests(resolutions) {
+    var tests = resolutions.slice();
+    resolutions.forEach(function(resolution) {
+        tests.push.apply(tests, permute2(resolution + ' from-image'));
+    });
+    return tests;
+}
+
 var imgUrl = '../../images/resources/green.jpg';
 var imgWidthPx = 16;
 var imgHeightPx = 16;
-var imgResolutionDppx = 72 / 96;
-var dimensions = imgWidthPx + 'x' + imgHeightPx + '@' + imgResolutionDppx + 'dppx';
+var imgResolutionDppx = 0; /* Embedded image resolution data not plumbed yet. */
+var dimensions = imgWidthPx + 'x' + imgHeightPx;
 
 description('Apply image-resolution property to a fixed image (' + dimensions + ').');
 
@@ -65,7 +80,7 @@ var resolutions = ['0dppx', '1dppx', '2dppx', '3dppx', '4dppx',
                    '0dpcm', '37.7dpcm', '75.5dpcm', '113.3dpcm', '151.1dpcm', ''];
 
 img.onload = function() {
-    resolutions.forEach(function(test) {
+    generateTests(resolutions).forEach(function(test) {
         var dppx = computeResolution(test, imgResolutionDppx);
         img.style.imageResolution = '';
         img.style.imageResolution = test;

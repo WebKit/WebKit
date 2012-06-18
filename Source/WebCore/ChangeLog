@@ -1,3 +1,34 @@
+2012-06-18  David Barr  <davidbarr@chromium.org>
+
+        Add from-image to css3-images image-resolution
+        https://bugs.webkit.org/show_bug.cgi?id=85451
+
+        Reviewed by Tony Chang.
+
+        The css3-images module is at candidate recommendation.
+        http://www.w3.org/TR/2012/CR-css3-images-20120417/#the-image-resolution
+
+        No new tests; extended fast/css/image-resolution/image-resolution.html
+
+        * css/CSSParser.cpp: Accept from-image identifier in image-resolution property.
+        (WebCore::CSSParser::parseImageResolution): Map CSSValueFromImage to identifier value from cssValuePool.
+        * css/CSSValueKeywords.in: Add from-image.
+        * css/StyleBuilder.cpp: Extend ApplyPropertyImageResolution to apply RenderStyle::imageResolutionSource.
+        (WebCore::ApplyPropertyImageResolution::applyInheritValue): Apply RenderStyle::imageResolutionSource.
+        (WebCore::ApplyPropertyImageResolution::applyInitialValue): Apply RenderStyle::imageResolutionSource.
+        (WebCore::ApplyPropertyImageResolution::applyValue): Map CSSValueFromImage to ImageResolutionFromImage.
+        * rendering/RenderImage.cpp: Extend conditions for recalculation of intrinsic size.
+        (WebCore::RenderImage::styleDidChange): Update intrinsic size if RenderStyle::imageResolutionSource() has changed.
+        * rendering/style/RenderStyle.cpp: Include StyleRareInheritedData::m_imageResolutionSource in style diff.
+        (WebCore::RenderStyle::diff): Map change in StyleRareInheritedData::m_imageResolutionSource to StyleDifferenceLayout.
+        * rendering/style/RenderStyle.h: Add RenderStyle::imageResolutionSource, RenderStyle::setImageResolutionSource, RenderStyle::initialImageResolutionSource.
+        * rendering/style/RenderStyleConstants.h: Add enum ImageResolutionSource.
+        * rendering/style/StyleRareInheritedData.cpp: Add StyleRareInheritedData::m_imageResolutionSource.
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData): Add m_imageResolutionSource to default and copy constructor.
+        (WebCore::StyleRareInheritedData::operator==): Include m_imageResolutionSource in comparison.
+        * rendering/style/StyleRareInheritedData.h: Add StyleRareInheritedData::m_imageResolutionSource.
+        (StyleRareInheritedData): Add 1-bit field StyleRareInheritedData::m_imageResolutionSource.
+
 2012-06-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] REGRESSION(r120346) ContentLayerPainter should clear rect to be painted

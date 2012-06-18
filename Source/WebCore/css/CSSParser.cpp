@@ -6893,10 +6893,14 @@ PassRefPtr<CSSValue> CSSParser::parseImageResolution(CSSParserValueList* valueLi
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     bool haveResolution = false;
+    bool haveFromImage = false;
 
     CSSParserValue* value = valueList->current();
     while (value) {
-        if (!haveResolution && validUnit(value, FResolution | FNonNeg) && value->fValue > 0) {
+        if (!haveFromImage && value->id == CSSValueFromImage) {
+            list->append(cssValuePool().createIdentifierValue(value->id));
+            haveFromImage = true;
+        } else if (!haveResolution && validUnit(value, FResolution | FNonNeg) && value->fValue > 0) {
             list->append(createPrimitiveNumericValue(value));
             haveResolution = true;
         } else

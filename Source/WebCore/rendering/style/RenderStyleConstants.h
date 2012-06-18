@@ -454,6 +454,8 @@ enum TextOverflow { TextOverflowClip = 0, TextOverflowEllipsis };
 
 enum EImageRendering { ImageRenderingAuto, ImageRenderingOptimizeSpeed, ImageRenderingOptimizeQuality, ImageRenderingOptimizeContrast };
 
+enum ImageResolutionSource { ImageResolutionSpecified = 0, ImageResolutionFromImage };
+
 enum Order { LogicalOrder = 0, VisualOrder };
 
 enum RegionOverflow { AutoRegionOverflow, BreakRegionOverflow };
