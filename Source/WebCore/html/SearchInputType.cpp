@@ -32,13 +32,16 @@
 #include "SearchInputType.h"
 
 #include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "KeyboardEvent.h"
-#include "RenderTextControlSingleLine.h"
+#include "RenderSearchField.h"
 #include "ShadowRoot.h"
 #include "TextControlInnerElements.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 inline SearchInputType::SearchInputType(HTMLInputElement* element)
     : BaseTextInputType(element)
@@ -49,6 +52,17 @@ inline SearchInputType::SearchInputType(HTMLInputElement* element)
 PassOwnPtr<InputType> SearchInputType::create(HTMLInputElement* element)
 {
     return adoptPtr(new SearchInputType(element));
+}
+
+void SearchInputType::addSearchResult()
+{
+    if (RenderObject* renderer = element()->renderer())
+        toRenderSearchField(renderer)->addSearchResult();
+}
+
+RenderObject* SearchInputType::createRenderer(RenderArena* arena, RenderStyle*) const
+{
+    return new (arena) RenderSearchField(element());
 }
 
 const AtomicString& SearchInputType::formControlType() const
@@ -151,5 +165,19 @@ void SearchInputType::searchEventTimerFired(Timer<SearchInputType>*)
     element()->onSearch();
 }
 
+bool SearchInputType::searchEventsShouldBeDispatched() const
+{
+    return element()->hasAttribute(incrementalAttr);
+}
+
+void SearchInputType::subtreeHasChanged()
+{
+    if (m_cancelButton.get())
+        toRenderSearchField(element()->renderer())->updateCancelButtonVisibility();
+
+    // If the incremental attribute is set, then dispatch the search event
+    if (searchEventsShouldBeDispatched())
+        startSearchEventTimer();
+}
 
 } // namespace WebCore

@@ -200,7 +200,7 @@ public:
     virtual void handleBlurEvent();
     virtual void accessKeyAction(bool sendMouseEvents);
     virtual bool canBeSuccessfulSubmitButton();
-
+    virtual void subtreeHasChanged();
 
     // Shadow tree handling
 
@@ -222,6 +222,7 @@ public:
 
     virtual bool rendererIsNeeded();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
+    virtual void addSearchResult();
     virtual void attach();
     virtual void detach();
     virtual void minOrMaxAttributeChanged();

@@ -30,7 +30,6 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
-#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
@@ -39,7 +38,6 @@
 #include "RenderLayer.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
-#include "SearchPopupMenu.h"
 #include "Settings.h"
 #include "SimpleFontData.h"
 #include "StyleResolver.h"
@@ -70,10 +68,8 @@ VisiblePosition RenderTextControlInnerBlock::positionForPoint(const LayoutPoint&
 
 RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node)
     : RenderTextControl(node)
-    , m_searchPopupIsVisible(false)
     , m_shouldDrawCapsLockIndicator(false)
     , m_desiredInnerTextHeight(-1)
-    , m_searchPopup(0)
 {
     ASSERT(node->isHTMLElement());
     ASSERT(node->toInputElement());
@@ -81,20 +77,6 @@ RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node)
 
 RenderTextControlSingleLine::~RenderTextControlSingleLine()
 {
-    if (m_searchPopup) {
-        m_searchPopup->popupMenu()->disconnectClient();
-        m_searchPopup = 0;
-    }
-}
-
-inline HTMLElement* RenderTextControlSingleLine::containerElement() const
-{
-    return inputElement()->containerElement();
-}
-
-inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
-{
-    return inputElement()->innerBlockElement();
 }
 
 inline HTMLElement* RenderTextControlSingleLine::innerSpinButtonElement() const
@@ -102,86 +84,10 @@ inline HTMLElement* RenderTextControlSingleLine::innerSpinButtonElement() const
     return inputElement()->innerSpinButtonElement();
 }
 
-inline HTMLElement* RenderTextControlSingleLine::resultsButtonElement() const
-{
-    return inputElement()->resultsButtonElement();
-}
-
-inline HTMLElement* RenderTextControlSingleLine::cancelButtonElement() const
-{
-    return inputElement()->cancelButtonElement();
-}
-
 RenderStyle* RenderTextControlSingleLine::textBaseStyle() const
 {
     HTMLElement* innerBlock = innerBlockElement();
     return innerBlock ? innerBlock->renderer()->style() : style();
-}
-
-void RenderTextControlSingleLine::addSearchResult()
-{
-    HTMLInputElement* input = inputElement();
-    if (input->maxResults() <= 0)
-        return;
-
-    String value = input->value();
-    if (value.isEmpty())
-        return;
-
-    Settings* settings = document()->settings();
-    if (!settings || settings->privateBrowsingEnabled())
-        return;
-
-    int size = static_cast<int>(m_recentSearches.size());
-    for (int i = size - 1; i >= 0; --i) {
-        if (m_recentSearches[i] == value)
-            m_recentSearches.remove(i);
-    }
-
-    m_recentSearches.insert(0, value);
-    while (static_cast<int>(m_recentSearches.size()) > input->maxResults())
-        m_recentSearches.removeLast();
-
-    const AtomicString& name = autosaveName();
-    if (!m_searchPopup)
-        m_searchPopup = document()->page()->chrome()->createSearchPopupMenu(this);
-
-    m_searchPopup->saveRecentSearches(name, m_recentSearches);
-}
-
-void RenderTextControlSingleLine::showPopup()
-{
-    if (m_searchPopupIsVisible)
-        return;
-
-    if (!m_searchPopup)
-        m_searchPopup = document()->page()->chrome()->createSearchPopupMenu(this);
-
-    if (!m_searchPopup->enabled())
-        return;
-
-    m_searchPopupIsVisible = true;
-
-    const AtomicString& name = autosaveName();
-    m_searchPopup->loadRecentSearches(name, m_recentSearches);
-
-    // Trim the recent searches list if the maximum size has changed since we last saved.
-    HTMLInputElement* input = inputElement();
-    if (static_cast<int>(m_recentSearches.size()) > input->maxResults()) {
-        do {
-            m_recentSearches.removeLast();
-        } while (static_cast<int>(m_recentSearches.size()) > input->maxResults());
-
-        m_searchPopup->saveRecentSearches(name, m_recentSearches);
-    }
-
-    m_searchPopup->popupMenu()->show(pixelSnappedIntRect(absoluteBoundingBoxRect()), document()->view(), -1);
-}
-
-void RenderTextControlSingleLine::hidePopup()
-{
-    if (m_searchPopup)
-        m_searchPopup->popupMenu()->hide();
 }
 
 void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -198,6 +104,11 @@ void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, const LayoutPoint&
         contentsRect.moveBy(paintOffset + location());
         theme()->paintCapsLockIndicator(this, paintInfo, pixelSnappedIntRect(contentsRect));
     }
+}
+
+LayoutUnit RenderTextControlSingleLine::computeHeightLimit() const
+{
+    return containerElement() ? contentHeight() : height();
 }
 
 void RenderTextControlSingleLine::layout()
@@ -225,7 +136,7 @@ void RenderTextControlSingleLine::layout()
     LayoutUnit desiredHeight = textBlockHeight();
     LayoutUnit currentHeight = innerTextRenderer->height();
 
-    LayoutUnit heightLimit = (inputElement()->isSearchField() || !container) ? height() : contentHeight();
+    LayoutUnit heightLimit = computeHeightLimit();
     if (currentHeight > heightLimit) {
         if (desiredHeight != currentHeight)
             setNeedsLayout(true, MarkOnlyThis);
@@ -258,12 +169,8 @@ void RenderTextControlSingleLine::layout()
     if (!container && currentHeight != contentHeight()) {
         LayoutUnit heightDiff = currentHeight - contentHeight();
         innerTextRenderer->setY(innerTextRenderer->y() - (heightDiff / 2 + layoutMod(heightDiff, 2)));
-    } else if (inputElement()->isSearchField() && containerRenderer && containerRenderer->height() > contentHeight()) {
-        // A quirk for find-in-page box on Safari Windows.
-        // http://webkit.org/b/63157
-        LayoutUnit heightDiff = containerRenderer->height() - contentHeight();
-        containerRenderer->setY(containerRenderer->y() - (heightDiff / 2 + layoutMod(heightDiff, 2)));
-    }
+    } else
+        centerContainerIfNeeded(containerRenderer);
 
     // Ignores the paddings for the inner spin button.
     if (RenderBox* innerSpinBox = innerSpinButtonElement() ? innerSpinButtonElement()->renderBox() : 0) {
@@ -431,31 +338,12 @@ LayoutUnit RenderTextControlSingleLine::preferredContentWidth(float charWidth) c
 
 LayoutUnit RenderTextControlSingleLine::computeControlHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const
 {
-    HTMLElement* resultsButton = resultsButtonElement();
-    if (RenderBox* resultsRenderer = resultsButton ? resultsButton->renderBox() : 0) {
-        resultsRenderer->computeLogicalHeight();
-        nonContentHeight = max(nonContentHeight, resultsRenderer->borderAndPaddingHeight() + resultsRenderer->marginHeight());
-        lineHeight = max(lineHeight, resultsRenderer->height());
-    }
-    HTMLElement* cancelButton = cancelButtonElement();
-    if (RenderBox* cancelRenderer = cancelButton ? cancelButton->renderBox() : 0) {
-        cancelRenderer->computeLogicalHeight();
-        nonContentHeight = max(nonContentHeight, cancelRenderer->borderAndPaddingHeight() + cancelRenderer->marginHeight());
-        lineHeight = max(lineHeight, cancelRenderer->height());
-    }
-
     return lineHeight + nonContentHeight;
 }
 
 void RenderTextControlSingleLine::updateFromElement()
 {
     RenderTextControl::updateFromElement();
-
-    if (cancelButtonElement())
-        updateCancelButtonVisibility();
-
-    if (m_searchPopupIsVisible)
-        m_searchPopup->popupMenu()->updateFromElement();
 }
 
 PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const RenderStyle* startStyle) const
@@ -496,186 +384,10 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const
     return innerBlockStyle.release();
 }
 
-void RenderTextControlSingleLine::updateCancelButtonVisibility() const
-{
-    RenderObject* cancelButtonRenderer = cancelButtonElement()->renderer();
-    if (!cancelButtonRenderer)
-        return;
-
-    const RenderStyle* curStyle = cancelButtonRenderer->style();
-    EVisibility buttonVisibility = visibilityForCancelButton();
-    if (curStyle->visibility() == buttonVisibility)
-        return;
-
-    RefPtr<RenderStyle> cancelButtonStyle = RenderStyle::clone(curStyle);
-    cancelButtonStyle->setVisibility(buttonVisibility);
-    cancelButtonRenderer->setStyle(cancelButtonStyle);
-}
-
-EVisibility RenderTextControlSingleLine::visibilityForCancelButton() const
-{
-    return (style()->visibility() == HIDDEN || inputElement()->value().isEmpty()) ? HIDDEN : VISIBLE;
-}
-
 bool RenderTextControlSingleLine::textShouldBeTruncated() const
 {
     return document()->focusedNode() != node()
         && style()->textOverflow() == TextOverflowEllipsis;
-}
-
-const AtomicString& RenderTextControlSingleLine::autosaveName() const
-{
-    return static_cast<Element*>(node())->getAttribute(autosaveAttr);
-}
-
-// PopupMenuClient methods
-void RenderTextControlSingleLine::valueChanged(unsigned listIndex, bool fireEvents)
-{
-    ASSERT(static_cast<int>(listIndex) < listSize());
-    HTMLInputElement* input = inputElement();
-    if (static_cast<int>(listIndex) == (listSize() - 1)) {
-        if (fireEvents) {
-            m_recentSearches.clear();
-            const AtomicString& name = autosaveName();
-            if (!name.isEmpty()) {
-                if (!m_searchPopup)
-                    m_searchPopup = document()->page()->chrome()->createSearchPopupMenu(this);
-                m_searchPopup->saveRecentSearches(name, m_recentSearches);
-            }
-        }
-    } else {
-        input->setValue(itemText(listIndex));
-        if (fireEvents)
-            input->onSearch();
-        input->select();
-    }
-}
-
-String RenderTextControlSingleLine::itemText(unsigned listIndex) const
-{
-    int size = listSize();
-    if (size == 1) {
-        ASSERT(!listIndex);
-        return searchMenuNoRecentSearchesText();
-    }
-    if (!listIndex)
-        return searchMenuRecentSearchesText();
-    if (itemIsSeparator(listIndex))
-        return String();
-    if (static_cast<int>(listIndex) == (size - 1))
-        return searchMenuClearRecentSearchesText();
-    return m_recentSearches[listIndex - 1];
-}
-
-String RenderTextControlSingleLine::itemLabel(unsigned) const
-{
-    return String();
-}
-
-String RenderTextControlSingleLine::itemIcon(unsigned) const
-{
-    return String();
-}
-
-bool RenderTextControlSingleLine::itemIsEnabled(unsigned listIndex) const
-{
-     if (!listIndex || itemIsSeparator(listIndex))
-        return false;
-    return true;
-}
-
-PopupMenuStyle RenderTextControlSingleLine::itemStyle(unsigned) const
-{
-    return menuStyle();
-}
-
-PopupMenuStyle RenderTextControlSingleLine::menuStyle() const
-{
-    return PopupMenuStyle(style()->visitedDependentColor(CSSPropertyColor), style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->font(), style()->visibility() == VISIBLE,
-        style()->display() == NONE, style()->textIndent(), style()->direction(), isOverride(style()->unicodeBidi()));
-}
-
-int RenderTextControlSingleLine::clientInsetLeft() const
-{
-    // Inset the menu by the radius of the cap on the left so that
-    // it only runs along the straight part of the bezel.
-    return height() / 2;
-}
-
-int RenderTextControlSingleLine::clientInsetRight() const
-{
-    // Inset the menu by the radius of the cap on the right so that
-    // it only runs along the straight part of the bezel (unless it needs
-    // to be wider).
-    return height() / 2;
-}
-
-LayoutUnit RenderTextControlSingleLine::clientPaddingLeft() const
-{
-    LayoutUnit padding = paddingLeft();
-    if (RenderBox* box = innerBlockElement() ? innerBlockElement()->renderBox() : 0)
-        padding += box->x();
-    return padding;
-}
-
-LayoutUnit RenderTextControlSingleLine::clientPaddingRight() const
-{
-    LayoutUnit padding = paddingRight();
-    if (RenderBox* containerBox = containerElement() ? containerElement()->renderBox() : 0) {
-        if (RenderBox* innerBlockBox = innerBlockElement() ? innerBlockElement()->renderBox() : 0)
-            padding += containerBox->width() - (innerBlockBox->x() + innerBlockBox->width());
-    }
-    return padding;
-}
-
-int RenderTextControlSingleLine::listSize() const
-{
-    // If there are no recent searches, then our menu will have 1 "No recent searches" item.
-    if (!m_recentSearches.size())
-        return 1;
-    // Otherwise, leave room in the menu for a header, a separator, and the "Clear recent searches" item.
-    return m_recentSearches.size() + 3;
-}
-
-int RenderTextControlSingleLine::selectedIndex() const
-{
-    return -1;
-}
-
-void RenderTextControlSingleLine::popupDidHide()
-{
-    m_searchPopupIsVisible = false;
-}
-
-bool RenderTextControlSingleLine::itemIsSeparator(unsigned listIndex) const
-{
-    // The separator will be the second to last item in our list.
-    return static_cast<int>(listIndex) == (listSize() - 2);
-}
-
-bool RenderTextControlSingleLine::itemIsLabel(unsigned listIndex) const
-{
-    return listIndex == 0;
-}
-
-bool RenderTextControlSingleLine::itemIsSelected(unsigned) const
-{
-    return false;
-}
-
-void RenderTextControlSingleLine::setTextFromItem(unsigned listIndex)
-{
-    inputElement()->setValue(itemText(listIndex));
-}
-
-FontSelector* RenderTextControlSingleLine::fontSelector() const
-{
-    return document()->styleResolver()->fontSelector();
-}
-
-HostWindow* RenderTextControlSingleLine::hostWindow() const
-{
-    return document()->view()->hostWindow();
 }
 
 void RenderTextControlSingleLine::autoscroll()
@@ -739,17 +451,6 @@ bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction
     if (layer && layer->scroll(logicalToPhysical(direction, style()->isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), granularity, multiplier))
         return true;
     return RenderBlock::logicalScroll(direction, granularity, multiplier, stopNode);
-}
-
-PassRefPtr<Scrollbar> RenderTextControlSingleLine::createScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
-{
-    RefPtr<Scrollbar> widget;
-    bool hasCustomScrollbarStyle = style()->hasPseudoStyle(SCROLLBAR);
-    if (hasCustomScrollbarStyle)
-        widget = RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, this->node());
-    else
-        widget = Scrollbar::createNativeScrollbar(scrollableArea, orientation, controlSize);
-    return widget.release();
 }
 
 HTMLInputElement* RenderTextControlSingleLine::inputElement() const

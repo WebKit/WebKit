@@ -91,6 +91,7 @@
 #include "RenderScrollbar.cpp"
 #include "RenderScrollbarPart.cpp"
 #include "RenderScrollbarTheme.cpp"
+#include "RenderSearchField.cpp"
 #include "RenderSlider.cpp"
 #include "RenderTable.cpp"
 #include "RenderTableCaption.cpp"

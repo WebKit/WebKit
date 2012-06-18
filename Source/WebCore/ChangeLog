@@ -1,5 +1,92 @@
 2012-06-17  Yoshifumi Inoue  <yosin@chromium.org>
 
+        [Forms] Move search field related code to RenderSearchField from RenderTextControlSingleLine
+        https://bugs.webkit.org/show_bug.cgi?id=88980
+
+        Reviewed by Kent Tamura.
+
+        This patch moves search field related methods in RenderTextControlSingleLine
+        to new class RenderSearchField and changes related classes to use
+        RenderSearchField.
+
+        No new tests. This patch doesn't change behavior.
+
+        * CMakeLists.txt: Added new file RenderSearchField.cpp
+        * GNUmakefile.list.am: Added new file RenderSearchField.cpp and RenderSearchField.h
+        * Target.pri: ditto
+        * WebCore.gypi: ditto
+        * WebCore.vcproj/WebCore.vcproj: ditto
+        * WebCore.xcodeproj/project.pbxproj: ditto
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::subtreeHasChanged): Call RenderSearchField::updateCancelButtonVisibility
+        (WebCore::HTMLInputElement::addSearchResult): Changed to call InputType::addSearchResult.
+        * html/InputType.cpp:
+        (WebCore::InputType::addSearchResult): Added.
+        * html/InputType.h:
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::addSearchResult): Moved from HTMLInputElement.
+        (WebCore::SearchInputType::createRenderer): Added to create RenderSearchField.
+        (WebCore::SearchInputType::searchEventsShouldBeDispatched): Moved from HTMLInputElement.
+        (WebCore::SearchInputType::subtreeHasChanged) Moved search related code from HTMLInputElement.
+        * html/SearchInputType.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler): Use RenderSearchField instead of RenderTextControlSingleLine.
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create): Got rid isSearchField() guard for addSearchResult().
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::RenderSearchField): Renamed to RenderSearchField.
+        (WebCore::RenderSearchField::~RenderSearchField): ditto
+        (WebCore::RenderSearchField::resultsButtonElement): ditto
+        (WebCore::RenderSearchField::cancelButtonElement): ditto
+        (WebCore::RenderSearchField::addSearchResult): ditto
+        (WebCore::RenderSearchField::showPopup): ditto
+        (WebCore::RenderSearchField::hidePopup): ditto
+        (WebCore::RenderSearchField::computeControlHeight): Added.
+        (WebCore::RenderSearchField::updateFromElement): Moved search field related code from RenderTextControlSingleLine.
+        (WebCore::RenderSearchField::updateCancelButtonVisibility): Renamed to RenderSearchField.
+        (WebCore::RenderSearchField::visibilityForCancelButton): ditto
+        (WebCore::RenderSearchField::autosaveName): ditto
+        (WebCore::RenderSearchField::valueChanged): ditto
+        (WebCore::RenderSearchField::itemText): ditto
+        (WebCore::RenderSearchField::itemLabel): ditto
+        (WebCore::RenderSearchField::itemIcon): ditto
+        (WebCore::RenderSearchField::itemIsEnabled): ditto
+        (WebCore::RenderSearchField::itemStyle): ditto
+        (WebCore::RenderSearchField::menuStyle): ditto
+        (WebCore::RenderSearchField::clientInsetLeft): ditto
+        (WebCore::RenderSearchField::clientInsetRight): ditto
+        (WebCore::RenderSearchField::clientPaddingLeft): ditto
+        (WebCore::RenderSearchField::clientPaddingRight): ditto
+        (WebCore::RenderSearchField::listSize): ditto
+        (WebCore::RenderSearchField::selectedIndex): ditto
+        (WebCore::RenderSearchField::popupDidHide): ditto
+        (WebCore::RenderSearchField::itemIsSeparator): ditto
+        (WebCore::RenderSearchField::itemIsLabel): ditto
+        (WebCore::RenderSearchField::itemIsSelected): ditto
+        (WebCore::RenderSearchField::setTextFromItem): ditto
+        (WebCore::RenderSearchField::fontSelector): ditto
+        (WebCore::RenderSearchField::hostWindow): ditto
+        (WebCore::RenderSearchField::createScrollbar): ditto
+        (WebCore::RenderSearchField::computeHeightLimit): Added.
+        (WebCore::RenderSearchField::centerContainerIfNeeded): Added.
+        * rendering/RenderSearchField.h:
+        (WebCore::toRenderSearchField): Added.
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::RenderTextControlSingleLine): Remove search field related code.
+        (WebCore::RenderTextControlSingleLine::~RenderTextControlSingleLine): ditto.
+        (WebCore::RenderTextControlSingleLine::computeHeightLimit): Added.
+        (WebCore::RenderTextControlSingleLine::layout): Use new methods for removing isSearchField.
+        (WebCore::RenderTextControlSingleLine::computeControlHeight): Added.
+        (WebCore::RenderTextControlSingleLine::updateFromElement): Remove search field related code.
+        * rendering/RenderTextControlSingleLine.h:
+        (RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::centerContainerIfNeeded): Added.
+        (WebCore::RenderTextControlSingleLine::containerElement): Exposed for RenderSearchField.
+        (WebCore::RenderTextControlSingleLine::innerBlockElement): Exposed for RenderSearchField.
+        * rendering/RenderingAllInOne.cpp: Added RenderSearchField.cpp
+
+2012-06-17  Yoshifumi Inoue  <yosin@chromium.org>
+
         [Forms] Copy RenderTextControlSingleLine.{cpp,h} to RenderSearchFiled.{cpp,h}
         https://bugs.webkit.org/show_bug.cgi?id=89155
 

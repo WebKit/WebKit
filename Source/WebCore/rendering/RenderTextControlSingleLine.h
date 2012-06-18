@@ -23,31 +23,30 @@
 #ifndef RenderTextControlSingleLine_h
 #define RenderTextControlSingleLine_h
 
-#include "PopupMenuClient.h"
+#include "HTMLInputElement.h"
 #include "RenderTextControl.h"
 
 namespace WebCore {
 
 class HTMLInputElement;
-class SearchPopupMenu;
 
-class RenderTextControlSingleLine : public RenderTextControl, private PopupMenuClient {
+class RenderTextControlSingleLine : public RenderTextControl {
 public:
     RenderTextControlSingleLine(Node*);
     virtual ~RenderTextControlSingleLine();
     // FIXME: Move create*Style() to their classes.
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
     PassRefPtr<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
-    void updateCancelButtonVisibility() const;
-
-    void addSearchResult();
-    void stopSearchEventTimer();
-
-    bool popupIsVisible() const { return m_searchPopupIsVisible; }
-    void showPopup();
-    void hidePopup();
 
     void capsLockStateMayHaveChanged();
+
+protected:
+    virtual void centerContainerIfNeeded(RenderBox*) const { }
+    virtual LayoutUnit computeHeightLimit() const;
+    HTMLElement* containerElement() const;
+    HTMLElement* innerBlockElement() const;
+    HTMLInputElement* inputElement() const;
+    virtual void updateFromElement() OVERRIDE;
 
 private:
     virtual bool hasControlClip() const;
@@ -76,58 +75,27 @@ private:
     virtual LayoutUnit preferredContentWidth(float charWidth) const;
     virtual LayoutUnit computeControlHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const OVERRIDE;
     
-    virtual void updateFromElement();
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual RenderStyle* textBaseStyle() const;
 
-    EVisibility visibilityForCancelButton() const;
     bool textShouldBeTruncated() const;
-    const AtomicString& autosaveName() const;
 
-    // PopupMenuClient methods
-    virtual void valueChanged(unsigned listIndex, bool fireEvents = true) OVERRIDE;
-    virtual void selectionChanged(unsigned, bool) OVERRIDE { }
-    virtual void selectionCleared() OVERRIDE { }
-    virtual String itemText(unsigned listIndex) const OVERRIDE;
-    virtual String itemLabel(unsigned listIndex) const OVERRIDE;
-    virtual String itemIcon(unsigned listIndex) const OVERRIDE;
-    virtual String itemToolTip(unsigned) const OVERRIDE { return String(); }
-    virtual String itemAccessibilityText(unsigned) const OVERRIDE { return String(); }
-    virtual bool itemIsEnabled(unsigned listIndex) const OVERRIDE;
-    virtual PopupMenuStyle itemStyle(unsigned listIndex) const OVERRIDE;
-    virtual PopupMenuStyle menuStyle() const OVERRIDE;
-    virtual int clientInsetLeft() const OVERRIDE;
-    virtual int clientInsetRight() const OVERRIDE;
-    virtual LayoutUnit clientPaddingLeft() const OVERRIDE;
-    virtual LayoutUnit clientPaddingRight() const OVERRIDE;
-    virtual int listSize() const OVERRIDE;
-    virtual int selectedIndex() const OVERRIDE;
-    virtual void popupDidHide() OVERRIDE;
-    virtual bool itemIsSeparator(unsigned listIndex) const OVERRIDE;
-    virtual bool itemIsLabel(unsigned listIndex) const OVERRIDE;
-    virtual bool itemIsSelected(unsigned listIndex) const OVERRIDE;
-    virtual bool shouldPopOver() const OVERRIDE { return false; }
-    virtual bool valueShouldChangeOnHotTrack() const OVERRIDE { return false; }
-    virtual void setTextFromItem(unsigned listIndex) OVERRIDE;
-    virtual FontSelector* fontSelector() const OVERRIDE;
-    virtual HostWindow* hostWindow() const OVERRIDE;
-    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize) OVERRIDE;
-
-    HTMLInputElement* inputElement() const;
-
-    HTMLElement* containerElement() const;
-    HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
-    HTMLElement* resultsButtonElement() const;
-    HTMLElement* cancelButtonElement() const;
 
-    bool m_searchPopupIsVisible;
     bool m_shouldDrawCapsLockIndicator;
     LayoutUnit m_desiredInnerTextHeight;
-    RefPtr<SearchPopupMenu> m_searchPopup;
-    Vector<String> m_recentSearches;
 };
+
+inline HTMLElement* RenderTextControlSingleLine::containerElement() const
+{
+    return inputElement()->containerElement();
+}
+
+inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
+{
+    return inputElement()->innerBlockElement();
+}
 
 inline RenderTextControlSingleLine* toRenderTextControlSingleLine(RenderObject* object)
 {

@@ -37,7 +37,7 @@
 #include "HTMLTextAreaElement.h"
 #include "MouseEvent.h"
 #include "Page.h"
-#include "RenderTextControlSingleLine.h"
+#include "RenderSearchField.h"
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "ScrollbarTheme.h"
@@ -151,7 +151,7 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         input->focus();
         input->select();
-        RenderTextControlSingleLine* renderer = toRenderTextControlSingleLine(input->renderer());
+        RenderSearchField* renderer = toRenderSearchField(input->renderer());
         if (renderer->popupIsVisible())
             renderer->hidePopup();
         else if (input->maxResults() > 0)
