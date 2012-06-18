@@ -1,3 +1,20 @@
+2012-06-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: native memory snapshot performance and coverage test implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=89363
+
+        We have to track the performance of MemoryAgent.getProcessMemoryDistribution.
+        Also this test will work as a burn down chart for Unknown memory metric.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/native-memory-snapshot.html: Added.
+        * inspector/performance-test.js:
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype.reportSize):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype._dump):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest):
+
 2012-06-05  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: serialize edge counts instead of indexes in heap snapshot

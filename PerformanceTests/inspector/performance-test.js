@@ -7,6 +7,7 @@ InspectorTest.runPerformanceTest = function(perfTest, executeTime, callback)
         this._callback = callback;
         this._test = test;
         this._times = {};
+        this._sizes = {};
         this._testStartTime = new Date();
         this._heapSizeDeltas = [];
         this._jsHeapSize = this._getJSHeapSize();
@@ -24,6 +25,13 @@ InspectorTest.runPerformanceTest = function(perfTest, executeTime, callback)
             if (!this._times[cookie.name])
                 this._times[cookie.name] = [];
             this._times[cookie.name].push(endTime - cookie.startTime);
+        },
+
+        reportSize: function(name, size)
+        {
+            if (!this._sizes[name])
+                this._sizes[name] = [];
+            this._sizes[name].push(size);
         },
 
         _getJSHeapSize: function()
@@ -74,6 +82,9 @@ InspectorTest.runPerformanceTest = function(perfTest, executeTime, callback)
         {
             for (var testName in this._times)
                 InspectorTest.dumpTestStats(groupName, testName, this._times[testName], "ms");
+
+            for (var testName in this._sizes)
+                InspectorTest.dumpTestStats(groupName, testName, this._sizes[testName], "kB", 1024);
 
             var url = WebInspector.inspectedPageURL;
             var regExp = /([^\/]+)\.html/;
