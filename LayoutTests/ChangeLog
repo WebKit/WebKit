@@ -1,3 +1,9 @@
+2012-06-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip one more failing test to paint.
+
+        * platform/qt/Skipped:
+
 2012-06-18  Dan Bernstein  <mitz@apple.com>
 
         Column progression direction cannot be set independently of writing direction

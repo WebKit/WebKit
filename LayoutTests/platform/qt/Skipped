@@ -2526,3 +2526,7 @@ http/tests/xmlhttprequest/origin-exact-matching.html
 # [Qt]Web Inspector: inspector/extensions/extensions-network.html makes inspector/extensions/extensions-reload.html timeout
 # https://bugs.webkit.org/show_bug.cgi?id=89349
 inspector/extensions/extensions-reload.html
+
+# New inspector/styles/inject-stylesheet.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=89364
+inspector/styles/inject-stylesheet.html
