@@ -373,7 +373,7 @@ int RenderTableSection::calcRowLogicalHeight()
             if (va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP || va == SUPER || va == SUB || va == LENGTH) {
                 LayoutUnit baselinePosition = cell->cellBaselinePosition();
                 if (baselinePosition > cell->borderBefore() + cell->paddingBefore()) {
-                    m_grid[r].baseline = max(m_grid[r].baseline, baselinePosition - cell->intrinsicPaddingBefore());
+                    m_grid[cellStartRow].baseline = max(m_grid[cellStartRow].baseline, baselinePosition - cell->intrinsicPaddingBefore());
                     baselineDescent = max(baselineDescent, m_rowPos[cellStartRow] + cellLogicalHeight - (baselinePosition - cell->intrinsicPaddingBefore()));
                 }
             }
@@ -633,9 +633,9 @@ void RenderTableSection::layoutRows()
                 case TEXT_BOTTOM:
                 case LENGTH:
                 case BASELINE: {
-                    LayoutUnit b = cell->cellBaselinePosition();
-                    if (b > cell->borderBefore() + cell->paddingBefore())
-                        intrinsicPaddingBefore = getBaseline(r) - (b - oldIntrinsicPaddingBefore);
+                    LayoutUnit baseline = cell->cellBaselinePosition();
+                    if (baseline > cell->borderBefore() + cell->paddingBefore())
+                        intrinsicPaddingBefore = getBaseline(cell->rowIndex()) - (baseline - oldIntrinsicPaddingBefore);
                     break;
                 }
                 case TOP:

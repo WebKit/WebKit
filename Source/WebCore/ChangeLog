@@ -1,3 +1,33 @@
+2012-06-18  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: table-height-algorithm-012 fails
+        https://bugs.webkit.org/show_bug.cgi?id=85652
+
+        Reviewed by Julien Chaffraix.
+
+        Test: css2.1/20110323/table-height-algorithm-012.htm
+              fast/css/vertical-align-baseline-rowspan-001.htm
+              fast/css/vertical-align-baseline-rowspan-002.htm
+              fast/css/vertical-align-baseline-rowspan-003.htm
+              fast/css/vertical-align-baseline-rowspan-004.htm
+              fast/css/vertical-align-baseline-rowspan-005.htm
+              fast/css/vertical-align-baseline-rowspan-006.htm
+              fast/css/vertical-align-baseline-rowspan-007.htm
+              fast/css/vertical-align-baseline-rowspan-008.htm
+              fast/css/vertical-align-baseline-rowspan-009.htm
+
+        A spanning cell with Vertical-align set to 'baseline' should align the cell's content baseline 
+        (which is the bottom of the first line of text or in-flow content) with the baseline of the first of the rows it spans.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight): Only calculate the baseline for the first row in a rowspan. This
+          ensures that any height added to the rowspan from the baseline is only added to the first row in the span rather than
+          to each of them.
+        (WebCore::RenderTableSection::layoutRows): Rather than get the baseline for each row in a rowspan (with the result that
+          only the baseline for the last row actually sticks), calculate it for the first row in the rowspan only. This function is
+          inefficient when handling rowspans so this doesn't fix the fact that redundant calculations are performed on each subsequent
+          row in the span - that should be done separately.
+
 2012-06-18  Hayato Ito  <hayato@chromium.org>
 
         Event dispatcher should use InsertionPoint::hasDistribution instead of InsertinPoint::isActive in re-targeting.

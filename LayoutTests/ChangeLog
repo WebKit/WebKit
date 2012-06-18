@@ -1,3 +1,38 @@
+2012-06-18  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: table-height-algorithm-012 fails
+        https://bugs.webkit.org/show_bug.cgi?id=85652
+
+        Reviewed by Julien Chaffraix.
+
+        * css2.1/20110323/table-height-algorithm-012-expected.html: Added.
+        * css2.1/20110323/table-height-algorithm-012.htm: Added.
+        * fast/css/vertical-align-baseline-rowspan-001-expected.html: Added.
+        * fast/css/vertical-align-baseline-rowspan-001.htm: Added.
+        * fast/css/vertical-align-baseline-rowspan-002-expected.html: Added.
+        * fast/css/vertical-align-baseline-rowspan-002.htm: Added.
+        * fast/css/vertical-align-baseline-rowspan-003-expected.html: Added.
+        * fast/css/vertical-align-baseline-rowspan-003.htm: Added.
+            These are a few variations on table-height-algorithm-012.htm
+        * fast/css/vertical-align-baseline-rowspan-004-expected.html: Added.
+        * fast/css/vertical-align-baseline-rowspan-004.htm: Added.
+        * fast/css/vertical-align-baseline-rowspan-005-expected.html: Added.
+        * fast/css/vertical-align-baseline-rowspan-005.htm: Added.
+        * fast/css/vertical-align-baseline-rowspan-006-expected.html: Added.
+        * fast/css/vertical-align-baseline-rowspan-006.htm: Added.
+            These three test the calculation of the baseline RenderTableSection::calcRowLogicalHeight,
+            where we now always use the first row in the span. Without this the 'Filler Text' in the middle
+            cell aligns beyond the top of the table.
+        * fast/css/vertical-align-baseline-rowspan-007-expected.html: Added.
+        * fast/css/vertical-align-baseline-rowspan-007.htm: Added.
+        * fast/css/vertical-align-baseline-rowspan-008-expected.html: Added.
+        * fast/css/vertical-align-baseline-rowspan-008.htm: Added.
+        * fast/css/vertical-align-baseline-rowspan-009-expected.html: Added.
+        * fast/css/vertical-align-baseline-rowspan-009.htm: Added.
+            These make sure the alignment used in the first row of the span is correct when things like
+            the height of the cell and the height of the span are specified.
+
+
 2012-06-18  Hayato Ito  <hayato@chromium.org>
 
         Event dispatcher should use InsertionPoint::hasDistribution instead of InsertinPoint::isActive in re-targeting.
