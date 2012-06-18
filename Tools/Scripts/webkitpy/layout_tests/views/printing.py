@@ -407,6 +407,9 @@ class Printer(object):
             return
         self._write(msg)
 
+    def writeln(self, *args, **kwargs):
+        self._meter.writeln(*args, **kwargs)
+
     def _write(self, msg):
         self._meter.writeln(msg)
 

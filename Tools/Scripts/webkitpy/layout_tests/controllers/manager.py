@@ -1463,9 +1463,10 @@ class Manager(object):
         worker_state.current_test_name = test_info.test_name
         worker_state.next_timeout = time.time() + hang_timeout
 
-    def handle_done(self, source):
+    def handle_done(self, source, log_messages=None):
         worker_state = self._worker_states[source]
         worker_state.done = True
+        self._log_messages(log_messages)
 
     def handle_exception(self, source, exception_type, exception_value, stack):
         if exception_type in (KeyboardInterrupt, TestRunInterruptedException):
@@ -1492,15 +1493,20 @@ class Manager(object):
             if not self._remaining_locked_shards:
                 self.stop_servers_with_lock()
 
-    def handle_finished_test(self, source, result, elapsed_time):
+    def handle_finished_test(self, source, result, elapsed_time, log_messages=None):
         worker_state = self._worker_states[source]
         worker_state.next_timeout = None
         worker_state.current_test_name = None
         worker_state.stats['total_time'] += elapsed_time
         worker_state.stats['num_tests'] += 1
 
+        self._log_messages(log_messages)
         self._all_results.append(result)
         self._update_summary_with_result(self._current_result_summary, result)
+
+    def _log_messages(self, messages):
+        for message in messages:
+            self._printer.writeln(*message)
 
     def _log_worker_stack(self, stack):
         webkitpydir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy') + self._filesystem.sep
