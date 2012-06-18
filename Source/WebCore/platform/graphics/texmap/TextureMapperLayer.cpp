@@ -77,7 +77,7 @@ void TextureMapperLayer::computeTransformsRecursive()
         parentTransform = m_effectTarget->m_transform.combined();
     m_transform.combineTransforms(parentTransform);
 
-    m_state.visible = m_state.backfaceVisibility || m_transform.combined().inverse().m33() >= 0;
+    m_state.visible = m_state.backfaceVisibility || !m_transform.combined().isBackFaceVisible();
 
     if (m_parent && m_parent->m_state.preserves3D)
         m_centerZ = m_transform.combined().mapPoint(FloatPoint3D(m_size.width() / 2, m_size.height() / 2, 0)).z();
@@ -154,6 +154,9 @@ void TextureMapperLayer::paint()
 
 void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
 {
+    if (!m_state.visible)
+        return;
+
     // We apply the following transform to compensate for painting into a surface, and then apply the offset so that the painting fits in the target rect.
     TransformationMatrix transform;
     transform.translate(options.offset.width(), options.offset.height());
@@ -286,7 +289,9 @@ bool TextureMapperLayer::isVisible() const
 {
     if (m_size.isEmpty() && (m_state.masksToBounds || m_state.maskLayer || m_children.isEmpty()))
         return false;
-    if (!m_state.visible || m_opacity < 0.01)
+    if (!m_state.visible && m_children.isEmpty())
+        return false;
+    if (m_opacity < 0.01)
         return false;
     return true;
 }
