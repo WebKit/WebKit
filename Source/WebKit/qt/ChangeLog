@@ -1,3 +1,21 @@
+2012-06-18  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt] Update QML plugins to Qt 5 style
+        https://bugs.webkit.org/show_bug.cgi?id=89027
+
+        Reviewed by Csaba Osztrogonác.
+
+        Since support for Qt 4 style plugins was removed from Qt 5
+        we need to update our plugins to the new style to be able
+        to build with a more recent Qt 5 hash.
+        Add empty plugin description json files for now.
+
+        * declarative/experimental/plugin.cpp:
+        * declarative/experimental/plugin.json: Added.
+        * declarative/plugin.cpp:
+        (WebKitQmlPlugin):
+        * declarative/plugin.json: Added.
+
 2012-06-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove dependency to QtScript for the Qt 5 build
