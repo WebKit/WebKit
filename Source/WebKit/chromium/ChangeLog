@@ -1,3 +1,9 @@
+2012-06-17  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed build fix.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-06-17  Zeev Lieber  <zlieber@chromium.org>
 
         [Chromium] Compositor should avoid drawing quads when cached textures are available and contents unchanged

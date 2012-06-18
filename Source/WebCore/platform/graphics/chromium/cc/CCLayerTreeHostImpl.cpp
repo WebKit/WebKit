@@ -418,7 +418,7 @@ void CCLayerTreeHostImpl::removeRenderPassesRecursive(CCRenderPassList& passes, 
 
 void CCLayerTreeHostImpl::removePassesWithCachedTextures(CCRenderPassList& passes, CCRenderPassList& skippedPasses)
 {
-    for (ssize_t passIndex = passes.size() - 1; passIndex >= 0; --passIndex) {
+    for (int passIndex = passes.size() - 1; passIndex >= 0; --passIndex) {
         CCRenderPass* currentPass = passes[passIndex].get();
         const CCQuadList& quadList = currentPass->quadList();
         CCQuadList::constBackToFrontIterator quadListIterator = quadList.backToFrontBegin();

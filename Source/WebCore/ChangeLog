@@ -1,3 +1,10 @@
+2012-06-17  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed build fix.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::removePassesWithCachedTextures):
+
 2012-06-17  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] optimize ::naturalSize()

@@ -1626,6 +1626,8 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     EXPECT_EQ(expectedSwapRect.height(), actualSwapRect.height());
 }
 
+} // namespace
+
 class FakeLayerWithQuads : public CCLayerImpl {
 public:
     static PassOwnPtr<FakeLayerWithQuads> create(int id) { return adoptPtr(new FakeLayerWithQuads(id)); }
@@ -1644,6 +1646,8 @@ private:
     {
     }
 };
+
+namespace {
 
 class MockContext : public FakeWebGraphicsContext3D {
 public:
