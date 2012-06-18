@@ -389,6 +389,13 @@ canvas/philip/tests/2d.path.rect.selfintersect.html
 # rectangle has zero height.
 canvas/philip/tests/2d.path.rect.zero.6.html
 
+# Repeat-x/-y doesn't work - not supported in Cairo, workaround needed
+# https://bugs.webkit.org/show_bug.cgi?id=53085
+canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html
+canvas/philip/tests/2d.pattern.paint.repeatx.outside.html
+canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html
+canvas/philip/tests/2d.pattern.paint.repeaty.outside.html
+
 # BUG: Bug in the test itself, as the input box can be big enough for the given coordinates to be inside it.
 fast/forms/input-text-click-outside.html
 

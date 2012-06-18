@@ -820,6 +820,12 @@ BUGWKGTK : canvas/philip/tests/2d.path.rect.selfintersect.html = TEXT
 // rectangle has zero height.
 BUGWKGTK : canvas/philip/tests/2d.path.rect.zero.6.html = TEXT
 
+// Repeat-x/-y doesn't work - not supported in Cairo, workaround needed
+BUGWK53085 : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
+BUGWK53085 : canvas/philip/tests/2d.pattern.paint.repeatx.outside.html = TEXT
+BUGWK53085 : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
+BUGWK53085 : canvas/philip/tests/2d.pattern.paint.repeaty.outside.html = TEXT
+
 // Tests that user modal dialogs fail in the DRT for some reason.
 BUGWK53600 : fast/animation/request-animation-frame-during-modal.html = TEXT
 BUGWK53600 : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT

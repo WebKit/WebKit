@@ -251,9 +251,6 @@ void PlatformContextCairo::prepareForFilling(const GraphicsContextState& state, 
                               state.fillGradient.get(),
                               state.fillColor,
                               patternAdjustment == AdjustPatternForGlobalAlpha ? globalAlpha() : 1);
-
-    if (state.fillPattern)
-        clipForPatternFilling(state);
 }
 
 void PlatformContextCairo::prepareForStroking(const GraphicsContextState& state, AlphaPreservation alphaPreservation)
@@ -263,45 +260,6 @@ void PlatformContextCairo::prepareForStroking(const GraphicsContextState& state,
                               state.strokeGradient.get(),
                               state.strokeColor,
                               alphaPreservation == PreserveAlpha ? globalAlpha() : 1);
-}
-
-void PlatformContextCairo::clipForPatternFilling(const GraphicsContextState& state)
-{
-    ASSERT(state.fillPattern);
-
-    // Hold current cairo path in a variable for restoring it after configuring the pattern clip rectangle.
-    OwnPtr<cairo_path_t> currentPath = adoptPtr(cairo_copy_path(m_cr.get()));
-    cairo_new_path(m_cr.get());
-
-    // Initialize clipping extent from current cairo clip extents, then shrink if needed according to pattern.
-    // Inspired by GraphicsContextQt::drawRepeatPattern.
-    double x1, y1, x2, y2;
-    cairo_clip_extents(m_cr.get(), &x1, &y1, &x2, &y2);
-    FloatRect clipRect(x1, y1, x2 - x1, y2 - y1);
-
-    Image* patternImage = state.fillPattern->tileImage();
-    ASSERT(patternImage);
-    const AffineTransform& patternTransform = state.fillPattern->getPatternSpaceTransform();
-    FloatRect patternRect = patternTransform.mapRect(FloatRect(0, 0, patternImage->width(), patternImage->height()));
-
-    bool repeatX = state.fillPattern->repeatX();
-    bool repeatY = state.fillPattern->repeatY();
-
-    if (!repeatX) {
-        clipRect.setX(patternRect.x());
-        clipRect.setWidth(patternRect.width());
-    }
-    if (!repeatY) {
-        clipRect.setY(patternRect.y());
-        clipRect.setHeight(patternRect.height());
-    }
-    if (!repeatX || !repeatY) {
-        cairo_rectangle(m_cr.get(), clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
-        cairo_clip(m_cr.get());
-    }
-
-    // Restoring cairo path.
-    cairo_append_path(m_cr.get(), currentPath.get());
 }
 
 } // namespace WebCore
