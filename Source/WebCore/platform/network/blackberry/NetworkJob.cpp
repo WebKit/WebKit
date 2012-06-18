@@ -541,6 +541,11 @@ bool NetworkJob::retryAsFTPDirectory()
 
 bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increasRedirectCount)
 {
+    // m_frame can be null if this is a PingLoader job (See NetworkJob::initialize).
+    // In this case we don't start new request.
+    if (!m_frame)
+        return false;
+
     if (isClientAvailable()) {
         RecursionGuard guard(m_callingClient);
         m_handle->client()->willSendRequest(m_handle.get(), newRequest, m_response);
