@@ -20,22 +20,24 @@
  *
  */
 
-#ifndef RenderSearchField_h
-#define RenderSearchField_h
+#ifndef RenderTextControlSingleLine_h
+#define RenderTextControlSingleLine_h
 
 #include "PopupMenuClient.h"
-#include "RenderTextControlSingleLine.h"
+#include "RenderTextControl.h"
 
 namespace WebCore {
 
 class HTMLInputElement;
 class SearchPopupMenu;
 
-class RenderSearchField : public RenderTextControlSingleLine, private PopupMenuClient {
+class RenderTextControlSingleLine : public RenderTextControl, private PopupMenuClient {
 public:
-    RenderSearchField(Node*);
-    virtual ~RenderSearchField();
-
+    RenderTextControlSingleLine(Node*);
+    virtual ~RenderTextControlSingleLine();
+    // FIXME: Move create*Style() to their classes.
+    virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
+    PassRefPtr<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
     void updateCancelButtonVisibility() const;
 
     void addSearchResult();
@@ -45,12 +47,42 @@ public:
     void showPopup();
     void hidePopup();
 
+    void capsLockStateMayHaveChanged();
+
 private:
-    virtual void centerContainerIfNeeded(RenderBox*) const OVERRIDE;
+    virtual bool hasControlClip() const;
+    virtual LayoutRect controlClipRect(const LayoutPoint&) const;
+    virtual bool isTextField() const { return true; }
+
+    virtual void paint(PaintInfo&, const LayoutPoint&);
+    virtual void layout();
+
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
+
+    virtual void autoscroll();
+
+    // Subclassed to forward to our inner div.
+    virtual int scrollLeft() const;
+    virtual int scrollTop() const;
+    virtual int scrollWidth() const;
+    virtual int scrollHeight() const;
+    virtual void setScrollLeft(int);
+    virtual void setScrollTop(int);
+    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
+    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
+
+    int textBlockWidth() const;
+    virtual float getAvgCharWidth(AtomicString family);
+    virtual LayoutUnit preferredContentWidth(float charWidth) const;
     virtual LayoutUnit computeControlHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const OVERRIDE;
-    virtual LayoutUnit computeHeightLimit() const OVERRIDE;
-    virtual void updateFromElement() OVERRIDE;
+    
+    virtual void updateFromElement();
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
+    virtual RenderStyle* textBaseStyle() const;
+
     EVisibility visibilityForCancelButton() const;
+    bool textShouldBeTruncated() const;
     const AtomicString& autosaveName() const;
 
     // PopupMenuClient methods
@@ -82,22 +114,42 @@ private:
     virtual HostWindow* hostWindow() const OVERRIDE;
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize) OVERRIDE;
 
+    HTMLInputElement* inputElement() const;
+
+    HTMLElement* containerElement() const;
+    HTMLElement* innerBlockElement() const;
+    HTMLElement* innerSpinButtonElement() const;
     HTMLElement* resultsButtonElement() const;
     HTMLElement* cancelButtonElement() const;
 
     bool m_searchPopupIsVisible;
+    bool m_shouldDrawCapsLockIndicator;
+    LayoutUnit m_desiredInnerTextHeight;
     RefPtr<SearchPopupMenu> m_searchPopup;
     Vector<String> m_recentSearches;
 };
 
-inline RenderSearchField* toRenderSearchField(RenderObject* object)
+inline RenderTextControlSingleLine* toRenderTextControlSingleLine(RenderObject* object)
 {
     ASSERT(!object || object->isTextField());
-    return static_cast<RenderSearchField*>(object);
+    return static_cast<RenderTextControlSingleLine*>(object);
 }
 
 // This will catch anyone doing an unnecessary cast.
-void toRenderSearchField(const RenderSearchField*);
+void toRenderTextControlSingleLine(const RenderTextControlSingleLine*);
+
+// ----------------------------
+
+class RenderTextControlInnerBlock : public RenderBlock {
+public:
+    RenderTextControlInnerBlock(Node* node, bool isMultiLine) : RenderBlock(node), m_multiLine(isMultiLine) { }
+
+private:
+    virtual bool hasLineIfEmpty() const { return true; }
+    virtual VisiblePosition positionForPoint(const LayoutPoint&);
+
+    bool m_multiLine;
+};
 
 }
 

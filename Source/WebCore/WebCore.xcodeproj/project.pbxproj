@@ -1189,8 +1189,6 @@
 		45099C411370A7800058D513 /* IconURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45099C401370A7800058D513 /* IconURL.cpp */; };
 		450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 450CEBEE15073BBE002BB149 /* LabelableElement.cpp */; };
 		450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 450CEBEF15073BBE002BB149 /* LabelableElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		458FE4091589DF0B005609E6 /* RenderSearchField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 458FE4071589DF0B005609E6 /* RenderSearchField.cpp */; };
-		458FE40A1589DF0B005609E6 /* RenderSearchField.h in Headers */ = {isa = PBXBuildFile; fileRef = 458FE4081589DF0B005609E6 /* RenderSearchField.h */; };
 		45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 45BAC2AF1360BBAB005DA258 /* IconURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45FEA5CF156DDE8C00654101 /* Decimal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45FEA5CD156DDE8C00654101 /* Decimal.cpp */; };
 		45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FEA5CE156DDE8C00654101 /* Decimal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8220,8 +8218,6 @@
 		45099C401370A7800058D513 /* IconURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconURL.cpp; sourceTree = "<group>"; };
 		450CEBEE15073BBE002BB149 /* LabelableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelableElement.cpp; sourceTree = "<group>"; };
 		450CEBEF15073BBE002BB149 /* LabelableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelableElement.h; sourceTree = "<group>"; };
-		458FE4071589DF0B005609E6 /* RenderSearchField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSearchField.cpp; sourceTree = "<group>"; };
-		458FE4081589DF0B005609E6 /* RenderSearchField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSearchField.h; sourceTree = "<group>"; };
 		45BAC2AF1360BBAB005DA258 /* IconURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconURL.h; sourceTree = "<group>"; };
 		45FEA5CD156DDE8C00654101 /* Decimal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Decimal.cpp; sourceTree = "<group>"; };
 		45FEA5CE156DDE8C00654101 /* Decimal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decimal.h; sourceTree = "<group>"; };
@@ -21120,8 +21116,6 @@
 				BC3BE9920E9C1C7C00835588 /* RenderScrollbarPart.h */,
 				BC3BE9A40E9C239600835588 /* RenderScrollbarTheme.cpp */,
 				BC3BE9980E9C1E5D00835588 /* RenderScrollbarTheme.h */,
-				458FE4071589DF0B005609E6 /* RenderSearchField.cpp */,
-				458FE4081589DF0B005609E6 /* RenderSearchField.h */,
 				0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */,
 				AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */,
 				AB247A6B0AFD6383003FA5FD /* RenderSlider.h */,
@@ -24278,7 +24272,6 @@
 				BC3BE9940E9C1C7C00835588 /* RenderScrollbar.h in Headers */,
 				BC3BE9950E9C1C7C00835588 /* RenderScrollbarPart.h in Headers */,
 				BC3BE9990E9C1E5D00835588 /* RenderScrollbarTheme.h in Headers */,
-				458FE40A1589DF0B005609E6 /* RenderSearchField.h in Headers */,
 				0F11A54F0F39233100C37884 /* RenderSelectionInfo.h in Headers */,
 				AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */,
 				BC8C8FAE0DDCD31B00B592F4 /* RenderStyle.h in Headers */,
@@ -27474,7 +27467,6 @@
 				BC3BE9930E9C1C7C00835588 /* RenderScrollbar.cpp in Sources */,
 				BC3BE9AB0E9C242000835588 /* RenderScrollbarPart.cpp in Sources */,
 				BC3BE9A50E9C239600835588 /* RenderScrollbarTheme.cpp in Sources */,
-				458FE4091589DF0B005609E6 /* RenderSearchField.cpp in Sources */,
 				AB247A6C0AFD6383003FA5FD /* RenderSlider.cpp in Sources */,
 				BC8C8FAD0DDCD31B00B592F4 /* RenderStyle.cpp in Sources */,
 				0F4E57171313276200CF85AF /* RenderSVGAllInOne.cpp in Sources */,

@@ -523,10 +523,6 @@ void InputType::accessKeyAction(bool)
     element()->focus(false);
 }
 
-void InputType::addSearchResult()
-{
-}
-
 void InputType::attach()
 {
 }
@@ -853,10 +849,6 @@ void InputType::disabledAttributeChanged()
 }
 
 void InputType::readonlyAttributeChanged()
-{
-}
-
-void InputType::subtreeHasChanged()
 {
 }
 

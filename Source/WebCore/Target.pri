@@ -1309,7 +1309,6 @@ SOURCES += \
     rendering/RenderScrollbar.cpp \
     rendering/RenderScrollbarPart.cpp \
     rendering/RenderScrollbarTheme.cpp \
-    rendering/RenderSearchField.cpp \
     rendering/RenderSlider.cpp \
     rendering/RenderTable.cpp \
     rendering/RenderTableCaption.cpp \
@@ -2515,7 +2514,6 @@ HEADERS += \
     rendering/RenderScrollbar.h \
     rendering/RenderScrollbarPart.h \
     rendering/RenderScrollbarTheme.h \
-    rendering/RenderSearchField.h \
     rendering/RenderSlider.h \
     rendering/RenderTableCaption.h \
     rendering/RenderTableCell.h \

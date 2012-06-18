@@ -227,6 +227,7 @@ public:
 
     void addSearchResult();
     void onSearch();
+    bool searchEventsShouldBeDispatched() const;
 
 #if ENABLE(DATALIST)
     HTMLElement* list() const;

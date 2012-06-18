@@ -3906,8 +3906,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderScrollbarPart.h \
 	Source/WebCore/rendering/RenderScrollbarTheme.cpp \
 	Source/WebCore/rendering/RenderScrollbarTheme.h \
-	Source/WebCore/rendering/RenderSearchField.cpp \
-	Source/WebCore/rendering/RenderSearchField.h \
 	Source/WebCore/rendering/RenderSelectionInfo.h \
 	Source/WebCore/rendering/RenderSlider.cpp \
 	Source/WebCore/rendering/RenderSlider.h \
