@@ -442,4 +442,8 @@ base.getURLParameter = function(name) {
     );
 }
 
+base.underscoredBuilderName = function(builderName) {
+    return builderName.replace(/[ .()]/g, '_');
+}
+
 })();

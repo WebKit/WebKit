@@ -76,7 +76,7 @@ config.kPlatforms = {
         useDirectoryListingForOldBuilds: true,
         useFlakinessDashboard: true,
         resultsDirectoryNameFromBuilderName: function(builderName) {
-            return builderName.replace(/[ .()]/g, '_');
+            return base.underscoredBuilderName(builderName);
         },
         resultsDirectoryForBuildNumber: function(buildNumber, revision) {
             return buildNumber;

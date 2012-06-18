@@ -367,14 +367,14 @@ ui.results.BuilderSelector = base.extends('div', {
         var tabStrip = this.appendChild(document.createElement('ul'));
 
         Object.keys(resultsByBuilder).sort().forEach(function(builderName) {
-            var builderDirectory = results.directoryForBuilder(builderName);
+            var builderHash = base.underscoredBuilderName(builderName);
 
             var link = document.createElement('a');
-            $(link).attr('href', "#" + builderDirectory).text(ui.displayNameForBuilder(builderName));
+            $(link).attr('href', "#" + builderHash).text(ui.displayNameForBuilder(builderName));
             tabStrip.appendChild(document.createElement('li')).appendChild(link);
 
             var content = this._delegate.contentForTestAndBuilder(testName, builderName);
-            content.id = builderDirectory;
+            content.id = builderHash;
             this.appendChild(content);
         }, this);
 
