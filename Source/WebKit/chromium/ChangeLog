@@ -1,3 +1,12 @@
+2012-06-14  Kinuko Yasuda  <kinuko@chromium.org>
+
+        [chromium] Cleanup: remove PlatformSupport::createAsyncFileSystem as it's no longer used
+        https://bugs.webkit.org/show_bug.cgi?id=89083
+
+        Reviewed by Kentaro Hara.
+
+        * src/PlatformSupport.cpp:
+
 2012-06-15  Kinuko Yasuda  <kinuko@chromium.org>
 
         XHR_RESPONSE_BLOB is not enabled on some platforms

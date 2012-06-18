@@ -1,3 +1,15 @@
+2012-06-14  Kinuko Yasuda  <kinuko@chromium.org>
+
+        [chromium] Cleanup: remove PlatformSupport::createAsyncFileSystem as it's no longer used
+        https://bugs.webkit.org/show_bug.cgi?id=89083
+
+        Reviewed by Kentaro Hara.
+
+        No new tests as this has no functional changes.
+
+        * platform/chromium/PlatformSupport.h:
+        (PlatformSupport):
+
 2012-06-18  Taiju Tsuiki  <tzik@chromium.org>
 
         Fix syntax of FileReader::readAsDataURL result
