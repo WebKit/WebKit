@@ -276,6 +276,8 @@ rect: style.getPropertyValue(-webkit-column-count) : auto
 rect: style.getPropertyCSSValue(-webkit-column-count) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-gap) : normal
 rect: style.getPropertyCSSValue(-webkit-column-gap) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-column-progression) : normal
+rect: style.getPropertyCSSValue(-webkit-column-progression) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-rule-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(-webkit-column-rule-color) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-rule-style) : none
@@ -808,6 +810,8 @@ g: style.getPropertyValue(-webkit-column-count) : auto
 g: style.getPropertyCSSValue(-webkit-column-count) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-gap) : normal
 g: style.getPropertyCSSValue(-webkit-column-gap) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-column-progression) : normal
+g: style.getPropertyCSSValue(-webkit-column-progression) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-rule-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(-webkit-column-rule-color) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-rule-style) : none
