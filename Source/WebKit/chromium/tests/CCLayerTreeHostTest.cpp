@@ -582,6 +582,50 @@ TEST_F(CCLayerTreeHostTestAddAnimation, runMultiThread)
     runTestThreaded();
 }
 
+// Add a layer animation to a layer, but continually fail to draw. Confirm that after
+// a while, we do eventually force a draw.
+class CCLayerTreeHostTestCheckerboardDoesNotStarveDraws : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestCheckerboardDoesNotStarveDraws()
+        : m_startedAnimating(false)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        postAddAnimationToMainThread();
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+    virtual void animateLayers(CCLayerTreeHostImpl* layerTreeHostImpl, double monotonicTime)
+    {
+        m_startedAnimating = true;
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl*)
+    {
+        if (m_startedAnimating)
+            endTest();
+    }
+
+    virtual bool prepareToDrawOnCCThread(CCLayerTreeHostImpl*)
+    {
+        return false;
+    }
+
+private:
+    bool m_startedAnimating;
+};
+
+// Starvation can only be an issue with the MT compositor.
+TEST_F(CCLayerTreeHostTestCheckerboardDoesNotStarveDraws, runMultiThread)
+{
+    runTestThreaded();
+}
+
 // Ensures that animations continue to be ticked when we are backgrounded.
 class CCLayerTreeHostTestTickAnimationWhileBackgrounded : public CCLayerTreeHostTestThreadOnly {
 public:

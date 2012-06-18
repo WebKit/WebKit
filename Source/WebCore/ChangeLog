@@ -1,3 +1,23 @@
+2012-06-18  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Ensure that skipping frames during an accelerated animation doesn't cause starvation
+        https://bugs.webkit.org/show_bug.cgi?id=87766
+
+        Reviewed by James Robinson.
+
+        Unit tests:
+            CCLayerTreeHostTestCheckerboardDoesNotStarveDraws.runMultiThread
+            CCSchedulerStateMachineTest.TestFailedDrawsWillEventuallyForceADrawAfterTheNextCommit
+
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp:
+        (WebCore::CCSchedulerStateMachine::CCSchedulerStateMachine):
+        (WebCore::CCSchedulerStateMachine::updateState):
+        (WebCore::CCSchedulerStateMachine::didDrawIfPossibleCompleted):
+        (WebCore::CCSchedulerStateMachine::setMaximumNumberOfFailedDrawsBeforeDrawIsForced):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.h:
+        (CCSchedulerStateMachine):
+
 2012-06-18  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Unbreak smooth scrolling.

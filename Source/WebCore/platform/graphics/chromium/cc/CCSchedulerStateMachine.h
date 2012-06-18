@@ -141,6 +141,9 @@ public:
     void didLoseContext();
     void didRecreateContext();
 
+    // Exposed for testing purposes.
+    void setMaximumNumberOfFailedDrawsBeforeDrawIsForced(int);
+
 protected:
     bool shouldDrawForced() const;
     bool drawSuspendedUntilCommit() const;
@@ -153,8 +156,11 @@ protected:
 
     int m_currentFrameNumber;
     int m_lastFrameNumberWhereDrawWasCalled;
+    int m_consecutiveFailedDraws;
+    int m_maximumNumberOfFailedDrawsBeforeDrawIsForced;
     bool m_needsRedraw;
     bool m_needsForcedRedraw;
+    bool m_needsForcedRedrawAfterNextCommit;
     bool m_needsCommit;
     bool m_needsForcedCommit;
     bool m_mainThreadNeedsLayerTextures;

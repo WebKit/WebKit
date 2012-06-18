@@ -133,7 +133,8 @@ void MockLayerTreeHostImpl::commitComplete()
 bool MockLayerTreeHostImpl::prepareToDraw(FrameData& frame)
 {
     bool result = CCLayerTreeHostImpl::prepareToDraw(frame);
-    m_testHooks->prepareToDrawOnCCThread(this);
+    if (!m_testHooks->prepareToDrawOnCCThread(this))
+        result = false;
     return result;
 }
 

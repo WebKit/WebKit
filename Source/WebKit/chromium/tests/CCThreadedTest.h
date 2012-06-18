@@ -51,7 +51,7 @@ class TestHooks : public WebCore::CCLayerAnimationDelegate {
 public:
     virtual void beginCommitOnCCThread(WebCore::CCLayerTreeHostImpl*) { }
     virtual void commitCompleteOnCCThread(WebCore::CCLayerTreeHostImpl*) { }
-    virtual void prepareToDrawOnCCThread(WebCore::CCLayerTreeHostImpl*) { }
+    virtual bool prepareToDrawOnCCThread(WebCore::CCLayerTreeHostImpl*) { return true; }
     virtual void drawLayersOnCCThread(WebCore::CCLayerTreeHostImpl*) { }
     virtual void animateLayers(WebCore::CCLayerTreeHostImpl*, double monotonicTime) { }
     virtual void willAnimateLayers(WebCore::CCLayerTreeHostImpl*, double monotonicTime) { }

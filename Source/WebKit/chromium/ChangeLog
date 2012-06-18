@@ -1,3 +1,28 @@
+2012-06-18  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Ensure that skipping frames during an accelerated animation doesn't cause starvation
+        https://bugs.webkit.org/show_bug.cgi?id=87766
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF):
+        (CCLayerTreeHostTestCheckerboardDoesNotStarveDraws):
+        (WTF::CCLayerTreeHostTestCheckerboardDoesNotStarveDraws::CCLayerTreeHostTestCheckerboardDoesNotStarveDraws):
+        (WTF::CCLayerTreeHostTestCheckerboardDoesNotStarveDraws::beginTest):
+        (WTF::CCLayerTreeHostTestCheckerboardDoesNotStarveDraws::afterTest):
+        (WTF::CCLayerTreeHostTestCheckerboardDoesNotStarveDraws::animateLayers):
+        (WTF::CCLayerTreeHostTestCheckerboardDoesNotStarveDraws::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestCheckerboardDoesNotStarveDraws::prepareToDrawOnCCThread):
+        (WTF::TEST_F):
+        * tests/CCSchedulerStateMachineTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+        * tests/CCThreadedTest.cpp:
+        (WebKitTests::MockLayerTreeHostImpl::prepareToDraw):
+        * tests/CCThreadedTest.h:
+        (WebKitTests::TestHooks::prepareToDrawOnCCThread):
+
 2012-06-18  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Change back "linuxish" to "linux" and include WebFontRendering.cpp on Android
