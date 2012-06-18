@@ -82,6 +82,7 @@ public:
     PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransformation) const;
 #endif
     void setPatternSpaceTransform(const AffineTransform& patternSpaceTransformation);
+    const AffineTransform& getPatternSpaceTransform() { return m_patternSpaceTransformation; };
     void setPlatformPatternSpaceTransform();
 
     bool repeatX() const { return m_repeatX; }
