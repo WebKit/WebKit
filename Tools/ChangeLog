@@ -1,3 +1,17 @@
+2012-06-18  Zan Dobersek  <zandobersek@gmail.com>
+
+        REGRESSION(r120546): It made 3 webkitpy tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=89332
+
+        Reviewed by Adam Barth.
+
+        Update the BaselineOptimizer unittest after r120546.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        (BaselineOptimizerTest.test_no_add_mac_future):
+        (BaselineOptimizerTest.test_mac_future):
+        (BaselineOptimizerTest.test_complex_shadowing):
+
 2012-06-18  Dirk Pranke  <dpranke@chromium.org>
 
         new-run-webkit-tests output gets confused when logging
