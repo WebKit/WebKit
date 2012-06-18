@@ -1,3 +1,19 @@
+2012-06-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] fast/files/xhr-response-blob.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=89334
+
+        Reviewed by Kentaro Hara.
+
+        Call wrap() instead of createWrapper() in JSBlob's toJS()
+        to avoid hitting the !getCachedWrapper ASSERT in 
+        createWrapper() because we fail to use the cached wrapper.
+
+        Test: fast/files/xhr-response-blob.html
+
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::toJS):
+
 2012-06-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: rename Unknown to Other in Native heap snapshot.
