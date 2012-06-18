@@ -1,3 +1,65 @@
+2012-06-18  Tony Payne  <tpayne@chromium.org>
+
+       [chromium] Add iccjpeg and qcms to chromium port
+       https://bugs.webkit.org/show_bug.cgi?id=81974
+
+       Reviewed by Adam Barth.
+
+       Covered by existing layout tests which will be rebaselined.
+
+       * WebCore.gyp/WebCore.gyp: Add qcms to the build.
+       * platform/image-decoders/ImageDecoder.h:
+       (WebCore::ImageDecoder::qcmsOutputDeviceProfile): Return an sRGB profile.
+       On OSX, return the default RGB profile. Add FIXME to use the user's
+       monitor profile and verify that profile for other platforms.
+
+       * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+       (turboSwizzled): For libjpeg-turbo, JCS_EXT_BGRA and JCS_EXT_RGBA are the
+       two known output color spaces for which the decoder uses a data swizzle.
+       (colorSpaceHasAlpha): JPEG's have no alpha in the output color space. For
+       libjpeg-turbo, alpha may be present in the swizzled output color space.
+
+       (WebCore::JPEGImageReader::JPEGImageReader):
+       (WebCore::JPEGImageReader::close):
+       (WebCore::JPEGImageReader::decode): For QCMSLIB, create the color transform
+       to use during decoding, and ensure we switch to inputing RGBA data to qcms
+       even if the desired output data is BGRA: outputScanlines() sends BGRA data
+       to the frame buffer following color correction if needed.
+       (JPEGImageReader):
+       (WebCore::JPEGImageReader::colorTransform): qcms color transform getter.
+       (WebCore::JPEGImageReader::createColorTransform): Create color transform.
+       Release the existing transform (if any) and assign to the color transform
+       created from the color profile data.
+       (WebCore::JPEGImageDecoder::outputScanlines): Minor style fix. Apply color
+       transform to each decoded image row.
+
+       * platform/image-decoders/png/PNGImageDecoder.cpp:
+       (WebCore::PNGImageReader::PNGImageReader):
+       (WebCore::PNGImageReader::close):
+       (WebCore::PNGImageReader::currentBufferSize): Move this adjacent to other
+       setters and getters.
+       (WebCore::PNGImageReader::decodingSizeOnly): Ditto.
+       (WebCore::PNGImageReader::setHasAlpha): Ditto.
+       (WebCore::PNGImageReader::hasAlpha): Ditto.
+       (WebCore::PNGImageReader::interlaceBuffer): Ditto.
+       (WebCore::PNGImageReader::createRowBuffer): Creates a temporary row buffer,
+       used when a color transform is applied to the decoded image pixels.
+       (WebCore::PNGImageReader::rowBuffer): Return the temporary row buffer.
+       (WebCore::PNGImageReader::colorTransform): qcms color transform getter.
+       (WebCore::PNGImageReader::createColorTransform): Create color transform.
+       Release the existing transform (if any) and assign to the color transform
+       created from the color profile data.
+       (WebCore::PNGImageDecoder::headerAvailable): For QCMSLIB, create the color
+       transform to use for decoding. Clear m_colorProfile (not used anymore).
+       (WebCore::PNGImageDecoder::rowAvailable): Create temporary row buffer if
+       a color transform is needed for decoding. Apply color transform to each
+       decoded image row.
+
+       * platform/image-decoders/skia/ImageDecoderSkia.cpp:
+       (WebCore::ImageFrame::setColorProfile): Old method of colorProfiles is no
+       longer used. Add a FIXME to remove the old implementation.
+       (WebCore::ImageFrame::setStatus): Remove old color correction code.
+
 2012-06-18  Dan Bernstein  <mitz@apple.com>
 
         Column progression direction cannot be set independently of writing direction
