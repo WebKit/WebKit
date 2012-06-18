@@ -1,3 +1,26 @@
+2012-06-18  Takashi Sakamoto  <tasak@google.com>
+
+        webkit fails IETC border-radius-clip-002
+        https://bugs.webkit.org/show_bug.cgi?id=83205
+
+        Added addRoundedRectClip instead of just clip when clipToBorderRadius
+        is true and bgLayer->clip() == ContentFillBox.
+
+        Reviewed by Simon Fraser.
+
+        This change is covered by the existing test: ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.
+        However expected images should be updated. I updated chromium-linux
+        and chromium-mac's expected images and removed chromium-win,
+        chromium-mac-leopard and chromium-mac-snowleopard's expected images.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        As the code for "clipping to content boxes as necessary" doesn't
+        consider border-radius or not, added the code for checking
+        clipToBorderRadius or not, and if so, modified to use
+        getBackgroundRoundedRect for obtaining rounded rect and to use
+        addRoundedRectClip by using the obtained rounded rect.
+
 2012-06-18  Iain Merrick  <husky@google.com>
 
         Allow updateFixedElementsAfterScrolling() to run during layout.       

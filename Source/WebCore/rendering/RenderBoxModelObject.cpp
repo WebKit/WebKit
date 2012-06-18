@@ -811,7 +811,11 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
                                    scrolledPaintRect.width() - bLeft - bRight - (includePadding ? pLeft + pRight : ZERO_LAYOUT_UNIT),
                                    scrolledPaintRect.height() - borderTop() - borderBottom() - (includePadding ? paddingTop() + paddingBottom() : ZERO_LAYOUT_UNIT));
         backgroundClipStateSaver.save();
-        context->clip(clipRect);
+        if (clipToBorderRadius && includePadding) {
+            RoundedRect rounded = getBackgroundRoundedRect(clipRect, box, boxSize.width(), boxSize.height(), includeLeftEdge, includeRightEdge);
+            context->addRoundedRectClip(rounded);
+        } else
+            context->clip(clipRect);
     } else if (bgLayer->clip() == TextFillBox) {
         // We have to draw our text into a mask that can then be used to clip background drawing.
         // First figure out how big the mask has to be.  It should be no bigger than what we need

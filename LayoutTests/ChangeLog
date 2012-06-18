@@ -1,3 +1,16 @@
+2012-06-18  Takashi Sakamoto  <tasak@google.com>
+
+        webkit fails IETC border-radius-clip-002
+        https://bugs.webkit.org/show_bug.cgi?id=83205
+
+        Reviewed by Simon Fraser.
+
+        * platform/chromium-linux/ietestcenter/css3/bordersbackgrounds/border-radius-clip-002-expected.png:
+        * platform/chromium-mac/ietestcenter/css3/bordersbackgrounds/border-radius-clip-002-expected.png:
+        * platform/chromium-mac-leopard/ietestcenter/css3/bordersbackgrounds/border-radius-clip-002-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/ietestcenter/css3/bordersbackgrounds/border-radius-clip-002-expected.png: Removed.
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-radius-clip-002-expected.png: Removed.
+
 2012-06-18  Iain Merrick  <husky@google.com>
 
         Allow updateFixedElementsAfterScrolling() to run during layout.
