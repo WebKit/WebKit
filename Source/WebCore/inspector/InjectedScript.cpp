@@ -95,26 +95,6 @@ void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const ScriptV
     makeEvalCall(errorString, function, result, wasThrown);
 }
 
-void InjectedScript::restartFrame(ErrorString* errorString, const ScriptValue& callFrames, const String& callFrameId, RefPtr<InspectorObject>* result)
-{
-    ScriptFunctionCall function(m_injectedScriptObject, "restartFrame");
-    function.appendArgument(callFrames);
-    function.appendArgument(callFrameId);
-    RefPtr<InspectorValue> resultValue;
-    makeCall(function, &resultValue);
-    if (resultValue) {
-        if (resultValue->type() == InspectorValue::TypeString) {
-            resultValue->asString(errorString);
-            return;
-        }
-        if (resultValue->type() == InspectorValue::TypeObject) {
-            *result = resultValue->asObject();
-            return;
-        }
-    }
-    *errorString = "Internal error";
-}
-
 void InjectedScript::getFunctionDetails(ErrorString* errorString, const String& functionId, RefPtr<FunctionDetails>* result)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "getFunctionDetails");

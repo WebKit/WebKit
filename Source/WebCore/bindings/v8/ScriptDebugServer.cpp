@@ -254,14 +254,6 @@ bool ScriptDebugServer::setScriptSource(const String& sourceID, const String& ne
     return true;
 }
 
-
-void ScriptDebugServer::updateCallStack(ScriptValue* callFrame)
-{
-    if (isPaused())
-        *callFrame = currentCallFrame();
-}
-
-
 ScriptValue ScriptDebugServer::currentCallFrame()
 {
     ASSERT(isPaused());

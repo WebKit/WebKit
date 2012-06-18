@@ -48,12 +48,6 @@ JSValue JSJavaScriptCallFrame::evaluate(ExecState* exec)
     return result;
 }
 
-JSValue JSJavaScriptCallFrame::restart(ExecState*)
-{
-    // FIXME(40300): implement this.
-    return JSValue(JSValue::JSFalse);
-}
-
 JSValue JSJavaScriptCallFrame::thisObject(ExecState*) const
 {
     return impl()->thisObject() ? JSValue(impl()->thisObject()) : jsNull();

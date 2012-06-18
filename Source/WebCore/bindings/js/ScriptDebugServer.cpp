@@ -206,13 +206,6 @@ bool ScriptDebugServer::setScriptSource(const String&, const String&, bool, Stri
     return false;
 }
 
-
-void ScriptDebugServer::updateCallStack(ScriptValue*)
-{
-    // This method is used for restart frame feature that is not implemented yet.
-    // FIXME(40300): implement this.
-}
-
 void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
 {
     ASSERT(m_paused);

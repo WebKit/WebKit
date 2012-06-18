@@ -83,7 +83,6 @@ public:
 
     bool canSetScriptSource();
     bool setScriptSource(const String& sourceID, const String& newContent, bool preview, String* error, ScriptValue* newCallFrames, ScriptObject* result);
-    void updateCallStack(ScriptValue* callFrame);
 
     bool causesRecompilation() { return true; }
     // FIXME: Need to remove this. Refer to bug: 88759.

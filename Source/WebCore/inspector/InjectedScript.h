@@ -81,7 +81,6 @@ public:
                              bool returnByValue,
                              RefPtr<TypeBuilder::Runtime::RemoteObject>* result,
                              TypeBuilder::OptOutput<bool>* wasThrown);
-    void restartFrame(ErrorString*, const ScriptValue& callFrames, const String& callFrameId, RefPtr<InspectorObject>* result);
     void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<TypeBuilder::Debugger::FunctionDetails>* result);
     void getProperties(ErrorString*, const String& objectId, bool ownProperties, RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::PropertyDescriptor> >* result);
     Node* nodeForObjectId(const String& objectId);
