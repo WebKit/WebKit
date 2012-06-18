@@ -1,3 +1,27 @@
+2012-06-17  Martin Robinson  <mrobinson@igalia.com>
+
+        [TextureMapper] Reduce boilerplate code in the TextureMapperShaderManager
+        https://bugs.webkit.org/show_bug.cgi?id=89293
+
+        Reviewed by Noam Rosenthal.
+
+        Refactor TextureMapperShaderManager to reduce boilerplate code, by:
+        1. Making fragment and shader source arguments to the superclass constructor.
+        2. Removing virtual methods (which should not be called in constructors) with
+           constructor implementations. This exchanges a small amount of code duplication
+           for a lot less boilerplate.
+        3. Standardizing on the fooLocation name instead of fooVariable.
+        4. Removing the ::prepare() series of methods for non-filter shaders. It's betters to
+           have all the uniform and attribute binding in the same place.
+
+        No new tests. This is just a refactor and shouldn't change any functionality.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        Handle binding the mask texture and opacity at both of the previous ::prepare callsites. Also
+        rename "shaderInfo" to "program".
+        * platform/graphics/texmap/TextureMapperShaderManager.cpp: Perform the refactoring described above.
+        * platform/graphics/texmap/TextureMapperShaderManager.h: Ditto.
+
 2012-06-17  Gregg Tavares  <gman@google.com>
 
         Fix Framebuffer restrictions

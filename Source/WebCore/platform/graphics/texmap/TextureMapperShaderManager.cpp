@@ -1,5 +1,6 @@
 /*
  Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
+ Copyright (C) 2012 Igalia S.L.
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -180,6 +181,21 @@ PassRefPtr<TextureMapperShaderProgram> TextureMapperShaderManager::getShaderProg
     return program;
 }
 
+TextureMapperShaderProgram::TextureMapperShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource)
+    : m_id(0)
+    , m_vertexAttrib(0)
+    , m_vertexShader(0)
+    , m_fragmentShader(0)
+    , m_matrixLocation(-1)
+    , m_sourceMatrixLocation(-1)
+    , m_sourceTextureLocation(-1)
+    , m_opacityLocation(-1)
+    , m_maskTextureLocation(-1)
+    , m_vertexShaderSource(vertexShaderSource)
+    , m_fragmentShaderSource(fragmentShaderSource)
+{
+}
+
 void TextureMapperShaderProgram::initializeProgram()
 {
     const char* vertexShaderSourceProgram = vertexShaderSource();
@@ -220,128 +236,54 @@ TextureMapperShaderProgram::~TextureMapperShaderProgram()
     glDeleteProgram(programID);
 }
 
-PassRefPtr<TextureMapperShaderProgramSimple> TextureMapperShaderProgramSimple::create()
-{
-    RefPtr<TextureMapperShaderProgramSimple> program = adoptRef(new TextureMapperShaderProgramSimple());
-    // Avoid calling virtual functions in constructor.
-    program->initialize();
-    return program.release();
-}
-
-void TextureMapperShaderProgramSimple::initialize()
+TextureMapperShaderProgramSimple::TextureMapperShaderProgramSimple()
+    : TextureMapperShaderProgram(vertexShaderSourceSimple, fragmentShaderSourceSimple)
 {
     initializeProgram();
-    getUniformLocation(m_sourceMatrixVariable, "InSourceMatrix");
-    getUniformLocation(m_matrixVariable, "InMatrix");
-    getUniformLocation(m_sourceTextureVariable, "SourceTexture");
-    getUniformLocation(m_opacityVariable, "Opacity");
+    getUniformLocation(m_sourceMatrixLocation, "InSourceMatrix");
+    getUniformLocation(m_matrixLocation, "InMatrix");
+    getUniformLocation(m_sourceTextureLocation, "SourceTexture");
+    getUniformLocation(m_opacityLocation, "Opacity");
 }
 
-const char* TextureMapperShaderProgramSimple::vertexShaderSource() const
-{
-    return vertexShaderSourceSimple;
-}
-
-const char* TextureMapperShaderProgramSimple::fragmentShaderSource() const
-{
-    return fragmentShaderSourceSimple;
-}
-
-void TextureMapperShaderProgramSimple::prepare(float opacity, const BitmapTexture* maskTexture)
-{
-    glUniform1f(m_opacityVariable, opacity);
-}
-
-PassRefPtr<TextureMapperShaderProgramSolidColor> TextureMapperShaderProgramSolidColor::create()
-{
-    RefPtr<TextureMapperShaderProgramSolidColor> program = adoptRef(new TextureMapperShaderProgramSolidColor());
-    // Avoid calling virtual functions in constructor.
-    program->initialize();
-    return program.release();
-}
-
-void TextureMapperShaderProgramSolidColor::initialize()
+TextureMapperShaderProgramSolidColor::TextureMapperShaderProgramSolidColor()
+    : TextureMapperShaderProgram(vertexShaderSourceSolidColor, fragmentShaderSourceSolidColor)
 {
     initializeProgram();
-    getUniformLocation(m_matrixVariable, "InMatrix");
-    getUniformLocation(m_colorVariable, "Color");
+    getUniformLocation(m_matrixLocation, "InMatrix");
+    getUniformLocation(m_colorLocation, "Color");
 }
 
-const char* TextureMapperShaderProgramSolidColor::vertexShaderSource() const
-{
-    return vertexShaderSourceSolidColor;
-}
-
-const char* TextureMapperShaderProgramSolidColor::fragmentShaderSource() const
-{
-    return fragmentShaderSourceSolidColor;
-}
-
-PassRefPtr<TextureMapperShaderProgramRectSimple> TextureMapperShaderProgramRectSimple::create()
-{
-    RefPtr<TextureMapperShaderProgramRectSimple> program = adoptRef(new TextureMapperShaderProgramRectSimple());
-    // Avoid calling virtual functions in constructor.
-    program->initialize();
-    return program.release();
-}
-
-const char* TextureMapperShaderProgramRectSimple::fragmentShaderSource() const
-{
-    return fragmentShaderSourceRectSimple;
-}
-
-PassRefPtr<TextureMapperShaderProgramOpacityAndMask> TextureMapperShaderProgramOpacityAndMask::create()
-{
-    RefPtr<TextureMapperShaderProgramOpacityAndMask> program = adoptRef(new TextureMapperShaderProgramOpacityAndMask());
-    // Avoid calling virtual functions in constructor.
-    program->initialize();
-    return program.release();
-}
-
-void TextureMapperShaderProgramOpacityAndMask::initialize()
+TextureMapperShaderProgramRectSimple::TextureMapperShaderProgramRectSimple()
+    : TextureMapperShaderProgram(vertexShaderSourceSimple, fragmentShaderSourceRectSimple)
 {
     initializeProgram();
-    getUniformLocation(m_matrixVariable, "InMatrix");
-    getUniformLocation(m_sourceMatrixVariable, "InSourceMatrix");
-    getUniformLocation(m_sourceTextureVariable, "SourceTexture");
-    getUniformLocation(m_maskTextureVariable, "MaskTexture");
-    getUniformLocation(m_opacityVariable, "Opacity");
+    getUniformLocation(m_sourceMatrixLocation, "InSourceMatrix");
+    getUniformLocation(m_matrixLocation, "InMatrix");
+    getUniformLocation(m_sourceTextureLocation, "SourceTexture");
+    getUniformLocation(m_opacityLocation, "Opacity");
 }
 
-const char* TextureMapperShaderProgramOpacityAndMask::vertexShaderSource() const
+TextureMapperShaderProgramOpacityAndMask::TextureMapperShaderProgramOpacityAndMask()
+    : TextureMapperShaderProgram(vertexShaderSourceOpacityAndMask, fragmentShaderSourceOpacityAndMask)
 {
-    return vertexShaderSourceOpacityAndMask;
+    initializeProgram();
+    getUniformLocation(m_matrixLocation, "InMatrix");
+    getUniformLocation(m_sourceMatrixLocation, "InSourceMatrix");
+    getUniformLocation(m_sourceTextureLocation, "SourceTexture");
+    getUniformLocation(m_maskTextureLocation, "MaskTexture");
+    getUniformLocation(m_opacityLocation, "Opacity");
 }
 
-const char* TextureMapperShaderProgramOpacityAndMask::fragmentShaderSource() const
+TextureMapperShaderProgramRectOpacityAndMask::TextureMapperShaderProgramRectOpacityAndMask()
+    : TextureMapperShaderProgram(vertexShaderSourceOpacityAndMask, fragmentShaderSourceRectOpacityAndMask)
 {
-    return fragmentShaderSourceOpacityAndMask;
-}
-
-void TextureMapperShaderProgramOpacityAndMask::prepare(float opacity, const BitmapTexture* maskTexture)
-{
-    glUniform1f(m_opacityVariable, opacity);
-    if (!maskTexture || !maskTexture->isValid())
-        return;
-
-    const BitmapTextureGL* maskTextureGL = static_cast<const BitmapTextureGL*>(maskTexture);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, maskTextureGL->id());
-    glUniform1i(m_maskTextureVariable, 1);
-    glActiveTexture(GL_TEXTURE0);
-}
-
-PassRefPtr<TextureMapperShaderProgramRectOpacityAndMask> TextureMapperShaderProgramRectOpacityAndMask::create()
-{
-    RefPtr<TextureMapperShaderProgramRectOpacityAndMask> program = adoptRef(new TextureMapperShaderProgramRectOpacityAndMask());
-    // Avoid calling virtual functions in constructor.
-    program->initialize();
-    return program.release();
-}
-
-const char* TextureMapperShaderProgramRectOpacityAndMask::fragmentShaderSource() const
-{
-    return fragmentShaderSourceRectOpacityAndMask;
+    initializeProgram();
+    getUniformLocation(m_matrixLocation, "InMatrix");
+    getUniformLocation(m_sourceMatrixLocation, "InSourceMatrix");
+    getUniformLocation(m_sourceTextureLocation, "SourceTexture");
+    getUniformLocation(m_maskTextureLocation, "MaskTexture");
+    getUniformLocation(m_opacityLocation, "Opacity");
 }
 
 TextureMapperShaderManager::TextureMapperShaderManager()
