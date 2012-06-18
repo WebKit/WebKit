@@ -1,3 +1,17 @@
+2012-06-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r118414): some pages on concursolutions.com doesn't show up
+        https://bugs.webkit.org/show_bug.cgi?id=89399
+
+        Reviewed by Adam Barth.
+
+        The bug was caused by insertAdjacentHTML's not passing context element to createFragmentForInnerOuterHTML.
+
+        Test: fast/html/adjacent-html-context-element.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::insertAdjacentHTML):
+
 2012-06-18  Zhenyao Mo  <zmo@google.com>
 
         Fix framebuffer-object-attachment.html failures
