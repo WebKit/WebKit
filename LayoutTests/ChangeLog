@@ -1,3 +1,26 @@
+2012-06-18  Adam Barth  <abarth@webkit.org>
+
+        Update baselines after http://trac.webkit.org/changeset/120609.
+
+        * platform/chromium-linux-x86/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-linux/fast/multicol/progression-reverse-expected.png: Added.
+        * platform/chromium-linux/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-mac-leopard/fast/css/getComputedStyle: Removed.
+        * platform/chromium-mac-leopard/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/chromium-mac-leopard/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-mac-snowleopard/fast/multicol/progression-reverse-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-mac/fast/multicol/progression-reverse-expected.png: Added.
+        * platform/chromium-mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win-vista/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win-xp/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/fast/multicol/progression-reverse-expected.png: Added.
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+
 2012-06-18  Enrica Casucci  <enrica@apple.com>
 
         Updating test results to include flakey cookies tests.
