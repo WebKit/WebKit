@@ -495,8 +495,7 @@ void MarkStack::mergeOpaqueRoots()
 void SlotVisitor::startCopying()
 {
     ASSERT(!m_copyBlock);
-    if (!m_shared.m_copiedSpace->borrowBlock(&m_copyBlock))
-        CRASH();
+    m_copyBlock = m_shared.m_copiedSpace->allocateBlockForCopyingPhase();
 }    
 
 void* SlotVisitor::allocateNewSpace(void* ptr, size_t bytes)
@@ -517,8 +516,7 @@ void* SlotVisitor::allocateNewSpace(void* ptr, size_t bytes)
         // We don't need to lock across these two calls because the master thread won't 
         // call doneCopying() because this thread is considered active.
         m_shared.m_copiedSpace->doneFillingBlock(m_copyBlock);
-        if (!m_shared.m_copiedSpace->borrowBlock(&m_copyBlock))
-            CRASH();
+        m_copyBlock = m_shared.m_copiedSpace->allocateBlockForCopyingPhase();
     }
     return CopiedSpace::allocateFromBlock(m_copyBlock, bytes);
 }

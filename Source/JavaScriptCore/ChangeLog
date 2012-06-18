@@ -1,3 +1,51 @@
+2012-06-17  Geoffrey Garen  <ggaren@apple.com>
+
+        GC copy phase spends needless cycles zero-filling blocks
+        https://bugs.webkit.org/show_bug.cgi?id=89128
+
+        Reviewed by Gavin Barraclough.
+
+        We only need to zero-fill when we're allocating memory that might not
+        get fully initialized before GC.
+
+        * heap/CopiedBlock.h:
+        (JSC::CopiedBlock::createNoZeroFill):
+        (JSC::CopiedBlock::create): Added a way to create without zero-filling.
+        This is our optimization.
+
+        (JSC::CopiedBlock::zeroFillToEnd):
+        (JSC::CopiedBlock::CopiedBlock): Split zero-filling out from creation,
+        so we can sometimes create without zero-filling.
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::init):
+        (JSC::CopiedSpace::tryAllocateSlowCase):
+        (JSC::CopiedSpace::doneCopying): Renamed addNewBlock to allocateBlock()
+        to clarify that the new block is always newly-allocated.
+
+        (JSC::CopiedSpace::doneFillingBlock): Make sure to zero-fill to the end
+        of a block that might be used in the future for allocation. (Most of the
+        time, this is a no-op, since we've already filled the block completely.)
+
+        (JSC::CopiedSpace::getFreshBlock): Removed this function because the
+        abstraction of "allocation must succeed" is no longer useful.
+
+        * heap/CopiedSpace.h: Updated declarations to match.
+
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC::CopiedSpace::allocateBlockForCopyingPhase): New function, which
+        knows that it can skip zero-filling.
+
+        Added tighter scoping to our lock, to improve parallelism.
+
+        (JSC::CopiedSpace::allocateBlock): Folded getFreshBlock functionality
+        into this function, for simplicity.
+
+        * heap/MarkStack.cpp:
+        (JSC::SlotVisitor::startCopying):
+        (JSC::SlotVisitor::allocateNewSpace): Use our new zero-fill-free helper
+        function for great good.
+
 2012-06-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should attempt to use structure watchpoints for all inlined get_by_id's and put_by_id's

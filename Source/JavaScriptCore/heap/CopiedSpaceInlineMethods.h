@@ -84,46 +84,31 @@ inline void CopiedSpace::recycleBlock(CopiedBlock* block)
     }
 }
 
-inline CheckedBoolean CopiedSpace::borrowBlock(CopiedBlock** outBlock)
+inline CopiedBlock* CopiedSpace::allocateBlockForCopyingPhase()
 {
-    CopiedBlock* block = 0;
-    if (!getFreshBlock(AllocationMustSucceed, &block)) {
-        *outBlock = 0;
-        return false;
+    ASSERT(m_inCopyingPhase);
+    CopiedBlock* block = CopiedBlock::createNoZeroFill(m_heap->blockAllocator().allocate());
+
+    {
+        MutexLocker locker(m_loanedBlocksLock);
+        m_numberOfLoanedBlocks++;
     }
 
-    ASSERT(m_inCopyingPhase);
-    MutexLocker locker(m_loanedBlocksLock);
-    m_numberOfLoanedBlocks++;
-
     ASSERT(block->m_offset == block->payload());
-    *outBlock = block;
-    return true;
+    return block;
 }
 
-inline CheckedBoolean CopiedSpace::addNewBlock()
+inline void CopiedSpace::allocateBlock()
 {
-    CopiedBlock* block = 0;
-    if (!getFreshBlock(AllocationCanFail, &block))
-        return false;
+    if (m_heap->shouldCollect())
+        m_heap->collect(Heap::DoNotSweep);
+
+    CopiedBlock* block = CopiedBlock::create(m_heap->blockAllocator().allocate());
         
     m_toSpace->push(block);
     m_blockFilter.add(reinterpret_cast<Bits>(block));
     m_blockSet.add(block);
     m_allocator.resetCurrentBlock(block);
-    return true;
-}
-
-inline CheckedBoolean CopiedSpace::allocateNewBlock(CopiedBlock** outBlock)
-{
-    PageAllocationAligned allocation = PageAllocationAligned::allocate(HeapBlock::s_blockSize, HeapBlock::s_blockSize, OSAllocator::JSGCHeapPages);
-    if (!static_cast<bool>(allocation)) {
-        *outBlock = 0;
-        return false;
-    }
-
-    *outBlock = new (NotNull, allocation.base()) CopiedBlock(allocation);
-    return true;
 }
 
 inline bool CopiedSpace::fitsInBlock(CopiedBlock* block, size_t bytes)
