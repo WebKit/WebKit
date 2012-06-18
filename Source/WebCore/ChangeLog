@@ -1,3 +1,19 @@
+2012-06-18  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderTableSection wastes vector capacity
+        https://bugs.webkit.org/show_bug.cgi?id=86561
+
+        Reviewed by Antti Koivisto.
+
+        Memory optimization, covered by existing tests.
+
+        The issue is that addChild calls Vector::grow() which can over-allocate our row grid (especially
+        for small tables as we allocate at least 16 entries). As we don't know if addChild is called
+        in a loop (e.g. during parsing), we postpone the shrinkToFit call at layout time.
+
+        (WebCore::RenderTableSection::layout):
+        Added a shrinkToFit call with some explanation as to why it's good trade-off to do it now.
+
 2012-06-18  Takashi Sakamoto  <tasak@google.com>
 
         webkit fails IETC border-radius-clip-002
