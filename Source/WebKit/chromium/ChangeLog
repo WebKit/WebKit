@@ -1,3 +1,21 @@
+2012-06-18  Hironori Bono  <hbono@chromium.org>
+
+        [chromium] Spellchecker should show suggestions only when right-clicking a misspelled word.
+        https://bugs.webkit.org/show_bug.cgi?id=89331
+
+        Reviewed by Hajime Morita.
+
+        When a selection includes two or more misspelled words, it is not so easy to
+        select one word from them and to show its suggestions. To avoid this problem,
+        this change shows suggestions only when the selection is collapsed. For this
+        case, we can use Range::setStart and setEnd to convert a DocumentMarker to a
+        Range.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems): Added a check that the selection is collapsed.
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::replaceMisspelledRange): Added a check that the selection is collapsed. Also, use Range::setStart() and Range::setEnd() to get the marker range to emulate the behavior of DocumentMarker::markersInRange().
+
 2012-06-14  Kinuko Yasuda  <kinuko@chromium.org>
 
         [chromium] Cleanup: remove PlatformSupport::createAsyncFileSystem as it's no longer used

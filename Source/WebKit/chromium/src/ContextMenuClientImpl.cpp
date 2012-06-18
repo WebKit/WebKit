@@ -279,7 +279,7 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
         // a mouse on a word, Chrome just needs to find a spelling marker on the word instread of spellchecking it.
         if (selectedFrame->settings() && selectedFrame->settings()->asynchronousSpellCheckingEnabled()) {
             RefPtr<Range> range = selectedFrame->selection()->toNormalizedRange();
-            if (range.get()) {
+            if (range.get() && range->collapsed()) {
                 Vector<DocumentMarker*> markers = selectedFrame->document()->markers()->markersInRange(range.get(), DocumentMarker::Spelling | DocumentMarker::Grammar);
                 if (!markers.isEmpty()) {
                     Vector<String> suggestions;
