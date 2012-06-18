@@ -1,3 +1,21 @@
+2012-06-18  Kinuko Yasuda  <kinuko@chromium.org>
+
+        fast/files/xhr-response-blob should use other file/blob type than javascript
+        https://bugs.webkit.org/show_bug.cgi?id=89338
+
+        Reviewed by Kentaro Hara.
+
+        Changing the test to use the most basic text/plain type.
+        Also removing platform-specific expectations.
+
+        * fast/files/script-tests/xhr-response-blob.js: Updated.
+        * fast/files/xhr-response-blob-expected.txt: Updated.
+        * platform/chromium-linux/fast/files/xhr-response-blob-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/files/xhr-response-blob-expected.txt: Removed.
+        * platform/chromium-mac/fast/files/xhr-response-blob-expected.txt: Removed.
+        * platform/chromium/fast/files/xhr-response-blob-expected.txt: Removed.
+        * platform/qt/fast/files/xhr-response-blob-expected.txt: Removed.
+
 2012-06-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening after r120574.

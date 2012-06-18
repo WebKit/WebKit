@@ -20,7 +20,7 @@ function testBlob(blobURL, blobType, doneFunction) {
     }
 }
 
-testBlob("script-tests/xhr-response-blob.js", "text/javascript", function() {
+testBlob("resources/UTF8.txt", "text/plain", function() {
     testBlob("resources/does_not_exist.txt", "", function() {
         testBlob("resources/empty-file", "", function() {
             if (window.layoutTestController)
