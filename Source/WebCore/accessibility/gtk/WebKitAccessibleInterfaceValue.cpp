@@ -21,6 +21,7 @@
 #include "WebKitAccessibleInterfaceValue.h"
 
 #include "AccessibilityObject.h"
+#include "HTMLNames.h"
 #include "WebKitAccessibleWrapperAtk.h"
 
 using namespace WebCore;
@@ -36,48 +37,73 @@ static AccessibilityObject* core(AtkValue* value)
 static void webkitAccessibleValueGetCurrentValue(AtkValue* value, GValue* gValue)
 {
     memset(gValue,  0, sizeof(GValue));
-    g_value_init(gValue, G_TYPE_DOUBLE);
-    g_value_set_double(gValue, core(value)->valueForRange());
+    g_value_init(gValue, G_TYPE_FLOAT);
+    g_value_set_float(gValue, core(value)->valueForRange());
 }
 
 static void webkitAccessibleValueGetMaximumValue(AtkValue* value, GValue* gValue)
 {
     memset(gValue,  0, sizeof(GValue));
-    g_value_init(gValue, G_TYPE_DOUBLE);
-    g_value_set_double(gValue, core(value)->maxValueForRange());
+    g_value_init(gValue, G_TYPE_FLOAT);
+    g_value_set_float(gValue, core(value)->maxValueForRange());
 }
 
 static void webkitAccessibleValueGetMinimumValue(AtkValue* value, GValue* gValue)
 {
     memset(gValue,  0, sizeof(GValue));
-    g_value_init(gValue, G_TYPE_DOUBLE);
-    g_value_set_double(gValue, core(value)->minValueForRange());
+    g_value_init(gValue, G_TYPE_FLOAT);
+    g_value_set_float(gValue, core(value)->minValueForRange());
 }
 
 static gboolean webkitAccessibleValueSetCurrentValue(AtkValue* value, const GValue* gValue)
 {
-    if (!G_VALUE_HOLDS_DOUBLE(gValue) && !G_VALUE_HOLDS_INT(gValue))
-        return FALSE;
+    double newValue;
+    if (G_VALUE_HOLDS_DOUBLE(gValue))
+        newValue = g_value_get_double(gValue);
+    else if (G_VALUE_HOLDS_FLOAT(gValue))
+        newValue = g_value_get_float(gValue);
+    else if (G_VALUE_HOLDS_INT64(gValue))
+        newValue = g_value_get_int64(gValue);
+    else if (G_VALUE_HOLDS_INT(gValue))
+        newValue = g_value_get_int(gValue);
+    else if (G_VALUE_HOLDS_LONG(gValue))
+        newValue = g_value_get_long(gValue);
+    else if (G_VALUE_HOLDS_ULONG(gValue))
+        newValue = g_value_get_ulong(gValue);
+    else if (G_VALUE_HOLDS_UINT64(gValue))
+        newValue = g_value_get_uint64(gValue);
+    else if (G_VALUE_HOLDS_UINT(gValue))
+        newValue = g_value_get_uint(gValue);
+    else
+        return false;
 
     AccessibilityObject* coreObject = core(value);
     if (!coreObject->canSetValueAttribute())
         return FALSE;
 
-    if (G_VALUE_HOLDS_DOUBLE(gValue))
-        coreObject->setValue(String::number(g_value_get_double(gValue)));
-    else
-        coreObject->setValue(String::number(g_value_get_int(gValue)));
+    // Check value against range limits
+    newValue = std::max(static_cast<double>(coreObject->minValueForRange()), newValue);
+    newValue = std::min(static_cast<double>(coreObject->maxValueForRange()), newValue);
 
+    coreObject->setValue(String::number(newValue));
     return TRUE;
 }
 
 static void webkitAccessibleValueGetMinimumIncrement(AtkValue* value, GValue* gValue)
 {
     memset(gValue,  0, sizeof(GValue));
-    g_value_init(gValue, G_TYPE_DOUBLE);
+    g_value_init(gValue, G_TYPE_FLOAT);
 
-    // There's not such a thing in the WAI-ARIA specification, thus return zero.
-    g_value_set_double(gValue, 0.0);
+    AccessibilityObject* coreObject = core(value);
+    if (!coreObject->getAttribute(HTMLNames::stepAttr).isEmpty()) {
+        g_value_set_float(gValue, coreObject->stepValueForRange());
+        return;
+    }
+
+    // If 'step' attribute is not defined, WebCore assumes a 5% of the
+    // range between minimum and maximum values, so return that.
+    float range = coreObject->maxValueForRange() - coreObject->minValueForRange();
+    g_value_set_float(gValue, range * 0.05);
 }
 
 void webkitAccessibleValueInterfaceInit(AtkValueIface* iface)

@@ -1,3 +1,17 @@
+2012-06-18  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Get rid of DumpRenderTreeSupportGtk::{in|de}crementAccessibilityValue
+        https://bugs.webkit.org/show_bug.cgi?id=89226
+
+        Reviewed by Martin Robinson.
+
+        Remove unnecesary functions incrementAccessibilityValue() and
+        decrementAccessibilityValue() from DumpRenderTreeSupportGtk.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+
 2012-06-14  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] Add TextureMapper ImageBuffer support as a fallback from the hardware accelerated path

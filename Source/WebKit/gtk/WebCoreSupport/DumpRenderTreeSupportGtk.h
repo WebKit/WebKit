@@ -94,8 +94,6 @@ public:
     static void forceWebViewPaint(WebKitWebView*);
 
     // Accessibility
-    static void incrementAccessibilityValue(AtkObject*);
-    static void decrementAccessibilityValue(AtkObject*);
     static WTF::CString accessibilityHelpText(AtkObject*);
 
     // TextInputController

@@ -1,3 +1,21 @@
+2012-06-18  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Get rid of DumpRenderTreeSupportGtk::{in|de}crementAccessibilityValue
+        https://bugs.webkit.org/show_bug.cgi?id=89226
+
+        Reviewed by Martin Robinson.
+
+        Implement increment() and decrement() functions in term of the AtkValue interface,
+        instead of using DumpRenderTreeSupportGtk helper class.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::intValue):
+        (AccessibilityUIElement::minValue):
+        (AccessibilityUIElement::maxValue):
+        (alterCurrentValue):
+        (AccessibilityUIElement::increment):
+        (AccessibilityUIElement::decrement):
+
 2012-06-17  Simon Fraser  <simon.fraser@apple.com>
 
         garden-o-matic 'Results' panel is broken for the Apple platform

@@ -330,13 +330,9 @@ double AccessibilityUIElement::intValue() const
         return 0.0f;
 
     atk_value_get_current_value(ATK_VALUE(m_element), &value);
-
-    if (G_VALUE_HOLDS_DOUBLE(&value))
-        return g_value_get_double(&value);
-    else if (G_VALUE_HOLDS_INT(&value))
-        return static_cast<double>(g_value_get_int(&value));
-    else
+    if (!G_VALUE_HOLDS_FLOAT(&value))
         return 0.0f;
+    return g_value_get_float(&value);
 }
 
 double AccessibilityUIElement::minValue()
@@ -347,13 +343,9 @@ double AccessibilityUIElement::minValue()
         return 0.0f;
 
     atk_value_get_minimum_value(ATK_VALUE(m_element), &value);
-
-    if (G_VALUE_HOLDS_DOUBLE(&value))
-        return g_value_get_double(&value);
-    else if (G_VALUE_HOLDS_INT(&value))
-        return static_cast<double>(g_value_get_int(&value));
-    else
+    if (!G_VALUE_HOLDS_FLOAT(&value))
         return 0.0f;
+    return g_value_get_float(&value);
 }
 
 double AccessibilityUIElement::maxValue()
@@ -364,13 +356,9 @@ double AccessibilityUIElement::maxValue()
         return 0.0f;
 
     atk_value_get_maximum_value(ATK_VALUE(m_element), &value);
-
-    if (G_VALUE_HOLDS_DOUBLE(&value))
-        return g_value_get_double(&value);
-    else if (G_VALUE_HOLDS_INT(&value))
-        return static_cast<double>(g_value_get_int(&value));
-    else
+    if (!G_VALUE_HOLDS_FLOAT(&value))
         return 0.0f;
+    return g_value_get_float(&value);
 }
 
 JSStringRef AccessibilityUIElement::valueDescription()
@@ -646,22 +634,38 @@ bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
     return false;
 }
 
-void AccessibilityUIElement::increment()
+static void alterCurrentValue(PlatformUIElement element, int factor)
 {
-    if (!m_element)
+    if (!element)
         return;
 
-    ASSERT(ATK_IS_OBJECT(m_element));
-    DumpRenderTreeSupportGtk::incrementAccessibilityValue(ATK_OBJECT(m_element));
+    ASSERT(ATK_IS_VALUE(element));
+
+    GValue currentValue = G_VALUE_INIT;
+    atk_value_get_current_value(ATK_VALUE(element), &currentValue);
+
+    GValue increment = G_VALUE_INIT;
+    atk_value_get_minimum_increment(ATK_VALUE(element), &increment);
+
+    GValue newValue = G_VALUE_INIT;
+    g_value_init(&newValue, G_TYPE_FLOAT);
+
+    g_value_set_float(&newValue, g_value_get_float(&currentValue) + factor * g_value_get_float(&increment));
+    atk_value_set_current_value(ATK_VALUE(element), &newValue);
+
+    g_value_unset(&newValue);
+    g_value_unset(&increment);
+    g_value_unset(&currentValue);
+}
+
+void AccessibilityUIElement::increment()
+{
+    alterCurrentValue(m_element, 1);
 }
 
 void AccessibilityUIElement::decrement()
 {
-    if (!m_element)
-        return;
-
-    ASSERT(ATK_IS_OBJECT(m_element));
-    DumpRenderTreeSupportGtk::decrementAccessibilityValue(ATK_OBJECT(m_element));
+    alterCurrentValue(m_element, -1);
 }
 
 void AccessibilityUIElement::press()

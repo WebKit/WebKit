@@ -1,3 +1,24 @@
+2012-06-18  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Get rid of DumpRenderTreeSupportGtk::{in|de}crementAccessibilityValue
+        https://bugs.webkit.org/show_bug.cgi?id=89226
+
+        Reviewed by Martin Robinson.
+
+        Implement webkitAccessibleValueGetMinimumIncrement() properly,
+        doing something similar to what is done in AccessibilityObject's
+        increment() and decrement() functions.
+
+        Also, added missing bits to webkitAccessibleValueSetCurrentValue
+        to make sure we check the new value against range limits.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceValue.cpp:
+        (webkitAccessibleValueGetCurrentValue):
+        (webkitAccessibleValueGetMaximumValue):
+        (webkitAccessibleValueGetMinimumValue):
+        (webkitAccessibleValueSetCurrentValue):
+        (webkitAccessibleValueGetMinimumIncrement):
+
 2012-06-14  Kinuko Yasuda  <kinuko@chromium.org>
 
         [chromium] Cleanup: remove PlatformSupport::createAsyncFileSystem as it's no longer used
