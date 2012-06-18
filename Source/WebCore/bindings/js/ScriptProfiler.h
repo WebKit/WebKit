@@ -74,6 +74,7 @@ public:
     // FIXME: Implement this counter for JSC. See bug 73936 for more details.
     static void visitJSDOMWrappers(DOMWrapperVisitor*) { }
     static void visitExternalJSStrings(DOMWrapperVisitor*) { }
+    static size_t profilerSnapshotsSize() { return 0; }
 };
 
 } // namespace WebCore

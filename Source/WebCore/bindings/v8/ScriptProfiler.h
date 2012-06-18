@@ -78,6 +78,7 @@ public:
     static void initialize();
     static void visitJSDOMWrappers(DOMWrapperVisitor*);
     static void visitExternalJSStrings(DOMWrapperVisitor*);
+    static size_t profilerSnapshotsSize();
 };
 
 } // namespace WebCore

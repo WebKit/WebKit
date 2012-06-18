@@ -66,6 +66,7 @@ namespace WebCore {
 namespace MemoryBlockName {
 static const char jsHeapAllocated[] = "JSHeapAllocated";
 static const char jsHeapUsed[] = "JSHeapUsed";
+static const char inspectorData[] = "InspectorData";
 static const char memoryCache[] = "MemoryCache";
 static const char processPrivateMemory[] = "ProcessPrivateMemory";
 
@@ -347,6 +348,14 @@ static PassRefPtr<InspectorMemoryBlock> jsHeapInfo()
     return jsHeapAllocated.release();
 }
 
+static PassRefPtr<InspectorMemoryBlock> inspectorData()
+{
+    size_t dataSize = ScriptProfiler::profilerSnapshotsSize();
+    RefPtr<InspectorMemoryBlock> inspectorData = InspectorMemoryBlock::create().setName(MemoryBlockName::inspectorData);
+    inspectorData->setSize(static_cast<int>(dataSize));
+    return inspectorData.release();
+}
+
 static PassRefPtr<InspectorMemoryBlock> renderTreeInfo(Page* page)
 {
     ArenaSize arenaSize = page->renderTreeSize();
@@ -401,6 +410,7 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
 
     RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
     children->addItem(jsHeapInfo());
+    children->addItem(inspectorData());
     children->addItem(memoryCacheInfo());
     children->addItem(renderTreeInfo(m_page)); // TODO: collect for all pages?
     processMemory->setChildren(children);

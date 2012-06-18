@@ -214,13 +214,14 @@ WebInspector.MemoryBlockViewProperties._initialize = function()
     {
         WebInspector.MemoryBlockViewProperties._standardBlocks[name] = new WebInspector.MemoryBlockViewProperties(fillStyle, name, WebInspector.UIString(description));
     }
-    addBlock("rgba(255, 255, 255, 0.8)", "ProcessPrivateMemory", "Total");
-    addBlock("rgba(240, 240, 250, 0.8)", "Other", "Other");
-    addBlock("rgba(250, 200, 200, 0.8)", "JSHeapAllocated", "JavaScript heap");
-    addBlock("rgba(200, 250, 200, 0.8)", "JSHeapUsed", "Used JavaScript heap");
-    addBlock("rgba(200, 170, 200, 0.8)", "MemoryCache", "Memory cache resources");
-    addBlock("rgba(250, 250, 150, 0.8)", "RenderTreeAllocated", "Render tree");
-    addBlock("rgba(200, 150, 150, 0.8)", "RenderTreeUsed", "Render tree used");
+    addBlock("hsl(  0,  0%, 100%)", "ProcessPrivateMemory", "Total");
+    addBlock("hsl(  0,  0%,  80%)", "Other", "Other");
+    addBlock("hsl( 90, 60%,  80%)", "JSHeapAllocated", "JavaScript heap");
+    addBlock("hsl( 90, 80%,  80%)", "JSHeapUsed", "Used JavaScript heap");
+    addBlock("hsl(210, 60%,  80%)", "InspectorData", "Inspector data");
+    addBlock("hsl( 30, 60%,  80%)", "MemoryCache", "Memory cache resources");
+    addBlock("hsl( 60, 60%,  80%)", "RenderTreeAllocated", "Render tree");
+    addBlock("hsl( 60, 60%,  80%)", "RenderTreeUsed", "Render tree used");
 }
 
 WebInspector.MemoryBlockViewProperties._forMemoryBlock = function(memoryBlock)

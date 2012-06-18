@@ -1,3 +1,29 @@
+2012-06-18  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: Add heap profiler owned memory to the pie chart
+        https://bugs.webkit.org/show_bug.cgi?id=89203
+
+        Heap profiler may consume considerable amount of memory
+        which is currently falls into Unknown category.
+        Give it a separate sector on the pie chart.
+
+        Reviewed by Yury Semikhatsky.
+
+        * bindings/js/ScriptProfiler.h:
+        (WebCore::ScriptProfiler::profilerSnapshotsSize):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::profilerSnapshotsSize):
+        (WebCore):
+        * bindings/v8/ScriptProfiler.h:
+        (ScriptProfiler):
+        * inspector/InspectorMemoryAgent.cpp:
+        (MemoryBlockName):
+        (WebCore):
+        (WebCore::inspectorData):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.MemoryBlockViewProperties._initialize):
+
 2012-06-18  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Get rid of DumpRenderTreeSupportGtk::{in|de}crementAccessibilityValue

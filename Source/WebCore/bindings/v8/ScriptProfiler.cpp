@@ -196,6 +196,11 @@ void ScriptProfiler::visitExternalJSStrings(DOMWrapperVisitor* visitor)
     V8BindingPerIsolateData::current()->visitJSExternalStrings(visitor);
 }
 
+size_t ScriptProfiler::profilerSnapshotsSize()
+{
+    return v8::HeapProfiler::GetMemorySizeUsedByProfiler();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)
