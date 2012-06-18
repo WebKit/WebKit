@@ -1,3 +1,19 @@
+2012-06-18  Iain Merrick  <husky@google.com>
+
+        Allow updateFixedElementsAfterScrolling() to run during layout.
+        https://bugs.webkit.org/show_bug.cgi?id=84965
+
+        This is needed because HistoryController restores the previous scroll
+        position during layout (because we don't want an ugly flash of wrongly-
+        scrolled content).
+
+        Reviewed by Simon Fraser.
+
+        * compositing/fixed-position-scroll-offset-history-restore-expected.txt: Added.
+        * compositing/fixed-position-scroll-offset-history-restore.html: Added.
+        * compositing/resources/fixed-position-scroll-offset-history-restore-2.html: Added.
+        * platform/chromium-linux/compositing/fixed-position-scroll-offset-history-restore-expected.png: Added.
+
 2012-06-18  Alexander Pavlov  <apavlov@chromium.org>
 
         CSSOM wrappers are not built for rules in the per-document and page group user stylesheets
