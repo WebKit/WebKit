@@ -1,5 +1,24 @@
 2012-06-18  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Rebaseline needed after r117339
+        https://bugs.webkit.org/show_bug.cgi?id=89328
+
+        Unreviewed EFL gardening. Rebaseline a few tests after r117339.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/pasteboard/innerText-inline-table-expected.png: Added.
+        * platform/efl/editing/pasteboard/innerText-inline-table-expected.txt: Added.
+        * platform/efl/editing/selection/iframe-expected.png: Added.
+        * platform/efl/editing/selection/iframe-expected.txt: Added.
+        * platform/efl/editing/selection/inline-table-expected.png: Added.
+        * platform/efl/editing/selection/inline-table-expected.txt: Added.
+        * platform/efl/editing/selection/table-caret-3-expected.png: Added.
+        * platform/efl/editing/selection/table-caret-3-expected.txt: Added.
+        * platform/efl/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/efl/tables/mozilla/bugs/bug2479-2-expected.txt:
+
+2012-06-18  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Rebaseline needed after r120477
         https://bugs.webkit.org/show_bug.cgi?id=89325
 
