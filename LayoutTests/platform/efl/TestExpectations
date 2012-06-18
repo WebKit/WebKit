@@ -719,16 +719,3 @@ BUGWK88984 : css3/flexbox/flexitem.html = TEXT
 // Animation timing inaccurate.
 BUGWK88986 : animations/first-letter-play-state.html = TEXT
 
-// Rebaselines needed for r120477.
-BUGWK74976 : fast/invalid/007.html = TEXT
-BUGWK74976 : fast/forms/formmove3.html = TEXT
-BUGWK74976 : tables/mozilla/bugs/bug647.html = TEXT
-BUGWK74976 : editing/deleting/delete-3800834-fix.html = TEXT
-BUGWK74976 : fast/forms/preserveFormDuringResidualStyle.html = TEXT
-BUGWK74976 : fast/dynamic/011.html = TEXT
-BUGWK74976 : tables/mozilla/other/wa_table_tr_align.html = TEXT
-BUGWK74976 : fast/invalid/004.html = TEXT
-BUGWK74976 : fast/invalid/003.html = TEXT
-BUGWK74976 : fast/invalid/001.html = TEXT
-BUGWK74976 : fast/invalid/019.html = TEXT
-BUGWK74976 : fast/multicol/span/clone-anonymous-block-non-inline-child-crash.html = TEXT
