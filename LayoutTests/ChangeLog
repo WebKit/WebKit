@@ -1,3 +1,9 @@
+2012-06-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip one more failing test. (Less test == less problem. :) )
+
+        * platform/qt/Skipped:
+
 2012-06-18  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [cairo] Fix LayoutTests/fast/canvas/patternfill-repeat.html

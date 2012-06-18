@@ -2522,3 +2522,7 @@ fast/block/basic/fieldset-stretch-to-legend.html
 # [Qt]REGRESSION(r120107): It made http/tests/xmlhttprequest/origin-exact-matching.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=88913
 http/tests/xmlhttprequest/origin-exact-matching.html
+
+# [Qt]Web Inspector: inspector/extensions/extensions-network.html makes inspector/extensions/extensions-reload.html timeout
+# https://bugs.webkit.org/show_bug.cgi?id=89349
+inspector/extensions/extensions-reload.html
