@@ -1,3 +1,15 @@
+2012-06-17  Gregg Tavares  <gman@google.com>
+
+        Fix Framebuffer restrictions
+        https://bugs.webkit.org/show_bug.cgi?id=89320
+
+        Reviewed by Kenneth Russell.
+
+        No new tests, just fixing old ones
+
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::checkStatus):
+
 2012-06-17  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Move search field related code to RenderSearchField from RenderTextControlSingleLine

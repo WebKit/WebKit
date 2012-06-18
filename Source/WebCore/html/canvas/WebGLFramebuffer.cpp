@@ -233,8 +233,9 @@ namespace {
     {
         ASSERT(attachedObject && attachedObject->isValid());
         ASSERT(reason);
+        GC3Denum format = attachedObject->getFormat();
         unsigned need = GraphicsContext3D::getClearBitsByAttachmentType(attachment);
-        unsigned have = GraphicsContext3D::getClearBitsByFormat(attachedObject->getFormat());
+        unsigned have = GraphicsContext3D::getClearBitsByFormat(format);
 
         if ((need & have) != need) {
             *reason = "attachment type is not correct for attachment";
@@ -243,6 +244,11 @@ namespace {
         if (!attachedObject->getWidth() || !attachedObject->getHeight()) {
             *reason = "attachment has a 0 dimension";
             return false;
+        }
+        if ((attachment == GraphicsContext3D::DEPTH_ATTACHMENT || attachment == GraphicsContext3D::STENCIL_ATTACHMENT)
+            && format == GraphicsContext3D::DEPTH_STENCIL) {
+          *reason = "attachment DEPTH_STENCIL not allowed on DEPTH or STENCIL attachment";
+          return false;
         }
         return true;
     }
@@ -440,7 +446,7 @@ GC3Denum WebGLFramebuffer::checkStatus(const char** reason) const
         return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
     }
     // WebGL specific: no conflicting DEPTH/STENCIL/DEPTH_STENCIL attachments.
-    if (haveDepthStencil && (haveDepth || haveStencil)) {
+    if ((haveDepthStencil && (haveDepth || haveStencil)) || (haveDepth && haveStencil)) {
         *reason = "conflicting DEPTH/STENCIL/DEPTH_STENCIL attachments";
         return GraphicsContext3D::FRAMEBUFFER_UNSUPPORTED;
     }
