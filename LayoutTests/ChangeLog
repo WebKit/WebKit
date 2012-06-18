@@ -1,5 +1,15 @@
 2012-06-18  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] skip fast/files/xhr-response-blob.html
+        https://bugs.webkit.org/show_bug.cgi?id=89335
+
+        Unreviewed EFL gardening. Skip fast/files/xhr-response-blob.html
+        because it is crashing.
+
+        * platform/efl/TestExpectations:
+
+2012-06-18  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Rebaseline needed after r117339
         https://bugs.webkit.org/show_bug.cgi?id=89328
 
