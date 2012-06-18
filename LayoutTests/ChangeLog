@@ -1,3 +1,11 @@
+2012-06-18  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, remove duplicates from the GTK WK2
+        Skipped list that are already present in the generic WK2 Skipped
+        list or in GTK's TestExpectations.
+
+        * platform/gtk-wk2/Skipped:
+
 2012-06-12  Kinuko Yasuda  <kinuko@chromium.org>
 
         Support File/DirectoryEntry access for <input type=file> if FileSystem API is enabled
