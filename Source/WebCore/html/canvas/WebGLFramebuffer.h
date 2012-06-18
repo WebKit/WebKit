@@ -71,9 +71,6 @@ public:
     void removeAttachmentFromBoundFramebuffer(GC3Denum);
     WebGLSharedObject* getAttachmentObject(GC3Denum) const;
 
-    // attach 'attachment' at 'attachmentPoint'.
-    void attach(GC3Denum attachment, GC3Denum attachmentPoint);
-
     GC3Denum getColorBufferFormat() const;
     GC3Dsizei getColorBufferWidth() const;
     GC3Dsizei getColorBufferHeight() const;
@@ -113,6 +110,9 @@ private:
 
     // Check if the framebuffer is currently bound.
     bool isBound() const;
+
+    // attach 'attachment' at 'attachmentPoint'.
+    void attach(GC3Denum attachment, GC3Denum attachmentPoint);
 
     typedef WTF::HashMap<GC3Denum, RefPtr<WebGLAttachment> > AttachmentMap;
 

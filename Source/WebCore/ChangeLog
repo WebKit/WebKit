@@ -1,3 +1,23 @@
+2012-06-18  Zhenyao Mo  <zmo@google.com>
+
+        Fix framebuffer-object-attachment.html failures
+        https://bugs.webkit.org/show_bug.cgi?id=89387
+
+        Reviewed by Kenneth Russell.
+
+        * html/canvas/WebGLFramebuffer.cpp: fix detachment behavior with depth/stencil/depth_stencil conflicts
+        (WebCore::WebGLFramebuffer::setAttachmentForBoundFramebuffer):
+        (WebCore::WebGLFramebuffer::removeAttachmentFromBoundFramebuffer):
+        * html/canvas/WebGLFramebuffer.h:
+        (WebGLFramebuffer):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::framebufferRenderbuffer): move logic to WebGLFramebuffer
+        (WebCore::WebGLRenderingContext::framebufferTexture2D): Ditto.
+        (WebCore::WebGLRenderingContext::getParameter): Correct the wrong assumption that it's always checking the drawingbuffer's DEPTH_BITS/STENCIL_BITS
+        * html/canvas/WebGLRenderingContext.h:
+        (WebGLRenderingContext):
+
 2012-06-18  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Ensure that skipping frames during an accelerated animation doesn't cause starvation

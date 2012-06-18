@@ -368,9 +368,6 @@ public:
     // Adds a compressed texture format.
     void addCompressedTextureFormat(GC3Denum);
 
-    // Reattaches depth and stencil attachments after one has been unattached.
-    void reattachDepthStencilAttachments(bool reattachDepth, bool reattachStencil, bool reattachDepthStencilDepth, bool reattachDepthStencilStencil);
-
 #if ENABLE(VIDEO)
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*, ExceptionCode&);
 #endif

@@ -128,7 +128,7 @@ namespace {
 
     void WebGLRenderbufferAttachment::unattach(GraphicsContext3D* context, GC3Denum attachment)
     {
-        if (attachment == GraphicsContext3D::DEPTH_STENCIL) {
+        if (attachment == GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT) {
             context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, 0);
             context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, 0);
         } else
@@ -283,11 +283,10 @@ WebGLFramebuffer::~WebGLFramebuffer()
 void WebGLFramebuffer::setAttachmentForBoundFramebuffer(GC3Denum attachment, GC3Denum texTarget, WebGLTexture* texture, GC3Dint level)
 {
     ASSERT(isBound());
+    removeAttachmentFromBoundFramebuffer(attachment);
     if (!object())
         return;
-    removeAttachmentFromBoundFramebuffer(attachment);
     if (texture && texture->object()) {
-
         m_attachments.add(attachment, WebGLTextureAttachment::create(texture, texTarget, level));
         texture->onAttached();
     }
@@ -296,9 +295,9 @@ void WebGLFramebuffer::setAttachmentForBoundFramebuffer(GC3Denum attachment, GC3
 void WebGLFramebuffer::setAttachmentForBoundFramebuffer(GC3Denum attachment, WebGLRenderbuffer* renderbuffer)
 {
     ASSERT(isBound());
+    removeAttachmentFromBoundFramebuffer(attachment);
     if (!object())
         return;
-    removeAttachmentFromBoundFramebuffer(attachment);
     if (renderbuffer && renderbuffer->object()) {
         m_attachments.add(attachment, WebGLRenderbufferAttachment::create(renderbuffer));
         renderbuffer->onAttached();
@@ -337,6 +336,18 @@ void WebGLFramebuffer::removeAttachmentFromBoundFramebuffer(GC3Denum attachment)
     if (attachmentObject) {
         attachmentObject->onDetached(context()->graphicsContext3D());
         m_attachments.remove(attachment);
+        switch (attachment) {
+        case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+            attach(GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::DEPTH_ATTACHMENT);
+            attach(GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::STENCIL_ATTACHMENT);
+            break;
+        case GraphicsContext3D::DEPTH_ATTACHMENT:
+            attach(GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT, GraphicsContext3D::DEPTH_ATTACHMENT);
+            break;
+        case GraphicsContext3D::STENCIL_ATTACHMENT:
+            attach(GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT, GraphicsContext3D::STENCIL_ATTACHMENT);
+            break;
+        }
     }
 }
 
