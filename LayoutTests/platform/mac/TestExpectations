@@ -42,6 +42,10 @@ BUGWK58192 : fast/canvas/webgl/gl-teximage.html = TEXT PASS
 BUGWK58192 : fast/frames/flattening/iframe-flattening-offscreen.html = TEXT PASS
 BUGWK58192 : svg/dom/SVGScriptElement/script-set-href.svg = TEXT PASS
 
+// Flakey cookies tests
+BUGWK73694 : http/tests/cookies/simple-cookies-expired.html = TEXT PASS
+BUGWK73695 : http/tests/cookies/simple-cookies-max-age.html = TEXT PASS
+
 BUGWK69999 RELEASE : http/tests/security/contentSecurityPolicy/media-src-allowed.html = TEXT PASS
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = IMAGE
