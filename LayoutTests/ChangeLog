@@ -1,3 +1,13 @@
+2012-06-18  Hayato Ito  <hayato@chromium.org>
+
+        Event dispatcher should use InsertionPoint::hasDistribution instead of InsertinPoint::isActive in re-targeting.
+        https://bugs.webkit.org/show_bug.cgi?id=89180
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/shadow-dom-event-dispatching-expected.txt:
+        * fast/dom/shadow/shadow-dom-event-dispatching.html:
+
 2012-06-18  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, updating baselines after r120596 and r120609.

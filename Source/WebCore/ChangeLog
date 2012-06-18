@@ -1,3 +1,21 @@
+2012-06-18  Hayato Ito  <hayato@chromium.org>
+
+        Event dispatcher should use InsertionPoint::hasDistribution instead of InsertinPoint::isActive in re-targeting.
+        https://bugs.webkit.org/show_bug.cgi?id=89180
+
+        Reviewed by Dimitri Glazkov.
+
+        If an event is fired on a fallback element within a insertion
+        point which does not select any nodes, the result of event's
+        re-targeting will be wrong since it uses
+        InsertionPoint::isActive() to judge an existence of a lower boundary.
+        That must use InsertionPoint::hasDistribution().
+
+        Test: fast/dom/shadow/shadow-dom-event-dispatching.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::ensureEventAncestors):
+
 2012-06-18  Tony Payne  <tpayne@chromium.org>
 
        [chromium] Add iccjpeg and qcms to chromium port

@@ -205,7 +205,7 @@ void EventDispatcher::ensureEventAncestors(Event* event)
     Vector<EventTarget*> targetStack;
     for (ComposedShadowTreeParentWalker walker(m_node.get()); walker.get(); walker.parentIncludingInsertionPointAndShadowRoot()) {
         Node* node = walker.get();
-        if (isActiveInsertionPoint(node) || targetStack.isEmpty())
+        if ((isInsertionPoint(node) && toInsertionPoint(node)->hasDistribution()) || targetStack.isEmpty())
             targetStack.append(eventTargetRespectingSVGTargetRules(node));
         m_ancestors.append(EventContext(node, eventTargetRespectingSVGTargetRules(node), targetStack.last()));
         if (!inDocument)

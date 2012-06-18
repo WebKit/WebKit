@@ -399,6 +399,32 @@ Click non-distributed-node
      @non-distributed-node (target: non-distributed-node)
      @A (target: non-distributed-node)
      @top (target: non-distributed-node)
+
+
+Composed Shadow Tree will be:
+DIV	 id=sandbox
+	DIV	 id=top
+		DIV	 id=A
+			DIV	 id=fallback
+
+
+Moving mouse from A/fallback to A
+
+  mouseout
+     @fallback (target: fallback) (related: A)
+     @content (target: fallback) (related: A)
+     @shadow-root (target: fallback) (related: A)
+
+  mouseover
+
+Moving mouse from A to A/fallback
+
+  mouseout
+
+  mouseover
+     @fallback (target: fallback) (related: A)
+     @content (target: fallback) (related: A)
+     @shadow-root (target: fallback) (related: A)
 PASS successfullyParsed is true
 
 TEST COMPLETE

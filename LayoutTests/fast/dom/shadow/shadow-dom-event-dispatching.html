@@ -352,6 +352,25 @@ function testEventsOnNonDistributedNodes()
     debugDispatchedEvent('click');
 }
 
+function testEventsOnFallbackElements()
+{
+    sandbox.innerHTML = '';
+    sandbox.appendChild(
+        createDOM('div', {'id': 'top'},
+                  createDOM('div', {'id': 'A'},
+                            createShadowRoot(
+                                createDOM('content', {'id': 'content', 'select': '#none'},
+                                          createDOM('div', {'id': 'fallback'}))),
+                            createDOM('div', {'id': 'B'}))));
+
+    addEventListeners(['top', 'A', 'B', 'A/', 'A/content', 'A/fallback']);
+    getNodeInShadowTreeStack('A/').id = 'shadow-root';
+    showSandboxTree();
+
+    moveMouse('A/fallback', 'A');
+    moveMouse('A', 'A/fallback');
+}
+
 function test()
 {
     if (window.layoutTestController)
@@ -366,6 +385,7 @@ function test()
     testEventsOnChildOfInactiveContent();
     testEventsOnMultipleShadowRoots();
     testEventsOnNonDistributedNodes();
+    testEventsOnFallbackElements();
 }
 
 test();
