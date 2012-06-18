@@ -1,3 +1,16 @@
+2012-06-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should attempt to use structure watchpoints for all inlined get_by_id's and put_by_id's
+        https://bugs.webkit.org/show_bug.cgi?id=89316
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addStructureTransitionCheck):
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2012-06-15  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Put platform-specific GC policy in GCActivityCallback

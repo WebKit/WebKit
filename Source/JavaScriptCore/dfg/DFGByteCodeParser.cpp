@@ -750,7 +750,7 @@ private:
         return call;
     }
     
-    void addStructureTransitionCheck(JSCell* object, Structure* structure)
+    NodeIndex addStructureTransitionCheck(JSCell* object, Structure* structure)
     {
         // Add a weak JS constant for the object regardless, since the code should
         // be jettisoned if the object ever dies.
@@ -758,10 +758,17 @@ private:
         
         if (object->structure() == structure && structure->transitionWatchpointSetIsStillValid()) {
             addToGraph(StructureTransitionWatchpoint, OpInfo(structure), objectIndex);
-            return;
+            return objectIndex;
         }
         
         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(structure)), objectIndex);
+        
+        return objectIndex;
+    }
+    
+    NodeIndex addStructureTransitionCheck(JSCell* object)
+    {
+        return addStructureTransitionCheck(object, object->structure());
     }
     
     SpeculatedType getPredictionWithoutOSRExit(NodeIndex nodeIndex, unsigned bytecodeIndex)
@@ -1591,8 +1598,7 @@ void ByteCodeParser::handleGetById(
         for (unsigned i = 0; i < getByIdStatus.chain().size(); ++i) {
             currentObject = asObject(currentStructure->prototypeForLookup(m_inlineStackTop->m_codeBlock));
             currentStructure = getByIdStatus.chain()[i];
-            base = addToGraph(WeakJSConstant, OpInfo(currentObject));
-            addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(currentStructure)), base);
+            base = addStructureTransitionCheck(currentObject, currentStructure);
         }
         useInlineStorage = currentStructure->isUsingInlineStorage();
     } else
@@ -1610,8 +1616,7 @@ void ByteCodeParser::handleGetById(
     if (getByIdStatus.specificValue()) {
         ASSERT(getByIdStatus.specificValue().isCell());
         
-        set(destinationOperand,
-            addToGraph(WeakJSConstant, OpInfo(getByIdStatus.specificValue().asCell())));
+        set(destinationOperand, cellConstant(getByIdStatus.specificValue().asCell()));
         return;
     }
     
@@ -2210,21 +2215,17 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(putByIdStatus.oldStructure())), base);
                 if (!direct) {
-                    if (!putByIdStatus.oldStructure()->storedPrototype().isNull())
-                        addToGraph(
-                            CheckStructure,
-                            OpInfo(m_graph.addStructureSet(putByIdStatus.oldStructure()->storedPrototype().asCell()->structure())),
-                            cellConstant(putByIdStatus.oldStructure()->storedPrototype().asCell()));
+                    if (!putByIdStatus.oldStructure()->storedPrototype().isNull()) {
+                        addStructureTransitionCheck(
+                            putByIdStatus.oldStructure()->storedPrototype().asCell());
+                    }
                     
                     for (WriteBarrier<Structure>* it = putByIdStatus.structureChain()->head(); *it; ++it) {
                         JSValue prototype = (*it)->storedPrototype();
                         if (prototype.isNull())
                             continue;
                         ASSERT(prototype.isCell());
-                        addToGraph(
-                            CheckStructure,
-                            OpInfo(m_graph.addStructureSet(prototype.asCell()->structure())),
-                            cellConstant(prototype.asCell()));
+                        addStructureTransitionCheck(prototype.asCell());
                     }
                 }
                 ASSERT(putByIdStatus.oldStructure()->transitionWatchpointSetHasBeenInvalidated());
@@ -2321,8 +2322,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             JSValue specificValue = globalObject->registerAt(entry.getIndex()).get();
             ASSERT(specificValue.isCell());
-            set(currentInstruction[1].u.operand,
-                addToGraph(WeakJSConstant, OpInfo(specificValue.asCell())));
+            set(currentInstruction[1].u.operand, cellConstant(specificValue.asCell()));
             
             NEXT_OPCODE(op_get_global_var_watchable);
         }
