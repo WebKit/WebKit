@@ -1,3 +1,57 @@
+2012-06-18  Antonio Gomes  <agomes@rim.com>
+
+       [BlackBerry] Overscroll can get reset while interacting with a page, due to style recalculations and scroll position clamping
+       https://bugs.webkit.org/show_bug.cgi?id=89371
+       PR #166982
+
+       Reviewed by Adam Treat.
+
+       While scrolling, the WebKit thread gets intercalated WebPage::setScrollPosition
+       calls dispatched from the UI thread. These calls are wrapped with
+       ScrollableArea::setConstrainsScrollingToContentEdge(false|true) calls, which
+       can clamp the scroll position (removes overscroll) if set to 'true'.
+
+       The following situation can happen: user is scrolling, and WebKit
+       thread is not in the middle of a WebPage::setScrollPosition call
+       (so setConstrainsScrollingToContentEdge is 'true'), and a relayout happens.
+       In this scenario, the scroll position will get clamped to 0,0, removing any
+       possible overscrolling.
+
+       See the stack trace below, paying special attention to frame 16:
+       #0  ScrollHandlerUserInterfaceThread::updateScrollPosition
+       #1  0x782b4a3e in WebPageClientImpl::scrollChanged
+       #2  0x78147484 in BlackBerry::WebKit::WebPagePrivate::notifyTransformedScrollChanged
+       #3  0x78171f68 in BlackBerry::WebKit::BackingStoreClient::checkOriginOfCurrentScrollOperation
+       #4  0x7816480a in WebCore::ChromeClientBlackBerry::scroll
+       #5  0x7a78b290 in WebCore::Chrome::scroll
+       #6  0x7a7ac8d0 in WebCore::FrameView::scrollContentsFastPath
+       #7  0x7a7eba72 in WebCore::ScrollView::scrollContents
+       #8  0x7a7ebb34 in WebCore::ScrollView::scrollTo
+       #9  0x7a7a8dae in WebCore::FrameView::scrollTo
+       #10 0x7a7e966e in WebCore::ScrollView::setScrollOffset
+       #11 0x7a7e77cc in WebCore::ScrollableArea::scrollPositionChanged
+       #12 0x7a7e7048 in WebCore::ScrollAnimator::notifyPositionChanged
+       #13 0x7a7e700c in WebCore::ScrollAnimator::scrollToOffsetWithoutAnimation
+       #14 0x7a7e7588 in WebCore::ScrollableArea::scrollToOffsetWithoutAnimation
+       #16 WebCore::ScrollView::updateScrollbars
+       #18 WebCore::ScrollView::setContentsSize
+       #19 0x7a7accd8 in WebCore::FrameView::setContentsSize
+       #20 0x7a7a85f4 in WebCore::FrameView::adjustViewSize
+       #22 WebCore::FrameView::layout
+       #23 0x7a59d66e in WebCore::Document::updateLayoutIgnorePendingStylesheets
+       #24 0x7a5ada92 in WebCore::Element::offsetHeight
+       #25 0x7ab226b6 in WebCore::jsElementOffsetHeight
+       #27 JSC::JSValue::get
+       #28 0x796dd662 in JSC::JITStubThunked_op_get_by_id_generic
+
+       Patch fixes this issue by tying ScrollableArea::setConstrainsScrollingToContentEdge
+       to BackingStore::m_isZoomingOrScrolling, when we are sure clamping should not happen.
+
+       * Api/BackingStore.cpp:
+       (BlackBerry::WebKit::BackingStorePrivate::setScrollingOrZooming):
+       * Api/WebPage.cpp:
+       (BlackBerry::WebKit::WebPage::setScrollPosition):
+
 2012-06-15  Eli Fidler  <efidler@rim.com>
 
         [BlackBerry] Use platform font settings for the standard settings.

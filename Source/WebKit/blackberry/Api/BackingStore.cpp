@@ -2655,6 +2655,8 @@ void BackingStorePrivate::setScrollingOrZooming(bool scrollingOrZooming, bool sh
     if (!m_webPage->settings()->shouldRenderAnimationsOnScrollOrZoom())
         m_suspendRegularRenderJobs = scrollingOrZooming; // Suspend the rendering of animations.
 
+    m_webPage->d->m_mainFrame->view()->setConstrainsScrollingToContentEdge(!scrollingOrZooming);
+
     // Clear this flag since we don't care if the render queue is under pressure
     // or not since we are scrolling and it is more important to not lag than
     // it is to ensure animations achieve better framerates!

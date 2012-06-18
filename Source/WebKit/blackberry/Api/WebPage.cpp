@@ -1281,9 +1281,7 @@ void WebPage::setScrollPosition(const Platform::IntPoint& point)
         d->m_userPerformedManualScroll = true;
 
     d->m_backingStoreClient->setIsClientGeneratedScroll(true);
-    d->m_mainFrame->view()->setCanOverscroll(true);
     d->setScrollPosition(d->mapFromTransformed(point));
-    d->m_mainFrame->view()->setCanOverscroll(false);
     d->m_backingStoreClient->setIsClientGeneratedScroll(false);
 }
 
