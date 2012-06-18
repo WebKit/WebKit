@@ -1,3 +1,39 @@
+2012-06-17  Philip Rogers  <pdr@google.com>
+
+        Prevent crash in SVGDocumentExtensions::removeAllElementReferencesForTarget.
+        https://bugs.webkit.org/show_bug.cgi?id=88144
+
+        Reviewed by Abhishek Arya.
+
+        When iterating over referencing elements to rebuild after a reference change in
+        SVGDocumentExtensions::removeAllElementReferencesForTarget, we can
+        modify the underlying toBeNotified vector, invalidating it. This change checks
+        that a vector element is valid before rebuilding, preventing a crash.
+
+        Some definitions from SVGDocumentExtensions that may put this patch in context:
+            An example of a "referenced elements" is a <path>.
+            An example of a "referencing element" is a <textPath href='some_path_id'>.
+            m_elementDependencies is a map from referenced elements (e.g., paths) to
+            a set of referencing elements (e.g., textPaths).
+
+        The check that the vector element is valid relies on checking if the referencing
+        element is in m_elementDependencies. This check is allowed because in the
+        destructor of SVGTextPathElement (and SVGFeImageElement),
+        removeAllTargetReferencesForElement() is called, removing the referencing element
+        from m_elementDependencies.
+
+        Simply checking if the referencing element is anywhere in m_elementDependencies
+        is enough to show it is valid, but that requires iterating over all referenced
+        elements to see if the given referencing element is present. This change
+        only checks if the textPath is still in the elements referencing the
+        path being removed, and only removes the referenced element from
+        m_elementDependencies after forcing the referencing elements to be rebuilt.
+
+        Test: svg/text/textpath-reference-crash.html
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::removeAllElementReferencesForTarget):
+
 2012-06-17  Yoshifumi Inoue  <yosin@chromium.org>
 
         Unreviewed, rolling out r120390.

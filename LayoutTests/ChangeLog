@@ -1,3 +1,13 @@
+2012-06-17  Philip Rogers  <pdr@google.com>
+
+        Prevent crash in SVGDocumentExtensions::removeAllElementReferencesForTarget.
+        https://bugs.webkit.org/show_bug.cgi?id=88144
+
+        Reviewed by Abhishek Arya.
+
+        * svg/text/textpath-reference-crash-expected.txt: Added.
+        * svg/text/textpath-reference-crash.html: Added.
+
 2012-06-17  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, updating baselines after r120541.
