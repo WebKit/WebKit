@@ -52,8 +52,7 @@
         log("This test requires WebKitTestRunner or DumpRenderTree.");
 
     layoutTestController.waitUntilDone();
-    internals.settings.setDeviceScaleFactor(2);
-    setTimeout(function() {
+    layoutTestController.setBackingScaleFactor(2, function() {
         var canvas = document.createElement("canvas");
         canvas.width = 8;
         canvas.height = 8;
@@ -115,5 +114,5 @@
             log("High-DPI canvas is not enabled.");
 
         layoutTestController.notifyDone();
-    }, 0);
+    });
 </script>

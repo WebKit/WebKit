@@ -2,8 +2,14 @@
 <head>
 <script>
     function startTest() {
-        if (window.internals)
-            internals.settings.setDeviceScaleFactor(2);
+        if (window.layoutTestController) {
+            layoutTestController.waitUntilDone();
+            layoutTestController.setBackingScaleFactor(2, finishTest);
+        }
+    }
+    
+    function finishTest() {
+        setTimeout(function() { layoutTestController.notifyDone(); }, 0);
     }
 </script>
 

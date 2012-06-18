@@ -135,6 +135,8 @@ module WTR {
         void removeChromeInputField(in object callback);
         void focusWebView(in object callback);
 
+        void setBackingScaleFactor(in double backingScaleFactor, in object callback);
+
         void setWindowIsKey(in boolean isKey);
 
         // FIXME: handle non-boolean preferences.

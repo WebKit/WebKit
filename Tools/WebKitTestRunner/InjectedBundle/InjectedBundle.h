@@ -86,6 +86,7 @@ public:
     void postAddChromeInputField();
     void postRemoveChromeInputField();
     void postFocusWebView();
+    void postSetBackingScaleFactor(double);
     void postSetWindowIsKey(bool);
 
 private:

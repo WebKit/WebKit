@@ -107,7 +107,6 @@ InternalSettings::InternalSettings(Frame* frame)
     , m_originalWindowFocusRestricted(settings()->windowFocusRestricted())
     , m_originalDeviceSupportsTouch(settings()->deviceSupportsTouch())
     , m_originalDeviceSupportsMouse(settings()->deviceSupportsMouse())
-    , m_originalDeviceScaleFactor(page() ? page()->deviceScaleFactor() : 1.0)
 {
 }
 
@@ -129,9 +128,6 @@ void InternalSettings::restoreTo(Settings* settings)
     settings->setWindowFocusRestricted(m_originalWindowFocusRestricted);
     settings->setDeviceSupportsTouch(m_originalDeviceSupportsTouch);
     settings->setDeviceSupportsMouse(m_originalDeviceSupportsMouse);
-
-    if (page())
-        page()->setDeviceScaleFactor(m_originalDeviceScaleFactor);
 }
 
 Settings* InternalSettings::settings() const

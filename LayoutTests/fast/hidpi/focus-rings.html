@@ -1,11 +1,16 @@
 <html>
 <script>
     function startTest() {
-        if (window.internals)
-            internals.settings.setDeviceScaleFactor(2);
-
+        if (window.layoutTestController) {
+            layoutTestController.waitUntilDone();
+            layoutTestController.setBackingScaleFactor(2, finishTest);
+        }
+    }
+    
+    function finishTest() {
         var div = document.getElementById("div");
         div.focus();
+        setTimeout(function() { layoutTestController.notifyDone(); }, 0);
     }
     </script>
 </head>

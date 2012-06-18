@@ -1170,6 +1170,11 @@ void LayoutTestController::focusWebView()
     [[[mainFrame webView] window] makeFirstResponder:[mainFrame webView]];
 }
 
+void LayoutTestController::setBackingScaleFactor(double backingScaleFactor)
+{
+    [[mainFrame webView] _setCustomBackingScaleFactor:backingScaleFactor];
+}
+
 void LayoutTestController::simulateDesktopNotificationClick(JSStringRef title)
 {
     // FIXME: Implement.
