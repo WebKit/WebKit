@@ -50,9 +50,6 @@ void OpaqueRectTrackingContentLayerDelegate::paintContents(SkCanvas* canvas, con
     platformContext.setTrackOpaqueRegion(!m_opaque);
     GraphicsContext context(&platformContext);
 
-    context.clearRect(clip);
-    context.clip(clip);
-
     // Record transform prior to painting, as all opaque tracking will be
     // relative to this current value.
     AffineTransform canvasToContentTransform = context.getCTM().inverse();

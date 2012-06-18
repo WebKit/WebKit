@@ -116,8 +116,6 @@ public:
         PlatformContextSkia platformContext(canvas);
         platformContext.setDrawingToImageBuffer(true);
         GraphicsContext context(&platformContext);
-        context.clearRect(contentRect);
-        context.clip(contentRect);
 
         // The following is a simplification of ScrollbarThemeComposite::paint.
         m_theme->paintScrollbarBackground(&context, m_scrollbar);
@@ -175,8 +173,6 @@ public:
         PlatformContextSkia platformContext(canvas);
         platformContext.setDrawingToImageBuffer(true);
         GraphicsContext context(&platformContext);
-
-        context.clearRect(contentRect);
 
         // Consider the thumb to be at the origin when painting.
         IntRect thumbRect = IntRect(IntPoint(), m_theme->thumbRect(m_scrollbar).size());

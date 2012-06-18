@@ -33,6 +33,9 @@
 #include "GraphicsContext.h"
 #include "LayerPainterChromium.h"
 #include "PlatformContextSkia.h"
+#include "SkCanvas.h"
+#include "SkPaint.h"
+#include "SkRect.h"
 #include "SkiaUtils.h"
 #include "TraceEvent.h"
 
@@ -62,6 +65,12 @@ void CanvasLayerTextureUpdater::paintContents(SkCanvas* canvas, const IntRect& c
         rect.scale(1 / contentsScale);
         scaledContentRect = enclosingIntRect(rect);
     }
+
+    SkPaint paint;
+    paint.setAntiAlias(false);
+    paint.setXfermodeMode(SkXfermode::kClear_Mode);
+    canvas->drawRect(scaledContentRect, paint);
+    canvas->clipRect(scaledContentRect);
 
     m_painter->paint(canvas, scaledContentRect, resultingOpaqueRect);
     canvas->restore();

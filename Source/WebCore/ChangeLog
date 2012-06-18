@@ -1,3 +1,21 @@
+2012-06-18  James Robinson  <jamesr@chromium.org>
+
+        [chromium] REGRESSION(r120346) ContentLayerPainter should clear rect to be painted
+        https://bugs.webkit.org/show_bug.cgi?id=89376
+
+        Reviewed by Adrienne Walker.
+
+        In r120346, a refactor moved a clearRect()/clip() call from ContentLayerPainter - which all
+        ContentLayerChromiums use - out to OpaqueRectTrackingContentLayerDelegate - which all GraphicsLayerChromium
+        backed layers use, but which callers using WebContentLayer directly do not use. This meant that the canvas
+        wasn't cleared/clipped as WebContentLayerClient.h claimed it would be. This moves the clear and the clip
+        into CanvasLayerTextureUpdater which all paths use, including layers that don't use the ContentLayerPainter.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerPainter::paint):
+        * platform/graphics/chromium/OpaqueRectTrackingContentLayerDelegate.cpp:
+        (WebCore::OpaqueRectTrackingContentLayerDelegate::paintContents):
+
 2012-06-18  Igor Oliveira  <igor.o@sisa.samsung.com>
 
         Unreviewed, rolling out r120119.
