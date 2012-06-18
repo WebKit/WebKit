@@ -65,7 +65,6 @@ typedef struct HFONT__* HFONT;
 
 namespace WebCore {
 
-class AsyncFileSystem;
 class Color;
 class Cursor;
 class Document;
@@ -98,10 +97,6 @@ public:
     static bool rawCookies(const Document*, const KURL&, Vector<Cookie>&);
     static void deleteCookie(const Document*, const KURL&, const String& cookieName);
     static bool cookiesEnabled(const Document*);
-
-#if ENABLE(FILE_SYSTEM)
-    static PassOwnPtr<AsyncFileSystem> createAsyncFileSystem();
-#endif
 
     // Font ---------------------------------------------------------------
 #if OS(WINDOWS)

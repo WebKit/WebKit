@@ -71,10 +71,8 @@ void JSXMLHttpRequest::visitChildren(JSCell* cell, SlotVisitor& visitor)
     if (ArrayBuffer* responseArrayBuffer = thisObject->m_impl->optionalResponseArrayBuffer())
         visitor.addOpaqueRoot(responseArrayBuffer);
 
-#if ENABLE(XHR_RESPONSE_BLOB)
     if (Blob* responseBlob = thisObject->m_impl->optionalResponseBlob())
         visitor.addOpaqueRoot(responseBlob);
-#endif
 
     thisObject->m_impl->visitJSEventListeners(visitor);
 }
@@ -174,7 +172,6 @@ JSValue JSXMLHttpRequest::response(ExecState* exec) const
         }
 
     case XMLHttpRequest::ResponseTypeBlob:
-#if ENABLE(XHR_RESPONSE_BLOB)
         {
             ExceptionCode ec = 0;
             Blob* blob = impl()->responseBlob(ec);
@@ -184,9 +181,6 @@ JSValue JSXMLHttpRequest::response(ExecState* exec) const
             }
             return toJS(exec, globalObject(), blob);
         }
-#else
-        return jsUndefined();
-#endif
 
     case XMLHttpRequest::ResponseTypeArrayBuffer:
         {

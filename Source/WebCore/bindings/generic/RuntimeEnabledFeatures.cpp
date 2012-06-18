@@ -70,10 +70,6 @@ bool RuntimeEnabledFeatures::isPeerConnectionEnabled = true;
 bool RuntimeEnabledFeatures::isGamepadEnabled = false;
 #endif
 
-#if ENABLE(XHR_RESPONSE_BLOB)
-bool RuntimeEnabledFeatures::isXHRResponseBlobEnabled = false;
-#endif
-
 #if ENABLE(FILE_SYSTEM)
 bool RuntimeEnabledFeatures::isFileSystemEnabled = false;
 

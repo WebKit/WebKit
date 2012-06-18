@@ -169,13 +169,6 @@ public:
     static bool webkitSpeechGrammarListEnabled() { return isScriptedSpeechEnabled; }
 #endif
 
-#if ENABLE(XHR_RESPONSE_BLOB)
-    static bool xhrResponseBlobEnabled() { return isXHRResponseBlobEnabled; }
-    static void setXHRResponseBlobEnabled(bool isEnabled) { isXHRResponseBlobEnabled = isEnabled; }
-    static bool responseBlobEnabled() { return isXHRResponseBlobEnabled; }
-    static bool asBlobEnabled()  { return isXHRResponseBlobEnabled; }
-#endif
-
 #if ENABLE(FILE_SYSTEM)
     static bool fileSystemEnabled();
     static void setFileSystemEnabled(bool isEnabled) { isFileSystemEnabled = isEnabled; }
@@ -259,10 +252,6 @@ private:
 #if ENABLE(SCRIPTED_SPEECH)
     static bool isScriptedSpeechEnabled;
 #endif
-#if ENABLE(XHR_RESPONSE_BLOB)
-    static bool isXHRResponseBlobEnabled;
-#endif
-
 #if ENABLE(FILE_SYSTEM)
     static bool isFileSystemEnabled;
 #endif

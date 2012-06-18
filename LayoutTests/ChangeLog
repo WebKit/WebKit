@@ -1,3 +1,19 @@
+2012-06-15  Kinuko Yasuda  <kinuko@chromium.org>
+
+        XHR_RESPONSE_BLOB is not enabled on some platforms
+        https://bugs.webkit.org/show_bug.cgi?id=88859
+
+        Reviewed by Adam Barth.
+
+        Removing xhr.Blob related test from Skipped files.
+
+        * platform/efl/Skipped:
+        * platform/gtk/TestExpectations:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-06-17  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Add EFL baseline for fast/parser/nested-fragment-parser-crash.html

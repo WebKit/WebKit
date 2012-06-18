@@ -264,7 +264,6 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
     return m_responseDocument.get();
 }
 
-#if ENABLE(XHR_RESPONSE_BLOB)
 Blob* XMLHttpRequest::responseBlob(ExceptionCode& ec)
 {
     if (m_responseTypeCode != ResponseTypeBlob) {
@@ -299,7 +298,6 @@ Blob* XMLHttpRequest::responseBlob(ExceptionCode& ec)
 
     return m_responseBlob.get();
 }
-#endif
 
 ArrayBuffer* XMLHttpRequest::responseArrayBuffer(ExceptionCode& ec)
 {
@@ -342,13 +340,11 @@ void XMLHttpRequest::setResponseType(const String& responseType, ExceptionCode& 
         m_responseTypeCode = ResponseTypeText;
     else if (responseType == "document")
         m_responseTypeCode = ResponseTypeDocument;
-    else if (responseType == "blob") {
-#if ENABLE(XHR_RESPONSE_BLOB)
+    else if (responseType == "blob")
         m_responseTypeCode = ResponseTypeBlob;
-#endif
-    } else if (responseType == "arraybuffer") {
+    else if (responseType == "arraybuffer")
         m_responseTypeCode = ResponseTypeArrayBuffer;
-    } else
+    else
         ec = SYNTAX_ERR;
 }
 
@@ -413,18 +409,6 @@ void XMLHttpRequest::setWithCredentials(bool value, ExceptionCode& ec)
 
     m_includeCredentials = value;
 }
-
-#if ENABLE(XHR_RESPONSE_BLOB)
-void XMLHttpRequest::setAsBlob(bool value, ExceptionCode& ec)
-{
-    if (m_state != OPENED || m_loader) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-    
-    m_responseTypeCode = value ? ResponseTypeBlob : ResponseTypeDefault;
-}
-#endif
 
 bool XMLHttpRequest::isAllowedHTTPMethod(const String& method)
 {
@@ -815,9 +799,7 @@ void XMLHttpRequest::clearResponseBuffers()
     m_responseBuilder.clear();
     m_createdDocument = false;
     m_responseDocument = 0;
-#if ENABLE(XHR_RESPONSE_BLOB)
     m_responseBlob = 0;
-#endif
     m_binaryResponseBuilder.clear();
     m_responseArrayBuffer.clear();
 }
@@ -1136,11 +1118,7 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
 
     if (useDecoder)
         m_responseBuilder.append(m_decoder->decode(data, len));
-    else if (m_responseTypeCode == ResponseTypeArrayBuffer
-#if ENABLE(XHR_RESPONSE_BLOB)
-             || m_responseTypeCode == ResponseTypeBlob
-#endif
-             ) {
+    else if (m_responseTypeCode == ResponseTypeArrayBuffer || m_responseTypeCode == ResponseTypeBlob) {
         // Buffer binary data.
         if (!m_binaryResponseBuilder)
             m_binaryResponseBuilder = SharedBuffer::create();

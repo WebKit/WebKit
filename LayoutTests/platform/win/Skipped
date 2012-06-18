@@ -1945,7 +1945,3 @@ svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context.svg
 svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg
 svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg
 svg/W3C-SVG-1.1-SE/text-intro-05-t.svg
-
-# Fail until ENABLE_XHR_RESPONSE_BLOB is enabled after r120042
-# https://bugs.webkit.org/show_bug.cgi?id=88859
-http/tests/xmlhttprequest/response-blob-size.html

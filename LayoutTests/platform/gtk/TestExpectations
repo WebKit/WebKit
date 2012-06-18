@@ -324,10 +324,6 @@ BUGWKGTK SKIP : http/tests/security/video-cross-origin-readback.html = TEXT
 // UndoManager is not yet enabled.
 BUGWK87908 SKIP : editing/undomanager = PASS
 
-// Fail until ENABLE_XHR_RESPONSE_BLOB is enabled after r120042
-// https://bugs.webkit.org/show_bug.cgi?id=88859
-BUGWK88859 : http/tests/xmlhttprequest/response-blob-size.html = TEXT
-
 // New test infrastructure required -- need isolated worlds
 BUGWK31508 SKIP : http/tests/security/isolatedWorld = TEXT
 BUGWK31508 BUGWK61540 SKIP : http/tests/security/isolatedWorld/cross-origin-xhr.html = TEXT

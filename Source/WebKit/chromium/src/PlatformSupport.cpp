@@ -78,7 +78,6 @@
 
 #include "NativeImageSkia.h"
 
-#include "AsyncFileSystemChromium.h"
 #include "BitmapImage.h"
 #include "Cookie.h"
 #include "Document.h"
@@ -206,15 +205,6 @@ bool PlatformSupport::cookiesEnabled(const Document* document)
         result = cookieJar->cookiesEnabled(document->cookieURL(), document->firstPartyForCookies());
     return result;
 }
-
-// File ------------------------------------------------------------------------
-
-#if ENABLE(FILE_SYSTEM)
-PassOwnPtr<AsyncFileSystem> PlatformSupport::createAsyncFileSystem()
-{
-    return AsyncFileSystemChromium::create();
-}
-#endif
 
 // Font -----------------------------------------------------------------------
 

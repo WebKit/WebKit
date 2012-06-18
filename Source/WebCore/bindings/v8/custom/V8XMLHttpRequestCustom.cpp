@@ -80,7 +80,6 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseAccessorGetter(v8::Local<v8::Str
         }
 
     case XMLHttpRequest::ResponseTypeBlob:
-#if ENABLE(XHR_RESPONSE_BLOB)
         {
             ExceptionCode ec = 0;
             Blob* blob = xmlHttpRequest->responseBlob(ec);
@@ -88,9 +87,6 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseAccessorGetter(v8::Local<v8::Str
                 return V8Proxy::setDOMException(ec, info.GetIsolate());
             return toV8(blob, info.GetIsolate());
         }
-#else
-        return v8::Undefined();
-#endif
 
     case XMLHttpRequest::ResponseTypeArrayBuffer:
         {

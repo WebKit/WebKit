@@ -1,3 +1,18 @@
+2012-06-15  Kinuko Yasuda  <kinuko@chromium.org>
+
+        XHR_RESPONSE_BLOB is not enabled on some platforms
+        https://bugs.webkit.org/show_bug.cgi?id=88859
+
+        Reviewed by Adam Barth.
+
+        Removing XHR_RESPONSE_BLOB since the current implementation has
+        no platform-specific part.
+
+        * src/PlatformSupport.cpp:
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableXHRResponseBlob):
+        (WebKit::WebRuntimeFeatures::isXHRResponseBlobEnabled):
+
 2012-06-17  MORITA Hajime  <morrita@google.com>
 
         Unreviewed build fix.
