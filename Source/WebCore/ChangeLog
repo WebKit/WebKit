@@ -1,3 +1,13 @@
+2012-06-17  Arvid Nilsson  <anilsson@rim.com>
+
+        Don't mark main frame layer opaque if the frame view is transparent
+        https://bugs.webkit.org/show_bug.cgi?id=88234
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+
 2012-06-17  Philip Rogers  <pdr@google.com>
 
         Prevent crash in SVGDocumentExtensions::removeAllElementReferencesForTarget.

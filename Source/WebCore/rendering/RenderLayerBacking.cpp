@@ -166,7 +166,11 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     m_graphicsLayer = createGraphicsLayer(layerName);
 
     if (m_isMainFrameRenderViewLayer) {
-        m_graphicsLayer->setContentsOpaque(true);
+        bool isTransparent = false;
+        if (FrameView* frameView = toRenderView(renderer())->frameView())
+            isTransparent = frameView->isTransparent();
+
+        m_graphicsLayer->setContentsOpaque(!isTransparent);
         m_graphicsLayer->setAppliesPageScale();
     }
 
