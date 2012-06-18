@@ -569,6 +569,7 @@
                 'src/WebIOSurfaceLayer.cpp',
                 'src/WebImageCG.cpp',
                 'src/WebImageDecoder.cpp',
+                'src/WebImageLayer.cpp',
                 'src/WebImageSkia.cpp',
                 'src/WebInputElement.cpp',
                 'src/WebInputEvent.cpp',

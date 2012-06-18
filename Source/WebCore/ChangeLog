@@ -1,5 +1,17 @@
 2012-06-14  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Use WebImageLayer in GraphicsLayerChromium for image layers
+        https://bugs.webkit.org/show_bug.cgi?id=89150
+
+        Reviewed by Adrienne Walker.
+
+        Uses WebImageLayer instead of ImageLayerChromium for GraphicsLayerChromium::setContentsToImage.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setContentsToImage):
+
+2012-06-14  James Robinson  <jamesr@chromium.org>
+
         [chromium] GraphicsLayerChromium should use WebContentLayer directly
         https://bugs.webkit.org/show_bug.cgi?id=89145
 

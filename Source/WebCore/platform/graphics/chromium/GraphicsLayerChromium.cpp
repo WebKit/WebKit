@@ -52,7 +52,6 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "Image.h"
-#include "ImageLayerChromium.h"
 #include "LayerChromium.h"
 #include "LinkHighlight.h"
 #include "NativeImageSkia.h"
@@ -67,6 +66,7 @@
 #include <public/WebFilterOperations.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebFloatRect.h>
+#include <public/WebImageLayer.h>
 #include <public/WebSize.h>
 #include <public/WebTransformationMatrix.h>
 #include <wtf/CurrentTime.h>
@@ -460,15 +460,15 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
     bool childrenChanged = false;
     if (image) {
         if (m_contentsLayer.isNull() || m_contentsLayerPurpose != ContentsLayerForImage) {
-            RefPtr<ImageLayerChromium> imageLayer = ImageLayerChromium::create();
-            setupContentsLayer(imageLayer.get());
+            WebKit::WebImageLayer imageLayer = WebKit::WebImageLayer::create();
+            setupContentsLayer(imageLayer.unwrap<LayerChromium>());
             m_contentsLayerPurpose = ContentsLayerForImage;
             childrenChanged = true;
         }
-        ImageLayerChromium* imageLayer = static_cast<ImageLayerChromium*>(m_contentsLayer.unwrap<LayerChromium>());
+        WebKit::WebImageLayer imageLayer = m_contentsLayer.to<WebKit::WebImageLayer>();
         NativeImageSkia* nativeImage = image->nativeImageForCurrentFrame();
-        imageLayer->setBitmap(nativeImage->bitmap());
-        imageLayer->setOpaque(image->isBitmapImage() && !image->currentFrameHasAlpha());
+        imageLayer.setBitmap(nativeImage->bitmap());
+        imageLayer.setOpaque(image->isBitmapImage() && !image->currentFrameHasAlpha());
         updateContentsRect();
     } else {
         if (!m_contentsLayer.isNull()) {

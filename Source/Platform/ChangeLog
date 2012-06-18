@@ -1,5 +1,22 @@
 2012-06-14  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Use WebImageLayer in GraphicsLayerChromium for image layers
+        https://bugs.webkit.org/show_bug.cgi?id=89150
+
+        Reviewed by Adrienne Walker.
+
+        Adds a WebImageLayer type to represent layers backed by (guess what) Images.
+
+        * Platform.gypi:
+        * chromium/public/WebImageLayer.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebImageLayer):
+        (WebKit::WebImageLayer::WebImageLayer):
+        (WebKit::WebImageLayer::~WebImageLayer):
+
+2012-06-14  James Robinson  <jamesr@chromium.org>
+
         [chromium] GraphicsLayerChromium should use WebContentLayer directly
         https://bugs.webkit.org/show_bug.cgi?id=89145
 
