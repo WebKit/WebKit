@@ -1,3 +1,26 @@
+2012-06-18  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: metered output doesn't handle ^C cleanly
+        https://bugs.webkit.org/show_bug.cgi?id=89249
+
+        Reviewed by Tony Chang.
+
+        If you ctrl-c a running nrwt (w/o --verbose), then all but
+        two characters of the last update are erased, and then we print
+        "interrupted, exiting" as an update, which itself then gets
+        erased. Fix this so that we flush the meter (making the last
+        update persistent, so that we print the ^C for a visual clue),
+        print the interrupt message, and move on ...
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (MeteredStream.flush):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer._write):
+        (Printer):
+        (Printer.flush):
+
 2012-06-18  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Change back "linuxish" to "linux" and include WebFontRendering.cpp on Android

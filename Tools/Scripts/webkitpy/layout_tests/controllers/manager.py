@@ -814,7 +814,8 @@ class Manager(object):
                         _log.error('Worker %d did not exit in time.' % worker_state.number)
 
         except KeyboardInterrupt:
-            self._printer.print_update('Interrupted, exiting ...')
+            self._printer.flush()
+            self._printer.write('Interrupted, exiting ...')
             self.cancel_workers()
             keyboard_interrupted = True
         except TestRunInterruptedException, e:

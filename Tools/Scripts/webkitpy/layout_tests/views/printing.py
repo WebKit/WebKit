@@ -409,3 +409,6 @@ class Printer(object):
 
     def _write(self, msg):
         self._meter.writeln(msg)
+
+    def flush(self):
+        self._meter.flush()

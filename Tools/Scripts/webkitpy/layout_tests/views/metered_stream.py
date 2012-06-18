@@ -114,6 +114,11 @@ class MeteredStream(object):
         self._stream.write(self._erasure(self._last_partial_line))
         self._last_partial_line = ''
 
+    def flush(self):
+        if self._last_partial_line:
+            self._stream.write('\n')
+            self._last_partial_line = ''
+            self._stream.flush()
 
 class _LogHandler(logging.Handler):
     def __init__(self, meter):
