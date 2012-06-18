@@ -1,3 +1,14 @@
+2012-06-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r120485 and r120582.
+        http://trac.webkit.org/changeset/120485
+        http://trac.webkit.org/changeset/120582
+        https://bugs.webkit.org/show_bug.cgi?id=89345
+
+        chromeos tree breakage (Requested by morrita on #webkit).
+
+        * wtf/Platform.h:
+
 2012-06-17  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Simplify implementation of currentTime()

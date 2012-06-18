@@ -1,3 +1,41 @@
+2012-06-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r120485 and r120582.
+        http://trac.webkit.org/changeset/120485
+        http://trac.webkit.org/changeset/120582
+        https://bugs.webkit.org/show_bug.cgi?id=89345
+
+        chromeos tree breakage (Requested by morrita on #webkit).
+
+        * WebCore.gyp/WebCore.gyp:
+        * platform/image-decoders/ImageDecoder.h:
+        (ImageFrame):
+        (ImageDecoder):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (turboSwizzled):
+        (WebCore::JPEGImageReader::JPEGImageReader):
+        (WebCore::JPEGImageReader::close):
+        (WebCore::JPEGImageReader::decode):
+        (JPEGImageReader):
+        (WebCore::JPEGImageDecoder::outputScanlines):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::PNGImageReader):
+        (WebCore::PNGImageReader::close):
+        (WebCore::PNGImageReader::currentBufferSize):
+        (PNGImageReader):
+        (WebCore::PNGImageReader::decodingSizeOnly):
+        (WebCore::PNGImageReader::interlaceBuffer):
+        (WebCore::PNGImageReader::hasAlpha):
+        (WebCore::PNGImageReader::setHasAlpha):
+        (WebCore::PNGImageDecoder::headerAvailable):
+        (WebCore::PNGImageDecoder::rowAvailable):
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp:
+        (WebCore):
+        (WebCore::resolveColorSpace):
+        (WebCore::createColorSpace):
+        (WebCore::ImageFrame::setColorProfile):
+        (WebCore::ImageFrame::setStatus):
+
 2012-06-18  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Add heap profiler owned memory to the pie chart

@@ -42,16 +42,6 @@
 #include "SkColorPriv.h"
 #endif
 
-#if USE(QCMSLIB)
-#include "qcms.h"
-#include <wtf/MainThread.h>
-#if OS(DARWIN)
-#include "GraphicsContextCG.h"
-#include <ApplicationServices/ApplicationServices.h>
-#include <wtf/RetainPtr.h>
-#endif
-#endif
-
 namespace WebCore {
 
     typedef Vector<char> ColorProfile;
@@ -175,12 +165,14 @@ namespace WebCore {
 
 #if USE(SKIA)
         NativeImageSkia m_bitmap;
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+        ColorProfile m_colorProfile;
+#endif
 #else
         Vector<PixelData> m_backingStore;
         PixelData* m_bytes; // The memory is backed by m_backingStore.
         IntSize m_size;
         bool m_hasAlpha;
-        // FIXME: Do we need m_colorProfile anymore?
         ColorProfile m_colorProfile;
 #endif
         IntRect m_originalFrameRect; // This will always just be the entire
@@ -297,43 +289,6 @@ namespace WebCore {
             return !memcmp(&profileData[12], "mntr", 4) || !memcmp(&profileData[12], "scnr", 4);
         }
 
-#if USE(QCMSLIB)
-        static qcms_profile* qcmsOutputDeviceProfile()
-        {
-            static qcms_profile* outputDeviceProfile = 0;
-
-            static bool qcmsInitialized = false;
-            if (!qcmsInitialized) {
-                // FIXME: Chromium's browser_tests hits this. https://bugs.webkit.org/show_bug.cgi?id=89341
-                // ASSERT(isMainThread());
-                qcmsInitialized = true;
-                // FIXME: Add optional ICCv4 support.
-#if OS(DARWIN)
-                RetainPtr<CGColorSpaceRef> monitorColorSpace(AdoptCF, CGDisplayCopyColorSpace(CGMainDisplayID()));
-                CFDataRef iccProfile(CGColorSpaceCopyICCProfile(monitorColorSpace.get()));
-                if (iccProfile) {
-                    size_t length = CFDataGetLength(iccProfile);
-                    const unsigned char* systemProfile = CFDataGetBytePtr(iccProfile);
-                    outputDeviceProfile = qcms_profile_from_memory(systemProfile, length);
-                    if (outputDeviceProfile && qcms_profile_is_bogus(outputDeviceProfile)) {
-                        qcms_profile_release(outputDeviceProfile);
-                        outputDeviceProfile = 0;
-                    }
-                }
-                if (!outputDeviceProfile)
-                    outputDeviceProfile = qcms_profile_sRGB();
-#else
-                // FIXME: sRGB profiles don't add much value. Use the user's monitor profile.
-                outputDeviceProfile = qcms_profile_sRGB();
-#endif
-                // FIXME: Check that the profile is valid. Fallback to sRGB if not?
-                if (outputDeviceProfile)
-                    qcms_profile_precache_output_transform(outputDeviceProfile);
-            }
-            return outputDeviceProfile;
-        }
-#endif
-
         // Sets the "decode failure" flag.  For caller convenience (since so
         // many callers want to return false after calling this), returns false
         // to enable easy tailcalling.  Subclasses may override this to also
@@ -365,7 +320,6 @@ namespace WebCore {
 
         RefPtr<SharedBuffer> m_data; // The encoded data.
         Vector<ImageFrame> m_frameBufferCache;
-        // FIXME: Do we need m_colorProfile any more, for any port?
         ColorProfile m_colorProfile;
         bool m_scaled;
         Vector<int> m_scaledColumns;
