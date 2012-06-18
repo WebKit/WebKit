@@ -314,7 +314,7 @@ bool CSPSourceList::parseSource(const UChar* begin, const UChar* end,
         return parseHost(beginHost, position, host, hostHasWildcard);
     }
 
-    if (*position == '/') {
+    if (position < end && *position == '/') {
         // host/path || host/ || /
         //     ^            ^    ^
         if (!parseHost(beginHost, position, host, hostHasWildcard)
@@ -324,7 +324,7 @@ bool CSPSourceList::parseSource(const UChar* begin, const UChar* end,
         return true;
     }
 
-    if (*position == ':') {
+    if (position < end && *position == ':') {
         if (end - position == 1) {
             // scheme:
             //       ^
@@ -345,15 +345,15 @@ bool CSPSourceList::parseSource(const UChar* begin, const UChar* end,
             skipWhile<isNotColonOrSlash>(position, end);
         }
 
-        if (*position == ':') {
+        if (position < end && *position == ':') {
             // host:port || scheme://host:port
             //     ^                     ^
             beginPort = position;
             skipUntil(position, end, '/');
         }
     }
-    
-    if (*position == '/') {
+
+    if (position < end && *position == '/') {
         // scheme://host/path || scheme://host:port/path
         //              ^                          ^
         if (position == beginHost)
