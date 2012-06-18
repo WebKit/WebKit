@@ -1,3 +1,18 @@
+2012-06-18  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        REGRESSION introduced in bug 88623: new shadowPseudoId elements need to get default styling.
+        https://bugs.webkit.org/show_bug.cgi?id=89280
+
+        Reviewed by Eric Carlson.
+
+        No new tests; existing tests found this bug.
+
+        * css/html.css:
+        (input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-media-slider-container):
+        Add -webkit-media-slider-container to the default styling.
+        (input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb):
+        Add -webkit-media-slider-thumb to the default styling.
+
 2012-06-12  Kinuko Yasuda  <kinuko@chromium.org>
 
         Support File/DirectoryEntry access for <input type=file> if FileSystem API is enabled

@@ -573,7 +573,7 @@ input[type="range"] {
     color: #909090;
 }
 
-input[type="range"]::-webkit-slider-container {
+input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-media-slider-container {
     -webkit-box-align: center;
     -webkit-box-orient: horizontal; /* This property is updated by C++ code. */
     -webkit-box-sizing: border-box;
@@ -588,7 +588,7 @@ input[type="range"]::-webkit-slider-runnable-track {
     display: block;
 }
 
-input[type="range"]::-webkit-slider-thumb {
+input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb {
     -webkit-appearance: sliderthumb-horizontal;
     -webkit-box-sizing: border-box;
     display: block;
