@@ -10,7 +10,7 @@ TEST COMPLETE
 PASS xhr.response is null
 PASS xhr.response is null
 PASS xhr.response instanceof Blob is true
-PASS xhr.response.type is "text/javascript"
+FAIL xhr.response.type should be text/javascript. Was application/x-javascript.
 PASS xhr.responseType is "blob"
 PASS xhr.response instanceof Blob is true
 PASS xhr.response.type is ""

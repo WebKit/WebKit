@@ -1,3 +1,10 @@
+2012-06-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening after r120574.
+
+        * fast/files/xhr-response-blob-expected.txt:
+        * platform/qt/fast/files/xhr-response-blob-expected.txt: Added.
+
 2012-06-18  Taiju Tsuiki  <tzik@chromium.org>
 
         Fix syntax of FileReader::readAsDataURL result
