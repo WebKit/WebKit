@@ -3727,8 +3727,6 @@ BUGWK88833 MAC DEBUG : media/track/track-cues-cuechange.html = PASS TIMEOUT
 
 BUGWK88832 XP : http/tests/xmlhttprequest/origin-exact-matching.html = PASS TIMEOUT
 
-BUGWK88856 : fast/events/constructors/speech-recognition-event-constructor.html = TEXT
-
 BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = TEXT
 
 // Flaky

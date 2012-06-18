@@ -1,3 +1,16 @@
+2012-06-12  Hans Wennborg  <hans@chromium.org>
+
+        [Chromium] fast/events/constructors/speech-recognition-event-constructor.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=88856
+
+        Reviewed by Adam Barth.
+
+        This fixes and re-enables the layout test that I forgot to update in r120053.
+
+        * fast/events/constructors/speech-recognition-event-constructor-expected.txt:
+        * fast/events/constructors/speech-recognition-event-constructor.html:
+        * platform/chromium/TestExpectations:
+
 2012-06-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] skip fast/files/xhr-response-blob.html
