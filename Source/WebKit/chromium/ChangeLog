@@ -1,3 +1,15 @@
+2012-06-18  Ilya Sherman  <isherman@chromium.org>
+
+        [Chromium] Ensure layout has happened before calling into hasNonEmptyBoundingBox()
+        Also update existing code to use updateLayoutIgnorePendingStylesheets()
+        https://bugs.webkit.org/show_bug.cgi?id=89258
+
+        Reviewed by James Robinson.
+
+        * src/WebNode.cpp:
+        (WebKit::WebNode::isFocusable): Use updateLayoutIgnorePendingStylesheets()
+        (WebKit::WebNode::hasNonEmptyBoundingBox): Force layout before checking the bounding box
+
 2012-06-18  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Ensure that skipping frames during an accelerated animation doesn't cause starvation

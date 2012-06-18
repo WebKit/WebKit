@@ -153,7 +153,7 @@ bool WebNode::isTextNode() const
 
 bool WebNode::isFocusable() const
 {
-    m_private->document()->updateLayout();
+    m_private->document()->updateLayoutIgnorePendingStylesheets();
     return m_private->isFocusable();
 }
 
@@ -215,6 +215,7 @@ WebElement WebNode::rootEditableElement() const
 
 bool WebNode::hasNonEmptyBoundingBox() const
 {
+    m_private->document()->updateLayoutIgnorePendingStylesheets();
     return m_private->hasNonEmptyBoundingBox();
 }
 
