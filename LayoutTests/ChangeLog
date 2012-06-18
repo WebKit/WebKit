@@ -1,3 +1,16 @@
+2012-06-17  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        colspan in table-layout:fixed does not add up widths properly
+        https://bugs.webkit.org/show_bug.cgi?id=20213
+
+        Reviewed by Abhishek Arya.
+
+        The bug has been fixed (likely by bug 14858) so landing the test case as fixed table layout with cell spanning several
+        <col>'s with fixed widths is not properly covered.
+
+        * fast/table/fixed-table-layout/fixed-layout-column-colspan-wrong-size-expected.txt: Added.
+        * fast/table/fixed-table-layout/fixed-layout-column-colspan-wrong-size.html: Added.
+
 2012-06-17  Philip Rogers  <pdr@google.com>
 
         Prevent crash in SVGDocumentExtensions::removeAllElementReferencesForTarget.
