@@ -1,3 +1,33 @@
+2012-06-17  Simon Fraser  <simon.fraser@apple.com>
+
+        garden-o-matic 'Results' panel is broken for the Apple platform
+        https://bugs.webkit.org/show_bug.cgi?id=89310
+
+        Reviewed by Adam Barth.
+        
+        For platforms that don't use accumulated build directories on the server,
+        carry along buildLocation data with buildInfo, so that we know where to
+        look for the test results files for a given test.
+        
+        Renamed historicalResultsSummaryURLs to historicalResultsLocations because
+        it now returns an array of objects with buildNumber, revision and url info.
+        
+        Fixed results.fetchResultsURLs() to use this data to find results.
+        
+        Fixed the results display to not scroll when you click on a test to see the results.
+        Made the h3s look less ugly
+        
+        Don't try to show the flakiness dashboard for the Apple platform.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/results.css:
+        (.results-view .top-panel):
+        (.results-view h3):
+
 2012-06-16  Simon Fraser  <simon.fraser@apple.com>
 
         Make garden-o-matic work for the Apple Mac port

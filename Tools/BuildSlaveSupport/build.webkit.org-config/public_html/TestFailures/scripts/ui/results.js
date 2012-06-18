@@ -254,7 +254,7 @@ ui.results.TestSelector = base.extends('div', {
             var header = document.createElement('h3');
             header.appendChild(nonLinkTitle);
             header.appendChild(linkTitle);
-            header.addEventListener('click', this._showResults.bind(this, header));
+            header.addEventListener('click', this._showResults.bind(this, header, false));
             topPanel.appendChild(header);
         }, this);
 
@@ -290,7 +290,7 @@ ui.results.TestSelector = base.extends('div', {
             document.querySelector('.top-panel').style.maxHeight = percentage + '%';
         }.bind(this))
     },
-    _showResults: function(header)
+    _showResults: function(header, scrollInfoView)
     {
         if (!header)
             return false;
@@ -308,9 +308,11 @@ ui.results.TestSelector = base.extends('div', {
         bottomPanel.appendChild(this._delegate.contentForTest(testName));
 
         var topPanel = this.querySelector('.top-panel');
-        topPanel.scrollTop = header.offsetTop;
-        if (header.offsetTop - topPanel.scrollTop < header.offsetHeight)
-            topPanel.scrollTop = topPanel.scrollTop - header.offsetHeight;
+        if (scrollInfoView) {
+            topPanel.scrollTop = header.offsetTop;
+            if (header.offsetTop - topPanel.scrollTop < header.offsetHeight)
+                topPanel.scrollTop = topPanel.scrollTop - header.offsetHeight;
+        }
 
         var resultsDetails = this.querySelectorAll('.results-detail');
         if (resultsDetails.length)
@@ -337,18 +339,18 @@ ui.results.TestSelector = base.extends('div', {
     },
     nextTest: function()
     {
-        return this._showResults(this.querySelector('.active').nextSibling);
+        return this._showResults(this.querySelector('.active').nextSibling, true);
     },
     previousTest: function()
     {
-        var succeeded = this._showResults(this.querySelector('.active').previousSibling);
+        var succeeded = this._showResults(this.querySelector('.active').previousSibling, true);
         if (succeeded)
             this.querySelector('.builder-selector').lastResult();
         return succeeded;
     },
     firstResult: function()
     {
-        this._showResults(this.querySelector('h3'));
+        this._showResults(this.querySelector('h3'), true);
     },
     currentTestName: function()
     {

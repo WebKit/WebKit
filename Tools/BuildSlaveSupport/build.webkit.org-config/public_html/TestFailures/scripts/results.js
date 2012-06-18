@@ -306,6 +306,8 @@ function resultsByTest(resultsByBuilder, filter)
     $.each(resultsByBuilder, function(builderName, resultsTree) {
         $.each(filter(resultsTree), function(testName, resultNode) {
             resultsByTest[testName] = resultsByTest[testName] || {};
+            if (!config.kPlatforms[config.currentPlatform].haveBuilderAccumulatedResults)
+                resultNode._buildLocation = resultsTree._buildLocation;
             resultsByTest[testName][builderName] = resultNode;
         });
     });
@@ -330,11 +332,16 @@ results.unexpectedSuccessesByTest = function(resultsByBuilder)
 
 results.failureInfoForTestAndBuilder = function(resultsByTest, testName, builderName)
 {
-    return {
+    var failureInfoForTest = {
         'testName': testName,
         'builderName': builderName,
-        'failureTypeList': results.failureTypeList(resultsByTest[testName][builderName].actual)
-    }
+        'failureTypeList': results.failureTypeList(resultsByTest[testName][builderName].actual),
+    };
+    
+    if (!config.kPlatforms[config.currentPlatform].haveBuilderAccumulatedResults)
+        failureInfoForTest.buildLocation = resultsByTest[testName][builderName]._buildLocation;
+    
+    return failureInfoForTest;
 };
 
 results.collectUnexpectedResults = function(dictionaryOfResultNodes)
@@ -347,29 +354,38 @@ results.collectUnexpectedResults = function(dictionaryOfResultNodes)
     return base.uniquifyArray(collectedResults);
 };
 
-function historicalResultsSummaryURLs(platform, builderName, callback)
+// Callback data is [{ buildNumber:, revision:, url: }]
+function historicalResultsLocations(platform, builderName, callback)
 {
     if (config.kPlatforms[platform].useDirectoryListingForOldBuilds) {
         var listingURL = resultsDirectoryListingURL(platform, builderName);
         net.get(listingURL, function(directoryListing) {
-            var summaryURLs = directoryListing.match(kBuildLinkRegexp).map(function(buildLink) {
+            var historicalResultsData = directoryListing.match(kBuildLinkRegexp).map(function(buildLink) {
                 var buildNumber = parseInt(buildLink.match(kBuildNumberRegexp)[0]);
-                var revision = 0; // FIXME: need revision for Apple.
-                return resultsSummaryURLForBuildNumber(platform, builderName, buildNumber, revision);
+                var revision = 0; // unused for Chromium.
+                var resultsData = {
+                    'buildNumber': buildNumber,
+                    'revision': revision,
+                    'url': resultsSummaryURLForBuildNumber(platform, builderName, buildNumber, revision)
+                };
+                return resultsData;
             }).reverse();
             
-            callback(summaryURLs);
+            callback(historicalResultsData);
         });
     } else {
-        var summaryURLs = [];
+        var historicalResultsData = [];
         builders.cachedBuildInfos(platform, builderName, function(cachedBuildInfos) {
             $.each(cachedBuildInfos, function(buildNumber, buildInfo) {
-                var revision = buildInfo.sourceStamp.revision;
-                var url = resultsSummaryURLForBuildNumber(platform, builderName, buildNumber, revision);
-                summaryURLs.push(url);
+                var resultsData = {
+                    'buildNumber': buildNumber,
+                    'revision': buildInfo.sourceStamp.revision,
+                    'url': resultsSummaryURLForBuildNumber(platform, builderName, buildNumber, buildInfo.sourceStamp.revision),
+                }
+                historicalResultsData.push(resultsData);
             });
             
-            callback(summaryURLs.reverse());
+            callback(historicalResultsData.reverse());
         });
     }
 }
@@ -386,9 +402,9 @@ function walkHistory(platform, builderName, testName, callback)
             return;
         }
 
-        var key = keyList[indexOfNextKeyToFetch];
+        var resultsURL = keyList[indexOfNextKeyToFetch].url;
         ++indexOfNextKeyToFetch;
-        g_resultsCache.get(key, function(resultsTree) {
+        g_resultsCache.get(resultsURL, function(resultsTree) {
             if ($.isEmptyObject(resultsTree)) {
                 continueWalk();
                 return;
@@ -409,8 +425,8 @@ function walkHistory(platform, builderName, testName, callback)
         continueWalk();
     }
 
-    historicalResultsSummaryURLs(platform, builderName, function(summaryURLs) {
-        keyList = summaryURLs;
+    historicalResultsLocations(platform, builderName, function(resultsLocations) {
+        keyList = resultsLocations;
         continueWalk();
     });
 }
@@ -557,15 +573,21 @@ function sortResultURLsBySuffix(urls)
 
 results.fetchResultsURLs = function(failureInfo, callback)
 {
-    var stem = resultsDirectoryURL(config.currentPlatform, failureInfo.builderName);
     var testNameStem = base.trimExtension(failureInfo.testName);
+    var urlStem;
+    
+    if (config.kPlatforms[config.currentPlatform].haveBuilderAccumulatedResults)
+        urlStem = resultsDirectoryURL(config.currentPlatform, failureInfo.builderName);
+    else 
+        urlStem = failureInfo.buildLocation.url.replace(kResultsName, '');
+
     var suffixList = possibleSuffixListFor(failureInfo.failureTypeList);
     var resultURLs = [];
     var tracker = new base.RequestTracker(suffixList.length, function() {
         callback(sortResultURLsBySuffix(resultURLs));
     });
     $.each(suffixList, function(index, suffix) {
-        var url = stem + testNameStem + suffix;
+        var url = urlStem + testNameStem + suffix;
         net.probe(url, {
             success: function() {
                 resultURLs.push(url);
@@ -593,17 +615,19 @@ results.fetchResultsForBuildOnBuilder = function(builderName, buildNumber, revis
 // Look for the most recent completed build that has full results.
 results.fetchResultsForMostRecentCompletedBuildOnBuilder = function(builderName, callback)
 {
-    historicalResultsSummaryURLs(config.currentPlatform, builderName, function(buildURLs) {
+    historicalResultsLocations(config.currentPlatform, builderName, function(buildLocations) {
         var currentIndex = 0;
         var resultsCallback = function(buildResults) {
             if ($.isEmptyObject(buildResults)) {
                 ++currentIndex;
-                net.jsonp(buildURLs[currentIndex], resultsCallback);
+                net.jsonp(buildLocations[currentIndex].url, resultsCallback);
                 return;
             }
+            if (!config.kPlatforms[config.currentPlatform].haveBuilderAccumulatedResults)
+                buildResults._buildLocation = buildLocations[currentIndex];
             callback(buildResults);
         };
-        net.jsonp(buildURLs[currentIndex], resultsCallback);
+        net.jsonp(buildLocations[currentIndex].url, resultsCallback);
     });
 };
 
@@ -627,7 +651,6 @@ results.fetchResultsByBuilder = function(builderNameList, callback)
                 if (recentBuildInfos[builderName]) {
                     // FIXME: use RequestTracker
                     ++requestsInFlight;
-                    var buildInfo = recentBuildInfos[builderName];
                     results.fetchResultsForMostRecentCompletedBuildOnBuilder(builderName, function(resultsTree) {
                         resultsByBuilder[builderName] = resultsTree;
                         --requestsInFlight;

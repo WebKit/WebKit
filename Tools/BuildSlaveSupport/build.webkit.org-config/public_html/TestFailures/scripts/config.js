@@ -43,6 +43,7 @@ config.kPlatforms = {
         },
         haveBuilderAccumulatedResults : false,
         useDirectoryListingForOldBuilds: false,
+        useFlakinessDashboard: false,
         resultsDirectoryNameFromBuilderName: function(builderName) {
             return encodeURIComponent(builderName);
         },
@@ -73,6 +74,7 @@ config.kPlatforms = {
         },
         haveBuilderAccumulatedResults : true,
         useDirectoryListingForOldBuilds: true,
+        useFlakinessDashboard: true,
         resultsDirectoryNameFromBuilderName: function(builderName) {
             return builderName.replace(/[ .()]/g, '_');
         },

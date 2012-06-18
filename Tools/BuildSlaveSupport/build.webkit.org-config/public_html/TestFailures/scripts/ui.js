@@ -52,7 +52,10 @@ ui.urlForFlakinessDashboard = function(opt_testNameList)
 
 ui.urlForEmbeddedFlakinessDashboard = function(opt_testNameList)
 {
-    return ui.urlForFlakinessDashboard(opt_testNameList) + '&showChrome=false';
+    if (config.kPlatforms[config.currentPlatform].useFlakinessDashboard)
+        return ui.urlForFlakinessDashboard(opt_testNameList) + '&showChrome=false';
+    
+    return 'about:blank';
 }
 
 ui.rolloutReasonForTestNameList = function(testNameList)
