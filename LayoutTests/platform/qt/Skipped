@@ -100,6 +100,9 @@ fast/mediastream
 # ENABLE(DIRECTORY_UPLOAD) is disabled.
 fast/forms/file/input-file-directory-upload.html
 
+# ENABLE(FILE_SYSTEM) is disabled.
+fast/forms/file/input-file-entries.html
+
 # ENABLE(INDEXED_DATABASE) is disabled.
 storage/indexeddb
 http/tests/inspector/indexeddb

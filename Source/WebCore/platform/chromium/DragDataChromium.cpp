@@ -43,6 +43,10 @@
 #include <public/Platform.h>
 #include <public/WebFileUtilities.h>
 
+#if ENABLE(FILE_SYSTEM)
+#include "DraggedIsolatedFileSystem.h"
+#endif
+
 namespace WebCore {
 
 static bool containsHTML(const ChromiumDataObject* dropData)
@@ -161,5 +165,16 @@ Color DragData::asColor() const
     notImplemented();
     return Color();
 }
+
+#if ENABLE(FILE_SYSTEM)
+String DragData::droppedFileSystemId() const
+{
+    DraggedIsolatedFileSystem* filesystem = DraggedIsolatedFileSystem::from(m_platformDragData);
+    if (!filesystem)
+        return String();
+    return filesystem->filesystemId();
+}
+#endif
+
 
 } // namespace WebCore

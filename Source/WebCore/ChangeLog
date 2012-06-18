@@ -1,3 +1,38 @@
+2012-06-12  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Support File/DirectoryEntry access for <input type=file> if FileSystem API is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=88293
+
+        Reviewed by Tony Chang.
+
+        Proposal email on whatwg: http://lists.whatwg.org/pipermail/whatwg-whatwg.org/2011-November/033814.html
+        Proposal draft: http://wiki.whatwg.org/wiki/DragAndDropEntries
+
+        Test: fast/forms/file/input-file-entries.html
+
+        * Modules/filesystem/HTMLInputElementFileSystem.cpp: Added.
+        * Modules/filesystem/HTMLInputElementFileSystem.h: Added.
+        * Modules/filesystem/HTMLInputElementFileSystem.idl: Added.
+        * WebCore.gypi:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::receiveDroppedFiles): Retrieves dropped file
+        system Id if the given DragData has it.
+        (WebCore::FileInputType::droppedFileSystemId): Added. This returns
+        dropped file system Id retrieved in receiveDroppedFiles, or an empty
+        string if the platform does not support isolated file system for
+        dropped files.
+        * html/FileInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::droppedFileSystemId): Added.
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::droppedFileSystemId): Added.
+        * html/InputType.h:
+        * platform/DragData.cpp:
+        * platform/DragData.h:
+        * platform/chromium/DragDataChromium.cpp:
+        (WebCore::DragData::droppedFileSystemId): Added.
+
 2012-06-18  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: Support 'Restart frame' in protocol and backend
