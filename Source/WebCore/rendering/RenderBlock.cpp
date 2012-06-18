@@ -6082,13 +6082,12 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
         firstLetter->destroy();
         firstLetter = newFirstLetter;
         firstLetterContainer->addChild(firstLetter, nextSibling);
-    }
-
-    firstLetter->setAnimatableStyle(pseudoStyle);
+    } else
+        firstLetter->setStyle(pseudoStyle);
 
     for (RenderObject* genChild = firstLetter->firstChild(); genChild; genChild = genChild->nextSibling()) {
         if (genChild->isText())
-            genChild->setStyle(firstLetter->style());
+            genChild->setStyle(pseudoStyle);
     }
 }
 
@@ -6101,13 +6100,8 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
         firstLetter = new (renderArena()) RenderInline(document());
     else
         firstLetter = new (renderArena()) RenderBlock(document());
-
-    RefPtr<RenderStyle> temporaryStyle = RenderStyle::create();
-    temporaryStyle->inheritFrom(firstLetterBlock->style());
-    firstLetter->setStyle(temporaryStyle);  
+    firstLetter->setStyle(pseudoStyle);
     firstLetterContainer->addChild(firstLetter, currentChild);
-    
-    firstLetter->setAnimatableStyle(pseudoStyle);
 
     RenderText* textObj = toRenderText(currentChild);
 
@@ -6155,7 +6149,7 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
         // construct text fragment for the first letter
         RenderTextFragment* letter = 
             new (renderArena()) RenderTextFragment(remainingText->node() ? remainingText->node() : remainingText->document(), oldText.get(), 0, length);
-        letter->setStyle(firstLetter->style());
+        letter->setStyle(pseudoStyle);
         firstLetter->addChild(letter);
 
         textObj->destroy();

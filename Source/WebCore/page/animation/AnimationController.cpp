@@ -100,7 +100,7 @@ double AnimationControllerPrivate::updateAnimations(SetChanged callSetChanged/* 
                 timeToNextService = t;
             if (!timeToNextService) {
                 if (callSetChanged == CallSetChanged) {
-                    Node* node = it->first->styledGeneratingNode();
+                    Node* node = it->first->node();
                     ASSERT(!node || (node->document() && !node->document()->inPageCache()));
                     node->setNeedsStyleRecalc(SyntheticStyleChange);
                     calledSetChanged = true;
@@ -328,7 +328,7 @@ bool AnimationControllerPrivate::pauseAnimationAtTime(RenderObject* renderer, co
         return false;
 
     if (compAnim->pauseAnimationAtTime(name, t)) {
-        renderer->styledGeneratingNode()->setNeedsStyleRecalc(SyntheticStyleChange);
+        renderer->node()->setNeedsStyleRecalc(SyntheticStyleChange);
         startUpdateStyleIfNeededDispatcher();
         return true;
     }
@@ -346,7 +346,7 @@ bool AnimationControllerPrivate::pauseTransitionAtTime(RenderObject* renderer, c
         return false;
 
     if (compAnim->pauseTransitionAtTime(cssPropertyID(property), t)) {
-        renderer->styledGeneratingNode()->setNeedsStyleRecalc(SyntheticStyleChange);
+        renderer->node()->setNeedsStyleRecalc(SyntheticStyleChange);
         startUpdateStyleIfNeededDispatcher();
         return true;
     }
@@ -508,7 +508,7 @@ void AnimationController::cancelAnimations(RenderObject* renderer)
         return;
 
     if (m_data->clear(renderer)) {
-        Node* node = renderer->styledGeneratingNode();
+        Node* node = renderer->node();
         ASSERT(!node || (node->document() && !node->document()->inPageCache()));
         node->setNeedsStyleRecalc(SyntheticStyleChange);
     }
@@ -533,6 +533,7 @@ PassRefPtr<RenderStyle> AnimationController::updateAnimations(RenderObject* rend
     // against the animations in the style and make sure we're in sync.  If destination values
     // have changed, we reset the animation.  We then do a blend to get new values and we return
     // a new style.
+    ASSERT(renderer->node()); // FIXME: We do not animate generated content yet.
 
     RefPtr<CompositeAnimation> rendererAnimations = m_data->accessCompositeAnimation(renderer);
     RefPtr<RenderStyle> blendedStyle = rendererAnimations->animate(renderer, oldStyle, newStyle);

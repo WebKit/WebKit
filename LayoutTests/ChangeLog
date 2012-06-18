@@ -1,3 +1,21 @@
+2012-06-18  Igor Oliveira  <igor.o@sisa.samsung.com>
+
+        Unreviewed, rolling out r120119.
+        http://trac.webkit.org/changeset/120119
+
+        Multiple regressions on ClusterFuzz
+
+        * animations/first-letter-animation-expected.txt: Removed.
+        * animations/first-letter-animation.html: Removed.
+        * animations/first-letter-play-state-expected.txt: Removed.
+        * animations/first-letter-play-state.html: Removed.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * transitions/first-letter-color-transition-expected.txt: Removed.
+        * transitions/first-letter-color-transition.html: Removed.
+        * transitions/first-letter-transition-expected.txt: Removed.
+        * transitions/first-letter-transition.html: Removed.
+
 2012-06-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r118414): some pages on concursolutions.com doesn't show up

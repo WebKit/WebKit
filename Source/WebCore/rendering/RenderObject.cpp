@@ -2142,21 +2142,6 @@ bool RenderObject::isRooted(RenderView** view)
     return true;
 }
 
-Node* RenderObject::styledGeneratingNode() const
-{
-    Node* node = generatingNode();
-    if (node)
-        return node;
-
-    for (RenderObject* object = parent(); object; object = object->parent()) {
-        if (Node* node = object->generatingNode())
-            return node;
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 RenderObject* RenderObject::rendererForRootBackground()
 {
     ASSERT(isRoot());

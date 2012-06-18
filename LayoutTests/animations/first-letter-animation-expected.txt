@@ -1,6 +1,0 @@
-Lorem ipsum dolor sit amet.
-Animations test result: 
-
-PASS
-PASS
-

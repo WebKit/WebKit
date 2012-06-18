@@ -51,8 +51,8 @@ KeyframeAnimation::KeyframeAnimation(const Animation* animation, RenderObject* r
     , m_unanimatedStyle(unanimatedStyle)
 {
     // Get the keyframe RenderStyles
-    if (m_object && m_object->styledGeneratingNode() && m_object->styledGeneratingNode()->isElementNode())
-        m_object->document()->styleResolver()->keyframeStylesForAnimation(static_cast<Element*>(m_object->styledGeneratingNode()), unanimatedStyle, m_keyframes);
+    if (m_object && m_object->node() && m_object->node()->isElementNode())
+        m_object->document()->styleResolver()->keyframeStylesForAnimation(static_cast<Element*>(m_object->node()), unanimatedStyle, m_keyframes);
 
     // Update the m_transformFunctionListValid flag based on whether the function lists in the keyframes match.
     validateTransformFunctionList();
@@ -255,7 +255,7 @@ void KeyframeAnimation::pauseAnimation(double timeOffset)
 #endif
     // Restore the original (unanimated) style
     if (!paused())
-        setNeedsStyleRecalc(m_object->styledGeneratingNode());
+        setNeedsStyleRecalc(m_object->node());
 }
 
 void KeyframeAnimation::endAnimation()
@@ -269,7 +269,7 @@ void KeyframeAnimation::endAnimation()
 #endif
     // Restore the original (unanimated) style
     if (!paused())
-        setNeedsStyleRecalc(m_object->styledGeneratingNode());
+        setNeedsStyleRecalc(m_object->node());
 }
 
 bool KeyframeAnimation::shouldSendEventForListener(Document::ListenerType listenerType) const
@@ -314,8 +314,8 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double
     if (shouldSendEventForListener(listenerType)) {
         // Dispatch the event
         RefPtr<Element> element;
-        if (m_object->styledGeneratingNode() && m_object->styledGeneratingNode()->isElementNode())
-            element = static_cast<Element*>(m_object->styledGeneratingNode());
+        if (m_object->node() && m_object->node()->isElementNode())
+            element = static_cast<Element*>(m_object->node());
 
         ASSERT(!element || (element->document() && !element->document()->inPageCache()));
         if (!element)

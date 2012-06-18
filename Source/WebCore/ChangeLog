@@ -1,3 +1,35 @@
+2012-06-18  Igor Oliveira  <igor.o@sisa.samsung.com>
+
+        Unreviewed, rolling out r120119.
+        http://trac.webkit.org/changeset/120119
+
+        Multiple regressions on ClusterFuzz
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::updateStateMachine):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateAnimations):
+        (WebCore::AnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::AnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::AnimationController::cancelAnimations):
+        (WebCore::AnimationController::updateAnimations):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::pauseAnimation):
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::pauseAnimation):
+        (WebCore::KeyframeAnimation::endAnimation):
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetterStyle):
+        (WebCore::RenderBlock::createFirstLetterRenderer):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        (RenderObject):
+
 2012-06-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r118414): some pages on concursolutions.com doesn't show up

@@ -709,6 +709,3 @@ BUGWK88031 : fast/multicol/span/generated-child-split-flow-crash.html = TEXT
 // Flexbox test failing on EFL.
 BUGWK88984 : css3/flexbox/flexitem.html = TEXT
 
-// Animation timing inaccurate.
-BUGWK88986 : animations/first-letter-play-state.html = TEXT
-
