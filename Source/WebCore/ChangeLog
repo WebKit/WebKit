@@ -1,3 +1,22 @@
+2012-06-18  Dan Bernstein  <mitz@apple.com>
+
+        Ideographic comma and full-stops are mishandled in linebreak
+        https://bugs.webkit.org/show_bug.cgi?id=87041
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: fast/text/line-breaks-after-ideographic-comma-or-full-stop-2.html
+
+        Specifically, line breaks were always allowed after an ideographic comma or full stop, even
+        before a closing bracket.
+
+        * rendering/break_lines.cpp:
+        (WebCore::shouldBreakAfter): Removed code that unconditionally allowed line breaks after
+        ideographic commas and full stops, which was added for <http://webkit.org/b/17411> to work
+        around an issue in Unicode 5.0. Current line break iterator implementations are based on
+        newer versions of Unicode, which do not have that issue, so we can use them instead of the
+        hardcoded approximate rule.
+
 2012-06-18  Martin Robinson  <mrobinson@igalia.com>
 
         [TextureMapper] Rename shader variables to match the naming scheme of the newer filter shaders

@@ -1,3 +1,13 @@
+2012-06-18  Dan Bernstein  <mitz@apple.com>
+
+        Ideographic comma and full-stops are mishandled in linebreak
+        https://bugs.webkit.org/show_bug.cgi?id=87041
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/text/line-breaks-after-ideographic-comma-or-full-stop-2-expected.txt: Added.
+        * fast/text/line-breaks-after-ideographic-comma-or-full-stop-2.html: Added.
+
 2012-06-18  Mike West  <mkwst@chromium.org>
 
         Crash in CSPSource::parseSource

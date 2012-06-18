@@ -121,32 +121,21 @@ COMPILE_ASSERT(WTF_ARRAY_LENGTH(asciiLineBreakTable) == asciiLineBreakTableLastC
 
 static inline bool shouldBreakAfter(UChar lastCh, UChar ch, UChar nextCh)
 {
-    switch (ch) {
-    case ideographicComma:
-    case ideographicFullStop:
-        // FIXME: cases for ideographicComma and ideographicFullStop are a workaround for an issue in Unicode 5.0
-        // which is likely to be resolved in Unicode 5.1 <http://bugs.webkit.org/show_bug.cgi?id=17411>.
-        // We may want to remove or conditionalize this workaround at some point.
-        return true;
-    case '-':
-        if (isASCIIDigit(nextCh)) {
-            // Don't allow line breaking between '-' and a digit if the '-' may mean a minus sign in the context,
-            // while allow breaking in 'ABCD-1234' and '1234-5678' which may be in long URLs.
-            return isASCIIAlphanumeric(lastCh);
-        }
-        // Fall through
-    default:
-        // If both ch and nextCh are ASCII characters, use a lookup table for enhanced speed and for compatibility
-        // with other browsers (see comments for asciiLineBreakTable for details).
-        if (ch >= asciiLineBreakTableFirstChar && ch <= asciiLineBreakTableLastChar
-                && nextCh >= asciiLineBreakTableFirstChar && nextCh <= asciiLineBreakTableLastChar) {
-            const unsigned char* tableRow = asciiLineBreakTable[ch - asciiLineBreakTableFirstChar];
-            int nextChIndex = nextCh - asciiLineBreakTableFirstChar;
-            return tableRow[nextChIndex / 8] & (1 << (nextChIndex % 8));
-        }
-        // Otherwise defer to the Unicode algorithm by returning false.
-        return false;
+    // Don't allow line breaking between '-' and a digit if the '-' may mean a minus sign in the context,
+    // while allow breaking in 'ABCD-1234' and '1234-5678' which may be in long URLs.
+    if (ch == '-' && isASCIIDigit(nextCh))
+        return isASCIIAlphanumeric(lastCh);
+
+    // If both ch and nextCh are ASCII characters, use a lookup table for enhanced speed and for compatibility
+    // with other browsers (see comments for asciiLineBreakTable for details).
+    if (ch >= asciiLineBreakTableFirstChar && ch <= asciiLineBreakTableLastChar
+            && nextCh >= asciiLineBreakTableFirstChar && nextCh <= asciiLineBreakTableLastChar) {
+        const unsigned char* tableRow = asciiLineBreakTable[ch - asciiLineBreakTableFirstChar];
+        int nextChIndex = nextCh - asciiLineBreakTableFirstChar;
+        return tableRow[nextChIndex / 8] & (1 << (nextChIndex % 8));
     }
+    // Otherwise defer to the Unicode algorithm by returning false.
+    return false;
 }
 
 static inline bool needsLineBreakIterator(UChar ch)
