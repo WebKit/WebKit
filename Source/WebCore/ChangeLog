@@ -1,5 +1,16 @@
 2012-06-17  Yoshifumi Inoue  <yosin@chromium.org>
 
+        Unreviewed, rolling out r120565.
+        http://trac.webkit.org/changeset/120565
+        https://bugs.webkit.org/show_bug.cgi?id=89155
+
+        Bad commit message
+
+        * rendering/RenderSearchField.cpp: Removed.
+        * rendering/RenderSearchField.h: Removed.
+
+2012-06-17  Yoshifumi Inoue  <yosin@chromium.org>
+
         [Forms] Copy RenderTextControlSingleLine.{cpp,h} to RenderSearchFiled.{cpp,h}
         https://bugs.webkit.org/show_bug.cgi?id=89155
 
