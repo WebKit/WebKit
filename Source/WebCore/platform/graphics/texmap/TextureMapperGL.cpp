@@ -386,13 +386,7 @@ void TextureMapperGL::drawTextureRectangleARB(uint32_t texture, Flags flags, con
     GL_CMD(glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture));
     GL_CMD(glUniform1i(program->sourceTextureLocation(), 0));
 
-    const GLfloat m4src[] = {
-        targetRect.width(), 0, 0, 0,
-        0, (flags & ShouldFlipTexture) ? -targetRect.height() : targetRect.height(), 0, 0,
-        0, 0, 1, 0,
-        0, (flags & ShouldFlipTexture) ? 1 : 0, 0, 1};
-
-    GL_CMD(glUniformMatrix4fv(program->sourceMatrixLocation(), 1, GL_FALSE, m4src));
+    GL_CMD(glUniform1f(program->flipLocation(), !!(flags & ShouldFlipTexture)));
 
     if (TextureMapperShaderProgram::isValidUniformLocation(program->opacityLocation()))
         GL_CMD(glUniform1f(program->opacityLocation(), opacity));
@@ -424,12 +418,7 @@ void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const IntSize& 
     GL_CMD(glBindTexture(GL_TEXTURE_2D, texture));
     GL_CMD(glUniform1i(program->sourceTextureLocation(), 0));
 
-    const GLfloat m4src[] = {
-        1, 0, 0, 0,
-        0, (flags & ShouldFlipTexture) ? -1 : 1, 0, 0,
-        0, 0, 1, 0,
-        0, (flags & ShouldFlipTexture) ? 1 : 0, 0, 1};
-    GL_CMD(glUniformMatrix4fv(program->sourceMatrixLocation(), 1, GL_FALSE, m4src));
+    GL_CMD(glUniform1f(program->flipLocation(), !!(flags & ShouldFlipTexture)));
 
     if (TextureMapperShaderProgram::isValidUniformLocation(program->opacityLocation()))
         GL_CMD(glUniform1f(program->opacityLocation(), opacity));

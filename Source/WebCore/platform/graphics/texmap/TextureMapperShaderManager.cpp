@@ -76,12 +76,13 @@ static const char* fragmentShaderSourceRectOpacityAndMask =
 
 static const char* vertexShaderSourceOpacityAndMask =
     VERTEX_SHADER(
-        uniform mat4 InMatrix, InSourceMatrix;
+        uniform mat4 InMatrix;
+        uniform lowp float u_flip;
         attribute vec4 InVertex;
         varying highp vec2 OutTexCoordSource, OutTexCoordMask;
         void main(void)
         {
-            OutTexCoordSource = vec2(InSourceMatrix * InVertex);
+            OutTexCoordSource = vec2(InVertex.x, mix(InVertex.y, 1. - InVertex.y, u_flip));
             OutTexCoordMask = vec2(InVertex);
             gl_Position = InMatrix * InVertex;
         }
@@ -113,12 +114,13 @@ static const char* fragmentShaderSourceRectSimple =
 
 static const char* vertexShaderSourceSimple =
     VERTEX_SHADER(
-        uniform mat4 InMatrix, InSourceMatrix;
+        uniform mat4 InMatrix;
+        uniform lowp float u_flip;
         attribute vec4 InVertex;
         varying highp vec2 OutTexCoordSource;
         void main(void)
         {
-            OutTexCoordSource = vec2(InSourceMatrix * InVertex);
+            OutTexCoordSource = vec2(InVertex.x, mix(InVertex.y, 1. - InVertex.y, u_flip));
             gl_Position = InMatrix * InVertex;
         }
     );
@@ -187,7 +189,7 @@ TextureMapperShaderProgram::TextureMapperShaderProgram(const char* vertexShaderS
     , m_vertexShader(0)
     , m_fragmentShader(0)
     , m_matrixLocation(-1)
-    , m_sourceMatrixLocation(-1)
+    , m_flipLocation(-1)
     , m_sourceTextureLocation(-1)
     , m_opacityLocation(-1)
     , m_maskTextureLocation(-1)
@@ -240,7 +242,7 @@ TextureMapperShaderProgramSimple::TextureMapperShaderProgramSimple()
     : TextureMapperShaderProgram(vertexShaderSourceSimple, fragmentShaderSourceSimple)
 {
     initializeProgram();
-    getUniformLocation(m_sourceMatrixLocation, "InSourceMatrix");
+    getUniformLocation(m_flipLocation, "u_flip");
     getUniformLocation(m_matrixLocation, "InMatrix");
     getUniformLocation(m_sourceTextureLocation, "SourceTexture");
     getUniformLocation(m_opacityLocation, "Opacity");
@@ -258,7 +260,7 @@ TextureMapperShaderProgramRectSimple::TextureMapperShaderProgramRectSimple()
     : TextureMapperShaderProgram(vertexShaderSourceSimple, fragmentShaderSourceRectSimple)
 {
     initializeProgram();
-    getUniformLocation(m_sourceMatrixLocation, "InSourceMatrix");
+    getUniformLocation(m_flipLocation, "u_flip");
     getUniformLocation(m_matrixLocation, "InMatrix");
     getUniformLocation(m_sourceTextureLocation, "SourceTexture");
     getUniformLocation(m_opacityLocation, "Opacity");
@@ -269,7 +271,7 @@ TextureMapperShaderProgramOpacityAndMask::TextureMapperShaderProgramOpacityAndMa
 {
     initializeProgram();
     getUniformLocation(m_matrixLocation, "InMatrix");
-    getUniformLocation(m_sourceMatrixLocation, "InSourceMatrix");
+    getUniformLocation(m_flipLocation, "u_flip");
     getUniformLocation(m_sourceTextureLocation, "SourceTexture");
     getUniformLocation(m_maskTextureLocation, "MaskTexture");
     getUniformLocation(m_opacityLocation, "Opacity");
@@ -280,7 +282,7 @@ TextureMapperShaderProgramRectOpacityAndMask::TextureMapperShaderProgramRectOpac
 {
     initializeProgram();
     getUniformLocation(m_matrixLocation, "InMatrix");
-    getUniformLocation(m_sourceMatrixLocation, "InSourceMatrix");
+    getUniformLocation(m_flipLocation, "u_flip");
     getUniformLocation(m_sourceTextureLocation, "SourceTexture");
     getUniformLocation(m_maskTextureLocation, "MaskTexture");
     getUniformLocation(m_opacityLocation, "Opacity");

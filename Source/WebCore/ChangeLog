@@ -1,3 +1,27 @@
+2012-06-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [TextureMapper] Replace the source transform with a flip uniform
+        https://bugs.webkit.org/show_bug.cgi?id=89317
+
+        Reviewed by Noam Rosenthal.
+
+        No new tests. This should not change any observable behavior.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp: Instead of building and passing
+        the m4src matrix to the shader, just pass a single uniform that says whether or
+        not the texture should be flipped.
+        * platform/graphics/texmap/TextureMapperShaderManager.cpp: Change the shader programs
+        to deal with a flip variable rather than a source matrix.
+        (WebCore::TextureMapperShaderProgram::TextureMapperShaderProgram): Instead of getting the location
+        of the source matrix, get the location of the flip uniform.
+        (WebCore::TextureMapperShaderProgramSimple::TextureMapperShaderProgramSimple): Ditto.
+        (WebCore::TextureMapperShaderProgramRectSimple::TextureMapperShaderProgramRectSimple): Ditto.
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::TextureMapperShaderProgramOpacityAndMask): Ditto.
+        (WebCore::TextureMapperShaderProgramRectOpacityAndMask::TextureMapperShaderProgramRectOpacityAndMask): Ditto.
+        * platform/graphics/texmap/TextureMapperShaderManager.h:
+        (WebCore::TextureMapperShaderProgram::flipLocation): Added this getter.
+        (TextureMapperShaderProgram): Rename the source matrix location member to reflect above changes.
+
 2012-06-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120598.
