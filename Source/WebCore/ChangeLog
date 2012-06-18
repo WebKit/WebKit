@@ -1,3 +1,17 @@
+2012-06-18  Robert Kroeger  <rjkroege@chromium.org>
+
+        Touch events with default actions should be handled.
+        https://bugs.webkit.org/show_bug.cgi?id=89304.
+
+        Reviewed by Kent Tamura.
+
+        Covered by existing tests and tests in blocked bug
+        https://bugs.webkit.org/show_bug.cgi?id=88807
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent): Return true that the touch event
+        was handled for either preventDefault or defaultHandled.
+
 2012-06-18  Silvia Pfeiffer  <silviapf@chromium.org>
 
         REGRESSION introduced in bug 88623: new shadowPseudoId elements need to get default styling.

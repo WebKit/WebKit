@@ -3591,7 +3591,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
     m_touchPressed = touches->length() > 0;
 
     // Now iterate the changedTouches list and m_targets within it, sending events to the targets as required.
-    bool defaultPrevented = false;
+    bool swallowedEvent = false;
     RefPtr<TouchList> emptyList = TouchList::create();
     for (unsigned state = 0; state != PlatformTouchPoint::TouchStateEnd; ++state) {
         if (!changedTouches[state].m_touches)
@@ -3614,11 +3614,11 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
                                    0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey());
             ExceptionCode ec = 0;
             touchEventTarget->dispatchEvent(touchEvent.get(), ec);
-            defaultPrevented |= touchEvent->defaultPrevented();
+            swallowedEvent = swallowedEvent || touchEvent->defaultPrevented() || touchEvent->defaultHandled();
         }
     }
 
-    return defaultPrevented;
+    return swallowedEvent;
 }
 
 bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent& event)
