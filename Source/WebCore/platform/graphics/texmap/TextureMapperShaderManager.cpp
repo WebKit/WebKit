@@ -48,100 +48,105 @@ namespace WebCore {
 
 static const char* fragmentShaderSourceOpacityAndMask =
     FRAGMENT_SHADER(
-        uniform sampler2D SourceTexture, MaskTexture;
-        uniform lowp float Opacity;
-        varying highp vec2 OutTexCoordSource, OutTexCoordMask;
+        uniform sampler2D s_source;
+        uniform sampler2D s_mask;
+        uniform lowp float u_opacity;
+        varying highp vec2 v_sourceTexCoord;
+        varying highp vec2 v_maskTexCoord;
         void main(void)
         {
-            lowp vec4 color = texture2D(SourceTexture, OutTexCoordSource);
-            lowp vec4 maskColor = texture2D(MaskTexture, OutTexCoordMask);
-            lowp float fragmentAlpha = Opacity * maskColor.a;
+            lowp vec4 color = texture2D(s_source, v_sourceTexCoord);
+            lowp vec4 maskColor = texture2D(s_mask, v_maskTexCoord);
+            lowp float fragmentAlpha = u_opacity * maskColor.a;
             gl_FragColor = vec4(color.rgb * fragmentAlpha, color.a * fragmentAlpha);
         }
     );
 
 static const char* fragmentShaderSourceRectOpacityAndMask =
     FRAGMENT_SHADER(
-        uniform sampler2DRect SourceTexture, MaskTexture;
-        uniform lowp float Opacity;
-        varying highp vec2 OutTexCoordSource, OutTexCoordMask;
+        uniform sampler2DRect s_source;
+        uniform sampler2DRect s_mask;
+        uniform lowp float u_opacity;
+        varying highp vec2 v_sourceTexCoord;
+        varying highp vec2 v_maskTexCoord;
         void main(void)
         {
-            lowp vec4 color = texture2DRect(SourceTexture, OutTexCoordSource);
-            lowp vec4 maskColor = texture2DRect(MaskTexture, OutTexCoordMask);
-            lowp float fragmentAlpha = Opacity * maskColor.a;
+            lowp vec4 color = texture2DRect(s_source, v_sourceTexCoord);
+            lowp vec4 maskColor = texture2DRect(s_mask, v_maskTexCoord);
+            lowp float fragmentAlpha = u_opacity * maskColor.a;
             gl_FragColor = vec4(color.rgb * fragmentAlpha, color.a * fragmentAlpha);
         }
     );
 
 static const char* vertexShaderSourceOpacityAndMask =
     VERTEX_SHADER(
-        uniform mat4 InMatrix;
+        uniform mat4 u_matrix;
         uniform lowp float u_flip;
-        attribute vec4 InVertex;
-        varying highp vec2 OutTexCoordSource, OutTexCoordMask;
+        attribute vec4 a_vertex;
+        varying highp vec2 v_sourceTexCoord;
+        varying highp vec2 v_maskTexCoord;
         void main(void)
         {
-            OutTexCoordSource = vec2(InVertex.x, mix(InVertex.y, 1. - InVertex.y, u_flip));
-            OutTexCoordMask = vec2(InVertex);
-            gl_Position = InMatrix * InVertex;
+            v_sourceTexCoord = vec2(a_vertex.x, mix(a_vertex.y, 1. - a_vertex.y, u_flip));
+            v_maskTexCoord = vec2(a_vertex);
+            gl_Position = u_matrix * a_vertex;
         }
     );
 
 static const char* fragmentShaderSourceSimple =
     FRAGMENT_SHADER(
-        uniform sampler2D SourceTexture;
-        uniform lowp float Opacity;
-        varying highp vec2 OutTexCoordSource;
+        uniform sampler2D s_source;
+        uniform lowp float u_opacity;
+        varying highp vec2 v_sourceTexCoord;
         void main(void)
         {
-            lowp vec4 color = texture2D(SourceTexture, OutTexCoordSource);
-            gl_FragColor = vec4(color.rgb * Opacity, color.a * Opacity);
+            lowp vec4 color = texture2D(s_source, v_sourceTexCoord);
+            gl_FragColor = vec4(color.rgb * u_opacity, color.a * u_opacity);
         }
     );
 
 static const char* fragmentShaderSourceRectSimple =
     FRAGMENT_SHADER(
-        uniform sampler2DRect SourceTexture;
-        uniform lowp float Opacity;
-        varying highp vec2 OutTexCoordSource;
+        uniform sampler2DRect s_source;
+        uniform lowp float u_opacity;
+        varying highp vec2 v_sourceTexCoord;
         void main(void)
         {
-            lowp vec4 color = texture2DRect(SourceTexture, OutTexCoordSource);
-            gl_FragColor = vec4(color.rgb * Opacity, color.a * Opacity);
+            lowp vec4 color = texture2DRect(s_source, v_sourceTexCoord);
+            gl_FragColor = vec4(color.rgb * u_opacity, color.a * u_opacity);
         }
     );
 
 static const char* vertexShaderSourceSimple =
     VERTEX_SHADER(
-        uniform mat4 InMatrix;
+        uniform mat4 u_matrix;
         uniform lowp float u_flip;
-        attribute vec4 InVertex;
-        varying highp vec2 OutTexCoordSource;
+        attribute vec4 a_vertex;
+        varying highp vec2 v_sourceTexCoord;
         void main(void)
         {
-            OutTexCoordSource = vec2(InVertex.x, mix(InVertex.y, 1. - InVertex.y, u_flip));
-            gl_Position = InMatrix * InVertex;
+            v_sourceTexCoord = vec2(a_vertex.x, mix(a_vertex.y, 1. - a_vertex.y, u_flip));
+            gl_Position = u_matrix * a_vertex;
         }
     );
 
 static const char* vertexShaderSourceSolidColor =
     VERTEX_SHADER(
-        uniform mat4 InMatrix;
-        attribute vec4 InVertex;
+        uniform mat4 u_matrix;
+        attribute vec4 a_vertex;
         void main(void)
         {
-            gl_Position = InMatrix * InVertex;
+            gl_Position = u_matrix * a_vertex;
         }
     );
 
 
 static const char* fragmentShaderSourceSolidColor =
     VERTEX_SHADER(
-        uniform vec4 Color;
+        uniform vec4 u_color;
         void main(void)
         {
-            gl_FragColor = Color;
+            gl_FragColor = u_color;
         }
     );
 
@@ -213,7 +218,7 @@ void TextureMapperShaderProgram::initializeProgram()
     glAttachShader(programID, fragmentShader);
     glLinkProgram(programID);
 
-    m_vertexAttrib = glGetAttribLocation(programID, "InVertex");
+    m_vertexAttrib = glGetAttribLocation(programID, "a_vertex");
     m_id = programID;
     m_vertexShader = vertexShader;
     m_fragmentShader = fragmentShader;
@@ -243,17 +248,17 @@ TextureMapperShaderProgramSimple::TextureMapperShaderProgramSimple()
 {
     initializeProgram();
     getUniformLocation(m_flipLocation, "u_flip");
-    getUniformLocation(m_matrixLocation, "InMatrix");
-    getUniformLocation(m_sourceTextureLocation, "SourceTexture");
-    getUniformLocation(m_opacityLocation, "Opacity");
+    getUniformLocation(m_matrixLocation, "u_matrix");
+    getUniformLocation(m_sourceTextureLocation, "s_source");
+    getUniformLocation(m_opacityLocation, "u_opacity");
 }
 
 TextureMapperShaderProgramSolidColor::TextureMapperShaderProgramSolidColor()
     : TextureMapperShaderProgram(vertexShaderSourceSolidColor, fragmentShaderSourceSolidColor)
 {
     initializeProgram();
-    getUniformLocation(m_matrixLocation, "InMatrix");
-    getUniformLocation(m_colorLocation, "Color");
+    getUniformLocation(m_matrixLocation, "u_matrix");
+    getUniformLocation(m_colorLocation, "u_color");
 }
 
 TextureMapperShaderProgramRectSimple::TextureMapperShaderProgramRectSimple()
@@ -261,31 +266,31 @@ TextureMapperShaderProgramRectSimple::TextureMapperShaderProgramRectSimple()
 {
     initializeProgram();
     getUniformLocation(m_flipLocation, "u_flip");
-    getUniformLocation(m_matrixLocation, "InMatrix");
-    getUniformLocation(m_sourceTextureLocation, "SourceTexture");
-    getUniformLocation(m_opacityLocation, "Opacity");
+    getUniformLocation(m_matrixLocation, "u_matrix");
+    getUniformLocation(m_sourceTextureLocation, "s_source");
+    getUniformLocation(m_opacityLocation, "u_opacity");
 }
 
 TextureMapperShaderProgramOpacityAndMask::TextureMapperShaderProgramOpacityAndMask()
     : TextureMapperShaderProgram(vertexShaderSourceOpacityAndMask, fragmentShaderSourceOpacityAndMask)
 {
     initializeProgram();
-    getUniformLocation(m_matrixLocation, "InMatrix");
+    getUniformLocation(m_matrixLocation, "u_matrix");
     getUniformLocation(m_flipLocation, "u_flip");
-    getUniformLocation(m_sourceTextureLocation, "SourceTexture");
-    getUniformLocation(m_maskTextureLocation, "MaskTexture");
-    getUniformLocation(m_opacityLocation, "Opacity");
+    getUniformLocation(m_sourceTextureLocation, "s_source");
+    getUniformLocation(m_maskTextureLocation, "s_mask");
+    getUniformLocation(m_opacityLocation, "u_opacity");
 }
 
 TextureMapperShaderProgramRectOpacityAndMask::TextureMapperShaderProgramRectOpacityAndMask()
     : TextureMapperShaderProgram(vertexShaderSourceOpacityAndMask, fragmentShaderSourceRectOpacityAndMask)
 {
     initializeProgram();
-    getUniformLocation(m_matrixLocation, "InMatrix");
+    getUniformLocation(m_matrixLocation, "u_matrix");
     getUniformLocation(m_flipLocation, "u_flip");
-    getUniformLocation(m_sourceTextureLocation, "SourceTexture");
-    getUniformLocation(m_maskTextureLocation, "MaskTexture");
-    getUniformLocation(m_opacityLocation, "Opacity");
+    getUniformLocation(m_sourceTextureLocation, "s_source");
+    getUniformLocation(m_maskTextureLocation, "s_mask");
+    getUniformLocation(m_opacityLocation, "u_opacity");
 }
 
 TextureMapperShaderManager::TextureMapperShaderManager()

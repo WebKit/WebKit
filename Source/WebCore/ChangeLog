@@ -1,3 +1,18 @@
+2012-06-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [TextureMapper] Rename shader variables to match the naming scheme of the newer filter shaders
+        https://bugs.webkit.org/show_bug.cgi?id=89324
+
+        Reviewed by Noam Rosenthal.
+
+        Rename shader variables to align them with those in the new filter shaders.
+
+        No new tests. This is just a simple refactor.
+
+        * platform/graphics/texmap/TextureMapperShaderManager.cpp:
+        Rename shader variables so that uniforms are prefixed by "u_", attributes by "a_",
+        and texture samplers by "s_".
+
 2012-06-18  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Implement native memory bar diagram
