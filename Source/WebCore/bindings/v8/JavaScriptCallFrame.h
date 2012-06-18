@@ -60,6 +60,7 @@ public:
     v8::Handle<v8::Value> thisObject() const;
     
     v8::Handle<v8::Value> evaluate(const String& expression);
+    v8::Handle<v8::Value> restart();
     
 private:
     JavaScriptCallFrame(v8::Handle<v8::Context> debuggerContext, v8::Handle<v8::Object> callFrame);

@@ -46,6 +46,13 @@ v8::Handle<v8::Value> V8JavaScriptCallFrame::evaluateCallback(const v8::Argument
     return impl->evaluate(expression);
 }
 
+v8::Handle<v8::Value> V8JavaScriptCallFrame::restartCallback(const v8::Arguments& args)
+{
+    INC_STATS("V8JavaScriptCallFrame.restartCallback()");
+    JavaScriptCallFrame* impl = V8JavaScriptCallFrame::toNative(args.Holder());
+    return impl->restart();
+}
+
 v8::Handle<v8::Value> V8JavaScriptCallFrame::scopeChainAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("V8JavaScriptCallFrame.scopeChainAccessorGetter()");

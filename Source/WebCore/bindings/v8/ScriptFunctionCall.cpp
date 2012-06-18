@@ -133,7 +133,7 @@ ScriptValue ScriptFunctionCall::call(bool& hadException, bool reportExceptions)
 
     v8::Local<v8::Value> result;
     {
-        V8RecursionScope scope(getScriptExecutionContext());
+        V8RecursionScope innerScope(getScriptExecutionContext());
         result = function->Call(thisObject, m_arguments.size(), args.get());
     }
     if (!scope.success()) {
