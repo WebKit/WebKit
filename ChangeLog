@@ -1,5 +1,11 @@
 2012-06-17  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK 64-bit build fix after r120551.
+
+        * Source/autotools/symbols.filter:
+
+2012-06-17  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK build fix after r120397.
 
         * Source/autotools/symbols.filter:
