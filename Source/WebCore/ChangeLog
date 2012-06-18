@@ -1,3 +1,17 @@
+2012-06-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        CSSOM wrappers are not built for rules in the per-document and page group user stylesheets
+        https://bugs.webkit.org/show_bug.cgi?id=89221
+
+        Reviewed by Antti Koivisto.
+
+        The issue manifested itself by not displaying injected page group stylesheet data in the Styles pane.
+
+        Test: inspector/styles/inject-stylesheet.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-06-18  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [cairo] Fix LayoutTests/fast/canvas/patternfill-repeat.html

@@ -3066,6 +3066,20 @@ static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wra
         collectCSSOMWrappers(wrapperMap, static_cast<CSSStyleSheet*>(styleSheet));
     }
     collectCSSOMWrappers(wrapperMap, document->pageUserSheet());
+    {
+        const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets = document->pageGroupUserSheets();
+        if (pageGroupUserSheets) {
+            for (size_t i = 0, size = pageGroupUserSheets->size(); i < size; ++i)
+                collectCSSOMWrappers(wrapperMap, pageGroupUserSheets->at(i).get());
+        }
+    }
+    {
+        const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets = document->documentUserSheets();
+        if (documentUserSheets) {
+            for (size_t i = 0, size = documentUserSheets->size(); i < size; ++i)
+                collectCSSOMWrappers(wrapperMap, documentUserSheets->at(i).get());
+        }
+    }
 }
 
 CSSStyleRule* StyleResolver::ensureFullCSSOMWrapperForInspector(StyleRule* rule)
