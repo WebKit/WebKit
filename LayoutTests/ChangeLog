@@ -1,3 +1,20 @@
+2012-06-18  Dan Bernstein  <mitz@apple.com>
+
+        Column progression direction cannot be set independently of writing direction
+        https://bugs.webkit.org/show_bug.cgi?id=89315
+
+        Reviewed by Darin Adler.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/multicol/progression-reverse-expected.png: Added.
+        * fast/multicol/progression-reverse-expected.txt: Added.
+        * fast/multicol/progression-reverse.html: Added.
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2012-06-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120598.

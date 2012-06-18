@@ -460,6 +460,8 @@ enum RegionOverflow { AutoRegionOverflow, BreakRegionOverflow };
 
 enum ColumnAxis { HorizontalColumnAxis, VerticalColumnAxis, AutoColumnAxis };
 
+enum ColumnProgression { NormalColumnProgression, ReverseColumnProgression };
+
 enum LineSnap { LineSnapNone, LineSnapBaseline, LineSnapContain };
 
 enum LineAlign { LineAlignNone, LineAlignEdges };

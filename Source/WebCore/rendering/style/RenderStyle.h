@@ -875,6 +875,7 @@ public:
         ColumnAxis axis = columnAxis();
         return axis == AutoColumnAxis || isHorizontalWritingMode() == (axis == HorizontalColumnAxis);
     }
+    ColumnProgression columnProgression() const { return static_cast<ColumnProgression>(rareNonInheritedData->m_multiCol->m_progression); }
     float columnWidth() const { return rareNonInheritedData->m_multiCol->m_width; }
     bool hasAutoColumnWidth() const { return rareNonInheritedData->m_multiCol->m_autoWidth; }
     unsigned short columnCount() const { return rareNonInheritedData->m_multiCol->m_count; }
@@ -1309,6 +1310,7 @@ public:
     void setBorderFit(EBorderFit b) { SET_VAR(rareNonInheritedData, m_borderFit, b); }
     void setResize(EResize r) { SET_VAR(rareInheritedData, resize, r); }
     void setColumnAxis(ColumnAxis axis) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_axis, axis); }
+    void setColumnProgression(ColumnProgression progression) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_progression, progression); }
     void setColumnWidth(float f) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_autoWidth, false); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_width, f); }
     void setHasAutoColumnWidth() { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_autoWidth, true); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_width, 0); }
     void setColumnCount(unsigned short c) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_autoCount, false); SET_VAR(rareNonInheritedData.access()->m_multiCol, m_count, c); }
@@ -1548,6 +1550,7 @@ public:
     static EClear initialClear() { return CNONE; }
     static ColorSpace initialColorSpace() { return ColorSpaceDeviceRGB; }
     static ColumnAxis initialColumnAxis() { return AutoColumnAxis; }
+    static ColumnProgression initialColumnProgression() { return NormalColumnProgression; }
     static TextDirection initialDirection() { return LTR; }
     static WritingMode initialWritingMode() { return TopToBottomWritingMode; }
     static TextCombine initialTextCombine() { return TextCombineNone; }

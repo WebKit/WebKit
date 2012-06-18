@@ -1,3 +1,58 @@
+2012-06-18  Dan Bernstein  <mitz@apple.com>
+
+        Column progression direction cannot be set independently of writing direction
+        https://bugs.webkit.org/show_bug.cgi?id=89315
+
+        Added a column-progression property, which can have the values 'normal' and 'reverse'. When
+        set to 'reverse', the first column is positioned at the end side of the block, and
+        subsequent columns go from the in the start direction (in the inline column axis case; in
+        the block column axis case, the first column coincides with the block and subsequent columns
+        go before the block).
+
+        Reviewed by Darin Adler.
+
+        Test: fast/multicol/progression-reverse.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Added handling of the new
+        property.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Added validity check for the new property. The valid
+        values are the identifiers 'normal' and 'reverse'.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Added this mapping from ColumnProgression
+        enum values to the identifiers 'normal and 'reverse'.
+        (WebCore::CSSPrimitiveValue::operator ColumnProgression): Added this mapping from the
+        identifiers 'normal' and 'reverse' to ColumnProgression enum values.
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty): Added the new property to the set of
+        non-inherited properties.
+        * css/CSSPropertyNames.in: Added -webkit-column-progression.
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder): Added a handler for the new property.
+        * rendering/ColumnInfo.h:
+        (WebCore::ColumnInfo::ColumnInfo): Added an initializer for the m_progressionIsReversed
+        member variable.
+        (WebCore::ColumnInfo::progressionIsReversed): Added this accessor.
+        (WebCore::ColumnInfo::setProgressionIsReversed): Ditto.
+        (ColumnInfo): Added a m_progressionIsReversed member variable.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnRules): Changed to advance in the reverse direction if
+        needed.
+        (WebCore::RenderBlock::setDesiredColumnCountAndWidth): Added call to
+        ColumnInfo::setProgressionIsReversed(), based on the new property.
+        (WebCore::RenderBlock::columnRectAt): Changed to take the progression direction into
+        account.
+        * rendering/style/RenderStyle.h: Added accessors and initial value for column progression.
+        * rendering/style/RenderStyleConstants.h: Added ColumnProgression enum.
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData): Added initializer for the m_progression
+        member variable.
+        (WebCore::StyleMultiColData::operator==): Added equality check for m_progression.
+        * rendering/style/StyleMultiColData.h:
+        (StyleMultiColData): Added m_progression member variable.
+
 2012-06-18  Martin Robinson  <mrobinson@igalia.com>
 
         [TextureMapper] Replace the source transform with a flip uniform

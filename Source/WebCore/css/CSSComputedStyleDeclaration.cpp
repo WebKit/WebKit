@@ -221,6 +221,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitColumnAxis,
     CSSPropertyWebkitColumnCount,
     CSSPropertyWebkitColumnGap,
+    CSSPropertyWebkitColumnProgression,
     CSSPropertyWebkitColumnRuleColor,
     CSSPropertyWebkitColumnRuleStyle,
     CSSPropertyWebkitColumnRuleWidth,
@@ -1594,6 +1595,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             if (style->hasNormalColumnGap())
                 return cssValuePool().createIdentifierValue(CSSValueNormal);
             return zoomAdjustedPixelValue(style->columnGap(), style.get());
+        case CSSPropertyWebkitColumnProgression:
+            return cssValuePool().createValue(style->columnProgression());
         case CSSPropertyWebkitColumnRuleColor:
             return m_allowVisitedStyle ? cssValuePool().createColorValue(style->visitedDependentColor(CSSPropertyOutlineColor).rgb()) : currentColorOrValidColor(style.get(), style->columnRuleColor());
         case CSSPropertyWebkitColumnRuleStyle:

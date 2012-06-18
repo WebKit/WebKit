@@ -2340,6 +2340,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (id == CSSValueHorizontal || id == CSSValueVertical || id == CSSValueAuto)
             validPrimitive = true;
         break;
+    case CSSPropertyWebkitColumnProgression:
+        if (id == CSSValueNormal || id == CSSValueReverse)
+            validPrimitive = true;
+        break;
     case CSSPropertyWebkitColumnSpan:        // all | 1
         if (id == CSSValueAll)
             validPrimitive = true;

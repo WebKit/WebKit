@@ -249,6 +249,7 @@ z-index
 -webkit-column-break-inside
 -webkit-column-count
 -webkit-column-gap
+-webkit-column-progression
 -webkit-column-rule
 -webkit-column-rule-color
 -webkit-column-rule-style

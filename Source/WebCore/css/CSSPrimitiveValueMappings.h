@@ -3714,6 +3714,33 @@ template<> inline CSSPrimitiveValue::operator ColumnAxis() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColumnProgression e)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (e) {
+    case NormalColumnProgression:
+        m_value.ident = CSSValueNormal;
+        break;
+    case ReverseColumnProgression:
+        m_value.ident = CSSValueReverse;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ColumnProgression() const
+{
+    switch (m_value.ident) {
+    case CSSValueNormal:
+        return NormalColumnProgression;
+    case CSSValueReverse:
+        return ReverseColumnProgression;
+    default:
+        ASSERT_NOT_REACHED();
+        return NormalColumnProgression;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WrapFlow wrapFlow)
 : CSSValue(PrimitiveClass)
 {
