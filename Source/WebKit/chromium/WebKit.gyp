@@ -284,8 +284,8 @@
                 'public/android/WebSandboxSupport.h',
                 'public/gtk/WebInputEventFactory.h',
                 'public/linux/WebFontRenderStyle.h',
+                'public/linux/WebFontRendering.h',
                 'public/linux/WebRenderTheme.h',
-                'public/linuxish/WebFontRendering.h',
                 'public/mac/WebInputEventFactory.h',
                 'public/mac/WebSandboxSupport.h',
                 'public/mac/WebScreenInfoFactory.h',
@@ -428,9 +428,9 @@
                 'src/PrerendererClientImpl.cpp',
                 'src/android/WebInputEventFactory.cpp',
                 'src/linux/WebFontInfo.cpp',
+                'src/linux/WebFontRendering.cpp',
                 'src/linux/WebFontRenderStyle.cpp',
                 'src/linux/WebRenderTheme.cpp',
-                'src/linuxish/WebFontRendering.cpp',
                 'src/x11/WebScreenInfoFactory.cpp',
                 'src/mac/WebInputEventFactory.mm',
                 'src/mac/WebScreenInfoFactory.mm',
@@ -776,7 +776,6 @@
                     'include_dirs': [
                         'public/x11',
                         'public/linux',
-                        'public/linuxish',
                     ],
                 }, { # else: use_x11 != 1
                     'sources/': [
@@ -799,18 +798,11 @@
                 ['OS=="android"', {
                     'include_dirs': [
                         'public/android',
-                        'public/linuxish',
+                        'public/linux', # We need linux/WebFontRendering.h on Android.
                     ],
                 }, { # else: OS!="android"
                     'sources/': [
                         ['exclude', '/android/'],
-                    ],
-                }],
-                # FIXME: Here and other places duplicate rules in Chromium's build/filename_rules.gypi.
-                # However without the duplication, gyp_webkit fails at least on chromium-win-release.
-                ['OS!="android" and OS!="linux" and OS!="openbsd" and OS!="freebsd"', {
-                    'sources/': [
-                        ['exclude', '/linuxish/'],
                     ],
                 }],
                 # TODO: we exclude CG.cpp on both sides of the below conditional. Move elsewhere?
@@ -855,6 +847,13 @@
                     'xcode_settings': {
                         'WARNING_CFLAGS': ['-Wglobal-constructors'],
                     },
+                }],
+            ],
+            'target_conditions': [
+                ['OS=="android"', {
+                    'sources/': [
+                        ['include', '^src/linux/WebFontRendering\\.cpp$'],
+                    ],
                 }],
             ],
         },

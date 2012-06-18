@@ -79,7 +79,7 @@
 #endif
 
 #if OS(LINUX) || OS(ANDROID)
-#include "linuxish/WebFontRendering.h"
+#include "linux/WebFontRendering.h"
 #endif
 
 using namespace WebCore;

@@ -1,3 +1,26 @@
+2012-06-18  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Change back "linuxish" to "linux" and include WebFontRendering.cpp on Android
+        https://bugs.webkit.org/show_bug.cgi?id=89228
+
+        Reviewed by Tony Chang.
+
+        * WebKit.gyp:
+        * public/linux/WebFontRendering.h:
+        (WebKit):
+        (WebFontRendering):
+        * public/linuxish/WebFontRendering.h: Removed.
+        * src/linux/WebFontRendering.cpp: Renamed from Source/WebKit/chromium/src/linuxish/WebFontRendering.cpp.
+        (WebKit):
+        (WebKit::WebFontRendering::setHinting):
+        (WebKit::WebFontRendering::setAutoHint):
+        (WebKit::WebFontRendering::setUseBitmaps):
+        (WebKit::WebFontRendering::setAntiAlias):
+        (WebKit::WebFontRendering::setSubpixelRendering):
+        (WebKit::WebFontRendering::setSubpixelPositioning):
+        (WebKit::WebFontRendering::setLCDOrder):
+        (WebKit::WebFontRendering::setLCDOrientation):
+
 2012-06-18  Hironori Bono  <hbono@chromium.org>
 
         [chromium] Spellchecker should show suggestions only when right-clicking a misspelled word.
