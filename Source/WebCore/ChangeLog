@@ -1,5 +1,16 @@
 2012-06-17  Yoshifumi Inoue  <yosin@chromium.org>
 
+        Unreviewed, rolling out r120390.
+        http://trac.webkit.org/changeset/120390
+        https://bugs.webkit.org/show_bug.cgi?id=89155
+
+        Failed to copy merge history to RenderSerachField.{cpp,h}
+
+        * rendering/RenderSearchField.cpp: Removed.
+        * rendering/RenderSearchField.h: Removed.
+
+2012-06-17  Yoshifumi Inoue  <yosin@chromium.org>
+
         Unreviewed, rolling out r120432.
         http://trac.webkit.org/changeset/120432
         https://bugs.webkit.org/show_bug.cgi?id=88980
