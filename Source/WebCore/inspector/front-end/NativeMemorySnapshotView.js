@@ -100,12 +100,12 @@ WebInspector.NativeMemoryProfileType.prototype = {
                     if (size)
                         knownSize += size;
                 }
-                var unknownSize = memoryBlock.size - knownSize;
+                var otherSize = memoryBlock.size - knownSize;
 
-                if (unknownSize) {
+                if (otherSize) {
                     memoryBlock.children.push({
-                        name: "Unknown",
-                        size: unknownSize
+                        name: "Other",
+                        size: otherSize
                     });
                 }
             }
@@ -215,7 +215,7 @@ WebInspector.MemoryBlockViewProperties._initialize = function()
         WebInspector.MemoryBlockViewProperties._standardBlocks[name] = new WebInspector.MemoryBlockViewProperties(fillStyle, name, WebInspector.UIString(description));
     }
     addBlock("rgba(255, 255, 255, 0.8)", "ProcessPrivateMemory", "Total");
-    addBlock("rgba(240, 240, 250, 0.8)", "Unknown", "Unknown");
+    addBlock("rgba(240, 240, 250, 0.8)", "Other", "Other");
     addBlock("rgba(250, 200, 200, 0.8)", "JSHeapAllocated", "JavaScript heap");
     addBlock("rgba(200, 250, 200, 0.8)", "JSHeapUsed", "Used JavaScript heap");
     addBlock("rgba(200, 170, 200, 0.8)", "MemoryCache", "Memory cache resources");
