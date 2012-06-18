@@ -1,3 +1,20 @@
+2012-06-18  Taiju Tsuiki  <tzik@chromium.org>
+
+        Fix syntax of FileReader::readAsDataURL result
+        https://bugs.webkit.org/show_bug.cgi?id=89330
+
+        When readAsDataURL generates data URL without media type, it used to omit semicolon before
+        "base64" keyword.  But this semicolor is required in this case, according to RFC2397.
+
+        Reviewed by Kent Tamura.
+
+        * fast/files/read-blob-async-expected.txt:
+        * fast/files/workers/worker-read-blob-async-expected.txt:
+        * fast/files/workers/worker-read-blob-sync-expected.txt:
+        * platform/chromium/fast/files/read-blob-async-expected.txt:
+        * platform/chromium/fast/files/workers/worker-read-blob-async-expected.txt:
+        * platform/chromium/fast/files/workers/worker-read-blob-sync-expected.txt:
+
 2012-06-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] fast/files/xhr-response-blob.html is crashing

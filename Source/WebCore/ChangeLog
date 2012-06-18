@@ -1,3 +1,20 @@
+2012-06-18  Taiju Tsuiki  <tzik@chromium.org>
+
+        Fix syntax of FileReader::readAsDataURL result
+        https://bugs.webkit.org/show_bug.cgi?id=89330
+
+        When readAsDataURL generates data URL without media type, it used to omit semicolon before
+        "base64" keyword.  But this semicolor is required in this case, according to RFC2397.
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/files/read-blob-async.html
+              fast/files/workers/worker-read-blob-async.html:
+              fast/files/workers/worker-read-blob-sync.html:
+
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::convertToDataURL):
+
 2012-06-18  MORITA Hajime  <morrita@google.com>
 
         Unreviewed chormium crash fix. This should be revisited.
