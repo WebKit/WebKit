@@ -1,3 +1,10 @@
+2012-06-18  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed chormium crash fix. This should be revisited.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::qcmsOutputDeviceProfile):
+
 2012-06-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] fast/files/xhr-response-blob.html is crashing

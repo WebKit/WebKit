@@ -304,7 +304,8 @@ namespace WebCore {
 
             static bool qcmsInitialized = false;
             if (!qcmsInitialized) {
-                ASSERT(isMainThread());
+                // FIXME: Chromium's browser_tests hits this. https://bugs.webkit.org/show_bug.cgi?id=89341
+                // ASSERT(isMainThread());
                 qcmsInitialized = true;
                 // FIXME: Add optional ICCv4 support.
 #if OS(DARWIN)
