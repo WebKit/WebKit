@@ -34,7 +34,7 @@ void InjectedBundle::platformInitialize(WKTypeRef)
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithInteger:4],   @"AppleAntiAliasingThreshold",
         [NSNumber numberWithInteger:0],   @"AppleFontSmoothing",
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(CHROMIUM)
         [NSNumber numberWithBool:NO],     @"NSScrollAnimationEnabled",
 #else
         [NSNumber numberWithBool:NO],     @"AppleScrollAnimationEnabled",

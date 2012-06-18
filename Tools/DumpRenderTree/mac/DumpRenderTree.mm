@@ -590,7 +590,7 @@ static void resetDefaultsToConsistentValues()
 #endif
 
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(CHROMIUM)
     [defaults setBool:NO forKey:@"NSScrollAnimationEnabled"];
 #else
     [defaults setBool:NO forKey:@"AppleScrollAnimationEnabled"];
