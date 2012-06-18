@@ -21,6 +21,8 @@
 
 #include "GStreamerVersioning.h"
 
+#include <gst/gst.h>
+
 void webkitGstObjectRefSink(GstObject* gstObject)
 {
 #ifdef GST_API_VERSION_1
@@ -31,9 +33,8 @@ void webkitGstObjectRefSink(GstObject* gstObject)
 #endif
 }
 
-GstCaps* webkitGstElementGetPadCaps(GstElement* element, const char* direction)
+GstCaps* webkitGstGetPadCaps(GstPad* pad)
 {
-    GstPad* pad = gst_element_get_static_pad(element, direction);
     if (!pad)
         return 0;
 
@@ -45,6 +46,5 @@ GstCaps* webkitGstElementGetPadCaps(GstElement* element, const char* direction)
 #else
     caps = GST_PAD_CAPS(pad);
 #endif
-    gst_object_unref(GST_OBJECT(pad));
     return caps;
 }

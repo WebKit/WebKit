@@ -20,9 +20,11 @@
 #ifndef GStreamerVersioning_h
 #define GStreamerVersioning_h
 
-#include <gst/gst.h>
+typedef struct _GstCaps GstCaps;
+typedef struct _GstObject GstObject;
+typedef struct _GstPad GstPad;
 
 void webkitGstObjectRefSink(GstObject*);
-GstCaps* webkitGstElementGetPadCaps(GstElement*, const char*);
+GstCaps* webkitGstGetPadCaps(GstPad*);
 
 #endif // GStreamerVersioning_h

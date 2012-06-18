@@ -493,7 +493,7 @@ IntSize MediaPlayerPrivateGStreamer::naturalSize() const
     if (!hasVideo())
         return IntSize();
 
-    GstCaps* caps = webkitGstElementGetPadCaps(m_webkitVideoSink, "sink");
+    GstCaps* caps = webkitGstGetPadCaps(m_videoSinkPad.get());
     if (!caps)
         return IntSize();
 
@@ -1676,6 +1676,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     g_signal_connect(m_playBin, "audio-changed", G_CALLBACK(mediaPlayerPrivateAudioChangedCallback), this);
 
     m_webkitVideoSink = webkitVideoSinkNew(m_gstGWorld.get());
+    m_videoSinkPad = adoptGRef(gst_element_get_static_pad(m_webkitVideoSink, "sink"));
 
     g_signal_connect(m_webkitVideoSink, "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
 

@@ -1,3 +1,23 @@
+2012-06-17  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] optimize ::naturalSize()
+        https://bugs.webkit.org/show_bug.cgi?id=89314
+
+        Reviewed by Martin Robinson.
+
+        Keep track of the video-sink sinkpad in the MediaPlayerPrivate and
+        adapt the webkitGstGetPadCaps API accordingly. The benefit of this
+        change is to reduce the number of calls to
+        gst_element_get_static_pad() and the corresponding gst_pad_unref().
+
+        * platform/graphics/gstreamer/GStreamerVersioning.cpp:
+        (webkitGstGetPadCaps):
+        * platform/graphics/gstreamer/GStreamerVersioning.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::naturalSize):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (MediaPlayerPrivateGStreamer):
+
 2012-06-17  Arvid Nilsson  <anilsson@rim.com>
 
         Don't mark main frame layer opaque if the frame view is transparent
