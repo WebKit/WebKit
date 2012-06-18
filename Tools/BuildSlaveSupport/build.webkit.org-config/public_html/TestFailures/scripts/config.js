@@ -81,7 +81,27 @@ config.kPlatforms = {
         resultsDirectoryForBuildNumber: function(buildNumber, revision) {
             return buildNumber;
         },
-    }
+    },
+    'gtk' : {
+        label : 'GTK',
+        buildConsoleURL: 'http://build.webkit.org',
+        layoutTestResultsURL: 'http://build.webkit.org/results',
+        waterfallURL: 'http://build.webkit.org/waterfall',
+        builders: {
+            'GTK Linux 32-bit Release' : {version: '32-bit release'},
+            'GTK Linux 64-bit Release' : {version: '64-bit release'},
+            'GTK Linux 64-bit Debug' : {version: '64-bit debug',debug: true},
+        },
+        haveBuilderAccumulatedResults : false,
+        useDirectoryListingForOldBuilds: false,
+        useFlakinessDashboard: false,
+        resultsDirectoryNameFromBuilderName: function(builderName) {
+            return encodeURIComponent(builderName);
+        },
+        resultsDirectoryForBuildNumber: function(buildNumber, revision) {
+            return encodeURIComponent('r' + revision + ' (' + buildNumber + ')');
+        },
+    },
 };
 
 config.kTracURL = 'http://trac.webkit.org';

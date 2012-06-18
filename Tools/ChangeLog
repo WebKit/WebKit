@@ -1,3 +1,16 @@
+2012-06-18  Zan Dobersek  <zandobersek@gmail.com>
+
+        [garden-o-matic] Add support for the GTK builders
+        https://bugs.webkit.org/show_bug.cgi?id=89360
+
+        Reviewed by Adam Barth.
+
+        Add the 'gtk' platform, essentially a copy of the 'apple' platform since
+        both get their data from build.webkit.org.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        (.):
+
 2012-06-18  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Unbreak smooth scrolling.
