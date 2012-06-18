@@ -1,3 +1,9 @@
+2012-06-18  Adam Barth  <abarth@webkit.org>
+
+        Fix the expected result for this test.  This got landed with the wrong expected.txt file.
+
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-malformed-meta-expected.txt:
+
 2012-06-18  Dan Bernstein  <mitz@apple.com>
 
         Ideographic comma and full-stops are mishandled in linebreak
