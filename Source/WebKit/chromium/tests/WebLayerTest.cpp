@@ -65,7 +65,7 @@ public:
 
 class MockWebContentLayerClient : public WebContentLayerClient {
 public:
-    MOCK_METHOD2(paintContents, void(WebCanvas*, const WebRect& clip));
+    MOCK_METHOD3(paintContents, void(WebCanvas*, const WebRect& clip, WebRect& opaque));
 };
 
 class WebLayerTest : public Test {
@@ -175,7 +175,7 @@ TEST_F(WebLayerTest, Client)
 
     // Content layer.
     MockWebContentLayerClient contentClient;
-    EXPECT_CALL(contentClient, paintContents(_, _)).Times(AnyNumber());
+    EXPECT_CALL(contentClient, paintContents(_, _, _)).Times(AnyNumber());
     EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
     WebContentLayer contentLayer = WebContentLayer::create(&contentClient);
     m_rootLayer.addChild(contentLayer);
@@ -209,7 +209,7 @@ TEST_F(WebLayerTest, Hierarchy)
     EXPECT_TRUE(layer2.parent().isNull());
 
     MockWebContentLayerClient contentClient;
-    EXPECT_CALL(contentClient, paintContents(_, _)).Times(AnyNumber());
+    EXPECT_CALL(contentClient, paintContents(_, _, _)).Times(AnyNumber());
     WebContentLayer contentLayer = WebContentLayer::create(&contentClient);
     WebExternalTextureLayer textureLayer = WebExternalTextureLayer::create();
 

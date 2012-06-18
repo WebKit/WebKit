@@ -91,7 +91,8 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     , m_pageScaleChanged(false)
 {
     m_opaqueRectTrackingContentLayerDelegate = adoptPtr(new OpaqueRectTrackingContentLayerDelegate(this));
-    m_layer = WebContentLayer(ContentLayerChromium::create(m_opaqueRectTrackingContentLayerDelegate.get()));
+    m_layer = WebContentLayer::create(m_opaqueRectTrackingContentLayerDelegate.get());
+    m_layer.setDrawsContent(m_drawsContent && m_contentsVisible);
 
     updateDebugIndicators();
 }

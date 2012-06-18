@@ -1,3 +1,22 @@
+2012-06-14  James Robinson  <jamesr@chromium.org>
+
+        [chromium] GraphicsLayerChromium should use WebContentLayer directly
+        https://bugs.webkit.org/show_bug.cgi?id=89145
+
+        Reviewed by Adrienne Walker.
+
+        Ports GraphicsLayerChromium (or more specifically OpaqueRectTrackingContentLayerDelegate) to implement
+        WebContentLayerClient instead of ContentLayerDelegate. In addition to the mechanical changes, this requires
+        eagerly setting drawsContent on GraphicsLayerChromium::m_layer since WebContentLayerImpl's default value is
+        different from LayerChromium's. Covered by all of compositing/
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::GraphicsLayerChromium):
+        * platform/graphics/chromium/OpaqueRectTrackingContentLayerDelegate.cpp:
+        (WebCore::OpaqueRectTrackingContentLayerDelegate::paintContents):
+        * platform/graphics/chromium/OpaqueRectTrackingContentLayerDelegate.h:
+        (OpaqueRectTrackingContentLayerDelegate):
+
 2012-06-18  David Barr  <davidbarr@chromium.org>
 
         Add from-image to css3-images image-resolution

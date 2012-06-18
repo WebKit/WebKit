@@ -1,3 +1,16 @@
+2012-06-14  James Robinson  <jamesr@chromium.org>
+
+        [chromium] GraphicsLayerChromium should use WebContentLayer directly
+        https://bugs.webkit.org/show_bug.cgi?id=89145
+
+        Reviewed by Adrienne Walker.
+
+        Add an opaque rect parameter to WebContentLayerClient::paintContents() for a client to (optionally) provide
+        information about opaque portions of the painted region for culling optimizations.
+
+        * chromium/public/WebContentLayerClient.h:
+        (WebContentLayerClient):
+
 2012-06-16  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Make the deviceScaleFactor dynamically adjustable.

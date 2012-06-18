@@ -53,11 +53,13 @@ WebContentLayerImpl::~WebContentLayerImpl()
     clearDelegate();
 }
 
-void WebContentLayerImpl::paintContents(SkCanvas* canvas, const IntRect& clip, IntRect&)
+void WebContentLayerImpl::paintContents(SkCanvas* canvas, const IntRect& clip, IntRect& opaque)
 {
     if (!m_contentClient)
         return;
-    m_contentClient->paintContents(canvas, WebRect(clip));
+    WebRect webOpaque;
+    m_contentClient->paintContents(canvas, WebRect(clip), webOpaque);
+    opaque = webOpaque;
 }
 
 } // namespace WebKit

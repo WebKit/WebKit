@@ -31,6 +31,9 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "PlatformContextSkia.h"
+#include <public/WebRect.h>
+
+using WebKit::WebRect;
 
 namespace WebCore {
 
@@ -44,7 +47,7 @@ OpaqueRectTrackingContentLayerDelegate::~OpaqueRectTrackingContentLayerDelegate(
 {
 }
 
-void OpaqueRectTrackingContentLayerDelegate::paintContents(SkCanvas* canvas, const IntRect& clip, IntRect& opaque)
+void OpaqueRectTrackingContentLayerDelegate::paintContents(SkCanvas* canvas, const WebRect& clip, WebRect& opaque)
 {
     PlatformContextSkia platformContext(canvas);
     platformContext.setTrackOpaqueRegion(!m_opaque);

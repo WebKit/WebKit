@@ -37,7 +37,11 @@ public:
     // through WebContentLayer::setNeedsDisplay, submitting drawing commands
     // through the WebCanvas.
     // The canvas is already clipped to the |clip| rect.
-    virtual void paintContents(WebCanvas*, const WebRect& clip) = 0;
+    // Optionally, the implementation may set |opaque| to a rect covering pixels that
+    // the implementation knows are opaque. This information can be used for various
+    // optimizations.
+#define WEBCONTENTLAYERCLIENT_HAS_OPAQUE 1
+    virtual void paintContents(WebCanvas*, const WebRect& clip, WebRect& opaque) = 0;
 
 protected:
     virtual ~WebContentLayerClient() { }

@@ -132,7 +132,10 @@ struct CCOcclusionTrackerTestMainThreadTypes {
     typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> LayerIterator;
     typedef CCOcclusionTracker OcclusionTrackerType;
 
-    static PassLayerPtrType createLayer() { return LayerChromium::create(); }
+    static PassLayerPtrType createLayer()
+    {
+        return LayerChromium::create();
+    }
     static PassContentLayerPtrType createContentLayer() { return adoptRef(new ContentLayerType()); }
 };
 

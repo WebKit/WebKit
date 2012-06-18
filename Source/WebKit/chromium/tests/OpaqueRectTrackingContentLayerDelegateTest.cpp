@@ -27,10 +27,14 @@
 #include "OpaqueRectTrackingContentLayerDelegate.h"
 
 #include "Color.h"
+#include "GraphicsContext.h"
+#include "IntRect.h"
 #include "skia/ext/platform_canvas.h"
+#include <public/WebRect.h>
 
 #include <gtest/gtest.h>
 
+using WebKit::WebRect;
 using namespace WebCore;
 
 namespace {
@@ -95,20 +99,20 @@ struct PaintFillPartialOpaque : public PaintCallback {
 };
 
 #define EXPECT_EQ_RECT(a, b) \
-    EXPECT_EQ(a.x(), b.x()); \
-    EXPECT_EQ(a.maxX(), b.maxX()); \
-    EXPECT_EQ(a.y(), b.y()); \
-    EXPECT_EQ(a.maxY(), b.maxY());
+    EXPECT_EQ(a.x, b.x); \
+    EXPECT_EQ(a.width, b.width); \
+    EXPECT_EQ(a.y, b.y); \
+    EXPECT_EQ(a.height, b.height);
 
 class OpaqueRectTrackingContentLayerDelegateTest : public testing::Test {
 public:
     OpaqueRectTrackingContentLayerDelegateTest()
-        : m_skCanvas(adoptPtr(skia::CreateBitmapCanvas(canvasRect().width(), canvasRect().height(), false)))
+        : m_skCanvas(adoptPtr(skia::CreateBitmapCanvas(canvasRect().width, canvasRect().height, false)))
     {
     }
 
     SkCanvas* skCanvas() { return m_skCanvas.get(); }
-    IntRect canvasRect() { return IntRect(0, 0, 400, 400); }
+    WebRect canvasRect() { return WebRect(0, 0, 400, 400); }
 
 private:
     OwnPtr<SkCanvas> m_skCanvas;
@@ -121,9 +125,9 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testOpaqueRectPresentAfterOpa
 
     OpaqueRectTrackingContentLayerDelegate delegate(&painter);
 
-    IntRect opaqueRect;
+    WebRect opaqueRect;
     delegate.paintContents(skCanvas(), canvasRect(), opaqueRect);
-    EXPECT_EQ_RECT(IntRect(0, 0, 400, 400), opaqueRect);
+    EXPECT_EQ_RECT(WebRect(0, 0, 400, 400), opaqueRect);
 }
 
 TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testOpaqueRectNotPresentAfterNonOpaquePaint)
@@ -132,9 +136,9 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testOpaqueRectNotPresentAfter
     TestLayerPainterChromium painter(fillAlpha);
     OpaqueRectTrackingContentLayerDelegate delegate(&painter);
 
-    IntRect opaqueRect;
+    WebRect opaqueRect;
     delegate.paintContents(skCanvas(), canvasRect(), opaqueRect);
-    EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), opaqueRect);
+    EXPECT_EQ_RECT(WebRect(0, 0, 0, 0), opaqueRect);
 }
 
 TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testOpaqueRectNotPresentForOpaqueLayerWithOpaquePaint)
@@ -145,9 +149,9 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testOpaqueRectNotPresentForOp
 
     delegate.setOpaque(true);
 
-    IntRect opaqueRect;
+    WebRect opaqueRect;
     delegate.paintContents(skCanvas(), canvasRect(), opaqueRect);
-    EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), opaqueRect);
+    EXPECT_EQ_RECT(WebRect(0, 0, 0, 0), opaqueRect);
 }
 
 TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testOpaqueRectNotPresentForOpaqueLayerWithNonOpaquePaint)
@@ -158,9 +162,9 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testOpaqueRectNotPresentForOp
 
     delegate.setOpaque(true);
 
-    IntRect opaqueRect;
+    WebRect opaqueRect;
     delegate.paintContents(skCanvas(), canvasRect(), opaqueRect);
-    EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), opaqueRect);
+    EXPECT_EQ_RECT(WebRect(0, 0, 0, 0), opaqueRect);
 }
 
 TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testPartialOpaqueRectNoTransform)
@@ -170,9 +174,9 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testPartialOpaqueRectNoTransf
     TestLayerPainterChromium painter(fillPartial);
     OpaqueRectTrackingContentLayerDelegate delegate(&painter);
 
-    IntRect opaqueRect;
+    WebRect opaqueRect;
     delegate.paintContents(skCanvas(), canvasRect(), opaqueRect);
-    EXPECT_EQ_RECT(partialRect, opaqueRect);
+    EXPECT_EQ_RECT(WebRect(partialRect.x(), partialRect.y(), partialRect.width(), partialRect.height()), opaqueRect);
 }
 
 TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testPartialOpaqueRectTranslation)
@@ -182,10 +186,10 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testPartialOpaqueRectTranslat
     TestLayerPainterChromium painter(fillPartial);
     OpaqueRectTrackingContentLayerDelegate delegate(&painter);
 
-    IntRect opaqueRect;
-    IntRect contentRect(11, 12, 389, 388);
+    WebRect opaqueRect;
+    WebRect contentRect(11, 12, 389, 388);
     delegate.paintContents(skCanvas(), contentRect, opaqueRect);
-    EXPECT_EQ_RECT(partialRect, opaqueRect);
+    EXPECT_EQ_RECT(WebRect(partialRect.x(), partialRect.y(), partialRect.width(), partialRect.height()), opaqueRect);
 }
 
 } // namespace

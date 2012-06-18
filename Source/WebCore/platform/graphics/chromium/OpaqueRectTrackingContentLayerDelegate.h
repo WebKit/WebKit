@@ -25,7 +25,8 @@
 #ifndef OpaqueRectTrackingContentLayerDelegate_h
 #define OpaqueRectTrackingContentLayerDelegate_h
 
-#include "ContentLayerChromium.h"
+#include <public/WebContentLayerClient.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
 class SkCanvas;
@@ -43,7 +44,7 @@ protected:
     virtual ~GraphicsContextPainter() { }
 };
 
-class OpaqueRectTrackingContentLayerDelegate : public ContentLayerDelegate {
+class OpaqueRectTrackingContentLayerDelegate : public WebKit::WebContentLayerClient {
     WTF_MAKE_NONCOPYABLE(OpaqueRectTrackingContentLayerDelegate);
 public:
     explicit OpaqueRectTrackingContentLayerDelegate(GraphicsContextPainter*);
@@ -53,8 +54,8 @@ public:
     // tracking opaqueness.
     void setOpaque(bool opaque) { m_opaque = opaque; }
 
-    // ContentLayerDelegate
-    virtual void paintContents(SkCanvas*, const IntRect& clip, IntRect& opaque) OVERRIDE;
+    // WebKit::WebContentLayerClient implementation.
+    virtual void paintContents(SkCanvas*, const WebKit::WebRect& clip, WebKit::WebRect& opaque) OVERRIDE;
 
 private:
     GraphicsContextPainter* m_painter;

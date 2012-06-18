@@ -1,3 +1,21 @@
+2012-06-14  James Robinson  <jamesr@chromium.org>
+
+        [chromium] GraphicsLayerChromium should use WebContentLayer directly
+        https://bugs.webkit.org/show_bug.cgi?id=89145
+
+        Reviewed by Adrienne Walker.
+
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::paintContents):
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests::CCOcclusionTrackerTestMainThreadTypes::createLayer):
+        * tests/OpaqueRectTrackingContentLayerDelegateTest.cpp:
+        (WebCore):
+        (WebCore::OpaqueRectTrackingContentLayerDelegateTest::OpaqueRectTrackingContentLayerDelegateTest):
+        (WebCore::OpaqueRectTrackingContentLayerDelegateTest::canvasRect):
+        (WebCore::TEST_F):
+        * tests/WebLayerTest.cpp:
+
 2012-06-18  Ilya Sherman  <isherman@chromium.org>
 
         [Chromium] Ensure layout has happened before calling into hasNonEmptyBoundingBox()
