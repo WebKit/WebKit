@@ -1,0 +1,50 @@
+This test verifies the functionality of the WEBGL_depth_texture extension, if it is available.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WebGL context exists
+Testing binding enum with extension disabled
+PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null) generated expected GL error: INVALID_ENUM.
+PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null) generated expected GL error: INVALID_ENUM.
+PASS Successfully enabled WEBGL_depth_texture extension
+PASS WEBGL_depth_texture listed as supported and getExtension succeeded
+Testing WEBGL_depth_texture
+
+testing: UNSIGNED_SHORT
+PASS gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, new Uint16Array(1)) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, canvas2) generated expected GL error: INVALID_OPERATION.
+PASS gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 0, 0, 1, 1, 0) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 8, 8, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null) generated expected GL error: NO_ERROR.
+PASS gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, new Uint16Array(1)) generated expected GL error: INVALID_OPERATION.
+PASS gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1) generated expected GL error: INVALID_OPERATION.
+PASS gl.generateMipmap(gl.TEXTURE_2D) generated expected GL error: INVALID_OPERATION.
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS depth texture rendered correctly.
+
+testing: UNSIGNED_INT
+PASS gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, new Uint32Array(1)) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, canvas2) generated expected GL error: INVALID_OPERATION.
+PASS gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 0, 0, 1, 1, 0) generated expected GL error: INVALID_OPERATION.
+PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 8, 8, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null) generated expected GL error: NO_ERROR.
+PASS gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, new Uint32Array(1)) generated expected GL error: INVALID_OPERATION.
+PASS gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1) generated expected GL error: INVALID_OPERATION.
+PASS gl.generateMipmap(gl.TEXTURE_2D) generated expected GL error: INVALID_OPERATION.
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS depth texture rendered correctly.
+
+

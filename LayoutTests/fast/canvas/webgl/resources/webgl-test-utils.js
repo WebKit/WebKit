@@ -134,9 +134,19 @@ var setupSimpleTextureFragmentShader = function(gl) {
  * @param {!Array.<number>} opt_locations The locations for the attribs.
  */
 var setupProgram = function(gl, shaders, opt_attribs, opt_locations) {
+  var realShaders = [];
   var program = gl.createProgram();
   for (var ii = 0; ii < shaders.length; ++ii) {
-    gl.attachShader(program, shaders[ii]);
+    var shader = shaders[ii];
+    if (typeof shader == 'string') {
+      var element = document.getElementById(shader);
+      if (element) {
+        shader = loadShaderFromScript(gl, shader);
+      } else {
+        shader = loadShader(gl, shader, ii ? gl.FRAGMENT_SHADER : gl.VERTEX_SHADER);
+      }
+    }
+    gl.attachShader(program, shader);
   }
   if (opt_attribs) {
     for (var ii = 0; ii < opt_attribs.length; ++ii) {
@@ -1109,6 +1119,50 @@ var getUrlArguments = function() {
   return args;
 };
 
+// Add your prefix here.
+var browserPrefixes = [
+  "",
+  "MOZ_",
+  "OP_",
+  "WEBKIT_"
+];
+
+/**
+ * Given an extension name like WEBGL_compressed_texture_s3tc
+ * returns the name of the supported version extension, like
+ * WEBKIT_WEBGL_compressed_teture_s3tc
+ * @param {string} name Name of extension to look for
+ * @return {string} name of extension found or undefined if not
+ *     found.
+ */
+var getSupportedExtensionWithKnownPrefixes = function(gl, name) {
+  var supported = gl.getSupportedExtensions();
+  for (var ii = 0; ii < browserPrefixes.length; ++ii) {
+    var prefixedName = browserPrefixes[ii] + name;
+    if (supported.indexOf(prefixedName) >= 0) {
+      return prefixedName;
+    }
+  }
+};
+
+/**
+ * Given an extension name like WEBGL_compressed_texture_s3tc
+ * returns the supported version extension, like
+ * WEBKIT_WEBGL_compressed_teture_s3tc
+ * @param {string} name Name of extension to look for
+ * @return {WebGLExtension} The extension or undefined if not
+ *     found.
+ */
+var getExtensionWithKnownPrefixes = function(gl, name) {
+  for (var ii = 0; ii < browserPrefixes.length; ++ii) {
+    var prefixedName = browserPrefixes[ii] + name;
+    var ext = gl.getExtension(prefixedName);
+    if (ext) {
+      return ext;
+    }
+  }
+};
+
 /**
  * Provides requestAnimationFrame in a cross browser way.
  */
@@ -1177,8 +1231,10 @@ return {
   createColoredTexture: createColoredTexture,
   drawQuad: drawQuad,
   endsWith: endsWith,
+  getExtensionWithKnownPrefixes: getExtensionWithKnownPrefixes,
   getFileListAsync: getFileListAsync,
   getLastError: getLastError,
+  getSupportedExtensionWithKnownPrefixes: getSupportedExtensionWithKnownPrefixes,
   getUrlArguments: getUrlArguments,
   glEnumToString: glEnumToString,
   glErrorShouldBe: glErrorShouldBe,

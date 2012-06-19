@@ -59,6 +59,7 @@
 #include "V8WebGLCompressedTextureS3TC.h"
 #include "V8WebGLDebugRendererInfo.h"
 #include "V8WebGLDebugShaders.h"
+#include "V8WebGLDepthTexture.h"
 #include "V8WebGLFramebuffer.h"
 #include "V8WebGLLoseContext.h"
 #include "V8WebGLProgram.h"
@@ -203,6 +204,10 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
     case WebGLExtension::WebKitWebGLCompressedTextureS3TCName:
         extensionObject = toV8(static_cast<WebGLCompressedTextureS3TC*>(extension), isolate);
         referenceName = "webKitWebGLCompressedTextureS3TCName";
+        break;
+    case WebGLExtension::WebKitWebGLDepthTextureName:
+        extensionObject = toV8(static_cast<WebGLDepthTexture*>(extension), isolate);
+        referenceName = "webKitWebGLDepthTextureName";
         break;
     }
     ASSERT(!extensionObject.IsEmpty());

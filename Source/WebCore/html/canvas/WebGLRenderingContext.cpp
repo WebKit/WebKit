@@ -59,6 +59,7 @@
 #include "WebGLContextGroup.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
+#include "WebGLDepthTexture.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLLoseContext.h"
 #include "WebGLProgram.h"
@@ -81,7 +82,7 @@
 namespace WebCore {
 
 const double secondsBetweenRestoreAttempts = 1.0;
-const int maxGLErrorsAllowedToConsole = 10;
+const int maxGLErrorsAllowedToConsole = 256;
 
 namespace {
 
@@ -1320,11 +1321,22 @@ void WebGLRenderingContext::compressedTexSubImage2D(GC3Denum target, GC3Dint lev
     cleanupAfterGraphicsCall(false);
 }
 
+bool WebGLRenderingContext::validateSettableTexFormat(const char* functionName, GC3Denum format)
+{
+    if (GraphicsContext3D::getClearBitsByFormat(format) & (GraphicsContext3D::DEPTH_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "format can not be set, only rendered to");
+        return false;
+    }
+    return true;
+}
+
 void WebGLRenderingContext::copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border)
 {
     if (isContextLost())
         return;
     if (!validateTexFuncParameters("copyTexImage2D", target, level, internalformat, width, height, border, internalformat, GraphicsContext3D::UNSIGNED_BYTE))
+        return;
+    if (!validateSettableTexFormat("copyTexImage2D", internalformat))
         return;
     WebGLTexture* tex = validateTextureBinding("copyTexImage2D", target, true);
     if (!tex)
@@ -1380,7 +1392,10 @@ void WebGLRenderingContext::copyTexSubImage2D(GC3Denum target, GC3Dint level, GC
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "copyTexSubImage2D", "rectangle out of range");
         return;
     }
-    if (!isTexInternalFormatColorBufferCombinationValid(tex->getInternalFormat(target, level), getBoundFramebufferColorFormat())) {
+    GC3Denum internalformat = tex->getInternalFormat(target, level);
+    if (!validateSettableTexFormat("copyTexSubImage2D", internalformat))
+        return;
+    if (!isTexInternalFormatColorBufferCombinationValid(internalformat, getBoundFramebufferColorFormat())) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "copyTexSubImage2D", "framebuffer is incompatible format");
         return;
     }
@@ -2137,6 +2152,9 @@ void WebGLRenderingContext::generateMipmap(GC3Denum target)
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "generateMipmap", "level 0 not power of 2 or not all the same size");
         return;
     }
+    if (!validateSettableTexFormat("generateMipmap", tex->getInternalFormat(target, 0)))
+        return;
+
     // generateMipmap won't work properly if minFilter is not NEAREST_MIPMAP_LINEAR
     // on Mac.  Remove the hack once this driver bug is fixed.
 #if OS(DARWIN)
@@ -2312,7 +2330,14 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             m_webglCompressedTextureS3TC = WebGLCompressedTextureS3TC::create(this);
         return m_webglCompressedTextureS3TC.get();
     }
-
+    if (equalIgnoringCase(name, "WEBKIT_WEBGL_depth_texture")
+        && WebGLDepthTexture::supported(graphicsContext3D())) {
+        if (!m_webglDepthTexture) {
+            m_context->getExtensions()->ensureEnabled("GL_CHROMIUM_depth_texture");
+            m_webglDepthTexture = WebGLDepthTexture::create(this);
+        }
+        return m_webglDepthTexture.get();
+    }
     if (allowPrivilegedExtensions()) {
         if (equalIgnoringCase(name, "WEBGL_debug_renderer_info")) {
             if (!m_webglDebugRendererInfo)
@@ -2796,6 +2821,8 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     result.append("WEBKIT_WEBGL_lose_context");
     if (WebGLCompressedTextureS3TC::supported(this))
         result.append("WEBKIT_WEBGL_compressed_texture_s3tc");
+    if (WebGLDepthTexture::supported(graphicsContext3D()))
+        result.append("WEBKIT_WEBGL_depth_texture");
 
     if (allowPrivilegedExtensions()) {
         if (m_context->getExtensions()->supports("GL_ANGLE_translated_shader_source"))
@@ -3488,11 +3515,21 @@ void WebGLRenderingContext::texImage2DBase(GC3Denum target, GC3Dint level, GC3De
         }
     }
     if (!pixels) {
-        bool succeed = m_context->texImage2DResourceSafe(target, level, internalformat, width, height,
-                                                         border, format, type, m_unpackAlignment);
-        if (!succeed)
-            return;
+        // Note: Chromium's OpenGL implementation clears textures and isResourceSafe() is therefore true.
+        // For other implementations, if they are using ANGLE_depth_texture, ANGLE depth textures
+        // can not be cleared with texImage2D and must be cleared by binding to an fbo and calling
+        // clear.
+        if (isResourceSafe())
+            m_context->texImage2D(target, level, internalformat, width, height, border, format, type, 0);
+        else {
+            bool succeed = m_context->texImage2DResourceSafe(target, level, internalformat, width, height,
+                                                             border, format, type, m_unpackAlignment);
+            if (!succeed)
+                return;
+        }
     } else {
+        if (!validateSettableTexFormat("texImage2D", internalformat))
+            return;
         m_context->texImage2D(target, level, internalformat, width, height,
                               border, format, type, pixels);
     }
@@ -3505,6 +3542,8 @@ void WebGLRenderingContext::texImage2DImpl(GC3Denum target, GC3Dint level, GC3De
                                            bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
     ec = 0;
+    if (!validateSettableTexFormat("texImage2D", internalformat))
+        return;
     Vector<uint8_t> data;
     if (!m_context->extractImageData(image, format, type, flipY, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE, data)) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "bad image data");
@@ -3522,7 +3561,7 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
                                        GC3Dsizei width, GC3Dsizei height, GC3Dint border,
                                        GC3Denum format, GC3Denum type, ArrayBufferView* pixels, ExceptionCode& ec)
 {
-    if (isContextLost() || !validateTexFuncData("texImage2D", width, height, format, type, pixels, NullAllowed))
+    if (isContextLost() || !validateTexFuncData("texImage2D", level, width, height, format, type, pixels, NullAllowed))
         return;
     void* data = pixels ? pixels->baseAddress() : 0;
     Vector<uint8_t> tempData;
@@ -3700,6 +3739,8 @@ void WebGLRenderingContext::texSubImage2DBase(GC3Denum target, GC3Dint level, GC
         return;
     if (!validateSize("texSubImage2D", xoffset, yoffset))
         return;
+    if (!validateSettableTexFormat("texSubImage2D", format))
+        return;
     WebGLTexture* tex = validateTextureBinding("texSubImage2D", target, true);
     if (!tex)
         return;
@@ -3739,7 +3780,7 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
                                           GC3Dsizei width, GC3Dsizei height,
                                           GC3Denum format, GC3Denum type, ArrayBufferView* pixels, ExceptionCode& ec)
 {
-    if (isContextLost() || !validateTexFuncData("texSubImage2D", width, height, format, type, pixels, NullNotAllowed))
+    if (isContextLost() || !validateTexFuncData("texSubImage2D", level, width, height, format, type, pixels, NullNotAllowed))
         return;
     void* data = pixels->baseAddress();
     Vector<uint8_t> tempData;
@@ -4663,7 +4704,7 @@ bool WebGLRenderingContext::validateString(const char* functionName, const Strin
     return true;
 }
 
-bool WebGLRenderingContext::validateTexFuncFormatAndType(const char* functionName, GC3Denum format, GC3Denum type)
+bool WebGLRenderingContext::validateTexFuncFormatAndType(const char* functionName, GC3Denum format, GC3Denum type, GC3Dint level)
 {
     switch (format) {
     case GraphicsContext3D::ALPHA:
@@ -4672,6 +4713,11 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(const char* functionNam
     case GraphicsContext3D::RGB:
     case GraphicsContext3D::RGBA:
         break;
+    case GraphicsContext3D::DEPTH_COMPONENT:
+        if (m_webglDepthTexture)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "DEPTH_COMPONENT texture format not enabled");
+        return false;
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture format");
         return false;
@@ -4685,6 +4731,12 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(const char* functionNam
         break;
     case GraphicsContext3D::FLOAT:
         if (m_oesTextureFloat)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture type");
+        return false;
+    case GraphicsContext3D::UNSIGNED_INT:
+    case GraphicsContext3D::UNSIGNED_SHORT:
+        if (m_webglDepthTexture)
             break;
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture type");
         return false;
@@ -4719,6 +4771,21 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(const char* functionNam
             && type != GraphicsContext3D::FLOAT) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid type for RGBA format");
             return false;
+        }
+        break;
+    case GraphicsContext3D::DEPTH_COMPONENT:
+        if (!m_webglDepthTexture) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid format. DEPTH_COMPONENT not enabled");
+            return false;
+        }
+        if (type != GraphicsContext3D::UNSIGNED_SHORT
+            && type != GraphicsContext3D::UNSIGNED_INT) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid type for DEPTH_COMPONENT format");
+            return false;
+        }
+        if (level > 0) {
+          synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "level must be 0 for DEPTH_COMPONENT format");
+          return false;
         }
         break;
     default:
@@ -4767,7 +4834,7 @@ bool WebGLRenderingContext::validateTexFuncParameters(const char* functionName,
     // We absolutely have to validate the format and type combination.
     // The texImage2D entry points taking HTMLImage, etc. will produce
     // temporary data based on this combination, so it must be legal.
-    if (!validateTexFuncFormatAndType(functionName, format, type) || !validateTexFuncLevel(functionName, target, level))
+    if (!validateTexFuncFormatAndType(functionName, format, type, level) || !validateTexFuncLevel(functionName, target, level))
         return false;
 
     if (width < 0 || height < 0) {
@@ -4811,7 +4878,7 @@ bool WebGLRenderingContext::validateTexFuncParameters(const char* functionName,
     return true;
 }
 
-bool WebGLRenderingContext::validateTexFuncData(const char* functionName,
+bool WebGLRenderingContext::validateTexFuncData(const char* functionName, GC3Dint level,
                                                 GC3Dsizei width, GC3Dsizei height,
                                                 GC3Denum format, GC3Denum type,
                                                 ArrayBufferView* pixels,
@@ -4824,7 +4891,9 @@ bool WebGLRenderingContext::validateTexFuncData(const char* functionName,
         return false;
     }
 
-    if (!validateTexFuncFormatAndType(functionName, format, type))
+    if (!validateTexFuncFormatAndType(functionName, format, type, level))
+        return false;
+    if (!validateSettableTexFormat(functionName, format))
         return false;
 
     switch (type) {

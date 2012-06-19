@@ -46,6 +46,7 @@
 #include "JSUint8Array.h"
 #include "JSWebGLBuffer.h"
 #include "JSWebGLCompressedTextureS3TC.h"
+#include "JSWebGLDepthTexture.h"
 #include "JSWebGLFramebuffer.h"
 #include "JSWebGLLoseContext.h"
 #include "JSWebGLProgram.h"
@@ -63,6 +64,7 @@
 #include "WebGLCompressedTextureS3TC.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
+#include "WebGLDepthTexture.h"
 #include "WebGLExtension.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLGetInfo.h"
@@ -204,6 +206,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
         return toJS(exec, globalObject, static_cast<WebGLDebugShaders*>(extension));
     case WebGLExtension::WebKitWebGLCompressedTextureS3TCName:
         return toJS(exec, globalObject, static_cast<WebGLCompressedTextureS3TC*>(extension));
+    case WebGLExtension::WebKitWebGLDepthTextureName:
+        return toJS(exec, globalObject, static_cast<WebGLDepthTexture*>(extension));
     }
     ASSERT_NOT_REACHED();
     return jsNull();

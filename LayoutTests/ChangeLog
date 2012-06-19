@@ -1,3 +1,15 @@
+2012-06-18  Gregg Tavares  <gman@google.com>
+
+        Expose WEBGL_depth_texture extension to WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=87029
+
+        Reviewed by Kenneth Russell.
+
+        * fast/canvas/webgl/resources/webgl-test-utils.js:
+        (WebGLTestUtils):
+        * fast/canvas/webgl/webgl-depth-texture-expected.txt: Added.
+        * fast/canvas/webgl/webgl-depth-texture.html: Added.
+
 2012-06-12  Kinuko Yasuda  <kinuko@chromium.org>
 
         Support File/DirectoryEntry access for <input type=file> if FileSystem API is enabled

@@ -296,6 +296,7 @@ IDL_BINDINGS += \
     $$PWD/html/canvas/WebGLContextEvent.idl \
     $$PWD/html/canvas/WebGLDebugRendererInfo.idl \
     $$PWD/html/canvas/WebGLDebugShaders.idl \
+    $$PWD/html/canvas/WebGLDepthTexture.idl \
     $$PWD/html/canvas/WebGLFramebuffer.idl \
     $$PWD/html/canvas/WebGLLoseContext.idl \
     $$PWD/html/canvas/WebGLProgram.idl \

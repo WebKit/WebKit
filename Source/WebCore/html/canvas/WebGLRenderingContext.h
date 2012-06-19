@@ -57,6 +57,7 @@ class WebGLCompressedTextureS3TC;
 class WebGLContextAttributes;
 class WebGLDebugRendererInfo;
 class WebGLDebugShaders;
+class WebGLDepthTexture;
 class WebGLExtension;
 class WebGLFramebuffer;
 class WebGLLoseContext;
@@ -506,6 +507,7 @@ public:
     OwnPtr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
     OwnPtr<WebGLDebugShaders> m_webglDebugShaders;
     OwnPtr<WebGLCompressedTextureS3TC> m_webglCompressedTextureS3TC;
+    OwnPtr<WebGLDepthTexture> m_webglDepthTexture;
 
     // Helpers for getParameter and others
     WebGLGetInfo getBooleanParameter(GC3Denum);
@@ -574,7 +576,7 @@ public:
 
     // Helper function to check input format/type for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if parameters are invalid.
-    bool validateTexFuncFormatAndType(const char* functionName, GC3Denum format, GC3Denum type);
+    bool validateTexFuncFormatAndType(const char* functionName, GC3Denum format, GC3Denum type, GC3Dint level);
 
     // Helper function to check input level for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if level is invalid.
@@ -596,11 +598,17 @@ public:
     // Helper function to validate that the given ArrayBufferView
     // is of the correct type and contains enough data for the texImage call.
     // Generates GL error and returns false if parameters are invalid.
-    bool validateTexFuncData(const char* functionName,
+    bool validateTexFuncData(const char* functionName, GC3Dint level,
                              GC3Dsizei width, GC3Dsizei height,
                              GC3Denum format, GC3Denum type,
                              ArrayBufferView* pixels,
                              NullDisposition);
+
+    // Helper function to validate a given texture format is settable as in
+    // you can supply data to texImage2D, or call texImage2D, copyTexImage2D and
+    // copyTexSubImage2D.
+    // Generates GL error and returns false if the format is not settable.
+    bool validateSettableTexFormat(const char* functionName, GC3Denum format);
 
     // Helper function to validate compressed texture data is correct size
     // for the given format and dimensions.

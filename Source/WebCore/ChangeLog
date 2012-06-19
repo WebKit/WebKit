@@ -1,3 +1,59 @@
+2012-06-18  Gregg Tavares  <gman@google.com>
+
+        Expose WEBGL_depth_texture extension to WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=87029
+        
+        Reviewed by Kenneth Russell.
+
+        Test: fast/canvas/webgl/webgl-depth-texture.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        * html/canvas/WebGLDepthTexture.cpp: Copied from Source/WebCore/html/canvas/WebGLExtension.h.
+        (WebCore):
+        (WebCore::WebGLDepthTexture::WebGLDepthTexture):
+        (WebCore::WebGLDepthTexture::~WebGLDepthTexture):
+        (WebCore::WebGLDepthTexture::getName):
+        (WebCore::WebGLDepthTexture::create):
+        (WebCore::WebGLDepthTexture::supported):
+        * html/canvas/WebGLDepthTexture.h: Copied from Source/WebCore/html/canvas/WebGLExtension.h.
+        (WebCore):
+        (WebGLDepthTexture):
+        * html/canvas/WebGLDepthTexture.idl: Copied from Source/WebCore/html/canvas/WebGLExtension.h.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::initializeAttachments):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::validateSettableTexFormat):
+        (WebCore::WebGLRenderingContext::copyTexImage2D):
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContext::generateMipmap):
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        (WebCore::WebGLRenderingContext::texImage2DBase):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::texSubImage2DBase):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        (WebCore::WebGLRenderingContext::validateTexFuncFormatAndType):
+        (WebCore::WebGLRenderingContext::validateTexFuncParameters):
+        (WebCore::WebGLRenderingContext::validateTexFuncData):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebCore):
+        (WebGLRenderingContext):
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::getClearBitsByAttachmentType):
+        (WebCore):
+        (WebCore::GraphicsContext3D::getClearBitsByFormat):
+        * platform/graphics/GraphicsContext3D.h:
+
 2012-06-12  Kinuko Yasuda  <kinuko@chromium.org>
 
         Support File/DirectoryEntry access for <input type=file> if FileSystem API is enabled
