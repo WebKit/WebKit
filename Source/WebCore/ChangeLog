@@ -1,3 +1,55 @@
+2012-06-19  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: Support 'Restart frame' in protocol and backend
+        https://bugs.webkit.org/show_bug.cgi?id=89147
+
+        Reviewed by Yury Semikhatsky.
+
+        Inspector.json got new command in Debugger domain.
+        A call path from InspectorDebuggerAgent to V8 Debug.LiveEdit.RestartFrame API
+        is built.
+        JSC implementation is a stub with fix me (40300). 
+
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::restart):
+        (WebCore):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore):
+        (WebCore::ScriptDebugServer::updateCallStack):
+        * bindings/js/ScriptDebugServer.h:
+        (ScriptDebugServer):
+        * bindings/v8/DebuggerScript.js:
+        (.):
+        * bindings/v8/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::restart):
+        (WebCore):
+        * bindings/v8/JavaScriptCallFrame.h:
+        (JavaScriptCallFrame):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore):
+        (WebCore::ScriptDebugServer::updateCallStack):
+        * bindings/v8/ScriptDebugServer.h:
+        * bindings/v8/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::call):
+        * bindings/v8/custom/V8JavaScriptCallFrameCustom.cpp:
+        (WebCore::V8JavaScriptCallFrame::restartCallback):
+        (WebCore):
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::restartFrame):
+        (WebCore):
+        * inspector/InjectedScript.h:
+        (InjectedScript):
+        * inspector/InjectedScriptExterns.js:
+        (JavaScriptCallFrame.prototype.restart):
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::restartFrame):
+        * inspector/InspectorDebuggerAgent.h:
+        (InspectorDebuggerAgent):
+        * inspector/JavaScriptCallFrame.idl:
+
 2012-06-19  Andrei Poenaru  <poenaru@adobe.com>
 
         Replaced printf with fprintf in DEBUG_AUDIONODE_REFERENCES

@@ -125,6 +125,12 @@ v8::Handle<v8::Value> JavaScriptCallFrame::evaluate(const String& expression)
     return evalFunction->Call(m_callFrame.get(), 1, argv);
 }
 
+v8::Handle<v8::Value> JavaScriptCallFrame::restart()
+{
+    v8::Handle<v8::Function> restartFunction = v8::Handle<v8::Function>::Cast(m_callFrame.get()->Get(v8String("restart")));
+    return restartFunction->Call(m_callFrame.get(), 0, 0);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)

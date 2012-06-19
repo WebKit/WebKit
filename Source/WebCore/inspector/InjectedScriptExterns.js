@@ -98,6 +98,8 @@ function JavaScriptCallFrame()
  */
 JavaScriptCallFrame.prototype.scopeType = function(index) { }
 
+JavaScriptCallFrame.prototype.restart = function() { }
+
 /**
  * @constructor
  */

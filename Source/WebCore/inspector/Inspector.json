@@ -2485,6 +2485,18 @@
                 "description": "Edits JavaScript source live."
             },
             {
+                "name": "restartFrame",
+                "parameters": [
+                    { "name": "callFrameId", "$ref": "CallFrameId", "description": "Call frame identifier to evaluate on." }
+                ],
+                "returns": [
+                    { "name": "callFrames", "type": "array", "items": { "$ref": "CallFrame"}, "description": "New stack trace." },
+                    { "name": "result", "type": "object", "description": "VM-specific description.", "hidden": true }
+                ],
+                "hidden": true,
+                "description": "Restarts particular call frame from the beginning."
+            },
+            {
                 "name": "getScriptSource",
                 "parameters": [
                     { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to get source for." }

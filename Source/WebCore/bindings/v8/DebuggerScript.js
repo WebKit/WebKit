@@ -254,8 +254,14 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
         scopeChain.push(DebuggerScript._buildScopeObject(scopeMirror));
     }
 
-    function evaluate(expression) {
+    function evaluate(expression)
+    {
         return frameMirror.evaluate(expression, false).value();
+    }
+
+    function restart()
+    {
+        return Debug.LiveEdit.RestartFrame(frameMirror);
     }
 
     return {
@@ -267,7 +273,8 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
         "scopeChain": scopeChain,
         "scopeType": scopeType,
         "evaluate": evaluate,
-        "caller": callerFrame
+        "caller": callerFrame,
+        "restart": restart
     };
 }
 

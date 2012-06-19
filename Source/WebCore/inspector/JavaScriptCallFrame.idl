@@ -39,6 +39,7 @@ module inspector {
         const unsigned short CATCH_SCOPE = 4;
 
         [Custom] void evaluate(in DOMString script);
+        [Custom] DOMObject restart();
 
         readonly attribute JavaScriptCallFrame caller;
         readonly attribute long sourceID;

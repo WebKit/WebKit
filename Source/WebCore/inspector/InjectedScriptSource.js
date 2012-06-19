@@ -371,6 +371,17 @@ InjectedScript.prototype = {
         return this._evaluateAndWrap(callFrame.evaluate, callFrame, expression, objectGroup, true, injectCommandLineAPI, returnByValue);
     },
 
+    restartFrame: function(topCallFrame, callFrameId)
+    {
+        var callFrame = this._callFrameForId(topCallFrame, callFrameId);
+        if (!callFrame)
+            return "Could not find call frame with given id";
+        var result = callFrame.restart();
+        if (result === false)
+            result = "Restart frame is not supported"; 
+        return result;
+    },
+
     _callFrameForId: function(topCallFrame, callFrameId)
     {
         var parsedCallFrameId = eval("(" + callFrameId + ")");

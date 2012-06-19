@@ -378,6 +378,18 @@ void InspectorDebuggerAgent::setScriptSource(ErrorString* error, const String& s
     if (object)
         result = object;
 }
+void InspectorDebuggerAgent::restartFrame(ErrorString* errorString, const String& callFrameId, RefPtr<Array<TypeBuilder::Debugger::CallFrame> >& newCallFrames, RefPtr<InspectorObject>& result)
+{
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(callFrameId);
+    if (injectedScript.hasNoValue()) {
+        *errorString = "Inspected frame has gone";
+        return;
+    }
+
+    injectedScript.restartFrame(errorString, m_currentCallStack, callFrameId, &result);
+    scriptDebugServer().updateCallStack(&m_currentCallStack);
+    newCallFrames = currentCallFrames();
+}
 
 void InspectorDebuggerAgent::getScriptSource(ErrorString* error, const String& scriptId, String* scriptSource)
 {
