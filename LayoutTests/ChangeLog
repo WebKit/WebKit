@@ -1,3 +1,10 @@
+2012-06-18  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations.
+
+        * platform/chromium-mac/compositing/fixed-position-scroll-offset-history-restore-expected.png: Added.
+        * platform/chromium-win/compositing/fixed-position-scroll-offset-history-restore-expected.png: Renamed from LayoutTests/platform/chromium-linux/compositing/fixed-position-scroll-offset-history-restore-expected.png.
+
 2012-06-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120593.
