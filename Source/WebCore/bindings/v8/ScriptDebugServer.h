@@ -80,7 +80,6 @@ public:
     void updateCallStack(ScriptValue* callFrame);
 
     bool causesRecompilation() { return false; }
-    bool supportsNativeBreakpoints() { return true; }
 
     void recompileAllJSFunctionsSoon() { }
     void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) { }

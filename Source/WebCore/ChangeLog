@@ -1,3 +1,36 @@
+2012-06-19  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        Remove the function ScriptDebugServer::supportsNativeBreakpoints()
+        https://bugs.webkit.org/show_bug.cgi?id=88759
+
+        Reviewed by Pavel Feldman.
+
+        Since both JSC and V8 support DOM breakpoint now, remove the conditional interface and related code.
+        So there is no new tests.
+
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/v8/ScriptDebugServer.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        * inspector/InspectorDebuggerAgent.h:
+        (InspectorDebuggerAgent):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.wasShown):
+        (WebInspector.ElementsPanel.prototype._populateContextMenu):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._createTable):
+        (WebInspector.NetworkLogView.prototype.switchToDetailedView):
+        (WebInspector.NetworkLogView.prototype.switchToBriefView):
+        (WebInspector.NetworkDataGridNode.prototype.createCells):
+        (WebInspector.NetworkDataGridNode.prototype.refreshRequest):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.wasShown):
+        (WebInspector.ScriptsPanel.prototype._clearInterface):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/inspector.js:
+        (WebInspector.doLoadedDone):
+
 2012-06-19  Nikita Vasilyev  <me@elv1s.ru>
 
         Web Inspector: Make text in WebSocket Frames tab selectable

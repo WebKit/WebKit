@@ -102,11 +102,9 @@ WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
     this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane();
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
     this.sidebarPanes.jsBreakpoints = new WebInspector.JavaScriptBreakpointsSidebarPane(WebInspector.breakpointManager, this._showSourceLine.bind(this));
-    if (Capabilities.nativeInstrumentationEnabled) {
-        this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane;
-        this.sidebarPanes.xhrBreakpoints = new WebInspector.XHRBreakpointsSidebarPane();
-        this.sidebarPanes.eventListenerBreakpoints = new WebInspector.EventListenerBreakpointsSidebarPane();
-    }
+    this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane;
+    this.sidebarPanes.xhrBreakpoints = new WebInspector.XHRBreakpointsSidebarPane();
+    this.sidebarPanes.eventListenerBreakpoints = new WebInspector.EventListenerBreakpointsSidebarPane();
 
     if (Preferences.exposeWorkersInspection && !WebInspector.WorkerManager.isWorkerFrontend()) {
         WorkerAgent.setWorkerInspectionEnabled(true);
@@ -216,8 +214,7 @@ WebInspector.ScriptsPanel.prototype = {
     wasShown: function()
     {
         WebInspector.Panel.prototype.wasShown.call(this);
-        if (Capabilities.nativeInstrumentationEnabled)
-            this._debugSidebarContentsElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.xhrBreakpoints.element);
+        this._debugSidebarContentsElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.xhrBreakpoints.element);
         this.sidebarPanes.watchExpressions.show();
 
         this._navigatorController.wasShown();
@@ -659,11 +656,9 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.callstack.update(null);
         this.sidebarPanes.scopechain.update(null);
         this.sidebarPanes.jsBreakpoints.clearBreakpointHighlight();
-        if (Capabilities.nativeInstrumentationEnabled) {
-            this.sidebarPanes.domBreakpoints.clearBreakpointHighlight();
-            this.sidebarPanes.eventListenerBreakpoints.clearBreakpointHighlight();
-            this.sidebarPanes.xhrBreakpoints.clearBreakpointHighlight();
-        }
+        this.sidebarPanes.domBreakpoints.clearBreakpointHighlight();
+        this.sidebarPanes.eventListenerBreakpoints.clearBreakpointHighlight();
+        this.sidebarPanes.xhrBreakpoints.clearBreakpointHighlight();
 
         this._clearCurrentExecutionLine();
         this._updateDebuggerButtons();

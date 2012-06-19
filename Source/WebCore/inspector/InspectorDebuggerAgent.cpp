@@ -118,11 +118,6 @@ void InspectorDebuggerAgent::canSetScriptSource(ErrorString*, bool* result)
     *result = scriptDebugServer().canSetScriptSource();
 }
 
-void InspectorDebuggerAgent::supportsNativeBreakpoints(ErrorString*, bool* result)
-{
-    *result = scriptDebugServer().supportsNativeBreakpoints();
-}
-
 void InspectorDebuggerAgent::enable(ErrorString*)
 {
     if (enabled())

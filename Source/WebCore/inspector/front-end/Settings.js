@@ -45,14 +45,14 @@ var Preferences = {
     applicationTitle: "Web Inspector - %s",
     showHeapSnapshotObjectsHiddenProperties: false,
     showDockToRight: false,
-    exposeFileSystemInspection: false
+    exposeFileSystemInspection: false,
+    displayInitiator: false
 }
 
 var Capabilities = {
     samplingCPUProfiler: false,
     debuggerCausesRecompilation: true,
     profilerCausesRecompilation: true,
-    nativeInstrumentationEnabled: false,
     heapProfilerPresent: false,
     canOverrideDeviceMetrics: false,
     timelineSupportsFrameInstrumentation: false,

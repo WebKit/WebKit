@@ -138,7 +138,7 @@ WebInspector.NetworkLogView.prototype = {
     _createTable: function()
     {
         var columns;
-        if (Capabilities.nativeInstrumentationEnabled)
+        if (Preferences.displayInitiator)
             columns = {name: {}, method: {}, status: {}, type: {}, initiator: {}, size: {}, time: {}, timeline: {}};
         else
             columns = {name: {}, method: {}, status: {}, type: {}, size: {}, time: {}, timeline: {}};
@@ -159,7 +159,7 @@ WebInspector.NetworkLogView.prototype = {
         columns.type.sortable = true;
         columns.type.width = "6%";
 
-        if (Capabilities.nativeInstrumentationEnabled) {
+        if (Preferences.displayInitiator) {
             columns.initiator.title = WebInspector.UIString("Initiator");
             columns.initiator.sortable = true;
             columns.initiator.width = "10%";
@@ -177,7 +177,7 @@ WebInspector.NetworkLogView.prototype = {
 
         columns.timeline.title = "";
         columns.timeline.sortable = false;
-        if (Capabilities.nativeInstrumentationEnabled)
+        if (Preferences.displayInitiator)
             columns.timeline.width = "40%";
         else
             columns.timeline.width = "50%";
@@ -842,7 +842,7 @@ WebInspector.NetworkLogView.prototype = {
         this._dataGrid.showColumn("method");
         this._dataGrid.showColumn("status");
         this._dataGrid.showColumn("type");
-        if (Capabilities.nativeInstrumentationEnabled)
+        if (Preferences.displayInitiator)
             this._dataGrid.showColumn("initiator");
         this._dataGrid.showColumn("size");
         this._dataGrid.showColumn("time");
@@ -853,11 +853,11 @@ WebInspector.NetworkLogView.prototype = {
         widths.method = 6;
         widths.status = 6;
         widths.type = 6;
-        if (Capabilities.nativeInstrumentationEnabled)
+        if (Preferences.displayInitiator)
             widths.initiator = 10;
         widths.size = 6;
         widths.time = 6;
-        if (Capabilities.nativeInstrumentationEnabled)
+        if (Preferences.displayInitiator)
             widths.timeline = 40;
         else
             widths.timeline = 50;
@@ -873,7 +873,7 @@ WebInspector.NetworkLogView.prototype = {
         this._dataGrid.hideColumn("method");
         this._dataGrid.hideColumn("status");
         this._dataGrid.hideColumn("type");
-        if (Capabilities.nativeInstrumentationEnabled)
+        if (Preferences.displayInitiator)
             this._dataGrid.hideColumn("initiator");
         this._dataGrid.hideColumn("size");
         this._dataGrid.hideColumn("time");
@@ -1726,7 +1726,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._methodCell = this._createDivInTD("method");
         this._statusCell = this._createDivInTD("status");
         this._typeCell = this._createDivInTD("type");
-        if (Capabilities.nativeInstrumentationEnabled)
+        if (Preferences.displayInitiator)
             this._initiatorCell = this._createDivInTD("initiator");
         this._sizeCell = this._createDivInTD("size");
         this._timeCell = this._createDivInTD("time");
@@ -1820,7 +1820,7 @@ WebInspector.NetworkDataGridNode.prototype = {
 
         this._refreshStatusCell();
         this._refreshTypeCell();
-        if (Capabilities.nativeInstrumentationEnabled)
+        if (Preferences.displayInitiator)
             this._refreshInitiatorCell();
         this._refreshSizeCell();
         this._refreshTimeCell();

@@ -70,8 +70,7 @@ WebInspector.ElementsPanel = function()
     this.sidebarPanes.styles = new WebInspector.StylesSidebarPane(this.sidebarPanes.computedStyle);
     this.sidebarPanes.metrics = new WebInspector.MetricsSidebarPane();
     this.sidebarPanes.properties = new WebInspector.PropertiesSidebarPane();
-    if (Capabilities.nativeInstrumentationEnabled)
-        this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane;
+    this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane;
     this.sidebarPanes.eventListeners = new WebInspector.EventListenersSidebarPane();
 
     this.sidebarPanes.styles.onexpand = this.updateStyles.bind(this);
@@ -140,8 +139,7 @@ WebInspector.ElementsPanel.prototype = {
         if (!this.treeOutline.rootDOMNode)
             WebInspector.domAgent.requestDocument();
 
-        if (Capabilities.nativeInstrumentationEnabled)
-            this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.eventListeners.element);
+        this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.eventListeners.element);
     },
 
     willHide: function()
@@ -215,8 +213,7 @@ WebInspector.ElementsPanel.prototype = {
             return;
         }
 
-        if (Capabilities.nativeInstrumentationEnabled)
-            this.sidebarPanes.domBreakpoints.restoreBreakpoints();
+        this.sidebarPanes.domBreakpoints.restoreBreakpoints();
 
         /**
          * @this {WebInspector.ElementsPanel}
@@ -333,12 +330,10 @@ WebInspector.ElementsPanel.prototype = {
 
     _populateContextMenu: function(contextMenu, node)
     {
-        if (Capabilities.nativeInstrumentationEnabled) {
-            // Add debbuging-related actions
-            contextMenu.appendSeparator();
-            var pane = this.sidebarPanes.domBreakpoints;
-            pane.populateNodeContextMenu(node, contextMenu);
-        }
+        // Add debbuging-related actions
+        contextMenu.appendSeparator();
+        var pane = this.sidebarPanes.domBreakpoints;
+        pane.populateNodeContextMenu(node, contextMenu);
     },
 
     _getPopoverAnchor: function(element)

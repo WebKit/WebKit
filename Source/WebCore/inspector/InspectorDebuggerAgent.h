@@ -67,7 +67,6 @@ public:
 
     virtual void causesRecompilation(ErrorString*, bool*);
     virtual void canSetScriptSource(ErrorString*, bool*);
-    virtual void supportsNativeBreakpoints(ErrorString*, bool*);
 
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);

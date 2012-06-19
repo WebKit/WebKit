@@ -396,7 +396,6 @@ WebInspector.doLoadedDone = function()
     WebInspector.WorkerManager.loaded();
 
     DebuggerAgent.causesRecompilation(WebInspector._initializeCapability.bind(WebInspector, "debuggerCausesRecompilation", null));
-    DebuggerAgent.supportsNativeBreakpoints(WebInspector._initializeCapability.bind(WebInspector, "nativeInstrumentationEnabled", null));
     ProfilerAgent.causesRecompilation(WebInspector._initializeCapability.bind(WebInspector, "profilerCausesRecompilation", null));
     ProfilerAgent.isSampling(WebInspector._initializeCapability.bind(WebInspector, "samplingCPUProfiler", null));
     ProfilerAgent.hasHeapProfiler(WebInspector._initializeCapability.bind(WebInspector, "heapProfilerPresent", null));
@@ -445,8 +444,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.advancedSearchController = new WebInspector.AdvancedSearchController();
     this.settingsController = new WebInspector.SettingsController();
 
-    if (Capabilities.nativeInstrumentationEnabled)
-        this.domBreakpointsSidebarPane = new WebInspector.DOMBreakpointsSidebarPane();
+    this.domBreakpointsSidebarPane = new WebInspector.DOMBreakpointsSidebarPane();
 
     this._zoomLevel = WebInspector.settings.zoomLevel.get();
     if (this._zoomLevel)
