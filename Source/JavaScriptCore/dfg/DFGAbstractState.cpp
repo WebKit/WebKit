@@ -592,6 +592,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         JSValue childConst = forNode(node.child1()).value();
         if (childConst) {
             forNode(nodeIndex).set(jsBoolean(!childConst.toBoolean()));
+            m_foundConstants = true;
             node.setCanExit(false);
             break;
         }
