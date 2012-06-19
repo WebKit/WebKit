@@ -1,3 +1,15 @@
+2012-06-19  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Fix the Windows build when Qt is built without -release or -debug
+        https://bugs.webkit.org/show_bug.cgi?id=89471
+
+        Reviewed by Tor Arne Vestbø.
+
+        Make sure that we at least remove build_all on Windows for api.pri,
+        as WebCore wasn't built for all configurations.
+
+        * Source/api.pri:
+
 2012-06-19  Mike West  <mkwst@chromium.org>
 
         Introduce ENABLE_CSP_NEXT configuration flag.

@@ -21,8 +21,12 @@ haveQt(5) {
     load(qt_module_config)
 
     # Make sure the module config doesn't override our preferred build config.
-    # This cause issues with lib suffixes when building debug on Windows, disable it.
-    !win32*:debug_and_release:if(!debug|!release): CONFIG -= debug_and_release
+    debug_and_release:if(!debug|!release) {
+        # Removing debug_and_release causes issues with lib suffixes when building debug on Windows.
+        # Work around it by only removing build_all, and still create the Makefiles for both configurations.
+        win32*: CONFIG -= build_all
+        else: CONFIG -= debug_and_release
+    }
 
     # Allow doing a debug-only build of WebKit (not supported by Qt)
     macx:!debug_and_release:debug: TARGET = $$BASE_TARGET
