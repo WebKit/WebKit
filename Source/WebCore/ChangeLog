@@ -1,3 +1,40 @@
+2012-06-18  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Crash][Editing] VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries() crashes in some Shadow DOM case.
+        https://bugs.webkit.org/show_bug.cgi?id=88500
+
+        Reviewed by Ryosuke Niwa.
+
+        When selecting from a child of shadow host to an element in Shadow DOM, the start position of
+        Selection comes after the end position of Selection in some cases. This caused a crash.
+
+        For example, let's think '<div id="host">A</div>D' and host has a Shadow DOM whose innerHTML
+        is 'B<content></content>C'. When selecting from just after A (p1 = (PositionIsOffsetInAnchor,
+        #text, 1)) to just before B (p2 = (PositionIsOffsetInAnchor, shadowRoot, 0)), since
+        comparePosition always judge as p2 is before p1, m_start and m_end in VisibleSelection
+        will be p2 and p1 respectively.
+
+        However, the anchorNodes of p1 and p2 have the different tree scope, we have to adjust p2 to
+        the same tree scope as p1. Since p2 is m_start, m_start was adjusted to positionAfterNode(div).
+        This breaks the assumption that m_start is always before (or equal to) m_end.
+
+        This patch keeps the assumption. When we cannot move m_start to positionAfterNode(div),
+        we move m_start to positionBeforeNode(div). Note that we cannot always move m_start to
+        positionBeforeNode(div), because when selecting just after D (p3 = (PositionIsOffsetInAnchor,
+        D's parent, 2), we don't want to select A.
+
+        In this case, m_start should be adjusted to positionAfterNode(div).
+
+        Test: editing/shadow/breaking-editing-boundaries.html
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::adjustPositionForEnd):
+        (WebCore):
+        (WebCore::adjustPositionForStart):
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries):
+        * editing/VisibleSelection.h:
+        (VisibleSelection):
+
 2012-06-18  Mike Lawther  <mikelawther@chromium.org>
 
         Crash when setting title dynamically

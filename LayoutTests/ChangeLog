@@ -1,3 +1,13 @@
+2012-06-18  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Crash][Editing] VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries() crashes in some Shadow DOM case.
+        https://bugs.webkit.org/show_bug.cgi?id=88500
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/shadow/breaking-editing-boundaries-expected.txt: Added.
+        * editing/shadow/breaking-editing-boundaries.html: Added.
+
 2012-06-18  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed test marking. Marked border-radius-clip-002.htm as a failure.

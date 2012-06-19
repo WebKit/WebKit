@@ -122,9 +122,6 @@ private:
     void adjustSelectionToAvoidCrossingEditingBoundaries();
     void updateSelectionType();
 
-    Position adjustPositionBefore(TreeScope*, const Position&);
-    Position adjustPositionAfter(TreeScope*, const Position&);
-
     // We need to store these as Positions because VisibleSelection is
     // used to store values in editing commands for use when
     // undoing the command. We need to be able to create a selection that, while currently

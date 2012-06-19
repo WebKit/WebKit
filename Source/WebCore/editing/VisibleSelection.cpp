@@ -410,28 +410,6 @@ void VisibleSelection::updateSelectionType()
         m_affinity = DOWNSTREAM;
 }
 
-Position VisibleSelection::adjustPositionBefore(TreeScope* treeScope, const Position& currentPosition)
-{
-    if (Node* ancestor = treeScope->ancestorInThisScope(currentPosition.anchorNode()))
-        return positionBeforeNode(ancestor);
-
-    if (Node* lastChild = treeScope->rootNode()->lastChild())
-        return positionAfterNode(lastChild);
-
-    return Position();
-}
-
-Position VisibleSelection::adjustPositionAfter(TreeScope* treeScope, const Position& currentPosition)
-{
-    if (Node* ancestor = treeScope->ancestorInThisScope(currentPosition.anchorNode()))
-        return positionAfterNode(ancestor);
-
-    if (Node* firstChild = treeScope->rootNode()->firstChild())
-        return positionBeforeNode(firstChild);
-
-    return Position();
-}
-
 void VisibleSelection::validate(TextGranularity granularity)
 {
     setBaseAndExtentToDeepEquivalents();
@@ -483,6 +461,42 @@ void VisibleSelection::setWithoutValidation(const Position& base, const Position
     m_selectionType = base == extent ? CaretSelection : RangeSelection;
 }
 
+static Position adjustPositionForEnd(const Position& currentPosition, Node* startContainerNode)
+{
+    TreeScope* treeScope = startContainerNode->treeScope();
+
+    ASSERT(currentPosition.containerNode()->treeScope() != treeScope);
+
+    if (Node* ancestor = treeScope->ancestorInThisScope(currentPosition.containerNode())) {
+        if (ancestor->contains(startContainerNode))
+            return positionAfterNode(ancestor);
+        return positionBeforeNode(ancestor);
+    }
+
+    if (Node* lastChild = treeScope->rootNode()->lastChild())
+        return positionAfterNode(lastChild);
+
+    return Position();
+}
+
+static Position adjustPositionForStart(const Position& currentPosition, Node* endContainerNode)
+{
+    TreeScope* treeScope = endContainerNode->treeScope();
+
+    ASSERT(currentPosition.containerNode()->treeScope() != treeScope);
+    
+    if (Node* ancestor = treeScope->ancestorInThisScope(currentPosition.containerNode())) {
+        if (ancestor->contains(endContainerNode))
+            return positionBeforeNode(ancestor);
+        return positionAfterNode(ancestor);
+    }
+
+    if (Node* firstChild = treeScope->rootNode()->firstChild())
+        return positionBeforeNode(firstChild);
+
+    return Position();
+}
+
 void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
 {
     if (m_base.isNull() || m_start.isNull() || m_end.isNull())
@@ -492,10 +506,10 @@ void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
         return;
 
     if (m_baseIsFirst) {
-        m_extent = adjustPositionBefore(m_start.anchorNode()->treeScope(), m_end);
+        m_extent = adjustPositionForEnd(m_end, m_start.containerNode());
         m_end = m_extent;
     } else {
-        m_extent = adjustPositionAfter(m_end.anchorNode()->treeScope(), m_start);
+        m_extent = adjustPositionForStart(m_start, m_end.containerNode());
         m_start = m_extent;
     }
 
