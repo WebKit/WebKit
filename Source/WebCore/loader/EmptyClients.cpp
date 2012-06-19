@@ -45,7 +45,6 @@
 
 namespace WebCore {
 
-#if ENABLE(SVG) || ENABLE(PAGE_POPUP)
 void fillWithEmptyClients(Page::PageClients& pageClients)
 {
 #if ENABLE(CONTEXT_MENUS)
@@ -64,7 +63,6 @@ void fillWithEmptyClients(Page::PageClients& pageClients)
     static InspectorClient* dummyInspectorClient = adoptPtr(new EmptyInspectorClient).leakPtr();
     pageClients.inspectorClient = dummyInspectorClient;
 }
-#endif
 
 class EmptyPopupMenu : public PopupMenu {
 public:

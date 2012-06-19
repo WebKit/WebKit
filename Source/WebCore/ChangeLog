@@ -1,3 +1,22 @@
+2012-06-19  Alexandre Elias  <aelias@google.com>
+
+        Fix link error with fillWithEmptyClients
+        https://bugs.webkit.org/show_bug.cgi?id=89484
+
+        Reviewed by Ryosuke Niwa.
+
+        fillWithEmptyClients() was within #if ENABLE() guard in the .cpp file
+        but not in the header.  There is now a caller unrelated to these ENABLEs
+        in WebHelperPluginImpl, so linking fails if both SVG and PAGE_POPUP
+        are disabled.
+
+        This function looks generic, so just remove the ENABLE guards.
+
+        No new tests. (Build fix.)
+
+        * loader/EmptyClients.cpp:
+        (WebCore::fillWithEmptyClients):
+
 2012-06-19  Abhishek Arya  <inferno@chromium.org>
 
         Crash in RenderInline::willBeDestroyed.
