@@ -96,6 +96,105 @@ typedef InspectorFileSystemAgent::FrontendProvider FrontendProvider;
 
 namespace {
 
+class GetFileSystemRootTask : public RefCounted<GetFileSystemRootTask> {
+    WTF_MAKE_NONCOPYABLE(GetFileSystemRootTask);
+public:
+    static PassRefPtr<GetFileSystemRootTask> create(PassRefPtr<FrontendProvider> frontendProvider, int requestId, const String& type)
+    {
+        return adoptRef(new GetFileSystemRootTask(frontendProvider, requestId, type));
+    }
+
+    void start(ScriptExecutionContext*);
+
+private:
+    class ErrorCallback;
+    class GetEntryCallback;
+
+    void gotEntry(Entry*);
+
+    void reportResult(FileError::ErrorCode errorCode, PassRefPtr<TypeBuilder::FileSystem::Entry> entry)
+    {
+        if (!m_frontendProvider || !m_frontendProvider->frontend())
+            return;
+        m_frontendProvider->frontend()->gotFileSystemRoot(m_requestId, static_cast<int>(errorCode), entry);
+        m_frontendProvider = 0;
+    }
+
+    GetFileSystemRootTask(PassRefPtr<FrontendProvider> frontendProvider, int requestId, const String& type)
+        : m_frontendProvider(frontendProvider)
+        , m_requestId(requestId)
+        , m_type(type) { }
+
+    RefPtr<FrontendProvider> m_frontendProvider;
+    int m_requestId;
+    String m_type;
+};
+
+class GetFileSystemRootTask::ErrorCallback : public WebCore::ErrorCallback {
+    WTF_MAKE_NONCOPYABLE(ErrorCallback);
+public:
+    static PassRefPtr<GetFileSystemRootTask::ErrorCallback> create(PassRefPtr<GetFileSystemRootTask> getFileSystemRootTask)
+    {
+        return adoptRef(new GetFileSystemRootTask::ErrorCallback(getFileSystemRootTask));
+    }
+
+    virtual bool handleEvent(FileError* error) OVERRIDE
+    {
+        m_getFileSystemRootTask->reportResult(error->code(), 0);
+        return true;
+    }
+
+private:
+    ErrorCallback(PassRefPtr<GetFileSystemRootTask> getFileSystemRootTask)
+        : m_getFileSystemRootTask(getFileSystemRootTask) { }
+    RefPtr<GetFileSystemRootTask> m_getFileSystemRootTask;
+};
+
+class GetFileSystemRootTask::GetEntryCallback : public WebCore::EntryCallback {
+    WTF_MAKE_NONCOPYABLE(GetEntryCallback);
+public:
+    static PassRefPtr<GetFileSystemRootTask::GetEntryCallback> create(PassRefPtr<GetFileSystemRootTask> getFileSystemRootTask)
+    {
+        return adoptRef(new GetFileSystemRootTask::GetEntryCallback(getFileSystemRootTask));
+    }
+
+    virtual bool handleEvent(Entry* entry) OVERRIDE
+    {
+        m_getFileSystemRootTask->gotEntry(entry);
+        return true;
+    }
+
+private:
+    GetEntryCallback(PassRefPtr<GetFileSystemRootTask> getFileSystemRootTask)
+        : m_getFileSystemRootTask(getFileSystemRootTask) { }
+    RefPtr<GetFileSystemRootTask> m_getFileSystemRootTask;
+};
+
+void GetFileSystemRootTask::start(ScriptExecutionContext* scriptExecutionContext)
+{
+    FileSystemType type;
+    if (m_type == DOMFileSystemBase::persistentPathPrefix)
+        type = FileSystemTypePersistent;
+    else if (m_type == DOMFileSystemBase::temporaryPathPrefix)
+        type = FileSystemTypeTemporary;
+    else {
+        reportResult(FileError::SYNTAX_ERR, 0);
+        return;
+    }
+
+    RefPtr<EntryCallback> successCallback = GetFileSystemRootTask::GetEntryCallback::create(this);
+    RefPtr<ErrorCallback> errorCallback = GetFileSystemRootTask::ErrorCallback::create(this);
+    OwnPtr<ResolveURICallbacks> fileSystemCallbacks = ResolveURICallbacks::create(successCallback, errorCallback, scriptExecutionContext, type, "/");
+
+    LocalFileSystem::localFileSystem().readFileSystem(scriptExecutionContext, type, fileSystemCallbacks.release());
+}
+
+void GetFileSystemRootTask::gotEntry(Entry* entry)
+{
+    RefPtr<TypeBuilder::FileSystem::Entry> result(TypeBuilder::FileSystem::Entry::create().setUrl(entry->toURL()).setName("/").setIsDirectory(true));
+    reportResult(static_cast<FileError::ErrorCode>(0), result);
+}
+
 class ReadDirectoryTask : public RefCounted<ReadDirectoryTask> {
     WTF_MAKE_NONCOPYABLE(ReadDirectoryTask);
 public:
@@ -307,6 +406,18 @@ void InspectorFileSystemAgent::disable(ErrorString*)
         return;
     m_enabled = false;
     m_state->setBoolean(FileSystemAgentState::fileSystemAgentEnabled, m_enabled);
+}
+
+void InspectorFileSystemAgent::getFileSystemRoot(ErrorString*, int requestId, const String& origin, const String& type)
+{
+    if (!m_enabled || !m_frontendProvider)
+        return;
+    ASSERT(m_frontendProvider->frontend());
+
+    if (ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextForOrigin(SecurityOrigin::createFromString(origin).get()))
+        GetFileSystemRootTask::create(m_frontendProvider, requestId, type)->start(scriptExecutionContext);
+    else
+        m_frontendProvider->frontend()->gotFileSystemRoot(requestId, static_cast<int>(FileError::ABORT_ERR), 0);
 }
 
 void InspectorFileSystemAgent::readDirectory(ErrorString*, int requestId, const String& url)

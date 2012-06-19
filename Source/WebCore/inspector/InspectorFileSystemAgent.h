@@ -59,6 +59,7 @@ public:
     virtual void enable(ErrorString*) OVERRIDE;
     virtual void disable(ErrorString*) OVERRIDE;
 
+    virtual void getFileSystemRoot(ErrorString*, int requestId, const String& origin, const String& type) OVERRIDE;
     virtual void readDirectory(ErrorString*, int requestId, const String& url) OVERRIDE;
 
     virtual void setFrontend(InspectorFrontend*) OVERRIDE;

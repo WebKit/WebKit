@@ -1525,7 +1525,6 @@ WebInspector.FileSystemListTreeElement.prototype = {
         var fileSystemTreeElement = this._fileSystemTreeElementByName(fileSystem.name);
         if (!fileSystemTreeElement)
             return;
-        fileSystemTreeElement.clear();
         this.removeChild(fileSystemTreeElement);
     },
 

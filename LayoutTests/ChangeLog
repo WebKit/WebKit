@@ -1,3 +1,13 @@
+2012-06-19  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: FileSystem tree should hide uninitialized FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=88602
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/filesystem/get-filesystem-root-expected.txt: Added.
+        * http/tests/inspector/filesystem/get-filesystem-root.html: Added.
+
 2012-06-19  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's LayoutTestController does not support setTextDirection

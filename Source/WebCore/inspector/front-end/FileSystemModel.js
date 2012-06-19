@@ -147,12 +147,8 @@ WebInspector.FileSystemModel.prototype = {
         this._fileSystemsForOrigin[origin] = {};
 
         var types = ["persistent", "temporary"];
-        for (var i = 0; i < types.length; ++i) {
-            // FIXME(88602): Check if the filesystem is initialized, and show it only if it was.
-            var fileSystem = new WebInspector.FileSystemModel.FileSystem(this, origin, types[i]);
-            this._fileSystemsForOrigin[origin][types[i]] = fileSystem;
-            this._fileSystemAdded(fileSystem);
-        }
+        for (var i = 0; i < types.length; ++i)
+            this._agentWrapper.getFileSystemRoot(origin, types[i], this._gotFileSystem.bind(this, origin, types[i], this._fileSystemsForOrigin[origin]));
     },
 
     /**
@@ -186,13 +182,26 @@ WebInspector.FileSystemModel.prototype = {
 
     refreshFileSystemList: function()
     {
-        for (var origin in this._fileSystemsForOrigin)
-            for (var type in this._fileSystemsForOrigin[origin])
-                this._fileSystemRemoved(this._fileSystemsForOrigin[origin][type]);
+        if (WebInspector.resourceTreeModel.mainFrame) {
+            this._detachFrameRecursively(WebInspector.resourceTreeModel.mainFrame);
+            this._attachFrameRecursively(WebInspector.resourceTreeModel.mainFrame);
+        }
+    },
 
-        for (var origin in this._fileSystemsForOrigin)
-            for (var type in this._fileSystemsForOrigin[origin])
-                this._fileSystemAdded(this._fileSystemsForOrigin[origin][type]);
+    /**
+     * @param {string} origin
+     * @param {string} type
+     * @param {Object.<WebInspector.FileSystemModel.FileSystem>} store
+     * @param {number} errorCode
+     * @param {FileSystemAgent.Entry=} backendRootEntry
+     */
+    _gotFileSystem: function(origin, type, store, errorCode, backendRootEntry)
+    {
+        if (errorCode === 0 && backendRootEntry && this._fileSystemsForOrigin[origin] === store) {
+            var fileSystem = new WebInspector.FileSystemModel.FileSystem(this, origin, type, backendRootEntry);
+            store[type] = fileSystem;
+            this._fileSystemAdded(fileSystem);
+        }
     }
 }
 
@@ -208,8 +217,9 @@ WebInspector.FileSystemModel.prototype.__proto__ = WebInspector.Object.prototype
  * @param {WebInspector.FileSystemModel} fileSystemModel
  * @param {string} origin
  * @param {string} type
+ * @param {FileSystemAgent.Entry} backendRootEntry
  */
-WebInspector.FileSystemModel.FileSystem = function(fileSystemModel, origin, type)
+WebInspector.FileSystemModel.FileSystem = function(fileSystemModel, origin, type, backendRootEntry)
 {
     this.origin = origin;
     this.type = type;
@@ -227,6 +237,7 @@ WebInspector.FileSystemModel.FileSystem.prototype = {
  */
 WebInspector.FileSystemRequestManager = function()
 {
+    this._pendingGetFileSystemRootRequests = {};
     this._pendingReadDirectoryRequests = {};
 
     InspectorBackend.registerFileSystemDispatcher(new WebInspector.FileSystemDispatcher(this));
@@ -242,6 +253,32 @@ WebInspector.FileSystemRequestManager.prototype = {
     _requestId: function()
     {
         return WebInspector.FileSystemRequestManager.nextRequestId++;
+    },
+
+    /**
+     * @param {string} origin
+     * @param {string} type
+     * @param {function(number, FileSystemAgent.Entry)} callback
+     */
+    getFileSystemRoot: function(origin, type, callback)
+    {
+        var requestId = this._requestId();
+        this._pendingGetFileSystemRootRequests[requestId] = callback;
+        FileSystemAgent.getFileSystemRoot(requestId, origin, type);
+    },
+
+    /**
+     * @param {number} requestId
+     * @param {number} errorCode
+     * @param {FileSystemAgent.Entry=} backendRootEntry
+     */
+    _gotFileSystemRoot: function(requestId, errorCode, backendRootEntry)
+    {
+        var callback = this._pendingGetFileSystemRootRequests[requestId];
+        if (!callback)
+            return;
+        delete this._pendingGetFileSystemRootRequests[requestId];
+        callback(errorCode, backendRootEntry);
     },
 
     /**
@@ -281,6 +318,16 @@ WebInspector.FileSystemDispatcher = function(agentWrapper)
 }
 
 WebInspector.FileSystemDispatcher.prototype = {
+    /**
+     * @param {number} requestId
+     * @param {number} errorCode
+     * @param {FileSystemAgent.Entry=} backendRootEntry
+     */
+    gotFileSystemRoot: function(requestId, errorCode, backendRootEntry)
+    {
+        this._agentWrapper._gotFileSystemRoot(requestId, errorCode, backendRootEntry);
+    },
+
     /**
      * @param {number} requestId
      * @param {number} errorCode
