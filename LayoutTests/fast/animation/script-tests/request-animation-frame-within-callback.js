@@ -15,17 +15,17 @@ window.webkitRequestAnimationFrame(function() {
 }, e);
 
 // This should fire the three already registered callbacks, but not the one dynamically registered.
-if (window.layoutTestController)
-    layoutTestController.display();
+if (window.testRunner)
+    testRunner.display();
 // This should fire the dynamically registered callback.
-if (window.layoutTestController)
-    layoutTestController.display();
+if (window.testRunner)
+    testRunner.display();
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 setTimeout(function() {
     isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }, 200);

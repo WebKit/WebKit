@@ -1,9 +1,9 @@
 <html>
 Test passes if it does not crash.
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function runTest()
@@ -13,8 +13,8 @@ function runTest()
 
 	document.body.offsetTop;
     
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 setTimeout("runTest();", 0);

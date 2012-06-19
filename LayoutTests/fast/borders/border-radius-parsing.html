@@ -29,8 +29,8 @@
         document.body.removeChild(element);
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     testBorderRadiusValue("border-radius", "10px", ["10px", "10px", "10px", "10px"]);
     testBorderRadiusValue("border-radius", "10px 20px", ["10px", "20px", "10px", "20px"]);

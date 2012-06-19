@@ -42,8 +42,8 @@ window.onload = function() {
 
     splitBlockParent.removeChild(splitFlowDt); // Ensure the node with the bad positioned object list gets layout.
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 }
 </script>
 <body>

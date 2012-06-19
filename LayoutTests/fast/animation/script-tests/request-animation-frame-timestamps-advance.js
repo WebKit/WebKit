@@ -20,12 +20,12 @@ window.webkitRequestAnimationFrame(function(timestamp) {
         finishJSTest();
     });
     busyWait(10);
-    if (window.layoutTestController)
-        layoutTestController.display();
+    if (window.testRunner)
+        testRunner.display();
 });
 
 
-if (window.layoutTestController)
+if (window.testRunner)
     window.setTimeout(function() {
-        layoutTestController.display();
+        testRunner.display();
     });

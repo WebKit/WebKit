@@ -2,8 +2,8 @@
 <body onload="runTest();">
 Test passes if it does not crash.
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function runTest() {
         span0 = document.createElement('span');

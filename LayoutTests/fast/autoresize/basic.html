@@ -4,9 +4,9 @@
 <script>
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.enableAutoResizeMode(10, 10, 1000, 1000);
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.enableAutoResizeMode(10, 10, 1000, 1000);
+        testRunner.dumpAsText();
     }
     shouldBe('document.body.clientWidth', 'window.innerWidth');
     shouldBe('document.body.clientHeight', 'window.innerHeight');

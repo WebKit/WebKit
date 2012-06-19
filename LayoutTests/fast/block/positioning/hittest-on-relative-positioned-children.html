@@ -61,7 +61,7 @@ function runTest(boxName, testDiv) {
     }
 }
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     var tests = document.getElementById('tests').getElementsByTagName('div');
     for (var i = 0; i < tests.length; i++)
         runTest("box " + (i + 1), tests[i]);

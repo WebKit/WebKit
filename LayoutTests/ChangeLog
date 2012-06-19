@@ -1,3 +1,51 @@
+2012-06-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use testRunner instead of layoutTestController in fast/animation, autoresize, backgrounds, block, body-propagation, borders, and box-* tests
+        https://bugs.webkit.org/show_bug.cgi?id=89422
+
+        Reviewed by Kent Tamura.
+
+        * fast/animation/request-animation-frame-detach-element.html:
+        * fast/animation/request-animation-frame-detach-element2.html:
+        * fast/animation/request-animation-frame-disabled.html:
+        * fast/animation/request-animation-frame-during-modal.html:
+        * fast/animation/request-animation-frame-iframe.html:
+        * fast/animation/script-tests/request-animation-frame-cancel.js:
+        * fast/animation/script-tests/request-animation-frame-cancel2.js:
+        * fast/animation/script-tests/request-animation-frame-disabled.js:
+        * fast/animation/script-tests/request-animation-frame-timestamps-advance.js:
+        * fast/animation/script-tests/request-animation-frame-timestamps.js:
+        * fast/animation/script-tests/request-animation-frame-within-callback.js:
+        * fast/animation/script-tests/request-animation-frame.js:
+        * fast/autoresize/autoresize-with-iframe.html:
+        * fast/autoresize/basic.html:
+        * fast/autoresize/turn-off-autoresize.html:
+        * fast/backgrounds/animated-gif-as-background.html:
+        * fast/backgrounds/animated-svg-as-mask.html:
+        * fast/backgrounds/background-fast-path-simple-color.html:
+        * fast/backgrounds/background-fill-zero-area-crash.html:
+        * fast/backgrounds/background-repeat-computed-style.html:
+        * fast/backgrounds/multiple-backgrounds-assert.html:
+        * fast/backgrounds/root-background-propagation.html:
+        * fast/backgrounds/root-background-propagation2.html:
+        * fast/backgrounds/size/contain-and-cover-zoomed.html:
+        * fast/backgrounds/solid-color-context-restore.html:
+        * fast/block/:
+        * fast/borders/border-image-reset-by-border-shorthand.html:
+        * fast/borders/border-image-slice-omission.html:
+        * fast/borders/border-mixed-alpha.html:
+        * fast/borders/border-radius-complex-inner.html:
+        * fast/borders/border-radius-parsing.html:
+        * fast/borders/negative-border-width.html:
+        * fast/borders/outline-alpha-block.html:
+        * fast/borders/outline-alpha-inline.html:
+        * fast/box-shadow/box-shadow-clipped-slices.html:
+        * fast/box-shadow/box-shadow-currentcolor.html:
+        * fast/box-shadow/no-blur-multiple-offsets.html:
+        * fast/box-shadow/resources/box-shadow-overflow-scroll.js:
+        * fast/box-shadow/spread-multiple-inset.html:
+        * fast/box-shadow/spread-multiple-normal.html:
+
 2012-06-18  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, updating baselines after rollouts in r120627.

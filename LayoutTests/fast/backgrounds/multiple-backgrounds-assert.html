@@ -25,9 +25,9 @@
 
   <script type="text/javascript" charset="utf-8">
 
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
     }
 
     function runTest()
@@ -35,8 +35,8 @@
       document.getElementById('box').className = 'box final';
       window.setTimeout(function() {
         document.getElementById('box').style.display = 'none';
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }, 0);
     }
   

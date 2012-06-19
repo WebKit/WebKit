@@ -148,8 +148,8 @@
             else
                 addResult("red", "FAILED: redHeight (" + redHeight + ") != blueHeight (" + blueHeight + ")");
 
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
         </script>
 
     </body>

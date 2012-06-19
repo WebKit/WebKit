@@ -6,10 +6,10 @@
 </span>
 <div id="result"></div>
 <script>
-if (window.layoutTestController)
+if (window.testRunner)
 {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function runTest()
@@ -31,8 +31,8 @@ function runTest()
     document.body.removeChild(listItem);
 
     document.getElementById('result').innerHTML = "PASS";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </body>

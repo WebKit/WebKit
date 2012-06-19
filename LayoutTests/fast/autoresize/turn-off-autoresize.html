@@ -4,9 +4,9 @@
 <script>
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.enableAutoResizeMode(10, 10, 1000, 1000);
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.enableAutoResizeMode(10, 10, 1000, 1000);
+        testRunner.dumpAsText();
     }
     shouldBe('document.body.clientWidth', 'window.innerWidth');
     shouldBe('document.body.clientHeight', 'window.innerHeight');
@@ -14,8 +14,8 @@ function runTest()
     shouldBe('document.body.scrollHeight', 'window.innerHeight');
     shouldBe('window.innerWidth', 'window.outerWidth');
     shouldBe('window.innerHeight', 'window.outerHeight');
-    if (window.layoutTestController)
-        layoutTestController.disableAutoResizeMode(200, 200);
+    if (window.testRunner)
+        testRunner.disableAutoResizeMode(200, 200);
 
     shouldBe('window.outerWidth', 200);
     shouldBe('window.outerHeight', 200);

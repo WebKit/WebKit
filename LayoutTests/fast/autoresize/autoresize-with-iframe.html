@@ -2,11 +2,11 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.enableAutoResizeMode(10, 10, 1000, 1000);
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.enableAutoResizeMode(10, 10, 1000, 1000);
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
 }
 
 function run()
@@ -14,7 +14,7 @@ function run()
     var frameWindow = document.getElementById("frame").contentWindow;
     frameWindow.postMessage("shouldBe('document.body.scrollWidth', 400)", "*");
     frameWindow.postMessage("shouldBe('document.body.scrollHeight', 200)", "*");
-    frameWindow.postMessage("log('DONE'); if (window.layoutTestController) layoutTestController.notifyDone();", "*");
+    frameWindow.postMessage("log('DONE'); if (window.testRunner) testRunner.notifyDone();", "*");
 }
 </script>
 </head>

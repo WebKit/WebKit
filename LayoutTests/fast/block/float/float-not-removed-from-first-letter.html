@@ -7,8 +7,8 @@ Webkit Bug 86019 - Crash due to floats not removed from first-letter element.
 .li2:first-of-type { display: -webkit-inline-flexbox; }
 </style>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
     
 function crash() {
     li1 = document.createElement('li');

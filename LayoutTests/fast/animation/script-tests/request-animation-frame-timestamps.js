@@ -20,11 +20,11 @@ window.webkitRequestAnimationFrame(function(timestamp) {
     shouldBe("firstTimestamp", "secondTimestamp");
 });
 
-if (window.layoutTestController)
-    layoutTestController.display();
+if (window.testRunner)
+    testRunner.display();
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 setTimeout(function() {
     shouldBeDefined("firstTimestamp");
@@ -32,6 +32,6 @@ setTimeout(function() {
 
 setTimeout(function() {
     isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }, 200);

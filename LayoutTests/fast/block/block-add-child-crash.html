@@ -14,8 +14,8 @@ The test passes if it doesn't CRASH nor ASSERT.
 <textarea></textarea>
 </li>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.body.offsetTop;
 var test = document.getElementById("test");

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 window.onload = function() {
     var el = document.getElementsByTagName("iframe")[0];
@@ -10,10 +10,10 @@ window.onload = function() {
         el.parentNode.removeChild(el);
     });
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         window.setTimeout(function() {
-            layoutTestController.display();
-            layoutTestController.notifyDone();
+            testRunner.display();
+            testRunner.notifyDone();
         }, 50);
     }
 }

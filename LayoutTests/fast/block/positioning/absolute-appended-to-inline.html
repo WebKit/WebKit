@@ -1,15 +1,15 @@
 <html>
 <head>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         function measureBlockPosition() {
             if (document.getElementById("block").offsetTop > document.getElementById("hover").offsetHeight)
               document.getElementById("console").innerHTML = "SUCCESS";
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
 
         function updateBlock() {
@@ -19,7 +19,7 @@
 
         function test(){
             var element = document.getElementById('hover');
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 eventSender.mouseMoveTo(element.offsetLeft + 5, element.offsetTop + 5);
             }
         }

@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function test()
 {
@@ -16,8 +16,8 @@ function release()
 {
     if (window.eventSender)
         eventSender.mouseUp();
-    if (window.layoutTestController)
-	setTimeout("layoutTestController.notifyDone()", 0);
+    if (window.testRunner)
+	setTimeout("testRunner.notifyDone()", 0);
 }
 
 </script>

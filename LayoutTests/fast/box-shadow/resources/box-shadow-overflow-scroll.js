@@ -29,6 +29,6 @@ element.scrollTop = 500;
 shouldBe("element.scrollTop", "40+50+60");
 
 // If we are in DTR, we don't need meaningless trailing messages.
-if (window.layoutTestController) {
+if (window.testRunner) {
     document.getElementById("main").innerHTML = "";
 }

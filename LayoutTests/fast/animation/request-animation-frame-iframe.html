@@ -10,16 +10,16 @@
 
         var callbackInvoked = false;
     
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         // Called from subframe.
         function doDisplay()
         {
-            if (window.layoutTestController)
-                layoutTestController.display();
+            if (window.testRunner)
+                testRunner.display();
         }
     
         function doCheckResult()
@@ -30,8 +30,8 @@
         function doTestDone()
         {
             isSuccessfullyParsed();
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </body>

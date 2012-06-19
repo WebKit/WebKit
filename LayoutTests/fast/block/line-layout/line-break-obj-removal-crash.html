@@ -24,8 +24,8 @@ window.onload = function() {
 
     document.documentElement.appendChild(document.createTextNode('PASS, if no crash or assert in debug'));
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 }
 </script>
 </html>
