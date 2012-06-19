@@ -1,3 +1,14 @@
+2012-06-18  Andy Estes  <aestes@apple.com>
+
+        [Mac] -[WebPDFView _menuItemsFromPDFKitForEvent:] leaks NSMenuItems
+        https://bugs.webkit.org/show_bug.cgi?id=89434
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView _menuItemsFromPDFKitForEvent:]): Release copied
+        NSMenuItems once they're stored in copiedItems.
+
 2012-06-19  Mike West  <mkwst@chromium.org>
 
         Introduce ENABLE_CSP_NEXT configuration flag.

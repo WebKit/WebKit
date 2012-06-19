@@ -1151,6 +1151,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
         // want to modify the original menu supplied by PDFKit.
         NSMenuItem *itemCopy = [item copy];
         [copiedItems addObject:itemCopy];
+        [itemCopy release];
         
         // Include all of PDFKit's separators for now. At the end we'll remove any ones that were made
         // useless by removing PDFKit's menu items.
