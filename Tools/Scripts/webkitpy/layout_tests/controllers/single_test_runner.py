@@ -46,7 +46,8 @@ def run_single_test(port, options, test_input, driver, worker_name):
     return runner.run()
 
 
-class SingleTestRunner:
+class SingleTestRunner(object):
+    (ALONGSIDE_TEST, PLATFORM_DIR, VERSION_DIR, UPDATE) = ('alongside', 'platform', 'version', 'update')
 
     def __init__(self, options, port, driver, test_input, worker_name):
         self._options = options
@@ -94,12 +95,12 @@ class SingleTestRunner:
 
     def run(self):
         if self._reference_files:
-            if self._port.get_option('no_ref_tests') or self._options.new_baseline or self._options.reset_results:
+            if self._port.get_option('no_ref_tests') or self._options.reset_results:
                 result = TestResult(self._test_name)
                 result.type = test_expectations.SKIP
                 return result
             return self._run_reftest()
-        if self._options.new_baseline or self._options.reset_results:
+        if self._options.reset_results:
             return self._run_rebaseline()
         return self._run_compare_test()
 
@@ -121,7 +122,7 @@ class SingleTestRunner:
         driver_output = self._driver.run_test(self._driver_input())
         failures = self._handle_error(driver_output)
         test_result_writer.write_test_result(self._filesystem, self._port, self._test_name, driver_output, None, failures)
-        # FIXME: It the test crashed or timed out, it might be bettter to avoid
+        # FIXME: It the test crashed or timed out, it might be better to avoid
         # to write new baselines.
         self._overwrite_baselines(driver_output)
         return TestResult(self._test_name, failures, driver_output.test_time, driver_output.has_stderr())
@@ -131,49 +132,50 @@ class SingleTestRunner:
     def _add_missing_baselines(self, test_result, driver_output):
         missingImage = test_result.has_failure_matching_types(test_failures.FailureMissingImage, test_failures.FailureMissingImageHash)
         if test_result.has_failure_matching_types(test_failures.FailureMissingResult):
-            self._save_baseline_data(driver_output.text, ".txt", SingleTestRunner._render_tree_dump_pattern.match(driver_output.text))
+            self._save_baseline_data(driver_output.text, '.txt', self._location_for_new_baseline(driver_output.text, '.txt'))
         if test_result.has_failure_matching_types(test_failures.FailureMissingAudio):
-            self._save_baseline_data(driver_output.audio, ".wav", generate_new_baseline=False)
+            self._save_baseline_data(driver_output.audio, '.wav', self._location_for_new_baseline(driver_output.audio, '.wav'))
         if missingImage:
-            self._save_baseline_data(driver_output.image, ".png", generate_new_baseline=True)
+            self._save_baseline_data(driver_output.image, '.png', self._location_for_new_baseline(driver_output.image, '.png'))
+
+    def _location_for_new_baseline(self, data, extension):
+        if self._options.add_platform_exceptions:
+            return self.VERSION_DIR
+        if extension == '.png':
+            return self.PLATFORM_DIR
+        if extension == '.wav':
+            return self.ALONGSIDE_TEST
+        if extension == '.txt' and self._render_tree_dump_pattern.match(data):
+            return self.PLATFORM_DIR
+        return self.ALONGSIDE_TEST
 
     def _overwrite_baselines(self, driver_output):
-        # Although all DumpRenderTree output should be utf-8,
-        # we do not ever decode it inside run-webkit-tests.  For some tests
-        # DumpRenderTree may not output utf-8 text (e.g. webarchives).
-        self._save_baseline_data(driver_output.text, ".txt", generate_new_baseline=self._options.new_baseline)
-        self._save_baseline_data(driver_output.audio, ".wav", generate_new_baseline=self._options.new_baseline)
+        location = self.VERSION_DIR if self._options.add_platform_exceptions else self.UPDATE
+        self._save_baseline_data(driver_output.text, '.txt', location)
+        self._save_baseline_data(driver_output.audio, '.wav', location)
         if self._options.pixel_tests:
-            self._save_baseline_data(driver_output.image, ".png", generate_new_baseline=self._options.new_baseline)
+            self._save_baseline_data(driver_output.image, '.png', location)
 
-    def _save_baseline_data(self, data, modifier, generate_new_baseline=True):
-        """Saves a new baseline file into the port's baseline directory.
-
-        The file will be named simply "<test>-expected<modifier>", suitable for
-        use as the expected results in a later run.
-
-        Args:
-          data: result to be saved as the new baseline
-          modifier: type of the result file, e.g. ".txt" or ".png"
-          generate_new_baseline: whether to enerate a new, platform-specific
-            baseline, or update the existing one
-        """
+    def _save_baseline_data(self, data, extension, location):
         if data is None:
             return
         port = self._port
         fs = self._filesystem
-        if generate_new_baseline:
-            relative_dir = fs.dirname(self._test_name)
-            baseline_path = port.baseline_path()
-            output_dir = fs.join(baseline_path, relative_dir)
-            output_file = fs.basename(fs.splitext(self._test_name)[0] + "-expected" + modifier)
-            fs.maybe_make_directory(output_dir)
-            output_path = fs.join(output_dir, output_file)
+        if location == self.ALONGSIDE_TEST:
+            output_dir = fs.dirname(port.abspath_for_test(self._test_name))
+        elif location == self.VERSION_DIR:
+            output_dir = fs.join(port.baseline_version_dir(), fs.dirname(self._test_name))
+        elif location == self.PLATFORM_DIR:
+            output_dir = fs.join(port.baseline_platform_dir(), fs.dirname(self._test_name))
+        elif location == self.UPDATE:
+            output_dir = fs.dirname(port.expected_filename(self._test_name, extension))
         else:
-            output_path = port.expected_filename(self._test_name, modifier)
+            raise AssertionError('unrecognized baseline location: %s' % location)
 
-        result_name = fs.relpath(output_path, port.layout_tests_dir())
-        _log.info('Writing new expected result "%s"' % result_name)
+        fs.maybe_make_directory(output_dir)
+        output_basename = fs.basename(fs.splitext(self._test_name)[0] + "-expected" + extension)
+        output_path = fs.join(output_dir, output_basename)
+        _log.info('Writing new expected result "%s"' % port.relative_test_filename(output_path))
         port.update_baseline(output_path, data)
 
     def _handle_error(self, driver_output, reference_filename=None):

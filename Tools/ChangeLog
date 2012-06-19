@@ -1,5 +1,42 @@
 2012-06-19  Dirk Pranke  <dpranke@chromium.org>
 
+        REGRESSION (NRWT): Results for new non-text-only tests are always put in the most-specific platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=78127
+
+        Reviewed by Ryosuke Niwa.
+
+        Add the --add-platform-exceptions flag from ORWT, and ensure
+        that --new-baseline is equivalent to --reset-results
+        --add-platform-exceptions. Also fix the default logic for where to
+        put PNGs and render tree dumps if --new-test-results is true:
+        if --add-platform-exceptions is False, baselines should go in
+        the least-specific platform directory (e.g., platform/mac)
+        rather than the most-specific (platform/mac-snowleopard).
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner):
+        (SingleTestRunner.run):
+        (SingleTestRunner._run_rebaseline):
+        (SingleTestRunner._add_missing_baselines):
+        (SingleTestRunner._location_for_new_baseline):
+        (SingleTestRunner._overwrite_baselines):
+        (SingleTestRunner._save_baseline_data):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.baseline_path):
+        (Port):
+        (Port.baseline_platform_dir):
+        (Port.baseline_version_dir):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RebaselineTest.assertBaselines):
+        (RebaselineTest.test_reset_results):
+        (RebaselineTest.test_missing_results):
+        (RebaselineTest.test_new_baseline):
+
+2012-06-19  Dirk Pranke  <dpranke@chromium.org>
+
         NRWT should not take memory used as disk cache into account when deciding how many processes to launch
         https://bugs.webkit.org/show_bug.cgi?id=81379
 

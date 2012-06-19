@@ -930,7 +930,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         "assert that the file_list contains the baselines."""
         for ext in extensions:
             baseline = file + "-expected" + ext
-            baseline_msg = 'Writing new expected result "%s"\n' % baseline[1:]
+            baseline_msg = 'Writing new expected result "%s"\n' % baseline
             self.assertTrue(any(f.find(baseline) != -1 for f in file_list))
             self.assertContainsLine(err, baseline_msg)
 
@@ -951,8 +951,8 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         self.assertEquals(res, 0)
         self.assertEmpty(out)
         self.assertEqual(len(file_list), 4)
-        self.assertBaselines(file_list, "/passes/image", [".txt", ".png"], err)
-        self.assertBaselines(file_list, "/failures/expected/missing_image", [".txt", ".png"], err)
+        self.assertBaselines(file_list, "passes/image", [".txt", ".png"], err)
+        self.assertBaselines(file_list, "failures/expected/missing_image", [".txt", ".png"], err)
 
     def test_missing_results(self):
         # Test that we update expectations in place. If the expectation
@@ -969,13 +969,13 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         self.assertEquals(res, 0)
         self.assertNotEmpty(out)
         self.assertEqual(len(file_list), 6)
-        self.assertBaselines(file_list, "/failures/unexpected/missing_text", [".txt"], err)
-        self.assertBaselines(file_list, "/platform/test-mac-leopard/failures/unexpected/missing_image", [".png"], err)
-        self.assertBaselines(file_list, "/platform/test-mac-leopard/failures/unexpected/missing_render_tree_dump", [".txt"], err)
+        self.assertBaselines(file_list, "failures/unexpected/missing_text", [".txt"], err)
+        self.assertBaselines(file_list, "platform/test/failures/unexpected/missing_image", [".png"], err)
+        self.assertBaselines(file_list, "platform/test/failures/unexpected/missing_render_tree_dump", [".txt"], err)
 
     def test_new_baseline(self):
-        # Test that we update the platform expectations. If the expectation
-        # is mssing, then create a new expectation in the platform dir.
+        # Test that we update the platform expectations in the version-specific directories
+        # for both existing and new baselines.
         host = MockHost()
         res, out, err, _ = logging_run(['--pixel-tests',
                         '--new-baseline',
@@ -988,9 +988,9 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         self.assertEmpty(out)
         self.assertEqual(len(file_list), 4)
         self.assertBaselines(file_list,
-            "/platform/test-mac-leopard/passes/image", [".txt", ".png"], err)
+            "platform/test-mac-leopard/passes/image", [".txt", ".png"], err)
         self.assertBaselines(file_list,
-            "/platform/test-mac-leopard/failures/expected/missing_image", [".txt", ".png"], err)
+            "platform/test-mac-leopard/failures/expected/missing_image", [".txt", ".png"], err)
 
 
 if __name__ == '__main__':

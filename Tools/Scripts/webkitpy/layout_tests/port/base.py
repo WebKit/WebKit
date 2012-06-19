@@ -165,6 +165,15 @@ class Port(object):
 
     def baseline_path(self):
         """Return the absolute path to the directory to store new baselines in for this port."""
+        # FIXME: remove once all callers are calling either baseline_version_dir() or baseline_platform_dir()
+        return self.baseline_version_dir()
+
+    def baseline_platform_dir(self):
+        """Return the absolute path to the default (version-independent) platform-specific results."""
+        return self._filesystem.join(self.layout_tests_dir(), 'platform', self.port_name)
+
+    def baseline_version_dir(self):
+        """Return the absolute path to the platform-and-version-specific results."""
         baseline_search_paths = self.get_option('additional_platform_directory', []) + self.baseline_search_path()
         return baseline_search_paths[0]
 

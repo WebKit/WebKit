@@ -167,6 +167,10 @@ def _set_up_derived_options(port, options):
     if options.ignore_metrics and (options.new_baseline or options.reset_results):
         warnings.append("--ignore-metrics has no effect with --new-baselines or with --reset-results")
 
+    if options.new_baseline:
+        options.reset_results = True
+        options.add_platform_exceptions = True
+
     return warnings
 
 
@@ -277,10 +281,12 @@ def parse_args(args=None):
         optparse.make_option("--results-directory", help="Location of test results"),
         optparse.make_option("--build-directory",
             help="Path to the directory under which build files are kept (should not include configuration)"),
+        optparse.make_option("--add-platform-exceptions", action="store_true", default=False,
+            help="Save generated results into the *most-specific-platform* directory rather than the *generic-platform* directory"),
         optparse.make_option("--new-baseline", action="store_true",
             default=False, help="Save generated results as new baselines "
-                 "into the *platform* directory, overwriting whatever's "
-                 "already there."),
+                 "into the *most-specific-platform* directory, overwriting whatever's "
+                 "already there. Equivalent to --reset-results --add-platform-exceptions"),
         optparse.make_option("--reset-results", action="store_true",
             default=False, help="Reset expectations to the "
                  "generated results in their existing location."),
