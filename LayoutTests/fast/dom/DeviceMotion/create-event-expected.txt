@@ -1,4 +1,4 @@
-Tests that document.createEvent() works with DeviceMotinEvent.
+Tests that document.createEvent() works with DeviceMotionEvent.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

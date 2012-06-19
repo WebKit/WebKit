@@ -1,4 +1,4 @@
-description("Tests that document.createEvent() works with DeviceMotinEvent.");
+description("Tests that document.createEvent() works with DeviceMotionEvent.");
 
 var event = document.createEvent('DeviceMotionEvent');
 

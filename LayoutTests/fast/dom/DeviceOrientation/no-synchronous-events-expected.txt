@@ -1,4 +1,4 @@
-Tests that events are never fired sycnhronously from a call to window.addEventListener().
+Tests that events are never fired synchronously from a call to window.addEventListener().
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

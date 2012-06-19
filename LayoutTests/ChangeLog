@@ -1,3 +1,15 @@
+2012-06-19  Amy Ousterhout  <aousterh@chromium.org>
+
+        Fixing Typos in DeviceOrientation and DeviceMotion Tests
+        https://bugs.webkit.org/show_bug.cgi?id=89339
+
+        Reviewed by Steve Block.
+
+        * fast/dom/DeviceMotion/create-event-expected.txt:
+        * fast/dom/DeviceMotion/script-tests/create-event.js:
+        * fast/dom/DeviceOrientation/no-synchronous-events-expected.txt:
+        * fast/dom/DeviceOrientation/script-tests/no-synchronous-events.js:
+
 2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip one more failing test.
