@@ -1,3 +1,15 @@
+2012-06-19  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [cairo] Fix LayoutTests/fast/canvas/patternfill-repeat.html
+        https://bugs.webkit.org/show_bug.cgi?id=53085
+
+        Reviewed by Martin Robinson.
+
+        canvas/philip/tests/2d.pattern.paint.repeat* tests now passing.
+
+        * platform/efl/Skipped:
+        * platform/gtk/TestExpectations:
+
 2012-06-19  Hayato Ito  <hayato@chromium.org>
 
         [Shadow DOM] An upper boundary breaks if a child node of an insertion point is clicked.

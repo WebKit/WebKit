@@ -1,3 +1,23 @@
+2012-06-19  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [cairo] Fix LayoutTests/fast/canvas/patternfill-repeat.html
+        https://bugs.webkit.org/show_bug.cgi?id=53085
+
+        Reviewed by Martin Robinson.
+
+        Clipping previously unlimited vertical and horizontal pattern repeats with
+        a clip rectangle similar to the Qt Graphics Context.
+
+        No new tests, this patch fixes
+        canvas/philip/tests/2d.pattern.paint.repeat* tests.
+
+        * platform/graphics/Pattern.h:
+        (WebCore::Pattern::getPatternSpaceTransform): Adding constant getter method to be able to map to pattern space externally, needed by PlatformContextCairo::clipForPatternFilling.
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::prepareForFilling):
+        (WebCore::PlatformContextCairo::clipForPatternFilling): Clip pattern repeats if needed.
+        * platform/graphics/cairo/PlatformContextCairo.h:
+
 2012-06-19  Hayato Ito  <hayato@chromium.org>
 
         [Shadow DOM] An upper boundary breaks if a child node of an insertion point is clicked.

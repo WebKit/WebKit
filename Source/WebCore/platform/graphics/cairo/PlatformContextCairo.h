@@ -68,6 +68,8 @@ public:
     void prepareForStroking(const GraphicsContextState&, AlphaPreservation = PreserveAlpha);
 
 private:
+    void clipForPatternFilling(const GraphicsContextState&);
+
     RefPtr<cairo_t> m_cr;
 
     class State;
