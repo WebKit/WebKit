@@ -39,7 +39,6 @@
 #include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
 #include "InspectorFrontend.h"
-#include "InspectorInstrumentation.h"
 #include "InspectorProtocolVersion.h"
 #include "MemoryCache.h"
 #include "Page.h"
@@ -65,7 +64,6 @@
 #include "platform/WebURLResponse.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
-#include <public/Platform.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
@@ -545,28 +543,6 @@ void WebDevToolsAgentImpl::clearBrowserCache()
 void WebDevToolsAgentImpl::clearBrowserCookies()
 {
     m_client->clearBrowserCookies();
-}
-
-void WebDevToolsAgentImpl::startMainThreadMonitoring()
-{
-    WebKit::Platform::current()->currentThread()->addTaskObserver(this);
-}
-
-void WebDevToolsAgentImpl::stopMainThreadMonitoring()
-{
-    WebKit::Platform::current()->currentThread()->removeTaskObserver(this);
-}
-
-void WebDevToolsAgentImpl::willProcessTask()
-{
-    if (Page* page = m_webViewImpl->page())
-        InspectorInstrumentation::willProcessTask(page);
-}
-
-void WebDevToolsAgentImpl::didProcessTask()
-{
-    if (Page* page = m_webViewImpl->page())
-        InspectorInstrumentation::didProcessTask(page);
 }
 
 void WebDevToolsAgentImpl::setProcessId(long processId)
