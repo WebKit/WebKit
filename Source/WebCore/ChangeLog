@@ -1,3 +1,21 @@
+2012-06-18  Adrienne Walker  <enne@google.com>
+
+        RenderLayerBacking sometimes doesn't attach scrollbars to graphics layer tree
+        https://bugs.webkit.org/show_bug.cgi?id=89402
+
+        Reviewed by James Robinson.
+
+        RenderLayerBacking only attaches scrollbar layers to the graphics
+        layer tree if there's a clip layer. This is wrong, because these
+        scrollbars become orphans and other code expects them to handle
+        repainting the scrollbars (which now become invisible). Fix by always
+        attaching scrollbar layers.
+
+        Test: compositing/overflow/image-load-overflow-scrollbars.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateInternalHierarchy):
+
 2012-06-18  Amy Ousterhout  <aousterh@chromium.org>
 
         [Chromium] DeviceOrientation Cleanup

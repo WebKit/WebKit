@@ -610,22 +610,22 @@ void RenderLayerBacking::updateInternalHierarchy()
     if (m_clippingLayer) {
         m_clippingLayer->removeFromParent();
         m_graphicsLayer->addChild(m_clippingLayer.get());
+    }
 
-        // The clip for child layers does not include space for overflow controls, so they exist as
-        // siblings of the clipping layer if we have one. Normal children of this layer are set as
-        // children of the clipping layer.
-        if (m_layerForHorizontalScrollbar) {
-            m_layerForHorizontalScrollbar->removeFromParent();
-            m_graphicsLayer->addChild(m_layerForHorizontalScrollbar.get());
-        }
-        if (m_layerForVerticalScrollbar) {
-            m_layerForVerticalScrollbar->removeFromParent();
-            m_graphicsLayer->addChild(m_layerForVerticalScrollbar.get());
-        }
-        if (m_layerForScrollCorner) {
-            m_layerForScrollCorner->removeFromParent();
-            m_graphicsLayer->addChild(m_layerForScrollCorner.get());
-        }
+    // The clip for child layers does not include space for overflow controls, so they exist as
+    // siblings of the clipping layer if we have one. Normal children of this layer are set as
+    // children of the clipping layer.
+    if (m_layerForHorizontalScrollbar) {
+        m_layerForHorizontalScrollbar->removeFromParent();
+        m_graphicsLayer->addChild(m_layerForHorizontalScrollbar.get());
+    }
+    if (m_layerForVerticalScrollbar) {
+        m_layerForVerticalScrollbar->removeFromParent();
+        m_graphicsLayer->addChild(m_layerForVerticalScrollbar.get());
+    }
+    if (m_layerForScrollCorner) {
+        m_layerForScrollCorner->removeFromParent();
+        m_graphicsLayer->addChild(m_layerForScrollCorner.get());
     }
 }
 
