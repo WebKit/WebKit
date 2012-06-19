@@ -1,3 +1,16 @@
+2012-06-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r120586.
+        http://trac.webkit.org/changeset/120586
+        https://bugs.webkit.org/show_bug.cgi?id=89444
+
+        doesn't fix mac issue (Requested by morrita on #webkit).
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::replaceMisspelledRange):
+
 2012-06-19  Mike West  <mkwst@chromium.org>
 
         Add a scheme registry for bypassing Content Security Policy.
