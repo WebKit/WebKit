@@ -1,3 +1,47 @@
+2012-06-19  Mike West  <mkwst@chromium.org>
+
+        Add a scheme registry for bypassing Content Security Policy.
+        https://bugs.webkit.org/show_bug.cgi?id=89373
+
+        Reviewed by Adam Barth.
+
+        The Content Security Policy specification notes that "Enforcing a CSP
+        policy should not interfere with the operation of user-supplied scripts
+        such as third-party user-agent add-ons and JavaScript bookmarklets."
+        (https://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html#processing-model)
+        This use case can be at least partially addressed by adding a scheme
+        registry for certain types of URLs whose resources should be loaded
+        regardless of a page's defined policy directives.
+
+        See http://crbug.com/133223 for additional context.
+
+        Test: http/tests/security/contentSecurityPolicy/register-bypassing-scheme.html
+
+        * WebCore.exp.in:
+            Exporting new symbols for use by Internals.
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::isAllowedByAllWithURL):
+            Adding a check against the new SchemeRegistry method to determine
+            whether or not we should proceed with checking the URL against the
+            policy.
+        * platform/SchemeRegistry.cpp:
+        (WebCore::CSPBypassingSchemes):
+        (WebCore):
+        (WebCore::SchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy):
+        (WebCore::SchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy):
+        (WebCore::SchemeRegistry::schemeShouldBypassContentSecurityPolicy):
+        * platform/SchemeRegistry.h:
+        (SchemeRegistry):
+            Adding the scheme registry for CSP-bypassing URL schemes.
+        * testing/Internals.cpp:
+        (WebCore):
+        (WebCore::Internals::registerURLSchemeAsBypassingContentSecurityPolicy):
+        (WebCore::Internals::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+            Adding a method to Internals so that we can write a layout test.
+
 2012-06-18  Andy Estes  <aestes@apple.com>
 
         [Mac] Editor::fontAttributesForSelectionStart() leaks a NSShadow

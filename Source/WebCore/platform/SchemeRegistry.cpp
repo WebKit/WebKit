@@ -164,6 +164,12 @@ static URLSchemesMap& CORSEnabledSchemes()
     return CORSEnabledSchemes;
 }
 
+static URLSchemesMap& ContentSecurityPolicyBypassingSchemes()
+{
+    DEFINE_STATIC_LOCAL(URLSchemesMap, schemes, ());
+    return schemes;
+}
+
 bool SchemeRegistry::shouldTreatURLSchemeAsLocal(const String& scheme)
 {
     if (scheme.isEmpty())
@@ -295,6 +301,23 @@ bool SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(const String& scheme)
     if (scheme.isEmpty())
         return false;
     return CORSEnabledSchemes().contains(scheme);
+}
+
+void SchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme)
+{
+    ContentSecurityPolicyBypassingSchemes().add(scheme);
+}
+
+void SchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme)
+{
+    ContentSecurityPolicyBypassingSchemes().remove(scheme);
+}
+
+bool SchemeRegistry::schemeShouldBypassContentSecurityPolicy(const String& scheme)
+{
+    if (scheme.isEmpty())
+        return false;
+    return ContentSecurityPolicyBypassingSchemes().contains(scheme);
 }
 
 } // namespace WebCore

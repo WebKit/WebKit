@@ -58,6 +58,7 @@
 #include "Range.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
+#include "SchemeRegistry.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SpellChecker.h"
@@ -1144,4 +1145,15 @@ void Internals::webkitDidExitFullScreenForElement(Document* document, Element* e
     document->webkitDidExitFullScreenForElement(element);
 }
 #endif
+
+void Internals::registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme)
+{
+    SchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy(scheme);
+}
+
+void Internals::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme)
+{
+    SchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(scheme);
+}
+
 }

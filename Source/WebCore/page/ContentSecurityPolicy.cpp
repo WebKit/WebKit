@@ -34,6 +34,7 @@
 #include "InspectorInstrumentation.h"
 #include "InspectorValues.h"
 #include "PingLoader.h"
+#include "SchemeRegistry.h"
 #include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
 #include "TextEncoding.h"
@@ -1018,6 +1019,9 @@ bool isAllowedByAllWithContext(const CSPDirectiveListVector& policies, const Str
 template<bool (CSPDirectiveList::*allowFromURL)(const KURL&) const>
 bool isAllowedByAllWithURL(const CSPDirectiveListVector& policies, const KURL& url)
 {
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+        return true;
+
     for (size_t i = 0; i < policies.size(); ++i) {
         if (!(policies[i].get()->*allowFromURL)(url))
             return false;

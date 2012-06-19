@@ -163,6 +163,9 @@ module window {
         void webkitWillExitFullScreenForElement(in Document document, in Element element);
         void webkitDidExitFullScreenForElement(in Document document, in Element element);
 #endif
+
+        void registerURLSchemeAsBypassingContentSecurityPolicy(in DOMString scheme);
+        void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(in DOMString scheme);
     };
 }
 

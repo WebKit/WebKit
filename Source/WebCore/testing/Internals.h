@@ -190,6 +190,9 @@ public:
     void webkitDidExitFullScreenForElement(Document*, Element*);
 #endif
 
+    void registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme);
+    void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme);
+
 private:
     explicit Internals(Document*);
     DocumentMarker* markerAt(Node*, const String& markerType, unsigned index, ExceptionCode&);

@@ -61,8 +61,11 @@ public:
     // included by an HTTPS page.
     WEBKIT_EXPORT static void registerURLSchemeAsSecure(const WebString&);
 
-    // Registers a non-HTTP URL scheme which can be sent CORS requests. 
+    // Registers a non-HTTP URL scheme which can be sent CORS requests.
     WEBKIT_EXPORT static void registerURLSchemeAsCORSEnabled(const WebString&);
+
+    // Registers a URL scheme whose resources can be loaded regardless of a page's Content Security Policy.
+    WEBKIT_EXPORT static void registerURLSchemeAsBypassingContentSecurityPolicy(const WebString&);
 
     // Registers a URL scheme as strictly empty documents, allowing them to
     // commit synchronously.
