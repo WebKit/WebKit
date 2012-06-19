@@ -259,6 +259,7 @@ fast/events/input-element-display-none-in-dragleave-crash.html
 fast/forms/file/file-input-reset.html
 fast/forms/file/file-reset-in-change.html
 fast/forms/file/input-file-directory-upload.html
+fast/forms/file/input-file-entries.html
 fast/forms/file/input-file-re-render.html
 fast/forms/file/recover-file-input-in-unposted-form.html
 http/tests/security/clipboard/clipboard-file-access.html

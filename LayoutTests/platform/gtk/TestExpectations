@@ -159,6 +159,7 @@ BUGWKGTK SKIP : http/tests/websocket/tests/hybi/send-file-blob.html = TEXT
 BUGWKGTK SKIP : http/tests/websocket/tests/hybi/send-file-blob-fail.html = TEXT
 BUGWKGTK SKIP : http/tests/workers/terminate-during-sync-operation.html = TEXT
 BUGWKGTK SKIP : fast/mutation/filesystem-callback-delivery.html = TEXT
+BUGWKGTK SKIP : fast/forms/file/input-file-entries.html = TEXT
 
 // Requires WebP support.
 BUGWKGTK SKIP : fast/canvas/canvas-toDataURL-webp.html = TEXT

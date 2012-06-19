@@ -1132,6 +1132,9 @@ media/media-can-play-flac-audio.html
 # Requires ENABLE(MEDIA_CAPTURE)
 fast/forms/file/file-input-capture.html
 
+# Requires ENABLE(FILE_SYSTEM)
+fast/forms/file/input-file-entries.html
+
 # Transparent image being produced
 fast/frames/transparent-scrollbar.html
 

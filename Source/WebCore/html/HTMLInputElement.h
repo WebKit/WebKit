@@ -219,6 +219,10 @@ public:
     // Returns true if the given DragData has more than one dropped files.
     bool receiveDroppedFiles(const DragData*);
 
+#if ENABLE(FILE_SYSTEM)
+    String droppedFileSystemId();
+#endif
+
     Icon* icon() const;
     // These functions are used for rendering the input active during a
     // drag-and-drop operation.

@@ -1,3 +1,24 @@
+2012-06-12  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Support File/DirectoryEntry access for <input type=file> if FileSystem API is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=88293
+
+        Reviewed by Tony Chang.
+
+        * fast/forms/file/input-file-entries-expected.txt: Added.
+        * fast/forms/file/input-file-entries.html: Added.
+        * fast/forms/resources/dir1/UTF8-2.txt: Added.
+        * fast/forms/resources/dir1/UTF8.txt: Added.
+        * fast/forms/resources/dir2/green.jpg: Added.
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-06-18  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Crash][Editing] VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries() crashes in some Shadow DOM case.
