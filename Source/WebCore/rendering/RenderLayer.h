@@ -441,7 +441,8 @@ public:
     // ditto for hasVisibleDescendant(), see https://bugs.webkit.org/show_bug.cgi?id=71277
     bool hasVisibleContent() const { return m_hasVisibleContent; }
     bool hasVisibleDescendant() const { return m_hasVisibleDescendant; }
-    void setHasVisibleContent(bool);
+
+    void setHasVisibleContent();
     void dirtyVisibleContentStatus();
 
     // FIXME: We should ASSERT(!m_hasSelfPaintingLayerDescendantDirty); here but we hit the same bugs as visible content above.
@@ -782,8 +783,8 @@ private:
     
     void updateScrollableAreaSet(bool hasOverflow);
 
-    void childVisibilityChanged(bool newVisibility);
-    void dirtyVisibleDescendantStatus();
+    void dirtyAncestorChainVisibleDescendantStatus();
+    void setAncestorChainHasVisibleDescendant();
 
     void updateDescendantDependentFlags();
 

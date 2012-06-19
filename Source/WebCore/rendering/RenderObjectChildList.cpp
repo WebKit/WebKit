@@ -194,7 +194,7 @@ void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* n
             if (!layer)
                 layer = owner->enclosingLayer();
             if (layer)
-                layer->setHasVisibleContent(true);
+                layer->setHasVisibleContent();
         }
 
         if (newChild->isListItem())
@@ -261,7 +261,7 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
             if (!layer)
                 layer = owner->enclosingLayer();
             if (layer)
-                layer->setHasVisibleContent(true);
+                layer->setHasVisibleContent();
         }
 
         if (child->isListItem())

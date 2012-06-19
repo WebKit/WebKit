@@ -632,53 +632,56 @@ void RenderLayer::updatePagination()
     }
 }
 
-void RenderLayer::setHasVisibleContent(bool b)
+void RenderLayer::setHasVisibleContent()
 { 
-    if (m_hasVisibleContent == b && !m_visibleContentStatusDirty)
+    if (m_hasVisibleContent && !m_visibleContentStatusDirty) {
+        ASSERT(!parent() || parent()->hasVisibleDescendant());
         return;
+    }
+
     m_visibleContentStatusDirty = false; 
-    m_hasVisibleContent = b;
-    if (m_hasVisibleContent) {
-        computeRepaintRects();
-        if (!isNormalFlowOnly()) {
-            for (RenderLayer* sc = stackingContext(); sc; sc = sc->stackingContext()) {
-                sc->dirtyZOrderLists();
-                if (sc->hasVisibleContent())
-                    break;
-            }
+    m_hasVisibleContent = true;
+    computeRepaintRects();
+    if (!isNormalFlowOnly()) {
+        // We don't collect invisible layers in z-order lists if we are not in compositing mode.
+        // As we became visible, we need to dirty our stacking contexts ancestors to be properly
+        // collected. FIXME: When compositing, we could skip this dirtying phase.
+        for (RenderLayer* sc = stackingContext(); sc; sc = sc->stackingContext()) {
+            sc->dirtyZOrderLists();
+            if (sc->hasVisibleContent())
+                break;
         }
     }
+
     if (parent())
-        parent()->childVisibilityChanged(m_hasVisibleContent);
+        parent()->setAncestorChainHasVisibleDescendant();
 }
 
 void RenderLayer::dirtyVisibleContentStatus() 
 { 
     m_visibleContentStatusDirty = true; 
     if (parent())
-        parent()->dirtyVisibleDescendantStatus();
+        parent()->dirtyAncestorChainVisibleDescendantStatus();
 }
 
-void RenderLayer::childVisibilityChanged(bool newVisibility) 
-{ 
-    if (m_hasVisibleDescendant == newVisibility || m_visibleDescendantStatusDirty)
-        return;
-    if (newVisibility) {
-        RenderLayer* l = this;
-        while (l && !l->m_visibleDescendantStatusDirty && !l->m_hasVisibleDescendant) {
-            l->m_hasVisibleDescendant = true;
-            l = l->parent();
-        }
-    } else 
-        dirtyVisibleDescendantStatus();
-}
-
-void RenderLayer::dirtyVisibleDescendantStatus()
+void RenderLayer::dirtyAncestorChainVisibleDescendantStatus()
 {
-    RenderLayer* l = this;
-    while (l && !l->m_visibleDescendantStatusDirty) {
-        l->m_visibleDescendantStatusDirty = true;
-        l = l->parent();
+    for (RenderLayer* layer = this; layer; layer = layer->parent()) {
+        if (layer->m_visibleDescendantStatusDirty)
+            break;
+
+        layer->m_visibleDescendantStatusDirty = true;
+    }
+}
+
+void RenderLayer::setAncestorChainHasVisibleDescendant()
+{
+    for (RenderLayer* layer = this; layer; layer = layer->parent()) {
+        if (!layer->m_visibleDescendantStatusDirty && layer->hasVisibleDescendant())
+            break;
+
+        layer->m_hasVisibleDescendant = true;
+        layer->m_visibleDescendantStatusDirty = false;
     }
 }
 
@@ -1277,7 +1280,7 @@ void RenderLayer::addChild(RenderLayer* child, RenderLayer* beforeChild)
 
     child->updateDescendantDependentFlags();
     if (child->m_hasVisibleContent || child->m_hasVisibleDescendant)
-        childVisibilityChanged(true);
+        setAncestorChainHasVisibleDescendant();
 
     if (child->isSelfPaintingLayer() || child->hasSelfPaintingLayerDescendant())
         setAncestorChainHasSelfPaintingLayerDescendant();
@@ -1320,7 +1323,7 @@ RenderLayer* RenderLayer::removeChild(RenderLayer* oldChild)
     
     oldChild->updateDescendantDependentFlags();
     if (oldChild->m_hasVisibleContent || oldChild->m_hasVisibleDescendant)
-        childVisibilityChanged(false);
+        dirtyAncestorChainVisibleDescendantStatus();
 
     if (oldChild->isSelfPaintingLayer() || oldChild->hasSelfPaintingLayerDescendant())
         dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();

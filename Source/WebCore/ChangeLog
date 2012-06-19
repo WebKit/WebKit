@@ -1,3 +1,47 @@
+2012-06-19  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Align RenderLayer's descendant dependent flags semantics
+        https://bugs.webkit.org/show_bug.cgi?id=89241
+
+        Reviewed by Simon Fraser.
+
+        Refactoring only, covered by existing tests.
+
+        This change aligns the naming and implementation of the different descendant
+        dependent flags. While aligning, I found some bugs (inefficiencies) with how
+        the visible descendant flags was computed.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setHasVisibleContent):
+        Changed this method to not take a boolean as every callers was passing 'true'.
+        Reworked the logic under this assumption.
+
+        (WebCore::RenderLayer::dirtyVisibleContentStatus):
+        Updated after the following renaming.
+
+        (WebCore::RenderLayer::dirtyAncestorChainVisibleDescendantStatus):
+        Renamed this function from dirtyVisibleDescendantStatus to match the hasSelfPaintingLayer
+        naming and implementation.
+
+        (WebCore::RenderLayer::setAncestorChainHasVisibleDescendant):
+        Added this function to factor the visible descendant setting out of defunct childVisibilityChanged.
+        Also improved the efficiency of the function by clearing the dirty flag as it goes up (an unnoticed bug).
+
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        Updated to use the new functions lieu of childVisibilityChanged.
+        * rendering/RenderLayer.h:
+        (RenderLayer::childVisibilityChanged):
+        Removed this function as it wasn't adding much and it's a lot more clear to call
+        dirtyAncestorChainVisibleDescendantStatus / setAncestorChainHasVisibleDescendant.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::appendChildNode):
+        (WebCore::RenderObjectChildList::insertChildNode):
+        Updated those callers after removing the boolean parameter from setHasVisibleContent.
+
 2012-06-19  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: Extract InjectedScriptBase class from the InjectedScript
