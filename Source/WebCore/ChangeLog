@@ -1,3 +1,20 @@
+2012-06-19  Adrienne Walker  <enne@google.com>
+
+        Fix scrollbar layers being misplaced with a clipped owner layer
+        https://bugs.webkit.org/show_bug.cgi?id=89486
+
+        Reviewed by Simon Fraser.
+
+        Scrollbar layers are positioned relative to their parent layer. If
+        that parent gets clipped, then that positioning becomes incorrect and
+        scrollbars get positioned relative to the clipped bounds instead of
+        the full bounds. Fix by not clipping in this case.
+
+        Test: compositing/overflow/scrollbars-with-clipped-owner.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::shouldClipCompositedBounds):
+
 2012-06-19  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow][Editing] applying document.execCommand('bold') twice to elements having shadow insertion points causes a crash.

@@ -244,6 +244,10 @@ static bool layerOrAncestorIsTransformed(RenderLayer* layer)
 
 bool RenderLayerBacking::shouldClipCompositedBounds() const
 {
+    // Scrollbar layers use this layer for relative positioning, so don't clip.
+    if (layerForHorizontalScrollbar() || layerForVerticalScrollbar())
+        return false;
+
     if (m_usingTiledCacheLayer)
         return true;
 
