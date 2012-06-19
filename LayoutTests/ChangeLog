@@ -1,3 +1,19 @@
+2012-06-19  Alexander Pavlov  <apavlov@chromium.org>
+
+        New inspector/styles/inject-stylesheet.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=89364
+
+        Reviewed by Zoltan Herczeg.
+
+        LayoutTestController in Chromium injects testRunner into the Inspector window, while its other implementations don't.
+        Additionally, testRunner.addUserStyleSheet() behavior differs across platforms: Chromium injects stylesheets
+        with the "Author" level, while the others do with the "User" level, so the Chromium expectation stands apart.
+
+        * inspector/styles/inject-stylesheet-expected.txt:
+        * inspector/styles/inject-stylesheet.html:
+        * platform/chromium/inspector/styles/inject-stylesheet-expected.txt: Copied from LayoutTests/inspector/styles/inject-stylesheet-expected.txt.
+        * platform/qt/Skipped:
+
 2012-06-19  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [GTK] Assert failure in svg/batik/text/textDecoration.svg,textEffect3.svg for 64bit Debug bot

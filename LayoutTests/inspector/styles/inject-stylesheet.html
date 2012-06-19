@@ -9,6 +9,13 @@
 <script src="../../http/tests/inspector/elements-test.js"></script>
 <script>
 
+function injectStyleSheet()
+{
+    var styleSheet = "#main { color: red }  #iframeBody { background: red }";
+    if (window.testRunner)
+        window.testRunner.addUserStyleSheet(styleSheet, true);
+}
+
 function loadIframe()
 {
     var iframe = document.createElement("iframe");
@@ -18,16 +25,13 @@ function loadIframe()
 
 function test()
 {
-    if (!window.testRunner) {
-        InspectorTest.addResult("This test requires window.testRunner, exiting.");
-        InspectorTest.completeTest();
-        return;
+
+    InspectorTest.evaluateInPage("injectStyleSheet()", init);
+
+    function init()
+    {
+        InspectorTest.selectNodeAndWaitForStyles("main", step0);
     }
-
-    var styleSheet = "#main { color: red }  #iframeBody { background: red }";
-
-    window.testRunner.addUserStyleSheet(styleSheet, true);
-    InspectorTest.selectNodeAndWaitForStyles("main", step0);
 
     function step0()
     {
