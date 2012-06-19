@@ -1,3 +1,9 @@
+2012-06-18  Ami Fischman  <fischman@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-06-14  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use WebImageLayer in GraphicsLayerChromium for image layers
