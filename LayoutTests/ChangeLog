@@ -1,3 +1,15 @@
+2012-06-19  Martin Kosiba  <mkosiba@google.com>
+
+        [Chromium] Add LayoutTests for find in page.
+        https://bugs.webkit.org/show_bug.cgi?id=89453
+
+        Reviewed by Adam Barth.
+
+        * platform/chromium/editing/text-iterator/findString-restarts-at-last-position-expected.txt: Added.
+        * platform/chromium/editing/text-iterator/findString-restarts-at-last-position.html: Added.
+        * platform/chromium/editing/text-iterator/findString-start-search-after-selection-expected.txt: Added.
+        * platform/chromium/editing/text-iterator/findString-start-search-after-selection.html: Added.
+
 2012-06-19  Adrienne Walker  <enne@google.com>
 
         Fix scrollbar layers being misplaced with a clipped owner layer
