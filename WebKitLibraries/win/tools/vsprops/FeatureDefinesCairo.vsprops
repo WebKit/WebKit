@@ -32,6 +32,11 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
+		Name="ENABLE_CSP_NEXT"
+		Value=""
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
 		Name="ENABLE_CSS3_FLEXBOX"
 		Value="ENABLE_CSS3_FLEXBOX"
 		PerformEnvironmentSet="true"

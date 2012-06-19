@@ -48,6 +48,7 @@ my (
     $batteryStatusSupport,
     $blobSupport,
     $channelMessagingSupport,
+    $cspNextSupport,
     $css3FlexboxSupport,
     $cssBoxDecorationBreakSupport,
     $cssExclusionsSupport,
@@ -148,6 +149,9 @@ my @features = (
 
     { option => "channel-messaging", desc => "Toggle Channel Messaging support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
+
+    { option => "csp-next", desc => "Toggle Content Security Policy 1.1 support",
+      define => "ENABLE_CSP_NEXT", default => 0, value => \$cspNextSupport },
 
     { option => "css-exclusions", desc => "Toggle CSS Exclusions support",
       define => "ENABLE_CSS_EXCLUSIONS", default => 1, value => \$cssExclusionsSupport },
