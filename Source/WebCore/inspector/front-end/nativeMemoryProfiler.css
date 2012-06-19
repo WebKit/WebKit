@@ -49,26 +49,3 @@
 .memory-blocks-list .item {
     margin: 10px;
 }
-
-.memory-bar-chart-name {
-    text-align: right;
-    white-space: nowrap;
-}
-
-.memory-bar-chart-bar {
-    border: 1px solid #bbb;
-    border-radius: 3px;
-    float: left;
-    height: 20px;
-    text-align: center;
-    overflow: hidden;
-}
-
-.memory-bar-chart-size {
-    text-indent: 6px;
-    white-space: nowrap;
-}
-
-.memory-bar-chart-total {
-    font-weight: bold;
-}

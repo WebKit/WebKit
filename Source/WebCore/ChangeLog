@@ -1,3 +1,18 @@
+2012-06-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r120621.
+        http://trac.webkit.org/changeset/120621
+        https://bugs.webkit.org/show_bug.cgi?id=89518
+
+        Memory graph should have been behind the experimental flag.
+        (Requested by pfeldman on #webkit).
+
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        * inspector/front-end/ProfileLauncherView.js:
+        (WebInspector.ProfileLauncherView):
+        * inspector/front-end/nativeMemoryProfiler.css:
+        (.memory-blocks-list .item):
+
 2012-06-19  Hans Muller  <hmuller@adobe.com>
 
         The CSS_WRAP_SHAPE CSSWrapShape::Type is no longer needed
