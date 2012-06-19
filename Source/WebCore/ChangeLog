@@ -1,3 +1,37 @@
+2012-06-19  Andreas Kling  <kling@webkit.org>
+
+        Remove the -webkit-match-nearest-mail-blockquote-color property.
+        <http://webkit.org/b/89480>
+
+        Reviewed by Antti Koivisto.
+
+        This property does nothing except taking up a bit on StyleRareNonInheritedData.
+        It's apparently famous for being the longest property name we support.
+        This passes the torch to -webkit-border-bottom-right-radius.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        (StyleRareNonInheritedData):
+
 2012-06-19  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Animations continue to request frames after they have finished

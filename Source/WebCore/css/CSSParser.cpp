@@ -758,10 +758,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNone || valueID == CSSValueSlide || valueID == CSSValueScroll || valueID == CSSValueAlternate)
             return true;
         break;
-    case CSSPropertyWebkitMatchNearestMailBlockquoteColor: // normal | match
-        if (valueID == CSSValueNormal || valueID == CSSValueMatch)
-            return true;
-        break;
     case CSSPropertyWebkitNbspMode: // normal | space
         if (valueID == CSSValueNormal || valueID == CSSValueSpace)
             return true;
@@ -945,7 +941,6 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitMarginTopCollapse:
     case CSSPropertyWebkitMarqueeDirection:
     case CSSPropertyWebkitMarqueeStyle:
-    case CSSPropertyWebkitMatchNearestMailBlockquoteColor:
     case CSSPropertyWebkitNbspMode:
 #if ENABLE(OVERFLOW_SCROLLING)
     case CSSPropertyWebkitOverflowScrolling:
@@ -2659,7 +2654,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitMarginTopCollapse:
     case CSSPropertyWebkitMarqueeDirection:
     case CSSPropertyWebkitMarqueeStyle:
-    case CSSPropertyWebkitMatchNearestMailBlockquoteColor:
     case CSSPropertyWebkitNbspMode:
 #if ENABLE(OVERFLOW_SCROLLING)
     case CSSPropertyWebkitOverflowScrolling:

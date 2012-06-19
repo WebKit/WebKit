@@ -24,6 +24,5 @@ var hiddenComputedStyleProperties = [
     "overflow",
     "-webkit-mask-position-x",
     "-webkit-mask-position-y",
-    "-webkit-match-nearest-mail-blockquote-color",
     "-webkit-text-size-adjust",
 ];

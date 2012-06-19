@@ -276,6 +276,5 @@ border-spacing: 0px 0px;
 overflow: visible;
 -webkit-mask-position-x: 0%;
 -webkit-mask-position-y: 0%;
--webkit-match-nearest-mail-blockquote-color: normal;
 -webkit-text-size-adjust: auto;
 

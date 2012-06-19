@@ -1904,33 +1904,6 @@ template<> inline CSSPrimitiveValue::operator EMarqueeDirection() const
     }
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EMatchNearestMailBlockquoteColor e)
-    : CSSValue(PrimitiveClass)
-{
-    m_primitiveUnitType = CSS_IDENT;
-    switch (e) {
-        case BCNORMAL:
-            m_value.ident = CSSValueNormal;
-            break;
-        case MATCH:
-            m_value.ident = CSSValueMatch;
-            break;
-    }
-}
-
-template<> inline CSSPrimitiveValue::operator EMatchNearestMailBlockquoteColor() const
-{
-    switch (m_value.ident) {
-        case CSSValueNormal:
-            return BCNORMAL;
-        case CSSValueMatch:
-            return MATCH;
-        default:
-            ASSERT_NOT_REACHED();
-            return BCNORMAL;
-    }
-}
-
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ENBSPMode e)
     : CSSValue(PrimitiveClass)
 {

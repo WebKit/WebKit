@@ -219,10 +219,6 @@ enum EKHTMLLineBreak {
     LBNORMAL, AFTER_WHITE_SPACE
 };
 
-enum EMatchNearestMailBlockquoteColor {
-    BCNORMAL, MATCH
-};
-
 enum EResize {
     RESIZE_NONE, RESIZE_BOTH, RESIZE_HORIZONTAL, RESIZE_VERTICAL
 };

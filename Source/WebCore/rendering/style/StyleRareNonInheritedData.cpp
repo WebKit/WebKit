@@ -68,7 +68,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , textOverflow(RenderStyle::initialTextOverflow())
     , marginBeforeCollapse(MCOLLAPSE)
     , marginAfterCollapse(MCOLLAPSE)
-    , matchNearestMailBlockquoteColor(RenderStyle::initialMatchNearestMailBlockquoteColor())
     , m_appearance(RenderStyle::initialAppearance())
     , m_borderFit(RenderStyle::initialBorderFit())
     , m_textCombine(RenderStyle::initialTextCombine())
@@ -140,7 +139,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , textOverflow(o.textOverflow)
     , marginBeforeCollapse(o.marginBeforeCollapse)
     , marginAfterCollapse(o.marginAfterCollapse)
-    , matchNearestMailBlockquoteColor(o.matchNearestMailBlockquoteColor)
     , m_appearance(o.m_appearance)
     , m_borderFit(o.m_borderFit)
     , m_textCombine(o.m_textCombine)
@@ -218,7 +216,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && textOverflow == o.textOverflow
         && marginBeforeCollapse == o.marginBeforeCollapse
         && marginAfterCollapse == o.marginAfterCollapse
-        && matchNearestMailBlockquoteColor == o.matchNearestMailBlockquoteColor
         && m_appearance == o.m_appearance
         && m_borderFit == o.m_borderFit
         && m_textCombine == o.m_textCombine

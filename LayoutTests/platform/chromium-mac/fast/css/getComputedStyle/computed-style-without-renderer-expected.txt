@@ -273,7 +273,6 @@ Computed style of an element whose parent's 'display' value is 'none':
     overflow: visible
     -webkit-mask-position-x: 0%
     -webkit-mask-position-y: 0%
-    -webkit-match-nearest-mail-blockquote-color: normal
     -webkit-text-size-adjust: auto
 
 After changing grandparent's 'color' and the parent's 'font-size' inherited properties:

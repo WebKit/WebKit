@@ -2029,8 +2029,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return cssValuePool().createValue(style->khtmlLineBreak());
         case CSSPropertyWebkitNbspMode:
             return cssValuePool().createValue(style->nbspMode());
-        case CSSPropertyWebkitMatchNearestMailBlockquoteColor:
-            return cssValuePool().createValue(style->matchNearestMailBlockquoteColor());
         case CSSPropertyResize:
             return cssValuePool().createValue(style->resize());
         case CSSPropertyWebkitFontKerning:

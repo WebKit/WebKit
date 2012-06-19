@@ -1,3 +1,23 @@
+2012-06-19  Andreas Kling  <kling@webkit.org>
+
+        Remove the -webkit-match-nearest-mail-blockquote-color property.
+        <http://webkit.org/b/89480>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * fast/dom/CSSStyleDeclaration/access-longest-css-property-expected.txt:
+        * fast/dom/CSSStyleDeclaration/access-longest-css-property.html:
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/gtk/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2012-06-19  Abhishek Arya  <inferno@chromium.org>
 
         Crash in WebCore::RenderSVGModelObject::checkIntersection
