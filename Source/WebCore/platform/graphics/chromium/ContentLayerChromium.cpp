@@ -38,7 +38,6 @@
 #include "BitmapSkPictureCanvasLayerTextureUpdater.h"
 #include "FrameBufferSkPictureCanvasLayerTextureUpdater.h"
 #include "LayerPainterChromium.h"
-#include "LayerRendererChromium.h"
 #include "PlatformSupport.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCSettings.h"

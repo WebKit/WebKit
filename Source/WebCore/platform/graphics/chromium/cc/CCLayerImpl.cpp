@@ -29,13 +29,13 @@
 
 #include "cc/CCLayerImpl.h"
 
-#include "LayerChromium.h"
-#include "LayerRendererChromium.h"
+#include "TextStream.h"
+#include "TraceEvent.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerSorter.h"
 #include "cc/CCMathUtil.h"
+#include "cc/CCProxy.h"
 #include "cc/CCQuadCuller.h"
-#include "cc/CCSolidColorDrawQuad.h"
 #include <wtf/text/WTFString.h>
 
 using WebKit::WebTransformationMatrix;

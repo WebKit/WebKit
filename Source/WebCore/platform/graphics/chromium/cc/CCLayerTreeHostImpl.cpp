@@ -26,8 +26,8 @@
 
 #include "cc/CCLayerTreeHostImpl.h"
 
-#include "Extensions3D.h"
 #include "LayerRendererChromium.h"
+#include "TextStream.h"
 #include "TraceEvent.h"
 #include "cc/CCActiveGestureAnimation.h"
 #include "cc/CCDamageTracker.h"
@@ -35,17 +35,15 @@
 #include "cc/CCDelayBasedTimeSource.h"
 #include "cc/CCFontAtlas.h"
 #include "cc/CCFrameRateCounter.h"
-#include "cc/CCGestureCurve.h"
 #include "cc/CCHeadsUpDisplay.h"
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostCommon.h"
-#include "cc/CCMathUtil.h"
+#include "cc/CCOverdrawMetrics.h"
 #include "cc/CCPageScaleAnimation.h"
 #include "cc/CCRenderPassDrawQuad.h"
 #include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
-#include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
 
 using WebKit::WebTransformationMatrix;

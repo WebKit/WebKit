@@ -1,3 +1,92 @@
+2012-06-19  Zeev Lieber  <zlieber@chromium.org>
+
+        [Chromium] Remove redundant #includes in compositor
+        https://bugs.webkit.org/show_bug.cgi?id=89503
+
+        Reviewed by Adrienne Walker.
+
+        Removed some redundant #includes to clarify dependency
+        picture. Some 90 #includes removed, some 50 less disruptive
+        #includes added. This brings the number of class dependencies to
+        902 from 1383.
+
+        No new tests are required, as this is only affects compile-time behavior.
+
+        * platform/graphics/chromium/AnimationTranslationUtil.h:
+        (WebCore):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp:
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h:
+        * platform/graphics/chromium/Canvas2DLayerBridge.cpp:
+        * platform/graphics/chromium/Canvas2DLayerBridge.h:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.cpp:
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore):
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        * platform/graphics/chromium/ManagedTexture.cpp:
+        * platform/graphics/chromium/ProgramBinding.h:
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        * platform/graphics/chromium/TextureCopier.cpp:
+        * platform/graphics/chromium/TextureLayerChromium.cpp:
+        * platform/graphics/chromium/TextureManager.cpp:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/cc/CCActiveAnimation.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCDelayBasedTimeSource.cpp:
+        * platform/graphics/chromium/cc/CCDrawQuad.cpp:
+        * platform/graphics/chromium/cc/CCFontAtlas.cpp:
+        * platform/graphics/chromium/cc/CCFrameRateController.cpp:
+        * platform/graphics/chromium/cc/CCFrameRateController.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCIOSurfaceLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCLayerAnimationController.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        * platform/graphics/chromium/cc/CCOcclusionTracker.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCProxy.cpp:
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        * platform/graphics/chromium/cc/CCRenderPass.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        * platform/graphics/chromium/cc/CCScopedThreadProxy.h:
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        * platform/graphics/chromium/cc/CCSolidColorLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCTextureLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCTimer.cpp:
+        * platform/graphics/chromium/cc/CCTimer.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+
 2012-06-19  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Align RenderLayer's descendant dependent flags semantics

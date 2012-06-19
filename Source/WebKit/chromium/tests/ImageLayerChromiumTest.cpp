@@ -28,6 +28,7 @@
 
 #include "GraphicsLayer.h"
 #include "GraphicsLayerChromium.h"
+#include "Image.h"
 #include "NativeImageSkia.h"
 #include <gtest/gtest.h>
 #include <wtf/PassOwnPtr.h>

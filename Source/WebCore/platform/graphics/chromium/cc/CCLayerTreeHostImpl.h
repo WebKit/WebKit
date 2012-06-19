@@ -26,13 +26,11 @@
 #define CCLayerTreeHostImpl_h
 
 #include "Color.h"
-#include "LayerRendererChromium.h"
 #include "cc/CCAnimationEvents.h"
 #include "cc/CCInputHandler.h"
 #include "cc/CCLayerSorter.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCRenderPass.h"
+#include "cc/CCRenderer.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 

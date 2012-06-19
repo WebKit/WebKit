@@ -29,9 +29,9 @@
 #include "FloatQuad.h"
 #include "Region.h"
 #include "cc/CCLayerIterator.h"
-#include "cc/CCOverdrawMetrics.h"
 
 namespace WebCore {
+class CCOverdrawMetrics;
 class CCLayerImpl;
 class CCRenderSurface;
 class LayerChromium;

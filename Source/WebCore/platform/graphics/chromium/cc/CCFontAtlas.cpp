@@ -27,13 +27,13 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "CCFontAtlas.h"
 
-#include "CCProxy.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "TextRun.h"
+#include "cc/CCProxy.h"
 
 #define ATLAS_SIZE 128
 #define FONT_HEIGHT 14

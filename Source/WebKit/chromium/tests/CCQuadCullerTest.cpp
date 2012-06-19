@@ -26,6 +26,7 @@
 
 #include "cc/CCQuadCuller.h"
 
+#include "cc/CCLayerTilingData.h"
 #include "cc/CCOcclusionTracker.h"
 #include "cc/CCOverdrawMetrics.h"
 #include "cc/CCSingleThreadProxy.h"

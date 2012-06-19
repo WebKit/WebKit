@@ -29,7 +29,6 @@
 #include "ManagedTexture.h"
 
 #include "GraphicsContext3D.h"
-#include "TextureManager.h"
 #include "cc/CCGraphicsContext.h"
 
 namespace WebCore {

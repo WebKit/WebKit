@@ -28,6 +28,7 @@
 #include "WebCompositorImpl.h"
 
 #include "CCThreadImpl.h"
+#include "GraphicsContext3D.h"
 #include "WebKit.h"
 #include "platform/WebKitPlatformSupport.h"
 #include "WebCompositorClient.h"

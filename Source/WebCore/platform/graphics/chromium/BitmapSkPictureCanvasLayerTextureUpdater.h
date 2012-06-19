@@ -29,7 +29,6 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "LayerTextureSubImage.h"
-#include "PlatformColor.h"
 #include "SkBitmap.h"
 #include "SkPictureCanvasLayerTextureUpdater.h"
 

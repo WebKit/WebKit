@@ -26,13 +26,13 @@
 #ifndef CCRenderPass_h
 #define CCRenderPass_h
 
-#include "cc/CCDrawQuad.h"
 #include "cc/CCOcclusionTracker.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+class CCDrawQuad;
 class CCLayerImpl;
 class CCRenderSurface;
 class CCSharedQuadState;

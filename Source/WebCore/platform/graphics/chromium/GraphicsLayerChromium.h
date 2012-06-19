@@ -33,7 +33,6 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "ContentLayerChromium.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "OpaqueRectTrackingContentLayerDelegate.h"
@@ -47,6 +46,7 @@ namespace WebCore {
 
 class LayerChromium;
 class LinkHighlight;
+class Path;
 
 class GraphicsLayerChromium : public GraphicsLayer, public GraphicsContextPainter, public CCLayerAnimationDelegate {
 public:

@@ -27,19 +27,20 @@
 #include "cc/CCLayerTreeHost.h"
 
 #include "LayerChromium.h"
-#include "LayerRendererChromium.h"
+#include "ManagedTexture.h"
 #include "Region.h"
 #include "TraceEvent.h"
 #include "TreeSynchronizer.h"
 #include "cc/CCFontAtlas.h"
+#include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCOcclusionTracker.h"
+#include "cc/CCOverdrawMetrics.h"
 #include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
-#include "cc/CCThread.h"
 #include "cc/CCThreadProxy.h"
 
 using namespace std;

@@ -35,7 +35,6 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "TextureCopier.h"
-#include "ThrottledTextureUploader.h"
 #include "TrackingTextureAllocator.h"
 #include "cc/CCRenderer.h"
 #include <wtf/PassOwnPtr.h>
@@ -56,9 +55,8 @@ class GeometryBinding;
 class GraphicsContext3D;
 class LayerRendererGpuMemoryAllocationChangedCallbackAdapter;
 class LayerRendererSwapBuffersCompleteCallbackAdapter;
+class ManagedTexture;
 class ScopedEnsureFramebufferAllocation;
-
-enum TextureUploaderOption { ThrottledUploader, UnthrottledUploader };
 
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public CCRenderer {

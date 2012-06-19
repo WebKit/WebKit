@@ -31,10 +31,10 @@
 #ifndef CCTimer_h
 #define CCTimer_h
 
-#include "cc/CCThread.h"
 
 namespace WebCore {
 
+class CCThread;
 class CCTimerTask;
 
 class CCTimerClient {

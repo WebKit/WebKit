@@ -26,8 +26,6 @@
 
 #include "cc/CCProxy.h"
 
-#include "TraceEvent.h"
-#include "cc/CCLayerTreeHost.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/MainThread.h>
 

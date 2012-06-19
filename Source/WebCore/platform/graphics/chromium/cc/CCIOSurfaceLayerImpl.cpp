@@ -30,11 +30,11 @@
 #include "cc/CCIOSurfaceLayerImpl.h"
 
 #include "Extensions3DChromium.h"
-#include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
+#include "TextStream.h"
+#include "cc/CCGraphicsContext.h"
 #include "cc/CCIOSurfaceDrawQuad.h"
 #include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCProxy.h"
 #include "cc/CCQuadCuller.h"
 
 namespace WebCore {

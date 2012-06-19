@@ -40,6 +40,8 @@ class TextureCopier;
 class TextureManager;
 class TextureUploader;
 
+enum TextureUploaderOption { ThrottledUploader, UnthrottledUploader };
+
 class CCRendererClient {
 public:
     virtual const IntSize& deviceViewportSize() const = 0;

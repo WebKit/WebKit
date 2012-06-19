@@ -34,7 +34,6 @@
 #include "cc/CCInputHandler.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCRenderSurface.h"
-#include "cc/CCSharedQuadState.h"
 #include <public/WebFilterOperations.h>
 #include <public/WebTransformationMatrix.h>
 #include <wtf/OwnPtr.h>
@@ -49,6 +48,7 @@ class CCLayerSorter;
 class CCLayerTreeHostImpl;
 class CCQuadCuller;
 class CCRenderer;
+class CCSharedQuadState;
 class LayerChromium;
 
 class CCLayerImpl : public CCLayerAnimationControllerClient {
