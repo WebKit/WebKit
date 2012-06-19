@@ -440,7 +440,6 @@ def main():
         host = MockHost()
     else:
         host = Host()
-    host._initialize_scm()
     port = host.port_factory.get(options.platform, options)
     logging.getLogger().setLevel(logging.DEBUG if options.verbose else logging.INFO)
     return run(port, options, args)

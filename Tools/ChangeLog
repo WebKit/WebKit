@@ -1,3 +1,17 @@
+2012-06-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r100558): NRWT should work without SVN or GIT
+        https://bugs.webkit.org/show_bug.cgi?id=76630
+
+        Reviewed by Dirk Pranke.
+
+        NRWT is not supposed to have a requirement that we have an
+        actual SVN or Git checkout, and we were unnecessarily
+        initializing the checkout. This patch removes that line :).
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main):
+
 2012-06-18  Zan Dobersek  <zandobersek@gmail.com>
 
         [garden-o-matic] Add support for the GTK builders
