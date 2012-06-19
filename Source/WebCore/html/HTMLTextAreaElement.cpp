@@ -34,6 +34,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "FormController.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
@@ -98,18 +99,17 @@ const AtomicString& HTMLTextAreaElement::formControlType() const
     return textarea;
 }
 
-bool HTMLTextAreaElement::saveFormControlState(String& result) const
+FormControlState HTMLTextAreaElement::saveFormControlState() const
 {
     String currentValue = value();
     if (currentValue == defaultValue())
-        return false;
-    result = currentValue;
-    return true;
+        return FormControlState();
+    return FormControlState(currentValue);
 }
 
-void HTMLTextAreaElement::restoreFormControlState(const String& state)
+void HTMLTextAreaElement::restoreFormControlState(const FormControlState& state)
 {
-    setValue(state);
+    setValue(state.value());
 }
 
 void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

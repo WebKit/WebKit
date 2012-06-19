@@ -120,8 +120,8 @@ private:
     virtual bool isEnumeratable() const { return true; }
     virtual bool supportLabels() const OVERRIDE { return true; }
 
-    virtual bool saveFormControlState(String& value) const;
-    virtual void restoreFormControlState(const String&);
+    virtual FormControlState saveFormControlState() const OVERRIDE;
+    virtual void restoreFormControlState(const FormControlState&) OVERRIDE;
 
     virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;

@@ -62,6 +62,11 @@ bool HTMLFormControlElementWithState::shouldSaveAndRestoreFormControlState() con
     return attached() && shouldAutocomplete();
 }
 
+FormControlState HTMLFormControlElementWithState::saveFormControlState() const
+{
+    return FormControlState();
+}
+
 void HTMLFormControlElementWithState::finishParsingChildren()
 {
     HTMLFormControlElement::finishParsingChildren();
@@ -74,8 +79,8 @@ void HTMLFormControlElementWithState::finishParsingChildren()
 
     Document* doc = document();
     if (doc->formController()->hasStateForNewFormElements()) {
-        String state;
-        if (doc->formController()->takeStateForFormElement(name().impl(), type().impl(), state))
+        FormControlState state = doc->formController()->takeStateForFormElement(name().impl(), type().impl());
+        if (state.hasValue())
             restoreFormControlState(state);
     }
 }

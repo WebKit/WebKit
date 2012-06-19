@@ -32,6 +32,7 @@
 #include "config.h"
 #include "HiddenInputType.h"
 
+#include "FormController.h"
 #include "FormDataList.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -51,15 +52,15 @@ const AtomicString& HiddenInputType::formControlType() const
     return InputTypeNames::hidden();
 }
 
-bool HiddenInputType::saveFormControlState(String& result) const
+FormControlState HiddenInputType::saveFormControlState() const
 {
-    result = element()->value();
-    return true;
+    // FIXME: We should not always save the value. http://webkit.org/b/88685
+    return FormControlState(element()->value());
 }
 
-void HiddenInputType::restoreFormControlState(const String& string)
+void HiddenInputType::restoreFormControlState(const FormControlState& state)
 {
-    element()->setAttribute(valueAttr, string);
+    element()->setAttribute(valueAttr, state.value());
 }
 
 bool HiddenInputType::supportsValidation() const

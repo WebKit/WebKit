@@ -126,8 +126,8 @@ public:
 
     // Form value functions
 
-    virtual bool saveFormControlState(String&) const;
-    virtual void restoreFormControlState(const String&);
+    virtual FormControlState saveFormControlState() const;
+    virtual void restoreFormControlState(const FormControlState&);
     virtual bool isFormDataAppendable() const;
     virtual bool appendFormData(FormDataList&, bool multipart) const;
 

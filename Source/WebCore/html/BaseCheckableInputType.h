@@ -42,8 +42,8 @@ protected:
     virtual void handleKeydownEvent(KeyboardEvent*);
 
 private:
-    virtual bool saveFormControlState(String&) const OVERRIDE;
-    virtual void restoreFormControlState(const String&) OVERRIDE;
+    virtual FormControlState saveFormControlState() const OVERRIDE;
+    virtual void restoreFormControlState(const FormControlState&) OVERRIDE;
     virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;
     virtual void handleKeypressEvent(KeyboardEvent*) OVERRIDE;
     virtual bool canSetStringValue() const OVERRIDE;

@@ -42,6 +42,7 @@
 #include "ExceptionCode.h"
 #include "FileInputType.h"
 #include "FileList.h"
+#include "FormController.h"
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
@@ -168,18 +169,17 @@ bool InputType::isRangeControl() const
     return false;
 }
 
-bool InputType::saveFormControlState(String& result) const
+FormControlState InputType::saveFormControlState() const
 {
     String currentValue = element()->value();
     if (currentValue == element()->defaultValue())
-        return false;
-    result = currentValue;
-    return true;
+        return FormControlState();
+    return FormControlState(currentValue);
 }
 
-void InputType::restoreFormControlState(const String& state)
+void InputType::restoreFormControlState(const FormControlState& state)
 {
-    element()->setValue(state);
+    element()->setValue(state.value());
 }
 
 bool InputType::isFormDataAppendable() const

@@ -33,6 +33,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "EventNames.h"
+#include "FormController.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLFormElement.h"
@@ -914,7 +915,7 @@ void HTMLSelectElement::deselectItemsWithoutValidation(HTMLElement* excludeEleme
     }
 }
 
-bool HTMLSelectElement::saveFormControlState(String& value) const
+FormControlState HTMLSelectElement::saveFormControlState() const
 {
     const Vector<HTMLElement*>& items = listItems();
     size_t length = items.size();
@@ -925,21 +926,21 @@ bool HTMLSelectElement::saveFormControlState(String& value) const
         bool selected = element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected();
         builder.append(selected ? 'X' : '.');
     }
-    value = builder.toString();
-    return true;
+    return FormControlState(builder.toString());
 }
 
-void HTMLSelectElement::restoreFormControlState(const String& state)
+void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
 {
     recalcListItems();
 
     const Vector<HTMLElement*>& items = listItems();
     size_t length = items.size();
 
+    String mask = state.value();
     for (size_t i = 0; i < length; ++i) {
         HTMLElement* element = items[i];
         if (element->hasTagName(optionTag))
-            toHTMLOptionElement(element)->setSelectedState(state[i] == 'X');
+            toHTMLOptionElement(element)->setSelectedState(mask[i] == 'X');
     }
 
     setOptionsChangedOnRenderer();

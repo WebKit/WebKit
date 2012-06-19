@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+class FormControlState;
+
 class HTMLFormControlElementWithState : public HTMLFormControlElement {
 public:
     virtual ~HTMLFormControlElementWithState();
@@ -35,8 +37,9 @@ public:
     virtual bool canContainRangeEndPoint() const { return false; }
 
     bool shouldSaveAndRestoreFormControlState() const;
-    virtual bool saveFormControlState(String&) const { return false; }
-    virtual void restoreFormControlState(const String&) { }
+    virtual FormControlState saveFormControlState() const;
+    // The specified FormControlState must have one string value.
+    virtual void restoreFormControlState(const FormControlState&) { }
 
 protected:
     HTMLFormControlElementWithState(const QualifiedName& tagName, Document*, HTMLFormElement*);

@@ -32,6 +32,7 @@
 #include "config.h"
 #include "BaseCheckableInputType.h"
 
+#include "FormController.h"
 #include "FormDataList.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -42,15 +43,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-bool BaseCheckableInputType::saveFormControlState(String& result) const
+FormControlState BaseCheckableInputType::saveFormControlState() const
 {
-    result = element()->checked() ? "on" : "off";
-    return true;
+    return FormControlState(element()->checked() ? "on" : "off");
 }
 
-void BaseCheckableInputType::restoreFormControlState(const String& state)
+void BaseCheckableInputType::restoreFormControlState(const FormControlState& state)
 {
-    element()->setChecked(state == "on");
+    element()->setChecked(state.value() == "on");
 }
 
 bool BaseCheckableInputType::appendFormData(FormDataList& encoding, bool) const

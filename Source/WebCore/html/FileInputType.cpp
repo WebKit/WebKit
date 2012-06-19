@@ -29,6 +29,7 @@
 #include "File.h"
 #include "FileList.h"
 #include "FileSystem.h"
+#include "FormController.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
@@ -100,11 +101,13 @@ const AtomicString& FileInputType::formControlType() const
     return InputTypeNames::file();
 }
 
-bool FileInputType::saveFormControlState(String& result) const
+FormControlState FileInputType::saveFormControlState() const
 {
     if (m_fileList->isEmpty())
-        return false;
-    result = String();
+        return FormControlState();
+    // FIXME: FormControlState should be capable to have multiple strings and we
+    // should stop the following ugly string concatenation.
+    StringBuilder result;
     unsigned numFiles = m_fileList->length();
     for (unsigned i = 0; i < numFiles; ++i) {
         result.append(m_fileList->item(i)->path());
@@ -112,14 +115,14 @@ bool FileInputType::saveFormControlState(String& result) const
         result.append(m_fileList->item(i)->name());
         result.append('\0');
     }
-    return true;
+    return FormControlState(result.toString());
 }
 
-void FileInputType::restoreFormControlState(const String& state)
+void FileInputType::restoreFormControlState(const FormControlState& state)
 {
     Vector<FileChooserFileInfo> files;
     Vector<String> paths;
-    state.split('\0', paths);
+    state.value().split('\0', paths);
     for (unsigned i = 0; i < paths.size(); ++i) {
         Vector<String> pathAndName;
         paths[i].split('\1', pathAndName);

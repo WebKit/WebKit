@@ -90,8 +90,8 @@ private:
 
     virtual const AtomicString& formControlType() const;
 
-    virtual bool saveFormControlState(String& value) const;
-    virtual void restoreFormControlState(const String&);
+    virtual FormControlState saveFormControlState() const OVERRIDE;
+    virtual void restoreFormControlState(const FormControlState&) OVERRIDE;
 
     virtual bool isTextFormControl() const { return true; }
 

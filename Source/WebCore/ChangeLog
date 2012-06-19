@@ -1,3 +1,75 @@
+2012-06-18  Kent Tamura  <tkent@chromium.org>
+
+        Refactoring: Introduce a class to represent restoring state of a form control
+        https://bugs.webkit.org/show_bug.cgi?id=89412
+
+        Reviewed by Hajime Morita.
+
+        HTMLFormControlElementWithState::saveFormControlState had two return
+        values; One is a boolean to represent whether we should save the state
+        or not, and another is form control value. This patch introduces
+        FormControlState class representing these values.
+
+        We're going to extend FormControlState class so that it can contain
+        multiple strings to fix a FileInputType issue and it have another type
+        to fix Bug 89409.
+
+        No new tests. Just a refactoring.
+
+        * html/FormController.cpp:
+        (WebCore::FormController::formElementsState):
+        Gets a state string from a FormControlState instance.
+        (WebCore::FormController::takeStateForFormElement):
+        Creates a FormControlState instance with a state string.
+        * html/FormController.h:
+        (WebCore::FormControlState): Added.
+
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::saveFormControlState):
+        Use FormControlState class.
+        (WebCore::BaseCheckableInputType::restoreFormControlState): ditto.
+        * html/BaseCheckableInputType.h:
+        (BaseCheckableInputType): ditto.
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::saveFormControlState): ditto.
+        (WebCore::FileInputType::restoreFormControlState): ditto.
+        * html/FileInputType.h:
+        (FileInputType): ditto.
+        * html/HTMLFormControlElementWithState.cpp:
+        (WebCore::HTMLFormControlElementWithState::saveFormControlState): ditto.
+        (WebCore::HTMLFormControlElementWithState::finishParsingChildren): ditto.
+        * html/HTMLFormControlElementWithState.h:
+        (HTMLFormControlElementWithState): ditto.
+        (WebCore::HTMLFormControlElementWithState::restoreFormControlState): ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::saveFormControlState): ditto.
+        (WebCore::HTMLInputElement::restoreFormControlState): ditto.
+        * html/HTMLInputElement.h:
+        (HTMLInputElement): ditto.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::saveFormControlState): ditto.
+        (WebCore::HTMLSelectElement::restoreFormControlState): ditto.
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::saveFormControlState): ditto.
+        (WebCore::HTMLTextAreaElement::restoreFormControlState): ditto.
+        * html/HTMLTextAreaElement.h:
+        * html/HiddenInputType.cpp:
+        (WebCore::HiddenInputType::saveFormControlState): ditto.
+        (WebCore::HiddenInputType::restoreFormControlState): ditto.
+        * html/HiddenInputType.h:
+        (HiddenInputType): ditto.
+        * html/InputType.cpp:
+        (WebCore::InputType::saveFormControlState): ditto.
+        (WebCore::InputType::restoreFormControlState): ditto.
+        * html/InputType.h:
+        (InputType): ditto.
+        * html/PasswordInputType.cpp:
+        (WebCore::PasswordInputType::saveFormControlState): ditto.
+        (WebCore::PasswordInputType::restoreFormControlState): ditto.
+        * html/PasswordInputType.h:
+        (PasswordInputType): ditto.
+
 2012-06-18  Joone Hur  <joone.hur@intel.com>
 
         [EFL] Fontconfig can't be linked properly

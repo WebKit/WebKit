@@ -26,6 +26,7 @@
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -72,6 +73,29 @@ struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {
     static bool isDeletedValue(const FormElementKey& value) { return value.isHashTableDeletedValue(); }
 };
 
+class FormControlState {
+public:
+    FormControlState() : m_type(TypeSkip) { }
+    explicit FormControlState(const String& value) : m_type(TypeRestore), m_value(value) { }
+    FormControlState(const FormControlState& another) : m_type(another.m_type), m_value(another.m_value) { }
+    FormControlState& operator=(const FormControlState&);
+
+    bool hasValue() const { return m_type == TypeRestore; }
+    String value() const { return m_value; }
+
+private:
+    enum Type { TypeSkip, TypeRestore };
+    Type m_type;
+    String m_value;
+};
+
+inline FormControlState& FormControlState::operator=(const FormControlState& another)
+{
+    m_type = another.m_type;
+    m_value = another.m_value;
+    return *this;
+}
+
 class FormController {
 public:
     static PassOwnPtr<FormController> create()
@@ -89,7 +113,7 @@ public:
     // This should be callled only by Document::setStateForNewFormElements().
     void setStateForNewFormElements(const Vector<String>&);
     bool hasStateForNewFormElements() const;
-    bool takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type, String& state);
+    FormControlState takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type);
 
     void registerFormElementWithFormAttribute(FormAssociatedElement*);
     void unregisterFormElementWithFormAttribute(FormAssociatedElement*);

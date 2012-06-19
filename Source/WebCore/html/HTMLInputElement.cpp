@@ -493,12 +493,12 @@ const AtomicString& HTMLInputElement::formControlType() const
     return m_inputType->formControlType();
 }
 
-bool HTMLInputElement::saveFormControlState(String& result) const
+FormControlState HTMLInputElement::saveFormControlState() const
 {
-    return m_inputType->saveFormControlState(result);
+    return m_inputType->saveFormControlState();
 }
 
-void HTMLInputElement::restoreFormControlState(const String& state)
+void HTMLInputElement::restoreFormControlState(const FormControlState& state)
 {
     m_inputType->restoreFormControlState(state);
     m_stateRestored = true;

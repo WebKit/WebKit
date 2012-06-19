@@ -32,6 +32,7 @@
 #include "config.h"
 #include "PasswordInputType.h"
 
+#include "FormController.h"
 #include "HTMLInputElement.h"
 #include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>
@@ -48,13 +49,13 @@ const AtomicString& PasswordInputType::formControlType() const
     return InputTypeNames::password();
 }
 
-bool PasswordInputType::saveFormControlState(String&) const
+FormControlState PasswordInputType::saveFormControlState() const
 {
     // Should never save/restore password fields.
-    return false;
+    return FormControlState();
 }
 
-void PasswordInputType::restoreFormControlState(const String&)
+void PasswordInputType::restoreFormControlState(const FormControlState&)
 {
     // Should never save/restore password fields.
     ASSERT_NOT_REACHED();

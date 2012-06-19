@@ -42,8 +42,8 @@ public:
 private:
     HiddenInputType(HTMLInputElement* element) : InputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
-    virtual bool saveFormControlState(String&) const OVERRIDE;
-    virtual void restoreFormControlState(const String&) OVERRIDE;
+    virtual FormControlState saveFormControlState() const OVERRIDE;
+    virtual void restoreFormControlState(const FormControlState&) OVERRIDE;
     virtual bool supportsValidation() const OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
     virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;

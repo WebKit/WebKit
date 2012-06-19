@@ -45,12 +45,12 @@ Vector<String> FormController::formElementsState() const
         HTMLFormControlElementWithState* elementWithState = *it;
         if (!elementWithState->shouldSaveAndRestoreFormControlState())
             continue;
-        String value;
-        if (!elementWithState->saveFormControlState(value))
+        FormControlState state = elementWithState->saveFormControlState();
+        if (!state.hasValue())
             continue;
         stateVector.append(elementWithState->name().string());
         stateVector.append(elementWithState->formControlType().string());
-        stateVector.append(value);
+        stateVector.append(state.value());
     }
     return stateVector;
 }
@@ -96,19 +96,19 @@ bool FormController::hasStateForNewFormElements() const
     return !m_stateForNewFormElements.isEmpty();
 }
 
-bool FormController::takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type, String& state)
+FormControlState FormController::takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type)
 {
     typedef FormElementStateMap::iterator Iterator;
     Iterator it = m_stateForNewFormElements.find(FormElementKey(name, type));
     if (it == m_stateForNewFormElements.end())
-        return false;
+        return FormControlState();
     ASSERT(it->second.size());
-    state = it->second.last();
+    FormControlState state(it->second.last());
     if (it->second.size() > 1)
         it->second.removeLast();
     else
         m_stateForNewFormElements.remove(it);
-    return true;
+    return state;
 }
 
 void FormController::registerFormElementWithFormAttribute(FormAssociatedElement* element)
