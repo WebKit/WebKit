@@ -1689,12 +1689,12 @@ IntPoint QWebPagePrivate::TouchAdjuster::findCandidatePointForTouch(const IntPoi
     \value CopyLinkToClipboard Copy the current link to the clipboard.
     \value OpenImageInNewWindow Open the highlighted image in a new window.
     \value DownloadImageToDisk Download the highlighted image to the disk.
-    \value CopyImageToClipboard Copy the highlighted image to the clipboard.
+    \value CopyImageToClipboard Copy the highlighted image to the clipboard.  (Added in Qt 4.8)
     \value CopyImageUrlToClipboard Copy the highlighted image's URL to the clipboard.
     \value Back Navigate back in the history of navigated links.
     \value Forward Navigate forward in the history of navigated links.
     \value Stop Stop loading the current page.
-    \value StopScheduledPageRefresh Stop all pending page refresh/redirect requests.
+    \value StopScheduledPageRefresh Stop all pending page refresh/redirect requests.  (Added in Qt 4.7)
     \value Reload Reload the current page.
     \value ReloadAndBypassCache Reload the current page, but do not use any local cache. (Added in Qt 4.6)
     \value Cut Cut the content currently selected into the clipboard.
@@ -1738,19 +1738,19 @@ IntPoint QWebPagePrivate::TouchAdjuster::findCandidatePointForTouch(const IntPoi
     \value InsertParagraphSeparator Insert a new paragraph.
     \value InsertLineSeparator Insert a new line.
     \value SelectAll Selects all content.
-    \value PasteAndMatchStyle Paste content from the clipboard with current style.
-    \value RemoveFormat Removes formatting and style.
-    \value ToggleStrikethrough Toggle the formatting between strikethrough and normal style.
-    \value ToggleSubscript Toggle the formatting between subscript and baseline.
-    \value ToggleSuperscript Toggle the formatting between supercript and baseline.
-    \value InsertUnorderedList Toggles the selection between an ordered list and a normal block.
-    \value InsertOrderedList Toggles the selection between an ordered list and a normal block.
-    \value Indent Increases the indentation of the currently selected format block by one increment.
-    \value Outdent Decreases the indentation of the currently selected format block by one increment.
-    \value AlignCenter Applies center alignment to content.
-    \value AlignJustified Applies full justification to content.
-    \value AlignLeft Applies left justification to content.
-    \value AlignRight Applies right justification to content.
+    \value PasteAndMatchStyle Paste content from the clipboard with current style. (Added in Qt 4.6)
+    \value RemoveFormat Removes formatting and style. (Added in Qt 4.6)
+    \value ToggleStrikethrough Toggle the formatting between strikethrough and normal style. (Added in Qt 4.6)
+    \value ToggleSubscript Toggle the formatting between subscript and baseline. (Added in Qt 4.6)
+    \value ToggleSuperscript Toggle the formatting between supercript and baseline. (Added in Qt 4.6)
+    \value InsertUnorderedList Toggles the selection between an ordered list and a normal block. (Added in Qt 4.6)
+    \value InsertOrderedList Toggles the selection between an ordered list and a normal block. (Added in Qt 4.6)
+    \value Indent Increases the indentation of the currently selected format block by one increment. (Added in Qt 4.6)
+    \value Outdent Decreases the indentation of the currently selected format block by one increment. (Added in Qt 4.6)
+    \value AlignCenter Applies center alignment to content. (Added in Qt 4.6)
+    \value AlignJustified Applies full justification to content. (Added in Qt 4.6)
+    \value AlignLeft Applies left justification to content. (Added in Qt 4.6)
+    \value AlignRight Applies right justification to content. (Added in Qt 4.6)
 
 
     \omitvalue WebActionCount
