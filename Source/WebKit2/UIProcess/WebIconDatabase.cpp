@@ -190,6 +190,14 @@ Image* WebIconDatabase::imageForPageURL(const String& pageURL, const WebCore::In
     return m_iconDatabaseImpl->synchronousIconForPageURL(pageURL, iconSize);
 }
 
+WebCore::NativeImagePtr WebIconDatabase::nativeImageForPageURL(const String& pageURL, const WebCore::IntSize& iconSize)
+{
+    if (!m_webContext || !m_iconDatabaseImpl || !m_iconDatabaseImpl->isOpen() || pageURL.isEmpty())
+        return 0;
+
+    return m_iconDatabaseImpl->synchronousNativeIconForPageURL(pageURL, iconSize);
+}
+
 bool WebIconDatabase::isOpen()
 {
     return m_iconDatabaseImpl && m_iconDatabaseImpl->isOpen();

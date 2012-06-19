@@ -31,6 +31,7 @@
 #include "Connection.h"
 #include "WebIconDatabaseClient.h"
 #include <WebCore/IconDatabaseClient.h>
+#include <WebCore/ImageSource.h>
 #include <WebCore/IntSize.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -78,6 +79,7 @@ public:
     void getLoadDecisionForIconURL(const String&, uint64_t callbackID);
 
     WebCore::Image* imageForPageURL(const String&, const WebCore::IntSize& iconSize = WebCore::IntSize(32, 32));
+    WebCore::NativeImagePtr nativeImageForPageURL(const String&, const WebCore::IntSize& iconSize = WebCore::IntSize(32, 32));
     bool isOpen();
 
     void removeAllIcons();

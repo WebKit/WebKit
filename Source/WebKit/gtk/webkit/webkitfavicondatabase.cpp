@@ -24,6 +24,7 @@
 #include "DatabaseDetails.h"
 #include "DatabaseTracker.h"
 #include "FileSystem.h"
+#include "GdkCairoUtilities.h"
 #include "IconDatabase.h"
 #include "IconDatabaseClient.h"
 #include "Image.h"
@@ -394,16 +395,18 @@ static GdkPixbuf* getIconPixbufSynchronously(WebKitFaviconDatabase* database, co
 
     // The exact size we pass is irrelevant to the iconDatabase code.
     // We must pass something greater than 0x0 to get a pixbuf.
-    Image* icon = iconDatabase().synchronousIconForPageURL(pageURL, !iconSize.isZero() ? iconSize : IntSize(1, 1));
+    NativeImagePtr icon = iconDatabase().synchronousNativeIconForPageURL(pageURL, !iconSize.isZero() ? iconSize : IntSize(1, 1));
     if (!icon)
         return 0;
 
-    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(icon->getGdkPixbuf());
+    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(cairoImageSurfaceToGdkPixbuf(icon->surface()));
     if (!pixbuf)
         return 0;
 
     // A size of (0, 0) means the maximum available size.
-    if (!iconSize.isZero() && (icon->width() != iconSize.width() || icon->height() != iconSize.height()))
+    int pixbufWidth = gdk_pixbuf_get_width(pixbuf.get());
+    int pixbufHeight = gdk_pixbuf_get_height(pixbuf.get());
+    if (!iconSize.isZero() && (pixbufWidth != iconSize.width() || pixbufHeight != iconSize.height()))
         pixbuf = gdk_pixbuf_scale_simple(pixbuf.get(), iconSize.width(), iconSize.height(), GDK_INTERP_BILINEAR);
     return pixbuf.leakRef();
 }

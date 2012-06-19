@@ -1,3 +1,22 @@
+2012-06-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        Calling nativeImageForCurrentFrame() causes assertion failure: m_verifier.isSafeToUse()
+        https://bugs.webkit.org/show_bug.cgi?id=67582
+
+        Reviewed by David Levin.
+
+        Added a new synchronous method to the IconDatabase that returns a
+        native image for the platform instead of a WebCore::Image*.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::synchronousNativeIconForPageURL):
+        (WebCore):
+        * loader/icon/IconDatabase.h:
+        (IconDatabase):
+        * loader/icon/IconDatabaseBase.h:
+        (WebCore::IconDatabaseBase::synchronousNativeIconForPageURL):
+        (IconDatabaseBase):
+
 2012-06-19  Andy Estes  <aestes@apple.com>
 
         [Mac] Use AutodrainedPool instead of NSAutoreleasePool in AudioBus::loadPlatformResource()

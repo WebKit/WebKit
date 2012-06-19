@@ -33,6 +33,14 @@
 #define WTF_USE_CF 1
 #endif
 
+#include <wtf/Platform.h>
+
+#if PLATFORM(WIN) && !OS(WINCE)
+#ifndef WTF_USE_CG
+#define WTF_USE_CG 1
+#endif
+#endif
+
 // NOTE: These need to appear up top, as they declare macros
 // used in the JS and WTF headers.
 #include <runtime/JSExportMacros.h>

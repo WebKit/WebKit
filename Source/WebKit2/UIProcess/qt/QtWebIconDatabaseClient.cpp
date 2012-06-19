@@ -89,11 +89,8 @@ QImage QtWebIconDatabaseClient::iconImageForPageURL(const WTF::String& pageURL, 
     MutexLocker locker(m_imageLock);
 
     WebCore::IntSize size(iconSize.width(), iconSize.height());
-    RefPtr<WebCore::Image> image = m_iconDatabase->imageForPageURL(pageURL, size);
-    if (!image)
-        return QImage();
 
-    QPixmap* nativeImage = image->nativeImageForCurrentFrame();
+    QPixmap* nativeImage = m_iconDatabase->nativeImageForPageURL(pageURL, size);
     if (!nativeImage)
         return QImage();
 

@@ -336,29 +336,26 @@ cairo_surface_t* ewk_history_item_icon_surface_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
 
-    WebCore::Image* icon = WebCore::iconDatabase().synchronousIconForPageURL(core->url(), WebCore::IntSize(16, 16));
-    if (!icon) {
+    WebCore::NativeImagePtr icon = WebCore::iconDatabase().synchronousNativeIconForPageURL(core->url(), WebCore::IntSize(16, 16));
+    if (!icon)
         ERR("icon is NULL.");
-        return 0;
-    }
 
-    WebCore::NativeImageCairo* nativeImage = icon->nativeImageForCurrentFrame();
-    return nativeImage ? nativeImage->surface() : 0;
+    return icon ? icon->surface() : 0;
 }
 
 Evas_Object* ewk_history_item_icon_object_add(const Ewk_History_Item* item, Evas* canvas)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
-    WebCore::Image* icon = WebCore::iconDatabase().synchronousIconForPageURL(core->url(), WebCore::IntSize(16, 16));
 
+    WebCore::NativeImagePtr icon = WebCore::iconDatabase().synchronousNativeIconForPageURL(core->url(), WebCore::IntSize(16, 16));
     if (!icon) {
         ERR("icon is NULL.");
         return 0;
     }
 
-    WebCore::NativeImageCairo* nativeImage = icon->nativeImageForCurrentFrame();
-    return nativeImage ? ewk_util_image_from_cairo_surface_add(canvas, nativeImage->surface()) : 0;
+    cairo_surface_t* surface = icon->surface();
+    return surface ? ewk_util_image_from_cairo_surface_add(canvas, surface) : 0;
 }
 
 Eina_Bool ewk_history_item_page_cache_exists(const Ewk_History_Item* item)

@@ -1149,13 +1149,10 @@ void FrameLoaderClientBlackBerry::download(ResourceHandle* handle, const Resourc
 void FrameLoaderClientBlackBerry::dispatchDidReceiveIcon()
 {
     String url = m_frame->document()->url().string();
-    Image* img = iconDatabase().synchronousIconForPageURL(url, IntSize(10, 10));
-    if (!img || !img->data())
-        return;
-
-    NativeImageSkia* bitmap = img->nativeImageForCurrentFrame();
+    NativeImageSkia* bitmap = iconDatabase().synchronousNativeIconForPageURL(url, IntSize(10, 10));
     if (!bitmap)
         return;
+
     bitmap->lockPixels();
     String iconUrl = iconDatabase().synchronousIconURLForPageURL(url);
     m_webPagePrivate->m_client->setFavicon(img->width(), img->height(), (unsigned char*)bitmap->getPixels(), iconUrl.utf8().data());

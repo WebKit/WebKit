@@ -1,3 +1,14 @@
+2012-06-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        Calling nativeImageForCurrentFrame() causes assertion failure: m_verifier.isSafeToUse()
+        https://bugs.webkit.org/show_bug.cgi?id=67582
+
+        Reviewed by David Levin.
+
+        Fixes windows build.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
 2011-12-20  Pavel Feldman  <pavel.feldman@gmail.com>
 
         Web Inspector: reproducible crash after closing web inspector and browser window  (iCab)

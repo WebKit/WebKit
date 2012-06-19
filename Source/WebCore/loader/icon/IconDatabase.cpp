@@ -34,6 +34,7 @@
 #include "FileSystem.h"
 #include "IconDatabaseClient.h"
 #include "IconRecord.h"
+#include "Image.h"
 #include "IntSize.h"
 #include "Logging.h"
 #include "SQLiteStatement.h"
@@ -290,6 +291,16 @@ Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, co
     // So the only time the data will be set from the second thread is when it is INITIALLY being read in from the database, but we would never 
     // delete the image on the secondary thread if the image already exists.
     return iconRecord->image(size);
+}
+
+NativeImagePtr IconDatabase::synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize& size)
+{
+    Image* icon = synchronousIconForPageURL(pageURLOriginal, size);
+    if (!icon)
+        return 0;
+
+    MutexLocker locker(m_urlAndIconLock);
+    return icon->nativeImageForCurrentFrame();
 }
 
 void IconDatabase::readIconForPageURLFromDisk(const String& pageURL)
