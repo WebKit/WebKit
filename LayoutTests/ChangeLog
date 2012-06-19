@@ -1,5 +1,12 @@
 2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening, remove unnecessary expected files.
+
+        * platform/qt-5.0/fast/dom/DeviceMotion/create-event-expected.txt: Removed.
+        * platform/qt-5.0/fast/dom/DeviceOrientation/create-event-expected.txt: Removed.
+
+2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening, skip one more failing test.
 
         * platform/qt-5.0-wk2/Skipped:
