@@ -1,3 +1,14 @@
+2012-06-19  Adam Barth  <abarth@webkit.org>
+
+        Missing results aren't shown in garden-o-matic
+
+        Reviewed by Kenneth Russell.
+
+        Previously we didn't know to look for text and image results when the
+        bot told us that results were missing.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js:
+
 2012-06-19  Dirk Pranke  <dpranke@chromium.org>
 
         Fix regression introduced in r120646 where the svn revision isn't saved in results.json

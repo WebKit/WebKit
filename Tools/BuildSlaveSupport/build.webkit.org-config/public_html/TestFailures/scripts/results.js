@@ -40,6 +40,7 @@ var CRASH = 'CRASH';
 var IMAGE = 'IMAGE';
 var IMAGE_TEXT = 'IMAGE+TEXT';
 var AUDIO = 'AUDIO';
+var MISSING = 'MISSING';
 
 var kFailingResults = [TIMEOUT, TEXT, CRASH, IMAGE, IMAGE_TEXT, AUDIO];
 
@@ -130,6 +131,10 @@ function possibleSuffixListFor(failureTypeList)
             break;
         case CRASH:
             suffixList.push(kCrashLogSuffix);
+            break;
+        case MISSING:
+            pushImageSuffixes();
+            pushTextSuffixes();
             break;
         default:
             // FIXME: Add support for the rest of the result types.
