@@ -1,3 +1,11 @@
+2012-06-19  Martin Robinson  <mrobinson@igalia.com>
+
+        2012-06-19  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the GTK+ build by adding some missing source files to the source list.
+
+        * GNUmakefile.list.am: WebGLDepthTexture.cpp/h to the source list.
+
 2012-06-19  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         Remove the function ScriptDebugServer::supportsNativeBreakpoints()

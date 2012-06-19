@@ -5946,6 +5946,8 @@ webcore_sources += \
 	Source/WebCore/html/canvas/WebGLDebugRendererInfo.h \
 	Source/WebCore/html/canvas/WebGLDebugShaders.cpp \
 	Source/WebCore/html/canvas/WebGLDebugShaders.h \
+	Source/WebCore/html/canvas/WebGLDepthTexture.cpp \
+	Source/WebCore/html/canvas/WebGLDepthTexture.h \
 	Source/WebCore/html/canvas/WebGLFramebuffer.cpp \
 	Source/WebCore/html/canvas/WebGLFramebuffer.h \
 	Source/WebCore/html/canvas/WebGLGetInfo.cpp \
