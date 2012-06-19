@@ -30,7 +30,8 @@ function mockResults()
         "uses_expectations_file": true,
         "has_pretty_patch": false,
         "has_wdiff": false,
-        "revision": 12345
+        "revision": 12345,
+        "pixel_tests_enabled": true
     };
 }
 

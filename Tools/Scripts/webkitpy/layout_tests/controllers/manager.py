@@ -236,6 +236,8 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     results['layout_tests_dir'] = port_obj.layout_tests_dir()
     results['has_wdiff'] = port_obj.wdiff_available()
     results['has_pretty_patch'] = port_obj.pretty_patch_available()
+    results['pixel_tests_enabled'] = port_obj.get_option('pixel_tests')
+
     try:
         # We only use the svn revision for using trac links in the results.html file,
         # Don't do this by default since it takes >100ms.

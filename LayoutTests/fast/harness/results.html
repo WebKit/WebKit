@@ -486,7 +486,9 @@ function processGlobalStateFor(testObject)
     }
 
     if (actual == 'PASS' && expected != 'PASS') {
-        globalState().unexpectedPassTests.push(testObject);
+        if (expected != 'IMAGE' || globalState().results.pixel_tests_enabled) {
+            globalState().unexpectedPassTests.push(testObject);
+        }
         return;
     }
 

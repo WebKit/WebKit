@@ -1,3 +1,15 @@
+2012-06-19  Dirk Pranke  <dpranke@chromium.org>
+
+        new-run-webkit-tests reports unexpected pass of pixel tests when pixel testing is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=85446
+
+        Reviewed by Simon Fraser.
+
+        Embed whether pixel testing was enabled into the results.json.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (summarize_results):
+
 2012-06-19  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Modify HTTPS port to 8443 for performance tests

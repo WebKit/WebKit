@@ -1,3 +1,19 @@
+2012-06-19  Dirk Pranke  <dpranke@chromium.org>
+
+        new-run-webkit-tests reports unexpected pass of pixel tests when pixel testing is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=85446
+
+        Reviewed by Simon Fraser.
+
+        This change makes results.html aware of whether pixel tests were
+        enabled when the tests were run; if they weren't, we ignore
+        expected IMAGE tests that pass instead of reporting them as
+        'unexpected pass'.
+
+        * fast/harness/resources/results-test.js:
+        (mockResults):
+        * fast/harness/results.html:
+
 2012-06-19  Andreas Kling  <kling@webkit.org>
 
         Remove the -webkit-match-nearest-mail-blockquote-color property.
