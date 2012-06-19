@@ -1,3 +1,24 @@
+2012-06-19  Ken Buchanan  <kenrb@chromium.org>
+
+        Absolute positioned objects should not be added to anonymous block lists
+        https://bugs.webkit.org/show_bug.cgi?id=87768
+
+        Reviewed by Abhishek Arya.
+
+        containingBlock() was returning an anonymous block for absolute
+        positioned objects under a relative positioned inline in the case
+        that the inline is split and the object is underneath the block
+        continuation. Anonymous blocks should never have anything in their
+        positioned object lists because they can be destroyed at any time
+        for a different reasons such as anonymous block merging, which is
+        a problem for layout if they have m_posChildNeedsLayout set.
+
+        This patch adds a generic check for anonymous blocks in
+        containingBlock() to correct this problem.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+
 2012-06-19  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: extensionPanel.onSearch `action` strings should be
