@@ -6,6 +6,6 @@ var canvas = document.getElementById('foo');
 var url = canvas.toDataURL();
 var p = document.getElementById('console');
 p.innerHTML = "PASS";
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 </script>

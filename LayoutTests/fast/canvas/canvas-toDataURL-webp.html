@@ -2,9 +2,9 @@
 <pre id="log"></pre>
 <img id="result">
 <script>
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText(pixelTest = true);
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    window.testRunner.dumpAsText(pixelTest = true);
+    window.testRunner.waitUntilDone();
 }
 
 function webpDataURLTest()
@@ -19,8 +19,8 @@ function webpDataURLTest()
     else
         document.getElementById('result').src = dataURL;
 
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 
 var image = new Image();

@@ -35,15 +35,15 @@ function imageLoaded() {
     c4.translate(- i.width / 2, - i.height / 2);
     c4.fillRect(0, 0, i.width, i.height);
 
-    if (window.layoutTestController) { 
-        layoutTestController.notifyDone();
+    if (window.testRunner) { 
+        testRunner.notifyDone();
     }
 }
 
 function runTests() {
-    if (window.layoutTestController) {
-	    layoutTestController.dumpAsText(true);
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+	    testRunner.dumpAsText(true);
+        testRunner.waitUntilDone();
     }
     
     i = new Image();

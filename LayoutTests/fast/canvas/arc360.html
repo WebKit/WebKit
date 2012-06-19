@@ -2,8 +2,8 @@
 <p>Test canvas arc() start / end points when the arc is >= 360 degrees. The result should be a circle with two line segments connected to the left hand side, towards the top left and bottom left corners.
 <canvas id="mycanvas" width="400" height="400"></canvas>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText(true);
+if (window.testRunner)
+    testRunner.dumpAsText(true);
 
 var canvas = document.getElementById('mycanvas');
 var ctx = canvas.getContext('2d');

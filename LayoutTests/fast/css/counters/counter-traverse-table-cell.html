@@ -4,8 +4,8 @@
             function test()
             {
                 document.getElementsByTagName("iframe")[0].src = "";
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
             }
         </script>
     </head>

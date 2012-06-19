@@ -12,9 +12,9 @@ description("Checks that painting WebGL contents doesn't pollute the context sta
 
 var wtu = WebGLTestUtils;
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var canvas;
@@ -27,8 +27,8 @@ function draw() {
   wtu.drawQuad(context);
 
   wtu.checkCanvasRect(context, 0, 0, 1, 1, [0, 0, 255, 255], "Should have rendered blue.", 1);
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 
 window.onload = function()

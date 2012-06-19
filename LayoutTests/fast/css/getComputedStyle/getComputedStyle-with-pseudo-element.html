@@ -127,8 +127,8 @@
 
     </style>
     <script type="text/javascript">
-      if (window.layoutTestController)
-          layoutTestController.dumpAsText();
+      if (window.testRunner)
+          testRunner.dumpAsText();
 
       var tests = [
         { 'elementId' : 'testFirsts', 'pseudoElement' : ':first-line', 'property' : 'color', 'expectedValue' : 'rgb(165, 42, 42)' },
@@ -187,8 +187,8 @@
 
       function setupAndRunTests()
       {
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
 
         // FIXME: It is currently necessary to run the animation at least once before querying for the style on the pseudo-element will work.
         document.getElementById("testHardwareAcceleratedCompositing").addEventListener('webkitAnimationEnd', runTests, false);
@@ -211,8 +211,8 @@
           resultsElement.appendChild(msg);
         });
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
       }
     </script>
   </head>

@@ -3,9 +3,9 @@
     <title>A canvas globalCompositeOperation test with alpha blending</title>
     <!-- This test was inspired by http://canvex.lazyilluminati.com/misc/compositex.html -->
     <script type="application/x-javascript">
-      if (window.layoutTestController) {
-          layoutTestController.dumpAsText();
-          layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+          testRunner.dumpAsText();
+          testRunner.waitUntilDone();
       }
 
       var compositeTypes = [
@@ -433,8 +433,8 @@
       {
           drawTable(useFillRect);
           drawTable(usePathAndFill);
-          if (window.layoutTestController)
-              layoutTestController.notifyDone();
+          if (window.testRunner)
+              testRunner.notifyDone();
       }
     </script>
     <style type="text/css">

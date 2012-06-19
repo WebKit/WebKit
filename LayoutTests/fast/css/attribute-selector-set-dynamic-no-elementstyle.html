@@ -19,14 +19,14 @@
         function change() {
             var element = document.getElementsByTagName('div')[0];
             element.setAttribute("test", "0");
-            if (window.layoutTestController) {
-                layoutTestController.notifyDone();
+            if (window.testRunner) {
+                testRunner.notifyDone();
             }
         }
         function startTest() {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
             // Trigger an attribute change after all load processing is done. Doing the change
             // here immediately does not exhibit the problem.

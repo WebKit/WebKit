@@ -38,8 +38,8 @@ w"); /* URL string contains twice newline */ }
 
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var rules = document.styleSheets[0].cssRules;
     var text = "";

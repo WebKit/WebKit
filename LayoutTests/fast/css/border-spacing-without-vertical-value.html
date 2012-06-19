@@ -4,8 +4,8 @@
 WebKit should not crash and we should get null.</p>
 <script type="text/javascript">
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var a = document.createElement("a");
 a.setAttribute("style", "-webkit-border-horizontal-spacing: 1px;");

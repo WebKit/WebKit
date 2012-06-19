@@ -9,8 +9,8 @@ function runTest()
 {
 	document.getElementById("result").firstChild.setAttribute("style","font-size: 16\\70\r\nx;");
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     if (document.getElementById("result").firstChild.style.fontSize === document.getElementById("expected").firstChild.style.fontSize)
         document.getElementById("message").firstChild.data = "SUCCESS";

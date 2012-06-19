@@ -62,8 +62,8 @@
 <div id="console"></div>
 <div id="out"></div>
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
 
 description("If no font resources are available for an @font-face rule due to download errors, the rule must be ignored but others must remain in effect.");
 
@@ -109,8 +109,8 @@ function test()
             shouldBe("document.getElementById('" + testId(mainTestId, subTestId) + "').offsetWidth", "document.getElementById('" + refId(mainTestId, subTestId) + "').offsetWidth");
         }
     }
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 
 for (var mainTestId = 0; mainTestId < expectedResults.length; mainTestId++) {

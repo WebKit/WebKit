@@ -8,8 +8,8 @@
 
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     if (document.getElementById("result").firstChild.style.fontSize === document.getElementById("expected").firstChild.style.fontSize)
         document.getElementById("message").firstChild.data = "SUCCESS";

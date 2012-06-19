@@ -485,8 +485,8 @@ function runTest() {
         context.fillStyle = '#0f0';
         context.fillRect(0, 0, canvas.width, canvas.height);
     }
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 }
 </script>
 <title>Canvas test of doom</title>

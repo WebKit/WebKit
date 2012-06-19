@@ -1,8 +1,8 @@
 function runRepaintTest()
 {
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         document.body.offsetTop;
-        layoutTestController.display();
+        testRunner.display();
         repaintTest();
     } else {
         setTimeout(repaintTest, 100);

@@ -9,8 +9,8 @@ div:target {
 <script>
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     // Location changes need to happen outside the onload handler to generate history entries.
     setTimeout(runTest, 0);
@@ -20,8 +20,8 @@ function runTest() {
     window.location.hash ='#target-01';
     document.body.offsetTop;
     window.history.back(); // This queues up a navigation, so we need to delay the call to notifyDone.
-    if (window.layoutTestController)
-        setTimeout(function() { layoutTestController.notifyDone() }, 0);
+    if (window.testRunner)
+        setTimeout(function() { testRunner.notifyDone() }, 0);
 }
 </script>
 </head>

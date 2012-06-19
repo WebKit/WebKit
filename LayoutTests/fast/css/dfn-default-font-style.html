@@ -13,8 +13,8 @@ if (dfnfont == 'italic')
 else
     testresult = 'FAIL';
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 }
 
 document.writeln(testresult);

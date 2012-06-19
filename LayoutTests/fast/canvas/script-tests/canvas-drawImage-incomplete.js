@@ -1,7 +1,7 @@
 description("Test that drawImage() does nothing with an incomplete image or video");
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext('2d');

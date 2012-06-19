@@ -6,9 +6,9 @@
         <link rel="help" href="http://www.w3.org/TR/CSS21/generate.html#counters">
         <script src="../../js/resources/js-test-pre.js"></script>
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
             function run()
             {
@@ -72,8 +72,8 @@
                 shouldBe("window.internals.counterValue(document.getElementById('test54'))", "'10'");
                 shouldBe("window.internals.counterValue(document.getElementById('test55'))", "'1'");
                 shouldBe("window.internals.counterValue(document.getElementById('test56'))", "'-2147483648'");
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         </script>
         <style type="text/css">

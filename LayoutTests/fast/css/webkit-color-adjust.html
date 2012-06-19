@@ -11,8 +11,8 @@ function test(id, expected) {
 }
 
 function runTests() {
-    if (window.layoutTestController)
-        window.layoutTestController.dumpAsText();
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
 
     test("economy", "economy");
     test("exact", "exact");

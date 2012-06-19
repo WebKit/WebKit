@@ -28,12 +28,12 @@ function test()
 
     var dynamicBlock = setupBlock("Tab size becomes 2 dynamically.", null);
 
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
     window.setTimeout(function() {
         dynamicBlock.style.setProperty("tab-size", "2");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 }
 </script>

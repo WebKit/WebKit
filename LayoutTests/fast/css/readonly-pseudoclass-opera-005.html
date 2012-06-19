@@ -20,8 +20,8 @@
     }
 
     function test() {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         document.getElementById('i3').removeAttribute('readonly');
         document.getElementById('i4').readOnly = true;

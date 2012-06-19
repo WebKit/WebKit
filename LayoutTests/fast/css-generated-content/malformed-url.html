@@ -5,9 +5,9 @@ An invalid URL in the "content" style property should not cause a crash when the
 
 FAIL - The browser should have navigated to resources/pass.html.
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 window.location.href = 'resources/pass.html';
 </script>

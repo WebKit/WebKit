@@ -38,13 +38,13 @@ function doDeferredTest() {
   else
     document.getElementById("console").innerHTML = "TEST FAILED";
 
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 
 var canvas = document.getElementById('c');

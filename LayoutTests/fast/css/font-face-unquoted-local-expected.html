@@ -13,9 +13,9 @@
 <p>SUCCESS</p>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
     document.documentElement.offsetTop;
-    setTimeout(function() { layoutTestController.notifyDone(); }, 200);
+    setTimeout(function() { testRunner.notifyDone(); }, 200);
 }
 </script>

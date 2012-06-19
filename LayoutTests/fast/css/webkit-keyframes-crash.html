@@ -4,8 +4,8 @@
     <p>This test passed if it did not crash</p>
     <p id="console">FAILED (test not run)</p>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         function main(){
             var e = window.document.styleSheets[0].cssRules[0];

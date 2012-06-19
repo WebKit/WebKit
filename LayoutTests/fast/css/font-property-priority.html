@@ -12,8 +12,8 @@
         document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var styleDeclaration = document.getElementById("style").sheet.rules[0].style;
 

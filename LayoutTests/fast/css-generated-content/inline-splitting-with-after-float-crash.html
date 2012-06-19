@@ -5,8 +5,8 @@ PASS, if the script does not cause a crash or ASSERT failure
 <script>
     function endTest(childSpan) {
         childSpan.appendChild(divToInsert);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     function startTest() {
         quoteNode = document.createElement('q');
@@ -18,9 +18,9 @@ PASS, if the script does not cause a crash or ASSERT failure
         parentSpan.appendChild(childSpan);
         document.documentElement.appendChild(parentSpan);
         setTimeout('endTest(childSpan);', 50);
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
         }
     }
     window.onload = startTest;

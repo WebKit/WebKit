@@ -12,19 +12,19 @@
   </style>
   <script type="text/javascript" charset="utf-8">
 
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText(true);
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText(true);
+      testRunner.waitUntilDone();
     }
 
     var appleImage;
     function runRepaintTest()
     {
-        if (window.layoutTestController) {
+        if (window.testRunner) {
             document.body.offsetTop;
-            layoutTestController.display();
+            testRunner.display();
             repaintTest();
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         } else {
             setTimeout(repaintTest, 0);
         }

@@ -12,7 +12,7 @@
     if (window.eventSender) {
         eventSender.mouseMoveTo(200, 50);
         eventSender.mouseMoveTo(210, 50);
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
         document.getElementById("result").innerText = getComputedStyle(document.getElementById("target").firstElementChild).backgroundColor === "rgb(0, 128, 0)" ? "PASS" : "FAIL";
     }
 </script>

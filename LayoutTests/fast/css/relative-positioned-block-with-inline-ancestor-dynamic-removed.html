@@ -30,15 +30,15 @@
             }
         </style>
         <script type="text/javascript">
-            if (window.layoutTestController) {
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
             }
 
             function run() {
                 document.getElementById("span1").style.position = "static";
                 document.body.offsetTop;
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
            }
         </script>
     </head>

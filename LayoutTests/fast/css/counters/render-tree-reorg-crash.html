@@ -8,8 +8,8 @@
 <spacer style='counter-increment: a'>
 <div id='p' style='counter-reset: a'>
 <script>
-  if (window.layoutTestController)
-    layoutTestController.dumpAsText();   
+  if (window.testRunner)
+    testRunner.dumpAsText();   
   document.getElementById('f').appendChild(document.getElementById("p"));
 </script>
 This test passes if it does not crash.<br>

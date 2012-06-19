@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 // Differences with respect to Khronos version of webgl-test.js
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+if (window.testRunner)
+    testRunner.overridePreference("WebKitWebGLEnabled", "1");
 
 function assertMsg(assertion, msg) {
     if (assertion) {
@@ -12,18 +12,18 @@ function assertMsg(assertion, msg) {
 }
 
 function initNonKhronosFramework(waitUntilDone) {
-  if (window.layoutTestController) {
-    layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-    layoutTestController.dumpAsText();
+  if (window.testRunner) {
+    testRunner.overridePreference("WebKitWebGLEnabled", "1");
+    testRunner.dumpAsText();
     if (waitUntilDone) {
-      layoutTestController.waitUntilDone();
+      testRunner.waitUntilDone();
     }
   }
 }
 
 function nonKhronosFrameworkNotifyDone() {
-  if (window.layoutTestController) {
-    layoutTestController.notifyDone();
+  if (window.testRunner) {
+    testRunner.notifyDone();
   }
 }
 

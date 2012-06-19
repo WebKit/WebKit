@@ -13,15 +13,15 @@
     ctx.fillText("B", 0, 100);
     ctx.fillStyle = "green";
     canvas.parentNode.removeChild(canvas);
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText(true);
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText(true);
+        testRunner.waitUntilDone();
 	}
     setTimeout(function()
     {
         ctx.fillText("A", 0, 100);
         document.body.appendChild(canvas);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 50);
 </script>

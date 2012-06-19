@@ -9,11 +9,11 @@
     <br>PASS
 </div>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
         // Must wait for the font to fail to load.
-        setTimeout(function() { layoutTestController.notifyDone() }, 100);
+        setTimeout(function() { testRunner.notifyDone() }, 100);
     }
 
     document.execCommand("SelectAll");

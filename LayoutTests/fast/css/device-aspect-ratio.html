@@ -3,8 +3,8 @@
 <head id="myhead">
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
-if (window.layoutTestController) {
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
 }
 
 var count = 0;
@@ -30,8 +30,8 @@ function waitForStylesheetLoad()
     if (document.defaultView.getComputedStyle(document.getElementById('description'), null).color == "rgb(0, 128, 0)") {
         shouldBe("document.defaultView.getComputedStyle(document.getElementById('description'), null).color", "'rgb(0, 128, 0)'");
         isSuccessfullyParsed();
-        if (window.layoutTestController) {
-            window.layoutTestController.notifyDone();
+        if (window.testRunner) {
+            window.testRunner.notifyDone();
         }
         return;
     }

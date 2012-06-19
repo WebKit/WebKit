@@ -6,8 +6,8 @@
     h1:after { content: counter(c) }
     </style>
     <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     window.onload = function () {
         var testElement = document.getElementById("test");

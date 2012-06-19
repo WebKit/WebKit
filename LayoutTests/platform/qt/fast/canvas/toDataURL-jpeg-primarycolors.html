@@ -2,13 +2,13 @@
 <head>
     <script src="toDataURL-jpeg.js"></script>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         window.notifyEndTest = function ()
         {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         };
 
         function testToDataURL(canvas, ctx)
@@ -37,8 +37,8 @@
             });
 
             img.src = data;
-            if (window.layoutTestController)
-                layoutTestController.waitUntilDone();
+            if (window.testRunner)
+                testRunner.waitUntilDone();
         }
         _addTest(testToDataURL);
     </script>

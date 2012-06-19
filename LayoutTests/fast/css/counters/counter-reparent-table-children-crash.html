@@ -5,15 +5,15 @@ td {
 }
 </style>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
 }
 
 function crash() {
     document.body.innerHTML = "PASS: Malformed table counters do not cause crash";
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.notifyDone();
+        testRunner.dumpAsText();
     }
 }
 </script>

@@ -62,8 +62,8 @@ top_div.style.setProperty('text-align', 'start', 'important');
 <pre id="console">
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 // Checks that the given element is left aligned if expectedAlignment is 'left', or right aligned if
 // expectedAlignment is 'right'.
@@ -77,7 +77,7 @@ function assertAlignment(element, i, expectedAlignment)
     var leftAlign = expectedAlignment == 'left';
     var isLeftAligned = (enclosingDiv.offsetLeft == innerSpan.offsetLeft);
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         if (leftAlign && isLeftAligned && computedStyle.textAlign == 'left')
             innerSpan.innerHTML = 'PASS';
         else if (!leftAlign && !isLeftAligned && computedStyle.textAlign == 'right')

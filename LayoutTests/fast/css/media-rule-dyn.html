@@ -5,8 +5,8 @@
         </style>
         <script>
             function runTest() {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
 
                 var styleSheet = document.getElementById('style1').sheet;
                 var mediaRule = styleSheet.cssRules[0];

@@ -25,11 +25,11 @@
     shouldBeEqualToString('background', bg)
   }
 
-  if (window.layoutTestController) {
+  if (window.testRunner) {
     description("Dragging out of an element should cause it to lose :hover")
     var box = document.getElementById('box')
     var box2 = document.getElementById('box2')
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     eventSender.dragMode = false;
     // This mouse click seems to be required for WebKit's event handling to

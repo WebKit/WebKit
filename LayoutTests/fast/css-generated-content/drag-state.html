@@ -12,8 +12,8 @@
     Drag the box above. The text should become blue and the browser should not crash.
 </p>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         eventSender.mouseMoveTo(50, 50);
         eventSender.mouseDown();
         eventSender.mouseMoveTo(250, 250);

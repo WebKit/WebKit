@@ -62,8 +62,8 @@
     }
 
     function draw() {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText(true);
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
 
         var image = createImage();
         drawFillRect(document.getElementById('unsmoothedFillRect'), image,

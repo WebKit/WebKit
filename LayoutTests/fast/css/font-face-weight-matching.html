@@ -92,9 +92,9 @@ If the test passes, all 14 glyphs below should be black squares:</p>
 <span style="font-family: f1; font-weight: 500">A</span>
 
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
         document.body.offsetTop;
-        setTimeout(function() { layoutTestController.notifyDone(); }, 100);
+        setTimeout(function() { testRunner.notifyDone(); }, 100);
     }
 </script>

@@ -12,12 +12,12 @@
     }
     </style>
     <script type="text/javascript">
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         function test()
         {
-            if (!window.layoutTestController)
+            if (!window.testRunner)
                 return;
             eventSender.mouseMoveTo(30, 30);
             document.body.offsetTop;    // force layout

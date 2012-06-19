@@ -10,8 +10,8 @@
             function runTest() {
                 document.body.offsetTop;
                 document.body.style.color = "blue";
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
             }
             window.onload = runTest;
         </script>

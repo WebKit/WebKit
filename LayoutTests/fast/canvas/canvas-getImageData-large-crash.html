@@ -1,8 +1,8 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText(false);
+if (window.testRunner)
+    testRunner.dumpAsText(false);
 
 var canvas = document.createElement("canvas");
 canvas.getContext("2d").getImageData(10, 0xffffffff, 2147483647,10);

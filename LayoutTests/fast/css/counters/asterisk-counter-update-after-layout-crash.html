@@ -4,8 +4,8 @@
 <script>
 function runTest() {
     document.styleSheets[0].insertRule("div { counter-reset: c 141170 }");
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 }
 window.onload=runTest;
 </script>

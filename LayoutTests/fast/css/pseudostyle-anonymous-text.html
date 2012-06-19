@@ -6,11 +6,11 @@
     </style>
     <script>
         function test() {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
             document.execCommand("SelectAll");
-            if (window.layoutTestController)
-                layoutTestController.display();
+            if (window.testRunner)
+                testRunner.display();
         }
     </script>
 </head>

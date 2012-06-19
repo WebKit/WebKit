@@ -18,8 +18,8 @@
             divChild = document.createElement('div');
             divChild.setAttribute('class', 'divChildStyle');
             parentDiv.appendChild(divChild);
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
         }
         window.onload = runTest;
     </script>

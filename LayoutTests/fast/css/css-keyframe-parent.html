@@ -3,8 +3,8 @@
     <script language="javascript">
     function runTest()
     {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         rule = document.styleSheets[0].cssRules[0];
         if (rule[0].parentRule == rule)

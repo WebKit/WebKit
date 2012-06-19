@@ -8,10 +8,10 @@
     }
     </style>
     <script>
-    if (window.layoutTestController) {
-        layoutTestController.display();
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.display();
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
     function log(message)
     {
@@ -27,7 +27,7 @@
             log('PASS');
         else
             log('FAIL');
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 
     function runTest()

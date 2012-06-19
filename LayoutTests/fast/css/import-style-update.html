@@ -3,8 +3,8 @@
 @import url("data:text/css,#test{display:none;}");
 </style>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 function test() {
 var s = document.styleSheets;
 s[0].cssRules[0].styleSheet.deleteRule(0);

@@ -17,13 +17,13 @@
         function change() {
             var element = document.getElementsByTagName('test')[0];
             element.attributes.test.value = 0;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
       
         window.onload = function () {
-            if (window.layoutTestController)
-                layoutTestController.waitUntilDone();
+            if (window.testRunner)
+                testRunner.waitUntilDone();
             // Trigger an attribute change after all load processing is done. Doing the change
             // here immediately does not exhibit the problem.
             setTimeout("change();", 0);

@@ -21,12 +21,12 @@
   <script src="../../js/resources/js-test-pre.js"></script>
   <script type="text/javascript">
 
-  if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+  if (window.testRunner)
+      testRunner.dumpAsText();
 
   function run()
   {
-      if (!window.layoutTestController)
+      if (!window.testRunner)
           return;
       shouldBe("window.internals.counterValue(document.getElementById('div1'))", "'0'");
       shouldBe("window.internals.counterValue(document.getElementById('div2'))", "'0.0'");

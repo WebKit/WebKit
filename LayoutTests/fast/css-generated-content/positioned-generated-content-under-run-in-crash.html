@@ -14,8 +14,8 @@ function runTest()
     document.documentElement.appendChild(test2);
     test3 = document.createElement('div');
     document.documentElement.appendChild(test3);
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 }
 window.onload = runTest;
 </script>

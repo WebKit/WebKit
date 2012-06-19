@@ -10,16 +10,16 @@ function createIframe()
     link.setAttribute("rel", "stylesheet");
     link.setAttribute("href", "does_not_exist.css");
     iframeDocument.head.appendChild(link);
-    if (window.layoutTestController) {
-        layoutTestController.addUserStyleSheet("#test { color: blue: }", true);
-        setTimeout("window.layoutTestController.notifyDone()", 100);
+    if (window.testRunner) {
+        testRunner.addUserStyleSheet("#test { color: blue: }", true);
+        setTimeout("window.testRunner.notifyDone()", 100);
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.addUserStyleSheet("#test { color: red: }", true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.addUserStyleSheet("#test { color: red: }", true);
 }
 setTimeout("createIframe()", 0);
 

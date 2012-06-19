@@ -44,8 +44,8 @@ The test passes if all the lines containing the text "Left Align" are aligned to
 
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 // Checks that the given element is left aligned if expectedAlignment is 'left', or right aligned if
 // expectedAlignment is 'right'.
@@ -54,7 +54,7 @@ function assertAlignment(enclosingListElement, i, expectedAlignment)
     var computedStyle = window.getComputedStyle(enclosingListElement, null);
     var leftAlign = expectedAlignment == 'left';
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         if (computedStyle.textAlign == 'start') {
             // For the case of -webkit-auto check the offset of the text on screen
             // rather than examining the computed style.

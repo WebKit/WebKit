@@ -5,8 +5,8 @@ This tests that we support empty style sheets.
 <div id="result">Test failed.</div>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 if (document.styleSheets[0]) {
     var result = document.getElementById("result");

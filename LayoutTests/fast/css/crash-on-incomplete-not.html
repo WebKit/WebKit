@@ -9,13 +9,13 @@
     window.setTimeout(runTest,0);
     function runTest(){
         me.textContent=g;
-        if (window.layoutTestController) {
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.notifyDone();
         }
     }
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 </script>
 <p>PASS without crash.</p>

@@ -7,8 +7,8 @@
   <p>There should be nothing below. Bug 8994. </p>
   <p><canvas width="200" height="100">FAIL</canvas></p>
   <script>
-   if (window.layoutTestController)
-     layoutTestController.dumpAsText(true);
+   if (window.testRunner)
+     testRunner.dumpAsText(true);
 
    var canvas = document.getElementsByTagName('canvas')[0];
    var context = canvas.getContext('2d');

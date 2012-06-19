@@ -30,8 +30,8 @@ var totalChecked = 0;
 var expectedCount = 0;
 var idArray=new Array("option1","option2","option3","option4","radio1","radio2","checkbox1","checkbox2");
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 }
 
 function isCheckedOrSelected(id) {

@@ -54,8 +54,8 @@
             log("FAIL: '" + target.id + "' resized to (" + actualWidth + ", " + actualHeight + ") instead of (" + width + ", " + height + ").");
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
 
         var both = document.getElementById("both");
         var horizontal = document.getElementById("horizontal");

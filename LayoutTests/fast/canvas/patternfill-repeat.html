@@ -4,9 +4,9 @@
   <title>createPattern repeat test</title>
   <style> canvas { border:solid #000 } </style>
   <script>
-   if (window.layoutTestController) {
-     layoutTestController.dumpAsText(true);
-     layoutTestController.waitUntilDone();
+   if (window.testRunner) {
+     testRunner.dumpAsText(true);
+     testRunner.waitUntilDone();
    }
    window.onload = function(){
     var i = new Image();
@@ -40,8 +40,8 @@
     	ctx.strokeRect(0, 0, 150, 150);
     	ctx.fillRect(0, 0, 150, 150);
     	
-    	if (window.layoutTestController)
-    	    layoutTestController.notifyDone();
+    	if (window.testRunner)
+    	    testRunner.notifyDone();
    		}
    }
   </script>

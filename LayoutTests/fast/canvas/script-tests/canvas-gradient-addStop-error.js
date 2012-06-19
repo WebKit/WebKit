@@ -6,9 +6,9 @@ shouldThrow("gradient.addColorStop(1, 'rgb(NaN%, NaN%, NaN%)')");
 var gradient = ctx.createRadialGradient(0, 0, 0, 100, 0, 0);
 shouldThrow("gradient.addColorStop(1, 'rgb(NaN%, NaN%, NaN%)')");
 
-if (this.layoutTestController) {
+if (this.testRunner) {
     debug("Switching to dashboard compatibility mode.  Invalid color strings should no longer cause an exception.");
-    layoutTestController.setUseDashboardCompatibilityMode(true);
+    testRunner.setUseDashboardCompatibilityMode(true);
 } else {
     debug("The following tests will fail in the browser as we can only enable dashboard compatibility mode in DRT.")
 }

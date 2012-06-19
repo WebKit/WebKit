@@ -6,8 +6,8 @@
   <script>
   var compositeTypes = ['source-in','copy'];
 
-  if (window.layoutTestController)
-    layoutTestController.dumpAsText(true);
+  if (window.testRunner)
+    testRunner.dumpAsText(true);
 
   for (i = 0; i < compositeTypes.length; i++) {
     var canvas = document.getElementById('canvas-' + compositeTypes[i]);

@@ -1,6 +1,6 @@
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 // This test should show a table of canvas elements. Onto the background of each a blue
@@ -374,6 +374,6 @@ function runTest() {
       //rebaseline(context, i, j);
     }
   }
-  if (layoutTestController)
-      layoutTestController.notifyDone();
+  if (testRunner)
+      testRunner.notifyDone();
 }

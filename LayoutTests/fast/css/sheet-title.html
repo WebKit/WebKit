@@ -2,8 +2,8 @@
 <head>
     <script language='javascript'>
     function runTest() {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         if (document.styleSheets[0].title == "basic" &&
             document.styleSheets[1].title == "basic") {
             document.getElementById("q").title = "advanced";

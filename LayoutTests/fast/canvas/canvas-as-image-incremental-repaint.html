@@ -10,18 +10,18 @@
    </style>
  
   <script type="application/x-javascript">
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
+    if (window.testRunner)
+      testRunner.waitUntilDone();
 
     var canvasContext;
     function runRepaintTest()
     {
       canvasContext = document.getCSSCanvasContext("2d", "squares", 300, 300);
-      if (window.layoutTestController) {
+      if (window.testRunner) {
         document.body.offsetTop;
-        layoutTestController.display();
+        testRunner.display();
         repaintTest();
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
       } else {
         setTimeout(repaintTest, 2000);
       }

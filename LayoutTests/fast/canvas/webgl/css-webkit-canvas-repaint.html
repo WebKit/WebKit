@@ -94,9 +94,9 @@
                 gl.drawArrays(gl.TRIANGLES, 0, 3); 
             }
             
-            if (window.layoutTestController) {
-                layoutTestController.waitUntilDone();
-                layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
+                testRunner.overridePreference("WebKitWebGLEnabled", "1");
             }
             
             initialize();
@@ -105,8 +105,8 @@
                 draw(0.7, 0, 0);
                 setTimeout(function() {
                     draw(0, 0.5, 0);
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
+                    if (window.testRunner)
+                        testRunner.notifyDone();
                 }, 100);
             }, 100);
         </script>

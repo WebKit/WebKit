@@ -2,8 +2,8 @@
     <script>
         window.onload = function()
         {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             document.getElementById('content').innerHTML = "PASS: rendered counter nodes without crashing.";
         }

@@ -1,8 +1,8 @@
 <html>
   <script>
-  if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
   }
   </script>
   <style>
@@ -26,7 +26,7 @@
       document.execCommand('removeformat');
 
       document.body.innerHTML = "PASS: Counters updated successfully without crashing";
-      layoutTestController.notifyDone();
+      testRunner.notifyDone();
     </script>
   </table>
 </html>

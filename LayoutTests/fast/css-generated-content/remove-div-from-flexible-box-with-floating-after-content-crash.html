@@ -13,6 +13,6 @@ parentDiv.appendChild(childDiv);
 parentDiv.appendChild(document.createTextNode('PASS if no exception or crash'));
 document.documentElement.offsetHeight; // forces a layout
 parentDiv.removeChild(childDiv);
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>

@@ -35,8 +35,8 @@ function testMain()
     for (var testId = 0; testId < 2; testId++) {
         shouldBe("document.getElementById('ref" + testId + "').offsetWidth", "document.getElementById('test" + testId + "').offsetWidth");
     }
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 
 var trialCount = 0;
@@ -53,8 +53,8 @@ function warmUpAndTest()
     window.setTimeout(warmUpAndTest, 10);
 }
 
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

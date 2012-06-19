@@ -16,8 +16,8 @@ function generate_deeply_nested_selector(nest) {
 
 generate_deeply_nested_selector(400000);
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 <p>Test case for <a href="http://bugs.webkit.org/show_bug.cgi?id=41129">http://bugs.webkit.org/show_bug.cgi?id=41129</a></p>
 <p>If browser didn't crash, the test passed.</p>

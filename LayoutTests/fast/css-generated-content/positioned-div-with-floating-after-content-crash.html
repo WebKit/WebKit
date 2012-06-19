@@ -1,9 +1,9 @@
 <script>
 function runTest() {
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpChildFramesAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
     }
 }
 window.onload = runTest;

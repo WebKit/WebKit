@@ -27,15 +27,15 @@ function imageLoaded() {
         canvases.appendChild(div);
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.testRunner) {
+        testRunner.notifyDone();
     }
 }
 
 function runTests() {
-    if (window.layoutTestController) {
-		layoutTestController.dumpAsText(true);
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+		testRunner.dumpAsText(true);
+        testRunner.waitUntilDone();
     }
 
     img = new Image();

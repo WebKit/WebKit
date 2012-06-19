@@ -24,21 +24,21 @@
            }       
         </style>
         <script type="text/javascript">
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             function finishTest()
             {
                 eventSender.mouseUp();
                 getSelection().removeAllRanges();
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
 
             function test()
             {
-                if (!window.layoutTestController)
+                if (!window.testRunner)
                     return;
-                layoutTestController.waitUntilDone();
+                testRunner.waitUntilDone();
                 eventSender.dragMode = false;
                 eventSender.mouseMoveTo(1, 1);
                 eventSender.mouseDown();

@@ -2,10 +2,10 @@
     <html xmlns="http://www.w3.org/1999/xhtml">
         <body>
             <script type="text/javascript">
-                if (window.layoutTestController)
+                if (window.testRunner)
                 {
-                    layoutTestController.dumpAsText();
-                    layoutTestController.waitUntilDone();
+                    testRunner.dumpAsText();
+                    testRunner.waitUntilDone();
                 }
 
                 function runTest()
@@ -13,8 +13,8 @@
                     document.getElementsByTagNameNS('http://www.w3.org/1999/xhtml', 'style')[0];
                     if (document.body) {
                         document.body.innerHTML = "PASS";
-                        if (window.layoutTestController)
-                            layoutTestController.notifyDone();
+                        if (window.testRunner)
+                            testRunner.notifyDone();
                     }
                 }
             </script>

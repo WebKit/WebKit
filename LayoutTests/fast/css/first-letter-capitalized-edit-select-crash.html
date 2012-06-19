@@ -14,7 +14,7 @@ Pass if no crash or assert in debug
 window.onload=function()
 {
     document.getElementById('span').focus();
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 };
 </script>

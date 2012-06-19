@@ -5,9 +5,9 @@
       #el2 { outline-style: dashed; }
     </style>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.display();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.display();
+            testRunner.waitUntilDone();
         }
 
         function log(message) {
@@ -20,10 +20,10 @@
            setTimeout("finish()", 100);
         }
         function finish() {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
                 log("PASSED: Didn't crash!\n");
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
         }
 

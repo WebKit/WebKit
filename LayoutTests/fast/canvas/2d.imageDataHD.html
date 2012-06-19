@@ -1,6 +1,6 @@
 <pre id="console"></pre>
 <script>
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     function log(message)
     {
@@ -48,11 +48,11 @@
             log("FAIL: Pixel " + i + " is not blue: " + formatColor(r, g, b, a) + ".");
     }
 
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         log("This test requires WebKitTestRunner or DumpRenderTree.");
 
-    layoutTestController.waitUntilDone();
-    layoutTestController.setBackingScaleFactor(2, function() {
+    testRunner.waitUntilDone();
+    testRunner.setBackingScaleFactor(2, function() {
         var canvas = document.createElement("canvas");
         canvas.width = 8;
         canvas.height = 8;
@@ -113,6 +113,6 @@
         } else
             log("High-DPI canvas is not enabled.");
 
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     });
 </script>

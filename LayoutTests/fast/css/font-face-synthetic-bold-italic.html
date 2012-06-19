@@ -13,9 +13,9 @@
 <p>Ahem synthetic italic:</p><i><p style="font-family: family1">Ahem synthetic italic</p></i>
 <p>Ahem synthetic bold italic:</p><strong><i><p style="font-family: family1">Ahem synthetic bold italic</p></i></strong>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
         document.body.offsetTop;
-        setTimeout(function() { layoutTestController.notifyDone(); }, 100);
+        setTimeout(function() { testRunner.notifyDone(); }, 100);
     }
 </script>

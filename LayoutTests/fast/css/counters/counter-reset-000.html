@@ -15,9 +15,9 @@
         .increment { counter-increment: c; }
     </style>
     <script type="text/javascript">
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();   
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();   
+            testRunner.waitUntilDone();
         }
 
         function run() {
@@ -26,7 +26,7 @@
             s.setAttribute("class", "reset");
             s.setAttribute("id", "newSpan");
             t.insertBefore(s, t.childNodes.item(1));
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 testElement = document.getElementById("test");
                 console = document.getElementById("console");
                 spanList = testElement.getElementsByTagName("span")
@@ -38,7 +38,7 @@
                         newSpanElement.innerText = newSpanElement.innerText + "-"
                     console.appendChild(newSpanElement);
                 }
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
           }
     </script>

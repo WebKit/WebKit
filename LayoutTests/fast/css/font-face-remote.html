@@ -17,16 +17,16 @@
         _FAIL<br>
     </div>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
 
         // Kick off loading of the font
         document.body.offsetTop;
 
         function finished()
         {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </body>

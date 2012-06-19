@@ -12,8 +12,8 @@ var style = document.createElement("style");
 style.appendChild(document.createTextNode(s));
 document.getElementsByTagName("head")[0].appendChild(style);
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 
 <!-- loading a linked style sheet causes the list of CSS Rules to be rebuilt,

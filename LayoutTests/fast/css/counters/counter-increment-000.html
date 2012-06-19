@@ -12,8 +12,8 @@
   <script src="../../js/resources/js-test-pre.js"></script>
   <script type="text/javascript">
 
-  if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+  if (window.testRunner)
+      testRunner.dumpAsText();
 
   function checkCounterValuesBeforeChange()
   {
@@ -40,7 +40,7 @@
 
   function run()
   {
-      if (window.layoutTestController)
+      if (window.testRunner)
           checkCounterValuesBeforeChange();
 
       var t = document.getElementById("test");
@@ -50,7 +50,7 @@
       s.appendChild(document.createTextNode("new-"));
       t.insertBefore(s, t.childNodes.item(1));
 
-      if (window.layoutTestController)
+      if (window.testRunner)
           checkCounterValuesAfterChange();
   }
   </script>

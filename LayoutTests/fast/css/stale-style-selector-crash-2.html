@@ -15,8 +15,8 @@
     </p>
     <div id="foo">SUCCESS</div>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         // Force a layout ignoring pending stylesheets
         document.body.offsetTop;

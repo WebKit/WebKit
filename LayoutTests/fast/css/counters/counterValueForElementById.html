@@ -32,8 +32,8 @@
     <div id="console"></div>
 
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
 
             shouldBe("window.internals.counterValue(document.getElementById('before'))", "'0'");
             shouldBe("window.internals.counterValue(document.getElementById('after'))", "'0'");

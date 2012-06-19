@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <body>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText()
+if (window.testRunner)
+    testRunner.dumpAsText()
 
 document.body.appendChild(document.createElement("p")).appendChild(document.createTextNode("This test passes if it does not cause a crash"));
 var canvas = document.body.appendChild(document.createElement("canvas"));

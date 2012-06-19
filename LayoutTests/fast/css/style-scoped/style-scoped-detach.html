@@ -25,9 +25,9 @@
 
         function runTests()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             log('--- ORIGINAL ---');
@@ -40,8 +40,8 @@
             setTimeout(function() {
                 testAll();
                 log('--- FINISHED ---');
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }, 0);
         }
     </script>

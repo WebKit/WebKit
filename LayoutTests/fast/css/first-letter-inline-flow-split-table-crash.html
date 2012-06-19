@@ -13,8 +13,8 @@ var textNode = document.createTextNode('abc');
 function removeTextNode() {
     childSpan.removeChild(textNode);
     delete textNode;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function changeClass() {
@@ -37,9 +37,9 @@ function runTest() {
     childSpan.appendChild(textNode);
     setTimeout('changeClass();', 10);
 
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 }
 window.onload = runTest;

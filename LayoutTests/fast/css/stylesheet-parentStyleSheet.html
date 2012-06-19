@@ -3,8 +3,8 @@
 @import url("data:text/css,#test{}");
 </style>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function test() {
     if (document.styleSheets[0].cssRules[0].styleSheet.parentStyleSheet == document.styleSheets[0])

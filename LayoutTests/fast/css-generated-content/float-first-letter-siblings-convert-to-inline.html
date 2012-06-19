@@ -6,8 +6,8 @@
 <script>
 function recreateFirstLetterBlock() {
   document.getElementById("parent").setAttribute('class', 'inlineFL');
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 function removeDiv() {
   // This causes the parent to only have inline (and floating) children
@@ -21,9 +21,9 @@ function changeDivStyle() {
 }
 function startTest() {
   setTimeout("changeDivStyle();", 10);
-  if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
   }
 }
 window.onload = startTest;

@@ -3,14 +3,14 @@
 function finishTest()
 {
     document.getElementById("test").setAttribute("class", "bullet");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function init()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
     setTimeout(finishTest, 0);
 }
 

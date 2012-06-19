@@ -2,9 +2,9 @@
 <head>
 <script src="../../resources/gc.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function load()
@@ -28,8 +28,8 @@ function crash()
     if (obj)
         obj = obj.foo;
     document.body.innerText = 'PASS';
-    if (window.layoutTestController)
-        layoutTestController.notifyDone()
+    if (window.testRunner)
+        testRunner.notifyDone()
 }
 </script>
 </head>

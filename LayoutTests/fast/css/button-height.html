@@ -6,8 +6,8 @@
 #button4 { height: 40px; background-color: yellow; }
 </style>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 window.onload = function()
 {
@@ -22,7 +22,7 @@ window.onload = function()
     else
         testFailed("document.getElementById('button5').offsetHeight is incorrect for this platform. Should be the same height as button 1 for the Mac ports and 40 otherwise.");
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var testContainer = document.getElementById("test-container");
         if (testContainer)
             document.body.removeChild(testContainer);   

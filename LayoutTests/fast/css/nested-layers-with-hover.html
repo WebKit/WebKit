@@ -25,7 +25,7 @@
             }
         
             function runTest() {
-                if (!window.layoutTestController) 
+                if (!window.testRunner) 
                     return;
                 var targetElem = document.getElementById('table-row');
                 eventSender.mouseMoveTo(targetElem.offsetLeft + targetElem.offsetWidth / 2, 

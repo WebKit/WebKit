@@ -116,8 +116,8 @@
         }
 
         function runTests() {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             test('fixed');
             test('percents');

@@ -3,10 +3,10 @@
 <script>
 function testOne(operation, quirk)
 {
-    if (window.layoutTestController){
-		layoutTestController.dumpAsText(true);
-        if (layoutTestController.setUseDashboardCompatibilityMode)
-            layoutTestController.setUseDashboardCompatibilityMode(quirk);
+    if (window.testRunner){
+		testRunner.dumpAsText(true);
+        if (testRunner.setUseDashboardCompatibilityMode)
+            testRunner.setUseDashboardCompatibilityMode(quirk);
     }
 
     var canvas = document.getElementById(operation + "-" + (quirk ? "" : "no-") + "quirk");

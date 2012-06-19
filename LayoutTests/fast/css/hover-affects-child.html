@@ -39,9 +39,9 @@
             }
         
             function runTest() {
-                if (!window.layoutTestController) 
+                if (!window.testRunner) 
                     return;
-                layoutTestController.dumpAsText();
+                testRunner.dumpAsText();
                 var targetElem = document.getElementById('targetElem');
                 eventSender.mouseMoveTo(targetElem.offsetLeft + targetElem.offsetWidth / 2, 
                                         targetElem.offsetTop + targetElem.offsetHeight / 2);

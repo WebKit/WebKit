@@ -1,3 +1,50 @@
+2012-06-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use testRunner instead of layoutTestController in fast/canvas, clip, compact, constructors, cookies, and css* tests
+        https://bugs.webkit.org/show_bug.cgi?id=89431
+
+        Reviewed by Kent Tamura.
+
+        * fast/canvas/:
+        * fast/constructors/constructor-as-function-crash.html:
+        * fast/css-generated-content/absolute-position-inside-inline.html:
+        * fast/css-generated-content/after-with-first-letter-float-crash.html:
+        * fast/css-generated-content/attr-missing.html:
+        * fast/css-generated-content/before-content-with-list-marker-in-anon-block-crash.html:
+        * fast/css-generated-content/block-after.html:
+        * fast/css-generated-content/drag-state.html:
+        * fast/css-generated-content/empty-content-with-float-crash.html:
+        * fast/css-generated-content/first-letter-next-sibling-crash.html:
+        * fast/css-generated-content/first-letter-table-cell-format-block-crash.html:
+        * fast/css-generated-content/float-first-letter-siblings-convert-to-inline.html:
+        * fast/css-generated-content/floating-before-content-with-list-marker-crash.html:
+        * fast/css-generated-content/hit-test-generated-content.html:
+        * fast/css-generated-content/hover-style-change.html:
+        * fast/css-generated-content/inline-splitting-with-after-float-crash.html:
+        * fast/css-generated-content/malformed-url.html:
+        * fast/css-generated-content/positioned-background-hit-test-crash.html:
+        * fast/css-generated-content/positioned-div-with-floating-after-content-crash.html:
+        * fast/css-generated-content/positioned-generated-content-under-run-in-crash.html:
+        * fast/css-generated-content/remove-div-from-flexible-box-with-floating-after-content-crash.html:
+        * fast/css-generated-content/reset-content-to-initial.html:
+        * fast/css-generated-content/resources/pass.html:
+        * fast/css-generated-content/resources/positioned-div-with-floating-after-content-crash-frame2.html:
+        * fast/css-generated-content/spellingToolTip-assert.html:
+        * fast/css-generated-content/table-row-after-no-crash.html:
+        * fast/css-generated-content/table-with-scrollbar-corner.html:
+        * fast/css-generated-content/text-before-table-col-crash.html:
+        * fast/css-grid-layout/display-grid-set-get.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-item-column-row-get-set.html:
+        * fast/css/:
+        * platform/mac/fast/canvas/canvas-draw-xbm-image.html:
+        * platform/qt/fast/canvas/toDataURL-jpeg-alpha.html:
+        * platform/qt/fast/canvas/toDataURL-jpeg-primarycolors.html:
+        * platform/qt/fast/canvas/toDataURL-jpeg-quality-basic.html:
+        * platform/qt/fast/canvas/toDataURL-jpeg-quality-notnumber.html:
+        * platform/qt/fast/canvas/toDataURL-jpeg-quality-outsiderange.html:
+
 2012-06-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip failing tests.

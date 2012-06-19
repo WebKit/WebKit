@@ -19,8 +19,8 @@
   <script type="text/javascript">
 
   function run() {
-      if (window.layoutTestController) {
-          layoutTestController.dumpAsText();
+      if (window.testRunner) {
+          testRunner.dumpAsText();
           // This call ensures the layout happened before we modify the DOM tree.
           window.internals.counterValue(document.getElementById("span1"));
       }
@@ -28,7 +28,7 @@
       var t = document.getElementById("test");
       t.removeChild(t.childNodes.item(1));
 
-      if (window.layoutTestController) {
+      if (window.testRunner) {
           testElement = document.getElementById("test");
           console = document.getElementById("console");
           spanList = testElement.getElementsByTagName("span");

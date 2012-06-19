@@ -29,8 +29,8 @@ function runTests() {
     context.fillStyle = '#0f0';
     context.fillRect(0, 0, canvas.width, canvas.height);
     debug("Test passed.");
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 }
 </script>
 <title>borkedness</title>

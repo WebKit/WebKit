@@ -51,9 +51,9 @@
         
         function init()
         {
-            if (window.layoutTestController) {
-                layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                testRunner.overridePreference("WebKitWebGLEnabled", "1");
+                testRunner.dumpAsText();
             }
             // Set up a canvas to get image data from
             var canvas2d = document.getElementById("texcanvas");

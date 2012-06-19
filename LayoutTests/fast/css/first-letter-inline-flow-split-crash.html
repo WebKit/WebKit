@@ -14,8 +14,8 @@ textNode =  document.createTextNode('bcd');
 function removeTextNode() {
     parentDiv.removeChild(textNode);
     delete textNode;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function changeClass() {
@@ -32,9 +32,9 @@ function runTest() {
     parentDiv.appendChild(textNode);
     childSpan.appendChild(childDiv);
     setTimeout("changeClass()", 10);
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 }
 window.onload = runTest;

@@ -3,8 +3,8 @@
     <script language='javascript'>
     function runTest()
     {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         var sheets = document.styleSheets;
         if (sheets.length == 11) {
             for (i = 0; i < sheets.length; i++) {

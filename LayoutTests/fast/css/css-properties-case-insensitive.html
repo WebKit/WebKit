@@ -13,8 +13,8 @@
             var test;
             var lowerValue, upperValue;
 
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             test = document.getElementById('test');
             lowerValue = document.defaultView.getComputedStyle(test, "").getPropertyValue("width");

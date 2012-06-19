@@ -16,16 +16,16 @@
         .increment { counter-increment: c; }
     </style>
     <script type="text/javascript">
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         function run() {
             document.getElementById("one").removeAttribute("class");
             document.getElementById("two").setAttribute("class", "increment");
             document.getElementById("three").setAttribute("style", "counter-increment: c");
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 testElement = document.getElementById("test");
                 console = document.getElementById("console");
                 spanList = testElement.getElementsByTagName("span")
@@ -37,7 +37,7 @@
                         newSpanElement.innerText = newSpanElement.innerText + "-";
                     console.appendChild(newSpanElement);
                 }
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
         }
     </script>

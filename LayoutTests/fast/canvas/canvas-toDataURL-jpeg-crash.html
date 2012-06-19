@@ -6,6 +6,6 @@ canvas.toDataURL("image/jpeg") should not crash.<br>
 var test = document.getElementById('canvas').toDataURL('image/jpeg');
 // Test passes if we don't crash.
 document.getElementById('log').innerHTML = 'PASS';
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>

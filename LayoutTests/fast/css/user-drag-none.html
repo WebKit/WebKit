@@ -58,9 +58,9 @@
         document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
     }
 
-    onload = window.layoutTestController ? function()
+    onload = window.testRunner ? function()
     {
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
 
         var container = document.getElementById("container");
         var y = container.getBoundingClientRect().top;

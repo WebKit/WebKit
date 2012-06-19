@@ -5,20 +5,20 @@
         document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         var canvas1 = document.createElement("canvas");
         var context1 = canvas1.getContext("2d");
 
-        layoutTestController.waitUntilDone();
-        layoutTestController.setBackingScaleFactor(2, function() {
+        testRunner.waitUntilDone();
+        testRunner.setBackingScaleFactor(2, function() {
             var canvas2 = document.createElement("canvas");
             var context2 = canvas2.getContext("2d");
 
             log ("context1.webkitBackingStorePixelRatio is " + context1.webkitBackingStorePixelRatio);
             log ("context2.webkitBackingStorePixelRatio is " + context2.webkitBackingStorePixelRatio);
 
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         });
     } else {
         log ("When not run inside DumpRenderTree or WebKitTestRunner, this test just prints the value of");

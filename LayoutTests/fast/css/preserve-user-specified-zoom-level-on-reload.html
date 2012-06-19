@@ -3,7 +3,7 @@
 <script>
 function runTest()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     if (!window.eventSender)
@@ -12,10 +12,10 @@ function runTest()
     if (!window.sessionStorage)
         return;
 
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
     if (sessionStorage.testCompleted) {
         delete sessionStorage.testCompleted;
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     } else {
         // Note, it is sufficient to zoom-in only once, but so as to make it easier
         // for a human to compare the pixel test results we zoom-in up to Safari's

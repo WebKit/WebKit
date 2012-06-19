@@ -1,7 +1,7 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
     
 function test()
@@ -13,8 +13,8 @@ function test()
     pre.innerText = "div height = " + d.clientHeight;
     document.body.appendChild(pre);
     
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <style>

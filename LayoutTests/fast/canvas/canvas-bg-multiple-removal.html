@@ -1,16 +1,16 @@
 <html>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 window.onload = function()
 {
     if (location.hash == "#2") {
         document.body.innerHTML = "PASSED: Duplicate webkit-canvas styles removed without crash.";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } else {
         if (location.hash)
             location.hash = "#" + (parseInt(location.hash.slice(1)) + 1).toString();

@@ -7,7 +7,7 @@
 </style>
 <script type="text/javascript">
 function dumpTest() {
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 function runTest() {
     document.getElementById('ruby').innerHTML = '<audio controls="controls" id="aud" src="blah.ogg" class="posAbsolute"></audio>';
@@ -15,9 +15,9 @@ function runTest() {
     document.body.removeChild(document.getElementById('remove')); // Cause anonymous blocks containing 'secondDivStyle' and 'ruby' to be merged
     document.getElementById('aud').style.color = "blue"; // Force style recalc
     setTimeout('dumpTest()', 10);
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-	layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+	testRunner.dumpAsText();
     }
 }
 window.onload = runTest;

@@ -6,8 +6,8 @@
     <p>If the canvas below is black, then we managed to draw before loading stylesheets. Hooray!</p>
     <canvas id="mycanvas" width="400" height="200"></canvas>
     <script type="application/x-javascript">
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText(true);
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
 
         var canvas = document.getElementById("mycanvas");
         canvas.getContext("2d").fillRect(0, 0, canvas.width, canvas.height);

@@ -3,8 +3,8 @@
 <script>
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     result = "TEST FAILED";
     if (getComputedStyle(document.getElementById("cell1")).fontWeight == "normal")
         if (getComputedStyle(document.getElementById("cell2")).fontWeight == "bold")

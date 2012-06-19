@@ -21,8 +21,8 @@ function drawCanvas(ctx) {
   ctx.fillText("I", -5, 100);
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var canvas = document.getElementById('c');
 var ctx = canvas.getContext("2d");

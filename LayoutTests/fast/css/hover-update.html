@@ -23,8 +23,8 @@ function finish()
 {
     shouldBeEqualToString("window.getComputedStyle(document.getElementById('b'), null).backgroundColor", "rgb(0, 128, 0)");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function hideC()
@@ -40,12 +40,12 @@ function hoveredC()
 
 function runtest()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     debug('Hover color before test: ' + window.getComputedStyle(document.getElementById("b"), null).backgroundColor);
 
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
     var target = document.getElementById('target');
     var x = target.offsetParent.offsetLeft + target.offsetLeft + target.offsetWidth / 2;
     var y = target.offsetParent.offsetTop + target.offsetTop + target.offsetHeight / 2;

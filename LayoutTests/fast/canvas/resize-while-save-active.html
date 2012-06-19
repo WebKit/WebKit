@@ -5,8 +5,8 @@
 <body>
 <canvas id="mycanvas" width="512" height="512"></canvas>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText()
+if (window.testRunner)
+    testRunner.dumpAsText()
 var canvas = document.getElementById('mycanvas');
 var ctx = canvas.getContext('2d');
 ctx.fillStyle = "rgb(255,165,0)";

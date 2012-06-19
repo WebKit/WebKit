@@ -41,7 +41,7 @@ var drawIterations = 2;
 function TestControllerPaint() {
     while (drawIterations > 0) {
         draw();
-        layoutTestController.display();
+        testRunner.display();
         drawIterations = drawIterations - 1;
     }
     draw();
@@ -61,7 +61,7 @@ function BrowserPaint(){
 
 function onLoadHandler()
 {
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         TestControllerPaint();
     } else {
         BrowserPaint();

@@ -2,8 +2,8 @@
 <html>
 <body>
 <script>
-  if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+  if (window.testRunner)
+      testRunner.dumpAsText();
   try {
     document.createElement('canvas').getContext('2d').strokeText();
   } catch (err) {

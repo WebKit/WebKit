@@ -18,8 +18,8 @@ div.b {background-color: green !important;}
     <div style="height:5px; width:5px; background-color:green; visibility: hidden"></div>
     <div id="result">Testing...</div>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         var expected = document.defaultView.getComputedStyle(document.getElementsByTagName("div")[2], null).backgroundColor;
         var result = document.defaultView.getComputedStyle(document.getElementsByTagName("div")[0], null).backgroundColor == expected
             && document.defaultView.getComputedStyle(document.getElementsByTagName("div")[1], null).backgroundColor == expected;

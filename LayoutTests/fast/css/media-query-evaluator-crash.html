@@ -2,8 +2,8 @@
 Test passes if it does not crash.
 <iframe id="test"></iframe>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var iframe = document.getElementById("test");
 var obj = iframe.contentWindow.matchMedia("(min-width: 0em)");

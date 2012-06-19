@@ -16,9 +16,9 @@
         .increment { counter-increment: c; }
     </style>
     <script type="text/javascript">
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         function run() {
@@ -27,7 +27,7 @@
             newSpanElement.setAttribute("class","increment");
             newSpanElement.setAttribute("id","newNode");
             testElement.insertBefore(newSpanElement, testElement.firstChild);
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 console = document.getElementById("console");
                 spanList = testElement.getElementsByTagName("span")
                 for (i = 0; i < spanList.length; ++i ) {
@@ -42,7 +42,7 @@
                 testElement.parentNode.removeChild(testElement);
                 testElement = document.getElementById("reference");
                 testElement.innerHTML = testElement.innerHTML.replace(/<b>a<u>b<\/u><\/b>/g,"");
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
         }
     </script>

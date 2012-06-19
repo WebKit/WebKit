@@ -2,13 +2,13 @@
 <head>
     <script src="toDataURL-jpeg.js"></script>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         window.notifyEndTest = function ()
         {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         };
 
         function testToDataURL(canvas, ctx)
@@ -29,8 +29,8 @@
             
                 _assert(canvas.toDataURL('image/jpeg', 1).length >= canvas.toDataURL('image/jpeg', 0.9).length, "canvas.toDataURL('image/jpeg', 1).length >= canvas.toDataURL('image/jpeg', 0.9).length");
                 _assert(canvas.toDataURL('image/jpeg', 0).length <= canvas.toDataURL('image/jpeg', 0.1).length, "canvas.toDataURL('image/jpeg', 0).length <= canvas.toDataURL('image/jpeg', 0.1).length");
-                if (window.layoutTestController)
-                    layoutTestController.waitUntilDone();
+                if (window.testRunner)
+                    testRunner.waitUntilDone();
             }
         }
 

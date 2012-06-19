@@ -1,8 +1,8 @@
 <head>
 <script>
 function runTest() {
-    if (window.layoutTestController)
-        window.layoutTestController.dumpAsText();
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
         
     var textAlign = window.getComputedStyle(document.getElementById("div")).textAlign;
     if (textAlign == "start")

@@ -21,20 +21,20 @@
 
 description("This test passes if both the first and the second counter are 1000.");
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function run()
 {
     document.getElementById("testView").setAttribute("class", "counter1000");
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     shouldBe("window.internals.counterValue(document.getElementById('testView'))", "'1000 1000'");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 window.onload = run;
