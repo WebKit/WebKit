@@ -1,5 +1,11 @@
 2012-06-18  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed chromium expectations update to mark tests as timing out due to r120627.
+
+        * platform/chromium/TestExpectations:
+
+2012-06-18  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed chromium expectations.
 
         * platform/chromium-mac/compositing/fixed-position-scroll-offset-history-restore-expected.png: Added.

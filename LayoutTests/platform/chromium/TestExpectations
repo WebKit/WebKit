@@ -3431,13 +3431,12 @@ BUGCR122448 : media/video-seek-past-end-paused.html = PASS TEXT
 
 BUGCR122462 WIN LINUX : http/tests/inspector/inspect-element.html = TEXT
 
-BUGWK83635 : fast/canvas/2d.backingStorePixelRatio.html = TEXT
-BUGWK83635 : platform/chromium/virtual/gpu/fast/canvas/2d.backingStorePixelRatio.html = TEXT
+BUGWK83635 : fast/canvas/2d.backingStorePixelRatio.html = TEXT TIMEOUT
+BUGWK83635 : platform/chromium/virtual/gpu/fast/canvas/2d.backingStorePixelRatio.html = TEXT TIMEOUT
+BUGWK83635 : fast/canvas/2d.imageDataHD.html = TEXT TIMEOUT
+BUGWK83635 : platform/chromium/virtual/gpu/fast/canvas/2d.imageDataHD.html = TEXT TIMEOUT
 
 BUGWK83647 WIN LINUX : fast/multicol/cell-shrinkback.html = IMAGE
-
-BUGWK83941 : fast/canvas/2d.imageDataHD.html = TEXT
-BUGWK83941 : platform/chromium/virtual/gpu/fast/canvas/2d.imageDataHD.html = TEXT
 
 BUGWK84065 MAC DEBUG : fast/canvas/webgl/shader-precision-format.html = TEXT
 BUGWK84065 WIN DEBUG : fast/canvas/webgl/shader-precision-format.html = TEXT
@@ -3729,3 +3728,4 @@ BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = TEXT
 // Flaky
 BUGWK89166 : http/tests/messaging/cross-domain-message-event-dispatch.html = TEXT
 BUGWK89167 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT
+
