@@ -107,7 +107,7 @@ function verifyDirectory(expected, callback, entries)
     returnedEntries = [];
     for (var i = 0; i < entries.length; i++) {
         // Skip the entries that start with '.' (so that we do not get '.svn' etc)
-        if (entries[i].fullPath.indexOf('.') == 0)
+        if (entries[i].name.indexOf('.') == 0)
             continue;
         returnedEntries.push(entries[i].fullPath);
     }
