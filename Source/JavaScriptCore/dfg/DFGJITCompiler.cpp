@@ -128,16 +128,14 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     for (unsigned i = 0; i < m_calls.size(); ++i)
         linkBuffer.link(m_calls[i].m_call, m_calls[i].m_function);
 
-    if (m_codeBlock->needsCallReturnIndices()) {
-        m_codeBlock->callReturnIndexVector().reserveCapacity(m_exceptionChecks.size());
-        for (unsigned i = 0; i < m_exceptionChecks.size(); ++i) {
-            unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_exceptionChecks[i].m_call);
-            CodeOrigin codeOrigin = m_exceptionChecks[i].m_codeOrigin;
-            while (codeOrigin.inlineCallFrame)
-                codeOrigin = codeOrigin.inlineCallFrame->caller;
-            unsigned exceptionInfo = codeOrigin.bytecodeIndex;
-            m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(returnAddressOffset, exceptionInfo));
-        }
+    m_codeBlock->callReturnIndexVector().reserveCapacity(m_exceptionChecks.size());
+    for (unsigned i = 0; i < m_exceptionChecks.size(); ++i) {
+        unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_exceptionChecks[i].m_call);
+        CodeOrigin codeOrigin = m_exceptionChecks[i].m_codeOrigin;
+        while (codeOrigin.inlineCallFrame)
+            codeOrigin = codeOrigin.inlineCallFrame->caller;
+        unsigned exceptionInfo = codeOrigin.bytecodeIndex;
+        m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(returnAddressOffset, exceptionInfo));
     }
 
     Vector<CodeOriginAtCallReturnOffset>& codeOrigins = m_codeBlock->codeOrigins();

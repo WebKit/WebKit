@@ -719,13 +719,6 @@ namespace JSC {
         }
 
         bool hasExpressionInfo() { return m_rareData && m_rareData->m_expressionInfo.size(); }
-        //  We only generate exception handling info if the user is debugging
-        // (and may want line number info), or if the function contains exception handler.
-        bool needsCallReturnIndices()
-        {
-            return true || (m_rareData
-                && (m_rareData->m_expressionInfo.size() || m_rareData->m_exceptionHandlers.size()));
-        }
 
 #if ENABLE(JIT)
         Vector<CallReturnOffsetToBytecodeOffset>& callReturnIndexVector()
