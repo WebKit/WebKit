@@ -1,3 +1,13 @@
+2012-06-19  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in WebCore::RenderSVGModelObject::checkIntersection
+        https://bugs.webkit.org/show_bug.cgi?id=89059
+
+        Reviewed by Rob Buis.
+
+        * svg/custom/intersection-list-crash-expected.txt: Added.
+        * svg/custom/intersection-list-crash.svg: Added.
+
 2012-06-19  Dan Bernstein  <mitz@apple.com>
 
         Paginated display API doesn’t allow setting the page progression direction
