@@ -242,6 +242,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         # We only use the svn revision for using trac links in the results.html file,
         # Don't do this by default since it takes >100ms.
         if use_trac_links_in_results_html(port_obj):
+            port_obj.host._initialize_scm()
             results['revision'] = port_obj.host.scm().head_svn_revision()
     except Exception, e:
         _log.warn("Failed to determine svn revision for checkout (cwd: %s, webkit_base: %s), leaving 'revision' key blank in full_results.json.\n%s" % (port_obj._filesystem.getcwd(), port_obj.path_from_webkit_base(), e))

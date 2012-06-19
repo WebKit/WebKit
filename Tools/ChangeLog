@@ -1,5 +1,21 @@
 2012-06-19  Dirk Pranke  <dpranke@chromium.org>
 
+        Fix regression introduced in r120646 where the svn revision isn't saved in results.json
+
+        Unreviewed, build fix.
+
+        It turns out that we store the svn revision two different ways
+        in the JSON, and I only caught one of them :(. This should fix
+        the other.
+
+        Also, this part of the code is poorly tested. I will investigate
+        adding at least a basic test for this in a separate fix.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (summarize_results):
+
+2012-06-19  Dirk Pranke  <dpranke@chromium.org>
+
         REGRESSION (NRWT): Results for new non-text-only tests are always put in the most-specific platform directory
         https://bugs.webkit.org/show_bug.cgi?id=78127
 
