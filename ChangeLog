@@ -1,3 +1,14 @@
+2012-06-19  Joel Dillon  <joel.dillon@codethink.co.uk>, Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Allow the modules file generation to work on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=89010
+
+        Reviewed by Csaba Osztrogonác.
+
+        Add calls to toSystemPath and use QMAKE_DIR_SEP where necessary.
+
+        * Source/api.pri:
+
 2012-06-19  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Fix TARGET not properly being set for QtWebKitd5.dll when building in debug.
