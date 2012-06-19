@@ -86,6 +86,7 @@ public:
 
     // NOTE: Don't try to clone() an AnimationValue, that's not a threadsafe operation since it mutates refcounts.
     const AnimationValue* valueAt(size_t i) const { return m_values.at(i); }
+    bool finished() const { return m_finished; }
 
     TransformationMatrix blendTransform(const TransformOperations* from, const TransformOperations*, double progress) const;
     float blendOpacity(float from, float to, double progress) const;
@@ -103,6 +104,7 @@ private:
         , m_duration(animation->duration())
         , m_iterationCount(animation->iterationCount())
         , m_direction(animation->direction())
+        , m_finished(false)
     {
         if (animation->isTimingFunctionSet())
             m_timingFunction = animation->timingFunction();
@@ -123,6 +125,7 @@ private:
         , m_duration(other.m_duration)
         , m_iterationCount(other.m_iterationCount)
         , m_direction(other.m_direction)
+        , m_finished(false)
     {
     }
 
@@ -143,6 +146,7 @@ private:
     double m_duration;
     int m_iterationCount;
     Animation::AnimationDirection m_direction;
+    bool m_finished;
 };
 
 }

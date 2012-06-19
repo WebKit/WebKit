@@ -77,7 +77,7 @@ static const TimingFunction* timingFunctionForAnimationValue(const AnimationValu
     return CubicBezierTimingFunction::defaultTimingFunction();
 }
 
-static double progress(double elapsedTime, const LayerAnimation* layerAnimation, double scale, double offset, const TimingFunction* tf)
+static double progress(double elapsedTime, const LayerAnimation* layerAnimation, double scale, double offset, const TimingFunction* tf, bool& animationFinished)
 {
     double dur = layerAnimation->duration();
     if (layerAnimation->iterationCount() > 0)
@@ -85,8 +85,10 @@ static double progress(double elapsedTime, const LayerAnimation* layerAnimation,
 
     if (!layerAnimation->duration())
         return 1.0;
-    if (layerAnimation->iterationCount() > 0 && elapsedTime >= dur)
+    if (layerAnimation->iterationCount() > 0 && elapsedTime >= dur) {
+        animationFinished = true;
         return (layerAnimation->iterationCount() % 2) ? 1.0 : 0.0;
+    }
 
     // Compute the fractional time, taking into account direction.
     // There is no need to worry about iterations, we assume that we would have
@@ -117,7 +119,7 @@ static double progress(double elapsedTime, const LayerAnimation* layerAnimation,
     return fractionalTime;
 }
 
-static void fetchIntervalEndpoints(double elapsedTime, const LayerAnimation* layerAnimation, const AnimationValue*& fromValue, const AnimationValue*& toValue, double& prog)
+static void fetchIntervalEndpoints(double elapsedTime, const LayerAnimation* layerAnimation, const AnimationValue*& fromValue, const AnimationValue*& toValue, double& prog, bool& animationFinished)
 {
     // Find the first key.
     if (layerAnimation->duration() && layerAnimation->iterationCount() != Animation::IterationCountInfinite)
@@ -186,7 +188,7 @@ static void fetchIntervalEndpoints(double elapsedTime, const LayerAnimation* lay
 
     const TimingFunction* timingFunction = timingFunctionForAnimationValue(prevKeyframe, layerAnimation);
 
-    prog = progress(elapsedTime, layerAnimation, scale, offset, timingFunction);
+    prog = progress(elapsedTime, layerAnimation, scale, offset, timingFunction, animationFinished);
 }
 
 void LayerAnimation::apply(LayerCompositingThread* layer, double elapsedTime)
@@ -194,8 +196,9 @@ void LayerAnimation::apply(LayerCompositingThread* layer, double elapsedTime)
     const AnimationValue* from = 0;
     const AnimationValue* to = 0;
     double progress = 0.0;
+    bool animationFinished = false;
 
-    fetchIntervalEndpoints(elapsedTime, this, from, to, progress);
+    fetchIntervalEndpoints(elapsedTime, this, from, to, progress, animationFinished);
 
     switch (property()) {
     case AnimatedPropertyWebkitTransform:
@@ -210,6 +213,8 @@ void LayerAnimation::apply(LayerCompositingThread* layer, double elapsedTime)
         ASSERT_NOT_REACHED();
         break;
     }
+
+    m_finished = animationFinished;
 }
 
 TransformationMatrix LayerAnimation::blendTransform(const TransformOperations* from, const TransformOperations* to, double progress) const

@@ -496,13 +496,14 @@ bool LayerCompositingThread::updateAnimations(double currentTime)
         animation->apply(this, elapsedTime);
     }
 
+    bool allAnimationsFinished = true;
     for (size_t i = 0; i < m_runningAnimations.size(); ++i) {
         LayerAnimation* animation = m_runningAnimations[i].get();
         double elapsedTime = (m_suspendTime ? m_suspendTime : currentTime) - animation->startTime() + animation->timeOffset();
         animation->apply(this, elapsedTime);
+        if (!animation->finished())
+            allAnimationsFinished = false;
     }
-
-    bool hasRunningAnimations = !m_runningAnimations.isEmpty();
 
     // If there are any overrides, apply them
     if (m_override) {
@@ -521,11 +522,12 @@ bool LayerCompositingThread::updateAnimations(double currentTime)
             LayerAnimation* animation = m_override->animations()[i].get();
             double elapsedTime = (m_suspendTime ? m_suspendTime : currentTime) - animation->startTime() + animation->timeOffset();
             animation->apply(this, elapsedTime);
-            hasRunningAnimations |= true;
+            if (!animation->finished())
+                allAnimationsFinished = false;
         }
     }
 
-    return hasRunningAnimations;
+    return !allAnimationsFinished;
 }
 
 bool LayerCompositingThread::hasVisibleHolePunchRect() const
