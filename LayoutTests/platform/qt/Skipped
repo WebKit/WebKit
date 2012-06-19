@@ -977,7 +977,7 @@ http/tests/misc/link-rel-icon-beforeload.html
 # https://bugs.webkit.org/show_bug.cgi?id=64002
 fast/selectors/unqualified-hover-strict.html
 
-[Qt] inspector/extensions/extensions-panel.html is flakey
+# [Qt] inspector/extensions/extensions-panel.html is flakey
 # https://bugs.webkit.org/show_bug.cgi?id=89333
 inspector/extensions/extensions-panel.html
 

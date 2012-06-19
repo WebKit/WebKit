@@ -1,3 +1,9 @@
+2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed typo fix.
+
+        * platform/qt/Skipped:
+
 2012-06-19  Alexander Pavlov  <apavlov@chromium.org>
 
         New inspector/styles/inject-stylesheet.html fails
