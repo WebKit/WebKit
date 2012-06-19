@@ -1,3 +1,19 @@
+2012-06-19  Andy Estes  <aestes@apple.com>
+
+        [Mac] Use AutodrainedPool instead of NSAutoreleasePool in AudioBus::loadPlatformResource()
+        https://bugs.webkit.org/show_bug.cgi?id=89427
+
+        Reviewed by Dan Bernstein.
+
+        loadPlatformResource() called -[NSAutoreleasePool release] at each of
+        its exit points, which is not only an error-prone pattern but is
+        incorrect in garbage-collected environments. AutodrainedPool solves
+        both these problems by automatically calling -[NSAutoreleasePool drain]
+        when going out of scope.
+
+        * platform/audio/mac/AudioBusMac.mm:
+        (WebCore::AudioBus::loadPlatformResource):
+
 2012-06-19  Mike West  <mkwst@chromium.org>
 
         Compilation failure in StyleResolver.cpp
