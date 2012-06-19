@@ -251,7 +251,7 @@ ViewController.prototype = {
 
         var sourceLink = base.createLinkNode('http://trac.webkit.org/changeset/' + parsed.revision, 'r' + parsed.revision);
         var buildLink = base.createLinkNode(builder.buildURL(parsed.buildNumber), parsed.buildNumber);
-        var resultsLink = base.createLinkNode(builder.resultsPageURL(buildName, 'results.html');
+        var resultsLink = base.createLinkNode(builder.resultsPageURL(buildName), 'results.html');
 
         var result = document.createDocumentFragment();
         result.appendChild(sourceLink);
