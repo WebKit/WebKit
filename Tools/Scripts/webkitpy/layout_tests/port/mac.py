@@ -31,6 +31,7 @@ import logging
 import os
 import re
 import subprocess
+import sys
 import time
 
 from webkitpy.common.system.crashlogs import CrashLogs
@@ -117,18 +118,22 @@ class MacPort(ApplePort):
         return self._version == "lion"
 
     def default_child_processes(self):
+        # FIXME: The Printer isn't initialized when this is called, so using _log would just show an unitialized logger error.
+
         if self.is_snowleopard():
-            _log.warn("Cannot run tests in parallel on Snow Leopard due to rdar://problem/10621525.")
+            print >> sys.stderr, "Cannot run tests in parallel on Snow Leopard due to rdar://problem/10621525."
             return 1
 
-        # FIXME: As a temporary workaround while we figure out what's going
-        # on with https://bugs.webkit.org/show_bug.cgi?id=83076, reduce by
-        # half the # of workers we run by default on bigger machines.
         default_count = super(MacPort, self).default_child_processes()
-        if default_count >= 8:
-            cpu_count = self._executive.cpu_count()
-            return max(1, min(default_count, int(cpu_count / 2)))
-        return default_count
+
+        # Make sure we have enough ram to support that many instances:
+        total_memory = self.host.platform.total_bytes_memory()
+        bytes_per_drt = 256 * 1024 * 1024  # Assume each DRT needs 256MB to run.
+        overhead = 2048 * 1024 * 1024  # Assume we need 2GB free for the O/S
+        supportable_instances = max((total_memory - overhead) / bytes_per_drt, 1)  # Always use one process, even if we don't have space for it.
+        if supportable_instances < default_count:
+            print >> sys.stderr, "This machine could support %s child processes, but only has enough memory for %s." % (default_count, supportable_instances)
+        return min(supportable_instances, default_count)
 
     def _build_java_test_support(self):
         java_tests_path = self._filesystem.join(self.layout_tests_dir(), "java")

@@ -1,5 +1,52 @@
 2012-06-19  Dirk Pranke  <dpranke@chromium.org>
 
+        NRWT should not take memory used as disk cache into account when deciding how many processes to launch
+        https://bugs.webkit.org/show_bug.cgi?id=81379
+
+        Reviewed by Eric Seidel.
+
+        The 'free memory' calculation we were running on the mac seemed
+        to underestimate how many children we can run in parallel, and
+        it was complex. This patch replaces that calculation with a
+        simpler one that reserves 2GB for overhead and assumes 256MB per
+        DRT/WTR, so if we had 4GB of RAM we can run up to 8 DRTs.
+
+        Also, there was a bug where we were truncating the memory
+        installed on the machine to 4GB by casting to an int instead of
+        a long; this was probably the source of some of the earlier
+        problems when using total memory.
+
+        This patch also removes the no-longer-needed restrictions on the
+        number of workers on beefy Lion boxes for both Apple Mac and Chromium
+        Mac; we should now use all of the cores by default.
+
+        The memory calculations have only been implemented on the mac;
+        having the calculation in base.default_child_processes() was IMO
+        misleading, and so this patch also moves the computation into
+        the MacPort. I have not heard of the # of workers being an issue
+        on any other ports, so this should be fine.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.total_bytes_memory):
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (PlatformInfo.total_bytes_memory):
+        (PlatformInfo.total_bytes_memory):
+        (PlatformInfo._win_version_tuple_from_cmd):
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (TestPlatformInfo.test_total_bytes_memory):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.default_child_processes):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_default_child_processes):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort.operating_system):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.default_child_processes):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (TestMacPort.test_default_child_processes):
+
+2012-06-19  Dirk Pranke  <dpranke@chromium.org>
+
         new-run-webkit-tests reports unexpected pass of pixel tests when pixel testing is disabled
         https://bugs.webkit.org/show_bug.cgi?id=85446
 

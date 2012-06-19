@@ -82,10 +82,8 @@ class TestPlatformInfo(unittest.TestCase):
 
         if info.is_mac():
             self.assertTrue(info.total_bytes_memory() > 0)
-            self.assertTrue(info.free_bytes_memory() > 0)
         else:
             self.assertEquals(info.total_bytes_memory(), None)
-            self.assertEquals(info.free_bytes_memory(), None)
 
     def test_os_name_and_wrappers(self):
         info = self.make_info(fake_sys('linux2'))
@@ -179,22 +177,6 @@ class TestPlatformInfo(unittest.TestCase):
 
         info = self.make_info(fake_sys('freebsd9'))
         self.assertEquals(info.total_bytes_memory(), None)
-
-    def test_free_bytes_memory(self):
-        vmstat_output = ("Mach Virtual Memory Statistics: (page size of 4096 bytes)\n"
-                         "Pages free:                        1.\n"
-                         "Pages inactive:                    1.\n")
-        info = self.make_info(fake_sys('darwin'), fake_platform('10.6.3'), fake_executive(vmstat_output))
-        self.assertEquals(info.free_bytes_memory(), 8192)
-
-        info = self.make_info(fake_sys('win32', tuple([6, 1, 7600])))
-        self.assertEquals(info.free_bytes_memory(), None)
-
-        info = self.make_info(fake_sys('linux2'))
-        self.assertEquals(info.free_bytes_memory(), None)
-
-        info = self.make_info(fake_sys('freebsd9'))
-        self.assertEquals(info.free_bytes_memory(), None)
 
 
 if __name__ == '__main__':
