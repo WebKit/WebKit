@@ -1,3 +1,12 @@
+2012-06-18  Ami Fischman  <fischman@chromium.org>
+
+        Make serve-video.php serve 206 responses
+        https://bugs.webkit.org/show_bug.cgi?id=89252
+
+        Reviewed by Adam Barth.
+
+        * http/tests/media/resources/serve-video.php:
+
 2012-06-18  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed test marking. Marked border-radius-clip-002.htm as a failure.

@@ -12,11 +12,12 @@
         $start = intval($range[0]); 
         if (!empty($range[1]))
             $end = intval($range[1]);
-        $httpStatus = "HTTP/1.1 206 Partial Content";
+        $httpStatus = "206 Partial Content";
     } else
         $httpStatus = "200 OK";
 
     header("Status: " . $httpStatus);
+    header("HTTP/1.1 " . $httpStatus);
     header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
     header("Pragma: no-cache");
     header("Etag: " . '"' . $fileSize . "-" . filemtime($fileName) . '"');
