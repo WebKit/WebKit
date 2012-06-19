@@ -204,11 +204,11 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
 
     const ShadowData* shadow = style->textShadow();
     if (shadow) {
-        NSShadow* s = [[NSShadow alloc] init];
-        [s setShadowOffset:NSMakeSize(shadow->x(), shadow->y())];
-        [s setShadowBlurRadius:shadow->blur()];
-        [s setShadowColor:nsColor(shadow->color())];
-        [result setObject:s forKey:NSShadowAttributeName];
+        RetainPtr<NSShadow> s(AdoptNS, [[NSShadow alloc] init]);
+        [s.get() setShadowOffset:NSMakeSize(shadow->x(), shadow->y())];
+        [s.get() setShadowBlurRadius:shadow->blur()];
+        [s.get() setShadowColor:nsColor(shadow->color())];
+        [result setObject:s.get() forKey:NSShadowAttributeName];
     }
 
     int decoration = style->textDecorationsInEffect();

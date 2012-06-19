@@ -1,3 +1,14 @@
+2012-06-18  Andy Estes  <aestes@apple.com>
+
+        [Mac] Editor::fontAttributesForSelectionStart() leaks a NSShadow
+        https://bugs.webkit.org/show_bug.cgi?id=89424
+
+        Reviewed by Dan Bernstein.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::fontAttributesForSelectionStart): Store the NSShadow
+        in a RetainPtr so that it's released before going out of scope.
+
 2012-06-18  Kent Tamura  <tkent@chromium.org>
 
         Refactoring: Introduce a class to represent restoring state of a form control
