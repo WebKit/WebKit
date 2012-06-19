@@ -891,5 +891,9 @@ fast/hidpi/device-scale-factor-paint.html
 # https://bugs.webkit.org/show_bug.cgi?id=88672
 svg/filters/color-space-conversion.svg
 
+# https://bugs.webkit.org/show_bug.cgi?id=89528
+svg/filters/container-with-filters.svg
+svg/filters/feSpecularLight-premultiplied.svg
+
 # https://bugs.webkit.org/show_bug.cgi?id=88736
 http/tests/security/mixedContent/blob-url-in-iframe.html

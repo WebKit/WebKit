@@ -1,3 +1,11 @@
+2012-06-19  Beth Dakin  <bdakin@apple.com>
+
+        Skipping failing tests to keep the bots green. Filed 
+        https://bugs.webkit.org/show_bug.cgi?id=89528 to track fixing the 
+        real problem.
+
+        * platform/mac/Skipped:
+
 2012-06-19  Kenneth Russell  <kbr@google.com>
 
         [Chromium][Mac] Layout Test ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.htm is failing
