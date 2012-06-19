@@ -2225,6 +2225,7 @@ HEADERS += \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
     platform/graphics/CrossfadeGeneratedImage.h \
+    platform/graphics/filters/CustomFilterGlobalContext.h \
     platform/graphics/filters/CustomFilterMesh.h \
     platform/graphics/filters/CustomFilterNumberParameter.h \
     platform/graphics/filters/CustomFilterShader.h \
@@ -3405,6 +3406,7 @@ contains(DEFINES, ENABLE_XSLT=1) {
 
 contains(DEFINES, ENABLE_FILTERS=1) {
     SOURCES += \
+        platform/graphics/filters/CustomFilterGlobalContext.cpp \
         platform/graphics/filters/CustomFilterOperation.cpp \
         platform/graphics/filters/CustomFilterProgram.cpp \
         platform/graphics/filters/CustomFilterShader.cpp \

@@ -31425,6 +31425,14 @@
 					Name="filters"
 					>
 					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterGlobalContext.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterGlobalContext.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\CustomFilterMesh.cpp"
 						>
 					</File>

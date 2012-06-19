@@ -3183,6 +3183,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/cairo/RefPtrCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/RefPtrCairo.h \
 	Source/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
+	Source/WebCore/platform/graphics/filters/CustomFilterGlobalContext.cpp \
+	Source/WebCore/platform/graphics/filters/CustomFilterGlobalContext.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterMesh.cpp \
 	Source/WebCore/platform/graphics/filters/CustomFilterMesh.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterNumberParameter.h \

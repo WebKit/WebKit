@@ -1199,6 +1199,7 @@ SET(WebCore_SOURCES
     platform/graphics/TextRun.cpp
     platform/graphics/WidthIterator.cpp
 
+    platform/graphics/filters/CustomFilterGlobalContext.cpp
     platform/graphics/filters/CustomFilterMesh.cpp
     platform/graphics/filters/CustomFilterProgram.cpp
     platform/graphics/filters/CustomFilterShader.cpp

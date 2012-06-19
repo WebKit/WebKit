@@ -1,3 +1,54 @@
+2012-06-19  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Create a shared object between FECustomFilter objects to store the shared resources
+        https://bugs.webkit.org/show_bug.cgi?id=87878
+
+        Reviewed by Dean Jackson.
+
+        An object called CustomFilterGlobalContext is created the first time a new FECustomFilter is needed in a document.
+        It is used to store the GraphicsContext3D needed to render the CSS Shaders. The context is shared by all the elements
+        in a document (no cross-domain).
+
+        More resources will be shared in following patches, including precompiled shaders and vertices/indices data.
+        https://bugs.webkit.org/show_bug.cgi?id=88427
+        https://bugs.webkit.org/show_bug.cgi?id=88429
+
+        The plan is to make CustomFilterGlobalContext and FECustomFilter (or a base class extracted out of it) usable from platform
+        code in the hardware accelerated compositing layer. The only dependency of the code is on the GraphicsContext3D.
+
+        No new tests. No functionality is changed yet, just added the new objects.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/CustomFilterGlobalContext.cpp: Added.
+        (WebCore):
+        (WebCore::CustomFilterGlobalContext::CustomFilterGlobalContext):
+        (WebCore::CustomFilterGlobalContext::~CustomFilterGlobalContext):
+        (WebCore::CustomFilterGlobalContext::prepareContextIfNeeded):
+        * platform/graphics/filters/CustomFilterGlobalContext.h: Added.
+        (WebCore):
+        (CustomFilterGlobalContext):
+        (WebCore::CustomFilterGlobalContext::context):
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::FECustomFilter): Changed to use the global context instead of the host window.
+        (WebCore::FECustomFilter::create):
+        (WebCore::FECustomFilter::initializeContext):
+        * platform/graphics/filters/FECustomFilter.h:
+        (WebCore):
+        (FECustomFilter):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build): Changed to initialize the global context if needed and pass it to the FECustomFilter.
+        * rendering/RenderView.cpp:
+        (WebCore):
+        (WebCore::RenderView::customFilterGlobalContext):
+        * rendering/RenderView.h:
+        (WebCore):
+        (RenderView):
+
 2012-06-19  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [cairo] Fix LayoutTests/fast/canvas/patternfill-repeat.html

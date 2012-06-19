@@ -3796,6 +3796,8 @@
             'platform/graphics/efl/ImageEfl.cpp',
             'platform/graphics/efl/IntPointEfl.cpp',
             'platform/graphics/efl/IntRectEfl.cpp',
+            'platform/graphics/filters/CustomFilterGlobalContext.cpp',
+            'platform/graphics/filters/CustomFilterGlobalContext.h',
             'platform/graphics/filters/CustomFilterMesh.h',
             'platform/graphics/filters/CustomFilterNumberParameter.h',
             'platform/graphics/filters/CustomFilterOperation.cpp',

@@ -37,6 +37,10 @@ class RenderWidget;
 class RenderLayerCompositor;
 #endif
 
+#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+class CustomFilterGlobalContext;
+#endif
+
 class RenderView : public RenderBlock {
 public:
     RenderView(Node*, FrameView*);
@@ -168,6 +172,10 @@ public:
     bool usesCompositing() const;
 #endif
 
+#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+    CustomFilterGlobalContext* customFilterGlobalContext();
+#endif
+
     IntRect unscaledDocumentRect() const;
     LayoutRect backgroundRect(RenderBox* backgroundRenderer) const;
 
@@ -273,6 +281,9 @@ private:
     unsigned m_layoutStateDisableCount;
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<RenderLayerCompositor> m_compositor;
+#endif
+#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+    OwnPtr<CustomFilterGlobalContext> m_customFilterGlobalContext;
 #endif
     OwnPtr<FlowThreadController> m_flowThreadController;
     RefPtr<IntervalArena> m_intervalArena;

@@ -45,19 +45,19 @@ class Uint8ClampedArray;
 namespace WebCore {
 
 class CachedShader;
+class CustomFilterGlobalContext;
 class CustomFilterMesh;
 class CustomFilterNumberParameter;
 class CustomFilterProgram;
 class CustomFilterShader;
 class DrawingBuffer;
 class GraphicsContext3D;
-class HostWindow;
 class IntSize;
 class Texture;
 
 class FECustomFilter : public FilterEffect {
 public:
-    static PassRefPtr<FECustomFilter> create(Filter*, HostWindow*, PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&,
+    static PassRefPtr<FECustomFilter> create(Filter*, CustomFilterGlobalContext*, PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&,
                    unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, 
                    CustomFilterOperation::MeshType);
 
@@ -67,7 +67,7 @@ public:
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FECustomFilter(Filter*, HostWindow*, PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&,
+    FECustomFilter(Filter*, CustomFilterGlobalContext*, PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&,
                    unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, 
                    CustomFilterOperation::MeshType);
     ~FECustomFilter();
@@ -80,7 +80,8 @@ private:
     void bindProgramParameters();
     void bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray);
     
-    HostWindow* m_hostWindow;
+    // No need to keep a reference here. It is owned by the RenderView.
+    CustomFilterGlobalContext* m_globalContext;
     
     RefPtr<GraphicsContext3D> m_context;
     RefPtr<Texture> m_inputTexture;
@@ -97,6 +98,7 @@ private:
 
     unsigned m_meshRows;
     unsigned m_meshColumns;
+    CustomFilterOperation::MeshBoxType m_meshBoxType;
     CustomFilterOperation::MeshType m_meshType;
 };
 

@@ -32,6 +32,7 @@
 #if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
 #include "FECustomFilter.h"
 
+#include "CustomFilterGlobalContext.h"
 #include "CustomFilterMesh.h"
 #include "CustomFilterNumberParameter.h"
 #include "CustomFilterParameter.h"
@@ -72,11 +73,11 @@ static void orthogonalProjectionMatrix(TransformationMatrix& matrix, float left,
     matrix.setM44(1.0f);
 }
 
-FECustomFilter::FECustomFilter(Filter* filter, HostWindow* hostWindow, PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& parameters,
+FECustomFilter::FECustomFilter(Filter* filter, CustomFilterGlobalContext* customFilterGlobalContext, PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& parameters,
                                unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType meshBoxType,
                                CustomFilterOperation::MeshType meshType)
     : FilterEffect(filter)
-    , m_hostWindow(hostWindow)
+    , m_globalContext(customFilterGlobalContext)
     , m_frameBuffer(0)
     , m_depthBuffer(0)
     , m_destTexture(0)
@@ -84,15 +85,16 @@ FECustomFilter::FECustomFilter(Filter* filter, HostWindow* hostWindow, PassRefPt
     , m_parameters(parameters)
     , m_meshRows(meshRows)
     , m_meshColumns(meshColumns)
+    , m_meshBoxType(meshBoxType)
     , m_meshType(meshType)
 {
 }
 
-PassRefPtr<FECustomFilter> FECustomFilter::create(Filter* filter, HostWindow* hostWindow, PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& parameters,
+PassRefPtr<FECustomFilter> FECustomFilter::create(Filter* filter, CustomFilterGlobalContext* customFilterGlobalContext, PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& parameters,
                                            unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType meshBoxType,
                                            CustomFilterOperation::MeshType meshType)
 {
-    return adoptRef(new FECustomFilter(filter, hostWindow, program, parameters, meshRows, meshColumns, meshBoxType, meshType));
+    return adoptRef(new FECustomFilter(filter, customFilterGlobalContext, program, parameters, meshRows, meshColumns, meshBoxType, meshType));
 }
 
 FECustomFilter::~FECustomFilter()
@@ -158,15 +160,18 @@ void FECustomFilter::platformApplySoftware()
 
 void FECustomFilter::initializeContext()
 {
-    GraphicsContext3D::Attributes attributes;
-    attributes.preserveDrawingBuffer = true;
-    attributes.premultipliedAlpha = false;
-    
     ASSERT(!m_context.get());
-    m_context = GraphicsContext3D::create(attributes, m_hostWindow, GraphicsContext3D::RenderOffscreen);
-    m_context->enable(GraphicsContext3D::DEPTH_TEST);
+    ASSERT(m_globalContext->context());
+    m_context = m_globalContext->context();
     
+    // FIXME: The shader and the mesh can be shared across multiple elements when possible.
+    // Sharing the shader means it's no need to analyze / compile and upload to GPU again.
+    // https://bugs.webkit.org/show_bug.cgi?id=88427
     m_shader = m_program->createShaderWithContext(m_context.get());
+
+    // FIXME: Sharing the mesh would just save the time needed to upload it to the GPU, so I assume we could
+    // benchmark that for performance.
+    // https://bugs.webkit.org/show_bug.cgi?id=88429
     m_mesh = CustomFilterMesh::create(m_context.get(), m_meshColumns, m_meshRows, 
                                       FloatRect(0, 0, 1, 1),
                                       m_meshType);
