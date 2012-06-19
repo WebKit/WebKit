@@ -3702,9 +3702,6 @@ BUGWK88832 XP : http/tests/xmlhttprequest/origin-exact-matching.html = PASS TIME
 
 BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = TEXT
 
-// Needs rebaseline.
-BUGWK89411 : ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.htm = IMAGE MISSING
-
 // Flaky
 BUGWK89166 : http/tests/messaging/cross-domain-message-event-dispatch.html = TEXT
 BUGWK89167 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT
