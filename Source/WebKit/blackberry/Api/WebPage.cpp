@@ -3513,6 +3513,8 @@ void WebPagePrivate::resumeBackingStore()
         directRendering = m_backingStore->d->shouldDirectRenderingToWindow();
         if (m_backingStore->d->renderVisibleContents() && !m_backingStore->d->isSuspended() && !directRendering)
             m_backingStore->d->blitVisibleContents();
+
+        m_client->notifyContentRendered(m_backingStore->d->visibleContentsRect());
     } else {
         if (m_backingStore->d->isOpenGLCompositing())
            setCompositorDrawsRootLayer(false);

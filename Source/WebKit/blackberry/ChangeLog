@@ -1,3 +1,19 @@
+2012-06-19  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Missing notifyContentRendered() when resuming rendering
+        https://bugs.webkit.org/show_bug.cgi?id=89507
+        RIM PR 150049
+
+        Reviewed by Antonio Gomes.
+
+        All the current calls to notifyContentRendered() are
+        located in the RenderQueue, but this omits the case
+        when we force rendering from resumeBackingStore()
+        after rendering had been suspended for a while.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::resumeBackingStore):
+
 2012-06-19  Sergio Villar Senin  <svillar@igalia.com>
 
         Calling nativeImageForCurrentFrame() causes assertion failure: m_verifier.isSafeToUse()
