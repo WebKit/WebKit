@@ -419,3 +419,7 @@ compositing/layer-creation/no-compositing-for-preserve-3d.html
 # [Qt][WK2] New http/tests/cache/xhr-vary-header.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=89278
 http/tests/cache/xhr-vary-header.html
+
+# [Qt][WK2] editing/pasteboard/copy-in-password-field.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=89473
+editing/pasteboard/copy-in-password-field.html
