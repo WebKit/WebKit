@@ -703,9 +703,21 @@ void WebPage::loadString(const char* string, const char* baseURL, const char* mi
     d->loadString(string, baseURL, mimeType, failingURL);
 }
 
-bool WebPagePrivate::executeJavaScript(const char* script, JavaScriptDataType& returnType, WebString& returnValue)
+bool WebPagePrivate::executeJavaScript(const char* scriptUTF8, JavaScriptDataType& returnType, WebString& returnValue)
 {
-    ScriptValue result = m_mainFrame->script()->executeScript(String::fromUTF8(script), false);
+    String script = String::fromUTF8(scriptUTF8);
+
+    if (script.isNull()) {
+        returnType = JSException;
+        return false;
+    }
+
+    if (script.isEmpty()) {
+        returnType = JSUndefined;
+        return true;
+    }
+
+    ScriptValue result = m_mainFrame->script()->executeScript(script, false);
     JSC::JSValue value = result.jsValue();
     if (!value) {
         returnType = JSException;

@@ -1,3 +1,17 @@
+2012-06-19  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Should check the return value of fromUTF8() before executing the script.
+        https://bugs.webkit.org/show_bug.cgi?id=89500
+
+        Reviewed by Rob Buis.
+        PR# 166623.
+
+        WebPagePrivate::executeJavaScript() should check the return value of fromUTF8()
+        before executing the script to avoid potential crash on invalid script source.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::executeJavaScript):
+
 2012-06-19  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Missing notifyContentRendered() when resuming rendering
