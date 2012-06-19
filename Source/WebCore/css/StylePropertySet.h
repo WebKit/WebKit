@@ -83,7 +83,7 @@ public:
     void removeBlockProperties();
     bool removePropertiesInSet(const CSSPropertyID* set, unsigned length);
 
-    void merge(const StylePropertySet*, bool argOverridesOnConflict = true);
+    void mergeAndOverrideOnConflict(const StylePropertySet*);
 
     void setCSSParserMode(CSSParserMode);
     CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }

@@ -861,18 +861,16 @@ String StylePropertySet::asText() const
     return result.toString();
 }
 
-void StylePropertySet::merge(const StylePropertySet* other, bool argOverridesOnConflict)
+void StylePropertySet::mergeAndOverrideOnConflict(const StylePropertySet* other)
 {
     ASSERT(isMutable());
     unsigned size = other->propertyCount();
     for (unsigned n = 0; n < size; ++n) {
         const CSSProperty& toMerge = other->propertyAt(n);
         CSSProperty* old = findPropertyWithId(toMerge.id());
-        if (old) {
-            if (!argOverridesOnConflict && old->value())
-                continue;
+        if (old)
             setProperty(toMerge, old);
-        } else
+        else
             append(toMerge);
     }
 }
