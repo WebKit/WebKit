@@ -1,3 +1,14 @@
+2012-06-19  Andy Estes  <aestes@apple.com>
+
+        [Mac] AudioFileReader::createBus() leaks an AudioBufferList if ExtAudioFileRead() returns an error
+        https://bugs.webkit.org/show_bug.cgi?id=89429
+
+        Reviewed by Darin Adler.
+
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        (WebCore::AudioFileReader::createBus): Call destroyAudioBufferList()
+        before returning if ExtAudioFileRead() returns an error.
+
 2012-06-19  Martin Robinson  <mrobinson@igalia.com>
 
         2012-06-19  Martin Robinson  <mrobinson@igalia.com>

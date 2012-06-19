@@ -219,8 +219,10 @@ PassOwnPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     // Read from the file (or in-memory version)
     UInt32 framesToRead = numberOfFrames;
     result = ExtAudioFileRead(m_extAudioFileRef, &framesToRead, bufferList);
-    if (result != noErr)
+    if (result != noErr) {
+        destroyAudioBufferList(bufferList);
         return nullptr;
+    }
 
     if (mixToMono && numberOfChannels == 2) {
         // Mix stereo down to mono
