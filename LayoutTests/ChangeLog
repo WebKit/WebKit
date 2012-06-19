@@ -1,3 +1,23 @@
+2012-06-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Remove the failing results added in
+        http://trac.webkit.org/changeset/119144 and
+        http://trac.webkit.org/changeset/119149 now that these tests pass
+        without them.
+
+        Rubber-stamped by Jessie Berlin.
+
+        * platform/win/fast/events/popup-allowed-from-gesture-initiated-event-expected.txt: Removed.
+        * platform/win/fast/events/popup-allowed-from-gesture-initiated-form-submit-expected.txt: Removed.
+        * platform/win/fast/events/popup-blocked-from-fake-user-gesture-expected.txt: Removed.
+        * platform/win/fast/events/popup-blocked-from-untrusted-mouse-click-expected.txt: Removed.
+        * platform/win/fast/events/popup-blocking-timers-expected.txt: Removed.
+        * platform/win/fast/events/remove-target-in-mouseup-deep-expected.txt: Removed.
+        * platform/win/fast/events/remove-target-in-mouseup-expected.txt: Removed.
+        * platform/win/fast/events/remove-target-in-mouseup-insertback-expected.txt: Removed.
+        * platform/win/fast/events/remove-target-in-mouseup-twice-expected.txt: Removed.
+        * platform/win/fast/events/remove-target-with-shadow-in-drag-expected.txt: Removed.
+
 2012-06-19  Ken Buchanan  <kenrb@chromium.org>
 
         Absolute positioned objects should not be added to anonymous block lists
