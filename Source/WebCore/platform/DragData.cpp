@@ -70,16 +70,9 @@ int DragData::modifierKeyState() const
         keyState = keyState | PlatformEvent::MetaKey;
     return keyState;
 }
+#endif
 
-#if ENABLE(FILE_SYSTEM)
-String DragData::droppedFileSystemId() const
-{
-    return String();
-}
-#endif
-#endif
 
 } // namespace WebCore
-
 
 #endif // ENABLE(DRAG_SUPPORT)

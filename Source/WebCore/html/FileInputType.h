@@ -64,9 +64,6 @@ private:
     virtual bool getTypeSpecificValue(String&) OVERRIDE; // Checked first, before internal storage or the value attribute.
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual bool receiveDroppedFiles(const DragData*) OVERRIDE;
-#if ENABLE(FILE_SYSTEM)
-    virtual String droppedFileSystemId() OVERRIDE;
-#endif
     virtual Icon* icon() const OVERRIDE;
     virtual bool isFileUpload() const OVERRIDE;
     virtual void createShadowSubtree() OVERRIDE;
@@ -87,10 +84,6 @@ private:
 
     RefPtr<FileList> m_fileList;
     RefPtr<Icon> m_icon;
-
-#if ENABLE(FILE_SYSTEM)
-    String m_droppedFileSystemId;
-#endif
 };
 
 } // namespace WebCore

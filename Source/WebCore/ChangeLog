@@ -1,3 +1,35 @@
+2012-06-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r120593.
+        http://trac.webkit.org/changeset/120593
+        https://bugs.webkit.org/show_bug.cgi?id=89404
+
+        Caused failures in fast/forms/file/input-file-entries.html
+        (Requested by atwilson on #webkit).
+
+        * Modules/filesystem/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::createIsolatedFileSystem):
+        * Modules/filesystem/HTMLInputElementFileSystem.cpp: Removed.
+        * Modules/filesystem/HTMLInputElementFileSystem.h: Removed.
+        * Modules/filesystem/HTMLInputElementFileSystem.idl: Removed.
+        * WebCore.gypi:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::receiveDroppedFiles):
+        * html/FileInputType.h:
+        (FileInputType):
+        * html/HTMLInputElement.cpp:
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/InputType.cpp:
+        * html/InputType.h:
+        (InputType):
+        * platform/DragData.cpp:
+        (WebCore::DragData::modifierKeyState):
+        (WebCore):
+        * platform/DragData.h:
+        (DragData):
+        * platform/chromium/DragDataChromium.cpp:
+
 2012-06-14  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use WebImageLayer in GraphicsLayerChromium for image layers

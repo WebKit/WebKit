@@ -64,12 +64,11 @@ PassRefPtr<DOMFileSystem> DOMFileSystem::create(ScriptExecutionContext* context,
 
 PassRefPtr<DOMFileSystem> DOMFileSystem::createIsolatedFileSystem(ScriptExecutionContext* context, const String& filesystemId)
 {
-    if (filesystemId.isEmpty())
-        return 0;
-
     StringBuilder filesystemName;
     filesystemName.append(context->securityOrigin()->databaseIdentifier());
-    filesystemName.append(":Isolated_");
+    filesystemName.append(":");
+    filesystemName.append(isolatedPathPrefix);
+    filesystemName.append("_");
     filesystemName.append(filesystemId);
 
     // The rootURL created here is going to be attached to each filesystem request and

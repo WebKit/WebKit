@@ -123,10 +123,6 @@ public:
     const String& pasteboardName() { return m_pasteboardName; }
 #endif
 
-#if ENABLE(FILE_SYSTEM)
-    String droppedFileSystemId() const;
-#endif
-
 #if PLATFORM(QT) || PLATFORM(GTK)
     // This constructor should used only by WebKit2 IPC because DragData
     // is initialized by the decoder and not in the constructor.
@@ -160,3 +156,4 @@ private:
 }
 
 #endif // !DragData_h
+

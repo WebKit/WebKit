@@ -677,14 +677,6 @@ bool InputType::receiveDroppedFiles(const DragData*)
     return false;
 }
 
-#if ENABLE(FILE_SYSTEM)
-String InputType::droppedFileSystemId()
-{
-    ASSERT_NOT_REACHED();
-    return String();
-}
-#endif
-
 Icon* InputType::icon() const
 {
     ASSERT_NOT_REACHED();
