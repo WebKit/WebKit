@@ -2765,6 +2765,8 @@
             'inspector/IdentifiersFactory.h',
             'inspector/InjectedScript.cpp',
             'inspector/InjectedScript.h',
+            'inspector/InjectedScriptBase.cpp',
+            'inspector/InjectedScriptBase.h',
             'inspector/InjectedScriptHost.cpp',
             'inspector/InjectedScriptHost.h',
             'inspector/InjectedScriptManager.cpp',

@@ -931,6 +931,7 @@ SET(WebCore_SOURCES
     inspector/DOMPatchSupport.cpp
     inspector/IdentifiersFactory.cpp
     inspector/InjectedScript.cpp
+    inspector/InjectedScriptBase.cpp
     inspector/InjectedScriptHost.cpp
     inspector/InjectedScriptManager.cpp
     inspector/InspectorAgent.cpp

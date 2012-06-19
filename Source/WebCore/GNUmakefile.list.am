@@ -2655,6 +2655,8 @@ webcore_sources += \
 	Source/WebCore/inspector/IdentifiersFactory.h \
 	Source/WebCore/inspector/InjectedScript.cpp \
 	Source/WebCore/inspector/InjectedScript.h \
+	Source/WebCore/inspector/InjectedScriptBase.cpp \
+	Source/WebCore/inspector/InjectedScriptBase.h \
 	Source/WebCore/inspector/InjectedScriptHost.cpp \
 	Source/WebCore/inspector/InjectedScriptHost.h \
 	Source/WebCore/inspector/InjectedScriptManager.cpp \

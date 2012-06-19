@@ -32,6 +32,7 @@
 #include "DOMPatchSupport.cpp"
 #include "IdentifiersFactory.cpp"
 #include "InjectedScript.cpp"
+#include "InjectedScriptBase.cpp"
 #include "InjectedScriptHost.cpp"
 #include "InjectedScriptManager.cpp"
 #include "InspectorAgent.cpp"

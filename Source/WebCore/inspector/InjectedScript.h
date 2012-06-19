@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,6 +31,7 @@
 #ifndef InjectedScript_h
 #define InjectedScript_h
 
+#include "InjectedScriptBase.h"
 #include "InjectedScriptManager.h"
 #include "InspectorTypeBuilder.h"
 #include "ScriptObject.h"
@@ -41,22 +42,15 @@
 
 namespace WebCore {
 
-class InspectorArray;
-class InspectorObject;
-class InspectorValue;
 class Node;
-class ScriptFunctionCall;
-
-typedef String ErrorString;
+class SerializedScriptValue;
 
 #if ENABLE(INSPECTOR)
 
-class InjectedScript {
+class InjectedScript : public InjectedScriptBase {
 public:
     InjectedScript();
     ~InjectedScript() { }
-
-    bool hasNoValue() const { return m_injectedScriptObject.hasNoValue(); }
 
     void evaluate(ErrorString*,
                   const String& expression,
@@ -98,21 +92,12 @@ public:
 
     void inspectNode(Node*);
     void releaseObjectGroup(const String&);
-    ScriptState* scriptState() const { return m_injectedScriptObject.scriptState(); }
 
 private:
     friend InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState*);
-    typedef bool (*InspectedStateAccessCheck)(ScriptState*);
     InjectedScript(ScriptObject, InspectedStateAccessCheck);
 
-    bool canAccessInspectedWindow() const;
-    ScriptValue callFunctionWithEvalEnabled(ScriptFunctionCall&, bool& hadException) const;
-    void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
-    void makeEvalCall(ErrorString*, ScriptFunctionCall&, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown);
     ScriptValue nodeAsScriptValue(Node*);
-
-    ScriptObject m_injectedScriptObject;
-    InspectedStateAccessCheck m_inspectedStateAccessCheck;
 };
 
 #endif

@@ -1,3 +1,54 @@
+2012-06-19  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: Extract InjectedScriptBase class from the InjectedScript
+        https://bugs.webkit.org/show_bug.cgi?id=89107
+
+        Extract methods from the InjectedScript that do not depend on
+        the concrete InjectedScriptSource.js implementation.
+
+        Reviewed by Pavel Feldman.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::InjectedScript):
+        (WebCore::InjectedScript::evaluate):
+        (WebCore::InjectedScript::callFunctionOn):
+        (WebCore::InjectedScript::evaluateOnCallFrame):
+        (WebCore::InjectedScript::getFunctionDetails):
+        (WebCore::InjectedScript::getProperties):
+        (WebCore::InjectedScript::nodeForObjectId):
+        (WebCore::InjectedScript::releaseObject):
+        (WebCore::InjectedScript::wrapCallFrames):
+        (WebCore::InjectedScript::wrapObject):
+        (WebCore::InjectedScript::wrapSerializedObject):
+        (WebCore::InjectedScript::findObjectById):
+        (WebCore::InjectedScript::inspectNode):
+        (WebCore::InjectedScript::releaseObjectGroup):
+        (WebCore::InjectedScript::nodeAsScriptValue):
+        * inspector/InjectedScript.h:
+        (WebCore):
+        (InjectedScript):
+        * inspector/InjectedScriptBase.cpp: Added.
+        (WebCore):
+        (WebCore::InjectedScriptBase::InjectedScriptBase):
+        (WebCore::InjectedScriptBase::canAccessInspectedWindow):
+        (WebCore::InjectedScriptBase::injectedScriptObject):
+        (WebCore::InjectedScriptBase::callFunctionWithEvalEnabled):
+        (WebCore::InjectedScriptBase::makeCall):
+        (WebCore::InjectedScriptBase::makeEvalCall):
+        * inspector/InjectedScriptBase.h: Copied from Source/WebCore/bindings/js/ScriptObject.h.
+        (WebCore):
+        (InjectedScriptBase):
+        (WebCore::InjectedScriptBase::~InjectedScriptBase):
+        (WebCore::InjectedScriptBase::hasNoValue):
+        (WebCore::InjectedScriptBase::scriptState):
+        * inspector/InspectorAllInOne.cpp:
+
 2012-06-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120621.

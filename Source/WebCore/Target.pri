@@ -891,6 +891,7 @@ SOURCES += \
     inspector/DOMPatchSupport.cpp \
     inspector/IdentifiersFactory.cpp \
     inspector/InjectedScript.cpp \
+    inspector/InjectedScriptBase.cpp \
     inspector/InjectedScriptHost.cpp \
     inspector/InjectedScriptManager.cpp \
     inspector/InspectorAgent.cpp \
@@ -2038,6 +2039,7 @@ HEADERS += \
     inspector/DOMWrapperVisitor.h \
     inspector/IdentifiersFactory.h \
     inspector/InjectedScript.h \
+    inspector/InjectedScriptBase.h \
     inspector/InjectedScriptHost.h \
     inspector/InjectedScriptManager.h \
     inspector/InspectorAgent.h \
