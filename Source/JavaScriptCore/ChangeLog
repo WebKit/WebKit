@@ -1,3 +1,9 @@
+2012-06-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, try to fix Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd:
+
 2012-06-17  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to look at disassembly

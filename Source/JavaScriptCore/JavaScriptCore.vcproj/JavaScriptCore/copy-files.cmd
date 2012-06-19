@@ -39,6 +39,7 @@ for %%d in (
     assembler
     bytecode
     dfg
+    disassembler
     heap
     debugger
     interpreter
