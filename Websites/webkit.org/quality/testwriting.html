@@ -25,7 +25,7 @@ failed.
 
 <p>A layout test should work both in the browser itself, and in the layout test tool. The layout test tool provides an 
 additional object on the window object called the layout test controller with some methods that control test output. 
-One you should know about is the <code>layoutTestController.dumpAsText</code> method. Calling this from JavaScript within a test arranges 
+One you should know about is the <code>testRunner.dumpAsText</code> method. Calling this from JavaScript within a test arranges 
 for the output to be written out as plain text rather than as a render tree dump. 
 This is useful for tests that are testing something other than layout. The event creation test mentioned above is a good example of 
 how to do this and when it makes sense.</p>
