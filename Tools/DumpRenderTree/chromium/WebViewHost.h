@@ -185,7 +185,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
 #if ENABLE(SCRIPTED_SPEECH)
     virtual WebKit::WebSpeechRecognizer* speechRecognizer() OVERRIDE;
 #endif
-    virtual WebKit::WebDeviceOrientationClient* deviceOrientationClient();
+    virtual WebKit::WebDeviceOrientationClient* deviceOrientationClient() OVERRIDE;
 #if ENABLE(MEDIA_STREAM)
     virtual WebKit::WebUserMediaClient* userMediaClient();
 #endif

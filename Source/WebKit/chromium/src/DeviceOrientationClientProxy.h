@@ -44,11 +44,11 @@ public:
     {
     }
 
-    void setController(WebCore::DeviceOrientationController*);
-    void startUpdating();
-    void stopUpdating();
-    WebCore::DeviceOrientation* lastOrientation() const;
-    virtual void deviceOrientationControllerDestroyed();
+    virtual void setController(WebCore::DeviceOrientationController*) OVERRIDE;
+    virtual void startUpdating() OVERRIDE;
+    virtual void stopUpdating() OVERRIDE;
+    virtual WebCore::DeviceOrientation* lastOrientation() const OVERRIDE;
+    virtual void deviceOrientationControllerDestroyed() OVERRIDE;
 
 private:
     WebDeviceOrientationClient* m_client;

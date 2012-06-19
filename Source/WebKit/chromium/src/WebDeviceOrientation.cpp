@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-WebDeviceOrientation::WebDeviceOrientation(const PassRefPtr<WebCore::DeviceOrientation>& orientation)
+WebDeviceOrientation::WebDeviceOrientation(const WebCore::DeviceOrientation* orientation)
 {
     if (!orientation) {
         m_isNull = true;
@@ -57,7 +57,7 @@ WebDeviceOrientation::WebDeviceOrientation(const PassRefPtr<WebCore::DeviceOrien
     m_absolute = orientation->absolute();
 }
 
-WebDeviceOrientation& WebDeviceOrientation::operator=(const PassRefPtr<WebCore::DeviceOrientation>& orientation)
+WebDeviceOrientation& WebDeviceOrientation::operator=(const WebCore::DeviceOrientation* orientation)
 {
     if (!orientation) {
         m_isNull = true;

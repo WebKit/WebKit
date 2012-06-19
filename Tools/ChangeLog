@@ -1,3 +1,13 @@
+2012-06-18  Amy Ousterhout  <aousterh@chromium.org>
+
+        [Chromium] DeviceOrientation Cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=89354
+
+        Reviewed by Kent Tamura.
+
+        * DumpRenderTree/chromium/WebViewHost.h: added OVERRIDE specifier for virtual function
+        (WebViewHost):
+
 2012-06-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Stop passing deprecated 'direct' parameter to webkit_support::CreateGraphicsContext3D

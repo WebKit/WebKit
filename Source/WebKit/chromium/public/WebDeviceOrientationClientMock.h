@@ -39,10 +39,10 @@ public:
     WEBKIT_EXPORT static WebDeviceOrientationClientMock* create();
     ~WebDeviceOrientationClientMock() { reset(); }
 
-    virtual void setController(WebDeviceOrientationController*);
-    virtual void startUpdating();
-    virtual void stopUpdating();
-    virtual WebDeviceOrientation lastOrientation() const;
+    virtual void setController(WebDeviceOrientationController*) OVERRIDE;
+    virtual void startUpdating() OVERRIDE;
+    virtual void stopUpdating() OVERRIDE;
+    virtual WebDeviceOrientation lastOrientation() const OVERRIDE;
 
     WEBKIT_EXPORT void setOrientation(WebDeviceOrientation&);
 

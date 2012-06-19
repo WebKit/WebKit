@@ -45,11 +45,11 @@ public:
     DeviceOrientationClientMock();
 
     // DeviceOrientationClient
-    virtual void setController(DeviceOrientationController*);
-    virtual void startUpdating();
-    virtual void stopUpdating();
-    virtual DeviceOrientation* lastOrientation() const { return m_orientation.get(); }
-    virtual void deviceOrientationControllerDestroyed() { }
+    virtual void setController(DeviceOrientationController*) OVERRIDE;
+    virtual void startUpdating() OVERRIDE;
+    virtual void stopUpdating() OVERRIDE;
+    virtual DeviceOrientation* lastOrientation() const OVERRIDE { return m_orientation.get(); }
+    virtual void deviceOrientationControllerDestroyed() OVERRIDE { }
 
     void setOrientation(PassRefPtr<DeviceOrientation>);
 

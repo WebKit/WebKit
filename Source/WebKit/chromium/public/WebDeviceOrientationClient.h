@@ -26,6 +26,9 @@
 #ifndef WebDeviceOrientationClient_h
 #define WebDeviceOrientationClient_h
 
+#include "WebDeviceOrientation.h"
+#include "platform/WebCommon.h"
+
 namespace WebKit {
 
 class WebDeviceOrientation;
@@ -35,11 +38,15 @@ class WebDeviceOrientationClient {
 public:
     virtual ~WebDeviceOrientationClient() {}
 
-    virtual void setController(WebDeviceOrientationController*) = 0;
-    virtual void startUpdating() = 0;
-    virtual void stopUpdating() = 0;
+    virtual void setController(WebDeviceOrientationController*) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void startUpdating() { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void stopUpdating() { WEBKIT_ASSERT_NOT_REACHED(); }
 
-    virtual WebDeviceOrientation lastOrientation() const = 0;
+    virtual WebDeviceOrientation lastOrientation() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebDeviceOrientation::nullOrientation();
+    }
 };
 
 } // namespace WebKit

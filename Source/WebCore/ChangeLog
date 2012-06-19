@@ -1,3 +1,15 @@
+2012-06-18  Amy Ousterhout  <aousterh@chromium.org>
+
+        [Chromium] DeviceOrientation Cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=89354
+
+        Reviewed by Kent Tamura.
+
+        No new tests because there is no intended change in behavior.
+
+        * platform/mock/DeviceOrientationClientMock.h: added OVERRIDE specifier for virtual functions
+        (DeviceOrientationClientMock):
+
 2012-06-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] media/video-seek-past-end-playing.html is flaky

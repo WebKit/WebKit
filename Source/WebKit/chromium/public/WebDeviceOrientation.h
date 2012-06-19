@@ -51,43 +51,43 @@ public:
     static WebDeviceOrientation nullOrientation() { return WebDeviceOrientation(); }
 
     void setNull(bool isNull) { m_isNull = isNull; }
-    bool isNull() { return m_isNull; }
+    bool isNull() const { return m_isNull; }
 
     void setAlpha(double alpha)
     {
         m_canProvideAlpha = true;
         m_alpha = alpha;
     }
-    bool canProvideAlpha() { return m_canProvideAlpha; }
-    double alpha() { return m_alpha; }
+    bool canProvideAlpha() const { return m_canProvideAlpha; }
+    double alpha() const { return m_alpha; }
 
     void setBeta(double beta)
     {
         m_canProvideBeta = true;
         m_beta = beta;
     }
-    bool canProvideBeta() { return m_canProvideBeta; }
-    double beta() { return m_beta; }
+    bool canProvideBeta() const { return m_canProvideBeta; }
+    double beta() const { return m_beta; }
 
     void setGamma(double gamma)
     {
         m_canProvideGamma = true;
         m_gamma = gamma;
     }
-    bool canProvideGamma() { return m_canProvideGamma; }
-    double gamma() { return m_gamma; }
+    bool canProvideGamma() const { return m_canProvideGamma; }
+    double gamma() const { return m_gamma; }
 
     void setAbsolute(bool absolute)
     {
         m_canProvideAbsolute = true;
         m_absolute = absolute;
     }
-    bool canProvideAbsolute() {return m_canProvideAbsolute; }
-    bool absolute() { return m_absolute; }
+    bool canProvideAbsolute() const {return m_canProvideAbsolute; }
+    bool absolute() const { return m_absolute; }
 
 #if WEBKIT_IMPLEMENTATION
-    WebDeviceOrientation(const WTF::PassRefPtr<WebCore::DeviceOrientation>&);
-    WebDeviceOrientation& operator=(const WTF::PassRefPtr<WebCore::DeviceOrientation>&);
+    WebDeviceOrientation(const WebCore::DeviceOrientation*);
+    WebDeviceOrientation& operator=(const WebCore::DeviceOrientation*);
     operator WTF::PassRefPtr<WebCore::DeviceOrientation>() const;
 #endif
 
