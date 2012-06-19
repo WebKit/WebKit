@@ -1,3 +1,12 @@
+2012-06-18  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, updating baselines after rollouts in r120627.
+
+        * platform/gtk/fast/hidpi/clip-text-in-hidpi-expected.txt:
+        * platform/gtk/fast/hidpi/image-set-background-dynamic-expected.txt:
+        * platform/gtk/fast/hidpi/image-set-border-image-dynamic-expected.txt:
+        * platform/gtk/fast/hidpi/image-set-in-content-dynamic-expected.txt:
+
 2012-06-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, update expected files.
