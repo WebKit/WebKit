@@ -1,3 +1,15 @@
+2012-06-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline some media controller tests.
+
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/controls-after-reload-expected.txt:
+        * platform/mac/media/controls-strict-expected.txt:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-no-audio-expected.txt:
+        * platform/mac/media/video-playing-and-pause-expected.txt:
+
 2012-06-19  Abhishek Arya  <inferno@chromium.org>
 
         Crash in RenderInline::willBeDestroyed.
