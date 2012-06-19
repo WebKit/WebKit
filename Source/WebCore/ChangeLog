@@ -1,3 +1,9 @@
+2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed build system fix after r120051.
+
+        * Target.pri:
+
 2012-06-19  Mike West  <mkwst@chromium.org>
 
         Add a scheme registry for bypassing Content Security Policy.

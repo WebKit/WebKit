@@ -1422,7 +1422,6 @@ HEADERS += \
     accessibility/AXObjectCache.h \
     bindings/ScriptControllerBase.h \
     bindings/generic/ActiveDOMCallback.h \
-    bindings/generic/ContextEnabledFeatures.h \
     bindings/generic/RuntimeEnabledFeatures.h
 
 v8 {
@@ -1701,6 +1700,7 @@ HEADERS += \
     dom/ComposedShadowTreeWalker.h \
     dom/ContainerNode.h \
     dom/ContainerNodeAlgorithms.h \
+    dom/ContextFeatures.h \
     dom/CustomEvent.h \
     dom/default/PlatformMessagePortChannel.h \
     dom/DeviceMotionClient.h \
