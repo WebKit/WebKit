@@ -1,3 +1,31 @@
+2012-06-19  Amy Ousterhout  <aousterh@chromium.org>
+
+        Adds DeviceMotionClientMock
+        https://bugs.webkit.org/show_bug.cgi?id=89220
+
+        Reviewed by Steve Block.
+
+        Adds DeviceMotionClientMock in WebCore to enable testing of DeviceMotion once it is fully implemented in WebKit.
+        This addition was originally included in https://bugs.webkit.org/show_bug.cgi?id=89197 but was split into a separate patch for easier review.
+
+        No new tests because DeviceMotionClientMock is designed to enable future testing and cannot be tested in itself.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * platform/mock/DeviceMotionClientMock.cpp: Added.
+        (WebCore):
+        (WebCore::DeviceMotionClientMock::DeviceMotionClientMock):
+        (WebCore::DeviceMotionClientMock::setController):
+        (WebCore::DeviceMotionClientMock::startUpdating):
+        (WebCore::DeviceMotionClientMock::stopUpdating):
+        (WebCore::DeviceMotionClientMock::setMotion):
+        (WebCore::DeviceMotionClientMock::timerFired):
+        * platform/mock/DeviceMotionClientMock.h: Added.
+        (WebCore):
+        (DeviceMotionClientMock):
+        
 2012-06-19  Alexandre Elias  <aelias@google.com>
 
         Fix link error with fillWithEmptyClients
