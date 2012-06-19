@@ -1,3 +1,18 @@
+2012-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Provide bug links for suspicious commits
+        https://bugs.webkit.org/show_bug.cgi?id=89408
+        
+        Reviewed by Adam Barth.
+
+        Add links to bugs for the suspicious commits if we have bug data.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/Bugzilla.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/notifications.css:
+        (ol.notifications>li ul.causes>li>div.description>span>span.bugID::before):
+        (ol.notifications>li ul.causes>li>div.description>span>span.bugID>a):
+
 2012-06-18  Amy Ousterhout  <aousterh@chromium.org>
 
         [Chromium] DeviceOrientation Cleanup

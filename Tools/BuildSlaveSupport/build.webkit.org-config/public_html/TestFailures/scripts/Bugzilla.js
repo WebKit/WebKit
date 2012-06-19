@@ -70,6 +70,11 @@ var g_searchCache = new base.AsynchronousCache(function(query, callback) {
     });
 });
 
+bugzilla.bugURL = function(bugNumber)
+{
+    return config.kBugzillaURL + '/show_bug.cgi?id=' + bugNumber;
+};
+
 bugzilla.quickSearch = function(query, callback)
 {
     g_searchCache.get(query, callback);

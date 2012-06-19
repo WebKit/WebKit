@@ -146,6 +146,16 @@ ol.notifications>li ul.causes>li>ul.actions {
             color: Gray;
         }
 
+        ol.notifications>li ul.causes>li>div.description>span>span.bugID::before {
+            content: 'bug ';
+            padding-left: 8px;
+        }
+
+        ol.notifications>li ul.causes>li>div.description>span>span.bugID>a {
+            cursor: hand;
+            pointer-events: auto;
+        }
+
         ol.notifications>li ul.causes>li>div.description>span>span.reviewer::before {
             content: ' (';
         }

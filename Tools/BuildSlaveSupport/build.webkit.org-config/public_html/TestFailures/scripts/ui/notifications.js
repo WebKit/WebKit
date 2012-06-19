@@ -117,12 +117,13 @@ ui.notifications.SuspiciousCommit = base.extends(Cause, {
         this._addDetail('summary', commitData);
         this._addDetail('author', commitData);
         this._addDetail('reviewer', commitData);
+        this._addDetail('bugID', commitData, bugzilla.bugURL);
     },
     hasRevision: function(revision)
     {
         return this._revision == revision;
     },
-    _addDetail: function(part, commitData)
+    _addDetail: function(part, commitData, linkFunction)
     {
         var content = commitData[part];
         if (!content)
@@ -130,7 +131,12 @@ ui.notifications.SuspiciousCommit = base.extends(Cause, {
 
         var span = this._details.appendChild(document.createElement('span'));
         span.className = part;
-        span.textContent = content;
+        
+        if (linkFunction) {
+            var link = base.createLinkNode(linkFunction(content), content, '_blank');
+            span.appendChild(link);
+        } else
+            span.textContent = content;
     }
 });
 
