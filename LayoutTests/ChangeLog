@@ -1,3 +1,17 @@
+2012-06-18  Mark Lam  <mark.lam@apple.com>
+
+        Ensure that error.stack and window.onerror always have the appropriate
+        line numbers of the exception being thrown.
+        https://bugs.webkit.org/show_bug.cgi?id=89410
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/js/exception-line-number-expected.txt: Added.
+        * fast/js/exception-line-number.html: Added.
+        * fast/js/script-tests/exception-line-number.js: Added.
+        (foo):
+        (window.onerror):
+
 2012-06-18  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed test fix (one more) for r120667: skip '.svn' directory from the test results.

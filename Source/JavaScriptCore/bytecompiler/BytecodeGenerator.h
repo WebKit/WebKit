@@ -616,10 +616,7 @@ namespace JSC {
 
         void addLineInfo(unsigned lineNo)
         {
-#if !ENABLE(OPCODE_SAMPLING)
-            if (m_shouldEmitRichSourceInfo)
-#endif
-                m_codeBlock->addLineInfo(instructions().size(), lineNo);
+            m_codeBlock->addLineInfo(instructions().size(), lineNo);
         }
 
         RegisterID* emitInitLazyRegister(RegisterID*);

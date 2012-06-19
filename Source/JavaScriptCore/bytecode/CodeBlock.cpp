@@ -1600,6 +1600,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
     , m_forcedOSRExitCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
+    , m_lineInfo(other.m_lineInfo)
 #if ENABLE(JIT)
     , m_canCompileWithDFGState(DFG::CapabilityLevelNotSet)
 #endif
@@ -1607,7 +1608,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
     setNumParameters(other.numParameters());
     optimizeAfterWarmUp();
     jitAfterWarmUp();
-    
+
     if (other.m_rareData) {
         createRareDataIfNecessary();
         
@@ -1618,7 +1619,6 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
         m_rareData->m_characterSwitchJumpTables = other.m_rareData->m_characterSwitchJumpTables;
         m_rareData->m_stringSwitchJumpTables = other.m_rareData->m_stringSwitchJumpTables;
         m_rareData->m_expressionInfo = other.m_rareData->m_expressionInfo;
-        m_rareData->m_lineInfo = other.m_rareData->m_lineInfo;
     }
 }
 
@@ -2163,10 +2163,7 @@ int CodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
     ASSERT(bytecodeOffset < instructions().size());
 
-    if (!m_rareData)
-        return m_ownerExecutable->source().firstLine();
-
-    Vector<LineInfo>& lineInfo = m_rareData->m_lineInfo;
+    Vector<LineInfo>& lineInfo = m_lineInfo;
 
     int low = 0;
     int high = lineInfo.size();
@@ -2291,6 +2288,7 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
         m_constantRegisters.shrinkToFit();
     } // else don't shrink these, because we would have already pointed pointers into these tables.
 
+    m_lineInfo.shrinkToFit();
     if (m_rareData) {
         m_rareData->m_exceptionHandlers.shrinkToFit();
         m_rareData->m_regexps.shrinkToFit();
@@ -2298,7 +2296,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
         m_rareData->m_characterSwitchJumpTables.shrinkToFit();
         m_rareData->m_stringSwitchJumpTables.shrinkToFit();
         m_rareData->m_expressionInfo.shrinkToFit();
-        m_rareData->m_lineInfo.shrinkToFit();
 #if ENABLE(JIT)
         m_rareData->m_callReturnIndexVector.shrinkToFit();
 #endif

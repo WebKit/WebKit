@@ -711,8 +711,7 @@ namespace JSC {
 
         void addLineInfo(unsigned bytecodeOffset, int lineNo)
         {
-            createRareDataIfNecessary();
-            Vector<LineInfo>& lineInfo = m_rareData->m_lineInfo;
+            Vector<LineInfo>& lineInfo = m_lineInfo;
             if (!lineInfo.size() || lineInfo.last().lineNumber != lineNo) {
                 LineInfo info = { bytecodeOffset, lineNo };
                 lineInfo.append(info);
@@ -720,13 +719,12 @@ namespace JSC {
         }
 
         bool hasExpressionInfo() { return m_rareData && m_rareData->m_expressionInfo.size(); }
-        bool hasLineInfo() { return m_rareData && m_rareData->m_lineInfo.size(); }
         //  We only generate exception handling info if the user is debugging
         // (and may want line number info), or if the function contains exception handler.
         bool needsCallReturnIndices()
         {
-            return m_rareData &&
-                (m_rareData->m_expressionInfo.size() || m_rareData->m_lineInfo.size() || m_rareData->m_exceptionHandlers.size());
+            return true || (m_rareData
+                && (m_rareData->m_expressionInfo.size() || m_rareData->m_exceptionHandlers.size()));
         }
 
 #if ENABLE(JIT)
@@ -1311,7 +1309,9 @@ namespace JSC {
         uint32_t m_forcedOSRExitCounter;
         uint16_t m_optimizationDelayCounter;
         uint16_t m_reoptimizationRetryCounter;
-        
+
+        Vector<LineInfo> m_lineInfo;
+
         struct RareData {
            WTF_MAKE_FAST_ALLOCATED;
         public:
@@ -1333,7 +1333,6 @@ namespace JSC {
             // Expression info - present if debugging.
             Vector<ExpressionRangeInfo> m_expressionInfo;
             // Line info - present if profiling or debugging.
-            Vector<LineInfo> m_lineInfo;
 #if ENABLE(JIT)
             Vector<CallReturnOffsetToBytecodeOffset> m_callReturnIndexVector;
 #endif

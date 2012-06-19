@@ -1,3 +1,27 @@
+2012-06-18  Mark Lam  <mark.lam@apple.com>
+
+        Changed JSC to always record line number information so that error.stack
+        and window.onerror() can report proper line numbers.
+        https://bugs.webkit.org/show_bug.cgi?id=89410
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::lineNumberForBytecodeOffset):
+        (JSC::CodeBlock::shrinkToFit): m_lineInfo is now available unconditionally.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addLineInfo):
+        (JSC::CodeBlock::hasLineInfo): Unused.  Now removed.
+        (JSC::CodeBlock::needsCallReturnIndices):
+        (CodeBlock):
+        (RareData):  Hoisted m_lineInfo out of m_rareData.  m_lineInfo is now
+        filled in unconditionally.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::addLineInfo):
+
 2012-06-18  Andy Estes  <aestes@apple.com>
 
         Fix r120663, which didn't land the change that was reviewed.
