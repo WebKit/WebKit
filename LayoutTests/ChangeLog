@@ -1,3 +1,13 @@
+2012-06-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, update expected files.
+
+        * platform/qt/Skipped: Skip a new failing test to paint the bot green.
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Updated after r120609.
+        * platform/qt/fast/multicol/progression-reverse-expected.png: Added after r120609.
+        * platform/qt/fast/multicol/progression-reverse-expected.txt: Added after r120609.
+        * platform/qt/svg/css/getComputedStyle-basic-expected.txt: Updated after r120609.
+
 2012-06-18  Mark Lam  <mark.lam@apple.com>
 
         Ensure that error.stack and window.onerror always have the appropriate
