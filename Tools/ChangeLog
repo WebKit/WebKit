@@ -1,5 +1,16 @@
 2012-06-18  Joone Hur  <joone.hur@intel.com>
 
+        [EFL] Fontconfig can't be linked properly
+        https://bugs.webkit.org/show_bug.cgi?id=89418
+
+        Unreviewed build fix.
+
+        Make Fontconfig be linked correctly.
+
+        * MiniBrowser/efl/CMakeLists.txt: add FONTCONFIG_LIBRARIES to MiniBrowser_LIBRARIES.
+
+2012-06-18  Joone Hur  <joone.hur@intel.com>
+
         Unreviewed. Updating email for committers.py script.
 
         * Scripts/webkitpy/common/config/committers.py:
