@@ -169,3 +169,7 @@ fast/parser/innerhtml-with-prefixed-elements.xhtml
 
 # [Qt] REGRESSION(r96779): It made svg/as-image/svg-nested.html timeout
 svg/as-image/svg-nested.html
+
+# [Qt] REGRESSION(r120624): It made fast/text/line-breaks-after-ideographic-comma-or-full-stop.html fail on non-ICU platforms
+# https://bugs.webkit.org/show_bug.cgi?id=89426
+fast/text/line-breaks-after-ideographic-comma-or-full-stop.html

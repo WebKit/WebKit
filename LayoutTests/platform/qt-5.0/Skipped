@@ -94,3 +94,7 @@ http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html
 http/tests/security/contentSecurityPolicy/object-src-none-allowed.html
 http/tests/security/contentSecurityPolicy/object-src-none-blocked.html
 http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+
+# [Qt] New fast/text/line-breaks-after-ideographic-comma-or-full-stop-2.html introduced in r120624 fails on ICU platforms
+# https://bugs.webkit.org/show_bug.cgi?id=89436
+fast/text/line-breaks-after-ideographic-comma-or-full-stop-2.html
