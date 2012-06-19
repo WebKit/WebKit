@@ -1,3 +1,18 @@
+2012-06-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        REGRESSION(r120552): Many tests timing out on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=89433
+
+        Reviewed by Andy Estes.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::lowResUTCTime):
+        It looks like there were two bugs:
+        1) the function was converting from 100ths of nanoseconds to seconds
+           rather than 100s of nanoseconds to seconds by dividing by
+           (nsPerSecond * 100) rather than (nsPerSecond / 100)
+        2) the function should've been returning milliseconds, not seconds
+
 2012-06-18  Tony Payne  <tpayne@chromium.org>
 
         [chromium] Add iccjpeg and qcms to chromium port.

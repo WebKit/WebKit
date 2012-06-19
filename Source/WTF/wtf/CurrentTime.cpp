@@ -71,7 +71,7 @@ namespace WTF {
 
 // Number of 100 nanosecond between January 1, 1601 and January 1, 1970.
 static const ULONGLONG epochBias = 116444736000000000ULL;
-static const double nsPerSecond = 1000000000.0;
+static const double hundredsOfNanosecondsPerMillisecond = 10000;
 
 static double lowResUTCTime()
 {
@@ -91,7 +91,7 @@ static double lowResUTCTime()
     memcpy(&dateTime, &fileTime, sizeof(dateTime));
 
     // Windows file times are in 100s of nanoseconds.
-    return (dateTime.QuadPart - epochBias) / (100 * nsPerSecond);
+    return (dateTime.QuadPart - epochBias) / hundredsOfNanosecondsPerMillisecond;
 }
 
 #if USE(QUERY_PERFORMANCE_COUNTER)
