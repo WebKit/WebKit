@@ -1,5 +1,9 @@
 2012-06-18  Andy Estes  <aestes@apple.com>
 
+        Fix r120663, which didn't land the change that was reviewed.
+
+2012-06-18  Andy Estes  <aestes@apple.com>
+
         [JSC] In JSGlobalData.cpp, enableAssembler() sometimes leaks two CF objects
         https://bugs.webkit.org/show_bug.cgi?id=89415
 

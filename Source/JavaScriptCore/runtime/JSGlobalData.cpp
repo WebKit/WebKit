@@ -104,7 +104,7 @@ static bool enableAssembler(ExecutableAllocator& executableAllocator)
     RetainPtr<CFStringRef> canUseJITKey(AdoptCF, CFStringCreateWithCString(0 , "JavaScriptCoreUseJIT", kCFStringEncodingMacRoman));
     RetainPtr<CFBooleanRef> canUseJIT(AdoptCF, (CFBooleanRef)CFPreferencesCopyAppValue(canUseJITKey.get(), kCFPreferencesCurrentApplication));
     if (canUseJIT)
-        return kCFBooleanTrue == canUseJIT;
+        return kCFBooleanTrue == canUseJIT.get();
 #endif
 
 #if USE(CF) || OS(UNIX)
