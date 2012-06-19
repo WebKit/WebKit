@@ -1,3 +1,20 @@
+2012-06-19  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [JSC] Implement support for JSDictionary::convertValue(Vector<String>& result)
+        https://bugs.webkit.org/show_bug.cgi?id=89447
+
+        Reviewed by Adam Barth.
+
+        Add implementation for JSDictionary::convertValue(Vector<String>& result)
+        so that IDBDatabase::createObjectStore() compiles with JSC.
+
+        Tests: storage/indexeddb
+
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        (WebCore):
+        * bindings/js/JSDictionary.h:
+
 2012-06-19  Andy Estes  <aestes@apple.com>
 
         [Mac] AudioFileReader::createBus() leaks an AudioBufferList if ExtAudioFileRead() returns an error

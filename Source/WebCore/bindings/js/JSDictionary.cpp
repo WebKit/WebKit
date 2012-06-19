@@ -102,6 +102,24 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, String& result)
     result = ustringToString(value.toString(exec)->value(exec));
 }
 
+void JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<String>& result)
+{
+    if (value.isUndefinedOrNull())
+        return;
+
+    unsigned length;
+    JSObject* object = toJSSequence(exec, value, length);
+    if (exec->hadException())
+        return;
+
+    for (unsigned i = 0 ; i < length; ++i) {
+        JSValue itemValue = object->get(exec, i);
+        if (exec->hadException())
+            return;
+        result.append(ustringToString(itemValue.toString(exec)->value(exec)));
+    }
+}
+
 void JSDictionary::convertValue(ExecState* exec, JSValue value, ScriptValue& result)
 {
     result = ScriptValue(exec->globalData(), value);

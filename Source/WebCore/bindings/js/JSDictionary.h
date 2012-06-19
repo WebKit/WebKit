@@ -92,6 +92,7 @@ private:
     static void convertValue(JSC::ExecState*, JSC::JSValue, Dictionary& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, String& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, ScriptValue& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, Vector<String>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<SerializedScriptValue>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<DOMWindow>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<EventTarget>& result);
