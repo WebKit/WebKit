@@ -30,6 +30,12 @@ RUNNING TEST: extension_testAPI
         }
         create : <function>
         setOpenResourceHandler : <function>
+        SearchAction : {
+            CancelSearch : "cancelSearch"
+            PerformSearch : "performSearch"
+            NextSearchResult : "nextSearchResult"
+            PreviousSearchResult : "previousSearchResult"
+        }
     }
     network : {
         onRequestFinished : {

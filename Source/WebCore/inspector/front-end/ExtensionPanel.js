@@ -147,25 +147,25 @@ WebInspector.ExtensionPanel.prototype = {
 
     searchCanceled: function(startingNewSearch)
     {
-        WebInspector.extensionServer.notifySearchAction(this._id, "cancelSearch");
+        WebInspector.extensionServer.notifySearchAction(this._id, WebInspector.extensionAPI.panels.SearchAction.CancelSearch);
         WebInspector.Panel.prototype.searchCanceled.apply(this, arguments);
     },
 
     performSearch: function(query)
     {
-        WebInspector.extensionServer.notifySearchAction(this._id, "performSearch", query);
+        WebInspector.extensionServer.notifySearchAction(this._id, WebInspector.extensionAPI.panels.SearchAction.PerformSearch, query);
         WebInspector.Panel.prototype.performSearch.apply(this, arguments);
     },
 
     jumpToNextSearchResult: function()
     {
-        WebInspector.extensionServer.notifySearchAction(this._id, "nextSearchResult");
+        WebInspector.extensionServer.notifySearchAction(this._id, WebInspector.extensionAPI.panels.SearchAction.NextSearchResult);
         WebInspector.Panel.prototype.jumpToNextSearchResult.call(this);
     },
 
     jumpToPreviousSearchResult: function()
     {
-        WebInspector.extensionServer.notifySearchAction(this._id, "previousSearchResult");
+        WebInspector.extensionServer.notifySearchAction(this._id, WebInspector.extensionAPI.panels.SearchAction.PreviousSearchResult);
         WebInspector.Panel.prototype.jumpToPreviousSearchResult.call(this);
     },
 

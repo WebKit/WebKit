@@ -1,3 +1,12 @@
+2012-06-19  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: extensionPanel.onSearch `action` strings should be enumerated
+        https://bugs.webkit.org/show_bug.cgi?id=89509
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/extensions/extensions-api-expected.txt:
+
 2012-06-19  Kenneth Russell  <kbr@google.com>
 
         [Chromium] Unreviewed gardening.

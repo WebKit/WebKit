@@ -32,7 +32,6 @@ function defineCommonExtensionSymbols(apiPrivate)
 {
     if (!apiPrivate.audits)
         apiPrivate.audits = {};
-
     apiPrivate.audits.Severity = {
         Info: "info",
         Warning: "warning",
@@ -48,6 +47,16 @@ function defineCommonExtensionSymbols(apiPrivate)
         Warning: "warning",
         Error: "error"
     };
+
+    if (!apiPrivate.panels)
+        apiPrivate.panels = {};
+    apiPrivate.panels.SearchAction = {
+        CancelSearch: "cancelSearch",
+        PerformSearch: "performSearch",
+        NextSearchResult: "nextSearchResult",
+        PreviousSearchResult: "previousSearchResult"
+    };
+
     apiPrivate.Events = {
         AuditStarted: "audit-started-",
         ButtonClicked: "button-clicked-",
@@ -64,6 +73,7 @@ function defineCommonExtensionSymbols(apiPrivate)
         ViewShown: "view-shown-",
         ViewHidden: "view-hidden-"
     };
+
     apiPrivate.Commands = {
         AddAuditCategory: "addAuditCategory",
         AddAuditResult: "addAuditResult",
@@ -320,6 +330,11 @@ Panels.prototype = {
         // Only send command if we either removed an existing handler or added handler and had none before.
         if (hadHandler === !callback)
             extensionServer.sendRequest({ command: commands.SetOpenResourceHandler, "handlerPresent": !!callback });
+    },
+
+    get SearchAction()
+    {
+        return apiPrivate.panels.SearchAction;
     }
 }
 
