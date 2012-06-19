@@ -206,6 +206,9 @@ public:
             || type == GestureScrollUpdate
             || type == GestureFlingStart
             || type == GestureFlingCancel
+            || type == GesturePinchBegin
+            || type == GesturePinchEnd
+            || type == GesturePinchUpdate
             || type == GestureTap
             || type == GestureTapDown
             || type == GestureDoubleTap
