@@ -1,3 +1,112 @@
+2012-06-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Remove some failing layout tests results added in
+        http://trac.webkit.org/changeset/119285 and
+        http://trac.webkit.org/changeset/119295. Most of these tests pass
+        without the failing results. Only one of them passes with the failing
+        result; compositing/layer-creation/spanOverlapsCanvas.html. I left that
+        failing result in place.
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * platform/win/compositing/geometry/flipped-writing-mode-expected.txt: Removed.
+        * platform/win/compositing/geometry/foreground-layer-expected.txt: Removed.
+        * platform/win/compositing/geometry/foreground-offset-change-expected.txt: Removed.
+        * platform/win/compositing/geometry/horizontal-scroll-composited-expected.txt: Removed.
+        * platform/win/compositing/geometry/layer-due-to-layer-children-deep-expected.txt: Removed.
+        * platform/win/compositing/geometry/layer-due-to-layer-children-deep-switch-expected.txt: Removed.
+        * platform/win/compositing/geometry/layer-due-to-layer-children-expected.txt: Removed.
+        * platform/win/compositing/geometry/layer-due-to-layer-children-switch-expected.txt: Removed.
+        * platform/win/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt: Removed.
+        * platform/win/compositing/geometry/limit-layer-bounds-opacity-transition-expected.txt: Removed.
+        * platform/win/compositing/geometry/limit-layer-bounds-overflow-repaint-expected.txt: Removed.
+        * platform/win/compositing/geometry/limit-layer-bounds-overflow-root-expected.txt: Removed.
+        * platform/win/compositing/geometry/limit-layer-bounds-positioned-expected.txt: Removed.
+        * platform/win/compositing/geometry/limit-layer-bounds-positioned-transition-expected.txt: Removed.
+        * platform/win/compositing/geometry/limit-layer-bounds-transformed-expected.txt: Removed.
+        * platform/win/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt: Removed.
+        * platform/win/compositing/geometry/outline-change-expected.txt: Removed.
+        * platform/win/compositing/geometry/partial-layout-update-expected.txt: Removed.
+        * platform/win/compositing/geometry/preserve-3d-switching-expected.txt: Removed.
+        * platform/win/compositing/geometry/root-layer-update-expected.txt: Removed.
+        * platform/win/compositing/geometry/tall-page-composited-expected.txt: Removed.
+        * platform/win/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.txt: Removed.
+        * platform/win/compositing/geometry/vertical-scroll-composited-expected.txt: Removed.
+        * platform/win/compositing/geometry/video-opacity-overlay-expected.txt: Removed.
+        * platform/win/compositing/iframes/become-composited-nested-iframes-expected.txt: Removed.
+        * platform/win/compositing/iframes/become-overlapped-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/composited-iframe-alignment-expected.txt: Removed.
+        * platform/win/compositing/iframes/composited-iframe-scroll-expected.txt: Removed.
+        * platform/win/compositing/iframes/composited-parent-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/connect-compositing-iframe-delayed-expected.txt: Removed.
+        * platform/win/compositing/iframes/connect-compositing-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/connect-compositing-iframe2-expected.txt: Removed.
+        * platform/win/compositing/iframes/connect-compositing-iframe3-expected.txt: Removed.
+        * platform/win/compositing/iframes/enter-compositing-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/iframe-content-flipping-expected.txt: Removed.
+        * platform/win/compositing/iframes/iframe-copy-on-scroll-expected.txt: Removed.
+        * platform/win/compositing/iframes/iframe-in-composited-layer-expected.txt: Removed.
+        * platform/win/compositing/iframes/iframe-resize-expected.txt: Removed.
+        * platform/win/compositing/iframes/iframe-size-from-zero-expected.txt: Removed.
+        * platform/win/compositing/iframes/invisible-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/invisible-nested-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/invisible-nested-iframe-hide-expected.txt: Removed.
+        * platform/win/compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * platform/win/compositing/iframes/layout-on-compositing-change-expected.txt: Removed.
+        * platform/win/compositing/iframes/nested-iframe-scrolling-expected.txt: Removed.
+        * platform/win/compositing/iframes/overlapped-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/overlapped-iframe-iframe-expected.txt:
+        * platform/win/compositing/iframes/page-cache-layer-tree-expected.txt: Removed.
+        * platform/win/compositing/iframes/resizer-expected.txt: Removed.
+        * platform/win/compositing/iframes/scrolling-iframe-expected.txt: Removed.
+        * platform/win/compositing/images: Removed.
+        * platform/win/compositing/images/clip-on-directly-composited-image-expected.txt: Removed.
+        * platform/win/compositing/images/direct-image-background-color-expected.txt: Removed.
+        * platform/win/compositing/images/direct-pdf-image-expected.txt: Removed.
+        * platform/win/compositing/images/direct-svg-image-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/fixed-position-out-of-view-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/overflow-scroll-overlap-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/overlap-animation-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/overlap-child-layer-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/overlap-clipping-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/overlap-transformed-and-clipped-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/overlap-transformed-layer-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/overlap-transforms-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/rotate3d-overlap-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/scroll-partial-update-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/stacking-context-overlap-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/stacking-context-overlap-nested-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/translatez-overlap-expected.txt: Removed.
+        * platform/win/compositing/masks: Removed.
+        * platform/win/compositing/masks/direct-image-mask-expected.txt: Removed.
+        * platform/win/compositing/masks/masked-ancestor-expected.txt: Removed.
+        * platform/win/compositing/masks/multiple-masks-expected.txt: Removed.
+        * platform/win/compositing/masks/simple-composited-mask-expected.txt: Removed.
+        * platform/win/compositing/overflow/ancestor-overflow-expected.txt: Removed.
+        * platform/win/compositing/overflow/clip-descendents-expected.txt: Removed.
+        * platform/win/compositing/overflow/content-gains-scrollbars-expected.txt: Removed.
+        * platform/win/compositing/overflow/content-loses-scrollbars-expected.txt: Removed.
+        * platform/win/compositing/overflow/overflow-compositing-descendant-expected.txt: Removed.
+        * platform/win/compositing/overflow/overflow-positioning-expected.txt: Removed.
+        * platform/win/compositing/overflow/overflow-scrollbar-layers-expected.txt: Removed.
+        * platform/win/compositing/overflow/resize-painting-expected.txt: Removed.
+        * platform/win/compositing/rtl: Removed.
+        * platform/win/compositing/rtl/rtl-absolute-expected.txt: Removed.
+        * platform/win/compositing/rtl/rtl-absolute-overflow-expected.txt: Removed.
+        * platform/win/compositing/rtl/rtl-absolute-overflow-scrolled-expected.txt: Removed.
+        * platform/win/compositing/rtl/rtl-iframe-absolute-expected.txt: Removed.
+        * platform/win/compositing/rtl/rtl-iframe-absolute-overflow-expected.txt: Removed.
+        * platform/win/compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.txt: Removed.
+        * platform/win/compositing/rtl/rtl-iframe-fixed-expected.txt: Removed.
+        * platform/win/compositing/rtl/rtl-iframe-fixed-overflow-expected.txt: Removed.
+        * platform/win/compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.txt: Removed.
+        * platform/win/compositing/rtl/rtl-iframe-relative-expected.txt: Removed.
+        * platform/win/compositing/rtl/rtl-relative-expected.txt: Removed.
+        * platform/win/compositing/tiling/crash-reparent-tiled-layer-expected.txt: Removed.
+        * platform/win/compositing/visibility: Removed.
+        * platform/win/compositing/visibility/layer-visible-content-expected.txt: Removed.
+        * platform/win/compositing/visibility/visibility-image-layers-dynamic-expected.txt: Removed.
+
 2012-06-19  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaseline some media controller tests.
@@ -10039,62 +10148,6 @@
         * http/tests/cookies/simple-cookies-max-age.html:
         * http/tests/cookies/single-quoted-value.html:
 
-2012-06-01  Jessie Berlin  <jberlin@apple.com>
-
-        [Win] Windows 7 Release Testers report many compositing failures
-        https://bugs.webkit.org/show_bug.cgi?id=88040
-
-        Part 2 of adding expected (failing?) results to get the bots greener.
-
-        * platform/win/compositing/images: Added.
-        * platform/win/compositing/images/clip-on-directly-composited-image-expected.txt: Added.
-        * platform/win/compositing/images/direct-image-background-color-expected.txt: Added.
-        * platform/win/compositing/images/direct-pdf-image-expected.txt: Added.
-        * platform/win/compositing/images/direct-svg-image-expected.txt: Added.
-        * platform/win/compositing/layer-creation/fixed-position-out-of-view-expected.txt: Added.
-        * platform/win/compositing/layer-creation/overflow-scroll-overlap-expected.txt: Added.
-        * platform/win/compositing/layer-creation/overlap-animation-expected.txt: Added.
-        * platform/win/compositing/layer-creation/overlap-child-layer-expected.txt: Added.
-        * platform/win/compositing/layer-creation/overlap-clipping-expected.txt: Added.
-        * platform/win/compositing/layer-creation/overlap-transformed-and-clipped-expected.txt: Added.
-        * platform/win/compositing/layer-creation/overlap-transformed-layer-expected.txt: Added.
-        * platform/win/compositing/layer-creation/overlap-transforms-expected.txt: Added.
-        * platform/win/compositing/layer-creation/rotate3d-overlap-expected.txt: Added.
-        * platform/win/compositing/layer-creation/scroll-partial-update-expected.txt: Added.
-        * platform/win/compositing/layer-creation/spanOverlapsCanvas-expected.txt: Added.
-        * platform/win/compositing/layer-creation/stacking-context-overlap-expected.txt: Added.
-        * platform/win/compositing/layer-creation/stacking-context-overlap-nested-expected.txt: Added.
-        * platform/win/compositing/layer-creation/translatez-overlap-expected.txt: Added.
-        * platform/win/compositing/masks: Added.
-        * platform/win/compositing/masks/direct-image-mask-expected.txt: Added.
-        * platform/win/compositing/masks/masked-ancestor-expected.txt: Added.
-        * platform/win/compositing/masks/multiple-masks-expected.txt: Added.
-        * platform/win/compositing/masks/simple-composited-mask-expected.txt: Added.
-        * platform/win/compositing/overflow/ancestor-overflow-expected.txt
-        * platform/win/compositing/overflow/clip-descendents-expected.txt: Added.
-        * platform/win/compositing/overflow/content-gains-scrollbars-expected.txt: Added.
-        * platform/win/compositing/overflow/content-loses-scrollbars-expected.txt: Added.
-        * platform/win/compositing/overflow/overflow-compositing-descendant-expected.txt: Added.
-        * platform/win/compositing/overflow/overflow-positioning-expected.txt: Added.
-        * platform/win/compositing/overflow/overflow-scrollbar-layers-expected.txt: Added.
-        * platform/win/compositing/overflow/resize-painting-expected.txt: Added.
-        * platform/win/compositing/rtl: Added.
-        * platform/win/compositing/rtl/rtl-absolute-expected.txt: Added.
-        * platform/win/compositing/rtl/rtl-absolute-overflow-expected.txt: Added.
-        * platform/win/compositing/rtl/rtl-absolute-overflow-scrolled-expected.txt: Added.
-        * platform/win/compositing/rtl/rtl-iframe-absolute-expected.txt: Added.
-        * platform/win/compositing/rtl/rtl-iframe-absolute-overflow-expected.txt: Added.
-        * platform/win/compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.txt: Added.
-        * platform/win/compositing/rtl/rtl-iframe-fixed-expected.txt: Added.
-        * platform/win/compositing/rtl/rtl-iframe-fixed-overflow-expected.txt: Added.
-        * platform/win/compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.txt: Added.
-        * platform/win/compositing/rtl/rtl-iframe-relative-expected.txt: Added.
-        * platform/win/compositing/rtl/rtl-relative-expected.txt: Added.
-        * platform/win/compositing/tiling/crash-reparent-tiled-layer-expected.txt: Added.
-        * platform/win/compositing/visibility: Added.
-        * platform/win/compositing/visibility/layer-visible-content-expected.txt: Added.
-        * platform/win/compositing/visibility/visibility-image-layers-dynamic-expected.txt: Added.
-
 2012-06-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFG constant folding search for the last local access skips the immediately previous local access
@@ -10132,64 +10185,6 @@
         tests), and the bug report doesn't have any information about what was wrong.
 
         * platform/mac/Skipped: Re-enable to see what happens.
-
-2012-06-01  Jessie Berlin  <jberlin@apple.com>
-
-        [Win] Windows 7 Release Testers report many compositing failures
-        https://bugs.webkit.org/show_bug.cgi?id=88040
-
-        Part 1 of adding expected (failing?) results to get the bots greener.
-
-        * platform/win/compositing/geometry/flipped-writing-mode-expected.txt: Added.
-        * platform/win/compositing/geometry/foreground-layer-expected.txt: Added.
-        * platform/win/compositing/geometry/foreground-offset-change-expected.txt: Added.
-        * platform/win/compositing/geometry/horizontal-scroll-composited-expected.txt: Added.
-        * platform/win/compositing/geometry/layer-due-to-layer-children-deep-expected.txt: Added.
-        * platform/win/compositing/geometry/layer-due-to-layer-children-deep-switch-expected.txt: Added.
-        * platform/win/compositing/geometry/layer-due-to-layer-children-expected.txt: Added.
-        * platform/win/compositing/geometry/layer-due-to-layer-children-switch-expected.txt: Added.
-        * platform/win/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt: Added.
-        * platform/win/compositing/geometry/limit-layer-bounds-opacity-transition-expected.txt: Added.
-        * platform/win/compositing/geometry/limit-layer-bounds-overflow-repaint-expected.txt: Added.
-        * platform/win/compositing/geometry/limit-layer-bounds-overflow-root-expected.txt: Added.
-        * platform/win/compositing/geometry/limit-layer-bounds-positioned-expected.txt: Added.
-        * platform/win/compositing/geometry/limit-layer-bounds-positioned-transition-expected.txt: Added.
-        * platform/win/compositing/geometry/limit-layer-bounds-transformed-expected.txt: Added.
-        * platform/win/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt: Added.
-        * platform/win/compositing/geometry/outline-change-expected.txt: Added.
-        * platform/win/compositing/geometry/partial-layout-update-expected.txt: Added.
-        * platform/win/compositing/geometry/preserve-3d-switching-expected.txt: Added.
-        * platform/win/compositing/geometry/root-layer-update-expected.txt: Added.
-        * platform/win/compositing/geometry/tall-page-composited-expected.txt: Added.
-        * platform/win/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.txt: Added.
-        * platform/win/compositing/geometry/vertical-scroll-composited-expected.txt: Added.
-        * platform/win/compositing/geometry/video-opacity-overlay-expected.txt: Added.
-        * platform/win/compositing/iframes/become-composited-nested-iframes-expected.txt: Added.
-        * platform/win/compositing/iframes/become-overlapped-iframe-expected.txt: Added.
-        * platform/win/compositing/iframes/composited-iframe-alignment-expected.txt: Added.
-        * platform/win/compositing/iframes/composited-iframe-scroll-expected.txt: Added.
-        * platform/win/compositing/iframes/composited-parent-iframe-expected.txt: Added.
-        * platform/win/compositing/iframes/connect-compositing-iframe-delayed-expected.txt: Added.
-        * platform/win/compositing/iframes/connect-compositing-iframe-expected.txt: Added.
-        * platform/win/compositing/iframes/connect-compositing-iframe2-expected.txt: Added.
-        * platform/win/compositing/iframes/connect-compositing-iframe3-expected.txt: Added.
-        * platform/win/compositing/iframes/enter-compositing-iframe-expected.txt: Added.
-        * platform/win/compositing/iframes/iframe-content-flipping-expected.txt: Added.
-        * platform/win/compositing/iframes/iframe-copy-on-scroll-expected.txt: Added.
-        * platform/win/compositing/iframes/iframe-in-composited-layer-expected.txt: Added.
-        * platform/win/compositing/iframes/iframe-resize-expected.txt: Added.
-        * platform/win/compositing/iframes/iframe-size-from-zero-expected.txt: Added.
-        * platform/win/compositing/iframes/invisible-iframe-expected.txt: Added.
-        * platform/win/compositing/iframes/invisible-nested-iframe-expected.txt: Added.
-        * platform/win/compositing/iframes/invisible-nested-iframe-hide-expected.txt: Added.
-        * platform/win/compositing/iframes/invisible-nested-iframe-show-expected.txt:
-        * platform/win/compositing/iframes/layout-on-compositing-change-expected.txt: Added.
-        * platform/win/compositing/iframes/nested-iframe-scrolling-expected.txt: Added.
-        * platform/win/compositing/iframes/overlapped-iframe-expected.txt: Added.
-        * platform/win/compositing/iframes/overlapped-iframe-iframe-expected.txt:
-        * platform/win/compositing/iframes/page-cache-layer-tree-expected.txt: Added.
-        * platform/win/compositing/iframes/resizer-expected.txt: Added.
-        * platform/win/compositing/iframes/scrolling-iframe-expected.txt: Added.
 
 2012-06-01  Zan Dobersek  <zandobersek@gmail.com>
 
