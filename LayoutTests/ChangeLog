@@ -1,3 +1,9 @@
+2012-06-18  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed test fix for r120667: skip '.svn' directory from the test results.
+
+        * fast/forms/file/input-file-entries.html:
+
 2012-06-18  Gregg Tavares  <gman@google.com>
 
         Expose WEBGL_depth_texture extension to WebGL
