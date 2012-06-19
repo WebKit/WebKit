@@ -223,6 +223,9 @@ bool JITCompiler::compile(JITCode& entry)
     speculative.linkOSREntries(linkBuffer);
 
     entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    entry.tryToDisassemble();
+#endif
     return true;
 }
 
@@ -305,6 +308,9 @@ bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
 
     entryWithArityCheck = linkBuffer.locationOf(arityCheck);
     entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    entry.tryToDisassemble();
+#endif
     return true;
 }
 

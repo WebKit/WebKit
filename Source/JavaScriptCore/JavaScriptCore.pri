@@ -19,6 +19,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/heap \
     $$SOURCE_DIR/dfg \
     $$SOURCE_DIR/debugger \
+    $$SOURCE_DIR/disassembler \
     $$SOURCE_DIR/interpreter \
     $$SOURCE_DIR/jit \
     $$SOURCE_DIR/llint \

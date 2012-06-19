@@ -172,14 +172,14 @@ WTF_EXPORT_PRIVATE void WTFInvokeCrashHook();
     WTFInvokeCrashHook(); \
     *(int *)(uintptr_t)0xbbadbeef = 0; \
     __builtin_trap(); \
-} while (false)
+} while (0)
 #else
 #define CRASH() do { \
     WTFReportBacktrace(); \
     WTFInvokeCrashHook(); \
     *(int *)(uintptr_t)0xbbadbeef = 0; \
     ((void(*)())0)(); /* More reliable, but doesn't say BBADBEEF */ \
-} while (false)
+} while (0)
 #endif
 #endif
 

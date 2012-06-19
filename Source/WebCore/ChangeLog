@@ -1,3 +1,14 @@
+2012-06-18  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to look at disassembly
+        https://bugs.webkit.org/show_bug.cgi?id=89319
+
+        Reviewed by Sam Weinig.
+        
+        Just fixing EFL's build system now that JSC has a new directory.
+
+        * CMakeLists.txt:
+
 2012-06-19  Amy Ousterhout  <aousterh@chromium.org>
 
         Adds DeviceMotionClientMock

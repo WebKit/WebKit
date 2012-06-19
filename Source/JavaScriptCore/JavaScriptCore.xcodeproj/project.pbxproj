@@ -193,6 +193,21 @@
 		0FD82E86141F3FF100179C94 /* SpeculatedType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */; };
 		0FE228ED1436AB2700196C48 /* Options.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE228EB1436AB2300196C48 /* Options.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE228EE1436AB2C00196C48 /* Options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE228EA1436AB2300196C48 /* Options.cpp */; };
+		0FF42731158EBD54004CB9FF /* Disassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4272F158EBD44004CB9FF /* Disassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF42732158EBD58004CB9FF /* UDis86Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF42730158EBD44004CB9FF /* UDis86Disassembler.cpp */; };
+		0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF42734158EBD94004CB9FF /* udis86_decode.c */; };
+		0FF42741158EBE8D004CB9FF /* udis86_decode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF42735158EBD94004CB9FF /* udis86_decode.h */; };
+		0FF42742158EBE91004CB9FF /* udis86_extern.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF42736158EBD94004CB9FF /* udis86_extern.h */; };
+		0FF42743158EBE91004CB9FF /* udis86_input.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF42737158EBD94004CB9FF /* udis86_input.c */; };
+		0FF42744158EBE91004CB9FF /* udis86_input.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF42738158EBD94004CB9FF /* udis86_input.h */; };
+		0FF42745158EBE91004CB9FF /* udis86_syn-att.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF42739158EBD94004CB9FF /* udis86_syn-att.c */; };
+		0FF42746158EBE91004CB9FF /* udis86_syn-intel.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4273A158EBD94004CB9FF /* udis86_syn-intel.c */; };
+		0FF42747158EBE91004CB9FF /* udis86_syn.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4273B158EBD94004CB9FF /* udis86_syn.c */; };
+		0FF42748158EBE91004CB9FF /* udis86_syn.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4273C158EBD94004CB9FF /* udis86_syn.h */; };
+		0FF42749158EBE91004CB9FF /* udis86_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4273D158EBD94004CB9FF /* udis86_types.h */; };
+		0FF4274A158EBE91004CB9FF /* udis86.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4273E158EBD94004CB9FF /* udis86.c */; };
+		0FF4274B158EBE91004CB9FF /* udis86.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4273F158EBD94004CB9FF /* udis86.h */; };
+		0FF4274D158EBFE6004CB9FF /* udis86_itab_holder.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4274C158EBFE1004CB9FF /* udis86_itab_holder.c */; };
 		0FF922D414F46B410041A24E /* LLIntOffsetsExtractor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4680A114BA7F8200BFE272 /* LLIntOffsetsExtractor.cpp */; };
 		0FFFC95714EF90A000C72532 /* DFGCFAPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */; };
 		0FFFC95814EF90A200C72532 /* DFGCFAPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -897,6 +912,21 @@
 		0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeculatedType.cpp; sourceTree = "<group>"; };
 		0FE228EA1436AB2300196C48 /* Options.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Options.cpp; sourceTree = "<group>"; };
 		0FE228EB1436AB2300196C48 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
+		0FF4272F158EBD44004CB9FF /* Disassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Disassembler.h; path = disassembler/Disassembler.h; sourceTree = "<group>"; };
+		0FF42730158EBD44004CB9FF /* UDis86Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UDis86Disassembler.cpp; path = disassembler/UDis86Disassembler.cpp; sourceTree = "<group>"; };
+		0FF42734158EBD94004CB9FF /* udis86_decode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = udis86_decode.c; path = disassembler/udis86/udis86_decode.c; sourceTree = "<group>"; };
+		0FF42735158EBD94004CB9FF /* udis86_decode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udis86_decode.h; path = disassembler/udis86/udis86_decode.h; sourceTree = "<group>"; };
+		0FF42736158EBD94004CB9FF /* udis86_extern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udis86_extern.h; path = disassembler/udis86/udis86_extern.h; sourceTree = "<group>"; };
+		0FF42737158EBD94004CB9FF /* udis86_input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = udis86_input.c; path = disassembler/udis86/udis86_input.c; sourceTree = "<group>"; };
+		0FF42738158EBD94004CB9FF /* udis86_input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udis86_input.h; path = disassembler/udis86/udis86_input.h; sourceTree = "<group>"; };
+		0FF42739158EBD94004CB9FF /* udis86_syn-att.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "udis86_syn-att.c"; path = "disassembler/udis86/udis86_syn-att.c"; sourceTree = "<group>"; };
+		0FF4273A158EBD94004CB9FF /* udis86_syn-intel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "udis86_syn-intel.c"; path = "disassembler/udis86/udis86_syn-intel.c"; sourceTree = "<group>"; };
+		0FF4273B158EBD94004CB9FF /* udis86_syn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = udis86_syn.c; path = disassembler/udis86/udis86_syn.c; sourceTree = "<group>"; };
+		0FF4273C158EBD94004CB9FF /* udis86_syn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udis86_syn.h; path = disassembler/udis86/udis86_syn.h; sourceTree = "<group>"; };
+		0FF4273D158EBD94004CB9FF /* udis86_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udis86_types.h; path = disassembler/udis86/udis86_types.h; sourceTree = "<group>"; };
+		0FF4273E158EBD94004CB9FF /* udis86.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = udis86.c; path = disassembler/udis86/udis86.c; sourceTree = "<group>"; };
+		0FF4273F158EBD94004CB9FF /* udis86.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udis86.h; path = disassembler/udis86/udis86.h; sourceTree = "<group>"; };
+		0FF4274C158EBFE1004CB9FF /* udis86_itab_holder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = udis86_itab_holder.c; path = disassembler/udis86/udis86_itab_holder.c; sourceTree = "<group>"; };
 		0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = JSCLLIntOffsetsExtractor; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCFAPhase.cpp; path = dfg/DFGCFAPhase.cpp; sourceTree = "<group>"; };
 		0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCFAPhase.h; path = dfg/DFGCFAPhase.h; sourceTree = "<group>"; };
@@ -1499,6 +1529,7 @@
 				969A078F0ED1D3AE00F1F681 /* bytecode */,
 				7E39D81D0EC38EFA003AF11A /* bytecompiler */,
 				1480DB9A0DDC2231003CFDF2 /* debugger */,
+				0FF4272E158EBCCE004CB9FF /* disassembler */,
 				86EC9DB31328DF44002B2AD7 /* dfg */,
 				142E312A134FF0A600AFADB5 /* heap */,
 				1429D77A0ED20D7300B89619 /* interpreter */,
@@ -1558,6 +1589,36 @@
 				86A054481556451B00445157 /* LowLevelInterpreter64.asm */,
 			);
 			name = llint;
+			sourceTree = "<group>";
+		};
+		0FF4272E158EBCCE004CB9FF /* disassembler */ = {
+			isa = PBXGroup;
+			children = (
+				0FF42733158EBD64004CB9FF /* udis86 */,
+				0FF4272F158EBD44004CB9FF /* Disassembler.h */,
+				0FF42730158EBD44004CB9FF /* UDis86Disassembler.cpp */,
+			);
+			name = disassembler;
+			sourceTree = "<group>";
+		};
+		0FF42733158EBD64004CB9FF /* udis86 */ = {
+			isa = PBXGroup;
+			children = (
+				0FF42734158EBD94004CB9FF /* udis86_decode.c */,
+				0FF42735158EBD94004CB9FF /* udis86_decode.h */,
+				0FF42736158EBD94004CB9FF /* udis86_extern.h */,
+				0FF42737158EBD94004CB9FF /* udis86_input.c */,
+				0FF42738158EBD94004CB9FF /* udis86_input.h */,
+				0FF4274C158EBFE1004CB9FF /* udis86_itab_holder.c */,
+				0FF42739158EBD94004CB9FF /* udis86_syn-att.c */,
+				0FF4273A158EBD94004CB9FF /* udis86_syn-intel.c */,
+				0FF4273B158EBD94004CB9FF /* udis86_syn.c */,
+				0FF4273C158EBD94004CB9FF /* udis86_syn.h */,
+				0FF4273D158EBD94004CB9FF /* udis86_types.h */,
+				0FF4273E158EBD94004CB9FF /* udis86.c */,
+				0FF4273F158EBD94004CB9FF /* udis86.h */,
+			);
+			name = udis86;
 			sourceTree = "<group>";
 		};
 		141211000A48772600480255 /* tests */ = {
@@ -2688,6 +2749,13 @@
 				0F919D0D157EE0A2004A4E7D /* JSSymbolTableObject.h in Headers */,
 				0F919D11157F332C004A4E7D /* JSSegmentedVariableObject.h in Headers */,
 				0F919D2615853CE3004A4E7D /* Watchpoint.h in Headers */,
+				0FF42731158EBD54004CB9FF /* Disassembler.h in Headers */,
+				0FF42741158EBE8D004CB9FF /* udis86_decode.h in Headers */,
+				0FF42742158EBE91004CB9FF /* udis86_extern.h in Headers */,
+				0FF42744158EBE91004CB9FF /* udis86_input.h in Headers */,
+				0FF42748158EBE91004CB9FF /* udis86_syn.h in Headers */,
+				0FF42749158EBE91004CB9FF /* udis86_types.h in Headers */,
+				0FF4274B158EBE91004CB9FF /* udis86.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2967,7 +3035,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/docs\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/bin/ln -sfh \"${SRCROOT}\" JavaScriptCore\nexport JavaScriptCore=\"JavaScriptCore\"\nexport BUILT_PRODUCTS_DIR=\"../..\"\n\nmake --no-builtin-rules -f \"JavaScriptCore/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.ncpu`\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb JavaScriptCore/llint/LowLevelInterpreter.asm ${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor LLIntAssembly.h\n";
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/docs\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/bin/ln -sfh \"${SRCROOT}\" JavaScriptCore\nexport JavaScriptCore=\"JavaScriptCore\"\nexport BUILT_PRODUCTS_DIR=\"../..\"\n\nmake --no-builtin-rules -f \"JavaScriptCore/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.ncpu` || exit 1\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb JavaScriptCore/llint/LowLevelInterpreter.asm ${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor LLIntAssembly.h || exit 1\n";
 		};
 		9319586B09D9F91A00A56FD4 /* Check For Global Initializers */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3264,6 +3332,14 @@
 				0F919D10157F3329004A4E7D /* JSSegmentedVariableObject.cpp in Sources */,
 				0F919D2515853CE0004A4E7D /* Watchpoint.cpp in Sources */,
 				0F919D2815856773004A4E7D /* SymbolTable.cpp in Sources */,
+				0FF42732158EBD58004CB9FF /* UDis86Disassembler.cpp in Sources */,
+				0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */,
+				0FF42743158EBE91004CB9FF /* udis86_input.c in Sources */,
+				0FF42745158EBE91004CB9FF /* udis86_syn-att.c in Sources */,
+				0FF42746158EBE91004CB9FF /* udis86_syn-intel.c in Sources */,
+				0FF42747158EBE91004CB9FF /* udis86_syn.c in Sources */,
+				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,
+				0FF4274D158EBFE6004CB9FF /* udis86_itab_holder.c in Sources */,
 				C2E526BD1590EF000054E48D /* HeapTimer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

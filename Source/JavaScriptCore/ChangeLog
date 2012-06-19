@@ -1,3 +1,160 @@
+2012-06-17  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to look at disassembly
+        https://bugs.webkit.org/show_bug.cgi?id=89319
+
+        Reviewed by Sam Weinig.
+        
+        This imports the udis86 disassembler library. The library is placed
+        behind an abstraction in disassembler/Disassembler.h, so that we can
+        in the future use other disassemblers (for other platforms) whenever
+        appropriate. As a first step, the disassembler is being invoked for
+        DFG verbose dumps.
+        
+        If we ever want to merge a new version of udis86 in the future, I've
+        made notes about changes I made to the library in
+        disassembler/udis86/differences.txt.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * disassembler: Added.
+        * disassembler/Disassembler.h: Added.
+        (JSC):
+        (JSC::tryToDisassemble):
+        * disassembler/UDis86Disassembler.cpp: Added.
+        (JSC):
+        (JSC::tryToDisassemble):
+        * disassembler/udis86: Added.
+        * disassembler/udis86/differences.txt: Added.
+        * disassembler/udis86/itab.py: Added.
+        (UdItabGenerator):
+        (UdItabGenerator.__init__):
+        (UdItabGenerator.toGroupId):
+        (UdItabGenerator.genLookupTable):
+        (UdItabGenerator.genLookupTableList):
+        (UdItabGenerator.genInsnTable):
+        (genItabH):
+        (genItabH.UD_ITAB_H):
+        (genItabC):
+        (genItab):
+        (main):
+        * disassembler/udis86/optable.xml: Added.
+        * disassembler/udis86/ud_opcode.py: Added.
+        (UdOpcodeTables):
+        (UdOpcodeTables.sizeOfTable):
+        (UdOpcodeTables.nameOfTable):
+        (UdOpcodeTables.updateTable):
+        (UdOpcodeTables.Insn):
+        (UdOpcodeTables.Insn.__init__):
+        (UdOpcodeTables.Insn.__init__.opcode):
+        (UdOpcodeTables.parse):
+        (UdOpcodeTables.addInsnDef):
+        (UdOpcodeTables.print_table):
+        (UdOpcodeTables.print_tree):
+        * disassembler/udis86/ud_optable.py: Added.
+        (UdOptableXmlParser):
+        (UdOptableXmlParser.parseDef):
+        (UdOptableXmlParser.parse):
+        (printFn):
+        (parse):
+        (main):
+        * disassembler/udis86/udis86.c: Added.
+        (ud_init):
+        (ud_disassemble):
+        (ud_set_mode):
+        (ud_set_vendor):
+        (ud_set_pc):
+        (ud):
+        (ud_insn_asm):
+        (ud_insn_off):
+        (ud_insn_hex):
+        (ud_insn_ptr):
+        (ud_insn_len):
+        * disassembler/udis86/udis86.h: Added.
+        * disassembler/udis86/udis86_decode.c: Added.
+        (eff_adr_mode):
+        (ud_lookup_mnemonic):
+        (decode_prefixes):
+        (modrm):
+        (resolve_operand_size):
+        (resolve_mnemonic):
+        (decode_a):
+        (decode_gpr):
+        (resolve_gpr64):
+        (resolve_gpr32):
+        (resolve_reg):
+        (decode_imm):
+        (decode_modrm_reg):
+        (decode_modrm_rm):
+        (decode_o):
+        (decode_operand):
+        (decode_operands):
+        (clear_insn):
+        (resolve_mode):
+        (gen_hex):
+        (decode_insn):
+        (decode_3dnow):
+        (decode_ssepfx):
+        (decode_ext):
+        (decode_opcode):
+        (ud_decode):
+        * disassembler/udis86/udis86_decode.h: Added.
+        (ud_itab_entry_operand):
+        (ud_itab_entry):
+        (ud_lookup_table_list_entry):
+        (sse_pfx_idx):
+        (mode_idx):
+        (modrm_mod_idx):
+        (vendor_idx):
+        (is_group_ptr):
+        (group_idx):
+        * disassembler/udis86/udis86_extern.h: Added.
+        * disassembler/udis86/udis86_input.c: Added.
+        (inp_buff_hook):
+        (inp_file_hook):
+        (ud):
+        (ud_set_user_opaque_data):
+        (ud_get_user_opaque_data):
+        (ud_set_input_buffer):
+        (ud_set_input_file):
+        (ud_input_skip):
+        (ud_input_end):
+        (ud_inp_next):
+        (ud_inp_back):
+        (ud_inp_peek):
+        (ud_inp_move):
+        (ud_inp_uint8):
+        (ud_inp_uint16):
+        (ud_inp_uint32):
+        (ud_inp_uint64):
+        * disassembler/udis86/udis86_input.h: Added.
+        * disassembler/udis86/udis86_itab_holder.c: Added.
+        * disassembler/udis86/udis86_syn-att.c: Added.
+        (opr_cast):
+        (gen_operand):
+        (ud_translate_att):
+        * disassembler/udis86/udis86_syn-intel.c: Added.
+        (opr_cast):
+        (gen_operand):
+        (ud_translate_intel):
+        * disassembler/udis86/udis86_syn.c: Added.
+        * disassembler/udis86/udis86_syn.h: Added.
+        (mkasm):
+        * disassembler/udis86/udis86_types.h: Added.
+        (ud_operand):
+        (ud):
+        * jit/JITCode.h:
+        (JITCode):
+        (JSC::JITCode::tryToDisassemble):
+
 2012-06-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         GCActivityCallback and IncrementalSweeper should share code

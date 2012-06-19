@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 #include "CallFrame.h"
 #include "JSValue.h"
+#include "Disassembler.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Profiler.h"
 #endif
@@ -105,6 +106,11 @@ namespace JSC {
             return reinterpret_cast<char*>(m_ref.code().executableAddress()) + offset;
         }
         
+        void* executableAddress() const
+        {
+            return executableAddressAtOffset(0);
+        }
+        
         void* dataAddressAtOffset(size_t offset) const
         {
             ASSERT(offset <= size()); // use <= instead of < because it is valid to ask for an address at the exclusive end of the code.
@@ -137,6 +143,11 @@ namespace JSC {
         {
             ASSERT(m_ref.code().executableAddress());
             return m_ref.size();
+        }
+        
+        bool tryToDisassemble() const
+        {
+            return JSC::tryToDisassemble(m_ref.code(), size(), WTF::dataFile());
         }
 
         ExecutableMemoryHandle* getExecutableMemory()

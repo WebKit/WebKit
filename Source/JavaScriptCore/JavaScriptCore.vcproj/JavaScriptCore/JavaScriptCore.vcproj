@@ -1939,6 +1939,14 @@
 			</File>
 		</Filter>
 		<Filter
+			Name="disassembler"
+			>
+			<File
+				RelativePath="..\..\disassembler\Disassembler.h"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="interpreter"
 			>
 			<File
