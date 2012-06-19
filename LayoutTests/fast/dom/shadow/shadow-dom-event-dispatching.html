@@ -359,16 +359,23 @@ function testEventsOnFallbackElements()
         createDOM('div', {'id': 'top'},
                   createDOM('div', {'id': 'A'},
                             createShadowRoot(
-                                createDOM('content', {'id': 'content', 'select': '#none'},
-                                          createDOM('div', {'id': 'fallback'}))),
+                                createDOM('content', {'id': 'content1', 'select': '#none'},
+                                          createDOM('div', {'id': 'used-fallback'})),
+                                createDOM('content', {'id': 'content2'},
+                                          createDOM('div', {'id': 'non-used-fallback'}))),
                             createDOM('div', {'id': 'B'}))));
 
-    addEventListeners(['top', 'A', 'B', 'A/', 'A/content', 'A/fallback']);
+    addEventListeners(['top', 'A', 'B', 'A/', 'A/content1', 'A/used-fallback', 'A/content2', 'A/non-used-fallback']);
     getNodeInShadowTreeStack('A/').id = 'shadow-root';
     showSandboxTree();
 
-    moveMouse('A/fallback', 'A');
-    moveMouse('A', 'A/fallback');
+    moveMouse('A/used-fallback', 'A');
+    moveMouse('A', 'A/used-fallback');
+
+    clearEventRecords();
+    debug('\nClick non-used-fallback node');
+    getNodeInShadowTreeStack('A/non-used-fallback').click();
+    debugDispatchedEvent('click');
 }
 
 function test()

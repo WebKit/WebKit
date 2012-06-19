@@ -57,6 +57,7 @@ public:
     virtual bool isInsertionPoint() const OVERRIDE { return true; }
 
     size_t indexOf(Node* node) const { return m_distribution.find(node); }
+    bool contains(const Node* node) const { return m_distribution.contains(const_cast<Node*>(node)); }
     size_t size() const { return m_distribution.size(); }
     Node* at(size_t index)  const { return m_distribution.at(index).get(); }
     Node* first() const { return m_distribution.isEmpty() ? 0 : m_distribution.first().get(); }

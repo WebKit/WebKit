@@ -1,3 +1,13 @@
+2012-06-19  Hayato Ito  <hayato@chromium.org>
+
+        [Shadow DOM] An upper boundary breaks if a child node of an insertion point is clicked.
+        https://bugs.webkit.org/show_bug.cgi?id=89407
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/shadow-dom-event-dispatching-expected.txt:
+        * fast/dom/shadow/shadow-dom-event-dispatching.html:
+
 2012-06-19  Martin Kosiba  <mkosiba@google.com>
 
         [Chromium] Add LayoutTests for find in page.

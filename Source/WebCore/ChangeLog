@@ -1,3 +1,26 @@
+2012-06-19  Hayato Ito  <hayato@chromium.org>
+
+        [Shadow DOM] An upper boundary breaks if a child node of an insertion point is clicked.
+        https://bugs.webkit.org/show_bug.cgi?id=89407
+
+        Reviewed by Dimitri Glazkov.
+
+        Update an event re-targeting algorithm so that it can set event's
+        target correctly when a fallback element in an insertion point is
+        clicked. To distinguish between distributed nodes and fallback
+        elements in an ancestor chain of composite shadow tree, an event
+        dispatcher checks explicitly whether a node is actually
+        distributed or assigned to the given insertion point.
+
+        Test: fast/dom/shadow/shadow-dom-event-dispatching.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::isAssignedTo):
+        (WebCore):
+        (WebCore::EventDispatcher::ensureEventAncestors):
+        * html/shadow/InsertionPoint.h:
+        (WebCore::InsertionPoint::contains):
+
 2012-06-19  Adrienne Walker  <enne@google.com>
 
         Fix scrollbar layers being misplaced with a clipped owner layer

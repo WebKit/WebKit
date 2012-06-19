@@ -51,6 +51,12 @@ namespace WebCore {
 
 static HashSet<Node*>* gNodesDispatchingSimulatedClicks = 0;
 
+static inline bool isAssignedTo(const Node* node, const InsertionPoint* insertionPoint)
+{
+    ASSERT(insertionPoint);
+    return node && (insertionPoint->contains(node) || (node->isShadowRoot() && toShadowRoot(node)->assignedTo() == insertionPoint));
+}
+
 EventRelatedTargetAdjuster::EventRelatedTargetAdjuster(PassRefPtr<Node> node, PassRefPtr<Node> relatedTarget)
     : m_node(node)
     , m_relatedTarget(relatedTarget)
@@ -203,13 +209,15 @@ void EventDispatcher::ensureEventAncestors(Event* event)
     bool inDocument = m_node->inDocument();
     bool isSVGElement = m_node->isSVGElement();
     Vector<EventTarget*> targetStack;
+    Node* last = 0;
     for (ComposedShadowTreeParentWalker walker(m_node.get()); walker.get(); walker.parentIncludingInsertionPointAndShadowRoot()) {
         Node* node = walker.get();
-        if ((isInsertionPoint(node) && toInsertionPoint(node)->hasDistribution()) || targetStack.isEmpty())
+        if ((isInsertionPoint(node) && isAssignedTo(last, toInsertionPoint(node))) || targetStack.isEmpty())
             targetStack.append(eventTargetRespectingSVGTargetRules(node));
         m_ancestors.append(EventContext(node, eventTargetRespectingSVGTargetRules(node), targetStack.last()));
         if (!inDocument)
             return;
+        last = node;
         if (!node->isShadowRoot())
             continue;
         if (determineDispatchBehavior(event, toShadowRoot(node)) == StayInsideShadowDOM)
