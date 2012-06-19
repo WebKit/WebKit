@@ -1,3 +1,24 @@
+2012-06-19  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Add an allocation step for CCRenderer before drawing a frame
+        https://bugs.webkit.org/show_bug.cgi?id=88924
+
+        Reviewed by Adrienne Walker.
+
+        This step will be used to decide which RenderPass textures can be kept
+        alive and do not need to be drawn again.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore):
+        (WebCore::LayerRendererChromium::decideRenderPassAllocationsForFrame):
+        (WebCore::LayerRendererChromium::beginDrawingFrame):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (CCRenderer):
+
 2012-06-19  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Create a shared object between FECustomFilter objects to store the shared resources

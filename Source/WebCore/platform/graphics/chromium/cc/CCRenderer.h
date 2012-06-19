@@ -29,12 +29,12 @@
 #include "FloatQuad.h"
 #include "IntRect.h"
 #include "cc/CCLayerTreeHost.h"
+#include "cc/CCRenderPass.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class CCRenderPass;
 class TextureAllocator;
 class TextureCopier;
 class TextureManager;
@@ -68,6 +68,7 @@ public:
     const WebKit::WebTransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
     const WebKit::WebTransformationMatrix& windowMatrix() const { return m_windowMatrix; }
 
+    virtual void decideRenderPassAllocationsForFrame(const CCRenderPassList&) = 0;
     virtual void beginDrawingFrame(const CCRenderPass* defaultRenderPass) = 0;
     virtual void drawRenderPass(const CCRenderPass*, const FloatRect& rootScissorRectInCurrentPass) = 0;
     virtual void finishDrawingFrame() = 0;

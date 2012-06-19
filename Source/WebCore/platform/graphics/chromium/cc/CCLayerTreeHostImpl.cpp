@@ -336,6 +336,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
     if (drawFrame)
         occlusionTracker.overdrawMetrics().recordMetrics(this);
 
+    m_layerRenderer->decideRenderPassAllocationsForFrame(frame.renderPasses);
     removePassesWithCachedTextures(frame.renderPasses, frame.skippedPasses);
 
     return drawFrame;

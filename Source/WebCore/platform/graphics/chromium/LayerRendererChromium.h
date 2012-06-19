@@ -76,6 +76,7 @@ public:
 
     const FloatQuad& sharedGeometryQuad() const { return m_sharedGeometryQuad; }
 
+    virtual void decideRenderPassAllocationsForFrame(const CCRenderPassList&) OVERRIDE;
     virtual void beginDrawingFrame(const CCRenderPass* defaultRenderPass) OVERRIDE;
     virtual void drawRenderPass(const CCRenderPass*, const FloatRect& framebufferDamageRect) OVERRIDE;
     virtual void finishDrawingFrame() OVERRIDE;

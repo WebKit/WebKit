@@ -429,6 +429,17 @@ void LayerRendererChromium::clearRenderPass(const CCRenderPass* renderPass, cons
     GLC(m_context, m_context->enable(GraphicsContext3D::SCISSOR_TEST));
 }
 
+
+void LayerRendererChromium::decideRenderPassAllocationsForFrame(const CCRenderPassList& renderPassesInDrawOrder)
+{
+    // FIXME: Get this memory limit from GPU Memory Manager
+    size_t contentsMemoryUseBytes = m_contentsTextureAllocator->currentMemoryUseBytes();
+    size_t maxLimitBytes = TextureManager::highLimitBytes(viewportSize());
+    size_t memoryLimitBytes = maxLimitBytes - contentsMemoryUseBytes > 0u ? maxLimitBytes - contentsMemoryUseBytes : 0u;
+
+    m_implTextureManager->setMaxMemoryLimitBytes(memoryLimitBytes);
+}
+
 void LayerRendererChromium::beginDrawingFrame(const CCRenderPass* rootRenderPass)
 {
     // FIXME: Remove this once framebuffer is automatically recreated on first use
@@ -436,11 +447,6 @@ void LayerRendererChromium::beginDrawingFrame(const CCRenderPass* rootRenderPass
 
     m_defaultRenderPass = rootRenderPass;
     ASSERT(m_defaultRenderPass);
-
-    size_t contentsMemoryUseBytes = m_contentsTextureAllocator->currentMemoryUseBytes();
-    size_t maxLimit = TextureManager::highLimitBytes(viewportSize());
-    size_t newLimit = (maxLimit > contentsMemoryUseBytes) ? maxLimit - contentsMemoryUseBytes : 0;
-    m_implTextureManager->setMaxMemoryLimitBytes(newLimit);
 
     if (viewportSize().isEmpty())
         return;
