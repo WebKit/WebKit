@@ -1,3 +1,15 @@
+2012-06-19  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [GTK] Assert failure in svg/batik/text/textDecoration.svg,textEffect3.svg for 64bit Debug bot
+        https://bugs.webkit.org/show_bug.cgi?id=89104
+
+        Reviewed by Nikolas Zimmermann.
+
+        Removing CRASH expectations after assertion failure is now fixed.
+
+        * platform/chromium/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2012-06-19  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: FileSystem tree should hide uninitialized FileSystem

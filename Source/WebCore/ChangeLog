@@ -1,3 +1,20 @@
+2012-06-19  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [GTK] Assert failure in svg/batik/text/textDecoration.svg,textEffect3.svg for 64bit Debug bot
+        https://bugs.webkit.org/show_bug.cgi?id=89104
+
+        Reviewed by Nikolas Zimmermann.
+
+        Adding SVGInline to assertion to fix assertion failure. Same assertion was hit on Chromium.
+
+        Covered by existing tests
+        svg/batik/text/textDecoration.svg
+        svg/batik/text/textEffect3.svg
+        where the assertion failure was hit.
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::shouldTransformOnTextPainting):
+
 2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Buildfix for newer Qt5, use QPointer instead of the deprecated QWeakPointer.
