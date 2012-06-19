@@ -49,6 +49,9 @@ public:
     unsigned start() const { return m_start; }
     unsigned end() const { return m_end; }
 
+    unsigned& start() { return m_start; }
+    unsigned& end() { return m_end; }
+
 private:
     unsigned m_start;
     unsigned m_end;

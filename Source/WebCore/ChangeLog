@@ -1,3 +1,27 @@
+2012-06-19  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Make RenderTableSection - nodeAtPoint and paintObject reuse spanning logic.
+        https://bugs.webkit.org/show_bug.cgi?id=88066
+
+        Reviewed by Julien Chaffraix.
+
+        Makes dirtiedRows and dirtiedColumns reuse spannedRows and spannedColumns
+        internally. This also changes their API to accept a damage-rect flipped 
+        by logicalRectForWritingModeAndDirection.
+
+        The generic code in spannedRows and spannedColumns solves a few FIXMEs 
+        surrounding RTL tables, which should improve performance.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::dirtiedRows):
+        (WebCore::RenderTableSection::dirtiedColumns):
+        (WebCore::RenderTableSection::paintObject):
+        * rendering/RenderTableSection.h:
+        (WebCore::CellSpan::start):
+        (WebCore::CellSpan::end):
+        (CellSpan):
+        (RenderTableSection):
+
 2012-06-19  Christophe Dumez  <christophe.dumez@intel.com>
 
         [JSC] Implement support for JSDictionary::convertValue(Vector<String>& result)

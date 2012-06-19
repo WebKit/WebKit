@@ -1046,60 +1046,39 @@ LayoutRect RenderTableSection::logicalRectForWritingModeAndDirection(const Layou
     return tableAlignedRect;
 }
 
-// FIXME: Use spannedRows internally, see https://bugs.webkit.org/show_bug.cgi?id=88066
 CellSpan RenderTableSection::dirtiedRows(const LayoutRect& damageRect) const
 {
     if (m_forceSlowPaintPathWithOverflowingCell) 
         return fullTableRowSpan();
 
-    LayoutUnit before = style()->isHorizontalWritingMode() ? damageRect.y() : damageRect.x();
+    CellSpan coveredRows = spannedRows(damageRect);
 
-    // binary search to find a row
-    unsigned startRow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), before) - m_rowPos.begin();
+    // To repaint the border we might need to repaint first or last row even if they are not spanned themselves.
+    if (coveredRows.start() >= m_rowPos.size() - 1 && m_rowPos[m_rowPos.size() - 1] + table()->outerBorderAfter() >= damageRect.y())
+        --coveredRows.start();
 
-    // The binary search above gives us the first row with
-    // a y position >= the top of the paint rect. Thus, the previous
-    // may need to be repainted as well.
-    if (startRow == m_rowPos.size() || (startRow > 0 && (m_rowPos[startRow] >  before)))
-        --startRow;
+    if (!coveredRows.end() && m_rowPos[0] - table()->outerBorderBefore() <= damageRect.maxY())
+        ++coveredRows.end();
 
-    LayoutUnit after = (style()->isHorizontalWritingMode() ? damageRect.maxY() : damageRect.maxX());
-    unsigned endRow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), after) - m_rowPos.begin();
-    if (endRow == m_rowPos.size())
-        --endRow;
-
-    if (!endRow && m_rowPos[0] - table()->outerBorderBefore() <= after)
-        ++endRow;
-
-    return CellSpan(startRow, endRow);
+    return coveredRows;
 }
 
-
-// FIXME: Use spannedColumns internally, see https://bugs.webkit.org/show_bug.cgi?id=88066
 CellSpan RenderTableSection::dirtiedColumns(const LayoutRect& damageRect) const
 {
     if (m_forceSlowPaintPathWithOverflowingCell) 
         return fullTableColumnSpan();
 
-    // FIXME: Implement RTL.
-    if (!style()->isLeftToRightDirection())
-        return fullTableColumnSpan();
+    CellSpan coveredColumns = spannedColumns(damageRect);
 
-    LayoutUnit start = style()->isHorizontalWritingMode() ? damageRect.x() : damageRect.y();
     Vector<int>& columnPos = table()->columnPositions();
-    unsigned startCol = std::lower_bound(columnPos.begin(), columnPos.end(), start) - columnPos.begin();
-    if ((startCol == columnPos.size()) || (startCol > 0 && (columnPos[startCol] > start)))
-        --startCol;
+    // To repaint the border we might need to repaint first or last column even if they are not spanned themselves.
+    if (coveredColumns.start() >= columnPos.size() - 1 && columnPos[columnPos.size() - 1] + table()->outerBorderEnd() >= damageRect.x())
+        --coveredColumns.start();
 
-    LayoutUnit end = (style()->isHorizontalWritingMode() ? damageRect.maxX() : damageRect.maxY());
-    unsigned endCol = std::lower_bound(columnPos.begin(), columnPos.end(), end) - columnPos.begin();
-    if (endCol == columnPos.size())
-        --endCol;
+    if (!coveredColumns.end() && columnPos[0] - table()->outerBorderStart() <= damageRect.maxX())
+        ++coveredColumns.end();
 
-    if (!endCol && columnPos[0] - table()->outerBorderStart() <= end)
-        ++endCol;
-
-    return CellSpan(startCol, endCol);
+    return coveredColumns;
 }
 
 CellSpan RenderTableSection::spannedRows(const LayoutRect& flippedRect) const
@@ -1159,17 +1138,12 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
 
     LayoutRect localRepaintRect = paintInfo.rect;
     localRepaintRect.moveBy(-paintOffset);
-    if (style()->isFlippedBlocksWritingMode()) {
-        if (style()->isHorizontalWritingMode())
-            localRepaintRect.setY(height() - localRepaintRect.maxY());
-        else
-            localRepaintRect.setX(width() - localRepaintRect.maxX());
-    }
-
     localRepaintRect.inflate(maximalOutlineSize(paintPhase));
 
-    CellSpan dirtiedRows = this->dirtiedRows(localRepaintRect);
-    CellSpan dirtiedColumns = this->dirtiedColumns(localRepaintRect);
+    LayoutRect tableAlignedRect = logicalRectForWritingModeAndDirection(localRepaintRect);
+
+    CellSpan dirtiedRows = this->dirtiedRows(tableAlignedRect);
+    CellSpan dirtiedColumns = this->dirtiedColumns(tableAlignedRect);
 
     if (dirtiedColumns.start() < dirtiedColumns.end()) {
         if (!m_hasMultipleCellLevels && !m_overflowingCells.size()) {
