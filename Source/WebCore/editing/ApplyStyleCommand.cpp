@@ -821,7 +821,7 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRe
 {
     ASSERT(element);
 
-    if (!element->parentNode() || !element->parentNode()->rendererIsEditable())
+    if (!element->parentNode() || !element->parentNode()->isContentEditable())
         return false;
 
     if (isStyledInlineElementToRemove(element.get())) {

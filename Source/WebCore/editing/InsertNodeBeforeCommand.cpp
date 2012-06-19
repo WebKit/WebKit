@@ -48,7 +48,7 @@ InsertNodeBeforeCommand::InsertNodeBeforeCommand(PassRefPtr<Node> insertChild, P
 void InsertNodeBeforeCommand::doApply()
 {
     ContainerNode* parent = m_refChild->parentNode();
-    if (!parent || !parent->rendererIsEditable())
+    if (!parent || !parent->isContentEditable())
         return;
 
     ExceptionCode ec;
@@ -60,7 +60,7 @@ void InsertNodeBeforeCommand::doApply()
 
 void InsertNodeBeforeCommand::doUnapply()
 {
-    if (!m_insertChild->rendererIsEditable())
+    if (!m_insertChild->isContentEditable())
         return;
         
     // Need to notify this before actually deleting the text

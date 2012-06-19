@@ -42,7 +42,7 @@ RemoveNodeCommand::RemoveNodeCommand(PassRefPtr<Node> node)
 void RemoveNodeCommand::doApply()
 {
     ContainerNode* parent = m_node->parentNode();
-    if (!parent || !parent->rendererIsEditable())
+    if (!parent || !parent->isContentEditable())
         return;
 
     m_parent = parent;

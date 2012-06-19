@@ -1,3 +1,33 @@
+2012-06-19  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow][Editing] applying document.execCommand('bold') twice to elements having shadow insertion points causes a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=88502
+
+        Reviewed by Ryosuke Niwa.
+
+        When inserting or removing insertion points (<shadow> or <content>) into or from Shdaow DOM,
+        ElementShadow::invalidateDistribution() will be called immediately. It will remove all the renderers
+        of elements in the Shadow DOM. Since Node::rendererIsEditable() returns false when an renderer does not
+        exist, all the elements in the Shadow DOM will be considered as non-content-editable until recalculating
+        layout, though some of them may actually be content-editable.
+
+        Actually the current code does not recalculate layout inside editing command, so a disaster happens.
+        For example, performing an editing command quits before completing all the commands, because the command
+        thinks it is adding some elements to a non-content-editable element (but actually it's content-editable).
+
+        So we have to recalculate layout if necessary when checking an element is content-editable or not.
+        This can be achieved by using Node::isContentEditable() instead of Node::rendererIsEditable().
+
+        Test: editing/shadow/bold-twice-in-shadow.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement):
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doApply):
+        (WebCore::InsertNodeBeforeCommand::doUnapply):
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::doApply):
+
 2012-06-19  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r120744.
