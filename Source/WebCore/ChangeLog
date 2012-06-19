@@ -1,3 +1,23 @@
+2012-06-18  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [Cairo] Fix memory leaks in GLContextGLX.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=89346
+
+        Reviewed by Martin Robinson.
+
+        Fix memory leaks found in GLContextGLX.cpp.
+
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore::GLContextGLX::cleanupActiveContextsAtExit): Removing element reduces
+        size of the vector, so the loop termination condition was failing in the last
+        iteration, when the vector contains more than one element. This patch fixes the
+        issue by iterating the vector backwards, so the termination condition doesn't
+        fail until the size() reaches 0.
+        (WebCore::GLContextGLX::createPbufferContext): Delete GLXPbuffer
+        returned by glXCreatePbuffer().
+        (WebCore::GLContextGLX::createPixmapContext): Delete XVisualInfo
+        returned by glXChooseVisual().
+
 2012-06-18  Gregg Tavares  <gman@google.com>
 
         Expose WEBGL_depth_texture extension to WebGL
