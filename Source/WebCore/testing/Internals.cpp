@@ -606,10 +606,14 @@ void Internals::setPagination(Document* document, const String& mode, int gap, E
     Page::Pagination pagination;
     if (mode == "Unpaginated")
         pagination.mode = Page::Pagination::Unpaginated;
-    else if (mode == "HorizontallyPaginated")
-        pagination.mode = Page::Pagination::HorizontallyPaginated;
-    else if (mode == "VerticallyPaginated")
-        pagination.mode = Page::Pagination::VerticallyPaginated;
+    else if (mode == "LeftToRightPaginated")
+        pagination.mode = Page::Pagination::LeftToRightPaginated;
+    else if (mode == "RightToLeftPaginated")
+        pagination.mode = Page::Pagination::RightToLeftPaginated;
+    else if (mode == "TopToBottomPaginated")
+        pagination.mode = Page::Pagination::TopToBottomPaginated;
+    else if (mode == "BottomToTopPaginated")
+        pagination.mode = Page::Pagination::BottomToTopPaginated;
     else {
         ec = SYNTAX_ERR;
         return;

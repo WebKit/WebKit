@@ -1589,7 +1589,40 @@ PassRefPtr<RenderStyle> StyleResolver::styleForDocument(Document* document, CSSF
         if (Page* page = frame->page()) {
             const Page::Pagination& pagination = page->pagination();
             if (pagination.mode != Page::Pagination::Unpaginated) {
-                documentStyle->setColumnAxis(pagination.mode == Page::Pagination::HorizontallyPaginated ? HorizontalColumnAxis : VerticalColumnAxis);
+                switch (pagination.mode) {
+                case Page::Pagination::LeftToRightPaginated:
+                    documentStyle->setColumnAxis(HorizontalColumnAxis);
+                    if (documentStyle->isHorizontalWritingMode())
+                        documentStyle->setColumnProgression(documentStyle->isLeftToRightDirection() ? NormalColumnProgression : ReverseColumnProgression);
+                    else
+                        documentStyle->setColumnProgression(documentStyle->isFlippedBlocksWritingMode() ? ReverseColumnProgression : NormalColumnProgression);
+                    break;
+                case Page::Pagination::RightToLeftPaginated:
+                    documentStyle->setColumnAxis(HorizontalColumnAxis);
+                    if (documentStyle->isHorizontalWritingMode())
+                        documentStyle->setColumnProgression(documentStyle->isLeftToRightDirection() ? ReverseColumnProgression : NormalColumnProgression);
+                    else
+                        documentStyle->setColumnProgression(documentStyle->isFlippedBlocksWritingMode() ? NormalColumnProgression : ReverseColumnProgression);
+                    break;
+                case Page::Pagination::TopToBottomPaginated:
+                    documentStyle->setColumnAxis(VerticalColumnAxis);
+                    if (documentStyle->isHorizontalWritingMode())
+                        documentStyle->setColumnProgression(documentStyle->isFlippedBlocksWritingMode() ? ReverseColumnProgression : NormalColumnProgression);
+                    else
+                        documentStyle->setColumnProgression(documentStyle->isLeftToRightDirection() ? NormalColumnProgression : ReverseColumnProgression);
+                    break;
+                case Page::Pagination::BottomToTopPaginated:
+                    documentStyle->setColumnAxis(VerticalColumnAxis);
+                    if (documentStyle->isHorizontalWritingMode())
+                        documentStyle->setColumnProgression(documentStyle->isFlippedBlocksWritingMode() ? NormalColumnProgression : ReverseColumnProgression);
+                    else
+                        documentStyle->setColumnProgression(documentStyle->isLeftToRightDirection() ? ReverseColumnProgression : NormalColumnProgression);
+                    break;
+                case Page::Pagination::Unpaginated:
+                    ASSERT_NOT_REACHED();
+                    break;
+                }
+
                 documentStyle->setColumnGap(pagination.gap);
             }
         }

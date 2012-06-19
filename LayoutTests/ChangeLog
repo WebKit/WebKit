@@ -1,3 +1,19 @@
+2012-06-19  Dan Bernstein  <mitz@apple.com>
+
+        Paginated display API doesn’t allow setting the page progression direction
+        https://bugs.webkit.org/show_bug.cgi?id=89394
+
+        Reviewed by Darin Adler.
+
+        * fast/multicol/pagination-h-horizontal-bt.html:
+        * fast/multicol/pagination-h-horizontal-tb.html:
+        * fast/multicol/pagination-h-vertical-lr.html:
+        * fast/multicol/pagination-h-vertical-rl.html:
+        * fast/multicol/pagination-v-horizontal-bt.html:
+        * fast/multicol/pagination-v-horizontal-tb.html:
+        * fast/multicol/pagination-v-vertical-lr.html:
+        * fast/multicol/pagination-v-vertical-rl.html:
+
 2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Skip new failing and crashing tests to try to paint the bot green.

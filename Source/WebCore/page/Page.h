@@ -250,7 +250,7 @@ namespace WebCore {
         void setDeviceScaleFactor(float);
 
         struct Pagination {
-            enum Mode { Unpaginated, HorizontallyPaginated, VerticallyPaginated };
+            enum Mode { Unpaginated, LeftToRightPaginated, RightToLeftPaginated, TopToBottomPaginated, BottomToTopPaginated };
 
             Pagination()
                 : mode(Unpaginated)

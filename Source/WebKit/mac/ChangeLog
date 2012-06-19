@@ -1,3 +1,17 @@
+2012-06-19  Dan Bernstein  <mitz@apple.com>
+
+        WebKit/mac part of: Paginated display API doesn’t allow setting the page progression direction
+        https://bugs.webkit.org/show_bug.cgi?id=89394
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebView.mm:
+        (-[WebView _setPaginationMode:]): Changed to map new WebPaginationMode values to new
+        Pagination::Mode values.
+        (-[WebView _paginationMode]): Similarly, in the opposite direction.
+        * WebView/WebViewPrivate.h: Replaced WebPaginationMode values with ones that specify an
+        axis and a direction along that axis.
+
 2012-06-18  Andy Estes  <aestes@apple.com>
 
         [Mac] -[WebPDFView _menuItemsFromPDFKitForEvent:] leaks NSMenuItems

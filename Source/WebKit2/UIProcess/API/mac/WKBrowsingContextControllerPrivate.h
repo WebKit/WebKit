@@ -27,8 +27,10 @@
 
 enum {
     WKPaginationModeUnpaginated,
-    WKPaginationModeHorizontal,
-    WKPaginationModeVertical,
+    WKPaginationModeLeftToRight,
+    WKPaginationModeRightToLeft,
+    WKPaginationModeTopToBottom,
+    WKPaginationModeBottomToTop,
 };
 typedef NSUInteger WKBrowsingContextPaginationMode;
 

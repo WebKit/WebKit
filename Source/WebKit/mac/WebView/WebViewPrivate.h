@@ -102,8 +102,10 @@ typedef NSUInteger WebFindOptions;
 
 typedef enum {
     WebPaginationModeUnpaginated,
-    WebPaginationModeHorizontal,
-    WebPaginationModeVertical,
+    WebPaginationModeLeftToRight,
+    WebPaginationModeRightToLeft,
+    WebPaginationModeTopToBottom,
+    WebPaginationModeBottomToTop,
 } WebPaginationMode;
 
 // This needs to be in sync with WebCore::NotificationClient::Permission

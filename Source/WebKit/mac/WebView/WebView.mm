@@ -2815,11 +2815,17 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     case WebPaginationModeUnpaginated:
         pagination.mode = Page::Pagination::Unpaginated;
         break;
-    case WebPaginationModeHorizontal:
-        pagination.mode = Page::Pagination::HorizontallyPaginated;
+    case WebPaginationModeLeftToRight:
+        pagination.mode = Page::Pagination::LeftToRightPaginated;
         break;
-    case WebPaginationModeVertical:
-        pagination.mode = Page::Pagination::VerticallyPaginated;
+    case WebPaginationModeRightToLeft:
+        pagination.mode = Page::Pagination::RightToLeftPaginated;
+        break;
+    case WebPaginationModeTopToBottom:
+        pagination.mode = Page::Pagination::TopToBottomPaginated;
+        break;
+    case WebPaginationModeBottomToTop:
+        pagination.mode = Page::Pagination::BottomToTopPaginated;
         break;
     default:
         return;
@@ -2837,10 +2843,14 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     switch (page->pagination().mode) {
     case Page::Pagination::Unpaginated:
         return WebPaginationModeUnpaginated;
-    case Page::Pagination::HorizontallyPaginated:
-        return WebPaginationModeHorizontal;
-    case Page::Pagination::VerticallyPaginated:
-        return WebPaginationModeVertical;
+    case Page::Pagination::LeftToRightPaginated:
+        return WebPaginationModeLeftToRight;
+    case Page::Pagination::RightToLeftPaginated:
+        return WebPaginationModeRightToLeft;
+    case Page::Pagination::TopToBottomPaginated:
+        return WebPaginationModeTopToBottom;
+    case Page::Pagination::BottomToTopPaginated:
+        return WebPaginationModeBottomToTop;
     }
 
     ASSERT_NOT_REACHED();

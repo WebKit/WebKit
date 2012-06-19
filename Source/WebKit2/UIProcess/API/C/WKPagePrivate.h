@@ -54,8 +54,10 @@ WK_EXPORT WKStringRef WKPageCopyStandardUserAgentWithApplicationName(WKStringRef
 
 enum {
     kWKPaginationModeUnpaginated,
-    kWKPaginationModeHorizontal,
-    kWKPaginationModeVertical,
+    kWKPaginationModeLeftToRight,
+    kWKPaginationModeRightToLeft,
+    kWKPaginationModeTopToBottom,
+    kWKPaginationModeBottomToTop,
 };
 typedef uint32_t WKPaginationMode;
 

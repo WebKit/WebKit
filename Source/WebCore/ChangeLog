@@ -1,3 +1,20 @@
+2012-06-19  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of: Paginated display API doesn’t allow setting the page progression direction
+        https://bugs.webkit.org/show_bug.cgi?id=89394
+
+        Reviewed by Darin Adler.
+
+        Updated fast/multicol/pagination-*.html.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForDocument): Changed to handle the new Pagination::Mode enum
+        values and set the column progression in addition to the column axis.
+        * page/Page.h: Changed the Pagination::Mode enum values to ones that specify an axis and a
+        direction along that axis.
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPagination): Changed to support the new Pagination::Mode enum values.
+
 2012-06-19  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Make RenderTableSection - nodeAtPoint and paintObject reuse spanning logic.

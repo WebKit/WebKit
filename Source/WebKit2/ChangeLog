@@ -1,3 +1,23 @@
+2012-06-19  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 part of: Paginated display API doesn’t allow setting the page progression direction
+        https://bugs.webkit.org/show_bug.cgi?id=89394
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPaginationMode): Changed to map new WKPaginationMode values to new
+        Pagination::Mode values.
+        (WKPageGetPaginationMode): Similarly, in the opposite direction.
+        * UIProcess/API/C/WKPagePrivate.h: Replaced WKPaginationMode values with ones that specify
+        an axis and a direction along that axis.
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController setPaginationMode:]): Changed to handle new values.
+        (-[WKBrowsingContextController paginationMode]): Ditto.
+        * UIProcess/API/mac/WKBrowsingContextControllerPrivate.h: Replaced
+        WKBrowsingContextPaginationMode values with ones that specify an axis and a direction along
+        that axis.
+
 2012-06-19  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Create an extra atlas when there is no available buffer space.

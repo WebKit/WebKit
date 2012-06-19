@@ -215,11 +215,17 @@ static inline NSURL *autoreleased(WKURLRef url)
     case WKPaginationModeUnpaginated:
         mode = kWKPaginationModeUnpaginated;
         break;
-    case WKPaginationModeHorizontal:
-        mode = kWKPaginationModeHorizontal;
+    case WKPaginationModeLeftToRight:
+        mode = kWKPaginationModeLeftToRight;
         break;
-    case WKPaginationModeVertical:
-        mode = kWKPaginationModeVertical;
+    case WKPaginationModeRightToLeft:
+        mode = kWKPaginationModeRightToLeft;
+        break;
+    case WKPaginationModeTopToBottom:
+        mode = kWKPaginationModeTopToBottom;
+        break;
+    case WKPaginationModeBottomToTop:
+        mode = kWKPaginationModeBottomToTop;
         break;
     default:
         return;
@@ -233,10 +239,14 @@ static inline NSURL *autoreleased(WKURLRef url)
     switch (WKPageGetPaginationMode(self._pageRef)) {
     case kWKPaginationModeUnpaginated:
         return WKPaginationModeUnpaginated;
-    case kWKPaginationModeHorizontal:
-        return WKPaginationModeHorizontal;
-    case kWKPaginationModeVertical:
-        return WKPaginationModeVertical;
+    case kWKPaginationModeLeftToRight:
+        return WKPaginationModeLeftToRight;
+    case kWKPaginationModeRightToLeft:
+        return WKPaginationModeRightToLeft;
+    case kWKPaginationModeTopToBottom:
+        return WKPaginationModeTopToBottom;
+    case kWKPaginationModeBottomToTop:
+        return WKPaginationModeBottomToTop;
     }
 
     ASSERT_NOT_REACHED();
