@@ -1,3 +1,9 @@
+2012-06-18  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed test marking. Marked border-radius-clip-002.htm as a failure.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-18  Mike Lawther  <mikelawther@chromium.org>
 
         Crash when setting title dynamically

@@ -3705,7 +3705,7 @@ BUGWK88832 XP : http/tests/xmlhttprequest/origin-exact-matching.html = PASS TIME
 
 BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = TEXT
 
-BUGWK89411 MAC : ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.htm = IMAGE
+BUGWK89411 WIN MAC : ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.htm = IMAGE
 
 // Flaky
 BUGWK89166 : http/tests/messaging/cross-domain-message-event-dispatch.html = TEXT
