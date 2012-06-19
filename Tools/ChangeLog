@@ -1,5 +1,14 @@
 2012-06-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Minor fix suggested by Adam Barth.
+
+        Use $(this._what).empty(); rather than removing children one at a time.
+        For some reason removeAllChildren() is undefined on this node.
+        
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+
+2012-06-18  Simon Fraser  <simon.fraser@apple.com>
+
         Show TOT revision in garden-o-matic, and make the revisions into links
         https://bugs.webkit.org/show_bug.cgi?id=89396
 

@@ -88,8 +88,7 @@ ui.notifications.Info = base.extends(ui.notifications.Notification, {
     },
     updateWithNode: function(node)
     {
-        while (this._what.firstChild)
-            this._what.removeChild(this._what.firstChild);
+        $(this._what).empty();
         this._what.appendChild(node);
     }
 });
