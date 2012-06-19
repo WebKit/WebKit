@@ -24,17 +24,12 @@
 
 namespace JSC {
 
-struct DefaultGCActivityCallbackPlatformData {
-    explicit DefaultGCActivityCallbackPlatformData(Heap* heap) : m_heap(heap) { }
-    Heap* m_heap;
-};
-
 DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
-    : d(adoptPtr(new DefaultGCActivityCallbackPlatformData(heap)))
+    : GCActivityCallback(heap->globalData())
 {
 }
 
-DefaultGCActivityCallback::~DefaultGCActivityCallback()
+DefaultGCActivityCallback::doWork()
 {
 }
 
@@ -46,17 +41,13 @@ void DefaultGCActivityCallback::didAllocate(size_t bytesAllocated)
     if (bytesAllocated < 1 * 1024 * 1024)
         return;
 
-    if (d->m_heap->isBusy() || !d->m_heap->isSafeToCollect())
+    if (m_globalData->heap.isBusy() || !m_globalData->heap.isSafeToCollect())
         return;
 
-    d->m_heap->collect(Heap::DoNotSweep);
+    m_globalData->heap.collect(Heap::DoNotSweep);
 }
 
 void DefaultGCActivityCallback::willCollect()
-{
-}
-
-void DefaultGCActivityCallback::synchronize()
 {
 }
 

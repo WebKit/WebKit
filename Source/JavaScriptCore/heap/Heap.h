@@ -221,9 +221,6 @@ namespace JSC {
         Vector<Vector<ValueStringPair>* > m_tempSortingVectors;
         OwnPtr<HashSet<MarkedArgumentBuffer*> > m_markListSet;
 
-        OwnPtr<GCActivityCallback> m_activityCallback;
-        OwnPtr<IncrementalSweeper> m_sweeper;
-        
         MachineThreads m_machineThreads;
         
         MarkStackThreadSharedData m_sharedData;
@@ -240,6 +237,9 @@ namespace JSC {
         double m_lastGCLength;
         double m_lastCodeDiscardTime;
 
+        OwnPtr<GCActivityCallback> m_activityCallback;
+        OwnPtr<IncrementalSweeper> m_sweeper;
+        
         DoublyLinkedList<ExecutableBase> m_compiledCode;
     };
 

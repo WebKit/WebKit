@@ -98,6 +98,7 @@ SET(JavaScriptCore_SOURCES
     heap/HandleSet.cpp
     heap/HandleStack.cpp
     heap/Heap.cpp
+    heap/HeapTimer.cpp
     heap/IncrementalSweeper.cpp
     heap/MachineStackMarker.cpp
     heap/MarkedAllocator.cpp

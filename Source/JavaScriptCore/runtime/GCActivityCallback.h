@@ -29,6 +29,7 @@
 #ifndef GCActivityCallback_h
 #define GCActivityCallback_h
 
+#include "HeapTimer.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -40,47 +41,54 @@ namespace JSC {
 
 class Heap;
 
-class GCActivityCallback {
+class GCActivityCallback : public HeapTimer {
 public:
-    virtual ~GCActivityCallback() { }
     virtual void didAllocate(size_t) { }
     virtual void willCollect() { }
-    virtual void synchronize() { }
     virtual void cancel() { }
     bool isEnabled() const { return m_enabled; }
     void setEnabled(bool enabled) { m_enabled = enabled; }
 
 protected:
-    GCActivityCallback()
-        : m_enabled(true)
+#if USE(CF)
+    GCActivityCallback(JSGlobalData* globalData, CFRunLoopRef runLoop)
+        : HeapTimer(globalData, runLoop)
+        , m_enabled(true)
     {
     }
+# else
+    GCActivityCallback(JSGlobalData* globalData)
+        : HeapTimer(globalData)
+        , m_enabled(true)
+    {
+    }
+#endif
 
     bool m_enabled;
 };
-
-struct DefaultGCActivityCallbackPlatformData;
 
 class DefaultGCActivityCallback : public GCActivityCallback {
 public:
     static PassOwnPtr<DefaultGCActivityCallback> create(Heap*);
 
     DefaultGCActivityCallback(Heap*);
-    virtual ~DefaultGCActivityCallback();
 
     virtual void didAllocate(size_t);
     virtual void willCollect();
-    virtual void synchronize();
     virtual void cancel();
+    
+    virtual void doWork();
 
 #if USE(CF)
 protected:
     DefaultGCActivityCallback(Heap*, CFRunLoopRef);
-    void commonConstructor(Heap*, CFRunLoopRef);
-#endif
-
+    
+    void cancelTimer();
+    void scheduleTimer(double);
+    
 private:
-    OwnPtr<DefaultGCActivityCallbackPlatformData> d;
+    double m_delay;
+#endif
 };
 
 inline PassOwnPtr<DefaultGCActivityCallback> DefaultGCActivityCallback::create(Heap* heap)

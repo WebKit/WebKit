@@ -14,33 +14,20 @@ namespace JSC {
 
 #if USE(CF)
 
-static const CFTimeInterval decade = 60 * 60 * 24 * 365 * 10;
 static const CFTimeInterval sweepTimeSlicePerBlock = 0.01;
 static const CFTimeInterval sweepTimeMultiplier = 1.0 / sweepTimeSlicePerBlock;
  
-void IncrementalSweeper::timerDidFire(CFRunLoopTimerRef, void* info)
+void IncrementalSweeper::doWork()
 {
-    Heap* heap = static_cast<Heap*>(info);
-    APIEntryShim shim(heap->globalData());
-    heap->sweeper()->doSweep(WTF::monotonicallyIncreasingTime());
+    APIEntryShim shim(m_globalData);
+    doSweep(WTF::monotonicallyIncreasingTime());
 }
     
 IncrementalSweeper::IncrementalSweeper(Heap* heap, CFRunLoopRef runLoop)
-    : m_heap(heap)
+    : HeapTimer(heap->globalData(), runLoop)
     , m_currentBlockToSweepIndex(0)
     , m_lengthOfLastSweepIncrement(0.0)
 {
-    memset(&m_context, 0, sizeof(CFRunLoopTimerContext));
-    m_context.info = m_heap;
-    m_runLoop = runLoop;
-    m_timer.adoptCF(CFRunLoopTimerCreate(0, CFAbsoluteTimeGetCurrent(), decade, 0, 0, &timerDidFire, &m_context));
-    CFRunLoopAddTimer(m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
-}
-
-IncrementalSweeper::~IncrementalSweeper()
-{
-    CFRunLoopRemoveTimer(m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
-    CFRunLoopTimerInvalidate(m_timer.get());
 }
 
 PassOwnPtr<IncrementalSweeper> IncrementalSweeper::create(Heap* heap)
@@ -55,7 +42,7 @@ void IncrementalSweeper::scheduleTimer()
 
 void IncrementalSweeper::cancelTimer()
 {
-    CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + decade);
+    CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade);
 }
 
 void IncrementalSweeper::doSweep(double sweepBeginTime)
@@ -85,17 +72,18 @@ void IncrementalSweeper::startSweeping(const HashSet<MarkedBlock*>& blockSnapsho
 
 #else
 
-IncrementalSweeper::IncrementalSweeper()
+IncrementalSweeper::IncrementalSweeper(JSGlobalData* globalData)
+    : HeapTimer(globalData)
 {
 }
 
-IncrementalSweeper::~IncrementalSweeper()
+void IncrementalSweeper::doWork()
 {
 }
 
-PassOwnPtr<IncrementalSweeper> IncrementalSweeper::create(Heap*)
+PassOwnPtr<IncrementalSweeper> IncrementalSweeper::create(Heap* heap)
 {
-    return adoptPtr(new IncrementalSweeper());
+    return adoptPtr(new IncrementalSweeper(heap->globalData()));
 }
 
 void IncrementalSweeper::startSweeping(const HashSet<MarkedBlock*>&)

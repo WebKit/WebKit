@@ -79,6 +79,7 @@ SOURCES += \
     heap/HandleStack.cpp \
     heap/BlockAllocator.cpp \
     heap/Heap.cpp \
+    heap/HeapTimer.cpp \
     heap/IncrementalSweeper.cpp \
     heap/MachineStackMarker.cpp \
     heap/MarkStack.cpp \

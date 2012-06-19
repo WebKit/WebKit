@@ -29,16 +29,16 @@
 #include "config.h"
 #include "GCActivityCallback.h"
 
+#include "Heap.h"
+
 namespace JSC {
 
-struct DefaultGCActivityCallbackPlatformData {
-};
-
-DefaultGCActivityCallback::DefaultGCActivityCallback(Heap*)
+DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
+    : GCActivityCallback(heap->globalData())
 {
 }
 
-DefaultGCActivityCallback::~DefaultGCActivityCallback()
+void DefaultGCActivityCallback::doWork()
 {
 }
 
@@ -47,10 +47,6 @@ void DefaultGCActivityCallback::didAllocate(size_t)
 }
 
 void DefaultGCActivityCallback::willCollect()
-{
-}
-
-void DefaultGCActivityCallback::synchronize()
 {
 }
 

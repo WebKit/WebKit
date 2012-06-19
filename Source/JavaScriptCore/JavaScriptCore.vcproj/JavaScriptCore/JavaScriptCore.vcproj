@@ -714,7 +714,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\GCActivityCallback.cpp"
+				RelativePath="..\..\runtime\GCActivityCallbackCF.cpp"
 				>
 			</File>
 			<File
@@ -2183,6 +2183,14 @@
 			</File>
 			<File
 				RelativePath="..\..\heap\HandleSet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\HeapTimer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\HeapTimer.h"
 				>
 			</File>
 			<File

@@ -44,29 +44,31 @@
 
 namespace JSC {
 
-struct DefaultGCActivityCallbackPlatformData {
-    static void timerDidFire(CFRunLoopTimerRef, void *info);
-
-    RetainPtr<CFRunLoopTimerRef> timer;
-    RetainPtr<CFRunLoopRef> runLoop;
-    CFRunLoopTimerContext context;
-    double delay;
-};
-
 const double gcTimeSlicePerMB = 0.01; // Percentage of CPU time we will spend to reclaim 1 MB
 const double maxGCTimeSlice = 0.05; // The maximum amount of CPU time we want to use for opportunistic timer-triggered collections.
 const double timerSlop = 2.0; // Fudge factor to avoid performance cost of resetting timer.
 const double pagingTimeOut = 0.1; // Time in seconds to allow opportunistic timer to iterate over all blocks to see if the Heap is paged out.
-const CFTimeInterval decade = 60 * 60 * 24 * 365 * 10;
 const CFTimeInterval hour = 60 * 60;
 
-void DefaultGCActivityCallbackPlatformData::timerDidFire(CFRunLoopTimerRef, void *info)
+DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
+    : GCActivityCallback(heap->globalData(), CFRunLoopGetCurrent())
+    , m_delay(s_decade)
 {
-    Heap* heap = static_cast<Heap*>(info);
-    if (!heap->activityCallback()->isEnabled())
-        return;
+}
 
-    APIEntryShim shim(heap->globalData());
+DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap, CFRunLoopRef runLoop)
+    : GCActivityCallback(heap->globalData(), runLoop)
+    , m_delay(s_decade)
+{
+}
+
+void DefaultGCActivityCallback::doWork()
+{
+    Heap* heap = &m_globalData->heap;
+    if (!isEnabled())
+        return;
+    
+    APIEntryShim shim(m_globalData);
 #if !PLATFORM(IOS)
     double startTime = WTF::monotonicallyIncreasingTime();
     if (heap->isPagedOut(startTime + pagingTimeOut)) {
@@ -77,48 +79,20 @@ void DefaultGCActivityCallbackPlatformData::timerDidFire(CFRunLoopTimerRef, void
 #endif
     heap->collectAllGarbage();
 }
-
-DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
+    
+void DefaultGCActivityCallback::scheduleTimer(double newDelay)
 {
-    commonConstructor(heap, CFRunLoopGetCurrent());
-}
-
-DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap, CFRunLoopRef runLoop)
-{
-    commonConstructor(heap, runLoop);
-}
-
-DefaultGCActivityCallback::~DefaultGCActivityCallback()
-{
-    CFRunLoopRemoveTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
-    CFRunLoopTimerInvalidate(d->timer.get());
-}
-
-void DefaultGCActivityCallback::commonConstructor(Heap* heap, CFRunLoopRef runLoop)
-{
-    d = adoptPtr(new DefaultGCActivityCallbackPlatformData);
-
-    memset(&d->context, 0, sizeof(CFRunLoopTimerContext));
-    d->context.info = heap;
-    d->runLoop = runLoop;
-    d->timer.adoptCF(CFRunLoopTimerCreate(0, decade, decade, 0, 0, DefaultGCActivityCallbackPlatformData::timerDidFire, &d->context));
-    d->delay = decade;
-    CFRunLoopAddTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
-}
-
-static void scheduleTimer(DefaultGCActivityCallbackPlatformData* d, double newDelay)
-{
-    if (newDelay * timerSlop > d->delay)
+    if (newDelay * timerSlop > m_delay)
         return;
-    double delta = d->delay - newDelay;
-    d->delay = newDelay;
-    CFRunLoopTimerSetNextFireDate(d->timer.get(), CFRunLoopTimerGetNextFireDate(d->timer.get()) - delta);
+    double delta = m_delay - newDelay;
+    m_delay = newDelay;
+    CFRunLoopTimerSetNextFireDate(m_timer.get(), CFRunLoopTimerGetNextFireDate(m_timer.get()) - delta);
 }
 
-static void cancelTimer(DefaultGCActivityCallbackPlatformData* d)
+void DefaultGCActivityCallback::cancelTimer()
 {
-    d->delay = decade;
-    CFRunLoopTimerSetNextFireDate(d->timer.get(), CFAbsoluteTimeGetCurrent() + decade);
+    m_delay = s_decade;
+    CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade);
 }
 
 void DefaultGCActivityCallback::didAllocate(size_t bytes)
@@ -127,29 +101,20 @@ void DefaultGCActivityCallback::didAllocate(size_t bytes)
     // We pretend it's one byte so that we don't ignore this allocation entirely.
     if (!bytes)
         bytes = 1;
-    Heap* heap = static_cast<Heap*>(d->context.info);
+    Heap* heap = static_cast<Heap*>(&m_globalData->heap);
     double gcTimeSlice = std::min((static_cast<double>(bytes) / MB) * gcTimeSlicePerMB, maxGCTimeSlice);
     double newDelay = heap->lastGCLength() / gcTimeSlice;
-    scheduleTimer(d.get(), newDelay);
+    scheduleTimer(newDelay);
 }
 
 void DefaultGCActivityCallback::willCollect()
 {
-    cancelTimer(d.get());
-}
-
-void DefaultGCActivityCallback::synchronize()
-{
-    if (CFRunLoopGetCurrent() == d->runLoop.get())
-        return;
-    CFRunLoopRemoveTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
-    d->runLoop = CFRunLoopGetCurrent();
-    CFRunLoopAddTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
+    cancelTimer();
 }
 
 void DefaultGCActivityCallback::cancel()
 {
-    cancelTimer(d.get());
+    cancelTimer();
 }
 
 }

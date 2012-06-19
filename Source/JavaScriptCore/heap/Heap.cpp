@@ -245,8 +245,6 @@ Heap::Heap(JSGlobalData* globalData, HeapType heapType)
     , m_operationInProgress(NoOperation)
     , m_objectSpace(this)
     , m_storageSpace(this)
-    , m_activityCallback(DefaultGCActivityCallback::create(this))
-    , m_sweeper(IncrementalSweeper::create(this))
     , m_machineThreads(this)
     , m_sharedData(globalData)
     , m_slotVisitor(m_sharedData)
@@ -255,6 +253,8 @@ Heap::Heap(JSGlobalData* globalData, HeapType heapType)
     , m_globalData(globalData)
     , m_lastGCLength(0)
     , m_lastCodeDiscardTime(WTF::currentTime())
+    , m_activityCallback(DefaultGCActivityCallback::create(this))
+    , m_sweeper(IncrementalSweeper::create(this))
 {
     m_storageSpace.init();
 }

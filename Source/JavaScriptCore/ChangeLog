@@ -1,3 +1,75 @@
+2012-06-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        GCActivityCallback and IncrementalSweeper should share code
+        https://bugs.webkit.org/show_bug.cgi?id=89400
+
+        Reviewed by Geoffrey Garen.
+
+        A lot of functionality is duplicated between GCActivityCallback and IncrementalSweeper. 
+        We should extract the common functionality out into a separate class that both of them 
+        can inherit from. This refactoring will be an even greater boon when we add the ability 
+        to shut these two agents down in a thread-safe fashion
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap): Move initialization down so that the JSGlobalData has a valid Heap when 
+        we're initializing the GCActivityCallback and the IncrementalSweeper.
+        * heap/Heap.h:
+        (Heap):
+        * heap/HeapTimer.cpp: Added.
+        (JSC):
+        (JSC::HeapTimer::HeapTimer): Initialize the various base class data that
+        DefaultGCActivityCallback::commonConstructor() used to do.
+        (JSC::HeapTimer::~HeapTimer): Call to invalidate().
+        (JSC::HeapTimer::synchronize): Same functionality as the old DefaultGCActivityCallback::synchronize().
+        Virtual so that non-CF subclasses can override.
+        (JSC::HeapTimer::invalidate): Tears down the runloop timer to prevent any future firing.
+        (JSC::HeapTimer::timerDidFire): Callback to pass to the timer function. Casts and calls the virtual doWork().
+        * heap/HeapTimer.h: Added. This is the class that serves as the common base class for 
+        both GCActivityCallback and IncrementalSweeper. It handles setting up and tearing down run loops and synchronizing 
+        across threads for its subclasses. 
+        (JSC):
+        (HeapTimer):
+        * heap/IncrementalSweeper.cpp: Changes to accomodate the extraction of common functionality 
+        between IncrementalSweeper and GCActivityCallback into a common ancestor.
+        (JSC):
+        (JSC::IncrementalSweeper::doWork): 
+        (JSC::IncrementalSweeper::IncrementalSweeper):
+        (JSC::IncrementalSweeper::cancelTimer):
+        (JSC::IncrementalSweeper::create):
+        * heap/IncrementalSweeper.h:
+        (IncrementalSweeper):
+        * runtime/GCActivityCallback.cpp:
+        (JSC::DefaultGCActivityCallback::DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::doWork):
+        * runtime/GCActivityCallback.h:
+        (GCActivityCallback):
+        (JSC::GCActivityCallback::willCollect):
+        (JSC::GCActivityCallback::GCActivityCallback):
+        (JSC):
+        (DefaultGCActivityCallback): Remove the platform data struct. The platform data should be kept in 
+        the class itself so as to be accessible by doWork(). Most of the platform data for CF is kept in 
+        HeapTimer anyways, so we only need the m_delay field now.
+        * runtime/GCActivityCallbackBlackBerry.cpp:
+        (JSC):
+        (JSC::DefaultGCActivityCallback::DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::doWork):
+        (JSC::DefaultGCActivityCallback::didAllocate):
+        * runtime/GCActivityCallbackCF.cpp:
+        (JSC):
+        (JSC::DefaultGCActivityCallback::DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::doWork):
+        (JSC::DefaultGCActivityCallback::scheduleTimer):
+        (JSC::DefaultGCActivityCallback::cancelTimer):
+        (JSC::DefaultGCActivityCallback::didAllocate):
+        (JSC::DefaultGCActivityCallback::willCollect):
+        (JSC::DefaultGCActivityCallback::cancel):
+
+
 2012-06-19  Mike West  <mkwst@chromium.org>
 
         Introduce ENABLE_CSP_NEXT configuration flag.
