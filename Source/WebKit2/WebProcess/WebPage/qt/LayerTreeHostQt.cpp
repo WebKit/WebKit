@@ -552,29 +552,29 @@ void LayerTreeHostQt::purgeBackingStores()
     m_updateAtlases.clear();
 }
 
-UpdateAtlas& LayerTreeHostQt::getAtlas(ShareableBitmap::Flags flags)
+static PassOwnPtr<WebCore::GraphicsContext> beginContentUpdateInAtlas(UpdateAtlas& atlas, const WebCore::IntSize& size, ShareableSurface::Handle& handle, WebCore::IntPoint& offset)
 {
-    for (int i = 0; i < m_updateAtlases.size(); ++i) {
-        if (m_updateAtlases[i].flags() == flags)
-            return m_updateAtlases[i];
-    }
-    static const int ScratchBufferDimension = 2000;
-    m_updateAtlases.append(UpdateAtlas(ScratchBufferDimension, flags));
-    return m_updateAtlases.last();
+    if (!atlas.surface()->createHandle(handle))
+        return PassOwnPtr<WebCore::GraphicsContext>();
+    return atlas.beginPaintingOnAvailableBuffer(size, offset);
 }
 
 PassOwnPtr<WebCore::GraphicsContext> LayerTreeHostQt::beginContentUpdate(const WebCore::IntSize& size, ShareableBitmap::Flags flags, ShareableSurface::Handle& handle, WebCore::IntPoint& offset)
 {
-    UpdateAtlas& atlas = getAtlas(flags);
-    if (!atlas.surface()->createHandle(handle))
-        return PassOwnPtr<WebCore::GraphicsContext>();
+    OwnPtr<WebCore::GraphicsContext> graphicsContext;
+    for (int i = 0; i < m_updateAtlases.size(); ++i) {
+        UpdateAtlas& atlas = m_updateAtlases[i];
+        if (atlas.flags() == flags) {
+            // This will return null if there is no available buffer space.
+            graphicsContext = beginContentUpdateInAtlas(atlas, size, handle, offset);
+            if (graphicsContext)
+                return graphicsContext.release();
+        }
+    }
 
-    // This will return null if there is no available buffer.
-    OwnPtr<WebCore::GraphicsContext> graphicsContext = atlas.beginPaintingOnAvailableBuffer(size, offset);
-    if (!graphicsContext)
-        return PassOwnPtr<WebCore::GraphicsContext>();
-
-    return graphicsContext.release();
+    static const int ScratchBufferDimension = 2000;
+    m_updateAtlases.append(UpdateAtlas(ScratchBufferDimension, flags));
+    return beginContentUpdateInAtlas(m_updateAtlases.last(), size, handle, offset);
 }
 
 } // namespace WebKit

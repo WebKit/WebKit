@@ -105,8 +105,6 @@ private:
     void performScheduledLayerFlush();
     void sendLayersToUI();
 
-    UpdateAtlas& getAtlas(ShareableBitmap::Flags);
-
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
 
     // The layer which contains all non-composited content.

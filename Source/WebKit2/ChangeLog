@@ -1,3 +1,22 @@
+2012-06-19  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Create an extra atlas when there is no available buffer space.
+        https://bugs.webkit.org/show_bug.cgi?id=89012
+
+        Reviewed by Noam Rosenthal.
+
+        In case of the desktop mode when we scroll the view all the tiles
+        are updated. It can happen that there no available buffer space for
+        the currently used atlas(especially when scrolling fast). In that case 
+        we can create a new one. One future improvement could be to make a timer and 
+        delete this extra atlas when it is not used.
+
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::beginContentUpdateInAtlas):
+        (WebKit::LayerTreeHostQt::beginContentUpdate):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+
 2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Buildfix for newer Qt5, use QPointer instead of the deprecated QWeakPointer.
