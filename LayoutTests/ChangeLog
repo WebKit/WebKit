@@ -2,6 +2,38 @@
 
         [Qt] Unreviewed gardening, remove unnecessary expected files.
 
+        * platform/qt/animations/combo-transform-translate+scale-expected.txt: Removed.
+        * platform/qt/compositing/geometry/object-clip-rects-assertion-expected.txt: Removed.
+        * platform/qt/css3/calc/getComputedStyle-margin-percentage-expected.txt: Removed.
+        * platform/qt/css3/filters/remove-filter-rendering-expected.txt: Removed.
+        * platform/qt/editing/inserting/return-key-in-hidden-field-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/paste-4039777-fix-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/paste-noscript-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/select-element-1-expected.txt: Removed.
+        * platform/qt/editing/selection/select-line-break-with-opposite-directionality-expected.txt: Removed.
+        * platform/qt/fast/css/border-solid-single-edge-antialias-expected.txt: Removed.
+        * platform/qt/fast/dom/Window/window-resize-contents-expected.txt: Removed.
+        * platform/qt/fast/events/mouse-relative-position-expected.txt: Removed.
+        * platform/qt/fast/preloader/document-write-noscript-expected.txt: Removed.
+        * platform/qt/fast/repaint/table-hover-on-link-expected.txt: Removed.
+        * platform/qt/http/tests/misc/SVGFont-delayed-load-expected.txt: Removed.
+        * platform/qt/http/tests/security/xssAuditor/script-tag-with-fancy-unicode-expected.txt: Removed.
+        * platform/qt/svg/custom/acid3-test-77-expected.txt: Removed.
+        * platform/qt/svg/custom/circular-marker-reference-1-expected.txt: Removed.
+        * platform/qt/svg/custom/glyph-setting-d-attribute-expected.txt: Removed.
+        * platform/qt/svg/custom/insertItemBefore-from-non-list-origin-expected.txt: Removed.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-svg-expected.txt: Removed.
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-symbol2-expected.txt: Removed.
+        * platform/qt/svg/dom/baseVal-animVal-crash-expected.txt: Removed.
+        * platform/qt/svg/dom/css-transforms-expected.txt: Removed.
+        * platform/qt/svg/dom/font-face-elements-expected.txt: Removed.
+        * platform/qt/svg/hixie/links/001-expected.txt: Removed.
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug3517-expected.txt: Removed.
+
+2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, remove unnecessary expected files.
+
         * platform/qt-5.0/fast/dom/DeviceMotion/create-event-expected.txt: Removed.
         * platform/qt-5.0/fast/dom/DeviceOrientation/create-event-expected.txt: Removed.
 
