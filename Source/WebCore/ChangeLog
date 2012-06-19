@@ -1,5 +1,18 @@
 2012-06-19  Abhishek Arya  <inferno@chromium.org>
 
+        Wrong repaintContainerSkipped in RenderObject::container()
+        when positioned objects are enclosed in a <foreignObject>.
+        https://bugs.webkit.org/show_bug.cgi?id=89384
+
+        Reviewed by Simon Fraser.
+
+        No new tests. The bug was found in a code audit.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::container):
+
+2012-06-19  Abhishek Arya  <inferno@chromium.org>
+
         Crash in WebCore::RenderSVGModelObject::checkIntersection
         https://bugs.webkit.org/show_bug.cgi?id=89059
 

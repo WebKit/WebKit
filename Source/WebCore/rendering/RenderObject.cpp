@@ -2201,13 +2201,14 @@ RenderObject* RenderObject::container(const RenderBoxModelObject* repaintContain
         // FIXME: The definition of view() has changed to not crawl up the render tree.  It might
         // be safe now to use it.
         while (o && o->parent() && !(o->hasTransform() && o->isRenderBlock())) {
-            if (repaintContainerSkipped && o == repaintContainer)
-                *repaintContainerSkipped = true;
 #if ENABLE(SVG)
             // foreignObject is the containing block for its contents.
             if (o->isSVGForeignObject())
                 break;
 #endif
+            if (repaintContainerSkipped && o == repaintContainer)
+                *repaintContainerSkipped = true;
+
             o = o->parent();
         }
     } else if (pos == AbsolutePosition) {
@@ -2215,12 +2216,13 @@ RenderObject* RenderObject::container(const RenderBoxModelObject* repaintContain
         // we may not have one if we're part of an uninstalled subtree.  We'll
         // climb as high as we can though.
         while (o && o->style()->position() == StaticPosition && !o->isRenderView() && !(o->hasTransform() && o->isRenderBlock())) {
-            if (repaintContainerSkipped && o == repaintContainer)
-                *repaintContainerSkipped = true;
 #if ENABLE(SVG)
             if (o->isSVGForeignObject()) // foreignObject is the containing block for contents inside it
                 break;
 #endif
+            if (repaintContainerSkipped && o == repaintContainer)
+                *repaintContainerSkipped = true;
+
             o = o->parent();
         }
     }
