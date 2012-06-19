@@ -1,3 +1,9 @@
+2012-06-18  Joone Hur  <joone.hur@intel.com>
+
+        Unreviewed. Updating email for committers.py script.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-06-18  Simon Fraser  <simon.fraser@apple.com>
 
         Fix a typo that caused TestFailures to have a syntax error.
