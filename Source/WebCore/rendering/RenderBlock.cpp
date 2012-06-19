@@ -1237,7 +1237,10 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         // If we are an empty anonymous block in the continuation chain,
         // we need to remove ourself and fix the continuation chain.
         if (!beingDestroyed() && isAnonymousBlockContinuation()) {
-            for (RenderObject* curr = this; curr; curr = curr->previousInPreOrder(parent())) {
+            RenderObject* containingBlockIgnoringAnonymous = containingBlock();
+            while (containingBlockIgnoringAnonymous && containingBlockIgnoringAnonymous->isAnonymousBlock())
+                containingBlockIgnoringAnonymous = containingBlockIgnoringAnonymous->containingBlock();
+            for (RenderObject* curr = this; curr; curr = curr->previousInPreOrder(containingBlockIgnoringAnonymous)) {
                 if (curr->virtualContinuation() != this)
                     continue;
 

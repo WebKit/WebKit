@@ -1,3 +1,21 @@
+2012-06-19  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in RenderInline::willBeDestroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=89386
+
+        Reviewed by Julien Chaffraix.
+
+        We were unable to find the previous continuation during the process
+        of cleaning up empty anonymous block continuation. The reason being
+        that we were just looking till our immediate parent and ignoring the
+        fact that it can be enclosed in anonymous blocks. The change skips
+        over anonymous blocks in the parent chain.
+
+        Test: fullscreen/empty-anonymous-block-continuation-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+
 2012-06-19  Andreas Kling  <kling@webkit.org>
 
         Remove the -webkit-match-nearest-mail-blockquote-color property.
