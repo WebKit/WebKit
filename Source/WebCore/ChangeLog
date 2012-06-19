@@ -1,3 +1,16 @@
+2012-06-19  Hans Muller  <hmuller@adobe.com>
+
+        The CSS_WRAP_SHAPE CSSWrapShape::Type is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=89403
+
+        Reviewed by Eric Seidel.
+
+        Removed CSS_WRAP_SHAPE_PATH definition from CSSWrapShapes.h.
+        It's no longer required. This definition was never used or
+        tested, no new tests are required.
+
+        * css/CSSWrapShapes.h:
+
 2012-06-19  Ken Buchanan  <kenrb@chromium.org>
 
         Absolute positioned objects should not be added to anonymous block lists

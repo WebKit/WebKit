@@ -44,8 +44,7 @@ public:
         CSS_WRAP_SHAPE_RECTANGLE = 1,
         CSS_WRAP_SHAPE_CIRCLE = 2,
         CSS_WRAP_SHAPE_ELLIPSE = 3,
-        CSS_WRAP_SHAPE_POLYGON = 4,
-        CSS_WRAP_SHAPE_PATH = 5
+        CSS_WRAP_SHAPE_POLYGON = 4
     };
 
     virtual Type type() = 0;
