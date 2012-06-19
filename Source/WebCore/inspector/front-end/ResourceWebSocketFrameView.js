@@ -23,7 +23,7 @@
 WebInspector.ResourceWebSocketFrameView = function(resource)
 {
     WebInspector.View.call(this);
-    this.element.addStyleClass("html");
+    this.element.addStyleClass("resource-websocket-frame-view");
     this.resource = resource;
     this.element.removeChildren();
     var table = document.createElement("table");

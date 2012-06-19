@@ -279,3 +279,7 @@
 .resource-timing-view.visible {
     display: block;
 }
+
+.resource-websocket-frame-view {
+    -webkit-user-select: text;
+}

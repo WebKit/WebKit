@@ -1,3 +1,15 @@
+2012-06-19  Nikita Vasilyev  <me@elv1s.ru>
+
+        Web Inspector: Make text in WebSocket Frames tab selectable
+        https://bugs.webkit.org/show_bug.cgi?id=89307
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ResourceWebSocketFrameView.js:
+        (WebInspector.ResourceWebSocketFrameView):
+        * inspector/front-end/networkPanel.css:
+        (.resource-websocket-frame-view):
+
 2012-06-19  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: Support 'Restart frame' in protocol and backend
