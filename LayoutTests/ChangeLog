@@ -1,3 +1,9 @@
+2012-06-19  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed expectation update.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-19  Mike West  <mkwst@chromium.org>
 
         Add a scheme registry for bypassing Content Security Policy.
