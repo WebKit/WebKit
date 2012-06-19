@@ -28,6 +28,7 @@
 
 #include "WebDOMStringList.h"
 #include "WebExceptionCode.h"
+#include "WebIDBMetadata.h"
 #include "platform/WebCommon.h"
 
 namespace WebKit {
@@ -44,6 +45,11 @@ class WebIDBDatabase {
 public:
     virtual ~WebIDBDatabase() { }
 
+    virtual WebIDBMetadata metadata() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebIDBMetadata();
+    }
     virtual WebString name() const
     {
         WEBKIT_ASSERT_NOT_REACHED();

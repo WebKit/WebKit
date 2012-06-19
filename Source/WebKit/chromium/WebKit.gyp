@@ -181,6 +181,7 @@
                 'public/WebIDBKey.h',
                 'public/WebIDBKeyPath.h',
                 'public/WebIDBKeyRange.h',
+                'public/WebIDBMetadata.h',
                 'public/WebIDBObjectStore.h',
                 'public/WebIDBTransaction.h',
                 'public/WebIDBTransactionCallbacks.h',

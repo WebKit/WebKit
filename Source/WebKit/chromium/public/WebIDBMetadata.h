@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,48 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIDBKeyPath_h
-#define WebIDBKeyPath_h
+#ifndef WebIDBMetadata_h
+#define WebIDBMetadata_h
 
+#include "WebIDBKeyPath.h"
 #include "platform/WebCommon.h"
-#include "platform/WebPrivateOwnPtr.h"
 #include "platform/WebString.h"
 #include "platform/WebVector.h"
 
-namespace WebCore { class IDBKeyPath; }
-
 namespace WebKit {
 
-class WebIDBKeyPath {
-public:
-    WEBKIT_EXPORT static WebIDBKeyPath create(const WebString&);
-    WEBKIT_EXPORT static WebIDBKeyPath create(const WebVector<WebString>&);
-    WEBKIT_EXPORT static WebIDBKeyPath createNull();
+struct WebIDBMetadata {
+    struct Index;
+    struct ObjectStore;
 
-    WebIDBKeyPath(const WebIDBKeyPath& keyPath) { assign(keyPath); }
-    virtual ~WebIDBKeyPath() { reset(); }
-    WebIDBKeyPath& operator=(const WebIDBKeyPath& keyPath)
-    {
-        assign(keyPath);
-        return *this;
-    }
+    WebString name;
+    WebString version;
+    WebVector<ObjectStore> objectStores;
+    WebIDBMetadata() { }
 
-    WEBKIT_EXPORT void reset();
-    WEBKIT_EXPORT void assign(const WebIDBKeyPath&);
-
-    enum Type {
-        NullType = 0,
-        StringType,
-        ArrayType,
+    struct ObjectStore {
+        WebString name;
+        WebIDBKeyPath keyPath;
+        bool autoIncrement;
+        WebVector<Index> indexes;
+        ObjectStore()
+            : keyPath(WebIDBKeyPath::createNull())
+            , autoIncrement(false) { }
     };
 
-    WEBKIT_EXPORT bool isValid() const;
-    WEBKIT_EXPORT Type type() const;
-    WEBKIT_EXPORT WebVector<WebString> array() const; // Only valid for ArrayType.
-    WEBKIT_EXPORT WebString string() const; // Only valid for StringType.
-
-#if WEBKIT_IMPLEMENTATION
-    WebIDBKeyPath(const WebCore::IDBKeyPath&);
-    WebIDBKeyPath& operator=(const WebCore::IDBKeyPath&);
-    operator const WebCore::IDBKeyPath&() const;
-#endif
-
-private:
-    WebPrivateOwnPtr<WebCore::IDBKeyPath> m_private;
+    struct Index {
+        WebString name;
+        WebIDBKeyPath keyPath;
+        bool unique;
+        bool multiEntry;
+        Index()
+            : keyPath(WebIDBKeyPath::createNull())
+            , unique(false)
+            , multiEntry(false) { }
+    };
 };
+
 
 } // namespace WebKit
 
-#endif // WebIDBKeyPath_h
+#endif // WebIDBMetadata_h

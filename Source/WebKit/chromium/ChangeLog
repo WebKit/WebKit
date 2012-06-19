@@ -1,3 +1,31 @@
+2012-06-19  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Add new type (and chromium webkit API) for metadata snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=88678
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::metadata):
+        * public/WebIDBKeyPath.h:
+        (WebIDBKeyPath):
+        (WebKit::WebIDBKeyPath::WebIDBKeyPath):
+        (WebKit::WebIDBKeyPath::~WebIDBKeyPath):
+        (WebKit::WebIDBKeyPath::operator=): Used by Chromium backend.
+        * public/WebIDBMetadata.h: Added new type.
+        (WebKit):
+        (WebIDBMetadata):
+        (WebKit::WebIDBMetadata::WebIDBMetadata):
+        (ObjectStore):
+        (WebKit::WebIDBMetadata::ObjectStore::ObjectStore):
+        (Index):
+        (WebKit::WebIDBMetadata::Index::Index):
+        * src/WebIDBKeyPath.cpp: Conform to normal WebXXX patern.
+        (WebKit::WebIDBKeyPath::assign):
+        (WebKit):
+        (WebKit::WebIDBKeyPath::reset):
+
 2012-06-19  Amy Ousterhout  <aousterh@chromium.org>
 
         [Chromium] Style Fix in WebDeviceOrientationController

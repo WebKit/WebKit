@@ -37,11 +37,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebIDBKeyPath::~WebIDBKeyPath()
-{
-    m_private.reset(0);
-}
-
 WebIDBKeyPath WebIDBKeyPath::create(const WebString& keyPath)
 {
     return WebIDBKeyPath(IDBKeyPath(keyPath));
@@ -58,6 +53,17 @@ WebIDBKeyPath WebIDBKeyPath::create(const WebVector<WebString>& keyPath)
 WebIDBKeyPath WebIDBKeyPath::createNull()
 {
     return WebIDBKeyPath(IDBKeyPath());
+}
+
+void WebIDBKeyPath::assign(const WebIDBKeyPath& keyPath)
+{
+    ASSERT(keyPath.m_private.get());
+    m_private.reset(new IDBKeyPath(keyPath));
+}
+
+void WebIDBKeyPath::reset()
+{
+    m_private.reset(0);
 }
 
 bool WebIDBKeyPath::isValid() const
@@ -85,12 +91,6 @@ WebString WebIDBKeyPath::string() const
     ASSERT(m_private.get());
     ASSERT(m_private->type() == IDBKeyPath::StringType);
     return m_private->string();
-}
-
-WebIDBKeyPath::WebIDBKeyPath(const WebIDBKeyPath& keyPath)
-    : m_private(new IDBKeyPath(keyPath))
-{
-    ASSERT(m_private.get());
 }
 
 WebIDBKeyPath::WebIDBKeyPath(const WebCore::IDBKeyPath& value)
