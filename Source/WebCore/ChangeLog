@@ -1,3 +1,22 @@
+2012-06-18  Mike Lawther  <mikelawther@chromium.org>
+
+        Crash when setting title dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=88083
+
+        Reviewed by Dan Bernstein.
+
+        Test: fast/text/title-crash.html
+
+        The crashing code takes a rare branch in StyleResolver::styleForElement() where
+        m_parentStyle is set to point to m_style. Consequently, while applying properties
+        to m_style we end up mutating m_parentStyle.
+
+        In this situation, we clone style() and point m_parentStyle at the clone. The
+        clone is destroyed at the end of StyleResolver::styleForElement().
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-06-18  Adrienne Walker  <enne@google.com>
 
         RenderLayerBacking sometimes doesn't attach scrollbars to graphics layer tree

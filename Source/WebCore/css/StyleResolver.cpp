@@ -1657,16 +1657,19 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
 
     m_style = RenderStyle::create();
 
+    RefPtr<RenderStyle> cloneForParent;
+
     if (m_parentStyle)
         m_style->inheritFrom(m_parentStyle, isAtShadowBoundary(element) ? RenderStyle::AtShadowBoundary : RenderStyle::NotAtShadowBoundary);
     else {
-        m_parentStyle = style();
         // Make sure our fonts are initialized if we don't inherit them from our parent style.
         if (Settings* settings = documentSettings()) {
             initializeFontStyle(settings);
             m_style->font().update(fontSelector());
         } else
             m_style->font().update(0);
+        cloneForParent = RenderStyle::clone(style());
+        m_parentStyle = cloneForParent.get();
     }
 
     if (element->isLink()) {
@@ -1688,6 +1691,9 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     adjustRenderStyle(style(), m_parentStyle, element);
 
     initElement(0); // Clear out for the next resolve.
+
+    if (cloneForParent)
+        m_parentStyle = 0;
 
     // Now return the style.
     return m_style.release();
