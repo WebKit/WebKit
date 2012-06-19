@@ -35,7 +35,7 @@ namespace WebKit {
 
 void WebDeviceOrientationController::didChangeDeviceOrientation(const WebDeviceOrientation& orientation)
 {
-    PassRefPtr<WebCore::DeviceOrientation> deviceOrientation(orientation);
+    RefPtr<WebCore::DeviceOrientation> deviceOrientation = PassRefPtr<WebCore::DeviceOrientation>(orientation);
     m_controller->didChangeDeviceOrientation(deviceOrientation.get());
 }
 
