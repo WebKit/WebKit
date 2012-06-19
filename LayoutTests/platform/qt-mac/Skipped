@@ -5710,3 +5710,23 @@ css3/filters/multiple-filters-invalidation.html
 canvas/philip/tests/2d.pattern.basic.zerocanvas.html
 fast/css-generated-content/reset-content-to-initial.html
 fast/css/giant-stylesheet-crash.html
+
+# new failing tests
+css1/box_properties/acid_test.html
+css2.1/20110323/c543-txt-decor-000.html
+editing/selection/caret-in-empty-inline-1.html
+editing/selection/caret-in-empty-inline-2.html
+editing/selection/internal-caret-rect.html
+editing/selection/move-by-line-006.html
+fast/runin/generated-content-crash.html
+fast/runin/insert-before-run-in.html
+fast/runin/move-run-in-original-position-crash.html
+fast/runin/run-in-after-run-in.html
+fast/runin/run-in-parent-add-child.html
+fast/runin/run-in-parent-block-child-add-and-intrude.html
+fast/runin/run-in-parent-block-child-add.html
+printing/iframe-print.html
+svg/custom/bug86119.html
+
+# new crashing test
+css3/filters/nested-filter.html
