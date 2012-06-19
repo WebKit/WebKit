@@ -1,3 +1,12 @@
+2012-06-19  Kenneth Russell  <kbr@google.com>
+
+        [Chromium] Unreviewed gardening.
+
+        * platform/chromium-win-xp/platform/chromium/virtual/gpu/fast/canvas/resize-while-save-active-expected.txt:
+            Added expectations without trailing newlines; unclear why this only happens in this configuration.
+        * platform/chromium/TestExpectations:
+            Added reference to https://bugs.webkit.org/show_bug.cgi?id=89510 .
+
 2012-06-19  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [cairo] Fix LayoutTests/fast/canvas/patternfill-repeat.html
