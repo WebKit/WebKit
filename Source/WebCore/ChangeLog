@@ -1,3 +1,21 @@
+2012-06-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] media/video-seek-past-end-playing.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=89301
+
+        Reviewed by Philippe Normand.
+
+        Switch to double for media duration and playback position
+        calculations to avoid precision problems.
+        This patch also removes the workaround for the precision
+        problem in didEnd() which is no longer needed.
+
+        Test: media/video-seek-past-end-playing.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition):
+        (WebCore::MediaPlayerPrivateGStreamer::duration):
+
 2012-06-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120593.

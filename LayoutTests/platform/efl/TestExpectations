@@ -155,7 +155,6 @@ BUGWK86081 : loader/navigation-while-deferring-loads.html = TEXT PASS
 BUGWK86082 : security/block-test.html = TEXT PASS
 BUGWK86084 : svg/dom/SVGScriptElement/script-onerror-bubbling.svg = TEXT PASS
 BUGWK60103 : fast/replaced/border-radius-clip.html = TEXT PASS
-BUGWK89301 : media/video-seek-past-end-playing.html = TEXT PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // FAILING TESTS
