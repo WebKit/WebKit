@@ -74,7 +74,7 @@ ui.notifications.Notification = base.extends('li', {
         {
             this.parentNode && this.parentNode.removeChild(this);
         });
-    }
+    },
 });
 
 ui.notifications.Info = base.extends(ui.notifications.Notification, {
@@ -85,16 +85,19 @@ ui.notifications.Info = base.extends(ui.notifications.Notification, {
     update: function(message)
     {
         this._what.textContent = message;
+    },
+    updateWithNode: function(node)
+    {
+        while (this._what.firstChild)
+            this._what.removeChild(this._what.firstChild);
+        this._what.appendChild(node);
     }
 });
 
 ui.notifications.FailingTestGroup = base.extends('li', {
     init: function(groupName, testNameList)
     {
-        var link = this.appendChild(document.createElement('a'));
-        link.target = '_blank';
-        link.href = ui.urlForFlakinessDashboard(testNameList);
-        link.textContent = groupName;
+        this.appendChild(base.createLinkNode(ui.urlForFlakinessDashboard(testNameList), groupName, '_blank'));
     }
 });
 
@@ -110,11 +113,8 @@ ui.notifications.SuspiciousCommit = base.extends(Cause, {
     init: function(commitData)
     {
         this._revision = commitData.revision;
-        var linkToRevision = this._description.appendChild(document.createElement('a'));
+        this._description.appendChild(base.createLinkNode(trac.changesetURL(commitData.revision), commitData.revision, '_blank'));
         this._details = this._description.appendChild(document.createElement('span'));
-        linkToRevision.href = trac.changesetURL(commitData.revision);
-        linkToRevision.target = '_blank';
-        linkToRevision.textContent = commitData.revision;
         this._addDetail('summary', commitData);
         this._addDetail('author', commitData);
         this._addDetail('reviewer', commitData);

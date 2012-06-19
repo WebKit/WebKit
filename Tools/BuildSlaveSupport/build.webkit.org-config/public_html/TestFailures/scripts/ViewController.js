@@ -132,10 +132,7 @@ ViewController.prototype = {
             latestBuildInfos.sort(function(a, b) { return a.tester.name.localeCompare(b.tester.name) });
             list.removeAllChildren();
             latestBuildInfos.forEach(function(buildInfo) {
-                var link = document.createElement('a');
-                link.href = '#/' + buildInfo.tester.name;
-                link.appendChild(document.createTextNode(buildInfo.tester.name));
-
+                var link = base.createLinkNode('#/' + buildInfo.tester.name, buildInfo.tester.name)
                 var item = document.createElement('li');
                 item.appendChild(link);
                 if (buildInfo.tooManyFailures)
@@ -193,11 +190,8 @@ ViewController.prototype = {
         var suspectsContainer = document.createElement('div');
         result.appendChild(suspectsContainer);
 
-        var link = document.createElement('a');
+        var link = base.createLinkNode(trac.logURL('trunk', firstSuspectRevision, lastSuspectRevision, true), 'View regression range in Trac');
         result.appendChild(link);
-
-        link.href = trac.logURL('trunk', firstSuspectRevision, lastSuspectRevision, true);
-        link.appendChild(document.createTextNode('View regression range in Trac'));
 
         suspectsContainer.appendChild(document.createTextNode('Searching for suspect revisions\u2026'));
 
@@ -229,12 +223,7 @@ ViewController.prototype = {
 
             list.appendChildren(sorted(suspectCommits, compareCommits).map(function(commit) {
                 var item = document.createElement('li');
-                var link = document.createElement('a');
-                item.appendChild(link);
-
-                link.href = trac.changesetURL(commit.revision);
-                link.appendChild(document.createTextNode(commit.title))
-
+                item.appendChild(base.createLinkNode(trac.changesetURL(commit.revision), commit.title));
                 return item;
             }));
         });
@@ -245,10 +234,6 @@ ViewController.prototype = {
     _domForAuxiliaryUIElements: function() {
         var aside = document.createElement('aside');
         aside.appendChild(document.createTextNode('Something not working? Have an idea to improve this page? '));
-        var link = document.createElement('a');
-        aside.appendChild(link);
-
-        link.appendChild(document.createTextNode('File a bug!'));
         var queryParameters = {
             product: 'WebKit',
             component: 'Tools / Tests',
@@ -257,26 +242,16 @@ ViewController.prototype = {
             cc: 'aroben@apple.com',
             short_desc: 'TestFailures page needs more unicorns!',
         };
-        link.href = addQueryParametersToURL(config.kBugzillaURL + '/enter_bug.cgi', queryParameters);
-        link.target = '_blank';
-
+        aside.appendChild(base.createLinkNode(addQueryParametersToURL(config.kBugzillaURL + '/enter_bug.cgi', queryParameters), 'File a bug!', '_blank'));
         return aside;
     },
 
     _domForBuildName: function(builder, buildName) {
         var parsed = this._buildbot.parseBuildName(buildName);
 
-        var sourceLink = document.createElement('a');
-        sourceLink.href = 'http://trac.webkit.org/changeset/' + parsed.revision;
-        sourceLink.appendChild(document.createTextNode('r' + parsed.revision));
-
-        var buildLink = document.createElement('a');
-        buildLink.href = builder.buildURL(parsed.buildNumber);
-        buildLink.appendChild(document.createTextNode(parsed.buildNumber));
-
-        var resultsLink = document.createElement('a');
-        resultsLink.href = builder.resultsPageURL(buildName);
-        resultsLink.appendChild(document.createTextNode('results.html'));
+        var sourceLink = base.createLinkNode('http://trac.webkit.org/changeset/' + parsed.revision, 'r' + parsed.revision);
+        var buildLink = base.createLinkNode(builder.buildURL(parsed.buildNumber), parsed.buildNumber);
+        var resultsLink = base.createLinkNode(builder.resultsPageURL(buildName, 'results.html');
 
         var result = document.createDocumentFragment();
         result.appendChild(sourceLink);
@@ -314,10 +289,7 @@ ViewController.prototype = {
         if (!('url' in diagnosticInfo))
             return textAndCrashingSymbol;
 
-        var link = document.createElement('a');
-        link.href = diagnosticInfo.url;
-        link.appendChild(textAndCrashingSymbol);
-        return link;
+        return base.createLinkNode(diagnosticInfo.url, textAndCrashingSymbol);
     },
 
     _domForNewAndExistingBugs: function(tester, failingTests, bugForm) {
@@ -350,10 +322,7 @@ ViewController.prototype = {
             list.className = 'existing-bugs-list';
 
             function bugToListItem(bug) {
-                var link = document.createElement('a');
-                link.href = bug.url;
-                link.appendChild(document.createTextNode(bug.title));
-
+                var link = base.createLinkNode(bug.url, bug.title);
                 var item = document.createElement('li');
                 item.appendChild(link);
 
@@ -382,13 +351,11 @@ ViewController.prototype = {
         var form = bugForm.domElement();
         result.appendChild(form);
 
-        var link = document.createElement('a');
-        container.appendChild(link);
-
+        var linkText = 'File bug for ' + (failingTests.length > 1 ? 'these failures' : 'this failure');
+        var link = base.createLinkNode('#', linkText);
         link.addEventListener('click', function(event) { form.submit(); event.preventDefault(); });
-        link.href = '#';
-        link.appendChild(document.createTextNode('File bug for ' + (failingTests.length > 1 ? 'these failures' : 'this failure')));
 
+        container.appendChild(link);
         return result;
     },
 

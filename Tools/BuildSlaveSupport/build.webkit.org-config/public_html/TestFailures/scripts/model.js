@@ -138,6 +138,11 @@ model.buildersInFlightForRevision = function(revision)
     return builders;
 };
 
+model.latestRevision = function()
+{
+    return model.state.recentCommits[0].revision;
+}
+
 model.latestRevisionWithNoBuildersInFlight = function()
 {
     var revision = 0;

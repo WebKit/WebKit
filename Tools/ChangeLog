@@ -1,3 +1,31 @@
+2012-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Show TOT revision in garden-o-matic, and make the revisions into links
+        https://bugs.webkit.org/show_bug.cgi?id=89396
+
+        Reviewed by Adam Barth.
+
+        The "latest revision" notification now reads "Latest revision processed by every bot: NN (trunk is at NN)"
+        where the revisions are links to trac.
+        
+        To avoid setting innerHTML, I made base.createLinkNode() and used it in a bunch of places, which had
+        the knock-on effect of flipping the target and href attributes for anchors in some test output.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ViewController.js:
+        (ViewController.prototype._displayTesters.updateList.list):
+        (ViewController.prototype._displayTesters.updateList):
+        (ViewController.prototype._domForRegressionRange.trac.commitDataForRevisionRange):
+        (ViewController.prototype._domForRegressionRange):
+        (ViewController.prototype._domForAuxiliaryUIElements):
+        (ViewController.prototype._domForBuildName):
+        (ViewController.prototype):
+        (ViewController.prototype.):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/garden-o-matic.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/model.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+
 2012-06-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r100558): NRWT should work without SVN or GIT

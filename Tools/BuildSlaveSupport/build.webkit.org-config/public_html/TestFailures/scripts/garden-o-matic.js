@@ -79,7 +79,21 @@ function update()
 
             updating.dismiss();
 
-            g_revisionHint = new ui.notifications.Info('Latest revision processed by every bot: ' + model.latestRevisionWithNoBuildersInFlight());
+            g_revisionHint = new ui.notifications.Info('');
+            
+            var latestRevisionSpan = document.createElement('span');
+            latestRevisionSpan.appendChild(document.createTextNode('Latest revision processed by every bot: '));
+            
+            var latestRevision = model.latestRevisionWithNoBuildersInFlight();
+            latestRevisionSpan.appendChild(base.createLinkNode(trac.changesetURL(latestRevision), latestRevision));
+            
+            var totRevision = model.latestRevision();
+            latestRevisionSpan.appendChild(document.createTextNode(' (trunk is at '));
+            latestRevisionSpan.appendChild(base.createLinkNode(trac.changesetURL(totRevision), totRevision));
+            latestRevisionSpan.appendChild(document.createTextNode(')'));
+            
+            g_revisionHint.updateWithNode(latestRevisionSpan);
+            
             g_info.add(g_revisionHint);
         });
     });
