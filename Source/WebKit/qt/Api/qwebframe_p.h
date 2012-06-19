@@ -151,7 +151,7 @@ public:
     QString linkText;
     QUrl linkUrl;
     QString linkTitle;
-    QWeakPointer<QWebFrame> linkTargetFrame;
+    QPointer<QWebFrame> linkTargetFrame;
     QWebElement linkElement;
     QString alternateText;
     QUrl imageUrl;
@@ -159,7 +159,7 @@ public:
     bool isContentEditable;
     bool isContentSelected;
     bool isScrollBar;
-    QWeakPointer<QWebFrame> frame;
+    QPointer<QWebFrame> frame;
     RefPtr<WebCore::Node> innerNode;
     RefPtr<WebCore::Node> innerNonSharedNode;
 };

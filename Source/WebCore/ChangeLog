@@ -1,3 +1,17 @@
+2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Buildfix for newer Qt5, use QPointer instead of the deprecated QWeakPointer.
+        https://bugs.webkit.org/show_bug.cgi?id=89449
+
+        Reviewed by Simon Hausmann.
+
+        * bridge/qt/qt_instance.h:
+        (QtInstance):
+        * bridge/qt/qt_runtime.h:
+        (QtField):
+        * platform/Widget.h:
+        (Widget):
+
 2012-06-19  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: FileSystem tree should hide uninitialized FileSystem

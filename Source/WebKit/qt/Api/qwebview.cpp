@@ -196,7 +196,7 @@ void QWebViewPrivate::detachCurrentPage()
     if (!page)
         return;
 
-    page->d->view.clear();
+    page->d->view = 0;
 
     // if the page client is the special client constructed for
     // delegating the responsibilities to a QWidget, we need

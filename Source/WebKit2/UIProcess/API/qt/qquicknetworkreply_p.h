@@ -28,7 +28,7 @@
 #include "qwebkitglobal.h"
 #include <QNetworkAccessManager>
 #include <QObject>
-#include <QWeakPointer>
+#include <QPointer>
 #include <QtQml/qqmllist.h>
 #include <QtQuick/qquickitem.h>
 
@@ -58,7 +58,7 @@ private:
     WTF::RefPtr<WebKit::QtRefCountedNetworkRequestData> m_networkRequestData;
     WTF::RefPtr<WebKit::QtRefCountedNetworkReplyData> m_networkReplyData;
     QVariant m_data;
-    QWeakPointer<QQuickWebViewExperimental> m_webViewExperimental;
+    QPointer<QQuickWebViewExperimental> m_webViewExperimental;
 };
 
 QML_DECLARE_TYPE(QQuickNetworkReply)

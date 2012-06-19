@@ -1344,7 +1344,7 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
     frameData.marginWidth = marginWidth;
     frameData.marginHeight = marginHeight;
 
-    QWeakPointer<QWebFrame> webFrame = new QWebFrame(m_webFrame, &frameData);
+    QPointer<QWebFrame> webFrame = new QWebFrame(m_webFrame, &frameData);
     // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
     if (!webFrame.data()->d->frame->page()) {
         frameData.frame.release();

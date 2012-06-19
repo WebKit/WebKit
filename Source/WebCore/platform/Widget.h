@@ -40,8 +40,8 @@
 #endif
 
 #if PLATFORM(QT)
+#include <QPointer>
 #include <qglobal.h>
-#include <QWeakPointer>
 #endif
 
 #if PLATFORM(MAC)
@@ -276,7 +276,7 @@ private:
 #endif
 
 #if PLATFORM(QT)
-    QWeakPointer<QObject> m_bindingObject;
+    QPointer<QObject> m_bindingObject;
 #endif
 
 };

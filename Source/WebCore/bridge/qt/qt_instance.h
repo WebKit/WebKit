@@ -21,8 +21,8 @@
 #define qt_instance_h
 
 #include "BridgeJSC.h"
+#include <QPointer>
 #include <QStack>
-#include <QWeakPointer>
 #include "Weak.h"
 #include "runtime_root.h"
 #include <qhash.h>
@@ -131,7 +131,7 @@ private:
     friend class QtField;
     QtInstance(QObject*, PassRefPtr<RootObject>, ValueOwnership); // Factory produced only..
     mutable QtClass* m_class;
-    QWeakPointer<QObject> m_object;
+    QPointer<QObject> m_object;
     QObject* m_hashkey;
     mutable QHash<QByteArray, QtWeakObjectReference> m_methods;
     mutable QHash<QString, QtField*> m_fields;

@@ -27,7 +27,7 @@
 #include "qt_instance.h"
 #include "runtime_method.h"
 
-#include <QWeakPointer>
+#include <QPointer>
 
 #include <qbytearray.h>
 #include <qmetaobject.h>
@@ -73,7 +73,7 @@ private:
     QtFieldType m_type;
     QByteArray m_dynamicProperty;
     QMetaProperty m_property;
-    QWeakPointer<QObject> m_childObject;
+    QPointer<QObject> m_childObject;
 };
 
 

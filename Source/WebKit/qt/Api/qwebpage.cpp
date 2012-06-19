@@ -844,7 +844,7 @@ QMenu *QWebPage::createStandardContextMenu()
 {
 #ifndef QT_NO_CONTEXTMENU
     QMenu* menu = d->currentContextMenu.data();
-    d->currentContextMenu.clear();
+    d->currentContextMenu = 0;
     return menu;
 #else
     return 0;

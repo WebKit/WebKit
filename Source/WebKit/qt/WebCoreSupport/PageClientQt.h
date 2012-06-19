@@ -239,7 +239,7 @@ public:
 #if USE(TEXTURE_MAPPER)
     OwnPtr<TextureMapperLayerClientQt> TextureMapperLayerClient;
 #else
-    QWeakPointer<QGraphicsObject> rootGraphicsLayer;
+    QPointer<QGraphicsObject> rootGraphicsLayer;
 #endif
     // we have to flush quite often, so we use a meta-method instead of QTimer::singleShot for putting the event in the queue
     Timer<PageClientQGraphicsWidget> syncTimer;

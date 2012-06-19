@@ -1,3 +1,19 @@
+2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Buildfix for newer Qt5, use QPointer instead of the deprecated QWeakPointer.
+        https://bugs.webkit.org/show_bug.cgi?id=89449
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebframe_p.h:
+        (QWebHitTestResultPrivate):
+        * Api/qwebpage_p.h:
+        (QWebPagePrivate):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createFrame):
+        * WebCoreSupport/PageClientQt.h:
+        (PageClientQGraphicsWidget):
+
 2012-06-19  Albert Astals Cid  <albert.astals@canonical.com>
 
         [Qt] Document the versions enums where added
