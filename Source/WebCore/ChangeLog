@@ -1,3 +1,21 @@
+2012-06-13  Eric Uhrhane  <ericu@chromium.org>
+
+        FileWriter progress events should be throttled to 50ms
+        https://bugs.webkit.org/show_bug.cgi?id=89022
+
+        Reviewed by Kent Tamura.
+
+        No new tests; existing tests validate our event sequences, and testing
+        timing is likely to be flaky.
+
+        * Modules/filesystem/FileWriter.cpp:
+        (WebCore):
+        (WebCore::FileWriter::FileWriter):
+        (WebCore::FileWriter::didWrite): Throttle sending progress events.
+        * Modules/filesystem/FileWriter.h:
+        (FileWriter): Add a variable that remembers when the last event was
+        sent.
+
 2012-06-19  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of: Paginated display API doesn’t allow setting the page progression direction
