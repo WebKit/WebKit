@@ -219,10 +219,10 @@ class ReplayServer(object):
     def __init__(self, archive, record):
         self._process = None
 
-        # FIXME: Should error if local proxy isn't set to forward requests to localhost:8080 and localhost:8413
+        # FIXME: Should error if local proxy isn't set to forward requests to localhost:8080 and localhost:8443
 
         replay_path = webkitpy.thirdparty.autoinstalled.webpagereplay.replay.__file__
-        args = ['python', replay_path, '--no-dns_forwarding', '--port', '8080', '--ssl_port', '8413', '--use_closest_match', '--log_level', 'warning']
+        args = ['python', replay_path, '--no-dns_forwarding', '--port', '8080', '--ssl_port', '8443', '--use_closest_match', '--log_level', 'warning']
         if record:
             args.append('--record')
         args.append(archive)
