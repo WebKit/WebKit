@@ -288,7 +288,7 @@ WebKit::WebGraphicsContext3D* WebViewHost::createGraphicsContext3D(const WebKit:
 {
     if (!webView())
         return 0;
-    return webkit_support::CreateGraphicsContext3D(attributes, webView(), true);
+    return webkit_support::CreateGraphicsContext3D(attributes, webView());
 }
 
 void WebViewHost::didAddMessageToConsole(const WebConsoleMessage& message, const WebString& sourceName, unsigned sourceLine)

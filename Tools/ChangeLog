@@ -1,3 +1,16 @@
+2012-06-18  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Stop passing deprecated 'direct' parameter to webkit_support::CreateGraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=89254
+
+        Reviewed by Adrienne Walker.
+
+        This parameter doesn't mean anything since this codepath is only used for onscreen contexts and is deprecated
+        upstream.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createGraphicsContext3D):
+
 2012-06-18  Simon Fraser  <simon.fraser@apple.com>
 
         Minor fix suggested by Adam Barth.
