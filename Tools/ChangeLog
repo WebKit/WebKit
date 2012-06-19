@@ -1,3 +1,18 @@
+2012-06-19  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's LayoutTestController does not support setTextDirection
+        https://bugs.webkit.org/show_bug.cgi?id=87481
+
+        Reviewed by Hajime Morita.
+
+        Implement setTextDirection in EFL's LayoutTestController and
+        properly reset its value between test cases to avoid flakiness.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setTextDirection):
+
 2012-06-19  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Temporarily disable xvfb driver in nrwt

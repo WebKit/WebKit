@@ -3959,6 +3959,26 @@ float ewk_view_device_pixel_ratio_get(const Evas_Object* ewkView)
     return priv->settings.devicePixelRatio;
 }
 
+void ewk_view_text_direction_set(Evas_Object* ewkView, Ewk_Text_Direction direction)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    // The Editor::setBaseWritingDirection() function checks if we can change
+    // the text direction of the selected node and updates its DOM "dir"
+    // attribute and its CSS "direction" property.
+    // So, we just call the function as Safari does.
+    WebCore::Frame* focusedFrame = priv->page->focusController()->focusedOrMainFrame();
+    if (!focusedFrame)
+        return;
+
+    WebCore::Editor* editor = focusedFrame->editor();
+    if (!editor->canEdit())
+        return;
+
+    editor->setBaseWritingDirection(static_cast<WritingDirection>(direction));
+}
+
 void ewk_view_did_first_visually_nonempty_layout(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);

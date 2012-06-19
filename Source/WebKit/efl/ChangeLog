@@ -1,3 +1,19 @@
+2012-06-19  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] EFL's LayoutTestController does not support setTextDirection
+        https://bugs.webkit.org/show_bug.cgi?id=87481
+
+        Reviewed by Hajime Morita.
+
+        Add new Ewk_View method to set the text direction, by calling
+        Editor::setBaseWritingDirection() internally, as Mac and Chromium
+        ports do.
+
+        * WebCoreSupport/AssertMatchingEnums.cpp:
+        * ewk/ewk_view.cpp:
+        (ewk_view_text_direction_set):
+        * ewk/ewk_view.h:
+
 2012-06-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's LayoutTestController does not support titleTextDirection

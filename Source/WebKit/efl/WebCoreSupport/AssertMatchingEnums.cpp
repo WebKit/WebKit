@@ -27,6 +27,7 @@
 #include "FrameLoaderTypes.h"
 #include "Page.h"
 #include "VisibleSelection.h"
+#include "WritingDirection.h"
 #include "ewk_contextmenu.h"
 #include "ewk_frame.h"
 #include "ewk_view.h"
@@ -39,6 +40,13 @@
 
 #define COMPILE_ASSERT_MATCHING_ENUM(webkit_name, webcore_name) \
     COMPILE_ASSERT(static_cast<int>(webkit_name) == static_cast<int>(WebCore::webcore_name), mismatching_enums)
+
+// These constants are not namespaced, bring them into WebCore so the ASSERT still works for them.
+namespace WebCore {
+using ::NaturalWritingDirection;
+using ::LeftToRightWritingDirection;
+using ::RightToLeftWritingDirection;
+};
 
 #if ENABLE(PAGE_VISIBILITY_API)
 COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGE_VISIBILITY_STATE_VISIBLE, PageVisibilityStateVisible);
@@ -73,6 +81,10 @@ COMPILE_ASSERT_MATCHING_ENUM(EWK_VIEW_MODE_FLOATING, Page::ViewModeFloating);
 COMPILE_ASSERT_MATCHING_ENUM(EWK_VIEW_MODE_FULLSCREEN, Page::ViewModeFullscreen);
 COMPILE_ASSERT_MATCHING_ENUM(EWK_VIEW_MODE_MAXIMIZED, Page::ViewModeMaximized);
 COMPILE_ASSERT_MATCHING_ENUM(EWK_VIEW_MODE_MINIMIZED, Page::ViewModeMinimized);
+
+COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_DEFAULT, NaturalWritingDirection);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_LEFT_TO_RIGHT, LeftToRightWritingDirection);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_RIGHT_TO_LEFT, RightToLeftWritingDirection);
 
 #if ENABLE(CONTEXT_MENUS)
 COMPILE_ASSERT_MATCHING_ENUM(EWK_CONTEXT_MENU_ITEM_TAG_NO_ACTION, ContextMenuItemTagNoAction);

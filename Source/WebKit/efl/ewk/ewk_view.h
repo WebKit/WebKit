@@ -2377,6 +2377,14 @@ EAPI Eina_Bool ewk_view_user_scalable_get(const Evas_Object *o);
 EAPI float ewk_view_device_pixel_ratio_get(const Evas_Object *o);
 
 /**
+ * Changes the text direction of the selected input node.
+ *
+ * @param o view object to set text direction.
+ * @param direction text direction.
+ */
+EAPI void ewk_view_text_direction_set(Evas_Object *o, Ewk_Text_Direction direction);
+
+/**
  * Sets the view mode.
  *
  * The view-mode media feature describes the mode in which the

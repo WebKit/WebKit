@@ -182,9 +182,6 @@ fast/viewport/viewport-125.html
 # viewport meta tag tests that failed because window.devicePixelRatio is not implemented
 fast/viewport/viewport-133.html
 
-# EFL's LayoutTestController does not implement setTextDirection
-fast/html/set-text-direction.html
-
 # Frame::findString does nothing on pages that prevent selection
 # https://bugs.webkit.org/show_bug.cgi?id=40361
 editing/text-iterator/findString-selection-disabled.html
