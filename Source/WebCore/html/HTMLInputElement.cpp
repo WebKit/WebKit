@@ -296,15 +296,26 @@ void HTMLInputElement::stepDown(int n, ExceptionCode& ec)
 
 bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
-    if (isTextField())
-        return HTMLTextFormControlElement::isFocusable();
-    return HTMLTextFormControlElement::isKeyboardFocusable(event) && m_inputType->isKeyboardFocusable();
+    return m_inputType->isKeyboardFocusable(event);
 }
 
 bool HTMLInputElement::isMouseFocusable() const
 {
-    if (isTextField())
-        return HTMLTextFormControlElement::isFocusable();
+    return m_inputType->isMouseFocusable();
+}
+
+bool HTMLInputElement::isTextFormControlFocusable() const
+{
+    return HTMLTextFormControlElement::isFocusable();
+}
+
+bool HTMLInputElement::isTextFormControlKeyboardFocusable(KeyboardEvent* event) const
+{
+    return HTMLTextFormControlElement::isKeyboardFocusable(event);
+}
+
+bool HTMLInputElement::isTextFormControlMouseFocusable() const
+{
     return HTMLTextFormControlElement::isMouseFocusable();
 }
 

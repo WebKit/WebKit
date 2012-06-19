@@ -65,6 +65,16 @@ TextFieldInputType::~TextFieldInputType()
 {
 }
 
+bool TextFieldInputType::isKeyboardFocusable(KeyboardEvent*) const
+{
+    return element()->isTextFormControlFocusable();
+}
+
+bool TextFieldInputType::isMouseFocusable() const
+{
+    return element()->isTextFormControlFocusable();
+}
+
 bool TextFieldInputType::isTextField() const
 {
     return true;

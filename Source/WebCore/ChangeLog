@@ -1,3 +1,39 @@
+2012-06-19  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Move isKeyboardFocusable and isMouseFocusable to InputType from HTMLInputElement
+        https://bugs.webkit.org/show_bug.cgi?id=89425
+
+        Reviewed by Kent Tamura.
+
+        This patch moves implementation of HTMLInpueElement::isKeyboardFocusable
+        and isMouseFocusable to InputType class to allow each implementation
+        of InputType can decide focus-ability.
+
+        No new tests. This patch doesn't change behavior.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isKeyboardFocusable): Changed to call InputType::isKeyboardFocusable.
+        (WebCore::HTMLInputElement::isMouseFocusable): Changed to call InputType::isMouseFocusable.
+        (WebCore::HTMLInputElement::isTextFormControlFocusable): Added to allow InputType can call a method in HTMLTextFormControlElement.
+        (WebCore::HTMLInputElement::isTextFormControlKeyboardFocusable): Added to allow InputType can call a method in HTMLTextFormControlElement.
+        (WebCore::HTMLInputElement::isTextFormControlMouseFocusable): Added to allow InputType can call a method in HTMLTextFormControlElement.
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/InputType.cpp:
+        (WebCore::InputType::isKeyboardFocusable): Changed to call isTextFormControlKeyboardFocusable.
+        (WebCore::InputType::isMouseFocusable): Added for default method of derived InputType classes.
+        * html/InputType.h:
+        (InputType): Chagned signature of isKeyboardFocusable.
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::isKeyboardFocusable): Changed to call isTextFormControlKeyboardFocusable which was done in HTMLInputElement.
+        * html/RadioInputType.h:
+        (RadioInputType):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::isKeyboardFocusable): Moved implementation from HTMLInputElement.
+        (WebCore::TextFieldInputType::isMouseFocusable): Moved implementation from HTMLInputElement.
+        * html/TextFieldInputType.h:
+        (TextFieldInputType):
+
 2012-06-19  Sergio Villar Senin  <svillar@igalia.com>
 
         Calling nativeImageForCurrentFrame() causes assertion failure: m_verifier.isSafeToUse()

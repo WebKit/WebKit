@@ -500,9 +500,14 @@ bool InputType::canSetStringValue() const
     return true;
 }
 
-bool InputType::isKeyboardFocusable() const
+bool InputType::isKeyboardFocusable(KeyboardEvent* event) const
 {
-    return true;
+    return element()->isTextFormControlKeyboardFocusable(event);
+}
+
+bool InputType::isMouseFocusable() const
+{
+    return element()->isTextFormControlMouseFocusable();
 }
 
 bool InputType::shouldUseInputMethod() const

@@ -241,6 +241,10 @@ public:
 
     void setValueInternal(const String&, TextFieldEventBehavior);
 
+    bool isTextFormControlFocusable() const;
+    bool isTextFormControlKeyboardFocusable(KeyboardEvent*) const;
+    bool isTextFormControlMouseFocusable() const;
+
     void cacheSelectionInResponseToSetValue(int caretOffset) { cacheSelection(caretOffset, caretOffset, SelectionHasNoDirection); }
 
 #if ENABLE(INPUT_TYPE_COLOR)
