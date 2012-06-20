@@ -377,8 +377,7 @@ WebInspector.NativeMemoryBarChart = function()
     this._memorySnapshot = null;
     this.element = document.createElement("div");
     this._table = this.element.createChild("table");
-    this._bars = {};
-    this._sizes = {};
+    this._divs = {};
     var row = this._table.insertRow();
     this._totalDiv = row.insertCell().createChild("div");
     this._totalDiv.addStyleClass("memory-bar-chart-total");
@@ -444,8 +443,8 @@ WebInspector.NativeMemoryBarChart.prototype = {
         for (var i = memoryBlock.children.length - 1; i >= 0 ; --i) {
             var child = memoryBlock.children[i];
             var name = child.name;
-            var barDiv = this._bars[name];
-            if (!barDiv) {
+            var divs = this._divs[name];
+            if (!divs) {
                 var row = this._table.insertRow();
                 var nameDiv = row.insertCell(-1).createChild("div");
                 var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(child);
@@ -457,15 +456,27 @@ WebInspector.NativeMemoryBarChart.prototype = {
                 barDiv.addStyleClass("memory-bar-chart-bar");
                 var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(child);
                 barDiv.style.backgroundColor = viewProperties._fillStyle;
-                this._bars[name] = barDiv;
+                var unusedDiv = barDiv.createChild("div");
+                unusedDiv.addStyleClass("memory-bar-chart-unused");
+                var percentDiv = barDiv.createChild("div");
+                percentDiv.addStyleClass("memory-bar-chart-percent");
                 var sizeDiv = barCell.createChild("div");
                 sizeDiv.addStyleClass("memory-bar-chart-size");
-                this._sizes[name] = sizeDiv;
+                divs = this._divs[name] = { barDiv: barDiv, unusedDiv: unusedDiv, percentDiv: percentDiv, sizeDiv: sizeDiv };
             }
-            barDiv.style.width = child.size * barLengthSizeRatio + "px";
-            barDiv.textContent = (child.size / memoryBlock.size * 100).toFixed(0) + "%";
-            var sizeDiv = this._sizes[name];
-            sizeDiv.textContent = (child.size / MB).toFixed(1) + "\u2009MB";
+            var unusedSize = 0;
+            if (!!child.children) {
+                unusedSize = child.size;
+                for (var j = 0; j < child.children.length; ++j)
+                    unusedSize -= child.children[j].size;
+            }
+            var unusedLength = unusedSize * barLengthSizeRatio;
+            var barLength = child.size * barLengthSizeRatio;
+
+            divs.barDiv.style.width = barLength + "px";
+            divs.unusedDiv.style.width = unusedLength + "px";
+            divs.percentDiv.textContent = barLength > 20 ? (child.size / memoryBlock.size * 100).toFixed(0) + "%" : "";
+            divs.sizeDiv.textContent = (child.size / MB).toFixed(1) + "\u2009MB";
         }
 
         var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(memoryBlock);

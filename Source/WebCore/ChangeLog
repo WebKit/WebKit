@@ -1,3 +1,18 @@
+2012-06-20  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: mark used/allocated JS heap on the native memory bar chart.
+        https://bugs.webkit.org/show_bug.cgi?id=89476
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeMemoryBarChart):
+        (WebInspector.NativeMemoryBarChart.prototype._updateView):
+        * inspector/front-end/nativeMemoryProfiler.css:
+        (.memory-bar-chart-bar):
+        (.memory-bar-chart-unused):
+        (.memory-bar-chart-percent):
+
 2012-06-20  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: Don't close database if pending connections are in flight

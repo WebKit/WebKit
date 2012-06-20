@@ -57,11 +57,23 @@
 
 .memory-bar-chart-bar {
     border: 1px solid #bbb;
-    border-radius: 3px;
+    border-radius: 2px;
     float: left;
     height: 20px;
-    text-align: center;
     overflow: hidden;
+    position: relative;
+}
+
+.memory-bar-chart-unused {
+    background-color: rgba(255, 255, 255, 0.5);
+    float: right;
+    height: 100%;
+}
+
+.memory-bar-chart-percent {
+    position: absolute;
+    text-align: center;
+    width: 100%;
 }
 
 .memory-bar-chart-size {
