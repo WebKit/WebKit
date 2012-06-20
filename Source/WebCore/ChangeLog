@@ -1,3 +1,24 @@
+2012-06-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Refactoring: Geolocation::startRequest() should not create the GeoNotifiers
+        https://bugs.webkit.org/show_bug.cgi?id=89533
+
+        Reviewed by David Kilzer.
+
+        It was odd to create the GeoNotifiers in Geolocation::startRequest() and having
+        assertions from the call site.
+
+        This patch move GeoNotifiers initialization to the exposed methods and pass them to
+        startRequest() as needed.
+        This will also help when adding support for dynamic permission reset and suspend/resume.
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::getCurrentPosition):
+        (WebCore::Geolocation::watchPosition):
+        (WebCore::Geolocation::startRequest):
+        * Modules/geolocation/Geolocation.h:
+        (Geolocation):
+
 2012-06-19  Cris Neckar  <cdn@chromium.org>
 
         Fixes condition where inserting a CounterNode subtree which could result in incorrect placement.

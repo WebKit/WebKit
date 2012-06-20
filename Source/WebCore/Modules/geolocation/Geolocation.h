@@ -152,7 +152,7 @@ private:
 
     void handlePendingPermissionNotifiers();
 
-    PassRefPtr<GeoNotifier> startRequest(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
+    void startRequest(GeoNotifier*);
 
     void fatalErrorOccurred(GeoNotifier*);
     void requestTimedOut(GeoNotifier*);

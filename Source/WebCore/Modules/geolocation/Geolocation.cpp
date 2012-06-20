@@ -297,8 +297,8 @@ void Geolocation::getCurrentPosition(PassRefPtr<PositionCallback> successCallbac
     if (!frame())
         return;
 
-    RefPtr<GeoNotifier> notifier = startRequest(successCallback, errorCallback, options);
-    ASSERT(notifier);
+    RefPtr<GeoNotifier> notifier = GeoNotifier::create(this, successCallback, errorCallback, options);
+    startRequest(notifier.get());
 
     m_oneShots.add(notifier);
 }
@@ -308,8 +308,8 @@ int Geolocation::watchPosition(PassRefPtr<PositionCallback> successCallback, Pas
     if (!frame())
         return 0;
 
-    RefPtr<GeoNotifier> notifier = startRequest(successCallback, errorCallback, options);
-    ASSERT(notifier);
+    RefPtr<GeoNotifier> notifier = GeoNotifier::create(this, successCallback, errorCallback, options);
+    startRequest(notifier.get());
 
     static int nextAvailableWatchId = firstAvailableWatchId;
     // In case of overflow, make sure the ID remains positive, but reuse the ID values.
@@ -319,10 +319,8 @@ int Geolocation::watchPosition(PassRefPtr<PositionCallback> successCallback, Pas
     return nextAvailableWatchId++;
 }
 
-PassRefPtr<Geolocation::GeoNotifier> Geolocation::startRequest(PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PassRefPtr<PositionOptions> options)
+void Geolocation::startRequest(GeoNotifier *notifier)
 {
-    RefPtr<GeoNotifier> notifier = GeoNotifier::create(this, successCallback, errorCallback, options);
-
     // Check whether permissions have already been denied. Note that if this is the case,
     // the permission state can not change again in the lifetime of this page.
     if (isDenied())
@@ -335,12 +333,10 @@ PassRefPtr<Geolocation::GeoNotifier> Geolocation::startRequest(PassRefPtr<Positi
         // if we don't yet have permission, request for permission before calling startUpdating()
         m_pendingForPermissionNotifiers.add(notifier);
         requestPermission();
-    } else if (startUpdating(notifier.get()))
+    } else if (startUpdating(notifier))
         notifier->startTimerIfNeeded();
     else
         notifier->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, failedToStartServiceErrorMessage));
-
-    return notifier.release();
 }
 
 void Geolocation::fatalErrorOccurred(Geolocation::GeoNotifier* notifier)
