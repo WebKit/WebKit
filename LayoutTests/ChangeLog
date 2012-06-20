@@ -1,3 +1,12 @@
+2012-06-20  Adam Barth  <abarth@webkit.org>
+
+        internals.settings.setDeviceScaleFactor doesn't work for WebKit2 and must be removed
+        https://bugs.webkit.org/show_bug.cgi?id=89274
+
+        Reviewed by James Robinson.
+
+        * fast/hidpi/device-scale-factor-paint.html:
+
 2012-06-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip new failing tests.

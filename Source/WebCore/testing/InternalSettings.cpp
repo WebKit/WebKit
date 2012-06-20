@@ -270,12 +270,6 @@ void InternalSettings::setDeviceSupportsMouse(bool enabled, ExceptionCode& ec)
     settings()->setDeviceSupportsMouse(enabled);
 }
 
-void InternalSettings::setDeviceScaleFactor(float scaleFactor, ExceptionCode& ec)
-{
-    InternalSettingsGuardForPage();
-    page()->setDeviceScaleFactor(scaleFactor);
-}
-
 typedef void (Settings::*SetFontFamilyFunction)(const AtomicString&, UScriptCode);
 static void setFontFamily(Settings* settings, const String& family, const String& script, SetFontFamilyFunction setter)
 {

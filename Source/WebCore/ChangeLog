@@ -1,3 +1,23 @@
+2012-06-20  Adam Barth  <abarth@webkit.org>
+
+        internals.settings.setDeviceScaleFactor doesn't work for WebKit2 and must be removed
+        https://bugs.webkit.org/show_bug.cgi?id=89274
+
+        Reviewed by James Robinson.
+
+        Using this window.internals API causes the apple-mac port to ASSERT in
+        WebKit2 because WebKit2 keeps a copy of this state in the UI process.
+        When a test uses this internals API, the WebCore state gets out of sync
+        with the state in the UI process.
+
+        Tests should use setBackingScaleFactor instead.
+
+        * testing/InternalSettings.cpp:
+        (WebCore):
+        * testing/InternalSettings.h:
+        (InternalSettings):
+        * testing/InternalSettings.idl:
+
 2012-06-20  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: persist timeline panel overview mode

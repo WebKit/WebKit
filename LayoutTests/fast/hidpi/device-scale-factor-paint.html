@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html>
 <script>
-if (window.internals)
-    internals.settings.setDeviceScaleFactor(2);
+    function startTest() {
+        if (window.layoutTestController) {
+            layoutTestController.waitUntilDone();
+            layoutTestController.setBackingScaleFactor(2, finishTest);
+        }
+    }
+    
+    function finishTest() {
+        setTimeout(layoutTestController.notifyDone, 0);
+    }
 </script>
-<body>
+</head>
+<body onload="startTest();">
 <div style='position: absolute; left: 5px; top: 10px; width: 50px; height: 50px; background-color: green'>
 </div>
 </body>
