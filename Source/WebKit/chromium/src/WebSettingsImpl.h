@@ -149,6 +149,7 @@ public:
     virtual void setMediaPlaybackRequiresUserGesture(bool);
     virtual bool viewportEnabled() const { return m_viewportEnabled; }
     virtual void setSyncXHRInDocumentsEnabled(bool);
+    virtual void setCookieEnabled(bool);
 
     bool showFPSCounter() const { return m_showFPSCounter; }
     bool showPlatformLayerTree() const { return m_showPlatformLayerTree; }

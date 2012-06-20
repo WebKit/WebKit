@@ -237,9 +237,6 @@ namespace WebCore {
         bool inLowQualityImageInterpolationMode() const;
         void setInLowQualityImageInterpolationMode(bool = true);
 
-        bool cookieEnabled() const { return m_cookieEnabled; }
-        void setCookieEnabled(bool enabled) { m_cookieEnabled = enabled; }
-
         float mediaVolume() const { return m_mediaVolume; }
         void setMediaVolume(float volume);
 

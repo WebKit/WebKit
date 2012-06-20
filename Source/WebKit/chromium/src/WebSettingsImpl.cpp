@@ -622,5 +622,9 @@ void WebSettingsImpl::setSyncXHRInDocumentsEnabled(bool enabled)
     m_settings->setSyncXHRInDocumentsEnabled(enabled);
 }
 
+void WebSettingsImpl::setCookieEnabled(bool enabled)
+{
+    m_settings->setCookieEnabled(enabled);
+}
 
 } // namespace WebKit

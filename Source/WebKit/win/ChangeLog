@@ -1,3 +1,14 @@
+2012-06-20  Garret Kelly  <gdk@chromium.org>
+
+        Moving cookieEnabled/setCookieEnabled from Page to Settings.
+        https://bugs.webkit.org/show_bug.cgi?id=89545
+
+        Reviewed by Adam Barth.
+
+        * WebView.cpp:
+        (WebView::setCookieEnabled):
+        (WebView::cookieEnabled):
+
 2012-06-20  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Use IntSize in RenderLayer to represent scroll offsets

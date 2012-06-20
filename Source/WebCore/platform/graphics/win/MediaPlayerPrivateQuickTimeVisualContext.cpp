@@ -263,7 +263,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::setUpCookiesForQuickTime(const St
     // download the movie into WinInet before asking QuickTime to open it.
     Document* document = m_player->mediaPlayerClient()->mediaPlayerOwningDocument();
     Frame* frame = document ? document->frame() : 0;
-    if (!frame || !frame->page() || !frame->page()->cookieEnabled())
+    if (!frame || !frame->page() || !frame->page()->settings()->cookieEnabled())
         return;
 
     KURL movieURL = KURL(KURL(), url);

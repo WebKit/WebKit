@@ -1,3 +1,14 @@
+2012-06-20  Garret Kelly  <gdk@chromium.org>
+
+        Moving cookieEnabled/setCookieEnabled from Page to Settings.
+        https://bugs.webkit.org/show_bug.cgi?id=89545
+
+        Reviewed by Adam Barth.
+
+        * WebView/WebView.mm:
+        (-[WebView _cookieEnabled]):
+        (-[WebView _setCookieEnabled:]):
+
 2012-06-19  Dan Bernstein  <mitz@apple.com>
 
         WebKit/mac part of: Paginated display API doesn’t allow setting the page progression direction

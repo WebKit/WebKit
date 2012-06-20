@@ -586,6 +586,9 @@ namespace WebCore {
         static bool shouldRespectPriorityInCSSAttributeSetters();
 #endif
 
+        void setCookieEnabled(bool enabled) { m_cookieEnabled = enabled; }
+        bool cookieEnabled() const { return m_cookieEnabled; }
+
     private:
         Settings(Page*);
 
@@ -750,6 +753,7 @@ namespace WebCore {
 
         bool m_fixedPositionCreatesStackingContext : 1;
         bool m_syncXHRInDocumentsEnabled : 1;
+        bool m_cookieEnabled : 1;
 
         bool m_windowFocusRestricted : 1;
 

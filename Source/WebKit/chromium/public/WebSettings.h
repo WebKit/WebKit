@@ -154,6 +154,7 @@ public:
     virtual void setMaxUntiledLayerSize(WebSize) = 0;
     virtual void setFixedPositionCreatesStackingContext(bool) = 0;
     virtual void setSyncXHRInDocumentsEnabled(bool) = 0;
+    virtual void setCookieEnabled(bool) = 0;
 
     virtual bool forceSoftwareCompositing() const = 0;
 
