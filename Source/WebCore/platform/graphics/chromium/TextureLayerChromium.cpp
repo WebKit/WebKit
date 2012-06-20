@@ -29,8 +29,6 @@
 
 #include "TextureLayerChromium.h"
 
-#include "Extensions3D.h"
-#include "GraphicsContext3DPrivate.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCTextureLayerImpl.h"
 #include <public/WebGraphicsContext3D.h>

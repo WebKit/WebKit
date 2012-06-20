@@ -29,7 +29,10 @@
  */
 
 #include "config.h"
+
 #include "cc/CCTimer.h"
+
+#include "cc/CCThread.h"
 
 namespace WebCore {
 

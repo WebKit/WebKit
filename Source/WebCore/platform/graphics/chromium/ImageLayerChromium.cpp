@@ -39,7 +39,6 @@
 #include "LayerTextureUpdater.h"
 #include "ManagedTexture.h"
 #include "PlatformColor.h"
-#include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHost.h"
 
 namespace WebCore {

@@ -31,8 +31,6 @@
 #include "IntRect.h"
 #include "LayerChromium.h"
 #include "RenderSurfaceChromium.h"
-#include "cc/CCActiveAnimation.h"
-#include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerSorter.h"

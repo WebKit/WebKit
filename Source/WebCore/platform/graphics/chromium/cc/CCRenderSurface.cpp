@@ -30,7 +30,6 @@
 #include "cc/CCRenderSurface.h"
 
 #include "GraphicsContext3D.h"
-#include "LayerChromium.h"
 #include "LayerRendererChromium.h"
 #include "ManagedTexture.h"
 #include "TextStream.h"

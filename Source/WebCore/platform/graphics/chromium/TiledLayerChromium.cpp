@@ -30,13 +30,13 @@
 #include "TiledLayerChromium.h"
 
 #include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
 #include "ManagedTexture.h"
 #include "Region.h"
 #include "TextStream.h"
-#include "TraceEvent.h"
 
 #include "cc/CCLayerImpl.h"
+#include "cc/CCLayerTreeHost.h"
+#include "cc/CCOverdrawMetrics.h"
 #include "cc/CCTextureUpdater.h"
 #include "cc/CCTiledLayerImpl.h"
 

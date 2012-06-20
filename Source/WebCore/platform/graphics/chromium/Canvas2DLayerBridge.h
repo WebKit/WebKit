@@ -26,6 +26,7 @@
 #ifndef Canvas2DLayerBridge_h
 #define Canvas2DLayerBridge_h
 
+#include "GraphicsContext3D.h"
 #include "ImageBuffer.h" // For DeferralMode enum.
 #include "IntSize.h"
 #include <public/WebExternalTextureLayer.h>

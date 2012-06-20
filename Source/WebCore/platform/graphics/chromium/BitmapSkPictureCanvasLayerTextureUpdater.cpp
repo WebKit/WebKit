@@ -31,6 +31,7 @@
 #include "BitmapSkPictureCanvasLayerTextureUpdater.h"
 
 #include "LayerPainterChromium.h"
+#include "PlatformColor.h"
 #include "SkCanvas.h"
 #include "SkDevice.h"
 

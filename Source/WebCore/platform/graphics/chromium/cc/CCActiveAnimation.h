@@ -25,13 +25,13 @@
 #ifndef CCActiveAnimation_h
 #define CCActiveAnimation_h
 
-#include "cc/CCAnimationCurve.h"
-
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+class CCAnimationCurve;
 
 // A CCActiveAnimation, contains all the state required to play a CCAnimationCurve.
 // Specifically, the affected property, the run state (paused, finished, etc.),

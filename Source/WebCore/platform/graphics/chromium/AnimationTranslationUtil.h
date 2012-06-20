@@ -33,12 +33,12 @@
 
 #include <wtf/PassOwnPtr.h>
 
+namespace WebCore {
+
 class KeyframeValueList;
 class Animation;
 class FloatSize;
 class CCActiveAnimation;
-
-namespace WebCore {
 
 // Translates WebCore animation data into a CCActiveAnimation. If we are unable
 // to perform this translation, we return nullptr. This can happen if

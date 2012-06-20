@@ -30,7 +30,6 @@
 #include "cc/CCCheckerboardDrawQuad.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCIOSurfaceDrawQuad.h"
-#include "cc/CCLayerImpl.h"
 #include "cc/CCRenderPassDrawQuad.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCStreamVideoDrawQuad.h"

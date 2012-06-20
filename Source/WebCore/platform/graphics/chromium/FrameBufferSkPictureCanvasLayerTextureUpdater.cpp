@@ -33,6 +33,7 @@
 #include "LayerPainterChromium.h"
 #include "SkCanvas.h"
 #include "SkGpuDevice.h"
+#include "cc/CCGraphicsContext.h"
 
 namespace WebCore {
 

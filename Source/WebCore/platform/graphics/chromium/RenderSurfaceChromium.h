@@ -31,9 +31,6 @@
 
 #include "FloatRect.h"
 #include "IntRect.h"
-#include "ProgramBinding.h"
-#include "ShaderChromium.h"
-#include "TextureManager.h"
 #include <public/WebFilterOperations.h>
 #include <public/WebTransformationMatrix.h>
 #include <wtf/Noncopyable.h>

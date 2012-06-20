@@ -28,9 +28,8 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "CCLayerImpl.h"
-#include "ManagedTexture.h"
 #include "ScrollbarThemeClient.h"
+#include "cc/CCLayerImpl.h"
 
 namespace WebCore {
 

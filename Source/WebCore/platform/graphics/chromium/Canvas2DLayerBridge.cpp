@@ -33,8 +33,8 @@
 #include "LayerRendererChromium.h" // For GLC() macro.
 #include "SkCanvas.h"
 #include "SkDeferredCanvas.h"
+#include "TraceEvent.h"
 #include "cc/CCProxy.h"
-#include "cc/CCTextureUpdater.h"
 #include <public/WebGraphicsContext3D.h>
 
 using WebKit::WebExternalTextureLayer;

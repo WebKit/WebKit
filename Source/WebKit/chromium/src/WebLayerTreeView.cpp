@@ -27,7 +27,9 @@
 #include "platform/WebLayerTreeView.h"
 
 #include "GraphicsContext3DPrivate.h"
+#include "LayerChromium.h"
 #include "WebLayerTreeViewImpl.h"
+#include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerTreeHost.h"
 #include "platform/WebLayer.h"
 #include "platform/WebPoint.h"

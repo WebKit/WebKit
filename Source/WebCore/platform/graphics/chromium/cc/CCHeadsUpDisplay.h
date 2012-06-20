@@ -27,6 +27,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "ManagedTexture.h"
 #include "cc/CCFontAtlas.h"
 
 namespace WebCore {
@@ -35,7 +36,7 @@ class CCDebugRectHistory;
 class CCFrameRateCounter;
 class CCLayerTreeHostImpl;
 class GraphicsContext;
-class ManagedTexture;
+
 struct CCLayerTreeSettings;
 
 // Class that handles drawing of composited render layers using GL.
