@@ -1,3 +1,11 @@
+2012-06-20  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Unreviewed build fix
+
+        The platform plugin example uses QGridLayout and thus needs QT += widgets
+
+        * examples/platformplugin/platformplugin.pro:
+
 2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Buildfix for newer Qt5, use QPointer instead of the deprecated QWeakPointer.
