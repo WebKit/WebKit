@@ -37,7 +37,7 @@
 				<key>URL</key>
 				<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>
 				<key>expectedContentLength</key>
-				<integer>81</integer>
+				<integer>61</integer>
 			</dict>
 			<key>WebResourceURL</key>
 			<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>

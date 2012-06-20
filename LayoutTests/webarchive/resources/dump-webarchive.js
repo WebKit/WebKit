@@ -1,2 +1,2 @@
-if (window.layoutTestController)
-    layoutTestController.dumpDOMAsWebArchive();
+if (window.testRunner)
+    testRunner.dumpDOMAsWebArchive();
