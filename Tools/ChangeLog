@@ -1,5 +1,28 @@
 2012-06-20  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: fix unit tests for ensuring svn revision is correct
+        https://bugs.webkit.org/show_bug.cgi?id=89498
+
+        Reviewed by Eric Seidel.
+
+        Reviewed by Eric Seidel.
+
+        Fix the unit tests for testing that we are embedding the SVN
+        revision in the results json for NRWT properly; this was broken
+        in r120646 but because the MockHost worked differently than the
+        real one (by always initializing the MockSCM object) we didn't
+        notice. Unfortunately, just changing the default breaks all
+        sorts of unit tests ...
+
+        * Scripts/webkitpy/common/host_mock.py:
+        (MockHost.__init__):
+        (MockHost._initialize_scm):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ResultSummaryTest.test_no_svn_revision):
+        (ResultSummaryTest.test_svn_revision):
+
+2012-06-20  Dirk Pranke  <dpranke@chromium.org>
+
         new-run-webkit-tests appends "/Debug" or "/Release" to $WEBKITOUTPUTDIR
         https://bugs.webkit.org/show_bug.cgi?id=69360
 
