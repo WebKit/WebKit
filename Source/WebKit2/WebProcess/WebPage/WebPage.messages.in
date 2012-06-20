@@ -220,6 +220,11 @@ messages -> WebPage {
     SetCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel)
     SetCanRunModal(bool canRunModal)
 
+    # Web Intents
+#if ENABLE(WEB_INTENTS)
+    DeliverIntentToFrame(uint64_t frameID, WebKit::IntentData intentData);
+#endif
+
 #if PLATFORM(QT)
     SetComposition(WTF::String text, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
     ConfirmComposition(WTF::String text, int64_t selectionStart, int64_t selectionLength)

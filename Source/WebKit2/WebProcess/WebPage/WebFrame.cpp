@@ -59,6 +59,12 @@
 #include <WebCore/TextResourceDecoder.h>
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(WEB_INTENTS)
+#include "IntentData.h"
+#include <WebCore/DOMWindowIntents.h>
+#include <WebCore/DeliveredIntent.h>
+#endif
+
 #if PLATFORM(MAC) || PLATFORM(WIN)
 #include <WebCore/LegacyWebArchive.h>
 #endif
@@ -235,6 +241,19 @@ void WebFrame::convertHandleToDownload(ResourceHandle* handle, const ResourceReq
     DownloadManager::shared().convertHandleToDownload(m_policyDownloadID, page(), handle, request, response);
     m_policyDownloadID = 0;
 }
+
+#if ENABLE(WEB_INTENTS)
+void WebFrame::deliverIntent(const IntentData& intentData)
+{
+    OwnPtr<DeliveredIntentClient> dummyClient;
+    OwnPtr<MessagePortArray> dummyPorts;
+    Vector<uint8_t> dataCopy = intentData.data;
+    RefPtr<DeliveredIntent> deliveredIntent = DeliveredIntent::create(m_coreFrame, dummyClient.release(), intentData.action, intentData.type,
+                                                                      SerializedScriptValue::adopt(dataCopy), dummyPorts.release(),
+                                                                      intentData.extras);
+    WebCore::DOMWindowIntents::from(m_coreFrame->domWindow())->deliver(deliveredIntent.release());
+}
+#endif
 
 String WebFrame::source() const 
 {

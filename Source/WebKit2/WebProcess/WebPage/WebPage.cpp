@@ -124,6 +124,10 @@
 #endif
 #endif
 
+#if ENABLE(WEB_INTENTS)
+#include "IntentData.h"
+#endif
+
 #if PLATFORM(MAC)
 #include "BuiltInPDFView.h"
 #endif
@@ -1913,6 +1917,17 @@ void WebPage::forceRepaint(uint64_t callbackID)
     forceRepaintWithoutCallback();
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
+
+#if ENABLE(WEB_INTENTS)
+void WebPage::deliverIntentToFrame(uint64_t frameID, const IntentData& intentData)
+{
+    WebFrame* frame = WebProcess::shared().webFrame(frameID);
+    if (!frame)
+        return;
+
+    frame->deliverIntent(intentData);
+}
+#endif
 
 void WebPage::preferencesDidChange(const WebPreferencesStore& store)
 {

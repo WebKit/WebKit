@@ -37,6 +37,10 @@
 #include <stdio.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(WEB_INTENTS)
+#include "WebIntentData.h"
+#endif
+
 using namespace WebCore;
 using namespace std;
 
@@ -94,6 +98,19 @@ void WebFrameProxy::stopLoading() const
 
     m_page->process()->send(Messages::WebPage::StopLoadingFrame(m_frameID), m_page->pageID());
 }
+
+#if ENABLE(WEB_INTENTS)
+void WebFrameProxy::deliverIntent(WebIntentData* webIntentData)
+{
+    if (!m_page)
+        return;
+
+    if (!m_page->isValid())
+        return;
+
+    m_page->process()->send(Messages::WebPage::DeliverIntentToFrame(m_frameID, webIntentData->store()), m_page->pageID());
+}
+#endif
     
 bool WebFrameProxy::canProvideSource() const
 {

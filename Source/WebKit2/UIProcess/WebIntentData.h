@@ -52,6 +52,7 @@ public:
     PassRefPtr<WebSerializedScriptValue> data() const;
     const HashMap<String, String>& extras() const { return m_store.extras; }
     const Vector<WebCore::KURL>& suggestions() const { return m_store.suggestions; }
+    const IntentData& store() const { return m_store; }
 
 private:
     WebIntentData(const IntentData&);

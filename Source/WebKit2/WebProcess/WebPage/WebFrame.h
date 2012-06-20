@@ -52,6 +52,10 @@ class InjectedBundleRangeHandle;
 class InjectedBundleScriptWorld;
 class WebPage;
 
+#if ENABLE(WEB_INTENTS)
+struct IntentData;
+#endif
+
 class WebFrame : public APIObject {
 public:
     static const Type APIType = TypeBundleFrame;
@@ -74,6 +78,10 @@ public:
 
     void startDownload(const WebCore::ResourceRequest&);
     void convertHandleToDownload(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+
+#if ENABLE(WEB_INTENTS)
+    void deliverIntent(const IntentData&);
+#endif
 
     String source() const;
     String contentsAsString() const;
