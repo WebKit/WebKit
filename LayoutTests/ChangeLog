@@ -1,3 +1,10 @@
+2012-06-20  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed GTK gardening. Removed some tests from TestExpectations
+        as they were passing in the tree bots.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-20  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed rebaselining.

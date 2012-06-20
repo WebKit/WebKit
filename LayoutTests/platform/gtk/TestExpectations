@@ -148,7 +148,6 @@ BUGWKGTK SKIP : fast/events/constructors/speech-recognition-event-constructor.ht
 
 // Web Timing issues.
 BUGWKGTK : fast/dom/Window/window-properties-performance.html = TEXT
-BUGWKGTK : http/tests/misc/webtiming-origins.html = TEXT
 
 // FileSystem API is not supported.
 BUGWKGTK SKIP : fast/filesystem = TEXT
@@ -309,6 +308,8 @@ BUGWK85532 : fast/sub-pixel/float-wrap-with-subpixel-top.html = PASS
 BUGWK85532 : fast/sub-pixel/inline-block-with-margin.html = PASS
 BUGWK85532 : fast/sub-pixel/file-upload-control-at-fractional-offset.html = PASS
 BUGWK85532 : fast/sub-pixel/column-clipping.html = PASS
+BUGWK85532 : fast/sub-pixel/table-cells-with-padding-do-not-wrap.html = PASS
+BUGWK85532 : fast/sub-pixel/table-rows-have-stable-height.html = PASS
 
 // Mediastream implementation is not complete yet.
 BUGWK79203 SKIP : fast/mediastream = TEXT
@@ -1099,7 +1100,6 @@ BUGWK83909 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
 BUGWK83912 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
 BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 
-BUGWK86971 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = TEXT
 BUGWK86971 : svg/custom/non-scaling-stroke.svg = TEXT
 
 BUGWK84678 : fast/spatial-navigation/snav-container-white-space.html = TEXT
@@ -1213,9 +1213,6 @@ BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS TEXT
 BUGWK88138 : http/tests/media/video-buffered.html = TEXT
 
 BUGWK89205 : editing/spelling/grammar-edit-word.html = TEXT
-
-BUGWK54637 : media/video-display-toggle.html = TEXT
-BUGWK54637 : media/controls-after-reload.html = TEXT
 
 BUGWK89084 : fast/forms/text-input-event.html = PASS TEXT
 
