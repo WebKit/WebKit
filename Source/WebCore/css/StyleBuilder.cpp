@@ -331,16 +331,16 @@ public:
 };
 
 enum LengthAuto { AutoDisabled = 0, AutoEnabled };
+enum LengthLegacyIntrinsic { LegacyIntrinsicDisabled = 0, LegacyIntrinsicEnabled };
 enum LengthIntrinsic { IntrinsicDisabled = 0, IntrinsicEnabled };
-enum LengthMinIntrinsic { MinIntrinsicDisabled = 0, MinIntrinsicEnabled };
 enum LengthNone { NoneDisabled = 0, NoneEnabled };
 enum LengthUndefined { UndefinedDisabled = 0, UndefinedEnabled };
 template <Length (RenderStyle::*getterFunction)() const,
           void (RenderStyle::*setterFunction)(Length),
           Length (*initialFunction)(),
           LengthAuto autoEnabled = AutoDisabled,
+          LengthLegacyIntrinsic legacyIntrinsicEnabled = LegacyIntrinsicDisabled,
           LengthIntrinsic intrinsicEnabled = IntrinsicDisabled,
-          LengthMinIntrinsic minIntrinsicEnabled = MinIntrinsicDisabled,
           LengthNone noneEnabled = NoneDisabled,
           LengthUndefined noneUndefined = UndefinedDisabled>
 class ApplyPropertyLength {
@@ -352,29 +352,41 @@ public:
             return;
 
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-        if (noneEnabled && primitiveValue->getIdent() == CSSValueNone)
+        if (noneEnabled && primitiveValue->getIdent() == CSSValueNone) {
             if (noneUndefined)
                 setValue(styleResolver->style(), Length(Undefined));
             else
                 setValue(styleResolver->style(), Length());
-        else if (intrinsicEnabled && primitiveValue->getIdent() == CSSValueIntrinsic)
-            setValue(styleResolver->style(), Length(Intrinsic));
-        else if (minIntrinsicEnabled && primitiveValue->getIdent() == CSSValueMinIntrinsic)
-            setValue(styleResolver->style(), Length(MinIntrinsic));
-        else if (autoEnabled && primitiveValue->getIdent() == CSSValueAuto)
-            setValue(styleResolver->style(), Length());
-        else {
-            if (primitiveValue->isLength()) {
-                Length length = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
-                length.setQuirk(primitiveValue->isQuirkValue());
-                setValue(styleResolver->style(), length);
-            } else if (primitiveValue->isPercentage())
-                setValue(styleResolver->style(), Length(primitiveValue->getDoubleValue(), Percent));
-            else if (primitiveValue->isCalculatedPercentageWithLength())
-                setValue(styleResolver->style(), Length(primitiveValue->cssCalcValue()->toCalcValue(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom())));
-            else if (primitiveValue->isViewportPercentageLength())
-                setValue(styleResolver->style(), primitiveValue->viewportPercentageLength());
         }
+        if (legacyIntrinsicEnabled) {
+            if (primitiveValue->getIdent() == CSSValueIntrinsic)
+                setValue(styleResolver->style(), Length(Intrinsic));
+            else if (primitiveValue->getIdent() == CSSValueMinIntrinsic)
+                setValue(styleResolver->style(), Length(MinIntrinsic));
+        }
+        if (intrinsicEnabled) {
+            if (primitiveValue->getIdent() == CSSValueWebkitMinContent)
+                setValue(styleResolver->style(), Length(MinContent));
+            else if (primitiveValue->getIdent() == CSSValueWebkitMaxContent)
+                setValue(styleResolver->style(), Length(MaxContent));
+            else if (primitiveValue->getIdent() == CSSValueWebkitFillAvailable)
+                setValue(styleResolver->style(), Length(FillAvailable));
+            else if (primitiveValue->getIdent() == CSSValueWebkitFitContent)
+                setValue(styleResolver->style(), Length(FitContent));
+        }
+
+        if (autoEnabled && primitiveValue->getIdent() == CSSValueAuto)
+            setValue(styleResolver->style(), Length());
+        else if (primitiveValue->isLength()) {
+            Length length = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
+            length.setQuirk(primitiveValue->isQuirkValue());
+            setValue(styleResolver->style(), length);
+        } else if (primitiveValue->isPercentage())
+            setValue(styleResolver->style(), Length(primitiveValue->getDoubleValue(), Percent));
+        else if (primitiveValue->isCalculatedPercentageWithLength())
+            setValue(styleResolver->style(), Length(primitiveValue->cssCalcValue()->toCalcValue(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom())));
+        else if (primitiveValue->isViewportPercentageLength())
+            setValue(styleResolver->style(), primitiveValue->viewportPercentageLength());
     }
 
     static PropertyHandler createHandler()
@@ -1884,7 +1896,7 @@ StyleBuilder::StyleBuilder()
     setPropertyHandler(CSSPropertyFontStyle, ApplyPropertyFont<FontItalic, &FontDescription::italic, &FontDescription::setItalic, FontItalicOff>::createHandler());
     setPropertyHandler(CSSPropertyFontVariant, ApplyPropertyFont<FontSmallCaps, &FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff>::createHandler());
     setPropertyHandler(CSSPropertyFontWeight, ApplyPropertyFontWeight::createHandler());
-    setPropertyHandler(CSSPropertyHeight, ApplyPropertyLength<&RenderStyle::height, &RenderStyle::setHeight, &RenderStyle::initialSize, AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneDisabled, UndefinedDisabled>::createHandler());
+    setPropertyHandler(CSSPropertyHeight, ApplyPropertyLength<&RenderStyle::height, &RenderStyle::setHeight, &RenderStyle::initialSize, AutoEnabled, LegacyIntrinsicEnabled, IntrinsicDisabled, NoneDisabled, UndefinedDisabled>::createHandler());
     setPropertyHandler(CSSPropertyImageRendering, ApplyPropertyDefault<EImageRendering, &RenderStyle::imageRendering, EImageRendering, &RenderStyle::setImageRendering, EImageRendering, &RenderStyle::initialImageRendering>::createHandler());
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     setPropertyHandler(CSSPropertyImageResolution, ApplyPropertyImageResolution::createHandler());
@@ -1901,10 +1913,10 @@ StyleBuilder::StyleBuilder()
     setPropertyHandler(CSSPropertyMarginLeft, ApplyPropertyLength<&RenderStyle::marginLeft, &RenderStyle::setMarginLeft, &RenderStyle::initialMargin, AutoEnabled>::createHandler());
     setPropertyHandler(CSSPropertyMarginRight, ApplyPropertyLength<&RenderStyle::marginRight, &RenderStyle::setMarginRight, &RenderStyle::initialMargin, AutoEnabled>::createHandler());
     setPropertyHandler(CSSPropertyMarginTop, ApplyPropertyLength<&RenderStyle::marginTop, &RenderStyle::setMarginTop, &RenderStyle::initialMargin, AutoEnabled>::createHandler());
-    setPropertyHandler(CSSPropertyMaxHeight, ApplyPropertyLength<&RenderStyle::maxHeight, &RenderStyle::setMaxHeight, &RenderStyle::initialMaxSize, AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneEnabled, UndefinedEnabled>::createHandler());
-    setPropertyHandler(CSSPropertyMaxWidth, ApplyPropertyLength<&RenderStyle::maxWidth, &RenderStyle::setMaxWidth, &RenderStyle::initialMaxSize, AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneEnabled, UndefinedEnabled>::createHandler());
-    setPropertyHandler(CSSPropertyMinHeight, ApplyPropertyLength<&RenderStyle::minHeight, &RenderStyle::setMinHeight, &RenderStyle::initialMinSize, AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>::createHandler());
-    setPropertyHandler(CSSPropertyMinWidth, ApplyPropertyLength<&RenderStyle::minWidth, &RenderStyle::setMinWidth, &RenderStyle::initialMinSize, AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled>::createHandler());
+    setPropertyHandler(CSSPropertyMaxHeight, ApplyPropertyLength<&RenderStyle::maxHeight, &RenderStyle::setMaxHeight, &RenderStyle::initialMaxSize, AutoEnabled, LegacyIntrinsicEnabled, IntrinsicDisabled, NoneEnabled, UndefinedEnabled>::createHandler());
+    setPropertyHandler(CSSPropertyMaxWidth, ApplyPropertyLength<&RenderStyle::maxWidth, &RenderStyle::setMaxWidth, &RenderStyle::initialMaxSize, AutoEnabled, LegacyIntrinsicEnabled, IntrinsicEnabled, NoneEnabled, UndefinedEnabled>::createHandler());
+    setPropertyHandler(CSSPropertyMinHeight, ApplyPropertyLength<&RenderStyle::minHeight, &RenderStyle::setMinHeight, &RenderStyle::initialMinSize, AutoEnabled, LegacyIntrinsicEnabled, IntrinsicDisabled>::createHandler());
+    setPropertyHandler(CSSPropertyMinWidth, ApplyPropertyLength<&RenderStyle::minWidth, &RenderStyle::setMinWidth, &RenderStyle::initialMinSize, AutoEnabled, LegacyIntrinsicEnabled, IntrinsicEnabled>::createHandler());
     setPropertyHandler(CSSPropertyOrphans, ApplyPropertyDefault<short, &RenderStyle::orphans, short, &RenderStyle::setOrphans, short, &RenderStyle::initialOrphans>::createHandler());
     setPropertyHandler(CSSPropertyOutline, ApplyPropertyExpanding<SuppressValue, CSSPropertyOutlineWidth, CSSPropertyOutlineColor, CSSPropertyOutlineStyle>::createHandler());
     setPropertyHandler(CSSPropertyOutlineColor, ApplyPropertyColor<NoInheritFromParent, &RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::setVisitedLinkOutlineColor, &RenderStyle::color>::createHandler());
@@ -2078,7 +2090,7 @@ StyleBuilder::StyleBuilder()
 #endif
     setPropertyHandler(CSSPropertyWhiteSpace, ApplyPropertyDefault<EWhiteSpace, &RenderStyle::whiteSpace, EWhiteSpace, &RenderStyle::setWhiteSpace, EWhiteSpace, &RenderStyle::initialWhiteSpace>::createHandler());
     setPropertyHandler(CSSPropertyWidows, ApplyPropertyDefault<short, &RenderStyle::widows, short, &RenderStyle::setWidows, short, &RenderStyle::initialWidows>::createHandler());
-    setPropertyHandler(CSSPropertyWidth, ApplyPropertyLength<&RenderStyle::width, &RenderStyle::setWidth, &RenderStyle::initialSize, AutoEnabled, IntrinsicEnabled, MinIntrinsicEnabled, NoneDisabled, UndefinedDisabled>::createHandler());
+    setPropertyHandler(CSSPropertyWidth, ApplyPropertyLength<&RenderStyle::width, &RenderStyle::setWidth, &RenderStyle::initialSize, AutoEnabled, LegacyIntrinsicEnabled, IntrinsicEnabled, NoneDisabled, UndefinedDisabled>::createHandler());
     setPropertyHandler(CSSPropertyWordBreak, ApplyPropertyDefault<EWordBreak, &RenderStyle::wordBreak, EWordBreak, &RenderStyle::setWordBreak, EWordBreak, &RenderStyle::initialWordBreak>::createHandler());
     setPropertyHandler(CSSPropertyWordSpacing, ApplyPropertyComputeLength<int, &RenderStyle::wordSpacing, &RenderStyle::setWordSpacing, &RenderStyle::initialLetterWordSpacing, NormalEnabled, ThicknessDisabled, SVGZoomEnabled>::createHandler());
     setPropertyHandler(CSSPropertyWordWrap, ApplyPropertyDefault<EWordWrap, &RenderStyle::wordWrap, EWordWrap, &RenderStyle::setWordWrap, EWordWrap, &RenderStyle::initialWordWrap>::createHandler());

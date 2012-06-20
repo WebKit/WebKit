@@ -1,3 +1,59 @@
+2012-06-20  Elliott Sprehn  <esprehn@gmail.com>
+
+        Add support for fit-content etc
+        https://bugs.webkit.org/show_bug.cgi?id=38919
+
+        Reviewed by Tony Chang.
+
+        Implement the CSS3 intrinsic dimension keywords for width properties and
+        add most of the plumbing for height properties but don't expose them
+        yet since this patch doesn't enforce them (matching current Gecko).
+        http://dev.w3.org/csswg/css3-writing-modes/#intrinsic-sizing
+
+        This patch implements -webkit-min-content, -webkit-max-content,
+        -webkit-fill-available and -webkit-fit-content for all width
+        properties.
+
+        Tests: fast/css-intrinsic-dimensions/height-dynamic-property-value.html
+               fast/css-intrinsic-dimensions/height-property-value.html
+               fast/css-intrinsic-dimensions/max-width-constrained.html
+               fast/css-intrinsic-dimensions/max-width-unconstrained.html
+               fast/css-intrinsic-dimensions/min-width.html
+               fast/css-intrinsic-dimensions/width-avoid-floats.html
+               fast/css-intrinsic-dimensions/width-dynamic-property-value.html
+               fast/css-intrinsic-dimensions/width-property-value.html
+               fast/css-intrinsic-dimensions/width.html
+
+        * css/CSSParser.cpp: Add parser support for the new keywords.
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore):
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * css/LengthFunctions.cpp: Implement conversion functions.
+        (WebCore::minimumValueForLength):
+        (WebCore::valueForLength):
+        (WebCore::floatValueForLength):
+        * css/StyleBuilder.cpp:
+        (WebCore::ApplyPropertyLength::applyValue):
+        (WebCore::StyleBuilder::StyleBuilder): Clean up the template for old
+           intrinsic values and add new values. Rename old intrinsic to
+           LegacyIntrinsic and add support for the new dimension keywords as
+           Intrinsic.
+        * platform/Length.h:
+        (WebCore::Length::isIntrinsicOrAuto):
+        (WebCore::Length::isLegacyIntrinsic): New method to check for old
+            min-intrinsic and intrinsic keywords.
+        (WebCore::Length::isIntrinsic): New method to check for CSS3 intrinsic
+            dimension keywords like min-content.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalWidthInRegionUsing): Expose the max
+           and min logical preferred widths as the new keywords.
+        (WebCore::RenderBox::sizesLogicalWidthToFitContent): Renamed method to
+           be more consistent with the new MinContent naming in the spec.
+        * rendering/RenderBox.h:
+        (RenderBox):
+
 2012-06-20  Christopher Cameron  <ccameron@chromium.org>
 
         [chromium] webkit-backface-visibility doesn't work with video

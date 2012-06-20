@@ -1,0 +1,37 @@
+<!doctype html>
+<!--
+    Tests that the height keywords are not respected by the parser yet.
+-->
+<script src="../js/resources/js-test-pre.js"></script>
+
+<div style="height: -webkit-min-content; min-height: -webkit-min-content; max-height: -webkit-min-content;"></div>
+<div style="height: -webkit-max-content; min-height: -webkit-max-content; max-height: -webkit-max-content;"></div>
+<div style="height: -webkit-fill-available; min-height: -webkit-fill-available; max-height: -webkit-fill-available;"></div>
+<div style="height: -webkit-fit-content; min-height: -webkit-fit-content; max-height: -webkit-fit-content;"></div>
+
+<script>
+    description('Tests that the height keywords are not exposed yet.');
+
+    var divs = document.querySelectorAll('div');
+    for (var i = 0; i < divs.length; ++i) {
+        shouldBeEmptyString('divs[i].style.height');
+        shouldBeEmptyString('divs[i].style.minHeight');
+        shouldBeEmptyString('divs[i].style.maxHeight');
+    }
+
+    var PREFIX = '-webkit-';
+    var KEYWORDS = ['min-content', 'max-content', 'fill-available',  'fit-content'];
+    var div;
+
+    KEYWORDS.forEach(function(keyword) {
+        div = document.createElement('div');
+        div.style.height = PREFIX + keyword;
+        div.style.minHeight = PREFIX + keyword;
+        div.style.maxHeight = PREFIX + keyword;
+        shouldBeEmptyString('div.style.height');
+        shouldBeEmptyString('div.style.minHeight');
+        shouldBeEmptyString('div.style.maxHeight');
+    });
+</script>
+
+<script src="../js/resources/js-test-post.js"></script>

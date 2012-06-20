@@ -571,6 +571,14 @@ intrinsic
 min-intrinsic
 
 //
+// CSS3 intrinsic dimension keywords
+//
+-webkit-min-content
+-webkit-max-content
+-webkit-fill-available
+-webkit-fit-content
+
+//
 // CSS_PROP_TEXT_OVERFLOW
 //
 clip

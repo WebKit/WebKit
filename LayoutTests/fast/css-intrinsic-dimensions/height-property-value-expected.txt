@@ -1,0 +1,36 @@
+Tests that the height keywords are not exposed yet.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS divs[i].style.height is ""
+PASS divs[i].style.minHeight is ""
+PASS divs[i].style.maxHeight is ""
+PASS divs[i].style.height is ""
+PASS divs[i].style.minHeight is ""
+PASS divs[i].style.maxHeight is ""
+PASS divs[i].style.height is ""
+PASS divs[i].style.minHeight is ""
+PASS divs[i].style.maxHeight is ""
+PASS divs[i].style.height is ""
+PASS divs[i].style.minHeight is ""
+PASS divs[i].style.maxHeight is ""
+PASS divs[i].style.height is ""
+PASS divs[i].style.minHeight is ""
+PASS divs[i].style.maxHeight is ""
+PASS div.style.height is ""
+PASS div.style.minHeight is ""
+PASS div.style.maxHeight is ""
+PASS div.style.height is ""
+PASS div.style.minHeight is ""
+PASS div.style.maxHeight is ""
+PASS div.style.height is ""
+PASS div.style.minHeight is ""
+PASS div.style.maxHeight is ""
+PASS div.style.height is ""
+PASS div.style.minHeight is ""
+PASS div.style.maxHeight is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

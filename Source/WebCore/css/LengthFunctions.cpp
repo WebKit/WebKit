@@ -65,11 +65,15 @@ LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue, 
             return static_cast<LayoutUnit>(std::min(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
         }
         return ZERO_LAYOUT_UNIT;
+    case FillAvailable:
     case Auto:
         return ZERO_LAYOUT_UNIT;
     case Relative:
     case Intrinsic:
     case MinIntrinsic:
+    case MinContent:
+    case MaxContent:
+    case FitContent:
     case Undefined:
         ASSERT_NOT_REACHED();
         return ZERO_LAYOUT_UNIT;
@@ -88,18 +92,15 @@ LayoutUnit valueForLength(const Length& length, LayoutUnit maximumValue, RenderV
     case ViewportPercentageHeight:
     case ViewportPercentageMin:
         return minimumValueForLength(length, maximumValue, renderView, roundPercentages);
+    case FillAvailable:
     case Auto:
         return maximumValue;
-    // multiple assertions are used below to provide more useful debug output.
     case Relative:
-        ASSERT_NOT_REACHED();
-        return ZERO_LAYOUT_UNIT;
     case Intrinsic:
-        ASSERT_NOT_REACHED();
-        return ZERO_LAYOUT_UNIT;
     case MinIntrinsic:
-        ASSERT_NOT_REACHED();
-        return ZERO_LAYOUT_UNIT;
+    case MinContent:
+    case MaxContent:
+    case FitContent:
     case Undefined:
         ASSERT_NOT_REACHED();
         return ZERO_LAYOUT_UNIT;
@@ -116,6 +117,7 @@ float floatValueForLength(const Length& length, LayoutUnit maximumValue, RenderV
         return length.getFloatValue();
     case Percent:
         return static_cast<float>(maximumValue * length.percent() / 100.0f);
+    case FillAvailable:
     case Auto:
         return static_cast<float>(maximumValue);
     case Calculated:
@@ -137,6 +139,9 @@ float floatValueForLength(const Length& length, LayoutUnit maximumValue, RenderV
     case Relative:
     case Intrinsic:
     case MinIntrinsic:
+    case MinContent:
+    case MaxContent:
+    case FitContent:
     case Undefined:
         ASSERT_NOT_REACHED();
         return 0;
@@ -152,6 +157,7 @@ float floatValueForLength(const Length& length, float maximumValue, RenderView* 
         return length.getFloatValue();
     case Percent:
         return static_cast<float>(maximumValue * length.percent() / 100.0f);
+    case FillAvailable:
     case Auto:
         return static_cast<float>(maximumValue);
     case Calculated:
@@ -173,6 +179,9 @@ float floatValueForLength(const Length& length, float maximumValue, RenderView* 
     case Relative:
     case Intrinsic:
     case MinIntrinsic:
+    case MinContent:
+    case MaxContent:
+    case FitContent:
     case Undefined:
         ASSERT_NOT_REACHED();
         return 0;

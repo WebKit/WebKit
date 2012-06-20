@@ -1889,18 +1889,29 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         validPrimitive = (!id && validUnit(value, FLength | FPercent | FNonNeg));
         break;
 
-    case CSSPropertyMaxHeight:           // <length> | <percentage> | none | inherit
-    case CSSPropertyMaxWidth:            // <length> | <percentage> | none | inherit
+    case CSSPropertyMaxWidth: // <length> | <percentage> | none | inherit
     case CSSPropertyWebkitMaxLogicalWidth:
+        if (id == CSSValueNone) {
+            validPrimitive = true;
+            break;
+        }
+        /* nobreak */
+    case CSSPropertyMinWidth: // <length> | <percentage> | inherit
+    case CSSPropertyWebkitMinLogicalWidth:
+        if (id == CSSValueIntrinsic || id == CSSValueMinIntrinsic || id == CSSValueWebkitMinContent || id == CSSValueWebkitMaxContent || id == CSSValueWebkitFillAvailable || id == CSSValueWebkitFitContent)
+            validPrimitive = true;
+        else
+            validPrimitive = (!id && validUnit(value, FLength | FPercent | FNonNeg));
+        break;
+
+    case CSSPropertyMaxHeight: // <length> | <percentage> | none | inherit
     case CSSPropertyWebkitMaxLogicalHeight:
         if (id == CSSValueNone) {
             validPrimitive = true;
             break;
         }
         /* nobreak */
-    case CSSPropertyMinHeight:           // <length> | <percentage> | inherit
-    case CSSPropertyMinWidth:            // <length> | <percentage> | inherit
-    case CSSPropertyWebkitMinLogicalWidth:
+    case CSSPropertyMinHeight: // <length> | <percentage> | inherit
     case CSSPropertyWebkitMinLogicalHeight:
         if (id == CSSValueIntrinsic || id == CSSValueMinIntrinsic)
             validPrimitive = true;
@@ -1924,9 +1935,14 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = (!id && validUnit(value, FLength | FPercent));
         break;
 
-    case CSSPropertyHeight:               // <length> | <percentage> | auto | inherit
-    case CSSPropertyWidth:                // <length> | <percentage> | auto | inherit
+    case CSSPropertyWidth: // <length> | <percentage> | auto | inherit
     case CSSPropertyWebkitLogicalWidth:
+        if (id == CSSValueWebkitMinContent || id == CSSValueWebkitMaxContent || id == CSSValueWebkitFillAvailable || id == CSSValueWebkitFitContent) {
+            validPrimitive = true;
+            break;
+        }
+        /* nobreak */
+    case CSSPropertyHeight: // <length> | <percentage> | auto | inherit
     case CSSPropertyWebkitLogicalHeight:
         if (id == CSSValueAuto || id == CSSValueIntrinsic || id == CSSValueMinIntrinsic)
             validPrimitive = true;

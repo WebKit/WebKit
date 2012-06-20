@@ -189,6 +189,7 @@ unsigned short CSSPrimitiveValue::primitiveType() const
     }
     return CSSPrimitiveValue::CSS_UNKNOWN;
 }
+
 static const AtomicString& valueOrPropertyName(int valueOrPropertyID)
 {
     ASSERT_ARG(valueOrPropertyID, valueOrPropertyID >= 0);
@@ -266,6 +267,22 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
         case MinIntrinsic:
             m_primitiveUnitType = CSS_IDENT;
             m_value.ident = CSSValueMinIntrinsic;
+            break;
+        case MinContent:
+            m_primitiveUnitType = CSS_IDENT;
+            m_value.ident = CSSValueWebkitMinContent;
+            break;
+        case MaxContent:
+            m_primitiveUnitType = CSS_IDENT;
+            m_value.ident = CSSValueWebkitMaxContent;
+            break;
+        case FillAvailable:
+            m_primitiveUnitType = CSS_IDENT;
+            m_value.ident = CSSValueWebkitFillAvailable;
+            break;
+        case FitContent:
+            m_primitiveUnitType = CSS_IDENT;
+            m_value.ident = CSSValueWebkitFitContent;
             break;
         case Percent:
             m_primitiveUnitType = CSS_PERCENTAGE;

@@ -335,7 +335,7 @@ public:
 
     // Whether or not the element shrinks to its intrinsic width (rather than filling the width
     // of a containing block).  HTML4 buttons, <select>s, <input>s, legends, and floating/compact elements do this.
-    bool sizesToIntrinsicLogicalWidth(LogicalWidthType) const;
+    bool sizesLogicalWidthToFitContent(LogicalWidthType) const;
     virtual bool stretchesToMinIntrinsicLogicalWidth() const { return false; }
 
     LayoutUnit shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStart, LayoutUnit childMarginEnd, const RenderBlock* cb, RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage);

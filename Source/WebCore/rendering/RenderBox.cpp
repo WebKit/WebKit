@@ -1744,20 +1744,25 @@ LayoutUnit RenderBox::computeLogicalWidthInRegionUsing(LogicalWidthType widthTyp
         LayoutUnit marginEnd = minimumValueForLength(styleToUse->marginEnd(), availableLogicalWidth, renderView);
         logicalWidthResult = availableLogicalWidth - marginStart - marginEnd;
 
+        // shrinkToAvoidFloats() is only true for width: auto so the below code works correctly for
+        // width: fill-available since no case matches and it returns the logicalWidthResult from above.
         if (shrinkToAvoidFloats() && cb->containsFloats())
             logicalWidthResult = shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, cb, region, offsetFromLogicalTopOfFirstPage);
 
-        if (sizesToIntrinsicLogicalWidth(widthType)) {
-            logicalWidthResult = max(logicalWidthResult, minPreferredLogicalWidth());
-            logicalWidthResult = min(logicalWidthResult, maxPreferredLogicalWidth());
-        }
+        if (logicalWidth.type() == MinContent)
+            logicalWidthResult = minPreferredLogicalWidth();
+        else if (logicalWidth.type() == MaxContent)
+            logicalWidthResult = maxPreferredLogicalWidth();
+        else if (logicalWidth.type() == FitContent || (logicalWidth.type() != FillAvailable && sizesLogicalWidthToFitContent(widthType)))
+            logicalWidthResult = max(minPreferredLogicalWidth(), min(maxPreferredLogicalWidth(), logicalWidthResult));
+
     } else // FIXME: If the containing block flow is perpendicular to our direction we need to use the available logical height instead.
         logicalWidthResult = computeBorderBoxLogicalWidth(valueForLength(logicalWidth, availableLogicalWidth, view())); 
 
     return logicalWidthResult;
 }
 
-bool RenderBox::sizesToIntrinsicLogicalWidth(LogicalWidthType widthType) const
+bool RenderBox::sizesLogicalWidthToFitContent(LogicalWidthType widthType) const
 {
     // Marquees in WinIE are like a mixture of blocks and inline-blocks.  They size as though they're blocks,
     // but they allow text to sit on the same line as the marquee.

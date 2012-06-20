@@ -34,8 +34,15 @@
 
 namespace WebCore {
 
-enum LengthType { Auto, Relative, Percent, Fixed, Intrinsic, MinIntrinsic, Calculated, ViewportPercentageWidth, ViewportPercentageHeight, ViewportPercentageMin, Undefined };
- 
+enum LengthType {
+    Auto, Relative, Percent, Fixed,
+    Intrinsic, MinIntrinsic,
+    MinContent, MaxContent, FillAvailable, FitContent,
+    Calculated,
+    ViewportPercentageWidth, ViewportPercentageHeight, ViewportPercentageMin,
+    Undefined
+};
+
 class CalculationValue;    
     
 struct Length {
@@ -213,7 +220,9 @@ public:
     bool isRelative() const { return type() == Relative; }
     bool isPercent() const { return type() == Percent || type() == Calculated; }
     bool isFixed() const { return type() == Fixed; }
-    bool isIntrinsicOrAuto() const { return type() == Auto || type() == MinIntrinsic || type() == Intrinsic; }
+    bool isIntrinsicOrAuto() const { return type() == Auto || isLegacyIntrinsic() || isIntrinsic(); }
+    bool isLegacyIntrinsic() const { return type() == Intrinsic || type() == MinIntrinsic; }
+    bool isIntrinsic() const { return type() == MinContent || type() == MaxContent || type() == FillAvailable || type() == FitContent; }
     bool isSpecified() const { return type() == Fixed || type() == Percent || type() == Calculated || isViewportPercentage(); }
     bool isCalculated() const { return type() == Calculated; }
     bool isCalculatedEqual(const Length&) const;

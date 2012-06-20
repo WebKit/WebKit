@@ -1,3 +1,47 @@
+2012-06-20  Elliott Sprehn  <esprehn@gmail.com>
+
+        Add support for fit-content etc
+        https://bugs.webkit.org/show_bug.cgi?id=38919
+
+        Reviewed by Tony Chang.
+
+        Tests for CSS3 intrinsic dimension keywords as defined in the
+        writing modes spec. This tests the implementation for width and
+        ensures that height properties don't allow the new keywords yet
+        since they're not implemented by this patch.
+
+        * fast/css-intrinsic-dimensions/height-dynamic-property-value-expected.txt: Added.
+        * fast/css-intrinsic-dimensions/height-dynamic-property-value.html: Added.
+        * fast/css-intrinsic-dimensions/height-property-value-expected.txt: Added.
+        * fast/css-intrinsic-dimensions/height-property-value.html: Added.
+        * fast/css-intrinsic-dimensions/max-width-constrained-expected.html: Added.
+        * fast/css-intrinsic-dimensions/max-width-constrained.html: Added.
+        * fast/css-intrinsic-dimensions/max-width-unconstrained-expected.html: Added.
+        * fast/css-intrinsic-dimensions/max-width-unconstrained.html: Added.
+        * fast/css-intrinsic-dimensions/min-width-expected.html: Added.
+        * fast/css-intrinsic-dimensions/min-width.html: Added.
+        * fast/css-intrinsic-dimensions/width-avoid-floats-expected.html: Added.
+        * fast/css-intrinsic-dimensions/width-avoid-floats.html: Added.
+        * fast/css-intrinsic-dimensions/width-dynamic-property-value-expected.txt: Added.
+        * fast/css-intrinsic-dimensions/width-dynamic-property-value.html: Added.
+        * fast/css-intrinsic-dimensions/width-expected.html: Added.
+        * fast/css-intrinsic-dimensions/width-keyword-classes.css: Added.
+        (.min-content):
+        (.max-content):
+        (.fill-available):
+        (.fit-content):
+        (.max-width-min-content):
+        (.max-width-max-content):
+        (.max-width-fill-available):
+        (.max-width-fit-content):
+        (.min-width-min-content):
+        (.min-width-max-content):
+        (.min-width-fill-available):
+        (.min-width-fit-content):
+        * fast/css-intrinsic-dimensions/width-property-value-expected.txt: Added.
+        * fast/css-intrinsic-dimensions/width-property-value.html: Added.
+        * fast/css-intrinsic-dimensions/width.html: Added.
+
 2012-06-20  Christopher Cameron  <ccameron@chromium.org>
 
         [chromium] webkit-backface-visibility doesn't work with video
