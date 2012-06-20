@@ -132,8 +132,6 @@ void JSGlobalObject::init(JSObject* thisValue)
 {
     ASSERT(JSLock::currentThreadIsHoldingLock());
     
-    structure()->disableSpecificFunctionTracking();
-
     m_globalScopeChain.set(globalData(), this, ScopeChainNode::create(0, this, &globalData(), this, thisValue));
 
     JSGlobalObject::globalExec()->init(0, 0, m_globalScopeChain.get(), CallFrame::noCaller(), 0, 0);
