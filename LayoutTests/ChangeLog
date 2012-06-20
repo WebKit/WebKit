@@ -1,3 +1,27 @@
+2012-06-19  Kent Tamura  <tkent@chromium.org>
+
+        Fix a form restore test broken by HTML5 parser
+        https://bugs.webkit.org/show_bug.cgi?id=89539
+
+        Reviewed by Kentaro Hara.
+
+        Before HTML5 parser, we parsed innerHTML input text and we attached
+        renderers to parsed nodes at the same time. The parsed nodes had
+        restored form values because we restore form values only for attached
+        elements.
+
+        After HTML5 parser, we don't attach renderers during innerHTML
+        parsing. state-restore-to-nonedited-controls.html used innerHTML to
+        built a form and the test haven't worked since introducing HTML5 parser.
+
+        This patch changes the test so that it uses document.write() instead of
+        innerHTML.
+
+        * fast/forms/state-restore-to-non-edited-controls-expected.txt:
+        Note that the FAIL line is expected. It's due to Bug 88685.
+        * fast/forms/state-restore-to-non-edited-controls.html:
+        Use document.write() instead of innerHTML.
+
 2012-06-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Test fix after r120521.

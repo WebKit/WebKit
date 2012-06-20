@@ -3,7 +3,7 @@
 <head>
 <script src="../../fast/js/resources/js-test-pre.js"></script>
 </head>
-<body onload="runTest()">
+<body>
 <p>Test to NOT save state for non-edited controls</p>
 <div id="console"></div>
 
@@ -14,7 +14,7 @@
 <script>
 
 function makeForm(parent, buttonValue, hiddenValue, imageValue, resetValue, submitValue, textValue1, textValue2, textAreaValue) {
-    parent.innerHTML = '<form action="data:text/html,<script>history.back()&lt;/script>" id=form1>'
+    document.write('<form action="data:text/html,<script>history.back()&lt;/script>" id=form1>'
         + '<input name=button id=button type=button value="' + buttonValue + '">'
         + '<input name=hidden id=hidden type=hidden value="' + hiddenValue + '">'
         + '<input name=image id=image type=image value="' + imageValue + '">'
@@ -23,7 +23,7 @@ function makeForm(parent, buttonValue, hiddenValue, imageValue, resetValue, subm
         + '<input name=text1 id=text1 type=text value="' + textValue1 + '">'
         + '<input name=text2 id=text2 type=text value="' + textValue2 + '">'
         + '<textarea name=textarea id=textarea>' + textAreaValue + '</textarea>'
-        + '</form>';
+        + '</form>');
 }
 
 function runTest()
@@ -49,7 +49,7 @@ function runTest()
         shouldBe('document.getElementById("image").value', '"2"');
         shouldBe('document.getElementById("reset").value', '"2"');
         shouldBe('document.getElementById("submit1").value', '"2"');
-        shouldBe('document.getElementById("text1").value', '"2"');
+        shouldBe('document.getElementById("text1").value', '"edit"');
         shouldBe('document.getElementById("text2").value', '"2"');
         shouldBe('document.getElementById("textarea").value', '"2"');
     
@@ -58,5 +58,7 @@ function runTest()
             layoutTestController.notifyDone();
     }
 }
+
+runTest();
 </script>
 </body>
