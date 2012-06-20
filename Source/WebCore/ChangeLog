@@ -1,3 +1,17 @@
+2012-06-19  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: Clicking "Clear all profiles" while ongoing recording should reset the ProfileLauncherView
+        https://bugs.webkit.org/show_bug.cgi?id=89464
+
+        Reviewed by Yury Semikhatsky.
+
+        Resetting the ProfileLauncherView in order to reflect the correct states of buttons
+
+        No new tests as UI related minor fix.
+
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._reset):
+
 2012-06-19  Hayato Ito  <hayato@chromium.org>
 
         Assertion for event's target is wrong.

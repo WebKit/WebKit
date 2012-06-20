@@ -377,6 +377,10 @@ WebInspector.ProfilesPanel.prototype = {
         this._profileGroups = {};
         this._profileGroupsForLinks = {};
         this._profilesWereRequested = false;
+        this.recordButton.toggled = false;
+        if (this._selectedProfileType)
+            this.recordButton.title = this._selectedProfileType.buttonTooltip;
+        this._launcherView.profileFinished();
 
         this.sidebarTreeElement.removeStyleClass("some-expandable");
 
