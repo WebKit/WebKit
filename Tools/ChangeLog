@@ -1,5 +1,36 @@
 2012-06-20  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt outputs empty files for wdiff output if wdiff is not installed
+        https://bugs.webkit.org/show_bug.cgi?id=88709
+
+        Reviewed by Tony Chang.
+
+        Reviewed by Tony Chang.
+
+        Don't write -wdiff or -pretty.html files if wdiff or prettypatch
+        aren't available, and clean up the handling for them in the port
+        code.
+
+        * Scripts/webkitpy/run_webkit_tests_integrationtest.py:
+        (MainTest.test_output_diffs):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter.create_text_diff_and_write_result):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.check_pretty_patch):
+        (Port.check_wdiff):
+        (Port._wdiff_missing_message):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort.check_build):
+        (ChromiumLinuxPort._wdiff_missing_message):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort.check_build):
+        (ChromiumMacPort):
+        (ChromiumMacPort._wdiff_missing_message):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        (ChromiumMacPortTest):
+
+2012-06-20  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: fix unit tests for ensuring svn revision is correct
         https://bugs.webkit.org/show_bug.cgi?id=89498
 

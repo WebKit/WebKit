@@ -39,9 +39,6 @@ class ChromiumMacPortTest(port_testcase.PortTestCase):
     port_name = 'chromium-mac'
     port_maker = chromium_mac.ChromiumMacPort
 
-    def test_check_wdiff(self):
-        self.assertTrue(self.make_port().check_wdiff())
-
     def assert_name(self, port_name, os_version_string, expected):
         port = self.make_port(os_version=os_version_string, port_name=port_name)
         self.assertEquals(expected, port.name())

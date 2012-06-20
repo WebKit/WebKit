@@ -112,8 +112,6 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
 
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)
-        result = self.check_wdiff() and result
-
         if not result:
             _log.error('For complete Linux build requirements, please see:')
             _log.error('')
@@ -145,13 +143,8 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
             _log.error('')
         return result
 
-    def check_wdiff(self, logging=True):
-        result = self._check_file_exists(self._path_to_wdiff(), 'wdiff')
-        if not result and logging:
-            _log.error('    Please install using: "sudo apt-get install wdiff"')
-            _log.error('')
-        # FIXME: The ChromiumMac port always returns True.
-        return result
+    def _wdiff_missing_message(self):
+        return 'wdiff is not installed; please install using "sudo apt-get install wdiff"'
 
     def _path_to_apache(self):
         if self._is_redhat_based():

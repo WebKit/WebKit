@@ -90,7 +90,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)
-        result = self.check_wdiff() and result
         if not result:
             _log.error('For complete Mac build requirements, please see:')
             _log.error('')
@@ -105,17 +104,11 @@ class ChromiumMacPort(chromium.ChromiumPort):
     # PROTECTED METHODS
     #
 
-    def check_wdiff(self, logging=True):
-        try:
-            # We're ignoring the return and always returning True
-            self._executive.run_command([self._path_to_wdiff()], error_handler=self._executive.ignore_error)
-        except OSError:
-            if logging:
-                _log.warning('wdiff not found. Install using MacPorts or some other means')
-        return True
-
     def _lighttpd_path(self, *comps):
         return self.path_from_chromium_base('third_party', 'lighttpd', 'mac', *comps)
+
+    def _wdiff_missing_message(self):
+        return 'wdiff is not installed; please install from MacPorts or elsewhere'
 
     def _path_to_apache(self):
         return '/usr/sbin/httpd'

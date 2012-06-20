@@ -152,9 +152,9 @@ class ChromiumPort(Port):
             result = self.check_image_diff(
                 'To override, invoke with --no-pixel-tests') and result
 
-        # It's okay if pretty patch isn't available, but we will at
-        # least log a message.
+        # It's okay if pretty patch and wdiff aren't available, but we will at least log messages.
         self._pretty_patch_available = self.check_pretty_patch()
+        self._wdiff_available = self.check_wdiff()
 
         return result
 

@@ -185,14 +185,16 @@ class TestResultWriter(object):
         fs.write_binary_file(diff_filename, diff)
 
         # Shell out to wdiff to get colored inline diffs.
-        wdiff = self._port.wdiff_text(expected_filename, actual_filename)
-        wdiff_filename = self.output_filename(self.FILENAME_SUFFIX_WDIFF)
-        fs.write_binary_file(wdiff_filename, wdiff)
+        if self._port.wdiff_available():
+            wdiff = self._port.wdiff_text(expected_filename, actual_filename)
+            wdiff_filename = self.output_filename(self.FILENAME_SUFFIX_WDIFF)
+            fs.write_binary_file(wdiff_filename, wdiff)
 
         # Use WebKit's PrettyPatch.rb to get an HTML diff.
-        pretty_patch = self._port.pretty_patch_text(diff_filename)
-        pretty_patch_filename = self.output_filename(self.FILENAME_SUFFIX_PRETTY_PATCH)
-        fs.write_binary_file(pretty_patch_filename, pretty_patch)
+        if self._port.pretty_patch_available():
+            pretty_patch = self._port.pretty_patch_text(diff_filename)
+            pretty_patch_filename = self.output_filename(self.FILENAME_SUFFIX_PRETTY_PATCH)
+            fs.write_binary_file(pretty_patch_filename, pretty_patch)
 
     def write_audio_files(self, actual_audio, expected_audio):
         self.write_output_files('.wav', actual_audio, expected_audio)

@@ -208,14 +208,14 @@ class Port(object):
         except OSError, e:
             if e.errno in [errno.ENOENT, errno.EACCES, errno.ECHILD]:
                 if logging:
-                    _log.error("Ruby is not installed; can't generate pretty patches.")
-                    _log.error('')
+                    _log.warning("Ruby is not installed; can't generate pretty patches.")
+                    _log.warning('')
                 return False
 
         if not self._filesystem.exists(self._pretty_patch_path):
             if logging:
-                _log.error("Unable to find %s; can't generate pretty patches." % self._pretty_patch_path)
-                _log.error('')
+                _log.warning("Unable to find %s; can't generate pretty patches." % self._pretty_patch_path)
+                _log.warning('')
             return False
 
         return True
@@ -229,10 +229,17 @@ class Port(object):
             _ = self._executive.run_command([self._path_to_wdiff(), '--help'])
         except OSError:
             if logging:
-                _log.error("wdiff is not installed.")
+                message = self._wdiff_missing_message()
+                if message:
+                    for line in message.splitlines():
+                        _log.warning('    ' + line)
+                        _log.warning('')
             return False
 
         return True
+
+    def _wdiff_missing_message(self):
+        return 'wdiff is not installed; please install it to generate word-by-word diffs.'
 
     def check_httpd(self):
         if self._uses_apache():
