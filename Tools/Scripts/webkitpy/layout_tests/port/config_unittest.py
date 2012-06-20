@@ -46,10 +46,10 @@ class ConfigTest(unittest.TestCase):
     def tearDown(self):
         config.clear_cached_configuration()
 
-    def make_config(self, output='', files=None, exit_code=0, exception=None, run_command_fn=None, stderr=''):
+    def make_config(self, output='', files=None, exit_code=0, exception=None, run_command_fn=None, stderr='', port_implementation=None):
         e = MockExecutive2(output=output, exit_code=exit_code, exception=exception, run_command_fn=run_command_fn, stderr=stderr)
         fs = MockFileSystem(files)
-        return config.Config(e, fs)
+        return config.Config(e, fs, port_implementation=port_implementation)
 
     def assert_configuration(self, contents, expected):
         # This tests that a configuration file containing
@@ -90,6 +90,13 @@ class ConfigTest(unittest.TestCase):
         # Test that stderr output from webkit-build-directory won't mangle the build dir
         c = self.make_config(output='/WebKitBuild/', stderr="mock stderr output from webkit-build-directory")
         self.assertEqual(c.build_directory(None), '/WebKitBuild/')
+
+    def test_build_directory_passes_port_implementation(self):
+        def mock_run_command(arg_list):
+            self.assetEquals('--gtk' in arg_list)
+            return '/tmp'
+
+        c = self.make_config(run_command_fn=mock_run_command, port_implementation='gtk')
 
     def test_default_configuration__release(self):
         self.assert_configuration('Release', 'Release')

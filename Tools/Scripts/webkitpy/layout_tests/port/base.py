@@ -104,7 +104,7 @@ class Port(object):
         self.host = host
         self._executive = host.executive
         self._filesystem = host.filesystem
-        self._config = config or port_config.Config(self._executive, self._filesystem)
+        self._config = config or port_config.Config(self._executive, self._filesystem, self.port_name)
 
         self._helper = None
         self._http_server = None

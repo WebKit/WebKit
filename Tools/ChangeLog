@@ -1,5 +1,32 @@
 2012-06-20  Dirk Pranke  <dpranke@chromium.org>
 
+        new-run-webkit-tests appends "/Debug" or "/Release" to $WEBKITOUTPUTDIR
+        https://bugs.webkit.org/show_bug.cgi?id=69360
+
+        Reviewed by Eric Seidel.
+
+        Reviewed by Eric Seidel.
+
+        Propagate the 'port_implementation' part of the platform (i.e.,
+        gtk,qt,chromium) to webkit-build-directory so that we can pick
+        up the gtk-specific handling of WEBKITOUTPUTDIR ...
+
+        I didn't write any additional tests for this; testing it
+        properly is an integration test between the python code and the
+        perl code, which I verified by hand.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.__init__):
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        (Config.__init__):
+        (Config.build_directory):
+        * Scripts/webkitpy/layout_tests/port/config_mock.py:
+        (MockConfig.__init__):
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py:
+        (ConfigTest.test_build_directory_passes_port_implementation):
+
+2012-06-20  Dirk Pranke  <dpranke@chromium.org>
+
         Fix import sorting missed in r120846
 
         Reviewed by Tony Chang.

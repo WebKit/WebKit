@@ -61,12 +61,13 @@ class Config(object):
         "Release": "--release",
     }
 
-    def __init__(self, executive, filesystem):
+    def __init__(self, executive, filesystem, port_implementation=None):
         self._executive = executive
         self._filesystem = filesystem
         self._webkit_base_dir = None
         self._default_configuration = None
         self._build_directories = {}
+        self._port_implementation = port_implementation
 
     def build_directory(self, configuration):
         """Returns the path to the build directory for the configuration."""
@@ -75,6 +76,9 @@ class Config(object):
         else:
             configuration = ""
             flags = []
+
+        if self._port_implementation:
+            flags.append('--' + self._port_implementation)
 
         if not self._build_directories.get(configuration):
             args = ["perl", self.script_path("webkit-build-directory")] + flags

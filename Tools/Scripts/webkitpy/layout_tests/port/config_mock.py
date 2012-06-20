@@ -38,9 +38,10 @@ class MockConfig(object):
         "Release": "--release",
     }
 
-    def __init__(self, filesystem=None, default_configuration='Release'):
+    def __init__(self, filesystem=None, default_configuration='Release', port_implementation=None):
         self._filesystem = filesystem or MockFileSystem()
         self._default_configuration = default_configuration
+        self._port_implmentation = port_implementation
 
     def flag_for_configuration(self, configuration):
         return self._FLAGS_FROM_CONFIGURATIONS[configuration]
