@@ -1,3 +1,9 @@
+2012-06-20  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed trivial permissions fix.
+
+        * qmake/mkspecs/features/features.prf: Don't mark this file as executable.
+
 2012-06-19  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][Regression] Build break after r120786
