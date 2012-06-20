@@ -1,3 +1,11 @@
+2012-06-19  Kenneth Russell  <kbr@google.com>
+
+        [Chromium] Unreviewed test expectations update.
+
+        * platform/chromium-win-xp/platform/chromium/virtual/gpu/fast/canvas/resize-while-save-active-expected.txt: Removed.
+        * platform/chromium/TestExpectations:
+            Referenced bugs 89529 and 89534.
+
 2012-06-19  Greg Billock  <gbillock@google.com>
 
         Add filesystem regression test to check that the filesystem object is
