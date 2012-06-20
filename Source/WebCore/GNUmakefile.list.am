@@ -3479,6 +3479,8 @@ webcore_sources += \
 	Source/WebCore/platform/mediastream/gstreamer/DeprecatedPeerConnectionHandler.cpp \
 	Source/WebCore/platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp \
 	Source/WebCore/platform/mediastream/gstreamer/MediaStreamCenterGStreamer.h \
+	Source/WebCore/platform/mock/DeviceMotionClientMock.cpp \
+	Source/WebCore/platform/mock/DeviceMotionClientMock.h \
 	Source/WebCore/platform/mock/DeviceOrientationClientMock.cpp \
 	Source/WebCore/platform/mock/DeviceOrientationClientMock.h \
 	Source/WebCore/platform/mock/GeolocationClientMock.cpp \

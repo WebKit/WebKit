@@ -1164,6 +1164,7 @@ SOURCES += \
     platform/MemoryPressureHandler.cpp \
     platform/MemoryUsageSupport.cpp \
     platform/MIMETypeRegistry.cpp \
+    platform/mock/DeviceMotionClientMock.cpp \
     platform/mock/DeviceOrientationClientMock.cpp \
     platform/mock/GeolocationClientMock.cpp \
     platform/mock/ScrollbarThemeMock.cpp \
@@ -2221,6 +2222,7 @@ HEADERS += \
     platform/FileSystem.h \
     platform/HistogramSupport.h \
     platform/image-decoders/ImageDecoder.h \
+    platform/mock/DeviceMotionClientMock.h \
     platform/mock/DeviceOrientationClientMock.h \
     platform/mock/GeolocationClientMock.cpp \
     platform/mock/ScrollbarThemeMock.h \
