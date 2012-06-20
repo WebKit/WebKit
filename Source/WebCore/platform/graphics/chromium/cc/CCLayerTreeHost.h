@@ -26,12 +26,13 @@
 #define CCLayerTreeHost_h
 
 #include "Color.h"
-#include "GraphicsContext3D.h"
 #include "GraphicsTypes3D.h"
 #include "IntRect.h"
+#include "LayerChromium.h"
 #include "RateLimiter.h"
 #include "cc/CCAnimationEvents.h"
-#include "cc/CCOcclusionTracker.h"
+#include "cc/CCGraphicsContext.h"
+#include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCProxy.h"
 
 #include <limits>
@@ -42,13 +43,10 @@
 
 namespace WebCore {
 
-class CCGraphicsContext;
-class CCLayerChromium;
 class CCLayerTreeHostImpl;
 class CCLayerTreeHostImplClient;
-class CCScrollAndScaleSet;
 class CCTextureUpdater;
-class ManagedTexture;
+class GraphicsContext3D;
 class Region;
 class TextureAllocator;
 class TextureManager;

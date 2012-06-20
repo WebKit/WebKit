@@ -37,8 +37,10 @@
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
 #include "PlatformString.h"
+#include "ProgramBinding.h"
 #include "Region.h"
 #include "RenderSurfaceChromium.h"
+#include "ShaderChromium.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCOcclusionTracker.h"
 

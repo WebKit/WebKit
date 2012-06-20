@@ -29,6 +29,9 @@
 
 #include "CCScrollbarLayerImpl.h"
 
+#include "LayerRendererChromium.h"
+#include "ManagedTexture.h"
+#include "PlatformCanvas.h"
 #include "ScrollbarTheme.h"
 #include "ScrollbarThemeComposite.h"
 #include "cc/CCQuadCuller.h"

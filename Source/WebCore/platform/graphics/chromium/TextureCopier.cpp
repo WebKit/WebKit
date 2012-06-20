@@ -25,7 +25,6 @@
 #include "config.h"
 
 #include "TextureCopier.h"
-#include "TraceEvent.h"
 
 #include "LayerRendererChromium.h" // For the GLC() macro
 

@@ -26,6 +26,7 @@
 #define CCSingleThreadProxy_h
 
 #include "cc/CCAnimationEvents.h"
+#include "cc/CCCompletionEvent.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCProxy.h"
 #include <limits>

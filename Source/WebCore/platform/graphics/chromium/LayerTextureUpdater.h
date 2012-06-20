@@ -31,6 +31,7 @@
 
 #include "ManagedTexture.h"
 #include "GraphicsTypes3D.h"
+#include "cc/CCGraphicsContext.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

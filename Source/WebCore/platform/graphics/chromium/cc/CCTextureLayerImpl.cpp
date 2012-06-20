@@ -29,7 +29,11 @@
 
 #include "cc/CCTextureLayerImpl.h"
 
-#include "TextStream.h"
+#include "Extensions3DChromium.h"
+#include "GraphicsContext3D.h"
+#include "LayerRendererChromium.h"
+#include "cc/CCIOSurfaceDrawQuad.h"
+#include "cc/CCProxy.h"
 #include "cc/CCQuadCuller.h"
 #include "cc/CCTextureDrawQuad.h"
 

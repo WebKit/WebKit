@@ -31,7 +31,6 @@
 #include "CCThreadedTest.h"
 #include "ContentLayerChromium.h"
 #include "GraphicsContext3DPrivate.h"
-#include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCSettings.h"
 #include "cc/CCTextureUpdater.h"

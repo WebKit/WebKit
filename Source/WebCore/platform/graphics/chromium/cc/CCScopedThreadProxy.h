@@ -25,6 +25,7 @@
 #ifndef CCScopedThreadProxy_h
 #define CCScopedThreadProxy_h
 
+#include "cc/CCProxy.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/ThreadSafeRefCounted.h>
 

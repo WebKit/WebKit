@@ -29,6 +29,7 @@
 
 #include "cc/CCSolidColorLayerImpl.h"
 
+#include "LayerRendererChromium.h"
 #include "cc/CCQuadCuller.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include <wtf/MathExtras.h>

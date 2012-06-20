@@ -28,8 +28,8 @@
 
 #include "TextureManager.h"
 
+#include "LayerRendererChromium.h"
 #include "ManagedTexture.h"
-#include "TraceEvent.h"
 
 using namespace std;
 

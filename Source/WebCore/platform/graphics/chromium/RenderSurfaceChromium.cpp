@@ -31,6 +31,7 @@
 
 #include "FilterOperations.h"
 #include "LayerChromium.h"
+#include "LayerRendererChromium.h"
 #include "cc/CCMathUtil.h"
 #include <public/WebTransformationMatrix.h>
 #include <wtf/text/CString.h>

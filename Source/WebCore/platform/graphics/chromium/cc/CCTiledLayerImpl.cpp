@@ -29,10 +29,9 @@
 
 #include "cc/CCTiledLayerImpl.h"
 
-#include "TextStream.h"
+#include "LayerRendererChromium.h"
 #include "cc/CCCheckerboardDrawQuad.h"
 #include "cc/CCDebugBorderDrawQuad.h"
-#include "cc/CCLayerTilingData.h"
 #include "cc/CCQuadCuller.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"

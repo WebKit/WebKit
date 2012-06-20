@@ -28,7 +28,6 @@
 
 #include "CCLayerTestCommon.h"
 #include "MockCCQuadCuller.h"
-#include "cc/CCLayerTilingData.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCTileDrawQuad.h"
 #include <gmock/gmock.h>

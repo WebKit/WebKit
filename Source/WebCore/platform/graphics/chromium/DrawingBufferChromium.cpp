@@ -37,6 +37,7 @@
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "cc/CCProxy.h"
+#include "cc/CCTextureUpdater.h"
 #include <algorithm>
 #include <public/WebExternalTextureLayer.h>
 #include <public/WebExternalTextureLayerClient.h>

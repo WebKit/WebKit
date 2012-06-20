@@ -32,6 +32,7 @@
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "TextureManager.h"
+#include "cc/CCLayerQuad.h"
 #include <public/WebFilterOperations.h>
 #include <public/WebTransformationMatrix.h>
 #include <wtf/Noncopyable.h>

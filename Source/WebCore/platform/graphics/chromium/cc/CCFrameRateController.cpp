@@ -27,7 +27,8 @@
 #include "cc/CCFrameRateController.h"
 
 #include "TraceEvent.h"
-#include "cc/CCTimeSource.h"
+#include "cc/CCThread.h"
+#include "cc/CCThreadTask.h"
 
 namespace WebCore {
 

@@ -31,7 +31,6 @@
 #include "CCTiledLayerTestCommon.h"
 #include "FakeCCLayerTreeHostClient.h"
 #include "WebCompositor.h"
-#include "cc/CCOverdrawMetrics.h"
 #include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
 #include <gtest/gtest.h>
 #include <public/WebTransformationMatrix.h>

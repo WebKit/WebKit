@@ -31,11 +31,11 @@
 
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
+#include "LayerRendererChromium.h"
 #include "LayerTextureSubImage.h"
 #include "NotImplemented.h"
-#include "TextStream.h"
+#include "ProgramBinding.h"
 #include "TextureManager.h" // For TextureAllocator
-#include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCProxy.h"
 #include "cc/CCQuadCuller.h"

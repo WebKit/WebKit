@@ -33,6 +33,7 @@
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCOverdrawMetrics.h"
+#include "cc/CCRenderPass.h"
 #include <public/WebTransformationMatrix.h>
 
 using namespace std;

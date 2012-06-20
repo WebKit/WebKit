@@ -29,6 +29,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "PlatformString.h"
+#include "TraceEvent.h"
 
 namespace WebCore {
 

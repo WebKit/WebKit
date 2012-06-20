@@ -30,6 +30,8 @@
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCProxy.h"
 #include "cc/CCScheduler.h"
+#include "cc/CCThread.h"
+#include "cc/CCTimer.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {

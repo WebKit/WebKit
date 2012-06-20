@@ -25,14 +25,13 @@
 #ifndef CCFrameRateController_h
 #define CCFrameRateController_h
 
+#include "cc/CCTimeSource.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
-
-class CCTimeSource;
 
 class CCFrameRateControllerClient {
 public:

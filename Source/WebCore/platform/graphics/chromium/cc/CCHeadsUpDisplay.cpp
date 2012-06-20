@@ -25,14 +25,16 @@
 #include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "cc/CCHeadsUpDisplay.h"
+#include "CCHeadsUpDisplay.h"
 
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
+#include "ManagedTexture.h"
 #include "PlatformCanvas.h"
 #include "TextureManager.h"
 #include "cc/CCDebugRectHistory.h"
+#include "cc/CCFontAtlas.h"
 #include "cc/CCFrameRateCounter.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include <wtf/text/WTFString.h>

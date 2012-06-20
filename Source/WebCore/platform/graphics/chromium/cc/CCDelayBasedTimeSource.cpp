@@ -26,6 +26,8 @@
 
 #include "cc/CCDelayBasedTimeSource.h"
 
+#include "cc/CCThread.h"
+#include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 

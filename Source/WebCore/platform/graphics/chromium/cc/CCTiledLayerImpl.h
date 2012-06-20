@@ -26,12 +26,13 @@
 #ifndef CCTiledLayerImpl_h
 #define CCTiledLayerImpl_h
 
+#include "LayerTextureUpdater.h"
 #include "cc/CCLayerImpl.h"
+#include "cc/CCLayerTilingData.h"
 #include <public/WebTransformationMatrix.h>
 
 namespace WebCore {
 
-class CCLayerTilingData;
 class DrawableTile;
 
 class CCTiledLayerImpl : public CCLayerImpl {

@@ -26,10 +26,9 @@
 
 #include "cc/CCSingleThreadProxy.h"
 
+#include "LayerRendererChromium.h"
 #include "TraceEvent.h"
-#include "cc/CCDrawQuad.h"
 #include "cc/CCFontAtlas.h"
-#include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCTextureUpdater.h"
 #include "cc/CCTimer.h"

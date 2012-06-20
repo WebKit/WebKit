@@ -30,7 +30,6 @@
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "WebCompositor.h"
-#include "cc/CCDrawQuad.h"
 #include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
 

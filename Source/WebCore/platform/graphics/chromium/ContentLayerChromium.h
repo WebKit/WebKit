@@ -35,6 +35,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "TiledLayerChromium.h"
+#include "cc/CCTiledLayerImpl.h"
 
 class SkCanvas;
 

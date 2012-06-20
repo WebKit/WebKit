@@ -32,7 +32,6 @@
 #include "LayerChromium.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCMathUtil.h"
-#include "cc/CCOverdrawMetrics.h"
 
 #include <algorithm>
 

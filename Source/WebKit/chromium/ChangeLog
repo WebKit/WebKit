@@ -1,3 +1,23 @@
+2012-06-19  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r120772.
+        http://trac.webkit.org/changeset/120772
+        https://bugs.webkit.org/show_bug.cgi?id=89503
+
+        Broke build on Chromium Mac
+
+        * src/WebCompositorImpl.cpp:
+        * src/WebLayerTreeView.cpp:
+        * tests/CCLayerTestCommon.cpp:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        * tests/CCOcclusionTrackerTest.cpp:
+        * tests/CCQuadCullerTest.cpp:
+        * tests/CCTiledLayerImplTest.cpp:
+        * tests/ImageLayerChromiumTest.cpp:
+        * tests/LayerRendererChromiumTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-06-19  Zeev Lieber  <zlieber@chromium.org>
 
         [Chromium] Remove redundant #includes in compositor
