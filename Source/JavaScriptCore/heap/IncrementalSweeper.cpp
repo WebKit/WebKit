@@ -14,9 +14,10 @@ namespace JSC {
 
 #if USE(CF)
 
-static const CFTimeInterval sweepTimeSlicePerBlock = 0.01;
-static const CFTimeInterval sweepTimeMultiplier = 1.0 / sweepTimeSlicePerBlock;
- 
+static const CFTimeInterval sweepTimeSlice = .01; // seconds
+static const CFTimeInterval sweepTimeTotal = .10;
+static const CFTimeInterval sweepTimeMultiplier = 1.0 / sweepTimeTotal;
+
 void IncrementalSweeper::doWork()
 {
     APIEntryShim shim(m_globalData);
@@ -26,7 +27,6 @@ void IncrementalSweeper::doWork()
 IncrementalSweeper::IncrementalSweeper(Heap* heap, CFRunLoopRef runLoop)
     : HeapTimer(heap->globalData(), runLoop)
     , m_currentBlockToSweepIndex(0)
-    , m_lengthOfLastSweepIncrement(0.0)
 {
 }
 
@@ -37,7 +37,7 @@ PassOwnPtr<IncrementalSweeper> IncrementalSweeper::create(Heap* heap)
 
 void IncrementalSweeper::scheduleTimer()
 {
-    CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + (m_lengthOfLastSweepIncrement * sweepTimeMultiplier));
+    CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + (sweepTimeSlice * sweepTimeMultiplier));
 }
 
 void IncrementalSweeper::cancelTimer()
@@ -47,14 +47,17 @@ void IncrementalSweeper::cancelTimer()
 
 void IncrementalSweeper::doSweep(double sweepBeginTime)
 {
-    for (; m_currentBlockToSweepIndex < m_blocksToSweep.size(); m_currentBlockToSweepIndex++) {
-        MarkedBlock* nextBlock = m_blocksToSweep[m_currentBlockToSweepIndex];
-        if (!nextBlock->needsSweeping())
+    while (m_currentBlockToSweepIndex < m_blocksToSweep.size()) {
+        MarkedBlock* block = m_blocksToSweep[m_currentBlockToSweepIndex++];
+        if (!block->needsSweeping())
             continue;
 
-        nextBlock->sweep();
-        m_blocksToSweep[m_currentBlockToSweepIndex++] = 0;
-        m_lengthOfLastSweepIncrement = WTF::monotonicallyIncreasingTime() - sweepBeginTime;
+        block->sweep();
+
+        CFTimeInterval elapsedTime = WTF::monotonicallyIncreasingTime() - sweepBeginTime;
+        if (elapsedTime < sweepTimeSlice)
+            continue;
+
         scheduleTimer();
         return;
     }

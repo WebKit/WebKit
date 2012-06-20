@@ -27,7 +27,6 @@ private:
     void cancelTimer();
     
     unsigned m_currentBlockToSweepIndex;
-    double m_lengthOfLastSweepIncrement; 
     Vector<MarkedBlock*> m_blocksToSweep;
 #else
     

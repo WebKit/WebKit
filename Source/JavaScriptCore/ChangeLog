@@ -1,3 +1,24 @@
+2012-06-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Made the incremental sweeper more aggressive
+        https://bugs.webkit.org/show_bug.cgi?id=89527
+
+        Reviewed by Oliver Hunt.
+
+        This is a pre-requisite to getting rid of "berzerker GC" because we need
+        the sweeper to reclaim memory in a timely fashion, or we'll see a memory
+        footprint regression.
+
+        * heap/IncrementalSweeper.h:
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::scheduleTimer): Since the time slice is predictable,
+        no need to use a data member to record it.
+
+        (JSC::IncrementalSweeper::doSweep): Sweep as many blocks as we can in a
+        small time slice. This is better than sweeping only one block per timer
+        fire because that strategy has a heavy timer overhead, and artificially
+        delays memory reclamation.
+
 2012-06-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to print disassembly interleaved with the IR
