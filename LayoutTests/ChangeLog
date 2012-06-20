@@ -1,3 +1,15 @@
+2012-06-19  Greg Billock  <gbillock@google.com>
+
+        Add filesystem regression test to check that the filesystem object is
+        not serializable as created by javascript.
+        https://bugs.webkit.org/show_bug.cgi?id=88267
+
+        Reviewed by David Levin.
+
+        * fast/filesystem/filesystem-unserializable-expected.html: Added.
+        * fast/filesystem/filesystem-unserializable.html: Added.
+        * fast/filesystem/script-tests/filesystem-unserializable.js: Added.
+
 2012-06-19  Beth Dakin  <bdakin@apple.com>
 
         Skipping failing tests to keep the bots green. Filed 

@@ -1,0 +1,10 @@
+This tests if the filesystem object is unserializable by default
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+DATA_CLONE_ERR: DOM Exception 25
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

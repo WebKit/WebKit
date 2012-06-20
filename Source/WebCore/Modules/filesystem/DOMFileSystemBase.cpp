@@ -62,6 +62,7 @@ DOMFileSystemBase::DOMFileSystemBase(ScriptExecutionContext* context, const Stri
     , m_name(name)
     , m_type(type)
     , m_filesystemRootURL(rootURL)
+    , m_clonable(false)
     , m_asyncFileSystem(asyncFileSystem)
 {
 }

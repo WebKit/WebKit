@@ -31,25 +31,15 @@
 #include "config.h"
 #include "SerializedScriptValue.h"
 
-#include <wtf/ArrayBuffer.h>
-#include <wtf/ArrayBufferView.h>
+#include "AsyncFileSystem.h"
 #include "Blob.h"
 #include "DataView.h"
 #include "ExceptionCode.h"
 #include "File.h"
 #include "FileList.h"
-#include <wtf/Float32Array.h>
-#include <wtf/Float64Array.h>
 #include "ImageData.h"
-#include <wtf/Int16Array.h>
-#include <wtf/Int32Array.h>
-#include <wtf/Int8Array.h>
 #include "MessagePort.h"
 #include "SharedBuffer.h"
-#include <wtf/Uint16Array.h>
-#include <wtf/Uint32Array.h>
-#include <wtf/Uint8Array.h>
-#include <wtf/Uint8ClampedArray.h>
 #include "V8ArrayBuffer.h"
 #include "V8ArrayBufferView.h"
 #include "V8Binding.h"
@@ -71,9 +61,24 @@
 #include "V8Uint8ClampedArray.h"
 #include "V8Utilities.h"
 
+#include <wtf/ArrayBuffer.h>
+#include <wtf/ArrayBufferView.h>
 #include <wtf/Assertions.h>
+#include <wtf/Float32Array.h>
+#include <wtf/Float64Array.h>
+#include <wtf/Int16Array.h>
+#include <wtf/Int32Array.h>
+#include <wtf/Int8Array.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Uint16Array.h>
+#include <wtf/Uint32Array.h>
+#include <wtf/Uint8Array.h>
+#include <wtf/Uint8ClampedArray.h>
 #include <wtf/Vector.h>
+
+#if ENABLE(FILE_SYSTEM)
+#include "V8DOMFileSystem.h"
+#endif
 
 // FIXME: consider crashing in debug mode on deserialization errors
 // NOTE: be sure to change wireFormatVersion as necessary!
@@ -187,6 +192,9 @@ enum SerializationTag {
     NumberTag = 'N', // value:double -> Number
     BlobTag = 'b', // url:WebCoreString, type:WebCoreString, size:uint64_t -> Blob (ref)
     FileTag = 'f', // file:RawFile -> File (ref)
+#if ENABLE(FILE_SYSTEM)
+    DOMFileSystemTag = 'd', // type:int32_t, name:WebCoreString, url:WebCoreString -> FileSystem (ref)
+#endif
     FileListTag = 'l', // length:uint32_t, files:RawFile[length] -> FileList (ref)
     ImageDataTag = '#', // width:uint32_t, height:uint32_t, pixelDataLength:uint32_t, data:byte[pixelDataLength] -> ImageData (ref)
     ObjectTag = '{', // numProperties:uint32_t -> pops the last object from the open stack;
@@ -359,6 +367,16 @@ public:
         doWriteWebCoreString(type);
         doWriteUint64(size);
     }
+
+#if ENABLE(FILE_SYSTEM)
+    void writeDOMFileSystem(int type, const String& name, const String& url)
+    {
+        append(DOMFileSystemTag);
+        doWriteUint32(type);
+        doWriteWebCoreString(name);
+        doWriteWebCoreString(url);
+    }
+#endif
 
     void writeFile(const String& path, const String& url, const String& type)
     {
@@ -982,6 +1000,19 @@ private:
         m_blobURLs.append(blob->url().string());
     }
 
+#if ENABLE(FILE_SYSTEM)
+    StateBase* writeDOMFileSystem(v8::Handle<v8::Value> value, StateBase* next)
+    {
+        DOMFileSystem* fs = V8DOMFileSystem::toNative(value.As<v8::Object>());
+        if (!fs)
+            return 0;
+        if (!fs->clonable())
+            return handleError(DataCloneError, next);
+        m_writer.writeDOMFileSystem(fs->type(), fs->name(), fs->rootURL().string());
+        return 0;
+    }
+#endif
+
     void writeFile(v8::Handle<v8::Value> value)
     {
         File* file = V8File::toNative(value.As<v8::Object>());
@@ -1183,6 +1214,10 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
             writeFile(value);
         else if (V8Blob::HasInstance(value))
             writeBlob(value);
+#if ENABLE(FILE_SYSTEM)
+        else if (V8DOMFileSystem::HasInstance(value))
+            return writeDOMFileSystem(value, next);
+#endif
         else if (V8FileList::HasInstance(value))
             writeFileList(value);
         else if (V8ImageData::HasInstance(value))
@@ -1320,6 +1355,13 @@ public:
                 return false;
             creator.pushObjectReference(*value);
             break;
+#if ENABLE(FILE_SYSTEM)
+        case DOMFileSystemTag:
+            if (!readDOMFileSystem(value))
+                return false;
+            creator.pushObjectReference(*value);
+            break;
+#endif
         case FileListTag:
             if (!readFileList(value))
                 return false;
@@ -1728,6 +1770,24 @@ private:
         *value = toV8(blob, m_isolate);
         return true;
     }
+
+#if ENABLE(FILE_SYSTEM)
+    bool readDOMFileSystem(v8::Handle<v8::Value>* value)
+    {
+        uint32_t type;
+        String name;
+        String url;
+        if (!doReadUint32(&type))
+            return false;
+        if (!readWebCoreString(&name))
+            return false;
+        if (!readWebCoreString(&url))
+            return false;
+        RefPtr<DOMFileSystem> fs = DOMFileSystem::create(getScriptExecutionContext(), name, static_cast<WebCore::FileSystemType>(type), KURL(ParsedURLString, url), AsyncFileSystem::create());
+        *value = toV8(fs.release(), m_isolate);
+        return true;
+    }
+#endif
 
     bool readFile(v8::Handle<v8::Value>* value)
     {

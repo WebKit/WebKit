@@ -1,3 +1,23 @@
+2012-06-19  Steve VanDeBogart  <vandebo@chromium.org>
+
+        Make DOMFileSystem selectively structure clonable so it can be the body of a web intent.
+        https://bugs.webkit.org/show_bug.cgi?id=88267
+
+        Reviewed by David Levin.
+
+        This functionality will allow FileSystem API objects to be dispatched to
+        web content in order to enable, for instance, an intent notifying web
+        content that a particular filesystem has been mounted by the local
+        system. The goal at this point is not to enable across-the-board
+        clonability, but just for handling the particular use case.
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::V8ObjectMap::Writer::writeDOMFileSystem):
+        (WebCore::V8ObjectMap::Serializer::writeDOMFileSystem):
+        (WebCore::V8ObjectMap::Serializer::doSerialize):
+        (WebCore::V8ObjectMap::Reader::read):
+        (WebCore::V8ObjectMap::Reader::readDOMFileSystem):
+
 2012-06-19  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r120772.
