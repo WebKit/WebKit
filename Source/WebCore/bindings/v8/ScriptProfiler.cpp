@@ -121,7 +121,7 @@ ScriptObject ScriptProfiler::objectByHeapObjectId(unsigned id)
     return ScriptObject(scriptState, object);
 }
 
-unsigned ScriptProfiler::getHeapObjectId(ScriptValue value)
+unsigned ScriptProfiler::getHeapObjectId(const ScriptValue& value)
 {
     v8::SnapshotObjectId id = v8::HeapProfiler::GetSnapshotObjectId(value.v8Value());
     return id;

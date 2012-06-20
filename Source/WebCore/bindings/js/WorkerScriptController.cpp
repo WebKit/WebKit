@@ -155,7 +155,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Script
     }
 }
 
-void WorkerScriptController::setException(ScriptValue exception)
+void WorkerScriptController::setException(const ScriptValue& exception)
 {
     throwError(m_workerContextWrapper->globalExec(), exception.jsValue());
 }

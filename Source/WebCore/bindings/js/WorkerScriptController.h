@@ -60,7 +60,7 @@ namespace WebCore {
         void evaluate(const ScriptSourceCode&);
         void evaluate(const ScriptSourceCode&, ScriptValue* exception);
 
-        void setException(ScriptValue);
+        void setException(const ScriptValue&);
 
         // Async request to terminate a JS run execution. Eventually causes termination
         // exception raised during JS execution, if the worker thread happens to run JS.

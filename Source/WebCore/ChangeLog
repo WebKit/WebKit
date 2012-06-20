@@ -1,3 +1,60 @@
+2012-06-19  Adam Klein  <adamk@chromium.org>
+
+        Pass ScriptValue by const ref where possible
+        https://bugs.webkit.org/show_bug.cgi?id=89531
+
+        Reviewed by Kentaro Hara.
+
+        Previously ScriptValue was sometimes passed by value, sometimes by const ref.
+
+        For consistency and optimality, pass by const ref everywhere (except where
+        ScriptValue is returned from non-accessor methods).
+
+        No new tests, no change in behavior.
+
+        * bindings/js/ScriptFunctionCall.h:
+        (ScriptCallback):
+        * bindings/js/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::getHeapObjectId):
+        * bindings/js/ScriptProfiler.h:
+        (ScriptProfiler):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::setException):
+        * bindings/js/WorkerScriptController.h:
+        (WorkerScriptController):
+        * bindings/v8/ScriptFunctionCall.cpp:
+        (WebCore::ScriptCallback::ScriptCallback):
+        * bindings/v8/ScriptFunctionCall.h:
+        (ScriptCallback):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::getHeapObjectId):
+        (WebCore):
+        * bindings/v8/ScriptProfiler.h:
+        (ScriptProfiler):
+        * bindings/v8/ScriptValue.h:
+        (WebCore::ScriptValue::operator==):
+        (WebCore::ScriptValue::operator!=):
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::setException):
+        * bindings/v8/WorkerScriptController.h:
+        (WorkerScriptController):
+        * css/MediaQueryListListener.h:
+        (WebCore::MediaQueryListListener::create):
+        (WebCore::MediaQueryListListener::MediaQueryListListener):
+        * dom/CustomEvent.cpp:
+        (WebCore::CustomEvent::initCustomEvent):
+        * dom/CustomEvent.h:
+        (CustomEvent):
+        (WebCore::CustomEvent::detail):
+        * dom/MessageEvent.h:
+        (WebCore::MessageEvent::dataAsScriptValue):
+        * dom/PopStateEvent.h:
+        (WebCore::PopStateEvent::state):
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::wrapObject):
+        * inspector/InjectedScript.h:
+        (InjectedScript):
+
 2012-06-18  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] 0.11 video-sink

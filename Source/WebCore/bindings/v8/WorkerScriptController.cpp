@@ -137,7 +137,7 @@ void WorkerScriptController::disableEval()
 {
 }
 
-void WorkerScriptController::setException(ScriptValue exception)
+void WorkerScriptController::setException(const ScriptValue& exception)
 {
     throwError(*exception.v8Value());
 }

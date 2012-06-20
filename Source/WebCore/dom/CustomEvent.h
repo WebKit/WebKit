@@ -51,11 +51,11 @@ public:
         return adoptRef(new CustomEvent(type, initializer));
     }
 
-    void initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, ScriptValue detail);
+    void initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, const ScriptValue& detail);
 
     virtual const AtomicString& interfaceName() const;
 
-    ScriptValue detail() const { return m_detail; }
+    const ScriptValue& detail() const { return m_detail; }
 
 private:
     CustomEvent();

@@ -99,7 +99,7 @@ public:
         return *this;
     }
 
-    bool operator==(const ScriptValue value) const
+    bool operator==(const ScriptValue& value) const
     {
         return m_value == value.m_value;
     }
@@ -114,7 +114,7 @@ public:
         return m_value->IsFunction();
     }
 
-    bool operator!=(const ScriptValue value) const
+    bool operator!=(const ScriptValue& value) const
     {
         return !operator==(value);
     }

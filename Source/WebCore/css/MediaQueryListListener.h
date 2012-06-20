@@ -34,7 +34,7 @@ class MediaQueryList;
 
 class MediaQueryListListener : public RefCounted<MediaQueryListListener> {
 public:
-    static PassRefPtr<MediaQueryListListener> create(ScriptValue value)
+    static PassRefPtr<MediaQueryListListener> create(const ScriptValue& value)
     {
         if (!value.isFunction())
             return 0;
@@ -45,7 +45,7 @@ public:
     bool operator==(const MediaQueryListListener& other) const { return m_value == other.m_value; }
 
 private:
-    MediaQueryListListener(ScriptValue value) : m_value(value) { }
+    MediaQueryListListener(const ScriptValue& value) : m_value(value) { }
 
     ScriptValue m_value;
 };

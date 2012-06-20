@@ -51,7 +51,7 @@ ScriptObject ScriptProfiler::objectByHeapObjectId(unsigned)
     return ScriptObject();
 }
 
-unsigned ScriptProfiler::getHeapObjectId(ScriptValue)
+unsigned ScriptProfiler::getHeapObjectId(const ScriptValue&)
 {
     return 0;
 }

@@ -87,7 +87,7 @@ namespace WebCore {
 
     class ScriptCallback : public ScriptCallArgumentHandler {
     public:
-        ScriptCallback(ScriptState*, ScriptValue);
+        ScriptCallback(ScriptState*, const ScriptValue&);
 
         ScriptValue call();
         ScriptValue call(bool& hadException);
