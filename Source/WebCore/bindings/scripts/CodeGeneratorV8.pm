@@ -181,63 +181,6 @@ sub AddIncludesForType
     }
 }
 
-sub NeedsToVisitDOMWrapper
-{
-    my $dataNode = shift;
-    return GetGenerateIsReachable($dataNode) || GetCustomIsReachable($dataNode);
-}
-
-sub GetGenerateIsReachable
-{
-    my $dataNode = shift;
-    return $dataNode->extendedAttributes->{"GenerateIsReachable"} || $dataNode->extendedAttributes->{"V8GenerateIsReachable"} || ""
-}
-
-sub GetCustomIsReachable
-{
-    my $dataNode = shift;
-    return $dataNode->extendedAttributes->{"CustomIsReachable"} || $dataNode->extendedAttributes->{"V8CustomIsReachable"};
-}
-
-sub GenerateVisitDOMWrapper
-{
-    my ($dataNode, $implClassName) = @_;
-
-    if (GetCustomIsReachable($dataNode)) {
-        return;
-    }
-
-    push(@implContent, <<END);
-void V8${implClassName}::visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
-{
-    ${implClassName}* impl = static_cast<${implClassName}*>(object);
-END
-    if (GetGenerateIsReachable($dataNode) eq  "ImplElementRoot" ||
-        GetGenerateIsReachable($dataNode) eq  "ImplOwnerRoot" ||
-        GetGenerateIsReachable($dataNode) eq  "ImplOwnerNodeRoot") {
-
-        my $methodName;
-        $methodName = "element" if (GetGenerateIsReachable($dataNode) eq "ImplElementRoot");
-        $methodName = "owner" if (GetGenerateIsReachable($dataNode) eq "ImplOwnerRoot");
-        $methodName = "ownerNode" if (GetGenerateIsReachable($dataNode) eq "ImplOwnerNodeRoot");
-
-        push(@implContent, <<END);
-    if (Node* owner = impl->${methodName}()) {
-        v8::Persistent<v8::Object> ownerWrapper = getDOMNodeMap().get(owner);
-        if (!ownerWrapper.IsEmpty()) {
-            v8::Persistent<v8::Value> value = wrapper;
-            v8::V8::AddImplicitReferences(ownerWrapper, &value, 1);
-        }
-    }
-END
-    }
-
-    push(@implContent, <<END);
-}
-
-END
-}
-
 sub GetSVGPropertyTypes
 {
     my $implType = shift;
@@ -292,8 +235,7 @@ sub GenerateHeader
     $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@allParents, 1);
     $codeGenerator->LinkOverloadedFunctions($dataNode);
 
-    my $hasDependentLifetime = $dataNode->extendedAttributes->{"V8DependentLifetime"} || $dataNode->extendedAttributes->{"ActiveDOMObject"}
-         || GetGenerateIsReachable($dataNode) || $className =~ /SVG/;
+    my $hasDependentLifetime = $dataNode->extendedAttributes->{"V8DependentLifetime"} || $dataNode->extendedAttributes->{"ActiveDOMObject"} || $className =~ /SVG/;
     if (!$hasDependentLifetime) {
         foreach (@{$dataNode->parents}) {
             my $parent = $codeGenerator->StripModule($_);
@@ -387,7 +329,6 @@ END
     }
     inline static v8::Handle<v8::Object> wrap(${nativeType}*, v8::Isolate* = 0${forceNewObjectParameter});
     static void derefObject(void*);
-    static void visitDOMWrapper(DOMDataStore*, void*, v8::Persistent<v8::Object>);
     static WrapperTypeInfo info;
 END
     if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
@@ -1930,12 +1871,12 @@ sub GenerateNamedConstructorCallback
 
     if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
         push(@implContent, <<END);
-WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constructor::GetTemplate, V8${implClassName}::derefObject, V8${implClassName}::toActiveDOMObject, 0, 0, WrapperTypeObjectPrototype };
+WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constructor::GetTemplate, V8${implClassName}::derefObject, V8${implClassName}::toActiveDOMObject, 0, WrapperTypeObjectPrototype };
 
 END
     } else {
         push(@implContent, <<END);
-WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constructor::GetTemplate, 0, 0, 0, 0, WrapperTypeObjectPrototype };
+WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constructor::GetTemplate, 0, 0, 0, WrapperTypeObjectPrototype };
 
 END
     }
@@ -2487,7 +2428,6 @@ sub GenerateImplementation
     AddIncludesForType($interfaceName);
 
     my $toActive = $dataNode->extendedAttributes->{"ActiveDOMObject"} ? "${className}::toActiveDOMObject" : "0";
-    my $domVisitor = NeedsToVisitDOMWrapper($dataNode) ? "${className}::visitDOMWrapper" : "0";
 
     # Find the super descriptor.
     my $parentClass = "";
@@ -2507,7 +2447,7 @@ sub GenerateImplementation
 
     my $WrapperTypePrototype = $dataNode->isException ? "WrapperTypeErrorPrototype" : "WrapperTypeObjectPrototype";
 
-    push(@implContentDecls, "WrapperTypeInfo ${className}::info = { ${className}::GetTemplate, ${className}::derefObject, $toActive, $domVisitor, $parentClassInfo, $WrapperTypePrototype };\n\n");
+    push(@implContentDecls, "WrapperTypeInfo ${className}::info = { ${className}::GetTemplate, ${className}::derefObject, $toActive, $parentClassInfo, $WrapperTypePrototype };\n\n");
     push(@implContentDecls, "namespace ${interfaceName}V8Internal {\n\n");
 
     push(@implContentDecls, "template <typename T> void V8_USE(T) { }\n\n");
@@ -2559,10 +2499,6 @@ sub GenerateImplementation
 
     if ($hasConstructors) {
         GenerateConstructorGetter($dataNode, $implClassName);
-    }
-
-    if (NeedsToVisitDOMWrapper($dataNode)) {
-        GenerateVisitDOMWrapper($dataNode, $implClassName);
     }
 
     my $indexer;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,57 +29,27 @@
  */
 
 #include "config.h"
-#include "V8NamedNodeMap.h"
+#include "V8DOMTokenList.h"
 
-#include "NamedNodeMap.h"
-#include "V8Attr.h"
+#include "DOMTokenList.h"
 #include "V8Binding.h"
-#include "V8BindingState.h"
+#include "V8DOMWrapper.h"
 #include "V8Element.h"
-#include "V8Node.h"
-#include "V8Proxy.h"
-
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8NamedNodeMap::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
-{
-    INC_STATS("DOM.NamedNodeMap.IndexedPropertyGetter");
-    NamedNodeMap* imp = V8NamedNodeMap::toNative(info.Holder());
-    RefPtr<Node> result = imp->item(index);
-    if (!result)
-        return v8::Handle<v8::Value>();
-
-    return toV8(result.release(), info.GetIsolate());
-}
-
-v8::Handle<v8::Value> V8NamedNodeMap::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    INC_STATS("DOM.NamedNodeMap.NamedPropertyGetter");
-
-    if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
-        return v8::Handle<v8::Value>();
-    if (info.Holder()->HasRealNamedCallbackProperty(name))
-        return v8::Handle<v8::Value>();
-
-    NamedNodeMap* imp = V8NamedNodeMap::toNative(info.Holder());
-    RefPtr<Node> result = imp->getNamedItem(toWebCoreString(name));
-    if (!result)
-        return v8::Handle<v8::Value>();
-
-    return toV8(result.release(), info.GetIsolate());
-}
-
-v8::Handle<v8::Value> toV8(NamedNodeMap* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(DOMTokenList* impl, v8::Isolate* isolate)
 {
     if (!impl)
         return v8NullWithCheck(isolate);
-    v8::Handle<v8::Object> wrapper = V8NamedNodeMap::wrap(impl, isolate);
-    // Add a hidden reference from named node map to its owner node.
+    v8::Handle<v8::Object> wrapper = V8DOMTokenList::wrap(impl, isolate);
+    // Add a hidden reference from the element to the DOMTokenList.
     Element* element = impl->element();
-    if (!wrapper.IsEmpty() && element)
-        wrapper->SetHiddenValue(V8HiddenPropertyName::ownerNode(), toV8(element, isolate));
+    if (!wrapper.IsEmpty() && element) {
+        v8::Handle<v8::Value> elementValue = toV8(element, isolate);
+        if (!elementValue.IsEmpty() && elementValue->IsObject())
+            elementValue.As<v8::Object>()->SetHiddenValue(V8HiddenPropertyName::domTokenList(), wrapper);
+    }
     return wrapper;
 }
 

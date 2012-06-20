@@ -36,7 +36,6 @@
 namespace WebCore {
     
     class ActiveDOMObject;
-    class DOMDataStore;
     
     static const int v8DOMWrapperTypeIndex = 0;
     static const int v8DOMWrapperObjectIndex = 1;
@@ -47,7 +46,6 @@ namespace WebCore {
     typedef v8::Persistent<v8::FunctionTemplate> (*GetTemplateFunction)();
     typedef void (*DerefObjectFunction)(void*);
     typedef ActiveDOMObject* (*ToActiveDOMObjectFunction)(v8::Handle<v8::Object>);
-    typedef void (*DOMWrapperVisitorFunction)(DOMDataStore*, void*, v8::Persistent<v8::Object>);
 
     enum WrapperTypePrototype {
         WrapperTypeObjectPrototype,
@@ -98,7 +96,6 @@ namespace WebCore {
         const GetTemplateFunction getTemplateFunction;
         const DerefObjectFunction derefObjectFunction;
         const ToActiveDOMObjectFunction toActiveDOMObjectFunction;
-        const DOMWrapperVisitorFunction domWrapperVisitorFunction;
         const WrapperTypeInfo* parentClass;
         const WrapperTypePrototype wrapperTypePrototype;
     };
