@@ -58,6 +58,9 @@ public:
     bool continuous() { return m_continuous; }
     void setContinuous(bool continuous) { m_continuous = continuous; }
 
+    unsigned long maxAlternatives() { return m_maxAlternatives; }
+    void setMaxAlternatives(unsigned long maxAlternatives) { m_maxAlternatives = maxAlternatives; }
+
     // Callable by the user.
     void start();
     void stopFunction();
@@ -112,6 +115,7 @@ private:
     RefPtr<SpeechGrammarList> m_grammars;
     String m_lang;
     bool m_continuous;
+    unsigned long m_maxAlternatives;
 
     EventTargetData m_eventTargetData;
 

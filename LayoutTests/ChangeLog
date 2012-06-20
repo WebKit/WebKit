@@ -1,3 +1,15 @@
+2012-06-20  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: add SpeechRecognition.maxAlternatives attribute
+        https://bugs.webkit.org/show_bug.cgi?id=89459
+
+        Reviewed by Eric Seidel.
+
+        Update the basic test to check for presence of the maxAlternatives attribute.
+
+        * fast/speech/scripted/basics-expected.txt:
+        * fast/speech/scripted/basics.html:
+
 2012-06-20  Takashi Sakamoto  <tasak@google.com>
 
         applyAuthorStyles makes rules declared in all enclosing shadow dom subtrees applicable.

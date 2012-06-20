@@ -47,7 +47,7 @@ PassRefPtr<SpeechRecognition> SpeechRecognition::create(ScriptExecutionContext* 
 void SpeechRecognition::start()
 {
     ASSERT(m_controller); // FIXME: Spec should say what to do if we are already started.
-    m_controller->start(this, m_grammars.get(), m_lang, m_continuous);
+    m_controller->start(this, m_grammars.get(), m_lang, m_continuous, m_maxAlternatives);
 }
 
 void SpeechRecognition::stopFunction()
@@ -137,6 +137,7 @@ SpeechRecognition::SpeechRecognition(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_grammars(SpeechGrammarList::create()) // FIXME: The spec is not clear on the default value for the grammars attribute.
     , m_continuous(false)
+    , m_maxAlternatives(1)
     , m_controller(0)
 {
     ASSERT(scriptExecutionContext()->isDocument());

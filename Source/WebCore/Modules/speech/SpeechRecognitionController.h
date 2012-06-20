@@ -38,7 +38,11 @@ class SpeechRecognitionController : public Supplement<Page> {
 public:
     virtual ~SpeechRecognitionController();
 
-    void start(SpeechRecognition* recognition, const SpeechGrammarList* grammars, const String& lang, bool continuous) { m_client->start(recognition, grammars, lang, continuous); }
+    void start(SpeechRecognition* recognition, const SpeechGrammarList* grammars, const String& lang, bool continuous, unsigned long maxAlternatives)
+    {
+        m_client->start(recognition, grammars, lang, continuous, maxAlternatives);
+    }
+
     void stop(SpeechRecognition* recognition) { m_client->stop(recognition); }
     void abort(SpeechRecognition* recognition) { m_client->abort(recognition); }
 
