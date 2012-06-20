@@ -50,7 +50,8 @@ public:
 
 private:
 #ifndef NDEBUG
-    bool accessible(Node*);
+    bool isUnreachableNode(EventTarget*);
+    bool isReachable(Node*);
 #endif
     RefPtr<Node> m_node;
     RefPtr<EventTarget> m_currentTarget;
@@ -80,12 +81,18 @@ inline EventTarget* EventContext::relatedTarget() const
 
 inline void EventContext::setRelatedTarget(PassRefPtr<EventTarget> relatedTarget)
 {
-    ASSERT(!relatedTarget || !relatedTarget->toNode() || accessible(relatedTarget->toNode()));
+    ASSERT(!isUnreachableNode(relatedTarget.get()));
     m_relatedTarget = relatedTarget;
 }
 
 #ifndef NDEBUG
-inline bool EventContext::accessible(Node* target)
+inline bool EventContext::isUnreachableNode(EventTarget* target)
+{
+    // FIXME: Checks also for SVG elements.
+    return target && target->toNode() && !target->toNode()->isSVGElement() && !isReachable(target->toNode());
+}
+
+inline bool EventContext::isReachable(Node* target)
 {
     ASSERT(target);
     TreeScope* targetScope = target->treeScope();

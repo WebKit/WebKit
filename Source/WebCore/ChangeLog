@@ -1,3 +1,23 @@
+2012-06-19  Hayato Ito  <hayato@chromium.org>
+
+        Assertion for event's target is wrong.
+        https://bugs.webkit.org/show_bug.cgi?id=89479
+
+        Reviewed by Hajime Morita.
+
+        Fix an assertion to ensure that event's target is reachable from a current target.
+
+        No new tests. Fix an assert condition.
+
+        * dom/EventContext.cpp:
+        (WebCore::EventContext::EventContext):
+        * dom/EventContext.h:
+        (EventContext):
+        (WebCore::EventContext::setRelatedTarget):
+        (WebCore::EventContext::isUnreachableNode):
+        (WebCore):
+        (WebCore::EventContext::isReachable):
+
 2012-06-19  Benjamin Poulain  <bpoulain@apple.com>
 
         Refactoring: Geolocation::startRequest() should not create the GeoNotifiers
