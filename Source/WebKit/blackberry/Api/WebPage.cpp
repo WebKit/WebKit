@@ -532,6 +532,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 #if USE(ACCELERATED_COMPOSITING)
     m_tapHighlight = DefaultTapHighlight::create(this);
     m_selectionOverlay = SelectionOverlay::create(this);
+    m_page->settings()->setAcceleratedCompositingForFixedPositionEnabled(true);
 #endif
 
     // FIXME: We explicitly call setDelegate() instead of passing ourself in createFromStandardSettings()

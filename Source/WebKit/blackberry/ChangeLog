@@ -1,3 +1,16 @@
+2012-06-20  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Enable setAcceleratedCompositingForFixedPositionEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=89575
+
+        Reviewed by Antonio Gomes.
+
+        Enable the flag so that we get position:fixed elemetns to be rendered
+        using accelerated compositing.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+
 2012-06-20  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Use IntSize in RenderLayer to represent scroll offsets
