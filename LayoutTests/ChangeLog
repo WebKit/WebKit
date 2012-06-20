@@ -1,3 +1,14 @@
+2012-06-20  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed rebaselining.
+
+        * platform/chromium-linux/platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo-expected.png:
+        * platform/chromium-mac-leopard/platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Speculative skipping to try to paint the bot green.
