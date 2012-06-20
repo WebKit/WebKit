@@ -1,3 +1,57 @@
+2012-06-20  Takashi Sakamoto  <tasak@google.com>
+
+        applyAuthorStyles makes rules declared in all enclosing shadow dom subtrees applicable.
+        https://bugs.webkit.org/show_bug.cgi?id=89061
+
+        Reviewed by Dimitri Glazkov.
+
+        Fixing apply-author-styles bug. If there exists some shadow subtree A
+        and A has apply-author-styles flag set, whether some rules declared in
+        a tree B is applicable in A or not depends on:
+        - the tree B encloses the tree A, and
+        - all trees which enclose A and are enclosed by B has
+          apply-author-styles set.
+        c.f.
+        http://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html#styles
+        However the second rule was not implemented.
+
+        Test: fast/css/style-scoped/style-scoped-apply-author-styles.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::setupScopeStack):
+        Modified to add a new member variable, authorStyleBoundsIndex to
+        ScopeStackFrame used by m_scopeStack. The index means: if shadow dom
+        subtree A and B has the same value and A encloses B, all shadow dom
+        subtrees which enclose B and are enclosed by B have
+        apply-author-styles set. And B also has apply-author-styles set.
+        This means, if some element X has authorStyleBoundsIndex N, all
+        rulesets whose scopes have authorStyleBoundsIndex N are applicable in
+        B's tree scope. If all shadow dom subtrees have apply-author-styles
+        unset, the index looks almost the same as treeScope(). In this case,
+        Rules in different tree scopes have different author style bounds
+        index.
+        (WebCore::StyleResolver::pushScope):
+        (WebCore::StyleResolver::popScope):
+        Added the code for updating m_scopeStackParentBoundsIndex. The member
+        variable keeps m_scopeStackParent's author style bounds index.
+        (WebCore::StyleResolver::matchScopedAuthorRules):
+        Modified to consider author style's bounds index. Firstly applying
+        scoped styles declared in document if apply-author-styles is set.
+        Next, applying scoped styles declared in shadow dom subtree with
+        considering author style bounds index, i.e. considering
+        apply-author-styles flag.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::ScopeStackFrame::ScopeStackFrame):
+        (ScopeStackFrame):
+        Added m_authorStyleBoundsIndex to keep apply-author-styles flag
+        information. m_authorStyleBoundsIndex increments by 1 if shadow root is
+        given and it has apply-author-styles unset.
+        Now rules in the same authorStyleBoundsIndex should be applied.
+        (StyleResolver):
+        Added m_scopeStackParentBoundsIndex.
+        As m_scopeStackParentAuthorStyleBoundsIndex is a little long,
+        used m_scopeStackParentBoundsIndex.
+
 2012-06-20  Amy Ousterhout  <aousterh@chromium.org>
 
         Adds DeviceMotionClientMock

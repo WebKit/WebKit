@@ -1,0 +1,38 @@
+PASS window.internals is defined.
+PASS window.internals.ensureShadowRoot is defined.
+PASS WebKitShadowRoot is defined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+test a scoped style in document is applied to a node in shadow dom subtree when apply-author-styles is true.
+target: rgb(0, 0, 0)
+target: rgb(255, 0, 0)
+test a style in an enclosing shadow dom tree is applied to a node in shadow subtree when apply-author-styles is true.
+target: rgb(0, 0, 0)
+target: rgb(255, 0, 0)
+test a scoped style in an enclosing shadow dom tree is applied to a node in shadow subtree when apply-author-styles is true and the node is in the scope.
+targetInScope: rgb(0, 0, 0)
+targetOutOfScope: rgb(0, 0, 0)
+targetInScope: rgb(255, 0, 0)
+targetOutOfScope: rgb(0, 0, 0)
+test a style in a shadow subtree is applied to a node in its descendant shadow subtree when all apply-author-styles in shadow subtrees between the shadow subtree and the descendant are true.
+target: rgb(0, 0, 0)
+target: rgb(255, 0, 0)
+target: rgb(0, 0, 255)
+test a style in document is applied to nodes in multiple shadow subtrees when apply-author-styles is true.
+oldestShadow: rgb(0, 0, 0)
+olderShadow: rgb(0, 0, 255)
+target: rgb(0, 0, 0)
+oldestShadow: rgb(0, 0, 0)
+olderShadow: rgb(0, 0, 255)
+target: rgb(255, 0, 0)
+oldestShadow: rgb(0, 0, 0)
+olderShadow: rgb(0, 0, 255)
+target: rgb(0, 0, 0)
+oldestShadow: rgb(255, 0, 0)
+olderShadow: rgb(0, 0, 255)
+target: rgb(0, 0, 0)
+test a style is applied in document order.
+target: rgb(255, 255, 0)
+target: rgb(0, 128, 0)
+

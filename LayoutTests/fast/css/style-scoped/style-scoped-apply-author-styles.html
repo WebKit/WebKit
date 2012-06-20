@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../dom/shadow/resources/polyfill.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+shouldBeDefined("window.internals");
+shouldBeDefined("window.internals.ensureShadowRoot");
+shouldBeDefined("WebKitShadowRoot");
+
+function dumpComputedStyle(node)
+{
+    debug(node.id + ": " + document.defaultView.getComputedStyle(node, null).getPropertyValue('border-color'));
+}
+
+function testBasic()
+{
+    debug('test a scoped style in document is applied to a node in shadow dom subtree when apply-author-styles is true.');
+    var div = document.createElement('div');
+    div.innerHTML = '<div><style scoped>div { border: 1px solid red; }</style><div id="host"></div></div>';
+    document.body.appendChild(div);
+
+    var shadow = new WebKitShadowRoot(document.getElementById("host"));
+    shadow.innerHTML = '<div id="target">target</div>';
+    document.body.appendChild(div);
+
+    // before
+    shadow.applyAuthorStyles = false;
+    dumpComputedStyle(shadow.getElementById("target"));
+
+    // after
+    shadow.applyAuthorStyles = true;
+    dumpComputedStyle(shadow.getElementById("target"));
+
+    document.body.removeChild(div);
+}
+
+function testEnclosingShadow()
+{
+    debug('test a style in an enclosing shadow dom tree is applied to a node in shadow subtree when apply-author-styles is true.');
+
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
+    var outerShadow = new WebKitShadowRoot(div);
+    outerShadow.innerHTML = '<style>div { border: 1px solid red; }</style><div id="outer">outer</div>';
+    var shadow = new WebKitShadowRoot(outerShadow.getElementById("outer"));
+    shadow.innerHTML = '<div id="target">target</div>';
+
+    // before
+    shadow.applyAuthorStyles = false;
+    dumpComputedStyle(shadow.getElementById("target"));
+
+    // after
+    shadow.applyAuthorStyles = true;
+    dumpComputedStyle(shadow.getElementById("target"));
+    document.body.removeChild(div);   
+}
+
+function testEnclosingShadowWithScoped()
+{
+    debug('test a scoped style in an enclosing shadow dom tree is applied to a node in shadow subtree when apply-author-styles is true and the node is in the scope.');
+
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
+    var outerShadow = new WebKitShadowRoot(div);
+    outerShadow.innerHTML = '<div><style scoped>div { border: 1px solid red; }</style><div id="outerInScope">outerInScope</div></div><div id="outerOutOfScope">outerOutOfScope</div>';
+
+    var shadow1 = new WebKitShadowRoot(outerShadow.getElementById("outerInScope"));
+    shadow1.innerHTML = '<div id="targetInScope">targetInScope</div>';
+    var shadow2 = new WebKitShadowRoot(outerShadow.getElementById("outerOutOfScope"));
+    shadow2.innerHTML = '<div id="targetOutOfScope">targetOutOfScope</div>';
+
+    // before
+    shadow1.applyAuthorStyles = false;
+    shadow2.applyAuthorStyles = false;
+    dumpComputedStyle(shadow1.getElementById("targetInScope"));
+    dumpComputedStyle(shadow2.getElementById("targetOutOfScope"));
+
+    // after
+    shadow1.applyAuthorStyles = true;
+    shadow2.applyAuthorStyles = true;
+    dumpComputedStyle(shadow1.getElementById("targetInScope"));
+    dumpComputedStyle(shadow2.getElementById("targetOutOfScope"));
+
+    document.body.removeChild(div);   
+}
+
+function testNestedShadow()
+{
+    debug('test a style in a shadow subtree is applied to a node in its descendant shadow subtree when all apply-author-styles in shadow subtrees between the shadow subtree and the descendant are true.');
+
+    var div = document.createElement('div');
+    div.innerHTML = '<style scoped>div { border: 1px solid red }</style><div id="host"></div>';
+    document.body.appendChild(div);
+
+    var outerMostShadow = new WebKitShadowRoot(document.getElementById("host"));
+    outerMostShadow.innerHTML = '<style>div { border: 1px solid blue; }</style><div id="outerMost">outerMost</div>';
+    outerMostShadow.applyAuthorStyles = false;
+
+    var outerShadow = new WebKitShadowRoot(outerMostShadow.getElementById("outerMost"));
+    outerShadow.innerHTML = '<div id="outer">outer</div>';
+    outerShadow.applyAuthorStyles = false;
+
+    var shadow = new WebKitShadowRoot(outerShadow.getElementById("outer"));
+    shadow.innerHTML = '<div id="target">target</div>';
+    shadow.applyAuthorStyles = false;
+
+    // No styles should be applied.
+    dumpComputedStyle(shadow.getElementById("target"));
+
+    shadow.applyAuthorStyles = true;
+    // A style in document should be applied.
+    dumpComputedStyle(shadow.getElementById("target"));
+
+    outerShadow.applyAuthorStyles = true
+    // A style in 'outerMost' shadow should be applied.
+    dumpComputedStyle(shadow.getElementById("target"));
+
+    document.body.removeChild(div);   
+}
+
+function testMultipleShadow()
+{
+    debug('test a style in document is applied to nodes in multiple shadow subtrees when apply-author-styles is true.');
+
+    var div = document.createElement('div');
+    div.innerHTML = '<style scoped>div { border: 1px solid red }</style><div>test</div>';
+    document.body.appendChild(div);
+
+    var oldestShadow = new WebKitShadowRoot(div);
+    oldestShadow.innerHTML = '<shadow></shadow><div id="oldestShadow">oldestShadow</div>';
+    oldestShadow.applyAuthorStyles = false;
+
+    var olderShadow =  new WebKitShadowRoot(div);
+    olderShadow.innerHTML = '<style scoped>div { border: 1px solid blue }</style><shadow></shadow><div id="olderShadow">olderShadow</div>';
+    olderShadow.applyAuthorStyles = false;
+
+    var shadow = new WebKitShadowRoot(div);
+    shadow.innerHTML = '<shadow></shadow><div id="target">shadow</div>';
+    shadow.applyAuthorStyles = false;
+
+    // before
+    dumpComputedStyle(oldestShadow.getElementById("oldestShadow"));
+    dumpComputedStyle(olderShadow.getElementById("olderShadow"));
+    dumpComputedStyle(shadow.getElementById("target"));
+
+    // document ---+--- oldestShadow
+    //             |
+    //             +--- olderShadow
+    //             |
+    //             +--- shadow
+
+    // apply-author-styles affects between shadow and document.
+    shadow.applyAuthorStyles = true;
+    dumpComputedStyle(oldestShadow.getElementById("oldestShadow"));
+    dumpComputedStyle(olderShadow.getElementById("olderShadow"));
+    dumpComputedStyle(shadow.getElementById("target"));
+
+    // apply-author-styles affects between older shadow and document.
+    shadow.applyAuthorStyles = false;
+    olderShadow.applyAuthorStyles = true;
+    dumpComputedStyle(oldestShadow.getElementById("oldestShadow"));
+    dumpComputedStyle(olderShadow.getElementById("olderShadow"));
+    dumpComputedStyle(shadow.getElementById("target"));
+
+    // apply-author-styles affects between oldest shadow and document.
+    olderShadow.applyAuthorStyles = false;
+    oldestShadow.applyAuthorStyles = true;
+    dumpComputedStyle(oldestShadow.getElementById("oldestShadow"));
+    dumpComputedStyle(olderShadow.getElementById("olderShadow"));
+    dumpComputedStyle(shadow.getElementById("target"));
+
+    document.body.removeChild(div);
+}
+
+function testOrderOfApplyStyle()
+{
+    debug('test a style is applied in document order.');
+
+    var div = document.createElement('div');
+    div.innerHTML = '<style scoped>div { border: 1px solid red }</style><div id="host"></div>';
+    document.body.appendChild(div);
+
+    var outerMostShadow = new WebKitShadowRoot(document.getElementById("host"));
+    outerMostShadow.innerHTML = '<style>div { border: 1px solid blue; }</style><div id="outerMost">outerMost</div>';
+    outerMostShadow.applyAuthorStyles = true;
+
+    var outerShadow = new WebKitShadowRoot(outerMostShadow.getElementById("outerMost"));
+    outerShadow.innerHTML = '<style>div { border: 1px solid green; }</style><div id="outer">outer</div>';
+    outerShadow.applyAuthorStyles = true;
+
+    var shadow = new WebKitShadowRoot(outerShadow.getElementById("outer"));
+    shadow.innerHTML = '<style>div { border: 1px solid yellow; }</style><div id="target">target</div>';
+    shadow.applyAuthorStyles = true;
+
+    // The last scoped style should be applied.
+    dumpComputedStyle(shadow.getElementById("target"));
+
+    shadow.innerHTML = '<div id="target">target</div>';
+    // The outer's scoped style should be applied.
+    dumpComputedStyle(shadow.getElementById("target"));
+
+    document.body.removeChild(div);   
+}
+
+function runTests() {
+    testBasic();
+    testEnclosingShadow();
+    testEnclosingShadowWithScoped();
+    testNestedShadow();
+    testMultipleShadow();
+    testOrderOfApplyStyle();
+}
+
+</script>
+</head>
+<body onload="runTests()">
+  <script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -531,9 +531,10 @@ private:
     ScopedRuleSetMap m_scopedAuthorStyles;
     
     struct ScopeStackFrame {
-        ScopeStackFrame() : m_scope(0), m_ruleSet(0) { }
-        ScopeStackFrame(const ContainerNode* scope, RuleSet* ruleSet) : m_scope(scope), m_ruleSet(ruleSet) { }
+        ScopeStackFrame() : m_scope(0), m_authorStyleBoundsIndex(0), m_ruleSet(0) { }
+        ScopeStackFrame(const ContainerNode* scope, int authorStyleBoundsIndex, RuleSet* ruleSet) : m_scope(scope), m_authorStyleBoundsIndex(authorStyleBoundsIndex), m_ruleSet(ruleSet) { }
         const ContainerNode* m_scope;
+        int m_authorStyleBoundsIndex;
         RuleSet* m_ruleSet;
     };
     // Vector (used as stack) that keeps track of scoping elements (i.e., elements with a <style scoped> child)
@@ -542,6 +543,7 @@ private:
     // Element last seen as parent element when updating m_scopingElementStack.
     // This is used to decide whether m_scopingElementStack is consistent, separately from SelectorChecker::m_parentStack.
     const ContainerNode* m_scopeStackParent;
+    int m_scopeStackParentBoundsIndex;
 #endif
 
     friend class StyleBuilder;

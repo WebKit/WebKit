@@ -1,3 +1,13 @@
+2012-06-20  Takashi Sakamoto  <tasak@google.com>
+
+        applyAuthorStyles makes rules declared in all enclosing shadow dom subtrees applicable.
+        https://bugs.webkit.org/show_bug.cgi?id=89061
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/css/style-scoped/style-scoped-apply-author-styles-expected.txt: Added.
+        * fast/css/style-scoped/style-scoped-apply-author-styles.html: Added.
+
 2012-06-20  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed GTK gardening. Removed some tests from TestExpectations

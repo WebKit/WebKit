@@ -372,6 +372,7 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
 #endif
 #if ENABLE(STYLE_SCOPED)
     , m_scopeStackParent(0)
+    , m_scopeStackParentBoundsIndex(0)
 #endif
 {
     Element* root = document->documentElement();
@@ -564,13 +565,17 @@ void StyleResolver::setupScopeStack(const ContainerNode* parent)
     ASSERT(!m_scopedAuthorStyles.isEmpty());
 
     m_scopeStack.shrink(0);
+    int authorStyleBoundsIndex = 0;
     for (const ContainerNode* scope = parent; scope; scope = scope->parentOrHostNode()) {
         RuleSet* ruleSet = ruleSetForScope(scope);
         if (ruleSet)
-            m_scopeStack.append(ScopeStackFrame(scope, ruleSet));
+            m_scopeStack.append(ScopeStackFrame(scope, authorStyleBoundsIndex, ruleSet));
+        if (scope->isShadowRoot() && !toShadowRoot(scope)->applyAuthorStyles())
+            --authorStyleBoundsIndex;
     }
     m_scopeStack.reverse();
     m_scopeStackParent = parent;
+    m_scopeStackParentBoundsIndex = 0;
 }
 
 void StyleResolver::pushScope(const ContainerNode* scope, const ContainerNode* scopeParent)
@@ -587,10 +592,12 @@ void StyleResolver::pushScope(const ContainerNode* scope, const ContainerNode* s
         setupScopeStack(scope);
         return;
     }
+    if (scope->isShadowRoot() && !toShadowRoot(scope)->applyAuthorStyles())
+        ++m_scopeStackParentBoundsIndex;
     // Otherwise just push the parent onto the stack.
     RuleSet* ruleSet = ruleSetForScope(scope);
     if (ruleSet)
-        m_scopeStack.append(ScopeStackFrame(scope, ruleSet));
+        m_scopeStack.append(ScopeStackFrame(scope, m_scopeStackParentBoundsIndex, ruleSet));
     m_scopeStackParent = scope;
 }
 
@@ -600,6 +607,8 @@ void StyleResolver::popScope(const ContainerNode* scope)
     if (scopeStackIsConsistent(scope)) {
         if (!m_scopeStack.isEmpty() && m_scopeStack.last().m_scope == scope)
             m_scopeStack.removeLast();
+        if (scope->isShadowRoot() && !toShadowRoot(scope)->applyAuthorStyles())
+            --m_scopeStackParentBoundsIndex;
         m_scopeStackParent = scope->parentOrHostNode();
     }
 }
@@ -926,21 +935,37 @@ void StyleResolver::matchScopedAuthorRules(MatchResult& result, bool includeEmpt
     MatchOptions options(includeEmptyRules);
 
     // Match scoped author rules by traversing the scoped element stack (rebuild it if it got inconsistent).
-    const ContainerNode* parent = m_element->parentOrHostNode();
-    if (!scopeStackIsConsistent(parent))
-        setupScopeStack(parent);
-    for (size_t i = m_scopeStack.size(); i; --i) {
-        const ScopeStackFrame& frame = m_scopeStack[i - 1];
+    if (!scopeStackIsConsistent(m_element))
+        setupScopeStack(m_element);
+
+    unsigned int firstShadowScopeIndex = 0;
+    if (m_element->treeScope()->applyAuthorStyles()) {
+        unsigned i;
+        for (i = 0; i < m_scopeStack.size() && !m_scopeStack[i].m_scope->isInShadowTree(); ++i) {
+            const ScopeStackFrame& frame = m_scopeStack[i];
+            options.scope = frame.m_scope;
+            collectMatchingRules(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
+            collectMatchingRulesForRegion(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
+        }
+        firstShadowScopeIndex = i;
+    }
+
+    if (!m_element->isInShadowTree() || m_scopeStack.isEmpty())
+        return;
+
+    unsigned scopedIndex = m_scopeStack.size();
+    int authorStyleBoundsIndex = m_scopeStackParentBoundsIndex;
+    for ( ; scopedIndex > firstShadowScopeIndex; --scopedIndex) {
+        if (authorStyleBoundsIndex != m_scopeStack[scopedIndex - 1].m_authorStyleBoundsIndex)
+            break;
+    }
+
+    // Ruleset for ancestor nodes should be applied first.
+    for (unsigned i = scopedIndex; i < m_scopeStack.size(); ++i) {
+        const ScopeStackFrame& frame = m_scopeStack[i];
         options.scope = frame.m_scope;
         collectMatchingRules(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
         collectMatchingRulesForRegion(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
-    }
-    // Also include the current element.
-    RuleSet* ruleSet = ruleSetForScope(m_element);
-    if (ruleSet) {
-        options.scope = m_element;
-        collectMatchingRules(ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
-        collectMatchingRulesForRegion(ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
     }
 #else
     UNUSED_PARAM(result);
