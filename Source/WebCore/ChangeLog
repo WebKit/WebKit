@@ -1,3 +1,16 @@
+2012-06-20  Varun Jain  <varunjain@chromium.org>
+
+        Account for device scale factor when creating image for dragging.
+        https://bugs.webkit.org/show_bug.cgi?id=89489
+
+        Reviewed by Adam Barth.
+
+        Manual Test: ManualTests/chromium/drag-image-accounts-for-device-scale.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::nodeImage):
+        (WebCore::Frame::dragImageForSelection):
+
 2012-06-20  Jacky Jiang  <zhajiang@rim.com>
 
         Add a != operator to ViewportArguments

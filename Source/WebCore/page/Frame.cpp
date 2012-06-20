@@ -1089,9 +1089,16 @@ DragImageRef Frame::nodeImage(Node* node)
     LayoutRect topLevelRect;
     IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
 
+    float deviceScaleFactor = 1;
+    if (m_page)
+        deviceScaleFactor = m_page->deviceScaleFactor();
+    paintingRect.setWidth(paintingRect.width() * deviceScaleFactor);
+    paintingRect.setHeight(paintingRect.height() * deviceScaleFactor);
+
     OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), 1, ColorSpaceDeviceRGB));
     if (!buffer)
         return 0;
+    buffer->context()->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
     buffer->context()->translate(-paintingRect.x(), -paintingRect.y());
     buffer->context()->clip(FloatRect(0, 0, paintingRect.maxX(), paintingRect.maxY()));
 
@@ -1112,9 +1119,16 @@ DragImageRef Frame::dragImageForSelection()
 
     IntRect paintingRect = enclosingIntRect(selection()->bounds());
 
+    float deviceScaleFactor = 1;
+    if (m_page)
+        deviceScaleFactor = m_page->deviceScaleFactor();
+    paintingRect.setWidth(paintingRect.width() * deviceScaleFactor);
+    paintingRect.setHeight(paintingRect.height() * deviceScaleFactor);
+
     OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), 1, ColorSpaceDeviceRGB));
     if (!buffer)
         return 0;
+    buffer->context()->scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
     buffer->context()->translate(-paintingRect.x(), -paintingRect.y());
     buffer->context()->clip(FloatRect(0, 0, paintingRect.maxX(), paintingRect.maxY()));
 
