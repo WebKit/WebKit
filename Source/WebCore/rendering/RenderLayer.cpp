@@ -125,6 +125,11 @@ using namespace HTMLNames;
 const int MinimumWidthWhileResizing = 100;
 const int MinimumHeightWhileResizing = 40;
 
+bool ClipRect::intersects(const HitTestPoint& hitTestPoint)
+{
+    return hitTestPoint.intersects(m_rect);
+}
+
 RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     : m_inResizeMode(false)
     , m_scrollDimensionsDirty(true)
@@ -3361,7 +3366,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
     if (!request.ignoreClipping())
         hitTestArea.intersect(frameVisibleRect(renderer()));
 
-    RenderLayer* insideLayer = hitTestLayer(this, 0, request, result, hitTestArea, result.point(), false);
+    RenderLayer* insideLayer = hitTestLayer(this, 0, request, result, hitTestArea, result.hitTestPoint(), false);
     if (!insideLayer) {
         // We didn't hit any layer. If we are the root layer and the mouse is -- or just was -- down, 
         // return ourselves. We do this so mouse events continue getting delivered after a drag has 
@@ -3413,7 +3418,7 @@ static double computeZOffset(const HitTestingTransformState& transformState)
 }
 
 PassRefPtr<HitTestingTransformState> RenderLayer::createLocalTransformState(RenderLayer* rootLayer, RenderLayer* containerLayer,
-                                        const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint,
+                                        const LayoutRect& hitTestRect, const HitTestPoint& hitTestPoint,
                                         const HitTestingTransformState* containerTransformState) const
 {
     RefPtr<HitTestingTransformState> transformState;
@@ -3425,7 +3430,7 @@ PassRefPtr<HitTestingTransformState> RenderLayer::createLocalTransformState(Rend
     } else {
         // If this is the first time we need to make transform state, then base it off of hitTestPoint,
         // which is relative to rootLayer.
-        transformState = HitTestingTransformState::create(hitTestPoint, FloatQuad(hitTestRect));
+        transformState = HitTestingTransformState::create(hitTestPoint.point(), FloatQuad(hitTestRect));
         convertToLayerCoords(rootLayer, offset);
     }
     
@@ -3475,14 +3480,12 @@ static bool isHitCandidate(const RenderLayer* hitLayer, bool canDepthSort, doubl
 // If zOffset is non-null (which indicates that the caller wants z offset information), 
 //  *zOffset on return is the z offset of the hit point relative to the containing flattening layer.
 RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
-                                       const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint, bool appliedTransform,
+                                       const LayoutRect& hitTestRect, const HitTestPoint& hitTestPoint, bool appliedTransform,
                                        const HitTestingTransformState* transformState, double* zOffset)
 {
     // The natural thing would be to keep HitTestingTransformState on the stack, but it's big, so we heap-allocate.
 
     bool useTemporaryClipRects = renderer()->view()->frameView()->containsScrollableAreaWithOverlayScrollbars();
-
-    LayoutRect hitTestArea = result.rectForPoint(hitTestPoint);
 
     // Apply a transform if we have one.
     if (transform() && !appliedTransform) {
@@ -3490,7 +3493,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         if (parent()) {
             ClipRect clipRect = backgroundClipRect(rootLayer, result.region(), useTemporaryClipRects ? TemporaryClipRects : RootRelativeClipRects, IncludeOverlayScrollbarSize);
             // Go ahead and test the enclosing clip now.
-            if (!clipRect.intersects(hitTestArea))
+            if (!clipRect.intersects(hitTestPoint))
                 return 0;
         }
 
@@ -3509,15 +3512,17 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         // by our container.
         LayoutPoint localPoint = roundedLayoutPoint(newTransformState->mappedPoint());
         LayoutRect localHitTestRect = newTransformState->boundsOfMappedQuad();
+        HitTestPoint newHitTestPoint(result.hitTestPoint());
+        newHitTestPoint.setPoint(localPoint);
 
         // Now do a hit test with the root layer shifted to be us.
-        return hitTestLayer(this, containerLayer, request, result, localHitTestRect, localPoint, true, newTransformState.get(), zOffset);
+        return hitTestLayer(this, containerLayer, request, result, localHitTestRect, newHitTestPoint, true, newTransformState.get(), zOffset);
     }
 
     // Ensure our lists and 3d status are up-to-date.
     updateCompositingAndLayerListsIfNeeded();
     update3DTransformedDescendantStatus();
-    
+
     RefPtr<HitTestingTransformState> localTransformState;
     if (appliedTransform) {
         // We computed the correct state in the caller (above code), so just reference it.
@@ -3573,8 +3578,8 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         // Container needs us to give back a z offset for the hit layer.
         zOffsetForContentsPtr = zOffset;
     }
-    
-    // This variable tracks which layer the mouse ends up being inside. 
+
+    // This variable tracks which layer the mouse ends up being inside.
     RenderLayer* candidateLayer = 0;
 
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
@@ -3596,7 +3601,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     }
 
     // Next we want to see if the mouse pos is inside the child RenderObjects of the layer.
-    if (fgRect.intersects(hitTestArea) && isSelfPaintingLayer()) {
+    if (fgRect.intersects(hitTestPoint) && isSelfPaintingLayer()) {
         // Hit test with a temporary HitTestResult, because we only want to commit to 'result' if we know we're frontmost.
         HitTestResult tempResult(result.hitTestPoint(), result.shadowContentFilterPolicy());
         if (hitTestContents(request, tempResult, layerBounds, hitTestPoint, HitTestDescendants) &&
@@ -3626,7 +3631,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     if (candidateLayer)
         return candidateLayer;
 
-    if (bgRect.intersects(hitTestArea) && isSelfPaintingLayer()) {
+    if (bgRect.intersects(hitTestPoint) && isSelfPaintingLayer()) {
         HitTestResult tempResult(result.hitTestPoint(), result.shadowContentFilterPolicy());
         if (hitTestContents(request, tempResult, layerBounds, hitTestPoint, HitTestSelf) &&
             isHitCandidate(this, false, zOffsetForContentsPtr, unflattenedTransformState.get())) {
@@ -3638,11 +3643,11 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         } else if (result.isRectBasedTest())
             result.append(tempResult);
     }
-    
+
     return 0;
 }
 
-bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& result, const LayoutRect& layerBounds, const LayoutPoint& hitTestPoint, HitTestFilter hitTestFilter) const
+bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& result, const LayoutRect& layerBounds, const HitTestPoint& hitTestPoint, HitTestFilter hitTestFilter) const
 {
     if (!renderer()->hitTest(request, result, hitTestPoint,
                             toLayoutPoint(layerBounds.location() - renderBoxLocation()),
@@ -3670,7 +3675,7 @@ bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& 
 
 RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* rootLayer,
                                       const HitTestRequest& request, HitTestResult& result,
-                                      const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint,
+                                      const LayoutRect& hitTestRect, const HitTestPoint& hitTestPoint,
                                       const HitTestingTransformState* transformState, 
                                       double* zOffsetForDescendants, double* zOffset,
                                       const HitTestingTransformState* unflattenedTransformState,
@@ -3702,12 +3707,12 @@ RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* r
                 break;
         }
     }
-    
+
     return resultLayer;
 }
 
 RenderLayer* RenderLayer::hitTestPaginatedChildLayer(RenderLayer* childLayer, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
-                                                     const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint, const HitTestingTransformState* transformState, double* zOffset)
+                                                     const LayoutRect& hitTestRect, const HitTestPoint& hitTestPoint, const HitTestingTransformState* transformState, double* zOffset)
 {
     Vector<RenderLayer*> columnLayers;
     RenderLayer* ancestorLayer = isNormalFlowOnly() ? parent() : stackingContext();
@@ -3724,7 +3729,7 @@ RenderLayer* RenderLayer::hitTestPaginatedChildLayer(RenderLayer* childLayer, Re
 }
 
 RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
-                                                   const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint, const HitTestingTransformState* transformState, double* zOffset,
+                                                   const LayoutRect& hitTestRect, const HitTestPoint& hitTestPoint, const HitTestingTransformState* transformState, double* zOffset,
                                                    const Vector<RenderLayer*>& columnLayers, size_t columnIndex)
 {
     RenderBlock* columnBlock = toRenderBlock(columnLayers[columnIndex]->renderer());
@@ -3735,10 +3740,10 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
 
     LayoutPoint layerOffset;
     columnBlock->layer()->convertToLayerCoords(rootLayer, layerOffset);
-    
+
     ColumnInfo* colInfo = columnBlock->columnInfo();
     int colCount = columnBlock->columnCount(colInfo);
-    
+
     // We have to go backwards from the last column to the first.
     bool isHorizontal = columnBlock->style()->isHorizontalWritingMode();
     LayoutUnit logicalLeft = columnBlock->logicalLeftOffsetForContent();
@@ -3781,7 +3786,7 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
         LayoutRect localClipRect(hitTestRect);
         localClipRect.intersect(colRect);
 
-        if (!localClipRect.isEmpty() && localClipRect.intersects(result.rectForPoint(hitTestPoint))) {
+        if (!localClipRect.isEmpty() && hitTestPoint.intersects(localClipRect)) {
             RenderLayer* hitLayer = 0;
             if (!columnIndex) {
                 // Apply a translation transform to change where the layer paints.
@@ -3791,7 +3796,7 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
                     oldTransform = *childLayer->transform();
                 TransformationMatrix newTransform(oldTransform);
                 newTransform.translateRight(offset.width(), offset.height());
-                
+
                 childLayer->m_transform = adoptPtr(new TransformationMatrix(newTransform));
                 hitLayer = childLayer->hitTestLayer(rootLayer, columnLayers[0], request, result, localClipRect, hitTestPoint, false, transformState, zOffset);
                 if (oldHasTransform)
@@ -3806,9 +3811,11 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
                 newTransformState->translate(offset.width(), offset.height(), HitTestingTransformState::AccumulateTransform);
                 LayoutPoint localPoint = roundedLayoutPoint(newTransformState->mappedPoint());
                 LayoutRect localHitTestRect = newTransformState->mappedQuad().enclosingBoundingBox();
+                HitTestPoint newHitTestPoint(result.hitTestPoint());
+                newHitTestPoint.setPoint(localPoint);
                 newTransformState->flatten();
 
-                hitLayer = hitTestChildLayerColumns(childLayer, columnLayers[columnIndex - 1], request, result, localHitTestRect, localPoint,
+                hitLayer = hitTestChildLayerColumns(childLayer, columnLayers[columnIndex - 1], request, result, localHitTestRect, newHitTestPoint,
                                                     newTransformState.get(), zOffset, columnLayers, columnIndex - 1);
             }
 

@@ -46,6 +46,7 @@ namespace WebCore {
 class AffineTransform;
 class AnimationController;
 class Cursor;
+class HitTestPoint;
 class HitTestResult;
 class InlineBox;
 class InlineFlowBox;
@@ -641,9 +642,9 @@ public:
 
     bool isComposited() const;
 
-    bool hitTest(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestFilter = HitTestAll);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
+    bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestFilter = HitTestAll);
     virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&);
     VisiblePosition createVisiblePosition(int offset, EAffinity);

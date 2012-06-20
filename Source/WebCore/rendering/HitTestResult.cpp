@@ -606,7 +606,7 @@ bool HitTestResult::isContentEditable() const
     return m_innerNonSharedNode->rendererIsEditable();
 }
 
-bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const LayoutPoint& pointInContainer, const IntRect& rect)
+bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestPoint& pointInContainer, const IntRect& rect)
 {
     // If it is not a rect-based hit test, this method has to be no-op.
     // Return false, so the hit test stops.
@@ -622,7 +622,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const LayoutPoint& 
 
     mutableRectBasedTestResult().add(node);
 
-    bool regionFilled = rect.contains(rectForPoint(pointInContainer));
+    bool regionFilled = rect.contains(rectForPoint(pointInContainer.point()));
     // FIXME: This code (incorrectly) attempts to correct for culled inline nodes. See https://bugs.webkit.org/show_bug.cgi?id=85849.
     if (node->renderer()->isInline() && !regionFilled) {
         for (RenderObject* curr = node->renderer()->parent(); curr; curr = curr->parent()) {
@@ -641,7 +641,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const LayoutPoint& 
     return !regionFilled;
 }
 
-bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const LayoutPoint& pointInContainer, const FloatRect& rect)
+bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestPoint& pointInContainer, const FloatRect& rect)
 {
     // If it is not a rect-based hit test, this method has to be no-op.
     // Return false, so the hit test stops.
@@ -657,7 +657,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const LayoutPoint& 
 
     mutableRectBasedTestResult().add(node);
 
-    bool regionFilled = rect.contains(rectForPoint(pointInContainer));
+    bool regionFilled = rect.contains(rectForPoint(pointInContainer.point()));
     // FIXME: This code (incorrectly) attempts to correct for culled inline nodes. See https://bugs.webkit.org/show_bug.cgi?id=85849.
     if (node->renderer()->isInline() && !regionFilled) {
         for (RenderObject* curr = node->renderer()->parent(); curr; curr = curr->parent()) {

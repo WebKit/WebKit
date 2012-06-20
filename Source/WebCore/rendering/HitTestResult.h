@@ -71,6 +71,9 @@ public:
     int bottomPadding() const { return m_bottomPadding; }
     int leftPadding() const { return m_leftPadding; }
 
+    bool intersects(const LayoutRect& rect) const { return rect.intersects(rectForPoint(m_point)); }
+    bool intersects(const FloatRect& rect) const { return rect.intersects(rectForPoint(m_point)); }
+
 private:
     LayoutPoint m_point;
 
@@ -148,8 +151,8 @@ public:
 
     // Returns true if it is rect-based hit test and needs to continue until the rect is fully
     // enclosed by the boundaries of a node.
-    bool addNodeToRectBasedTestResult(Node*, const LayoutPoint& pointInContainer, const IntRect& = IntRect());
-    bool addNodeToRectBasedTestResult(Node*, const LayoutPoint& pointInContainer, const FloatRect&);
+    bool addNodeToRectBasedTestResult(Node*, const HitTestPoint& pointInContainer, const IntRect& = IntRect());
+    bool addNodeToRectBasedTestResult(Node*, const HitTestPoint& pointInContainer, const FloatRect&);
     void append(const HitTestResult&);
 
     // If m_rectBasedTestResult is 0 then set it to a new NodeSet. Return *m_rectBasedTestResult. Lazy allocation makes

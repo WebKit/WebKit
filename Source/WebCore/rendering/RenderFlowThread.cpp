@@ -299,24 +299,24 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
     }
 }
 
-bool RenderFlowThread::hitTestRegion(RenderRegion* region, const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
+bool RenderFlowThread::hitTestRegion(RenderRegion* region, const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
     LayoutRect regionRect(region->regionRect());
     LayoutRect regionOverflowRect = region->regionOverflowRect();
     LayoutRect regionClippingRect(accumulatedOffset + (regionOverflowRect.location() - regionRect.location()), regionOverflowRect.size());
-    if (!regionClippingRect.contains(pointInContainer))
+    if (!regionClippingRect.contains(pointInContainer.point()))
         return false;
-    
-    LayoutPoint renderFlowThreadOffset;
+
+    LayoutSize renderFlowThreadOffset;
     if (style()->isFlippedBlocksWritingMode()) {
         LayoutRect flippedRegionRect(regionRect);
         flipForWritingMode(flippedRegionRect);
-        renderFlowThreadOffset = LayoutPoint(accumulatedOffset - flippedRegionRect.location());
+        renderFlowThreadOffset = accumulatedOffset - flippedRegionRect.location();
     } else
-        renderFlowThreadOffset = LayoutPoint(accumulatedOffset - regionRect.location());
+        renderFlowThreadOffset = accumulatedOffset - regionRect.location();
 
-    LayoutPoint transformedPoint(pointInContainer.x() - renderFlowThreadOffset.x(), pointInContainer.y() - renderFlowThreadOffset.y());
-    
+    LayoutPoint transformedPoint = pointInContainer.point() - renderFlowThreadOffset;
+
     // Always ignore clipping, since the RenderFlowThread has nothing to do with the bounds of the FrameView.
     HitTestRequest newRequest(request.type() | HitTestRequest::IgnoreClipping);
 

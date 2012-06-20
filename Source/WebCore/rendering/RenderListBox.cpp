@@ -677,7 +677,7 @@ void RenderListBox::setScrollTop(int newTop)
     scrollToOffsetWithoutAnimation(VerticalScrollbar, index);
 }
 
-bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     if (!RenderBlock::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, hitTestAction))
         return false;
@@ -686,12 +686,12 @@ bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 
     for (int i = 0; i < size; ++i) {
-        if (itemBoundingBoxRect(adjustedLocation, i).contains(pointInContainer)) {
+        if (itemBoundingBoxRect(adjustedLocation, i).contains(pointInContainer.point())) {
             if (Element* node = listItems[i]) {
                 result.setInnerNode(node);
                 if (!result.innerNonSharedNode())
                     result.setInnerNonSharedNode(node);
-                result.setLocalPoint(pointInContainer - toLayoutSize(adjustedLocation));
+                result.setLocalPoint(pointInContainer.point() - toLayoutSize(adjustedLocation));
                 break;
             }
         }

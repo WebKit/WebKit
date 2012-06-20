@@ -96,7 +96,7 @@ private:
     virtual bool isFrameSet() const { return true; }
 
     virtual void layout();
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;

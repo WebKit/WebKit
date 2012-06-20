@@ -1275,17 +1275,17 @@ LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, RenderRegi
     return rect;
 }
 
-bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
+bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 
     // Check kids first.
-    if (!hasOverflowClip() || overflowClipRect(adjustedLocation, result.region()).intersects(result.rectForPoint(pointInContainer))) {
+    if (!hasOverflowClip() || pointInContainer.intersects(overflowClipRect(adjustedLocation, result.region()))) {
         for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
             if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child->isTableCaption())) {
                 LayoutPoint childPoint = flipForWritingModeForChild(toRenderBox(child), adjustedLocation);
                 if (child->nodeAtPoint(request, result, pointInContainer, childPoint, action)) {
-                    updateHitTestResult(result, toLayoutPoint(pointInContainer - childPoint));
+                    updateHitTestResult(result, toLayoutPoint(pointInContainer.point() - childPoint));
                     return true;
                 }
             }
@@ -1294,8 +1294,8 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     // Check our bounds next.
     LayoutRect boundsRect(adjustedLocation, size());
-    if (visibleToHitTesting() && (action == HitTestBlockBackground || action == HitTestChildBlockBackground) && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
-        updateHitTestResult(result, flipForWritingMode(pointInContainer - toLayoutSize(adjustedLocation)));
+    if (visibleToHitTesting() && (action == HitTestBlockBackground || action == HitTestChildBlockBackground) && pointInContainer.intersects(boundsRect)) {
+        updateHitTestResult(result, flipForWritingMode(pointInContainer.point() - toLayoutSize(adjustedLocation)));
         if (!result.addNodeToRectBasedTestResult(node(), pointInContainer, boundsRect))
             return true;
     }

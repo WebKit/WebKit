@@ -95,7 +95,7 @@ private:
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void layout();
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     virtual bool requiresLayer() const OVERRIDE { return isTransparent() || hasOverflowClip() || hasTransform() || hasHiddenBackface() || hasMask() || hasFilter(); }
 

@@ -1,3 +1,149 @@
+2012-06-20  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Use HitTestPoint instead of LayoutPoint for nodeAtPoint.
+        https://bugs.webkit.org/show_bug.cgi?id=89448
+
+        Reviewed by Eric Seidel.
+
+        This patch updates the API of nodeAtPoint without changing any 
+        functionality. This is largest change necessary to support
+        transforms in area-based hit-testing, but is only boilerplate.
+
+        No change in functionality. No new tests. 
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        (EllipsisBox):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult):
+        * rendering/HitTestResult.h:
+        (WebCore::HitTestPoint::intersects):
+        (HitTestPoint):
+        (HitTestResult):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nodeAtPoint):
+        * rendering/InlineBox.h:
+        (InlineBox):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        * rendering/InlineFlowBox.h:
+        (InlineFlowBox):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::nodeAtPoint):
+        * rendering/InlineTextBox.h:
+        (InlineTextBox):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::hitTestColumns):
+        (WebCore::RenderBlock::hitTestContents):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::nodeAtPoint):
+        * rendering/RenderEmbeddedObject.h:
+        (RenderEmbeddedObject):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::hitTestRegion):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::nodeAtPoint):
+        * rendering/RenderFrameSet.h:
+        (RenderFrameSet):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::nodeAtPoint):
+        * rendering/RenderImage.h:
+        (RenderImage):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::nodeAtPoint):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        * rendering/RenderLayer.cpp:
+        (WebCore::ClipRect::intersects):
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::RenderLayer::createLocalTransformState):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestContents):
+        (WebCore::RenderLayer::hitTestList):
+        (WebCore::RenderLayer::hitTestPaginatedChildLayer):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+        * rendering/RenderLayer.h:
+        (ClipRect):
+        (RenderLayer):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderLineBoxList.h:
+        (RenderLineBoxList):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::nodeAtPoint):
+        * rendering/RenderListBox.h:
+        (RenderListBox):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::hitTest):
+        (WebCore::RenderObject::nodeAtPoint):
+        * rendering/RenderObject.h:
+        (RenderObject):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::nodeAtPoint):
+        * rendering/RenderRegion.h:
+        (RenderRegion):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTable.h:
+        (RenderTable):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::nodeAtPoint):
+        * rendering/RenderTableRow.h:
+        (RenderTableRow):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTableSection.h:
+        (RenderTableSection):
+        * rendering/RenderText.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::nodeAtPoint):
+        * rendering/RenderTextControlMultiLine.h:
+        (RenderTextControlMultiLine):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        * rendering/RenderTextControlSingleLine.h:
+        (RenderTextControlSingleLine):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::nodeAtPoint):
+        * rendering/RenderWidget.h:
+        (RenderWidget):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::nodeAtPoint):
+        * rendering/RootInlineBox.h:
+        (RootInlineBox):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::nodeAtFloatPoint):
+        (WebCore::RenderSVGForeignObject::nodeAtPoint):
+        * rendering/svg/RenderSVGForeignObject.h:
+        (RenderSVGForeignObject):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::nodeAtPoint):
+        * rendering/svg/RenderSVGModelObject.h:
+        (RenderSVGModelObject):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        * rendering/svg/RenderSVGRoot.h:
+        (RenderSVGRoot):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtFloatPoint):
+        (WebCore::RenderSVGText::nodeAtPoint):
+        * rendering/svg/RenderSVGText.h:
+        (RenderSVGText):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::nodeAtPoint):
+        * rendering/svg/SVGInlineTextBox.h:
+        (SVGInlineTextBox):
+
 2012-06-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: don't report context ids before DidCommitLoad

@@ -28,6 +28,7 @@
 #include "CachedImage.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include "HitTestResult.h"
 #include "PaintInfo.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
@@ -193,7 +194,7 @@ LayoutRect RenderTableRow::clippedOverflowRectForRepaint(RenderBoxModelObject* r
 }
 
 // Hit Testing
-bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
+bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     // Table rows cannot ever be hit tested.  Effectively they do not exist.
     // Just forward to our children always.
@@ -205,12 +206,12 @@ bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
         if (child->isTableCell() && !toRenderBox(child)->hasSelfPaintingLayer()) {
             LayoutPoint cellPoint = flipForWritingModeForChild(toRenderTableCell(child), accumulatedOffset);
             if (child->nodeAtPoint(request, result, pointInContainer, cellPoint, action)) {
-                updateHitTestResult(result, pointInContainer - toLayoutSize(cellPoint));
+                updateHitTestResult(result, pointInContainer.point() - toLayoutSize(cellPoint));
                 return true;
             }
         }
     }
-    
+
     return false;
 }
 

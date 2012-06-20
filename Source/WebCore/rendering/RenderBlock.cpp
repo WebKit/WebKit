@@ -4524,7 +4524,7 @@ bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const LayoutPo
     return layer()->hitTestOverflowControls(result, roundedIntPoint(pointInContainer - toLayoutSize(accumulatedOffset)));
 }
 
-bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     LayoutPoint adjustedLocation(accumulatedOffset + location());
     LayoutSize localOffset = toLayoutSize(adjustedLocation);
@@ -4534,12 +4534,12 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         LayoutRect overflowBox = visualOverflowRect();
         flipForWritingMode(overflowBox);
         overflowBox.moveBy(adjustedLocation);
-        if (!overflowBox.intersects(result.rectForPoint(pointInContainer)))
+        if (!pointInContainer.intersects(overflowBox))
             return false;
     }
 
-    if ((hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) && isPointInOverflowControl(result, pointInContainer, adjustedLocation)) {
-        updateHitTestResult(result, pointInContainer - localOffset);
+    if ((hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) && isPointInOverflowControl(result, pointInContainer.point(), adjustedLocation)) {
+        updateHitTestResult(result, pointInContainer.point() - localOffset);
         // FIXME: isPointInOverflowControl() doesn't handle rect-based tests yet.
         if (!result.addNodeToRectBasedTestResult(node(), pointInContainer))
            return true;
@@ -4548,8 +4548,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     // If we have clipping, then we can't have any spillout.
     bool useOverflowClip = hasOverflowClip() && !hasSelfPaintingLayer();
     bool useClip = (hasControlClip() || useOverflowClip);
-    LayoutRect hitTestArea(result.rectForPoint(pointInContainer));
-    bool checkChildren = !useClip || (hasControlClip() ? controlClipRect(adjustedLocation).intersects(hitTestArea) : overflowClipRect(adjustedLocation, result.region(), IncludeOverlayScrollbarSize).intersects(hitTestArea));
+    bool checkChildren = !useClip || (hasControlClip() ? pointInContainer.intersects(controlClipRect(adjustedLocation)) : pointInContainer.intersects(overflowClipRect(adjustedLocation, result.region(), IncludeOverlayScrollbarSize)));
     if (checkChildren) {
         // Hit test descendants first.
         LayoutSize scrolledOffset(localOffset);
@@ -4559,13 +4558,13 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         // Hit test contents if we don't have columns.
         if (!hasColumns()) {
             if (hitTestContents(request, result, pointInContainer, toLayoutPoint(scrolledOffset), hitTestAction)) {
-                updateHitTestResult(result, pointInContainer - localOffset);
+                updateHitTestResult(result, pointInContainer.point() - localOffset);
                 return true;
             }
             if (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer, toLayoutPoint(scrolledOffset)))
                 return true;
         } else if (hitTestColumns(request, result, pointInContainer, toLayoutPoint(scrolledOffset), hitTestAction)) {
-            updateHitTestResult(result, flipForWritingMode(pointInContainer - localOffset));
+            updateHitTestResult(result, flipForWritingMode(pointInContainer.point() - localOffset));
             return true;
         }
     }
@@ -4573,8 +4572,8 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     // Now hit test our background
     if (hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) {
         LayoutRect boundsRect(adjustedLocation, size());
-        if (visibleToHitTesting() && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
-            updateHitTestResult(result, flipForWritingMode(pointInContainer - localOffset));
+        if (visibleToHitTesting() && pointInContainer.intersects(boundsRect)) {
+            updateHitTestResult(result, flipForWritingMode(pointInContainer.point() - localOffset));
             if (!result.addNodeToRectBasedTestResult(node(), pointInContainer, boundsRect))
                 return true;
         }
@@ -4583,7 +4582,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     return false;
 }
 
-bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
+bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
     if (!m_floatingObjects)
         return false;
@@ -4603,7 +4602,7 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
             LayoutUnit yOffset = yPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->y();
             LayoutPoint childPoint = flipFloatForWritingModeForChild(floatingObject, adjustedLocation + LayoutSize(xOffset, yOffset));
             if (floatingObject->m_renderer->hitTest(request, result, pointInContainer, childPoint)) {
-                updateHitTestResult(result, pointInContainer - toLayoutSize(childPoint));
+                updateHitTestResult(result, pointInContainer.point() - toLayoutSize(childPoint));
                 return true;
             }
         }
@@ -4671,17 +4670,17 @@ private:
     LayoutRect m_colRect;
 };
 
-bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     // We need to do multiple passes, breaking up our hit testing into strips.
     if (!hasColumns())
         return false;
 
     for (ColumnRectIterator it(*this); it.hasMore(); it.advance()) {
-        LayoutRect hitRect = result.rectForPoint(pointInContainer);
+        LayoutRect hitRect = result.rectForPoint(pointInContainer.point());
         LayoutRect colRect = it.columnRect();
         colRect.moveBy(accumulatedOffset);
-        if (colRect.intersects(hitRect)) {
+        if (pointInContainer.intersects(colRect)) {
             // The point is inside this column.
             // Adjust accumulatedOffset to change where we hit test.
             LayoutSize offset;
@@ -4708,7 +4707,7 @@ void RenderBlock::adjustForColumnRect(LayoutSize& offset, const LayoutPoint& poi
     }
 }
 
-bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     if (childrenInline() && !isTable()) {
         // We have to hit-test our line boxes.
@@ -4725,7 +4724,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
                 return true;
         }
     }
-    
+
     return false;
 }
 

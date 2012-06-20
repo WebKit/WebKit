@@ -111,7 +111,7 @@ void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyl
     SVGResourcesCache::clientStyleChanged(this, diff, style());
 }
 
-bool RenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint&, const LayoutPoint&, HitTestAction)
+bool RenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestPoint&, const LayoutPoint&, HitTestAction)
 {
     ASSERT_NOT_REACHED();
     return false;

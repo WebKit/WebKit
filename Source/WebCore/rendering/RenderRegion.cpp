@@ -118,7 +118,7 @@ void RenderRegion::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintO
 }
 
 // Hit Testing
-bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
+bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     if (!isValid())
         return false;
@@ -129,11 +129,11 @@ bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     // foreground phase (which is true for replaced elements like images).
     LayoutRect boundsRect = borderBoxRectInRegion(result.region());
     boundsRect.moveBy(adjustedLocation);
-    if (visibleToHitTesting() && action == HitTestForeground && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
+    if (visibleToHitTesting() && action == HitTestForeground && pointInContainer.intersects(boundsRect)) {
         // Check the contents of the RenderFlowThread.
         if (m_flowThread && m_flowThread->hitTestRegion(this, request, result, pointInContainer, LayoutPoint(adjustedLocation.x() + borderLeft() + paddingLeft(), adjustedLocation.y() + borderTop() + paddingTop())))
             return true;
-        updateHitTestResult(result, pointInContainer - toLayoutSize(adjustedLocation));
+        updateHitTestResult(result, pointInContainer.point() - toLayoutSize(adjustedLocation));
         if (!result.addNodeToRectBasedTestResult(node(), pointInContainer, boundsRect))
             return true;
     }

@@ -273,8 +273,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
     }
 }
 
-
-bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction) const
+bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction) const
 {
     if (hitTestAction != HitTestForeground)
         return false;
@@ -285,9 +284,10 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     if (!firstLineBox())
         return false;
 
+    LayoutPoint point = pointInContainer.point();
     LayoutRect rect = firstLineBox()->isHorizontal() ?
-        IntRect(pointInContainer.x(), pointInContainer.y() - result.topPadding(), 1, result.topPadding() + result.bottomPadding() + 1) :
-        IntRect(pointInContainer.x() - result.leftPadding(), pointInContainer.y(), result.rightPadding() + result.leftPadding() + 1, 1);
+        IntRect(point.x(), point.y() - pointInContainer.topPadding(), 1, pointInContainer.topPadding() + pointInContainer.bottomPadding() + 1) :
+        IntRect(point.x() - pointInContainer.leftPadding(), point.y(), pointInContainer.rightPadding() + pointInContainer.leftPadding() + 1, 1);
 
     if (!anyLineIntersectsRect(renderer, rect, accumulatedOffset))
         return false;
@@ -300,12 +300,12 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
         if (rangeIntersectsRect(renderer, curr->logicalTopVisualOverflow(root->lineTop()), curr->logicalBottomVisualOverflow(root->lineBottom()), rect, accumulatedOffset)) {
             bool inside = curr->nodeAtPoint(request, result, pointInContainer, accumulatedOffset, root->lineTop(), root->lineBottom());
             if (inside) {
-                renderer->updateHitTestResult(result, pointInContainer - toLayoutSize(accumulatedOffset));
+                renderer->updateHitTestResult(result, pointInContainer.point() - toLayoutSize(accumulatedOffset));
                 return true;
             }
         }
     }
-    
+
     return false;
 }
 

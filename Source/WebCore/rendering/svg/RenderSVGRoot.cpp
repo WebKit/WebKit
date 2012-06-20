@@ -409,9 +409,9 @@ void RenderSVGRoot::updateCachedBoundaries()
     m_repaintBoundingBox.inflate(borderAndPaddingWidth());
 }
 
-bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    LayoutPoint pointInParent = pointInContainer - toLayoutSize(accumulatedOffset);
+    LayoutPoint pointInParent = pointInContainer.point() - toLayoutSize(accumulatedOffset);
     LayoutPoint pointInBorderBox(pointInParent.x() - x(), pointInParent.y() - y());
 
     // Note: For now, we're ignoring hits to border and padding for <svg>

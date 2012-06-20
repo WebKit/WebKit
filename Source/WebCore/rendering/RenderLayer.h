@@ -115,6 +115,7 @@ public:
 
     bool isEmpty() const { return m_rect.isEmpty(); }
     bool intersects(const LayoutRect& rect) { return m_rect.intersects(rect); }
+    bool intersects(const HitTestPoint&);
 
 private:
     LayoutRect m_rect;
@@ -717,26 +718,26 @@ private:
                                     PaintLayerFlags, const Vector<RenderLayer*>& columnLayers, size_t columnIndex);
 
     RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
-                              const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint, bool appliedTransform,
+                              const LayoutRect& hitTestRect, const HitTestPoint&, bool appliedTransform,
                               const HitTestingTransformState* transformState = 0, double* zOffset = 0);
     RenderLayer* hitTestList(Vector<RenderLayer*>*, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
-                             const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint,
+                             const LayoutRect& hitTestRect, const HitTestPoint&,
                              const HitTestingTransformState* transformState, double* zOffsetForDescendants, double* zOffset,
                              const HitTestingTransformState* unflattenedTransformState, bool depthSortDescendants);
     RenderLayer* hitTestPaginatedChildLayer(RenderLayer* childLayer, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
-                                            const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint,
+                                            const LayoutRect& hitTestRect, const HitTestPoint&,
                                             const HitTestingTransformState* transformState, double* zOffset);
     RenderLayer* hitTestChildLayerColumns(RenderLayer* childLayer, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
-                                          const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint,
+                                          const LayoutRect& hitTestRect, const HitTestPoint&,
                                           const HitTestingTransformState* transformState, double* zOffset,
                                           const Vector<RenderLayer*>& columnLayers, size_t columnIndex);
-                                    
+
     PassRefPtr<HitTestingTransformState> createLocalTransformState(RenderLayer* rootLayer, RenderLayer* containerLayer,
-                            const LayoutRect& hitTestRect, const LayoutPoint& hitTestPoint,
+                            const LayoutRect& hitTestRect, const HitTestPoint&,
                             const HitTestingTransformState* containerTransformState) const;
     
-    bool hitTestContents(const HitTestRequest&, HitTestResult&, const LayoutRect& layerBounds, const LayoutPoint& hitTestPoint, HitTestFilter) const;
-    
+    bool hitTestContents(const HitTestRequest&, HitTestResult&, const LayoutRect& layerBounds, const HitTestPoint&, HitTestFilter) const;
+
     void computeScrollDimensions();
     bool hasHorizontalOverflow() const;
     bool hasVerticalOverflow() const;
