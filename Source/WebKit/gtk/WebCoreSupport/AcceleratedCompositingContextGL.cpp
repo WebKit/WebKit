@@ -189,10 +189,10 @@ void AcceleratedCompositingContext::syncLayersTimeout()
     if (!m_rootGraphicsLayer)
         return;
 
-    renderLayersToWindow(0, IntRect());
-
     if (toTextureMapperLayer(m_rootGraphicsLayer.get())->descendantsOrSelfHaveRunningAnimations())
         m_syncTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 1000.0 / 60.0, reinterpret_cast<GSourceFunc>(syncLayersTimeoutCallback), this, 0);
+
+    renderLayersToWindow(0, IntRect());
 }
 
 void AcceleratedCompositingContext::notifyAnimationStarted(const GraphicsLayer*, double time)

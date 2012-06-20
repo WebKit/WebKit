@@ -1,3 +1,18 @@
+2012-06-19  Chang Wan Hong  <jourmoon@company100.net>
+
+        Refine syncLayersTimeoutCallback for Accelerated Compositing.
+        https://bugs.webkit.org/show_bug.cgi?id=89538
+
+        Reviewed by Martin Robinson.
+
+        syncLayersTimeout reschedules the timer so that it can render each frame
+        every 1/60 seconds on animation. However, because it takes to time to execute
+        renderLayersToWindow, the timer is delayed. To fix this, we must reschedule
+        the timer before calling renderLayersToWindow.
+
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+        (WebKit::AcceleratedCompositingContext::syncLayersTimeout):
+
 2012-06-19  Sergio Villar Senin  <svillar@igalia.com>
 
         Calling nativeImageForCurrentFrame() causes assertion failure: m_verifier.isSafeToUse()
