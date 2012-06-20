@@ -654,6 +654,9 @@ public:
     // WebPopupMenuProxy::Client
     virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent();
 
+    void setSuppressVisibilityUpdates(bool flag) { m_suppressVisibilityUpdates = flag; }
+    bool suppressVisibilityUpdates() { return m_suppressVisibilityUpdates; }
+
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
 
@@ -1088,7 +1091,9 @@ private:
     static WKPageDebugPaintFlags s_debugPaintFlags;
 
     bool m_shouldSendEventsSynchronously;
-    
+
+    bool m_suppressVisibilityUpdates;
+
     float m_mediaVolume;
 
 #if PLATFORM(QT)

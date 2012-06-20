@@ -98,5 +98,7 @@ namespace WebKit {
 - (NSInteger)spellCheckerDocumentTag;
 - (void)handleAcceptedAlternativeText:(NSString*)text;
 
+- (void)_setSuppressVisibilityUpdates:(BOOL)suppressVisibilityUpdates;
+- (BOOL)_suppressVisibilityUpdates;
 
 @end

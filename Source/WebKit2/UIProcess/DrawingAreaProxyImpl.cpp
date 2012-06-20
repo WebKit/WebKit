@@ -134,14 +134,16 @@ void DrawingAreaProxyImpl::layerHostingModeDidChange()
 
 void DrawingAreaProxyImpl::visibilityDidChange()
 {
-    if (!m_webPageProxy->isViewVisible()) {
-        // Suspend painting.
-        m_webPageProxy->process()->send(Messages::DrawingArea::SuspendPainting(), m_webPageProxy->pageID());
-        return;
-    }
+    if (!m_webPageProxy->suppressVisibilityUpdates()) {
+        if (!m_webPageProxy->isViewVisible()) {
+            // Suspend painting.
+            m_webPageProxy->process()->send(Messages::DrawingArea::SuspendPainting(), m_webPageProxy->pageID());
+            return;
+        }
 
-    // Resume painting.
-    m_webPageProxy->process()->send(Messages::DrawingArea::ResumePainting(), m_webPageProxy->pageID());
+        // Resume painting.
+        m_webPageProxy->process()->send(Messages::DrawingArea::ResumePainting(), m_webPageProxy->pageID());
+    }
 
 #if USE(ACCELERATED_COMPOSITING)
     // If we don't have a backing store, go ahead and mark the backing store as being changed so
