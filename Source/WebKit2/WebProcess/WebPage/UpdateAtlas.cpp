@@ -99,7 +99,7 @@ void UpdateAtlas::didSwapBuffers()
         m_bufferStates[i] = Available;
 }
 
-PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(const WebCore::IntSize& size, IntPoint& offset)
+PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(ShareableSurface::Handle& handle, const WebCore::IntSize& size, IntPoint& offset)
 {
     buildLayoutIfNeeded();
     int index = findAvailableIndex(size);
@@ -107,6 +107,9 @@ PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(const We
     // No available buffer was found, returning null.
     if (index < 0)
         return PassOwnPtr<GraphicsContext>();
+
+    if (!m_surface->createHandle(handle))
+        return PassOwnPtr<WebCore::GraphicsContext>();
 
     // FIXME: Use tri-state buffers, to allow faster updates.
     m_bufferStates[index] = Taken;

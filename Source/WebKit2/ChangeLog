@@ -1,3 +1,23 @@
+2012-06-20  Alexis Menard  <alexis.menard@openbossa.org>
+
+        REGRESSION (120705) : LayerTreeHostQt asserts in debug.
+        https://bugs.webkit.org/show_bug.cgi?id=89487
+
+        Reviewed by Noam Rosenthal.
+
+        We try to call createHandle twice on the same handle when the
+        first matching atlas is full. This patch solved the problem by
+        moving the createHandle call inside UpdateAtlas and call createHandle
+        only when the atlas is not full. We can also remove the surface()
+        getter as it is not used anymore.
+
+        * WebProcess/WebPage/UpdateAtlas.cpp:
+        (WebKit::UpdateAtlas::beginPaintingOnAvailableBuffer):
+        * WebProcess/WebPage/UpdateAtlas.h:
+        (UpdateAtlas):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::beginContentUpdate):
+
 2012-06-19  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][Regression] Build break after r120786

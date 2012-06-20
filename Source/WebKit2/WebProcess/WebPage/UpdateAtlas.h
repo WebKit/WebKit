@@ -34,11 +34,10 @@ class UpdateAtlas {
 public:
     UpdateAtlas(int dimension, ShareableBitmap::Flags);
 
-    PassRefPtr<ShareableSurface> surface() { return m_surface; }
     inline WebCore::IntSize size() const { return m_surface->size(); }
 
     // Returns a null pointer of there is no available buffer.
-    PassOwnPtr<WebCore::GraphicsContext> beginPaintingOnAvailableBuffer(const WebCore::IntSize&, WebCore::IntPoint& offset);
+    PassOwnPtr<WebCore::GraphicsContext> beginPaintingOnAvailableBuffer(ShareableSurface::Handle&, const WebCore::IntSize&, WebCore::IntPoint& offset);
     void didSwapBuffers();
     ShareableBitmap::Flags flags() const { return m_flags; }
 

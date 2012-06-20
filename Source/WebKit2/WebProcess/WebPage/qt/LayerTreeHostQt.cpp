@@ -552,13 +552,6 @@ void LayerTreeHostQt::purgeBackingStores()
     m_updateAtlases.clear();
 }
 
-static PassOwnPtr<WebCore::GraphicsContext> beginContentUpdateInAtlas(UpdateAtlas& atlas, const WebCore::IntSize& size, ShareableSurface::Handle& handle, WebCore::IntPoint& offset)
-{
-    if (!atlas.surface()->createHandle(handle))
-        return PassOwnPtr<WebCore::GraphicsContext>();
-    return atlas.beginPaintingOnAvailableBuffer(size, offset);
-}
-
 PassOwnPtr<WebCore::GraphicsContext> LayerTreeHostQt::beginContentUpdate(const WebCore::IntSize& size, ShareableBitmap::Flags flags, ShareableSurface::Handle& handle, WebCore::IntPoint& offset)
 {
     OwnPtr<WebCore::GraphicsContext> graphicsContext;
@@ -566,7 +559,7 @@ PassOwnPtr<WebCore::GraphicsContext> LayerTreeHostQt::beginContentUpdate(const W
         UpdateAtlas& atlas = m_updateAtlases[i];
         if (atlas.flags() == flags) {
             // This will return null if there is no available buffer space.
-            graphicsContext = beginContentUpdateInAtlas(atlas, size, handle, offset);
+            graphicsContext = atlas.beginPaintingOnAvailableBuffer(handle, size, offset);
             if (graphicsContext)
                 return graphicsContext.release();
         }
@@ -574,7 +567,7 @@ PassOwnPtr<WebCore::GraphicsContext> LayerTreeHostQt::beginContentUpdate(const W
 
     static const int ScratchBufferDimension = 2000;
     m_updateAtlases.append(UpdateAtlas(ScratchBufferDimension, flags));
-    return beginContentUpdateInAtlas(m_updateAtlases.last(), size, handle, offset);
+    return m_updateAtlases.last().beginPaintingOnAvailableBuffer(handle, size, offset);
 }
 
 } // namespace WebKit
