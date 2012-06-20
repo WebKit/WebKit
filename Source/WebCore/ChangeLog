@@ -1,5 +1,11 @@
 2012-06-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Let XCode have its own way.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2012-06-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Move m_listsInvalidatedAtDocument from NodeListsNodeData to Document
         https://bugs.webkit.org/show_bug.cgi?id=89603
 
