@@ -104,6 +104,8 @@ public:
     void stopCurrentLoad();
     void prepareToDestroy();
 
+    void enableCrossSiteXHR();
+
     LoadState loadState() const { return m_loadState; }
     bool isLoading() const { return m_loadState == WebPagePrivate::Provisional || m_loadState == WebPagePrivate::Committed; }
 

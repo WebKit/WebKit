@@ -1,3 +1,23 @@
+2012-06-20  Christopher Hutten-Czapski  <chutten@rim.com>
+
+        [BlackBerry] Add an API to immediately enable cross-site XHR
+        https://bugs.webkit.org/show_bug.cgi?id=89594
+
+        Internally Reviewed by Yong Li.
+        Reviewed by Rob Buis.
+
+        There is no API to disable it as clients may rely on legacy behaviour
+        of not disabling until the next frame load.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::enableCrossSiteXHRRecursively):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::enableCrossSiteXHR):
+        (BlackBerry::WebKit::WebPage::enableCrossSiteXHR):
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-06-20  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Enable setAcceleratedCompositingForFixedPositionEnabled

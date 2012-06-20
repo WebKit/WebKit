@@ -889,6 +889,29 @@ void WebPage::prepareToDestroy()
     d->prepareToDestroy();
 }
 
+static void enableCrossSiteXHRRecursively(Frame* frame)
+{
+    frame->document()->securityOrigin()->grantUniversalAccess();
+
+    Vector<RefPtr<Frame>, 10> childFrames;
+    for (RefPtr<Frame> childFrame = frame->tree()->firstChild(); childFrame; childFrame = childFrame->tree()->nextSibling())
+        childFrames.append(childFrame);
+
+    unsigned size = childFrames.size();
+    for (unsigned i = 0; i < size; i++)
+        enableCrossSiteXHRRecursively(childFrames[i].get());
+}
+
+void WebPagePrivate::enableCrossSiteXHR()
+{
+    enableCrossSiteXHRRecursively(m_mainFrame);
+}
+
+void WebPage::enableCrossSiteXHR()
+{
+    d->enableCrossSiteXHR();
+}
+
 void WebPagePrivate::setLoadState(LoadState state)
 {
     if (m_loadState == state)

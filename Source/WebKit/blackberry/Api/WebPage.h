@@ -110,6 +110,8 @@ public:
     // This will force any unload handlers to run.
     void prepareToDestroy();
 
+    void enableCrossSiteXHR();
+
     void reload();
     void reloadFromCache();
 
