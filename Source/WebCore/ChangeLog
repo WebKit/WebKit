@@ -1,3 +1,19 @@
+2012-06-20  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: persist timeline panel overview mode
+        https://bugs.webkit.org/show_bug.cgi?id=88711
+
+        Reviewed by Pavel Feldman.
+
+        - replace all internal methods of switching to a new mode of TimelineOverviewPane with setMode();
+        - make current mode a persistent setting;
+
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane):
+        (WebInspector.TimelineOverviewPane.prototype.setMode):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+
 2012-06-20  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11653784> and https://bugs.webkit.org/show_bug.cgi?id=89590

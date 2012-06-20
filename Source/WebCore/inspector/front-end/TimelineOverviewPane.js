@@ -55,22 +55,25 @@ WebInspector.TimelineOverviewPane = function(model)
 
     var topPaneSidebarTree = new TreeOutline(overviewTreeElement);
 
-    var eventsOverviewItem = new WebInspector.SidebarTreeElement("timeline-overview-sidebar-events", WebInspector.UIString("Events"));
-    topPaneSidebarTree.appendChild(eventsOverviewItem);
-    eventsOverviewItem.revealAndSelect(false);
-    eventsOverviewItem.onselect = this._showEvents.bind(this);
-
-    if (Capabilities.timelineSupportsFrameInstrumentation) {
-        var framesOverviewItem = new WebInspector.SidebarTreeElement("timeline-overview-sidebar-frames", WebInspector.UIString("Frames"));
-        topPaneSidebarTree.appendChild(framesOverviewItem);
-        framesOverviewItem.onselect = this._showFrames.bind(this);
-    }
-
-    var memoryOverviewItem = new WebInspector.SidebarTreeElement("timeline-overview-sidebar-memory", WebInspector.UIString("Memory"));
-    topPaneSidebarTree.appendChild(memoryOverviewItem);
-    memoryOverviewItem.onselect = this._showMemoryGraph.bind(this);
-
     this._currentMode = WebInspector.TimelineOverviewPane.Mode.Events;
+
+    this._overviewItems = {};
+    this._overviewItems[WebInspector.TimelineOverviewPane.Mode.Events] = new WebInspector.SidebarTreeElement("timeline-overview-sidebar-events",
+        WebInspector.UIString("Events"));
+    if (Capabilities.timelineSupportsFrameInstrumentation) {
+        this._overviewItems[WebInspector.TimelineOverviewPane.Mode.Frames] = new WebInspector.SidebarTreeElement("timeline-overview-sidebar-frames",
+            WebInspector.UIString("Frames"));
+    }
+    this._overviewItems[WebInspector.TimelineOverviewPane.Mode.Memory] = new WebInspector.SidebarTreeElement("timeline-overview-sidebar-memory",
+        WebInspector.UIString("Memory"));
+
+    for (var mode in this._overviewItems) {
+        var item = this._overviewItems[mode];
+        item.onselect = this.setMode.bind(this, mode);
+        topPaneSidebarTree.appendChild(item);
+    }
+    
+    this._overviewItems[this._currentMode].revealAndSelect(false);
 
     this._overviewContainer = this.element.createChild("div", "fill");
     this._overviewContainer.id = "timeline-overview-container";
@@ -134,39 +137,24 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._update();
     },
 
-    _showEvents: function()
+    setMode: function(newMode)
     {
-        if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.Events)
+        if (this._currentMode === newMode)
             return;
-        this._heapGraph.hide();
-        this._setFrameMode(false);
-        this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
-        this._setMode(WebInspector.TimelineOverviewPane.Mode.Events);
-    },
 
-    _showFrames: function()
-    {
-        if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.Frames)
-            return;
-        this._heapGraph.hide();
-        this._setFrameMode(true);
-        this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
-        this._setMode(WebInspector.TimelineOverviewPane.Mode.Frames);
-    },
-
-    _showMemoryGraph: function()
-    {
-        if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.Memory)
-            return;
-        this._setFrameMode(false);
-        this._overviewGrid.itemsGraphsElement.addStyleClass("hidden");
-        this._heapGraph.show();
-        this._setMode(WebInspector.TimelineOverviewPane.Mode.Memory);
-    },
-
-    _setMode: function(newMode)
-    {
         this._currentMode = newMode;
+        this._setFrameMode(this._currentMode === WebInspector.TimelineOverviewPane.Mode.Frames);
+        switch (this._currentMode) {
+            case WebInspector.TimelineOverviewPane.Mode.Events:
+            case WebInspector.TimelineOverviewPane.Mode.Frames:
+                this._heapGraph.hide();
+                this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
+                break;
+            case WebInspector.TimelineOverviewPane.Mode.Memory:
+                this._overviewGrid.itemsGraphsElement.addStyleClass("hidden");
+                this._heapGraph.show();
+        }
+        this._overviewItems[this._currentMode].revealAndSelect(false);
         this.dispatchEventToListeners(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._currentMode);
         this._update();
     },

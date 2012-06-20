@@ -42,7 +42,7 @@ WebInspector.TimelinePanel = function()
 
     this._overviewPane = new WebInspector.TimelineOverviewPane(this._model);
     this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.WindowChanged, this._scheduleRefresh.bind(this, false));
-    this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._timelinesOverviewModeChanged, this);
+    this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._overviewModeChanged, this);
     this._overviewPane.show(this.element);
 
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
@@ -130,6 +130,8 @@ WebInspector.TimelinePanel = function()
     this._presentationModel.addFilter(this._overviewPane);
     this._presentationModel.addFilter(new WebInspector.TimelineCategoryFilter()); 
     this._presentationModel.addFilter(new WebInspector.TimelineIsLongFilter(this)); 
+
+    this._overviewModeSetting = WebInspector.settings.createSetting("timelineOverviewMode", WebInspector.TimelineOverviewPane.Mode.Events);
 }
 
 // Define row height, should be in sync with styles for timeline graphs.
@@ -404,10 +406,12 @@ WebInspector.TimelinePanel.prototype = {
         this._overviewPane.zoomToFrame(frameBar._frame);
     },
 
-    _timelinesOverviewModeChanged: function(event)
+    _overviewModeChanged: function(event)
     {
-        var shouldShowMemory = event.data === WebInspector.TimelineOverviewPane.Mode.Memory;
-        var frameMode = event.data === WebInspector.TimelineOverviewPane.Mode.Frames;
+        var mode = event.data;
+        var shouldShowMemory = mode === WebInspector.TimelineOverviewPane.Mode.Memory;
+        var frameMode = mode === WebInspector.TimelineOverviewPane.Mode.Frames;
+        this._overviewModeSetting.set(mode);
         if (frameMode !== this._frameMode) {
             this._frameMode = frameMode;
             this._glueParentButton.disabled = frameMode;
@@ -553,6 +557,7 @@ WebInspector.TimelinePanel.prototype = {
             WebInspector.TimelinePanel._categoryStylesInitialized = true;
             this._injectCategoryStyles();
         }
+        this._overviewPane.setMode(this._overviewModeSetting.get());
         this._refresh();
         WebInspector.drawer.currentPanelCounters = this.recordsCounter;
     },
