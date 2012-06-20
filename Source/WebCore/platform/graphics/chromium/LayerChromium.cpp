@@ -83,6 +83,7 @@ LayerChromium::LayerChromium()
     , m_usesLayerClipping(false)
     , m_isNonCompositedContent(false)
     , m_preserves3D(false)
+    , m_useParentBackfaceVisibility(false)
     , m_alwaysReserveTextures(false)
     , m_drawCheckerboardForMissingTiles(false)
     , m_forceRenderSurface(false)
@@ -561,6 +562,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setIsContainerForFixedPositionLayers(m_isContainerForFixedPositionLayers);
     layer->setFixedToContainerLayer(m_fixedToContainerLayer);
     layer->setPreserves3D(preserves3D());
+    layer->setUseParentBackfaceVisibility(m_useParentBackfaceVisibility);
     layer->setScrollPosition(m_scrollPosition);
     layer->setMaxScrollPosition(m_maxScrollPosition);
     layer->setSublayerTransform(m_sublayerTransform);

@@ -838,6 +838,7 @@ void GraphicsLayerChromium::setupContentsLayer(LayerChromium* contentsLayer)
         return;
 
     if (!m_contentsLayer.isNull()) {
+        m_contentsLayer.setUseParentBackfaceVisibility(false);
         m_contentsLayer.removeFromParent();
         m_contentsLayer.reset();
     }
@@ -846,6 +847,7 @@ void GraphicsLayerChromium::setupContentsLayer(LayerChromium* contentsLayer)
         m_contentsLayer = WebLayer(contentsLayer);
 
         m_contentsLayer.setAnchorPoint(FloatPoint(0, 0));
+        m_contentsLayer.setUseParentBackfaceVisibility(true);
 
         // It is necessary to call setDrawsContent as soon as we receive the new contentsLayer, for
         // the correctness of early exit conditions in setDrawsContent() and setContentsVisible().

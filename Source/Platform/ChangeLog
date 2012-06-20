@@ -1,3 +1,21 @@
+2012-06-20  Christopher Cameron  <ccameron@chromium.org>
+
+        [chromium] webkit-backface-visibility doesn't work with video
+        https://bugs.webkit.org/show_bug.cgi?id=88908
+
+        When determining a contents layer's backface culling, use the parent
+        layer's transform and backface-visibility properties. Track which
+        layers need this special treatment with useParentBackfaceVisibility
+        and setUseParentBackfaceVisibility functions in WebCore::LayerChromium,
+        WebKit::WebLayer, and WebCore::CCLayerImpl.
+
+        Reviewed by Adrienne Walker.
+
+        * chromium/public/WebLayer.h:
+            (WebLayer):
+                Add an accessor to specify that a layer should use its parent's
+                backface culling behavior.
+
 2012-06-19  Tony Payne  <tpayne@chromium.org>
 
         Add monitor profile support for Win

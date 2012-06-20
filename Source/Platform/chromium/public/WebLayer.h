@@ -108,6 +108,16 @@ public:
     WEBKIT_EXPORT bool drawsContent() const;
 
     WEBKIT_EXPORT void setPreserves3D(bool);
+
+    // Mark that this layer should use its parent's transform and double-sided
+    // properties in determining this layer's backface visibility instead of
+    // using its own properties. If this property is set, this layer must
+    // have a parent, and the parent may not have this property set.
+    // Note: This API is to work around issues with visibility the handling of
+    // WebKit layers that have a contents layer (canvas, plugin, WebGL, video,
+    // etc).
+    WEBKIT_EXPORT void setUseParentBackfaceVisibility(bool);
+
     WEBKIT_EXPORT void setBackgroundColor(WebColor);
 
     // Clear the filters in use by passing in a newly instantiated

@@ -1,3 +1,49 @@
+2012-06-20  Christopher Cameron  <ccameron@chromium.org>
+
+        [chromium] webkit-backface-visibility doesn't work with video
+        https://bugs.webkit.org/show_bug.cgi?id=88908
+
+        When determining a contents layer's backface culling, use the parent
+        layer's transform and backface-visibility properties. Track which
+        layers need this special treatment with useParentBackfaceVisibility
+        and setUseParentBackfaceVisibility functions in WebCore::LayerChromium,
+        WebKit::WebLayer, and WebCore::CCLayerImpl.
+
+        Reviewed by Adrienne Walker.
+
+        Tests: compositing/backface-visibility/backface-visibility-image.html
+               compositing/backface-visibility/backface-visibility-webgl.html
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setupContentsLayer):
+            When a contents layer is added, tag it as inheriting its backface
+            culling from its parent.
+        * platform/graphics/chromium/LayerChromium.cpp:
+            (WebCore::LayerChromium::LayerChromium):
+                Initialize new m_useParentBackfaceVisibility member variable.
+            (WebCore::LayerChromium::pushPropertiesTo):
+                Propagate m_useParentBackfaceVisibility to CCLayerImpl.
+        * platform/graphics/chromium/LayerChromium.h:
+            (WebCore::LayerChromium::setUseParentBackfaceVisibility):
+            (WebCore::LayerChromium::useParentBackfaceVisibility):
+            (LayerChromium):
+                Add m_useParentBackfaceVisibility member variable and modify
+                and query accessors.
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+            (WebCore::CCLayerImpl::CCLayerImpl):
+                Initialize new m_useParentBackfaceVisibility member variable.
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+            (WebCore::CCLayerImpl::setUseParentBackfaceVisibility):
+            (WebCore::CCLayerImpl::useParentBackfaceVisibility):
+            (CCLayerImpl):
+                Add m_useParentBackfaceVisibility member variable and modify
+                and query accessors.
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+            (WebCore::layerShouldBeSkipped):
+                When examining a layer, if the layer has 
+                useParentBackfaceVisibility set then use the layer's parent
+                layer to determine backface culling.
+
 2012-06-20  Nate Chapin  <japhet@chromium.org>
 
         Don't re-enter CachedResource::removeClient() if an XHR

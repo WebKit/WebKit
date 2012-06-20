@@ -241,8 +241,15 @@ static bool layerShouldBeSkipped(LayerType* layer)
     if (!layer->drawsContent() || layer->bounds().isEmpty())
         return true;
 
+    LayerType* backfaceTestLayer = layer;
+    if (layer->useParentBackfaceVisibility()) {
+        ASSERT(layer->parent());
+        ASSERT(!layer->parent()->useParentBackfaceVisibility());
+        backfaceTestLayer = layer->parent();
+    }
+
     // The layer should not be drawn if (1) it is not double-sided and (2) the back of the layer is known to be facing the screen.
-    if (!layer->doubleSided() && transformToScreenIsKnown(layer) && isLayerBackFaceVisible(layer))
+    if (!backfaceTestLayer->doubleSided() && transformToScreenIsKnown(backfaceTestLayer) && isLayerBackFaceVisible(backfaceTestLayer))
         return true;
 
     return false;

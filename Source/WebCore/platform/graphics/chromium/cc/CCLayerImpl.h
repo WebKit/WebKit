@@ -141,6 +141,9 @@ public:
     void setPreserves3D(bool);
     bool preserves3D() const { return m_preserves3D; }
 
+    void setUseParentBackfaceVisibility(bool useParentBackfaceVisibility) { m_useParentBackfaceVisibility = useParentBackfaceVisibility; }
+    bool useParentBackfaceVisibility() const { return m_useParentBackfaceVisibility; }
+
     void setUsesLayerClipping(bool usesLayerClipping) { m_usesLayerClipping = usesLayerClipping; }
     bool usesLayerClipping() const { return m_usesLayerClipping; }
 
@@ -335,6 +338,7 @@ private:
     float m_opacity;
     FloatPoint m_position;
     bool m_preserves3D;
+    bool m_useParentBackfaceVisibility;
     bool m_drawCheckerboardForMissingTiles;
     WebKit::WebTransformationMatrix m_sublayerTransform;
     WebKit::WebTransformationMatrix m_transform;
