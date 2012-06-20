@@ -278,25 +278,27 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
         // words and attaches suggestions to these markers in the background. Therefore, when a user right-clicks
         // a mouse on a word, Chrome just needs to find a spelling marker on the word instread of spellchecking it.
         if (selectedFrame->settings() && selectedFrame->settings()->asynchronousSpellCheckingEnabled()) {
-            RefPtr<Range> range = selectedFrame->selection()->toNormalizedRange();
-            if (range.get()) {
+            VisibleSelection selection = selectedFrame->selection()->selection();
+            if (selection.isCaretOrRange()) {
+                if (selection.isCaret())
+                    selection.expandUsingGranularity(WordGranularity);
+                RefPtr<Range> range = selection.toNormalizedRange();
                 Vector<DocumentMarker*> markers = selectedFrame->document()->markers()->markersInRange(range.get(), DocumentMarker::Spelling | DocumentMarker::Grammar);
-                if (!markers.isEmpty()) {
-                    Vector<String> suggestions;
-                    for (size_t i = 0; i < markers.size(); ++i) {
-                        if (!markers[i]->description().isEmpty()) {
-                            Vector<String> descriptions;
-                            markers[i]->description().split('\n', descriptions);
-                            suggestions.append(descriptions);
-                        }
-                    }
-                    data.misspelledWord = selectMisspelledWord(defaultMenu, selectedFrame);
-                    if (!suggestions.isEmpty())
+                if (markers.size() == 1) {
+                    range->setStart(range->startContainer(), markers[0]->startOffset());
+                    range->setEnd(range->endContainer(), markers[0]->endOffset());
+                    data.misspelledWord = range->text();
+                    if (markers[0]->description().length()) {
+                        Vector<String> suggestions;
+                        markers[0]->description().split('\n', suggestions);
                         data.dictionarySuggestions = suggestions;
-                    else if (m_webView->spellCheckClient()) {
+                    } else if (m_webView->spellCheckClient()) {
                         int misspelledOffset, misspelledLength;
                         m_webView->spellCheckClient()->spellCheck(data.misspelledWord, misspelledOffset, misspelledLength, &data.dictionarySuggestions);
                     }
+                    selection = VisibleSelection(range.get());
+                    if (selectedFrame->selection()->shouldChangeSelection(selection))
+                        selectedFrame->selection()->setSelection(selection, WordGranularity);
                 }
             }
         } else if (m_webView->focusedWebCoreFrame()->editor()->isContinuousSpellCheckingEnabled()) {

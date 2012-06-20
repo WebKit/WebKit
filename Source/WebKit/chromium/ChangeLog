@@ -1,3 +1,19 @@
+2012-06-20  Hironori Bono  <hbono@chromium.org>
+
+        [chromium] Select the marker range when right-clicking on a marker.
+        https://bugs.webkit.org/show_bug.cgi?id=89331
+
+        Reviewed by Hajime Morita.
+
+        Chromium always selects only one word when right-clicking on a spelling marker.
+        This prevents selecting whole region specified by a marker if the marker
+        consists of two or more words. This change retrieves a range coverted by a
+        marker and select the range. This emulates the behavior of Mac Chromium and it
+        does not need any workarounds for Mac.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2012-06-19  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r120772.
