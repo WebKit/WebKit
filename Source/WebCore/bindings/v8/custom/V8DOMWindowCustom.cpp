@@ -304,6 +304,10 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     DOMWindow* window = V8DOMWindow::toNative(args.Holder());
     DOMWindow* source = V8Proxy::retrieveWindowForCallingContext();
 
+    // If called directly by WebCore we don't have a calling context.
+    if (!source)
+        return V8Proxy::throwTypeError(0, args.GetIsolate());
+
     // This function has variable arguments and can be:
     // Per current spec:
     //   postMessage(message, targetOrigin)
