@@ -3932,16 +3932,48 @@ HashSet<RenderBox*>* RenderBlock::percentHeightDescendants() const
     return gPercentHeightDescendantsMap ? gPercentHeightDescendantsMap->get(this) : 0;
 }
 
-#if !ASSERT_DISABLED
+bool RenderBlock::hasPercentHeightContainerMap()
+{
+    return gPercentHeightContainerMap;
+}
+
 bool RenderBlock::hasPercentHeightDescendant(RenderBox* descendant)
 {
-    ASSERT(descendant);
-    if (!gPercentHeightContainerMap)
-        return false;
-    HashSet<RenderBlock*>* containerSet = gPercentHeightContainerMap->take(descendant);
-    return containerSet && containerSet->size();
+    // We don't null check gPercentHeightContainerMap since the caller
+    // already ensures this and we need to call this function on every
+    // descendant in clearPercentHeightDescendantsFrom().
+    ASSERT(gPercentHeightContainerMap);
+    return gPercentHeightContainerMap->contains(descendant);
 }
-#endif
+
+void RenderBlock::removePercentHeightDescendantIfNeeded(RenderBox* descendant)
+{
+    // We query the map directly, rather than looking at style's
+    // logicalHeight()/logicalMinHeight()/logicalMaxHeight() since those
+    // can change with writing mode/directional changes.
+    if (!hasPercentHeightContainerMap())
+        return;
+
+    if (!hasPercentHeightDescendant(descendant))
+        return;
+
+    removePercentHeightDescendant(descendant);
+}
+
+void RenderBlock::clearPercentHeightDescendantsFrom(RenderBox* parent)
+{
+    ASSERT(gPercentHeightContainerMap);
+    for (RenderObject* curr = parent->firstChild(); curr; curr = curr->nextInPreOrder(parent)) {
+        if (!curr->isBox())
+            continue;
+ 
+        RenderBox* box = toRenderBox(curr);
+        if (!hasPercentHeightDescendant(box))
+            continue;
+
+        removePercentHeightDescendant(box);
+    }
+}
 
 template <RenderBlock::FloatingObject::Type FloatTypeValue>
 inline void RenderBlock::FloatIntervalSearchAdapter<FloatTypeValue>::collectIfNeeded(const IntervalType& interval) const

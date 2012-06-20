@@ -1,3 +1,37 @@
+2012-06-20  Abhishek Arya  <inferno@chromium.org>
+
+        Crash on accessing a removed renderer from percent height descendant map.
+        https://bugs.webkit.org/show_bug.cgi?id=88017
+
+        Reviewed by Eric Seidel.
+
+        Test: fast/block/percent-height-descendant-not-removed-crash2.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hasPercentHeightContainerMap): helper to tell
+        if we have a height container map.
+        (WebCore):
+        (WebCore::RenderBlock::hasPercentHeightDescendant): change from a debug
+        only function to a regular function for use. no need to null check
+        for a percent height container map in this function.
+        (WebCore::RenderBlock::clearPercentHeightDescendantsFrom): helper to
+        clear all percent height descendants under us.
+        (WebCore::RenderBlock::removePercentHeightDescendantIfNeeded): helper to
+        clear the box if it exists in the percent height descendant map.
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed): remove the assert and change the
+        percent height detection check to use removePercentHeightDescendantIfNeeded.
+        We shouldn't rely on logicalHeight().isPercent() as it can change when our
+        writing mode changes. Instead, just query the map directly to see if we exist.
+        (WebCore::RenderBox::styleDidChange): when our writing mode changes from
+        horizontal to vertical or vice versa, we clear all our descendants from
+        the percent height descendant map. Cache the value of isHorizontalWritingMode()
+        before it changes in styleDidChange and compare it with the new value
+        (can't use oldStyle->isHorizontalWritingMode() since it can be inherited
+        and already updated).
+
 2012-06-20  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION(r113885): Margin not properly applied to elements with align=center
