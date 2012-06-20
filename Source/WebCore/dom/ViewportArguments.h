@@ -107,6 +107,11 @@ struct ViewportArguments {
             && height == other.height
             && userScalable == other.userScalable;
     }
+
+    bool operator!=(const ViewportArguments& other) const
+    {
+        return !(*this == other);
+    }
 };
 
 ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, int deviceDPI, IntSize visibleViewport);

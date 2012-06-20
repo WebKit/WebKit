@@ -1,3 +1,17 @@
+2012-06-20  Jacky Jiang  <zhajiang@rim.com>
+
+        Add a != operator to ViewportArguments
+        https://bugs.webkit.org/show_bug.cgi?id=87505
+
+        Reviewed by Antonio Gomes.
+        Patch by Jacky Jiang  <zhajiang@rim.com>
+
+        Add a != operator to ViewportArguments for convenience.
+
+        * dom/ViewportArguments.h:
+        (ViewportArguments):
+        (WebCore::ViewportArguments::operator!=):
+
 2012-06-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Let XCode have its own way.

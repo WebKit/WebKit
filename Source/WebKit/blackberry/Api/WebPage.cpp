@@ -980,7 +980,7 @@ void WebPagePrivate::setLoadState(LoadState state)
             static ViewportArguments defaultViewportArguments;
             bool documentHasViewportArguments = false;
             FrameLoadType frameLoadType = FrameLoadTypeStandard;
-            if (m_mainFrame && m_mainFrame->document() && !(m_mainFrame->document()->viewportArguments() == defaultViewportArguments))
+            if (m_mainFrame && m_mainFrame->document() && m_mainFrame->document()->viewportArguments() != defaultViewportArguments)
                 documentHasViewportArguments = true;
             if (m_mainFrame && m_mainFrame->loader())
                 frameLoadType = m_mainFrame->loader()->loadType();
@@ -3668,7 +3668,7 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
 
     // Recompute our virtual viewport.
     static ViewportArguments defaultViewportArguments;
-    if (!(m_viewportArguments == defaultViewportArguments)) {
+    if (m_viewportArguments != defaultViewportArguments) {
         // We may need to infer the width and height for the viewport with respect to the rotation.
         IntSize newVirtualViewport = recomputeVirtualViewportFromViewportArguments();
         ASSERT(!newVirtualViewport.isEmpty());

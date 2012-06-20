@@ -111,7 +111,7 @@ bool WebViewportArguments::operator==(const WebViewportArguments& other)
 
 bool WebViewportArguments::operator!=(const WebViewportArguments& other)
 {
-    return !(*this == other);
+    return *d != *(other.d);
 }
 
 } // namespace WebKit

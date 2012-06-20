@@ -1,3 +1,19 @@
+2012-06-20  Jacky Jiang  <zhajiang@rim.com>
+
+        Add a != operator to ViewportArguments
+        https://bugs.webkit.org/show_bug.cgi?id=87505
+
+        Reviewed by Antonio Gomes.
+        Patch by Jacky Jiang  <zhajiang@rim.com>
+
+        Use != operator of ViewportArguments.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        * Api/WebViewportArguments.cpp:
+        (BlackBerry::WebKit::WebViewportArguments::operator!=):
+
 2012-06-20  Christopher Hutten-Czapski  <chutten@rim.com>
 
         [BlackBerry] Add an API to immediately enable cross-site XHR
