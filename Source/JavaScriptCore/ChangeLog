@@ -1,3 +1,28 @@
+2012-06-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        [Qt][Mac] REGRESSION(r120742): It broke the build
+        https://bugs.webkit.org/show_bug.cgi?id=89516
+
+        Reviewed by Geoffrey Garen.
+
+        Removing GCActivityCallbackCF.cpp because it doesn't mesh well with cross-platform 
+        code on Darwin (e.g. Qt). We now use plain ol' vanilla ifdefs to handle platforms 
+        without CF support. These if-defs will probably disappear in the future when we 
+        use cross-platform timers in HeapTimer.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/GCActivityCallback.cpp:
+        (JSC):
+        (JSC::DefaultGCActivityCallback::DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::doWork):
+        (JSC::DefaultGCActivityCallback::scheduleTimer):
+        (JSC::DefaultGCActivityCallback::cancelTimer):
+        (JSC::DefaultGCActivityCallback::didAllocate):
+        (JSC::DefaultGCActivityCallback::willCollect):
+        (JSC::DefaultGCActivityCallback::cancel):
+        * runtime/GCActivityCallbackCF.cpp: Removed.
+
 2012-06-19  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CFA forgets to notify subsequent phases of found constants if it proves LogicalNot to be a constant
