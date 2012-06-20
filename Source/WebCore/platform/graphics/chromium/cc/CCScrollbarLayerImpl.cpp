@@ -200,8 +200,8 @@ int CCScrollbarLayerImpl::CCScrollbar::totalSize() const
     // FIXME: Hardcoding the first child here is weird. Think of
     // a cleaner way to get the contentBounds on the Impl side.
     if (orientation() == HorizontalScrollbar)
-        return m_owner->m_scrollLayer->children()[0]->contentBounds().width();
-    return m_owner->m_scrollLayer->children()[0]->contentBounds().height();
+        return m_owner->m_scrollLayer->children()[0]->bounds().width();
+    return m_owner->m_scrollLayer->children()[0]->bounds().height();
 }
 
 int CCScrollbarLayerImpl::CCScrollbar::maximum() const

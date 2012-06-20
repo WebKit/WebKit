@@ -187,6 +187,9 @@ public:
     const IntSize& contentBounds() const { return m_contentBounds; }
     void setContentBounds(const IntSize&);
 
+    void setContentsScale(float contentsScale) { m_contentsScale = contentsScale; }
+    float contentsScale() const { return m_contentsScale; }
+
     const IntPoint& scrollPosition() const { return m_scrollPosition; }
     void setScrollPosition(const IntPoint&);
 
@@ -305,6 +308,7 @@ private:
     float m_anchorPointZ;
     IntSize m_bounds;
     IntSize m_contentBounds;
+    float m_contentsScale;
     IntPoint m_scrollPosition;
     bool m_scrollable;
     bool m_shouldScrollOnMainThread;
