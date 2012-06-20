@@ -35,6 +35,7 @@
 #include <wininet.h> // for INTERNET_MAX_URL_LENGTH
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(CF)
@@ -299,19 +300,14 @@ void markupToCFHTML(const String& markup, const String& srcURL, Vector<char>& re
 void replaceNewlinesWithWindowsStyleNewlines(String& str)
 {
     DEFINE_STATIC_LOCAL(String, windowsNewline, ("\r\n"));
-    const static unsigned windowsNewlineLength = windowsNewline.length();
-
-    unsigned index = 0;
-    unsigned strLength = str.length();
-    while (index < strLength) {
-        if (str[index] != '\n' || (index > 0 && str[index - 1] == '\r')) {
-            ++index;
-            continue;
-        }
-        str.replace(index, 1, windowsNewline);
-        strLength = str.length();
-        index += windowsNewlineLength;
+    StringBuilder result;
+    for (unsigned index = 0; index < str.length(); ++index) {
+        if (str[index] != '\n' || (index > 0 && str[index - 1] == '\r'))
+            result.append(str[index]);
+        else
+            result.append(windowsNewline);
     }
+    str = result.toString();
 }
 
 void replaceNBSPWithSpace(String& str)
