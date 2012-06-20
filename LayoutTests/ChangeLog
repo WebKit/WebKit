@@ -1,3 +1,11 @@
+2012-06-20  Nate Chapin  <japhet@chromium.org>
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=89378.
+        Reviewed by Eric Seidel.
+
+        * http/tests/xmlhttprequest/reentrant-cancel-expected.txt: Added.
+        * http/tests/xmlhttprequest/reentrant-cancel.html: Added.
+
 2012-06-20  Robert Hogan  <robert@webkit.org>
 
         Negative margin block doesn't properly clear a float enclosed by a previous sibling
