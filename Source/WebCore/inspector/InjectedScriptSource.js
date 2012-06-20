@@ -40,6 +40,7 @@ var InjectedScript = function()
     this._idToWrappedObject = {};
     this._idToObjectGroupName = {};
     this._objectGroups = {};
+    this._modules = {};
 }
 
 InjectedScript.primitiveTypes = {
@@ -409,6 +410,19 @@ InjectedScript.prototype = {
         if (!object || this._subtype(object) !== "node")
             return null;
         return object;
+    },
+
+    module: function(name)
+    {
+        return this._modules[name];
+    },
+ 
+    injectModule: function(name, source)
+    {
+        delete this._modules[name];
+        var module = eval("(" + source + ")");
+        this._modules[name] = module;
+        return module;
     },
 
     _isDefined: function(object)

@@ -68,8 +68,10 @@ public:
     ScriptObject wrapWebGLRenderingContextForInstrumentation(const ScriptObject&);
 #endif
 
-private:
     typedef bool (*InspectedStateAccessCheck)(ScriptState*);
+    InspectedStateAccessCheck inspectedStateAccessCheck() const { return m_inspectedStateAccessCheck; }
+
+private:
     explicit InjectedScriptManager(InspectedStateAccessCheck);
 
     String injectedScriptSource();

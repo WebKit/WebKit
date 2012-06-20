@@ -1,3 +1,55 @@
+2012-06-20  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: Allow module injections into the InjectedScript
+        https://bugs.webkit.org/show_bug.cgi?id=89530
+
+        Add a new InjectedScriptModule abstract class that inherits InjectedScriptBase
+        to reuse implementation, and which javascript code is injected via
+        InjectedScript.
+
+        Reviewed by Pavel Feldman.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptObject::ScriptObject):
+        (WebCore):
+        * bindings/js/ScriptObject.h:
+        (ScriptObject):
+        (WebCore::ScriptObject::ScriptObject):
+        * bindings/v8/ScriptObject.cpp:
+        (WebCore::ScriptObject::ScriptObject):
+        (WebCore):
+        * bindings/v8/ScriptObject.h:
+        (ScriptObject):
+        (WebCore::ScriptObject::~ScriptObject):
+        * inspector/InjectedScript.cpp:
+        * inspector/InjectedScript.h:
+        (WebCore):
+        (WebCore::InjectedScript::name):
+        (InjectedScript):
+        * inspector/InjectedScriptBase.cpp:
+        (WebCore::InjectedScriptBase::callFunctionWithEvalEnabled):
+        * inspector/InjectedScriptBase.h:
+        (WebCore):
+        (InjectedScriptBase):
+        * inspector/InjectedScriptManager.h:
+        (InjectedScriptManager):
+        (WebCore::InjectedScriptManager::inspectedStateAccessCheck):
+        * inspector/InjectedScriptModule.cpp: Copied from Source/WebCore/inspector/InjectedScriptBase.h.
+        (WebCore):
+        (WebCore::InjectedScriptModule::InjectedScriptModule):
+        (WebCore::InjectedScriptModule::ensureInjected):
+        * inspector/InjectedScriptModule.h: Copied from Source/WebCore/bindings/js/ScriptObject.h.
+        (WebCore):
+        (InjectedScriptModule):
+        * inspector/InjectedScriptSource.js:
+        (.):
+
 2012-06-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: Timeline label bar jiggles when scrolling

@@ -28,47 +28,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedScriptBase_h
-#define InjectedScriptBase_h
+#ifndef InjectedScriptModule_h
+#define InjectedScriptModule_h
 
-#include "InspectorTypeBuilder.h"
-#include "ScriptObject.h"
-#include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
+#include "InjectedScriptBase.h"
+#include "PlatformString.h"
+#include "ScriptState.h"
 
 namespace WebCore {
 
-class InspectorValue;
-class ScriptFunctionCall;
-
-typedef String ErrorString;
+class InjectedScriptManager;
 
 #if ENABLE(INSPECTOR)
 
-class InjectedScriptBase {
+class InjectedScriptModule : public InjectedScriptBase {
 public:
-    virtual ~InjectedScriptBase() { }
-
-    const String& name() const { return m_name; }
-    bool hasNoValue() const { return m_injectedScriptObject.hasNoValue(); }
-    ScriptState* scriptState() const { return m_injectedScriptObject.scriptState(); }
+    virtual String source() const = 0;
 
 protected:
-    typedef bool (*InspectedStateAccessCheck)(ScriptState*);
-    InjectedScriptBase(const String& name);
-    InjectedScriptBase(const String& name, ScriptObject, InspectedStateAccessCheck);
-
-    void initialize(ScriptObject, InspectedStateAccessCheck);
-    bool canAccessInspectedWindow() const;
-    const ScriptObject& injectedScriptObject() const;
-    ScriptValue callFunctionWithEvalEnabled(ScriptFunctionCall&, bool& hadException) const;
-    void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
-    void makeEvalCall(ErrorString*, ScriptFunctionCall&, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown);
-
-private:
-    String m_name;
-    ScriptObject m_injectedScriptObject;
-    InspectedStateAccessCheck m_inspectedStateAccessCheck;
+    // Do not expose constructor in the child classes as well. Instead provide
+    // a static factory method that would create a new instance of the class
+    // and call its ensureInjected() method immediately.
+    InjectedScriptModule(const String& name);
+    void ensureInjected(InjectedScriptManager&, ScriptState*);
 };
 
 #endif

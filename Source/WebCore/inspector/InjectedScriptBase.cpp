@@ -43,15 +43,23 @@ using WebCore::TypeBuilder::Runtime::RemoteObject;
 
 namespace WebCore {
 
-InjectedScriptBase::InjectedScriptBase()
-    : m_inspectedStateAccessCheck(0)
+InjectedScriptBase::InjectedScriptBase(const String& name)
+    : m_name(name)
+    , m_inspectedStateAccessCheck(0)
 {
 }
 
-InjectedScriptBase::InjectedScriptBase(ScriptObject injectedScriptObject, InspectedStateAccessCheck accessCheck)
-    : m_injectedScriptObject(injectedScriptObject)
+InjectedScriptBase::InjectedScriptBase(const String& name, ScriptObject injectedScriptObject, InspectedStateAccessCheck accessCheck)
+    : m_name(name)
+    , m_injectedScriptObject(injectedScriptObject)
     , m_inspectedStateAccessCheck(accessCheck)
 {
+}
+
+void InjectedScriptBase::initialize(ScriptObject injectedScriptObject, InspectedStateAccessCheck accessCheck)
+{
+    m_injectedScriptObject = injectedScriptObject;
+    m_inspectedStateAccessCheck = accessCheck;
 }
 
 bool InjectedScriptBase::canAccessInspectedWindow() const
@@ -67,7 +75,7 @@ const ScriptObject& InjectedScriptBase::injectedScriptObject() const
 ScriptValue InjectedScriptBase::callFunctionWithEvalEnabled(ScriptFunctionCall& function, bool& hadException) const
 {
     ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextFromScriptState(m_injectedScriptObject.scriptState());
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willCallFunction(scriptExecutionContext, "InjectedScript", 1);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willCallFunction(scriptExecutionContext, name(), 1);
 
     ScriptState* scriptState = m_injectedScriptObject.scriptState();
     bool evalIsDisabled = false;

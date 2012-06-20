@@ -2766,6 +2766,8 @@
             'inspector/DOMWrapperVisitor.h',
             'inspector/IdentifiersFactory.cpp',
             'inspector/IdentifiersFactory.h',
+            'inspector/InjectedScriptModule.cpp',
+            'inspector/InjectedScriptModule.h',
             'inspector/InjectedScript.cpp',
             'inspector/InjectedScript.h',
             'inspector/InjectedScriptBase.cpp',

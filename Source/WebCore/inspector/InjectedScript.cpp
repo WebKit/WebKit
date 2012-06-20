@@ -35,6 +35,7 @@
 #include "InjectedScript.h"
 
 #include "InjectedScriptHost.h"
+#include "InjectedScriptModule.h"
 #include "InspectorValues.h"
 #include "Node.h"
 #include "PlatformString.h"
@@ -50,11 +51,12 @@ using WebCore::TypeBuilder::Runtime::RemoteObject;
 namespace WebCore {
 
 InjectedScript::InjectedScript()
+    : InjectedScriptBase("InjectedScript")
 {
 }
 
 InjectedScript::InjectedScript(ScriptObject injectedScriptObject, InspectedStateAccessCheck accessCheck)
-    : InjectedScriptBase(injectedScriptObject, accessCheck)
+    : InjectedScriptBase("InjectedScript", injectedScriptObject, accessCheck)
 {
 }
 

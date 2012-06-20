@@ -50,6 +50,12 @@ ScriptObject::ScriptObject(ScriptState* scriptState, JSObject* object)
 {
 }
 
+ScriptObject::ScriptObject(ScriptState* scriptState, const ScriptValue& scriptValue)
+    : ScriptValue(scriptState->globalData(), scriptValue.jsValue())
+    , m_scriptState(scriptState)
+{
+}
+
 static bool handleException(ScriptState* scriptState)
 {
     if (!scriptState->hadException())

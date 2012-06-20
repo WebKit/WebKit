@@ -51,6 +51,12 @@ ScriptObject::ScriptObject(ScriptState* scriptState, v8::Handle<v8::Object> v8Ob
 {
 }
 
+ScriptObject::ScriptObject(ScriptState* scriptState, const ScriptValue& scriptValue)
+    : ScriptValue(scriptValue)
+    , m_scriptState(scriptState)
+{
+}
+
 v8::Local<v8::Object> ScriptObject::v8Object() const
 {
     ASSERT(v8Value()->IsObject());

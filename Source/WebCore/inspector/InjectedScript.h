@@ -42,6 +42,7 @@
 
 namespace WebCore {
 
+class InjectedScriptModule;
 class Node;
 class SerializedScriptValue;
 
@@ -94,6 +95,7 @@ public:
     void releaseObjectGroup(const String&);
 
 private:
+    friend class InjectedScriptModule;
     friend InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState*);
     InjectedScript(ScriptObject, InspectedStateAccessCheck);
 
