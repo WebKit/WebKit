@@ -1,3 +1,14 @@
+2012-06-20  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        Import themaninblue.com/experiment/AnimationBenchmark/ as performance tests
+        https://bugs.webkit.org/show_bug.cgi?id=78789
+
+        Reviewed by Ryosuke Niwa.
+
+        Added PerfTestRunner fixture around it.
+
+        * Animation/balls.html: Added.
+
 2012-06-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: native memory snapshot performance and coverage test implementation.
