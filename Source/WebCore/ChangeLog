@@ -1,3 +1,17 @@
+2012-06-20  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [Cairo] Fix memory leak in GraphicsContext3DCairo.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=89561
+
+        Reviewed by Martin Robinson.
+
+        Fix a memory leak in GraphicsContext3D::getImageData().
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::getImageData): asNewNativeImage() returns a
+        caller-owned pointer to the native image data. So, using OwnPtr to manage
+        memory automatically.
+
 2012-06-20  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Use HitTestPoint instead of LayoutPoint for nodeAtPoint.
