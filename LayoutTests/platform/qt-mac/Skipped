@@ -5728,5 +5728,6 @@ fast/runin/run-in-parent-block-child-add.html
 printing/iframe-print.html
 svg/custom/bug86119.html
 
-# new crashing test
+# new crashing tests
 css3/filters/nested-filter.html
+css3/filters/nested-filters.html

@@ -1,3 +1,9 @@
+2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Skip one more crashing test.
+
+        * platform/qt-mac/Skipped:
+
 2012-06-19  Cris Neckar  <cdn@chromium.org>
 
         Add test which inserts a CounterNode subtree which contains reset nodes into another tree. 
