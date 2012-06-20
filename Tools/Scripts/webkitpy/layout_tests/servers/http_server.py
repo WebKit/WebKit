@@ -43,12 +43,12 @@ class Lighttpd(http_server_base.HttpServerBase):
 
     def __init__(self, port_obj, output_dir, background=False, port=None,
                  root=None, run_background=None, additional_dirs=None,
-                 layout_tests_dir=None):
+                 layout_tests_dir=None, num_servers=None):
         """Args:
           output_dir: the absolute path to the layout test result directory
         """
         # Webkit tests
-        http_server_base.HttpServerBase.__init__(self, port_obj)
+        http_server_base.HttpServerBase.__init__(self, port_obj, num_servers)
         self._name = 'lighttpd'
         self._output_dir = output_dir
         self._port = port

@@ -786,16 +786,16 @@ class Port(object):
         method."""
         pass
 
-    def start_http_server(self, additional_dirs=None):
+    def start_http_server(self, additional_dirs=None, number_of_servers=None):
         """Start a web server. Raise an error if it can't start or is already running.
 
         Ports can stub this out if they don't need a web server to be running."""
         assert not self._http_server, 'Already running an http server.'
 
         if self._uses_apache():
-            server = apache_http_server.LayoutTestApacheHttpd(self, self.results_directory(), additional_dirs=additional_dirs)
+            server = apache_http_server.LayoutTestApacheHttpd(self, self.results_directory(), additional_dirs=additional_dirs, number_of_servers=number_of_servers)
         else:
-            server = http_server.Lighttpd(self, self.results_directory(), additional_dirs=additional_dirs)
+            server = http_server.Lighttpd(self, self.results_directory(), additional_dirs=additional_dirs, num_servers=num_servers)
 
         server.start()
         self._http_server = server

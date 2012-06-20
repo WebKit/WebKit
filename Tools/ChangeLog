@@ -1,3 +1,40 @@
+2012-06-18  Dirk Pranke  <dpranke@chromium.org>
+
+        new-run-webkit-tests should spin-up enough httpd processes to avoid timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=88134
+
+        Reviewed by Tony Chang.
+
+        Change NRWT to spin up 2*min(child_processes, locked_shards)
+        http servers by default so that we are less likely to get a
+        bunch of http timeouts at the beginning of a test run.
+
+        Note that I had to tweak executive_mock to support mocked stderr
+        because the apache_http_server code reads stderr when starting a
+        process to ensure it started okay.
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockProcess.__init__):
+        * Scripts/webkitpy/common/system/outputcapture.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+        (Manager.start_servers_with_lock):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.to.start_http_server):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.start_http_server):
+        (TestPort._path_to_apache):
+        (TestPort):
+        (TestPort._path_to_apache_config_file):
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__):
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server_unittest.py: Added
+        (LayoutTestApacheHttpd.__init__):
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        (Lighttpd.__init__):
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase.__init__):
+
 2012-06-20  Tom Zakrajsek  <tomz@codeaurora.org>
 
         Unreviewed: Back out accidentally checked in debug print which broke a test

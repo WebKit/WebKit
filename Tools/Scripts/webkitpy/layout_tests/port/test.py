@@ -428,7 +428,7 @@ class TestPort(Port):
     def _driver_class(self):
         return TestDriver
 
-    def start_http_server(self):
+    def start_http_server(self, additional_dirs=None, number_of_servers=None):
         pass
 
     def start_websocket_server(self):
@@ -454,6 +454,12 @@ class TestPort(Port):
 
     def _path_to_lighttpd_php(self):
         return "/usr/bin/php-cgi"
+
+    def _path_to_apache(self):
+        return "/usr/sbin/httpd"
+
+    def _path_to_apache_config_file(self):
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', 'httpd.conf')
 
     def path_to_test_expectations_file(self):
         return self._expectations_path

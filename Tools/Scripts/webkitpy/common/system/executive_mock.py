@@ -34,10 +34,12 @@ from webkitpy.common.system.executive import ScriptError
 
 
 class MockProcess(object):
-    def __init__(self, stdout='MOCK STDOUT\n'):
+    def __init__(self, stdout='MOCK STDOUT\n', stderr=''):
         self.pid = 42
         self.stdout = StringIO.StringIO(stdout)
+        self.stderr = StringIO.StringIO(stderr)
         self.stdin = StringIO.StringIO()
+        self.returncode = 0
 
     def wait(self):
         return

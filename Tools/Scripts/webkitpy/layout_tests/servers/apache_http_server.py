@@ -43,12 +43,12 @@ _log = logging.getLogger(__name__)
 
 class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
 
-    def __init__(self, port_obj, output_dir, additional_dirs=None):
+    def __init__(self, port_obj, output_dir, additional_dirs=None, number_of_servers=None):
         """Args:
           port_obj: handle to the platform-specific routines
           output_dir: the absolute path to the layout test result directory
         """
-        http_server_base.HttpServerBase.__init__(self, port_obj)
+        http_server_base.HttpServerBase.__init__(self, port_obj, number_of_servers)
         # We use the name "httpd" instead of "apache" to make our paths (e.g. the pid file: /tmp/WebKit/httpd.pid)
         # match old-run-webkit-tests: https://bugs.webkit.org/show_bug.cgi?id=63956
         self._name = 'httpd'
@@ -94,6 +94,12 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
                         '-c', "\'<Location %s>\'" % alias,
                         '-c', "\'RemoveHandler .cgi .pl\'",
                         '-c', "\'</Location>\'"]
+
+        if self._number_of_servers:
+            start_cmd += ['-c', "\'StartServers %d\'" % self._number_of_servers,
+                          '-c', "\'MinSpareServers %d\'" % self._number_of_servers,
+                          '-c', "\'MaxSpareServers %d\'" % self._number_of_servers]
+
 
         stop_cmd = [executable,
             '-f', "\"%s\"" % self._get_apache_config_file_path(test_dir, output_dir),

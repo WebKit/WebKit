@@ -765,8 +765,8 @@ class Manager(object):
 
         all_shards = locked_shards + unlocked_shards
         self._remaining_locked_shards = locked_shards
-        if self._options.http and (self._http_tests() or self._websocket_tests()):
-            self.start_servers_with_lock()
+        if locked_shards and self._options.http:
+            self.start_servers_with_lock(2 * min(num_workers, len(locked_shards)))
 
         num_workers = min(num_workers, len(all_shards))
         self._log_num_workers(num_workers, len(all_shards), len(locked_shards))
@@ -969,12 +969,12 @@ class Manager(object):
 
         return self._port.exit_code_from_summarized_results(unexpected_results)
 
-    def start_servers_with_lock(self):
+    def start_servers_with_lock(self, number_of_servers):
         self._printer.print_update('Acquiring http lock ...')
         self._port.acquire_http_lock()
         if self._http_tests():
             self._printer.print_update('Starting HTTP server ...')
-            self._port.start_http_server()
+            self._port.start_http_server(number_of_servers=number_of_servers)
         if self._websocket_tests():
             self._printer.print_update('Starting WebSocket server ...')
             self._port.start_websocket_server()
