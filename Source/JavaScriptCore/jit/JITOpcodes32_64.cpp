@@ -207,7 +207,7 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     patchBuffer.link(callCallNotJSFunction, FunctionPtr(cti_op_call_NotJSFunction));
     patchBuffer.link(callConstructNotJSFunction, FunctionPtr(cti_op_construct_NotJSConstruct));
 
-    CodeRef finalCode = patchBuffer.finalizeCode();
+    CodeRef finalCode = FINALIZE_CODE(patchBuffer, ("JIT CTI machine trampolines"));
     RefPtr<ExecutableMemoryHandle> executableMemory = finalCode.executableMemory();
 
     trampolines->ctiVirtualCallLink = patchBuffer.trampolineAt(virtualCallLinkBegin);
@@ -497,7 +497,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(JSGlobalData* globalData, NativeFu
     LinkBuffer patchBuffer(*m_globalData, this, GLOBAL_THUNK_ID);
 
     patchBuffer.link(nativeCall, FunctionPtr(func));
-    return patchBuffer.finalizeCode();
+    return FINALIZE_CODE(patchBuffer, ("JIT CTI native call"));
 }
 
 void JIT::emit_op_mov(Instruction* currentInstruction)

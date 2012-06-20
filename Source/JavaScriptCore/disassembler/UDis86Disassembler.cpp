@@ -28,11 +28,12 @@
 
 #if USE(UDIS86)
 
+#include "MacroAssemblerCodeRef.h"
 #include "udis86.h"
 
 namespace JSC {
 
-bool tryToDisassemble(MacroAssemblerCodePtr codePtr, size_t size, FILE* out)
+bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, FILE* out)
 {
     ud_t disassembler;
     ud_init(&disassembler);
@@ -45,10 +46,12 @@ bool tryToDisassemble(MacroAssemblerCodePtr codePtr, size_t size, FILE* out)
     ud_set_pc(&disassembler, bitwise_cast<uintptr_t>(codePtr.executableAddress()));
     ud_set_syntax(&disassembler, UD_SYN_ATT);
     
+    uint64_t currentPC = disassembler.pc;
     while (ud_disassemble(&disassembler)) {
         char pcString[20];
-        snprintf(pcString, sizeof(pcString), "0x%lx", static_cast<unsigned long>(disassembler.pc));
-        fprintf(out, "%16s: %s\n", pcString, ud_insn_asm(&disassembler));
+        snprintf(pcString, sizeof(pcString), "0x%lx", static_cast<unsigned long>(currentPC));
+        fprintf(out, "%s%16s: %s\n", prefix, pcString, ud_insn_asm(&disassembler));
+        currentPC = disassembler.pc;
     }
     
     return true;

@@ -26,16 +26,18 @@
 #ifndef Disassembler_h
 #define Disassembler_h
 
-#include "MacroAssemblerCodeRef.h"
+#include <stdio.h>
 #include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
+class MacroAssemblerCodePtr;
+
 #if ENABLE(DISASSEMBLER)
-bool tryToDisassemble(MacroAssemblerCodePtr, size_t size, FILE* out);
+bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char* prefix, FILE* out);
 #else
-inline bool tryToDisassemble(MacroAssemblerCodePtr, size_t, FILE*)
+inline bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char*, FILE*)
 {
     return false;
 }

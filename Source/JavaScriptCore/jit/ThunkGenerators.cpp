@@ -78,7 +78,7 @@ MacroAssemblerCodeRef charCodeAtThunkGenerator(JSGlobalData* globalData)
     SpecializedThunkJIT jit(1, globalData);
     stringCharLoad(jit);
     jit.returnInt32(SpecializedThunkJIT::regT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "charCodeAt");
 }
 
 MacroAssemblerCodeRef charAtThunkGenerator(JSGlobalData* globalData)
@@ -87,7 +87,7 @@ MacroAssemblerCodeRef charAtThunkGenerator(JSGlobalData* globalData)
     stringCharLoad(jit);
     charToString(jit, globalData, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "charAt");
 }
 
 MacroAssemblerCodeRef fromCharCodeThunkGenerator(JSGlobalData* globalData)
@@ -97,7 +97,7 @@ MacroAssemblerCodeRef fromCharCodeThunkGenerator(JSGlobalData* globalData)
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0);
     charToString(jit, globalData, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "fromCharCode");
 }
 
 MacroAssemblerCodeRef sqrtThunkGenerator(JSGlobalData* globalData)
@@ -109,7 +109,7 @@ MacroAssemblerCodeRef sqrtThunkGenerator(JSGlobalData* globalData)
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.sqrtDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "sqrt");
 }
 
 
@@ -209,7 +209,7 @@ MacroAssemblerCodeRef floorThunkGenerator(JSGlobalData* globalData)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "floor");
 }
 
 MacroAssemblerCodeRef ceilThunkGenerator(JSGlobalData* globalData)
@@ -228,7 +228,7 @@ MacroAssemblerCodeRef ceilThunkGenerator(JSGlobalData* globalData)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "ceil");
 }
 
 MacroAssemblerCodeRef roundThunkGenerator(JSGlobalData* globalData)
@@ -262,7 +262,7 @@ MacroAssemblerCodeRef roundThunkGenerator(JSGlobalData* globalData)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "round");
 }
 
 MacroAssemblerCodeRef expThunkGenerator(JSGlobalData* globalData)
@@ -275,7 +275,7 @@ MacroAssemblerCodeRef expThunkGenerator(JSGlobalData* globalData)
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.callDoubleToDouble(UnaryDoubleOpWrapper(exp));
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "exp");
 }
 
 MacroAssemblerCodeRef logThunkGenerator(JSGlobalData* globalData)
@@ -288,7 +288,7 @@ MacroAssemblerCodeRef logThunkGenerator(JSGlobalData* globalData)
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.callDoubleToDouble(UnaryDoubleOpWrapper(log));
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "log");
 }
 
 MacroAssemblerCodeRef absThunkGenerator(JSGlobalData* globalData)
@@ -308,7 +308,7 @@ MacroAssemblerCodeRef absThunkGenerator(JSGlobalData* globalData)
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.absDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
     jit.returnDouble(SpecializedThunkJIT::fpRegT1);
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "abs");
 }
 
 MacroAssemblerCodeRef powThunkGenerator(JSGlobalData* globalData)
@@ -360,7 +360,7 @@ MacroAssemblerCodeRef powThunkGenerator(JSGlobalData* globalData)
     } else
         jit.appendFailure(nonIntExponent);
 
-    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "pow");
 }
 
 }

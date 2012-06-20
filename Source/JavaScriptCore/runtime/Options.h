@@ -32,6 +32,8 @@ namespace JSC { namespace Options {
 
 extern bool useJIT;
 
+extern bool showDisassembly;
+
 extern unsigned maximumOptimizationCandidateInstructionCount;
 
 extern unsigned maximumFunctionForCallInlineCandidateInstructionCount;

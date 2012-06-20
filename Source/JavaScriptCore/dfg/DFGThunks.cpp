@@ -79,7 +79,7 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(JSGlobalData* globalData)
     
     patchBuffer.link(functionCall, compileOSRExit);
     
-    return patchBuffer.finalizeCode();
+    return FINALIZE_CODE(patchBuffer, ("DFG OSR exit generation thunk"));
 }
 
 } } // namespace JSC::DFG

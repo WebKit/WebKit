@@ -47,6 +47,7 @@ SOURCES += \
     API/OpaqueJSString.cpp \
     assembler/ARMAssembler.cpp \
     assembler/ARMv7Assembler.cpp \
+    assembler/LinkBuffer.cpp \
     assembler/MacroAssemblerARM.cpp \
     assembler/MacroAssemblerSH4.cpp \
     bytecode/CallLinkInfo.cpp \

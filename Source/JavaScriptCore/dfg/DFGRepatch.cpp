@@ -155,7 +155,10 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
     
     linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, successLabel, slowCaseLabel);
     
-    stubRoutine = patchBuffer.finalizeCode();
+    stubRoutine = FINALIZE_CODE(
+        patchBuffer,
+        ("DFG prototype chain access stub for CodeBlock %p, return point %p",
+         exec->codeBlock(), successLabel.executableAddress()));
 }
 
 static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
@@ -206,7 +209,11 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         
         linkRestoreScratch(patchBuffer, needToRestoreScratch, stubInfo, success, fail, failureCases);
         
-        stubInfo.stubRoutine = patchBuffer.finalizeCode();
+        stubInfo.stubRoutine = FINALIZE_CODE(
+            patchBuffer,
+            ("DFG GetById array length stub for CodeBlock %p, return point %p",
+             exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
+                 stubInfo.patch.dfg.deltaCallToDone).executableAddress()));
         
         RepatchBuffer repatchBuffer(codeBlock);
         repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck), CodeLocationLabel(stubInfo.stubRoutine.code()));
@@ -405,7 +412,11 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
             patchBuffer.link(handlerCall, lookupExceptionHandlerInStub);
         }
         
-        MacroAssemblerCodeRef stubRoutine = patchBuffer.finalizeCode();
+        MacroAssemblerCodeRef stubRoutine = FINALIZE_CODE(
+            patchBuffer,
+            ("DFG GetById polymorphic list access for CodeBlock %p, return point %p",
+             exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
+                 stubInfo.patch.dfg.deltaCallToDone).executableAddress()));
         
         polymorphicStructureList->list[listIndex].set(*globalData, codeBlock->ownerExecutable(), stubRoutine, structure, isDirect);
         
@@ -611,7 +622,11 @@ static void emitPutReplaceStub(
     patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone));
     patchBuffer.link(failure, failureLabel);
             
-    stubRoutine = patchBuffer.finalizeCode();
+    stubRoutine = FINALIZE_CODE(
+        patchBuffer,
+        ("DFG PutById replace stub for CodeBlock %p, return point %p",
+         exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
+             stubInfo.patch.dfg.deltaCallToDone).executableAddress()));
 }
 
 static void emitPutTransitionStub(
@@ -707,7 +722,11 @@ static void emitPutTransitionStub(
     else
         patchBuffer.link(failureCases, failureLabel);
             
-    stubRoutine = patchBuffer.finalizeCode();
+    stubRoutine = FINALIZE_CODE(
+        patchBuffer,
+        ("DFG PutById transition stub for CodeBlock %p, return point %p",
+         exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
+             stubInfo.patch.dfg.deltaCallToDone).executableAddress()));
 }
 
 static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier& ident, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)

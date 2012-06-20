@@ -36,7 +36,7 @@
 
 namespace JSC { namespace LLInt {
 
-static MacroAssemblerCodeRef generateThunkWithJumpTo(JSGlobalData* globalData, void (*target)())
+static MacroAssemblerCodeRef generateThunkWithJumpTo(JSGlobalData* globalData, void (*target)(), const char *thunkKind)
 {
     JSInterfaceJIT jit;
     
@@ -45,37 +45,37 @@ static MacroAssemblerCodeRef generateThunkWithJumpTo(JSGlobalData* globalData, v
     jit.jump(JSInterfaceJIT::regT0);
     
     LinkBuffer patchBuffer(*globalData, &jit, GLOBAL_THUNK_ID);
-    return patchBuffer.finalizeCode();
+    return FINALIZE_CODE(patchBuffer, ("LLInt %s prologue thunk", thunkKind));
 }
 
 MacroAssemblerCodeRef functionForCallEntryThunkGenerator(JSGlobalData* globalData)
 {
-    return generateThunkWithJumpTo(globalData, llint_function_for_call_prologue);
+    return generateThunkWithJumpTo(globalData, llint_function_for_call_prologue, "function for call");
 }
 
 MacroAssemblerCodeRef functionForConstructEntryThunkGenerator(JSGlobalData* globalData)
 {
-    return generateThunkWithJumpTo(globalData, llint_function_for_construct_prologue);
+    return generateThunkWithJumpTo(globalData, llint_function_for_construct_prologue, "function for construct");
 }
 
 MacroAssemblerCodeRef functionForCallArityCheckThunkGenerator(JSGlobalData* globalData)
 {
-    return generateThunkWithJumpTo(globalData, llint_function_for_call_arity_check);
+    return generateThunkWithJumpTo(globalData, llint_function_for_call_arity_check, "function for call with arity check");
 }
 
 MacroAssemblerCodeRef functionForConstructArityCheckThunkGenerator(JSGlobalData* globalData)
 {
-    return generateThunkWithJumpTo(globalData, llint_function_for_construct_arity_check);
+    return generateThunkWithJumpTo(globalData, llint_function_for_construct_arity_check, "function for construct with arity check");
 }
 
 MacroAssemblerCodeRef evalEntryThunkGenerator(JSGlobalData* globalData)
 {
-    return generateThunkWithJumpTo(globalData, llint_eval_prologue);
+    return generateThunkWithJumpTo(globalData, llint_eval_prologue, "eval");
 }
 
 MacroAssemblerCodeRef programEntryThunkGenerator(JSGlobalData* globalData)
 {
-    return generateThunkWithJumpTo(globalData, llint_program_prologue);
+    return generateThunkWithJumpTo(globalData, llint_program_prologue, "program");
 }
 
 } } // namespace JSC::LLInt

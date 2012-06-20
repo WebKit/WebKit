@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,9 @@
 #ifndef MacroAssemblerCodeRef_h
 #define MacroAssemblerCodeRef_h
 
+#include "Disassembler.h"
 #include "ExecutableAllocator.h"
+#include <wtf/DataLog.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UnusedParam.h>
@@ -365,6 +367,11 @@ public:
         if (!m_executableMemory)
             return 0;
         return m_executableMemory->sizeInBytes();
+    }
+    
+    bool tryToDisassemble(const char* prefix) const
+    {
+        return JSC::tryToDisassemble(m_codePtr, size(), prefix, WTF::dataFile());
     }
     
     bool operator!() const { return !m_codePtr; }

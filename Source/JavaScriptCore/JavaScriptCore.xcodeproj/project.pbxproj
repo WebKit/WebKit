@@ -208,6 +208,7 @@
 		0FF4274A158EBE91004CB9FF /* udis86.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4273E158EBD94004CB9FF /* udis86.c */; };
 		0FF4274B158EBE91004CB9FF /* udis86.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4273F158EBD94004CB9FF /* udis86.h */; };
 		0FF4274D158EBFE6004CB9FF /* udis86_itab_holder.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4274C158EBFE1004CB9FF /* udis86_itab_holder.c */; };
+		0FF4275715914A20004CB9FF /* LinkBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4275615914A20004CB9FF /* LinkBuffer.cpp */; };
 		0FF922D414F46B410041A24E /* LLIntOffsetsExtractor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4680A114BA7F8200BFE272 /* LLIntOffsetsExtractor.cpp */; };
 		0FFFC95714EF90A000C72532 /* DFGCFAPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */; };
 		0FFFC95814EF90A200C72532 /* DFGCFAPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -927,6 +928,7 @@
 		0FF4273E158EBD94004CB9FF /* udis86.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = udis86.c; path = disassembler/udis86/udis86.c; sourceTree = "<group>"; };
 		0FF4273F158EBD94004CB9FF /* udis86.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = udis86.h; path = disassembler/udis86/udis86.h; sourceTree = "<group>"; };
 		0FF4274C158EBFE1004CB9FF /* udis86_itab_holder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = udis86_itab_holder.c; path = disassembler/udis86/udis86_itab_holder.c; sourceTree = "<group>"; };
+		0FF4275615914A20004CB9FF /* LinkBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkBuffer.cpp; sourceTree = "<group>"; };
 		0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = JSCLLIntOffsetsExtractor; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCFAPhase.cpp; path = dfg/DFGCFAPhase.cpp; sourceTree = "<group>"; };
 		0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCFAPhase.h; path = dfg/DFGCFAPhase.h; sourceTree = "<group>"; };
@@ -2295,6 +2297,7 @@
 				9688CB130ED12B4E001D649F /* AssemblerBuffer.h */,
 				86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */,
 				86E116B00FE75AC800B512BC /* CodeLocation.h */,
+				0FF4275615914A20004CB9FF /* LinkBuffer.cpp */,
 				86D3B3C110159D7F002865E7 /* LinkBuffer.h */,
 				86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */,
 				86C568DD11A213EE0007F7F0 /* MacroAssemblerARM.cpp */,
@@ -3340,6 +3343,7 @@
 				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,
 				0FF4274D158EBFE6004CB9FF /* udis86_itab_holder.c in Sources */,
 				C2E526BD1590EF000054E48D /* HeapTimer.cpp in Sources */,
+				0FF4275715914A20004CB9FF /* LinkBuffer.cpp in Sources */,
 				C2D58C3415912FEE0021A844 /* GCActivityCallback.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

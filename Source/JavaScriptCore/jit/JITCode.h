@@ -145,9 +145,9 @@ namespace JSC {
             return m_ref.size();
         }
         
-        bool tryToDisassemble() const
+        bool tryToDisassemble(const char* prefix) const
         {
-            return JSC::tryToDisassemble(m_ref.code(), size(), WTF::dataFile());
+            return m_ref.tryToDisassemble(prefix);
         }
 
         ExecutableMemoryHandle* getExecutableMemory()

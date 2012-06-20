@@ -47,6 +47,8 @@ namespace JSC { namespace Options {
 
 bool useJIT;
 
+bool showDisassembly;
+
 unsigned maximumOptimizationCandidateInstructionCount;
 
 unsigned maximumFunctionForCallInlineCandidateInstructionCount;
@@ -161,6 +163,8 @@ static unsigned computeNumberOfGCMarkers(int maxNumberOfGCMarkers)
 void initializeOptions()
 {
     SET(useJIT, true);
+    
+    SET(showDisassembly, false);
     
     SET(maximumOptimizationCandidateInstructionCount, 10000);
     

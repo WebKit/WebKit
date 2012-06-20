@@ -1738,6 +1738,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\assembler\LinkBuffer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\assembler\LinkBuffer.h"
 				>
 			</File>

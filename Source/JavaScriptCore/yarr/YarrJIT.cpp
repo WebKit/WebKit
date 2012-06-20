@@ -2611,14 +2611,14 @@ public:
 
         if (compileMode == MatchOnly) {
             if (m_charSize == Char8)
-                jitObject.set8BitCodeMatchOnly(linkBuffer.finalizeCode());
+                jitObject.set8BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, ("Match-only 8-bit regular expression")));
             else
-                jitObject.set16BitCodeMatchOnly(linkBuffer.finalizeCode());
+                jitObject.set16BitCodeMatchOnly(FINALIZE_CODE(linkBuffer, ("Match-only 16-bit regular expression")));
         } else {
             if (m_charSize == Char8)
-                jitObject.set8BitCode(linkBuffer.finalizeCode());
+                jitObject.set8BitCode(FINALIZE_CODE(linkBuffer, ("8-bit regular expression")));
             else
-                jitObject.set16BitCode(linkBuffer.finalizeCode());
+                jitObject.set16BitCode(FINALIZE_CODE(linkBuffer, ("16-bit regular expression")));
         }
         jitObject.setFallBack(m_shouldFallBack);
     }

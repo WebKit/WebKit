@@ -36,6 +36,8 @@ SET(JavaScriptCore_SOURCES
     API/JSValueRef.cpp
     API/JSWeakObjectMapRefPrivate.cpp
     API/OpaqueJSString.cpp
+    
+    assembler/LinkBuffer.cpp
 
     bytecode/CallLinkInfo.cpp
     bytecode/CallLinkStatus.cpp

@@ -220,10 +220,9 @@ bool JITCompiler::compile(JITCode& entry)
     link(linkBuffer);
     speculative.linkOSREntries(linkBuffer);
 
-    entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    entry.tryToDisassemble();
-#endif
+    entry = JITCode(
+        FINALIZE_CODE(linkBuffer, ("DFG program/eval CodeBlock %p", m_codeBlock)),
+        JITCode::DFGJIT);
     return true;
 }
 
@@ -305,10 +304,9 @@ bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     linkBuffer.link(callArityCheck, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
 
     entryWithArityCheck = linkBuffer.locationOf(arityCheck);
-    entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    entry.tryToDisassemble();
-#endif
+    entry = JITCode(
+        FINALIZE_CODE(linkBuffer, ("DFG function CodeBlock %p", m_codeBlock)),
+        JITCode::DFGJIT);
     return true;
 }
 

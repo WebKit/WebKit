@@ -1,3 +1,108 @@
+2012-06-19  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should be able to show disassembly for all generated JIT code
+        https://bugs.webkit.org/show_bug.cgi?id=89536
+
+        Reviewed by Gavin Barraclough.
+        
+        Now instead of doing linkBuffer.finalizeCode(), you do
+        FINALIZE_CODE(linkBuffer, (... explanation ...)). FINALIZE_CODE() then
+        prints your explanation and the disassembled code, if
+        Options::showDisassembly is set to true.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/LinkBuffer.cpp: Added.
+        (JSC):
+        (JSC::LinkBuffer::finalizeCodeWithoutDisassembly):
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+        (JSC::LinkBuffer::linkCode):
+        (JSC::LinkBuffer::performFinalization):
+        (JSC::LinkBuffer::dumpLinkStatistics):
+        (JSC::LinkBuffer::dumpCode):
+        * assembler/LinkBuffer.h:
+        (LinkBuffer):
+        (JSC):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodeRef::tryToDisassemble):
+        (MacroAssemblerCodeRef):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::emitPutReplaceStub):
+        (JSC::DFG::emitPutTransitionStub):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        * disassembler/Disassembler.h:
+        (JSC):
+        (JSC::tryToDisassemble):
+        * disassembler/UDis86Disassembler.cpp:
+        (JSC::tryToDisassemble):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITCode.h:
+        (JSC::JITCode::tryToDisassemble):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerators.cpp:
+        (JSC::charCodeAtThunkGenerator):
+        (JSC::charAtThunkGenerator):
+        (JSC::fromCharCodeThunkGenerator):
+        (JSC::sqrtThunkGenerator):
+        (JSC::floorThunkGenerator):
+        (JSC::ceilThunkGenerator):
+        (JSC::roundThunkGenerator):
+        (JSC::expThunkGenerator):
+        (JSC::logThunkGenerator):
+        (JSC::absThunkGenerator):
+        (JSC::powThunkGenerator):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::functionForCallEntryThunkGenerator):
+        (JSC::LLInt::functionForConstructEntryThunkGenerator):
+        (JSC::LLInt::functionForCallArityCheckThunkGenerator):
+        (JSC::LLInt::functionForConstructArityCheckThunkGenerator):
+        (JSC::LLInt::evalEntryThunkGenerator):
+        (JSC::LLInt::programEntryThunkGenerator):
+        * runtime/Options.cpp:
+        (Options):
+        (JSC::Options::initializeOptions):
+        * runtime/Options.h:
+        (Options):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::compile):
+
 2012-06-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         [Qt][Mac] REGRESSION(r120742): It broke the build

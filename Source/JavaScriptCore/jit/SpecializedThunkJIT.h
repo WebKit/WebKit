@@ -132,13 +132,13 @@ namespace JSC {
             ret();
         }
         
-        MacroAssemblerCodeRef finalize(JSGlobalData& globalData, MacroAssemblerCodePtr fallback)
+        MacroAssemblerCodeRef finalize(JSGlobalData& globalData, MacroAssemblerCodePtr fallback, const char* thunkKind)
         {
             LinkBuffer patchBuffer(globalData, this, GLOBAL_THUNK_ID);
             patchBuffer.link(m_failures, CodeLocationLabel(fallback));
             for (unsigned i = 0; i < m_calls.size(); i++)
                 patchBuffer.link(m_calls[i].first, m_calls[i].second);
-            return patchBuffer.finalizeCode();
+            return FINALIZE_CODE(patchBuffer, ("Specialized thunk for %s", thunkKind));
         }
 
         // Assumes that the target function uses fpRegister0 as the first argument
