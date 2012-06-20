@@ -38,6 +38,7 @@
 #include "WebGraphicsContext3D.h"
 #include "WebLocalizedString.h"
 #include "WebString.h"
+#include "WebVector.h"
 
 namespace WebKit {
 
@@ -237,6 +238,12 @@ public:
     // It's OK for this value to be conservitive (i.e. true even if the
     // sandbox isn't active).
     virtual bool sandboxEnabled() { return false; }
+
+
+    // Screen -------------------------------------------------------------
+
+    // Supplies the system monitor color profile ("monitor") or a named ICC profile.
+    virtual void screenColorProfile(const WebString& type, WebVector<char>* profile) { }
 
 
     // Sudden Termination --------------------------------------------------

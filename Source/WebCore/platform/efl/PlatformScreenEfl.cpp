@@ -92,4 +92,9 @@ FloatRect screenAvailableRect(Widget* widget)
     return screenRect(widget);
 }
 
+void screenColorProfile(Widget*, const String&, ColorProfile&)
+{
+    notImplemented();
+}
+
 }

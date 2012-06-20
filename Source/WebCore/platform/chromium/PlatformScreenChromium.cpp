@@ -34,6 +34,8 @@
 #include "IntRect.h"
 #include "PlatformSupport.h"
 
+#include <public/Platform.h>
+
 namespace WebCore {
 
 int screenHorizontalDPI(Widget* widget)
@@ -69,6 +71,14 @@ FloatRect screenRect(Widget* widget)
 FloatRect screenAvailableRect(Widget* widget)
 {
     return PlatformSupport::screenAvailableRect(widget);
+}
+
+void screenColorProfile(Widget*, const String& type, ColorProfile& toProfile)
+{
+    // FIXME: Add support for multiple monitors.
+    WebKit::WebVector<char> profile;
+    WebKit::Platform::current()->screenColorProfile(WebKit::WebString(type), &profile);
+    toProfile.append(profile.data(), profile.size());
 }
 
 } // namespace WebCore

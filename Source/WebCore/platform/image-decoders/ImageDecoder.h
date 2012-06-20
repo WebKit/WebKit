@@ -31,6 +31,7 @@
 
 #include "IntRect.h"
 #include "ImageSource.h"
+#include "PlatformScreen.h"
 #include "PlatformString.h"
 #include "SharedBuffer.h"
 #include <wtf/Assertions.h>
@@ -44,7 +45,6 @@
 
 #if USE(QCMSLIB)
 #include "qcms.h"
-#include <wtf/MainThread.h>
 #if OS(DARWIN)
 #include "GraphicsContextCG.h"
 #include <ApplicationServices/ApplicationServices.h>
@@ -53,8 +53,6 @@
 #endif
 
 namespace WebCore {
-
-    typedef Vector<char> ColorProfile;
 
     // ImageFrame represents the decoded image data.  This buffer is what all
     // decoders write a single frame into.
@@ -313,18 +311,20 @@ namespace WebCore {
                     size_t length = CFDataGetLength(iccProfile);
                     const unsigned char* systemProfile = CFDataGetBytePtr(iccProfile);
                     outputDeviceProfile = qcms_profile_from_memory(systemProfile, length);
-                    if (outputDeviceProfile && qcms_profile_is_bogus(outputDeviceProfile)) {
-                        qcms_profile_release(outputDeviceProfile);
-                        outputDeviceProfile = 0;
-                    }
+                }
+#else
+                // FIXME: add support for multiple monitors.
+                ColorProfile profile;
+                screenColorProfile(0, "monitor", profile);
+                if (!profile.isEmpty())
+                    outputDeviceProfile = qcms_profile_from_memory(profile.data(), profile.size());
+#endif
+                if (outputDeviceProfile && qcms_profile_is_bogus(outputDeviceProfile)) {
+                    qcms_profile_release(outputDeviceProfile);
+                    outputDeviceProfile = 0;
                 }
                 if (!outputDeviceProfile)
                     outputDeviceProfile = qcms_profile_sRGB();
-#else
-                // FIXME: sRGB profiles don't add much value. Use the user's monitor profile.
-                outputDeviceProfile = qcms_profile_sRGB();
-#endif
-                // FIXME: Check that the profile is valid. Fallback to sRGB if not?
                 if (outputDeviceProfile)
                     qcms_profile_precache_output_transform(outputDeviceProfile);
             }

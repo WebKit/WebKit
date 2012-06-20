@@ -76,6 +76,11 @@ FloatRect screenAvailableRect(Widget* widget)
     return toUserSpace([screenForWindow(window) visibleFrame], window);
 }
 
+void screenColorProfile(Widget*, const String&, ColorProfile&)
+{
+    notImplemented();
+}
+
 NSScreen *screenForWindow(NSWindow *window)
 {
     NSScreen *screen = [window screen]; // nil if the window is off-screen

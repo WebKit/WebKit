@@ -143,4 +143,9 @@ FloatRect screenAvailableRect(Widget* widget)
     return FloatRect(r.x(), r.y(), r.width(), r.height());
 }
 
+void screenColorProfile(Widget*, const String&, ColorProfile&)
+{
+    notImplemented();
+}
+
 } // namespace WebCore

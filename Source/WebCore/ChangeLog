@@ -1,3 +1,37 @@
+2012-06-19  Tony Payne  <tpayne@chromium.org>
+
+        Add monitor profile support for Win
+        https://bugs.webkit.org/show_bug.cgi?id=88565
+
+        Reviewed by Eric Seidel.
+
+        Tests: fast/images/jpeg-with-color-profile.html
+        fast/images/png-with-color-profile.html. Also covered by numerous
+        layout tests.
+
+        * WebCore.gyp/WebCore.gyp:
+        * platform/PlatformScreen.h:
+        (WebCore):
+        * platform/blackberry/PlatformScreenBlackBerry.cpp:
+        (WebCore::screenColorProfile):
+        (WebCore):
+        * platform/chromium/PlatformScreenChromium.cpp:
+        (WebCore::screenColorProfile):
+        (WebCore):
+        * platform/efl/PlatformScreenEfl.cpp:
+        (WebCore::screenColorProfile):
+        (WebCore):
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenColorProfile):
+        (WebCore):
+        * platform/image-decoders/ImageDecoder.h:
+        (ImageFrame):
+        (ImageDecoder):
+        (WebCore::ImageDecoder::qcmsOutputDeviceProfile):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (turboSwizzled):
+        (colorSpaceHasAlpha):
+
 2012-06-19  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Fix issue where a callback got a null calling context
