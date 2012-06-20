@@ -157,6 +157,7 @@ results.failureTypeToExtensionList = function(failureType)
         return [kWAVExtension];
     case TEXT:
         return [kTXTExtension];
+    case MISSING:
     case IMAGE_TEXT:
         return [kTXTExtension, kPNGExtension];
     default:
