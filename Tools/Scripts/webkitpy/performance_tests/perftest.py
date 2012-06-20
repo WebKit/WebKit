@@ -135,7 +135,7 @@ class PerfTest(object):
 
             if not self._should_ignore_line_in_parser_test_result(line):
                 test_failed = True
-                _log.error("PerfTest can't parse line [" + line + "]")
+                _log.error(line)
 
         if test_failed or set(self._statistics_keys) != set(results.keys()):
             return None
