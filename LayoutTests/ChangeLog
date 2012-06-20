@@ -1,3 +1,32 @@
+2012-06-20  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION(r113885): Margin not properly applied to elements with align=center
+        https://bugs.webkit.org/show_bug.cgi?id=89515
+
+        Reviewed by Levi Weintraub.
+
+        Reviewed by Levi Weintraub.
+
+        * fast/block/negative-margin-start-positive-margin-end-expected.html: Added.
+        * fast/block/negative-margin-start-positive-margin-end.html: Added.
+        * fast/block/negative-start-margin-align-center-expected.html: Added.
+        * fast/block/negative-start-margin-align-center.html: Added.
+        * fast/block/positive-margin-block-child-align-center-expected.html: Added.
+        * fast/block/positive-margin-block-child-align-center.html: Added.
+        * fast/block/positive-margin-start-align-center-expected.html: Added.
+        * fast/block/positive-margin-start-align-center.html: Added.
+        * fast/block/positive-margin-start-negative-margin-end-align-center-expected.html: Added.
+        * fast/block/positive-margin-start-negative-margin-end-align-center.html: Added.
+        Those checks the combination of margin start / end both positive and negative.
+
+        * fast/block/positive-margin-block-child-align-center-rtl-expected.html: Added.
+        * fast/block/positive-margin-block-child-align-center-rtl.html: Added.
+        One ltr test as I didn't find any.
+
+        * fast/table/table-cell-negative-start-margin-align-center-expected.html: Added.
+        * fast/table/table-cell-negative-start-margin-align-center.html: Added.
+        This test is very similar to the one above but involves a table.
+
 2012-06-20  Robert Hogan  <robert@webkit.org>
 
         r120844: Skip two tests on Qt

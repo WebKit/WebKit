@@ -1837,8 +1837,12 @@ void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, Layo
     // Case One: The object is being centered in the containing block's available logical width.
     if ((marginStartLength.isAuto() && marginEndLength.isAuto() && childWidth < containerWidth)
         || (!marginStartLength.isAuto() && !marginEndLength.isAuto() && containingBlock->style()->textAlign() == WEBKIT_CENTER)) {
-        containingBlock->setMarginStartForChild(this, max<LayoutUnit>(0, (containerWidth - childWidth) / 2));
-        containingBlock->setMarginEndForChild(this, containerWidth - childWidth - containingBlock->marginStartForChild(this));
+        // Other browsers center the margin box for align=center elements so we match them here.
+        LayoutUnit marginStartWidth = marginStartLength.value();
+        LayoutUnit marginEndWidth = marginEndLength.value();
+        LayoutUnit centeredMarginBoxStart = max<LayoutUnit>(0, (containerWidth - childWidth - marginStartWidth - marginEndWidth) / 2);
+        containingBlock->setMarginStartForChild(this, centeredMarginBoxStart + marginStartWidth);
+        containingBlock->setMarginEndForChild(this, containerWidth - childWidth - containingBlock->marginStartForChild(this) + marginEndWidth);
         return;
     } 
     
