@@ -1,5 +1,16 @@
 2012-06-20  Dirk Pranke  <dpranke@chromium.org>
 
+        Fix chromium win http servers after breakage introduced in r120846.
+
+        Unreviewed, build fix.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.to.start_http_server):
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        (Lighttpd.__init__):
+
+2012-06-20  Dirk Pranke  <dpranke@chromium.org>
+
         tweak output of webkit-patch print-{baselines,expectations}
         https://bugs.webkit.org/show_bug.cgi?id=89588
 

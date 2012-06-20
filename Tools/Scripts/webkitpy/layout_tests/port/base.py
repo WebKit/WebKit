@@ -795,7 +795,7 @@ class Port(object):
         if self._uses_apache():
             server = apache_http_server.LayoutTestApacheHttpd(self, self.results_directory(), additional_dirs=additional_dirs, number_of_servers=number_of_servers)
         else:
-            server = http_server.Lighttpd(self, self.results_directory(), additional_dirs=additional_dirs, num_servers=num_servers)
+            server = http_server.Lighttpd(self, self.results_directory(), additional_dirs=additional_dirs, number_of_servers=number_of_servers)
 
         server.start()
         self._http_server = server
