@@ -2369,7 +2369,7 @@ public:
     
     Vector<SlowPathGenerator*, 8> m_slowPathGenerators; // doesn't use OwnPtr<> because I don't want to include DFGSlowPathGenerator.h
     Vector<SilentRegisterSavePlan> m_plans;
-
+    
     ValueRecovery computeValueRecoveryFor(const ValueSource&);
 
     ValueRecovery computeValueRecoveryFor(int operand)

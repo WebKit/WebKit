@@ -89,7 +89,7 @@ static void printWhiteSpace(unsigned amount)
         dataLog(" ");
 }
 
-void Graph::dumpCodeOrigin(NodeIndex prevNodeIndex, NodeIndex nodeIndex)
+void Graph::dumpCodeOrigin(const char* prefix, NodeIndex prevNodeIndex, NodeIndex nodeIndex)
 {
     if (prevNodeIndex == NoNode)
         return;
@@ -112,18 +112,30 @@ void Graph::dumpCodeOrigin(NodeIndex prevNodeIndex, NodeIndex nodeIndex)
     
     // Print the pops.
     for (unsigned i = previousInlineStack.size(); i-- > indexOfDivergence;) {
+        dataLog("%s", prefix);
         printWhiteSpace(i * 2);
         dataLog("<-- %p\n", previousInlineStack[i].inlineCallFrame->executable.get());
     }
     
     // Print the pushes.
     for (unsigned i = indexOfDivergence; i < currentInlineStack.size(); ++i) {
+        dataLog("%s", prefix);
         printWhiteSpace(i * 2);
         dataLog("--> %p\n", currentInlineStack[i].inlineCallFrame->executable.get());
     }
 }
 
-void Graph::dump(NodeIndex nodeIndex)
+int Graph::amountOfNodeWhiteSpace(Node& node)
+{
+    return (node.codeOrigin.inlineDepth() - 1) * 2;
+}
+
+void Graph::printNodeWhiteSpace(Node& node)
+{
+    printWhiteSpace(amountOfNodeWhiteSpace(node));
+}
+
+void Graph::dump(const char* prefix, NodeIndex nodeIndex)
 {
     Node& node = at(nodeIndex);
     NodeType op = node.op();
@@ -134,7 +146,8 @@ void Graph::dump(NodeIndex nodeIndex)
     if (mustGenerate)
         --refCount;
     
-    printWhiteSpace((node.codeOrigin.inlineDepth() - 1) * 2);
+    dataLog("%s", prefix);
+    printNodeWhiteSpace(node);
 
     // Example/explanation of dataflow dump output
     //
@@ -288,6 +301,54 @@ void Graph::dump(NodeIndex nodeIndex)
     dataLog("\n");
 }
 
+void Graph::dumpBlockHeader(const char* prefix, BlockIndex blockIndex, PhiNodeDumpMode phiNodeDumpMode)
+{
+    BasicBlock* block = m_blocks[blockIndex].get();
+
+    dataLog("%sBlock #%u (bc#%u): %s%s\n", prefix, (int)blockIndex, block->bytecodeBegin, block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "");
+    dataLog("%s  Predecessors:", prefix);
+    for (size_t i = 0; i < block->m_predecessors.size(); ++i)
+        dataLog(" #%u", block->m_predecessors[i]);
+    dataLog("\n");
+    if (m_dominators.isValid()) {
+        dataLog("%s  Dominated by:", prefix);
+        for (size_t i = 0; i < m_blocks.size(); ++i) {
+            if (!m_dominators.dominates(i, blockIndex))
+                continue;
+            dataLog(" #%lu", static_cast<unsigned long>(i));
+        }
+        dataLog("\n");
+        dataLog("%s  Dominates:", prefix);
+        for (size_t i = 0; i < m_blocks.size(); ++i) {
+            if (!m_dominators.dominates(blockIndex, i))
+                continue;
+            dataLog(" #%lu", static_cast<unsigned long>(i));
+        }
+        dataLog("\n");
+    }
+    dataLog("%s  Phi Nodes:", prefix);
+    unsigned count = 0;
+    for (size_t i = 0; i < block->phis.size(); ++i) {
+        NodeIndex phiNodeIndex = block->phis[i];
+        Node& phiNode = at(phiNodeIndex);
+        if (!phiNode.shouldGenerate() && phiNodeDumpMode == DumpLivePhisOnly)
+            continue;
+        if (!((++count) % 4))
+            dataLog("\n%s      ", prefix);
+        dataLog(" @%u->(", phiNodeIndex);
+        if (phiNode.child1()) {
+            dataLog("@%u", phiNode.child1().index());
+            if (phiNode.child2()) {
+                dataLog(", @%u", phiNode.child2().index());
+                if (phiNode.child3())
+                    dataLog(", @%u", phiNode.child3().index());
+            }
+        }
+        dataLog(")%s", i + 1 < block->phis.size() ? "," : "");
+    }
+    dataLog("\n");
+}
+
 void Graph::dump()
 {
     NodeIndex lastNodeIndex = NoNode;
@@ -295,33 +356,7 @@ void Graph::dump()
         BasicBlock* block = m_blocks[b].get();
         if (!block)
             continue;
-        dataLog("Block #%u (bc#%u): %s%s\n", (int)b, block->bytecodeBegin, block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "");
-        dataLog("  Predecessors:");
-        for (size_t i = 0; i < block->m_predecessors.size(); ++i)
-            dataLog(" #%u", block->m_predecessors[i]);
-        dataLog("\n");
-        if (m_dominators.isValid()) {
-            dataLog("  Dominated by:");
-            for (size_t i = 0; i < m_blocks.size(); ++i) {
-                if (!m_dominators.dominates(i, b))
-                    continue;
-                dataLog(" #%lu", static_cast<unsigned long>(i));
-            }
-            dataLog("\n");
-            dataLog("  Dominates:");
-            for (size_t i = 0; i < m_blocks.size(); ++i) {
-                if (!m_dominators.dominates(b, i))
-                    continue;
-                dataLog(" #%lu", static_cast<unsigned long>(i));
-            }
-            dataLog("\n");
-        }
-        dataLog("  Phi Nodes:\n");
-        for (size_t i = 0; i < block->phis.size(); ++i) {
-            dumpCodeOrigin(lastNodeIndex, block->phis[i]);
-            dump(block->phis[i]);
-            lastNodeIndex = block->phis[i];
-        }
+        dumpBlockHeader("", b, DumpAllPhis);
         dataLog("  vars before: ");
         if (block->cfaHasVisited)
             dumpOperands(block->valuesAtHead, WTF::dataFile());
@@ -332,8 +367,8 @@ void Graph::dump()
         dumpOperands(block->variablesAtHead, WTF::dataFile());
         dataLog("\n");
         for (size_t i = 0; i < block->size(); ++i) {
-            dumpCodeOrigin(lastNodeIndex, block->at(i));
-            dump(block->at(i));
+            dumpCodeOrigin("", lastNodeIndex, block->at(i));
+            dump("", block->at(i));
             lastNodeIndex = block->at(i);
         }
         dataLog("  vars after: ");

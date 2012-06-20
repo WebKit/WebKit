@@ -46,19 +46,19 @@ const char* nodeFlagsAsString(NodeFlags flags)
     if (flags & NodeResultMask) {
         switch (flags & NodeResultMask) {
         case NodeResultJS:
-            ptr.strcat("ResultJS");
+            ptr.strcat("JS");
             break;
         case NodeResultNumber:
-            ptr.strcat("ResultNumber");
+            ptr.strcat("Number");
             break;
         case NodeResultInt32:
-            ptr.strcat("ResultInt32");
+            ptr.strcat("Int32");
             break;
         case NodeResultBoolean:
-            ptr.strcat("ResultBoolean");
+            ptr.strcat("Boolean");
             break;
         case NodeResultStorage:
-            ptr.strcat("ResultStorage");
+            ptr.strcat("Storage");
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -70,21 +70,21 @@ const char* nodeFlagsAsString(NodeFlags flags)
     if (flags & NodeMustGenerate) {
         if (hasPrinted)
             ptr.strcat("|");
-        ptr.strcat("MustGenerate");
+        ptr.strcat("MustGen");
         hasPrinted = true;
     }
     
     if (flags & NodeHasVarArgs) {
         if (hasPrinted)
             ptr.strcat("|");
-        ptr.strcat("HasVarArgs");
+        ptr.strcat("VarArgs");
         hasPrinted = true;
     }
     
     if (flags & NodeClobbersWorld) {
         if (hasPrinted)
             ptr.strcat("|");
-        ptr.strcat("ClobbersWorld");
+        ptr.strcat("Clobbers");
         hasPrinted = true;
     }
     
@@ -95,18 +95,23 @@ const char* nodeFlagsAsString(NodeFlags flags)
         hasPrinted = true;
     }
     
-    if (flags & NodeUsedAsNumber) {
-        if (hasPrinted)
-            ptr.strcat("|");
-        ptr.strcat("UsedAsNum");
-        hasPrinted = true;
-    }
-    
-    if (flags & NodeNeedsNegZero) {
-        if (hasPrinted)
-            ptr.strcat("|");
-        ptr.strcat("NeedsNegZero");
-        hasPrinted = true;
+    if (flags & NodeResultMask) {
+        if (!(flags & NodeUsedAsNumber) && !(flags & NodeNeedsNegZero)) {
+            if (hasPrinted)
+                ptr.strcat("|");
+            ptr.strcat("PureInt");
+            hasPrinted = true;
+        } else if (!(flags & NodeUsedAsNumber)) {
+            if (hasPrinted)
+                ptr.strcat("|");
+            ptr.strcat("PureInt(w/ neg zero)");
+            hasPrinted = true;
+        } else if (!(flags & NodeNeedsNegZero)) {
+            if (hasPrinted)
+                ptr.strcat("|");
+            ptr.strcat("PureNum");
+            hasPrinted = true;
+        }
     }
     
     if (flags & NodeMayOverflow) {
@@ -126,7 +131,7 @@ const char* nodeFlagsAsString(NodeFlags flags)
     if (flags & NodeUsedAsInt) {
         if (hasPrinted)
             ptr.strcat("|");
-        ptr.strcat("UsedAsInt");
+        ptr.strcat("UseAsInt");
         hasPrinted = true;
     }
     

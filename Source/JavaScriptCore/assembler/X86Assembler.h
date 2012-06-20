@@ -1730,6 +1730,11 @@ public:
         m_indexOfTailOfLastWatchpoint = result.m_offset + maxJumpReplacementSize();
         return result;
     }
+    
+    AssemblerLabel labelIgnoringWatchpoints()
+    {
+        return m_formatter.label();
+    }
 
     AssemblerLabel label()
     {

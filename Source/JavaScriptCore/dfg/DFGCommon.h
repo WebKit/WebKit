@@ -134,6 +134,11 @@ enum NoResultTag { NoResult };
 
 enum OptimizationFixpointState { FixpointConverged, FixpointNotConverged };
 
+inline bool shouldShowDisassembly()
+{
+    return Options::showDisassembly || Options::showDFGDisassembly;
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

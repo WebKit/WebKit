@@ -555,6 +555,15 @@ public:
 
 
     // Section 3: Misc admin methods
+#if ENABLE(DFG_JIT)
+    Label labelIgnoringWatchpoints()
+    {
+        Label result;
+        result.m_label = m_assembler.labelIgnoringWatchpoints();
+        return result;
+    }
+#endif
+    
     Label label()
     {
         return Label(this);

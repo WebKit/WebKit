@@ -1827,6 +1827,11 @@ public:
         m_formatter.oneWordOp8Imm8(OP_NOP_T1, 0);
     }
     
+    AssemblerLabel labelIgnoringWatchpoints()
+    {
+        return m_formatter.label();
+    }
+
     AssemblerLabel labelForWatchpoint()
     {
         AssemblerLabel result = m_formatter.label();

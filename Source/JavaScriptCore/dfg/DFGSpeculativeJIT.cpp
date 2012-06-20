@@ -1026,6 +1026,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
 
     for (m_indexInBlock = 0; m_indexInBlock < block.size(); ++m_indexInBlock) {
         m_compileIndex = block[m_indexInBlock];
+        m_jit.setForNode(m_compileIndex);
         Node& node = at(m_compileIndex);
         m_codeOriginForOSR = node.codeOrigin;
         if (!node.shouldGenerate()) {
@@ -1321,6 +1322,7 @@ bool SpeculativeJIT::compile()
 
     ASSERT(!m_compileIndex);
     for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block) {
+        m_jit.setForBlock(m_block);
         BasicBlock* block = m_jit.graph().m_blocks[m_block].get();
         if (block)
             compile(*block);

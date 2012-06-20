@@ -102,6 +102,7 @@ SOURCES += \
     dfg/DFGConstantFoldingPhase.cpp \
     dfg/DFGCorrectableJumpPoint.cpp \
     dfg/DFGCSEPhase.cpp \
+    dfg/DFGDisassembler.cpp \
     dfg/DFGDominators.cpp \
     dfg/DFGDriver.cpp \
     dfg/DFGFixupPhase.cpp \

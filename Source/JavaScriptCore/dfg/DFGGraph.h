@@ -179,11 +179,15 @@ public:
 
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
     void dump();
-    void dump(NodeIndex);
+    enum PhiNodeDumpMode { DumpLivePhisOnly, DumpAllPhis };
+    void dumpBlockHeader(const char* prefix, BlockIndex, PhiNodeDumpMode);
+    void dump(const char* prefix, NodeIndex);
+    static int amountOfNodeWhiteSpace(Node&);
+    static void printNodeWhiteSpace(Node&);
 
     // Dump the code origin of the given node as a diff from the code origin of the
     // preceding node.
-    void dumpCodeOrigin(NodeIndex, NodeIndex);
+    void dumpCodeOrigin(const char* prefix, NodeIndex, NodeIndex);
 
     BlockIndex blockIndexForBytecodeOffset(Vector<BlockIndex>& blocks, unsigned bytecodeBegin);
 

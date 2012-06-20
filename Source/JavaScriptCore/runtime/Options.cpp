@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@ namespace JSC { namespace Options {
 bool useJIT;
 
 bool showDisassembly;
+bool showDFGDisassembly;
 
 unsigned maximumOptimizationCandidateInstructionCount;
 
@@ -165,6 +166,7 @@ void initializeOptions()
     SET(useJIT, true);
     
     SET(showDisassembly, false);
+    SET(showDFGDisassembly, false);
     
     SET(maximumOptimizationCandidateInstructionCount, 10000);
     

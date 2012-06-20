@@ -730,6 +730,11 @@ struct Node {
     {
         return m_refCount;
     }
+    
+    bool willHaveCodeGen()
+    {
+        return shouldGenerate() && op() != Phantom && op() != Nop;
+    }
 
     unsigned refCount()
     {

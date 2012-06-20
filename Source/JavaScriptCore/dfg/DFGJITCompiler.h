@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "DFGCCallHelpers.h"
+#include "DFGDisassembler.h"
 #include "DFGFPRInfo.h"
 #include "DFGGPRInfo.h"
 #include "DFGGraph.h"
@@ -208,18 +209,49 @@ struct PropertyAccessRecord {
 // call to be linked).
 class JITCompiler : public CCallHelpers {
 public:
-    JITCompiler(Graph& dfg)
-        : CCallHelpers(&dfg.m_globalData, dfg.m_codeBlock)
-        , m_graph(dfg)
-        , m_currentCodeOriginIndex(0)
-    {
-    }
+    JITCompiler(Graph& dfg);
     
     bool compile(JITCode& entry);
     bool compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWithArityCheck);
 
     // Accessors for properties.
     Graph& graph() { return m_graph; }
+    
+    // Methods to set labels for the disassembler.
+    void setStartOfCode()
+    {
+        if (LIKELY(!m_disassembler))
+            return;
+        m_disassembler->setStartOfCode(labelIgnoringWatchpoints());
+    }
+    
+    void setForBlock(BlockIndex blockIndex)
+    {
+        if (LIKELY(!m_disassembler))
+            return;
+        m_disassembler->setForBlock(blockIndex, labelIgnoringWatchpoints());
+    }
+    
+    void setForNode(NodeIndex nodeIndex)
+    {
+        if (LIKELY(!m_disassembler))
+            return;
+        m_disassembler->setForNode(nodeIndex, labelIgnoringWatchpoints());
+    }
+    
+    void setEndOfMainPath()
+    {
+        if (LIKELY(!m_disassembler))
+            return;
+        m_disassembler->setEndOfMainPath(labelIgnoringWatchpoints());
+    }
+    
+    void setEndOfCode()
+    {
+        if (LIKELY(!m_disassembler))
+            return;
+        m_disassembler->setEndOfCode(labelIgnoringWatchpoints());
+    }
     
     // Get a token for beginning a call, and set the current code origin index in
     // the call frame.
@@ -353,6 +385,8 @@ private:
     // The dataflow graph currently being generated.
     Graph& m_graph;
 
+    OwnPtr<Disassembler> m_disassembler;
+    
     // Vector of calls out from JIT code, including exception handler information.
     // Count of the number of CallRecords with exception handlers.
     Vector<CallLinkRecord> m_calls;
