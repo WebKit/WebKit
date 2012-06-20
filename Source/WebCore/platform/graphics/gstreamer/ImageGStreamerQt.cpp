@@ -40,7 +40,7 @@ ImageGStreamer::ImageGStreamer(GstBuffer* buffer, GstCaps* caps)
     GstVideoFormat format;
     IntSize size;
     int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
-    webkitGetVideoSizeAndFormatFromCaps(caps, size, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride);
+    getVideoSizeAndFormatFromCaps(caps, size, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride);
 
 #ifdef GST_API_VERSION_1
     GstMapInfo info;

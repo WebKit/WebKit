@@ -1,3 +1,10 @@
+2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed buildfix after r120790. Typo fix.
+
+        * platform/graphics/gstreamer/ImageGStreamerQt.cpp:
+        (ImageGStreamer::ImageGStreamer):
+
 2012-06-19  Takashi Sakamoto  <tasak@google.com>
 
         [Shadow DOM] ShadowRoot.host should be gone
