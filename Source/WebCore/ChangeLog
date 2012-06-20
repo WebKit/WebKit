@@ -1,3 +1,27 @@
+2012-06-20  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: Timeline label bar jiggles when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=89579
+
+        Reviewed by Vsevolod Vlasov.
+
+        Adding timeline header into the timeline panel and settings its position
+        to absolute. Drive-by fix that updates rulers on sidebar resize.
+
+        * inspector/front-end/TimelineGrid.js:
+        (WebInspector.TimelineGrid):
+        (WebInspector.TimelineGrid.prototype.get gridHeaderElement):
+        (WebInspector.TimelineGrid.prototype.addEventDividers):
+        (WebInspector.TimelineGrid.prototype.setScrollAndDividerTop):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane.prototype.sidebarResized):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype.sidebarResized):
+        (WebInspector.TimelinePanel.prototype.onResize):
+        * inspector/front-end/timelinePanel.css:
+        (#timeline-grid-header):
+
 2012-06-20  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Make sure that render surfaces are not pixel doubled with a device scale factor of 2

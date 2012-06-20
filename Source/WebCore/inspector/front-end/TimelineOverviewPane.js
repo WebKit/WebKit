@@ -232,6 +232,7 @@ WebInspector.TimelineOverviewPane.prototype = {
     {
         this._overviewContainer.style.left = width + "px";
         this._topPaneSidebarElement.style.width = width + "px";
+        this._update();
     },
 
     /**

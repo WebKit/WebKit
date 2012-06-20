@@ -590,11 +590,7 @@
 
 .timeline-frame-container {
     height: 19px;
-}
-
-.timeline-frame-strip {
-    position: absolute;
-    height: 19px;
+    overflow: hidden;
     background-color: rgb(220, 220, 220);
     opacity: 0.6;
     color: black;
@@ -602,4 +598,18 @@
     padding-top: 3px;
     z-index: 350;
     pointer-events: auto;
+}
+
+.timeline-frame-strip {
+    position: absolute;
+    height: 19px;
+}
+
+#timeline-grid-header {
+    position: absolute;
+    left: 200px;
+    right: 0;
+    top: 90px;
+    bottom: 0;
+    pointer-events: none;
 }

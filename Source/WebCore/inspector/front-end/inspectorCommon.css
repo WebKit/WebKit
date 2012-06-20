@@ -71,7 +71,7 @@ iframe.view {
 .resources-event-dividers {
     position: absolute;
     left: 0;
-    right: 5px;
+    right: 0;
     height: 100%;
     top: 0;
     z-index: 300;

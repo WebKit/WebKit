@@ -43,13 +43,17 @@ WebInspector.TimelineGrid = function()
     this._dividersElement.className = "resources-dividers";
     this.element.appendChild(this._dividersElement);
 
+    this._gridHeaderElement = document.createElement("div"); 
+
     this._eventDividersElement = document.createElement("div");
     this._eventDividersElement.className = "resources-event-dividers";
-    this.element.appendChild(this._eventDividersElement);
+    this._gridHeaderElement.appendChild(this._eventDividersElement);
 
     this._dividersLabelBarElement = document.createElement("div");
     this._dividersLabelBarElement.className = "resources-dividers-label-bar";
-    this.element.appendChild(this._dividersLabelBarElement);
+    this._gridHeaderElement.appendChild(this._dividersLabelBarElement);
+
+    this.element.appendChild(this._gridHeaderElement);
 }
 
 WebInspector.TimelineGrid.prototype = {
@@ -61,6 +65,11 @@ WebInspector.TimelineGrid.prototype = {
     get dividersElement()
     {
         return this._dividersElement;
+    },
+
+    get gridHeaderElement()
+    {
+        return this._gridHeaderElement;
     },
 
     removeDividers: function()
@@ -158,12 +167,12 @@ WebInspector.TimelineGrid.prototype = {
 
     addEventDividers: function(dividers)
     {
-        this.element.removeChild(this._eventDividersElement);
+        this._gridHeaderElement.removeChild(this._eventDividersElement);
         for (var i = 0; i < dividers.length; ++i) {
             if (dividers[i])
                 this._eventDividersElement.appendChild(dividers[i]);
         }
-        this.element.appendChild(this._eventDividersElement);
+        this._gridHeaderElement.appendChild(this._eventDividersElement);
     },
 
     removeEventDividers: function()
@@ -184,7 +193,5 @@ WebInspector.TimelineGrid.prototype = {
     setScrollAndDividerTop: function(scrollTop, dividersTop)
     {
         this._dividersElement.style.top = scrollTop + "px";
-        this._eventDividersElement.style.top = scrollTop + "px";
-        this._dividersLabelBarElement.style.top = dividersTop + "px";
     }
 }

@@ -77,7 +77,9 @@ WebInspector.TimelinePanel = function()
     this._itemsGraphsElement = this._timelineGrid.itemsGraphsElement;
     this._itemsGraphsElement.id = "timeline-graphs";
     this._containerContentElement.appendChild(this._timelineGrid.element);
+    this._timelineGrid.gridHeaderElement.id = "timeline-grid-header";
     this._memoryStatistics.setMainTimelineGrid(this._timelineGrid);
+    this.element.appendChild(this._timelineGrid.gridHeaderElement);
 
     this._topGapElement = document.createElement("div");
     this._topGapElement.className = "timeline-gap";
@@ -104,9 +106,9 @@ WebInspector.TimelinePanel = function()
     this._boundariesAreValid = true;
     this._scrollTop = 0;
 
-    this._popoverHelper = new WebInspector.PopoverHelper(this._containerElement, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
-    this._containerElement.addEventListener("mousemove", this._mouseMove.bind(this), false);
-    this._containerElement.addEventListener("mouseout", this._mouseOut.bind(this), false);
+    this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
+    this.element.addEventListener("mousemove", this._mouseMove.bind(this), false);
+    this.element.addEventListener("mouseout", this._mouseOut.bind(this), false);
 
     // Disable short events filter by default.
     this.toggleFilterButton.toggled = true;
@@ -507,12 +509,15 @@ WebInspector.TimelinePanel.prototype = {
         // Min width = <number of buttons on the left> * 31
         this.statusBarFilters.style.left = Math.max((this.statusBarItems.length + 2) * 31, width) + "px";
         this._memoryStatistics.setSidebarWidth(width);
+        this._timelineGrid.gridHeaderElement.style.left = width + "px";
+        this._timelineGrid.gridHeaderElement.style.width = this._itemsGraphsElement.offsetWidth + "px";
     },
 
     onResize: function()
     {
         this._closeRecordDetails();
         this._scheduleRefresh(false);
+        this._timelineGrid.gridHeaderElement.style.width = this._itemsGraphsElement.offsetWidth + "px";
     },
 
     _clearPanel: function()
