@@ -11,8 +11,8 @@
                 console.appendChild(li);
             }
             
-            if (window.layoutTestController) {
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
             }
 
             function dispatchWheelEvent()
@@ -36,8 +36,8 @@
                 log("window.scrollX: " + window.scrollX);
                 log("window.scrollY: " + window.scrollY);
 
-                if (window.layoutTestController)
-                    window.layoutTestController.notifyDone();
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
             }
 
             function mousewheelHandler(e)

@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function mouseOver()
 {
@@ -36,8 +36,8 @@ function printResults(result)
     console.innerHTML = result;
     console.style.display = "block";
     document.getElementById("parentNode").style.display = "none";
-    layoutTestController.dumpAsText();
-    layoutTestController.notifyDone();
+    testRunner.dumpAsText();
+    testRunner.notifyDone();
 }
 
 </script>

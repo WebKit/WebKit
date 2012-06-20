@@ -3,9 +3,9 @@
 <head>
 <script>
 function runTest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     } else
         return;
     
@@ -31,7 +31,7 @@ function dragEnterOrOver(event) {
 function drop(event) {
     event.preventDefault();
     eventSender.dumpFilenameBeingDragged();
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 <style>

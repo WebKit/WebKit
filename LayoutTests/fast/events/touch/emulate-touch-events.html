@@ -18,7 +18,7 @@ function touchEventCallback() {
     } else
         debug(event.type);
 
-    if (window.layoutTestController && touchEventsReceived == EXPECTED_TOUCH_EVENTS_TOTAL)
+    if (window.testRunner && touchEventsReceived == EXPECTED_TOUCH_EVENTS_TOTAL)
         finishJSTest();
 }
 

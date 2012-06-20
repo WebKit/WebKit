@@ -31,8 +31,8 @@
 
             onload = function()
             {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
 
                 // Test vertical scrollbar presence and that it is initially at the bottom for RTL page.
                 assertEqual("original scroll y for RTL page ", window.scrollY, 0);

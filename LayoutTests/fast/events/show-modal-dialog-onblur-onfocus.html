@@ -5,14 +5,14 @@
     {
         window.onfocus = onFocusFunc;
         window.onblur = onBlurFunc;
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.setCanOpenWindows();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setCanOpenWindows();
+            testRunner.waitUntilDone();
 
             // DumpRenderTreeWindow does not respond to focus events.  Forcing onblur event so
             // that the results matches what you'll see in the browser.
-            layoutTestController.setWindowIsKey(false);
+            testRunner.setWindowIsKey(false);
         }
         showModalDialog("resources/modal-dialog.html");
     }

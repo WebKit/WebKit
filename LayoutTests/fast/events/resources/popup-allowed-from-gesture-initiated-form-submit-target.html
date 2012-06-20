@@ -4,8 +4,8 @@
             var parentWindow = window.opener;
             var console = parentWindow.document.getElementById("console");
             console.innerHTML = "PASS";
-            if (parentWindow.layoutTestController)
-                parentWindow.layoutTestController.notifyDone();
+            if (parentWindow.testRunner)
+                parentWindow.testRunner.notifyDone();
         </script>
     </head>
 </html>

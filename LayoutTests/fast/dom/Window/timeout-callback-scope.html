@@ -5,9 +5,9 @@
 window.completionCounter = 0;
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     // Get the iframe's window.
     var iframeWindow = window.frames["testIframe"];
@@ -29,8 +29,8 @@ function test()
 function checkResult() {
     if (completionCounter < 2)
         return;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <body onload="test()">

@@ -54,11 +54,11 @@ var dataOfInvalidCases = [
 ]
 
 function doTest() {
-    if (!window.layoutTestController || !window.internals) {
+    if (!window.testRunner || !window.internals) {
         return;
     }
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     for (var i = 0; i < dataOfValidCases.length; ++i) {
          test(dataOfValidCases[i], true);

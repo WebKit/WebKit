@@ -15,8 +15,8 @@ function eventHandler(event)
 }
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var event = document.createEvent("Events");
     event.initEvent("foo", true, false);
     addEventListener("foo", eventHandler, false);

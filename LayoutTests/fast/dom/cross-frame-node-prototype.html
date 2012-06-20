@@ -1,8 +1,8 @@
 <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=26520">bug 26520</a>:
 Accessing a DOM node from a parent window in a child iframe moves the prototype to the child iframe and resets it in the parent window.</p>
 <script type="text/javascript">
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 HTMLInputElement.prototype.foo = 'foo';
 

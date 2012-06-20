@@ -14,8 +14,8 @@ function init() {
     input.addEventListener("keypress", keyevent, true);
     input.addEventListener("keyup", keyevent, true);
    
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     
     if (window.eventSender)
         eventSender.fireKeyboardEventsToElement(input);

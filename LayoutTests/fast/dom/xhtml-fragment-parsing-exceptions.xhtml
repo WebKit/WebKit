@@ -40,8 +40,8 @@ try {
     document.getElementById('outerHTML').textContent = 'PASS - ' + exception.name;
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 ]]>
 </script>

@@ -5,9 +5,9 @@
 <div id="test">Select a <span id="target">word</span> in this paragraph by a right-click</div>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpEditingCallbacks();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpEditingCallbacks();
 }
 
 var handlerWasCalled = false;
@@ -15,7 +15,7 @@ document.body.onselectstart = function () { handlerWasCalled = true; return fals
 
 var test = document.getElementById('test');
 
-if (window.layoutTestController && !window.eventSender)
+if (window.testRunner && !window.eventSender)
     test.textContent = 'This test requires eventSender';
 else {
     window.getSelection().setPosition(document.body, 0);

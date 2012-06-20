@@ -8,8 +8,8 @@ function print(message)
 }
 function test(event)
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     print("Received an event, type is " + event.type);
     print("Target is " + event.target);

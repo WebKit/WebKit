@@ -9,13 +9,13 @@ function getCenterFor(element)
 
 function runTest()
 {
-  if (!window.layoutTestController)
+  if (!window.testRunner)
     return;
   if (!window.eventSender)
     return;
 
-  layoutTestController.waitUntilDone();
-  layoutTestController.dumpAsText();
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
 
   alert("Scroll position " + document.body.scrollTop);
   center = getCenterFor(document.getElementById("sp"));
@@ -30,7 +30,7 @@ function verifyScrolling()
 {
   debug("Scroll position is more than 0");
   shouldBe("document.body.scrollTop > 0", "true");
-  layoutTestController.notifyDone();
+  testRunner.notifyDone();
 }
 
 </script>

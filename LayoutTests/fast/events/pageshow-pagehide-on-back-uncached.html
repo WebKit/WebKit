@@ -1,8 +1,8 @@
 <p>Test pageshow/pagehide event behavior when navigating back to an uncached page.</p>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 window.onload = function(evt) {
@@ -11,7 +11,7 @@ window.onload = function(evt) {
         // Returned back.
         window.name = "";
         window.onpagehide = null;
-        setTimeout(function() { if (window.layoutTestController) layoutTestController.notifyDone(); }, 10);
+        setTimeout(function() { if (window.testRunner) testRunner.notifyDone(); }, 10);
     } else {
         window.name = "pageshow/pagehide";
         setTimeout('window.location = "data:text/html,<script>history.back();</scr" + "ipt>"', 0);

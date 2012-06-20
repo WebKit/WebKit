@@ -63,10 +63,10 @@
     
     onload = function()
     {
-        if (!window.layoutTestController)
+        if (!window.testRunner)
             return;
         
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
     
         var range = document.createRange();
         var node = document.getElementById("first");

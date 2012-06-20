@@ -10,8 +10,8 @@
 </pre>
 
 <script>
-  if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+  if (window.testRunner)
+    testRunner.dumpAsText();
   var sheet = document.querySelector('style').sheet;
   var expected = 'solid red';
   var actual = sheet.cssRules[0].style.getPropertyValue('border');

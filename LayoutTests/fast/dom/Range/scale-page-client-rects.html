@@ -3,9 +3,9 @@
 <script>
 function testRects()
 {
-    if (!window.layoutTestController ||  !window.internals)
+    if (!window.testRunner ||  !window.internals)
         return;
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     var range = document.createRange();
     range.selectNodeContents(document.getElementById('div'));

@@ -5,8 +5,8 @@ function replace()
 }
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
             modifiers = ["ctrlKey", "altKey"];
         else

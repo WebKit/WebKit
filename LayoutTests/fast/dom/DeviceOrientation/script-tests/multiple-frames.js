@@ -28,8 +28,8 @@ function maybeFinishTest() {
 }
 
 var mockEvent = {alpha: 1.1, beta: 2.2, gamma: 3.3};
-if (window.layoutTestController)
-    layoutTestController.setMockDeviceOrientation(true, mockEvent.alpha, true, mockEvent.beta, true, mockEvent.gamma);
+if (window.testRunner)
+    testRunner.setMockDeviceOrientation(true, mockEvent.alpha, true, mockEvent.beta, true, mockEvent.gamma);
 else
     debug('This test can not be run without the LayoutTestController');
 

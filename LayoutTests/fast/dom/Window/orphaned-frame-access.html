@@ -5,9 +5,9 @@
 <title>Null frame access tests</title>
 <script>
 window.onload = function() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var tag = document.getElementById('subframe');
@@ -20,8 +20,8 @@ window.onload = function() {
         document.body.appendChild(document.createTextNode(win.test || 'property: PASS ... '));
         document.body.appendChild(document.createTextNode(win[20] || 'array: PASS ... '));
         document.body.appendChild(document.createTextNode(win.Comment || 'missing property: PASS.'));
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 };
 </script>

@@ -10,8 +10,8 @@ function debug(str) {
 }
 
 function runTests() { 
-	if (window.layoutTestController) { 
-		layoutTestController.dumpAsText();
+	if (window.testRunner) { 
+		testRunner.dumpAsText();
 	}
 	div = document.getElementById('duplicate');
 	dup1 = div.parentNode.removeChild(div);

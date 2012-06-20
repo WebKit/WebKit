@@ -2,8 +2,8 @@ description(
 'This tests enumerating the elements of DOM lists.'
 );
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 // Create a testing environment that can be cleanup up easily.
 var testingGround = document.createElement('div');

@@ -1,7 +1,7 @@
 <title>Test case for Radar 4411663</title>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 var para = document.createElement("p");
 for (var x = 0; x < 1000; x++) {
     var newNode = document.createTextNode("asdf " + x);

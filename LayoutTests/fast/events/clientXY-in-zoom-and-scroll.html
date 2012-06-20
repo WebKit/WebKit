@@ -48,9 +48,9 @@
         window.scrollTo(x, y);
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     // Default.
@@ -117,11 +117,11 @@
     scrollPage(0, 0);
     window.removeEventListener("click", zoomedAndScrolled, false);
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);
 
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 </script>
 <script src="../js/resources/js-test-post.js"></script>

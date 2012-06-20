@@ -19,8 +19,8 @@
       debug("Scrolled element to rect");
       shouldBe("rect.left", "computedLeft");
       shouldBe("rect.top", "computedTop");
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+      if (window.testRunner) {
+        testRunner.dumpAsText();
       }
     </script>
     <script src="../js/resources/js-test-post.js"></script>

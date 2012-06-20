@@ -8,8 +8,8 @@
 <div id="container"></div>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function createShadowForm() {
     var container = document.getElementById('container');
@@ -61,8 +61,8 @@ if (location.href.indexOf('?') > 0) {
     var query = location.href.substr(location.href.indexOf('?') + 1);
     checkQuery(query);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 } else {
     submitButton.click();
 }

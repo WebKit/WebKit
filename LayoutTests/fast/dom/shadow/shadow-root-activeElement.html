@@ -12,8 +12,8 @@ description("This tests the activeElement property of a ShadowRoot.");
 if (!window.internals)
     debug('This test runs on DRT only');
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var childInBody = document.createElement("p");
 childInBody.tabIndex = "1";

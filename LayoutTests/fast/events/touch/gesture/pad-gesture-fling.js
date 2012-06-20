@@ -16,22 +16,22 @@ function recordWheelEvent(event)
 
 document.addEventListener("mousewheel", recordWheelEvent);
 
-if (window.layoutTestController && window.eventSender && window.eventSender.gestureFlingStart) {
+if (window.testRunner && window.eventSender && window.eventSender.gestureFlingStart) {
     eventSender.gestureFlingStart(10, 11, 1000, 1000);
-    layoutTestController.display();
-    layoutTestController.display();
-    layoutTestController.display();
+    testRunner.display();
+    testRunner.display();
+    testRunner.display();
 }
 
 setTimeout(function() {
     shouldBe('actualWheelEventsOccurred', expectedWheelEventsOccurred);
 }, 100);
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 setTimeout(function() {
     isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }, 200);

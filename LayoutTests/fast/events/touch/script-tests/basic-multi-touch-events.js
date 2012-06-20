@@ -16,12 +16,12 @@ function touchEventCallback() {
         debug(event.type);
     }
 
-    if (window.layoutTestController && touchEventsReceived == EXPECTED_TOUCH_EVENTS_TOTAL) {
+    if (window.testRunner && touchEventsReceived == EXPECTED_TOUCH_EVENTS_TOTAL) {
         // If we've got here, we can safely say we were successfully parsed :) We need to
         // call the isSucccessfullyParsed function to output the correct TEST COMPLETE
         // footer message.
         isSuccessfullyParsed();
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 }
 

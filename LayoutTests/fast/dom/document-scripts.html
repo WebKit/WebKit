@@ -35,8 +35,8 @@ function shouldBe(a, b)
 }
 
 function runTests() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
         
     shouldBe(document.scripts.length, 2);
     shouldBe("document.scripts[0].id", "first");

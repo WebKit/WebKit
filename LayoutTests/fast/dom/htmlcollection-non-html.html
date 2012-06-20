@@ -57,8 +57,8 @@ function testElementProperty(elementName, attributeName, subelementName, base) {
 }
 
 function runTest() {
-  if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+  if (window.testRunner)
+    window.testRunner.dumpAsText();
 
   description('Tests that HTMLCollection only properly contains HTML elements');
 

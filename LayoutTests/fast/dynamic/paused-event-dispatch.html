@@ -7,8 +7,8 @@
 
     function test()
     {
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
 
         document.body.offsetTop;
         var bottomBox = document.getElementById("bottomBox");
@@ -19,8 +19,8 @@
     function iframeResized()
     {
         document.body.appendChild(document.createElement("div"));
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         setTimeout(finish, 0);
     }
@@ -28,8 +28,8 @@
     function finish()
     {
         document.getElementById("tallBox").style.height = "50px";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 <p>

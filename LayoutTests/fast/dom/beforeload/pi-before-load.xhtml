@@ -12,8 +12,8 @@
 <script>
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     if (document.getElementById('block').offsetWidth == 100)
         print("PASS", "green");

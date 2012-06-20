@@ -6,10 +6,10 @@
 
 function buildFrameset()
 {
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpChildFramesAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
     }
 
     var outHTML="<frameset rows=\"33%, 33%, 33%\">"+
@@ -33,8 +33,8 @@ function buildFrameset()
     frames['topRow'].document.close();
 
     var localImageLocation = "file:///tmp/LayoutTests/fast/dom/resources/abe.png";
-    if (window.layoutTestController)
-        localImageLocation = layoutTestController.pathToLocalResource(localImageLocation);
+    if (window.testRunner)
+        localImageLocation = testRunner.pathToLocalResource(localImageLocation);
 
     // We check image loading via an onload handler on the <img> instead of the <body> because due to https://webkit.org/b/29615
     // the document onload may fire before the image has loaded.
@@ -66,8 +66,8 @@ var frameLoadCounter = 3;
 function frameLoaded()
 {
     frameLoadCounter--;
-    if (frameLoadCounter == 0 && window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (frameLoadCounter == 0 && window.testRunner)
+        testRunner.notifyDone();
 }
 
 buildFrameset();

@@ -10,13 +10,13 @@ function setImg() {
 }
 
 function init() {
-    if (window.layoutTestController) {
-        window.layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        window.testRunner.waitUntilDone();
     }
     getImg();
     document.getElementById("right").contentWindow.location.href = "about:blank";
-    if (window.layoutTestController) {
-        setTimeout("setImg(); window.layoutTestController.notifyDone();",100);
+    if (window.testRunner) {
+        setTimeout("setImg(); window.testRunner.notifyDone();",100);
     }
     else {
         setTimeout("setImg();",100);

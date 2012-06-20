@@ -5,8 +5,8 @@
 <input id="field" type="text" value="some text">
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.getElementById('field').setAttribute('style', 'display: inline');
 document.getElementById('field').focus();

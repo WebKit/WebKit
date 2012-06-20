@@ -2,8 +2,8 @@
 <head>
 <script>
 function load() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     str = "";
     for (i=0;i<10;i++)
       str += "Hostname is " + document.links[i].hostname + ". Host is " + document.links[i].host + "<br>";

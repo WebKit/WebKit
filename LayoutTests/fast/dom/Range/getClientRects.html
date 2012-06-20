@@ -84,8 +84,8 @@
 </div>
 
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function addBBoxOverClientRect(rect)
     {
@@ -108,7 +108,7 @@
 
     function show(range)
     {
-        if (window.layoutTestController)
+        if (window.testRunner)
             return;
         addBBoxOverClientRects(range.getClientRects());
     }
@@ -403,7 +403,7 @@
     rects = range11.getClientRects();
     shouldBe("rects.length", "0");
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);
     }

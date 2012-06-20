@@ -15,8 +15,8 @@ function gc()
 
 function pageLoaded()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     pageHasLoaded = true;
     if (pageHasLoaded && frameHasLoaded)
@@ -32,8 +32,8 @@ function frameLoaded()
 
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var frame = document.getElementById("frame");
     frame.setAttribute("onload", "frameLoadedAgain()");
@@ -44,8 +44,8 @@ function frameLoadedAgain()
 {
     gc();
     document.getElementById("result").firstChild.data = "TEST PASSED - Unless an assertion or crash happens soon.";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

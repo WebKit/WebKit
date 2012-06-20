@@ -59,8 +59,8 @@ function prepareDOMTree(parent)
 }
 
 function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     if (!window.eventSender) {
         testFailed('');

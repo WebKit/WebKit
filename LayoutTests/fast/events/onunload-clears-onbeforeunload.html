@@ -3,9 +3,9 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 window.addEventListener('beforeunload', before, false);
@@ -24,7 +24,7 @@ function unload()
 
 function load()
 {
-    location = "data:text/html,If you didn't hit an assert you PASS.<script>if (window.layoutTestController) layoutTestController.notifyDone(); </" + "script>";
+    location = "data:text/html,If you didn't hit an assert you PASS.<script>if (window.testRunner) testRunner.notifyDone(); </" + "script>";
 }
 
 </script>

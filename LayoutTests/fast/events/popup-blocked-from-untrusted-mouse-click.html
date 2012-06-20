@@ -1,11 +1,11 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    testRunner.waitUntilDone();
 }
 
 var TEST_STARTED = 0;
@@ -23,7 +23,7 @@ function nextTestStage() {
         doClick();
     } else {
         document.getElementById("console").innerHTML = "PASSED";
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 }
 
@@ -51,8 +51,8 @@ function openWindow(evt) {
     if (!window.popupBlockerIsEnabled)
         expectedWindowCount = 2;
     // Encounter a failure, quit test.
-    if (layoutTestController.windowCount() != expectedWindowCount) {
-        layoutTestController.notifyDone();
+    if (testRunner.windowCount() != expectedWindowCount) {
+        testRunner.notifyDone();
         return;
     }
     // Go to next test stage.
@@ -60,7 +60,7 @@ function openWindow(evt) {
 }
 
 function doClick() {
-    layoutTestController.setPopupBlockingEnabled(window.popupBlockerIsEnabled);
+    testRunner.setPopupBlockingEnabled(window.popupBlockerIsEnabled);
     // Send a mouse-click event to click the button.
     eventSender.mouseMoveTo(0, 0);
     eventSender.mouseMoveTo(20, 20);
@@ -69,7 +69,7 @@ function doClick() {
 }
 
 function test() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     window.testStage = TEST_STARTED;
     nextTestStage();

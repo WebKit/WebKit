@@ -2,8 +2,8 @@
 <body>
   <p>To pass, this test should not crash</p>
   <script>
-    if (window.layoutTestController)
-      window.layoutTestController.dumpAsText();
+    if (window.testRunner)
+      window.testRunner.dumpAsText();
 
     var o = document.createTextNode();
     try {

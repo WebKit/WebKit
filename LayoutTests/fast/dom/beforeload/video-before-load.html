@@ -5,13 +5,13 @@
 <body>
 <div id="console"></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 </script>
 
-<video src="../../../media/content/test.mp4" onbeforeload="print('PASS', 'green'); if (window.layoutTestController) window.layoutTestController.notifyDone(); return false;" onload="print('FAIL', 'red'); if (window.layoutTestController) window.layoutTestController.notifyDone();"></video>
+<video src="../../../media/content/test.mp4" onbeforeload="print('PASS', 'green'); if (window.testRunner) window.testRunner.notifyDone(); return false;" onload="print('FAIL', 'red'); if (window.testRunner) window.testRunner.notifyDone();"></video>
 
 </body>
 </html>

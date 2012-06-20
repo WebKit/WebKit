@@ -67,8 +67,8 @@ function debug(s) {
 }
 
 function runTests() {
-	if (window.layoutTestController)
-		layoutTestController.dumpAsText();
+	if (window.testRunner)
+		testRunner.dumpAsText();
 
 	originalStyle = document.getElementById('style').firstChild.nodeValue;
 	debug(originalStyle);

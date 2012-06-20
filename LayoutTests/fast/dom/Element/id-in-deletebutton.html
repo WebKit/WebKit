@@ -14,7 +14,7 @@ sel = window.getSelection();
 li = document.getElementById("li");
 sel.setPosition(li, 0);
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     deleteButton = document.getElementById("WebKit-Editing-Delete-Button");
     shouldBeNonNull('deleteButton');
 }

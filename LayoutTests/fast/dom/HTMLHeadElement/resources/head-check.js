@@ -2,8 +2,8 @@ var maxTests = 4;
 var currentTest = 1;
 var iframe;
 
-if (window.layoutTestController) {
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
 }
 
 function testAndLoadNext() {
@@ -23,8 +23,8 @@ function testAndLoadNext() {
     else {
         iframe.style.display = "none";
         debug('<span class="pass">TEST COMPLETE</span>');
-        if (window.layoutTestController) {
-            window.layoutTestController.notifyDone();
+        if (window.testRunner) {
+            window.testRunner.notifyDone();
         }
     }
 }

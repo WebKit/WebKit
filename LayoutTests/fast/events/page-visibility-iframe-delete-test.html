@@ -36,15 +36,15 @@ function startTest() {
     frame2.contentDocument.addEventListener(
         "webkitvisibilitychange", onFrame2VisibilityChange, false);
     // Change the visibility of the current page to invisible.
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         numVisibilityChanges++;
-        layoutTestController.setPageVisibility("hidden");
+        testRunner.setPageVisibility("hidden");
     }
 }
 
 function finishTest() {
-    if (window.layoutTestController)
-        layoutTestController.resetPageVisibility();
+    if (window.testRunner)
+        testRunner.resetPageVisibility();
     finishJSTest();
 }
 

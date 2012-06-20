@@ -12,9 +12,9 @@ once the test completes.
 <div id="status">Test in progress...</div>
 
 <script>
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
 }
 
 var myFrames = subframe.frames;
@@ -22,8 +22,8 @@ var myFrames = subframe.frames;
 function done() {
     var foo = myFrames.length;
     document.getElementById("status").innerText = "SUCCESS";
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 
 subframe.document.location = "resources/notify-parent-done.html";

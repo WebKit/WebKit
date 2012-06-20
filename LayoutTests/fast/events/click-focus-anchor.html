@@ -37,13 +37,13 @@ function handleFocus(e)
     log(el.id + ' received focus (' + el.title + ')');
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 }
 
 window.onload = function()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     for (var i = 1; i <= 6; i++) {

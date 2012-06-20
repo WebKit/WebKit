@@ -1,13 +1,13 @@
 <html>
     <head>
         <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.setCanOpenWindows();
-            layoutTestController.dumpChildFramesAsText();
-            layoutTestController.waitUntilDone();
-            layoutTestController.setCloseRemainingWindowsWhenComplete()
-            layoutTestController.setPopupBlockingEnabled(true);
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setCanOpenWindows();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
+            testRunner.setCloseRemainingWindowsWhenComplete()
+            testRunner.setPopupBlockingEnabled(true);
         }
 
         function test()
@@ -15,7 +15,7 @@
             var myLink = document.getElementById('link');
             var myFrame = document.getElementById('otherFrame').contentWindow;
             myLink.onclick = myFrame.handleClick;
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 var x = myLink.offsetLeft + 2;
                 var y = myLink.offsetTop + 2;
                 eventSender.mouseMoveTo(x, y);

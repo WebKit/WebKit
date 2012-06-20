@@ -2,8 +2,8 @@
 <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=21886">bug 21886</a>:
 window.HTMLOptionElement == "[object HTMLElementConstructor]" instead of HTMLOptionElementConstructor.</p>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 window.HTMLOptionElement.prototype.foo = function() { }
 

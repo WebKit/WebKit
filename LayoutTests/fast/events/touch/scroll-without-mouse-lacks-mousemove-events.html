@@ -7,9 +7,9 @@ if (window.internals)
 else
     alert("This test requires window.internals");
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function listener() {
@@ -21,7 +21,7 @@ window.addEventListener("mousemove", listener, false);
 
 window.addEventListener("scroll", function() {
     window.setTimeout(function() {
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }, 200);
 }, false);
 

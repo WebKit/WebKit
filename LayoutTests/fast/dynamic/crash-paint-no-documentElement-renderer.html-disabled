@@ -4,8 +4,8 @@
 <p>Bug 64284: Crash in RenderBox::paintBoxDecorations when documentElement has no renderer</p>
 <p>For this test to PASS, it should not ASSERT or CRASH.</p>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function go() {
         document.open();

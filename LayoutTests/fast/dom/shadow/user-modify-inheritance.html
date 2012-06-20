@@ -14,8 +14,8 @@
 <pre id="console"></pre>
 <script>
 description("Tests to ensure that a '-webkit-user-modify' CSS porperty is not inherited across shadow boundaries.");
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function computedStyle(element, style) {
     var cs = window.getComputedStyle(element);

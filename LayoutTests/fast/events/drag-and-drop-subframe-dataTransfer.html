@@ -11,12 +11,12 @@ function onDrop(evt) {
 			document.body.innerHTML = 'FAIL';
 	}
 	evt.preventDefault();
-	window.layoutTestController.notifyDone();
+	window.testRunner.notifyDone();
 }
 
 function runTest() {
-	window.layoutTestController.dumpAsText();
-	window.layoutTestController.waitUntilDone();
+	window.testRunner.dumpAsText();
+	window.testRunner.waitUntilDone();
 	var d = document.getElementById('drag');
 	var o = document.getElementById('drop');
 	eventSender.mouseMoveTo(d.offsetLeft + d.offsetWidth / 2, d.offsetTop + d.offsetHeight / 2);
@@ -36,7 +36,7 @@ window.onload = function() {
 	window.addEventListener('dragover', function(x) { x.preventDefault() }, true);
 	window.addEventListener('dragstart', function(x) { window.focus() }, true);
 
-	if (window.layoutTestController)
+	if (window.testRunner)
 		runTest();
 }
 </script>

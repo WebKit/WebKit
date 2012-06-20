@@ -3,10 +3,10 @@
 This tests opens a new window, sets a timeout to close it, then sets a timeout to navigate it via window.location.
 We pass if we don't crash when setting the location of the already closed window.
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.waitUntilDone();
 }
 
 var w = window.open('resources/set-location-after-close-new-window.html');
@@ -18,8 +18,8 @@ function processMessage(event) {
         w.close();
     else if (event.data == "closed") {
         w.location = '';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 </script>

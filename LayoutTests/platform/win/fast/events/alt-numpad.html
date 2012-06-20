@@ -6,8 +6,8 @@
     <script>
         document.getElementById("ce").focus();
 
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
 
             eventSender.dispatchMessage(eventSender.WM_SYSKEYDOWN, 18 /* Alt */, 0x20380001);
             eventSender.dispatchMessage(eventSender.WM_SYSKEYDOWN, 45 /* Num Pad 0 */, 0x20520001);

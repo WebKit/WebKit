@@ -91,8 +91,8 @@
 
 </div>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var testRects;
     function testClientRects(rects, expectedNumberOfRects)
@@ -158,7 +158,7 @@
     for (var i = 0; i < tests.length; ++i)
         test(i + 1, tests[i]);
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);
     }

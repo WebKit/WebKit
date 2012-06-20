@@ -16,12 +16,12 @@
 function runTest()
 {
     description("This tests wrapper round-tripping between JavaScript and Objective-C.");
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         debug("This test only works in DumpRenderTree.\n");
         return;
     }
     
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     var message = "FAIL: Test did not run properly.";
     try {

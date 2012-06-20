@@ -18,8 +18,8 @@ function frameLoaded()
     output.innerHTML += spanB.parentNode + "<BR>";
     output.innerHTML += spanB.ownerDocument + "<BR>";
     
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();    
+    if (window.testRunner)
+        testRunner.notifyDone();    
 }
 
 function doit()
@@ -32,9 +32,9 @@ function doit()
     frame.src = 'about:blank'
 }
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 </script>

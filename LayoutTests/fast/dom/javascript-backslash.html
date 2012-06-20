@@ -9,8 +9,8 @@
             }
             function test()
             {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
                 log("javascript: function argument containing a backslash (\\) should not be converted to a slash (/): \"" + document.getElementById("1").pathname + "\"");
                 log("http: base should convert a \\ to a / : \"" + document.getElementById("2").href + "\"");
                 log("https: base should also convert a \\ to a / : \"" + document.getElementById("3").href + "\"");

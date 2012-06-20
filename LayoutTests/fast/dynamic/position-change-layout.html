@@ -3,8 +3,8 @@
     <script>
         function test()
         {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
             var table = document.getElementById('table');
             table.offsetHeight; // Trigger layout.
             table.createCaption(); // Add a caption and mark the table as needing layout.

@@ -2,8 +2,8 @@
 REGRESSION: document.open doesn't clear the document.</p>
 
 <script>
-  if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+  if (window.testRunner)
+      testRunner.dumpAsText();
 
   document.open();
   document.write("<p>This line should appear second.</p>");

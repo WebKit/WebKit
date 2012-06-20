@@ -17,9 +17,9 @@
 
        function test()
        {
-           if (window.layoutTestController) {
-               layoutTestController.waitUntilDone();
-               layoutTestController.dumpAsText();
+           if (window.testRunner) {
+               testRunner.waitUntilDone();
+               testRunner.dumpAsText();
                setTimeout(scrollToAnchor, 0);
            }
        }
@@ -40,8 +40,8 @@
            else
                log("Automated test : PASSED");
 
-           if (window.layoutTestController)
-               layoutTestController.notifyDone();
+           if (window.testRunner)
+               testRunner.notifyDone();
        }     
         </script>
     </head>

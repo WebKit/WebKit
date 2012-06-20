@@ -84,8 +84,8 @@ function checkScrollOffset()
     if (scrollsOccurred == expectedScrollsTotal) {
         // If we've got here, we've passed.
         isSuccessfullyParsed();
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } else {
         secondGestureScrollSequence();
     }
@@ -119,12 +119,12 @@ function exitIfNecessary()
 {
     debug('Gesture events not implemented on this platform or broken');
     isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function runTest()
 {

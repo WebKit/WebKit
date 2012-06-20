@@ -6,9 +6,9 @@
   <script type="application/javascript">
     function runTest()
     {
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
       }
 
       var e = {};
@@ -37,8 +37,8 @@
       /* Rect based test over the entire img. */
       check(0, 0, 0, 99, 99, 0, [e.img]);
 
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
 
     window.onload = runTest;

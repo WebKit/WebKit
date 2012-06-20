@@ -7,8 +7,8 @@ REGRESSION(r28669): Page scrolls down when you hit space key in text area.</p>
 document.onkeypress=function(){return false;}
 document.onscroll=function(){alert("FAIL - scrolled!");}
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     eventSender.keyDown(" ", []);
 }
 </script>

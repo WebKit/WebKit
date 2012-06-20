@@ -21,8 +21,8 @@ element. The anchor shouldn't be activated (i.e. you shouldn't see any "anchor a
 </pre>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function log(message) { document.querySelector("pre").innerHTML += message + "\n"; }
 function formSubmitted() { log("form submitted\n"); }
@@ -67,6 +67,6 @@ if (window.eventSender) {
     log("\nThe details element was " + (details.open ? "" : "not ") + "opened");
 }
 
-if (window.layoutTestController)
+if (window.testRunner)
     document.querySelector("a").style.display = "none";
 </script>

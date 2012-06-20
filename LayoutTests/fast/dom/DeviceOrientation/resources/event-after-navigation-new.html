@@ -6,9 +6,9 @@
     away when the original page is in the page cache.<br><br>
     SUCCESS
     <script>
-      if (window.layoutTestController) {
-          layoutTestController.setMockDeviceOrientation(true, 1.1, true, 2.2, true, 3.3);
-          layoutTestController.notifyDone();
+      if (window.testRunner) {
+          testRunner.setMockDeviceOrientation(true, 1.1, true, 2.2, true, 3.3);
+          testRunner.notifyDone();
       }
     </script>
   </body>

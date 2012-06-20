@@ -21,9 +21,9 @@
  
                window.scrollBy(1, 0);
 
-        if (window.layoutTestController) {
-            layoutTestController.display();
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.display();
+            testRunner.dumpAsText();
             test();
         } else
             setTimeout(test, 500);

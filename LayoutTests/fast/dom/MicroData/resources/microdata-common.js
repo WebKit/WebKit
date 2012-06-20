@@ -1,7 +1,7 @@
 // this function creates element with specified property and contents.
 function createElement(type, props, contents) {
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+    if (window.testRunner)
+      testRunner.dumpAsText();
 
     var element = document.createElement(type);
 
@@ -21,8 +21,8 @@ function createElement(type, props, contents) {
 
 // runs a test and writes a log
 function runTest(collection, elements, title) {
-  if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+  if (window.testRunner)
+    testRunner.dumpAsText();
 
   pass = true;
 

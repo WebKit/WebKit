@@ -5,8 +5,8 @@ function load() {
   var xhr = new XMLHttpRequest();
   xhr.onload = function() {
     top.document.getElementById("result").innerHTML="SUCCESS";
-    if (top.layoutTestController)
-        top.layoutTestController.notifyDone();
+    if (top.testRunner)
+        top.testRunner.notifyDone();
   }
   xhr.open("GET", "window-early-properties-xhr-frame.html");
   xhr.send(false);

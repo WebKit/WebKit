@@ -4,18 +4,18 @@
         <div id="console"></div>
         <form id="form1" style="display:none" method="post" target="test" action="http://anything.com"></form>
         <script>
-            if (window.layoutTestController)
+            if (window.testRunner)
             {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
         
             function runTest()
             {
                 document.getElementById('form1').submit();
                 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
                 document.getElementById('console').innerHTML = 'PASS';
             }
 

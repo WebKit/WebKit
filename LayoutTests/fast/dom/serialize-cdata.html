@@ -2,8 +2,8 @@
 XMLSerializer.serializeToString incorrect value for CDATA nodes.</p>
 <p>Should say PASS below.</p>
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 
 var d = window.document.implementation.createDocument("", "", null);
 var n = d.createCDATASection("-- <cdata> --");

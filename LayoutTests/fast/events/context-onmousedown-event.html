@@ -7,14 +7,14 @@
 
 
 <script>
-if (window.layoutTestController) {
+if (window.testRunner) {
      var box, x, y;
      box = document.getElementById("box");
      x = box.offsetParent.offsetLeft + box.offsetLeft + box.offsetWidth / 2;
      y = box.offsetParent.offsetTop + box.offsetTop + box.offsetHeight / 2;
      eventSender.mouseMoveTo(x, y);
      eventSender.contextClick();
-     layoutTestController.dumpAsText();
+     testRunner.dumpAsText();
 }
 
 </script>

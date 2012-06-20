@@ -12,8 +12,8 @@ description("This tests the innerHTML property of a shadow root.");
 if (!window.internals)
     debug('This test runs on DRT only');
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
 host = document.createElement("div");
 document.body.appendChild(host);

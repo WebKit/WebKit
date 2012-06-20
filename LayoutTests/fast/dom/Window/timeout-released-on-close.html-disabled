@@ -5,9 +5,9 @@
 
 var objectCountBefore;
 function start() {
-    if (window.layoutTestController && window.GCController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner && window.GCController) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
         window.GCController.collect();
         objectCountBefore = window.GCController.getJSObjectCount();
         var iframeElement = document.getElementById("iframe");
@@ -39,7 +39,7 @@ function verify()
                                                                       ", before: " +  objectCountBefore +
                                                                       ", after load: " + objectCountAfterLoad +
                                                                       ", after: " + objectCountAfter);
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 <body onload="start()">

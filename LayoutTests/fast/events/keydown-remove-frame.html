@@ -6,8 +6,8 @@
 <script>
     function test() {
         document.getElementById("iframe").focus();
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
             eventSender.keyDown("x");
         }
     }

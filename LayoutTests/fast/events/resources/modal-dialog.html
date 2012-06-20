@@ -3,12 +3,12 @@
 <script>
     function closeWindow()
     {
-        if (window.layoutTestController) {
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.notifyDone();
         }
         opener.log("Modal dialog closing.");
-        if (window.layoutTestController) {
-            layoutTestController.abortModal();
+        if (window.testRunner) {
+            testRunner.abortModal();
         }
         close();
     }

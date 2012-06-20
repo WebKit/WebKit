@@ -5,9 +5,9 @@
 <pre id="log"></pre>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function createFrame(id, parent) {
@@ -56,8 +56,8 @@ container.onload = function () {
         log('DONE');
     else
         log('Received ' + i + ' events but expected ' + expectedOrder.length);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 container.src = 'resources/before-unload-in-subframe-destination.html';
 

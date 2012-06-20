@@ -60,8 +60,8 @@ function expandRangeString(range, startId, startOffset, endId, endOffset, expand
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     // test 1 - Expand to document.
     var range = document.createRange();

@@ -3,8 +3,8 @@
 <p>Test that an element that was imported from a frameless document has functional attribute event listeners. Should alert "SUCCESS".</p>
 <script>
 <![CDATA[
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var doc = (new DOMParser).parseFromString('<html xmlns="http://www.w3.org/1999/xhtml"><a id="a" href="javascript:alert(\'FAIL\')" onclick="alert(\'SUCCESS\'); return false">Link (clicked automatically).</a></html>', "application/xhtml+xml");
 

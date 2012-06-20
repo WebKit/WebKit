@@ -2,9 +2,9 @@
 <head>
 <script src="../../resources/gc.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function go() {
@@ -21,8 +21,8 @@ function go() {
   delete node2;
   gc();
   document.body.innerText = 'Final end container, offset: ' + range.endContainer + ', ' + range.endOffset;
-  if (window.layoutTestController)
-    layoutTestController.notifyDone()
+  if (window.testRunner)
+    testRunner.notifyDone()
 }
 </script>
 </head>

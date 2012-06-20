@@ -4,7 +4,7 @@
 <stop id="s"/>
 <script>
 
-if (!window.layoutTestController)
+if (!window.testRunner)
     alert("This test requires GCController")
 else {
     var range = document.createRange();
@@ -13,7 +13,7 @@ else {
     range.surroundContents( document.getElementById('f') );
     GCController.collect();
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     alert("PASS. WebKit didn't crash.");
 }
 

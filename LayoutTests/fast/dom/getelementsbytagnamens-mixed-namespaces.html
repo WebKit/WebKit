@@ -3,8 +3,8 @@
   <span>Test to ensure that node list caching pays attention to namespaces</span><br>
   <div>div 1</div>
   <script>
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+    if (window.testRunner)
+      testRunner.dumpAsText();
     try {
       var divs = document.getElementsByTagName("div");
       document.write("Should be 1: " + divs.length + "<br>");

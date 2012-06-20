@@ -2,8 +2,8 @@
 <head>
     <script src="resources/print.js"></script>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         document.addEventListener("beforeload", function(event) {
             event.target.parentElement.removeChild(event.target);

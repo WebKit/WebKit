@@ -6,8 +6,8 @@
     'This test verifies that exception thrown while converting an object to string '
     + 'are correctly propagated and do not crash the browser.');
 
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
     }
 
     var throwing = { toString: function() { throw 'EXCEPTION'; } };

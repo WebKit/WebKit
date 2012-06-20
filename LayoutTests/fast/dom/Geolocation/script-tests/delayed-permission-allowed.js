@@ -1,12 +1,12 @@
 description("Tests that when a position is available, no callbacks are invoked until permission is allowed.");
 
-if (window.layoutTestController)
-    window.layoutTestController.setMockGeolocationPosition(51.478, -0.166, 100);
+if (window.testRunner)
+    window.testRunner.setMockGeolocationPosition(51.478, -0.166, 100);
 
 function allowPermission() {
     permissionSet = true;
-    if (window.layoutTestController)
-        layoutTestController.setGeolocationPermission(true);
+    if (window.testRunner)
+        testRunner.setGeolocationPermission(true);
 }
 
 navigator.geolocation.getCurrentPosition(function() {

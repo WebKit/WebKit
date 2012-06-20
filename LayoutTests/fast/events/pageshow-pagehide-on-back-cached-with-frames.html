@@ -6,10 +6,10 @@ Test pageshow/pagehide event behavior when navigating away from a page with fram
 </body>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 }
 
 function log(message)
@@ -29,8 +29,8 @@ window.onload = function(evt) {
 window.onpageshow = function(evt) {
     log("Main frame window.onpageshow" + ", target = " + evt.target + ", persisted = " + evt.persisted);
     if (evt.persisted) {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } else {
         log("***Navigating top-level frame to a page that will immediately navigate back to this one***");
         // Location changes need to happen outside the onload handler to generate history entries.

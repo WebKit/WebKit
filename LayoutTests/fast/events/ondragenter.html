@@ -14,11 +14,11 @@ function dragEnter(div)
 <script>
 function runTest()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
         
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
     
     // Find the element to drag
     var elementToDrag = document.getElementById("elementToDrag");
@@ -44,7 +44,7 @@ function runTest()
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 runTest();

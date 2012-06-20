@@ -43,9 +43,9 @@
         }
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     // Zoomed.
@@ -64,11 +64,11 @@
     zoomPageOut();
     window.removeEventListener("dblclick", zoomed, false);
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);
 
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 </script>
 <script src="../js/resources/js-test-post.js"></script>

@@ -9,8 +9,8 @@ if (nick.naturalWidth == 320 && nick.naturalHeight == 240)
     result.innerHTML = "SUCCESS.";
 else
     result.innerHTML = "FAILURE!";
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 }
 </script>
 <body onload="runtest()">

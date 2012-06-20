@@ -18,12 +18,12 @@ if (!window.gc)
 
 function load()
 {
-    if (window.layoutTestController)
+    if (window.testRunner)
     {
-        layoutTestController.dumpAsText();
-        layoutTestController.setCanOpenWindows();
-        layoutTestController.setCloseRemainingWindowsWhenComplete(true);
-        layoutTestController.waitUntilDone();
+        testRunner.dumpAsText();
+        testRunner.setCanOpenWindows();
+        testRunner.setCloseRemainingWindowsWhenComplete(true);
+        testRunner.waitUntilDone();
     }
     win = window.open();
     if (win.webkitURL)
@@ -34,8 +34,8 @@ function load()
         return;
     }
     document.body.innerHTML = "PASS";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function crash()
@@ -48,8 +48,8 @@ function crash()
         return;
     }
     document.body.innerHTML = "PASS";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </head>

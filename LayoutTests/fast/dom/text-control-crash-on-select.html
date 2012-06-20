@@ -8,8 +8,8 @@ Tests that we don't crash when killing an text input's or textarea's renderer an
 <input id="input3">
 <input id="input4">
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function $(id) {
         return document.getElementById(id);

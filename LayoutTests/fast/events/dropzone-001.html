@@ -57,8 +57,8 @@ function runTest()
     if (!window.eventSender)
         return;
         
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
         
     var startX = dragMe.offsetLeft + 10;
     var startY = dragMe.offsetTop + dragMe.offsetHeight / 2;

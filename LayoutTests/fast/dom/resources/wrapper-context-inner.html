@@ -15,8 +15,8 @@ function runTest() {
      } else {
          top.writeOutput("FAIL");
      }
-     if (window.layoutTestController) {
-         layoutTestController.notifyDone();
+     if (window.testRunner) {
+         testRunner.notifyDone();
      }
 }
 </script>

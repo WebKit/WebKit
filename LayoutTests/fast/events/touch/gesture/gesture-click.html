@@ -41,7 +41,7 @@ function endTest()
     }
     // Bail.
     isSuccessfullyParsed();
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function runTest() {
@@ -52,9 +52,9 @@ function runTest() {
     div.addEventListener("mousemove", gestureEventCallback, false);
     document.addEventListener("keydown", quitKeyToEndTest, false);
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     if (window.eventSender) {

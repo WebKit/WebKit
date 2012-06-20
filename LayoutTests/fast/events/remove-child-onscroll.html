@@ -1,15 +1,15 @@
 <html>
     <head>
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             function dispatchScrollEvents()
             {
-                if (window.eventSender && window.layoutTestController) {
-                    layoutTestController.waitUntilDone();
+                if (window.eventSender && window.testRunner) {
+                    testRunner.waitUntilDone();
                     var scrollCount = 0;
                     document.getElementById('dv').addEventListener(
                         'scroll',
@@ -19,7 +19,7 @@
                             if (scrollCount == 1)
                                 eventSender.mouseScrollBy(-1, -1);
                             else
-                                layoutTestController.notifyDone();
+                                testRunner.notifyDone();
                         },
                         false);
 

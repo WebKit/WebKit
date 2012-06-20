@@ -6,9 +6,9 @@ function test()
     if (queryIndex == -1) {
         window.scrollTo(500, 500);
 
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
 
             eventSender.mouseMoveTo(18, 18);
             eventSender.mouseDown();
@@ -18,8 +18,8 @@ function test()
         document.write("<div>Form data: " + document.URL.substring(queryIndex + 1) + "</div>");
         document.write("<div>X and Y should both be about 10.</div>");
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 </script>

@@ -3,9 +3,9 @@ description("Tests Geolocation error callback using the mock service.");
 var mockCode = 2;
 var mockMessage = "debug";
 
-if (window.layoutTestController) {
-    layoutTestController.setGeolocationPermission(true);
-    layoutTestController.setMockGeolocationError(mockCode, mockMessage);
+if (window.testRunner) {
+    testRunner.setGeolocationPermission(true);
+    testRunner.setMockGeolocationError(mockCode, mockMessage);
 } else
     debug('This test can not be run without the LayoutTestController');
 

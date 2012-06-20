@@ -1,6 +1,6 @@
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var console = document.getElementById("console");
@@ -139,8 +139,8 @@ function onmessage(evt) {
         shouldBe("eventData", message);
     }
 
-    if (safeToString(evt.data) == 'done' && window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (safeToString(evt.data) == 'done' && window.testRunner)
+        testRunner.notifyDone();
 }
 
 window.addEventListener('message', onmessage, false);

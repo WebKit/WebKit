@@ -1,12 +1,12 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.setCanOpenWindows();
-  layoutTestController.setPopupBlockingEnabled(true);
-  layoutTestController.setCloseRemainingWindowsWhenComplete(true);
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setCanOpenWindows();
+  testRunner.setPopupBlockingEnabled(true);
+  testRunner.setCloseRemainingWindowsWhenComplete(true);
+  testRunner.waitUntilDone();
 }
 
 function test() {
@@ -14,7 +14,7 @@ function test() {
     var ctrl1 = document.getElementById('control1');
     ctrl1.focus();
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         // change the option selection
         eventSender.keyDown("e", []);
     }
@@ -42,7 +42,7 @@ If the pop-up was not blocked then there will be an PASS message. Otherwise, the
 <form id="form" action="data:text/html,<script>alert('PASSED')</script>" target="target">
 <input id="control2" type="submit" value="Submit to new window"/>
 </form>
-<form id="form2" action="data:text/html,<b>hello!</b><script>window.layoutTestController && layoutTestController.notifyDone()</script>" target="panel">
+<form id="form2" action="data:text/html,<b>hello!</b><script>window.testRunner && testRunner.notifyDone()</script>" target="panel">
 <input type="submit" value="Submit local page Javascript"/>
 </form>
 <iframe id="target"></iframe><iframe id="panel"></iframe>

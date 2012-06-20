@@ -25,9 +25,9 @@ function checkError(e) {
     debug('');
 }
 
-if (window.layoutTestController) {
-    layoutTestController.setGeolocationPermission(true);
-    layoutTestController.setMockGeolocationPosition(mockLatitude, mockLongitude, mockAccuracy);
+if (window.testRunner) {
+    testRunner.setGeolocationPermission(true);
+    testRunner.setMockGeolocationPosition(mockLatitude, mockLongitude, mockAccuracy);
 } else
     debug('This test can not be run without the LayoutTestController');
 
@@ -36,13 +36,13 @@ navigator.geolocation.watchPosition(function(p) {
     switch (state++) {
         case 0:
             checkPosition(p);
-            if (window.layoutTestController)
-                layoutTestController.setMockGeolocationPosition(++mockLatitude, ++mockLongitude, ++mockAccuracy);
+            if (window.testRunner)
+                testRunner.setMockGeolocationPosition(++mockLatitude, ++mockLongitude, ++mockAccuracy);
             break;
         case 1:
             checkPosition(p);
-            if (window.layoutTestController)
-                layoutTestController.setMockGeolocationError(mockCode, mockMessage);
+            if (window.testRunner)
+                testRunner.setMockGeolocationError(mockCode, mockMessage);
             break;
         case 3:
             checkPosition(p);
@@ -56,8 +56,8 @@ navigator.geolocation.watchPosition(function(p) {
     switch (state++) {
         case 2:
             checkError(e);
-            if (window.layoutTestController)
-                layoutTestController.setMockGeolocationPosition(++mockLatitude, ++mockLongitude, ++mockAccuracy);
+            if (window.testRunner)
+                testRunner.setMockGeolocationPosition(++mockLatitude, ++mockLongitude, ++mockAccuracy);
             break;
         default:
             testFailed('Error callback invoked unexpectedly');

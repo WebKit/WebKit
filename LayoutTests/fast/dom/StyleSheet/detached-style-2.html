@@ -7,8 +7,8 @@
 Test that &lt;link> elements only have stylesheets when in document.</p>
 <pre id=result></pre>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 head = document.getElementsByTagName("head")[0];
 link = document.getElementsByTagName("link")[0];

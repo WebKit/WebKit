@@ -4,9 +4,9 @@
 <div id="description"/>
 <div id="console"/>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var console = document.getElementById("console");
@@ -17,8 +17,8 @@ function recieveMessage(evt) {
       var data = evt.data;
       if (data.i == 0) {
           console.innerHTML += "Done."
-          if (window.layoutTestController)
-              layoutTestController.notifyDone();
+          if (window.testRunner)
+              testRunner.notifyDone();
       }
       else {
           if (data.i < maxCount) {
@@ -50,8 +50,8 @@ function recieveMessage(evt) {
       }
     } catch (e) {
         console.innerHTML += "Exception " + e + "<br>";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 window.addEventListener('message', recieveMessage, false);

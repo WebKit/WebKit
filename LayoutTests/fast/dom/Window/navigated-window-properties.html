@@ -4,9 +4,9 @@
 <p>Accessing properties of a navigated window shouldn't crash</p>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 
@@ -19,8 +19,8 @@ function testPhase1() {
 
 function testPhase2() {
     func();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <iframe id="subframe" src="resources/navigated-window-prop-subframe1.html"></iframe>

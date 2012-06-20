@@ -1,8 +1,8 @@
 <html>
     <body>
         <script>
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
         </script>
         <label id="label">Label: <input type=text onfocus="document.getElementById('output').innerHTML = 'THIS TEST HAS PASSED'"></label>
         <div id="output">THIS TEST HAS FAILED</div>

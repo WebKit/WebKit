@@ -1,7 +1,7 @@
 <html>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
     
 var iterator = document.createNodeIterator(document, NodeFilter.SHOW_ELEMENT, 0, false);
 var walker = document.createTreeWalker(document, NodeFilter.SHOW_ELEMENT, 0, false);

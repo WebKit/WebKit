@@ -9,8 +9,8 @@
         var fr = document.getElementById('fr');
         var tf1 = fr.contentDocument.getElementById('tf1');
         tf0.focus();
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
             eventSender.keyDown("1");
             eventSender.keyDown("2");
             eventSender.keyDown("3");

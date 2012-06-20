@@ -7,9 +7,9 @@
   <script type="application/javascript">
     function runTest()
     {
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
       }
 
       var e = {};
@@ -77,8 +77,8 @@
       check(39, 212, 0, 10, 0, 10, [e.p5, e.body]);
       check(39, 212, 10, 10, 10, 10, [e.p5, e.d2, e.p2, e.body]);
 
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
 
     window.onload = runTest;

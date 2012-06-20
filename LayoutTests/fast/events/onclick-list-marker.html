@@ -20,12 +20,12 @@ function clickCounter() {
 
 function runTest() {
 
-    if (!layoutTestController) {
+    if (!testRunner) {
         document.write("Cannot be run interactively");
         return;
     }
     
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     var ul = document.getElementById("ul");
     var li = document.getElementById("li");

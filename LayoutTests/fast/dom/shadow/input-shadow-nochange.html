@@ -12,10 +12,10 @@
 var container = document.getElementById("container");
 
 function doTest() {
-    if (!window.layoutTestController || !window.internals)
+    if (!window.testRunner || !window.internals)
         return;
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     var input = document.createElement('input');
     var inputTypes = [

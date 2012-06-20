@@ -4,8 +4,8 @@ not crash.</p>
 
 <input id="1"> 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var evt = document.createEvent("KeyboardEvent");
 evt.initKeyboardEvent("keydown", true, true, window, 0, 0, 0, 0, 0, 0, "a");

@@ -27,8 +27,8 @@
 
         function test()
         {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
                 
             window.addEventListener("submit", window_listener, true); 
             document.getElementById('outer_form').addEventListener("submit", reg_listener, true); 

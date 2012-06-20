@@ -1,5 +1,5 @@
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 var constructors = ["Image", "MessageChannel", "Option", "XMLHttpRequest", "Audio"];
 
@@ -44,8 +44,8 @@ window.onload = function () {
             }
         }
         
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     };
     testFrame.src = 'data:text/html,<script>var constructors = ["Image", "MessageChannel", "Option", "XMLHttpRequest", "Audio"];'
                   + 'for(var i = 0; i < constructors.length; i++) if(window[constructors[i]])'

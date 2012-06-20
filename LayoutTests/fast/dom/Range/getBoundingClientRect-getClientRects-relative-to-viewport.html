@@ -14,8 +14,8 @@
     <div id="pusher">This box is here to create scrollbars.</div>
 </div>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var range = document.createRange();
     range.selectNodeContents(document.getElementById('test'));
@@ -45,7 +45,7 @@
     shouldBe("unScrolledBoundingBox.left - scrolledRightBoundingBox.left", "50");
     shouldBe("unScrolledBoundingBoxes[0].left - scrolledRightBoundingBoxes[0].left", "50");
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);
     }

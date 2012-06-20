@@ -10,9 +10,9 @@ Hash and search properties should be non-empty only if they were specified.<br>
 <a id="link3" href="http://localhost:3000/?search#test">link with hash</a>
 <div id="out"></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 if (window.location.toString().charAt(window.location.toString().length - 1) != "#") {
@@ -26,8 +26,8 @@ if (window.location.toString().charAt(window.location.toString().length - 1) != 
                   + "link1.search: " + link1.search + "<br>"
                   + "link2.search: " + link2.search + "<br>"
                   + "link3.search: " + link3.search + "<br>"
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } else
         window.location += "?#";
 
@@ -45,8 +45,8 @@ if (window.location.toString().charAt(window.location.toString().length - 1) != 
                   + "link2.search: " + link2.search + "<br>"
                   + "link3.search: " + link3.search + "<br>"
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

@@ -2,9 +2,9 @@
 <head>
 <script>
 function runTests() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpTitleChanges();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpTitleChanges();
     }
     
     document.title = '1. setting document.title';

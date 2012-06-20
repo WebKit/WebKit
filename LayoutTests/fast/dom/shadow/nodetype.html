@@ -9,8 +9,8 @@
 This tests the shadow host's and shadow root's nodeType.
 </pre>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         
         var keygen = document.getElementById('keys');
         var shadow = internals.shadowRoot(keygen);

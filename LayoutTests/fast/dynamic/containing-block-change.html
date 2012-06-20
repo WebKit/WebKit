@@ -2,14 +2,14 @@
     function test()
     {
         document.body.offsetTop;    // force layout
-        if (window.layoutTestController)
-            layoutTestController.display();
+        if (window.testRunner)
+            testRunner.display();
         var t = document.getElementById('t');
         t.style.position = 'relative';
         document.body.offsetTop;    // force layout
         t.lastChild.removeChild(t.lastChild.lastChild);
-        if (window.layoutTestController)
-            layoutTestController.display();
+        if (window.testRunner)
+            testRunner.display();
     }
 </script>
 <body onload="test()">

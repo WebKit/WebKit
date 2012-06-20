@@ -2,10 +2,10 @@
 <body onload="runTest()">
 <script>
 var count = 0;
-if (window.layoutTestController)
+if (window.testRunner)
 {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function runTest()
@@ -18,8 +18,8 @@ function runTest()
     catch (exception) {
        divBlock.innerHTML = "Threw an exception - " + exception;
     }
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function eventListener()

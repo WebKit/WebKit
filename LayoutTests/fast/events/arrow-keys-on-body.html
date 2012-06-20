@@ -55,8 +55,8 @@ log("target - type - " + ["ctrlKey", "altKey", "shiftKey", "metaKey"]
         + ' - ' + "keyCode"
         + ' - ' + "charCode");
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     eventSender.keyDown("leftArrow", []);
 }
 

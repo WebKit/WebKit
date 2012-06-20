@@ -3,9 +3,9 @@
 <p>Test that when window.onerror handler is called, window.event is the corresponding ErrorEvent object. <a href="https://bugs.webkit.org/show_bug.cgi?id=8519">Bug 8519</a>.</p>
 <div id="console"></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(msg) {
@@ -23,8 +23,8 @@ window.onerror = function(msg, url, line)
     log("window.event.message = " + window.event.message);
     log("window.event.filename = " + lastPathComponent(window.event.filename));
     log("window.event.lineno = " + window.event.lineno);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
     return true;
 }
 

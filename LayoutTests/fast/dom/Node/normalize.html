@@ -157,8 +157,8 @@ function runTest(testDiv, testName)
 
 function runTests()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     try {
         var tests = document.getElementById("tests").childNodes;

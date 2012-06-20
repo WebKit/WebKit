@@ -1,9 +1,9 @@
 <html>
 <script>
 function runTest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     var image = new Image();
@@ -11,8 +11,8 @@ function runTest() {
     image.onload = function () {
         document.getElementById('result').innerHTML = 'SUCCESS';
         
-        if (window.layoutTestController) 
-            layoutTestController.notifyDone();
+        if (window.testRunner) 
+            testRunner.notifyDone();
     }
     
     image.src = 'resources/blue_rect.jpg'

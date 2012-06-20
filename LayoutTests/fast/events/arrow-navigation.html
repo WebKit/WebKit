@@ -6,8 +6,8 @@
                 var tf = document.getElementById('tf');
                 tf.focus();
                 tf.setSelectionRange(0, 0);
-                if (window.layoutTestController) {
-                    layoutTestController.dumpAsText();
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
                     eventSender.keyDown("rightArrow");
                 }
                 if (tf.selectionStart == 1)

@@ -1,7 +1,7 @@
 <script type="text/javascript">
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 
     window.onload = function() {
@@ -13,8 +13,8 @@
             document.querySelectorAll('h1:first-child');
             if (window.location.toString().indexOf('?') < 0)
                 window.setTimeout(doReload, 100);
-            else if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            else if (window.testRunner)
+                testRunner.notifyDone();
         }
 
         window.setTimeout(doQSA, 100);

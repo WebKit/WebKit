@@ -3,9 +3,9 @@
 <head>
     <script src="../js/resources/js-test-pre.js"></script>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         
         var dropTarget;
@@ -17,8 +17,8 @@
                 dropTarget.style.display = "none";
                 setTimeout(function() {
                     shouldBeEqualToString("dropTarget.value", "C:\\fakepath\\abe.png");
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
+                    if (window.testRunner)
+                        testRunner.notifyDone();
                 }, 0);
             }, false);
             

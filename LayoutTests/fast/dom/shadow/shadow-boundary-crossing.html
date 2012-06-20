@@ -268,8 +268,8 @@ var tests = {
 
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     logDiv = document.getElementById('log');
     for(var testName in tests) {

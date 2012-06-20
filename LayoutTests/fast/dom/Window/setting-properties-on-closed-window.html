@@ -6,8 +6,8 @@ function handleTimeout()
     w.status = i;
     
     if (i == 2) {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     
     setTimeout(handleTimeout, 1);    
@@ -15,10 +15,10 @@ function handleTimeout()
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-        layoutTestController.setCanOpenWindows();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.setCanOpenWindows();
     }
     
     i = 0;

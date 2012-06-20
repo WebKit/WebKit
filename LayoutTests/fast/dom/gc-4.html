@@ -9,8 +9,8 @@ function print(message) {
 }
 
 function test() {
-	if (window.layoutTestController) {
-		layoutTestController.dumpAsText();
+	if (window.testRunner) {
+		testRunner.dumpAsText();
 	}
 
 	for (x = 0; x < 1000; x++) {

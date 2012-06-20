@@ -30,9 +30,9 @@ function allocate() {
 }
 
 (function () {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     var listener = function () { return "click"; };
@@ -59,7 +59,7 @@ function allocate() {
     // See if the listener is still registered.
     shouldBe("div.onclick", div.onclick, listener);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 })();
 </script>

@@ -3,9 +3,9 @@
 <script>
 function testShouldNotCrash()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    window.layoutTestController.dumpAsText();
+    window.testRunner.dumpAsText();
 
     var host = document.createElement("blockquote");
     var shadow = internals.ensureShadowRoot(host);

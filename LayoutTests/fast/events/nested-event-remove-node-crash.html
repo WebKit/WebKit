@@ -14,8 +14,8 @@ function callback(response)
 {
     document.getElementById("replaceMe").innerHTML = "";
     document.getElementById("replaceMe").innerHTML = response;
-    if (window.layoutTestController && (run == 2))
-        layoutTestController.notifyDone();
+    if (window.testRunner && (run == 2))
+        testRunner.notifyDone();
 }
 
 function handleStateChange()
@@ -37,9 +37,9 @@ function test()
     document.getElementById("theSelect").focus();
     sendXHR();
     
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 }
 

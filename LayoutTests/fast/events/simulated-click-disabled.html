@@ -16,8 +16,8 @@ function clickOn(element)
 
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     clickOn(document.querySelector('label'));
     document.querySelector('div').textContent = document.getElementById('target').checked ? 'FAIL' : 'PASS';

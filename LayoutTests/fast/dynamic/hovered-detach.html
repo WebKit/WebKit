@@ -2,9 +2,9 @@
 <script type="text/javascript">
 function test()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     eventSender.mouseMoveTo(0, 0);      // outside span
     var a = document.getElementById('a');
     document.body.offsetTop;            // force layout

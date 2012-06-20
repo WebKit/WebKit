@@ -16,8 +16,8 @@ window.onload = function () {
     getSelection().getRangeAt(0).extractContents();
     range.getBoundingClientRect();
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     alert("This test calls getBoundingClientRect on a range obtained inside a mutation event listener.\n"
     + "The test passes if WebKit doesn't crash.\n\n"

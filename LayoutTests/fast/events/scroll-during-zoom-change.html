@@ -16,8 +16,8 @@
     function scrolled(event)
     {
         event.target.parentNode.removeChild(event.target);
-        if (window.layoutTestController) {
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.notifyDone();
         }
     }
 
@@ -30,9 +30,9 @@
         document.body.style.zoom = 2;
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     test();
 </script>

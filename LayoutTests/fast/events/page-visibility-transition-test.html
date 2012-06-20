@@ -10,23 +10,23 @@ description("This test checks that Page Visibility state values are correct and 
 var jsTestIsAsync = true;
 
 function makePageVisible() {
-    if (window.layoutTestController)
-        layoutTestController.setPageVisibility("visible");
+    if (window.testRunner)
+        testRunner.setPageVisibility("visible");
 }
 
 function makePageHidden() {
-    if (window.layoutTestController)
-        layoutTestController.setPageVisibility("hidden");
+    if (window.testRunner)
+        testRunner.setPageVisibility("hidden");
 }
 
 function makePagePrerender() {
-    if (window.layoutTestController)
-        layoutTestController.setPageVisibility("prerender");
+    if (window.testRunner)
+        testRunner.setPageVisibility("prerender");
 }
 
 function makePagePreview() {
-    if (window.layoutTestController)
-        layoutTestController.setPageVisibility("preview");
+    if (window.testRunner)
+        testRunner.setPageVisibility("preview");
 }
 
 function checkIsPageVisible() {
@@ -68,8 +68,8 @@ function startTest() {
 }
 
 function finishTest() {
-    if (window.layoutTestController) {
-        layoutTestController.resetPageVisibility();
+    if (window.testRunner) {
+        testRunner.resetPageVisibility();
     }
     finishJSTest();
 }

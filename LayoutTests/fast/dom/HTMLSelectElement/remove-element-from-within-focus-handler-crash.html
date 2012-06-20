@@ -4,8 +4,8 @@
 <h2>Layout test for <a href='https://bugs.webkit.org/show_bug.cgi?id=23858'>bug 23858</a></h2>
 <p>If this page is displayed without crashing then the test has passed.</p>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var select = document.getElementById('bomb');
     var mouseEvent = document.createEvent("MouseEvents");

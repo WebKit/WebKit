@@ -2,11 +2,11 @@
 <html>
 <script>
 var count = 0;
-if (!window.layoutTestController)
+if (!window.testRunner)
     document.write("This test requires GCController.");
 else {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     function crash() {
         if (++count > 1)
@@ -15,7 +15,7 @@ else {
         document.write('PASS');
         document.close();
         GCController.collect();
-        setTimeout("layoutTestController.notifyDone()", 0);
+        setTimeout("testRunner.notifyDone()", 0);
     }
 
     setTimeout(function () {

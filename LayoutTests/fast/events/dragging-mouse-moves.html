@@ -11,12 +11,12 @@ function log(msg)
 
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
         testDragAndMove();
     } else
-        log("layoutTestController is not available");
+        log("testRunner is not available");
 
 }
 
@@ -38,7 +38,7 @@ function testDragAndMove()
     eventSender.mouseUp();
     document.getElementById("test").style.display = "none";
     log("PASS");
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
  }
         </script>
     </head>

@@ -1,9 +1,9 @@
 <pre id="console"></pre>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText()
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText()
 }
 
 function log(msg)
@@ -90,8 +90,8 @@ function done(didPass)
     else
         log("FAIL: All tests did not pass.");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 setTimeout1();

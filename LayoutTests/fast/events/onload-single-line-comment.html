@@ -5,13 +5,13 @@
 function loaded()
 {
     document.getElementById("result").innerHTML = "PASS";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText()    
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText()    
 }
 </script>
 </head>

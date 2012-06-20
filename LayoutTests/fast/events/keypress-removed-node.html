@@ -5,8 +5,8 @@ been removed from the DOM.</p>
 <pre id="console">PASS: did not get keyboard event.</pre>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
     
 input = document.getElementsByTagName('input')[0];
 input.focus();

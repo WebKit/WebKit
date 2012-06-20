@@ -4,9 +4,9 @@
 <script>
 
 window.onload = function() {
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
 
         var iframeElement = document.querySelector('iframe');
         iframeElement.onload = function() {
@@ -17,7 +17,7 @@ window.onload = function() {
             frame.Window;
 
             document.body.textContent = 'PASS';
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         };
         iframeElement.src = 'data:text/html,PASS';
     }

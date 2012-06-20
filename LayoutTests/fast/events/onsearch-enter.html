@@ -5,8 +5,8 @@
         {
             var sf = document.getElementById('sf');
             sf.focus();
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
                 eventSender.keyDown("\r", []);
             }
         }

@@ -5,10 +5,10 @@
 <pre id="log"></pre>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
 }
 
 var log = document.getElementById('log');
@@ -18,7 +18,7 @@ var numberOfFrames = 3;
 function test(iframe) {
     if (iframe.done) {
         if (numberOfBeforeUnloadInSubframes == numberOfFrames)
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         return;
     }
     iframe.done = true;

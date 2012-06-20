@@ -1,8 +1,8 @@
 description("Tests that when a request is made on a Geolocation object after its frame has been disconnected, no callbacks are made and no crash occurs.");
 
-if (window.layoutTestController) {
-    layoutTestController.setGeolocationPermission(true);
-    layoutTestController.setMockGeolocationPosition(51.478, -0.166, 100);
+if (window.testRunner) {
+    testRunner.setGeolocationPermission(true);
+    testRunner.setMockGeolocationPosition(51.478, -0.166, 100);
 }
 
 function onFirstIframeLoaded() {

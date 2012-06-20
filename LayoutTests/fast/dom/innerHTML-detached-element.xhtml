@@ -2,8 +2,8 @@
 <body>
 <pre id="log"/>
 <script><![CDATA[
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function log(message) {
         document.getElementById("log").textContent += (message + "\n");

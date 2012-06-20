@@ -6,9 +6,9 @@ You should see PASS below.
 <div id="output"></div>
 <iframe id="inner" src="resources/wrapper-context-inner.html"></iframe>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function writeOutput(s) {

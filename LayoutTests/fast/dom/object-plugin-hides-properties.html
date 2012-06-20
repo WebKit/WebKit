@@ -4,8 +4,8 @@
 <script type="text/javascript">
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var result = document.getElementById('obj').children == undefined ? "FAILED" : "PASSED";
     document.getElementById("result").innerText = result;

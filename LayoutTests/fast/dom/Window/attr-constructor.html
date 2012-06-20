@@ -4,8 +4,8 @@ window.Attr is undefined.</p>
 <div id=test></div>
 <script>
   try {
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+    if (window.testRunner)
+      testRunner.dumpAsText();
 
     Attr.prototype.foobar = function () { document.write("SUCCESS"); }
 

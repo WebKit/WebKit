@@ -2,10 +2,10 @@
 <script>
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     document.all.input.value = "PASS"
-    if (window.layoutTestController)
+    if (window.testRunner)
         document.getElementById('res').innerText = document.all.input.value;
 }
 </script>

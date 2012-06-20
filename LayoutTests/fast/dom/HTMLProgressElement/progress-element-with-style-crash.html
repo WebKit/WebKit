@@ -1,17 +1,17 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function test() {
     // It is necessary to allow some time for the progress bar to render the
     // progress and produce the crash.
     window.setTimeout(function() {
-          if (window.layoutTestController)
-              layoutTestController.notifyDone();
+          if (window.testRunner)
+              testRunner.notifyDone();
     }, 10);
 }
 </script>

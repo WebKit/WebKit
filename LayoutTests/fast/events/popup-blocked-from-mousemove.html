@@ -1,14 +1,14 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.setPopupBlockingEnabled(true);
-    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.setPopupBlockingEnabled(true);
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    testRunner.waitUntilDone();
     // Record current window count.
-    window.windowCount = window.layoutTestController.windowCount();
+    window.windowCount = window.testRunner.windowCount();
 }
 
 function eventfire()
@@ -27,11 +27,11 @@ window.onload = function() {
     
     function finishTest()
     {
-        if (layoutTestController.windowCount() == window.windowCount)
+        if (testRunner.windowCount() == window.windowCount)
             document.getElementById("console").innerText = "PASSED";
         else
             document.getElementById("console").innerText = "FAILED";
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
     setTimeout(finishTest, 0);
 }

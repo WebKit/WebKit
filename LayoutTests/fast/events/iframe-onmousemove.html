@@ -2,8 +2,8 @@
 <head>
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 var testFinished = false;
 
@@ -14,8 +14,8 @@ function done()
     testFinished = true;
     testPassed("received mousemove event.");
     debug('<br /><span class="pass">TEST COMPLETE</span>');
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest()

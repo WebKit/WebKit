@@ -7,8 +7,8 @@ function debug(str) {
 }
 
 function runTests() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
         
     debug('document.all: ' + document.all)
     

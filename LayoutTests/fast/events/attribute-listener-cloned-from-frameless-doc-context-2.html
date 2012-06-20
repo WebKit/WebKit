@@ -2,9 +2,9 @@
 <body onload="test()">
 <iframe src='data:text/html,<a id="a" href="#" onclick="document.write(window != top ? &apos;<p>FAIL</p>&apos; : &apos;<p>PASS</p>&apos;); return false">link</a>'></iframe>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function test()
@@ -24,8 +24,8 @@ function test2()
     var event = top.document.createEvent('MouseEvent');
     event.initEvent('click', true, true);
     top.document.getElementsByTagName('a')[0].dispatchEvent(event);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </body>

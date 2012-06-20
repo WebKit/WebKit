@@ -1,8 +1,8 @@
 <body style="margin:0">
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 </script>
 
@@ -27,6 +27,6 @@ if (window.eventSender) {
 function finished()
 {
     document.getElementById('console').innerHTML = "Scroll offset is " + document.getElementById('overflow').scrollTop;
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 </script>

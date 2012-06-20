@@ -6,8 +6,8 @@
                 dv.style.display = "none";
             }
             function test() {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
                 if (window.eventSender) {
                     eventSender.dragMode = false;
                     eventSender.mouseMoveTo(100, 50);

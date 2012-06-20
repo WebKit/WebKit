@@ -29,8 +29,8 @@
     var r = document.getElementById('subpixel-test').getBoundingClientRect();
     var hasSubpixelSupport = r.right - r.left == 4.5;
     
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     description('This checks for proper behavior of caretRangeFromPoint before and after scrolling.');        
 
@@ -100,7 +100,7 @@
     eventSender.zoomPageOut();
     testsWithBaseline(topBaseline, elementTop.firstChild, "zoom");
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);
     }

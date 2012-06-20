@@ -5,15 +5,15 @@ This layout test is checks that we don't crash when a stand alone image is dragg
 <script>
 function waitForImageLoad()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     var img = document.body.getElementsByTagName("img")[0];
     if (img.width != 0)
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     else {
         img.addEventListener("load", function() {
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }, false);
     }
 }

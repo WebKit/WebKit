@@ -18,9 +18,9 @@ function log(message)
     document.getElementById("log").innerHTML += message + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function test1()
@@ -43,8 +43,8 @@ function test2()
     channel = 0;
     gc();
     log("PASS: port closed.");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 test1();

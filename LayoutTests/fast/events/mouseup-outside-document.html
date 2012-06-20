@@ -19,8 +19,8 @@ function main()
 {
     document.addEventListener("mouseup", document_mouseUp, false);
     
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     
     if (window.eventSender) {
         eventSender.mouseMoveTo(20, 20); // in window

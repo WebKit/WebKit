@@ -18,8 +18,8 @@
       if (++numFramesLoaded == 2)
         runTest();
     }
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
   </script>
   <frameset rows="100px, 100px, *">
     <frame onload="frameLoaded()" src="resources/standalone-image-drag-to-editable-frame.html">

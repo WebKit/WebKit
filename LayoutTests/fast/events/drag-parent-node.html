@@ -17,7 +17,7 @@ window.ondragstart = function() {
 }
 
 window.ondragend = function() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     if (dragStarted) {
@@ -26,7 +26,7 @@ window.ondragend = function() {
 }
 
 function test() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     if (!window.eventSender)
@@ -34,8 +34,8 @@ function test() {
 
     document.getElementById('results').innerHTML = 'Test failed.';
 
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     var testBookmark = document.getElementById('testBookmark');
     var x = testBookmark.offsetLeft + testBookmark.offsetWidth / 2;
@@ -46,7 +46,7 @@ function test() {
     eventSender.mouseMoveTo(x + 100, y + 100);
     eventSender.mouseUp();
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 

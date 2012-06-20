@@ -4,9 +4,9 @@
     <div id="target" style="height: 75%; background-color: red;"></div>
 </div>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     window.onload = function () {
@@ -24,15 +24,15 @@
     function pass()
     {
         result.innerHTML = "PASS";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     
     function fail()
     {
         result.innerHTML = "FAIL";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     function toggleOverflow()

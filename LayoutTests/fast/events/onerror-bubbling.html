@@ -13,16 +13,16 @@ function print(message, color)
 
 function test() 
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-        window.setTimeout("layoutTestController.notifyDone()", 5000); // prevent hang on failure
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        window.setTimeout("testRunner.notifyDone()", 5000); // prevent hang on failure
     }
         
     var div = document.createElement("div");
     div.setAttribute("onerror", "print('FAILED: dynamic script load error bubbled'); \
-                                 if (window.layoutTestController) \
-                                    layoutTestController.notifyDone();");
+                                 if (window.testRunner) \
+                                    testRunner.notifyDone();");
     
     var script = document.createElement("script");
     script.src="file:///GregTheBunny.js";
@@ -38,8 +38,8 @@ function scriptOnerror()
 
     // Allow event bubbling phase to complete.
     setTimeout(function() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 }
 

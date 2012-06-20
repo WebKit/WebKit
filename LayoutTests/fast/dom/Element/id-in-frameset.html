@@ -5,14 +5,14 @@
   <frame name="frame1" src="javascript:
     function log(s)
     {
-      if (window.layoutTestController)
+      if (window.testRunner)
         alert(s);
       else
         top.frame1.document.write('<p>' + s + '</p>');
     }
 
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+    if (window.testRunner)
+      testRunner.dumpAsText();
 
     top.frameset.removeChild(top.frame2.frameElement);
     log(top.frameset.children.length);

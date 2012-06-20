@@ -5,7 +5,7 @@ This tests HTMLIFrameElement.contentWindow.
 
 If there is no crash this test passes.
 <script type="text/javascript">
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     document.createElement('iframe').contentWindow;
 </script>

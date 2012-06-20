@@ -11,8 +11,8 @@ function turnAnchorIntoBlock()
 {
     document.getElementById("a").style.display = "block";
     document.getElementById("span").firstChild.data = "PASSED";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function turnSpanIntoBlock()
@@ -25,9 +25,9 @@ function turnSpanIntoBlock()
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     setTimeout(turnSpanIntoBlock, 0);
 }

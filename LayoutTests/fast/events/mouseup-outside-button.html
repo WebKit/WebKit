@@ -20,8 +20,8 @@ function main()
 {
     document.getElementById('button').addEventListener("mouseup", button_mouseUp, false);
     
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     
     if (window.eventSender) {
         eventSender.mouseMoveTo(40, 20); // in button

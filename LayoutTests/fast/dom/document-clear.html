@@ -3,8 +3,8 @@
   <script src="resources/document-clear.js"></script>
   <p>Calling document.clear() from an external script should not crash.</p>
   <script>
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+    if (window.testRunner)
+      testRunner.dumpAsText();
   </script>
   <p>If successful, there will be 4 lines total</p>
 </html>

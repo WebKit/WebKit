@@ -25,8 +25,8 @@ function changeDir(new_dir)
 
 onload = function()
 {
-    if (window.layoutTestController)                    
-        layoutTestController.dumpAsText();
+    if (window.testRunner)                    
+        testRunner.dumpAsText();
 
     assertEqual("original scroll x for RTL page ", window.scrollX, 0);
     window.scrollTo(-100, 0);

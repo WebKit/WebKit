@@ -7,9 +7,9 @@
   <script type="application/javascript">
     function runTest()
     {
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
       }
 
       var e = {};
@@ -44,8 +44,8 @@
       check(divCenter.x, divCenter.y, 0, 0, divBottom.y - divCenter.y, 0, [div, body], innerDocument);
       check(divCenter.x, divCenter.y, 0, 0, pCenter.y - divCenter.y, 0, [p, div, body], innerDocument);
 
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
 
     window.onload = runTest;

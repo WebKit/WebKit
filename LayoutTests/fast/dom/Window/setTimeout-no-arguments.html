@@ -16,15 +16,15 @@ function handleTimeout()
 {
     document.getElementById("console").innerHTML = 'Result: <span class="pass">Timeout was successful</span><br>';
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     setTimeout(handleTimeout);

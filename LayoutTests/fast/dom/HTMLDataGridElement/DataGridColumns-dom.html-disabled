@@ -3,9 +3,9 @@
     <pre id="console"></pre>
     <datagrid id="test"><dcol id="from" label="From" type="text" primary><dcol id="subject" label="Subject" type="text"></datagrid>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         function log(msg)
@@ -121,8 +121,8 @@
             log("FAIL: Threw exception " + exception);
         }
         
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     </script>
 </body>
 </html>

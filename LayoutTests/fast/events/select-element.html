@@ -64,7 +64,7 @@ function sendKeyAndExpectIndex(selectId, key, initialIndex, expectedIndex) {
         log("can't set selectedIndex to " + initialIndex + ' (is ' + select.selectedIndex + ')');
         return false;
     }
-    if (window.layoutTestController)
+    if (window.testRunner)
         eventSender.keyDown(key);
     if (select.selectedIndex != expectedIndex) {
         log('selectedIndex should be ' + expectedIndex + ' (is ' + select.selectedIndex + ') after a ' + key + ' from index ' + initialIndex);
@@ -110,7 +110,7 @@ function clearSelection(select) {
 function sendWithShiftKeyAndExpectIndices(selectId, key, expectedIndices) {
     var select = document.getElementById(selectId);
     select.focus();
-    if (window.layoutTestController)
+    if (window.testRunner)
         eventSender.keyDown(key, ["shiftKey"]);
     nowSelected = getSelectedIndices(select);
     if (!equalArrays(nowSelected, expectedIndices)) {

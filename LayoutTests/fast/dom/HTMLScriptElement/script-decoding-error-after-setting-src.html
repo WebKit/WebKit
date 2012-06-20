@@ -8,9 +8,9 @@
     <div id="content_panel">≤‚ ‘</div>
     <script>
     function set_script_src() {
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
       }
       var script_obj = document.getElementById("script_target");
       if (script_obj) {

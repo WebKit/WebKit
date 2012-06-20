@@ -48,7 +48,7 @@ function touchEndHandler()
 
     if (++endCount == 2)
     {
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
         isSuccessfullyParsed();
     }
 }
@@ -63,8 +63,8 @@ div2.addEventListener("touchend", touchEndHandler, false);
 
 description("Tests that the an event is sent for every touch listener, and target touches contains all the points for that target");
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
 }
 
 if (window.eventSender) {

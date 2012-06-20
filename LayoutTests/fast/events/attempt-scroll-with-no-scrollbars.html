@@ -4,10 +4,10 @@ var theWinref;
 
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.setCanOpenWindows();
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.setCanOpenWindows();
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
     theWinref = window.open('','_blank','scrollbars=no');
     setTimeout(doNewWindow, 250);
@@ -35,9 +35,9 @@ function printResult()
 
 function endTest()
 {
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         if (theWinref.closed)
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         else
             setTimeout("endTest()", 10);
     }

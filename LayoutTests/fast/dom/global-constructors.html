@@ -30,8 +30,8 @@ function shouldBe(a, b)
 
 function test() 
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     domParser = new DOMParser();
     shouldBe("DOMParser.prototype.isPrototypeOf(domParser)", true);

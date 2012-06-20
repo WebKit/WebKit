@@ -16,14 +16,14 @@ function nick_onload()
     ++nick_load_count;
     if (nick_load_count == 2) {
         log("SUCCESS.  Two loads.");
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpResourceResponseMIMETypes();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpResourceResponseMIMETypes();
 }
 </script>
 <p>This test verifies that an image which is prefetched, and which is also contained as a

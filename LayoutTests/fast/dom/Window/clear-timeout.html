@@ -1,8 +1,8 @@
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function f1()
@@ -13,8 +13,8 @@ function f1()
 function f2()
 {
     document.getElementById('line2').appendChild(document.createTextNode('The function f2 was called.'));
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 var t1 = setTimeout('f1()', 0);

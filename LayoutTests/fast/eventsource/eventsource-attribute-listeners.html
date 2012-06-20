@@ -7,9 +7,9 @@ function log(msg) {
     document.getElementById("result").innerHTML += msg + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var es = new EventSource("eventsource");
@@ -45,8 +45,8 @@ if (flag) {
 else
     log("FAIL: dispatching event on an EventSource does not trigger attribute listener");
 
-if (window.layoutTestController)
-    layoutTestController.notifyDone();
+if (window.testRunner)
+    testRunner.notifyDone();
 
 </script>
 </body>

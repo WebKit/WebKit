@@ -25,8 +25,8 @@ function getDescription(value)
 
 window.onload = function onload()
 {
-    if ("layoutTestController" in this)
-        layoutTestController.dumpAsText();
+    if ("testRunner" in this)
+        testRunner.dumpAsText();
 
     var arguments = [
         0,

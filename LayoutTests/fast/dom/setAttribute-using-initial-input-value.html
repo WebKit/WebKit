@@ -2,8 +2,8 @@
 <head>
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 </script>
 </head>
 <body>
@@ -42,8 +42,8 @@ Some values used with setAttribute() cause the attribute to be removed (null str
 <script src="../js/resources/js-test-post.js"></script>
 <script>
     elem.style.display = "none";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 </script>
 </body>
 </html>

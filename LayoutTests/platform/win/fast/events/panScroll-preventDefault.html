@@ -4,9 +4,9 @@
     </head>
     <body>
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
             
             addEventListener('mousedown', 
@@ -40,7 +40,7 @@
                 else
                     document.getElementById('console').innerHTML = "Success! Div with overflow was not scrolled";
                 
-                window.layoutTestController.notifyDone();
+                window.testRunner.notifyDone();
             }
         </script>
     </body>

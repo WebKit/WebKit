@@ -1,17 +1,17 @@
 <html>
   <head>
     <script>
-        if (window.layoutTestController)
+        if (window.testRunner)
         {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         window.onload = function ()
         {
             var element = document.getElementById("test");
             element.onchange = function() { element.size = 30; }
             element.focus();
-            if (window.layoutTestController)
+            if (window.testRunner)
             {
                 // This triggers selection of second option in the select and press Enter.
                 eventSender.keyDown("e");
@@ -20,7 +20,7 @@
                 document.body.offsetTop;
                 
                 document.getElementById("log").innerHTML = "<span style='color: green;'>PASS:</span> Did not crash";
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
          }
     </script>

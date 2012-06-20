@@ -9,8 +9,8 @@ function touchStartHandler(e)
 
 description("If this test does not crash then you pass!");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 if (window.eventSender) {
     eventSender.clearTouchPoints();

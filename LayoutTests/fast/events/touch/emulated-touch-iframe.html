@@ -13,7 +13,7 @@ function testComplete()
 {
     if (++eventCount === EXPECTED_EVENT_COUNT) {
         debug("Final touchend (test will time out if broken)");
-        window.layoutTestController.notifyDone();
+        window.testRunner.notifyDone();
     }
 }
 
@@ -30,8 +30,8 @@ function runTest() {
        debug('This test requires DRT.');
 }
 
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
 
 </script>
 </body>

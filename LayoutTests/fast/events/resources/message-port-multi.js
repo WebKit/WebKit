@@ -1,6 +1,6 @@
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 description("This test checks the various use cases around sending multiple ports through MessagePort.postMessage");
@@ -72,8 +72,8 @@ function testTransfers() {
                 testFailed("send-two-ports: failed to transfer two ports");
         } else if (event.data.id == "done") {
             debug('<br><span class="pass">TEST COMPLETE</span>');
-            if (window.layoutTestController)
-            layoutTestController.notifyDone();
+            if (window.testRunner)
+            testRunner.notifyDone();
         } else {
             testFailed("Unexpected message " + event.data);
         }

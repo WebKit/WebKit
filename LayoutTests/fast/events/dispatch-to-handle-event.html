@@ -8,8 +8,8 @@ handler.handleEvent = function (event) {
 }
 
 function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     document.addEventListener("event", handler, false);
     var event = document.createEvent("Event");

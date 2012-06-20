@@ -3,8 +3,8 @@
         <script>
             function test()
             {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
                 log(document.activeElement);
                 document.getElementById('one').focus();
                 log(document.activeElement + " id: " + document.activeElement.id);

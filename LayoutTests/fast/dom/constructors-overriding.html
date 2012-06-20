@@ -22,8 +22,8 @@ function shouldBe(a, b)
 
 function test() 
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
         
     window.Image = 1;
     window.Option = 1;

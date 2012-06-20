@@ -29,9 +29,9 @@ function setFavIcon(iconURL) {
 }
 
 function runTests() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpIconChanges();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpIconChanges();
     }
     iconURL = document.getElementsByTagName("head")[0].getElementsByTagName("link")[0].href;
     debugOutput ('Original iconURL is: ' + iconURL);

@@ -12,18 +12,18 @@
                 shouldBeUndefined("win");
             }
 
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.setCanOpenWindows();
-                layoutTestController.setPopupBlockingEnabled(true);
-                layoutTestController.setCloseRemainingWindowsWhenComplete(true);
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.setCanOpenWindows();
+                testRunner.setPopupBlockingEnabled(true);
+                testRunner.setCloseRemainingWindowsWhenComplete(true);
+                testRunner.waitUntilDone();
             }
 
             document.getElementById("test").click();
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         </script> 
     </body> 
 </html>

@@ -6,8 +6,8 @@ function test()
     else
         document.getElementById("failedDiv").setAttribute("style", "display:none;");
         
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 

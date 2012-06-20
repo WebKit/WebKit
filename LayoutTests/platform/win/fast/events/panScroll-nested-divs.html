@@ -4,9 +4,9 @@
     </head>
     <body>
         <script>
-            if (layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
         </script>
         <div id="overflow" style="width:500px; height:300px; overflow:auto; border:2px solid red; padding:10px">
@@ -42,7 +42,7 @@
                 else
                     document.getElementById('console').innerHTML = "Fail! Div with overflow was not scrolled";
                 
-                window.layoutTestController.notifyDone();
+                window.testRunner.notifyDone();
             }
         </script>
     </body>

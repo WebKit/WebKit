@@ -2,8 +2,8 @@
 <body>
 <div id="test"><!--SUCESS--></div>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 x = document.getElementById("test").firstChild;
 if (x && x.nodeType == Node.COMMENT_NODE)
     document.write(x.nodeValue);

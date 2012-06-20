@@ -2,8 +2,8 @@
 <body>
 <p>Test that HTML element constructors are accessible as window object properties.</p>
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 
 function test(className) {
   document.write("<p>" + className + ": " + eval("window." + className) + "</p>");

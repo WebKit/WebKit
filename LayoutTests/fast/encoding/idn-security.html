@@ -8,7 +8,7 @@
 function testIDNEncode(charCode)
 {
     var str = String.fromCharCode(charCode);
-    str = layoutTestController.encodeHostName(str);
+    str = testRunner.encodeHostName(str);
     if (str.substr(0, 4) == "xn--")
         return "punycode";
     return escape(str);
@@ -18,7 +18,7 @@ function testIDNEncodeNotFirstCharacter(charCode)
 {
     var str = String.fromCharCode(charCode);
     str = "a" + str;
-    str = layoutTestController.encodeHostName(str);
+    str = testRunner.encodeHostName(str);
     if (str.substr(0, 4) == "xn--")
         return "punycode";
     if (str.substr(0, 1) == "a")
@@ -29,8 +29,8 @@ function testIDNEncodeNotFirstCharacter(charCode)
 function testIDNRoundTrip(charCode)
 {
     var str = String.fromCharCode(charCode);
-    str = layoutTestController.encodeHostName(str);
-    str = layoutTestController.decodeHostName(str);
+    str = testRunner.encodeHostName(str);
+    str = testRunner.decodeHostName(str);
     if (str.substr(0, 4) == "xn--")
         return "punycode";
     return escape(str);
@@ -40,8 +40,8 @@ function testIDNRoundTripNotFirstCharacter(charCode)
 {
     var str = String.fromCharCode(charCode);
     str = "a" + str;
-    str = layoutTestController.encodeHostName(str);
-    str = layoutTestController.decodeHostName(str);
+    str = testRunner.encodeHostName(str);
+    str = testRunner.decodeHostName(str);
     if (str.substr(0, 4) == "xn--")
         return "punycode";
     if (str.substr(0, 1) == "a")

@@ -18,14 +18,14 @@
 
     function test()
     {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         
         // Test for select that's not inside a form element
         var menu1 = document.getElementById('menu1');
         menu1.focus();
 
-        if (window.layoutTestController) {
+        if (window.testRunner) {
             // change the option selection
             eventSender.keyDown('e');
         }
@@ -38,7 +38,7 @@
         var menu2 = document.getElementById('menu2');
         menu2.focus();
 
-        if (window.layoutTestController) {
+        if (window.testRunner) {
             // change the option selection
             eventSender.keyDown('e');
         }

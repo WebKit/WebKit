@@ -30,15 +30,15 @@ function imageLoaded() {
         debug('SUCCESS!')
     }
     
-    if (window.layoutTestController) { 
-        layoutTestController.notifyDone();
+    if (window.testRunner) { 
+        testRunner.notifyDone();
     }
 }
 
 function runTests() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     i1 = new Image();

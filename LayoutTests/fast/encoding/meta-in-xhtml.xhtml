@@ -12,8 +12,8 @@ Should only honor encoding from &lt;meta> in HTML</p>
 <p id="result" />
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.getElementById("result").innerHTML = "Charset: " + 
     (document.charset ? document.charset : document.characterSet) + " (should be UTF-8)";

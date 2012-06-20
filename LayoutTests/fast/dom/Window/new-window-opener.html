@@ -8,10 +8,10 @@
 <body>
 
     <script type="text/javascript">
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
-            layoutTestController.setCanOpenWindows();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            testRunner.setCanOpenWindows();
         }
 
     
@@ -73,8 +73,8 @@
         function nextTest() {
             if (testNum == lastTest) {
                 isSuccessfullyParsed();
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
                 return;
             } else if (testNum == 0) {
                 debug("");

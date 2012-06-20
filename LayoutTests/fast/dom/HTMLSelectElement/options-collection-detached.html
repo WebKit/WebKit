@@ -11,8 +11,8 @@
         Result: <span id="result">FAIL (test did not run)</span>
     </p>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         
         var select = document.createElement("select");
         var lastOption = document.createElement("option");

@@ -11,14 +11,14 @@ function touchcancelHandler() {
     shouldBeNonNull("cancelEvent");
     shouldBe("cancelEvent.pageX", touchX.toString());
     shouldBe("cancelEvent.pageY", touchY.toString());
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.testRunner) {
+        testRunner.notifyDone();
         isSuccessfullyParsed(); 
     }
 }
     
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
 
 window.onload = function() {
     if (window.eventSender) {

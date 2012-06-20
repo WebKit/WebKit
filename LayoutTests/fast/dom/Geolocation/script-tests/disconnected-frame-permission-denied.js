@@ -2,9 +2,9 @@ description("Tests that when a request is made on a Geolocation object, permissi
 
 // Prime the Geolocation instance by denying permission. This makes sure that we execute the
 // same code path for both preemptive and non-preemtive permissions policies.
-if (window.layoutTestController) {
-    layoutTestController.setGeolocationPermission(false);
-    layoutTestController.setMockGeolocationPosition(51.478, -0.166, 100);
+if (window.testRunner) {
+    testRunner.setGeolocationPermission(false);
+    testRunner.setMockGeolocationPosition(51.478, -0.166, 100);
 } else
     debug('This test can not be run without the LayoutTestController');
 

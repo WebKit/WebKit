@@ -1,7 +1,7 @@
 // runs a test and writes a log
 function t(collection, elements) {
-  if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+  if (window.testRunner)
+    testRunner.dumpAsText();
 
   var log = "",
       r = document.getElementById("r"),

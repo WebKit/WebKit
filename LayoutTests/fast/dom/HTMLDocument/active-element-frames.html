@@ -56,8 +56,8 @@ function assertActiveElement(doc, expected)
         print('FAIL: ' + describe(doc) + ' document.activeElement is ' + describe(doc.activeElement) + ' but expected ' + describe(expected));
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 print('Focusing ' + describe(input0));
 input0.focus();

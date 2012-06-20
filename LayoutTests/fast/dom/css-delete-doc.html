@@ -42,8 +42,8 @@ function step2a()
     }
     catch(e) {
         document.body.innerText = 'FAIL, threw exception.';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
 
     }    
 }
@@ -54,8 +54,8 @@ function step2b()
         sheet.insertRule('a { }', 0);
         if (iteration++ == 10) {
             document.body.innerText = 'PASS';
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
             return;
         }
         
@@ -63,8 +63,8 @@ function step2b()
     }
     catch(e) {
         document.body.innerText = 'FAIL, threw exception.';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
 
     }
 }

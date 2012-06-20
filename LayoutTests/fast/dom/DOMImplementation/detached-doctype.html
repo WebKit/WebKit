@@ -10,8 +10,8 @@ function gc()
         var s = new String("");
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var o = document.implementation.createDocumentType('x', null, null);
 var doc = document.implementation.createDocument("doc", null, 0);

@@ -2,9 +2,9 @@
 <iframe src="resources/pageshow-pagehide-subframe.html"></iframe>
 <pre id="log"></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -36,8 +36,8 @@ window.addEventListener("message", function(evt) {
     if (evt.data == "subframe-loaded") {
         if (state == 1) {
             log("***Done***");
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     } else if (evt.data == "subsubframe-loaded") {
         if (state == 0) {

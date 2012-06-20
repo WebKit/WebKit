@@ -11,8 +11,8 @@
         write("RECV1");
         window.removeEventListener("message", recvMsg1, false);
 
-        if (window.layoutTestController)
-          layoutTestController.interceptPostMessage = true;
+        if (window.testRunner)
+          testRunner.interceptPostMessage = true;
 
         window.addEventListener("message", recvMsg2, false);
         window.postMessage("Message 2", "*");
@@ -30,15 +30,15 @@
       }
 
       function done() {
-        if (window.layoutTestController)
-          window.layoutTestController.notifyDone();
+        if (window.testRunner)
+          window.testRunner.notifyDone();
       }
 
       window.addEventListener("message", recvMsg1, false);
 
-      if (window.layoutTestController) {
-        window.layoutTestController.dumpAsText();
-        window.layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
       }
 
       window.postMessage("Message 1", "*");

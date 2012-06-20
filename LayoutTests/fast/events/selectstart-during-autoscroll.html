@@ -2,9 +2,9 @@
 <head>
     <title></title>
     <script type="text/javascript">
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.dumpEditingCallbacks();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpEditingCallbacks();
         }
 
         function kill_event(event)
@@ -24,7 +24,7 @@
             var result = document.getElementById("result");
             result.innerText = getSelection().baseNode ? "FAIL" : "PASS";
 
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
 
         function test()
@@ -32,7 +32,7 @@
             if (!window.eventSender)
                 return;
 
-            layoutTestController.waitUntilDone();
+            testRunner.waitUntilDone();
 
             var target = document.getElementById("target");
             y = target.offsetTop + target.offsetHeight / 2;

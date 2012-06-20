@@ -3,8 +3,8 @@
   <head>
     <script>
       function init() {
-          if (window.layoutTestController)
-              layoutTestController.setGeolocationPermission(false);
+          if (window.testRunner)
+              testRunner.setGeolocationPermission(false);
           window.parent.onIframeReady()
       }
     </script>

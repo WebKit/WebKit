@@ -19,8 +19,8 @@ function expect(expected, actual)
 
 function test()
 {
-    if (window.layoutTestController)
-        window.layoutTestController.dumpAsText();
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
 
     expect(0, document.getElementsByTagName('title').length);
     document.title = 'Document title';

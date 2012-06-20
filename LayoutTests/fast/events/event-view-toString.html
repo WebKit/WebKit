@@ -4,9 +4,9 @@
 <head>
     <title>Test for bug 4233558</title>
 <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function clickBody(event) {
@@ -21,8 +21,8 @@
         catch(e) {
             resultsDiv.innerHTML +=  " ERROR (" + e + ") getting value!<br/>";
         }
-        if (window.layoutTestController) {
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.notifyDone();
         }
     }
 

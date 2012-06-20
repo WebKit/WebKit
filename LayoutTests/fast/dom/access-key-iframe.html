@@ -43,8 +43,8 @@ function createDomInDocument(doc, tagName, attributes)
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var sandbox = document.getElementById('sandbox');
     sandbox.appendChild(createDomInDocument(document, 'input', {'id': 'inputB'}));

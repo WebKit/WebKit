@@ -8,7 +8,7 @@ function runTest()
 
         setTimeout(function() {
             document.getElementById("test").innerHTML = "PASSED";
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }, 0);
     }, false);
 
@@ -20,9 +20,9 @@ function runTest()
 
     document.getElementById("1").focus();
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
         eventSender.keyDown("a")
     }
 }

@@ -4,8 +4,8 @@
 </head>
 <body>
 <script>
-  if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+  if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 <p>We need to treat Latin-1 as if it were windows-1252, see <a href="https://bugs.webkit.org/show_bug.cgi?id=7602">bug 7602</a>.</p>
 <p>As entities: <span id='entities'>&#x80;&#x81;&#x83;&#x86;&#x87;</span></p>

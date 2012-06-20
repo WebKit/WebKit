@@ -11,8 +11,8 @@
             var event;
             var div;
 
-            if (window.layoutTestController)
-                layoutTestController.waitUntilDone();
+            if (window.testRunner)
+                testRunner.waitUntilDone();
 
             function dispatchWheelEvent()
             {
@@ -34,8 +34,8 @@
                 shouldBe("div.scrollTop", "window.expectedScrollTop");
                 shouldBe("div.scrollLeft", "window.expectedScrollLeft");
 
-                if (window.layoutTestController)
-                    window.layoutTestController.notifyDone();
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
             }
 
             function mousewheelHandler(e)

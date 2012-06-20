@@ -124,8 +124,8 @@ function secondGestureScroll()
     checkScrollOffset();
 }
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function runTest()
 {

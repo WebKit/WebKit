@@ -19,8 +19,8 @@ function assertEqual(message, actual, expected)
 
 onload = function()
 {
-    if (window.layoutTestController)                    
-        layoutTestController.dumpAsText();
+    if (window.testRunner)                    
+        testRunner.dumpAsText();
 
     assertEqual("original scroll y for RTL page ", window.scrollY, 0);
     window.scrollTo(0, -100);

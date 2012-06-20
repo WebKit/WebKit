@@ -1,11 +1,11 @@
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var key = 0;
 function test()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
  
     var elem = document.getElementById('focusMe')

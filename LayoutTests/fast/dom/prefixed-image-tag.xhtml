@@ -13,8 +13,8 @@
         function testPrefix()
         {
             console = document.getElementById("console");
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             if (document.getElementById('image').prefix == "foo")
                 debug("PASSED: prefix was kept");

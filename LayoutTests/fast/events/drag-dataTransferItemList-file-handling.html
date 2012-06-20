@@ -49,7 +49,7 @@ function drop(event)
     assertEq(1, event.dataTransfer.items.length);
     assertEq('file', event.dataTransfer.items[0].kind);
     assertEq('text/plain', event.dataTransfer.items[0].type);
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function runTest()
@@ -76,10 +76,10 @@ function runTest()
 
 window.onload = function()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     runTest();
 }

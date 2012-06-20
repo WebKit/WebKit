@@ -5,8 +5,8 @@
 </p>
 <div contenteditable id=ce></div>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         document.getElementById("ce").focus();
 
         eventSender.dispatchMessage(eventSender.WM_KEYDOWN, 220 /* VK_OEM_5 */, 0x00290001);

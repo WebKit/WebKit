@@ -9,8 +9,8 @@ function print(message) {
 }
 
 function test() {
-	if (window.layoutTestController) {
-		window.layoutTestController.dumpAsText();
+	if (window.testRunner) {
+		window.testRunner.dumpAsText();
 	}
 	//test get align
 	var divL = document.getElementById("divLeft");

@@ -1,3 +1,79 @@
+2012-06-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use testRunner instead of layoutTestController in fast/doctypes, dom, dynamic, encoding, events, eventsource, and exclusions tests
+        https://bugs.webkit.org/show_bug.cgi?id=89438
+
+        Reviewed by Tony Chang.
+
+        * fast/doctypes/005-case-preserving.html:
+        * fast/doctypes/doctype-after-comment.html:
+        * fast/doctypes/doctype-at-end.html:
+        * fast/doctypes/doctype-in-element.html:
+        * fast/doctypes/doctype-parsing.html:
+        * fast/doctypes/html-doctype.html:
+        * fast/doctypes/xhtml-with-xhtmlmp-doctype.xhtml:
+        * fast/doctypes/xml-doctype.xhtml:
+        * fast/dom/:
+        * fast/dynamic/5872671.html:
+        * fast/dynamic/ancestor-to-absolute.html:
+        * fast/dynamic/checkbox-selection-crash.html:
+        * fast/dynamic/containing-block-change.html:
+        * fast/dynamic/crash-generated-counter.html:
+        * fast/dynamic/crash-generated-image.html:
+        * fast/dynamic/crash-generated-quote.html:
+        * fast/dynamic/crash-generated-text.html:
+        * fast/dynamic/crash-paint-no-documentElement-renderer.html-disabled:
+        * fast/dynamic/float-remove-above-line-2.html:
+        * fast/dynamic/float-remove-above-line.html:
+        * fast/dynamic/hover-before-position-after-style-change.html:
+        * fast/dynamic/hover-before-position-after-style-change2.html:
+        * fast/dynamic/hover-style-recalc-crash.html:
+        * fast/dynamic/hovered-detach.html:
+        * fast/dynamic/inline-to-block-crash.html:
+        * fast/dynamic/insertAdjacentElement.html:
+        * fast/dynamic/insertAdjacentHTML-allowed-parents.html:
+        * fast/dynamic/insertAdjacentHTML.html:
+        * fast/dynamic/insertAdjacentText.html:
+        * fast/dynamic/jQuery-animation-crash.html:
+        * fast/dynamic/layer-hit-test-crash.html:
+        * fast/dynamic/layer-no-longer-paginated.html:
+        * fast/dynamic/outerHTML-no-element.html:
+        * fast/dynamic/paused-event-dispatch.html:
+        * fast/dynamic/position-absolute-to-fixed-crash.html:
+        * fast/dynamic/position-change-layout.html:
+        * fast/dynamic/recursive-layout.html:
+        * fast/dynamic/style-access-late-stylesheet-load.html:
+        * fast/dynamic/subtree-common-root.html:
+        * fast/dynamic/subtree-table-cell-height.html:
+        * fast/dynamic/subtree-unrooted.html:
+        * fast/encoding/:
+        * fast/events/:
+        * platform/chromium/fast/events/drag-downloadURL.html:
+        * platform/chromium/fast/events/intercept-postmessage.html:
+        * platform/chromium/fast/events/rtl-scrollbar.html:
+        * platform/gtk/fast/events/event-sender-metakey.html:
+        * platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk.html:
+        * platform/mac/fast/dom/character-index-for-point.html:
+        * platform/mac/fast/dom/objc-wrapper-identity.html:
+        * platform/mac/fast/dom/wrapper-classes-objc.html:
+        * platform/mac/fast/dom/wrapper-round-tripping.html:
+        * platform/mac/fast/events/objc-event-api.html:
+        * platform/mac/fast/events/objc-keyboard-event-creation.html:
+        * platform/qt/fast/events/event-sender-keydown-frame.html:
+        * platform/win/fast/events/alt-numpad.html:
+        * platform/win/fast/events/alt-space-scroll.html:
+        * platform/win/fast/events/double-dead-char.html:
+        * platform/win/fast/events/keyLocation-numpad.html:
+        * platform/win/fast/events/panScroll-correct-direction.html:
+        * platform/win/fast/events/panScroll-event-fired.html:
+        * platform/win/fast/events/panScroll-image-no-scroll.html:
+        * platform/win/fast/events/panScroll-imageMap-href-no-scroll.html:
+        * platform/win/fast/events/panScroll-imageMap-noHref-scroll.html:
+        * platform/win/fast/events/panScroll-nested-divs.html:
+        * platform/win/fast/events/panScroll-no-iframe-jump.html:
+        * platform/win/fast/events/panScroll-preventDefault.html:
+        * platform/win/fast/events/script-tests/context-click-events.js:
+
 2012-06-19  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Remove the failing expected results added in

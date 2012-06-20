@@ -8,9 +8,9 @@ function log(message) {
 }
 
 function test() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
 
         // Find the element to drag
         elementToDrag = frames[0].document.getElementById("elementToDrag");
@@ -42,7 +42,7 @@ function test() {
             "<p>These results are just \"sensible\" at the moment, meaning that " +
             "all the events fire on the right elements, nothing more. The order in particular "+
             "can rightfully change.</p>" +
-            "<scr" + "ipt>layoutTestController.notifyDone();</scr" + "ipt>" + 
+            "<scr" + "ipt>testRunner.notifyDone();</scr" + "ipt>" + 
             "</body>");
     }
 }

@@ -5,8 +5,8 @@ You should see "PASS" below.
 
 <div id='result'>FAIL: this text should be replaced on success.<div>
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 function onload() {
   var result = document.getElementById('result');
   result.innerHTML='PASS: onload function gets called.';

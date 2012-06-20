@@ -27,8 +27,8 @@ function logEvent(e) {
 var test = document.getElementById('test');
 test.focus();
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
     // Add event listeners to the <input> node.
     test.addEventListener("compositionstart", logEvent, false);

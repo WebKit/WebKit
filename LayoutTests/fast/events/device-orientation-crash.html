@@ -14,8 +14,8 @@ if (!window.gc) {
 
 function done() {
     document.body.innerHTML = 'PASS: handler not supported or did not crash when removing Windows during ondeviceorientation event';
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function remove() {
@@ -26,9 +26,9 @@ function remove() {
 }
 
 function crash() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     frame = document.createElement('iframe');

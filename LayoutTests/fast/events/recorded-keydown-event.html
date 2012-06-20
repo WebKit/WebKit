@@ -3,9 +3,9 @@
 Crash when replaying a sequence of keyboard events.</p>
 <iframe src="about:blank"></iframe>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function test()
@@ -30,8 +30,8 @@ function record(event)
             window.recordedEvent.charCode;
             window.recordedEvent.keyCode;
             document.getElementById("p").innerHTML = "PASS";
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
 
         }, 0);
     }, 0);

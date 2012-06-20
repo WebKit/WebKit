@@ -2,9 +2,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function log(msg) {
@@ -25,7 +25,7 @@ window.onload = function() {
             log("Window.onload fired before subframe completed load.");
         }
         
-        if (!window.layoutTestController) {
+        if (!window.testRunner) {
             log("This test needs to be run in DRT.  To test manually drag from the text 'Drag Me!' out into the parent frame.");
             return;
         }
@@ -41,8 +41,8 @@ window.onload = function() {
         eventSender.mouseMoveTo(x1, y1);
         eventSender.mouseUp();
     } finally {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 </script>

@@ -33,9 +33,9 @@ log("target - type - " + ["ctrlKey", "altKey", "shiftKey", "metaKey"]
         + ' - ' + "keyCode"
         + ' - ' + "charCode");
 
-if (window.layoutTestController) {
+if (window.testRunner) {
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     eventSender.dispatchMessage(eventSender.WM_SYSKEYDOWN, 0x12 /* Alt */, 0x20380001);
     eventSender.dispatchMessage(eventSender.WM_SYSKEYDOWN, 0x20 /* Space */, 0x20390001);
     eventSender.dispatchMessage(eventSender.WM_SYSCHAR, 0x20 /* Space */, 0x20390001);

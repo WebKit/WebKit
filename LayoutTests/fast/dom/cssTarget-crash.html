@@ -4,9 +4,9 @@
 <form name="f" method="GET" action="#a"></form>
 <div id="anchors"><a name="a"></a></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var stopped = false;
@@ -14,8 +14,8 @@ setTimeout("doIt()", 0);
 setTimeout("stopped = true;", 100);
 function doIt() {
     if (stopped) {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
     document.forms.f.submit();

@@ -8,8 +8,8 @@
             function doneHandler() {
                 if (!winToClose.closed)
                     setTimeout(doneHandler, 1);
-                else if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                else if (window.testRunner)
+                    testRunner.notifyDone();
             }
         }
 

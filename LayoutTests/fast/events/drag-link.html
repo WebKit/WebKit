@@ -29,8 +29,8 @@ function dragElement(srcElement, destElement)
     document.getElementById('result').innerHTML = "PASS";
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var editableDiv = document.getElementById('editableDiv');
 editableDiv.focus();

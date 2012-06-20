@@ -1,11 +1,11 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var script = document.createElement("script");
-script.src = "data:text/javascript,document.write('FAIL');if (window.layoutTestController) layoutTestController.notifyDone();";
+script.src = "data:text/javascript,document.write('FAIL');if (window.testRunner) testRunner.notifyDone();";
 document.getElementsByTagName("head")[0].appendChild(script);
 script.src = "";
 </script>

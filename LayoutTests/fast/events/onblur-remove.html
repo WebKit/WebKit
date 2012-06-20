@@ -2,8 +2,8 @@
   <head>
       <script src="../js/resources/js-test-pre.js"></script>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
 
         var numBlurs = 0;
 
@@ -20,8 +20,8 @@
                 testPassed('Onblur handler not called.');
 
             debug('<br /><span class="pass">TEST COMPLETE</span>');
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
   </head>

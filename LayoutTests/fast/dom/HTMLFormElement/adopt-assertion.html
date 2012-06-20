@@ -8,8 +8,8 @@
 </p>
 <form id="target"></form>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var otherDocument = document.implementation.createHTMLDocument();
     otherDocument.adoptNode(document.getElementById("target"));

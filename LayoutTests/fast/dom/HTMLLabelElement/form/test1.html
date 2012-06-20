@@ -9,8 +9,8 @@
         }
         function test() 
         {
-            if(window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if(window.testRunner)
+                testRunner.dumpAsText();
 
             labelInsideForm = document.getElementById("labelInsideForm");
             labelNotInsideForm = document.getElementById("labelNotInsideForm");

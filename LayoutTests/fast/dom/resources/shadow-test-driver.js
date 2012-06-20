@@ -140,7 +140,7 @@ function doneTest() {
     log("TEST COMPLETED");
     if (window.tearDownOnce)
         window.tearDownOnce();
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 // A test driver. Call this body.onload.
@@ -148,9 +148,9 @@ function doTest(tests) {
     if (window.setUpOnce)
         window.setUpOnce();
 
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 
     cleanUp();

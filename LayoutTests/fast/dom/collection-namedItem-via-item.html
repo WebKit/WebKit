@@ -7,8 +7,8 @@
         }
         function test()
         {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             log("document.all.item('1') == document.all.item(1)");
             log("document.all.item('target') == document.getElementById('target')");

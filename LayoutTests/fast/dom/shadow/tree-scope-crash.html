@@ -5,8 +5,8 @@
 <script>
 RELOAD_THRESHOULD = 10;
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 Markup.noAutoDump();
     
@@ -31,8 +31,8 @@ function runTest()
 
     
     var count = currentCount();
-    if (RELOAD_THRESHOULD <= count && window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (RELOAD_THRESHOULD <= count && window.testRunner) {
+        testRunner.notifyDone();
         return;
     }
 

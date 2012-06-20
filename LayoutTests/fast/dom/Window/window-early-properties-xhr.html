@@ -5,9 +5,9 @@ Referencing XHR constructor for a not yet loaded frame permanently breaks it.</p
 <div id=result></div>
 <iframe src="resources/window-early-properties-xhr-frame.html"></iframe>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 window.frames[0].XMLHttpRequest;
 </script>

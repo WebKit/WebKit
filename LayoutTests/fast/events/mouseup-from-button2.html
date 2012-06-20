@@ -75,8 +75,8 @@ function main()
   targetBox.addEventListener("click", _captureMouseEvents, false);
   targetBox.addEventListener("contextmenu", _captureMouseEvents, false);
     
-  if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+  if (window.testRunner)
+      testRunner.dumpAsText();
       
   if (window.eventSender) {
       // Confirm that left button works properly     

@@ -15,7 +15,7 @@ function testComplete(event)
     shouldBe("touch.pageX", "50");
     shouldBe("touch.pageY", "50");
     isSuccessfullyParsed();
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function runTest() {
@@ -30,8 +30,8 @@ function runTest() {
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
 }
 </script>
 </body>

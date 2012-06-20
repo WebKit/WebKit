@@ -3,8 +3,8 @@
 <p>Tests for <a href="https://bugs.webkit.org/show_bug.cgi?id=47753">bug 47753</a>: 
 REGRESSION(r69850) Loading apple.com/startpage in WebKit on Windows gets a bad request.</p>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var userAgent = navigator.userAgent;
 

@@ -8,8 +8,8 @@
 
         function test()
         {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             log("document.body.clientWidth = " + document.body.clientWidth);
             log("document.body.clientHeight = " + document.body.clientHeight);

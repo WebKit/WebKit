@@ -13,8 +13,8 @@ function print(message, color)
 
 function test() 
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
         
     try {
         document.importNode(null);

@@ -15,9 +15,9 @@ function assertDirection(label, expectedDirection, html)
     doc.write(html);
     doc.close();
 
-    var dir = window.layoutTestController ?
-        layoutTestController.titleTextDirection
-      : 'layoutTestController unavailable';
+    var dir = window.testRunner ?
+        testRunner.titleTextDirection
+      : 'testRunner unavailable';
     var status = html + ' should have title direction "' + expectedDirection + '". ';
     if (dir == expectedDirection) {
         status += 'PASS';
@@ -29,8 +29,8 @@ function assertDirection(label, expectedDirection, html)
     document.body.appendChild(div);
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 assertDirection('normal doc', 'ltr',
                 '<html><title>foo</title></html>');

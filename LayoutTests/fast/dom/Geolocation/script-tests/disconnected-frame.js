@@ -1,8 +1,8 @@
 description("Tests that when a request is made on a Geolocation object and its Frame is disconnected before a callback is made, the error callback is invoked with the correct error message.");
 
-if (window.layoutTestController) {
-    layoutTestController.setGeolocationPermission(true);
-    layoutTestController.setMockGeolocationPosition(51.478, -0.166, 100);
+if (window.testRunner) {
+    testRunner.setGeolocationPermission(true);
+    testRunner.setMockGeolocationPosition(51.478, -0.166, 100);
 }
 
 function onIframeLoaded() {

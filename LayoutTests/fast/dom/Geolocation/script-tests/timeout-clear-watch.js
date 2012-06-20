@@ -1,7 +1,7 @@
 description("Tests that when a watch times out and is cleared from the error callback, there is no crash. This a regression test for https://bugs.webkit.org/show_bug.cgi?id=32111.");
 
-if (window.layoutTestController)
-    layoutTestController.setMockGeolocationPosition(51.478, -0.166, 100.0);
+if (window.testRunner)
+    testRunner.setMockGeolocationPosition(51.478, -0.166, 100.0);
 
 var error;
 var watchId = navigator.geolocation.watchPosition(function() {

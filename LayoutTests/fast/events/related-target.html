@@ -21,14 +21,14 @@ function over(event)
         + event.target.getAttribute("id") + " from "
         + event.relatedTarget.getAttribute("id") + "."));
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     if (window.eventSender) {
         eventSender.mouseMoveTo(50, 50);

@@ -24,7 +24,7 @@ function HandleMessage(message_event) {
         log("Expected '" + num + "', Got: '" + message_event.data + "'");
     }
     if (num == endNum) {
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
     else {
         ++num;
@@ -53,9 +53,9 @@ function AddListener() {
 }
 document.addEventListener("DOMContentLoaded", AddListener, false);
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 log("DONE");
 

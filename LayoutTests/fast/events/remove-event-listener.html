@@ -1,8 +1,8 @@
 <html>
 <body>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     // following code should leak the function and window/document objects.
     function leaked(e) { var a = window; }

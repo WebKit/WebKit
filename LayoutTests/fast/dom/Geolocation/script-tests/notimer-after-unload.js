@@ -1,9 +1,9 @@
 description("Tests that no timers will trigger for navigator.geolocation object after onunload.");
 
-if (window.layoutTestController) layoutTestController.setGeolocationPermission(true);
+if (window.testRunner) testRunner.setGeolocationPermission(true);
 
 document.body.onload = function() {
-    location = "data:text/html,You should have seen one unload alert appear.<script>window.setTimeout('if (window.layoutTestController) layoutTestController.notifyDone();', 100);</script>";
+    location = "data:text/html,You should have seen one unload alert appear.<script>window.setTimeout('if (window.testRunner) testRunner.notifyDone();', 100);</script>";
 }
 
 document.body.onunload = function() {

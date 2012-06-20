@@ -37,8 +37,8 @@ testEncode('GBK', 'U+301C', '%A1%AB');
 // Turning on this test causes a download to occur. FIXME: A bug?
 // testEncode('UTF-8', 'U+221A', '%E2%88%9A');
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 runTest();
 
 </script>

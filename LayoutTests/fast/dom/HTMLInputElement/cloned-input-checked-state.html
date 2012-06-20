@@ -3,9 +3,9 @@
 Assertion failure in CheckedRadioButtons::removeButton when using jQuery 1.4.1. Also tests actual
 behavior the crashing jQuery was test was checking for.</p>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function gc()
@@ -56,8 +56,8 @@ try {
 
     setTimeout(function() {
         gc();
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 } catch (ex) {
     document.write("FAIL: " + ex);

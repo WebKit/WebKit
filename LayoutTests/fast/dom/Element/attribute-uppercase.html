@@ -9,8 +9,8 @@ function write(str) {
 }
 
 function runTests() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     elem = document.createElement('test');
     elem.setAttribute('attr_name', 'attr_value');

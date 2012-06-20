@@ -10,8 +10,8 @@
 
             function runTest()
             {
-                if (window.layoutTestController) {
-                    layoutTestController.dumpAsText();
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
                     
                     elementToDrag = document.getElementById("elementToDrag");
                     x1 = elementToDrag.offsetLeft + elementToDrag.offsetWidth / 2;

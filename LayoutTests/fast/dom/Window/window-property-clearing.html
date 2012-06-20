@@ -42,16 +42,16 @@ function didFinishLoading(childWindow) // called by subframes
         shouldBe('name' in childWindow, "'name' in childWindow", true);
         shouldBe(childWindow.name, "childWindow.name", "test");
     
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 }
 

@@ -11,8 +11,8 @@ range.selectNodeContents(node);
 node.appendChild(range.createContextualFragment("<script> count++; </script" + ">"));
 node.textContent = count == 1 ? 'PASS' : 'FAIL - expected one execution but executed ' + count + ' times';
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 </script>
 </body>

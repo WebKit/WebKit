@@ -51,8 +51,8 @@ This <b>line</b> contains <img src="../replaced/resources/compass.jpg"> an image
 <p><b><u>The innerText of the above:</u></b></p>
 <pre id="innertext"></pre>
 <script>
-    if (window.layoutTestController)
-        window.layoutTestController.dumpAsText();
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
     
     document.getElementById("innertext").innerText = document.getElementById("test").innerText; 
 </script>

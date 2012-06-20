@@ -37,8 +37,8 @@
         alert(e.clientX + " " + e.clientY + " " + document.elementFromPoint(e.clientX, e.clientY).textContent);
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     description('This test document.elementFromPoint is evaluated in with respect to the viewport, not the document.');
 
@@ -97,7 +97,7 @@
     eventSender.zoomPageOut();
     testElement(elementInitial, "Initial", offset.left, offset.top, /* hasZoom */ true);
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);
     }

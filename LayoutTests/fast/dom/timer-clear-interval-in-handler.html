@@ -8,8 +8,8 @@
             if (count > 10)  {
                 clearInterval(intervalID);
                 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         }
 
@@ -17,9 +17,9 @@
     var count = 0;
 
     function runTests() {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText()
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText()
+            testRunner.waitUntilDone();
         }
             
         intervalID = setInterval(timeoutHandler, 1);

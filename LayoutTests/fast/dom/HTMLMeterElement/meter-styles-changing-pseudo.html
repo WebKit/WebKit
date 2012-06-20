@@ -1,16 +1,16 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function test() {
     // We touch offsetWidth here to ensure following code run after the first layout is done, 
     // because what we test is side-effect for the the layout and the painting.
     document.documentElement.offsetWidth;
     document.getElementById("target").value = 90;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <style>

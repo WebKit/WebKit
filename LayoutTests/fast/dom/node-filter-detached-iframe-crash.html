@@ -2,9 +2,9 @@
 <head>
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 
     var dummyFilterCalled = false;
@@ -26,8 +26,8 @@
         shouldBeTrue("dummyFilterCalled");
         shouldBe("foundNode.toString()", "\"[object HTMLHtmlElement]\"");
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 </head>

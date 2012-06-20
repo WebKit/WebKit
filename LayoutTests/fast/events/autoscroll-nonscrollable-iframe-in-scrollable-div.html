@@ -8,9 +8,9 @@
 
        function test()
        {
-           if (window.layoutTestController) {
-               layoutTestController.waitUntilDone();
-               layoutTestController.dumpAsText();
+           if (window.testRunner) {
+               testRunner.waitUntilDone();
+               testRunner.dumpAsText();
                setTimeout(autoscrollTestPart1, 0);
            }
        }
@@ -41,8 +41,8 @@
            else
                log("FAILED : the autoscroll has not worked :-(");
            
-           if (window.layoutTestController)
-               layoutTestController.notifyDone();
+           if (window.testRunner)
+               testRunner.notifyDone();
        }       
         </script>
     </head>

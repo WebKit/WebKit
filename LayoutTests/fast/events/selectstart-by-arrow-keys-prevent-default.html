@@ -14,8 +14,8 @@ div.addEventListener('selectstart', function (event) { event.preventDefault(); s
 div.focus();
 window.getSelection().setPosition(div.firstChild, 1);
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     eventSender.keyDown("rightArrow", ["shiftKey"]);
     logResult("Check Right arrow + Shift", 1);
 

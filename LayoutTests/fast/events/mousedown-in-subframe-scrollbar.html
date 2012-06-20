@@ -5,8 +5,8 @@
 </body>
 <script>
 function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var iframe = document.getElementById("fr");
     iframe.contentWindow.focusAndSelectText();

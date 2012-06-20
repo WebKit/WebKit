@@ -4,12 +4,12 @@
 <script>
 function prefetch_onload() {
     testPassed('onload called!');
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpResourceResponseMIMETypes();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpResourceResponseMIMETypes();
 }
 </script>
 <html>

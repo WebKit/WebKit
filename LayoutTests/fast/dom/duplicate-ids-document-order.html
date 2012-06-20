@@ -10,8 +10,8 @@ function debug(str) {
 }
 
 function runTest() {
-    if (window.layoutTestController) { 
-        layoutTestController.dumpAsText();
+    if (window.testRunner) { 
+        testRunner.dumpAsText();
     }
     var div = document.getElementById("foo");
     for (var i = 0; i < 5; ++i) {

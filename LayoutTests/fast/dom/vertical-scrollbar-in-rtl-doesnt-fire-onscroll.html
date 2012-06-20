@@ -12,8 +12,8 @@
 
             onload = function()
             {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
             }
 
             document.onscroll=function(){log("FAIL - scroll event received!");}

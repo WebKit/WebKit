@@ -12,8 +12,8 @@ function moveDiv(dv) {
 var oHead = document.getElementsByTagName('head')[0];
 
 function createAndAppend() {
-    if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+            testRunner.waitUntilDone();
     }
 
         var oElm = document.createElement('div')
@@ -36,8 +36,8 @@ function createAndAppend() {
                         
     setTimeout(moveDiv(oElm), 1000);
 
-    if (window.layoutTestController) {
-            layoutTestController.notifyDone();
+    if (window.testRunner) {
+            testRunner.notifyDone();
     }
 }
         </script>

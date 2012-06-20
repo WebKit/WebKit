@@ -13,8 +13,8 @@ function print(message, color)
 
 function test() 
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
         
     var doc = document.implementation.createHTMLDocument("");
     doc.body.parentNode.removeChild(doc.body);

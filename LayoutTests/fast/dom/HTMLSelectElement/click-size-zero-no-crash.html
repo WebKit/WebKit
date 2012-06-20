@@ -9,12 +9,12 @@ function getCenterFor(element)
 
 function runTest()
 {
-  if (!window.layoutTestController)
+  if (!window.testRunner)
     return;
   if (!window.eventSender)
     return;
 
-  layoutTestController.dumpAsText();
+  testRunner.dumpAsText();
   center = getCenterFor(document.getElementById("emptyselect"));
   eventSender.mouseMoveTo(center.x, center.y);
   eventSender.mouseDown();

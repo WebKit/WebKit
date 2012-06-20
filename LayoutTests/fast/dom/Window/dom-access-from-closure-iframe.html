@@ -1,7 +1,7 @@
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function log(s)
@@ -14,8 +14,8 @@
         // Call the method injected by resources/dom-access-from-closure-iframe-child.html
         accessFrame();
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 <pre id="console"></pre>

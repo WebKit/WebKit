@@ -2,9 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
  <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 </script>
   <script type="text/javascript">
@@ -22,8 +22,8 @@ if (window.layoutTestController) {
         }
         
         document.write(xmlNode.ownerDocument.data ? "<p>SUCCESS</p>" : "<p>FAILURE</p>");
-        if (window.layoutTestController)
-             layoutTestController.notifyDone();
+        if (window.testRunner)
+             testRunner.notifyDone();
     }
 
     function loadData() {

@@ -224,9 +224,9 @@
     .bar. { background: red; color: yellow; }
   </style>
   <script><![CDATA[
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
 	window.onload = function(){
@@ -720,8 +720,8 @@
 			t( "Not", "a.blog:not(.link)", ["mark"] );
 		}
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
 	};
   ]]></script>
 </head>

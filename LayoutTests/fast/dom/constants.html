@@ -35,8 +35,8 @@ function shouldBe(a, b)
 var cssRule, cssValue, nodeFilter, event;
 
 function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
         
     cssRule = document.styleSheets[0].cssRules[0];
     shouldBe("cssRule.UNKNOWN_RULE", 0);

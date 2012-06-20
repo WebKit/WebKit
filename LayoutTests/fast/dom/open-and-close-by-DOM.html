@@ -2,18 +2,18 @@
 <html>
 <head>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.setCanOpenWindows();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setCanOpenWindows();
+        testRunner.waitUntilDone();
     }
 
     var start;
     var myInterval;
 
-    //This function should only be used with DRT and thus layoutTestController
+    //This function should only be used with DRT and thus testRunner
     function checkIfDone() {
-        var numOpenWindows = layoutTestController.windowCount();
+        var numOpenWindows = testRunner.windowCount();
         var now = new Date();
         if (numOpenWindows == 1) {
             var span = document.createElement("span");
@@ -21,7 +21,7 @@
             document.getElementById("console").appendChild(span);
 
             clearInterval(myInterval);
-            layoutTestController.notifyDone();            
+            testRunner.notifyDone();            
         } else if (now - start > 10000) {
             var span = document.createElement("span");
             span.innerHTML = 'TEST FAILED <br> Number of open windows: ' + numOpenWindows + '<br/>';
@@ -29,7 +29,7 @@
             document.getElementById("console").appendChild(span);
 
             clearInterval(myInterval);
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     }
 
@@ -38,8 +38,8 @@
         event.initEvent( 'click', true, true );
         document.getElementById('anchorLink').dispatchEvent(event);
 
-        if (window.layoutTestController) {
-            layoutTestController.setCloseRemainingWindowsWhenComplete();
+        if (window.testRunner) {
+            testRunner.setCloseRemainingWindowsWhenComplete();
 
             start = new Date();
             myInterval = setInterval(checkIfDone, 500);        

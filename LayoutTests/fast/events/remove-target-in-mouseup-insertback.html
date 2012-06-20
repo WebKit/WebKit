@@ -14,8 +14,8 @@ function mouseup() {
     test.appendChild(target);
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     if (!window.eventSender)
         test.innerHTML = 'FAIL - this test requires eventSender';
     else {

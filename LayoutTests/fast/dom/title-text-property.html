@@ -11,9 +11,9 @@ function debugOutput(str) {
 }
 
 function runTests() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpTitleChanges();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpTitleChanges();
     }
 
     titleElem = document.getElementsByTagName('title').item(0);

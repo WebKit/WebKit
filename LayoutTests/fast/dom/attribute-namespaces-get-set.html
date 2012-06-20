@@ -34,8 +34,8 @@ function shouldBe(a, b)
 }
 
 function runTests() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
         
     var src = '<root xmlns:foo="http://www.example.com" attr="test2" foo:attr="test" />';
     var doc = (new DOMParser()).parseFromString(src, 'text/xml')

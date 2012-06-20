@@ -1,8 +1,8 @@
 <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=15650">bug 15650</a>:
 XML attribute nodes are not importable.</p>
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 
 try {
   var xmld = new DOMParser().parseFromString( "<foo test='baz'/>", "text/xml");

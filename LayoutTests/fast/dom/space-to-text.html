@@ -2,8 +2,8 @@
 <head>
 <script type="text/javascript">
 function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     document.getElementById("s1").firstChild.nodeValue="SU";
     document.getElementById("s2").firstChild.insertData(0, "CC");

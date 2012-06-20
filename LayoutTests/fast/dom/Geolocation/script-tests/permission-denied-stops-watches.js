@@ -2,9 +2,9 @@ description("Tests that when Geolocation permission is denied, watches are stopp
 
 // Configure the mock Geolocation service to report a position to cause permission
 // to be requested, then deny it.
-if (window.layoutTestController) {
-    layoutTestController.setGeolocationPermission(false);
-    layoutTestController.setMockGeolocationPosition(51.478, -0.166, 100.0);
+if (window.testRunner) {
+    testRunner.setGeolocationPermission(false);
+    testRunner.setMockGeolocationPosition(51.478, -0.166, 100.0);
 } else
     debug('This test can not be run without the LayoutTestController');
 
@@ -26,8 +26,8 @@ navigator.geolocation.watchPosition(function(p) {
 
     // Update the mock Geolocation service to report a new position, then
     // yield to allow a chance for the success callback to be invoked.
-    if (window.layoutTestController)
-        layoutTestController.setMockGeolocationPosition(55.478, -0.166, 100);
+    if (window.testRunner)
+        testRunner.setMockGeolocationPosition(55.478, -0.166, 100);
     window.setTimeout(finishJSTest, 0);
 });
 

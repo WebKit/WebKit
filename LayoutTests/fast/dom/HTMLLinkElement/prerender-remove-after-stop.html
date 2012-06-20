@@ -3,8 +3,8 @@
 <script>
 
 function done() {
-   if (window.layoutTestController) {
-       layoutTestController.notifyDone();
+   if (window.testRunner) {
+       testRunner.notifyDone();
    }
 }
 
@@ -22,9 +22,9 @@ function navigateIFrameThenRemoveLink() {
     iframe.contentWindow.location = "resources/empty.html";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 </script>
 </head>

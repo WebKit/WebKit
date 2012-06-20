@@ -9,8 +9,8 @@
             }
             function test()
             {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
                 log("paths like this should turn all \\ characters into /: \"" + document.getElementById("1").pathname + "\"");
                 log("query strings like this one should still have \\ characters: \"" + document.getElementById("2").search + "\"");
                 log("query strings like this one should still have \\ characters even if the URL is only a query: \"" + document.getElementById("3").search + "\"");

@@ -5,8 +5,8 @@ onpageshow = function(event) {
         testPassed('WebTiming asserts in FrameLoader.cpp did not fire');
         finishJSTest();
     } else {
-        if (window.layoutTestController)
-            layoutTestController.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
+        if (window.testRunner)
+            testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
         setTimeout(function() {location.href = 'data:text/html,<script>onunload=function() {},onload=function(){window.name = \'navigated\';history.back();}<' + '/script>';}, 0);
     }
 }

@@ -18,9 +18,9 @@ function log(message)
     document.getElementById("log").innerHTML += message + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var channel = new MessageChannel;
@@ -29,7 +29,7 @@ channel.port1.start();
 channel = 0;
 gc();
 
-setTimeout("log('PASS'); if (window.layoutTestController) layoutTestController.notifyDone()", 100);
+setTimeout("log('PASS'); if (window.testRunner) testRunner.notifyDone()", 100);
 
 </script>
 </body>

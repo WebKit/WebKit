@@ -14,8 +14,8 @@ function log(message)
     document.getElementById("log").innerText += message + "\n";
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 if (document.inputEncoding == "KOI8-R")
     log("PASS: " + document.inputEncoding);

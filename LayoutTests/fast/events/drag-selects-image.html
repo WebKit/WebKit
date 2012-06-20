@@ -19,9 +19,9 @@
     }
     window.onload = function()
     {
-        if (!window.layoutTestController)
+        if (!window.testRunner)
             return;
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
 
         log('Starting test...');
         log(window.getSelection().rangeCount + ' range(s) selected');

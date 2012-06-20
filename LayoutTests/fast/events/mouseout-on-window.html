@@ -14,8 +14,8 @@ This test ensures that mouse out events are sent to the window.<br />
 FAIL: No mouseout was sent.
 </div>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 if (window.eventSender) {
     // Initial move on windows is used to force the webview to 
     // initialise the windows mouse event tracker. 

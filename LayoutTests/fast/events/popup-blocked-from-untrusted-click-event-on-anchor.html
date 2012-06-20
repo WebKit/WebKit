@@ -12,20 +12,20 @@
                 shouldBeUndefined("win");
             }
 
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.setCanOpenWindows();
-                layoutTestController.setPopupBlockingEnabled(true);
-                layoutTestController.setCloseRemainingWindowsWhenComplete(true);
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.setCanOpenWindows();
+                testRunner.setPopupBlockingEnabled(true);
+                testRunner.setCloseRemainingWindowsWhenComplete(true);
+                testRunner.waitUntilDone();
             }
 
             clickEvent = document.createEvent("MouseEvents");
             clickEvent.initEvent("click", true, true, document.defaultView, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
             document.getElementById("test").dispatchEvent(clickEvent);
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         </script> 
     </body> 
 </html>

@@ -38,8 +38,8 @@ input.addEventListener('keydown', logEvent, false);
 input.addEventListener('keyup', logEvent, false);
 input.focus();
 
-if (window.layoutTestController) {
-   layoutTestController.dumpAsText();
+if (window.testRunner) {
+   testRunner.dumpAsText();
    log("<br>Ampersand:");
    eventSender.keyDown("7", ["shiftKey"]);
    log("<br>Backspace:");

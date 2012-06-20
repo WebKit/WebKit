@@ -23,8 +23,8 @@
     <div id=expandingblock>
     </div>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
         }
 
         var blockcount = 0;
@@ -46,8 +46,8 @@
                 result = '<p style="color: red">FAIL';
             var resultElement = document.getElementById('result1')
             resultElement.innerHTML += result;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
         onload = addBlock;
     </script>

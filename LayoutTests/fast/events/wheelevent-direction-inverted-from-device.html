@@ -19,7 +19,7 @@ function scrollHandler(event) {
 };
 t.addEventListener('mousewheel', scrollHandler, false);
 
-if (window.layoutTestController && window.eventSender) {
+if (window.testRunner && window.eventSender) {
     debug("sending scroll event to green target");
     eventSender.mouseMoveTo(t.offsetLeft + 10, t.offsetTop + 10);
     eventSender.continuousMouseScrollBy(0,10);

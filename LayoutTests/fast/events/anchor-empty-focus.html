@@ -4,8 +4,8 @@
          function test()
          {
             document.getElementById("anch").focus();
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
                 eventSender.keyDown('s');
             }
          }

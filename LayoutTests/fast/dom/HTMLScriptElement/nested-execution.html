@@ -1,8 +1,8 @@
 <head>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         var started = false;
@@ -21,8 +21,8 @@
             else
                 canPass = true;
 
-            if (window.layoutTestController)
-                layoutTestController.setCacheModel(0); // WebCacheModelDocumentViewer
+            if (window.testRunner)
+                testRunner.setCacheModel(0); // WebCacheModelDocumentViewer
         }
     </script>
 </head>

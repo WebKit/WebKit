@@ -23,13 +23,13 @@ function scroll() {
         var result = scrollAfterMoveToMainFrame == scrollAfterReturnToSubframe ? "PASS" 
             : "FAIL: scrollAfterMoveToMainFrame = " + scrollAfterMoveToMainFrame + ", scrollAfterReturnToSubframe = " + scrollAfterReturnToSubframe;
         document.getElementById("console").appendChild(document.createTextNode(result));
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 </script>
 <div id="console"></div>

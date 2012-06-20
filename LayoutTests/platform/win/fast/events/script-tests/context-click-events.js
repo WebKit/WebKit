@@ -47,13 +47,13 @@ traceMouseEvent(target, "mousedown");
 traceMouseEvent(target, "mouseup");
 traceMouseEvent(target, "contextmenu");
 
-if (window.layoutTestController) {
+if (window.testRunner) {
      var box = document.getElementById("description");
      var x = box.offsetParent.offsetLeft + box.offsetLeft + box.offsetWidth / 2;
      var y = box.offsetParent.offsetTop + box.offsetTop + box.offsetHeight / 2;
      eventSender.mouseMoveTo(x, y);
      eventSender.contextClick();
-     layoutTestController.dumpAsText();
+     testRunner.dumpAsText();
 }
 
 

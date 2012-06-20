@@ -26,8 +26,8 @@
 
         document.getElementById("ce").focus();
 
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
 
             eventSender.dispatchMessage(eventSender.WM_KEYDOWN, 96 /* VK_NUMPAD0 */, 0x00520001);
             eventSender.dispatchMessage(eventSender.WM_KEYUP, 96 /* VK_NUMPAD0 */, 0xc0520001);

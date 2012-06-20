@@ -2,8 +2,8 @@
 <p>You should see two "PASS" messages below:</p>
 
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 
 document.write("Computed style parent (should be null): " + document.defaultView.getComputedStyle(document.body, null).parentRule);
 try {

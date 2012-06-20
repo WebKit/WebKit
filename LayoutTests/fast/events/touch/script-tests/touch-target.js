@@ -64,7 +64,7 @@ function declareTouchMove(div_id)
 
         if (++totalTouchMoveCount == 6)
         {
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
             isSuccessfullyParsed();
         }
     }
@@ -78,8 +78,8 @@ div2.addEventListener("touchmove", declareTouchMove(), false);
 
 description("Tests that the target of touches match the element where the event originated, not where the touch is currently occurring.");
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
 }
 
 if (window.eventSender) {

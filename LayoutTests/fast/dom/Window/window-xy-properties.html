@@ -53,8 +53,8 @@ function mouseev(event) {
     }
 }
 function test() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         // test a normal mouse to
         eventSender.mouseMoveTo(50, 50);
         eventSender.mouseDown();

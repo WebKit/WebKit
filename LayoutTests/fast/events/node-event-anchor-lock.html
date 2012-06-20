@@ -12,9 +12,9 @@ This test does the following:</br>
 </div>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 if (window.eventSender) {
@@ -42,7 +42,7 @@ else
     line.appendChild(document.createTextNode("FAIL: scrollTop is " + scrollTop+ "px, but should be more than 600px"));
 document.getElementById('console').appendChild(line);
 
-if (window.layoutTestController)
-    layoutTestController.notifyDone();
+if (window.testRunner)
+    testRunner.notifyDone();
 
 </script></body></html>

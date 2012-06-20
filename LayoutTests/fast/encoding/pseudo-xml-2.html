@@ -7,8 +7,8 @@ An XML declaration without an explicit encoding incorrectly triggers UTF-8 encod
 <p id="result" />
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.getElementById("result").innerHTML = "Charset: " + 
     (document.charset ? document.charset : document.characterSet) + " (should be KOI8-R)";

@@ -3,10 +3,10 @@
         <div id="test"></div>
         <div id="result"></div> 
         <script>
-            if (window.layoutTestController)
+            if (window.testRunner)
             {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             var event = document.createEvent('KeyboardEvent');
@@ -14,8 +14,8 @@
             document.getElementById('test').dispatchEvent(event);
 
             document.getElementById('result').innerHTML = "PASS";
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         </script> 
     </body> 
 </html>

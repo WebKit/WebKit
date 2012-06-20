@@ -24,7 +24,7 @@ description('Test touches set the active state.');
 function testComplete(event)
 {
     isSuccessfullyParsed();
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function runTest()
@@ -37,8 +37,8 @@ function runTest()
         debug('This test requires DRT.');
 }
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 </script>
 </body>
 </html>

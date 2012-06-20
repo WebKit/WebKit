@@ -10,8 +10,8 @@
 
     function test() {
 
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         var el = document.getElementById('ta');
 
@@ -21,8 +21,8 @@
         if (el.value != "")
             return;
 
-        if (window.layoutTestController)
-            layoutTestController.setTabKeyCyclesThroughElements(false);
+        if (window.testRunner)
+            testRunner.setTabKeyCyclesThroughElements(false);
 
         // Test that activating the setting causes a tab character insertion.
         focusElementAndPressTabKey(el);
@@ -30,8 +30,8 @@
             return;
 
         // Set this preference so the tab key will actually insert a tab character- like in Mail.
-        if (window.layoutTestController)
-            layoutTestController.setTabKeyCyclesThroughElements(true);
+        if (window.testRunner)
+            testRunner.setTabKeyCyclesThroughElements(true);
 
         // Test that deactivating the setting prevents a tab insertion.
         el.value = "";

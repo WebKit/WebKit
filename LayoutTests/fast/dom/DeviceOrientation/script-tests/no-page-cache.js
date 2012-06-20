@@ -1,9 +1,9 @@
 description('Tests that pages that use DeviceOrientation are not put in the page cache.');
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+    testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
 } else
     debug('This test can not be run without the LayoutTestController');
 

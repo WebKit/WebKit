@@ -4,9 +4,9 @@
 <script src="../../js/resources/js-test-pre.js"></script>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var updatedFrameURL = "data:text/html,Updated contents of iframe";
@@ -37,8 +37,8 @@ function handleLoad()
 
     shouldBe("window.frames[0].location.toString()", '"' + updatedFrameURL + '"');
     shouldBe("window.frames[1].location.toString()", '"' + updatedObjectURL + '"');
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.testRunner) {
+        testRunner.notifyDone();
     }
 }
 </script>

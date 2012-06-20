@@ -16,15 +16,15 @@ function everythingLoaded()
 
     document.getElementById("result").innerHTML = "PASS: Test complete and passed unless a subsequent test crashes.";
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function documentLoaded()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     isDocumentLoaded = true;

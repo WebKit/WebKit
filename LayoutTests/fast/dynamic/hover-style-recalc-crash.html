@@ -16,8 +16,8 @@
     <a></a>
 </div>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         document.body.offsetTop;
         var y = document.getElementById("a").getBoundingClientRect().top;
         eventSender.mouseMoveTo(50, y + 50);

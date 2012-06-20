@@ -142,5 +142,5 @@ var node = null;
 shouldThrow("range.intersectsNode(node)");
 debug("");
     
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();

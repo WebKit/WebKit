@@ -5,6 +5,6 @@ if (panel_obj) {
     panel_obj.innerHTML = "SUCCESS";
   else
     panel_obj.innerHTML = "FAILURE";
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }

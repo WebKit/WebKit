@@ -70,8 +70,8 @@ function moveMouse(oldElementId, newElementId)
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var ids = ['sandbox', 'details', 'summary'];
     for (var i = 0; i < ids.length; ++i) {
         var element = document.getElementById(ids[i]);

@@ -6,9 +6,9 @@ Setting display:none on an iframe causes the ownerDocument to freeze.</p>
 <a id=foo href="javascript:pass()"></a>
 <iframe src="about:blank"></iframe>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 var iframe = document.getElementsByTagName("iframe")[0];
@@ -50,8 +50,8 @@ function pass()
     document.getElementById("log").innerHTML = "PASS";
     document.getElementById("foo").innerHTML = "";
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

@@ -18,9 +18,9 @@ document.events = {};
 document.saveWhere = null;
 
 function runTest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
 
         eventSender.mouseMoveTo(1,1);
         eventSender.mouseDown();
@@ -68,7 +68,7 @@ function finish()
     shouldBe("document.events['C-no-press'].which", "0");
     shouldBe("document.events['D-middle'].which", "2");
 
-    layoutTestController.notifyDone()
+    testRunner.notifyDone()
 }
 
 description("This test verifies that we get the correct button on mouseover events in .which when entering a document.");

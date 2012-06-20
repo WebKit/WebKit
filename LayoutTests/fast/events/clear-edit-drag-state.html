@@ -54,7 +54,7 @@ function dragSpan() {
 }
 
 if (window.eventSender) {
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     getSelection().selectAllChildren(span);
     dragSpan();
     var firstLog = setLog('');

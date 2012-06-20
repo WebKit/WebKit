@@ -3,9 +3,9 @@
   <head>
     <script>
       function init() {
-          if (window.layoutTestController) {
-              layoutTestController.setGeolocationPermission(true);
-              layoutTestController.setMockGeolocationPosition(51.478, -0.166, 100);
+          if (window.testRunner) {
+              testRunner.setGeolocationPermission(true);
+              testRunner.setMockGeolocationPosition(51.478, -0.166, 100);
           }
           window.parent.onIframeReady()
       }

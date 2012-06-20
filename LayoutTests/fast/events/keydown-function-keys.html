@@ -24,8 +24,8 @@ function onKeyEvent(ev) {
 <textarea id="test" rows="1" cols="40" onkeydown="return onKeyEvent(event);" onkeyup="return onKeyEvent(event);"></textarea>
 <ul id="console"></ul>
 <script language="javascript" type="text/javascript">
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 var textarea = document.getElementById("test");
 textarea.focus();
 eventSender.keyDown("F1");

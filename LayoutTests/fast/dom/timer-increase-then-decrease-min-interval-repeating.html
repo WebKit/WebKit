@@ -20,20 +20,20 @@ function slowTimeoutHandler() {
         log("PASS");
     else
         log("FAIL -- timeout ran " + count + " times");
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function runTest() {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         log("This test requires the LayoutTestController");
         return;
     }
 
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     // Make timers run no more often than once every two seconds.
-    layoutTestController.setMinimumTimerInterval(2.0);
+    testRunner.setMinimumTimerInterval(2.0);
 
     setInterval(slowTimeoutHandler, 1000);
     setInterval(fastTimeoutHandler, 1);
@@ -42,7 +42,7 @@ function runTest() {
     // If this doesn't cause timers to get re-evaluated immediately,
     // the fast timeout handler won't get called for up to two seconds,
     // which would lead to poor responsiveness.
-    layoutTestController.setMinimumTimerInterval(0.004);
+    testRunner.setMinimumTimerInterval(0.004);
 }
 </script>
 </head>

@@ -5,7 +5,7 @@ function expect(test, msg) {
         return true;
 
     log.innerText = 'FAIL: expected ' + msg;
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
     return false;
 }
 
@@ -79,22 +79,22 @@ function doStep(step, location) {
             return;
         log.innerText += 'PASS: test complete';
         sessionStorage.removeItem('step');
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 }
 
 window.onpageshow = function() {
-    if (!window.layoutTestController || !window.eventSender || !window.internals) {
+    if (!window.testRunner || !window.eventSender || !window.internals) {
         log.innerText =
-            'This test requires eventSender, layoutTestController and window.internals. ' +
+            'This test requires eventSender, testRunner and window.internals. ' +
             'It cannot be run manually.';
         return;
     }
     if (!location.search) {
         sessionStorage.step = 0;
-        layoutTestController.dumpAsText();
-        layoutTestController.clearBackForwardList();
-        layoutTestController.waitUntilDone();
+        testRunner.dumpAsText();
+        testRunner.clearBackForwardList();
+        testRunner.waitUntilDone();
     }
 
     setTimeout(function() {

@@ -63,8 +63,8 @@ function recordScroll(event) {
 	        // If we've got here, we've passed.
 	        successfullyParsed = true;
 	        isSuccessfullyParsed();
-	        if (window.layoutTestController)
-	            layoutTestController.notifyDone();
+	        if (window.testRunner)
+	            testRunner.notifyDone();
 		}
     }
 }
@@ -114,8 +114,8 @@ function secondGestureScroll()
     checkScrollOffset();
 }
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function runTest()
 {

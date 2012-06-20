@@ -43,8 +43,8 @@ if (document.getElementsByTagName("input")[0].addEventListener)
 
 document.getElementsByTagName("input")[0].focus();
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     log("Space:");
     eventSender.keyDown(" ", []);
     log("Enter:");

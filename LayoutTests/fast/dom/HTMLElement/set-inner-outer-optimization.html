@@ -62,8 +62,8 @@ function runTest(markup, propertyName, newValue, expectedResult)
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var parent = document.getElementById("parent");
     parent.addEventListener("DOMSubtreeModified", setModifiedFlag, true);

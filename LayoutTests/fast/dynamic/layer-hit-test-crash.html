@@ -2,8 +2,8 @@
 <head>
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function test()
 {
@@ -35,8 +35,8 @@ function finish()
 {
     if (window.eventSender)
         eventSender.mouseUp();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

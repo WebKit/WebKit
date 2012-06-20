@@ -6,8 +6,8 @@
 <input type="text" id="inputObject" value="test">
 <input type="text" id="outputObject">
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.getElementById("inputObject").ondragenter = function() {
     document.getElementById("inputObject").value = "";

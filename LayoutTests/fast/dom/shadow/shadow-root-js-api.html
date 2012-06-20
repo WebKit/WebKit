@@ -12,8 +12,8 @@
 <script>
 description("Tests for ShadowRoot JS APIs. Can only run within DRT");
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 shouldThrow("new WebKitShadowRoot()");
 shouldThrow("new WebKitShadowRoot(undefined)");
 shouldThrow("new WebKitShadowRoot(null)");

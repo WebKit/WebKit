@@ -2,17 +2,17 @@
 Timer-related crash when closing Web Inspector.</p>
 <p>PASS if no crash.</p>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 var timeoutID;
 function test()
 {
     clearTimeout(timeoutID);
-    if (window.layoutTestController)
-        setTimeout(function() { layoutTestController.notifyDone() }, 0);
+    if (window.testRunner)
+        setTimeout(function() { testRunner.notifyDone() }, 0);
 }
 
 timeoutID = setTimeout(test, 0);

@@ -24,12 +24,12 @@
                 document.getElementById("test").dispatchEvent(clickEvent);
             }
 
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.setCanOpenWindows();
-                layoutTestController.setPopupBlockingEnabled(true);
-                layoutTestController.setCloseRemainingWindowsWhenComplete(true);
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.setCanOpenWindows();
+                testRunner.setPopupBlockingEnabled(true);
+                testRunner.setCloseRemainingWindowsWhenComplete(true);
+                testRunner.waitUntilDone();
 
                 var button1 = document.getElementById("button1");
                 var button2 = document.getElementById("button2");
@@ -43,7 +43,7 @@
                     eventSender.mouseUp();
                 }
 
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
         </script> 
     </body> 

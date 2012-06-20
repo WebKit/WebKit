@@ -7,8 +7,8 @@
 <script language="JavaScript" type="text/javascript">
 	// FIXME Disabled because of <rdar://problem/5569119>
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     window.moveTo(0, 0);
 

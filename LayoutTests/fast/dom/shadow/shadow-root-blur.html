@@ -13,8 +13,8 @@ description("This tests the blur() on on shadow host should work when a shadow h
 if (!window.internals)
     debug('This test runs on DRT only');
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.body.appendChild(
     createDOM('div', {'id':'shadowHostA'},

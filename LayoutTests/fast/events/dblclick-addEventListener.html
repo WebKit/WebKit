@@ -26,8 +26,8 @@
 			var elem = document.getElementById("click_area");
             elem.addEventListener('dblclick', handler, false);
             
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
                 eventSender.mouseMoveTo(50,50);
                 eventSender.mouseDown();
                 eventSender.mouseUp();

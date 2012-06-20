@@ -9,7 +9,7 @@ function debug(str) {
 }
 
 function runTests() {
-    if (window.layoutTestController) layoutTestController.dumpAsText();
+    if (window.testRunner) testRunner.dumpAsText();
     
     var parser = new DOMParser();
     parser.test = "test"

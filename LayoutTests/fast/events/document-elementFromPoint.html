@@ -203,7 +203,7 @@ th { height: 30px; }
 <div id="subpixel-test"></div>
 <script>
 // Debug mode.
-if (!window.layoutTestController) {
+if (!window.testRunner) {
     document.body.onmousemove = function(e) {
         var resultBox = document.getElementById('mouse-position');
         var offsets = 'element id: ' + e.target.id + '<br> clientX: ' + e.clientX + ' clientY: ' + e.clientY + '<br>';
@@ -245,9 +245,9 @@ function clicked(event) {
     log(result);
 }
 
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
 }
 
 // Start the test.
@@ -275,8 +275,8 @@ window.addEventListener('load', function() {
             dispatchEvent(388, 88, 'fixed', 188, 38);
 
             // End asynchronous test.
-            if (window.layoutTestController)
-                window.layoutTestController.notifyDone();            
+            if (window.testRunner)
+                window.testRunner.notifyDone();            
         }, 0);
     }, 0);
 }, false);

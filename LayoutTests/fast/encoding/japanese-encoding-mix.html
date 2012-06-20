@@ -4,6 +4,6 @@
 <p>Some text here is encoded as EUC-JP, and some (in comment) as Shift_JIS. Since there is an explicit encoding declaration, auto-detection shouldn't change the encoding.</p><p>･ﾋ･ﾃ･ﾝ･ﾆ･�･ﾓ</p>
 <!--右カラムコメントアウト ここから -->
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 document.write("Should be EUC-JP: " + (document.charset ? document.charset : document.characterSet));</script>

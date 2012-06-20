@@ -1,9 +1,9 @@
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.setCanOpenWindows();
-        layoutTestController.setCloseRemainingWindowsWhenComplete();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setCanOpenWindows();
+        testRunner.setCloseRemainingWindowsWhenComplete();
+        testRunner.waitUntilDone();
     }
 
     var win = window.open("resources/dom-access-from-closure-window-child.html", "child");
@@ -18,8 +18,8 @@
         // Call the method injected by resources/dom-access-from-closure-window-child.html
         accessFrame();
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 <pre id="console"></pre>

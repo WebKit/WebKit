@@ -12,8 +12,8 @@ var div = document.getElementById('test');
 div.addEventListener('selectstart', function (event) { selectStartCount++; });
 div.focus();
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     logResult('Initial state', 0);
 
     eventSender.keyDown("rightArrow");

@@ -3,16 +3,16 @@
 <body>
 <script>
 
-if (!window.layoutTestController)
+if (!window.testRunner)
     document.writeln("This crash test needs to be ran inside DumpRenderTree");
 
 var target;
 
 function startTest() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     function mouseMoveToCenterOfElement(element) {
         eventSender.mouseMoveTo(element.offsetLeft + element.offsetWidth / 2, element.offsetTop + element.offsetHeight / 2);

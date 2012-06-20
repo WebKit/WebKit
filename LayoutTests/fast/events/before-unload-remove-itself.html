@@ -5,10 +5,10 @@
 <pre id="log"></pre>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
 }
 
 var log = document.getElementById('log');
@@ -21,8 +21,8 @@ function test() {
             log.innerHTML = 'FAIL: beforeunload event was never dispatched.\n';
         else
             log.innerHTML = 'FAIL: beforeunload event handler did not remove the frame.\n';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
     done = true;
@@ -32,8 +32,8 @@ function test() {
 function fired() {
     document.body.removeChild(document.body.getElementsByTagName('iframe')[0]);
     log.innerHTML = 'PASS\n';
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

@@ -80,9 +80,9 @@ var worldDiv = document.getElementById('world');
 attachLogger(helloDiv);
 attachLogger(worldDiv);
 
-if (window.layoutTestController && window.eventSender) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner && window.eventSender) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     var events = [
         function () { eventSender.mouseMoveTo(helloDiv.offsetLeft + 10, helloDiv.offsetTop + 2); },
@@ -101,7 +101,7 @@ if (window.layoutTestController && window.eventSender) {
     function timer() {
         // Need to wait one more iteration for events to be processed
         if (j >= events.length) {
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
             return;
         }
         events[j]();

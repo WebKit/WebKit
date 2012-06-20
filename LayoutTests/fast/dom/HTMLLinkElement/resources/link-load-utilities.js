@@ -1,6 +1,6 @@
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 
 function shouldComputedColorOfElementBeEqualToRGBString(element, expectedColor)
@@ -57,6 +57,6 @@ function testFailedAndNotifyDone(message)
 
 function testFinished()
 {
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }

@@ -23,10 +23,10 @@ function test() {
 
     document.documentElement.offsetLeft;
     foo.appendChild(qux);
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
-layoutTestController.waitUntilDone();
-layoutTestController.dumpAsText();
+testRunner.waitUntilDone();
+testRunner.dumpAsText();
 window.onload = test;
 </script>

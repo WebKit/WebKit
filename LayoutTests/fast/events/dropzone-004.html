@@ -43,8 +43,8 @@ function runTest()
     if (!window.eventSender)
         return;
         
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
         
     var endX = dropTarget.offsetLeft + 10;
     var endY = dropTarget.offsetTop + dropTarget.offsetHeight / 2

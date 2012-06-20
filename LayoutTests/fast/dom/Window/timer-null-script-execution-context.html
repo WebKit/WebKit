@@ -4,9 +4,9 @@
 <iframe src="about:blank"></iframe>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function gc()
@@ -35,8 +35,8 @@ function test()
         try { w_setInterval.call(w, "", 0); alert("FAIL: no exception") } catch (ex) { }
         try { w_clearInterval.call(w, 0) } catch (ex) { }
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 }
 </script>

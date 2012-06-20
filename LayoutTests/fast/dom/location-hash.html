@@ -77,8 +77,8 @@
             else
                 print("FAILURE: one or more tests failed", "red");
                 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
                 
             return;
         }
@@ -91,10 +91,10 @@
     }
         
     function runTests() {
-        if (window.layoutTestController) {
-            layoutTestController.clearBackForwardList();
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.clearBackForwardList();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         
         state = 0;

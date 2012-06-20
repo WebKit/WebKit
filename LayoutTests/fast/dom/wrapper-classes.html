@@ -12,8 +12,8 @@
 <body>
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function jsWrapperClass(node)
 {
@@ -284,8 +284,8 @@ function runTest()
 
     // what else is missing?
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function frameLoaded()

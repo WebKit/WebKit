@@ -1,7 +1,7 @@
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText()
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText()
+  testRunner.waitUntilDone();
 }
 
 function log(msg) {
@@ -13,8 +13,8 @@ function log(msg) {
 var timer = setInterval(function() {
   clearInterval(timer);
   setTimeout(function() {
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   }, 10);
 
   // This function tries to appendChild to body, but body doesn't exist

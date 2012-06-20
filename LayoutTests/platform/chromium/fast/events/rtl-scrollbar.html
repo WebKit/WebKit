@@ -14,8 +14,8 @@ description('Test that we can scroll down an RTL element with its left-side scro
 
 var scrollTop = document.getElementById('overflow').scrollTop;
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 if (window.eventSender) {
     var node = document.getElementById('overflow');
@@ -28,7 +28,7 @@ if (window.eventSender) {
 function finished()
 {
     shouldBeTrue('document.getElementById(\'overflow\').scrollTop > scrollTop');
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 
 var successfullyParsed = true;

@@ -2,16 +2,16 @@
 <head>
 <script>
 
-if (layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function done()
 {
     document.getElementById("results").appendChild(document.createTextNode("PASS"));
-    if (layoutTestController)
-        layoutTestController.notifyDone();
+    if (testRunner)
+        testRunner.notifyDone();
 }
 
 function loaded() {

@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 depth = window.screen.pixelDepth;
 if (depth == 16 || depth == 24) {
   document.write("PASS: window.screen.pixelDepth is either 16 or 24");

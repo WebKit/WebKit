@@ -14,7 +14,7 @@ function log(text)
 window.addEventListener('beforeunload', function ()
 {
     log('PASS');
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 });
 document.body.addEventListener('dragenter', function (event)
 {
@@ -30,10 +30,10 @@ document.body.addEventListener('drop', function (event)
 });
 (function ()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     log('Starting test');
     eventSender.beginDragWithFiles(['DRTFakeFile']);
     eventSender.mouseMoveTo(document.body.offsetLeft + 10, document.body.offsetTop + 10);
@@ -42,7 +42,7 @@ document.body.addEventListener('drop', function (event)
     {
         // Deadman's switch so we don't need to wait for the test to timeout to fail.
         log('FAIL');
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }, 0);
 })();
 </script>

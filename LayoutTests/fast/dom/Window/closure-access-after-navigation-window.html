@@ -1,10 +1,10 @@
 <pre id="console"></pre>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.setCanOpenWindows();
-        layoutTestController.setCloseRemainingWindowsWhenComplete();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setCanOpenWindows();
+        testRunner.setCloseRemainingWindowsWhenComplete();
+        testRunner.waitUntilDone();
     }
 
     var logString = "";
@@ -24,8 +24,8 @@
     function done()
     {
         document.getElementById("console").innerHTML = logString;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     Object.prototype.myVal = "parent";

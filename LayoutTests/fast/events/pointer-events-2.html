@@ -151,8 +151,8 @@
     
   </style>
   <script>
-    if (window.layoutTestController) {
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
     }
   
     var pointerEventsValues = ['auto', 'none'];
@@ -196,8 +196,8 @@
         yOffset += 100;
       }
       
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
   </script>
   

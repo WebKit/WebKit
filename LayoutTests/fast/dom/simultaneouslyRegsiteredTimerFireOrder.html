@@ -35,13 +35,13 @@ function done()
     for (var i = 0; i < count; ++i)
         shouldBe(firedTimers[i], "firedTimers[" + i + "]", i);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 for (var i = 0; i < count; ++i)

@@ -12,9 +12,9 @@ function mousemoved(event)
 
 function test()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     eventSender.mouseMoveTo(150, 100);
     eventSender.mouseDown();
     eventSender.mouseMoveTo(50, 100);

@@ -1,12 +1,12 @@
 description("Tests that when a position is available, no callbacks are invoked until permission is denied.");
 
-if (window.layoutTestController)
-    window.layoutTestController.setMockGeolocationPosition(51.478, -0.166, 100);
+if (window.testRunner)
+    window.testRunner.setMockGeolocationPosition(51.478, -0.166, 100);
 
 function denyPermission() {
     permissionSet = true;
-    if (window.layoutTestController)
-        layoutTestController.setGeolocationPermission(false);
+    if (window.testRunner)
+        testRunner.setGeolocationPermission(false);
 }
 
 var error;

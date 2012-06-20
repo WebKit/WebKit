@@ -1,13 +1,13 @@
 <html>
     <head>
         <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.setCanOpenWindows();
-            layoutTestController.dumpChildFramesAsText();
-            layoutTestController.waitUntilDone();
-            layoutTestController.setCloseRemainingWindowsWhenComplete()
-            layoutTestController.setPopupBlockingEnabled(true);
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setCanOpenWindows();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
+            testRunner.setCloseRemainingWindowsWhenComplete()
+            testRunner.setPopupBlockingEnabled(true);
         }
 
         function closeWindow(windowToClose)
@@ -19,8 +19,8 @@
             {
                 if (!windowToClose.closed)
                     setTimeout(doneHandler, 1);
-                else if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                else if (window.testRunner)
+                    testRunner.notifyDone();
             }
         }
 
@@ -37,7 +37,7 @@
 
         function test()
         {
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 eventSender.mouseMoveTo(2, 2);
                 eventSender.scheduleAsynchronousClick();
             }

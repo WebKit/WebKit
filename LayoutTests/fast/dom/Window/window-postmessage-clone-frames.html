@@ -5,9 +5,9 @@
 <input type="file" id="fileInput">
 <div id="console"></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var console = document.getElementById("console");
@@ -76,8 +76,8 @@ function shouldBe(actual, expected)
 var i = 0;
 window.onmessage = function(evt) {
     if (safeToString(frames[0].tests[i].eventData) == 'done') {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
 

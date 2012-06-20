@@ -1,8 +1,8 @@
 description("Tests Geolocation when permission is denied, using the mock service.");
 
-if (window.layoutTestController) {
-    layoutTestController.setGeolocationPermission(false);
-    layoutTestController.setMockGeolocationPosition(51.478, -0.166, 100.0);
+if (window.testRunner) {
+    testRunner.setGeolocationPermission(false);
+    testRunner.setMockGeolocationPosition(51.478, -0.166, 100.0);
 } else
     debug('This test can not be run without the LayoutTestController');
 

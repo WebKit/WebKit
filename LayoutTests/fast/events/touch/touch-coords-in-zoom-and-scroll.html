@@ -41,9 +41,9 @@
         window.scrollTo(x, y);
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     // Default.
@@ -117,10 +117,10 @@
         eventSender.clearTouchPoints();
     }
     
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);
         isSuccessfullyParsed();
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 </script>

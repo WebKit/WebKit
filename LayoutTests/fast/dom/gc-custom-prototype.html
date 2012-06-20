@@ -56,8 +56,8 @@ function shouldBeNonNull(aDescription, a)
 }
 
 (function () {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     shouldBeNonNull("$('p').__proto__", $('p').__proto__);
     $('p').__proto__ = null;

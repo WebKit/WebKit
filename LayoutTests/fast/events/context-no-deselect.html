@@ -11,7 +11,7 @@ var input = document.getElementById("text");
 input.selectionStart = 5;
 input.selectionEnd = 15;
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     var x, y;
     x = input.offsetParent.offsetLeft + input.offsetLeft + input.offsetWidth / 2;
     y = input.offsetParent.offsetTop + input.offsetTop + input.offsetHeight / 2;

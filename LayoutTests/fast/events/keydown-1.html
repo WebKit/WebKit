@@ -28,7 +28,7 @@ false);
 function step2() {
     addEventListeners();
     
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
         
     var iframe = document.getElementById("iframe");
@@ -46,13 +46,13 @@ function step2() {
     eventSender.keyDown("delete");
 
     log(window.frames[0].document.body.innerText);
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 
 function runTest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        window.layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
     }
     window.setTimeout(step2, 200);
 }

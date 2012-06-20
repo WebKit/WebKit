@@ -16,8 +16,8 @@ function dragLeave() {
     setTimeout(function() {
         // Wait until after the drop to notifyDone, just to make sure
         // the navigation was prevented correctly.
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 }
 
@@ -28,7 +28,7 @@ window.addEventListener("dragover", dragOver, true);
 window.addEventListener("dragleave", dragLeave, true);
 
 function doTest() {
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     eventSender.beginDragWithFiles(["resources/file-for-prevent-drag-to-navigate.html"]);
     eventSender.mouseMoveTo(10, 10);
@@ -36,7 +36,7 @@ function doTest() {
 }
 
 if (window.eventSender) {
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
     // The load seems to fail (for the wrong reasons) if we try to kick of a
     // new load before this one is finished.  So we wait.
     window.onload = doTest();

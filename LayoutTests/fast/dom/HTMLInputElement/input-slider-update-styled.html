@@ -26,16 +26,16 @@ value is updated.
 
 */
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function runTest()
 {
     setTimeout(function()
     {
         document.getElementById('slider').value = 100;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 }
 

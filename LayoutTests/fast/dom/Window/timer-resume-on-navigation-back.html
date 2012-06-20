@@ -8,15 +8,15 @@ function verify() {
     document.getElementById("result").innerHTML =
         actualTimerDelay >= timeoutValue ? 'PASS' : 'FAIL with ' + actualTimerDelay + ' ms delay.';
 
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
 }
 
 function runTest() {
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
-      layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+      testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
     // Location changes need to happen outside the onload handler to generate history entries.
     setTimeout(function() {

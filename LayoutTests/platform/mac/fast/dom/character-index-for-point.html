@@ -16,11 +16,11 @@ body { margin: 10; padding: 0 }
         document.getElementById("console").appendChild(item);
     }
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         
         try {
         
-            layoutTestController.dumpAsText();
+            testRunner.dumpAsText();
         
             window.getSelection().setPosition(document.getElementById("test"), 0);
             log(textInputController.characterIndexForPoint(5, 600-5));

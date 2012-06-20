@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function test()
@@ -18,7 +18,7 @@
     {
         if (window.eventSender)
             eventSender.keyDown("menu");
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 </script>
 </head>

@@ -13,15 +13,15 @@ function print(message, color)
 
 function test() 
 {
-    if (window.layoutTestController) {
-       layoutTestController.dumpAsText();
-       layoutTestController.waitUntilDone(); 
+    if (window.testRunner) {
+       testRunner.dumpAsText();
+       testRunner.waitUntilDone(); 
     }
     var img1 = document.getElementById('img1');
     img1.onerror = function (error) {
         print("PASS: caught image load error: " + error, "green");
-        if (window.layoutTestController) {
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.notifyDone();
         }
     };
     img1.src = "invalidinvalid.jpg";

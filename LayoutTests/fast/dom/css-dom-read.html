@@ -8,8 +8,8 @@ I { display: block; }
 </style>
 <script>
 function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     t = document.createTextNode(document.getElementsByTagName('style').item(0).firstChild.nodeValue);
     document.getElementById('docStyle').appendChild(t);

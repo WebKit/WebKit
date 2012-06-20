@@ -5,9 +5,9 @@ var p5result = "FAIL";
 
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     document.getElementById("p5").innerHTML = p5result;
@@ -30,7 +30,7 @@ function test()
     
     var e3 = document.createElement( "script" );
     e3.type  = "text/javascript";
-    e3.setAttribute("onload", "if (window.layoutTestController) setTimeout('layoutTestController.notifyDone()', 100)"); 
+    e3.setAttribute("onload", "if (window.testRunner) setTimeout('testRunner.notifyDone()', 100)"); 
     e3.src = "resources/script-set-src-p9failBefore.js";
     e3.src = "resources/script-set-src-p9pass.js";
     document.getElementsByTagName("head")[0].appendChild(e3);

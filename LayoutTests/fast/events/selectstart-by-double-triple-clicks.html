@@ -25,10 +25,10 @@ function expect(title, expectedCount, expectedType, expectedString) {
         document.writeln('PASS');
 }
 
-if (window.layoutTestController && !window.eventSender)
+if (window.testRunner && !window.eventSender)
     document.write('This test requires eventSender');
-else if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+else if (window.testRunner) {
+    testRunner.dumpAsText();
 
     var y = span.offsetTop + span.offsetHeight / 2;
     expect('Initial state', 0, 'caret');

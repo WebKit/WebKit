@@ -6,8 +6,8 @@
   <p></p>
   <p></p>
   <script>
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+    if (window.testRunner)
+      testRunner.dumpAsText();
     try {
       var divs = document.getElementsByName("my_a");
       divs[0].parentNode.removeChild(divs[0]);

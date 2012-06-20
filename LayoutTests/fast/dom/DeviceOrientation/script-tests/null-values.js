@@ -3,8 +3,8 @@ description('Tests using null values for some of the event properties.');
 var mockEvent;
 function setMockOrientation(alpha, beta, gamma) {
     mockEvent = {alpha: alpha, beta: beta, gamma: gamma};
-    if (window.layoutTestController)
-        layoutTestController.setMockDeviceOrientation(
+    if (window.testRunner)
+        testRunner.setMockDeviceOrientation(
             null != mockEvent.alpha, null == mockEvent.alpha ? 0 : mockEvent.alpha,
             null != mockEvent.beta, null == mockEvent.beta ? 0 : mockEvent.beta,
             null != mockEvent.gamma, null == mockEvent.gamma ? 0 : mockEvent.gamma);

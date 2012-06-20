@@ -8,8 +8,8 @@
 Test that &lt;xml-stylesheet> processing instructions only have stylesheets when in document.</p>
 <pre id="result"></pre>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 sheet = document.styleSheets[0];
 pi = document.firstChild;

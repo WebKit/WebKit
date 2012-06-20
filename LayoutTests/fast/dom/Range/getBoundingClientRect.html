@@ -62,8 +62,8 @@ body {
 
 </div>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     else
         alert("WARNING:\nThis test may show bogus FAILures if not run in DumpRenderTree, due to platform-specific differences in font metrics.");
 
@@ -99,7 +99,7 @@ body {
 
     function show(range)
     {
-        if (window.layoutTestController)
+        if (window.testRunner)
             return;
         addBBoxOverClientRect(range.getBoundingClientRect());
     }
@@ -162,7 +162,7 @@ body {
     rect = range6.getBoundingClientRect()
     testClientRect(rect, expectedResults[6 - 1]);
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);
     }

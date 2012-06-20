@@ -6,9 +6,9 @@ jQuery animation crashing Safari.</p>
 </div>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function swap( elem, options, callback ) {
@@ -49,8 +49,8 @@ setTimeout(function() {
     forceLayout();
     elem.style['display']='none';
     forceLayout();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
     return;
 }, 0); 
 

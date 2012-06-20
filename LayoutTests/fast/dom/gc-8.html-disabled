@@ -13,22 +13,22 @@ function print(message, color)
 
 function test() 
 {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         print("FAIL: This test can only run from inside DumpRenderTree.", "red");
         return;
     }
 
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     
     document.body.style.myCustomProperty = new String("1");
     new Date(); // allocate another object to create heap entropy
     // Collecting on a timeout seems to make the crash more reproducible -- not exactly sure why
     setTimeout('GCController.collectOnAlternateThread(true);', 0);
-    setTimeout('document.body.style.myCustomProperty; print("PASS: you didn\'t crash"); layoutTestController.notifyDone();', 1);
+    setTimeout('document.body.style.myCustomProperty; print("PASS: you didn\'t crash"); testRunner.notifyDone();', 1);
     
     // fail-safe
-    setTimeout('print("FAIL: Test hung -- bailing out"); layoutTestController.notifyDone();', 2);
+    setTimeout('print("FAIL: Test hung -- bailing out"); testRunner.notifyDone();', 2);
 }
 
 </script>

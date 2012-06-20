@@ -3,8 +3,8 @@
     <script>
         function test()
         {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             var target = document.getElementById("target");
             getSelection().setBaseAndExtent(target, 0, target, 0);

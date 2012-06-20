@@ -8,8 +8,8 @@ function print(message)
 }
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var ev = document.createEvent("MouseEvent");
     ev.initMouseEvent("click", true, true, null, 1, 1, 1, 1, 1, false, false, false, false, 0, document);

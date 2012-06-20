@@ -31,8 +31,8 @@ window.frames[0].document.body.onfocus = fail;
 var expected = ['a', 'b'];
 var i = 0;
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 if (window.eventSender) {
     document.body.focus();

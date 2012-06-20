@@ -13,20 +13,20 @@ function log(s)
 function afterOnload()
 {
     log("PASS: onload fired");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
 
         // Quirkily, the FrameLoadDelegate API considers our <iframe> fully loaded 
         // once it has loaded its initial empty document. So, if we want DumpRenderTree 
         // to wait for the load event caused by our document.close() before dumping,
         // we need to tell it so explicitly.
-        layoutTestController.waitUntilDone();
+        testRunner.waitUntilDone();
     }
 
     var doc = frames[0].document;

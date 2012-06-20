@@ -2,10 +2,10 @@
 <head>
 <script>
 function runTest() {
-  if (!window.layoutTestController)
+  if (!window.testRunner)
     return;
 
-  window.layoutTestController.dumpAsText();
+  window.testRunner.dumpAsText();
 
   var span = document.getElementById("root");
   eventSender.mouseMoveTo(span.offsetLeft + 10, span.offsetTop + span.offsetHeight / 2);

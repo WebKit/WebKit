@@ -7,8 +7,8 @@ function debug(str) {
     pre.appendChild(txt)
 }
 function runTests() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText()
+    if (window.testRunner)
+        testRunner.dumpAsText()
 
     var elem = document.createElementNS('http://www.example.org', 'test:p')
     var importedNode = document.importNode(elem, true)

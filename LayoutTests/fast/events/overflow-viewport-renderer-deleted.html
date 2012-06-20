@@ -11,8 +11,8 @@
 
     onload = function()
     {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         document.getElementById('container').addEventListener('overflowchanged', function() { }, false);
         document.body.offsetTop;

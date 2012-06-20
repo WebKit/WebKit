@@ -28,9 +28,9 @@ function mouseDoubleClick(evt)
 
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     if (window.eventSender) {
         var testEle = document.getElementById("testDiv");
@@ -50,7 +50,7 @@ function testClick()
         // Skip forward 1 second so that the clicks are counted as distinct.
         eventSender.leapForward(1000);
     }
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 </script>

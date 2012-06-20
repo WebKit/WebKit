@@ -5,11 +5,11 @@
         var intervalId;
         var firstIntervalExecution = true;
         
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.setCanOpenWindows();
-            layoutTestController.waitUntilDone();
-            layoutTestController.setPopupBlockingEnabled(true);
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setCanOpenWindows();
+            testRunner.waitUntilDone();
+            testRunner.setPopupBlockingEnabled(true);
         }
     
         function clickHandler() {
@@ -38,8 +38,8 @@
                 debug("Test calling window.open() with a 1001 ms delay. A popup should not be allowed.")
                 shouldBeUndefined("newWindow");
                 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }, 1001);
             
             intervalId = setInterval(function() {

@@ -1,12 +1,12 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.setCanOpenWindows();
-  layoutTestController.setPopupBlockingEnabled(true);
-  layoutTestController.setCloseRemainingWindowsWhenComplete(true);
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setCanOpenWindows();
+  testRunner.setPopupBlockingEnabled(true);
+  testRunner.setCloseRemainingWindowsWhenComplete(true);
+  testRunner.waitUntilDone();
 }
 
 function test() {
@@ -24,7 +24,7 @@ Window object. Otherwise, the test passes.
 <form id="form" action="data:text/html,<script>alert(window)</script>" target="_blank">
 <input type="submit" value="Submit to new window"/>
 </form>
-<form id="form2" action="data:text/html,<b>hello!</b><script>window.layoutTestController && layoutTestController.notifyDone()</script>" target="target">
+<form id="form2" action="data:text/html,<b>hello!</b><script>window.testRunner && testRunner.notifyDone()</script>" target="target">
 <input type="submit" value="Submit local page Javascript"/>
 </form>
 <iframe id="target"></iframe>

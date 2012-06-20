@@ -2,8 +2,8 @@ description(
 'This tests that calling parentRule on the child rule of MediaRule is equal to that MediaRule.'
 );
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var head = document.getElementsByTagName('head')[0];
 head.innerHTML = "<style>@media all { a { border-color: red; } }</style>";

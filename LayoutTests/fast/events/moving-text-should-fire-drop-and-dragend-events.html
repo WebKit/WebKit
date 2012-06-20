@@ -23,7 +23,7 @@ div.addEventListener('dragend', logEvent, false);
 div.addEventListener('drop', logEvent, false);
 
 if (window.eventSender) {
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     div.focus();
     getSelection().collapse(div, 0);

@@ -9,15 +9,15 @@ function log(msg) {
 }
 
 function runTest() {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         log("This test requires the LayoutTestController");
         return;
     }
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     // Make timers run no more often than twice a second.
-    layoutTestController.setMinimumTimerInterval(0.5);
+    testRunner.setMinimumTimerInterval(0.5);
 
     // Part 2 of this test (which will likely be executed immediately
     // after this one by the harness) verifies that the minimum timer

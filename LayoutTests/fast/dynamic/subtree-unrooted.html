@@ -16,8 +16,8 @@
         The test passes if, in a debug build, it does not cause an assertion failure.
     </p>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         document.body.offsetTop;
     </script>
     <div id="target"></div>

@@ -16,8 +16,8 @@ function recordScroll(event)
             // If we've got here, we've passed.
             successfullyParsed = true;
             isSuccessfullyParsed();
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     }
 }
@@ -27,8 +27,8 @@ function exitIfNecessary()
     debug('gesture events not implemented on this platform or gesture event scrolling of a document is broken');
     successfullyParsed = true;
     isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function checkTestDependencies()

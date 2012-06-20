@@ -2,10 +2,10 @@
 <head>
     <script>
     function test() {
-        if (window.layoutTestController) {
-            layoutTestController.setCanOpenWindows();
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.setCanOpenWindows();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         newWindow = window.open('resources/early-document-access-popup.html');
@@ -13,15 +13,15 @@
             newWindow.document; // access the document
         } else {
             document.body.innerText = 'FAIL: window.open failed to make a window.';
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     }
 
     function done() {
-        if (window.layoutTestController)
-            if (layoutTestController.windowCount() == 1)
-                layoutTestController.notifyDone();
+        if (window.testRunner)
+            if (testRunner.windowCount() == 1)
+                testRunner.notifyDone();
             else
                 setTimeout("done()", 100);
     }

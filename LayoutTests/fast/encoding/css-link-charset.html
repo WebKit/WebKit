@@ -8,8 +8,8 @@
 <p id="result"></p>
 <script>
 function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     try {
         text = document.styleSheets[0].rules[0].style.cssText;
         if (text.match('.*SUÑÑÅSS.*'))

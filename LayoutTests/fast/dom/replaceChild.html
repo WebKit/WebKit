@@ -16,16 +16,16 @@
 	}
 </style>
 <script language="javascript" type="text/javascript">
-	if (window.layoutTestController) {
-		layoutTestController.waitUntilDone();
-		layoutTestController.dumpAsText();
+	if (window.testRunner) {
+		testRunner.waitUntilDone();
+		testRunner.dumpAsText();
 	}
 	function loadMenu(m){
 		var w = document.getElementById("menu_content_area");
 		w.replaceChild(m, document.getElementById("menu_import"));
 		document.body.appendChild(document.createTextNode("PASS"));
-		if (window.layoutTestController)
-			layoutTestController.notifyDone();
+		if (window.testRunner)
+			testRunner.notifyDone();
 	}
 </script>
 </head>

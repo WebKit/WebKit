@@ -12,12 +12,12 @@
     function finish()
     {
         document.getElementById("result").innerText = passed ? "PASS" : "FAIL";
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
 
         // WebKit schedules a fake mouse move event as part of installing the WebView in
         // a window. For the test to be valid, it must begin only after that event

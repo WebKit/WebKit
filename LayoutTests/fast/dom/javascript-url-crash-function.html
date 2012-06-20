@@ -6,9 +6,9 @@ iframe is calling a JavaScript function causes a crash.
 <iframe src="resources/javascript-url-crash-function-iframe.html"></iframe>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
 }
 </script>

@@ -5,10 +5,10 @@
 <pre id="log"></pre>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
 }
 
 var log = document.getElementById('log');
@@ -19,8 +19,8 @@ function test() {
         // log's not having any content implies that load event was dispatched for the second time before beforeunload is dispatched.
         if (!log.innerHTML.length)
             log.innerHTML = 'FAIL: beforeunload event was never dispatched.\n';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
     done = true;
@@ -32,8 +32,8 @@ function fired() {
         log.innerHTML = 'PASS\n';
     else
         log.innerHTML = 'FAIL: beforeunload event was dispatched after the second load event.'
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

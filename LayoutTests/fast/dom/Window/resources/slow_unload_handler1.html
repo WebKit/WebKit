@@ -14,8 +14,8 @@ function pause() {
             break;
     }
     parent.document.getElementById("results").appendChild(document.createTextNode("FAIL"));
-    if (layoutTestController)
-        layoutTestController.notifyDone();
+    if (testRunner)
+        testRunner.notifyDone();
 }
 
 function nopause() {
@@ -23,8 +23,8 @@ function nopause() {
         var time1 = (new Date()).getTime();
     } catch(e) {
         parent.document.getElementById("results").appendChild(document.createTextNode("FAIL"));
-        if (layoutTestController)
-            layoutTestController.notifyDone();
+        if (testRunner)
+            testRunner.notifyDone();
     }
 }
 function nopause1() {

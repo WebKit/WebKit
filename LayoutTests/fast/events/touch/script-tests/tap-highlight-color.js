@@ -23,7 +23,7 @@ function onTouchEnd()
     shouldBeNonNull("div.ownerDocument.defaultView.getComputedStyle(div, null).getPropertyValue('-webkit-tap-highlight-color')");
     // Notify the test done.
     isSuccessfullyParsed();
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 div.addEventListener("touchstart", onTouchStart, false);
@@ -41,8 +41,8 @@ function touchTargets()
     eventSender.touchEnd();
 }
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 if (window.eventSender && eventSender.clearTouchPoints) {
     description("Check tap highlight color in touch event");

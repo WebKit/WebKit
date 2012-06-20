@@ -2,9 +2,9 @@
 <head>
     <script src="resources/print.js"></script>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         
         var count = 0;
@@ -27,15 +27,15 @@
         {
             if (!document.getElementsByTagName("object").length) {
                 print("PASS", "green");
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
                 return;
             }
             
             if (++count > maxCount) {
                 print("FAIL", "red");
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
                 return;
             }
             

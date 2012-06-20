@@ -9,8 +9,8 @@ var isReload = false;
 if ("#reload" == location.hash)
     isReload = true;
 
-if (window.layoutTestController) {
-    numPendingRequests = layoutTestController.numberOfPendingGeolocationPermissionRequests();
+if (window.testRunner) {
+    numPendingRequests = testRunner.numberOfPendingGeolocationPermissionRequests();
     shouldBe('numPendingRequests', '0');
 
     if (isReload)

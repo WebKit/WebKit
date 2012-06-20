@@ -2,20 +2,20 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.setPopupBlockingEnabled(true);
-    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.setPopupBlockingEnabled(true);
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    testRunner.waitUntilDone();
     // Record current window count.
-    window.windowCount = window.layoutTestController.windowCount();
+    window.windowCount = window.testRunner.windowCount();
 }
 function test() {
-    if (window.layoutTestController && window.layoutTestController.windowCount() == window.windowCount)
+    if (window.testRunner && window.testRunner.windowCount() == window.windowCount)
         document.getElementById("console").innerText = "PASSED";
     // Close the test.
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 </head>

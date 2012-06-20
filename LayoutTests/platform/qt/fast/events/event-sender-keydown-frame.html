@@ -4,9 +4,9 @@
     <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=20303">bug 20303</a>:
     [Qt] key events are not working in frames.</p>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     function reportIFramePos()
     {
@@ -18,7 +18,7 @@
             document.getElementById("console").innerHTML = "SUCCESS";
         else
             document.getElementById("console").innerHTML = "FAILURE";
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 
     function testAndReport() {

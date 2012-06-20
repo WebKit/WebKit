@@ -39,7 +39,7 @@ function setupTargetTree()
 
 function test()
 {
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     log("This test compares a shadow-based render tree with one for a refrence DOM tree.");
     setupTargetTree();
     var targetContainerRenderTree = window.internals.elementRenderTreeAsText(document.getElementById("targetContainer"));

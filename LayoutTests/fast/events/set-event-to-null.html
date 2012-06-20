@@ -21,8 +21,8 @@ function runTest() {
     newEvent.initMouseEvent("mouseover", false, false, window, 0, 10, 10, 10, 10, false, false, false, false, 0, target);
     target.dispatchEvent(newEvent);
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
     }
 }
 

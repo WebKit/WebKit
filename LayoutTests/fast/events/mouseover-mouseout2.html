@@ -89,9 +89,9 @@ Mouse events vs. DOM manipulation.</p>
 
 <script>
 function autoTest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
 
         eventSender.mouseMoveTo(1,1);
         eventSender.mouseDown();
@@ -118,7 +118,7 @@ function autoTest() {
         eventSender.mouseMoveTo(385, 125);
 
         eventSender.mouseMoveTo(1, 1);
-        layoutTestController.notifyDone()
+        testRunner.notifyDone()
     }
 }
 </script>

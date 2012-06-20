@@ -7,8 +7,8 @@
 <script type="text/javascript">
 description('Tries to trigger an assert in xmlhttprequest during pagehide.');
 
-if (window.layoutTestController)
-    layoutTestController.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
+if (window.testRunner)
+    testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
 
 
 onpageshow = function(event)

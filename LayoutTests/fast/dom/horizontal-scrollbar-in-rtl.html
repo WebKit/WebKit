@@ -31,8 +31,8 @@
 
             onload = function()
             {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
 
                 // Test horizontal scroll bar presents and was initially at the right for RTL page.
                 assertEqual("original scroll x for RTL page ", window.scrollX, 0);

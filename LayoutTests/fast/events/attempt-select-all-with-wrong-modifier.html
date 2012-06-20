@@ -9,8 +9,8 @@ function test()
     if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
         onMacPlatform = true;
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
     }
 
     document.body.focus();

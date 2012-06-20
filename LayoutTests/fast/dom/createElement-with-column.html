@@ -2,8 +2,8 @@
 <title>createElement('a:b') in HTML</title>
 <p>FAIL (script didn't run)</p>
 <script>
- if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+ if (window.testRunner)
+    testRunner.dumpAsText();
 
  var got = document.createElement('a:b').localName;
  var expected = 'a:b';

@@ -5,8 +5,8 @@
 </head>
 <body>
 <script>
-if (window.layoutTestController)
-	layoutTestController.dumpAsText();
+if (window.testRunner)
+	testRunner.dumpAsText();
 document.write("<p>Should be your browser default encoding: " + document.characterSet + "</p>");
 document.write("<p>If it's latin-1 (ISO-8859-1), this should be accented e: é</p>");
 </script>

@@ -2,8 +2,8 @@
 <head>
     <script>
     function runTest() {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText()
+        if (window.testRunner)
+            testRunner.dumpAsText()
 
         var div = document.createElement("div");
         div.innerText = "\nText\nwith\nnewlines\n\n";

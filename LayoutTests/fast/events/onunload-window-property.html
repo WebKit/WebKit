@@ -3,9 +3,9 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function unload()
@@ -16,7 +16,7 @@ function unload()
 function load()
 {
     window.onunload = unload;
-    location = "data:text/html,You should have seen an unload alert appear.<script>if (window.layoutTestController) layoutTestController.notifyDone(); </" + "script>";
+    location = "data:text/html,You should have seen an unload alert appear.<script>if (window.testRunner) testRunner.notifyDone(); </" + "script>";
 }
 
 </script>

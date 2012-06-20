@@ -65,9 +65,9 @@ tests = [
 var i = 0;
 var selected = null;
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var log = [];
@@ -111,9 +111,9 @@ function timer() {
         selected = null;
         i++;
         if (i == tests.length) {
-            if (window.layoutTestController)
+            if (window.testRunner)
                 document.getElementById('container').style.display = 'none';
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
             return;
         }
     }

@@ -7,8 +7,8 @@
 Test passes if it does not crash.
 <div id="console"></div>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 iframe1 = document.createElement('iframe');
 document.body.appendChild(iframe1);

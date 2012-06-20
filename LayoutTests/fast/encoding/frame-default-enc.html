@@ -3,9 +3,9 @@
 <meta http-equiv="content-type" content="text/html; charset=x-mac-cyrillic">
 <title>Frames and encodings</title>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 window.done = function(charset) {
@@ -15,8 +15,8 @@ window.done = function(charset) {
 
     document.close();
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </head>
