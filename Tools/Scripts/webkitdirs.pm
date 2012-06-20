@@ -633,12 +633,22 @@ sub setArchitecture
     $architecture = $passedArchitecture if $passedArchitecture;
 }
 
+sub executableHasEntitlements
+{
+    my $executablePath = shift;
+    return (`codesign -d --entitlements - $executablePath 2>&1` =~ /<key>/);
+}
 
 sub safariPathFromSafariBundle
 {
     my ($safariBundle) = @_;
 
-    return "$safariBundle/Contents/MacOS/Safari" if isAppleMacWebKit();
+    if (isAppleMacWebKit()) {
+        my $safariPath = "$safariBundle/Contents/MacOS/Safari";
+        my $safariForWebKitDevelopmentPath = "$safariBundle/Contents/MacOS/SafariForWebKitDevelopment";
+        return $safariForWebKitDevelopmentPath if -f $safariForWebKitDevelopmentPath && executableHasEntitlements($safariPath);
+        return $safariPath;
+    }
     return $safariBundle if isAppleWinWebKit();
 }
 
