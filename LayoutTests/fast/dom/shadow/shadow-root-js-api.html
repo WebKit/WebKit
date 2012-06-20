@@ -21,9 +21,6 @@ shouldThrow("new WebKitShadowRoot(1)");
 var shadowHost = document.createElement('div');
 document.body.appendChild(shadowHost);
 var shadowRoot = new WebKitShadowRoot(shadowHost);
-shouldBe("shadowHost", "shadowRoot.host");
-debug('The previous test should not have side effects.');
-shouldBe("shadowHost", "shadowRoot.host");
 
 var div1 = document.createElement("div");
 div1.setAttribute("id", "div1");

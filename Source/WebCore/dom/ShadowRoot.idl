@@ -32,7 +32,6 @@ module core {
         ConstructorRaisesException,
         JSGenerateToJSObject
     ] ShadowRoot : DocumentFragment {
-        readonly attribute Element host;
         readonly attribute Element activeElement;
         attribute boolean applyAuthorStyles;
         attribute boolean resetStyleInheritance;

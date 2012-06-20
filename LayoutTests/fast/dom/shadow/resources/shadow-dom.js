@@ -42,7 +42,7 @@ function isShadowHost(node)
 function isShadowRoot(node)
 {
     // FIXME: window.internals should have internals.isShadowRoot(node).
-    return node.nodeName == "#shadow-root" || node.host;
+    return node.nodeName == "#shadow-root";
 }
 
 function isIframeElement(element)

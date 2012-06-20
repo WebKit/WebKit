@@ -1,3 +1,19 @@
+2012-06-19  Takashi Sakamoto  <tasak@google.com>
+
+        [Shadow DOM] ShadowRoot.host should be gone
+        https://bugs.webkit.org/show_bug.cgi?id=88387
+
+        According to the w3c spec change,
+        i.e. https://www.w3.org/Bugs/Public/show_bug.cgi?id=16764
+        Removed host attribute from ShadowRoot.idl.
+
+        Reviewed by Dimitri Glazkov.
+
+        No new tests, because this change modified only idl.
+
+        * dom/ShadowRoot.idl:
+        Just removed host attribute.
+
 2012-06-19  Adam Klein  <adamk@chromium.org>
 
         Pass ScriptValue by const ref where possible
