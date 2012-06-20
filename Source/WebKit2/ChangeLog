@@ -1,3 +1,28 @@
+2012-06-20  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11653784> and https://bugs.webkit.org/show_bug.cgi?id=89590
+        showModalDialog message handling is flaky in WebKit2
+
+        Because RunLoop::performWork() swaps the function queue to a temporary Vector before calling
+        the functions an inner run-loop - such as we see with running a modal dialog - does not have
+        a change to handle any of the functions that were queued after the WebPageProxy::RunModal message.
+
+        By servicing the functions in the queue one at a time we can give the RunLoop a chance to pick up
+        where it left off if RunLoop::performWork is re-entered.
+
+        To guarantee RunLoop::performWork is re-entered to handle those functions we also need to signal
+        its source before entering the modal run loop so our RunLoop is woken up.
+
+        Reviewed by Darin Adler.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::wakeUpRunLoop): Added so the WebPageProxy can signal the runloop to be woken up
+          before it enters the modal dialog run loop.
+        * Platform/CoreIPC/Connection.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runModal): Call wakeUpRunLoop() before entering the modal dialog run loop.
+
 2012-06-20  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Use IntSize in RenderLayer to represent scroll offsets

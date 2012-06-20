@@ -1,3 +1,27 @@
+2012-06-20  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11653784> and https://bugs.webkit.org/show_bug.cgi?id=89590
+        showModalDialog message handling is flaky in WebKit2
+
+        Because RunLoop::performWork() swaps the function queue to a temporary Vector before calling
+        the functions an inner run-loop - such as we see with running a modal dialog - does not have
+        a change to handle any of the functions that were queued after the WebPageProxy::RunModal message.
+
+        By servicing the functions in the queue one at a time we can give the RunLoop a chance to pick up
+        where it left off if RunLoop::performWork is re-entered.
+
+        To guarantee RunLoop::performWork is re-entered to handle those functions we also need to signal
+        its source before entering the modal run loop so our RunLoop is woken up.
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in:
+        * platform/RunLoop.cpp:
+        (WebCore::RunLoop::performWork): Take the first function off the queue one at a time so subsequent
+          functions remain in the queue and can be handled by an inner modal run loop.
+        * platform/RunLoop.h:
+        (RunLoop): Change the function queue to be a Deque to efficiently support "takeFirst" 
+
 2012-06-20  Varun Jain  <varunjain@chromium.org>
 
         Account for device scale factor when creating image for dragging.

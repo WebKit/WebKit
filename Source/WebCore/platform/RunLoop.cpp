@@ -57,14 +57,23 @@ RunLoop* RunLoop::main()
 
 void RunLoop::performWork()
 {
-    Vector<Function<void()> > functionQueue;
-    {
-        MutexLocker locker(m_functionQueueLock);
-        m_functionQueue.swap(functionQueue);
-    }
+    Function<void()> function;
+    
+    while (true) {
+        // It is important to handle the functions in the queue one at a time because while inside one of these
+        // functions we might re-enter RunLoop::performWork() and we need to be able to pick up where we left off.
+        // See http://webkit.org/b/89590 for more discussion.
 
-    for (size_t i = 0; i < functionQueue.size(); ++i)
-        functionQueue[i]();
+        {
+            MutexLocker locker(m_functionQueueLock);
+            if (m_functionQueue.isEmpty())
+                break;
+
+            function = m_functionQueue.takeFirst();
+        }
+        
+        function();
+    }
 }
 
 void RunLoop::dispatch(const Function<void()>& function)

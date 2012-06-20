@@ -3622,6 +3622,12 @@ void WebPageProxy::runModal()
     // Since runModal() can (and probably will) spin a nested run loop we need to turn off the responsiveness timer.
     process()->responsivenessTimer()->stop();
 
+    // Our Connection's run loop might have more messages waiting to be handled after this RunModal message.
+    // To make sure they are handled inside of the the nested modal run loop we must first signal the Connection's
+    // run loop so we're guaranteed that it has a chance to wake up.
+    // See http://webkit.org/b/89590 for more discussion.
+    process()->connection()->wakeUpRunLoop();
+
     m_uiClient.runModal(this);
 }
 

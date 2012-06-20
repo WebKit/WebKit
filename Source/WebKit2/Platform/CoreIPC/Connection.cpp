@@ -717,4 +717,9 @@ void Connection::dispatchOneMessage()
     dispatchMessage(incomingMessage);
 }
 
+void Connection::wakeUpRunLoop()
+{
+    m_clientRunLoop->wakeUp();
+}
+
 } // namespace CoreIPC
