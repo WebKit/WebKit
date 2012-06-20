@@ -1,3 +1,21 @@
+2012-06-20  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [CSS3 Backgrounds and Borders] Implement box-decoration-break rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=88228
+
+        Reviewed by Eric Seidel.
+
+        Implement the new CSS property box-decoration-break. It modifies
+        where we decide whether the borders needs to be sliced or not by
+        checking if the box-decoration-break is set to clone. If it's the case
+        then we need to explicitely redraw all edges.
+
+        Test: fast/box-decoration-break/box-decoration-break-rendering.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+        (WebCore::InlineFlowBox::paintFillLayer):
+
 2012-06-20  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Use IntSize in RenderLayer to represent scroll offsets

@@ -316,6 +316,11 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogically
         // we know the inline began on this line (unless we are a continuation).
         RenderLineBoxList* lineBoxList = rendererLineBoxes();
         if (!lineBoxList->firstLineBox()->isConstructed() && !renderer()->isInlineElementContinuation()) {
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
+            if (renderer()->style()->boxDecorationBreak() == DCLONE)
+                includeLeftEdge = includeRightEdge = true;
+            else
+#endif
             if (ltr && lineBoxList->firstLineBox() == this)
                 includeLeftEdge = true;
             else if (!ltr && lineBoxList->lastLineBox() == this)
@@ -330,7 +335,12 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogically
             // (1) The next line was not created, or it is constructed. We check the previous line for rtl.
             // (2) The logicallyLastRun is not a descendant of this renderer.
             // (3) The logicallyLastRun is a descendant of this renderer, but it is the last child of this renderer and it does not wrap to the next line.
-            
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
+            // (4) The decoration break is set to clone therefore there will be borders on every sides.
+            if (renderer()->style()->boxDecorationBreak() == DCLONE)
+                includeLeftEdge = includeRightEdge = true;
+            else
+#endif
             if (ltr) {
                 if (!nextLineBox()
                     && ((lastLine || isLastObjectOnLine) && !inlineFlow->continuation()))
@@ -1102,6 +1112,13 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
     bool hasFillImage = img && img->canRender(renderer(), renderer()->style()->effectiveZoom());
     if ((!hasFillImage && !renderer()->style()->hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent())
         boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
+    else if (renderer()->style()->boxDecorationBreak() == DCLONE) {
+        GraphicsContextStateSaver stateSaver(*paintInfo.context);
+        paintInfo.context->clip(LayoutRect(rect.x(), rect.y(), width(), height()));
+        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
+    }
+#endif
     else {
         // We have a fill image that spans multiple lines.
         // We need to adjust tx and ty by the width of all previous lines.

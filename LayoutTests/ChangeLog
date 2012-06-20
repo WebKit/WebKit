@@ -1,3 +1,15 @@
+2012-06-20  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [CSS3 Backgrounds and Borders] Implement box-decoration-break rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=88228
+
+        Reviewed by Eric Seidel.
+
+        Add new tests to cover the feature.
+
+        * fast/box-decoration-break/box-decoration-break-rendering-expected.html: Added.
+        * fast/box-decoration-break/box-decoration-break-rendering.html: Added.
+
 2012-06-20  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: add SpeechRecognition.maxAlternatives attribute
