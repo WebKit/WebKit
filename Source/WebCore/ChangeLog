@@ -1,3 +1,32 @@
+2012-06-20  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Don't close database if pending connections are in flight
+        https://bugs.webkit.org/show_bug.cgi?id=89512
+
+        Add a counter tracking connections between the two phases, which is used along with
+        the completed connection count to determine the total number of connections.
+
+        Reviewed by Tony Chang.
+
+        Test: webkit_unit_tests --gtest_filter='IDBDatabaseBackendTest.ConnectionLifecycle'
+
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        (WebCore::IDBDatabaseBackendImpl::connectionCount):
+        (WebCore):
+        (WebCore::IDBDatabaseBackendImpl::processPendingCalls):
+        (WebCore::IDBDatabaseBackendImpl::transaction):
+        (WebCore::IDBDatabaseBackendImpl::registerFrontendCallbacks):
+        (WebCore::IDBDatabaseBackendImpl::openConnection):
+        (WebCore::IDBDatabaseBackendImpl::close):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::openInternal):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+
 2012-06-20  Sergey Rogulenko  <rogulenko@google.com>
 
         Web Inspector: duplicating selected text when Enter key is pressed 

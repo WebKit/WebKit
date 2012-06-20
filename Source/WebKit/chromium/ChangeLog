@@ -1,3 +1,20 @@
+2012-06-20  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Don't close database if pending connections are in flight
+        https://bugs.webkit.org/show_bug.cgi?id=89512
+
+        Reviewed by Tony Chang.
+
+        * tests/IDBDatabaseBackendTest.cpp:
+        (MockIDBCallbacks):
+        (WebCore::MockIDBCallbacks::create):
+        (WebCore::MockIDBCallbacks::MockIDBCallbacks):
+        (WebCore):
+        (FakeIDBDatabaseCallbacks):
+        (WebCore::FakeIDBDatabaseCallbacks::create):
+        (WebCore::FakeIDBDatabaseCallbacks::FakeIDBDatabaseCallbacks):
+        (WebCore::TEST):
+
 2012-06-20  Zeev Lieber  <zlieber@chromium.org>
 
         [Chromium] Remove redundant #includes in compositor

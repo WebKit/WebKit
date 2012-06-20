@@ -182,8 +182,8 @@ void IDBFactoryBackendImpl::openInternal(const String& name, IDBCallbacks* callb
 
     RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, backingStore.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
     if (databaseBackend) {
-        callbacks->onSuccess(RefPtr<IDBDatabaseBackendInterface>(databaseBackend.get()).release());
         m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
+        databaseBackend->openConnection(callbacks);
     } else
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
 }

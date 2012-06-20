@@ -43,6 +43,7 @@
 #include "IDBCallbacks.h"
 #include "IDBCursor.h"
 #include "IDBDatabaseBackendInterface.h"
+#include "IDBDatabaseCallbacks.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBIndexBackendInterface.h"
 #include "IDBKey.h"
@@ -115,6 +116,21 @@ public:
     virtual void onBlocked() { }
 };
 
+class InspectorIDBDatabaseCallbacks : public IDBDatabaseCallbacks {
+public:
+    static PassRefPtr<InspectorIDBDatabaseCallbacks> create()
+    {
+        return adoptRef(new InspectorIDBDatabaseCallbacks());
+    }
+
+    virtual ~InspectorIDBDatabaseCallbacks() { }
+
+    virtual void onVersionChange(const String& version) { }
+private:
+    InspectorIDBDatabaseCallbacks() { }
+};
+
+
 class InspectorIDBTransactionCallback : public IDBTransactionCallbacks {
 public:
     static PassRefPtr<InspectorIDBTransactionCallback> create()
@@ -172,6 +188,28 @@ public:
     virtual void execute(PassRefPtr<IDBDatabaseBackendInterface>) = 0;
 };
 
+class DatabaseConnection {
+public:
+    DatabaseConnection()
+        : m_idbDatabaseCallbacks(InspectorIDBDatabaseCallbacks::create()) { }
+
+    void connect(PassRefPtr<IDBDatabaseBackendInterface> idbDatabase)
+    {
+        m_idbDatabase = idbDatabase;
+        m_idbDatabase->registerFrontendCallbacks(m_idbDatabaseCallbacks);
+    }
+
+    ~DatabaseConnection()
+    {
+        if (m_idbDatabase)
+            m_idbDatabase->close(m_idbDatabaseCallbacks);
+    }
+
+private:
+    RefPtr<IDBDatabaseBackendInterface> m_idbDatabase;
+    RefPtr<IDBDatabaseCallbacks> m_idbDatabaseCallbacks;
+};
+
 class OpenDatabaseCallback : public InspectorIDBCallback {
 public:
     static PassRefPtr<OpenDatabaseCallback> create(ExecutableWithDatabase* executableWithDatabase)
@@ -181,8 +219,9 @@ public:
 
     virtual ~OpenDatabaseCallback() { }
 
-    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface> idbDatabase)
+    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface> prpDatabase)
     {
+        RefPtr<IDBDatabaseBackendInterface> idbDatabase = prpDatabase;
         m_executableWithDatabase->execute(idbDatabase);
     }
 
@@ -263,8 +302,10 @@ public:
 
     virtual ~DatabaseLoaderCallback() { }
 
-    virtual void execute(PassRefPtr<IDBDatabaseBackendInterface> idbDatabase)
+    virtual void execute(PassRefPtr<IDBDatabaseBackendInterface> prpDatabase)
     {
+        RefPtr<IDBDatabaseBackendInterface> idbDatabase = prpDatabase;
+        m_connection.connect(idbDatabase);
         if (!m_frontendProvider->frontend())
             return;
 
@@ -315,6 +356,7 @@ private:
         , m_requestId(requestId) { }
     RefPtr<InspectorIndexedDBAgent::FrontendProvider> m_frontendProvider;
     int m_requestId;
+    DatabaseConnection m_connection;
 };
 
 static PassRefPtr<IDBKey> idbKeyFromInspectorObject(InspectorObject* key)
@@ -430,6 +472,8 @@ static PassRefPtr<Key> keyFromIDBKey(IDBKey* idbKey)
     return key.release();
 }
 
+class DataLoaderCallback;
+
 class OpenCursorCallback : public InspectorIDBCallback {
 public:
     enum CursorType {
@@ -437,9 +481,9 @@ public:
         IndexDataCursor
     };
 
-    static PassRefPtr<OpenCursorCallback> create(PassRefPtr<InspectorIndexedDBAgent::FrontendProvider> frontendProvider, InjectedScript injectedScript, PassRefPtr<IDBTransactionBackendInterface> idbTransaction, CursorType cursorType, int requestId, int skipCount, unsigned pageSize)
+    static PassRefPtr<OpenCursorCallback> create(PassRefPtr<InspectorIndexedDBAgent::FrontendProvider> frontendProvider, InjectedScript injectedScript, PassRefPtr<DataLoaderCallback> dataLoaderCallback, PassRefPtr<IDBTransactionBackendInterface> idbTransaction, CursorType cursorType, int requestId, int skipCount, unsigned pageSize)
     {
-        return adoptRef(new OpenCursorCallback(frontendProvider, injectedScript, idbTransaction, cursorType, requestId, skipCount, pageSize));
+        return adoptRef(new OpenCursorCallback(frontendProvider, injectedScript, dataLoaderCallback, idbTransaction, cursorType, requestId, skipCount, pageSize));
     }
 
     virtual ~OpenCursorCallback() { }
@@ -491,6 +535,7 @@ public:
 
     void end(bool hasMore)
     {
+        m_dataLoaderCallback.clear();
         if (!m_frontendProvider->frontend())
             return;
 
@@ -509,9 +554,10 @@ public:
     }
 
 private:
-    OpenCursorCallback(PassRefPtr<InspectorIndexedDBAgent::FrontendProvider> frontendProvider, InjectedScript injectedScript, PassRefPtr<IDBTransactionBackendInterface> idbTransaction, CursorType cursorType, int requestId, int skipCount, unsigned pageSize)
+    OpenCursorCallback(PassRefPtr<InspectorIndexedDBAgent::FrontendProvider> frontendProvider, InjectedScript injectedScript, PassRefPtr<DataLoaderCallback> dataLoaderCallback, PassRefPtr<IDBTransactionBackendInterface> idbTransaction, CursorType cursorType, int requestId, int skipCount, unsigned pageSize)
         : m_frontendProvider(frontendProvider)
         , m_injectedScript(injectedScript)
+        , m_dataLoaderCallback(dataLoaderCallback)
         , m_idbTransaction(idbTransaction)
         , m_cursorType(cursorType)
         , m_requestId(requestId)
@@ -523,6 +569,7 @@ private:
     }
     RefPtr<InspectorIndexedDBAgent::FrontendProvider> m_frontendProvider;
     InjectedScript m_injectedScript;
+    RefPtr<DataLoaderCallback> m_dataLoaderCallback;
     RefPtr<IDBTransactionBackendInterface> m_idbTransaction;
     CursorType m_cursorType;
     int m_requestId;
@@ -541,8 +588,10 @@ public:
 
     virtual ~DataLoaderCallback() { }
 
-    virtual void execute(PassRefPtr<IDBDatabaseBackendInterface> idbDatabase)
+    virtual void execute(PassRefPtr<IDBDatabaseBackendInterface> prpDatabase)
     {
+        RefPtr<IDBDatabaseBackendInterface> idbDatabase = prpDatabase;
+        m_connection.connect(idbDatabase);
         if (!m_frontendProvider->frontend())
             return;
 
@@ -558,12 +607,12 @@ public:
             if (!idbIndex)
                 return;
 
-            RefPtr<OpenCursorCallback> openCursorCallback = OpenCursorCallback::create(m_frontendProvider, m_injectedScript, idbTransaction.get(), OpenCursorCallback::IndexDataCursor, m_requestId, m_skipCount, m_pageSize);
+            RefPtr<OpenCursorCallback> openCursorCallback = OpenCursorCallback::create(m_frontendProvider, m_injectedScript, this, idbTransaction.get(), OpenCursorCallback::IndexDataCursor, m_requestId, m_skipCount, m_pageSize);
 
             ExceptionCode ec = 0;
             idbIndex->openCursor(m_idbKeyRange, IDBCursor::NEXT, openCursorCallback, idbTransaction.get(), ec);
         } else {
-            RefPtr<OpenCursorCallback> openCursorCallback = OpenCursorCallback::create(m_frontendProvider, m_injectedScript, idbTransaction.get(), OpenCursorCallback::ObjectStoreDataCursor, m_requestId, m_skipCount, m_pageSize);
+            RefPtr<OpenCursorCallback> openCursorCallback = OpenCursorCallback::create(m_frontendProvider, m_injectedScript, this, idbTransaction.get(), OpenCursorCallback::ObjectStoreDataCursor, m_requestId, m_skipCount, m_pageSize);
 
             ExceptionCode ec = 0;
             idbObjectStore->openCursor(m_idbKeyRange, IDBCursor::NEXT, openCursorCallback, idbTransaction.get(), ec);
@@ -588,6 +637,7 @@ private:
     RefPtr<IDBKeyRange> m_idbKeyRange;
     int m_skipCount;
     unsigned m_pageSize;
+    DatabaseConnection m_connection;
 };
 
 } // namespace

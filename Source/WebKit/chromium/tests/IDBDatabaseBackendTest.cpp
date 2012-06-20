@@ -67,6 +67,70 @@ TEST(IDBDatabaseBackendTest, BackingStoreRetention)
     EXPECT_TRUE(backingStore->hasOneRef());
 }
 
+class MockIDBCallbacks : public IDBCallbacks {
+public:
+    static PassRefPtr<MockIDBCallbacks> create() { return adoptRef(new MockIDBCallbacks()); }
+    virtual ~MockIDBCallbacks() OVERRIDE
+    {
+        EXPECT_TRUE(m_wasSuccessDBCalled);
+    }
+    virtual void onError(PassRefPtr<IDBDatabaseError>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<DOMStringList>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>) OVERRIDE
+    {
+        m_wasSuccessDBCalled = true;
+    }
+    virtual void onSuccess(PassRefPtr<IDBKey>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<SerializedScriptValue>) OVERRIDE { }
+    virtual void onSuccessWithContinuation() OVERRIDE { }
+    virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) OVERRIDE { }
+    virtual void onBlocked() OVERRIDE { }
+private:
+    MockIDBCallbacks()
+        : m_wasSuccessDBCalled(false) { }
+    bool m_wasSuccessDBCalled;
+};
+
+class FakeIDBDatabaseCallbacks : public IDBDatabaseCallbacks {
+public:
+    static PassRefPtr<FakeIDBDatabaseCallbacks> create() { return adoptRef(new FakeIDBDatabaseCallbacks()); }
+    virtual ~FakeIDBDatabaseCallbacks() OVERRIDE { }
+    virtual void onVersionChange(const String& version) OVERRIDE { }
+private:
+    FakeIDBDatabaseCallbacks() { }
+};
+
+TEST(IDBDatabaseBackendTest, ConnectionLifecycle)
+{
+    RefPtr<IDBFakeBackingStore> backingStore = adoptRef(new IDBFakeBackingStore());
+    EXPECT_TRUE(backingStore->hasOneRef());
+
+    IDBTransactionCoordinator* coordinator = 0;
+    IDBFactoryBackendImpl* factory = 0;
+    RefPtr<IDBDatabaseBackendImpl> db = IDBDatabaseBackendImpl::create("db", backingStore.get(), coordinator, factory, "uniqueid");
+    EXPECT_GT(backingStore->refCount(), 1);
+
+    RefPtr<MockIDBCallbacks> request1 = MockIDBCallbacks::create();
+    db->openConnection(request1);
+
+    RefPtr<FakeIDBDatabaseCallbacks> connection1 = FakeIDBDatabaseCallbacks::create();
+    db->registerFrontendCallbacks(connection1);
+
+    RefPtr<MockIDBCallbacks> request2 = MockIDBCallbacks::create();
+    db->openConnection(request2);
+
+    db->close(connection1);
+    EXPECT_GT(backingStore->refCount(), 1);
+
+    RefPtr<FakeIDBDatabaseCallbacks> connection2 = FakeIDBDatabaseCallbacks::create();
+    db->registerFrontendCallbacks(connection2);
+
+    db->close(connection2);
+    EXPECT_TRUE(backingStore->hasOneRef());
+}
+
 } // namespace
 
 #endif // ENABLE(INDEXED_DATABASE)
