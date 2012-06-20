@@ -3,7 +3,7 @@
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -35,6 +35,13 @@ from StringIO import StringIO
 
 
 class OutputCapture(object):
+    # By default we capture the output to a stream. Other modules may override
+    # this function in order to do things like pass through the output. See
+    # webkitpy.test.main for an example.
+    @staticmethod
+    def stream_wrapper(stream):
+        return StringIO()
+
     def __init__(self):
         self.saved_outputs = dict()
         self._log_level = logging.INFO
@@ -45,8 +52,9 @@ class OutputCapture(object):
             self._logs_handler.setLevel(self._log_level)
 
     def _capture_output_with_name(self, output_name):
-        self.saved_outputs[output_name] = getattr(sys, output_name)
-        captured_output = StringIO()
+        stream = getattr(sys, output_name)
+        captured_output = self.stream_wrapper(stream)
+        self.saved_outputs[output_name] = stream
         setattr(sys, output_name, captured_output)
         return captured_output
 

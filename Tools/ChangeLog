@@ -1,3 +1,32 @@
+2012-06-19  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy: add a -p flag to pass through captured output to enable debugging
+        https://bugs.webkit.org/show_bug.cgi?id=89158
+
+        Reviewed by Eric Seidel.
+
+        Normally when outputcapture runs it intercepts stdout/stderr,
+        which makes running under the debugger difficult and mostly
+        pointless (since you can't see any output). This change adds a
+        flag to test-webkitpy (-p) that will cause outputcapture to pass
+        through the output as well as capture it.
+
+        * Scripts/webkitpy/common/system/outputcapture.py:
+        (OutputCapture.stream_wrapper):
+        (OutputCapture._capture_output_with_name):
+        * Scripts/webkitpy/common/system/outputcapture_unittest.py:
+        (OutputCaptureTest.setUp):
+        * Scripts/webkitpy/test/main.py:
+        (Tester._parse_args):
+        (Tester._run_tests):
+        (Tester._log_exception):
+        (_CaptureAndPassThroughStream):
+        (_CaptureAndPassThroughStream.__init__):
+        (_CaptureAndPassThroughStream.write):
+        (_CaptureAndPassThroughStream._message_is_from_pdb):
+        (_CaptureAndPassThroughStream.flush):
+        (_CaptureAndPassThroughStream.getvalue):
+
 2012-06-19  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic fails to rebaseline tests with MISSING results
