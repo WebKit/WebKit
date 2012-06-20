@@ -1,3 +1,9 @@
+2012-06-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip new failing tests.
+
+        * platform/qt/Skipped:
+
 2012-06-20  Tony Chang  <tony@chromium.org>
 
         Computed style tests are a maintenance burden on the project
@@ -57,8 +63,6 @@
 
         REGRESSION(r113885): Margin not properly applied to elements with align=center
         https://bugs.webkit.org/show_bug.cgi?id=89515
-
-        Reviewed by Levi Weintraub.
 
         Reviewed by Levi Weintraub.
 
