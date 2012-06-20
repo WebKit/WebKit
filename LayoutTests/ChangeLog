@@ -1,3 +1,15 @@
+2012-06-20  Robert Hogan  <robert@webkit.org>
+
+        r120844: Skip two tests on Qt
+        
+        The tests fast/block/float/previous-sibling-abspos-001.html and 
+        fast/block/float/previous-sibling-float-001.html have pixel differences
+        on Qt. Skip them for now - bug 89597 opened.
+        
+        Unreviewed, gardening.
+
+        * platform/qt/Skipped:
+
 2012-06-20  Elliott Sprehn  <esprehn@gmail.com>
 
         Add support for fit-content etc
