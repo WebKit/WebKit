@@ -209,12 +209,10 @@ class BugzillaQueries(object):
 
     # Currently this returns all bugs across all components.
     # In the future we may wish to extend this API to construct more restricted searches.
-    def fetch_bugs_matching_search(self, search_string, author_email=None):
+    def fetch_bugs_matching_search(self, search_string):
         query = "buglist.cgi?query_format=advanced"
         if search_string:
             query += "&short_desc_type=allwordssubstr&short_desc=%s" % urllib.quote(search_string)
-        if author_email:
-            query += "&emailreporter1=1&emailtype1=substring&email1=%s" % urllib.quote(search_string)
         return self._fetch_bugs_from_advanced_query(query)
 
     def fetch_patches_from_pending_commit_list(self):

@@ -269,7 +269,7 @@ class MockBugzillaQueries(object):
     def fetch_patches_from_pending_commit_list(self):
         return sum([bug.reviewed_patches() for bug in self._all_bugs()], [])
 
-    def fetch_bugs_matching_search(self, search_string, author_email=None):
+    def fetch_bugs_matching_search(self, search_string):
         return [self._bugzilla.fetch_bug(50004), self._bugzilla.fetch_bug(50003)]
 
     def fetch_bugs_matching_quicksearch(self, search_string):
