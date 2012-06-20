@@ -4344,7 +4344,7 @@ bool WebPagePrivate::scrollRenderer(RenderObject* renderer, const IntSize& delta
         if (!layerDelta.isZero()) {
             m_inRegionScrollStartingNode = enclosingLayerNode(layer);
             IntPoint newOffset = currentOffset + layerDelta;
-            layer->scrollToOffset(newOffset.x(), newOffset.y());
+            layer->scrollToOffset(toSize(newOffset));
             renderer->repaint(true);
             return true;
         }

@@ -846,7 +846,7 @@ void RenderLayer::updateLayerPosition()
             localPoint += columnOffset;
         }
 
-        LayoutSize scrollOffset = parent()->scrolledContentOffset();
+        IntSize scrollOffset = parent()->scrolledContentOffset();
         localPoint -= scrollOffset;
     }
         
@@ -1521,7 +1521,12 @@ static inline int adjustedScrollDelta(int beginningDelta) {
     return adjustedDelta;
 }
 
-void RenderLayer::panScrollFromPoint(const LayoutPoint& sourcePoint) 
+static inline IntSize adjustedScrollDelta(const IntSize& delta)
+{
+    return IntSize(adjustedScrollDelta(delta.width()), adjustedScrollDelta(delta.height()));
+}
+
+void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
 {
     Frame* frame = renderer()->frame();
     if (!frame)
@@ -1536,20 +1541,19 @@ void RenderLayer::panScrollFromPoint(const LayoutPoint& sourcePoint)
     else
         previousMousePosition = currentMousePosition;
 
-    int xDelta = currentMousePosition.x() - sourcePoint.x();
-    int yDelta = currentMousePosition.y() - sourcePoint.y();
+    IntSize delta = currentMousePosition - sourcePoint;
 
-    if (abs(xDelta) <= ScrollView::noPanScrollRadius) // at the center we let the space for the icon
-        xDelta = 0;
-    if (abs(yDelta) <= ScrollView::noPanScrollRadius)
-        yDelta = 0;
+    if (abs(delta.width()) <= ScrollView::noPanScrollRadius) // at the center we let the space for the icon
+        delta.setWidth(0);
+    if (abs(delta.height()) <= ScrollView::noPanScrollRadius)
+        delta.setHeight(0);
 
-    scrollByRecursively(adjustedScrollDelta(xDelta), adjustedScrollDelta(yDelta), ScrollOffsetClamped);
+    scrollByRecursively(adjustedScrollDelta(delta), ScrollOffsetClamped);
 }
 
-void RenderLayer::scrollByRecursively(int xDelta, int yDelta, ScrollOffsetClamping clamp)
+void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping clamp)
 {
-    if (!xDelta && !yDelta)
+    if (delta.isZero())
         return;
 
     bool restrictedByLineClamp = false;
@@ -1557,16 +1561,14 @@ void RenderLayer::scrollByRecursively(int xDelta, int yDelta, ScrollOffsetClampi
         restrictedByLineClamp = !renderer()->parent()->style()->lineClamp().isNone();
 
     if (renderer()->hasOverflowClip() && !restrictedByLineClamp) {
-        int newOffsetX = scrollXOffset() + xDelta;
-        int newOffsetY = scrollYOffset() + yDelta;
-        scrollToOffset(newOffsetX, newOffsetY, clamp);
+        IntSize newScrollOffset = scrollOffset() + delta;
+        scrollToOffset(newScrollOffset, clamp);
 
         // If this layer can't do the scroll we ask the next layer up that can scroll to try
-        int leftToScrollX = newOffsetX - scrollXOffset();
-        int leftToScrollY = newOffsetY - scrollYOffset();
-        if ((leftToScrollX || leftToScrollY) && renderer()->parent()) {
+        IntSize remainingScrollOffset = newScrollOffset - scrollOffset();
+        if (!remainingScrollOffset.isZero() && renderer()->parent()) {
             if (RenderLayer* scrollableLayer = enclosingScrollableLayer())
-                scrollableLayer->scrollByRecursively(leftToScrollX, leftToScrollY);
+                scrollableLayer->scrollByRecursively(remainingScrollOffset);
 
             Frame* frame = renderer()->frame();
             if (frame)
@@ -1575,29 +1577,30 @@ void RenderLayer::scrollByRecursively(int xDelta, int yDelta, ScrollOffsetClampi
     } else if (renderer()->view()->frameView()) {
         // If we are here, we were called on a renderer that can be programmatically scrolled, but doesn't
         // have an overflow clip. Which means that it is a document node that can be scrolled.
-        renderer()->view()->frameView()->scrollBy(IntSize(xDelta, yDelta));
+        renderer()->view()->frameView()->scrollBy(delta);
         // FIXME: If we didn't scroll the whole way, do we want to try looking at the frames ownerElement? 
         // https://bugs.webkit.org/show_bug.cgi?id=28237
     }
 }
 
-void RenderLayer::scrollToOffset(int x, int y, ScrollOffsetClamping clamp)
+IntSize RenderLayer::clampScrollOffset(const IntSize& scrollOffset) const
 {
-    if (clamp == ScrollOffsetClamped) {
-        RenderBox* box = renderBox();
-        if (!box)
-            return;
+    RenderBox* box = renderBox();
+    ASSERT(box);
 
-        int maxX = scrollWidth() - box->clientWidth();
-        int maxY = scrollHeight() - box->clientHeight();
+    int maxX = scrollWidth() - box->clientWidth();
+    int maxY = scrollHeight() - box->clientHeight();
 
-        x = min(max(x, 0), maxX);
-        y = min(max(y, 0), maxY);
-    }
+    int x = min(max(scrollOffset.width(), 0), maxX);
+    int y = min(max(scrollOffset.height(), 0), maxY);
+    return IntSize(x, y);
+}
 
-    IntPoint newScrollOffset(x, y);
-    if (newScrollOffset != LayoutPoint(scrollXOffset(), scrollYOffset()))
-        scrollToOffsetWithoutAnimation(newScrollOffset);
+void RenderLayer::scrollToOffset(const IntSize& scrollOffset, ScrollOffsetClamping clamp)
+{
+    IntSize newScrollOffset = clamp == ScrollOffsetClamped ? clampScrollOffset(scrollOffset) : scrollOffset;
+    if (newScrollOffset != this->scrollOffset())
+        scrollToOffsetWithoutAnimation(toPoint(newScrollOffset));
 }
 
 void RenderLayer::scrollTo(int x, int y)
@@ -1692,23 +1695,14 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
         LayoutRect exposeRect = LayoutRect(rect.x() + scrollXOffset(), rect.y() + scrollYOffset(), rect.width(), rect.height());
         LayoutRect r = getRectToExpose(layerBounds, exposeRect, alignX, alignY);
         
-        LayoutUnit adjustedX = r.x() - absPos.x();
-        LayoutUnit adjustedY = r.y() - absPos.y();
-        // Adjust offsets if they're outside of the allowable range.
-        adjustedX = max<LayoutUnit>(0, min(scrollWidth() - layerBounds.width(), adjustedX));
-        adjustedY = max<LayoutUnit>(0, min(scrollHeight() - layerBounds.height(), adjustedY));
-
-        int xOffset = roundToInt(adjustedX);
-        int yOffset = roundToInt(adjustedY);
-        
-        if (xOffset != scrollXOffset() || yOffset != scrollYOffset()) {
-            int diffX = scrollXOffset();
-            int diffY = scrollYOffset();
-            scrollToOffset(xOffset, yOffset);
-            diffX = scrollXOffset() - diffX;
-            diffY = scrollYOffset() - diffY;
-            newRect.setX(rect.x() - diffX);
-            newRect.setY(rect.y() - diffY);
+        int roundedAdjustedX = roundToInt(r.x() - absPos.x());
+        int roundedAdjustedY = roundToInt(r.y() - absPos.y());
+        IntSize clampedScrollOffset = clampScrollOffset(IntSize(roundedAdjustedX, roundedAdjustedY));
+        if (clampedScrollOffset != scrollOffset()) {
+            IntSize oldScrollOffset = scrollOffset();
+            scrollToOffset(clampedScrollOffset);
+            IntSize scrollOffsetDifference = scrollOffset() - oldScrollOffset;
+            newRect.move(-scrollOffsetDifference);
         }
     } else if (!parentLayer && renderer()->isBox() && renderBox()->canBeProgramaticallyScrolled()) {
         if (frameView) {
@@ -2561,23 +2555,22 @@ void RenderLayer::updateScrollInfoAfterLayout()
         return;
 
     m_scrollDimensionsDirty = true;
-    IntSize scrollOffsetOriginal(scrollXOffset(), scrollYOffset());
+    IntSize originalScrollOffset = scrollOffset();
 
     computeScrollDimensions();
 
     if (box->style()->overflowX() != OMARQUEE) {
         // Layout may cause us to be at an invalid scroll position. In this case we need
         // to pull our scroll offsets back to the max (or push them up to the min).
-        int newX = max(0, min<int>(scrollXOffset(), scrollWidth() - box->clientWidth()));
-        int newY = max(0, min<int>(scrollYOffset(), scrollHeight() - box->clientHeight()));
-        if (newX != scrollXOffset() || newY != scrollYOffset())
-            scrollToOffset(newX, newY);
+        IntSize clampedScrollOffset = clampScrollOffset(scrollOffset());
+        if (clampedScrollOffset != scrollOffset())
+            scrollToOffset(clampedScrollOffset);
     }
 
     updateScrollbarsAfterLayout();
 
-    if (scrollOffsetOriginal != scrollOffset())
-        scrollToOffsetWithoutAnimation(IntPoint(scrollXOffset(), scrollYOffset()));
+    if (originalScrollOffset != scrollOffset())
+        scrollToOffsetWithoutAnimation(toPoint(scrollOffset()));
 }
 
 void RenderLayer::paintOverflowControls(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& damageRect, bool paintingOverlayControls)

@@ -309,7 +309,7 @@ public:
     int scrollWidth() const;
     int scrollHeight() const;
 
-    void panScrollFromPoint(const LayoutPoint&);
+    void panScrollFromPoint(const IntPoint&);
 
     enum ScrollOffsetClamping {
         ScrollOffsetUnclamped,
@@ -317,15 +317,14 @@ public:
     };
 
     // Scrolling methods for layers that can scroll their overflow.
-    void scrollByRecursively(int xDelta, int yDelta, ScrollOffsetClamping = ScrollOffsetUnclamped);
+    void scrollByRecursively(const IntSize&, ScrollOffsetClamping = ScrollOffsetUnclamped);
+    void scrollToOffset(const IntSize&, ScrollOffsetClamping = ScrollOffsetUnclamped);
+    void scrollToXOffset(int x, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(IntSize(x, scrollYOffset()), clamp); }
+    void scrollToYOffset(int y, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(IntSize(scrollXOffset(), y), clamp); }
 
     int scrollXOffset() const { return m_scrollOffset.width() + scrollOrigin().x(); }
     int scrollYOffset() const { return m_scrollOffset.height() + scrollOrigin().y(); }
     IntSize scrollOffset() const { return IntSize(scrollXOffset(), scrollYOffset()); }
-
-    void scrollToOffset(int, int, ScrollOffsetClamping = ScrollOffsetUnclamped);
-    void scrollToXOffset(int x, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(x, scrollYOffset(), clamp); }
-    void scrollToYOffset(int y, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(scrollXOffset(), y, clamp); }
 
     void scrollRectToVisible(const LayoutRect&, const ScrollAlignment& alignX, const ScrollAlignment& alignY);
 
@@ -677,6 +676,8 @@ private:
 
     friend IntSize RenderBox::scrolledContentOffset() const;
     IntSize scrolledContentOffset() const { return m_scrollOffset; }
+
+    IntSize clampScrollOffset(const IntSize&) const;
 
     // The normal operator new is disallowed on all render objects.
     void* operator new(size_t) throw();

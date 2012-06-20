@@ -1,3 +1,46 @@
+2012-06-20  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Use IntSize in RenderLayer to represent scroll offsets
+        https://bugs.webkit.org/show_bug.cgi?id=89154
+
+        Reviewed by Eric Seidel.
+
+        Refactoring, covered by existing tests.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::scrollTo):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::forwardEvent):
+        * page/SpatialNavigation.cpp:
+        (WebCore::scrollInDirection):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::start):
+        Updated those call-sites to use the IntSize variant of the scrolling function.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::panScrollFromPoint):
+        Updated the signature to use IntPoint to avoid an extra round-trip to LayoutPoint
+        (furthermore touch points should be in device pixels).
+
+        (WebCore::RenderLayer::clampScrollOffset):
+        Added this function that clamps a scroll offset to the box's size. This enables more
+        code sharing between the different functions. Also removed a NULL-check that shouldn't
+        be needed: scrolling is a RenderBox concept so any callers should ensure that we have
+        a RenderBox or it makes no sense to try to scroll.
+
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::adjustedScrollDelta):
+        (WebCore::RenderLayer::scrollByRecursively):
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        Updated to do IntSize arithmetic. Reuse clampScrollOffset when applicable.
+
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::scrollToXOffset):
+        (WebCore::RenderLayer::scrollToYOffset):
+        Updated the functions to take IntSize as much as possible.
+
 2012-06-20  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: mark used/allocated JS heap on the native memory bar chart.

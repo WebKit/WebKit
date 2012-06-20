@@ -1652,7 +1652,7 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
             return false;
 
         // We negate here since panning up moves the content up, but moves the scrollbar down.
-        m_gestureTargetNode->renderer()->enclosingLayer()->scrollByRecursively(-deltaX, -deltaY);
+        m_gestureTargetNode->renderer()->enclosingLayer()->scrollByRecursively(IntSize(-deltaX, -deltaY));
            
         if (!(UpdatePanningFeedbackPtr() && BeginPanningFeedbackPtr() && EndPanningFeedbackPtr())) {
             CloseGestureInfoHandlePtr()(gestureHandle);

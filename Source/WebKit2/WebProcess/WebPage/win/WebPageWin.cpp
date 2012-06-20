@@ -447,7 +447,7 @@ void WebPage::gestureDidScroll(const IntSize& size)
             verticalScrollbar = view->verticalScrollbar();
     }
 
-    m_gestureTargetNode->renderer()->enclosingLayer()->scrollByRecursively(size.width(), size.height());
+    m_gestureTargetNode->renderer()->enclosingLayer()->scrollByRecursively(size);
     bool gestureReachedScrollingLimit = verticalScrollbar && scrollbarAtTopOrBottomOfDocument(verticalScrollbar);
 
     // FIXME: We really only want to update this state if the state was updated via scrolling the main frame,

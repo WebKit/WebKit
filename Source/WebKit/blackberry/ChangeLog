@@ -1,3 +1,14 @@
+2012-06-20  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Use IntSize in RenderLayer to represent scroll offsets
+        https://bugs.webkit.org/show_bug.cgi?id=89154
+
+        Reviewed by Eric Seidel.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::scrollRenderer):
+        Updated to pass an IntSize to scrollToOffset.
+
 2012-06-19  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Should check the return value of fromUTF8() before executing the script.

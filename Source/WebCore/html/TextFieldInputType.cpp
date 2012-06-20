@@ -184,8 +184,10 @@ void TextFieldInputType::forwardEvent(Event* event)
         RenderTextControlSingleLine* renderTextControl = toRenderTextControlSingleLine(element()->renderer());
         if (event->type() == eventNames().blurEvent) {
             if (RenderBox* innerTextRenderer = innerTextElement()->renderBox()) {
-                if (RenderLayer* innerLayer = innerTextRenderer->layer())
-                    innerLayer->scrollToOffset(!renderTextControl->style()->isLeftToRightDirection() ? innerLayer->scrollWidth() : 0, 0, RenderLayer::ScrollOffsetClamped);
+                if (RenderLayer* innerLayer = innerTextRenderer->layer()) {
+                    IntSize scrollOffset(!renderTextControl->style()->isLeftToRightDirection() ? innerLayer->scrollWidth() : 0, 0);
+                    innerLayer->scrollToOffset(scrollOffset, RenderLayer::ScrollOffsetClamped);
+                }
             }
 
             renderTextControl->capsLockStateMayHaveChanged();

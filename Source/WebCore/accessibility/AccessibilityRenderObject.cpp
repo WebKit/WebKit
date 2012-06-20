@@ -4013,7 +4013,7 @@ void AccessibilityRenderObject::scrollTo(const IntPoint& point) const
         return;
 
     RenderLayer* layer = box->layer();
-    layer->scrollToOffset(point.x(), point.y(), RenderLayer::ScrollOffsetClamped);
+    layer->scrollToOffset(toSize(point), RenderLayer::ScrollOffsetClamped);
 }
 
 } // namespace WebCore

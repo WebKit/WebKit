@@ -1,3 +1,14 @@
+2012-06-20  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Use IntSize in RenderLayer to represent scroll offsets
+        https://bugs.webkit.org/show_bug.cgi?id=89154
+
+        Reviewed by Eric Seidel.
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::gestureDidScroll):
+        Updated to pass an IntSize to scrollByRecursively.
+
 2012-06-20  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Implement Web Intent delivery
