@@ -1,5 +1,13 @@
 2012-06-20  Joshua Bell  <jsbell@chromium.org>
 
+        Unreviewed build fix.
+
+        * tests/IDBDatabaseBackendTest.cpp:
+        (WebCore::MockIDBCallbacks::~MockIDBCallbacks):
+        (WebCore::FakeIDBDatabaseCallbacks::~FakeIDBDatabaseCallbacks):
+
+2012-06-20  Joshua Bell  <jsbell@chromium.org>
+
         [Chromium] IndexedDB: Don't close database if pending connections are in flight
         https://bugs.webkit.org/show_bug.cgi?id=89512
 

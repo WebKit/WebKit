@@ -70,7 +70,7 @@ TEST(IDBDatabaseBackendTest, BackingStoreRetention)
 class MockIDBCallbacks : public IDBCallbacks {
 public:
     static PassRefPtr<MockIDBCallbacks> create() { return adoptRef(new MockIDBCallbacks()); }
-    virtual ~MockIDBCallbacks() OVERRIDE
+    virtual ~MockIDBCallbacks()
     {
         EXPECT_TRUE(m_wasSuccessDBCalled);
     }
@@ -96,7 +96,7 @@ private:
 class FakeIDBDatabaseCallbacks : public IDBDatabaseCallbacks {
 public:
     static PassRefPtr<FakeIDBDatabaseCallbacks> create() { return adoptRef(new FakeIDBDatabaseCallbacks()); }
-    virtual ~FakeIDBDatabaseCallbacks() OVERRIDE { }
+    virtual ~FakeIDBDatabaseCallbacks() { }
     virtual void onVersionChange(const String& version) OVERRIDE { }
 private:
     FakeIDBDatabaseCallbacks() { }
