@@ -1,3 +1,14 @@
+2012-06-19  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: remove unneeded imports in layout_tests/port/chromium.py
+        https://bugs.webkit.org/show_bug.cgi?id=89522
+
+        Reviewed by Eric Seidel.
+
+        They were no longer being used. No tests necessary.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2012-06-19  Adam Barth  <abarth@webkit.org>
 
         Missing results aren't shown in garden-o-matic

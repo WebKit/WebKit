@@ -37,20 +37,12 @@ import signal
 import subprocess
 import sys
 import time
-import webbrowser
 
-from webkitpy.common.config import urls
 from webkitpy.common.system import executive
-from webkitpy.common.system.path import cygpath
-from webkitpy.layout_tests.controllers.manager import Manager
-from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.base import Port, VirtualTestSuite
 from webkitpy.layout_tests.port.driver import DriverOutput
 from webkitpy.layout_tests.port.webkit import WebKitDriver
-from webkitpy.layout_tests.port import builders
-from webkitpy.layout_tests.servers import http_server
-from webkitpy.layout_tests.servers import websocket_server
 
 
 _log = logging.getLogger(__name__)
