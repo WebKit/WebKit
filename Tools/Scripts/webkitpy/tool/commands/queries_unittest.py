@@ -32,6 +32,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
+from webkitpy.layout_tests.port.test import TestPort
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queries import *
 from webkitpy.tool.mocktool import MockTool, MockOptions
@@ -107,10 +108,11 @@ class FailureReasonTest(unittest.TestCase):
 
 
 class PrintExpectationsTest(unittest.TestCase):
-    def run_test(self, tests, expected_stdout, **args):
-        options = MockOptions(all=False, csv=False, full=False, platform='test-win-xp',
+    def run_test(self, tests, expected_stdout, platform='test-win-xp', **args):
+        options = MockOptions(all=False, csv=False, full=False, platform=platform,
                               include_keyword=[], exclude_keyword=[]).update(**args)
         tool = MockTool()
+        tool.port_factory.all_port_names = lambda: TestPort.ALL_BASELINE_VARIANTS
         command = PrintExpectations()
         command.bind_to_tool(tool)
 
@@ -127,6 +129,21 @@ class PrintExpectationsTest(unittest.TestCase):
                       ('// For test-win-xp\n'
                        'failures/expected/image.html = IMAGE\n'
                        'failures/expected/text.html = TEXT\n'))
+
+    def test_multiple(self):
+        self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
+                      ('// For test-win-vista\n'
+                       'failures/expected/image.html = IMAGE\n'
+                       'failures/expected/text.html = TEXT\n'
+                       '\n'
+                       '// For test-win-win7\n'
+                       'failures/expected/image.html = IMAGE\n'
+                       'failures/expected/text.html = TEXT\n'
+                       '\n'
+                       '// For test-win-xp\n'
+                       'failures/expected/image.html = IMAGE\n'
+                       'failures/expected/text.html = TEXT\n'),
+                       platform='test-win-*')
 
     def test_full(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
@@ -160,7 +177,7 @@ class PrintBaselinesTest(unittest.TestCase):
         self.tool = MockTool()
         self.test_port = self.tool.port_factory.get('test-win-xp')
         self.tool.port_factory.get = lambda port_name=None: self.test_port
-        self.tool.port_factory.all_port_names = lambda: ['test-win-xp']
+        self.tool.port_factory.all_port_names = lambda: TestPort.ALL_BASELINE_VARIANTS
 
     def tearDown(self):
         if self.oc:
@@ -183,6 +200,25 @@ class PrintBaselinesTest(unittest.TestCase):
         stdout, _, _ = self.restore_output()
         self.assertEquals(stdout,
                           ('// For test-win-xp\n'
+                           'passes/text-expected.png\n'
+                           'passes/text-expected.txt\n'))
+
+    def test_multiple(self):
+        command = PrintBaselines()
+        command.bind_to_tool(self.tool)
+        self.capture_output()
+        command.execute(MockOptions(all=False, include_virtual_tests=False, csv=False, platform='test-win-*'), ['passes/text.html'], self.tool)
+        stdout, _, _ = self.restore_output()
+        self.assertEquals(stdout,
+                          ('// For test-win-vista\n'
+                           'passes/text-expected.png\n'
+                           'passes/text-expected.txt\n'
+                           '\n'
+                           '// For test-win-win7\n'
+                           'passes/text-expected.png\n'
+                           'passes/text-expected.txt\n'
+                           '\n'
+                           '// For test-win-xp\n'
                            'passes/text-expected.png\n'
                            'passes/text-expected.txt\n'))
 

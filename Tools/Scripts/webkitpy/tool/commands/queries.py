@@ -406,7 +406,6 @@ class PrintExpectations(AbstractDeclarativeCommand):
             print "You must either specify one or more test paths or --all."
             return
 
-        default_port = tool.port_factory.get(options=options)
         if options.platform:
             port_names = fnmatch.filter(tool.port_factory.all_port_names(), options.platform)
             if not port_names:
@@ -416,7 +415,10 @@ class PrintExpectations(AbstractDeclarativeCommand):
                 else:
                     print "No port names match '%s'" % options.platform
                     return
+            else:
+                default_port = tool.port_factory.get(port_names[0])
         else:
+            default_port = tool.port_factory.get(options=options)
             port_names = [default_port.name()]
 
         serializer = TestExpectationSerializer()
@@ -425,6 +427,8 @@ class PrintExpectations(AbstractDeclarativeCommand):
             model = self._model(options, port_name, tests)
             tests_to_print = self._filter_tests(options, model, tests)
             lines = [model.get_expectation_line(test) for test in sorted(tests_to_print)]
+            if port_name != port_names[0]:
+                print
             print '\n'.join(self._format_lines(options, port_name, serializer, lines))
 
     def _filter_tests(self, options, model, tests):
@@ -489,19 +493,17 @@ class PrintBaselines(AbstractDeclarativeCommand):
         else:
             port_names = [default_port.name()]
 
-        if len(port_names) > 1:
-            options.csv = True
-
         if options.include_virtual_tests:
             tests = sorted(default_port.tests(args))
         else:
             # FIXME: make real_tests() a public method.
             tests = sorted(default_port._real_tests(args))
 
-        if not options.csv:
-            print "// For %s" % port_names[0]
-
         for port_name in port_names:
+            if port_name != port_names[0]:
+                print
+            if not options.csv:
+                print "// For %s" % port_name
             port = tool.port_factory.get(port_name)
             for test_name in tests:
                 self._print_baselines(options, port_name, test_name, port.expected_baselines_by_extension(test_name))

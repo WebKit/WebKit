@@ -1,3 +1,24 @@
+2012-06-20  Dirk Pranke  <dpranke@chromium.org>
+
+        tweak output of webkit-patch print-{baselines,expectations}
+        https://bugs.webkit.org/show_bug.cgi?id=89588
+
+        Reviewed by Tony Chang.
+
+        Minor tweaks to the output to make it more readable, including
+        turning off csv by default for print-baselines with multiple ports.
+
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintExpectations.execute):
+        (PrintBaselines.execute):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (PrintExpectationsTest.run_test):
+        (PrintExpectationsTest.test_multiple):
+        (PrintBaselinesTest.setUp):
+        (PrintBaselinesTest.test_multiple):
+
 2012-06-18  Dirk Pranke  <dpranke@chromium.org>
 
         new-run-webkit-tests should spin-up enough httpd processes to avoid timeouts

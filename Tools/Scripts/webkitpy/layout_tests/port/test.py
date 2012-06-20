@@ -320,9 +320,9 @@ class TestPort(Port):
 
     """Test implementation of the Port interface."""
     ALL_BASELINE_VARIANTS = (
-        'test-mac-snowleopard', 'test-mac-leopard',
-        'test-win-win7', 'test-win-vista', 'test-win-xp',
         'test-linux-x86_64',
+        'test-mac-snowleopard', 'test-mac-leopard',
+        'test-win-vista', 'test-win-win7', 'test-win-xp',
     )
 
     @classmethod
