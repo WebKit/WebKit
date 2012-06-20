@@ -1,3 +1,15 @@
+2012-06-19  Cris Neckar  <cdn@chromium.org>
+
+        Fixes condition where inserting a CounterNode subtree which could result in incorrect placement.
+        https://bugs.webkit.org/show_bug.cgi?id=88142
+
+        Reviewed by Adam Barth.
+
+        Test: fast/css/counters/counter-reset-subtree-insert-crash.html
+
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::insertAfter):
+
 2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix after r120790. Typo fix.

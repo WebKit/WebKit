@@ -261,25 +261,22 @@ void CounterNode::insertAfter(CounterNode* newChild, CounterNode* refChild, cons
     newChild->m_parent = this;
     newChild->m_previousSibling = refChild;
 
-    if (!newChild->m_firstChild || newChild->m_hasResetType) {
+    if (next) {
+        ASSERT(next->m_previousSibling == refChild);
+        next->m_previousSibling = newChild;
         newChild->m_nextSibling = next;
-        if (next) {
-            ASSERT(next->m_previousSibling == refChild);
-            next->m_previousSibling = newChild;
-        } else {
-            ASSERT(m_lastChild == refChild);
-            m_lastChild = newChild;
-        }
+    } else {
+        ASSERT(m_lastChild == refChild);
+        m_lastChild = newChild;
+    }
 
+    if (!newChild->m_firstChild || newChild->m_hasResetType) {
         newChild->m_countInParent = newChild->computeCountInParent();
         newChild->resetThisAndDescendantsRenderers();
         if (next)
             next->recount();
         return;
     }
-    // If the new child is the last in the sibling list we must set the parent's lastChild.
-    if (!newChild->m_nextSibling)
-        m_lastChild = newChild;
 
     // The code below handles the case when a formerly root increment counter is loosing its root position
     // and therefore its children become next siblings.

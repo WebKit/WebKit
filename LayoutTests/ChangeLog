@@ -1,3 +1,13 @@
+2012-06-19  Cris Neckar  <cdn@chromium.org>
+
+        Add test which inserts a CounterNode subtree which contains reset nodes into another tree. 
+        https://bugs.webkit.org/show_bug.cgi?id=88142
+
+        Reviewed by Adam Barth.
+
+        * fast/css/counters/counter-reset-subtree-insert-crash-expected.txt: Added.
+        * fast/css/counters/counter-reset-subtree-insert-crash.html: Added.
+
 2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed expected update after r120735.
