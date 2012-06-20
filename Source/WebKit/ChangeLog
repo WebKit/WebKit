@@ -1,3 +1,9 @@
+2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [CMake] Unreviewed speculative buildfix after r120786.
+
+        * CMakeLists.txt:
+
 2012-06-13  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Enable MEDIA_STREAM by default
