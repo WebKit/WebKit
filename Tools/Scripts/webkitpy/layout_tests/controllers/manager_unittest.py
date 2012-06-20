@@ -342,6 +342,58 @@ class ManagerTest(unittest.TestCase):
         manager = get_manager_with_tests(tests)
         manager._look_for_new_crash_logs(rs, time.time())
 
+    def test_servers_started(self):
+
+        def start_http_server():
+            self.http_started = True
+
+        def start_websocket_server():
+            self.websocket_started = True
+
+        def stop_http_server():
+            self.http_stopped = True
+
+        def stop_websocket_server():
+            self.websocket_stopped = True
+
+        host = MockHost()
+        port = host.port_factory.get('test-mac-leopard')
+        port.start_http_server = start_http_server
+        port.start_websocket_server = start_websocket_server
+        port.stop_http_server = stop_http_server
+        port.stop_websocket_server = stop_websocket_server
+
+        self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
+        manager = Manager(port=port, options=MockOptions(http=True), printer=Mock())
+        manager._test_files = ['http/tests/pass.txt']
+        manager.start_servers_with_lock()
+        self.assertEquals(self.http_started, True)
+        self.assertEquals(self.websocket_started, False)
+        manager.stop_servers_with_lock()
+        self.assertEquals(self.http_stopped, True)
+        self.assertEquals(self.websocket_stopped, False)
+
+        self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
+        manager = Manager(port=port, options=MockOptions(http=True), printer=Mock())
+        manager._test_files = ['websocket/pass.txt']
+        manager.start_servers_with_lock()
+        self.assertEquals(self.http_started, True)
+        self.assertEquals(self.websocket_started, True)
+        manager.stop_servers_with_lock()
+        self.assertEquals(self.http_stopped, True)
+        self.assertEquals(self.websocket_stopped, True)
+
+        self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
+        manager = Manager(port=port, options=MockOptions(http=True), printer=Mock())
+        manager._test_files = ['perf/foo/test.html']
+        manager.start_servers_with_lock()
+        self.assertEquals(self.http_started, False)
+        self.assertEquals(self.websocket_started, False)
+        manager.stop_servers_with_lock()
+        self.assertEquals(self.http_stopped, False)
+        self.assertEquals(self.websocket_stopped, False)
+
+
 
 class NaturalCompareTest(unittest.TestCase):
     def assert_cmp(self, x, y, result):

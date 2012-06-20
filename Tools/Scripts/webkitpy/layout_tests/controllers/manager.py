@@ -366,6 +366,9 @@ class Manager(object):
     def _http_tests(self):
         return set(test for test in self._test_files if self._is_http_test(test))
 
+    def _websocket_tests(self):
+        return set(test for test in self._test_files if self.WEBSOCKET_SUBDIR in test)
+
     def _is_perf_test(self, test):
         return self.PERF_SUBDIR == test or (self.PERF_SUBDIR + self._port.TEST_PATH_SEPARATOR) in test
 
@@ -762,7 +765,7 @@ class Manager(object):
 
         all_shards = locked_shards + unlocked_shards
         self._remaining_locked_shards = locked_shards
-        if locked_shards and self._options.http:
+        if self._options.http and (self._http_tests() or self._websocket_tests()):
             self.start_servers_with_lock()
 
         num_workers = min(num_workers, len(all_shards))
@@ -967,21 +970,24 @@ class Manager(object):
         return self._port.exit_code_from_summarized_results(unexpected_results)
 
     def start_servers_with_lock(self):
-        assert(self._options.http)
         self._printer.print_update('Acquiring http lock ...')
         self._port.acquire_http_lock()
-        self._printer.print_update('Starting HTTP server ...')
-        self._port.start_http_server()
-        self._printer.print_update('Starting WebSocket server ...')
-        self._port.start_websocket_server()
+        if self._http_tests():
+            self._printer.print_update('Starting HTTP server ...')
+            self._port.start_http_server()
+        if self._websocket_tests():
+            self._printer.print_update('Starting WebSocket server ...')
+            self._port.start_websocket_server()
         self._has_http_lock = True
 
     def stop_servers_with_lock(self):
         if self._has_http_lock:
-            self._printer.print_update('Stopping HTTP server ...')
-            self._port.stop_http_server()
-            self._printer.print_update('Stopping WebSocket server ...')
-            self._port.stop_websocket_server()
+            if self._http_tests():
+                self._printer.print_update('Stopping HTTP server ...')
+                self._port.stop_http_server()
+            if self._websocket_tests():
+                self._printer.print_update('Stopping WebSocket server ...')
+                self._port.stop_websocket_server()
             self._printer.print_update('Releasing server lock ...')
             self._port.release_http_lock()
             self._has_http_lock = False

@@ -1,5 +1,23 @@
 2012-06-19  Dirk Pranke  <dpranke@chromium.org>
 
+        NRWT spins up and down the WebSocket server when running a single HTTP test from the command line
+        https://bugs.webkit.org/show_bug.cgi?id=64489
+
+        Reviewed by Tony Chang.
+
+        This change changes NRWT so that we don't start the websocket
+        server if we aren't running websocket tests and don't start the
+        HTTP server if we aren't running http tests.
+        
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._websocket_tests):
+        (Manager.start_servers_with_lock):
+        (Manager.stop_servers_with_lock):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_servers_started):
+
+2012-06-19  Dirk Pranke  <dpranke@chromium.org>
+
         test-webkitpy: add a -p flag to pass through captured output to enable debugging
         https://bugs.webkit.org/show_bug.cgi?id=89158
 
