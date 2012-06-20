@@ -1,3 +1,10 @@
+2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed expected update after r120735.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2012-06-19  Kinuko Yasuda  <kinuko@chromium.org>
 
         Use testRunner instead of layoutTestController in fast/{files,filesystem}
