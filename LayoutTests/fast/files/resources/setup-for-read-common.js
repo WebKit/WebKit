@@ -2,8 +2,8 @@ function log(message)
 {
     document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
     if (message == "DONE") {
-        if (window && window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window && window.testRunner)
+            testRunner.notifyDone();
     }
 }
 
@@ -32,15 +32,15 @@ function startWorker(testFiles, workerScriptURL)
     {
         log(event.data);
         if (event.data == "DONE") {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     }
     worker.onerror = function(event)
     {
         log("Received error from worker: " + event.message);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     worker.postMessage(testFiles);
 }

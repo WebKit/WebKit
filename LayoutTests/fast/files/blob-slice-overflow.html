@@ -4,9 +4,9 @@ The excessive length passed to Blob.slice() should be trapped and result in
 a truncated slice being returned.
 <pre id='console'></pre>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone()
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone()
 }
 
 var text = '';
@@ -21,8 +21,8 @@ if (slicedBlob.size != 1) {
     document.getElementById('console').appendChild(document.createTextNode('FAIL'));
 }
 
-if (window.layoutTestController) {
-  layoutTestController.notifyDone();
+if (window.testRunner) {
+  testRunner.notifyDone();
 }
 </script>
 </body>

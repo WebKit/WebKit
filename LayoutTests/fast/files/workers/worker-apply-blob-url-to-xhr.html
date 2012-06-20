@@ -18,15 +18,15 @@ function onInputFileChange()
     {
         log(event.data);
         if (event.data == "DONE") {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     }
     worker.onerror = function(event)
     {
         log("Received error from worker: " + event.message);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     worker.postMessage(file);
 }
@@ -39,8 +39,8 @@ function runTests()
 }
 
 if (window.eventSender) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     window.onload = runTests;
 }
 </script>

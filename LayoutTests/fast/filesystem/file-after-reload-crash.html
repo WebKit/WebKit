@@ -5,9 +5,9 @@
      http://webkit.org/b/76461 -->
 <script>
 if (location.search != '?reenter') {
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
   }
 
   webkitRequestFileSystem(TEMPORARY, 1024*1024,
@@ -15,14 +15,14 @@ if (location.search != '?reenter') {
 } else {
   document.write('PASS');
 
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 
 function onError(msg, e) {
   document.body.innerText = 'FAIL: ' + e.code + ' msg = ' + msg;
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 
 function gotFS(fs) {

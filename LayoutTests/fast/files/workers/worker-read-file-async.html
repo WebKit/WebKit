@@ -23,8 +23,8 @@ function startTest(testFiles)
 }
 
 if (window.eventSender) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     window.onload = function() { runTests(testFileInfoList); }
 }
 </script>

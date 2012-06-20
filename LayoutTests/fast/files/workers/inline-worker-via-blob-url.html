@@ -20,17 +20,17 @@ function runTest()
     worker.onmessage = function(event) {
         log(event.data);
         log("DONE");
-        if (layoutTestController.notifyDone)
-            layoutTestController.notifyDone();
+        if (testRunner.notifyDone)
+            testRunner.notifyDone();
     };
     worker.postMessage();
 }
 
-if (window.layoutTestController) {
-    layoutTestController.setAllowUniversalAccessFromFileURLs(false);
-    layoutTestController.setAllowFileAccessFromFileURLs(true);
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.setAllowUniversalAccessFromFileURLs(false);
+    testRunner.setAllowFileAccessFromFileURLs(true);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 </script>
 </head>

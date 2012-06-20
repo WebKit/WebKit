@@ -15,14 +15,14 @@ function onInputFileChange()
     reader.readAsText(file);
     reader.onloadend = function() {
         statusElement.textContent = "PASS, no crash";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 eventSender.beginDragWithFiles(['resources']);

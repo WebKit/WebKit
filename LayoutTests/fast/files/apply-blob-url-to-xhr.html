@@ -39,8 +39,8 @@ function onInputFileChange()
     sendXMLHttpRequest("GET", fileURL);
 
     log("DONE");
-    if (layoutTestController.notifyDone)
-        layoutTestController.notifyDone();
+    if (testRunner.notifyDone)
+        testRunner.notifyDone();
 }
 
 function runTests()
@@ -51,8 +51,8 @@ function runTests()
 }
 
 if (window.eventSender) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     window.onload = runTests;
 }
 </script>

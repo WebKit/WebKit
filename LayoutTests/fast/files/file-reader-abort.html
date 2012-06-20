@@ -27,8 +27,8 @@ function onInputFileChange()
     reader.onloadend = function() {
         log("Received loadend event");
         log("DONE");
-        if (layoutTestController.notifyDone)
-            layoutTestController.notifyDone();
+        if (testRunner.notifyDone)
+            testRunner.notifyDone();
     };
     reader.onabort = function() {
         log("Received abort event");
@@ -46,8 +46,8 @@ function runTests()
 }
 
 if (window.eventSender) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     window.onload = runTests;
 }
 </script>

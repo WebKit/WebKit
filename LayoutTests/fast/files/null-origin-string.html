@@ -16,14 +16,14 @@ function onInputFileChange()
     reader.readAsText(file);
     console.log('Started reading...');
 
-    top.location = 'data:text/html,<p>PASS if no crash.</p><script>layoutTestController.notifyDone()</scr' + 'ipt>';
+    top.location = 'data:text/html,<p>PASS if no crash.</p><script>testRunner.notifyDone()</scr' + 'ipt>';
 }
 </script>
 
 <script>
 if (window.eventSender) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 document.write('<iframe src="data:text/html,<input type=file id=file onchange=\'onInputFileChange()\'><script>' + document.getElementsByTagName("script")[0].innerText + 'runTest()</scr' + 'ipt>" style="left:0px;top:0px"></iframe>');
 </script>

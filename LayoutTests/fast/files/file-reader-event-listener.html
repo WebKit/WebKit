@@ -45,8 +45,8 @@ function onLoadEnd()
     fileReader.removeEventListener("load", onLoad, false);
     fileReader.removeEventListener("error", onError, false);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function onAbort()
@@ -88,9 +88,9 @@ function runTests()
 }
 
 if (window.eventSender) {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     window.onload = runTests;
 } else {

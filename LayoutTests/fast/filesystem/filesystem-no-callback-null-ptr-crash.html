@@ -4,8 +4,8 @@
 -->
 <div id="log">FAIL</div>
 <script>
-  if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+  if (window.testRunner)
+      testRunner.dumpAsText();
   if (window.webkitRequestFileSystem) {
       // These two calls should throw an exception but should NOT cause a NULL pointer crash:
       webkitResolveLocalFileSystemURL('');

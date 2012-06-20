@@ -1,3 +1,41 @@
+2012-06-19  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Use testRunner instead of layoutTestController in fast/{files,filesystem}
+        https://bugs.webkit.org/show_bug.cgi?id=89462
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/files/apply-blob-url-to-img.html:
+        * fast/files/apply-blob-url-to-xhr.html:
+        * fast/files/blob-builder-crash.html:
+        * fast/files/blob-slice-overflow.html:
+        * fast/files/blob-slice-test.html:
+        * fast/files/create-blob-url-crash.html:
+        * fast/files/domurl-script-execution-context-crash.html:
+        * fast/files/file-reader-abort.html:
+        * fast/files/file-reader-directory-crash.html:
+        * fast/files/file-reader-event-listener.html:
+        * fast/files/file-reader-file-url.html:
+        * fast/files/file-reader-sandbox-iframe.html:
+        * fast/files/null-origin-string.html:
+        * fast/files/read-blob-async.html:
+        * fast/files/read-file-async.html:
+        * fast/files/resources/file-reader-real.html:
+        * fast/files/resources/setup-for-read-common.js:
+        * fast/files/revoke-blob-url.html:
+        * fast/files/script-tests/xhr-response-blob.js:
+        * fast/files/workers/inline-worker-via-blob-url.html:
+        * fast/files/workers/worker-apply-blob-url-to-xhr.html:
+        * fast/files/workers/worker-read-blob-async.html:
+        * fast/files/workers/worker-read-blob-sync.html:
+        * fast/files/workers/worker-read-file-async.html:
+        * fast/files/workers/worker-read-file-sync.html:
+        * fast/filesystem/cross-filesystem-op.html:
+        * fast/filesystem/file-after-reload-crash.html:
+        * fast/filesystem/file-metadata-after-write.html:
+        * fast/filesystem/filesystem-no-callback-null-ptr-crash.html:
+        * fast/filesystem/filesystem-uri-origin.html:
+
 2012-06-19  Takashi Sakamoto  <tasak@google.com>
 
         [Shadow DOM] ShadowRoot.host should be gone

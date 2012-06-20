@@ -51,8 +51,8 @@ function errorCallback(msg)
     return function(e) {
         console.log(e);
         log('ERROR:' + msg + ': ' + e.code);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     };
 }
 
@@ -235,8 +235,8 @@ function startTest(e) {
             log('Successfully ran ' + tests.length + ' tests.');
             cleanupDirectory(destTestDirectory, function() {
                 log('Cleanup done.');
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             });
         });
     });
@@ -249,9 +249,9 @@ destination.addEventListener('dragover', function(e) {
 }, false);
 destination.addEventListener('drop', startTest, false);
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 
     eventSender.beginDragWithFiles([sourceDirectoryPath]);
     eventSender.leapForward(100);

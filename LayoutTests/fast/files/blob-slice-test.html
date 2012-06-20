@@ -69,8 +69,8 @@ function testSlicing(start, end)
 function runNextTest()
 {
     if (testIndex >= sliceParams.length) {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
 
@@ -87,9 +87,9 @@ function runTests()
     runNextTest();
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 </script>
 </head>

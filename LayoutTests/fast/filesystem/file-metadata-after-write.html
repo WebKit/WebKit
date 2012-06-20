@@ -8,9 +8,9 @@
 <div id='console'></div>
 <script>
 
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var fileEntryForCleanup;
@@ -79,8 +79,8 @@ function cleanup()
 
 function endTest()
 {
-    if (layoutTestController)
-        layoutTestController.notifyDone();
+    if (testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

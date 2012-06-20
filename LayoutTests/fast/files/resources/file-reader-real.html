@@ -9,8 +9,8 @@ function runTest()
         console.log("Received data: " + event.target.result);
     }
     reader.onloadend = function() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     reader.onerror = function(event) {
         console.log("Received error event: " + event.target.error.code);
