@@ -368,6 +368,9 @@ static bool isFeedWithNestedProtocolInHTTPFamily(const KURL& url)
 
 bool SecurityOrigin::canDisplay(const KURL& url) const
 {
+    if (m_universalAccess)
+        return true;
+
     String protocol = url.protocol().lower();
 
     if (isFeedWithNestedProtocolInHTTPFamily(url))

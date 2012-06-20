@@ -1,3 +1,20 @@
+2012-06-20  Yong Li  <yoli@rim.com>
+
+        SecurityOrigin::canDisplay() should return true when m_universalAccess is true
+        https://bugs.webkit.org/show_bug.cgi?id=84865
+
+        Reviewed by Adam Barth.
+
+        Add an early return (true) in canDisplay() for if (m_universalAccess),
+        as we did for canAccess() and canRequest().
+
+        No new tests. We should be good as long as this change doesn't break existing
+        tests, which means the contents supposed to be blocked are still blocked when
+        m_universalAccess is false.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canDisplay):
+
 2012-06-20  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Use v8::V8::AddImplicitReferences instead of SetHiddenValue
