@@ -50,6 +50,14 @@ WebInspector.ProfileLauncherView = function(profilesPanel)
     header.textContent = WebInspector.UIString("Select profiling type");
 
     this._profileTypeSelectorForm = this._contentElement.createChild("form");
+
+    if (WebInspector.experimentsSettings.liveNativeMemoryChart.isEnabled()) {
+        this._nativeMemoryElement = document.createElement("div");
+        this._contentElement.appendChild(this._nativeMemoryElement);
+        this._nativeMemoryLiveChart = new WebInspector.NativeMemoryBarChart();
+        this._nativeMemoryLiveChart.show(this._nativeMemoryElement);
+    }
+
     this._contentElement.createChild("div", "flexible-space");
 
     this._controlButton = this._contentElement.createChild("button", "control-profiling");
