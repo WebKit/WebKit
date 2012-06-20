@@ -714,6 +714,7 @@ public:
 
     void registerDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
     void unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
+    void clearNodeListCaches();
 
     void attachNodeIterator(NodeIterator*);
     void detachNodeIterator(NodeIterator*);
@@ -1393,6 +1394,7 @@ private:
     
     OwnPtr<HTMLCollection> m_collections[NumUnnamedDocumentCachedTypes];
     OwnPtr<HTMLAllCollection> m_allCollection;
+    HashSet<DynamicSubtreeNodeList*> m_listsInvalidatedAtDocument;
 
     typedef HashMap<AtomicStringImpl*, OwnPtr<HTMLNameCollection> > NamedCollectionMap;
     NamedCollectionMap m_documentNamedItemCollections;

@@ -3864,14 +3864,19 @@ void Document::setCSSTarget(Element* n)
 
 void Document::registerDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
 {
-    ensureRareData()->ensureNodeLists(this)->m_listsInvalidatedAtDocument.add(list);
+    m_listsInvalidatedAtDocument.add(list);
 }
 
 void Document::unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
 {
-    ASSERT(hasRareData());
-    ASSERT(rareData()->nodeLists());
-    rareData()->nodeLists()->m_listsInvalidatedAtDocument.remove(list);
+    m_listsInvalidatedAtDocument.remove(list);
+}
+
+void Document::clearNodeListCaches()
+{
+    HashSet<DynamicSubtreeNodeList*>::iterator end = m_listsInvalidatedAtDocument.end();
+    for (HashSet<DynamicSubtreeNodeList*>::iterator it = m_listsInvalidatedAtDocument.begin(); it != end; ++it)
+        (*it)->invalidateCache();
 }
 
 void Document::attachNodeIterator(NodeIterator* ni)

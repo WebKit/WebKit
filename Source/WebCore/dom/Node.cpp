@@ -967,10 +967,7 @@ void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& at
         && (attrName != idAttr || !attributeOwnerElement->isFormControlElement()))
         return;
 
-    if (document()->hasRareData()) {
-        if (NodeListsNodeData* nodeLists = document()->rareData()->nodeLists())
-            nodeLists->invalidateCachesForDocument();
-    }
+    document()->clearNodeListCaches();
 
     if (!treeScope()->hasNodeListCaches())
         return;
@@ -992,13 +989,11 @@ void Node::invalidateNodeListsCacheAfterChildrenChanged()
     if (hasRareData())
         rareData()->clearChildNodeListCache();
 
-    if (document()->hasRareData()) {
-        if (NodeListsNodeData* nodeLists = document()->rareData()->nodeLists())
-            nodeLists->invalidateCachesForDocument();
-    }
+    document()->clearNodeListCaches();
 
     if (!treeScope()->hasNodeListCaches())
         return;
+
     for (Node* node = this; node; node = node->parentNode()) {
         if (!node->hasRareData())
             continue;
@@ -2325,13 +2320,6 @@ void NodeListsNodeData::invalidateCaches()
     invalidateCachesThatDependOnAttributes();
 }
 
-void NodeListsNodeData::invalidateCachesForDocument()
-{
-    NodeListsNodeData::NodeListSet::iterator end = m_listsInvalidatedAtDocument.end();
-    for (NodeListsNodeData::NodeListSet::iterator it = m_listsInvalidatedAtDocument.begin(); it != end; ++it)
-        (*it)->invalidateCache();
-}
-
 void NodeListsNodeData::invalidateCachesThatDependOnAttributes()
 {
     ClassNodeListCache::iterator classCacheEnd = m_classNodeListCache.end();
@@ -2349,17 +2337,10 @@ void NodeListsNodeData::invalidateCachesThatDependOnAttributes()
     for (MicroDataItemListCache::iterator it = m_microDataItemListCache.begin(); it != itemListCacheEnd; ++it)
         it->second->invalidateCache();
 #endif
-
-    RadioNodeListCache::iterator radioNodeListCacheEnd = m_radioNodeListCache.end();
-    for (RadioNodeListCache::iterator it = m_radioNodeListCache.begin(); it != radioNodeListCacheEnd; ++it)
-        it->second->invalidateCache();
 }
 
 bool NodeListsNodeData::isEmpty() const
 {
-    if (!m_listsInvalidatedAtDocument.isEmpty())
-        return false;
-
     if (!m_tagNodeListCache.isEmpty())
         return false;
     if (!m_tagNodeListCacheNS.isEmpty())

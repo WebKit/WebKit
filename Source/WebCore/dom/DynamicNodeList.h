@@ -104,9 +104,6 @@ protected:
     DynamicSubtreeNodeList(PassRefPtr<Node>, RootType = RootedAtNode);
 
 private:
-    using DynamicNodeList::invalidateCache;
-    friend struct NodeListsNodeData;
-
     Node* itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
     Node* itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
 };

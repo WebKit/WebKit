@@ -51,9 +51,6 @@ class TreeScope;
 struct NodeListsNodeData {
     WTF_MAKE_NONCOPYABLE(NodeListsNodeData); WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef HashSet<DynamicSubtreeNodeList*> NodeListSet;
-    NodeListSet m_listsInvalidatedAtDocument;
-
     typedef HashMap<String, ClassNodeList*> ClassNodeListCache;
     ClassNodeListCache m_classNodeListCache;
 
@@ -82,7 +79,6 @@ public:
     }
 
     void invalidateCaches();
-    void invalidateCachesForDocument();
     void invalidateCachesThatDependOnAttributes();
 
     bool isEmpty() const;

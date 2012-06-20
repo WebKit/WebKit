@@ -1,3 +1,32 @@
+2012-06-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move m_listsInvalidatedAtDocument from NodeListsNodeData to Document
+        https://bugs.webkit.org/show_bug.cgi?id=89603
+
+        Reviewed by Andreas Kling.
+
+        Moved the variable. m_listsInvalidatedAtDocument is never used in non-Document nodes
+        so it was just wasting memory space.
+
+        * dom/Document.cpp:
+        (WebCore::Document::registerDynamicSubtreeNodeList):
+        (WebCore::Document::unregisterDynamicSubtreeNodeList):
+        (WebCore):
+        (WebCore::Document::clearNodeListCaches):
+        * dom/Document.h:
+        (Document):
+        * dom/DynamicNodeList.h:
+        (DynamicSubtreeNodeList):
+        * dom/Node.cpp:
+        (WebCore::Node::invalidateNodeListsCacheAfterAttributeChanged):
+        (WebCore::Node::invalidateNodeListsCacheAfterChildrenChanged):
+        (WebCore):
+        (WebCore::NodeListsNodeData::invalidateCachesThatDependOnAttributes): RadioNodeList
+        is invalidated at document level. No need to invalidate it again here.
+        (WebCore::NodeListsNodeData::isEmpty):
+        * dom/NodeRareData.h:
+        (NodeListsNodeData):
+
 2012-06-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120854.
