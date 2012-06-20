@@ -29,15 +29,29 @@
 #if USE(GSTREAMER)
 #include "VideoSinkGStreamer.h"
 
+#include "GStreamerVersioning.h"
+#include "IntSize.h"
 #include <glib.h>
 #include <gst/gst.h>
+#ifdef GST_API_VERSION_1
+#include <gst/video/gstvideometa.h>
+#include <gst/video/gstvideopool.h>
+#endif
 #include <wtf/FastAllocBase.h>
 
 // CAIRO_FORMAT_RGB24 used to render the video buffers is little/big endian dependant.
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
+#ifndef GST_API_VERSION_1
 #define WEBKIT_VIDEO_SINK_PAD_CAPS GST_VIDEO_CAPS_BGRx ";" GST_VIDEO_CAPS_BGRA
 #else
+#define WEBKIT_VIDEO_SINK_PAD_CAPS GST_VIDEO_CAPS_MAKE("{ BGRx, BGRA }")
+#endif
+#else
+#ifndef GST_API_VERSION_1
 #define WEBKIT_VIDEO_SINK_PAD_CAPS GST_VIDEO_CAPS_xRGB ";" GST_VIDEO_CAPS_ARGB
+#else
+#define WEBKIT_VIDEO_SINK_PAD_CAPS GST_VIDEO_CAPS_MAKE("{ xRGB, ARGB }")
+#endif
 #endif
 static GstStaticPadTemplate s_sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS(WEBKIT_VIDEO_SINK_PAD_CAPS));
 
@@ -62,7 +76,13 @@ struct _WebKitVideoSinkPrivate {
     GMutex* bufferMutex;
     GCond* dataCondition;
 
+#ifdef GST_API_VERSION_1
+    GstVideoInfo info;
+#endif
+
+#ifndef GST_API_VERSION_1
     WebCore::GStreamerGWorld* gstGWorld;
+#endif
 
     // If this is TRUE all processing should finish ASAP
     // This is necessary because there could be a race between
@@ -90,6 +110,10 @@ static void webkit_video_sink_init(WebKitVideoSink* sink)
 #else
     sink->priv->dataCondition = g_cond_new();
     sink->priv->bufferMutex = g_mutex_new();
+#endif
+
+#ifdef GST_API_VERSION_1
+    gst_video_info_init(&sink->priv->info);
 #endif
 }
 
@@ -129,15 +153,18 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
         return GST_FLOW_OK;
     }
 
+#ifndef GST_API_VERSION_1
     // Ignore buffers if the video is already in fullscreen using
     // another sink.
     if (priv->gstGWorld->isFullscreen()) {
         g_mutex_unlock(priv->bufferMutex);
         return GST_FLOW_OK;
     }
+#endif
 
     priv->buffer = gst_buffer_ref(buffer);
 
+#ifndef GST_API_VERSION_1
     // For the unlikely case where the buffer has no caps, the caps
     // are implicitely the caps of the pad. This shouldn't happen.
     if (UNLIKELY(!GST_BUFFER_CAPS(buffer))) {
@@ -146,13 +173,25 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
     }
 
     GstCaps* caps = GST_BUFFER_CAPS(buffer);
+#else
+    GstCaps* caps = gst_video_info_to_caps(&priv->info);
+#endif
+
     GstVideoFormat format;
-    int width, height;
-    if (UNLIKELY(!gst_video_format_parse_caps(caps, &format, &width, &height))) {
+    WebCore::IntSize size;
+    int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
+    if (!getVideoSizeAndFormatFromCaps(caps, size, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride)) {
         gst_buffer_unref(buffer);
+#ifdef GST_API_VERSION_1
+        gst_caps_unref(caps);
+#endif
         g_mutex_unlock(priv->bufferMutex);
         return GST_FLOW_ERROR;
     }
+
+#ifdef GST_API_VERSION_1
+    gst_caps_unref(caps);
+#endif
 
     // Cairo's ARGB has pre-multiplied alpha while GStreamer's doesn't.
     // Here we convert to Cairo's ARGB.
@@ -162,7 +201,7 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
         // The buffer content should not be changed here because the same buffer
         // could be passed multiple times to this method (in theory).
 
-        GstBuffer* newBuffer = gst_buffer_try_new_and_alloc(GST_BUFFER_SIZE(buffer));
+        GstBuffer* newBuffer = createGstBuffer(buffer);
 
         // Check if allocation failed.
         if (UNLIKELY(!newBuffer)) {
@@ -170,17 +209,24 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
             return GST_FLOW_ERROR;
         }
 
-        gst_buffer_copy_metadata(newBuffer, buffer, static_cast<GstBufferCopyFlags>(GST_BUFFER_COPY_ALL));
-
         // We don't use Color::premultipliedARGBFromColor() here because
         // one function call per video pixel is just too expensive:
         // For 720p/PAL for example this means 1280*720*25=23040000
         // function calls per second!
+#ifndef GST_API_VERSION_1
         const guint8* source = GST_BUFFER_DATA(buffer);
         guint8* destination = GST_BUFFER_DATA(newBuffer);
+#else
+        GstMapInfo sourceInfo;
+        GstMapInfo destinationInfo;
+        gst_buffer_map(buffer, &sourceInfo, GST_MAP_READ);
+        const guint8* source = const_cast<guint8*>(sourceInfo.data);
+        gst_buffer_map(newBuffer, &destinationInfo, GST_MAP_WRITE);
+        guint8* destination = static_cast<guint8*>(destinationInfo.data);
+#endif
 
-        for (int x = 0; x < height; x++) {
-            for (int y = 0; y < width; y++) {
+        for (int x = 0; x < size.height(); x++) {
+            for (int y = 0; y < size.width(); y++) {
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
                 unsigned short alpha = source[3];
                 destination[0] = (source[0] * alpha + 128) / 255;
@@ -199,6 +245,10 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
             }
         }
 
+#ifdef GST_API_VERSION_1
+        gst_buffer_unmap(buffer, &sourceInfo);
+        gst_buffer_unmap(newBuffer, &destinationInfo);
+#endif
         gst_buffer_unref(buffer);
         buffer = priv->buffer = newBuffer;
     }
@@ -293,6 +343,25 @@ static gboolean webkitVideoSinkStart(GstBaseSink* baseSink)
     return TRUE;
 }
 
+#ifdef GST_API_VERSION_1
+static gboolean webkitVideoSinkProposeAllocation(GstBaseSink* baseSink, GstQuery* query)
+{
+    GstCaps* caps;
+    gst_query_parse_allocation(query, &caps, 0);
+    if (!caps)
+        return FALSE;
+
+    WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(baseSink);
+    if (!gst_video_info_from_caps(&sink->priv->info, caps))
+        return FALSE;
+
+    gst_query_add_allocation_meta(query, GST_VIDEO_META_API_TYPE);
+    gst_query_add_allocation_meta(query, GST_VIDEO_CROP_META_API_TYPE);
+    return TRUE;
+}
+#endif
+
+#ifndef GST_API_VERSION_1
 static void webkitVideoSinkMarshalVoidAndMiniObject(GClosure* closure, GValue* returnValue, guint parametersNumber, const GValue* parameterValues, gpointer invocationHint, gpointer marshalData)
 {
     typedef void (*marshalfunc_VOID__MINIOBJECT) (gpointer obj, gpointer arg1, gpointer data2);
@@ -313,6 +382,7 @@ static void webkitVideoSinkMarshalVoidAndMiniObject(GClosure* closure, GValue* r
     callback = (marshalfunc_VOID__MINIOBJECT) (marshalData ? marshalData : cclosure->callback);
     callback(data1, gst_value_get_mini_object(parameterValues + 1), data2);
 }
+#endif
 
 static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
 {
@@ -321,7 +391,11 @@ static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
     GstElementClass* elementClass = GST_ELEMENT_CLASS(klass);
 
     gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&s_sinkTemplate));
+#ifdef GST_API_VERSION_1
+    gst_element_class_set_metadata(elementClass,
+#else
     gst_element_class_set_details_simple(elementClass,
+#endif
             "WebKit video sink",
             "Sink/Video", "Sends video data from a GStreamer pipeline to a Cairo surface",
             "Alp Toker <alp@atoker.com>");
@@ -336,6 +410,9 @@ static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
     baseSinkClass->preroll = webkitVideoSinkRender;
     baseSinkClass->stop = webkitVideoSinkStop;
     baseSinkClass->start = webkitVideoSinkStart;
+#ifdef GST_API_VERSION_1
+    baseSinkClass->propose_allocation = webkitVideoSinkProposeAllocation;
+#endif
 
     webkitVideoSinkSignals[REPAINT_REQUESTED] = g_signal_new("repaint-requested",
             G_TYPE_FROM_CLASS(klass),
@@ -343,18 +420,29 @@ static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
             0, // Class offset
             0, // Accumulator
             0, // Accumulator data
+#ifndef GST_API_VERSION_1
             webkitVideoSinkMarshalVoidAndMiniObject,
+#else
+            g_cclosure_marshal_generic,
+#endif
             G_TYPE_NONE, // Return type
             1, // Only one parameter
             GST_TYPE_BUFFER);
 }
 
 
+#ifndef GST_API_VERSION_1
 GstElement* webkitVideoSinkNew(WebCore::GStreamerGWorld* gstGWorld)
 {
     GstElement* element = GST_ELEMENT(g_object_new(WEBKIT_TYPE_VIDEO_SINK, 0));
     WEBKIT_VIDEO_SINK(element)->priv->gstGWorld = gstGWorld;
     return element;
 }
+#else
+GstElement* webkitVideoSinkNew()
+{
+    return GST_ELEMENT(g_object_new(WEBKIT_TYPE_VIDEO_SINK, 0));
+}
+#endif
 
 #endif // USE(GSTREAMER)

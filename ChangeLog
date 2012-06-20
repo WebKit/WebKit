@@ -1,3 +1,12 @@
+2012-06-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] 0.11 video-sink
+        https://bugs.webkit.org/show_bug.cgi?id=77087
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: Fix required gstreamer 0.11 version
+
 2012-06-19  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Fix the Windows build when Qt is built without -release or -debug

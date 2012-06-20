@@ -21,7 +21,7 @@
 
 #include "GStreamerVersioning.h"
 
-#include <gst/gst.h>
+#include "IntSize.h"
 
 void webkitGstObjectRefSink(GstObject* gstObject)
 {
@@ -47,4 +47,61 @@ GstCaps* webkitGstGetPadCaps(GstPad* pad)
     caps = GST_PAD_CAPS(pad);
 #endif
     return caps;
+}
+
+bool getVideoSizeAndFormatFromCaps(GstCaps* caps, WebCore::IntSize& size, GstVideoFormat& format, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride)
+{
+#ifdef GST_API_VERSION_1
+    GstVideoInfo info;
+    if (!gst_video_info_from_caps(&info, caps))
+        return false;
+
+    format = GST_VIDEO_INFO_FORMAT(&info);
+    size.setWidth(GST_VIDEO_INFO_WIDTH(&info));
+    size.setHeight(GST_VIDEO_INFO_HEIGHT(&info));
+    pixelAspectRatioNumerator = GST_VIDEO_INFO_PAR_N(&info);
+    pixelAspectRatioDenominator = GST_VIDEO_INFO_PAR_D(&info);
+    stride = GST_VIDEO_INFO_PLANE_STRIDE(&info, 0);
+#else
+    gint width, height;
+    if (!GST_IS_CAPS(caps) || !gst_caps_is_fixed(caps)
+        || !gst_video_format_parse_caps(caps, &format, &width, &height)
+        || !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator,
+                                                    &pixelAspectRatioDenominator))
+        return false;
+    size.setWidth(width);
+    size.setHeight(height);
+    stride = size.width() * 4;
+#endif
+
+    return true;
+}
+
+GstBuffer* createGstBuffer(GstBuffer* buffer)
+{
+#ifndef GST_API_VERSION_1
+    GstBuffer* newBuffer = gst_buffer_try_new_and_alloc(GST_BUFFER_SIZE(buffer));
+#else
+    gsize bufferSize = gst_buffer_get_size(buffer);
+    GstBuffer* newBuffer = gst_buffer_new_and_alloc(bufferSize);
+#endif
+
+    if (!newBuffer)
+        return 0;
+
+#ifndef GST_API_VERSION_1
+    gst_buffer_copy_metadata(newBuffer, buffer, static_cast<GstBufferCopyFlags>(GST_BUFFER_COPY_ALL));
+#else
+    gst_buffer_copy_into(newBuffer, buffer, static_cast<GstBufferCopyFlags>(GST_BUFFER_COPY_METADATA), 0, bufferSize);
+#endif
+    return newBuffer;
+}
+
+void setGstElementClassMetadata(GstElementClass* elementClass, const char* name, const char* longName, const char* description, const char* author)
+{
+#ifdef GST_API_VERSION_1
+    gst_element_class_set_metadata(elementClass, name, longName, description, author);
+#else
+    gst_element_class_set_details_simple(elementClass, name, longName, description, author);
+#endif
 }

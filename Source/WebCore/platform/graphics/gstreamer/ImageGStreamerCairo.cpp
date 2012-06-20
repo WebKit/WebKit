@@ -22,40 +22,51 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include <cairo.h>
+#include <gst/gst.h>
+#include <gst/video/video.h>
 #include <wtf/gobject/GOwnPtr.h>
+
+#ifdef GST_API_VERSION_1
+#include <gst/video/gstvideometa.h>
+#endif
+
 
 using namespace std;
 using namespace WebCore;
 
-PassRefPtr<ImageGStreamer> ImageGStreamer::createImage(GstBuffer* buffer)
+ImageGStreamer::ImageGStreamer(GstBuffer* buffer, GstCaps* caps)
 {
-    int width = 0, height = 0;
-    GstCaps* caps = gst_buffer_get_caps(buffer);
     GstVideoFormat format;
-    if (!gst_video_format_parse_caps(caps, &format, &width, &height)) {
-        gst_caps_unref(caps);
-        return 0;
-    }
+    IntSize size;
+    int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
+    getVideoSizeAndFormatFromCaps(caps, size, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride);
 
-    gst_caps_unref(caps);
+#ifdef GST_API_VERSION_1
+    GstMapInfo mapInfo;
+    gst_buffer_map(buffer, &mapInfo, GST_MAP_READ);
+    unsigned char* bufferData = reinterpret_cast<unsigned char*>(mapInfo.data);
+#else
+    unsigned char* bufferData = reinterpret_cast<unsigned char*>(GST_BUFFER_DATA(buffer));
+#endif
 
     cairo_format_t cairoFormat;
-    if (format == GST_VIDEO_FORMAT_ARGB || format == GST_VIDEO_FORMAT_BGRA)
-        cairoFormat = CAIRO_FORMAT_ARGB32;
-    else
-        cairoFormat = CAIRO_FORMAT_RGB24;
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+    cairoFormat = (format == GST_VIDEO_FORMAT_BGRA) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
+#else
+    cairoFormat = (format == GST_VIDEO_FORMAT_ARGB) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
+#endif
 
-    return adoptRef(new ImageGStreamer(buffer, IntSize(width, height), cairoFormat));
-}
-
-ImageGStreamer::ImageGStreamer(GstBuffer*& buffer, IntSize size, cairo_format_t& cairoFormat)
-    : m_image(0)
-{
-    cairo_surface_t* surface = cairo_image_surface_create_for_data(GST_BUFFER_DATA(buffer), cairoFormat,
-                                                    size.width(), size.height(),
-                                                    cairo_format_stride_for_width(cairoFormat, size.width()));
+    cairo_surface_t* surface = cairo_image_surface_create_for_data(bufferData, cairoFormat, size.width(), size.height(), stride);
     ASSERT(cairo_surface_status(surface) == CAIRO_STATUS_SUCCESS);
     m_image = BitmapImage::create(surface);
+
+#ifdef GST_API_VERSION_1
+    if (GstVideoCropMeta* cropMeta = gst_buffer_get_video_crop_meta(buffer))
+        setCropRect(FloatRect(cropMeta->x, cropMeta->y, cropMeta->width, cropMeta->height));
+
+    gst_buffer_unmap(buffer, &mapInfo);
+#endif
 }
 
 ImageGStreamer::~ImageGStreamer()

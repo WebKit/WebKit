@@ -853,10 +853,14 @@ void StreamingClient::didReceiveResponse(ResourceHandle*, const ResourceResponse
     }
 
     if (gst_tag_list_is_empty(tags))
+#ifdef GST_API_VERSION_1
+        gst_tag_list_unref(tags);
+#else
         gst_tag_list_free(tags);
+#endif
     else
 #ifdef GST_API_VERSION_1
-        gst_pad_push_event(GST_PAD_CAST(m_src->priv->srcpad), gst_event_new_tag(tags));
+        gst_pad_push_event(GST_PAD_CAST(m_src->priv->srcpad), gst_event_new_tag("WebKitWebSrc", tags));
 #else
         gst_element_found_tags_for_pad(GST_ELEMENT(m_src), m_src->priv->srcpad, tags);
 #endif
