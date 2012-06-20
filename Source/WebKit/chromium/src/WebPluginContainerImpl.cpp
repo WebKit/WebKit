@@ -461,8 +461,8 @@ void WebPluginContainerImpl::setOpaque(bool opaque)
 
 bool WebPluginContainerImpl::isRectTopmost(const WebRect& rect)
 {
-    Page* page = m_element->document()->page();
-    if (!page)
+    Frame* frame = m_element->document()->frame();
+    if (!frame)
         return false;
 
     // hitTestResultAtPoint() takes a padding rectangle.
@@ -471,8 +471,7 @@ bool WebPluginContainerImpl::isRectTopmost(const WebRect& rect)
     LayoutPoint center = documentRect.center();
     // Make the rect we're checking (the point surrounded by padding rects) contained inside the requested rect. (Note that -1/2 is 0.)
     LayoutSize padding((documentRect.width() - 1) / 2, (documentRect.height() - 1) / 2);
-    HitTestResult result =
-        page->mainFrame()->eventHandler()->hitTestResultAtPoint(center, false, false, DontHitTestScrollbars, HitTestRequest::ReadOnly | HitTestRequest::Active, padding);
+    HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(center, false, false, DontHitTestScrollbars, HitTestRequest::ReadOnly | HitTestRequest::Active, padding);
     const HitTestResult::NodeSet& nodes = result.rectBasedTestResult();
     if (nodes.size() != 1)
         return false;

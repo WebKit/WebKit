@@ -1,3 +1,16 @@
+2012-06-20  Raymes Khoury  <raymes@chromium.org>
+
+        Perform hit-test from correct frame in isRectTopmost()
+        https://bugs.webkit.org/show_bug.cgi?id=89492
+
+        Reviewed by Levi Weintraub.
+
+        Hit-testing was being performed from the main frame, which gave the
+        incorrect result if the plugin was in a different frame.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::isRectTopmost):
+
 2012-06-20  Alexandre Elias  <aelias@google.com>
 
         [chromium] Support mobile device rotation resizing
