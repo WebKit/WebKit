@@ -1,3 +1,15 @@
+2012-06-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Remove the failing expected results added in
+        http://trac.webkit.org/changeset/119190 now that these tests pass.
+
+        Rubber-stamped by Jessie Berlin.
+
+        * platform/win/fast/frames/frame-set-scaling-hit-expected.txt: Removed.
+        * platform/win/fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize-expected.txt: Removed.
+        * platform/win/fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false-expected.txt: Removed.
+        * platform/win/fast/frames/frames-with-frameborder-zero-can-be-resized-expected.txt: Removed.
+
 2012-06-19  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Fix issue where a callback got a null calling context
