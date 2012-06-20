@@ -158,7 +158,6 @@ v8 {
         \
         bindings/v8/custom/V8CSSRuleCustom.cpp \
         bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp \
-        bindings/v8/custom/V8CSSStyleSheetCustom.cpp \
         bindings/v8/custom/V8CSSValueCustom.cpp \
         bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp \
         bindings/v8/custom/V8ClipboardCustom.cpp \
@@ -167,8 +166,7 @@ v8 {
         bindings/v8/custom/V8InjectedScriptHostCustom.cpp \
         bindings/v8/custom/V8InjectedScriptManager.cpp \
         bindings/v8/custom/V8InspectorFrontendHostCustom.cpp \
-        bindings/v8/custom/V8DOMStringMapCustom.cpp \
-        bindings/v8/custom/V8DOMTokenListCustom.cpp
+        bindings/v8/custom/V8DOMStringMapCustom.cpp
 
     SOURCES += \
         bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp \
@@ -215,7 +213,6 @@ v8 {
         bindings/v8/custom/V8StorageCustom.cpp \
         bindings/v8/custom/V8StyleSheetCustom.cpp \
         bindings/v8/custom/V8StyleSheetListCustom.cpp \
-        bindings/v8/custom/V8TextTrackListCustom.cpp \
         bindings/v8/custom/V8WebKitAnimationCustom.cpp \
         bindings/v8/custom/V8WebKitMutationObserverCustom.cpp \
         bindings/v8/custom/V8WebKitPointConstructor.cpp \

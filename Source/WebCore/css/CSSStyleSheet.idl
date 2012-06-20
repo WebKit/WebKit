@@ -22,7 +22,7 @@ module css {
 
     // Introduced in DOM Level 2:
     interface [
-        V8CustomToJSObject
+        V8GenerateIsReachable=ImplOwnerNodeRoot
     ] CSSStyleSheet : StyleSheet {
         readonly attribute CSSRule          ownerRule;
         readonly attribute CSSRuleList      cssRules;
