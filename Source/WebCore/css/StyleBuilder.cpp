@@ -1707,16 +1707,16 @@ class ApplyPropertyFlex {
 public:
     static void applyInheritValue(StyleResolver* styleResolver)
     {
-        ApplyPropertyDefaultBase<float, &RenderStyle::positiveFlex, float, &RenderStyle::setPositiveFlex, float, &RenderStyle::initialNegativeFlex>::applyInheritValue(styleResolver);
-        ApplyPropertyDefaultBase<float, &RenderStyle::negativeFlex, float, &RenderStyle::setNegativeFlex, float, &RenderStyle::initialPositiveFlex>::applyInheritValue(styleResolver);
-        ApplyPropertyDefaultBase<Length, &RenderStyle::flexPreferredSize, Length, &RenderStyle::setFlexPreferredSize, Length, &RenderStyle::initialFlexPreferredSize>::applyInheritValue(styleResolver);
+        ApplyPropertyDefaultBase<float, &RenderStyle::flexGrow, float, &RenderStyle::setFlexGrow, float, &RenderStyle::initialFlexGrow>::applyInheritValue(styleResolver);
+        ApplyPropertyDefaultBase<float, &RenderStyle::flexShrink, float, &RenderStyle::setFlexShrink, float, &RenderStyle::initialFlexShrink>::applyInheritValue(styleResolver);
+        ApplyPropertyDefaultBase<Length, &RenderStyle::flexBasis, Length, &RenderStyle::setFlexBasis, Length, &RenderStyle::initialFlexBasis>::applyInheritValue(styleResolver);
     }
 
     static void applyInitialValue(StyleResolver* styleResolver)
     {
-        styleResolver->style()->setPositiveFlex(RenderStyle::initialPositiveFlex());
-        styleResolver->style()->setNegativeFlex(RenderStyle::initialNegativeFlex());
-        styleResolver->style()->setFlexPreferredSize(RenderStyle::initialFlexPreferredSize());
+        styleResolver->style()->setFlexGrow(RenderStyle::initialFlexGrow());
+        styleResolver->style()->setFlexShrink(RenderStyle::initialFlexShrink());
+        styleResolver->style()->setFlexBasis(RenderStyle::initialFlexBasis());
     }
 
     static void applyValue(StyleResolver* styleResolver, CSSValue* value)
@@ -1724,9 +1724,9 @@ public:
         if (value->isPrimitiveValue()) {
             CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
             if (primitiveValue->getIdent() == CSSValueNone) {
-                styleResolver->style()->setPositiveFlex(0);
-                styleResolver->style()->setNegativeFlex(0);
-                styleResolver->style()->setFlexPreferredSize(Length(Auto));
+                styleResolver->style()->setFlexGrow(0);
+                styleResolver->style()->setFlexShrink(0);
+                styleResolver->style()->setFlexBasis(Length(Auto));
             }
             return;
         }
@@ -1740,13 +1740,13 @@ public:
         float flexValue = 0;
         if (!getFlexValue(valueList->itemWithoutBoundsCheck(0), flexValue))
             return;
-        styleResolver->style()->setPositiveFlex(flexValue);
+        styleResolver->style()->setFlexGrow(flexValue);
 
         if (!getFlexValue(valueList->itemWithoutBoundsCheck(1), flexValue))
             return;
-        styleResolver->style()->setNegativeFlex(flexValue);
+        styleResolver->style()->setFlexShrink(flexValue);
 
-        ApplyPropertyLength<&RenderStyle::flexPreferredSize, &RenderStyle::setFlexPreferredSize, &RenderStyle::initialFlexPreferredSize, AutoEnabled>::applyValue(styleResolver, valueList->itemWithoutBoundsCheck(2));
+        ApplyPropertyLength<&RenderStyle::flexBasis, &RenderStyle::setFlexBasis, &RenderStyle::initialFlexBasis, AutoEnabled>::applyValue(styleResolver, valueList->itemWithoutBoundsCheck(2));
     }
 
     static PropertyHandler createHandler()

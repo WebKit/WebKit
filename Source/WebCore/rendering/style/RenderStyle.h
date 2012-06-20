@@ -815,9 +815,9 @@ public:
     EBoxPack boxPack() const { return static_cast<EBoxPack>(rareNonInheritedData->m_deprecatedFlexibleBox->pack); }
 
     float order() const { return rareNonInheritedData->m_order; }
-    float positiveFlex() const { return rareNonInheritedData->m_flexibleBox->m_positiveFlex; }
-    float negativeFlex() const { return rareNonInheritedData->m_flexibleBox->m_negativeFlex; }
-    Length flexPreferredSize() const { return rareNonInheritedData->m_flexibleBox->m_preferredSize; }
+    float flexGrow() const { return rareNonInheritedData->m_flexibleBox->m_flexGrow; }
+    float flexShrink() const { return rareNonInheritedData->m_flexibleBox->m_flexShrink; }
+    Length flexBasis() const { return rareNonInheritedData->m_flexibleBox->m_flexBasis; }
     EAlignContent alignContent() const { return static_cast<EAlignContent>(rareNonInheritedData->m_alignContent); }
     EAlignItems alignItems() const { return static_cast<EAlignItems>(rareNonInheritedData->m_alignItems); }
     EAlignItems alignSelf() const { return static_cast<EAlignItems>(rareNonInheritedData->m_alignSelf); }
@@ -1270,9 +1270,9 @@ public:
     void setBoxShadow(PassOwnPtr<ShadowData>, bool add = false);
     void setBoxReflect(PassRefPtr<StyleReflection> reflect) { if (rareNonInheritedData->m_boxReflect != reflect) rareNonInheritedData.access()->m_boxReflect = reflect; }
     void setBoxSizing(EBoxSizing s) { SET_VAR(m_box, m_boxSizing, s); }
-    void setPositiveFlex(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_positiveFlex, f); }
-    void setNegativeFlex(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_negativeFlex, f); }
-    void setFlexPreferredSize(Length l) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_preferredSize, l); }
+    void setFlexGrow(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexGrow, f); }
+    void setFlexShrink(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexShrink, f); }
+    void setFlexBasis(Length length) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexBasis, length); }
     void setOrder(float o) { SET_VAR(rareNonInheritedData, m_order, o); }
     void setAlignContent(EAlignContent p) { SET_VAR(rareNonInheritedData, m_alignContent, p); }
     void setAlignItems(EAlignItems a) { SET_VAR(rareNonInheritedData, m_alignItems, a); }
@@ -1605,9 +1605,9 @@ public:
     static unsigned int initialBoxOrdinalGroup() { return 1; }
     static EBoxSizing initialBoxSizing() { return CONTENT_BOX; }
     static StyleReflection* initialBoxReflect() { return 0; }
-    static float initialPositiveFlex() { return 0; }
-    static float initialNegativeFlex() { return 1; }
-    static Length initialFlexPreferredSize() { return Length(Auto); }
+    static float initialFlexGrow() { return 0; }
+    static float initialFlexShrink() { return 1; }
+    static Length initialFlexBasis() { return Length(Auto); }
     static float initialOrder() { return 0; }
     static EAlignContent initialAlignContent() { return AlignContentStretch; }
     static EAlignItems initialAlignItems() { return AlignStretch; }

@@ -1,3 +1,45 @@
+2012-06-19  Tony Chang  <tony@chromium.org>
+
+        Refactor RenderFlexibleBox terminology to use grow/shrink instead of positive/negative
+        https://bugs.webkit.org/show_bug.cgi?id=89493
+
+        Reviewed by Eric Seidel.
+
+        The spec stopped referring to positive and negative flex and now
+        talks about flex grow and flex shrink. Also, the preferred size is
+        now known as the flex basis. Make the code match the terms used in
+        the spec. http://dev.w3.org/csswg/css3-flexbox/
+
+        This will also make it easier to split flex into long hand notation
+        (flex-grow, flex-shrink and flex-basis).
+
+        No new tests, covered by existing tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/StyleBuilder.cpp:
+        (WebCore::ApplyPropertyFlex::applyInheritValue):
+        (WebCore::ApplyPropertyFlex::applyInitialValue):
+        (WebCore::ApplyPropertyFlex::applyValue):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::PropertyWrapperFlex::equals):
+        (WebCore::PropertyWrapperFlex::blend):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::flexBasisForChild):
+        (WebCore::RenderFlexibleBox::preferredMainAxisContentExtentForChild):
+        (WebCore::RenderFlexibleBox::layoutFlexItems):
+        (WebCore::RenderFlexibleBox::computeMainAxisPreferredSizes):
+        (WebCore::RenderFlexibleBox::computeNextFlexLine):
+        (WebCore::RenderFlexibleBox::freezeViolations):
+        (WebCore::RenderFlexibleBox::resolveFlexibleLengths):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleFlexibleBoxData.cpp:
+        (WebCore::StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (WebCore::StyleFlexibleBoxData::operator==):
+        * rendering/style/StyleFlexibleBoxData.h:
+        (StyleFlexibleBoxData):
+
 2012-06-19  Steve VanDeBogart  <vandebo@chromium.org>
 
         Make DOMFileSystem selectively structure clonable so it can be the body of a web intent.

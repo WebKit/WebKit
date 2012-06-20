@@ -31,9 +31,9 @@
 namespace WebCore {
 
 StyleFlexibleBoxData::StyleFlexibleBoxData()
-    : m_positiveFlex(RenderStyle::initialPositiveFlex())
-    , m_negativeFlex(RenderStyle::initialNegativeFlex())
-    , m_preferredSize(RenderStyle::initialFlexPreferredSize())
+    : m_flexGrow(RenderStyle::initialFlexGrow())
+    , m_flexShrink(RenderStyle::initialFlexShrink())
+    , m_flexBasis(RenderStyle::initialFlexBasis())
     , m_flexDirection(RenderStyle::initialFlexDirection())
     , m_flexWrap(RenderStyle::initialFlexWrap())
 {
@@ -41,9 +41,9 @@ StyleFlexibleBoxData::StyleFlexibleBoxData()
 
 StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
     : RefCounted<StyleFlexibleBoxData>()
-    , m_positiveFlex(o.m_positiveFlex)
-    , m_negativeFlex(o.m_negativeFlex)
-    , m_preferredSize(o.m_preferredSize)
+    , m_flexGrow(o.m_flexGrow)
+    , m_flexShrink(o.m_flexShrink)
+    , m_flexBasis(o.m_flexBasis)
     , m_flexDirection(o.m_flexDirection)
     , m_flexWrap(o.m_flexWrap)
 {
@@ -51,7 +51,7 @@ StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
 
 bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
 {
-    return m_positiveFlex == o.m_positiveFlex && m_negativeFlex == o.m_negativeFlex && m_preferredSize == o.m_preferredSize
+    return m_flexGrow == o.m_flexGrow && m_flexShrink == o.m_flexShrink && m_flexBasis == o.m_flexBasis
         && m_flexDirection == o.m_flexDirection && m_flexWrap == o.m_flexWrap;
 }
 

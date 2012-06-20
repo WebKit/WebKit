@@ -1652,16 +1652,16 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
 #if ENABLE(CSS3_FLEXBOX)
         case CSSPropertyWebkitFlex: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-            list->append(cssValuePool().createValue(style->positiveFlex()));
-            list->append(cssValuePool().createValue(style->negativeFlex()));
+            list->append(cssValuePool().createValue(style->flexGrow()));
+            list->append(cssValuePool().createValue(style->flexShrink()));
 
-            Length preferredSize = style->flexPreferredSize();
-            if (preferredSize.isAuto())
+            Length flexBasis = style->flexBasis();
+            if (flexBasis.isAuto())
                 list->append(cssValuePool().createIdentifierValue(CSSValueAuto));
-            else if (preferredSize.isPercent())
-                list->append(cssValuePool().createValue(preferredSize.value(), CSSPrimitiveValue::CSS_PERCENTAGE));
+            else if (flexBasis.isPercent())
+                list->append(cssValuePool().createValue(flexBasis.value(), CSSPrimitiveValue::CSS_PERCENTAGE));
             else
-                list->append(cssValuePool().createValue(preferredSize.value(), CSSPrimitiveValue::CSS_PX));
+                list->append(cssValuePool().createValue(flexBasis.value(), CSSPrimitiveValue::CSS_PX));
 
             return list.release();
         }

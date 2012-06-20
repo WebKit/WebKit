@@ -917,14 +917,14 @@ public:
         if (!a || !b)
             return false;
 
-        return a->flexPreferredSize() == b->flexPreferredSize() && a->positiveFlex() == b->positiveFlex() && a->negativeFlex() == b->negativeFlex();
+        return a->flexBasis() == b->flexBasis() && a->flexGrow() == b->flexGrow() && a->flexShrink() == b->flexShrink();
     }
 
     virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
     {
-        dst->setFlexPreferredSize(blendFunc(anim, a->flexPreferredSize(), b->flexPreferredSize(), progress));
-        dst->setPositiveFlex(blendFunc(anim, a->positiveFlex(), b->positiveFlex(), progress));
-        dst->setNegativeFlex(blendFunc(anim, a->negativeFlex(), b->negativeFlex(), progress));
+        dst->setFlexBasis(blendFunc(anim, a->flexBasis(), b->flexBasis(), progress));
+        dst->setFlexGrow(blendFunc(anim, a->flexGrow(), b->flexGrow(), progress));
+        dst->setFlexShrink(blendFunc(anim, a->flexShrink(), b->flexShrink(), progress));
     }
 };
 #endif

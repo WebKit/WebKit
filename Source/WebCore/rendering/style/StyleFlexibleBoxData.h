@@ -44,9 +44,9 @@ public:
         return !(*this == o);
     }
 
-    float m_positiveFlex;
-    float m_negativeFlex;
-    Length m_preferredSize;
+    float m_flexGrow;
+    float m_flexShrink;
+    Length m_flexBasis;
 
     unsigned m_flexDirection : 2; // EFlexDirection
     unsigned m_flexWrap : 2; // EFlexWrap
