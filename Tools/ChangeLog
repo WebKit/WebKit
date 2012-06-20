@@ -1,3 +1,18 @@
+2012-06-19  Adam Barth  <abarth@webkit.org>
+
+        svn.delete_list fails to delete empty parent directories
+        https://bugs.webkit.org/show_bug.cgi?id=89520
+
+        Reviewed by Dirk Pranke.
+
+        These functions were calling scm.delete and scm.add, which already
+        delete the parent directory. We'd get an exception when we tried to
+        delete the parent directory again.
+
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN._add_parent_directories):
+        (SVN._delete_parent_directories):
+
 2012-06-19  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         webkitpy: Simplify fetch_bugs_matching_search()

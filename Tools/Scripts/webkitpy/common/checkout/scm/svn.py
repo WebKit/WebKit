@@ -172,10 +172,6 @@ class SVN(SCM, SVNRepository):
         """Does 'svn add' to the path and its parents."""
         if self.in_working_directory(path):
             return
-        dirname = os.path.dirname(path)
-        # We have dirname directry - ensure it added.
-        if dirname != path:
-            self._add_parent_directories(dirname)
         self.add(path)
 
     def add_list(self, paths, return_exit_code=False):
@@ -189,9 +185,6 @@ class SVN(SCM, SVNRepository):
         if set(os.listdir(path)) - self._svn_metadata_files:
             return  # Directory has non-trivial files in it.
         self.delete(path)
-        dirname = os.path.dirname(path)
-        if dirname != path:
-            self._delete_parent_directories(dirname)
 
     def delete_list(self, paths):
         for path in paths:
