@@ -1,3 +1,12 @@
+2012-06-19  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][Regression] Build break after r120786
+        https://bugs.webkit.org/show_bug.cgi?id=89549
+
+        Unreviewed build fix for Efl port.
+
+        * DumpRenderTree/efl/CMakeLists.txt: Added disassembler in includes.
+
 2012-06-19  Dirk Pranke  <dpranke@chromium.org>
 
         NRWT spins up and down the WebSocket server when running a single HTTP test from the command line

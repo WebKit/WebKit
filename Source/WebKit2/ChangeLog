@@ -1,3 +1,12 @@
+2012-06-19  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][Regression] Build break after r120786
+        https://bugs.webkit.org/show_bug.cgi?id=89549
+
+        Unreviewed build fix for Efl port.
+
+        * CMakeLists.txt: Added disassembler in includes.
+
 2012-06-19  Dan Bernstein  <mitz@apple.com>
 
         WebKit2 part of: Paginated display API doesn’t allow setting the page progression direction
