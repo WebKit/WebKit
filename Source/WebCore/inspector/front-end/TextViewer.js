@@ -1216,7 +1216,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (!range)
             return false;
 
-        range.normalize();
+        range = range.normalize();
 
         if (range.endColumn === 0)
             return false;

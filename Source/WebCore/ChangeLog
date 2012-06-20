@@ -1,3 +1,14 @@
+2012-06-20  Sergey Rogulenko  <rogulenko@google.com>
+
+        Web Inspector: duplicating selected text when Enter key is pressed 
+        https://bugs.webkit.org/show_bug.cgi?id=89559
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorMainPanel.prototype.handleEnterKey):
+        The returned result of method normalize() should be used.
+
 2012-06-20  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [Cairo] Fix memory leak in GraphicsContext3DCairo.cpp
