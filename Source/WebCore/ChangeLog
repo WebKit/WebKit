@@ -1,3 +1,23 @@
+2012-06-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: don't report context ids before DidCommitLoad
+        https://bugs.webkit.org/show_bug.cgi?id=89567
+
+        Reviewed by Pavel Feldman.
+
+        When inspector state is restored only report existing context ids
+        if "did commit load" even has already been dispatched.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::PageRuntimeAgent):
+        (WebCore::PageRuntimeAgent::restore):
+        * inspector/PageRuntimeAgent.h:
+        (WebCore):
+        (WebCore::PageRuntimeAgent::create):
+        (PageRuntimeAgent):
+
 2012-06-20  Zeev Lieber  <zlieber@chromium.org>
 
         [Chromium] Remove redundant #includes in compositor

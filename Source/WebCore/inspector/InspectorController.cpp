@@ -121,7 +121,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     m_resourceAgent = resourceAgentPtr.get();
     m_agents.append(resourceAgentPtr.release());
 
-    OwnPtr<InspectorRuntimeAgent> runtimeAgentPtr(PageRuntimeAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get(), page, pageAgent));
+    OwnPtr<InspectorRuntimeAgent> runtimeAgentPtr(PageRuntimeAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get(), page, pageAgent, m_inspectorAgent));
     InspectorRuntimeAgent* runtimeAgent = runtimeAgentPtr.get();
     m_agents.append(runtimeAgentPtr.release());
 

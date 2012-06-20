@@ -38,6 +38,7 @@
 #include "Document.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
+#include "InspectorAgent.h"
 #include "InspectorPageAgent.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
@@ -52,10 +53,11 @@ namespace PageRuntimeAgentState {
 static const char reportExecutionContextCreation[] = "reportExecutionContextCreation";
 };
 
-PageRuntimeAgent::PageRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
+PageRuntimeAgent::PageRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent, InspectorAgent* inspectorAgent)
     : InspectorRuntimeAgent(instrumentingAgents, state, injectedScriptManager)
     , m_inspectedPage(page)
     , m_pageAgent(pageAgent)
+    , m_inspectorAgent(inspectorAgent)
     , m_frontend(0)
 {
 }
@@ -81,8 +83,13 @@ void PageRuntimeAgent::restore()
 {
     if (!m_state->getBoolean(PageRuntimeAgentState::reportExecutionContextCreation))
         return;
-    String error;
-    setReportExecutionContextCreation(&error, true);
+    // Only report existing contexts if the page did commit load, otherwise we may
+    // unintentionally initialize contexts in the frames which may trigger some listeners
+    // that are expected to be triggered only after the load is committed, see http://crbug.com/131623
+    if (m_inspectorAgent->didCommitLoadFired()) {
+        String error;
+        setReportExecutionContextCreation(&error, true);
+    }
 }
 
 void PageRuntimeAgent::setReportExecutionContextCreation(ErrorString*, bool enable)
