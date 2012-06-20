@@ -82,8 +82,6 @@ rect: style.getPropertyValue(empty-cells) : show
 rect: style.getPropertyCSSValue(empty-cells) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(float) : none
 rect: style.getPropertyCSSValue(float) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(font-family) : Times
-rect: style.getPropertyCSSValue(font-family) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-size) : 16px
 rect: style.getPropertyCSSValue(font-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-style) : normal
@@ -164,6 +162,8 @@ rect: style.getPropertyValue(speak) : normal
 rect: style.getPropertyCSSValue(speak) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(table-layout) : auto
 rect: style.getPropertyCSSValue(table-layout) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(tab-size) : 8
+rect: style.getPropertyCSSValue(tab-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-align) : start
 rect: style.getPropertyCSSValue(text-align) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-decoration) : none
@@ -274,8 +274,6 @@ rect: style.getPropertyValue(-webkit-column-count) : auto
 rect: style.getPropertyCSSValue(-webkit-column-count) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-gap) : normal
 rect: style.getPropertyCSSValue(-webkit-column-gap) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-column-progression) : normal
-rect: style.getPropertyCSSValue(-webkit-column-progression) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-rule-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(-webkit-column-rule-color) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-rule-style) : none
@@ -390,10 +388,6 @@ rect: style.getPropertyValue(-webkit-print-color-adjust) : economy
 rect: style.getPropertyCSSValue(-webkit-print-color-adjust) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-rtl-ordering) : logical
 rect: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-shape-inside) : auto
-rect: style.getPropertyCSSValue(-webkit-shape-inside) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-shape-outside) : auto
-rect: style.getPropertyCSSValue(-webkit-shape-outside) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-combine) : none
 rect: style.getPropertyCSSValue(-webkit-text-combine) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
@@ -436,26 +430,6 @@ rect: style.getPropertyValue(-webkit-user-select) : text
 rect: style.getPropertyCSSValue(-webkit-user-select) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-writing-mode) : horizontal-tb
 rect: style.getPropertyCSSValue(-webkit-writing-mode) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-flow-into) : none
-rect: style.getPropertyCSSValue(-webkit-flow-into) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-flow-from) : none
-rect: style.getPropertyCSSValue(-webkit-flow-from) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-region-overflow) : auto
-rect: style.getPropertyCSSValue(-webkit-region-overflow) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-region-break-after) : auto
-rect: style.getPropertyCSSValue(-webkit-region-break-after) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-region-break-before) : auto
-rect: style.getPropertyCSSValue(-webkit-region-break-before) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-region-break-inside) : auto
-rect: style.getPropertyCSSValue(-webkit-region-break-inside) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-wrap-flow) : auto
-rect: style.getPropertyCSSValue(-webkit-wrap-flow) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-wrap-margin) : 0px
-rect: style.getPropertyCSSValue(-webkit-wrap-margin) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-wrap-padding) : 0px
-rect: style.getPropertyCSSValue(-webkit-wrap-padding) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-wrap-through) : wrap
-rect: style.getPropertyCSSValue(-webkit-wrap-through) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(clip-path) : none
 rect: style.getPropertyCSSValue(clip-path) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(clip-rule) : nonzero
@@ -614,8 +588,6 @@ g: style.getPropertyValue(empty-cells) : show
 g: style.getPropertyCSSValue(empty-cells) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(float) : none
 g: style.getPropertyCSSValue(float) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(font-family) : Times
-g: style.getPropertyCSSValue(font-family) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-size) : 16px
 g: style.getPropertyCSSValue(font-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-style) : normal
@@ -696,6 +668,8 @@ g: style.getPropertyValue(speak) : normal
 g: style.getPropertyCSSValue(speak) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(table-layout) : auto
 g: style.getPropertyCSSValue(table-layout) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(tab-size) : 8
+g: style.getPropertyCSSValue(tab-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-align) : start
 g: style.getPropertyCSSValue(text-align) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-decoration) : none
@@ -806,8 +780,6 @@ g: style.getPropertyValue(-webkit-column-count) : auto
 g: style.getPropertyCSSValue(-webkit-column-count) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-gap) : normal
 g: style.getPropertyCSSValue(-webkit-column-gap) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-column-progression) : normal
-g: style.getPropertyCSSValue(-webkit-column-progression) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-rule-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(-webkit-column-rule-color) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-rule-style) : none
@@ -912,6 +884,8 @@ g: style.getPropertyValue(-webkit-mask-size) : auto
 g: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-nbsp-mode) : normal
 g: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-order) : 0
+g: style.getPropertyCSSValue(-webkit-order) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-perspective) : none
 g: style.getPropertyCSSValue(-webkit-perspective) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-perspective-origin) : 0px 0px
@@ -920,10 +894,6 @@ g: style.getPropertyValue(-webkit-print-color-adjust) : economy
 g: style.getPropertyCSSValue(-webkit-print-color-adjust) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-rtl-ordering) : logical
 g: style.getPropertyCSSValue(-webkit-rtl-ordering) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-shape-inside) : auto
-g: style.getPropertyCSSValue(-webkit-shape-inside) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-shape-outside) : auto
-g: style.getPropertyCSSValue(-webkit-shape-outside) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-combine) : none
 g: style.getPropertyCSSValue(-webkit-text-combine) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-decorations-in-effect) : none
@@ -966,26 +936,6 @@ g: style.getPropertyValue(-webkit-user-select) : text
 g: style.getPropertyCSSValue(-webkit-user-select) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-writing-mode) : horizontal-tb
 g: style.getPropertyCSSValue(-webkit-writing-mode) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-flow-into) : none
-g: style.getPropertyCSSValue(-webkit-flow-into) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-flow-from) : none
-g: style.getPropertyCSSValue(-webkit-flow-from) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-region-overflow) : auto
-g: style.getPropertyCSSValue(-webkit-region-overflow) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-region-break-after) : auto
-g: style.getPropertyCSSValue(-webkit-region-break-after) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-region-break-before) : auto
-g: style.getPropertyCSSValue(-webkit-region-break-before) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-region-break-inside) : auto
-g: style.getPropertyCSSValue(-webkit-region-break-inside) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-wrap-flow) : auto
-g: style.getPropertyCSSValue(-webkit-wrap-flow) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-wrap-margin) : 0px
-g: style.getPropertyCSSValue(-webkit-wrap-margin) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-wrap-padding) : 0px
-g: style.getPropertyCSSValue(-webkit-wrap-padding) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-wrap-through) : wrap
-g: style.getPropertyCSSValue(-webkit-wrap-through) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(clip-path) : none
 g: style.getPropertyCSSValue(clip-path) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(clip-rule) : nonzero

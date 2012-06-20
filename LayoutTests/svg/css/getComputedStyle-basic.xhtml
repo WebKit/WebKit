@@ -23,7 +23,7 @@
       
         for (var x = 0; x < style.length; x++) {
           var name = style.item(x);
-          if (propertiesToSkip[name])
+          if (!propertiesToTest[name])
             continue;
           var value = style.getPropertyValue(name);
           var cssValue = style.getPropertyCSSValue(name);

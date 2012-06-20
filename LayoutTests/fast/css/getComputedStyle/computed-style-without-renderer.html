@@ -18,16 +18,16 @@
             if (!properties) {
                 for (var i = 0; i != style.length; ++i) {
                     var name = style.item(i);
-                    if (propertiesToSkip[name])
+                    if (!propertiesToTest[name])
                         continue;
-                    log("    " + name + ": " + style.getPropertyValue(name));
+                    log(name + ": " + style.getPropertyValue(name));
                 }
                 properties = hiddenComputedStyleProperties;
             }
 
             for (var i = 0; i != properties.length; ++i) {
                 var name = properties[i];
-                log("    " + name + ": " + style.getPropertyValue(name));
+                log(name + ": " + style.getPropertyValue(name));
             }
             log("");
         }
@@ -56,7 +56,7 @@
         }
     </script>
     <style>
-        div#middle { display: none; }
+        div#middle { display: none; width: 700px; }
         div#inner { background: green; border-top: 1em solid; height: 100px; margin-left: auto; width: 50%; }
     </style>
 </head>

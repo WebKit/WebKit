@@ -1,3 +1,48 @@
+2012-06-20  Tony Chang  <tony@chromium.org>
+
+        Computed style tests are a maintenance burden on the project
+        https://bugs.webkit.org/show_bug.cgi?id=87991
+
+        Reviewed by Eric Seidel.
+
+        Convert computed-style.html, computed-style-without-renderer.html and getComputedStyle-basic.xhtml
+        to use a whitelist of properties rather than a blacklist. The whitelist includes all properties
+        that are supported based on the checked in results so all ports can share the same values. Adding
+        new properties won't cause these tests to be rebaselined.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer.html: Remove indenting and use a fixed
+        width for the middle div so we don't get fractional pixel values for ports with fractional pixel
+        values enabled.
+        * fast/css/getComputedStyle/computed-style.html:
+        * fast/css/getComputedStyle/resources/property-names.js: Whitelist of common CSS properties.
+        * platform/chromium-linux-x86/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/chromium-linux/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/chromium-mac-leopard/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/chromium-mac/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/chromium-win-vista/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/gtk/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/qt/svg/css/getComputedStyle-basic-expected.png: Removed.
+        * platform/qt/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * svg/css/getComputedStyle-basic-expected.txt:
+        * svg/css/getComputedStyle-basic.xhtml:
+
 2012-06-20  Abhishek Arya  <inferno@chromium.org>
 
         Crash on accessing a removed renderer from percent height descendant map.

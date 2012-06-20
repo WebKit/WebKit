@@ -8,7 +8,7 @@ function test()
     var text = "";
     for (var i = 0; i != style.length; ++i) {
         var name = style.item(i);
-        if (propertiesToSkip[name])
+        if (!propertiesToTest[name])
             continue;
         var value = style.getPropertyValue(name);
         text += name + ": " + value + ";\n";
