@@ -1,3 +1,19 @@
+2012-06-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Separate LayerRenderer initialization from updateLayers
+        https://bugs.webkit.org/show_bug.cgi?id=89525
+
+        Reviewed by Adrienne Walker.
+
+        Update tests to call initializeLayerRendererIfNeeded() before calling updateLayers() to reflect what the proxies
+        do.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestLayerOcclusion::beginTest):
+        (WTF::CCLayerTreeHostTestLayerOcclusionWithFilters::beginTest):
+        (WTF::CCLayerTreeHostTestManySurfaces::beginTest):
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-06-20  Christopher Cameron  <ccameron@chromium.org>
 
         [chromium] webkit-backface-visibility doesn't work with video

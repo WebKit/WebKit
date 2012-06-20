@@ -345,10 +345,11 @@ bool CCSingleThreadProxy::commitAndComposite()
 {
     ASSERT(CCProxy::isMainThread());
 
-    CCTextureUpdater updater;
-
-    if (!m_layerTreeHost->updateLayers(updater))
+    if (!m_layerTreeHost->initializeLayerRendererIfNeeded())
         return false;
+
+    CCTextureUpdater updater;
+    m_layerTreeHost->updateLayers(updater);
 
     m_layerTreeHost->willCommit();
     doCommit(updater);

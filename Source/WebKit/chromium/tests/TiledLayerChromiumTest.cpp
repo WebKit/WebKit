@@ -799,6 +799,7 @@ TEST(TiledLayerChromiumTest, skipsDrawGetsReset)
     WebKit::WebCompositor::initialize(0);
     FakeCCLayerTreeHostClient fakeCCLayerTreeHostClient;
     OwnPtr<CCLayerTreeHost> ccLayerTreeHost = CCLayerTreeHost::create(&fakeCCLayerTreeHostClient, CCLayerTreeSettings());
+    ASSERT_TRUE(ccLayerTreeHost->initializeLayerRendererIfNeeded());
 
     // Create two 300 x 300 tiled layers.
     IntSize contentBounds(300, 300);
@@ -882,6 +883,7 @@ TEST(TiledLayerChromiumTest, partialUpdates)
 
     FakeCCLayerTreeHostClient fakeCCLayerTreeHostClient;
     OwnPtr<CCLayerTreeHost> ccLayerTreeHost = CCLayerTreeHost::create(&fakeCCLayerTreeHostClient, settings);
+    ASSERT_TRUE(ccLayerTreeHost->initializeLayerRendererIfNeeded());
 
     // Create one 500 x 300 tiled layer.
     IntSize contentBounds(300, 200);

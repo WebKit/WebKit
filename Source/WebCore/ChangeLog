@@ -1,3 +1,29 @@
+2012-06-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Separate LayerRenderer initialization from updateLayers
+        https://bugs.webkit.org/show_bug.cgi?id=89525
+
+        Reviewed by Adrienne Walker.
+
+        This adds an explicit call to initialize the layer renderer of a given CCLayerTreeHost instead of having it be
+        implicit in updateLayers(). This way the proxies can control the initialization sequence more closely and do
+        useful work between the two calls.
+
+        Refactor, no change in behavior. Covered by existing tests.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::compositeAndReadback):
+        (WebCore::CCLayerTreeHost::initializeLayerRendererIfNeeded):
+        (WebCore):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::commitAndComposite):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::compositeAndReadback):
+        (WebCore::CCThreadProxy::beginFrame):
+
 2012-06-20  Yong Li  <yoli@rim.com>
 
         SecurityOrigin::canDisplay() should return true when m_universalAccess is true

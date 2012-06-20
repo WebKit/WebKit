@@ -170,7 +170,8 @@ public:
     void deleteContentsTexturesOnImplThread(TextureAllocator*);
     virtual void acquireLayerTextures();
     // Returns false if we should abort this frame due to initialization failure.
-    bool updateLayers(CCTextureUpdater&);
+    bool initializeLayerRendererIfNeeded();
+    void updateLayers(CCTextureUpdater&);
 
     CCLayerTreeHostClient* client() { return m_client; }
 

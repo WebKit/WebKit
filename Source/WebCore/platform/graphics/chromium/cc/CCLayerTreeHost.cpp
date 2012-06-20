@@ -300,15 +300,6 @@ CCGraphicsContext* CCLayerTreeHost::context()
 
 bool CCLayerTreeHost::compositeAndReadback(void *pixels, const IntRect& rect)
 {
-    if (!m_layerRendererInitialized) {
-        initializeLayerRenderer();
-        if (!m_layerRendererInitialized)
-            return false;
-    }
-    if (m_contextLost) {
-        if (recreateContext() != RecreateSucceeded)
-            return false;
-    }
     m_triggerIdlePaints = false;
     bool ret = m_proxy->compositeAndReadback(pixels, rect);
     m_triggerIdlePaints = true;
@@ -467,7 +458,7 @@ void CCLayerTreeHost::scheduleComposite()
     m_client->scheduleComposite();
 }
 
-bool CCLayerTreeHost::updateLayers(CCTextureUpdater& updater)
+bool CCLayerTreeHost::initializeLayerRendererIfNeeded()
 {
     if (!m_layerRendererInitialized) {
         initializeLayerRenderer();
@@ -479,7 +470,13 @@ bool CCLayerTreeHost::updateLayers(CCTextureUpdater& updater)
         if (recreateContext() != RecreateSucceeded)
             return false;
     }
+    return true;
+}
 
+
+void CCLayerTreeHost::updateLayers(CCTextureUpdater& updater)
+{
+    ASSERT(m_layerRendererInitialized);
     // The visible state and memory allocation are set independently and in
     // arbitrary order, so do not change the memory allocation used for the
     // current commit until both values match intentions.
@@ -492,13 +489,12 @@ bool CCLayerTreeHost::updateLayers(CCTextureUpdater& updater)
     }
 
     if (!rootLayer())
-        return true;
+        return;
 
     if (viewportSize().isEmpty())
-        return true;
+        return;
 
     updateLayers(rootLayer(), updater);
-    return true;
 }
 
 void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& updater)

@@ -104,7 +104,7 @@ bool CCThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect)
     ASSERT(isMainThread());
     ASSERT(m_layerTreeHost);
 
-    if (!m_layerRendererInitialized) {
+    if (!m_layerTreeHost->initializeLayerRendererIfNeeded()) {
         TRACE_EVENT("compositeAndReadback_EarlyOut_LR_Uninitialized", this, 0);
         return false;
     }
@@ -510,8 +510,10 @@ void CCThreadProxy::beginFrame()
     m_commitRequested = false;
     m_forcedCommitRequested = false;
 
-    if (!m_layerTreeHost->updateLayers(*request->updater))
+    if (!m_layerTreeHost->initializeLayerRendererIfNeeded())
         return;
+
+    m_layerTreeHost->updateLayers(*request->updater);
 
     // Once single buffered layers are committed, they cannot be modified until
     // they are drawn by the impl thread.

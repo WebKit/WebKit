@@ -1732,6 +1732,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
         CCTextureUpdater updater;
         m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
@@ -1939,6 +1940,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
         CCTextureUpdater updater;
         m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
@@ -2027,6 +2029,7 @@ public:
 
         m_layerTreeHost->setRootLayer(layers[0].get());
         m_layerTreeHost->setViewportSize(layers[0]->bounds());
+        ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
         CCTextureUpdater updater;
         m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
