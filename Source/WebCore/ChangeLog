@@ -14,7 +14,7 @@
 
 2012-06-20  Ryosuke Niwa  <rniwa@webkit.org>
 
-        Let XCode have its own way.
+        Let Xcode have its own way.
 
         * WebCore.xcodeproj/project.pbxproj:
 
@@ -26081,7 +26081,7 @@
 
         The ImageGStreamerCG abstraction is being removed until I manage to
         port my gst-mac WebKit branch over to the WebKit2 mac port. No
-        need to update the XCode project because this file is not
+        need to update the Xcode project because this file is not
         referenced there anyway.
 
         Reviewed by Martin Robinson.
