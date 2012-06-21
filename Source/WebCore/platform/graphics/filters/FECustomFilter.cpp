@@ -74,7 +74,7 @@ static void orthogonalProjectionMatrix(TransformationMatrix& matrix, float left,
 }
 
 FECustomFilter::FECustomFilter(Filter* filter, CustomFilterGlobalContext* customFilterGlobalContext, PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& parameters,
-                               unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType meshBoxType,
+                               unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType,
                                CustomFilterOperation::MeshType meshType)
     : FilterEffect(filter)
     , m_globalContext(customFilterGlobalContext)
@@ -85,7 +85,6 @@ FECustomFilter::FECustomFilter(Filter* filter, CustomFilterGlobalContext* custom
     , m_parameters(parameters)
     , m_meshRows(meshRows)
     , m_meshColumns(meshColumns)
-    , m_meshBoxType(meshBoxType)
     , m_meshType(meshType)
 {
 }

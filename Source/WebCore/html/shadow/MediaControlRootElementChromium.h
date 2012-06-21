@@ -140,7 +140,6 @@ private:
     MediaControlCurrentTimeDisplayElement* m_currentTimeDisplay;
     MediaControlTimeRemainingDisplayElement* m_durationDisplay;
     MediaControlTimelineElement* m_timeline;
-    MediaControlTimelineContainerElement* m_timelineContainer;
     MediaControlPanelMuteButtonElement* m_panelMuteButton;
     MediaControlVolumeSliderElement* m_volumeSlider;
 #if ENABLE(FULLSCREEN_MEDIA_CONTROLS)
