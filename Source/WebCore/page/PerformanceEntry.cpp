@@ -43,6 +43,10 @@ PerformanceEntry::PerformanceEntry(const String& name, const String& entryType, 
 {
 }
 
+PerformanceEntry::~PerformanceEntry()
+{
+}
+
 String PerformanceEntry::name() const
 {
     return m_name;

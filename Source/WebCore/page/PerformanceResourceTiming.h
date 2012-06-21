@@ -28,40 +28,61 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PerformanceEntry_h
-#define PerformanceEntry_h
+#ifndef PerformanceResourceTiming_h
+#define PerformanceResourceTiming_h
 
-#if ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
+#if ENABLE(RESOURCE_TIMING)
 
-#include "Performance.h"
+#include "PerformanceEntry.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class PerformanceEntry : public RefCounted<PerformanceEntry> {
+class Document;
+class KURL;
+class ResourceLoadTiming;
+class ResourceRequest;
+class ResourceResponse;
+
+class PerformanceResourceTiming : public PerformanceEntry {
 public:
-    virtual ~PerformanceEntry();
+    static PassRefPtr<PerformanceResourceTiming> create(const ResourceRequest& request, const ResourceResponse& response, double finishTime, Document* requestingDocument)
+    {
+        return adoptRef(new PerformanceResourceTiming(request, response, finishTime, requestingDocument));
+    }
 
-    String name() const;
-    String entryType() const;
-    double startTime() const;
-    double duration() const;
+    String initiatorType() const;
 
-    virtual bool isResource() { return false; }
+    double redirectStart() const;
+    double redirectEnd() const;
+    double fetchStart() const;
+    double domainLookupStart() const;
+    double domainLookupEnd() const;
+    double connectStart() const;
+    double connectEnd() const;
+    double secureConnectionStart() const;
+    double requestStart() const;
+    double responseStart() const;
+    double responseEnd() const;
 
-protected:
-    PerformanceEntry(const String& name, const String& entryType, double startTime, double duration);
+    virtual bool isResource() { return true; }
 
 private:
-    const String m_name;
-    const String m_entryType;
-    const double m_startTime;
-    const double m_duration;
+    PerformanceResourceTiming(const ResourceRequest&, const ResourceResponse&, double finishTime, Document*);
+    ~PerformanceResourceTiming();
+
+    double monotonicTimeToDocumentMilliseconds(double seconds) const;
+    double resourceTimeToDocumentMilliseconds(int deltaMilliseconds) const;
+
+    RefPtr<ResourceLoadTiming> m_timing;
+    double m_finishTime;
+    RefPtr<Document> m_requestingDocument;
 };
 
 }
 
-#endif // !ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
-#endif // !defined(PerformanceEntry_h)
+#endif // ENABLE(RESOURCE_TIMING)
+
+#endif // !defined(PerformanceResourceTiming_h)

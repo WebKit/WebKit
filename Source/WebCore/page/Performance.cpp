@@ -34,8 +34,11 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "MemoryInfo.h"
+#include "PerformanceEntry.h"
 #include "PerformanceNavigation.h"
+#include "PerformanceResourceTiming.h"
 #include "PerformanceTiming.h"
+#include "ResourceResponse.h"
 #include <wtf/CurrentTime.h>
 
 #if ENABLE(WEB_TIMING)
@@ -47,6 +50,22 @@ namespace WebCore {
 Performance::Performance(Frame* frame)
     : DOMWindowProperty(frame)
 {
+}
+
+Performance::~Performance()
+{
+}
+
+const AtomicString& Performance::interfaceName() const
+{
+    return eventNames().interfaceForPerformance;
+}
+
+ScriptExecutionContext* Performance::scriptExecutionContext() const
+{
+    if (!frame())
+        return 0;
+    return frame()->document();
 }
 
 PassRefPtr<MemoryInfo> Performance::memory() const
@@ -75,22 +94,76 @@ PerformanceTiming* Performance::timing() const
 PassRefPtr<PerformanceEntryList> Performance::webkitGetEntries() const
 {
     RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
+
+#if ENABLE(RESOURCE_TIMING)
+    entries->appendAll(m_resourceTimingBuffer);
+#endif // ENABLE(RESOURCE_TIMING)
+
     return entries;
 }
 
-PassRefPtr<PerformanceEntryList> Performance::webkitGetEntriesByType(const String&)
+PassRefPtr<PerformanceEntryList> Performance::webkitGetEntriesByType(const String& entryType)
 {
     RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
+
+#if ENABLE(RESOURCE_TIMING)
+    if (equalIgnoringCase(entryType, "resource"))
+        for (Vector<RefPtr<PerformanceEntry> >::const_iterator resource = m_resourceTimingBuffer.begin(); resource != m_resourceTimingBuffer.end(); ++resource)
+            entries->append(*resource);
+#endif // ENABLE(RESOURCE_TIMING)
+
     return entries;
 }
 
-PassRefPtr<PerformanceEntryList> Performance::webkitGetEntriesByName(const String&, const String&)
+PassRefPtr<PerformanceEntryList> Performance::webkitGetEntriesByName(const String& name, const String& entryType)
 {
     RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
+
+#if ENABLE(RESOURCE_TIMING)
+    if (entryType.isNull() || equalIgnoringCase(entryType, "resource"))
+        for (Vector<RefPtr<PerformanceEntry> >::const_iterator resource = m_resourceTimingBuffer.begin(); resource != m_resourceTimingBuffer.end(); ++resource)
+            if ((*resource)->name() == name)
+                entries->append(*resource);
+#endif // ENABLE(RESOURCE_TIMING)
+
     return entries;
 }
 
 #endif // ENABLE(PERFORMANCE_TIMELINE)
+
+#if ENABLE(RESOURCE_TIMING)
+
+void Performance::webkitClearResourceTimings()
+{
+    m_resourceTimingBuffer.clear();
+}
+
+void Performance::webkitSetResourceTimingBufferSize(unsigned int)
+{
+    // FIXME: Implement this.
+}
+
+void Performance::addResourceTiming(const ResourceRequest& request, const ResourceResponse& response, double finishTime, Document* requestingDocument)
+{
+    if (!response.resourceLoadTiming())
+        return;
+
+    RefPtr<PerformanceEntry> entry = PerformanceResourceTiming::create(request, response, finishTime, requestingDocument);
+    // FIXME: Need to enforce buffer limits.
+    m_resourceTimingBuffer.append(entry);
+}
+
+#endif // ENABLE(RESOURCE_TIMING)
+
+EventTargetData* Performance::eventTargetData()
+{
+    return &m_eventTargetData;
+}
+
+EventTargetData* Performance::ensureEventTargetData()
+{
+    return &m_eventTargetData;
+}
 
 double Performance::webkitNow() const
 {

@@ -28,40 +28,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PerformanceEntry_h
-#define PerformanceEntry_h
+#include "config.h"
+#include "PerformanceEntry.h"
 
-#if ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
+#if ENABLE(PERFORMANCE_TIMELINE)
 
 #include "Performance.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include "PerformanceResourceTiming.h"
+
+#include "V8PerformanceEntry.h"
+#include "V8PerformanceResourceTiming.h"
+
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class PerformanceEntry : public RefCounted<PerformanceEntry> {
-public:
-    virtual ~PerformanceEntry();
+v8::Handle<v8::Value> toV8(PerformanceEntry* impl, v8::Isolate* isolate)
+{
+    if (!impl)
+        return v8::Null();
 
-    String name() const;
-    String entryType() const;
-    double startTime() const;
-    double duration() const;
+#if ENABLE(RESOURCE_TIMING)
+    if (impl->isResource())
+        return toV8(static_cast<PerformanceResourceTiming*>(impl), isolate);
+#endif
 
-    virtual bool isResource() { return false; }
-
-protected:
-    PerformanceEntry(const String& name, const String& entryType, double startTime, double duration);
-
-private:
-    const String m_name;
-    const String m_entryType;
-    const double m_startTime;
-    const double m_duration;
-};
-
+    return V8PerformanceEntry::wrap(impl);
 }
 
-#endif // !ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
-#endif // !defined(PerformanceEntry_h)
+} // namespace WebCore
+
+#endif // ENABLE(PERFORMANCE_TIMELINE)

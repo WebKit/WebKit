@@ -34,6 +34,7 @@
 #if ENABLE(WEB_TIMING)
 
 #include "DOMWindowProperty.h"
+#include "EventTarget.h"
 #include "MemoryInfo.h"
 #include "PerformanceEntryList.h"
 #include "PerformanceNavigation.h"
@@ -45,9 +46,17 @@
 
 namespace WebCore {
 
-class Performance : public RefCounted<Performance>, public DOMWindowProperty {
+class Document;
+class ResourceRequest;
+class ResourceResponse;
+
+class Performance : public RefCounted<Performance>, public DOMWindowProperty, public EventTarget {
 public:
     static PassRefPtr<Performance> create(Frame* frame) { return adoptRef(new Performance(frame)); }
+    ~Performance();
+
+    virtual const AtomicString& interfaceName() const;
+    virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     PassRefPtr<MemoryInfo> memory() const;
     PerformanceNavigation* navigation() const;
@@ -60,11 +69,35 @@ public:
     PassRefPtr<PerformanceEntryList> webkitGetEntriesByName(const String& name, const String& entryType);
 #endif
 
+#if ENABLE(RESOURCE_TIMING)
+    void webkitClearResourceTimings();
+    void webkitSetResourceTimingBufferSize(unsigned int);
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitresourcetimingbufferfull);
+
+    void addResourceTiming(const ResourceRequest&, const ResourceResponse&, double finishTime, Document*);
+#endif
+
+    using RefCounted<Performance>::ref;
+    using RefCounted<Performance>::deref;
+
 private:
     explicit Performance(Frame*);
 
+    virtual void refEventTarget() { ref(); }
+    virtual void derefEventTarget() { deref(); }
+    virtual EventTargetData* eventTargetData();
+    virtual EventTargetData* ensureEventTargetData();
+
+    EventTargetData m_eventTargetData;
+    ScriptExecutionContext *m_scriptExecutionContext;
+
     mutable RefPtr<PerformanceNavigation> m_navigation;
     mutable RefPtr<PerformanceTiming> m_timing;
+
+#if ENABLE(RESOURCE_TIMING)
+    Vector<RefPtr<PerformanceEntry> > m_resourceTimingBuffer;
+#endif
 };
 
 }

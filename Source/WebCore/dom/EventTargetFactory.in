@@ -22,6 +22,7 @@ NetworkInfoConnection conditional=NETWORK_INFO
 Node
 Notification conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS
 PeerConnection00 conditional=MEDIA_STREAM
+Performance conditional=WEB_TIMING
 SharedWorker conditional=SHARED_WORKERS
 SharedWorkerContext conditional=SHARED_WORKERS
 SpeechRecognition conditional=SCRIPTED_SPEECH

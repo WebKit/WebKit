@@ -26879,6 +26879,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\PerformanceResourceTiming.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PerformanceResourceTiming.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\PerformanceTiming.cpp"
 				>
 			</File>

@@ -33,6 +33,7 @@ module window {
     // See: http://dev.w3.org/2006/webapi/WebTiming/
     interface [
         Conditional=WEB_TIMING,
+        EventTarget,
         OmitConstructor
     ] Performance {
         readonly attribute PerformanceNavigation navigation;
@@ -43,6 +44,13 @@ module window {
         PerformanceEntryList webkitGetEntries();
         PerformanceEntryList webkitGetEntriesByType(in DOMString entryType);
         PerformanceEntryList webkitGetEntriesByName(in DOMString name, in [Optional=DefaultIsNullString] DOMString entryType);
+#endif
+
+#if defined(ENABLE_RESOURCE_TIMING) && ENABLE_RESOURCE_TIMING
+        void webkitClearResourceTimings();
+        void webkitSetResourceTimingBufferSize(in unsigned long maxSize);
+
+        attribute EventListener onwebkitresourcetimingbufferfull;
 #endif
         // See http://www.w3.org/TR/hr-time/ for details.
         double webkitNow();

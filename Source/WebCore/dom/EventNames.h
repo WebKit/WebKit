@@ -227,6 +227,8 @@ namespace WebCore {
     \
     macro(webkitnetworkinfochange) \
     \
+    macro(webkitresourcetimingbufferfull) \
+    \
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 

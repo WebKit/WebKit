@@ -208,6 +208,7 @@ v8 {
         bindings/v8/custom/V8NodeCustom.cpp \
         bindings/v8/custom/V8NodeListCustom.cpp \
         bindings/v8/custom/V8PerformanceCustom.cpp \
+        bindings/v8/custom/V8PerformanceEntryCustom.cpp \
         bindings/v8/custom/V8SQLResultSetRowListCustom.cpp \
         bindings/v8/custom/V8SQLTransactionCustom.cpp \
         bindings/v8/custom/V8WebSocketCustom.cpp \
@@ -1050,6 +1051,7 @@ SOURCES += \
     page/PerformanceEntry.cpp \
     page/PerformanceEntryList.cpp \
     page/PerformanceNavigation.cpp \
+    page/PerformanceResourceTiming.cpp \
     page/PerformanceTiming.cpp \
     page/PrintContext.cpp \
     page/Screen.cpp \

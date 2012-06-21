@@ -396,6 +396,7 @@ SET(WebCore_IDL_FILES
     page/PerformanceEntry.idl
     page/PerformanceEntryList.idl
     page/PerformanceNavigation.idl
+    page/PerformanceResourceTiming.idl
     page/PerformanceTiming.idl
     page/Screen.idl
     page/SpeechInputEvent.idl
@@ -1087,6 +1088,7 @@ SET(WebCore_SOURCES
     page/PerformanceEntry.cpp
     page/PerformanceEntryList.cpp
     page/PerformanceNavigation.cpp
+    page/PerformanceResourceTiming.cpp
     page/PerformanceTiming.cpp
     page/PrintContext.cpp
     page/Screen.cpp

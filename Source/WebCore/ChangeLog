@@ -1,3 +1,81 @@
+2012-06-21  James Simonsen  <simonjam@chromium.org>
+
+        [Resource Timing] Implement Resource Timing interface
+        https://bugs.webkit.org/show_bug.cgi?id=61152
+
+        This patch implements the Resource Timing interface. It doesn't do anything
+        useful, because nothing populates the timeline yet. There are also some gaps
+        in the implementation, which have been filed as bugs.
+
+        http://dvcs.w3.org/hg/webperf/raw-file/tip/specs/ResourceTiming/Overview.html
+
+        Reviewed by Tony Gentilcore.
+
+        No new tests. Feature is disabled on all platforms.
+
+        * CMakeLists.txt:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/v8/custom/V8PerformanceEntryCustom.cpp:
+        (WebCore):
+        (WebCore::toV8): Support PerformanceEntry polymorphism.
+        * dom/EventNames.h:
+        (WebCore):
+        * dom/EventTargetFactory.in:
+        * page/Performance.cpp:
+        (WebCore::Performance::~Performance):
+        (WebCore):
+        (WebCore::Performance::interfaceName): Reqired for EventTarget.
+        (WebCore::Performance::scriptExecutionContext): Ditto.
+        (WebCore::Performance::webkitGetEntries): Return "resource" entries.
+        (WebCore::Performance::webkitGetEntriesByType): Ditto.
+        (WebCore::Performance::webkitGetEntriesByName): Ditto.
+        (WebCore::Performance::webkitClearResourceTimings): New.
+        (WebCore::Performance::webkitSetResourceTimingBufferSize): New. Unimplemented.
+        (WebCore::Performance::addResourceTiming): This is how resources in WebCore will report to the timeline.
+        (WebCore::Performance::eventTargetData): Required for EventTarget.
+        (WebCore::Performance::ensureEventTargetData): Ditto.
+        * page/Performance.h:
+        (Performance):
+        (WebCore::Performance::refEventTarget):
+        (WebCore::Performance::derefEventTarget):
+        * page/Performance.idl:
+        * page/PerformanceEntry.cpp:
+        (WebCore::PerformanceEntry::~PerformanceEntry):
+        (WebCore):
+        * page/PerformanceEntry.h:
+        (PerformanceEntry):
+        (WebCore::PerformanceEntry::isResource):
+        * page/PerformanceEntry.idl:
+        * page/PerformanceResourceTiming.cpp: Added.
+        (WebCore):
+        (WebCore::PerformanceResourceTiming::PerformanceResourceTiming):
+        (WebCore::PerformanceResourceTiming::initiatorType):
+        (WebCore::PerformanceResourceTiming::redirectStart):
+        (WebCore::PerformanceResourceTiming::redirectEnd):
+        (WebCore::PerformanceResourceTiming::fetchStart):
+        (WebCore::PerformanceResourceTiming::domainLookupStart):
+        (WebCore::PerformanceResourceTiming::domainLookupEnd):
+        (WebCore::PerformanceResourceTiming::connectStart):
+        (WebCore::PerformanceResourceTiming::connectEnd):
+        (WebCore::PerformanceResourceTiming::secureConnectionStart):
+        (WebCore::PerformanceResourceTiming::requestStart):
+        (WebCore::PerformanceResourceTiming::responseStart):
+        (WebCore::PerformanceResourceTiming::responseEnd):
+        (WebCore::PerformanceResourceTiming::monotonicTimeToDocumentMilliseconds):
+        (WebCore::PerformanceResourceTiming::resourceTimeToMilliseconds):
+        * page/PerformanceResourceTiming.h: Added.
+        (WebCore):
+        (PerformanceResourceTiming):
+        (WebCore::PerformanceResourceTiming::create):
+        (WebCore::PerformanceResourceTiming::isResource):
+        * page/PerformanceResourceTiming.idl: Added.
+
 2012-06-21  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Remove FIXMEs about whether events bubble and are cancelable

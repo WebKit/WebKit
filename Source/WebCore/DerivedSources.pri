@@ -425,6 +425,7 @@ IDL_BINDINGS += \
     $$PWD/page/PerformanceEntry.idl \
     $$PWD/page/PerformanceEntryList.idl \
     $$PWD/page/PerformanceNavigation.idl \
+    $$PWD/page/PerformanceResourceTiming.idl \
     $$PWD/page/PerformanceTiming.idl \
     $$PWD/page/Screen.idl \
     $$PWD/page/SpeechInputEvent.idl \

@@ -28,40 +28,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PerformanceEntry_h
-#define PerformanceEntry_h
+module window {
 
-#if ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
+    // See: https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/ResourceTiming/Overview.html
+    interface [
+        Conditional=RESOURCE_TIMING,
+        OmitConstructor
+    ] PerformanceResourceTiming : PerformanceEntry {
+        readonly attribute DOMString initiatorType;
 
-#include "Performance.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
-
-namespace WebCore {
-
-class PerformanceEntry : public RefCounted<PerformanceEntry> {
-public:
-    virtual ~PerformanceEntry();
-
-    String name() const;
-    String entryType() const;
-    double startTime() const;
-    double duration() const;
-
-    virtual bool isResource() { return false; }
-
-protected:
-    PerformanceEntry(const String& name, const String& entryType, double startTime, double duration);
-
-private:
-    const String m_name;
-    const String m_entryType;
-    const double m_startTime;
-    const double m_duration;
-};
-
+        readonly attribute double redirectStart;
+        readonly attribute double redirectEnd;
+        readonly attribute double fetchStart;
+        readonly attribute double domainLookupStart;
+        readonly attribute double domainLookupEnd;
+        readonly attribute double connectStart;
+        readonly attribute double connectEnd;
+        readonly attribute double secureConnectionStart;
+        readonly attribute double requestStart;
+        readonly attribute double responseStart;
+        readonly attribute double responseEnd;
+    };
 }
-
-#endif // !ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
-#endif // !defined(PerformanceEntry_h)
