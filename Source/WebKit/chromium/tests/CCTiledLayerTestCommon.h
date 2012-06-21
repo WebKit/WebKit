@@ -150,8 +150,9 @@ protected:
 
 class FakeTextureAllocator : public WebCore::TextureAllocator {
 public:
-    virtual unsigned createTexture(const WebCore::IntSize&, GC3Denum) { return 1; }
-    virtual void deleteTexture(unsigned, const WebCore::IntSize&, GC3Denum) { }
+    virtual unsigned createTexture(const WebCore::IntSize&, GC3Denum) OVERRIDE { return 1; }
+    virtual void deleteTexture(unsigned, const WebCore::IntSize&, GC3Denum) OVERRIDE { }
+    virtual void deleteAllTextures() OVERRIDE { }
 };
 
 class FakeTextureCopier : public WebCore::TextureCopier {

@@ -81,7 +81,6 @@ public:
     virtual void setNeedsRedrawOnImplThread() OVERRIDE { m_didRequestRedraw = true; }
     virtual void setNeedsCommitOnImplThread() OVERRIDE { m_didRequestCommit = true; }
     virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) OVERRIDE { }
-    virtual void postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread(size_t) OVERRIDE { }
 
     PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHost(bool partialSwap, PassRefPtr<CCGraphicsContext> graphicsContext, PassOwnPtr<CCLayerImpl> rootPtr)
     {
@@ -1792,7 +1791,7 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapNoUpdate)
     Mock::VerifyAndClearExpectations(&mockContext);
 }
 
-class PartialSwapContext: public FakeWebGraphicsContext3D {
+class PartialSwapContext : public FakeWebGraphicsContext3D {
 public:
     WebString getString(WGC3Denum name)
     {
@@ -2041,12 +2040,17 @@ private:
 // FakeWebGraphicsContext3D have an id of 1).
 class StrictWebGraphicsContext3D : public FakeWebGraphicsContext3D {
 public:
+    StrictWebGraphicsContext3D()
+        : FakeWebGraphicsContext3D()
+    {
+        m_nextTextureId = 7; // Start allocating texture ids larger than any other resource IDs so we can tell if someone's mixing up their resource types.
+    }
+
     virtual WebGLId createBuffer() { return 2; }
     virtual WebGLId createFramebuffer() { return 3; }
     virtual WebGLId createProgram() { return 4; }
     virtual WebGLId createRenderbuffer() { return 5; }
     virtual WebGLId createShader(WGC3Denum) { return 6; }
-    virtual WebGLId createTexture() { return 7; }
 
     virtual void deleteBuffer(WebGLId id)
     {
@@ -2078,10 +2082,17 @@ public:
             ADD_FAILURE() << "Trying to delete shader id " << id;
     }
 
+    virtual WebGLId createTexture()
+    {
+        unsigned textureId = FakeWebGraphicsContext3D::createTexture();
+        m_allocatedTextureIds.add(textureId);
+        return textureId;
+    }
     virtual void deleteTexture(WebGLId id)
     {
-        if (id != 7)
+        if (!m_allocatedTextureIds.contains(id))
             ADD_FAILURE() << "Trying to delete texture id " << id;
+        m_allocatedTextureIds.remove(id);
     }
 
     virtual void bindBuffer(WGC3Denum, WebGLId id)
@@ -2116,7 +2127,7 @@ public:
 
     virtual void bindTexture(WGC3Denum, WebGLId id)
     {
-        if (id != 7 && id)
+        if (id && !m_allocatedTextureIds.contains(id))
             ADD_FAILURE() << "Trying to bind texture id " << id;
     }
 
@@ -2124,6 +2135,9 @@ public:
     {
         return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new StrictWebGraphicsContext3D()), GraphicsContext3D::RenderDirectlyToHostWindow);
     }
+
+private:
+    HashSet<unsigned> m_allocatedTextureIds;
 };
 
 // Fake video frame that represents a 4x4 YUV video frame.
@@ -2263,14 +2277,13 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
 class TrackingWebGraphicsContext3D : public FakeWebGraphicsContext3D {
 public:
     TrackingWebGraphicsContext3D()
-        : m_nextTextureId(1)
+        : FakeWebGraphicsContext3D()
         , m_numTextures(0)
     { }
 
     virtual WebGLId createTexture() OVERRIDE
     {
-        WebGLId id = m_nextTextureId;
-        ++m_nextTextureId;
+        WebGLId id = FakeWebGraphicsContext3D::createTexture();
 
         m_textures.set(id, true);
         ++m_numTextures;
@@ -2302,7 +2315,6 @@ public:
     unsigned numTextures() const { return m_numTextures; }
 
 private:
-    WebGLId m_nextTextureId;
     HashMap<WebGLId, bool> m_textures;
     unsigned m_numTextures;
 };

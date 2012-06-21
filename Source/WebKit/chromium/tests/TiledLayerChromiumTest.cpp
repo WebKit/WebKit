@@ -824,8 +824,7 @@ TEST(TiledLayerChromiumTest, skipsDrawGetsReset)
 
     ccLayerTreeHost->setRootLayer(rootLayer);
     ccLayerTreeHost->setViewportSize(IntSize(300, 300));
-    textureManager->setMaxMemoryLimitBytes(memoryLimit);
-    ccLayerTreeHost->updateLayers(updater);
+    ccLayerTreeHost->updateLayers(updater, memoryLimit);
 
     // We'll skip the root layer.
     EXPECT_TRUE(rootLayer->skipsDraw());
@@ -837,7 +836,7 @@ TEST(TiledLayerChromiumTest, skipsDrawGetsReset)
     // Remove the child layer.
     rootLayer->removeAllChildren();
 
-    ccLayerTreeHost->updateLayers(updater);
+    ccLayerTreeHost->updateLayers(updater, memoryLimit);
     EXPECT_FALSE(rootLayer->skipsDraw());
 
     ccLayerTreeHost->setRootLayer(0);
@@ -904,7 +903,7 @@ TEST(TiledLayerChromiumTest, partialUpdates)
     ccLayerTreeHost->setViewportSize(IntSize(300, 200));
 
     // Full update of all 6 tiles.
-    ccLayerTreeHost->updateLayers(updater);
+    ccLayerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
     {
         DebugScopedSetImplThread implThread;
         OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
@@ -922,7 +921,7 @@ TEST(TiledLayerChromiumTest, partialUpdates)
 
     // Full update of 3 tiles and partial update of 3 tiles.
     layer->invalidateRect(IntRect(0, 0, 300, 150));
-    ccLayerTreeHost->updateLayers(updater);
+    ccLayerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
     {
         DebugScopedSetImplThread implThread;
         OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
@@ -943,7 +942,7 @@ TEST(TiledLayerChromiumTest, partialUpdates)
     {
         DebugScopedSetImplThread implThread;
         OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
-        ccLayerTreeHost->updateLayers(updater);
+        ccLayerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         updater.update(0, &allocator, &copier, &uploader, 4);
         EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_TRUE(updater.hasMoreUpdates());
@@ -970,7 +969,7 @@ TEST(TiledLayerChromiumTest, partialUpdates)
     {
         DebugScopedSetImplThread implThread;
         OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
-        ccLayerTreeHost->updateLayers(updater);
+        ccLayerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         updater.update(0, &allocator, &copier, &uploader, 4);
         EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_TRUE(updater.hasMoreUpdates());
@@ -988,7 +987,7 @@ TEST(TiledLayerChromiumTest, partialUpdates)
     {
         DebugScopedSetImplThread implThread;
         OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
-        ccLayerTreeHost->updateLayers(updater);
+        ccLayerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         updater.update(0, &allocator, &copier, &uploader, 4);
         EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_FALSE(updater.hasMoreUpdates());

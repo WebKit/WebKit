@@ -44,6 +44,7 @@ class TextureAllocator {
 public:
     virtual unsigned createTexture(const IntSize&, GC3Denum format) = 0;
     virtual void deleteTexture(unsigned texture, const IntSize&, GC3Denum) = 0;
+    virtual void deleteAllTextures() = 0;
 
 protected:
     virtual ~TextureAllocator() { }
@@ -88,6 +89,7 @@ public:
     unsigned allocateTexture(TextureAllocator*, TextureToken);
     void deleteEvictedTextures(TextureAllocator*);
 
+    void evictAndRemoveAllDeletedTextures();
     void evictAndDeleteAllTextures(TextureAllocator*);
 
     void reduceMemoryToLimit(size_t);

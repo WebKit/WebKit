@@ -89,6 +89,7 @@ unsigned TrackingTextureAllocator::createTexture(const IntSize& size, GC3Denum f
         extensions->texStorage2DEXT(GraphicsContext3D::TEXTURE_2D, 1, storageFormat, size.width(), size.height());
     } else
         GLC(m_context.get(), m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, format, size.width(), size.height(), 0, format, GraphicsContext3D::UNSIGNED_BYTE));
+    m_allocatedTextureIds.add(textureId);
     return textureId;
 }
 
@@ -96,6 +97,16 @@ void TrackingTextureAllocator::deleteTexture(unsigned textureId, const IntSize& 
 {
     m_currentMemoryUseBytes -= TextureManager::memoryUseBytes(size, format);
     GLC(m_context.get(), m_context->deleteTexture(textureId));
+    ASSERT(m_allocatedTextureIds.contains(textureId));
+    m_allocatedTextureIds.remove(textureId);
+}
+
+void TrackingTextureAllocator::deleteAllTextures()
+{
+    for (HashSet<unsigned>::const_iterator it = m_allocatedTextureIds.begin(); it != m_allocatedTextureIds.end(); ++it)
+        GLC(m_context.get(), m_context->deleteTexture(*it));
+    m_currentMemoryUseBytes = 0;
+    m_allocatedTextureIds.clear();
 }
 
 }

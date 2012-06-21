@@ -1,3 +1,170 @@
+2012-06-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] LayerRendererChromium is not getting visibility messages in single threaded compositing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=89045
+
+        Reviewed by Adrienne Walker.
+
+        Based on patch by Michal Mocny <mmocny@google.com>.
+
+        Invariants:
+
+        1.) We never commit (paint, animate, any of it) when not visible on the main thread -except- for
+        compositeAndReadback, regardless of threaded vs non-threaded mode
+        2.) CCLayerTreeHost::m_contentsTextureManager's memory budget is only set by updateLayers() when we are going to
+        make a frame and is always set to a non-zero value
+        3.) Zero-sized allocations from the GPU process are always serviced immediately on the impl thread.  Non-zero
+        allocations are met in the next frame, whenever we would produce that frame according to our usual frame
+        scheduling logic.
+        4.) The impl thread always knows the set of currently-allocated managed texture IDs and can delete them all
+        whenever it likes without needing the main thread to be responsive.
+
+        Details:
+
+        There are two main changes - tweaking how the contents texture manager's budget is handled and tweaking frame
+        scheduling for the !visible case.
+
+        The scheduling change is a bit more subtle but it unifies the single and multi threaded paths and is really
+        important.  Except for compositeAndReadback (which I'll talk about below), we simply won't produce frames when
+        not visible.  This already happens in the single threaded path thanks to render_widget so the only change is to
+        the threaded path.  The difficulty here is we might post a beginFrame task from the impl thread and then get a
+        setVisible(false) call on the main thread before the beginFrame task runs.  Since I'm making the setVisible()
+        call a blocking call from main thread -> impl thread, when the beginFrame task eventually does run on the main
+        thread we can know that the impl thread's notion of visibility is in sync with the main threads.  Thus I'm
+        planning to simply abort the frame before doing any processing on the main thread.  The scheduler will know if
+        it gets a beginFrameAborted and COMMIT_STATE_IDLE.
+
+        compositeAndReadback is special - this call currently does come in when we aren't visible (in single and
+        threaded mode) and we need to service it.  In particular, we need to send a beginFrame over and have it
+        not be ignored on the main thread.  For this I'm thinking of having the proxy keep track of whether it's
+        servicing a compositeAndReadback() and use that bit on the main thread to know to process the beginFrame
+        normally.  On the impl side, we need a few changes.  First, we have to allocate a default framebuffer
+        (ensureFramebufferCHROMIUM) even if we've dropped it previously and remember to discard it after the
+        readPixels().  Second, we have to provide a non-zero contents texture allocation on the beginFrame message, and
+        again remember to delete the textures after the readPixels().  Third, we have to know that the beginFrame is a
+        forced frame so when we get the beginFrameComplete we go ahead with the rest of the frame.  For this, I think
+        I'll have to add ACTION_BEGIN_FORCED_FRAME and a corresponding COMMIT_STATE_FORCED_FRAME_IN_PROGRESS so the
+        scheduler can keep track of the magicness of this frame, and then add some logic after the readpixels call to
+        drop resources after the readback.  It's probably a good time to stop swapping on readbacks too....
+
+        The contents texture manager's budget is only relevant when we want to make a frame, so it's now passed in on
+        the updateLayers().  Since we only make frames when we are visible and we never have a zero allocation when
+        visible (thanks to the frame scheduling changes above), this value is always non-zero.  The other thing the
+        texture manager needs to know about is if we've killed all of the underlying textures from the impl thread -
+        this bit is passed in by the proxy before the updateLayers() call.  This means if we're running while visible
+        and the manager wants to decrease our budget to something other than zero, we'll get a new (non-zero) allocation
+        on the impl thread, schedule a frame, then when it's time to make the frame pass the new lower limit in to
+        updateLayers(), then have the contents texture manager evict down to our new limit and make a frame with the new
+        budget.  When the commit completes we'll get notified on the impl thread of which textures the contents texture
+        manager decided to evict and issue the deleteTexture() calls on them.
+
+        The texture budget we pass in will be based on the most recent non-zero memory allocation we received from the
+        GPU memory manager, or some default value I'll pull out my ass if we haven't heard anything yet.  On compositor
+        initialization, we can't afford to wait for a round-trip through the GPU process to get a budget for the first
+        frame.  I don't think handling a decrease to a non-zero budget on a visible tab needs to be terribly urgent - we
+        can get to it when we get to making the next frame.  If we wanted to satisfy reduced texture budgets directly
+        from the impl thread, we could keep a priority-list ordered set of textures once we have priorities and delete
+        based on that.  Let's worry about that later.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererGpuMemoryAllocationChangedCallbackAdapter::onGpuMemoryAllocationChangedOnImpl):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::initialize):
+        (WebCore::LayerRendererChromium::setVisible):
+        (WebCore::LayerRendererChromium::setGpuMemoryAllocation):
+        (WebCore):
+        (WebCore::LayerRendererChromium::swapBuffers):
+        (WebCore::LayerRendererChromium::getFramebufferPixels):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore):
+        (LayerRendererChromium):
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::evictAndRemoveAllDeletedTextures):
+        (WebCore):
+        * platform/graphics/chromium/TextureManager.h:
+        (TextureAllocator):
+        (TextureManager):
+        * platform/graphics/chromium/TrackingTextureAllocator.cpp:
+        (WebCore::TrackingTextureAllocator::createTexture):
+        (WebCore::TrackingTextureAllocator::deleteTexture):
+        (WebCore):
+        (WebCore::TrackingTextureAllocator::deleteAllTextures):
+        * platform/graphics/chromium/TrackingTextureAllocator.h:
+        (TrackingTextureAllocator):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initializeLayerRenderer):
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::setVisible):
+        (WebCore::CCLayerTreeHost::evictAllContentTextures):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::commitComplete):
+        (WebCore::CCLayerTreeHostImpl::canDraw):
+        (WebCore::CCLayerTreeHostImpl::context):
+        (WebCore::CCLayerTreeHostImpl::releaseContentsTextures):
+        (WebCore):
+        (WebCore::CCLayerTreeHostImpl::setMemoryAllocationLimitBytes):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImplClient):
+        (WebCore::CCLayerTreeHostImpl::contentsTexturesWerePurgedSinceLastCommit):
+        (WebCore::CCLayerTreeHostImpl::memoryAllocationLimitBytes):
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        (CCProxy):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (CCRendererClient):
+        * platform/graphics/chromium/cc/CCScheduler.cpp:
+        (WebCore::CCScheduler::beginFrameComplete):
+        (WebCore::CCScheduler::beginFrameAborted):
+        (WebCore):
+        (WebCore::CCScheduler::didSwapBuffersComplete):
+        (WebCore::CCScheduler::didLoseContext):
+        (WebCore::CCScheduler::didRecreateContext):
+        (WebCore::CCScheduler::vsyncTick):
+        * platform/graphics/chromium/cc/CCScheduler.h:
+        (CCScheduler):
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp:
+        (WebCore::CCSchedulerStateMachine::beginFrameAborted):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::setVisible):
+        (WebCore):
+        (WebCore::CCSingleThreadProxy::stop):
+        (WebCore::CCSingleThreadProxy::commitAndComposite):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (CCSingleThreadProxy):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::compositeAndReadback):
+        (WebCore::CCThreadProxy::setVisible):
+        (WebCore):
+        (WebCore::CCThreadProxy::setVisibleOnImplThread):
+        (WebCore::CCThreadProxy::scheduledActionBeginFrame):
+        (WebCore::CCThreadProxy::beginFrame):
+        (WebCore::CCThreadProxy::beginFrameAbortedOnImplThread):
+        (WebCore::CCThreadProxy::scheduledActionDrawAndSwapInternal):
+        (WebCore::CCThreadProxy::layerTreeHostClosedOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+        (BeginFrameAndCommitState):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::~CCVideoLayerImpl):
+        (WebCore::CCVideoLayerImpl::willDraw):
+        (WebCore::CCVideoLayerImpl::willDrawInternal):
+        (WebCore::CCVideoLayerImpl::FramePlane::allocateData):
+        (WebCore::CCVideoLayerImpl::FramePlane::freeData):
+        (WebCore::CCVideoLayerImpl::allocatePlaneData):
+        (WebCore::CCVideoLayerImpl::freePlaneData):
+        (WebCore::CCVideoLayerImpl::freeUnusedPlaneData):
+        (WebCore::CCVideoLayerImpl::didLoseContext):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+        (FramePlane):
+
 2012-06-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Shrink NodeListsNodeData

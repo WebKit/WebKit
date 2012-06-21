@@ -88,8 +88,15 @@ void CCScheduler::setMainThreadNeedsLayerTextures()
 
 void CCScheduler::beginFrameComplete()
 {
-    TRACE_EVENT("CCScheduler::beginFrameComplete", this, 0);
+    TRACE_EVENT0("cc", "CCScheduler::beginFrameComplete");
     m_stateMachine.beginFrameComplete();
+    processScheduledActions();
+}
+
+void CCScheduler::beginFrameAborted()
+{
+    TRACE_EVENT0("cc", "CCScheduler::beginFrameAborted");
+    m_stateMachine.beginFrameAborted();
     processScheduledActions();
 }
 
@@ -100,13 +107,13 @@ void CCScheduler::setMaxFramesPending(int maxFramesPending)
 
 void CCScheduler::didSwapBuffersComplete()
 {
-    TRACE_EVENT("CCScheduler::didSwapBuffersComplete", this, 0);
+    TRACE_EVENT0("cc", "CCScheduler::didSwapBuffersComplete");
     m_frameRateController->didFinishFrame();
 }
 
 void CCScheduler::didLoseContext()
 {
-    TRACE_EVENT("CCScheduler::didLoseContext", this, 0);
+    TRACE_EVENT0("cc", "CCScheduler::didLoseContext");
     m_frameRateController->didAbortAllPendingFrames();
     m_stateMachine.didLoseContext();
     processScheduledActions();
@@ -114,7 +121,7 @@ void CCScheduler::didLoseContext()
 
 void CCScheduler::didRecreateContext()
 {
-    TRACE_EVENT("CCScheduler::didRecreateContext", this, 0);
+    TRACE_EVENT0("cc", "CCScheduler::didRecreateContext");
     m_stateMachine.didRecreateContext();
     processScheduledActions();
 }
@@ -125,7 +132,7 @@ void CCScheduler::vsyncTick()
         m_updateMoreResourcesPending = false;
         m_stateMachine.beginUpdateMoreResourcesComplete(m_client->hasMoreResourceUpdates());
     }
-    TRACE_EVENT("CCScheduler::vsyncTick", this, 0);
+    TRACE_EVENT0("cc", "CCScheduler::vsyncTick");
 
     m_stateMachine.didEnterVSync();
     processScheduledActions();

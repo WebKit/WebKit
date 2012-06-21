@@ -299,6 +299,12 @@ void CCSchedulerStateMachine::beginFrameComplete()
     m_commitState = COMMIT_STATE_UPDATING_RESOURCES;
 }
 
+void CCSchedulerStateMachine::beginFrameAborted()
+{
+    ASSERT(m_commitState == COMMIT_STATE_FRAME_IN_PROGRESS);
+    m_commitState = COMMIT_STATE_IDLE;
+}
+
 void CCSchedulerStateMachine::beginUpdateMoreResourcesComplete(bool morePending)
 {
     ASSERT(m_commitState == COMMIT_STATE_UPDATING_RESOURCES);
