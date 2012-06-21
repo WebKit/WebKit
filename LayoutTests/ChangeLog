@@ -1,3 +1,19 @@
+2012-06-20  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow][Editing] Selection will break editing boundaries in Shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=89075
+
+        Reviewed by Antti Koivisto.
+
+        Test cases to confirm that (1) selection does not break editing boundary,
+        and (2) content-editable is not propagated from shadow host to shadow DOM.
+
+        Actually a patch for Bug 88514 contains a test for (2), but it is not enough.
+
+
+        * editing/shadow/breaking-editing-boundary-with-table.html: Added.
+        * editing/shadow/contenteditable-propagation-at-shadow-boundary.html: Added.
+
 2012-06-20  Adam Barth  <abarth@webkit.org>
 
         internals.settings.setDeviceScaleFactor doesn't work for WebKit2 and must be removed

@@ -2949,11 +2949,12 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         // style declarations. We then only need to apply the inherited properties, if any, as their values can depend on the 
         // element context. This is fast and saves memory by reusing the style data structures.
         m_style->copyNonInheritedFrom(cacheItem->renderStyle.get());
-        if (m_parentStyle->inheritedDataShared(cacheItem->parentRenderStyle.get())) {
+        if (m_parentStyle->inheritedDataShared(cacheItem->parentRenderStyle.get()) && !isAtShadowBoundary(element)) {
             EInsideLink linkStatus = m_style->insideLink();
             // If the cache item parent style has identical inherited properties to the current parent style then the
             // resulting style will be identical too. We copy the inherited properties over from the cache and are done.
-            m_style->inheritFrom(cacheItem->renderStyle.get(), isAtShadowBoundary(element) ? RenderStyle::AtShadowBoundary : RenderStyle::NotAtShadowBoundary);
+            m_style->inheritFrom(cacheItem->renderStyle.get());
+
             // Unfortunately the link status is treated like an inherited property. We need to explicitly restore it.
             m_style->setInsideLink(linkStatus);
             return;

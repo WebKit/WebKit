@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/dom/shadow/resources/polyfill.js"></script>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<p>This test checks that content-editable is not propagated from shadow host to a shadow subtree.</p>
+
+<p>This p is required to produce the issue.</p>
+<div contenteditable>
+  <div>This div and parent div are required to produce the issue.</div>
+  <div id="host1" contenteditable>shadow host 1</div>
+</div>
+<pre id="console"></pre>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function computedStyle(element, style) {
+    var cs = window.getComputedStyle(element);
+    if (!cs)
+        return '(NA)';
+    if (cs.getPropertyCSSValue(style))
+        return cs.getPropertyCSSValue(style).cssText;
+    return undefined;
+}
+
+function prepareNodeInShadowRoot(host) {
+    var shadowRoot = new WebKitShadowRoot(host);
+    var nodeInShadow = document.createElement('div');
+    nodeInShadow.setAttribute('id', 'node-in-shadow-root');
+    nodeInShadow.appendChild(document.createTextNode('In Shadow'));
+    shadowRoot.appendChild(nodeInShadow);
+    return nodeInShadow;
+}
+
+document.body.offsetLeft;
+
+var nodeInShadowRoot1 = prepareNodeInShadowRoot(document.getElementById('host1'));
+var userModifyPropertyName = '-webkit-user-modify';
+shouldBeEqualToString('computedStyle(nodeInShadowRoot1, userModifyPropertyName)', 'read-only');
+
+var successfullyParsed = true;
+</script>
+
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

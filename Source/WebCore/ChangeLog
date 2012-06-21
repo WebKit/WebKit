@@ -1,3 +1,22 @@
+2012-06-20  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow][Editing] Selection will break editing boundaries in Shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=89075
+
+        Reviewed by Antti Koivisto.
+
+        At the shadow boundary, some styles (e.g. user-modify, text-decoration) cannot be inherited
+        from the shadow host. However, when style property cache is used, such styles are wrongly
+        inherited from the cache.
+
+        So this patch makes not to use cache for inehrited styles at the shadow boundary.
+
+        Tests: editing/shadow/breaking-editing-boundary-with-table.html
+               editing/shadow/contenteditable-propagation-at-shadow-boundary.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-06-20  Garret Kelly  <gdk@chromium.org>
 
         Moving cookieEnabled/setCookieEnabled from Page to Settings.
