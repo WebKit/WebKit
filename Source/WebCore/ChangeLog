@@ -1,3 +1,39 @@
+2012-06-21  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [WebGL] Add injected WebGL module class
+        https://bugs.webkit.org/show_bug.cgi?id=89592
+
+        Reviewed by Pavel Feldman.
+
+        Adding a new InjectedScriptWebGLModule class and moving WebGL-related
+        stuff out of InjectedScriptManager class.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InjectedScriptManager.cpp:
+        * inspector/InjectedScriptManager.h:
+        (InjectedScriptManager):
+        * inspector/InjectedScriptModule.cpp:
+        (WebCore::InjectedScriptModule::ensureInjected):
+        * inspector/InjectedScriptModule.h:
+        (InjectedScriptModule):
+        * inspector/InjectedScriptWebGLModule.cpp: Copied from Source/WebCore/inspector/InjectedScriptModule.cpp.
+        (WebCore):
+        (WebCore::InjectedScriptWebGLModule::InjectedScriptWebGLModule):
+        (WebCore::InjectedScriptWebGLModule::moduleForState):
+        (WebCore::InjectedScriptWebGLModule::source):
+        (WebCore::InjectedScriptWebGLModule::wrapWebGLContext):
+        (WebCore::InjectedScriptWebGLModule::captureFrame):
+        * inspector/InjectedScriptWebGLModule.h: Copied from Source/WebCore/inspector/InjectedScriptModule.h.
+        (WebCore):
+        (InjectedScriptWebGLModule):
+        * inspector/InspectorWebGLAgent.cpp:
+        (WebCore::InspectorWebGLAgent::wrapWebGLRenderingContextForInstrumentation):
+
 2012-06-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: do not add separator to the end of the context menu.

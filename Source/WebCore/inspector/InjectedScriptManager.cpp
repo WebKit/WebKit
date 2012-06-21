@@ -37,9 +37,6 @@
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptSource.h"
-#if ENABLE(WEBGL)
-#include "InjectedWebGLScriptSource.h"
-#endif
 #include "InspectorValues.h"
 #include "ScriptObject.h"
 #include <wtf/PassOwnPtr.h>
@@ -189,19 +186,6 @@ InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState* inspectedSc
     m_idToInjectedScript.set(injectedScript.first, result);
     return result;
 }
-
-#if ENABLE(WEBGL)
-ScriptObject InjectedScriptManager::wrapWebGLRenderingContextForInstrumentation(const ScriptObject&)
-{
-    // FIXME(88973): Inject via this.injectScript()
-    return ScriptObject();
-}
-
-String InjectedScriptManager::injectedWebGLScriptSource()
-{
-    return String(reinterpret_cast<const char*>(InjectedWebGLScriptSource_js), sizeof(InjectedWebGLScriptSource_js));
-}
-#endif
 
 } // namespace WebCore
 

@@ -930,11 +930,12 @@ SET(WebCore_SOURCES
     inspector/DOMNodeHighlighter.cpp
     inspector/DOMPatchSupport.cpp
     inspector/IdentifiersFactory.cpp
-    inspector/InjectedScriptModule.cpp
     inspector/InjectedScript.cpp
     inspector/InjectedScriptBase.cpp
     inspector/InjectedScriptHost.cpp
     inspector/InjectedScriptManager.cpp
+    inspector/InjectedScriptModule.cpp
+    inspector/InjectedScriptWebGLModule.cpp
     inspector/InspectorAgent.cpp
     inspector/InspectorApplicationCacheAgent.cpp
     inspector/InspectorBaseAgent.cpp

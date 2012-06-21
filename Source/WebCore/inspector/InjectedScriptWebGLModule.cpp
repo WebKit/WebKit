@@ -30,50 +30,59 @@
 
 #include "config.h"
 
-#if ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR) && ENABLE(WEBGL)
 
-#include "InjectedScriptModule.h"
+#include "InjectedScriptWebGLModule.h"
 
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
+#include "InjectedWebGLScriptSource.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
 
 namespace WebCore {
 
-InjectedScriptModule::InjectedScriptModule(const String& name)
-    : InjectedScriptBase(name)
+InjectedScriptWebGLModule::InjectedScriptWebGLModule()
+    : InjectedScriptModule("InjectedScriptWebGLModule")
 {
 }
 
-void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptManager, ScriptState* scriptState)
+InjectedScriptWebGLModule InjectedScriptWebGLModule::moduleForState(InjectedScriptManager* injectedScriptManager, ScriptState* scriptState)
 {
-    InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(scriptState);
-    ASSERT(!injectedScript.hasNoValue());
-    if (injectedScript.hasNoValue())
-        return;
+    InjectedScriptWebGLModule result;
+    result.ensureInjected(injectedScriptManager, scriptState);
+    return result;
+}
 
-    // FIXME: Make the InjectedScript a module itself.
-    ScriptFunctionCall function(injectedScript.injectedScriptObject(), "module");
-    function.appendArgument(name());
+String InjectedScriptWebGLModule::source() const
+{
+    return String(reinterpret_cast<const char*>(InjectedWebGLScriptSource_js), sizeof(InjectedWebGLScriptSource_js));
+}
+
+ScriptObject InjectedScriptWebGLModule::wrapWebGLContext(const ScriptObject& glContext)
+{
+    ScriptFunctionCall function(injectedScriptObject(), "wrapWebGLContext");
+    function.appendArgument(glContext);
     bool hadException = false;
-    ScriptValue resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
-    ASSERT(!hadException);
+    ScriptValue resultValue = callFunctionWithEvalEnabled(function, hadException);
     if (hadException || resultValue.hasNoValue() || !resultValue.isObject()) {
-        ScriptFunctionCall function(injectedScript.injectedScriptObject(), "injectModule");
-        function.appendArgument(name());
-        function.appendArgument(source());
-        resultValue = injectedScript.callFunctionWithEvalEnabled(function, hadException);
-        if (hadException || resultValue.hasNoValue() || !resultValue.isObject()) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
+        ASSERT_NOT_REACHED();
+        return ScriptObject();
     }
+    return ScriptObject(glContext.scriptState(), resultValue);
+}
 
-    ScriptObject moduleObject(scriptState, resultValue);
-    initialize(moduleObject, injectedScriptManager->inspectedStateAccessCheck());
+void InjectedScriptWebGLModule::captureFrame(ErrorString* errorString, const String& contextId)
+{
+    ScriptFunctionCall function(injectedScriptObject(), "captureFrame");
+    function.appendArgument(contextId);
+    bool hadException = false;
+    callFunctionWithEvalEnabled(function, hadException);
+    ASSERT(!hadException);
+    if (hadException)
+        *errorString = "Internal error";
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR)
+#endif // ENABLE(INSPECTOR) && ENABLE(WEBGL)

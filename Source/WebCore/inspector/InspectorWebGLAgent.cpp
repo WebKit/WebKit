@@ -35,6 +35,7 @@
 #include "InspectorWebGLAgent.h"
 
 #include "InjectedScriptManager.h"
+#include "InjectedScriptWebGLModule.h" 
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
@@ -96,7 +97,16 @@ void InspectorWebGLAgent::disable(ErrorString*)
 
 ScriptObject InspectorWebGLAgent::wrapWebGLRenderingContextForInstrumentation(const ScriptObject& glContext)
 {
-    return m_injectedScriptManager->wrapWebGLRenderingContextForInstrumentation(glContext);
+    if (glContext.hasNoValue()) {
+        ASSERT_NOT_REACHED();
+        return ScriptObject();
+    }
+    InjectedScriptWebGLModule module = InjectedScriptWebGLModule::moduleForState(m_injectedScriptManager, glContext.scriptState());
+    if (module.hasNoValue()) {
+        ASSERT_NOT_REACHED();
+        return ScriptObject();
+    }
+    return module.wrapWebGLContext(glContext);
 }
 
 } // namespace WebCore
