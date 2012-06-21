@@ -1,3 +1,9 @@
+2012-06-21  Yong Li  <yoli@rim.com>
+
+        Unreviewed. Moving myself from committer to reviewer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-06-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] Add a new webkit2 tests slave bot
