@@ -1,3 +1,21 @@
+2012-06-21  Genevieve Mak  <gmak@rim.com>
+
+        Add a parameter to handletTouchPoint to bypass FatFingers
+        on touch up. There are some cases where the user may drag
+        their finger off the element and we want to use the actual
+        touch point instead of the FatFingers adjusted point.
+        https://bugs.webkit.org/show_bug.cgi?id=89677
+
+        Reviewed by Antonio Gomes.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::touchPointAsMouseEvent):
+        * Api/WebPage.h:
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+        * WebKitSupport/TouchEventHandler.h:
+        (TouchEventHandler):
+
 2012-06-21  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Input mode should adapt automatically to settings changes

@@ -4165,7 +4165,7 @@ bool WebPagePrivate::dispatchTouchEventToFullScreenPlugin(PluginView* plugin, co
     return handled;
 }
 
-bool WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point)
+bool WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point, bool useFatFingers)
 {
     if (d->m_page->defersLoading())
         return false;
@@ -4180,7 +4180,7 @@ bool WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point)
     tPoint.m_pos = d->mapFromTransformed(tPoint.m_pos);
     tPoint.m_screenPos = d->mapFromTransformed(tPoint.m_screenPos);
 
-    return d->m_touchEventHandler->handleTouchPoint(tPoint);
+    return d->m_touchEventHandler->handleTouchPoint(tPoint, useFatFingers);
 }
 
 bool WebPagePrivate::dispatchTouchPointAsMouseEventToFullScreenPlugin(PluginView* pluginView, const Platform::TouchPoint& point)

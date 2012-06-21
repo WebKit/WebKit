@@ -139,7 +139,7 @@ public:
 
     // For conversion to mouse events.
     void touchEventCancel();
-    bool touchPointAsMouseEvent(const Platform::TouchPoint&);
+    bool touchPointAsMouseEvent(const Platform::TouchPoint&, bool useFatFingers = true);
 
     // Returns true if the key stroke was handled by WebKit.
     bool keyEvent(const Platform::KeyboardEvent&);

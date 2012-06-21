@@ -168,7 +168,7 @@ void TouchEventHandler::touchHoldEvent()
         m_webPage->clearFocusNode();
 }
 
-bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
+bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFatFingers)
 {
     // Enable input mode on any touch event.
     m_webPage->m_inputHandler->setInputModeEnabled();
@@ -177,6 +177,7 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
     switch (point.m_state) {
     case Platform::TouchPoint::TouchPressed:
         {
+            // FIXME: bypass FatFingers if useFatFingers is false
             m_lastFatFingersResult.reset(); // Theoretically this shouldn't be required. Keep it just in case states get mangled.
             m_didCancelTouch = false;
             m_lastScreenPoint = point.m_screenPos;
@@ -229,7 +230,7 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
                 m_webPage->m_inputHandler->notifyClientOfKeyboardVisibilityChange(true);
 
             IntPoint adjustedPoint;
-            if (m_convertTouchToMouse) {
+            if (m_convertTouchToMouse || !useFatFingers) {
                 adjustedPoint = point.m_pos;
                 m_convertTouchToMouse = pureWithMouseConversion;
             } else // Fat finger point in viewport coordinates.
