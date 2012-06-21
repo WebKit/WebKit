@@ -1,3 +1,21 @@
+2012-06-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Non-fixed length margins don't work with align=center
+        https://bugs.webkit.org/show_bug.cgi?id=89626
+
+        Reviewed by Levi Weintraub.
+
+        Tests: fast/block/negative-start-margin-align-center-percent.html
+               fast/block/positive-margin-block-child-align-center-calc.html
+
+        Calling Length::value() is a bad idea as it returns the *raw* value of
+        the length. For percent and calculated length this is a bad idea as they
+        bear not relation to the actual computed length.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeInlineDirectionMargins):
+        Fixed the code to use minimumValueForLength as this nicely takes care of the 'auto' case.
+
 2012-06-21  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] style improvement for setDeviceScaleFactor code

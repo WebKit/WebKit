@@ -1839,8 +1839,8 @@ void RenderBox::computeInlineDirectionMargins(RenderBlock* containingBlock, Layo
     if ((marginStartLength.isAuto() && marginEndLength.isAuto() && childWidth < containerWidth)
         || (!marginStartLength.isAuto() && !marginEndLength.isAuto() && containingBlock->style()->textAlign() == WEBKIT_CENTER)) {
         // Other browsers center the margin box for align=center elements so we match them here.
-        LayoutUnit marginStartWidth = marginStartLength.value();
-        LayoutUnit marginEndWidth = marginEndLength.value();
+        LayoutUnit marginStartWidth = minimumValueForLength(marginStartLength, containerWidth, renderView);
+        LayoutUnit marginEndWidth = minimumValueForLength(marginEndLength, containerWidth, renderView);
         LayoutUnit centeredMarginBoxStart = max<LayoutUnit>(0, (containerWidth - childWidth - marginStartWidth - marginEndWidth) / 2);
         containingBlock->setMarginStartForChild(this, centeredMarginBoxStart + marginStartWidth);
         containingBlock->setMarginEndForChild(this, containerWidth - childWidth - containingBlock->marginStartForChild(this) + marginEndWidth);
