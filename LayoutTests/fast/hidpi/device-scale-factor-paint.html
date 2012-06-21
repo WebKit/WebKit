@@ -9,7 +9,7 @@
     }
     
     function finishTest() {
-        setTimeout(layoutTestController.notifyDone, 0);
+        setTimeout(function() { layoutTestController.notifyDone() }, 0);
     }
 </script>
 </head>
