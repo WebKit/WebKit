@@ -32,7 +32,15 @@ Expecting exception from deletedStore.delete(0)
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
+Expecting exception from deletedStore.delete(IDBKeyRange.only(0))
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
 Expecting exception from deletedStore.get(0)
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedStore.get(IDBKeyRange.only(0))
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
@@ -41,6 +49,22 @@ PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
 Expecting exception from deletedStore.openCursor()
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedStore.openCursor(0)
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedStore.openCursor(0, 'next')
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedStore.openCursor(IDBKeyRange.only(0))
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedStore.openCursor(IDBKeyRange.only(0), 'next')
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
@@ -60,8 +84,32 @@ Expecting exception from deletedStore.count()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
+Expecting exception from deletedStore.count(0)
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedStore.count(IDBKeyRange.only(0))
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
 
 Expecting exception from deletedIndex.openCursor()
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedIndex.openCursor(0)
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedIndex.openCursor(0, 'next')
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedIndex.openCursor(IDBKeyRange.only(0))
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedIndex.openCursor(IDBKeyRange.only(0), 'next')
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
@@ -69,7 +117,27 @@ Expecting exception from deletedIndex.openKeyCursor()
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
+Expecting exception from deletedIndex.openKeyCursor(0)
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedIndex.openKeyCursor(0, 'next')
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedIndex.openKeyCursor(IDBKeyRange.only(0))
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedIndex.openKeyCursor(IDBKeyRange.only(0), 'next')
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
 Expecting exception from deletedIndex.get(0)
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedIndex.get(IDBKeyRange.only(0))
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
@@ -77,7 +145,19 @@ Expecting exception from deletedIndex.getKey(0)
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
+Expecting exception from deletedIndex.getKey(IDBKeyRange.only(0))
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
 Expecting exception from deletedIndex.count()
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedIndex.count(0)
+PASS Exception was thrown.
+PASS code is DOMException.INVALID_STATE_ERR
+PASS ename is 'InvalidStateError'
+Expecting exception from deletedIndex.count(IDBKeyRange.only(0))
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'

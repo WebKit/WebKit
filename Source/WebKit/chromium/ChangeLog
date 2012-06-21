@@ -1,3 +1,19 @@
+2012-06-20  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove redundant IDBObjectStore.delete() overloads
+        https://bugs.webkit.org/show_bug.cgi?id=89587
+
+        Reviewed by Darin Fisher.
+
+        * public/WebIDBObjectStore.h: Add note to remove overload when Chromium is updated.
+        (WebIDBObjectStore):
+        * src/IDBObjectStoreBackendProxy.cpp: Delete IDBKey overload.
+        * src/IDBObjectStoreBackendProxy.h: Delete IDBKey overload.
+        (IDBObjectStoreBackendProxy):
+        * src/WebIDBObjectStoreImpl.cpp: Delete IDBKey overload.
+        * src/WebIDBObjectStoreImpl.h: Delete IDBKey overload.
+        (WebIDBObjectStoreImpl):
+
 2012-06-20  Garret Kelly  <gdk@chromium.org>
 
         Moving cookieEnabled/setCookieEnabled from Page to Settings, and

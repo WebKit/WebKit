@@ -1,3 +1,35 @@
+2012-06-20  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove redundant IDBObjectStore.delete() overloads
+        https://bugs.webkit.org/show_bug.cgi?id=89587
+
+        Reviewed by Darin Fisher.
+
+        The IDBObjectStore.delete(IDBKey) overload can delegate to the delete(IDBKeyRange)
+        overload. Also cleaned up redundant checks in related overloads.
+
+        Test: storage/indexeddb/deleted-objects.html
+
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::deleteFunction): Call keyRange variant instead.
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::get): Remove redundant deleted/invalid IDBKey checks.
+        (WebCore::IDBIndex::getKey): Remove redundant deleted/invalid IDBKey checks.
+        * Modules/indexeddb/IDBKeyRange.cpp: Null IDBKeys are not acceptable; currently
+        not passed in by any callers.
+        (WebCore::IDBKeyRange::only):
+        (WebCore::IDBKeyRange::lowerBound):
+        (WebCore::IDBKeyRange::upperBound):
+        (WebCore::IDBKeyRange::bound):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::get): Was missing deleted check in IDBKeyRange overload.
+        Removed redundant checks in IDBKey overload.
+        (WebCore::IDBObjectStore::deleteFunction): Delegate to IDBKeyRange overload.
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp: Remove IDBKey overload.
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h: Remove IDBKey overload.
+        (IDBObjectStoreBackendImpl):
+        * Modules/indexeddb/IDBObjectStoreBackendInterface.h: Remove IDBKey overload.
+
 2012-06-20  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow][Editing] Selection will break editing boundaries in Shadow DOM.

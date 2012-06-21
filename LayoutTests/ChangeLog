@@ -1,3 +1,16 @@
+2012-06-20  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove redundant IDBObjectStore.delete() overloads
+        https://bugs.webkit.org/show_bug.cgi?id=89587
+
+        Reviewed by Darin Fisher.
+
+        * storage/indexeddb/deleted-objects-expected.txt:
+        * storage/indexeddb/resources/deleted-objects.js: Test IDBKeyRange overloads.
+        (openDatabase.request.onsuccess.request.onsuccess):
+        (openDatabase.request.onsuccess):
+        (openDatabase):
+
 2012-06-20  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow][Editing] Selection will break editing boundaries in Shadow DOM.

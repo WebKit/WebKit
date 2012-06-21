@@ -337,22 +337,6 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
     callbacks->onSuccess(key.get());
 }
 
-void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
-{
-    IDB_TRACE("IDBObjectStoreBackendImpl::delete");
-    RefPtr<IDBKey> key = prpKey;
-    if (!key || !key->isValid()) {
-        ec = IDBDatabaseException::DATA_ERR;
-        return;
-    }
-
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
-    if (ec)
-        return;
-
-    deleteFunction(keyRange.release(), prpCallbacks, transaction, ec);
-}
-
 void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKeyRange> prpKeyRange, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::delete");

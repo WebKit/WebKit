@@ -88,7 +88,10 @@ bool IDBObjectStore::autoIncrement() const
 PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::get");
-
+    if (m_deleted) {
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        return 0;
+    }
     if (!keyRange) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
@@ -105,16 +108,6 @@ PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, Pass
 PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::get");
-    if (m_deleted) {
-        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
-        return 0;
-    }
-
-    if (!key || (key->type() == IDBKey::InvalidType)) {
-        ec = IDBDatabaseException::DATA_ERR;
-        return 0;
-    }
-
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
     if (ec)
         return 0;
@@ -216,27 +209,10 @@ PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* co
 PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::delete");
-    if (m_deleted) {
-        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
+    if (ec)
         return 0;
-    }
-    if (m_transaction->isReadOnly()) {
-        ec = IDBDatabaseException::READ_ONLY_ERR;
-        return 0;
-    }
-
-    if (!key || !key->isValid()) {
-        ec = IDBDatabaseException::DATA_ERR;
-        return 0;
-    }
-
-    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_backend->deleteFunction(key, request, m_transaction->backend(), ec);
-    if (ec) {
-        request->markEarlyDeath();
-        return 0;
-    }
-    return request.release();
+    return deleteFunction(context, keyRange.release(), ec);
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, ExceptionCode& ec)

@@ -171,7 +171,10 @@ void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks,
         return;
     }
 
-    m_objectStore->deleteFunction(m_cursor->primaryKey(), prpCallbacks, m_transaction.get(), ec);
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(m_cursor->primaryKey(), ec);
+    ASSERT(!ec);
+
+    m_objectStore->deleteFunction(keyRange.release(), prpCallbacks, m_transaction.get(), ec);
 }
 
 void IDBCursorBackendImpl::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)

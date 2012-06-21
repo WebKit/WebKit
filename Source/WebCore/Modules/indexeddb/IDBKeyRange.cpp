@@ -44,7 +44,7 @@ IDBKeyRange::IDBKeyRange(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, Low
 PassRefPtr<IDBKeyRange> IDBKeyRange::only(PassRefPtr<IDBKey> prpKey, ExceptionCode& ec)
 {
     RefPtr<IDBKey> key = prpKey;
-    if (key && (key->type() == IDBKey::InvalidType)) {
+    if (!key || !key->isValid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
     }
@@ -54,7 +54,7 @@ PassRefPtr<IDBKeyRange> IDBKeyRange::only(PassRefPtr<IDBKey> prpKey, ExceptionCo
 
 PassRefPtr<IDBKeyRange> IDBKeyRange::lowerBound(PassRefPtr<IDBKey> bound, bool open, ExceptionCode& ec)
 {
-    if (bound && (bound->type() == IDBKey::InvalidType)) {
+    if (!bound || !bound->isValid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
     }
@@ -64,7 +64,7 @@ PassRefPtr<IDBKeyRange> IDBKeyRange::lowerBound(PassRefPtr<IDBKey> bound, bool o
 
 PassRefPtr<IDBKeyRange> IDBKeyRange::upperBound(PassRefPtr<IDBKey> bound, bool open, ExceptionCode& ec)
 {
-    if (bound && (bound->type() == IDBKey::InvalidType)) {
+    if (!bound || !bound->isValid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
     }
@@ -74,15 +74,15 @@ PassRefPtr<IDBKeyRange> IDBKeyRange::upperBound(PassRefPtr<IDBKey> bound, bool o
 
 PassRefPtr<IDBKeyRange> IDBKeyRange::bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen, ExceptionCode& ec)
 {
-    if ((lower && (lower->type() == IDBKey::InvalidType)) || (upper && (upper->type() == IDBKey::InvalidType))) {
+    if (!lower || !lower->isValid() || !upper || !upper->isValid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
     }
-    if (lower && upper && upper->isLessThan(lower.get())) {
+    if (upper->isLessThan(lower.get())) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
     }
-    if (lower && upper && upper->isEqual(lower.get()) && (lowerOpen || upperOpen)) {
+    if (upper->isEqual(lower.get()) && (lowerOpen || upperOpen)) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
     }
