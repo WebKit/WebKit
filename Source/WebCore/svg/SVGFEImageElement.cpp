@@ -96,9 +96,6 @@ void SVGFEImageElement::buildPendingResource()
     String id;
     Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
     if (!target) {
-        if (hasPendingResources())
-            return;
-
         if (id.isEmpty())
             requestImageResource();
         else {

@@ -1,3 +1,32 @@
+2012-06-21  Philip Rogers  <pdr@google.com>
+
+        Add pending resource even if others are pending
+        https://bugs.webkit.org/show_bug.cgi?id=89633
+
+        Reviewed by Dirk Schulze.
+
+        An element can have multiple simultaneous pending resources but some of
+        this code was legacy, before the hasPendingResource()->hasPendingResources()
+        change (r105573). This patch continues adding a pending resource even if
+        there are other pending resources. In some cases, this can lead to marking
+        a resource as pending twice but the performance impact of that is negligible.
+
+        Other than SVGUseElement, SVGTrefElement and SVGFEImageElement are also
+        changed. These elements are unaffected because they can only have
+        a single resource at the moment (href), with other Style url() references
+        being handled by their parent containers.
+
+        Tests: svg/custom/use-multiple-pending-resources-expected.svg
+               svg/custom/use-multiple-pending-resources.svg
+
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::buildPendingResource):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::detachTarget):
+        (WebCore::SVGTRefElement::buildPendingResource):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::buildPendingResource):
+
 2012-06-21  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Replace the use of "struct stat" with GStatBuf

@@ -418,10 +418,9 @@ void SVGUseElement::buildPendingResource()
         // We can't observe if the target somewhen enters the external document, nor should we do it.
         if (externalDocument())
             return;
-        if (hasPendingResources() || id.isEmpty())
+        if (id.isEmpty())
             return;
 
-        ASSERT(!hasPendingResources());
         referencedDocument()->accessSVGExtensions()->addPendingResource(id, this);
         ASSERT(hasPendingResources());
         return;
