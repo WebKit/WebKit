@@ -5,16 +5,7 @@
 document.addEventListener("DOMContentLoaded", runTest);
 function test()
 {
-    // FIXME: Replace FileSystemDispatcher with FileSystemDispatcher implementation after it landed.
-    function FileSystemDispatcher() {}
-    FileSystemDispatcher.prototype = {
-        didReadDirectory: function(requestId, errorCode, entries)
-        {
-        }
-    };
-
-    InspectorBackend.registerFileSystemDispatcher(new FileSystemDispatcher());
-    FileSystemAgent.enable();
+    var requestManager = new WebInspector.FileSystemRequestManager();
 
     InspectorTest.clearFileSystem(step1);
 
@@ -35,22 +26,17 @@ function test()
 
     function step4()
     {
-        InspectorTest.addSniffer(FileSystemDispatcher.prototype, "didReadDirectory", step5, false);
-        // FIXME: Call FileSystemDispatcher through FileSystemDispatcher implementation after it landed.
-        FileSystemAgent.readDirectory(1, "filesystem:http://127.0.0.1:8000/temporary/hoge");
+        requestManager.requestDirectoryContent("filesystem:http://127.0.0.1:8000/temporary/hoge", step5);
     }
 
-    function step5(requestId, errorCode, entries)
+    function step5(errorCode, entries)
     {
-        InspectorTest.dumpReadDirectoryResult(requestId, errorCode, entries);
-
-        InspectorTest.addSniffer(FileSystemDispatcher.prototype, "didReadDirectory", step6, false);
-        // FIXME: Call FileSystemDispatcher through FileSystemDispatcher implementation after it landed.
-        FileSystemAgent.readDirectory(1, "filesystem:http://127.0.0.1:8000/temporary/foo");
+        InspectorTest.dumpReadDirectoryResult(errorCode, entries);
+        requestManager.requestDirectoryContent("filesystem:http://127.0.0.1:8000/temporary/foo", step6);
     }
 
-    function step6(requestId, errorCode, entries) {
-        InspectorTest.dumpReadDirectoryResult(requestId, errorCode, entries);
+    function step6(errorCode, entries) {
+        InspectorTest.dumpReadDirectoryResult(errorCode, entries);
 
         InspectorTest.clearFileSystem(step7);
     }

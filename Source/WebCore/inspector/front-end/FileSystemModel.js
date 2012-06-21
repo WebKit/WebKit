@@ -148,7 +148,7 @@ WebInspector.FileSystemModel.prototype = {
 
         var types = ["persistent", "temporary"];
         for (var i = 0; i < types.length; ++i)
-            this._agentWrapper.getFileSystemRoot(origin, types[i], this._gotFileSystem.bind(this, origin, types[i], this._fileSystemsForOrigin[origin]));
+            this._agentWrapper.requestFileSystemRoot(origin, types[i], this._fileSystemRootReceived.bind(this, origin, types[i], this._fileSystemsForOrigin[origin]));
     },
 
     /**
@@ -195,7 +195,7 @@ WebInspector.FileSystemModel.prototype = {
      * @param {number} errorCode
      * @param {FileSystemAgent.Entry=} backendRootEntry
      */
-    _gotFileSystem: function(origin, type, store, errorCode, backendRootEntry)
+    _fileSystemRootReceived: function(origin, type, store, errorCode, backendRootEntry)
     {
         if (errorCode === 0 && backendRootEntry && this._fileSystemsForOrigin[origin] === store) {
             var fileSystem = new WebInspector.FileSystemModel.FileSystem(this, origin, type, backendRootEntry);
@@ -237,34 +237,29 @@ WebInspector.FileSystemModel.FileSystem.prototype = {
  */
 WebInspector.FileSystemRequestManager = function()
 {
-    this._pendingGetFileSystemRootRequests = {};
-    this._pendingReadDirectoryRequests = {};
+    this._pendingFileSystemRootRequests = {};
+    this._pendingDirectoryContentRequests = {};
 
     InspectorBackend.registerFileSystemDispatcher(new WebInspector.FileSystemDispatcher(this));
     FileSystemAgent.enable();
 }
 
-WebInspector.FileSystemRequestManager.nextRequestId = 1;
-
 WebInspector.FileSystemRequestManager.prototype = {
-    /**
-     * @return {number}
-     */
-    _requestId: function()
-    {
-        return WebInspector.FileSystemRequestManager.nextRequestId++;
-    },
-
     /**
      * @param {string} origin
      * @param {string} type
      * @param {function(number, FileSystemAgent.Entry)} callback
      */
-    getFileSystemRoot: function(origin, type, callback)
+    requestFileSystemRoot: function(origin, type, callback)
     {
-        var requestId = this._requestId();
-        this._pendingGetFileSystemRootRequests[requestId] = callback;
-        FileSystemAgent.getFileSystemRoot(requestId, origin, type);
+        var store = this._pendingFileSystemRootRequests;
+        FileSystemAgent.requestFileSystemRoot(origin, type, requestAccepted);
+
+        function requestAccepted(error, requestId)
+        {
+            if (!error)
+                store[requestId] = callback;
+        }
     },
 
     /**
@@ -272,12 +267,12 @@ WebInspector.FileSystemRequestManager.prototype = {
      * @param {number} errorCode
      * @param {FileSystemAgent.Entry=} backendRootEntry
      */
-    _gotFileSystemRoot: function(requestId, errorCode, backendRootEntry)
+    _fileSystemRootReceived: function(requestId, errorCode, backendRootEntry)
     {
-        var callback = this._pendingGetFileSystemRootRequests[requestId];
+        var callback = this._pendingFileSystemRootRequests[requestId];
         if (!callback)
             return;
-        delete this._pendingGetFileSystemRootRequests[requestId];
+        delete this._pendingFileSystemRootRequests[requestId];
         callback(errorCode, backendRootEntry);
     },
 
@@ -285,11 +280,16 @@ WebInspector.FileSystemRequestManager.prototype = {
      * @param {string} url
      * @param {function(number, Array.<FileSystemAgent.Entry>=)} callback
      */
-    readDirectory: function(url, callback)
+    requestDirectoryContent: function(url, callback)
     {
-        var requestId = this.requestId();
-        this._pendingReadDirectoryRequests[requestId] = callback;
-        FileSystemAgent.readDirectory(requestId, url);
+        var store = this._pendingDirectoryContentRequests;
+        FileSystemAgent.requestDirectoryContent(url, requestAccepted);
+
+        function requestAccepted(error, requestId)
+        {
+            if (!error)
+                store[requestId] = callback;
+        }
     },
 
     /**
@@ -297,12 +297,12 @@ WebInspector.FileSystemRequestManager.prototype = {
      * @param {number} errorCode
      * @param {Array.<FileSystemAgent.Entry>=} backendEntries
      */
-    _didReadDirectory: function(requestId, errorCode, backendEntries)
+    _directoryContentReceived: function(requestId, errorCode, backendEntries)
     {
-        var callback = /** @type {function(number, Array.<FileSystemAgent.Entry>=)} */ this._pendingReadDirectoryRequests[requestId];
+        var callback = /** @type {function(number, Array.<FileSystemAgent.Entry>=)} */ this._pendingDirectoryContentRequests[requestId];
         if (!callback)
             return;
-        delete this._pendingReadDirectoryRequests[requestId];
+        delete this._pendingDirectoryContentRequests[requestId];
         callback(errorCode, backendEntries);
     }
 }
@@ -323,9 +323,9 @@ WebInspector.FileSystemDispatcher.prototype = {
      * @param {number} errorCode
      * @param {FileSystemAgent.Entry=} backendRootEntry
      */
-    gotFileSystemRoot: function(requestId, errorCode, backendRootEntry)
+    fileSystemRootReceived: function(requestId, errorCode, backendRootEntry)
     {
-        this._agentWrapper._gotFileSystemRoot(requestId, errorCode, backendRootEntry);
+        this._agentWrapper._fileSystemRootReceived(requestId, errorCode, backendRootEntry);
     },
 
     /**
@@ -333,8 +333,8 @@ WebInspector.FileSystemDispatcher.prototype = {
      * @param {number} errorCode
      * @param {Array.<FileSystemAgent.Entry>=} backendEntries
      */
-    didReadDirectory: function(requestId, errorCode, backendEntries)
+    directoryContentReceived: function(requestId, errorCode, backendEntries)
     {
-        this._agentWrapper._didReadDirectory(requestId, errorCode, backendEntries);
+        this._agentWrapper._directoryContentReceived(requestId, errorCode, backendEntries);
     }
 }

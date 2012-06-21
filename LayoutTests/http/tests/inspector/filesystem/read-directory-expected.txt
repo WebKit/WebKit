@@ -1,6 +1,5 @@
 Tests readDirectory.
 
-requestId: 1
 errorCode: 0
 entries:
   0:
@@ -13,7 +12,6 @@ entries:
     url: filesystem:http://127.0.0.1:8000/temporary/hoge/fuga
     name: fuga
     isDirectory: true
-requestId: 1
 errorCode: 1
 entries: (null)
 

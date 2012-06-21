@@ -34,9 +34,8 @@ var initialize_FileSystemTest = function()
         InspectorTest.evaluateInPage("clearFileSystem(" + InspectorTest.registerCallback(callback) + ")");
     };
 
-    InspectorTest.dumpReadDirectoryResult = function(requestId, errorCode, entries)
+    InspectorTest.dumpReadDirectoryResult = function(errorCode, entries)
     {
-        InspectorTest.addResult("requestId: " + requestId);
         InspectorTest.addResult("errorCode: " + errorCode);
 
         if (!entries) {

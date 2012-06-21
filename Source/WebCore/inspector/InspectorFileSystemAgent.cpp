@@ -116,7 +116,7 @@ private:
     {
         if (!m_frontendProvider || !m_frontendProvider->frontend())
             return;
-        m_frontendProvider->frontend()->gotFileSystemRoot(m_requestId, static_cast<int>(errorCode), entry);
+        m_frontendProvider->frontend()->fileSystemRootReceived(m_requestId, static_cast<int>(errorCode), entry);
         m_frontendProvider = 0;
     }
 
@@ -222,7 +222,7 @@ private:
     {
         if (!m_frontendProvider || !m_frontendProvider->frontend())
             return;
-        m_frontendProvider->frontend()->didReadDirectory(m_requestId, static_cast<int>(errorCode), entries);
+        m_frontendProvider->frontend()->directoryContentReceived(m_requestId, static_cast<int>(errorCode), entries);
         m_frontendProvider = 0;
     }
 
@@ -408,28 +408,31 @@ void InspectorFileSystemAgent::disable(ErrorString*)
     m_state->setBoolean(FileSystemAgentState::fileSystemAgentEnabled, m_enabled);
 }
 
-void InspectorFileSystemAgent::getFileSystemRoot(ErrorString*, int requestId, const String& origin, const String& type)
+void InspectorFileSystemAgent::requestFileSystemRoot(ErrorString* error, const String& origin, const String& type, int* requestId)
 {
     if (!m_enabled || !m_frontendProvider)
         return;
     ASSERT(m_frontendProvider->frontend());
 
+    *requestId = m_nextRequestId++;
     if (ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextForOrigin(SecurityOrigin::createFromString(origin).get()))
-        GetFileSystemRootTask::create(m_frontendProvider, requestId, type)->start(scriptExecutionContext);
+        GetFileSystemRootTask::create(m_frontendProvider, *requestId, type)->start(scriptExecutionContext);
     else
-        m_frontendProvider->frontend()->gotFileSystemRoot(requestId, static_cast<int>(FileError::ABORT_ERR), 0);
+        m_frontendProvider->frontend()->fileSystemRootReceived(*requestId, static_cast<int>(FileError::ABORT_ERR), 0);
 }
 
-void InspectorFileSystemAgent::readDirectory(ErrorString*, int requestId, const String& url)
+void InspectorFileSystemAgent::requestDirectoryContent(ErrorString*, const String& url, int* requestId)
 {
     if (!m_enabled || !m_frontendProvider)
         return;
     ASSERT(m_frontendProvider->frontend());
 
+    *requestId = m_nextRequestId++;
+
     if (ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextForOrigin(SecurityOrigin::createFromString(url).get()))
-        ReadDirectoryTask::create(m_frontendProvider, requestId, url)->start(scriptExecutionContext);
+        ReadDirectoryTask::create(m_frontendProvider, *requestId, url)->start(scriptExecutionContext);
     else
-        m_frontendProvider->frontend()->didReadDirectory(requestId, static_cast<int>(FileError::ABORT_ERR), 0);
+        m_frontendProvider->frontend()->directoryContentReceived(*requestId, static_cast<int>(FileError::ABORT_ERR), 0);
 }
 
 void InspectorFileSystemAgent::setFrontend(InspectorFrontend* frontend)
@@ -457,6 +460,7 @@ InspectorFileSystemAgent::InspectorFileSystemAgent(InstrumentingAgents* instrume
     : InspectorBaseAgent<InspectorFileSystemAgent>("FileSystem", instrumentingAgents, state)
     , m_pageAgent(pageAgent)
     , m_enabled(false)
+    , m_nextRequestId(1)
 {
     ASSERT(instrumentingAgents);
     ASSERT(state);

@@ -59,8 +59,8 @@ public:
     virtual void enable(ErrorString*) OVERRIDE;
     virtual void disable(ErrorString*) OVERRIDE;
 
-    virtual void getFileSystemRoot(ErrorString*, int requestId, const String& origin, const String& type) OVERRIDE;
-    virtual void readDirectory(ErrorString*, int requestId, const String& url) OVERRIDE;
+    virtual void requestFileSystemRoot(ErrorString*, const String& origin, const String& type, int* requestId) OVERRIDE;
+    virtual void requestDirectoryContent(ErrorString*, const String& url, int* requestId) OVERRIDE;
 
     virtual void setFrontend(InspectorFrontend*) OVERRIDE;
     virtual void clearFrontend() OVERRIDE;
@@ -73,6 +73,7 @@ private:
     InspectorPageAgent* m_pageAgent;
     RefPtr<FrontendProvider> m_frontendProvider;
     bool m_enabled;
+    int m_nextRequestId;
 };
 
 } // namespace WebCore

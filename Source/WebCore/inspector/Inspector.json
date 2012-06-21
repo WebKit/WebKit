@@ -617,7 +617,7 @@
                 "name": "addInspectedHeapObject",
                 "parameters": [
                     { "name": "heapObjectId", "type": "integer" }
-		]
+                ]
             }
         ],
         "events": [
@@ -1405,6 +1405,11 @@
         "hidden": true,
         "types": [
             {
+                "id": "RequestId",
+                "type": "integer",
+                "description": "Request Identifier to glue a request and its completion event."
+            },
+            {
                 "id": "Entry",
                 "type": "object",
                 "properties": [
@@ -1427,41 +1432,45 @@
                 "description": "Disables events from backend."
             },
             {
-                "name": "getFileSystemRoot",
+                "name": "requestFileSystemRoot",
                 "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request Identifier of the command. The backend should pass back this value on corresponding gotFileSystemRoot event." },
                     { "name": "origin", "type": "string", "description": "Security origin of requesting FileSystem. One of frames in current page needs to have this security origin." },
                     { "name": "type", "type": "string", "enum": ["temporary", "persistent"], "description": "FileSystem type of requesting FileSystem." }
                 ],
-                "description": "Returns root directory of the FileSystem if exists."
+                "returns": [
+                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding fileSystemRootReceived event should have same requestId with this." }
+                ],
+                "description": "Returns root directory of the FileSystem as fileSystemRootReceived event, if exists."
             },
             {
-                "name": "readDirectory",
+                "name": "requestDirectoryContent",
                 "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request Identifier of the command. The backend should pass back this value on corresponding didReadDirectory event." },
                     { "name": "url", "type": "string", "description": "URL of the directory that the frontend is requesting to read from." }
                 ],
-                "description": "Requests to read the directory content. Result should return on didReadDirectory event with request id."
+                "returns": [
+                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding directoryContentReceived event should have same requestId with this." }
+                ],
+                "description": "Returns content of the directory as directoryContentReceived event."
             }
         ],
         "events": [
             {
-                "name": "gotFileSystemRoot",
+                "name": "fileSystemRootReceived",
                 "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was passed to corresponding getFileSystemRoot command." },
+                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned by corresponding requestFileSystemRoot command." },
                     { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
                     { "name": "root", "$ref": "FileSystem.Entry", "optional": true, "description": "Contains root of the requested FileSystem if the command completed successfully." }
                 ],
-                "description": "Completion event of getFileSystemRoot command."
+                "description": "Completion event of requestFileSystemRoot command."
             },
             {
-                "name": "didReadDirectory",
+                "name": "directoryContentReceived",
                 "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was passed to corresponding readDirectory request." },
+                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned by corresponding requestDirectoryContent command." },
                     { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
                     { "name": "entries", "type": "array", "items": { "$ref": "FileSystem.Entry" }, "optional": true, "description": "Contains all entries on directory if the command completed successfully." }
                 ],
-                "description": "Completion event of readDirectory command."
+                "description": "Completion event of requestDirectoryContent command."
             }
         ]
     },
