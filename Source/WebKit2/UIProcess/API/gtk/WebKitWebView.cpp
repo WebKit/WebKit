@@ -65,6 +65,7 @@ enum {
 
     CREATE,
     READY_TO_SHOW,
+    RUN_AS_MODAL,
     CLOSE,
 
     SCRIPT_DIALOG,
@@ -117,6 +118,8 @@ struct _WebKitWebViewPrivate {
     GRefPtr<WebKitBackForwardList> backForwardList;
     GRefPtr<WebKitSettings> settings;
     GRefPtr<WebKitWindowProperties> windowProperties;
+
+    GRefPtr<GMainLoop> modalLoop;
 
     GRefPtr<WebKitHitTestResult> mouseTargetHitTestResult;
     unsigned mouseTargetModifiers;
@@ -223,6 +226,14 @@ static gboolean webkitWebViewPermissionRequest(WebKitWebView*, WebKitPermissionR
     return TRUE;
 }
 
+static void allowModalDialogsChanged(WebKitSettings* settings, GParamSpec*, WebKitWebView* webView)
+{
+    WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
+    if (!page)
+        return;
+    page->setCanRunModal(webkit_settings_get_allow_modal_dialogs(settings));
+}
+
 static void zoomTextOnlyChanged(WebKitSettings* settings, GParamSpec*, WebKitWebView* webView)
 {
     WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
@@ -236,7 +247,16 @@ static void webkitWebViewSetSettings(WebKitWebView* webView, WebKitSettings* set
 {
     webView->priv->settings = settings;
     webkitSettingsAttachSettingsToPage(webView->priv->settings.get(), wkPage);
+    g_signal_connect(settings, "notify::allow-modal-dialogs", G_CALLBACK(allowModalDialogsChanged), webView);
     g_signal_connect(settings, "notify::zoom-text-only", G_CALLBACK(zoomTextOnlyChanged), webView);
+}
+
+static void webkitWebViewDisconnectSettingsSignalHandlers(WebKitWebView* webView)
+{
+    WebKitSettings* settings = webView->priv->settings.get();
+    g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(allowModalDialogsChanged), webView);
+    g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(zoomTextOnlyChanged), webView);
+
 }
 
 static void fileChooserDialogResponseCallback(GtkDialog* dialog, gint responseID, WebKitFileChooserRequest* request)
@@ -353,8 +373,16 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
 static void webkitWebViewFinalize(GObject* object)
 {
     WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(object)->priv;
+
     if (priv->javascriptGlobalContext)
         JSGlobalContextRelease(priv->javascriptGlobalContext);
+
+    // For modal dialogs, make sure the main loop is stopped when finalizing the webView.
+    if (priv->modalLoop && g_main_loop_is_running(priv->modalLoop.get()))
+        g_main_loop_quit(priv->modalLoop.get());
+
+    webkitWebViewDisconnectSettingsSignalHandlers(WEBKIT_WEB_VIEW(object));
+
     priv->~WebKitWebViewPrivate();
     G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
 }
@@ -603,6 +631,27 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      0, 0,
                      g_cclosure_marshal_VOID__VOID,
                      G_TYPE_NONE, 0);
+
+     /**
+     * WebKitWebView::run-as-modal:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     *
+     * Emitted after #WebKitWebView::ready-to-show on the newly
+     * created #WebKitWebView when JavaScript code calls
+     * <function>window.showModalDialog</function>. The purpose of
+     * this signal is to allow the client application to prepare the
+     * new view to behave as modal. Once the signal is emitted a new
+     * mainloop will be run to block user interaction in the parent
+     * #WebKitWebView until the new dialog is closed.
+     */
+    signals[RUN_AS_MODAL] =
+            g_signal_new("run-as-modal",
+                         G_TYPE_FROM_CLASS(webViewClass),
+                         G_SIGNAL_RUN_LAST,
+                         G_STRUCT_OFFSET(WebKitWebViewClass, run_as_modal),
+                         0, 0,
+                         g_cclosure_marshal_VOID__VOID,
+                         G_TYPE_NONE, 0);
 
     /**
      * WebKitWebView::close:
@@ -1032,6 +1081,16 @@ WKPageRef webkitWebViewCreateNewPage(WebKitWebView* webView, WKDictionaryRef wkW
 void webkitWebViewReadyToShowPage(WebKitWebView* webView)
 {
     g_signal_emit(webView, signals[READY_TO_SHOW], 0, NULL);
+}
+
+void webkitWebViewRunAsModal(WebKitWebView* webView)
+{
+    g_signal_emit(webView, signals[RUN_AS_MODAL], 0, NULL);
+
+    webView->priv->modalLoop = adoptGRef(g_main_loop_new(0, FALSE));
+    GDK_THREADS_ENTER();
+    g_main_loop_run(webView->priv->modalLoop.get());
+    GDK_THREADS_LEAVE();
 }
 
 void webkitWebViewClosePage(WebKitWebView* webView)
@@ -1684,7 +1743,7 @@ void webkit_web_view_set_settings(WebKitWebView* webView, WebKitSettings* settin
     if (webView->priv->settings == settings)
         return;
 
-    g_signal_handlers_disconnect_by_func(webView->priv->settings.get(), reinterpret_cast<gpointer>(zoomTextOnlyChanged), webView);
+    webkitWebViewDisconnectSettingsSignalHandlers(webView);
     webkitWebViewSetSettings(webView, settings, toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView))));
 }
 

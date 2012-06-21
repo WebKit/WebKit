@@ -644,6 +644,9 @@ public:
     String accessibilityPlugID() const { return m_accessibilityPlugID; }
 #endif
 
+    void setCanRunModal(bool);
+    bool canRunModal();
+
     void beginPrinting(WebFrameProxy*, const PrintInfo&);
     void endPrinting();
     void computePagesForPrinting(WebFrameProxy*, const PrintInfo&, PassRefPtr<ComputedPagesCallback>);
@@ -1075,6 +1078,9 @@ private:
 
     // Whether WebPageProxy::close() has been called on this page.
     bool m_isClosed;
+
+    // Whether it can run modal child web pages.
+    bool m_canRunModal;
 
     bool m_isInPrintingMode;
     bool m_isPerformingDOMPrintOperation;

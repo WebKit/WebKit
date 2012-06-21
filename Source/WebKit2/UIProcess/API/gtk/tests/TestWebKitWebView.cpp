@@ -103,6 +103,7 @@ public:
     enum WebViewEvents {
         Create,
         ReadyToShow,
+        RunAsModal,
         Close
     };
 
@@ -178,46 +179,19 @@ public:
         test->m_windowPropertiesChanged.add(g_param_spec_get_name(paramSpec));
     }
 
-    static void viewClose(WebKitWebView* webView, UIClientTest* test)
+    static GtkWidget* viewCreateCallback(WebKitWebView* webView, UIClientTest* test)
     {
-        g_assert(webView != test->m_webView);
-
-        test->m_webViewEvents.append(Close);
-        g_object_unref(webView);
-
-        g_main_loop_quit(test->m_mainLoop);
+        return test->viewCreate(webView);
     }
 
-    static void viewReadyToShow(WebKitWebView* webView, UIClientTest* test)
+    static void viewReadyToShowCallback(WebKitWebView* webView, UIClientTest* test)
     {
-        g_assert(webView != test->m_webView);
-
-        WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(webView);
-        g_assert(windowProperties);
-        WindowProperties(windowProperties).assertEqual(test->m_windowProperties);
-
-        test->m_webViewEvents.append(ReadyToShow);
+        test->viewReadyToShow(webView);
     }
 
-    static GtkWidget* viewCreate(WebKitWebView* webView, UIClientTest* test)
+    static void viewCloseCallback(WebKitWebView* webView, UIClientTest* test)
     {
-        g_assert(webView == test->m_webView);
-
-        GtkWidget* newWebView = webkit_web_view_new_with_context(webkit_web_view_get_context(webView));
-        g_object_ref_sink(newWebView);
-
-        test->m_webViewEvents.append(Create);
-
-        WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(newWebView));
-        g_assert(windowProperties);
-        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(windowProperties));
-        test->m_windowPropertiesChanged.clear();
-        g_signal_connect(windowProperties, "notify", G_CALLBACK(windowPropertiesNotifyCallback), test);
-
-        g_signal_connect(newWebView, "ready-to-show", G_CALLBACK(viewReadyToShow), test);
-        g_signal_connect(newWebView, "close", G_CALLBACK(viewClose), test);
-
-        return newWebView;
+        test->viewClose(webView);
     }
 
     void scriptAlert(WebKitScriptDialog* dialog)
@@ -300,7 +274,7 @@ public:
         , m_mouseTargetModifiers(0)
     {
         webkit_settings_set_javascript_can_open_windows_automatically(webkit_web_view_get_settings(m_webView), TRUE);
-        g_signal_connect(m_webView, "create", G_CALLBACK(viewCreate), this);
+        g_signal_connect(m_webView, "create", G_CALLBACK(viewCreateCallback), this);
         g_signal_connect(m_webView, "script-dialog", G_CALLBACK(scriptDialog), this);
         g_signal_connect(m_webView, "mouse-target-changed", G_CALLBACK(mouseTargetChanged), this);
         g_signal_connect(m_webView, "permission-request", G_CALLBACK(permissionRequested), this);
@@ -326,6 +300,48 @@ public:
         mouseMoveTo(x, y, mouseModifiers);
         g_main_loop_run(m_mainLoop);
         return m_mouseTargetHitTestResult.get();
+    }
+
+    virtual GtkWidget* viewCreate(WebKitWebView* webView)
+    {
+        g_assert(webView == m_webView);
+
+        GtkWidget* newWebView = webkit_web_view_new_with_context(webkit_web_view_get_context(webView));
+        g_object_ref_sink(newWebView);
+
+        m_webViewEvents.append(Create);
+
+        WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(newWebView));
+        g_assert(windowProperties);
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(windowProperties));
+        m_windowPropertiesChanged.clear();
+
+        g_signal_connect(windowProperties, "notify", G_CALLBACK(windowPropertiesNotifyCallback), this);
+        g_signal_connect(newWebView, "ready-to-show", G_CALLBACK(viewReadyToShowCallback), this);
+        g_signal_connect(newWebView, "close", G_CALLBACK(viewCloseCallback), this);
+
+        return newWebView;
+    }
+
+    virtual void viewReadyToShow(WebKitWebView* webView)
+    {
+        g_assert(webView != m_webView);
+
+        WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(webView);
+        g_assert(windowProperties);
+        WindowProperties(windowProperties).assertEqual(m_windowProperties);
+
+        m_webViewEvents.append(ReadyToShow);
+    }
+
+    virtual void viewClose(WebKitWebView* webView)
+    {
+        g_assert(webView != m_webView);
+
+        m_webViewEvents.append(Close);
+        g_object_unref(webView);
+
+        g_main_loop_quit(m_mainLoop);
     }
 
     Vector<WebViewEvents> m_webViewEvents;
@@ -356,6 +372,62 @@ static gboolean checkMimeTypeForFilter(GtkFileFilter* filter, const gchar* mimeT
     filterInfo.contains = GTK_FILE_FILTER_MIME_TYPE;
     filterInfo.mime_type = mimeType;
     return gtk_file_filter_filter(filter, &filterInfo);
+}
+
+class ModalDialogsTest: public UIClientTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(ModalDialogsTest);
+
+    static void dialogRunAsModalCallback(WebKitWebView* webView, ModalDialogsTest* test)
+    {
+        g_assert(webView != test->m_webView);
+        test->m_webViewEvents.append(RunAsModal);
+    }
+
+    GtkWidget* viewCreate(WebKitWebView* webView)
+    {
+        g_assert(webView == m_webView);
+
+        GtkWidget* newWebView = UIClientTest::viewCreate(webView);
+        g_signal_connect(newWebView, "run-as-modal", G_CALLBACK(dialogRunAsModalCallback), this);
+        return newWebView;
+    }
+
+    void viewReadyToShow(WebKitWebView* webView)
+    {
+        g_assert(webView != m_webView);
+        m_webViewEvents.append(ReadyToShow);
+    }
+};
+
+static void testWebViewAllowModalDialogs(ModalDialogsTest* test, gconstpointer)
+{
+    WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
+    webkit_settings_set_allow_modal_dialogs(settings, TRUE);
+
+    test->loadHtml("<html><body onload=\"window.showModalDialog('data:text/html,<html><body/><script>window.close();</script></html>')\"></body></html>", 0);
+    test->waitUntilMainLoopFinishes();
+
+    Vector<UIClientTest::WebViewEvents>& events = test->m_webViewEvents;
+    g_assert_cmpint(events.size(), ==, 4);
+    g_assert_cmpint(events[0], ==, UIClientTest::Create);
+    g_assert_cmpint(events[1], ==, UIClientTest::ReadyToShow);
+    g_assert_cmpint(events[2], ==, UIClientTest::RunAsModal);
+    g_assert_cmpint(events[3], ==, UIClientTest::Close);
+}
+
+static void testWebViewDisallowModalDialogs(ModalDialogsTest* test, gconstpointer)
+{
+    WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
+    webkit_settings_set_allow_modal_dialogs(settings, FALSE);
+
+    test->loadHtml("<html><body onload=\"window.showModalDialog('data:text/html,<html><body/><script>window.close();</script></html>')\"></body></html>", 0);
+    // We need to use a timeout here because the viewClose() function
+    // won't ever be called as the dialog won't be created.
+    test->wait(1);
+
+    Vector<UIClientTest::WebViewEvents>& events = test->m_webViewEvents;
+    g_assert_cmpint(events.size(), ==, 0);
 }
 
 static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
@@ -795,6 +867,8 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
     WebViewTest::add("WebKitWebView", "replace-content", testWebViewReplaceContent);
     UIClientTest::add("WebKitWebView", "create-ready-close", testWebViewCreateReadyClose);
+    ModalDialogsTest::add("WebKitWebView", "allow-modal-dialogs", testWebViewAllowModalDialogs);
+    ModalDialogsTest::add("WebKitWebView", "disallow-modal-dialogs", testWebViewDisallowModalDialogs);
     UIClientTest::add("WebKitWebView", "javascript-dialogs", testWebViewJavaScriptDialogs);
     UIClientTest::add("WebKitWebView", "window-properties", testWebViewWindowProperties);
     UIClientTest::add("WebKitWebView", "mouse-target", testWebViewMouseTarget);

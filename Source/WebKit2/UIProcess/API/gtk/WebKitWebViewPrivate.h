@@ -38,6 +38,7 @@ void webkitWebViewSetTitle(WebKitWebView*, const CString&);
 void webkitWebViewUpdateURI(WebKitWebView*);
 WKPageRef webkitWebViewCreateNewPage(WebKitWebView*, WKDictionaryRef wkWindowFeatures);
 void webkitWebViewReadyToShowPage(WebKitWebView*);
+void webkitWebViewRunAsModal(WebKitWebView*);
 void webkitWebViewClosePage(WebKitWebView*);
 void webkitWebViewRunJavaScriptAlert(WebKitWebView*, const CString& message);
 bool webkitWebViewRunJavaScriptConfirm(WebKitWebView*, const CString& message);

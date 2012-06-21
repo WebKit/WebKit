@@ -33,6 +33,7 @@
 
 #include "WebKitPrivate.h"
 #include "WebKitSettingsPrivate.h"
+#include "WebPageProxy.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
 
@@ -46,6 +47,7 @@ struct _WebKitSettingsPrivate {
     CString fantasyFontFamily;
     CString pictographFontFamily;
     CString defaultCharset;
+    bool allowModalDialogs;
     bool zoomTextOnly;
 };
 
@@ -105,6 +107,7 @@ enum {
     PROP_PRINT_BACKGROUNDS,
     PROP_ENABLE_WEBAUDIO,
     PROP_ENABLE_WEBGL,
+    PROP_ALLOW_MODAL_DIALOGS,
     PROP_ZOOM_TEXT_ONLY,
     PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD,
     PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE,
@@ -215,6 +218,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_ENABLE_WEBGL:
         webkit_settings_set_enable_webgl(settings, g_value_get_boolean(value));
+        break;
+    case PROP_ALLOW_MODAL_DIALOGS:
+        webkit_settings_set_allow_modal_dialogs(settings, g_value_get_boolean(value));
         break;
     case PROP_ZOOM_TEXT_ONLY:
         webkit_settings_set_zoom_text_only(settings, g_value_get_boolean(value));
@@ -340,6 +346,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ENABLE_WEBGL:
         g_value_set_boolean(value, webkit_settings_get_enable_webgl(settings));
+        break;
+    case PROP_ALLOW_MODAL_DIALOGS:
+        g_value_set_boolean(value, webkit_settings_get_allow_modal_dialogs(settings));
         break;
     case PROP_ZOOM_TEXT_ONLY:
         g_value_set_boolean(value, webkit_settings_get_zoom_text_only(settings));
@@ -853,6 +862,24 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          readWriteConstructParamFlags));
 
     /**
+     * WebKitSettings:allow-modal-dialogs:
+     *
+     * Determine whether it's allowed to create and run modal dialogs
+     * from a #WebKitWebView through JavaScript with
+     * <function>window.showModalDialog</function>. If it's set to
+     * %FALSE, the associated #WebKitWebView won't be able to create
+     * new modal dialogs, so not even the #WebKitWebView::create
+     * signal will be emitted.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ALLOW_MODAL_DIALOGS,
+                                    g_param_spec_boolean("allow-modal-dialogs",
+                                                         _("Allow modal dialogs"),
+                                                         _("Whether it is possible to create modal dialogs"),
+                                                         FALSE,
+                                                         readWriteConstructParamFlags));
+
+    /**
      * WebKitSettings:zoom-text-only:
      *
      * Whether #WebKitWebView:zoom-level affects only the
@@ -969,6 +996,7 @@ static void webkit_settings_init(WebKitSettings* settings)
 void webkitSettingsAttachSettingsToPage(WebKitSettings* settings, WKPageRef wkPage)
 {
     WKPageGroupSetPreferences(WKPageGetPageGroup(wkPage), settings->priv->preferences.get());
+    WebKit::toImpl(wkPage)->setCanRunModal(settings->priv->allowModalDialogs);
 }
 
 /**
@@ -2186,6 +2214,39 @@ void webkit_settings_set_enable_webgl(WebKitSettings* settings, gboolean enabled
 
     WKPreferencesSetWebGLEnabled(priv->preferences.get(), enabled);
     g_object_notify(G_OBJECT(settings), "enable-webgl");
+}
+
+/**
+ * webkit_settings_set_allow_modal_dialogs:
+ * @settings: a #WebKitSettings
+ * @allowed: Value to be set
+ *
+ * Set the #WebKitSettings:allow-modal-dialogs property.
+ */
+void webkit_settings_set_allow_modal_dialogs(WebKitSettings* settings, gboolean allowed)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    if (priv->allowModalDialogs == allowed)
+        return;
+
+    priv->allowModalDialogs = allowed;
+    g_object_notify(G_OBJECT(settings), "allow-modal-dialogs");
+}
+
+/**
+ * webkit_settings_get_allow_modal_dialogs:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:allow-modal-dialogs property.
+ *
+ * Returns: %TRUE if it's allowed to create and run modal dialogs or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_allow_modal_dialogs(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+    return settings->priv->allowModalDialogs;
 }
 
 /**

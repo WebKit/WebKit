@@ -308,6 +308,13 @@ webkit_settings_set_enable_webgl                               (WebKitSettings *
                                                                 gboolean        enabled);
 
 WEBKIT_API void
+webkit_settings_set_allow_modal_dialogs                        (WebKitSettings *settings,
+                                                                gboolean        allowed);
+
+WEBKIT_API gboolean
+webkit_settings_get_allow_modal_dialogs                        (WebKitSettings *settings);
+
+WEBKIT_API void
 webkit_settings_set_zoom_text_only                             (WebKitSettings *settings,
                                                                 gboolean        zoom_text_only);
 

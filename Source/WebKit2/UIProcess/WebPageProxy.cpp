@@ -187,6 +187,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_gapBetweenPages(0)
     , m_isValid(true)
     , m_isClosed(false)
+    , m_canRunModal(false)
     , m_isInPrintingMode(false)
     , m_isPerformingDOMPrintOperation(false)
     , m_inDecidePolicyForResponse(false)
@@ -305,7 +306,7 @@ void WebPageProxy::initializeUIClient(const WKPageUIClient* client)
     m_uiClient.initialize(client);
 
     process()->send(Messages::WebPage::SetCanRunBeforeUnloadConfirmPanel(m_uiClient.canRunBeforeUnloadConfirmPanel()), m_pageID);
-    process()->send(Messages::WebPage::SetCanRunModal(m_uiClient.canRunModal()), m_pageID);
+    setCanRunModal(m_uiClient.canRunModal());
 }
 
 void WebPageProxy::initializeFindClient(const WKPageFindClient* client)
@@ -3550,7 +3551,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient.canRunBeforeUnloadConfirmPanel();
-    parameters.canRunModal = m_uiClient.canRunModal();
+    parameters.canRunModal = m_canRunModal;
     parameters.deviceScaleFactor = m_intrinsicDeviceScaleFactor;
     parameters.mediaVolume = m_mediaVolume;
 
@@ -3755,6 +3756,23 @@ void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const String& sug
 void WebPageProxy::backForwardRemovedItem(uint64_t itemID)
 {
     process()->send(Messages::WebPage::DidRemoveBackForwardItem(itemID), m_pageID);
+}
+
+void WebPageProxy::setCanRunModal(bool canRunModal)
+{
+    if (!isValid())
+        return;
+
+    // It's only possible to change the state for a WebPage which
+    // already qualifies for running modal child web pages, otherwise
+    // there's no other possibility than not allowing it.
+    m_canRunModal = m_uiClient.canRunModal() && canRunModal;
+    process()->send(Messages::WebPage::SetCanRunModal(m_canRunModal), m_pageID);
+}
+
+bool WebPageProxy::canRunModal()
+{
+    return isValid() ? m_canRunModal : false;
 }
 
 void WebPageProxy::beginPrinting(WebFrameProxy* frame, const PrintInfo& printInfo)

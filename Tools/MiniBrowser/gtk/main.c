@@ -45,7 +45,7 @@ static gchar *argumentToURL(const char *filename)
 static void createBrowserWindow(const gchar *uri, WebKitSettings *webkitSettings)
 {
     GtkWidget *webView = webkit_web_view_new();
-    GtkWidget *mainWindow = browser_window_new(WEBKIT_WEB_VIEW(webView));
+    GtkWidget *mainWindow = browser_window_new(WEBKIT_WEB_VIEW(webView), NULL);
     gchar *url = argumentToURL(uri);
 
     if (webkitSettings) {

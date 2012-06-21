@@ -1,3 +1,93 @@
+2012-06-21  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Add support for window.showModalDialog in WebKit2GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=79500
+
+        Reviewed by Carlos Garcia Campos.
+
+        Implement runModal in WebKitUIClient to make the WebKitWebView
+        emit a 'run-as-modal' signal when requested, creating a new
+        mainloop there to block user interaction with the original window
+        while the modal dialog is showing.
+
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (runModal): Call to the new webkitWebViewRunAsModalPage function.
+        (attachUIClientToView): Add runModal.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (_WebKitWebViewPrivate): Add an atribute for a new main loop.
+        (webkitWebViewFinalize): Make sure the main loop for main dialogs,
+        if any, is stopped if it was still running.
+        (webkit_web_view_class_init): Declare new signal 'run-as-modal'.
+        (webkitWebViewRunAsModal): Emit the 'run-as-modal' signal and, if
+        handled, create and run a new main loop.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        (_WebKitWebViewClass): New handler for the 'run-as-modal' signal.
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h: Add webkitWebViewRunAsModalPage.
+
+        Allow setting and getting the value of WebPage's canRunModal
+        attribute in the WebProcess from the UIProcess after the creation
+        of a WebPage, to allow using it from WebKitWebView to allow the
+        client application to decide whether to allow create modal
+        dialogs, which would result in launching an additional nested
+        event loop in the web process, after creating the dialog.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Initialize the new
+        m_canRunModal attribute, to cache the current status of the
+        WebPage in the WebProcess.
+        (WebKit::WebPageProxy::initializeUIClient): Call the new function
+        setCanRunModal, instead of manually sending the SetCanRunModal message.
+        (WebKit::WebPageProxy::creationParameters): Use m_canRunModal
+        instead of m_uiClient.canRunModal when preparing the parameters.
+        (WebKit::WebPageProxy::setCanRunModal): New public function, it
+        sets the value of m_canRunModal and sends a message to the Web
+        process for updating the WebPage, whenever possible.
+        (WebKit::WebPageProxy::canRunModal): New public function, returns
+        the value of the m_canRunModal attribute.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy): Added new public functions and private attribute.
+
+        New property in WebKitSettings to be able to decide whether it is
+        allowed to create and run new child webviews as modal dialogs.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (_WebKitSettingsPrivate): New attribute allowModalDialogs.
+        (webKitSettingsSetProperty): Handle the new property.
+        (webKitSettingsGetProperty): Ditto.
+        (webkit_settings_class_init): Install the new property.
+        (webkitSettingsAttachSettingsToPage): Make sure the WebPage is
+        initialized with the value of the new property.
+        (webkit_settings_set_allow_modal_dialogs): New setter.
+        (webkit_settings_get_allow_modal_dialogs): New getter.
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Added new accessors.
+
+        Connect to the 'notify::allow-modal-dialogs' signal from
+        WebKitSettings to ensure that canRunModal property of the WebPage
+        is kept up to date. Ensure that signal handlers for monitoring
+        settings are disconnected when the webview is finalized.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewSetSettings): Connect to the new signal
+        'notify::allow-modal-dialogs', from WebKitSettings.
+        (allowModalDialogsChanged): Callback to update WebPage's
+        canRunModal property when updated through WebKitSettings.
+        (webkitWebViewDisconnectSettingsSignalHandlers): Disconnect signal
+        handlers for monitoring WebKitSettings properties.
+        (webkitWebViewFinalize): Ensure signal handlers are disconnected.
+        (webkit_web_view_set_settings): Ditto.
+        * UIProcess/API/gtk/WebKitWebView.h:
+
+        Add new unit tests to check the 'run-as-modal' signal is emitted
+        only when the new property in WebKitSettings is set to TRUE.
+
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewAllowModalDialogs): New unit test to check that modal
+        dialogs are properly created from JavaScript when allowed.
+        (testWebViewDisallowModalDialogs): New unit test to check that
+        it's not possible to create modal dialogs when not allowed.
+        (beforeAll): Add the new unit test.
+
 2012-06-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [WK2] Color chooser API missing

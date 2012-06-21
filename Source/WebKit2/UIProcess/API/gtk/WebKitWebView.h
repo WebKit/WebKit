@@ -136,6 +136,7 @@ struct _WebKitWebViewClass {
 
     GtkWidget *(* create)                (WebKitWebView             *web_view);
     void       (* ready_to_show)         (WebKitWebView             *web_view);
+    void       (* run_as_modal)          (WebKitWebView             *web_view);
     void       (* close)                 (WebKitWebView             *web_view);
 
     gboolean   (* script_dialog)         (WebKitWebView             *web_view,

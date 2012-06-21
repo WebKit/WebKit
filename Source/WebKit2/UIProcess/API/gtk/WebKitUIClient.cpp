@@ -151,6 +151,11 @@ static void decidePolicyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, W
     webkitWebViewMakePermissionRequest(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_PERMISSION_REQUEST(geolocationPermissionRequest.get()));
 }
 
+static void runModal(WKPageRef page, const void* clientInfo)
+{
+    webkitWebViewRunAsModal(WEBKIT_WEB_VIEW(clientInfo));
+}
+
 void attachUIClientToView(WebKitWebView* webView)
 {
     WKPageUIClient wkUIClient = {
@@ -191,7 +196,7 @@ void attachUIClientToView(WebKitWebView* webView)
         0, // drawHeader
         0, // drawFooter
         printFrame,
-        0, // runModal
+        runModal,
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
