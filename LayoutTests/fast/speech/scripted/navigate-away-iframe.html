@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<script type="text/javascript">
+
+function log(msg) {
+    parent.postMessage(msg, '*');
+}
+
+function setDefaultHandlers(r) {
+    for (var prop in r) {
+        if (prop.match('^on')) {
+            r[prop] = function() {
+                log('unexpected ' + event.type + ' event!');
+            }
+        }
+    }
+}
+
+function run() {
+    if (window.top == window.self) {
+        // We are not in an iframe.
+        document.getElementById('body').innerHTML = 'This file is meant to be used as part of the navigate-away.html test.';
+        return;
+    }
+
+    window.speechreco = new webkitSpeechRecognition();
+    log('Created SpeechRecognition');
+    setDefaultHandlers(speechreco);
+
+    speechreco.onstart = function() {
+        log('onstart');
+        log('navigating away');
+        window.location = 'data:text/html,Navigated away.';
+    };
+
+    log('calling start()');
+    speechreco.start();
+}
+
+window.onload = run;
+</script>
+This iframe creates a speechreco object.
+</html>
+

@@ -46,7 +46,10 @@ PassRefPtr<SpeechRecognition> SpeechRecognition::create(ScriptExecutionContext* 
 
 void SpeechRecognition::start()
 {
-    ASSERT(m_controller); // FIXME: Spec should say what to do if we are already started.
+    ASSERT(m_controller);
+    // FIXME: Spec should say what to do if we are already started.
+
+    setPendingActivity(this);
     m_controller->start(this, m_grammars.get(), m_lang, m_continuous, m_maxAlternatives);
 }
 
@@ -121,6 +124,7 @@ void SpeechRecognition::didStart()
 void SpeechRecognition::didEnd()
 {
     dispatchEvent(Event::create(eventNames().endEvent, /*canBubble=*/false, /*cancelable=*/false));
+    unsetPendingActivity(this);
 }
 
 const AtomicString& SpeechRecognition::interfaceName() const
@@ -131,6 +135,12 @@ const AtomicString& SpeechRecognition::interfaceName() const
 ScriptExecutionContext* SpeechRecognition::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();
+}
+
+void SpeechRecognition::stop()
+{
+    if (hasPendingActivity())
+        abort();
 }
 
 SpeechRecognition::SpeechRecognition(ScriptExecutionContext* context)

@@ -1,3 +1,27 @@
+2012-06-20  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: SpeechRecognition should hook up with ActiveDOMObject more
+        https://bugs.webkit.org/show_bug.cgi?id=89217
+
+        Reviewed by Adam Barth.
+
+        Previously, the SpeechRecognition was kept alive while waiting for
+        pending events by making the embedder hold a reference to the object.
+        We should do this by using ActiveDOMObject's setPendingActivity() instead.
+
+        Also, override ActiveDOMObject::stop() to get notified when the user
+        leaves the page.
+
+        Test: fast/speech/scripted/navigate-away.html
+
+        * Modules/speech/SpeechRecognition.cpp:
+        (WebCore::SpeechRecognition::start):
+        (WebCore::SpeechRecognition::didEnd):
+        (WebCore::SpeechRecognition::stop):
+        (WebCore):
+        * Modules/speech/SpeechRecognition.h:
+        (SpeechRecognition):
+
 2012-06-21  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Move requestId allocation from FileSystem frontend to backend

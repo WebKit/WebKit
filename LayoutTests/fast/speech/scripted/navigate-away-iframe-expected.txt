@@ -1,0 +1,1 @@
+This file is meant to be used as part of the navigate-away.html test.

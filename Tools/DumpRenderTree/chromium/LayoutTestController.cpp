@@ -118,6 +118,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
 #if ENABLE(SCRIPTED_SPEECH)
     bindMethod("addMockSpeechRecognitionResult", &LayoutTestController::addMockSpeechRecognitionResult);
     bindMethod("setMockSpeechRecognitionError", &LayoutTestController::setMockSpeechRecognitionError);
+    bindMethod("wasMockSpeechRecognitionAborted", &LayoutTestController::wasMockSpeechRecognitionAborted);
 #endif
     bindMethod("addOriginAccessWhitelistEntry", &LayoutTestController::addOriginAccessWhitelistEntry);
     bindMethod("addUserScript", &LayoutTestController::addUserScript);
@@ -1965,6 +1966,13 @@ void LayoutTestController::setMockSpeechRecognitionError(const CppArgumentList& 
 
     if (MockWebSpeechRecognizer* recognizer = m_shell->webViewHost()->mockSpeechRecognizer())
         recognizer->setError(arguments[0].toInt32(), cppVariantToWebString(arguments[1]));
+}
+
+void LayoutTestController::wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant* result)
+{
+    result->set(false);
+    if (MockWebSpeechRecognizer* recognizer = m_shell->webViewHost()->mockSpeechRecognizer())
+        result->set(recognizer->wasAborted());
 }
 #endif
 

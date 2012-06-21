@@ -375,6 +375,7 @@ public:
 #if ENABLE(SCRIPTED_SPEECH)
     void addMockSpeechRecognitionResult(const CppArgumentList&, CppVariant*);
     void setMockSpeechRecognitionError(const CppArgumentList&, CppVariant*);
+    void wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant*);
 #endif
     void startSpeechInput(const CppArgumentList&, CppVariant*);
 

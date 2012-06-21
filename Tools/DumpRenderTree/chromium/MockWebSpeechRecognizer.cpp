@@ -37,31 +37,31 @@ namespace {
 
 // Task class for calling a client function that does not take any parameters.
 typedef void (WebSpeechRecognizerClient::*ClientFunctionPointer)(const WebSpeechRecognitionHandle&);
-class ClientCallTask : public MethodTask<MockWebSpeechRecognizer> {
+class ClientCallTask : public MockWebSpeechRecognizer::Task {
 public:
     ClientCallTask(MockWebSpeechRecognizer* mock, ClientFunctionPointer function)
-        : MethodTask<MockWebSpeechRecognizer>(mock)
+        : MockWebSpeechRecognizer::Task(mock)
         , m_function(function)
     {
     }
 
-    virtual void runIfValid() OVERRIDE { (m_object->client()->*m_function)(m_object->handle()); }
+    virtual void run() OVERRIDE { (m_recognizer->client()->*m_function)(m_recognizer->handle()); }
 
 private:
     ClientFunctionPointer m_function;
 };
 
 // Task for delivering a result event.
-class ResultTask : public MethodTask<MockWebSpeechRecognizer> {
+class ResultTask : public MockWebSpeechRecognizer::Task {
 public:
     ResultTask(MockWebSpeechRecognizer* mock, const WebString transcript, float confidence)
-        : MethodTask<MockWebSpeechRecognizer>(mock)
+        : MockWebSpeechRecognizer::Task(mock)
         , m_transcript(transcript)
         , m_confidence(confidence)
     {
     }
 
-    virtual void runIfValid() OVERRIDE
+    virtual void run() OVERRIDE
     {
         WebVector<WebString> transcripts(static_cast<size_t>(1));
         WebVector<float> confidences(static_cast<size_t>(1));
@@ -70,7 +70,7 @@ public:
         WebSpeechRecognitionResult res;
         res.assign(transcripts, confidences, true);
 
-        m_object->client()->didReceiveResult(m_object->handle(), res, 0, WebVector<WebSpeechRecognitionResult>());
+        m_recognizer->client()->didReceiveResult(m_recognizer->handle(), res, 0, WebVector<WebSpeechRecognitionResult>());
     }
 
 private:
@@ -79,23 +79,23 @@ private:
 };
 
 // Task for delivering a nomatch event.
-class NoMatchTask : public MethodTask<MockWebSpeechRecognizer> {
+class NoMatchTask : public MockWebSpeechRecognizer::Task {
 public:
-    NoMatchTask(MockWebSpeechRecognizer* mock) : MethodTask<MockWebSpeechRecognizer>(mock) { }
-    virtual void runIfValid() OVERRIDE { m_object->client()->didReceiveNoMatch(m_object->handle(), WebSpeechRecognitionResult()); }
+    NoMatchTask(MockWebSpeechRecognizer* mock) : MockWebSpeechRecognizer::Task(mock) { }
+    virtual void run() OVERRIDE { m_recognizer->client()->didReceiveNoMatch(m_recognizer->handle(), WebSpeechRecognitionResult()); }
 };
 
 // Task for delivering an error event.
-class ErrorTask : public MethodTask<MockWebSpeechRecognizer> {
+class ErrorTask : public MockWebSpeechRecognizer::Task {
 public:
     ErrorTask(MockWebSpeechRecognizer* mock, int code, const WebString& message)
-        : MethodTask<MockWebSpeechRecognizer>(mock)
+        : MockWebSpeechRecognizer::Task(mock)
         , m_code(code)
         , m_message(message)
     {
     }
 
-    virtual void runIfValid() OVERRIDE { m_object->client()->didReceiveError(m_object->handle(), m_message, static_cast<WebSpeechRecognizerClient::ErrorCode>(m_code)); }
+    virtual void run() OVERRIDE { m_recognizer->client()->didReceiveError(m_recognizer->handle(), m_message, static_cast<WebSpeechRecognizerClient::ErrorCode>(m_code)); }
 
 private:
     int m_code;
@@ -111,29 +111,32 @@ PassOwnPtr<MockWebSpeechRecognizer> MockWebSpeechRecognizer::create()
 
 void MockWebSpeechRecognizer::start(const WebSpeechRecognitionHandle& handle, const WebSpeechRecognitionParams& params, WebSpeechRecognizerClient* client)
 {
+    m_wasAborted = false;
     m_handle = handle;
     m_client = client;
 
-    postTask(new ClientCallTask(this, &WebSpeechRecognizerClient::didStart));
-    postTask(new ClientCallTask(this, &WebSpeechRecognizerClient::didStartAudio));
-    postTask(new ClientCallTask(this, &WebSpeechRecognizerClient::didStartSound));
-    postTask(new ClientCallTask(this, &WebSpeechRecognizerClient::didStartSpeech));
+    m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didStart)));
+    m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didStartAudio)));
+    m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didStartSound)));
+    m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didStartSpeech)));
 
     if (!m_mockTranscripts.isEmpty()) {
         ASSERT(m_mockTranscripts.size() == m_mockConfidences.size());
 
         for (size_t i = 0; i < m_mockTranscripts.size(); ++i)
-            postTask(new ResultTask(this, m_mockTranscripts[i], m_mockConfidences[i]));
+            m_taskQueue.append(adoptPtr(new ResultTask(this, m_mockTranscripts[i], m_mockConfidences[i])));
 
         m_mockTranscripts.clear();
         m_mockConfidences.clear();
     } else
-        postTask(new NoMatchTask(this));
+        m_taskQueue.append(adoptPtr(new NoMatchTask(this)));
 
-    postTask(new ClientCallTask(this, &WebSpeechRecognizerClient::didEndSpeech));
-    postTask(new ClientCallTask(this, &WebSpeechRecognizerClient::didEndSound));
-    postTask(new ClientCallTask(this, &WebSpeechRecognizerClient::didEndAudio));
-    postTask(new ClientCallTask(this, &WebSpeechRecognizerClient::didEnd));
+    m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didEndSpeech)));
+    m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didEndSound)));
+    m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didEndAudio)));
+    m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didEnd)));
+
+    startTaskQueue();
 }
 
 void MockWebSpeechRecognizer::stop(const WebSpeechRecognitionHandle& handle, WebSpeechRecognizerClient* client)
@@ -150,8 +153,10 @@ void MockWebSpeechRecognizer::abort(const WebSpeechRecognitionHandle& handle, We
     m_handle = handle;
     m_client = client;
 
-    // FIXME: Implement.
-    ASSERT_NOT_REACHED();
+    m_taskQueue.clear();
+    m_wasAborted = true;
+    m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didEnd)));
+    startTaskQueue();
 }
 
 void MockWebSpeechRecognizer::addMockResult(const WebString& transcript, float confidence)
@@ -162,12 +167,15 @@ void MockWebSpeechRecognizer::addMockResult(const WebString& transcript, float c
 
 void MockWebSpeechRecognizer::setError(int code, const WebString& message)
 {
-    m_taskList.revokeAll();
-    postTask(new ErrorTask(this, code, message));
-    postTask(new ClientCallTask(this, &WebSpeechRecognizerClient::didEnd));
+    m_taskQueue.clear();
+    m_taskQueue.append(adoptPtr(new ErrorTask(this, code, message)));
+    m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didEnd)));
+    startTaskQueue();
 }
 
 MockWebSpeechRecognizer::MockWebSpeechRecognizer()
+    : m_wasAborted(false)
+    , m_taskQueueRunning(false)
 {
 }
 
@@ -175,5 +183,32 @@ MockWebSpeechRecognizer::~MockWebSpeechRecognizer()
 {
 }
 
+void MockWebSpeechRecognizer::startTaskQueue()
+{
+    if (m_taskQueueRunning)
+        return;
+    postTask(new StepTask(this));
+    m_taskQueueRunning = true;
+}
+
+void MockWebSpeechRecognizer::StepTask::runIfValid()
+{
+    ASSERT(m_object->m_taskQueueRunning);
+
+    if (m_object->m_taskQueue.isEmpty()) {
+        m_object->m_taskQueueRunning = false;
+        return;
+    }
+
+    m_object->m_taskQueue[0]->run();
+    m_object->m_taskQueue.remove(0);
+
+    if (m_object->m_taskQueue.isEmpty()) {
+        m_object->m_taskQueueRunning = false;
+        return;
+    }
+
+    postTask(new StepTask(m_object));
+}
 
 #endif // ENABLE(SCRIPTED_SPEECH)

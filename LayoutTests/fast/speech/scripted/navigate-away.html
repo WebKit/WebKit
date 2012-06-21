@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+description('Test behaviour when navigating away from a page using the Speech JavaScript API');
+
+function run() {
+    // Check availability of constructors.
+    shouldBeTrue("'webkitSpeechRecognition' in self");
+    shouldBeFalse("webkitSpeechRecognition == null");
+
+    if (window.testRunner)
+        shouldBeFalse("testRunner.wasMockSpeechRecognitionAborted()");
+
+    window.onmessage = function() {
+        debug('iframe: ' + event.data);
+    };
+}
+
+window.iframeonloadcount = 0;
+function iframeonload() {
+    ++iframeonloadcount;
+
+    if (iframeonloadcount === 1) {
+        // The iframe has loaded for the first time.
+        debug('The iframe was loaded.');
+        return;
+    }
+
+    debug('The iframe was navigated away.');
+    if (window.testRunner)
+        shouldBeTrue("testRunner.wasMockSpeechRecognitionAborted()");
+    finishJSTest();
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+<iframe id="iframe" src="navigate-away-iframe.html" onload="iframeonload()" >
+</body>
+</html>

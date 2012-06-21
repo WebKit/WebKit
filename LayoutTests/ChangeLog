@@ -1,3 +1,18 @@
+2012-06-20  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: SpeechRecognition should hook up with ActiveDOMObject more
+        https://bugs.webkit.org/show_bug.cgi?id=89217
+
+        Reviewed by Adam Barth.
+
+        Add a layout test to check that speech recognition gets aborted when
+        navigating away from the page.
+
+        * fast/speech/scripted/navigate-away-expected.txt: Added.
+        * fast/speech/scripted/navigate-away-iframe-expected.txt: Added.
+        * fast/speech/scripted/navigate-away-iframe.html: Added.
+        * fast/speech/scripted/navigate-away.html: Added.
+
 2012-06-21  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r120847

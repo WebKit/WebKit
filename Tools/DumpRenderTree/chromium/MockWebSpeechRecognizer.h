@@ -53,19 +53,43 @@ public:
     // Methods accessed by layout tests:
     void addMockResult(const WebKit::WebString& transcript, float confidence);
     void setError(int code, const WebKit::WebString& message);
+    bool wasAborted() const { return m_wasAborted; }
 
-    TaskList* taskList() { return &m_taskList; }
+    // Methods accessed from Task objects:
     WebKit::WebSpeechRecognizerClient* client() { return m_client; }
     WebKit::WebSpeechRecognitionHandle& handle() { return m_handle; }
+    TaskList* taskList() { return &m_taskList; }
+
+    class Task {
+    public:
+        Task(MockWebSpeechRecognizer* recognizer) : m_recognizer(recognizer) { }
+        virtual ~Task() { }
+        virtual void run() = 0;
+    protected:
+        MockWebSpeechRecognizer* m_recognizer;
+    };
 
 private:
     MockWebSpeechRecognizer();
+    void startTaskQueue();
 
     TaskList m_taskList;
     WebKit::WebSpeechRecognitionHandle m_handle;
     WebKit::WebSpeechRecognizerClient* m_client;
     Vector<WebKit::WebString> m_mockTranscripts;
     Vector<float> m_mockConfidences;
+    bool m_wasAborted;
+
+    // Queue of tasks to be run.
+    Vector<OwnPtr<Task> > m_taskQueue;
+    bool m_taskQueueRunning;
+
+    // Task for stepping the queue.
+    class StepTask : public MethodTask<MockWebSpeechRecognizer> {
+    public:
+        StepTask(MockWebSpeechRecognizer* object) : MethodTask<MockWebSpeechRecognizer>(object) { }
+        virtual void runIfValid() OVERRIDE;
+    };
 };
 
 #endif // ENABLE(SCRIPTED_SPEECH)

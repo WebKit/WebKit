@@ -49,15 +49,13 @@ public:
     static PassRefPtr<SpeechRecognition> create(ScriptExecutionContext*);
     ~SpeechRecognition();
 
+    // Attributes.
     PassRefPtr<SpeechGrammarList> grammars() { return m_grammars; }
     void setGrammars(PassRefPtr<SpeechGrammarList> grammars) { m_grammars = grammars; }
-
     String lang() { return m_lang; }
     void setLang(const String& lang) { m_lang = lang; }
-
     bool continuous() { return m_continuous; }
     void setContinuous(bool continuous) { m_continuous = continuous; }
-
     unsigned long maxAlternatives() { return m_maxAlternatives; }
     void setMaxAlternatives(unsigned long maxAlternatives) { m_maxAlternatives = maxAlternatives; }
 
@@ -80,9 +78,12 @@ public:
     void didStart();
     void didEnd();
 
-    // EventTarget
+    // EventTarget.
     virtual const AtomicString& interfaceName() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+
+    // ActiveDOMObject.
+    virtual void stop() OVERRIDE;
 
     using RefCounted<SpeechRecognition>::ref;
     using RefCounted<SpeechRecognition>::deref;

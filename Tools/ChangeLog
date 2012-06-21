@@ -1,3 +1,45 @@
+2012-06-20  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: SpeechRecognition should hook up with ActiveDOMObject more
+        https://bugs.webkit.org/show_bug.cgi?id=89217
+
+        Reviewed by Adam Barth.
+
+        Add a method for checking whether the mock speech
+        recognition was aborted.
+
+        Also redo the way the mock posts tasks. Instead of posting them all at once,
+        maintain an internal queue of task objects, and call postTask() for them
+        once at the time. This means that for example when the page is navigated
+        away and abort() is called, that call doesn't end up after a bunch
+        of previously posted events on the event loop.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::wasMockSpeechRecognitionAborted):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController):
+        * DumpRenderTree/chromium/MockWebSpeechRecognizer.cpp:
+        (WebKit::ClientCallTask::ClientCallTask):
+        (WebKit::ResultTask::ResultTask):
+        (WebKit::NoMatchTask::NoMatchTask):
+        (WebKit::ErrorTask::ErrorTask):
+        (MockWebSpeechRecognizer::start):
+        (MockWebSpeechRecognizer::abort):
+        (MockWebSpeechRecognizer::setError):
+        (MockWebSpeechRecognizer::MockWebSpeechRecognizer):
+        (MockWebSpeechRecognizer::startTaskQueue):
+        (MockWebSpeechRecognizer::StepTask::runIfValid):
+        * DumpRenderTree/chromium/MockWebSpeechRecognizer.h:
+        (MockWebSpeechRecognizer::hasBeenAborted):
+        (MockWebSpeechRecognizer):
+        (MockWebSpeechRecognizer::taskList):
+        (Task):
+        (MockWebSpeechRecognizer::Task::Task):
+        (MockWebSpeechRecognizer::Task::~Task):
+        (StepTask):
+        (MockWebSpeechRecognizer::StepTask::StepTask):
+
 2012-06-21  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Add support for window.showModalDialog in WebKit2GTK+
