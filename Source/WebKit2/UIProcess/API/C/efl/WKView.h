@@ -6,36 +6,34 @@
  * License as published by the Free Software Foundation; either
  * version 2 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIB.  If not, write to
+ * along with this program; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
-#ifndef ewk_view_private_h
-#define ewk_view_private_h
+#ifndef WKView_h
+#define WKView_h
 
-#include "WebPageProxy.h"
-#include <Evas.h>
 #include <WebKit2/WKBase.h>
 
-namespace WebCore {
-class IntRect;
-class IntSize;
+typedef struct _Evas Evas;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT WKViewRef WKViewCreate(Evas* canvas, WKContextRef context, WKPageGroupRef pageGroup);
+
+WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
+
+#ifdef __cplusplus
 }
+#endif
 
-void ewk_view_display(Evas_Object* ewkView, const WebCore::IntRect& rect);
-void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const WebCore::IntSize& size);
-void ewk_view_title_changed(Evas_Object* ewkView, const char* title);
-
-Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef, WKPageGroupRef);
-
-WebKit::WebPageProxy* ewk_view_page_get(const Evas_Object* ewkView);
-
-#endif // ewk_view_private_h
+#endif /* WKView_h */

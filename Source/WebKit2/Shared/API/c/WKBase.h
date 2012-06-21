@@ -41,6 +41,10 @@
 #include <WebKit2/WKBaseSoup.h>
 #endif
 
+#if defined(BUILDING_EFL__)
+#include <WebKit2/WKBaseEfl.h>
+#endif
+
 /* WebKit2 shared types */
 
 typedef uint32_t WKTypeID;

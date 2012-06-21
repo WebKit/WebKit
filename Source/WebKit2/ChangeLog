@@ -1,3 +1,26 @@
+2012-06-21  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL[WK2] Add WKViewEfl and WebKit2 API Object to represent Evas_Object.
+        https://bugs.webkit.org/show_bug.cgi?id=88935
+
+        Reviewed by Chang Shu.
+
+        Add WKViewEfl to support WTR/Efl.
+
+        * PlatformEfl.cmake:
+        * Shared/API/c/WKBase.h:
+        * Shared/API/c/efl/WKBaseEfl.h: Added.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/efl/WKAPICastEfl.h: Added.
+        (WebKit):
+        * UIProcess/API/C/efl/WKView.cpp: Added.
+        (WKViewCreate):
+        (WKViewGetPage):
+        * UIProcess/API/C/efl/WKView.h: Added.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_page_get):
+        * UIProcess/API/efl/ewk_view_private.h:
+
 2012-06-21  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [Qt] API tests for ColorChooser

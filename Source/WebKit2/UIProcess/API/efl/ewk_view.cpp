@@ -629,3 +629,11 @@ void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const IntSiz
     evas_object_image_size_set(smartData->image, size.width(), size.height());
     evas_object_image_data_copy_set(smartData->image, imageData);
 }
+
+WebPageProxy* ewk_view_page_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+
+    return priv->pageClient->page();
+}

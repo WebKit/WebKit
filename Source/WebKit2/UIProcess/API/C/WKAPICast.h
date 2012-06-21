@@ -368,4 +368,8 @@ inline ProxyingRefPtr<WebGrammarDetail> toAPI(const WebCore::GrammarDetail& gram
 #include "WKAPICastSoup.h"
 #endif
 
+#if defined(BUILDING_EFL__)
+#include "WKAPICastEfl.h"
+#endif
+
 #endif // WKAPICast_h
