@@ -117,7 +117,7 @@ bool getFileSize(const String& path, long long& resultSize)
     if (filename.isNull())
         return false;
 
-    struct stat statResult;
+    GStatBuf statResult;
     gint result = g_stat(filename.data(), &statResult);
     if (result != 0)
         return false;
@@ -132,7 +132,7 @@ bool getFileModificationTime(const String& path, time_t& modifiedTime)
     if (filename.isNull())
         return false;
 
-    struct stat statResult;
+    GStatBuf statResult;
     gint result = g_stat(filename.data(), &statResult);
     if (result != 0)
         return false;

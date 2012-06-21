@@ -1,3 +1,17 @@
+2012-06-21  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Replace the use of "struct stat" with GStatBuf
+        https://bugs.webkit.org/show_bug.cgi?id=89488
+
+        Reviewed by Martin Robinson.
+
+        Make sure we pass GStatBuf to g_stat(); depending on the platform, it
+        isn't always the same as "struct stat", e.g. on Windows.
+
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::getFileSize):
+        (WebCore::getFileModificationTime):
+
 2012-06-21  Min Qin  <qinmin@chromium.org>
 
         remove ENABLE_FULLSCREEN_MEDIA_CONTROL flag
