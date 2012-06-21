@@ -2981,23 +2981,23 @@ BUGWK81402 WIN : media/track/track-active-cues.html = PASS TIMEOUT
 BUGWK83882 : media/track/track-mode.html = PASS TEXT TIMEOUT
 
 // Need rebaseline after patch lands.
-BUGWK89284 WIN MAC : media/audio-controls-rendering.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : media/audio-repaint.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : media/controls-after-reload.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : media/controls-layout-direction.html = IMAGE
-BUGWK89284 WIN MAC : media/controls-strict.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : media/controls-styling.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : media/controls-without-preload.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : media/media-controls-clone.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : media/media-document-audio-repaint.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : media/video-controls-rendering.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : media/video-display-toggle.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : media/video-no-audio.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : media/video-playing-and-pause.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : media/video-zoom-controls.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : fast/layers/video-layer.html = IMAGE+TEXT
-BUGWK89284 WIN MAC : fullscreen/full-screen-stacking-context.html = IMAGE
-BUGWK89284 WIN MAC : http/tests/media/video-buffered-range-contains-currentTime.html = IMAGE
+BUGWK89696 WIN MAC : media/audio-controls-rendering.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : media/audio-repaint.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : media/controls-after-reload.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : media/controls-layout-direction.html = IMAGE
+BUGWK89696 WIN MAC : media/controls-strict.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : media/controls-styling.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : media/controls-without-preload.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : media/media-controls-clone.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : media/media-document-audio-repaint.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : media/video-controls-rendering.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : media/video-display-toggle.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : media/video-no-audio.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : media/video-playing-and-pause.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : media/video-zoom-controls.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : fast/layers/video-layer.html = IMAGE IMAGE+TEXT
+BUGWK89696 WIN MAC : fullscreen/full-screen-stacking-context.html = IMAGE
+BUGWK89696 WIN MAC : http/tests/media/video-buffered-range-contains-currentTime.html = IMAGE
 
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
 

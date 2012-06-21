@@ -1,3 +1,13 @@
+2012-06-21  Kenneth Russell  <kbr@google.com>
+
+        [Chromium] Rebaseline video tests after r120939
+        https://bugs.webkit.org/show_bug.cgi?id=89696
+
+        Unreviewed test expectations update to adjust bug number and
+        silence failures on Windows platform. Rebaselines are still needed.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-21  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Implement spec behavior for multiEntry indexes with invalid/duplicate subkeys
