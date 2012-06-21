@@ -32,12 +32,12 @@
 #if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
 #include "FECustomFilter.h"
 
+#include "CustomFilterCompiledProgram.h"
 #include "CustomFilterGlobalContext.h"
 #include "CustomFilterMesh.h"
 #include "CustomFilterNumberParameter.h"
 #include "CustomFilterParameter.h"
 #include "CustomFilterProgram.h"
-#include "CustomFilterShader.h"
 #include "DrawingBuffer.h"
 #include "GraphicsContext3D.h"
 #include "ImageData.h"
@@ -141,7 +141,7 @@ void FECustomFilter::platformApplySoftware()
         return;
     
     // The shader had compiler errors. We cannot draw anything.
-    if (!m_shader->isInitialized())
+    if (!m_compiledProgram->isInitialized())
         return;
 
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_frameBuffer);
@@ -167,7 +167,7 @@ void FECustomFilter::initializeContext()
     // FIXME: The shader and the mesh can be shared across multiple elements when possible.
     // Sharing the shader means it's no need to analyze / compile and upload to GPU again.
     // https://bugs.webkit.org/show_bug.cgi?id=88427
-    m_shader = m_program->createShaderWithContext(m_context.get());
+    m_compiledProgram = m_program->compileProgramWithContext(m_context.get());
 
     // FIXME: Sharing the mesh would just save the time needed to upload it to the GPU, so I assume we could
     // benchmark that for performance.
@@ -245,7 +245,7 @@ void FECustomFilter::bindProgramParameters()
     size_t parametersSize = m_parameters.size();
     for (size_t i = 0; i < parametersSize; ++i) {
         CustomFilterParameter* parameter = m_parameters.at(i).get();
-        int uniformLocation = m_shader->uniformLocationByName(parameter->name());
+        int uniformLocation = m_compiledProgram->uniformLocationByName(parameter->name());
         if (uniformLocation == -1)
             continue;
         switch (parameter->parameterType()) {
@@ -258,32 +258,32 @@ void FECustomFilter::bindProgramParameters()
 
 void FECustomFilter::bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray)
 {
-    m_context->useProgram(m_shader->program());
+    m_context->useProgram(m_compiledProgram->program());
     
-    if (m_shader->samplerLocation() != -1) {
+    if (m_compiledProgram->samplerLocation() != -1) {
         m_context->activeTexture(GraphicsContext3D::TEXTURE0);
-        m_context->uniform1i(m_shader->samplerLocation(), 0);
+        m_context->uniform1i(m_compiledProgram->samplerLocation(), 0);
         m_inputTexture->load(srcPixelArray->data());
         m_inputTexture->bindTile(0);
     }
     
-    if (m_shader->projectionMatrixLocation() != -1) {
+    if (m_compiledProgram->projectionMatrixLocation() != -1) {
         TransformationMatrix projectionMatrix; 
         orthogonalProjectionMatrix(projectionMatrix, -0.5, 0.5, -0.5, 0.5);
         float glProjectionMatrix[16];
         projectionMatrix.toColumnMajorFloatArray(glProjectionMatrix);
-        m_context->uniformMatrix4fv(m_shader->projectionMatrixLocation(), 1, false, &glProjectionMatrix[0]);
+        m_context->uniformMatrix4fv(m_compiledProgram->projectionMatrixLocation(), 1, false, &glProjectionMatrix[0]);
     }
     
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_mesh->verticesBufferObject());
     m_context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, m_mesh->elementsBufferObject());
 
     unsigned offset = 0;
-    bindVertexAttribute(m_shader->positionAttribLocation(), 4, offset);
-    bindVertexAttribute(m_shader->texAttribLocation(), 2, offset);
-    bindVertexAttribute(m_shader->meshAttribLocation(), 2, offset);
+    bindVertexAttribute(m_compiledProgram->positionAttribLocation(), 4, offset);
+    bindVertexAttribute(m_compiledProgram->texAttribLocation(), 2, offset);
+    bindVertexAttribute(m_compiledProgram->meshAttribLocation(), 2, offset);
     if (m_meshType == CustomFilterOperation::DETACHED)
-        bindVertexAttribute(m_shader->triangleAttribLocation(), 3, offset);
+        bindVertexAttribute(m_compiledProgram->triangleAttribLocation(), 3, offset);
     
     bindProgramParameters();
 }

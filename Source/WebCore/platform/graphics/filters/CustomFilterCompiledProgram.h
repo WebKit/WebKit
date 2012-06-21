@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef CustomFilterShader_h
-#define CustomFilterShader_h
+#ifndef CustomFilterCompiledProgram_h
+#define CustomFilterCompiledProgram_h
 
 #if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
 
@@ -40,14 +40,14 @@ namespace WebCore {
 
 class GraphicsContext3D;
 
-class CustomFilterShader: public RefCounted<CustomFilterShader> {
+class CustomFilterCompiledProgram: public RefCounted<CustomFilterCompiledProgram> {
 public:
-    static PassRefPtr<CustomFilterShader> create(GraphicsContext3D* context, const String& vertexShader, const String& fragmentShader)
+    static PassRefPtr<CustomFilterCompiledProgram> create(GraphicsContext3D* context, const String& vertexShader, const String& fragmentShader)
     {
-        return adoptRef(new CustomFilterShader(context, vertexShader, fragmentShader));
+        return adoptRef(new CustomFilterCompiledProgram(context, vertexShader, fragmentShader));
     }
     
-    ~CustomFilterShader();
+    ~CustomFilterCompiledProgram();
     
     String vertexShaderString() const { return m_vertexShaderString; }
     String fragmentShaderString() const { return m_fragmentShaderString; }
@@ -71,7 +71,7 @@ public:
     Platform3DObject program() const { return m_program; }
 
 private:
-    CustomFilterShader(GraphicsContext3D*, const String& vertexShader, const String& fragmentShader);
+    CustomFilterCompiledProgram(GraphicsContext3D*, const String& vertexShader, const String& fragmentShader);
     
     Platform3DObject compileShader(GC3Denum shaderType, const String& shaderString);
     Platform3DObject linkProgram(Platform3DObject vertexShader, Platform3DObject fragmentShader);

@@ -3197,8 +3197,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/filters/CustomFilterParameter.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterProgram.cpp \
 	Source/WebCore/platform/graphics/filters/CustomFilterProgram.h \
-	Source/WebCore/platform/graphics/filters/CustomFilterShader.cpp \
-	Source/WebCore/platform/graphics/filters/CustomFilterShader.h \
+	Source/WebCore/platform/graphics/filters/CustomFilterCompiledProgram.cpp \
+	Source/WebCore/platform/graphics/filters/CustomFilterCompiledProgram.h \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.cpp \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.h \
 	Source/WebCore/platform/graphics/filters/FEBlend.cpp \

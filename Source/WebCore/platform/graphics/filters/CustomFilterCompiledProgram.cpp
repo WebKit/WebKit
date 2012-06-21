@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,14 +30,15 @@
 #include "config.h"
 
 #if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
-#include "CustomFilterShader.h"
+#include "CustomFilterCompiledProgram.h"
+ 
 #include "GraphicsContext3D.h"
 
 namespace WebCore {
 
 #define SHADER(Src) (#Src)
 
-String CustomFilterShader::defaultVertexShaderString()
+String CustomFilterCompiledProgram::defaultVertexShaderString()
 {
     DEFINE_STATIC_LOCAL(String, vertexShaderString, SHADER(
         precision mediump float;
@@ -54,7 +55,7 @@ String CustomFilterShader::defaultVertexShaderString()
     return vertexShaderString;
 }
 
-String CustomFilterShader::defaultFragmentShaderString()
+String CustomFilterCompiledProgram::defaultFragmentShaderString()
 {
     DEFINE_STATIC_LOCAL(String, fragmentShaderString, SHADER(
         precision mediump float;
@@ -68,7 +69,7 @@ String CustomFilterShader::defaultFragmentShaderString()
     return fragmentShaderString;
 }
 
-CustomFilterShader::CustomFilterShader(GraphicsContext3D* context, const String& vertexShaderString, const String& fragmentShaderString)
+CustomFilterCompiledProgram::CustomFilterCompiledProgram(GraphicsContext3D* context, const String& vertexShaderString, const String& fragmentShaderString)
     : m_context(context)
     , m_vertexShaderString(!vertexShaderString.isNull() ? vertexShaderString : defaultVertexShaderString())
     , m_fragmentShaderString(!fragmentShaderString.isNull() ? fragmentShaderString : defaultFragmentShaderString())
@@ -109,7 +110,7 @@ CustomFilterShader::CustomFilterShader(GraphicsContext3D* context, const String&
     m_isInitialized = true;
 }
 
-Platform3DObject CustomFilterShader::compileShader(GC3Denum shaderType, const String& shaderString)
+Platform3DObject CustomFilterCompiledProgram::compileShader(GC3Denum shaderType, const String& shaderString)
 {
     Platform3DObject shader = m_context->createShader(shaderType);
     m_context->shaderSource(shader, shaderString);
@@ -127,7 +128,7 @@ Platform3DObject CustomFilterShader::compileShader(GC3Denum shaderType, const St
     return shader;
 }
 
-Platform3DObject CustomFilterShader::linkProgram(Platform3DObject vertexShader, Platform3DObject fragmentShader)
+Platform3DObject CustomFilterCompiledProgram::linkProgram(Platform3DObject vertexShader, Platform3DObject fragmentShader)
 {
     Platform3DObject program = m_context->createProgram();
     m_context->attachShader(program, vertexShader);
@@ -146,7 +147,7 @@ Platform3DObject CustomFilterShader::linkProgram(Platform3DObject vertexShader, 
     return program;
 }
 
-void CustomFilterShader::initializeParameterLocations()
+void CustomFilterCompiledProgram::initializeParameterLocations()
 {
     m_positionAttribLocation = m_context->getAttribLocation(m_program, "a_position");
     m_texAttribLocation = m_context->getAttribLocation(m_program, "a_texCoord");
@@ -161,14 +162,14 @@ void CustomFilterShader::initializeParameterLocations()
     m_contentSamplerLocation = m_context->getUniformLocation(m_program, "u_contentTexture");
 }
 
-int CustomFilterShader::uniformLocationByName(const String& name)
+int CustomFilterCompiledProgram::uniformLocationByName(const String& name)
 {
     ASSERT(m_isInitialized);
     // FIXME: Improve this by caching the uniform locations.
     return m_context->getUniformLocation(m_program, name);
 }
     
-CustomFilterShader::~CustomFilterShader()
+CustomFilterCompiledProgram::~CustomFilterCompiledProgram()
 {
     if (m_program)
         m_context->deleteProgram(m_program);

@@ -1465,8 +1465,8 @@
 		50D403C814768C9400D30BB5 /* FECustomFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D403C614768C9400D30BB5 /* FECustomFilter.h */; };
 		50D405F9147D31F300D30BB5 /* CustomFilterMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50D405F7147D31F300D30BB5 /* CustomFilterMesh.cpp */; };
 		50D405FA147D31F300D30BB5 /* CustomFilterMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D405F8147D31F300D30BB5 /* CustomFilterMesh.h */; };
-		50D40611147D49DE00D30BB5 /* CustomFilterShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50D4060F147D49DE00D30BB5 /* CustomFilterShader.cpp */; };
-		50D40612147D49DE00D30BB5 /* CustomFilterShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D40610147D49DE00D30BB5 /* CustomFilterShader.h */; };
+		50D40611147D49DE00D30BB5 /* CustomFilterCompiledProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50D4060F147D49DE00D30BB5 /* CustomFilterCompiledProgram.cpp */; };
+		50D40612147D49DE00D30BB5 /* CustomFilterCompiledProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D40610147D49DE00D30BB5 /* CustomFilterCompiledProgram.h */; };
 		50E566D6139E38C500214433 /* CSSWrapShapes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 501BAAB11395114B00F7ACEB /* CSSWrapShapes.cpp */; };
 		510184690B08602A004A825F /* CachedPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 510184670B08602A004A825F /* CachedPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5101846A0B08602A004A825F /* CachedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510184680B08602A004A825F /* CachedPage.cpp */; };
@@ -8535,8 +8535,8 @@
 		50D403C614768C9400D30BB5 /* FECustomFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FECustomFilter.h; path = filters/FECustomFilter.h; sourceTree = "<group>"; };
 		50D405F7147D31F300D30BB5 /* CustomFilterMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterMesh.cpp; path = filters/CustomFilterMesh.cpp; sourceTree = "<group>"; };
 		50D405F8147D31F300D30BB5 /* CustomFilterMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterMesh.h; path = filters/CustomFilterMesh.h; sourceTree = "<group>"; };
-		50D4060F147D49DE00D30BB5 /* CustomFilterShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterShader.cpp; path = filters/CustomFilterShader.cpp; sourceTree = "<group>"; };
-		50D40610147D49DE00D30BB5 /* CustomFilterShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterShader.h; path = filters/CustomFilterShader.h; sourceTree = "<group>"; };
+		50D4060F147D49DE00D30BB5 /* CustomFilterCompiledProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterCompiledProgram.cpp; path = filters/CustomFilterCompiledProgram.cpp; sourceTree = "<group>"; };
+		50D40610147D49DE00D30BB5 /* CustomFilterCompiledProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterCompiledProgram.h; path = filters/CustomFilterCompiledProgram.h; sourceTree = "<group>"; };
 		510184670B08602A004A825F /* CachedPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPage.h; sourceTree = "<group>"; };
 		510184680B08602A004A825F /* CachedPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedPage.cpp; sourceTree = "<group>"; };
 		510D4A2D103165EE0049EA54 /* SocketStreamErrorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamErrorBase.cpp; sourceTree = "<group>"; };
@@ -17910,8 +17910,8 @@
 				503D0CA714B5B08700F32F57 /* CustomFilterProgram.cpp */,
 				503D0CA814B5B08700F32F57 /* CustomFilterProgram.h */,
 				503D0CA914B5B08700F32F57 /* CustomFilterProgramClient.h */,
-				50D4060F147D49DE00D30BB5 /* CustomFilterShader.cpp */,
-				50D40610147D49DE00D30BB5 /* CustomFilterShader.h */,
+				50D4060F147D49DE00D30BB5 /* CustomFilterCompiledProgram.cpp */,
+				50D40610147D49DE00D30BB5 /* CustomFilterCompiledProgram.h */,
 				A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */,
 				84730D5A1248F0B300D3A9C9 /* DistantLightSource.h */,
 				A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */,
@@ -22211,7 +22211,7 @@
 				509CC9FB14C069ED00BBECBD /* CustomFilterParameter.h in Headers */,
 				503D0CAB14B5B08700F32F57 /* CustomFilterProgram.h in Headers */,
 				503D0CAC14B5B08700F32F57 /* CustomFilterProgramClient.h in Headers */,
-				50D40612147D49DE00D30BB5 /* CustomFilterShader.h in Headers */,
+				50D40612147D49DE00D30BB5 /* CustomFilterCompiledProgram.h in Headers */,
 				A8CB413E0E8633FD0032C4F0 /* DashArray.h in Headers */,
 				A80E6D0B0A1989CA007FB8C5 /* DashboardRegion.h in Headers */,
 				97BC6A211505F081001B74AC /* Database.h in Headers */,
@@ -25727,7 +25727,7 @@
 				50D405F9147D31F300D30BB5 /* CustomFilterMesh.cpp in Sources */,
 				50CC0A3914C6F5B10017AB51 /* CustomFilterOperation.cpp in Sources */,
 				503D0CAA14B5B08700F32F57 /* CustomFilterProgram.cpp in Sources */,
-				50D40611147D49DE00D30BB5 /* CustomFilterShader.cpp in Sources */,
+				50D40611147D49DE00D30BB5 /* CustomFilterCompiledProgram.cpp in Sources */,
 				97BC6A201505F081001B74AC /* Database.cpp in Sources */,
 				97BC6A231505F081001B74AC /* DatabaseAuthorizer.cpp in Sources */,
 				97BC6A271505F081001B74AC /* DatabaseContext.cpp in Sources */,

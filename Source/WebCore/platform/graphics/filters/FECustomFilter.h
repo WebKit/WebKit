@@ -49,7 +49,7 @@ class CustomFilterGlobalContext;
 class CustomFilterMesh;
 class CustomFilterNumberParameter;
 class CustomFilterProgram;
-class CustomFilterShader;
+class CustomFilterCompiledProgram;
 class DrawingBuffer;
 class GraphicsContext3D;
 class IntSize;
@@ -85,7 +85,7 @@ private:
     
     RefPtr<GraphicsContext3D> m_context;
     RefPtr<Texture> m_inputTexture;
-    RefPtr<CustomFilterShader> m_shader;
+    RefPtr<CustomFilterCompiledProgram> m_compiledProgram;
     RefPtr<CustomFilterMesh> m_mesh;
     IntSize m_contextSize;
 

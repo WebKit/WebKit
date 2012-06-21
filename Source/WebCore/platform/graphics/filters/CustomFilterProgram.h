@@ -39,7 +39,7 @@
 namespace WebCore {
 
 class GraphicsContext3D;
-class CustomFilterShader;
+class CustomFilterCompiledProgram;
 class CustomFilterProgramClient;
 
 // This is the base class for the StyleCustomFilterProgram class which knows how to keep
@@ -54,7 +54,7 @@ public:
     void removeClient(CustomFilterProgramClient*);
     
 #if ENABLE(WEBGL)
-    PassRefPtr<CustomFilterShader> createShaderWithContext(GraphicsContext3D*);
+    PassRefPtr<CustomFilterCompiledProgram> compileProgramWithContext(GraphicsContext3D*);
 #endif
 
     // StyleCustomFilterProgram has the only implementation for the following method. That means, it casts to StyleCustomFilterProgram
@@ -63,7 +63,7 @@ public:
     bool operator!=(const CustomFilterProgram& o) const { return !(*this == o); }
 protected:
     // StyleCustomFilterProgram can notify the clients that the cached resources are
-    // loaded and it is ready to create CustomFilterShader objects.
+    // loaded and it is ready to create CustomFilterCompiledProgram objects.
     void notifyClients();
     
     virtual String vertexShaderString() const = 0;

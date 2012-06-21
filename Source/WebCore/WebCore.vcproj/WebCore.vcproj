@@ -31469,11 +31469,11 @@
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\filters\CustomFilterShader.cpp"
+						RelativePath="..\platform\graphics\filters\CustomFilterCompiledProgram.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\filters\CustomFilterShader.h"
+						RelativePath="..\platform\graphics\filters\CustomFilterCompiledProgram.h"
 						>
 					</File>
 					<File

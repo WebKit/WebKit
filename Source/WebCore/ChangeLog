@@ -1,3 +1,46 @@
+2012-06-20  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Rename CustomFilterShader class name to CustomFilterCompiledProgram
+        https://bugs.webkit.org/show_bug.cgi?id=89578
+
+        Reviewed by Dean Jackson.
+
+        I've renamed CustomFilterShader to CustomFilterCompiledProgram to make it obvious that it is the result of 
+        calling CustomFilterProgram::compileProgramWithContext.
+
+        No new tests, just renamed an existing class.
+        
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/CustomFilterCompiledProgram.cpp: Renamed from Source/WebCore/platform/graphics/filters/CustomFilterShader.cpp.
+        (WebCore):
+        (WebCore::CustomFilterCompiledProgram::defaultVertexShaderString):
+        (WebCore::CustomFilterCompiledProgram::defaultFragmentShaderString):
+        (WebCore::CustomFilterCompiledProgram::CustomFilterCompiledProgram):
+        (WebCore::CustomFilterCompiledProgram::compileShader):
+        (WebCore::CustomFilterCompiledProgram::linkProgram):
+        (WebCore::CustomFilterCompiledProgram::initializeParameterLocations):
+        (WebCore::CustomFilterCompiledProgram::uniformLocationByName):
+        (WebCore::CustomFilterCompiledProgram::~CustomFilterCompiledProgram):
+        * platform/graphics/filters/CustomFilterCompiledProgram.h: Renamed from Source/WebCore/platform/graphics/filters/CustomFilterShader.h.
+        (WebCore):
+        * platform/graphics/filters/CustomFilterProgram.cpp:
+        (WebCore::CustomFilterProgram::compileProgramWithContext): Renamed method from createShaderWithContext to compileProgramWithContext.
+        * platform/graphics/filters/CustomFilterProgram.h:
+        (WebCore):
+        * platform/graphics/filters/FECustomFilter.cpp: Renamed m_shader to m_compiledProgram.
+        (WebCore::FECustomFilter::platformApplySoftware):
+        (WebCore::FECustomFilter::initializeContext):
+        (WebCore::FECustomFilter::bindProgramParameters):
+        (WebCore::FECustomFilter::bindProgramAndBuffers):
+        * platform/graphics/filters/FECustomFilter.h:
+        (WebCore):
+        (FECustomFilter):
+
 2012-06-19  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: reduce timeline refresh rate

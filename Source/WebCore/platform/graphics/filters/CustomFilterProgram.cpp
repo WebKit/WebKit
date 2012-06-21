@@ -32,8 +32,8 @@
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterProgram.h"
 
+#include "CustomFilterCompiledProgram.h"
 #include "CustomFilterProgramClient.h"
-#include "CustomFilterShader.h"
 
 #if ENABLE(WEBGL)
 #include "GraphicsContext3D.h"
@@ -81,10 +81,10 @@ void CustomFilterProgram::notifyClients()
 }
 
 #if ENABLE(WEBGL)
-PassRefPtr<CustomFilterShader> CustomFilterProgram::createShaderWithContext(GraphicsContext3D* context)
+PassRefPtr<CustomFilterCompiledProgram> CustomFilterProgram::compileProgramWithContext(GraphicsContext3D* context)
 {
     ASSERT(isLoaded());
-    return CustomFilterShader::create(context, vertexShaderString(), fragmentShaderString());
+    return CustomFilterCompiledProgram::create(context, vertexShaderString(), fragmentShaderString());
 }
 #endif
 
