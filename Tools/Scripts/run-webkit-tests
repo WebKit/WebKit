@@ -114,6 +114,8 @@ if (isQt()) {
     push(@ARGV, "--efl");
 } elsif (isChromium()) {
     push(@ARGV, "--chromium")
+} elsif (isWinCairo()) {
+    push(@ARGV, "--wincairo")
 }
 
 my $harnessPath = File::Spec->catfile(relativeScriptsDir(), $harnessName);
