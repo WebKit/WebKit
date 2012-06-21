@@ -151,7 +151,7 @@ inline Image* CachedImage::lookupOrCreateImageForRenderer(const RenderObject* re
         return 0;
     if (!m_image->isSVGImage())
         return m_image.get();
-    Image* useImage = m_svgImageCache->lookupOrCreateBitmapImageForClient(renderer);
+    Image* useImage = m_svgImageCache->lookupOrCreateBitmapImageForRenderer(renderer);
     if (useImage == Image::nullImage())
         return m_image.get();
     return useImage;
@@ -207,10 +207,7 @@ void CachedImage::setContainerSizeForRenderer(const RenderObject* renderer, cons
         return;
     }
 
-    // FIXME (85335): This needs to take CSS transform scale into account as well.
-    float containerScale = renderer->document()->page()->deviceScaleFactor() * renderer->document()->page()->pageScaleFactor();
-
-    m_svgImageCache->setRequestedSizeAndScales(renderer, SVGImageCache::SizeAndScales(containerSize, containerZoom, containerScale));
+    m_svgImageCache->setRequestedSizeAndScales(renderer, SVGImageCache::SizeAndScales(containerSize, containerZoom));
 #else
     UNUSED_PARAM(renderer);
     UNUSED_PARAM(containerZoom);

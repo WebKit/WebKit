@@ -1,3 +1,18 @@
+2012-06-21  Tim Horton  <timothy_horton@apple.com>
+
+        SVGImageCache isn't invalidated for <img> on dynamic page scale changes
+        https://bugs.webkit.org/show_bug.cgi?id=89621
+        <rdar://problem/11714677>
+
+        Reviewed by Simon Fraser.
+
+        Add a test that ensures that dynamic changes to pageScaleFactor are propagated through
+        to the SVGImageCache.
+
+        * platform/mac/svg/as-image/image-respects-pageScaleFactor-change-expected.png: Added.
+        * platform/mac/svg/as-image/image-respects-pageScaleFactor-change-expected.txt: Added.
+        * svg/as-image/image-respects-pageScaleFactor-change.html: Added.
+
 2012-06-21  Beth Dakin  <bdakin@apple.com>
 
         Skipping this failing test. Filed 
