@@ -1,3 +1,18 @@
+2012-06-21  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Properly encode/decode service in IntentData
+        https://bugs.webkit.org/show_bug.cgi?id=89460
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update IntentData::encode() and IntentData::decode()
+        so that the "service" member is properly encoded
+        and decoded.
+
+        * Shared/IntentData.cpp:
+        (WebKit::IntentData::encode):
+        (WebKit::IntentData::decode):
+
 2012-06-21  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL][WK2] Make WebKit2/Efl headers and resources installable.

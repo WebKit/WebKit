@@ -40,6 +40,7 @@ void IntentData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(action);
     encoder->encode(type);
+    encoder->encode(service);
     encoder->encode(CoreIPC::DataReference(data));
     encoder->encode(extras);
     encoder->encode(suggestions);
@@ -50,6 +51,8 @@ bool IntentData::decode(CoreIPC::ArgumentDecoder* decoder, IntentData& intentDat
     if (!decoder->decode(intentData.action))
         return false;
     if (!decoder->decode(intentData.type))
+        return false;
+    if (!decoder->decode(intentData.service))
         return false;
     CoreIPC::DataReference data;
     if (!decoder->decode(data))
