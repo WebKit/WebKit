@@ -1,3 +1,22 @@
+2012-06-20  Zeev Lieber  <zlieber@chromium.org>
+
+        [Chromium] Damage tracker is not used without partial swap, causing valid render passes to be removed
+        https://bugs.webkit.org/show_bug.cgi?id=89589
+
+        Reviewed by Adrienne Walker.
+
+        When not using partial swap, the CCDamageTracker was not used, and
+        its m_currentDamageRect was always empty. As a result,
+        CCLayerTreeHostImpl was thinking no content was changed and was
+        removing more textures than needed. Fixed this by turning on
+        CCDamageTracker usage even if not using partial swap, but
+        overwriting the rootScissorRect with viewport rect if required.
+
+        Added unit tests to exercise this scenario.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderSurfaceLayerList):
+
 2012-06-20  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Remove redundant IDBObjectStore.delete() overloads
