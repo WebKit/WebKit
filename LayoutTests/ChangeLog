@@ -1,3 +1,45 @@
+2012-06-21  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Paint played and buffered ranges differently in Chrome video controls.
+        https://bugs.webkit.org/show_bug.cgi?id=89284
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline tests for linux build; mark others in TestExpectations.
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium-linux/fast/layers/video-layer-expected.png:
+        * platform/chromium-linux/fullscreen/full-screen-stacking-context-expected.png:
+        * platform/chromium-linux/http/tests/media/video-buffered-range-contains-currentTime-expected.png:
+        * platform/chromium-linux/media/audio-controls-rendering-expected.png:
+        * platform/chromium-linux/media/controls-after-reload-expected.png:
+        * platform/chromium-linux/media/controls-strict-expected.png:
+        * platform/chromium-linux/media/controls-styling-expected.png:
+        * platform/chromium-linux/media/controls-without-preload-expected.png:
+        * platform/chromium-linux/media/video-controls-rendering-expected.png:
+        * platform/chromium-linux/media/video-display-toggle-expected.png:
+        * platform/chromium-linux/media/video-playing-and-pause-expected.png:
+        * platform/chromium-linux/media/video-zoom-controls-expected.png:
+        * platform/chromium-linux/media/audio-repaint-expected.png:
+        * platform/chromium-linux/media/controls-layout-direction-expected.png:
+        * platform/chromium-linux/media/media-controls-clone-expected.png:
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-linux/media/video-no-audio-expected.png:
+        * platform/chromium-win/fast/layers/video-layer-expected.txt:
+        * platform/chromium-win/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-win/media/audio-repaint-expected.txt:
+        * platform/chromium-win/media/controls-after-reload-expected.txt:
+        * platform/chromium-win/media/controls-strict-expected.txt:
+        * platform/chromium-win/media/controls-styling-expected.txt:
+        * platform/chromium-win/media/controls-without-preload-expected.txt:
+        * platform/chromium-win/media/media-controls-clone-expected.txt:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.txt:
+        * platform/chromium-win/media/video-controls-rendering-expected.txt:
+        * platform/chromium-win/media/video-display-toggle-expected.txt:
+        * platform/chromium-win/media/video-no-audio-expected.txt:
+        * platform/chromium-win/media/video-playing-and-pause-expected.txt:
+        * platform/chromium-win/media/video-zoom-controls-expected.txt:
+
 2012-06-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Non-fixed length margins don't work with align=center

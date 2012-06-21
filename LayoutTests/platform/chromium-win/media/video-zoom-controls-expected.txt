@@ -16,7 +16,7 @@ layer at (65,213) size 225x45 scrollWidth 344 scrollHeight 54
     RenderBlock (anonymous) at (0,0) size 72x45
       RenderButton {INPUT} at (13,0) size 46x45
     RenderSlider {INPUT} at (72,16) size 38x13
-      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 38x12 [border: (1px solid #828282)]
+      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 38x12 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,1) size 9x36
         RenderBlock {DIV} at (-1,1) size 48x36
     RenderDeprecatedFlexibleBox {DIV} at (132,0) size 40x45 [color=#FFFFFF]
@@ -26,7 +26,7 @@ layer at (65,213) size 225x45 scrollWidth 344 scrollHeight 54
     RenderBlock (anonymous) at (185,0) size 63x45
       RenderButton {INPUT} at (0,0) size 53x45
     RenderSlider {INPUT} at (247,16) size 23x13
-      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 23x12 [border: (1px solid #828282)]
+      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 23x12 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,1) size 6x36
         RenderBlock {DIV} at (-4,1) size 36x36
     RenderBlock (anonymous) at (292,0) size 52x45
@@ -43,7 +43,7 @@ layer at (65,438) size 225x45 scrollWidth 344 scrollHeight 54
     RenderBlock (anonymous) at (0,0) size 72x45
       RenderButton {INPUT} at (13,0) size 46x45
     RenderSlider {INPUT} at (72,16) size 38x13
-      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 38x12 [border: (1px solid #828282)]
+      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 38x12 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,1) size 9x36
         RenderBlock {DIV} at (-1,1) size 48x36
     RenderDeprecatedFlexibleBox {DIV} at (132,0) size 40x45 [color=#FFFFFF]
@@ -53,7 +53,7 @@ layer at (65,438) size 225x45 scrollWidth 344 scrollHeight 54
     RenderBlock (anonymous) at (185,0) size 63x45
       RenderButton {INPUT} at (0,0) size 53x45
     RenderSlider {INPUT} at (247,16) size 23x13
-      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 23x12 [border: (1px solid #828282)]
+      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 23x12 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,1) size 6x36
         RenderBlock {DIV} at (-4,1) size 36x36
     RenderBlock (anonymous) at (292,0) size 52x45

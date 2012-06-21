@@ -121,29 +121,37 @@ static void paintRoundedSliderBackground(const IntRect& rect, const RenderStyle*
 {
     int borderRadius = rect.height() / 2;
     IntSize radii(borderRadius, borderRadius);
-    Color sliderBackgroundColor = Color(29, 29, 29);
+    Color sliderBackgroundColor = Color(11, 11, 11);
     context->save();
     context->fillRoundedRect(rect, radii, radii, radii, radii, sliderBackgroundColor, ColorSpaceDeviceRGB);
     context->restore();
 }
 
-static void paintSliderRangeHighlight(const IntRect& rect, const RenderStyle* style, GraphicsContext* context, float startFraction, float widthFraction)
+static void paintSliderRangeHighlight(const IntRect& rect, const RenderStyle* style, GraphicsContext* context, int startPosition, int endPosition, Color startColor, Color endColor)
 {
-    if (startFraction < 0)
-        startFraction = 0;
-    if (widthFraction > 1)
-        widthFraction = 1;
-    float endFraction = startFraction + widthFraction;
-    if (endFraction > 1) {
-        widthFraction = widthFraction - startFraction;
-        endFraction = startFraction + widthFraction;
+    // Calculate border radius; need to avoid being smaller than half the slider height
+    // because of https://bugs.webkit.org/show_bug.cgi?id=30143.
+    int borderRadius = rect.height() / 2;
+    IntSize radii(borderRadius, borderRadius);
+
+    // Calculate highlight rectangle and edge dimensions.
+    int startOffset = startPosition;
+    int endOffset = rect.width() - endPosition;
+    int rangeWidth = endPosition - startPosition;
+
+    if (rangeWidth <= 0)
+        return;
+
+    // Make sure the range width is bigger than border radius at the edges to retain rounded corners.
+    if (startOffset < borderRadius && rangeWidth < borderRadius)
+        rangeWidth = borderRadius;
+    if (endOffset < borderRadius && rangeWidth < borderRadius) {
+        startPosition -= borderRadius - rangeWidth;
+        rangeWidth = borderRadius;
     }
 
     // Set rectangle to highlight range.
     IntRect highlightRect = rect;
-    int startOffset = startFraction * rect.width();
-    int endOffset = rect.width() - endFraction * rect.width();
-    int rangeWidth = widthFraction * rect.width();
     highlightRect.move(startOffset, 0);
     highlightRect.setWidth(rangeWidth);
 
@@ -151,17 +159,10 @@ static void paintSliderRangeHighlight(const IntRect& rect, const RenderStyle* st
     if (highlightRect.isEmpty())
         return;
 
-    // Calculate border radius; need to avoid being smaller than half the slider height
-    // because of https://bugs.webkit.org/show_bug.cgi?id=30143.
-    int borderRadius = rect.height() / 2;
-    IntSize radii(borderRadius, borderRadius);
-
     // Calculate white-grey gradient.
     IntPoint sliderTopLeft = highlightRect.location();
     IntPoint sliderBottomLeft = sliderTopLeft;
     sliderBottomLeft.move(0, highlightRect.height());
-    Color startColor = Color(220, 220, 220);
-    Color endColor = Color(240, 240, 240);
     RefPtr<Gradient> gradient = Gradient::create(sliderTopLeft, sliderBottomLeft);
     gradient->addColorStop(0.0, startColor);
     gradient->addColorStop(1.0, endColor);
@@ -181,6 +182,8 @@ static void paintSliderRangeHighlight(const IntRect& rect, const RenderStyle* st
 
     context->restore();
 }
+
+const int mediaSliderThumbWidth = 32;
 
 static bool paintMediaSlider(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
@@ -206,11 +209,28 @@ static bool paintMediaSlider(RenderObject* object, const PaintInfo& paintInfo, c
         float end = bufferedTimeRanges->end(i, ASSERT_NO_EXCEPTION);
         if (isnan(start) || isnan(end) || start > currentTime || end < currentTime)
             continue;
-        float startFraction = start / duration;
-        float endFraction = end / duration;
-        float widthFraction = endFraction - startFraction;
+        int startPosition = int(start * rect.width() / duration);
+        int currentPosition = int(currentTime * rect.width() / duration);
+        int endPosition = int(end * rect.width() / duration);
 
-        paintSliderRangeHighlight(rect, style, context, startFraction, widthFraction);
+        // Add half the thumb width proportionally adjusted to the current painting position.
+        int thumbCenter = mediaSliderThumbWidth / 2;
+        int addWidth = thumbCenter * (1.0 - 2.0 * currentPosition / rect.width());
+        currentPosition += addWidth;
+
+        // Draw white-ish highlight before current time.
+        Color startColor = Color(195, 195, 195);
+        Color endColor = Color(217, 217, 217);
+        if (currentPosition > startPosition)
+            paintSliderRangeHighlight(rect, style, context, startPosition, currentPosition, startColor, endColor);
+
+        // Draw grey-ish highlight after current time.
+        startColor = Color(60, 60, 60);
+        endColor = Color(76, 76, 76);
+
+        if (endPosition > currentPosition)
+            paintSliderRangeHighlight(rect, style, context, currentPosition, endPosition, startColor, endColor);
+
         return true;
     }
 
@@ -264,7 +284,10 @@ static bool paintMediaVolumeSlider(RenderObject* object, const PaintInfo& paintI
         fillWidth = positionWidth + (zoomLevel * thumbCenter / 2);
     }
 
-    paintSliderRangeHighlight(rect, style, context, 0.0, fillWidth / rect.width());
+    Color startColor = Color(195, 195, 195);
+    Color endColor = Color(217, 217, 217);
+
+    paintSliderRangeHighlight(rect, style, context, 0.0, fillWidth, startColor, endColor);
 
     return true;
 }
@@ -338,7 +361,6 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
     return false;
 }
 
-const int mediaSliderThumbWidth = 32;
 const int mediaSliderThumbHeight = 24;
 const int mediaVolumeSliderThumbHeight = 24;
 

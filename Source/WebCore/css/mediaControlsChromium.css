@@ -162,7 +162,7 @@ input[type="range"]::-webkit-media-slider-container {
     -webkit-box-sizing: border-box;
     height: 100%;
     width: 100%;
-    border: 1px solid rgb(130, 130, 130);
+    border: 1px solid rgba(230, 230, 230, 0.35);
     border-radius: 4px;
     background-color: transparent; /* Background drawing is managed by C++ code to draw ranges. */
 }

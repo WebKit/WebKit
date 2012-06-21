@@ -1,3 +1,37 @@
+2012-06-21  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Paint played and buffered ranges differently in Chrome video controls.
+        https://bugs.webkit.org/show_bug.cgi?id=89284
+
+        Reviewed by Eric Carlson.
+
+        No new tests; existing video control tests cover this case.
+
+        The Chrome video controls are receiving a visual update. This patch changes
+        the format in which the playback position slider displays the buffered range.
+        It is painted in a lighter color left of the position thumb and darker right
+        of the position thumb
+
+        * css/mediaControlsChromium.css:
+        (input[type="range"]::-webkit-media-slider-container):
+        Adjust the border color of the playback position slider.
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintRoundedSliderBackground):
+        Adjust the background color of the position slider.
+        (WebCore::paintSliderRangeHighlight):
+        Make the color of the range region a function parameter,
+        provide start and end position as pixel width instead of percentage,
+        and make sure the rounded corners at beginning and end don't turn into rectangles.
+        (WebCore):
+        Move the mediaSliderThumbWidth variable up to be used in paintMediaSlider().
+        (WebCore::paintMediaSlider):
+        Calculate start, current and end position instead of fractions,
+        adjust the current position by half the thumb's width for improved rendering,
+        and draw two highlight areas: one bright one before current position and
+        one grey one after current position.
+        (WebCore::paintMediaVolumeSlider):
+        Adjust the paintSliderRangeHighlight function call and add the colors.
+
 2012-06-21  Kwang Yul Seo  <skyul@company100.net>
 
         Remove unused static variable uninitializedLineNumberValue.
