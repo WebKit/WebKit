@@ -57,6 +57,7 @@ class MockGraphicsLayerClient : public GraphicsLayerClient {
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip) OVERRIDE { }
     virtual bool showDebugBorders(const GraphicsLayer*) const OVERRIDE { return false; }
     virtual bool showRepaintCounter(const GraphicsLayer*) const OVERRIDE { return false; }
+    virtual float deviceScaleFactor() const OVERRIDE { return 2; }
 };
 
 class MockLayerTreeHostClient : public CCLayerTreeHostClient {
@@ -393,6 +394,11 @@ TEST_F(GraphicsLayerChromiumTest, createReversedAlternatingAnimation)
 
     expectTranslateX(4, curve->getValue(0));
     expectTranslateX(2, curve->getValue(duration));
+}
+
+TEST_F(GraphicsLayerChromiumTest, shouldStartWithCorrectContentsScale)
+{
+    EXPECT_EQ(2, m_platformLayer->contentsScale());
 }
 
 } // namespace
