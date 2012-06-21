@@ -1,3 +1,48 @@
+2012-06-21  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [WK2][Qt] Color chooser API missing
+        https://bugs.webkit.org/show_bug.cgi?id=87749
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added public experimental API for ColorChooser. This will
+        allow the browser to define a custom dialog for selecting
+        color when a input field of type "color" get focus.
+
+        The current implementation gives a model to the QML Component
+        that has methods for canceling a request, selecting a color
+        and fetching what is the current value of the HTML input.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewExperimental::colorChooser):
+        (QQuickWebViewExperimental::setColorChooser):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/qt/QtPageClient.cpp:
+        (WebKit::QtPageClient::createColorChooserProxy):
+        * UIProcess/qt/WebColorChooserProxyQt.cpp: Added.
+        (WebKit):
+        (ColorChooserContextObject):
+        (WebKit::ColorChooserContextObject::ColorChooserContextObject):
+        (WebKit::ColorChooserContextObject::currentColor):
+        (WebKit::ColorChooserContextObject::accept):
+        (WebKit::ColorChooserContextObject::reject):
+        (WebKit::WebColorChooserProxyQt::WebColorChooserProxyQt):
+        (WebKit::WebColorChooserProxyQt::~WebColorChooserProxyQt):
+        (WebKit::WebColorChooserProxyQt::createItem):
+        (WebKit::WebColorChooserProxyQt::createContext):
+        (WebKit::WebColorChooserProxyQt::setSelectedColor):
+        (WebKit::WebColorChooserProxyQt::notifyColorSelected):
+        (WebKit::WebColorChooserProxyQt::endChooser):
+        * UIProcess/qt/WebColorChooserProxyQt.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebColorChooserProxyQt):
+        (WebKit::WebColorChooserProxyQt::create):
+
 2012-06-21  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Add support for window.showModalDialog in WebKit2GTK+

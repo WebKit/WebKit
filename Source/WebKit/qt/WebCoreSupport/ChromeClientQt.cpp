@@ -31,6 +31,7 @@
 #include "ChromeClientQt.h"
 
 #include "ApplicationCacheStorage.h"
+#include "ColorChooser.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
 #include "FileChooser.h"
@@ -556,6 +557,14 @@ void ChromeClientQt::reachedApplicationCacheOriginQuota(SecurityOrigin* origin, 
 
     emit m_webPage->applicationCacheQuotaExceeded(securityOrigin, defaultOriginQuota, static_cast<quint64>(totalSpaceNeeded));
 }
+
+#if ENABLE(INPUT_TYPE_COLOR)
+PassOwnPtr<ColorChooser> ChromeClientQt::createColorChooser(ColorChooserClient*, const Color&)
+{
+    notImplemented();
+    return nullptr;
+}
+#endif
 
 void ChromeClientQt::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileChooser)
 {

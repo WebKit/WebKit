@@ -163,6 +163,11 @@ public:
     virtual bool requiresFullscreenForVideoPlayback();
     FullScreenVideoQt* fullScreenVideo();
 #endif
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&);
+#endif
+
      virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
      virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*);
 

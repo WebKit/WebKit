@@ -1,3 +1,20 @@
+2012-06-21  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [WK2][Qt] Color chooser API missing
+        https://bugs.webkit.org/show_bug.cgi?id=87749
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added ColorChooser API stub to WebKit. Otherwise
+        it will break the build for Qt WebKit2 (that now has
+        complete support for color chooser) when INPUT_TYPE_COLOR is set.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore):
+        (WebCore::ChromeClientQt::createColorChooser):
+        * WebCoreSupport/ChromeClientQt.h:
+        (ChromeClientQt):
+
 2012-06-20  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Unreviewed build fix

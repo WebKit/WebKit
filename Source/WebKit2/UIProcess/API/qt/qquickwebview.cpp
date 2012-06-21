@@ -266,6 +266,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , proxyAuthenticationDialog(0)
     , filePicker(0)
     , databaseQuotaDialog(0)
+    , colorChooser(0)
     , m_useDefaultContentItemSize(true)
     , m_navigatorQtObjectEnabled(false)
     , m_renderToOffscreenBuffer(false)
@@ -1144,6 +1145,22 @@ void QQuickWebViewExperimental::setDatabaseQuotaDialog(QQmlComponent* databaseQu
         return;
     d->databaseQuotaDialog = databaseQuotaDialog;
     emit databaseQuotaDialogChanged();
+}
+
+QQmlComponent* QQuickWebViewExperimental::colorChooser() const
+{
+    Q_D(const QQuickWebView);
+    return d->colorChooser;
+}
+
+void QQuickWebViewExperimental::setColorChooser(QQmlComponent* colorChooser)
+{
+    Q_D(QQuickWebView);
+    if (d->colorChooser == colorChooser)
+        return;
+
+    d->colorChooser = colorChooser;
+    emit colorChooserChanged();
 }
 
 QString QQuickWebViewExperimental::userAgent() const

@@ -809,6 +809,13 @@ contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
         Shared/qt/NativeWebTouchEventQt.cpp
 }
 
+contains(DEFINES, ENABLE_INPUT_TYPE_COLOR=1) {
+    HEADERS += \
+        UIProcess/qt/WebColorChooserProxyQt.h
+    SOURCES += \
+        UIProcess/qt/WebColorChooserProxyQt.cpp
+}
+
 contains(DEFINES, ENABLE_GEOLOCATION=1): QT += location
 
 plugin_backend_xlib {

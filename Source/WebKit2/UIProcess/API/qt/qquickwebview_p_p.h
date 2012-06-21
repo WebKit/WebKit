@@ -185,6 +185,7 @@ protected:
     QQmlComponent* proxyAuthenticationDialog;
     QQmlComponent* filePicker;
     QQmlComponent* databaseQuotaDialog;
+    QQmlComponent* colorChooser;
 
     QList<QUrl> userScripts;
 
