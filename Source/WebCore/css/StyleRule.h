@@ -45,7 +45,7 @@ public:
         Page,
         Keyframes,
         Keyframe, // Not used. These are internally non-rule StyleKeyframe objects.
-        Region
+        Region = 16
     };
     Type type() const { return static_cast<Type>(m_type); }
     
@@ -83,8 +83,8 @@ private:
     
     PassRefPtr<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const;
 
-    unsigned m_type : 4;
-    signed m_sourceLine : 28;
+    unsigned m_type : 5;
+    signed m_sourceLine : 27;
 };
 
 class StyleRule : public StyleRuleBase {

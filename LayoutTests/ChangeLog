@@ -1,3 +1,16 @@
+2012-06-21  Andrei Onea  <onea@adobe.com>
+
+        [CSSRegions]Change WEBKIT_REGION_RULE value to 16
+        https://bugs.webkit.org/show_bug.cgi?id=89421
+
+        Reviewed by Tony Chang.
+
+        Added check for exact value of WEBKIT_REGION_RULE which should be 16,
+        according to CSS Regions spec.
+
+        * fast/regions/webkit-region-rule-expected.txt:
+        * fast/regions/webkit-region-rule.html:
+
 2012-06-21  Jon Lee  <jonlee@apple.com>
 
         r120835: fast/box-decoration-break/box-decoration-break-rendering.html failing on mac bots

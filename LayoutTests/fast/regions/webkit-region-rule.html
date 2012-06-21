@@ -26,6 +26,7 @@ if (window.CSSRule.WEBKIT_REGION_RULE)
     testPassed("WEBKIT_REGION_RULE exists on Window.CSSRule object");
 else
     testFailed("WEBKIT_REGION_RULE does not exist on Window.CSSRule object");
+shouldBe("window.CSSRule.WEBKIT_REGION_RULE", "16");
 
 var regionRule1 = document.styleSheets.item(0).cssRules.item(0);
 shouldBe("regionRule1.type", "window.CSSRule.WEBKIT_REGION_RULE");

@@ -1,3 +1,32 @@
+2012-06-21  Andrei Onea  <onea@adobe.com>
+
+        [CSSRegions]Change WEBKIT_REGION_RULE value to 16
+        https://bugs.webkit.org/show_bug.cgi?id=89421
+
+        Reviewed by Tony Chang.
+
+        Modified WEBKIT_REGION_RULE where applicable to match CSS Regions spec.
+        The new value for WEBKIT_REGION_RULE is 16 (was 10).
+
+        * css/CSSRule.cpp:
+        (WebCore):
+        Added COMPILE_ASSERT to ensure StyleRule::Region and CSSRule::WEBKIT_REGION_RULE will
+        * css/CSSRule.h:
+        (CSSRule):
+        Modified m_type bitfield length to 5
+        * css/CSSRule.idl:
+        * css/StyleRule.cpp:
+        (SameSizeAsStyleRuleBase):
+        (WebCore):
+        Added COMPILE_ASSERT to ensure that StyleRuleBase will always have exactly 32bits.
+        * css/StyleRule.h:
+        (StyleRuleBase):
+        Modified m_type bitfield to 5 to accommodate the new value, and modified
+        m_sourceLine bitfield to 27 bits in order to keep StyleRule 32
+        bits long. Consequently, any css rule longer than 67,108,863 lines will
+        cause overflow - however, the value is large enough not to cause
+        problems.
+
 2012-06-21  Silvia Pfeiffer  <silviapf@chromium.org>
 
         Paint played and buffered ranges differently in Chrome video controls.

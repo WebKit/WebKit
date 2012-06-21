@@ -35,6 +35,12 @@
 
 namespace WebCore {
 
+struct SameSizeAsStyleRuleBase : public WTF::RefCountedBase {
+    unsigned bitfields;
+};
+
+COMPILE_ASSERT(sizeof(StyleRuleBase) == sizeof(SameSizeAsStyleRuleBase), StyleRuleBase_should_stay_small);
+
 PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet) const
 {
     return createCSSOMWrapper(parentSheet, 0);

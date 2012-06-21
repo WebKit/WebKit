@@ -58,7 +58,7 @@ public:
         WEBKIT_KEYFRAMES_RULE,
         WEBKIT_KEYFRAME_RULE,
 #if ENABLE(CSS_REGIONS)
-        WEBKIT_REGION_RULE = 10
+        WEBKIT_REGION_RULE = 16
 #endif
     };
 
@@ -125,7 +125,7 @@ protected:
 private:
     mutable unsigned m_hasCachedSelectorText : 1;
     unsigned m_parentIsRule : 1;
-    unsigned m_type : 4;
+    unsigned m_type : 5;
     union {
         CSSRule* m_parentRule;
         CSSStyleSheet* m_parentStyleSheet;

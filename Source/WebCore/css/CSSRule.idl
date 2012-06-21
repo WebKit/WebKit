@@ -40,7 +40,7 @@ module css {
         const unsigned short WEBKIT_KEYFRAMES_RULE = 7;
         const unsigned short WEBKIT_KEYFRAME_RULE = 8;
 #if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
-        const unsigned short WEBKIT_REGION_RULE = 10;
+        const unsigned short WEBKIT_REGION_RULE = 16;
 #endif
 
         readonly attribute unsigned short   type;
