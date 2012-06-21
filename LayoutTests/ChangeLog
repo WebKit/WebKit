@@ -1,5 +1,12 @@
 2012-06-21  Tony Chang  <tony@chromium.org>
 
+        Unreviewed gardening. Removing pixel results for CSS computed style tests which are text only tests.
+
+        * platform/qt/fast/css/getComputedStyle/computed-style-expected.png: Removed.
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.png: Removed.
+
+2012-06-21  Tony Chang  <tony@chromium.org>
+
         Unreviewed gardening. The computed style tests should now pass on EFL after r120870.
 
         * platform/efl/TestExpectations:
