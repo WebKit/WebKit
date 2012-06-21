@@ -1,3 +1,25 @@
+2012-06-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should inline 'new Array()'
+        https://bugs.webkit.org/show_bug.cgi?id=89632
+
+        Reviewed by Geoffrey Garen.
+        
+        This adds support for treating InternalFunction like intrinsics. The code
+        to do so is actually quite clean, so I don't feel bad about perpetuating
+        the InternalFunction vs. JSFunction-with-NativeExecutable dichotomy.
+        
+        Currently this newfound power is only used to inline 'new Array()'.
+        
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (DFG):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::isInternalFunctionConstant):
+        (JSC::DFG::Graph::valueOfInternalFunctionConstant):
+
 2012-06-21  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Adding copyrights to new files.

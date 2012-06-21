@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ArrayConstructor.h"
 #include "CallLinkStatus.h"
 #include "CodeBlock.h"
 #include "DFGByteCodeCache.h"
@@ -95,6 +96,7 @@ private:
     void setIntrinsicResult(bool usesResult, int resultOperand, NodeIndex);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
     bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction);
+    bool handleConstantInternalFunction(bool usesResult, int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, CodeSpecializationKind);
     void handleGetByOffset(
         int destinationOperand, SpeculatedType, NodeIndex base, unsigned identifierNumber,
         bool useInlineStorage, size_t offset);
@@ -1128,7 +1130,12 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
     
     NodeIndex callTarget = get(currentInstruction[1].u.operand);
-    enum { ConstantFunction, LinkedFunction, UnknownFunction } callType;
+    enum {
+        ConstantFunction,
+        ConstantInternalFunction,
+        LinkedFunction,
+        UnknownFunction
+    } callType;
             
     CallLinkStatus callLinkStatus = CallLinkStatus::computeFor(
         m_inlineStackTop->m_profiledBlock, m_currentIndex);
@@ -1150,6 +1157,13 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
                 m_graph.size(), m_currentIndex,
                 m_graph.valueOfFunctionConstant(callTarget),
                 m_graph.valueOfFunctionConstant(callTarget)->executable());
+#endif
+    } else if (m_graph.isInternalFunctionConstant(callTarget)) {
+        callType = ConstantInternalFunction;
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        dataLog("Call at [@%lu, bc#%u] has an internal function constant: %p.\n",
+                m_graph.size(), m_currentIndex,
+                m_graph.valueOfInternalFunctionConstant(callTarget));
 #endif
     } else if (callLinkStatus.isSet() && !callLinkStatus.couldTakeSlowPath()
                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
@@ -1183,6 +1197,16 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
             prediction = getPrediction();
             nextOffset += OPCODE_LENGTH(op_call_put_result);
         }
+
+        if (callType == ConstantInternalFunction) {
+            if (handleConstantInternalFunction(usesResult, resultOperand, m_graph.valueOfInternalFunctionConstant(callTarget), registerOffset, argumentCountIncludingThis, prediction, kind))
+                return;
+            
+            // Can only handle this using the generic call handler.
+            addCall(interpreter, currentInstruction, op);
+            return;
+        }
+        
         JSFunction* expectedFunction;
         Intrinsic intrinsic;
         bool certainAboutExpectedFunction;
@@ -1214,7 +1238,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
         } else if (handleInlining(usesResult, currentInstruction[1].u.operand, callTarget, resultOperand, certainAboutExpectedFunction, expectedFunction, registerOffset, argumentCountIncludingThis, nextOffset, kind))
             return;
     }
-            
+    
     addCall(interpreter, currentInstruction, op);
 }
 
@@ -1569,6 +1593,35 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
     default:
         return false;
     }
+}
+
+bool ByteCodeParser::handleConstantInternalFunction(
+    bool usesResult, int resultOperand, InternalFunction* function, int registerOffset,
+    int argumentCountIncludingThis, SpeculatedType prediction, CodeSpecializationKind kind)
+{
+    // If we ever find that we have a lot of internal functions that we specialize for,
+    // then we should probably have some sort of hashtable dispatch, or maybe even
+    // dispatch straight through the MethodTable of the InternalFunction. But for now,
+    // it seems that this case is hit infrequently enough, and the number of functions
+    // we know about is small enough, that having just a linear cascade of if statements
+    // is good enough.
+    
+    UNUSED_PARAM(registerOffset); // Remove this once we do more things to the arguments.
+    UNUSED_PARAM(prediction); // Remove this once we do more things.
+    UNUSED_PARAM(kind); // Remove this once we do more things.
+    
+    if (function->classInfo() == &ArrayConstructor::s_info) {
+        // We could handle this but don't for now.
+        if (argumentCountIncludingThis != 1)
+            return false;
+        
+        setIntrinsicResult(
+            usesResult, resultOperand,
+            addToGraph(Node::VarArg, NewArray, OpInfo(0), OpInfo(0)));
+        return true;
+    }
+    
+    return false;
 }
 
 void ByteCodeParser::handleGetByOffset(
