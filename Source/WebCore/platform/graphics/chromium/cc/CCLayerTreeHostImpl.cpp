@@ -707,11 +707,11 @@ static void applyPageScaleDeltaToScrollLayers(CCLayerImpl* layerImpl, float page
         applyPageScaleDeltaToScrollLayers(layerImpl->children()[i].get(), pageScaleDelta);
 }
 
-void CCLayerTreeHostImpl::setDeviceScaleFactor(float newDeviceScaleFactor)
+void CCLayerTreeHostImpl::setDeviceScaleFactor(float deviceScaleFactor)
 {
-    if (newDeviceScaleFactor == deviceScaleFactor())
+    if (deviceScaleFactor == m_deviceScaleFactor)
         return;
-    m_deviceScaleFactor = newDeviceScaleFactor;
+    m_deviceScaleFactor = deviceScaleFactor;
 
     m_deviceViewportSize = viewportSize();
     m_deviceViewportSize.scale(m_deviceScaleFactor);
