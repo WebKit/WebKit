@@ -34,6 +34,7 @@
 
 #include "WebKitMutationObserver.h"
 
+#include "Dictionary.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "MutationCallback.h"
@@ -81,15 +82,41 @@ bool WebKitMutationObserver::validateOptions(MutationObserverOptions options)
         && ((options & CharacterData) || !(options & CharacterDataOldValue));
 }
 
-void WebKitMutationObserver::observe(Node* node, MutationObserverOptions options, const HashSet<AtomicString>& attributeFilter, ExceptionCode& ec)
+void WebKitMutationObserver::observe(Node* node, const Dictionary& optionsDictionary, ExceptionCode& ec)
 {
     if (!node) {
         ec = NOT_FOUND_ERR;
         return;
     }
 
+    if (optionsDictionary.isUndefinedOrNull()) {
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+
+    static const struct {
+        const char* name;
+        MutationObserverOptions value;
+    } booleanOptions[] = {
+        { "childList", WebKitMutationObserver::ChildList },
+        { "attributes", WebKitMutationObserver::Attributes },
+        { "characterData", WebKitMutationObserver::CharacterData },
+        { "subtree", WebKitMutationObserver::Subtree },
+        { "attributeOldValue", WebKitMutationObserver::AttributeOldValue },
+        { "characterDataOldValue", WebKitMutationObserver::CharacterDataOldValue }
+    };
+    MutationObserverOptions options = 0;
+    for (unsigned i = 0; i < sizeof(booleanOptions) / sizeof(booleanOptions[0]); ++i) {
+        bool value = false;
+        if (optionsDictionary.get(booleanOptions[i].name, value) && value)
+            options |= booleanOptions[i].value;
+    }
+
+    HashSet<AtomicString> attributeFilter;
+    if (optionsDictionary.get("attributeFilter", attributeFilter))
+        options |= WebKitMutationObserver::AttributeFilter;
+
     if (!validateOptions(options)) {
-        // FIXME: Revisit this once the spec specifies the exception type; SYNTAX_ERR may not be appropriate.
         ec = SYNTAX_ERR;
         return;
     }

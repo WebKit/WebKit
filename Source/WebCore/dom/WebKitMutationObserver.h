@@ -43,6 +43,7 @@
 
 namespace WebCore {
 
+class Dictionary;
 class MutationCallback;
 class MutationObserverRegistration;
 class MutationRecord;
@@ -78,7 +79,7 @@ public:
 
     ~WebKitMutationObserver();
 
-    void observe(Node*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter, ExceptionCode&);
+    void observe(Node*, const Dictionary&, ExceptionCode&);
     Vector<RefPtr<MutationRecord> > takeRecords();
     void disconnect();
     void observationStarted(MutationObserverRegistration*);

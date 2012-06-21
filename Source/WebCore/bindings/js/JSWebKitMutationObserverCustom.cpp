@@ -34,15 +34,9 @@
 
 #include "JSWebKitMutationObserver.h"
 
-#include "ExceptionCode.h"
-#include "JSDictionary.h"
 #include "JSMutationCallback.h"
-#include "JSNode.h"
-#include "Node.h"
 #include "WebKitMutationObserver.h"
 #include <runtime/Error.h>
-#include <wtf/HashSet.h>
-#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 
@@ -62,59 +56,6 @@ EncodedJSValue JSC_HOST_CALL JSWebKitMutationObserverConstructor::constructJSWeb
     JSWebKitMutationObserverConstructor* jsConstructor = jsCast<JSWebKitMutationObserverConstructor*>(exec->callee());
     RefPtr<MutationCallback> callback = JSMutationCallback::create(object, jsConstructor->globalObject());
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), WebKitMutationObserver::create(callback.release()))));
-}
-
-struct BooleanOption {
-    const char* name;
-    MutationObserverOptions value;
-};
-
-static const BooleanOption booleanOptions[] = {
-    { "childList", WebKitMutationObserver::ChildList },
-    { "attributes", WebKitMutationObserver::Attributes },
-    { "characterData", WebKitMutationObserver::CharacterData },
-    { "subtree", WebKitMutationObserver::Subtree },
-    { "attributeOldValue", WebKitMutationObserver::AttributeOldValue },
-    { "characterDataOldValue", WebKitMutationObserver::CharacterDataOldValue }
-};
-
-static const size_t numBooleanOptions = sizeof(booleanOptions) / sizeof(BooleanOption);
-
-JSValue JSWebKitMutationObserver::observe(ExecState* exec)
-{
-    if (exec->argumentCount() < 2)
-        return throwError(exec, createNotEnoughArgumentsError(exec));
-    Node* target = toNode(exec->argument(0));
-    if (exec->hadException())
-        return jsUndefined();
-
-    JSObject* optionsObject = exec->argument(1).getObject();
-    if (!optionsObject) {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
-        return jsUndefined();
-    }
-
-    JSDictionary dictionary(exec, optionsObject);
-    MutationObserverOptions options = 0;
-    for (unsigned i = 0; i < numBooleanOptions; ++i) {
-        bool option = false;
-        if (!dictionary.tryGetProperty(booleanOptions[i].name, option))
-            return jsUndefined();
-        if (option)
-            options |= booleanOptions[i].value;
-    }
-
-    HashSet<AtomicString> attributeFilter;
-    if (!dictionary.tryGetProperty("attributeFilter", attributeFilter))
-        return jsUndefined();
-    if (!attributeFilter.isEmpty())
-        options |= WebKitMutationObserver::AttributeFilter;
-
-    ExceptionCode ec = 0;
-    impl()->observe(target, options, attributeFilter, ec);
-    if (ec)
-        setDOMException(exec, ec);
-    return jsUndefined();
 }
 
 } // namespace WebCore

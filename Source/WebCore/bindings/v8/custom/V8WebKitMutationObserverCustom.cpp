@@ -34,19 +34,13 @@
 
 #include "V8WebKitMutationObserver.h"
 
-#include "Dictionary.h"
-#include "ExceptionCode.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
 #include "V8DOMWrapper.h"
 #include "V8MutationCallback.h"
-#include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WebKitMutationObserver.h"
-
-#include <wtf/HashSet.h>
-#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
@@ -77,43 +71,6 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::constructorCallback(const v8::Ar
     V8DOMWrapper::setDOMWrapper(args.Holder(), &info, observer.get());
     V8DOMWrapper::setJSWrapperForDOMObject(observer.release(), v8::Persistent<v8::Object>::New(args.Holder()));
     return args.Holder();
-}
-
-v8::Handle<v8::Value> V8WebKitMutationObserver::observeCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.WebKitMutationObserver.observe");
-    if (args.Length() < 2)
-        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
-    WebKitMutationObserver* imp = V8WebKitMutationObserver::toNative(args.Holder());
-    EXCEPTION_BLOCK(Node*, target, V8Node::HasInstance(args[0]) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
-
-    if (!args[1]->IsObject())
-        return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());
-
-    Dictionary optionsObject(args[1]);
-    unsigned options = 0;
-    HashSet<AtomicString> attributeFilter;
-    bool option;
-    if (optionsObject.get("childList", option) && option)
-        options |= WebKitMutationObserver::ChildList;
-    if (optionsObject.get("attributes", option) && option)
-        options |= WebKitMutationObserver::Attributes;
-    if (optionsObject.get("attributeFilter", attributeFilter))
-        options |= WebKitMutationObserver::AttributeFilter;
-    if (optionsObject.get("characterData", option) && option)
-        options |= WebKitMutationObserver::CharacterData;
-    if (optionsObject.get("subtree", option) && option)
-        options |= WebKitMutationObserver::Subtree;
-    if (optionsObject.get("attributeOldValue", option) && option)
-        options |= WebKitMutationObserver::AttributeOldValue;
-    if (optionsObject.get("characterDataOldValue", option) && option)
-        options |= WebKitMutationObserver::CharacterDataOldValue;
-
-    ExceptionCode ec = 0;
-    imp->observe(target, options, attributeFilter, ec);
-    if (ec)
-        return V8Proxy::setDOMException(ec, args.GetIsolate());
-    return v8::Handle<v8::Value>();
 }
 
 } // namespace WebCore
