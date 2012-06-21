@@ -65,8 +65,9 @@ static PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value, Vec
             v8::Local<v8::Value> item = array->Get(v8::Int32::New(i));
             RefPtr<IDBKey> subkey = createIDBKeyFromValue(item, stack);
             if (!subkey)
-                return 0;
-            subkeys.append(subkey);
+                subkeys.append(IDBKey::createInvalid());
+            else
+                subkeys.append(subkey);
         }
 
         stack.removeLast();

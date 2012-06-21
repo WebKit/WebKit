@@ -183,7 +183,7 @@ void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
 void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursor::continue");
-    if (key && (key->type() == IDBKey::InvalidType)) {
+    if (key && !key->isValid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return;
     }

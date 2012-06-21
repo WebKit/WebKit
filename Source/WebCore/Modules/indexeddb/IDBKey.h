@@ -73,6 +73,32 @@ public:
         return idbKey.release();
     }
 
+    static PassRefPtr<IDBKey> createMultiEntryArray(const KeyArray& array)
+    {
+        RefPtr<IDBKey> idbKey = adoptRef(new IDBKey());
+        idbKey->m_type = ArrayType;
+        KeyArray& result = idbKey->m_array;
+
+        for (size_t i = 0; i < array.size(); i++) {
+            if (!array[i]->isValid())
+                continue;
+
+            bool skip = false;
+            for (size_t j = 0; j < result.size(); j++) {
+                if (array[i]->isEqual(result[j].get())) {
+                    skip = true;
+                    break;
+                }
+            }
+            if (!skip) {
+                result.append(array[i]);
+                idbKey->m_sizeEstimate += array[i]->m_sizeEstimate;
+            }
+        }
+        ASSERT(idbKey->isValid());
+        return idbKey.release();
+    }
+
     static PassRefPtr<IDBKey> createArray(const KeyArray& array)
     {
         RefPtr<IDBKey> idbKey = adoptRef(new IDBKey());
@@ -98,7 +124,7 @@ public:
     };
 
     Type type() const { return m_type; }
-    bool isValid() const { return m_type != InvalidType; }
+    bool isValid() const;
 
     const KeyArray& array() const
     {

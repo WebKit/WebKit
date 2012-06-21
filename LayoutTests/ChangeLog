@@ -1,3 +1,20 @@
+2012-06-21  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Implement spec behavior for multiEntry indexes with invalid/duplicate subkeys
+        https://bugs.webkit.org/show_bug.cgi?id=86123
+
+        Reviewed by Darin Fisher.
+
+        * storage/indexeddb/index-multientry-expected.txt:
+        * storage/indexeddb/resources/index-multientry.js:
+        (addData):
+        (verifyIndexes.request.onsuccess):
+        (verifyIndexes):
+        (verifyUniqueConstraint.request.onsuccess.request.onsuccess.request.onerror):
+        (verifyUniqueConstraint.request.onsuccess.request.onsuccess):
+        (verifyUniqueConstraint.request.onsuccess):
+        (verifyUniqueConstraint):
+
 2012-06-21  Tim Horton  <timothy_horton@apple.com>
 
         SVGImageCache isn't invalidated for <img> on dynamic page scale changes

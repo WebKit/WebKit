@@ -264,6 +264,9 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         const RefPtr<IDBIndexBackendImpl>& index = it->second;
 
         RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(value.get(), index->keyPath());
+        if (indexKey && index->multiEntry() && indexKey->type() == IDBKey::ArrayType)
+            indexKey = IDBKey::createMultiEntryArray(indexKey->array());
+
         if (!indexKey || !indexKey->isValid()) {
             // Null/invalid keys not added to index; null entry keeps iterator/vector indexes consistent.
             indexKey.clear();
@@ -279,7 +282,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         }
 
         if (index->multiEntry() && indexKey->type() == IDBKey::ArrayType) {
-           for (size_t j = 0; j < indexKey->array().size(); ++j) {
+            for (size_t j = 0; j < indexKey->array().size(); ++j) {
                 if (!index->addingKeyAllowed(indexKey->array()[j].get(), key.get())) {
                     objectStore->resetAutoIncrementKeyCache();
                     callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "One of the derived (from a keyPath) keys for an index does not satisfy its uniqueness requirements."));
@@ -426,8 +429,10 @@ public:
         } else {
             ASSERT(m_index->multiEntry());
             ASSERT(indexKey->type() == IDBKey::ArrayType);
+
+            indexKey = IDBKey::createMultiEntryArray(indexKey->array());
             for (size_t i = 0; i < indexKey->array().size(); ++i) {
-                if (!m_index->addingKeyAllowed(indexKey.get()))
+                if (!m_index->addingKeyAllowed(indexKey->array()[i].get()))
                     return false;
                 if (!m_backingStore.putIndexDataForRecord(m_databaseId, m_objectStoreId, m_index->id(), *indexKey->array()[i], recordIdentifier))
                     return false;

@@ -79,6 +79,7 @@ public:
     };
 
     WEBKIT_EXPORT Type type() const;
+    WEBKIT_EXPORT bool isValid() const;
     WEBKIT_EXPORT WebVector<WebIDBKey> array() const; // Only valid for ArrayType.
     WEBKIT_EXPORT WebString string() const; // Only valid for StringType.
     WEBKIT_EXPORT double date() const; // Only valid for DateType.

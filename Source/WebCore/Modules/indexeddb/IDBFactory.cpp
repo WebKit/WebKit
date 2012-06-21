@@ -133,7 +133,7 @@ short IDBFactory::cmp(PassRefPtr<IDBKey> first, PassRefPtr<IDBKey> second, Excep
     ASSERT(first);
     ASSERT(second);
 
-    if (first->type() == IDBKey::InvalidType || second->type() == IDBKey::InvalidType) {
+    if (!first->isValid() || !second->isValid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
     }    

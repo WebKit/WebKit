@@ -1,3 +1,54 @@
+2012-06-21  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Implement spec behavior for multiEntry indexes with invalid/duplicate subkeys
+        https://bugs.webkit.org/show_bug.cgi?id=86123
+
+        Reviewed by Darin Fisher.
+
+        Distinguish between an actual invalid IDBKey, and an array of
+        possibly-invalid subkeys by making IDBKey::isValid() check subkeys
+        if the type is an array.
+
+        Introduce a new way to transform an IDBKey into a
+        multiEntry-specific IDBKey, (IDBKey::createMultiEntryArray)
+        throwing out duplicates and invalid keys. Use it when storing
+        index entries for multiEntry indexes.
+
+        No new tests: existing tests have been altered to include new behavior.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::continueFunction):
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::cmp):
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::get):
+        (WebCore::IDBIndex::getKey):
+        * Modules/indexeddb/IDBKey.cpp:
+        (WebCore::IDBKey::isValid):
+        (WebCore):
+        * Modules/indexeddb/IDBKey.h:
+        (WebCore::IDBKey::createMultiEntryArray):
+        (IDBKey):
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::only):
+        (WebCore::IDBKeyRange::lowerBound):
+        (WebCore::IDBKeyRange::upperBound):
+        (WebCore::IDBKeyRange::bound):
+        * Modules/indexeddb/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::putObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::putIndexDataForRecord):
+        * Modules/indexeddb/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::encodeIDBKey):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore):
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromValue):
+
 2012-06-21  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Overlays when using the web inspector are blurry with device scale factor > 1

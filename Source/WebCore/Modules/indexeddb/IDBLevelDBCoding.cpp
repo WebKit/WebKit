@@ -387,6 +387,7 @@ Vector<char> encodeIDBKey(const IDBKey& key)
 void encodeIDBKey(const IDBKey& key, Vector<char>& into)
 {
     size_t previousSize = into.size();
+    ASSERT(key.isValid());
     switch (key.type()) {
     case IDBKey::InvalidType:
     case IDBKey::MinType:

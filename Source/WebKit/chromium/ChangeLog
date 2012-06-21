@@ -1,3 +1,19 @@
+2012-06-21  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Implement spec behavior for multiEntry indexes with invalid/duplicate subkeys
+        https://bugs.webkit.org/show_bug.cgi?id=86123
+
+        Reviewed by Darin Fisher.
+
+        Add matching isValid() to WebIDBKey to match the one in IDBKey.
+
+        * public/WebIDBKey.h:
+        * src/WebIDBKey.cpp:
+        (WebKit::WebIDBKey::isValid):
+        (WebKit):
+        * src/WebIDBKeyRange.cpp:
+        (WebKit::WebIDBKeyRange::assign):
+
 2012-06-21  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Overlays when using the web inspector are blurry with device scale factor > 1

@@ -43,7 +43,7 @@ void WebIDBKeyRange::assign(const WebIDBKeyRange& other)
 
 void WebIDBKeyRange::assign(const WebIDBKey& lower, const WebIDBKey& upper, bool lowerOpen, bool upperOpen)
 {
-    if (lower.type() == WebIDBKey::InvalidType && upper.type() == WebIDBKey::InvalidType)
+    if (!lower.isValid() && !upper.isValid())
         m_private = 0;
     else
         m_private = IDBKeyRange::create(lower, upper, lowerOpen ? IDBKeyRange::LowerBoundOpen : IDBKeyRange::LowerBoundClosed, upperOpen ? IDBKeyRange::UpperBoundOpen : IDBKeyRange::UpperBoundClosed);

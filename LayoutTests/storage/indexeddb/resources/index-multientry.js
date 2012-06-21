@@ -54,6 +54,10 @@ function addData()
     request.onerror = unexpectedErrorCallback;
     request = evalAndLog("transaction.objectStore('store').put({x: [4, 5, 6], y: 'b'}, 'bar')");
     request.onerror = unexpectedErrorCallback;
+    request = evalAndLog("transaction.objectStore('store').put({x: [7, 7, 8, 7], y: 'c'}, 'baz')");
+    request.onerror = unexpectedErrorCallback;
+    request = evalAndLog("transaction.objectStore('store').put({x: [null, 9, 9], y: 'd'}, 'bloop')");
+    request.onerror = unexpectedErrorCallback;
 }
 
 function verifyIndexes(indexName, callback)
@@ -71,6 +75,9 @@ function verifyIndexes(indexName, callback)
         { key: 4, primaryKey: 'bar', y: 'b' },
         { key: 5, primaryKey: 'bar', y: 'b' },
         { key: 6, primaryKey: 'bar', y: 'b' },
+        { key: 7, primaryKey: 'baz', y: 'c' },
+        { key: 8, primaryKey: 'baz', y: 'c' },
+        { key: 9, primaryKey: 'bloop', y: 'd' },
     ];
 
     var request = evalAndLog("transaction.objectStore('store').index('" + indexName + "').openCursor()");
@@ -83,7 +90,7 @@ function verifyIndexes(indexName, callback)
             shouldBe("cursor.key", String(ex.key));
             shouldBeEqualToString("cursor.primaryKey", ex.primaryKey);
             shouldBeEqualToString("cursor.value.y", ex.y);
-            cursor.continue();
+            evalAndLog("cursor.continue()");
         } else {
             shouldBe("expected.length", "0");
         }
@@ -113,7 +120,7 @@ function verifyUniqueConstraint()
             debug("This should fail the uniqueness constraint on the index, and fail:");
             request = evalAndLog("transaction.objectStore('store-unique').put({x: [5, 2], y: 'c'}, 'should fail')");
             request.onsuccess = unexpectedSuccessCallback;
-            request.onerror = function() { debug("Request failed, as expected"); };
+            request.onerror = function() { debug("Request failed, as expected (" + request.error.name + ")"); };
         };
     };
 }

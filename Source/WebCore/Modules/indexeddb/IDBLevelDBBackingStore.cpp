@@ -587,6 +587,7 @@ static int64_t getNewVersionNumber(LevelDBTransaction* transaction, int64_t data
 
 bool IDBLevelDBBackingStore::putObjectStoreRecord(int64_t databaseId, int64_t objectStoreId, const IDBKey& key, const String& value, ObjectStoreRecordIdentifier* recordIdentifier)
 {
+    ASSERT(key.isValid());
     ASSERT(m_currentTransaction);
     int64_t version = getNewVersionNumber(m_currentTransaction.get(), databaseId, objectStoreId);
     const Vector<char> objectStoredataKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, key);
@@ -869,6 +870,7 @@ void IDBLevelDBBackingStore::deleteIndex(int64_t databaseId, int64_t objectStore
 
 bool IDBLevelDBBackingStore::putIndexDataForRecord(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, const ObjectStoreRecordIdentifier* recordIdentifier)
 {
+    ASSERT(key.isValid());
     ASSERT(indexId >= kMinimumIndexId);
     const LevelDBRecordIdentifier* levelDBRecordIdentifier = static_cast<const LevelDBRecordIdentifier*>(recordIdentifier);
 

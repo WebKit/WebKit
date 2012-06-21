@@ -25,6 +25,8 @@ transaction.objectStore('store').put({x: [7, 8, 9], y: 'a'}, 'foo')
 Now overwrite them with what we're expecting
 transaction.objectStore('store').put({x: [1, 2, 3], y: 'a'}, 'foo')
 transaction.objectStore('store').put({x: [4, 5, 6], y: 'b'}, 'bar')
+transaction.objectStore('store').put({x: [7, 7, 8, 7], y: 'c'}, 'baz')
+transaction.objectStore('store').put({x: [null, 9, 9], y: 'd'}, 'bloop')
 
 Verifying index: index
 transaction = db.transaction(['store'], 'readonly')
@@ -34,31 +36,55 @@ PASS ex is non-null.
 PASS cursor.key is 1
 PASS cursor.primaryKey is "foo"
 PASS cursor.value.y is "a"
+cursor.continue()
 cursor = event.target.result
 PASS ex is non-null.
 PASS cursor.key is 2
 PASS cursor.primaryKey is "foo"
 PASS cursor.value.y is "a"
+cursor.continue()
 cursor = event.target.result
 PASS ex is non-null.
 PASS cursor.key is 3
 PASS cursor.primaryKey is "foo"
 PASS cursor.value.y is "a"
+cursor.continue()
 cursor = event.target.result
 PASS ex is non-null.
 PASS cursor.key is 4
 PASS cursor.primaryKey is "bar"
 PASS cursor.value.y is "b"
+cursor.continue()
 cursor = event.target.result
 PASS ex is non-null.
 PASS cursor.key is 5
 PASS cursor.primaryKey is "bar"
 PASS cursor.value.y is "b"
+cursor.continue()
 cursor = event.target.result
 PASS ex is non-null.
 PASS cursor.key is 6
 PASS cursor.primaryKey is "bar"
 PASS cursor.value.y is "b"
+cursor.continue()
+cursor = event.target.result
+PASS ex is non-null.
+PASS cursor.key is 7
+PASS cursor.primaryKey is "baz"
+PASS cursor.value.y is "c"
+cursor.continue()
+cursor = event.target.result
+PASS ex is non-null.
+PASS cursor.key is 8
+PASS cursor.primaryKey is "baz"
+PASS cursor.value.y is "c"
+cursor.continue()
+cursor = event.target.result
+PASS ex is non-null.
+PASS cursor.key is 9
+PASS cursor.primaryKey is "bloop"
+PASS cursor.value.y is "d"
+cursor.continue()
 cursor = event.target.result
 PASS expected.length is 0
 
@@ -71,7 +97,7 @@ transaction.objectStore('store-unique').put({x: [1, 2, 7], y: 'a'}, 'foo')
 success!
 This should fail the uniqueness constraint on the index, and fail:
 transaction.objectStore('store-unique').put({x: [5, 2], y: 'c'}, 'should fail')
-Request failed, as expected
+Request failed, as expected (DataError)
 Transaction aborted as expected
 
 Create an index on a populated store
@@ -89,31 +115,55 @@ PASS ex is non-null.
 PASS cursor.key is 1
 PASS cursor.primaryKey is "foo"
 PASS cursor.value.y is "a"
+cursor.continue()
 cursor = event.target.result
 PASS ex is non-null.
 PASS cursor.key is 2
 PASS cursor.primaryKey is "foo"
 PASS cursor.value.y is "a"
+cursor.continue()
 cursor = event.target.result
 PASS ex is non-null.
 PASS cursor.key is 3
 PASS cursor.primaryKey is "foo"
 PASS cursor.value.y is "a"
+cursor.continue()
 cursor = event.target.result
 PASS ex is non-null.
 PASS cursor.key is 4
 PASS cursor.primaryKey is "bar"
 PASS cursor.value.y is "b"
+cursor.continue()
 cursor = event.target.result
 PASS ex is non-null.
 PASS cursor.key is 5
 PASS cursor.primaryKey is "bar"
 PASS cursor.value.y is "b"
+cursor.continue()
 cursor = event.target.result
 PASS ex is non-null.
 PASS cursor.key is 6
 PASS cursor.primaryKey is "bar"
 PASS cursor.value.y is "b"
+cursor.continue()
+cursor = event.target.result
+PASS ex is non-null.
+PASS cursor.key is 7
+PASS cursor.primaryKey is "baz"
+PASS cursor.value.y is "c"
+cursor.continue()
+cursor = event.target.result
+PASS ex is non-null.
+PASS cursor.key is 8
+PASS cursor.primaryKey is "baz"
+PASS cursor.value.y is "c"
+cursor.continue()
+cursor = event.target.result
+PASS ex is non-null.
+PASS cursor.key is 9
+PASS cursor.primaryKey is "bloop"
+PASS cursor.value.y is "d"
+cursor.continue()
 cursor = event.target.result
 PASS expected.length is 0
 PASS successfullyParsed is true

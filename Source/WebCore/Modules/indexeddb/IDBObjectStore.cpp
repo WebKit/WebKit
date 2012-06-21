@@ -126,7 +126,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, Pass
         return 0;
     }
 
-    if (key && (key->type() == IDBKey::InvalidType)) {
+    if (key && !key->isValid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
     }
@@ -159,7 +159,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptExecutionContext* context, Pass
         return 0;
     }
 
-    if (key && (key->type() == IDBKey::InvalidType)) {
+    if (key && !key->isValid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
     }

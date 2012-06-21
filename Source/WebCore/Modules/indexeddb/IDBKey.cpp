@@ -40,6 +40,21 @@ IDBKey::~IDBKey()
 {
 }
 
+bool IDBKey::isValid() const
+{
+    if (m_type == InvalidType)
+        return false;
+
+    if (m_type == ArrayType) {
+        for (size_t i = 0; i < m_array.size(); i++) {
+            if (!m_array[i]->isValid())
+                return false;
+        }
+    }
+
+    return true;
+}
+
 int IDBKey::compare(const IDBKey* other) const
 {
     ASSERT(other);

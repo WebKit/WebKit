@@ -120,6 +120,8 @@ static PassRefPtr<IDBKey> convertFromWebIDBKeyArray(const WebVector<WebIDBKey>& 
             keys.append(IDBKey::createNumber(array[i].number()));
             break;
         case WebIDBKey::InvalidType:
+            keys.append(IDBKey::createInvalid());
+            break;
         case WebIDBKey::NullType:
             ASSERT_NOT_REACHED();
             break;
@@ -149,6 +151,8 @@ static void convertToWebIDBKeyArray(const IDBKey::KeyArray& array, WebVector<Web
             keys[i] = WebIDBKey::createNumber(key->number());
             break;
         case IDBKey::InvalidType:
+            keys[i] = WebIDBKey::createInvalid();
+            break;
         case IDBKey::MinType:
             ASSERT_NOT_REACHED();
             break;
@@ -197,6 +201,13 @@ WebIDBKey::Type WebIDBKey::type() const
     if (!m_private.get())
         return NullType;
     return Type(m_private->type());
+}
+
+bool WebIDBKey::isValid() const
+{
+    if (!m_private.get())
+        return false;
+    return m_private->isValid();
 }
 
 WebVector<WebIDBKey> WebIDBKey::array() const
