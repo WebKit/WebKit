@@ -1,3 +1,41 @@
+2012-06-21  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Combine WebKit API tests into fewer binaries
+        https://bugs.webkit.org/show_bug.cgi?id=88458
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of creating one binary per-test file, create binaries for each
+        category of tests. Right now this includes WTF and the WebKit2 C API,
+        but later tests can be added for the GTK+ platform layer and the WebKit1
+        and WebKit2 API layers.
+
+        * TestWebKitAPI/GNUmakefile.am: Compile only two test binaries, one for the WebKit2
+          C API and one for WTF. Refresh the source list to ensure that new test are active.
+        * gtk/run-api-tests: Change the way that tests are skipped by splitting out the
+        concept of skipping a test and skipping a suite (program) of tests. Test cases are
+        skipped because of legitimate failures, but entire programs are skipped because of
+        problems in the harness. As of right now a test program is only skipped if the
+        accessibility bus cannot be started.
+        (SkippedTest.__init__): Make the test case a required argument and have one skipped
+        test case per SkippedTest instance.
+        (SkippedTest.__str__): Ditto.
+        (TestRunner): Update the directory list. We only have two gtest binaries now and they are
+        in one directory. Reformat the test list to make it slightly easier to read.
+        (TestRunner.__init__): Add the _skipped_test_program member, which handles entire
+        test programs that are skipped.
+        (TestRunner._setup_testing_environment): Use the new member.
+        (TestRunner._test_cases_to_skip): Collect all skipped test cases now instead of just
+        the first SkippedTest that matches.
+        (TestRunner._should_run_test_program): Take a look at the new member to make this
+        decision.
+        (TestRunner._run_test_command): Use the name test_program instead of test
+        to disambiguate between test cases and test suites.
+        (TestRunner._run_test_glib): ditto.
+        (TestRunner._run_test_google): Ditto.
+        (TestRunner._run_test): Ditto.
+        (TestRunner.run_tests): Ditto.
+
 2012-06-21  Yong Li  <yoli@rim.com>
 
         Unreviewed. Moving myself from committer to reviewer.
