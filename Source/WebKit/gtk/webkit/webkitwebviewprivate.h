@@ -137,6 +137,8 @@ GtkMenu* webkit_web_view_get_context_menu(WebKitWebView*);
 void webViewEnterFullscreen(WebKitWebView* webView, WebCore::Node*);
 void webViewExitFullscreen(WebKitWebView* webView);
 
+void webkitWebViewRunFileChooserRequest(WebKitWebView*, WebKitFileChooserRequest*);
+
 #if ENABLE(ICONDATABASE)
 void webkitWebViewRegisterForIconNotification(WebKitWebView*, bool shouldRegister);
 void webkitWebViewIconLoaded(WebKitFaviconDatabase*, const char* frameURI, WebKitWebView*);

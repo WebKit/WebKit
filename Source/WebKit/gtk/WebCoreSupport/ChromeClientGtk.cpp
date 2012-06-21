@@ -55,6 +55,7 @@
 #include "WebKitDOMBinding.h"
 #include "WebKitDOMHTMLElementPrivate.h"
 #include "WindowFeatures.h"
+#include "webkitfilechooserrequestprivate.h"
 #include "webkitgeolocationpolicydecision.h"
 #include "webkitgeolocationpolicydecisionprivate.h"
 #include "webkitnetworkrequest.h"
@@ -815,40 +816,8 @@ void ChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t)
 
 void ChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
 {
-    RefPtr<FileChooser> chooser = prpFileChooser;
-
-    GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
-    if (!widgetIsOnscreenToplevelWindow(toplevel))
-        toplevel = 0;
-
-    GtkWidget* dialog = gtk_file_chooser_dialog_new(_("Upload File"),
-                                                    toplevel ? GTK_WINDOW(toplevel) : 0,
-                                                    GTK_FILE_CHOOSER_ACTION_OPEN,
-                                                    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                                    GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-                                                    NULL);
-
-    gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), chooser->settings().allowsMultipleFiles);
-
-    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
-        if (gtk_file_chooser_get_select_multiple(GTK_FILE_CHOOSER(dialog))) {
-            GOwnPtr<GSList> filenames(gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog)));
-            Vector<String> names;
-            for (GSList* item = filenames.get() ; item ; item = item->next) {
-                if (!item->data)
-                    continue;
-                names.append(filenameToString(static_cast<char*>(item->data)));
-                g_free(item->data);
-            }
-            chooser->chooseFiles(names);
-        } else {
-            gchar* filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-            if (filename)
-                chooser->chooseFile(filenameToString(filename));
-            g_free(filename);
-        }
-    }
-    gtk_widget_destroy(dialog);
+    GRefPtr<WebKitFileChooserRequest> request = adoptGRef(webkit_file_chooser_request_create(prpFileChooser));
+    webkitWebViewRunFileChooserRequest(m_webView, request.get());
 }
 
 void ChromeClient::loadIconForFiles(const Vector<WTF::String>& filenames, WebCore::FileIconLoader* loader)

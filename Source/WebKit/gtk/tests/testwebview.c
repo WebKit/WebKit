@@ -506,6 +506,186 @@ static void test_webkit_web_view_fullscreen(gconstpointer blocked)
     gtk_widget_destroy(window);
 }
 
+static gboolean checkMimeTypeForFilter(GtkFileFilter* filter, const gchar* mimeType)
+{
+    GtkFileFilterInfo filter_info;
+    filter_info.contains = GTK_FILE_FILTER_MIME_TYPE;
+    filter_info.mime_type = mimeType;
+    return gtk_file_filter_filter(filter, &filter_info);
+}
+
+static gboolean runFileChooserCbNoMultiselNoMime(WebKitWebView* webview, WebKitFileChooserRequest* request, gpointer data)
+{
+    g_assert(!webkit_file_chooser_request_get_select_multiple(request));
+
+    const gchar* const* mimeTypes = webkit_file_chooser_request_get_mime_types(request);
+    g_assert(!mimeTypes);
+    GtkFileFilter* filter = webkit_file_chooser_request_get_mime_types_filter(request);
+    g_assert(!filter);
+
+    const gchar* const* selectedFiles = webkit_file_chooser_request_get_selected_files(request);
+    g_assert(!selectedFiles);
+
+    g_main_loop_quit(loop);
+    return TRUE;
+}
+
+static gboolean runFileChooserCbMultiselNoMime(WebKitWebView* webview, WebKitFileChooserRequest* request, gpointer data)
+{
+    g_assert(webkit_file_chooser_request_get_select_multiple(request));
+
+    const gchar* const* mimeTypes = webkit_file_chooser_request_get_mime_types(request);
+    g_assert(!mimeTypes);
+    GtkFileFilter* filter = webkit_file_chooser_request_get_mime_types_filter(request);
+    g_assert(!filter);
+    const gchar* const* selectedFiles = webkit_file_chooser_request_get_selected_files(request);
+    g_assert(!selectedFiles);
+
+    // Select some files.
+    const gchar* filesToSelect[4] = { "/foo", "/foo/bar", "/foo/bar/baz", 0 };
+    webkit_file_chooser_request_select_files(request, filesToSelect);
+
+    // Check the files that have been just selected.
+    selectedFiles = webkit_file_chooser_request_get_selected_files(request);
+    g_assert(selectedFiles);
+    g_assert_cmpstr(selectedFiles[0], ==, "/foo");
+    g_assert_cmpstr(selectedFiles[1], ==, "/foo/bar");
+    g_assert_cmpstr(selectedFiles[2], ==, "/foo/bar/baz");
+    g_assert(!selectedFiles[3]);
+
+    g_main_loop_quit(loop);
+    return TRUE;
+}
+
+static gboolean runFileChooserCbSelectionRetained(WebKitWebView* webview, WebKitFileChooserRequest* request, gpointer data)
+{
+    const gchar* const* selectedFiles = webkit_file_chooser_request_get_selected_files(request);
+    g_assert(selectedFiles);
+    g_assert_cmpstr(selectedFiles[0], ==, "/foo");
+    g_assert_cmpstr(selectedFiles[1], ==, "/foo/bar");
+    g_assert_cmpstr(selectedFiles[2], ==, "/foo/bar/baz");
+    g_assert(!selectedFiles[3]);
+
+    g_main_loop_quit(loop);
+    return TRUE;
+}
+
+static gboolean runFileChooserCbNoMultiselAcceptTypes(WebKitWebView* webview, WebKitFileChooserRequest* request, gpointer data)
+{
+    g_assert(!webkit_file_chooser_request_get_select_multiple(request));
+
+    const gchar* const* mimeTypes = webkit_file_chooser_request_get_mime_types(request);
+    g_assert(mimeTypes);
+    g_assert_cmpstr(mimeTypes[0], ==, "audio/*");
+    g_assert_cmpstr(mimeTypes[1], ==, "video/*");
+    g_assert_cmpstr(mimeTypes[2], ==, "image/*");
+    g_assert(!mimeTypes[3]);
+
+    GtkFileFilter* filter = webkit_file_chooser_request_get_mime_types_filter(request);
+    g_assert(GTK_IS_FILE_FILTER(filter));
+    g_assert(checkMimeTypeForFilter(filter, "audio/*"));
+    g_assert(checkMimeTypeForFilter(filter, "video/*"));
+    g_assert(checkMimeTypeForFilter(filter, "image/*"));
+
+    const gchar* const* selectedFiles = webkit_file_chooser_request_get_selected_files(request);
+    g_assert(!selectedFiles);
+
+    g_main_loop_quit(loop);
+    return TRUE;
+}
+
+void doMouseButtonEvent(GtkWidget* widget, GdkEventType eventType, int x, int y, unsigned int button, unsigned int modifiers)
+{
+    g_assert(gtk_widget_get_realized(widget));
+
+    GdkEvent* event = gdk_event_new(eventType);
+    event->button.window = gtk_widget_get_window(widget);
+    g_object_ref(event->button.window);
+
+    event->button.time = GDK_CURRENT_TIME;
+    event->button.x = x;
+    event->button.y = y;
+    event->button.axes = 0;
+    event->button.state = modifiers;
+    event->button.button = button;
+
+    event->button.device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(widget)));
+
+    int xRoot, yRoot;
+    gdk_window_get_root_coords(gtk_widget_get_window(widget), x, y, &xRoot, &yRoot);
+    event->button.x_root = xRoot;
+    event->button.y_root = yRoot;
+    gtk_main_do_event(event);
+}
+
+static void clickMouseButton(GtkWidget* widget, int x, int y, unsigned int button, unsigned int modifiers)
+{
+    doMouseButtonEvent(widget, GDK_BUTTON_PRESS, x, y, button, modifiers);
+    doMouseButtonEvent(widget, GDK_BUTTON_RELEASE, x, y, button, modifiers);
+}
+
+static gboolean clickMouseButtonAndWaitForFileChooserRequest(WebKitWebView* webView)
+{
+    clickMouseButton(GTK_WIDGET(webView), 5, 5, 1, 0);
+    return TRUE;
+}
+
+static void test_webkit_web_view_file_chooser()
+{
+    const gchar* htmlFormatBase = "<html><body>"
+            "<input style='position:absolute;left:0;top:0;margin:0;padding:0' type='file' %s/>"
+            "</body></html>";
+
+    GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget* webView = webkit_web_view_new();
+    gtk_container_add(GTK_CONTAINER(window), webView);
+    gtk_widget_show_all(window);
+
+    loop = g_main_loop_new(NULL, TRUE);
+
+    // Multiple selections not allowed, no MIME filtering.
+    gulong handler = g_signal_connect(webView, "run-file-chooser", G_CALLBACK(runFileChooserCbNoMultiselNoMime), NULL);
+    gchar* htmlFormat = g_strdup_printf(htmlFormatBase, "");
+    webkit_web_view_load_string(WEBKIT_WEB_VIEW(webView), htmlFormat, NULL, NULL, NULL);
+    g_free(htmlFormat);
+
+    g_timeout_add(100, (GSourceFunc) clickMouseButtonAndWaitForFileChooserRequest, WEBKIT_WEB_VIEW(webView));
+    g_main_loop_run(loop);
+
+    g_signal_handler_disconnect(webView, handler);
+
+    // Multiple selections allowed, no MIME filtering, some pre-selected files.
+    handler = g_signal_connect(webView, "run-file-chooser", G_CALLBACK(runFileChooserCbMultiselNoMime), NULL);
+    htmlFormat = g_strdup_printf(htmlFormatBase, "multiple");
+    webkit_web_view_load_string(WEBKIT_WEB_VIEW(webView), htmlFormat, NULL, NULL, NULL);
+    g_free(htmlFormat);
+
+    g_timeout_add(100, (GSourceFunc) clickMouseButtonAndWaitForFileChooserRequest, WEBKIT_WEB_VIEW(webView));
+    g_main_loop_run(loop);
+
+    g_signal_handler_disconnect(webView, handler);
+
+    // Perform another request to check if the list of files selected
+    // in the previous step appears now as part of the new request.
+    handler = g_signal_connect(webView, "run-file-chooser", G_CALLBACK(runFileChooserCbSelectionRetained), NULL);
+    g_timeout_add(100, (GSourceFunc) clickMouseButtonAndWaitForFileChooserRequest, WEBKIT_WEB_VIEW(webView));
+    g_main_loop_run(loop);
+
+    g_signal_handler_disconnect(webView, handler);
+
+    // Multiple selections not allowed, only accept images, audio and video files.
+    handler = g_signal_connect(webView, "run-file-chooser", G_CALLBACK(runFileChooserCbNoMultiselAcceptTypes), NULL);
+    htmlFormat = g_strdup_printf(htmlFormatBase, "accept='audio/*,video/*,image/*'");
+    webkit_web_view_load_string(WEBKIT_WEB_VIEW(webView), htmlFormat, NULL, NULL, NULL);
+    g_free(htmlFormat);
+
+    g_timeout_add(100, (GSourceFunc) clickMouseButtonAndWaitForFileChooserRequest, WEBKIT_WEB_VIEW(webView));
+    g_main_loop_run(loop);
+
+    g_signal_handler_disconnect(webView, handler);
+    gtk_widget_destroy(window);
+}
+
 int main(int argc, char** argv)
 {
     SoupServer* server;
@@ -537,6 +717,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/webview/webview-does-not-steal-focus", test_webkit_web_view_does_not_steal_focus);
     g_test_add_data_func("/webkit/webview/fullscreen", GINT_TO_POINTER(FALSE), test_webkit_web_view_fullscreen);
     g_test_add_data_func("/webkit/webview/fullscreen-blocked", GINT_TO_POINTER(TRUE), test_webkit_web_view_fullscreen);
+    g_test_add_func("/webkit/webview/file-chooser", test_webkit_web_view_file_chooser);
 
     return g_test_run ();
 }

@@ -1,6 +1,7 @@
 #include <webkit/webkit.h>
 webkit_download_get_type
 webkit_favicon_database_get_type
+webkit_file_chooser_request_get_type
 webkit_geolocation_policy_decision_get_type
 webkit_hit_test_result_get_type
 webkit_icon_database_get_type

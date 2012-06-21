@@ -114,6 +114,7 @@ webkitgtk_static_h_api += \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitdownload.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkiterror.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitfavicondatabase.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitfilechooserrequest.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitgeolocationpolicydecision.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitglobals.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkithittestresult.h \
@@ -221,6 +222,9 @@ webkitgtk_sources += \
 	Source/WebKit/gtk/webkit/webkiterror.cpp \
 	Source/WebKit/gtk/webkit/webkitfavicondatabase.cpp \
 	Source/WebKit/gtk/webkit/webkitfavicondatabaseprivate.h \
+	Source/WebKit/gtk/webkit/webkitfilechooserrequest.cpp \
+	Source/WebKit/gtk/webkit/webkitfilechooserrequest.h \
+	Source/WebKit/gtk/webkit/webkitfilechooserrequestprivate.h \
 	Source/WebKit/gtk/webkit/webkitgeolocationpolicydecision.cpp \
 	Source/WebKit/gtk/webkit/webkitgeolocationpolicydecisionprivate.h \
 	Source/WebKit/gtk/webkit/webkitglobals.cpp \

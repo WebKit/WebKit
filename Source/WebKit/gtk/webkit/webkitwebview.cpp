@@ -216,6 +216,7 @@ enum {
     ENTERING_FULLSCREEN,
     LEAVING_FULLSCREEN,
     CONTEXT_MENU,
+    RUN_FILE_CHOOSER,
 
     LAST_SIGNAL
 };
@@ -1292,6 +1293,48 @@ static gboolean webkit_web_view_real_entering_fullscreen(WebKitWebView* webView)
 static gboolean webkit_web_view_real_leaving_fullscreen(WebKitWebView* webView)
 {
     return FALSE;
+}
+
+static void fileChooserDialogResponseCallback(GtkDialog* dialog, gint responseID, WebKitFileChooserRequest* request)
+{
+    GRefPtr<WebKitFileChooserRequest> adoptedRequest = adoptGRef(request);
+    if (responseID == GTK_RESPONSE_ACCEPT) {
+        GOwnPtr<GSList> filesList(gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog)));
+        GRefPtr<GPtrArray> filesArray = adoptGRef(g_ptr_array_new());
+        for (GSList* file = filesList.get(); file; file = g_slist_next(file))
+            g_ptr_array_add(filesArray.get(), file->data);
+        g_ptr_array_add(filesArray.get(), 0);
+        webkit_file_chooser_request_select_files(adoptedRequest.get(), reinterpret_cast<const gchar* const*>(filesArray->pdata));
+    }
+
+    gtk_widget_destroy(GTK_WIDGET(dialog));
+}
+
+static gboolean webkitWebViewRealRunFileChooser(WebKitWebView* webView, WebKitFileChooserRequest* request)
+{
+    GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(webView));
+    if (!widgetIsOnscreenToplevelWindow(toplevel))
+        toplevel = 0;
+
+    gboolean allowsMultipleSelection = webkit_file_chooser_request_get_select_multiple(request);
+    GtkWidget* dialog = gtk_file_chooser_dialog_new(allowsMultipleSelection ? _("Select Files") : _("Select File"),
+                                                    toplevel ? GTK_WINDOW(toplevel) : 0,
+                                                    GTK_FILE_CHOOSER_ACTION_OPEN,
+                                                    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                                    GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                                    NULL);
+
+    if (GtkFileFilter* filter = webkit_file_chooser_request_get_mime_types_filter(request))
+        gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
+    gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), allowsMultipleSelection);
+
+    if (const gchar* const* selectedFiles = webkit_file_chooser_request_get_selected_files(request))
+        gtk_file_chooser_select_filename(GTK_FILE_CHOOSER(dialog), selectedFiles[0]);
+
+    g_signal_connect(dialog, "response", G_CALLBACK(fileChooserDialogResponseCallback), g_object_ref(request));
+    gtk_widget_show(dialog);
+
+    return TRUE;
 }
 
 static void webkit_web_view_dispose(GObject* object)
@@ -2547,6 +2590,42 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_TYPE_NONE, 1,
             WEBKIT_TYPE_WEB_FRAME);
 
+     /**
+     * WebKitWebView::run-file-chooser:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @request: a #WebKitFileChooserRequest
+     *
+     * This signal is emitted when the user interacts with a &lt;input
+     * type='file' /&gt; HTML element, requesting from WebKit to show
+     * a dialog to select one or more files to be uploaded. To let the
+     * application know the details of the file chooser, as well as to
+     * allow the client application to either cancel the request or
+     * perform an actual selection of files, the signal will pass an
+     * instance of the #WebKitFileChooserRequest in the @request
+     * argument.
+     *
+     * The default signal handler will asynchronously run a regular
+     * #GtkFileChooserDialog for the user to interact with.
+     *
+     * If this signal is to be handled asynchronously, you must
+     * call g_object_ref() on the @request, and return %TRUE to indicate
+     * that the request is being handled. When you are ready to complete the
+     * request, call webkit_file_chooser_request_select_files().
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *   %FALSE to propagate the event further.
+     *
+     */
+    webkit_web_view_signals[RUN_FILE_CHOOSER] =
+        g_signal_new("run-file-chooser",
+                     G_TYPE_FROM_CLASS(webViewClass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(WebKitWebViewClass, run_file_chooser),
+                     g_signal_accumulator_true_handled, 0 /* accumulator data */,
+                     webkit_marshal_BOOLEAN__OBJECT,
+                     G_TYPE_BOOLEAN, 1, /* number of parameters */
+                     WEBKIT_TYPE_FILE_CHOOSER_REQUEST);
+
     webkit_web_view_signals[SHOULD_BEGIN_EDITING] = g_signal_new("should-begin-editing",
         G_TYPE_FROM_CLASS(webViewClass), static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
         G_STRUCT_OFFSET(WebKitWebViewClass, should_allow_editing_action), g_signal_accumulator_first_wins, 0,
@@ -2856,6 +2935,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->should_allow_editing_action = webkit_web_view_real_should_allow_editing_action;
     webViewClass->entering_fullscreen = webkit_web_view_real_entering_fullscreen;
     webViewClass->leaving_fullscreen = webkit_web_view_real_leaving_fullscreen;
+    webViewClass->run_file_chooser = webkitWebViewRealRunFileChooser;
 
     GObjectClass* objectClass = G_OBJECT_CLASS(webViewClass);
     objectClass->dispose = webkit_web_view_dispose;
@@ -3608,6 +3688,12 @@ GtkWidget* webkit_web_view_new(void)
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, NULL));
 
     return GTK_WIDGET(webView);
+}
+
+void webkitWebViewRunFileChooserRequest(WebKitWebView* webView, WebKitFileChooserRequest* request)
+{
+    gboolean returnValue;
+    g_signal_emit(webView, webkit_web_view_signals[RUN_FILE_CHOOSER], 0, request, &returnValue);
 }
 
 // for internal use only

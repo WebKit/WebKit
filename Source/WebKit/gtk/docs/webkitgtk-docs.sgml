@@ -41,6 +41,7 @@
     <xi:include href="xml/webkiticondatabase.xml"/>
     <xi:include href="xml/webkitspellchecker.xml"/>
     <xi:include href="xml/webkitfavicondatabase.xml"/>
+    <xi:include href="xml/webkitfilechooserrequest.xml"/>
   </chapter>
 
   <chapter>

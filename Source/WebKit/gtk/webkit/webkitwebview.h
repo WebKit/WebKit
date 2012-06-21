@@ -28,6 +28,7 @@
 
 #include <webkit/webkitdefines.h>
 #include <webkit/webkitdom.h>
+#include <webkit/webkitfilechooserrequest.h>
 #include <webkit/webkitwebbackforwardlist.h>
 #include <webkit/webkitwebframe.h>
 #include <webkit/webkitwebhistoryitem.h>
@@ -178,9 +179,8 @@ struct _WebKitWebViewClass {
     gboolean                   (* should_allow_editing_action) (WebKitWebView   *web_view);
     gboolean                   (* entering_fullscreen) (WebKitWebView   *web_view);
     gboolean                   (* leaving_fullscreen) (WebKitWebView   *web_view);
-
-    /* Padding for future expansion */
-    void (*_webkit_reserved0) (void);
+    gboolean                   (* run_file_chooser)       (WebKitWebView            *web_view,
+                                                           WebKitFileChooserRequest *request);
 };
 
 WEBKIT_API GType
