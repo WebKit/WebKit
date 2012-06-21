@@ -42,7 +42,7 @@ PassRefPtr<SpeechRecognitionError> SpeechRecognitionError::create(const AtomicSt
 }
 
 SpeechRecognitionError::SpeechRecognitionError(Code code, const String& message)
-    : Event(eventNames().errorEvent, /*canBubble=*/false, /*cancelable=*/false) // FIXME: Spec should say whether it bubbles and is cancelable.
+    : Event(eventNames().errorEvent, /*canBubble=*/false, /*cancelable=*/false)
     , m_code(static_cast<unsigned short>(code))
     , m_message(message)
 {

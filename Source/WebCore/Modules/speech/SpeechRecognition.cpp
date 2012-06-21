@@ -67,7 +67,6 @@ void SpeechRecognition::abort()
 
 void SpeechRecognition::didStartAudio()
 {
-    // FIXME: The spec should specify whether these events can bubble and are cancelable.
     dispatchEvent(Event::create(eventNames().audiostartEvent, /*canBubble=*/false, /*cancelable=*/false));
 }
 

@@ -1,3 +1,20 @@
+2012-06-21  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: Remove FIXMEs about whether events bubble and are cancelable
+        https://bugs.webkit.org/show_bug.cgi?id=89657
+
+        Reviewed by Adam Barth.
+
+        The spec has been updated to clarify that the events do not bubble and
+        are not cancelable.
+
+        No new tests, just removing comments.
+
+        * Modules/speech/SpeechRecognition.cpp:
+        (WebCore::SpeechRecognition::didStartAudio):
+        * Modules/speech/SpeechRecognitionError.cpp:
+        (WebCore::SpeechRecognitionError::SpeechRecognitionError):
+
 2012-06-21  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [WebGL] Rename InjectedWebGLScriptSource.js -> InjectedScriptWebGLModuleSource.js
