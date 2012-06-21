@@ -24,6 +24,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "GRefPtrGStreamer.h"
+#include "GStreamerVersioning.h"
 #include "MediaPlayer.h"
 #include "NetworkingContext.h"
 #include "NotImplemented.h"
@@ -155,15 +156,8 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
 
     gst_element_class_add_pad_template(eklass,
                                        gst_static_pad_template_get(&srcTemplate));
-#ifdef GST_API_VERSION_1
-    gst_element_class_set_metadata(eklass,
-#else
-    gst_element_class_set_details_simple(eklass,
-#endif
-                                         (gchar*) "WebKit Web source element",
-                                         (gchar*) "Source",
-                                         (gchar*) "Handles HTTP/HTTPS uris",
-                                         (gchar*) "Sebastian Dröge <sebastian.droege@collabora.co.uk>");
+    setGstElementClassMetadata(eklass, "WebKit Web source element", "Source", "Handles HTTP/HTTPS uris",
+                               "Sebastian Dröge <sebastian.droege@collabora.co.uk>");
 
     // icecast stuff
     g_object_class_install_property(oklass,

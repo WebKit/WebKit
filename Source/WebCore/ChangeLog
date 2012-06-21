@@ -1,3 +1,16 @@
+2012-06-21  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Use setGstElementClassMetadata.
+
+        Rubber/stamped by Martin Robinson.
+
+        This function was introduced in r120790 but I forgot to actually
+        use it in that patch.
+
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_class_init):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+
 2012-06-21  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Use v8::V8::AddImplicitReferences instead of SetHiddenValue
