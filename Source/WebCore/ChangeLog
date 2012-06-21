@@ -1,3 +1,42 @@
+2012-06-20  Hayato Ito  <hayato@chromium.org>
+
+        [Shadow][Editing] Deleting character in distributed element caused a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=88484
+
+        Reviewed by Ryosuke Niwa.
+
+        If we mutate nodes which are children of a shadow host, it causes
+        ElementShadow::invalidateDistribution().  As a result, shadow host
+        is detached (and lazyAttached()) and its renderer is gone.  That
+        causes assertion error since isEditablePosition() assumes
+        anchorNode's style was correctly calculated.
+
+        This patch makes isEditablePosition() call
+        document->updateLayoutIgnorePendingStylesheets() so that it does
+        not return a bogus result.
+
+        There is an exceptional caller of isEditablePosition,
+        RenderBlock::paintCaret(), from where we can not call
+        updateLayout() in isEditablePosition because it hits assertion,
+        ASSERT(!isPainting). So I've added the third parameter to
+        isEditablePosition to control updating the style.
+
+        Test: edition/shadow/delete-characters-in-distributed-node.html
+
+        * editing/FrameSelection.h:
+        (WebCore::FrameSelection::rendererIsEditable):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::rendererIsEditable):
+        (WebCore):
+        * editing/VisibleSelection.h:
+        (VisibleSelection):
+        * editing/htmlediting.cpp:
+        (WebCore::isEditablePosition):
+        * editing/htmlediting.h:
+        (WebCore):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret):
+
 2012-06-20  Kent Tamura  <tkent@chromium.org>
 
         Unmodified form control value are overwritten by another form

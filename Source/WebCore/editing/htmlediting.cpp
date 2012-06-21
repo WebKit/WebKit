@@ -145,12 +145,16 @@ Node* lowestEditableAncestor(Node* node)
     return lowestRoot;
 }
 
-bool isEditablePosition(const Position& p, EditableType editableType)
+bool isEditablePosition(const Position& p, EditableType editableType, EUpdateStyle updateStyle)
 {
     Node* node = p.deprecatedNode();
     if (!node)
         return false;
-        
+    if (updateStyle == UpdateStyle)
+        node->document()->updateLayoutIgnorePendingStylesheets();
+    else
+        ASSERT(updateStyle == DoNotUpdateStyle);
+
     if (node->renderer() && node->renderer()->isTable())
         node = node->parentNode();
     

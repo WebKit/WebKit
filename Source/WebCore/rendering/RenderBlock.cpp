@@ -2885,7 +2885,7 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     bool isContentEditable;
     if (type == CursorCaret) {
         caretPainter = frame()->selection()->caretRenderer();
-        isContentEditable = frame()->selection()->isContentEditable();
+        isContentEditable = frame()->selection()->rendererIsEditable();
     } else {
         caretPainter = frame()->page()->dragCaretController()->caretRenderer();
         isContentEditable = frame()->page()->dragCaretController()->isContentEditable();

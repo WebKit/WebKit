@@ -628,6 +628,11 @@ bool VisibleSelection::isContentEditable() const
     return isEditablePosition(start());
 }
 
+bool VisibleSelection::rendererIsEditable() const
+{
+    return isEditablePosition(start(), ContentIsEditable, DoNotUpdateStyle);
+}
+
 bool VisibleSelection::isContentRichlyEditable() const
 {
     return isRichlyEditablePosition(start());

@@ -151,8 +151,9 @@ inline Position lastPositionInOrAfterNode(Node* node)
 int comparePositions(const Position&, const Position&);
 
 // boolean functions on Position
-    
-bool isEditablePosition(const Position&, EditableType = ContentIsEditable);
+
+enum EUpdateStyle { UpdateStyle, DoNotUpdateStyle };
+bool isEditablePosition(const Position&, EditableType = ContentIsEditable, EUpdateStyle = UpdateStyle);
 bool isRichlyEditablePosition(const Position&, EditableType = ContentIsEditable);
 bool isFirstVisiblePositionInSpecialElement(const Position&);
 bool isLastVisiblePositionInSpecialElement(const Position&);
