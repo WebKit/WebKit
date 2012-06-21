@@ -167,6 +167,8 @@ public:
     // All clients should move to the overloads that take a message type.
     template<typename E, typename T> bool deprecatedSend(E messageID, uint64_t destinationID, const T& arguments);
     template<typename E, typename T, typename U> bool deprecatedSendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout = NoTimeout);
+    
+    void wakeUpRunLoop();
 
 private:
     template<typename T> class Message {
