@@ -1,3 +1,31 @@
+2012-06-20  Philip Rogers  <pdr@google.com>
+
+        Add a performance test for paths in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=89547
+
+        Reviewed by Ryosuke Niwa.
+
+        This change adds the first performance test for SVG paths.
+        In the test we modify complex cubic paths in several ways, testing:
+        transformations, clipping, d attribute changes, stroke properties,
+        text on a path, and opacity.
+
+        Sample test results on my Linux desktop:
+            RESULT SVG: SvgCubics= 68.85 ms
+            median= 69.5 ms, stdev= 4.70398767005 ms, min= 56.0 ms, max= 75.0 ms
+
+            RESULT SVG: SvgCubics= 68.4 ms
+            median= 69.0 ms, stdev= 3.51283361405 ms, min= 59.0 ms, max= 74.0 ms
+
+            RESULT SVG: SvgCubics= 66.95 ms
+            median= 67.0 ms, stdev= 3.4420197559 ms, min= 59.0 ms, max= 74.0 ms
+
+            RESULT SVG: SvgCubics= 70.2 ms
+            median= 71.5 ms, stdev= 3.23419232576 ms, min= 63.0 ms, max= 74.0 ms
+
+        * SVG: Added.
+        * SVG/SvgCubics.html: Added.
+
 2012-06-20  Tom Zakrajsek  <tomz@codeaurora.org>
 
         Import themaninblue.com/experiment/AnimationBenchmark/ as performance tests
