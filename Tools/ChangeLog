@@ -1,3 +1,21 @@
+2012-06-21  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] DRT in standalone mode hangs after the first test
+        https://bugs.webkit.org/show_bug.cgi?id=89613
+
+        Reviewed by Csaba Osztrogonác.
+
+        Break an inline signal slot chain that ends up in setting
+        LayoutTestController::m_hasDumped too early. In LayoutTestController::maybeDump()
+        we emit done() which starts the chain that finishes in DumpRenderTree::open().
+        The next line in maybeDump sets m_hasDumped to true. We could simply reorder
+        these two lines but it seems to be wrong in general to start the next load
+        from this call chain. The server mode (when DRT is runned by the test harness)
+        also uses a queued connection to read the next test from stdin.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::processArgsLine):
+
 2012-06-20  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: SpeechRecognition should hook up with ActiveDOMObject more
