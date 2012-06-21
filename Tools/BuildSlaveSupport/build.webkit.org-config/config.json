@@ -29,7 +29,6 @@
                     { "name": "gtk-linux-slave-1", "platform": "gtk"},
                     { "name": "gtk-linux-slave-2", "platform": "gtk"},
                     { "name": "gtk-linux-slave-3", "platform": "gtk"},
-                    { "name": "gtk-linux-slave-4", "platform": "gtk"},
 
                     { "name": "szeged-linux-1", "platform": "qt-4.8"},
                     { "name": "szeged-linux-2", "platform": "qt-4.8"},
@@ -140,17 +139,12 @@
                     {
                       "name": "GTK Linux 64-bit Release", "type": "BuildAndTest", "builddir": "gtk-linux-64-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["gtk-linux-slave-2"], "triggers": ["gtk-linux-64-release-tests-wk2"]
+                      "slavenames": ["gtk-linux-slave-2"]
                     },
                     {
                       "name": "GTK Linux 64-bit Debug", "type": "BuildAndTest", "builddir": "gtk-linux-64-debug",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-3"]
-                    },
-                    {
-                      "name": "GTK Linux 64-bit Release WK2 (Tests)", "type": "TestWebKit2", "builddir": "gtk-linux-64-release-tests-wk2",
-                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["gtk-linux-slave-4"]
                     },
                     {
                       "name": "Qt Linux Release", "type": "BuildAndTest", "builddir": "qt-linux-release",
@@ -340,9 +334,6 @@
                     },
                     { "type": "Triggerable", "name": "chromium-linux-perf-tests",
                       "builderNames": ["Chromium Linux Release (Perf)"]
-                    },
-                    { "type": "Triggerable", "name": "gtk-linux-64-release-tests-wk2",
-                      "builderNames": ["GTK Linux 64-bit Release WK2 (Tests)"]
                     }
                   ]
 }
