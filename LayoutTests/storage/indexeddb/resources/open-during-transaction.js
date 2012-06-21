@@ -14,18 +14,22 @@ function test()
 function prepareDatabase()
 {
     debug("prepare database");
-    evalAndLog("openreq1 = indexedDB.open('db1')");
-    openreq1.onerror = unexpectedErrorCallback;
-    openreq1.onsuccess = function (e) {
-        evalAndLog("dbc1 = openreq1.result");
-        evalAndLog("setverreq = dbc1.setVersion('1.0')");
-        setverreq.onerror = unexpectedErrorCallback;
-        setverreq.onsuccess = function (e) {
-            evalAndLog("dbc1.createObjectStore('storeName')");
-            setverreq.result.oncomplete = function (e) {
-                debug("database preparation complete");
-                debug("");
-                startTransaction();
+    deleteRequest = evalAndLog("indexedDB.deleteDatabase('open-during-transaction1')");
+    deleteRequest.onerror = unexpectedErrorCallback;
+    deleteRequest.onsuccess = function () {
+        evalAndLog("openreq1 = indexedDB.open('open-during-transaction1')");
+        openreq1.onerror = unexpectedErrorCallback;
+        openreq1.onsuccess = function (e) {
+            evalAndLog("dbc1 = openreq1.result");
+            evalAndLog("setverreq = dbc1.setVersion('1.0')");
+            setverreq.onerror = unexpectedErrorCallback;
+            setverreq.onsuccess = function (e) {
+                evalAndLog("dbc1.createObjectStore('storeName')");
+                setverreq.result.oncomplete = function (e) {
+                    debug("database preparation complete");
+                    debug("");
+                    startTransaction();
+                };
             };
         };
     };
@@ -63,7 +67,7 @@ function tryOpens()
     debug("");
 
     debug("trying to open a different database");
-    evalAndLog("openreq3 = indexedDB.open('db2')");
+    evalAndLog("openreq3 = indexedDB.open('open-during-transaction2')");
     openreq3.onerror = unexpectedErrorCallback;
     openreq3.onsuccess = function (e) {
         debug("openreq3.onsuccess");

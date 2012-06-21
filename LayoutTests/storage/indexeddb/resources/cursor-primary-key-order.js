@@ -15,17 +15,20 @@ function test()
 function prepareDatabase()
 {
     debug("");
-    evalAndLog("openRequest = indexedDB.open('cursor-primary-key-order')");
-    openRequest.onerror = unexpectedErrorCallback;
-    openRequest.onsuccess = function() {
-        evalAndLog("db = openRequest.result");
-        evalAndLog("versionChangeRequest = db.setVersion('1')");
-        versionChangeRequest.onerror = unexpectedErrorCallback;
-        versionChangeRequest.onsuccess = function() {
-            evalAndLog("store = db.createObjectStore('store')");
-            evalAndLog("index = store.createIndex('index', 'indexKey')");
-
-            versionChangeRequest.result.oncomplete = populateStore;
+    deleteRequest = evalAndLog("indexedDB.deleteDatabase('cursor-primary-key-order')");
+    deleteRequest.onerror = unexpectedErrorCallback;
+    deleteRequest.onsuccess = function () {
+        evalAndLog("openRequest = indexedDB.open('cursor-primary-key-order')");
+        openRequest.onerror = unexpectedErrorCallback;
+        openRequest.onsuccess = function() {
+            evalAndLog("db = openRequest.result");
+            evalAndLog("versionChangeRequest = db.setVersion('1')");
+            versionChangeRequest.onerror = unexpectedErrorCallback;
+            versionChangeRequest.onsuccess = function() {
+                evalAndLog("store = db.createObjectStore('store')");
+                evalAndLog("index = store.createIndex('index', 'indexKey')");
+                versionChangeRequest.result.oncomplete = populateStore;
+            };
         };
     };
 }

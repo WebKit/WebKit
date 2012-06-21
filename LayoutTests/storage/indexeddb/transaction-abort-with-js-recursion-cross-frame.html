@@ -19,9 +19,13 @@ description("Test that pending transactions are not aborted during recursive JS 
 
 function setup() {
     removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('transaction-abort-with-js-recursion-cross-frame')");
-    request.onsuccess = setVersion;
+    request = evalAndLog("indexedDB.deleteDatabase('transaction-abort-with-js-recursion-cross-frame')");
     request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function () {
+        request = evalAndLog("indexedDB.open('transaction-abort-with-js-recursion-cross-frame')");
+        request.onsuccess = setVersion;
+        request.onerror = unexpectedErrorCallback;
+    };
 }
 
 function setVersion() {

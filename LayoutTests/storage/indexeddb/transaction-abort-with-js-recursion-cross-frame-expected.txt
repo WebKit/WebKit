@@ -5,6 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
+indexedDB.deleteDatabase('transaction-abort-with-js-recursion-cross-frame')
 indexedDB.open('transaction-abort-with-js-recursion-cross-frame')
 db = event.target.result
 db.setVersion('new version')

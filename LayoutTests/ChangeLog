@@ -1,3 +1,40 @@
+2012-06-21  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Fix layout tests to clear previous database structures
+        https://bugs.webkit.org/show_bug.cgi?id=89609
+
+        Reviewed by Tony Chang.
+
+        A handful of tests weren't deleting previously created stores (or the whole
+        database), which made them fail if trivially re-run in Chromium or under
+        NRWT with --iterations=2.
+
+        * storage/indexeddb/cursor-key-order-expected.txt:
+        * storage/indexeddb/cursor-primary-key-order-expected.txt:
+        * storage/indexeddb/open-during-transaction-expected.txt:
+        * storage/indexeddb/resources/cursor-key-order.js:
+        (prepareDatabase.deleteRequest.onsuccess.openreq.onsuccess.verreq.onsuccess):
+        (prepareDatabase.deleteRequest.onsuccess.openreq.onsuccess):
+        (prepareDatabase.deleteRequest.onsuccess):
+        (prepareDatabase):
+        * storage/indexeddb/resources/cursor-primary-key-order.js:
+        (prepareDatabase.deleteRequest.onsuccess.openRequest.onsuccess.versionChangeRequest.onsuccess):
+        (prepareDatabase.deleteRequest.onsuccess.openRequest.onsuccess):
+        (prepareDatabase.deleteRequest.onsuccess):
+        (prepareDatabase):
+        * storage/indexeddb/resources/factory-deletedatabase-interactions.js:
+        * storage/indexeddb/resources/open-close-version.js:
+        (test6):
+        (test6.halfDone):
+        * storage/indexeddb/resources/open-during-transaction.js:
+        (prepareDatabase.deleteRequest.onsuccess.openreq1.onsuccess.setverreq.onsuccess.setverreq.result.oncomplete):
+        (prepareDatabase.deleteRequest.onsuccess.openreq1.onsuccess.setverreq.onsuccess):
+        (prepareDatabase.deleteRequest.onsuccess.openreq1.onsuccess):
+        (prepareDatabase.deleteRequest.onsuccess):
+        (prepareDatabase):
+        * storage/indexeddb/transaction-abort-with-js-recursion-cross-frame-expected.txt:
+        * storage/indexeddb/transaction-abort-with-js-recursion-cross-frame.html:
+
 2012-06-21  Kenneth Russell  <kbr@google.com>
 
         [Chromium] Rebaseline video tests after r120939

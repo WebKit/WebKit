@@ -5,12 +5,13 @@ if (this.importScripts) {
 
 description("Test the deleteDatabase call and its interaction with open/setVersion");
 
+var dbprefix = 'factory-deletedatabase-interactions-';
 function Connection(id) {
     id = String(id);
     var that = this;
     this.open = function(opts) {
         self.steps.push(evalAndLog("'" + id + ".open'"));
-        var req = indexedDB.open(self.dbname);
+        var req = indexedDB.open(dbprefix + self.dbname);
         req.onerror = unexpectedErrorCallback;
         req.onsuccess = function (e) {
             that.handle = e.target.result;
@@ -70,7 +71,7 @@ function Connection(id) {
 
 function deleteDatabase(id, name, opts) {
     self.steps.push(evalAndLog("'deleteDatabase(" + id + ")'"));
-    var req = indexedDB.deleteDatabase(name);
+    var req = indexedDB.deleteDatabase(dbprefix + name);
     req.onsuccess = function (e) {
         self.steps.push(evalAndLog("'deleteDatabase(" + id + ").onsuccess'"));
         if (opts && opts.onsuccess) { opts.onsuccess.call(null); }

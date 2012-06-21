@@ -6,7 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
 prepare database
-openreq1 = indexedDB.open('db1')
+indexedDB.deleteDatabase('open-during-transaction1')
+openreq1 = indexedDB.open('open-during-transaction1')
 dbc1 = openreq1.result
 setverreq = dbc1.setVersion('1.0')
 dbc1.createObjectStore('storeName')
@@ -21,7 +22,7 @@ trying to open the same database
 openreq2 = indexedDB.open('db1')
 
 trying to open a different database
-openreq3 = indexedDB.open('db2')
+openreq3 = indexedDB.open('open-during-transaction2')
 
 openreq2.onsuccess
 PASS state is "starting"

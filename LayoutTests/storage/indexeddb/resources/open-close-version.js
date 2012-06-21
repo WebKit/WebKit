@@ -10,7 +10,7 @@ function Connection(id) {
     var that = this;
     this.open = function(opts) {
         self.steps.push(evalAndLog("'" + id + ".open'"));
-        var req = indexedDB.open(self.dbname);
+        var req = indexedDB.open('open-close-version-' + self.dbname);
         req.onerror = unexpectedErrorCallback;
         req.onsuccess = function (e) {
             that.handle = e.target.result;
@@ -250,8 +250,8 @@ function test6() {
     evalAndLog("self.dbname = 'test6'; self.ver = 1; self.steps = []");
     var h1 = new Connection("h1");
 
-    runSteps([function(doNext) { h1.open({onsuccess: doNext}); },                                  
-              function(doNext) { h1.setVersion({onsuccess: halfDone}); 
+    runSteps([function(doNext) { h1.open({onsuccess: doNext}); },
+              function(doNext) { h1.setVersion({onsuccess: halfDone});
                                  h1.setVersion({onsuccess: halfDone}); }
               ]);
 
@@ -263,7 +263,7 @@ function test6() {
         } else {
             finishTest();
         }
-    }  
+    }
 
     function finishTest() {
         shouldBeEqualToString("self.steps.toString()",
