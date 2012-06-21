@@ -255,11 +255,11 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
         deviceScaleTransform.scale(m_deviceScaleFactor);
         CCLayerTreeHostCommon::calculateDrawTransforms(m_rootLayerImpl.get(), m_rootLayerImpl.get(), deviceScaleTransform, identityMatrix, renderSurfaceLayerList, m_rootLayerImpl->renderSurface()->layerList(), &m_layerSorter, layerRendererCapabilities().maxTextureSize);
 
-        trackDamageForAllSurfaces(m_rootLayerImpl.get(), renderSurfaceLayerList);
+        if (layerRendererCapabilities().usingPartialSwap || settings().showSurfaceDamageRects)
+            trackDamageForAllSurfaces(m_rootLayerImpl.get(), renderSurfaceLayerList);
+        m_rootScissorRect = m_rootLayerImpl->renderSurface()->damageTracker()->currentDamageRect();
 
-        if (layerRendererCapabilities().usingPartialSwap)
-            m_rootScissorRect = m_rootLayerImpl->renderSurface()->damageTracker()->currentDamageRect();
-        else
+        if (!layerRendererCapabilities().usingPartialSwap)
             m_rootScissorRect = FloatRect(FloatPoint(0, 0), deviceViewportSize());
 
         CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, m_rootScissorRect);

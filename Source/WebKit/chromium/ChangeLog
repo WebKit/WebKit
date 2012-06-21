@@ -1,3 +1,14 @@
+2012-06-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r120889.
+        http://trac.webkit.org/changeset/120889
+        https://bugs.webkit.org/show_bug.cgi?id=89630
+
+        [Chromium] webkit_unit_tests didDrawNotCalledOnHiddenLayer
+        start failing (Requested by ukai on #webkit).
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-06-20  Zeev Lieber  <zlieber@chromium.org>
 
         [Chromium] Damage tracker is not used without partial swap, causing valid render passes to be removed
