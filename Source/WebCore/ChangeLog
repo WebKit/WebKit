@@ -1,5 +1,17 @@
 2012-06-21  Kwang Yul Seo  <skyul@company100.net>
 
+        Remove unused static variable uninitializedLineNumberValue.
+        https://bugs.webkit.org/show_bug.cgi?id=89643
+
+        Reviewed by Alexey Proskuryakov.
+
+        No behavioral changes.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore):
+
+2012-06-21  Kwang Yul Seo  <skyul@company100.net>
+
         Remove unused static function skipComment.
         https://bugs.webkit.org/show_bug.cgi?id=89641
 

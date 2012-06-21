@@ -56,8 +56,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const int uninitializedLineNumberValue = -1;
-
 static TextPosition uninitializedPositionValue1()
 {
     return TextPosition(OrdinalNumber::fromOneBasedInt(-1), OrdinalNumber::first());
