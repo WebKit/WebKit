@@ -241,10 +241,10 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
         for (int x = 0; x < numColumns; x++) {
             int basex = x * 4;
             unsigned* pixel = row + x + destx;
-            Color pixelColor(srcRows[basex],
-                    srcRows[basex + 1],
-                    srcRows[basex + 2],
-                    srcRows[basex + 3]);
+            Color pixelColor = Color::createUnCheked(srcRows[basex],
+                                                     srcRows[basex + 1],
+                                                     srcRows[basex + 2],
+                                                     srcRows[basex + 3]);
             if (multiplied == Unmultiplied)
                 *pixel = premultipliedARGBFromColor(pixelColor);
             else

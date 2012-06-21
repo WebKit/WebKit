@@ -1,3 +1,26 @@
+2012-06-20  Arnaud Renevier  <arno@renevier.net>
+
+        [cairo] improve putByteArray speed by avoiding max/min checks at Color construction.
+        https://bugs.webkit.org/show_bug.cgi?id=89138
+
+        Reviewed by Adam Barth.
+
+        Color constructor accepts integer arguments and checks if they are
+        between 0 and 255. In some cases, we already known those numbers to be
+        within those boundaries. For example when using unsigned chars. So
+        this patch introduces Color::createUnChecked which return a Color
+        object without checking for boundaries.
+
+        No new tests: no behaviour change
+
+        * platform/graphics/Color.cpp:
+        (WebCore::colorFromPremultipliedARGB):
+        * platform/graphics/Color.h:
+        (WebCore::Color::createUnCheked):
+        (Color):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::putByteArray):
+
 2012-06-20  Zeev Lieber  <zlieber@chromium.org>
 
         [Chromium] Damage tracker is not used without partial swap, causing valid render passes to be removed

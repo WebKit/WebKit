@@ -397,17 +397,18 @@ void Color::getHSL(double& hue, double& saturation, double& lightness) const
 
 Color colorFromPremultipliedARGB(unsigned pixelColor)
 {
-    RGBA32 rgba;
+    Color color;
 
     if (unsigned alpha = (pixelColor & 0xFF000000) >> 24) {
-        rgba = makeRGBA(((pixelColor & 0x00FF0000) >> 16) * 255 / alpha,
+        color = Color::createUnCheked(
+                        ((pixelColor & 0x00FF0000) >> 16) * 255 / alpha,
                         ((pixelColor & 0x0000FF00) >> 8) * 255 / alpha,
                          (pixelColor & 0x000000FF) * 255 / alpha,
                           alpha);
     } else
-        rgba = pixelColor;
+        color = Color(pixelColor);
 
-    return Color(rgba);
+    return color;
 }
 
 unsigned premultipliedARGBFromColor(const Color& color)
