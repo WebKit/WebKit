@@ -1,3 +1,32 @@
+2012-06-21  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Input mode should adapt automatically to settings changes
+        https://bugs.webkit.org/show_bug.cgi?id=89595
+
+        Reviewed by Antonio Gomes.
+
+        PR 167540.
+
+        Add helper function to check if input is enabled so that
+        the override settings can be applied at any time.
+
+        Reviewed Internally by Gen Mak.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::handleMouseEvent):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::isInputModeEnabled):
+        (BlackBerry::WebKit::InputHandler::setInputModeEnabled):
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+        (BlackBerry::WebKit::InputHandler::notifyClientOfKeyboardVisibilityChange):
+        (BlackBerry::WebKit::InputHandler::handleKeyboardInput):
+        (BlackBerry::WebKit::InputHandler::setComposingText):
+        * WebKitSupport/InputHandler.h:
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
 2012-06-20  Jacky Jiang  <zhajiang@rim.com>
 
         Add a != operator to ViewportArguments

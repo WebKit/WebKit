@@ -171,7 +171,7 @@ void TouchEventHandler::touchHoldEvent()
 bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
 {
     // Enable input mode on any touch event.
-    m_webPage->m_inputHandler->enableInputMode();
+    m_webPage->m_inputHandler->setInputModeEnabled();
     bool pureWithMouseConversion = m_webPage->m_touchEventMode == PureTouchEventsWithMouseConversion;
 
     switch (point.m_state) {

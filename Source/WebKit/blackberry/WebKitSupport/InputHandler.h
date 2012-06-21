@@ -57,7 +57,8 @@ public:
     enum FocusElementType { TextEdit, TextPopup /* Date/Time & Color */, SelectPopup, Plugin };
     enum CaretScrollType { CenterAlways, CenterIfNeeded, EdgeIfNeeded };
 
-    void enableInputMode(bool inputModeAllowed = true);
+    bool isInputModeEnabled() const;
+    void setInputModeEnabled(bool active = true);
 
     void focusedNodeChanged();
     void nodeTextChanged(const WebCore::Node*);

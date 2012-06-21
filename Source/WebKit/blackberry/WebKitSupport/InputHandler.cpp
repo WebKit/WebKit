@@ -432,21 +432,22 @@ void InputHandler::setElementUnfocused(bool refocusOccuring)
     m_currentFocusElementType = TextEdit;
 }
 
-void InputHandler::enableInputMode(bool inputModeAllowed)
+bool InputHandler::isInputModeEnabled() const
 {
-    FocusLog(LogLevelInfo, "InputHandler::enableInputMode '%s', override is '%s'"
-             , inputModeAllowed ? "true" : "false"
+    // Input mode is enabled when set, or when dump render tree or always show keyboard setting is enabled.
+    return m_inputModeEnabled || m_webPage->m_dumpRenderTree || Platform::Settings::get()->alwaysShowKeyboardOnFocus();
+}
+
+void InputHandler::setInputModeEnabled(bool active)
+{
+    FocusLog(LogLevelInfo, "InputHandler::setInputModeEnabled '%s', override is '%s'"
+             , active ? "true" : "false"
              , m_webPage->m_dumpRenderTree || Platform::Settings::get()->alwaysShowKeyboardOnFocus() ? "true" : "false");
 
-    m_inputModeEnabled = inputModeAllowed;
-
-    // If DRT is running or always show keyboard setting is active, do not delay
-    // showing the keyboard.
-    if (m_webPage->m_dumpRenderTree || Platform::Settings::get()->alwaysShowKeyboardOnFocus())
-        m_inputModeEnabled = true;
+    m_inputModeEnabled = active;
 
     // If the frame selection isn't focused, focus it.
-    if (m_inputModeEnabled && isActiveTextEdit() && !m_currentFocusElement->document()->frame()->selection()->isFocused())
+    if (isInputModeEnabled() && isActiveTextEdit() && !m_currentFocusElement->document()->frame()->selection()->isFocused())
         m_currentFocusElement->document()->frame()->selection()->setFocused(true);
 }
 
@@ -455,8 +456,8 @@ void InputHandler::setElementFocused(Element* element)
     ASSERT(DOMSupport::isTextBasedContentEditableElement(element));
     ASSERT(element->document() && element->document()->frame());
 
-    if (element->document()->frame()->selection()->isFocused() != m_inputModeEnabled)
-        element->document()->frame()->selection()->setFocused(m_inputModeEnabled);
+    if (element->document()->frame()->selection()->isFocused() != isInputModeEnabled())
+        element->document()->frame()->selection()->setFocused(isInputModeEnabled());
 
     // Clear the existing focus node details.
     setElementUnfocused(true /*refocusOccuring*/);
@@ -552,7 +553,7 @@ WebCore::IntRect InputHandler::boundingBoxForInputField()
 
 void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
 {
-    if (!m_inputModeEnabled || !m_currentFocusElement || !m_currentFocusElement->document())
+    if (!isActiveTextEdit() || !isInputModeEnabled() || !m_currentFocusElement->document())
         return;
 
     if (!Platform::Settings::get()->allowCenterScrollAdjustmentForInputFields() && scrollType != EdgeIfNeeded)
@@ -770,7 +771,7 @@ void InputHandler::processPendingKeyboardVisibilityChange()
 void InputHandler::notifyClientOfKeyboardVisibilityChange(bool visible)
 {
     // If we aren't ready for input, keyboard changes should be ignored.
-    if (!m_inputModeEnabled && visible)
+    if (!isInputModeEnabled() && visible)
         return;
 
     if (!m_delayKeyboardVisibilityChange) {
@@ -929,7 +930,7 @@ bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEv
     InputLog(LogLevelInfo, "InputHandler::handleKeyboardInput received character=%lc, type=%d", keyboardEvent.character(), keyboardEvent.type());
 
     // Enable input mode if we are processing a key event.
-    enableInputMode();
+    setInputModeEnabled();
 
     // If we aren't specifically part of a composition, fail, IMF should never send key input
     // while composing text. If IMF has failed, we should have already finished the
@@ -1725,7 +1726,7 @@ int32_t InputHandler::setComposingText(spannable_string_t* spannableString, int3
     InputLog(LogLevelInfo, "InputHandler::setComposingText at relativeCursorPosition: %d", relativeCursorPosition);
 
     // Enable input mode if we are processing a key event.
-    enableInputMode();
+    setInputModeEnabled();
 
     return setSpannableTextAndRelativeCursor(spannableString, relativeCursorPosition, true /* markTextAsComposing */) ? 0 : -1;
 }
