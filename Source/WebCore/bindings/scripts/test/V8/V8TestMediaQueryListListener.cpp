@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8TestMediaQueryListListener::info = { V8TestMediaQueryListListener::GetTemplate, V8TestMediaQueryListListener::derefObject, 0, 0, WrapperTypeObjectPrototype };
+WrapperTypeInfo V8TestMediaQueryListListener::info = { V8TestMediaQueryListListener::GetTemplate, V8TestMediaQueryListListener::derefObject, 0, 0, 0, WrapperTypeObjectPrototype };
 
 namespace TestMediaQueryListListenerV8Internal {
 

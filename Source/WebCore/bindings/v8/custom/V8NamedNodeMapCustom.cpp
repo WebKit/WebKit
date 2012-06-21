@@ -71,16 +71,4 @@ v8::Handle<v8::Value> V8NamedNodeMap::namedPropertyGetter(v8::Local<v8::String> 
     return toV8(result.release(), info.GetIsolate());
 }
 
-v8::Handle<v8::Value> toV8(NamedNodeMap* impl, v8::Isolate* isolate)
-{
-    if (!impl)
-        return v8NullWithCheck(isolate);
-    v8::Handle<v8::Object> wrapper = V8NamedNodeMap::wrap(impl, isolate);
-    // Add a hidden reference from named node map to its owner node.
-    Element* element = impl->element();
-    if (!wrapper.IsEmpty() && element)
-        wrapper->SetHiddenValue(V8HiddenPropertyName::ownerNode(), toV8(element, isolate));
-    return wrapper;
-}
-
 } // namespace WebCore

@@ -53,7 +53,7 @@ namespace WebCore {
 
 WrapperTypeInfo* npObjectTypeInfo()
 {
-    static WrapperTypeInfo typeInfo = { 0, 0, 0, 0, WrapperTypeObjectPrototype };
+    static WrapperTypeInfo typeInfo = { 0, 0, 0, 0, 0, WrapperTypeObjectPrototype };
     return &typeInfo;
 }
 

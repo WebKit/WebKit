@@ -1,3 +1,110 @@
+2012-06-21  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Use v8::V8::AddImplicitReferences instead of SetHiddenValue
+        https://bugs.webkit.org/show_bug.cgi?id=80880
+
+        Reviewed by Adam Barth.
+
+        We used to add a hidden property in the getter to the returned wrapper.
+        With this patch we instead handle the liveness of the wrapper in the GC phase by
+        calling v8::V8::AddHiddenReference.
+
+        To reduce the amount of custom code we need, the V8 code generator now supports
+        GenerateIsReachable (as well as CustomIsReachable) which, even though different
+        from the JSC attribute, is used in the same cases and takes the same values (even though
+        at the moment not all JSC values are supported by V8). Interfaces that have *IsReachable
+        also have a dependent life time (just like if V8DependentLifetime was present).
+
+        No new tests. Covered by existing tests.
+
+        * Target.pri:
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetGenerateIsReachable): Abstracted GenerateIsReachable and JSGenerateIsReachable.
+        (GetCustomIsReachable): Ditto.
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (NeedsToVisitDOMWrapper):
+        (GetGenerateIsReachable):
+        (GetCustomIsReachable):
+        (GenerateVisitDOMWrapper):
+        (GenerateHeader):
+        (GenerateNamedConstructorCallback):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8Float64Array.h:
+        (V8Float64Array):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.h:
+        (V8TestActiveDOMObject):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.h:
+        (V8TestCustomNamedGetter):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestEventConstructor.h:
+        (V8TestEventConstructor):
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestEventTarget.h:
+        (V8TestEventTarget):
+        * bindings/scripts/test/V8/V8TestException.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestException.h:
+        (V8TestException):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        (V8TestInterface):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.h:
+        (V8TestMediaQueryListListener):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.h:
+        (V8TestNamedConstructor):
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestNode.h:
+        (V8TestNode):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestObj.h:
+        (V8TestObj):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h:
+        (V8TestSerializedScriptValueInterface):
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::npObjectTypeInfo):
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::GrouperVisitor::visitDOMWrapper):
+        * bindings/v8/WrapperTypeInfo.h:
+        (WebCore):
+        (WrapperTypeInfo):
+        * bindings/v8/custom/V8CSSStyleSheetCustom.cpp: Removed.
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp:
+        * bindings/v8/custom/V8DOMTokenListCustom.cpp: Removed.
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore):
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+        * bindings/v8/custom/V8StyleSheetCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8TextTrackListCustom.cpp: Removed.
+        * css/CSSStyleSheet.idl:
+        * css/StyleSheet.idl:
+        * dom/DOMStringMap.idl:
+        * dom/NamedNodeMap.idl:
+        * html/DOMTokenList.idl:
+        * html/track/TextTrackList.idl:
+
 2012-06-21  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Implement spec behavior for multiEntry indexes with invalid/duplicate subkeys

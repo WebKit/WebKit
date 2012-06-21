@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-WrapperTypeInfo V8TestSerializedScriptValueInterface::info = { V8TestSerializedScriptValueInterface::GetTemplate, V8TestSerializedScriptValueInterface::derefObject, 0, 0, WrapperTypeObjectPrototype };
+WrapperTypeInfo V8TestSerializedScriptValueInterface::info = { V8TestSerializedScriptValueInterface::GetTemplate, V8TestSerializedScriptValueInterface::derefObject, 0, 0, 0, WrapperTypeObjectPrototype };
 
 namespace TestSerializedScriptValueInterfaceV8Internal {
 
