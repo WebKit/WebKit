@@ -20,6 +20,7 @@
         <file>qml/AuthenticationDialog.qml</file>
         <file>qml/BrowserWindow.qml</file>
         <file>qml/CheckBox.qml</file>
+        <file>qml/ColorChooser.qml</file>
         <file>qml/ConfirmDialog.qml</file>
         <file>qml/Dialog.qml</file>
         <file>qml/DialogButton.qml</file>

@@ -377,6 +377,7 @@ Rectangle {
                 }
             }
         }
+        experimental.colorChooser: ColorChooser { }
         experimental.onEnterFullScreenRequested : {
             navigationBar.visible = false;
             Window.showFullScreen();
