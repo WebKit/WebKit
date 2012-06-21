@@ -1,3 +1,11 @@
+2012-06-21  Beth Dakin  <bdakin@apple.com>
+
+        Skipping this failing test. Filed 
+        https://bugs.webkit.org/show_bug.cgi?id=89680 to track fixing the 
+        real issue.
+
+        * platform/mac/Skipped:
+
 2012-06-21  Philip Rogers  <pdr@google.com>
 
         Add pending resource even if others are pending
