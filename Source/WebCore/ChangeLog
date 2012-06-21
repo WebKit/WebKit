@@ -1,3 +1,15 @@
+2012-06-21  Philippe Normand  <pnormand@igalia.com>
+
+        [Qt] REGRESSION(r120790): broke video rendering
+        https://bugs.webkit.org/show_bug.cgi?id=89619
+
+        Reviewed by Alexis Menard.
+
+        Invert the pixel components of the Image on little endian architectures.
+
+        * platform/graphics/gstreamer/ImageGStreamerQt.cpp:
+        (ImageGStreamer::ImageGStreamer):
+
 2012-06-21  James Simonsen  <simonjam@chromium.org>
 
         [Resource Timing] Implement Resource Timing interface

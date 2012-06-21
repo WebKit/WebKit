@@ -50,18 +50,32 @@ ImageGStreamer::ImageGStreamer(GstBuffer* buffer, GstCaps* caps)
     uchar* bufferData = reinterpret_cast<uchar*>(GST_BUFFER_DATA(buffer));
 #endif
     QImage::Format imageFormat;
+    QImage::InvertMode invertMode;
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-    imageFormat = (format == GST_VIDEO_FORMAT_BGRA) ? QImage::Format_RGB32 : QImage::Format_RGB888;
+    if (format == GST_VIDEO_FORMAT_BGRA) {
+        imageFormat = QImage::Format_ARGB32;
+        invertMode = QImage::InvertRgba;
+    } else {
+        imageFormat = QImage::Format_RGB32;
+        invertMode = QImage::InvertRgb;
+    }
 #else
-    imageFormat = (format == GST_VIDEO_FORMAT_ARGB) ? QImage::Format_ARGB32 : QImage::Format_RGB888;
+    imageFormat = (format == GST_VIDEO_FORMAT_ARGB) ? QImage::Format_ARGB32 : QImage::Format_RGB32;
 #endif
 
     QImage image(bufferData, size.width(), size.height(), imageFormat);
+
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+    image.invertPixels(invertMode);
+#endif
 
     surface->convertFromImage(image);
     m_image = BitmapImage::create(surface);
 
 #ifdef GST_API_VERSION_1
+    if (GstVideoCropMeta* cropMeta = gst_buffer_get_video_crop_meta(buffer))
+        setCropRect(FloatRect(cropMeta->x, cropMeta->y, cropMeta->width, cropMeta->height));
+
     gst_buffer_unmap(buffer, &info);
 #endif
 }
