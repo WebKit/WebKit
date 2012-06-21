@@ -282,10 +282,10 @@ using std::signbit;
 #if COMPILER_QUIRK(GCC11_GLOBAL_ISINF_ISNAN)
 // A workaround to avoid conflicting declarations of isinf and isnan when compiling with GCC in C++11 mode.
 namespace std {
-    constexpr bool wtf_isinf(float f) { return std::isinf(f); }
-    constexpr bool wtf_isinf(double d) { return std::isinf(d); }
-    constexpr bool wtf_isnan(float f) { return std::isnan(f); }
-    constexpr bool wtf_isnan(double d) { return std::isnan(d); }
+    inline bool wtf_isinf(float f) { return std::isinf(f); }
+    inline bool wtf_isinf(double d) { return std::isinf(d); }
+    inline bool wtf_isnan(float f) { return std::isnan(f); }
+    inline bool wtf_isnan(double d) { return std::isnan(d); }
 };
 
 using std::wtf_isinf;
