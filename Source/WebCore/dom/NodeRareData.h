@@ -46,7 +46,7 @@ class LabelsNodeList;
 class RadioNodeList;
 class TreeScope;
 
-struct NodeListsNodeData {
+class NodeListsNodeData {
     WTF_MAKE_NONCOPYABLE(NodeListsNodeData); WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef HashMap<std::pair<unsigned short, AtomicString>, DynamicSubtreeNodeList*> NodeListAtomicNameCacheMap;
