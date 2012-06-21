@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "NodeRareData.h"
 
 namespace WebCore {
 
@@ -46,7 +47,8 @@ MicroDataItemList::MicroDataItemList(PassRefPtr<Node> rootNode, const String& ty
 
 MicroDataItemList::~MicroDataItemList()
 {
-    rootNode()->document()->removeCachedMicroDataItemList(this, m_originalTypeNames);
+    String localTypeNames = m_originalTypeNames.isNull() ? String("http://webkit.org/microdata/undefinedItemType") : m_originalTypeNames;
+    m_node->nodeLists()->removeCacheWithName(this, DynamicNodeList::MicroDataItemListType, localTypeNames);
 }
 
 bool MicroDataItemList::nodeMatches(Element* testNode) const

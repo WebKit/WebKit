@@ -23,11 +23,9 @@
 #define NodeRareData_h
 
 #include "ChildNodeList.h"
-#include "ClassNodeList.h"
 #include "DOMSettableTokenList.h"
 #include "DynamicNodeList.h"
 #include "MutationObserverRegistration.h"
-#include "NameNodeList.h"
 #include "QualifiedName.h"
 #include "TagNodeList.h"
 #include "WebKitMutationObserver.h"
@@ -51,40 +49,92 @@ class TreeScope;
 struct NodeListsNodeData {
     WTF_MAKE_NONCOPYABLE(NodeListsNodeData); WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef HashMap<String, ClassNodeList*> ClassNodeListCache;
-    ClassNodeListCache m_classNodeListCache;
+    typedef HashMap<std::pair<unsigned short, AtomicString>, DynamicSubtreeNodeList*> NodeListAtomicNameCacheMap;
+    typedef HashMap<std::pair<unsigned short, String>, DynamicSubtreeNodeList*> NodeListNameCacheMap;
+    typedef HashMap<QualifiedName, TagNodeList*> TagNodeListCacheNS;
 
-    typedef HashMap<String, NameNodeList*> NameNodeListCache;
-    NameNodeListCache m_nameNodeListCache;
- 
-    typedef HashMap<AtomicString, TagNodeList*> TagNodeListCache;
-    TagNodeListCache m_tagNodeListCache;
+    template<typename T>
+    PassRefPtr<T> addCacheWithAtomicName(Node* node, DynamicNodeList::NodeListType listType, const AtomicString& name)
+    {
+        NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(listType, name), 0);
+        if (!result.isNewEntry)
+            return static_cast<T*>(result.iterator->second);
 
-    typedef HashMap<RefPtr<QualifiedName::QualifiedNameImpl>, TagNodeList*> TagNodeListCacheNS;
-    TagNodeListCacheNS m_tagNodeListCacheNS;
+        RefPtr<T> list = T::create(node, name);
+        result.iterator->second = list.get();
+        return list.release();
+    }
 
-#if ENABLE(MICRODATA)
-    typedef HashMap<String, MicroDataItemList*> MicroDataItemListCache;
-    MicroDataItemListCache m_microDataItemListCache;
-#endif
+    template<typename T>
+    PassRefPtr<T> addCacheWithName(Node* node, DynamicNodeList::NodeListType listType, const String& name)
+    {
+        NodeListNameCacheMap::AddResult result = m_nameCaches.add(namedNodeListKey(listType, name), 0);
+        if (!result.isNewEntry)
+            return static_cast<T*>(result.iterator->second);
 
-    LabelsNodeList* m_labelsNodeListCache;
+        RefPtr<T> list = T::create(node, name);
+        result.iterator->second = list.get();
+        return list.release();
+    }
 
-    typedef HashMap<String, RadioNodeList*> RadioNodeListCache;
-    RadioNodeListCache m_radioNodeListCache;
+    PassRefPtr<TagNodeList> addCacheWithQualifiedName(Node* node, const AtomicString& namespaceURI, const AtomicString& localName)
+    {
+        QualifiedName name(nullAtom, localName, namespaceURI);
+        TagNodeListCacheNS::AddResult result = m_tagNodeListCacheNS.add(name, 0);
+        if (!result.isNewEntry)
+            return result.iterator->second;
+
+        RefPtr<TagNodeList> list = TagNodeList::create(node, namespaceURI, localName);
+        result.iterator->second = list.get();
+        return list.release();
+    }
+
+    void removeCacheWithAtomicName(DynamicSubtreeNodeList* list, DynamicNodeList::NodeListType listType, const AtomicString& name)
+    {
+        ASSERT_UNUSED(list, list == m_atomicNameCaches.get(namedNodeListKey(listType, name)));
+        m_atomicNameCaches.remove(namedNodeListKey(listType, name));
+    }
+
+    void removeCacheWithName(DynamicSubtreeNodeList* list, DynamicNodeList::NodeListType listType, const String& name)
+    {
+        ASSERT_UNUSED(list, list == m_nameCaches.get(namedNodeListKey(listType, name)));
+        m_nameCaches.remove(namedNodeListKey(listType, name));
+    }
+
+    void removeCacheWithQualifiedName(DynamicSubtreeNodeList* list, const AtomicString& namespaceURI, const AtomicString& localName)
+    {
+        QualifiedName name(nullAtom, localName, namespaceURI);
+        ASSERT_UNUSED(list, list == m_tagNodeListCacheNS.get(name));
+        m_tagNodeListCacheNS.remove(name);
+    }
 
     static PassOwnPtr<NodeListsNodeData> create()
     {
         return adoptPtr(new NodeListsNodeData);
     }
 
-    void invalidateCaches();
-    void invalidateCachesThatDependOnAttributes();
-
-    bool isEmpty() const;
+    void invalidateCaches(const QualifiedName* attrName = 0);
+    bool isEmpty() const
+    {
+        return m_atomicNameCaches.isEmpty() && m_nameCaches.isEmpty() && m_tagNodeListCacheNS.isEmpty();
+    }
 
 private:
-    NodeListsNodeData() : m_labelsNodeListCache(0) {}
+    NodeListsNodeData() { }
+
+    std::pair<unsigned short, AtomicString> namedNodeListKey(DynamicNodeList::NodeListType listType, const AtomicString& name)
+    {
+        return std::pair<unsigned short, AtomicString>(listType, name);
+    }
+
+    std::pair<unsigned short, String> namedNodeListKey(DynamicNodeList::NodeListType listType, const String& name)
+    {
+        return std::pair<unsigned short, String>(listType, name);
+    }
+
+    NodeListAtomicNameCacheMap m_atomicNameCaches;
+    NodeListNameCacheMap m_nameCaches;
+    TagNodeListCacheNS m_tagNodeListCacheNS;
 };
 
 class NodeRareData {

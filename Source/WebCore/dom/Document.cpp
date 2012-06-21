@@ -5926,31 +5926,11 @@ DocumentLoader* Document::loader() const
 #if ENABLE(MICRODATA)
 PassRefPtr<NodeList> Document::getItems(const String& typeNames)
 {
-    NodeListsNodeData* nodeLists = ensureRareData()->ensureNodeLists(this);
-
     // Since documet.getItem() is allowed for microdata, typeNames will be null string.
     // In this case we need to create an unique string identifier to map such request in the cache.
     String localTypeNames = typeNames.isNull() ? String("http://webkit.org/microdata/undefinedItemType") : typeNames;
 
-    NodeListsNodeData::MicroDataItemListCache::AddResult result = nodeLists->m_microDataItemListCache.add(localTypeNames, 0);
-    if (!result.isNewEntry)
-        return PassRefPtr<NodeList>(result.iterator->second);
-
-    RefPtr<MicroDataItemList> list = MicroDataItemList::create(this, typeNames);
-    result.iterator->second = list.get();
-    return list.release();
-}
-
-void Document::removeCachedMicroDataItemList(MicroDataItemList* list, const String& typeNames)
-{
-    ASSERT(rareData());
-    ASSERT(rareData()->nodeLists());
-
-    NodeListsNodeData* data = rareData()->nodeLists();
-
-    String localTypeNames = typeNames.isNull() ? String("http://webkit.org/microdata/undefinedItemType") : typeNames;
-    ASSERT_UNUSED(list, list == data->m_microDataItemListCache.get(localTypeNames));
-    data->m_microDataItemListCache.remove(localTypeNames);
+    return ensureRareData()->ensureNodeLists(this)->addCacheWithName<MicroDataItemList>(this, DynamicNodeList::MicroDataItemListType, localTypeNames);
 }
 #endif
 

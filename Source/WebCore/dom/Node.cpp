@@ -980,7 +980,7 @@ void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& at
         if (!data->nodeLists())
             continue;
 
-        data->nodeLists()->invalidateCachesThatDependOnAttributes();
+        data->nodeLists()->invalidateCaches(&attrName);
     }
 }
 
@@ -1005,54 +1005,9 @@ void Node::invalidateNodeListsCacheAfterChildrenChanged()
     }
 }
 
-void Node::removeCachedClassNodeList(ClassNodeList* list, const String& className)
+NodeListsNodeData* Node::nodeLists()
 {
-    ASSERT(rareData());
-    ASSERT(rareData()->nodeLists());
-
-    NodeListsNodeData* data = rareData()->nodeLists();
-    ASSERT_UNUSED(list, list == data->m_classNodeListCache.get(className));
-    data->m_classNodeListCache.remove(className);
-}
-
-void Node::removeCachedNameNodeList(NameNodeList* list, const String& nodeName)
-{
-    ASSERT(rareData());
-    ASSERT(rareData()->nodeLists());
-
-    NodeListsNodeData* data = rareData()->nodeLists();
-    ASSERT_UNUSED(list, list == data->m_nameNodeListCache.get(nodeName));
-    data->m_nameNodeListCache.remove(nodeName);
-}
-
-void Node::removeCachedTagNodeList(TagNodeList* list, const AtomicString& name)
-{
-    ASSERT(rareData());
-    ASSERT(rareData()->nodeLists());
-
-    NodeListsNodeData* data = rareData()->nodeLists();
-    ASSERT_UNUSED(list, list == data->m_tagNodeListCache.get(name.impl()));
-    data->m_tagNodeListCache.remove(name.impl());
-}
-
-void Node::removeCachedTagNodeList(TagNodeList* list, const QualifiedName& name)
-{
-    ASSERT(rareData());
-    ASSERT(rareData()->nodeLists());
-
-    NodeListsNodeData* data = rareData()->nodeLists();
-    ASSERT_UNUSED(list, list == data->m_tagNodeListCacheNS.get(name.impl()));
-    data->m_tagNodeListCacheNS.remove(name.impl());
-}
-
-void Node::removeCachedLabelsNodeList(DynamicSubtreeNodeList* list)
-{
-    ASSERT(rareData());
-    ASSERT(rareData()->nodeLists());
-
-    NodeListsNodeData* data = rareData()->nodeLists();
-    ASSERT_UNUSED(list, list == data->m_labelsNodeListCache);
-    data->m_labelsNodeListCache = 0;
+    return hasRareData() ? rareData()->nodeLists() : 0;
 }
 
 void Node::removeCachedChildNodeList()
@@ -1592,19 +1547,9 @@ PassRefPtr<NodeList> Node::getElementsByTagName(const AtomicString& localName)
     if (localName.isNull())
         return 0;
 
-    AtomicString localNameAtom = localName;
-
-    NodeListsNodeData::TagNodeListCache::AddResult result = ensureRareData()->ensureNodeLists(this)->m_tagNodeListCache.add(localNameAtom, 0);
-    if (!result.isNewEntry)
-        return PassRefPtr<TagNodeList>(result.iterator->second);
-
-    RefPtr<TagNodeList> list;
     if (document()->isHTMLDocument())
-        list = HTMLTagNodeList::create(this, starAtom, localNameAtom);
-    else
-        list = TagNodeList::create(this, starAtom, localNameAtom);
-    result.iterator->second = list.get();
-    return list.release();   
+        return ensureRareData()->ensureNodeLists(this)->addCacheWithAtomicName<HTMLTagNodeList>(this, DynamicNodeList::TagNodeListType, localName);
+    return ensureRareData()->ensureNodeLists(this)->addCacheWithAtomicName<TagNodeList>(this, DynamicNodeList::TagNodeListType, localName);
 }
 
 PassRefPtr<NodeList> Node::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
@@ -1615,39 +1560,23 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const AtomicString& namespaceU
     if (namespaceURI == starAtom)
         return getElementsByTagName(localName);
 
-    AtomicString localNameAtom = localName;
-
-    NodeListsNodeData::TagNodeListCacheNS::AddResult result
-        = ensureRareData()->ensureNodeLists(this)->m_tagNodeListCacheNS.add(QualifiedName(nullAtom, localNameAtom, namespaceURI).impl(), 0);
-    if (!result.isNewEntry)
-        return PassRefPtr<TagNodeList>(result.iterator->second);
-
-    RefPtr<TagNodeList> list = TagNodeList::create(this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localNameAtom);
-    result.iterator->second = list.get();
-    return list.release();
+    return ensureRareData()->ensureNodeLists(this)->addCacheWithQualifiedName(this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
 }
 
 PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
 {
-    NodeListsNodeData::NameNodeListCache::AddResult result = ensureRareData()->ensureNodeLists(this)->m_nameNodeListCache.add(elementName, 0);
-    if (!result.isNewEntry)
-        return PassRefPtr<NodeList>(result.iterator->second);
-
-    RefPtr<NameNodeList> list = NameNodeList::create(this, elementName);
-    result.iterator->second = list.get();
-    return list.release();
+    return ensureRareData()->ensureNodeLists(this)->addCacheWithAtomicName<NameNodeList>(this, DynamicNodeList::NameNodeListType, elementName);
 }
 
 PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
 {
-    NodeListsNodeData::ClassNodeListCache::AddResult result
-        = ensureRareData()->ensureNodeLists(this)->m_classNodeListCache.add(classNames, 0);
-    if (!result.isNewEntry)
-        return PassRefPtr<NodeList>(result.iterator->second);
+    return ensureRareData()->ensureNodeLists(this)->addCacheWithName<ClassNodeList>(this, DynamicNodeList::ClassNodeListType, classNames);
+}
 
-    RefPtr<ClassNodeList> list = ClassNodeList::create(this, classNames);
-    result.iterator->second = list.get();
-    return list.release();
+PassRefPtr<RadioNodeList> Node::radioNodeList(const AtomicString& name)
+{
+    ASSERT(hasTagName(formTag) || hasTagName(fieldsetTag));
+    return ensureRareData()->ensureNodeLists(this)->addCacheWithAtomicName<RadioNodeList>(this, DynamicNodeList::RadioNodeListType, name);
 }
 
 PassRefPtr<Element> Node::querySelector(const AtomicString& selectors, ExceptionCode& ec)
@@ -2309,58 +2238,26 @@ void Node::showTreeForThisAcrossFrame() const
 
 // --------
 
-void NodeListsNodeData::invalidateCaches()
+void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
 {
-    TagNodeListCache::const_iterator tagCacheEnd = m_tagNodeListCache.end();
-    for (TagNodeListCache::const_iterator it = m_tagNodeListCache.begin(); it != tagCacheEnd; ++it)
+    NodeListAtomicNameCacheMap::const_iterator atomicNameCacheEnd = m_atomicNameCaches.end();
+    for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it) {
+        if (!attrName || it->second->shouldInvalidateOnAttributeChange())
+            it->second->invalidateCache();
+    }
+
+    NodeListNameCacheMap::const_iterator nameCacheEnd = m_nameCaches.end();
+    for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it) {
+        if (!attrName || it->second->shouldInvalidateOnAttributeChange())
+            it->second->invalidateCache();
+    }
+
+    if (!attrName)
+        return;
+
+    TagNodeListCacheNS::iterator tagCacheEnd = m_tagNodeListCacheNS.end();
+    for (TagNodeListCacheNS::iterator it = m_tagNodeListCacheNS.begin(); it != tagCacheEnd; ++it)
         it->second->invalidateCache();
-    TagNodeListCacheNS::const_iterator tagCacheNSEnd = m_tagNodeListCacheNS.end();
-    for (TagNodeListCacheNS::const_iterator it = m_tagNodeListCacheNS.begin(); it != tagCacheNSEnd; ++it)
-        it->second->invalidateCache();
-    invalidateCachesThatDependOnAttributes();
-}
-
-void NodeListsNodeData::invalidateCachesThatDependOnAttributes()
-{
-    ClassNodeListCache::iterator classCacheEnd = m_classNodeListCache.end();
-    for (ClassNodeListCache::iterator it = m_classNodeListCache.begin(); it != classCacheEnd; ++it)
-        it->second->invalidateCache();
-
-    NameNodeListCache::iterator nameCacheEnd = m_nameNodeListCache.end();
-    for (NameNodeListCache::iterator it = m_nameNodeListCache.begin(); it != nameCacheEnd; ++it)
-        it->second->invalidateCache();
-    if (m_labelsNodeListCache)
-        m_labelsNodeListCache->invalidateCache();
-
-#if ENABLE(MICRODATA)
-    MicroDataItemListCache::iterator itemListCacheEnd = m_microDataItemListCache.end();
-    for (MicroDataItemListCache::iterator it = m_microDataItemListCache.begin(); it != itemListCacheEnd; ++it)
-        it->second->invalidateCache();
-#endif
-}
-
-bool NodeListsNodeData::isEmpty() const
-{
-    if (!m_tagNodeListCache.isEmpty())
-        return false;
-    if (!m_tagNodeListCacheNS.isEmpty())
-        return false;
-    if (!m_classNodeListCache.isEmpty())
-        return false;
-    if (!m_nameNodeListCache.isEmpty())
-        return false;
-#if ENABLE(MICRODATA)
-    if (!m_microDataItemListCache.isEmpty())
-        return false;
-#endif
-
-    if (m_labelsNodeListCache)
-        return false;
-
-    if (!m_radioNodeListCache.isEmpty())
-        return false;
-
-    return true;
 }
 
 void Node::getSubresourceURLs(ListHashSet<KURL>& urls) const
@@ -2869,31 +2766,6 @@ void NodeRareData::clearChildNodeListCache()
 {
     if (m_childNodeList)
         m_childNodeList->invalidateCache();
-}
-
-PassRefPtr<RadioNodeList> Node::radioNodeList(const AtomicString& name)
-{
-    ASSERT(hasTagName(formTag) || hasTagName(fieldsetTag));
-
-    NodeListsNodeData* nodeLists = ensureRareData()->ensureNodeLists(this);
-
-    NodeListsNodeData::RadioNodeListCache::AddResult result = nodeLists->m_radioNodeListCache.add(name, 0);
-    if (!result.isNewEntry)
-        return PassRefPtr<RadioNodeList>(result.iterator->second);
-
-    RefPtr<RadioNodeList> list = RadioNodeList::create(toElement(this), name);
-    result.iterator->second = list.get();
-    return list.release();
-}
-
-void Node::removeCachedRadioNodeList(RadioNodeList* list, const AtomicString& name)
-{
-    ASSERT(rareData());
-    ASSERT(rareData()->nodeLists());
-
-    NodeListsNodeData* data = rareData()->nodeLists();
-    ASSERT_UNUSED(list, list == data->m_radioNodeListCache.get(name));
-    data->m_radioNodeListCache.remove(name);
 }
 
 // It's important not to inline removedLastRef, because we don't want to inline the code to

@@ -1108,7 +1108,6 @@ public:
 
 #if ENABLE(MICRODATA)
     PassRefPtr<NodeList> getItems(const String& typeNames);
-    void removeCachedMicroDataItemList(MicroDataItemList*, const String&);
 #endif
     
 #if ENABLE(UNDO_MANAGER)

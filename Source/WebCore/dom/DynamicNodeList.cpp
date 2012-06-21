@@ -28,11 +28,6 @@
 
 namespace WebCore {
 
-DynamicSubtreeNodeList::DynamicSubtreeNodeList(PassRefPtr<Node> node, RootType rootType)
-    : DynamicNodeList(node, rootType)
-{
-}
-
 DynamicSubtreeNodeList::~DynamicSubtreeNodeList()
 {
 }

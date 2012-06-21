@@ -27,6 +27,7 @@
 #include "Element.h"
 #include "HTMLLabelElement.h"
 #include "HTMLNames.h"
+#include "NodeRareData.h"
 
 namespace WebCore {
 
@@ -34,20 +35,19 @@ using namespace HTMLNames;
 
 LabelsNodeList::LabelsNodeList(Node* forNode)
     : DynamicSubtreeNodeList(forNode, RootedAtDocument)
-    , m_forNode(forNode)
 {
-    m_forNode->document()->registerDynamicSubtreeNodeList(this);
+    document()->registerDynamicSubtreeNodeList(this);
 }
 
 LabelsNodeList::~LabelsNodeList()
 {
-    m_forNode->removeCachedLabelsNodeList(this);
-    m_forNode->document()->unregisterDynamicSubtreeNodeList(this);
+    m_node->nodeLists()->removeCacheWithAtomicName(this, DynamicNodeList::LabelsNodeListType, starAtom);
+    document()->unregisterDynamicSubtreeNodeList(this);
 } 
     
 bool LabelsNodeList::nodeMatches(Element* testNode) const
 {
-    return testNode->hasTagName(labelTag) && static_cast<HTMLLabelElement*>(testNode)->control() == m_forNode;
+    return testNode->hasTagName(labelTag) && static_cast<HTMLLabelElement*>(testNode)->control() == m_node;
 }
 
 } // namespace WebCore

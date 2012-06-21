@@ -36,14 +36,26 @@ class Node;
 
 class DynamicNodeList : public NodeList {
 public:
+    enum NodeListType {
+        ChildNodeListType,
+        ClassNodeListType,
+        NameNodeListType,
+        TagNodeListType,
+        RadioNodeListType,
+        LabelsNodeListType,
+        MicroDataItemListType,
+    };
     enum RootType {
         RootedAtNode,
         RootedAtDocument,
     };
-
-    DynamicNodeList(PassRefPtr<Node> node, RootType rootType = RootedAtNode)
+    enum InvalidationType {
+        AlwaysInvalidate,
+        DoNotInvalidateOnAttributeChange,
+    };
+    DynamicNodeList(PassRefPtr<Node> node, RootType rootType, InvalidationType invalidationType)
         : m_node(node)
-        , m_caches(rootType)
+        , m_caches(rootType, invalidationType)
     { }
     virtual ~DynamicNodeList() { }
 
@@ -59,6 +71,9 @@ public:
             return m_node->document();
         return m_node.get();
     }
+    Document* document() { return m_node->document(); }
+
+    bool shouldInvalidateOnAttributeChange() const { return m_caches.shouldInvalidateOnAttributeChange; }
 
     void invalidateCache() { m_caches.reset(); }
 
@@ -66,8 +81,9 @@ protected:
     virtual bool nodeMatches(Element*) const = 0;
 
     struct Caches {
-        Caches(RootType rootType)
+        Caches(RootType rootType, InvalidationType invalidationType)
             : rootedAtDocument(rootType == RootedAtDocument)
+            , shouldInvalidateOnAttributeChange(invalidationType == AlwaysInvalidate)
         {
             reset();
         }
@@ -81,10 +97,14 @@ protected:
 
         Node* lastItem;
         unsigned cachedLength;
-        unsigned lastItemOffset : 29; // Borrow 3-bits for bit fields
+        unsigned lastItemOffset;
         unsigned isLengthCacheValid : 1;
         unsigned isItemCacheValid : 1;
+
+        // Following flags should belong in DynamicSubtreeNode but are here for bit-packing.
+        unsigned type : 4;
         unsigned rootedAtDocument : 1;
+        unsigned shouldInvalidateOnAttributeChange : 1;
     };
 
     RefPtr<Node> m_node;
@@ -101,7 +121,9 @@ public:
     virtual Node* item(unsigned index) const OVERRIDE;
 
 protected:
-    DynamicSubtreeNodeList(PassRefPtr<Node>, RootType = RootedAtNode);
+    DynamicSubtreeNodeList(PassRefPtr<Node> node, RootType rootType = RootedAtNode, InvalidationType invalidationType = AlwaysInvalidate)
+        : DynamicNodeList(node, rootType, invalidationType)
+    { }
 
 private:
     Node* itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;

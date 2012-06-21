@@ -25,12 +25,13 @@
 #include "TagNodeList.h"
 
 #include "Element.h"
+#include "NodeRareData.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
 TagNodeList::TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
-    : DynamicSubtreeNodeList(rootNode)
+    : DynamicSubtreeNodeList(rootNode, RootedAtNode, DoNotInvalidateOnAttributeChange)
     , m_namespaceURI(namespaceURI)
     , m_localName(localName)
 {
@@ -40,9 +41,9 @@ TagNodeList::TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespac
 TagNodeList::~TagNodeList()
 {
     if (m_namespaceURI == starAtom)
-        node()->removeCachedTagNodeList(this, m_localName);
+        m_node->nodeLists()->removeCacheWithAtomicName(this, DynamicNodeList::TagNodeListType, m_localName);
     else
-        node()->removeCachedTagNodeList(this, QualifiedName(nullAtom, m_localName, m_namespaceURI));
+        m_node->nodeLists()->removeCacheWithQualifiedName(this, m_namespaceURI, m_localName);
 }
 
 bool TagNodeList::nodeMatches(Element* testNode) const
@@ -54,8 +55,8 @@ bool TagNodeList::nodeMatches(Element* testNode) const
     return m_namespaceURI == starAtom || m_namespaceURI == testNode->namespaceURI();
 }
 
-HTMLTagNodeList::HTMLTagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
-    : TagNodeList(rootNode, namespaceURI, localName)
+HTMLTagNodeList::HTMLTagNodeList(PassRefPtr<Node> rootNode, const AtomicString& localName)
+    : TagNodeList(rootNode, starAtom, localName)
     , m_loweredLocalName(localName.lower())
 {
 }
@@ -69,7 +70,8 @@ bool HTMLTagNodeList::nodeMatches(Element* testNode) const
             return false;
     }
 
-    return m_namespaceURI == starAtom || m_namespaceURI == testNode->namespaceURI();
+    ASSERT(m_namespaceURI == starAtom);
+    return true;
 }
 
 } // namespace WebCore

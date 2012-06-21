@@ -32,7 +32,7 @@ namespace WebCore {
 
 class LabelsNodeList : public DynamicSubtreeNodeList {
 public:
-    static PassRefPtr<LabelsNodeList> create(Node* forNode)
+    static PassRefPtr<LabelsNodeList> create(Node* forNode, const AtomicString&)
     {
         return adoptRef(new LabelsNodeList(forNode));
     }
@@ -42,9 +42,6 @@ protected:
     LabelsNodeList(Node* forNode);
 
     virtual bool nodeMatches(Element*) const;
-
-private:
-    RefPtr<Node> m_forNode;
 };
 
 } // namespace WebCore

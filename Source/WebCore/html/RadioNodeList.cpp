@@ -31,23 +31,23 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "NodeRareData.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-RadioNodeList::RadioNodeList(Element* baseElement, const AtomicString& name)
-    : DynamicSubtreeNodeList(baseElement, baseElement->hasTagName(formTag) ? RootedAtDocument : RootedAtNode)
+RadioNodeList::RadioNodeList(Node* rootNode, const AtomicString& name)
+    : DynamicSubtreeNodeList(rootNode, rootNode->hasTagName(formTag) ? RootedAtDocument : RootedAtNode)
     , m_name(name)
-    , m_baseElement(baseElement)
 {
-    m_baseElement->document()->registerDynamicSubtreeNodeList(this);
+    document()->registerDynamicSubtreeNodeList(this);
 }
 
 RadioNodeList::~RadioNodeList()
 {
-    m_baseElement->removeCachedRadioNodeList(this, m_name);
-    m_baseElement->document()->unregisterDynamicSubtreeNodeList(this);
+    m_node->nodeLists()->removeCacheWithAtomicName(this, DynamicNodeList::RadioNodeListType, m_name);
+    document()->unregisterDynamicSubtreeNodeList(this);
 }
 
 static inline HTMLInputElement* toRadioButtonInputElement(Node* node)
@@ -86,13 +86,13 @@ void RadioNodeList::setValue(const String& value)
 bool RadioNodeList::checkElementMatchesRadioNodeListFilter(Element* testElement) const
 {
     ASSERT(testElement->hasTagName(objectTag) || testElement->isFormControlElement());
-    if (m_baseElement->hasTagName(formTag)) {
+    if (m_node->hasTagName(formTag)) {
         HTMLFormElement* formElement = 0;
         if (testElement->hasTagName(objectTag))
             formElement = static_cast<HTMLObjectElement*>(testElement)->form();
         else
             formElement = static_cast<HTMLFormControlElement*>(testElement)->form();
-        if (!formElement || formElement != m_baseElement)
+        if (!formElement || formElement != m_node)
             return false;
     }
 

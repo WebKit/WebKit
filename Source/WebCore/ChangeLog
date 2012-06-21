@@ -1,3 +1,100 @@
+2012-06-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Shrink NodeListsNodeData
+        https://bugs.webkit.org/show_bug.cgi?id=89036
+
+        Reviewed by Andreas Kling.
+
+        Replaced 6 hash maps of AtomicString, String, and RefPtr<QualifiedName::QualifiedNameImpl> and a raw pointer
+        by 3 hash maps of std::pair<unsigned short, AtomicString>, std::pair<unsigned short, String>, and QualifiedName,
+        to halve the NodeListsNodeData's size (Reduced from 7 pointers to 3 pointers). Made those hash maps private and
+        added addCacheWith* and removeCacheWith* member functions to reduce the code duplication.
+
+        Also got rid of removeCached*NodeList member functions from Node and Document now that DynamicSubtreeNodeList can
+        simply call nodeLists()->removeCacheWith* on m_node.
+
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::ChildNodeList):
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::~ClassNodeList):
+        * dom/Document.cpp:
+        (WebCore::Document::getItems): Use addCacheWithName.
+        * dom/Document.h: Got rid of removeCachedMicroDataItemList.
+        (Document):
+        * dom/DynamicNodeList.cpp:
+        (WebCore): Moved the constructor to the header file.
+        * dom/DynamicNodeList.h: Added NodeListType and InvalidationType to be used in NodeListsNodeData.
+        (WebCore::DynamicNodeList::DynamicNodeList): Takes the invalidation type.
+        (WebCore::DynamicNodeList::document): Added.
+        (WebCore::DynamicNodeList::shouldInvalidateOnAttributeChange): Added.
+        (WebCore::DynamicNodeList::Caches::Caches): Added shouldInvalidateOnAttributeChange to retain the invalidation type.
+        (Caches):
+        (WebCore::DynamicSubtreeNodeList::DynamicSubtreeNodeList):
+        * dom/MicroDataItemList.cpp:
+        (WebCore::MicroDataItemList::~MicroDataItemList):
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList):
+        (WebCore::NameNodeList::~NameNodeList):
+        (WebCore::NameNodeList::nodeMatches):
+        * dom/NameNodeList.h:
+        (WebCore):
+        (NameNodeList):
+        (WebCore::NameNodeList::create):
+        * dom/Node.cpp:
+        (WebCore::Node::nodeLists): Added so that node lists can directly call removeCacheWith*.
+        (WebCore::Node::getElementsByTagName):
+        (WebCore::Node::getElementsByTagNameNS):
+        (WebCore::Node::getElementsByName):
+        (WebCore::Node::getElementsByClassName):
+        (WebCore::Node::radioNodeList):
+        (WebCore::NodeListsNodeData::invalidateCaches): Merged invalidateCachesThatDependOnAttributes. The function takes
+        the attribute name to avoid invalidating tag node lists when only attributes are modified. Also, now we have exactly
+        three hash maps to invalidate: m_atomicNameCaches, m_nameCaches, and m_tagNodeListCacheNS.
+        (WebCore): NodeListsNodeData::isEmpty is moved to NodeRareData.h.
+        * dom/Node.h:
+        (WebCore):
+        (Node):
+        * dom/NodeRareData.h:
+        (NodeListsNodeData):
+        (WebCore::NodeListsNodeData::addCacheWithAtomicName):
+        (WebCore::NodeListsNodeData::addCacheWithName):
+        (WebCore::NodeListsNodeData::addCacheWithQualifiedName):
+        (WebCore::NodeListsNodeData::removeCacheWithAtomicName):
+        (WebCore::NodeListsNodeData::removeCacheWithName):
+        (WebCore::NodeListsNodeData::removeCacheWithQualifiedName):
+        (WebCore::NodeListsNodeData::isEmpty): Moved from Node.cpp now that this function is much shorter.
+        (WebCore::NodeListsNodeData::NodeListsNodeData):
+        (WebCore::NodeListsNodeData::namedNodeListKey): Helper member functions to obtain the key for AtomicString and
+        String hash maps.
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::TagNodeList):
+        (WebCore::TagNodeList::~TagNodeList):
+        (WebCore::HTMLTagNodeList::HTMLTagNodeList): Hard code namespaceURI = starAtom since other values are never used.
+        (WebCore::HTMLTagNodeList::nodeMatches): Given that, assert m_namespace == starAtom.
+        * dom/TagNodeList.h:
+        (WebCore::TagNodeList::create): Add a new version of create that doesn't take namespace (assume starAtom) so that
+        addCacheWithAtomicName works with this class.
+        (WebCore::HTMLTagNodeList::create): Removed namespaceURI from the argument list since it's always starAtom.
+        (HTMLTagNodeList):
+        * html/LabelableElement.cpp:
+        (WebCore::LabelableElement::labels):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::LabelsNodeList): Removed redundant m_forNode (identical to m_node in DynamicNodeList).
+        (WebCore::LabelsNodeList::~LabelsNodeList):
+        (WebCore::LabelsNodeList::nodeMatches):
+        * html/LabelsNodeList.h:
+        (WebCore::LabelsNodeList::create):
+        (LabelsNodeList):
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList): Removed redundant m_baseElement (identical to m_node in DynamicNodeList).
+        Also changed the first argument's type from Element* to Node* so that it works better with new template member
+        functions of NodeListsNodeData.
+        (WebCore::RadioNodeList::~RadioNodeList):
+        (WebCore::RadioNodeList::checkElementMatchesRadioNodeListFilter):
+        * html/RadioNodeList.h:
+        (WebCore::RadioNodeList::create):
+        (RadioNodeList):
+
 2012-06-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120945.

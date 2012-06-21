@@ -25,26 +25,27 @@
 
 #include "Element.h"
 #include "HTMLNames.h"
+#include "NodeRareData.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-NameNodeList::NameNodeList(PassRefPtr<Node> rootNode, const String& name)
+NameNodeList::NameNodeList(PassRefPtr<Node> rootNode, const AtomicString& name)
     : DynamicSubtreeNodeList(rootNode)
-    , m_nodeName(name)
+    , m_name(name)
 {
 }
 
 NameNodeList::~NameNodeList()
 {
-    node()->removeCachedNameNodeList(this, m_nodeName);
+    m_node->nodeLists()->removeCacheWithAtomicName(this, DynamicNodeList::NameNodeListType, m_name);
 } 
 
 bool NameNodeList::nodeMatches(Element* testNode) const
 {
-    return testNode->getNameAttribute() == m_nodeName;
+    return testNode->getNameAttribute() == m_name;
 }
 
 } // namespace WebCore

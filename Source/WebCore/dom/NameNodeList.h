@@ -30,23 +30,23 @@
 
 namespace WebCore {
 
-    // NodeList which lists all Nodes in a Element with a given "name" attribute
-    class NameNodeList : public DynamicSubtreeNodeList {
-    public:
-        static PassRefPtr<NameNodeList> create(PassRefPtr<Node> rootNode, const String& name)
-        {
-            return adoptRef(new NameNodeList(rootNode, name));
-        }
+// NodeList which lists all Nodes in a Element with a given "name" attribute
+class NameNodeList : public DynamicSubtreeNodeList {
+public:
+    static PassRefPtr<NameNodeList> create(PassRefPtr<Node> rootNode, const AtomicString& name)
+    {
+        return adoptRef(new NameNodeList(rootNode, name));
+    }
 
-        virtual ~NameNodeList();
+    virtual ~NameNodeList();
 
-    private:
-        NameNodeList(PassRefPtr<Node> rootNode, const String& name);
+private:
+    NameNodeList(PassRefPtr<Node> rootNode, const AtomicString& name);
 
-        virtual bool nodeMatches(Element*) const;
+    virtual bool nodeMatches(Element*) const;
 
-        AtomicString m_nodeName;
-    };
+    AtomicString m_name;
+};
 
 } // namespace WebCore
 

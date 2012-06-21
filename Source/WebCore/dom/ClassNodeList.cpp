@@ -31,6 +31,7 @@
 #include "ClassNodeList.h"
 
 #include "Document.h"
+#include "NodeRareData.h"
 #include "StyledElement.h"
 
 namespace WebCore {
@@ -44,7 +45,7 @@ ClassNodeList::ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames
 
 ClassNodeList::~ClassNodeList()
 {
-    node()->removeCachedClassNodeList(this, m_originalClassNames);
+    node()->nodeLists()->removeCacheWithName(this, DynamicNodeList::ClassNodeListType, m_originalClassNames);
 } 
 
 bool ClassNodeList::nodeMatches(Element* testNode) const
