@@ -1,3 +1,12 @@
+2012-06-21  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Adding copyrights to new files.
+
+        * heap/HeapTimer.cpp:
+        * heap/HeapTimer.h:
+        * heap/IncrementalSweeper.cpp:
+        * heap/IncrementalSweeper.h:
+
 2012-06-21  Arnaud Renevier  <arno@renevier.net>
 
         make sure headers are included only once per file
