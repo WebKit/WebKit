@@ -9,7 +9,7 @@ function setMockOrientation(alpha, beta, gamma) {
             null != mockEvent.beta, null == mockEvent.beta ? 0 : mockEvent.beta,
             null != mockEvent.gamma, null == mockEvent.gamma ? 0 : mockEvent.gamma);
     else
-        debug('This test can not be run without the LayoutTestController');
+        debug('This test can not be run without the TestRunner');
 }
 
 var deviceOrientationEvent;

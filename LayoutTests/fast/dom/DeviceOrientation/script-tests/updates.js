@@ -6,7 +6,7 @@ function setMockOrientation(alpha, beta, gamma) {
     if (window.testRunner)
         testRunner.setMockDeviceOrientation(true, mockEvent.alpha, true, mockEvent.beta, true, mockEvent.gamma);
     else
-        debug('This test can not be run without the LayoutTestController');
+        debug('This test can not be run without the TestRunner');
 }
 
 var deviceOrientationEvent;

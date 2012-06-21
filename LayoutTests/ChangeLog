@@ -1,3 +1,25 @@
+2012-06-21  Amy Ousterhout  <aousterh@chromium.org>
+
+        DeviceOrientation and DeviceMotion Test Cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=89662
+
+        Reviewed by Ryosuke Niwa.
+
+        Replaces 'LayoutTestController' with 'TestRunner' in debug messages.
+        This makes it consistent with testRunner, which replaced layoutTestController.
+
+        * fast/dom/DeviceMotion/script-tests/no-page-cache.js:
+        * fast/dom/DeviceOrientation/script-tests/add-listener-from-callback.js:
+        * fast/dom/DeviceOrientation/script-tests/basic-operation.js:
+        * fast/dom/DeviceOrientation/script-tests/event-after-navigation.js:
+        * fast/dom/DeviceOrientation/script-tests/multiple-frames.js:
+        * fast/dom/DeviceOrientation/script-tests/no-page-cache.js:
+        * fast/dom/DeviceOrientation/script-tests/no-synchronous-events.js:
+        * fast/dom/DeviceOrientation/script-tests/null-values.js:
+        (setMockOrientation):
+        * fast/dom/DeviceOrientation/script-tests/updates.js:
+        (setMockOrientation):
+
 2012-06-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, unskip now passing tests.

@@ -31,7 +31,7 @@ var mockEvent = {alpha: 1.1, beta: 2.2, gamma: 3.3};
 if (window.testRunner)
     testRunner.setMockDeviceOrientation(true, mockEvent.alpha, true, mockEvent.beta, true, mockEvent.gamma);
 else
-    debug('This test can not be run without the LayoutTestController');
+    debug('This test can not be run without the TestRunner');
 
 var childFrame = document.createElement('iframe');
 document.body.appendChild(childFrame);
