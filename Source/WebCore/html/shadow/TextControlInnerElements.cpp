@@ -234,8 +234,9 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 
 // ----------------------------
 
-inline SpinButtonElement::SpinButtonElement(Document* document)
+inline SpinButtonElement::SpinButtonElement(Document* document, StepActionHandler& stepActionHandler)
     : HTMLDivElement(divTag, document)
+    , m_stepActionHandler(&stepActionHandler)
     , m_capturing(false)
     , m_upDownState(Indeterminate)
     , m_pressStartingState(Indeterminate)
@@ -243,9 +244,9 @@ inline SpinButtonElement::SpinButtonElement(Document* document)
 {
 }
 
-PassRefPtr<SpinButtonElement> SpinButtonElement::create(Document* document)
+PassRefPtr<SpinButtonElement> SpinButtonElement::create(Document* document, StepActionHandler& stepActionHandler)
 {
-    return adoptRef(new SpinButtonElement(document));
+    return adoptRef(new SpinButtonElement(document, stepActionHandler));
 }
 
 const AtomicString& SpinButtonElement::shadowPseudoId() const
@@ -294,7 +295,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
             input->select();
             if (renderer()) {
                 if (m_upDownState != Indeterminate) {
-                    input->stepUpFromRenderer(m_upDownState == Up ? 1 : -1);
+                    doStepAction(m_upDownState == Up ? 1 : -1);
                     if (renderer())
                         startRepeatingTimer();
                 }
@@ -323,6 +324,17 @@ void SpinButtonElement::defaultEventHandler(Event* event)
 
     if (!event->defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
+}
+
+void SpinButtonElement::doStepAction(int amount)
+{
+    if (!m_stepActionHandler)
+        return;
+
+    if (amount > 0)
+        m_stepActionHandler->spinButtonStepUp();
+    else if (amount < 0)
+        m_stepActionHandler->spinButtonStepDown();
 }
 
 void SpinButtonElement::releaseCapture()
@@ -360,7 +372,7 @@ void SpinButtonElement::step(int amount)
     if (m_upDownState != m_pressStartingState)
         return;
 #endif
-    input->stepUpFromRenderer(amount);
+    doStepAction(amount);
 }
     
 void SpinButtonElement::repeatingTimerFired(Timer<SpinButtonElement>*)

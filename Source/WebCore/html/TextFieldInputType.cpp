@@ -63,6 +63,8 @@ TextFieldInputType::TextFieldInputType(HTMLInputElement* element)
 
 TextFieldInputType::~TextFieldInputType()
 {
+    if (m_innerSpinButton)
+        m_innerSpinButton->removeStepActionHandler();
 }
 
 bool TextFieldInputType::isKeyboardFocusable(KeyboardEvent*) const
@@ -152,14 +154,12 @@ void TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent* event)
     if (element()->disabled() || element()->readOnly())
         return;
     const String& key = event->keyIdentifier();
-    int step = 0;
     if (key == "Up")
-        step = 1;
+        spinButtonStepUp();
     else if (key == "Down")
-        step = -1;
+        spinButtonStepDown();
     else
         return;
-    element()->stepUpFromRenderer(step);
     event->setDefaultHandled();
 }
 
@@ -167,14 +167,12 @@ void TextFieldInputType::handleWheelEventForSpinButton(WheelEvent* event)
 {
     if (element()->disabled() || element()->readOnly() || !element()->focused())
         return;
-    int step = 0;
     if (event->wheelDeltaY() > 0)
-        step = 1;
+        spinButtonStepUp();
     else if (event->wheelDeltaY() < 0)
-        step = -1;
+        spinButtonStepDown();
     else
         return;
-    element()->stepUpFromRenderer(step);
     event->setDefaultHandled();
 }
 
@@ -270,7 +268,7 @@ void TextFieldInputType::createShadowSubtree()
 #endif
 
     if (shouldHaveSpinButton) {
-        m_innerSpinButton = SpinButtonElement::create(document);
+        m_innerSpinButton = SpinButtonElement::create(document, *this);
         m_container->appendChild(m_innerSpinButton, ec);
     }
 
@@ -320,6 +318,8 @@ void TextFieldInputType::destroyShadowSubtree()
 #if ENABLE(INPUT_SPEECH)
     m_speechButton.clear();
 #endif
+    if (m_innerSpinButton)
+        m_innerSpinButton->removeStepActionHandler();
     m_innerSpinButton.clear();
     m_container.clear();
 }
@@ -439,5 +439,16 @@ bool TextFieldInputType::appendFormData(FormDataList& list, bool multipart) cons
         list.appendData(dirnameAttrValue, element()->directionForFormData());
     return true;
 }
+
+void TextFieldInputType::spinButtonStepDown()
+{
+    stepUpFromRenderer(-1);
+}
+
+void TextFieldInputType::spinButtonStepUp()
+{
+    stepUpFromRenderer(1);
+}
+
 
 } // namespace WebCore

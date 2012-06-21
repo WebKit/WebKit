@@ -1461,11 +1461,6 @@ bool HTMLInputElement::isSteppable() const
     return m_inputType->isSteppable();
 }
 
-void HTMLInputElement::stepUpFromRenderer(int n)
-{
-    m_inputType->stepUpFromRenderer(n);
-}
-
 #if ENABLE(INPUT_SPEECH)
 
 bool HTMLInputElement::isSpeechEnabled() const

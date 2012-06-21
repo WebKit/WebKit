@@ -1,3 +1,40 @@
+2012-06-20  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Make step action of SpinButtonElement replaceable
+        https://bugs.webkit.org/show_bug.cgi?id=89439
+
+        Reviewed by Kent Tamura.
+
+        This patch introduces SpinButtonElement::Callback to specify step
+        action by control clients for using SpinButtonElement by
+        TextFieldInputType and future version of TimeInputField.
+
+        In addition to this improving flexibility of SpinButtonElement, we
+        free HTMLInputElement from SpinButtonElement dependency on
+        stepUpFromRenderer.
+
+        No new tests. This patch doesn't change behavior.
+
+        * html/HTMLInputElement.cpp: Removed stepUpFromRenderer().
+        * html/HTMLInputElement.h: Removed stepUpFromRenderer().
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::~TextFieldInputType): Added to call SpinButtonElement::removeStepActionHandler.
+        (WebCore::TextFieldInputType::handleKeydownEventForSpinButton): Changed to call spinButtonStep{Down,Up}
+        (WebCore::TextFieldInputType::handleWheelEventForSpinButton): Changed to call spinButtonStep{Down,Up}
+        (WebCore::TextFieldInputType::createShadowSubtree): Added SpinButtonElement::StepActionHandler parameter.
+        (WebCore::TextFieldInputType::destroyShadowSubtree): Added to call SpinButtonElement::removeStepActionHandler.
+        (WebCore::TextFieldInputType::spinButtonStepDown): Added for implementation of SpinButtonElement::StepActionHandler.
+        (WebCore::TextFieldInputType::spinButtonStepUp): Added for implementation of SpinButtonElement::StepActionHandler.
+        * html/TextFieldInputType.h:
+        (TextFieldInputType):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SpinButtonElement::SpinButtonElement): Added StepActionHandler parameter.
+        (WebCore::SpinButtonElement::defaultEventHandler): Changed to call doStepAction.
+        (WebCore::SpinButtonElement::doStepAction): Added to call StepActionHandler if possible.
+        (WebCore::SpinButtonElement::step): Changed to call doStepAction.
+        * html/shadow/TextControlInnerElements.h:
+        (StepActionHandler): Added.
+
 2012-06-20  Adrienne Walker  <enne@google.com>
 
         [chromium] Modify CCDamageTracker hash to allow for layer id 0
