@@ -3731,3 +3731,6 @@ BUGWK89510 WIN : gamepad/gamepad-polling-access.html = PASS TIMEOUT
 BUGWK89529 MAC LEOPARD DEBUG : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = PASS CRASH
 
 BUGWK89534 XP DEBUG : platform/chromium/virtual/gpu/fast/canvas/resize-while-save-active.html = TEXT
+
+BUGWK89702 : compositing/geometry/fixed-position-transform-composited-page-scale-down.html = PASS IMAGE
+BUGWK89702 : compositing/scaling/tiled-layer-recursion.html = PASS IMAGE
