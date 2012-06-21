@@ -184,6 +184,7 @@ WebInspector.TimelineOverviewPane.prototype = {
     {
         delete this._refreshTimeout;
 
+        this._updateWindow();
         this._overviewCalculator.setWindow(this._model.minimumRecordTime(), this._model.maximumRecordTime());
         this._overviewCalculator.setDisplayWindow(0, this._overviewContainer.clientWidth);
 
@@ -300,6 +301,8 @@ WebInspector.TimelineOverviewPane.prototype = {
 
     _onWindowChanged: function()
     {
+        if (this._ignoreWindowChangedEvent)
+            return;
         if (this._frameOverview) {
             var times = this._frameOverview.getWindowTimes(this.windowLeft(), this.windowRight());
             this._windowStartTime = times.startTime;
@@ -311,6 +314,28 @@ WebInspector.TimelineOverviewPane.prototype = {
             this._windowEndTime = absoluteMin + (absoluteMax - absoluteMin) * this.windowRight();
         }
         this.dispatchEventToListeners(WebInspector.TimelineOverviewPane.Events.WindowChanged);
+    },
+
+    /**
+     * @param {Number} left
+     * @param {Number} right
+     */
+    setWindowTimes: function(left, right)
+    {
+        this._windowStartTime = left;
+        this._windowEndTime = right;
+        this._updateWindow();
+    },
+
+    _updateWindow: function()
+    {
+        var offset = this._model.minimumRecordTime();
+        var timeSpan = this._model.maximumRecordTime() - offset;
+        var left = this._windowStartTime ? (this._windowStartTime - offset) / timeSpan : 0;
+        var right = this._windowEndTime < Infinity ? (this._windowEndTime - offset) / timeSpan : 1;
+        this._ignoreWindowChangedEvent = true;
+        this._overviewWindow._setWindow(left, right);
+        this._ignoreWindowChangedEvent = false;
     },
 
     /**
@@ -327,7 +352,7 @@ WebInspector.TimelineOverviewPane.prototype = {
             return;
         if (!this.isShowing())
             return;
-        this._refreshTimeout = setTimeout(this._update.bind(this), 100);
+        this._refreshTimeout = setTimeout(this._update.bind(this), 300);
     }
 }
 
@@ -496,6 +521,16 @@ WebInspector.TimelineOverviewWindow.prototype = {
     _resizeWindowMaximum: function()
     {
         this._setWindowPosition(0, this._parentElement.clientWidth);
+    },
+
+    /**
+     * @param {number} left
+     * @param {number} right
+     */
+    _setWindow: function(left, right)
+    {
+        var clientWidth = this._parentElement.clientWidth;
+        this._setWindowPosition(left * clientWidth, right * clientWidth);
     },
 
     _setWindowPosition: function(start, end)

@@ -1,3 +1,34 @@
+2012-06-19  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: reduce timeline refresh rate
+        https://bugs.webkit.org/show_bug.cgi?id=89548
+
+        Reviewed by Pavel Feldman.
+
+        Minimize resource contention with the inspected page during refresh:
+
+        - reduce refresh for both overview and main panes to 300ms
+        - automatically limit window size to approximately one pageful of events in the lower pane
+        - do not refresh lower pane for events that are outside of the window
+
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane.prototype._update):
+        (WebInspector.TimelineOverviewPane.prototype._onWindowChanged):
+        (WebInspector.TimelineOverviewPane.prototype.setWindowTimes): Set overview window by times.
+        (WebInspector.TimelineOverviewPane.prototype._updateWindow):
+        (WebInspector.TimelineOverviewPane.prototype._scheduleRefresh): Refresh once in 300ms (insted of once in 100ms).
+        (WebInspector.TimelineOverviewWindow.prototype._setWindow):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._onTimelineEventRecorded): Do not refresh if the new record is outside of window.
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._resetPanel):
+        (WebInspector.TimelinePanel.prototype._scheduleRefresh): Refresh rate: 100ms -> 300ms.
+        (WebInspector.TimelinePanel.prototype._refreshRecords): Automatically set overview window.
+        * inspector/front-end/TimelinePresentationModel.js: Expose filterRecords
+        (WebInspector.TimelinePresentationModel.prototype.filteredRecords):
+        (WebInspector.TimelinePresentationModel.prototype.filterRecords):
+        (WebInspector.TimelinePresentationModel.prototype._innerFilterRecords):
+
 2012-06-20  Zeev Lieber  <zlieber@chromium.org>
 
         [Chromium] Damage tracker is not used without partial swap, causing valid render passes to be removed

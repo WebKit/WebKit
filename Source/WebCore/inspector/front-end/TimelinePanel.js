@@ -486,8 +486,8 @@ WebInspector.TimelinePanel.prototype = {
 
     _onTimelineEventRecorded: function(event)
     {
-        this._innerAddRecordToTimeline(event.data, this._rootRecord());
-        this._scheduleRefresh(false);
+        if (this._innerAddRecordToTimeline(event.data, this._rootRecord()))
+            this._scheduleRefresh(false);
     },
 
     _innerAddRecordToTimeline: function(record, parentRecord)
@@ -501,7 +501,9 @@ WebInspector.TimelinePanel.prototype = {
             if (WebInspector.TimelinePresentationModel.isEventDivider(record))
                 timeStampRecords.push(record);
         }
-        WebInspector.TimelinePresentationModel.forAllRecords([ formattedRecord ], addTimestampRecords);
+        var records = [ formattedRecord ];
+        WebInspector.TimelinePresentationModel.forAllRecords(records, addTimestampRecords);
+        return !!this._presentationModel.filterRecords(records).length || formattedRecord.parent !== this._presentationModel.rootRecord;
     },
 
     sidebarResized: function(event)
@@ -543,6 +545,7 @@ WebInspector.TimelinePanel.prototype = {
         this._adjustScrollPosition(0);
         this._closeRecordDetails();
         this._allRecordsCount = 0;
+        this._automaticallySizeWindow = true;
     },
 
     elementsToRestoreScrollPositionsFor: function()
@@ -590,7 +593,7 @@ WebInspector.TimelinePanel.prototype = {
             this._refresh();
         else {
             if (!this._refreshTimeout)
-                this._refreshTimeout = setTimeout(this._refresh.bind(this), 100);
+                this._refreshTimeout = setTimeout(this._refresh.bind(this), 300);
         }
     },
 
@@ -662,6 +665,15 @@ WebInspector.TimelinePanel.prototype = {
         // Convert visible area to visible indexes. Always include top-level record for a visible nested record.
         var startIndex = Math.max(0, Math.min(Math.floor(visibleTop / rowHeight) - 1, recordsInWindow.length - 1));
         var endIndex = Math.min(recordsInWindow.length, Math.ceil(visibleBottom / rowHeight));
+        var lastVisibleLine = Math.max(0, Math.floor(visibleBottom / rowHeight) - 1);
+        if (this._automaticallySizeWindow && recordsInWindow.length > lastVisibleLine) {
+            this._automaticallySizeWindow = false;
+            // If we're at the top, always use real timeline start as a left window bound so that expansion arrow padding logic works.
+            var windowStartTime = startIndex ? recordsInWindow[startIndex].startTime : this._model.minimumRecordTime();
+            this._overviewPane.setWindowTimes(windowStartTime, recordsInWindow[Math.max(0, lastVisibleLine - 1)].endTime);
+            recordsInWindow = this._presentationModel.filteredRecords();
+            endIndex = Math.min(recordsInWindow.length, lastVisibleLine);
+        }
 
         // Resize gaps first.
         const top = (startIndex * rowHeight) + "px";

@@ -295,6 +295,11 @@ WebInspector.TimelinePresentationModel.prototype = {
 
     filteredRecords: function()
     {
+        return this.filterRecords(this._rootRecord.children);
+    },
+
+    filterRecords: function(records)
+    {
         function filter(record)
         {
             for (var i = 0; i < this._filters.length; ++i) {
@@ -303,14 +308,18 @@ WebInspector.TimelinePresentationModel.prototype = {
             }
             return true;
         }
-        return this._filterRecords(filter.bind(this));
+        return this._innerFilterRecords(filter.bind(this), records);
     },
 
-    _filterRecords: function(filter)
+    /**
+     * @param {function(WebInspector.TimelinePresentationModel.Record):boolean} filter
+     * @param {Array.<WebInspector.TimelinePresentationModel.Record>} inputRecords
+     */
+    _innerFilterRecords: function(filter, inputRecords)
     {
         var recordsInWindow = [];
 
-        var stack = [{children: this._rootRecord.children, index: 0, parentIsCollapsed: false}];
+        var stack = [{children: inputRecords, index: 0, parentIsCollapsed: false}];
         while (stack.length) {
             var entry = stack[stack.length - 1];
             var records = entry.children;
