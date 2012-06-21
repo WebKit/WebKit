@@ -525,7 +525,7 @@ class WebKitDriver(Driver):
 
     def _command_from_driver_input(self, driver_input):
         # FIXME: performance tests pass in full URLs instead of test names.
-        if driver_input.test_name.startswith('http://') or driver_input.test_name.startswith('https://'):
+        if driver_input.test_name.startswith('http://') or driver_input.test_name.startswith('https://')  or driver_input.test_name == ('about:blank'):
             command = driver_input.test_name
         elif self.is_http_test(driver_input.test_name):
             command = self.test_to_uri(driver_input.test_name)
