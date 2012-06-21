@@ -425,6 +425,8 @@ BUGWK88867 : media/track/track-cue-rendering-snap-to-lines-not-set.html is flaky
 
 BUGWK63611 DEBUG : editing/pasteboard/interchange-newline-3.html = TEXT PASS
 
+BUGWK89663 : editing/deleting/delete-3800834-fix.html = PASS TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
 //////////////////////////////////////////////////////////////////////////////////////////

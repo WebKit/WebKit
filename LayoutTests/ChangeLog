@@ -1,3 +1,13 @@
+2012-06-21  Simon Pena  <spena@igalia.com>
+
+        [GTK] Update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=89664
+
+        Unreviewed gardening. Mark editing/deleting/delete-3800834-fix.html
+        as flaky.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-21  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Crash][Editing] Pressing enter on LI element triggers assertion in Shadow DOM.
