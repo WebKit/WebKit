@@ -46,12 +46,8 @@ BUGWK83897 SKIP : fast/regions = PASS
 // Exclusions implementation not complete yet.
 BUGWK83898 SKIP : fast/exclusions = PASS
 
-// CSS Regions & Exclusions implementation not complete yet.
-BUGWK83898 : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
-
 // CSS Filters support not yet enabled (needs ENABLE_CSS_FILTERS).
 BUGWK85465 SKIP : css3/filters = TEXT
-BUGWK85465 SKIP : fast/css/getComputedStyle/computed-style.html = TEXT
 
 // CSS image-resolution is not yet enabled.
 BUGWK85262 SKIP : fast/css/image-resolution = PASS
