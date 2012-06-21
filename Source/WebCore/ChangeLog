@@ -1,3 +1,19 @@
+2012-06-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: do not add separator to the end of the context menu.
+        https://bugs.webkit.org/show_bug.cgi?id=89634
+
+        Reviewed by Vsevolod Vlasov.
+
+        Attaching separators only before menu items now.
+
+        * inspector/front-end/ContextMenu.js:
+        (WebInspector.ContextSubMenuItem.prototype.appendItem):
+        (WebInspector.ContextSubMenuItem.prototype.appendSubMenuItem):
+        (WebInspector.ContextSubMenuItem.prototype.appendCheckboxItem):
+        (WebInspector.ContextSubMenuItem.prototype.appendSeparator):
+        (WebInspector.ContextSubMenuItem.prototype._pushItem):
+
 2012-06-21  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Unify FileSystem callbacks

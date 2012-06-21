@@ -91,7 +91,7 @@ WebInspector.ContextSubMenuItem.prototype = {
     appendItem: function(label, handler, disabled)
     {
         var item = new WebInspector.ContextMenuItem(this._contextMenu, "item", label, disabled);
-        this._items.push(item);
+        this._pushItem(item);
         this._contextMenu._setHandler(item.id(), handler);
         return item;
     },
@@ -99,7 +99,7 @@ WebInspector.ContextSubMenuItem.prototype = {
     appendSubMenuItem: function(label, disabled)
     {
         var item = new WebInspector.ContextSubMenuItem(this._contextMenu, label, disabled);
-        this._items.push(item);
+        this._pushItem(item);
         return item;
     },
 
@@ -109,21 +109,24 @@ WebInspector.ContextSubMenuItem.prototype = {
     appendCheckboxItem: function(label, handler, checked, disabled)
     {
         var item = new WebInspector.ContextMenuItem(this._contextMenu, "checkbox", label, disabled, checked);
-        this._items.push(item);
+        this._pushItem(item);
         this._contextMenu._setHandler(item.id(), handler);
         return item;
     },
 
     appendSeparator: function()
     {
-        // No separator dupes allowed.
-        if (this._items.length === 0)
-            return null;
-        if (this._items[this._items.length - 1].type() === "separator")
-            return null;
-        var item = new WebInspector.ContextMenuItem(this._contextMenu, "separator");
+        if (this._items.length)
+            this._pendingSeparator = true;
+    },
+
+    _pushItem: function(item)
+    {
+        if (this._pendingSeparator) {
+            this._items.push(new WebInspector.ContextMenuItem(this._contextMenu, "separator"));
+            delete this._pendingSeparator;
+        }
         this._items.push(item);
-        return item;
     },
 
     /**
