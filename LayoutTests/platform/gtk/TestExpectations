@@ -1054,8 +1054,6 @@ BUGWK74276 : fast/events/dont-loose-last-event.html = TEXT
 
 BUGWK74282 : editing/pasteboard/emacs-ctrl-k-with-move.html = TEXT
 
-BUGWK75785 : accessibility/textbox-role-reports-line-number.html = TEXT
-
 BUGWK76048 : fast/text/font-kerning.html = IMAGE
 
 // Needs custom policy delegate enhancement to log downloads

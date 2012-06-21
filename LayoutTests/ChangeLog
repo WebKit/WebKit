@@ -1,3 +1,17 @@
+2012-06-21  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] accessibility/textbox-role-reports-line-number.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=75785
+
+        Reviewed by Chris Fleizach.
+
+        Move a Mac specific accessibility test to the platform directory.
+
+        * platform/gtk/TestExpectations: Removed test from gtk test expectations.
+        * platform/mac/accessibility/textbox-role-reports-line-number-expected.txt: Renamed from LayoutTests/accessibility/textbox-role-reports-line-number-expected.txt.
+        * platform/mac/accessibility/textbox-role-reports-line-number.html: Renamed from LayoutTests/accessibility/textbox-role-reports-line-number.html.
+        * platform/win/accessibility/textbox-role-reports-line-number-expected.txt: Removed.
+
 2012-06-21  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Move requestId allocation from FileSystem frontend to backend
