@@ -502,38 +502,6 @@ bool TextResourceDecoder::checkForCSSCharset(const char* data, size_t len, bool&
     return true;
 }
 
-// Other browsers allow comments in the head section, so we need to also.
-// It's important not to look for tags inside the comments.
-static inline void skipComment(const char*& ptr, const char* pEnd)
-{
-    const char* p = ptr;
-    if (p == pEnd)
-        return;
-
-    // Allow <!-->; other browsers do.
-    if (*p == '>') {
-        ptr = p + 1;
-        return;
-    }
-
-    while (p + 2 < pEnd) {
-        if (*p == '-') {
-            // This is the real end of comment, "-->".
-            if (bytesEqual(p + 1, '-', '>')) {
-                p += 3;
-                break;
-            }
-            // This is the incorrect end of comment that other browsers allow, "--!>".
-            if (p + 3 < pEnd && bytesEqual(p + 1, '-', '!', '>')) {
-                p += 4;
-                break;
-            }
-        }
-        p++;
-    }
-    ptr = p;
-}
-
 bool TextResourceDecoder::checkForHeadCharset(const char* data, size_t len, bool& movedDataToBuffer)
 {
     if (m_source != DefaultEncoding && m_source != EncodingFromParentFrame) {

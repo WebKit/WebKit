@@ -1,3 +1,14 @@
+2012-06-21  Kwang Yul Seo  <skyul@company100.net>
+
+        Remove unused static function skipComment.
+        https://bugs.webkit.org/show_bug.cgi?id=89641
+
+        Reviewed by Alexey Proskuryakov.
+
+        No behavioral changes.
+
+        * loader/TextResourceDecoder.cpp:
+
 2012-06-21  Nico Weber  <thakis@chromium.org>
 
         Remove two more member variables found by clang's Wunused-private-field
