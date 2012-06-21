@@ -991,10 +991,10 @@ all : InjectedScriptSource.h
 InjectedScriptSource.h : InjectedScriptSource.js
 	perl $(WebCore)/inspector/xxd.pl InjectedScriptSource_js $(WebCore)/inspector/InjectedScriptSource.js InjectedScriptSource.h
 
-all : InjectedWebGLScriptSource.h
+all : InjectedScriptWebGLModuleSource.h
 
-InjectedWebGLScriptSource.h : InjectedWebGLScriptSource.js
-	perl $(WebCore)/inspector/xxd.pl InjectedWebGLScriptSource_js $(WebCore)/inspector/InjectedWebGLScriptSource.js InjectedWebGLScriptSource.h
+InjectedScriptWebGLModuleSource.h : InjectedScriptWebGLModuleSource.js
+	perl $(WebCore)/inspector/xxd.pl InjectedScriptWebGLModuleSource_js $(WebCore)/inspector/InjectedScriptWebGLModuleSource.js InjectedScriptWebGLModuleSource.h
 
 -include $(JS_DOM_HEADERS:.h=.dep)
 

@@ -36,7 +36,7 @@
 
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
-#include "InjectedWebGLScriptSource.h"
+#include "InjectedScriptWebGLModuleSource.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
 
@@ -56,7 +56,7 @@ InjectedScriptWebGLModule InjectedScriptWebGLModule::moduleForState(InjectedScri
 
 String InjectedScriptWebGLModule::source() const
 {
-    return String(reinterpret_cast<const char*>(InjectedWebGLScriptSource_js), sizeof(InjectedWebGLScriptSource_js));
+    return String(reinterpret_cast<const char*>(InjectedScriptWebGLModuleSource_js), sizeof(InjectedScriptWebGLModuleSource_js));
 }
 
 ScriptObject InjectedScriptWebGLModule::wrapWebGLContext(const ScriptObject& glContext)

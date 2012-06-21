@@ -2678,14 +2678,14 @@ ADD_CUSTOM_COMMAND(
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.h)
 
 
-# Generate InjectedWebGLScriptSource.h
+# Generate InjectedScriptWebGLModuleSource.h
 IF (ENABLE_WEBGL)
     ADD_CUSTOM_COMMAND(
-        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedWebGLScriptSource.h
-        MAIN_DEPENDENCY inspector/InjectedWebGLScriptSource.js
-        COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl InjectedWebGLScriptSource_js ${WEBCORE_DIR}/inspector/InjectedWebGLScriptSource.js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedWebGLScriptSource.h
+        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptWebGLModuleSource.h
+        MAIN_DEPENDENCY inspector/InjectedScriptWebGLModuleSource.js
+        COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl InjectedScriptWebGLModuleSource_js ${WEBCORE_DIR}/inspector/InjectedScriptWebGLModuleSource.js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptWebGLModuleSource.h
         VERBATIM)
-    LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedWebGLScriptSource.h)
+    LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptWebGLModuleSource.h)
 ENDIF ()
 
 

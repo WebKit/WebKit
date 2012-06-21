@@ -11482,8 +11482,8 @@
 		AA4C3A750B2B1679002334A2 /* StyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StyleElement.h; sourceTree = "<group>"; };
 		AA73183C159255B900A93E6E /* InjectedScriptWebGLModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptWebGLModule.cpp; sourceTree = "<group>"; };
 		AA73183D159255B900A93E6E /* InjectedScriptWebGLModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptWebGLModule.h; sourceTree = "<group>"; };
-		AA9030FE157E16A000276247 /* InjectedWebGLScriptSource.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InjectedWebGLScriptSource.js; sourceTree = "<group>"; };
-		AA912750157E35A500454E54 /* InjectedWebGLScriptSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedWebGLScriptSource.h; sourceTree = "<group>"; };
+		AA9030FE157E16A000276247 /* InjectedScriptWebGLModuleSource.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InjectedScriptWebGLModuleSource.js; sourceTree = "<group>"; };
+		AA912750157E35A500454E54 /* InjectedScriptWebGLModuleSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptWebGLModuleSource.h; sourceTree = "<group>"; };
 		AAB6054A15874C58007B5031 /* InjectedScriptBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptBase.cpp; sourceTree = "<group>"; };
 		AAB6054B15874C58007B5031 /* InjectedScriptBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptBase.h; sourceTree = "<group>"; };
 		AAB6054C15874C58007B5031 /* InjectedScriptModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptModule.cpp; sourceTree = "<group>"; };
@@ -14377,7 +14377,7 @@
 			isa = PBXGroup;
 			children = (
 				7A563E5412DE32B000F4536D /* InjectedScriptSource.h */,
-				AA912750157E35A500454E54 /* InjectedWebGLScriptSource.h */,
+				AA912750157E35A500454E54 /* InjectedScriptWebGLModuleSource.h */,
 				4F707A9711EF679400ACDA69 /* InspectorBackendDispatcher.cpp */,
 				4F707A9811EF679400ACDA69 /* InspectorBackendDispatcher.h */,
 				4F4F5FFA11CBD2D200A186BF /* InspectorFrontend.cpp */,
@@ -14429,7 +14429,7 @@
 				7A563F9512DF5C9100F4536D /* InjectedScriptSource.js */,
 				AA73183C159255B900A93E6E /* InjectedScriptWebGLModule.cpp */,
 				AA73183D159255B900A93E6E /* InjectedScriptWebGLModule.h */,
-				AA9030FE157E16A000276247 /* InjectedWebGLScriptSource.js */,
+				AA9030FE157E16A000276247 /* InjectedScriptWebGLModuleSource.js */,
 				1C435CD414E8545B004E10EA /* Inspector-0.1.json */,
 				1C435CD514E8545B004E10EA /* Inspector-1.0.json */,
 				1C435CD314E8544F004E10EA /* Inspector.json */,

@@ -7268,7 +7268,7 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/HTMLNames.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/HeaderDetection.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InjectedScriptSource.h',
-            '<(PRODUCT_DIR)/DerivedSources/WebCore/InjectedWebGLScriptSource.h',
+            '<(PRODUCT_DIR)/DerivedSources/WebCore/InjectedScriptWebGLModuleSource.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorBackendDispatcher.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorBackendDispatcher.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorBackendCommands.js',

@@ -1,3 +1,24 @@
+2012-06-21  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [WebGL] Rename InjectedWebGLScriptSource.js -> InjectedScriptWebGLModuleSource.js
+        https://bugs.webkit.org/show_bug.cgi?id=89675
+
+        Reviewed by Pavel Feldman.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InjectedScriptWebGLModule.cpp:
+        (WebCore::InjectedScriptWebGLModule::source):
+        * inspector/InjectedScriptWebGLModuleSource.js: Renamed from Source/WebCore/inspector/InjectedWebGLScriptSource.js.
+        (.):
+
 2012-06-21  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Fix NPAPI plugins on Windows

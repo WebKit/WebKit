@@ -441,21 +441,21 @@
       'type': 'none',
       'actions': [
         {
-          'action_name': 'generateInjectedWebGLScriptSource',
+          'action_name': 'generateInjectedScriptWebGLModuleSource',
           'inputs': [
-            '../inspector/InjectedWebGLScriptSource.js',
+            '../inspector/InjectedScriptWebGLModuleSource.js',
           ],
           'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/InjectedWebGLScriptSource.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InjectedScriptWebGLModuleSource.h',
           ],
           'action': [
             'perl',
             '../inspector/xxd.pl',
-            'InjectedWebGLScriptSource_js',
+            'InjectedScriptWebGLModuleSource_js',
             '<@(_inputs)',
             '<@(_outputs)'
           ],
-          'message': 'Generating InjectedWebGLScriptSource.h from InjectedWebGLScriptSource.js',
+          'message': 'Generating InjectedScriptWebGLModuleSource.h from InjectedScriptWebGLModuleSource.js',
         },
       ]
     },
