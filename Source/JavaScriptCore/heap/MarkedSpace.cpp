@@ -30,38 +30,37 @@ namespace JSC {
 
 class Structure;
 
-class Take {
+class Free {
 public:
     typedef MarkedBlock* ReturnType;
 
-    enum TakeMode { TakeIfEmpty, TakeAll };
+    enum FreeMode { FreeOrShrink, FreeAll };
 
-    Take(TakeMode, MarkedSpace*);
+    Free(FreeMode, MarkedSpace*);
     void operator()(MarkedBlock*);
     ReturnType returnValue();
     
 private:
-    TakeMode m_takeMode;
+    FreeMode m_freeMode;
     MarkedSpace* m_markedSpace;
     DoublyLinkedList<MarkedBlock> m_blocks;
 };
 
-inline Take::Take(TakeMode takeMode, MarkedSpace* newSpace)
-    : m_takeMode(takeMode)
+inline Free::Free(FreeMode freeMode, MarkedSpace* newSpace)
+    : m_freeMode(freeMode)
     , m_markedSpace(newSpace)
 {
 }
 
-inline void Take::operator()(MarkedBlock* block)
+inline void Free::operator()(MarkedBlock* block)
 {
-    if (m_takeMode == TakeIfEmpty && !block->isEmpty())
-        return;
-    
-    m_markedSpace->allocatorFor(block).removeBlock(block);
-    m_blocks.append(block);
+    if (m_freeMode == FreeOrShrink)
+        m_markedSpace->freeOrShrinkBlock(block);
+    else
+        m_markedSpace->freeBlock(block);
 }
 
-inline Take::ReturnType Take::returnValue()
+inline Free::ReturnType Free::returnValue()
 {
     return m_blocks.head();
 }
@@ -93,9 +92,8 @@ MarkedSpace::MarkedSpace(Heap* heap)
 
 MarkedSpace::~MarkedSpace()
 {
-    // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
-    Take take(Take::TakeAll, this);
-    freeBlocks(forEachBlock(take));
+    Free free(Free::FreeAll, this);
+    forEachBlock(free);
 }
 
 struct LastChanceToFinalize : MarkedBlock::VoidFunctor {
@@ -160,17 +158,21 @@ bool MarkedSpace::isPagedOut(double deadline)
     return false;
 }
 
-void MarkedSpace::freeBlocks(MarkedBlock* head)
+void MarkedSpace::freeBlock(MarkedBlock* block)
 {
-    MarkedBlock* next;
-    for (MarkedBlock* block = head; block; block = next) {
-        next = static_cast<MarkedBlock*>(block->next());
-        
-        m_blocks.remove(block);
-        block->sweep();
+    allocatorFor(block).removeBlock(block);
+    m_blocks.remove(block);
+    m_heap->blockAllocator().deallocate(MarkedBlock::destroy(block));
+}
 
-        m_heap->blockAllocator().deallocate(MarkedBlock::destroy(block));
+void MarkedSpace::freeOrShrinkBlock(MarkedBlock* block)
+{
+    if (!block->isEmpty()) {
+        block->shrink();
+        return;
     }
+
+    freeBlock(block);
 }
 
 struct Shrink : MarkedBlock::VoidFunctor {
@@ -179,11 +181,8 @@ struct Shrink : MarkedBlock::VoidFunctor {
 
 void MarkedSpace::shrink()
 {
-    // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
-    Take takeIfEmpty(Take::TakeIfEmpty, this);
-    freeBlocks(forEachBlock(takeIfEmpty));
-
-    forEachBlock<Shrink>();
+    Free freeOrShrink(Free::FreeOrShrink, this);
+    forEachBlock(freeOrShrink);
 }
 
 #if ENABLE(GGC)

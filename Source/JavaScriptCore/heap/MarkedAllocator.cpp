@@ -107,8 +107,10 @@ void MarkedAllocator::addBlock(MarkedBlock* block)
 
 void MarkedAllocator::removeBlock(MarkedBlock* block)
 {
-    if (m_currentBlock == block)
-        m_currentBlock = 0;
+    if (m_currentBlock == block) {
+        m_currentBlock = static_cast<MarkedBlock*>(m_currentBlock->next());
+        m_freeList = MarkedBlock::FreeList();
+    }
     m_blockList.remove(block);
 }
 

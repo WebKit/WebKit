@@ -1,3 +1,43 @@
+2012-06-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reduced (but did not eliminate) use of "berzerker GC"
+        https://bugs.webkit.org/show_bug.cgi?id=89237
+
+        Reviewed by Gavin Barraclough.
+
+        (PART 1)
+
+        This patch turned out to be crashy, so I'm landing the non-crashy bits
+        first.
+
+        This part is pre-requisite refactoring. I didn't actually turn off
+        "berzerker GC" or turn on incremental shrinking.
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::removeBlock): Make sure to clear the free list when
+        we throw away the block we're currently allocating out of. Otherwise, we'll
+        allocate out of a stale free list.
+
+        * heap/MarkedSpace.cpp:
+        (JSC::Free::Free):
+        (JSC::Free::operator()):
+        (JSC::Free::returnValue): Refactored this functor to use a shared helper
+        function, so we can share our implementation with the incremental sweeper.
+
+        Also changed to freeing individual blocks immediately instead of linking
+        them into a list for later freeing. This makes the programming interface
+        simpler, and it's slightly more efficient to boot.
+
+        (JSC::MarkedSpace::~MarkedSpace): Updated for rename.
+
+        (JSC::MarkedSpace::freeBlock):
+        (JSC::MarkedSpace::freeOrShrinkBlock): New helper functions to share behavior
+        with the incremental sweeper.
+
+        (JSC::MarkedSpace::shrink): Updated for new functor behavior.
+
+        * heap/MarkedSpace.h: Statically typed languages are awesome.
+
 2012-06-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should optimize ResolveGlobal
