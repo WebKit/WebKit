@@ -443,6 +443,7 @@ BUGWK86727 : compositing/plugins/invalidate_rect.html = TEXT
 BUGWK86730 : compositing/layer-creation/fixed-position-scroll.html = MISSING
 
 // EFL does not support WebGL
+BUGWK77219 : compositing/backface-visibility/backface-visibility-webgl.html = TEXT
 BUGWK77219 : compositing/visibility/visibility-simple-webgl-layer.html = TEXT
 BUGWK77219 : fast/dom/constructed-objects-prototypes.html = TEXT
 
