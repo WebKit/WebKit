@@ -67,13 +67,25 @@ EventRelatedTargetAdjuster::EventRelatedTargetAdjuster(PassRefPtr<Node> node, Pa
 
 void EventRelatedTargetAdjuster::adjust(Vector<EventContext>& ancestors)
 {
+    Vector<EventTarget*> relatedTargetStack;
     TreeScope* lastTreeScope = 0;
+    Node* lastNode = 0;
     for (ComposedShadowTreeParentWalker walker(m_relatedTarget.get()); walker.get(); walker.parentIncludingInsertionPointAndShadowRoot()) {
-        TreeScope* scope = walker.get()->treeScope();
-        // Skips adding a node to the map if treeScope does not change.
+        Node* node = walker.get();
+        if (relatedTargetStack.isEmpty())
+            relatedTargetStack.append(node);
+        else if (isInsertionPoint(node) && isAssignedTo(lastNode, toInsertionPoint(node)))
+            relatedTargetStack.append(relatedTargetStack.last());
+        TreeScope* scope = node->treeScope();
+        // Skips adding a node to the map if treeScope does not change. Just for the performance optimization.
         if (scope != lastTreeScope)
-            m_relatedTargetMap.add(scope, walker.get());
+            m_relatedTargetMap.add(scope, relatedTargetStack.last());
         lastTreeScope = scope;
+        lastNode = node;
+        if (node->isShadowRoot()) {
+            ASSERT(!relatedTargetStack.isEmpty());
+            relatedTargetStack.removeLast();
+        }
     }
 
     lastTreeScope = 0;
@@ -81,7 +93,7 @@ void EventRelatedTargetAdjuster::adjust(Vector<EventContext>& ancestors)
     for (Vector<EventContext>::iterator iter = ancestors.begin(); iter < ancestors.end(); ++iter) {
         TreeScope* scope = iter->node()->treeScope();
         if (scope == lastTreeScope) {
-            // Re-use the previous adjustedRelatedTarget if treeScope does not change.
+            // Re-use the previous adjustedRelatedTarget if treeScope does not change. Just for the performance optimization.
             iter->setRelatedTarget(adjustedRelatedTarget);
         } else {
             adjustedRelatedTarget = findRelatedTarget(scope);
@@ -212,8 +224,10 @@ void EventDispatcher::ensureEventAncestors(Event* event)
     Node* last = 0;
     for (ComposedShadowTreeParentWalker walker(m_node.get()); walker.get(); walker.parentIncludingInsertionPointAndShadowRoot()) {
         Node* node = walker.get();
-        if ((isInsertionPoint(node) && isAssignedTo(last, toInsertionPoint(node))) || targetStack.isEmpty())
+        if (targetStack.isEmpty())
             targetStack.append(eventTargetRespectingSVGTargetRules(node));
+        else if (isInsertionPoint(node) && isAssignedTo(last, toInsertionPoint(node)))
+            targetStack.append(targetStack.last());
         m_ancestors.append(EventContext(node, eventTargetRespectingSVGTargetRules(node), targetStack.last()));
         if (!inDocument)
             return;
@@ -222,8 +236,10 @@ void EventDispatcher::ensureEventAncestors(Event* event)
             continue;
         if (determineDispatchBehavior(event, toShadowRoot(node)) == StayInsideShadowDOM)
             return;
-        if (!isSVGElement && !targetStack.isEmpty())
+        if (!isSVGElement) {
+            ASSERT(!targetStack.isEmpty());
             targetStack.removeLast();
+        }
     }
 }
 

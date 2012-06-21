@@ -1,3 +1,12 @@
+2012-06-21  Hayato Ito  <hayato@chromium.org>
+
+        Modify event re-targeting algorithm so that we can tell which distributed node is clicked.
+        https://bugs.webkit.org/show_bug.cgi?id=89073
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/shadow-dom-event-dispatching-expected.txt:
+
 2012-06-21  Andrei Onea  <onea@adobe.com>
 
         [CSSRegions]Change WEBKIT_REGION_RULE value to 16
