@@ -1,3 +1,12 @@
+2012-06-21  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL][WK2] Make WebKit2/Efl headers and resources installable.
+        https://bugs.webkit.org/show_bug.cgi?id=88207
+
+        Reviewed by Chang Shu.
+
+        * shell/CMakeLists.txt: Use ${EXEC_INSTALL_DIR} instead of hardcoding "bin"
+
 2012-06-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reduced (but did not eliminate) use of "berzerker GC"

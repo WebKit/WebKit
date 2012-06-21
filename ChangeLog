@@ -1,3 +1,14 @@
+2012-06-21  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL][WK2] Make WebKit2/Efl headers and resources installable.
+        https://bugs.webkit.org/show_bug.cgi?id=88207
+
+        Reviewed by Chang Shu.
+
+        * Source/cmake/OptionsCommon.cmake:
+        Provide new variable, EXEC_INSTALL_DIR to determine where to install
+        executables.
+
 2012-06-21  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL[WK2] Add WKViewEfl and WebKit2 API Object to represent Evas_Object.

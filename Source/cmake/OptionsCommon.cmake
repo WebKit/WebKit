@@ -29,3 +29,4 @@ SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 SET(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
 
 SET(LIB_INSTALL_DIR "lib${LIB_SUFFIX}" CACHE PATH "Where to install libraries (lib${LIB_SUFFIX})")
+SET(EXEC_INSTALL_DIR "bin" CACHE PATH "Where to install executables")
