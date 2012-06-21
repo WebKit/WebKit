@@ -43,6 +43,16 @@
 
 namespace JSC {
 
+JSCell* getCallableObjectSlow(JSCell* cell)
+{
+    Structure* structure = cell->structure();
+    if (structure->typeInfo().type() == JSFunctionType)
+        return cell;
+    if (structure->classInfo()->isSubClassOf(&InternalFunction::s_info))
+        return cell;
+    return 0;
+}
+
 ASSERT_CLASS_FITS_IN_CELL(JSObject);
 ASSERT_CLASS_FITS_IN_CELL(JSNonFinalObject);
 ASSERT_CLASS_FITS_IN_CELL(JSFinalObject);
@@ -133,7 +143,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
         for (JSObject* obj = thisObject; !obj->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto(); obj = asObject(prototype)) {
             prototype = obj->prototype();
             if (prototype.isNull()) {
-                if (!thisObject->putDirectInternal<PutModePut>(globalData, propertyName, value, 0, slot, getJSFunction(value)) && slot.isStrictMode())
+                if (!thisObject->putDirectInternal<PutModePut>(globalData, propertyName, value, 0, slot, getCallableObject(value)) && slot.isStrictMode())
                     throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
                 return;
             }
@@ -180,7 +190,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
             break;
     }
     
-    if (!thisObject->putDirectInternal<PutModePut>(globalData, propertyName, value, 0, slot, getJSFunction(value)) && slot.isStrictMode())
+    if (!thisObject->putDirectInternal<PutModePut>(globalData, propertyName, value, 0, slot, getCallableObject(value)) && slot.isStrictMode())
         throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     return;
 }
@@ -196,7 +206,7 @@ void JSObject::putDirectVirtual(JSObject* object, ExecState* exec, PropertyName 
 {
     ASSERT(!value.isGetterSetter() && !(attributes & Accessor));
     PutPropertySlot slot;
-    object->putDirectInternal<PutModeDefineOwnProperty>(exec->globalData(), propertyName, value, attributes, slot, getJSFunction(value));
+    object->putDirectInternal<PutModeDefineOwnProperty>(exec->globalData(), propertyName, value, attributes, slot, getCallableObject(value));
 }
 
 bool JSObject::setPrototypeWithCycleCheck(JSGlobalData& globalData, JSValue prototype)
@@ -226,7 +236,7 @@ void JSObject::putDirectAccessor(JSGlobalData& globalData, PropertyName property
     ASSERT(value.isGetterSetter() && (attributes & Accessor));
 
     PutPropertySlot slot;
-    putDirectInternal<PutModeDefineOwnProperty>(globalData, propertyName, value, attributes, slot, getJSFunction(value));
+    putDirectInternal<PutModeDefineOwnProperty>(globalData, propertyName, value, attributes, slot, getCallableObject(value));
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure

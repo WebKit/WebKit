@@ -211,6 +211,8 @@
 		0FF4275715914A20004CB9FF /* LinkBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4275615914A20004CB9FF /* LinkBuffer.cpp */; };
 		0FF427641591A1CC004CB9FF /* DFGDisassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF427611591A1C9004CB9FF /* DFGDisassembler.cpp */; };
 		0FF427651591A1CE004CB9FF /* DFGDisassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF427621591A1C9004CB9FF /* DFGDisassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF42771159275D5004CB9FF /* ResolveGlobalStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4276E159275D2004CB9FF /* ResolveGlobalStatus.cpp */; };
+		0FF42772159275D8004CB9FF /* ResolveGlobalStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4276F159275D2004CB9FF /* ResolveGlobalStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF922D414F46B410041A24E /* LLIntOffsetsExtractor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4680A114BA7F8200BFE272 /* LLIntOffsetsExtractor.cpp */; };
 		0FFFC95714EF90A000C72532 /* DFGCFAPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */; };
 		0FFFC95814EF90A200C72532 /* DFGCFAPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -933,6 +935,8 @@
 		0FF4275615914A20004CB9FF /* LinkBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkBuffer.cpp; sourceTree = "<group>"; };
 		0FF427611591A1C9004CB9FF /* DFGDisassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDisassembler.cpp; path = dfg/DFGDisassembler.cpp; sourceTree = "<group>"; };
 		0FF427621591A1C9004CB9FF /* DFGDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDisassembler.h; path = dfg/DFGDisassembler.h; sourceTree = "<group>"; };
+		0FF4276E159275D2004CB9FF /* ResolveGlobalStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResolveGlobalStatus.cpp; sourceTree = "<group>"; };
+		0FF4276F159275D2004CB9FF /* ResolveGlobalStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResolveGlobalStatus.h; sourceTree = "<group>"; };
 		0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = JSCLLIntOffsetsExtractor; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCFAPhase.cpp; path = dfg/DFGCFAPhase.cpp; sourceTree = "<group>"; };
 		0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCFAPhase.h; path = dfg/DFGCFAPhase.h; sourceTree = "<group>"; };
@@ -2347,6 +2351,8 @@
 				0F93329814CA7DC10085F3C6 /* MethodCallLinkStatus.h */,
 				0F93329914CA7DC10085F3C6 /* PutByIdStatus.cpp */,
 				0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */,
+				0FF4276E159275D2004CB9FF /* ResolveGlobalStatus.cpp */,
+				0FF4276F159275D2004CB9FF /* ResolveGlobalStatus.h */,
 				0F93329B14CA7DC10085F3C6 /* StructureSet.h */,
 				0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */,
 				0F0B83B614BCF8DF00885B4F /* GlobalResolveInfo.h */,
@@ -2766,6 +2772,7 @@
 				0FF42749158EBE91004CB9FF /* udis86_types.h in Headers */,
 				0FF4274B158EBE91004CB9FF /* udis86.h in Headers */,
 				0FF427651591A1CE004CB9FF /* DFGDisassembler.h in Headers */,
+				0FF42772159275D8004CB9FF /* ResolveGlobalStatus.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3353,6 +3360,7 @@
 				0FF4275715914A20004CB9FF /* LinkBuffer.cpp in Sources */,
 				C2D58C3415912FEE0021A844 /* GCActivityCallback.cpp in Sources */,
 				0FF427641591A1CC004CB9FF /* DFGDisassembler.cpp in Sources */,
+				0FF42771159275D5004CB9FF /* ResolveGlobalStatus.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

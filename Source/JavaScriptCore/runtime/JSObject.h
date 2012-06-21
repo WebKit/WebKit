@@ -46,6 +46,15 @@ namespace JSC {
         return 0;
     }
 
+    JS_EXPORT_PRIVATE JSCell* getCallableObjectSlow(JSCell*);
+
+    inline JSCell* getCallableObject(JSValue value)
+    {
+        if (!value.isCell())
+            return 0;
+        return getCallableObjectSlow(value.asCell());
+    }
+
     class GetterSetter;
     class HashEntry;
     class InternalFunction;
@@ -759,20 +768,20 @@ inline bool JSObject::putOwnDataProperty(JSGlobalData& globalData, PropertyName 
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     ASSERT(!structure()->hasGetterSetterProperties());
 
-    return putDirectInternal<PutModePut>(globalData, propertyName, value, 0, slot, getJSFunction(value));
+    return putDirectInternal<PutModePut>(globalData, propertyName, value, 0, slot, getCallableObject(value));
 }
 
 inline void JSObject::putDirect(JSGlobalData& globalData, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     ASSERT(!value.isGetterSetter() && !(attributes & Accessor));
     PutPropertySlot slot;
-    putDirectInternal<PutModeDefineOwnProperty>(globalData, propertyName, value, attributes, slot, getJSFunction(value));
+    putDirectInternal<PutModeDefineOwnProperty>(globalData, propertyName, value, attributes, slot, getCallableObject(value));
 }
 
 inline void JSObject::putDirect(JSGlobalData& globalData, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     ASSERT(!value.isGetterSetter());
-    putDirectInternal<PutModeDefineOwnProperty>(globalData, propertyName, value, 0, slot, getJSFunction(value));
+    putDirectInternal<PutModeDefineOwnProperty>(globalData, propertyName, value, 0, slot, getCallableObject(value));
 }
 
 inline void JSObject::putDirectWithoutTransition(JSGlobalData& globalData, PropertyName propertyName, JSValue value, unsigned attributes)
@@ -781,7 +790,7 @@ inline void JSObject::putDirectWithoutTransition(JSGlobalData& globalData, Prope
     PropertyStorage newStorage = propertyStorage();
     if (structure()->shouldGrowPropertyStorage())
         newStorage = growPropertyStorage(globalData, structure()->propertyStorageCapacity(), structure()->suggestedNewPropertyStorageSize());
-    size_t offset = structure()->addPropertyWithoutTransition(globalData, propertyName, attributes, getJSFunction(value));
+    size_t offset = structure()->addPropertyWithoutTransition(globalData, propertyName, attributes, getCallableObject(value));
     setPropertyStorage(globalData, newStorage, structure());
     putDirectOffset(globalData, offset, value);
 }

@@ -189,6 +189,7 @@ EXPORTS
     ?get@Structure@JSC@@QAEIAAVJSGlobalData@2@VPropertyName@2@AAIAAPAVJSCell@2@@Z
     ?getCalculatedDisplayName@JSC@@YA?AVUString@1@PAVExecState@1@PAVJSObject@1@@Z
     ?getCallData@JSCell@JSC@@SA?AW4CallType@2@PAV12@AATCallData@2@@Z
+    ?getCallableObjectSlow@JSC@@YAPAVJSCell@1@PAV21@@Z
     ?getConstructData@JSCell@JSC@@SA?AW4ConstructType@2@PAV12@AATConstructData@2@@Z
     ?getCurrentLocalTime@WTF@@YAXPAUtm@@@Z
     ?getObject@JSCell@JSC@@QAEPAVJSObject@2@XZ

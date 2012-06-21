@@ -35,6 +35,7 @@
 #include "GetByIdStatus.h"
 #include "MethodCallLinkStatus.h"
 #include "PutByIdStatus.h"
+#include "ResolveGlobalStatus.h"
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 
@@ -94,6 +95,9 @@ private:
     void setIntrinsicResult(bool usesResult, int resultOperand, NodeIndex);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
     bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction);
+    void handleGetByOffset(
+        int destinationOperand, SpeculatedType, NodeIndex base, unsigned identifierNumber,
+        bool useInlineStorage, size_t offset);
     void handleGetById(
         int destinationOperand, SpeculatedType, NodeIndex base, unsigned identifierNumber,
         const GetByIdStatus&);
@@ -1567,6 +1571,31 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
     }
 }
 
+void ByteCodeParser::handleGetByOffset(
+    int destinationOperand, SpeculatedType prediction, NodeIndex base, unsigned identifierNumber,
+    bool useInlineStorage, size_t offset)
+{
+    NodeIndex propertyStorage;
+    size_t offsetOffset;
+    if (useInlineStorage) {
+        propertyStorage = base;
+        ASSERT(!(sizeof(JSObject) % sizeof(EncodedJSValue)));
+        offsetOffset = sizeof(JSObject) / sizeof(EncodedJSValue);
+    } else {
+        propertyStorage = addToGraph(GetPropertyStorage, base);
+        offsetOffset = 0;
+    }
+    set(destinationOperand,
+        addToGraph(
+            GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction),
+            propertyStorage));
+        
+    StorageAccessData storageAccessData;
+    storageAccessData.offset = offset + offsetOffset;
+    storageAccessData.identifierNumber = identifierNumber;
+    m_graph.m_storageAccessData.append(storageAccessData);
+}
+
 void ByteCodeParser::handleGetById(
     int destinationOperand, SpeculatedType prediction, NodeIndex base, unsigned identifierNumber,
     const GetByIdStatus& getByIdStatus)
@@ -1620,25 +1649,9 @@ void ByteCodeParser::handleGetById(
         return;
     }
     
-    NodeIndex propertyStorage;
-    size_t offsetOffset;
-    if (useInlineStorage) {
-        propertyStorage = base;
-        ASSERT(!(sizeof(JSObject) % sizeof(EncodedJSValue)));
-        offsetOffset = sizeof(JSObject) / sizeof(EncodedJSValue);
-    } else {
-        propertyStorage = addToGraph(GetPropertyStorage, base);
-        offsetOffset = 0;
-    }
-    set(destinationOperand,
-        addToGraph(
-            GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction),
-            propertyStorage));
-        
-    StorageAccessData storageAccessData;
-    storageAccessData.offset = getByIdStatus.offset() + offsetOffset;
-    storageAccessData.identifierNumber = identifierNumber;
-    m_graph.m_storageAccessData.append(storageAccessData);
+    handleGetByOffset(
+        destinationOperand, prediction, base, identifierNumber, useInlineStorage,
+        getByIdStatus.offset());
 }
 
 void ByteCodeParser::prepareToParseBlock()
@@ -2648,10 +2661,39 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_resolve_global: {
             SpeculatedType prediction = getPrediction();
             
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[
+                currentInstruction[2].u.operand];
+            
+            ResolveGlobalStatus status = ResolveGlobalStatus::computeFor(
+                m_inlineStackTop->m_profiledBlock, m_currentIndex,
+                m_codeBlock->identifier(identifierNumber));
+            if (status.isSimple()) {
+                ASSERT(status.structure());
+                
+                NodeIndex globalObject = addStructureTransitionCheck(
+                    m_inlineStackTop->m_codeBlock->globalObject(), status.structure());
+                
+                if (status.specificValue()) {
+                    ASSERT(status.specificValue().isCell());
+                    
+                    set(currentInstruction[1].u.operand,
+                        cellConstant(status.specificValue().asCell()));
+                } else {
+                    handleGetByOffset(
+                        currentInstruction[1].u.operand, prediction, globalObject,
+                        identifierNumber, status.structure()->isUsingInlineStorage(),
+                        status.offset());
+                }
+                
+                m_globalResolveNumber++; // Skip over the unused global resolve info.
+                
+                NEXT_OPCODE(op_resolve_global);
+            }
+            
             NodeIndex resolve = addToGraph(ResolveGlobal, OpInfo(m_graph.m_resolveGlobalData.size()), OpInfo(prediction));
             m_graph.m_resolveGlobalData.append(ResolveGlobalData());
             ResolveGlobalData& data = m_graph.m_resolveGlobalData.last();
-            data.identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
+            data.identifierNumber = identifierNumber;
             data.resolveInfoIndex = m_globalResolveNumber++;
             set(currentInstruction[1].u.operand, resolve);
 

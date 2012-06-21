@@ -64,6 +64,7 @@ SOURCES += \
     bytecode/Opcode.cpp \
     bytecode/PolymorphicPutByIdList.cpp \
     bytecode/PutByIdStatus.cpp \
+    bytecode/ResolveGlobalStatus.cpp \
     bytecode/SamplingTool.cpp \
     bytecode/SpeculatedType.cpp \
     bytecode/StructureStubInfo.cpp \

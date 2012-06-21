@@ -42,6 +42,11 @@ struct GlobalResolveInfo {
     unsigned bytecodeOffset;
 };
 
+inline unsigned getGlobalResolveInfoBytecodeOffset(GlobalResolveInfo* globalResolveInfo)
+{
+    return globalResolveInfo->bytecodeOffset;
+}
+
 } // namespace JSC
 
 #endif // GlobalResolveInfo_h

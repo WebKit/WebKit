@@ -2258,6 +2258,10 @@ bool CodeBlock::hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset)
         return false;
     return true;
 }
+GlobalResolveInfo& CodeBlock::globalResolveInfoForBytecodeOffset(unsigned bytecodeOffset)
+{
+    return *(binarySearch<GlobalResolveInfo, unsigned, getGlobalResolveInfoBytecodeOffset>(m_globalResolveInfos.begin(), m_globalResolveInfos.size(), bytecodeOffset));
+}
 #endif
 
 void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)

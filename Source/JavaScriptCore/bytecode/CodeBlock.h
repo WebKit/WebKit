@@ -553,6 +553,8 @@ namespace JSC {
         }
         GlobalResolveInfo& globalResolveInfo(int index) { return m_globalResolveInfos[index]; }
         bool hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset);
+        GlobalResolveInfo& globalResolveInfoForBytecodeOffset(unsigned bytecodeOffset);
+        unsigned numberOfGlobalResolveInfos() { return m_globalResolveInfos.size(); }
 
         void setNumberOfCallLinkInfos(size_t size) { m_callLinkInfos.grow(size); }
         size_t numberOfCallLinkInfos() const { return m_callLinkInfos.size(); }
