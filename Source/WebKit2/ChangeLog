@@ -1,5 +1,35 @@
 2012-06-21  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [WK2] Add C API to inspect a Web Intent
+        https://bugs.webkit.org/show_bug.cgi?id=89275
+
+        Reviewed by Anders Carlsson.
+
+        Add C API for Web Intent so that it can be queried
+        on client side.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UIProcess/API/C/WKIntentData.cpp: Copied from Source/WebKit2/UIProcess/WebIntentData.cpp.
+        (WKIntentDataGetTypeID):
+        (WKIntentDataCopyAction):
+        (WKIntentDataCopyType):
+        (WKIntentDataCopyService):
+        (WKIntentDataCopySuggestions):
+        (WKIntentDataCopyExtra):
+        (WKIntentDataCopyExtras):
+        * UIProcess/API/C/WKIntentData.h: Copied from Source/WebKit2/UIProcess/WebIntentData.cpp.
+        * UIProcess/WebIntentData.cpp:
+        (WebKit::WebIntentData::suggestions):
+        (WebKit):
+        (WebKit::WebIntentData::extra):
+        (WebKit::WebIntentData::extras):
+        * UIProcess/WebIntentData.h:
+        (WebIntentData):
+
+2012-06-21  Christophe Dumez  <christophe.dumez@intel.com>
+
         [WK2] Properly encode/decode service in IntentData
         https://bugs.webkit.org/show_bug.cgi?id=89460
 

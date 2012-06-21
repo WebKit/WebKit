@@ -50,8 +50,10 @@ public:
     const String& payloadType() const { return m_store.type; }
     const WebCore::KURL& service() const { return m_store.service; }
     PassRefPtr<WebSerializedScriptValue> data() const;
-    const HashMap<String, String>& extras() const { return m_store.extras; }
-    const Vector<WebCore::KURL>& suggestions() const { return m_store.suggestions; }
+    String extra(const String& key) const;
+    PassRefPtr<ImmutableDictionary> extras() const;
+    PassRefPtr<ImmutableArray> suggestions() const;
+
     const IntentData& store() const { return m_store; }
 
 private:

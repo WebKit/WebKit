@@ -24,52 +24,77 @@
  */
 
 #include "config.h"
-#include "WebIntentData.h"
-
-#if ENABLE(WEB_INTENTS)
+#include "WKIntentData.h"
 
 #include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
-#include "WebString.h"
-#include "WebURL.h"
+#include "WKAPICast.h"
 
-namespace WebKit {
+#if ENABLE(WEB_INTENTS)
+#include "WebIntentData.h"
+#endif
 
-WebIntentData::WebIntentData(const IntentData& store)
-    : m_store(store)
+using namespace WebKit;
+
+WKTypeID WKIntentDataGetTypeID()
 {
+#if ENABLE(WEB_INTENTS)
+    return toAPI(WebIntentData::APIType);
+#else
+    return 0;
+#endif
 }
 
-PassRefPtr<WebSerializedScriptValue> WebIntentData::data() const
+WKStringRef WKIntentDataCopyAction(WKIntentDataRef intentRef)
 {
-    Vector<uint8_t> dataCopy = m_store.data;
-    return WebSerializedScriptValue::adopt(dataCopy);
+#if ENABLE(WEB_INTENTS)
+    return toCopiedAPI(toImpl(intentRef)->action());
+#else
+    return 0;
+#endif
 }
 
-PassRefPtr<ImmutableArray> WebIntentData::suggestions() const
+WKStringRef WKIntentDataCopyType(WKIntentDataRef intentRef)
 {
-    const size_t numSuggestions = m_store.suggestions.size();
-    Vector<RefPtr<APIObject> > wkSuggestions(numSuggestions);
-    for (unsigned i = 0; i < numSuggestions; ++i)
-        wkSuggestions[i] = WebURL::create(m_store.suggestions[i]);
-    return ImmutableArray::adopt(wkSuggestions);
+#if ENABLE(WEB_INTENTS)
+    return toCopiedAPI(toImpl(intentRef)->payloadType());
+#else
+    return 0;
+#endif
 }
 
-String WebIntentData::extra(const String& key) const
+WKURLRef WKIntentDataCopyService(WKIntentDataRef intentRef)
 {
-    return m_store.extras.get(key);
+#if ENABLE(WEB_INTENTS)
+    return toCopiedURLAPI(toImpl(intentRef)->service());
+#else
+    return 0;
+#endif
 }
 
-PassRefPtr<ImmutableDictionary> WebIntentData::extras() const
+WKArrayRef WKIntentDataCopySuggestions(WKIntentDataRef intentRef)
 {
-    ImmutableDictionary::MapType wkExtras;
-    HashMap<String, String>::const_iterator end = m_store.extras.end();
-    for (HashMap<String, String>::const_iterator it = m_store.extras.begin(); it != end; ++it)
-        wkExtras.set(it->first, WebString::create(it->second));
-    return ImmutableDictionary::adopt(wkExtras);
+#if ENABLE(WEB_INTENTS)
+    return toAPI(toImpl(intentRef)->suggestions().leakRef());
+#else
+    return 0;
+#endif
 }
 
-} // namespace WebKit
+WKStringRef WKIntentDataCopyExtra(WKIntentDataRef intentRef, WKStringRef key)
+{
+#if ENABLE(WEB_INTENTS)
+    return toCopiedAPI(toImpl(intentRef)->extra(toWTFString(key)));
+#else
+    return 0;
+#endif
+}
 
-#endif // ENABLE(WEB_INTENTS)
-
+WKDictionaryRef WKIntentDataCopyExtras(WKIntentDataRef intentRef)
+{
+#if ENABLE(WEB_INTENTS)
+    return toAPI(toImpl(intentRef)->extras().leakRef());
+#else
+    return 0;
+#endif
+}

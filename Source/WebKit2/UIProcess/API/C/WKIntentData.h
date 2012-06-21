@@ -23,53 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebIntentData.h"
+#ifndef WKIntentData_h
+#define WKIntentData_h
 
-#if ENABLE(WEB_INTENTS)
+#include <WebKit2/WKBase.h>
 
-#include "ImmutableArray.h"
-#include "ImmutableDictionary.h"
-#include "WebString.h"
-#include "WebURL.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace WebKit {
+WK_EXPORT WKTypeID WKIntentDataGetTypeID();
+WK_EXPORT WKStringRef WKIntentDataCopyAction(WKIntentDataRef intentRef);
+WK_EXPORT WKStringRef WKIntentDataCopyType(WKIntentDataRef intentRef);
+WK_EXPORT WKURLRef WKIntentDataCopyService(WKIntentDataRef intentRef);
+WK_EXPORT WKArrayRef WKIntentDataCopySuggestions(WKIntentDataRef intentRef);
+WK_EXPORT WKStringRef WKIntentDataCopyExtra(WKIntentDataRef intentRef, WKStringRef key);
+WK_EXPORT WKDictionaryRef WKIntentDataCopyExtras(WKIntentDataRef intentRef);
 
-WebIntentData::WebIntentData(const IntentData& store)
-    : m_store(store)
-{
+#ifdef __cplusplus
 }
+#endif
 
-PassRefPtr<WebSerializedScriptValue> WebIntentData::data() const
-{
-    Vector<uint8_t> dataCopy = m_store.data;
-    return WebSerializedScriptValue::adopt(dataCopy);
-}
-
-PassRefPtr<ImmutableArray> WebIntentData::suggestions() const
-{
-    const size_t numSuggestions = m_store.suggestions.size();
-    Vector<RefPtr<APIObject> > wkSuggestions(numSuggestions);
-    for (unsigned i = 0; i < numSuggestions; ++i)
-        wkSuggestions[i] = WebURL::create(m_store.suggestions[i]);
-    return ImmutableArray::adopt(wkSuggestions);
-}
-
-String WebIntentData::extra(const String& key) const
-{
-    return m_store.extras.get(key);
-}
-
-PassRefPtr<ImmutableDictionary> WebIntentData::extras() const
-{
-    ImmutableDictionary::MapType wkExtras;
-    HashMap<String, String>::const_iterator end = m_store.extras.end();
-    for (HashMap<String, String>::const_iterator it = m_store.extras.begin(); it != end; ++it)
-        wkExtras.set(it->first, WebString::create(it->second));
-    return ImmutableDictionary::adopt(wkExtras);
-}
-
-} // namespace WebKit
-
-#endif // ENABLE(WEB_INTENTS)
-
+#endif // WKIntentData_h
