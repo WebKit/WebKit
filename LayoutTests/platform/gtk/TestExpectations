@@ -357,6 +357,8 @@ BUGWK86176 DEBUG : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
 
 BUGWK89188 RELEASE : storage/websql/quota-tracking.html = CRASH PASS
 
+BUGWK89647 DEBUG : fast/canvas/canvas-createImageData.html = CRASH
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -400,6 +402,13 @@ BUGWK78344 : fast/text/international/inline-plaintext-relayout-with-leading-neut
 BUGWK80246 : fast/css/hover-update.html = PASS TEXT
 
 BUGWK88198 : svg/stroke/non-scaling-stroke-pattern.svg = PASS IMAGE
+
+BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-32-t.svg = PASS TEXT
+BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-33-t.svg = PASS TEXT
+BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-36-t.svg = PASS TEXT
+BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-40-t.svg = PASS TEXT
+BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-41-t.svg = PASS TEXT
+BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-46-t.svg = PASS TEXT
 
 BUGWK80158 : plugins/netscape-plugin-page-cache-works.html = PASS TEXT
 

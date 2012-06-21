@@ -1,3 +1,16 @@
+2012-06-21  Simon Pena  <spena@igalia.com>
+
+        [GTK] Add new baseline and update TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=89651
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: marked
+        svg/W3C-SVG-1.1/animate-elem-{32,33,40,41,46}-t.svg as flaky, and
+        fast/canvas/canvas-createImageData.html as crashing on DEBUG
+        * platform/gtk/fast/hidpi/device-scale-factor-paint-expected.png: Added.
+        * platform/gtk/fast/hidpi/device-scale-factor-paint-expected.txt: Added.
+
 2012-06-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip a new failing test.
