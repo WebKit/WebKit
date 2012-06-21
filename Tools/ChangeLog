@@ -1,3 +1,16 @@
+2012-06-21  Dirk Pranke  <dpranke@chromium.org>
+
+        reenable perf tests on win
+        https://bugs.webkit.org/show_bug.cgi?id=89690
+
+        Reviewed by Ryosuke Niwa.
+
+        Only the replay tests don't work, and those are disabled by
+        default. This change also fixes the undefined _log reference
+        that was causing a crash.
+
+        * Scripts/run-perf-tests:
+
 2012-06-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120937.
