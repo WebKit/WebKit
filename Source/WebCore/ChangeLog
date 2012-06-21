@@ -1,3 +1,23 @@
+2012-06-21  Min Qin  <qinmin@chromium.org>
+
+        remove ENABLE_FULLSCREEN_MEDIA_CONTROL flag
+        https://bugs.webkit.org/show_bug.cgi?id=89614
+
+        Reviewed by Eric Carlson.
+
+        Desktop chromium also starts to use fullscreen button after https://bugs.webkit.org/show_bug.cgi?id=88818
+        we don't need this flag any more
+        No test needed as this change just removes a flag.
+
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::MediaControlRootElementChromium):
+        (WebCore::MediaControlRootElementChromium::create):
+        (WebCore::MediaControlRootElementChromium::setMediaController):
+        (WebCore::MediaControlRootElementChromium::reset):
+        (WebCore::MediaControlRootElementChromium::reportedError):
+        * html/shadow/MediaControlRootElementChromium.h:
+        (MediaControlRootElementChromium):
+
 2012-06-21  Hayato Ito  <hayato@chromium.org>
 
         Modify event re-targeting algorithm so that we can tell which distributed node is clicked.

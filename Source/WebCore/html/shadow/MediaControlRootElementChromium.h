@@ -142,9 +142,7 @@ private:
     MediaControlTimelineElement* m_timeline;
     MediaControlPanelMuteButtonElement* m_panelMuteButton;
     MediaControlVolumeSliderElement* m_volumeSlider;
-#if ENABLE(FULLSCREEN_MEDIA_CONTROLS)
     MediaControlFullscreenButtonElement* m_fullscreenButton;
-#endif
     MediaControlPanelElement* m_panel;
     MediaControlChromiumEnclosureElement* m_enclosure;
 #if ENABLE(VIDEO_TRACK)

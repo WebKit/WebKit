@@ -1,3 +1,14 @@
+2012-06-21  Min Qin  <qinmin@chromium.org>
+
+        remove ENABLE_FULLSCREEN_MEDIA_CONTROL flag
+        https://bugs.webkit.org/show_bug.cgi?id=89614
+
+        Reviewed by Eric Carlson.
+
+        Since desktop chrome now has fullscreen button, we don't need this flag anymore
+
+        * features.gypi:
+
 2012-06-20  Zeev Lieber  <zlieber@chromium.org>
 
         [Chromium] Damage tracker is not used without partial swap, causing valid render passes to be removed
