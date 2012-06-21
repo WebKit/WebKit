@@ -27,6 +27,42 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+// ----------------------------------------------------------------------------
+
+// Serilized form of FormControlState:
+//  (',' means strings around it are separated in stateVector.)
+//
+// SerializedControlState ::= SkipState | SingleValueState
+// SkipState ::= '0'
+// SingleValueState ::= '1', ControlValue
+// ControlValue ::= arbitrary string
+
+void FormControlState::serializeTo(Vector<String>& stateVector) const
+{
+    ASSERT(!isFailure());
+    if (!hasValue())
+        stateVector.append("0");
+    else {
+        stateVector.append("1");
+        stateVector.append(m_value);
+    }
+}
+
+FormControlState FormControlState::deserialize(const Vector<String>& stateVector, size_t& index)
+{
+    if (index >= stateVector.size())
+        return FormControlState(TypeFailure);
+    uint64_t valueSize = stateVector[index++].toUInt64();
+    if (!valueSize)
+        return FormControlState();
+    if (valueSize != 1 || index + 1 > stateVector.size())
+        return FormControlState(TypeFailure);
+    return FormControlState(stateVector[index++]);
+}
+
+// ----------------------------------------------------------------------------
+
+
 FormController::FormController()
 {
 }
@@ -35,22 +71,29 @@ FormController::~FormController()
 {
 }
 
+static String formStateSignature()
+{
+    // In the legacy version of serialized state, the first item was a name
+    // attribute value of a form control. The following string literal should
+    // contain some characters which are rarely used for name attribute values.
+    DEFINE_STATIC_LOCAL(String, signature, ("\n\r?% WebKit serialized form state version 1 \n\r=&"));
+    return signature;
+}
+
 Vector<String> FormController::formElementsState() const
 {
     Vector<String> stateVector;
-    stateVector.reserveInitialCapacity(m_formElementsWithState.size() * 3);
+    stateVector.reserveInitialCapacity(m_formElementsWithState.size() * 4 + 1);
+    stateVector.append(formStateSignature());
     typedef FormElementListHashSet::const_iterator Iterator;
     Iterator end = m_formElementsWithState.end();
     for (Iterator it = m_formElementsWithState.begin(); it != end; ++it) {
         HTMLFormControlElementWithState* elementWithState = *it;
         if (!elementWithState->shouldSaveAndRestoreFormControlState())
             continue;
-        FormControlState state = elementWithState->saveFormControlState();
-        if (!state.hasValue())
-            continue;
         stateVector.append(elementWithState->name().string());
         stateVector.append(elementWithState->formControlType().string());
-        stateVector.append(state.value());
+        elementWithState->saveFormControlState().serializeTo(stateVector);
     }
     return stateVector;
 }
@@ -62,33 +105,32 @@ static bool isNotFormControlTypeCharacter(UChar ch)
 
 void FormController::setStateForNewFormElements(const Vector<String>& stateVector)
 {
-    // Walk the state vector backwards so that the value to use for each
-    // name/type pair first is the one at the end of each individual vector
-    // in the FormElementStateMap. We're using them like stacks.
     typedef FormElementStateMap::iterator Iterator;
     m_formElementsWithState.clear();
 
-    if (stateVector.size() % 3)
+    size_t i = 0;
+    if (stateVector.size() < 1 || stateVector[i++] != formStateSignature())
         return;
-    for (size_t i = 0; i < stateVector.size(); i += 3) {
-        if (stateVector[i + 1].find(isNotFormControlTypeCharacter) != notFound)
-            return;
-    }
 
-    for (size_t i = stateVector.size() / 3 * 3; i; i -= 3) {
-        AtomicString name = stateVector[i - 3];
-        AtomicString type = stateVector[i - 2];
-        const String& value = stateVector[i - 1];
+    while (i + 2 < stateVector.size()) {
+        AtomicString name = stateVector[i++];
+        AtomicString type = stateVector[i++];
+        FormControlState state = FormControlState::deserialize(stateVector, i);
+        if (type.isEmpty() || type.impl()->find(isNotFormControlTypeCharacter) != notFound || state.isFailure())
+            break;
+
         FormElementKey key(name.impl(), type.impl());
         Iterator it = m_stateForNewFormElements.find(key);
         if (it != m_stateForNewFormElements.end())
-            it->second.append(value);
+            it->second.append(state);
         else {
-            Vector<String> valueList(1);
-            valueList[0] = value;
-            m_stateForNewFormElements.set(key, valueList);
+            Deque<FormControlState> stateList;
+            stateList.append(state);
+            m_stateForNewFormElements.set(key, stateList);
         }
     }
+    if (i != stateVector.size())
+        m_stateForNewFormElements.clear();
 }
 
 bool FormController::hasStateForNewFormElements() const
@@ -103,10 +145,8 @@ FormControlState FormController::takeStateForFormElement(AtomicStringImpl* name,
     if (it == m_stateForNewFormElements.end())
         return FormControlState();
     ASSERT(it->second.size());
-    FormControlState state(it->second.last());
-    if (it->second.size() > 1)
-        it->second.removeLast();
-    else
+    FormControlState state = it->second.takeFirst();
+    if (!it->second.size())
         m_stateForNewFormElements.remove(it);
     return state;
 }

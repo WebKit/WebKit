@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 3: Generated state: [name1,text,modified]
+CONSOLE MESSAGE: line 5: Generated state: [name1,text,1,modified]
 The value was modified in the first load of state-restore-broken-state-1.html, but it should not be restored because the state-restore-broken-state-2.html breaks the state.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

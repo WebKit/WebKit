@@ -1,3 +1,69 @@
+2012-06-20  Kent Tamura  <tkent@chromium.org>
+
+        Unmodified form control value are overwritten by another form
+        control value with the same name after navigating and going back
+        https://bugs.webkit.org/show_bug.cgi?id=89409
+
+        Reviewed by Hajime Morita.
+
+        Detail of the bug:
+        If a page had multiple form controls of which names and types were
+        identical like the following:
+          <input type=text name=name1 id=input1>
+          <input type=text name=name1 id=input2>
+        and a user updated the value of the second control, then went to
+        another page and went back to the page again, we restored the updated
+        value to the first element, and didn't update the second element.
+
+        We didn't save unmodified control state, and the form state data
+        had no ways to represent "this control should be skipped".
+
+        How to resovle the bug:
+        We need to represent "this control should be skipped" in the
+        seriazlied form state vector.
+
+        - A serialized control state had three items:
+                name, type, value.
+          Now we change it to:
+                name, type, flag, optional value
+
+        - It is definitely incompatible with serizlized state produced by
+        older WebCore. So, we need to add the signature string to
+        represent the version of serialized state format.
+
+        - Because the state for a form control is variable-length and we
+        can't deserialize it in reverse-order, we change the on-memory
+        representation from Vector<> to Deque<>.
+
+        Test: fast/forms/state-restore-to-non-edited-controls.html
+
+        * html/FormController.cpp:
+        (WebCore::FormControlState::serializeTo):
+        Added. Serialize a state for a form control to a string vector.
+        (WebCore::FormControlState::deserialize):
+        Added. Produce a FormControlState object from the specified string vector.
+        It can produce a FromControlState of the failure type.
+        (WebCore::formStateSignature): The signature string of the serialized state.
+        (WebCore::FormController::formElementsState):
+         - Capacity:
+          The size of seirlized data for one form control is typically 4.
+          +1 for the signature.
+         - We need to store a FormControlState with no values.
+        (WebCore::FormController::setStateForNewFormElements):
+         - We can't iterate over the stateVector in reverse order any more
+           because serialized control state is variable-length.
+         - We put FormControlState objects to HashMap instead of String objects.
+        (WebCore::FormController::takeStateForFormElement):
+         Updated for Deque<>.
+        * html/FormController.h:
+        (FormControlState): Declare deserialize() and serializeTo().
+        (WebCore::FormControlState::isFailure): Added.
+        (WebCore::FormControlState::FormControlState):
+        Added to create a FormControlState with failure type.
+        (FormController):
+        Change the value type of m_stateForNewFormElements from Vector<String>
+        to Deque<FormControlState>.
+
 2012-06-20  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Rename CustomFilterShader class name to CustomFilterCompiledProgram

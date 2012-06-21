@@ -23,6 +23,7 @@
 #define FormController_h
 
 #include "CheckedRadioButtons.h"
+#include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
@@ -77,14 +78,19 @@ class FormControlState {
 public:
     FormControlState() : m_type(TypeSkip) { }
     explicit FormControlState(const String& value) : m_type(TypeRestore), m_value(value) { }
+    static FormControlState deserialize(const Vector<String>& stateVector, size_t& index);
     FormControlState(const FormControlState& another) : m_type(another.m_type), m_value(another.m_value) { }
     FormControlState& operator=(const FormControlState&);
 
+    bool isFailure() const { return m_type == TypeFailure; }
     bool hasValue() const { return m_type == TypeRestore; }
     String value() const { return m_value; }
+    void serializeTo(Vector<String>& stateVector) const;
 
 private:
-    enum Type { TypeSkip, TypeRestore };
+    enum Type { TypeSkip, TypeRestore, TypeFailure };
+    explicit FormControlState(Type type) : m_type(type) { }
+
     Type m_type;
     String m_value;
 };
@@ -129,7 +135,7 @@ private:
     typedef ListHashSet<RefPtr<FormAssociatedElement>, 32> FormAssociatedElementListHashSet;
     FormAssociatedElementListHashSet m_formElementsWithFormAttribute;
 
-    typedef HashMap<FormElementKey, Vector<String>, FormElementKeyHash, FormElementKeyHashTraits> FormElementStateMap;
+    typedef HashMap<FormElementKey, Deque<FormControlState>, FormElementKeyHash, FormElementKeyHashTraits> FormElementStateMap;
     FormElementStateMap m_stateForNewFormElements;
     
 };

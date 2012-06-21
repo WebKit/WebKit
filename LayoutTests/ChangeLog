@@ -1,3 +1,19 @@
+2012-06-20  Kent Tamura  <tkent@chromium.org>
+
+        Unmodified form control value are overwritten by another form
+        control value with the same name after navigating and going back
+        https://bugs.webkit.org/show_bug.cgi?id=89409
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/resources/state-restore-broken-state-2.html:
+        Take care of the signature string at the beginning of the array.
+        * fast/forms/state-restore-broken-state-expected.txt:
+        Updated for the serialized format change.
+        * fast/forms/state-restore-to-non-edited-controls-expected.txt:
+        * fast/forms/state-restore-to-non-edited-controls.html:
+        Add a test for a case of duplicated names.
+
 2012-06-20  Adam Barth  <abarth@webkit.org>
 
         Unskip fast/hidpi/device-scale-factor-paint.html
