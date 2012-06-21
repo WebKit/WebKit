@@ -1,3 +1,28 @@
+2012-06-20  Adrienne Walker  <enne@google.com>
+
+        [chromium] Modify CCDamageTracker hash to allow for layer id 0
+        https://bugs.webkit.org/show_bug.cgi?id=89631
+
+        Reviewed by James Robinson.
+
+        HashMap has the bizarre property that 0 is the empty value for integer
+        keys. Modify the damage tracking HashMap to use negative values for
+        both the empty and the deleted key traits. Additionally, make sure we
+        never generate negative layer IDs in practice.
+
+        Test: passes webkit_unit_tests with the patch in bug 89589 applied.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        * platform/graphics/chromium/cc/CCDamageTracker.h:
+        (RectMapKeyTraits):
+        (WebCore::CCDamageTracker::RectMapKeyTraits::emptyValue):
+        (WebCore::CCDamageTracker::RectMapKeyTraits::constructDeletedValue):
+        (WebCore::CCDamageTracker::RectMapKeyTraits::isDeletedValue):
+        (CCDamageTracker):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+
 2012-06-20  Adam Klein  <adamk@chromium.org>
 
         Use Dictionary in MutationObserver.observe to kill custom code

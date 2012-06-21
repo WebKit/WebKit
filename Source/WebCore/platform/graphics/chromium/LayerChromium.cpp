@@ -97,6 +97,10 @@ LayerChromium::LayerChromium()
     , m_layerAnimationDelegate(0)
     , m_layerScrollDelegate(0)
 {
+    if (m_layerId < 0) {
+        s_nextLayerId = 1;
+        m_layerId = s_nextLayerId++;
+    }
 }
 
 LayerChromium::~LayerChromium()

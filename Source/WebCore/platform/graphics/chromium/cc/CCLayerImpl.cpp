@@ -84,6 +84,7 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_layerAnimationController(CCLayerAnimationController::create(this))
 {
     ASSERT(CCProxy::isImplThread());
+    ASSERT(m_layerId >= 0);
 }
 
 CCLayerImpl::~CCLayerImpl()
