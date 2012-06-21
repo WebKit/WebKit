@@ -69,7 +69,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/Vector.h>
-#include "StructureStubInfo.h"
 
 namespace JSC {
 
