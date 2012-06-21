@@ -66,9 +66,6 @@ canvas/philip/tests/2d.drawImage.outsidesource.html
 #       Disabled features.                                                    #
 # =========================================================================== #
 
-# ENABLE_DATALIST is not yet enabled.
-fast/forms/datalist
-
 # ENABLE_INPUT_TYPE_COLOR is disabled.
 fast/forms/color
 
@@ -100,9 +97,6 @@ fast/mediastream
 # ENABLE(DIRECTORY_UPLOAD) is disabled.
 fast/forms/file/input-file-directory-upload.html
 
-# ENABLE(FILE_SYSTEM) is disabled.
-fast/forms/file/input-file-entries.html
-
 # ENABLE(INDEXED_DATABASE) is disabled.
 storage/indexeddb
 http/tests/inspector/indexeddb
@@ -120,6 +114,7 @@ svg/webarchive
 
 # ENABLE(FILE_SYSTEM) is disabled.
 fast/filesystem
+fast/forms/file/input-file-entries.html
 http/tests/filesystem
 http/tests/inspector/filesystem
 http/tests/security/filesystem-iframe-from-remote.html
@@ -573,9 +568,6 @@ fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
 #       Failing HTTP tests.                                                   #
 # =========================================================================== #
 
-# no expected results
-http/tests/misc/favicon-as-image.html
-
 # No authentication challenge handling
 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html
 http/tests/loading/basic-credentials-sent-automatically.html
@@ -584,11 +576,12 @@ http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-
 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html
 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html
 
-# new failing test after r116473
+# New http/tests/loading/post-in-iframe-with-back-navigation.html introduced in r116473 fails
 # https://bugs.webkit.org/show_bug.cgi?id=85969
 http/tests/loading/post-in-iframe-with-back-navigation.html
 
-# This needs more attention!
+# [Qt] Acid3 test reveals that WTR does not pick up monospace fonts for testing
+# https://bugs.webkit.org/show_bug.cgi?id=87501
 http/tests/misc/acid3.html
 
 # Benign pixel differences except for:
@@ -706,16 +699,8 @@ http/tests/xmlhttprequest/xmlhttprequest-check-get-readystate-for-404-without-bo
 # =========================================================================== #
 #       Failing editing/inserting tests.                                      #
 # =========================================================================== #
-# ---- rendertree results OK but suspicious diffs.
-editing/inserting/4960120-1.html
-editing/inserting/before-after-input-element.html
-
-# ---- rendertree results OK but diff in editing delegate msgs.
-editing/inserting/insert-tab-003.html
-editing/inserting/insert-text-with-newlines.html
-
-editing/inserting/5994480-2.html
 editing/inserting/typing-at-end-of-line.html
+editing/inserting/insert-tab-003.html
 
 # =========================================================================== #
 #       Failing editing/pasteboard tests.                                     #
@@ -742,8 +727,6 @@ editing/pasteboard/smart-paste-008.html
 # ============================================================================= #
 
 # -- fail with --platform mac --ignore-metrics
-editing/deleting/delete-block-table.html
-editing/deleting/delete-ligature-001.html
 editing/deleting/delete-tab-001.html
 editing/deleting/delete-tab-002.html
 editing/deleting/delete-tab-003.html
@@ -1929,6 +1912,10 @@ fast/notifications/notifications-click-event-focus.html
 # https://bugs.webkit.org/show_bug.cgi?id=88062
 fast/dom/gc-attribute-node.html
 
+# [Qt] fast/forms/datalist/input-list.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=89656
+fast/forms/datalist/input-list.html
+
 # ============================================================================= #
 # failing fonts tests
 # ============================================================================= #
@@ -2135,8 +2122,6 @@ svg/custom/small-rect-scale.svg
 # failing new tests
 fast/text/midword-break-before-surrogate-pair.html
 svg/custom/svg-fonts-fallback.xhtml
-
-# new tests, they needs investigation
 
 # new tests without expected files, need investigation
 css3/images/cross-fade-background-size.html

@@ -1,3 +1,17 @@
+2012-06-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, unskip now passing tests.
+
+        * platform/qt/Skipped:
+        * platform/qt/editing/inserting/4960120-1-expected.png: Added.
+        * platform/qt/editing/inserting/4960120-1-expected.txt:
+        * platform/qt/editing/inserting/before-after-input-element-expected.png: Added.
+        * platform/qt/editing/inserting/before-after-input-element-expected.txt:
+        * platform/qt/editing/inserting/insert-text-with-newlines-expected.png: Added.
+        * platform/qt/editing/inserting/insert-text-with-newlines-expected.txt:
+        * platform/qt/http/tests/misc/favicon-as-image-expected.png: Added.
+        * platform/qt/http/tests/misc/favicon-as-image-expected.txt: Added.
+
 2012-06-21  Simon Pena  <spena@igalia.com>
 
         [GTK] Add new baseline and update TestExpectations
