@@ -833,6 +833,8 @@ PassRefPtr<Node> CompositeEditCommand::appendBlockPlaceholder(PassRefPtr<Element
 {
     if (!container)
         return 0;
+
+    document()->updateLayoutIgnorePendingStylesheets();
     
     // Should assert isBlockFlow || isInlineFlow when deletion improves. See 4244964.
     ASSERT(container->renderer());

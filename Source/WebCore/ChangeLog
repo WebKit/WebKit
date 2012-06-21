@@ -1,3 +1,20 @@
+2012-06-21  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Crash][Editing] Pressing enter on LI element triggers assertion in Shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=89171
+
+        Reviewed by Ryosuke Niwa.
+
+        Since modidying Shadow DOM removes renderer of elements in Shadow DOM and shadow host,
+        assertion to check the existence of renderer was triggered.
+
+        We should update layout here to create renderer again.
+
+        Test: editing/shadow/pressing-enter-on-list.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::appendBlockPlaceholder):
+
 2012-06-21  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [WebGL] Add injected WebGL module class

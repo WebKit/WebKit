@@ -1,3 +1,13 @@
+2012-06-21  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Crash][Editing] Pressing enter on LI element triggers assertion in Shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=89171
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/shadow/pressing-enter-on-list-expected.txt: Added.
+        * editing/shadow/pressing-enter-on-list.html: Added.
+
 2012-06-21  Amy Ousterhout  <aousterh@chromium.org>
 
         DeviceOrientation and DeviceMotion Test Cleanup
