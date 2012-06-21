@@ -1,3 +1,21 @@
+2012-06-21  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11718988> and https://bugs.webkit.org/show_bug.cgi?id=89673
+        showModalDialog fix creates risk of never returning from RunLoop::performWork, potentially blocking other event sources
+
+        In case handling a function on the queue places additional functions on the queue, we should
+        limit the number of functions each invocation of performWork() performs so it can return and
+        other event sources have a chance to spin.
+
+        The showModalDialog fix in question is http://trac.webkit.org/changeset/120879
+
+        Reviewed by Darin Adler and Anders Carlson.
+
+        * platform/RunLoop.cpp:
+        (WebCore::RunLoop::performWork): If there are only N functions in the queue when performWork is called,
+          only handle up to N functions before returning. Any additional functions will be handled the next time
+          the runloop spins.
+
 2012-06-21  Tim Horton  <timothy_horton@apple.com>
 
         SVGImageCache isn't invalidated for <img> on dynamic page scale changes
