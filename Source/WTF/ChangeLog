@@ -1,3 +1,17 @@
+2012-06-21  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Fix NPAPI plugins on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=54531
+
+        Reviewed by Martin Robinson.
+
+        Define ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH for the GTK+ port, and
+        include OwnPtrWin.cpp in the list of files built on Windows.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * wtf/Platform.h:
+
 2012-06-21  Balazs Kelemen  <kbalazs@webkit.org>
 
         Compile error: 'bool std::isinf(float)' is not 'constexpr' with GCC 4.6 in C++11 mode

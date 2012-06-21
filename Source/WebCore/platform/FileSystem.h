@@ -74,10 +74,10 @@ typedef struct _GModule GModule;
 namespace WebCore {
 
 // PlatformModule
-#if PLATFORM(GTK)
-typedef GModule* PlatformModule;
-#elif OS(WINDOWS)
+#if OS(WINDOWS)
 typedef HMODULE PlatformModule;
+#elif PLATFORM(GTK)
+typedef GModule* PlatformModule;
 #elif PLATFORM(QT)
 #if defined(Q_WS_MAC)
 typedef CFBundleRef PlatformModule;

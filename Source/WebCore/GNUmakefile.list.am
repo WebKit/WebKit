@@ -4818,9 +4818,7 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/SoundGtk.cpp \
 	Source/WebCore/platform/gtk/WidgetGtk.cpp \
 	Source/WebCore/platform/gtk/WidgetRenderingContext.cpp \
-	Source/WebCore/platform/gtk/WidgetRenderingContext.h \
-	Source/WebCore/plugins/gtk/PluginPackageGtk.cpp \
-	Source/WebCore/plugins/gtk/PluginViewGtk.cpp
+	Source/WebCore/platform/gtk/WidgetRenderingContext.h
 
 if TARGET_X11
 webcoregtk_sources += \
@@ -4836,13 +4834,28 @@ endif
 
 if TARGET_WIN32
 webcore_sources += \
+	Source/WebCore/platform/graphics/win/DIBPixelData.cpp \
+	Source/WebCore/platform/graphics/win/GraphicsContextCairoWin.cpp \
+	Source/WebCore/platform/graphics/win/GraphicsContextWin.cpp \
+	Source/WebCore/platform/graphics/win/LocalWindowsContext.h \
+	Source/WebCore/platform/graphics/win/TransformationMatrixWin.cpp \
+	Source/WebCore/platform/win/BitmapInfo.cpp \
+	Source/WebCore/platform/win/BitmapInfo.h \
 	Source/WebCore/platform/win/SystemInfo.cpp \
 	Source/WebCore/platform/win/SystemInfo.h \
+	Source/WebCore/platform/win/WebCoreInstanceHandle.cpp \
+	Source/WebCore/platform/win/WebCoreInstanceHandle.h \
 	Source/WebCore/plugins/win/PluginDatabaseWin.cpp \
 	Source/WebCore/plugins/win/PluginMessageThrottlerWin.cpp \
-	Source/WebCore/plugins/win/PluginMessageThrottlerWin.h
+	Source/WebCore/plugins/win/PluginMessageThrottlerWin.h \
+	Source/WebCore/plugins/win/PluginPackageWin.cpp
 webcoregtk_sources += \
-	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp
+	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp \
+	Source/WebCore/plugins/win/PluginViewWin.cpp
+else
+webcoregtk_sources += \
+	Source/WebCore/plugins/gtk/PluginPackageGtk.cpp \
+	Source/WebCore/plugins/gtk/PluginViewGtk.cpp
 endif
 
 # ----

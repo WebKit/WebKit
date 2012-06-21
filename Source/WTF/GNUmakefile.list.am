@@ -227,7 +227,8 @@ wtf_sources += \
     Source/WTF/wtf/OSAllocatorWin.cpp \
     Source/WTF/wtf/ThreadFunctionInvocation.h \
     Source/WTF/wtf/ThreadingWin.cpp \
-    Source/WTF/wtf/ThreadSpecificWin.cpp
+    Source/WTF/wtf/ThreadSpecificWin.cpp \
+    Source/WTF/wtf/win/OwnPtrWin.cpp
 else
 wtf_sources += \
     Source/WTF/wtf/OSAllocatorPosix.cpp

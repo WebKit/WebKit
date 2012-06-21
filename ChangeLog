@@ -1,3 +1,14 @@
+2012-06-21  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Fix NPAPI plugins on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=54531
+
+        Reviewed by Martin Robinson.
+
+        Define XP_WIN on Windows for plugin support.
+
+        * GNUmakefile.am:
+
 2012-06-21  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL][WK2] Make WebKit2/Efl headers and resources installable.

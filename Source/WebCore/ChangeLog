@@ -1,3 +1,42 @@
+2012-06-21  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Fix NPAPI plugins on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=54531
+
+        Reviewed by Martin Robinson.
+
+        Switch to using PluginPackageWin.cpp and PluginViewWin.cpp on Windows
+        platform, and leave plugins/gtk/ only for XP_UNIX platforms. With this
+        we can share a lot of code with other ports and don't have to
+        reimplement all the Windows-specific code in plugins/gtk/.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * platform/FileSystem.h:
+        (WebCore):
+        * platform/graphics/GraphicsContext.h:
+        (GraphicsContext):
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (GraphicsContextPlatformPrivate):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (TransformationMatrix):
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore):
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore):
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::unloadModule):
+        * plugins/PluginView.h:
+        (PluginView):
+        * plugins/win/PluginViewWin.cpp:
+        (windowHandleForPageClient):
+        (WebCore::registerPluginView):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::snapshot):
+
 2012-06-21  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11718988> and https://bugs.webkit.org/show_bug.cgi?id=89673

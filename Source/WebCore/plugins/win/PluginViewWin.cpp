@@ -86,6 +86,11 @@
 #include <cairo-win32.h>
 #endif
 
+#if PLATFORM(GTK)
+#include <gdk/gdkwin32.h>
+#include <gtk/gtk.h>
+#endif
+
 #if PLATFORM(QT)
 #include "QWebPageClient.h"
 #if HAVE(QT5)
@@ -102,7 +107,13 @@
 
 static inline HWND windowHandleForPageClient(PlatformPageClient client)
 {
-#if PLATFORM(QT)
+#if PLATFORM(GTK)
+    if (!client)
+        return 0;
+    if (GdkWindow* window = gtk_widget_get_window(client))
+        return static_cast<HWND>(GDK_WINDOW_HWND(window));
+    return 0;
+#elif PLATFORM(QT)
     if (!client)
         return 0;
 #if HAVE(QT5)
@@ -300,8 +311,8 @@ static bool registerPluginView()
 
     haveRegisteredWindowClass = true;
 
-#if PLATFORM(QT)
-    WebCore::setInstanceHandle((HINSTANCE)(qWinAppInst()));
+#if PLATFORM(GTK) || PLATFORM(QT)
+    WebCore::setInstanceHandle((HINSTANCE)(GetModuleHandle(0)));
 #endif
 
     ASSERT(WebCore::instanceHandle());
@@ -642,9 +653,9 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
     // On Safari/Windows without transparency layers the GraphicsContext returns the HDC
     // of the window and the plugin expects that the passed in DC has window coordinates.
-    // In the Qt port we always draw in an offscreen buffer and therefore need to preserve
-    // the translation set in getWindowsContext.
-#if !PLATFORM(QT) && !OS(WINCE)
+    // In the GTK and Qt ports we always draw in an offscreen buffer and therefore need
+    // to preserve the translation set in getWindowsContext.
+#if !PLATFORM(GTK) && !PLATFORM(QT) && !OS(WINCE)
     if (!context->isInTransparencyLayer()) {
         XFORM transform;
         GetWorldTransform(windowsContext.hdc(), &transform);
@@ -752,7 +763,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 
-#if !PLATFORM(QT) && !PLATFORM(WX) && !OS(WINCE)
+#if !PLATFORM(GTK) && !PLATFORM(QT) && !PLATFORM(WX) && !OS(WINCE)
     // Currently, Widget::setCursor is always called after this function in EventHandler.cpp
     // and since we don't want that we set ignoreNextSetCursor to true here to prevent that.
     ignoreNextSetCursor = true;
@@ -997,7 +1008,7 @@ bool PluginView::platformStart()
         HWND window = ::CreateWindowEx(0, kWebPluginViewdowClassName, 0, flags,
                                        0, 0, 0, 0, parentWindowHandle, 0, WebCore::instanceHandle(), 0);
 
-#if OS(WINDOWS) && (PLATFORM(QT) || PLATFORM(WX))
+#if OS(WINDOWS) && (PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(WX))
         m_window = window;
 #else
         setPlatformWidget(window);
@@ -1040,7 +1051,7 @@ void PluginView::platformDestroy()
 
 PassRefPtr<Image> PluginView::snapshot()
 {
-#if !PLATFORM(WX) && !OS(WINCE)
+#if !PLATFORM(GTK) && !PLATFORM(WX) && !OS(WINCE)
     OwnPtr<HDC> hdc = adoptPtr(CreateCompatibleDC(0));
 
     if (!m_isWindowed) {

@@ -161,7 +161,10 @@ global_cppflags += \
 endif
 
 # For the Gtk port we want to use XP_UNIX both in X11 and Mac
-if !TARGET_WIN32
+if TARGET_WIN32
+global_cppflags += \
+	-DXP_WIN
+else
 global_cppflags += \
 	-DXP_UNIX
 endif
