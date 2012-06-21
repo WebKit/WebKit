@@ -324,6 +324,9 @@
 		37C4E9F6131C6E7E0029BD5A /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = B396EA5512E0ED2D00F4FEB7 /* config.h */; };
 		37F623B812A57B6200E3FDF6 /* WKFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F623B712A57B6200E3FDF6 /* WKFindOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F90DE31376560E0051CF68 /* HTTPCookieAcceptPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F638954F133BEF38008941D5 /* HTTPCookieAcceptPolicy.h */; };
+		3F87B9BD158940120090FF62 /* WebColorChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */; };
+		3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BB15893F630090FF62 /* WebColorChooser.h */; };
+		3F87B9C0158940D80090FF62 /* WebColorChooserProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BF158940D80090FF62 /* WebColorChooserProxy.h */; };
 		4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */; };
 		51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */; };
 		510FBB9A1288C95E00AFFDF4 /* WebContextMenuItemData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510FBB981288C95E00AFFDF4 /* WebContextMenuItemData.cpp */; };
@@ -1343,6 +1346,9 @@
 		37948406150C4B9600E52CE9 /* WKRenderLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKRenderLayer.cpp; sourceTree = "<group>"; };
 		37948407150C4B9600E52CE9 /* WKRenderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRenderLayer.h; sourceTree = "<group>"; };
 		37F623B712A57B6200E3FDF6 /* WKFindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFindOptions.h; sourceTree = "<group>"; };
+		3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorChooser.cpp; sourceTree = "<group>"; };
+		3F87B9BB15893F630090FF62 /* WebColorChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorChooser.h; sourceTree = "<group>"; };
+		3F87B9BF158940D80090FF62 /* WebColorChooserProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorChooserProxy.h; sourceTree = "<group>"; };
 		4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockingResponseMap.h; sourceTree = "<group>"; };
 		510031F61379CACB00C8DFE4 /* WebProcessShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = WebProcessShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClientMac.mm; sourceTree = "<group>"; };
@@ -2772,6 +2778,8 @@
 				CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */,
 				BC111A53112F4FBB00337BAB /* WebChromeClient.cpp */,
 				BC032D6010F4378D0058C15A /* WebChromeClient.h */,
+				3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */,
+				3F87B9BB15893F630090FF62 /* WebColorChooser.h */,
 				BC111A54112F4FBB00337BAB /* WebContextMenuClient.cpp */,
 				BC032D6210F4378D0058C15A /* WebContextMenuClient.h */,
 				F6A25FDA12ADC6CC00DC40CC /* WebDatabaseManager.cpp */,
@@ -2884,6 +2892,7 @@
 				512E35F0130B638C00ABD19A /* WebApplicationCacheManagerProxy.messages.in */,
 				BC72BA1B11E64907001EB4EA /* WebBackForwardList.cpp */,
 				BC72BA1C11E64907001EB4EA /* WebBackForwardList.h */,
+				3F87B9BF158940D80090FF62 /* WebColorChooserProxy.h */,
 				BC4A62A514744EC6006C681A /* WebConnectionToWebProcess.cpp */,
 				BC4A62A614744EC6006C681A /* WebConnectionToWebProcess.h */,
 				BCB9E2421120DACA00A137E0 /* WebContext.cpp */,
@@ -4191,6 +4200,8 @@
 				CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */,
 				E19582D3153CBFD700B60875 /* PDFKitImports.h in Headers */,
 				51EFC1CF1524E62500C9A938 /* WKBundleDOMWindowExtension.h in Headers */,
+				3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */,
+				3F87B9C0158940D80090FF62 /* WebColorChooserProxy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4939,6 +4950,7 @@
 				51FA2D7415212DF100C1BA0B /* InjectedBundleDOMWindowExtension.cpp in Sources */,
 				51FA2D7715212E2600C1BA0B /* WKBundleDOMWindowExtension.cpp in Sources */,
 				1A2A4B0E1586A2240090C9E9 /* ColorSpaceData.mm in Sources */,
+				3F87B9BD158940120090FF62 /* WebColorChooser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

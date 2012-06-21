@@ -229,6 +229,14 @@ PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPagePr
     return WebContextMenuProxyGtk::create(m_viewWidget, page);
 }
 
+#if ENABLE(INPUT_TYPE_COLOR)
+PassRefPtr<WebColorChooserProxy> PageClientImpl::createColorChooserProxy(WebPageProxy*, const WebCore::Color&)
+{
+    notImplemented();
+    return 0;
+}
+#endif
+
 void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate)
 {
     notImplemented();

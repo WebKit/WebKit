@@ -756,6 +756,7 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebApplicationCacheManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebBackForwardList.cpp \
 	Source/WebKit2/UIProcess/WebBackForwardList.h \
+	Source/WebKit2/UIProcess/WebColorChooserProxy.h \
 	Source/WebKit2/UIProcess/WebConnectionToWebProcess.cpp \
 	Source/WebKit2/UIProcess/WebConnectionToWebProcess.h \
 	Source/WebKit2/UIProcess/WebContext.cpp \
@@ -999,6 +1000,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebAlternativeTextClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebChromeClient.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebChromeClient.h \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebColorChooser.cpp \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebColorChooser.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebContextMenuClient.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebContextMenuClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebDatabaseManager.cpp \

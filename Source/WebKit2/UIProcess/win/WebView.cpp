@@ -1429,6 +1429,14 @@ PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy* pa
     return WebContextMenuProxyWin::create(m_window, page);
 }
 
+#if ENABLE(INPUT_TYPE_COLOR)
+PassRefPtr<WebColorChooserProxy> WebView::createColorChooserProxy(WebPageProxy*, const WebCore::Color&)
+{
+    notImplemented();
+    return 0;
+}
+#endif
+
 void WebView::setFindIndicator(PassRefPtr<FindIndicator> prpFindIndicator, bool fadeOut, bool animate)
 {
     UNUSED_PARAM(animate);

@@ -27,6 +27,7 @@
 #define PageClient_h
 
 #include "ShareableBitmap.h"
+#include "WebColorChooserProxy.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxy.h"
 #include <WebCore/AlternativeTextClient.h>
@@ -61,6 +62,9 @@ class WebGestureEvent;
 class WebContextMenuProxy;
 class WebEditCommandProxy;
 class WebPopupMenuProxy;
+#if ENABLE(INPUT_TYPE_COLOR)
+class WebColorChooserProxy;
+#endif
 
 #if PLATFORM(WIN)
 struct WindowGeometry;
@@ -168,6 +172,10 @@ public:
 
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) = 0;
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) = 0;
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    virtual PassRefPtr<WebColorChooserProxy> createColorChooserProxy(WebPageProxy*, const WebCore::Color& initialColor) = 0;
+#endif
 
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate) = 0;
 #if PLATFORM(WIN)

@@ -45,6 +45,7 @@
 #include "ShareableBitmap.h"
 #include "WKBase.h"
 #include "WKPagePrivate.h"
+#include "WebColorChooserProxy.h"
 #include "WebContextMenuItemData.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFindClient.h"
@@ -59,6 +60,7 @@
 #include "WebResourceLoadClient.h"
 #include "WebUIClient.h"
 #include <WebCore/AlternativeTextClient.h>
+#include <WebCore/Color.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/DragSession.h>
 #include <WebCore/HitTestResult.h>
@@ -231,7 +233,12 @@ private:
     CallbackFunction m_callback;
 };
 
-class WebPageProxy : public APIObject, public WebPopupMenuProxy::Client {
+class WebPageProxy
+    : public APIObject
+#if ENABLE(INPUT_TYPE_COLOR)
+    , public WebColorChooserProxy::Client
+#endif
+    , public WebPopupMenuProxy::Client {
 public:
     static const Type APIType = TypePage;
 
@@ -810,6 +817,14 @@ private:
     void needTouchEvents(bool);
 #endif
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    void showColorChooser(const WebCore::Color& initialColor);
+    void setColorChooserColor(const WebCore::Color&);
+    void endColorChooser();
+    void didChooseColor(const WebCore::Color&);
+    void didEndColorChooser();
+#endif
+
     void editorStateChanged(const EditorState&);
 
     // Back/Forward list management
@@ -1088,6 +1103,9 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     bool m_needTouchEvents;
     Deque<QueuedTouchEvents> m_touchEventQueue;
+#endif
+#if ENABLE(INPUT_TYPE_COLOR)
+    RefPtr<WebColorChooserProxy> m_colorChooser;
 #endif
 
     uint64_t m_pageID;

@@ -205,6 +205,14 @@ PassRefPtr<WebContextMenuProxy> QtPageClient::createContextMenuProxy(WebPageProx
     return WebContextMenuProxyQt::create(webPageProxy);
 }
 
+#if ENABLE(INPUT_TYPE_COLOR)
+PassRefPtr<WebColorChooserProxy> QtPageClient::createColorChooserProxy(WebPageProxy*, const WebCore::Color&)
+{
+    notImplemented();
+    return 0;
+}
+#endif
+
 void QtPageClient::flashBackingStoreUpdates(const Vector<IntRect>&)
 {
     notImplemented();

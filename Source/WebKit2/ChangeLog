@@ -1,3 +1,103 @@
+2012-06-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [WK2] Color chooser API missing
+        https://bugs.webkit.org/show_bug.cgi?id=87495
+
+        Reviewed by Andreas Kling.
+
+        Added ColorChooser API to WebKit2. This API allows the
+        embedder to define a custom color picker for <input type="color">.
+
+        Only one ColorChooser can be active for a page at a time. Although
+        the implementation doesn't not assume a modal dialog, no other
+        color chooser will be created until the active one is closed.
+
+        Also added stubs for all platforms, so it wont break the build when
+        enabling color chooser, even though they don't have the backend
+        implemented yet.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit):
+        (WebKit::PageClientImpl::createColorChooserProxy):
+        * UIProcess/API/efl/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit):
+        (WebKit::PageClientImpl::createColorChooserProxy):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/mac/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit):
+        (WebKit::PageClientImpl::createColorChooserProxy):
+        * UIProcess/PageClient.h:
+        (WebKit):
+        (PageClient):
+        * UIProcess/WebColorChooserProxy.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebColorChooserProxy):
+        (Client):
+        (WebKit::WebColorChooserProxy::Client::~Client):
+        (WebKit::WebColorChooserProxy::~WebColorChooserProxy):
+        (WebKit::WebColorChooserProxy::invalidate):
+        (WebKit::WebColorChooserProxy::WebColorChooserProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit):
+        (WebKit::WebPageProxy::showColorChooser):
+        (WebKit::WebPageProxy::setColorChooserColor):
+        (WebKit::WebPageProxy::endColorChooser):
+        (WebKit::WebPageProxy::didChooseColor):
+        (WebKit::WebPageProxy::didEndColorChooser):
+        (WebKit::WebPageProxy::processDidCrash):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/qt/QtPageClient.cpp:
+        (WebKit):
+        (WebKit::QtPageClient::createColorChooserProxy):
+        * UIProcess/qt/QtPageClient.h:
+        (QtPageClient):
+        * UIProcess/win/WebView.cpp:
+        (WebKit):
+        (WebKit::WebView::createColorChooserProxy):
+        * UIProcess/win/WebView.h:
+        (WebView):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createColorChooser):
+        * WebProcess/WebCoreSupport/WebColorChooser.cpp: Added.
+        (WebKit):
+        (WebKit::WebColorChooser::WebColorChooser):
+        (WebKit::WebColorChooser::~WebColorChooser):
+        (WebKit::WebColorChooser::didChooseColor):
+        (WebKit::WebColorChooser::didEndChooser):
+        (WebKit::WebColorChooser::disconnectFromPage):
+        (WebKit::WebColorChooser::setSelectedColor):
+        (WebKit::WebColorChooser::endChooser):
+        * WebProcess/WebCoreSupport/WebColorChooser.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebColorChooser):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::close):
+        (WebKit):
+        (WebKit::WebPage::setActiveColorChooser):
+        (WebKit::WebPage::didEndColorChooser):
+        (WebKit::WebPage::didChooseColor):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit):
+        (WebPage):
+        (WebKit::WebPage::activeColorChooser):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * win/WebKit2.vcproj:
+
 2012-06-20  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11653784> and https://bugs.webkit.org/show_bug.cgi?id=89590

@@ -229,6 +229,7 @@ HEADERS += \
     UIProcess/VisitedLinkProvider.h \
     UIProcess/WebApplicationCacheManagerProxy.h \
     UIProcess/WebBackForwardList.h \
+    UIProcess/WebColorChooserProxy.h \
     UIProcess/WebConnectionToWebProcess.h \
     UIProcess/WebContext.h \
     UIProcess/WebContextConnectionClient.h \
@@ -345,6 +346,7 @@ HEADERS += \
     WebProcess/Plugins/PluginProcessConnection.h \
     WebProcess/Plugins/PluginProcessConnectionManager.h \
     WebProcess/WebCoreSupport/WebChromeClient.h \
+    WebProcess/WebCoreSupport/WebColorChooser.h \
     WebProcess/WebCoreSupport/WebContextMenuClient.h \
     WebProcess/WebCoreSupport/WebDatabaseManager.h \
     WebProcess/WebCoreSupport/WebDragClient.h \
@@ -711,6 +713,7 @@ SOURCES += \
     WebProcess/Plugins/PluginProcessConnection.cpp \
     WebProcess/Plugins/PluginProcessConnectionManager.cpp \
     WebProcess/WebCoreSupport/WebChromeClient.cpp \
+    WebProcess/WebCoreSupport/WebColorChooser.cpp \
     WebProcess/WebCoreSupport/WebContextMenuClient.cpp \
     WebProcess/WebCoreSupport/WebDatabaseManager.cpp \
     WebProcess/WebCoreSupport/WebDragClient.cpp \

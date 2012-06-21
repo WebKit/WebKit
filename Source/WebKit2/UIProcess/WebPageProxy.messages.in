@@ -83,6 +83,12 @@ messages -> WebPageProxy {
     NeedTouchEvents(bool needTouchEvents)
 #endif
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    ShowColorChooser(WebCore::Color initialColor);
+    SetColorChooserColor(WebCore::Color color);
+    EndColorChooser();
+#endif
+
     # Policy messages
     DecidePolicyForResponse(uint64_t frameID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID)
     DecidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID)

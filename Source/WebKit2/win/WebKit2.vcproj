@@ -1838,6 +1838,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebColorChooser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebColorChooser.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebCoreSupport\WebContextMenuClient.cpp"
 					>
 				</File>
@@ -2880,6 +2888,10 @@
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebBackForwardList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebColorChooserProxy.h"
 				>
 			</File>
 			<File

@@ -401,6 +401,7 @@ SET(WebKit2_SOURCES
     WebProcess/ResourceCache/WebResourceCacheManager.cpp
 
     WebProcess/WebCoreSupport/WebChromeClient.cpp
+    WebProcess/WebCoreSupport/WebColorChooser.cpp
     WebProcess/WebCoreSupport/WebContextMenuClient.cpp
     WebProcess/WebCoreSupport/WebDatabaseManager.cpp
     WebProcess/WebCoreSupport/WebDragClient.cpp

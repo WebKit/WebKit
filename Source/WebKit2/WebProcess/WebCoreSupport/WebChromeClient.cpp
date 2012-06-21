@@ -31,6 +31,7 @@
 #include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "LayerTreeHost.h"
+#include "WebColorChooser.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
@@ -597,10 +598,12 @@ bool WebChromeClient::paintCustomOverhangArea(GraphicsContext* context, const In
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-PassOwnPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient*, const Color&)
+PassOwnPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient* client, const Color& initialColor)
 {
-    notImplemented();
-    return nullptr;
+    if (m_page->activeColorChooser())
+        return nullptr;
+
+    return adoptPtr(new WebColorChooser(m_page, client, initialColor));
 }
 #endif
 

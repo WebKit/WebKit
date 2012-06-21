@@ -360,6 +360,14 @@ PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPagePr
     return WebContextMenuProxyMac::create(m_wkView, page);
 }
 
+#if ENABLE(INPUT_TYPE_COLOR)
+PassRefPtr<WebColorChooserProxy> PageClientImpl::createColorChooserProxy(WebPageProxy*, const WebCore::Color&)
+{
+    notImplemented();
+    return 0;
+}
+#endif
+
 void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, bool fadeOut, bool animate)
 {
     [m_wkView _setFindIndicator:findIndicator fadeOut:fadeOut animate:animate];
