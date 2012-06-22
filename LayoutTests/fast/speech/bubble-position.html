@@ -30,8 +30,8 @@ function run() {
     input.onwebkitspeechchange = onSpeechChange;
     iframe.contentDocument.getElementsByTagName('body')[0].appendChild(input);
 
-    if (window.layoutTestController && window.eventSender) {
-        layoutTestController.setMockSpeechInputDumpRect(true);
+    if (window.testRunner && window.eventSender) {
+        testRunner.setMockSpeechInputDumpRect(true);
 
         debug('Clicking the speech button.');
         var x = input.offsetLeft + input.offsetWidth - 4;

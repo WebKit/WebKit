@@ -20,10 +20,10 @@ function onSpeechChange() {
 }
 
 function run() {
-    if (window.layoutTestController && window.eventSender) {
-        layoutTestController.addMockSpeechInputResult('Green eggs and ham', 0.8, '');
-        layoutTestController.addMockSpeechInputResult('Green x and ham', 0.5, '');
-        layoutTestController.addMockSpeechInputResult('3 x and am', 0.2, '');
+    if (window.testRunner && window.eventSender) {
+        testRunner.addMockSpeechInputResult('Green eggs and ham', 0.8, '');
+        testRunner.addMockSpeechInputResult('Green x and ham', 0.5, '');
+        testRunner.addMockSpeechInputResult('3 x and am', 0.2, '');
 
         // Clicking the speech button should fill in mock speech-recognized text.
         var input = document.getElementById('speechInput');

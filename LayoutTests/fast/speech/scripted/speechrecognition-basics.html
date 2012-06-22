@@ -45,8 +45,8 @@ function oneMatchTest() {
         noMatchTest();
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.addMockSpeechRecognitionResult('hello, world', 0.42);
+    if (window.testRunner) {
+        testRunner.addMockSpeechRecognitionResult('hello, world', 0.42);
     }
     r.start();
 }

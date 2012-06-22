@@ -31,8 +31,8 @@ function testField(index) {
 }
 
 function run() {
-    if (window.layoutTestController && window.eventSender) {
-        layoutTestController.addMockSpeechInputResult('Test', 1.0, '');
+    if (window.testRunner && window.eventSender) {
+        testRunner.addMockSpeechInputResult('Test', 1.0, '');
         testField(0);
     }
 }

@@ -14,7 +14,7 @@ function startSpeechInput(id) {
     // will be set in input during the generated TextInput event.
     var input = document.getElementById(id);
     input.select();
-    layoutTestController.startSpeechInput(input);
+    testRunner.startSpeechInput(input);
 }
 
 function onWebkitSpeechChange() {
@@ -23,8 +23,8 @@ function onWebkitSpeechChange() {
 }
 
 function run() {
-    if (window.layoutTestController && window.eventSender) {
-        layoutTestController.addMockSpeechInputResult('Pictures of a sunset', 1.0, '');
+    if (window.testRunner && window.eventSender) {
+        testRunner.addMockSpeechInputResult('Pictures of a sunset', 1.0, '');
         startSpeechInput("speechInput");
     }
 }

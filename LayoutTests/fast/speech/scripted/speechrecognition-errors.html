@@ -33,7 +33,7 @@ function notAllowedTest() {
     window.count = 0;
 
     r.start();
-    layoutTestController.setMockSpeechRecognitionError(webkitSpeechRecognitionError.NOT_ALLOWED, "not allowed");
+    testRunner.setMockSpeechRecognitionError(webkitSpeechRecognitionError.NOT_ALLOWED, "not allowed");
 
     // Check that we get an error event.
     r.onerror = function() {

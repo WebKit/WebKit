@@ -44,9 +44,9 @@ function setupDispatchEventTest() {
 // for any web page to use. The speech button should identify that this is not a real user
 // input event and not process it.
 function run() {
-    if (window.layoutTestController && window.eventSender) {
+    if (window.testRunner && window.eventSender) {
         // Running in DRT, test the eventSender case.
-        layoutTestController.addMockSpeechInputResult('Pictures of the moon', 1.0, '');
+        testRunner.addMockSpeechInputResult('Pictures of the moon', 1.0, '');
         document.getElementById('speechInput').onwebkitspeechchange = function() {
             shouldBeEqualToString('document.getElementById("speechInput").value', 'Pictures of the moon');
 

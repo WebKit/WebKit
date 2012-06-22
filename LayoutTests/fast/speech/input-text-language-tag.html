@@ -34,9 +34,9 @@ function speechButtonClick(elementId) {
 }
 
 function run() {
-    if (window.layoutTestController && window.eventSender) {
-        layoutTestController.addMockSpeechInputResult('Pictures of the moon', 1.0, 'en-GB');
-        layoutTestController.addMockSpeechInputResult('月の写真', 1.0, 'ja');
+    if (window.testRunner && window.eventSender) {
+        testRunner.addMockSpeechInputResult('Pictures of the moon', 1.0, 'en-GB');
+        testRunner.addMockSpeechInputResult('月の写真', 1.0, 'ja');
         speechButtonClick('speechInputNone');
     }
 }

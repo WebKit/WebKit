@@ -1,3 +1,24 @@
+2012-06-21  Hans Wennborg  <hans@chromium.org>
+
+        s/layoutTestController/testRunner/ in speech tests
+        https://bugs.webkit.org/show_bug.cgi?id=89654
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/speech/bubble-position.html:
+        * fast/speech/change-focus.html:
+        * fast/speech/input-onspeechchange-event.html:
+        * fast/speech/input-ontextinput-event.html:
+        * fast/speech/input-readonly-and-disabled.html:
+        * fast/speech/input-text-language-tag.html:
+        * fast/speech/input-text-speechbutton.html:
+        * fast/speech/input-text-speechstart.html:
+        * fast/speech/scripted/speechrecognition-basics.html:
+        * fast/speech/scripted/speechrecognition-errors.html:
+        * fast/speech/speech-button-ignore-generated-events.html:
+        * fast/speech/speech-input-result-list-not-enough-arguments.html:
+        * fast/speech/speech-input-scripting.html:
+
 2012-06-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r120982.

@@ -28,8 +28,8 @@ function startSpeechInput(id) {
 }
 
 function run() {
-    if (window.layoutTestController && window.eventSender) {
-        layoutTestController.addMockSpeechInputResult('Pictures of the moon', 1.0, '');
+    if (window.testRunner && window.eventSender) {
+        testRunner.addMockSpeechInputResult('Pictures of the moon', 1.0, '');
         startSpeechInput('input1');
     }
 }

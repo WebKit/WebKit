@@ -15,10 +15,10 @@ function onWebkitSpeechChange() {
 }
 
 function run() {
-    if (!window.layoutTestController || !window.eventSender)
+    if (!window.testRunner || !window.eventSender)
         return;
 
-    layoutTestController.addMockSpeechInputResult('Pictures of the moon', 1.0, '');
+    testRunner.addMockSpeechInputResult('Pictures of the moon', 1.0, '');
     var input = document.getElementById('speechInput');
     input.addEventListener('webkitspeechchange', onWebkitSpeechChange);
     var x = input.offsetLeft + input.offsetWidth - 8;

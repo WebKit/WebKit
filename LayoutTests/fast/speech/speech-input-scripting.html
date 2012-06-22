@@ -53,10 +53,10 @@ function testSetAttributeAndClick() {
 }
 
 function run() {
-    if (!window.layoutTestController || !window.eventSender)
+    if (!window.testRunner || !window.eventSender)
         return;
 
-    layoutTestController.addMockSpeechInputResult('Pictures of the moon', 1.0, '');
+    testRunner.addMockSpeechInputResult('Pictures of the moon', 1.0, '');
 
     // Try disabling speech with an input tag which has the attribute set in HTML and
     // verify that doesn't result in any crashes.
