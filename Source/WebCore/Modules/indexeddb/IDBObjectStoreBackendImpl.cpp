@@ -216,6 +216,69 @@ void IDBObjectStoreBackendImpl::revertAutoIncrementKeyCache(ScriptExecutionConte
     objectStore->resetAutoIncrementKeyCache();
 }
 
+namespace {
+class IndexWriter {
+public:
+    explicit IndexWriter(PassRefPtr<IDBIndexBackendImpl> index)
+        : m_index(index)
+    {
+    }
+
+    bool loadIndexKeysForValue(SerializedScriptValue* objectValue, const IDBKey* primaryKey = 0, String* errorMessage = 0)
+    {
+        m_indexKeys.clear();
+
+        RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(objectValue, m_index->keyPath());
+
+        if (!indexKey)
+            return true;
+
+        if (!m_index->multiEntry() || indexKey->type() != IDBKey::ArrayType) {
+            if (!indexKey->isValid())
+                return true;
+
+            if (!m_index->addingKeyAllowed(indexKey.get(), primaryKey)) {
+                if (errorMessage)
+                    *errorMessage = String::format("Unable to add key to index '%s': the key does not satisfy its uniqueness requirements.",
+                                                   m_index->name().utf8().data());
+                return false;
+            }
+            m_indexKeys.append(indexKey);
+        } else {
+            ASSERT(m_index->multiEntry());
+            ASSERT(indexKey->type() == IDBKey::ArrayType);
+            indexKey = IDBKey::createMultiEntryArray(indexKey->array());
+
+            for (size_t i = 0; i < indexKey->array().size(); ++i) {
+                if (!m_index->addingKeyAllowed(indexKey->array()[i].get(), primaryKey)) {
+                    if (errorMessage)
+                        *errorMessage = String::format("Unable to add key to index '%s': at least one key does not satisfy the uniqueness requirements.",
+                                                       m_index->name().utf8().data());
+                    return false;
+                }
+                m_indexKeys.append(indexKey->array()[i]);
+            }
+        }
+        return true;
+    }
+
+    bool writeIndexKeys(const IDBBackingStore::ObjectStoreRecordIdentifier* recordIdentifier, IDBBackingStore& backingStore, int64_t databaseId, int64_t objectStoreId, String* errorMessage = 0)
+    {
+        for (size_t i = 0; i < m_indexKeys.size(); ++i) {
+            if (!backingStore.deleteIndexDataForRecord(databaseId, objectStoreId, m_index->id(), recordIdentifier))
+                return false;
+            if (!backingStore.putIndexDataForRecord(databaseId, objectStoreId, m_index->id(), *m_indexKeys[i].get(), recordIdentifier))
+                return false;
+        }
+        return true;
+    }
+
+private:
+    RefPtr<IDBIndexBackendImpl> m_index;
+    Vector<RefPtr<IDBKey> > m_indexKeys;
+};
+}
+
 void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::putInternal");
@@ -267,39 +330,22 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         return;
     }
 
-    Vector<RefPtr<IDBKey> > indexKeys;
+    Vector<OwnPtr<IndexWriter> > indexWriters;
     for (IndexMap::iterator it = objectStore->m_indexes.begin(); it != objectStore->m_indexes.end(); ++it) {
+
         const RefPtr<IDBIndexBackendImpl>& index = it->second;
+        if (!index->hasValidId())
+            continue; // The index object has been created, but does not exist in the database yet.
 
-        RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(value.get(), index->keyPath());
-        if (indexKey && index->multiEntry() && indexKey->type() == IDBKey::ArrayType)
-            indexKey = IDBKey::createMultiEntryArray(indexKey->array());
-
-        if (!indexKey || !indexKey->isValid()) {
-            // Null/invalid keys not added to index; null entry keeps iterator/vector indexes consistent.
-            indexKey.clear();
-            indexKeys.append(indexKey);
-            continue;
-        }
-        ASSERT(indexKey->isValid());
-
-        if ((!index->multiEntry() || indexKey->type() != IDBKey::ArrayType) && !index->addingKeyAllowed(indexKey.get(), key.get())) {
+        OwnPtr<IndexWriter> indexWriter(adoptPtr(new IndexWriter(index)));
+        String errorMessage;
+        if (!indexWriter->loadIndexKeysForValue(value.get(), key.get(), &errorMessage)) {
             objectStore->resetAutoIncrementKeyCache();
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "One of the derived (from a keyPath) keys for an index does not satisfy its uniqueness requirements."));
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, errorMessage));
             return;
         }
 
-        if (index->multiEntry() && indexKey->type() == IDBKey::ArrayType) {
-            for (size_t j = 0; j < indexKey->array().size(); ++j) {
-                if (!index->addingKeyAllowed(indexKey->array()[j].get(), key.get())) {
-                    objectStore->resetAutoIncrementKeyCache();
-                    callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "One of the derived (from a keyPath) keys for an index does not satisfy its uniqueness requirements."));
-                    return;
-                }
-            }
-        }
-
-        indexKeys.append(indexKey.release());
+        indexWriters.append(indexWriter.release());
     }
 
     // Before this point, don't do any mutation.  After this point, rollback the transaction in case of error.
@@ -310,38 +356,13 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         return;
     }
 
-    int i = 0;
-    for (IndexMap::iterator it = objectStore->m_indexes.begin(); it != objectStore->m_indexes.end(); ++it, ++i) {
-        RefPtr<IDBIndexBackendImpl>& index = it->second;
-        if (!index->hasValidId())
-            continue; // The index object has been created, but does not exist in the database yet.
-
-        if (!objectStore->backingStore()->deleteIndexDataForRecord(objectStore->databaseId(), objectStore->id(), index->id(), recordIdentifier.get())) {
+    for (size_t i = 0; i < indexWriters.size(); ++i) {
+        if (!indexWriters[i]->writeIndexKeys(recordIdentifier.get(),
+                                             *objectStore->backingStore(), objectStore->databaseId(),
+                                             objectStore->m_id)) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
             transaction->abort();
             return;
-        }
-
-        if (!indexKeys[i])
-            continue;
-        RefPtr<IDBKey> indexKey = indexKeys[i];
-
-        if (!index->multiEntry() || indexKey->type() != IDBKey::ArrayType) {
-            if (!objectStore->backingStore()->putIndexDataForRecord(objectStore->databaseId(), objectStore->id(), index->id(), *indexKey, recordIdentifier.get())) {
-                callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
-                transaction->abort();
-                return;
-            }
-        } else {
-            ASSERT(index->multiEntry());
-            ASSERT(indexKey->type() == IDBKey::ArrayType);
-            for (size_t j = 0; j < indexKey->array().size(); ++j) {
-                if (!objectStore->backingStore()->putIndexDataForRecord(objectStore->databaseId(), objectStore->id(), index->id(), *indexKey->array()[j], recordIdentifier.get())) {
-                    callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
-                    transaction->abort();
-                    return;
-                }
-            }
         }
     }
 
@@ -417,43 +438,23 @@ public:
         : m_backingStore(backingStore)
         , m_databaseId(databaseId)
         , m_objectStoreId(objectStoreId)
-        , m_index(index)
+        , m_writer(index)
     {
     }
 
     virtual bool callback(const IDBBackingStore::ObjectStoreRecordIdentifier* recordIdentifier, const String& value)
     {
         RefPtr<SerializedScriptValue> objectValue = SerializedScriptValue::createFromWire(value);
-        RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(objectValue.get(), m_index->keyPath());
-
-        if (!indexKey)
-            return true;
-
-        if (!m_index->multiEntry() || indexKey->type() != IDBKey::ArrayType) {
-            if (!m_index->addingKeyAllowed(indexKey.get()))
-                return false;
-            if (!m_backingStore.putIndexDataForRecord(m_databaseId, m_objectStoreId, m_index->id(), *indexKey, recordIdentifier))
-                return false;
-        } else {
-            ASSERT(m_index->multiEntry());
-            ASSERT(indexKey->type() == IDBKey::ArrayType);
-
-            indexKey = IDBKey::createMultiEntryArray(indexKey->array());
-            for (size_t i = 0; i < indexKey->array().size(); ++i) {
-                if (!m_index->addingKeyAllowed(indexKey->array()[i].get()))
-                    return false;
-                if (!m_backingStore.putIndexDataForRecord(m_databaseId, m_objectStoreId, m_index->id(), *indexKey->array()[i], recordIdentifier))
-                    return false;
-            }
-        }
-        return true;
+        if (!m_writer.loadIndexKeysForValue(objectValue.get()))
+            return false;
+        return m_writer.writeIndexKeys(recordIdentifier, m_backingStore, m_databaseId, m_objectStoreId);
     }
 
 private:
     IDBBackingStore& m_backingStore;
     int64_t m_databaseId;
     int64_t m_objectStoreId;
-    RefPtr<IDBIndexBackendImpl> m_index;
+    IndexWriter m_writer;
 };
 }
 
@@ -626,7 +627,7 @@ void IDBObjectStoreBackendImpl::loadIndexes()
     ASSERT(uniqueFlags.size() == ids.size());
     ASSERT(multiEntryFlags.size() == ids.size());
 
-    for (size_t i = 0; i < ids.size(); i++)
+    for (size_t i = 0; i < ids.size(); ++i)
         m_indexes.set(names[i], IDBIndexBackendImpl::create(m_database, this, ids[i], names[i], keyPaths[i], uniqueFlags[i], multiEntryFlags[i]));
 }
 

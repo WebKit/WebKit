@@ -1,3 +1,22 @@
+2012-06-22  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: refactor index-writing to be more self-contained
+        https://bugs.webkit.org/show_bug.cgi?id=89607
+
+        Reviewed by Tony Chang.
+
+        Refactor index-writing into the IndexWriter class. Does not change
+        existing behavior but begins migrating index-writing logic into a
+        self-contained class that can eventually be used in the
+        frontend (renderer) side of IndexedDB.
+
+        No new tests, behavior is unchanged.
+
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::populateIndex):
+
 2012-06-22  Dave Tu  <dtu@chromium.org>
 
         [chromium] Expose rendering statistics to WebWidget.
