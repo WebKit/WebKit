@@ -3843,11 +3843,11 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.loadPtr(JITCompiler::Address(globalObjectGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
         m_jit.load32(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), resolveInfoGPR);
         m_jit.loadPtr(JITCompiler::BaseIndex(resultGPR, resolveInfoGPR, JITCompiler::ScalePtr), resultGPR);
-
+        
         addSlowPathGenerator(
             slowPathCall(
                 structuresDontMatch, this, operationResolveGlobal,
-                resultGPR, resolveInfoGPR,
+                resultGPR, resolveInfoGPR, globalObjectGPR,
                 &m_jit.codeBlock()->identifier(data.identifierNumber)));
 
         jsValueResult(resultGPR, m_compileIndex);

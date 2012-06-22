@@ -1,3 +1,29 @@
+2012-06-21  Filip Pizlo  <fpizlo@apple.com>
+
+        op_resolve_global should not prevent DFG inlining
+        https://bugs.webkit.org/show_bug.cgi?id=89726
+
+        Reviewed by Gavin Barraclough.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/GlobalResolveInfo.h:
+        (JSC::GlobalResolveInfo::GlobalResolveInfo):
+        (GlobalResolveInfo):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canInlineOpcode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-06-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should inline 'new Array()'

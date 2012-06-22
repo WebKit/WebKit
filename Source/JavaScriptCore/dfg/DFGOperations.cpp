@@ -968,13 +968,11 @@ EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState* exec, Iden
     return JSValue::encode(base);
 }
 
-EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState* exec, GlobalResolveInfo* resolveInfo, Identifier* propertyName)
+EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState* exec, GlobalResolveInfo* resolveInfo, JSGlobalObject* globalObject, Identifier* propertyName)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-
     PropertySlot slot(globalObject);
     if (globalObject->getPropertySlot(exec, *propertyName, slot)) {
         JSValue result = slot.getValue(exec, *propertyName);

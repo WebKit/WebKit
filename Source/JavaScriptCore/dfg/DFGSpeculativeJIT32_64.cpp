@@ -3840,7 +3840,7 @@ void SpeculativeJIT::compile(Node& node)
         addSlowPathGenerator(
             slowPathCall(
                 structuresNotMatch, this, operationResolveGlobal,
-                JSValueRegs(resultTagGPR, resultPayloadGPR), resolveInfoGPR,
+                JSValueRegs(resultTagGPR, resultPayloadGPR), resolveInfoGPR, globalObjectGPR,
                 &m_jit.codeBlock()->identifier(data.identifierNumber)));
 
         jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex);

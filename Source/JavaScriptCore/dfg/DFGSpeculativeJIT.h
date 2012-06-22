@@ -1229,9 +1229,9 @@ public:
         m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, result);
         return call;
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EGI operation, GPRReg result, GPRReg arg1, Identifier* identifier)
+    JITCompiler::Call callOperation(J_DFGOperation_EGriJsgI operation, GPRReg result, GPRReg arg1, GPRReg arg2, Identifier* identifier)
     {
-        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(identifier));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EI operation, GPRReg result, Identifier* identifier)
@@ -1482,9 +1482,9 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(pointer));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EGI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, Identifier* identifier)
+    JITCompiler::Call callOperation(J_DFGOperation_EGriJsgI operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, GPRReg arg2, Identifier* identifier)
     {
-        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identifier));
+        m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(identifier));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1)

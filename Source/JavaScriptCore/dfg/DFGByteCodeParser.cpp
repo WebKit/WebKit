@@ -3172,6 +3172,8 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
             }
             m_constantRemap[i] = result.iterator->second;
         }
+        for (unsigned i = 0; i < codeBlock->numberOfGlobalResolveInfos(); ++i)
+            byteCodeParser->m_codeBlock->addGlobalResolveInfo(std::numeric_limits<unsigned>::max());
         
         m_callsiteBlockHeadNeedsLinking = true;
     } else {
