@@ -1105,15 +1105,7 @@ namespace JSC {
 #endif
         
 #if ENABLE(JIT)
-        void reoptimize()
-        {
-            ASSERT(replacement() != this);
-            ASSERT(replacement()->alternative() == this);
-            replacement()->tallyFrequentExitSites();
-            replacement()->jettison();
-            countReoptimization();
-            optimizeAfterWarmUp();
-        }
+        void reoptimize();
 #endif
 
 #if ENABLE(VERBOSE_VALUE_PROFILE)

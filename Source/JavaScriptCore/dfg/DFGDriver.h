@@ -38,6 +38,8 @@ class MacroAssemblerCodePtr;
 
 namespace DFG {
 
+JS_EXPORT_PRIVATE unsigned getNumCompilations();
+
 #if ENABLE(DFG_JIT)
 bool tryCompile(ExecState*, CodeBlock*, JITCode&);
 bool tryCompileFunction(ExecState*, CodeBlock*, JITCode&, MacroAssemblerCodePtr& jitCodeWithArityCheck);

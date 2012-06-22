@@ -56,8 +56,6 @@ void JIT::emit_op_call_put_result(Instruction* instruction)
 
 void JIT::emit_op_ret(Instruction* currentInstruction)
 {
-    emitOptimizationCheck(RetOptimizationCheck);
-    
     unsigned dst = currentInstruction[1].u.operand;
 
     emitLoad(dst, regT1, regT0);
@@ -70,8 +68,6 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
 
 void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
 {
-    emitOptimizationCheck(RetOptimizationCheck);
-    
     unsigned result = currentInstruction[1].u.operand;
     unsigned thisReg = currentInstruction[2].u.operand;
 

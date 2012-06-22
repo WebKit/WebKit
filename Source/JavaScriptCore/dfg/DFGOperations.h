@@ -227,6 +227,8 @@ size_t DFG_OPERATION dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue) WTF_
 void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void*) WTF_INTERNAL;
 #endif
 
+void DFG_OPERATION triggerReoptimizationNow(CodeBlock*) WTF_INTERNAL;
+
 } // extern "C"
 } } // namespace JSC::DFG
 

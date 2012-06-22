@@ -43,10 +43,19 @@
 
 namespace JSC { namespace DFG {
 
+static unsigned numCompilations;
+
+unsigned getNumCompilations()
+{
+    return numCompilations;
+}
+
 enum CompileMode { CompileFunction, CompileOther };
 inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck)
 {
     SamplingRegion samplingRegion("DFG Compilation (Driver)");
+    
+    numCompilations++;
     
     ASSERT(codeBlock);
     ASSERT(codeBlock->alternative());

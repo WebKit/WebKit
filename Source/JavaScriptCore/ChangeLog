@@ -1,3 +1,67 @@
+2012-06-22  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG tier-up should happen in prologues, not epilogues
+        https://bugs.webkit.org/show_bug.cgi?id=89752
+
+        Reviewed by Geoffrey Garen.
+
+        This change has two outcomes:
+        
+        1) Slightly reduces the likelihood that a function will be optimized both
+        standalone and via inlining.  Previously, if you had a call sequence like foo() 
+        calls bar() exactly once, and nobody else calls bar(), then bar() would get
+        optimized first (because it returns first) and then foo() gets optimized.  If foo()
+        can inline bar() then that means that bar() gets optimized twice.  But now, if we
+        optimize in prologues, then foo() will be optimized first.  If it inlines bar(),
+        that means that there will no longer be any calls to bar().
+        
+        2) It lets us kill some code in JITStubs.  Epilogue tier-up was very different from
+        loop tier-up, since epilogue tier-up should not attempt OSR.  But prologue tier-up
+        requires OSR (albeit really easy OSR since it's the top of the compilation unit),
+        so it becomes just like loop tier-up.  As a result, we now have one optimization
+        hook (cti_optimize) instead of two (cti_optimize_from_loop and
+        cti_optimize_from_ret).
+        
+        As a consequence of not having an optimization check in epilogues, the OSR exit
+        code must now trigger reoptimization itself instead of just signaling the epilogue
+        check to fire.
+        
+        This also adds the ability to count the number of DFG compilations, which was
+        useful for debugging this patch and might be useful for other things in the future.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::reoptimize):
+        (JSC):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGDriver.cpp:
+        (DFG):
+        (JSC::DFG::getNumCompilations):
+        (JSC::DFG::compile):
+        * dfg/DFGDriver.h:
+        (DFG):
+        * dfg/DFGOSRExitCompiler.cpp:
+        (JSC::DFG::OSRExitCompiler::handleExitCounts):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::emitOptimizationCheck):
+        * jit/JIT.h:
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        (JSC::JIT::emit_op_enter):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_enter):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+
 2012-06-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSLock should be per-JSGlobalData

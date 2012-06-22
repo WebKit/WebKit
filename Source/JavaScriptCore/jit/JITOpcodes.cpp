@@ -576,8 +576,6 @@ void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
 
 void JIT::emit_op_ret(Instruction* currentInstruction)
 {
-    emitOptimizationCheck(RetOptimizationCheck);
-    
     ASSERT(callFrameRegister != regT1);
     ASSERT(regT1 != returnValueRegister);
     ASSERT(returnValueRegister != callFrameRegister);
@@ -598,8 +596,6 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
 
 void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
 {
-    emitOptimizationCheck(RetOptimizationCheck);
-    
     ASSERT(callFrameRegister != regT1);
     ASSERT(regT1 != returnValueRegister);
     ASSERT(returnValueRegister != callFrameRegister);
@@ -1218,13 +1214,14 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
 
 void JIT::emit_op_enter(Instruction*)
 {
+    emitOptimizationCheck(EnterOptimizationCheck);
+    
     // Even though CTI doesn't use them, we initialize our constant
     // registers to zap stale pointers, to avoid unnecessarily prolonging
     // object lifetime and increasing GC pressure.
     size_t count = m_codeBlock->m_numVars;
     for (size_t j = 0; j < count; ++j)
         emitInitRegister(j);
-
 }
 
 void JIT::emit_op_create_activation(Instruction* currentInstruction)

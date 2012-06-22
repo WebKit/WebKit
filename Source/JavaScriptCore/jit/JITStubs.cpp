@@ -1919,17 +1919,16 @@ DEFINE_STUB_FUNCTION(void, op_check_has_instance)
 }
 
 #if ENABLE(DFG_JIT)
-DEFINE_STUB_FUNCTION(void, optimize_from_loop)
+DEFINE_STUB_FUNCTION(void, optimize)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
     
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
-
     unsigned bytecodeIndex = stackFrame.args[0].int32();
-    
+
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("%p: Entered optimize_from_loop with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u\n", codeBlock, codeBlock->jitExecuteCounter(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
+    dataLog("%p: Entered optimize with bytecodeIndex = %u, executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u\n", codeBlock, bytecodeIndex, codeBlock->jitExecuteCounter(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
 #endif
 
     if (!codeBlock->checkIfOptimizationThresholdReached())
@@ -1937,7 +1936,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
 
     if (codeBlock->hasOptimizedReplacement()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("Considering loop OSR into %p(%p) with success/fail %u/%u.\n", codeBlock, codeBlock->replacement(), codeBlock->replacement()->speculativeSuccessCounter(), codeBlock->replacement()->speculativeFailCounter());
+        dataLog("Considering OSR into %p(%p) with success/fail %u/%u.\n", codeBlock, codeBlock->replacement(), codeBlock->replacement()->speculativeSuccessCounter(), codeBlock->replacement()->speculativeFailCounter());
 #endif
         if (codeBlock->replacement()->shouldReoptimizeFromLoopNow()) {
 #if ENABLE(JIT_VERBOSE_OSR)
@@ -1959,14 +1958,14 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
         JSObject* error = codeBlock->compileOptimized(callFrame, scopeChain);
 #if ENABLE(JIT_VERBOSE_OSR)
         if (error)
-            dataLog("WARNING: optimized compilation from loop failed.\n");
+            dataLog("WARNING: optimized compilation failed.\n");
 #else
         UNUSED_PARAM(error);
 #endif
         
         if (codeBlock->replacement() == codeBlock) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            dataLog("Optimizing %p from loop failed.\n", codeBlock);
+            dataLog("Optimizing %p failed.\n", codeBlock);
 #endif
             
             ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
@@ -1980,7 +1979,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
     
     if (void* address = DFG::prepareOSREntry(callFrame, optimizedCodeBlock, bytecodeIndex)) {
 #if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("Optimizing %p from loop succeeded, performing OSR after a delay of %u.\n", codeBlock, codeBlock->optimizationDelayCounter());
+        dataLog("Optimizing %p succeeded, performing OSR after a delay of %u.\n", codeBlock, codeBlock->optimizationDelayCounter());
 #endif
 
         codeBlock->optimizeSoon();
@@ -1990,7 +1989,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
     }
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("Optimizing %p from loop succeeded, OSR failed, after a delay of %u.\n", codeBlock, codeBlock->optimizationDelayCounter());
+    dataLog("Optimizing %p succeeded, OSR failed, after a delay of %u.\n", codeBlock, codeBlock->optimizationDelayCounter());
 #endif
 
     // Count the OSR failure as a speculation failure. If this happens a lot, then
@@ -1998,7 +1997,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
     optimizedCodeBlock->countSpeculationFailure();
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("Encountered loop OSR failure into %p(%p) with success/fail %u/%u.\n", codeBlock, codeBlock->replacement(), codeBlock->replacement()->speculativeSuccessCounter(), codeBlock->replacement()->speculativeFailCounter());
+    dataLog("Encountered OSR failure into %p(%p) with success/fail %u/%u.\n", codeBlock, codeBlock->replacement(), codeBlock->replacement()->speculativeSuccessCounter(), codeBlock->replacement()->speculativeFailCounter());
 #endif
 
     // We are a lot more conservative about triggering reoptimization after OSR failure than
@@ -2011,7 +2010,7 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
     // reoptimization trigger.
     if (optimizedCodeBlock->shouldReoptimizeNow()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("Triggering reoptimization of %p(%p) (in loop after OSR fail).\n", codeBlock, codeBlock->replacement());
+        dataLog("Triggering reoptimization of %p(%p) (after OSR fail).\n", codeBlock, codeBlock->replacement());
 #endif
         codeBlock->reoptimize();
         return;
@@ -2020,71 +2019,6 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
     // OSR failed this time, but it might succeed next time! Let the code run a bit
     // longer and then try again.
     codeBlock->optimizeAfterWarmUp();
-}
-
-DEFINE_STUB_FUNCTION(void, optimize_from_ret)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    
-    CallFrame* callFrame = stackFrame.callFrame;
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("Entered optimize_from_ret with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u\n", codeBlock->jitExecuteCounter(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
-#endif
-
-    if (!codeBlock->checkIfOptimizationThresholdReached())
-        return;
-
-    if (codeBlock->hasOptimizedReplacement()) {
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("Returning from old JIT call frame with optimized replacement %p(%p), with success/fail %u/%u", codeBlock, codeBlock->replacement(), codeBlock->replacement()->speculativeSuccessCounter(), codeBlock->replacement()->speculativeFailCounter());
-        CallFrame* callerFrame = callFrame->callerFrame();
-        if (callerFrame)
-            dataLog(", callerFrame = %p, returnPC = %p, caller code block = %p", callerFrame, callFrame->returnPC().value(), callerFrame->codeBlock());
-        dataLog("\n");
-#endif
-        if (codeBlock->replacement()->shouldReoptimizeNow()) {
-#if ENABLE(JIT_VERBOSE_OSR)
-            dataLog("Triggering reoptimization of %p(%p) (in return).\n", codeBlock, codeBlock->replacement());
-#endif
-            codeBlock->reoptimize();
-        }
-        
-        codeBlock->optimizeSoon();
-        return;
-    }
-    
-    if (!codeBlock->shouldOptimizeNow()) {
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("Delaying optimization for %p (in return) because of insufficient profiling.\n", codeBlock);
-#endif
-        return;
-    }
-    
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-
-    JSObject* error = codeBlock->compileOptimized(callFrame, scopeChain);
-    if (error)
-        dataLog("WARNING: optimized compilation from ret failed.\n");
-    
-    if (codeBlock->replacement() == codeBlock) {
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("Optimizing %p from return failed.\n", codeBlock);
-#endif
-
-        ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
-        codeBlock->dontOptimizeAnytimeSoon();
-        return;
-    }
-    
-    ASSERT(codeBlock->replacement()->getJITType() == JITCode::DFGJIT);
-
-#if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("Optimizing %p from return succeeded after a delay of %u.\n", codeBlock, codeBlock->optimizationDelayCounter());
-#endif
-    
-    codeBlock->optimizeSoon();
 }
 #endif // ENABLE(DFG_JIT)
 

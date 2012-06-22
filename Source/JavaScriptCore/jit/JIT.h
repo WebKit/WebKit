@@ -806,7 +806,7 @@ namespace JSC {
         // Loads the character value of a single character string into dst.
         void emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures);
         
-        enum OptimizationCheckKind { LoopOptimizationCheck, RetOptimizationCheck };
+        enum OptimizationCheckKind { LoopOptimizationCheck, EnterOptimizationCheck };
 #if ENABLE(DFG_JIT)
         void emitOptimizationCheck(OptimizationCheckKind);
 #else

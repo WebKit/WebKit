@@ -2464,6 +2464,16 @@ void CodeBlock::copyPostParseDataFromAlternative()
 }
 
 #if ENABLE(JIT)
+void CodeBlock::reoptimize()
+{
+    ASSERT(replacement() != this);
+    ASSERT(replacement()->alternative() == this);
+    replacement()->tallyFrequentExitSites();
+    replacement()->jettison();
+    countReoptimization();
+    optimizeAfterWarmUp();
+}
+
 CodeBlock* ProgramCodeBlock::replacement()
 {
     return &static_cast<ProgramExecutable*>(ownerExecutable())->generatedBytecode();

@@ -115,7 +115,10 @@ void OSRExitCompiler::handleExitCounts(const OSRExit& exit)
         m_jit.store32(GPRInfo::regT2, AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfForcedOSRExitCounter()));
         m_jit.store32(GPRInfo::regT1, AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeSuccessCounter()));
         
+        m_jit.move(AssemblyHelpers::TrustedImmPtr(m_jit.baselineCodeBlock()), GPRInfo::regT0);
+
         tooFewFails.append(m_jit.branch32(AssemblyHelpers::BelowOrEqual, GPRInfo::regT2, AssemblyHelpers::TrustedImm32(Options::forcedOSRExitCountForReoptimization)));
+
     } else {
         // Proceed based on the assumption that we can handle these exits so long as they
         // don't get too frequent.
@@ -136,8 +139,14 @@ void OSRExitCompiler::handleExitCounts(const OSRExit& exit)
     }
 
     // Reoptimize as soon as possible.
-    m_jit.store32(AssemblyHelpers::TrustedImm32(0), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));
-    m_jit.store32(AssemblyHelpers::TrustedImm32(0), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionActiveThreshold()));
+#if !NUMBER_OF_ARGUMENT_REGISTERS
+    m_jit.poke(GPRInfo::regT0);
+#else
+    m_jit.move(GPRInfo::regT0, GPRInfo::argumentGPR0);
+    ASSERT(GPRInfo::argumentGPR0 != GPRInfo::regT1);
+#endif
+    m_jit.move(AssemblyHelpers::TrustedImmPtr(bitwise_cast<void*>(triggerReoptimizationNow)), GPRInfo::regT1);
+    m_jit.call(GPRInfo::regT1);
     AssemblyHelpers::Jump doneAdjusting = m_jit.jump();
     
     tooFewFails.link(&m_jit);

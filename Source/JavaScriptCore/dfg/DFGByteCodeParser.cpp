@@ -3257,6 +3257,9 @@ void ByteCodeParser::parseCodeBlock()
                     ASSERT(m_inlineStackTop->m_unlinkedBlocks.isEmpty() || m_graph.m_blocks[m_inlineStackTop->m_unlinkedBlocks.last().m_blockIndex]->bytecodeBegin < m_currentIndex);
                     m_inlineStackTop->m_unlinkedBlocks.append(UnlinkedBlock(m_graph.m_blocks.size()));
                     m_inlineStackTop->m_blockLinkingTargets.append(m_graph.m_blocks.size());
+                    // The first block is definitely an OSR target.
+                    if (!m_graph.m_blocks.size())
+                        block->isOSRTarget = true;
                     m_graph.m_blocks.append(block.release());
                     prepareToParseBlock();
                 }

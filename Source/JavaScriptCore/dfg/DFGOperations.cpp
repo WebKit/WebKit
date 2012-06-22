@@ -32,14 +32,15 @@
 #include "DFGRepatch.h"
 #include "HostCallReturnValue.h"
 #include "GetterSetter.h"
-#include <wtf/InlineASM.h>
 #include "Interpreter.h"
+#include "JIT.h"
 #include "JITExceptions.h"
 #include "JSActivation.h"
 #include "JSGlobalData.h"
 #include "JSStaticScopeObject.h"
 #include "NameInstance.h"
 #include "Operations.h"
+#include <wtf/InlineASM.h>
 
 #if ENABLE(DFG_JIT)
 
@@ -1250,6 +1251,27 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
             codeBlock->forcedOSRExitCounter());
 }
 #endif
+
+extern "C" void DFG_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
+{
+#if ENABLE(JIT_VERBOSE_OSR)
+    dataLog("%p: Entered reoptimize\n", codeBlock);
+#endif
+    // We must be called with the baseline code block.
+    ASSERT(JITCode::isBaselineCode(codeBlock->getJITType()));
+
+    // If I am my own replacement, then reoptimization has already been triggered.
+    // This can happen in recursive functions.
+    if (codeBlock->replacement() == codeBlock)
+        return;
+
+    // Otherwise, the replacement must be optimized code. Use this as an opportunity
+    // to check our logic.
+    ASSERT(codeBlock->hasOptimizedReplacement());
+    ASSERT(codeBlock->replacement()->getJITType() == JITCode::DFGJIT);
+
+    codeBlock->reoptimize();
+}
 
 } // extern "C"
 } } // namespace JSC::DFG
