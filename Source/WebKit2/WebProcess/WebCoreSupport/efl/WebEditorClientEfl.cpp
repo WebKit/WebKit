@@ -40,7 +40,8 @@ namespace WebKit {
 
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
-    notImplemented();
+    if (m_page->handleEditingKeyboardEvent(event))
+        event->setDefaultHandled();
 }
 
 void WebEditorClient::handleInputMethodKeydown(KeyboardEvent*)

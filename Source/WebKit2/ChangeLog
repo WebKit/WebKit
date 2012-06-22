@@ -1,3 +1,15 @@
+2012-06-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Support keyboard event
+        https://bugs.webkit.org/show_bug.cgi?id=89268
+
+        Reviewed by Chang Shu.
+
+        * WebProcess/WebCoreSupport/efl/WebEditorClientEfl.cpp:
+        (WebKit::WebEditorClient::handleKeyboardEvent): Implemented default behavior.
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::WebPage::interpretKeyEvent): Implemented like WebKit1/Efl did.
+
 2012-06-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSLock should be per-JSGlobalData

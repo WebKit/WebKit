@@ -34,9 +34,14 @@ class String;
 
 namespace WebCore {
 
+class KeyboardEvent;
+
 WTF::String keyIdentifierForEvasKeyName(const WTF::String&);
 WTF::String singleCharacterString(const WTF::String&);
 int windowsKeyCodeForEvasKeyName(const WTF::String&);
+
+const char* getKeyDownCommandName(const KeyboardEvent*);
+const char* getKeyPressCommandName(const KeyboardEvent*);
 
 } // namespace WebCore
 

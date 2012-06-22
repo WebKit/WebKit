@@ -31,6 +31,7 @@
 #include "NotImplemented.h"
 #include "WebEvent.h"
 #include "WindowsKeyboardCodes.h"
+#include <WebCore/EflKeyboardUtilities.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/KeyboardEvent.h>
@@ -93,10 +94,14 @@ PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const KURL&)
     return 0;
 }
 
-const char* WebPage::interpretKeyEvent(const KeyboardEvent* evt)
+const char* WebPage::interpretKeyEvent(const KeyboardEvent* event)
 {
-    notImplemented();
-    return 0;
+    ASSERT(event->type() == eventNames().keydownEvent || event->type() == eventNames().keypressEvent);
+
+    if (event->type() == eventNames().keydownEvent)
+        return getKeyDownCommandName(event);
+
+    return getKeyPressCommandName(event);
 }
 
 } // namespace WebKit
