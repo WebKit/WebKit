@@ -1,3 +1,17 @@
+2012-06-21  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: Properly display native memory sizes bigger than 2GB
+        https://bugs.webkit.org/show_bug.cgi?id=89661
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::jsHeapInfo):
+        (WebCore::inspectorData):
+        (WebCore::renderTreeInfo):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+
 2012-06-21  Abhishek Arya  <inferno@chromium.org>
 
         Crash in RenderBlock::layoutPositionedObjects.

@@ -337,11 +337,11 @@ static PassRefPtr<InspectorMemoryBlock> jsHeapInfo()
     ScriptGCEvent::getHeapSize(usedJSHeapSize, totalJSHeapSize, jsHeapSizeLimit);
 
     RefPtr<InspectorMemoryBlock> jsHeapAllocated = InspectorMemoryBlock::create().setName(MemoryBlockName::jsHeapAllocated);
-    jsHeapAllocated->setSize(static_cast<int>(totalJSHeapSize));
+    jsHeapAllocated->setSize(totalJSHeapSize);
 
     RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
     RefPtr<InspectorMemoryBlock> jsHeapUsed = InspectorMemoryBlock::create().setName(MemoryBlockName::jsHeapUsed);
-    jsHeapUsed->setSize(static_cast<int>(usedJSHeapSize));
+    jsHeapUsed->setSize(usedJSHeapSize);
     children->addItem(jsHeapUsed);
 
     jsHeapAllocated->setChildren(children);
@@ -352,7 +352,7 @@ static PassRefPtr<InspectorMemoryBlock> inspectorData()
 {
     size_t dataSize = ScriptProfiler::profilerSnapshotsSize();
     RefPtr<InspectorMemoryBlock> inspectorData = InspectorMemoryBlock::create().setName(MemoryBlockName::inspectorData);
-    inspectorData->setSize(static_cast<int>(dataSize));
+    inspectorData->setSize(dataSize);
     return inspectorData.release();
 }
 
@@ -361,11 +361,11 @@ static PassRefPtr<InspectorMemoryBlock> renderTreeInfo(Page* page)
     ArenaSize arenaSize = page->renderTreeSize();
 
     RefPtr<InspectorMemoryBlock> renderTreeAllocated = InspectorMemoryBlock::create().setName(MemoryBlockName::renderTreeAllocated);
-    renderTreeAllocated->setSize(static_cast<int>(arenaSize.allocated));
+    renderTreeAllocated->setSize(arenaSize.allocated);
 
     RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
     RefPtr<InspectorMemoryBlock> renderTreeUsed = InspectorMemoryBlock::create().setName(MemoryBlockName::renderTreeUsed);
-    renderTreeUsed->setSize(static_cast<int>(arenaSize.treeSize));
+    renderTreeUsed->setSize(arenaSize.treeSize);
     children->addItem(renderTreeUsed);
 
     renderTreeAllocated->setChildren(children);
@@ -406,7 +406,7 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
     size_t sharedBytes = 0;
     MemoryUsageSupport::processMemorySizesInBytes(&privateBytes, &sharedBytes);
     processMemory = InspectorMemoryBlock::create().setName(MemoryBlockName::processPrivateMemory);
-    processMemory->setSize(static_cast<int>(privateBytes));
+    processMemory->setSize(privateBytes);
 
     RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
     children->addItem(jsHeapInfo());
