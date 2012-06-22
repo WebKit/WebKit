@@ -1,3 +1,43 @@
+2012-06-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Add support for the grid and inline-grid display types.
+        https://bugs.webkit.org/show_bug.cgi?id=60732
+
+        Reviewed by Tony Chang.
+
+        Tests: fast/css-grid-layout/containing-block-grids-expected.html
+               fast/css-grid-layout/containing-block-grids.html
+               fast/css-grid-layout/floating-empty-grids-expected.html
+               fast/css-grid-layout/floating-empty-grids.html
+
+        Based on an earlier patch by David Hyatt <hyatt@apple.com>.
+
+        Added the first renderer for grid elements.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added RenderGrid files to the build systems.
+
+        * rendering/RenderGrid.cpp: Added.
+        (WebCore::RenderGrid::RenderGrid):
+        (WebCore::RenderGrid::~RenderGrid):
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::renderName):
+        * rendering/RenderGrid.h: Added.
+        (RenderGrid):
+        Skeleton renderer for now.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        Return our new RenderGrid for our 2 new |display| values.
+
+        * rendering/style/RenderStyle.h:
+        Added INLINE_GRID to the inline and replaced types.
+
 2012-06-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Clang build fix.

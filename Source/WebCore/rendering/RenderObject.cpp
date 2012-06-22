@@ -47,6 +47,7 @@
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
 #include "RenderGeometryMap.h"
+#include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderInline.h"
@@ -151,9 +152,6 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
         return new (arena) RenderRubyText(node);
 
     switch (style->display()) {
-    // For now, we don't show grid elements.
-    case GRID:
-    case INLINE_GRID:
     case NONE:
         return 0;
     case INLINE:
@@ -194,6 +192,9 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     case INLINE_FLEX:
         return new (arena) RenderFlexibleBox(node);
 #endif
+    case GRID:
+    case INLINE_GRID:
+        return new (arena) RenderGrid(node);
     }
 
     return 0;

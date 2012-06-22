@@ -1490,7 +1490,7 @@ public:
 
     bool isDisplayReplacedType() const
     {
-        return display() == INLINE_BLOCK || display() == INLINE_BOX || display() == INLINE_TABLE;
+        return display() == INLINE_BLOCK || display() == INLINE_BOX || display() == INLINE_TABLE || display() == INLINE_GRID;
     }
 
     bool isDisplayInlineType() const
@@ -1501,7 +1501,7 @@ public:
     bool isOriginalDisplayInlineType() const
     {
         return originalDisplay() == INLINE || originalDisplay() == INLINE_BLOCK
-            || originalDisplay() == INLINE_BOX || originalDisplay() == INLINE_TABLE;
+            || originalDisplay() == INLINE_BOX || originalDisplay() == INLINE_TABLE || originalDisplay() == INLINE_GRID;
     }
 
     void setWritingMode(WritingMode v) { inherited_flags.m_writingMode = v; }

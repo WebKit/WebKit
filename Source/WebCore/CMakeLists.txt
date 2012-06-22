@@ -1353,6 +1353,7 @@ SET(WebCore_SOURCES
     rendering/RenderFieldset.cpp
     rendering/RenderFileUploadControl.cpp
     rendering/RenderFlexibleBox.cpp
+    rendering/RenderGrid.cpp
     rendering/RenderFlowThread.cpp
     rendering/RenderFrame.cpp
     rendering/RenderFrameBase.cpp

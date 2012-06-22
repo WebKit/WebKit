@@ -4844,6 +4844,8 @@
             'rendering/RenderFrameSet.h',
             'rendering/RenderFullScreen.cpp',
             'rendering/RenderFullScreen.h',
+            'rendering/RenderGrid.cpp',
+            'rendering/RenderGrid.h',
             'rendering/RenderGeometryMap.cpp',
             'rendering/RenderGeometryMap.h',
             'rendering/RenderHTMLCanvas.cpp',

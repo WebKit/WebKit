@@ -5229,6 +5229,8 @@
 		BC124EE80C2641CD009E2349 /* BarInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC124EE50C2641CD009E2349 /* BarInfo.h */; };
 		BC124EFF0C26447A009E2349 /* JSBarInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC124EFD0C26447A009E2349 /* JSBarInfo.cpp */; };
 		BC124F000C26447A009E2349 /* JSBarInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC124EFE0C26447A009E2349 /* JSBarInfo.h */; };
+		BC128A73137C867C00CAC845 /* RenderGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = BC128A72137C867C00CAC845 /* RenderGrid.h */; };
+		BC128B01137C8D4600CAC845 /* RenderGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC128B00137C8D4600CAC845 /* RenderGrid.cpp */; };
 		BC14028A0E83680800319717 /* ScrollbarThemeComposite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC1402880E83680800319717 /* ScrollbarThemeComposite.cpp */; };
 		BC14028B0E83680800319717 /* ScrollbarThemeComposite.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1402890E83680800319717 /* ScrollbarThemeComposite.h */; };
 		BC17F9660B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC17F9650B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp */; };
@@ -12398,6 +12400,8 @@
 		BC124EE60C2641CD009E2349 /* BarInfo.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = BarInfo.idl; sourceTree = "<group>"; };
 		BC124EFD0C26447A009E2349 /* JSBarInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSBarInfo.cpp; sourceTree = "<group>"; };
 		BC124EFE0C26447A009E2349 /* JSBarInfo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSBarInfo.h; sourceTree = "<group>"; };
+		BC128A72137C867C00CAC845 /* RenderGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderGrid.h; sourceTree = "<group>"; };
+		BC128B00137C8D4600CAC845 /* RenderGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderGrid.cpp; sourceTree = "<group>"; };
 		BC1402880E83680800319717 /* ScrollbarThemeComposite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarThemeComposite.cpp; sourceTree = "<group>"; };
 		BC1402890E83680800319717 /* ScrollbarThemeComposite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeComposite.h; sourceTree = "<group>"; };
 		BC17F9650B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSelectElementCustom.cpp; sourceTree = "<group>"; };
@@ -21083,6 +21087,8 @@
 				A871DEC90A1530C700B12A68 /* RenderFrameSet.h */,
 				CDEA7C831276230400B846DD /* RenderFullScreen.cpp */,
 				CDEA7C821276230400B846DD /* RenderFullScreen.h */,
+				BC128B00137C8D4600CAC845 /* RenderGrid.cpp */,
+				BC128A72137C867C00CAC845 /* RenderGrid.h */,
 				0F3F0E57157030C3006DA57F /* RenderGeometryMap.cpp */,
 				0F3F0E58157030C3006DA57F /* RenderGeometryMap.h */,
 				BCEA482A097D93020094C9E4 /* RenderHTMLCanvas.cpp */,
@@ -24233,6 +24239,7 @@
 				7E33CD01127F340D00BE8F17 /* PurgePriority.h in Headers */,
 				550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */,
 				379E371713736A6600B9E919 /* QuotedPrintable.h in Headers */,
+				BC128A73137C867C00CAC845 /* RenderGrid.h in Headers */,
 				5A574F29131DB96D00471B88 /* QuotesData.h in Headers */,
 				B22279720D00BF220071B782 /* RadialGradientAttributes.h in Headers */,
 				F55B3DCC1251F12D003EF269 /* RadioInputType.h in Headers */,
@@ -27444,6 +27451,7 @@
 				E4D687770ED7AE3D006EA978 /* PurgeableBufferMac.cpp in Sources */,
 				550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */,
 				379E371613736A6600B9E919 /* QuotedPrintable.cpp in Sources */,
+				BC128B01137C8D4600CAC845 /* RenderGrid.cpp in Sources */,
 				5A574F28131DB96D00471B88 /* QuotesData.cpp in Sources */,
 				F55B3DCB1251F12D003EF269 /* RadioInputType.cpp in Sources */,
 				B658FFA51522EFAA00DD5595 /* RadioNodeList.cpp in Sources */,

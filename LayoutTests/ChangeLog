@@ -1,3 +1,17 @@
+2012-06-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Add support for the grid and inline-grid display types.
+        https://bugs.webkit.org/show_bug.cgi?id=60732
+
+        Reviewed by Tony Chang.
+
+        Based on an earlier patch by David Hyatt <hyatt@apple.com>.
+
+        * fast/css-grid-layout/containing-block-grids-expected.html: Added.
+        * fast/css-grid-layout/containing-block-grids.html: Added.
+        * fast/css-grid-layout/floating-empty-grids-expected.html: Added.
+        * fast/css-grid-layout/floating-empty-grids.html: Added.
+
 2012-06-21  Kenneth Russell  <kbr@google.com>
 
         [chromium] Layout test failures after fixing GraphicsLayerChromium scale factors

@@ -3842,6 +3842,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderFrameSet.h \
 	Source/WebCore/rendering/RenderFullScreen.cpp \
 	Source/WebCore/rendering/RenderFullScreen.h \
+	Source/WebCore/rendering/RenderGrid.cpp \
+	Source/WebCore/rendering/RenderGrid.h \
 	Source/WebCore/rendering/RenderGeometryMap.cpp \
 	Source/WebCore/rendering/RenderGeometryMap.h \
 	Source/WebCore/rendering/RenderHTMLCanvas.cpp \
