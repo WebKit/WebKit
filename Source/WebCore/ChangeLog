@@ -1,3 +1,24 @@
+2012-06-22  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Clean up visitDOMWrapper code
+        https://bugs.webkit.org/show_bug.cgi?id=89774
+
+        Reviewed by Tony Chang.
+
+        This moves the check if domWrapperVisitorFunction is null into a function of the WrapperTypeInfo struct.
+        This is so that users of WrapperTypeInfo does not need to know about the inner details of the struct.
+        It also makes things more consistent since the other fields in the struct have these kind of functions.
+
+        This is a follow up change to http://trac.webkit.org/changeset/120854.
+
+        No new tests. Covered by existing tests.
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::GrouperVisitor::visitDOMWrapper): Call WrapperTypeInfo::visitDOMWrapper instead.
+        * bindings/v8/WrapperTypeInfo.h:
+        (WrapperTypeInfo):
+        (WebCore::WrapperTypeInfo::visitDOMWrapper): If domWrapperVisitorFunction is non null call it.
+
 2012-06-22  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: ExtensionPanel.onSearch listener doesn't work

@@ -94,7 +94,13 @@ namespace WebCore {
                 return 0;
             return toActiveDOMObjectFunction(object);
         }
-        
+
+        void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
+        {
+            if (domWrapperVisitorFunction)
+                domWrapperVisitorFunction(store, object, wrapper);
+        }
+
         const GetTemplateFunction getTemplateFunction;
         const DerefObjectFunction derefObjectFunction;
         const ToActiveDOMObjectFunction toActiveDOMObjectFunction;
