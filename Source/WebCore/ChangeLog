@@ -1,3 +1,18 @@
+2012-06-22  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Sanitize GLSL code using ANGLE.
+
+        BlackBerry port does not sanitize GLSL code with ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=89583
+
+        Reviewed by Rob Buis.
+
+        No new tests are required.
+
+        * CMakeLists.txt: Added ANGLE requirment for CMake builds with WEBGL
+        * platform/graphics/ANGLEWebKitBridge.h: Added include for ANGLE/ShaderLang.h in BlackBerry platform.
+        * platform/graphics/GraphicsContext3D.h: Added include for ANGLEWebKitBridge.h in BlackBerry platform.
+
 2012-06-22  Dan Bernstein  <mitz@apple.com>
 
         RenderText’s minimum preferred width is incorrect when soft hyphens are used

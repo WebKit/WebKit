@@ -32,6 +32,9 @@ IF (ADDITIONAL_SYSTEM_INCLUDE_PATH)
     FOREACH (directory ${ADDITIONAL_SYSTEM_INCLUDE_PATH})
         INCLUDE_DIRECTORIES(SYSTEM ${directory})
     ENDFOREACH ()
+    IF(ENABLE_WEBGL)
+        INCLUDE_DIRECTORIES(SYSTEM ${THIRDPARTY_DIR}/ANGLE/include) #As system so as to be lower-priority than actual system headers
+    ENDIF ()
 ENDIF ()
 
 IF (ENABLE_DRT)

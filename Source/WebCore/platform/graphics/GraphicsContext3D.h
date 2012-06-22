@@ -43,7 +43,7 @@
 #undef VERSION
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(BLACKBERRY)
 #include "ANGLEWebKitBridge.h"
 #endif
 
@@ -91,6 +91,10 @@ const Platform3DObject NullPlatform3DObject = 0;
 #include <CoreGraphics/CGContext.h>
 #endif
 
+#if PLATFORM(BLACKBERRY)
+#include <GLES2/gl2.h>
+#endif
+
 namespace WebCore {
 class DrawingBuffer;
 class Extensions3D;
@@ -108,6 +112,8 @@ class IntRect;
 class IntSize;
 #if USE(CAIRO)
 class PlatformContextCairo;
+#elif PLATFORM(BLACKBERRY)
+class GraphicsContext;
 #endif
 
 struct ActiveInfo {
@@ -940,7 +946,7 @@ public:
     RetainPtr<WebGLLayer> m_webGLLayer;
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(BLACKBERRY)
     typedef struct {
         String source;
         String log;

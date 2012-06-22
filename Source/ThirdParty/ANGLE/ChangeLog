@@ -1,3 +1,14 @@
+2012-06-22  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Sanitize GLSL code using ANGLE.
+
+        BlackBerry port does not sanitize GLSL code with ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=89583
+
+        Reviewed by Rob Buis.
+
+        * src/compiler/osinclude.h: Recognises QNX as POSIX
+
 2012-03-26  Dean Jackson  <dino@apple.com>
 
         Update ANGLE in WebKit

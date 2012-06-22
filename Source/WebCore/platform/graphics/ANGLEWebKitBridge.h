@@ -31,7 +31,7 @@
 
 #if PLATFORM(QT)
 #include "ANGLE/include/GLSLANG/ShaderLang.h"
-#elif !PLATFORM(GTK) && !PLATFORM(EFL)
+#elif !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(BLACKBERRY)
 #include "ANGLE/ShaderLang.h"
 #else
 #include "ShaderLang.h"

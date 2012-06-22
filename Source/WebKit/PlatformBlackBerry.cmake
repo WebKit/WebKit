@@ -107,6 +107,18 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/FatFingers.cpp
 )
 
+
+IF (ENABLE_WEBGL)
+    LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+        ${OPENGL_INCLUDE_DIR}
+        ${THIRDPARTY_DIR}/ANGLE/src
+        ${THIRDPARTY_DIR}/ANGLE/include/GLSLANG
+    )
+    LIST(APPEND WebKit_LIBRARIES
+        ${OPENGL_gl_LIBRARY}
+    )
+ENDIF (ENABLE_WEBGL)
+
 IF (ENABLE_DRT)
     # DumpRenderTree sources
     LIST(APPEND WebKit_SOURCES

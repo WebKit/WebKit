@@ -1,3 +1,14 @@
+2012-06-22  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Sanitize GLSL code using ANGLE.
+
+        BlackBerry port does not sanitize GLSL code with ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=89583
+
+        Reviewed by Rob Buis.
+
+        * PlatformBlackBerry.cmake: Add ANGLE sources to BlackBerry builds.
+
 2012-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [CMake] Unreviewed speculative buildfix after r120786.
