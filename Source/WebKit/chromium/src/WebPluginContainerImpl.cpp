@@ -481,6 +481,18 @@ bool WebPluginContainerImpl::isRectTopmost(const WebRect& rect)
     return (nodes.first().get() == m_element);
 }
 
+void WebPluginContainerImpl::setIsAcceptingTouchEvents(bool acceptingTouchEvents)
+{
+    if (m_isAcceptingTouchEvents == acceptingTouchEvents)
+        return;
+    m_isAcceptingTouchEvents = acceptingTouchEvents;
+    if (m_isAcceptingTouchEvents) {
+        m_element->document()->didAddTouchEventHandler();
+        m_element->document()->addListenerType(Document::TOUCH_LISTENER);
+    } else
+        m_element->document()->didRemoveTouchEventHandler();
+}
+
 void WebPluginContainerImpl::didReceiveResponse(const ResourceResponse& response)
 {
     // Make sure that the plugin receives window geometry before data, or else
@@ -579,11 +591,15 @@ WebPluginContainerImpl::WebPluginContainerImpl(WebCore::HTMLPlugInElement* eleme
     , m_textureId(0)
     , m_ioSurfaceId(0)
 #endif
+    , m_isAcceptingTouchEvents(false)
 {
 }
 
 WebPluginContainerImpl::~WebPluginContainerImpl()
 {
+    if (m_isAcceptingTouchEvents)
+        m_element->document()->didRemoveTouchEventHandler();
+
     for (size_t i = 0; i < m_pluginLoadObservers.size(); ++i)
         m_pluginLoadObservers[i]->clearPluginContainer();
     m_webPlugin->destroy();

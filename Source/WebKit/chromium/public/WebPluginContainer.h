@@ -107,6 +107,9 @@ public:
     // content. The rectangle is in the plugin's coordinate system.
     virtual bool isRectTopmost(const WebRect&) = 0;
 
+    // Notifies when the plugin starts/stops accepting touch events.
+    virtual void setIsAcceptingTouchEvents(bool) = 0;
+
     virtual WebPlugin* plugin() = 0;
     virtual void setPlugin(WebPlugin*) = 0;
 

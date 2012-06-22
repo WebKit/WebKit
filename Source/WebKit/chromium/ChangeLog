@@ -1,3 +1,24 @@
+2012-06-22  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Notify the document if a plugin accepts touch input events
+        https://bugs.webkit.org/show_bug.cgi?id=89769
+
+        Reviewed by Adam Barth.
+
+        The browser sends touch events to webkit only if webkit has any touch-event handlers. So it is
+        necessary to notify the document when a plugin starts accepting touch-events so that it can in
+        turn tell the browser to send it touch events.
+
+        * public/WebPluginContainer.h:
+        (WebPluginContainer):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::setIsAcceptingTouchEvents):
+        (WebKit):
+        (WebKit::WebPluginContainerImpl::WebPluginContainerImpl):
+        (WebKit::WebPluginContainerImpl::~WebPluginContainerImpl):
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+
 2012-06-22  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r121064.
