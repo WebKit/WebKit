@@ -1,3 +1,19 @@
+2012-06-21  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Reset mediaPlaybackRequiresUserGesture WebSettings after each test
+        https://bugs.webkit.org/show_bug.cgi?id=89718
+
+        Reviewed by Kent Tamura.
+
+        We should reset this WebSetting to its default value so that it behaves
+        consistently across tests.
+
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+        (WebPreferences):
+
 2012-06-21  Zoltan Horvath  <zoltan@webkit.org>
 
         DRT/WTR python interface handles about:blank incorrectly
