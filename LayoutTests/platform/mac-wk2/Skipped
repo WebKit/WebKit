@@ -264,6 +264,10 @@ http/tests/media/remove-while-loading.html
 platform/mac/editing/input/insert-dictated-text.html
 platform/mac/editing/input/edit-dictated-text-with-alternative.html
 
+# Crashes on Lion Debug WK2
+# https://bugs.webkit.org/show_bug.cgi?id=89780
+fast/canvas/canvas-createImageData.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

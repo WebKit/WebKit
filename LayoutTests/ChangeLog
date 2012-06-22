@@ -1,3 +1,10 @@
+2012-06-22  Jon Lee  <jonlee@apple.com>
+
+        fast/canvas/canvas-createImageData.html crashes on Lion WK2 Debug bot
+        https://bugs.webkit.org/show_bug.cgi?id=89780
+
+        * platform/mac-wk2/Skipped: Add to skipped list for wk2.
+
 2012-06-22  Dan Bernstein  <mitz@apple.com>
 
         RenderText’s minimum preferred width is incorrect when soft hyphens are used
