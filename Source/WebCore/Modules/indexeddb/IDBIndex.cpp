@@ -42,8 +42,9 @@ namespace WebCore {
 
 static const unsigned short defaultDirection = IDBCursor::NEXT;
 
-IDBIndex::IDBIndex(PassRefPtr<IDBIndexBackendInterface> backend, IDBObjectStore* objectStore, IDBTransaction* transaction)
-    : m_backend(backend)
+IDBIndex::IDBIndex(const IDBIndexMetadata& metadata, PassRefPtr<IDBIndexBackendInterface> backend, IDBObjectStore* objectStore, IDBTransaction* transaction)
+    : m_metadata(metadata)
+    , m_backend(backend)
     , m_objectStore(objectStore)
     , m_transaction(transaction)
     , m_deleted(false)

@@ -58,6 +58,7 @@ public:
     void openConnection(PassRefPtr<IDBCallbacks>);
     void deleteDatabase(PassRefPtr<IDBCallbacks>);
 
+    virtual IDBDatabaseMetadata metadata() const;
     virtual String name() const { return m_name; }
     virtual String version() const { return m_version; }
     virtual PassRefPtr<DOMStringList> objectStoreNames() const;

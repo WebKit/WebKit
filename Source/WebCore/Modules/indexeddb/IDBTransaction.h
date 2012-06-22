@@ -35,6 +35,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
+#include "IDBMetadata.h"
 #include "IDBTransactionBackendInterface.h"
 #include "IDBTransactionCallbacks.h"
 #include <wtf/HashSet.h>
@@ -142,6 +143,9 @@ private:
 
     typedef HashMap<String, RefPtr<IDBObjectStore> > IDBObjectStoreMap;
     IDBObjectStoreMap m_objectStoreMap;
+
+    typedef HashMap<RefPtr<IDBObjectStore>, IDBObjectStoreMetadata> IDBObjectStoreMetadataMap;
+    IDBObjectStoreMetadataMap m_objectStoreCleanupMap;
 
     HashSet<IDBCursor*> m_openCursors;
 

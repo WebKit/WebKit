@@ -1,3 +1,32 @@
+2012-06-22  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Snapshot metadata in front end to avoid IPC round-trips
+        https://bugs.webkit.org/show_bug.cgi?id=88467
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/metadata-expected.txt: Added.
+        * storage/indexeddb/metadata.html: Added.
+        * storage/indexeddb/resources/metadata.js: Added.
+        (test):
+        (firstOpen.request.onsuccess.request.onsuccess.trans.oncomplete):
+        (firstOpen.request.onsuccess.request.onsuccess):
+        (firstOpen.request.onsuccess):
+        (firstOpen):
+        (secondOpen.request.onsuccess.request.onsuccess.trans.oncomplete):
+        (secondOpen.request.onsuccess.request.onsuccess):
+        (secondOpen.request.onsuccess):
+        (secondOpen):
+        (thirdOpen.request.onsuccess.request.onsuccess.trans.onabort):
+        (thirdOpen.request.onsuccess.request.onsuccess):
+        (thirdOpen.request.onsuccess):
+        (thirdOpen):
+        (fourthOpen.request.onsuccess.request.onsuccess.trans.oncomplete):
+        (fourthOpen.request.onsuccess.request.onsuccess):
+        (fourthOpen.request.onsuccess):
+        (fourthOpen):
+        (checkState):
+
 2012-06-22  Jon Lee  <jonlee@apple.com>
 
         editing/spelling/grammar-edit-word.html fails on WK2 bots

@@ -72,6 +72,14 @@ IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(const IDBDatabaseBackendImp
 {
 }
 
+IDBObjectStoreMetadata IDBObjectStoreBackendImpl::metadata() const
+{
+    IDBObjectStoreMetadata metadata(m_name, m_keyPath, m_autoIncrement);
+    for (IndexMap::const_iterator it = m_indexes.begin(); it != m_indexes.end(); ++it)
+        metadata.indexes.set(it->first, it->second->metadata());
+    return metadata;
+}
+
 PassRefPtr<DOMStringList> IDBObjectStoreBackendImpl::indexNames() const
 {
     RefPtr<DOMStringList> indexNames = DOMStringList::create();

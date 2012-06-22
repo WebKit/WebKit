@@ -1,3 +1,97 @@
+2012-06-22  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Snapshot metadata in front end to avoid IPC round-trips
+        https://bugs.webkit.org/show_bug.cgi?id=88467
+
+        Reviewed by Tony Chang.
+
+        Define a new type (IDBDatabaseMetadata) that captures the "schema" of an
+        IDB database (name, version, properties of stores, properties of indexes).
+        Add a method for the front end to request this from the back end once up
+        front to avoid later calls (which may be slow IPC calls in ports). Implement
+        IDB spec logic that the metadata should be frozen for a particular IDBDatabase
+        connection, and only change within a version change transaction, and the spec's
+        funky requirement for aborted version change transactions.
+
+        Test: storage/indexeddb/metadata.html
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::IDBDatabase): Fetch metadata from back end when connection is created.
+        (WebCore::IDBDatabase::transactionCreated):
+        (WebCore::IDBDatabase::transactionFinished): Update metadata at the end of a transaction in 
+        case it was rolled back.
+        (WebCore::IDBDatabase::objectStoreNames): Move implementation to front-end.
+        (WebCore):
+        (WebCore::IDBDatabase::createObjectStore): Update local copy of metadata.
+        (WebCore::IDBDatabase::deleteObjectStore): Update local copy of metadata.
+        * Modules/indexeddb/IDBDatabase.h:
+        (WebCore::IDBDatabase::name): Move implementation to front-end.
+        (WebCore::IDBDatabase::version): Move implementation to front-end.
+        (IDBDatabase):
+        (WebCore::IDBDatabase::metadata):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::metadata): Construct a metadata snapshot.
+        (WebCore):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h:
+        (WebCore):
+        (IDBDatabaseBackendInterface):
+        * Modules/indexeddb/IDBIndex.cpp: Store a copy of the metadata, which will never
+        change during the lifetime of the index.
+        (WebCore::IDBIndex::IDBIndex):
+        * Modules/indexeddb/IDBIndex.h:
+        (WebCore::IDBIndex::create):
+        (WebCore::IDBIndex::name): Move implementation to front-end.
+        (WebCore::IDBIndex::objectStore): Return RefPtr (unrelated tidying).
+        (WebCore::IDBIndex::keyPath): Move implementation to front-end.
+        (WebCore::IDBIndex::unique): Move implementation to front-end.
+        (WebCore::IDBIndex::multiEntry): Move implementation to front-end.
+        (IDBIndex):
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::metadata): Construct a metadata snapshot.
+        (WebCore):
+        * Modules/indexeddb/IDBIndexBackendImpl.h:
+        (IDBIndexBackendImpl):
+        * Modules/indexeddb/IDBMetadata.h: Added new structs.
+        (WebCore):
+        (WebCore::IDBDatabaseMetadata::IDBDatabaseMetadata):
+        (IDBDatabaseMetadata):
+        (WebCore::IDBObjectStoreMetadata::IDBObjectStoreMetadata):
+        (IDBObjectStoreMetadata):
+        (WebCore::IDBIndexMetadata::IDBIndexMetadata):
+        (IDBIndexMetadata):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::IDBObjectStore): Store a "live" copy of the metadata, and
+        and copy in case of an aborted version change transaction.
+        (WebCore::IDBObjectStore::indexNames): Move implementation to front-end.
+        (WebCore::IDBObjectStore::createIndex): Update metadata to include new index.
+        (WebCore::IDBObjectStore::index): Pass along metadata to instance constructor.
+        (WebCore::IDBObjectStore::deleteIndex): Delete index from metadata.
+        * Modules/indexeddb/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::create):
+        (WebCore::IDBObjectStore::name): Move implementation to front-end.
+        (WebCore::IDBObjectStore::keyPath): Move implementation to front-end.
+        (WebCore::IDBObjectStore::transaction): Return RefPtr (unrelated tidying).
+        (WebCore::IDBObjectStore::autoIncrement): Move implementation to front-end.
+        (WebCore::IDBObjectStore::metadata): Allow copying the metadata, in case of abort.
+        (WebCore::IDBObjectStore::resetMetadata): Allow setting the metadata, in case of abort.
+        (IDBObjectStore):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::metadata): Construct a metadata snapshot.
+        (WebCore):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h:
+        (WebCore):
+        (IDBObjectStoreBackendImpl):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::objectStore): Pass along metadata to instance constructor.
+        (WebCore::IDBTransaction::objectStoreCreated): Track stores changed during transaction.
+        (WebCore::IDBTransaction::objectStoreDeleted):Track stores changed during transaction.
+        (WebCore::IDBTransaction::onAbort): Revert stores metadata potentially changed during transaction.
+        * Modules/indexeddb/IDBTransaction.h:
+        (IDBTransaction):
+        * WebCore.gypi:
+
 2012-06-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSLock should be per-JSGlobalData

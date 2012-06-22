@@ -31,6 +31,10 @@
 #include "platform/WebString.h"
 #include "platform/WebVector.h"
 
+namespace WebCore {
+struct IDBDatabaseMetadata;
+}
+
 namespace WebKit {
 
 struct WebIDBMetadata {
@@ -62,6 +66,11 @@ struct WebIDBMetadata {
             , unique(false)
             , multiEntry(false) { }
     };
+
+#if WEBKIT_IMPLEMENTATION
+    WebIDBMetadata(const WebCore::IDBDatabaseMetadata&);
+    operator WebCore::IDBDatabaseMetadata() const;
+#endif
 };
 
 

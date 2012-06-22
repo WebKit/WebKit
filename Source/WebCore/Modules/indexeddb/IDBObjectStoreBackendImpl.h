@@ -28,6 +28,7 @@
 
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBKeyPath.h"
+#include "IDBMetadata.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
@@ -40,6 +41,7 @@ class IDBDatabaseBackendImpl;
 class IDBIndexBackendImpl;
 class IDBTransactionBackendInterface;
 class ScriptExecutionContext;
+struct IDBObjectStoreMetadata;
 
 class IDBObjectStoreBackendImpl : public IDBObjectStoreBackendInterface {
 public:
@@ -61,6 +63,7 @@ public:
     }
     void setId(int64_t id) { m_id = id; }
 
+    virtual IDBObjectStoreMetadata metadata() const;
     virtual String name() const { return m_name; }
     virtual IDBKeyPath keyPath() const { return m_keyPath; }
     virtual PassRefPtr<DOMStringList> indexNames() const;

@@ -31,6 +31,7 @@
 #include "IDBIndex.h"
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
+#include "IDBMetadata.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
@@ -49,18 +50,18 @@ class IDBAny;
 
 class IDBObjectStore : public RefCounted<IDBObjectStore> {
 public:
-    static PassRefPtr<IDBObjectStore> create(PassRefPtr<IDBObjectStoreBackendInterface> idbObjectStore, IDBTransaction* transaction)
+    static PassRefPtr<IDBObjectStore> create(const IDBObjectStoreMetadata& metadata, PassRefPtr<IDBObjectStoreBackendInterface> backend, IDBTransaction* transaction)
     {
-        return adoptRef(new IDBObjectStore(idbObjectStore, transaction));
+        return adoptRef(new IDBObjectStore(metadata, backend, transaction));
     }
     ~IDBObjectStore() { }
 
     // Implement the IDBObjectStore IDL
-    String name() const;
-    PassRefPtr<IDBAny> keyPath() const;
+    const String name() const { return m_metadata.name; }
+    PassRefPtr<IDBAny> keyPath() const { return m_metadata.keyPath; }
     PassRefPtr<DOMStringList> indexNames() const;
-    IDBTransaction* transaction() const;
-    bool autoIncrement() const;
+    PassRefPtr<IDBTransaction> transaction() const { return m_transaction; }
+    bool autoIncrement() const { return m_metadata.autoIncrement; }
 
     PassRefPtr<IDBRequest> add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, ExceptionCode& ec) { return add(context, value, 0, ec);  }
     PassRefPtr<IDBRequest> put(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, ExceptionCode& ec) { return put(context, value, 0, ec);  }
@@ -97,10 +98,14 @@ public:
     void markDeleted() { m_deleted = true; }
     void transactionFinished();
 
+    IDBObjectStoreMetadata metadata() const { return m_metadata; }
+    void setMetadata(const IDBObjectStoreMetadata& metadata) { m_metadata = metadata; }
+
 private:
-    IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface>, IDBTransaction*);
+    IDBObjectStore(const IDBObjectStoreMetadata&, PassRefPtr<IDBObjectStoreBackendInterface>, IDBTransaction*);
     void removeTransactionFromPendingList();
 
+    IDBObjectStoreMetadata m_metadata;
     RefPtr<IDBObjectStoreBackendInterface> m_backend;
     RefPtr<IDBTransaction> m_transaction;
     bool m_deleted;

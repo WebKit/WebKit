@@ -41,6 +41,7 @@ class IDBDatabaseCallbacks;
 class IDBKeyPath;
 class IDBObjectStoreBackendInterface;
 class IDBTransactionBackendInterface;
+struct IDBDatabaseMetadata;
 
 typedef int ExceptionCode;
 
@@ -52,6 +53,7 @@ class IDBDatabaseBackendInterface : public ThreadSafeRefCounted<IDBDatabaseBacke
 public:
     virtual ~IDBDatabaseBackendInterface() { }
 
+    virtual IDBDatabaseMetadata metadata() const = 0;
     virtual String name() const = 0;
     virtual String version() const = 0;
     virtual PassRefPtr<DOMStringList> objectStoreNames() const = 0;

@@ -42,6 +42,7 @@ public:
     static PassRefPtr<WebCore::IDBDatabaseBackendInterface> create(PassOwnPtr<WebIDBDatabase>);
     virtual ~IDBDatabaseBackendProxy();
 
+    virtual WebCore::IDBDatabaseMetadata metadata() const;
     virtual String name() const;
     virtual String version() const;
     virtual PassRefPtr<WebCore::DOMStringList> objectStoreNames() const;

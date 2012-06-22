@@ -134,6 +134,14 @@ PassRefPtr<IDBBackingStore> IDBDatabaseBackendImpl::backingStore() const
     return m_backingStore;
 }
 
+IDBDatabaseMetadata IDBDatabaseBackendImpl::metadata() const
+{
+    IDBDatabaseMetadata metadata(m_name, m_version);
+    for (ObjectStoreMap::const_iterator it = m_objectStores.begin(); it != m_objectStores.end(); ++it)
+        metadata.objectStores.set(it->first, it->second->metadata());
+    return metadata;
+}
+
 PassRefPtr<DOMStringList> IDBDatabaseBackendImpl::objectStoreNames() const
 {
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();

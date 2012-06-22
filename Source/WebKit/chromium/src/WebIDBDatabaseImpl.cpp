@@ -32,9 +32,11 @@
 #include "IDBCallbacksProxy.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseCallbacksProxy.h"
+#include "IDBMetadata.h"
 #include "IDBTransactionBackendInterface.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBDatabaseCallbacks.h"
+#include "WebIDBMetadata.h"
 #include "WebIDBObjectStoreImpl.h"
 #include "WebIDBTransactionImpl.h"
 
@@ -49,6 +51,11 @@ WebIDBDatabaseImpl::WebIDBDatabaseImpl(PassRefPtr<IDBDatabaseBackendInterface> d
 
 WebIDBDatabaseImpl::~WebIDBDatabaseImpl()
 {
+}
+
+WebIDBMetadata WebIDBDatabaseImpl::metadata() const
+{
+    return m_databaseBackend->metadata();
 }
 
 WebString WebIDBDatabaseImpl::name() const

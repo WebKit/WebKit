@@ -1,3 +1,33 @@
+2012-06-22  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Snapshot metadata in front end to avoid IPC round-trips
+        https://bugs.webkit.org/show_bug.cgi?id=88467
+
+        Reviewed by Tony Chang.
+
+        Add conversions to/from WebCore IDB metadata type and plumbing for routing the
+        IDBDatabaseBackendInterface::metadata() call through the public API..
+
+        * WebKit.gyp: New file added.
+        * public/WebIDBMetadata.h: Conversion functions.
+        (WebCore):
+        (WebIDBMetadata):
+        * src/IDBDatabaseBackendProxy.cpp: Plumbing.
+        (WebKit::IDBDatabaseBackendProxy::metadata):
+        (WebKit):
+        * src/IDBDatabaseBackendProxy.h: Plumbing.
+        (IDBDatabaseBackendProxy):
+        * src/WebIDBDatabaseImpl.cpp: Plumbing.
+        (WebKit::WebIDBDatabaseImpl::metadata):
+        (WebKit):
+        * src/WebIDBDatabaseImpl.h: Plumbing.
+        (WebKit):
+        (WebIDBDatabaseImpl):
+        * src/WebIDBMetadata.cpp: Added - conversion functions.
+        (WebKit):
+        (WebKit::WebIDBMetadata::WebIDBMetadata):
+        (WebKit::WebIDBMetadata::operator IDBDatabaseMetadata):
+
 2012-06-22  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Browser Plugin: Expose advanceFocus to WebKit API so that guests can advance focus of theirs embedders

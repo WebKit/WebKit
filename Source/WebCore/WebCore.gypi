@@ -1492,6 +1492,7 @@
             'Modules/indexeddb/IDBLevelDBCoding.h',
             'Modules/indexeddb/IDBLevelDBBackingStore.cpp',
             'Modules/indexeddb/IDBLevelDBBackingStore.h',
+            'Modules/indexeddb/IDBMetadata.h',
             'Modules/indexeddb/IDBObjectStore.cpp',
             'Modules/indexeddb/IDBObjectStore.h',
             'Modules/indexeddb/IDBObjectStoreBackendImpl.cpp',

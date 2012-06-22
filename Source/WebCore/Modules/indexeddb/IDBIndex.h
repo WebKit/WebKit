@@ -30,6 +30,8 @@
 #include "IDBIndexBackendInterface.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
+#include "IDBMetadata.h"
+#include "IDBObjectStore.h"
 #include "IDBRequest.h"
 #include "PlatformString.h"
 #include <wtf/Forward.h>
@@ -42,18 +44,18 @@ class IDBObjectStore;
 
 class IDBIndex : public RefCounted<IDBIndex> {
 public:
-    static PassRefPtr<IDBIndex> create(PassRefPtr<IDBIndexBackendInterface> backend, IDBObjectStore* objectStore, IDBTransaction* transaction)
+    static PassRefPtr<IDBIndex> create(const IDBIndexMetadata& metadata, PassRefPtr<IDBIndexBackendInterface> backend, IDBObjectStore* objectStore, IDBTransaction* transaction)
     {
-        return adoptRef(new IDBIndex(backend, objectStore, transaction));
+        return adoptRef(new IDBIndex(metadata, backend, objectStore, transaction));
     }
     ~IDBIndex();
 
     // Implement the IDL
-    String name() const { return m_backend->name(); }
-    IDBObjectStore* objectStore() const { return m_objectStore.get(); }
-    PassRefPtr<IDBAny> keyPath() const { return m_backend->keyPath(); }
-    bool unique() const { return m_backend->unique(); }
-    bool multiEntry() const { return m_backend->multiEntry(); }
+    const String name() const { return m_metadata.name; }
+    PassRefPtr<IDBObjectStore> objectStore() const { return m_objectStore; }
+    PassRefPtr<IDBAny> keyPath() const { return m_metadata.keyPath; }
+    bool unique() const { return m_metadata.unique; }
+    bool multiEntry() const { return m_metadata.multiEntry; }
 
     // FIXME: Try to modify the code generator so this is unneeded.
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) { return openCursor(context, static_cast<IDBKeyRange*>(0), ec); }
@@ -83,8 +85,9 @@ public:
     void markDeleted() { m_deleted = true; }
 
 private:
-    IDBIndex(PassRefPtr<IDBIndexBackendInterface>, IDBObjectStore*, IDBTransaction*);
+    IDBIndex(const IDBIndexMetadata&, PassRefPtr<IDBIndexBackendInterface>, IDBObjectStore*, IDBTransaction*);
 
+    IDBIndexMetadata m_metadata;
     RefPtr<IDBIndexBackendInterface> m_backend;
     RefPtr<IDBObjectStore> m_objectStore;
     RefPtr<IDBTransaction> m_transaction;

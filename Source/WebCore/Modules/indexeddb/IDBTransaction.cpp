@@ -158,25 +158,34 @@ PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, Excep
     if (ec)
         return 0;
 
-    RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(objectStoreBackend, this);
+    const IDBDatabaseMetadata& metadata = m_database->metadata();
+    IDBDatabaseMetadata::ObjectStoreMap::const_iterator mdit = metadata.objectStores.find(name);
+    ASSERT(mdit != metadata.objectStores.end());
+
+    RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(mdit->second, objectStoreBackend, this);
     objectStoreCreated(name, objectStore);
     return objectStore.release();
 }
 
-void IDBTransaction::objectStoreCreated(const String& name, PassRefPtr<IDBObjectStore> objectStore)
+void IDBTransaction::objectStoreCreated(const String& name, PassRefPtr<IDBObjectStore> prpObjectStore)
 {
     ASSERT(!m_transactionFinished);
+    RefPtr<IDBObjectStore> objectStore = prpObjectStore;
     m_objectStoreMap.set(name, objectStore);
+    if (isVersionChange())
+        m_objectStoreCleanupMap.set(objectStore, objectStore->metadata());
 }
 
 void IDBTransaction::objectStoreDeleted(const String& name)
 {
     ASSERT(!m_transactionFinished);
+    ASSERT(isVersionChange());
     IDBObjectStoreMap::iterator it = m_objectStoreMap.find(name);
     if (it != m_objectStoreMap.end()) {
         RefPtr<IDBObjectStore> objectStore = it->second;
         m_objectStoreMap.remove(name);
         objectStore->markDeleted();
+        m_objectStoreCleanupMap.set(objectStore, objectStore->metadata());
     }
 }
 
@@ -239,6 +248,11 @@ void IDBTransaction::onAbort()
         request->abort();
     }
 
+    if (isVersionChange()) {
+        for (IDBObjectStoreMetadataMap::iterator it = m_objectStoreCleanupMap.begin(); it != m_objectStoreCleanupMap.end(); ++it)
+            it->first->setMetadata(it->second);
+    }
+    m_objectStoreCleanupMap.clear();
     closeOpenCursors();
     m_database->transactionFinished(this);
 
@@ -251,6 +265,7 @@ void IDBTransaction::onAbort()
 void IDBTransaction::onComplete()
 {
     ASSERT(!m_transactionFinished);
+    m_objectStoreCleanupMap.clear();
     closeOpenCursors();
     m_database->transactionFinished(this);
 

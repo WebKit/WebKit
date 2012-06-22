@@ -36,6 +36,7 @@
 #include "IDBDatabaseException.h"
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
+#include "IDBMetadata.h"
 #include "IDBObjectStoreBackendImpl.h"
 #include "IDBTracing.h"
 
@@ -65,6 +66,11 @@ IDBIndexBackendImpl::IDBIndexBackendImpl(const IDBDatabaseBackendImpl* database,
 
 IDBIndexBackendImpl::~IDBIndexBackendImpl()
 {
+}
+
+IDBIndexMetadata IDBIndexBackendImpl::metadata() const
+{
+    return IDBIndexMetadata(m_name, m_keyPath, m_unique, m_multiEntry);
 }
 
 void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> range, unsigned short untypedDirection, IDBCursorBackendInterface::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)

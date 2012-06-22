@@ -561,6 +561,7 @@
                 'src/WebIDBKey.cpp',
                 'src/WebIDBKeyPath.cpp',
                 'src/WebIDBKeyRange.cpp',
+                'src/WebIDBMetadata.cpp',
                 'src/WebIDBObjectStoreImpl.cpp',
                 'src/WebIDBObjectStoreImpl.h',
                 'src/WebIDBTransactionImpl.cpp',

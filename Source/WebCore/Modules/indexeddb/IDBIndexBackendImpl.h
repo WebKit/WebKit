@@ -32,6 +32,7 @@
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBIndexBackendInterface.h"
 #include "IDBKeyPath.h"
+#include "IDBMetadata.h"
 
 namespace WebCore {
 
@@ -63,6 +64,7 @@ public:
     bool addingKeyAllowed(const IDBKey* indexKey, const IDBKey* primaryKey = 0);
 
     // Implements IDBIndexBackendInterface.
+    virtual IDBIndexMetadata metadata() const;
     virtual String name() { return m_name; }
     virtual IDBKeyPath keyPath() { return m_keyPath; }
     virtual bool unique() { return m_unique; }
