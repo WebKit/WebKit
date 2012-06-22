@@ -2399,6 +2399,11 @@ void WebViewImpl::scrollFocusedNodeIntoRect(const WebRect& rect)
     frame->view()->scrollElementToRect(elementNode, IntRect(rect.x, rect.y, rect.width, rect.height));
 }
 
+void WebViewImpl::advanceFocus(bool reverse)
+{
+    page()->focusController()->advanceFocus(reverse ? FocusDirectionBackward : FocusDirectionForward, 0);
+}
+
 double WebViewImpl::zoomLevel()
 {
     return m_zoomLevel;

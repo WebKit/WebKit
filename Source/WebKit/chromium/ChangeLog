@@ -1,3 +1,23 @@
+2012-06-22  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Browser Plugin: Expose advanceFocus to WebKit API so that guests can advance focus of theirs embedders
+        https://bugs.webkit.org/show_bug.cgi?id=88827
+
+        Reviewed by Darin Fisher.
+
+        A browser plugin needs to be able to tells its embedder when the guest
+        is done tabbing through controls and wants its embedder to advance its
+        tab position.
+
+        * public/WebView.h:
+        (WebView):
+        (WebKit::WebView::advanceFocus):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::advanceFocus):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-06-22  Jeff Timanus  <twiz@chromium.org>
 
         [Chromium] Change implementing a fast-path for copying GPU-accelerated Canvas2D instances to WebGL textures.

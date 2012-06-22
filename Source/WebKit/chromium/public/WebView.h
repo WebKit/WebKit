@@ -191,6 +191,10 @@ public:
     // window space.
     virtual void scrollFocusedNodeIntoRect(const WebRect&) { }
 
+    // Advance the focus of the WebView forward to the next element or to the
+    // previous element in the tab sequence (if reverse is true).
+    virtual void advanceFocus(bool reverse) { }
+
 
     // Zoom ----------------------------------------------------------------
 
