@@ -1,3 +1,13 @@
+2012-06-22  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        [Chromium] Adjust the displayed elements of the new Chrome media controls.
+        https://bugs.webkit.org/show_bug.cgi?id=89416
+
+        Reviewed by Eric Carlson.
+
+        * platform/chromium/TestExpectations:
+        Skipping a test temporarily for win and mac until rebaseline.
+
 2012-06-22  Florin Malita  <fmalita@chromium.org>
 
         REGRESSION (Safari 5.1.5 - ToT): Crash in RenderSVGRoot::computeReplacedLogicalWidth

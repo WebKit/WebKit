@@ -2998,6 +2998,7 @@ BUGWK89696 WIN MAC : media/video-zoom-controls.html = IMAGE IMAGE+TEXT
 BUGWK89696 WIN MAC : fast/layers/video-layer.html = IMAGE IMAGE+TEXT
 BUGWK89696 WIN MAC : fullscreen/full-screen-stacking-context.html = IMAGE
 BUGWK89696 WIN MAC : http/tests/media/video-buffered-range-contains-currentTime.html = IMAGE
+BUGWK89416 WIN MAC : media/video-empty-source.html = IMAGE IMAGE+TEXT
 
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
 

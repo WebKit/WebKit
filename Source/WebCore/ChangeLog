@@ -1,3 +1,23 @@
+2012-06-22  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        [Chromium] Adjust the displayed elements of the new Chrome media controls.
+        https://bugs.webkit.org/show_bug.cgi?id=89416
+
+        Reviewed by Eric Carlson.
+
+        No new tests - existing media tests cover these cases.
+
+        Remove the volume slider for videos without audio or media resource.
+        Display the transport bar for videos without a media resource.
+        Don't show the fullscreen button for
+
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::reset):
+        Don't display volume slider if media controller has no audio.
+        Don't display fullscreen button if media controller supportsFullscreen().
+        (WebCore::MediaControlRootElementChromium::reportedError):
+        Don't hide the timeline for failed videos, e.g. where the resource doesn't load.
+
 2012-06-22  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Elements] Right-clicking on whitespace should show the same context menu as right-clicking on the tag text

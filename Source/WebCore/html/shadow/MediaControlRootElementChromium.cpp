@@ -236,11 +236,19 @@ void MediaControlRootElementChromium::reset()
 
     m_panelMuteButton->show();
 
-    if (m_volumeSlider)
-        m_volumeSlider->setVolume(m_mediaController->volume());
+    if (m_volumeSlider) {
+        if (!m_mediaController->hasAudio())
+            m_volumeSlider->hide();
+        else {
+            m_volumeSlider->show();
+            m_volumeSlider->setVolume(m_mediaController->volume());
+        }
+    }
 
-    m_fullscreenButton->show();
-
+    if (m_mediaController->supportsFullscreen())
+        m_fullscreenButton->show();
+    else
+        m_fullscreenButton->hide();
     makeOpaque();
 }
 
@@ -302,7 +310,6 @@ void MediaControlRootElementChromium::reportedError()
     if (!page)
         return;
 
-    m_timeline->hide();
     m_panelMuteButton->hide();
     m_volumeSlider->hide();
     m_fullscreenButton->hide();
