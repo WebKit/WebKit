@@ -61,10 +61,10 @@ var testElement = function (element) {
 
 var runTests = function () {
 
-    if (!window.layoutTestController || !window.eventSender)
+    if (!window.testRunner || !window.eventSender)
         return;
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     testElement(0);
     testElement(1);

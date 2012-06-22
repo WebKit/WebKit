@@ -1,10 +1,10 @@
 <body>
 <script>
 onload = function() {
-  if (window.layoutTestController)
+  if (window.testRunner)
   {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
   }
 }
 
@@ -15,8 +15,8 @@ function onFrameLoaded()
     wentBack = true;
     history.back();
     document.getElementById('result').innerText = 'PASS';
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();      
+    if (window.testRunner)
+        testRunner.notifyDone();      
 }
 </script>
 <iframe src="resources/history-back-within-subframe-url-2.html"></iframe>

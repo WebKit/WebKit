@@ -32,8 +32,8 @@ function test()
     pre.textContent = s;
     document.body.appendChild(pre);
     
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();    
+    if (window.testRunner)
+        testRunner.dumpAsText();    
 };
 
 document.ondragstart = function(e)

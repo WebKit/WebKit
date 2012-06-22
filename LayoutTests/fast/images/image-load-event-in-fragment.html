@@ -6,9 +6,9 @@ Image load event fires before the document fragment is attached.</p>
 <!-- Preload an image, possibly making second load synchronous -->
 <img src="resources/boston.gif" style="visibility:hidden">
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 function test()
 {
@@ -25,8 +25,8 @@ function loaded()
 {
     // There is code on the Web expecting that an image is in the document by the time its load event fires.
     document.getElementById("result").innerHTML = (document.getElementById("new")) ? "PASS" : "FAIL";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </body>

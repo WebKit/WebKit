@@ -13,8 +13,8 @@
         document.getElementById("target").style.display = "block";
         document.getElementById("positioned").style.display = "none";
     }
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     document.body.offsetTop;
     test();

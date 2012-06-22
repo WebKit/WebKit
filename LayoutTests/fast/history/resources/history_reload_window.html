@@ -22,8 +22,8 @@
         function closed()
         {
             if (window.opener.i == 2)
-                if (window.layoutTestController)
-                    opener.setTimeout("layoutTestController.notifyDone()", 0);
+                if (window.testRunner)
+                    opener.setTimeout("testRunner.notifyDone()", 0);
         }
         </script>
     </head>

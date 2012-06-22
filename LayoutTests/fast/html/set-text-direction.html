@@ -49,7 +49,7 @@ document.body.appendChild(input);
 expected = 'rtl';
 sentInputEvent = false;
 textarea.focus();
-layoutTestController.setTextDirection('rtl');
+testRunner.setTextDirection('rtl');
 shouldBeTrue('sentInputEvent');
 
 // Change the text direction of the textarea element to LTR.
@@ -57,14 +57,14 @@ shouldBeTrue('sentInputEvent');
 expected = 'ltr';
 sentInputEvent = false;
 textarea.focus();
-layoutTestController.setTextDirection('ltr');
+testRunner.setTextDirection('ltr');
 shouldBeTrue('sentInputEvent');
 
 // Change the text direction of the input element to RTL.
 expected = 'rtl';
 sentInputEvent = false;
 input.focus();
-layoutTestController.setTextDirection('rtl');
+testRunner.setTextDirection('rtl');
 shouldBeTrue('sentInputEvent');
 
 // Change the text direction of the input element to LTR.
@@ -72,7 +72,7 @@ shouldBeTrue('sentInputEvent');
 expected = 'ltr';
 sentInputEvent = false;
 input.focus();
-layoutTestController.setTextDirection('ltr');
+testRunner.setTextDirection('ltr');
 shouldBeTrue('sentInputEvent');
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>

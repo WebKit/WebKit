@@ -3,11 +3,11 @@
 
 var runTests = function () {
 
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     var d = document.getElementById("d1");
 
@@ -17,7 +17,7 @@ var runTests = function () {
             d.open = true;
             setTimeout(function () {
                 d.open = false;
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }, 1);
         }, 1);
     }, 1);

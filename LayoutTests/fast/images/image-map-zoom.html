@@ -9,7 +9,7 @@ function runTest()
     if (!window.eventSender)
         return;
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     eventSender.mouseMoveTo(340, 140);
     eventSender.mouseDown();

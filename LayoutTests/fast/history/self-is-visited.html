@@ -1,16 +1,16 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    window.layoutTestController.keepWebHistory();
-    window.layoutTestController.dumpAsText();
+if (window.testRunner) {
+    window.testRunner.keepWebHistory();
+    window.testRunner.dumpAsText();
 }
 
 function compareStyles()
 {
-    if (window.layoutTestController) {
-        var firstStyle = window.layoutTestController.computedStyleIncludingVisitedInfo(document.getElementById('one'));
-        var secondStyle = window.layoutTestController.computedStyleIncludingVisitedInfo(document.getElementById('two'));
+    if (window.testRunner) {
+        var firstStyle = window.testRunner.computedStyleIncludingVisitedInfo(document.getElementById('one'));
+        var secondStyle = window.testRunner.computedStyleIncludingVisitedInfo(document.getElementById('two'));
         if (firstStyle.color == secondStyle.color || firstStyle.backgroundColor == secondStyle.backgroundColor) {
             document.getElementById('result').innerHTML = 'FAIL';
             return;

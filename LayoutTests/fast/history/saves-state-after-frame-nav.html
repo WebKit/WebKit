@@ -42,16 +42,16 @@ function frameLoaded() {
     if (getTextInput().value == "test")
       document.getElementById("result").innerHTML = "PASS";
 
-    if (window.layoutTestController) {
-      layoutTestController.notifyDone();
+    if (window.testRunner) {
+      testRunner.notifyDone();
     }
   }
 }
 
 onload = function () {
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
   }
   clickLink();
 }

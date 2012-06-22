@@ -3,9 +3,9 @@
 <body onload="onload()">
 </body>
 <script>
-  if (window.layoutTestController) {
-      layoutTestController.clearBackForwardList();
-      layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+      testRunner.clearBackForwardList();
+      testRunner.waitUntilDone();
   }
 
   function onload() {

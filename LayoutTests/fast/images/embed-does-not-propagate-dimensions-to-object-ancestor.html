@@ -2,9 +2,9 @@
 <head>
     <!-- https://bugs.webkit.org/show_bug.cgi?id=17688 - ensure the <embed> element does not propagate its height and width to an object ancestor node -->
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         function measure() {
@@ -13,7 +13,7 @@
                 && document.getElementById("third").height == 100 
                 && document.getElementById("third").width == 100)
               document.getElementById("console").innerHTML = "SUCCESS";
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
 
         function test(){

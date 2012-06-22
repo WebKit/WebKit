@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <script>
-if (layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function runTest() {
@@ -24,8 +24,8 @@ function runTest() {
             return;
         }
         
-        if (layoutTestController)
-            layoutTestController.notifyDone();
+        if (testRunner)
+            testRunner.notifyDone();
     }
 
     frame1.src = frame2.src = 'data:text/html,navigated'; 

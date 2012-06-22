@@ -13,12 +13,12 @@
 <p id="result">
 </p>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.keepWebHistory();
-        layoutTestController.waitUntilDone();
-        layoutTestController.setCanOpenWindows(true);
-        layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.keepWebHistory();
+        testRunner.waitUntilDone();
+        testRunner.setCanOpenWindows(true);
+        testRunner.setCloseRemainingWindowsWhenComplete(true);
         document.getElementById("result").innerText = "FAIL: Test did not complete";
         var button = document.getElementById("button");
         eventSender.mouseMoveTo(button.offsetParent.offsetLeft + button.offsetLeft + button.offsetWidth / 2, button.offsetParent.offsetTop +  button.offsetTop + button.offsetHeight / 2);
@@ -29,9 +29,9 @@
     function childLoaded()
     {
         childWindow.close();
-        if (window.layoutTestController) {
-            document.getElementById("result").innerText = layoutTestController.webHistoryItemCount === 1 ? "PASS" : "FAIL";
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            document.getElementById("result").innerText = testRunner.webHistoryItemCount === 1 ? "PASS" : "FAIL";
+            testRunner.notifyDone();
         }
     }
 </script>

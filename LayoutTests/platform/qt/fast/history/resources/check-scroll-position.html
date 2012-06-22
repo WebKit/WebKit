@@ -1,8 +1,8 @@
 <head>
 <title>Check Scroll Position</title>
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function checkScrollPosition()
 {
@@ -10,8 +10,8 @@ function checkScrollPosition()
         document.getElementById("result").innerHTML = "SUCCESS";
     else
         window.scroll(0, 500);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 onload = checkScrollPosition;

@@ -5,9 +5,9 @@
   <div id="manual-explanation" style="display: none; color: blue">When running this test outside of DRT, please click on the "Navigate" button.</div>
 </body>
 <script>
-  if (window.layoutTestController) {
-      layoutTestController.clearBackForwardList();
-      layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+      testRunner.clearBackForwardList();
+      testRunner.waitUntilDone();
   }
 
   if (window.eventSender) {

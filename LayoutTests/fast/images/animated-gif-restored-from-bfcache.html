@@ -1,12 +1,12 @@
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
 
     function runTest() {
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
 
         var image = document.getElementById("image");
         var console = document.getElementById("console");            
@@ -30,15 +30,15 @@
             else
                 console.innerHTML = "<span style='color:green'>PASS</span>";
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, 100);
     }
 
     window.onpageshow = function(event) {
-        if (!event.persisted && window.layoutTestController) {
-            layoutTestController.queueLoad("about:blank");
-            layoutTestController.queueBackNavigation(1);
+        if (!event.persisted && window.testRunner) {
+            testRunner.queueLoad("about:blank");
+            testRunner.queueBackNavigation(1);
             return;
         }
 

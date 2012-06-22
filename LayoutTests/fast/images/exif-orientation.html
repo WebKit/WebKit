@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.overridePreference('WebKitShouldRespectImageOrientation', 1);
-    layoutTestController.dumpAsText(1);
+if (window.testRunner) {
+    testRunner.overridePreference('WebKitShouldRespectImageOrientation', 1);
+    testRunner.dumpAsText(1);
 }
 
 function log(str) {
@@ -31,7 +31,7 @@ div { display: inline-block; margin-right: 20px; margin-bottom: 10px; width: 100
 </style>
 </head>
 <body onload="load()">
-<b>The images should be rotated respecting their EXIF orientation. This test can only be run with layoutTestController (or by manually setting WebKitShouldRespectImageOrientation to true).</b><br><br>
+<b>The images should be rotated respecting their EXIF orientation. This test can only be run with testRunner (or by manually setting WebKitShouldRespectImageOrientation to true).</b><br><br>
 <div><img id="img1" src="resources/exif-orientation-1-ul.jpg"><br>Normal</div>
 <div><img id="img2" src="resources/exif-orientation-2-ur.jpg"><br>Flipped horizontally</div>
 <div><img id="img3" src="resources/exif-orientation-3-lr.jpg"><br>Rotated 180&deg;</div>

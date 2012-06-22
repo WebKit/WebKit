@@ -12,10 +12,10 @@
   </head>
   <body onload="init()">
     <script>
-      if (window.layoutTestController) {
-          window.layoutTestController.keepWebHistory();
-          window.layoutTestController.dumpAsText();
-          window.layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+          window.testRunner.keepWebHistory();
+          window.testRunner.dumpAsText();
+          window.testRunner.waitUntilDone();
       }
       var oVisitedLink, oUnvisitedLink;
       function init() {
@@ -29,8 +29,8 @@
           document.body.appendChild(document.createElement('strong')).appendChild(document.createTextNode(sDifferent));
           oVisitedLink.style.display = 'none';
           oUnvisitedLink.style.display = 'none';
-          if (window.layoutTestController)
-              window.layoutTestController.notifyDone();
+          if (window.testRunner)
+              window.testRunner.notifyDone();
         }, 0);
       }
       function createInvisibleLink(sUrl) {

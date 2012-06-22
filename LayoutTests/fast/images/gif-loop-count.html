@@ -2,16 +2,16 @@
 <head>
 <script>
     function step2() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     function step1() {
         document.getElementById('replaceme').src = 'resources/gif-loop-count.gif';
         setTimeout("step2()", 200);
     }
     function test() {
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
         }
         setTimeout("step1()", 200);
     }

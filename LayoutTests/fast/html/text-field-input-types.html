@@ -7,7 +7,7 @@
     <script type="text/javascript">
         function test()
         {
-            if (!window.layoutTestController)
+            if (!window.testRunner)
                 return;
             
             const items = [ "email", "password", "tel", "text" , "url" ];
@@ -27,7 +27,7 @@
                 
             document.getElementById('result').innerHTML = result;
 
-            layoutTestController.dumpAsText();
+            testRunner.dumpAsText();
         }
     </script>
 </head>

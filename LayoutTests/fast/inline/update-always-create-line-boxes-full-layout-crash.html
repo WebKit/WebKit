@@ -4,9 +4,9 @@
 .table:nth-last-child(even) { line-height: 100%; }
 </style>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function runTest()
@@ -14,8 +14,8 @@ function runTest()
     var test = document.getElementById('test');
     test.parentNode.removeChild(test);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 setTimeout("runTest()", 0); 

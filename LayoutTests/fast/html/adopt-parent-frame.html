@@ -6,8 +6,8 @@
 <div>Adopting grandparent frame: <span id="grandchild"></span></div>
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function createFrame(id, parent) {
     var iframe = document.createElement('iframe');

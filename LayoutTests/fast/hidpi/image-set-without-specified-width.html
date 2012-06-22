@@ -2,18 +2,18 @@
 <head>
 <script>
     function runTest() {
-        if (!window.layoutTestController || !window.sessionStorage)
+        if (!window.testRunner || !window.sessionStorage)
             return;
 
         if (!sessionStorage.scaleFactorIsSet) {
-            layoutTestController.waitUntilDone();
-            layoutTestController.setBackingScaleFactor(2, scaleFactorIsSet);
+            testRunner.waitUntilDone();
+            testRunner.setBackingScaleFactor(2, scaleFactorIsSet);
         }
         
         if (sessionStorage.pageReloaded && sessionStorage.scaleFactorIsSet) {
             delete sessionStorage.pageReloaded;
             delete sessionStorage.scaleFactorIsSet;
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         } else {
             // Right now there is a bug that image-set does not properly deal with dynamic changes to the scale factor,
             // so to work around that, we must reload the page to get the 2x image.

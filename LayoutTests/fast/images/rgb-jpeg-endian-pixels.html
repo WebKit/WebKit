@@ -9,9 +9,9 @@ order, regardless of the underlying machine pixel buffer endianess.<br><br>
 <pre id="log">PASS</pre>
 
 <script>
-if (window.layoutTestController) {
-    window.layoutTestController.waitUntilDone();
-    window.layoutTestController.dumpAsText();
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
+    window.testRunner.dumpAsText();
 }
 
 function log(message)
@@ -70,7 +70,7 @@ function test(image, expect)
         log('FAIL: ' + e.message);
     }
 
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 </script>

@@ -26,9 +26,9 @@ function runTestStep() {
   var field = document.getElementById('field');
 
   if (hash == "") {
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
     }
     // Location changes need to happen outside the onload handler to generate history entries.
     setTimeout(function() {
@@ -37,8 +37,8 @@ function runTestStep() {
     }, 0);
   } else {
     document.body.innerHTML = (field.value == '') ? 'FAIL' : 'PASS';
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   }
 }
 

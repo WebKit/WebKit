@@ -2,10 +2,10 @@
 onload = function() {
   if (location.search.substring(1).length == 0) {
     sessionStorage.testStage = 0;
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.clearBackForwardList();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.clearBackForwardList();
+      testRunner.waitUntilDone();
     }
   }
 
@@ -31,8 +31,8 @@ onload = function() {
         document.body.innerHTML = "PASS";
       else
         document.body.innerHTML = "FAIL: initialLength=" + sessionStorage.initialLength + ", history.length=" + history.length;
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
       break;
     }
   }, 0);

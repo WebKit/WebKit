@@ -1,14 +1,14 @@
 <html>
 <script>
     function startTest() {
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
-            layoutTestController.setBackingScaleFactor(2, finishTest);
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.setBackingScaleFactor(2, finishTest);
         }
     }
     
     function finishTest() {
-        setTimeout(function() { layoutTestController.notifyDone(); }, 0);
+        setTimeout(function() { testRunner.notifyDone(); }, 0);
     }
     </script>
 </head>

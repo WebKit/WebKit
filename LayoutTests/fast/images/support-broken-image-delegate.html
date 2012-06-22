@@ -2,11 +2,11 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpResourceLoadCallbacks();
-    layoutTestController.dumpAsText();
-    layoutTestController.setShouldPaintBrokenImage(false);
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpResourceLoadCallbacks();
+    testRunner.dumpAsText();
+    testRunner.setShouldPaintBrokenImage(false);
+    testRunner.waitUntilDone();
 }
 
 function loaded() {
@@ -14,9 +14,9 @@ function loaded() {
     var img = document.getElementById('img');
     // The default broken image height in mac is 20.
     result.innerHTML = img.offsetHeight >= 10 ? "FAIL" : "PASS";
-    if (window.layoutTestController) {
-        layoutTestController.setShouldPaintBrokenImage(true);
-        layoutTestController.notifyDone();
+    if (window.testRunner) {
+        testRunner.setShouldPaintBrokenImage(true);
+        testRunner.notifyDone();
     }
 }
 
@@ -24,9 +24,9 @@ function failed() {
     var result = document.getElementById('result');
     // Report 'FAIL' if WebCore didn't report onError on broken image.
     result.innerHTML = "FAIL";
-    if (window.layoutTestController) {
-        layoutTestController.setShouldPaintBrokenImage(true);
-        layoutTestController.notifyDone();
+    if (window.testRunner) {
+        testRunner.setShouldPaintBrokenImage(true);
+        testRunner.notifyDone();
     } 
 }
 </script>

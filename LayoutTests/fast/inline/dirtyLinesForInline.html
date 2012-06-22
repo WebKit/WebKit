@@ -27,9 +27,9 @@ The bug is fixed if we don't crash. </p>
 </div>
 
 <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
             if (window.eventSender) {
                 eventSender.mouseMoveTo(50,75);
                 eventSender.mouseDown();
@@ -53,7 +53,7 @@ The bug is fixed if we don't crash. </p>
                 eventSender.mouseDown();
                 eventSender.mouseUp();
             }
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
 </script>
 

@@ -21,8 +21,8 @@
 </svg>
 <script>
 window.addEventListener ("load", function() {
-    if (window.layoutTestController)
-	    layoutTestController.dumpAsText();
+    if (window.testRunner)
+	    testRunner.dumpAsText();
     document.getElementById("content").firstChild.nodeValue = document.documentElement.innerHTML;
 }, false);
 

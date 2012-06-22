@@ -10,8 +10,8 @@
             document.getElementById("console").appendChild(paragraph);
         }
 
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText(); 
+        if (window.testRunner) {
+            testRunner.dumpAsText(); 
         }
         
         var results = [true, true, false, false];

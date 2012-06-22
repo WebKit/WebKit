@@ -3,10 +3,10 @@
     <script>
     var i = 0;
     function test() {
-        if (window.layoutTestController) {
-            layoutTestController.setCanOpenWindows();
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.setCanOpenWindows();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
             var button = document.getElementById("button");
             eventSender.mouseMoveTo(button.offsetParent.offsetLeft + button.offsetLeft + button.offsetWidth / 2, button.offsetParent.offsetTop +  button.offsetTop + button.offsetHeight / 2);
             eventSender.mouseDown();

@@ -7,22 +7,22 @@
 // 2- loads check-scroll-position.html.
 // 3- executes back and forward navigations.
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-    layoutTestController.handleErrorPages();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.handleErrorPages();
 }
 
 function onPageShow(evt)
 {
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         if (!evt.persisted) {
             // This is the first time the page has been loaded, then setup the
             // to-be-tested scenario.
-            layoutTestController.queueLoad("./non-existent.html");
-            layoutTestController.queueLoad("resources/check-scroll-position.html");
-            layoutTestController.queueBackNavigation(1);
-            layoutTestController.queueForwardNavigation(1);
+            testRunner.queueLoad("./non-existent.html");
+            testRunner.queueLoad("resources/check-scroll-position.html");
+            testRunner.queueBackNavigation(1);
+            testRunner.queueForwardNavigation(1);
         } else {
             // The page is loaded again? So either the DRT doesn't support error page
             // or it doesn't save a history item for the error page.

@@ -20,8 +20,8 @@ function test() {
     $('result').textContent =
         (default_color == size0_color && default_color == size1_color) ? "PASS"
                                                                        : "FAIL";
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 }
 </script>
 <body onload='test();'>

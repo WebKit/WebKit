@@ -1,4 +1,4 @@
-The images should be rotated respecting their EXIF orientation. This test can only be run with layoutTestController (or by manually setting WebKitShouldRespectImageOrientation to true).
+The images should be rotated respecting their EXIF orientation. This test can only be run with testRunner (or by manually setting WebKitShouldRespectImageOrientation to true).
 
 
 Normal 

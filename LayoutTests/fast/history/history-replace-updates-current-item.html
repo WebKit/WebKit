@@ -1,8 +1,8 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpBackForwardList();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpBackForwardList();
+    testRunner.waitUntilDone();
 }
 
 onunload = function() {

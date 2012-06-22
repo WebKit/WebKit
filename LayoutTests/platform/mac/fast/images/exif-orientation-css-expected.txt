@@ -1,4 +1,4 @@
-None of the images should be rotated. This test is only valid when run with layoutTestController (or with WebKitShouldRespectImageOrientation manually set to true).
+None of the images should be rotated. This test is only valid when run with testRunner (or with WebKitShouldRespectImageOrientation manually set to true).
 
 
 Normal 

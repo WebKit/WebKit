@@ -59,7 +59,7 @@ function runTest()
         document.getElementById("log").textContent = "To run the test manually, click " + numClicks + " times in the image rectangle.\n";
         return;
     }
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     eventSender.mouseMoveTo(50, 50);
     for (var click = 0; click < numClicks; ++click) {
         eventSender.mouseDown();

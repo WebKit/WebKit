@@ -9,8 +9,8 @@ function log(message)
 }
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     if (document.body.scrollTop == 0)
         log("PASS: Document is starting scrolled to top.");
     else

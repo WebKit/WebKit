@@ -10,8 +10,8 @@ function log(s)
     document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var h3 = document.getElementById("h3");
 log("h3.firstChild: " + h3.firstChild.tagName);

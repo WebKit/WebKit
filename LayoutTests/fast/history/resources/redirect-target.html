@@ -22,11 +22,11 @@ function testHistoryItemCount()
 }
 
 window.addEventListener("load", function () {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         testHistoryItemCount();
-        layoutTestController.dumpBackForwardList();
-        layoutTestController.notifyDone();
+        testRunner.dumpBackForwardList();
+        testRunner.notifyDone();
     } else {
         testHistoryItemCount();
     }

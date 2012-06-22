@@ -14,11 +14,11 @@
 <iframe a width="200" height="200" onunload="" src="resources/frame-initial-url.html"></iframe>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpBackForwardList();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+    testRunner.dumpBackForwardList();
 } else {
     // Disable page cache when not running under the DRT.
     onunload = function() {};
@@ -28,8 +28,8 @@ function runTest()
 {
     if (sessionStorage.didNav) {
         delete sessionStorage.didNav;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } else {
         // Navigate a timeout to make sure we generate a history entry that we can go back to.
         setTimeout(function() {location.href = 'data:text/html,<script>alert("Going back.");history.back();</' + 'script>';}, 0);

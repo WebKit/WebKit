@@ -5,8 +5,8 @@
 function test(id, reason) {
     alert(document.getElementById(id).style.getPropertyValue("background-image") + " (" + reason + ")");
 }
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 test("testUnquoted", "URL should not be quoted");
 test("testNoQuotesNeeded", "URL should not be quoted");
 test("testShouldQuote", "URL should be quoted");

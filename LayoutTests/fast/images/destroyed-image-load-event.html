@@ -4,9 +4,9 @@ WebCore::ImageEventSender::dispatchPendingEvents() crashes in certain conditions
 <div id="testRun"></div>
 <div id="container"></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function gc()
@@ -29,8 +29,8 @@ function test()
 
     if (--remainingTestRuns < 0) {
         testRunDiv.innerHTML = "PASS";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
 

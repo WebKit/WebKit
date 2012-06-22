@@ -1,8 +1,8 @@
 <body>
 <p>This is a regression test for https://bugs.webkit.org/show_bug.cgi?id=50434. It verifies that a marquee does not animate when scrollAmount is set to 0 by script.</p>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
     var marquee = document.createElement("marquee");
     marquee.innerHTML = "Test";
     marquee.width = "100px";
@@ -10,9 +10,9 @@
     document.body.appendChild(marquee);
     setTimeout(function() {
         marquee.scrollAmount = 0;
-        if (window.layoutTestController) {
+        if (window.testRunner) {
             setTimeout(function() {
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }, 55);
         }
     }, 0);

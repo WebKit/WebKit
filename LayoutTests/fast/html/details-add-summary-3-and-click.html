@@ -12,7 +12,7 @@ var runTests = function () {
     document.getElementById("dt1").appendChild(createNewElement("summary", "new1", "new 1"));
     document.getElementById("dt1").insertBefore(createNewElement("summary", "new2", "new 2"), document.getElementById("new1"));
 
-    if (!window.layoutTestController || !window.eventSender)
+    if (!window.testRunner || !window.eventSender)
         return;
     eventSender.mouseMoveTo(2, 2);
     eventSender.mouseDown();

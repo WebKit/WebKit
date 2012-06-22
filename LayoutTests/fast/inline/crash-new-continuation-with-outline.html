@@ -15,8 +15,8 @@
 <body>
 <p>Test case for bug <a href="https://bugs.webkit.org/show_bug.cgi?id=84774">84774</a>: NULL-deref in RenderBox::clippedOverflowRectForRepaint</p>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var objectElement = document.createElement("object");
     newContent = document.createTextNode("Lorem");

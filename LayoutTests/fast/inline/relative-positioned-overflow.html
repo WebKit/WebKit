@@ -6,8 +6,8 @@
     });
 
     document.body.offsetTop;
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         eventSender.mouseMoveTo(50, 50);
         eventSender.mouseDown();
         eventSender.mouseUp();

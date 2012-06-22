@@ -8,9 +8,9 @@
 </div>
 <pre></pre>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 
     function check() {
@@ -21,6 +21,6 @@
             out.textContent = "PASS";
         else
             out.textContent = "FAIL: image height was " + actual + " expected " + expected;
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 </script>

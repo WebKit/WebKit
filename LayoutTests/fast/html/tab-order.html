@@ -39,8 +39,8 @@
 
         function test()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
             }
 
             var inputs = document.getElementsByTagName('input');

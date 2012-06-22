@@ -6,8 +6,8 @@
 <title>HTML innerHTML test, including custom tags</title>
 <script>
 function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var n = document.getElementsByTagName("emptyCustomTag")[0];
     n.parentNode.insertBefore(document.createElementNS("http://webkit.org/test", "anotherEmptyCustomTag"), n.nextSibling);
     n.parentNode.insertBefore(document.createTextNode("\n"), n.nextSibling);

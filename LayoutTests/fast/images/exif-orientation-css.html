@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.overridePreference('WebKitShouldRespectImageOrientation', 1);
-    layoutTestController.dumpAsText(1);
+if (window.testRunner) {
+    testRunner.overridePreference('WebKitShouldRespectImageOrientation', 1);
+    testRunner.dumpAsText(1);
 }
 
 function log(str) {
@@ -32,7 +32,7 @@ img { width: 100px; height: 100px; background-repeat: no-repeat; }
 </style>
 </head>
 <body onload="load()">
-<b>None of the images should be rotated. This test is only valid when run with layoutTestController (or with WebKitShouldRespectImageOrientation manually set to true).</b><br><br>
+<b>None of the images should be rotated. This test is only valid when run with testRunner (or with WebKitShouldRespectImageOrientation manually set to true).</b><br><br>
 <div class="container"><div class="image" id="img1" style="content: url(resources/exif-orientation-1-ul.jpg)"></div><br>Normal</div>
 <div class="container"><div class="image" id="img2" style="content: url(resources/exif-orientation-2-ur.jpg)"></div><br>Flipped horizontally</div>
 <div class="container"><div class="image" id="img3" style="content: url(resources/exif-orientation-3-lr.jpg)"></div><br>Rotated 180&deg;</div>

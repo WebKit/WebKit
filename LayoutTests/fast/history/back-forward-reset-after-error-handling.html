@@ -20,11 +20,11 @@
     "        console.innerHTML = 'FAIL';                    "+
     "}";
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-        layoutTestController.handleErrorPages();
-        layoutTestController.dumpBackForwardList();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+        testRunner.handleErrorPages();
+        testRunner.dumpBackForwardList();
     }
 
     function onPageShow(evt)
@@ -32,11 +32,11 @@
         if (!evt.persisted) {
             // this is the first time the page has been loaded, then setup the
             // to-be-tested scenario.
-            layoutTestController.queueLoad("./non-existent.html");
-            layoutTestController.queueBackNavigation(1);
-            layoutTestController.queueForwardNavigation(1);
-            layoutTestController.queueBackNavigation(1);
-            layoutTestController.queueNonLoadingScript("eval(\"" + isOkToContinue + "\")");
+            testRunner.queueLoad("./non-existent.html");
+            testRunner.queueBackNavigation(1);
+            testRunner.queueForwardNavigation(1);
+            testRunner.queueBackNavigation(1);
+            testRunner.queueNonLoadingScript("eval(\"" + isOkToContinue + "\")");
         }
     }
 

@@ -10,8 +10,8 @@ onhashchange = function() {
   }
   if (location.hash == "") {
     parent.document.getElementById("result").innerText = "PASS";
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   }
 }
 </script>

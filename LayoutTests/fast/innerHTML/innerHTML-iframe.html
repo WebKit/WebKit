@@ -1,12 +1,12 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 setTimeout(function(){
         document.body.innerHTML = "<b>PASS:</b> body and iframe cleared without crashing.";
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }, 0);
 </script>
 <body onload='document.getElementById("x").innerHTML = 1'>

@@ -4,17 +4,17 @@ Images cannot be dynamically added to image documents.</p>
 <p id=result>Onload was not called, which is not good. But is the square below green?</p>
 <iframe src="resources/test-load.jpg" width=100 height=100 frameborder=0></iframe>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function loaded()
 {
     if (frames[0].document.getElementById("green").naturalWidth == 16)
         document.getElementById("result").innerHTML = "PASS";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function test()

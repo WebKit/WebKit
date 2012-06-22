@@ -12,14 +12,14 @@
     <script>
         function step2()
         {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
 
         function step1()
         {
-            if (window.layoutTestController)
-                layoutTestController.display();
+            if (window.testRunner)
+                testRunner.display();
             document.getElementById("target").style.display="none";
             document.body.offsetTop;
             setTimeout("step2()", 200);
@@ -27,9 +27,9 @@
 
         function test()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
             setTimeout("step1()", 100);
         }
