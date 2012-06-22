@@ -1,3 +1,12 @@
+2012-06-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening after r120924.
+
+        * platform/qt-5.0-wk1/editing/inserting/4960120-1-expected.png: Added.
+        * platform/qt-5.0-wk1/editing/inserting/4960120-1-expected.txt: Added.
+        * platform/qt-5.0-wk1/editing/inserting/before-after-input-element-expected.png: Added.
+        * platform/qt-5.0-wk1/editing/inserting/before-after-input-element-expected.txt: Added.
+
 2012-06-22  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r117738):[Forms] validationMessage IDL attribute should not have range overflow message if value isn't range overflow
