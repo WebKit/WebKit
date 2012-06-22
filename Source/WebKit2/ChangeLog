@@ -1,3 +1,30 @@
+2012-06-22  Jocelyn Turcotte  <turcotte.j@gmail.com>
+
+        [Qt] Fix the remote inspector loading problems on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=89747
+
+        Reviewed by Simon Hausmann.
+
+        Reverse the creation order of the inter-dependent WebSocketServerConnection
+        and SocketStreamHandle to make sure that the later has a client properly
+        set on construction.
+
+        This is to work around the assert on m_state in SocketStreamHandle::setClient.
+
+        * UIProcess/InspectorServer/WebSocketServer.cpp:
+        (WebKit::WebSocketServer::didAcceptConnection):
+        * UIProcess/InspectorServer/WebSocketServer.h:
+        (WebKit::WebSocketServer::client):
+        (WebSocketServer):
+        * UIProcess/InspectorServer/WebSocketServerConnection.cpp:
+        (WebKit::WebSocketServerConnection::WebSocketServerConnection):
+        (WebKit::WebSocketServerConnection::setSocketHandle):
+        (WebKit):
+        * UIProcess/InspectorServer/WebSocketServerConnection.h:
+        (WebSocketServerConnection):
+        * UIProcess/InspectorServer/qt/WebSocketServerQt.cpp:
+        (WebKit::QtTcpServerHandler::handleNewConnection):
+
 2012-06-22  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2] FindController::hideFindUI should unmark highlighted text matches

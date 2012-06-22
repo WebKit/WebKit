@@ -49,11 +49,12 @@ class WebSocketServerClient;
 class WebSocketServerConnection : public WebCore::SocketStreamHandleClient {
 public:
     enum WebSocketServerMode { HTTP, WebSocket };
-    WebSocketServerConnection(PassRefPtr<WebCore::SocketStreamHandle>, WebSocketServerClient*, WebSocketServer*);
+    WebSocketServerConnection(WebSocketServerClient*, WebSocketServer*);
     virtual ~WebSocketServerConnection();
 
     unsigned identifier() const { return m_identifier; }
     void setIdentifier(unsigned id) { m_identifier = id; }
+    void setSocketHandle(PassRefPtr<WebCore::SocketStreamHandle>);
 
     // Sending data over the connection.
     void sendWebSocketMessage(const String& message);

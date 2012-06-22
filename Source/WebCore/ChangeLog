@@ -1,3 +1,18 @@
+2012-06-22  Jocelyn Turcotte  <turcotte.j@gmail.com>
+
+        [Qt] Fix the remote inspector loading problems on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=89747
+
+        Reviewed by Simon Hausmann.
+
+        Make sure that the state of a SocketStreamHandle is set properly
+        when created from an existing QTcpSocket.
+
+        This fixes the inspectorserver Qt api auto test on Mac.
+
+        * platform/network/qt/SocketStreamHandleQt.cpp:
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+
 2012-06-22  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r117738):[Forms] validationMessage IDL attribute should not have range overflow message if value isn't range overflow

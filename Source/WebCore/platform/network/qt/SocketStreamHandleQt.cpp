@@ -191,6 +191,8 @@ SocketStreamHandle::SocketStreamHandle(QTcpSocket* socket, SocketStreamHandleCli
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, m_client);
     m_p = new SocketStreamHandlePrivate(this, socket);
+    if (socket->isOpen())
+        m_state = Open;
 }
 
 SocketStreamHandle::~SocketStreamHandle()

@@ -45,19 +45,23 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebSocketServerConnection::WebSocketServerConnection(PassRefPtr<SocketStreamHandle> socket, WebSocketServerClient* client, WebSocketServer* server)
+WebSocketServerConnection::WebSocketServerConnection(WebSocketServerClient* client, WebSocketServer* server)
     : m_identifier(0)
     , m_mode(HTTP)
-    , m_socket(socket)
     , m_server(server)
     , m_client(client)
 {
-    m_socket->setClient(this);
 }
 
 WebSocketServerConnection::~WebSocketServerConnection()
 {
     shutdownNow();
+}
+
+void WebSocketServerConnection::setSocketHandle(PassRefPtr<WebCore::SocketStreamHandle> socket)
+{
+    ASSERT(!m_socket);
+    m_socket = socket;
 }
 
 void WebSocketServerConnection::shutdownNow()

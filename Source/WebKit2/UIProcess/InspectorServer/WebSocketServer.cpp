@@ -82,9 +82,9 @@ void WebSocketServer::close()
     m_bindAddress = String();
 }
 
-void WebSocketServer::didAcceptConnection(PassRefPtr<SocketStreamHandle> socketHandle)
+void WebSocketServer::didAcceptConnection(PassOwnPtr<WebSocketServerConnection> connection)
 {
-    m_connections.append(adoptPtr(new WebSocketServerConnection(socketHandle, m_client, this)));
+    m_connections.append(connection);
 }
 
 void WebSocketServer::didCloseWebSocketServerConnection(WebSocketServerConnection* connection)

@@ -23,6 +23,7 @@
 #include "WebSocketServerQt.h"
 
 #include "WebSocketServer.h"
+#include "WebSocketServerConnection.h"
 #include <WebCore/SocketStreamHandle.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -55,7 +56,9 @@ void QtTcpServerHandler::handleNewConnection()
 {
     QTcpSocket* socket = m_serverSocket.nextPendingConnection();
     ASSERT(socket);
-    m_webSocketServer->didAcceptConnection(SocketStreamHandle::create(socket, 0));
+    OwnPtr<WebSocketServerConnection> conection = adoptPtr(new WebSocketServerConnection(m_webSocketServer->client(), m_webSocketServer));
+    conection->setSocketHandle(SocketStreamHandle::create(socket, conection.get()));
+    m_webSocketServer->didAcceptConnection(conection.release());
 }
 
 bool QtTcpServerHandler::listen(const String& bindAddress, unsigned short port)

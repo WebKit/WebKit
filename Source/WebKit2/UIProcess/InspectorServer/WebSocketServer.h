@@ -61,7 +61,8 @@ public:
     ServerState serverState() const { return m_state; };
     void close();
 
-    void didAcceptConnection(PassRefPtr<WebCore::SocketStreamHandle>);
+    WebSocketServerClient* client() const { return m_client; }
+    void didAcceptConnection(PassOwnPtr<WebSocketServerConnection>);
 
 private:
     void didCloseWebSocketServerConnection(WebSocketServerConnection*);
