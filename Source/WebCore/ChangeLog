@@ -1,3 +1,26 @@
+2012-06-21  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in RenderBlock::layoutPositionedObjects.
+        https://bugs.webkit.org/show_bug.cgi?id=89599
+
+        Reviewed by Julien Chaffraix.
+
+        Test: fast/table/table-split-positioned-object-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::splitBlocks): no longer need to explicitly call
+        removePositionedObjects, since it is part of moveChildrenTo.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::hasPositionedObjects): helper to tell if we have
+        positioned objects in our list.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::splitAnonymousBoxesAroundChild): Like r102263, this
+        condition was wrong and while moving children across completely different 
+        trees, we need fullRemoveInsert as true.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::moveChildTo): see code comment.
+        (WebCore::RenderBoxModelObject::moveChildrenTo): see code comment. 
+
 2012-06-21  Kwang Yul Seo  <skyul@company100.net>
 
         Make HTMLDocumentParser::create(DocumentFragment*,Element*, FragmentScriptingPermission) private.

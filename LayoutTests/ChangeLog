@@ -1,3 +1,13 @@
+2012-06-21  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in RenderBlock::layoutPositionedObjects.
+        https://bugs.webkit.org/show_bug.cgi?id=89599
+
+        Reviewed by Julien Chaffraix.
+
+        * fast/table/table-split-positioned-object-crash-expected.txt: Added.
+        * fast/table/table-split-positioned-object-crash.html: Added.
+
 2012-06-21  Tony Gentilcore  <tonyg@chromium.org>
 
         [Chromium][Win] Missing trailing newlines in one text test expectation, debug only

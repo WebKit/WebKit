@@ -2758,6 +2758,11 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(bool fixed, bool useTransform
 
 void RenderBoxModelObject::moveChildTo(RenderBoxModelObject* toBoxModelObject, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert)
 {
+    // FIXME: We need a performant way to handle clearing positioned objects from our list that are
+    // in |child|'s subtree so we could just clear them here. Because of this, we assume that callers
+    // have cleared their positioned objects list for child moves (!fullRemoveInsert) to avoid any badness.
+    ASSERT(!fullRemoveInsert || !isRenderBlock() || !toRenderBlock(this)->hasPositionedObjects());
+
     ASSERT(this == child->parent());
     ASSERT(!beforeChild || toBoxModelObject == beforeChild->parent());
     if (fullRemoveInsert && (toBoxModelObject->isRenderBlock() || toBoxModelObject->isRenderInline())) {
@@ -2770,6 +2775,15 @@ void RenderBoxModelObject::moveChildTo(RenderBoxModelObject* toBoxModelObject, R
 
 void RenderBoxModelObject::moveChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert)
 {
+    // This condition is rarely hit since this function is usually called on
+    // anonymous blocks which can no longer carry positioned objects (see r120761)
+    // or when fullRemoveInsert is false.
+    if (fullRemoveInsert && isRenderBlock()) {
+        RenderBlock* block = toRenderBlock(this);
+        if (block->hasPositionedObjects())
+            block->removePositionedObjects(0);
+    }
+
     ASSERT(!beforeChild || toBoxModelObject == beforeChild->parent());
     for (RenderObject* child = startChild; child && child != endChild; ) {
         // Save our next sibling as moveChildTo will clear it.
