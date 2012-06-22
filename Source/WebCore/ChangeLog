@@ -1,3 +1,13 @@
+2012-06-22  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: timeline event details popup misses CPU time
+        https://bugs.webkit.org/show_bug.cgi?id=89765
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.Record.prototype.generatePopupContent):
+
 2012-06-22  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Disable c++0x compatibility warnings in JavaScriptCore.gyp when building for Android

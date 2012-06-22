@@ -702,3 +702,4 @@ localizedStrings["Local modifications..."] = "Local modifications...";
 localizedStrings["apply original content"] = "apply original content";
 localizedStrings["apply revision content"] = "apply revision content";
 localizedStrings["revert"] = "revert";
+localizedStrings["CPU Time"] = "CPU Time";
