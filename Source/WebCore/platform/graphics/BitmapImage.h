@@ -179,6 +179,9 @@ public:
     virtual bool notSolidColor();
 #endif
 
+private:
+    void updateSize() const;
+
 protected:
     enum RepetitionCountStatus {
       Unknown,    // We haven't checked the source's repetition count.

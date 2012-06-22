@@ -1,3 +1,27 @@
+2012-06-22  Dean Jackson  <dino@apple.com>
+
+        BitmapImage duplicates code to calculate size
+        https://bugs.webkit.org/show_bug.cgi?id=89728
+        <rdar://problem/11724321>
+
+        Reviewed by Darin Adler.
+
+        Add a new updateSize method to BitmapImage that
+        avoids duplication in the size and
+        sizeRespectingOrientation methods.
+
+        No new tests needed.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::updateSize): new method that will set
+        m_size and m_sizeRespectingOrientation if necessary.
+        (WebCore):
+        (WebCore::BitmapImage::size):
+        (WebCore::BitmapImage::sizeRespectingOrientation): these each
+        now call updateSize rather than duplicate the update code.
+        * platform/graphics/BitmapImage.h:
+        (BitmapImage):
+
 2012-06-22  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Clean up visitDOMWrapper code
