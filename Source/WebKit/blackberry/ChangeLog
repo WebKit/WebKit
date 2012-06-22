@@ -1,3 +1,25 @@
+2012-06-22  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Tap highlight fade animations are added to overlay continuously during pinch zoom.
+        https://bugs.webkit.org/show_bug.cgi?id=89772
+
+        Reviewed by Antonio Gomes.
+
+        When pinch zooming, DefaultTapHighlight::hide is continuously
+        called from the UI thread. This resulted in fade animations being
+        created and added to the override overlay continuously.
+
+        This patch moves the m_visible check so that it applies for both
+        threads.
+
+        Internal PR164183
+
+        * WebKitSupport/DefaultTapHighlight.cpp:
+        (BlackBerry::WebKit::DefaultTapHighlight::draw):
+        (BlackBerry::WebKit::DefaultTapHighlight::hide):
+        * WebKitSupport/DefaultTapHighlight.h:
+        (DefaultTapHighlight):
+
 2012-06-22  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Set WebSecurityEnabled flag accordingly.

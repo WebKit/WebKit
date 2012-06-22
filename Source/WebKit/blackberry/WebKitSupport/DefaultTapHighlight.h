@@ -31,6 +31,7 @@
 #include <BlackBerryPlatformIntRectRegion.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Threading.h>
 
 namespace BlackBerry {
 namespace WebKit {
@@ -69,6 +70,7 @@ private:
     WebCore::Color m_color;
     bool m_visible;
     bool m_shouldHideAfterScroll;
+    Mutex m_mutex;
 };
 
 } // namespace WebKit

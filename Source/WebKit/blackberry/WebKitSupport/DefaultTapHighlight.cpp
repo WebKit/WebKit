@@ -61,7 +61,10 @@ void DefaultTapHighlight::draw(const Platform::IntRectRegion& region, int red, i
     if (rect.isEmpty())
         return;
 
-    m_visible = true;
+    {
+        MutexLocker lock(m_mutex);
+        m_visible = true;
+    }
 
     if (!m_overlay) {
         m_overlay = adoptPtr(new WebOverlay(this));
@@ -82,18 +85,22 @@ void DefaultTapHighlight::hide()
     if (!m_overlay)
         return;
 
+    {
+        MutexLocker lock(m_mutex);
+        if (!m_visible)
+            return;
+        m_visible = false;
+    }
+
     // Since WebAnimation is not thread safe, we create a new one each time instead of reusing the same object on different
     // threads (that would introduce race conditions).
     WebAnimation fadeAnimation = WebAnimation::fadeAnimation(fadeAnimationName(), 1.0, 0.0, ActiveTextFadeAnimationDuration);
 
     // Normally, this method is called on the WebKit thread, but it can also be
     // called from the compositing thread.
-    if (BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread()) {
-        if (!m_visible)
-            return;
-        m_visible = false;
+    if (BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread())
         m_overlay->addAnimation(fadeAnimation);
-    } else if (BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread())
+    else if (BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread())
         m_overlay->override()->addAnimation(fadeAnimation);
 }
 
