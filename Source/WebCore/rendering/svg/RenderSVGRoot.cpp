@@ -173,9 +173,12 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) cons
     if (svg->widthAttributeEstablishesViewport())
         return resolveLengthAttributeForSVG(svg->intrinsicWidth(SVGSVGElement::IgnoreCSSProperties), style()->effectiveZoom(), containingBlock()->availableLogicalWidth(), view());
 
-    // Only SVGs embedded in <object> reach this point.
-    ASSERT(isEmbeddedThroughFrameContainingSVGDocument());
-    return document()->frame()->ownerRenderer()->availableLogicalWidth();
+    // SVG embedded through object/embed/iframe.
+    if (isEmbeddedThroughFrameContainingSVGDocument())
+        return document()->frame()->ownerRenderer()->availableLogicalWidth();
+
+    // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
+    return RenderReplaced::computeReplacedLogicalWidth(includeMaxWidth);
 }
 
 LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
@@ -205,9 +208,12 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
         return resolveLengthAttributeForSVG(height, style()->effectiveZoom(), containingBlock()->availableLogicalHeight(), view());
     }
 
-    // Only SVGs embedded in <object> reach this point.
-    ASSERT(isEmbeddedThroughFrameContainingSVGDocument());
-    return document()->frame()->ownerRenderer()->availableLogicalHeight();
+    // SVG embedded through object/embed/iframe.
+    if (isEmbeddedThroughFrameContainingSVGDocument())
+        return document()->frame()->ownerRenderer()->availableLogicalHeight();
+
+    // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
+    return RenderReplaced::computeReplacedLogicalHeight();
 }
 
 void RenderSVGRoot::layout()
