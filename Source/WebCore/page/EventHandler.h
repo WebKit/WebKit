@@ -48,6 +48,8 @@ class NSView;
 #include <wtf/HashMap.h>
 #endif
 
+class EventHandlerTest;
+
 namespace WebCore {
 
 class Clipboard;
@@ -227,6 +229,8 @@ public:
 #endif
 
 private:
+    friend class ::EventHandlerTest;
+
 #if ENABLE(DRAG_SUPPORT)
     static DragState& dragState();
     static const double TextDragDelay;
@@ -266,7 +270,7 @@ private:
     void autoscrollTimerFired(Timer<EventHandler>*);
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
     
-    bool shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&) const;
+    bool shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&, const PlatformWheelEvent&) const;
     bool mouseDownMayStartSelect() const { return m_mouseDownMayStartSelect; }
 
     static bool isKeyboardOptionTab(KeyboardEvent*);

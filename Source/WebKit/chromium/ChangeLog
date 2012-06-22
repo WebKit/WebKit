@@ -1,3 +1,33 @@
+2012-06-22  Robert Kroeger  <rjkroege@chromium.org>
+
+        Suppress horizontal conversion of PlatformWheelEvents when hasPreciseScrollingDeltas is true
+        https://bugs.webkit.org/show_bug.cgi?id=89580
+
+        WebKit GTK and Chromium Linux force vertical wheel events to
+        scroll horizontally when over horizontal scroll bars.  This is
+        undesirable for touchpad scrolling with hasPreciseScrollingDeltas() == true.
+
+        Added unit tests to show that
+        EventHandler::shouldTurnVerticalTicksIntoHorizontal() is true
+        only for PlatformWheelEvents when !hasPreciseScrollingDeltas().
+
+        Reviewed by Adam Barth.
+
+        * WebKit.gypi:
+        * tests/EventHandlerTest.cpp: Added.
+        (MockScrollbar):
+        (MockScrollbar::MockScrollbar):
+        (MockScrollbar::~MockScrollbar):
+        (MockHitTestResult):
+        (MockHitTestResult::MockHitTestResult):
+        (MockHitTestResult::scrollbar):
+        (MockPlatformWheelEvent):
+        (MockPlatformWheelEvent::MockPlatformWheelEvent):
+        (EventHandlerTest):
+        (EventHandlerTest::EventHandlerTest):
+        (EventHandlerTest::externalShouldTurnVerticalTicksIntoHorizontal):
+        (TEST):
+
 2012-06-22  Amy Ousterhout  <aousterh@chromium.org>
 
         Renamed DeviceOrientation to DeviceOrientationData

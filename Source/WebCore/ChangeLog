@@ -1,3 +1,28 @@
+2012-06-22  Robert Kroeger  <rjkroege@chromium.org>
+
+        Suppress horizontal conversion of PlatformWheelEvents when hasPreciseScrollingDeltas is true
+        https://bugs.webkit.org/show_bug.cgi?id=89580
+
+        WebKit GTK and Chromium Linux force vertical wheel events to
+        scroll horizontally when over horizontal scroll bars.  This is
+        undesirable for touchpad scrolling with
+        hasPreciseScrollingDeltas() == true. Modified shouldTurnVerticalTicksIntoHorizontal
+        to not perform this conversion for PlatformWheelEvents with preciseScrollingDeltas.
+
+        Reviewed by Adam Barth.
+
+        Unit tests in EventHandlerTest.cpp
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::shouldTurnVerticalTicksIntoHorizontal): 
+        (WebCore::EventHandler::handleWheelEvent):
+        * page/EventHandler.h:
+        (EventHandler):
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::shouldTurnVerticalTicksIntoHorizontal):
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::shouldTurnVerticalTicksIntoHorizontal):
+
 2012-06-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: partially instrument DOM Tree native memory.
