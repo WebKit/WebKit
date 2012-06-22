@@ -1,3 +1,15 @@
+2012-06-21  Joone Hur  <joone.hur@intel.com>
+
+        [EFL] Unreviewed gardening, unskip now passing tests.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/viewport/viewport-126-expected.txt: Added.
+        * platform/efl/fast/viewport/viewport-127-expected.txt: Added.
+        * platform/efl/fast/viewport/viewport-65-expected.txt: Added.
+        * platform/efl/fast/viewport/viewport-82-expected.txt: Added.
+        * platform/efl/fast/viewport/viewport-84-expected.txt: Added.
+        * platform/efl/fast/viewport/viewport-87-expected.txt: Added.
+
 2012-06-21  Hans Wennborg  <hans@chromium.org>
 
         s/layoutTestController/testRunner/ in speech tests

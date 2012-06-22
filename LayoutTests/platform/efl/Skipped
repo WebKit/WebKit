@@ -1101,12 +1101,6 @@ editing/spelling/spelling.html
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
 fast/js/global-constructors.html
 fast/text/unicode-variation-selector.html
-fast/viewport/viewport-126.html
-fast/viewport/viewport-127.html
-fast/viewport/viewport-65.html
-fast/viewport/viewport-82.html
-fast/viewport/viewport-84.html
-fast/viewport/viewport-87.html
 
 http/tests/cache/history-only-cached-subresource-loads.html
 http/tests/cache/cancel-during-revalidation-succeeded.html
