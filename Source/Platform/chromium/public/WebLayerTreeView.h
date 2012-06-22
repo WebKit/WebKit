@@ -44,7 +44,6 @@ class WebLayerTreeViewClient;
 class WebLayerTreeViewImpl;
 struct WebPoint;
 struct WebRect;
-struct WebRenderingStats;
 
 class WebLayerTreeView : public WebNonCopyable {
 public:
@@ -173,10 +172,6 @@ public:
     WEBKIT_EXPORT WebGraphicsContext3D* context();
 
     // Debugging / dangerous ---------------------------------------------
-
-    // Fills in a WebRenderingStats struct containing information about the state of the compositor.
-    // This call is relatively expensive in threaded mode as it blocks on the compositor thread.
-    WEBKIT_EXPORT void renderingStats(WebRenderingStats&) const;
 
     // Simulates a lost context. For testing only.
     WEBKIT_EXPORT void loseCompositorContext(int numTimes);

@@ -1,3 +1,24 @@
+2012-06-22  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r121064.
+        http://trac.webkit.org/changeset/121064
+        https://bugs.webkit.org/show_bug.cgi?id=88268
+
+        Broke Chromium Mac build.
+
+        * public/WebView.h:
+        (WebKit):
+        (WebView):
+        * src/WebLayerTreeView.cpp:
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestScrollSimple::layout):
+        (WTF::CCLayerTreeHostTestScrollMultipleRedraw::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestVisibilityAndAllocationControlDrawing::didCommitAndDrawFrame):
+        (WTF::CCLayerTreeHostTestVisibilityAndAllocationControlDrawing::didCommit):
+
 2012-06-22  Dave Tu  <dtu@chromium.org>
 
         [chromium] Expose rendering statistics to WebWidget.

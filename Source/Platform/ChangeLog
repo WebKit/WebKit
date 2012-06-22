@@ -1,3 +1,17 @@
+2012-06-22  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r121064.
+        http://trac.webkit.org/changeset/121064
+        https://bugs.webkit.org/show_bug.cgi?id=88268
+
+        Broke Chromium Mac build.
+
+        * Platform.gypi:
+        * chromium/public/WebLayerTreeView.h:
+        (WebKit):
+        (WebLayerTreeView):
+        * chromium/public/WebRenderingStats.h: Removed.
+
 2012-06-22  Dave Tu  <dtu@chromium.org>
 
         [chromium] Expose rendering statistics to WebWidget.

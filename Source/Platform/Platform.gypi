@@ -94,7 +94,6 @@
             'chromium/public/WebPrivatePtr.h',
             'chromium/public/WebRect.h',
             'chromium/public/WebReferrerPolicy.h',
-            'chromium/public/WebRenderingStats.h',
             'chromium/public/WebSessionDescriptionDescriptor.h',
             'chromium/public/WebSize.h',
             'chromium/public/WebSocketStreamError.h',

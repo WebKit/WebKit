@@ -46,7 +46,6 @@ class CCGraphicsContext;
 class CCLayerChromium;
 class CCLayerTreeHostImpl;
 class CCLayerTreeHostImplClient;
-class CCRenderingStats;
 struct CCScrollAndScaleSet;
 class CCTextureUpdater;
 class ManagedTexture;
@@ -193,11 +192,7 @@ public:
 
     void finishAllRendering();
 
-    int animationFrameNumber() const { return m_animationFrameNumber; }
-
-    int commitNumber() const { return m_commitNumber; }
-
-    void renderingStats(CCRenderingStats&) const;
+    int frameNumber() const { return m_frameNumber; }
 
     const LayerRendererCapabilities& layerRendererCapabilities() const;
 
@@ -285,8 +280,7 @@ private:
 
     CCLayerTreeHostClient* m_client;
 
-    int m_animationFrameNumber;
-    int m_commitNumber;
+    int m_frameNumber;
     bool m_frameIsForDisplay;
 
     OwnPtr<CCProxy> m_proxy;

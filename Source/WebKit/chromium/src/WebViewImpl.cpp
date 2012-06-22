@@ -728,13 +728,6 @@ void WebViewImpl::transferActiveWheelFlingAnimation(const WebActiveWheelFlingPar
     scheduleAnimation();
 }
 
-void WebViewImpl::renderingStats(WebRenderingStats& stats) const
-{
-    ASSERT(isAcceleratedCompositingActive());
-    if (!m_layerTreeView.isNull())
-        m_layerTreeView.renderingStats(stats);
-}
-
 void WebViewImpl::startPageScaleAnimation(const IntPoint& scroll, bool useAnchor, float newScale, double durationSec)
 {
     if (!m_layerTreeView.isNull())

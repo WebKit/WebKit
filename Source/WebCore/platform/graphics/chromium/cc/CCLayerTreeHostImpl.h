@@ -119,7 +119,7 @@ public:
     void setFontAtlas(PassOwnPtr<CCFontAtlas>);
 
     void finishAllRendering();
-    int sourceAnimationFrameNumber() const { return m_sourceAnimationFrameNumber; }
+    int frameNumber() const { return m_frameNumber; }
 
     bool initializeLayerRenderer(PassRefPtr<CCGraphicsContext>, TextureUploaderOption);
     bool isContextLost();
@@ -196,7 +196,7 @@ protected:
 
     CCLayerTreeHostImplClient* m_client;
     int m_sourceFrameNumber;
-    int m_sourceAnimationFrameNumber;
+    int m_frameNumber;
 
 private:
     void computeDoubleTapZoomDeltas(CCScrollAndScaleSet* scrollInfo);

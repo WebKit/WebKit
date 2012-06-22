@@ -31,7 +31,6 @@
 #include "cc/CCFontAtlas.h"
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerTreeHost.h"
-#include "cc/CCRenderingStats.h"
 #include "cc/CCTextureUpdater.h"
 #include "cc/CCTimer.h"
 #include <wtf/CurrentTime.h>
@@ -197,11 +196,6 @@ bool CCSingleThreadProxy::recreateContext()
         m_contextLost = false;
 
     return initialized;
-}
-
-void CCSingleThreadProxy::implSideRenderingStats(CCRenderingStats& stats)
-{
-    stats.numFramesSentToScreen = m_layerTreeHostImpl->sourceAnimationFrameNumber();
 }
 
 const LayerRendererCapabilities& CCSingleThreadProxy::layerRendererCapabilities() const

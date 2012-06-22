@@ -832,7 +832,7 @@ public:
     virtual void layout()
     {
         LayerChromium* root = m_layerTreeHost->rootLayer();
-        if (!m_layerTreeHost->commitNumber())
+        if (!m_layerTreeHost->frameNumber())
             EXPECT_EQ(root->scrollPosition(), m_initialScroll);
         else {
             EXPECT_EQ(root->scrollPosition(), m_initialScroll + m_scrollAmount);
@@ -918,7 +918,7 @@ public:
         root->setScrollable(true);
         root->setMaxScrollPosition(IntSize(100, 100));
 
-        if (!impl->sourceFrameNumber() && impl->sourceAnimationFrameNumber() == 1) {
+        if (!impl->sourceFrameNumber() && impl->frameNumber() == 1) {
             // First draw after first commit.
             EXPECT_EQ(root->scrollDelta(), IntSize());
             root->scrollBy(m_scrollAmount);
@@ -926,7 +926,7 @@ public:
 
             EXPECT_EQ(root->scrollPosition(), m_initialScroll);
             postSetNeedsRedrawToMainThread();
-        } else if (!impl->sourceFrameNumber() && impl->sourceAnimationFrameNumber() == 2) {
+        } else if (!impl->sourceFrameNumber() && impl->frameNumber() == 2) {
             // Second draw after first commit.
             EXPECT_EQ(root->scrollDelta(), m_scrollAmount);
             root->scrollBy(m_scrollAmount);
@@ -936,7 +936,7 @@ public:
             postSetNeedsCommitToMainThread();
         } else if (impl->sourceFrameNumber() == 1) {
             // Third or later draw after second commit.
-            EXPECT_GE(impl->sourceAnimationFrameNumber(), 3);
+            EXPECT_GE(impl->frameNumber(), 3);
             EXPECT_EQ(root->scrollDelta(), IntSize());
             EXPECT_EQ(root->scrollPosition(), m_initialScroll + m_scrollAmount + m_scrollAmount);
             endTest();
@@ -1009,7 +1009,7 @@ public:
 
     virtual void didCommitAndDrawFrame()
     {
-        int lastFrame = m_layerTreeHost->commitNumber() - 1;
+        int lastFrame = m_layerTreeHost->frameNumber() - 1;
 
         // These frames should draw.
         switch (lastFrame) {
@@ -1040,7 +1040,7 @@ public:
 
     virtual void didCommit()
     {
-        int lastFrame = m_layerTreeHost->commitNumber() - 1;
+        int lastFrame = m_layerTreeHost->frameNumber() - 1;
 
         // These frames should not draw.
         switch (lastFrame) {
@@ -2308,7 +2308,7 @@ public:
     virtual void beginCommitOnCCThread(CCLayerTreeHostImpl* impl) OVERRIDE
     {
         EXPECT_EQ(m_rootScrollLayer->scrollPosition(), IntPoint());
-        if (!m_layerTreeHost->commitNumber())
+        if (!m_layerTreeHost->frameNumber())
             EXPECT_EQ(m_childLayer->scrollPosition(), IntPoint());
         else
             EXPECT_EQ(m_childLayer->scrollPosition(), IntPoint() + m_scrollAmount);
@@ -2316,11 +2316,11 @@ public:
 
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl) OVERRIDE
     {
-        if (impl->sourceAnimationFrameNumber() == 1) {
+        if (impl->frameNumber() == 1) {
             EXPECT_EQ(impl->scrollBegin(IntPoint(5, 5), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
             impl->scrollBy(m_scrollAmount);
             impl->scrollEnd();
-        } else if (impl->sourceAnimationFrameNumber() == 2)
+        } else if (impl->frameNumber() == 2)
             endTest();
     }
 

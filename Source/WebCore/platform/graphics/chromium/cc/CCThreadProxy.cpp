@@ -36,7 +36,6 @@
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCInputHandler.h"
 #include "cc/CCLayerTreeHost.h"
-#include "cc/CCRenderingStats.h"
 #include "cc/CCScheduler.h"
 #include "cc/CCScopedThreadProxy.h"
 #include "cc/CCTextureUpdater.h"
@@ -266,17 +265,6 @@ int CCThreadProxy::compositorIdentifier() const
 {
     ASSERT(isMainThread());
     return m_compositorIdentifier;
-}
-
-void CCThreadProxy::implSideRenderingStats(CCRenderingStats& stats)
-{
-    ASSERT(isMainThread());
-
-    CCCompletionEvent completion;
-    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::implSideRenderingStatsOnImplThread,
-                                                       AllowCrossThreadAccess(&completion),
-                                                       AllowCrossThreadAccess(&stats)));
-    completion.wait();
 }
 
 const LayerRendererCapabilities& CCThreadProxy::layerRendererCapabilities() const
@@ -889,13 +877,6 @@ void CCThreadProxy::recreateContextOnImplThread(CCCompletionEvent* completion, C
         *capabilities = m_layerTreeHostImpl->layerRendererCapabilities();
         m_schedulerOnImplThread->didRecreateContext();
     }
-    completion->signal();
-}
-
-void CCThreadProxy::implSideRenderingStatsOnImplThread(CCCompletionEvent* completion, CCRenderingStats* stats)
-{
-    ASSERT(isImplThread());
-    stats->numFramesSentToScreen = m_layerTreeHostImpl->sourceAnimationFrameNumber();
     completion->signal();
 }
 
