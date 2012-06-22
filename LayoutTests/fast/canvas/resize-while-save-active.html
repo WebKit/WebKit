@@ -7,15 +7,18 @@
 <script>
 if (window.testRunner)
     testRunner.dumpAsText()
-var canvas = document.getElementById('mycanvas');
-var ctx = canvas.getContext('2d');
-ctx.fillStyle = "rgb(255,165,0)";
-ctx.fillRect(0, 0, 512, 512);
-ctx.save();
-canvas.width = 256;
-ctx.fillStyle = "rgb(255,165,0)";
-ctx.fillRect(0, 0, 256, 512);
-document.body.appendChild(document.createElement("p")).appendChild(document.createTextNode("If we got this far without an assertion, this test passed."));
+onload = function()
+{
+    var canvas = document.getElementById('mycanvas');
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = "rgb(255,165,0)";
+    ctx.fillRect(0, 0, 512, 512);
+    ctx.save();
+    canvas.width = 256;
+    ctx.fillStyle = "rgb(255,165,0)";
+    ctx.fillRect(0, 0, 256, 512);
+    document.body.appendChild(document.createElement("p")).appendChild(document.createTextNode("If we got this far without an assertion, this test passed."));
+};
 </script>
 </body>
 </html>

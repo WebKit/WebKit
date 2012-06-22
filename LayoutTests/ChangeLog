@@ -1,3 +1,13 @@
+2012-06-21  Tony Gentilcore  <tonyg@chromium.org>
+
+        [Chromium][Win] Missing trailing newlines in one text test expectation, debug only
+        https://bugs.webkit.org/show_bug.cgi?id=89534
+
+        Reviewed by Tony Gentilcore.
+
+        * fast/canvas/resize-while-save-active-expected.txt:
+        * fast/canvas/resize-while-save-active.html: Make test deterministic by running script after load and fix line endings.
+
 2012-06-21  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow][Editing] Assertion in VisibleSelection::adjuseSelectionToAvoidCrossingBoundaries() is triggered.
