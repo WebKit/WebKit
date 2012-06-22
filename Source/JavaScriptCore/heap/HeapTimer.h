@@ -27,6 +27,7 @@
 #define HeapTimer_h
 
 #include <wtf/RetainPtr.h>
+#include <wtf/Threading.h>
 
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
@@ -46,7 +47,8 @@ public:
 #endif
     
     virtual ~HeapTimer();
-    
+
+    void didStartVMShutdown();
     virtual void synchronize();
     virtual void doWork() = 0;
     
@@ -59,6 +61,8 @@ protected:
     RetainPtr<CFRunLoopTimerRef> m_timer;
     RetainPtr<CFRunLoopRef> m_runLoop;
     CFRunLoopTimerContext m_context;
+
+    Mutex m_shutdownMutex;
 #endif
     
 private:

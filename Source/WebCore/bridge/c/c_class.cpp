@@ -34,6 +34,7 @@
 #include "npruntime_impl.h"
 #include <runtime/ScopeChain.h>
 #include <runtime/Identifier.h>
+#include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSObject.h>
 #include <wtf/text/StringHash.h>
@@ -47,8 +48,6 @@ CClass::CClass(NPClass* aClass)
 
 CClass::~CClass()
 {
-    JSLock lock(SilenceAssertionsOnly);
-
     deleteAllValues(_methods);
     _methods.clear();
 
@@ -91,7 +90,7 @@ MethodList CClass::methodsNamed(PropertyName propertyName, Instance* instance) c
     if (_isa->hasMethod && _isa->hasMethod(obj, ident)){
         Method* aMethod = new CMethod(ident); // deleted in the CClass destructor
         {
-            JSLock lock(SilenceAssertionsOnly);
+            JSLockHolder lock(inst->rootObject()->globalObject()->globalData());
             _methods.set(name.impl(), aMethod);
         }
         methodList.append(aMethod);
@@ -114,7 +113,7 @@ Field* CClass::fieldNamed(PropertyName propertyName, Instance* instance) const
     if (_isa->hasProperty && _isa->hasProperty(obj, ident)){
         aField = new CField(ident); // deleted in the CClass destructor
         {
-            JSLock lock(SilenceAssertionsOnly);
+            JSLockHolder lock(inst->rootObject()->globalObject()->globalData());
             _fields.set(name.impl(), aField);
         }
     }

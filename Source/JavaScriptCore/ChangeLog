@@ -1,3 +1,122 @@
+2012-06-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSLock should be per-JSGlobalData
+        https://bugs.webkit.org/show_bug.cgi?id=89123
+
+        Reviewed by Gavin Barraclough.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * API/APIShims.h:
+        (APIEntryShimWithoutLock):
+        (JSC::APIEntryShimWithoutLock::APIEntryShimWithoutLock): Added an extra parameter to the constructor to 
+        determine whether we should ref the JSGlobalData or not. We want to ref all the time except for in the 
+        HeapTimer class because timerDidFire could run after somebody has started to tear down that particular 
+        JSGlobalData, so we wouldn't want to resurrect the ref count of that JSGlobalData from 0 back to 1 after 
+        its destruction has begun. 
+        (JSC::APIEntryShimWithoutLock::~APIEntryShimWithoutLock): Now derefs if it also refed.
+        (JSC::APIEntryShim::APIEntryShim):
+        (APIEntryShim):
+        (JSC::APIEntryShim::~APIEntryShim):
+        (JSC::APIEntryShim::init): Factored out common initialization code for the various APIEntryShim constructors.
+        Also moved the timeoutChecker stop and start here because we need to start after we've grabbed the API lock
+        and before we've released it, which can only done in APIEntryShim.
+        (JSC::APICallbackShim::~APICallbackShim): We no longer need to synchronize here.
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreate):
+        (JSGlobalContextCreateInGroup):
+        (JSGlobalContextRelease):
+        (JSContextCreateBacktrace):
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::tryAllocateSlowCase):
+        * heap/Heap.cpp:
+        (JSC::Heap::protect):
+        (JSC::Heap::unprotect):
+        (JSC::Heap::collect):
+        (JSC::Heap::setActivityCallback):
+        (JSC::Heap::activityCallback):
+        (JSC::Heap::sweeper):
+        * heap/Heap.h: Changed m_activityCallback and m_sweeper to be raw pointers rather than OwnPtrs because they 
+        are now responsible for their own lifetime. Also changed the order of declaration of the GCActivityCallback
+        and the IncrementalSweeper to make sure they're the last things that get initialized during construction to 
+        prevent any issues with uninitialized memory in the JSGlobalData/Heap they might care about.
+        (Heap):
+        * heap/HeapTimer.cpp: Refactored to allow for thread-safe operation and shutdown.
+        (JSC::HeapTimer::~HeapTimer):
+        (JSC::HeapTimer::invalidate):
+        (JSC):
+        (JSC::HeapTimer::didStartVMShutdown): Called at the beginning of ~JSGlobalData. If we're on the same thread 
+        that the HeapTimer is running on, we kill the HeapTimer ourselves. If not, then we set some state in the 
+        HeapTimer and schedule it to fire immediately so that it can notice and kill itself.
+        (JSC::HeapTimer::timerDidFire): We grab our mutex and check our JSGlobalData pointer. If it has been zero-ed
+        out, then we know the VM has started to shutdown and we should kill ourselves. Otherwise, grab the APIEntryShim,
+        but without ref-ing the JSGlobalData (we don't want to bring the JSGlobalData's ref-count from 0 to 1) in case 
+        we were interrupted between releasing our mutex and trying to grab the APILock.
+        * heap/HeapTimer.h: 
+        (HeapTimer):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doWork): We no longer need the API shim here since HeapTimer::timerDidFire handles 
+        all of that for us. 
+        (JSC::IncrementalSweeper::create):
+        * heap/IncrementalSweeper.h:
+        (IncrementalSweeper):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateSlowCase):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::reap):
+        * jsc.cpp:
+        (functionGC):
+        (functionReleaseExecutableMemory):
+        (jscmain):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::evaluate):
+        * runtime/GCActivityCallback.h:
+        (DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::create):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData): Signals to the two HeapTimers (GCActivityCallback and IncrementalSweeper)
+        that the VM has started shutting down. It then waits until the HeapTimer is done with whatever activity 
+        it needs to do before continuing with any further destruction. Also asserts that we do not currently hold the 
+        APILock because this could potentially cause deadlock when we try to signal to the HeapTimers using their mutexes.
+        (JSC::JSGlobalData::sharedInstance): Protect the initialization for the shared instance with the GlobalJSLock.
+        (JSC::JSGlobalData::sharedInstanceInternal):
+        * runtime/JSGlobalData.h: Change to be ThreadSafeRefCounted so that we don't have to worry about refing and 
+        de-refing JSGlobalDatas on separate threads since we don't do it that often anyways.
+        (JSGlobalData):
+        (JSC::JSGlobalData::apiLock):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        * runtime/JSLock.cpp:
+        (JSC):
+        (JSC::GlobalJSLock::GlobalJSLock): For accessing the shared instance.
+        (JSC::GlobalJSLock::~GlobalJSLock):
+        (JSC::JSLockHolder::JSLockHolder): MutexLocker for JSLock. Also refs the JSGlobalData to keep it alive so that 
+        it can successfully unlock it later without it disappearing from underneath it.
+        (JSC::JSLockHolder::~JSLockHolder):
+        (JSC::JSLock::JSLock):
+        (JSC::JSLock::~JSLock):
+        (JSC::JSLock::lock): Uses the spin lock for guarding the lock count and owner thread fields. Uses the mutex for 
+        actually waiting for long periods. 
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::currentThreadIsHoldingLock): 
+        (JSC::JSLock::dropAllLocks):
+        (JSC::JSLock::dropAllLocksUnconditionally):
+        (JSC::JSLock::grabAllLocks):
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+        (JSC::JSLock::DropAllLocks::~DropAllLocks):
+        * runtime/JSLock.h:
+        (JSC):
+        (GlobalJSLock):
+        (JSLockHolder):
+        (JSLock):
+        (DropAllLocks):
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::set):
+        * testRegExp.cpp:
+        (realMain):
+
 2012-06-22  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Disable c++0x compatibility warnings in JavaScriptCore.gyp when building for Android

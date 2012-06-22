@@ -174,7 +174,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
 
 jvalue convertValueToJValue(ExecState* exec, RootObject* rootObject, JSValue value, JavaType javaType, const char* javaClassName)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     jvalue result;
     memset(&result, 0, sizeof(jvalue));

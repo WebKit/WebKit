@@ -99,10 +99,10 @@ namespace JSC {
         MachineThreads& machineThreads() { return m_machineThreads; }
 
         JS_EXPORT_PRIVATE GCActivityCallback* activityCallback();
-        JS_EXPORT_PRIVATE void setActivityCallback(PassOwnPtr<GCActivityCallback>);
+        JS_EXPORT_PRIVATE void setActivityCallback(GCActivityCallback*);
         JS_EXPORT_PRIVATE void setGarbageCollectionTimerEnabled(bool);
 
-        IncrementalSweeper* sweeper();
+        JS_EXPORT_PRIVATE IncrementalSweeper* sweeper();
 
         // true if an allocation or collection is in progress
         inline bool isBusy();
@@ -237,10 +237,10 @@ namespace JSC {
         double m_lastGCLength;
         double m_lastCodeDiscardTime;
 
-        OwnPtr<GCActivityCallback> m_activityCallback;
-        OwnPtr<IncrementalSweeper> m_sweeper;
-        
         DoublyLinkedList<ExecutableBase> m_compiledCode;
+        
+        GCActivityCallback* m_activityCallback;
+        IncrementalSweeper* m_sweeper;
     };
 
     inline bool Heap::shouldCollect()

@@ -373,7 +373,7 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
 
     PluginView::setCurrentPluginView(this);
 #if USE(JSC)
-    JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
 #endif
     setCallingPlugin(true);
     bool accepted = !m_plugin->pluginFuncs()->event(m_instance, &event);
@@ -687,7 +687,7 @@ void PluginView::setNPWindowIfNeeded()
 
     PluginView::setCurrentPluginView(this);
 #if USE(JSC)
-    JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
 #endif
     setCallingPlugin(true);
     m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
@@ -949,7 +949,7 @@ bool PluginView::platformStart()
     if (m_plugin->pluginFuncs()->getvalue) {
         PluginView::setCurrentPluginView(this);
 #if USE(JSC)
-        JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+        JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
 #endif
         setCallingPlugin(true);
         m_plugin->pluginFuncs()->getvalue(m_instance, NPPVpluginNeedsXEmbed, &m_needsXEmbed);

@@ -506,13 +506,12 @@ static JSValueRef qtSenderCallback(JSContextRef context, JSObjectRef, JSObjectRe
 
 void QWebFramePrivate::addQtSenderToGlobalObject()
 {
-    JSC::JSLock lock(JSC::SilenceAssertionsOnly);
-
     JSDOMWindow* window = toJSDOMWindow(frame, mainThreadNormalWorld());
     Q_ASSERT(window);
 
     JSC::ExecState* exec = window->globalExec();
     Q_ASSERT(exec);
+    JSC::JSLockHolder lock(exec);
 
     JSContextRef context = ::toRef(exec);
     JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString("__qt_sender__"));
@@ -657,7 +656,6 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
         return;
 #if USE(JSC)
     JSC::Bindings::QtInstance::ValueOwnership valueOwnership = static_cast<JSC::Bindings::QtInstance::ValueOwnership>(ownership);
-    JSC::JSLock lock(JSC::SilenceAssertionsOnly);
     JSDOMWindow* window = toJSDOMWindow(d->frame, mainThreadNormalWorld());
     JSC::Bindings::RootObject* root;
     if (valueOwnership == JSC::Bindings::QtInstance::QtOwnership)
@@ -675,6 +673,7 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
     }
 
     JSC::ExecState* exec = window->globalExec();
+    JSC::JSLockHolder lock(exec);
 
     JSC::JSObject* runtimeObject =
             JSC::Bindings::QtInstance::getQtInstance(object, root, valueOwnership)->createRuntimeObject(exec);

@@ -368,7 +368,7 @@ bool WebNetscapePluginStream::wantsAllStreams() const
     NPError error;
     {
         PluginStopDeferrer deferrer(m_pluginView.get());
-        JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+        JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
         error = m_pluginFuncs->getvalue(m_plugin, NPPVpluginWantsAllNetworkStreams, &value);
     }
     if (error != NPERR_NO_ERROR)

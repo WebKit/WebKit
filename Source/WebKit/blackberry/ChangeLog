@@ -1,3 +1,22 @@
+2012-06-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSLock should be per-JSGlobalData
+        https://bugs.webkit.org/show_bug.cgi?id=89123
+
+        Reviewed by Gavin Barraclough.
+
+        Changed all sites that used JSLock to instead use the new JSLockHolder
+        and pass in the correct JS context that the code is about to interact with that 
+        needs protection.
+
+        * Api/BlackBerryGlobal.cpp:
+        (BlackBerry::WebKit::clearMemoryCaches):
+        * WebCoreSupport/ClientExtension.cpp:
+        * WebCoreSupport/PagePopupBlackBerry.cpp:
+        (WebCore::PagePopupBlackBerry::installDomFunction):
+        * WebKitSupport/DumpRenderTreeSupport.cpp:
+        (DumpRenderTreeSupport::computedStyleIncludingVisitedInfo):
+
 2012-06-22  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Tap highlight fade animations are added to overlay continuously during pinch zoom.

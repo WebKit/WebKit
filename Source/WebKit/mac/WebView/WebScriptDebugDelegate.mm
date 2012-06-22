@@ -174,9 +174,9 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     if (!_private->debuggerCallFrame)
         return [NSArray array];
 
-    JSLock lock(SilenceAssertionsOnly);
 
     ScopeChainNode* scopeChain = _private->debuggerCallFrame->scopeChain();
+    JSLockHolder lock(scopeChain->globalData);
     if (!scopeChain->next)  // global frame
         return [NSArray arrayWithObject:_private->globalObject];
 
@@ -229,13 +229,13 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     if (!_private->debuggerCallFrame)
         return nil;
 
-    JSLock lock(SilenceAssertionsOnly);
-
     // If this is the global call frame and there is no dynamic global object,
     // Dashcode is attempting to execute JS in the evaluator using a stale
     // WebScriptCallFrame. Instead, we need to set the dynamic global object
     // and evaluate the JS in the global object's global call frame.
     JSGlobalObject* globalObject = _private->debugger->globalObject();
+    JSLockHolder lock(globalObject->globalData());
+
     if (self == _private->debugger->globalCallFrame() && !globalObject->globalData().dynamicGlobalObject) {
         JSGlobalObject* globalObject = _private->debugger->globalObject();
 

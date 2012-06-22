@@ -75,7 +75,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     if (!scriptExecutionContext || scriptExecutionContext->isJSExecutionForbidden())
         return;
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(scriptExecutionContext->globalData());
 
     JSObject* jsFunction = this->jsFunction(scriptExecutionContext);
     if (!jsFunction)

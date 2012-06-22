@@ -62,10 +62,7 @@ JavaClass::JavaClass(jobject anInstance)
         for (i = 0; i < numFields; i++) {
             jobject aJField = env->GetObjectArrayElement((jobjectArray)fields, i);
             JavaField* aField = new JavaField(env, aJField); // deleted in the JavaClass destructor
-            {
-                JSLock lock(SilenceAssertionsOnly);
-                m_fields.set(aField->name().impl(), aField);
-            }
+            m_fields.set(aField->name().impl(), aField);
             env->DeleteLocalRef(aJField);
         }
         env->DeleteLocalRef(fields);
@@ -77,15 +74,10 @@ JavaClass::JavaClass(jobject anInstance)
         for (i = 0; i < numMethods; i++) {
             jobject aJMethod = env->GetObjectArrayElement((jobjectArray)methods, i);
             JavaMethod* aMethod = new JavaMethod(env, aJMethod); // deleted in the JavaClass destructor
-            MethodList* methodList;
-            {
-                JSLock lock(SilenceAssertionsOnly);
-
-                methodList = m_methods.get(aMethod->name().impl());
-                if (!methodList) {
-                    methodList = new MethodList();
-                    m_methods.set(aMethod->name().impl(), methodList);
-                }
+            MethodList* methodList = m_methods.get(aMethod->name().impl());
+            if (!methodList) {
+                methodList = new MethodList();
+                m_methods.set(aMethod->name().impl(), methodList);
             }
             methodList->append(aMethod);
             env->DeleteLocalRef(aJMethod);
@@ -99,8 +91,6 @@ JavaClass::JavaClass(jobject anInstance)
 JavaClass::~JavaClass()
 {
     fastFree(const_cast<char*>(m_name));
-
-    JSLock lock(SilenceAssertionsOnly);
 
     deleteAllValues(m_fields);
     m_fields.clear();

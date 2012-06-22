@@ -39,7 +39,7 @@ class Heap;
     
 class IncrementalSweeper : public HeapTimer {
 public:
-    static PassOwnPtr<IncrementalSweeper> create(Heap*);
+    static IncrementalSweeper* create(Heap*);
     void startSweeping(const HashSet<MarkedBlock*>& blockSnapshot);
     virtual void doWork();
 
