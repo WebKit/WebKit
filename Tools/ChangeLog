@@ -1,3 +1,24 @@
+2012-06-22  Dirk Pranke  <dpranke@chromium.org>
+
+        run_webkit_tests.py failed with AttributeError(''NoneType' object has no attribute 'pid'')
+        https://bugs.webkit.org/show_bug.cgi?id=89734
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix a crash in ServerProcess if you called .pid() after it
+        crashed during a write(). We had a test for this case but the
+        test wasn't calling pid(), just has_crashed(). Fixed the problem
+        and the test.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess.__init__):
+        (ServerProcess.pid):
+        (ServerProcess._start):
+        (ServerProcess.stop):
+        * Scripts/webkitpy/layout_tests/port/server_process_unittest.py:
+        (FakeServerProcess._start):
+        (TestServerProcess.test_broken_pipe):
+
 2012-06-22  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Disable c++0x compatibility warnings in JavaScriptCore.gyp when building for Android

@@ -67,6 +67,7 @@ class ServerProcess(object):
         self._cmd = cmd
         self._env = env
         self._host = self._port.host
+        self._pid = None
         self._reset()
 
         # See comment in imports for why we need the win32 APIs and can't just use select.
@@ -77,7 +78,7 @@ class ServerProcess(object):
         return self._name
 
     def pid(self):
-        return self._proc.pid
+        return self._pid
 
     def _reset(self):
         self._proc = None
@@ -100,6 +101,7 @@ class ServerProcess(object):
                                       stderr=subprocess.PIPE,
                                       close_fds=close_fds,
                                       env=self._env)
+        self._pid = self._proc.pid
         fd = self._proc.stdout.fileno()
         if not self._use_win32_apis:
             fl = fcntl.fcntl(fd, fcntl.F_GETFL)
@@ -301,7 +303,6 @@ class ServerProcess(object):
         if self.poll() is None:
             self._port.check_for_leaks(self.name(), self.pid())
 
-        pid = self._proc.pid
         self._proc.stdin.close()
         self._proc.stdout.close()
         if self._proc.stderr:

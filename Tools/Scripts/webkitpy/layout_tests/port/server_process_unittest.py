@@ -79,6 +79,7 @@ class FakeServerProcess(server_process.ServerProcess):
     def _start(self):
         self._proc = MockProc(self)
         self.stdin = self._proc.stdin
+        self._pid = self._proc.pid
         self.broken_pipes = []
 
 
@@ -119,6 +120,7 @@ class TestServerProcess(unittest.TestCase):
         server_process = FakeServerProcess(port_obj=port_obj, name="test", cmd=["test"])
         server_process.write("should break")
         self.assertTrue(server_process.has_crashed())
+        self.assertNotEquals(server_process.pid(), None)
         self.assertEquals(server_process._proc, None)
         self.assertEquals(server_process.broken_pipes, [server_process.stdin])
 
