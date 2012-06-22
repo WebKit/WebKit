@@ -435,7 +435,7 @@ void InputHandler::setElementUnfocused(bool refocusOccuring)
 bool InputHandler::isInputModeEnabled() const
 {
     // Input mode is enabled when set, or when dump render tree or always show keyboard setting is enabled.
-    return m_inputModeEnabled || m_webPage->m_dumpRenderTree || Platform::Settings::intsance()->alwaysShowKeyboardOnFocus();
+    return m_inputModeEnabled || m_webPage->m_dumpRenderTree || Platform::Settings::instance()->alwaysShowKeyboardOnFocus();
 }
 
 void InputHandler::setInputModeEnabled(bool active)
