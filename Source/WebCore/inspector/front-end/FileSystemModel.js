@@ -202,6 +202,39 @@ WebInspector.FileSystemModel.prototype = {
             store[type] = fileSystem;
             this._fileSystemAdded(fileSystem);
         }
+    },
+
+    /**
+     * @param {WebInspector.FileSystemModel.Directory} directory
+     * @param {function(number, Array.<WebInspector.FileSystemModel.Entry>=)} callback
+     */
+    requestDirectoryContent: function(directory, callback)
+    {
+        this._agentWrapper.requestDirectoryContent(directory.url, this._directoryContentReceived.bind(this, directory, callback));
+    },
+
+    /**
+     * @param {WebInspector.FileSystemModel.Directory} parentDirectory
+     * @param {function(number, Array.<WebInspector.FileSystemModel.Entry>=)} callback
+     * @param {number} errorCode
+     * @param {Array.<FileSystemAgent.Entry>=} backendEntries
+     */
+    _directoryContentReceived: function(parentDirectory, callback, errorCode, backendEntries)
+    {
+        if (errorCode !== 0) {
+            callback(errorCode, null);
+            return;
+        }
+
+        var entries = [];
+        for (var i = 0; i < backendEntries.length; ++i) {
+            if (backendEntries[i].isDirectory)
+                entries.push(new WebInspector.FileSystemModel.Directory(this, parentDirectory.fileSystem, backendEntries[i]));
+            else
+                entries.push(new WebInspector.FileSystemModel.File(this, parentDirectory.fileSystem, backendEntries[i]));
+        }
+
+        callback(errorCode, entries);
     }
 }
 
@@ -223,14 +256,136 @@ WebInspector.FileSystemModel.FileSystem = function(fileSystemModel, origin, type
 {
     this.origin = origin;
     this.type = type;
+
+    this.root = new WebInspector.FileSystemModel.Directory(fileSystemModel, this, backendRootEntry);
 }
 
 WebInspector.FileSystemModel.FileSystem.prototype = {
+    /**
+     * @type {string}
+     */
     get name()
     {
         return "filesystem:" + this.origin + "/" + this.type;
     }
 }
+
+/**
+ * @constructor
+ * @param {WebInspector.FileSystemModel} fileSystemModel
+ * @param {WebInspector.FileSystemModel.FileSystem} fileSystem
+ * @param {FileSystemAgent.Entry} backendEntry
+ */
+WebInspector.FileSystemModel.Entry = function(fileSystemModel, fileSystem, backendEntry)
+{
+    this._fileSystemModel = fileSystemModel;
+    this._fileSystem = fileSystem;
+
+    this._url = backendEntry.url;
+    this._name = backendEntry.name;
+    this._isDirectory = backendEntry.isDirectory;
+}
+
+WebInspector.FileSystemModel.Entry.prototype = {
+    /**
+     * @type {WebInspector.FileSystemModel}
+     */
+    get fileSystemModel()
+    {
+        return this._fileSystemModel;
+    },
+
+    /**
+     * @type {WebInspector.FileSystemModel.FileSystem}
+     */
+    get fileSystem()
+    {
+        return this._fileSystem;
+    },
+
+    /**
+     * @type {string}
+     */
+    get url()
+    {
+        return this._url;
+    },
+
+    /**
+     * @type {string}
+     */
+    get name()
+    {
+        return this._name;
+    },
+
+    /**
+     * @type {boolean}
+     */
+    get isDirectory()
+    {
+        return this._isDirectory;
+    }
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.FileSystemModel.Entry}
+ * @param {WebInspector.FileSystemModel} fileSystemModel
+ * @param {WebInspector.FileSystemModel.FileSystem} fileSystem
+ * @param {FileSystemAgent.Entry} backendEntry
+ */
+WebInspector.FileSystemModel.Directory = function(fileSystemModel, fileSystem, backendEntry)
+{
+    WebInspector.FileSystemModel.Entry.call(this, fileSystemModel, fileSystem, backendEntry);
+}
+
+WebInspector.FileSystemModel.Directory.prototype = {
+    /**
+     * @param {function(number, Array.<WebInspector.FileSystemModel.Directory>)} callback
+     */
+    requestDirectoryContent: function(callback)
+    {
+        this.fileSystemModel.requestDirectoryContent(this, callback);
+    }
+}
+
+WebInspector.FileSystemModel.Directory.prototype.__proto__ = WebInspector.FileSystemModel.Entry.prototype;
+
+/**
+ * @constructor
+ * @extends {WebInspector.FileSystemModel.Entry}
+ * @param {WebInspector.FileSystemModel} fileSystemModel
+ * @param {WebInspector.FileSystemModel.FileSystem} fileSystem
+ * @param {FileSystemAgent.Entry} backendEntry
+ */
+WebInspector.FileSystemModel.File = function(fileSystemModel, fileSystem, backendEntry)
+{
+    WebInspector.FileSystemModel.Entry.call(this, fileSystemModel, fileSystem, backendEntry);
+
+    this._mimeType = backendEntry.mimeType;
+    this._resourceType = WebInspector.resourceTypes[backendEntry.resourceType];
+}
+
+WebInspector.FileSystemModel.File.prototype = {
+    /**
+     * @type {string}
+     */
+    get mimeType()
+    {
+        return this._mimeType;
+    },
+
+    /**
+     * @type {WebInspector.ResourceType}
+     */
+    get resourceType()
+    {
+        return this._resourceType;
+    }
+}
+
+WebInspector.FileSystemModel.File.prototype.__proto__ = WebInspector.FileSystemModel.Entry.prototype;
 
 /**
  * @constructor

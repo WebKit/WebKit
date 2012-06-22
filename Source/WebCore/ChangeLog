@@ -1,3 +1,27 @@
+2012-06-22  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Add frontend-side Entry object to FileSystemModel
+        https://bugs.webkit.org/show_bug.cgi?id=89739
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/FileSystemModel.js:
+        (WebInspector.FileSystemModel.prototype._fileSystemRootReceived):
+        (WebInspector.FileSystemModel.prototype.requestDirectoryContent):
+        (WebInspector.FileSystemModel.prototype._directoryContentReceived):
+        (WebInspector.FileSystemModel.FileSystem):
+        (WebInspector.FileSystemModel.Entry):
+        (WebInspector.FileSystemModel.Entry.prototype.get fileSystemModel):
+        (WebInspector.FileSystemModel.Entry.prototype.get fileSystem):
+        (WebInspector.FileSystemModel.Entry.prototype.get url):
+        (WebInspector.FileSystemModel.Entry.prototype.get name):
+        (WebInspector.FileSystemModel.Entry.prototype.get isDirectory):
+        (WebInspector.FileSystemModel.Directory):
+        (WebInspector.FileSystemModel.Directory.prototype.requestDirectoryContent):
+        (WebInspector.FileSystemModel.File):
+        (WebInspector.FileSystemModel.File.prototype.get mimeType):
+        (WebInspector.FileSystemModel.File.prototype.get resourceType):
+
 2012-06-22  Amy Ousterhout  <aousterh@chromium.org>
 
         Renamed DeviceOrientation to DeviceOrientationData
