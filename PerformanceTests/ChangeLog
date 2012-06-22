@@ -1,3 +1,29 @@
+2012-06-22  Philip Rogers  <pdr@google.com>
+
+        Make SvgCubics performance test more consistent
+        https://bugs.webkit.org/show_bug.cgi?id=89778
+
+        Reviewed by Ryosuke Niwa.
+
+        Previously this test ran twice for each iteration, but this led to inconsistent repaints.
+        This change updates the test to only run once per iteration, and adds even more cubics
+        so that the test runs consistently in the 80ms range on my Linux desktop.
+
+        Performance results on my desktop:
+            RESULT SVG: SvgCubics= 80.5 ms
+            median= 82.0 ms, stdev= 3.04138126515 ms, min= 75.0 ms, max= 85.0 ms
+
+            RESULT SVG: SvgCubics= 80.1 ms
+            median= 81.0 ms, stdev= 4.27668095607 ms, min= 74.0 ms, max= 88.0 ms
+
+            RESULT SVG: SvgCubics= 81.45 ms
+            median= 83.0 ms, stdev= 4.01839520207 ms, min= 75.0 ms, max= 89.0 ms
+
+            RESULT SVG: SvgCubics= 78.9 ms
+            median= 80.0 ms, stdev= 4.75289385533 ms, min= 72.0 ms, max= 87.0 ms
+
+        * SVG/SvgCubics.html:
+
 2012-06-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: partially instrument DOM Tree native memory.
