@@ -1,3 +1,10 @@
+2012-06-22  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed gardening. Unskipping test passing after fixing bug 88419.
+
+        * gtk/run-api-tests:
+        (TestRunner): Unskip WTF.HashMap.
+
 2012-06-22  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Allow DumpRenderTree to dump about:blank
