@@ -1,3 +1,21 @@
+2012-06-22  Dan Bernstein  <mitz@apple.com>
+
+        RenderText’s minimum preferred width is incorrect when soft hyphens are used
+        https://bugs.webkit.org/show_bug.cgi?id=89775
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/text/soft-hyphen-min-preferred-width.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::hyphenWidth): Added this helper function.
+        (WebCore::RenderText::computePreferredLogicalWidths): In places where this function tests
+        for the soft hyphen character, added a check that the 'hyphens' style property is not set
+        to 'none', because in that case soft hyphens are not break opportunities. Also added an
+        explicit check to suppress break opportunities from isBreakable() if the occur after a
+        soft hyphen and 'hyphens' is set to 'none'. Finally, when measuring text up to a potential
+        line break, added the width of the hyphen string when needed.
+
 2012-06-22  Dean Jackson  <dino@apple.com>
 
         BitmapImage duplicates code to calculate size

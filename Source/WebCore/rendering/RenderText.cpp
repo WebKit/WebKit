@@ -882,6 +882,12 @@ void RenderText::computePreferredLogicalWidths(float leadWidth)
         m_knownToHaveNoOverflowAndNoFallbackFonts = true;
 }
 
+static inline float hyphenWidth(RenderText* renderer, const Font& font)
+{
+    RenderStyle* style = renderer->style();
+    return font.width(RenderBlock::constructTextRun(renderer, font, style->hyphenString().string(), style));
+}
+
 void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const SimpleFontData*>& fallbackFonts, GlyphOverflow& glyphOverflow)
 {
     ASSERT(m_hasTab || preferredLogicalWidthsDirty() || !m_knownToHaveNoOverflowAndNoFallbackFonts);
@@ -963,7 +969,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
             ASSERT(lastWordBoundary == i);
             lastWordBoundary++;
             continue;
-        } else if (c == softHyphen) {
+        } else if (c == softHyphen && styleToUse->hyphens() != HyphensNone) {
             currMaxWidth += widthFromCache(f, lastWordBoundary, i - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow);
             if (firstGlyphLeftOverflow < 0)
                 firstGlyphLeftOverflow = glyphOverflow.left;
@@ -974,12 +980,12 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
         bool hasBreak = breakAll || isBreakable(breakIterator, i, nextBreakable, breakNBSP);
         bool betweenWords = true;
         int j = i;
-        while (c != '\n' && !isSpaceAccordingToStyle(c, styleToUse) && c != '\t' && c != softHyphen) {
+        while (c != '\n' && !isSpaceAccordingToStyle(c, styleToUse) && c != '\t' && (c != softHyphen || styleToUse->hyphens() == HyphensNone)) {
             j++;
             if (j == len)
                 break;
             c = txt[j];
-            if (isBreakable(breakIterator, j, nextBreakable, breakNBSP))
+            if (isBreakable(breakIterator, j, nextBreakable, breakNBSP) && txt[j - 1] != softHyphen)
                 break;
             if (breakAll) {
                 betweenWords = false;
@@ -993,8 +999,11 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
             float w;
             if (wordTrailingSpaceWidth && isSpace)
                 w = widthFromCache(f, i, wordLen + 1, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow) - wordTrailingSpaceWidth;
-            else
+            else {
                 w = widthFromCache(f, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow);
+                if (c == softHyphen && styleToUse->hyphens() != HyphensNone)
+                    currMinWidth += hyphenWidth(this, f);
+            }
 
             if (firstGlyphLeftOverflow < 0)
                 firstGlyphLeftOverflow = glyphOverflow.left;
