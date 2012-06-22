@@ -84,6 +84,7 @@ public:
     Element* getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode&);
     bool isValidContentSelect(Element* insertionPoint, ExceptionCode&);
     Node* treeScopeRootNode(Node*, ExceptionCode&);
+    Node* parentTreeScope(Node*, ExceptionCode&);
 
     bool attached(Node*, ExceptionCode&);
 

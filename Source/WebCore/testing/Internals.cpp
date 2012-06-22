@@ -206,6 +206,16 @@ Node* Internals::treeScopeRootNode(Node* node, ExceptionCode& ec)
     return node->treeScope()->rootNode();
 }
 
+Node* Internals::parentTreeScope(Node* node, ExceptionCode& ec)
+{
+    if (!node) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+    const TreeScope* parentTreeScope = node->treeScope()->parentTreeScope();
+    return parentTreeScope ? parentTreeScope->rootNode() : 0;
+}
+
 bool Internals::attached(Node* node, ExceptionCode& ec)
 {
     if (!node) {

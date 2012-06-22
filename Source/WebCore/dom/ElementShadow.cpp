@@ -74,6 +74,7 @@ void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> sh
         return;
 
     shadowRoot->setHost(shadowHost);
+    shadowRoot->setParentTreeScope(shadowHost->treeScope());
     m_shadowRoots.push(shadowRoot.get());
     invalidateDistribution(shadowHost);
     ChildNodeInsertionNotifier(shadowHost).notify(shadowRoot.get());
