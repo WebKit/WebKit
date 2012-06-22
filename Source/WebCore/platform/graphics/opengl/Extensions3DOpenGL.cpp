@@ -201,6 +201,12 @@ String Extensions3DOpenGL::getTranslatedShaderSourceANGLE(Platform3DObject shade
     // FIXME: implement this function and add GL_ANGLE_translated_shader_source in supports().
 }
 
+void Extensions3DOpenGL::copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum)
+{
+    // FIXME: implement this function and add GL_CHROMIUM_copy_texture in supports().
+    return;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

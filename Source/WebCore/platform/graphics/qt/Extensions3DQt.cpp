@@ -93,6 +93,11 @@ String Extensions3DQt::getTranslatedShaderSourceANGLE(Platform3DObject shader)
     return "";
 }
 
+void Extensions3DQt::copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum)
+{
+    return;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

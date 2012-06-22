@@ -156,6 +156,9 @@ public:
     void getQueryivEXT(GC3Denum, GC3Denum, GC3Dint*);
     void getQueryObjectuivEXT(Platform3DObject, GC3Denum, GC3Duint*);
 
+    // GL_CHROMIUM_copy_texture
+    void copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum);
+
 private:
     // Instances of this class are strictly owned by the GraphicsContext3D implementation and do not
     // need to be instantiated by any other code.

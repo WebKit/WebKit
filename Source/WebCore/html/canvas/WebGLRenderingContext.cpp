@@ -3634,6 +3634,19 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
         ec = SECURITY_ERR;
         return;
     }
+
+    WebGLTexture* texture = validateTextureBinding("texImage2D", target, true);
+    // If possible, copy from the canvas element directly to the texture
+    // via the GPU, without a read-back to system memory.
+    if (GraphicsContext3D::TEXTURE_2D == target && texture && type == texture->getType(target, level)) {
+        ImageBuffer* buffer = canvas->buffer();
+        if (buffer && buffer->copyToPlatformTexture(*m_context.get(), texture->object(), internalformat, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
+            texture->setLevelInfo(target, level, internalformat, canvas->width(), canvas->height(), type);
+            cleanupAfterGraphicsCall(false);
+            return;
+        }
+    }
+
     RefPtr<ImageData> imageData = canvas->getImageData();
     if (imageData)
         texImage2D(target, level, internalformat, format, type, imageData.get(), ec);

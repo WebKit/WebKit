@@ -63,6 +63,8 @@ public:
     LayerChromium* layer() const;
     void contextAcquired();
 
+    unsigned backBufferTexture();
+
 private:
     Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D>, const IntSize&, DeferralMode, unsigned textureId);
 

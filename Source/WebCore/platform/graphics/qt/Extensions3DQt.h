@@ -46,6 +46,7 @@ public:
     virtual GC3Dboolean isVertexArrayOES(Platform3DObject);
     virtual void bindVertexArrayOES(Platform3DObject);
     virtual String getTranslatedShaderSourceANGLE(Platform3DObject);
+    virtual void copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum);
 
 private:
     // This class only needs to be instantiated by GraphicsContext3D implementations.

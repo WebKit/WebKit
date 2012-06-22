@@ -1,3 +1,52 @@
+2012-06-22  Jeff Timanus  <twiz@chromium.org>
+
+        [Chromium] Change implementing a fast-path for copying GPU-accelerated Canvas2D instances to WebGL textures.
+        https://bugs.webkit.org/show_bug.cgi?id=86275
+
+        This change adds the necessary plumbing to the various rendering contexts to copy the backing store texture of
+        a Canvas2D instance to be copied to a WebGL texture.  The GL_CHROMIUM_copy_texture extension is necessary
+        because the backing-store for a GPU-accelerated skia Canvas2D is normally in BGRA format, which is not supported
+        by glCopyTexImage.
+
+        Reviewed by Kenneth Russell.
+
+        Test: fast/canvas/webgl/*
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        * platform/chromium/support/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::copyTextureCHROMIUM):
+        (WebCore):
+        * platform/graphics/Extensions3D.h:
+        (Extensions3D):
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore):
+        (WebCore::ImageBuffer::copyToPlatformTexture):
+        * platform/graphics/ImageBuffer.h:
+        (WebCore):
+        (ImageBuffer):
+        * platform/graphics/chromium/Canvas2DLayerBridge.cpp:
+        (WebCore::Canvas2DLayerBridge::backBufferTexture):
+        (WebCore):
+        * platform/graphics/chromium/Canvas2DLayerBridge.h:
+        (Canvas2DLayerBridge):
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        (Extensions3DChromium):
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::copyTextureCHROMIUM):
+        (WebCore):
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        (Extensions3DOpenGL):
+        * platform/graphics/qt/Extensions3DQt.cpp:
+        (WebCore::Extensions3DQt::copyTextureCHROMIUM):
+        (WebCore):
+        * platform/graphics/qt/Extensions3DQt.h:
+        (Extensions3DQt):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::copyToPlatformTexture):
+        (WebCore):
+
 2012-06-22  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
 
         Add url to supportsType

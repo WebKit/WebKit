@@ -66,6 +66,8 @@ public:
     //   GL_OES_compressed_ETC1_RGB8_texture
     //   GL_IMG_texture_compression_pvrtc
     //   EXT_texture_filter_anisotropic
+    //   GL_CHROMIUM_copy_texture
+    //   GL_CHROMIUM_flipy
 
     // Takes full name of extension; for example,
     // "GL_EXT_texture_format_BGRA8888".
@@ -140,6 +142,13 @@ public:
         // GL_EXT_texture_filter_anisotropic
         TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE,
         MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF,
+
+        // GL_CHROMIUM_flipy
+        UNPACK_FLIP_Y_CHROMIUM = 0x9240,
+
+        // GL_CHROMIUM_copy_texture
+        UNPACK_PREMULTIPLY_ALPHA_CHROMIUM = 0x9241,
+        UNPACK_UNPREMULTIPLY_ALPHA_CHROMIUM = 0x9242
     };
 
     // GL_ARB_robustness
@@ -165,6 +174,9 @@ public:
 
     // GL_ANGLE_translated_shader_source
     virtual String getTranslatedShaderSourceANGLE(Platform3DObject) = 0;
+
+    // GL_CHROMIUM_copy_texture
+    virtual void copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum) = 0;
 };
 
 } // namespace WebCore

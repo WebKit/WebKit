@@ -201,4 +201,9 @@ void Extensions3DChromium::getQueryObjectuivEXT(Platform3DObject query, GC3Denum
     m_private->webContext()->getQueryObjectuivEXT(query, pname, params);
 }
 
+void Extensions3DChromium::copyTextureCHROMIUM(GC3Denum target, Platform3DObject sourceId, Platform3DObject destId, GC3Dint level, GC3Denum internalFormat)
+{
+    m_private->webContext()->copyTextureCHROMIUM(target, sourceId, destId, level, internalFormat);
+}
+
 } // namespace WebCore

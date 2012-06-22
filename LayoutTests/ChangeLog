@@ -1,3 +1,17 @@
+2012-06-22  Jeff Timanus  <twiz@chromium.org>
+
+        [Chromium] Change implementing a fast-path for copying GPU-accelerated Canvas2D instances to WebGL textures.
+        https://bugs.webkit.org/show_bug.cgi?id=86275
+
+        This change adds the necessary plumbing to the various rendering contexts to copy the backing store texture of
+        a Canvas2D instance to be copied to a WebGL texture.  The GL_CHROMIUM_copy_texture extension is necessary
+        because the backing-store for a GPU-accelerated skia Canvas2D is normally in BGRA format, which is not supported
+        by glCopyTexImage.
+
+        Reviewed by Kenneth Russell.
+
+        * platform/chromium/TestExpectations: Temporarily suppressed layout test, fast/canvas/webgl/gl-teximage.html until a rebaseline can be submitted.
+
 2012-06-22  Kenneth Russell  <kbr@google.com>
 
         Layout Test media/event-attributes.html is failing

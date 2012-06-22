@@ -105,4 +105,11 @@ PlatformLayer* ImageBuffer::platformLayer() const
 }
 #endif
 
+#if !USE(SKIA)
+bool ImageBuffer::copyToPlatformTexture(GraphicsContext3D&, Platform3DObject, GC3Denum, bool, bool)
+{
+    return false;
+}
+#endif
+
 }

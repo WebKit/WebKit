@@ -36,6 +36,7 @@
 #include "GraphicsLayer.h"
 #endif
 #include "GraphicsTypes.h"
+#include "GraphicsTypes3D.h"
 #include "IntSize.h"
 #include "ImageBufferData.h"
 #include <wtf/Forward.h>
@@ -51,6 +52,7 @@ namespace WebCore {
     class ImageData;
     class IntPoint;
     class IntRect;
+    class GraphicsContext3D;
 
     enum Multiply {
         Premultiplied,
@@ -116,6 +118,8 @@ namespace WebCore {
 #if USE(ACCELERATED_COMPOSITING)
         PlatformLayer* platformLayer() const;
 #endif
+
+        bool copyToPlatformTexture(GraphicsContext3D&, Platform3DObject, GC3Denum, bool, bool);
 
     private:
 #if USE(CG)

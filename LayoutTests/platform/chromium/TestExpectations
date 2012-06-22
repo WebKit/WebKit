@@ -2406,6 +2406,8 @@ BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-transform-skewed.
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/image-object-in-canvas.html = IMAGE
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate.html = IMAGE
 
+BUGWK89494 : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-teximage.html = TEXT
+
 BUGWK47923 : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 
 // Chromium does not support PDF content in <img> tags.

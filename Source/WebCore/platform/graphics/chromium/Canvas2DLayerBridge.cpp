@@ -166,5 +166,14 @@ void Canvas2DLayerBridge::contextAcquired()
         m_layer.willModifyTexture();
 }
 
+unsigned Canvas2DLayerBridge::backBufferTexture()
+{
+    contextAcquired();
+    if (m_canvas)
+        m_canvas->flush();
+    m_context->flush();
+    return m_backBufferTexture;
+}
+
 }
 
