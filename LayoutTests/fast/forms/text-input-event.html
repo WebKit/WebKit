@@ -20,8 +20,8 @@ function typeInto(element, value)
 
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     logDiv = document.getElementById('log');
     var input = document.getElementsByTagName('input')[0];

@@ -32,8 +32,8 @@ function testTypeAheadFind(keys, expectedMenuListText)
     result.innerHTML += "was " + menulist.value;
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 testTypeAheadFind(['a'], "Apple");
 testTypeAheadFind(['c'], "Carrot");

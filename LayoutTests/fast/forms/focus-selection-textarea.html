@@ -4,15 +4,15 @@
 <script>
 function runTest()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     var accessKeyModifiers = ["altKey"];
     if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
         accessKeyModifiers = ["ctrlKey", "altKey"];
 
-    layoutTestController.dumpEditingCallbacks();
-    layoutTestController.dumpAsText();
+    testRunner.dumpEditingCallbacks();
+    testRunner.dumpAsText();
 
     shouldBe("first.selectionStart", "11");
     shouldBe("first.selectionEnd", "18");

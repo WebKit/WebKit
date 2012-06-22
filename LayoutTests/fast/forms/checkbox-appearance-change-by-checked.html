@@ -5,11 +5,11 @@
 <script>
 var checkbox = document.getElementsByTagName('input')[0];
 checkbox.offsetTop;
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 setTimeout(function() {
     checkbox.checked = true;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }, 0);
 </script>

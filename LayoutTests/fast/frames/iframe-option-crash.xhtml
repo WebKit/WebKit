@@ -4,8 +4,8 @@
 <script>
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     var frame = document.getElementsByTagName("iframe")[0];
     var body = document.getElementById("body");
@@ -14,8 +14,8 @@ function test()
 
     document.getElementById("result").appendChild(document.createTextNode("If no crash while painting, the test passed (requires pixel test mode)."));
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 

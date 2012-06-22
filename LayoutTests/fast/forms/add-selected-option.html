@@ -38,8 +38,8 @@ Cannot change SELECT to a dynamically created option.</p>
         }
     }
     
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var results = document.createElement('div');
     results.id = "res";

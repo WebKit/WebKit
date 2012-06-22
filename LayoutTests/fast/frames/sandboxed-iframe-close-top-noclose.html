@@ -1,11 +1,11 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
 }
 </script>
 </head>
@@ -19,8 +19,8 @@ function start() {
 }
 
 function done() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 // In LayoutTests mode we can start automagically.

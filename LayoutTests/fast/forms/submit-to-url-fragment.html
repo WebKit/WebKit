@@ -2,15 +2,15 @@
 <head>
 <title>Test for Bug 20038: REGRESSION (r35151): Can't post comments on flickr.com</title>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function runTest() {
     if (document.location.hash != "#preview") {
         document.getElementById("mysubmit").click();
-        setTimeout('if (window.layoutTestController) { layoutTestController.notifyDone(); }', 5000);
+        setTimeout('if (window.testRunner) { testRunner.notifyDone(); }', 5000);
     }
 }
 </script>
@@ -28,8 +28,8 @@ if (document.location.hash != "#preview") {
     document.write("FAIL");
 } else {
     document.write("PASS");
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.testRunner) {
+        testRunner.notifyDone();
     }
 }
 </script>

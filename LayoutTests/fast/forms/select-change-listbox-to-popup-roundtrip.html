@@ -1,9 +1,9 @@
 <html>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function runTest()
@@ -38,8 +38,8 @@ function reportResults()
         "<li>And neither should dropping out of the message loop: " + (selected3 == selected1 ? "PASS" : "FAIL") +
         "</ul>";
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

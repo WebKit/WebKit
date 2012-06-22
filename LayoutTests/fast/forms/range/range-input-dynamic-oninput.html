@@ -8,8 +8,8 @@ function log(msg) {
 }
 
 function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var input = document.getElementsByTagName('input')[0]
     input.value = 200;

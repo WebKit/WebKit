@@ -25,8 +25,8 @@ document.execCommand('InsertText', false, 'PASS');
 if (test.value != 'PASS')
     test.value = 'FAIL';
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     test.parentNode.parentNode.style.display = 'none';
     document.writeln(test.value);
 }

@@ -2,8 +2,8 @@
 <head>
     <script>
     function runTest() {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         else {
             alert('This test does not work in Safari.');
             return;

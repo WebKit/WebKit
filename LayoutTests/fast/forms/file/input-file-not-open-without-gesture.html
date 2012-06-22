@@ -2,9 +2,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 const INITIAL= 0;
 const OPEN_FILE_WITHOUT_GESTURE = 1;
@@ -38,12 +38,12 @@ function openFileDialogWithoutUserGesture() {
         clickFired = true;
         testStage = OPEN_FILE_WITHOUT_GESTURE;
         // Waits for opening the file dialog and checks whether the click event can still be received by document.
-        setTimeout("checkResult(function() { layoutTestController.notifyDone(); })", 500);
+        setTimeout("checkResult(function() { testRunner.notifyDone(); })", 500);
     }, 1);
 }
 
 function startTest() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     document.body.addEventListener("click", function() { window.clickReceived = true }, true);
     setTimeout(openFileDialogWithoutUserGesture, 1);

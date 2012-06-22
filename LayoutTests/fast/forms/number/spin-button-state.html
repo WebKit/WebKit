@@ -15,7 +15,7 @@ var logs = document.getElementById("logs");
 function log(msg) { logs.innerHTML += msg + "<br>"; }
 
 function testIt() {
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     var outer = document.getElementById("outer");
 
@@ -40,7 +40,7 @@ function testIt() {
     log("expect 1, actual=" + num2.value);
 }
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     testIt();
 }
 </script>

@@ -9,8 +9,8 @@
             }
             function test()
             {
-                if (window.layoutTestController) {
-                    layoutTestController.dumpAsText();
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
                 }
                 var elt = document.getElementById("text");
                 elt.value = "This\ris\ra\rtest";

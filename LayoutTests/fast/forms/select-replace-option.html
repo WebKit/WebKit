@@ -2,8 +2,8 @@
 <script>
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var select = document.getElementById('select');
     select.options[1] = new Option("Replacement Option 1", "Replacement Option 1");
     var length = select.options.length;

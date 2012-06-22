@@ -2,13 +2,13 @@
 <head>
 <script>      
     function runTests() {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.dumpUserGestureInFrameLoadCallbacks();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpUserGestureInFrameLoadCallbacks();
+            testRunner.waitUntilDone();
         }
 
-        setTimeout("location.href='data:text/html,<script>layoutTestController.notifyDone()</" + "script>'", 1000);
+        setTimeout("location.href='data:text/html,<script>testRunner.notifyDone()</" + "script>'", 1000);
     }
     </script>
 </head>

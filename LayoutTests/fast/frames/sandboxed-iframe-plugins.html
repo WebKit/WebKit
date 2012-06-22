@@ -2,8 +2,8 @@
 <head>
 <script src="../js/resources/js-test-pre.js"></script>
 <script> 
-if (window.layoutTestController) 
-    layoutTestController.dumpAsText(); 
+if (window.testRunner) 
+    testRunner.dumpAsText(); 
  
 window.onload = function() { 
     shouldBeTrue("(self.appletFrame1.document['app'].init) != undefined");

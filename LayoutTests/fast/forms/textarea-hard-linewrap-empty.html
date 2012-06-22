@@ -10,9 +10,9 @@ Bug 9537 REGRESSION: Reproducible crash in WebCore::RenderTextField::textWithHar
 <input type="submit">
 </form>
 <script>
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
 }
 
 if (document.URL.indexOf('?') == -1) {
@@ -24,8 +24,8 @@ if (document.URL.indexOf('?') == -1) {
     else
         document.write("<div>Failure.</div><div>Expected: textarea=</div><div>Actual: " + formData + "</div>");
 
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 </script>
 </body>

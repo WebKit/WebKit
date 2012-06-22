@@ -21,5 +21,5 @@ shouldBe("gebi('toHorizontal').clientHeight", "referenceHorizontalHeight");
 shouldBe("gebi('toVertical').clientHeight", "referenceVerticalHeight");
 
 // If we are in DTR, we don't need meaningless messages.
-if (window.layoutTestController)
+if (window.testRunner)
     document.getElementById("main").innerHTML = "";

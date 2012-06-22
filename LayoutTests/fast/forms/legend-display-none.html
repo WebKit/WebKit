@@ -7,8 +7,8 @@
     <legend id="target" style="display: none;">Legendary</legend>
 </fieldset>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     document.body.offsetTop;
     display = getComputedStyle(document.getElementById("target")).display;

@@ -17,9 +17,9 @@ function log(msg) {
     document.getElementById('res').innerHTML = document.getElementById('res').innerHTML + msg + "<br>";
 }
     
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var unescapedLineWrap = unescape("%0D%0A");
@@ -59,8 +59,8 @@ if (document.URL.substring(0, 4) == "file") {
         assertLineWrap("wrap=hard mixed rtl and ltr text", urlString.substring(index5, index6 - 1), true);
         assertLineWrap("wrap=hard visibility:hidden", urlString.substring(index6, index7 - 1), true);
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
 } else {

@@ -10,13 +10,13 @@
           didFireOnChange = true;
         }
 
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
         }
 
         tf.focus();
-        if (window.layoutTestController) {
-            layoutTestController.setValueForUser(tf, 'Hello!');
+        if (window.testRunner) {
+            testRunner.setValueForUser(tf, 'Hello!');
         }
 
         // Should not fire the event until focus is lost.

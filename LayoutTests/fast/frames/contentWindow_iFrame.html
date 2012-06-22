@@ -2,8 +2,8 @@
 <head>
 <script>
     function putText() {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
         }
         var w = document.getElementById("my_iframe").contentWindow;
         var d = document.getElementById("my_div");

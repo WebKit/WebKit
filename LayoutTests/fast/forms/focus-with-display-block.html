@@ -15,7 +15,7 @@ output, meter, progress {
 description('This test ensures that &lt;output&gt;, &lt;meter&gt; and &lt;progress&gt; are not focused.');
 
 function moveFocus(element) {
-    if (window.layoutTestController)
+    if (window.testRunner)
         eventSender.keyDown('\t');
     else
         element.focus();

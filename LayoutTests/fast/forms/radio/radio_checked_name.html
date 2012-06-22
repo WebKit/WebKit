@@ -2,8 +2,8 @@
     <head>
         <script>
         function test() {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
                 
             var r1 = document.getElementById('r1');
             verifyCheckedState(r1, true);
@@ -20,7 +20,7 @@
             
             // Attempt to check with the spacebar
             r2.focus();
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 eventSender.keyDown(' ');
             }
             verifyCheckedState(r2, true);
@@ -28,7 +28,7 @@
             var r3 = document.getElementById('r3');
                                      
             // Attempt to check with the mouse
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 eventSender.mouseMoveTo(r3.offsetLeft + 7, r3.offsetTop + 7);
                 eventSender.mouseDown();
                 eventSender.mouseUp();

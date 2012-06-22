@@ -2,8 +2,8 @@
 <p><input id="input" value="12345678"></input></p>
 <p>Content of input after pressing return is "<span id="result"></span>". It should be "12345678".</p>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 var input = document.getElementById("input");
 input.setSelectionRange(2, 6);
 var event = document.createEvent("KeyboardEvents");

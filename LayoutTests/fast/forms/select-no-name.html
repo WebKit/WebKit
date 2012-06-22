@@ -27,9 +27,9 @@ SELECT with no name generates invalid query string.</p>
 <h2 id="pass">PASS</h2>
 <h2 id="fail">FAIL</h2>
 <script type="text/javascript">
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function test() {
@@ -55,8 +55,8 @@ function test() {
         } 
         document.getElementById("pass").style.display = "inline-block";
     }
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 };
 </script>
 <p>

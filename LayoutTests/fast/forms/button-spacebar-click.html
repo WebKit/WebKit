@@ -4,8 +4,8 @@
     function test() {
         var bt = document.getElementById('bt');
         bt.focus();
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
             eventSender.keyDown(' ');
         }
     }

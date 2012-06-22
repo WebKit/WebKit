@@ -9,8 +9,8 @@
 <script>
 description("This test checks a form element can handle elements of which form attribute points the form element even if elements are outside of the form.");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 var container = document.createElement('div');
 document.body.appendChild(container);
@@ -44,8 +44,8 @@ if (query.indexOf('submitted=true') == -1) {
     shouldBeEqualToString('pairs[0]', 'key1=value1');
     shouldBeEqualToString('pairs[1]', 'key2=value2');
     shouldBeEqualToString('pairs[2]', 'submitted=true');
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>

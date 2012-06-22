@@ -1,15 +1,15 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
 }
 
 function framesLoaded()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

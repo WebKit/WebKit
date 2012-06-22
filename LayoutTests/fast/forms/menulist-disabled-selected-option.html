@@ -19,8 +19,8 @@ parent.innerHTML = '<form action="">'
     + '</select>'
     + '</form>';
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 var query = window.location.search;
 if (query.indexOf('submitted=true') == -1) {
     var select = document.getElementsByTagName('select')[0];
@@ -29,8 +29,8 @@ if (query.indexOf('submitted=true') == -1) {
 } else {
     shouldBe('query.indexOf("select=Disabled")', '-1');
     shouldBe('query.indexOf("select=Enabled")', '-1');
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>

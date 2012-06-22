@@ -3,8 +3,8 @@
  <p>This tests to see if 'style.display' for an element can be set dynamically.  See bug 820947. </p>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.writeln("<div  id=\"result\"> \r\n  This test: FAILED </div>\r\n");
 document.writeln("<div  id=\"announce:Top\">\r\n This text should be hidden </div>\r\n");

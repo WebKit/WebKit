@@ -6,8 +6,8 @@
 <p id="result">
 </p>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     select.selectedIndex = 1;
     result.innerText = select.selectedIndex == 1 ? "PASS" : "FAIL";

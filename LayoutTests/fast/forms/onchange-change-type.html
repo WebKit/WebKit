@@ -16,8 +16,8 @@
           didFireOnChange = true;
         }
 
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
         }
 
         tf.focus();

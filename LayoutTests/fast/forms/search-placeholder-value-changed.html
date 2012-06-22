@@ -4,12 +4,12 @@ function delayedTest()
 {
     var searchField = document.getElementById("test");
     searchField.setAttribute("placeholder", "Test Passed");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 setTimeout(delayedTest, 100);
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 </script>

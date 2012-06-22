@@ -1,8 +1,8 @@
 <html>
   <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function gc() {
@@ -18,8 +18,8 @@
         form.id = 'foo';
         document.body.appendChild(form);
         document.body.innerHTML += 'PASS';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     function test() {

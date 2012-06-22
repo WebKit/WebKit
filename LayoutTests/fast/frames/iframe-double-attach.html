@@ -7,8 +7,8 @@
     <script>
         function runTest()
         {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
                 
             // first, make sure the target needs style recalc
             target.style.backgroundColor = "white";

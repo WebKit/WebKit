@@ -73,8 +73,8 @@ function assertNotChecked(value)
         fail(value + ' should not be checked');
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 if (window.eventSender) {
     getRadio('a').focus();

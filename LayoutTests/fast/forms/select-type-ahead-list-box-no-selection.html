@@ -11,8 +11,8 @@
 </select>
 <div id="result">To run interactively, tab to list and type "12" quickly. If it doesn't crash, the test passed.</div>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         var menu = document.getElementById("list");
         menu.focus();
         eventSender.keyDown("1");

@@ -6,9 +6,9 @@
 <iframe name="tg"></iframe>
 <div id="result"></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 window.onload = function() {
@@ -19,8 +19,8 @@ window.onload = function() {
             document.getElementById('result').textContent = "PASS";
         else
             document.getElementById('result').textContent = "FAIL: actual=" + actual_search;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, false);
 
     document.getElementsByTagName('form')[0].submit();

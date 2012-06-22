@@ -4,8 +4,8 @@ Test passes if it does not crash.
 <textarea id="A"></textarea>
 <textarea id="B"></textarea>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 A.selectionStart = 0;
 B.style.display = "none";

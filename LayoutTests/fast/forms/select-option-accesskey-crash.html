@@ -14,8 +14,8 @@
 <script>
 description('This test is to ensure that we do not crash when selecting an item from a menu list in a list box through an access key.')
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
     var selectElement = document.getElementById("target");
     selectElement.focus();

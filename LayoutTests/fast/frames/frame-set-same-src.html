@@ -4,8 +4,8 @@
 <head>
 <script>
     
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     function rightFrameLoaded() {
         rightFrameLoadCount++;
@@ -13,15 +13,15 @@
             // Console is set by runTest
             console.firstChild.nodeValue = "SUCCESS";
 
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 // Put the test result in the main document so we can dump as text
                 var text = console.ownerDocument.documentElement.innerHTML;
                 document.open();
                 document.write(text);
                 document.close();
 
-                layoutTestController.dumpAsText();
-                layoutTestController.notifyDone();
+                testRunner.dumpAsText();
+                testRunner.notifyDone();
             }
         }
     }

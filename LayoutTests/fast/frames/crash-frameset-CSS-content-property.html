@@ -4,15 +4,15 @@
 <script>
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var frameset = document.getElementById("frameset");
     var mouseClick = document.createEvent("MouseEvent");
     mouseClick.initEvent("click", true, true);
     frameset.dispatchEvent(mouseClick);
 
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         // For some reason, when running this test by hand in release builds you must manually
         // click on the not-found image placeholder to cause a crash. Hence, we don't replace
         // the <frameset> and print a PASS message.

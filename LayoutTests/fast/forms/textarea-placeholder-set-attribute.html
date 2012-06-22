@@ -3,14 +3,14 @@
 function finishTest()
 {
     document.getElementById('textarea').setAttribute('placeholder','Placeholder');
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
     setTimeout(finishTest, 0);
 }
 

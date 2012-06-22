@@ -1,7 +1,7 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 window.iframeLoadCount = 0;
@@ -16,8 +16,8 @@ window.onload = function() {
   alert('Frame has loaded ' + top.iframeLoadCount + ' time(s).');
   if (top.iframeLoadCount == 2) {
     alert('PASS');
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
   } else if (top.iframeLoadCount > 2)
     alert('FAIL!!');
   </script>

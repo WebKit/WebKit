@@ -1,16 +1,16 @@
 <html>
 <head>
     <script type="text/javascript">
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
-            layoutTestController.setFrameFlatteningEnabled(true);
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.setFrameFlatteningEnabled(true);
         }
 
         function test()
         {
             setTimeout(function() {
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }, 0);
         }
     </script>

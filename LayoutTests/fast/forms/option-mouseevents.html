@@ -44,9 +44,9 @@ function mouseeventverify2(event, x, y, offsetX, offsetY, target, type)
     shouldBe("event.y", event.y, y);
 }
 function test() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     if (window.eventSender) {
@@ -83,8 +83,8 @@ function test() {
         eventSender.mouseUp();
     }
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </head>

@@ -2,8 +2,8 @@
 <iframe src="data:text/html,<body><input><script>document.getElementsByTagName('input')[0].focus()</script></body>" height=40 width=200></iframe>
 <p>This field should look and act focused. Try to type into it: <input></p>
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function test()
 {
@@ -25,8 +25,8 @@ function test2()
             input.value = "PASS";
     }
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 
 }
 </script>

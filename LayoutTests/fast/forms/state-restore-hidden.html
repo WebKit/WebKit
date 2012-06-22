@@ -19,8 +19,8 @@ function runTest() {
     var state = document.getElementById("emptyOnFirstVisit");
     if (!state.value) {
         // First visit.
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         state.value = "visited";
 
         document.f.hidden.value = "after";
@@ -35,8 +35,8 @@ function runTest() {
         script.src = "../js/resources/js-test-post.js";
         script.type = "text/javascript";
         script.onload = function() {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         };
         document.body.appendChild(script);
     }

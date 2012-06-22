@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 window.unload = function() {
@@ -17,8 +17,8 @@ window.onload = function() {
     // wait for a bit.
     setTimeout(function() {
         alert("PASS");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 20);
 }
 </script>

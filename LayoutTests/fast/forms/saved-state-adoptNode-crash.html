@@ -7,14 +7,14 @@ Marshmallows
 <iframe id="iframe" src="data:text/html,"></iframe>
 <input type="password" id="password" value="seikooC">
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var newDoc = document.getElementById("iframe").contentDocument;
     newDoc.adoptNode(document.getElementById("select"));
     newDoc.adoptNode(document.getElementById("textarea"));
     newDoc.adoptNode(document.getElementById("password"));
-    location.href="data:text/html,SUCCESS<script>if (window.layoutTestController) layoutTestController.notifyDone()</scr" + "ipt>";
+    location.href="data:text/html,SUCCESS<script>if (window.testRunner) testRunner.notifyDone()</scr" + "ipt>";
 </script>

@@ -17,8 +17,8 @@ function pressKey(key)
 }
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
 
         for (i = 1; i <= 9; i++)
             pressKey(i.toString());

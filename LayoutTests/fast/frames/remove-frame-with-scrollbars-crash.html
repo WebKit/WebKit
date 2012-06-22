@@ -16,10 +16,10 @@ function destroyIframe()
 {
     iframe.parentNode.removeChild(iframe);
     log("PASS: Yout didn't crash.");
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 iframe.onload = function() { setTimeout(destroyIframe, 0); }
-layoutTestController.dumpAsText();
-layoutTestController.waitUntilDone();
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
 </script>

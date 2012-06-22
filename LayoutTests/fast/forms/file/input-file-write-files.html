@@ -23,8 +23,8 @@ function onInputFileChange()
 
     doStringTest();
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function handleDragOver(e) {
@@ -71,9 +71,9 @@ function doStringTest()
         log("FAIL: writing empty string to value did not clear files");
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 if (window.eventSender) {

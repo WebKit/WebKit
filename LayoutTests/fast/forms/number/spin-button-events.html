@@ -16,7 +16,7 @@ num1.onchange = function () { log("onchange(" + num1.value + ")"); }
 num1.oninput = function () { log("oninput(" + num1.value + ")"); }
 
 function testIt() {
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     // Click spin Up button
     eventSender.mouseMoveTo(
@@ -26,7 +26,7 @@ function testIt() {
     eventSender.mouseUp();
 }
 
-if (window.layoutTestController) {
+if (window.testRunner) {
   testIt();
 }
 </script>

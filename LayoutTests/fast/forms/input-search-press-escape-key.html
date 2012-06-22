@@ -17,7 +17,7 @@ description("This tests if the value in a search input form is cleared and a 'se
             "To run (a part of) this test manually, type some text in the search form and then press the Escape key. " +
             "If the text is cleared, then the test passes.");
 
-if (window.layoutTestController && window.eventSender) {
+if (window.testRunner && window.eventSender) {
     var input = $("search");
     var enabled = false;
     var disabled = true;

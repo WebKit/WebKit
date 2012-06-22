@@ -10,7 +10,7 @@
             document.getElementById("anIFrame").contentWindow.location.href = "resources/purple.html";
         } else {
             document.getElementById("console").firstChild.nodeValue = "SUCCESS";
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     }
     
@@ -18,9 +18,9 @@
 </head>
 <body>
   <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
   </script>
 

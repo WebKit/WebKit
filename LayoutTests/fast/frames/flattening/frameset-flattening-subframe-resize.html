@@ -1,9 +1,9 @@
 <html>
 <head>
     <script type="text/javascript">
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
-            layoutTestController.setFrameFlatteningEnabled(true);
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.setFrameFlatteningEnabled(true);
         }
 
         function test()
@@ -18,9 +18,9 @@
                 div.style.width='300';
                 div.style.backgroundColor='blue';
 
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 frames[0].document.body.offsetTop;
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
         }
     </script>

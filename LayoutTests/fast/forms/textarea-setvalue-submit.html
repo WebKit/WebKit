@@ -12,9 +12,9 @@
 
 if (document.URL.indexOf('?') == -1) {
 
-    if (window.layoutTestController) {
-        window.layoutTestController.dumpAsText();
-        window.layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
     }
     
     var textarea1 = document.getElementById("textarea1");
@@ -32,8 +32,8 @@ if (document.URL.indexOf('?') == -1) {
     else
         document.write("Failure.  The value set in the textarea via javascript wasn't sent when the form was submitted.  Expected: " + expected + ", Found: " + formData);
     
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 
 </script>

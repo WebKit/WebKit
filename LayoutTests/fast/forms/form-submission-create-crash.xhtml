@@ -4,9 +4,9 @@ Test passes if it does not crash.
 <input id="submit" type="submit" />
 </form>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 textNode = document.createTextNode("x");
@@ -16,8 +16,8 @@ runTest = function() {
     event = document.createEvent("MouseEvent");
     event.initEvent("click");
     textNode.dispatchEvent(event);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 setTimeout(runTest, 0);

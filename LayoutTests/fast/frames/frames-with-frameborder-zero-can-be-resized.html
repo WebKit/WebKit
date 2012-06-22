@@ -3,7 +3,7 @@
     <head>
         <script>
             function log(frame, success, isWidth, size) {
-                if (window.layoutTestController) {
+                if (window.testRunner) {
                     document.getElementById("results").contentDocument.getElementById("console").appendChild(document.createTextNode((success ? "PASS: " : "FAIL: ") + frame.name + " resized correctly\n"));
                 } else {
                     frame.document.close();
@@ -19,15 +19,15 @@
             }
 
             function checkProgress() {
-                if (!window.layoutTestController) {
+                if (!window.testRunner) {
                     checkSuccess();
                 }
             }
 
             function run() {
-                if (window.layoutTestController) {
-                    layoutTestController.dumpAsText();
-                    layoutTestController.dumpChildFramesAsText();
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
+                    testRunner.dumpChildFramesAsText();
 
                     document.getElementById("results").contentDocument.getElementById("description").innerText = "\nThis tests that frames with frameborder=0 can be resized. See WebKit Bug 23750. On success, two 'PASS' messages will be shown below.";
 

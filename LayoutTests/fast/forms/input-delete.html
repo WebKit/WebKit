@@ -3,8 +3,8 @@
 <script src="../../editing/editing.js" language="JavaScript" type="text/JavaScript" ></script>
 <script>
 function test() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
     }
     document.getElementById('tf').setSelectionRange(5, 11);
     deleteCommand();

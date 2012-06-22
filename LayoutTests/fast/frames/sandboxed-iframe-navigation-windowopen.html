@@ -2,10 +2,10 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.setCanOpenWindows(true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows(true);
 }
 
 var testStatus       = "FAIL: not completed";
@@ -20,8 +20,8 @@ function updateStatus(loaded, done)
 
     if (mainWindowLoaded && testCompleted) {
         document.getElementById("testStatus").innerHTML = testStatus;
-        if (testCompleted && window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (testCompleted && window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

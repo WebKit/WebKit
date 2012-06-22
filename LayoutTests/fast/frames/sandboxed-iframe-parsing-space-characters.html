@@ -17,8 +17,8 @@ function next() {
         return;
     }
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function testCharacter(possibleDelimiter, message) {
@@ -30,9 +30,9 @@ function testCharacter(possibleDelimiter, message) {
     document.body.appendChild(iframe);
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 next();

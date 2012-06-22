@@ -12,9 +12,9 @@ function log(s) {
 
 (function () {    
     if (document.URL.indexOf('?') == -1) {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         document.getElementById("textarea").style.display = "none";
@@ -25,7 +25,7 @@ function log(s) {
     log("PASS: You didn't crash.");
     log("Submitted form value: " + location.search);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 })();
 </script>

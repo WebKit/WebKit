@@ -5,10 +5,10 @@
     <script>
     function test() {
         if (document.location.hash !== '#submitted') {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.setXSSAuditorEnabled(true)
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.setXSSAuditorEnabled(true)
+                testRunner.waitUntilDone();
             }
 
             var form = document.getElementById('form');
@@ -16,8 +16,8 @@
             form.submit();
         } else {
             testPassed('No assertions raised.');
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     }
     </script>

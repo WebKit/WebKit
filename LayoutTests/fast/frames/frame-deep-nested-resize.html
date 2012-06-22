@@ -1,11 +1,11 @@
 <html>
     <head>
         <script>
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             function log(frame, success, isWidth, size) {
-              if (window.layoutTestController) {
+              if (window.testRunner) {
                 alert(frame.name + ' resized correctly = ' + (success ? 'true' : 'false'));
               } else {
                 frame.document.close();
@@ -21,12 +21,12 @@
             }
 
             function checkProgress() {
-                if (!window.layoutTestController)
+                if (!window.testRunner)
                     checkSuccess();
             }
 
             function init() {
-                if (window.layoutTestController) {
+                if (window.testRunner) {
                     //Move the One/* vertical resizer ten pixels west...
                     eventSender.mouseMoveTo(90, 400);
                     eventSender.mouseDown();

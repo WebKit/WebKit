@@ -2,9 +2,9 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
 }
 
 var navigatedFrames = 0;
@@ -20,8 +20,8 @@ function checkResults()
     else
         testStatus.innerHTML = 'FAIL: frames not navigated properly';
 
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 
 function countFrame()

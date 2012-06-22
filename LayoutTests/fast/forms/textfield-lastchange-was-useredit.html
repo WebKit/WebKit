@@ -10,7 +10,7 @@ HTMLTextAreaElement.lastChangeWasUserEdit, which are exposed via WebKit API.</p>
 <input type="text"><textarea></textarea>
 <script>
 
-if (!window.layoutTestController || !window.internals)
+if (!window.testRunner || !window.internals)
     testFailed('This test requires access to window.internals');
 
 var textField;

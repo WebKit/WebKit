@@ -11,8 +11,8 @@
     }
 
     function test() {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
             
         if (document.activeElement == document.getElementsByTagName("input")[0])
             log("SUCCESS");

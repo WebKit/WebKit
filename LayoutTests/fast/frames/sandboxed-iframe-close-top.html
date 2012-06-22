@@ -1,11 +1,11 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
 }
 </script>
 </head>
@@ -23,8 +23,8 @@ function done() {
     // We end the test asynchronously becaues this function is being called
     // from a strange callstack.
     window.setTimeout(function () {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 }
 

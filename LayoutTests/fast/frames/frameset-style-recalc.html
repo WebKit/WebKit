@@ -3,14 +3,14 @@
     <script type="text/javascript">
         function test()
         {
-            if (window.layoutTestController)
-                layoutTestController.waitUntilDone();
+            if (window.testRunner)
+                testRunner.waitUntilDone();
 
             document.body.offsetTop;
             setTimeout(function() {
                 document.body.rows = "200,*";
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }, 0);
         }
     </script>

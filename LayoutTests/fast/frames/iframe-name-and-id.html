@@ -8,8 +8,8 @@ function print(message) {
 }
 
 function test() {
-        if (window.layoutTestController) {
-                window.layoutTestController.dumpAsText();
+        if (window.testRunner) {
+                window.testRunner.dumpAsText();
         }
         
         print("frames[0].name (should be frame0_name): " + frames[0].name);

@@ -17,15 +17,15 @@
         </form>
         <div id="console"></div>
         <script type="text/javascript">
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.setCanOpenWindows();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setCanOpenWindows();
+            testRunner.waitUntilDone();
         }
         var numberTimesToClick = 2;
         var numberTimesToSpace = 2;
         window.onload = function() {
-            if (!window.layoutTestController || !window.eventSender)
+            if (!window.testRunner || !window.eventSender)
                 return;
             
             click();
@@ -65,8 +65,8 @@
             eventSender.keyDown(' ');
         }
         function notifyDone() {
-            layoutTestController.setCloseRemainingWindowsWhenComplete();
-            layoutTestController.notifyDone();
+            testRunner.setCloseRemainingWindowsWhenComplete();
+            testRunner.notifyDone();
         }
         </script>
     </body>

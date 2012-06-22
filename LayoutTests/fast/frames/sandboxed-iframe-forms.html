@@ -2,9 +2,9 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
 }
 
 var submissionCount      = 0;
@@ -17,8 +17,8 @@ function allowedFormSubmitted()
     if (submissionCount == 10) {
         document.getElementById("test_status").innerHTML = (disallowedSubmission ? "FAIL" : "PASS");
       
-        if (window.layoutTestController)
-            window.layoutTestController.notifyDone();
+        if (window.testRunner)
+            window.testRunner.notifyDone();
     }
 }
 

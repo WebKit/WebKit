@@ -11,9 +11,9 @@ Empty forms are submitted incorrectly.</p>
 </form>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 if (document.URL.indexOf('?') == -1) {
@@ -27,8 +27,8 @@ if (document.URL.indexOf('?') == -1) {
     else
         document.write("<p>Failure</p>");
     
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

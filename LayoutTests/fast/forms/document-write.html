@@ -4,9 +4,9 @@
 function test() {
   if (document.URL.indexOf('?') == -1) {
 
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
     }
     
     document.write("<html><body>" +
@@ -16,8 +16,8 @@ function test() {
     "pt></body></html>");
   } else {
     document.getElementById("result").innerHTML="SUCCESS";
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   }
   
 }

@@ -5,8 +5,8 @@
 <select id="menu"><option>&#x05e9;</option><option>&#x05d3;</option><option>&#x05d2;</option><option>&#x05db;</option><option>&#x05e2;</option></select>
 <div id="result">Cannot run interactively.</div>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         var menu = document.getElementById("menu");
         menu.focus();
         eventSender.keyDown("\u05d2");

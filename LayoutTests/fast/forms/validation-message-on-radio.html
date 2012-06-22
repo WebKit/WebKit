@@ -27,10 +27,10 @@ var host = $('host');
 var hostRect;
 var bubbleRect;
 $('submit').click();
-if (window.layoutTestController) {
+if (window.testRunner) {
     setTimeout(check, 0);
 } else {
-    debug('The test requires layoutTestController.');
+    debug('The test requires testRunner.');
 }
 
 var jsTestIsAsync = true;

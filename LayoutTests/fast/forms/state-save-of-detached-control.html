@@ -21,8 +21,8 @@ function runTest()
     var state = document.getElementById('emptyOnFirstVisit');
     if (!state.value) {
         // First visit.
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         state.value = 'visited';
 
         form1.innerHTML = '<input name=user id=input1>';
@@ -35,8 +35,8 @@ function runTest()
         // Second visit.
         shouldBe('document.getElementById("input2").value', '""'); // Not 'value1'.
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
  }
 </script>

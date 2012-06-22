@@ -11,9 +11,9 @@
     }
 
     function test() {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         var input = document.getElementsByTagName('input')[0];
         var p = document.getElementsByTagName('p')[0];
@@ -30,8 +30,8 @@
         else
             log("FAILURE");
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
 </script>

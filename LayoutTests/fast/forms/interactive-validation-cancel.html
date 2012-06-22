@@ -30,12 +30,12 @@ function startOrVerify() {
         testPassed('The form was not submitted.');
     }
     debug('TEST COMPLETE');
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 window.onload = startOrVerify;
 </script>
 </body>

@@ -2,8 +2,8 @@
     <head>
         <script>
             function test() {
-                if (window.layoutTestController)
-                    layoutTestController.waitUntilDone();
+                if (window.testRunner)
+                    testRunner.waitUntilDone();
                     
                 setTimeout('addLongOption();', 100);
             }
@@ -14,8 +14,8 @@
                 var sl = document.getElementById("t");
                 sl.appendChild(newOpt);
                                 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         </script>
     </head>

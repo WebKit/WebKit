@@ -48,12 +48,12 @@ window.jsTestIsAsync = true;
 
 function test()
 {
-    if (!window.layoutTestController) {
-        debug("This test needs layoutTestController.");
+    if (!window.testRunner) {
+        debug("This test needs testRunner.");
         return;
     }
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     debug("\nClick enabled option");
     $("listbox").selectedIndex = 2;

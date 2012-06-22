@@ -9,8 +9,8 @@ function log(message)
 }
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     document.getElementById("1").focus();
     document.getElementById("2").focus();

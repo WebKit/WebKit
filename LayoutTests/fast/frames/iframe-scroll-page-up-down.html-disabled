@@ -3,11 +3,11 @@
 <script>
 function test() 
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     // 1st test: iframes scrolled to top, top level document scrolled to bottom
     // pageup in innermost iframe should scroll top level document up

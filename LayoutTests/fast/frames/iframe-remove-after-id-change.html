@@ -10,8 +10,8 @@ function log(s)
     document.getElementById("console").appendChild(document.createTextNode(s));
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var iframe = document.getElementById("iframe");
 iframe.setAttribute("id", "iframe2", 0);

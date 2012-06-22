@@ -1,3 +1,52 @@
+2012-06-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use testRunner instead of layoutTestController in fast/fast-mobile-scrolling, flexbox, forms, frames, gradients tests
+        https://bugs.webkit.org/show_bug.cgi?id=89741
+
+        Reviewed by Kent Tamura.
+
+        * fast/flexbox/box-ordinal-group.html:
+        * fast/flexbox/box-size-integer-overflow.html:
+        * fast/flexbox/crash-button-input-autofocus.html:
+        * fast/flexbox/crash-button-keygen.html:
+        * fast/flexbox/crash-button-relayout.html:
+        * fast/flexbox/crash-flexbox-no-layout-child.html:
+        * fast/flexbox/horizontal-box-float-crash.html:
+        * fast/flexbox/inline-children-crash.html:
+        * fast/flexbox/layoutHorizontalBox-crash.html:
+        * fast/flexbox/line-clamp-crash.html:
+        * fast/flexbox/overhanging-floats-not-removed-crash.html:
+        * fast/flexbox/resources/box-orient-button.js:
+        * fast/forms/:
+        * fast/frames/:
+        * fast/gradients/crash-on-1px-border.html:
+        * fast/gradients/crash-on-degenerate-gradient.html:
+        * fast/gradients/crash-on-remove.html:
+        * fast/gradients/crash-on-tr.html:
+        * fast/gradients/css3-color-stop-units.html:
+        * fast/gradients/css3-color-stops.html:
+        * fast/gradients/css3-linear-angle-gradients.html:
+        * fast/gradients/css3-linear-right-angle-gradients.html:
+        * fast/gradients/css3-radial-gradient-crash.html:
+        * fast/gradients/css3-radial-gradients.html:
+        * fast/gradients/css3-radial-gradients2.html:
+        * fast/gradients/css3-radial-gradients3.html:
+        * fast/gradients/css3-repeating-end-fill.html:
+        * fast/gradients/css3-repeating-linear-gradients.html:
+        * fast/gradients/css3-repeating-linear-gradients2.html:
+        * fast/gradients/css3-repeating-radial-gradients.html:
+        * fast/gradients/gradient-after-transparent-border.html:
+        * fast/gradients/gradient-on-pseudoelement-crash.html:
+        * platform/chromium/fast/forms/search-popup-crasher.html:
+        * platform/gtk/fast/forms/menulist-typeahead-find.html:
+        * platform/gtk/fast/frames/scrolling-iframe-out-of-viewport.html:
+        * platform/mac/fast/forms/attributed-strings.html:
+        * platform/mac/fast/forms/listbox-scrollbar-hit-test.html:
+        * platform/mac/fast/forms/script-tests/focus-option-control-on-page.js:
+        (startTest):
+        (runKeyPresses):
+        (notifyDone):
+
 2012-06-21  Joone Hur  <joone.hur@intel.com>
 
         [EFL] Unreviewed gardening, unskip now passing tests.

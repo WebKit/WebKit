@@ -22,8 +22,8 @@ function startOrVerify()
             log('PASS: ' + query);
         else
             log('FAIL: ' + query);
-        layoutTestController.dumpAsText();
-        layoutTestController.notifyDone();
+        testRunner.dumpAsText();
+        testRunner.notifyDone();
     } else {
         // Start the test
         eventSender.beginDragWithFiles(['get-file-upload.html']);
@@ -34,7 +34,7 @@ function startOrVerify()
 }
 
 if (window.eventSender) {
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
     window.onload = startOrVerify;
 }
 </script>

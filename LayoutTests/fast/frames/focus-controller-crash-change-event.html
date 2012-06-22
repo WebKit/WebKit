@@ -5,16 +5,16 @@
     <iframe></iframe>
 </div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-	layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+	testRunner.waitUntilDone();
 }
 
 a.addEventListener("change", function() { 
     b.innerHTML = "PASS";
 
-	if (window.layoutTestController)
-	    layoutTestController.notifyDone();
+	if (window.testRunner)
+	    testRunner.notifyDone();
 });
 
 a.addEventListener("keyup", function() {
@@ -26,7 +26,7 @@ a.addEventListener("keyup", function() {
 document.body.offsetTop;
 a.focus();
 
-if (window.layoutTestController)
+if (window.testRunner)
     eventSender.keyDown('a');
 </script>
 </html>

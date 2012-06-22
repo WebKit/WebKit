@@ -2,8 +2,8 @@
 <head>
 <script>
 function showElement(x, y) {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
         
     var result = document.getElementById('res');
     var myElement = document.elementFromPoint(x, y);

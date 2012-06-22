@@ -12,9 +12,9 @@ description("Test for the formtarget attribute in a button tag.");
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.setAllowUniversalAccessFromFileURLs(true);
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.setAllowUniversalAccessFromFileURLs(true);
+        testRunner.waitUntilDone();
     }
 
     // Not dumping as text since the DumpRenderTree does not dump the text content of child frames.                
@@ -28,8 +28,8 @@ function passFrameLoaded()
         return;
     testPassed("The formtarget attribute was successfully used.");
     isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function failFrameLoaded()
@@ -38,8 +38,8 @@ function failFrameLoaded()
         return;
     testFailed("The formtarget attribute was not used.");
     isSuccessfullyParsed();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <iframe src="about:blank" id="pass" name="passFrame" onload="passFrameLoaded()"></iframe>

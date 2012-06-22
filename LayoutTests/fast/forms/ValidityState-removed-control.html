@@ -14,8 +14,8 @@ function gc()
 
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var validity = document.getElementById("control").validity;
     document.body.removeChild(document.getElementById("control"));
     gc();

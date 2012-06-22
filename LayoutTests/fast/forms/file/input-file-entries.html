@@ -34,8 +34,8 @@ var expectedFileAttributes = {
 var droppedEntries, verifyingEntry, returnedMetadata, returnedEntries;
 
 var jsTestIsAsync = true;
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
     doTest(0);
 }
 

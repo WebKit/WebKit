@@ -16,8 +16,8 @@
         Clicking the (x) button should clear the field.
     </p>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         if (window.eventSender) {
             var target = document.getElementById("target");
             var translationAmount = 50;

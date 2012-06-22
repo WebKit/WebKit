@@ -1,8 +1,8 @@
 <html>
     <head>
         <script>
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             function moveFocus() {
                 var ifrm = document.getElementById("rte");
@@ -14,7 +14,7 @@
                 ifrm.contentDocument.designMode = "on";
                 ifrm.contentWindow.focus();
                 
-                if (window.layoutTestController) {
+                if (window.testRunner) {
                     eventSender.keyDown('T');
                     eventSender.keyDown('E');
                     eventSender.keyDown('S');

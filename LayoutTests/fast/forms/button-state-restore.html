@@ -16,14 +16,14 @@
 
                 document.getElementById("result").innerText = result;
 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
                 return;
             }
 
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             beenHere.value = "FAIL";

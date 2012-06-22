@@ -7,14 +7,14 @@
   <frame name="frame1" src="javascript:
     function log(s)
     {
-      if (window.layoutTestController)
+      if (window.testRunner)
         alert(s);
       else
         top.frame1.document.write('<p>' + s + '</p>');
     }
     
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+    if (window.testRunner)
+      testRunner.dumpAsText();
     
     top.frame1.document.write('<p>Test for the presence of frameElement.width and frameElement.height <a href=\'https://bugs.webkit.org/show_bug.cgi?id=6402\'>(bug 6402)</a></p>');
     

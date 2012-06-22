@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var results = {};
@@ -18,13 +18,13 @@
             var resultText = "FAIL";
 
         results[tag] = resultText;
-        if (window.layoutTestController && results["script"] && results["textarea"]) {
+        if (window.testRunner && results["script"] && results["textarea"]) {
             document.open();
             document.write("script: " + results["script"] + "<br>");
             document.write("textarea: " + results["textarea"] + "<br>");
             document.close();
 
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         } else {
             document.getElementById(tag + "_result").textContent = resultText;
         }

@@ -29,8 +29,8 @@
         placeholder.parentNode.removeChild(placeholder);
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     document.body.offsetTop;
     test();

@@ -18,9 +18,9 @@
             {
                 setup();
                 
-                if (window.layoutTestController) {
-                    layoutTestController.dumpAsText();
-                    layoutTestController.waitUntilDone();
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
+                    testRunner.waitUntilDone();
                 }
 
                 checkSelection("0");
@@ -116,8 +116,8 @@
                 document.getElementById("sl1").blur();
                 checkSelection("4");
 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
             
             function mouseDownOnSelect(selId, index, shift, metaOrCtrl)

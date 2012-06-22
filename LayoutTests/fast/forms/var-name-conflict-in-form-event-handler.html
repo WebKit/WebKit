@@ -13,8 +13,8 @@ takes precedence over items of form.
 <div id='sourceViewDiv'>This test: FAILED</div>
 
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 
 var x=document.getElementsByTagName('select')[0];
 x.options[2].selected=true;

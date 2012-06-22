@@ -3,9 +3,9 @@
 <body>
 Test passes if it doesn't crash (may require libgmalloc and repeating) and this line gets erased.
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 var iterationsLeft = 2;
 function test()
@@ -14,8 +14,8 @@ function test()
         frames[0].history.go(0);
     } else {
         document.body.textContent = frames[0].document.body.textContent;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 </script>

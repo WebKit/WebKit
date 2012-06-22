@@ -26,7 +26,7 @@ var input;
 var delay;
 window.jsTestIsAsync = true;
 
-if (window.layoutTestController && window.eventSender) {
+if (window.testRunner && window.eventSender) {
     testInputs = [document.getElementById("readonlyNumber"), document.getElementById("disabledNumber")];
     setTimeout(function() {
         nextInputTest();

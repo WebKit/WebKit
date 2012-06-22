@@ -60,9 +60,9 @@
     
     function test()
     {
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
       }
       
       if (!window.eventSender) {
@@ -74,8 +74,8 @@
       setTimeout(function() {
         mouseDownOnSelect('select1', 0, 0);
         mouseDownOnSelect('select2', 50, 50);
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }, 0);
     }
   </script>

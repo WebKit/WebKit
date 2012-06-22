@@ -3,9 +3,9 @@
         <script>
         function test()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             setTimeout(test2, 0);
@@ -27,8 +27,8 @@
             else
                 log("Test Failed.  scrollTop = " + scrollTop + " even though there is only one option in the listbox");
             
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
         
         function log(msg)

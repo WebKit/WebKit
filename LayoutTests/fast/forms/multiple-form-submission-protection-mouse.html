@@ -2,10 +2,10 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.waitUntilDone();
 }
 
 addEventListener('message', function(e) {
@@ -43,7 +43,7 @@ function submitTo(target)
 <li>Click on "Click 2" to submit form to this window. Single word "SUCCESS" should replace the contents of this document.
 </ol>
 <p>If either event doesn't occur, the test has failed.
-<form method="post" name="test" action="data:text/html,<script>if (opener) { opener.postMessage('trololo', '*'); window.close(); } else { document.write('SUCCESS'); window.layoutTestController && layoutTestController.notifyDone(); }</script>">
+<form method="post" name="test" action="data:text/html,<script>if (opener) { opener.postMessage('trololo', '*'); window.close(); } else { document.write('SUCCESS'); window.testRunner && testRunner.notifyDone(); }</script>">
 <input type="button" id="button1" value="Click 1" onclick="submitTo('_new')">
 <input type="button" id="button2" value="Click 2" onclick="submitTo('_self')">
 </form>

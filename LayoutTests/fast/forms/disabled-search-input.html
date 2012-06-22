@@ -2,9 +2,9 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var logDiv;
@@ -42,7 +42,7 @@ function runTest()
         eventSender.mouseUp();
         eventSender.keyDown('a');
         log('The inner text element of the search input should never be 0-height', input.value == 'a');
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }, 0);
 }
 

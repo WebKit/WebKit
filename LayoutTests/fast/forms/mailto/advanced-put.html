@@ -4,9 +4,9 @@
         <title>action="mailto" PUT method</title>
         <script>
             function test() {
-              if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitForPolicyDelegate();
+              if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitForPolicyDelegate();
                 document.getElementsByTagName("form")[0].submit();
               }
             }

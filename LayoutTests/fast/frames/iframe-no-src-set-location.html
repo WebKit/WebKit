@@ -2,9 +2,9 @@
 <head>
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var iframeHasLoadedFirstPage = false;
@@ -22,8 +22,8 @@ function runTest()
 
         isSuccessfullyParsed();
 
-        if (window.layoutTestController) {
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.notifyDone();
         }
     }
 }

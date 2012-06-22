@@ -2,8 +2,8 @@
 <head>
 <script>
 function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var tf = document.getElementById('tf');
     var x = tf.offsetLeft + tf.offsetWidth / 2;
     var y = tf.offsetTop + tf.offsetHeight / 2;

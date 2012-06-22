@@ -3,8 +3,8 @@
 <script src="../../editing/editing.js"></script>
 <script>
 function test() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
     }
     document.getElementById('tf').focus();
     selectAllCommand();    

@@ -7,9 +7,9 @@
 </form>
 <script>
 if (document.URL.indexOf('?') == -1) {
-    if (window.layoutTestController) {
-        window.layoutTestController.dumpAsText();
-        window.layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
     }
     document.getElementById("textarea").removeAttribute("wrap");
     document.f.submit();
@@ -19,8 +19,8 @@ if (document.URL.indexOf('?') == -1) {
         document.write("Success");
     else
         document.write("Failure.  The form data that should have been submitted: textarea=123456789<br>This is what was actually submitted: " + formData);    
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 </script>
 </body>

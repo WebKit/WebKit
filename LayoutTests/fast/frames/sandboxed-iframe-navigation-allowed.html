@@ -3,9 +3,9 @@
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
 
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
 }
 
 function childFrameWasNavigated()
@@ -27,8 +27,8 @@ function sandboxWasNavigated()
     shouldBe("document.getElementById('sandboxedFrameId').sandbox", "'allow-scripts allow-same-origin'");
     isSuccessfullyParsed();
 
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 
 </script>

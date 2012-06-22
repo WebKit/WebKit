@@ -23,12 +23,12 @@ function startTest()
     // Attach a renderer again.
     input.style.display = 'inline-block';
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 if (window.eventSender) {
     window.onload = startTest;
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
 }
 </script>
 </body>

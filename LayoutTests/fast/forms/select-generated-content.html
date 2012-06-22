@@ -12,8 +12,8 @@ function boom() {
     var s2 = document.createElement('select');
     s2.setAttribute('class', 's2');
     document.documentElement.appendChild(s2);
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 }
 window.onload = boom;
 </script>

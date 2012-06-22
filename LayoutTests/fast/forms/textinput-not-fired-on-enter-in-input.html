@@ -40,14 +40,14 @@ form.addEventListener('submit', function(event) {
     event.preventDefault();
 });
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 el.focus();
 if (window.eventSender) {
     log('\nSending Enter to input element');
     eventSender.keyDown('\r', []);
-} else if (window.layoutTestController)
+} else if (window.testRunner)
     log('This test requires eventSender to run in LayoutTests.');
 
 </script>

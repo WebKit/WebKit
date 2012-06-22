@@ -21,8 +21,8 @@ function startOrVerify() {
         testPassed('The form should be submitted.');
         shouldBeTrue('location.search.indexOf("terms=on") != -1');
         debug('TEST COMPLETE');
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } else {
         document.getElementById('i1').checked = true;
         // HTMLFormElement::submit() skips validation. Use the submit button.
@@ -31,8 +31,8 @@ function startOrVerify() {
     }
 }
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 window.onload = startOrVerify;
 </script>
 </body>

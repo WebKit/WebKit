@@ -2,14 +2,14 @@
     <head>
         <script>
             function test() {
-                if (window.layoutTestController)
-                    layoutTestController.waitUntilDone();
+                if (window.testRunner)
+                    testRunner.waitUntilDone();
                 setTimeout("test2()", 100);
             }
             function test2() {
                 document.getElementById('sl').options[0] = new Option ( "This text should fit in the list box", "1" );
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         </script>
     </head>

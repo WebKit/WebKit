@@ -5,10 +5,10 @@
     <script>
         function test()
         {
-            if (!window.layoutTestController)
+            if (!window.testRunner)
                 return;
 
-            layoutTestController.dumpAsText();
+            testRunner.dumpAsText();
 
             var s1 = document.getElementById("search1");
             var s2 = document.getElementById("search2");

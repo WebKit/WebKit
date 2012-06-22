@@ -10,8 +10,8 @@ function test() {
 	var after = zipselect.options.length;
     if (before > after)
         document.getElementById("theDiv").innerHTML = "test passed"
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();  
+    if (window.testRunner)
+        testRunner.dumpAsText();  
 }
 </SCRIPT>
 </head>

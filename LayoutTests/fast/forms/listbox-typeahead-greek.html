@@ -41,8 +41,8 @@ function log(str) {
     console.appendChild(li);
 }
 
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 
 // Set the input focus to the <select> element.
 var node = document.getElementById("test");

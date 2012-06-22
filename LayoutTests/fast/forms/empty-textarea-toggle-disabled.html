@@ -4,9 +4,9 @@ the test succeeded.<p>
 <textarea id="ta" disabled="disabled"></textarea>
 
 <script type="text/javascript">
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 setTimeout(function() {
@@ -20,7 +20,7 @@ setTimeout(function() {
         else
             document.write("<pre>FAIL, result was '" + result + "'.</pre>");
     }
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }, 0);
 </script>

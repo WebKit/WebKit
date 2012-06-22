@@ -12,8 +12,8 @@ function log(str)
 
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     if (!window.eventSender)
         return;

@@ -3,8 +3,8 @@
         <script>
             function test()
             {
-                if (window.layoutTestController) {
-                    layoutTestController.waitUntilDone();
+                if (window.testRunner) {
+                    testRunner.waitUntilDone();
                     setTimeout(autoscrollTestPart1, 0);
                 }
             }
@@ -27,8 +27,8 @@
                 if (window.eventSender)
                     eventSender.mouseUp();
                 log("ScrollLeft: " + document.getElementById('tf').scrollLeft);
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
             function log(msg)
             {

@@ -2,8 +2,8 @@ This tests to make sure that clicking inside a text field places the caret in it
 <input id="textfield" onFocus="window.scrollBy(0, 40)" value="click in me"><br>
 <div style="height: 1500px;">
 <script>
-if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
     textfield = document.getElementById("textfield");
     // Click near the end of the field so that the caret after all of the text inside it.
     x = textfield.offsetParent.offsetLeft + textfield.offsetLeft + textfield.offsetWidth - 5;

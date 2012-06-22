@@ -42,8 +42,8 @@ function runTest(name, shouldChangeSelection) {
     document.writeln();
 }
 
-if (window.layoutTestController && window.eventSender) {
-    layoutTestController.dumpAsText();
+if (window.testRunner && window.eventSender) {
+    testRunner.dumpAsText();
 
     runTest('input', false);
     runTest('input', true);

@@ -6,8 +6,8 @@
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     document.getElementById('select').length; // cause the <select> element to build a list of options
     document.getElementById('group').innerHTML = ""; // remove an option using innerHTML

@@ -11,9 +11,9 @@ REGRESSION: Reproducible crash at Wikipedia</p>
  <input type=hidden name=q value="&#x65;&#x301;"><br>
 </form>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 if (document.URL.substring(0, 4) == "file") {
@@ -28,8 +28,8 @@ if (document.URL.substring(0, 4) == "file") {
         <!-- no crash == success -->
         document.write("<p>SUCCESS</p>");
         
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
 } else {

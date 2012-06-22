@@ -7,8 +7,8 @@
 var select = document.forms[0].elements[0];
 var res = document.getElementById("res");
 select.focus();
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     eventSender.keyDown("downArrow", []);
     eventSender.keyDown("downArrow", ["shiftKey"]);
 } else {

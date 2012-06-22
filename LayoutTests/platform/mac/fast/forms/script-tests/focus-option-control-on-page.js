@@ -6,7 +6,7 @@ var result;
 function startTest() {
     debug("Pressing tab 4 times:");
     modifiers = undefined;
-    layoutTestController.focusWebView(runKeyPresses);
+    testRunner.focusWebView(runKeyPresses);
 }
 
 function runKeyPresses() {
@@ -21,29 +21,29 @@ function runKeyPresses() {
             shouldBe('result', '" /1:focused text field /2: /3:focused text field /4:"');
             debug("Pressing shift-tab 4 times:");
             modifiers = ["shiftKey"];
-            layoutTestController.focusWebView(runKeyPresses);
+            testRunner.focusWebView(runKeyPresses);
             break;
         case 2:
             shouldBe('result', '" /1:focused text field /2: /3:focused text field /4:"');
             debug("Pressing option-tab 4 times:");
             modifiers = ["altKey"];
-            layoutTestController.focusWebView(runKeyPresses);
+            testRunner.focusWebView(runKeyPresses);
             break;
         case 3:
             shouldBe('result', '" /1:focused first button /2:focused text field /3:focused second button /4:"');
             debug("Pressing shift-option-tab 4 times:");
             modifiers = ["shiftKey", "altKey"];
-            layoutTestController.focusWebView(runKeyPresses);
+            testRunner.focusWebView(runKeyPresses);
             break;
         case 4:
             shouldBe('result', '" /1:focused second button /2:focused text field /3:focused first button /4:"');
-            layoutTestController.removeChromeInputField(notifyDone);
+            testRunner.removeChromeInputField(notifyDone);
             break;
     }
 }
 
 function notifyDone() {
-    setTimeout(function() { layoutTestController.notifyDone(); }, 0);
+    setTimeout(function() { testRunner.notifyDone(); }, 0);
 }
 
 function log(val) {
@@ -51,9 +51,9 @@ function log(val) {
 }
 
 /////////////////////////////////
-if (window.layoutTestController && window.eventSender && layoutTestController.addChromeInputField) {
+if (window.testRunner && window.eventSender && testRunner.addChromeInputField) {
     window.jsTestIsAsync = true;
-    layoutTestController.addChromeInputField(startTest);
+    testRunner.addChromeInputField(startTest);
 } else
     finishJSTest();
 

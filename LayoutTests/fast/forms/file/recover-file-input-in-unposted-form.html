@@ -33,7 +33,7 @@ description("Test that the state of a file chooser is recovered when navigating 
 // - Check the form data.
 
 function test() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     if (document.location.search == "" && window.name == "") {
         // Start of the test. Set the values to the input elements.

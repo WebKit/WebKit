@@ -4,8 +4,8 @@
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var widthBefore = document.getElementById("select").offsetWidth;
     document.getElementById("select").setAttribute("style", "font-size: 32px");

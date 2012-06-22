@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function gc() {
@@ -34,8 +34,8 @@ function delay()
     form.setAttribute('id', 'form2');
     document.body.appendChild(form);
     location.reload();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </head>

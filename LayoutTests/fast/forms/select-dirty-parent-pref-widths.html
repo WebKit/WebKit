@@ -5,13 +5,13 @@
       function go() {
         document.getElementById('sel1').style.display = '';
 
-        if (window.layoutTestController)
-            window.layoutTestController.notifyDone();
+        if (window.testRunner)
+            window.testRunner.notifyDone();
       }
 
       function main() {
-        if (window.layoutTestController)
-            window.layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
         setTimeout(go, 0);
       }
     </script>

@@ -83,12 +83,12 @@ function installMouseTracker() {
 
 function test()
 {
-    if (!window.layoutTestController) {
+    if (!window.testRunner) {
         installMouseTracker();
         return;
     }
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     for (var formIndex = 0; formIndex < numForms; formIndex++) {
         for (var colIndex = 0; colIndex < numCols; colIndex++) {

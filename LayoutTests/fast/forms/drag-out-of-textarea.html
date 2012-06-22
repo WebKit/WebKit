@@ -11,13 +11,13 @@ function runTest() {
 
     textarea.select();
 
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     if (!window.eventSender)
         return;
 
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     eventSender.mouseMoveTo(tx, ty);
     eventSender.mouseDown();
@@ -31,7 +31,7 @@ function runTest() {
     else
         document.getElementById("result").innerText = "Test failed! Input value was " + input.value + " and text area value was " + textarea.value + ".";
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 </script>

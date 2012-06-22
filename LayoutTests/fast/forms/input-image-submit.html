@@ -13,8 +13,8 @@
 <div id="console"></div>
 <script>
 function notifyDone() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function failAndDone(message) {
@@ -41,8 +41,8 @@ function handleClick() {
     }
 }
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 var state = document.getElementById('state');
 var image = document.getElementById('image');

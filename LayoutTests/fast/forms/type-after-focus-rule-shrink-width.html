@@ -20,18 +20,18 @@ var input = document.getElementsByTagName('input')[0];
 function typeText() {
     document.execCommand('SelectAll', false, null);
     document.execCommand('InsertText', false, 'PASS');
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         input.parentNode.innerHTML = input.value;
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     if (!window.eventSender)
         document.write('This test requires eventSender');
     else {
-        layoutTestController.waitUntilDone();
+        testRunner.waitUntilDone();
 
         eventSender.mouseMoveTo(input.offsetLeft + input.offsetWidth * 2 / 3, input.offsetTop + input.offsetHeight / 2);
         eventSender.mouseDown();

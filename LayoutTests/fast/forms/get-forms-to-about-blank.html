@@ -5,9 +5,9 @@
     <script>
 
 function run() {
-    if (window.layoutTestController) {
-        window.layoutTestController.dumpAsText();
-        window.layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
     }
 
     description('Submitting a GET form to &lt;about:blank&gt; should redirect the browser to &lt;about:blank?&gt;.');
@@ -27,8 +27,8 @@ function onFrameLoad()
 
     shouldBe('iframe.contentDocument.URL', '"about:blank?"');
     isSuccessfullyParsed();
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
     </script>
   </head>

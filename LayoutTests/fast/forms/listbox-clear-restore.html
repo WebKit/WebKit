@@ -28,8 +28,8 @@ function clearList()
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     populateList();
     document.getElementById("myList").selectedIndex = 19;
@@ -38,8 +38,8 @@ function test()
     document.body.offsetWidth; // Force a layout.
     populateList();
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </body>

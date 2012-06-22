@@ -29,8 +29,8 @@ function runTest()
     var state = document.getElementById('emptyOnFirstVisit');
     if (!state.value) {
         // First visit.
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         state.value = 'visited';
     
         document.getElementById('input1').value = 'value1';
@@ -51,8 +51,8 @@ function runTest()
         shouldBe('document.getElementById("input2").value', '"value2"');
         shouldBe('document.getElementById("textarea2").value', '"good"');
         shouldBe('document.getElementById("select2").value', '"BSD"');
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
  }
 </script>

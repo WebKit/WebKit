@@ -22,8 +22,8 @@ function logEvent(event)
 
 function loaded()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var keys = ['\r', ' '];
     var keyNames = ['Enter', 'U+0020'];

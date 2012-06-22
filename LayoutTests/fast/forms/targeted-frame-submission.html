@@ -4,8 +4,8 @@
 
             function runTest()
             {
-                if (window.layoutTestController)
-                    layoutTestController.waitUntilDone();
+                if (window.testRunner)
+                    testRunner.waitUntilDone();
 
                 // Not dumping as text since the DumpRenderTree does not dump the text content of child frames.                
                 var button = document.getElementById('blankButton');
@@ -16,8 +16,8 @@
             {
                 if (document.getElementsByTagName('iframe')[0].contentDocument.URL == "about:blank")
                     return;
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
 
         </script>

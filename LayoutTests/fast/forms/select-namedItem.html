@@ -26,8 +26,8 @@ function test()
             print("ERROR: " + e.message);
         }
     }
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 }
 </script>
 <title>Test for HTMLSelectElement.namedItem()</title>

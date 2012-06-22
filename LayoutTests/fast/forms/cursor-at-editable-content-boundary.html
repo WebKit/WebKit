@@ -16,8 +16,8 @@ var succeed = true;
 
 function runTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     // The 2nd parameter 22 is the last character in textarea with id "textarea_rtl".
     testCaretRect("textarea_rtl", 22, "rtl", "horizontal");

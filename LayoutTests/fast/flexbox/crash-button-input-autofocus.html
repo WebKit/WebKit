@@ -2,8 +2,8 @@
 <body>
 <p style="visibility: collapse;"><button><input autofocus><input id="test"></input></button></p>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 document.body.offsetTop;
 document.getElementById('test').parentNode.removeChild(document.getElementById('test'));
 document.body.offsetTop;

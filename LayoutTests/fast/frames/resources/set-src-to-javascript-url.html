@@ -6,8 +6,8 @@ FAIL
         return "test";
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     parent.document.getElementById("parent").setAttribute("src", "javascript: returnStringValue()");
 </script>

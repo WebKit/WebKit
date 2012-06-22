@@ -4,8 +4,8 @@
 <div id="result"></div>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 CSSStyleDeclaration.prototype.foo = "foo";
 var win = document.getElementById('ifr').contentWindow;

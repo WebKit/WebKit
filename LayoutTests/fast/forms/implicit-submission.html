@@ -36,9 +36,9 @@ var allTests = [
     [ "Multiple text inputs with a disabled button", "!text,text,-button", "n"]
 ];
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var results = {
@@ -74,8 +74,8 @@ function runNextTest()
     }
     document.getElementById('arena').textContent = '';
     results.publish();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function buildAndTestForm(arena, inputs, description)

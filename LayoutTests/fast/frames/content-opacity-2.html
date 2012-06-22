@@ -4,8 +4,8 @@
     <script>
         function test()
         {
-            if (window.layoutTestController)
-                layoutTestController.waitUntilDone();
+            if (window.testRunner)
+                testRunner.waitUntilDone();
 
             setTimeout(function()
             {
@@ -14,8 +14,8 @@
                 link.setAttribute("rel", "stylesheet");
                 link.setAttribute("href", "data:text/css,/* This loads asynchronously */");
                 doc.documentElement.firstChild.appendChild(link);
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }, 100);
         }
     </script>

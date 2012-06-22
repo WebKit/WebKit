@@ -33,8 +33,8 @@ function runTest()
     var state = document.getElementById('emptyOnFirstVisit');
     if (!state.value) {
         // First visit.
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         state.value = 'visited';
         makeForm(parent, '1', '1', '1', '1', '1', '1', '1', '1', '1');
     
@@ -56,8 +56,8 @@ function runTest()
         shouldBe('document.getElementById("textarea").value', '"2"');
     
         parent.innerHTML = '';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

@@ -9,8 +9,8 @@
             function test()
             {
                 var slider = document.getElementById('slider');
-                if (window.layoutTestController) {
-                    layoutTestController.dumpAsText();
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
                     eventSender.mouseMoveTo(slider.offsetLeft + 7, slider.offsetTop + 7);
                     eventSender.mouseDown();
                     log(slider.value)

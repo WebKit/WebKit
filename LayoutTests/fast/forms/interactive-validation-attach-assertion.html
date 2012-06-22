@@ -15,13 +15,13 @@
 <script>
 function check() {
     testPassed('Not crashed.');
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     setTimeout(check, 10);
     document.getElementsByTagName('input')[1].click();
 } else {

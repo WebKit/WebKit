@@ -42,8 +42,8 @@
             "PASSED" : 
             "FAILED: " + reportMismatch("frame1") + "; " + reportMismatch("frame2");
 
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
     }
     
 </script>

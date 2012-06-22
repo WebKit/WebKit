@@ -10,8 +10,8 @@
     <script>
       window.enablePixelTesting = true;
 
-      if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+      if (window.testRunner)
+        testRunner.waitUntilDone();
 
       // Layout for the iframe will be scaled down to a quarter.
       // It appears this bug will only manifest itself if layout for the
@@ -32,8 +32,8 @@
           // appear to be recalculated after this
           scalePage(1.0);
           document.body.offsetWidth;
-          if (window.layoutTestController)
-            layoutTestController.notifyDone();
+          if (window.testRunner)
+            testRunner.notifyDone();
       }
     </script>
     <script src="../js/resources/js-test-pre.js"></script>

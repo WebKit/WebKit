@@ -5,9 +5,9 @@
 <img src="" id="i">
 </form>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function gc()
@@ -33,8 +33,8 @@ function test()
         } catch (ex) {
             document.getElementsByTagName("div")[0].innerHTML = "PASS";
         }
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 }
 </script>

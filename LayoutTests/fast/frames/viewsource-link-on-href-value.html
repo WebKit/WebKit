@@ -2,9 +2,9 @@
 <!-- This tests that a base element is respected in rendering anchors on viewsource page. -->
 <head>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function checkFrame(id) {
@@ -42,12 +42,12 @@
         if (checkFrame("lower") && checkFrame("upper")) {
             resultText = "PASS";
         }
-        if (window.layoutTestController) {
+        if (window.testRunner) {
             document.open();
             document.write(resultText);
             document.close();
 
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         } else {
             document.getElementById("result").textContent = resultText;
         }

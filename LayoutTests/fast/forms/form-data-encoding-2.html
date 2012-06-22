@@ -8,9 +8,9 @@
  <input type=hidden name=q value="&#1105;&#66560;&#119083;çc"><br>
 </form>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 if (document.URL.substring(0, 4) == "file") {
@@ -25,8 +25,8 @@ if (document.URL.substring(0, 4) == "file") {
         else
             document.write("<p>Failure</p>");
         
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
 } else {

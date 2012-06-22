@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function boom() {
   setTimeout('document.querySelector("progress").setAttribute("style", "overflow: scroll; border-style: dotted;");', 10);

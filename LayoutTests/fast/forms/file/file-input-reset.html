@@ -15,7 +15,7 @@ To run this test manually, choose a file and then click the reset button.
 If the label next to the file chooser button changes to "No file chosen", the test passes.
 </p>
 <script>
-if (layoutTestController && eventSender) {
+if (testRunner && eventSender) {
     var file = document.getElementById("file");
     var reset = document.getElementById("reset");
     dragFilesOntoElement(file, ["foo.txt"]);

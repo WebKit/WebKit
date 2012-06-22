@@ -8,8 +8,8 @@ To manually test this, click on the black region below.</p>
 </div>
 <script>
 
-if (window.layoutTestController && window.eventSender) {
-    layoutTestController.dumpAsText();
+if (window.testRunner && window.eventSender) {
+    testRunner.dumpAsText();
 
     eventSender.mouseMoveTo(180, 50);
     eventSender.leapForward(200);

@@ -1,9 +1,9 @@
 <html>
 <script>
     function test() {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         setTimeout(test2, 0);
     }
@@ -11,8 +11,8 @@
         document.getElementById('tf').focus();
         eventSender.keyDown('a');
         eventSender.keyDown("\r", null);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     function test3()
     {

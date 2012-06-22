@@ -11,8 +11,8 @@ document.
 <div id="div"></div>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.getElementById('div').innerHTML = '<iframe src="about:blank" onload="this.parentNode.removeChild(this)"></iframe>';
 </script>

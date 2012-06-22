@@ -10,8 +10,8 @@
 ><input type="text" onkeydown="move(this.nextSibling)">
 <script type="text/javascript">
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var activeInput = null;
 
@@ -29,10 +29,10 @@ var inputs = document.getElementsByTagName('input');
 move(inputs[0]);
 
 if (window.eventSender) {
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
     for (var i = 0; i < inputs.length - 1; i++)
         eventSender.keyDown('downArrow', []);
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 document.body.appendChild(document.createTextNode('PASS'));

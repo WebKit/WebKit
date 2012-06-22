@@ -10,7 +10,7 @@
 <p>This tests the label of a file chooser button.</p>
 <div id="console"></div>
 <script>
-if (window.layoutTestController) {
+if (window.testRunner) {
     var file = document.getElementById('single_file');
     var button = internals.shadowRoot(file).firstChild;
     var label = button.getAttribute('value');

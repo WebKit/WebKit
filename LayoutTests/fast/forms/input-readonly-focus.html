@@ -2,7 +2,7 @@
 <head>
 <script>
 function runTest() {
-  window.layoutTestController.dumpAsText();
+  window.testRunner.dumpAsText();
 
   var input = document.getElementById('i');
   eventSender.mouseMoveTo(input.offsetLeft + input.offsetWidth / 2, input.offsetTop + input.offsetHeight / 2);
@@ -14,7 +14,7 @@ window.onload = function() {
   input.onfocus = function(e) {
     document.body.innerHTML = 'PASS';
   }
-  if (window.layoutTestController)
+  if (window.testRunner)
     runTest();
 }
 </script>

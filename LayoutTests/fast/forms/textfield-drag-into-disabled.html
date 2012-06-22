@@ -17,7 +17,7 @@ var fieldY = field.offsetTop + field.offsetHeight / 2;
 
 window.getSelection().setBaseAndExtent(text, 0, text, 1);
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     eventSender.mouseMoveTo(textX, textY);
     eventSender.mouseDown();
     // leap forward so mouseDown will kick off a drag instead of starting a new selection.
@@ -26,7 +26,7 @@ if (window.layoutTestController) {
     eventSender.mouseMoveTo(fieldX, fieldY);
     eventSender.mouseUp();
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     var resultText = "FAIL"
     if (!field.value)
         resultText = "PASS -- http://bugs.webkit.org/show_bug.cgi?id=10177";

@@ -7,13 +7,13 @@
     }
 
     function test() {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
         }
 
         var field = document.getElementById('field');
-        if (window.layoutTestController) {
-            layoutTestController.setAutofilled(field, true);
+        if (window.testRunner) {
+            testRunner.setAutofilled(field, true);
         } else {
             testFailed('This test requires a LayoutTestController.');
             return;

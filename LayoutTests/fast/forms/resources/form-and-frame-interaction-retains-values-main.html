@@ -2,10 +2,10 @@
 <html>
 <head>
   <script>
-    if (window.layoutTestController) {
-        window.layoutTestController.dumpAsText();
-        window.layoutTestController.dumpChildFramesAsText();
-        window.layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.dumpChildFramesAsText();
+        window.testRunner.waitUntilDone();
     }
 
   function performTest() {
@@ -13,8 +13,8 @@
       window.name = "";
       if(document.getElementById("text").value == "Correct Value")
         document.getElementById("result").innerHTML = "PASS";
-      if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+      if (window.testRunner)
+        window.testRunner.notifyDone();
     } else {
       document.getElementById("text").value = "Old Value";
       window.frames[0].location = "form-and-frame-interaction-retains-values-submit.html";

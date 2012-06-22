@@ -35,7 +35,7 @@ function setInputAttributes(input, value, disabled, readonly) {
     input.readOnly = !!readonly;
 }
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     var input = $("search_input");
     var cancelButtonPosition = searchCancelButtonPosition(input);
     var middleButtonPosition = {};

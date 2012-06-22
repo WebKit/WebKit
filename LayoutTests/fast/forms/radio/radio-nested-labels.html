@@ -1,11 +1,11 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function checkButton() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     var radioFour = document.getElementById("four");
@@ -19,7 +19,7 @@ function checkButton() {
     var result = document.getElementById("result");
     if (radioFour.checked)
         result.innerHTML = "Test Succeeded!";
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 

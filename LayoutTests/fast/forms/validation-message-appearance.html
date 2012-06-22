@@ -14,9 +14,9 @@
 
 <script>
 document.getElementById('submit').click();
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    setTimeout(function() { layoutTestController.notifyDone(); }, 10);
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    setTimeout(function() { testRunner.notifyDone(); }, 10);
 }
 </script>
 

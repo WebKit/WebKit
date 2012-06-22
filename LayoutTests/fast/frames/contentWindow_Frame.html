@@ -2,9 +2,9 @@
 <head>
   <script>
     function putText() {
-      if (window.layoutTestController) {
-          layoutTestController.dumpAsText();
-          layoutTestController.dumpChildFramesAsText();
+      if (window.testRunner) {
+          testRunner.dumpAsText();
+          testRunner.dumpChildFramesAsText();
       }
       var t = document.getElementById("t_frame");
       var b = document.getElementById("b_frame");

@@ -52,8 +52,8 @@ function onInputFileChange(currentFileList, lastTest)
             log("PASS: name is " + files[i].name + "; path is " + files[i].webkitRelativePath);
     }
 
-   if (lastTest && layoutTestController)
-        layoutTestController.notifyDone();
+   if (lastTest && testRunner)
+        testRunner.notifyDone();
    else
         log("");
 }
@@ -68,9 +68,9 @@ function doTest(fileList, last)
     eventSender.mouseUp();
 }
 
-if (layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 if (window.eventSender) {

@@ -3,13 +3,13 @@
 <html>
 <head>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function sendKey(element, key) {
-        if (window.layoutTestController) {
+        if (window.testRunner) {
             key = key.substr(0,1).toLowerCase() + key.substr(1); // lowercase 1st letter for eventSender
             eventSender.keyDown(key);
         } else {
@@ -46,8 +46,8 @@
         sendKey(testInput, 'r');
 
         document.getElementById('result').innerText = testInput.value;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
       }, 0);
     }
     

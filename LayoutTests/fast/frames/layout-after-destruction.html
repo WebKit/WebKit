@@ -4,15 +4,15 @@ function runTest()
     if (!window.sessionStorage)
         return;
     
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 
     if (sessionStorage.testCompleted) {
         delete sessionStorage.testCompleted;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } else {
         sessionStorage.testCompleted = true;
         document.location.reload(true);

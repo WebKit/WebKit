@@ -9,12 +9,12 @@
     function test() {
         var tf = document.getElementById('tf');
 
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
         }
         
         tf.focus();
-        if (window.layoutTestController) {
+        if (window.testRunner) {
             eventSender.keyDown('a');
             eventSender.keyDown('\r');
         }
