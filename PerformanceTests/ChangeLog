@@ -1,3 +1,35 @@
+2012-06-21  Kentaro Hara  <haraken@chromium.org>
+
+        Add a perf-test for innerHTML setter for a large DOM tree
+        https://bugs.webkit.org/show_bug.cgi?id=89723
+
+        Reviewed by Ryosuke Niwa.
+
+        We want a benchmark for innerHTML setter for the following reason:
+
+        - innerHTML setter is widely used in the real world.
+        - I am planning to optimize innerHTML setter in the near future.
+        - I want to use the innerHTML setter benchmark for the patch of bug 88834.
+
+        Performance results in my Linux desktop:
+
+        RESULT Parser: innerHTML-setter= 289.782649995 runs/s
+        median= 290.046269741 runs/s, stdev= 1.06575112224 runs/s, min= 286.831812256 runs/s, max= 291.005291005 runs/s
+
+        RESULT Parser: innerHTML-setter= 289.020706132 runs/s
+        median= 289.093298292 runs/s, stdev= 0.985203313093 runs/s, min= 286.831812256 runs/s, max= 290.620871863 runs/s
+
+        RESULT Parser: innerHTML-setter= 288.912051701 runs/s
+        median= 291.005291005 runs/s, stdev= 3.65241325588 runs/s, min= 283.505154639 runs/s, max= 292.553191489 runs/s
+
+        RESULT Parser: innerHTML-setter= 288.644186666 runs/s
+        median= 288.713910761 runs/s, stdev= 1.31889053717 runs/s, min= 286.085825748 runs/s, max= 290.620871863 runs/s
+
+        RESULT Parser: innerHTML-setter= 288.698714577 runs/s
+        median= 288.713910761 runs/s, stdev= 1.03938198202 runs/s, min= 286.458333333 runs/s, max= 290.237467018 runs/s
+
+        * Parser/innerHTML-setter.html: Added.
+
 2012-06-20  Philip Rogers  <pdr@google.com>
 
         Add a performance test for paths in SVG
