@@ -648,12 +648,7 @@
 #endif
 #endif
 
-#if PLATFORM(GTK)
-#if HAVE(PTHREAD_H)
-#define WTF_USE_PTHREADS 1
-#define HAVE_PTHREAD_RWLOCK 1
-#endif
-#elif PLATFORM(QT) && OS(UNIX)
+#if OS(UNIX) && (PLATFORM(GTK) || PLATFORM(QT))
 #define WTF_USE_PTHREADS 1
 #define HAVE_PTHREAD_RWLOCK 1
 #endif

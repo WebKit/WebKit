@@ -1,3 +1,15 @@
+2012-06-22  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Memory corruption on HashTable.h
+        https://bugs.webkit.org/show_bug.cgi?id=88419
+
+        Reviewed by Martin Robinson.
+
+        Simplify definition of WTF_USE_PTHREADS and HAVE_PTHREAD_RWLOCK
+        for the GTK platform using OS(LINUX) instead of HAVE(PTHREAD_H).
+
+        * wtf/Platform.h:
+
 2012-06-21  Parth Patel  <parpatel@rim.com>
 
         [Blackberry] BlackBerry::Platform::Settings::get() rename to BlackBerry::Platform::Settings::instance() to make it consistent with our other singletons
