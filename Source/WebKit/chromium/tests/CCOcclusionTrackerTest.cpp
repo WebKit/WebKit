@@ -258,6 +258,7 @@ protected:
         ASSERT(root == m_root.get());
         Vector<CCLayerImpl*> dummyLayerList;
         int dummyMaxTextureSize = 512;
+        CCLayerSorter layerSorter;
 
         ASSERT(!root->renderSurface());
         root->createRenderSurface();
@@ -265,7 +266,7 @@ protected:
         root->setClipRect(IntRect(IntPoint::zero(), root->bounds()));
         m_renderSurfaceLayerListImpl.append(m_root.get());
 
-        CCLayerTreeHostCommon::calculateDrawTransforms(root, root, identityMatrix, identityMatrix, m_renderSurfaceLayerListImpl, dummyLayerList, 0, dummyMaxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransforms(root, root, identityMatrix, identityMatrix, m_renderSurfaceLayerListImpl, dummyLayerList, &layerSorter, dummyMaxTextureSize);
 
         CCLayerTreeHostCommon::calculateVisibleAndScissorRects(m_renderSurfaceLayerListImpl, root->renderSurface()->contentRect());
 
@@ -435,6 +436,9 @@ private:
 
 #define MAIN_THREAD_TEST(ClassName) \
     RUN_TEST_MAIN_THREAD_OPAQUE_LAYERS(ClassName)
+
+#define IMPL_THREAD_TEST(ClassName) \
+    RUN_TEST_IMPL_THREAD_OPAQUE_LAYERS(ClassName)
 
 #define MAIN_AND_IMPL_THREAD_TEST(ClassName) \
     RUN_TEST_MAIN_THREAD_OPAQUE_LAYERS(ClassName) \
@@ -1873,6 +1877,44 @@ protected:
 MAIN_AND_IMPL_THREAD_TEST(CCOcclusionTrackerTest3dTransform);
 
 template<class Types, bool opaqueLayers>
+class CCOcclusionTrackerTestUnsorted3dLayers : public CCOcclusionTrackerTest<Types, opaqueLayers> {
+protected:
+    void runMyTest()
+    {
+        // Currently, the main thread layer iterator does not iterate over 3d items in
+        // sorted order, because layer sorting is not performed on the main thread.
+        // Because of this, the occlusion tracker cannot assume that a 3d layer occludes
+        // other layers that have not yet been iterated over. For now, the expected
+        // behavior is that a 3d layer simply does not add any occlusion to the occlusion
+        // tracker.
+
+        WebTransformationMatrix translationToFront;
+        translationToFront.translate3d(0, 0, -10);
+        WebTransformationMatrix translationToBack;
+        translationToFront.translate3d(0, 0, -100);
+
+        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+        typename Types::ContentLayerType* child1 = this->createDrawingLayer(parent, translationToBack, FloatPoint(0, 0), IntSize(100, 100), true);
+        typename Types::ContentLayerType* child2 = this->createDrawingLayer(parent, translationToFront, FloatPoint(50, 50), IntSize(100, 100), true);
+        parent->setPreserves3D(true);
+
+        this->calcDrawEtc(parent);
+
+        TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
+        this->visitLayer(child2, occlusion);
+        EXPECT_TRUE(occlusion.occlusionInScreenSpace().isEmpty());
+        EXPECT_TRUE(occlusion.occlusionInTargetSurface().isEmpty());
+
+        this->visitLayer(child1, occlusion);
+        EXPECT_TRUE(occlusion.occlusionInScreenSpace().isEmpty());
+        EXPECT_TRUE(occlusion.occlusionInTargetSurface().isEmpty());
+    }
+};
+
+// This test will have different layer ordering on the impl thread; the test will only work on the main thread.
+MAIN_THREAD_TEST(CCOcclusionTrackerTestUnsorted3dLayers);
+
+template<class Types, bool opaqueLayers>
 class CCOcclusionTrackerTestPerspectiveTransform : public CCOcclusionTrackerTest<Types, opaqueLayers> {
 protected:
     void runMyTest()
@@ -1897,7 +1939,8 @@ protected:
     }
 };
 
-MAIN_THREAD_TEST(CCOcclusionTrackerTestPerspectiveTransform);
+// This test requires accumulating occlusion of 3d layers, which are skipped by the occlusion tracker on the main thread. So this test should run on the impl thread.
+IMPL_THREAD_TEST(CCOcclusionTrackerTestPerspectiveTransform);
 
 template<class Types, bool opaqueLayers>
 class CCOcclusionTrackerTestPerspectiveTransformBehindCamera : public CCOcclusionTrackerTest<Types, opaqueLayers> {
@@ -1929,7 +1972,8 @@ protected:
     }
 };
 
-MAIN_THREAD_TEST(CCOcclusionTrackerTestPerspectiveTransformBehindCamera);
+// This test requires accumulating occlusion of 3d layers, which are skipped by the occlusion tracker on the main thread. So this test should run on the impl thread.
+IMPL_THREAD_TEST(CCOcclusionTrackerTestPerspectiveTransformBehindCamera);
 
 template<class Types, bool opaqueLayers>
 class CCOcclusionTrackerTestLayerBehindCameraDoesNotOcclude : public CCOcclusionTrackerTest<Types, opaqueLayers> {
@@ -1958,7 +2002,8 @@ protected:
     }
 };
 
-MAIN_THREAD_TEST(CCOcclusionTrackerTestLayerBehindCameraDoesNotOcclude);
+// This test requires accumulating occlusion of 3d layers, which are skipped by the occlusion tracker on the main thread. So this test should run on the impl thread.
+IMPL_THREAD_TEST(CCOcclusionTrackerTestLayerBehindCameraDoesNotOcclude);
 
 template<class Types, bool opaqueLayers>
 class CCOcclusionTrackerTestLargePixelsOccludeInsideClipRect : public CCOcclusionTrackerTest<Types, opaqueLayers> {
@@ -1983,14 +2028,15 @@ protected:
         // Ensure that those pixels don't occlude things outside the clipRect.
         this->visitLayer(layer, occlusion);
         this->enterLayer(parent, occlusion);
-        EXPECT_EQ(IntRect(0, 0, 100, 100), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
-        EXPECT_EQ(IntRect(0, 0, 100, 100), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
     }
 };
 
-MAIN_THREAD_TEST(CCOcclusionTrackerTestLargePixelsOccludeInsideClipRect);
+// This test requires accumulating occlusion of 3d layers, which are skipped by the occlusion tracker on the main thread. So this test should run on the impl thread.
+IMPL_THREAD_TEST(CCOcclusionTrackerTestLargePixelsOccludeInsideClipRect);
 
 template<class Types, bool opaqueLayers>
 class CCOcclusionTrackerTestAnimationOpacity1OnMainThread : public CCOcclusionTrackerTest<Types, opaqueLayers> {

@@ -111,6 +111,9 @@ static inline bool surfaceTransformsToTargetKnown(const CCRenderSurface*) { retu
 static inline bool surfaceTransformsToScreenKnown(const RenderSurfaceChromium* surface) { return !surface->screenSpaceTransformsAreAnimating(); }
 static inline bool surfaceTransformsToScreenKnown(const CCRenderSurface*) { return true; }
 
+static inline bool layerIsInUnsorted3dRenderingContext(const LayerChromium* layer) { return layer->parent() && layer->parent()->preserves3D(); }
+static inline bool layerIsInUnsorted3dRenderingContext(const CCLayerImpl*) { return false; }
+
 template<typename LayerType, typename RenderSurfaceType>
 void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::finishedTargetRenderSurface(const LayerType* owningLayer, const RenderSurfaceType* finishedTarget)
 {
@@ -333,6 +336,9 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
         return;
 
     if (!layerOpacityKnown(layer) || layer->drawOpacity() < 1)
+        return;
+
+    if (layerIsInUnsorted3dRenderingContext(layer))
         return;
 
     Region opaqueContents = layer->visibleContentOpaqueRegion();

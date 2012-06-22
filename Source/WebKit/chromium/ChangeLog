@@ -1,3 +1,17 @@
+2012-06-22  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Do not accumulate occlusion from 3d layers on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=89704
+
+        Reviewed by James Robinson.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests::CCOcclusionTrackerTest::calcDrawEtc):
+        (WebKitTests):
+        (CCOcclusionTrackerTestUnsorted3dLayers):
+        (WebKitTests::CCOcclusionTrackerTestUnsorted3dLayers::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLargePixelsOccludeInsideClipRect::runMyTest):
+
 2012-06-22  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Snapshot metadata in front end to avoid IPC round-trips

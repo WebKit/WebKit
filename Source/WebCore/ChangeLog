@@ -1,3 +1,32 @@
+2012-06-22  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Do not accumulate occlusion from 3d layers on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=89704
+
+        Reviewed by James Robinson.
+
+        Layer iterators on the main thread may not iterate over 3d layers
+        in correct front-to-back or back-to-front order, because layer
+        sorting is not performed on the main thread. As a result,
+        occlusion tracking can accidentally think something is occluded if
+        a 3d layer is processed out of order. This patch choses to solve
+        this by avoiding accumulating occlusion for 3d layers. It may be
+        appropriate later to consider adding layer sorting on the main
+        thread, but for now that seemed like an unnecessary heavy-handed
+        approach.
+
+        In addition to a new unit test that covers this, other unit tests
+        were changed to work on the impl thread, so that the 3d layers
+        still accumulate occlusion as required.
+
+        Unit test added to CCOcclusionTrackerTest:
+          CCOcclusionTrackerTestUnsorted3dLayers
+
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        (WebCore::layerIsInUnsorted3dRenderingContext):
+        (WebCore):
+        (WebCore::::markOccludedBehindLayer):
+
 2012-06-22  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Snapshot metadata in front end to avoid IPC round-trips
