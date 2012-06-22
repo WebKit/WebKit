@@ -70,8 +70,6 @@ function initialize_extensionsPanelTest()
 
 function extension_testCreatePanel(nextTest)
 {
-    var callbackCount = 0;
-
     function onPanelCreated(panel)
     {
         output("Panel created");
@@ -102,6 +100,27 @@ function extension_testCreatePanel(nextTest)
     evaluateOnFrontend("InspectorTest.waitForPanel(reply);", nextTest);
     var basePath = location.pathname.replace(/\/[^/]*$/, "/");
     webInspector.panels.create("Test Panel", basePath + "extension-panel.png", basePath + "extension-panel.html", onPanelCreated);
+}
+
+function extension_testSearch(nextTest)
+{
+    var callbackCount = 0;
+
+    function onPanelCreated(panel)
+    {
+        panel.onSearch.addListener(function(action, queryString) {
+            output("Panel searched:");
+            dumpObject(Array.prototype.slice.call(arguments));
+            callbackCount++;
+            if (callbackCount === 2)
+                nextTest();
+        });
+
+        extension_showPanel("extension");
+    }
+    evaluateOnFrontend("WebInspector.searchController._performSearch('hello', true, false, false); reply()");
+    var basePath = location.pathname.replace(/\/[^/]*$/, "/");
+    webInspector.panels.create("Test Panel", basePath + "extension-panel.png", basePath + "non-existent.html", onPanelCreated);
 }
 
 function extension_testStatusBarButtons(nextTest)

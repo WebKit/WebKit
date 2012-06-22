@@ -1,3 +1,13 @@
+2012-06-22  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: ExtensionPanel.onSearch listener doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=89517
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/extensions/extensions-panel-expected.txt:
+        * inspector/extensions/extensions-panel.html:
+
 2012-06-22  Silvia Pfeiffer  <silviapf@chromium.org>
 
         [Chromium] Adjust the displayed elements of the new Chrome media controls.

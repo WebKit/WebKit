@@ -1,3 +1,19 @@
+2012-06-22  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: ExtensionPanel.onSearch listener doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=89517
+
+        Reviewed by Yury Semikhatsky.
+
+        Added a test to see if listener fires on search:
+        LayoutTests/inspector/extensions/extensions-panel.html
+
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionPanel.prototype.searchCanceled):
+        (WebInspector.ExtensionPanel.prototype.performSearch):
+        (WebInspector.ExtensionPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ExtensionPanel.prototype.jumpToPreviousSearchResult):
+
 2012-06-22  Brian Salomon  <bsalomon@google.com>
 
         Increase the GrContext texture cache count cap to 2K
