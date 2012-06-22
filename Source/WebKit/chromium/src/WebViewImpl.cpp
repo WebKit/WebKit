@@ -3537,6 +3537,8 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
                 setDeviceScaleFactor(m_deviceScaleInCompositor);
             }
 
+            bool visible = page()->visibilityState() == PageVisibilityStateVisible;
+            m_layerTreeView.setVisible(visible);
             m_layerTreeView.setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
             if (m_compositorSurfaceReady)
                 m_layerTreeView.setSurfaceReady();

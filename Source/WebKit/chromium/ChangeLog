@@ -1,3 +1,20 @@
+2012-06-21  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Initialize compositor's visibility state upon initialization
+        https://bugs.webkit.org/show_bug.cgi?id=89712
+
+        Reviewed by Adrienne Walker.
+
+        A given WebViewImpl's visibility state might change any number of times before compositing is enabled. If the
+        visibility state is not the default (visible) when the compositor is initialized, we need to let it know the
+        correct visibility state or it will start ticking uselessly in threaded mode.
+
+        Tested manually, there's no way to create a new WebViewImpl in a non-visible state in a WebKit test that I know
+        of.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2012-06-21  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Add touch-event support for WebPluginContainerImpl
