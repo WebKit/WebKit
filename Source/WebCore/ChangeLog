@@ -1,3 +1,17 @@
+2012-06-21  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: exception in TimelinePresentationModel when recording timeline
+        https://bugs.webkit.org/show_bug.cgi?id=89716
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline.processRecord):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.prototype.filteredRecords):
+        (WebInspector.TimelinePresentationModel.prototype.isVisible):
+
 2012-06-21  Oli Lan  <olilan@chromium.org>
 
         Add methods to select between offsets in an editable field.

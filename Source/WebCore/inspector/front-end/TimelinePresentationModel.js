@@ -295,31 +295,9 @@ WebInspector.TimelinePresentationModel.prototype = {
 
     filteredRecords: function()
     {
-        return this.filterRecords(this._rootRecord.children);
-    },
-
-    filterRecords: function(records)
-    {
-        function filter(record)
-        {
-            for (var i = 0; i < this._filters.length; ++i) {
-                if (!this._filters[i].accept(record))
-                    return false;
-            }
-            return true;
-        }
-        return this._innerFilterRecords(filter.bind(this), records);
-    },
-
-    /**
-     * @param {function(WebInspector.TimelinePresentationModel.Record):boolean} filter
-     * @param {Array.<WebInspector.TimelinePresentationModel.Record>} inputRecords
-     */
-    _innerFilterRecords: function(filter, inputRecords)
-    {
         var recordsInWindow = [];
 
-        var stack = [{children: inputRecords, index: 0, parentIsCollapsed: false}];
+        var stack = [{children: this._rootRecord.children, index: 0, parentIsCollapsed: false}];
         while (stack.length) {
             var entry = stack[stack.length - 1];
             var records = entry.children;
@@ -327,7 +305,7 @@ WebInspector.TimelinePresentationModel.prototype = {
                  var record = records[entry.index];
                  ++entry.index;
 
-                 if (filter(record)) {
+                 if (this.isVisible(record)) {
                      ++record.parent._invisibleChildrenCount;
                      if (!entry.parentIsCollapsed)
                          recordsInWindow.push(record);
@@ -348,6 +326,15 @@ WebInspector.TimelinePresentationModel.prototype = {
         }
 
         return recordsInWindow;
+    },
+
+    isVisible: function(record)
+    {
+        for (var i = 0; i < this._filters.length; ++i) {
+            if (!this._filters[i].accept(record))
+                return false;
+        }
+        return true;
     }
 }
 

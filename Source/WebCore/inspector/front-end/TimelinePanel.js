@@ -496,14 +496,18 @@ WebInspector.TimelinePanel.prototype = {
         ++this._allRecordsCount;
         var recordTypes = WebInspector.TimelineModel.RecordType;
         var timeStampRecords = this._timeStampRecords;
-        function addTimestampRecords(record)
+        var hasVisibleRecords = false;
+        var presentationModel = this._presentationModel;
+        function processRecord(record)
         {
             if (WebInspector.TimelinePresentationModel.isEventDivider(record))
                 timeStampRecords.push(record);
+            hasVisibleRecords |= presentationModel.isVisible(record);
         }
         var records = [ formattedRecord ];
-        WebInspector.TimelinePresentationModel.forAllRecords(records, addTimestampRecords);
-        return !!this._presentationModel.filterRecords(records).length || formattedRecord.parent !== this._presentationModel.rootRecord;
+        WebInspector.TimelinePresentationModel.forAllRecords(records, processRecord);
+        // Tell caller update is necessary either if we added a visible record or if we re-parented a record.
+        return hasVisibleRecords || formattedRecord.parent !== this._presentationModel.rootRecord;
     },
 
     sidebarResized: function(event)
