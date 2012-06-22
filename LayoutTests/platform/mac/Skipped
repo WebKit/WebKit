@@ -853,6 +853,9 @@ http/tests/security/referrer-policy-redirect-link.html
 inspector/extensions/extensions-eval-content-script.html
 inspector/extensions/extensions-audits-content-script.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=89790
+inspector/extensions/extensions-panel.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=86480
 plugins/npruntime/delete-plugin-within-setProperty.html
 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html
