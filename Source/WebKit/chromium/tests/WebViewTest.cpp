@@ -306,4 +306,23 @@ TEST_F(WebViewTest, DISABLED_TextInputType)
 
 }
 
+TEST_F(WebViewTest, SetEditableSelectionOffsets)
+{
+    FrameTestHelpers::registerMockedURLLoad(m_baseURL, "input_field_populated.html");
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "input_field_populated.html");
+    webView->setInitialFocus(false);
+    webView->setEditableSelectionOffsets(5, 13);
+    WebFrameImpl* frame = static_cast<WebFrameImpl*>(webView->mainFrame());
+    EXPECT_EQ("56789abc", frame->selectionAsText());
+    webView->close();
+
+    FrameTestHelpers::registerMockedURLLoad(m_baseURL, "content_editable_populated.html");
+    webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "content_editable_populated.html");
+    webView->setInitialFocus(false);
+    webView->setEditableSelectionOffsets(8, 19);
+    frame = static_cast<WebFrameImpl*>(webView->mainFrame());
+    EXPECT_EQ("89abcdefghi", frame->selectionAsText());
+    webView->close();
+}
+
 }

@@ -1,3 +1,40 @@
+2012-06-21  Oli Lan  <olilan@chromium.org>
+
+        Add methods to select between offsets in an editable field.
+        https://bugs.webkit.org/show_bug.cgi?id=89098
+
+        Reviewed by Ryosuke Niwa.
+
+        Reviewed by Ryosuke Niwa.
+
+        This adds a new method WebViewImpl::setEditableSelectionOffsets, which
+        can be used to select between two character positions in the node
+        currently beign edited.
+
+        The offsets are assumed to be relative to the rootEditableElement.
+        
+        This can be used for IME features that require the ability to manipulate
+        the selection, for example on Android where the method InputConnection#setSelection
+        is used.
+
+        This method calls a new method Editor::setSelectionOffsets.
+
+        The method works for inputs/textareas (i.e. text form controls) and
+        contenteditable nodes, and the new test in WebViewTest tests both these cases.
+
+        * public/WebView.h:
+        (WebView):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setEditableSelectionOffsets):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/WebViewTest.cpp:
+        (WebKit::TEST_F):
+        (WebKit):
+        * tests/data/content_editable_populated.html: Added.
+        * tests/data/input_field_populated.html: Added.
+
 2012-06-19  James Robinson  <jamesr@chromium.org>
 
         [chromium] LayerRendererChromium is not getting visibility messages in single threaded compositing mode.

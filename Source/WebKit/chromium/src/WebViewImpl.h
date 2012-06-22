@@ -150,6 +150,7 @@ public:
     virtual bool compositionRange(size_t* location, size_t* length);
     virtual WebTextInputInfo textInputInfo();
     virtual WebTextInputType textInputType();
+    virtual bool setEditableSelectionOffsets(int start, int end);
     virtual bool selectionBounds(WebRect& start, WebRect& end) const;
     virtual bool selectionTextDirection(WebTextDirection& start, WebTextDirection& end) const;
     virtual bool caretOrSelectionRange(size_t* location, size_t* length);

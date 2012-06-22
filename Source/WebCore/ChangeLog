@@ -1,3 +1,26 @@
+2012-06-21  Oli Lan  <olilan@chromium.org>
+
+        Add methods to select between offsets in an editable field.
+        https://bugs.webkit.org/show_bug.cgi?id=89098
+
+        Reviewed by Ryosuke Niwa.
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a new method setSelectionOffsets to Editor. This selects between
+        the two integer offsets provided in the node currently being edited,
+        assuming the offsets are given relative to the rootEditableElement.
+        If no node or field is currently being edited, the method returns false.
+        
+        Test: a new test has been added to the chromium port's WebViewTest that
+        calls this via WebViewImpl::setSelectionEditableOffsets.
+        
+        * editing/Editor.cpp:
+        (WebCore::Editor::setSelectionOffsets):
+        (WebCore):
+        * editing/Editor.h:
+        (Editor):
+
 2012-06-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Add support for the grid and inline-grid display types.

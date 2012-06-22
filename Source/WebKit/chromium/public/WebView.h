@@ -453,6 +453,8 @@ public:
     // by the compositor) but must be completed by the WebView.
     virtual void transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters&) = 0;
 
+    virtual bool setEditableSelectionOffsets(int start, int end) = 0;
+
     // Visibility -----------------------------------------------------------
 
     // Sets the visibility of the WebView.

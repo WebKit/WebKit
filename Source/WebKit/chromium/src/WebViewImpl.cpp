@@ -2131,6 +2131,19 @@ bool WebViewImpl::selectionTextDirection(WebTextDirection& start, WebTextDirecti
     return true;
 }
 
+bool WebViewImpl::setEditableSelectionOffsets(int start, int end)
+{
+    const Frame* focused = focusedWebCoreFrame();
+    if (!focused)
+        return false;
+
+    Editor* editor = focused->editor();
+    if (!editor || !editor->canEdit())
+        return false;
+
+    return editor->setSelectionOffsets(start, end);
+}
+
 bool WebViewImpl::caretOrSelectionRange(size_t* location, size_t* length)
 {
     const Frame* focused = focusedWebCoreFrame();
