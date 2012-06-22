@@ -490,6 +490,7 @@
 
 #if PLATFORM(GTK)
 #define WTF_USE_CAIRO 1
+#define ENABLE_GLOBAL_FASTMALLOC_NEW 0
 #endif
 
 

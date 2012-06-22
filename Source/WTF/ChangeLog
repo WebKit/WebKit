@@ -1,3 +1,14 @@
+2012-06-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        Causes crashes in LLVMPipe
+        https://bugs.webkit.org/show_bug.cgi?id=89358
+
+        Reviewed by Martin Robinson.
+
+        Change suggested by Dave Airlie and Xan Lopez.
+
+        * wtf/Platform.h: disable global fastMalloc for GTK+
+
 2012-06-22  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Memory corruption on HashTable.h
