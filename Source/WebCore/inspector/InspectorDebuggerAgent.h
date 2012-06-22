@@ -67,6 +67,7 @@ public:
 
     virtual void causesRecompilation(ErrorString*, bool*);
     virtual void canSetScriptSource(ErrorString*, bool*);
+    virtual void supportsSeparateScriptCompilationAndExecution(ErrorString*, bool*);
 
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
@@ -109,6 +110,8 @@ public:
                              const bool* returnByValue,
                              RefPtr<TypeBuilder::Runtime::RemoteObject>& result,
                              TypeBuilder::OptOutput<bool>* wasThrown);
+    void compileScript(ErrorString*, const String& expression, const String& sourceURL, TypeBuilder::OptOutput<TypeBuilder::Debugger::ScriptId>*, TypeBuilder::OptOutput<String>* syntaxErrorMessage);
+    void runScript(ErrorString*, const int* executionContextId, const TypeBuilder::Debugger::ScriptId&, const String* objectGroup, const bool* doNotPauseOnExceptionsAndMuteConsole, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown);
 
     class Listener {
     public:
@@ -127,6 +130,8 @@ protected:
     virtual void stopListeningScriptDebugServer() = 0;
     virtual void muteConsole() = 0;
     virtual void unmuteConsole() = 0;
+    InjectedScriptManager* injectedScriptManager() { return m_injectedScriptManager; }
+    virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) = 0;
 
 private:
     void enable();

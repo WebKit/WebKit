@@ -35,6 +35,7 @@
 #include "PageDebuggerAgent.h"
 
 #include "Console.h"
+#include "Page.h"
 #include "PageScriptDebugServer.h"
 
 namespace WebCore {
@@ -78,6 +79,19 @@ void PageDebuggerAgent::unmuteConsole()
 {
     Console::unmute();
 }
+
+InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString* errorString, const int* executionContextId)
+{
+    if (!executionContextId) {
+        ScriptState* scriptState = mainWorldScriptState(m_inspectedPage->mainFrame());
+        return injectedScriptManager()->injectedScriptFor(scriptState);
+    }
+    InjectedScript injectedScript = injectedScriptManager()->injectedScriptForId(*executionContextId);
+    if (injectedScript.hasNoValue())
+        *errorString = "Execution context with given id not found.";
+    return injectedScript;
+}
+
 
 } // namespace WebCore
 

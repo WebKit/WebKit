@@ -396,6 +396,7 @@ WebInspector.doLoadedDone = function()
     WebInspector.WorkerManager.loaded();
 
     DebuggerAgent.causesRecompilation(WebInspector._initializeCapability.bind(WebInspector, "debuggerCausesRecompilation", null));
+    DebuggerAgent.supportsSeparateScriptCompilationAndExecution(WebInspector._initializeCapability.bind(WebInspector, "separateScriptCompilationAndExecutionEnabled", null));
     ProfilerAgent.causesRecompilation(WebInspector._initializeCapability.bind(WebInspector, "profilerCausesRecompilation", null));
     ProfilerAgent.isSampling(WebInspector._initializeCapability.bind(WebInspector, "samplingCPUProfiler", null));
     ProfilerAgent.hasHeapProfiler(WebInspector._initializeCapability.bind(WebInspector, "heapProfilerPresent", null));

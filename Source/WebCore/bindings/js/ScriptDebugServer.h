@@ -86,11 +86,16 @@ public:
     void updateCallStack(ScriptValue* callFrame);
 
     bool causesRecompilation() { return true; }
+    bool supportsSeparateScriptCompilationAndExecution() { return false; }
 
     void recompileAllJSFunctionsSoon();
     virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) = 0;
 
     bool isPaused() { return m_paused; }
+
+    void compileScript(ScriptState*, const String& expression, const String& sourceURL, String* scriptId, String* exceptionMessage);
+    void clearCompiledScripts();
+    void runScript(ScriptState*, const String& scriptId, ScriptValue* result, bool* wasThrown, String* exceptionMessage);
 
     class Task {
     public:

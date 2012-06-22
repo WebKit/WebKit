@@ -52,6 +52,7 @@ var Preferences = {
 var Capabilities = {
     samplingCPUProfiler: false,
     debuggerCausesRecompilation: true,
+    separateScriptCompilationAndExecutionEnabled: false,
     profilerCausesRecompilation: true,
     heapProfilerPresent: false,
     canOverrideDeviceMetrics: false,

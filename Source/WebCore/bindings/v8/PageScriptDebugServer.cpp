@@ -34,6 +34,7 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include "Frame.h"
+#include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "ScriptDebugListener.h"
 #include "V8Binding.h"
@@ -132,6 +133,38 @@ void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* 
 void PageScriptDebugServer::setClientMessageLoop(PassOwnPtr<ClientMessageLoop> clientMessageLoop)
 {
     m_clientMessageLoop = clientMessageLoop;
+}
+
+void PageScriptDebugServer::compileScript(ScriptState* state, const String& expression, const String& sourceURL, String* scriptId, String* exceptionMessage)
+{
+    ScriptExecutionContext* scriptExecutionContext = state->scriptExecutionContext();
+    RefPtr<Frame> protect = static_cast<Document*>(scriptExecutionContext)->frame();
+    ScriptDebugServer::compileScript(state, expression, sourceURL, scriptId, exceptionMessage);
+    if (!scriptId->isNull())
+        m_compiledScriptURLs.set(*scriptId, sourceURL);
+}
+
+void PageScriptDebugServer::clearCompiledScripts()
+{
+    ScriptDebugServer::clearCompiledScripts();
+    m_compiledScriptURLs.clear();
+}
+
+void PageScriptDebugServer::runScript(ScriptState* state, const String& scriptId, ScriptValue* result, bool* wasThrown, String* exceptionMessage)
+{
+    String sourceURL = m_compiledScriptURLs.take(scriptId);
+
+    ScriptExecutionContext* scriptExecutionContext = state->scriptExecutionContext();
+    Frame* frame = static_cast<Document*>(scriptExecutionContext)->frame();
+    InspectorInstrumentationCookie cookie;
+    if (frame)
+        cookie = InspectorInstrumentation::willEvaluateScript(frame, sourceURL, TextPosition::minimumPosition().m_line.oneBasedInt());
+
+    RefPtr<Frame> protect = frame;
+    ScriptDebugServer::runScript(state, scriptId, result, wasThrown, exceptionMessage);
+
+    if (frame)
+        InspectorInstrumentation::didEvaluateScript(cookie);
 }
 
 ScriptDebugListener* PageScriptDebugServer::getDebugListenerForContext(v8::Handle<v8::Context> context)

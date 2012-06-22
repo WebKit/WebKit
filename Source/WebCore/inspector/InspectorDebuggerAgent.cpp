@@ -47,6 +47,7 @@
 
 using WebCore::TypeBuilder::Array;
 using WebCore::TypeBuilder::Debugger::FunctionDetails;
+using WebCore::TypeBuilder::Debugger::ScriptId;
 using WebCore::TypeBuilder::Runtime::RemoteObject;
 
 namespace WebCore {
@@ -97,6 +98,7 @@ void InspectorDebuggerAgent::disable()
 
     stopListeningScriptDebugServer();
     scriptDebugServer().clearBreakpoints();
+    scriptDebugServer().clearCompiledScripts();
     clear();
 
     if (m_listener)
@@ -116,6 +118,11 @@ void InspectorDebuggerAgent::causesRecompilation(ErrorString*, bool* result)
 void InspectorDebuggerAgent::canSetScriptSource(ErrorString*, bool* result)
 {
     *result = scriptDebugServer().canSetScriptSource();
+}
+
+void InspectorDebuggerAgent::supportsSeparateScriptCompilationAndExecution(ErrorString*, bool* result)
+{
+    *result = scriptDebugServer().supportsSeparateScriptCompilationAndExecution();
 }
 
 void InspectorDebuggerAgent::enable(ErrorString*)
@@ -503,6 +510,60 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, const
     injectedScript.evaluateOnCallFrame(errorString, m_currentCallStack, callFrameId, expression, objectGroup ? *objectGroup : "", includeCommandLineAPI ? *includeCommandLineAPI : false, returnByValue ? *returnByValue : false, &result, wasThrown);
 
     if (doNotPauseOnExceptionsAndMuteConsole ? *doNotPauseOnExceptionsAndMuteConsole : false) {
+        unmuteConsole();
+        if (scriptDebugServer().pauseOnExceptionsState() != previousPauseOnExceptionsState)
+            scriptDebugServer().setPauseOnExceptionsState(previousPauseOnExceptionsState);
+    }
+}
+
+void InspectorDebuggerAgent::compileScript(ErrorString* errorString, const String& expression, const String& sourceURL, TypeBuilder::OptOutput<ScriptId>* scriptId, TypeBuilder::OptOutput<String>* syntaxErrorMessage)
+{
+    InjectedScript injectedScript = injectedScriptForEval(errorString, 0);
+    if (injectedScript.hasNoValue()) {
+        *errorString = "Inspected frame has gone";
+        return;
+    }
+
+    String scriptIdValue;
+    String exceptionMessage;
+    scriptDebugServer().compileScript(injectedScript.scriptState(), expression, sourceURL, &scriptIdValue, &exceptionMessage);
+    if (!scriptIdValue && !exceptionMessage) {
+        *errorString = "Script compilation failed";
+        return;
+    }
+    *syntaxErrorMessage = exceptionMessage;
+    *scriptId = scriptIdValue;
+}
+
+void InspectorDebuggerAgent::runScript(ErrorString* errorString, const int* executionContextId, const ScriptId& scriptId, const String* const objectGroup, const bool* const doNotPauseOnExceptionsAndMuteConsole, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown)
+{
+    InjectedScript injectedScript = injectedScriptForEval(errorString, executionContextId);
+    if (injectedScript.hasNoValue()) {
+        *errorString = "Inspected frame has gone";
+        return;
+    }
+
+    ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = scriptDebugServer().pauseOnExceptionsState();
+    if (doNotPauseOnExceptionsAndMuteConsole && *doNotPauseOnExceptionsAndMuteConsole) {
+        if (previousPauseOnExceptionsState != ScriptDebugServer::DontPauseOnExceptions)
+            scriptDebugServer().setPauseOnExceptionsState(ScriptDebugServer::DontPauseOnExceptions);
+        muteConsole();
+    }
+
+    ScriptValue value;
+    bool wasThrownValue;
+    String exceptionMessage;
+    scriptDebugServer().runScript(injectedScript.scriptState(), scriptId, &value, &wasThrownValue, &exceptionMessage);
+    *wasThrown = wasThrownValue;
+    if (value.hasNoValue()) {
+        *errorString = "Script execution failed";
+        return;
+    }
+    result = injectedScript.wrapObject(value, objectGroup ? *objectGroup : "");
+    if (wasThrownValue)
+        result->setDescription(exceptionMessage);
+
+    if (doNotPauseOnExceptionsAndMuteConsole && *doNotPauseOnExceptionsAndMuteConsole) {
         unmuteConsole();
         if (scriptDebugServer().pauseOnExceptionsState() != previousPauseOnExceptionsState)
             scriptDebugServer().setPauseOnExceptionsState(previousPauseOnExceptionsState);

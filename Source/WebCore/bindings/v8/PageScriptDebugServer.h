@@ -56,6 +56,10 @@ public:
     };
     void setClientMessageLoop(PassOwnPtr<ClientMessageLoop>);
 
+    virtual void compileScript(ScriptState*, const String& expression, const String& sourceURL, String* scriptId, String* exceptionMessage);
+    virtual void clearCompiledScripts();
+    virtual void runScript(ScriptState*, const String& scriptId, ScriptValue* result, bool* wasThrown, String* exceptionMessage);
+
 private:
     PageScriptDebugServer();
     virtual ~PageScriptDebugServer() { }
@@ -68,6 +72,7 @@ private:
     ListenersMap m_listenersMap;
     OwnPtr<ClientMessageLoop> m_clientMessageLoop;
     Page* m_pausedPage;
+    HashMap<String, String> m_compiledScriptURLs;
 };
 
 } // namespace WebCore

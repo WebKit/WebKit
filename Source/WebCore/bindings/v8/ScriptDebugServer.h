@@ -48,6 +48,7 @@ namespace WebCore {
 
 class ScriptDebugListener;
 class ScriptObject;
+class ScriptState;
 class ScriptValue;
 
 class ScriptDebugServer {
@@ -80,6 +81,7 @@ public:
     void updateCallStack(ScriptValue* callFrame);
 
     bool causesRecompilation() { return false; }
+    bool supportsSeparateScriptCompilationAndExecution() { return true; }
 
     void recompileAllJSFunctionsSoon() { }
     void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) { }
@@ -95,6 +97,10 @@ public:
     bool isPaused();
 
     v8::Local<v8::Value> functionScopes(v8::Handle<v8::Function>);
+
+    virtual void compileScript(ScriptState*, const String& expression, const String& sourceURL, String* scriptId, String* exceptionMessage);
+    virtual void clearCompiledScripts();
+    virtual void runScript(ScriptState*, const String& scriptId, ScriptValue* result, bool* wasThrown, String* exceptionMessage);
 
 protected:
     ScriptDebugServer();
@@ -125,6 +131,7 @@ protected:
 
     bool m_breakpointsActivated;
     OwnHandle<v8::FunctionTemplate> m_breakProgramCallbackTemplate;
+    HashMap<String, OwnPtr<OwnHandle<v8::Script> > > m_compiledScripts;
 };
 
 } // namespace WebCore

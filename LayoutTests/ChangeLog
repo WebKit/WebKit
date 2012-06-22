@@ -1,3 +1,18 @@
+2012-06-21  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Support separate script compilation and execution.
+        https://bugs.webkit.org/show_bug.cgi?id=89646
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/debugger-compile-and-run-expected.txt: Added.
+        * inspector/debugger/debugger-compile-and-run.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-06-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in fast/hidpi, history, html, images, inline, inline-block, innerHTML, inspector-support, invalid tests

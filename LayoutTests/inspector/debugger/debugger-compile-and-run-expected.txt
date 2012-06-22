@@ -1,0 +1,20 @@
+Tests separate compilation and run.
+
+Bug 89646.
+Debugger was enabled.
+
+Running: testSuccessfulCompileAndRun
+Compiling script
+Running script
+Script result: 3
+
+Running: testRunError
+Compiling script
+Running script
+Script run error: Uncaught ReferenceError: c is not defined
+
+Running: testCompileError
+Compiling script
+Script compile error: Uncaught SyntaxError: Unexpected token }
+Debugger was disabled.
+

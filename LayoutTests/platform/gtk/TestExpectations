@@ -701,6 +701,7 @@ BUGWK43332 SKIP : inspector/debugger/event-listener-breakpoints.html = TEXT
 BUGWK43332 SKIP : inspector/debugger/step-through-event-listeners.html = TEXT
 BUGWK43332 SKIP : inspector/debugger/xhr-breakpoints.html = TEXT
 BUGWK40300 SKIP : inspector/debugger/live-edit.html = TEXT
+BUGWK89652 SKIP : inspector/debugger/debugger-compile-and-run.html = TEXT
 BUGWK50868 SKIP : inspector/debugger/debugger-step-out.html = TEXT
 BUGWK50868 SKIP : inspector/styles/styles-source-lines-inline.html = TEXT
 BUGWK85709 SKIP : inspector/extensions/extensions-eval-content-script.html = TEXT

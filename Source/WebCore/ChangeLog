@@ -1,3 +1,63 @@
+2012-06-21  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Support separate script compilation and execution.
+        https://bugs.webkit.org/show_bug.cgi?id=89646
+
+        Reviewed by Pavel Feldman.
+
+        Separate script compilation and run commands added to protocol and DebuggerAgent.
+        Separate script compilation and run implemented in v8 ScriptDebugServer, stubs added for js implementation.
+
+        Test: inspector/debugger/debugger-compile-and-run.html
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::compileScript):
+        (WebCore):
+        (WebCore::ScriptDebugServer::clearCompiledScripts):
+        (WebCore::ScriptDebugServer::runScript):
+        * bindings/js/ScriptDebugServer.h:
+        (WebCore::ScriptDebugServer::supportsSeparateScriptCompilationAndExecution):
+        (ScriptDebugServer):
+        * bindings/v8/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::compileScript):
+        (WebCore):
+        (WebCore::PageScriptDebugServer::clearCompiledScripts):
+        (WebCore::PageScriptDebugServer::runScript):
+        * bindings/v8/PageScriptDebugServer.h:
+        (PageScriptDebugServer):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::compileScript):
+        (WebCore):
+        (WebCore::ScriptDebugServer::clearCompiledScripts):
+        (WebCore::ScriptDebugServer::runScript):
+        * bindings/v8/ScriptDebugServer.h:
+        (WebCore):
+        (WebCore::ScriptDebugServer::supportsSeparateScriptCompilationAndExecution):
+        (ScriptDebugServer):
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::disable):
+        (WebCore::InspectorDebuggerAgent::supportsSeparateScriptCompilationAndExecution):
+        (WebCore):
+        (WebCore::InspectorDebuggerAgent::compileScript):
+        (WebCore::InspectorDebuggerAgent::runScript):
+        * inspector/InspectorDebuggerAgent.h:
+        (InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::injectedScriptManager):
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::injectedScriptForEval):
+        (WebCore):
+        * inspector/PageDebuggerAgent.h:
+        (PageDebuggerAgent):
+        * inspector/WorkerDebuggerAgent.cpp:
+        (WebCore::WorkerDebuggerAgent::injectedScriptForEval):
+        (WebCore):
+        * inspector/WorkerDebuggerAgent.h:
+        (WorkerDebuggerAgent):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/inspector.js:
+        (WebInspector.doLoadedDone):
+
 2012-06-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: InspectorState::updateCookie should not do JSON serialization if unsupported
