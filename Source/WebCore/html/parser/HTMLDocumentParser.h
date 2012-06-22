@@ -60,11 +60,6 @@ public:
     {
         return adoptRef(new HTMLDocumentParser(document, reportErrors));
     }
-    static PassRefPtr<HTMLDocumentParser> create(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission permission)
-    {
-        return adoptRef(new HTMLDocumentParser(fragment, contextElement, permission));
-    }
-
     virtual ~HTMLDocumentParser();
 
     // Exposed for HTMLParserScheduler
@@ -95,6 +90,11 @@ protected:
     HTMLTreeBuilder* treeBuilder() const { return m_treeBuilder.get(); }
 
 private:
+    static PassRefPtr<HTMLDocumentParser> create(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission permission)
+    {
+        return adoptRef(new HTMLDocumentParser(fragment, contextElement, permission));
+    }
+
     // DocumentParser
     virtual void detach();
     virtual bool hasInsertionPoint();

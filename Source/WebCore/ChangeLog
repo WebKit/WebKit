@@ -1,3 +1,16 @@
+2012-06-21  Kwang Yul Seo  <skyul@company100.net>
+
+        Make HTMLDocumentParser::create(DocumentFragment*,Element*, FragmentScriptingPermission) private.
+        https://bugs.webkit.org/show_bug.cgi?id=89724
+
+        Reviewed by Darin Adler.
+
+        It is used only by HTMLDocumentParser::parseDocumentFragment. No behavioral changes.
+
+        * html/parser/HTMLDocumentParser.h:
+        (WebCore::HTMLDocumentParser::create):
+        (HTMLDocumentParser):
+
 2012-06-21  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Use the empty plugin support on non-X11 and non-Windows platforms
