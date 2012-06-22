@@ -138,14 +138,17 @@ function shouldGenerateGLError(ctx, glErrors, evalStr) {
     testFailed(evalStr + " threw exception " + exception);
   } else {
     var err = ctx.getError();
+    var errStrs = [];
+    for (var ii = 0; ii < glErrors.length; ++ii) {
+      errStrs.push(getGLErrorAsString(ctx, glErrors[ii]));
+    }
+    var expected = errStrs.join(" or ");
     if (glErrors.indexOf(err) < 0) {
-      var errStrs = [];
-      for (var ii = 0; ii < glErrors.length; ++ii) {
-        errStrs.push(getGLErrorAsString(ctx, glErrors[ii]));
-      }
-      testFailed(evalStr + " expected: " + errStrs.join(" or ") + ". Was " + getGLErrorAsString(ctx, err) + ".");
+      testFailed(evalStr + " expected: " + expected + ". Was " + getGLErrorAsString(ctx, err) + ".");
     } else {
-      testPassed(evalStr + " generated expected GL error: " + getGLErrorAsString(ctx, err) + ".");
+      var msg = (glErrors.length == 1) ? " generated expected GL error: " :
+                                         " generated one of expected GL errors: ";
+      testPassed(evalStr + msg + expected + ".");
     }
   }
 }
@@ -165,21 +168,17 @@ function glErrorShouldBe(gl, glErrors, opt_msg) {
   opt_msg = opt_msg || "";
   var err = gl.getError();
   var ndx = glErrors.indexOf(err);
+  var errStrs = [];
+  for (var ii = 0; ii < glErrors.length; ++ii) {
+    errStrs.push(getGLErrorAsString(gl, glErrors[ii]));
+  }
+  var expected = errStrs.join(" or ");
   if (ndx < 0) {
-    if (glErrors.length == 1) {
-      testFailed("getError expected: " + getGLErrorAsString(gl, glErrors[0]) +
-                 ". Was " + getGLErrorAsString(gl, err) + " : " + opt_msg);
-    } else {
-      var errs = [];
-      for (var ii = 0; ii < glErrors.length; ++ii) {
-        errs.push(getGLErrorAsString(gl, glErrors[ii]));
-      }
-      testFailed("getError expected one of: [" + errs.join(", ") +
-                 "]. Was " + getGLErrorAsString(gl, err) + " : " + opt_msg);
-    }
+    var msg = "getError expected" + ((glErrors.length > 1) ? " one of: " : ": ");
+    testFailed(msg + expected +  ". Was " + getGLErrorAsString(gl, err) + " : " + opt_msg);
   } else {
-    testPassed("getError was expected value: " +
-                getGLErrorAsString(gl, err) + " : " + opt_msg);
+    var msg = "getError was " + ((glErrors.length > 1) ? "one of: " : "expected value: ");
+    testPassed(msg + expected + " : " + opt_msg);
   }
 };
 
