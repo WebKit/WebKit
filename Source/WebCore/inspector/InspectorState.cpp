@@ -65,7 +65,7 @@ void InspectorState::unmute()
 
 void InspectorState::updateCookie()
 {
-    if (m_client && !m_isOnMute)
+    if (m_client && !m_isOnMute && m_client->supportsInspectorStateUpdates())
         m_client->updateInspectorStateCookie(m_properties->toJSONString());
 }
 

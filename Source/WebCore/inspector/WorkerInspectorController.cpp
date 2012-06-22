@@ -77,6 +77,7 @@ public:
     virtual ~WorkerStateClient() { }
 
 private:
+    virtual bool supportsInspectorStateUpdates() const { return true; }
     virtual void updateInspectorStateCookie(const String& cookie)
     {
         m_workerContext->thread()->workerReportingProxy().updateInspectorStateCookie(cookie);

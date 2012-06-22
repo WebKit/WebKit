@@ -59,6 +59,7 @@ public:
 
     virtual bool sendMessageToFrontend(const WTF::String&);
 
+    virtual bool supportsInspectorStateUpdates() const { return true; }
     virtual void updateInspectorStateCookie(const WTF::String&);
 
     virtual bool canClearBrowserCache();

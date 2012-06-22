@@ -1,3 +1,13 @@
+2012-06-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: InspectorState::updateCookie should not do JSON serialization if unsupported
+        https://bugs.webkit.org/show_bug.cgi?id=89743
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCoreSupport/InspectorClientBlackBerry.cpp:
+        (WebCore::InspectorClientBlackBerry::updateInspectorStateCookie):
+
 2012-06-21  Parth Patel  <parpatel@rim.com>
 
         [Blackberry] BlackBerry::Platform::Settings::get() rename to BlackBerry::Platform::Settings::instance() to make it consistent with our other singletons

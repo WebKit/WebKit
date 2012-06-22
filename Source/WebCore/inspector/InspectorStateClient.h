@@ -37,6 +37,7 @@ public:
     // Navigation can cause some WebKit implementations to change the view / page / inspector controller instance.
     // However, there are some inspector controller states that should survive navigation (such as tracking resources
     // or recording timeline) and worker restart. Following callbacks allow embedders to track these states.
+    virtual bool supportsInspectorStateUpdates() const { return false; }
     virtual void updateInspectorStateCookie(const String&) { };
 };
 

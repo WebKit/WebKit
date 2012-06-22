@@ -87,6 +87,7 @@ void InspectorClientBlackBerry::clearBrowserCookies()
 
 void InspectorClientBlackBerry::updateInspectorStateCookie(const String& cookie)
 {
+    // If this is implemented, we should override and return true in InspectorStateClient::supportsInspectorStateUpdates().
     notImplemented();
 };
 
