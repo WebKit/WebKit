@@ -62,6 +62,7 @@ struct WebActiveWheelFlingParameters;
 struct WebMediaPlayerAction;
 struct WebPluginAction;
 struct WebPoint;
+struct WebRenderingStats;
 
 class WebView : public WebWidget {
 public:
@@ -458,6 +459,10 @@ public:
     virtual void transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters&) = 0;
 
     virtual bool setEditableSelectionOffsets(int start, int end) = 0;
+
+    // Fills in a WebRenderingStats struct containing information about the state of the compositor.
+    // This call is relatively expensive in threaded mode as it blocks on the compositor thread.
+    virtual void renderingStats(WebRenderingStats&) const { }
 
     // Visibility -----------------------------------------------------------
 

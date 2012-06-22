@@ -52,6 +52,7 @@ public:
     virtual bool initializeLayerRenderer() OVERRIDE;
     virtual bool recreateContext() OVERRIDE;
     virtual int compositorIdentifier() const OVERRIDE { return m_compositorIdentifier; }
+    virtual void implSideRenderingStats(CCRenderingStats&) OVERRIDE;
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const OVERRIDE;
     virtual void loseContext() OVERRIDE;
     virtual void setNeedsAnimate() OVERRIDE;

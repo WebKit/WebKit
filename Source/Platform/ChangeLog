@@ -1,3 +1,18 @@
+2012-06-22  Dave Tu  <dtu@chromium.org>
+
+        [chromium] Expose rendering statistics to WebWidget.
+        https://bugs.webkit.org/show_bug.cgi?id=88268
+
+        Reviewed by James Robinson.
+
+        The WebKit side of a basic framework for exposing rendering statistics
+        to Chromium's --enable-benchmarking extension.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebRenderingStatistics):
+        (WebKit):
+        (WebLayerTreeView):
+
 2012-06-22  Jeff Timanus  <twiz@chromium.org>
 
         [Chromium] Change implementing a fast-path for copying GPU-accelerated Canvas2D instances to WebGL textures.

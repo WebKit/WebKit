@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class CCFontAtlas;
+class CCRenderingStats;
 class CCThread;
 class CCGraphicsContext;
 struct LayerRendererCapabilities;
@@ -78,6 +79,8 @@ public:
     virtual bool recreateContext() = 0;
 
     virtual int compositorIdentifier() const = 0;
+
+    virtual void implSideRenderingStats(CCRenderingStats&) = 0;
 
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const = 0;
 

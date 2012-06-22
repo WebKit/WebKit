@@ -1,3 +1,25 @@
+2012-06-22  Dave Tu  <dtu@chromium.org>
+
+        [chromium] Expose rendering statistics to WebWidget.
+        https://bugs.webkit.org/show_bug.cgi?id=88268
+
+        Reviewed by James Robinson.
+
+        The WebKit side of a basic framework for exposing rendering statistics
+        to Chromium's --enable-benchmarking extension.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeHost::implFrameNumber):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        (CCProxy):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::implFrameNumber):
+        (WebCore):
+        (WebCore::CCThreadProxy::implFrameNumberOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+
 2012-06-22  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Do not accumulate occlusion from 3d layers on the main thread
