@@ -1,3 +1,19 @@
+2012-06-22  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r117738):[Forms] validationMessage IDL attribute should not have range overflow message if value isn't range overflow
+        https://bugs.webkit.org/show_bug.cgi?id=89736
+
+        Reviewed by Kent Tamura.
+
+        Tests for HTMLInputElement.validationMessage attribute.
+
+        * fast/forms/date/input-date-validation-message-expected.txt: Added.
+        * fast/forms/date/input-date-validation-message.html: Added.
+        * fast/forms/number/input-number-validation-message-expected.txt: Added.
+        * fast/forms/number/input-number-validation-message.html: Added.
+        * fast/forms/range/input-range-validation-message-expected.txt: Added.
+        * fast/forms/range/input-range-validation-message.html: Added.
+
 2012-06-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Support separate script compilation and execution.

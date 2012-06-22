@@ -374,7 +374,7 @@ String InputType::validationMessage() const
     if (numericValue < stepRange.minimum())
         return validationMessageRangeUnderflowText(serialize(stepRange.minimum()));
 
-    if (numericValue < stepRange.maximum())
+    if (numericValue > stepRange.maximum())
         return validationMessageRangeOverflowText(serialize(stepRange.maximum()));
 
     if (stepRange.stepMismatch(numericValue)) {

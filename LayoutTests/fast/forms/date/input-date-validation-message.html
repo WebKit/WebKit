@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test for validationMessage IDL attribute for &lt;input type=date>');
+var parent = document.createElement('div');
+document.body.appendChild(parent);
+parent.innerHTML = '<input type=date id=date maxlength=1 pattern=x>';
+var input = document.getElementById('date');
+
+function testIt(value, min, max, step)
+{
+    input.setAttribute("max", max);
+    input.setAttribute("min", min);
+    input.setAttribute("step", step);
+    input.setAttribute("value", value);
+    return input.validationMessage;
+}
+
+debug('No message')
+shouldBeEqualToString('testIt("", "", "")', '');
+
+debug('Value missing')
+input.setAttribute("required", "");
+shouldBeEqualToString('testIt("", "", "")', 'value missing');
+input.removeAttribute("required");
+
+debug('Type mismatch');
+shouldBeEqualToString('testIt("foo", "", "")', '');
+
+debug('Range overflow')
+shouldBeEqualToString('testIt("1982-11-02", "", "1970-12-31")', 'range overflow');
+
+debug('Range underflow')
+shouldBeEqualToString('testIt("1982-11-02", "1990-05-25", "1990-12-24")', 'range underflow');
+
+debug('Step mismatch')
+shouldBeEqualToString('testIt("1982-11-02", "", "", "123")', 'step mismatch');
+
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
