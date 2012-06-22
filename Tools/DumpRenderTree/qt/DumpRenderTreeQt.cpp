@@ -700,7 +700,8 @@ void DumpRenderTree::processLine(const QString &input)
 
     if (line.startsWith(QLatin1String("http:"))
             || line.startsWith(QLatin1String("https:"))
-            || line.startsWith(QLatin1String("file:"))) {
+            || line.startsWith(QLatin1String("file:"))
+            || line == QLatin1String("about:blank")) {
         open(QUrl(line));
     } else {
         QFileInfo fi(line);

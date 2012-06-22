@@ -1,3 +1,16 @@
+2012-06-22  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Allow DumpRenderTree to dump about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=89685
+
+        Reviewed by Ryosuke Niwa.
+
+        We need to allow DumpRenderTree to dump about:blank page, then it will be consistent with other ports,
+        additionaly this behavior is required for running WTR performance tests.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::processLine):
+
 2012-06-21  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Reset mediaPlaybackRequiresUserGesture WebSettings after each test
