@@ -541,6 +541,24 @@ WebInspector.DebuggerModel.prototype = {
         if (!script)
             return null;
         return script.rawLocationToUILocation(rawLocation.lineNumber, rawLocation.columnNumber);
+    },
+
+    /**
+     * Handles notification from JavaScript VM about updated stack (liveedit or frame restart action).
+     * @this {WebInspector.DebuggerModel}
+     * @param {Array.<DebuggerAgent.CallFrame>=} newCallFrames
+     * @param {Object=} details
+     */
+    callStackModified: function(newCallFrames, details)
+    {
+        // FIXME: declare this property in protocol and in JavaScript.
+        if (details && details["stack_update_needs_step_in"])
+            DebuggerAgent.stepInto();
+        else {
+            if (newCallFrames && newCallFrames.length)
+                this._pausedScript(newCallFrames, this._debuggerPausedDetails.reason, this._debuggerPausedDetails.auxData);
+
+        }
     }
 }
 
@@ -707,6 +725,27 @@ WebInspector.DebuggerModel.CallFrame.prototype = {
             callback(result, wasThrown);
         }
         DebuggerAgent.evaluateOnCallFrame(this._payload.callFrameId, code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, didEvaluateOnCallFrame.bind(this));
+    },
+
+    /**
+     * @param {function(?Protocol.Error=)=} callback
+     */
+    restart: function(callback)
+    {
+        /**
+         * @this {WebInspector.DebuggerModel.CallFrame}
+         * @param {?Protocol.Error} error
+         * @param {Array.<DebuggerAgent.CallFrame>=} callFrames
+         * @param {Object=} details
+         */
+        function protocolCallback(error, callFrames, details)
+        {
+            if (!error)
+                WebInspector.debuggerModel.callStackModified(callFrames, details);
+            if (callback)
+                callback(error);
+        }
+        DebuggerAgent.restartFrame(this._payload.callFrameId, protocolCallback);
     },
 
     /**

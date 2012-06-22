@@ -543,6 +543,7 @@ localizedStrings["property"] = "property";
 localizedStrings["Object types:"] = "Object types:";
 localizedStrings["%s() at %s"] = "%s() at %s";
 localizedStrings["Copy Stack Trace"] = "Copy Stack Trace";
+localizedStrings["Restart Frame"] = "Restart Frame";
 localizedStrings["Collect Garbage"] = "Collect Garbage";
 localizedStrings["JSON"] = "JSON";
 localizedStrings["Catch"] = "Catch";

@@ -1,3 +1,28 @@
+2012-06-22  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: Support 'Restart frame' in inspector frontend
+        https://bugs.webkit.org/show_bug.cgi?id=89678
+
+        Reviewed by Pavel Feldman.
+
+        Action is added to call frame placard's context menu. Context menu is now built
+        on a call frame level rather than on callback sidebar level.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane):
+        (WebInspector.CallStackSidebarPane.prototype.update):
+        (WebInspector.CallStackSidebarPane.Placard):
+        (WebInspector.CallStackSidebarPane.Placard.prototype._update):
+        (WebInspector.CallStackSidebarPane.Placard.prototype._placardContextMenu):
+        (_restartFrame):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.rawLocationToUILocation):
+        (WebInspector.DebuggerModel.prototype.callStackModified):
+        (WebInspector.DebuggerModel.CallFrame.prototype.restart):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.editSource):
+
 2012-06-22  Jocelyn Turcotte  <turcotte.j@gmail.com>
 
         [Qt] Fix the remote inspector loading problems on Mac

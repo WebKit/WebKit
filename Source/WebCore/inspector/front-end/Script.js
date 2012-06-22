@@ -138,6 +138,7 @@ WebInspector.Script.prototype = {
          */
         function didEditScriptSource(error, callFrames, debugData)
         {
+            // FIXME: support debugData.stack_update_needs_step_in flag by calling WebInspector.debugger_model.callStackModified
             if (!error)
                 this._source = newSource;
             callback(error, callFrames);
