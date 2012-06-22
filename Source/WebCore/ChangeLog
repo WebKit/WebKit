@@ -1,3 +1,17 @@
+2012-06-22  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION(r116446): Crash in RenderBoxModelObject::adjustedPositionRelativeToOffsetParent
+        https://bugs.webkit.org/show_bug.cgi?id=89785
+
+        Reviewed by Abhishek Arya.
+
+        Test: fullscreen/full-screen-crash-offsetLeft.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent):
+        Added a NULL-check for parent() as it can be NULL in fullscreen mode. Also updated a stale
+        comment while touching the code.
+
 2012-06-22  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r121064.

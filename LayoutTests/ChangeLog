@@ -1,3 +1,13 @@
+2012-06-22  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION(r116446): Crash in RenderBoxModelObject::adjustedPositionRelativeToOffsetParent
+        https://bugs.webkit.org/show_bug.cgi?id=89785
+
+        Reviewed by Abhishek Arya.
+
+        * fullscreen/full-screen-crash-offsetLeft-expected.html: Added.
+        * fullscreen/full-screen-crash-offsetLeft.html: Added.
+
 2012-06-22  Beth Dakin  <bdakin@apple.com>
 
         Skipping this test because it's failing most of the time since 

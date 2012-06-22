@@ -517,11 +517,11 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
 
 LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const LayoutPoint& startPoint) const
 {
-    // If the element is the HTML body element or does not have an associated box
+    // If the element is the HTML body element or doesn't have a parent
     // return 0 and stop this algorithm.
-    if (isBody())
+    if (isBody() || !parent())
         return LayoutPoint();
-    
+
     LayoutPoint referencePoint = startPoint;
     referencePoint.move(parent()->offsetForColumns(referencePoint));
     
