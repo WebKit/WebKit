@@ -119,6 +119,35 @@ public:
         return m_atomicNameCaches.isEmpty() && m_nameCaches.isEmpty() && m_tagNodeListCacheNS.isEmpty();
     }
 
+    void adoptTreeScope(TreeScope* oldTreeScope, TreeScope* newTreeScope, Document* oldDocument, Document* newDocument)
+    {
+        invalidateCaches();
+
+        if (oldDocument != newDocument) {
+            NodeListAtomicNameCacheMap::const_iterator atomicNameCacheEnd = m_atomicNameCaches.end();
+            for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it) {
+                DynamicSubtreeNodeList* list = it->second;
+                if (list->isRootedAtDocument()) {
+                    oldDocument->unregisterDynamicSubtreeNodeList(list);
+                    newDocument->registerDynamicSubtreeNodeList(list);
+                }
+            }
+
+            NodeListNameCacheMap::const_iterator nameCacheEnd = m_nameCaches.end();
+            for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it) {
+                DynamicSubtreeNodeList* list = it->second;
+                if (list->isRootedAtDocument()) {
+                    oldDocument->unregisterDynamicSubtreeNodeList(list);
+                    newDocument->registerDynamicSubtreeNodeList(list);
+                }
+            }
+        }
+
+        if (oldTreeScope)
+            oldTreeScope->removeNodeListCache();
+        newTreeScope->addNodeListCache();
+    }
+
 private:
     NodeListsNodeData() { }
 

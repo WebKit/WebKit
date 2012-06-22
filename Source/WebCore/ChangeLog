@@ -1,3 +1,60 @@
+2012-06-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        LabelsNodeList isn't updated properly after its owner node is adopted into a new document
+        https://bugs.webkit.org/show_bug.cgi?id=89730
+
+        Reviewed by Darin Adler.
+
+        When a node is adopted, node lists that are invalidated at document level need to be unregistered
+        from old document and registered to new document so that DOM mutations in new document will invalidate
+        caches in the node lists. Done that in NodeListsNodeData::adoptTreeScope, which was extracted from
+        TreeScopeAdopter::moveTreeToNewScope.
+
+        Also renamed DynamicNodeList::node() and m_node to rootNode() and m_ownerNode to better express
+        their semantics and added ownerNode() to make m_ownerNode private to DynamicNodeList.
+
+        Test: fast/forms/label/labels-owner-node-adopted.html
+
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::JSNodeListOwner::isReachableFromOpaqueRoots):
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::~ChildNodeList):
+        (WebCore::ChildNodeList::length):
+        (WebCore::ChildNodeList::item):
+        (WebCore::ChildNodeList::nodeMatches):
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList):
+        (WebCore::ClassNodeList::~ClassNodeList):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicSubtreeNodeList::length):
+        (WebCore::DynamicSubtreeNodeList::itemForwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::itemBackwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::item):
+        (WebCore::DynamicNodeList::itemWithName):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeList::DynamicNodeList):
+        (WebCore::DynamicNodeList::ownerNode):
+        (WebCore::DynamicNodeList::rootedAtDocument):
+        (WebCore::DynamicNodeList::shouldInvalidateOnAttributeChange):
+        (WebCore::DynamicNodeList::rootNode):
+        (WebCore::DynamicNodeList::document):
+        (DynamicNodeList):
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::~NameNodeList):
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::adoptTreeScope):
+        (NodeListsNodeData):
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::~TagNodeList):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::~LabelsNodeList):
+        (WebCore::LabelsNodeList::nodeMatches):
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::~RadioNodeList):
+        (WebCore::RadioNodeList::checkElementMatchesRadioNodeListFilter):
+
 2012-06-21  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Properly display native memory sizes bigger than 2GB

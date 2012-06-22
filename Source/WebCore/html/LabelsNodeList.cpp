@@ -41,13 +41,13 @@ LabelsNodeList::LabelsNodeList(Node* forNode)
 
 LabelsNodeList::~LabelsNodeList()
 {
-    m_node->nodeLists()->removeCacheWithAtomicName(this, DynamicNodeList::LabelsNodeListType, starAtom);
+    ownerNode()->nodeLists()->removeCacheWithAtomicName(this, DynamicNodeList::LabelsNodeListType, starAtom);
     document()->unregisterDynamicSubtreeNodeList(this);
 } 
     
 bool LabelsNodeList::nodeMatches(Element* testNode) const
 {
-    return testNode->hasTagName(labelTag) && static_cast<HTMLLabelElement*>(testNode)->control() == m_node;
+    return testNode->hasTagName(labelTag) && static_cast<HTMLLabelElement*>(testNode)->control() == ownerNode();
 }
 
 } // namespace WebCore

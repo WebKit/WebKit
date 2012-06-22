@@ -46,7 +46,7 @@ RadioNodeList::RadioNodeList(Node* rootNode, const AtomicString& name)
 
 RadioNodeList::~RadioNodeList()
 {
-    m_node->nodeLists()->removeCacheWithAtomicName(this, DynamicNodeList::RadioNodeListType, m_name);
+    ownerNode()->nodeLists()->removeCacheWithAtomicName(this, DynamicNodeList::RadioNodeListType, m_name);
     document()->unregisterDynamicSubtreeNodeList(this);
 }
 
@@ -86,13 +86,13 @@ void RadioNodeList::setValue(const String& value)
 bool RadioNodeList::checkElementMatchesRadioNodeListFilter(Element* testElement) const
 {
     ASSERT(testElement->hasTagName(objectTag) || testElement->isFormControlElement());
-    if (m_node->hasTagName(formTag)) {
+    if (ownerNode()->hasTagName(formTag)) {
         HTMLFormElement* formElement = 0;
         if (testElement->hasTagName(objectTag))
             formElement = static_cast<HTMLObjectElement*>(testElement)->form();
         else
             formElement = static_cast<HTMLFormControlElement*>(testElement)->form();
-        if (!formElement || formElement != m_node)
+        if (!formElement || formElement != ownerNode())
             return false;
     }
 

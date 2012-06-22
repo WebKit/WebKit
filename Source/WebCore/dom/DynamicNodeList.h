@@ -53,8 +53,8 @@ public:
         AlwaysInvalidate,
         DoNotInvalidateOnAttributeChange,
     };
-    DynamicNodeList(PassRefPtr<Node> node, RootType rootType, InvalidationType invalidationType)
-        : m_node(node)
+    DynamicNodeList(PassRefPtr<Node> ownerNode, RootType rootType, InvalidationType invalidationType)
+        : m_ownerNode(ownerNode)
         , m_caches(rootType, invalidationType)
     { }
     virtual ~DynamicNodeList() { }
@@ -65,19 +65,19 @@ public:
     virtual Node* itemWithName(const AtomicString&) const;
 
     // Other methods (not part of DOM)
-    Node* node() const
-    {
-        if (m_caches.rootedAtDocument && m_node->inDocument())
-            return m_node->document();
-        return m_node.get();
-    }
-    Document* document() { return m_node->document(); }
-
+    Node* ownerNode() const { return m_ownerNode.get(); }
+    bool isRootedAtDocument() const { return m_caches.rootedAtDocument; }
     bool shouldInvalidateOnAttributeChange() const { return m_caches.shouldInvalidateOnAttributeChange; }
-
     void invalidateCache() { m_caches.reset(); }
 
 protected:
+    Node* rootNode() const
+    {
+        if (m_caches.rootedAtDocument && m_ownerNode->inDocument())
+            return m_ownerNode->document();
+        return m_ownerNode.get();
+    }
+    Document* document() const { return m_ownerNode->document(); }
     virtual bool nodeMatches(Element*) const = 0;
 
     struct Caches {
@@ -107,7 +107,7 @@ protected:
         unsigned shouldInvalidateOnAttributeChange : 1;
     };
 
-    RefPtr<Node> m_node;
+    RefPtr<Node> m_ownerNode;
     mutable Caches m_caches;
 
 private:
