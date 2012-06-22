@@ -324,8 +324,6 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
     g_assert(highlightPixbuf);
     g_assert(!gdkPixbufEqual(originalPixbuf.get(), highlightPixbuf.get()));
 
-#if (0)
-    // Requires http://webkit.org/b/77747 to be fixed
     WebKitFindController* findController = webkit_web_view_get_find_controller(test->m_webView);
     webkit_find_controller_search_finish(findController);
     webkit_web_view_execute_editing_command(test->m_webView, "Unselect");
@@ -334,7 +332,6 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
     GRefPtr<GdkPixbuf> unhighlightPixbuf = gdk_pixbuf_get_from_window(webViewGdkWindow, 0, 0, allocatedHeight, allocatedWidth);
     g_assert(unhighlightPixbuf);
     g_assert(gdkPixbufEqual(originalPixbuf.get(), unhighlightPixbuf.get()));
-#endif
 }
 
 static void testFindControllerInstance(FindControllerTest* test, gconstpointer)

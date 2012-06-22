@@ -164,6 +164,7 @@ void FindController::hideFindUI()
     if (m_findPageOverlay)
         m_webPage->uninstallPageOverlay(m_findPageOverlay, false);
 
+    m_webPage->corePage()->unmarkAllTextMatches();
     hideFindIndicator();
 }
 

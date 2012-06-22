@@ -1,3 +1,22 @@
+2012-06-22  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2] FindController::hideFindUI should unmark highlighted text matches
+        https://bugs.webkit.org/show_bug.cgi?id=77747
+
+        Reviewed by Carlos Garcia Campos.
+
+        Unmark all text matches whenever FindController::hideFindUI is
+        called to allow callers using the ShowHighlight find option to
+        remove highlighting.
+
+        This patch enables a unit test for the WebKitFindController
+        previously guarded by a #if(0) after r109222.
+
+        * UIProcess/API/gtk/tests/TestWebKitFindController.cpp:
+        (testFindControllerHide):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::hideFindUI):
+
 2012-06-21  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add C API to inspect a Web Intent
