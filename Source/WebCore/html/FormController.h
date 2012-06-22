@@ -77,14 +77,15 @@ struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {
 class FormControlState {
 public:
     FormControlState() : m_type(TypeSkip) { }
-    explicit FormControlState(const String& value) : m_type(TypeRestore), m_value(value) { }
+    explicit FormControlState(const String& value) : m_type(TypeRestore) { m_values.append(value); }
     static FormControlState deserialize(const Vector<String>& stateVector, size_t& index);
-    FormControlState(const FormControlState& another) : m_type(another.m_type), m_value(another.m_value) { }
+    FormControlState(const FormControlState& another) : m_type(another.m_type), m_values(another.m_values) { }
     FormControlState& operator=(const FormControlState&);
 
     bool isFailure() const { return m_type == TypeFailure; }
-    bool hasValue() const { return m_type == TypeRestore; }
-    String value() const { return m_value; }
+    size_t valueSize() const { return m_values.size(); }
+    const String& operator[](size_t i) const { return m_values[i]; }
+    void append(const String&);
     void serializeTo(Vector<String>& stateVector) const;
 
 private:
@@ -92,14 +93,20 @@ private:
     explicit FormControlState(Type type) : m_type(type) { }
 
     Type m_type;
-    String m_value;
+    Vector<String> m_values;
 };
 
 inline FormControlState& FormControlState::operator=(const FormControlState& another)
 {
     m_type = another.m_type;
-    m_value = another.m_value;
+    m_values = another.m_values;
     return *this;
+}
+
+inline void FormControlState::append(const String& value)
+{
+    m_type = TypeRestore;
+    m_values.append(value);
 }
 
 class FormController {

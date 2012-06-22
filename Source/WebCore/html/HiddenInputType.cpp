@@ -60,7 +60,7 @@ FormControlState HiddenInputType::saveFormControlState() const
 
 void HiddenInputType::restoreFormControlState(const FormControlState& state)
 {
-    element()->setAttribute(valueAttr, state.value());
+    element()->setAttribute(valueAttr, state[0]);
 }
 
 bool HiddenInputType::supportsValidation() const

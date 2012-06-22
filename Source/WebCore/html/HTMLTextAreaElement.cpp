@@ -109,7 +109,7 @@ FormControlState HTMLTextAreaElement::saveFormControlState() const
 
 void HTMLTextAreaElement::restoreFormControlState(const FormControlState& state)
 {
-    setValue(state.value());
+    setValue(state[0]);
 }
 
 void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

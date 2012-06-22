@@ -32,20 +32,21 @@ using namespace HTMLNames;
 // Serilized form of FormControlState:
 //  (',' means strings around it are separated in stateVector.)
 //
-// SerializedControlState ::= SkipState | SingleValueState
+// SerializedControlState ::= SkipState | RestoreState
 // SkipState ::= '0'
-// SingleValueState ::= '1', ControlValue
+// RestoreState ::= UnsignedNumber, ControlValue+
+// UnsignedNumber ::= [0-9]+
 // ControlValue ::= arbitrary string
+//
+// RestoreState has a sequence of ControlValues. The length of the
+// sequence is represented by UnsignedNumber.
 
 void FormControlState::serializeTo(Vector<String>& stateVector) const
 {
     ASSERT(!isFailure());
-    if (!hasValue())
-        stateVector.append("0");
-    else {
-        stateVector.append("1");
-        stateVector.append(m_value);
-    }
+    stateVector.append(String::number(m_values.size()));
+    for (size_t i = 0; i < m_values.size(); ++i)
+        stateVector.append(m_values[i].isNull() ? emptyString() : m_values[i]);
 }
 
 FormControlState FormControlState::deserialize(const Vector<String>& stateVector, size_t& index)
@@ -55,9 +56,13 @@ FormControlState FormControlState::deserialize(const Vector<String>& stateVector
     uint64_t valueSize = stateVector[index++].toUInt64();
     if (!valueSize)
         return FormControlState();
-    if (valueSize != 1 || index + 1 > stateVector.size())
+    if (index + valueSize > stateVector.size())
         return FormControlState(TypeFailure);
-    return FormControlState(stateVector[index++]);
+    FormControlState state;
+    state.m_values.reserveCapacity(valueSize);
+    for (size_t i = 0; i < valueSize; ++i)
+        state.append(stateVector[index++]);
+    return state;
 }
 
 // ----------------------------------------------------------------------------
@@ -76,7 +81,7 @@ static String formStateSignature()
     // In the legacy version of serialized state, the first item was a name
     // attribute value of a form control. The following string literal should
     // contain some characters which are rarely used for name attribute values.
-    DEFINE_STATIC_LOCAL(String, signature, ("\n\r?% WebKit serialized form state version 1 \n\r=&"));
+    DEFINE_STATIC_LOCAL(String, signature, ("\n\r?% WebKit serialized form state version 2 \n\r=&"));
     return signature;
 }
 

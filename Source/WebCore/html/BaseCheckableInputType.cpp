@@ -50,7 +50,7 @@ FormControlState BaseCheckableInputType::saveFormControlState() const
 
 void BaseCheckableInputType::restoreFormControlState(const FormControlState& state)
 {
-    element()->setChecked(state.value() == "on");
+    element()->setChecked(state[0] == "on");
 }
 
 bool BaseCheckableInputType::appendFormData(FormDataList& encoding, bool) const

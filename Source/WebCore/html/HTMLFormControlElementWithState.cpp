@@ -80,7 +80,7 @@ void HTMLFormControlElementWithState::finishParsingChildren()
     Document* doc = document();
     if (doc->formController()->hasStateForNewFormElements()) {
         FormControlState state = doc->formController()->takeStateForFormElement(name().impl(), type().impl());
-        if (state.hasValue())
+        if (state.valueSize() > 0)
             restoreFormControlState(state);
     }
 }

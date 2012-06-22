@@ -936,7 +936,7 @@ void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
     const Vector<HTMLElement*>& items = listItems();
     size_t length = items.size();
 
-    String mask = state.value();
+    String mask = state[0];
     for (size_t i = 0; i < length; ++i) {
         HTMLElement* element = items[i];
         if (element->hasTagName(optionTag))

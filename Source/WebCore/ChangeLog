@@ -1,3 +1,55 @@
+2012-06-21  Kent Tamura  <tkent@chromium.org>
+
+        Make FormControlState capable to store multiple values
+        https://bugs.webkit.org/show_bug.cgi?id=89628
+
+        Reviewed by Hajime Morita.
+
+        Make FormControlState capable to store multiple values in order to
+        clean FileInputType.cpp up and prepare to fix Bug 89623.
+
+        No new tests. This doesn't change web-exposed behavior, and
+        fast/forms/file/recover-file-input-in-unposted-form.html covers
+        major part of this change.
+
+        * html/FormController.cpp:
+        (WebCore::FormControlState::serializeTo): Support for two or more values.
+        (WebCore::FormControlState::deserialize): ditto.
+        (WebCore::formStateSignature):
+        Bump up the version because the state format for <input type=file> is changed.
+        * html/FormController.h:
+         - String m_value -> Vector<String> m_values
+         - Add some functions.
+         - Remove hasValue() and value().
+        (WebCore::FormControlState::FormControlState): m_value -> m_values.
+        (WebCore::FormControlState::valueSize): Added.
+        (WebCore::FormControlState::operator[]): Added.
+        (FormControlState): Add append() declaration, etc.
+        (WebCore::FormControlState::operator=): m_value -> m_values
+        (WebCore::FormControlState::append): Added.
+
+        * html/HTMLFormControlElementWithState.cpp:
+        (WebCore::HTMLFormControlElementWithState::finishParsingChildren):
+        Use valueSize() instead of hasValue().
+        * html/HTMLFormControlElementWithState.h:
+        (HTMLFormControlElementWithState): Update the comment.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::saveFormControlState):
+        Use multiple value capability of FormControlState
+        (WebCore::FileInputType::restoreFormControlState): ditto.
+
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::restoreFormControlState): Use [0] instead of value().
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::restoreFormControlState): ditto.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::restoreFormControlState): ditto.
+        * html/HiddenInputType.cpp:
+        (WebCore::HiddenInputType::restoreFormControlState): ditto.
+        * html/InputType.cpp:
+        (WebCore::InputType::restoreFormControlState): ditto.
+
 2012-06-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         LabelsNodeList isn't updated properly after its owner node is adopted into a new document

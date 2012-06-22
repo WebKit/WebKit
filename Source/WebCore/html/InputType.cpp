@@ -179,7 +179,7 @@ FormControlState InputType::saveFormControlState() const
 
 void InputType::restoreFormControlState(const FormControlState& state)
 {
-    element()->setValue(state.value());
+    element()->setValue(state[0]);
 }
 
 bool InputType::isFormDataAppendable() const

@@ -105,31 +105,25 @@ FormControlState FileInputType::saveFormControlState() const
 {
     if (m_fileList->isEmpty())
         return FormControlState();
-    // FIXME: FormControlState should be capable to have multiple strings and we
-    // should stop the following ugly string concatenation.
-    StringBuilder result;
+    FormControlState state;
     unsigned numFiles = m_fileList->length();
     for (unsigned i = 0; i < numFiles; ++i) {
-        result.append(m_fileList->item(i)->path());
-        result.append('\1');
-        result.append(m_fileList->item(i)->name());
-        result.append('\0');
+        state.append(m_fileList->item(i)->path());
+        state.append(m_fileList->item(i)->name());
     }
-    return FormControlState(result.toString());
+    return state;
 }
 
 void FileInputType::restoreFormControlState(const FormControlState& state)
 {
+    if (state.valueSize() % 2)
+        return;
     Vector<FileChooserFileInfo> files;
-    Vector<String> paths;
-    state.value().split('\0', paths);
-    for (unsigned i = 0; i < paths.size(); ++i) {
-        Vector<String> pathAndName;
-        paths[i].split('\1', pathAndName);
-        if (pathAndName.size() > 1)
-            files.append(FileChooserFileInfo(pathAndName[0], pathAndName[1]));
+    for (size_t i = 0; i < state.valueSize(); i += 2) {
+        if (!state[i + 1].isEmpty())
+            files.append(FileChooserFileInfo(state[i], state[i + 1]));
         else
-            files.append(FileChooserFileInfo(paths[i]));
+            files.append(FileChooserFileInfo(state[i]));
     }
     filesChosen(files);
 }

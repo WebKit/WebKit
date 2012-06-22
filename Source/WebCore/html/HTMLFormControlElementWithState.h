@@ -38,7 +38,7 @@ public:
 
     bool shouldSaveAndRestoreFormControlState() const;
     virtual FormControlState saveFormControlState() const;
-    // The specified FormControlState must have one string value.
+    // The specified FormControlState must have at least one string value.
     virtual void restoreFormControlState(const FormControlState&) { }
 
 protected:
