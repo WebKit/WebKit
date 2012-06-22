@@ -1,3 +1,18 @@
+2012-06-22  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: FormController.cpp fails to build on 32-bit architectures
+
+        This fixes the following build failure introduced in r121004 for
+        Bug 89628:
+
+            FormController.cpp:62:36: error: implicit conversion loses integer precision: 'uint64_t' (aka 'unsigned long long') to 'size_t' (aka 'unsigned long') [-Werror,-Wshorten-64-to-32]
+                state.m_values.reserveCapacity(valueSize);
+                ~~~~~                          ^~~~~~~~~
+
+        * html/FormController.cpp:
+        (WebCore::FormControlState::deserialize): Change type of
+        valueSize from uint64_t to size_t.
+
 2012-06-22  Abhishek Arya  <inferno@chromium.org>
 
         Crash in DragController::concludeEditDrag.

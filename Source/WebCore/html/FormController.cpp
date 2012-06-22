@@ -53,7 +53,7 @@ FormControlState FormControlState::deserialize(const Vector<String>& stateVector
 {
     if (index >= stateVector.size())
         return FormControlState(TypeFailure);
-    uint64_t valueSize = stateVector[index++].toUInt64();
+    size_t valueSize = stateVector[index++].toUInt();
     if (!valueSize)
         return FormControlState();
     if (index + valueSize > stateVector.size())
