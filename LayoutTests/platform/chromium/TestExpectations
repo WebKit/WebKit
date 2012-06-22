@@ -3021,7 +3021,7 @@ BUGWK77110 WIN DEBUG : accessibility/loading-iframe-sends-notification.html = PA
 
 BUGWK73514 WIN : platform/chromium/compositing/lost-compositor-context-permanently.html = PASS TIMEOUT
 
-BUGWK73692 : media/event-attributes.html = TEXT PASS
+BUGWK73692 : media/event-attributes.html = CRASH TEXT PASS
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = IMAGE
 

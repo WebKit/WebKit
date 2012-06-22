@@ -1,3 +1,13 @@
+2012-06-22  Kenneth Russell  <kbr@google.com>
+
+        Layout Test media/event-attributes.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=73692
+
+        Unreviewed test expectations update; mark test as occasionally
+        crashing as well.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-22  Jon Lee  <jonlee@apple.com>
 
         fast/canvas/canvas-createImageData.html crashes on Lion WK2 Debug bot
