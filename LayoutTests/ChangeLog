@@ -1,3 +1,17 @@
+2012-06-22  Michael Nordman  <michaeln@google.com>
+
+        ApplicationCache - verify that an open network whitelist doesn't break online vs fallback layering.
+        https://bugs.webkit.org/show_bug.cgi?id=89714
+
+        An explicit online network namespace should trump a fallback namespace, the fallback should not be used.
+        Chrome had a bug where if a '*' was in the NETWORK section, explicit entries got ignored, and that
+        expected behavior was botched. See http://code.google.com/p/chromium/issues/detail?id=133816 for more
+        details about the chrome bug and code change this LayoutTest aims to verify.
+
+        Reviewed by Tony Chang.
+
+        * http/tests/appcache/resources/online-fallback-layering.manifest:
+
 2012-06-22  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Snapshot metadata in front end to avoid IPC round-trips
