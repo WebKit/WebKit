@@ -1,0 +1,3 @@
+Selecting around a table which is distributed from shadow subtree to nested shadow subtree will trigger an assertion. To try manually, select from "shadow 2" to around "after" and confirm a crash does not occur.
+
+PASS

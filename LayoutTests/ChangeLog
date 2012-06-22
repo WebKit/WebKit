@@ -1,3 +1,13 @@
+2012-06-21  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow][Editing] Assertion in VisibleSelection::adjuseSelectionToAvoidCrossingBoundaries() is triggered.
+        https://bugs.webkit.org/show_bug.cgi?id=89081
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/shadow/adjusting-editing-boundary-with-table-in-shadow-expected.txt: Added.
+        * editing/shadow/adjusting-editing-boundary-with-table-in-shadow.html: Added.
+
 2012-06-21  Gregg Tavares  <gman@google.com>
 
         Make GL error messages consistent in LayoutTests

@@ -1,3 +1,24 @@
+2012-06-21  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow][Editing] Assertion in VisibleSelection::adjuseSelectionToAvoidCrossingBoundaries() is triggered.
+        https://bugs.webkit.org/show_bug.cgi?id=89081
+
+        Reviewed by Ryosuke Niwa.
+
+        firstEditablePositionAfterPositionInRoot and lastEditablePositionBeforePositionInRoot did not
+        consider a case that an argument hiehestRoot can be in Shadow DOM. So when adjusting selection to
+        avoid crossing editing boundaries, VisiblePosition can break shadow boundaries, and it causes
+        an assertion trigger.
+
+        By this patch, firstEditablePositionAfterPositionInRoot and lastEditablePositionBeforePositionInRoot will
+        adjust position to the tree scope of highestRoot instead of its parent tree scope.
+
+        Test: editing/shadow/adjusting-editing-boundary-with-table-in-shadow.html
+
+        * editing/htmlediting.cpp:
+        (WebCore::firstEditablePositionAfterPositionInRoot):
+        (WebCore::lastEditablePositionBeforePositionInRoot):
+
 2012-06-21  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: exception in TimelinePresentationModel when recording timeline
