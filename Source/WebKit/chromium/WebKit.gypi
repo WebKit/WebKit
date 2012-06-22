@@ -102,7 +102,6 @@
             'tests/DecimalTest.cpp',
             'tests/DragImageTest.cpp',
             'tests/DrawingBufferChromiumTest.cpp',
-            'tests/EventHandlerTest.cpp',
             'tests/EventListenerTest.cpp',
             'tests/FakeCCLayerTreeHostClient.h',
             'tests/FakeGraphicsContext3DTest.cpp',

@@ -2284,7 +2284,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
 }
 
 #if !PLATFORM(GTK) && !(PLATFORM(CHROMIUM) && (OS(UNIX) && !OS(DARWIN)))
-bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&, const PlatformWheelEvent&) const
+bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&) const
 {
     return false;
 }
@@ -2339,7 +2339,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
     // Instead, the handlers should know convert vertical scrolls
     // appropriately.
     PlatformWheelEvent event = e;
-    if (m_baseEventType == PlatformEvent::NoType && shouldTurnVerticalTicksIntoHorizontal(result, e))
+    if (m_baseEventType == PlatformEvent::NoType && shouldTurnVerticalTicksIntoHorizontal(result))
         event = event.copyTurningVerticalTicksIntoHorizontalTicks();
 
     if (node) {
