@@ -1,3 +1,12 @@
+2012-06-21  Kenneth Russell  <kbr@google.com>
+
+        [chromium] Layout Test fast/speech/scripted/speechgrammar-basics.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=89717
+
+        Unreviewed. Added suppression for flaky crash.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Add support for the grid and inline-grid display types.

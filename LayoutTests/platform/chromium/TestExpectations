@@ -3737,3 +3737,6 @@ BUGWK89534 XP DEBUG : platform/chromium/virtual/gpu/fast/canvas/resize-while-sav
 
 BUGWK89702 : compositing/geometry/fixed-position-transform-composited-page-scale-down.html = PASS IMAGE
 BUGWK89702 : compositing/scaling/tiled-layer-recursion.html = PASS IMAGE
+
+// Flaky
+BUGWK89717 : fast/speech/scripted/speechgrammar-basics.html = PASS CRASH
