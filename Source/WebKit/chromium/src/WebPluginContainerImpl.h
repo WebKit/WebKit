@@ -52,6 +52,7 @@ class LayerChromium;
 class MouseEvent;
 class ResourceError;
 class ResourceResponse;
+class TouchEvent;
 class WheelEvent;
 
 #if ENABLE(GESTURE_EVENTS)
@@ -160,6 +161,7 @@ private:
     void handleMouseEvent(WebCore::MouseEvent*);
     void handleWheelEvent(WebCore::WheelEvent*);
     void handleKeyboardEvent(WebCore::KeyboardEvent*);
+    void handleTouchEvent(WebCore::TouchEvent*);
 
     void calculateGeometry(const WebCore::IntRect& frameRect,
                            WebCore::IntRect& windowRect,

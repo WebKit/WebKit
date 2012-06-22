@@ -71,6 +71,7 @@
 #include "ScrollAnimator.h"
 #include "ScrollView.h"
 #include "ScrollbarTheme.h"
+#include "TouchEvent.h"
 #include "UserGestureIndicator.h"
 #include "WebPrintParams.h"
 #include "WheelEvent.h"
@@ -185,6 +186,8 @@ void WebPluginContainerImpl::handleEvent(Event* event)
         handleWheelEvent(static_cast<WheelEvent*>(event));
     else if (event->isKeyboardEvent())
         handleKeyboardEvent(static_cast<KeyboardEvent*>(event));
+    else if (eventNames().isTouchEventType(event->type()))
+        handleTouchEvent(static_cast<TouchEvent*>(event));
 
     // FIXME: it would be cleaner if Widget::handleEvent returned true/false and
     // HTMLPluginElement called setDefaultHandled or defaultEventHandler.
@@ -680,6 +683,17 @@ void WebPluginContainerImpl::handleKeyboardEvent(KeyboardEvent* event)
     WebCursorInfo cursorInfo;
     if (m_webPlugin->handleInputEvent(webEvent, cursorInfo))
         event->setDefaultHandled();
+}
+
+void WebPluginContainerImpl::handleTouchEvent(TouchEvent* event)
+{
+    WebTouchEventBuilder webEvent(this, *event);
+    if (webEvent.type == WebInputEvent::Undefined)
+        return;
+    WebCursorInfo cursorInfo;
+    if (m_webPlugin->handleInputEvent(webEvent, cursorInfo))
+        event->setDefaultHandled();
+    // FIXME: Can a plugin change the cursor from a touch-event callback?
 }
 
 void WebPluginContainerImpl::calculateGeometry(const IntRect& frameRect,

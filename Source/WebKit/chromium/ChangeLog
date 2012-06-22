@@ -1,3 +1,16 @@
+2012-06-21  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Add touch-event support for WebPluginContainerImpl
+        https://bugs.webkit.org/show_bug.cgi?id=89089
+
+        Reviewed by Adam Barth.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleEvent):
+        * src/WebPluginContainerImpl.h:
+        (WebCore):
+        (WebPluginContainerImpl):
+
 2012-06-21  Oli Lan  <olilan@chromium.org>
 
         Add methods to select between offsets in an editable field.
