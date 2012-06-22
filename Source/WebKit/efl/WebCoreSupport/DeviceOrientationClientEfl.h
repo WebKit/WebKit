@@ -20,8 +20,8 @@
 #ifndef DeviceOrientationClientEfl_h
 #define DeviceOrientationClientEfl_h
 
-#include "DeviceOrientation.h"
 #include "DeviceOrientationClient.h"
+#include "DeviceOrientationData.h"
 
 namespace WebCore {
 
@@ -33,7 +33,7 @@ public:
     virtual void setController(DeviceOrientationController*);
     virtual void startUpdating();
     virtual void stopUpdating();
-    virtual DeviceOrientation* lastOrientation() const;
+    virtual DeviceOrientationData* lastOrientation() const;
     virtual void deviceOrientationControllerDestroyed();
 
 private:

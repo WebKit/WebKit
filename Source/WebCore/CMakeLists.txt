@@ -567,8 +567,8 @@ SET(WebCore_SOURCES
     dom/DeviceMotionController.cpp
     dom/DeviceMotionData.cpp
     dom/DeviceMotionEvent.cpp
-    dom/DeviceOrientation.cpp
     dom/DeviceOrientationController.cpp
+    dom/DeviceOrientationData.cpp
     dom/DeviceOrientationEvent.cpp
     dom/Document.cpp
     dom/DocumentMarkerController.cpp

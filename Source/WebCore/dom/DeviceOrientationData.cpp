@@ -24,22 +24,22 @@
  */
 
 #include "config.h"
-#include "DeviceOrientation.h"
+#include "DeviceOrientationData.h"
 
 namespace WebCore {
 
-PassRefPtr<DeviceOrientation> DeviceOrientation::create()
+PassRefPtr<DeviceOrientationData> DeviceOrientationData::create()
 {
-    return adoptRef(new DeviceOrientation);
+    return adoptRef(new DeviceOrientationData);
 }
 
-PassRefPtr<DeviceOrientation> DeviceOrientation::create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute, bool absolute)
+PassRefPtr<DeviceOrientationData> DeviceOrientationData::create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute, bool absolute)
 {
-    return adoptRef(new DeviceOrientation(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma, canProvideAbsolute, absolute));
+    return adoptRef(new DeviceOrientationData(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma, canProvideAbsolute, absolute));
 }
 
 
-DeviceOrientation::DeviceOrientation()
+DeviceOrientationData::DeviceOrientationData()
     : m_canProvideAlpha(false)
     , m_canProvideBeta(false)
     , m_canProvideGamma(false)
@@ -51,7 +51,7 @@ DeviceOrientation::DeviceOrientation()
 {
 }
 
-DeviceOrientation::DeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute, bool absolute)
+DeviceOrientationData::DeviceOrientationData(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute, bool absolute)
     : m_canProvideAlpha(canProvideAlpha)
     , m_canProvideBeta(canProvideBeta)
     , m_canProvideGamma(canProvideGamma)
@@ -63,42 +63,42 @@ DeviceOrientation::DeviceOrientation(bool canProvideAlpha, double alpha, bool ca
 {
 }
 
-double DeviceOrientation::alpha() const
+double DeviceOrientationData::alpha() const
 {
     return m_alpha;
 }
 
-double DeviceOrientation::beta() const
+double DeviceOrientationData::beta() const
 {
     return m_beta;
 }
 
-double DeviceOrientation::gamma() const
+double DeviceOrientationData::gamma() const
 {
     return m_gamma;
 }
 
-bool DeviceOrientation::absolute() const
+bool DeviceOrientationData::absolute() const
 {
     return m_absolute;
 }
 
-bool DeviceOrientation::canProvideAlpha() const
+bool DeviceOrientationData::canProvideAlpha() const
 {
     return m_canProvideAlpha;
 }
 
-bool DeviceOrientation::canProvideBeta() const
+bool DeviceOrientationData::canProvideBeta() const
 {
     return m_canProvideBeta;
 }
 
-bool DeviceOrientation::canProvideGamma() const
+bool DeviceOrientationData::canProvideGamma() const
 {
     return m_canProvideGamma;
 }
 
-bool DeviceOrientation::canProvideAbsolute() const
+bool DeviceOrientationData::canProvideAbsolute() const
 {
     return m_canProvideAbsolute;
 }

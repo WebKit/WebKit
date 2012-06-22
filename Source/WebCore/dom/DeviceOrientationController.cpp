@@ -26,8 +26,8 @@
 #include "config.h"
 #include "DeviceOrientationController.h"
 
-#include "DeviceOrientation.h"
 #include "DeviceOrientationClient.h"
+#include "DeviceOrientationData.h"
 #include "DeviceOrientationEvent.h"
 
 namespace WebCore {
@@ -55,7 +55,7 @@ void DeviceOrientationController::timerFired(Timer<DeviceOrientationController>*
     ASSERT_UNUSED(timer, timer == &m_timer);
     ASSERT(m_client->lastOrientation());
 
-    RefPtr<DeviceOrientation> orientation = m_client->lastOrientation();
+    RefPtr<DeviceOrientationData> orientation = m_client->lastOrientation();
     RefPtr<DeviceOrientationEvent> event = DeviceOrientationEvent::create(eventNames().deviceorientationEvent, orientation.get());
 
     Vector<RefPtr<DOMWindow> > listenersVector;
@@ -127,7 +127,7 @@ void DeviceOrientationController::resumeEventsForAllListeners(DOMWindow* window)
         addListener(window);
 }
 
-void DeviceOrientationController::didChangeDeviceOrientation(DeviceOrientation* orientation)
+void DeviceOrientationController::didChangeDeviceOrientation(DeviceOrientationData* orientation)
 {
     RefPtr<DeviceOrientationEvent> event = DeviceOrientationEvent::create(eventNames().deviceorientationEvent, orientation);
     Vector<RefPtr<DOMWindow> > listenersVector;

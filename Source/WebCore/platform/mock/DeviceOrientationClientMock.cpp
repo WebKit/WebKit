@@ -55,7 +55,7 @@ void DeviceOrientationClientMock::stopUpdating()
     m_timer.stop();
 }
 
-void DeviceOrientationClientMock::setOrientation(PassRefPtr<DeviceOrientation> orientation)
+void DeviceOrientationClientMock::setOrientation(PassRefPtr<DeviceOrientationData> orientation)
 {
     m_orientation = orientation;
     if (m_isUpdating && !m_timer.isActive())

@@ -1824,10 +1824,10 @@ webcore_sources += \
 	Source/WebCore/dom/DeviceOrientationClient.h \
 	Source/WebCore/dom/DeviceOrientationController.cpp \
 	Source/WebCore/dom/DeviceOrientationController.h \
-	Source/WebCore/dom/DeviceOrientation.cpp \
+	Source/WebCore/dom/DeviceOrientationData.cpp \
+	Source/WebCore/dom/DeviceOrientationData.h \
 	Source/WebCore/dom/DeviceOrientationEvent.cpp \
 	Source/WebCore/dom/DeviceOrientationEvent.h \
-	Source/WebCore/dom/DeviceOrientation.h \
 	Source/WebCore/dom/Document.cpp \
 	Source/WebCore/dom/DocumentFragment.cpp \
 	Source/WebCore/dom/DocumentFragment.h \

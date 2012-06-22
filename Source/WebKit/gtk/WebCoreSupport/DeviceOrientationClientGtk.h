@@ -21,8 +21,8 @@
 #ifndef DeviceOrientationClientGtk_h
 #define DeviceOrientationClientGtk_h
 
-#include "DeviceOrientation.h"
 #include "DeviceOrientationClient.h"
+#include "DeviceOrientationData.h"
 
 namespace WebKit {
 
@@ -34,7 +34,7 @@ public:
     virtual void setController(WebCore::DeviceOrientationController*);
     virtual void startUpdating();
     virtual void stopUpdating();
-    virtual WebCore::DeviceOrientation* lastOrientation() const;
+    virtual WebCore::DeviceOrientationData* lastOrientation() const;
     virtual void deviceOrientationControllerDestroyed();
 
 private:

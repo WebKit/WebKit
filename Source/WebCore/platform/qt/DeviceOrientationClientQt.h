@@ -20,8 +20,8 @@
 #ifndef DeviceOrientationClientQt_h
 #define DeviceOrientationClientQt_h
 
-#include "DeviceOrientation.h"
 #include "DeviceOrientationClient.h"
+#include "DeviceOrientationData.h"
 
 #include "DeviceOrientationController.h"
 #include "DeviceOrientationProviderQt.h"
@@ -37,7 +37,7 @@ public:
     virtual void setController(DeviceOrientationController*);
     virtual void startUpdating();
     virtual void stopUpdating();
-    virtual DeviceOrientation* lastOrientation() const;
+    virtual DeviceOrientationData* lastOrientation() const;
     virtual void deviceOrientationControllerDestroyed();
 
 private:

@@ -23,18 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DeviceOrientation_h
-#define DeviceOrientation_h
+#ifndef DeviceOrientationData_h
+#define DeviceOrientationData_h
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class DeviceOrientation : public RefCounted<DeviceOrientation> {
+class DeviceOrientationData : public RefCounted<DeviceOrientationData> {
 public:
-    static PassRefPtr<DeviceOrientation> create();
-    static PassRefPtr<DeviceOrientation> create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute = false, bool absolute = false);
+    static PassRefPtr<DeviceOrientationData> create();
+    static PassRefPtr<DeviceOrientationData> create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute = false, bool absolute = false);
 
     double alpha() const;
     double beta() const;
@@ -46,8 +46,8 @@ public:
     bool canProvideAbsolute() const;
 
 private:
-    DeviceOrientation();
-    DeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute, bool absolute);
+    DeviceOrientationData();
+    DeviceOrientationData(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute, bool absolute);
 
     bool m_canProvideAlpha;
     bool m_canProvideBeta;
@@ -61,4 +61,4 @@ private:
 
 } // namespace WebCore
 
-#endif // DeviceOrientation_h
+#endif // DeviceOrientationData_h

@@ -28,18 +28,17 @@
 
 namespace WebCore {
 
-class DeviceOrientation;
 class DeviceOrientationController;
+class DeviceOrientationData;
 class Page;
 
 class DeviceOrientationClient {
 public:
     virtual ~DeviceOrientationClient() {}
-
     virtual void setController(DeviceOrientationController*) = 0;
     virtual void startUpdating() = 0;
     virtual void stopUpdating() = 0;
-    virtual DeviceOrientation* lastOrientation() const = 0;
+    virtual DeviceOrientationData* lastOrientation() const = 0;
     virtual void deviceOrientationControllerDestroyed() = 0;
 };
 

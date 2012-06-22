@@ -591,7 +591,7 @@ public:
     virtual void setController(DeviceOrientationController*) { }
     virtual void startUpdating() { }
     virtual void stopUpdating() { }
-    virtual DeviceOrientation* lastOrientation() const { return 0; }
+    virtual DeviceOrientationData* lastOrientation() const { return 0; }
     virtual void deviceOrientationControllerDestroyed() { }
 };
 

@@ -1,3 +1,73 @@
+2012-06-22  Amy Ousterhout  <aousterh@chromium.org>
+
+        Renamed DeviceOrientation to DeviceOrientationData
+        https://bugs.webkit.org/show_bug.cgi?id=88663
+
+        Reviewed by Steve Block.
+
+        No new tests because this is simply a name change.
+
+        Renamed DeviceOrientation to DeviceOrientationData in order to be consistent with DeviceMotionData.
+        Updated all files that use DeviceOrientation.
+  
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDeviceOrientationEventCustom.cpp:
+        (WebCore::JSDeviceOrientationEvent::initDeviceOrientationEvent):
+        * bindings/v8/custom/V8DeviceOrientationEventCustom.cpp:
+        (WebCore::V8DeviceOrientationEvent::initDeviceOrientationEventCallback):
+        * dom/DOMAllInOne.cpp:
+        * dom/DeviceOrientationClient.h:
+        (WebCore):
+        (DeviceOrientationClient):
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::timerFired):
+        (WebCore::DeviceOrientationController::didChangeDeviceOrientation):
+        * dom/DeviceOrientationController.h:
+        (WebCore):
+        (DeviceOrientationController):
+        * dom/DeviceOrientationData.cpp: Renamed from Source/WebCore/dom/DeviceOrientation.cpp.
+        (WebCore):
+        (WebCore::DeviceOrientationData::create):
+        (WebCore::DeviceOrientationData::DeviceOrientationData):
+        (WebCore::DeviceOrientationData::alpha):
+        (WebCore::DeviceOrientationData::beta):
+        (WebCore::DeviceOrientationData::gamma):
+        (WebCore::DeviceOrientationData::absolute):
+        (WebCore::DeviceOrientationData::canProvideAlpha):
+        (WebCore::DeviceOrientationData::canProvideBeta):
+        (WebCore::DeviceOrientationData::canProvideGamma):
+        (WebCore::DeviceOrientationData::canProvideAbsolute):
+        * dom/DeviceOrientationData.h: Renamed from Source/WebCore/dom/DeviceOrientation.h.
+        (WebCore):
+        (DeviceOrientationData):
+        * dom/DeviceOrientationEvent.cpp:
+        (WebCore::DeviceOrientationEvent::DeviceOrientationEvent):
+        (WebCore::DeviceOrientationEvent::initDeviceOrientationEvent):
+        * dom/DeviceOrientationEvent.h:
+        (WebCore):
+        (WebCore::DeviceOrientationEvent::create):
+        (DeviceOrientationEvent):
+        (WebCore::DeviceOrientationEvent::orientation):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyDeviceOrientationClient::lastOrientation):
+        * platform/mock/DeviceOrientationClientMock.cpp:
+        (WebCore::DeviceOrientationClientMock::setOrientation):
+        * platform/mock/DeviceOrientationClientMock.h:
+        (WebCore::DeviceOrientationClientMock::lastOrientation):
+        (DeviceOrientationClientMock):
+        * platform/qt/DeviceOrientationClientQt.cpp:
+        (DeviceOrientationClientQt):
+        * platform/qt/DeviceOrientationClientQt.h:
+        (DeviceOrientationClientQt):
+        * platform/qt/DeviceOrientationProviderQt.h:
+        (DeviceOrientationProviderQt):
+ 
 2012-06-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Support separate script compilation and execution.

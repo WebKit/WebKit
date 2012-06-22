@@ -25,21 +25,21 @@
 
 #import "WebDeviceOrientation.h"
 
-#import <WebCore/DeviceOrientation.h>
+#import <WebCore/DeviceOrientationData.h>
 #import <wtf/RefPtr.h>
 
 @interface WebDeviceOrientationInternal : NSObject {
 @public
-    RefPtr<WebCore::DeviceOrientation> m_orientation;
+    RefPtr<WebCore::DeviceOrientationData> m_orientation;
 }
 
-- (id)initWithCoreDeviceOrientation:(PassRefPtr<WebCore::DeviceOrientation>)coreDeviceOrientation;
+- (id)initWithCoreDeviceOrientation:(PassRefPtr<WebCore::DeviceOrientationData>)coreDeviceOrientation;
 @end
 
 @interface WebDeviceOrientation (Internal)
 
-- (id)initWithCoreDeviceOrientation:(PassRefPtr<WebCore::DeviceOrientation>)coreDeviceOrientation;
+- (id)initWithCoreDeviceOrientation:(PassRefPtr<WebCore::DeviceOrientationData>)coreDeviceOrientation;
 
 @end
 
-WebCore::DeviceOrientation* core(WebDeviceOrientation*);
+WebCore::DeviceOrientationData* core(WebDeviceOrientation*);

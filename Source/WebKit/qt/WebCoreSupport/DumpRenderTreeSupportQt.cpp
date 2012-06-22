@@ -33,9 +33,9 @@
 #include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
 #include "ContextMenuController.h"
-#include "DeviceOrientation.h"
 #include "DeviceOrientationClientMock.h"
 #include "DeviceOrientationController.h"
+#include "DeviceOrientationData.h"
 #include "DocumentLoader.h"
 #include "Editor.h"
 #include "EditorClientQt.h"
@@ -769,7 +769,7 @@ void DumpRenderTreeSupportQt::setMockDeviceOrientation(QWebPage* page, bool canP
 #if ENABLE(DEVICE_ORIENTATION)
     Page* corePage = QWebPagePrivate::core(page);
     DeviceOrientationClientMock* mockClient = toDeviceOrientationClientMock(DeviceOrientationController::from(corePage)->client());
-    mockClient->setOrientation(DeviceOrientation::create(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma));
+    mockClient->setOrientation(DeviceOrientationData::create(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma));
 #endif
 }
 

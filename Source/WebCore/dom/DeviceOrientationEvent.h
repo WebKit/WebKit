@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class DeviceOrientation;
+class DeviceOrientationData;
 
 class DeviceOrientationEvent : public Event {
 public:
@@ -39,22 +39,22 @@ public:
     {
         return adoptRef(new DeviceOrientationEvent);
     }
-    static PassRefPtr<DeviceOrientationEvent> create(const AtomicString& eventType, DeviceOrientation* orientation)
+    static PassRefPtr<DeviceOrientationEvent> create(const AtomicString& eventType, DeviceOrientationData* orientation)
     {
         return adoptRef(new DeviceOrientationEvent(eventType, orientation));
     }
 
-    void initDeviceOrientationEvent(const AtomicString& type, bool bubbles, bool cancelable, DeviceOrientation*);
+    void initDeviceOrientationEvent(const AtomicString& type, bool bubbles, bool cancelable, DeviceOrientationData*);
 
-    DeviceOrientation* orientation() const { return m_orientation.get(); }
+    DeviceOrientationData* orientation() const { return m_orientation.get(); }
 
     virtual const AtomicString& interfaceName() const;
 
 private:
     DeviceOrientationEvent();
-    DeviceOrientationEvent(const AtomicString& eventType, DeviceOrientation*);
+    DeviceOrientationEvent(const AtomicString& eventType, DeviceOrientationData*);
 
-    RefPtr<DeviceOrientation> m_orientation;
+    RefPtr<DeviceOrientationData> m_orientation;
 };
 
 } // namespace WebCore

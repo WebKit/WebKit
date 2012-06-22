@@ -28,7 +28,7 @@
 
 #if WEBKIT_IMPLEMENTATION
 namespace WTF { template <typename T> class PassRefPtr; }
-namespace WebCore { class DeviceOrientation; }
+namespace WebCore { class DeviceOrientationData; }
 #endif
 
 namespace WebKit {
@@ -86,9 +86,9 @@ public:
     bool absolute() const { return m_absolute; }
 
 #if WEBKIT_IMPLEMENTATION
-    WebDeviceOrientation(const WebCore::DeviceOrientation*);
-    WebDeviceOrientation& operator=(const WebCore::DeviceOrientation*);
-    operator WTF::PassRefPtr<WebCore::DeviceOrientation>() const;
+    WebDeviceOrientation(const WebCore::DeviceOrientationData*);
+    WebDeviceOrientation& operator=(const WebCore::DeviceOrientationData*);
+    operator WTF::PassRefPtr<WebCore::DeviceOrientationData>() const;
 #endif
 
 private:

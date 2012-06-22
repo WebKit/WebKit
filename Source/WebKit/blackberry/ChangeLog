@@ -1,3 +1,16 @@
+2012-06-22  Amy Ousterhout  <aousterh@chromium.org>
+
+        Renamed DeviceOrientation to DeviceOrientationData
+        https://bugs.webkit.org/show_bug.cgi?id=88663
+
+        Reviewed by Steve Block.
+
+        Updated files to use the renamed DeviceOrientationData instead of DeviceOrientation.
+        This change makes DeviceOrientationData consistent with DeviceMotionData.
+
+        * WebCoreSupport/DeviceOrientationClientBlackBerry.h:
+        (DeviceOrientationClientBlackBerry):
+
 2012-06-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: InspectorState::updateCookie should not do JSON serialization if unsupported

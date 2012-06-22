@@ -50,7 +50,7 @@ void DeviceOrientationClientQt::stopUpdating()
         m_provider->stop();
 }
 
-DeviceOrientation* DeviceOrientationClientQt::lastOrientation() const
+DeviceOrientationData* DeviceOrientationClientQt::lastOrientation() const
 {
     return (m_provider) ? m_provider->lastOrientation() : 0;
 }

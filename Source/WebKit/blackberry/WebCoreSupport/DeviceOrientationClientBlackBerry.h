@@ -19,8 +19,8 @@
 #ifndef DeviceOrientationClientBlackBerry_h
 #define DeviceOrientationClientBlackBerry_h
 
-#include "DeviceOrientation.h"
 #include "DeviceOrientationClient.h"
+#include "DeviceOrientationData.h"
 
 #include <BlackBerryPlatformDeviceOrientationTrackerListener.h>
 #include <wtf/RefPtr.h>
@@ -47,7 +47,7 @@ public:
     virtual void setController(DeviceOrientationController*);
     virtual void startUpdating();
     virtual void stopUpdating();
-    virtual DeviceOrientation* lastOrientation() const;
+    virtual DeviceOrientationData* lastOrientation() const;
     virtual void deviceOrientationControllerDestroyed();
     virtual void onOrientation(const BlackBerry::Platform::DeviceOrientationEvent*);
 
@@ -55,7 +55,7 @@ private:
     BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;
     BlackBerry::Platform::DeviceOrientationTracker* m_tracker;
     DeviceOrientationController* m_controller;
-    RefPtr<DeviceOrientation> m_currentOrientation;
+    RefPtr<DeviceOrientationData> m_currentOrientation;
 };
 }
 

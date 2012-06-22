@@ -29,7 +29,7 @@ using namespace WebCore;
 
 @implementation WebDeviceOrientationInternal
 
-- (id)initWithCoreDeviceOrientation:(PassRefPtr<DeviceOrientation>)coreDeviceOrientation
+- (id)initWithCoreDeviceOrientation:(PassRefPtr<DeviceOrientationData>)coreDeviceOrientation
 {
     self = [super init];
     if (!self)
@@ -42,7 +42,7 @@ using namespace WebCore;
 
 @implementation WebDeviceOrientation (Internal)
 
-- (id)initWithCoreDeviceOrientation:(PassRefPtr<WebCore::DeviceOrientation>)coreDeviceOrientation
+- (id)initWithCoreDeviceOrientation:(PassRefPtr<WebCore::DeviceOrientationData>)coreDeviceOrientation
 {
     self = [super init];
     if (!self)
@@ -55,7 +55,7 @@ using namespace WebCore;
 
 @implementation WebDeviceOrientation
 
-DeviceOrientation* core(WebDeviceOrientation* orientation)
+DeviceOrientationData* core(WebDeviceOrientation* orientation)
 {
     return orientation ? orientation->m_internal->m_orientation.get() : 0;
 }
@@ -65,7 +65,7 @@ DeviceOrientation* core(WebDeviceOrientation* orientation)
     self = [super init];
     if (!self)
         return nil;
-    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:DeviceOrientation::create(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma)];
+    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:DeviceOrientationData::create(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma)];
     return self;
 }
 

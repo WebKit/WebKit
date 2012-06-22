@@ -55,7 +55,7 @@ void WebDeviceOrientationClient::stopUpdating()
     [getProvider() stopUpdating];
 }
 
-DeviceOrientation* WebDeviceOrientationClient::lastOrientation() const
+DeviceOrientationData* WebDeviceOrientationClient::lastOrientation() const
 {
     return core([getProvider() lastOrientation]);
 }

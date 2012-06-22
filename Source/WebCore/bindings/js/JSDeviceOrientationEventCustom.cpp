@@ -29,7 +29,7 @@
 
 #include "JSDeviceOrientationEvent.h"
 
-#include "DeviceOrientation.h"
+#include "DeviceOrientationData.h"
 #include "DeviceOrientationEvent.h"
 
 using namespace JSC;
@@ -83,7 +83,7 @@ JSValue JSDeviceOrientationEvent::initDeviceOrientationEvent(ExecState* exec)
     double gamma = exec->argument(5).toNumber(exec);
     bool absoluteProvided = !exec->argument(5).isUndefinedOrNull();
     bool absolute = exec->argument(6).toBoolean();
-    RefPtr<DeviceOrientation> orientation = DeviceOrientation::create(alphaProvided, alpha, betaProvided, beta, gammaProvided, gamma, absoluteProvided, absolute);
+    RefPtr<DeviceOrientationData> orientation = DeviceOrientationData::create(alphaProvided, alpha, betaProvided, beta, gammaProvided, gamma, absoluteProvided, absolute);
     DeviceOrientationEvent* imp = static_cast<DeviceOrientationEvent*>(impl());
     imp->initDeviceOrientationEvent(type, bubbles, cancelable, orientation.get());
     return jsUndefined();

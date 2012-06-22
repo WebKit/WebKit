@@ -529,8 +529,8 @@ SOURCES += \
     dom/DeviceMotionController.cpp \
     dom/DeviceMotionData.cpp \
     dom/DeviceMotionEvent.cpp \
-    dom/DeviceOrientation.cpp \
     dom/DeviceOrientationController.cpp \
+    dom/DeviceOrientationData.cpp \    
     dom/DeviceOrientationEvent.cpp \
     dom/Document.cpp \
     dom/DocumentEventQueue.cpp \
@@ -1711,9 +1711,9 @@ HEADERS += \
     dom/DeviceMotionController.h \
     dom/DeviceMotionData.h \
     dom/DeviceMotionEvent.h \
-    dom/DeviceOrientation.h \
     dom/DeviceOrientationClient.h \
     dom/DeviceOrientationController.h \
+    dom/DeviceOrientationData.h \
     dom/DeviceOrientationEvent.h \
     dom/Document.h \
     dom/DocumentFragment.h \

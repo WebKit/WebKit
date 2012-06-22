@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class DeviceOrientation;
+class DeviceOrientationData;
 class DeviceOrientationClient;
 
 class DeviceOrientationController : public Supplement<Page> {
@@ -50,7 +50,7 @@ public:
     void suspendEventsForAllListeners(DOMWindow*);
     void resumeEventsForAllListeners(DOMWindow*);
 
-    void didChangeDeviceOrientation(DeviceOrientation*);
+    void didChangeDeviceOrientation(DeviceOrientationData*);
 
     bool isActive() { return !m_listeners.isEmpty(); }
 

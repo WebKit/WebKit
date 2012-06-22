@@ -1603,7 +1603,7 @@
 		57CF4C8714F7597A00ECFF14 /* ElementShadow.h in Headers */ = {isa = PBXBuildFile; fileRef = 57CF4C8514F7597A00ECFF14 /* ElementShadow.h */; };
 		5905ADBF1302F3CE00F116DF /* XMLTreeViewer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */; };
 		5905ADC01302F3CE00F116DF /* XMLTreeViewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */; };
-		590E1B4911E4EF4B0069F784 /* DeviceOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		590E1B4911E4EF4B0069F784 /* DeviceOrientationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 590E1B4811E4EF4B0069F784 /* DeviceOrientationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		590E1B4B11E4EF700069F784 /* JSDeviceOrientationEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 590E1B4A11E4EF700069F784 /* JSDeviceOrientationEventCustom.cpp */; };
 		59102FBB14327D3B003C9D04 /* ContentSearchUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59102FB914327D3B003C9D04 /* ContentSearchUtils.cpp */; };
 		59102FBC14327D3B003C9D04 /* ContentSearchUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 59102FBA14327D3B003C9D04 /* ContentSearchUtils.h */; };
@@ -1639,7 +1639,7 @@
 		59C27F07138D28CF0079B7E2 /* NetworkResourcesData.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C27F06138D28CF0079B7E2 /* NetworkResourcesData.h */; };
 		59C28045138DC2410079B7E2 /* XMLErrors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59C28043138DC2410079B7E2 /* XMLErrors.cpp */; };
 		59C28046138DC2410079B7E2 /* XMLErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 59C28044138DC2410079B7E2 /* XMLErrors.h */; };
-		59D1C10411EB5DCF00B638C8 /* DeviceOrientation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D1C10311EB5DCF00B638C8 /* DeviceOrientation.cpp */; };
+		59D1C10411EB5DCF00B638C8 /* DeviceOrientationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59D1C10311EB5DCF00B638C8 /* DeviceOrientationData.cpp */; };
 		59DE790413F16C7F0007FCDF /* JavaMethodJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59DE790313F16C7F0007FCDF /* JavaMethodJSC.cpp */; };
 		59DE790613F16C8C0007FCDF /* JavaMethodJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59DE790513F16C8C0007FCDF /* JavaMethodJSC.h */; };
 		59E560A71105336600AA1258 /* JavaClassJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59E560A61105336600AA1258 /* JavaClassJSC.h */; };
@@ -8686,7 +8686,7 @@
 		57CF4C8514F7597A00ECFF14 /* ElementShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementShadow.h; sourceTree = "<group>"; };
 		5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTreeViewer.cpp; sourceTree = "<group>"; };
 		5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTreeViewer.h; sourceTree = "<group>"; };
-		590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientation.h; sourceTree = "<group>"; };
+		590E1B4811E4EF4B0069F784 /* DeviceOrientationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationData.h; sourceTree = "<group>"; };
 		590E1B4A11E4EF700069F784 /* JSDeviceOrientationEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDeviceOrientationEventCustom.cpp; sourceTree = "<group>"; };
 		59102FB914327D3B003C9D04 /* ContentSearchUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentSearchUtils.cpp; sourceTree = "<group>"; };
 		59102FBA14327D3B003C9D04 /* ContentSearchUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentSearchUtils.h; sourceTree = "<group>"; };
@@ -8725,7 +8725,7 @@
 		59C27F06138D28CF0079B7E2 /* NetworkResourcesData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkResourcesData.h; sourceTree = "<group>"; };
 		59C28043138DC2410079B7E2 /* XMLErrors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLErrors.cpp; sourceTree = "<group>"; };
 		59C28044138DC2410079B7E2 /* XMLErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLErrors.h; sourceTree = "<group>"; };
-		59D1C10311EB5DCF00B638C8 /* DeviceOrientation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceOrientation.cpp; sourceTree = "<group>"; };
+		59D1C10311EB5DCF00B638C8 /* DeviceOrientationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceOrientationData.cpp; sourceTree = "<group>"; };
 		59DE790313F16C7F0007FCDF /* JavaMethodJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaMethodJSC.cpp; path = jsc/JavaMethodJSC.cpp; sourceTree = "<group>"; };
 		59DE790513F16C8C0007FCDF /* JavaMethodJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaMethodJSC.h; path = jsc/JavaMethodJSC.h; sourceTree = "<group>"; };
 		59E560A61105336600AA1258 /* JavaClassJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaClassJSC.h; path = jsc/JavaClassJSC.h; sourceTree = "<group>"; };
@@ -21304,11 +21304,11 @@
 				31FB1A54120A5D0600DC02A0 /* DeviceMotionEvent.cpp */,
 				31FB1A55120A5D0600DC02A0 /* DeviceMotionEvent.h */,
 				31FB1A56120A5D0600DC02A0 /* DeviceMotionEvent.idl */,
-				59D1C10311EB5DCF00B638C8 /* DeviceOrientation.cpp */,
-				590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */,
 				59A8F1D711A69520001AC34A /* DeviceOrientationClient.h */,
 				59A8F1D311A69508001AC34A /* DeviceOrientationController.cpp */,
 				59A8F1D511A69513001AC34A /* DeviceOrientationController.h */,
+				59D1C10311EB5DCF00B638C8 /* DeviceOrientationData.cpp */,
+				590E1B4811E4EF4B0069F784 /* DeviceOrientationData.h */,
 				59A85EA1119D68D900DEF1EF /* DeviceOrientationEvent.cpp */,
 				59A85EA3119D68EC00DEF1EF /* DeviceOrientationEvent.h */,
 				59A85EAA119D7B6E00DEF1EF /* DeviceOrientationEvent.idl */,
@@ -22273,10 +22273,10 @@
 				31FB1A59120A5D0600DC02A0 /* DeviceMotionController.h in Headers */,
 				31FB1A5B120A5D0600DC02A0 /* DeviceMotionData.h in Headers */,
 				31FB1A5D120A5D0600DC02A0 /* DeviceMotionEvent.h in Headers */,
-				590E1B4911E4EF4B0069F784 /* DeviceOrientation.h in Headers */,
 				59A8F1D811A69520001AC34A /* DeviceOrientationClient.h in Headers */,
 				59309A1311F4AE6A00250603 /* DeviceOrientationClientMock.h in Headers */,
 				59A8F1D611A69513001AC34A /* DeviceOrientationController.h in Headers */,
+				590E1B4911E4EF4B0069F784 /* DeviceOrientationData.h in Headers */,
 				59A85EA4119D68EC00DEF1EF /* DeviceOrientationEvent.h in Headers */,
 				CECADFC7153778FF00E37068 /* DictationAlternative.h in Headers */,
 				CECADFC9153778FF00E37068 /* DictationCommand.h in Headers */,
@@ -25782,9 +25782,9 @@
 				31FB1A58120A5D0600DC02A0 /* DeviceMotionController.cpp in Sources */,
 				31FB1A5A120A5D0600DC02A0 /* DeviceMotionData.cpp in Sources */,
 				31FB1A5C120A5D0600DC02A0 /* DeviceMotionEvent.cpp in Sources */,
-				59D1C10411EB5DCF00B638C8 /* DeviceOrientation.cpp in Sources */,
 				59309A1111F4AE5800250603 /* DeviceOrientationClientMock.cpp in Sources */,
 				59A8F1D411A69508001AC34A /* DeviceOrientationController.cpp in Sources */,
+				59D1C10411EB5DCF00B638C8 /* DeviceOrientationData.cpp in Sources */,
 				59A85EA2119D68D900DEF1EF /* DeviceOrientationEvent.cpp in Sources */,
 				CECADFC6153778FF00E37068 /* DictationAlternative.cpp in Sources */,
 				CECADFC8153778FF00E37068 /* DictationCommand.cpp in Sources */,

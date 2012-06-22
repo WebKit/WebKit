@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DeviceOrientationClientProxy.h"
 
-#include "DeviceOrientation.h"
+#include "DeviceOrientationData.h"
 #include "WebDeviceOrientation.h"
 #include "WebDeviceOrientationController.h"
 #include <wtf/OwnPtr.h>
@@ -60,12 +60,12 @@ void DeviceOrientationClientProxy::stopUpdating()
     m_client->stopUpdating();
 }
 
-WebCore::DeviceOrientation* DeviceOrientationClientProxy::lastOrientation() const
+WebCore::DeviceOrientationData* DeviceOrientationClientProxy::lastOrientation() const
 {
     if (!m_client)
         return 0;
 
-    // Cache the DeviceOrientation pointer so its reference count does not drop to zero upon return.
+    // Cache the DeviceOrientationData pointer so its reference count does not drop to zero upon return.
     m_lastOrientation = m_client->lastOrientation();
 
     return m_lastOrientation.get();

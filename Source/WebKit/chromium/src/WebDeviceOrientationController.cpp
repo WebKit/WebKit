@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WebDeviceOrientationController.h"
 
-#include "DeviceOrientation.h"
 #include "DeviceOrientationController.h"
+#include "DeviceOrientationData.h"
 #include "WebDeviceOrientation.h"
 #include <wtf/PassRefPtr.h>
 
@@ -35,7 +35,7 @@ namespace WebKit {
 
 void WebDeviceOrientationController::didChangeDeviceOrientation(const WebDeviceOrientation& orientation)
 {
-    RefPtr<WebCore::DeviceOrientation> deviceOrientation = PassRefPtr<WebCore::DeviceOrientation>(orientation);
+    RefPtr<WebCore::DeviceOrientationData> deviceOrientation = PassRefPtr<WebCore::DeviceOrientationData>(orientation);
     m_controller->didChangeDeviceOrientation(deviceOrientation.get());
 }
 

@@ -26,8 +26,8 @@
 #ifndef DeviceOrientationClientProxy_h
 #define DeviceOrientationClientProxy_h
 
-#include "DeviceOrientation.h"
 #include "DeviceOrientationClient.h"
+#include "DeviceOrientationData.h"
 #include "WebDeviceOrientationClient.h"
 #include <wtf/RefPtr.h>
 
@@ -47,12 +47,12 @@ public:
     virtual void setController(WebCore::DeviceOrientationController*) OVERRIDE;
     virtual void startUpdating() OVERRIDE;
     virtual void stopUpdating() OVERRIDE;
-    virtual WebCore::DeviceOrientation* lastOrientation() const OVERRIDE;
+    virtual WebCore::DeviceOrientationData* lastOrientation() const OVERRIDE;
     virtual void deviceOrientationControllerDestroyed() OVERRIDE;
 
 private:
     WebDeviceOrientationClient* m_client;
-    mutable RefPtr<WebCore::DeviceOrientation> m_lastOrientation;
+    mutable RefPtr<WebCore::DeviceOrientationData> m_lastOrientation;
 };
 
 } // namespace WebKit
