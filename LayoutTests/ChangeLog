@@ -1,3 +1,12 @@
+2012-06-22  Kenneth Russell  <kbr@google.com>
+
+        [Chromium] Layout test plugins/embed-attributes-style.html failing on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=89789
+
+        Unreviewed; disabled now-failing test.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-22  Tony Chang  <tony@chromium.org>
 
         Fix the CSS grid layout tests added in r120984

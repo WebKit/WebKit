@@ -3738,3 +3738,5 @@ BUGWK89702 : compositing/scaling/tiled-layer-recursion.html = PASS IMAGE
 
 // Flaky
 BUGWK89717 : fast/speech/scripted/speechgrammar-basics.html = PASS CRASH
+
+BUGWK89789 MAC : plugins/embed-attributes-style.html = PASS IMAGE
