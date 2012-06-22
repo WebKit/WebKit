@@ -128,7 +128,7 @@ public:
 
     PassRefPtr<TimeRanges> buffered() const;
     void load(ExceptionCode&);
-    String canPlayType(const String& mimeType, const String& keySystem = String()) const;
+    String canPlayType(const String& mimeType, const String& keySystem = String(), const KURL& = KURL()) const;
 
 // ready state
     ReadyState readyState() const;

@@ -186,10 +186,10 @@ private:
     static void getSupportedTypes(WTF::HashSet<WTF::String>&);
 #if ENABLE(ENCRYPTED_MEDIA)
     static WebCore::MediaPlayer::SupportsType supportsType(
-        const WTF::String& type, const WTF::String& codecs, const String& keySystem);
+        const WTF::String& type, const WTF::String& codecs, const String& keySystem, const WebCore::KURL&);
 #else
     static WebCore::MediaPlayer::SupportsType supportsType(
-        const WTF::String& type, const WTF::String& codecs);
+        const WTF::String& type, const WTF::String& codecs, const WebCore::KURL&);
 #endif
 #if USE(ACCELERATED_COMPOSITING)
     bool acceleratedRenderingInUse();

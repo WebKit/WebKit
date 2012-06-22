@@ -46,7 +46,7 @@ private:
     // Engine support
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static void getSupportedTypes(HashSet<String>& types);
-    static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
+    static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs, const KURL&);
     static bool isAvailable();
 
     virtual void cancelLoad();

@@ -72,7 +72,7 @@ void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
         types.add(i->c_str());
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, const String& codecs)
+MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, const String& codecs, const KURL&)
 {
     if (type.isNull() || type.isEmpty()) {
         LOG(Media, "MediaPlayer does not support type; type is null or empty.");

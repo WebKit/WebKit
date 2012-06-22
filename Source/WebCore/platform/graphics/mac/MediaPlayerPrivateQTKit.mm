@@ -1501,7 +1501,7 @@ void MediaPlayerPrivateQTKit::getSupportedTypes(HashSet<String>& supportedTypes)
         supportedTypes.add(*it);
 } 
 
-MediaPlayer::SupportsType MediaPlayerPrivateQTKit::supportsType(const String& type, const String& codecs)
+MediaPlayer::SupportsType MediaPlayerPrivateQTKit::supportsType(const String& type, const String& codecs, const KURL&)
 {
     // Only return "IsSupported" if there is no codecs parameter for now as there is no way to ask QT if it supports an
     // extended MIME type yet.

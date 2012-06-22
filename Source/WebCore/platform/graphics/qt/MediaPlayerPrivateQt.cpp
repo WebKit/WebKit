@@ -81,7 +81,7 @@ void MediaPlayerPrivateQt::getSupportedTypes(HashSet<String> &supported)
     }
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivateQt::supportsType(const String& mime, const String& codec)
+MediaPlayer::SupportsType MediaPlayerPrivateQt::supportsType(const String& mime, const String& codec, const KURL&)
 {
     if (!mime.startsWith("audio/") && !mime.startsWith("video/"))
         return MediaPlayer::IsNotSupported;

@@ -1,3 +1,64 @@
+2012-06-22  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
+
+        Add url to supportsType
+        https://bugs.webkit.org/show_bug.cgi?id=89514
+
+        Reviewed by Eric Carlson.
+
+        No new tests since there's no change on code behavior.
+
+        When a blob is created as the address for a Media Stream, the MediaEngine
+        will ask it's players if they support that media. However, a player built
+        for MediaStream needs to know to URL to decide if it's supported or not.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canPlayType):
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (MediaPlayerFactory):
+        (WebCore::MediaPlayerFactory::MediaPlayerFactory):
+        (WebCore):
+        (WebCore::textPlain):
+        (WebCore::bestMediaEngineForTypeAndCodecs):
+        (WebCore::MediaPlayer::load):
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        (WebCore::MediaPlayer::paint):
+        (WebCore::MediaPlayer::supportsType):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::supportsType):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        (MediaPlayerPrivateAVFoundationCF):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        (MediaPlayerPrivateAVFoundationObjC):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType):
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore::MediaPlayerPrivate::supportsType):
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.h:
+        (MediaPlayerPrivate):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (MediaPlayerPrivateGStreamer):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        (MediaPlayerPrivateQTKit):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::supportsType):
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::supportsType):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        (MediaPlayerPrivateQt):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::supportsType):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h:
+        (MediaPlayerPrivateQuickTimeVisualContext):
+        * platform/graphics/wince/MediaPlayerPrivateWinCE.h:
+        (MediaPlayerPrivate):
+
 2012-06-22  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Sanitize GLSL code using ANGLE.

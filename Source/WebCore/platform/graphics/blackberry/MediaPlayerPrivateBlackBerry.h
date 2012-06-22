@@ -39,7 +39,7 @@ public:
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static void registerMediaEngine(MediaEngineRegistrar);
     static void getSupportedTypes(HashSet<String>&);
-    static MediaPlayer::SupportsType supportsType(const String&, const String&);
+    static MediaPlayer::SupportsType supportsType(const String&, const String&, const KURL&);
     static void notifyAppActivatedEvent(bool);
     static void setCertificatePath(const String&);
 

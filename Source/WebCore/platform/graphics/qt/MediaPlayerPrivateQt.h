@@ -51,7 +51,7 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
     static void getSupportedTypes(HashSet<String>&);
-    static MediaPlayer::SupportsType supportsType(const String&, const String&);
+    static MediaPlayer::SupportsType supportsType(const String&, const String&, const KURL&);
     static bool isAvailable() { return true; }
 
     bool hasVideo() const;

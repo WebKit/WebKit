@@ -803,11 +803,13 @@ void WebMediaPlayerClientImpl::getSupportedTypes(HashSet<String>& supportedTypes
 #if ENABLE(ENCRYPTED_MEDIA)
 MediaPlayer::SupportsType WebMediaPlayerClientImpl::supportsType(const String& type,
                                                                  const String& codecs,
-                                                                 const String& keySystem)
+                                                                 const String& keySystem,
+                                                                 const KURL&)
 {
 #else
 MediaPlayer::SupportsType WebMediaPlayerClientImpl::supportsType(const String& type,
-                                                                 const String& codecs)
+                                                                 const String& codecs,
+                                                                 const KURL&)
 {
     String keySystem;
 #endif
