@@ -472,16 +472,16 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
     {
         var contentHelper = new WebInspector.TimelinePresentationModel.PopupContentHelper(this.title);
 
+        var text = WebInspector.UIString("%s (at %s)", Number.secondsToString(this._lastChildEndTime - this.startTime, true),
+            Number.secondsToString(this._startTimeOffset));
         contentHelper._appendTextRow(WebInspector.UIString("Duration"), text);
+
         if (this._children && this._children.length) {
             contentHelper._appendTextRow(WebInspector.UIString("Self Time"), Number.secondsToString(this._selfTime, true));
             contentHelper._appendTextRow(WebInspector.UIString("CPU Time"), Number.secondsToString(this._cpuTime, true));
             contentHelper._appendElementRow(WebInspector.UIString("Aggregated Time"),
                 WebInspector.TimelinePresentationModel._generateAggregatedInfo(this._aggregatedStats));
         }
-        var text = WebInspector.UIString("%s (at %s)", Number.secondsToString(this._lastChildEndTime - this.startTime, true),
-            Number.secondsToString(this._startTimeOffset));
-
         const recordTypes = WebInspector.TimelineModel.RecordType;
 
         switch (this.type) {
