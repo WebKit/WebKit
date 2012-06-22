@@ -1,3 +1,16 @@
+2012-06-22  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Disable c++0x compatibility warnings in JavaScriptCore.gyp when building for Android
+        https://bugs.webkit.org/show_bug.cgi?id=88853
+
+        Reviewed by Steve Block.
+
+        The Android exclusions were necessary to fix a gyp generation error, as
+        the gcc_version variable wasn't being defined for Android. Remove these
+        exceptions when Chromium is able to define the gcc_version variable.
+
+        * WTF.gyp/WTF.gyp:
+
 2012-06-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         Causes crashes in LLVMPipe
