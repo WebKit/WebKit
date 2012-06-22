@@ -831,7 +831,6 @@ WebInspector.TimelineCalculator = function(model)
 }
 
 WebInspector.TimelineCalculator._minWidth = 5;
-WebInspector.TimelineCalculator._borderWidth = 4;
 
 WebInspector.TimelineCalculator.prototype = {
     /**
@@ -854,13 +853,19 @@ WebInspector.TimelineCalculator.prototype = {
     computeBarGraphWindowPosition: function(record)
     {
         var percentages = this.computeBarGraphPercentages(record);
+        var widthAdjustment = 0;
 
         var left = this.computePosition(record.startTime);
-        var width = (percentages.end - percentages.start) / 100 * this._workingArea + WebInspector.TimelineCalculator._minWidth;
-        var widthWithChildren =  (percentages.endWithChildren - percentages.start) / 100 * this._workingArea;
-        var cpuWidth = percentages.cpuWidth / 100 * this._workingArea + WebInspector.TimelineCalculator._minWidth;
+        var width = (percentages.end - percentages.start) / 100 * this._workingArea;
+        if (width < WebInspector.TimelineCalculator._minWidth) {
+            widthAdjustment = WebInspector.TimelineCalculator._minWidth - width;
+            left -= widthAdjustment / 2;
+            width += widthAdjustment;
+        }
+        var widthWithChildren = (percentages.endWithChildren - percentages.start) / 100 * this._workingArea + widthAdjustment;
+        var cpuWidth = percentages.cpuWidth / 100 * this._workingArea + widthAdjustment;
         if (percentages.endWithChildren > percentages.end)
-            widthWithChildren += WebInspector.TimelineCalculator._borderWidth + WebInspector.TimelineCalculator._minWidth;
+            widthWithChildren += widthAdjustment;
         return {left: left, width: width, widthWithChildren: widthWithChildren, cpuWidth: cpuWidth};
     },
 
@@ -877,7 +882,7 @@ WebInspector.TimelineCalculator.prototype = {
      */
     setDisplayWindow: function(paddingLeft, clientWidth)
     {
-        this._workingArea = clientWidth - WebInspector.TimelineCalculator._minWidth - WebInspector.TimelineCalculator._borderWidth - paddingLeft;
+        this._workingArea = clientWidth - WebInspector.TimelineCalculator._minWidth - paddingLeft;
         this.paddingLeft = paddingLeft;
     },
 
@@ -985,7 +990,7 @@ WebInspector.TimelineRecordGraphRow.prototype = {
         this._barWithChildrenElement.style.left = barPosition.left + "px";
         this._barWithChildrenElement.style.width = barPosition.widthWithChildren + "px";
         this._barElement.style.left = barPosition.left + "px";
-        this._barElement.style.width =  barPosition.width + "px";
+        this._barElement.style.width = barPosition.width + "px";
         this._barCpuElement.style.left = barPosition.left + "px";
         this._barCpuElement.style.width = barPosition.cpuWidth + "px";
         this._expandElement._update(record, index, barPosition.left - expandOffset, barPosition.width);

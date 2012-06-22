@@ -1,3 +1,15 @@
+2012-06-21  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: only increase length for timeline bars below minimal width
+        https://bugs.webkit.org/show_bug.cgi?id=89727
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphWindowPosition):
+        (WebInspector.TimelineCalculator.prototype.setDisplayWindow):
+        (WebInspector.TimelineRecordGraphRow.prototype.update):
+
 2012-06-22  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: FormController.cpp fails to build on 32-bit architectures
