@@ -1,0 +1,4 @@
+// This file should remain empty. It is used by the chromium-android port in
+// its downstream repository to manage test expecations downstream. Rather than
+// add expectations to this file upstream, please add them to the normal
+// TestExpectations file with the ANDROID keyword.

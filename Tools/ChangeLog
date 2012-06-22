@@ -1,3 +1,21 @@
+2012-06-22  Adam Barth  <abarth@webkit.org>
+
+        Add support for test_expectations_android.txt for overriding test expecations on the chromium-android branch
+        https://bugs.webkit.org/show_bug.cgi?id=89791
+
+        Reviewed by Dirk Pranke.
+
+        Downstream, the chromium-android port maintains a test expectations
+        file to keep track of which tests pass or fail. That causes them to
+        keep a patch in chromium_android.py in their branch.
+
+        This patch teaches chromium_android.py to use test_expectations_android.txt.
+        We don't intend to use this file upstream, but having this code patch
+        upstream lets us unfork webkitpy.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.expectations_files):
+
 2012-06-22  Dirk Pranke  <dpranke@chromium.org>
 
         run_webkit_tests.py failed with AttributeError(''NoneType' object has no attribute 'pid'')

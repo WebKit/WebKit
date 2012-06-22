@@ -210,6 +210,11 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
                 return False
         return True
 
+    # FIXME: Remove this function when chromium-android is fully upstream.
+    def expectations_files(self):   
+        android_expectations_file = self.path_from_webkit_base('LayoutTests', 'platform', 'chromium', 'test_expectations_android.txt')
+        return super(ChromiumAndroidPort, self).expectations_files() + [android_expectations_file]
+
     def test_expectations(self):
         # Automatically apply all expectation rules of chromium-linux to
         # chromium-android.
