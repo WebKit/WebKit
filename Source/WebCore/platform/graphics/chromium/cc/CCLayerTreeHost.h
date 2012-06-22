@@ -171,7 +171,7 @@ public:
     virtual void acquireLayerTextures();
     // Returns false if we should abort this frame due to initialization failure.
     bool initializeLayerRendererIfNeeded();
-    void updateLayers(CCTextureUpdater&, size_t contentsMemoryLimitBytes);
+    void updateLayers(CCTextureUpdater&);
 
     CCLayerTreeHostClient* client() { return m_client; }
 
@@ -202,6 +202,7 @@ public:
     void setNeedsAnimate();
     // virtual for testing
     virtual void setNeedsCommit();
+    void setNeedsForcedCommit();
     void setNeedsRedraw();
     bool commitRequested() const;
 
@@ -227,12 +228,7 @@ public:
     void setHasTransparentBackground(bool transparent) { m_hasTransparentBackground = transparent; }
 
     TextureManager* contentsTextureManager() const;
-
-    // This will cause contents texture manager to evict all textures, but
-    // without deleting them. This happens after all content textures have
-    // already been deleted on impl, after getting a 0 allocation limit.
-    // Set during a commit, but before updateLayers.
-    void evictAllContentTextures();
+    void setContentsMemoryAllocationLimitBytes(size_t);
 
     bool visible() const { return m_visible; }
     void setVisible(bool);
@@ -285,6 +281,7 @@ private:
     CCLayerTreeHostClient* m_client;
 
     int m_frameNumber;
+    bool m_frameIsForDisplay;
 
     OwnPtr<CCProxy> m_proxy;
     bool m_layerRendererInitialized;
@@ -302,6 +299,9 @@ private:
     float m_deviceScaleFactor;
 
     bool m_visible;
+
+    size_t m_memoryAllocationBytes;
+    bool m_memoryAllocationIsForDisplay;
 
     typedef HashMap<WebKit::WebGraphicsContext3D*, RefPtr<RateLimiter> > RateLimiterMap;
     RateLimiterMap m_rateLimiters;

@@ -1,3 +1,103 @@
+2012-06-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r120982.
+        http://trac.webkit.org/changeset/120982
+        https://bugs.webkit.org/show_bug.cgi?id=89740
+
+        [chromium] ASSERTION FAILED:
+        m_allocatedTextureIds.contains(textureId) (Requested by ukai
+        on #webkit).
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererGpuMemoryAllocationChangedCallbackAdapter::onGpuMemoryAllocationChangedOnImpl):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::initialize):
+        (WebCore::LayerRendererChromium::setVisible):
+        (WebCore::LayerRendererChromium::swapBuffers):
+        (WebCore::LayerRendererChromium::getFramebufferPixels):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore):
+        (LayerRendererChromium):
+        * platform/graphics/chromium/TextureManager.cpp:
+        * platform/graphics/chromium/TextureManager.h:
+        (TextureAllocator):
+        (TextureManager):
+        * platform/graphics/chromium/TrackingTextureAllocator.cpp:
+        (WebCore::TrackingTextureAllocator::createTexture):
+        (WebCore::TrackingTextureAllocator::deleteTexture):
+        * platform/graphics/chromium/TrackingTextureAllocator.h:
+        (TrackingTextureAllocator):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initializeLayerRenderer):
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::setNeedsForcedCommit):
+        (WebCore):
+        (WebCore::CCLayerTreeHost::setVisible):
+        (WebCore::CCLayerTreeHost::setContentsMemoryAllocationLimitBytes):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::commitComplete):
+        (WebCore::CCLayerTreeHostImpl::canDraw):
+        (WebCore::CCLayerTreeHostImpl::context):
+        (WebCore::CCLayerTreeHostImpl::setContentsMemoryAllocationLimitBytes):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImplClient):
+        (WebCore::CCLayerTreeHostImpl::sourceFrameCanBeDrawn):
+        (WebCore::CCLayerTreeHostImpl::setSourceFrameCanBeDrawn):
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        (CCProxy):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (CCRendererClient):
+        * platform/graphics/chromium/cc/CCScheduler.cpp:
+        (WebCore::CCScheduler::beginFrameComplete):
+        (WebCore::CCScheduler::didSwapBuffersComplete):
+        (WebCore::CCScheduler::didLoseContext):
+        (WebCore::CCScheduler::didRecreateContext):
+        (WebCore::CCScheduler::vsyncTick):
+        * platform/graphics/chromium/cc/CCScheduler.h:
+        (CCScheduler):
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp:
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::setNeedsForcedCommit):
+        (WebCore):
+        (WebCore::CCSingleThreadProxy::stop):
+        (WebCore::CCSingleThreadProxy::postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread):
+        (WebCore::CCSingleThreadProxy::commitAndComposite):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (CCSingleThreadProxy):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::compositeAndReadback):
+        (WebCore::CCThreadProxy::setNeedsForcedCommit):
+        (WebCore):
+        (WebCore::CCThreadProxy::postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread):
+        (WebCore::CCThreadProxy::scheduledActionBeginFrame):
+        (WebCore::CCThreadProxy::beginFrame):
+        (WebCore::CCThreadProxy::scheduledActionDrawAndSwapInternal):
+        (WebCore::CCThreadProxy::setContentsMemoryAllocationLimitBytes):
+        (WebCore::CCThreadProxy::layerTreeHostClosedOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+        (BeginFrameAndCommitState):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::~CCVideoLayerImpl):
+        (WebCore::CCVideoLayerImpl::willDraw):
+        (WebCore::CCVideoLayerImpl::willDrawInternal):
+        (WebCore::CCVideoLayerImpl::FramePlane::allocateData):
+        (WebCore::CCVideoLayerImpl::FramePlane::freeData):
+        (WebCore::CCVideoLayerImpl::allocatePlaneData):
+        (WebCore::CCVideoLayerImpl::freePlaneData):
+        (WebCore::CCVideoLayerImpl::freeUnusedPlaneData):
+        (WebCore::CCVideoLayerImpl::didLoseContext):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+        (FramePlane):
+
 2012-06-21  Kent Tamura  <tkent@chromium.org>
 
         Make FormControlState capable to store multiple values

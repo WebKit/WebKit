@@ -486,40 +486,6 @@ TEST_F(CCLayerTreeHostTestCompositeAndReadbackWhileInvisible, runMultiThread)
     runTestThreaded();
 }
 
-class CCLayerTreeHostTestAbortFrameWhenInvisible : public CCLayerTreeHostTestThreadOnly {
-public:
-    CCLayerTreeHostTestAbortFrameWhenInvisible()
-    {
-    }
-
-    virtual void beginTest()
-    {
-        // Request a commit (from the main thread), which will trigger the commit flow from the impl side.
-        m_layerTreeHost->setNeedsCommit();
-        // Then mark ourselves as not visible before processing any more messages on the main thread.
-        m_layerTreeHost->setVisible(false);
-        // If we make it without kicking a frame, we pass!
-        endTestAfterDelay(1);
-    }
-
-    virtual void layout() OVERRIDE
-    {
-        ASSERT_FALSE(true);
-        endTest();
-    }
-
-    virtual void afterTest()
-    {
-    }
-
-private:
-};
-
-TEST_F(CCLayerTreeHostTestAbortFrameWhenInvisible, runMultiThread)
-{
-    runTestThreaded();
-}
-
 
 // Trigger a frame with setNeedsCommit. Then, inside the resulting animate
 // callback, requet another frame using setNeedsAnimate. End the test when
@@ -1030,6 +996,113 @@ TEST_F(CCLayerTreeHostTestCommit, runTest)
 {
     runTest(true);
 }
+
+class CCLayerTreeHostTestVisibilityAndAllocationControlDrawing : public CCLayerTreeHostTest {
+public:
+
+    CCLayerTreeHostTestVisibilityAndAllocationControlDrawing() { }
+
+    virtual void beginTest()
+    {
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void didCommitAndDrawFrame()
+    {
+        int lastFrame = m_layerTreeHost->frameNumber() - 1;
+
+        // These frames should draw.
+        switch (lastFrame) {
+        case 0:
+            // Set the tree invisible, this should not draw.
+            m_layerTreeHost->setVisible(false);
+            break;
+        case 2:
+            // Set the tree invisible and give a non-visible allocation, this
+            // should not draw.
+            m_layerTreeHost->setVisible(false);
+            m_layerTreeHost->setContentsMemoryAllocationLimitBytes(0);
+            break;
+        case 5:
+            // Give a memory allocation not for display, but while we are
+            // visible. This should not be used and we should remain
+            // ready for display and it should draw.
+            m_layerTreeHost->setContentsMemoryAllocationLimitBytes(0);
+            break;
+        case 6:
+            endTest();
+            break;
+
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+
+    virtual void didCommit()
+    {
+        int lastFrame = m_layerTreeHost->frameNumber() - 1;
+
+        // These frames should not draw.
+        switch (lastFrame) {
+        case 1:
+            // Set the tree visible, this should draw.
+            m_layerTreeHost->setVisible(true);
+            break;
+        case 3:
+            // Set visible without giving a visible memory allocation, this
+            // shouldn't make the impl side ready for display, so it should
+            // not draw.
+            m_layerTreeHost->setVisible(true);
+            break;
+        case 4:
+            // Now give a memory allocation for display, this should draw.
+            m_layerTreeHost->setContentsMemoryAllocationLimitBytes(1);
+            break;
+        }
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        switch (impl->sourceFrameNumber()) {
+        case 0:
+            // The host starts out visible and able to display before we do any commit.
+            EXPECT_TRUE(impl->visible());
+            EXPECT_TRUE(impl->sourceFrameCanBeDrawn());
+            break;
+        case 1:
+            // We still have a memory allocation for display.
+            EXPECT_FALSE(impl->visible());
+            EXPECT_TRUE(impl->sourceFrameCanBeDrawn());
+            break;
+        case 2:
+            EXPECT_TRUE(impl->visible());
+            EXPECT_TRUE(impl->sourceFrameCanBeDrawn());
+            break;
+        case 3:
+            EXPECT_FALSE(impl->visible());
+            EXPECT_FALSE(impl->sourceFrameCanBeDrawn());
+            break;
+        case 4:
+            EXPECT_TRUE(impl->visible());
+            EXPECT_FALSE(impl->sourceFrameCanBeDrawn());
+            break;
+        case 5:
+            EXPECT_TRUE(impl->visible());
+            EXPECT_TRUE(impl->sourceFrameCanBeDrawn());
+            break;
+        case 6:
+            EXPECT_TRUE(impl->visible());
+            EXPECT_TRUE(impl->sourceFrameCanBeDrawn());
+            break;
+        }
+    }
+
+    virtual void afterTest()
+    {
+    }
+};
+
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestVisibilityAndAllocationControlDrawing)
 
 // Verifies that startPageScaleAnimation events propagate correctly from CCLayerTreeHost to
 // CCLayerTreeHostImpl in the MT compositor.
@@ -1661,7 +1734,7 @@ public:
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
         ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
         CCTextureUpdater updater;
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1678,7 +1751,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1696,7 +1769,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1716,7 +1789,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1738,7 +1811,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1760,7 +1833,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
@@ -1783,7 +1856,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1806,7 +1879,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
@@ -1869,7 +1942,7 @@ public:
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
         ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
         CCTextureUpdater updater;
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
@@ -1896,7 +1969,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
@@ -1958,7 +2031,7 @@ public:
         m_layerTreeHost->setViewportSize(layers[0]->bounds());
         ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
         CCTextureUpdater updater;
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(updater);
         m_layerTreeHost->commitComplete();
 
         for (int i = 0; i < numSurfaces-1; ++i) {

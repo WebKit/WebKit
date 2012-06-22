@@ -29,7 +29,6 @@
 #include "LayerRendererChromium.h"
 #include "TextStream.h"
 #include "TraceEvent.h"
-#include "TrackingTextureAllocator.h"
 #include "cc/CCActiveGestureAnimation.h"
 #include "cc/CCDamageTracker.h"
 #include "cc/CCDebugRectHistory.h"
@@ -121,8 +120,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCLayerTreeSettings& settings, CC
     , m_settings(settings)
     , m_deviceScaleFactor(1)
     , m_visible(true)
-    , m_contentsTexturesWerePurgedSinceLastCommit(false)
-    , m_memoryAllocationLimitBytes(TextureManager::highLimitBytes(viewportSize()))
+    , m_sourceFrameCanBeDrawn(true)
     , m_headsUpDisplay(CCHeadsUpDisplay::create())
     , m_pageScale(1)
     , m_pageScaleDelta(1)
@@ -157,7 +155,6 @@ void CCLayerTreeHostImpl::commitComplete()
     // Recompute max scroll position; must be after layer content bounds are
     // updated.
     updateMaxScrollPosition();
-    m_contentsTexturesWerePurgedSinceLastCommit = false;
 }
 
 bool CCLayerTreeHostImpl::canDraw()
@@ -168,12 +165,12 @@ bool CCLayerTreeHostImpl::canDraw()
         return false;
     if (!m_layerRenderer)
         return false;
-    if (m_contentsTexturesWerePurgedSinceLastCommit)
+    if (!m_sourceFrameCanBeDrawn)
         return false;
     return true;
 }
 
-CCGraphicsContext* CCLayerTreeHostImpl::context() const
+CCGraphicsContext* CCLayerTreeHostImpl::context()
 {
     return m_context.get();
 }
@@ -470,20 +467,9 @@ bool CCLayerTreeHostImpl::prepareToDraw(FrameData& frame)
     return true;
 }
 
-void CCLayerTreeHostImpl::releaseContentsTextures()
+void CCLayerTreeHostImpl::setContentsMemoryAllocationLimitBytes(size_t bytes)
 {
-    contentsTextureAllocator()->deleteAllTextures();
-    m_contentsTexturesWerePurgedSinceLastCommit = true;
-}
-
-void CCLayerTreeHostImpl::setMemoryAllocationLimitBytes(size_t bytes)
-{
-    if (m_memoryAllocationLimitBytes == bytes)
-        return;
-    m_memoryAllocationLimitBytes = bytes;
-
-    ASSERT(bytes);
-    m_client->setNeedsCommitOnImplThread();
+    m_client->postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread(bytes);
 }
 
 void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)

@@ -242,13 +242,6 @@ void TextureManager::deleteEvictedTextures(TextureAllocator* allocator)
     m_evictedTextures.clear();
 }
 
-void TextureManager::evictAndRemoveAllDeletedTextures()
-{
-    unprotectAllTextures();
-    reduceMemoryToLimit(0);
-    m_evictedTextures.clear();
-}
-
 void TextureManager::evictAndDeleteAllTextures(TextureAllocator* allocator)
 {
     unprotectAllTextures();

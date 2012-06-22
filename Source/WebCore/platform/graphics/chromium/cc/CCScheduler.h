@@ -94,7 +94,6 @@ public:
     void setNeedsForcedRedraw();
 
     void beginFrameComplete();
-    void beginFrameAborted();
 
     void setMaxFramesPending(int);
     void didSwapBuffersComplete();

@@ -84,13 +84,12 @@ public:
     }
 
     // CCRendererClient methods.
-    virtual const IntSize& deviceViewportSize() const OVERRIDE { static IntSize fakeSize(1, 1); return fakeSize; }
+    virtual const IntSize& deviceViewportSize() const OVERRIDE { static IntSize fakeSize; return fakeSize; }
     virtual const CCLayerTreeSettings& settings() const OVERRIDE { static CCLayerTreeSettings fakeSettings; return fakeSettings; }
     virtual void didLoseContext() OVERRIDE { }
     virtual void onSwapBuffersComplete() OVERRIDE { }
     virtual void setFullRootLayerDamage() OVERRIDE { m_setFullRootLayerDamageCount++; }
-    virtual void releaseContentsTextures() OVERRIDE { }
-    virtual void setMemoryAllocationLimitBytes(size_t bytes) OVERRIDE { m_memoryAllocationLimitBytes = bytes; }
+    virtual void setContentsMemoryAllocationLimitBytes(size_t bytes) OVERRIDE { m_memoryAllocationLimitBytes = bytes; }
 
     // Methods added for test.
     int setFullRootLayerDamageCount() const { return m_setFullRootLayerDamageCount; }
@@ -169,34 +168,20 @@ TEST_F(LayerRendererChromiumTest, SuggestBackbufferYesWhenItAlreadyExistsShouldD
 }
 
 // Test LayerRendererChromium discardFramebuffer functionality:
-// Suggest discarding framebuffer when one exists and the renderer is not visible.
+// Suggest discarding framebuffer when one exists.
 // Expected: it is discarded and damage tracker is reset.
-TEST_F(LayerRendererChromiumTest, SuggestBackbufferNoShouldDiscardBackbufferAndDamageRootLayerWhileNotVisible)
+TEST_F(LayerRendererChromiumTest, SuggestBackbufferNoShouldDiscardBackbufferAndDamageRootLayer)
 {
-    m_layerRendererChromium.setVisible(false);
     m_mockContext.setMemoryAllocation(m_suggestHaveBackbufferNo);
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
     EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
 }
-
-// Test LayerRendererChromium discardFramebuffer functionality:
-// Suggest discarding framebuffer when one exists and the renderer is visible.
-// Expected: the allocation is ignored.
-TEST_F(LayerRendererChromiumTest, SuggestBackbufferNoDoNothingWhenVisible)
-{
-    m_layerRendererChromium.setVisible(true);
-    m_mockContext.setMemoryAllocation(m_suggestHaveBackbufferNo);
-    EXPECT_EQ(0, m_mockClient.setFullRootLayerDamageCount());
-    EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
-}
-
 
 // Test LayerRendererChromium discardFramebuffer functionality:
 // Suggest discarding framebuffer when one does not exist.
 // Expected: it does nothing.
 TEST_F(LayerRendererChromiumTest, SuggestBackbufferNoWhenItDoesntExistShouldDoNothing)
 {
-    m_layerRendererChromium.setVisible(false);
     m_mockContext.setMemoryAllocation(m_suggestHaveBackbufferNo);
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
     EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
@@ -207,37 +192,37 @@ TEST_F(LayerRendererChromiumTest, SuggestBackbufferNoWhenItDoesntExistShouldDoNo
 }
 
 // Test LayerRendererChromium discardFramebuffer functionality:
-// Begin drawing a frame while a framebuffer is discarded.
-// Expected: will recreate framebuffer.
-TEST_F(LayerRendererChromiumTest, DiscardedBackbufferIsRecreatedForScopeDuration)
+// Suggest discarding framebuffer, then try to swapBuffers.
+// Expected: framebuffer is discarded, swaps are ignored, and damage is reset after discard and after each swap.
+TEST_F(LayerRendererChromiumTest, SwapBuffersWhileBackbufferDiscardedShouldIgnoreSwapAndDamageRootLayer)
 {
-    m_layerRendererChromium.setVisible(false);
     m_mockContext.setMemoryAllocation(m_suggestHaveBackbufferNo);
     EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
 
-    m_layerRendererChromium.setVisible(true);
+    swapBuffers();
+    EXPECT_EQ(0, m_mockContext.frameCount());
+    EXPECT_EQ(2, m_mockClient.setFullRootLayerDamageCount());
+
+    swapBuffers();
+    EXPECT_EQ(0, m_mockContext.frameCount());
+    EXPECT_EQ(3, m_mockClient.setFullRootLayerDamageCount());
+}
+
+// Test LayerRendererChromium discardFramebuffer functionality:
+// Begin drawing a frame while a framebuffer is discarded.
+// Expected: will recreate framebuffer.
+TEST_F(LayerRendererChromiumTest, DiscardedBackbufferIsRecreatredForScopeDuration)
+{
+    m_mockContext.setMemoryAllocation(m_suggestHaveBackbufferNo);
+    EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
+    EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
+
     m_layerRendererChromium.beginDrawingFrame(m_mockClient.rootRenderPass());
     EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
 
     swapBuffers();
     EXPECT_EQ(1, m_mockContext.frameCount());
-}
-
-TEST_F(LayerRendererChromiumTest, FramebufferDiscardedAfterReadbackWhenNotVisible)
-{
-    m_layerRendererChromium.setVisible(false);
-    m_mockContext.setMemoryAllocation(m_suggestHaveBackbufferNo);
-    EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
-    EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
-
-    char pixels[4];
-    m_layerRendererChromium.beginDrawingFrame(m_mockClient.rootRenderPass());
-    EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
-
-    m_layerRendererChromium.getFramebufferPixels(pixels, IntRect(0, 0, 1, 1));
-    EXPECT_TRUE(m_layerRendererChromium.isFramebufferDiscarded());
-    EXPECT_EQ(2, m_mockClient.setFullRootLayerDamageCount());
 }
 
 class ForbidSynchronousCallContext : public FakeWebGraphicsContext3D {

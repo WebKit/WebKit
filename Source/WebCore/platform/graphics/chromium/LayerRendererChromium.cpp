@@ -35,6 +35,7 @@
 #include "LayerRendererChromium.h"
 
 #include "Extensions3D.h"
+#include "Extensions3DChromium.h"
 #include "FloatQuad.h"
 #include "GeometryBinding.h"
 #include "GrTexture.h"
@@ -218,7 +219,11 @@ private:
     void onGpuMemoryAllocationChangedOnImpl(Extensions3DChromium::GpuMemoryAllocationCHROMIUM allocation)
     {
         ASSERT(CCProxy::isImplThread());
-        m_layerRenderer->setGpuMemoryAllocation(allocation);
+        if (!allocation.suggestHaveBackbuffer)
+            m_layerRenderer->discardFramebuffer();
+        else
+            m_layerRenderer->ensureFramebuffer();
+        m_layerRenderer->m_client->setContentsMemoryAllocationLimitBytes(allocation.gpuResourceSizeInBytes);
     }
 
     LayerRendererChromium* m_layerRenderer;
@@ -246,7 +251,6 @@ LayerRendererChromium::LayerRendererChromium(CCRendererClient* client,
     , m_defaultRenderPass(0)
     , m_isViewportChanged(false)
     , m_isFramebufferDiscarded(false)
-    , m_visible(true)
     , m_textureUploaderSetting(textureUploaderSetting)
 {
     ASSERT(m_context.get());
@@ -330,7 +334,7 @@ bool LayerRendererChromium::initialize()
         Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(extensions);
         extensions3DChromium->setGpuMemoryAllocationChangedCallbackCHROMIUM(LayerRendererGpuMemoryAllocationChangedCallbackAdapter::create(this));
     } else {
-        m_client->setMemoryAllocationLimitBytes(TextureManager::highLimitBytes(viewportSize()));
+        m_client->setContentsMemoryAllocationLimitBytes(TextureManager::highLimitBytes(viewportSize()));
     }
 
     m_capabilities.usingDiscardFramebuffer = extensions->supports("GL_CHROMIUM_discard_framebuffer");
@@ -371,9 +375,8 @@ void LayerRendererChromium::debugGLCall(GraphicsContext3D* context, const char* 
 
 void LayerRendererChromium::setVisible(bool visible)
 {
-    if (m_visible == visible)
-        return;
-    m_visible = visible;
+    if (!visible)
+        releaseRenderPassTextures();
 
     // TODO: Replace setVisibilityCHROMIUM with an extension to explicitly manage front/backbuffers
     // crbug.com/116049
@@ -1267,22 +1270,6 @@ void LayerRendererChromium::copyTextureToFramebuffer(int textureId, const IntSiz
                                     -1);
 }
 
-void LayerRendererChromium::setGpuMemoryAllocation(Extensions3DChromium::GpuMemoryAllocationCHROMIUM allocation)
-{
-    if (m_visible && !allocation.gpuResourceSizeInBytes)
-        return;
-
-    if (!allocation.suggestHaveBackbuffer && !m_visible)
-        discardFramebuffer();
-
-    if (!allocation.gpuResourceSizeInBytes) {
-        releaseRenderPassTextures();
-        m_client->releaseContentsTextures();
-        GLC(m_context, m_context->flush());
-    } else
-        m_client->setMemoryAllocationLimitBytes(allocation.gpuResourceSizeInBytes);
-}
-
 void LayerRendererChromium::finish()
 {
     TRACE_EVENT("LayerRendererChromium::finish", this, 0);
@@ -1291,8 +1278,12 @@ void LayerRendererChromium::finish()
 
 bool LayerRendererChromium::swapBuffers(const IntRect& subBuffer)
 {
-    ASSERT(m_visible);
-    ASSERT(!m_isFramebufferDiscarded);
+    // FIXME: Remove this once gpu process supports ignoring swap buffers command while framebuffer is discarded.
+    //        Alternatively (preferably?), protect all cc code so as not to attempt a swap after a framebuffer discard.
+    if (m_isFramebufferDiscarded) {
+        m_client->setFullRootLayerDamage();
+        return false;
+    }
 
     TRACE_EVENT("LayerRendererChromium::swapBuffers", this, 0);
     // We're done! Time to swapbuffers!
@@ -1395,14 +1386,6 @@ void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& re
         GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0));
         GLC(context, context->deleteFramebuffer(temporaryFBO));
         GLC(context, context->deleteTexture(temporaryTexture));
-    }
-
-    if (!m_visible) {
-        TRACE_EVENT0("cc", "LayerRendererChromium::getFramebufferPixels dropping resources after readback");
-        discardFramebuffer();
-        releaseRenderPassTextures();
-        m_client->releaseContentsTextures();
-        GLC(m_context, m_context->flush());
     }
 }
 

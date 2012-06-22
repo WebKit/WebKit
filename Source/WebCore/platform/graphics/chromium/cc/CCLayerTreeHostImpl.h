@@ -57,6 +57,7 @@ public:
     virtual void setNeedsRedrawOnImplThread() = 0;
     virtual void setNeedsCommitOnImplThread() = 0;
     virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) = 0;
+    virtual void postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread(size_t) = 0;
 };
 
 // CCLayerTreeHostImpl owns the CCLayerImpl tree as well as associated rendering state
@@ -108,12 +109,11 @@ public:
     virtual void didLoseContext() OVERRIDE;
     virtual void onSwapBuffersComplete() OVERRIDE;
     virtual void setFullRootLayerDamage() OVERRIDE;
-    virtual void releaseContentsTextures() OVERRIDE;
-    virtual void setMemoryAllocationLimitBytes(size_t) OVERRIDE;
+    virtual void setContentsMemoryAllocationLimitBytes(size_t) OVERRIDE;
 
     // Implementation
     bool canDraw();
-    CCGraphicsContext* context() const;
+    CCGraphicsContext* context();
 
     String layerTreeAsText() const;
     void setFontAtlas(PassOwnPtr<CCFontAtlas>);
@@ -146,8 +146,8 @@ public:
     int sourceFrameNumber() const { return m_sourceFrameNumber; }
     void setSourceFrameNumber(int frameNumber) { m_sourceFrameNumber = frameNumber; }
 
-    bool contentsTexturesWerePurgedSinceLastCommit() const { return m_contentsTexturesWerePurgedSinceLastCommit; }
-    size_t memoryAllocationLimitBytes() const { return m_memoryAllocationLimitBytes; }
+    bool sourceFrameCanBeDrawn() const { return m_sourceFrameCanBeDrawn; }
+    void setSourceFrameCanBeDrawn(bool sourceFrameCanBeDrawn) { m_sourceFrameCanBeDrawn = sourceFrameCanBeDrawn; }
 
     const IntSize& viewportSize() const { return m_viewportSize; }
     void setViewportSize(const IntSize&);
@@ -235,8 +235,7 @@ private:
     IntSize m_deviceViewportSize;
     float m_deviceScaleFactor;
     bool m_visible;
-    bool m_contentsTexturesWerePurgedSinceLastCommit;
-    size_t m_memoryAllocationLimitBytes;
+    bool m_sourceFrameCanBeDrawn;
 
     OwnPtr<CCHeadsUpDisplay> m_headsUpDisplay;
 

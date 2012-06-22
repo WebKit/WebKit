@@ -3528,9 +3528,6 @@ BUGWK85120 : fast/js/toString-number.html = TEXT
 
 BUGWK68744 : fast/block/float/float-not-removed-from-next-sibling4.html = IMAGE
 
-// Needs a new set of baselines due to generating less useless invalidations.
-BUGWK89045 : compositing/video-page-visibility.html = IMAGE
-
 BUGWK83076 SNOWLEOPARD RELEASE : compositing/geometry/outline-change.html = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : css3/selectors3/xml/css3-modsel-161.xml = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : css3/selectors3/xml/css3-modsel-166.xml = TIMEOUT PASS
