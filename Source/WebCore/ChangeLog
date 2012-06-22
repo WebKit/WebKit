@@ -1,3 +1,34 @@
+2012-06-22  Hayato Ito  <hayato@chromium.org>
+
+        Modify event re-targeting algorithm so that we can tell which distributed node is clicked.
+        https://bugs.webkit.org/show_bug.cgi?id=89073
+
+        Reviewed by Dimitri Glazkov.
+
+        Re-landing r120945 since bug 89172 was resolved.
+
+        Adopt a new event re-targeting algorithm in the latest Shadow DOM spec.
+        The corresponding bug in the shadow DOM spec is:
+        https://www.w3.org/Bugs/Public/show_bug.cgi?id=17090
+
+        This change is introduced to handle the following use case:
+        1. There is an insertion point, with zero or more nodes distributed into it.
+        2. User clicks on one of the items.
+        3. The event handler in shadow DOM subtree wants to know which item was clicked on.
+
+        The new re-targeting algorithm sets an event's target to a
+        distributed node where an event was originally fired, instead of
+        an insertion point to where the node is distributed.
+
+        The similar re-targeting algorithm also applies to an event's
+        relatedTarget.
+
+        Test: fast/dom/shadow/shadow-dom-event-dispatching.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventRelatedTargetAdjuster::adjust):
+        (WebCore::EventDispatcher::ensureEventAncestors):
+
 2012-06-22  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed follow-up to r121030, fix display of "Duration" in timeline event details popup.
