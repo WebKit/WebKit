@@ -1,3 +1,10 @@
+2012-06-22  Jon Lee  <jonlee@apple.com>
+
+        editing/spelling/grammar-edit-word.html fails on WK2 bots
+        https://bugs.webkit.org/show_bug.cgi?id=89199
+
+        * platform/mac-wk2/Skipped:
+
 2012-06-22  Jeff Timanus  <twiz@chromium.org>
 
         [Chromium] Change implementing a fast-path for copying GPU-accelerated Canvas2D instances to WebGL textures.
