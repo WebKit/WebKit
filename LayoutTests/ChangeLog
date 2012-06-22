@@ -1,3 +1,20 @@
+2012-06-22  Tony Chang  <tony@chromium.org>
+
+        Fix the CSS grid layout tests added in r120984
+        https://bugs.webkit.org/show_bug.cgi?id=89782
+
+        Reviewed by Julien Chaffraix.
+
+        We need to call testRunner.overridePreference("WebKitCSSGridLayoutEnabled", true)
+        to enable grid layout in tests. These tests were passing due to other bugs in the tests.
+
+        * fast/css-grid-layout/containing-block-grids-expected.html: Simplify expected results.
+        * fast/css-grid-layout/containing-block-grids.html: Set the display to none and override it with grid/inline-grid to make sure it's applying.
+        The default display of block would also produce the correct results.
+        * fast/css-grid-layout/floating-empty-grids-expected.html: Fix a missing close } which was causing the
+        other styles to be ignored. Also, one of the boxes wasn't showing up because it was a div instead of a span.
+        * fast/css-grid-layout/floating-empty-grids.html: Same fixes as for expected.
+
 2012-06-22  Michael Nordman  <michaeln@google.com>
 
         ApplicationCache - verify that an open network whitelist doesn't break online vs fallback layering.
