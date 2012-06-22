@@ -1,3 +1,17 @@
+2012-06-21  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Use the empty plugin support on non-X11 and non-Windows platforms
+        https://bugs.webkit.org/show_bug.cgi?id=89501
+
+        Reviewed by Martin Robinson.
+
+        The GTK+ port doesn't currently support NPAPI plugins on platforms other
+        than X11 or Windows. Using PluginPackageNone and PluginViewNone makes it
+        easier to build it on other platforms and also allows us to drop some
+        ifdefs from PluginPackageGtk and PluginViewGtk.
+
+        * GNUmakefile.list.am:
+
 2012-06-21  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow][Editing] Assertion in VisibleSelection::adjuseSelectionToAvoidCrossingBoundaries() is triggered.

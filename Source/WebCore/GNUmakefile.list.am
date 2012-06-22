@@ -4834,9 +4834,10 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/GtkWidgetBackingStoreX11.cpp \
 	Source/WebCore/plugins/gtk/gtk2xtbin.c \
 	Source/WebCore/plugins/gtk/gtk2xtbin.h \
+	Source/WebCore/plugins/gtk/PluginPackageGtk.cpp \
+	Source/WebCore/plugins/gtk/PluginViewGtk.cpp \
 	Source/WebCore/plugins/gtk/xembed.h
-endif
-
+else
 if TARGET_WIN32
 webcore_sources += \
 	Source/WebCore/platform/graphics/win/DIBPixelData.cpp \
@@ -4858,10 +4859,11 @@ webcoregtk_sources += \
 	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp \
 	Source/WebCore/plugins/win/PluginViewWin.cpp
 else
-webcoregtk_sources += \
-	Source/WebCore/plugins/gtk/PluginPackageGtk.cpp \
-	Source/WebCore/plugins/gtk/PluginViewGtk.cpp
-endif
+webcore_sources += \
+	Source/WebCore/plugins/PluginPackageNone.cpp \
+	Source/WebCore/plugins/PluginViewNone.cpp
+endif # END TARGET_WIN32
+endif # END TARGET_X11
 
 # ----
 # icu unicode backend
