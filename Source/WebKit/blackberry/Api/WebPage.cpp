@@ -564,6 +564,8 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     m_page->settings()->setInteractiveFormValidationEnabled(true);
     m_page->settings()->setAllowUniversalAccessFromFileURLs(false);
     m_page->settings()->setAllowFileAccessFromFileURLs(false);
+    m_page->settings()->setShouldUseCrossOriginProtocolCheck(!m_webSettings->allowCrossSiteRequests());
+    m_page->settings()->setWebSecurityEnabled(!m_webSettings->allowCrossSiteRequests());
 
     m_backingStoreClient = BackingStoreClient::create(m_mainFrame, /* parent frame */ 0, m_webPage);
     // The direct access to BackingStore is left here for convenience since it
@@ -6336,6 +6338,7 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setProcessHTTPEquiv(!webSettings->isEmailMode());
 
     coreSettings->setShouldUseCrossOriginProtocolCheck(!webSettings->allowCrossSiteRequests());
+    coreSettings->setWebSecurityEnabled(!webSettings->allowCrossSiteRequests());
 
     cookieManager().setPrivateMode(webSettings->isPrivateBrowsingEnabled());
 

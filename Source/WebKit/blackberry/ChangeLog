@@ -1,3 +1,16 @@
+2012-06-22  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Set WebSecurityEnabled flag accordingly.
+        https://bugs.webkit.org/show_bug.cgi?id=89602
+
+        Reviewed by Rob Buis.
+
+        Disable web security checks if needed.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+
 2012-06-22  Parth Patel  <parpatel@rim.com>
 
         [Blackberry] BlackBerry::Platform::Settings::get() rename to BlackBerry::Platform::Settings::instance() to make it consistent with our other singletons
