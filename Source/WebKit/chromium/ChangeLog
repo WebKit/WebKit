@@ -1,3 +1,37 @@
+2012-06-22  James Robinson  <jamesr@chromium.org>
+
+        [chromium] LayerRendererChromium is not getting visibility messages in single threaded compositing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=89045
+
+        Reviewed by Adrienne Walker.
+
+        Based on patch by Michal Mocny <mmocny@google.com>.
+
+        Update various test fixtures and tests to cover scheduling, visibility, and resource allocation changes.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (CCLayerTreeHostTestAbortFrameWhenInvisible):
+        (WTF::CCLayerTreeHostTestAbortFrameWhenInvisible::CCLayerTreeHostTestAbortFrameWhenInvisible):
+        (WTF::CCLayerTreeHostTestAbortFrameWhenInvisible::beginTest):
+        (WTF::CCLayerTreeHostTestAbortFrameWhenInvisible::afterTest):
+        (WTF):
+        (WTF::TEST_F):
+        (WTF::CCLayerTreeHostTestLayerOcclusion::beginTest):
+        (WTF::CCLayerTreeHostTestLayerOcclusionWithFilters::beginTest):
+        (WTF::CCLayerTreeHostTestManySurfaces::beginTest):
+        * tests/CCSchedulerStateMachineTest.cpp:
+        (WebCore::TEST):
+        * tests/CCTiledLayerTestCommon.h:
+        * tests/FakeWebGraphicsContext3D.h:
+        (WebKit::FakeWebGraphicsContext3D::FakeWebGraphicsContext3D):
+        (FakeWebGraphicsContext3D):
+        (WebKit::FakeWebGraphicsContext3D::createTexture):
+        * tests/LayerRendererChromiumTest.cpp:
+        (TEST_F):
+        * tests/TiledLayerChromiumTest.cpp:
+
+
 2012-06-22  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Notify the document if a plugin accepts touch input events

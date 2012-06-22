@@ -35,6 +35,11 @@ namespace WebKit {
 // All operations are no-ops (returning 0 if necessary).
 class FakeWebGraphicsContext3D : public WebGraphicsContext3D {
 public:
+    FakeWebGraphicsContext3D()
+        : m_nextTextureId(1)
+    {
+    }
+
     virtual bool makeContextCurrent() { return true; }
 
     virtual int width() { return 0; }
@@ -246,7 +251,7 @@ public:
     virtual WebGLId createProgram() { return 1; }
     virtual WebGLId createRenderbuffer() { return 1; }
     virtual WebGLId createShader(WGC3Denum) { return 1; }
-    virtual WebGLId createTexture() { return 1; }
+    virtual WebGLId createTexture() { return m_nextTextureId++; }
 
     virtual void deleteBuffer(WebGLId) { }
     virtual void deleteFramebuffer(WebGLId) { }
@@ -267,6 +272,7 @@ public:
     virtual void getQueryObjectuivEXT(WebGLId, GC3Denum, GC3Duint*) { }
 
 protected:
+    unsigned m_nextTextureId;
     Attributes m_attrs;
 };
 

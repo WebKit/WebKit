@@ -26,6 +26,8 @@
 
 #include "cc/CCSchedulerStateMachine.h"
 
+#include <stdio.h>
+
 namespace WebCore {
 
 CCSchedulerStateMachine::CCSchedulerStateMachine()
@@ -297,6 +299,12 @@ void CCSchedulerStateMachine::beginFrameComplete()
 {
     ASSERT(m_commitState == COMMIT_STATE_FRAME_IN_PROGRESS);
     m_commitState = COMMIT_STATE_UPDATING_RESOURCES;
+}
+
+void CCSchedulerStateMachine::beginFrameAborted()
+{
+    ASSERT(m_commitState == COMMIT_STATE_FRAME_IN_PROGRESS);
+    m_commitState = COMMIT_STATE_IDLE;
 }
 
 void CCSchedulerStateMachine::beginUpdateMoreResourcesComplete(bool morePending)

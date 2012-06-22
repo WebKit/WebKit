@@ -120,6 +120,10 @@ public:
     // updating of compositor resources can begin.
     void beginFrameComplete();
 
+    // Call this only in response to receiving an ACTION_BEGIN_FRAME
+    // from nextState if the client rejects the beginFrame message.
+    void beginFrameAborted();
+
     // Call this only in response to receiving an ACTION_UPDATE_MORE_RESOURCES
     // from nextState. Indicates that the specific update request completed.
     void beginUpdateMoreResourcesComplete(bool morePending);

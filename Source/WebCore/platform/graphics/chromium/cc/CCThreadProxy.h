@@ -56,6 +56,7 @@ public:
     virtual bool isStarted() const OVERRIDE;
     virtual bool initializeContext() OVERRIDE;
     virtual void setSurfaceReady() OVERRIDE;
+    virtual void setVisible(bool) OVERRIDE;
     virtual bool initializeLayerRenderer() OVERRIDE;
     virtual bool recreateContext() OVERRIDE;
     virtual int compositorIdentifier() const OVERRIDE;
@@ -63,7 +64,6 @@ public:
     virtual void loseContext() OVERRIDE;
     virtual void setNeedsAnimate() OVERRIDE;
     virtual void setNeedsCommit() OVERRIDE;
-    virtual void setNeedsForcedCommit() OVERRIDE;
     virtual void setNeedsRedraw() OVERRIDE;
     virtual bool commitRequested() const OVERRIDE;
     virtual void didAddAnimation() OVERRIDE { }
@@ -80,7 +80,6 @@ public:
     virtual void setNeedsRedrawOnImplThread() OVERRIDE;
     virtual void setNeedsCommitOnImplThread() OVERRIDE;
     virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) OVERRIDE;
-    virtual void postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread(size_t) OVERRIDE;
 
     // CCSchedulerClient implementation
     virtual bool canDraw() OVERRIDE;
@@ -108,6 +107,8 @@ private:
         double monotonicFrameBeginTime;
         OwnPtr<CCScrollAndScaleSet> scrollInfo;
         CCTextureUpdater* updater;
+        bool contentsTexturesWereDeleted;
+        size_t memoryAllocationLimitBytes;
     };
     OwnPtr<BeginFrameAndCommitState> m_pendingBeginFrameRequest;
 
@@ -116,7 +117,6 @@ private:
     void didCommitAndDrawFrame();
     void didCompleteSwapBuffers();
     void setAnimationEvents(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime);
-    void setContentsMemoryAllocationLimitBytes(size_t);
     void beginContextRecreation();
     void tryToRecreateContext();
 
@@ -129,11 +129,13 @@ private:
     };
     void forceBeginFrameOnImplThread(CCCompletionEvent*);
     void beginFrameCompleteOnImplThread(CCCompletionEvent*);
+    void beginFrameAbortedOnImplThread();
     void requestReadbackOnImplThread(ReadbackRequest*);
     void requestStartPageScaleAnimationOnImplThread(IntSize targetPosition, bool useAnchor, float scale, double durationSec);
     void finishAllRenderingOnImplThread(CCCompletionEvent*);
     void initializeImplOnImplThread(CCCompletionEvent*);
     void setSurfaceReadyOnImplThread();
+    void setVisibleOnImplThread(CCCompletionEvent*, bool);
     void initializeContextOnImplThread(CCGraphicsContext*);
     void initializeLayerRendererOnImplThread(CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*);
     void layerTreeHostClosedOnImplThread(CCCompletionEvent*);
@@ -157,6 +159,7 @@ private:
     LayerRendererCapabilities m_layerRendererCapabilitiesMainThreadCopy;
     bool m_started;
     bool m_texturesAcquired;
+    bool m_inCompositeAndReadback;
 
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;
 

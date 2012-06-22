@@ -27,6 +27,7 @@
 
 #include "GraphicsContext3D.h"
 #include "TextureManager.h"
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -40,8 +41,9 @@ public:
     }
     virtual ~TrackingTextureAllocator();
 
-    virtual unsigned createTexture(const IntSize&, GC3Denum format);
-    virtual void deleteTexture(unsigned texture, const IntSize&, GC3Denum format);
+    virtual unsigned createTexture(const IntSize&, GC3Denum format) OVERRIDE;
+    virtual void deleteTexture(unsigned texture, const IntSize&, GC3Denum format) OVERRIDE;
+    virtual void deleteAllTextures() OVERRIDE;
 
     size_t currentMemoryUseBytes() const { return m_currentMemoryUseBytes; }
 
@@ -57,6 +59,7 @@ protected:
     size_t m_currentMemoryUseBytes;
     TextureUsageHint m_textureUsageHint;
     bool m_useTextureStorageExt;
+    HashSet<unsigned> m_allocatedTextureIds;
 };
 
 }

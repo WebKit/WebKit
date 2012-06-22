@@ -75,8 +75,8 @@ public:
 
         FramePlane() : textureId(0) { }
 
-        bool allocateData(CCRenderer*);
-        void freeData(CCRenderer*);
+        bool allocateData(CCGraphicsContext*);
+        void freeData(CCGraphicsContext*);
     };
 
 private:
@@ -86,10 +86,10 @@ private:
     virtual const char* layerTypeAsString() const OVERRIDE { return "VideoLayer"; }
 
     void willDrawInternal(CCRenderer*, CCGraphicsContext*);
-    bool allocatePlaneData(CCRenderer*);
+    bool allocatePlaneData(CCRenderer*, CCGraphicsContext*);
     bool copyPlaneData(CCRenderer*, CCGraphicsContext*);
-    void freePlaneData(CCRenderer*);
-    void freeUnusedPlaneData(CCRenderer*);
+    void freePlaneData(CCGraphicsContext*);
+    void freeUnusedPlaneData(CCGraphicsContext*);
 
     // Guards the destruction of m_provider and the frame that it provides
     Mutex m_providerMutex;

@@ -31,6 +31,7 @@
 
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
+#include "LayerRendererChromium.h" // For GLC macro
 #include "LayerTextureSubImage.h"
 #include "NotImplemented.h"
 #include "TextStream.h"
@@ -75,7 +76,7 @@ CCVideoLayerImpl::~CCVideoLayerImpl()
         m_provider->setVideoFrameProviderClient(0);
         m_provider = 0;
     }
-    freePlaneData(layerTreeHostImpl()->layerRenderer());
+    freePlaneData(layerTreeHostImpl()->context());
 
 #if !ASSERT_DISABLED
     for (unsigned i = 0; i < WebKit::WebVideoFrame::maxPlanes; ++i)
@@ -125,7 +126,7 @@ void CCVideoLayerImpl::willDraw(CCRenderer* layerRenderer, CCGraphicsContext* co
     m_providerMutex.lock();
 
     willDrawInternal(layerRenderer, context);
-    freeUnusedPlaneData(layerRenderer);
+    freeUnusedPlaneData(context);
 
     if (!m_frame)
         m_providerMutex.unlock();
@@ -159,7 +160,7 @@ void CCVideoLayerImpl::willDrawInternal(CCRenderer* layerRenderer, CCGraphicsCon
         return;
     }
 
-    if (!allocatePlaneData(layerRenderer)) {
+    if (!allocatePlaneData(layerRenderer, context)) {
         m_provider->putCurrentFrame(m_frame);
         m_frame = 0;
         return;
@@ -282,25 +283,43 @@ IntSize CCVideoLayerImpl::computeVisibleSize(const WebKit::WebVideoFrame& frame,
     return IntSize(visibleWidth, visibleHeight);
 }
 
-bool CCVideoLayerImpl::FramePlane::allocateData(CCRenderer* layerRenderer)
+bool CCVideoLayerImpl::FramePlane::allocateData(CCGraphicsContext* context)
 {
     if (textureId)
         return true;
 
-    textureId = layerRenderer->contentsTextureAllocator()->createTexture(size, format);
+    GraphicsContext3D* context3D = context->context3D();
+    if (!context3D)
+        return false;
+
+    GLC(context3D, textureId = context3D->createTexture());
+    GLC(context3D, context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
+    // Do basic linear filtering on resize.
+    GLC(context3D, context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
+    GLC(context3D, context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+    // NPOT textures in GL ES only work when the wrap mode is set to GraphicsContext3D::CLAMP_TO_EDGE.
+    GLC(context3D, context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
+    GLC(context3D, context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
+
+    GLC(context3D, context3D->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, format, size.width(), size.height(), 0, format, GraphicsContext3D::UNSIGNED_BYTE));
+
     return textureId;
 }
 
-void CCVideoLayerImpl::FramePlane::freeData(CCRenderer* layerRenderer)
+void CCVideoLayerImpl::FramePlane::freeData(CCGraphicsContext* context)
 {
     if (!textureId)
         return;
 
-    layerRenderer->contentsTextureAllocator()->deleteTexture(textureId, size, format);
+    GraphicsContext3D* context3D = context->context3D();
+    if (!context3D)
+        return;
+
+    GLC(context3D, context3D->deleteTexture(textureId));
     textureId = 0;
 }
 
-bool CCVideoLayerImpl::allocatePlaneData(CCRenderer* layerRenderer)
+bool CCVideoLayerImpl::allocatePlaneData(CCRenderer* layerRenderer, CCGraphicsContext* context)
 {
     int maxTextureSize = layerRenderer->capabilities().maxTextureSize;
     for (unsigned planeIndex = 0; planeIndex < m_frame->planes(); ++planeIndex) {
@@ -312,13 +331,13 @@ bool CCVideoLayerImpl::allocatePlaneData(CCRenderer* layerRenderer)
             return false;
 
         if (plane.size != requiredTextureSize || plane.format != m_format) {
-            plane.freeData(layerRenderer);
+            plane.freeData(context);
             plane.size = requiredTextureSize;
             plane.format = m_format;
         }
 
         if (!plane.textureId) {
-            if (!plane.allocateData(layerRenderer))
+            if (!plane.allocateData(context))
                 return false;
             plane.visibleSize = computeVisibleSize(*m_frame, planeIndex);
         }
@@ -351,17 +370,17 @@ bool CCVideoLayerImpl::copyPlaneData(CCRenderer* layerRenderer, CCGraphicsContex
     return true;
 }
 
-void CCVideoLayerImpl::freePlaneData(CCRenderer* layerRenderer)
+void CCVideoLayerImpl::freePlaneData(CCGraphicsContext* context)
 {
     for (unsigned i = 0; i < WebKit::WebVideoFrame::maxPlanes; ++i)
-        m_framePlanes[i].freeData(layerRenderer);
+        m_framePlanes[i].freeData(context);
 }
 
-void CCVideoLayerImpl::freeUnusedPlaneData(CCRenderer* layerRenderer)
+void CCVideoLayerImpl::freeUnusedPlaneData(CCGraphicsContext* context)
 {
     unsigned firstUnusedPlane = m_frame ? m_frame->planes() : 0;
     for (unsigned i = firstUnusedPlane; i < WebKit::WebVideoFrame::maxPlanes; ++i)
-        m_framePlanes[i].freeData(layerRenderer);
+        m_framePlanes[i].freeData(context);
 }
 
 void CCVideoLayerImpl::didReceiveFrame()
@@ -381,7 +400,7 @@ void CCVideoLayerImpl::didUpdateMatrix(const float matrix[16])
 
 void CCVideoLayerImpl::didLoseContext()
 {
-    freePlaneData(layerTreeHostImpl()->layerRenderer());
+    freePlaneData(layerTreeHostImpl()->context());
 }
 
 void CCVideoLayerImpl::setNeedsRedraw()

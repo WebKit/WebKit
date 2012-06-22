@@ -807,7 +807,7 @@ TEST(CCSchedulerStateMachineTest, TestRequestCommitInvisible)
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
 }
 
-TEST(CCSchedulerStateMachineTest, TestGoesInvisibleMidCommit)
+TEST(CCSchedulerStateMachineTest, TestGoesInvisibleBeforeBeginFrameCompletes)
 {
     StateMachine state;
     state.setCanBeginFrame(true);
@@ -823,33 +823,12 @@ TEST(CCSchedulerStateMachineTest, TestGoesInvisibleMidCommit)
     EXPECT_FALSE(state.needsCommit());
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
 
-    // Become invisible
+    // Become invisible and abort the beginFrame.
     state.setVisible(false);
+    state.beginFrameAborted();
 
-    // Tell the scheduler the frame finished
-    state.beginFrameComplete();
-    EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_UPDATING_RESOURCES, state.commitState());
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction());
-
-    // Tell the scheduler the update began and finished
-    state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES);
-    state.beginUpdateMoreResourcesComplete(false);
-    EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_READY_TO_COMMIT, state.commitState());
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
-
-    // Commit in invisible state should leave us:
-    // - COMMIT_STATE_WAITING_FOR_FIRST_DRAW
-    // - Waiting for redraw.
-    // - No commit needed
-    state.updateState(CCSchedulerStateMachine::ACTION_COMMIT);
-    EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_WAITING_FOR_FIRST_DRAW, state.commitState());
-    EXPECT_TRUE(state.needsRedraw());
-    EXPECT_FALSE(state.needsCommit());
-
-    // Expect to do nothing, both in and out of vsync.
-    state.didLeaveVSync();
-    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
-    state.didEnterVSync();
+    // We should now be back in the idle state as if we didn't start a frame at all.
+    EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_IDLE, state.commitState());
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
 }
 

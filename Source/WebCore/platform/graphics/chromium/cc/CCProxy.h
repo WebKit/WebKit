@@ -70,6 +70,8 @@ public:
     // Indicates that the compositing surface associated with our context is ready to use.
     virtual void setSurfaceReady() = 0;
 
+    virtual void setVisible(bool) = 0;
+
     // Attempts to initialize the layer renderer. Returns false if the context isn't usable for compositing.
     virtual bool initializeLayerRenderer() = 0;
 
@@ -83,7 +85,6 @@ public:
 
     virtual void setNeedsAnimate() = 0;
     virtual void setNeedsCommit() = 0;
-    virtual void setNeedsForcedCommit() = 0;
     virtual void setNeedsRedraw() = 0;
 
     virtual void didAddAnimation() = 0;
