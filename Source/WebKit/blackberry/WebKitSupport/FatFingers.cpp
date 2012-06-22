@@ -450,10 +450,10 @@ bool FatFingers::checkForText(Node* curNode, Vector<IntersectingRegion>& interse
 
 void FatFingers::getPaddings(unsigned& top, unsigned& right, unsigned& bottom, unsigned& left) const
 {
-    static unsigned topPadding = Platform::Settings::get()->topFatFingerPadding();
-    static unsigned rightPadding = Platform::Settings::get()->rightFatFingerPadding();
-    static unsigned bottomPadding = Platform::Settings::get()->bottomFatFingerPadding();
-    static unsigned leftPadding = Platform::Settings::get()->leftFatFingerPadding();
+    static unsigned topPadding = Platform::Settings::instance()->topFatFingerPadding();
+    static unsigned rightPadding = Platform::Settings::instance()->rightFatFingerPadding();
+    static unsigned bottomPadding = Platform::Settings::instance()->bottomFatFingerPadding();
+    static unsigned leftPadding = Platform::Settings::instance()->leftFatFingerPadding();
 
     double currentScale = m_webPage->currentScale();
     top = topPadding / currentScale;

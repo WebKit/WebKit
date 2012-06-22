@@ -99,7 +99,7 @@ String configPage()
 #endif
     + "</td></tr>";
 
-    BlackBerry::Platform::Settings* settings = BlackBerry::Platform::Settings::get();
+    BlackBerry::Platform::Settings* settings = BlackBerry::Platform::Settings::instance();
     page += String("</table><h2>Platform Settings</h2><table>");
     page += numberToHTMLTr("isRSSFilteringEnabled", settings->isRSSFilteringEnabled());
     page += numberToHTMLTr("secondaryThreadStackSize", settings->secondaryThreadStackSize());

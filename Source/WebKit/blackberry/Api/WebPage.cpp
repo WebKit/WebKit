@@ -549,7 +549,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     m_mainFrame->init();
 
 #if ENABLE(WEBGL)
-    Platform::Settings* settings = Platform::Settings::get();
+    Platform::Settings* settings = Platform::Settings::instance();
     m_page->settings()->setWebGLEnabled(settings && settings->isWebGLSupported());
 #endif
 #if ENABLE(ACCELERATED_2D_CANVAS)
@@ -1335,7 +1335,7 @@ bool WebPagePrivate::shouldSendResizeEvent()
     //            NOTE: Care must be exercised in the use of this option, as it bypasses
     //                  the sanity provided in 'isLoadingInAPISense()' below.
     //
-    static const bool unrestrictedResizeEvents = Platform::Settings::get()->unrestrictedResizeEvents();
+    static const bool unrestrictedResizeEvents = Platform::Settings::instance()->unrestrictedResizeEvents();
     if (unrestrictedResizeEvents)
         return true;
 

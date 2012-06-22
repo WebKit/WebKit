@@ -56,7 +56,7 @@ void CacheClientBlackBerry::updateCacheCapacity()
 #if ENABLE(BLACKBERRY_DEBUG_MEMORY)
     // We're debugging memory usage. So keep it disabled.
 #else
-    unsigned cacheCapacity = BlackBerry::Platform::Settings::get()->getSuggestedCacheCapacity(memoryCache()->totalSize());
+    unsigned cacheCapacity = BlackBerry::Platform::Settings::instance()->getSuggestedCacheCapacity(memoryCache()->totalSize());
     if (m_lastCapacity == cacheCapacity) {
         // Suggested capacity hasn't been changed.
         return;

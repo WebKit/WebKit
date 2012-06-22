@@ -1,3 +1,15 @@
+2012-06-21  Parth Patel  <parpatel@rim.com>
+
+        [Blackberry] BlackBerry::Platform::Settings::get() rename to BlackBerry::Platform::Settings::instance() to make it consistent with our other singletons
+        https://bugs.webkit.org/show_bug.cgi?id=89684
+
+        Reviewed by Yong Li.
+        
+        Update setting instance access to use instance() instead of get().
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::createThreadInternal):
+
 2012-06-21  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Fix NPAPI plugins on Windows

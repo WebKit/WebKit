@@ -69,8 +69,8 @@ void SurfacePool::initialize(const BlackBerry::Platform::IntSize& tileSize)
         return;
     m_initialized = true;
 
-    const unsigned numberOfTiles = BlackBerry::Platform::Settings::get()->numberOfBackingStoreTiles();
-    const unsigned maxNumberOfTiles = BlackBerry::Platform::Settings::get()->maximumNumberOfBackingStoreTilesAcrossProcesses();
+    const unsigned numberOfTiles = BlackBerry::Platform::Settings::instance()->numberOfBackingStoreTiles();
+    const unsigned maxNumberOfTiles = BlackBerry::Platform::Settings::instance()->maximumNumberOfBackingStoreTilesAcrossProcesses();
 
     if (numberOfTiles) { // Only allocate if we actually use a backingstore.
         unsigned byteLimit = (maxNumberOfTiles /*pool*/ + 2 /*visible tile buffer, backbuffer*/) * tileSize.width() * tileSize.height() * 4;

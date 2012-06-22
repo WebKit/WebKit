@@ -75,7 +75,7 @@ void globalInitialize()
 
     CacheClientBlackBerry::get()->initialize();
 
-    BlackBerry::Platform::Settings* settings = BlackBerry::Platform::Settings::get();
+    BlackBerry::Platform::Settings* settings = BlackBerry::Platform::Settings::instance();
 
     ImageSource::setMaxPixelsPerDecodedImage(settings->maxPixelsPerDecodedImage());
 }

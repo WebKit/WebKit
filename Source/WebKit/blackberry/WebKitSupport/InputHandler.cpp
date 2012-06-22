@@ -435,14 +435,14 @@ void InputHandler::setElementUnfocused(bool refocusOccuring)
 bool InputHandler::isInputModeEnabled() const
 {
     // Input mode is enabled when set, or when dump render tree or always show keyboard setting is enabled.
-    return m_inputModeEnabled || m_webPage->m_dumpRenderTree || Platform::Settings::get()->alwaysShowKeyboardOnFocus();
+    return m_inputModeEnabled || m_webPage->m_dumpRenderTree || Platform::Settings::intsance()->alwaysShowKeyboardOnFocus();
 }
 
 void InputHandler::setInputModeEnabled(bool active)
 {
     FocusLog(LogLevelInfo, "InputHandler::setInputModeEnabled '%s', override is '%s'"
              , active ? "true" : "false"
-             , m_webPage->m_dumpRenderTree || Platform::Settings::get()->alwaysShowKeyboardOnFocus() ? "true" : "false");
+             , m_webPage->m_dumpRenderTree || Platform::Settings::instance()->alwaysShowKeyboardOnFocus() ? "true" : "false");
 
     m_inputModeEnabled = active;
 
@@ -556,7 +556,7 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
     if (!isActiveTextEdit() || !isInputModeEnabled() || !m_currentFocusElement->document())
         return;
 
-    if (!Platform::Settings::get()->allowCenterScrollAdjustmentForInputFields() && scrollType != EdgeIfNeeded)
+    if (!Platform::Settings::instance()->allowCenterScrollAdjustmentForInputFields() && scrollType != EdgeIfNeeded)
         return;
 
     Frame* elementFrame = m_currentFocusElement->document()->frame();

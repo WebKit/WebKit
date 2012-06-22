@@ -178,7 +178,7 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     if (pthread_attr_getstack(&attr, &stackAddr, &stackSize))
         LOG_ERROR("pthread_attr_getstack() failed: %d", errno);
     else {
-        stackSize = BlackBerry::Platform::Settings::get()->secondaryThreadStackSize();
+        stackSize = BlackBerry::Platform::Settings::instance()->secondaryThreadStackSize();
         if (pthread_attr_setstack(&attr, stackAddr, stackSize))
             LOG_ERROR("pthread_attr_getstack() failed: %d", errno);
     }
