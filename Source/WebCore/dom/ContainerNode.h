@@ -99,6 +99,14 @@ public:
     Node* traverseNextNode() const;
     Node* traverseNextNode(const Node* stayWithin) const;
 
+    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
+        Node::reportMemoryUsage(memoryObjectInfo);
+        memoryObjectInfo->reportInstrumentedPointer(m_firstChild);
+        memoryObjectInfo->reportInstrumentedPointer(m_lastChild);
+    }
+
 protected:
     ContainerNode(Document*, ConstructionType = CreateContainer);
 

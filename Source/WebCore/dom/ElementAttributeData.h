@@ -27,6 +27,7 @@
 #define ElementAttributeData_h
 
 #include "Attribute.h"
+#include "MemoryInstrumentation.h"
 #include "SpaceSplitString.h"
 #include "StylePropertySet.h"
 #include <wtf/NotFound.h>
@@ -98,6 +99,16 @@ public:
     void removeAttr(Element*, const QualifiedName&);
     PassRefPtr<Attr> attrIfExists(Element*, const QualifiedName&);
     PassRefPtr<Attr> ensureAttr(Element*, const QualifiedName&);
+
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
+        memoryObjectInfo->reportInstrumentedPointer(m_inlineStyleDecl.get());
+        memoryObjectInfo->reportInstrumentedPointer(m_attributeStyle.get());
+        memoryObjectInfo->reportObject(m_classNames);
+        memoryObjectInfo->reportObject(m_idForStyleResolution);
+        memoryObjectInfo->reportObject(m_attributes);
+    }
 
 private:
     friend class Element;

@@ -54,6 +54,12 @@ public:
         weakClear(m_wrapper, wrapper);
     }
 
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
+        memoryObjectInfo->reportObject(m_wrapper);
+    }
+
 private:
     JSC::Weak<JSDOMWrapper> m_wrapper;
 };

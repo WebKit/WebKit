@@ -1745,6 +1745,7 @@ HEADERS += \
     dom/ExceptionCode.h \
     dom/FragmentScriptingPermission.h \
     dom/KeyboardEvent.h \
+    dom/MemoryInstrumentation.h \
     dom/MessageChannel.h \
     dom/MessageEvent.h \
     dom/MessagePortChannel.h \

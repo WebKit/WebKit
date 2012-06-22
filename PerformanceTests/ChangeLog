@@ -1,3 +1,15 @@
+2012-06-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: partially instrument DOM Tree native memory.
+        https://bugs.webkit.org/show_bug.cgi?id=89568
+
+        This patch adds MemoryInstrumentation class that counts all visited
+        objects and calls reportMemoryUsage.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/native-memory-snapshot.html:
+
 2012-06-21  Kentaro Hara  <haraken@chromium.org>
 
         Add a perf-test for innerHTML setter for a large DOM tree

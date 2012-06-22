@@ -1,5 +1,17 @@
 <html>
 <head>
+  <style type="text/css">
+    span {
+      color:red;
+      width: 100px;
+      height: 20px;
+    }
+    div {
+      color:blue;
+      width: 50px;
+      height: 10px;
+    }
+  </style>
   <script src="../../LayoutTests/http/tests/inspector/inspector-test.js"></script>
   <script src="performance-test.js"></script>
 <script>
@@ -39,8 +51,12 @@ function createDOMTree(elementsCount)
 {
     var root = document.getElementById("testTreeRoot");
 
-    for (var i = 0; i < elementsCount; ++i)
-        root.appendChild(document.createElement("span"));
+    for (var i = 0; i < elementsCount; ++i) {
+        var span = document.createElement("span");
+        span.id = "span_" + i;
+        span.style.width = "10px";
+        root.appendChild(span);
+    }
 
     for (var i = 0; i < elementsCount; ++i)
         root.appendChild(document.createElement("div"));

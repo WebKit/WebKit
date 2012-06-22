@@ -111,6 +111,12 @@ public:
     bool m_inRemovedLastRefFunction;
 #endif
 
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
+        memoryObjectInfo->reportInstrumentedPointer(m_parent);
+    }
+
 private:
 #ifndef NDEBUG
     friend void adopted<>(TreeShared<NodeType, ParentNodeType>*);

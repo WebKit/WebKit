@@ -25,6 +25,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
+#include "MemoryInstrumentation.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -115,6 +116,13 @@ public:
     void showStyle();
 #endif
     
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::CSS);
+        if (m_isMutable)
+            memoryObjectInfo->reportPointer(m_mutablePropertyVector, MemoryInstrumentation::CSS);
+    }
+
 private:
     StylePropertySet(CSSParserMode);
     StylePropertySet(const CSSProperty* properties, unsigned count, CSSParserMode, bool makeMutable);

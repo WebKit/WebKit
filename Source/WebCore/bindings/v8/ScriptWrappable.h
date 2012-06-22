@@ -52,6 +52,12 @@ public:
 
     void clearWrapper() { m_wrapper = 0; }
 
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
+        memoryObjectInfo->reportPointer(m_wrapper, MemoryInstrumentation::DOM);
+    }
+
 private:
     v8::Persistent<v8::Object>* m_wrapper;
 };

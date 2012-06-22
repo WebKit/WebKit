@@ -1,3 +1,72 @@
+2012-06-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: partially instrument DOM Tree native memory.
+        https://bugs.webkit.org/show_bug.cgi?id=89568
+
+        This patch adds MemoryInstrumentation class that counts all visited
+        objects and calls reportMemoryUsage for the instrumented classes.
+
+        Reviewed by Yury Semikhatsky.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::reportMemoryUsage):
+        (ScriptWrappable):
+        * bindings/v8/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::reportMemoryUsage):
+        (ScriptWrappable):
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::reportMemoryUsage):
+        (StylePropertySet):
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::reportMemoryUsage):
+        (ContainerNode):
+        * dom/Element.h:
+        (WebCore::Element::reportMemoryUsage):
+        (Element):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+        (ElementAttributeData):
+        * dom/MemoryInstrumentation.h: Added.
+        (WebCore):
+        (MemoryInstrumentation):
+        (WebCore::MemoryInstrumentation::~MemoryInstrumentation):
+        (WebCore::MemoryInstrumentation::reportObject):
+        (WebCore::MemoryInstrumentation::reportPointer):
+        (MemoryObjectInfo):
+        (WebCore::MemoryObjectInfo::MemoryObjectInfo):
+        (WebCore::MemoryObjectInfo::reportInstrumentedPointer):
+        (WebCore::MemoryObjectInfo::reportPointer):
+        (WebCore::MemoryObjectInfo::reportInstrumentedObject):
+        (WebCore::MemoryObjectInfo::reportObject):
+        (WebCore::MemoryObjectInfo::reportObjectInfo):
+        (WebCore::MemoryObjectInfo::objectType):
+        (WebCore::MemoryObjectInfo::objectSize):
+        (WebCore::MemoryInstrumentation::reportInstrumentedPointer):
+        (WebCore::MemoryInstrumentation::reportInstrumentedObject):
+        * dom/Node.cpp:
+        (WebCore::Node::reportMemoryUsage):
+        (WebCore):
+        * dom/Node.h:
+        (Node):
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedNameImpl::reportMemoryUsage):
+        (WebCore::QualifiedName::reportMemoryUsage):
+        * inspector/InspectorMemoryAgent.cpp:
+        (MemoryBlockName):
+        (WebCore):
+        (WebCore::addMemoryBlockFor):
+        (WebCore::domTreeInfo):
+        (WebCore::memoryCacheInfo):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * platform/TreeShared.h:
+        (WebCore::TreeShared::reportMemoryUsage):
+        (TreeShared):
+
 2012-06-22  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: Support 'Restart frame' in inspector frontend

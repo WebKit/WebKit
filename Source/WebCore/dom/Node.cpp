@@ -2785,6 +2785,16 @@ void Node::removedLastRef()
     delete this;
 }
 
+void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
+    TreeShared<Node, ContainerNode>::reportMemoryUsage(memoryObjectInfo);
+    ScriptWrappable::reportMemoryUsage(memoryObjectInfo);
+    memoryObjectInfo->reportPointer(m_document, MemoryInstrumentation::DOM);
+    memoryObjectInfo->reportInstrumentedPointer(m_next);
+    memoryObjectInfo->reportInstrumentedPointer(m_previous);
+}
+
 } // namespace WebCore
 
 #ifndef NDEBUG

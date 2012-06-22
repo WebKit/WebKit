@@ -29,6 +29,7 @@
 #include "EventTarget.h"
 #include "KURLHash.h"
 #include "LayoutTypes.h"
+#include "MemoryInstrumentation.h"
 #include "RenderStyleConstants.h"
 #include "ScriptWrappable.h"
 #include "TreeShared.h"
@@ -647,6 +648,8 @@ public:
 #endif
     bool hasScopedHTMLStyleChild() const;
     size_t numberOfScopedHTMLStyleChildren() const;
+
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     enum NodeFlags {

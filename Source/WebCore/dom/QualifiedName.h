@@ -21,6 +21,8 @@
 #ifndef QualifiedName_h
 #define QualifiedName_h
 
+#include "MemoryInstrumentation.h"
+
 #include <wtf/HashTraits.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
@@ -48,6 +50,14 @@ public:
         const AtomicString m_namespace;
         mutable AtomicString m_localNameUpper;
 
+        void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+        {
+            memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
+            memoryObjectInfo->reportObject(m_prefix);
+            memoryObjectInfo->reportObject(m_localName);
+            memoryObjectInfo->reportObject(m_namespace);
+            memoryObjectInfo->reportObject(m_localNameUpper);
+        }
     private:
         QualifiedNameImpl(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI)
             : m_prefix(prefix)
@@ -92,6 +102,11 @@ public:
     // Init routine for globals
     static void init();
     
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
+        memoryObjectInfo->reportInstrumentedPointer(m_impl);
+    }
 private:
     void init(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI);
     void ref() const { m_impl->ref(); }

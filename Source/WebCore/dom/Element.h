@@ -421,6 +421,14 @@ public:
     IntSize savedLayerScrollOffset() const;
     void setSavedLayerScrollOffset(const IntSize&);
 
+    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
+        ContainerNode::reportMemoryUsage(memoryObjectInfo);
+        memoryObjectInfo->reportInstrumentedObject(m_tagName);
+        memoryObjectInfo->reportInstrumentedPointer(m_attributeData.get());
+    }
+
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
         : ContainerNode(document, type)
