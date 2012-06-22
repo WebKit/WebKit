@@ -44,7 +44,7 @@
 namespace {
 
 // The limit of the number of textures we hold in the GrContext's bitmap->texture cache.
-const int maxGaneshTextureCacheCount = 512;
+const int maxGaneshTextureCacheCount = 2048;
 // The limit of the bytes allocated toward textures in the GrContext's bitmap->texture cache.
 const size_t maxGaneshTextureCacheBytes = 96 * 1024 * 1024;
 

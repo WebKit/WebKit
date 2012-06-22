@@ -1,3 +1,14 @@
+2012-06-22  Brian Salomon  <bsalomon@google.com>
+
+        Increase the GrContext texture cache count cap to 2K
+        https://bugs.webkit.org/show_bug.cgi?id=89761
+
+        Reviewed by Stephen White.
+
+        Tests: The change is for performance. The code is exercised by all the canvas 2d layout tests.
+
+        * platform/chromium/support/GraphicsContext3DPrivate.cpp:
+
 2012-06-22  Silvia Pfeiffer  <silviapf@chromium.org>
 
         [Chromium] Adjust the displayed elements of the new Chrome media controls.
