@@ -239,7 +239,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitAlignSelf,
     CSSPropertyWebkitFlex,
     CSSPropertyWebkitFlexDirection,
-    CSSPropertyWebkitFlexFlow,
     CSSPropertyWebkitFlexWrap,
     CSSPropertyWebkitJustifyContent,
 #endif

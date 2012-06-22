@@ -46,7 +46,6 @@ var propertiesToTest = {
     "-webkit-column-width": true,
     "-webkit-flex": true,
     "-webkit-flex-direction": true,
-    "-webkit-flex-flow": true,
     "-webkit-flex-wrap": true,
     "-webkit-font-kerning": true,
     "-webkit-font-smoothing": true,

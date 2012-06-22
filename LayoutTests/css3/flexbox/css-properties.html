@@ -259,6 +259,15 @@ flexbox.style.webkitFlexFlow = 'row-reverse wrap-reverse';
 shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'row-reverse wrap-reverse');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row-reverse wrap-reverse');
 
+// -webkit-flex-flow is a shorthand, so it shouldn't show up as a computed property.
+var computedStyle = getComputedStyle(flexbox);
+var foundFlexFlow = false;
+for (var i = 0; i < computedStyle.length; ++i) {
+    if (computedStyle[i] == 'webkitFlexFlow')
+        foundFlexFlow = true;
+}
+shouldBeFalse('foundFlexFlow');
+
 // The initial value is 'stretch'.
 shouldBeEqualToString('flexbox.style.webkitAlignContent', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitAlignContent', 'stretch');

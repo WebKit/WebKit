@@ -190,6 +190,7 @@ PASS flexbox.style.webkitFlexFlow is "column wrap"
 PASS window.getComputedStyle(flexbox, null).webkitFlexFlow is "column wrap"
 PASS flexbox.style.webkitFlexFlow is "row-reverse wrap-reverse"
 PASS window.getComputedStyle(flexbox, null).webkitFlexFlow is "row-reverse wrap-reverse"
+PASS foundFlexFlow is false
 PASS flexbox.style.webkitAlignContent is ""
 PASS window.getComputedStyle(flexbox, null).webkitAlignContent is "stretch"
 PASS flexbox.style.webkitAlignContent is "flex-start"

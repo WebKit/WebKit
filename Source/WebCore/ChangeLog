@@ -1,3 +1,20 @@
+2012-06-22  Tony Chang  <tony@chromium.org>
+
+        -webkit-flex-flow shouldn't be an enumerable property of the computed style
+        https://bugs.webkit.org/show_bug.cgi?id=89698
+
+        Reviewed by Ojan Vafai.
+
+        flex-flow is a shorthand for flex-direction and flex-wrap:
+        http://dev.w3.org/csswg/css3-flexbox/#flex-flow-property
+        Shorthand properties should not be enumerable in the computed style, although you can still
+        get the value from the computed style.
+
+        Tests: css3/flexbox/css-properties.html: New test case added.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore):
+
 2012-06-22  Robert Kroeger  <rjkroege@chromium.org>
 
         Suppress horizontal conversion of PlatformWheelEvents when hasPreciseScrollingDeltas is true

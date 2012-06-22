@@ -148,7 +148,6 @@ zoom: 1;
 -webkit-align-self: stretch;
 -webkit-flex: 0 1 auto;
 -webkit-flex-direction: row;
--webkit-flex-flow: row none;
 -webkit-flex-wrap: none;
 -webkit-justify-content: flex-start;
 -webkit-font-kerning: auto;
