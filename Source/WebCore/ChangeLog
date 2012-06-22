@@ -1,3 +1,18 @@
+2012-06-22  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in DragController::concludeEditDrag.
+        https://bugs.webkit.org/show_bug.cgi?id=89762
+
+        Reviewed by Ryosuke Niwa.
+
+        RefPtr the innerFrame since it can get destroyed due to mutation
+        event fired in DragController::dispatchTextInputEventFor().
+
+        Test: editing/pasteboard/drop-text-events-sideeffect-crash.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+
 2012-06-22  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: timeline event details popup misses CPU time
