@@ -1,3 +1,13 @@
+2012-06-22  Hayato Ito  <hayato@chromium.org>
+
+        [Shadow] ShadowRoot.activeElement should use the result of re-targeting algorithm.
+        https://bugs.webkit.org/show_bug.cgi?id=89763
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/shadow-root-activeElement-expected.txt:
+        * fast/dom/shadow/shadow-root-activeElement.html:
+
 2012-06-22  Kenneth Russell  <kbr@google.com>
 
         Unreviewed Chromium gardening. Suppressed additional test failures

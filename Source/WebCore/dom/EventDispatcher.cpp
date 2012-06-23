@@ -51,12 +51,6 @@ namespace WebCore {
 
 static HashSet<Node*>* gNodesDispatchingSimulatedClicks = 0;
 
-static inline bool isAssignedTo(const Node* node, const InsertionPoint* insertionPoint)
-{
-    ASSERT(insertionPoint);
-    return node && (insertionPoint->contains(node) || (node->isShadowRoot() && toShadowRoot(node)->assignedTo() == insertionPoint));
-}
-
 EventRelatedTargetAdjuster::EventRelatedTargetAdjuster(PassRefPtr<Node> node, PassRefPtr<Node> relatedTarget)
     : m_node(node)
     , m_relatedTarget(relatedTarget)
@@ -74,7 +68,7 @@ void EventRelatedTargetAdjuster::adjust(Vector<EventContext>& ancestors)
         Node* node = walker.get();
         if (relatedTargetStack.isEmpty())
             relatedTargetStack.append(node);
-        else if (isInsertionPoint(node) && isAssignedTo(lastNode, toInsertionPoint(node)))
+        else if (isInsertionPoint(node) && toInsertionPoint(node)->contains(lastNode))
             relatedTargetStack.append(relatedTargetStack.last());
         TreeScope* scope = node->treeScope();
         // Skips adding a node to the map if treeScope does not change. Just for the performance optimization.
@@ -226,7 +220,7 @@ void EventDispatcher::ensureEventAncestors(Event* event)
         Node* node = walker.get();
         if (targetStack.isEmpty())
             targetStack.append(eventTargetRespectingSVGTargetRules(node));
-        else if (isInsertionPoint(node) && isAssignedTo(last, toInsertionPoint(node)))
+        else if (isInsertionPoint(node) && toInsertionPoint(node)->contains(last))
             targetStack.append(targetStack.last());
         m_ancestors.append(EventContext(node, eventTargetRespectingSVGTargetRules(node), targetStack.last()));
         if (!inDocument)

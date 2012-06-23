@@ -2,9 +2,11 @@
 <html>
 <head>
 <script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/shadow-dom.js"></script>
 </head>
 <body>
-<div id="console">
+<div id="console"></div>
+<div id="sandbox">
 </div>
 <script>
 description("This tests the activeElement property of a ShadowRoot.");
@@ -15,51 +17,51 @@ if (!window.internals)
 if (window.testRunner)
     testRunner.dumpAsText();
 
-var childInBody = document.createElement("p");
-childInBody.tabIndex = "1";
-document.body.appendChild(childInBody);
+document.getElementById('sandbox').appendChild(
+    createDOM('div', {},
+              createDOM('div', {'id': 'node-in-document', 'tabindex': 1}),
+              createDOM('div', {'id': 'shadow-host-1'},
+                        createShadowRoot(
+                            createDOM('div', {'id': 'shadow-host-2'},
+                                      createShadowRoot(
+                                          createDOM('div', {'id': 'child-in-shadow-root-2', 'tabindex': 1}))),
+                            createDOM('div', {'id': 'child-in-shadow-root-1', 'tabindex': 1}),
+                            createDOM('content', {'select': '#distributed-light-child'})),
+                        createDOM('div', {'id': 'distributed-light-child', 'tabindex': 1}))));
 
-// First ShodowHost
-var shadowHost = document.createElement("div");
-document.body.appendChild(shadowHost);
-var shadowRoot = new WebKitShadowRoot(shadowHost);
+var shadowHost1 = getNodeInShadowTreeStack('shadow-host-1');
+var shadowHost2 = getNodeInShadowTreeStack('shadow-host-1/shadow-host-2');
+var shadowRoot1 = getNodeInShadowTreeStack('shadow-host-1/');
+var shadowRoot2 = getNodeInShadowTreeStack('shadow-host-1/shadow-host-2/');
 
-// Second ShadowHost
-shadowHostInside = document.createElement("div");
-shadowRoot.appendChild(shadowHostInside);
-var shadowRootInside = new WebKitShadowRoot(shadowHostInside);
+var nodeInDocument = document.getElementById('node-in-document');
+var distributedLightChild = document.getElementById('distributed-light-child');
+var childInShadowRoot1 = getNodeInShadowTreeStack('shadow-host-1/child-in-shadow-root-1');
+var childInShadowRoot2 = getNodeInShadowTreeStack('shadow-host-1/shadow-host-2/child-in-shadow-root-2');
 
-// Add a child inside first Shadow host
-var childInTreeOne = document.createElement("p");
-childInTreeOne.setAttribute("id", "childInTreeOne");
-childInTreeOne.tabIndex = "1";
-shadowRoot.appendChild(childInTreeOne);
+shouldBeDefined("shadowRoot1.activeElement");
+shouldBeDefined("shadowRoot2.activeElement");
 
-// Add a child inside second shadow host
-var childInTreeTwo = document.createElement("p");
-childInTreeTwo.setAttribute("id", "childInTreeTwo");
-childInTreeTwo.tabIndex = "1";
-shadowRootInside.appendChild(childInTreeTwo);
+shouldBe("nodeInDocument.focus(); document.activeElement", "nodeInDocument");
+shouldBe("nodeInDocument.focus(); shadowRoot1.activeElement", "null");
+shouldBe("nodeInDocument.focus(); shadowRoot2.activeElement", "null");
 
-shouldBeDefined("shadowRoot.activeElement");
-shouldBeDefined("shadowRootInside.activeElement");
+shouldBe("distributedLightChild.focus(); document.activeElement", "distributedLightChild");
+shouldBe("distributedLightChild.focus(); shadowRoot1.activeElement", "distributedLightChild");
+shouldBe("distributedLightChild.focus(); shadowRoot2.activeElement", "null");
 
-shouldBe("childInBody.focus();document.activeElement", "childInBody");
-shouldBe("childInBody.focus();shadowRoot.activeElement", "null");
-shouldBe("childInBody.focus();shadowRootInside.activeElement", "null");
+shouldBe("childInShadowRoot1.focus(); document.activeElement", "shadowHost1");
+shouldBe("childInShadowRoot1.focus(); shadowRoot1.activeElement", "childInShadowRoot1");
+shouldBe("childInShadowRoot1.focus(); shadowRoot2.activeElement", "null");
 
-shouldBe("childInTreeOne.focus();document.activeElement", "shadowHost");
-shouldBe("childInTreeOne.focus();shadowRoot.activeElement", "childInTreeOne");
-shouldBe("childInTreeOne.focus();shadowRootInside.activeElement", "null");
+shouldBe("childInShadowRoot2.focus(); document.activeElement", "shadowHost1");
+shouldBe("childInShadowRoot2.focus(); shadowRoot1.activeElement", "shadowHost2");
+shouldBe("childInShadowRoot2.focus(); shadowRoot2.activeElement", "childInShadowRoot2");
 
-shouldBe("childInTreeTwo.focus();document.activeElement", "shadowHost");
-shouldBe("childInTreeTwo.focus();shadowRoot.activeElement", "shadowHostInside");
-shouldBe("childInTreeTwo.focus();shadowRootInside.activeElement", "childInTreeTwo");
-
-evalAndLog("childInTreeTwo.blur();");
+evalAndLog("childInShadowRoot2.blur();");
 shouldBe("document.activeElement", "document.body");
-shouldBe("shadowRoot.activeElement", "null");
-shouldBe("shadowRootInside.activeElement", "null");
+shouldBe("shadowRoot1.activeElement", "null");
+shouldBe("shadowRoot2.activeElement", "null");
 
 var successfullyParsed = true;
 </script>

@@ -1,3 +1,28 @@
+2012-06-22  Hayato Ito  <hayato@chromium.org>
+
+        [Shadow] ShadowRoot.activeElement should use the result of re-targeting algorithm.
+        https://bugs.webkit.org/show_bug.cgi?id=89763
+
+        Reviewed by Dimitri Glazkov.
+
+        Use the result of the re-targeting algorithm in calculating
+        shadow root's activeElement so that ShadowRoot.activeElement returns
+        a focused distributed node correctly as the algorithm says.
+
+        The spec is:
+        https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html#active-element
+
+        Tests: fast/dom/shadow/shadow-root-activeElement.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore):
+        (WebCore::EventRelatedTargetAdjuster::adjust):
+        (WebCore::EventDispatcher::ensureEventAncestors):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::focusedNode):
+        * html/shadow/InsertionPoint.h:
+        (WebCore::InsertionPoint::contains):
+
 2012-06-22  James Robinson  <jamesr@chromium.org>
 
         [chromium] LayerRendererChromium is not getting visibility messages in single threaded compositing mode.

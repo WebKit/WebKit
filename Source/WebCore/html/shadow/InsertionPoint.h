@@ -34,6 +34,7 @@
 #include "ContentDistributor.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "ShadowRoot.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -57,7 +58,7 @@ public:
     virtual bool isInsertionPoint() const OVERRIDE { return true; }
 
     size_t indexOf(Node* node) const { return m_distribution.find(node); }
-    bool contains(const Node* node) const { return m_distribution.contains(const_cast<Node*>(node)); }
+    bool contains(const Node* node) const { return m_distribution.contains(const_cast<Node*>(node)) || (node->isShadowRoot() && toShadowRoot(node)->assignedTo() == this); }
     size_t size() const { return m_distribution.size(); }
     Node* at(size_t index)  const { return m_distribution.at(index).get(); }
     Node* first() const { return m_distribution.isEmpty() ? 0 : m_distribution.first().get(); }
