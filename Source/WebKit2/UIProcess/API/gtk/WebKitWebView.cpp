@@ -1342,7 +1342,7 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, WKArrayRef wkPropo
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
     WebContextMenuProxyGtk* contextMenuProxy = webkitWebViewBaseGetActiveContextMenuProxy(webViewBase);
-    ASSERT(contextMenu);
+    ASSERT(contextMenuProxy);
 
     GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(wkProposedMenu));
     if (WKHitTestResultIsContentEditable(wkHitTestResult))

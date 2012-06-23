@@ -1,3 +1,10 @@
+2012-06-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed build fix for GTK's WebKit2 build after r121093.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewPopulateContextMenu):
+
 2012-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix several GTK+ unit tests.
