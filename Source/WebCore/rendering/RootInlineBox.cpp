@@ -122,7 +122,7 @@ bool RootInlineBox::lineCanAccommodateEllipsis(bool ltr, int blockEdge, int line
     return InlineFlowBox::canAccommodateEllipsis(ltr, blockEdge, ellipsisWidth);
 }
 
-void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth,
+float RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth,
                                   InlineBox* markupBox)
 {
     // Create an ellipsis box.
@@ -138,21 +138,26 @@ void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, fl
     // FIXME: Do we need an RTL version of this?
     if (ltr && (x() + logicalWidth() + ellipsisWidth) <= blockRightEdge) {
         ellipsisBox->setX(x() + logicalWidth());
-        return;
+        return logicalWidth() + ellipsisWidth;
     }
 
     // Now attempt to find the nearest glyph horizontally and place just to the right (or left in RTL)
     // of that glyph.  Mark all of the objects that intersect the ellipsis box as not painting (as being
     // truncated).
     bool foundBox = false;
-    ellipsisBox->setX(placeEllipsisBox(ltr, blockLeftEdge, blockRightEdge, ellipsisWidth, foundBox));
+    float truncatedWidth = 0;
+    float position = placeEllipsisBox(ltr, blockLeftEdge, blockRightEdge, ellipsisWidth, truncatedWidth, foundBox);
+    ellipsisBox->setX(position);
+    return truncatedWidth;
 }
 
-float RootInlineBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, bool& foundBox)
+float RootInlineBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox)
 {
-    float result = InlineFlowBox::placeEllipsisBox(ltr, blockLeftEdge, blockRightEdge, ellipsisWidth, foundBox);
-    if (result == -1)
+    float result = InlineFlowBox::placeEllipsisBox(ltr, blockLeftEdge, blockRightEdge, ellipsisWidth, truncatedWidth, foundBox);
+    if (result == -1) {
         result = ltr ? blockRightEdge - ellipsisWidth : blockLeftEdge;
+        truncatedWidth = blockRightEdge - blockLeftEdge;
+    }
     return result;
 }
 
@@ -231,6 +236,8 @@ void RootInlineBox::adjustPosition(float dx, float dy)
     m_lineBottom += blockDirectionDelta;
     m_lineTopWithLeading += blockDirectionDelta;
     m_lineBottomWithLeading += blockDirectionDelta;
+    if (hasEllipsisBox())
+        ellipsisBox()->adjustPosition(dx, dy);
 }
 
 void RootInlineBox::childRemoved(InlineBox* box)

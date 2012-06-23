@@ -1,3 +1,60 @@
+2012-06-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        Text with text-overflow:ellipsis and text-align:right is left aligned
+        https://bugs.webkit.org/show_bug.cgi?id=88705
+
+        Reviewed by Dan Bernstein.
+
+        When building the line of a text with overflow, we do not know if we can place
+        an ellipsis and where it should be. Because of that, text is laid out as if it does
+        not have text-overflow: ellipsis.
+
+        This causes problems with text-alignement right in LTR and left in RTL. The shortened text
+        did not follow the allignment.
+
+        This patch changes the position of lines with ellipsis after layout to follow the allignment.
+        In RenderBlock::checkLinesForTextOverflow(), the call to RootInlineBox::placeEllipsis() now
+        also gives the width of the truncated text. We use this width to re-compute the alignement and
+        shift the box if necessary.
+
+        In RenderBlock::deleteEllipsisLineBoxes() we revert the text to the position computed with the
+        total width. This way all layout computation is done as usual.
+
+        Tests: fast/css/text-overflow-ellipsis-text-align-left.html
+               fast/css/text-overflow-ellipsis-text-align-right.html
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::canAccommodateEllipsis): Make the method const for readability, truncating is
+        done later in placeEllipsisBox().
+        (WebCore::InlineBox::placeEllipsisBox): Add an output argument, truncatedWidth, giving the width
+        of the text + ellipsis after truncation (if any truncation can be done).
+        * rendering/InlineBox.h:
+        (InlineBox):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineBox::adjustLogicalPosition): adjustPosition() logical coordinates.
+        (WebCore::InlineFlowBox::canAccommodateEllipsis):
+        (WebCore::InlineFlowBox::placeEllipsisBox):
+        * rendering/InlineFlowBox.h:
+        (InlineFlowBox):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::placeEllipsisBox):
+        * rendering/InlineTextBox.h:
+        (InlineTextBox):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::deleteEllipsisLineBoxes): In addition to removing the truncation, we
+        need to revert the shift introduced by checkLinesForTextOverflow(). This restore the lines
+        to its original, untruncated position in order to layout the block correctly in RenderBlock::layoutInlineChildren().
+        (WebCore::RenderBlock::checkLinesForTextOverflow): After we truncate the text, we now recompute the shift we need
+        for alignment, and move the line accordingly.
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::placeEllipsis): Return the width of the truncated text + the width of the ellipsis.
+        (WebCore::RootInlineBox::placeEllipsisBox):
+        (WebCore::RootInlineBox::adjustPosition):
+        * rendering/RootInlineBox.h:
+        (RootInlineBox):
+
 2012-06-22  Eugene Klyuchnikov  <eustas.big@gmail.com>
 
         Web Inspector: Fix negative time interval on zoom-in

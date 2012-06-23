@@ -92,15 +92,17 @@ public:
     void childRemoved(InlineBox* box);
 
     bool lineCanAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth);
-    void placeEllipsis(const AtomicString& ellipsisStr, bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, InlineBox* markupBox = 0);
-    virtual float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, bool& foundBox);
+    // Return the truncatedWidth, the width of the truncated text + ellipsis.
+    float placeEllipsis(const AtomicString& ellipsisStr, bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, InlineBox* markupBox = 0);
+    // Return the position of the EllipsisBox or -1.
+    virtual float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) OVERRIDE;
 
     using InlineBox::hasEllipsisBox;
     EllipsisBox* ellipsisBox() const;
 
     void paintEllipsisBox(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) const;
 
-    virtual void clearTruncation();
+    virtual void clearTruncation() OVERRIDE;
 
     bool isHyphenated() const;
 
@@ -184,7 +186,6 @@ public:
     virtual const char* boxName() const;
 #endif
 private:
-
     LayoutUnit lineSnapAdjustment(LayoutUnit delta = 0) const;
 
     LayoutUnit beforeAnnotationsAdjustment() const;

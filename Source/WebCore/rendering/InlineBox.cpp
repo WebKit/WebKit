@@ -322,7 +322,7 @@ RenderObject::SelectionState InlineBox::selectionState()
     return renderer()->selectionState();
 }
 
-bool InlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth)
+bool InlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const
 {
     // Non-replaced elements can always accommodate an ellipsis.
     if (!m_renderer || !m_renderer->isReplaced())
@@ -333,9 +333,10 @@ bool InlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidt
     return !(boxRect.intersects(ellipsisRect));
 }
 
-float InlineBox::placeEllipsisBox(bool, float, float, float, bool&)
+float InlineBox::placeEllipsisBox(bool, float, float, float, float& truncatedWidth, bool&)
 {
     // Use -1 to mean "we didn't set the position."
+    truncatedWidth += logicalWidth();
     return -1;
 }
 

@@ -233,7 +233,7 @@ void InlineTextBox::attachLine()
     toRenderText(renderer())->attachTextBox(this);
 }
 
-float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, bool& foundBox)
+float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox)
 {
     if (foundBox) {
         m_truncation = cFullTruncation;
@@ -275,6 +275,7 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
             // No characters should be rendered.  Set ourselves to full truncation and place the ellipsis at the min of our start
             // and the ellipsis edge.
             m_truncation = cFullTruncation;
+            truncatedWidth += ellipsisWidth;
             return min(ellipsisX, x());
         }
 
@@ -290,11 +291,13 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
         // box directionality.
         // e.g. In the case of an LTR inline box truncated in an RTL flow then we can
         // have a situation such as |Hello| -> |...He|
+        truncatedWidth += widthOfVisibleText + ellipsisWidth;
         if (flowIsLTR)
             return left() + widthOfVisibleText;
         else
             return right() - widthOfVisibleText - ellipsisWidth;
     }
+    truncatedWidth += logicalWidth();
     return -1;
 }
 

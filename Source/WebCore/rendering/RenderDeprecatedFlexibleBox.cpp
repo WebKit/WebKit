@@ -979,6 +979,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
             continue;
 
         // Let the truncation code kick in.
+        // FIXME: the text alignment should be recomputed after the width changes due to truncation.
         lastVisibleLine->placeEllipsis(anchorBox ? ellipsisAndSpaceStr : ellipsisStr, leftToRight, blockLeftEdge, blockRightEdge, totalWidth, anchorBox);
         destBlock->setHasMarkupTruncation(true);
     }

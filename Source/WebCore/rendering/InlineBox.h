@@ -72,6 +72,13 @@ public:
     virtual bool isLineBreak() const { return false; }
 
     virtual void adjustPosition(float dx, float dy);
+    void adjustLogicalPosition(float deltaLogicalLeft, float deltaLogicalTop)
+    {
+        if (isHorizontal())
+            adjustPosition(deltaLogicalLeft, deltaLogicalTop);
+        else
+            adjustPosition(deltaLogicalTop, deltaLogicalLeft);
+    }
     void adjustLineDirectionPosition(float delta)
     {
         if (isHorizontal())
@@ -261,9 +268,9 @@ public:
     
     virtual RenderObject::SelectionState selectionState();
 
-    virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth);
+    virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const;
     // visibleLeftEdge, visibleRightEdge are in the parent's coordinate system.
-    virtual float placeEllipsisBox(bool ltr, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, bool&);
+    virtual float placeEllipsisBox(bool ltr, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool&);
 
 #ifndef NDEBUG
     void setHasBadParent();

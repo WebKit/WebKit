@@ -2675,8 +2675,26 @@ void RenderBlock::addOverflowFromInlineChildren()
 
 void RenderBlock::deleteEllipsisLineBoxes()
 {
-    for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox())
-        curr->clearTruncation();
+    ETextAlign textAlign = style()->textAlign();
+    bool ltr = style()->isLeftToRightDirection();
+    bool firstLine = true;
+    for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
+        if (curr->hasEllipsisBox()) {
+            curr->clearTruncation();
+
+            // Shift the line back where it belongs if we cannot accomodate an ellipsis.
+            float logicalLeft = pixelSnappedLogicalLeftOffsetForLine(curr->lineTop(), firstLine);
+            float availableLogicalWidth = logicalRightOffsetForLine(curr->lineTop(), false) - logicalLeft;
+            float totalLogicalWidth = curr->logicalWidth();
+            updateLogicalWidthForAlignment(textAlign, 0, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
+
+            if (ltr)
+                curr->adjustLogicalPosition((logicalLeft - curr->logicalLeft()), 0);
+            else
+                curr->adjustLogicalPosition(-(curr->logicalLeft() - logicalLeft), 0);
+        }
+        firstLine = false;
+    }
 }
 
 void RenderBlock::checkLinesForTextOverflow()
@@ -2694,20 +2712,33 @@ void RenderBlock::checkLinesForTextOverflow()
     // check the left edge of the line box to see if it is less
     // Include the scrollbar for overflow blocks, which means we want to use "contentWidth()"
     bool ltr = style()->isLeftToRightDirection();
+    ETextAlign textAlign = style()->textAlign();
+    bool firstLine = true;
     for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-        LayoutUnit blockRightEdge = logicalRightOffsetForLine(curr->y(), curr == firstRootBox());
-        LayoutUnit blockLeftEdge = logicalLeftOffsetForLine(curr->y(), curr == firstRootBox());
+        LayoutUnit blockRightEdge = logicalRightOffsetForLine(curr->lineTop(), firstLine);
+        LayoutUnit blockLeftEdge = logicalLeftOffsetForLine(curr->lineTop(), firstLine);
         LayoutUnit lineBoxEdge = ltr ? curr->x() + curr->logicalWidth() : curr->x();
         if ((ltr && lineBoxEdge > blockRightEdge) || (!ltr && lineBoxEdge < blockLeftEdge)) {
             // This line spills out of our box in the appropriate direction.  Now we need to see if the line
             // can be truncated.  In order for truncation to be possible, the line must have sufficient space to
             // accommodate our truncation string, and no replaced elements (images, tables) can overlap the ellipsis
             // space.
-            LayoutUnit width = curr == firstRootBox() ? firstLineEllipsisWidth : ellipsisWidth;
+
+            LayoutUnit width = firstLine ? firstLineEllipsisWidth : ellipsisWidth;
             LayoutUnit blockEdge = ltr ? blockRightEdge : blockLeftEdge;
-            if (curr->lineCanAccommodateEllipsis(ltr, blockEdge, lineBoxEdge, width))
-                curr->placeEllipsis(ellipsisStr, ltr, blockLeftEdge, blockRightEdge, width);
+            if (curr->lineCanAccommodateEllipsis(ltr, blockEdge, lineBoxEdge, width)) {
+                float totalLogicalWidth = curr->placeEllipsis(ellipsisStr, ltr, blockLeftEdge, blockRightEdge, width);
+
+                float logicalLeft = 0; // We are only intersted in the delta from the base position.
+                float truncatedWidth = pixelSnappedLogicalRightOffsetForLine(curr->lineTop(), firstLine);
+                updateLogicalWidthForAlignment(textAlign, 0, logicalLeft, totalLogicalWidth, truncatedWidth, 0);
+                if (ltr)
+                    curr->adjustLogicalPosition(logicalLeft, 0);
+                else
+                    curr->adjustLogicalPosition(-(truncatedWidth - (logicalLeft + totalLogicalWidth)), 0);
+            }
         }
+        firstLine = false;
     }
 }
 
@@ -2776,7 +2807,7 @@ LayoutUnit RenderBlock::startAlignedOffsetForLine(RenderBox* child, LayoutUnit p
     logicalLeft = logicalLeftOffsetForLine(logicalHeight(), false);
     availableLogicalWidth = logicalRightOffsetForLine(logicalHeight(), false) - logicalLeft;
     float totalLogicalWidth = logicalWidthForChild(child);
-    updateLogicalWidthForAlignment(textAlign, 0l, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
+    updateLogicalWidthForAlignment(textAlign, 0, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
 
     if (!style()->isLeftToRightDirection())
         return logicalWidth() - (logicalLeft + totalLogicalWidth);

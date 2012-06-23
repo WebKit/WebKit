@@ -1,3 +1,31 @@
+2012-06-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        Text with text-overflow:ellipsis and text-align:right is left aligned
+        https://bugs.webkit.org/show_bug.cgi?id=88705
+
+        Reviewed by Dan Bernstein.
+
+        * fast/css/text-overflow-ellipsis-text-align-center.html: Added.
+        * fast/css/text-overflow-ellipsis-text-align-justify.html: Added.
+        * fast/css/text-overflow-ellipsis-text-align-left.html: Added.
+        * fast/css/text-overflow-ellipsis-text-align-right.html: Added.
+        * fast/css/vertical-text-overflow-ellipsis-text-align-center.html: Added.
+        * fast/css/vertical-text-overflow-ellipsis-text-align-justify.html: Added.
+        * fast/css/vertical-text-overflow-ellipsis-text-align-left.html: Added.
+        * fast/css/vertical-text-overflow-ellipsis-text-align-right.html: Added.
+        The vertical-text tests are incorrect due to other bugs. Add they to track regressions/progressions
+        going forward.
+
+        * platform/chromium/TestExpectations: The tests need platform specific results.
+        * platform/mac/fast/css/text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/mac/fast/css/text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/mac/fast/css/text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/mac/fast/css/text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/mac/fast/css/text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/mac/fast/css/text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/mac/fast/css/text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/mac/fast/css/text-overflow-ellipsis-text-align-right-expected.txt: Added.
+
 2012-06-22  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Re-enable the CSS Shaders compile time flag on Safari Mac
