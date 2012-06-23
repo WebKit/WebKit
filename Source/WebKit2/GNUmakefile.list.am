@@ -89,6 +89,9 @@ webkit2_h_api += \
 webkit2gtk_h_api += \
 	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardList.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardListItem.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitContextMenu.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitContextMenuActions.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitContextMenuItem.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitCookieManager.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitDefines.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitDownload.h \
@@ -578,8 +581,17 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitContextMenu.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitContextMenu.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuActions.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuActions.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuActionsPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuClient.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuItem.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuItem.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuItemPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitCookieManager.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitCookieManager.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitCookieManagerPrivate.h \

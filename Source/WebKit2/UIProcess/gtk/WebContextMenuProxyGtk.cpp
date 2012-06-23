@@ -92,6 +92,7 @@ void WebContextMenuProxyGtk::showContextMenu(const WebCore::IntPoint& position, 
     // Display menu initiated by right click (mouse button pressed = 3).
     NativeWebMouseEvent* mouseEvent = m_page->currentlyProcessedMouseDownEvent();
     const GdkEvent* event = mouseEvent ? mouseEvent->nativeEvent() : 0;
+    gtk_menu_attach_to_widget(m_menu.platformDescription(), GTK_WIDGET(m_webView), 0);
     gtk_menu_popup(m_menu.platformDescription(), 0, 0, reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this,
                    event ? event->button.button : 3, event ? event->button.time : GDK_CURRENT_TIME);
 }

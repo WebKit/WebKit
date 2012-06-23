@@ -1,3 +1,147 @@
+2012-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add ContextMenu API to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=81011
+
+        Reviewed by Martin Robinson.
+
+        Add WebKitWebView::context-menu signal and WebKitContextMenu and
+        WebKitContextMenuItem objects to customize the default menu or
+        buils new menus.
+
+        * GNUmakefile.list.am: Add new files to destination.
+        * UIProcess/API/gtk/WebKitContextMenu.cpp: Added.
+        (webkitContextMenuFinalize):
+        (webkit_context_menu_init):
+        (webkit_context_menu_class_init):
+        (webkitContextMenuPopulate): Populate the given vector of
+        ContextMenuItems with the WebKitContextMenu items releasing the
+        items added to the vector.
+        (webkitContextMenuCreate): Create a new WebKitContextMenu for the
+        given WKArrayRef of WKContextMenuItemRef.
+        (webkitContextMenuSetParentItem): Set the parent menu item of the
+        menu. Used when a menu is added as a submenu of a menu item.
+        (webkitContextMenuGetParentItem): Return the parent menu item of
+        the menu.
+        (webkit_context_menu_new): Create a new WebKitContextMenu.
+        (webkit_context_menu_new_with_items): Create a new
+        WebKitContextMenu using the given list of WebKitContextMenuItem.
+        (webkit_context_menu_prepend): Add item at the beginning.
+        (webkit_context_menu_append): Add item at the end.
+        (webkit_context_menu_insert): Insert item at a random position.
+        (webkit_context_menu_move_item): Move an existing item to a new
+        position.
+        (webkit_context_menu_get_items): Get the list of items.
+        (webkit_context_menu_get_n_items): Get the number of items.
+        (webkit_context_menu_first): Get the first item.
+        (webkit_context_menu_last): Get the last item.
+        (webkit_context_menu_get_item_at_position): Get the item at the
+        given position.
+        (webkit_context_menu_remove): Remove the given item.
+        (webkit_context_menu_remove_all): Remove all items.
+        * UIProcess/API/gtk/WebKitContextMenu.h: Added.
+        * UIProcess/API/gtk/WebKitContextMenuActions.cpp: Added.
+        (webkitContextMenuActionIsCheckable): Check if the given stock
+        action is a toggle action.
+        (webkitContextMenuActionGetActionTag): Get the WebCore
+        ContextMenuAction corresponding to the given stock action.
+        (webkitContextMenuActionGetForContextMenuItem): Get the stock
+        action corresponding to the given WebCore ContextMenuAction.
+        (webkitContextMenuActionGetLabel): Get the label string of the
+        given stock action.
+        * UIProcess/API/gtk/WebKitContextMenuActions.h: Added.
+        * UIProcess/API/gtk/WebKitContextMenuActionsPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp: Added.
+        (webkitContextMenuItemFinalize):
+        (webkit_context_menu_item_init):
+        (webkit_context_menu_item_class_init):
+        (checkAndWarnIfMenuHasParentItem): Check whether the given menu
+        is already inside another menu showing a warning in such case.
+        (webkitContextMenuItemSetSubMenu): Set the submenu of a menu item,
+        checking that the menu is not part of another menu and setting the
+        item as the parent of the submenu.
+        (webkitContextMenuItemCreate): Create a new WebKitContextMenuItem
+        for the given WKContextMenuItemRef.
+        (webkitContextMenuItemCreateForGtkItem): Create a new
+        WebKitContextMenuItem using the given GtkMenuItem.
+        (webkitContextMenuItemSetSubMenuFromGtkMenu): Set the given
+        GtkMenu as submenu of the item. This is used only to add Input
+        Methods submenu that is created by GTK.
+        (webkitContextMenuItemRelease): Release the WebCore
+        ContextMenuItem associated to the item.
+        (webkit_context_menu_item_new): Create a new WebKitContextMenuItem
+        for the given GtkAction.
+        (webkit_context_menu_item_new_from_stock_action): Create a new
+        WebKitContextMenuItem for a stock action.
+        (webkit_context_menu_item_new_from_stock_action_with_label):
+        Create a new WebKitContextMenuItem for a stock action using a
+        custom label.
+        (webkit_context_menu_item_new_with_submenu): Create a new
+        WebKitContextMenuItem with a submenu.
+        (webkit_context_menu_item_new_separator): Create a new separator
+        menu item.
+        (webkit_context_menu_item_get_action): Get the GtkAction of the item.
+        (webkit_context_menu_item_get_stock_action): Get the stock action
+        of the item.
+        (webkit_context_menu_item_is_separator): Whether item is a separator.
+        (webkit_context_menu_item_set_submenu): Set or replace the
+        submenu of the item.
+        (webkit_context_menu_item_get_submenu): Get the submenu of the item.
+        * UIProcess/API/gtk/WebKitContextMenuItem.h: Added.
+        * UIProcess/API/gtk/WebKitContextMenuItemPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitContextMenuPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitDefines.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init): Add WebKitWebView::context-menu signal.
+        (getUnicodeMenuItemPosition): Helper function that returns the
+        position of the unicode menu item in the proposed context menu.
+        (webkitWebViewCreateAndAppendInputMethodsMenuItem): Use
+        WebKitContextMenu API to add the input methods submenu to the
+        default context menu.
+        (webkitWebViewPopulateContextMenu): Create a WebKitContextMenu for
+        the default context menu and emit WebKitWebView::context-menu
+        signal. Then populate the context menu proxy with the resulting
+        WebKitContextMenu.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseButtonPressEvent): In case of right click save
+        the event to be used by context menu signal.
+        (webkitWebViewBaseTakeContextMenuEvent): Return and release the
+        saved button event.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add sections for
+        WebKitContextMenu and WebKitContextMenuItem.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add
+        webkit_context_menu_get_type and webkit_context_menu_item_get_type.
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Add new test for context menu.
+        * UIProcess/API/gtk/tests/TestContextMenu.cpp: Added.
+        (testContextMenuDefaultMenu):
+        (testContextMenuPopulateMenu):
+        (testContextMenuCustomMenu):
+        (testContextMenuDisableMenu):
+        (testContextMenuSubMenu):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/tests/TestMain.h:
+        (Test::addLogFatalFlag): Add a log level flag to the mask of flags
+        causing the program to abort.
+        (Test::removeLogFatalFlag): Remove a log level flag to the mask of
+        flags causing the program to abort.
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::quitMainLoop): Finish the main loop.
+        (WebViewTest::quitMainLoopAfterProcessingPendingEvents): Finish
+        the main loop when all pending events have been processed.
+        (quitMainLoopIdleCallback):
+        (WebViewTest::wait):
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+        * UIProcess/API/gtk/webkit2.h: Include WebKitContextMenu.h,
+        WebKitContextMenuItem.h and WebKitContextMenuActions.h.
+        * UIProcess/API/gtk/webkit2marshal.list:
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::showContextMenu): Attach the
+        popup menu to the view widget before showing it.
+
 2012-06-22  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Re-enable the CSS Shaders compile time flag on Safari Mac

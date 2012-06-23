@@ -40,6 +40,8 @@ public:
     void goForward();
     void goToBackForwardListItem(WebKitBackForwardListItem*);
 
+    void quitMainLoop();
+    void quitMainLoopAfterProcessingPendingEvents();
     void wait(double seconds);
     void waitUntilLoadFinished();
     void waitUntilTitleChangedTo(const char* expectedTitle);

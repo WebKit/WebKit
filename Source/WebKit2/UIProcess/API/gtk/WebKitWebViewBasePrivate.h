@@ -49,5 +49,6 @@ void webkitWebViewBaseInitializeFullScreenClient(WebKitWebViewBase*, const WKFul
 void webkitWebViewBaseSetInspectorViewHeight(WebKitWebViewBase*, unsigned height);
 void webkitWebViewBaseSetActiveContextMenuProxy(WebKitWebViewBase*, WebContextMenuProxyGtk*);
 WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebViewBase*);
+GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase*);
 
 #endif // WebKitWebViewBasePrivate_h

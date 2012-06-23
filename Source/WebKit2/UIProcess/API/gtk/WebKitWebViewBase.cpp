@@ -46,6 +46,7 @@
 #include <WebCore/DataObjectGtk.h>
 #include <WebCore/DragData.h>
 #include <WebCore/DragIcon.h>
+#include <WebCore/GOwnPtrGtk.h>
 #include <WebCore/GtkClickCounter.h>
 #include <WebCore/GtkDragAndDropHelper.h>
 #include <WebCore/GtkUtilities.h>
@@ -94,6 +95,7 @@ struct _WebKitWebViewBasePrivate {
 #endif
     GtkWidget* inspectorView;
     unsigned inspectorViewHeight;
+    GOwnPtr<GdkEvent> contextMenuEvent;
     WebContextMenuProxyGtk* activeContextMenuProxy;
 };
 
@@ -448,6 +450,10 @@ static gboolean webkitWebViewBaseButtonPressEvent(GtkWidget* widget, GdkEventBut
 
     if (!priv->clickCounter.shouldProcessButtonEvent(buttonEvent))
         return TRUE;
+
+    // If it's a right click event save it as a possible context menu event.
+    if (buttonEvent->button == 3)
+        priv->contextMenuEvent.set(gdk_event_copy(reinterpret_cast<GdkEvent*>(buttonEvent)));
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(reinterpret_cast<GdkEvent*>(buttonEvent),
                                                      priv->clickCounter.clickCountForGdkButtonEvent(widget, buttonEvent)));
     return TRUE;
@@ -783,4 +789,9 @@ void webkitWebViewBaseSetActiveContextMenuProxy(WebKitWebViewBase* webkitWebView
 WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKitWebViewBase* webkitWebViewBase)
 {
     return webkitWebViewBase->priv->activeContextMenuProxy;
+}
+
+GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebViewBase)
+{
+    return webkitWebViewBase->priv->contextMenuEvent.release();
 }

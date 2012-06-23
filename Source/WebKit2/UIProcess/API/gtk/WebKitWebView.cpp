@@ -25,6 +25,8 @@
 #include "WebContextMenuItemData.h"
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitContextMenuClient.h"
+#include "WebKitContextMenuItemPrivate.h"
+#include "WebKitContextMenuPrivate.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitError.h"
 #include "WebKitFullscreenClient.h"
@@ -50,6 +52,7 @@
 #include "WebPageProxy.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/DragIcon.h>
+#include <WebCore/GOwnPtrGtk.h>
 #include <WebCore/GtkUtilities.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -83,6 +86,8 @@ enum {
     LEAVE_FULLSCREEN,
 
     RUN_FILE_CHOOSER,
+
+    CONTEXT_MENU,
 
     LAST_SIGNAL
 };
@@ -982,6 +987,62 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      webkit_marshal_BOOLEAN__OBJECT,
                      G_TYPE_BOOLEAN, 1, /* number of parameters */
                      WEBKIT_TYPE_FILE_CHOOSER_REQUEST);
+
+    /**
+     * WebKitWebView::context-menu:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @context_menu: the proposed #WebKitContextMenu
+     * @event: the #GdkEvent that triggered the context menu
+     * @hit_test_result: a #WebKitHitTestResult
+     *
+     * Emmited when a context menu is about to be displayed to give the application
+     * a chance to customize the proposed menu, prevent the menu from being displayed
+     * or build its own context menu.
+     * <itemizedlist>
+     * <listitem><para>
+     *  To customize the proposed menu you can use webkit_context_menu_prepend(),
+     *  webkit_context_menu_append() or webkit_context_menu_insert() to add new
+     *  #WebKitContextMenuItem<!-- -->s to @context_menu, webkit_context_menu_move_item()
+     *  to reorder existing items, or webkit_context_menu_remove() to remove an
+     *  existing item. The signal handler should return %FALSE, and the menu represented
+     *  by @context_menu will be shown.
+     * </para></listitem>
+     * <listitem><para>
+     *  To prevent the menu from being displayed you can just connect to this signal
+     *  and return %TRUE so that the proposed menu will not be shown.
+     * </para></listitem>
+     * <listitem><para>
+     *  To build your own menu, you can remove all items from the proposed menu with
+     *  webkit_context_menu_remove_all(), add your own items and return %FALSE so
+     *  that the menu will be shown. You can also ignore the proposed #WebKitContextMenu,
+     *  build your own #GtkMenu and return %TRUE to prevent the proposed menu from being shown.
+     * </para></listitem>
+     * <listitem><para>
+     *  If you just want the default menu to be shown always, simply don't connect to this
+     *  signal because showing the proposed context menu is the default behaviour.
+     * </para></listitem>
+     * </itemizedlist>
+     *
+     * If the signal handler returns %FALSE the context menu represented by @context_menu
+     * will be shown, if it return %TRUE the context menu will not be shown.
+     *
+     * The proposed #WebKitContextMenu passed in @context_menu argument is only valid
+     * during the signal emission.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *    %FALSE to propagate the event further.
+     */
+    signals[CONTEXT_MENU] =
+        g_signal_new("context-menu",
+                     G_TYPE_FROM_CLASS(webViewClass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(WebKitWebViewClass, context_menu),
+                     g_signal_accumulator_true_handled, 0,
+                     webkit_marshal_BOOLEAN__OBJECT_BOXED_OBJECT,
+                     G_TYPE_BOOLEAN, 3,
+                     WEBKIT_TYPE_CONTEXT_MENU,
+                     GDK_TYPE_EVENT | G_SIGNAL_TYPE_STATIC_SCOPE,
+                     WEBKIT_TYPE_HIT_TEST_RESULT);
 }
 
 static bool updateReplaceContentStatus(WebKitWebView* webView, WebKitLoadEvent loadEvent)
@@ -1231,14 +1292,6 @@ void webkitWebViewRunFileChooserRequest(WebKitWebView* webView, WebKitFileChoose
     g_signal_emit(webView, signals[RUN_FILE_CHOOSER], 0, request, &returnValue);
 }
 
-static void webkitWebViewCreateAndAppendDefaultMenuItems(WebKitWebView* webView, WKArrayRef wkProposedMenu, Vector<ContextMenuItem>& contextMenuItems)
-{
-    for (size_t i = 0; i < WKArrayGetSize(wkProposedMenu); ++i) {
-        WKContextMenuItemRef wkItem = static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(wkProposedMenu, i));
-        contextMenuItems.append(toImpl(wkItem)->data()->core());
-    }
-}
-
 static bool webkitWebViewShouldShowInputMethodsMenu(WebKitWebView* webView)
 {
     GtkSettings* settings = gtk_widget_get_settings(GTK_WIDGET(webView));
@@ -1250,33 +1303,65 @@ static bool webkitWebViewShouldShowInputMethodsMenu(WebKitWebView* webView)
     return showInputMethodMenu;
 }
 
-static void webkitWebViewCreateAndAppendInputMethodsMenuItem(WebKitWebView* webView, Vector<ContextMenuItem>& contextMenuItems)
+static int getUnicodeMenuItemPosition(WebKitContextMenu* contextMenu)
+{
+    GList* items = webkit_context_menu_get_items(contextMenu);
+    GList* iter;
+    int i = 0;
+    for (iter = items, i = 0; iter; iter = g_list_next(iter), ++i) {
+        WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(iter->data);
+
+        if (webkit_context_menu_item_is_separator(item))
+            continue;
+        if (webkit_context_menu_item_get_stock_action(item) == WEBKIT_CONTEXT_MENU_ACTION_UNICODE)
+            return i;
+    }
+    return -1;
+}
+
+static void webkitWebViewCreateAndAppendInputMethodsMenuItem(WebKitWebView* webView, WebKitContextMenu* contextMenu)
 {
     if (!webkitWebViewShouldShowInputMethodsMenu(webView))
         return;
 
+    // Place the im context menu item right before the unicode menu item
+    // if it's present.
+    int unicodeMenuItemPosition = getUnicodeMenuItemPosition(contextMenu);
+    if (unicodeMenuItemPosition == -1)
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
+
     GtkIMContext* imContext = webkitWebViewBaseGetIMContext(WEBKIT_WEB_VIEW_BASE(webView));
     GtkMenu* imContextMenu = GTK_MENU(gtk_menu_new());
     gtk_im_multicontext_append_menuitems(GTK_IM_MULTICONTEXT(imContext), GTK_MENU_SHELL(imContextMenu));
-    ContextMenu subMenu(imContextMenu);
-
-    ContextMenuItem separator(SeparatorType, ContextMenuItemTagNoAction, String());
-    contextMenuItems.append(separator);
-    ContextMenuItem menuItem(SubmenuType, ContextMenuItemTagNoAction, _("Input _Methods"), &subMenu);
-    contextMenuItems.append(menuItem);
+    WebKitContextMenuItem* menuItem = webkit_context_menu_item_new_from_stock_action(WEBKIT_CONTEXT_MENU_ACTION_INPUT_METHODS);
+    webkitContextMenuItemSetSubMenuFromGtkMenu(menuItem, imContextMenu);
+    webkit_context_menu_insert(contextMenu, menuItem, unicodeMenuItemPosition);
 }
 
 void webkitWebViewPopulateContextMenu(WebKitWebView* webView, WKArrayRef wkProposedMenu, WKHitTestResultRef wkHitTestResult)
 {
-    WebContextMenuProxyGtk* contextMenu = webkitWebViewBaseGetActiveContextMenuProxy(WEBKIT_WEB_VIEW_BASE(webView));
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
+    WebContextMenuProxyGtk* contextMenuProxy = webkitWebViewBaseGetActiveContextMenuProxy(webViewBase);
     ASSERT(contextMenu);
 
-    Vector<ContextMenuItem> contextMenuItems;
-    webkitWebViewCreateAndAppendDefaultMenuItems(webView, wkProposedMenu, contextMenuItems);
+    GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(wkProposedMenu));
     if (WKHitTestResultIsContentEditable(wkHitTestResult))
-        webkitWebViewCreateAndAppendInputMethodsMenuItem(webView, contextMenuItems);
+        webkitWebViewCreateAndAppendInputMethodsMenuItem(webView, contextMenu.get());
 
-    contextMenu->populate(contextMenuItems);
+    GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(wkHitTestResult));
+    GOwnPtr<GdkEvent> contextMenuEvent(webkitWebViewBaseTakeContextMenuEvent(webViewBase));
+
+    gboolean returnValue;
+    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(), contextMenuEvent.get(), hitTestResult.get(), &returnValue);
+    if (returnValue)
+        return;
+
+    Vector<ContextMenuItem> contextMenuItems;
+    webkitContextMenuPopulate(contextMenu.get(), contextMenuItems);
+    contextMenuProxy->populate(contextMenuItems);
+
+    // Clear the menu to make sure it's useless after signal emission.
+    webkit_context_menu_remove_all(contextMenu.get());
 }
 
 /**

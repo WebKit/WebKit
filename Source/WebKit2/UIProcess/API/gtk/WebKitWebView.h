@@ -159,6 +159,10 @@ struct _WebKitWebViewClass {
     gboolean   (* leave_fullscreen)      (WebKitWebView             *web_view);
     gboolean   (* run_file_chooser)      (WebKitWebView             *web_view,
                                           WebKitFileChooserRequest  *request);
+    gboolean   (* context_menu)         (WebKitWebView              *web_view,
+                                         WebKitContextMenu          *context_menu,
+                                         GdkEvent                   *event,
+                                         WebKitHitTestResult        *hit_test_result);
 
     /* Padding for future expansion */
     void (*_webkit_reserved0) (void);

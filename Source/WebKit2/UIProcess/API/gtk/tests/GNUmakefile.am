@@ -2,6 +2,7 @@ if ENABLE_WEBKIT2
 
 TEST_PROGS += \
 	Programs/WebKit2APITests/TestBackForwardList \
+	Programs/WebKit2APITests/TestContextMenu \
 	Programs/WebKit2APITests/TestCookieManager \
 	Programs/WebKit2APITests/TestDownloads \
 	Programs/WebKit2APITests/TestInspector \
@@ -166,5 +167,11 @@ Programs_WebKit2APITests_TestWebKitVersion_SOURCES = \
 Programs_WebKit2APITests_TestWebKitVersion_CPPFLAGS = $(webkit2_tests_cppflags)
 Programs_WebKit2APITests_TestWebKitVersion_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestWebKitVersion_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestContextMenu_SOURCES = \
+        Source/WebKit2/UIProcess/API/gtk/tests/TestContextMenu.cpp
+Programs_WebKit2APITests_TestContextMenu_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestContextMenu_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestContextMenu_LDFLAGS = $(webkit2_tests_ldflags)
 
 endif # ENABLE_WEBKIT2

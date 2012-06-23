@@ -75,6 +75,20 @@ public:
         return resourcesDir.get();
     }
 
+    void addLogFatalFlag(unsigned flag)
+    {
+        unsigned fatalMask = g_log_set_always_fatal(static_cast<GLogLevelFlags>(G_LOG_FATAL_MASK));
+        fatalMask |= flag;
+        g_log_set_always_fatal(static_cast<GLogLevelFlags>(fatalMask));
+    }
+
+    void removeLogFatalFlag(unsigned flag)
+    {
+        unsigned fatalMask = g_log_set_always_fatal(static_cast<GLogLevelFlags>(G_LOG_FATAL_MASK));
+        fatalMask &= ~flag;
+        g_log_set_always_fatal(static_cast<GLogLevelFlags>(fatalMask));
+    }
+
     HashSet<GObject*> m_watchedObjects;
 };
 

@@ -43,12 +43,6 @@ WebViewTest::~WebViewTest()
     g_main_loop_unref(m_mainLoop);
 }
 
-static gboolean testLoadTimeoutFinishLoop(GMainLoop* loop)
-{
-    g_main_loop_quit(loop);
-    return FALSE;
-}
-
 void WebViewTest::loadURI(const char* uri)
 {
     m_activeURI = uri;
@@ -112,9 +106,27 @@ void WebViewTest::goToBackForwardListItem(WebKitBackForwardListItem* item)
     webkit_web_view_go_to_back_forward_list_item(m_webView, item);
 }
 
+void WebViewTest::quitMainLoop()
+{
+    g_main_loop_quit(m_mainLoop);
+}
+
+void WebViewTest::quitMainLoopAfterProcessingPendingEvents()
+{
+    while (gtk_events_pending())
+        gtk_main_iteration();
+    quitMainLoop();
+}
+
+static gboolean quitMainLoopIdleCallback(WebViewTest* test)
+{
+    test->quitMainLoop();
+    return FALSE;
+}
+
 void WebViewTest::wait(double seconds)
 {
-    g_timeout_add_seconds(seconds, reinterpret_cast<GSourceFunc>(testLoadTimeoutFinishLoop), m_mainLoop);
+    g_timeout_add_seconds(seconds, reinterpret_cast<GSourceFunc>(quitMainLoopIdleCallback), m_mainLoop);
     g_main_loop_run(m_mainLoop);
 }
 
