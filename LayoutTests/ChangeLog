@@ -1,3 +1,9 @@
+2012-06-23  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed. Fix chromium test expectations
+
+        * platform/chromium/TestExpectations:
+
 2012-06-23  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening after 121063, adding IMAGE test expectation
