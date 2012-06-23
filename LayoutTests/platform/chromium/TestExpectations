@@ -3023,7 +3023,9 @@ BUGWK77110 WIN DEBUG : accessibility/loading-iframe-sends-notification.html = PA
 
 BUGWK73514 WIN : platform/chromium/compositing/lost-compositor-context-permanently.html = PASS TIMEOUT
 
+// Flaky
 BUGWK73692 : media/event-attributes.html = CRASH TEXT PASS
+BUGWK73692 : media/video-playbackrate.html = CRASH PASS
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = IMAGE
 
@@ -3740,6 +3742,7 @@ BUGWK89702 : compositing/scaling/tiled-layer-recursion.html = PASS IMAGE
 BUGWK89717 : fast/speech/scripted/speechgrammar-basics.html = PASS CRASH
 
 BUGWK89789 MAC : plugins/embed-attributes-style.html = PASS IMAGE
+BUGWK89789 MAC : userscripts/user-script-video-document.html = PASS CRASH
 
 // Flaky
 BUGWK89794 MAC : fast/regions/get-regions-by-content-node2.html = PASS CRASH
