@@ -1,3 +1,14 @@
+2012-06-22  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Re-enable the CSS Shaders compile time flag on Safari Mac
+        https://bugs.webkit.org/show_bug.cgi?id=89781
+
+        Reviewed by Dean Jackson.
+
+        Added CSS Shaders as enabled by default on Safari for Mac.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-06-22  Adam Barth  <abarth@webkit.org>
 
         Add support for test_expectations_android.txt for overriding test expecations on the chromium-android branch
