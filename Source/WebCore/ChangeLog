@@ -1,5 +1,11 @@
 2012-06-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Clang and cl.exe build fix after r121103. Don't inherit from WTF::PairHash<unsigned char, StringType>.
+
+        * dom/NodeRareData.h:
+
+2012-06-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION(r120979): getElementsByTagName is 12% slower
         https://bugs.webkit.org/show_bug.cgi?id=89783
 

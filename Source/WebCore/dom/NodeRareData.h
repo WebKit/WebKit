@@ -50,7 +50,7 @@ class NodeListsNodeData {
     WTF_MAKE_NONCOPYABLE(NodeListsNodeData); WTF_MAKE_FAST_ALLOCATED;
 public:
     template <typename StringType>
-    struct NodeListCacheMapEntryHash : public WTF::PairHash<unsigned char, StringType> {
+    struct NodeListCacheMapEntryHash {
         static unsigned hash(const std::pair<unsigned char, StringType>& entry)
         {
             return DefaultHash<StringType>::Hash::hash(entry.second) + entry.first;
