@@ -51,7 +51,7 @@ public:
 
     HitTestPoint();
     HitTestPoint(const LayoutPoint&);
-    // Pass non-negative padding values to perform a rect-based hit test.
+    // Pass non-zero padding values to perform a rect-based hit test.
     HitTestPoint(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
     HitTestPoint(const HitTestPoint&);
     ~HitTestPoint();
@@ -60,27 +60,25 @@ public:
     LayoutPoint point() const { return m_point; }
     IntPoint roundedPoint() const { return roundedIntPoint(m_point); }
 
-    void setPoint(const LayoutPoint& p) { m_point = p; }
+    void setPoint(const LayoutPoint&);
 
     // Rect-based hit test related methods.
     bool isRectBasedTest() const { return m_isRectBased; }
-    IntRect rectForPoint(const LayoutPoint&) const;
-    static IntRect rectForPoint(const LayoutPoint&, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
-    int topPadding() const { return m_topPadding; }
-    int rightPadding() const { return m_rightPadding; }
-    int bottomPadding() const { return m_bottomPadding; }
-    int leftPadding() const { return m_leftPadding; }
+    IntRect boundingBox() const { return m_boundingBox; }
 
-    bool intersects(const LayoutRect& rect) const { return rect.intersects(rectForPoint(m_point)); }
-    bool intersects(const FloatRect& rect) const { return rect.intersects(rectForPoint(m_point)); }
+    static IntRect rectForPoint(const LayoutPoint&, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
+    int topPadding() const { return roundedPoint().y() - m_boundingBox.y(); }
+    int rightPadding() const { return m_boundingBox.maxX() - roundedPoint().x() - 1; }
+    int bottomPadding() const { return m_boundingBox.maxY() - roundedPoint().y() - 1; }
+    int leftPadding() const { return roundedPoint().x() - m_boundingBox.x(); }
+
+    bool intersects(const LayoutRect&) const;
+    bool intersects(const FloatRect&) const;
 
 private:
     LayoutPoint m_point;
 
-    int m_topPadding;
-    int m_rightPadding;
-    int m_bottomPadding;
-    int m_leftPadding;
+    IntRect m_boundingBox;
     bool m_isRectBased;
 };
 
@@ -151,7 +149,7 @@ public:
 
     // Returns true if it is rect-based hit test and needs to continue until the rect is fully
     // enclosed by the boundaries of a node.
-    bool addNodeToRectBasedTestResult(Node*, const HitTestPoint& pointInContainer, const IntRect& = IntRect());
+    bool addNodeToRectBasedTestResult(Node*, const HitTestPoint& pointInContainer, const LayoutRect& = LayoutRect());
     bool addNodeToRectBasedTestResult(Node*, const HitTestPoint& pointInContainer, const FloatRect&);
     void append(const HitTestResult&);
 
@@ -183,16 +181,6 @@ private:
 
     mutable OwnPtr<NodeSet> m_rectBasedTestResult;
 };
-
-// Formula:
-// x = p.x() - rightPadding
-// y = p.y() - topPadding
-// width = leftPadding + rightPadding + 1
-// height = topPadding + bottomPadding + 1
-inline IntRect HitTestPoint::rectForPoint(const LayoutPoint& point) const
-{
-    return rectForPoint(point, m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding);
-}
 
 String displayString(const String&, const Node*);
 

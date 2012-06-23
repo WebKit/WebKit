@@ -4706,7 +4706,7 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
         return false;
 
     for (ColumnRectIterator it(*this); it.hasMore(); it.advance()) {
-        LayoutRect hitRect = result.rectForPoint(pointInContainer.point());
+        LayoutRect hitRect = pointInContainer.boundingBox();
         LayoutRect colRect = it.columnRect();
         colRect.moveBy(accumulatedOffset);
         if (pointInContainer.intersects(colRect)) {

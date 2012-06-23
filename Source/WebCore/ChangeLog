@@ -1,3 +1,39 @@
+2012-06-23  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Store hit-test rect in HitTestPoint as Rect.
+        https://bugs.webkit.org/show_bug.cgi?id=89454
+
+        Reviewed by Darin Adler.
+
+        Calculate the rectangle early and store that instead of padding
+        to avoid recalculating the rectangle for every single element
+        hit tested.
+
+        No change in functionality. No new tests.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::bestClickableNodeForTouchPoint):
+        (WebCore::EventHandler::bestZoomableAreaForTouchPoint):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestPoint::HitTestPoint):
+        (WebCore::HitTestPoint::operator=):
+        (WebCore::HitTestPoint::setPoint):
+        (WebCore::hitTestPointIntersects):
+        (WebCore::HitTestPoint::intersects):
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult):
+        * rendering/HitTestResult.h:
+        (HitTestPoint):
+        (WebCore::HitTestPoint::boundingBox):
+        (WebCore::HitTestPoint::topPadding):
+        (WebCore::HitTestPoint::rightPadding):
+        (WebCore::HitTestPoint::bottomPadding):
+        (WebCore::HitTestPoint::leftPadding):
+        (HitTestResult):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hitTestColumns):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+
 2012-06-22  Benjamin Poulain  <bpoulain@apple.com>
 
         Text with text-overflow:ellipsis and text-align:right is left aligned

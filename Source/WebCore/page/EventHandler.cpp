@@ -2485,7 +2485,7 @@ bool EventHandler::bestClickableNodeForTouchPoint(const IntPoint& touchCenter, c
     IntPoint hitTestPoint = m_frame->view()->windowToContents(touchCenter);
     HitTestResult result = hitTestResultAtPoint(hitTestPoint, /*allowShadowContent*/ false, /*ignoreClipping*/ false, DontHitTestScrollbars, hitType, touchRadius);
 
-    IntRect touchRect = result.rectForPoint(touchCenter);
+    IntRect touchRect(touchCenter - touchRadius, touchRadius + touchRadius);
     RefPtr<StaticHashSetNodeList> nodeList = StaticHashSetNodeList::adopt(result.rectBasedTestResult());
     return findBestClickableCandidate(targetNode, targetPoint, touchCenter, touchRect, *nodeList.get());
 }
@@ -2496,7 +2496,7 @@ bool EventHandler::bestZoomableAreaForTouchPoint(const IntPoint& touchCenter, co
     IntPoint hitTestPoint = m_frame->view()->windowToContents(touchCenter);
     HitTestResult result = hitTestResultAtPoint(hitTestPoint, /*allowShadowContent*/ false, /*ignoreClipping*/ false, DontHitTestScrollbars, hitType, touchRadius);
 
-    IntRect touchRect = result.rectForPoint(touchCenter);
+    IntRect touchRect(touchCenter - touchRadius, touchRadius + touchRadius);
     RefPtr<StaticHashSetNodeList> nodeList = StaticHashSetNodeList::adopt(result.rectBasedTestResult());
     return findBestZoomableArea(targetNode, targetArea, touchCenter, touchRect, *nodeList.get());
 }
