@@ -2639,7 +2639,8 @@ sub execMacWebKitAppForDebugging($)
 {
     my ($appPath) = @_;
 
-    my $gdbPath = "/usr/bin/gdb";
+    my $gdbPath = `xcrun -find gdb`;
+    chomp $gdbPath;
     die "Can't find gdb executable. Is gdb installed?\n" unless -x $gdbPath;
 
     my $productDir = productDir();

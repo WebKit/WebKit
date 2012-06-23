@@ -1,3 +1,12 @@
+2012-06-23  Dan Bernstein  <mitz@apple.com>
+
+        debug-{minibrowser,safari,test-runner} fail when gdb is not installed in /usr/bin.
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitdirs.pm:
+        (execMacWebKitAppForDebugging): Use xcrun to locate gdb.
+
 2012-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Skip GTK+ unit test /webkit2/WebKitFindController/hide.
