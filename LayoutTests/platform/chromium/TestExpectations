@@ -3746,3 +3746,5 @@ BUGWK89789 MAC : userscripts/user-script-video-document.html = PASS CRASH
 
 // Flaky
 BUGWK89794 MAC : fast/regions/get-regions-by-content-node2.html = PASS CRASH
+
+BUGWK89045 : compositing/video-page-visibility.html = IMAGE
