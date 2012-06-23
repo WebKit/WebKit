@@ -1,3 +1,9 @@
+2012-06-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-06-22  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Avoid infinite loop if we try to encode -1 for leveldb
