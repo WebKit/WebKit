@@ -92,6 +92,7 @@ public:
     virtual Status status() { return Uncached; }
     virtual bool startUpdate() { return false; }
     virtual bool swapCache() { return false; }
+    virtual void abort() { }
 
     // Structures and methods to support inspecting Application Caches.
     struct CacheInfo {

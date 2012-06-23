@@ -1,3 +1,15 @@
+2012-06-22  Michael Nordman  <michaeln@google.com>
+
+        [chromium] WebKit API plumbing for applicationCache.abort() 
+        https://bugs.webkit.org/show_bug.cgi?id=89792
+
+        Reviewed by Darin Fisher.
+
+        * public/WebApplicationCacheHost.h:
+        (WebKit::WebApplicationCacheHost::abort):
+        * src/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::abort):
+
 2012-06-22  James Robinson  <jamesr@chromium.org>
 
         [chromium] LayerRendererChromium is not getting visibility messages in single threaded compositing mode.

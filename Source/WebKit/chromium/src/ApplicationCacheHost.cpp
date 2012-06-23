@@ -299,7 +299,8 @@ bool ApplicationCacheHost::swapCache()
 
 void ApplicationCacheHost::abort()
 {
-    // FIXME: See https://bugs.webkit.org/show_bug.cgi?id=76270
+    if (m_internal)
+        m_internal->m_outerHost->abort();
 }
 
 bool ApplicationCacheHost::isApplicationCacheEnabled()
