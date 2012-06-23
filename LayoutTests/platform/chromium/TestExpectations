@@ -3758,3 +3758,9 @@ BUGWK89789 MAC : userscripts/user-script-video-document.html = PASS CRASH
 BUGWK89794 MAC : fast/regions/get-regions-by-content-node2.html = PASS CRASH
 
 BUGWK89045 : compositing/video-page-visibility.html = IMAGE
+
+// Flaky
+BUGWK89812 DEBUG : fast/parser/parser-yield-timing.html = PASS TEXT
+
+// Flaky
+BUGWK89813 LINUX DEBUG : fast/js/large-expressions.html = PASS TIMEOUT

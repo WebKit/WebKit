@@ -1,3 +1,10 @@
+2012-06-23  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed Chromium gardening. Marked tests flaky per bugs 89812
+        and 89813.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-23  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding test expectations for two
