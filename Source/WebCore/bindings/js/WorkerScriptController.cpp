@@ -64,7 +64,7 @@ WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
 
 WorkerScriptController::~WorkerScriptController()
 {
-    JSLockHolder lock(globalData());
+    JSLock lock(SilenceAssertionsOnly);
     m_workerContextWrapper.clear();
     m_globalData.clear();
 }
@@ -73,7 +73,7 @@ void WorkerScriptController::initScript()
 {
     ASSERT(!m_workerContextWrapper);
 
-    JSLockHolder lock(m_globalData.get());
+    JSLock lock(SilenceAssertionsOnly);
 
     // Explicitly protect the global object's prototype so it isn't collected
     // when we allocate the global object. (Once the global object is fully
@@ -117,7 +117,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
     ScriptValue exception;
     evaluate(sourceCode, &exception);
     if (exception.jsValue()) {
-        JSLockHolder lock(globalData());
+        JSLock lock(SilenceAssertionsOnly);
         reportException(m_workerContextWrapper->globalExec(), exception.jsValue());
     }
 }
@@ -128,9 +128,9 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Script
         return;
 
     initScriptIfNeeded();
+    JSLock lock(SilenceAssertionsOnly);
 
     ExecState* exec = m_workerContextWrapper->globalExec();
-    JSLockHolder lock(exec);
 
     m_workerContextWrapper->globalData().timeoutChecker.start();
 
@@ -191,7 +191,7 @@ bool WorkerScriptController::isExecutionForbidden() const
 void WorkerScriptController::disableEval()
 {
     initScriptIfNeeded();
-    JSLockHolder lock(globalData());
+    JSLock lock(SilenceAssertionsOnly);
 
     m_workerContextWrapper->setEvalEnabled(false);
 }

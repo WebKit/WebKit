@@ -22,7 +22,6 @@
 
 #include "Error.h"
 #include "JSDOMBinding.h"
-#include "JSDOMWindowBase.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "ObjectPrototype.h"
@@ -93,7 +92,7 @@ QtInstance::QtInstance(QObject* o, PassRefPtr<RootObject> rootObject, ValueOwner
 
 QtInstance::~QtInstance()
 {
-    JSLockHolder lock(WebCore::JSDOMWindowBase::commonJSGlobalData());
+    JSLock lock(SilenceAssertionsOnly);
 
     cachedInstances.remove(m_hashkey);
 
@@ -120,7 +119,7 @@ QtInstance::~QtInstance()
 
 PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObject> rootObject, ValueOwnership ownership)
 {
-    JSLockHolder lock(WebCore::JSDOMWindowBase::commonJSGlobalData());
+    JSLock lock(SilenceAssertionsOnly);
 
     foreach (QtInstance* instance, cachedInstances.values(o))
         if (instance->rootObject() == rootObject) {
@@ -181,7 +180,7 @@ Class* QtInstance::getClass() const
 
 RuntimeObject* QtInstance::newRuntimeObject(ExecState* exec)
 {
-    JSLockHolder lock(exec);
+    JSLock lock(SilenceAssertionsOnly);
     m_methods.clear();
     return QtRuntimeObject::create(exec, exec->lexicalGlobalObject(), this);
 }

@@ -73,7 +73,6 @@ public:
     static JSC::JSValue evaluate(JSC::ExecState* exec, JSC::ScopeChainNode* chain, const JSC::SourceCode& source, JSC::JSValue thisValue, JSC::JSValue* exception)
     {
         JSMainThreadExecState currentState(exec);
-        JSC::JSLockHolder lock(exec);
         return JSC::evaluate(exec, chain, source, thisValue, exception);
     };
 

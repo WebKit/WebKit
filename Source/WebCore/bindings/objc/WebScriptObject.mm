@@ -122,12 +122,13 @@ static void addExceptionToConsole(ExecState* exec)
 
 static void _didExecute(WebScriptObject *obj)
 {
+    ASSERT(JSLock::lockCount() > 0);
+    
     RootObject* root = [obj _rootObject];
     if (!root)
         return;
 
     ExecState* exec = root->globalObject()->globalExec();
-    ASSERT(exec->globalData().apiLock().currentThreadIsHoldingLock());
     KJSDidExecuteFunctionPtr func = Instance::didExecuteFunction();
     if (func)
         func(exec, root->globalObject());
@@ -147,25 +148,19 @@ static void _didExecute(WebScriptObject *obj)
 
     WebCore::addJSWrapper(self, imp);
 
-    if (_private->rootObject) {
-        JSLockHolder holder(&_private->rootObject->globalObject()->globalData());
+    if (_private->rootObject)
         _private->rootObject->gcProtect(imp);
-    }
 }
 
 - (void)_setOriginRootObject:(PassRefPtr<RootObject>)originRootObject andRootObject:(PassRefPtr<RootObject>)rootObject
 {
     ASSERT(_private->imp);
 
-    if (rootObject) {
-        JSLockHolder holder(&rootObject->globalObject()->globalData());
+    if (rootObject)
         rootObject->gcProtect(_private->imp);
-    }
 
-    if (_private->rootObject && _private->rootObject->isValid()) {
-        JSLockHolder holder(&_private->rootObject->globalObject()->globalData());
+    if (_private->rootObject && _private->rootObject->isValid())
         _private->rootObject->gcUnprotect(_private->imp);
-    }
 
     if (_private->rootObject)
         _private->rootObject->deref();
@@ -237,10 +232,8 @@ static void _didExecute(WebScriptObject *obj)
     if (_private->imp)
         WebCore::removeJSWrapper(_private->imp);
 
-    if (_private->rootObject && _private->rootObject->isValid()) {
-        JSLockHolder holder(&_private->rootObject->globalObject()->globalData());
+    if (_private->rootObject && _private->rootObject->isValid())
         _private->rootObject->gcUnprotect(_private->imp);
-    }
 
     if (_private->rootObject)
         _private->rootObject->deref();
@@ -255,10 +248,8 @@ static void _didExecute(WebScriptObject *obj)
 
 - (void)finalize
 {
-    if (_private->rootObject && _private->rootObject->isValid()) {
-        JSLockHolder holder(&_private->rootObject->globalObject()->globalData());
+    if (_private->rootObject && _private->rootObject->isValid())
         _private->rootObject->gcUnprotect(_private->imp);
-    }
 
     if (_private->rootObject)
         _private->rootObject->deref();
@@ -290,9 +281,10 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (![self _isSafeScript])
         return nil;
 
+    JSLock lock(SilenceAssertionsOnly);
+    
     // Look up the function object.
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
-    JSLockHolder lock(exec);
     ASSERT(!exec->hadException());
 
     JSValue function = [self _imp]->get(exec, Identifier(exec, stringToUString(String(name))));
@@ -333,7 +325,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSLockHolder lock(exec);
+    JSLock lock(SilenceAssertionsOnly);
     
     [self _rootObject]->globalObject()->globalData().timeoutChecker.start();
     JSValue returnValue = JSMainThreadExecState::evaluate(exec, [self _rootObject]->globalObject()->globalScopeChain(), makeSource(String(script)), JSC::JSValue(), 0);
@@ -354,7 +346,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSLockHolder lock(exec);
+    JSLock lock(SilenceAssertionsOnly);
 
     PutPropertySlot slot;
     [self _imp]->methodTable()->put([self _imp], exec, Identifier(exec, stringToUString(String(key))), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
@@ -380,7 +372,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         // Need to scope this lock to ensure that we release the lock before calling
         // [super valueForKey:key] which might throw an exception and bypass the JSLock destructor,
         // leaving the lock permanently held
-        JSLockHolder lock(exec);
+        JSLock lock(SilenceAssertionsOnly);
         
         JSValue result = [self _imp]->get(exec, Identifier(exec, stringToUString(String(key))));
         
@@ -396,7 +388,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if ([resultObj isKindOfClass:[WebUndefined class]])
         resultObj = [super valueForKey:key];    // defaults to throwing an exception
 
-    JSLockHolder lock(exec);
+    JSLock lock(SilenceAssertionsOnly);
     _didExecute(self);
     
     return resultObj;
@@ -410,7 +402,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSLockHolder lock(exec);
+    JSLock lock(SilenceAssertionsOnly);
     [self _imp]->methodTable()->deleteProperty([self _imp], exec, Identifier(exec, stringToUString(String(key))));
 
     if (exec->hadException()) {
@@ -429,7 +421,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSLockHolder lock(exec);
+    JSLock lock(SilenceAssertionsOnly);
     BOOL result = [self _imp]->hasProperty(exec, Identifier(exec, stringToUString(String(key))));
 
     if (exec->hadException()) {
@@ -449,8 +441,8 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         return @"Undefined";
     }
 
+    JSLock lock(SilenceAssertionsOnly);
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
-    JSLockHolder lock(exec);
     
     id result = convertValueToObjcValue(exec, [self _imp], ObjcObjectType).objectValue;
 
@@ -469,7 +461,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSLockHolder lock(exec);
+    JSLock lock(SilenceAssertionsOnly);
     JSValue result = [self _imp]->get(exec, index);
 
     if (exec->hadException()) {
@@ -493,7 +485,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSLockHolder lock(exec);
+    JSLock lock(SilenceAssertionsOnly);
     [self _imp]->methodTable()->putByIndex([self _imp], exec, index, convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), false);
 
     if (exec->hadException()) {
@@ -523,7 +515,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 {
     if (value.isObject()) {
         JSObject* object = asObject(value);
-        JSLockHolder lock(rootObject->globalObject()->globalData());
+        JSLock lock(SilenceAssertionsOnly);
 
         if (object->inherits(&JSHTMLElement::s_info)) {
             // Plugin elements cache the instance internally.

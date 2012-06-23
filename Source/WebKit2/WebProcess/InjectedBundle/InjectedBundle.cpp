@@ -409,7 +409,7 @@ void InjectedBundle::garbageCollectJavaScriptObjectsOnAlternateThreadForDebuggin
 
 size_t InjectedBundle::javaScriptObjectsCount()
 {
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
+    JSLock lock(SilenceAssertionsOnly);
     return JSDOMWindow::commonJSGlobalData()->heap.objectCount();
 }
 
@@ -418,8 +418,8 @@ void InjectedBundle::reportException(JSContextRef context, JSValueRef exception)
     if (!context || !exception)
         return;
 
+    JSLock lock(JSC::SilenceAssertionsOnly);
     JSC::ExecState* execState = toJS(context);
-    JSLockHolder lock(execState);
 
     // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a Page.
     if (!toJSDOMWindow(execState->lexicalGlobalObject()))

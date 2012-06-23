@@ -122,12 +122,13 @@ static JSStaticValue popUpExtensionStaticValues[] =
 
 void PagePopupBlackBerry::installDomFunction(Frame* frame)
 {
+    JSC::JSLock lock(JSC::SilenceAssertionsOnly);
+
     JSDOMWindow* window = toJSDOMWindow(frame, mainThreadNormalWorld());
     ASSERT(window);
 
     JSC::ExecState* exec = window->globalExec();
     ASSERT(exec);
-    JSC::JSLockHolder lock(exec);
 
     JSContextRef context = ::toRef(exec);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);

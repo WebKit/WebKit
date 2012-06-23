@@ -78,6 +78,7 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
     // If the application was linked before JSGlobalContextCreate was changed to use a unique JSGlobalData,
     // we use a shared one for backwards compatibility.
     if (NSVersionOfLinkTimeLibrary("JavaScriptCore") <= webkitFirstVersionWithConcurrentGlobalContexts) {
+        JSLock lock(LockForReal);
         return JSGlobalContextCreateInGroup(toRef(&JSGlobalData::sharedInstance()), globalObjectClass);
     }
 #endif // OS(DARWIN)
@@ -89,9 +90,11 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
 {
     initializeThreading();
 
+    JSLock lock(LockForReal);
     RefPtr<JSGlobalData> globalData = group ? PassRefPtr<JSGlobalData>(toJS(group)) : JSGlobalData::createContextGroup(ThreadStackTypeSmall);
 
     APIEntryShim entryShim(globalData.get(), false);
+
     globalData->makeUsableFromMultipleThreads();
 
     if (!globalObjectClass) {
@@ -121,19 +124,18 @@ JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
 
 void JSGlobalContextRelease(JSGlobalContextRef ctx)
 {
-    IdentifierTable* savedIdentifierTable;
     ExecState* exec = toJS(ctx);
-    {
-        JSLockHolder lock(exec);
+    JSLock lock(exec);
 
-        JSGlobalData& globalData = exec->globalData();
-        savedIdentifierTable = wtfThreadData().setCurrentIdentifierTable(globalData.identifierTable);
+    JSGlobalData& globalData = exec->globalData();
+    IdentifierTable* savedIdentifierTable = wtfThreadData().setCurrentIdentifierTable(globalData.identifierTable);
 
-        bool protectCountIsZero = Heap::heap(exec->dynamicGlobalObject())->unprotect(exec->dynamicGlobalObject());
-        if (protectCountIsZero)
-            globalData.heap.reportAbandonedObjectGraph();
-        globalData.deref();
+    bool protectCountIsZero = Heap::heap(exec->dynamicGlobalObject())->unprotect(exec->dynamicGlobalObject());
+    if (protectCountIsZero) {
+        globalData.heap.activityCallback()->synchronize();
+        globalData.heap.reportAbandonedObjectGraph();
     }
+    globalData.deref();
 
     wtfThreadData().setCurrentIdentifierTable(savedIdentifierTable);
 }
@@ -164,7 +166,7 @@ JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx)
 JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
 {
     ExecState* exec = toJS(ctx);
-    JSLockHolder lock(exec);
+    JSLock lock(exec);
 
     unsigned count = 0;
     UStringBuilder builder;

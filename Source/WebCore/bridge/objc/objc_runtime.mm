@@ -92,18 +92,19 @@ JSValue ObjcField::valueFromInstance(ExecState* exec, const Instance* instance) 
     
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
 
-    JSLock::DropAllLocks dropAllLocks(exec); // Can't put this inside the @try scope because it unwinds incorrectly.
+    JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     @try {
         if (id objcValue = [targetObject valueForKey:(NSString *)_name.get()])
             result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType, instance->rootObject());
         {
-            JSLockHolder lock(exec);
+            JSLock lock(SilenceAssertionsOnly);
             ObjcInstance::moveGlobalExceptionToExecState(exec);
         }
     } @catch(NSException* localException) {
-        JSLockHolder lock(exec);
+        JSLock::lock(SilenceAssertionsOnly);
         throwError(exec, [localException reason]);
+        JSLock::unlock(SilenceAssertionsOnly);
     }
 
     // Work around problem in some versions of GCC where result gets marked volatile and
@@ -124,17 +125,18 @@ void ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JS
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
     id value = convertValueToObjcObject(exec, aValue);
 
-    JSLock::DropAllLocks dropAllLocks(exec); // Can't put this inside the @try scope because it unwinds incorrectly.
+    JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     @try {
         [targetObject setValue:value forKey:(NSString *)_name.get()];
         {
-            JSLockHolder lock(exec);
+            JSLock lock(SilenceAssertionsOnly);
             ObjcInstance::moveGlobalExceptionToExecState(exec);
         }
     } @catch(NSException* localException) {
-        JSLockHolder lock(exec);
+        JSLock::lock(SilenceAssertionsOnly);
         throwError(exec, [localException reason]);
+        JSLock::unlock(SilenceAssertionsOnly);
     }
 }
 

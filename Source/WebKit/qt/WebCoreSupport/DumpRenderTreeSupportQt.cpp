@@ -1086,12 +1086,13 @@ void DumpRenderTreeSupportQt::injectInternalsObject(QWebFrame* frame)
 {
     WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
 #if USE(JSC)
+    JSC::JSLock lock(JSC::SilenceAssertionsOnly);
+
     JSDOMWindow* window = toJSDOMWindow(coreFrame, mainThreadNormalWorld());
     Q_ASSERT(window);
 
     JSC::ExecState* exec = window->globalExec();
     Q_ASSERT(exec);
-    JSC::JSLockHolder lock(exec);
 
     JSContextRef context = toRef(exec);
     WebCoreTestSupport::injectInternalsObject(context);
@@ -1112,12 +1113,13 @@ void DumpRenderTreeSupportQt::resetInternalsObject(QWebFrame* frame)
 {
     WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
 #if USE(JSC)
+    JSC::JSLock lock(JSC::SilenceAssertionsOnly);
+
     JSDOMWindow* window = toJSDOMWindow(coreFrame, mainThreadNormalWorld());
     Q_ASSERT(window);
 
     JSC::ExecState* exec = window->globalExec();
     Q_ASSERT(exec);
-    JSC::JSLockHolder lock(exec);
 
     JSContextRef context = toRef(exec);
     WebCoreTestSupport::resetInternalsObject(context);

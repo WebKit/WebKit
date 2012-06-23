@@ -39,8 +39,8 @@ namespace WebCoreTestSupport {
 
 void injectInternalsObject(JSContextRef context)
 {
+    JSLock lock(SilenceAssertionsOnly);
     ExecState* exec = toJS(context);
-    JSLockHolder lock(exec);
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
     Document* document = scriptContext->isDocument() ? static_cast<Document*>(scriptContext) : 0;
@@ -49,8 +49,8 @@ void injectInternalsObject(JSContextRef context)
 
 void resetInternalsObject(JSContextRef context)
 {
+    JSLock lock(SilenceAssertionsOnly);
     ExecState* exec = toJS(context);
-    JSLockHolder lock(exec);
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     Internals * internals = toInternals(globalObject->getDirect(exec->globalData(), Identifier(exec, Internals::internalsId)));
     if (internals) {

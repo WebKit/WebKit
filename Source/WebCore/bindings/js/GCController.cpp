@@ -38,7 +38,7 @@ namespace WebCore {
 
 static void collect(void*)
 {
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
+    JSLock lock(SilenceAssertionsOnly);
     JSDOMWindow::commonJSGlobalData()->heap.collectAllGarbage();
 }
 
@@ -63,7 +63,7 @@ void GCController::garbageCollectSoon()
     // down into WTF so that more platforms can take advantage of it, we will be 
     // able to use reportAbandonedObjectGraph on more platforms.
 #if USE(CF)
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
+    JSLock lock(SilenceAssertionsOnly);
     JSDOMWindow::commonJSGlobalData()->heap.reportAbandonedObjectGraph();
 #else
     if (!m_GCTimer.isActive())
@@ -80,7 +80,7 @@ void GCController::gcTimerFired(Timer<GCController>*)
 
 void GCController::garbageCollectNow()
 {
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
+    JSLock lock(SilenceAssertionsOnly);
     if (!JSDOMWindow::commonJSGlobalData()->heap.isBusy())
         JSDOMWindow::commonJSGlobalData()->heap.collectAllGarbage();
 }
@@ -104,7 +104,7 @@ void GCController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)
 
 void GCController::discardAllCompiledCode()
 {
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
+    JSLock lock(SilenceAssertionsOnly);
     JSDOMWindow::commonJSGlobalData()->heap.deleteAllCompiledCode();
 }
 

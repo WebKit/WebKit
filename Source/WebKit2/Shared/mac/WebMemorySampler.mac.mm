@@ -116,7 +116,7 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     totalBytesInUse += fastMallocBytesInUse;
     totalBytesCommitted += fastMallocBytesCommitted;
     
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
+    JSLock lock(SilenceAssertionsOnly);
     size_t jscHeapBytesInUse = JSDOMWindow::commonJSGlobalData()->heap.size();
     size_t jscHeapBytesCommitted = JSDOMWindow::commonJSGlobalData()->heap.capacity();
     totalBytesInUse += jscHeapBytesInUse;

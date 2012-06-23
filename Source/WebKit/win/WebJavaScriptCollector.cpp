@@ -111,7 +111,7 @@ HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::objectCount(
         return E_POINTER;
     }
 
-    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
+    JSLock lock(SilenceAssertionsOnly);
     *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap.objectCount();
     return S_OK;
 }

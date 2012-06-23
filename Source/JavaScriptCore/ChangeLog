@@ -1,3 +1,94 @@
+2012-06-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121058.
+        http://trac.webkit.org/changeset/121058
+        https://bugs.webkit.org/show_bug.cgi?id=89809
+
+        Patch causes plugins tests to crash in GTK debug builds
+        (Requested by zdobersek on #webkit).
+
+        * API/APIShims.h:
+        (JSC::APIEntryShimWithoutLock::APIEntryShimWithoutLock):
+        (JSC::APIEntryShimWithoutLock::~APIEntryShimWithoutLock):
+        (APIEntryShimWithoutLock):
+        (JSC::APIEntryShim::APIEntryShim):
+        (APIEntryShim):
+        (JSC::APICallbackShim::~APICallbackShim):
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreate):
+        (JSGlobalContextCreateInGroup):
+        (JSGlobalContextRelease):
+        (JSContextCreateBacktrace):
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::tryAllocateSlowCase):
+        * heap/Heap.cpp:
+        (JSC::Heap::protect):
+        (JSC::Heap::unprotect):
+        (JSC::Heap::collect):
+        (JSC::Heap::setActivityCallback):
+        (JSC::Heap::activityCallback):
+        (JSC::Heap::sweeper):
+        * heap/Heap.h:
+        (Heap):
+        * heap/HeapTimer.cpp:
+        (JSC::HeapTimer::~HeapTimer):
+        (JSC::HeapTimer::invalidate):
+        (JSC::HeapTimer::timerDidFire):
+        (JSC):
+        * heap/HeapTimer.h:
+        (HeapTimer):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doWork):
+        (JSC::IncrementalSweeper::create):
+        * heap/IncrementalSweeper.h:
+        (IncrementalSweeper):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateSlowCase):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::reap):
+        * jsc.cpp:
+        (functionGC):
+        (functionReleaseExecutableMemory):
+        (jscmain):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::evaluate):
+        * runtime/GCActivityCallback.h:
+        (DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::create):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+        (JSC::JSGlobalData::sharedInstance):
+        (JSC::JSGlobalData::sharedInstanceInternal):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        * runtime/JSLock.cpp:
+        (JSC):
+        (JSC::createJSLockCount):
+        (JSC::JSLock::lockCount):
+        (JSC::setLockCount):
+        (JSC::JSLock::JSLock):
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::currentThreadIsHoldingLock):
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+        (JSC::JSLock::DropAllLocks::~DropAllLocks):
+        * runtime/JSLock.h:
+        (JSC):
+        (JSLock):
+        (JSC::JSLock::JSLock):
+        (JSC::JSLock::~JSLock):
+        (DropAllLocks):
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::set):
+        * testRegExp.cpp:
+        (realMain):
+
 2012-06-22  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Re-enable the CSS Shaders compile time flag on Safari Mac

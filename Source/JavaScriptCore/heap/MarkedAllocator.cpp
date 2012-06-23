@@ -3,7 +3,6 @@
 
 #include "GCActivityCallback.h"
 #include "Heap.h"
-#include "JSGlobalData.h"
 #include <wtf/CurrentTime.h>
 
 namespace JSC {
@@ -57,7 +56,6 @@ inline void* MarkedAllocator::tryAllocate()
     
 void* MarkedAllocator::allocateSlowCase()
 {
-    ASSERT(m_heap->globalData()->apiLock().currentThreadIsHoldingLock());
 #if COLLECT_ON_EVERY_ALLOCATION
     m_heap->collectAllGarbage();
     ASSERT(m_heap->m_operationInProgress == NoOperation);

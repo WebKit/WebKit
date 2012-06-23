@@ -23,7 +23,6 @@
 
 #include "Heap.h"
 #include "CallFrame.h"
-#include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "ScopeChain.h"
 
@@ -39,94 +38,94 @@ namespace JSC {
 #if (OS(DARWIN) || USE(PTHREADS))
 
 // Acquire this mutex before accessing lock-related data.
-static pthread_mutex_t giantGlobalJSLock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t JSMutex = PTHREAD_MUTEX_INITIALIZER;
 
-GlobalJSLock::GlobalJSLock()
+// Thread-specific key that tells whether a thread holds the JSMutex, and how many times it was taken recursively.
+pthread_key_t JSLockCount;
+
+static void createJSLockCount()
 {
-    pthread_mutex_lock(&giantGlobalJSLock);
+    pthread_key_create(&JSLockCount, 0);
 }
 
-GlobalJSLock::~GlobalJSLock()
+pthread_once_t createJSLockCountOnce = PTHREAD_ONCE_INIT;
+
+// Lock nesting count.
+intptr_t JSLock::lockCount()
 {
-    pthread_mutex_unlock(&giantGlobalJSLock);
+    pthread_once(&createJSLockCountOnce, createJSLockCount);
+
+    return reinterpret_cast<intptr_t>(pthread_getspecific(JSLockCount));
 }
 
-JSLockHolder::JSLockHolder(ExecState* exec)
-    : m_globalData(&exec->globalData())
+static void setLockCount(intptr_t count)
 {
-    m_globalData->apiLock().lock();
+    ASSERT(count >= 0);
+    pthread_setspecific(JSLockCount, reinterpret_cast<void*>(count));
 }
 
-JSLockHolder::JSLockHolder(JSGlobalData* globalData)
-    : m_globalData(globalData)
+JSLock::JSLock(ExecState* exec)
+    : m_lockBehavior(exec->globalData().isSharedInstance() ? LockForReal : SilenceAssertionsOnly)
 {
-    m_globalData->apiLock().lock();
+    lock(m_lockBehavior);
 }
 
-JSLockHolder::JSLockHolder(JSGlobalData& globalData)
-    : m_globalData(&globalData)
+JSLock::JSLock(JSGlobalData* globalData)
+    : m_lockBehavior(globalData->isSharedInstance() ? LockForReal : SilenceAssertionsOnly)
 {
-    m_globalData->apiLock().lock();
+    lock(m_lockBehavior);
 }
 
-JSLockHolder::~JSLockHolder()
+void JSLock::lock(JSLockBehavior lockBehavior)
 {
-    m_globalData->apiLock().unlock();
-}
+#ifdef NDEBUG
+    // Locking "not for real" is a debug-only feature.
+    if (lockBehavior == SilenceAssertionsOnly)
+        return;
+#endif
 
-JSLock::JSLock()
-    : m_lockCount(0)
-{
-    m_spinLock.Init();
-}
+    pthread_once(&createJSLockCountOnce, createJSLockCount);
 
-JSLock::~JSLock()
-{
-}
-
-void JSLock::lock()
-{
-    ThreadIdentifier currentThread = WTF::currentThread();
-    {
-        SpinLockHolder holder(&m_spinLock);
-        if (m_ownerThread == currentThread && m_lockCount) {
-            m_lockCount++;
-            return;
-        }
+    intptr_t currentLockCount = lockCount();
+    if (!currentLockCount && lockBehavior == LockForReal) {
+        int result = pthread_mutex_lock(&JSMutex);
+        ASSERT_UNUSED(result, !result);
     }
-
-    m_lock.lock();
-
-    SpinLockHolder holder(&m_spinLock);
-    m_ownerThread = currentThread;
-    ASSERT(!m_lockCount);
-    m_lockCount = 1;
+    setLockCount(currentLockCount + 1);
 }
 
-void JSLock::unlock()
+void JSLock::unlock(JSLockBehavior lockBehavior)
 {
-    ASSERT(currentThreadIsHoldingLock());
+    ASSERT(lockCount());
 
-    SpinLockHolder holder(&m_spinLock);
-    m_lockCount--;
+#ifdef NDEBUG
+    // Locking "not for real" is a debug-only feature.
+    if (lockBehavior == SilenceAssertionsOnly)
+        return;
+#endif
 
-    if (!m_lockCount)
-        m_lock.unlock();
+    intptr_t newLockCount = lockCount() - 1;
+    setLockCount(newLockCount);
+    if (!newLockCount && lockBehavior == LockForReal) {
+        int result = pthread_mutex_unlock(&JSMutex);
+        ASSERT_UNUSED(result, !result);
+    }
 }
 
 void JSLock::lock(ExecState* exec)
 {
-    exec->globalData().apiLock().lock();
+    lock(exec->globalData().isSharedInstance() ? LockForReal : SilenceAssertionsOnly);
 }
 
 void JSLock::unlock(ExecState* exec)
 {
-    exec->globalData().apiLock().unlock();
+    unlock(exec->globalData().isSharedInstance() ? LockForReal : SilenceAssertionsOnly);
 }
 
 bool JSLock::currentThreadIsHoldingLock()
 {
-    return m_lockCount && m_ownerThread == WTF::currentThread();
+    pthread_once(&createJSLockCountOnce, createJSLockCount);
+    return !!pthread_getspecific(JSLockCount);
 }
 
 // This is fairly nasty.  We allow multiple threads to run on the same
@@ -150,7 +149,7 @@ bool JSLock::currentThreadIsHoldingLock()
 // this to happen, and were its stack to grow further, then it may potentially
 // write over the second thread's call frames.
 //
-// To avoid JS stack corruption we enforce a policy of only ever allowing two
+// In avoid JS stack corruption we enforce a policy of only ever allowing two
 // threads to use a JS context concurrently, and only allowing the second of
 // these threads to execute until it has completed and fully returned from its
 // outermost call into JSC.  We enforce this policy using 'lockDropDepth'.  The
@@ -159,7 +158,7 @@ bool JSLock::currentThreadIsHoldingLock()
 // same thread again, enter JSC (through evaluate script or call function), and exit
 // again through a callback, then the locks will not be dropped when DropAllLocks
 // is called (since lockDropDepth is non-zero).  Since this thread is still holding
-// the locks, only it will be able to re-enter JSC (either be returning from the
+// the locks, only it will re able to re-enter JSC (either be returning from the
 // callback, or by re-entering through another call to evaulate script or call
 // function).
 //
@@ -169,84 +168,61 @@ bool JSLock::currentThreadIsHoldingLock()
 // order in which they were made - though implementing the less restrictive policy
 // would likely increase complexity and overhead.
 //
-
-// This function returns the number of locks that were dropped.
-unsigned JSLock::dropAllLocks()
-{
-    if (m_lockDropDepth++)
-        return 0;
-
-    return dropAllLocksUnconditionally();
-}
-
-unsigned JSLock::dropAllLocksUnconditionally()
-{
-    unsigned lockCount = m_lockCount;
-    for (unsigned i = 0; i < lockCount; i++)
-        unlock();
-
-    return lockCount;
-}
-
-void JSLock::grabAllLocks(unsigned lockCount)
-{
-    for (unsigned i = 0; i < lockCount; i++)
-        lock();
-
-    m_lockDropDepth--;
-}
+static unsigned lockDropDepth = 0;
 
 JSLock::DropAllLocks::DropAllLocks(ExecState* exec)
-    : m_lockCount(0)
-    , m_globalData(&exec->globalData())
+    : m_lockBehavior(exec->globalData().isSharedInstance() ? LockForReal : SilenceAssertionsOnly)
 {
-    m_lockCount = m_globalData->apiLock().dropAllLocks();
+    pthread_once(&createJSLockCountOnce, createJSLockCount);
+
+    if (lockDropDepth++) {
+        m_lockCount = 0;
+        return;
+    }
+
+    m_lockCount = JSLock::lockCount();
+    for (intptr_t i = 0; i < m_lockCount; i++)
+        JSLock::unlock(m_lockBehavior);
 }
 
-JSLock::DropAllLocks::DropAllLocks(JSGlobalData* globalData)
-    : m_lockCount(0)
-    , m_globalData(globalData)
+JSLock::DropAllLocks::DropAllLocks(JSLockBehavior JSLockBehavior)
+    : m_lockBehavior(JSLockBehavior)
 {
-    m_lockCount = m_globalData->apiLock().dropAllLocks();
+    pthread_once(&createJSLockCountOnce, createJSLockCount);
+
+    if (lockDropDepth++) {
+        m_lockCount = 0;
+        return;
+    }
+
+    // It is necessary to drop even "unreal" locks, because having a non-zero lock count
+    // will prevent a real lock from being taken.
+
+    m_lockCount = JSLock::lockCount();
+    for (intptr_t i = 0; i < m_lockCount; i++)
+        JSLock::unlock(m_lockBehavior);
 }
 
 JSLock::DropAllLocks::~DropAllLocks()
 {
-    m_globalData->apiLock().grabAllLocks(m_lockCount);
+    for (intptr_t i = 0; i < m_lockCount; i++)
+        JSLock::lock(m_lockBehavior);
+
+    --lockDropDepth;
 }
 
 #else // (OS(DARWIN) || USE(PTHREADS))
 
-GlobalJSLock::GlobalJSLock()
+JSLock::JSLock(ExecState*)
+    : m_lockBehavior(SilenceAssertionsOnly)
 {
 }
 
-GlobalJSLock::~GlobalJSLock()
+// If threading support is off, set the lock count to a constant value of 1 so ssertions
+// that the lock is held don't fail
+intptr_t JSLock::lockCount()
 {
-}
-
-JSLockHolder::JSLockHolder(JSGlobalData*)
-{
-}
-
-JSLockHolder::JSLockHolder(JSGlobalData&)
-{
-}
-
-JSLockHolder::JSLockHolder(ExecState*)
-{
-}
-
-JSLockHolder::~JSLockHolder()
-{
-}
-
-JSLock::JSLock()
-{
-}
-
-JSLock::~JSLock()
-{
+    return 1;
 }
 
 bool JSLock::currentThreadIsHoldingLock()
@@ -254,11 +230,11 @@ bool JSLock::currentThreadIsHoldingLock()
     return true;
 }
 
-void JSLock::lock()
+void JSLock::lock(JSLockBehavior)
 {
 }
 
-void JSLock::unlock()
+void JSLock::unlock(JSLockBehavior)
 {
 }
 
@@ -270,33 +246,11 @@ void JSLock::unlock(ExecState*)
 {
 }
 
-void JSLock::lock(JSGlobalData&)
-{
-}
-
-void JSLock::unlock(JSGlobalData&)
-{
-}
-
-unsigned JSLock::dropAllLocks()
-{
-    return 0;
-}
-
-unsigned JSLock::dropAllLocksUnconditionally()
-{
-    return 0;
-}
-
-void JSLock::grabAllLocks(unsigned)
-{
-}
-
 JSLock::DropAllLocks::DropAllLocks(ExecState*)
 {
 }
 
-JSLock::DropAllLocks::DropAllLocks(JSGlobalData*)
+JSLock::DropAllLocks::DropAllLocks(JSLockBehavior)
 {
 }
 

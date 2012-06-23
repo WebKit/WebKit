@@ -642,7 +642,7 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, Inj
     JSDOMWindow* globalObject = m_coreFrame->script()->globalObject(world->coreWorld());
     ExecState* exec = globalObject->globalExec();
 
-    JSLockHolder lock(exec);
+    JSLock lock(SilenceAssertionsOnly);
     return toRef(exec, toJS(exec, globalObject, nodeHandle->coreNode()));
 }
 
@@ -654,7 +654,7 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleRangeHandle* rangeHandle, I
     JSDOMWindow* globalObject = m_coreFrame->script()->globalObject(world->coreWorld());
     ExecState* exec = globalObject->globalExec();
 
-    JSLockHolder lock(exec);
+    JSLock lock(SilenceAssertionsOnly);
     return toRef(exec, toJS(exec, globalObject, rangeHandle->coreRange()));
 }
 
@@ -671,7 +671,7 @@ JSValueRef WebFrame::computedStyleIncludingVisitedInfo(JSObjectRef element)
 
     RefPtr<CSSComputedStyleDeclaration> style = CSSComputedStyleDeclaration::create(static_cast<JSElement*>(toJS(element))->impl(), true);
 
-    JSLockHolder lock(exec);
+    JSLock lock(SilenceAssertionsOnly);
     return toRef(exec, toJS(exec, globalObject, style.get()));
 }
 

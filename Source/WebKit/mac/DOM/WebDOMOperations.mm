@@ -67,9 +67,8 @@ using namespace JSC;
     if (!value)
         return 0;
 
-    ExecState* exec = toJS(context);
-    JSLockHolder lock(exec);
-    return kit(toElement(toJS(exec, value)));
+    JSLock lock(SilenceAssertionsOnly);
+    return kit(toElement(toJS(toJS(context), value)));
 }
 
 - (NSString *)_markerTextForListItem

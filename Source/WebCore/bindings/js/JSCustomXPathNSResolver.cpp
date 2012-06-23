@@ -67,7 +67,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 {
     ASSERT(m_customResolver);
 
-    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
+    JSLock lock(SilenceAssertionsOnly);
 
     ExecState* exec = m_globalObject->globalExec();
         

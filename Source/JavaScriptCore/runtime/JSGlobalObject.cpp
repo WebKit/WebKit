@@ -114,6 +114,8 @@ template <typename T> static inline void visitIfNeeded(SlotVisitor& visitor, Wri
 
 JSGlobalObject::~JSGlobalObject()
 {
+    ASSERT(JSLock::currentThreadIsHoldingLock());
+
     if (m_debugger)
         m_debugger->detach(this);
 
@@ -128,7 +130,7 @@ void JSGlobalObject::destroy(JSCell* cell)
 
 void JSGlobalObject::init(JSObject* thisValue)
 {
-    ASSERT(globalData().apiLock().currentThreadIsHoldingLock());
+    ASSERT(JSLock::currentThreadIsHoldingLock());
     
     m_globalScopeChain.set(globalData(), this, ScopeChainNode::create(0, this, &globalData(), this, thisValue));
 

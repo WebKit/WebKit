@@ -37,7 +37,7 @@ namespace JSC {
 
 bool checkSyntax(ExecState* exec, const SourceCode& source, JSValue* returnedException)
 {
-    JSLockHolder lock(exec);
+    JSLock lock(exec);
     ASSERT(exec->globalData().identifierTable == wtfThreadData().currentIdentifierTable());
 
     ProgramExecutable* program = ProgramExecutable::create(exec, source);
@@ -53,7 +53,7 @@ bool checkSyntax(ExecState* exec, const SourceCode& source, JSValue* returnedExc
 
 JSValue evaluate(ExecState* exec, ScopeChainNode* scopeChain, const SourceCode& source, JSValue thisValue, JSValue* returnedException)
 {
-    JSLockHolder lock(exec);
+    JSLock lock(exec);
     ASSERT(exec->globalData().identifierTable == wtfThreadData().currentIdentifierTable());
     if (exec->globalData().isCollectorBusy())
         CRASH();

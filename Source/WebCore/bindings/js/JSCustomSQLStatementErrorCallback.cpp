@@ -48,7 +48,7 @@ bool JSSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLEr
 
     RefPtr<JSSQLStatementErrorCallback> protect(this);
 
-    JSC::JSLockHolder lock(m_data->globalObject()->globalData());
+    JSC::JSLock lock(SilenceAssertionsOnly);
 
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;

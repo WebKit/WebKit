@@ -63,7 +63,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
 
     ErrorEvent* errorEvent = static_cast<ErrorEvent*>(event);
 
-    JSLockHolder lock(scriptExecutionContext->globalData());
+    JSLock lock(SilenceAssertionsOnly);
 
     JSObject* jsFunction = this->jsFunction(scriptExecutionContext);
     if (!jsFunction)

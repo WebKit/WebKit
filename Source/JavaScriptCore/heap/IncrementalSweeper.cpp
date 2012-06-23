@@ -45,6 +45,7 @@ static const CFTimeInterval sweepTimeMultiplier = 1.0 / sweepTimeTotal;
 
 void IncrementalSweeper::doWork()
 {
+    APIEntryShim shim(m_globalData);
     doSweep(WTF::monotonicallyIncreasingTime());
 }
     
@@ -54,9 +55,9 @@ IncrementalSweeper::IncrementalSweeper(Heap* heap, CFRunLoopRef runLoop)
 {
 }
 
-IncrementalSweeper* IncrementalSweeper::create(Heap* heap)
+PassOwnPtr<IncrementalSweeper> IncrementalSweeper::create(Heap* heap)
 {
-    return new IncrementalSweeper(heap, CFRunLoopGetCurrent());
+    return adoptPtr(new IncrementalSweeper(heap, CFRunLoopGetCurrent()));
 }
 
 void IncrementalSweeper::scheduleTimer()
@@ -108,9 +109,9 @@ void IncrementalSweeper::doWork()
 {
 }
 
-IncrementalSweeper* IncrementalSweeper::create(Heap* heap)
+PassOwnPtr<IncrementalSweeper> IncrementalSweeper::create(Heap* heap)
 {
-    return new IncrementalSweeper(heap->globalData());
+    return adoptPtr(new IncrementalSweeper(heap->globalData()));
 }
 
 void IncrementalSweeper::startSweeping(const HashSet<MarkedBlock*>&)

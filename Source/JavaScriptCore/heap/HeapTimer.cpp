@@ -26,10 +26,6 @@
 #include "config.h"
 #include "HeapTimer.h"
 
-#include "APIShims.h"
-#include "JSObject.h"
-#include "JSString.h"
-#include "ScopeChain.h"
 #include <wtf/Threading.h>
 
 namespace JSC {
@@ -50,8 +46,7 @@ HeapTimer::HeapTimer(JSGlobalData* globalData, CFRunLoopRef runLoop)
 
 HeapTimer::~HeapTimer()
 {
-    CFRunLoopRemoveTimer(m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
-    CFRunLoopTimerInvalidate(m_timer.get());
+    invalidate();
 }
 
 void HeapTimer::synchronize()
@@ -65,37 +60,14 @@ void HeapTimer::synchronize()
 
 void HeapTimer::invalidate()
 {
-    m_globalData = 0;
-    CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() - s_decade);
-}
-
-void HeapTimer::didStartVMShutdown()
-{
-    if (CFRunLoopGetCurrent() == m_runLoop.get()) {
-        invalidate();
-        delete this;
-        return;
-    }
-    ASSERT(!m_globalData->apiLock().currentThreadIsHoldingLock());
-    MutexLocker locker(m_shutdownMutex);
-    invalidate();
+    CFRunLoopRemoveTimer(m_runLoop.get(), m_timer.get(), kCFRunLoopCommonModes);
+    CFRunLoopTimerInvalidate(m_timer.get());
 }
 
 void HeapTimer::timerDidFire(CFRunLoopTimerRef, void* info)
 {
     HeapTimer* agent = static_cast<HeapTimer*>(info);
-    agent->m_shutdownMutex.lock();
-    if (!agent->m_globalData) {
-        agent->m_shutdownMutex.unlock();
-        delete agent;
-        return;
-    }
-    {
-        // We don't ref here to prevent us from resurrecting the ref count of a "dead" JSGlobalData.
-        APIEntryShim shim(agent->m_globalData, APIEntryShimWithoutLock::DontRefGlobalData);
-        agent->doWork();
-    }
-    agent->m_shutdownMutex.unlock();
+    agent->doWork();
 }
 
 #else
@@ -109,11 +81,6 @@ HeapTimer::~HeapTimer()
 {
 }
 
-void HeapTimer::didStartVMShutdown()
-{
-    delete this;
-}
-
 void HeapTimer::synchronize()
 {
 }
@@ -121,6 +88,7 @@ void HeapTimer::synchronize()
 void HeapTimer::invalidate()
 {
 }
+
 
 #endif
     

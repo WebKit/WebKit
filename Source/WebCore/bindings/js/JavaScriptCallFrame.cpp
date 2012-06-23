@@ -30,7 +30,6 @@
 #include "JavaScriptCallFrame.h"
 
 #include "JSDOMBinding.h"
-#include "JSDOMWindowBase.h"
 #include "PlatformString.h"
 #include <debugger/DebuggerCallFrame.h>
 #include <runtime/Completion.h>
@@ -107,7 +106,7 @@ JSValue JavaScriptCallFrame::evaluate(const UString& script, JSValue& exception)
     if (!m_isValid)
         return jsNull();
 
-    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
+    JSLock lock(SilenceAssertionsOnly);
     return m_debuggerCallFrame.evaluate(script, exception);
 }
 

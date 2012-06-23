@@ -139,7 +139,7 @@ JSValue NPRuntimeObjectMap::convertNPVariantToJSValue(JSC::ExecState* exec, JSC:
 
 void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue value, NPVariant& variant)
 {
-    JSLockHolder lock(exec);
+    JSLock lock(SilenceAssertionsOnly);
 
     VOID_TO_NPVARIANT(variant);
     
@@ -186,7 +186,7 @@ bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String&scriptString,
 
     ExecState* exec = globalObject->globalExec();
     
-    JSLockHolder lock(exec);
+    JSLock lock(SilenceAssertionsOnly);
     JSValue thisValue = getOrCreateJSObject(globalObject.get(), npObject);
 
     globalObject->globalData().timeoutChecker.start();
@@ -266,7 +266,7 @@ void NPRuntimeObjectMap::moveGlobalExceptionToExecState(ExecState* exec)
         return;
 
     {
-        JSLockHolder lock(exec);
+        JSLock lock(SilenceAssertionsOnly);
         throwError(exec, createError(exec, stringToUString(globalExceptionString())));
     }
     

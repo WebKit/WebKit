@@ -40,7 +40,7 @@ bool JSRequestAnimationFrameCallback::handleEvent(DOMTimeStamp time)
 
     RefPtr<JSRequestAnimationFrameCallback> protect(this);
 
-    JSLockHolder lock(m_data->globalObject()->globalData());
+    JSLock lock(SilenceAssertionsOnly);
 
     MarkedArgumentBuffer args;
     args.append(jsNumber(time));

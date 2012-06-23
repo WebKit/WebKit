@@ -160,9 +160,15 @@ static inline size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
     return 1.25 * heapSize;
 }
 
-static inline bool isValidSharedInstanceThreadState(JSGlobalData* globalData)
+static inline bool isValidSharedInstanceThreadState()
 {
-    return globalData->apiLock().currentThreadIsHoldingLock();
+    if (!JSLock::lockCount())
+        return false;
+
+    if (!JSLock::currentThreadIsHoldingLock())
+        return false;
+
+    return true;
 }
 
 static inline bool isValidThreadState(JSGlobalData* globalData)
@@ -170,7 +176,7 @@ static inline bool isValidThreadState(JSGlobalData* globalData)
     if (globalData->identifierTable != wtfThreadData().currentIdentifierTable())
         return false;
 
-    if (globalData->isSharedInstance() && !isValidSharedInstanceThreadState(globalData))
+    if (globalData->isSharedInstance() && !isValidSharedInstanceThreadState())
         return false;
 
     return true;
@@ -321,7 +327,7 @@ void Heap::didAbandon(size_t bytes)
 void Heap::protect(JSValue k)
 {
     ASSERT(k);
-    ASSERT(m_globalData->apiLock().currentThreadIsHoldingLock());
+    ASSERT(JSLock::currentThreadIsHoldingLock() || !m_globalData->isSharedInstance());
 
     if (!k.isCell())
         return;
@@ -332,7 +338,7 @@ void Heap::protect(JSValue k)
 bool Heap::unprotect(JSValue k)
 {
     ASSERT(k);
-    ASSERT(m_globalData->apiLock().currentThreadIsHoldingLock());
+    ASSERT(JSLock::currentThreadIsHoldingLock() || !m_globalData->isSharedInstance());
 
     if (!k.isCell())
         return false;
@@ -686,7 +692,6 @@ void Heap::collect(SweepToggle sweepToggle)
     SamplingRegion samplingRegion("Garbage Collection");
     
     GCPHASE(Collect);
-    ASSERT(globalData()->apiLock().currentThreadIsHoldingLock());
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
@@ -772,19 +777,19 @@ void Heap::collect(SweepToggle sweepToggle)
     JAVASCRIPTCORE_GC_END();
 }
 
-void Heap::setActivityCallback(GCActivityCallback* activityCallback)
+void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
 {
     m_activityCallback = activityCallback;
 }
 
 GCActivityCallback* Heap::activityCallback()
 {
-    return m_activityCallback;
+    return m_activityCallback.get();
 }
 
 IncrementalSweeper* Heap::sweeper()
 {
-    return m_sweeper;
+    return m_sweeper.get();
 }
 
 void Heap::setGarbageCollectionTimerEnabled(bool enable)

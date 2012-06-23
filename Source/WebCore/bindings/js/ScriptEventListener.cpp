@@ -98,7 +98,7 @@ String eventListenerHandlerBody(Document* document, EventListener* eventListener
     ASSERT(jsListener);
     if (!jsListener)
         return "";
-    JSLockHolder lock(jsListener->isolatedWorld()->globalData());
+    JSLock lock(SilenceAssertionsOnly);
     JSC::JSObject* jsFunction = jsListener->jsFunction(document);
     if (!jsFunction)
         return "";
@@ -112,7 +112,7 @@ bool eventListenerHandlerLocation(Document* document, EventListener* eventListen
     ASSERT(jsListener);
     if (!jsListener)
         return false;
-    JSLockHolder lock(jsListener->isolatedWorld()->globalData());
+    JSLock lock(SilenceAssertionsOnly);
     JSC::JSObject* jsObject = jsListener->jsFunction(document);
     if (!jsObject)
         return false;
