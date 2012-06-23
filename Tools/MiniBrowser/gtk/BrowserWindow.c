@@ -57,7 +57,7 @@ struct _BrowserWindowClass {
     GtkWindowClass parent;
 };
 
-static const char *defaultWindowTitle = "WebKitGTK+ MiniBrwoser";
+static const char *defaultWindowTitle = "WebKitGTK+ MiniBrowser";
 static const gdouble minimumZoomLevel = 0.5;
 static const gdouble maximumZoomLevel = 3;
 static const gdouble zoomStep = 1.2;

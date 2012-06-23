@@ -1,3 +1,12 @@
+2012-06-23  Wajahat Siddiqui  <mdwajahatali.siddiqui@motorola.com>
+
+        [GTK][WK2]Mis-spelt defaultWindowTitle
+        https://bugs.webkit.org/show_bug.cgi?id=89808
+
+        Reviewed by Carlos Garcia Campos.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+
 2012-06-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] Add a new webkit2 tests slave bot
