@@ -1,3 +1,21 @@
+2012-06-22  Eugene Klyuchnikov  <eustas.big@gmail.com>
+
+        Web Inspector: Fix negative time interval on zoom-in
+        https://bugs.webkit.org/show_bug.cgi?id=89798
+
+        Reviewed by Pavel Feldman.
+
+        Steps to reproduce:
+        1) Record timeline
+        2) Select small range with left tick close to zero
+        3) Move pointer to the right end of the ruler
+        4) Zoom-in with mouse-wheel
+
+        Result: right tick goes below the zero.
+
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewWindow.prototype._zoom):
+
 2012-06-22  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Re-enable the CSS Shaders compile time flag on Safari Mac

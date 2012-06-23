@@ -583,10 +583,12 @@ WebInspector.TimelineOverviewWindow.prototype = {
         var left = this._leftResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset;
         var right = this._rightResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset;
 
-        if (factor < 1 && factor * (right - left) < WebInspector.TimelineOverviewPane.MinSelectableSize)
+        var delta = factor * (right - left);
+        if (factor < 1 && delta < WebInspector.TimelineOverviewPane.MinSelectableSize)
             return;
-        left = Math.max(0, referencePoint + (left - referencePoint) * factor);
-        right = Math.min(this._parentElement.clientWidth, referencePoint + (right - referencePoint) * factor);
+        var max = this._parentElement.clientWidth;
+        left = Math.max(0, Math.min(max - delta, referencePoint + (left - referencePoint) * factor));
+        right = Math.min(max, left + delta);
         this._setWindowPosition(left, right);
     }
 }
