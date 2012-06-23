@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<familyset>
+
+    <family>
+        <nameset>
+            <name>sans</name>
+            <name>sans serif</name>
+            <name>sans-serif</name>
+            <name>Arial</name>
+            <name>Helvetica</name>
+        </nameset>
+        <fileset>
+            <file>Arial.ttf</file>
+            <file>Arial_Bold.ttf</file>
+            <file>Arial_Italic.ttf</file>
+            <file>Arial_Bold_Italic.ttf</file>
+        </fileset>
+    </family>
+
+    <family>
+        <nameset>
+            <name>serif</name>
+            <name>Times</name>
+            <name>Times New Roman</name>
+            <name>Monaco</name>
+        </nameset>
+        <fileset>
+            <file>Times_New_Roman.ttf</file>
+            <file>Times_New_Roman_Bold.ttf</file>
+            <file>Times_New_Roman_Italic.ttf</file>
+            <file>Times_New_Roman_Bold_Italic.ttf</file>
+        </fileset>
+    </family>
+
+    <family>
+        <nameset>
+            <name>mono</name>
+            <name>monospace</name>
+            <name>Courier</name>
+            <name>Courier New</name>
+        </nameset>
+        <fileset>
+            <file>Courier_New.ttf</file>
+            <file>Courier_New_Bold.ttf</file>
+            <file>Courier_New_Italic.ttf</file>
+            <file>Courier_New_Bold_Italic.ttf</file>
+        </fileset>
+    </family>
+
+    <family>
+        <nameset>
+            <name>cursive</name>
+            <name>Comic Sans MS</name>
+        </nameset>
+        <fileset>
+            <file>Comic_Sans_MS.ttf</file>
+            <file>Comic_Sans_MS_Bold.ttf</file>
+        </fileset>
+    </family>
+
+    <family>
+        <nameset>
+            <name>fantasy</name>
+            <name>Impact</name>
+        </nameset>
+        <fileset>
+            <file>Impact.ttf</file>
+        </fileset>
+    </family>
+
+    <family>
+        <nameset>
+            <name>Georgia</name>
+        </nameset>
+        <fileset>
+            <file>Georgia.ttf</file>
+            <file>Georgia_Bold.ttf</file>
+            <file>Georgia_Italic.ttf</file>
+            <file>Georgia_Bold_Italic.ttf</file>
+        </fileset>
+    </family>
+
+    <family>
+        <nameset>
+            <name>Trebuchet MS</name>
+        </nameset>
+        <fileset>
+            <file>Trebuchet_MS.ttf</file>
+            <file>Trebuchet_MS_Bold.ttf</file>
+            <file>Trebuchet_MS_Italic.ttf</file>
+            <file>Trebuchet_MS_Bold_Italic.ttf</file>
+        </fileset>
+    </family>
+
+    <family>
+        <nameset>
+            <name>Verdana</name>
+        </nameset>
+        <fileset>
+            <file>Verdana.ttf</file>
+            <file>Verdana_Bold.ttf</file>
+            <file>Verdana_Italic.ttf</file>
+            <file>Verdana_Bold_Italic.ttf</file>
+        </fileset>
+    </family>
+
+    <family>
+        <nameset>
+            <name>Ahem</name>
+        </nameset>
+        <fileset>
+            <file>AHEM____.TTF</file>
+        </fileset>
+    </family>
+
+</familyset>

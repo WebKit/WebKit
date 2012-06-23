@@ -256,6 +256,8 @@
                         'destination': '<(PRODUCT_DIR)',
                         'files': [
                             '<(ahem_path)',
+                            '<(tools_dir)/DumpRenderTree/chromium/android_main_fonts.xml',
+                            '<(tools_dir)/DumpRenderTree/chromium/android_fallback_fonts.xml',
                             '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
                         ]
                     }],

@@ -79,7 +79,7 @@ MS_TRUETYPE_FONTS_DIR = '/usr/share/fonts/truetype/msttcorefonts/'
 # Timeout in seconds to wait for start/stop of DumpRenderTree.
 DRT_START_STOP_TIMEOUT_SECS = 10
 
-# List of fonts that layout tests expect, copied from DumpRenderTree/gtk/TestShellGtk.cpp.
+# List of fonts that layout tests expect, copied from DumpRenderTree/gtk/TestShellX11.cpp.
 HOST_FONT_FILES = [
     [MS_TRUETYPE_FONTS_DIR, 'Arial.ttf'],
     [MS_TRUETYPE_FONTS_DIR, 'Arial_Bold.ttf'],
@@ -108,9 +108,12 @@ HOST_FONT_FILES = [
     [MS_TRUETYPE_FONTS_DIR, 'Verdana_Bold.ttf'],
     [MS_TRUETYPE_FONTS_DIR, 'Verdana_Bold_Italic.ttf'],
     [MS_TRUETYPE_FONTS_DIR, 'Verdana_Italic.ttf'],
+    # The Microsoft font EULA
+    ['/usr/share/doc/ttf-mscorefonts-installer/', 'READ_ME!.gz'],
+    ['/usr/share/fonts/truetype/ttf-dejavu/', 'DejaVuSans.ttf'],
 ]
 # Should increase this version after changing HOST_FONT_FILES.
-FONT_FILES_VERSION = 1
+FONT_FILES_VERSION = 2
 
 DEVICE_FONTS_DIR = DEVICE_DRT_DIR + 'fonts/'
 
@@ -333,6 +336,10 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
                                  DEVICE_DRT_DIR + 'DumpRenderTree.pak')
             self._push_to_device(self._build_path(self.get_option('configuration'), 'DumpRenderTree_resources'),
                                  DEVICE_DRT_DIR + 'DumpRenderTree_resources')
+            self._push_to_device(self._build_path(self.get_option('configuration'), 'android_main_fonts.xml'),
+                                 DEVICE_DRT_DIR + 'android_main_fonts.xml')
+            self._push_to_device(self._build_path(self.get_option('configuration'), 'android_fallback_fonts.xml'),
+                                 DEVICE_DRT_DIR + 'android_fallback_fonts.xml')
             # Version control of test resources is dependent on executables,
             # because we will always rebuild executables when resources are
             # updated.
@@ -346,6 +353,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
             self._push_to_device(path_to_ahem_font, DEVICE_FONTS_DIR + 'AHEM____.TTF')
             for (host_dir, font_file) in HOST_FONT_FILES:
                 self._push_to_device(host_dir + font_file, DEVICE_FONTS_DIR + font_file)
+            self._link_device_file('/system/fonts/DroidSansFallback.ttf', DEVICE_FONTS_DIR + 'DroidSansFallback.ttf')
             self._update_version(DEVICE_FONTS_DIR, FONT_FILES_VERSION)
 
     def _push_test_resources(self):
@@ -385,9 +393,10 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         _log.debug('Run adb result:\n' + result)
         return result
 
-    def _copy_device_file(self, from_file, to_file, ignore_error=False):
-        # 'cp' is unavailable on Android, so use 'dd' instead.
-        return self._run_adb_command(['shell', 'dd', 'if=' + from_file, 'of=' + to_file], ignore_error)
+    def _link_device_file(self, from_file, to_file, ignore_error=False):
+        # rm to_file first to make sure that ln succeeds.
+        self._run_adb_command(['shell', 'rm', to_file], ignore_error)
+        return self._run_adb_command(['shell', 'ln', '-s', from_file, to_file], ignore_error)
 
     def _push_to_device(self, host_path, device_path, ignore_error=False):
         return self._run_adb_command(['push', host_path, device_path], ignore_error)
