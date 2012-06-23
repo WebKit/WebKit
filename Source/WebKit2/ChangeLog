@@ -1,5 +1,16 @@
 2012-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix several GTK+ unit tests.
+
+        GTK+ unit tests using WebViewTest::wait() started to fail due to a
+        bug introduced in r121093.
+
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::wait): Use this instead of m_mainLoop as user data
+        for the idle callback.
+
+2012-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add ContextMenu API to WebKit2 GTK+ API
         https://bugs.webkit.org/show_bug.cgi?id=81011
 

@@ -126,7 +126,7 @@ static gboolean quitMainLoopIdleCallback(WebViewTest* test)
 
 void WebViewTest::wait(double seconds)
 {
-    g_timeout_add_seconds(seconds, reinterpret_cast<GSourceFunc>(quitMainLoopIdleCallback), m_mainLoop);
+    g_timeout_add_seconds(seconds, reinterpret_cast<GSourceFunc>(quitMainLoopIdleCallback), this);
     g_main_loop_run(m_mainLoop);
 }
 
