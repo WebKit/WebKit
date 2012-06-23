@@ -229,7 +229,7 @@ BUGWKGTK SKIP : http/tests/security/webgl-remote-read-remote-image-allowed-with-
 BUGWKGTK SKIP : http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html = TEXT
 
 // CSS Grid Layout is not yet enabled.
-BUGWK60731 : fast/css-grid-layout = TEXT
+BUGWK60731 : fast/css-grid-layout = TEXT IMAGE
 BUGWK60731 : fast/css-grid-layout/grid-disabled-by-default.html = PASS
 
 // <style scoped> is not yet enabled.

@@ -1,3 +1,12 @@
+2012-06-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening after 121063, adding IMAGE test expectation
+        for tests in fast/css-grid-layout now that some reftests are working
+        properly and causing failures for platforms that don't support the
+        feature yet.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-22  Benjamin Poulain  <bpoulain@apple.com>
 
         Text with text-overflow:ellipsis and text-align:right is left aligned
