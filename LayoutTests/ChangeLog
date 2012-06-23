@@ -1,3 +1,10 @@
+2012-06-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding test expectations for two
+        flaky media tests.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-23  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed. Fix chromium test expectations

@@ -414,8 +414,9 @@ BUGWK80158 : plugins/netscape-plugin-page-cache-works.html = PASS TEXT
 
 BUGWK83790 : media/video-duration-known-after-eos.html = PASS TEXT
 BUGWK83790 : media/media-element-play-after-eos.html = PASS TEXT
-
 BUGWK83704 : media/event-attributes.html = PASS TEXT
+BUGWK89811 : media/media-blocked-by-beforeload.html = PASS TEXT
+BUGWK84856 : media/media-controller-playback.html = PASS TEXT
 
 // Sometimes asserts in debug builds (cross-platform problem): https://bugs.webkit.org/show_bug.cgi?id=59801
 BUGWK84859 : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TEXT
