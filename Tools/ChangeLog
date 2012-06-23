@@ -1,3 +1,12 @@
+2012-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Skip GTK+ unit test /webkit2/WebKitFindController/hide.
+
+        It fails always when running it in Xvfb.
+
+        * gtk/run-api-tests:
+        (TestRunner):
+
 2012-06-23  Wajahat Siddiqui  <mdwajahatali.siddiqui@motorola.com>
 
         [GTK][WK2]Mis-spelt defaultWindowTitle
