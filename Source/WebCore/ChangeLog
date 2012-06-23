@@ -1,3 +1,21 @@
+2012-06-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r120979): getElementsByTagName is 12% slower
+        https://bugs.webkit.org/show_bug.cgi?id=89783
+
+        Reviewed by Darin Adler.
+
+        The problem is that hashing std::pair<unsigned short, AtomicString> is very slow compared to just hashing AtomicString,
+        which internally holds a hash already. Fixed the regression by replacing the default hash function by the one that
+        computes AtomicString's hash + list type. This is okay because we only have 7 node list types at the moment.
+
+        * dom/NodeRareData.h:
+        (NodeListsNodeData):
+        (WebCore::NodeListsNodeData::NodeListCacheMapEntryHash::hash):
+        (NodeListCacheMapEntryHash):
+        (WebCore::NodeListsNodeData::NodeListCacheMapEntryHash::equal):
+        (WebCore::NodeListsNodeData::namedNodeListKey):
+
 2012-06-23  Dan Bernstein  <mitz@apple.com>
 
         RenderText’s minimum preferred width is incorrect automatic hyphenation is used

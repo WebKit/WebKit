@@ -49,8 +49,18 @@ class TreeScope;
 class NodeListsNodeData {
     WTF_MAKE_NONCOPYABLE(NodeListsNodeData); WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef HashMap<std::pair<unsigned short, AtomicString>, DynamicSubtreeNodeList*> NodeListAtomicNameCacheMap;
-    typedef HashMap<std::pair<unsigned short, String>, DynamicSubtreeNodeList*> NodeListNameCacheMap;
+    template <typename StringType>
+    struct NodeListCacheMapEntryHash : public WTF::PairHash<unsigned char, StringType> {
+        static unsigned hash(const std::pair<unsigned char, StringType>& entry)
+        {
+            return DefaultHash<StringType>::Hash::hash(entry.second) + entry.first;
+        }
+        static bool equal(const std::pair<unsigned char, StringType>& a, const std::pair<unsigned char, StringType>& b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = DefaultHash<StringType>::Hash::safeToCompareToEmptyOrDeleted;
+    };
+
+    typedef HashMap<std::pair<unsigned char, AtomicString>, DynamicSubtreeNodeList*, NodeListCacheMapEntryHash<AtomicString> > NodeListAtomicNameCacheMap;
+    typedef HashMap<std::pair<unsigned char, String>, DynamicSubtreeNodeList*, NodeListCacheMapEntryHash<String> > NodeListNameCacheMap;
     typedef HashMap<QualifiedName, TagNodeList*> TagNodeListCacheNS;
 
     template<typename T>
@@ -151,14 +161,14 @@ public:
 private:
     NodeListsNodeData() { }
 
-    std::pair<unsigned short, AtomicString> namedNodeListKey(DynamicNodeList::NodeListType listType, const AtomicString& name)
+    std::pair<unsigned char, AtomicString> namedNodeListKey(DynamicNodeList::NodeListType listType, const AtomicString& name)
     {
-        return std::pair<unsigned short, AtomicString>(listType, name);
+        return std::pair<unsigned char, AtomicString>(listType, name);
     }
 
-    std::pair<unsigned short, String> namedNodeListKey(DynamicNodeList::NodeListType listType, const String& name)
+    std::pair<unsigned char, String> namedNodeListKey(DynamicNodeList::NodeListType listType, const String& name)
     {
-        return std::pair<unsigned short, String>(listType, name);
+        return std::pair<unsigned char, String>(listType, name);
     }
 
     NodeListAtomicNameCacheMap m_atomicNameCaches;
