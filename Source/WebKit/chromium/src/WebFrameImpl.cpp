@@ -1162,7 +1162,7 @@ void WebFrameImpl::replaceSelection(const WebString& text)
 {
     bool selectReplacement = false;
     bool smartReplace = true;
-    return frame()->editor()->replaceSelectionWithText(text, selectReplacement, smartReplace);
+    frame()->editor()->replaceSelectionWithText(text, selectReplacement, smartReplace);
 }
 
 void WebFrameImpl::insertText(const WebString& text)
