@@ -77,6 +77,9 @@ static bool getInt(DBOrTransaction* db, const Vector<char>& key, int64_t& foundI
 template <typename DBOrTransaction>
 static bool putInt(DBOrTransaction* db, const Vector<char>& key, int64_t value)
 {
+    ASSERT(value >= 0);
+    if (value < 0)
+        return false;
     return db->put(key, encodeInt(value));
 }
 

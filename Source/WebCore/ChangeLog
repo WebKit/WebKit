@@ -1,3 +1,19 @@
+2012-06-22  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Avoid infinite loop if we try to encode -1 for leveldb
+        https://bugs.webkit.org/show_bug.cgi?id=89625
+
+        It gets worse, memory is allocated inside the loop so the process is
+        eventually killed by the OS.
+
+        Reviewed by Tony Chang.
+
+        Added tests to Source/WebKit/chromium/tests/IDBLevelDBCodingTest.cpp
+
+        * Modules/indexeddb/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::encodeInt):
+        (WebCore::IDBLevelDBCoding::encodeVarInt):
+
 2012-06-22  Hayato Ito  <hayato@chromium.org>
 
         [Shadow] ShadowRoot.activeElement should use the result of re-targeting algorithm.

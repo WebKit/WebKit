@@ -194,9 +194,10 @@ bool decodeBool(const char* begin, const char* end)
     return *begin;
 }
 
-Vector<char> encodeInt(int64_t n)
+Vector<char> encodeInt(int64_t nParam)
 {
-    ASSERT(n >= 0);
+    ASSERT(nParam >= 0);
+    uint64_t n = static_cast<uint64_t>(nParam);
     Vector<char> ret; // FIXME: Size this at creation.
 
     do {
@@ -236,8 +237,10 @@ static int compareInts(int64_t a, int64_t b)
     return 0;
 }
 
-Vector<char> encodeVarInt(int64_t n)
+Vector<char> encodeVarInt(int64_t nParam)
 {
+    ASSERT(nParam >= 0);
+    uint64_t n = static_cast<uint64_t>(nParam);
     Vector<char> ret; // FIXME: Size this at creation.
 
     do {
