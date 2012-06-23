@@ -1,3 +1,21 @@
+2012-06-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] Add a new webkit2 tests slave bot
+        https://bugs.webkit.org/show_bug.cgi?id=89336
+
+        Reviewed by Csaba Osztrogonác.
+
+        Slave configuration for a new GTK 64 bit release bot that will run
+        WebKit2 tests.
+
+        Also BuildAndTest now accepts the "triggers" parametter,
+        this means that apart from building and testing it can trigger
+        some other build/test sequences in other slaves.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (BuildAndTestFactory.__init__):
+
 2012-06-23  Kwang Yul Seo  <skyul@company100.net>
 
         Unreviewed. Update my email.
