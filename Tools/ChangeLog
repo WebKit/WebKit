@@ -1,3 +1,9 @@
+2012-06-23  Kwang Yul Seo  <skyul@company100.net>
+
+        Unreviewed. Update my email.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-06-22  Adam Barth  <abarth@webkit.org>
 
         [Chromium] DumpRenderTree on Android needs to configure fonts for testing
