@@ -1,3 +1,13 @@
+2012-06-23  Dan Bernstein  <mitz@apple.com>
+
+        RenderText’s minimum preferred width is incorrect automatic hyphenation is used
+        https://bugs.webkit.org/show_bug.cgi?id=89814
+
+        Reviewed by Sam Weinig.
+
+        * fast/text/hyphen-min-preferred-width-expected.html: Added.
+        * fast/text/hyphen-min-preferred-width.html: Added.
+
 2012-06-23  Kenneth Russell  <kbr@google.com>
 
         Unreviewed Chromium gardening. Marked tests flaky per bugs 89812

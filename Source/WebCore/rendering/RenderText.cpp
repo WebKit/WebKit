@@ -30,6 +30,7 @@
 #include "FloatQuad.h"
 #include "FontTranscoder.h"
 #include "FrameView.h"
+#include "Hyphenation.h"
 #include "InlineTextBox.h"
 #include "Range.h"
 #include "RenderArena.h"
@@ -888,6 +889,46 @@ static inline float hyphenWidth(RenderText* renderer, const Font& font)
     return font.width(RenderBlock::constructTextRun(renderer, font, style->hyphenString().string(), style));
 }
 
+static float maxWordFragmentWidth(RenderText* renderer, RenderStyle* style, const Font& font, const UChar* word, int wordLength, int minimumPrefixLength, int minimumSuffixLength, int& suffixStart)
+{
+    suffixStart = 0;
+    if (wordLength <= minimumSuffixLength)
+        return 0;
+
+    Vector<int, 8> hyphenLocations;
+    int hyphenLocation = wordLength - minimumSuffixLength;
+    while ((hyphenLocation = lastHyphenLocation(word, wordLength, hyphenLocation, style->locale())) >= minimumPrefixLength)
+        hyphenLocations.append(hyphenLocation);
+
+    if (hyphenLocations.isEmpty())
+        return 0;
+
+    hyphenLocations.reverse();
+
+    float minimumFragmentWidthToConsider = font.pixelSize() * 5 / 4 + hyphenWidth(renderer, font);
+    float maxFragmentWidth = 0;
+    for (size_t k = 0; k < hyphenLocations.size(); ++k) {
+        int fragmentLength = hyphenLocations[k] - suffixStart;
+        StringBuilder fragmentWithHyphen;
+        fragmentWithHyphen.append(word + suffixStart, fragmentLength);
+        fragmentWithHyphen.append(style->hyphenString());
+
+        TextRun run = RenderBlock::constructTextRun(renderer, font, fragmentWithHyphen.characters(), fragmentWithHyphen.length(), style);
+        run.setCharactersLength(fragmentWithHyphen.length());
+        run.setCharacterScanForCodePath(!renderer->canUseSimpleFontCodePath());
+        float fragmentWidth = font.width(run);
+
+        // Narrow prefixes are ignored. See tryHyphenating in RenderBlockLineLayout.cpp.
+        if (fragmentWidth <= minimumFragmentWidthToConsider)
+            continue;
+
+        suffixStart += fragmentLength;
+        maxFragmentWidth = max(maxFragmentWidth, fragmentWidth);
+    }
+
+    return maxFragmentWidth;
+}
+
 void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const SimpleFontData*>& fallbackFonts, GlyphOverflow& glyphOverflow)
 {
     ASSERT(m_hasTab || preferredLogicalWidthsDirty() || !m_knownToHaveNoOverflowAndNoFallbackFonts);
@@ -925,6 +966,24 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
     // Non-zero only when kerning is enabled, in which case we measure words with their trailing
     // space, then subtract its width.
     float wordTrailingSpaceWidth = f.typesettingFeatures() & Kerning ? f.width(RenderBlock::constructTextRun(this, f, &space, 1, styleToUse)) : 0;
+
+    // If automatic hyphenation is allowed, we keep track of the width of the widest word (or word
+    // fragment) encountered so far, and only try hyphenating words that are wider.
+    float maxWordWidth = numeric_limits<float>::max();
+    int minimumPrefixLength = 0;
+    int minimumSuffixLength = 0;
+    if (styleToUse->hyphens() == HyphensAuto && canHyphenate(styleToUse->locale())) {
+        maxWordWidth = 0;
+
+        // Map 'hyphenate-limit-{before,after}: auto;' to 2.
+        minimumPrefixLength = styleToUse->hyphenationLimitBefore();
+        if (minimumPrefixLength < 0)
+            minimumPrefixLength = 2;
+
+        minimumSuffixLength = styleToUse->hyphenationLimitAfter();
+        if (minimumSuffixLength < 0)
+            minimumSuffixLength = 2;
+    }
 
     int firstGlyphLeftOverflow = -1;
 
@@ -1005,6 +1064,25 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                     currMinWidth += hyphenWidth(this, f);
             }
 
+            if (w > maxWordWidth) {
+                int suffixStart;
+                float maxFragmentWidth = maxWordFragmentWidth(this, styleToUse, f, txt + i, wordLen, minimumPrefixLength, minimumSuffixLength, suffixStart);
+
+                if (suffixStart) {
+                    float suffixWidth;
+                    if (wordTrailingSpaceWidth && isSpace)
+                        suffixWidth = widthFromCache(f, i + suffixStart, wordLen - suffixStart + 1, leadWidth + currMaxWidth, 0, 0) - wordTrailingSpaceWidth;
+                    else
+                        suffixWidth = widthFromCache(f, i + suffixStart, wordLen - suffixStart, leadWidth + currMaxWidth, 0, 0);
+
+                    maxFragmentWidth = max(maxFragmentWidth, suffixWidth);
+
+                    currMinWidth += maxFragmentWidth - w;
+                    maxWordWidth = max(maxWordWidth, maxFragmentWidth);
+                } else
+                    maxWordWidth = w;
+            }
+
             if (firstGlyphLeftOverflow < 0)
                 firstGlyphLeftOverflow = glyphOverflow.left;
             currMinWidth += w;
@@ -1032,9 +1110,9 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                 // being appended to a previous text run when considering the total minimum width of the containing block.
                 if (hasBreak)
                     m_hasBreakableChar = true;
-                m_beginMinWidth = hasBreak ? 0 : w;
+                m_beginMinWidth = hasBreak ? 0 : currMinWidth;
             }
-            m_endMinWidth = w;
+            m_endMinWidth = currMinWidth;
 
             if (currMinWidth > m_minWidth)
                 m_minWidth = currMinWidth;
