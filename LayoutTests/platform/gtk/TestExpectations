@@ -374,6 +374,7 @@ BUGWK68878 : media/video-playing-and-pause.html = PASS TEXT
 BUGWK55126 : media/video-aspect-ratio.html = PASS TEXT
 
 BUGWK56561 : svg/custom/clip-path-referencing-use2.svg = PASS TEXT
+BUGWK62204 : svg/custom/circular-marker-reference-4.svg = PASS TEXT
 
 BUGWK89097 : plugins/plugin-initiate-popup-window.html = PASS TEXT
 
@@ -387,6 +388,7 @@ BUGWK80129 : fast/frames/flattening/frameset-flattening-subframesets.html = PASS
 BUGWK80129 : fast/frames/flattening/iframe-flattening-offscreen.html = PASS TEXT
 BUGWK80129 : fast/frames/flattening/frameset-flattening-grid.html = TEXT PASS
 BUGWK80129 : fast/frames/flattening/iframe-flattening-out-of-view.html = TEXT PASS
+BUGWK87363 : fast/frames/flattening/iframe-tiny.html = PASS TEXT
 
 BUGWK72698 : media/audio-garbage-collect.html = PASS TEXT
 BUGWK79760 : media/video-poster-blocked-by-willsendrequest.html = PASS TEXT
@@ -401,6 +403,7 @@ BUGWK78344 : fast/text/international/inline-plaintext-relayout-with-leading-neut
 
 BUGWK80246 : fast/css/hover-update.html = PASS TEXT
 
+BUGWK86971 : svg/custom/non-scaling-stroke-markers.svg = PASS TEXT
 BUGWK88198 : svg/stroke/non-scaling-stroke-pattern.svg = PASS IMAGE
 
 BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-32-t.svg = PASS TEXT
@@ -427,6 +430,17 @@ BUGWK88867 : media/track/track-cue-rendering-snap-to-lines-not-set.html is flaky
 BUGWK63611 DEBUG : editing/pasteboard/interchange-newline-3.html = TEXT PASS
 
 BUGWK89663 : editing/deleting/delete-3800834-fix.html = PASS TEXT
+
+BUGWK49179 : animations/stop-animation-on-suspend.html = PASS TEXT
+
+BUGWK78819 : fast/workers/shared-worker-load-error.html = PASS TEXT
+
+BUGWK61121 : http/tests/appcache/interrupted-update.html = PASS TEXT
+
+BUGWK77631 : fast/multicol/span/span-as-immediate-child-property-removal.html = PASS TEXT
+BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = PASS TEXT
+
+BUGWK88061 : fast/replaced/border-radius-clip.html = PASS TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
@@ -467,7 +481,7 @@ BUGWK84676 SKIP : fast/files/file-reader-event-listener.html = TIMEOUT
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = IMAGE
 
-BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE TEXT
+BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE
 
 BUGWKGTK : accessibility/aria-hidden.html = TEXT
 BUGWKGTK : accessibility/aria-hidden-with-elements.html = TEXT
@@ -910,8 +924,6 @@ BUGWKGTK : plugins/plugin-document-load-prevented-userscript.html = TEXT
 BUGWKGTK : fast/frames/location-redirect-user-gesture.html = TEXT
 BUGWKGTK : fast/frames/meta-refresh-user-gesture.html = TEXT
 
-BUGWK49179 : animations/stop-animation-on-suspend.html = TEXT
-
 // Rounding color problems inside pixman
 BUGWK49964 : fast/canvas/canvas-fillPath-shadow.html = TEXT
 
@@ -960,8 +972,6 @@ BUGWK60206 : http/tests/navigation/response204.html = TEXT
 BUGWK61118 : fullscreen/full-screen-keyboard-enabled.html = TEXT
 BUGWK61118 : fullscreen/full-screen-element-stack.html = TEXT
 BUGWK61118 : fullscreen/full-screen-restrictions.html = TEXT
-
-BUGWK61121 : http/tests/appcache/interrupted-update.html = TEXT
 
 BUGWK61122 : http/tests/navigation/post-307-response.html = TEXT
 
@@ -1043,7 +1053,6 @@ BUGWK73003 : editing/spelling/spellcheck-async.html = TEXT
 
 // 1 pixel difference between 64-bits and 32-bits
 // Some of these also present rounding issues and xx.00 vs xx.
-BUGWK62204 : svg/custom/circular-marker-reference-4.svg = TEXT
 BUGWK62204 : svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml = TEXT
 BUGWK62204 : svg/custom/use-on-symbol-inside-pattern.svg = TEXT
 BUGWK62204 : svg/W3C-SVG-1.1/paths-data-03-f.svg = TEXT
@@ -1076,17 +1085,12 @@ BUGWK77015 : fast/events/clear-edit-drag-state.html = TEXT
 
 BUGWK77413 : fast/parser/nested-fragment-parser-crash.html = TEXT
 
-BUGWK77631 : fast/multicol/span/span-as-immediate-child-property-removal.html = TEXT
-BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = TEXT
-
 // These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 BUGWKGTK SKIP : inspector/styles/vendor-prefixes.html = TEXT
 BUGWKGTK : fast/css/apple-prefix.html = TEXT
 
 // Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
 BUGWK76564 : fast/workers/worker-crash-with-invalid-location.html = TEXT
-
-BUGWK78819 : fast/workers/shared-worker-load-error.html = TEXT
 
 BUGWK80210 : security/block-test.html = TEXT
 
@@ -1193,12 +1197,9 @@ BUGWK86771 SKIP : fast/dom/gc-10.html = TEXT
 BUGWK88961 : http/tests/misc/redirect-to-about-blank.html = TEXT
 
 BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = TEXT
-BUGWK86971 : svg/custom/non-scaling-stroke-markers.svg = TEXT PASS
 BUGWK89099 : svg/transforms/transformed-text-fill-pattern.html = IMAGE
 
 BUGWK87088 : fast/js/names.html = TEXT
-
-BUGWK87363 : fast/frames/flattening/iframe-tiny.html = TEXT PASS
 
 BUGWK87593 : http/tests/cache/cancel-in-progress-load.html = TEXT
 
@@ -1215,18 +1216,16 @@ BUGWK87734 : svg/dom/viewspec-parser-3.html = TEXT
 BUGWK87734 : svg/dom/viewspec-parser-4.html = TEXT
 BUGWK87734 : svg/dom/viewspec-parser-5.html = TEXT
 
-BUGWK88061 : fast/replaced/border-radius-clip.html = TEXT PASS
-
 // Needs rebaseline after the bots cycle.
-BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS TEXT
+BUG_OJAN : tables/mozilla/bugs/bug131020.html = TEXT
 
 BUGWK88138 : http/tests/media/video-buffered.html = TEXT
 
 BUGWK89205 : editing/spelling/grammar-edit-word.html = TEXT
 
-BUGWK89084 : fast/forms/text-input-event.html = PASS TEXT
+BUGWK89084 : fast/forms/text-input-event.html = TEXT
 
-BUGWK83683 : editing/pasteboard/pasting-empty-html-falls-back-to-text.html = PASS TEXT
+BUGWK83683 : editing/pasteboard/pasting-empty-html-falls-back-to-text.html = TEXT
 
 BUGWK51027 RELEASE : plugins/refcount-leaks.html = TEXT
 
