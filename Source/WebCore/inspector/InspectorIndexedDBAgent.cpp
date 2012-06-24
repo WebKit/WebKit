@@ -49,6 +49,7 @@
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
+#include "IDBMetadata.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBPendingTransactionMonitor.h"
 #include "IDBTransaction.h"
@@ -309,42 +310,35 @@ public:
         if (!m_frontendProvider->frontend())
             return;
 
+        const IDBDatabaseMetadata databaseMetadata = idbDatabase->metadata();
+
         RefPtr<TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStore> > objectStores = TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStore>::create();
 
-        RefPtr<DOMStringList> objectStoreNamesList = idbDatabase->objectStoreNames();
-        for (size_t i = 0; i < objectStoreNamesList->length(); ++i) {
-            String objectStoreName = objectStoreNamesList->item(i);
-            RefPtr<IDBTransactionBackendInterface> idbTransaction = transactionForDatabase(idbDatabase.get(), objectStoreName);
-            if (!idbTransaction)
-                continue;
-            RefPtr<IDBObjectStoreBackendInterface> idbObjectStore = objectStoreForTransaction(idbTransaction.get(), objectStoreName);
-            if (!idbObjectStore)
-                continue;
+        for (IDBDatabaseMetadata::ObjectStoreMap::const_iterator it = databaseMetadata.objectStores.begin(); it != databaseMetadata.objectStores.end(); ++it) {
+            const IDBObjectStoreMetadata& objectStoreMetadata = it->second;
 
             RefPtr<TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStoreIndex> > indexes = TypeBuilder::Array<TypeBuilder::IndexedDB::ObjectStoreIndex>::create();
-            RefPtr<DOMStringList> indexNamesList = idbObjectStore->indexNames();
-            for (size_t j = 0; j < indexNamesList->length(); ++j) {
-                RefPtr<IDBIndexBackendInterface> idbIndex = indexForObjectStore(idbObjectStore.get(), indexNamesList->item(j));
-                if (!idbIndex)
-                    continue;
+
+            for (IDBObjectStoreMetadata::IndexMap::const_iterator it = objectStoreMetadata.indexes.begin(); it != objectStoreMetadata.indexes.end(); ++it) {
+                const IDBIndexMetadata& indexMetadata = it->second;
 
                 RefPtr<ObjectStoreIndex> objectStoreIndex = ObjectStoreIndex::create()
-                    .setName(idbIndex->name())
-                    .setKeyPath(keyPathFromIDBKeyPath(idbIndex->keyPath()))
-                    .setUnique(idbIndex->unique())
-                    .setMultiEntry(idbIndex->multiEntry());
+                    .setName(indexMetadata.name)
+                    .setKeyPath(keyPathFromIDBKeyPath(indexMetadata.keyPath))
+                    .setUnique(indexMetadata.unique)
+                    .setMultiEntry(indexMetadata.multiEntry);
                 indexes->addItem(objectStoreIndex);
             }
-
+            // FIXME: add objectStoreMetadata.autoIncrement property http://webkit.org/b/89701
             RefPtr<ObjectStore> objectStore = ObjectStore::create()
-                .setName(idbObjectStore->name())
-                .setKeyPath(keyPathFromIDBKeyPath(idbObjectStore->keyPath()))
+                .setName(objectStoreMetadata.name)
+                .setKeyPath(keyPathFromIDBKeyPath(objectStoreMetadata.keyPath))
                 .setIndexes(indexes);
             objectStores->addItem(objectStore);
         }
         RefPtr<DatabaseWithObjectStores> result = DatabaseWithObjectStores::create()
-            .setName(idbDatabase->name())
-            .setVersion(idbDatabase->version())
+            .setName(databaseMetadata.name)
+            .setVersion(databaseMetadata.version)
             .setObjectStores(objectStores);
 
         m_frontendProvider->frontend()->databaseLoaded(m_requestId, result);

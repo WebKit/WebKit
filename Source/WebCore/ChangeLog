@@ -1,3 +1,15 @@
+2012-06-24  Joshua Bell  <jsbell@chromium.org>
+
+        Web Inspector: Simplify InspectorIndexedDBAgent to use IDB metadata API
+        https://bugs.webkit.org/show_bug.cgi?id=89495
+
+        Reviewed by Vsevolod Vlasov.
+
+        No new tests - no functional changes.
+
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+
 2012-06-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: speed up Timeline and Elements panel rendering
