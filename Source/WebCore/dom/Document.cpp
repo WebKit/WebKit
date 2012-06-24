@@ -3872,11 +3872,14 @@ void Document::unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
     m_listsInvalidatedAtDocument.remove(list);
 }
 
-void Document::clearNodeListCaches()
+void Document::clearNodeListCaches(const QualifiedName* attrName)
 {
+    // FIXME: Only invalidate caches of node lists that match attrName.
     HashSet<DynamicSubtreeNodeList*>::iterator end = m_listsInvalidatedAtDocument.end();
-    for (HashSet<DynamicSubtreeNodeList*>::iterator it = m_listsInvalidatedAtDocument.begin(); it != end; ++it)
-        (*it)->invalidateCache();
+    for (HashSet<DynamicSubtreeNodeList*>::iterator it = m_listsInvalidatedAtDocument.begin(); it != end; ++it) {
+        if (!attrName || (*it)->shouldInvalidateOnAttributeChange())
+            (*it)->invalidateCache();
+    }
 }
 
 void Document::attachNodeIterator(NodeIterator* ni)

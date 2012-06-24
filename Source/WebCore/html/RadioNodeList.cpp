@@ -41,13 +41,11 @@ RadioNodeList::RadioNodeList(Node* rootNode, const AtomicString& name)
     : DynamicSubtreeNodeList(rootNode, rootNode->hasTagName(formTag) ? RootedAtDocument : RootedAtNode)
     , m_name(name)
 {
-    document()->registerDynamicSubtreeNodeList(this);
 }
 
 RadioNodeList::~RadioNodeList()
 {
     ownerNode()->nodeLists()->removeCacheWithAtomicName(this, DynamicNodeList::RadioNodeListType, m_name);
-    document()->unregisterDynamicSubtreeNodeList(this);
 }
 
 static inline HTMLInputElement* toRadioButtonInputElement(Node* node)

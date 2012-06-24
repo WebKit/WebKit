@@ -36,13 +36,11 @@ using namespace HTMLNames;
 LabelsNodeList::LabelsNodeList(Node* forNode)
     : DynamicSubtreeNodeList(forNode, RootedAtDocument)
 {
-    document()->registerDynamicSubtreeNodeList(this);
 }
 
 LabelsNodeList::~LabelsNodeList()
 {
     ownerNode()->nodeLists()->removeCacheWithAtomicName(this, DynamicNodeList::LabelsNodeListType, starAtom);
-    document()->unregisterDynamicSubtreeNodeList(this);
 } 
     
 bool LabelsNodeList::nodeMatches(Element* testNode) const

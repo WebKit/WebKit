@@ -482,9 +482,6 @@ OwnPtr<NodeRareData> Node::createRareData()
 void Node::clearRareData()
 {
     ASSERT(hasRareData());
-    if (treeScope() && rareData()->nodeLists())
-        treeScope()->removeNodeListCache();
-
 #if ENABLE(MUTATION_OBSERVERS)
     ASSERT(!transientMutationObserverRegistry() || transientMutationObserverRegistry()->isEmpty());
 #endif
@@ -951,10 +948,10 @@ void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& at
         return;
 
     // FIXME: Move the list of attributes each NodeList type cares about to be a static on the
-    // appropriate NodeList class. Then use those lists here and in invalidateCachesThatDependOnAttributes
+    // appropriate NodeList class. Then use those lists here and in clearNodeListCaches
     // to only invalidate the cache types that depend on the attribute that changed.
     // FIXME: Keep track of when we have no caches of a given type so that we can avoid the for-loop
-    // below even if a related attribute changed (e.g. if we have no RadioNodeLists, we don't need
+    // in clearNodeListCaches even if a related attribute changed (e.g. if we have no RadioNodeLists, we don't need
     // to invalidate any caches when id attributes change.)
     if (attrName != classAttr
 #if ENABLE(MICRODATA)
@@ -967,21 +964,7 @@ void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& at
         && (attrName != idAttr || !attributeOwnerElement->isFormControlElement()))
         return;
 
-    document()->clearNodeListCaches();
-
-    if (!treeScope()->hasNodeListCaches())
-        return;
-
-    for (Node* node = this; node; node = node->parentNode()) {
-        ASSERT(this == node || !node->isAttributeNode());
-        if (!node->hasRareData())
-            continue;
-        NodeRareData* data = node->rareData();
-        if (!data->nodeLists())
-            continue;
-
-        data->nodeLists()->invalidateCaches(&attrName);
-    }
+    document()->clearNodeListCaches(&attrName);
 }
 
 void Node::invalidateNodeListsCacheAfterChildrenChanged()
@@ -989,20 +972,7 @@ void Node::invalidateNodeListsCacheAfterChildrenChanged()
     if (hasRareData())
         rareData()->clearChildNodeListCache();
 
-    document()->clearNodeListCaches();
-
-    if (!treeScope()->hasNodeListCaches())
-        return;
-
-    for (Node* node = this; node; node = node->parentNode()) {
-        if (!node->hasRareData())
-            continue;
-        NodeRareData* data = node->rareData();
-        if (!data->nodeLists())
-            continue;
-
-        data->nodeLists()->invalidateCaches();
-    }
+    document()->clearNodeListCaches(0);
 }
 
 NodeListsNodeData* Node::nodeLists()
@@ -1548,8 +1518,8 @@ PassRefPtr<NodeList> Node::getElementsByTagName(const AtomicString& localName)
         return 0;
 
     if (document()->isHTMLDocument())
-        return ensureRareData()->ensureNodeLists(this)->addCacheWithAtomicName<HTMLTagNodeList>(this, DynamicNodeList::TagNodeListType, localName);
-    return ensureRareData()->ensureNodeLists(this)->addCacheWithAtomicName<TagNodeList>(this, DynamicNodeList::TagNodeListType, localName);
+        return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<HTMLTagNodeList>(this, DynamicNodeList::TagNodeListType, localName);
+    return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<TagNodeList>(this, DynamicNodeList::TagNodeListType, localName);
 }
 
 PassRefPtr<NodeList> Node::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
@@ -1560,23 +1530,23 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const AtomicString& namespaceU
     if (namespaceURI == starAtom)
         return getElementsByTagName(localName);
 
-    return ensureRareData()->ensureNodeLists(this)->addCacheWithQualifiedName(this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
+    return ensureRareData()->ensureNodeLists()->addCacheWithQualifiedName(this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
 }
 
 PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
 {
-    return ensureRareData()->ensureNodeLists(this)->addCacheWithAtomicName<NameNodeList>(this, DynamicNodeList::NameNodeListType, elementName);
+    return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<NameNodeList>(this, DynamicNodeList::NameNodeListType, elementName);
 }
 
 PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
 {
-    return ensureRareData()->ensureNodeLists(this)->addCacheWithName<ClassNodeList>(this, DynamicNodeList::ClassNodeListType, classNames);
+    return ensureRareData()->ensureNodeLists()->addCacheWithName<ClassNodeList>(this, DynamicNodeList::ClassNodeListType, classNames);
 }
 
 PassRefPtr<RadioNodeList> Node::radioNodeList(const AtomicString& name)
 {
     ASSERT(hasTagName(formTag) || hasTagName(fieldsetTag));
-    return ensureRareData()->ensureNodeLists(this)->addCacheWithAtomicName<RadioNodeList>(this, DynamicNodeList::RadioNodeListType, name);
+    return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<RadioNodeList>(this, DynamicNodeList::RadioNodeListType, name);
 }
 
 PassRefPtr<Element> Node::querySelector(const AtomicString& selectors, ExceptionCode& ec)
@@ -2238,28 +2208,6 @@ void Node::showTreeForThisAcrossFrame() const
 
 // --------
 
-void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
-{
-    NodeListAtomicNameCacheMap::const_iterator atomicNameCacheEnd = m_atomicNameCaches.end();
-    for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it) {
-        if (!attrName || it->second->shouldInvalidateOnAttributeChange())
-            it->second->invalidateCache();
-    }
-
-    NodeListNameCacheMap::const_iterator nameCacheEnd = m_nameCaches.end();
-    for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it) {
-        if (!attrName || it->second->shouldInvalidateOnAttributeChange())
-            it->second->invalidateCache();
-    }
-
-    if (!attrName)
-        return;
-
-    TagNodeListCacheNS::iterator tagCacheEnd = m_tagNodeListCacheNS.end();
-    for (TagNodeListCacheNS::iterator it = m_tagNodeListCacheNS.begin(); it != tagCacheEnd; ++it)
-        it->second->invalidateCache();
-}
-
 void Node::getSubresourceURLs(ListHashSet<KURL>& urls) const
 {
     addSubresourceAttributeURLs(urls);
@@ -2754,12 +2702,9 @@ HTMLPropertiesCollection* Node::properties()
 }
 #endif
 
-void NodeRareData::createNodeLists(Node* node)
+void NodeRareData::createNodeLists()
 {
-    ASSERT(node);
     setNodeLists(NodeListsNodeData::create());
-    if (TreeScope* treeScope = node->treeScope())
-        treeScope->addNodeListCache();
 }
 
 void NodeRareData::clearChildNodeListCache()

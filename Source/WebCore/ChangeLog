@@ -1,5 +1,73 @@
 2012-06-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Inserting nodes is slow due to Node::notifyNodeListsAttributeChanged (20%+)
+        https://bugs.webkit.org/show_bug.cgi?id=73853
+
+        Reviewed by Anders Carlsson and Ojan Vafai.
+
+        Invalidate all node lists at document level to avoid having to walk up the DOM tree in the invalidation.
+        In particular, this makes appending node O(1) with respect to the depth of the tree in common cases when
+        we have node lists somewhere in the tree scope.
+
+        We now invalidate more node lists than we used to but it shouldn't matter much in practice because
+        most websites don't add or remove nodes or modify relevant attributes while iterating through node lists.
+        The change would also register each node list to document thereby consuming one extra pointer, however,
+        this should not have a significant memory impact given we used to do it unintentionally until I fixed it in
+        r110797 three months ago.
+
+        Also, RadioNodeList and LabelsNodeList had always been invalidated at document level so this refactoring
+        also allows us to move calls to registerDynamicSubtreeNodeList and unregisterDynamicSubtreeNodeList in
+        those node lists to DynamicSubtreeNodeList, and even delete NodeListsNodeData::invalidateCaches().
+
+        In addition, removed m_numNodeListCaches from TreeScope since it was only used to avoid walking up
+        the ancestors in invalidateNodeListsCacheAfterAttributeChanged and invalidateNodeListsCacheAfterChildrenChanged
+        but we don't walk up the ancestors any more. Also note that m_listsInvalidatedAtDocument tells us exactly
+        how many node lists are present for each document.
+
+        * dom/Document.cpp:
+        (WebCore::Document::clearNodeListCaches): Optionally takes a qualified attribute name so that we don't
+        have to invalidate tag node lists when only attributes are modified.
+        * dom/Document.h:
+        (Document):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicSubtreeNodeList::~DynamicSubtreeNodeList): Calls unregisterDynamicSubtreeNodeList.
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicSubtreeNodeList::DynamicSubtreeNodeList): Calls registerDynamicSubtreeNodeList.
+        * dom/Node.cpp:
+        (WebCore::Node::clearRareData):
+        (WebCore::Node::invalidateNodeListsCacheAfterAttributeChanged): No longer walks up the tree to invalidate
+        node list caches. All invalidations are done in Document::clearNodeListCaches.
+        (WebCore::Node::invalidateNodeListsCacheAfterChildrenChanged): Ditto.
+        (WebCore::Node::getElementsByTagName):
+        (WebCore::Node::getElementsByTagNameNS):
+        (WebCore::Node::getElementsByName):
+        (WebCore::Node::getElementsByClassName):
+        (WebCore::Node::radioNodeList):
+        (WebCore):
+        (WebCore::NodeRareData::createNodeLists):
+        * dom/NodeRareData.h:
+        (NodeListsNodeData):
+        (WebCore::NodeListsNodeData::adoptTreeScope): Invalidate node list caches while registering and
+        unregistering node lists from old and new documents respectively now that invalidateCaches() has been
+        (WebCore::NodeRareData::ensureNodeLists):
+        (NodeRareData):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::TreeScope):
+        * dom/TreeScope.h:
+        (TreeScope):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        * html/LabelableElement.cpp:
+        (WebCore::LabelableElement::labels):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::LabelsNodeList):
+        (WebCore::LabelsNodeList::~LabelsNodeList):
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList):
+        (WebCore::RadioNodeList::~RadioNodeList):
+
+2012-06-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Clang and cl.exe build fix after r121103. Don't inherit from WTF::PairHash<unsigned char, StringType>.
 
         * dom/NodeRareData.h:
