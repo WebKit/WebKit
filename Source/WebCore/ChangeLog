@@ -1,3 +1,25 @@
+2012-06-24  Oli Lan  <olilan@chromium.org>
+
+        After Editor::setComposition is called, input should scroll to the end of the composition.
+        https://bugs.webkit.org/show_bug.cgi?id=88999
+
+        Reviewed by Ryosuke Niwa.
+
+        This fixes an issue where after a call to setComposition, the start of the composition is revealed
+        (scrolled to) instead of the end (where the caret/editing point should be).
+
+        The change is to allow revealSelectionAfterEditingOperation to take a revealExtent parameter,
+        and to pass that parameter as true when calling from setIgnoreCompositionSelectionChange, which is
+        called at the end of setComposition.
+
+        Test: fast/forms/input-set-composition-scroll.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::revealSelectionAfterEditingOperation):
+        (WebCore::Editor::setIgnoreCompositionSelectionChange):
+        * editing/Editor.h:
+        (Editor):
+
 2012-06-24  Joshua Bell  <jsbell@chromium.org>
 
         Web Inspector: Simplify InspectorIndexedDBAgent to use IDB metadata API

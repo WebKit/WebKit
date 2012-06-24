@@ -1,3 +1,16 @@
+2012-06-24  Oli Lan  <olilan@chromium.org>
+
+        After Editor::setComposition is called, input should scroll to the end of the composition.
+        https://bugs.webkit.org/show_bug.cgi?id=88999
+
+        Reviewed by Ryosuke Niwa.
+
+        This tests that after setComposition is called, the input scrolls to the end of the composition
+        (i.e. that the end of the selection/composition is revealed).
+
+        * fast/forms/input-set-composition-scroll-expected.txt: Added.
+        * fast/forms/input-set-composition-scroll.html: Added.
+
 2012-06-24  Adam Barth  <abarth@webkit.org>
 
         The comment in test_expectations_android.txt is unclear as to the purpose of this file.
