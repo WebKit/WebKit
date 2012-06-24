@@ -42,7 +42,7 @@ WebImageLayer::WebImageLayer(PassRefPtr<WebCore::ImageLayerChromium> layer)
 
 void WebImageLayer::setBitmap(SkBitmap bitmap)
 {
-    return unwrap<WebCore::ImageLayerChromium>()->setBitmap(bitmap);
+    unwrap<WebCore::ImageLayerChromium>()->setBitmap(bitmap);
 }
 
 } // namespace WebKit

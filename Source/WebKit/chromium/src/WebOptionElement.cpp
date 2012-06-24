@@ -44,7 +44,7 @@ namespace WebKit {
 
 void WebOptionElement::setValue(const WebString& newValue)
 {
-    return unwrap<HTMLOptionElement>()->setValue(newValue);
+    unwrap<HTMLOptionElement>()->setValue(newValue);
 }
 
 WebString WebOptionElement::value() const
@@ -69,7 +69,7 @@ bool WebOptionElement::defaultSelected() const
 
 void WebOptionElement::setDefaultSelected(bool newSelected)
 {
-    return unwrap<HTMLOptionElement>()->setAttribute(selectedAttr, newSelected ? "" : 0);
+    unwrap<HTMLOptionElement>()->setAttribute(selectedAttr, newSelected ? "" : 0);
 }
 
 WebString WebOptionElement::label() const

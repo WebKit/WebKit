@@ -187,7 +187,7 @@ bool WebLayer::masksToBounds() const
 void WebLayer::setMaskLayer(const WebLayer& maskLayer)
 {
     WebLayer ref = maskLayer;
-    return m_private->setMaskLayer(ref.unwrap<LayerChromium>());
+    m_private->setMaskLayer(ref.unwrap<LayerChromium>());
 }
 
 WebLayer WebLayer::maskLayer() const

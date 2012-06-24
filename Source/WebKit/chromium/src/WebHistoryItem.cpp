@@ -173,7 +173,7 @@ float WebHistoryItem::pageScaleFactor() const
 void WebHistoryItem::setPageScaleFactor(float scale)
 {
     ensureMutable();
-    return m_private->setPageScaleFactor(scale);
+    m_private->setPageScaleFactor(scale);
 }
 
 bool WebHistoryItem::isTargetItem() const
