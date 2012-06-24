@@ -674,6 +674,9 @@ BUGWK88138 : http/tests/media/video-buffered.html = TEXT
 // Failing after r120145 on both GTK and EFL
 BUGWK88961 : http/tests/misc/redirect-to-about-blank.html = TEXT
 
+// EFL port does not support hyphenation
+BUGWK89830 : fast/text/hyphen-min-preferred-width.html = IMAGE
+
 // EFL's LayoutTestController does not implement setAsynchronousSpellCheckingEnabled
 BUGWK86637 : editing/spelling/spellcheck-async.html = TEXT
 BUGWK86637 : editing/spelling/spellcheck-async-mutation.html = TEXT
