@@ -1470,7 +1470,8 @@ WebInspector.ElementsTreeElement.prototype = {
         }
 
         delete this.selectionElement;
-        this.updateSelection();
+        if (this.selected)
+            this.updateSelection();
         this._preventFollowingLinksOnDoubleClick();
         this._highlightSearchResults();
     },
@@ -1845,6 +1846,9 @@ WebInspector.ElementsTreeUpdater.prototype = {
         }
 
         var updatedParentTreeElements = [];
+        var treeOutlineContainerElement = this._treeOutline.element.parentNode;
+        var originalScrollTop = treeOutlineContainerElement ? treeOutlineContainerElement.scrollTop : 0;
+        this._treeOutline.element.addStyleClass("hidden");
 
         for (var i = 0; i < this._recentlyModifiedNodes.length; ++i) {
             var parent = this._recentlyModifiedNodes[i].parent;
@@ -1852,6 +1856,7 @@ WebInspector.ElementsTreeUpdater.prototype = {
             if (parent === this._treeOutline._rootDOMNode) {
                 // Document's children have changed, perform total update.
                 this._treeOutline.update();
+                this._treeOutline.element.removeStyleClass("hidden");
                 return;
             }
 
@@ -1878,6 +1883,9 @@ WebInspector.ElementsTreeUpdater.prototype = {
         for (var i = 0; i < updatedParentTreeElements.length; ++i)
             delete updatedParentTreeElements[i].alreadyUpdatedChildren;
 
+        this._treeOutline.element.removeStyleClass("hidden");
+        if (originalScrollTop)
+            treeOutlineContainerElement.scrollTop = originalScrollTop;
         this._recentlyModifiedNodes = [];
     },
 

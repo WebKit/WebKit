@@ -45,6 +45,10 @@
     bottom: auto;
 }
 
+.timeline .split-view-resizer {
+    top: 20px;
+}
+
 .timeline-sidebar-background {
     top: 90px;
     bottom: 0;
