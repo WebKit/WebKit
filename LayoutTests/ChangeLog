@@ -1,3 +1,12 @@
+2012-06-23  Kenneth Russell  <kbr@google.com>
+
+        [chromium] Layout Test fast/text/hyphen-min-preferred-width.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=89820
+
+        Unreviewed gardening; marked test as known failure.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-23  Dan Bernstein  <mitz@apple.com>
 
         RenderText’s minimum preferred width is incorrect automatic hyphenation is used
