@@ -456,8 +456,6 @@ BUGWK84676 SKIP : fast/files/file-reader-abort.html = TIMEOUT
 BUGWK84676 SKIP : fast/files/apply-blob-url-to-xhr.html = TIMEOUT
 BUGWK84676 SKIP : fast/files/file-reader-event-listener.html = TIMEOUT
 
-BUGWK87469 : fast/events/domactivate-sets-underlying-click-event-as-handled.html = TIMEOUT
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests timing out
 //////////////////////////////////////////////////////////////////////////////////////////

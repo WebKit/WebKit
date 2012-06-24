@@ -1273,6 +1273,13 @@ static void didRunInsecureContent(WebKitWebFrame*, WebKitSecurityOrigin*, const 
         printf("didRunInsecureContent\n");
 }
 
+static gboolean webViewRunFileChooser(WebKitWebView*, WebKitFileChooserRequest*)
+{
+    // We return TRUE to not propagate the event further so the
+    // default file chooser dialog is not shown.
+    return TRUE;
+}
+
 static WebKitWebView* createWebView()
 {
     // It is important to declare DRT is running early so when creating
@@ -1307,6 +1314,7 @@ static WebKitWebView* createWebView()
                      "signal::resource-response-received", didReceiveResponse, 0,
                      "signal::resource-load-finished", didFinishLoading, 0,
                      "signal::resource-load-failed", didFailLoadingWithError, 0,
+                     "signal::run-file-chooser", webViewRunFileChooser, 0,
                      NULL);
     connectEditingCallbacks(view);
 

@@ -1,3 +1,15 @@
+2012-06-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] REGRESSION(r120918): Causes flaky DND tests
+        https://bugs.webkit.org/show_bug.cgi?id=89770
+
+        Reviewed by Martin Robinson.
+
+        Remove test expectations for fast/events/domactivate-sets-underlying-click-event-as-handled.html
+        as the test now passes since the file chooser dialog is no longer run.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-23  Kenneth Russell  <kbr@google.com>
 
         [chromium] Layout Test fast/text/hyphen-min-preferred-width.html is failing
