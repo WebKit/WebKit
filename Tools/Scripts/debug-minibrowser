@@ -33,7 +33,7 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-printHelpAndExitForRunAndDebugWebKitAppIfNeeded();
+printHelpAndExitForRunAndDebugWebKitAppIfNeeded(INCLUDE_OPTIONS_FOR_DEBUGGING);
 
 setConfiguration();
 

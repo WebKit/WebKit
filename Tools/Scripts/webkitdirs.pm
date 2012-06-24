@@ -71,6 +71,7 @@ BEGIN {
 }
 
 use constant USE_OPEN_COMMAND => 1; # Used in runMacWebKitApp().
+use constant INCLUDE_OPTIONS_FOR_DEBUGGING => 1;
 
 our @EXPORT_OK;
 
@@ -83,6 +84,7 @@ my $configurationForVisualStudio;
 my $configurationProductDir;
 my $sourceDir;
 my $currentSVNRevision;
+my $debugger;
 my $nmPath;
 my $osXVersion;
 my $generateDsym;
@@ -1402,6 +1404,22 @@ sub determineShouldTargetWebProcess
     $shouldTargetWebProcess = checkForArgumentAndRemoveFromARGV("--target-web-process");
 }
 
+sub debugger
+{
+    determineDebugger();
+    return $debugger;
+}
+
+sub determineDebugger
+{
+    return if defined($debugger);
+    if (checkForArgumentAndRemoveFromARGV("--use-lldb")) {
+        $debugger = "lldb";
+    } else {
+        $debugger = "gdb";
+    }
+}
+
 sub appendToEnvironmentVariableList
 {
     my ($environmentVariableName, $value) = @_;
@@ -2597,15 +2615,26 @@ sub setPathForRunningWebKitApp
     }
 }
 
-sub printHelpAndExitForRunAndDebugWebKitAppIfNeeded()
+sub printHelpAndExitForRunAndDebugWebKitAppIfNeeded
 {
     return unless checkForArgumentAndRemoveFromARGV("--help");
+
+    my ($includeOptionsForDebugging) = @_;
+
     print STDERR <<EOF;
 Usage: @{[basename($0)]} [options] [args ...]
   --help                Show this help message
   --no-saved-state      Disable application resume for the session on Mac OS 10.7
   --guard-malloc        Enable Guard Malloc (Mac OS X only)
 EOF
+
+    if ($includeOptionsForDebugging) {
+        print STDERR <<EOF;
+  --target-web-process  Debug the web process
+  --use-lldb            Use LLDB
+EOF
+    }
+
     exit(1);
 }
 
@@ -2638,10 +2667,22 @@ sub runMacWebKitApp($;$)
 sub execMacWebKitAppForDebugging($)
 {
     my ($appPath) = @_;
+    my $architectureSwitch;
+    my $argumentsSeparator;
 
-    my $gdbPath = `xcrun -find gdb`;
-    chomp $gdbPath;
-    die "Can't find gdb executable. Is gdb installed?\n" unless -x $gdbPath;
+    if (debugger() eq "lldb") {
+        $architectureSwitch = "--arch";
+        $argumentsSeparator = "--";
+    } elsif (debugger() eq "gdb") {
+        $architectureSwitch = "-arch";
+        $argumentsSeparator = "--args";
+    } else {
+        die "Unknown debugger $debugger.\n";
+    }
+
+    my $debuggerPath = `xcrun -find $debugger`;
+    chomp $debuggerPath;
+    die "Can't find the $debugger executable.\n" unless -x $debuggerPath;
 
     my $productDir = productDir();
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
@@ -2649,10 +2690,10 @@ sub execMacWebKitAppForDebugging($)
 
     setUpGuardMallocIfNeeded();
 
-    my @architectureFlags = ("-arch", architecture());
+    my @architectureFlags = ($architectureSwitch, architecture());
     if (!shouldTargetWebProcess()) {
-        print "Starting @{[basename($appPath)]} under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
-        exec { $gdbPath } $gdbPath, @architectureFlags, "--args", $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
+        print "Starting @{[basename($appPath)]} under $debugger with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+        exec { $debuggerPath } $debuggerPath, @architectureFlags, $argumentsSeparator, $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
     } else {
         my $webProcessShimPath = File::Spec->catfile($productDir, "WebProcessShim.dylib");
         my $webProcessPath = File::Spec->catdir($productDir, "WebProcess.app");
@@ -2660,8 +2701,8 @@ sub execMacWebKitAppForDebugging($)
 
         appendToEnvironmentVariableList("DYLD_INSERT_LIBRARIES", $webProcessShimPath);
 
-        print "Starting WebProcess under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
-        exec { $gdbPath } $gdbPath, @architectureFlags, "--args", $webProcessPath, $webKit2ExecutablePath, "-type", "webprocess", "-client-executable", $appPath or die;
+        print "Starting WebProcess under $debugger with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+        exec { $debuggerPath } $debuggerPath, @architectureFlags, $argumentsSeparator, $webProcessPath, $webKit2ExecutablePath, "-type", "webprocess", "-client-executable", $appPath or die;
     }
 }
 

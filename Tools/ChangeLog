@@ -1,3 +1,21 @@
+2012-06-24  Dan Bernstein  <mitz@apple.com>
+
+        Made debug-{minibrowser,safari,test-runner} work with LLDB.
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/debug-minibrowser: Pass INCLUDE_OPTIONS_FOR_DEBUGGING to
+        printHelpAndExitForRunAndDebugWebKitAppIfNeeded().
+        * Scripts/debug-safari: Ditto.
+        * Scripts/debug-test-runner: Ditto.
+        * Scripts/webkitdirs.pm:
+        (debugger): Added. Calls determineDebugger() if needed and returns the chosen debugger.
+        (determineDebugger): Added. Sets the debugger to "lldb" if the --use-lldb switch is present,
+        and to "gdb" otherwise.
+        (printHelpAndExitForRunAndDebugWebKitAppIfNeeded): Changed to print help for the
+        --target-web-process and --use-lldb switches if passed INCLUDE_OPTIONS_FOR_DEBUGGING.
+        (execMacWebKitAppForDebugging): Changed to use the chosen debugger.
+
 2012-06-24  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Release media resources after each LayoutTest on Android
