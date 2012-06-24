@@ -303,6 +303,9 @@ void TestShell::resetTestController()
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter->reset();
 #endif
+#if OS(ANDROID)
+    webkit_support::ReleaseMediaResources();
+#endif
     m_drtDevToolsAgent->reset();
     if (m_drtDevToolsClient)
         m_drtDevToolsClient->reset();

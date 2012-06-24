@@ -1,3 +1,19 @@
+2012-06-24  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Release media resources after each LayoutTest on Android
+        https://bugs.webkit.org/show_bug.cgi?id=89720
+
+        Reviewed by Eric Carlson.
+
+        The LayoutTests can hang when run on Android because we sometimes run
+        out of media resources. This patch causes us to release our media
+        resources after each test in order to avoid running out of this
+        resource. In production, there are other mechanisms that manage this
+        resource.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetTestController):
+
 2012-06-23  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] REGRESSION(r120918): Causes flaky DND tests
