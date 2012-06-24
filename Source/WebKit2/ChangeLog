@@ -1,3 +1,27 @@
+2012-06-24  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r120329): Intermittent WebProcess shutdowns due to out-of-line DidReceiveEvent messages.
+        <rdar://problem/11686974>
+        <http://webkit.org/b/89659>
+
+        Reviewed by Sam Weinig.
+
+        Instead of sending DidReceiveEvent for key events as DispatchMessageEvenWhenWaitingForSyncReply,
+        use proper synchronous messages. This makes the WebProcess block while the UIProcess handles
+        the event but prevents a weird race condition where DidReceiveEvent gets dispatched just before
+        a synchronous DecidePolicyForNavigationAction and something happens below DidReceiveEvent that
+        invalidates the frame ID passed to DecidePolicyForNavigationAction.
+
+        This is a speculative fire-fighting fix.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveKeyEvent):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::keyEvent):
+
 2012-06-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121058.

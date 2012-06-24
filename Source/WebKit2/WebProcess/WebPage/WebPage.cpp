@@ -1439,9 +1439,7 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
     if (!handled)
         handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
 
-    // The receiving end relies on DidReceiveEvent and InterpretQueuedKeyEvent arriving in the same order they are sent
-    // (for keyboard events.) We set the DispatchMessageEvenWhenWaitingForSyncReply flag to ensure consistent ordering.
-    connection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(keyboardEvent.type()), handled), m_pageID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    sendSync(Messages::WebPageProxy::DidReceiveKeyEvent(static_cast<uint32_t>(keyboardEvent.type()), handled), Messages::WebPageProxy::DidReceiveKeyEvent::Reply());
 }
 
 void WebPage::keyEventSyncForTesting(const WebKeyboardEvent& keyboardEvent, bool& handled)
