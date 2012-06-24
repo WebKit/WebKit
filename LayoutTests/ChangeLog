@@ -1,5 +1,18 @@
 2012-06-24  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed GTK gardening, generating baselines required after r121085.
+
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/gtk/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/gtk/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/gtk/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/gtk/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.txt: Added.
+
+2012-06-24  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening, move some flaky tests under the
         proper section in the TestExpectations file and narrow down
         test expectations for failures that were shown not to be flaky.
