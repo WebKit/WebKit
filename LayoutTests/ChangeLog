@@ -1,3 +1,15 @@
+2012-06-24  Adam Barth  <abarth@webkit.org>
+
+        The comment in test_expectations_android.txt is unclear as to the purpose of this file.
+        https://bugs.webkit.org/show_bug.cgi?id=89832
+
+        Reviewed by Ojan Vafai.
+
+        This patch attempts to clarify the purpose of this file and what will
+        happen to it in the future.
+
+        * platform/chromium/test_expectations_android.txt:
+
 2012-06-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Skip fast/text/hyphen-min-preferred-width.html
