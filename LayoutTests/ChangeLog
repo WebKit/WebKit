@@ -1,3 +1,16 @@
+2012-06-24  Joone Hur  <joone.hur@intel.com>
+
+        Unreviewed EFL gardening, generating baselines required after r121085.
+
+        * platform/efl/fast/css/text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/efl/fast/css/text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/efl/fast/css/text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/efl/fast/css/text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/efl/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/efl/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/efl/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/efl/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.txt: Added.
+
 2012-06-24  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, generating baselines required after r121085.
