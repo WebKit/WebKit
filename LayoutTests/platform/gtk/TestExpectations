@@ -546,6 +546,7 @@ BUGWK44478 SKIP : fast/text/hyphenate-character.html = TEXT
 BUGWK44478 SKIP : fast/text/hyphens.html = TEXT
 BUGWK44478 SKIP : fast/text/hyphenate-first-word.html = TEXT
 BUGWK44478 SKIP : fast/text/hyphenate-locale.html = TEXT
+BUGWK44478 SKIP : fast/text/hyphen-min-preferred-width.html = IMAGE
 
 // This port doesn't support v8 i18n extension.
 BUGWKGTK : fast/js/i18n-bindings-locale.html = TEXT

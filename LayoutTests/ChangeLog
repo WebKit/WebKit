@@ -1,5 +1,12 @@
 2012-06-23  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed GTK gardening, skip the auto-hyphenation test
+        added in r121102 as the GTK port does not support the feature.
+
+        * platform/gtk/TestExpectations:
+
+2012-06-23  Zan Dobersek  <zandobersek@gmail.com>
+
         [Gtk] REGRESSION(r120918): Causes flaky DND tests
         https://bugs.webkit.org/show_bug.cgi?id=89770
 
