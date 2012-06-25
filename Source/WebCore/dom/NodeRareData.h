@@ -123,36 +123,39 @@ public:
         return adoptPtr(new NodeListsNodeData);
     }
 
+    void invalidateCaches(const QualifiedName* attrName = 0);
     bool isEmpty() const
     {
         return m_atomicNameCaches.isEmpty() && m_nameCaches.isEmpty() && m_tagNodeListCacheNS.isEmpty();
     }
 
-    void adoptTreeScope(Document* oldDocument, Document* newDocument)
+    void adoptTreeScope(TreeScope* oldTreeScope, TreeScope* newTreeScope, Document* oldDocument, Document* newDocument)
     {
-        NodeListAtomicNameCacheMap::const_iterator atomicNameCacheEnd = m_atomicNameCaches.end();
-        for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it) {
-            DynamicSubtreeNodeList* list = it->second;
-            list->invalidateCache();
-            if (oldDocument != newDocument && list->isRootedAtDocument()) {
-                oldDocument->unregisterDynamicSubtreeNodeList(list);
-                newDocument->registerDynamicSubtreeNodeList(list);
+        invalidateCaches();
+
+        if (oldDocument != newDocument) {
+            NodeListAtomicNameCacheMap::const_iterator atomicNameCacheEnd = m_atomicNameCaches.end();
+            for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it) {
+                DynamicSubtreeNodeList* list = it->second;
+                if (list->isRootedAtDocument()) {
+                    oldDocument->unregisterDynamicSubtreeNodeList(list);
+                    newDocument->registerDynamicSubtreeNodeList(list);
+                }
+            }
+
+            NodeListNameCacheMap::const_iterator nameCacheEnd = m_nameCaches.end();
+            for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it) {
+                DynamicSubtreeNodeList* list = it->second;
+                if (list->isRootedAtDocument()) {
+                    oldDocument->unregisterDynamicSubtreeNodeList(list);
+                    newDocument->registerDynamicSubtreeNodeList(list);
+                }
             }
         }
 
-        NodeListNameCacheMap::const_iterator nameCacheEnd = m_nameCaches.end();
-        for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it) {
-            DynamicSubtreeNodeList* list = it->second;
-            list->invalidateCache();
-            if (oldDocument != newDocument && list->isRootedAtDocument()) {
-                oldDocument->unregisterDynamicSubtreeNodeList(list);
-                newDocument->registerDynamicSubtreeNodeList(list);
-            }
-        }
-
-        TagNodeListCacheNS::iterator tagCacheEnd = m_tagNodeListCacheNS.end();
-        for (TagNodeListCacheNS::iterator it = m_tagNodeListCacheNS.begin(); it != tagCacheEnd; ++it)
-            it->second->invalidateCache();
+        if (oldTreeScope)
+            oldTreeScope->removeNodeListCache();
+        newTreeScope->addNodeListCache();
     }
 
 private:
@@ -212,10 +215,10 @@ public:
     void clearNodeLists() { m_nodeLists.clear(); }
     void setNodeLists(PassOwnPtr<NodeListsNodeData> lists) { m_nodeLists = lists; }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
-    NodeListsNodeData* ensureNodeLists()
+    NodeListsNodeData* ensureNodeLists(Node* node)
     {
         if (!m_nodeLists)
-            createNodeLists();
+            createNodeLists(node);
         return m_nodeLists.get();
     }
     void clearChildNodeListCache();
@@ -345,7 +348,7 @@ protected:
     void setNeedsFocusAppearanceUpdateSoonAfterAttach(bool needs) { m_needsFocusAppearanceUpdateSoonAfterAttach = needs; }
 
 private:
-    void createNodeLists();
+    void createNodeLists(Node*);
 
     TreeScope* m_treeScope;
     OwnPtr<NodeListsNodeData> m_nodeLists;

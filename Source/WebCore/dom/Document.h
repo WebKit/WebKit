@@ -714,7 +714,7 @@ public:
 
     void registerDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
     void unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
-    void clearNodeListCaches(const QualifiedName* attrName);
+    void clearNodeListCaches();
 
     void attachNodeIterator(NodeIterator*);
     void detachNodeIterator(NodeIterator*);

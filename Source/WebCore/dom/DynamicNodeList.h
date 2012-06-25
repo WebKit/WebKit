@@ -123,9 +123,7 @@ public:
 protected:
     DynamicSubtreeNodeList(PassRefPtr<Node> node, RootType rootType = RootedAtNode, InvalidationType invalidationType = AlwaysInvalidate)
         : DynamicNodeList(node, rootType, invalidationType)
-    {
-        document()->registerDynamicSubtreeNodeList(this);
-    }
+    { }
 
 private:
     Node* itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;

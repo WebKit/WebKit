@@ -30,7 +30,6 @@ namespace WebCore {
 
 DynamicSubtreeNodeList::~DynamicSubtreeNodeList()
 {
-    document()->unregisterDynamicSubtreeNodeList(this);
 }
 
 unsigned DynamicSubtreeNodeList::length() const

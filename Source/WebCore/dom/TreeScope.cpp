@@ -54,6 +54,7 @@ using namespace HTMLNames;
 TreeScope::TreeScope(ContainerNode* rootNode)
     : m_rootNode(rootNode)
     , m_parentTreeScope(0)
+    , m_numNodeListCaches(0)
 {
     ASSERT(rootNode);
 }

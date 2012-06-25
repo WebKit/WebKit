@@ -61,6 +61,10 @@ public:
     void removeImageMap(HTMLMapElement*);
     HTMLMapElement* getImageMap(const String& url) const;
 
+    void addNodeListCache() { ++m_numNodeListCaches; }
+    void removeNodeListCache() { ASSERT(m_numNodeListCaches > 0); --m_numNodeListCaches; }
+    bool hasNodeListCaches() const { return m_numNodeListCaches; }
+
     DOMSelection* getSelection() const;
 
     // Find first anchor with the given name.
@@ -90,6 +94,8 @@ private:
 
     DocumentOrderedMap m_elementsById;
     DocumentOrderedMap m_imageMapsByName;
+
+    unsigned m_numNodeListCaches;
 
     mutable RefPtr<DOMSelection> m_selection;
 };

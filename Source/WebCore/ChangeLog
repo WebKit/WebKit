@@ -1,3 +1,55 @@
+2012-06-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121106.
+        http://trac.webkit.org/changeset/121106
+        https://bugs.webkit.org/show_bug.cgi?id=89841
+
+        Caused 85% performance regressions on Dromaeo/jslib-modify-
+        jquery.html (Requested by rniwa on #webkit).
+
+        * dom/Document.cpp:
+        (WebCore::Document::clearNodeListCaches):
+        * dom/Document.h:
+        (Document):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicSubtreeNodeList::~DynamicSubtreeNodeList):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicSubtreeNodeList::DynamicSubtreeNodeList):
+        * dom/Node.cpp:
+        (WebCore::Node::clearRareData):
+        (WebCore::Node::invalidateNodeListsCacheAfterAttributeChanged):
+        (WebCore::Node::invalidateNodeListsCacheAfterChildrenChanged):
+        (WebCore::Node::getElementsByTagName):
+        (WebCore::Node::getElementsByTagNameNS):
+        (WebCore::Node::getElementsByName):
+        (WebCore::Node::getElementsByClassName):
+        (WebCore::Node::radioNodeList):
+        (WebCore::NodeListsNodeData::invalidateCaches):
+        (WebCore):
+        (WebCore::NodeRareData::createNodeLists):
+        * dom/NodeRareData.h:
+        (NodeListsNodeData):
+        (WebCore::NodeListsNodeData::adoptTreeScope):
+        (WebCore::NodeRareData::ensureNodeLists):
+        (NodeRareData):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::TreeScope):
+        * dom/TreeScope.h:
+        (WebCore::TreeScope::addNodeListCache):
+        (WebCore::TreeScope::removeNodeListCache):
+        (WebCore::TreeScope::hasNodeListCaches):
+        (TreeScope):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        * html/LabelableElement.cpp:
+        (WebCore::LabelableElement::labels):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::LabelsNodeList):
+        (WebCore::LabelsNodeList::~LabelsNodeList):
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList):
+        (WebCore::RadioNodeList::~RadioNodeList):
+
 2012-06-24  Adam Barth  <abarth@webkit.org>
 
         Change the type of the second argument of FrameSelection::revealSelection to use RevealExtentOption
