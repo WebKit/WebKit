@@ -93,8 +93,6 @@ module xml {
             getter raises(DOMException);
         readonly attribute Document responseXML
             getter raises(DOMException);
-        readonly attribute Blob responseBlob
-            getter raises(DOMException);
 
         attribute DOMString responseType
             setter raises(DOMException);

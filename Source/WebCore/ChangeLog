@@ -1,3 +1,23 @@
+2012-06-25  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Remove responseBlob field from XMLHttpResponse.idl
+        https://bugs.webkit.org/show_bug.cgi?id=89859
+
+        Reviewed by Eric Seidel.
+
+        Remove XMLHttpResponse.responseBlob from XMLHttpResponse.idl, which
+        has only been exposed for a very limited time (since r120574) but
+        probably should not have been done so since XHR2 spec no longer has
+        the field.  A quick search also showed that no one seems to be using the field.
+
+        (More context: the field was added long time ago with a runtime guard
+        which had never been enabled until the guard was removed in r120574
+        to remove XHR_RESPONSE_BLOB on all platforms.)
+
+        No new tests as no tests use this field.
+
+        * xml/XMLHttpRequest.idl: Removed responseBlob field.
+
 2012-06-25  Huang Dongsung  <luxtella@company100.net>
 
         Add static qualifier to GraphicsContext3D::extractImageData.
