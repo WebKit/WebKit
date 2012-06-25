@@ -1,3 +1,24 @@
+2012-06-25  Adam Barth  <abarth@webkit.org>
+
+        ASSERT(m_wheelEventHandlerCount > 0) can fire
+        https://bugs.webkit.org/show_bug.cgi?id=89856
+
+        Reviewed by Eric Seidel.
+
+        When a node with a wheel or a touch event is moved from one document to
+        another, the didAddMumble/didRemoveMumble calls do not balance because
+        they're called on different documents. This patch twiddles the counts
+        appropriately in that case.
+
+        Test: fast/events/move-element-with-wheel-and-touch-event-listeners.html
+
+        * dom/EventNames.h:
+        (WebCore::EventNames::isTouchEventType):
+        (EventNames):
+        (WebCore::EventNames::touchEventNames):
+        * dom/Node.cpp:
+        (WebCore::Node::didMoveToNewDocument):
+
 2012-06-25  Eric Seidel  <eric@webkit.org>
 
         Split map* functions out of StyleResolver into a helper object

@@ -1,3 +1,17 @@
+2012-06-25  Adam Barth  <abarth@webkit.org>
+
+        ASSERT(m_wheelEventHandlerCount > 0) can fire
+        https://bugs.webkit.org/show_bug.cgi?id=89856
+
+        Reviewed by Eric Seidel.
+
+        Test what happens when we move a node with wheel and/or touch events
+        from one document to another. Prior to this patch, this test triggers
+        ASSERT(m_wheelEventHandlerCount > 0) in Document.cpp.
+
+        * fast/events/move-element-with-wheel-and-touch-event-listeners-expected.txt: Added.
+        * fast/events/move-element-with-wheel-and-touch-event-listeners.html: Added.
+
 2012-06-25  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Executing Italic and InsertUnorderedList in Shadow DOM causes a crash

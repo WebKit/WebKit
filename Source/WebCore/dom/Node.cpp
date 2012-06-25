@@ -2309,6 +2309,21 @@ void Node::didMoveToNewDocument(Document* oldDocument)
 
     // FIXME: Event listener types for this node should be set on the new owner document here.
 
+    const EventListenerVector& wheelListeners = getEventListeners(eventNames().mousewheelEvent);
+    for (size_t i = 0; i < wheelListeners.size(); ++i) {
+        oldDocument->didRemoveWheelEventHandler();
+        document()->didAddWheelEventHandler();
+    }
+
+    Vector<AtomicString> touchEventNames = eventNames().touchEventNames();
+    for (size_t i = 0; i < touchEventNames.size(); ++i) {
+        const EventListenerVector& listeners = getEventListeners(touchEventNames[i]);
+        for (size_t j = 0; j < listeners.size(); ++j) {
+            oldDocument->didRemoveTouchEventHandler();
+            document()->didAddTouchEventHandler();
+        }
+    }
+
 #if ENABLE(MUTATION_OBSERVERS)
     if (Vector<OwnPtr<MutationObserverRegistration> >* registry = mutationObserverRegistry()) {
         for (size_t i = 0; i < registry->size(); ++i) {
