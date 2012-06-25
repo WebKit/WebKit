@@ -122,7 +122,11 @@ PlatformContextSkia::State::State()
     , m_lineJoin(SkPaint::kDefault_Join)
     , m_dash(0)
     , m_textDrawingMode(TextModeFill)
+#if USE(LOW_QUALITY_IMAGE_INTERPOLATION)
+    , m_interpolationQuality(InterpolationLow)
+#else
     , m_interpolationQuality(InterpolationHigh)
+#endif
 {
 }
 

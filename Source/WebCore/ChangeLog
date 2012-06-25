@@ -1,3 +1,22 @@
+2012-06-25  Adam Barth  <abarth@webkit.org>
+
+        Use InterpolationLow on chromium-android
+        https://bugs.webkit.org/show_bug.cgi?id=89849
+
+        Reviewed by Daniel Bates.
+
+        Min Qin writes:
+
+          Using InterpolationHigh is very very expensive when resampling
+          images.  For example, it took 1400ms to decode an image on
+          http://www.crossfitsunnyvale.com/blog/, but it took 2800 ms to do the
+          resampling Switch to InterpolationLow will result in linear
+          resampling. It is much faster as the time it tooks is almost
+          non-noticable [sic] on the trace.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::State::State):
+
 2012-06-25  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Remove unused backend property accessors

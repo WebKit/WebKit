@@ -1,3 +1,14 @@
+2012-06-25  Adam Barth  <abarth@webkit.org>
+
+        Use InterpolationLow on chromium-android
+        https://bugs.webkit.org/show_bug.cgi?id=89849
+
+        Reviewed by Daniel Bates.
+
+        Introduce a USE macro to control image interpolation quality.
+
+        * wtf/Platform.h:
+
 2012-06-25  Kent Tamura  <tkent@chromium.org>
 
         Change the serialization format of form control state to make the code simple
