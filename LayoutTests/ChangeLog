@@ -1,3 +1,13 @@
+2012-06-21  Kent Tamura  <tkent@chromium.org>
+
+        Selected option is not restored correctly
+        https://bugs.webkit.org/show_bug.cgi?id=89623
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/select/select-state-restore-expected.txt: Added.
+        * fast/forms/select/select-state-restore.html: Added.
+
 2012-06-24  David Barr  <davidbarr@chromium.org>
 
         Add snap to css3-images image-resolution

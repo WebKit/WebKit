@@ -1,3 +1,54 @@
+2012-06-22  Kent Tamura  <tkent@chromium.org>
+
+        Selected option is not restored correctly
+        https://bugs.webkit.org/show_bug.cgi?id=89623
+
+        Reviewed by Hajime Morita.
+
+        Details of the bug:
+        We saved a state of a <select> element as a string of which length was
+        the size of <select>'s children. e.g. If a <select> had five children
+        and the second and the fifth items were selected, the state string was:
+                ".X..X"
+
+        This didn't work well if the structure of the children was updated after
+        parsing. For example,
+        1. A page has the following <select> initially:
+          <select multiple>
+            <option>Banana
+            <option>Lemon
+            <option>Orange
+            <option>Strawberry
+          <select>
+
+        2. For some reasons, <option>Apple</option> is prepended to the children.
+        3. Some items are selected.
+        4. The page is unloaded. Selection state is saved.
+        5. A user go back to the page again. A browser parses the page again.
+        6. Try to restore the <select> state with the saved data at 4.
+          But "Apple" is missing. The <select> has wrong selections.
+
+        Solution:
+        We save the state as a set of selected values. If "Banana" and
+        "Strawberry" are selected in the above <select>, we save two strings;
+        "Banana" and "Strawberry", not ".X..X".
+
+        Test: fast/forms/select/select-state-restore.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::saveFormControlState):
+        Store selected value strings to a FormControlState object.
+        (WebCore::HTMLSelectElement::searchOptionsForValue):
+        A helper function to find an <option> with the specified value.
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        Clear all of selections, then select options with saved values.
+        In order to avoid O(M x N) loop, we start searching at position we found
+        the previous value.
+        * html/HTMLSelectElement.h: Declare searchOptionsForValue.
+        * html/FormController.cpp:
+        (formStateSignature): Bump up the version because this is a incompatible
+        change.
+
 2012-06-24  David Barr  <davidbarr@chromium.org>
 
         Add snap to css3-images image-resolution

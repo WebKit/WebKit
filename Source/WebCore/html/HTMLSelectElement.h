@@ -164,6 +164,7 @@ private:
     bool platformHandleKeydownEvent(KeyboardEvent*);
     void listBoxDefaultEventHandler(Event*);
     void setOptionsChangedOnRenderer();
+    size_t searchOptionsForValue(const String&, size_t listIndexStart, size_t listIndexEnd) const;
 
     enum SkipDirection {
         SkipBackwards = -1,
