@@ -1,3 +1,25 @@
+2012-06-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Support screenDepth() functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=89423
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Support screenDepth() based on ecore_x_window_depth_get(). This functionality may be used by
+        both WebKit1 and WebKit2. So, concrete function is placed into EflScreenUtilities.cpp.
+
+        This patch can't support existing test cases. Because, EFL DumpRenderTree works without X11 window
+        by default.
+
+        * platform/efl/EflScreenUtilities.cpp:
+        (WebCore::getPixelDepth):
+        (WebCore):
+        * platform/efl/EflScreenUtilities.h:
+        (WebCore):
+        * platform/efl/PlatformScreenEfl.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+
 2012-06-25  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Executing Italic and InsertUnorderedList in Shadow DOM causes a crash

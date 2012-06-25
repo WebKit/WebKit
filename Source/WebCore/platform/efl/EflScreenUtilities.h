@@ -27,6 +27,7 @@ namespace WebCore {
 
 void applyFallbackCursor(Ecore_Evas*, const char*);
 int getDPI();
+int getPixelDepth(const Evas*);
 bool isUsingEcoreX(const Evas*);
 
 } // namespace WebCore

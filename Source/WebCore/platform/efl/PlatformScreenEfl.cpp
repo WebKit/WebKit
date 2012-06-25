@@ -34,6 +34,7 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
+#include "EflScreenUtilities.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "Widget.h"
@@ -57,14 +58,19 @@ int screenVerticalDPI(Widget* widget)
 
 int screenDepth(Widget* widget)
 {
-    notImplemented();
-    return 8;
+    if (!widget->evas())
+        return 0;
+
+    return getPixelDepth(widget->evas());
 }
 
-int screenDepthPerComponent(Widget*)
+int screenDepthPerComponent(Widget* widget)
 {
-    notImplemented();
-    return 8;
+    if (!widget->evas())
+        return 0;
+
+    // FIXME: How to support this functionality based on EFL library ?
+    return getPixelDepth(widget->evas());
 }
 
 bool screenIsMonochrome(Widget*)
