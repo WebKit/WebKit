@@ -1,3 +1,16 @@
+2012-06-24  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [Qt] Enable <input type="color"> support by default
+        https://bugs.webkit.org/show_bug.cgi?id=89653
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This feature is complete for Qt WebKit2. Enabling by default
+        will help to mature the implementation.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * qmake/mkspecs/features/features.pri:
+
 2012-06-24  Dan Bernstein  <mitz@apple.com>
 
         Made debug-{minibrowser,safari,test-runner} work with LLDB.
