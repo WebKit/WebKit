@@ -1,3 +1,15 @@
+2012-06-25  Alpha Lam  <hclam@chromium.org>
+
+        Roll Chromium DEPS to r144020
+        https://bugs.webkit.org/show_bug.cgi?id=89912
+
+        Build fixed now! Unreviewed.
+
+        Rolled DEPS to fix chromium build.
+        Patch by Scott Graham <scottmg@chromium.org>.
+
+        * DEPS:
+
 2012-06-25  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Stub out new onSuccess() handler for chromium
