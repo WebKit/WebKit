@@ -1,3 +1,13 @@
+2012-06-25  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Unskip 3D transform tests.
+        https://bugs.webkit.org/show_bug.cgi?id=89878
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt/Skipped:
+
 2012-06-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: toggling style should not start property edit first.

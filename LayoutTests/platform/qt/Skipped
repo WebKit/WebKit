@@ -263,8 +263,12 @@ fast/css/font-face-woff.html
 # Need to implement getFormValue().
 plugins/form-value.html
 
-# We have bad support for 3d transformations in general, so this will remain skipped.
-transforms/3d
+# Boxes are not showing the correct perspective.
+transforms/3d/general/perspective-non-layer.html
+transforms/3d/general/perspective-units.html
+
+# "backface-visibility: hidden" is not hiding test boxes.
+transforms/3d/hit-testing
 
 # accessibility support
 accessibility

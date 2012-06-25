@@ -337,15 +337,6 @@ compositing/geometry/tall-page-composited.html
 # https://bugs.webkit.org/show_bug.cgi?id=89645
 compositing/backface-visibility/backface-visibility-webgl.html
 
-# Boxes are not showing the correct perspective.
-transforms/3d/general/perspective-units.html
-
-# "backface-visibility: hidden" is not hiding test boxes.
-transforms/3d/hit-testing
-
-# Generated results doesn't contain any visible 3d transformation.
-transforms/3d/point-mapping
-
 # For some reason they time-out on the bot.
 fullscreen/video-controls-timeline.html
 fullscreen/full-screen-iframe-legacy.html
