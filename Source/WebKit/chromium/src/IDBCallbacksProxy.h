@@ -52,6 +52,7 @@ public:
     virtual void onSuccess(PassRefPtr<WebCore::IDBKey>);
     virtual void onSuccess(PassRefPtr<WebCore::IDBTransactionBackendInterface>);
     virtual void onSuccess(PassRefPtr<WebCore::SerializedScriptValue>);
+    virtual void onSuccess(PassRefPtr<WebCore::SerializedScriptValue>, PassRefPtr<WebCore::IDBKey>, const WebCore::IDBKeyPath&);
     virtual void onSuccessWithContinuation();
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<WebCore::IDBKey> >& keys, const Vector<RefPtr<WebCore::IDBKey> >& primaryKeys, const Vector<RefPtr<WebCore::SerializedScriptValue> >& values);
     virtual void onBlocked();

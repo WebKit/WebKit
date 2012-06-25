@@ -94,6 +94,10 @@ void IDBCallbacksProxy::onSuccess(PassRefPtr<SerializedScriptValue> serializedSc
     m_callbacks->onSuccess(WebSerializedScriptValue(serializedScriptValue));
 }
 
+void IDBCallbacksProxy::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptValue, PassRefPtr<IDBKey> key, const IDBKeyPath& keyPath)
+{
+    m_callbacks->onSuccess(serializedScriptValue, key, keyPath);
+}
 void IDBCallbacksProxy::onSuccessWithContinuation()
 {
     m_callbacks->onSuccessWithContinuation();

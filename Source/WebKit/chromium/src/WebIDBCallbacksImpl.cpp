@@ -90,6 +90,13 @@ void WebIDBCallbacksImpl::onSuccess(const WebSerializedScriptValue& serializedSc
     m_callbacks->onSuccess(serializedScriptValue);
 }
 
+void WebIDBCallbacksImpl::onSuccess(const WebSerializedScriptValue& serializedScriptValue, const WebIDBKey& key, const WebIDBKeyPath& keyPath)
+{
+    // FIXME: proxy to the 3-parameter version when interface lands:
+    // m_callbacks->onSuccess(serializedScriptValue, key, keyPath););
+    ASSERT_NOT_REACHED();
+}
+
 void WebIDBCallbacksImpl::onSuccessWithContinuation()
 {
     m_callbacks->onSuccessWithContinuation();
