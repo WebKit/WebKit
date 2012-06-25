@@ -33,6 +33,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/UIProcess/Notifications \
     $$SOURCE_DIR/UIProcess/Plugins \
     $$SOURCE_DIR/UIProcess/qt \
+    $$SOURCE_DIR/UIProcess/texmap \
     $$SOURCE_DIR/WebProcess \
     $$SOURCE_DIR/WebProcess/ApplicationCache \
     $$SOURCE_DIR/WebProcess/Authentication \

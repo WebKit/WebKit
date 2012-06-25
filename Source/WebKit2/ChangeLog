@@ -1,3 +1,32 @@
+2012-06-25  YoungTaeck Song  <youngtaeck.song@samsung.com>
+
+        [WK2][Qt][EFL] Move LayerBackingStore into common directory
+        https://bugs.webkit.org/show_bug.cgi?id=89838
+
+        Reviewed by Noam Rosenthal.
+
+        Move LayerBackingStore into 'Source/WebKit2/UIProcess/texmap' to be used by both Qt and Efl.
+
+        * Target.pri:
+        * UIProcess/texmap/LayerBackingStore.cpp: Renamed from Source/WebKit2/UIProcess/qt/LayerBackingStore.cpp.
+        (WebKit):
+        (WebKit::LayerBackingStoreTile::swapBuffers):
+        (WebKit::LayerBackingStoreTile::setBackBuffer):
+        (WebKit::LayerBackingStore::createTile):
+        (WebKit::LayerBackingStore::removeTile):
+        (WebKit::LayerBackingStore::updateTile):
+        (WebKit::LayerBackingStore::texture):
+        (WebKit::LayerBackingStore::paintToTextureMapper):
+        (WebKit::LayerBackingStore::commitTileOperations):
+        * UIProcess/texmap/LayerBackingStore.h: Renamed from Source/WebKit2/UIProcess/qt/LayerBackingStore.h.
+        (WebKit):
+        (LayerBackingStoreTile):
+        (WebKit::LayerBackingStoreTile::LayerBackingStoreTile):
+        (WebKit::LayerBackingStoreTile::scale):
+        (LayerBackingStore):
+        (WebKit::LayerBackingStore::create):
+        (WebKit::LayerBackingStore::LayerBackingStore):
+
 2012-06-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test /webkit2/WebKitWebView/permission-requests fails due to a runtime warning
