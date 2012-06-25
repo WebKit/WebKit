@@ -1,3 +1,49 @@
+2012-06-25  Kent Tamura  <tkent@chromium.org>
+
+        Change the serialization format of form control state to make the code simple
+        https://bugs.webkit.org/show_bug.cgi?id=89847
+
+        Reviewed by Hajime Morita.
+
+        We used multiple strings to represent state of single form control. It
+        made the code complex. We change the serialization format so that one
+        CSV string represents state.
+
+        Examples in the old format:
+            "0"
+            "1", "value"
+            "3", "value1", "value2,value2", "value3"
+
+        Examples in the new format:
+            ""
+            ",value"
+            ",value1,value2\,value2,value3"
+
+        Test: fast/forms/state-restore-various-values.html
+
+        * html/FormController.cpp:
+        (WebCore::FormControlState::serialize):
+        Generate comma-separated string.
+        ',' in a value is serialized as "\,".
+        We changed the signature because we don't need the out-argument.
+        (WebCore::FormControlState::deserialize):
+        Parses the input comma-separated string.
+        We changed the signature because we don't need multiple input strings.
+        (formStateSignature):
+        Bump up the version because of the representation change.
+        (WebCore::FormController::formElementsState):
+        The new serialized format occupies just one string for one control.
+        - Expected size is now 3n+1.
+        - Use FormControlState::serialize().
+        (WebCore::FormController::setStateForNewFormElements):
+        The new serialized format occupies just one string for one control.
+        So we can check the vector size before the iteration.
+        * html/FormController.h:
+        (FormControlState): Change the function signatures.
+
+        * html/shadow/CalendarPickerElement.cpp:
+        (WebCore::addJavaScriptString): Use StringBuilder::appendEscaped().
+
 2012-06-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: add external resources size to the native memory diagram

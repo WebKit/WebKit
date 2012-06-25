@@ -1,3 +1,15 @@
+2012-06-25  Kent Tamura  <tkent@chromium.org>
+
+        Change the serialization format of form control state to make the code simple
+        https://bugs.webkit.org/show_bug.cgi?id=89847
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/state-restore-broken-state-expected.txt:
+        Apply the serialization format change.
+        * fast/forms/state-restore-various-values-expected.txt: Added.
+        * fast/forms/state-restore-various-values.html: Added.
+
 2012-06-24  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening, skip new failing tests.

@@ -22,6 +22,7 @@
 #include "FormController.h"
 
 #include "HTMLFormControlElementWithState.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -30,38 +31,61 @@ using namespace HTMLNames;
 // ----------------------------------------------------------------------------
 
 // Serilized form of FormControlState:
-//  (',' means strings around it are separated in stateVector.)
 //
 // SerializedControlState ::= SkipState | RestoreState
-// SkipState ::= '0'
-// RestoreState ::= UnsignedNumber, ControlValue+
-// UnsignedNumber ::= [0-9]+
-// ControlValue ::= arbitrary string
-//
-// RestoreState has a sequence of ControlValues. The length of the
-// sequence is represented by UnsignedNumber.
+// SkipState ::= ''
+// RestoreState ::= (',' EscapedValue )+
+// EscapedValue ::= ('\\' | '\,' | [^\,])+
 
-void FormControlState::serializeTo(Vector<String>& stateVector) const
+String FormControlState::serialize() const
 {
     ASSERT(!isFailure());
-    stateVector.append(String::number(m_values.size()));
+    if (!m_values.size())
+        return emptyString();
+
+    size_t enoughSize = 0;
     for (size_t i = 0; i < m_values.size(); ++i)
-        stateVector.append(m_values[i].isNull() ? emptyString() : m_values[i]);
+        enoughSize += 1 + m_values[i].length() * 2;
+    StringBuilder builder;
+    builder.reserveCapacity(enoughSize);
+    for (size_t i = 0; i < m_values.size(); ++i) {
+        builder.append(',');
+        builder.appendEscaped(m_values[i], '\\', ',');
+    }
+    return builder.toString();
 }
 
-FormControlState FormControlState::deserialize(const Vector<String>& stateVector, size_t& index)
+FormControlState FormControlState::deserialize(const String& escaped)
 {
-    if (index >= stateVector.size())
-        return FormControlState(TypeFailure);
-    size_t valueSize = stateVector[index++].toUInt();
-    if (!valueSize)
+    if (!escaped.length())
         return FormControlState();
-    if (index + valueSize > stateVector.size())
+    if (escaped[0] != ',')
         return FormControlState(TypeFailure);
+
+    size_t valueSize = 1;
+    for (unsigned i = 1; i < escaped.length(); ++i) {
+        if (escaped[i] == '\\') {
+            if (++i >= escaped.length())
+                return FormControlState(TypeFailure);
+        } else if (escaped[i] == ',')
+            valueSize++;
+    }
+
     FormControlState state;
     state.m_values.reserveCapacity(valueSize);
-    for (size_t i = 0; i < valueSize; ++i)
-        state.append(stateVector[index++]);
+    StringBuilder builder;
+    for (unsigned i = 1; i < escaped.length(); ++i) {
+        if (escaped[i] == '\\') {
+            if (++i >= escaped.length())
+                return FormControlState(TypeFailure);
+            builder.append(escaped[i]);
+        } else if (escaped[i] == ',') {
+            state.append(builder.toString());
+            builder.clear();
+        } else
+            builder.append(escaped[i]);
+    }
+    state.append(builder.toString());
     return state;
 }
 
@@ -81,14 +105,14 @@ static String formStateSignature()
     // In the legacy version of serialized state, the first item was a name
     // attribute value of a form control. The following string literal should
     // contain some characters which are rarely used for name attribute values.
-    DEFINE_STATIC_LOCAL(String, signature, ("\n\r?% WebKit serialized form state version 3 \n\r=&"));
+    DEFINE_STATIC_LOCAL(String, signature, ("\n\r?% WebKit serialized form state version 4 \n\r=&"));
     return signature;
 }
 
 Vector<String> FormController::formElementsState() const
 {
     Vector<String> stateVector;
-    stateVector.reserveInitialCapacity(m_formElementsWithState.size() * 4 + 1);
+    stateVector.reserveInitialCapacity(m_formElementsWithState.size() * 3 + 1);
     stateVector.append(formStateSignature());
     typedef FormElementListHashSet::const_iterator Iterator;
     Iterator end = m_formElementsWithState.end();
@@ -98,7 +122,7 @@ Vector<String> FormController::formElementsState() const
             continue;
         stateVector.append(elementWithState->name().string());
         stateVector.append(elementWithState->formControlType().string());
-        elementWithState->saveFormControlState().serializeTo(stateVector);
+        stateVector.append(elementWithState->saveFormControlState().serialize());
     }
     return stateVector;
 }
@@ -113,14 +137,15 @@ void FormController::setStateForNewFormElements(const Vector<String>& stateVecto
     typedef FormElementStateMap::iterator Iterator;
     m_formElementsWithState.clear();
 
-    size_t i = 0;
-    if (stateVector.size() < 1 || stateVector[i++] != formStateSignature())
+    if (stateVector.size() < 1 || stateVector[0] != formStateSignature())
+        return;
+    if ((stateVector.size() - 1) % 3)
         return;
 
-    while (i + 2 < stateVector.size()) {
-        AtomicString name = stateVector[i++];
-        AtomicString type = stateVector[i++];
-        FormControlState state = FormControlState::deserialize(stateVector, i);
+    for (size_t i = 1; i < stateVector.size(); i += 3) {
+        AtomicString name = stateVector[i];
+        AtomicString type = stateVector[i + 1];
+        FormControlState state = FormControlState::deserialize(stateVector[i + 2]);
         if (type.isEmpty() || type.impl()->find(isNotFormControlTypeCharacter) != notFound || state.isFailure())
             break;
 
@@ -134,8 +159,6 @@ void FormController::setStateForNewFormElements(const Vector<String>& stateVecto
             m_stateForNewFormElements.set(key, stateList);
         }
     }
-    if (i != stateVector.size())
-        m_stateForNewFormElements.clear();
 }
 
 bool FormController::hasStateForNewFormElements() const

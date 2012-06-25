@@ -151,12 +151,7 @@ static void addJavaScriptString(const String& str, DocumentWriter& writer)
 {
     addLiteral("\"", writer);
     StringBuilder builder;
-    builder.reserveCapacity(str.length());
-    for (unsigned i = 0; i < str.length(); ++i) {
-        if (str[i] == '\\' || str[i] == '"')
-            builder.append('\\');
-        builder.append(str[i]);
-    }
+    builder.appendEscaped(str, '\\', '"');
     addString(builder.toString(), writer);
     addLiteral("\"", writer);
 }

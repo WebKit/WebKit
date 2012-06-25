@@ -130,6 +130,21 @@ public:
         append(static_cast<LChar>(c));
     }
 
+    void appendEscaped(const String& string, UChar escape, UChar special)
+    {
+        if (string.isEmpty())
+            return;
+        unsigned requiredSize = length() + string.length();
+        if (capacity() < requiredSize)
+            reserveCapacity(requiredSize);
+        for (unsigned i = 0; i < string.length(); ++i) {
+            UChar ch = string[i];
+            if (ch == escape || ch == special)
+                append(escape);
+            append(ch);
+        }
+    }
+
     String toString()
     {
         shrinkToFit();

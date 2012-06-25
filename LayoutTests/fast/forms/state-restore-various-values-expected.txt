@@ -1,0 +1,17 @@
+Test if special characters are correctly restored.
+
+PASS $("opt-01").selected is true
+PASS $("opt-02").selected is true
+PASS $("opt-03").selected is true
+PASS $("opt-04").selected is true
+PASS $("opt-05").selected is true
+PASS $("opt-06").selected is true
+PASS $("opt-07").selected is true
+PASS $("opt-08").selected is true
+PASS $("opt-09").selected is true
+PASS $("opt-10").selected is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

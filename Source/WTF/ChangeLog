@@ -1,3 +1,15 @@
+2012-06-25  Kent Tamura  <tkent@chromium.org>
+
+        Change the serialization format of form control state to make the code simple
+        https://bugs.webkit.org/show_bug.cgi?id=89847
+
+        Reviewed by Hajime Morita.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::appendEscaped): Added. This function adds the
+        escaped form of the input string. e.g. if stiring="foo,bar" escape='\'
+        special=',', the appended string is foo\,bar.
+
 2012-06-24  Adam Barth  <abarth@webkit.org>
 
         Remove USE(CHROMIUM_NET) because it is unused
