@@ -4,6 +4,12 @@
 
         * platform/qt/Skipped:
 
+2012-06-24  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening, skip new failing tests.
+
+        * platform/qt/Skipped:
+
 2012-06-24  Joone Hur  <joone.hur@intel.com>
 
         Unreviewed GTK/EFL gardening after r121121.

@@ -275,6 +275,8 @@ fast/loader/subframe-navigate-during-main-frame-load.html
 fast/text/hyphenate-character.html
 fast/text/hyphens.html
 fast/text/soft-hyphen-4.html
+fast/text/hyphen-min-preferred-width.html
+fast/text/soft-hyphen-min-preferred-width.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=43332
 inspector/debugger/dom-breakpoints.html
@@ -516,6 +518,7 @@ editing/pasteboard/subframe-dragndrop-1.html
 editing/pasteboard/get-data-text-plain-drop.html
 editing/pasteboard/drop-text-events.html
 editing/pasteboard/drop-text-events-sideeffect.html
+editing/pasteboard/drop-text-events-sideeffect-crash.html
 editing/pasteboard/drag-and-drop-image-contenteditable.html
 editing/pasteboard/drag-and-drop-inputimage-contenteditable.html
 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
@@ -1185,6 +1188,9 @@ editing/spelling/spelling-hasspellingmarker.html
 # textInputController.hasGrammarMarkers() is not implemented.
 editing/spelling/grammar.html
 editing/spelling/grammar-paste.html
+
+# textInputController.setComposition() is not implemented
+fast/forms/input-set-composition-scroll.html
 
 # Need to call Settings::setValidationMessageTimerMagnification(-1) in DRT.
 fast/forms/validation-message-appearance.html
@@ -2447,8 +2453,6 @@ fast/css/empty-cell-baseline.html
 fast/multicol/cell-shrinkback.html
 fast/multicol/overflow-into-columngap.html
 fast/table/td-width-fifty-percent-regression.html
-fast/text/hyphen-min-preferred-width.html
-fast/text/soft-hyphen-min-preferred-width.html
 svg/custom/anchor-on-use.svg
 svg/animations/animateTransform-rotate-around-point.svg
 svg/animations/animateMotion-additive-1.svg
