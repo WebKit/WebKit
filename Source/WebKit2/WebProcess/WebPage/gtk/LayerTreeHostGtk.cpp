@@ -262,11 +262,6 @@ bool LayerTreeHostGtk::showRepaintCounter(const GraphicsLayer*) const
     return m_webPage->corePage()->settings()->showRepaintCounter();
 }
 
-float LayerTreeHostGtk::deviceScaleFactor() const
-{
-    return m_webPage->corePage()->deviceScaleFactor();
-}
-
 gboolean LayerTreeHostGtk::layerFlushTimerFiredCallback(LayerTreeHostGtk* layerTreeHost)
 {
     layerTreeHost->layerFlushTimerFired();
