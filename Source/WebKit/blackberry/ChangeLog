@@ -1,3 +1,27 @@
+2012-06-25  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Use AIR controls if client doesn't support HTML control
+        https://bugs.webkit.org/show_bug.cgi?id=89777
+
+        Reviewed by Yong Li.
+
+        Currently HTML controls depend on client implementing CreateWindow event, for those clients
+        that don't implement CreateWindow event, use old AIR controls so we don't break them.
+
+        PR 163818.
+
+        Internal reviewed by Mike Fenton.
+
+        * Api/WebPageClient.h:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::openPagePopup):
+        * WebCoreSupport/PagePopupBlackBerry.cpp:
+        (WebCore::PagePopupBlackBerry::sendCreatePopupWebViewRequest):
+        * WebCoreSupport/PagePopupBlackBerry.h:
+        (PagePopupBlackBerry):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::openSelectPopup):
+
 2012-06-25  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Require text editable element to be enabled for VKB

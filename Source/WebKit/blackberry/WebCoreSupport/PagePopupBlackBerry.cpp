@@ -56,9 +56,9 @@ PagePopupBlackBerry::~PagePopupBlackBerry()
 {
 }
 
-void PagePopupBlackBerry::sendCreatePopupWebViewRequest()
+bool PagePopupBlackBerry::sendCreatePopupWebViewRequest()
 {
-    m_webPagePrivate->client()->createPopupWebView(m_rect);
+    return m_webPagePrivate->client()->createPopupWebView(m_rect);
 }
 
 bool PagePopupBlackBerry::init(WebPage* webpage)

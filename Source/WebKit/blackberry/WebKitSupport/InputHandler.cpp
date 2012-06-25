@@ -1174,8 +1174,10 @@ bool InputHandler::openSelectPopup(HTMLSelectElement* select)
     }
 
     SelectPopupClient* selectClient = new SelectPopupClient(multiple, size, labels, enableds, itemTypes, selecteds, m_webPage, select);
-    WebCore::IntRect elementRectInRootView = select->document()->view()->contentsToRootView(select->getRect());
-    m_webPage->m_page->chrome()->client()->openPagePopup(selectClient, elementRectInRootView);
+    WebCore::IntRect elementRectInRootView = select->document()->view()->contentsToRootView(enclosingIntRect(select->getRect()));
+    // Fail to create HTML popup, use the old path
+    if (!m_webPage->m_page->chrome()->client()->openPagePopup(selectClient, elementRectInRootView))
+        m_webPage->m_client->openPopupList(multiple, size, labels, enableds, itemTypes, selecteds);
     return true;
 }
 

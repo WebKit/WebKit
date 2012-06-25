@@ -41,7 +41,7 @@ public:
     PagePopupBlackBerry(BlackBerry::WebKit::WebPagePrivate*, PagePopupClient*, const IntRect&);
     ~PagePopupBlackBerry();
 
-    void sendCreatePopupWebViewRequest();
+    bool sendCreatePopupWebViewRequest();
     bool init(BlackBerry::WebKit::WebPage*);
     void closePopup();
     void installDomFunction(Frame*);

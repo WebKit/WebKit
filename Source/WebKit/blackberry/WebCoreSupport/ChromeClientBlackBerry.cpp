@@ -307,8 +307,11 @@ PagePopup* ChromeClientBlackBerry::openPagePopup(PagePopupClient* client, const 
 
     PagePopupBlackBerry* webPopup = new PagePopupBlackBerry(m_webPagePrivate, client, rootViewToScreen(originBoundsInRootView));
     m_webPagePrivate->m_webPage->popupOpened(webPopup);
-    webPopup->sendCreatePopupWebViewRequest();
-    return webPopup;
+    if (webPopup->sendCreatePopupWebViewRequest())
+        return webPopup;
+
+    closePagePopup(0);
+    return 0;
 }
 
 void ChromeClientBlackBerry::closePagePopup(PagePopup*)
