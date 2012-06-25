@@ -1,3 +1,9 @@
+2012-06-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and configure.ac for 1.9.4 release
+
+        * configure.ac: Bump version number.
+
 2012-06-22  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Sanitize GLSL code using ANGLE.

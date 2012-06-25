@@ -1,4 +1,28 @@
 =================
+WebKitGTK+ 1.9.4
+=================
+
+What's new in WebKitGTK+ 1.9.4?
+
+  - Add an accelerated compositing implementation for WebKit2.
+  - Add API to register custom URI schemes to WebKit2 GTK+ API.
+  - Add support for window.showModalDialog in WebKit2 GTK+ API.
+  - Add webkit_download_get_received_data_length to WebKit2 GTK+ API.
+  - Add ContextMenu API to WebKit2 GTK+.
+  - Add Geolocation permission requests API to WebKit2 GTK.
+  - Add API to get the library version to WebKit2 GTK+.
+  - Add WebKitWebView::run-file-chooser signal to WebKit1 API.
+  - Port the video sink to GStreamer 0.11 API.
+  - Add TextureMapper ImageBuffer support as a fallback from the
+    hardware accelerated path
+  - Add input methods submenu item to the default context menu for
+    editable content.
+  - Unmark highlighted text matches when find operation finishes.
+  - Honor the device scale factor property when drawing.
+  - Prevent setting or editing httpOnly cookies from JavaScript.
+  - Fix several memory leaks.
+
+=================
 WebKitGTK+ 1.9.3
 =================
 
