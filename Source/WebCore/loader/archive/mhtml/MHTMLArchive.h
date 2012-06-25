@@ -52,6 +52,8 @@ public:
     // Binary encoding results in smaller MHTML files but they might not work in other browsers.
     static PassRefPtr<SharedBuffer> generateMHTMLDataUsingBinaryEncoding(Page*);
 
+    virtual ~MHTMLArchive();
+
 private:
     static PassRefPtr<SharedBuffer> generateMHTMLData(Page*, bool useBinaryEncoding);
 

@@ -56,8 +56,12 @@ protected:
     void setMainResource(PassRefPtr<ArchiveResource> mainResource) { m_mainResource = mainResource; }
     void addSubresource(PassRefPtr<ArchiveResource> subResource) { m_subresources.append(subResource); }
     void addSubframeArchive(PassRefPtr<Archive> subframeArchive) { m_subframeArchives.append(subframeArchive); }
-    
+
+    void clearAllSubframeArchives();
+
 private:
+    void clearAllSubframeArchivesImpl(Vector<RefPtr<Archive> >* clearedArchives);
+
     RefPtr<ArchiveResource> m_mainResource;
     Vector<RefPtr<ArchiveResource> > m_subresources;
     Vector<RefPtr<Archive> > m_subframeArchives;

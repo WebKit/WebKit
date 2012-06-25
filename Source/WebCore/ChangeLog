@@ -1,3 +1,35 @@
+2012-06-25  Jay Civelli  <jcivelli@chromium.org>
+
+        Fix for a memory leak with MHTMLArchives.
+
+        MHTML files present a flat list of frames and resources but the WebKit Archive
+        has a tree strcture. So the MHTMLArchive class make sures that every frame
+        knows about any other frames and resources.
+        Because these objects are ref counted, that would introduce circular references
+        preventing the entire Archive from being deleted.
+        This fixes this by:
+        - making sure the top-frame (which appears as the first entry in the MHTML) is
+          not referenced by the other frames.
+        - when the main frame is deleted it traverse the entire subarchive (sub-frames)
+          graph and makes sure they clear all their references to other subarchives.
+
+        https://bugs.webkit.org/show_bug.cgi?id=88470
+
+        Reviewed by Adam Barth.
+
+        * loader/archive/Archive.cpp:
+        (WebCore::Archive::clearAllSubframeArchives):
+        (WebCore):
+        (WebCore::Archive::clearAllSubframeArchivesImpl):
+        * loader/archive/Archive.h:
+        (Archive):
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        (WebCore::MHTMLArchive::~MHTMLArchive):
+        (WebCore):
+        (WebCore::MHTMLArchive::create):
+        * loader/archive/mhtml/MHTMLArchive.h:
+        (MHTMLArchive):
+
 2012-06-25  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed, rolling out r121178.

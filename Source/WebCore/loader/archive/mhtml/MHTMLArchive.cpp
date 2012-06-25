@@ -96,6 +96,12 @@ MHTMLArchive::MHTMLArchive()
 {
 }
 
+MHTMLArchive::~MHTMLArchive()
+{
+    // Because all frames know about each other we need to perform a deep clearing of the archives graph.
+    clearAllSubframeArchives();
+}
+
 PassRefPtr<MHTMLArchive> MHTMLArchive::create()
 {
     return adoptRef(new MHTMLArchive);
@@ -115,7 +121,7 @@ PassRefPtr<MHTMLArchive> MHTMLArchive::create(const KURL& url, SharedBuffer* dat
     // Since MHTML is a flat format, we need to make all frames aware of all resources.
     for (size_t i = 0; i < parser.frameCount(); ++i) {
         RefPtr<MHTMLArchive> archive = parser.frameAt(i);
-        for (size_t j = 0; j < parser.frameCount(); ++j) {
+        for (size_t j = 1; j < parser.frameCount(); ++j) {
             if (i != j)
                 archive->addSubframeArchive(parser.frameAt(j));
         }
