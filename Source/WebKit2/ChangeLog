@@ -1,3 +1,16 @@
+2012-06-24  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r120329): Intermittent WebProcess shutdowns due to out-of-line DidReceiveEvent messages.
+        <rdar://problem/11686974>
+        <http://webkit.org/b/89659>
+
+        Unreviewed tests assertion fix, handleKeyboardEvent() should call didReceiveKeyEvent()
+        rather than didReceiveEvent().
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleKeyboardEvent):
+        (WebKit::WebPageProxy::didReceiveKeyEvent):
+
 2012-06-24  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [WK2][Qt][EFL] Modify Qt specific code to common code
