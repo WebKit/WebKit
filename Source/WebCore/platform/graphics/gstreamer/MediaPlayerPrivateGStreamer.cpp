@@ -749,6 +749,8 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
         LOG_VERBOSE(Media, "Error: %d, %s", err->code,  err->message);
 
+        GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_playBin), GST_DEBUG_GRAPH_SHOW_ALL, "webkit-video.error");
+
         error = MediaPlayer::Empty;
         if (err->code == GST_STREAM_ERROR_CODEC_NOT_FOUND
             || err->code == GST_STREAM_ERROR_WRONG_TYPE
@@ -788,8 +790,19 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
 
         // Ignore state changes from internal elements. They are
         // forwarded to playbin2 anyway.
-        if (GST_MESSAGE_SRC(message) == reinterpret_cast<GstObject*>(m_playBin))
+        if (GST_MESSAGE_SRC(message) == reinterpret_cast<GstObject*>(m_playBin)) {
             updateStates();
+
+            // Construct a filename for the graphviz dot file output.
+            GstState oldState, newState;
+            gst_message_parse_state_changed(message, &oldState, &newState, 0);
+
+            CString dotFileName = String::format("webkit-video.%s_%s",
+                                                 gst_element_state_get_name(oldState),
+                                                 gst_element_state_get_name(newState)).utf8();
+
+            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_playBin), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.data());
+        }
         break;
     case GST_MESSAGE_BUFFERING:
         processBufferingStats(message);

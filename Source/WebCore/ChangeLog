@@ -1,3 +1,18 @@
+2012-06-25  Allan Xavier  <allan.xavier@undefinedltd.co.uk>
+
+        [GTK] Add graphviz debug output for the gstreamer video pipeline.
+        https://bugs.webkit.org/show_bug.cgi?id=89660
+
+        Reviewed by Martin Robinson.
+
+        Dump the current video pipeline as a graphviz DOT file when the
+        pipeline state changes or when an error occours.
+
+        No new tests as the change is only useful for debugging.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+
 2012-06-25  Adam Barth  <abarth@webkit.org>
 
         ASSERT(m_wheelEventHandlerCount > 0) can fire
