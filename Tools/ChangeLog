@@ -1,3 +1,14 @@
+2012-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix Win32 debug build
+
+        Reviewed by Tor Arne Vestbø.
+
+        Consolidate use_all_in_one_files into mac/unix/win32 default_pre.prf.
+
+        * qmake/mkspecs/features/unix/default_pre.prf:
+        * qmake/mkspecs/features/win32/default_pre.prf: Added.
+
 2012-06-24  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [Qt] Enable <input type="color"> support by default

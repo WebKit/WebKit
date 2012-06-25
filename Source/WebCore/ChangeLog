@@ -1,3 +1,14 @@
+2012-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix Win32 debug build
+
+        Reviewed by Tor Arne Vestbø.
+
+        Consistently use use_all_in_one_files when requested in the configuration. The previous
+        Linux condition has been moved to Tools/qmake/mkspecs/features/unix/default_pre.prf
+
+        * Target.pri:
+
 2012-06-25  Philip Rogers  <pdr@google.com>
 
         Fix rewinding of SVG animations
