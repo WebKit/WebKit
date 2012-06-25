@@ -185,7 +185,7 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const R
     const RenderObject* renderer = layer->renderer();
 
     // The simple case can be handled fast in the layer tree.
-    bool canConvertInLayerTree = ancestorLayer && renderer->style()->position() != FixedPosition;
+    bool canConvertInLayerTree = ancestorLayer && renderer->style()->position() != FixedPosition && !renderer->style()->isFlippedBlocksWritingMode();
     for (const RenderLayer* current = layer; current != ancestorLayer && canConvertInLayerTree; current = current->parent())
         canConvertInLayerTree = current->canUseConvertToLayerCoords();
 
