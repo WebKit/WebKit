@@ -1,3 +1,23 @@
+2012-06-25  Philip Rogers  <pdr@google.com>
+
+        Fix rewinding of SVG animations
+        https://bugs.webkit.org/show_bug.cgi?id=89846
+
+        Reviewed by Nikolas Zimmermann.
+
+        r116451 introduced an optimization to only clear non-freeze animations when
+        calling setCurrentTime (via reset()). This causes fill=freeze animations to
+        not clear which breaks rewinding of an animation.
+
+        In the presence of multiple animations, we reset the first animation to the
+        base value and accumulate all results into that; this masked the problem because
+        2 animations were required to hit the bug (our tests primarily cover just 1).
+
+        Test: svg/animations/animate-reset-freeze.html
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::reset):
+
 2012-06-25  Kent Tamura  <tkent@chromium.org>
 
         Change the serialization format of form control state to make the code simple

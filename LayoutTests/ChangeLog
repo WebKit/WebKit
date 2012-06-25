@@ -1,3 +1,13 @@
+2012-06-25  Philip Rogers  <pdr@google.com>
+
+        Fix rewinding of SVG animations
+        https://bugs.webkit.org/show_bug.cgi?id=89846
+
+        Reviewed by Nikolas Zimmermann.
+
+        * svg/animations/animate-reset-freeze-expected.txt: Added.
+        * svg/animations/animate-reset-freeze.html: Added.
+
 2012-06-25  Kent Tamura  <tkent@chromium.org>
 
         Change the serialization format of form control state to make the code simple

@@ -178,9 +178,7 @@ static inline void clearTimesWithDynamicOrigins(Vector<SMILTimeWithOrigin>& time
 
 void SVGSMILElement::reset()
 {
-    // Don't clear the animated type if we're frozen, only take action here if we're active.
-    if (m_activeState == Active)
-        clearAnimatedType(m_targetElement);
+    clearAnimatedType(m_targetElement);
 
     m_activeState = Inactive;
     m_isWaitingForFirstInterval = true;
