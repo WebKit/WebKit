@@ -352,7 +352,7 @@
 }
 
 .styles-section .properties > li.child-editing .webkit-css-property {
-    margin-left: -8px;
+    margin-left: 0;
 }
 
 .styles-section.matched-styles .properties li {
@@ -362,6 +362,7 @@
 .styles-section .properties li.child-editing {
     word-wrap: break-word !important;
     white-space: normal !important;
+    padding-left: 0;
 }
 
 .styles-section .properties ol {
