@@ -1184,12 +1184,6 @@ void LayerRendererChromium::finishDrawingFrame()
     GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
 
     m_implTextureManager->unprotectAllTextures();
-
-    size_t contentsMemoryUseBytes = m_contentsTextureAllocator->currentMemoryUseBytes();
-    size_t reclaimLimit = TextureManager::reclaimLimitBytes(viewportSize());
-    size_t preferredLimit = reclaimLimit > contentsMemoryUseBytes ? reclaimLimit - contentsMemoryUseBytes : 0;
-    m_implTextureManager->setPreferredMemoryLimitBytes(preferredLimit);
-    m_implTextureManager->reduceMemoryToLimit(preferredLimit);
     m_implTextureManager->deleteEvictedTextures(m_implTextureAllocator.get());
 }
 

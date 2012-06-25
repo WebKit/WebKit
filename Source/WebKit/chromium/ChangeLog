@@ -1,3 +1,15 @@
+2012-06-25  Zeev Lieber  <zlieber@chromium.org>
+
+        [Chromium] RenderPass textures are evicted at the end of every frame
+        https://bugs.webkit.org/show_bug.cgi?id=89786
+
+        Reviewed by Adrienne Walker.
+
+        Added unit tests to verify large textures are staying in memory
+        and available for render pass optimization.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-06-25  Kinuko Yasuda  <kinuko@chromium.org>
 
         Heap-use-after-free in WebKit::MainThreadFileSystemCallbacks

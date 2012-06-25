@@ -1804,6 +1804,13 @@ public:
     {
         return WebString("GL_CHROMIUM_post_sub_buffer");
     }
+
+    // Unlimited texture size.
+    virtual void getIntegerv(WGC3Denum pname, WGC3Dint* value)
+    {
+        if (pname == WebCore::GraphicsContext3D::MAX_TEXTURE_SIZE)
+            *value = 8192;
+    }
 };
 
 static PassOwnPtr<CCLayerTreeHostImpl> setupLayersForOpacity(bool partialSwap, CCLayerTreeHostImplClient* client)
@@ -2422,21 +2429,21 @@ TEST_F(CCLayerTreeHostImplTest, hasTransparentBackground)
     Mock::VerifyAndClearExpectations(&mockContext);
 }
 
-static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl, CCLayerImpl*& rootPtr, CCLayerImpl*& intermediateLayerPtr, CCLayerImpl*& surfaceLayerPtr, CCLayerImpl*& childPtr)
+static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl, CCLayerImpl*& rootPtr, CCLayerImpl*& intermediateLayerPtr, CCLayerImpl*& surfaceLayerPtr, CCLayerImpl*& childPtr, const IntSize& rootSize)
 {
     RefPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new PartialSwapContext()), GraphicsContext3D::RenderDirectlyToHostWindow));
 
     layerTreeHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
-    layerTreeHostImpl->setViewportSize(IntSize(100, 100));
+    layerTreeHostImpl->setViewportSize(rootSize);
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     rootPtr = root.get();
 
     root->setAnchorPoint(FloatPoint(0, 0));
     root->setPosition(FloatPoint(0, 0));
-    root->setBounds(IntSize(100, 100));
-    root->setContentBounds(IntSize(100, 100));
-    root->setVisibleLayerRect(IntRect(0, 0, 100, 100));
+    root->setBounds(rootSize);
+    root->setContentBounds(rootSize);
+    root->setVisibleLayerRect(IntRect(IntPoint(0, 0), rootSize));
     root->setDrawsContent(true);
     layerTreeHostImpl->setRootLayer(root.release());
 
@@ -2446,9 +2453,9 @@ static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl,
 
     intermediateLayerPtr->setAnchorPoint(FloatPoint(0, 0));
     intermediateLayerPtr->setPosition(FloatPoint(10, 10));
-    intermediateLayerPtr->setBounds(IntSize(100, 100));
-    intermediateLayerPtr->setContentBounds(IntSize(100, 100));
-    intermediateLayerPtr->setVisibleLayerRect(IntRect(0, 0, 100, 100));
+    intermediateLayerPtr->setBounds(rootSize);
+    intermediateLayerPtr->setContentBounds(rootSize);
+    intermediateLayerPtr->setVisibleLayerRect(IntRect(IntPoint(0, 0), rootSize));
     intermediateLayerPtr->setDrawsContent(false); // only children draw content
     rootPtr->addChild(intermediateLayer.release());
 
@@ -2457,11 +2464,12 @@ static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl,
 
     // Surface layer is the layer that changes its opacity
     // It will contain other layers that draw content.
+    IntSize surfaceSize(rootSize.width(), rootSize.height());
     surfaceLayerPtr->setAnchorPoint(FloatPoint(0, 0));
     surfaceLayerPtr->setPosition(FloatPoint(10, 10));
-    surfaceLayerPtr->setBounds(IntSize(50, 50));
-    surfaceLayerPtr->setContentBounds(IntSize(50, 50));
-    surfaceLayerPtr->setVisibleLayerRect(IntRect(0, 0, 50, 50));
+    surfaceLayerPtr->setBounds(surfaceSize);
+    surfaceLayerPtr->setContentBounds(surfaceSize);
+    surfaceLayerPtr->setVisibleLayerRect(IntRect(IntPoint(0, 0), surfaceSize));
     surfaceLayerPtr->setDrawsContent(false); // only children draw content
     surfaceLayerPtr->setOpacity(0.5f); // This will cause it to have a surface
     intermediateLayerPtr->addChild(surfaceLayer.release());
@@ -2470,11 +2478,12 @@ static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl,
     OwnPtr<FakeLayerWithQuads> child = FakeLayerWithQuads::create(4);
     childPtr = child.get();
 
+    IntSize childSize(rootSize.width(), rootSize.height());
     childPtr->setAnchorPoint(FloatPoint(0, 0));
     childPtr->setPosition(FloatPoint(5, 5));
-    childPtr->setBounds(IntSize(10, 10));
-    childPtr->setContentBounds(IntSize(10, 10));
-    childPtr->setVisibleLayerRect(IntRect(0, 0, 10, 10));
+    childPtr->setBounds(childSize);
+    childPtr->setContentBounds(childSize);
+    childPtr->setVisibleLayerRect(IntRect(IntPoint(0, 0), childSize));
     childPtr->setDrawsContent(true);
 
     surfaceLayerPtr->addChild(child.release());
@@ -2492,7 +2501,7 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCaching)
     CCLayerImpl* surfaceLayerPtr;
     CCLayerImpl* childPtr;
 
-    setupLayersForTextureCaching(myHostImpl.get(), rootPtr, intermediateLayerPtr, surfaceLayerPtr, childPtr);
+    setupLayersForTextureCaching(myHostImpl.get(), rootPtr, intermediateLayerPtr, surfaceLayerPtr, childPtr, IntSize(100, 100));
 
     {
         CCLayerTreeHostImpl::FrameData frame;
@@ -2649,7 +2658,7 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingNoPartialSwap)
     CCLayerImpl* surfaceLayerPtr;
     CCLayerImpl* childPtr;
 
-    setupLayersForTextureCaching(myHostImpl.get(), rootPtr, intermediateLayerPtr, surfaceLayerPtr, childPtr);
+    setupLayersForTextureCaching(myHostImpl.get(), rootPtr, intermediateLayerPtr, surfaceLayerPtr, childPtr, IntSize(100, 100));
 
     {
         CCLayerTreeHostImpl::FrameData frame;
@@ -2787,6 +2796,80 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingNoPartialSwap)
         ASSERT_EQ(1U, frame.renderPasses.size());
         EXPECT_EQ(1U, frame.renderPasses[0]->quadList().size());
 
+        EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[0]->quadList()[0]->material());
+        CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[0]->quadList()[0].get());
+        EXPECT_FALSE(quad->renderPass()->targetSurface()->contentsChanged());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+}
+
+// FIXME: This test is temporary until memory management in render surfaces gets refactored.
+// It depends on implementation of TextureManager and needs to get removed as
+// it will become meaningless with a different implementation.
+TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingMemoryLimit)
+{
+    CCSettings::setPartialSwapEnabled(true);
+
+    CCLayerTreeSettings settings;
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
+
+    CCLayerImpl* rootPtr;
+    CCLayerImpl* intermediateLayerPtr;
+    CCLayerImpl* surfaceLayerPtr;
+    CCLayerImpl* childPtr;
+
+    // FIXME: The number 4200 is the "magic" number which will cause render surface size
+    // to go above 64M. This will bring it above reclaimLimitBytes().
+    // We could compute this number from return value of reclaimLimitBytes(), however
+    // it takes a viewport, so it's no better as it still contains same kind of assumption
+    // (namely that reclaimLimitBytes() ignores viewport size).
+    IntSize largeSurfaceSize(4200, 4200);
+    setupLayersForTextureCaching(myHostImpl.get(), rootPtr, intermediateLayerPtr, surfaceLayerPtr, childPtr, largeSurfaceSize);
+
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive two render passes, each with one quad
+        ASSERT_EQ(2U, frame.renderPasses.size());
+        EXPECT_EQ(1U, frame.renderPasses[0]->quadList().size());
+        EXPECT_EQ(1U, frame.renderPasses[1]->quadList().size());
+
+        EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
+        CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[1]->quadList()[0].get());
+        EXPECT_TRUE(quad->renderPass()->targetSurface()->contentsChanged());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+
+    // Draw without any change
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive two EMPTY render passes
+        ASSERT_EQ(2U, frame.renderPasses.size());
+        EXPECT_EQ(0U, frame.renderPasses[0]->quadList().size());
+        EXPECT_EQ(0U, frame.renderPasses[1]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+
+    // Change opacity and draw.
+    // If all goes well, the texture must still be available, even though it's really big.
+    surfaceLayerPtr->setOpacity(0.6f);
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive one render pass, as the other one should be culled
+        ASSERT_EQ(1U, frame.renderPasses.size());
+
+        EXPECT_EQ(1U, frame.renderPasses[0]->quadList().size());
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[0]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[0]->quadList()[0].get());
         EXPECT_FALSE(quad->renderPass()->targetSurface()->contentsChanged());

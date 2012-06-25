@@ -1,3 +1,18 @@
+2012-06-25  Zeev Lieber  <zlieber@chromium.org>
+
+        [Chromium] RenderPass textures are evicted at the end of every frame
+        https://bugs.webkit.org/show_bug.cgi?id=89786
+
+        Reviewed by Adrienne Walker.
+
+        Removed calls to TextureManager::reduceMemoryToLimit inside
+        finishDrawingFrame() method.
+
+        Added unit tests to verify new behavior.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::finishDrawingFrame):
+
 2012-06-25  Allan Xavier  <allan.xavier@undefinedltd.co.uk>
 
         [GTK] Add graphviz debug output for the gstreamer video pipeline.
