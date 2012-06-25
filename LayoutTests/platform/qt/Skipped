@@ -191,6 +191,7 @@ fast/dom/shadow/link-in-shadow-tree.html
 fast/dom/shadow/multiple-shadowroot.html
 fast/dom/shadow/multiple-shadowroot-rendering.html
 fast/dom/shadow/multiple-shadowroot-adopt.html
+fast/dom/shadow/parent-tree-scope-in-shadow.html
 fast/dom/shadow/selections-in-shadow.html
 fast/dom/shadow/selection-shouldnt-expose-shadow-dom.html
 fast/dom/shadow/shadow-boundary-events.html
@@ -2446,6 +2447,8 @@ fast/css/empty-cell-baseline.html
 fast/multicol/cell-shrinkback.html
 fast/multicol/overflow-into-columngap.html
 fast/table/td-width-fifty-percent-regression.html
+fast/text/hyphen-min-preferred-width.html
+fast/text/soft-hyphen-min-preferred-width.html
 svg/custom/anchor-on-use.svg
 svg/animations/animateTransform-rotate-around-point.svg
 svg/animations/animateMotion-additive-1.svg
