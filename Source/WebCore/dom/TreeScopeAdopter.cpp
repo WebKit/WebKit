@@ -32,11 +32,6 @@
 
 namespace WebCore {
 
-static inline ElementShadow* shadowFor(Node* node)
-{
-    return node->isElementNode() ? toElement(node)->shadow() : 0;
-}
-
 void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
 {
     ASSERT(needsScopeChange());
