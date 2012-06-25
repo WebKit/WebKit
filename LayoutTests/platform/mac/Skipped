@@ -902,3 +902,6 @@ fast/box-decoration-break/box-decoration-break-rendering.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=89680
 fast/canvas/canvas-imageSmoothingEnabled-repaint.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=89845
+fast/forms/input-set-composition-scroll.html
