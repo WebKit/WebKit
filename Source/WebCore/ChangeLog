@@ -1,5 +1,22 @@
 2012-06-25  Alpha Lam  <hclam@chromium.org>
 
+        Unreviewed, rolling out r121137.
+        http://trac.webkit.org/changeset/121137
+
+        Chromium build fix, (un)touch files to build on Chromium Win
+        Release
+
+        * css/CSSParserMode.h:
+        * css/CSSValue.h:
+        (WebCore):
+        * css/CSSVariableValue.h:
+        * page/Settings.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleVariableData.h:
+
+2012-06-25  Alpha Lam  <hclam@chromium.org>
+
         Unreviewed, rolling out r121129.
         http://trac.webkit.org/changeset/121129
         https://bugs.webkit.org/show_bug.cgi?id=89542
