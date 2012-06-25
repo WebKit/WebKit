@@ -162,7 +162,7 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, LayoutUnit beforeBorderP
     // if we had any border/padding (obviously), if we're the root or HTML elements, or if
     // we're positioned, floating, a table cell.
     RenderStyle* blockStyle = block->style();
-    m_canCollapseWithChildren = !block->isRenderView() && !block->isRoot() && !block->isPositioned()
+    m_canCollapseWithChildren = !block->isRenderView() && !block->isRoot() && !block->isOutOfFlowPositioned()
         && !block->isFloating() && !block->isTableCell() && !block->hasOverflowClip() && !block->isInlineBlockOrInlineTable()
         && !block->isWritingModeRoot() && blockStyle->hasAutoColumnCount() && blockStyle->hasAutoColumnWidth()
         && !blockStyle->columnSpan();
@@ -278,7 +278,7 @@ void RenderBlock::willBeDestroyed()
 void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     RenderStyle* oldStyle = style();
-    s_canPropagateFloatIntoSibling = oldStyle ? !isFloatingOrPositioned() && !avoidsFloats() : false;
+    s_canPropagateFloatIntoSibling = oldStyle ? !isFloatingOrOutOfFlowPositioned() && !avoidsFloats() : false;
 
     setReplaced(newStyle->isDisplayInlineType());
     
@@ -303,7 +303,7 @@ void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle* newSt
                 toRenderBlock(cb)->removePositionedObjects(this);
         }
 
-        if (containsFloats() && !isFloating() && !isPositioned() && (newStyle->position() == AbsolutePosition || newStyle->position() == FixedPosition))
+        if (containsFloats() && !isFloating() && !isOutOfFlowPositioned() && (newStyle->position() == AbsolutePosition || newStyle->position() == FixedPosition))
             markAllDescendantsWithFloatsForLayout();
     }
 
@@ -337,7 +337,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     // blocks, then we need to find the top most parent containing that overhanging float and
     // then mark its descendants with floats for layout and clear all floats from its next
     // sibling blocks that exist in our floating objects list. See bug 56299 and 62875.
-    bool canPropagateFloatIntoSibling = !isFloatingOrPositioned() && !avoidsFloats();
+    bool canPropagateFloatIntoSibling = !isFloatingOrOutOfFlowPositioned() && !avoidsFloats();
     if (diff == StyleDifferenceLayout && s_canPropagateFloatIntoSibling && !canPropagateFloatIntoSibling && hasOverhangingFloats()) {
         RenderBlock* parentBlock = this;
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
@@ -412,7 +412,7 @@ void RenderBlock::addChildToContinuation(RenderObject* newChild, RenderObject* b
             beforeChildParent = flow;
     }
 
-    if (newChild->isFloatingOrPositioned()) {
+    if (newChild->isFloatingOrOutOfFlowPositioned()) {
         beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
         return;
     }
@@ -459,7 +459,7 @@ void RenderBlock::addChildToAnonymousColumnBlocks(RenderObject* newChild, Render
         beforeChildParent = toRenderBlock(lastChild());
 
     // If the new child is floating or positioned it can just go in that block.
-    if (newChild->isFloatingOrPositioned()) {
+    if (newChild->isFloatingOrOutOfFlowPositioned()) {
         beforeChildParent->addChildIgnoringAnonymousColumnBlocks(newChild, beforeChild);
         return;
     }
@@ -508,7 +508,7 @@ RenderBlock* RenderBlock::containingColumnsBlock(bool allowAnonymousColumnBlock)
 {
     RenderBlock* firstChildIgnoringAnonymousWrappers = 0;
     for (RenderObject* curr = this; curr; curr = curr->parent()) {
-        if (!curr->isRenderBlock() || curr->isFloatingOrPositioned() || curr->isTableCell() || curr->isRoot() || curr->isRenderView() || curr->hasOverflowClip()
+        if (!curr->isRenderBlock() || curr->isFloatingOrOutOfFlowPositioned() || curr->isTableCell() || curr->isRoot() || curr->isRenderView() || curr->hasOverflowClip()
             || curr->isInlineBlockOrInlineTable())
             return 0;
 
@@ -758,7 +758,7 @@ RenderBlock* RenderBlock::columnsBlockForSpanningElement(RenderObject* newChild)
     // This function currently supports (1) and (2).
     RenderBlock* columnsBlockAncestor = 0;
     if (!newChild->isText() && newChild->style()->columnSpan() && !newChild->isBeforeOrAfterContent()
-        && !newChild->isFloatingOrPositioned() && !newChild->isInline() && !isAnonymousColumnSpanBlock()) {
+        && !newChild->isFloatingOrOutOfFlowPositioned() && !newChild->isInline() && !isAnonymousColumnSpanBlock()) {
         columnsBlockAncestor = containingColumnsBlock(false);
         if (columnsBlockAncestor) {
             // Make sure that none of the parent ancestors have a continuation.
@@ -885,7 +885,7 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
     // A block has to either have all of its children inline, or all of its children as blocks.
     // So, if our children are currently inline and a block child has to be inserted, we move all our
     // inline children into anonymous block boxes.
-    if (childrenInline() && !newChild->isInline() && !newChild->isFloatingOrPositioned()) {
+    if (childrenInline() && !newChild->isInline() && !newChild->isFloatingOrOutOfFlowPositioned()) {
         // This is a block with inline content. Wrap the inline content in anonymous blocks.
         makeChildrenNonInline(beforeChild);
         madeBoxesNonInline = true;
@@ -895,7 +895,7 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
             ASSERT(beforeChild->isAnonymousBlock());
             ASSERT(beforeChild->parent() == this);
         }
-    } else if (!childrenInline() && (newChild->isFloatingOrPositioned() || newChild->isInline())) {
+    } else if (!childrenInline() && (newChild->isFloatingOrOutOfFlowPositioned() || newChild->isInline())) {
         // If we're inserting an inline child but all of our children are blocks, then we have to make sure
         // it is put into an anomyous block box. We try to use an existing anonymous box if possible, otherwise
         // a new one is created and inserted into our list of children in the appropriate position.
@@ -961,7 +961,7 @@ static void getInlineRun(RenderObject* start, RenderObject* boundary,
     RenderObject * curr = start;
     bool sawInline;
     do {
-        while (curr && !(curr->isInline() || curr->isFloatingOrPositioned()))
+        while (curr && !(curr->isInline() || curr->isFloatingOrOutOfFlowPositioned()))
             curr = curr->nextSibling();
         
         inlineRunStart = inlineRunEnd = curr;
@@ -972,7 +972,7 @@ static void getInlineRun(RenderObject* start, RenderObject* boundary,
         sawInline = curr->isInline();
         
         curr = curr->nextSibling();
-        while (curr && (curr->isInline() || curr->isFloatingOrPositioned()) && (curr != boundary)) {
+        while (curr && (curr->isInline() || curr->isFloatingOrOutOfFlowPositioned()) && (curr != boundary)) {
             inlineRunEnd = curr;
             if (curr->isInline())
                 sawInline = true;
@@ -1283,7 +1283,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
         // Whether or not we collapse is dependent on whether all our normal flow children
         // are also self-collapsing.
         for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-            if (child->isFloatingOrPositioned())
+            if (child->isFloatingOrOutOfFlowPositioned())
                 continue;
             if (!child->isSelfCollapsingBlock())
                 return false;
@@ -1507,7 +1507,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
         if (oldHeight > newHeight && maxFloatLogicalBottom > newHeight && !childrenInline()) {
             // One of our children's floats may have become an overhanging float for us. We need to look for it.
             for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-                if (child->isBlockFlow() && !child->isFloatingOrPositioned()) {
+                if (child->isBlockFlow() && !child->isFloatingOrOutOfFlowPositioned()) {
                     RenderBlock* block = toRenderBlock(child);
                     if (block->lowestFloatLogicalBottom() + block->logicalTop() > newHeight)
                         addOverhangingFloats(block, false);
@@ -1638,7 +1638,7 @@ void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeF
 void RenderBlock::addOverflowFromBlockChildren()
 {
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (!child->isFloatingOrPositioned())
+        if (!child->isFloatingOrOutOfFlowPositioned())
             addOverflowFromChild(child);
     }
 }
@@ -1690,7 +1690,7 @@ void RenderBlock::addVisualOverflowFromTheme()
 
 bool RenderBlock::expandsToEncloseOverhangingFloats() const
 {
-    return isInlineBlockOrInlineTable() || isFloatingOrPositioned() || hasOverflowClip() || (parent() && parent()->isDeprecatedFlexibleBox())
+    return isInlineBlockOrInlineTable() || isFloatingOrOutOfFlowPositioned() || hasOverflowClip() || (parent() && parent()->isDeprecatedFlexibleBox())
            || hasColumns() || isTableCell() || isTableCaption() || isFieldset() || isWritingModeRoot() || isRoot();
 }
 
@@ -1756,7 +1756,7 @@ bool RenderBlock::handleSpecialChild(RenderBox* child, const MarginInfo& marginI
 
 bool RenderBlock::handlePositionedChild(RenderBox* child, const MarginInfo& marginInfo)
 {
-    if (child->isPositioned()) {
+    if (child->isOutOfFlowPositioned()) {
         child->containingBlock()->insertPositionedObject(child);
         adjustPositionedBlock(child, marginInfo);
         return true;
@@ -1869,7 +1869,7 @@ void RenderBlock::moveRunInUnderSiblingBlockIfNeeded(RenderObject* runIn)
     if (curr->isRunIn() || (curr->firstChild() && curr->firstChild()->isRunIn()))
         return;
 
-    if (curr->isAnonymous() || curr->isFloatingOrPositioned())
+    if (curr->isAnonymous() || curr->isFloatingOrOutOfFlowPositioned())
         return;
 
     RenderBoxModelObject* oldRunIn = toRenderBoxModelObject(runIn);
@@ -2031,7 +2031,7 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
     // overhang from the previous sibling are added to our parent. If the child's previous sibling itself is a float the child will avoid
     // or clear it anyway, so don't worry about any floating children it may contain.
     RenderObject* prev = child->previousSibling();
-    if (prev && prev->isBlockFlow() && !prev->isFloatingOrPositioned()) {
+    if (prev && prev->isBlockFlow() && !prev->isFloatingOrOutOfFlowPositioned()) {
         RenderBlock* block = toRenderBlock(prev);
         if (block->containsFloats() && block->lowestFloatLogicalBottom() > logicalTop) 
             addOverhangingFloats(block, false);
@@ -2056,7 +2056,7 @@ LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& margin
         // self-collapsing block's bottom margin.
         bool atBottomOfBlock = true;
         for (RenderBox* curr = child->nextSiblingBox(); curr && atBottomOfBlock; curr = curr->nextSiblingBox()) {
-            if (!curr->isFloatingOrPositioned())
+            if (!curr->isFloatingOrOutOfFlowPositioned())
                 atBottomOfBlock = false;
         }
         
@@ -2451,7 +2451,7 @@ void RenderBlock::simplifiedNormalFlowLayout()
         ListHashSet<RootInlineBox*> lineBoxes;
         for (InlineWalker walker(this); !walker.atEnd(); walker.advance()) {
             RenderObject* o = walker.current();
-            if (!o->isPositioned() && (o->isReplaced() || o->isFloating())) {
+            if (!o->isOutOfFlowPositioned() && (o->isReplaced() || o->isFloating())) {
                 o->layoutIfNeeded();
                 if (toRenderBox(o)->inlineBoxWrapper()) {
                     RootInlineBox* box = toRenderBox(o)->inlineBoxWrapper()->root();
@@ -2469,7 +2469,7 @@ void RenderBlock::simplifiedNormalFlowLayout()
         }
     } else {
         for (RenderBox* box = firstChildBox(); box; box = box->nextSiblingBox()) {
-            if (!box->isPositioned())
+            if (!box->isOutOfFlowPositioned())
                 box->layoutIfNeeded();
         }
     }
@@ -3133,9 +3133,9 @@ bool RenderBlock::isSelectionRoot() const
     if (isTable())
         return false;
         
-    if (isBody() || isRoot() || hasOverflowClip() || isRelPositioned() ||
-        isFloatingOrPositioned() || isTableCell() || isInlineBlockOrInlineTable() || hasTransform() ||
-        hasReflection() || hasMask() || isWritingModeRoot())
+    if (isBody() || isRoot() || hasOverflowClip() || isRelPositioned()
+        || isFloatingOrOutOfFlowPositioned() || isTableCell() || isInlineBlockOrInlineTable() || hasTransform()
+        || hasReflection() || hasMask() || isWritingModeRoot())
         return true;
     
     if (view() && view()->selectionStart()) {
@@ -3352,7 +3352,7 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock* rootBlock, const LayoutPoi
         if (childState == SelectionBoth || childState == SelectionEnd)
             sawSelectionEnd = true;
 
-        if (curr->isFloatingOrPositioned())
+        if (curr->isFloatingOrOutOfFlowPositioned())
             continue; // We must be a normal flow object in order to even be considered.
 
         if (curr->isRelPositioned() && curr->hasLayer()) {
@@ -4179,7 +4179,7 @@ void RenderBlock::clearFloats()
     }
 
     // Inline blocks are covered by the isReplaced() check in the avoidFloats method.
-    if (avoidsFloats() || isRoot() || isRenderView() || isFloatingOrPositioned() || isTableCell()) {
+    if (avoidsFloats() || isRoot() || isRenderView() || isFloatingOrOutOfFlowPositioned() || isTableCell()) {
         if (m_floatingObjects) {
             deleteAllValues(m_floatingObjects->set());
             m_floatingObjects->clear();
@@ -4217,7 +4217,7 @@ void RenderBlock::clearFloats()
     RenderBlock* parentBlock = toRenderBlock(parent());
     bool parentHasFloats = false;
     RenderObject* prev = previousSibling();
-    while (prev && (prev->isFloatingOrPositioned() || !prev->isBox() || !prev->isRenderBlock() || toRenderBlock(prev)->avoidsFloats())) {
+    while (prev && (prev->isFloatingOrOutOfFlowPositioned() || !prev->isBox() || !prev->isRenderBlock() || toRenderBlock(prev)->avoidsFloats())) {
         if (prev->isFloating())
             parentHasFloats = true;
         prev = prev->previousSibling();
@@ -4451,7 +4451,7 @@ void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove
     // Iterate over our children and mark them as needed.
     if (!childrenInline()) {
         for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-            if ((!floatToRemove && child->isFloatingOrPositioned()) || !child->isRenderBlock())
+            if ((!floatToRemove && child->isFloatingOrOutOfFlowPositioned()) || !child->isRenderBlock())
                 continue;
             RenderBlock* childBlock = toRenderBlock(child);
             if ((floatToRemove ? childBlock->containsFloat(floatToRemove) : childBlock->containsFloats()) || childBlock->shrinkToAvoidFloats())
@@ -4469,7 +4469,7 @@ void RenderBlock::markSiblingsWithFloatsForLayout(RenderBox* floatToRemove)
     FloatingObjectSetIterator end = floatingObjectSet.end();
 
     for (RenderObject* next = nextSibling(); next; next = next->nextSibling()) {
-        if (!next->isRenderBlock() || next->isFloatingOrPositioned() || toRenderBlock(next)->avoidsFloats())
+        if (!next->isRenderBlock() || next->isFloatingOrOutOfFlowPositioned() || toRenderBlock(next)->avoidsFloats())
             continue;
 
         RenderBlock* nextBlock = toRenderBlock(next);
@@ -4884,7 +4884,7 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoin
 
 static inline bool isChildHitTestCandidate(RenderBox* box)
 {
-    return box->height() && box->style()->visibility() == VISIBLE && !box->isFloatingOrPositioned();
+    return box->height() && box->style()->visibility() == VISIBLE && !box->isFloatingOrOutOfFlowPositioned();
 }
 
 VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point)
@@ -5417,7 +5417,7 @@ RenderObject* InlineMinMaxIterator::next()
     while (current || current == parent) {
         if (!oldEndOfInline &&
             (current == parent ||
-             (!current->isFloating() && !current->isReplaced() && !current->isPositioned())))
+             (!current->isFloating() && !current->isReplaced() && !current->isOutOfFlowPositioned())))
             result = current->firstChild();
         if (!result) {
             // We hit the end of our inline. (It was empty, e.g., <span></span>.)
@@ -5442,7 +5442,7 @@ RenderObject* InlineMinMaxIterator::next()
         if (!result)
             break;
 
-        if (!result->isPositioned() && (result->isText() || result->isFloating() || result->isReplaced() || result->isRenderInline()))
+        if (!result->isOutOfFlowPositioned() && (result->isText() || result->isFloating() || result->isReplaced() || result->isRenderInline()))
              break;
         
         current = result;
@@ -5768,7 +5768,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
     LayoutUnit floatLeftWidth = 0, floatRightWidth = 0;
     while (child) {
         // Positioned children don't affect the min/max width
-        if (child->isPositioned()) {
+        if (child->isOutOfFlowPositioned()) {
             child = child->nextSibling();
             continue;
         }
@@ -5942,7 +5942,7 @@ LayoutUnit RenderBlock::firstLineBoxBaseline() const
     }
     else {
         for (RenderBox* curr = firstChildBox(); curr; curr = curr->nextSiblingBox()) {
-            if (!curr->isFloatingOrPositioned()) {
+            if (!curr->isFloatingOrOutOfFlowPositioned()) {
                 LayoutUnit result = curr->firstLineBoxBaseline();
                 if (result != -1)
                     return curr->logicalTop() + result; // Translate to our coordinate space.
@@ -5973,7 +5973,7 @@ LayoutUnit RenderBlock::lastLineBoxBaseline() const
     } else {
         bool haveNormalFlowChild = false;
         for (RenderBox* curr = lastChildBox(); curr; curr = curr->previousSiblingBox()) {
-            if (!curr->isFloatingOrPositioned()) {
+            if (!curr->isFloatingOrOutOfFlowPositioned()) {
                 haveNormalFlowChild = true;
                 LayoutUnit result = curr->lastLineBoxBaseline();
                 if (result != -1)
@@ -6208,7 +6208,7 @@ void RenderBlock::updateFirstLetter()
             break;
         if (currChild->isListMarker())
             currChild = currChild->nextSibling();
-        else if (currChild->isFloatingOrPositioned()) {
+        else if (currChild->isFloatingOrOutOfFlowPositioned()) {
             if (currChild->style()->styleType() == FIRST_LETTER) {
                 currChild = currChild->firstChild();
                 break;
@@ -6248,9 +6248,9 @@ void RenderBlock::updateFirstLetter()
 // (crawling into blocks).
 static bool shouldCheckLines(RenderObject* obj)
 {
-    return !obj->isFloatingOrPositioned() && !obj->isRunIn() &&
-            obj->isBlockFlow() && obj->style()->height().isAuto() &&
-            (!obj->isDeprecatedFlexibleBox() || obj->style()->boxOrient() == VERTICAL);
+    return !obj->isFloatingOrOutOfFlowPositioned() && !obj->isRunIn()
+            && obj->isBlockFlow() && obj->style()->height().isAuto()
+            && (!obj->isDeprecatedFlexibleBox() || obj->style()->boxOrient() == VERTICAL);
 }
 
 static RootInlineBox* getLineAtIndex(RenderBlock* block, int i, int& count)
@@ -6291,8 +6291,7 @@ static int getHeightForLineCount(RenderBlock* block, int l, bool includeBottom, 
                     int result = getHeightForLineCount(toRenderBlock(obj), l, false, count);
                     if (result != -1)
                         return result + obj->y() + (includeBottom ? (block->borderBottom() + block->paddingBottom()) : ZERO_LAYOUT_UNIT);
-                }
-                else if (!obj->isFloatingOrPositioned() && !obj->isRunIn())
+                } else if (!obj->isFloatingOrOutOfFlowPositioned() && !obj->isRunIn())
                     normalFlowChildWithoutLines = obj;
             }
             if (normalFlowChildWithoutLines && l == 0)
@@ -6345,7 +6344,7 @@ void RenderBlock::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit&
         }
         else {
             for (RenderBox* obj = firstChildBox(); obj; obj = obj->nextSiblingBox()) {
-                if (!obj->isFloatingOrPositioned()) {
+                if (!obj->isFloatingOrOutOfFlowPositioned()) {
                     if (obj->isBlockFlow() && !obj->hasOverflowClip())
                         toRenderBlock(obj)->adjustForBorderFit(x + obj->x(), left, right);
                     else if (obj->style()->visibility() == VISIBLE) {
@@ -6669,7 +6668,7 @@ static bool inNormalFlow(RenderBox* child)
     while (curr && curr != renderView) {
         if (curr->hasColumns() || curr->isRenderFlowThread())
             return true;
-        if (curr->isFloatingOrPositioned())
+        if (curr->isFloatingOrOutOfFlowPositioned())
             return false;
         curr = curr->containingBlock();
     }
@@ -6848,7 +6847,7 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
         }
         LayoutUnit totalLogicalHeight = lineHeight + max(ZERO_LAYOUT_UNIT, logicalOffset);
         LayoutUnit pageLogicalHeightAtNewOffset = hasUniformPageLogicalHeight ? pageLogicalHeight : pageLogicalHeightForOffset(logicalOffset + remainingLogicalHeight);
-        if (lineBox == firstRootBox() && totalLogicalHeight < pageLogicalHeightAtNewOffset && !isPositioned() && !isTableCell())
+        if (lineBox == firstRootBox() && totalLogicalHeight < pageLogicalHeightAtNewOffset && !isOutOfFlowPositioned() && !isTableCell())
             setPaginationStrut(remainingLogicalHeight + max(ZERO_LAYOUT_UNIT, logicalOffset));
         else {
             delta += remainingLogicalHeight;
@@ -6905,7 +6904,7 @@ LayoutUnit RenderBlock::adjustBlockChildForPagination(LayoutUnit logicalTopAfter
     if (paginationStrut) {
         // We are willing to propagate out to our parent block as long as we were at the top of the block prior
         // to collapsing our margins, and as long as we didn't clear or move as a result of other pagination.
-        if (atBeforeSideOfBlock && oldTop == result && !isPositioned() && !isTableCell()) {
+        if (atBeforeSideOfBlock && oldTop == result && !isOutOfFlowPositioned() && !isTableCell()) {
             // FIXME: Should really check if we're exceeding the page height before propagating the strut, but we don't
             // have all the information to do so (the strut only has the remaining amount to push). Gecko gets this wrong too
             // and pushes to the next page anyway, so not too concerned about it.
@@ -7103,7 +7102,7 @@ const char* RenderBlock::renderName() const
     
     if (isFloating())
         return "RenderBlock (floating)";
-    if (isPositioned())
+    if (isOutOfFlowPositioned())
         return "RenderBlock (positioned)";
     if (isAnonymousColumnsBlock())
         return "RenderBlock (anonymous multi-column)";

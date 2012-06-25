@@ -189,7 +189,7 @@ static RenderObject* getParentOfFirstLineBox(RenderBlock* curr, RenderObject* ma
         if (currChild->isInline() && (!currChild->isRenderInline() || curr->generatesLineBoxesForInlineChild(currChild)))
             return curr;
 
-        if (currChild->isFloating() || currChild->isPositioned())
+        if (currChild->isFloating() || currChild->isOutOfFlowPositioned())
             continue;
 
         if (currChild->isTable() || !currChild->isRenderBlock() || (currChild->isBox() && toRenderBox(currChild)->isWritingModeRoot()))

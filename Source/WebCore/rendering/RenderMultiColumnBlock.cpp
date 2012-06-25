@@ -152,7 +152,7 @@ const char* RenderMultiColumnBlock::renderName() const
 {    
     if (isFloating())
         return "RenderMultiColumnBlock (floating)";
-    if (isPositioned())
+    if (isOutOfFlowPositioned())
         return "RenderMultiColumnBlock (positioned)";
     if (isAnonymousBlock())
         return "RenderMultiColumnBlock (anonymous)";

@@ -297,7 +297,7 @@ static void updateOffsetFromViewportForSelf(RenderLayer* renderLayer)
     if (!style)
         return;
 
-    if (!renderLayer->renderer()->isPositioned() || renderLayer->renderer()->style()->position() != FixedPosition)
+    if (!renderLayer->renderer()->isOutOfFlowPositioned() || renderLayer->renderer()->style()->position() != FixedPosition)
         return;
 
     if (!renderLayer->renderer()->container()->isRenderView())

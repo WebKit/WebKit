@@ -334,7 +334,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderObject* container, Rend
     RootInlineBox* box = 0;
     RenderObject* curr = 0;
     for (curr = child->previousSibling(); curr; curr = curr->previousSibling()) {
-        if (curr->isFloatingOrPositioned())
+        if (curr->isFloatingOrOutOfFlowPositioned())
             continue;
 
         if (curr->isReplaced()) {

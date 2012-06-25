@@ -114,7 +114,7 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     if (!beforeChild)
         beforeChild = afterPseudoElementRenderer();
 
-    bool wrapInAnonymousSection = !child->isPositioned();
+    bool wrapInAnonymousSection = !child->isOutOfFlowPositioned();
 
     if (child->isTableCaption()) {
         m_captions.append(toRenderTableCaption(child));
@@ -213,7 +213,7 @@ void RenderTable::computeLogicalWidth()
 {
     recalcSectionsIfNeeded();
 
-    if (isPositioned())
+    if (isOutOfFlowPositioned())
         computePositionedLogicalWidth();
 
     RenderBlock* cb = containingBlock();
@@ -390,7 +390,7 @@ void RenderTable::layout()
 
     setLogicalHeight(logicalHeight() + borderAndPaddingBefore);
 
-    if (!isPositioned())
+    if (!isOutOfFlowPositioned())
         computeLogicalHeight();
 
     Length logicalHeightLength = style()->logicalHeight();
@@ -439,7 +439,7 @@ void RenderTable::layout()
         layoutCaption(m_captions[i]);
     }
 
-    if (isPositioned())
+    if (isOutOfFlowPositioned())
         computeLogicalHeight();
 
     // table can be containing block of positioned elements.

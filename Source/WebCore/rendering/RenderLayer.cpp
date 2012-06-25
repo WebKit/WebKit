@@ -606,7 +606,7 @@ static bool checkContainingBlockChainForPagination(RenderBoxModelObject* rendere
         return false;
         
     // If the previous block is absolutely positioned, then we can't be paginated by the columns block.
-    if (prevBlock->isPositioned())
+    if (prevBlock->isOutOfFlowPositioned())
         return false;
         
     // Otherwise we are paginated by the columns block.
@@ -807,7 +807,7 @@ void RenderLayer::updateLayerPosition()
     // Clear our cached clip rect information.
     clearClipRects();
  
-    if (!renderer()->isPositioned() && renderer()->parent()) {
+    if (!renderer()->isOutOfFlowPositioned() && renderer()->parent()) {
         // We must adjust our position by walking up the render tree looking for the
         // nearest enclosing object with a layer.
         RenderObject* curr = renderer()->parent();
@@ -826,14 +826,14 @@ void RenderLayer::updateLayerPosition()
     }
     
     // Subtract our parent's scroll offset.
-    if (renderer()->isPositioned() && enclosingPositionedAncestor()) {
+    if (renderer()->isOutOfFlowPositioned() && enclosingPositionedAncestor()) {
         RenderLayer* positionedParent = enclosingPositionedAncestor();
 
         // For positioned layers, we subtract out the enclosing positioned layer's scroll offset.
         LayoutSize offset = positionedParent->scrolledContentOffset();
         localPoint -= offset;
         
-        if (renderer()->isPositioned() && positionedParent->renderer()->isRelPositioned() && positionedParent->renderer()->isRenderInline()) {
+        if (renderer()->isOutOfFlowPositioned() && positionedParent->renderer()->isRelPositioned() && positionedParent->renderer()->isRenderInline()) {
             LayoutSize offset = toRenderInline(positionedParent->renderer())->relativePositionedInlineOffset(toRenderBox(renderer()));
             localPoint += offset;
         }
@@ -915,7 +915,7 @@ RenderLayer* RenderLayer::stackingContext() const
 static inline bool isPositionedContainer(RenderLayer* layer)
 {
     RenderBoxModelObject* layerRenderer = layer->renderer();
-    return layer->isRootLayer() || layerRenderer->isPositioned() || layerRenderer->isRelPositioned() || layer->hasTransform();
+    return layer->isRootLayer() || layerRenderer->isOutOfFlowPositioned() || layerRenderer->isRelPositioned() || layer->hasTransform();
 }
 
 static inline bool isFixedPositionedContainer(RenderLayer* layer)
@@ -3905,7 +3905,7 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, RenderRegion*
             if (renderer()->style()->hasBorderRadius())
                 newOverflowClip.setHasRadius(true);
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
-            if (renderer()->isPositioned() || renderer()->isRelPositioned())
+            if (renderer()->isOutOfFlowPositioned() || renderer()->isRelPositioned())
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
         }
         if (renderer()->hasClip()) {
@@ -4701,7 +4701,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
                 || renderer()->isApplet()
                 || renderer()->isRenderIFrame()
                 || renderer()->style()->specifiesColumns())
-            && !renderer()->isPositioned()
+            && !renderer()->isOutOfFlowPositioned()
             && !renderer()->isRelPositioned()
             && !renderer()->hasTransform()
 #if ENABLE(CSS_FILTERS)

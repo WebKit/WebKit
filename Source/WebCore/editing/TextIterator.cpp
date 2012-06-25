@@ -775,7 +775,7 @@ static bool shouldEmitNewlinesBeforeAndAfterNode(Node* node)
             return true;
     }
     
-    return !r->isInline() && r->isRenderBlock() && !r->isFloatingOrPositioned() && !r->isBody();
+    return !r->isInline() && r->isRenderBlock() && !r->isFloatingOrOutOfFlowPositioned() && !r->isBody();
 }
 
 static bool shouldEmitNewlineAfterNode(Node* node)

@@ -45,7 +45,7 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
 {
     ASSERT(m_next);
 
-    bool fixed = renderer->isPositioned() && renderer->style()->position() == FixedPosition;
+    bool fixed = renderer->isOutOfFlowPositioned() && renderer->style()->position() == FixedPosition;
     if (fixed) {
         // FIXME: This doesn't work correctly with transforms.
         FloatPoint fixedOffset = renderer->view()->localToAbsolute(FloatPoint(), true);
@@ -53,7 +53,7 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
     } else
         m_paintOffset = prev->m_paintOffset + offset;
 
-    if (renderer->isPositioned() && !fixed) {
+    if (renderer->isOutOfFlowPositioned() && !fixed) {
         if (RenderObject* container = renderer->container()) {
             if (container->isRelPositioned() && container->isRenderInline())
                 m_paintOffset += toRenderInline(container)->relativePositionedInlineOffset(renderer);

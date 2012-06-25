@@ -50,7 +50,7 @@ const char* RenderGrid::renderName() const
 {
     if (isFloating())
         return "RenderGrid (floating)";
-    if (isPositioned())
+    if (isOutOfFlowPositioned())
         return "RenderGrid (positioned)";
     if (isAnonymous())
         return "RenderGrid (generated)";

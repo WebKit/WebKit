@@ -2506,7 +2506,7 @@ typedef bool (*PredicateFunction)(RenderLayer*);
 static bool isPositionedContainer(RenderLayer* layer)
 {
     RenderObject* o = layer->renderer();
-    return o->isRenderView() || o->isPositioned() || o->isRelPositioned() || layer->hasTransform();
+    return o->isRenderView() || o->isOutOfFlowPositioned() || o->isRelPositioned() || layer->hasTransform();
 }
 
 static bool isNonRenderViewFixedPositionedContainer(RenderLayer* layer)
@@ -2515,13 +2515,13 @@ static bool isNonRenderViewFixedPositionedContainer(RenderLayer* layer)
     if (o->isRenderView())
         return false;
 
-    return o->isPositioned() && o->style()->position() == FixedPosition;
+    return o->isOutOfFlowPositioned() && o->style()->position() == FixedPosition;
 }
 
 static bool isFixedPositionedContainer(RenderLayer* layer)
 {
     RenderObject* o = layer->renderer();
-    return o->isRenderView() || (o->isPositioned() && o->style()->position() == FixedPosition);
+    return o->isRenderView() || (o->isOutOfFlowPositioned() && o->style()->position() == FixedPosition);
 }
 
 static RenderLayer* findAncestorOrSelfNotMatching(PredicateFunction predicate, RenderLayer* layer)

@@ -500,7 +500,8 @@ public:
     virtual RenderBoxModelObject* virtualContinuation() const { return 0; }
 
     bool isFloating() const { return m_bitfields.floating(); }
-    bool isPositioned() const { return m_bitfields.positioned(); } // absolute or fixed positioning
+    bool isOutOfFlowPositioned() const { return m_bitfields.positioned(); } // absolute or fixed positioning
+    bool isInFlowPositioned() const { return m_bitfields.relPositioned(); } // relative positioning
     bool isRelPositioned() const { return m_bitfields.relPositioned(); } // relative positioning
     bool isText() const  { return m_bitfields.isText(); }
     bool isBox() const { return m_bitfields.isBox(); }
@@ -538,7 +539,7 @@ public:
 
     bool isSelectionBorder() const;
 
-    bool hasClip() const { return isPositioned() && style()->hasClip(); }
+    bool hasClip() const { return isOutOfFlowPositioned() && style()->hasClip(); }
     bool hasOverflowClip() const { return m_bitfields.hasOverflowClip(); }
 
     bool hasTransform() const { return m_bitfields.hasTransform(); }
@@ -780,7 +781,7 @@ public:
 
     virtual unsigned int length() const { return 1; }
 
-    bool isFloatingOrPositioned() const { return (isFloating() || isPositioned()); }
+    bool isFloatingOrOutOfFlowPositioned() const { return (isFloating() || isOutOfFlowPositioned()); }
 
     bool isTransparent() const { return style()->opacity() < 1.0f; }
     float opacity() const { return style()->opacity(); }

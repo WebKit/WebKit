@@ -218,7 +218,7 @@ bool Text::rendererIsNeeded(const NodeRenderingContext& context)
             return false;
         
         RenderObject* first = parent->firstChild();
-        while (first && first->isFloatingOrPositioned())
+        while (first && first->isFloatingOrOutOfFlowPositioned())
             first = first->nextSibling();
         RenderObject* next = context.nextRenderer();
         if (!first || next == first)

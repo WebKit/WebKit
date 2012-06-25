@@ -105,7 +105,7 @@ static bool isDeletableElement(const Node* node)
     if (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(iframeTag))
         return true;
 
-    if (renderer->isPositioned())
+    if (renderer->isOutOfFlowPositioned())
         return true;
 
     if (renderer->isRenderBlock() && !renderer->isTableCell()) {

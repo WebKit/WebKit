@@ -1,3 +1,187 @@
+2012-06-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename isPositioned to isOutOfFlowPositioned for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=89836
+
+        Reviewed by Antti Koivisto.
+        
+        RenderObject and RenderStyle had an isPositioned() method that was
+        confusing, because it excluded relative positioning. Rename to 
+        isOutOfFlowPositioned(), which makes it clearer that it only applies
+        to absolute and fixed positioning.
+
+        Simple rename; no behavior change.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::getPositionOffsetValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * dom/Text.cpp:
+        (WebCore::Text::rendererIsNeeded):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+        * editing/TextIterator.cpp:
+        (WebCore::shouldEmitNewlinesBeforeAndAfterNode):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::shouldScaleColumns):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::placeBoxesInInlineDirection):
+        (WebCore::InlineFlowBox::requiresIdeographicBaseline):
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::flipLinesInBlockDirection):
+        (WebCore::InlineFlowBox::computeOverflow):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment):
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment):
+        * rendering/InlineIterator.h:
+        (WebCore::isIteratorTarget):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::styleWillChange):
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::addChildToContinuation):
+        (WebCore::RenderBlock::addChildToAnonymousColumnBlocks):
+        (WebCore::RenderBlock::containingColumnsBlock):
+        (WebCore::RenderBlock::columnsBlockForSpanningElement):
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        (WebCore::getInlineRun):
+        (WebCore::RenderBlock::isSelfCollapsingBlock):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::addOverflowFromBlockChildren):
+        (WebCore::RenderBlock::expandsToEncloseOverhangingFloats):
+        (WebCore::RenderBlock::handlePositionedChild):
+        (WebCore::RenderBlock::moveRunInUnderSiblingBlockIfNeeded):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::simplifiedNormalFlowLayout):
+        (WebCore::RenderBlock::isSelectionRoot):
+        (WebCore::RenderBlock::blockSelectionGaps):
+        (WebCore::RenderBlock::clearFloats):
+        (WebCore::RenderBlock::markAllDescendantsWithFloatsForLayout):
+        (WebCore::RenderBlock::markSiblingsWithFloatsForLayout):
+        (WebCore::isChildHitTestCandidate):
+        (WebCore::InlineMinMaxIterator::next):
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths):
+        (WebCore::RenderBlock::firstLineBoxBaseline):
+        (WebCore::RenderBlock::lastLineBoxBaseline):
+        (WebCore::RenderBlock::updateFirstLetter):
+        (WebCore::shouldCheckLines):
+        (WebCore::getHeightForLineCount):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        (WebCore::inNormalFlow):
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        (WebCore::RenderBlock::adjustBlockChildForPagination):
+        (WebCore::RenderBlock::renderName):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::shouldSkipCreatingRunsForObject):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::setMarginsForRubyRun):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlock::computeBlockDirectionPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::requiresLineBox):
+        (WebCore::RenderBlock::LineBreaker::skipTrailingWhitespace):
+        (WebCore::RenderBlock::LineBreaker::skipLeadingWhitespace):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::removeFloatingOrPositionedChildFromBlockLists):
+        (WebCore::RenderBox::styleWillChange):
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::updateBoxModelInfoFromStyle):
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::positionLineBox):
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        (WebCore::RenderBox::renderBoxRegionInfo):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        (WebCore::percentageLogicalHeightIsResolvable):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::stretchesToViewport):
+        (WebCore::RenderBox::isDeprecatedFlexItem):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent):
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::requiresLayer):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::childDoesNotAffectWidthOrFlexing):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::renderName):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::findLegend):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computePreferredLogicalWidths):
+        (WebCore::RenderFlexibleBox::autoMarginOffsetInMainAxis):
+        (WebCore::RenderFlexibleBox::availableAlignmentSpaceForChild):
+        (WebCore::RenderFlexibleBox::computeMainAxisPreferredSizes):
+        (WebCore::RenderFlexibleBox::computeNextFlexLine):
+        (WebCore::RenderFlexibleBox::resolveFlexibleLengths):
+        (WebCore::RenderFlexibleBox::prepareChildForPositionedLayout):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::layoutColumnReverse):
+        (WebCore::RenderFlexibleBox::adjustAlignmentForChild):
+        (WebCore::RenderFlexibleBox::flipForRightToLeftColumn):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::renderName):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::computeIntrinsicRatioInformation):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        (WebCore::RenderInline::addChildToContinuation):
+        (WebCore::RenderInline::generateCulledLineBoxRects):
+        (WebCore):
+        (WebCore::RenderInline::culledInlineFirstLineBox):
+        (WebCore::RenderInline::culledInlineLastLineBox):
+        (WebCore::RenderInline::culledInlineVisualOverflowBoundingBox):
+        (WebCore::RenderInline::computeRectForRepaint):
+        (WebCore::RenderInline::dirtyLineBoxes):
+        * rendering/RenderLayer.cpp:
+        (WebCore::checkContainingBlockChainForPagination):
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::isPositionedContainer):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        * rendering/RenderListItem.cpp:
+        (WebCore::getParentOfFirstLineBox):
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::renderName):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+        (WebCore::RenderObject::setPreferredLogicalWidthsDirty):
+        (WebCore::RenderObject::invalidateContainerPreferredLogicalWidths):
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore::RenderObject::offsetParent):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isOutOfFlowPositioned):
+        (WebCore::RenderObject::isInFlowPositioned):
+        (WebCore::RenderObject::hasClip):
+        (WebCore::RenderObject::isFloatingOrOutOfFlowPositioned):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::hasAutoHeightOrContainingBlockWithAutoHeight):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::rubyText):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        (WebCore::RenderTable::computeLogicalWidth):
+        (WebCore::RenderTable::layout):
+        * rendering/style/RenderStyle.h:
+
 2012-06-24  Oli Lan  <olilan@chromium.org>
 
         After Editor::setComposition is called, input should scroll to the end of the composition.
