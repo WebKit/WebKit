@@ -8,6 +8,7 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   "${WEBCORE_DIR}/page/efl"
   "${WEBCORE_DIR}/platform/efl"
   "${WEBCORE_DIR}/platform/graphics/efl"
+  "${WEBCORE_DIR}/platform/mediastream/gstreamer"
   "${WEBCORE_DIR}/platform/network/soup"
   "${WEBCORE_DIR}/platform/text/efl"
   "${WEBCORE_DIR}/plugins/efl"
@@ -73,6 +74,8 @@ LIST(APPEND WebCore_SOURCES
   platform/image-decoders/jpeg/JPEGImageDecoder.cpp
   platform/image-decoders/png/PNGImageDecoder.cpp
   platform/image-decoders/webp/WEBPImageDecoder.cpp
+  platform/mediastream/gstreamer/DeprecatedPeerConnectionHandler.cpp
+  platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp
   platform/network/soup/CookieJarSoup.cpp
   platform/network/soup/CredentialStorageSoup.cpp
   platform/network/soup/DNSSoup.cpp

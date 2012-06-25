@@ -1,3 +1,17 @@
+2012-06-25  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Add support for building with ENABLE_MEDIA_STREAM
+        https://bugs.webkit.org/show_bug.cgi?id=88413
+
+        Reviewed by Dirk Pranke.
+
+        Add files which are needed for supporting the Media Stream
+        feature.
+
+        No change in functionality so no new tests.
+
+        * PlatformEfl.cmake:
+
 2012-06-25  Huang Dongsung  <luxtella@company100.net>
 
         [Texmap] TextureMapperPaintOptions should keep current surface.
