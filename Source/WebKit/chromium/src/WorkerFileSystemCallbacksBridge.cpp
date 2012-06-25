@@ -187,8 +187,10 @@ void WorkerFileSystemCallbacksBridge::cleanUpAfterCallback()
 
     m_callbacksOnWorkerThread = 0;
     if (m_workerContextObserver) {
-        delete m_workerContextObserver;
+        WorkerFileSystemContextObserver* observer = m_workerContextObserver;
         m_workerContextObserver = 0;
+        // The next line may delete this.
+        delete observer;
     }
 }
 

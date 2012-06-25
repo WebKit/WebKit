@@ -1,3 +1,15 @@
+2012-06-25  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Heap-use-after-free in WebKit::MainThreadFileSystemCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=87019
+
+        Reviewed by David Levin.
+
+        Should not access the CallbacksBridge's member field after it's freed.
+
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        (WebKit::WorkerFileSystemCallbacksBridge::cleanUpAfterCallback):
+
 2012-06-24  Luke Macpherson  <macpherson@chromium.org>
 
         Add runtime flag to enable/disable CSS variables (in addition to existing compile-time flag).
