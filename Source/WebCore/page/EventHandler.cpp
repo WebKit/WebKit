@@ -1484,6 +1484,11 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 {
     RefPtr<FrameView> protector(m_frame->view());
 
+    if (InspectorInstrumentation::handleMousePress(m_frame->page())) {
+        invalidateClick();
+        return true;
+    }
+
 #if ENABLE(TOUCH_EVENTS)
     bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(mouseEvent);
     if (defaultPrevented)
@@ -1527,11 +1532,6 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
     m_mousePressNode = targetNode(mev);
 
-    if (InspectorInstrumentation::handleMousePress(m_frame->page())) {
-        invalidateClick();
-        return true;
-    }
-        
     Frame* subframe = subframeForHitTestResult(mev);
     if (subframe && passMousePressEventToSubframe(mev, subframe)) {
         // Start capturing future events for this frame.  We only do this if we didn't clear
