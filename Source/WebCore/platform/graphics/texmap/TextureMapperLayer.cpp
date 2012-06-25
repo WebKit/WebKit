@@ -351,9 +351,6 @@ void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options
 
     TextureMapperPaintOptions paintOptions(options);
     paintOptions.mask = maskTexture.get();
-    IntRect surfaceRect;
-
-    RefPtr<BitmapTexture> surface;
 
     if (!shouldPaintToIntermediateSurface()) {
         paintOptions.opacity = opacity;
@@ -363,8 +360,9 @@ void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options
 
     // Prepare a surface to paint into.
     // We paint into the surface ignoring the opacity/transform of the current layer.
-    surfaceRect = intermediateSurfaceRect();
-    surface = options.textureMapper->acquireTextureFromPool(surfaceRect.size());
+    IntRect surfaceRect = intermediateSurfaceRect();
+    RefPtr<BitmapTexture> surface = options.textureMapper->acquireTextureFromPool(surfaceRect.size());
+    paintOptions.surface = surface;
     options.textureMapper->bindSurface(surface.get());
     paintOptions.opacity = 1;
 

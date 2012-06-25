@@ -1,3 +1,28 @@
+2012-06-25  Huang Dongsung  <luxtella@company100.net>
+
+        [Texmap] TextureMapperPaintOptions should keep current surface.
+        https://bugs.webkit.org/show_bug.cgi?id=89266
+
+        Add a opacity property to two div layers in animation-insiVde-reflection
+        test.
+        Texmap has a bug when a transparent reflection layer has another
+        transparent reflection layer, so two reflection layer in
+        animation-inside-reflection test have opacity in order to cover Texmap's
+        bug.
+
+        Reviewed by Noam Rosenthal.
+
+        * compositing/reflections/animation-inside-reflection.html:
+        * platform/chromium-linux/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/chromium-mac-leopard/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/chromium-mac/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/chromium-win/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/efl/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/mac-snowleopard/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/qt/compositing/reflections/animation-inside-reflection-expected.png: Added.
+        * platform/qt/compositing/reflections/animation-inside-reflection-expected.txt: Added.
+
 2012-06-25  Jon Lee  <jonlee@apple.com>
 
         Missing implementation of textInputController.setComposition() causes bot redness

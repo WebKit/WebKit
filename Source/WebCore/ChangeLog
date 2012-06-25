@@ -1,3 +1,22 @@
+2012-06-25  Huang Dongsung  <luxtella@company100.net>
+
+        [Texmap] TextureMapperPaintOptions should keep current surface.
+        https://bugs.webkit.org/show_bug.cgi?id=89266
+
+        Before this patch, if a replica layer has a descendant replica child, the child
+        layer does not render the result in the parent layer's surface because
+        TextureMapperPaintOptions does not keep current surface.
+        This patch amends that TextureMapperPaintOptions keeps current surface before
+        calling paintSelfAndChildrenWithReplica recursively, so previous surface could be
+        restored after paintSelfAndChildrenWithReplica.
+
+        Reviewed by Noam Rosenthal.
+
+        Test: compositing/reflections/animation-inside-reflection.html
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintRecursive):
+
 2012-06-25  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Layer chromium should need a redraw after getting its first non-empty bounds.
