@@ -1,3 +1,14 @@
+2012-06-25  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed. Build fix.
+
+        Rebaseline layout test expectations from r121179.
+
+        * platform/chromium-linux/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/chromium-mac/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/chromium-win/compositing/reflections/animation-inside-reflection-expected.png:
+
 2012-06-25  Jon Lee  <jonlee@apple.com>
 
         Mac bot gardening.
