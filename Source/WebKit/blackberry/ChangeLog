@@ -1,3 +1,20 @@
+2012-06-25  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Require text editable element to be enabled for VKB
+        https://bugs.webkit.org/show_bug.cgi?id=89876
+
+        Reviewed by Yong Li.
+
+        After bug 58837 got in, children of <fieldset> now can inherit the disabled
+        state of the fieldset. When trying for instance fast/forms/fieldset/fieldset-disabled.html,
+        it can be seen that when they are visually disabled, the input handling can still be triggered. So
+        add an extra check to isTextBasedContentEditableElement that the element is enabled.
+
+        Reviewed internally by Mike Fenton.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::isTextBasedContentEditableElement):
+
 2012-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         Rename isPositioned to isOutOfFlowPositioned for clarity
