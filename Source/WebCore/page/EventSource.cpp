@@ -315,6 +315,11 @@ void EventSource::parseEventStream()
 
         parseEventStreamLine(bufPos, fieldLength, lineLength);
         bufPos += lineLength + 1;
+
+        // EventSource.close() might've been called by one of the message event handlers.
+        // Per spec, no further messages should be fired after that.
+        if (m_state == CLOSED)
+            break;
     }
 
     if (bufPos == bufSize)

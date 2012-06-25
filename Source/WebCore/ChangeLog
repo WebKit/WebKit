@@ -1,3 +1,24 @@
+2012-06-25  Pablo Flouret  <pablof@motorola.com>
+
+        EventSource: Events should not be dispatched after close()
+        https://bugs.webkit.org/show_bug.cgi?id=85346
+
+        Reviewed by Adam Barth.
+
+        Spec changed to make sure that no events are dispatched after close() is
+        called, even if more data was received before the call to close().
+
+        See,
+        https://www.w3.org/Bugs/Public/show_bug.cgi?id=14331#c5
+        http://html5.org/tools/web-apps-tracker?from=6771&to=6772
+
+        Firefox behaves like this already.
+
+        Test: http/tests/eventsource/eventsource-events-after-close.html
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::parseEventStream):
+
 2012-06-25  Mike West  <mkwst@chromium.com>
 
         Fixing compilation failure in StyleResolver.cpp/CSSParser.cpp

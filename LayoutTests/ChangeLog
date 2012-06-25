@@ -1,3 +1,13 @@
+2012-06-25  Pablo Flouret  <pablof@motorola.com>
+
+        EventSource: Events should not be dispatched after close()
+        https://bugs.webkit.org/show_bug.cgi?id=85346
+
+        Reviewed by Adam Barth.
+
+        * http/tests/eventsource/eventsource-events-after-close-expected.txt: Added.
+        * http/tests/eventsource/eventsource-events-after-close.html: Added.
+
 2012-06-25  Dirk Pranke  <dpranke@chromium.org>
 
         remove support for chromium vista from tools
