@@ -1,3 +1,13 @@
+2012-06-24  David Barr  <davidbarr@chromium.org>
+
+        Add snap to css3-images image-resolution
+        https://bugs.webkit.org/show_bug.cgi?id=89745
+
+        Reviewed by Tony Chang.
+
+        * fast/css/image-resolution/image-resolution-expected.txt:
+        * fast/css/image-resolution/image-resolution.html:
+
 2012-06-24  Oli Lan  <olilan@chromium.org>
 
         After Editor::setComposition is called, input should scroll to the end of the composition.

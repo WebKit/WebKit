@@ -1785,12 +1785,14 @@ public:
     static void applyInheritValue(StyleResolver* styleResolver)
     {
         ApplyPropertyDefaultBase<ImageResolutionSource, &RenderStyle::imageResolutionSource, ImageResolutionSource, &RenderStyle::setImageResolutionSource, ImageResolutionSource, &RenderStyle::initialImageResolutionSource>::applyInheritValue(styleResolver);
+        ApplyPropertyDefaultBase<ImageResolutionSnap, &RenderStyle::imageResolutionSnap, ImageResolutionSnap, &RenderStyle::setImageResolutionSnap, ImageResolutionSnap, &RenderStyle::initialImageResolutionSnap>::applyInheritValue(styleResolver);
         ApplyPropertyDefaultBase<float, &RenderStyle::imageResolution, float, &RenderStyle::setImageResolution, float, &RenderStyle::initialImageResolution>::applyInheritValue(styleResolver);
     }
 
     static void applyInitialValue(StyleResolver* styleResolver)
     {
         ApplyPropertyDefaultBase<ImageResolutionSource, &RenderStyle::imageResolutionSource, ImageResolutionSource, &RenderStyle::setImageResolutionSource, ImageResolutionSource, &RenderStyle::initialImageResolutionSource>::applyInitialValue(styleResolver);
+        ApplyPropertyDefaultBase<ImageResolutionSnap, &RenderStyle::imageResolutionSnap, ImageResolutionSnap, &RenderStyle::setImageResolutionSnap, ImageResolutionSnap, &RenderStyle::initialImageResolutionSnap>::applyInitialValue(styleResolver);
         ApplyPropertyDefaultBase<float, &RenderStyle::imageResolution, float, &RenderStyle::setImageResolution, float, &RenderStyle::initialImageResolution>::applyInitialValue(styleResolver);
     }
 
@@ -1800,6 +1802,7 @@ public:
             return;
         CSSValueList* valueList = static_cast<CSSValueList*>(value);
         ImageResolutionSource source = RenderStyle::initialImageResolutionSource();
+        ImageResolutionSnap snap = RenderStyle::initialImageResolutionSnap();
         double resolution = RenderStyle::initialImageResolution();
         for (size_t i = 0; i < valueList->length(); i++) {
             CSSValue* item = valueList->itemWithoutBoundsCheck(i);
@@ -1808,10 +1811,13 @@ public:
             CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
             if (primitiveValue->getIdent() == CSSValueFromImage)
                 source = ImageResolutionFromImage;
+            else if (primitiveValue->getIdent() == CSSValueSnap)
+                snap = ImageResolutionSnapPixels;
             else
                 resolution = primitiveValue->getDoubleValue(CSSPrimitiveValue::CSS_DPPX);
         }
         styleResolver->style()->setImageResolutionSource(source);
+        styleResolver->style()->setImageResolutionSnap(snap);
         styleResolver->style()->setImageResolution(resolution);
     }
 

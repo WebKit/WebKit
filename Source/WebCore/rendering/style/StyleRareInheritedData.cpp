@@ -89,6 +89,7 @@ StyleRareInheritedData::StyleRareInheritedData()
 #endif
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     , m_imageResolutionSource(RenderStyle::initialImageResolutionSource())
+    , m_imageResolutionSnap(RenderStyle::initialImageResolutionSnap())
 #endif
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
@@ -147,6 +148,7 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
 #endif
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     , m_imageResolutionSource(o.m_imageResolutionSource)
+    , m_imageResolutionSnap(o.m_imageResolutionSnap)
 #endif
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
@@ -231,6 +233,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && m_imageRendering == o.m_imageRendering
 #if ENABLE(CSS_IMAGE_RESOLUTION)
         && m_imageResolutionSource == o.m_imageResolutionSource
+        && m_imageResolutionSnap == o.m_imageResolutionSnap
         && m_imageResolution == o.m_imageResolution
 #endif
         && m_lineSnap == o.m_lineSnap

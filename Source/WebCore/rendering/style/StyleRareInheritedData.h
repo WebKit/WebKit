@@ -103,6 +103,7 @@ public:
 #endif
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     unsigned m_imageResolutionSource : 1; // ImageResolutionSource
+    unsigned m_imageResolutionSnap : 1; // ImageResolutionSnap
 #endif
 
     AtomicString hyphenationString;

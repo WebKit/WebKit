@@ -27,6 +27,8 @@ function computeResolution(resolution, imgResolutionDppx)
     var value = explicit && explicit[1] * 1;
     var unit = explicit && explicit[3];
     var dppx = 1;
+    if (!unit && !fromImage)
+        return;
     if (unit && value <= 0)
         return;
     if (unit && value) {
@@ -38,27 +40,39 @@ function computeResolution(resolution, imgResolutionDppx)
             dppx = value / cssPxPerIn;
         else if (unit === 'dpcm')
             dppx = value / (cssPxPerIn / cmPerIn);
+        else
+            return;
     }
     if (fromImage && imgResolutionDppx)
         dppx = imgResolutionDppx;
     if (snap)
-        dppx = Math.floor(dppx);
+        dppx = Math.floor(dppx + 0.01);
     if (dppx <= 0)
         dppx = 1;
     return dppx;
 }
 
-function permute2(rule) {
+function permute3(rule) {
     var s = rule.trim().split(' ');
     if (s.length == 1)
         return s;
-    return [s.join(' '), [s[1], s[0]].join(' ')];
+    if (s.length == 2)
+        return [s.join(' '), [s[1], s[0]].join(' ')];
+    return [[s[0], s[1], s[2]].join(' '), [s[0], s[2], s[1]].join(' '),
+            [s[1], s[0], s[2]].join(' '), [s[1], s[2], s[0]].join(' '),
+            [s[2], s[0], s[1]].join(' '), [s[2], s[1], s[0]].join(' ')];
 }
 
 function generateTests(resolutions) {
     var tests = resolutions.slice();
     resolutions.forEach(function(resolution) {
-        tests.push.apply(tests, permute2(resolution + ' from-image'));
+        tests.push.apply(tests, permute3(resolution + ' from-image'));
+    });
+    resolutions.forEach(function(resolution) {
+        tests.push.apply(tests, permute3(resolution + ' snap'));
+    });
+    resolutions.forEach(function(resolution) {
+        tests.push.apply(tests, permute3(resolution + ' from-image snap'));
     });
     return tests;
 }

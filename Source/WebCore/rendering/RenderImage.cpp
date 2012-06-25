@@ -140,6 +140,7 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     if (diff == StyleDifferenceLayout
         && (oldStyle->imageResolution() != style()->imageResolution()
+            || oldStyle->imageResolutionSnap() != style()->imageResolutionSnap()
             || oldStyle->imageResolutionSource() != style()->imageResolutionSource()))
         imageDimensionsChanged(true /* imageSizeChanged */);
 #endif
@@ -198,7 +199,12 @@ bool RenderImage::updateIntrinsicSizeIfNeeded(const IntSize& newSize, bool image
 void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* rect)
 {
 #if ENABLE(CSS_IMAGE_RESOLUTION)
-    bool intrinsicSizeChanged = updateIntrinsicSizeIfNeeded(m_imageResource->imageSize(style()->effectiveZoom() / style()->imageResolution()), imageSizeChanged);
+    double scale = style()->imageResolution();
+    if (style()->imageResolutionSnap() == ImageResolutionSnapPixels)
+        scale = roundForImpreciseConversion<int>(scale);
+    if (scale <= 0)
+        scale = 1;
+    bool intrinsicSizeChanged = updateIntrinsicSizeIfNeeded(m_imageResource->imageSize(style()->effectiveZoom() / scale), imageSizeChanged);
 #else
     bool intrinsicSizeChanged = updateIntrinsicSizeIfNeeded(m_imageResource->imageSize(style()->effectiveZoom()), imageSizeChanged);
 #endif

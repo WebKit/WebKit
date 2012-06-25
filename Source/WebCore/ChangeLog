@@ -1,3 +1,35 @@
+2012-06-24  David Barr  <davidbarr@chromium.org>
+
+        Add snap to css3-images image-resolution
+        https://bugs.webkit.org/show_bug.cgi?id=89745
+
+        Reviewed by Tony Chang.
+
+        Due to floating point imprecision, it is difficult to be precise in dpcm.
+        So use PrimitiveValue::roundForImpreciseConversion rather than just floor.
+
+        No new tests; extended fast/css/image-resolution/image-resolution.html
+
+        * css/CSSParser.cpp: Accept snap identifier in image-resolution property.
+        (WebCore::CSSParser::parseImageResolution): Map CSSValueSnap to identifier value from cssValuePool.
+        * css/CSSValueKeywords.in: Add snap.
+        * css/StyleBuilder.cpp: Extend ApplyPropertyImageResolution to apply RenderStyle::imageResolutionSnap.
+        (WebCore::ApplyPropertyImageResolution::applyInheritValue): Apply RenderStyle::imageResolutionSnap.
+        (WebCore::ApplyPropertyImageResolution::applyInitialValue): Apply RenderStyle::imageResolutionSnap.
+        (WebCore::ApplyPropertyImageResolution::applyValue): Map CSSValueSnap to ImageResolutionSnapPixels.
+        * rendering/RenderImage.cpp: Extend conditions for recalculation of intrinsic size.
+        (WebCore::RenderImage::styleDidChange): Update intrinsic size if RenderStyle::imageResolutionSnap() has changed.
+        (WebCore::RenderImage::imageDimensionsChanged): Floor scale factor to int, round up if less than 0.01 away from ceiling.
+        * rendering/style/RenderStyle.cpp: Include StyleRareInheritedData::m_imageResolutionSnap in style diff.
+        (WebCore::RenderStyle::diff): Map change in StyleRareInheritedData::m_imageResolutionSnap to StyleDifferenceLayout.
+        * rendering/style/RenderStyle.h: Add RenderStyle::imageResolutionSnap, RenderStyle::setImageResolutionSnap, RenderStyle::initialImageResolutionSnap.
+        * rendering/style/RenderStyleConstants.h: Add enum ImageResolutionSnap.
+        * rendering/style/StyleRareInheritedData.cpp: Add StyleRareInheritedData::m_imageResolutionSnap.
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData): Add m_imageResolutionSnap to default and copy constructor.
+        (WebCore::StyleRareInheritedData::operator==): Include m_imageResolutionSnap in comparison.
+        * rendering/style/StyleRareInheritedData.h: Add StyleRareInheritedData::m_imageResolutionSnap.
+        (StyleRareInheritedData): Add 1-bit field StyleRareInheritedData::m_imageResolutionSnap.
+
 2012-06-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121106.

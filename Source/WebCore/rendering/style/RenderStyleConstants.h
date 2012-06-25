@@ -452,6 +452,8 @@ enum EImageRendering { ImageRenderingAuto, ImageRenderingOptimizeSpeed, ImageRen
 
 enum ImageResolutionSource { ImageResolutionSpecified = 0, ImageResolutionFromImage };
 
+enum ImageResolutionSnap { ImageResolutionNoSnap = 0, ImageResolutionSnapPixels };
+
 enum Order { LogicalOrder = 0, VisualOrder };
 
 enum RegionOverflow { AutoRegionOverflow, BreakRegionOverflow };

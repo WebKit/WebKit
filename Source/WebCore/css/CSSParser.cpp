@@ -6904,12 +6904,16 @@ PassRefPtr<CSSValue> CSSParser::parseImageResolution(CSSParserValueList* valueLi
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     bool haveResolution = false;
     bool haveFromImage = false;
+    bool haveSnap = false;
 
     CSSParserValue* value = valueList->current();
     while (value) {
         if (!haveFromImage && value->id == CSSValueFromImage) {
             list->append(cssValuePool().createIdentifierValue(value->id));
             haveFromImage = true;
+        } else if (!haveSnap && value->id == CSSValueSnap) {
+            list->append(cssValuePool().createIdentifierValue(value->id));
+            haveSnap = true;
         } else if (!haveResolution && validUnit(value, FResolution | FNonNeg) && value->fValue > 0) {
             list->append(createPrimitiveNumericValue(value));
             haveResolution = true;
@@ -6918,6 +6922,8 @@ PassRefPtr<CSSValue> CSSParser::parseImageResolution(CSSParserValueList* valueLi
         value = m_valueList->next();
     }
     if (!list->length())
+        return 0;
+    if (!haveFromImage && !haveResolution)
         return 0;
     return list;
 }

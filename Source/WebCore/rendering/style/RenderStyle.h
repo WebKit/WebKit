@@ -983,6 +983,7 @@ public:
 
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     ImageResolutionSource imageResolutionSource() const { return static_cast<ImageResolutionSource>(rareInheritedData->m_imageResolutionSource); }
+    ImageResolutionSnap imageResolutionSnap() const { return static_cast<ImageResolutionSnap>(rareInheritedData->m_imageResolutionSnap); }
     float imageResolution() const { return rareInheritedData->m_imageResolution; }
 #endif
     
@@ -1154,6 +1155,7 @@ public:
 
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     void setImageResolutionSource(ImageResolutionSource v) { SET_VAR(rareInheritedData, m_imageResolutionSource, v) }
+    void setImageResolutionSnap(ImageResolutionSnap v) { SET_VAR(rareInheritedData, m_imageResolutionSnap, v) }
     void setImageResolution(float f) { SET_VAR(rareInheritedData, m_imageResolution, f) }
 #endif
 
@@ -1667,6 +1669,7 @@ public:
     static LineBoxContain initialLineBoxContain() { return LineBoxContainBlock | LineBoxContainInline | LineBoxContainReplaced; }
     static EImageRendering initialImageRendering() { return ImageRenderingAuto; }
     static ImageResolutionSource initialImageResolutionSource() { return ImageResolutionSpecified; }
+    static ImageResolutionSnap initialImageResolutionSnap() { return ImageResolutionNoSnap; }
     static float initialImageResolution() { return 1; }
     static StyleImage* initialBorderImageSource() { return 0; }
     static StyleImage* initialMaskBoxImageSource() { return 0; }

@@ -474,6 +474,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             || rareInheritedData->m_lineGrid != other->rareInheritedData->m_lineGrid
 #if ENABLE(CSS_IMAGE_RESOLUTION)
             || rareInheritedData->m_imageResolutionSource != other->rareInheritedData->m_imageResolutionSource
+            || rareInheritedData->m_imageResolutionSnap != other->rareInheritedData->m_imageResolutionSnap
             || rareInheritedData->m_imageResolution != other->rareInheritedData->m_imageResolution
 #endif
             || rareInheritedData->m_lineSnap != other->rareInheritedData->m_lineSnap
