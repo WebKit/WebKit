@@ -303,7 +303,7 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
         else
             alignment = (align == AlignCursorOnScrollAlways) ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignToEdgeIfNeeded;
 
-        revealSelection(alignment, true);
+        revealSelection(alignment, RevealExtent);
     }
 
     notifyAccessibilityForSelectionChange();
@@ -1932,7 +1932,7 @@ HTMLFormElement* FrameSelection::currentForm() const
     return scanForForm(start);
 }
 
-void FrameSelection::revealSelection(const ScrollAlignment& alignment, bool revealExtent)
+void FrameSelection::revealSelection(const ScrollAlignment& alignment, RevealExtentOption revealExtentOption)
 {
     LayoutRect rect;
 
@@ -1943,7 +1943,7 @@ void FrameSelection::revealSelection(const ScrollAlignment& alignment, bool reve
         rect = absoluteCaretBounds();
         break;
     case VisibleSelection::RangeSelection:
-        rect = revealExtent ? VisiblePosition(extent()).absoluteCaretBounds() : enclosingIntRect(bounds(false));
+        rect = revealExtentOption == RevealExtent ? VisiblePosition(extent()).absoluteCaretBounds() : enclosingIntRect(bounds(false));
         break;
     }
 

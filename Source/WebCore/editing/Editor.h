@@ -423,11 +423,6 @@ private:
     void pasteAsPlainTextWithPasteboard(Pasteboard*);
     void pasteWithPasteboard(Pasteboard*, bool allowPlainText);
 
-    enum RevealExtentOption {
-        RevealExtent,
-        DoNotRevealExtent
-    };
-
     void revealSelectionAfterEditingOperation(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = DoNotRevealExtent);
     void markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling, RefPtr<Range>& firstMisspellingRange);
     TextCheckingTypeMask resolveTextCheckingTypeMask(TextCheckingTypeMask);

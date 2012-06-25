@@ -1,3 +1,22 @@
+2012-06-24  Adam Barth  <abarth@webkit.org>
+
+        Change the type of the second argument of FrameSelection::revealSelection to use RevealExtentOption
+        https://bugs.webkit.org/show_bug.cgi?id=89833
+
+        Reviewed by Ryosuke Niwa.
+
+        As requested by Ryosuke Niwa.  Rare boolean parameters are hard to read.
+
+        * WebCore.exp.in:
+        * editing/Editor.cpp:
+        (WebCore::Editor::revealSelectionAfterEditingOperation):
+        * editing/Editor.h:
+        (Editor):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::FrameSelection::revealSelection):
+        * editing/FrameSelection.h:
+
 2012-06-24  Antti Koivisto  <antti@apple.com>
 
         Optimize RenderGeometryMap mappings gathering

@@ -2301,7 +2301,7 @@ void Editor::revealSelectionAfterEditingOperation(const ScrollAlignment& alignme
     if (m_ignoreCompositionSelectionChange)
         return;
 
-    m_frame->selection()->revealSelection(alignment, revealExtentOption == RevealExtent);
+    m_frame->selection()->revealSelection(alignment, revealExtentOption);
 }
 
 void Editor::setIgnoreCompositionSelectionChange(bool ignore)

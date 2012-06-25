@@ -49,6 +49,11 @@ class VisiblePosition;
 
 enum EUserTriggered { NotUserTriggered = 0, UserTriggered = 1 };
 
+enum RevealExtentOption {
+    RevealExtent,
+    DoNotRevealExtent
+};
+
 class CaretBase {
     WTF_MAKE_NONCOPYABLE(CaretBase);
     WTF_MAKE_FAST_ALLOCATED;
@@ -247,7 +252,7 @@ public:
 
     HTMLFormElement* currentForm() const;
 
-    void revealSelection(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, bool revealExtent = false);
+    void revealSelection(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = DoNotRevealExtent);
     void setSelectionFromNone();
 
 private:
