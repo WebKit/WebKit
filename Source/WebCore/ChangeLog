@@ -1,3 +1,22 @@
+2012-06-25  Antti Koivisto  <antti@apple.com>
+
+        Fast path for simple transform parsing
+        https://bugs.webkit.org/show_bug.cgi?id=89898
+
+        Reviewed by Anders Carlsson.
+
+        When manipulating transforms using script, the transform value parsing can show up in profiles pretty heavily 
+        (up 4% in some cases). We can optimize it easily by implementing a fast path that does not spin up the full CSS
+        parser, like we already do for several other common value types.
+        
+        The patch implements a fast path for transform(), transformX/Y/Z() and transform3D(). It speeds up parsing by >5x.
+
+        * css/CSSParser.cpp:
+        (WebCore):
+        (WebCore::parseTransformArguments):
+        (WebCore::parseTransformValue):
+        (WebCore::CSSParser::parseValue):
+
 2012-06-25  Kwang Yul Seo  <skyul@company100.net>
 
         Remove unused static function shadowFor

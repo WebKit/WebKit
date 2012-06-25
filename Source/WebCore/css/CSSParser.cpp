@@ -1013,6 +1013,74 @@ static bool parseKeywordValue(StylePropertySet* declaration, CSSPropertyID prope
     return true;
 }
 
+template <typename CharType>
+static bool parseTransformArguments(WebKitCSSTransformValue* transformValue, CharType* characters, unsigned length, unsigned start, unsigned expectedCount)
+{
+    while (expectedCount) {
+        size_t end = WTF::find(characters, length, expectedCount == 1 ? ')' : ',', start);
+        if (end == notFound || (expectedCount == 1 && end != length - 1))
+            return false;
+        unsigned argumentLength = end - start;
+        CSSPrimitiveValue::UnitTypes unit = CSSPrimitiveValue::CSS_NUMBER;
+        double number;
+        if (!parseSimpleLength(characters + start, argumentLength, unit, number))
+            return false;
+        if (unit != CSSPrimitiveValue::CSS_PX && (number || unit != CSSPrimitiveValue::CSS_NUMBER))
+            return false;
+        transformValue->append(cssValuePool().createValue(number, unit));
+        start = end + 1;
+        --expectedCount;
+    }
+    return true;
+}
+
+static bool parseTransformValue(StylePropertySet* properties, CSSPropertyID propertyID, const String& string, bool important)
+{
+    if (propertyID != CSSPropertyWebkitTransform)
+        return false;
+    static const unsigned shortestValidTransformStringLength = 12;
+    static const unsigned likelyMultipartTransformStringLengthCutoff = 32;
+    if (string.length() < shortestValidTransformStringLength || string.length() > likelyMultipartTransformStringLengthCutoff)
+        return false;
+    if (!string.startsWith("translate", false))
+        return false;
+    UChar c9 = toASCIILower(string[9]);
+    UChar c10 = toASCIILower(string[10]);
+
+    WebKitCSSTransformValue::TransformOperationType transformType;
+    unsigned expectedArgumentCount = 1;
+    unsigned argumentStart = 11;
+    if (c9 == 'x' && c10 == '(')
+        transformType = WebKitCSSTransformValue::TranslateXTransformOperation;
+    else if (c9 == 'y' && c10 == '(')
+        transformType = WebKitCSSTransformValue::TranslateYTransformOperation;
+    else if (c9 == 'z' && c10 == '(')
+        transformType = WebKitCSSTransformValue::TranslateZTransformOperation;
+    else if (c9 == '(') {
+        transformType = WebKitCSSTransformValue::TranslateTransformOperation;
+        expectedArgumentCount = 2;
+        argumentStart = 10;
+    } else if (c9 == '3' && c10 == 'd' && string[11] == '(') {
+        transformType = WebKitCSSTransformValue::Translate3DTransformOperation;
+        expectedArgumentCount = 3;
+        argumentStart = 12;
+    } else
+        return false;
+
+    RefPtr<WebKitCSSTransformValue> transformValue = WebKitCSSTransformValue::create(transformType);
+    bool success;
+    if (string.is8Bit())
+        success = parseTransformArguments(transformValue.get(), string.characters8(), string.length(), argumentStart, expectedArgumentCount);
+    else
+        success = parseTransformArguments(transformValue.get(), string.characters16(), string.length(), argumentStart, expectedArgumentCount);
+    if (!success)
+        return false;
+    RefPtr<CSSValueList> result = CSSValueList::createSpaceSeparated();
+    result->append(transformValue.release());
+    properties->addParsedProperty(CSSProperty(CSSPropertyWebkitTransform, result.release(), important));
+    return true;
+}
+
 PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& string)
 {
     if (string.isEmpty())
@@ -1050,6 +1118,8 @@ bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID property
     if (parseColorValue(declaration, propertyID, string, important, cssParserMode))
         return true;
     if (parseKeywordValue(declaration, propertyID, string, important, contextStyleSheet->parserContext()))
+        return true;
+    if (parseTransformValue(declaration, propertyID, string, important))
         return true;
 
     CSSParserContext context(cssParserMode);
