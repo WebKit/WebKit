@@ -13,8 +13,7 @@ function test()
         InspectorTest.addResult("Before disable");
         InspectorTest.dumpSelectedElementStyles(true, true);
 
-        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
-        treeItem.toggleEnabled({ target: { checked: false } });
+        InspectorTest.toggleStyleProperty("font-weight", false);
         InspectorTest.waitForStyles("container", step2);
     }
 

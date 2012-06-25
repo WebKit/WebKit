@@ -20,8 +20,7 @@ function test()
 
     function step2()
     {
-        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
-        treeItem.toggleEnabled({ target: { checked: false } });
+        InspectorTest.toggleStyleProperty("font-weight", false);
         InspectorTest.selectNodeAndWaitForStyles("nested", step3);
     }
 

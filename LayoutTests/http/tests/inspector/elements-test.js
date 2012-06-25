@@ -157,7 +157,13 @@ InspectorTest.dumpSelectedElementStyles = function(excludeComputed, excludeMatch
         }
         InspectorTest.addResult("");
     }
-};
+}
+
+InspectorTest.toggleStyleProperty = function(propertyName, checked)
+{
+    var treeItem = InspectorTest.getElementStylePropertyTreeItem(propertyName);
+    treeItem.toggleEnabled({ target: { checked: checked }, consume: function() { } });
+}
 
 InspectorTest.expandAndDumpSelectedElementEventListeners = function(callback)
 {

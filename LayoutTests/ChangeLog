@@ -1,3 +1,19 @@
+2012-06-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: toggling style should not start property edit first.
+        https://bugs.webkit.org/show_bug.cgi?id=89834
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.dumpSelectedElementStyles):
+        (initialize_ElementTest.InspectorTest.toggleStylePropertyEnabled):
+        * inspector/styles/styles-disable-inherited.html:
+        * inspector/styles/styles-disable-then-change.html:
+        * inspector/styles/styles-disable-then-delete.html:
+        * inspector/styles/styles-disable-then-enable.html:
+        * inspector/styles/undo-property-toggle.html:
+
 2012-06-25  Philip Rogers  <pdr@google.com>
 
         Fix rewinding of SVG animations

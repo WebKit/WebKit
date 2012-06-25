@@ -14,7 +14,7 @@ function test()
         var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
         InspectorTest.dumpStyleTreeItem(treeItem, "");
 
-        treeItem.toggleEnabled({ target: { checked: false } });
+        InspectorTest.toggleStyleProperty("font-weight", false);
         InspectorTest.waitForStyles("container", step2);
     }
 
@@ -24,7 +24,7 @@ function test()
         var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
         InspectorTest.dumpStyleTreeItem(treeItem, "");
 
-        treeItem.toggleEnabled({ target: { checked: true } });
+        InspectorTest.toggleStyleProperty("font-weight", true);
         InspectorTest.waitForStyles("container", step3);
     }
 

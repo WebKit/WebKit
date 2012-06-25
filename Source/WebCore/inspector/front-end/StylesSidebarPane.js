@@ -1693,7 +1693,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             enabledCheckboxElement.className = "enabled-button";
             enabledCheckboxElement.type = "checkbox";
             enabledCheckboxElement.checked = !this.disabled;
-            enabledCheckboxElement.addEventListener("change", this.toggleEnabled.bind(this), false);
+            enabledCheckboxElement.addEventListener("click", this.toggleEnabled.bind(this), false);
         }
 
         var nameElement = document.createElement("span");
@@ -1986,6 +1986,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         this._parentPane._userOperation = true;
         this.property.setDisabled(disabled, callback.bind(this));
+        event.consume();
     },
 
     updateState: function()
