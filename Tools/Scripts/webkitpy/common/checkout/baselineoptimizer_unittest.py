@@ -155,7 +155,7 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/chromium-win-xp': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
             'LayoutTests/platform/chromium-mac-leopard': '65e7d42f8b4882b29d46dc77bb879dd41bc074dc',
             'LayoutTests/platform/mac-lion': '7ad045ece7c030e2283c5d21d9587be22bcba56e',
-            'LayoutTests/platform/chromium-win-vista': 'f83af9732ce74f702b8c9c4a3d9a4c6636b8d3bd',
+            'LayoutTests/platform/chromium-win': 'f83af9732ce74f702b8c9c4a3d9a4c6636b8d3bd',
             'LayoutTests/platform/win-xp': '5b1253ef4d5094530d5f1bc6cdb95c90b446bec7',
             'LayoutTests/platform/chromium-linux': 'f52fcdde9e4be8bd5142171cd859230bd4471036',
         }, {
@@ -164,7 +164,7 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/chromium-win-xp': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
             'LayoutTests/platform/chromium-mac-leopard': '65e7d42f8b4882b29d46dc77bb879dd41bc074dc',
             'LayoutTests/platform/mac-lion': '7ad045ece7c030e2283c5d21d9587be22bcba56e',
-            'LayoutTests/platform/chromium-win-vista': 'f83af9732ce74f702b8c9c4a3d9a4c6636b8d3bd',
+            'LayoutTests/platform/chromium-win': 'f83af9732ce74f702b8c9c4a3d9a4c6636b8d3bd',
             'LayoutTests/platform/win-xp': '5b1253ef4d5094530d5f1bc6cdb95c90b446bec7',
             'LayoutTests/platform/chromium-linux': 'f52fcdde9e4be8bd5142171cd859230bd4471036'
         })

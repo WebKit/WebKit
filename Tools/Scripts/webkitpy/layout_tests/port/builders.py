@@ -38,7 +38,6 @@ from webkitpy.common.memoized import memoized
 _exact_matches = {
     # These builders are on build.chromium.org.
     "Webkit Win": {"port_name": "chromium-win-xp", "specifiers": set(["xp", "release"])},
-    "Webkit Vista": {"port_name": "chromium-win-vista", "specifiers": set(["vista"])},
     "Webkit Win7": {"port_name": "chromium-win-win7", "specifiers": set(["win7"])},
     "Webkit Win (dbg)(1)": {"port_name": "chromium-win-xp", "specifiers": set(["win", "debug"])},
     "Webkit Win (dbg)(2)": {"port_name": "chromium-win-xp", "specifiers": set(["win", "debug"])},

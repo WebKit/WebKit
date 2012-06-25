@@ -42,19 +42,12 @@ class ChromiumWinPort(chromium.ChromiumPort):
     port_name = 'chromium-win'
 
     # FIXME: Figure out how to unify this with base.TestConfiguration.all_systems()?
-    SUPPORTED_VERSIONS = ('xp', 'vista', 'win7')
+    SUPPORTED_VERSIONS = ('xp', 'win7')
 
     # FIXME: Do we need mac-snowleopard here, like the base win port?
     FALLBACK_PATHS = {
         'xp': [
             'chromium-win-xp',
-            'chromium-win-vista',
-            'chromium-win',
-            'chromium',
-            'mac',
-        ],
-        'vista': [
-            'chromium-win-vista',
             'chromium-win',
             'chromium',
             'mac',

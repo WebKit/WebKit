@@ -648,7 +648,7 @@ var kExampleBuildInfoWithTaskKillWarning = {
         "expectations": [["output",1776,1534.0625014267862]],
         "isFinished": true,
         "isStarted": true,
-        "logs": [["stdio","http://build.chromium.org/p/chromium.webkitbuilders/Vista%20Perf/builds/10268/steps/taskkill/logs/stdio"]],
+        "logs": [["stdio","http://build.chromium.org/p/chromium.webkitbuilders/XP%20Perf/builds/10268/steps/taskkill/logs/stdio"]],
         "name": "taskkill",
         "results": [1,[]],
         "statistics": {},

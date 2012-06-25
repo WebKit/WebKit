@@ -58,7 +58,6 @@ config.kPlatforms = {
         waterfallURL: 'http://build.chromium.org/p/chromium.webkit/waterfall',
         builders: {
             'Webkit Win': {version: 'xp'},
-            'Webkit Vista': {version: 'vista'},
             'Webkit Win7': {version: 'win7'},
             'Webkit Win (dbg)(1)': {version: 'xp', debug: true},
             'Webkit Win (dbg)(2)': {version: 'xp', debug: true},

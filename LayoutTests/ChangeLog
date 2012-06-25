@@ -1,3 +1,12 @@
+2012-06-25  Dirk Pranke  <dpranke@chromium.org>
+
+        remove support for chromium vista from tools
+        https://bugs.webkit.org/show_bug.cgi?id=89915
+
+        Reviewed by Tony Chang.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-25  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed. Build fix.

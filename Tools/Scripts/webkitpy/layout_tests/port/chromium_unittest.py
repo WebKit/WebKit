@@ -194,8 +194,6 @@ class ChromiumPortTest(port_testcase.PortTestCase):
             TestConfiguration('lion', 'x86', 'release'),
             TestConfiguration('xp', 'x86', 'debug'),
             TestConfiguration('xp', 'x86', 'release'),
-            TestConfiguration('vista', 'x86', 'debug'),
-            TestConfiguration('vista', 'x86', 'release'),
             TestConfiguration('win7', 'x86', 'debug'),
             TestConfiguration('win7', 'x86', 'release'),
             TestConfiguration('lucid', 'x86', 'debug'),

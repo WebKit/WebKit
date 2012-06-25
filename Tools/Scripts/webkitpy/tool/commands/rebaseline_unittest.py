@@ -204,9 +204,6 @@ Retrieving results for chromium-mac-lion from Webkit Mac10.7.
 Retrieving results for chromium-mac-snowleopard from Webkit Mac10.6.
     userscripts/another-test.html (txt)
     userscripts/images.svg (png)
-Retrieving results for chromium-win-vista from Webkit Vista.
-    userscripts/another-test.html (txt)
-    userscripts/images.svg (png)
 Retrieving results for chromium-win-win7 from Webkit Win7.
     userscripts/another-test.html (txt)
     userscripts/images.svg (png)
@@ -225,8 +222,6 @@ MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Webkit Mac10
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Webkit Mac10.7', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Webkit Mac10.6', 'userscripts/another-test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Webkit Mac10.6', 'userscripts/images.svg'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Webkit Vista', 'userscripts/another-test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Webkit Vista', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Webkit Win7', 'userscripts/another-test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Webkit Win7', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Webkit Win', 'userscripts/another-test.html'], cwd=/mock-checkout

@@ -56,7 +56,6 @@ class ChromiumPort(Port):
         ('snowleopard', 'x86'),
         ('lion', 'x86'),
         ('xp', 'x86'),
-        ('vista', 'x86'),
         ('win7', 'x86'),
         ('lucid', 'x86'),
         ('lucid', 'x86_64'),
@@ -66,13 +65,13 @@ class ChromiumPort(Port):
 
     ALL_BASELINE_VARIANTS = [
         'chromium-mac-lion', 'chromium-mac-snowleopard', 'chromium-mac-leopard',
-        'chromium-win-win7', 'chromium-win-vista', 'chromium-win-xp',
+        'chromium-win-win7', 'chromium-win-xp',
         'chromium-linux-x86_64', 'chromium-linux-x86',
     ]
 
     CONFIGURATION_SPECIFIER_MACROS = {
         'mac': ['leopard', 'snowleopard', 'lion'],
-        'win': ['xp', 'vista', 'win7'],
+        'win': ['xp', 'win7'],
         'linux': ['lucid'],
         'android': ['icecreamsandwich'],
     }

@@ -88,7 +88,7 @@ test("rebaseline", 4, function() {
             'testName': 'another/test.svg',
             'failureTypeList': ['IMAGE', 'TEXT', 'IMAGE+TEXT'],
         }, {
-            'builderName': 'Webkit Vista',
+            'builderName': 'Webkit Win7',
             'testName': 'fast/test.html',
             'failureTypeList': ['IMAGE+TEXT'],
         }], function() {
@@ -107,7 +107,7 @@ test("rebaseline", 4, function() {
                  "WebKit Linux": ["png"], 
                  "WebKit Mac10.6": ["png","txt"]},
              "fast/test.html": {
-                 "Webkit Vista": ["txt","png"]
+                 "Webkit Win7": ["txt","png"]
              }})]
     ]);
 });

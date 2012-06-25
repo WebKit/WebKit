@@ -1023,7 +1023,6 @@ BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEX
 
 // New test added in r82159
 BUGCR77706 LINUX XP WIN7 SNOWLEOPARD LION : editing/spelling/grammar.html = TEXT
-BUGCR77706 VISTA SLOW : editing/spelling/grammar.html = TEXT
 
 // Needs grammar checking.
 BUGWK71792 : editing/spelling/markers.html = TEXT
@@ -1893,7 +1892,7 @@ BUGCR42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.
 
 // WebKit roll 58304:58400
 BUGUKAI MAC : fast/text/international/bold-bengali.html = IMAGE
-BUGUKAI VISTA WIN7 : fast/text/international/bold-bengali.html = IMAGE+TEXT
+BUGUKAI WIN7 : fast/text/international/bold-bengali.html = IMAGE+TEXT
 
 // These 5,000+ tests are already being run by the V8 team (and have no chromium expectations).
 // They should be moved to the JavaScriptCore test suite.
@@ -2116,10 +2115,6 @@ BUGWK45652 : fast/viewport/viewport-126.html = MISSING
 BUGWK45652 : fast/viewport/viewport-127.html = MISSING
 BUGWK45652 : fast/viewport/viewport-128.html = TIMEOUT TEXT
 BUGWK45652 : fast/viewport/viewport-129.html = TIMEOUT MISSING TEXT
-BUGWK87757 VISTA : fast/viewport/viewport-130.html = TIMEOUT TEXT
-BUGWK87757 VISTA : fast/viewport/viewport-131.html = TIMEOUT TEXT
-BUGWK87757 VISTA : fast/viewport/viewport-132.html = TIMEOUT TEXT
-BUGWK87757 VISTA : fast/viewport/viewport-legacy-xhtmlmp-misplaced-doctype.html = TIMEOUT TEXT
 BUGWK45652 : fast/viewport/scroll-delegates-switch-on-page-with-no-composition-mode-asserts.html = PASS
 
 BUGWK45737 BUGCR100056 DEBUG : fast/frames/frame-limit.html = TIMEOUT
@@ -2672,7 +2667,7 @@ BUGWK60822 : plugins/get-url-with-javascript-url.html = TIMEOUT
 BUGWK60822 : plugins/get-url-notify-with-url-that-fails-to-load.html = CRASH
 
 // Flaky since added by r86478
-BUGCR82881 LINUX MAC VISTA XP : http/tests/appcache/interrupted-update.html = PASS TEXT
+BUGCR82881 LINUX MAC XP : http/tests/appcache/interrupted-update.html = PASS TEXT
 
 // Fails on windows - added in r86693
 BUGCR82950 WIN : http/tests/navigation/post-301-response.html = TEXT
@@ -2699,8 +2694,6 @@ BUGWK88951 : fast/forms/color/input-color-onchange-event.html = TEXT
 BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html = TEXT
 
 BUGCR84032 WIN : fast/dom/object-plugin-hides-properties.html = PASS TIMEOUT
-
-BUGCR84093 VISTA : http/tests/history/redirect-200-refresh-2-seconds.pl = PASS TIMEOUT
 
 BUGWK62255 LEOPARD DEBUG : animations/animation-iteration-event-destroy-renderer.html = PASS TIMEOUT
 
@@ -2771,8 +2764,6 @@ BUGCR87732 : fast/regex/toString.html = TEXT
 
 // Test fails because it's trying to load a plugin we don't have. We probably don't need to fix this.
 BUGJAPHET : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = TEXT
-
-BUGCR88230 VISTA : fast/dom/dom-parse-serialize-display.html = PASS TIMEOUT
 
 // Started around WebKit r90233:r90242
 BUGWK64000 DEBUG : fast/events/click-focus-anchor.html = PASS TEXT
@@ -3493,15 +3484,11 @@ BUGWK84689 SNOWLEOPARD : fast/images/embed-does-not-propagate-dimensions-to-obje
 
 BUGWK84696 SNOWLEOPARD : fast/workers/storage/interrupt-database.html = TIMEOUT PASS
 
-BUGWK84712 VISTA : http/tests/inspector/network/x-frame-options-deny.html = TIMEOUT PASS
-
 BUGWK84714 SNOWLEOPARD : compositing/geometry/empty-embed-rects.html = TIMEOUT PASS
 
 BUGWK84720 DEBUG : fast/repaint/fixed-right-in-page-scale.html = IMAGE PASS
 
 BUGWK84724 SNOWLEOPARD : platform/chromium/media/video-frame-size-change.html = IMAGE PASS
-
-BUGWK84733 VISTA : fast/canvas/canvas-composite.html = TIMEOUT PASS
 
 BUGWK84735 WIN : http/tests/inspector/change-iframe-src.html = TIMEOUT PASS
 
@@ -3625,11 +3612,7 @@ BUGWK86908 WIN : http/tests/security/cross-frame-access-put.html = PASS TEXT
 
 BUGWK86909 WIN SLOW : compositing/geometry/object-clip-rects-assertion.html = PASS
 BUGWK86909 WIN : http/tests/inspector/appcache/appcache-iframe-manifests.html = PASS TIMEOUT
-BUGWK86909 VISTA SLOW : http/tests/inspector/network/async-xhr-json-mime-type.html = PASS
-BUGWK86909 VISTA SLOW : http/tests/inspector/network/network-cachedresources-with-same-urls.html = PASS
 BUGWK86909 WIN : http/tests/inspector/network/network-content-replacement-xhr.html = PASS TIMEOUT
-BUGWK86909 VISTA SLOW : http/tests/security/escape-form-data-field-names.html = PASS
-BUGWK86909 VISTA SLOW : http/tests/security/feed-urls-from-remote.html = PASS
 BUGWK86909 WIN DEBUG : http/tests/security/referrer-policy-redirect-link.html = PASS TIMEOUT
 BUGWK86909 WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/imagedata-contains-uint8clampedarray.html = PASS TIMEOUT
 BUGWK86909 WIN SLOW : platform/chromium/virtual/gpu/fast/canvas/webgl/webgl-composite-modes-repaint.html = PASS
