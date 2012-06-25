@@ -1,3 +1,17 @@
+2012-06-24  Adam Barth  <abarth@webkit.org>
+
+        Remove USE(CHROMIUM_NET) because it is unused
+        https://bugs.webkit.org/show_bug.cgi?id=89850
+
+        Reviewed by Eric Seidel.
+
+        I didn't see any mentions of CHROMIUM_NET when I grepped the Source
+        directory. Also, this USE macro isn't defined on OS(DARWIN) or
+        OS(ANDROID), which seems a bit odd given that Chromium uses the same
+        network stack on all platforms.
+
+        * wtf/Platform.h:
+
 2012-06-22  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Disable c++0x compatibility warnings in JavaScriptCore.gyp when building for Android
