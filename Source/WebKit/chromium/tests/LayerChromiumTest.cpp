@@ -813,20 +813,4 @@ TEST(LayerChromiumLayerTreeHostTest, replaceMaskAndReplicaLayer)
     WebKit::WebCompositor::shutdown();
 }
 
-class MockLayerChromium : public LayerChromium {
-public:
-    bool needsDisplay() const { return m_needsDisplay; }
-};
-
-TEST(LayerChromiumTestWithoutFixture, setBoundsTriggersSetNeedsRedrawAfterGettingNonEmptyBounds)
-{
-    MockLayerChromium layer;
-    EXPECT_FALSE(layer.needsDisplay());
-    layer.setBounds(IntSize(0, 10));
-    EXPECT_FALSE(layer.needsDisplay());
-    layer.setBounds(IntSize(10, 10));
-    EXPECT_TRUE(layer.needsDisplay());
-}
-
-
 } // namespace

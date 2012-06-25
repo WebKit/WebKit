@@ -1,5 +1,16 @@
 2012-06-25  Alpha Lam  <hclam@chromium.org>
 
+        Unreviewed, rolling out r121178.
+        http://trac.webkit.org/changeset/121178
+        https://bugs.webkit.org/show_bug.cgi?id=89784
+
+        New unit test added is failing on WebKit Linux (dbg)
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setBounds):
+
+2012-06-25  Alpha Lam  <hclam@chromium.org>
+
         Unreviewed, rolling out r121137.
         http://trac.webkit.org/changeset/121137
 
