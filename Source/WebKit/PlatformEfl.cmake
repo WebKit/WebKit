@@ -68,11 +68,18 @@ IF (WTF_USE_PANGO)
 ENDIF ()
 
 IF (ENABLE_NETWORK_INFO)
+  LIST(APPEND WebKit_LINK_FLAGS
+    ${EEZE_LDFLAGS}
+  )
   LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/networkinfo"
+     ${EEZE_INCLUDE_DIRS}
   )
   LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/NetworkInfoClientEfl.cpp
+  )
+  LIST(APPEND WebKit_LIBRARIES
+    ${EEZE_LIBRARIES}
   )
 ENDIF ()
 

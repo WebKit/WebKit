@@ -14,6 +14,7 @@
       <dep package="libsoup"/>
       <dep package="edje"/>
       <dep package="e_dbus"/>
+      <dep package="eeze"/>
     </dependencies>
   </metamodule>
 
@@ -210,6 +211,16 @@
 
   <autotools id="e_dbus">
     <branch module="e_dbus"
+            repo="enlightenment.org"
+            revision="68629"/>
+    <dependencies>
+      <dep package="ecore"/>
+      <dep package="eina"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eeze">
+    <branch module="eeze"
             repo="enlightenment.org"
             revision="68629"/>
     <dependencies>

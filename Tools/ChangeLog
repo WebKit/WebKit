@@ -1,3 +1,12 @@
+2012-06-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Implement Network Information API
+        https://bugs.webkit.org/show_bug.cgi?id=87067
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * efl/jhbuild.modules: Add eeze library dependency.
+
 2012-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix Win32 debug build

@@ -12,7 +12,8 @@ PKG_CHECK_MODULES (EFLDEPS REQUIRED
   edje>=1.0.0
   eukit>=1.1.0
   edbus>=1.1.0
-  ecore-input>=1.0.0)
+  ecore-input>=1.0.0
+  eeze>=1.1.99)
 PKG_CHECK_MODULES (EINA REQUIRED eina>=1.0.0)
 PKG_CHECK_MODULES (ECORE_X ecore-x>=1.0.0)
 PKG_CHECK_MODULES (EVAS REQUIRED evas>=1.0.0)

@@ -45,8 +45,9 @@ public:
     virtual bool metered() const;
 
 private:
-
     NetworkInfoController* m_controller;
+
+    bool m_metered;
 };
 }
 
