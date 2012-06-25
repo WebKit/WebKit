@@ -4160,7 +4160,11 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         m_style->setGridItemRow(row);
         return;
     }
-
+#if ENABLE(CSS_VARIABLES)
+    case CSSPropertyVariable:
+        // FIXME: This should have an actual implementation.
+        return;
+#endif
     // These properties are implemented in the StyleBuilder lookup table.
     case CSSPropertyBackgroundAttachment:
     case CSSPropertyBackgroundClip:

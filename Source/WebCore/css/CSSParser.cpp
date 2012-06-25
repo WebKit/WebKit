@@ -2663,6 +2663,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         m_valueList->next();
         break;
 #endif
+#if ENABLE(CSS_VARIABLES)
+    case CSSPropertyVariable:
+        // FIXME: This should have an actual implementation.
+        return false;
+#endif
     case CSSPropertyBorderBottomStyle:
     case CSSPropertyBorderCollapse:
     case CSSPropertyBorderLeftStyle:

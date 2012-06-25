@@ -1,3 +1,20 @@
+2012-06-25  Mike West  <mkwst@chromium.com>
+
+        Fixing compilation failure in StyleResolver.cpp/CSSParser.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=89892
+
+        Reviewed by Alexis Menard.
+
+        Adding CSSPropertyVariable to switch statements in CSSParser and
+        StyleResolver to fix compilation errors under ninja/clang. I've
+        added both as new cases to the switches, with FIXME comments for
+        implementation.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-06-25  Jay Civelli  <jcivelli@chromium.org>
 
         Fix for a memory leak with MHTMLArchives.
