@@ -1,3 +1,13 @@
+2012-06-25  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Executing Italic and InsertUnorderedList in Shadow DOM causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=88495
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/shadow/insertorderedlist-crash-expected.txt: Added.
+        * editing/shadow/insertorderedlist-crash.html: Added.
+
 2012-06-25  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Unskip 3D transform tests.

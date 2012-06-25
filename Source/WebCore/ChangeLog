@@ -1,3 +1,26 @@
+2012-06-25  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Executing Italic and InsertUnorderedList in Shadow DOM causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=88495
+
+        Reviewed by Ryosuke Niwa.
+
+        InsertionPoint::removedFrom(insertionPoint) tries to find its owner ElementShadow from
+        parentNode or insertionPoint. If the parent node exsits but we cannot reach ElementShadow from
+        the parent node, InsertionPoint::removedFrom does not try to find ElementShadow anymore.
+
+        It's OK if the ElementShadow is being destructed, but there is a case ElementShadow is not being
+        destructed in editing. In this case, we should try to find ElementShadow from insertionPoint.
+        Otherwise it will bring inconsistency to Shadow DOM, and causes a crash.
+
+        Actually checking the existence of parentNode() does not make any sense. We should get
+        shadowRoot() directly.
+
+        Test: editing/shadow/insertorderedlist-crash.html
+
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::removedFrom):
+
 2012-06-25  Kinuko Yasuda  <kinuko@chromium.org>
 
         Remove responseBlob field from XMLHttpResponse.idl
