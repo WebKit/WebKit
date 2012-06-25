@@ -1,3 +1,55 @@
+2012-06-25  Raymond Toy  <rtoy@google.com>
+
+        Add layout tests for audio codecs
+        https://bugs.webkit.org/show_bug.cgi?id=88794
+
+        Reviewed by Chris Rogers.
+
+        New tests and expected results
+        * webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.wav: Added.
+        * webaudio/codec-tests/aac/vbr-128kbps-44khz.html: Added.
+        * webaudio/codec-tests/mp3/128kbps-44khz-expected.wav: Added.
+        * webaudio/codec-tests/mp3/128kbps-44khz.html: Added.
+        * webaudio/codec-tests/vorbis/vbr-128kbps-44khz-expected.wav: Added.
+        * webaudio/codec-tests/vorbis/vbr-128kbps-44khz.html: Added.
+        * webaudio/codec-tests/vorbis/vbr-70kbps-44khz-expected.wav: Added.
+        * webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html: Added.
+        * webaudio/codec-tests/vorbis/vbr-96kbps-44khz-expected.wav: Added.
+        * webaudio/codec-tests/vorbis/vbr-96kbps-44khz.html: Added.
+        * webaudio/codec-tests/wav/24bit-22khz-resample-expected.wav: Added.
+        * webaudio/codec-tests/wav/24bit-22khz-resample.html: Added.
+        * webaudio/codec-tests/wav/24bit-44khz-expected.wav: Added.
+        * webaudio/codec-tests/wav/24bit-44khz.html: Added.
+        * webaudio/resources/audio-codec-test.js: Added.
+        (runDecodingTest):
+        (finishedLoading):
+
+        Media files for the tests
+        * webaudio/resources/media/128kbps-44khz.mp3: Added.
+        * webaudio/resources/media/24bit-22khz.wav: Added.
+        * webaudio/resources/media/24bit-44khz.wav: Added.
+        * webaudio/resources/media/vbr-128kbps-44khz.m4a: Added.
+        * webaudio/resources/media/vbr-128kbps-44khz.ogg: Added.
+        * webaudio/resources/media/vbr-70kbps-44khz.ogg: Added.
+        * webaudio/resources/media/vbr-96kbps-44khz.ogg: Added.
+
+        Platform-specific expected results
+        * platform/chromium-linux/webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.wav: Added.
+        * platform/chromium-linux/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav: Added.
+        * platform/chromium-linux/webaudio/codec-tests/wav/24bit-22khz-resample-expected.wav: Added.
+        * platform/chromium-mac/webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.wav: Added.
+        * platform/chromium-mac/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav: Added.
+        * platform/chromium-win/webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.wav: Added.
+        * platform/chromium-win/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav: Added.
+        * platform/chromium-win/webaudio/codec-tests/wav/24bit-22khz-resample-expected.wav: Added.
+
+        New test expectations
+        * platform/chromium/TestExpectations: Disable aac/mp3 tests until bots have support.
+        * platform/efl/TestExpectations: Disable all webaudio codec tests
+        * platform/gtk/TestExpectations: Disable all webaudio codec tests
+        * platform/mac/TestExpectations: Disable all webaudio codec tests
+        * platform/qt/TestExpectations: Disable all webaudio codec tests
+
 2012-06-25  Huang Dongsung  <luxtella@company100.net>
 
         [Texmap] TextureMapperPaintOptions should keep current surface.

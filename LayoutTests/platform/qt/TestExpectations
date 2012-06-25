@@ -96,3 +96,6 @@ BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS TEXT IMAGE IMAGE+TEXT
 
 // LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
 BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = PASS
+
+// Disable webaudio codec tests, including proprietary codecs.
+BUGWK88794 SKIP : webaudio/codec-tests = PASS

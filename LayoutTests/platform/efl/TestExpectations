@@ -128,6 +128,9 @@ BUGWK86080 SKIP : fast/encoding/idn-security.html = TEXT
 // UndoManager is not yet enabled.
 BUGWK87908 SKIP : editing/undomanager = PASS
 
+// Disable webaudio codec tests, including proprietary codecs.
+BUGWK88794 SKIP : webaudio/codec-tests = PASS
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////

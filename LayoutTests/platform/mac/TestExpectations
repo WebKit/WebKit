@@ -275,3 +275,7 @@ BUG_OJAN : tables/mozilla/bugs/bug131020.html = TEXT IMAGE IMAGE+TEXT
 BUGWK85918 : compositing/backface-visibility/backface-visibility-3d.html = IMAGE
 BUGWK85918 : compositing/backface-visibility/backface-visibility-hierarchical-transform.html = IMAGE
 BUGWK85918 : compositing/backface-visibility/backface-visibility-non3d.html = IMAGE
+
+// Disable webaudio codec tests, including proprietary codecs.
+BUGWK88794 SKIP : webaudio/codec-tests = PASS
+

@@ -336,6 +336,9 @@ BUGWK31508 SKIP : storage/websql/transaction-callback-isolated-world.html = TEXT
 BUGWK31508 SKIP : storage/websql/transaction-error-callback-isolated-world.html = TEXT
 BUGWK31508 SKIP : storage/websql/transaction-success-callback-isolated-world.html = TEXT
 
+// Disable webaudio codec tests, including proprietary codecs.
+BUGWK88794 SKIP : webaudio/codec-tests = PASS
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
 //////////////////////////////////////////////////////////////////////////////////////////
