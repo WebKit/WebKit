@@ -1,0 +1,9 @@
+<body>NO</body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+internals.settings.setCSSVariablesEnabled(true);
+if (internals.settings.cssVariablesEnabled())
+    document.body.innerHTML = "YES";
+</script>
