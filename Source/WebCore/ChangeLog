@@ -1,3 +1,22 @@
+2012-06-24  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Texmap] Minor cleanup for TextureMapper::accelerationMode()
+        https://bugs.webkit.org/show_bug.cgi?id=89825
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Replace the virtual method with a simple member variable.
+
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::TextureMapper::accelerationMode):
+        (WebCore::TextureMapper::TextureMapper):
+        (TextureMapper):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::TextureMapperGL):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        * platform/graphics/texmap/TextureMapperImageBuffer.h:
+        (WebCore::TextureMapperImageBuffer::TextureMapperImageBuffer):
+
 2012-06-24  Mike Lawther  <mikelawther@chromium.org>
 
         CSS3 calc: transitions starting and ending with a calc expression move to end state

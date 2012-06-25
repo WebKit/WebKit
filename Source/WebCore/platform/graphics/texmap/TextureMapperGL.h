@@ -63,7 +63,6 @@ public:
     virtual IntSize maxTextureSize() const OVERRIDE { return IntSize(2000, 2000); }
     virtual PassRefPtr<BitmapTexture> createTexture() OVERRIDE;
     virtual GraphicsContext* graphicsContext() OVERRIDE { return m_context; }
-    virtual AccelerationMode accelerationMode() const OVERRIDE { return OpenGLMode; }
     virtual void setGraphicsContext(GraphicsContext* context) OVERRIDE { m_context = context; }
 
 #if ENABLE(CSS_FILTERS)

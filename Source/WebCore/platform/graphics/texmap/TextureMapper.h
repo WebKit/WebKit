@@ -128,7 +128,7 @@ public:
 
     InterpolationQuality imageInterpolationQuality() const { return m_interpolationQuality; }
     TextDrawingModeFlags textDrawingMode() const { return m_textDrawingMode; }
-    virtual AccelerationMode accelerationMode() const = 0;
+    AccelerationMode accelerationMode() const { return m_accelerationMode; }
 
     virtual void beginPainting(PaintFlags flags = 0) { }
     virtual void endPainting() { }
@@ -139,9 +139,10 @@ public:
     virtual PassRefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&);
 
 protected:
-    TextureMapper()
+    TextureMapper(AccelerationMode accelerationMode)
         : m_interpolationQuality(InterpolationDefault)
         , m_textDrawingMode(TextModeFill)
+        , m_accelerationMode(accelerationMode)
     {}
 
 private:
@@ -157,6 +158,7 @@ private:
     TextDrawingModeFlags m_textDrawingMode;
     Vector<RefPtr<BitmapTexture> > m_texturePool;
     GraphicsContext* m_context;
+    AccelerationMode m_accelerationMode;
 };
 
 }
