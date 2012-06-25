@@ -555,7 +555,7 @@ public:
     // return the suggested GL error indicating the cause of the failure:
     //   INVALID_VALUE if width/height is negative or overflow happens.
     //   INVALID_ENUM if format/type is illegal.
-    GC3Denum computeImageSizeInBytes(GC3Denum format,
+    static GC3Denum computeImageSizeInBytes(GC3Denum format,
                                      GC3Denum type,
                                      GC3Dsizei width,
                                      GC3Dsizei height,
@@ -567,7 +567,7 @@ public:
     // packing the pixel data according to the given format and type,
     // and obeying the flipY, premultiplyAlpha, and ignoreGammaAndColorProfile
     // flags. Returns true upon success.
-    bool extractImageData(Image* image,
+    static bool extractImageData(Image*,
                           GC3Denum format,
                           GC3Denum type,
                           bool flipY,
@@ -579,7 +579,7 @@ public:
     // packing the pixel data according to the given format and type,
     // and obeying the flipY and premultiplyAlpha flags. Returns true
     // upon success.
-    bool extractImageData(ImageData*,
+    static bool extractImageData(ImageData*,
                           GC3Denum format,
                           GC3Denum type,
                           bool flipY,
@@ -591,7 +591,7 @@ public:
     // If the data is not tightly packed according to the passed
     // unpackAlignment, the output data will be tightly packed.
     // Returns true if successful, false if any error occurred.
-    bool extractTextureData(unsigned int width, unsigned int height,
+    static bool extractTextureData(unsigned int width, unsigned int height,
                             GC3Denum format, GC3Denum type,
                             unsigned int unpackAlignment,
                             bool flipY, bool premultiplyAlpha,
@@ -599,7 +599,7 @@ public:
                             Vector<uint8_t>& data);
 
     // Flips the given image data vertically, in-place.
-    void flipVertically(void* imageData,
+    static void flipVertically(void* imageData,
                         unsigned int width,
                         unsigned int height,
                         unsigned int bytesPerPixel,
@@ -888,7 +888,7 @@ public:
     //
     // No vertical flip of the image data is performed by this
     // method.
-    bool getImageData(Image* image,
+    static bool getImageData(Image*,
                       GC3Denum format,
                       GC3Denum type,
                       bool premultiplyAlpha,
@@ -909,7 +909,7 @@ public:
     // A sourceUnpackAlignment of zero indicates that the source
     // data is tightly packed. Non-zero values may take a slow path.
     // Destination data will have no gaps between rows.
-    bool packPixels(const uint8_t* sourceData,
+    static bool packPixels(const uint8_t* sourceData,
                     SourceDataFormat sourceDataFormat,
                     unsigned int width,
                     unsigned int height,
