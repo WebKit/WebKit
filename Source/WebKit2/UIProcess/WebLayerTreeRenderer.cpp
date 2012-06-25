@@ -142,7 +142,7 @@ void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& m
     m_textureMapper->endPainting();
 }
 
-void WebLayerTreeRenderer::paintToGraphicsContext(QPainter* painter)
+void WebLayerTreeRenderer::paintToGraphicsContext(BackingStore::PlatformGraphicsContext painter)
 {
     if (!m_textureMapper)
         m_textureMapper = TextureMapper::create();

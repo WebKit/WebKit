@@ -1,3 +1,15 @@
+2012-06-24  YoungTaeck Song  <youngtaeck.song@samsung.com>
+
+        [WK2][Qt][EFL] Modify Qt specific code to common code
+        https://bugs.webkit.org/show_bug.cgi?id=89839
+
+        Reviewed by Noam Rosenthal.
+
+        Modify paintToGraphicsContext’s first argument QPainter to PlatformGraphicsContext to be used by both Qt and Efl.
+
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::paintToGraphicsContext):
+
 2012-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         Rename isPositioned to isOutOfFlowPositioned for clarity
