@@ -1,3 +1,16 @@
+2012-06-25  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Layer chromium should need a redraw after getting its first non-empty bounds.
+        https://bugs.webkit.org/show_bug.cgi?id=89784
+
+        Reviewed by James Robinson.
+
+        Previously, we'd only set needs redraw if the old bounds were zero,
+        and the new bounds were non-zero, but we should actually have 
+        checked that the old bounds were non-empty.
+
+        * tests/LayerChromiumTest.cpp:
+
 2012-06-25  Scott Graham  <scottmg@chromium.org>
 
         Plumb Scrollbar button dimensions down to WebThemeEngine

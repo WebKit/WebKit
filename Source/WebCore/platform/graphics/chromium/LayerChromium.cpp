@@ -228,7 +228,7 @@ void LayerChromium::setBounds(const IntSize& size)
     if (bounds() == size)
         return;
 
-    bool firstResize = !bounds().width() && !bounds().height() && size.width() && size.height();
+    bool firstResize = bounds().isEmpty() && !size.isEmpty();
 
     m_bounds = size;
 
