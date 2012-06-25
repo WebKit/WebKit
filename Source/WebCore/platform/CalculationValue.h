@@ -86,7 +86,7 @@ public:
 
     bool operator==(const CalculationValue& o) const 
     { 
-        return m_value == o.m_value || *(m_value.get()) == *(o.m_value.get());
+        return *(m_value.get()) == *(o.m_value.get());
     }
     
 private:

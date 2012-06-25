@@ -1,3 +1,13 @@
+2012-06-24  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc: transitions starting and ending with a calc expression move to end state
+        https://bugs.webkit.org/show_bug.cgi?id=89738
+
+        Reviewed by Tony Chang.
+
+        * css3/calc/transition-start-end-with-calc-expected.txt: Added.
+        * css3/calc/transition-start-end-with-calc.html: Added.
+
 2012-06-21  Kent Tamura  <tkent@chromium.org>
 
         Selected option is not restored correctly

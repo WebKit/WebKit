@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<style>
+#rect {
+    background-color: green;
+    height: 100px;
+    -webkit-transition: all 1s;
+    -moz-transition: all 1s;
+    width: -webkit-calc(10% + 1px);
+    width: -moz-calc(10% + 1px);
+}
+#rect.go {
+    width: -webkit-calc(100% - 100px);
+    width: -moz-calc(100% - 100px);
+}
+</style>
+
+This tests that transitions beginning and ending with calc() expressions move to the final state.
+<div style="width:500px; border: 1px solid black;">
+    <div id="rect"></div>
+</div>
+<div id="result"></div>
+
+<script src="../../transitions/resources/transition-test-helpers.js"></script>
+<script>
+const expectedValues = [
+  // [time, element-id, property, expected-value, tolerance]
+  [1.0, 'rect', 'width', 400, 0],
+];
+
+function setupTest()
+{
+    var expectedStartWidth = 51; // (10% + 1px) where 100% = 500px
+    var rect = document.getElementById("rect");
+    var width = rect.offsetWidth;
+    if (width == expectedStartWidth)
+        rect.innerHTML += 'PASS - "width" property for "rect" element at 0.0s was: ' + width;
+    else
+        rect.innerHTML += 'FAIL  - "width" property for "rect" element at 0.0s expected: ' + expectedStartWidth + 'but saw: ' + width;
+    
+    rect.className = "go";
+}
+
+runTransitionTest(expectedValues, setupTest, true, false /* pixel test */);
+
+</script>
