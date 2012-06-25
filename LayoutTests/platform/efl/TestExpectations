@@ -708,3 +708,5 @@ BUGWK88031 : fast/multicol/span/generated-child-split-flow-crash.html = TEXT
 // Flexbox test failing on EFL.
 BUGWK88984 : css3/flexbox/flexitem.html = TEXT
 
+// Failing after r121121 on both GTK and EFL
+BUGWK89845 : fast/forms/input-set-composition-scroll.html = TEXT

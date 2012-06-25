@@ -1235,6 +1235,9 @@ BUGWK83800 : plugins/get-url-with-blank-target.html = TEXT
 
 BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
 
+// Failing after r121121 on both GTK and EFL
+BUGWK89845 : fast/forms/input-set-composition-scroll.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
