@@ -473,6 +473,16 @@ public:
     void setFilterBackendNeedsRepaintingInRect(const LayoutRect&, bool immediate);
 #endif
 
+    bool canUseConvertToLayerCoords() const
+    {
+        // These RenderObject have an impact on their layers' without them knowing about it.
+        return !renderer()->hasColumns() && !renderer()->hasTransform() && !isComposited()
+#if ENABLE(SVG)
+            && !renderer()->isSVGRoot()
+#endif
+            ;
+    }
+
     void convertToPixelSnappedLayerCoords(const RenderLayer* ancestorLayer, IntPoint& location) const;
     void convertToPixelSnappedLayerCoords(const RenderLayer* ancestorLayer, IntRect&) const;
     void convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutPoint& location) const;
@@ -857,16 +867,6 @@ private:
     LayoutUnit overflowBottom() const;
     LayoutUnit overflowLeft() const;
     LayoutUnit overflowRight() const;
-
-    bool canUseConvertToLayerCoords() const
-    {
-        // These RenderObject have an impact on their layers' without them knowing about it.
-        return !renderer()->hasColumns() && !renderer()->hasTransform() && !isComposited()
-#if ENABLE(SVG)
-            && !renderer()->isSVGRoot()
-#endif
-            ;
-    }
 
     LayoutUnit verticalScrollbarStart(int minX, int maxX) const;
     LayoutUnit horizontalScrollbarStart(int minX) const;

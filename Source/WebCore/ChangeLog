@@ -1,3 +1,38 @@
+2012-06-24  Antti Koivisto  <antti@apple.com>
+
+        Optimize RenderGeometryMap mappings gathering
+        https://bugs.webkit.org/show_bug.cgi?id=89828
+
+        Reviewed by Simon Fraser.
+
+        RenderGeometryMap currently gathers mappings by climbing the rendering tree. This is slow and can produce 
+        large number of mapping steps. In the common case we already have the child layer coordinates available in
+        the layer tree and we can just use that.
+        
+        The combination of faster mappings gathering and fewer number of applying steps reduces time spent under 
+        RenderLayerCompositor::computeCompositingRequirements to less than half when scrolling the mobile version
+        of twitter.com.
+        
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore):
+        (WebCore::RenderGeometryMap::pushMappingsToAncestor):
+        
+            Use pre-computed mapping from the layer tree when possible.
+
+        (WebCore::RenderGeometryMap::popMappingsToAncestor):
+        * rendering/RenderGeometryMap.h:
+        
+            Add some inline capacity.
+
+        (WebCore):
+        (RenderGeometryMap):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::canUseConvertToLayerCoords):
+        (RenderLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::addToOverlapMapRecursive):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
 2012-06-24  Simon Fraser  <simon.fraser@apple.com>
 
         Rename isPositioned to isOutOfFlowPositioned for clarity

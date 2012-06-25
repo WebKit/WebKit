@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class RenderGeometryMapStep;
+class RenderLayer;
 
 // Can be used while walking the Renderer tree to cache data about offsets and transforms.
 class RenderGeometryMap {
@@ -47,7 +48,9 @@ public:
     FloatRect absoluteRect(const FloatRect&) const;
     
     // Called by code walking the renderer or layer trees.
-    void pushMappingsToAncestor(const RenderObject*, const RenderBoxModelObject* ancestor);
+    void pushMappingsToAncestor(const RenderLayer*, const RenderLayer* ancestorLayer);
+    void popMappingsToAncestor(const RenderLayer*);
+    void pushMappingsToAncestor(const RenderObject*, const RenderBoxModelObject* ancestorRenderer);
     void popMappingsToAncestor(const RenderBoxModelObject*);
     
     // The following methods should only be called by renderers inside a call to pushMappingsToAncestor().
@@ -70,8 +73,8 @@ private:
     bool hasTransformStep() const { return m_transformedStepsCount; }
     bool hasFixedPositionStep() const { return m_fixedStepsCount; }
     
-    typedef Vector<OwnPtr<RenderGeometryMapStep> > RenderGeometryMapSteps; // FIXME: inline capacity?
-    
+    typedef Vector<OwnPtr<RenderGeometryMapStep>, 32> RenderGeometryMapSteps;
+
     size_t m_insertionPosition;
     int m_nonUniformStepsCount;
     int m_transformedStepsCount;

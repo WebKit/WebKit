@@ -26,11 +26,12 @@
 #include "config.h"
 #include "RenderGeometryMap.h"
 
+#include "RenderLayer.h"
 #include "RenderView.h"
 #include "TransformState.h"
+#include <wtf/TemporaryChange.h>
 
 namespace WebCore {
-
 
 // Stores data about how to map from one renderer to its container.
 class RenderGeometryMapStep {
@@ -170,18 +171,33 @@ void RenderGeometryMap::mapToAbsolute(TransformState& transformState) const
     transformState.flatten();    
 }
 
-void RenderGeometryMap::pushMappingsToAncestor(const RenderObject* renderer, const RenderBoxModelObject* ancestor)
+void RenderGeometryMap::pushMappingsToAncestor(const RenderObject* renderer, const RenderBoxModelObject* ancestorRenderer)
 {
-    const RenderObject* currRenderer = renderer;
-    
     // We need to push mappings in reverse order here, so do insertions rather than appends.
-    m_insertionPosition = m_mapping.size();
-    
+    TemporaryChange<size_t> positionChange(m_insertionPosition, m_mapping.size());
     do {
-        currRenderer = currRenderer->pushMappingToContainer(ancestor, *this);
-    } while (currRenderer && currRenderer != ancestor);
-    
-    m_insertionPosition = notFound;
+        renderer = renderer->pushMappingToContainer(ancestorRenderer, *this);
+    } while (renderer && renderer != ancestorRenderer);
+}
+
+void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const RenderLayer* ancestorLayer)
+{
+    const RenderObject* renderer = layer->renderer();
+
+    // The simple case can be handled fast in the layer tree.
+    bool canConvertInLayerTree = ancestorLayer && renderer->style()->position() != FixedPosition;
+    for (const RenderLayer* current = layer; current != ancestorLayer && canConvertInLayerTree; current = current->parent())
+        canConvertInLayerTree = current->canUseConvertToLayerCoords();
+
+    if (canConvertInLayerTree) {
+        TemporaryChange<size_t> positionChange(m_insertionPosition, m_mapping.size());
+        LayoutPoint layerOffset;
+        layer->convertToLayerCoords(ancestorLayer, layerOffset);
+        push(renderer, toLayoutSize(layerOffset), /*accumulatingTransform*/ true, /*isNonUniform*/ false, /*isFixedPosition*/ false, /*hasTransform*/ false);
+        return;
+    }
+    const RenderBoxModelObject* ancestorRenderer = ancestorLayer ? ancestorLayer->renderer() : 0;
+    pushMappingsToAncestor(renderer, ancestorRenderer);
 }
 
 void RenderGeometryMap::push(const RenderObject* renderer, const LayoutSize& offsetFromContainer, bool accumulatingTransform, bool isNonUniform, bool isFixedPosition, bool hasTransform)
@@ -220,14 +236,20 @@ void RenderGeometryMap::pushView(const RenderView* view, const LayoutSize& scrol
     m_mapping.insert(m_insertionPosition, step.release());
 }
 
-void RenderGeometryMap::popMappingsToAncestor(const RenderBoxModelObject* ancestor)
+void RenderGeometryMap::popMappingsToAncestor(const RenderBoxModelObject* ancestorRenderer)
 {
     ASSERT(m_mapping.size());
 
-    while (m_mapping.size() && m_mapping.last()->m_renderer != ancestor) {
+    while (m_mapping.size() && m_mapping.last()->m_renderer != ancestorRenderer) {
         stepRemoved(*m_mapping.last().get());
         m_mapping.removeLast();
     }
+}
+
+void RenderGeometryMap::popMappingsToAncestor(const RenderLayer* ancestorLayer)
+{
+    const RenderBoxModelObject* ancestorRenderer = ancestorLayer ? ancestorLayer->renderer() : 0;
+    popMappingsToAncestor(ancestorRenderer);
 }
 
 void RenderGeometryMap::stepInserted(const RenderGeometryMapStep& step)
