@@ -80,7 +80,7 @@ private:
 inline bool isInsertionPoint(const Node* node)
 {
     if (!node)
-        return true;
+        return false;
 
     if (node->isHTMLElement() && toHTMLElement(node)->isInsertionPoint())
         return true;
@@ -105,7 +105,7 @@ inline bool isActiveInsertionPoint(const Node* node)
     return isInsertionPoint(node) && toInsertionPoint(node)->isActive();
 }
 
-inline bool isShadowBoundary(Node* node)
+inline bool isLowerEncapsulationBoundary(Node* node)
 {
     if (!isInsertionPoint(node))
         return false;

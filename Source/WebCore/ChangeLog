@@ -1,3 +1,40 @@
+2012-06-24  MORITA Hajime  <morrita@google.com>
+
+        NodeRenderingContext::AttachingPhase is redundant.
+        https://bugs.webkit.org/show_bug.cgi?id=79220
+
+        Reviewed by Dimitri Glazkov.
+
+        This change removes NodeRenderingContext::AttachingPhase and
+        NodeRenderingContext::m_phase respectively. The state originally
+        represented as m_phase is naturally encoded into other member variables.
+
+        NodeRenderingContext::m_visualParentShadow is also replaced, with
+        a local variable parentScope.
+
+        Basically, what NodeRenderingContext wants to know is the parent of
+        the composed shadow tree and an optional insertion point where the
+        node is distributed. Once these becomes clear, m_phase is no longer required.
+        It was rather a historical artifact.
+
+        No new tests. No behavioral change.
+
+        * dom/NodeRenderingContext.cpp: Replaced m_phase with implicit states.
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        (WebCore::NodeRenderingContext::parentRenderer):
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        (WebCore::NodeRenderingContext::isOnEncapsulationBoundary):
+        (WebCore::NodeRenderingContext::isOnUpperEncapsulationBoundary):
+        * dom/NodeRenderingContext.h:
+        (NodeRenderingContext):
+        (WebCore::NodeRenderingContext::parentNodeForRenderingAndStyle): Removed an assert which checks m_phase.
+        (WebCore::NodeRenderingContext::resetStyleInheritance): Removed an assert which checks m_phase.
+        * html/shadow/InsertionPoint.h:
+        (WebCore::isInsertionPoint): Fix null case check.
+        (WebCore::isLowerEncapsulationBoundary): Renamed from isShadowBoundary()
+
 2012-06-24  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r121124): LayoutTests/fast/block/inline-children-root-linebox-crash.html asserts

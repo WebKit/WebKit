@@ -68,22 +68,9 @@ public:
     void moveToFlowThreadIfNeeded();
 
 private:
-    enum AttachingPhase {
-        Calculating,
-        AttachingStraight,
-        AttachingNotInTree,
-        AttachingDistributed,
-        AttachingNotDistributed,
-        AttachingFallbacked,
-        AttachingNotFallbacked,
-        AttachingShadowChild,
-    };
-
-    AttachingPhase m_phase;
     Node* m_node;
     ContainerNode* m_parentNodeForRenderingAndStyle;
     bool m_resetStyleInheritance;
-    ElementShadow* m_visualParentShadow;
     InsertionPoint* m_insertionPoint;
     RefPtr<RenderStyle> m_style;
     RenderNamedFlowThread* m_parentFlowRenderer;
@@ -97,13 +84,11 @@ inline Node* NodeRenderingContext::node() const
 
 inline ContainerNode* NodeRenderingContext::parentNodeForRenderingAndStyle() const
 {
-    ASSERT(m_phase != Calculating);
     return m_parentNodeForRenderingAndStyle;
 }
 
 inline bool NodeRenderingContext::resetStyleInheritance() const
 {
-    ASSERT(m_phase != Calculating);
     return m_resetStyleInheritance;
 }
 
@@ -115,18 +100,6 @@ inline RenderStyle* NodeRenderingContext::style() const
 inline InsertionPoint* NodeRenderingContext::insertionPoint() const
 {
     return m_insertionPoint;
-}
-
-inline bool NodeRenderingContext::isOnEncapsulationBoundary() const
-{
-    return (m_phase == AttachingDistributed
-            || m_phase == AttachingShadowChild
-            || m_phase == AttachingFallbacked);
-}
-
-inline bool NodeRenderingContext::isOnUpperEncapsulationBoundary() const
-{
-    return m_phase == AttachingShadowChild;
 }
 
 class NodeRendererFactory {
