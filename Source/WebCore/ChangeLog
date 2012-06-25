@@ -1,3 +1,15 @@
+2012-06-25  Kwang Yul Seo  <skyul@company100.net>
+
+        Remove unused constant timeWithoutMouseMovementBeforeHidingControls
+        https://bugs.webkit.org/show_bug.cgi?id=89823
+
+        Reviewed by Daniel Bates.
+
+        After r87692, timeWithoutMouseMovementBeforeHidingControls is not used anymore.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore):
+
 2012-06-25  Zeev Lieber  <zlieber@chromium.org>
 
         [Chromium] RenderPass textures are evicted at the end of every frame
