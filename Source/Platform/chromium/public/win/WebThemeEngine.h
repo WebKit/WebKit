@@ -83,6 +83,10 @@ public:
     virtual void paintProgressBar(
         WebCanvas*, const WebRect& barRect, const WebRect& valueRect,
         bool determinate, double animatedSeconds) { }
+
+    // Get dimensions of a particular part. Only supports SBP_ARROWBTN
+    // currently.
+    virtual WebSize getSize(int part) = 0;
 };
 
 } // namespace WebKit

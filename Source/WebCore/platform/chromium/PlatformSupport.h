@@ -186,6 +186,7 @@ public:
         GraphicsContext*, int part, int state, int classicState, const IntRect&);
     static void paintProgressBar(
         GraphicsContext*, const IntRect& barRect, const IntRect& valueRect, bool determinate, double animatedSeconds);
+    static IntSize getThemePartSize(int part);
 #elif OS(DARWIN)
     enum ThemePaintState {
         StateDisabled,

@@ -442,6 +442,11 @@ void PlatformSupport::paintProgressBar(
         gc->platformContext()->canvas(), barRect, valueRect, determinate, animatedSeconds);
 }
 
+IntSize PlatformSupport::getThemePartSize(int part)
+{
+    return WebKit::Platform::current()->themeEngine()->getSize(part);
+}
+
 #elif OS(DARWIN)
 
 void PlatformSupport::paintScrollbarThumb(

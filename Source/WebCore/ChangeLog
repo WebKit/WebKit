@@ -1,3 +1,21 @@
+2012-06-25  Scott Graham  <scottmg@chromium.org>
+
+        Plumb Scrollbar button dimensions down to WebThemeEngine
+        https://bugs.webkit.org/show_bug.cgi?id=89264
+
+        Reviewed by James Robinson.
+
+        Rather than making the height of the scrollbar buttons the same as the
+        width of the scrollbar, delegate to the WebThemeEngine. This allows
+        matching the Aura theme rather than the standard Windows theme.
+
+        No new tests, as bounds are overridden for DRT.
+
+        * platform/chromium/PlatformSupport.h:
+        (PlatformSupport):
+        * platform/chromium/ScrollbarThemeChromiumWin.cpp:
+        (WebCore::ScrollbarThemeChromiumWin::buttonSize):
+
 2012-06-25  Antti Koivisto  <antti@apple.com>
 
         Fast path for simple transform parsing

@@ -1,3 +1,18 @@
+2012-06-25  Scott Graham  <scottmg@chromium.org>
+
+        Plumb Scrollbar button dimensions down to WebThemeEngine
+        https://bugs.webkit.org/show_bug.cgi?id=89264
+
+        Reviewed by James Robinson.
+
+        Rather than making the height of the scrollbar buttons the same as the
+        width of the scrollbar, delegate to the WebThemeEngine. This allows
+        matching the Aura theme rather than the standard Windows theme.
+
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::getThemePartSize):
+        (WebCore):
+
 2012-06-25  Zeev Lieber  <zlieber@chromium.org>
 
         [Chromium] RenderPass textures are evicted at the end of every frame

@@ -1,3 +1,18 @@
+2012-06-25  Scott Graham  <scottmg@chromium.org>
+
+        Plumb Scrollbar button dimensions through WebThemeEngine
+        https://bugs.webkit.org/show_bug.cgi?id=89264
+
+        Reviewed by James Robinson.
+
+        Rather than making the height of the scrollbar buttons the same as the
+        width of the scrollbar, delegate to the WebThemeEngine. This allows
+        matching the Aura theme rather than the standard Windows theme.
+
+        * chromium/public/win/WebThemeEngine.h:
+        (WebKit):
+        (WebThemeEngine):
+
 2012-06-22  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r121064.
