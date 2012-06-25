@@ -1,3 +1,19 @@
+2012-06-24  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed compile error fix of Chromium Win Release.
+        Touch header files for ENABLE(CSS_VARIABLES) so that
+        it forces to rebuild files by changing ENABLE(CSS_VARIABLES)
+        in Sources/WebKit/chromium/features.gypi at r121129
+
+        * css/CSSParserMode.h:
+        * css/CSSValue.h:
+        (WebCore):
+        * css/CSSVariableValue.h:
+        * page/Settings.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleVariableData.h:
+
 2012-06-24  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Texmap] Minor cleanup for TextureMapper::accelerationMode()

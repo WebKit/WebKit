@@ -30,7 +30,7 @@
 namespace WebCore {
 
 class StyleSheetContents;
-    
+
 // FIXME: The current CSSValue and subclasses should be turned into internal types (StyleValue).
 // The few subtypes that are actually exposed in CSSOM can be seen in the cloneForCSSOM() function.
 // They should be handled by separate wrapper classes.
