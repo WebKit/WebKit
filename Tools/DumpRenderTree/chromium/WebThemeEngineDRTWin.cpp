@@ -785,3 +785,9 @@ void WebThemeEngineDRTWin::paintProgressBar(WebKit::WebCanvas* canvas,
     drawProgressBar(canvas, ctype, cstate, barRect, valueRect);
 }
 
+
+WebKit::WebSize WebThemeEngineDRTWin::getSize(int part)
+{
+    return WebKit::WebSize();
+}
+

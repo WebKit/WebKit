@@ -1,3 +1,15 @@
+2012-06-25  Scott Graham  <scottmg@chromium.org>
+
+        [Chromium] add empty impl of WebThemeEngine::getSize() for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=89907
+
+        Not reviewed. Fix build in Chromium.
+
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.cpp:
+        (WebThemeEngineDRTWin::getSize):
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.h:
+        (WebThemeEngineDRTWin):
+
 2012-06-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Implement Network Information API

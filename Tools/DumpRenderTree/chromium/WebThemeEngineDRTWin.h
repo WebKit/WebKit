@@ -93,6 +93,8 @@ public:
         WebKit::WebCanvas*, const WebKit::WebRect& barRect,
         const WebKit::WebRect& valueRect,
         bool determinate, double time);
+
+    virtual WebKit::WebSize getSize(int part);
 };
 
 #endif // WebThemeEngineDRTWin_h
