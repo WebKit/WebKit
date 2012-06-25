@@ -34,8 +34,8 @@
 
 #include "InspectorMemoryAgent.h"
 
+#include "BindingVisitors.h"
 #include "CharacterData.h"
-#include "DOMWrapperVisitor.h"
 #include "Document.h"
 #include "EventListenerMap.h"
 #include "Frame.h"
@@ -51,6 +51,8 @@
 #include "ScriptGCEvent.h"
 #include "ScriptProfiler.h"
 #include "StyledElement.h"
+#include <wtf/ArrayBuffer.h>
+#include <wtf/ArrayBufferView.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -67,6 +69,9 @@ namespace WebCore {
 namespace MemoryBlockName {
 static const char jsHeapAllocated[] = "JSHeapAllocated";
 static const char jsHeapUsed[] = "JSHeapUsed";
+static const char jsExternalResources[] = "JSExternalResources";
+static const char jsExternalArrays[] = "JSExternalArrays";
+static const char jsExternalStrings[] = "JSExternalStrings";
 static const char inspectorData[] = "InspectorData";
 static const char memoryCache[] = "MemoryCache";
 static const char processPrivateMemory[] = "ProcessPrivateMemory";
@@ -94,9 +99,9 @@ String nodeName(Node* node)
     return node->nodeName().lower();
 }
 
-int stringSize(StringImpl* string)
+size_t stringSize(StringImpl* string)
 {
-    int size = string->length();
+    size_t size = string->length();
     if (!string->is8Bit())
         size *= 2;
     return size + sizeof(*string);
@@ -218,7 +223,7 @@ private:
     CharacterDataStatistics& m_characterDataStatistics;
 };
 
-class CounterVisitor : public DOMWrapperVisitor {
+class CounterVisitor : public NodeWrapperVisitor, public ExternalStringVisitor {
 public:
     CounterVisitor(Page* page)
         : m_page(page)
@@ -308,6 +313,34 @@ private:
     int m_sharedStringSize;
 };
 
+class ExternalResourceVisitor : public ExternalStringVisitor, public ExternalArrayVisitor {
+public:
+    ExternalResourceVisitor()
+        : m_jsExternalStringSize(0)
+        , m_externalArraySize(0)
+    { }
+
+    size_t externalStringSize() const { return m_jsExternalStringSize; }
+    size_t externalArraySize() const { return m_externalArraySize; }
+
+private:
+    virtual void visitJSExternalArray(ArrayBufferView* bufferView)
+    {
+        ArrayBuffer* buffer = bufferView->buffer().get();
+        if (m_arrayBuffers.add(buffer).isNewEntry)
+            m_externalArraySize += buffer->byteLength();
+    }
+    virtual void visitJSExternalString(StringImpl* string)
+    {
+        int size = stringSize(string);
+        m_jsExternalStringSize += size;
+    }
+
+    size_t m_jsExternalStringSize;
+    size_t m_externalArraySize;
+    HashSet<ArrayBuffer*> m_arrayBuffers;
+};
+
 } // namespace
 
 InspectorMemoryAgent::~InspectorMemoryAgent()
@@ -317,7 +350,7 @@ InspectorMemoryAgent::~InspectorMemoryAgent()
 void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Memory::DOMGroup> >& domGroups, RefPtr<TypeBuilder::Memory::StringStatistics>& strings)
 {
     CounterVisitor counterVisitor(m_page);
-    ScriptProfiler::visitJSDOMWrappers(&counterVisitor);
+    ScriptProfiler::visitNodeWrappers(&counterVisitor);
 
     // Make sure all documents reachable from the main frame are accounted.
     for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
@@ -325,7 +358,7 @@ void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<TypeBuilder::Arr
             counterVisitor.visitNode(doc);
     }
 
-    ScriptProfiler::visitExternalJSStrings(&counterVisitor);
+    ScriptProfiler::visitExternalStrings(&counterVisitor);
 
     domGroups = counterVisitor.domGroups();
     strings = counterVisitor.strings();
@@ -424,7 +457,7 @@ private:
     VisitedObjects m_visitedObjects;
 };
 
-class DOMTreesIterator : public DOMWrapperVisitor {
+class DOMTreesIterator : public NodeWrapperVisitor {
 public:
     explicit DOMTreesIterator(Page* page) : m_page(page) { }
 
@@ -435,8 +468,6 @@ public:
 
         m_domMemoryUsage.reportInstrumentedPointer(node);
     }
-
-    virtual void visitJSExternalString(StringImpl*) { }
 
     PassRefPtr<InspectorMemoryBlock> dumpStatistics() { return m_domMemoryUsage.dumpStatistics(); }
 
@@ -450,7 +481,7 @@ private:
 static PassRefPtr<InspectorMemoryBlock> domTreeInfo(Page* page)
 {
     DOMTreesIterator domTreesIterator(page);
-    ScriptProfiler::visitJSDOMWrappers(&domTreesIterator);
+    ScriptProfiler::visitNodeWrappers(&domTreesIterator);
 
     // Make sure all documents reachable from the main frame are accounted.
     for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
@@ -482,6 +513,27 @@ static PassRefPtr<InspectorMemoryBlock> memoryCacheInfo()
     return memoryCacheStats.release();
 }
 
+static PassRefPtr<InspectorMemoryBlock> jsExternalResourcesInfo()
+{
+    ExternalResourceVisitor visitor;
+    ScriptProfiler::visitExternalStrings(&visitor);
+    ScriptProfiler::visitExternalArrays(&visitor);
+
+    RefPtr<InspectorMemoryBlock> externalResourcesStats = InspectorMemoryBlock::create().setName(MemoryBlockName::jsExternalResources);
+    externalResourcesStats->setSize(visitor.externalStringSize() + visitor.externalArraySize());
+    RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
+
+    RefPtr<InspectorMemoryBlock> externalStringStats = InspectorMemoryBlock::create().setName(MemoryBlockName::jsExternalStrings);
+    externalStringStats->setSize(visitor.externalStringSize());
+    children->addItem(externalStringStats);
+
+    RefPtr<InspectorMemoryBlock> externalArrayStats = InspectorMemoryBlock::create().setName(MemoryBlockName::jsExternalArrays);
+    externalArrayStats->setSize(visitor.externalArraySize());
+    children->addItem(externalArrayStats);
+
+    return externalResourcesStats.release();
+}
+
 void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<InspectorMemoryBlock>& processMemory)
 {
     size_t privateBytes = 0;
@@ -492,6 +544,7 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
 
     RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
     children->addItem(jsHeapInfo());
+    children->addItem(jsExternalResourcesInfo());
     children->addItem(inspectorData());
     children->addItem(memoryCacheInfo());
     children->addItem(renderTreeInfo(m_page)); // TODO: collect for all pages?

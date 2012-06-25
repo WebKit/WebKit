@@ -31,8 +31,8 @@
 #include "config.h"
 #include "V8Binding.h"
 
+#include "BindingVisitors.h"
 #include "DOMStringList.h"
-#include "DOMWrapperVisitor.h"
 #include "Element.h"
 #include "PlatformString.h"
 #include "QualifiedName.h"
@@ -150,7 +150,7 @@ public:
         return m_atomicString;
     }
 
-    void visitStrings(DOMWrapperVisitor* visitor)
+    void visitStrings(ExternalStringVisitor* visitor)
     {
         visitor->visitJSExternalString(m_plainString.impl());
         if (m_plainString.impl() != m_atomicString.impl() && !m_atomicString.isNull())
@@ -178,12 +178,12 @@ private:
 };
 
 #if ENABLE(INSPECTOR)
-void V8BindingPerIsolateData::visitJSExternalStrings(DOMWrapperVisitor* visitor)
+void V8BindingPerIsolateData::visitExternalStrings(ExternalStringVisitor* visitor)
 {
     v8::HandleScope handleScope;
     class VisitorImpl : public v8::ExternalResourceVisitor {
     public:
-        VisitorImpl(DOMWrapperVisitor* visitor) : m_visitor(visitor) { }
+        VisitorImpl(ExternalStringVisitor* visitor) : m_visitor(visitor) { }
         virtual ~VisitorImpl() { }
         virtual void VisitExternalString(v8::Handle<v8::String> string)
         {
@@ -192,7 +192,7 @@ void V8BindingPerIsolateData::visitJSExternalStrings(DOMWrapperVisitor* visitor)
                 resource->visitStrings(m_visitor);
         }
     private:
-        DOMWrapperVisitor* m_visitor;
+        ExternalStringVisitor* m_visitor;
     } v8Visitor(visitor);
     v8::V8::VisitExternalResources(&v8Visitor);
 }

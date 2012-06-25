@@ -40,7 +40,9 @@
 
 namespace WebCore {
 
-class DOMWrapperVisitor;
+class ExternalArrayVisitor;
+class ExternalStringVisitor;
+class NodeWrapperVisitor;
 class Page;
 class ScriptObject;
 class ScriptValue;
@@ -76,8 +78,9 @@ public:
     static bool isSampling() { return true; }
     static bool hasHeapProfiler() { return true; }
     static void initialize();
-    static void visitJSDOMWrappers(DOMWrapperVisitor*);
-    static void visitExternalJSStrings(DOMWrapperVisitor*);
+    static void visitNodeWrappers(NodeWrapperVisitor*);
+    static void visitExternalStrings(ExternalStringVisitor*);
+    static void visitExternalArrays(ExternalArrayVisitor*);
     static size_t profilerSnapshotsSize();
 };
 

@@ -26,21 +26,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMWrapperVisitor_h
-#define DOMWrapperVisitor_h
+#ifndef BindingVisitors_h
+#define BindingVisitors_h
+
+namespace WTF {
+class ArrayBufferView;
+class StringImpl;
+}
 
 namespace WebCore {
 
 class Node;
 
-class DOMWrapperVisitor {
+class NodeWrapperVisitor {
 public:
     virtual void visitNode(Node*) = 0;
-    virtual void visitJSExternalString(StringImpl*) = 0;
 protected:
-    virtual ~DOMWrapperVisitor() { }
+    virtual ~NodeWrapperVisitor() { }
+};
+
+class ExternalStringVisitor {
+public:
+    virtual void visitJSExternalString(WTF::StringImpl*) = 0;
+protected:
+    virtual ~ExternalStringVisitor() { }
+};
+
+
+class ExternalArrayVisitor {
+public:
+    virtual void visitJSExternalArray(WTF::ArrayBufferView*) = 0;
+protected:
+    virtual ~ExternalArrayVisitor() { }
 };
 
 } // namespace WebCore
 
-#endif // DOMWrapperVisitor_h
+#endif // BindingVisitors_h

@@ -73187,6 +73187,10 @@
 			Name="inspector"
 			>
 			<File
+				RelativePath="..\inspector\BindingVisitors.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\ConsoleMessage.cpp"
 				>
 				<FileConfiguration
@@ -73304,10 +73308,6 @@
 			</File>
 			<File
 				RelativePath="..\inspector\DOMPatchSupport.h"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\DOMWrapperVisitor.h"
 				>
 			</File>
 			<File

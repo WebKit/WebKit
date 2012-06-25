@@ -1,3 +1,54 @@
+2012-06-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add external resources size to the native memory diagram
+        https://bugs.webkit.org/show_bug.cgi?id=89754
+
+        Reviewed by Vsevolod Vlasov.
+
+        Size of external strings and arrays is now reported through the inspector
+        protocol and displayed on the native memory chart.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptProfiler.h:
+        (WebCore):
+        (WebCore::ScriptProfiler::visitJSDOMWrappers):
+        (WebCore::ScriptProfiler::visitExternalJSStrings):
+        (WebCore::ScriptProfiler::visitExternalJSArrays):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::visitJSDOMWrappers):
+        (WebCore::ScriptProfiler::visitExternalJSStrings):
+        (WebCore::ScriptProfiler::visitExternalJSArrays):
+        (WebCore):
+        * bindings/v8/ScriptProfiler.h:
+        (WebCore):
+        (ScriptProfiler):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::WebCoreStringResource::visitStrings):
+        (WebCore::V8BindingPerIsolateData::visitJSExternalStrings):
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+        (V8BindingPerIsolateData):
+        * inspector/BindingVisitors.h: Renamed from Source/WebCore/inspector/DOMWrapperVisitor.h.
+        (WTF):
+        (WebCore):
+        (NodeWrapperVisitor):
+        (WebCore::NodeWrapperVisitor::~NodeWrapperVisitor):
+        (ExternalStringVisitor):
+        (WebCore::ExternalStringVisitor::~ExternalStringVisitor):
+        (ExternalArrayVisitor):
+        (WebCore::ExternalArrayVisitor::~ExternalArrayVisitor):
+        * inspector/InspectorMemoryAgent.cpp:
+        (MemoryBlockName):
+        (WebCore):
+        (WebCore::jsExternalResourcesInfo):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.MemoryBlockViewProperties._initialize):
+
 2012-06-24  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed compile error fix of Chromium Win Release.

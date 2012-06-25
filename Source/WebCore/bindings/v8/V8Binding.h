@@ -46,9 +46,9 @@
 namespace WebCore {
 
     class DOMStringList;
-    class DOMWrapperVisitor;
     class EventListener;
     class EventTarget;
+    class ExternalStringVisitor;
 
     // FIXME: Remove V8Binding.
     class V8Binding {
@@ -146,7 +146,7 @@ namespace WebCore {
 
         StringCache* stringCache() { return &m_stringCache; }
 #if ENABLE(INSPECTOR)
-        void visitJSExternalStrings(DOMWrapperVisitor*);
+        void visitExternalStrings(ExternalStringVisitor*);
 #endif
         DOMDataList& allStores() { return m_domDataList; }
 

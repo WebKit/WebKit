@@ -2035,12 +2035,12 @@ HEADERS += \
     html/track/WebVTTParser.h \
     html/track/WebVTTToken.h \
     html/track/WebVTTTokenizer.h \
+    inspector/BindingVisitor.h \
     inspector/ConsoleMessage.h \
     inspector/ContentSearchUtils.h \
     inspector/DOMEditor.h \
     inspector/DOMNodeHighlighter.h \
     inspector/DOMPatchSupport.h \
-    inspector/DOMWrapperVisitor.h \
     inspector/IdentifiersFactory.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptBase.h \

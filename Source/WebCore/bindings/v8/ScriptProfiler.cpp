@@ -32,9 +32,10 @@
 #if ENABLE(INSPECTOR)
 #include "ScriptProfiler.h"
 
-#include "DOMWrapperVisitor.h"
+#include "BindingVisitors.h"
 #include "RetainedDOMInfo.h"
 #include "ScriptObject.h"
+#include "V8ArrayBufferView.h"
 #include "V8Binding.h"
 #include "V8DOMMap.h"
 #include "V8Node.h"
@@ -175,25 +176,47 @@ void ScriptProfiler::initialize()
     v8::HeapProfiler::DefineWrapperClass(v8DOMSubtreeClassId, &retainedDOMInfo);
 }
 
-void ScriptProfiler::visitJSDOMWrappers(DOMWrapperVisitor* visitor)
+void ScriptProfiler::visitNodeWrappers(NodeWrapperVisitor* visitor)
 {
     class VisitorAdapter : public DOMWrapperMap<Node>::Visitor {
     public:
-        VisitorAdapter(DOMWrapperVisitor* visitor) : m_visitor(visitor) { }
+        VisitorAdapter(NodeWrapperVisitor* visitor) : m_visitor(visitor) { }
 
         virtual void visitDOMWrapper(DOMDataStore*, Node* node, v8::Persistent<v8::Object>)
         {
             m_visitor->visitNode(node);
         }
     private:
-        DOMWrapperVisitor* m_visitor;
+        NodeWrapperVisitor* m_visitor;
     } adapter(visitor);
     visitDOMNodes(&adapter);
 }
 
-void ScriptProfiler::visitExternalJSStrings(DOMWrapperVisitor* visitor)
+void ScriptProfiler::visitExternalStrings(ExternalStringVisitor* visitor)
 {
-    V8BindingPerIsolateData::current()->visitJSExternalStrings(visitor);
+    V8BindingPerIsolateData::current()->visitExternalStrings(visitor);
+}
+
+void ScriptProfiler::visitExternalArrays(ExternalArrayVisitor* visitor)
+{
+    class VisitorAdapter : public DOMWrapperMap<void>::Visitor {
+    public:
+        VisitorAdapter(ExternalArrayVisitor* visitor) : m_visitor(visitor) { }
+
+        virtual void visitDOMWrapper(DOMDataStore*, void* impl, v8::Persistent<v8::Object> v8Object)
+        {
+            WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(v8Object);
+            if (!type->isSubclass(&V8ArrayBufferView::info))
+                return;
+            ArrayBufferView* arrayBufferView = V8ArrayBufferView::toNative(v8Object);
+            m_visitor->visitJSExternalArray(arrayBufferView);
+        }
+    private:
+        ExternalArrayVisitor* m_visitor;
+    } adapter(visitor);
+
+    getDOMObjectMap().visit(0, &adapter);
+
 }
 
 size_t ScriptProfiler::profilerSnapshotsSize()
