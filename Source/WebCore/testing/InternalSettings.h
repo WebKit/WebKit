@@ -75,8 +75,6 @@ public:
     void setEnableScrollAnimator(bool enabled, ExceptionCode&);
     bool scrollAnimatorEnabled(ExceptionCode&);
     void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);
-    void setCSSVariablesEnabled(bool enabled, ExceptionCode&);
-    bool cssVariablesEnabled(ExceptionCode&);
     void setMediaPlaybackRequiresUserGesture(bool, ExceptionCode&);
     void setEditingBehavior(const String&, ExceptionCode&);
     void setFixedPositionCreatesStackingContext(bool, ExceptionCode&);

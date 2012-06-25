@@ -338,11 +338,6 @@ void WebSettingsImpl::setExperimentalCSSCustomFilterEnabled(bool enabled)
     m_settings->setCSSCustomFilterEnabled(enabled);
 }
 
-void WebSettingsImpl::setExperimentalCSSVariablesEnabled(bool enabled)
-{
-    m_settings->setCSSVariablesEnabled(enabled);
-}
-
 void WebSettingsImpl::setOpenGLMultisamplingEnabled(bool enabled)
 {
     m_settings->setOpenGLMultisamplingEnabled(enabled);

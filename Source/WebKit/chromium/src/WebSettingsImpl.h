@@ -97,7 +97,6 @@ public:
     virtual void setExperimentalCSSRegionsEnabled(bool);
     virtual void setExperimentalCSSGridLayoutEnabled(bool);
     virtual void setExperimentalCSSCustomFilterEnabled(bool);
-    virtual void setExperimentalCSSVariablesEnabled(bool);
     virtual void setOpenGLMultisamplingEnabled(bool);
     virtual void setPrivilegedWebGLExtensionsEnabled(bool);
     virtual void setWebGLErrorsToConsoleEnabled(bool);

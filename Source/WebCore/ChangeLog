@@ -1,3 +1,30 @@
+2012-06-25  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed, rolling out r121129.
+        http://trac.webkit.org/changeset/121129
+        https://bugs.webkit.org/show_bug.cgi?id=89542
+
+        Chromium ASan failure: crbug.com/134402
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        (WebCore):
+        (WebCore::CSSParser::detectDashToken):
+        (WebCore::CSSParser::lex):
+        * css/CSSParser.h:
+        (CSSParser):
+        * css/CSSParserMode.h:
+        (CSSParserContext):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * page/Settings.h:
+        (Settings):
+        * testing/InternalSettings.cpp:
+        * testing/InternalSettings.h:
+        (InternalSettings):
+        * testing/InternalSettings.idl:
+
 2012-06-25  Adam Barth  <abarth@webkit.org>
 
         Use InterpolationLow on chromium-android

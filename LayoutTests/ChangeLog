@@ -1,3 +1,31 @@
+2012-06-25  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed, rolling out r121129.
+        http://trac.webkit.org/changeset/121129
+        https://bugs.webkit.org/show_bug.cgi?id=89542
+
+        Chromium ASan failure: crbug.com/134402
+
+        * fast/css/variables/border-width.html:
+        * fast/css/variables/build-supports-variables-expected.txt: Removed.
+        * fast/css/variables/build-supports-variables.html: Removed.
+        * fast/css/variables/colors-test.html:
+        * fast/css/variables/complex-cycle.html:
+        * fast/css/variables/computed-style.html:
+        * fast/css/variables/inherited-values.html:
+        * fast/css/variables/inline-styles.html:
+        * fast/css/variables/invalid-shorthand.html:
+        * fast/css/variables/invalid-variable-value.html:
+        * fast/css/variables/multi-level-cycle.html:
+        * fast/css/variables/redefinition.html:
+        * fast/css/variables/shorthand.html:
+        * fast/css/variables/simple-cycle.html:
+        * fast/css/variables/transform-test.html:
+        * fast/css/variables/undefined.html:
+        * fast/css/variables/use-before-defined.html:
+        * fast/css/variables/var-inside-shorthand.html:
+        * fast/css/variables/variable-chain.html:
+
 2012-06-25  Raymond Toy  <rtoy@google.com>
 
         Add layout tests for audio codecs

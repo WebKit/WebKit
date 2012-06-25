@@ -194,9 +194,6 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const KURL& baseURL)
     , isCSSCustomFilterEnabled(false)
     , isCSSRegionsEnabled(false)
     , isCSSGridLayoutEnabled(false)
-#if ENABLE(CSS_VARIABLES)
-    , isCSSVariablesEnabled(false)
-#endif
     , needsSiteSpecificQuirks(false)
     , enforcesCSSMIMETypeInNoQuirksMode(true)
 {
@@ -210,9 +207,6 @@ CSSParserContext::CSSParserContext(Document* document, const KURL& baseURL, cons
     , isCSSCustomFilterEnabled(document->settings() ? document->settings()->isCSSCustomFilterEnabled() : false)
     , isCSSRegionsEnabled(document->cssRegionsEnabled())
     , isCSSGridLayoutEnabled(document->cssGridLayoutEnabled())
-#if ENABLE(CSS_VARIABLES)
-    , isCSSVariablesEnabled(document->settings() ? document->settings()->cssVariablesEnabled() : false)
-#endif
     , needsSiteSpecificQuirks(document->settings() ? document->settings()->needsSiteSpecificQuirks() : false)
     , enforcesCSSMIMETypeInNoQuirksMode(!document->settings() || document->settings()->enforceCSSMIMETypeInNoQuirksMode())
 {
@@ -227,9 +221,6 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.isCSSCustomFilterEnabled == b.isCSSCustomFilterEnabled
         && a.isCSSRegionsEnabled == b.isCSSRegionsEnabled
         && a.isCSSGridLayoutEnabled == b.isCSSGridLayoutEnabled
-#if ENABLE(CSS_VARIABLES)
-        && a.isCSSVariablesEnabled == b.isCSSVariablesEnabled
-#endif
         && a.needsSiteSpecificQuirks == b.needsSiteSpecificQuirks
         && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode;
 }
@@ -1090,25 +1081,6 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& strin
         return 0;
     return static_pointer_cast<CSSValueList>(dummyStyle->getPropertyCSSValue(CSSPropertyFontFamily));
 }
-
-#if ENABLE(CSS_VARIABLES)
-bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID propertyID, const String& string, bool important, Document* document)
-{
-    ASSERT(!string.isEmpty());
-
-    CSSParserContext context(document);
-
-    if (parseSimpleLengthValue(declaration, propertyID, string, important, context.mode))
-        return true;
-    if (parseColorValue(declaration, propertyID, string, important, context.mode))
-        return true;
-    if (parseKeywordValue(declaration, propertyID, string, important, context))
-        return true;
-
-    CSSParser parser(context);
-    return parser.parseValue(declaration, propertyID, string, important, static_cast<StyleSheetContents*>(0));
-}
-#endif
 
 bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID propertyID, const String& string, bool important, CSSParserMode cssParserMode, StyleSheetContents* contextStyleSheet)
 {
@@ -2991,11 +2963,6 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
 }
 
 #if ENABLE(CSS_VARIABLES)
-bool CSSParser::cssVariablesEnabled() const
-{
-    return m_context.isCSSVariablesEnabled;
-}
-
 void CSSParser::storeVariableDeclaration(const CSSParserString& name, PassOwnPtr<CSSParserValueList> value, bool important)
 {
     StringBuilder builder;
@@ -8625,7 +8592,7 @@ inline void CSSParser::detectDashToken(int length)
         else if (isASCIIAlphaCaselessEqual(name[10], 'x') && isEqualToCSSIdentifier(name + 1, "webkit-ma"))
             m_token = MAXFUNCTION;
 #if ENABLE(CSS_VARIABLES)
-        else if (cssVariablesEnabled() && isASCIIAlphaCaselessEqual(name[10], 'r') && isEqualToCSSIdentifier(name + 1, "webkit-va"))
+        else if (isASCIIAlphaCaselessEqual(name[10], 'r') && isEqualToCSSIdentifier(name + 1, "webkit-va"))
             m_token = VARFUNCTION;
 #endif
     } else if (length == 12 && isEqualToCSSIdentifier(name + 1, "webkit-calc"))
@@ -8967,7 +8934,7 @@ restartAfterComment:
 
     case CharacterDash:
 #if ENABLE(CSS_VARIABLES)
-        if (cssVariablesEnabled() && m_currentCharacter[10] == '-' && isEqualToCSSIdentifier(m_currentCharacter, "webkit-var") && isIdentifierStartAfterDash(m_currentCharacter + 11)) {
+        if (m_currentCharacter[10] == '-' && isEqualToCSSIdentifier(m_currentCharacter, "webkit-var") && isIdentifierStartAfterDash(m_currentCharacter + 11)) {
             // handle variable declarations
             m_currentCharacter += 11;
             parseIdentifier(result, hasEscape);

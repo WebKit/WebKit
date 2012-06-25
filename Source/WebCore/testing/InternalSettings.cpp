@@ -348,18 +348,6 @@ void InternalSettings::setCSSExclusionsEnabled(bool enabled, ExceptionCode& ec)
     RuntimeEnabledFeatures::setCSSExclusionsEnabled(enabled);
 }
 
-void InternalSettings::setCSSVariablesEnabled(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setCSSVariablesEnabled(enabled);
-}
-
-bool InternalSettings::cssVariablesEnabled(ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettingsReturn(false);
-    return settings()->cssVariablesEnabled();
-}
-
 void InternalSettings::setMediaPlaybackRequiresUserGesture(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
