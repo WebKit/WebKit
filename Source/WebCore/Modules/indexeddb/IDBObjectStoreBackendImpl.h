@@ -64,10 +64,6 @@ public:
     void setId(int64_t id) { m_id = id; }
 
     virtual IDBObjectStoreMetadata metadata() const;
-    virtual String name() const { return m_name; }
-    virtual IDBKeyPath keyPath() const { return m_keyPath; }
-    virtual PassRefPtr<DOMStringList> indexNames() const;
-    virtual bool autoIncrement() const { return m_autoIncrement; }
 
     virtual void get(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void put(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
@@ -82,6 +78,10 @@ public:
     virtual void count(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
     static bool populateIndex(IDBBackingStore&, int64_t databaseId, int64_t objectStoreId, PassRefPtr<IDBIndexBackendImpl>);
+
+    const String& name() { return m_name; }
+    const IDBKeyPath& keyPath() const { return m_keyPath; }
+    const bool& autoIncrement() const { return m_autoIncrement; }
 
 private:
     IDBObjectStoreBackendImpl(const IDBDatabaseBackendImpl*, int64_t databaseId, const String& name, const IDBKeyPath&, bool autoIncrement);

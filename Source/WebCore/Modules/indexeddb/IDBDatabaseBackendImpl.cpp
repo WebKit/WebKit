@@ -142,15 +142,6 @@ IDBDatabaseMetadata IDBDatabaseBackendImpl::metadata() const
     return metadata;
 }
 
-PassRefPtr<DOMStringList> IDBDatabaseBackendImpl::objectStoreNames() const
-{
-    RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
-    for (ObjectStoreMap::const_iterator it = m_objectStores.begin(); it != m_objectStores.end(); ++it)
-        objectStoreNames->append(it->first);
-    objectStoreNames->sort();
-    return objectStoreNames.release();
-}
-
 PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     ASSERT(transactionPtr->mode() == IDBTransaction::VERSION_CHANGE);

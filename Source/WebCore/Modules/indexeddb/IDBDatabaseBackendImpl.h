@@ -59,9 +59,6 @@ public:
     void deleteDatabase(PassRefPtr<IDBCallbacks>);
 
     virtual IDBDatabaseMetadata metadata() const;
-    virtual String name() const { return m_name; }
-    virtual String version() const { return m_version; }
-    virtual PassRefPtr<DOMStringList> objectStoreNames() const;
 
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);

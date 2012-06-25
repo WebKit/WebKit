@@ -65,16 +65,17 @@ public:
 
     // Implements IDBIndexBackendInterface.
     virtual IDBIndexMetadata metadata() const;
-    virtual String name() { return m_name; }
-    virtual IDBKeyPath keyPath() { return m_keyPath; }
-    virtual bool unique() { return m_unique; }
-    virtual bool multiEntry() { return m_multiEntry; }
 
     virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void count(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void openKeyCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void get(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void getKey(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
+
+    const String& name() { return m_name; }
+    const IDBKeyPath& keyPath() { return m_keyPath; }
+    const bool& unique() { return m_unique; }
+    const bool& multiEntry() { return m_multiEntry; }
 
 private:
     IDBIndexBackendImpl(const IDBDatabaseBackendImpl*, IDBObjectStoreBackendImpl*, int64_t id, const String& name, const IDBKeyPath&, bool unique, bool multiEntry);

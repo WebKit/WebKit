@@ -48,11 +48,6 @@ class IDBObjectStoreBackendInterface : public ThreadSafeRefCounted<IDBObjectStor
 public:
     virtual ~IDBObjectStoreBackendInterface() { }
 
-    virtual String name() const = 0;
-    virtual IDBKeyPath keyPath() const = 0;
-    virtual PassRefPtr<DOMStringList> indexNames() const = 0;
-    virtual bool autoIncrement() const = 0;
-
     virtual void get(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 
     enum PutMode {

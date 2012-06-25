@@ -1,3 +1,35 @@
+2012-06-25  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove unused backend property accessors
+        https://bugs.webkit.org/show_bug.cgi?id=89893
+
+        Reviewed by Darin Fisher.
+
+        Following the "metadata" API addition in trac.webkit.org/changeset/121059
+        the IDBXXXBackendInterface types no longer need per-property accessors.
+
+        No new tests - no functional changes.
+
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp: Remove method implementation.
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h: Remove methods.
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h: Remove methods.
+        (IDBDatabaseBackendInterface):
+        * Modules/indexeddb/IDBIndexBackendImpl.h: Make methods simple accessors.
+        (IDBIndexBackendImpl):
+        (WebCore::IDBIndexBackendImpl::name):
+        (WebCore::IDBIndexBackendImpl::keyPath):
+        (WebCore::IDBIndexBackendImpl::unique):
+        (WebCore::IDBIndexBackendImpl::multiEntry):
+        * Modules/indexeddb/IDBIndexBackendInterface.h: Remove methods.
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp: Remove method implementation.
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h: Make methods simple accessors.
+        (IDBObjectStoreBackendImpl):
+        (WebCore::IDBObjectStoreBackendImpl::name):
+        (WebCore::IDBObjectStoreBackendImpl::keyPath):
+        (WebCore::IDBObjectStoreBackendImpl::autoIncrement):
+        * Modules/indexeddb/IDBObjectStoreBackendInterface.h: Remove methods.
+
 2012-06-25  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Add support for building with ENABLE_MEDIA_STREAM

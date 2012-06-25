@@ -54,9 +54,6 @@ public:
     virtual ~IDBDatabaseBackendInterface() { }
 
     virtual IDBDatabaseMetadata metadata() const = 0;
-    virtual String name() const = 0;
-    virtual String version() const = 0;
-    virtual PassRefPtr<DOMStringList> objectStoreNames() const = 0;
 
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
     virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&) = 0;

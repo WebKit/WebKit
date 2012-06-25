@@ -46,11 +46,6 @@ class IDBIndexBackendInterface : public ThreadSafeRefCounted<IDBIndexBackendInte
 public:
     virtual ~IDBIndexBackendInterface() { }
 
-    virtual String name() = 0;
-    virtual IDBKeyPath keyPath() = 0;
-    virtual bool unique() = 0;
-    virtual bool multiEntry() = 0;
-
     virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
     virtual void count(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
     virtual void openKeyCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;

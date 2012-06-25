@@ -51,9 +51,6 @@ public:
     virtual ~WebIDBDatabaseImpl();
 
     virtual WebIDBMetadata metadata() const;
-    virtual WebString name() const;
-    virtual WebString version() const;
-    virtual WebDOMStringList objectStoreNames() const;
 
     virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebIDBKeyPath&, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&);
     virtual void deleteObjectStore(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);

@@ -80,15 +80,6 @@ IDBObjectStoreMetadata IDBObjectStoreBackendImpl::metadata() const
     return metadata;
 }
 
-PassRefPtr<DOMStringList> IDBObjectStoreBackendImpl::indexNames() const
-{
-    RefPtr<DOMStringList> indexNames = DOMStringList::create();
-    for (IndexMap::const_iterator it = m_indexes.begin(); it != m_indexes.end(); ++it)
-        indexNames->append(it->first);
-    indexNames->sort();
-    return indexNames.release();
-}
-
 void IDBObjectStoreBackendImpl::get(PassRefPtr<IDBKeyRange> prpKeyRange, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::get");

@@ -43,11 +43,6 @@ public:
     WebIDBIndexImpl(WTF::PassRefPtr<WebCore::IDBIndexBackendInterface>);
     virtual ~WebIDBIndexImpl();
 
-    virtual WebString name() const;
-    virtual WebIDBKeyPath keyPath() const;
-    virtual bool unique() const;
-    virtual bool multiEntry() const;
-
     virtual void openObjectCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&); 
     virtual void openKeyCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
     virtual void count(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);

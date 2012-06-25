@@ -1,3 +1,23 @@
+2012-06-25  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove unused backend property accessors
+        https://bugs.webkit.org/show_bug.cgi?id=89893
+
+        Reviewed by Darin Fisher.
+
+        Following the "metadata" API addition in trac.webkit.org/changeset/121059
+        per-property accessors can be removed from the Chromium WebKit API.
+
+        * src/WebIDBDatabaseImpl.cpp: Removed name, version, objectStoreNames.
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl):
+        * src/WebIDBIndexImpl.cpp: Removed name, keyPath, unique, multiEntry.
+        * src/WebIDBIndexImpl.h:
+        (WebIDBIndexImpl):
+        * src/WebIDBObjectStoreImpl.cpp: Removed name, keyPath, autoIncrement, indexNames.
+        * src/WebIDBObjectStoreImpl.h:
+        (WebIDBObjectStoreImpl):
+
 2012-06-25  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Layer chromium should need a redraw after getting its first non-empty bounds.

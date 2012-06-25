@@ -58,21 +58,6 @@ WebIDBMetadata WebIDBDatabaseImpl::metadata() const
     return m_databaseBackend->metadata();
 }
 
-WebString WebIDBDatabaseImpl::name() const
-{
-    return m_databaseBackend->name();
-}
-
-WebString WebIDBDatabaseImpl::version() const
-{
-    return m_databaseBackend->version();
-}
-
-WebDOMStringList WebIDBDatabaseImpl::objectStoreNames() const
-{
-    return m_databaseBackend->objectStoreNames();
-}
-
 WebIDBObjectStore* WebIDBDatabaseImpl::createObjectStore(const WebString& name, const WebIDBKeyPath& keyPath, bool autoIncrement, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
     RefPtr<IDBObjectStoreBackendInterface> objectStore = m_databaseBackend->createObjectStore(name, keyPath, autoIncrement, transaction.getIDBTransactionBackendInterface(), ec);
