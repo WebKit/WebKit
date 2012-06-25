@@ -38,17 +38,22 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+const String& MicroDataItemList::undefinedItemType()
+{
+    DEFINE_STATIC_LOCAL(String, undefinedItemTypeString, ("http://webkit.org/microdata/undefinedItemType"));
+    return undefinedItemTypeString;
+}
+
 MicroDataItemList::MicroDataItemList(PassRefPtr<Node> rootNode, const String& typeNames)
     : DynamicSubtreeNodeList(rootNode)
-    , m_typeNames(typeNames, node()->document()->inQuirksMode())
+    , m_typeNames(typeNames, document()->inQuirksMode())
     , m_originalTypeNames(typeNames)
 {
 }
 
 MicroDataItemList::~MicroDataItemList()
 {
-    String localTypeNames = m_originalTypeNames.isNull() ? String("http://webkit.org/microdata/undefinedItemType") : m_originalTypeNames;
-    m_node->nodeLists()->removeCacheWithName(this, DynamicNodeList::MicroDataItemListType, localTypeNames);
+    ownerNode()->nodeLists()->removeCacheWithName(this, DynamicNodeList::MicroDataItemListType, m_originalTypeNames);
 }
 
 bool MicroDataItemList::nodeMatches(Element* testNode) const
@@ -60,7 +65,7 @@ bool MicroDataItemList::nodeMatches(Element* testNode) const
     if (!testElement->fastHasAttribute(itemscopeAttr) || testElement->fastHasAttribute(itempropAttr))
         return false;
 
-    if (!m_typeNames.size())
+    if (m_originalTypeNames == undefinedItemType())
         return true;
 
     return testElement->itemType()->tokens().containsAll(m_typeNames);

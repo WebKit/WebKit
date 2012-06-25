@@ -5928,7 +5928,7 @@ PassRefPtr<NodeList> Document::getItems(const String& typeNames)
 {
     // Since documet.getItem() is allowed for microdata, typeNames will be null string.
     // In this case we need to create an unique string identifier to map such request in the cache.
-    String localTypeNames = typeNames.isNull() ? String("http://webkit.org/microdata/undefinedItemType") : typeNames;
+    String localTypeNames = typeNames.isNull() ? MicroDataItemList::undefinedItemType() : typeNames;
 
     return ensureRareData()->ensureNodeLists(this)->addCacheWithName<MicroDataItemList>(this, DynamicNodeList::MicroDataItemListType, localTypeNames);
 }

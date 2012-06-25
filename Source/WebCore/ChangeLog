@@ -1,3 +1,31 @@
+2012-06-25  Arko Saha  <arko@motorola.com>
+
+        Microdata: document.getItems(typeNames) is not returning Microdata items when typeNames argument is not specified.
+        https://bugs.webkit.org/show_bug.cgi?id=89757
+
+        Reviewed by Ryosuke Niwa.
+
+        With r120979 change, it creates MicroDataItemList with m_typeNames = "http://webkit.org/microdata/undefinedItemType",
+        when typeNames argument is not specified. Modified the check in nodeMatches() accordingly.
+
+        This fixes the following failing tests :
+            fast/dom/MicroData/002.html
+            fast/dom/MicroData/003.html
+            fast/dom/MicroData/007.html
+            fast/dom/MicroData/009.html
+            fast/dom/MicroData/properties-collection-must-see-the-properties-added-in-itemref.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::getItems): Use undefinedItemType to avoid String conversion.
+        * dom/MicroDataItemList.cpp:
+        (WebCore::MicroDataItemList::undefinedItemType): It defines "http://webkit.org/microdata/undefinedItemType"
+        string using DEFINE_STATIC_LOCAL to avoid String conversion.
+        (WebCore::MicroDataItemList::MicroDataItemList): Use document() method of DynamicNodeList to obtain
+        document of owner element.
+        (WebCore::MicroDataItemList::~MicroDataItemList): Removed originalTypeNames null check.
+        (WebCore::MicroDataItemList::nodeMatches): Return true if originalTypeNames is equal to undefinedItemType.
+        * dom/MicroDataItemList.h:
+
 2012-06-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

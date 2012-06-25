@@ -43,6 +43,8 @@ public:
 
     virtual ~MicroDataItemList();
 
+    static const String& undefinedItemType();
+
 private:
     MicroDataItemList(PassRefPtr<Node> rootNode, const String& typeNames);
 
