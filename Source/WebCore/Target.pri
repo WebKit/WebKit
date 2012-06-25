@@ -466,6 +466,7 @@ SOURCES += \
     css/CSSStyleRule.cpp \
     css/CSSStyleSheet.cpp \
     css/CSSTimingFunctionValue.cpp \
+    css/CSSToStyleMap.cpp \
     css/CSSUnicodeRangeValue.cpp \
     css/CSSValue.cpp \
     css/CSSValueList.cpp \
@@ -1648,6 +1649,7 @@ HEADERS += \
     css/CSSStyleRule.h \
     css/CSSStyleSheet.h \
     css/CSSTimingFunctionValue.h \
+    css/CSSToStyleMap.h \
     css/CSSUnicodeRangeValue.h \
     css/CSSValue.cpp \
     css/CSSValue.h \

@@ -503,6 +503,7 @@ SET(WebCore_SOURCES
     css/CSSStyleRule.cpp
     css/CSSStyleSheet.cpp
     css/CSSTimingFunctionValue.cpp
+    css/CSSToStyleMap.cpp
     css/CSSUnicodeRangeValue.cpp
     css/CSSValue.cpp
     css/CSSValueList.cpp

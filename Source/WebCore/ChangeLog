@@ -1,3 +1,72 @@
+2012-06-25  Eric Seidel  <eric@webkit.org>
+
+        Split map* functions out of StyleResolver into a helper object
+        https://bugs.webkit.org/show_bug.cgi?id=89881
+
+        Reviewed by Daniel Bates.
+
+        These map* functions are completely independent of the rest of StyleResolver
+        and only exist to serve StyleBuilder.
+        CSSToStyleMap doesn't even want to have a StyleResolver pointer, but
+        currently needs one to access the resolve-lifetime caches for the
+        current resolve.  Once we split out that per-resolve state into
+        some sort of ResolveState/ResolveInfo object (akin to PaintInfo/LayoutState)
+        then this object will be even simpler.
+
+        No behavioral change, thus no tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSToStyleMap.cpp: Added.
+        (WebCore):
+        (WebCore::CSSToStyleMap::style):
+        (WebCore::CSSToStyleMap::rootElementStyle):
+        (WebCore::CSSToStyleMap::useSVGZoomRules):
+        (WebCore::CSSToStyleMap::styleImage):
+        (WebCore::CSSToStyleMap::mapFillAttachment):
+        (WebCore::CSSToStyleMap::mapFillClip):
+        (WebCore::CSSToStyleMap::mapFillComposite):
+        (WebCore::CSSToStyleMap::mapFillOrigin):
+        (WebCore::CSSToStyleMap::mapFillImage):
+        (WebCore::CSSToStyleMap::mapFillRepeatX):
+        (WebCore::CSSToStyleMap::mapFillRepeatY):
+        (WebCore::CSSToStyleMap::mapFillSize):
+        (WebCore::CSSToStyleMap::mapFillXPosition):
+        (WebCore::CSSToStyleMap::mapFillYPosition):
+        (WebCore::CSSToStyleMap::mapAnimationDelay):
+        (WebCore::CSSToStyleMap::mapAnimationDirection):
+        (WebCore::CSSToStyleMap::mapAnimationDuration):
+        (WebCore::CSSToStyleMap::mapAnimationFillMode):
+        (WebCore::CSSToStyleMap::mapAnimationIterationCount):
+        (WebCore::CSSToStyleMap::mapAnimationName):
+        (WebCore::CSSToStyleMap::mapAnimationPlayState):
+        (WebCore::CSSToStyleMap::mapAnimationProperty):
+        (WebCore::CSSToStyleMap::mapAnimationTimingFunction):
+        (WebCore::CSSToStyleMap::mapNinePieceImage):
+        (WebCore::CSSToStyleMap::mapNinePieceImageSlice):
+        (WebCore::CSSToStyleMap::mapNinePieceImageQuad):
+        (WebCore::CSSToStyleMap::mapNinePieceImageRepeat):
+        * css/CSSToStyleMap.h: Added.
+        (WebCore):
+        (CSSToStyleMap):
+        (WebCore::CSSToStyleMap::CSSToStyleMap):
+        * css/StyleBuilder.cpp:
+        (WebCore::ApplyPropertyFillLayer::applyValue):
+        (WebCore::ApplyPropertyBorderImage::applyValue):
+        (WebCore::ApplyPropertyBorderImageModifier::applyValue):
+        (WebCore):
+        (WebCore::ApplyPropertyAnimation::map):
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::styleMap):
+        (StyleResolver):
+
 2012-06-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Support screenDepth() functionality.

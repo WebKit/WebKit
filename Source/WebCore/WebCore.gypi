@@ -2505,6 +2505,8 @@
             'css/CSSStyleSheet.h',
             'css/CSSTimingFunctionValue.cpp',
             'css/CSSTimingFunctionValue.h',
+            'css/CSSToStyleMap.cpp',
+            'css/CSSToStyleMap.h',
             'css/CSSUnicodeRangeValue.cpp',
             'css/CSSUnicodeRangeValue.h',
             'css/CSSUnknownRule.h',

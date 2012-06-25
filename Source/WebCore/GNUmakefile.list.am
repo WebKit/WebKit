@@ -1679,6 +1679,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSStyleSheet.h \
 	Source/WebCore/css/CSSTimingFunctionValue.cpp \
 	Source/WebCore/css/CSSTimingFunctionValue.h \
+	Source/WebCore/css/CSSToStyleMap.cpp \
+	Source/WebCore/css/CSSToStyleMap.h \
 	Source/WebCore/css/CSSWrapShapes.cpp \
 	Source/WebCore/css/CSSWrapShapes.h \
 	Source/WebCore/css/CSSUnicodeRangeValue.cpp \

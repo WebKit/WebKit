@@ -36635,6 +36635,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSToStyleMap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSToStyleMap.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSUnicodeRangeValue.cpp"
 				>
 				<FileConfiguration
