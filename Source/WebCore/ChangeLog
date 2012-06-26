@@ -1,3 +1,9 @@
+2012-06-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed typo fix after r121144.
+
+        * Target.pri:
+
 2012-06-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: columns in heap snapshot summary view are not resizable

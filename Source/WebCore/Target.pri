@@ -2037,7 +2037,7 @@ HEADERS += \
     html/track/WebVTTParser.h \
     html/track/WebVTTToken.h \
     html/track/WebVTTTokenizer.h \
-    inspector/BindingVisitor.h \
+    inspector/BindingVisitors.h \
     inspector/ConsoleMessage.h \
     inspector/ContentSearchUtils.h \
     inspector/DOMEditor.h \
