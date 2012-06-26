@@ -56,6 +56,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/WebProcess/WebCoreSupport \
     $$SOURCE_DIR/WebProcess/WebCoreSupport/qt \
     $$SOURCE_DIR/WebProcess/WebPage \
+    $$SOURCE_DIR/WebProcess/WebPage/LayerTreeCoordinator \
     $$SOURCE_DIR/WebProcess/qt \
     $$SOURCE_DIR/PluginProcess
 

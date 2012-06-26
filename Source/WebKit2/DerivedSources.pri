@@ -63,7 +63,7 @@ MESSAGE_RECEIVERS = \
     DownloadProxy.messages.in \
     DrawingAreaProxy.messages.in \
     EventDispatcher.messages.in \
-    LayerTreeHostProxy.messages.in \
+    LayerTreeCoordinatorProxy.messages.in \
     PluginControllerProxy.messages.in \
     PluginProcess.messages.in \
     PluginProcessConnection.messages.in \
@@ -90,7 +90,7 @@ MESSAGE_RECEIVERS = \
     WebFullScreenManager.messages.in \
     WebFullScreenManagerProxy.messages.in \
     WebPage/DrawingArea.messages.in \
-    WebPage/LayerTreeHost.messages.in \
+    WebPage/LayerTreeCoordinator/LayerTreeCoordinator.messages.in \
     WebPage/WebInspector.messages.in \
     WebPage/WebPage.messages.in \
     WebPageProxy.messages.in \

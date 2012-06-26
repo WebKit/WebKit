@@ -689,10 +689,10 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 }
 
 #if USE(UI_SIDE_COMPOSITING)
-void DrawingAreaImpl::didReceiveLayerTreeHostMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void DrawingAreaImpl::didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (m_layerTreeHost)
-        m_layerTreeHost->didReceiveLayerTreeHostMessage(connection, messageID, arguments);
+        m_layerTreeHost->didReceiveLayerTreeCoordinatorMessage(connection, messageID, arguments);
 }
 #endif
 

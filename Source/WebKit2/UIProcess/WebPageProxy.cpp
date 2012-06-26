@@ -94,7 +94,7 @@
 #endif
 
 #if USE(UI_SIDE_COMPOSITING)
-#include "LayerTreeHostProxyMessages.h"
+#include "LayerTreeCoordinatorProxyMessages.h"
 #endif
 
 #if PLATFORM(QT)
@@ -1737,8 +1737,8 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
     }
 
 #if USE(UI_SIDE_COMPOSITING)
-    if (messageID.is<CoreIPC::MessageClassLayerTreeHostProxy>()) {
-        m_drawingArea->didReceiveLayerTreeHostProxyMessage(connection, messageID, arguments);
+    if (messageID.is<CoreIPC::MessageClassLayerTreeCoordinatorProxy>()) {
+        m_drawingArea->didReceiveLayerTreeCoordinatorProxyMessage(connection, messageID, arguments);
         return;
     }
 #endif

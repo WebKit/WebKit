@@ -74,8 +74,7 @@ namespace WebCore {
 
 class WebGraphicsLayer : public WebCore::GraphicsLayer
                        , public TiledBackingStoreClient
-                       , public WebKit::TiledBackingStoreRemoteTileClient
-{
+                       , public WebKit::TiledBackingStoreRemoteTileClient {
 public:
     WebGraphicsLayer(GraphicsLayerClient*);
     virtual ~WebGraphicsLayer();

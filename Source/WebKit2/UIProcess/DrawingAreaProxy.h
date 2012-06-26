@@ -54,7 +54,7 @@ namespace WebCore {
 namespace WebKit {
 
 class LayerTreeContext;
-class LayerTreeHostProxy;
+class LayerTreeCoordinatorProxy;
 class UpdateInfo;
 class WebLayerTreeInfo;
 class WebLayerUpdateInfo;
@@ -93,12 +93,12 @@ public:
     virtual WebCore::IntRect viewportVisibleRect() const { return contentsRect(); }
     virtual WebCore::IntRect contentsRect() const;
     virtual bool isBackingStoreReady() const { return true; }
-    LayerTreeHostProxy* layerTreeHostProxy() const { return m_layerTreeHostProxy.get(); }
+    LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy() const { return m_layerTreeCoordinatorProxy.get(); }
     virtual void setVisibleContentsRect(const WebCore::IntRect& visibleContentsRect, float scale, const WebCore::FloatPoint& trajectoryVector, const WebCore::FloatPoint& accurateVisibleContentsPosition = WebCore::FloatPoint()) { }
     virtual void createTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo&) { }
     virtual void updateTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo&) { }
     virtual void removeTileForLayer(int layerID, int tileID) { }
-    virtual void didReceiveLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    virtual void didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     WebPageProxy* page() { return m_webPageProxy; }
 #endif
@@ -112,7 +112,7 @@ protected:
     WebCore::IntSize m_scrollOffset;
 
 #if USE(UI_SIDE_COMPOSITING)
-    OwnPtr<LayerTreeHostProxy> m_layerTreeHostProxy;
+    OwnPtr<LayerTreeCoordinatorProxy> m_layerTreeCoordinatorProxy;
 #endif
 
 private:

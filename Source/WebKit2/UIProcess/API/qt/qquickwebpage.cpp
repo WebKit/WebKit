@@ -21,7 +21,7 @@
 #include "config.h"
 #include "qquickwebpage_p.h"
 
-#include "LayerTreeHostProxy.h"
+#include "LayerTreeCoordinatorProxy.h"
 #include "QtWebPageEventHandler.h"
 #include "QtWebPageSGNode.h"
 #include "TransformationMatrix.h"
@@ -72,9 +72,9 @@ void QQuickWebPagePrivate::paint(QPainter* painter)
     if (!webPageProxy->drawingArea())
         return;
 
-    LayerTreeHostProxy* layerTreeHostProxy = webPageProxy->drawingArea()->layerTreeHostProxy();
-    if (layerTreeHostProxy->layerTreeRenderer())
-        layerTreeHostProxy->layerTreeRenderer()->paintToGraphicsContext(painter);
+    LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy = webPageProxy->drawingArea()->layerTreeCoordinatorProxy();
+    if (layerTreeCoordinatorProxy->layerTreeRenderer())
+        layerTreeCoordinatorProxy->layerTreeRenderer()->paintToGraphicsContext(painter);
 }
 
 QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
@@ -82,8 +82,8 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     if (!d->webPageProxy->drawingArea())
         return oldNode;
 
-    LayerTreeHostProxy* layerTreeHostProxy = d->webPageProxy->drawingArea()->layerTreeHostProxy();
-    WebLayerTreeRenderer* renderer = layerTreeHostProxy->layerTreeRenderer();
+    LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy = d->webPageProxy->drawingArea()->layerTreeCoordinatorProxy();
+    WebLayerTreeRenderer* renderer = layerTreeCoordinatorProxy->layerTreeRenderer();
 
     QtWebPageSGNode* node = static_cast<QtWebPageSGNode*>(oldNode);
     if (!node)
@@ -159,8 +159,8 @@ void QQuickWebPagePrivate::updateSize()
     QSizeF scaledSize = contentsSize * contentsScale;
 
     DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
-    if (drawingArea && drawingArea->layerTreeHostProxy())
-        drawingArea->layerTreeHostProxy()->setContentsSize(contentsSize);
+    if (drawingArea && drawingArea->layerTreeCoordinatorProxy())
+        drawingArea->layerTreeCoordinatorProxy()->setContentsSize(contentsSize);
 
     q->setSize(scaledSize);
 

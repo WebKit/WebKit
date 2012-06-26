@@ -40,7 +40,7 @@
 namespace WebKit {
 
 class LayerBackingStore;
-class LayerTreeHostProxy;
+class LayerTreeCoordinatorProxy;
 class WebLayerInfo;
 class WebLayerUpdateInfo;
 
@@ -59,7 +59,7 @@ public:
         {
         }
     };
-    WebLayerTreeRenderer(LayerTreeHostProxy*);
+    WebLayerTreeRenderer(LayerTreeCoordinatorProxy*);
     virtual ~WebLayerTreeRenderer();
     void purgeGLResources();
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&, WebCore::TextureMapper::PaintFlags = 0);
@@ -135,7 +135,7 @@ private:
     void renderNextFrame();
     void purgeBackingStores();
 
-    LayerTreeHostProxy* m_layerTreeHostProxy;
+    LayerTreeCoordinatorProxy* m_layerTreeCoordinatorProxy;
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
     Vector<WebLayerID> m_layersToDelete;
 

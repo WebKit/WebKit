@@ -28,7 +28,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
-#include "LayerTreeHostProxyMessages.h"
+#include "LayerTreeCoordinatorProxyMessages.h"
 #include "Page.h"
 #include "TextureMapperPlatformLayer.h"
 #include "TiledBackingStoreRemoteTile.h"
@@ -456,7 +456,7 @@ void WebGraphicsLayer::syncFilters()
 #endif
 
 void WebGraphicsLayer::syncLayerState()
- {
+{
     if (!m_shouldSyncLayerState)
         return;
     m_shouldSyncLayerState = false;

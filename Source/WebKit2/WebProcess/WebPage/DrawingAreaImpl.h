@@ -78,7 +78,7 @@ private:
 #endif
 
 #if USE(UI_SIDE_COMPOSITING)
-    virtual void didReceiveLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    virtual void didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 #endif
 
     // CoreIPC message handlers.

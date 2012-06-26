@@ -25,7 +25,7 @@
 
 #include "GraphicsLayerTextureMapper.h"
 #include "LayerBackingStore.h"
-#include "LayerTreeHostProxy.h"
+#include "LayerTreeCoordinatorProxy.h"
 #include "MessageID.h"
 #include "ShareableBitmap.h"
 #include "TextureMapper.h"
@@ -85,9 +85,9 @@ static IntPoint boundedScrollPosition(const IntPoint& scrollPosition, const IntR
     return IntPoint(scrollPositionX, scrollPositionY);
 }
 
-WebLayerTreeRenderer::WebLayerTreeRenderer(LayerTreeHostProxy* layerTreeHostProxy)
+WebLayerTreeRenderer::WebLayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy)
     : m_contentsScale(1)
-    , m_layerTreeHostProxy(layerTreeHostProxy)
+    , m_layerTreeCoordinatorProxy(layerTreeCoordinatorProxy)
     , m_rootLayerID(InvalidWebLayerID)
     , m_isActive(false)
 {
@@ -175,8 +175,8 @@ void WebLayerTreeRenderer::setVisibleContentsRect(const IntRect& rect, float sca
 
 void WebLayerTreeRenderer::updateViewport()
 {
-    if (m_layerTreeHostProxy)
-        m_layerTreeHostProxy->updateViewport();
+    if (m_layerTreeCoordinatorProxy)
+        m_layerTreeCoordinatorProxy->updateViewport();
 }
 
 void WebLayerTreeRenderer::adjustPositionForFixedLayers()
@@ -406,8 +406,8 @@ void WebLayerTreeRenderer::flushLayerChanges()
 
 void WebLayerTreeRenderer::renderNextFrame()
 {
-    if (m_layerTreeHostProxy)
-        m_layerTreeHostProxy->renderNextFrame();
+    if (m_layerTreeCoordinatorProxy)
+        m_layerTreeCoordinatorProxy->renderNextFrame();
 }
 
 void WebLayerTreeRenderer::ensureRootLayer()
@@ -465,13 +465,13 @@ void WebLayerTreeRenderer::purgeGLResources()
 
 void WebLayerTreeRenderer::purgeBackingStores()
 {
-    if (m_layerTreeHostProxy)
-        m_layerTreeHostProxy->purgeBackingStores();
+    if (m_layerTreeCoordinatorProxy)
+        m_layerTreeCoordinatorProxy->purgeBackingStores();
 }
 
 void WebLayerTreeRenderer::detach()
 {
-    m_layerTreeHostProxy = 0;
+    m_layerTreeCoordinatorProxy = 0;
 }
 
 void WebLayerTreeRenderer::appendUpdate(const Function<void()>& function)

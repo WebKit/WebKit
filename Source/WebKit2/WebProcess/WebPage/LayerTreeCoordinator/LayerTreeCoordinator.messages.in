@@ -18,8 +18,8 @@
 #
 
 
-#if USE(TILED_BACKING_STORE)
-messages -> LayerTreeHost {
+#if USE(UI_SIDE_COMPOSITING)
+messages -> LayerTreeCoordinator {
     SetVisibleContentsRect(WebCore::IntRect visibleContentsRect, float scale, WebCore::FloatPoint trajectoryVectory)
     RenderNextFrame()
     PurgeBackingStores()

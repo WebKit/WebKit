@@ -17,8 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef LayerTreeHostQt_h
-#define LayerTreeHostQt_h
+#ifndef LayerTreeCoordinator_h
+#define LayerTreeCoordinator_h
 
 #include "LayerTreeContext.h"
 #include "LayerTreeHost.h"
@@ -33,12 +33,11 @@ namespace WebKit {
 class UpdateInfo;
 class WebPage;
 
-class LayerTreeHostQt : public LayerTreeHost, WebCore::GraphicsLayerClient
-                      , public WebGraphicsLayerClient
-{
+class LayerTreeCoordinator : public LayerTreeHost, WebCore::GraphicsLayerClient
+                           , public WebGraphicsLayerClient {
 public:
-    static PassRefPtr<LayerTreeHostQt> create(WebPage*);
-    virtual ~LayerTreeHostQt();
+    static PassRefPtr<LayerTreeCoordinator> create(WebPage*);
+    virtual ~LayerTreeCoordinator();
 
     static bool supportsAcceleratedCompositing();
 
@@ -74,6 +73,8 @@ public:
     virtual void purgeBackingStores();
     virtual bool layerTreeTileUpdatesAllowed() const;
     virtual void setVisibleContentsRect(const WebCore::IntRect&, float scale, const WebCore::FloatPoint&);
+    virtual void didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
     virtual void syncLayerState(WebLayerID, const WebLayerInfo&);
     virtual void syncLayerChildren(WebLayerID, const Vector<WebLayerID>&);
 #if ENABLE(CSS_FILTERS)
@@ -87,7 +88,7 @@ public:
     virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, ShareableSurface::Handle&, WebCore::IntPoint&);
 
 protected:
-    explicit LayerTreeHostQt(WebPage*);
+    explicit LayerTreeCoordinator(WebPage*);
 
 private:
     // GraphicsLayerClient
@@ -97,7 +98,7 @@ private:
     virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const;
     virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const;
 
-    // LayerTreeHostQt
+    // LayerTreeCoordinator
     void createPageOverlayLayer();
     void destroyPageOverlayLayer();
     bool flushPendingLayerChanges();
@@ -129,11 +130,11 @@ private:
     LayerTreeContext m_layerTreeContext;
     bool m_shouldSyncFrame;
     bool m_shouldSyncRootLayer;
-    void layerFlushTimerFired(WebCore::Timer<LayerTreeHostQt>*);
-    WebCore::Timer<LayerTreeHostQt> m_layerFlushTimer;
+    void layerFlushTimerFired(WebCore::Timer<LayerTreeCoordinator>*);
+    WebCore::Timer<LayerTreeCoordinator> m_layerFlushTimer;
     bool m_layerFlushSchedulingEnabled;
 };
 
 }
 
-#endif // LayerTreeHostQt_h
+#endif // LayerTreeCoordinator_h

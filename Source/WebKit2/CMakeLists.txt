@@ -209,7 +209,7 @@ SET(WebKit2_SOURCES
     UIProcess/FindIndicator.cpp
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
-    UIProcess/LayerTreeHostProxy.cpp
+    UIProcess/LayerTreeCoordinatorProxy.cpp
     UIProcess/ResponsivenessTimer.cpp
     UIProcess/VisitedLinkProvider.cpp
     UIProcess/WebApplicationCacheManagerProxy.cpp
@@ -409,7 +409,6 @@ SET(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebEditorClient.cpp
     WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
     WebProcess/WebCoreSupport/WebGeolocationClient.cpp
-    WebProcess/WebCoreSupport/WebGraphicsLayer.cpp
     WebProcess/WebCoreSupport/WebInspectorClient.cpp
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp
     WebProcess/WebCoreSupport/WebNotificationClient.cpp
@@ -423,6 +422,7 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/EncoderAdapter.cpp
     WebProcess/WebPage/EventDispatcher.cpp
     WebProcess/WebPage/FindController.cpp
+    WebProcess/WebPage/LayerTreeCoordinator/WebGraphicsLayer.cpp
     WebProcess/WebPage/LayerTreeHost.cpp
     WebProcess/WebPage/PageOverlay.cpp
     WebProcess/WebPage/TapHighlightController.cpp
@@ -445,7 +445,7 @@ SET(WebKit2_MESSAGES_IN_FILES
     Shared/Plugins/NPObjectMessageReceiver.messages.in
 
     UIProcess/DrawingAreaProxy.messages.in
-    UIProcess/LayerTreeHostProxy.messages.in
+    UIProcess/LayerTreeCoordinatorProxy.messages.in
     UIProcess/WebApplicationCacheManagerProxy.messages.in
     UIProcess/WebContext.messages.in
     UIProcess/WebCookieManagerProxy.messages.in
@@ -495,7 +495,7 @@ SET(WebKit2_MESSAGES_IN_FILES
 
     WebProcess/WebPage/DrawingArea.messages.in
     WebProcess/WebPage/EventDispatcher.messages.in
-    WebProcess/WebPage/LayerTreeHost.messages.in
+    WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.messages.in
     WebProcess/WebPage/WebInspector.messages.in
     WebProcess/WebPage/WebPage.messages.in
 )

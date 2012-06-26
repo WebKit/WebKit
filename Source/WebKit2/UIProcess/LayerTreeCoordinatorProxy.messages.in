@@ -18,7 +18,7 @@
 #
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TILED_BACKING_STORE)
-messages -> LayerTreeHostProxy {
+messages -> LayerTreeCoordinatorProxy {
     SetCompositingLayerState(uint32_t id, WebKit::WebLayerInfo layerInfo)
     SetCompositingLayerChildren(uint32_t id, Vector<uint32_t> children)
 #if ENABLE(CSS_FILTERS)

@@ -2605,9 +2605,9 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
     }
 
 #if USE(TILED_BACKING_STORE) && USE(ACCELERATED_COMPOSITING)
-    if (messageID.is<CoreIPC::MessageClassLayerTreeHost>()) {
+    if (messageID.is<CoreIPC::MessageClassLayerTreeCoordinator>()) {
         if (m_drawingArea)
-            m_drawingArea->didReceiveLayerTreeHostMessage(connection, messageID, arguments);
+            m_drawingArea->didReceiveLayerTreeCoordinatorMessage(connection, messageID, arguments);
         return;
     }
 #endif

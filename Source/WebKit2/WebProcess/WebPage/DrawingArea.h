@@ -91,7 +91,7 @@ public:
 #endif
 
 #if USE(UI_SIDE_COMPOSITING)
-    virtual void didReceiveLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;
+    virtual void didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;
 #endif
 
 #if PLATFORM(WIN)

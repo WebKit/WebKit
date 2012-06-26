@@ -17,8 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef LayerTreeHostProxy_h
-#define LayerTreeHostProxy_h
+#ifndef LayerTreeCoordinatorProxy_h
+#define LayerTreeCoordinatorProxy_h
 
 #if USE(UI_SIDE_COMPOSITING)
 
@@ -44,10 +44,10 @@ class WebLayerInfo;
 class WebLayerTreeRenderer;
 class WebLayerUpdateInfo;
 
-class LayerTreeHostProxy {
+class LayerTreeCoordinatorProxy {
 public:
-    LayerTreeHostProxy(DrawingAreaProxy*);
-    virtual ~LayerTreeHostProxy();
+    LayerTreeCoordinatorProxy(DrawingAreaProxy*);
+    virtual ~LayerTreeCoordinatorProxy();
     void setCompositingLayerState(WebLayerID, const WebLayerInfo&);
     void setCompositingLayerChildren(WebLayerID, const Vector<WebLayerID>&);
 #if ENABLE(CSS_FILTERS)
@@ -65,7 +65,7 @@ public:
     void removeTileForLayer(int layerID, int tileID);
     void createDirectlyCompositedImage(int64_t, const WebKit::ShareableBitmap::Handle&);
     void destroyDirectlyCompositedImage(int64_t);
-    void didReceiveLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void updateViewport();
     void renderNextFrame();
     void didChangeScrollPosition(const WebCore::IntPoint& position);
@@ -87,4 +87,4 @@ protected:
 
 #endif
 
-#endif // LayerTreeHostProxy_h
+#endif // LayerTreeCoordinatorProxy_h
