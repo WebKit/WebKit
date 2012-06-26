@@ -3035,25 +3035,17 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
-    case StrCat:
     case NewArray: {
-        // We really don't want to grow the register file just to do a StrCat or NewArray.
-        // Say we have 50 functions on the stack that all have a StrCat in them that has
-        // upwards of 10 operands. In the DFG this would mean that each one gets
-        // some random virtual register, and then to do the StrCat we'd need a second
-        // span of 10 operands just to have somewhere to copy the 10 operands to, where
-        // they'd be contiguous and we could easily tell the C code how to find them.
-        // Ugly! So instead we use the scratchBuffer infrastructure in JSGlobalData. That
-        // way, those 50 functions will share the same scratchBuffer for offloading their
-        // StrCat operands. It's about as good as we can do, unless we start doing
-        // virtual register coalescing to ensure that operands to StrCat get spilled
-        // in exactly the place where StrCat wants them, or else have the StrCat
-        // refer to those operands' SetLocal instructions to force them to spill in
-        // the right place. Basically, any way you cut it, the current approach
-        // probably has the best balance of performance and sensibility in the sense
-        // that it does not increase the complexity of the DFG JIT just to make StrCat
-        // fast and pretty.
-
+        if (!node.numChildren()) {
+            flushRegisters();
+            GPRResult result(this);
+            callOperation(
+                operationNewEmptyArray, result.gpr(),
+                m_jit.graph().globalObjectFor(node.codeOrigin)->arrayStructure());
+            cellResult(result.gpr(), m_compileIndex);
+            break;
+        }
+        
         size_t scratchSize = sizeof(EncodedJSValue) * node.numChildren();
         ScratchBuffer* scratchBuffer = m_jit.globalData()->scratchBufferForSize(scratchSize);
         EncodedJSValue* buffer = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : 0;
@@ -3078,7 +3070,58 @@ void SpeculativeJIT::compile(Node& node)
 
         GPRResult result(this);
         
-        callOperation(op == StrCat ? operationStrCat : operationNewArray, result.gpr(), static_cast<void *>(buffer), node.numChildren());
+        callOperation(
+            operationNewArray, result.gpr(),
+            m_jit.graph().globalObjectFor(node.codeOrigin)->arrayStructure(),
+            static_cast<void*>(buffer), node.numChildren());
+
+        if (scratchSize) {
+            GPRTemporary scratch(this);
+
+            m_jit.move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratch.gpr());
+            m_jit.storePtr(TrustedImmPtr(0), scratch.gpr());
+        }
+
+        cellResult(result.gpr(), m_compileIndex, UseChildrenCalledExplicitly);
+        break;
+    }
+        
+    case NewArrayWithSize: {
+        SpeculateStrictInt32Operand size(this, node.child1());
+        GPRReg sizeGPR = size.gpr();
+        flushRegisters();
+        GPRResult result(this);
+        callOperation(operationNewArrayWithSize, result.gpr(), m_jit.graph().globalObjectFor(node.codeOrigin)->arrayStructure(), sizeGPR);
+        cellResult(result.gpr(), m_compileIndex);
+        break;
+    }
+        
+    case StrCat: {
+        size_t scratchSize = sizeof(EncodedJSValue) * node.numChildren();
+        ScratchBuffer* scratchBuffer = m_jit.globalData()->scratchBufferForSize(scratchSize);
+        EncodedJSValue* buffer = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : 0;
+        
+        for (unsigned operandIdx = 0; operandIdx < node.numChildren(); ++operandIdx) {
+            JSValueOperand operand(this, m_jit.graph().m_varArgChildren[node.firstChild() + operandIdx]);
+            GPRReg opGPR = operand.gpr();
+            operand.use();
+            
+            m_jit.storePtr(opGPR, buffer + operandIdx);
+        }
+        
+        flushRegisters();
+
+        if (scratchSize) {
+            GPRTemporary scratch(this);
+
+            // Tell GC mark phase how much of the scratch buffer is active during call.
+            m_jit.move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratch.gpr());
+            m_jit.storePtr(TrustedImmPtr(scratchSize), scratch.gpr());
+        }
+
+        GPRResult result(this);
+        
+        callOperation(operationStrCat, result.gpr(), static_cast<void *>(buffer), node.numChildren());
 
         if (scratchSize) {
             GPRTemporary scratch(this);

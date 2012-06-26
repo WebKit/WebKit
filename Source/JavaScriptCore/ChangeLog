@@ -1,3 +1,41 @@
+2012-06-25  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::operationNewArray is unnecessarily slow, and may use the wrong array
+        prototype when inlined
+        https://bugs.webkit.org/show_bug.cgi?id=89821
+
+        Reviewed by Geoffrey Garen.
+        
+        Fixes all array allocations to use the right structure, and hence the right prototype. Adds
+        inlining of new Array(...) with a non-zero number of arguments. Optimizes allocations of
+        empty arrays.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        (CCallHelpers):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/JSArray.h:
+        (JSC):
+        (JSC::constructArray):
+        * runtime/JSGlobalObject.h:
+        (JSC):
+        (JSC::constructArray):
+
 2012-06-26  Filip Pizlo  <fpizlo@apple.com>
 
         New fast/js/dfg-store-unexpected-value-into-argument-and-osr-exit.html fails on 32 bit

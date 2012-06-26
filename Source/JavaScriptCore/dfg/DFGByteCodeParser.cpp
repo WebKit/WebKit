@@ -1606,15 +1606,19 @@ bool ByteCodeParser::handleConstantInternalFunction(
     // we know about is small enough, that having just a linear cascade of if statements
     // is good enough.
     
-    UNUSED_PARAM(registerOffset); // Remove this once we do more things to the arguments.
     UNUSED_PARAM(prediction); // Remove this once we do more things.
     UNUSED_PARAM(kind); // Remove this once we do more things.
     
     if (function->classInfo() == &ArrayConstructor::s_info) {
-        // We could handle this but don't for now.
-        if (argumentCountIncludingThis != 1)
-            return false;
+        if (argumentCountIncludingThis == 2) {
+            setIntrinsicResult(
+                usesResult, resultOperand,
+                addToGraph(NewArrayWithSize, get(registerOffset + argumentToOperand(1))));
+            return true;
+        }
         
+        for (int i = 1; i < argumentCountIncludingThis; ++i)
+            addVarArgChild(get(registerOffset + argumentToOperand(i)));
         setIntrinsicResult(
             usesResult, resultOperand,
             addToGraph(Node::VarArg, NewArray, OpInfo(0), OpInfo(0)));

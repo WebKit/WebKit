@@ -445,23 +445,10 @@ namespace JSC {
     {
         return constructEmptyArray(exec, exec->lexicalGlobalObject(), initialLength);
     }
-
+ 
     inline JSArray* constructArray(ExecState* exec, JSGlobalObject* globalObject, const ArgList& values)
     {
-        JSGlobalData& globalData = exec->globalData();
-        unsigned length = values.size();
-        JSArray* array = JSArray::tryCreateUninitialized(globalData, globalObject->arrayStructure(), length);
-
-        // FIXME: we should probably throw an out of memory error here, but
-        // when making this change we should check that all clients of this
-        // function will correctly handle an exception being thrown from here.
-        if (!array)
-            CRASH();
-
-        for (unsigned i = 0; i < length; ++i)
-            array->initializeIndex(globalData, i, values.at(i));
-        array->completeInitialization(length);
-        return array;
+        return constructArray(exec, globalObject->arrayStructure(), values);
     }
 
     inline JSArray* constructArray(ExecState* exec, const ArgList& values)
@@ -471,19 +458,7 @@ namespace JSC {
 
     inline JSArray* constructArray(ExecState* exec, JSGlobalObject* globalObject, const JSValue* values, unsigned length)
     {
-        JSGlobalData& globalData = exec->globalData();
-        JSArray* array = JSArray::tryCreateUninitialized(globalData, globalObject->arrayStructure(), length);
-
-        // FIXME: we should probably throw an out of memory error here, but
-        // when making this change we should check that all clients of this
-        // function will correctly handle an exception being thrown from here.
-        if (!array)
-            CRASH();
-
-        for (unsigned i = 0; i < length; ++i)
-            array->initializeIndex(globalData, i, values[i]);
-        array->completeInitialization(length);
-        return array;
+        return constructArray(exec, globalObject->arrayStructure(), values, length);
     }
 
     inline JSArray* constructArray(ExecState* exec, const JSValue* values, unsigned length)

@@ -1,3 +1,44 @@
+2012-06-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::operationNewArray is unnecessarily slow, and may use the wrong array
+        prototype when inlined
+        https://bugs.webkit.org/show_bug.cgi?id=89821
+
+        Rubber stamped by Geoffrey Garen.
+
+        * fast/js/dfg-cross-global-object-inline-new-array-expected.txt: Added.
+        * fast/js/dfg-cross-global-object-inline-new-array-literal-expected.txt: Added.
+        * fast/js/dfg-cross-global-object-inline-new-array-literal-with-variables-expected.txt: Added.
+        * fast/js/dfg-cross-global-object-inline-new-array-literal-with-variables.html: Added.
+        * fast/js/dfg-cross-global-object-inline-new-array-literal.html: Added.
+        * fast/js/dfg-cross-global-object-inline-new-array-with-elements-expected.txt: Added.
+        * fast/js/dfg-cross-global-object-inline-new-array-with-elements.html: Added.
+        * fast/js/dfg-cross-global-object-inline-new-array-with-size-expected.txt: Added.
+        * fast/js/dfg-cross-global-object-inline-new-array-with-size.html: Added.
+        * fast/js/dfg-cross-global-object-inline-new-array.html: Added.
+        * fast/js/script-tests/cross-global-object-inline-global-var.js:
+        (done):
+        * fast/js/script-tests/dfg-cross-global-object-inline-new-array-literal-with-variables.js: Added.
+        (foo):
+        (done):
+        (doit):
+        * fast/js/script-tests/dfg-cross-global-object-inline-new-array-literal.js: Added.
+        (foo):
+        (done):
+        (doit):
+        * fast/js/script-tests/dfg-cross-global-object-inline-new-array-with-elements.js: Added.
+        (foo):
+        (done):
+        (doit):
+        * fast/js/script-tests/dfg-cross-global-object-inline-new-array-with-size.js: Added.
+        (foo):
+        (done):
+        (doit):
+        * fast/js/script-tests/dfg-cross-global-object-inline-new-array.js: Added.
+        (foo):
+        (done):
+        (doit):
+
 2012-06-26  Adam Klein  <adamk@chromium.org>
 
         MutationObserver.observe should treat a null or undefined options argument as empty

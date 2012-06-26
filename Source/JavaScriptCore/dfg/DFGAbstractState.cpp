@@ -1141,13 +1141,19 @@ bool AbstractState::execute(unsigned indexInBlock)
     case NewArray:
     case NewArrayBuffer:
         node.setCanExit(false);
-        forNode(nodeIndex).set(m_codeBlock->globalObject()->arrayStructure());
+        forNode(nodeIndex).set(m_graph.globalObjectFor(node.codeOrigin)->arrayStructure());
+        m_haveStructures = true;
+        break;
+        
+    case NewArrayWithSize:
+        speculateInt32Unary(node);
+        forNode(nodeIndex).set(m_graph.globalObjectFor(node.codeOrigin)->arrayStructure());
         m_haveStructures = true;
         break;
             
     case NewRegexp:
         node.setCanExit(false);
-        forNode(nodeIndex).set(m_codeBlock->globalObject()->regExpStructure());
+        forNode(nodeIndex).set(m_graph.globalObjectFor(node.codeOrigin)->regExpStructure());
         m_haveStructures = true;
         break;
             

@@ -184,6 +184,7 @@ namespace JSC { namespace DFG {
     /* Allocations. */\
     macro(NewObject, NodeResultJS) \
     macro(NewArray, NodeResultJS | NodeHasVarArgs) \
+    macro(NewArrayWithSize, NodeResultJS) \
     macro(NewArrayBuffer, NodeResultJS) \
     macro(NewRegexp, NodeResultJS) \
     \

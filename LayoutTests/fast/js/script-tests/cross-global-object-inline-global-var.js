@@ -18,7 +18,7 @@ function done(value) {
     if (value == expected)
         testPassed("done() called with " + expected);
     else
-        testFailed("done() is " + value + " and should be " + expected + ".");
+        testFailed("done() called with " + value + ", but expected " + expected);
     layoutTestController.notifyDone();
 }
 
