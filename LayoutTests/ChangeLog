@@ -1,3 +1,63 @@
+2012-06-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Convert editing/deleting/delete-3959464-fix.html, delete-at-paragraph-boundaries-001.html, merge-into-empty-block-1.html and merge-into-empty-block-2.html to dump-as-markup tests
+        https://bugs.webkit.org/show_bug.cgi?id=90011
+
+        Reviewed by Eric Seidel.
+
+        * editing/deleting/delete-3959464-fix-expected.txt: Added.
+        * editing/deleting/delete-3959464-fix.html:
+        * editing/deleting/delete-at-paragraph-boundaries-001-expected.txt: Added.
+        * editing/deleting/delete-at-paragraph-boundaries-001.html:
+        * editing/deleting/merge-into-empty-block-1-expected.txt: Added.
+        * editing/deleting/merge-into-empty-block-1.html:
+        * editing/deleting/merge-into-empty-block-2-expected.txt: Added.
+        * editing/deleting/merge-into-empty-block-2.html:
+        * platform/chromium-linux/editing/deleting/delete-3959464-fix-expected.png: Removed.
+        * platform/chromium-linux/editing/deleting/delete-at-paragraph-boundaries-001-expected.png: Removed.
+        * platform/chromium-linux/editing/deleting/merge-into-empty-block-1-expected.png: Removed.
+        * platform/chromium-linux/editing/deleting/merge-into-empty-block-2-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/deleting/delete-at-paragraph-boundaries-001-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/deleting/merge-into-empty-block-1-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/deleting/merge-into-empty-block-2-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/editing/deleting/merge-into-empty-block-1-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/editing/deleting/merge-into-empty-block-2-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-3959464-fix-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-at-paragraph-boundaries-001-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/merge-into-empty-block-1-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/merge-into-empty-block-2-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/delete-3959464-fix-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/delete-3959464-fix-expected.txt: Removed.
+        * platform/chromium-win/editing/deleting/delete-at-paragraph-boundaries-001-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/delete-at-paragraph-boundaries-001-expected.txt: Removed.
+        * platform/chromium-win/editing/deleting/merge-into-empty-block-1-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/merge-into-empty-block-1-expected.txt: Removed.
+        * platform/chromium-win/editing/deleting/merge-into-empty-block-2-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/merge-into-empty-block-2-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-3959464-fix-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-at-paragraph-boundaries-001-expected.png: Removed.
+        * platform/gtk/editing/deleting/delete-at-paragraph-boundaries-001-expected.txt: Removed.
+        * platform/gtk/editing/deleting/merge-into-empty-block-1-expected.png: Removed.
+        * platform/gtk/editing/deleting/merge-into-empty-block-1-expected.txt: Removed.
+        * platform/gtk/editing/deleting/merge-into-empty-block-2-expected.png: Removed.
+        * platform/gtk/editing/deleting/merge-into-empty-block-2-expected.txt: Removed.
+        * platform/mac/editing/deleting/delete-3959464-fix-expected.png: Removed.
+        * platform/mac/editing/deleting/delete-3959464-fix-expected.txt: Removed.
+        * platform/mac/editing/deleting/delete-at-paragraph-boundaries-001-expected.png: Removed.
+        * platform/mac/editing/deleting/delete-at-paragraph-boundaries-001-expected.txt: Removed.
+        * platform/mac/editing/deleting/merge-into-empty-block-1-expected.png: Removed.
+        * platform/mac/editing/deleting/merge-into-empty-block-1-expected.txt: Removed.
+        * platform/mac/editing/deleting/merge-into-empty-block-2-expected.png: Removed.
+        * platform/mac/editing/deleting/merge-into-empty-block-2-expected.txt: Removed.
+        * platform/qt/editing/deleting/delete-3959464-fix-expected.png: Removed.
+        * platform/qt/editing/deleting/delete-3959464-fix-expected.txt: Removed.
+        * platform/qt/editing/deleting/delete-at-paragraph-boundaries-001-expected.png: Removed.
+        * platform/qt/editing/deleting/delete-at-paragraph-boundaries-001-expected.txt: Removed.
+        * platform/qt/editing/deleting/merge-into-empty-block-1-expected.png: Removed.
+        * platform/qt/editing/deleting/merge-into-empty-block-1-expected.txt: Removed.
+        * platform/qt/editing/deleting/merge-into-empty-block-2-expected.png: Removed.
+        * platform/qt/editing/deleting/merge-into-empty-block-2-expected.txt: Removed.
+
 2012-06-26  Dave Tharp  <dtharp@codeaurora.org>
 
         ietestcenter/css3/valuesandunits/units-000.htm asserts

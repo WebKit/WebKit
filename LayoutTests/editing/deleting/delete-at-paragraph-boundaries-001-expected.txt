@@ -1,0 +1,50 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of P > DIV > DIV > BODY > HTML > #document to 1 of #text > P > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of P > DIV > DIV > BODY > HTML > #document to 4 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of P > DIV > DIV > BODY > HTML > #document to 0 of P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+
+
+Tests: 
+
+Deleting when a selection starts in a blank line created by a block with a BR placeholder in it and extends to the end of a block.
+
+
+Expected Results:
+
+Should see the three lines in the red box. First line should be "A". Next two lines should be empty. Insertion point should
+be blinking on the second line (the first blank one).
+
+
+| "
+"
+| <div>
+|   class="editing"
+|   id="test"
+|   "
+"
+|   <p>
+|     style="margin-top: 0; margin-bottom: 0"
+|     "A"
+|   "
+"
+|   <p>
+|     style="margin-top: 0; margin-bottom: 0"
+|     <#selection-caret>
+|     <br>
+|   "
+"
+|   <p>
+|     style="margin-top: 0; margin-bottom: 0"
+|     <br>
+|       class="webkit-block-placeholder"
+|   "
+"
+| "
+"

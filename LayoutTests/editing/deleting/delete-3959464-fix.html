@@ -1,6 +1,5 @@
 <html> 
 <head>
-
 <style>
 .editing { 
     border: 2px solid red; 
@@ -14,8 +13,8 @@
     margin-bottom: 24px;
 }
 </style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
 
 function editingTest() {
@@ -26,6 +25,9 @@ function editingTest() {
     typeCharacterCommand();
     extendSelectionBackwardByLineCommand();
     deleteCommand();
+
+    Markup.description(document.querySelector('.explanation').textContent);
+    Markup.dump('root');
 }
 
 </script>
@@ -34,8 +36,7 @@ function editingTest() {
 </head> 
 <body>
 <div class="explanation">
-Should see "foo" and "bar" each in a separate red box. Note that the "foo" text is really "foo ". 
-There <b>must</b> be a space at the end of the line.
+Should see two blank lines after "foo" each in a separate red box (class=editing).
 </div>
 
 <div contenteditable="true" id="root" style="word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;">
