@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 765x42
+          text run at (0,0) width 765: "There are two boxes below, both rotated 180\x{B0} in Y. The rightmost one has backface-visibility: hidden, so you"
+          text run at (0,21) width 79: "can't see it."
+      RenderBlock {DIV} at (0,58) size 402x202 [border: (1px solid #000000)]
+        RenderText {#text} at (197,181) size 4x21
+          text run at (197,181) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,260) size 784x42
+        RenderText {#text} at (0,0) size 184x21
+          text run at (0,0) width 184: "Found box1 on left: PASS"
+        RenderBR {BR} at (184,16) size 0x0
+        RenderText {#text} at (0,21) size 225x21
+          text run at (0,21) width 225: "Found container on right: PASS"
+        RenderBR {BR} at (225,37) size 0x0
+layer at (27,85) size 160x160
+  RenderBlock {DIV} at (19,19) size 160x160 [bgcolor=#808080]
+layer at (227,85) size 160x160
+  RenderBlock {DIV} at (219,19) size 160x160 [bgcolor=#808080]

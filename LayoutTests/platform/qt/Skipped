@@ -264,8 +264,8 @@ plugins/form-value.html
 transforms/3d/general/perspective-non-layer.html
 transforms/3d/general/perspective-units.html
 
-# "backface-visibility: hidden" is not hiding test boxes.
-transforms/3d/hit-testing
+# Small rounding error.
+transforms/3d/point-mapping/3d-point-mapping-origins.html
 
 # accessibility support
 accessibility
