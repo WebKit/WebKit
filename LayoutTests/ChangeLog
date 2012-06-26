@@ -1,3 +1,13 @@
+2012-06-25  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Deleting list distributed to Shadow DOM does not work correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=89170
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/shadow/delete-list-in-shadow-expected.txt: Added.
+        * editing/shadow/delete-list-in-shadow.html: Added.
+
 2012-06-25  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, rolling out r121145.

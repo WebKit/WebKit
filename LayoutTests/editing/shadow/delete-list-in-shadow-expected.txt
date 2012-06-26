@@ -1,0 +1,9 @@
+Elements distributed to Shadow DOM should be deleted correctly when pressing delete key.
+
+To test manually, select somewhere in ABCDE from somehwere in 12345, and press delete, and check the selected text is deleted correctly.
+
+PASS hostTextContent is 'AB345'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

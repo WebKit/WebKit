@@ -1,3 +1,18 @@
+2012-06-25  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Deleting list distributed to Shadow DOM does not work correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=89170
+
+        Reviewed by Ryosuke Niwa.
+
+        When deleting several elements distributed to Shadow DOM, some renderers might be gone in
+        processing deletion. To fix them, we should call isContentEditable() instead of rendererIsEditable().
+
+        Test: editing/shadow/delete-list-in-shadow.html
+
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::doApply):
+
 2012-06-25  Min Qin  <qinmin@chromium.org>
 
         [Chromium] Fix the css stylesheet for android media controls after recent changes

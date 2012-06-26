@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../fast/dom/shadow/resources/polyfill.js"></script>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+
+<p>Elements distributed to Shadow DOM should be deleted correctly when pressing delete key.</p>
+<p>To test manually, select somewhere in ABCDE from somehwere in 12345, and press delete, and check the selected text is deleted correctly.</p>
+
+<div id="container">
+    <ol id="host" contenteditable>
+        <li id="list1">ABCDE</li>
+        <li id="list2">abcde</li>
+        <li id="list3">12345</li>
+    </ol>
+</div>
+<pre id="console"></pre>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var shadowRoot = new WebKitShadowRoot(host);
+var li = document.createElement('li');
+li.innerHTML = 'hogehoge';
+shadowRoot.appendChild(li);
+shadowRoot.appendChild(document.createElement('shadow'));
+
+if (window.eventSender) {
+    eventSender.mouseMoveTo(list1.offsetLeft + 20, list1.offsetTop + list1.offsetHeight / 2);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(list3.offsetLeft + 20, list3.offsetTop + list3.offsetHeight / 2);
+    eventSender.mouseUp();
+
+    eventSender.keyDown('delete');
+
+    var hostTextContent = host.textContent.replace(/^\s+|\s+$/g, '');
+    shouldBe("hostTextContent", "'AB345'");
+    container.innerHTML = "";
+}
+</script>
+
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
