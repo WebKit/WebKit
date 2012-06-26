@@ -144,8 +144,11 @@ bool ExecutionCounter::setThreshold(CodeBlock* codeBlock)
         return true;
     }
 
-    int32_t maxThreshold =
-        codeBlock->globalObject()->weakRandomInteger() % Options::maximumExecutionCountsBetweenCheckpoints;
+    int32_t maxThreshold;
+    if (Options::randomizeExecutionCountsBetweenCheckpoints)
+        maxThreshold = codeBlock->globalObject()->weakRandomInteger() % Options::maximumExecutionCountsBetweenCheckpoints;
+    else
+        maxThreshold = Options::maximumExecutionCountsBetweenCheckpoints;
     if (threshold > maxThreshold)
         threshold = maxThreshold;
     

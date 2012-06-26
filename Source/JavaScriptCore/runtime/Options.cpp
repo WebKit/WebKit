@@ -67,6 +67,7 @@ int32_t thresholdForOptimizeSoon;
 int32_t executionCounterIncrementForLoop;
 int32_t executionCounterIncrementForReturn;
 
+bool randomizeExecutionCountsBetweenCheckpoints;
 int32_t maximumExecutionCountsBetweenCheckpoints;
 
 unsigned desiredSpeculativeSuccessFailRatio;
@@ -190,6 +191,7 @@ void initializeOptions()
     SET(executionCounterIncrementForLoop,   1);
     SET(executionCounterIncrementForReturn, 15);
     
+    SET(randomizeExecutionCountsBetweenCheckpoints, false);
     SET(maximumExecutionCountsBetweenCheckpoints, 1000);
 
     SET(desiredSpeculativeSuccessFailRatio, 6);

@@ -1,3 +1,25 @@
+2012-06-25  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should try to make profiling deterministic because otherwise reproducing failures is
+        nearly impossible
+        https://bugs.webkit.org/show_bug.cgi?id=89940
+
+        Rubber stamped by Gavin Barraclough.
+        
+        This rolls out the part of http://trac.webkit.org/changeset/121215 that introduced randomness
+        into the system. Now, instead of randomizing the tier-up threshold, we always set it to an
+        artificially low (and statically predetermined!) value. This gives most of the benefit of
+        threshold randomization without actually making the system behave completely differently on
+        each invocation.
+
+        * bytecode/ExecutionCounter.cpp:
+        (JSC::ExecutionCounter::setThreshold):
+        * runtime/Options.cpp:
+        (Options):
+        (JSC::Options::initializeOptions):
+        * runtime/Options.h:
+        (Options):
+
 2012-06-22  Filip Pizlo  <fpizlo@apple.com>
 
         Value profiling should use tier-up threshold randomization to get more coverage

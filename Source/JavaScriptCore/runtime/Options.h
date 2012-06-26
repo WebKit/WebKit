@@ -53,6 +53,7 @@ extern int32_t thresholdForOptimizeNextInvocation;
 extern int32_t executionCounterIncrementForLoop;
 extern int32_t executionCounterIncrementForReturn;
 
+extern bool randomizeExecutionCountsBetweenCheckpoints;
 extern int32_t maximumExecutionCountsBetweenCheckpoints;
 
 extern unsigned desiredSpeculativeSuccessFailRatio;
