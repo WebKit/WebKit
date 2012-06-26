@@ -168,18 +168,14 @@ static int ioSurfaceLockOptions(int lockOptions)
     return options;
 }
 
-static int ioSurfaceUnlockOptions(int lockOptions)
-{
-    int options = 0;
-    if (lockOptions & GraphicsSurface::ReadOnly)
-        options |= (kIOSurfaceLockAvoidSync | kIOSurfaceLockReadOnly);
-    return options;
-}
-
 char* GraphicsSurface::platformLock(const IntRect& rect, int* outputStride, LockOptions lockOptions)
 {
     m_lockOptions = lockOptions;
-    IOSurfaceLock(m_platformSurface, ioSurfaceLockOptions(m_lockOptions), 0);
+    IOReturn status = IOSurfaceLock(m_platformSurface, ioSurfaceLockOptions(m_lockOptions), 0);
+    if (status == kIOReturnCannotLock) {
+        m_lockOptions |= RetainPixels;
+        IOSurfaceLock(m_platformSurface, ioSurfaceLockOptions(m_lockOptions), 0);
+    }
 
     int stride = IOSurfaceGetBytesPerRow(m_platformSurface);
     if (outputStride)
@@ -191,7 +187,7 @@ char* GraphicsSurface::platformLock(const IntRect& rect, int* outputStride, Lock
 
 void GraphicsSurface::platformUnlock()
 {
-    IOSurfaceUnlock(m_platformSurface, ioSurfaceUnlockOptions(m_lockOptions) & (~kIOSurfaceLockAvoidSync), 0);
+    IOSurfaceUnlock(m_platformSurface, ioSurfaceLockOptions(m_lockOptions), 0);
 }
 
 void GraphicsSurface::platformDestroy()

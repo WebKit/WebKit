@@ -1,3 +1,19 @@
+2012-06-25  Jocelyn Turcotte  <turcotte.j@gmail.com>
+
+        GraphicsSurface: Fix IOSurfaceLock failures on Intel video cards.
+        https://bugs.webkit.org/show_bug.cgi?id=89883
+
+        Reviewed by Noam Rosenthal.
+
+        Follow the documentation which says: "If locking the buffer requires a readback,
+        the lock will fail with an error return of kIOReturnCannotLock."
+        Also make sure that we use the same set of flags when locking and unlocking
+        for simplicity and to follow this requirement on the kIOSurfaceLockReadOnly flag.
+
+        * platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp:
+        (WebCore::GraphicsSurface::platformLock):
+        (WebCore::GraphicsSurface::platformUnlock):
+
 2012-06-26  Philip Rogers  <pdr@google.com>
 
         Fix setCurrentTime for paused animations
