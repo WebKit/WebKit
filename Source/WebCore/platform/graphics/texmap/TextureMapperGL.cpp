@@ -474,7 +474,8 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
 {
     GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id));
 
-    if (bytesPerLine == targetRect.width() / 4 && sourceOffset == IntPoint::zero()) {
+    const unsigned bytesPerPixel = 4;
+    if (bytesPerLine == targetRect.width() * bytesPerPixel && sourceOffset == IntPoint::zero()) {
         GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), GL_RGBA, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data));
         return;
     }
@@ -482,11 +483,11 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
     // For ES drivers that don't support sub-images.
     if (!driverSupportsSubImage()) {
         const char* bits = static_cast<const char*>(data);
-        const char* src = bits + sourceOffset.y() * bytesPerLine + sourceOffset.x() * 4;
-        Vector<char> temporaryData(targetRect.width() * targetRect.height() * 4);
+        const char* src = bits + sourceOffset.y() * bytesPerLine + sourceOffset.x() * bytesPerPixel;
+        Vector<char> temporaryData(targetRect.width() * targetRect.height() * bytesPerPixel);
         char* dst = temporaryData.data();
 
-        const int targetBytesPerLine = targetRect.width() * 4;
+        const int targetBytesPerLine = targetRect.width() * bytesPerPixel;
         for (int y = 0; y < targetRect.height(); ++y) {
             memcpy(dst, src, targetBytesPerLine);
             src += bytesPerLine;
@@ -499,7 +500,7 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
 
 #if !defined(TEXMAP_OPENGL_ES_2)
     // Use the OpenGL sub-image extension, now that we know it's available.
-    GL_CMD(glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / 4));
+    GL_CMD(glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / bytesPerPixel));
     GL_CMD(glPixelStorei(GL_UNPACK_SKIP_ROWS, sourceOffset.y()));
     GL_CMD(glPixelStorei(GL_UNPACK_SKIP_PIXELS, sourceOffset.x()));
     GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), GL_RGBA, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data));
