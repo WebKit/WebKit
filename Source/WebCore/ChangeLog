@@ -1,3 +1,22 @@
+2012-06-25  Adrienne Walker  <enne@google.com>
+
+        [chromium] Make CCThreadProxy not draw a frame mid-commit
+        https://bugs.webkit.org/show_bug.cgi?id=89905
+
+        Reviewed by James Robinson.
+
+        If commitComplete is not called before the next frame goes up, then
+        then the max scroll position on the root scroll layer is not updated.
+        This causes the compositor-side scrollbar to have an incorrect
+        visibleSize, causing the thumbRect to become stretched, relative to
+        when it was originally painted.
+
+        CCScheduler::setVisible has the side effect of kicking off a frame, so
+        move it last.
+
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::scheduledActionCommit):
+
 2012-06-25  Pablo Flouret  <pablof@motorola.com>
 
         EventSource: Events should not be dispatched after close()

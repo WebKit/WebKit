@@ -621,7 +621,6 @@ void CCThreadProxy::scheduledActionCommit()
 
     m_layerTreeHost->beginCommitOnImplThread(m_layerTreeHostImpl.get());
     m_layerTreeHost->finishCommitOnImplThread(m_layerTreeHostImpl.get());
-    m_schedulerOnImplThread->setVisible(m_layerTreeHostImpl->visible());
 
     m_layerTreeHostImpl->commitComplete();
 
@@ -629,6 +628,9 @@ void CCThreadProxy::scheduledActionCommit()
 
     m_commitCompletionEventOnImplThread->signal();
     m_commitCompletionEventOnImplThread = 0;
+
+    // SetVisible kicks off the next scheduler action, so this must be last.
+    m_schedulerOnImplThread->setVisible(m_layerTreeHostImpl->visible());
 }
 
 void CCThreadProxy::scheduledActionBeginContextRecreation()
