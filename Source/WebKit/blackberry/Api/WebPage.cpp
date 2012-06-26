@@ -5572,8 +5572,10 @@ void WebPage::notifyAppActivationStateChange(ActivationStateType activationState
 
 void WebPage::notifySwipeEvent()
 {
-    FOR_EACH_PLUGINVIEW(d->m_pluginViews)
-       (*it)->handleSwipeEvent();
+    if (d->m_fullScreenPluginView.get())
+       d->m_fullScreenPluginView->handleSwipeEvent();
+    else
+       notifyFullScreenVideoExited(true);
 }
 
 void WebPage::notifyScreenPowerStateChanged(bool powered)

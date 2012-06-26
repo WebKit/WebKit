@@ -1,3 +1,20 @@
+2012-06-26  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Use gesture SwipeDown to exit fullscreen for both video and plugin.
+        https://bugs.webkit.org/show_bug.cgi?id=89960
+
+        Reviewed by Antonio Gomes.
+
+        We used to use gesture swipedown to exit fullscreen for plugin, but not fullscreen
+        HTML5 video; When a swipe down happens, it applies this event to all the pluginviews
+        in a page, even though only the one in fullscreen mode will process this.
+
+        With this patch, the SwipeDown gesture will only apply to the fullscreen elemement,
+        which is either a plugin, or an Video element.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::notifySwipeEvent):
+
 2012-06-25  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Fill more data in device motion event
