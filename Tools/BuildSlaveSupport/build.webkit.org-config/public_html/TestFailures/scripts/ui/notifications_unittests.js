@@ -326,8 +326,8 @@ test('BuildersFailing', 1, function() {
         '<div class="what">' +
             '<div class="problem">Disasterifying:' +
                 '<ul class="effects">' +
-                    '<li class="builder"><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux"><span class="version">lucid</span><span class="architecture">64-bit</span></a></li>' +
-                    '<li class="builder"><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Win7"><span class="version">win7</span></a></li>' +
+                    '<li class="builder"><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux"><span class="version">lucid</span><span class="architecture">64-bit</span><span class="failures"> compile</span></a></li>' +
+                    '<li class="builder"><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Win7"><span class="version">win7</span><span class="failures"> webkit_tests, update</span></a></li>' +
                 '</ul>' +
             '</div>' +
             '<ul class="causes"></ul>' +

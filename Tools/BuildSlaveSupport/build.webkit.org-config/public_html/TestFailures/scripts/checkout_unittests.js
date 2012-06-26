@@ -56,7 +56,7 @@ test("updateExpectations", 4, function() {
     });
 });
 
-test("rebaseline", 4, function() {
+test("rebaseline", 3, function() {
     var simulator = new NetworkSimulator();
 
     var requests = [];
@@ -67,8 +67,8 @@ test("rebaseline", 4, function() {
     };
     simulator.ajax = function(options)
     {
-        if (options.url.indexOf('/ping') != -1)
-            ok(false, 'Recieved non-ping ajax request.');
+        if (options.url.indexOf('/ping') == -1)
+            ok(false, 'Received non-ping ajax request: ' + options.url);
         simulator.scheduleCallback(options.success);
     };
 
