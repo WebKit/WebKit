@@ -1,3 +1,15 @@
+2012-06-26  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt][NRWT] Fix baseline and skipped file search path.
+        https://bugs.webkit.org/show_bug.cgi?id=89882
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        (QtPortTest.test_baseline_search_path):
+
 2012-06-26  Tony Chang  <tony@chromium.org>
 
         [Qt] Enable grid layout LayoutTests
