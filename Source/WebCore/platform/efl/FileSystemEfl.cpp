@@ -86,50 +86,19 @@ String homeDirectoryPath()
 
 Vector<String> listDirectory(const String& path, const String& filter)
 {
-    Vector<String> entries;
-    CString cpath = path.utf8();
+    Vector<String> matchingEntries;
     CString cfilter = filter.utf8();
-    char filePath[PATH_MAX];
-    char* fileName;
-    size_t fileNameSpace;
-    DIR* dir;
+    const char *f_name;
 
-    if (cpath.length() + NAME_MAX >= sizeof(filePath))
-        return entries;
-    // loop invariant: directory part + '/'
-    memcpy(filePath, cpath.data(), cpath.length());
-    fileName = filePath + cpath.length();
-    if (cpath.length() > 0 && filePath[cpath.length() - 1] != '/') {
-        fileName[0] = '/';
-        fileName++;
+    Eina_Iterator* it = eina_file_ls(path.utf8().data());
+    EINA_ITERATOR_FOREACH(it, f_name) {
+        if (!fnmatch(cfilter.data(), f_name, 0))
+            matchingEntries.append(String::fromUTF8(f_name));
+        eina_stringshare_del(f_name);
     }
-    fileNameSpace = sizeof(filePath) - (fileName - filePath) - 1;
+    eina_iterator_free(it);
 
-    dir = opendir(cpath.data());
-    if (!dir)
-        return entries;
-
-    struct dirent* de;
-    while (de = readdir(dir)) {
-        size_t nameLen;
-        if (de->d_name[0] == '.') {
-            if (de->d_name[1] == '\0')
-                continue;
-            if (de->d_name[1] == '.' && de->d_name[2] == '\0')
-                continue;
-        }
-        if (fnmatch(cfilter.data(), de->d_name, 0))
-            continue;
-
-        nameLen = strlen(de->d_name);
-        if (nameLen >= fileNameSpace)
-            continue; // maybe assert? it should never happen anyway...
-
-        memcpy(fileName, de->d_name, nameLen + 1);
-        entries.append(filePath);
-    }
-    closedir(dir);
-    return entries;
+    return matchingEntries;
 }
 
 }

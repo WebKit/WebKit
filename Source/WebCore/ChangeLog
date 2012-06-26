@@ -1,3 +1,19 @@
+2012-06-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Use eina_file_ls() in EFL implementation of FileSystem listDirectory()
+        https://bugs.webkit.org/show_bug.cgi?id=89976
+
+        Reviewed by Antonio Gomes.
+
+        Rewrite EFL implementation of Filesystem listDirectory() in order to
+        use eina_file_ls() instead of POSIX C functions. This results in
+        shorter code.
+
+        No new tests, behavior has not changed.
+
+        * platform/efl/FileSystemEfl.cpp:
+        (WebCore::listDirectory):
+
 2012-06-26  Alice Cheng  <alice_cheng@apple.com>
 
         Crash at WebCore::TextIterator::handleTextBox
