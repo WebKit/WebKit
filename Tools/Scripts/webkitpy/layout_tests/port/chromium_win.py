@@ -65,7 +65,8 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def determine_full_port_name(cls, host, options, port_name):
         if port_name.endswith('-win'):
             assert host.platform.is_win()
-            if host.platform.os_version in ('7sp0', '7sp1', 'future'):
+            # We don't maintain separate baselines for vista, so we pretend it is win7.
+            if host.platform.os_version in ('vista', '7sp0', '7sp1', 'future'):
                 version = 'win7'
             else:
                 version = host.platform.os_version

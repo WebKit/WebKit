@@ -1,3 +1,23 @@
+2012-06-26  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: broken for chromium on vista
+        https://bugs.webkit.org/show_bug.cgi?id=89988
+
+        Reviewed by Tony Chang.
+
+        r121194 removed support for 'chromium-win-vista' as a separate
+        port, but this actually prevented the code from running on vista
+        at all, which is unduly harsh and broke the websocket tests on
+        the (non-webkit) chromium bots that are still running on vista.
+
+        It's probably good enough to pretend that vista is win7 instead;
+        some layout tests will still fail but at least things'll run.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumWinPort.determine_full_port_name):
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        (ChromiumWinTest.test_versions):
+
 2012-06-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         master.cfg cleanup: Pass CheckOutSource instance instead of class to BuildStep.addStep

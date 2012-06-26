@@ -82,9 +82,11 @@ class ChromiumWinTest(port_testcase.PortTestCase):
         self.assert_name('chromium-win-xp', '7sp0', 'chromium-win-xp')
 
         self.assert_name(None, '7sp0', 'chromium-win-win7')
+        self.assert_name(None, 'vista', 'chromium-win-win7')
         self.assert_name('chromium-win', '7sp0', 'chromium-win-win7')
         self.assert_name('chromium-win-win7', 'xp', 'chromium-win-win7')
         self.assert_name('chromium-win-win7', '7sp0', 'chromium-win-win7')
+        self.assert_name('chromium-win-win7', 'vista', 'chromium-win-win7')
 
         self.assertRaises(AssertionError, self.assert_name, None, 'w2k', 'chromium-win-xp')
 
