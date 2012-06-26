@@ -1,3 +1,26 @@
+2012-06-26  Alice Cheng  <alice_cheng@apple.com>
+
+        Crash at WebCore::TextIterator::handleTextBox
+        https://bugs.webkit.org/show_bug.cgi?id=89526
+        <rdar://problem/10305315>
+
+        Reviewed by Darin Adler.
+
+        The range used for marking becomes invalid after SpellingCorrectionCommand, due to changes in the DOM made by ReplaceSelectionCommand. 
+        This invalid range caused marking to be incorrect, and Mail.app to crash when iterating through the invalid range.  To fix this,
+        recalculate the range for marking after SpellingCorrectionCommand.
+
+        Test: platform/mac/editing/spelling/autocorrection-blockquote-crash.html
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+        * editing/Editor.cpp:  (WebCore::Editor::markAndReplaceFor):
+        * testing/Internals.cpp:
+        (WebCore):
+        (WebCore::Internals::hasAutocorrectedMarker):
+        * testing/Internals.h: (Internals):
+        * testing/Internals.idl:
+
 2012-06-26  Tom Sepez  <tsepez@chromium.org>
 
         [chromium] HTML5 audio/video tags - loading http content from https page doesn't trigger warning.
