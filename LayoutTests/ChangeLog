@@ -1,3 +1,13 @@
+2012-06-26  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Mark a layout test as timeout
+        https://bugs.webkit.org/show_bug.cgi?id=90003
+
+        fast/js/repeat-cached-vm-reentry.html started timing out on Mac debug and Win debug builds
+        between r121233:121239.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in FixedTableLayout::layout

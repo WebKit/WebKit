@@ -36,7 +36,7 @@ BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
 BUGCR24182 LINUX WIN DEBUG : jquery/traversing.html = PASS TIMEOUT
 BUGCR24182 LEOPARD DEBUG : jquery/traversing.html = PASS TEXT TIMEOUT
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
-BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
+BUGCR24182 SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS TIMEOUT
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int8array.html = PASS
@@ -3768,3 +3768,6 @@ BUGWK89936 WIN : fast/css/text-rendering.html = IMAGE+TEXT
 
 // Started failing after r121267.
 BUGWK89998 SNOWLEOPARD RELEASE : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
+
+// Started timeout between r121233:r121239.
+BUGWK90003 WIN DEBUG : fast/js/repeat-cached-vm-reentry.html = TIMEOUT PASS
