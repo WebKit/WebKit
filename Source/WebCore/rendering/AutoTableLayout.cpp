@@ -498,8 +498,11 @@ void AutoTableLayout::layout()
     int available = tableLogicalWidth;
     size_t nEffCols = m_table->numEffCols();
 
+    // FIXME: It is possible to be called without having properly updated our internal representation.
+    // This means that our preferred logical widths were not recomputed as expected.
     if (nEffCols != m_layoutStruct.size()) {
         fullRecalc();
+        // FIXME: Table layout shouldn't modify our table structure (but does due to columns and colum-groups).
         nEffCols = m_table->numEffCols();
     }
 

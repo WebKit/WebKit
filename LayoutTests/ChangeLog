@@ -1,3 +1,22 @@
+2012-06-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in FixedTableLayout::layout
+        https://bugs.webkit.org/show_bug.cgi?id=88676
+
+        Reviewed by Abhishek Arya.
+
+        * fast/table/auto-table-layout-colgroup-removal-crash-expected.txt: Added.
+        * fast/table/auto-table-layout-colgroup-removal-crash.html: Added.
+        * fast/table/fixed-table-layout/colgroup-removal-crash-expected.txt: Added.
+        * fast/table/fixed-table-layout/colgroup-removal-crash.html: Added.
+        2 cases where we remove a colgroup after having done layout.
+
+        * fast/table/fixed-table-layout/prepend-in-fixed-table-expected.txt: Added.
+        * fast/table/fixed-table-layout/prepend-in-fixed-table.html: Added.
+        This is a copy of fast/table/prepend-in-anonymous-table.html modified to work with
+        fixed table layout. This covers a bug found during testing that is fixed as part of
+        this broader change.
+
 2012-06-26  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Mark a layout test as fail

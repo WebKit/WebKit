@@ -1,3 +1,33 @@
+2012-06-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in FixedTableLayout::layout
+        https://bugs.webkit.org/show_bug.cgi?id=88676
+
+        Reviewed by Abhishek Arya.
+
+        Tests: fast/table/auto-table-layout-colgroup-removal-crash.html
+               fast/table/fixed-table-layout/colgroup-removal-crash.html
+               fast/table/fixed-table-layout/prepend-in-fixed-table.html
+
+        The issue comes from RenderTable not properly dirtying its preferred logical
+        widths. As the table layout codes (both fixed and auto), recomputes their internal
+        structures at computePreferredLogicalWidth, the internal structure doesn't match
+        the table sizing and we crash.
+
+        This fix adds a work-around in FixedTableLayout::layout (which matches AutoTableLayout).
+        The long-term fix would be to properly fix the logic but this is a lot safer, especially
+        since our logic is really not bullet-proof at the moment.
+
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::layout):
+        Added an internal structure recomputation, if we have drifted from our table's structure.
+        Also we need to update nEffCols if we call calcWidthArray.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::layout):
+        Added a comment matching FixedTableLayout. The nEffCols is unneeded but kept for consistency
+        with FixedTableLayout.
+
 2012-06-26  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Layer chromium should need a redraw after getting its first non-empty bounds.
