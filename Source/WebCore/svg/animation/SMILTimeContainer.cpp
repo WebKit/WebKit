@@ -112,10 +112,11 @@ void SMILTimeContainer::pause()
 
 void SMILTimeContainer::resume()
 {
-    if (!m_beginTime)
-        return;
     ASSERT(isPaused());
-    m_accumulatedPauseTime += currentTime() - m_pauseTime;
+
+    if (m_beginTime)
+        m_accumulatedPauseTime += currentTime() - m_pauseTime;
+
     m_pauseTime = 0;
     startTimer(0);
 }

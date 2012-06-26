@@ -1,3 +1,20 @@
+2012-06-26  Philip Rogers  <pdr@google.com>
+
+        Fix bug where animations failed to start
+        https://bugs.webkit.org/show_bug.cgi?id=89943
+
+        Reviewed by Nikolas Zimmermann.
+
+        The unpause code previously checked that the animations had not started
+        before un-setting the pause state. This meant that if an animation was
+        paused and unpaused before the animations started, it would remain in the
+        paused state. This patch simply reorders the unpause logic to fix this bug.
+
+        Test: svg/custom/animate-initial-pause-unpause.html
+
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::resume):
+
 2012-06-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: popover is not shown for detached DOM nodes, not referenced directly from JS
