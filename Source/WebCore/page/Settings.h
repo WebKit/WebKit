@@ -331,6 +331,14 @@ namespace WebCore {
         bool cssRegionsEnabled() const { return false; }
 #endif
 
+#if ENABLE(CSS_VARIABLES)
+        void setCSSVariablesEnabled(bool enabled) { m_cssVariablesEnabled = enabled; }
+        bool cssVariablesEnabled() const { return true; }
+#else
+        void setCSSVariablesEnabled(bool) { }
+        bool cssVariablesEnabled() const { return false; }
+#endif
+
         void setRegionBasedColumnsEnabled(bool enabled) { m_regionBasedColumnsEnabled = enabled; }
         bool regionBasedColumnsEnabled() const { return m_regionBasedColumnsEnabled; }
 
@@ -676,6 +684,9 @@ namespace WebCore {
         bool m_isCSSCustomFilterEnabled : 1;
 #if ENABLE(CSS_REGIONS)
         bool m_cssRegionsEnabled : 1;
+#endif
+#if ENABLE(CSS_VARIABLES)
+        bool m_cssVariablesEnabled : 1;
 #endif
         bool m_regionBasedColumnsEnabled : 1;
         bool m_cssGridLayoutEnabled : 1;
