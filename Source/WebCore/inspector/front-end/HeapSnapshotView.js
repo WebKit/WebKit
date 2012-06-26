@@ -562,10 +562,7 @@ WebInspector.HeapSnapshotView.prototype = {
         var row = target.enclosingNodeOrSelfWithNodeName("tr");
         if (!row)
             return;
-        var gridNode = row._dataGridNode;
-        if (!gridNode.hasHoverMessage)
-            return;
-        span.node = gridNode;
+        span.node = row._dataGridNode;
         return span;
     },
 

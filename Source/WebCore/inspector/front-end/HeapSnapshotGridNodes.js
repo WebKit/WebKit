@@ -91,7 +91,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
                 node.dispose();
     },
 
-    hasHoverMessage: false,
+    _reachableFromWindow: false,
 
     queryObjectContent: function(callback)
     {
@@ -356,12 +356,12 @@ WebInspector.HeapSnapshotGenericObjectNode = function(tree, node)
     this.snapshotNodeId = node.id;
     this.snapshotNodeIndex = node.nodeIndex;
     if (this._type === "string")
-        this.hasHoverMessage = true;
+        this._reachableFromWindow = true;
     else if (this._type === "object" && this.isWindow(this._name)) {
         this._name = this.shortenWindowURL(this._name, false);
-        this.hasHoverMessage = true;
+        this._reachableFromWindow = true;
     } else if (node.flags & tree.snapshot.nodeFlags.canBeQueried)
-        this.hasHoverMessage = true;
+        this._reachableFromWindow = true;
     if (node.flags & tree.snapshot.nodeFlags.detachedDOMTreeNode)
         this.detachedDOMTreeNode = true;
 };
@@ -435,7 +435,7 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
                 value += "[]";
             break;
         };
-        if (this.hasHoverMessage)
+        if (this._reachableFromWindow)
             valueStyle += " highlight";
         if (value === "Object")
             value = "";

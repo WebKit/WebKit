@@ -1,3 +1,22 @@
+2012-06-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: popover is not shown for detached DOM nodes, not referenced directly from JS
+        https://bugs.webkit.org/show_bug.cgi?id=89955
+
+        Reviewed by Vsevolod Vlasov.
+
+        Show object popover for all heap snapshot nodes event for those whose
+        canBeQueried flag is false. We didn't show popover for such objects before
+        as it could lead to the backend crash. In the meantime the backend shouldn't
+        fail on such DOM wrappers and report an error if it cannot resolve
+        inspected object.
+
+        * inspector/front-end/HeapSnapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGenericObjectNode):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.get data):
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapSnapshotView.prototype._getHoverAnchor):
+
 2012-06-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Simplify SharedBuffer::createWithContentsOfFile() implementation
