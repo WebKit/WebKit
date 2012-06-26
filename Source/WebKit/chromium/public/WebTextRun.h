@@ -33,7 +33,7 @@
 
 #include "platform/WebString.h"
 
-#ifdef WEBKIT_IMPLEMENTATION
+#if WEBKIT_IMPLEMENTATION
 namespace WebCore { class TextRun; }
 #endif
 
@@ -56,7 +56,7 @@ struct WebTextRun {
     bool rtl;
     bool directionalOverride;
 
-#ifdef WEBKIT_IMPLEMENTATION
+#if WEBKIT_IMPLEMENTATION
     // The resulting WebCore::TextRun will refer to the text in this
     // struct, so "this" must outlive the WebCore text run.
     operator WebCore::TextRun() const;

@@ -50,7 +50,7 @@ struct WEBKIT_EXPORT WebFontRenderStyle {
     char useSubpixelRendering; // use subpixel rendering (partially-filled pixels)
     char useSubpixelPositioning; // use subpixel positioning (fractional X positions for glyphs)
 
-#ifdef WEBKIT_IMPLEMENTATION
+#if WEBKIT_IMPLEMENTATION
     // Translates the members of this struct to a FontRenderStyle
     void toFontRenderStyle(WebCore::FontRenderStyle*);
 #endif

@@ -1,3 +1,20 @@
+2012-06-26  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Fix incorrect #ifdef WEBKIT_IMPLEMENTATION statements
+        https://bugs.webkit.org/show_bug.cgi?id=89931
+
+        Reviewed by James Robinson.
+
+        WEBKIT_IMPLEMENTATION is defined as either 0 or 1, so the usage of
+        #ifdef or #if have different behavior. There are some places in
+        the code that use "#ifdef WEBKIT_IMLPEMENTATION", but they should
+        actually be "#if WEBKIT_IMPLEMENTATION". This patch fixes those
+        #ifdef statements.
+
+        * public/WebTextRun.h:
+        (WebTextRun):
+        * public/linux/WebFontRenderStyle.h:
+
 2012-06-26  Jun Mukai  <mukai@chromium.org>
 
         Allow using <input type="color"> UI in ChromeOS.
