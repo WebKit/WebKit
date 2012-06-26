@@ -669,6 +669,8 @@ void LayoutTestController::overridePreference(const QString& name, const QVarian
         settings->setAttribute(QWebSettings::WebGLEnabled, value.toBool());
     else if (name == "WebKitCSSRegionsEnabled")
         settings->setAttribute(QWebSettings::CSSRegionsEnabled, value.toBool());
+    else if (name == "WebKitCSSGridLayoutEnabled")
+        settings->setAttribute(QWebSettings::CSSGridLayoutEnabled, value.toBool());
     else if (name == "WebKitHyperlinkAuditingEnabled")
         settings->setAttribute(QWebSettings::HyperlinkAuditingEnabled, value.toBool());
     else if (name == "WebKitHixie76WebSocketProtocolEnabled")

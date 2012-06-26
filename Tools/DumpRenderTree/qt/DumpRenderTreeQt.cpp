@@ -189,6 +189,8 @@ void WebPage::resetSettings()
     settings()->resetAttribute(QWebSettings::JavascriptCanAccessClipboard);
     settings()->resetAttribute(QWebSettings::AutoLoadImages);
     settings()->resetAttribute(QWebSettings::ZoomTextOnly);
+    settings()->resetAttribute(QWebSettings::CSSRegionsEnabled);
+    settings()->resetAttribute(QWebSettings::CSSGridLayoutEnabled);
 
     m_drt->layoutTestController()->setCaretBrowsingEnabled(false);
     m_drt->layoutTestController()->setAuthorAndUserStylesEnabled(true);

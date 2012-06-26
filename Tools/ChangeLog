@@ -1,3 +1,17 @@
+2012-06-26  Tony Chang  <tony@chromium.org>
+
+        [Qt] Enable grid layout LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=89909
+
+        Reviewed by Csaba Osztrogonác.
+
+        These tests pass, we just need to hook up the overridePreference.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::resetSettings): Reset grid layout and regions between tests.
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::overridePreference): Add WebKitCSSGridLayoutEnabled.
+
 2012-06-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121236.
