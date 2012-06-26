@@ -1,3 +1,13 @@
+2012-06-25  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] CCOverdrawMetrics should use the deviceViewportSize to count actual pixels
+        https://bugs.webkit.org/show_bug.cgi?id=89922
+
+        Reviewed by Adrienne Walker.
+
+        * platform/graphics/chromium/cc/CCOverdrawMetrics.cpp:
+        (WebCore::CCOverdrawMetrics::recordMetricsInternal):
+
 2012-06-25  Huang Dongsung  <luxtella@company100.net>
 
         [Texmap] Remove platform specific code in BitmapImageGL::updateContents by using

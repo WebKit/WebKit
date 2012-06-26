@@ -131,9 +131,9 @@ template<typename LayerTreeHostType>
 void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const LayerTreeHostType* layerTreeHost) const
 {
     // This gives approximately 10x the percentage of pixels to fill the viewport once.
-    float normalization = 1000.f / (layerTreeHost->viewportSize().width() * layerTreeHost->viewportSize().height());
+    float normalization = 1000.f / (layerTreeHost->deviceViewportSize().width() * layerTreeHost->deviceViewportSize().height());
     // This gives approximately 100x the percentage of tiles to fill the viewport once, if all tiles were 256x256.
-    float tileNormalization = 10000.f / (layerTreeHost->viewportSize().width() / 256.f * layerTreeHost->viewportSize().height() / 256.f);
+    float tileNormalization = 10000.f / (layerTreeHost->deviceViewportSize().width() / 256.f * layerTreeHost->deviceViewportSize().height() / 256.f);
 
     switch (metricsType) {
     case DrawingToScreen:
@@ -142,8 +142,8 @@ void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const Lay
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.pixelCountCulled_Draw", static_cast<int>(normalization * m_pixelsCulledForDrawing), 100, 1000000, 50);
 
         {
-            TRACE_COUNTER_ID1("webkit", "DrawPixelsCulled", layerTreeHost, m_pixelsCulledForDrawing);
-            TRACE_EVENT2("webkit", "CCOverdrawMetrics", "PixelsDrawnOpaque", m_pixelsDrawnOpaque, "PixelsDrawnTranslucent", m_pixelsDrawnTranslucent);
+            TRACE_COUNTER_ID1("cc", "DrawPixelsCulled", layerTreeHost, m_pixelsCulledForDrawing);
+            TRACE_EVENT2("cc", "CCOverdrawMetrics", "PixelsDrawnOpaque", m_pixelsDrawnOpaque, "PixelsDrawnTranslucent", m_pixelsDrawnTranslucent);
         }
         break;
     case UpdateAndCommit:
@@ -153,12 +153,12 @@ void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const Lay
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.tileCountCulled_Upload", static_cast<int>(tileNormalization * m_tilesCulledForUpload), 100, 10000000, 50);
 
         {
-            TRACE_COUNTER_ID1("webkit", "UploadTilesCulled", layerTreeHost, m_tilesCulledForUpload);
-            TRACE_EVENT2("webkit", "CCOverdrawMetrics", "PixelsUploadedOpaque", m_pixelsUploadedOpaque, "PixelsUploadedTranslucent", m_pixelsUploadedTranslucent);
+            TRACE_COUNTER_ID1("cc", "UploadTilesCulled", layerTreeHost, m_tilesCulledForUpload);
+            TRACE_EVENT2("cc", "CCOverdrawMetrics", "PixelsUploadedOpaque", m_pixelsUploadedOpaque, "PixelsUploadedTranslucent", m_pixelsUploadedTranslucent);
         }
         {
             // This must be in a different scope than the TRACE_EVENT2 above.
-            TRACE_EVENT1("webkit", "CCOverdrawPaintMetrics", "PixelsPainted", m_pixelsPainted);
+            TRACE_EVENT1("cc", "CCOverdrawPaintMetrics", "PixelsPainted", m_pixelsPainted);
         }
         break;
     }
