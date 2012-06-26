@@ -1,3 +1,18 @@
+2012-06-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Convert editing/inserting/font-size-clears-from-typing-style.html to a dump-as-markup test
+        https://bugs.webkit.org/show_bug.cgi?id=90024
+
+        Reviewed by Ojan Vafai.
+
+        Converted a script test to a dump-as-markup test because the test result can be understood much eaiser that way.
+
+        * editing/inserting/font-size-clears-from-typing-style-expected.txt:
+        * editing/inserting/font-size-clears-from-typing-style.html:
+        * editing/inserting/script-tests: Removed.
+        * editing/inserting/script-tests/TEMPLATE.html: Removed.
+        * editing/inserting/script-tests/font-size-clears-from-typing-style.js: Removed.
+
 2012-06-26  Tom Sepez  <tsepez@chromium.org>
 
         [chromium] HTML5 audio/video tags - loading http content from https page doesn't trigger warning.
