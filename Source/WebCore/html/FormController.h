@@ -78,7 +78,7 @@ class FormControlState {
 public:
     FormControlState() : m_type(TypeSkip) { }
     explicit FormControlState(const String& value) : m_type(TypeRestore) { m_values.append(value); }
-    static FormControlState deserialize(const String&);
+    static FormControlState deserialize(const Vector<String>& stateVector, size_t& index);
     FormControlState(const FormControlState& another) : m_type(another.m_type), m_values(another.m_values) { }
     FormControlState& operator=(const FormControlState&);
 
@@ -86,7 +86,7 @@ public:
     size_t valueSize() const { return m_values.size(); }
     const String& operator[](size_t i) const { return m_values[i]; }
     void append(const String&);
-    String serialize() const;
+    void serializeTo(Vector<String>& stateVector) const;
 
 private:
     enum Type { TypeSkip, TypeRestore, TypeFailure };

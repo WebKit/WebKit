@@ -1,3 +1,23 @@
+2012-06-25  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r121145.
+        http://trac.webkit.org/changeset/121145
+        https://bugs.webkit.org/show_bug.cgi?id=89847
+
+        Had an objection for the change.
+
+        * html/FormController.cpp:
+        (WebCore):
+        (WebCore::FormControlState::serializeTo):
+        (WebCore::FormControlState::deserialize):
+        (WebCore::formStateSignature):
+        (WebCore::FormController::formElementsState):
+        (WebCore::FormController::setStateForNewFormElements):
+        * html/FormController.h:
+        (FormControlState):
+        * html/shadow/CalendarPickerElement.cpp:
+        (WebCore::addJavaScriptString):
+
 2012-06-25  Jay Civelli  <jcivelli@chromium.org>
 
         Fix progress load reporting for MHTML documents.

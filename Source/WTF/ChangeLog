@@ -1,3 +1,13 @@
+2012-06-25  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r121145.
+        http://trac.webkit.org/changeset/121145
+        https://bugs.webkit.org/show_bug.cgi?id=89847
+
+        Had an objection for the change.
+
+        * wtf/text/StringBuilder.h:
+
 2012-06-25  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Add JSC statistics into about:memory
