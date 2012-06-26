@@ -404,6 +404,14 @@ void InputHandler::learnText()
     sendLearnTextDetails(textInField);
 }
 
+
+void InputHandler::spellCheckingRequestProcessed(int32_t id, spannable_string_t* spannableString)
+{
+    UNUSED_PARAM(id);
+    UNUSED_PARAM(spannableString);
+    // TODO implement.
+}
+
 void InputHandler::setElementUnfocused(bool refocusOccuring)
 {
     if (isActiveTextEdit()) {

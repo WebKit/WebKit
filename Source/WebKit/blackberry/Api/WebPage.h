@@ -250,6 +250,7 @@ public:
     int32_t commitText(spannable_string_t*, int32_t relativeCursorPosition);
 
     void setSpellCheckingEnabled(bool);
+    void spellCheckingRequestProcessed(int32_t id, spannable_string_t*);
 
     void setSelection(const Platform::IntPoint& startPoint, const Platform::IntPoint& endPoint);
     void setCaretPosition(const Platform::IntPoint&);

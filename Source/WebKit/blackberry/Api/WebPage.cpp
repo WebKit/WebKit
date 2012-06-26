@@ -4510,6 +4510,11 @@ void WebPage::setSpellCheckingEnabled(bool enabled)
     static_cast<EditorClientBlackBerry*>(d->m_page->editorClient())->enableSpellChecking(enabled);
 }
 
+void WebPage::spellCheckingRequestProcessed(int32_t id, spannable_string_t* spannableString)
+{
+    d->m_inputHandler->spellCheckingRequestProcessed(id, spannableString);
+}
+
 class DeferredTaskSelectionCancelled: public DeferredTask<&WebPagePrivate::m_wouldCancelSelection> {
 public:
     explicit DeferredTaskSelectionCancelled(WebPagePrivate* webPagePrivate)

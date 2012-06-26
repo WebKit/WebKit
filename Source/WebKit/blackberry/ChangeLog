@@ -1,3 +1,27 @@
+2012-06-26  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Add WebPage interface for Async spell check.
+        https://bugs.webkit.org/show_bug.cgi?id=89999
+
+        Reviewed by Rob Buis.
+
+        PR 124517.
+
+        Add interface for IMS async spell checking.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::spellCheckingRequestProcessed):
+        (WebKit):
+        * Api/WebPage.h:
+        * Api/WebPageClient.h:
+        * WebKitSupport/InputHandler.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestProcessed):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2012-06-26  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Limit session storage quota to 5MB by default
