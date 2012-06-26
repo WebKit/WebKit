@@ -129,6 +129,7 @@
 
     // WheelEvent
     shouldBeTrue("document.createEvent('WheelEvent') instanceof window.WheelEvent");
+    shouldBeTrue("document.createEvent('WheelEvent') instanceof window.MouseEvent");
     shouldBeTrue("document.createEvent('WheelEvent') instanceof window.UIEvent");
     shouldBeTrue("document.createEvent('WheelEvent') instanceof window.Event");
     shouldBeTrue("document.createEvent('WheelEvent').constructor === window.WheelEvent");

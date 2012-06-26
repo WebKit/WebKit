@@ -42,12 +42,13 @@ WheelEvent::WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta,
                        const IntPoint& screenLocation, const IntPoint& pageLocation,
                        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
                        bool directionInvertedFromDevice)
-    : MouseRelatedEvent(eventNames().mousewheelEvent,
-                        true, true, view, 0, screenLocation, pageLocation,
+    : MouseEvent(eventNames().mousewheelEvent,
+                 true, true, view, 0, screenLocation.x(), screenLocation.y(),
+                 pageLocation.x(), pageLocation.y(),
 #if ENABLE(POINTER_LOCK)
-                        IntPoint(0, 0),
+                 0, 0,
 #endif
-                        ctrlKey, altKey, shiftKey, metaKey)
+                 ctrlKey, altKey, shiftKey, metaKey, 0, 0, 0, false)
     , m_wheelDelta(IntPoint(static_cast<int>(wheelTicks.x() * tickMultiplier), static_cast<int>(wheelTicks.y() * tickMultiplier)))
     , m_rawDelta(roundedIntPoint(rawDelta))
     , m_granularity(granularity)
@@ -91,6 +92,11 @@ void WheelEvent::initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<A
 const AtomicString& WheelEvent::interfaceName() const
 {
     return eventNames().interfaceForWheelEvent;
+}
+
+bool WheelEvent::isMouseEvent() const
+{
+    return false;
 }
 
 inline static WheelEvent::Granularity granularity(const PlatformWheelEvent& event)
