@@ -1,3 +1,15 @@
+2012-06-26  Lucas Forschler  <lforschler@apple.com>
+
+      Teach the Apple port how to build the test tools in build-webkit
+      https://bugs.webkit.org/show_bug.cgi?id=89540
+
+      Reviewed by Jon Lee & Simon Fraser.
+
+      * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+      (RunWebKitTests.start): pass --no-build since tools should now be in the downloaded archive
+      (RunUnitTests.start): ditto
+      * Scripts/build-webkit: add tools to the projects build list
+
 2012-06-26  Ojan Vafai  <ojan@chromium.org>
 
         Only show the platform-appropriate builders for non-layout test failures in garden-o-matic

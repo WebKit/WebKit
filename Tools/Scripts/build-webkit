@@ -246,6 +246,9 @@ if (isGtk()) {
     # WebKit2 is only supported in SnowLeopard and later at present.
     push @projects, ("Source/WebKit2", "Tools/MiniBrowser") if osXVersion()->{"minor"} >= 6 and !$noWebKit2;
 
+    # Build Tools needed for Apple ports
+    push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
+    
     # Copy library and header from WebKitLibraries to a findable place in the product directory.
     (system("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", $productDir) == 0) or die;
 } elsif (isWinCairo()) {
@@ -375,6 +378,7 @@ for my $dir (@projects) {
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport && $project ne "ANGLE";
         my $useGYPProject = $useGYP && ($project =~ "WebCore|JavaScriptCore");
         my $projectPath = $useGYPProject ? "gyp/$project" : $project;
+        $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
     } elsif (isAppleWinWebKit()) {
         if ($project eq "WebKit") {
