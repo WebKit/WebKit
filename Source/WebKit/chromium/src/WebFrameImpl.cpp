@@ -950,6 +950,15 @@ v8::Handle<v8::Value> WebFrameImpl::createFileSystem(WebFileSystem::Type type,
     return toV8(DOMFileSystem::create(frame()->document(), name, static_cast<WebCore::FileSystemType>(type), KURL(ParsedURLString, path.utf8().data()), AsyncFileSystemChromium::create()));
 }
 
+v8::Handle<v8::Value> WebFrameImpl::createSerializableFileSystem(WebFileSystem::Type type,
+                                                                 const WebString& name,
+                                                                 const WebString& path)
+{
+    RefPtr<DOMFileSystem> fs = DOMFileSystem::create(frame()->document(), name, static_cast<WebCore::FileSystemType>(type), KURL(ParsedURLString, path.utf8().data()), AsyncFileSystemChromium::create());
+    fs->makeClonable();
+    return toV8(fs.release());
+}
+
 v8::Handle<v8::Value> WebFrameImpl::createFileEntry(WebFileSystem::Type type,
                                                     const WebString& fileSystemName,
                                                     const WebString& fileSystemPath,

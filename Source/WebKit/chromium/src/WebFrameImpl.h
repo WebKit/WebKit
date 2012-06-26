@@ -126,6 +126,9 @@ public:
     virtual v8::Handle<v8::Value> createFileSystem(WebFileSystem::Type,
                                                    const WebString& name,
                                                    const WebString& path);
+    virtual v8::Handle<v8::Value> createSerializableFileSystem(WebFileSystem::Type,
+                                                               const WebString& name,
+                                                               const WebString& path);
     virtual v8::Handle<v8::Value> createFileEntry(WebFileSystem::Type,
                                                   const WebString& fileSystemName,
                                                   const WebString& fileSystemPath,

@@ -1,3 +1,22 @@
+2012-06-25  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
+
+        [Chromium] Add a chromium-webkit API to create a serializable file system.
+        https://bugs.webkit.org/show_bug.cgi?id=89776
+
+        In order to send a DOMFileSystem as part of WebIntent payload data it
+        should be serializable. Therefore, I added an API that allows us to
+        create serializable file system in chromium code.
+
+        Reviewed by Adam Barth.
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createSerializableFileSystem):
+        (WebKit):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
 2012-06-25  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed, rolling out r121178.
