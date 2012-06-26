@@ -35,6 +35,7 @@
 #include "SharedBuffer.h"
 #if HAVE(QT5)
 #include <QWindow>
+#include <qpa/qplatformpixmap.h>
 #endif
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
@@ -490,7 +491,15 @@ bool GraphicsContext3D::getImageData(Image* image,
         nativeImage = QImage::fromData(reinterpret_cast<const uchar*>(image->data()->data()), image->data()->size()).convertToFormat(QImage::Format_ARGB32);
     else {
         QPixmap* nativePixmap = image->nativeImageForCurrentFrame();
-        nativeImage = nativePixmap->toImage().convertToFormat(QImage::Format_ARGB32);
+        QImage qtImage;
+#if HAVE(QT5)
+        // With QPA, we can avoid a deep copy.
+        qtImage = *nativePixmap->handle()->buffer();
+#else
+        // This might be a deep copy, depending on other references to the pixmap.
+        qtImage = nativePixmap->toImage();
+#endif
+        nativeImage = qtImage.convertToFormat(QImage::Format_ARGB32);
     }
     AlphaOp neededAlphaOp = AlphaDoNothing;
     if (premultiplyAlpha)

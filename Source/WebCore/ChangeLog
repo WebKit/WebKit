@@ -1,3 +1,15 @@
+2012-06-25  Huang Dongsung  <luxtella@company100.net>
+
+        [Qt] Avoid a deep copy of QImage in GraphicsContext3D::getImageData.
+        https://bugs.webkit.org/show_bug.cgi?id=89865
+
+        Reviewed by Noam Rosenthal.
+
+        No new tests. Covered by existing tests.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+
 2012-06-25  Nick Carter  <nick@chromium.org>
 
         Reduce memory footprint of BitmapImage Vectors.
