@@ -1,3 +1,21 @@
+2012-06-26  Adam Klein  <adamk@chromium.org>
+
+        MutationObserver.observe should treat a null or undefined options argument as empty
+        https://bugs.webkit.org/show_bug.cgi?id=89992
+
+        Reviewed by Ojan Vafai.
+
+        The WebIDL spec was recently updated to treat null or undefined
+        Dictionary arguments the same as the empty dictionary. This patch
+        updates MutationObserver.observe to follow that spec.
+
+        Note that we still throw a SYNTAX_ERR in this case, since it's an
+        error not to pass one of "attributes", "childList", or "characterData"
+        as a key in the dictionary.
+
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::WebKitMutationObserver::observe):
+
 2012-06-26  Ian Vollick  <vollick@chromium.org>
 
         [chromium] The single thread proxy should not automatically tick new animations.

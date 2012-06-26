@@ -89,11 +89,6 @@ void WebKitMutationObserver::observe(Node* node, const Dictionary& optionsDictio
         return;
     }
 
-    if (optionsDictionary.isUndefinedOrNull()) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
-
     static const struct {
         const char* name;
         MutationObserverOptions value;
