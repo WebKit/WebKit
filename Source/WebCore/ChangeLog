@@ -1,3 +1,17 @@
+2012-06-25  Nick Carter  <nick@chromium.org>
+
+        Reduce memory footprint of BitmapImage Vectors.
+        https://bugs.webkit.org/show_bug.cgi?id=86563
+
+        Reviewed by Simon Fraser.
+
+        No new tests, affects template params only.
+
+        * platform/graphics/BitmapImage.h:
+        (BitmapImage): use an inline capacity of 1 for the image frame Vector 
+        * platform/image-decoders/ImageDecoder.h:
+        (ImageDecoder): use an inline capacity of 1 for the image frame Vector
+
 2012-06-25  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, rolling out r121145.

@@ -362,7 +362,7 @@ namespace WebCore {
         int scaledY(int origY, int searchStart = 0);
 
         RefPtr<SharedBuffer> m_data; // The encoded data.
-        Vector<ImageFrame> m_frameBufferCache;
+        Vector<ImageFrame, 1> m_frameBufferCache;
         // FIXME: Do we need m_colorProfile any more, for any port?
         ColorProfile m_colorProfile;
         bool m_scaled;
