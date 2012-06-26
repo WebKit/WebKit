@@ -1,3 +1,16 @@
+2012-06-25  Anders Carlsson  <andersca@apple.com>
+
+        [Lion WK2] fast/loader/reload-zero-byte-plugin.html hits assert
+        https://bugs.webkit.org/show_bug.cgi?id=89611
+        <rdar://problem/11714023>
+
+        Reviewed by Sam Weinig.
+
+        Make sure to send the response along to the plug-in in the case where the stream was empty.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::finishedLoading):
+
 2012-06-25  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [WK2][Qt][EFL] Move LayerBackingStore into common directory

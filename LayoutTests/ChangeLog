@@ -1,3 +1,15 @@
+2012-06-25  Anders Carlsson  <andersca@apple.com>
+
+        [Lion WK2] fast/loader/reload-zero-byte-plugin.html hits assert
+        https://bugs.webkit.org/show_bug.cgi?id=89611
+        <rdar://problem/11714023>
+
+        Reviewed by Sam Weinig.
+
+        Remove the test from the Skipped list.
+
+        * platform/mac-wk2/Skipped:
+
 2012-06-25  Dirk Pranke  <dpranke@chromium.org>
 
         remove chromium vista baselines

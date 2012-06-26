@@ -271,10 +271,6 @@ fast/canvas/canvas-createImageData.html
 # https://bugs.webkit.org/show_bug.cgi?id=89199
 editing/spelling/grammar-edit-word.html
 
-# PluginProcess crashes on WK2
-# https://bugs.webkit.org/show_bug.cgi?id=89611
-fast/loader/reload-zero-byte-plugin.html
-
 ### END OF (1) Classified failures with bug reports
 ########################################
 

@@ -907,8 +907,17 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
         }
     }
 
-    // Plugin view could have been created inside committedLoad().
     if (m_pluginView) {
+        // If we just received an empty response without any data, we won't have sent a response to the plug-in view.
+        // Make sure to do this before calling manualLoadDidFinishLoading.
+        if (!m_hasSentResponseToPluginView) {
+            m_pluginView->manualLoadDidReceiveResponse(loader->response());
+
+            // Protect against the above call nulling out the plug-in (by trying to cancel the load for example).
+            if (!m_pluginView)
+                return;
+        }
+
         m_pluginView->manualLoadDidFinishLoading();
         m_pluginView = 0;
         m_hasSentResponseToPluginView = false;
