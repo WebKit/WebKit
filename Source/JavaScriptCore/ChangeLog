@@ -1,3 +1,15 @@
+2012-06-26  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Add JSC statistics into about:memory
+        https://bugs.webkit.org/show_bug.cgi?id=89779
+
+        Reviewed by Rob Buis.
+
+        Fix non-JIT build on BlackBerry broken by r121196.
+
+        * runtime/MemoryStatistics.cpp:
+        (JSC::globalMemoryStatistics):
+
 2012-06-25  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::operationNewArray is unnecessarily slow, and may use the wrong array
