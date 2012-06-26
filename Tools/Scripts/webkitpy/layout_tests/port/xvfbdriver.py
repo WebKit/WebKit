@@ -34,50 +34,39 @@ import subprocess
 from webkitpy.layout_tests.port.server_process import ServerProcess
 from webkitpy.layout_tests.port.webkit import WebKitDriver
 from webkitpy.common.system.executive import Executive
-from webkitpy.common.system.file_lock import FileLock
-from webkitpy.common.system.filesystem import FileSystem
 
 _log = logging.getLogger(__name__)
 
 
 class XvfbDriver(WebKitDriver):
-    def __init__(self, *args, **kwargs):
-        WebKitDriver.__init__(self, *args, **kwargs)
-        self._guard_lock = None
-
     def _start(self, pixel_tests, per_test_args):
 
-        def next_free_id():
-            for i in range(99):
-                if not os.path.exists('/tmp/.X%d-lock' % i):
-                    self._guard_lock = FileLock(self._port._filesystem.join('/tmp', 'WebKitXvfb.lock.%i' % i))
-                    if self._guard_lock.acquire_lock():
-                        return i
+        # Collect the number of X servers running already and make
+        # sure our Xvfb process doesn't clash with any of them.
+        def x_filter(process_name):
+            return process_name.find("Xorg") > -1
 
-        self._display_id = next_free_id()
-        _log.debug('Start new xvfb with id %d for worker/%d' % (self._display_id, self._worker_number))
-        run_xvfb = ["Xvfb", ":%d" % (self._display_id), "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
+        running_displays = len(Executive().running_pids(x_filter))
+
+        # Use even displays for pixel tests and odd ones otherwise. When pixel tests are disabled,
+        # DriverProxy creates two drivers, one for normal and the other for ref tests. Both have
+        # the same worker number, so this prevents them from using the same Xvfb instance.
+        display_id = self._worker_number * 2 + running_displays
+        if pixel_tests:
+            display_id += 1
+        run_xvfb = ["Xvfb", ":%d" % (display_id), "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
         with open(os.devnull, 'w') as devnull:
             self._xvfb_process = subprocess.Popen(run_xvfb, stderr=devnull)
-        self._driver_tempdir = self._port._filesystem.mkdtemp(prefix='%s-' % self._port.driver_name())
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)
         # We must do this here because the DISPLAY number depends on _worker_number
-        environment['DISPLAY'] = ":%d" % (self._display_id)
-        environment['DYLD_LIBRARY_PATH'] = self._port._build_path()
-        environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
-        # FIXME: We're assuming that WebKitTestRunner checks this DumpRenderTree-named environment variable.
-        environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
-        environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
+        environment['DISPLAY'] = ":%d" % (display_id)
         self._crashed_process_name = None
         self._crashed_pid = None
         self._server_process = ServerProcess(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
 
     def stop(self):
         WebKitDriver.stop(self)
-        if self._guard_lock:
-            self._guard_lock.release_lock()
-            self._guard_lock = None
         if getattr(self, '_xvfb_process', None):
             try:
                 self._xvfb_process.terminate()
