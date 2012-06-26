@@ -1,0 +1,51 @@
+<!DOCTYPE html><meta charset="UTF-8">
+<script src="../inspector-test.js"></script>
+<script src="filesystem-test.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", runTest);
+function test()
+{
+    var fileSystemRequestManager = new WebInspector.FileSystemRequestManager();
+
+    InspectorTest.clearFileSystem(step1);
+
+    function step1()
+    {
+        InspectorTest.writeFile("/hoge", "fuga", step2);
+    }
+
+    function step2()
+    {
+        fileSystemRequestManager.requestMetadata("filesystem:http://127.0.0.1:8000/temporary/hoge", step3);
+    }
+
+    function step3(errorCode, metadata)
+    {
+        InspectorTest.dumpMetadataRequestResult(errorCode, metadata);
+        step4();
+    }
+
+    function step4()
+    {
+        InspectorTest.createDirectory("/piyo", step5);
+    }
+
+    function step5()
+    {
+        fileSystemRequestManager.requestMetadata("filesystem:http://127.0.0.1:8000/temporary/piyo", step6);
+    }
+
+    function step6(errorCode, metadata)
+    {
+        InspectorTest.dumpMetadataRequestResult(errorCode, metadata);
+        InspectorTest.clearFileSystem(step7);
+    }
+
+    function step7(errorCode, fileSystem)
+    {
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+<p>Tests getMetadata.</p>

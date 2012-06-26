@@ -1,0 +1,11 @@
+Tests getMetadata.
+
+errorCode: 0
+metadata:
+  modificationTime: (exists)
+  size: 4
+errorCode: 0
+metadata:
+  modificationTime: (exists)
+  size: (null)
+

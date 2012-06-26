@@ -1,3 +1,33 @@
+2012-06-26  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Add requestMetadata command and metadataReceived event to FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=87856
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: http/tests/inspector/filesystem/get-metadata.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorFileSystemAgent.cpp:
+        (WebCore):
+        (WebCore::InspectorFileSystemAgent::requestFileSystemRoot):
+        (WebCore::InspectorFileSystemAgent::requestDirectoryContent):
+        (WebCore::InspectorFileSystemAgent::requestMetadata):
+        * inspector/InspectorFileSystemAgent.h:
+        (InspectorFileSystemAgent):
+        * inspector/front-end/FileSystemModel.js:
+        (WebInspector.FileSystemModel.prototype._directoryContentReceived):
+        (WebInspector.FileSystemModel.prototype.requestMetadata):
+        (WebInspector.FileSystemModel.Entry.prototype.get isDirectory):
+        (WebInspector.FileSystemModel.Entry.prototype.requestMetadata):
+        (WebInspector.FileSystemRequestManager):
+        (WebInspector.FileSystemRequestManager.prototype._directoryContentReceived):
+        (WebInspector.FileSystemRequestManager.prototype.requestMetadata.requestAccepted):
+        (WebInspector.FileSystemRequestManager.prototype.requestMetadata):
+        (WebInspector.FileSystemRequestManager.prototype._metadataReceived):
+        (WebInspector.FileSystemDispatcher.prototype.directoryContentReceived):
+        (WebInspector.FileSystemDispatcher.prototype.metadataReceived):
+
 2012-06-25  Jocelyn Turcotte  <turcotte.j@gmail.com>
 
         [Qt] GraphicsSurface: Fix tile update artifacts on Mac

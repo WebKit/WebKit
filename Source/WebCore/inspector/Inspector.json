@@ -1420,6 +1420,15 @@
                     { "name": "resourceType", "$ref": "Page.ResourceType", "optional": true, "description": "ResourceType of the entry, available for a file only." }
                 ],
                 "description": "Represents a browser side file or directory."
+            },
+            {
+                "id": "Metadata",
+                "type": "object",
+                "properties": [
+                    { "name": "modificationTime", "type": "number", "description": "Modification time." },
+                    { "name": "size", "type": "number", "optional": true, "description": "File size. This field is available only for a file." }
+                ],
+                "description": "Represents metadata of a file or entry."
             }
         ],
         "commands": [
@@ -1451,6 +1460,16 @@
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding directoryContentReceived event should have same requestId with this." }
                 ],
                 "description": "Returns content of the directory as directoryContentReceived event."
+            },
+            {
+                "name": "requestMetadata",
+                "parameters": [
+                    { "name": "url", "type": "string", "description": "URL of the entry that the frontend is requesting to get metadata from." }
+                ],
+                "returns": [
+                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding metadataReceived event should have same requestId with this." }
+                ],
+                "description": "Returns metadata of the entry as metadataReceived event."
             }
         ],
         "events": [
@@ -1471,6 +1490,15 @@
                     { "name": "entries", "type": "array", "items": { "$ref": "FileSystem.Entry" }, "optional": true, "description": "Contains all entries on directory if the command completed successfully." }
                 ],
                 "description": "Completion event of requestDirectoryContent command."
+            },
+            {
+                "name": "metadataReceived",
+                "parameters": [
+                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned in response to the corresponding getMetadata request." },
+                    { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
+                    { "name": "metadata", "$ref": "FileSystem.Metadata", "optional": true, "description": "Contains metadata of the entry if the command completed successfully." }
+                ],
+                "description": "Completion event of getMetadata command."
             }
         ]
     },

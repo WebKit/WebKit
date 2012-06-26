@@ -235,6 +235,11 @@ WebInspector.FileSystemModel.prototype = {
         }
 
         callback(errorCode, entries);
+    },
+
+    requestMetadata: function(entry, callback)
+    {
+        this._agentWrapper.requestMetadata(entry.url, callback);
     }
 }
 
@@ -325,6 +330,14 @@ WebInspector.FileSystemModel.Entry.prototype = {
     get isDirectory()
     {
         return this._isDirectory;
+    },
+
+    /**
+     * @param {function(number, FileSystemAgent.Metadata)} callback
+     */
+    requestMetadata: function(callback)
+    {
+        this.fileSystemModel.requestMetadata(this, callback);
     }
 }
 
@@ -394,6 +407,7 @@ WebInspector.FileSystemRequestManager = function()
 {
     this._pendingFileSystemRootRequests = {};
     this._pendingDirectoryContentRequests = {};
+    this._pendingMetadataRequests = {};
 
     InspectorBackend.registerFileSystemDispatcher(new WebInspector.FileSystemDispatcher(this));
     FileSystemAgent.enable();
@@ -459,6 +473,31 @@ WebInspector.FileSystemRequestManager.prototype = {
             return;
         delete this._pendingDirectoryContentRequests[requestId];
         callback(errorCode, backendEntries);
+    },
+
+    /**
+     * @param {string} url
+     * @param {function(number, FileSystemAgent.Metadata=)} callback
+     */
+    requestMetadata: function(url, callback)
+    {
+        var store = this._pendingMetadataRequests;
+        FileSystemAgent.requestMetadata(url, requestAccepted);
+
+        function requestAccepted(error, requestId)
+        {
+            if (!error)
+                store[requestId] = callback;
+        }
+    },
+
+    _metadataReceived: function(requestId, errorCode, metadata)
+    {
+        var callback = this._pendingMetadataRequests[requestId];
+        if (!callback)
+            return;
+        delete this._pendingMetadataRequests[requestId];
+        callback(errorCode, metadata);
     }
 }
 
@@ -491,5 +530,15 @@ WebInspector.FileSystemDispatcher.prototype = {
     directoryContentReceived: function(requestId, errorCode, backendEntries)
     {
         this._agentWrapper._directoryContentReceived(requestId, errorCode, backendEntries);
+    },
+
+    /**
+     * @param {number} requestId
+     * @param {number} errorCode
+     * @param {FileSystemAgent.Metadata=} metadata
+     */
+    metadataReceived: function(requestId, errorCode, metadata)
+    {
+        this._agentWrapper._metadataReceived(requestId, errorCode, metadata);
     }
 }

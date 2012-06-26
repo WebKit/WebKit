@@ -1,3 +1,21 @@
+2012-06-26  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Add requestMetadata command and metadataReceived event to FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=87856
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/filesystem/filesystem-test.js:
+        (initialize_FileSystemTest.InspectorTest.writeFile):
+        (initialize_FileSystemTest.InspectorTest.dumpMetadataRequestResult):
+        (initialize_FileSystemTest):
+        (writeFile.didGetFileSystem):
+        (writeFile):
+        (writeFile.didGetWriter.writer.onwrite):
+        (writeFile.didGetWriter):
+        * http/tests/inspector/filesystem/get-metadata-expected.txt: Added.
+        * http/tests/inspector/filesystem/get-metadata.html: Added.
+
 2012-06-26  Philip Rogers  <pdr@google.com>
 
         Fix setCurrentTime for paused animations
