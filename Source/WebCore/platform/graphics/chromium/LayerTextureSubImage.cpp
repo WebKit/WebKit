@@ -89,7 +89,7 @@ void LayerTextureSubImage::uploadWithTexSubImage(const uint8_t* image, const Int
         pixelSource = &m_subImage[0];
     }
 
-    GraphicsContext3D* context3d = context->context3D();
+    WebKit::WebGraphicsContext3D* context3d = context->context3D();
     if (!context3d) {
         // FIXME: Implement this path for software compositing.
         return;
@@ -102,7 +102,7 @@ void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const 
                                                     GC3Denum format, CCGraphicsContext* context)
 {
     TRACE_EVENT("LayerTextureSubImage::uploadWithMapTexSubImage", this, 0);
-    GraphicsContext3D* context3d = context->context3D();
+    WebKit::WebGraphicsContext3D* context3d = context->context3D();
     if (!context3d) {
         // FIXME: Implement this path for software compositing.
         return;
@@ -112,8 +112,7 @@ void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const 
     IntPoint offset(sourceRect.x() - imageRect.x(), sourceRect.y() - imageRect.y());
 
     // Upload tile data via a mapped transfer buffer
-    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context3d->getExtensions());
-    uint8_t* pixelDest = static_cast<uint8_t*>(extensions->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
+    uint8_t* pixelDest = static_cast<uint8_t*>(context3d->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
 
     if (!pixelDest) {
         uploadWithTexSubImage(image, imageRect, sourceRect, destRect, format, context);
@@ -137,7 +136,7 @@ void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const 
                    &image[4 * (offset.x() + (offset.y() + row) * imageRect.width())],
                    destRect.width() * componentsPerPixel * bytesPerComponent);
     }
-    GLC(context3d, extensions->unmapTexSubImage2DCHROMIUM(pixelDest));
+    GLC(context3d, context3d->unmapTexSubImage2DCHROMIUM(pixelDest));
 }
 
 } // namespace WebCore

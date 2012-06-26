@@ -140,11 +140,10 @@ bool CCSingleThreadProxy::isStarted() const
 bool CCSingleThreadProxy::initializeContext()
 {
     ASSERT(CCProxy::isMainThread());
-    RefPtr<CCGraphicsContext> context = m_layerTreeHost->createContext();
+    OwnPtr<CCGraphicsContext> context = m_layerTreeHost->createContext();
     if (!context)
         return false;
-    ASSERT(context->hasOneRef());
-    m_contextBeforeInitialization = context;
+    m_contextBeforeInitialization = context.release();
     return true;
 }
 
@@ -183,16 +182,15 @@ bool CCSingleThreadProxy::recreateContext()
     ASSERT(CCProxy::isMainThread());
     ASSERT(m_contextLost);
 
-    RefPtr<CCGraphicsContext> context = m_layerTreeHost->createContext();
+    OwnPtr<CCGraphicsContext> context = m_layerTreeHost->createContext();
     if (!context)
         return false;
 
-    ASSERT(context->hasOneRef());
     bool initialized;
     {
         DebugScopedSetImplThread impl;
         m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
-        initialized = m_layerTreeHostImpl->initializeLayerRenderer(context, UnthrottledUploader);
+        initialized = m_layerTreeHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
         if (initialized) {
             m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
         }

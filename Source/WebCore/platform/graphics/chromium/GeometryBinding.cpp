@@ -29,13 +29,13 @@
 
 #include "GeometryBinding.h"
 
-#include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
+#include <public/WebGraphicsContext3D.h>
 
 namespace WebCore {
 
-GeometryBinding::GeometryBinding(GraphicsContext3D* context)
+GeometryBinding::GeometryBinding(WebKit::WebGraphicsContext3D* context)
     : m_context(context)
     , m_quadVerticesVbo(0)
     , m_quadElementsVbo(0)

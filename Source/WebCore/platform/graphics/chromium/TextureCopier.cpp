@@ -25,16 +25,19 @@
 #include "config.h"
 
 #include "TextureCopier.h"
-#include "TraceEvent.h"
 
+#include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h" // For the GLC() macro
+#include "TraceEvent.h"
+#include <public/WebGraphicsContext3D.h>
 
 namespace WebCore {
 
 #if USE(ACCELERATED_COMPOSITING)
-AcceleratedTextureCopier::AcceleratedTextureCopier(PassRefPtr<GraphicsContext3D> context)
+AcceleratedTextureCopier::AcceleratedTextureCopier(WebKit::WebGraphicsContext3D* context)
     : m_context(context)
 {
+    ASSERT(m_context);
     GLC(m_context, m_fbo = m_context->createFramebuffer());
     GLC(m_context, m_positionBuffer = m_context->createBuffer());
 
@@ -45,17 +48,17 @@ AcceleratedTextureCopier::AcceleratedTextureCopier(PassRefPtr<GraphicsContext3D>
         {-1, 1, 0, 1}
     };
 
-    GLC(m_context.get(), m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_positionBuffer));
-    GLC(m_context.get(), m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, sizeof(kPositions), kPositions, GraphicsContext3D::STATIC_DRAW));
-    GLC(m_context.get(), m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, 0));
+    GLC(m_context, m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_positionBuffer));
+    GLC(m_context, m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, sizeof(kPositions), kPositions, GraphicsContext3D::STATIC_DRAW));
+    GLC(m_context, m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, 0));
 
-    m_blitProgram = adoptPtr(new BlitProgram(m_context.get()));
+    m_blitProgram = adoptPtr(new BlitProgram(m_context));
 }
 
 AcceleratedTextureCopier::~AcceleratedTextureCopier()
 {
     if (m_blitProgram)
-        m_blitProgram->cleanup(m_context.get());
+        m_blitProgram->cleanup(m_context);
     if (m_positionBuffer)
         GLC(m_context, m_context->deleteBuffer(m_positionBuffer));
     if (m_fbo)
@@ -66,7 +69,7 @@ void AcceleratedTextureCopier::copyTexture(CCGraphicsContext* ccContext, unsigne
 {
     TRACE_EVENT("TextureCopier::copyTexture", this, 0);
 
-    GraphicsContext3D* context = ccContext->context3D();
+    WebKit::WebGraphicsContext3D* context = ccContext->context3D();
     if (!context) {
         // FIXME: Implement this path for software compositing.
         return;

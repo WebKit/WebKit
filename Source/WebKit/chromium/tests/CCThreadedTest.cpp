@@ -103,14 +103,9 @@ CompositorFakeWebGraphicsContext3DWithTextureTracking::CompositorFakeWebGraphics
 {
 }
 
-PassRefPtr<GraphicsContext3D> TestHooks::createContext()
+PassOwnPtr<WebGraphicsContext3D> TestHooks::createContext()
 {
-    GraphicsContext3D::Attributes attrs;
-    WebGraphicsContext3D::Attributes webAttrs;
-    webAttrs.alpha = attrs.alpha;
-
-    OwnPtr<WebGraphicsContext3D> webContext = CompositorFakeWebGraphicsContext3DWithTextureTracking::create(webAttrs);
-    return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow);
+    return CompositorFakeWebGraphicsContext3DWithTextureTracking::create(WebGraphicsContext3D::Attributes());
 }
 
 PassOwnPtr<MockLayerTreeHostImpl> MockLayerTreeHostImpl::create(TestHooks* testHooks, const CCLayerTreeSettings& settings, CCLayerTreeHostImplClient* client)
@@ -232,7 +227,7 @@ public:
         m_testHooks->applyScrollAndScale(scrollDelta, scale);
     }
 
-    virtual PassRefPtr<GraphicsContext3D> createContext3D() OVERRIDE
+    virtual PassOwnPtr<WebGraphicsContext3D> createContext3D() OVERRIDE
     {
         return m_testHooks->createContext();
     }

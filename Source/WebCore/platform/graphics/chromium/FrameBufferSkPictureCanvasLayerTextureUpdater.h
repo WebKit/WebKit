@@ -56,7 +56,7 @@ public:
 
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager*) OVERRIDE;
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) OVERRIDE;
-    void updateTextureRect(CCGraphicsContext*, TextureAllocator*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
+    void updateTextureRect(PassRefPtr<GraphicsContext3D>, TextureAllocator*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
 private:
     explicit FrameBufferSkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);

@@ -28,7 +28,6 @@
 #include "GraphicsContext3D.h"
 #include "IntRect.h"
 #include "IntSize.h"
-
 #include <wtf/FastAllocBase.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

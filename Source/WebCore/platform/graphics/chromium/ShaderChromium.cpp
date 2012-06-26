@@ -29,11 +29,12 @@
 
 #include "ShaderChromium.h"
 
-#include "GraphicsContext.h"
-#include "GraphicsContext3D.h"
+#include <public/WebGraphicsContext3D.h>
 
 #define SHADER0(Src) #Src
 #define SHADER(Src) SHADER0(Src)
+
+using WebKit::WebGraphicsContext3D;
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ VertexShaderPosTex::VertexShaderPosTex()
 {
 }
 
-void VertexShaderPosTex::init(GraphicsContext3D* context, unsigned program)
+void VertexShaderPosTex::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
     ASSERT(m_matrixLocation != -1);
@@ -70,7 +71,7 @@ VertexShaderPosTexYUVStretch::VertexShaderPosTexYUVStretch()
 {
 }
 
-void VertexShaderPosTexYUVStretch::init(GraphicsContext3D* context, unsigned program)
+void VertexShaderPosTexYUVStretch::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
     m_yWidthScaleFactorLocation = context->getUniformLocation(program, "y_widthScaleFactor");
@@ -103,7 +104,7 @@ VertexShaderPos::VertexShaderPos()
 {
 }
 
-void VertexShaderPos::init(GraphicsContext3D* context, unsigned program)
+void VertexShaderPos::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
     ASSERT(m_matrixLocation != -1);
@@ -127,7 +128,7 @@ VertexShaderPosTexTransform::VertexShaderPosTexTransform()
 {
 }
 
-void VertexShaderPosTexTransform::init(GraphicsContext3D* context, unsigned program)
+void VertexShaderPosTexTransform::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
     m_texTransformLocation = context->getUniformLocation(program, "texTransform");
@@ -169,7 +170,7 @@ String VertexShaderPosTexIdentity::getShaderString() const
     );
 }
 
-void VertexShaderQuad::init(GraphicsContext3D* context, unsigned program)
+void VertexShaderQuad::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
     m_pointLocation = context->getUniformLocation(program, "point");
@@ -205,7 +206,7 @@ VertexShaderTile::VertexShaderTile()
 {
 }
 
-void VertexShaderTile::init(GraphicsContext3D* context, unsigned program)
+void VertexShaderTile::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
     m_pointLocation = context->getUniformLocation(program, "point");
@@ -242,7 +243,7 @@ VertexShaderVideoTransform::VertexShaderVideoTransform()
 {
 }
 
-bool VertexShaderVideoTransform::init(GraphicsContext3D* context, unsigned program)
+bool VertexShaderVideoTransform::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
     m_texMatrixLocation = context->getUniformLocation(program, "texMatrix");
@@ -271,7 +272,7 @@ FragmentTexAlphaBinding::FragmentTexAlphaBinding()
 {
 }
 
-void FragmentTexAlphaBinding::init(GraphicsContext3D* context, unsigned program)
+void FragmentTexAlphaBinding::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_samplerLocation = context->getUniformLocation(program, "s_texture");
     m_alphaLocation = context->getUniformLocation(program, "alpha");
@@ -284,7 +285,7 @@ FragmentTexOpaqueBinding::FragmentTexOpaqueBinding()
 {
 }
 
-void FragmentTexOpaqueBinding::init(GraphicsContext3D* context, unsigned program)
+void FragmentTexOpaqueBinding::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_samplerLocation = context->getUniformLocation(program, "s_texture");
 
@@ -306,7 +307,7 @@ String FragmentShaderRGBATexFlipAlpha::getShaderString() const
     );
 }
 
-bool FragmentShaderOESImageExternal::init(GraphicsContext3D* context, unsigned program)
+bool FragmentShaderOESImageExternal::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_samplerLocation = context->getUniformLocation(program, "s_texture");
 
@@ -436,7 +437,7 @@ FragmentShaderRGBATexAlphaAA::FragmentShaderRGBATexAlphaAA()
 {
 }
 
-void FragmentShaderRGBATexAlphaAA::init(GraphicsContext3D* context, unsigned program)
+void FragmentShaderRGBATexAlphaAA::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_samplerLocation = context->getUniformLocation(program, "s_texture");
     m_alphaLocation = context->getUniformLocation(program, "alpha");
@@ -478,7 +479,7 @@ FragmentTexClampAlphaAABinding::FragmentTexClampAlphaAABinding()
 {
 }
 
-void FragmentTexClampAlphaAABinding::init(GraphicsContext3D* context, unsigned program)
+void FragmentTexClampAlphaAABinding::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_samplerLocation = context->getUniformLocation(program, "s_texture");
     m_alphaLocation = context->getUniformLocation(program, "alpha");
@@ -549,7 +550,7 @@ FragmentShaderRGBATexAlphaMask::FragmentShaderRGBATexAlphaMask()
 {
 }
 
-void FragmentShaderRGBATexAlphaMask::init(GraphicsContext3D* context, unsigned program)
+void FragmentShaderRGBATexAlphaMask::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_samplerLocation = context->getUniformLocation(program, "s_texture");
     m_maskSamplerLocation = context->getUniformLocation(program, "s_mask");
@@ -582,7 +583,7 @@ FragmentShaderRGBATexAlphaMaskAA::FragmentShaderRGBATexAlphaMaskAA()
 {
 }
 
-void FragmentShaderRGBATexAlphaMaskAA::init(GraphicsContext3D* context, unsigned program)
+void FragmentShaderRGBATexAlphaMaskAA::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_samplerLocation = context->getUniformLocation(program, "s_texture");
     m_maskSamplerLocation = context->getUniformLocation(program, "s_mask");
@@ -628,7 +629,7 @@ FragmentShaderYUVVideo::FragmentShaderYUVVideo()
 {
 }
 
-void FragmentShaderYUVVideo::init(GraphicsContext3D* context, unsigned program)
+void FragmentShaderYUVVideo::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_yTextureLocation = context->getUniformLocation(program, "y_texture");
     m_uTextureLocation = context->getUniformLocation(program, "u_texture");
@@ -671,7 +672,7 @@ FragmentShaderColor::FragmentShaderColor()
 {
 }
 
-void FragmentShaderColor::init(GraphicsContext3D* context, unsigned program)
+void FragmentShaderColor::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_colorLocation = context->getUniformLocation(program, "color");
     ASSERT(m_colorLocation != -1);
@@ -696,7 +697,7 @@ FragmentShaderCheckerboard::FragmentShaderCheckerboard()
 {
 }
 
-void FragmentShaderCheckerboard::init(GraphicsContext3D* context, unsigned program)
+void FragmentShaderCheckerboard::init(WebGraphicsContext3D* context, unsigned program)
 {
     m_alphaLocation = context->getUniformLocation(program, "alpha");
     m_texTransformLocation = context->getUniformLocation(program, "texTransform");

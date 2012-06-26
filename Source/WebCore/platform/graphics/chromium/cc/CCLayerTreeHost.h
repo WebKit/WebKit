@@ -61,7 +61,7 @@ public:
     virtual void updateAnimations(double frameBeginTime) = 0;
     virtual void layout() = 0;
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) = 0;
-    virtual PassRefPtr<GraphicsContext3D> createContext3D() = 0;
+    virtual PassOwnPtr<WebKit::WebGraphicsContext3D> createContext3D() = 0;
     virtual void didRecreateContext(bool success) = 0;
     virtual void willCommit() = 0;
     virtual void didCommit() = 0;
@@ -117,6 +117,7 @@ struct LayerRendererCapabilities {
         , usingTextureStorageExtension(false)
         , usingGpuMemoryManager(false)
         , usingDiscardFramebuffer(false)
+        , usingEglImage(false)
         , maxTextureSize(0) { }
 
     GC3Denum bestTextureFormat;
@@ -130,6 +131,7 @@ struct LayerRendererCapabilities {
     bool usingTextureStorageExtension;
     bool usingGpuMemoryManager;
     bool usingDiscardFramebuffer;
+    bool usingEglImage;
     int maxTextureSize;
 };
 
@@ -146,6 +148,7 @@ public:
 
     static bool needsFilterContext() { return s_needsFilterContext; }
     static void setNeedsFilterContext(bool needsFilterContext) { s_needsFilterContext = needsFilterContext; }
+    bool needsSharedContext() const { return needsFilterContext() || settings().acceleratePainting; }
 
     // CCLayerTreeHost interface to CCProxy.
     void willBeginFrame() { m_client->willBeginFrame(); }
@@ -155,7 +158,7 @@ public:
     void beginCommitOnImplThread(CCLayerTreeHostImpl*);
     void finishCommitOnImplThread(CCLayerTreeHostImpl*);
     void commitComplete();
-    PassRefPtr<CCGraphicsContext> createContext();
+    PassOwnPtr<CCGraphicsContext> createContext();
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient*);
     void didLoseContext();
     enum RecreateResult {

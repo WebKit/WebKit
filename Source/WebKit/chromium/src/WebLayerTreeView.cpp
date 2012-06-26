@@ -175,7 +175,7 @@ void WebLayerTreeView::finishAllRendering()
 
 WebGraphicsContext3D* WebLayerTreeView::context()
 {
-    return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_private->layerTreeHost()->context()->context3D());
+    return m_private->layerTreeHost()->context()->context3D();
 }
 
 void WebLayerTreeView::loseCompositorContext(int numTimes)

@@ -27,7 +27,7 @@
 #include "GraphicsLayerChromium.h"
 
 #include "CCAnimationTestCommon.h"
-#include "CompositorFakeGraphicsContext3D.h"
+#include "CompositorFakeWebGraphicsContext3D.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "GraphicsLayer.h"
@@ -42,6 +42,7 @@
 #include "cc/CCSingleThreadProxy.h"
 
 #include <gtest/gtest.h>
+#include <public/WebGraphicsContext3D.h>
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
@@ -67,10 +68,9 @@ public:
     virtual void updateAnimations(double frameBeginTime) OVERRIDE { }
     virtual void layout() OVERRIDE { }
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) OVERRIDE { }
-    virtual PassRefPtr<GraphicsContext3D> createContext3D() OVERRIDE
+    virtual PassOwnPtr<WebGraphicsContext3D> createContext3D() OVERRIDE
     {
-        GraphicsContext3D::Attributes attrs;
-        return createCompositorMockGraphicsContext3D(attrs);
+        return CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes());
     }
     virtual void didRecreateContext(bool success) OVERRIDE { }
     virtual void willCommit() OVERRIDE { }

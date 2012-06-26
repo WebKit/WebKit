@@ -29,6 +29,7 @@
 #include "Extensions3D.h"
 #include "GraphicsContext3D.h"
 #include "SkTypes.h" 
+#include <public/WebGraphicsContext3D.h>
 
 namespace WebCore {
 
@@ -40,14 +41,14 @@ public:
     }
 
     // Returns the most efficient texture format for this platform.
-    static GC3Denum bestTextureFormat(GraphicsContext3D* context)
+    static GC3Denum bestTextureFormat(WebKit::WebGraphicsContext3D* context, bool supportsBGRA8888)
     {
         GC3Denum textureFormat = GraphicsContext3D::RGBA;
         switch (format()) {
         case GraphicsContext3D::SourceFormatRGBA8:
             break;
         case GraphicsContext3D::SourceFormatBGRA8:
-            if (context->getExtensions()->supports("GL_EXT_texture_format_BGRA8888"))
+            if (supportsBGRA8888)
                 textureFormat = Extensions3D::BGRA_EXT;
             break;
         default:

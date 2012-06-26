@@ -288,7 +288,7 @@ bool CCVideoLayerImpl::FramePlane::allocateData(CCGraphicsContext* context)
     if (textureId)
         return true;
 
-    GraphicsContext3D* context3D = context->context3D();
+    WebKit::WebGraphicsContext3D* context3D = context->context3D();
     if (!context3D)
         return false;
 
@@ -301,7 +301,7 @@ bool CCVideoLayerImpl::FramePlane::allocateData(CCGraphicsContext* context)
     GLC(context3D, context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
     GLC(context3D, context3D->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
 
-    GLC(context3D, context3D->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, format, size.width(), size.height(), 0, format, GraphicsContext3D::UNSIGNED_BYTE));
+    GLC(context3D, context3D->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, format, size.width(), size.height(), 0, format, GraphicsContext3D::UNSIGNED_BYTE, 0));
 
     return textureId;
 }
@@ -311,7 +311,7 @@ void CCVideoLayerImpl::FramePlane::freeData(CCGraphicsContext* context)
     if (!textureId)
         return;
 
-    GraphicsContext3D* context3D = context->context3D();
+    WebKit::WebGraphicsContext3D* context3D = context->context3D();
     if (!context3D)
         return;
 
@@ -351,7 +351,7 @@ bool CCVideoLayerImpl::copyPlaneData(CCRenderer* layerRenderer, CCGraphicsContex
     if (!softwarePlaneCount)
         return true;
 
-    GraphicsContext3D* context3d = context->context3D();
+    WebKit::WebGraphicsContext3D* context3d = context->context3D();
     if (!context3d) {
         // FIXME: Implement this path for software compositing.
         return false;

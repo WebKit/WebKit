@@ -31,9 +31,10 @@
 #include "FrameBufferSkPictureCanvasLayerTextureUpdater.h"
 
 #include "LayerPainterChromium.h"
+#include "SharedGraphicsContext3D.h"
 #include "SkCanvas.h"
 #include "SkGpuDevice.h"
-#include "cc/CCGraphicsContext.h"
+#include "cc/CCProxy.h"
 
 namespace WebCore {
 
@@ -67,9 +68,12 @@ FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::~Texture()
 {
 }
 
-void FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect(CCGraphicsContext* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
+void FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect(CCGraphicsContext*, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
 {
-    textureUpdater()->updateTextureRect(context, allocator, texture(), sourceRect, destRect);
+    RefPtr<GraphicsContext3D> sharedContext = CCProxy::hasImplThread() ? SharedGraphicsContext3D::getForImplThread() : SharedGraphicsContext3D::get();
+    if (!sharedContext)
+        return;
+    textureUpdater()->updateTextureRect(sharedContext.release(), allocator, texture(), sourceRect, destRect);
 }
 
 PassRefPtr<FrameBufferSkPictureCanvasLayerTextureUpdater> FrameBufferSkPictureCanvasLayerTextureUpdater::create(PassOwnPtr<LayerPainterChromium> painter)
@@ -97,21 +101,15 @@ LayerTextureUpdater::SampledTexelFormat FrameBufferSkPictureCanvasLayerTextureUp
     return LayerTextureUpdater::SampledTexelFormatRGBA;
 }
 
-void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(CCGraphicsContext* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(PassRefPtr<GraphicsContext3D> prpContext, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
-    GraphicsContext3D* context3d = context->context3D();
-    if (!context3d) {
-        // FIXME: Implement this path for software compositing.
-        return;
-    }
+    RefPtr<GraphicsContext3D> context(prpContext);
 
     // Make sure ganesh uses the correct GL context.
-    context3d->makeContextCurrent();
-    // Notify ganesh to sync its internal GL state.
-    context3d->grContext()->resetContext();
+    context->makeContextCurrent();
 
     // Create an accelerated canvas to draw on.
-    OwnPtr<SkCanvas> canvas = createAcceleratedCanvas(context3d, allocator, texture);
+    OwnPtr<SkCanvas> canvas = createAcceleratedCanvas(context.get(), allocator, texture);
 
     // The compositor expects the textures to be upside-down so it can flip
     // the final composited image. Ganesh renders the image upright so we
@@ -127,7 +125,10 @@ void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(CCGraphics
     drawPicture(canvas.get());
 
     // Flush ganesh context so that all the rendered stuff appears on the texture.
-    context3d->grContext()->flush();
+    context->grContext()->flush();
+
+    // Flush the GL context so rendering results from this context are visible in the compositor's context.
+    context->flush();
 }
 
 } // namespace WebCore

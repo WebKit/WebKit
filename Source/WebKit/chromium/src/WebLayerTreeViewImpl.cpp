@@ -54,12 +54,9 @@ public:
     virtual void updateAnimations(double monotonicFrameBeginTime) OVERRIDE { m_client->updateAnimations(monotonicFrameBeginTime); }
     virtual void layout() OVERRIDE { m_client->layout(); }
     virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale) OVERRIDE { m_client->applyScrollAndScale(scrollDelta, pageScale); }
-    virtual PassRefPtr<WebCore::GraphicsContext3D> createContext3D() OVERRIDE
+    virtual PassOwnPtr<WebGraphicsContext3D> createContext3D() OVERRIDE
     {
-        OwnPtr<WebGraphicsContext3D> webContext = adoptPtr(m_client->createContext3D());
-        if (!webContext)
-            return 0;
-        return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow, false /* preserveDrawingBuffer */ );
+        return adoptPtr(m_client->createContext3D());
     }
     virtual void didRecreateContext(bool success) OVERRIDE { m_client->didRebindGraphicsContext(success); }
     virtual void willCommit() OVERRIDE { m_client->willCommit(); }

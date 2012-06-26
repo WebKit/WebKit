@@ -26,32 +26,33 @@
 #ifndef CCGraphicsContext_h
 #define CCGraphicsContext_h
 
-#include "GraphicsContext3D.h"
-#include <wtf/PassRefPtr.h>
+#include <public/WebGraphicsContext3D.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class GraphicsContext3D;
 
-class CCGraphicsContext : public RefCounted<CCGraphicsContext> {
+class CCGraphicsContext {
+    WTF_MAKE_NONCOPYABLE(CCGraphicsContext);
 public:
-    static PassRefPtr<CCGraphicsContext> create2D()
+    static PassOwnPtr<CCGraphicsContext> create2D()
     {
-        return adoptRef(new CCGraphicsContext());
+        return adoptPtr(new CCGraphicsContext());
     }
-    static PassRefPtr<CCGraphicsContext> create3D(PassRefPtr<GraphicsContext3D> context3D)
+    static PassOwnPtr<CCGraphicsContext> create3D(PassOwnPtr<WebKit::WebGraphicsContext3D> context3D)
     {
-        return adoptRef(new CCGraphicsContext(context3D));
+        return adoptPtr(new CCGraphicsContext(context3D));
     }
 
-    GraphicsContext3D* context3D() { return m_context3D.get(); }
+    WebKit::WebGraphicsContext3D* context3D() { return m_context3D.get(); }
 
 private:
     CCGraphicsContext() { }
-    explicit CCGraphicsContext(PassRefPtr<GraphicsContext3D> context3D)
+    explicit CCGraphicsContext(PassOwnPtr<WebKit::WebGraphicsContext3D> context3D)
         : m_context3D(context3D) { }
 
-    RefPtr<GraphicsContext3D> m_context3D;
+    OwnPtr<WebKit::WebGraphicsContext3D> m_context3D;
 };
 
 }

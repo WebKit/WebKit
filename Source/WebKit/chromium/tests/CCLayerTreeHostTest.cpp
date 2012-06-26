@@ -1369,7 +1369,7 @@ public:
 
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl)
     {
-        CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(impl->context()->context3D()));
+        CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(impl->context()->context3D());
 
         switch (impl->sourceFrameNumber()) {
         case 0:
@@ -1403,7 +1403,7 @@ public:
 
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
     {
-        CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(impl->context()->context3D()));
+        CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(impl->context()->context3D());
 
         // Number of textures used for draw should always be one.
         EXPECT_EQ(1, context->numUsedTextures());
@@ -1473,7 +1473,7 @@ public:
 
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl)
     {
-        CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(impl->context()->context3D()));
+        CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(impl->context()->context3D());
 
         switch (impl->sourceFrameNumber()) {
         case 0:
@@ -1542,7 +1542,7 @@ public:
 
     virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
     {
-        CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(impl->context()->context3D()));
+        CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(impl->context()->context3D());
 
         // Number of textures used for drawing should two except for frame 4
         // where the viewport only contains one layer.

@@ -68,7 +68,7 @@ public:
     virtual void notifyAnimationStarted(double time) { }
     virtual void notifyAnimationFinished(double time) { }
 
-    virtual PassRefPtr<WebCore::GraphicsContext3D> createContext();
+    virtual PassOwnPtr<WebKit::WebGraphicsContext3D> createContext();
 };
 
 class TimeoutTask;

@@ -1,3 +1,46 @@
+2012-06-25  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use WebGraphicsContext3D in compositor implementation
+        https://bugs.webkit.org/show_bug.cgi?id=89700
+
+        Reviewed by Adrienne Walker.
+
+        Updates tests for refactor, mostly by removing unnecessary GraphicsContext3D wrapper around mock contexts.
+
+        * WebKit.gypi:
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::context):
+        * src/WebLayerTreeViewImpl.cpp:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestAtomicCommit::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestAtomicCommit::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestAtomicCommitWithPartialUpdate::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestAtomicCommitWithPartialUpdate::drawLayersOnCCThread):
+        * tests/CCSingleThreadProxyTest.cpp:
+        * tests/CCThreadedTest.cpp:
+        (WebKitTests::TestHooks::createContext):
+        * tests/CCThreadedTest.h:
+        (TestHooks):
+        * tests/Canvas2DLayerBridgeTest.cpp:
+        (Canvas2DLayerBridgeTest::fullLifecycleTest):
+        * tests/CompositorFakeGraphicsContext3D.h: Removed.
+        * tests/DrawingBufferChromiumTest.cpp: Removed.
+        * tests/FakeCCLayerTreeHostClient.h:
+        * tests/FakeGraphicsContext3DTest.cpp:
+        (TEST):
+        * tests/GraphicsLayerChromiumTest.cpp:
+        * tests/LayerRendererChromiumTest.cpp:
+        (FakeLayerRendererChromium::FakeLayerRendererChromium):
+        (LayerRendererChromiumTest::LayerRendererChromiumTest):
+        (LayerRendererChromiumTest):
+        (TEST_F):
+        (TEST):
+        * tests/TextureCopierTest.cpp:
+        * tests/ThrottledTextureUploaderTest.cpp:
+        (WebKit::TEST):
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-06-25  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
 
         [Chromium] Add a chromium-webkit API to create a serializable file system.

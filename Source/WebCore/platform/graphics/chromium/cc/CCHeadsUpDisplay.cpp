@@ -35,6 +35,7 @@
 #include "cc/CCDebugRectHistory.h"
 #include "cc/CCFrameRateCounter.h"
 #include "cc/CCLayerTreeHostImpl.h"
+#include <public/WebGraphicsContext3D.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -68,7 +69,7 @@ bool CCHeadsUpDisplay::showDebugRects(const CCLayerTreeSettings& settings) const
 void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
 {
     CCRenderer* layerRenderer = layerTreeHostImpl->layerRenderer();
-    GraphicsContext3D* context = layerTreeHostImpl->context()->context3D();
+    WebKit::WebGraphicsContext3D* context = layerTreeHostImpl->context()->context3D();
     if (!context) {
         // FIXME: Implement this path for software compositing.
         return;
@@ -106,13 +107,12 @@ void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
         m_hudTexture->bindTexture(layerTreeHostImpl->context(), layerRenderer->implTextureAllocator());
         bool uploadedViaMap = false;
         if (layerRenderer->capabilities().usingMapSub) {
-            Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());
-            uint8_t* pixelDest = static_cast<uint8_t*>(extensions->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, hudSize.width(), hudSize.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
+            uint8_t* pixelDest = static_cast<uint8_t*>(context->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, hudSize.width(), hudSize.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
 
             if (pixelDest) {
                 uploadedViaMap = true;
                 memcpy(pixelDest, locker.pixels(), hudSize.width() * hudSize.height() * 4);
-                extensions->unmapTexSubImage2DCHROMIUM(pixelDest);
+                context->unmapTexSubImage2DCHROMIUM(pixelDest);
             }
         }
 

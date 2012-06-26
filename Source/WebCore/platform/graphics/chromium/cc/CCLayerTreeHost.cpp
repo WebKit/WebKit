@@ -260,9 +260,8 @@ void CCLayerTreeHost::commitComplete()
     m_client->didCommit();
 }
 
-PassRefPtr<CCGraphicsContext> CCLayerTreeHost::createContext()
+PassOwnPtr<CCGraphicsContext> CCLayerTreeHost::createContext()
 {
-    RefPtr<CCGraphicsContext> context;
     if (settings().forceSoftwareCompositing)
         return CCGraphicsContext::create2D();
     return CCGraphicsContext::create3D(m_client->createContext3D());

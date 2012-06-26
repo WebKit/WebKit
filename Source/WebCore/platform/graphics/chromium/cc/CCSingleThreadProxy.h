@@ -97,7 +97,7 @@ private:
 
     // Holds on to the context between initializeContext() and initializeLayerRenderer() calls. Shouldn't
     // be used for anything else.
-    RefPtr<CCGraphicsContext> m_contextBeforeInitialization;
+    OwnPtr<CCGraphicsContext> m_contextBeforeInitialization;
 
     OwnPtr<CCSingleThreadProxyAnimationTimer> m_animationTimer;
 

@@ -27,17 +27,19 @@
 #include "TrackingTextureAllocator.h"
 
 #include "Extensions3DChromium.h"
+#include "GraphicsContext3D.h"
 #include "IntRect.h"
 #include "LayerRendererChromium.h" // For the GLC() macro
 
 namespace WebCore {
 
-TrackingTextureAllocator::TrackingTextureAllocator(PassRefPtr<GraphicsContext3D> context)
+TrackingTextureAllocator::TrackingTextureAllocator(WebKit::WebGraphicsContext3D* context)
     : m_context(context)
     , m_currentMemoryUseBytes(0)
     , m_textureUsageHint(Any)
     , m_useTextureStorageExt(false)
 {
+    ASSERT(m_context);
 }
 
 TrackingTextureAllocator::~TrackingTextureAllocator()
@@ -72,23 +74,22 @@ unsigned TrackingTextureAllocator::createTexture(const IntSize& size, GC3Denum f
     m_currentMemoryUseBytes += TextureManager::memoryUseBytes(size, format);
 
     unsigned textureId = 0;
-    GLC(m_context.get(), textureId = m_context->createTexture());
-    GLC(m_context.get(), m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
+    GLC(m_context, textureId = m_context->createTexture());
+    GLC(m_context, m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
     // Do basic linear filtering on resize.
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+    GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
+    GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
     // NPOT textures in GL ES only work when the wrap mode is set to GraphicsContext3D::CLAMP_TO_EDGE.
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
+    GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
+    GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
 
     if (m_textureUsageHint == FramebufferAttachment)
-        GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, Extensions3DChromium::GL_TEXTURE_USAGE_ANGLE, Extensions3DChromium::GL_FRAMEBUFFER_ATTACHMENT_ANGLE));
+        GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, Extensions3DChromium::GL_TEXTURE_USAGE_ANGLE, Extensions3DChromium::GL_FRAMEBUFFER_ATTACHMENT_ANGLE));
     if (m_useTextureStorageExt && isTextureFormatSupportedForStorage(format)) {
-        Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(m_context->getExtensions());
         GC3Denum storageFormat = textureToStorageFormat(format);
-        extensions->texStorage2DEXT(GraphicsContext3D::TEXTURE_2D, 1, storageFormat, size.width(), size.height());
+        m_context->texStorage2DEXT(GraphicsContext3D::TEXTURE_2D, 1, storageFormat, size.width(), size.height());
     } else
-        GLC(m_context.get(), m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, format, size.width(), size.height(), 0, format, GraphicsContext3D::UNSIGNED_BYTE));
+        GLC(m_context, m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, format, size.width(), size.height(), 0, format, GraphicsContext3D::UNSIGNED_BYTE, 0));
     m_allocatedTextureIds.add(textureId);
     return textureId;
 }
@@ -96,7 +97,8 @@ unsigned TrackingTextureAllocator::createTexture(const IntSize& size, GC3Denum f
 void TrackingTextureAllocator::deleteTexture(unsigned textureId, const IntSize& size, GC3Denum format)
 {
     m_currentMemoryUseBytes -= TextureManager::memoryUseBytes(size, format);
-    GLC(m_context.get(), m_context->deleteTexture(textureId));
+    GLC(m_context, m_context->deleteTexture(textureId));
+    GLC(m_context, m_context->deleteTexture(textureId));
     ASSERT(m_allocatedTextureIds.contains(textureId));
     m_allocatedTextureIds.remove(textureId);
 }
@@ -104,7 +106,7 @@ void TrackingTextureAllocator::deleteTexture(unsigned textureId, const IntSize& 
 void TrackingTextureAllocator::deleteAllTextures()
 {
     for (HashSet<unsigned>::const_iterator it = m_allocatedTextureIds.begin(); it != m_allocatedTextureIds.end(); ++it)
-        GLC(m_context.get(), m_context->deleteTexture(*it));
+        GLC(m_context, m_context->deleteTexture(*it));
     m_currentMemoryUseBytes = 0;
     m_allocatedTextureIds.clear();
 }

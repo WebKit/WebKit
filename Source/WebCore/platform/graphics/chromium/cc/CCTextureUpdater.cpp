@@ -129,7 +129,7 @@ void CCTextureUpdater::update(CCGraphicsContext* context, TextureAllocator* allo
     // before letting the main thread proceed as it may make draw calls to the source texture of one of
     // our copy operations.
     if (m_copyEntries.size()) {
-        GraphicsContext3D* context3d = context->context3D();
+        WebKit::WebGraphicsContext3D* context3d = context->context3D();
         if (context3d)
             context3d->flush();
         // FIXME: Implement this path for software compositing.

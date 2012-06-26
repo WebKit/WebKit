@@ -28,20 +28,20 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "PlatformString.h"
+namespace WebKit {
+class WebGraphicsContext3D;
+}
 
 namespace WebCore {
 
-class GraphicsContext3D;
-
 class GeometryBinding {
 public:
-    explicit GeometryBinding(GraphicsContext3D*);
+    explicit GeometryBinding(WebKit::WebGraphicsContext3D*);
     ~GeometryBinding();
 
     bool initialized() const { return m_initialized; }
 
-    GraphicsContext3D* context() const { return m_context; }
+    WebKit::WebGraphicsContext3D* context() const { return m_context; }
     unsigned quadVerticesVbo() const { return m_quadVerticesVbo; }
     unsigned quadElementsVbo() const { return m_quadElementsVbo; }
 
@@ -54,7 +54,7 @@ public:
     static int texCoordAttribLocation() { return 1; }
 
 private:
-    GraphicsContext3D* m_context;
+    WebKit::WebGraphicsContext3D* m_context;
     unsigned m_quadVerticesVbo;
     unsigned m_quadElementsVbo;
     bool m_initialized;

@@ -29,12 +29,13 @@
 
 #include "ProgramBinding.h"
 
-#include "Extensions3D.h"
 #include "GeometryBinding.h"
-#include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
+#include <public/WebGraphicsContext3D.h>
+
+using WebKit::WebGraphicsContext3D;
 
 namespace WebCore {
 
@@ -51,19 +52,19 @@ ProgramBindingBase::~ProgramBindingBase()
     ASSERT(!m_initialized);
 }
 
-static bool contextLost(GraphicsContext3D* context)
+static bool contextLost(WebGraphicsContext3D* context)
 {
-    return (context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR);
+    return (context->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR);
 }
 
 
-void ProgramBindingBase::init(GraphicsContext3D* context, const String& vertexShader, const String& fragmentShader)
+void ProgramBindingBase::init(WebGraphicsContext3D* context, const String& vertexShader, const String& fragmentShader)
 {
     m_program = createShaderProgram(context, vertexShader, fragmentShader);
     ASSERT(m_program || contextLost(context));
 }
 
-void ProgramBindingBase::cleanup(GraphicsContext3D* context)
+void ProgramBindingBase::cleanup(WebGraphicsContext3D* context)
 {
     m_initialized = false;
     if (!m_program)
@@ -74,13 +75,13 @@ void ProgramBindingBase::cleanup(GraphicsContext3D* context)
     m_program = 0;
 }
 
-unsigned ProgramBindingBase::loadShader(GraphicsContext3D* context, unsigned type, const String& shaderSource)
+unsigned ProgramBindingBase::loadShader(WebGraphicsContext3D* context, unsigned type, const String& shaderSource)
 {
     unsigned shader = context->createShader(type);
     if (!shader)
         return 0;
     String sourceString(shaderSource);
-    GLC(context, context->shaderSource(shader, sourceString));
+    GLC(context, context->shaderSource(shader, sourceString.utf8().data()));
     GLC(context, context->compileShader(shader));
 #ifndef NDEBUG
     int compiled = 0;
@@ -93,9 +94,9 @@ unsigned ProgramBindingBase::loadShader(GraphicsContext3D* context, unsigned typ
     return shader;
 }
 
-unsigned ProgramBindingBase::createShaderProgram(GraphicsContext3D* context, const String& vertexShaderSource, const String& fragmentShaderSource)
+unsigned ProgramBindingBase::createShaderProgram(WebGraphicsContext3D* context, const String& vertexShaderSource, const String& fragmentShaderSource)
 {
-    TRACE_EVENT("ProgramBindingBase::createShaderProgram", this, 0);
+    TRACE_EVENT0("cc", "ProgramBindingBase::createShaderProgram");
     unsigned vertexShader = loadShader(context, GraphicsContext3D::VERTEX_SHADER, vertexShaderSource);
     if (!vertexShader) {
         if (!contextLost(context))

@@ -649,9 +649,9 @@ void CCLayerTreeHostImpl::setVisible(bool visible)
     setBackgroundTickingEnabled(!m_visible && m_needsAnimateLayers);
 }
 
-bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<CCGraphicsContext> context, TextureUploaderOption textureUploader)
+bool CCLayerTreeHostImpl::initializeLayerRenderer(PassOwnPtr<CCGraphicsContext> context, TextureUploaderOption textureUploader)
 {
-    GraphicsContext3D* context3d = context->context3D();
+    WebKit::WebGraphicsContext3D* context3d = context->context3D();
     if (!context3d) {
         // FIXME: Implement this path for software compositing.
         return false;

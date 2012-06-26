@@ -171,7 +171,7 @@ private:
 
     // Holds on to the context we might use for compositing in between initializeContext()
     // and initializeLayerRenderer() calls.
-    RefPtr<CCGraphicsContext> m_contextBeforeInitializationOnImplThread;
+    OwnPtr<CCGraphicsContext> m_contextBeforeInitializationOnImplThread;
 
     // Set when the main thread is waiting on a scheduledActionBeginFrame to be issued.
     CCCompletionEvent* m_beginFrameCompletionEventOnImplThread;

@@ -74,15 +74,11 @@ class Canvas2DLayerBridgeTest : public Test {
 protected:
     void fullLifecycleTest(ThreadMode threadMode, DeferralMode deferralMode)
     {
-        GraphicsContext3D::Attributes attrs;
-
-        RefPtr<GraphicsContext3D> mainContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext()), GraphicsContext3D::RenderDirectlyToHostWindow);
-        RefPtr<CCGraphicsContext> ccMainContext = CCGraphicsContext::create3D(mainContext);
-        RefPtr<GraphicsContext3D> implContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext()), GraphicsContext3D::RenderDirectlyToHostWindow);
-        RefPtr<CCGraphicsContext> ccImplContext = CCGraphicsContext::create3D(implContext);
+        RefPtr<GraphicsContext3D> mainContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext), GraphicsContext3D::RenderOffscreen);
+        OwnPtr<CCGraphicsContext> ccImplContext = CCGraphicsContext::create3D(adoptPtr(new MockCanvasContext));
 
         MockCanvasContext& mainMock = *static_cast<MockCanvasContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(mainContext.get()));
-        MockCanvasContext& implMock = *static_cast<MockCanvasContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(implContext.get()));
+        MockCanvasContext& implMock = *static_cast<MockCanvasContext*>(ccImplContext->context3D());
 
         MockWebTextureUpdater updater;
 
@@ -151,7 +147,7 @@ TEST(Canvas2DLayerBridgeTest2, testClearClient)
 {
     GraphicsContext3D::Attributes attrs;
 
-    RefPtr<GraphicsContext3D> mainContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext()), GraphicsContext3D::RenderDirectlyToHostWindow);
+    RefPtr<GraphicsContext3D> mainContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext), GraphicsContext3D::RenderDirectlyToHostWindow);
     OwnPtr<Canvas2DLayerBridge> bridge = Canvas2DLayerBridge::create(mainContext.get(), IntSize(100, 100), Deferred, 1);
     RefPtr<LayerChromium> layer = bridge->layer();
     bridge.clear();

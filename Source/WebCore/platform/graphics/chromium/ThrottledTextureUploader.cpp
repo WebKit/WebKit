@@ -27,6 +27,7 @@
 #include "ThrottledTextureUploader.h"
 
 #include "Extensions3DChromium.h"
+#include <public/WebGraphicsContext3D.h>
 
 namespace {
 
@@ -37,57 +38,52 @@ static const size_t maxPendingQueries = 2;
 
 namespace WebCore {
 
-ThrottledTextureUploader::Query::Query(PassRefPtr<GraphicsContext3D> context)
+ThrottledTextureUploader::Query::Query(WebKit::WebGraphicsContext3D* context)
     : m_context(context)
     , m_queryId(0)
 {
-    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(m_context->getExtensions());
-    m_queryId = extensions->createQueryEXT();
+    m_queryId = m_context->createQueryEXT();
 }
 
 ThrottledTextureUploader::Query::~Query()
 {
-    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(m_context->getExtensions());
-    extensions->deleteQueryEXT(m_queryId);
+    m_context->deleteQueryEXT(m_queryId);
 }
 
 void ThrottledTextureUploader::Query::begin()
 {
-    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(m_context->getExtensions());
-    extensions->beginQueryEXT(Extensions3DChromium::COMMANDS_ISSUED_CHROMIUM, m_queryId);
+    m_context->beginQueryEXT(Extensions3DChromium::COMMANDS_ISSUED_CHROMIUM, m_queryId);
 }
 
 void ThrottledTextureUploader::Query::end()
 {
-    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(m_context->getExtensions());
-    extensions->endQueryEXT(Extensions3DChromium::COMMANDS_ISSUED_CHROMIUM);
+    m_context->endQueryEXT(Extensions3DChromium::COMMANDS_ISSUED_CHROMIUM);
 }
 
 bool ThrottledTextureUploader::Query::isPending()
 {
-    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(m_context->getExtensions());
     unsigned available = 1;
-    extensions->getQueryObjectuivEXT(m_queryId, Extensions3DChromium::QUERY_RESULT_AVAILABLE_EXT, &available);
+    m_context->getQueryObjectuivEXT(m_queryId, Extensions3DChromium::QUERY_RESULT_AVAILABLE_EXT, &available);
     return !available;
 }
 
 void ThrottledTextureUploader::Query::wait()
 {
-    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(m_context->getExtensions());
     unsigned result;
-    extensions->getQueryObjectuivEXT(m_queryId, Extensions3DChromium::QUERY_RESULT_EXT, &result);
+    m_context->getQueryObjectuivEXT(m_queryId, Extensions3DChromium::QUERY_RESULT_EXT, &result);
 }
 
-ThrottledTextureUploader::ThrottledTextureUploader(PassRefPtr<GraphicsContext3D> context)
+ThrottledTextureUploader::ThrottledTextureUploader(WebKit::WebGraphicsContext3D* context)
     : m_context(context)
     , m_maxPendingQueries(maxPendingQueries)
 {
 }
 
-ThrottledTextureUploader::ThrottledTextureUploader(PassRefPtr<GraphicsContext3D> context, size_t pendingUploadLimit)
+ThrottledTextureUploader::ThrottledTextureUploader(WebKit::WebGraphicsContext3D* context, size_t pendingUploadLimit)
     : m_context(context)
     , m_maxPendingQueries(pendingUploadLimit)
 {
+    ASSERT(m_context);
 }
 
 ThrottledTextureUploader::~ThrottledTextureUploader()

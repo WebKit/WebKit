@@ -52,9 +52,8 @@ public:
 TEST(TextureCopierTest, testDrawArraysCopy)
 {
     GraphicsContext3D::Attributes attrs;
-    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockContext()), GraphicsContext3D::RenderDirectlyToHostWindow);
-    MockContext& mockContext = *static_cast<MockContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(context.get()));
-    RefPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(context);
+    OwnPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(adoptPtr(new MockContext));
+    MockContext& mockContext = *static_cast<MockContext*>(ccContext->context3D());
 
     {
         InSequence sequence;
@@ -79,7 +78,7 @@ TEST(TextureCopierTest, testDrawArraysCopy)
     int sourceTextureId = 1;
     int destTextureId = 2;
     IntSize size(256, 128);
-    OwnPtr<AcceleratedTextureCopier> copier(AcceleratedTextureCopier::create(context));
+    OwnPtr<AcceleratedTextureCopier> copier(AcceleratedTextureCopier::create(ccContext->context3D()));
     copier->copyTexture(ccContext.get(), sourceTextureId, destTextureId, size);
 }
 

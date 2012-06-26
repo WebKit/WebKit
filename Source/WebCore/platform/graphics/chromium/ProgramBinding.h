@@ -28,27 +28,29 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "PlatformString.h"
+#include <wtf/text/WTFString.h>
+
+namespace WebKit {
+class WebGraphicsContext3D;
+}
 
 namespace WebCore {
-
-class GraphicsContext3D;
 
 class ProgramBindingBase {
 public:
     ProgramBindingBase();
     ~ProgramBindingBase();
 
-    void init(GraphicsContext3D*, const String& vertexShader, const String& fragmentShader);
-    void cleanup(GraphicsContext3D*);
+    void init(WebKit::WebGraphicsContext3D*, const String& vertexShader, const String& fragmentShader);
+    void cleanup(WebKit::WebGraphicsContext3D*);
 
     unsigned program() const { ASSERT(m_initialized); return m_program; }
     bool initialized() const { return m_initialized; }
 
 protected:
 
-    unsigned loadShader(GraphicsContext3D*, unsigned type, const String& shaderSource);
-    unsigned createShaderProgram(GraphicsContext3D*, const String& vertexShaderSource, const String& fragmentShaderSource);
+    unsigned loadShader(WebKit::WebGraphicsContext3D*, unsigned type, const String& shaderSource);
+    unsigned createShaderProgram(WebKit::WebGraphicsContext3D*, const String& vertexShaderSource, const String& fragmentShaderSource);
 
     unsigned m_program;
     bool m_initialized;
@@ -57,12 +59,12 @@ protected:
 template<class VertexShader, class FragmentShader>
 class ProgramBinding : public ProgramBindingBase {
 public:
-    explicit ProgramBinding(GraphicsContext3D* context)
+    explicit ProgramBinding(WebKit::WebGraphicsContext3D* context)
     {
         ProgramBindingBase::init(context, m_vertexShader.getShaderString(), m_fragmentShader.getShaderString());
     }
 
-    void initialize(GraphicsContext3D* context)
+    void initialize(WebKit::WebGraphicsContext3D* context)
     {
         ASSERT(context);
         ASSERT(m_program);

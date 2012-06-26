@@ -29,13 +29,14 @@
 
 #include "cc/CCIOSurfaceLayerImpl.h"
 
-#include "Extensions3DChromium.h"
+#include "Extensions3D.h"
 #include "LayerRendererChromium.h"
 #include "TextStream.h"
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCIOSurfaceDrawQuad.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCQuadCuller.h"
+#include <public/WebGraphicsContext3D.h>
 
 namespace WebCore {
 
@@ -54,7 +55,7 @@ CCIOSurfaceLayerImpl::~CCIOSurfaceLayerImpl()
 
     CCGraphicsContext* context = layerTreeHostImpl()->context();
     // FIXME: Implement this path for software compositing.
-    GraphicsContext3D* context3d = context->context3D();
+    WebKit::WebGraphicsContext3D* context3d = context->context3D();
     if (context3d)
         context3d->deleteTexture(m_ioSurfaceTextureId);
 }
@@ -64,14 +65,11 @@ void CCIOSurfaceLayerImpl::willDraw(CCRenderer* layerRenderer, CCGraphicsContext
     CCLayerImpl::willDraw(layerRenderer, context);
 
     if (m_ioSurfaceChanged) {
-        GraphicsContext3D* context3d = context->context3D();
+        WebKit::WebGraphicsContext3D* context3d = context->context3D();
         if (!context3d) {
             // FIXME: Implement this path for software compositing.
             return;
         }
-        Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context3d->getExtensions());
-        ASSERT(extensions->supports("GL_CHROMIUM_iosurface"));
-        ASSERT(extensions->supports("GL_ARB_texture_rectangle"));
 
         // FIXME: Do this in a way that we can track memory usage.
         if (!m_ioSurfaceTextureId)
@@ -83,11 +81,11 @@ void CCIOSurfaceLayerImpl::willDraw(CCRenderer* layerRenderer, CCGraphicsContext
         GLC(context3d, context3d->texParameteri(Extensions3D::TEXTURE_RECTANGLE_ARB, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
         GLC(context3d, context3d->texParameteri(Extensions3D::TEXTURE_RECTANGLE_ARB, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
         GLC(context3d, context3d->texParameteri(Extensions3D::TEXTURE_RECTANGLE_ARB, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
-        extensions->texImageIOSurface2DCHROMIUM(Extensions3D::TEXTURE_RECTANGLE_ARB,
-                                                m_ioSurfaceSize.width(),
-                                                m_ioSurfaceSize.height(),
-                                                m_ioSurfaceId,
-                                                0);
+        context3d->texImageIOSurface2DCHROMIUM(Extensions3D::TEXTURE_RECTANGLE_ARB,
+                                               m_ioSurfaceSize.width(),
+                                               m_ioSurfaceSize.height(),
+                                               m_ioSurfaceId,
+                                               0);
         // Do not check for error conditions. texImageIOSurface2DCHROMIUM is supposed to hold on to
         // the last good IOSurface if the new one is already closed. This is only a possibility
         // during live resizing of plugins. However, it seems that this is not sufficient to

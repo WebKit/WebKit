@@ -121,7 +121,7 @@ public:
     void finishAllRendering();
     int frameNumber() const { return m_frameNumber; }
 
-    bool initializeLayerRenderer(PassRefPtr<CCGraphicsContext>, TextureUploaderOption);
+    bool initializeLayerRenderer(PassOwnPtr<CCGraphicsContext>, TextureUploaderOption);
     bool isContextLost();
     CCRenderer* layerRenderer() { return m_layerRenderer.get(); }
     const LayerRendererCapabilities& layerRendererCapabilities() const;
@@ -224,7 +224,7 @@ private:
 
     void dumpRenderSurfaces(TextStream&, int indent, const CCLayerImpl*) const;
 
-    RefPtr<CCGraphicsContext> m_context;
+    OwnPtr<CCGraphicsContext> m_context;
     OwnPtr<CCRenderer> m_layerRenderer;
     OwnPtr<CCLayerImpl> m_rootLayerImpl;
     CCLayerImpl* m_rootScrollLayerImpl;

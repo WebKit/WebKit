@@ -65,11 +65,10 @@ private:
 TEST(ThrottledTextureUploaderTest, IsBusy)
 {
     GraphicsContext3D::Attributes attrs;
-    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3DWithQueryTesting()), GraphicsContext3D::RenderDirectlyToHostWindow);
-    FakeWebGraphicsContext3DWithQueryTesting& fakeContext = *static_cast<FakeWebGraphicsContext3DWithQueryTesting*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(context.get()));
-    OwnPtr<ThrottledTextureUploader> uploader = ThrottledTextureUploader::create(context, 2);
+    OwnPtr<FakeWebGraphicsContext3DWithQueryTesting> fakeContext(adoptPtr(new FakeWebGraphicsContext3DWithQueryTesting));
+    OwnPtr<ThrottledTextureUploader> uploader = ThrottledTextureUploader::create(fakeContext.get(), 2);
 
-    fakeContext.setResultAvailable(0);
+    fakeContext->setResultAvailable(0);
     EXPECT_FALSE(uploader->isBusy());
     uploader->beginUploads();
     uploader->endUploads();
@@ -78,7 +77,7 @@ TEST(ThrottledTextureUploaderTest, IsBusy)
     uploader->endUploads();
     EXPECT_TRUE(uploader->isBusy());
 
-    fakeContext.setResultAvailable(1);
+    fakeContext->setResultAvailable(1);
     EXPECT_FALSE(uploader->isBusy());
     uploader->beginUploads();
     uploader->endUploads();

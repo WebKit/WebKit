@@ -1,3 +1,18 @@
+2012-06-25  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use WebGraphicsContext3D in compositor implementation
+        https://bugs.webkit.org/show_bug.cgi?id=89700
+
+        Reviewed by Adrienne Walker.
+
+        Puts all callback destructors in protected section and removes obsolete memory callback signature.
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebGraphicsContextLostCallback):
+        (WebGraphicsErrorMessageCallback):
+        (WebGraphicsSwapBuffersCompleteCallbackCHROMIUM):
+        (WebGraphicsMemoryAllocationChangedCallbackCHROMIUM):
+
 2012-06-25  Scott Graham  <scottmg@chromium.org>
 
         Plumb Scrollbar button dimensions through WebThemeEngine

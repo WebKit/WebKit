@@ -29,16 +29,20 @@
 
 #include <wtf/Deque.h>
 
+namespace WebKit {
+class WebGraphicsContext3D;
+}
+
 namespace WebCore {
 
 class ThrottledTextureUploader : public TextureUploader {
     WTF_MAKE_NONCOPYABLE(ThrottledTextureUploader);
 public:
-    static PassOwnPtr<ThrottledTextureUploader> create(PassRefPtr<GraphicsContext3D> context)
+    static PassOwnPtr<ThrottledTextureUploader> create(WebKit::WebGraphicsContext3D* context)
     {
         return adoptPtr(new ThrottledTextureUploader(context));
     }
-    static PassOwnPtr<ThrottledTextureUploader> create(PassRefPtr<GraphicsContext3D> context, size_t pendingUploadLimit)
+    static PassOwnPtr<ThrottledTextureUploader> create(WebKit::WebGraphicsContext3D* context, size_t pendingUploadLimit)
     {
         return adoptPtr(new ThrottledTextureUploader(context, pendingUploadLimit));
     }
@@ -52,7 +56,7 @@ public:
 private:
     class Query {
     public:
-        static PassOwnPtr<Query> create(PassRefPtr<GraphicsContext3D> context) { return adoptPtr(new Query(context)); }
+        static PassOwnPtr<Query> create(WebKit::WebGraphicsContext3D* context) { return adoptPtr(new Query(context)); }
 
         virtual ~Query();
 
@@ -62,18 +66,18 @@ private:
         void wait();
 
     private:
-        explicit Query(PassRefPtr<GraphicsContext3D>);
+        explicit Query(WebKit::WebGraphicsContext3D*);
 
-        RefPtr<GraphicsContext3D> m_context;
+        WebKit::WebGraphicsContext3D* m_context;
         unsigned m_queryId;
     };
 
-    ThrottledTextureUploader(PassRefPtr<GraphicsContext3D>);
-    ThrottledTextureUploader(PassRefPtr<GraphicsContext3D>, size_t pendingUploadLimit);
+    ThrottledTextureUploader(WebKit::WebGraphicsContext3D*);
+    ThrottledTextureUploader(WebKit::WebGraphicsContext3D*, size_t pendingUploadLimit);
 
     void processQueries();
 
-    RefPtr<GraphicsContext3D> m_context;
+    WebKit::WebGraphicsContext3D* m_context;
     size_t m_maxPendingQueries;
     Deque<OwnPtr<Query> > m_pendingQueries;
     Deque<OwnPtr<Query> > m_availableQueries;

@@ -111,27 +111,30 @@ public:
     class WebGraphicsContextLostCallback {
     public:
         virtual void onContextLost() = 0;
+
+    protected:
         virtual ~WebGraphicsContextLostCallback() { }
     };
 
     class WebGraphicsErrorMessageCallback {
     public:
         virtual void onErrorMessage(const WebString&, WGC3Dint) = 0;
+
+    protected:
         virtual ~WebGraphicsErrorMessageCallback() { }
     };
 
     class WebGraphicsSwapBuffersCompleteCallbackCHROMIUM {
     public:
         virtual void onSwapBuffersComplete() = 0;
+
+    protected:
         virtual ~WebGraphicsSwapBuffersCompleteCallbackCHROMIUM() { }
     };
 
     class WebGraphicsMemoryAllocationChangedCallbackCHROMIUM {
     public:
-        // FIXME: Remove this once we switch to WebGraphicsMemoryAllocation version.
-        virtual void onMemoryAllocationChanged(size_t gpuResourceSizeInBytes) = 0;
-        // FIXME: Make this pure virtual once we implement everywhere.
-        virtual void onMemoryAllocationChanged(WebGraphicsMemoryAllocation) { }
+        virtual void onMemoryAllocationChanged(WebGraphicsMemoryAllocation) = 0;
 
     protected:
         virtual ~WebGraphicsMemoryAllocationChangedCallbackCHROMIUM() { }

@@ -673,8 +673,7 @@ TEST(TiledLayerChromiumTest, invalidateFromPrepare)
     FakeTextureAllocator fakeAllocator;
     FakeTextureCopier fakeCopier;
     FakeTextureUploader fakeUploader;
-    RefPtr<GraphicsContext3D> context = createCompositorMockGraphicsContext3D(GraphicsContext3D::Attributes());
-    RefPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(context);
+    OwnPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(WebKit::CompositorFakeWebGraphicsContext3D::create(WebKit::WebGraphicsContext3D::Attributes()));
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));

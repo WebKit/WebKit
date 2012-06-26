@@ -70,9 +70,9 @@ public:
         endTestAfterDelay(ceil(CCSingleThreadProxy::animationTimerDelay() * 1000));
     }
 
-    virtual PassRefPtr<GraphicsContext3D> createContext() OVERRIDE
+    virtual PassOwnPtr<WebGraphicsContext3D> createContext() OVERRIDE
     {
-        return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3DMakeCurrentFails), GraphicsContext3D::RenderDirectlyToHostWindow);
+        return adoptPtr(new FakeWebGraphicsContext3DMakeCurrentFails);
     }
 
     virtual void afterTest()
@@ -117,9 +117,9 @@ public:
         endTestAfterDelay(ceil(CCSingleThreadProxy::animationTimerDelay() * 1000));
     }
 
-    virtual PassRefPtr<GraphicsContext3D> createContext() OVERRIDE
+    virtual PassOwnPtr<WebGraphicsContext3D> createContext() OVERRIDE
     {
-        return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3DMakeCurrentFails), GraphicsContext3D::RenderDirectlyToHostWindow);
+        return adoptPtr(new FakeWebGraphicsContext3DMakeCurrentFails);
     }
 
     virtual void afterTest()

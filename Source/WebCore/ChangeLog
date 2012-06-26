@@ -1,3 +1,219 @@
+2012-06-25  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use WebGraphicsContext3D in compositor implementation
+        https://bugs.webkit.org/show_bug.cgi?id=89700
+
+        Reviewed by Adrienne Walker.
+
+        This converts the compositor implementation from using WebCore::GraphicsContext3D to using the Platform-provided
+        WebGraphicsContext3D. This removes several unnecessary layers of indirection/wrapping and cuts down the
+        compositor's implementation dependencies. GraphicsContext3D.h is still widely used to provide GL enum values.
+        Most of the changes are purely mechanical - changing type names and the like.
+
+        Ownership is changed a bit. Instead of multiple components holding references to the compositor's context, the
+        context is now owned by the CCGraphicsContext, which is now owned directly by CCLayerTreeHostImpl.
+        CCLayerTreeHostImpl also has ownership of its CCRenderer (LayerRendererChromium in 3D mode) and passes a
+        non-owning pointer down to the CCRenderer.
+
+        Extension checking is a bit different. The compositor does not (and never has) used extensions provided by
+        WebGL's request/ensure mechanism. It simply checks for the existence of extensions it needs in the GL_EXTENSIONS
+        string.
+
+        FrameBufferSkPictureCanvasLayerTextureUpdater had to be patched as well, since it was grabbing a GrContext off
+        of the compositor's GraphicsContext3D. This caused many problems. It was inefficient, since it required a full
+        state flush when switching between ganesh and compositor calls. The gpu memory management was completely broken
+        since the compositor clobbered ganesh's onMemoryAllocationChanged callback. This moves FBSkPCLTU over to using
+        the appropriate SharedGraphicsContext3D, like filters.
+
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.h:
+        (FrameBufferSkPictureCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/GeometryBinding.cpp:
+        (WebCore::GeometryBinding::GeometryBinding):
+        * platform/graphics/chromium/GeometryBinding.h:
+        (WebKit):
+        (GeometryBinding):
+        (WebCore::GeometryBinding::context):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::initialize):
+        (WebCore::LayerRendererChromium::~LayerRendererChromium):
+        (WebCore::LayerRendererChromium::context):
+        (WebCore::LayerRendererChromium::debugGLCall):
+        (WebCore::LayerRendererChromium::setVisible):
+        (WebCore::LayerRendererChromium::drawStreamVideoQuad):
+        (WebCore::LayerRendererChromium::drawHeadsUpDisplay):
+        (WebCore::LayerRendererChromium::swapBuffers):
+        (WebCore::LayerRendererChromium::onMemoryAllocationChanged):
+        (WebCore):
+        (WebCore::LayerRendererChromium::onMemoryAllocationChangedOnImplThread):
+        (WebCore::LayerRendererChromium::discardFramebuffer):
+        (WebCore::LayerRendererChromium::ensureFramebuffer):
+        (WebCore::LayerRendererChromium::onContextLost):
+        (WebCore::LayerRendererChromium::getFramebufferPixels):
+        (WebCore::LayerRendererChromium::getFramebufferTexture):
+        (WebCore::LayerRendererChromium::bindFramebufferToTexture):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::tileCheckerboardProgram):
+        (WebCore::LayerRendererChromium::solidColorProgram):
+        (WebCore::LayerRendererChromium::headsUpDisplayProgram):
+        (WebCore::LayerRendererChromium::renderPassProgram):
+        (WebCore::LayerRendererChromium::renderPassProgramAA):
+        (WebCore::LayerRendererChromium::renderPassMaskProgram):
+        (WebCore::LayerRendererChromium::renderPassMaskProgramAA):
+        (WebCore::LayerRendererChromium::tileProgram):
+        (WebCore::LayerRendererChromium::tileProgramOpaque):
+        (WebCore::LayerRendererChromium::tileProgramAA):
+        (WebCore::LayerRendererChromium::tileProgramSwizzle):
+        (WebCore::LayerRendererChromium::tileProgramSwizzleOpaque):
+        (WebCore::LayerRendererChromium::tileProgramSwizzleAA):
+        (WebCore::LayerRendererChromium::textureProgram):
+        (WebCore::LayerRendererChromium::textureProgramFlip):
+        (WebCore::LayerRendererChromium::textureIOSurfaceProgram):
+        (WebCore::LayerRendererChromium::videoYUVProgram):
+        (WebCore::LayerRendererChromium::videoStreamTextureProgram):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        (WebCore::LayerRendererChromium::isContextLost):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebKit):
+        (WebCore):
+        (LayerRendererChromium):
+        (WebCore::LayerRendererChromium::isFramebufferDiscarded):
+        * platform/graphics/chromium/LayerTextureSubImage.cpp:
+        (WebCore::LayerTextureSubImage::uploadWithTexSubImage):
+        (WebCore::LayerTextureSubImage::uploadWithMapTexSubImage):
+        * platform/graphics/chromium/ManagedTexture.cpp:
+        (WebCore::ManagedTexture::bindTexture):
+        (WebCore::ManagedTexture::framebufferTexture2D):
+        * platform/graphics/chromium/PlatformColor.h:
+        (WebCore::PlatformColor::bestTextureFormat):
+        * platform/graphics/chromium/ProgramBinding.cpp:
+        (WebCore::contextLost):
+        (WebCore::ProgramBindingBase::init):
+        (WebCore::ProgramBindingBase::cleanup):
+        (WebCore::ProgramBindingBase::loadShader):
+        (WebCore::ProgramBindingBase::createShaderProgram):
+        * platform/graphics/chromium/ProgramBinding.h:
+        (WebKit):
+        (ProgramBindingBase):
+        (WebCore::ProgramBinding::ProgramBinding):
+        (WebCore::ProgramBinding::initialize):
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::VertexShaderPosTex::init):
+        (WebCore::VertexShaderPosTexYUVStretch::init):
+        (WebCore::VertexShaderPos::init):
+        (WebCore::VertexShaderPosTexTransform::init):
+        (WebCore::VertexShaderQuad::init):
+        (WebCore::VertexShaderTile::init):
+        (WebCore::VertexShaderVideoTransform::init):
+        (WebCore::FragmentTexAlphaBinding::init):
+        (WebCore::FragmentTexOpaqueBinding::init):
+        (WebCore::FragmentShaderOESImageExternal::init):
+        (WebCore::FragmentShaderRGBATexAlphaAA::init):
+        (WebCore::FragmentTexClampAlphaAABinding::init):
+        (WebCore::FragmentShaderRGBATexAlphaMask::init):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::init):
+        (WebCore::FragmentShaderYUVVideo::init):
+        (WebCore::FragmentShaderColor::init):
+        (WebCore::FragmentShaderCheckerboard::init):
+        * platform/graphics/chromium/ShaderChromium.h:
+        (WebKit):
+        (VertexShaderPosTex):
+        (VertexShaderPosTexYUVStretch):
+        (VertexShaderPos):
+        (WebCore::VertexShaderPosTexIdentity::init):
+        (VertexShaderPosTexTransform):
+        (VertexShaderQuad):
+        (VertexShaderTile):
+        (VertexShaderVideoTransform):
+        (FragmentTexAlphaBinding):
+        (FragmentTexOpaqueBinding):
+        (FragmentShaderOESImageExternal):
+        (FragmentShaderRGBATexAlphaAA):
+        (FragmentTexClampAlphaAABinding):
+        (FragmentShaderRGBATexAlphaMask):
+        (FragmentShaderRGBATexAlphaMaskAA):
+        (FragmentShaderYUVVideo):
+        (FragmentShaderColor):
+        (FragmentShaderCheckerboard):
+        * platform/graphics/chromium/TextureCopier.cpp:
+        (WebCore::AcceleratedTextureCopier::AcceleratedTextureCopier):
+        (WebCore::AcceleratedTextureCopier::~AcceleratedTextureCopier):
+        (WebCore::AcceleratedTextureCopier::copyTexture):
+        * platform/graphics/chromium/TextureCopier.h:
+        (WebKit):
+        (WebCore):
+        (WebCore::AcceleratedTextureCopier::create):
+        (AcceleratedTextureCopier):
+        * platform/graphics/chromium/TextureManager.h:
+        * platform/graphics/chromium/ThrottledTextureUploader.cpp:
+        (WebCore::ThrottledTextureUploader::Query::Query):
+        (WebCore::ThrottledTextureUploader::Query::~Query):
+        (WebCore::ThrottledTextureUploader::Query::begin):
+        (WebCore::ThrottledTextureUploader::Query::end):
+        (WebCore::ThrottledTextureUploader::Query::isPending):
+        (WebCore::ThrottledTextureUploader::Query::wait):
+        (WebCore::ThrottledTextureUploader::ThrottledTextureUploader):
+        * platform/graphics/chromium/ThrottledTextureUploader.h:
+        (WebKit):
+        (WebCore::ThrottledTextureUploader::create):
+        (WebCore::ThrottledTextureUploader::Query::create):
+        (Query):
+        (ThrottledTextureUploader):
+        * platform/graphics/chromium/TrackingTextureAllocator.cpp:
+        (WebCore::TrackingTextureAllocator::TrackingTextureAllocator):
+        (WebCore::TrackingTextureAllocator::createTexture):
+        (WebCore::TrackingTextureAllocator::deleteTexture):
+        (WebCore::TrackingTextureAllocator::deleteAllTextures):
+        * platform/graphics/chromium/TrackingTextureAllocator.h:
+        (WebKit):
+        (WebCore::TrackingTextureAllocator::create):
+        (TrackingTextureAllocator):
+        * platform/graphics/chromium/cc/CCGraphicsContext.h:
+        (CCGraphicsContext):
+        (WebCore::CCGraphicsContext::create2D):
+        (WebCore::CCGraphicsContext::create3D):
+        (WebCore::CCGraphicsContext::context3D):
+        (WebCore::CCGraphicsContext::CCGraphicsContext):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCIOSurfaceLayerImpl.cpp:
+        (WebCore::CCIOSurfaceLayerImpl::~CCIOSurfaceLayerImpl):
+        (WebCore::CCIOSurfaceLayerImpl::willDraw):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::createContext):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHostClient):
+        (WebCore::LayerRendererCapabilities::LayerRendererCapabilities):
+        (LayerRendererCapabilities):
+        (WebCore::CCLayerTreeHost::needsSharedContext):
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::initializeLayerRenderer):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::initializeContext):
+        (WebCore::CCSingleThreadProxy::recreateContext):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        * platform/graphics/chromium/cc/CCTextureUpdater.cpp:
+        (WebCore::CCTextureUpdater::update):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::initializeContext):
+        (WebCore::CCThreadProxy::recreateContext):
+        (WebCore::CCThreadProxy::beginFrame):
+        (WebCore::CCThreadProxy::initializeContextOnImplThread):
+        (WebCore::CCThreadProxy::recreateContextOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::FramePlane::allocateData):
+        (WebCore::CCVideoLayerImpl::FramePlane::freeData):
+        (WebCore::CCVideoLayerImpl::copyPlaneData):
+
 2012-06-25  Adrienne Walker  <enne@google.com>
 
         [chromium] Make CCThreadProxy not draw a frame mid-commit
