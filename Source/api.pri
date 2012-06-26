@@ -144,8 +144,6 @@ WEBKIT += webcore
 
 !no_webkit1: WEBKIT += webkit1
 
-!static: DEFINES += QT_MAKEDLL
-
 # ------------- Install rules -------------
 
 haveQt(5) {

@@ -18,3 +18,24 @@ win32-msvc*|wince*: QMAKE_CXXFLAGS += -wd4291 -wd4344 -wd4396 -wd4503 -wd4800 -w
 win32-icc: QMAKE_CXXFLAGS += -wd873
 
 load(default_post)
+
+# When creating the target DLL, extract exporting linker directives from
+# all static libraries we're linking into the DLL and make sure they are
+# also exported from the DLL.
+shared:contains(TEMPLATE, lib) {
+    for(target, POST_TARGETDEPS) {
+        libdep = $$find(target, .*\\.lib)
+        exists($$libdep): LIBSWITHEXPORTS += $$libdep
+    }
+}
+
+!isEmpty(LIBSWITHEXPORTS) {
+    exportgen.input = LIBSWITHEXPORTS
+    exportgen.output = exports_${QMAKE_FILE_BASE}.cpp
+    exportgen.commands = python $${ROOT_WEBKIT_DIR}$${QMAKE_DIR_SEP}Tools$${QMAKE_DIR_SEP}Scripts$${QMAKE_DIR_SEP}generate-win32-export-forwards ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+    exportgen.variable_out = SOURCES
+    QMAKE_EXTRA_COMPILERS += exportgen
+}
+
+# To ensure the Qt export macros are set to dllexport
+contains(TEMPLATE, lib):!contains(QT, webkit): DEFINES += QT_MAKEDLL

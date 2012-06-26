@@ -1,3 +1,17 @@
+2012-06-26  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][Win] Symbols are not exported in QtWebKit5.dll
+        https://bugs.webkit.org/show_bug.cgi?id=88873
+
+        Reviewed by Tor Arne Vestbø.
+
+        When linking the target dll make sure to re-export the symbols from
+        the static libraries marked as export, with the help of a little python
+        script and a qmake extra compiler.
+
+        * Scripts/generate-win32-export-forwards: Added.
+        * qmake/mkspecs/features/win32/default_post.prf:
+
 2012-06-25  Jocelyn Turcotte  <turcotte.j@gmail.com>
 
         Add a note about hostname completion not working well with --cc completion
