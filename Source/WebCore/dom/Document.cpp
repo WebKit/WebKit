@@ -3401,14 +3401,11 @@ void Document::removeStyleSheetCandidateNode(Node* node)
 
 void Document::collectActiveStylesheets(Vector<RefPtr<StyleSheet> >& sheets)
 {
-    bool matchAuthorAndUserStyles = true;
-    if (Settings* settings = this->settings())
-        matchAuthorAndUserStyles = settings->authorAndUserStylesEnabled();
+    if (settings() && !settings()->authorAndUserStylesEnabled())
+        return;
 
     StyleSheetCandidateListHashSet::iterator begin = m_styleSheetCandidateNodes.begin();
     StyleSheetCandidateListHashSet::iterator end = m_styleSheetCandidateNodes.end();
-    if (!matchAuthorAndUserStyles)
-        end = begin;
     for (StyleSheetCandidateListHashSet::iterator it = begin; it != end; ++it) {
         Node* n = *it;
         StyleSheet* sheet = 0;

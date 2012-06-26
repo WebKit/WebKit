@@ -1,3 +1,13 @@
+2012-06-26  Joe Thomas  <joethomas@motorola.com>
+
+        Do early-return when author and user styles are disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=89947
+
+        Reviewed by Andreas Kling.
+
+        * dom/Document.cpp:
+        (WebCore::Document::collectActiveStylesheets):
+
 2012-06-26  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove dead compositor-related API from GraphicsContext3DPrivate / Extensions3DChromium
