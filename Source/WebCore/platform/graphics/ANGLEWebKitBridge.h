@@ -47,7 +47,7 @@ enum ANGLEShaderType {
 class ANGLEWebKitBridge {
 public:
 
-    ANGLEWebKitBridge();
+    ANGLEWebKitBridge(ShShaderOutput = SH_GLSL_OUTPUT);
     ~ANGLEWebKitBridge();
     
     ShBuiltInResources getResources() { return m_resources; }
@@ -63,6 +63,8 @@ private:
     
     ShHandle m_fragmentCompiler;
     ShHandle m_vertexCompiler;
+
+    ShShaderOutput m_shaderOutput;
 
     ShBuiltInResources m_resources;
 };

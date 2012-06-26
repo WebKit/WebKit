@@ -1,3 +1,21 @@
+2012-06-26  Roland Takacs  <takacs.roland@stud.u-szeged.hu>
+
+        Shader compiler unprepared to make ESSL output when GLES is used
+        https://bugs.webkit.org/show_bug.cgi?id=87718
+
+        Reviewed by Noam Rosenthal.
+
+        Defined a new member that says what type of output code must be generated
+        (SH_GLSL_OUTPUT, SH_ESSL_OUTPUT). It is set within the constructor.
+
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::ANGLEWebKitBridge::ANGLEWebKitBridge):
+        (WebCore::ANGLEWebKitBridge::validateShaderSource):
+        * platform/graphics/ANGLEWebKitBridge.h:
+        (ANGLEWebKitBridge):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2012-06-26  Philip Rogers  <pdr@google.com>
 
         Fix bug where animations failed to start
