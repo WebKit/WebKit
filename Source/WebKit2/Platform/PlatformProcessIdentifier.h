@@ -29,6 +29,8 @@
 
 #if PLATFORM(QT)
 class QProcess;
+#elif PLATFORM(EFL)
+#include <unistd.h>
 #endif
 
 namespace WebKit {

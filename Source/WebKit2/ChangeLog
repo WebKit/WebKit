@@ -1,3 +1,18 @@
+2012-06-25  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL][WK2] Include unistd.h in PlatformProcessIdentifier.h.
+        https://bugs.webkit.org/show_bug.cgi?id=89804
+
+        Reviewed by Hajime Morita.
+
+        The pid_t typedef ends up coming from stdlib.h (indirectly via WTF
+        includes) on Mac and Linux, even though that is not mandated by
+        POSIX and breaks other platforms (such as FreeBSD). Fix that by
+        explicitly including unistd.h, which is where the typedef is
+        supposed to come from.
+
+        * Platform/PlatformProcessIdentifier.h:
+
 2012-06-25  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [WK2][Qt][EFL] Extract common code from LayerTreeHostQt
