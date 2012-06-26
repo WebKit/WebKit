@@ -131,17 +131,6 @@ void ManagedTexture::bindTexture(CCGraphicsContext* context, TextureAllocator* a
     context3d->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
 }
 
-void ManagedTexture::framebufferTexture2D(CCGraphicsContext* context, TextureAllocator* allocator)
-{
-    allocate(allocator);
-    WebGraphicsContext3D* context3d = context->context3D();
-    if (!context3d) {
-        // FIXME: Implement this path for software compositing.
-        return;
-    }
-    context3d->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_textureId, 0);
-}
-
 PassOwnPtr<ManagedTexture> ManagedTexture::steal()
 {
     OwnPtr<ManagedTexture> texture = adoptPtr(new ManagedTexture(m_textureManager, m_token, m_size, m_format, m_textureId));

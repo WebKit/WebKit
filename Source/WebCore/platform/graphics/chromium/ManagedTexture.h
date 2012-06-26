@@ -59,7 +59,6 @@ public:
 
     void allocate(TextureAllocator*);
     void bindTexture(CCGraphicsContext*, TextureAllocator*);
-    void framebufferTexture2D(CCGraphicsContext*, TextureAllocator*);
 
     IntSize size() const { return m_size; }
     unsigned format() const { return m_format; }
