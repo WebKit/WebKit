@@ -222,6 +222,8 @@
                 'public/WebPluginContainer.h',
                 'public/WebPluginDocument.h',
                 'public/WebPluginListBuilder.h',
+                'public/WebPluginScrollbar.h',
+                'public/WebPluginScrollbarClient.h',
                 'public/WebPrintParams.h',
                 'public/WebPrintScalingOption.h',
                 'public/WebPopupMenu.h',

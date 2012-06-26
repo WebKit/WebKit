@@ -1,3 +1,21 @@
+2012-06-25  Adrienne Walker  <enne@google.com>
+
+        [chromium] Add WebPluginScrollbar and WebPluginScrollbarClient stub implementations
+        https://bugs.webkit.org/show_bug.cgi?id=89928
+
+        Reviewed by Darin Fisher.
+
+        These classes are just typedef'd to be the non-Plugin version. The
+        next step is to change Chromium to use the Plugin version, then move
+        most of WebPluginScrollbar to a WebScrollbar in Platform to separate
+        out the base functionality, while providing the same top level API.
+
+        * WebKit.gyp:
+        * public/WebPluginScrollbar.h: Added.
+        (WebKit):
+        * public/WebPluginScrollbarClient.h: Added.
+        (WebKit):
+
 2012-06-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
