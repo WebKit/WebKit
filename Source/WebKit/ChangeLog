@@ -1,5 +1,11 @@
 2012-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Unreviewed build fix: Don't do QT += widgets with Qt 4
+
+        * WebKit1.pro: This is already done in WebKit1.pri.
+
+2012-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Make it possible to build WebKit without QtWidgets
         https://bugs.webkit.org/show_bug.cgi?id=78109
 

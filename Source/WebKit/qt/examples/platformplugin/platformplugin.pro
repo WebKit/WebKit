@@ -1,7 +1,8 @@
 TEMPLATE = lib
 TARGET = platformplugin
 
-QT += core gui widgets
+QT += core gui
+haveQt(5): QT += widgets
 CONFIG += plugin
 
 ## load mobilityconfig if mobility is available

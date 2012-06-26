@@ -1,3 +1,9 @@
+2012-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed build fix: Don't do QT += widgets with Qt 4
+
+        * examples/platformplugin/platformplugin.pro:
+
 2012-06-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121058.

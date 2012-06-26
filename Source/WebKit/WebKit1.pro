@@ -12,7 +12,7 @@ load(features)
 include(WebKit1.pri)
 
 WEBKIT += wtf javascriptcore webcore
-QT += gui widgets
+QT += gui
 
 CONFIG += staticlib
 
