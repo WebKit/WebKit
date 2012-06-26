@@ -138,15 +138,12 @@ void FormController::setStateForNewFormElements(const Vector<String>& stateVecto
         m_stateForNewFormElements.clear();
 }
 
-bool FormController::hasStateForNewFormElements() const
+FormControlState FormController::takeStateForFormElement(const HTMLFormControlElementWithState& control)
 {
-    return !m_stateForNewFormElements.isEmpty();
-}
-
-FormControlState FormController::takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type)
-{
+    if (m_stateForNewFormElements.isEmpty())
+        return FormControlState();
     typedef FormElementStateMap::iterator Iterator;
-    Iterator it = m_stateForNewFormElements.find(FormElementKey(name, type));
+    Iterator it = m_stateForNewFormElements.find(FormElementKey(control.name().impl(), control.type().impl()));
     if (it == m_stateForNewFormElements.end())
         return FormControlState();
     ASSERT(it->second.size());

@@ -77,12 +77,9 @@ void HTMLFormControlElementWithState::finishParsingChildren()
     if (!shouldSaveAndRestoreFormControlState())
         return;
 
-    Document* doc = document();
-    if (doc->formController()->hasStateForNewFormElements()) {
-        FormControlState state = doc->formController()->takeStateForFormElement(name().impl(), type().impl());
-        if (state.valueSize() > 0)
-            restoreFormControlState(state);
-    }
+    FormControlState state = document()->formController()->takeStateForFormElement(*this);
+    if (state.valueSize() > 0)
+        restoreFormControlState(state);
 }
 
 } // namespace Webcore

@@ -1,3 +1,28 @@
+2012-06-26  Kent Tamura  <tkent@chromium.org>
+
+        Refactoring: Simplify FormController interface
+        https://bugs.webkit.org/show_bug.cgi?id=89951
+
+        Reviewed by Kentaro Hara.
+
+        - Remove FormController::hasStateForNewFormElements()
+          takeStateForFormElement() can check the emptiness, and return an empty
+          FormControlState.
+
+        - Change the argument of takeStateForFormElement()
+          Passing just one HTMLFormControlElementWithState object instead of two
+          AtomicStringImpl. This is a preparation to use
+          HTMLFormControlElementWithState::form() in FormController.
+
+        No new tests. Just a refactoring.
+
+        * html/FormController.cpp:
+        (WebCore::FormController::takeStateForFormElement):
+        * html/FormController.h:
+        (FormController):
+        * html/HTMLFormControlElementWithState.cpp:
+        (WebCore::HTMLFormControlElementWithState::finishParsingChildren):
+
 2012-06-26  Dominic Cooney  <dominicc@chromium.org>
 
         WheelEvent should inherit from MouseEvent

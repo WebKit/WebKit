@@ -125,8 +125,7 @@ public:
     Vector<String> formElementsState() const;
     // This should be callled only by Document::setStateForNewFormElements().
     void setStateForNewFormElements(const Vector<String>&);
-    bool hasStateForNewFormElements() const;
-    FormControlState takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type);
+    FormControlState takeStateForFormElement(const HTMLFormControlElementWithState&);
 
     void registerFormElementWithFormAttribute(FormAssociatedElement*);
     void unregisterFormElementWithFormAttribute(FormAssociatedElement*);
