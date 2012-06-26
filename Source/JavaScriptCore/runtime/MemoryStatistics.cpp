@@ -37,7 +37,7 @@ GlobalMemoryStatistics globalMemoryStatistics()
     GlobalMemoryStatistics stats;
 
     stats.stackBytes = RegisterFile::committedByteCount();
-#if ENABLE(EXECUTABLE_ALLOCATOR_FIXED)
+#if ENABLE(EXECUTABLE_ALLOCATOR_FIXED) || PLATFORM(BLACKBERRY)
     stats.JITBytes = ExecutableAllocator::committedByteCount();
 #else
     stats.JITBytes = 0;

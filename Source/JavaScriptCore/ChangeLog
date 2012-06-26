@@ -1,3 +1,16 @@
+2012-06-25  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Add JSC statistics into about:memory
+        https://bugs.webkit.org/show_bug.cgi?id=89779
+
+        Reviewed by Rob Buis.
+
+        Add MemoryStatistics.cpp into build, and fill JITBytes for BlackBerry port.
+
+        * PlatformBlackBerry.cmake:
+        * runtime/MemoryStatistics.cpp:
+        (JSC::globalMemoryStatistics):
+
 2012-06-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121058.

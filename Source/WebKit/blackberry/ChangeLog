@@ -1,3 +1,17 @@
+2012-06-25  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Add JSC statistics into about:memory
+        https://bugs.webkit.org/show_bug.cgi?id=89779
+
+        Reviewed by Rob Buis.
+
+        Add detailed JS memory statistics to about:memory page.
+
+        * WebCoreSupport/AboutData.cpp:
+        (WebCore::dumpJSCTypeCountSetToTableHTML):
+        (WebCore):
+        (WebCore::memoryPage):
+
 2012-06-25  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Use AIR controls if client doesn't support HTML control

@@ -1,3 +1,16 @@
+2012-06-25  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Add JSC statistics into about:memory
+        https://bugs.webkit.org/show_bug.cgi?id=89779
+
+        Reviewed by Rob Buis.
+
+        Turn on WTF_USE_EXPORT_MACROS for BlackBerry port.
+        This will make macros like JS_EXPORT_PRIVATE work without
+        extra porting.
+
+        * wtf/Platform.h:
+
 2012-06-25  Adam Barth  <abarth@webkit.org>
 
         Use InterpolationLow on chromium-android
