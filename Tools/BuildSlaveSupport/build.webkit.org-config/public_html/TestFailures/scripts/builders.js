@@ -30,7 +30,7 @@ var builders = builders || {};
 var kUpdateStepName = 'update';
 var kUpdateScriptsStepName = 'update_scripts';
 var kCompileStepName = 'compile';
-var kWebKitTestsStepName = 'webkit_tests';
+var kWebKitTestsStepNames = ['webkit_tests', 'layout-test'];
 
 var kCrashedOrHungOutputMarker = 'crashed or hung';
 
@@ -51,8 +51,9 @@ function urlForBuildInfo(platform, builderName, buildNumber)
 
 function didFail(step)
 {
-    if (step.name == kWebKitTestsStepName) {
+    if (kWebKitTestsStepNames.indexOf(step.name) != -1) {
         // run-webkit-tests fails to generate test coverage when it crashes or hangs.
+        // FIXME: Do build.webkit.org bots output this marker when the tests fail to run?
         return step.text.indexOf(kCrashedOrHungOutputMarker) != -1;
     }
     return step.results[0] > 0 && step.text.indexOf('warning') == -1;
@@ -94,10 +95,7 @@ function fetchMostRecentBuildInfoByBuilder(platform, callback)
         var builderNames = Object.keys(builderStatus);
         var requestTracker = new base.RequestTracker(builderNames.length, callback, [buildInfoByBuilder]);
         builderNames.forEach(function(builderName) {
-            // FIXME: Should garden-o-matic show these? I can imagine showing the deps bots being useful at least so
-            // that the gardener only need to look at garden-o-matic and never at the waterfall. Not really sure who
-            // watches the GPU bots.
-            if (builderName.indexOf('GPU') != -1 || builderName.indexOf('deps') != -1 || builderName.indexOf('ASAN') != -1) {
+            if (!config.kPlatforms[config.currentPlatform].builderApplies(builderName)) {
                 requestTracker.requestComplete();
                 return;
             }

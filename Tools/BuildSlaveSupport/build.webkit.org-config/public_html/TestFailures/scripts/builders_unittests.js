@@ -57,6 +57,36 @@ var kExampleBuilderStatusJSON =  {
     },
 };
 
+var kExampleWebKitDotOrgBuilderStatusJSON =  {
+    "Apple Lion Release WK2 (Tests)": {
+        "basedir": "Webkit_Linux",
+        "cachedBuilds": [11459, 11460, 11461, 11462],
+        "category": "6webkit linux latest",
+        "currentBuilds": [11462],
+        "pendingBuilds": 0,
+        "slaves": ["vm124-m1"],
+        "state": "building"
+    },
+    "GTK Linux 64-bit Debug": {
+        "basedir": "Webkit_Linux",
+        "cachedBuilds": [11459, 11460, 11461, 11462],
+        "category": "6webkit linux latest",
+        "currentBuilds": [11461, 11462],
+        "pendingBuilds": 0,
+        "slaves": ["vm124-m1"],
+        "state": "building"
+    },
+    "Qt Linux Release": {
+        "basedir": "Webkit_Linux",
+        "cachedBuilds": [11459, 11460, 11461, 11462],
+        "category": "6webkit linux latest",
+        "currentBuilds": [11461, 11462],
+        "pendingBuilds": 0,
+        "slaves": ["vm124-m1"],
+        "state": "building"
+    },
+};
+
 var kExampleBuildInfoJSON = {
     "blame": ["abarth@webkit.org"],
     "builderName": "Webkit Linux",
@@ -992,6 +1022,51 @@ test("buildersFailing", 3, function() {
       "http://build.chromium.org/p/chromium.webkit/json/builders/Webkit%20Mac10.6/builds/11460",
     ]);
 });
+
+test("buildersFailing (Apple)", 3, function() {
+    var simulator = new NetworkSimulator();
+    builders.clearBuildInfoCache();
+
+    config.currentPlatform = 'apple';
+
+    var failingBuildInfoJSON = JSON.parse(JSON.stringify(kExampleBuildInfoJSON));
+    failingBuildInfoJSON.number = 11460;
+    failingBuildInfoJSON.steps[2].results[0] = 1;
+
+    var requestedURLs = [];
+    simulator.get = function(url, callback)
+    {
+        requestedURLs.push(url);
+        simulator.scheduleCallback(function() {
+            if (/\/json\/builders$/.exec(url))
+                callback(kExampleWebKitDotOrgBuilderStatusJSON);
+            else if (/Apple%20Lion%20Release%20WK2%20\(Tests\)/.exec(url))
+                callback(kExampleBuildInfoJSON);
+            else {
+                ok(false, "Unexpected URL: " + url);
+                callback();
+            }
+        });
+    };
+
+    simulator.runTest(function() {
+        builders.buildersFailingNonLayoutTests(function(builderNameList) {
+            deepEqual(builderNameList, {
+                "Apple Lion Release WK2 (Tests)": [
+                    "webkit_gpu_tests"
+                ]
+            });
+        });
+    });
+
+    deepEqual(requestedURLs, [
+        "http://build.webkit.org/json/builders",
+        "http://build.webkit.org/json/builders/Apple%20Lion%20Release%20WK2%20(Tests)/builds/11461"
+    ]);
+
+    config.currentPlatform = 'chromium';
+});
+
 
 test("buildersFailing (run-webkit-tests crash)", 3, function() {
     var simulator = new NetworkSimulator();
