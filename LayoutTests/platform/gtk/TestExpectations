@@ -1234,6 +1234,9 @@ BUGWK51027 RELEASE : plugins/refcount-leaks.html = TEXT
 
 BUGWK57346 : fast/text/justify-ideograph-leading-expansion.html = TEXT
 
+// Needs Rebaseline after bug 86942
+BUGWK86942 : fast/backgrounds/size/zero.html = TEXT
+
 BUGWK83800 : plugins/get-url-with-blank-target.html = TEXT
 
 BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = TEXT

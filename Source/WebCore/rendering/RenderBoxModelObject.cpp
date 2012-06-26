@@ -1070,7 +1070,7 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
                 h = imageIntrinsicSize.height();
             }
             
-            return IntSize(max(1, w), max(1, h));
+            return IntSize(max(0, w), max(0, h));
         }
         case SizeNone: {
             // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.

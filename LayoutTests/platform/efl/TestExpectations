@@ -700,6 +700,9 @@ BUGWK86722 SKIP : fast/images/paletted-png-with-color-profile.html = PASS
 BUGWK88729 SKIP : userscripts/window-onerror-for-isolated-world-1.html = PASS
 BUGWK88729 SKIP : userscripts/window-onerror-for-isolated-world-2.html = PASS
 
+// Needs Rebaseline after bug 86942
+BUGWK86942 : fast/backgrounds/size/zero.html = IMAGE+TEXT
+
 // Needs rebaseline after the bots cycle.
 BUG_OJAN : tables/mozilla/bugs/bug131020.html = TEXT IMAGE IMAGE+TEXT
 

@@ -1,3 +1,24 @@
+2012-06-26  Joe Thomas  <joethomas@motorola.com>
+
+        background-size:0 shows as 1px instead of invisible
+        https://bugs.webkit.org/show_bug.cgi?id=86942
+
+        Reviewed by Eric Seidel.
+
+        As per the specification http://www.w3.org/TR/css3-background/#background-size, if the background image's width or height resolves to zero,
+        this causes the image not to be displayed. The effect should be the same as if it had been a transparent image.
+        This is also mentioned in http://www.w3.org/TR/2002/WD-css3-background-20020802/#background-size.
+
+        * fast/backgrounds/size/zero.html:
+        * fast/backgrounds/zero-background-size-expected.html: Added.
+        * fast/backgrounds/zero-background-size.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/fast/backgrounds/size/zero-expected.png:
+        * platform/mac/fast/backgrounds/size/zero-expected.txt:
+        * platform/qt/TestExpectations:
+
 2012-06-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a test after r121286.
