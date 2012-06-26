@@ -1,3 +1,18 @@
+2012-06-25  Pratik Solanki  <psolanki@apple.com>
+
+        JavaScript resources have low priority when SVG is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=89932
+        <rdar://problem/11741325>
+
+        Reviewed by Adele Peterson.
+
+        r108785 inadvertently lowered the priority of JavaScript resources. Fix the code so we set
+        the correct priority for scripts. Also, move the code so that all ifdefs are together at the
+        bottom to make it a bit easier to read..
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType):
+
 2012-06-25  Luke Macpherson  <macpherson@chromium.org>
 
         Add runtime flag to enable/disable CSS variables (in addition to existing compile-time flag).
