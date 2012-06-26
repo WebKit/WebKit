@@ -1,3 +1,18 @@
+2012-06-26  Philip Rogers  <pdr@google.com>
+
+        Fix setCurrentTime for paused animations
+        https://bugs.webkit.org/show_bug.cgi?id=81350
+
+        Reviewed by Nikolas Zimmermann.
+
+        SMILTimeContainer::setElapsed was not resetting the pause time, breaking
+        setCurrentTime if the animation was paused.
+
+        Test: svg/custom/animate-pause-resume.html
+
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::setElapsed):
+
 2012-06-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed typo fix after r121144.

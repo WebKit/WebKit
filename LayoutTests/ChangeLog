@@ -1,3 +1,18 @@
+2012-06-26  Philip Rogers  <pdr@google.com>
+
+        Fix setCurrentTime for paused animations
+        https://bugs.webkit.org/show_bug.cgi?id=81350
+
+        Reviewed by Nikolas Zimmermann.
+
+        This test does not use the SVG animation test framework because the framework
+        works by pausing animations and testing animated values at fixed times
+        (through calling setCurrentTime). Testing this patch requires that we run
+        the animation and cannot be tested with the animation test framework.
+
+        * svg/custom/animate-pause-resume-expected.txt: Added.
+        * svg/custom/animate-pause-resume.html: Added.
+
 2012-06-26  Tony Chang  <tony@chromium.org>
 
         [Qt] Enable grid layout LayoutTests
