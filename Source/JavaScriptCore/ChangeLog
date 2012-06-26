@@ -1,3 +1,25 @@
+2012-06-26  Filip Pizlo  <fpizlo@apple.com>
+
+        New fast/js/dfg-store-unexpected-value-into-argument-and-osr-exit.html fails on 32 bit
+        https://bugs.webkit.org/show_bug.cgi?id=89953
+
+        Reviewed by Zoltan Herczeg.
+        
+        DFG 32-bit JIT was confused about the difference between a predicted type and a
+        proven type. This is easy to get confused about, since a local that is predicted int32
+        almost always means that the local must be an int32 since speculations are hoisted to
+        stores to locals. But that is less likely to be the case for arguments, where there is
+        an additional least-upper-bounding step: any store to an argument with a weird type
+        may force the argument to be any type.
+        
+        This patch basically duplicates the functionality in DFGSpeculativeJIT64.cpp for
+        GetLocal: the decision of whether to load a local as an int32 (or as an array, or as
+        a boolean) is made based on the AbstractValue::m_type, which is a type proof, rather
+        than the VariableAccessData::prediction(), which is a predicted type.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-06-25  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should try to make profiling deterministic because otherwise reproducing failures is

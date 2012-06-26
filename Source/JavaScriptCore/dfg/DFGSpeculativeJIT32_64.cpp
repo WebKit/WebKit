@@ -1891,7 +1891,7 @@ void SpeculativeJIT::compile(Node& node)
                 break;
             }
         
-            if (isInt32Speculation(prediction)) {
+            if (isInt32Speculation(value.m_type)) {
                 GPRTemporary result(this);
                 m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
 
@@ -1903,7 +1903,7 @@ void SpeculativeJIT::compile(Node& node)
                 break;
             }
 
-            if (isArraySpeculation(prediction)) {
+            if (isArraySpeculation(value.m_type)) {
                 GPRTemporary result(this);
                 m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
 
@@ -1915,7 +1915,7 @@ void SpeculativeJIT::compile(Node& node)
                 break;
             }
 
-            if (isBooleanSpeculation(prediction)) {
+            if (isBooleanSpeculation(value.m_type)) {
                 GPRTemporary result(this);
                 m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
 
