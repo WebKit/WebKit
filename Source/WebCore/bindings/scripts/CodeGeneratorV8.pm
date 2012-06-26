@@ -1724,13 +1724,8 @@ sub GenerateParametersCheck
             $parameterCheckString .= "    EXCEPTION_BLOCK($nativeType, $parameterName, " .
                  JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)", "args.GetIsolate()") . ");\n";
             if ($nativeType eq 'Dictionary') {
-               $parameterCheckString .= "    if (args.Length() > $paramIndex && !$parameterName.isUndefinedOrNull() && !$parameterName.isObject()) {\n";
-               if (@{$function->raisesExceptions}) {
-                   $parameterCheckString .= "        ec = TYPE_MISMATCH_ERR;\n";
-                   $parameterCheckString .= "        V8Proxy::setDOMException(ec, args.GetIsolate());\n";
-               }
-               $parameterCheckString .= "        return V8Proxy::throwTypeError(\"Not an object.\");\n";
-               $parameterCheckString .= "    }\n";
+               $parameterCheckString .= "    if (!$parameterName.isUndefinedOrNull() && !$parameterName.isObject())\n";
+               $parameterCheckString .= "        return V8Proxy::throwTypeError(\"Not an object.\", args.GetIsolate());\n";
             }
         }
 
