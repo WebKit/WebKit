@@ -213,7 +213,9 @@ contains(DEFINES, ENABLE_WEBGL=1) {
 
 contains(CONFIG, texmap) {
     DEFINES += WTF_USE_TEXTURE_MAPPER=1
-    !win32-*:contains(QT_CONFIG, opengl) {
+    # TextureMapperGL requires stuff from GraphicsContext3D, hence the WebGL
+    # dependency.
+    !win32-*:contains(QT_CONFIG, opengl):contains(DEFINES, ENABLE_WEBGL=1) {
         DEFINES += WTF_USE_TEXTURE_MAPPER_GL=1
         contains(QT_CONFIG, opengles2): LIBS += -lEGL
     }
