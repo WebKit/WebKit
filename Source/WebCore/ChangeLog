@@ -1,3 +1,15 @@
+2012-06-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in FixedTableLayout::layout
+        https://bugs.webkit.org/show_bug.cgi?id=88676
+
+        Unreviewed typo fix, pointed out by Darin Adler.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::layout):
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::layout):
+
 2012-06-26  Adam Klein  <adamk@chromium.org>
 
         MutationObserver.observe should treat a null or undefined options argument as empty

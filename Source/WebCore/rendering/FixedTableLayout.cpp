@@ -212,7 +212,7 @@ void FixedTableLayout::layout()
     // This means that our preferred logical widths were not recomputed as expected.
     if (nEffCols != m_width.size()) {
         calcWidthArray(tableLogicalWidth);
-        // FIXME: Table layout shouldn't modify our table structure (but does due to columns and colum-groups).
+        // FIXME: Table layout shouldn't modify our table structure (but does due to columns and column-groups).
         nEffCols = m_table->numEffCols();
     }
 
