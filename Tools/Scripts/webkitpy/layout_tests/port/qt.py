@@ -106,16 +106,7 @@ class QtPort(WebKitPort):
             version = '4.8'
         return version
 
-    def _search_paths(self):
-        # Qt port uses same paths for baseline_search_path and _skipped_file_search_paths
-        #
-        # qt-5.0-wk1    qt-5.0-wk2
-        #            \/
-        #         qt-5.0    qt-4.8
-        #                \/
-        #    (qt-linux|qt-mac|qt-win)
-        #                |
-        #               qt
+    def baseline_search_path(self):
         search_paths = []
         version = self.qt_version()
         if '5.0' in version:
@@ -123,21 +114,26 @@ class QtPort(WebKitPort):
                 search_paths.append('qt-5.0-wk2')
             else:
                 search_paths.append('qt-5.0-wk1')
+        search_paths.append(self.name())
         if '4.8' in version:
             search_paths.append('qt-4.8')
         elif version:
             search_paths.append('qt-5.0')
-        search_paths.append(self.port_name + '-' + self.host.platform.os_name)
         search_paths.append(self.port_name)
-        return search_paths
-
-    def baseline_search_path(self):
-        return map(self._webkit_baseline_path, self._search_paths())
+        return map(self._webkit_baseline_path, search_paths)
 
     def _skipped_file_search_paths(self):
-        skipped_path = self._search_paths()
-        skipped_path.append('wk2')
-        return skipped_path
+        search_paths = set([self.port_name, self.name()])
+        version = self.qt_version()
+        if '4.8' in version:
+            search_paths.add('qt-4.8')
+        elif version:
+            search_paths.add('qt-5.0')
+            if self.get_option('webkit_test_runner'):
+                search_paths.update(['qt-5.0-wk2', 'wk2'])
+            else:
+                search_paths.add('qt-5.0-wk1')
+        return search_paths
 
     def setup_environ_for_server(self, server_name=None):
         clean_env = WebKitPort.setup_environ_for_server(self, server_name)
