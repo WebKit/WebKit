@@ -379,6 +379,7 @@ WebInspector.HeapSnapshotViewportDataGrid.prototype = {
 
     onResize: function()
     {
+        WebInspector.HeapSnapshotSortableDataGrid.prototype.onResize.call(this);
         this.updateVisibleNodes();
     },
 

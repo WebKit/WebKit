@@ -1,3 +1,14 @@
+2012-06-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: columns in heap snapshot summary view are not resizable
+        https://bugs.webkit.org/show_bug.cgi?id=89952
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/HeapSnapshotDataGrids.js:
+        (WebInspector.HeapSnapshotViewportDataGrid.prototype.onResize): overriden method
+        should call overriden one to make sure column resizers are added to the DataGrid.
+
 2012-06-26  Kent Tamura  <tkent@chromium.org>
 
         Refactoring: Simplify FormController interface
