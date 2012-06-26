@@ -1,3 +1,19 @@
+2012-06-26  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Layer chromium should need a redraw after getting its first non-empty bounds.
+        https://bugs.webkit.org/show_bug.cgi?id=89784
+
+        Reviewed by James Robinson.
+
+        Previously, we'd only set needs redraw if the old bounds were zero,
+        and the new bounds were non-zero, but we should actually have 
+        checked that the old bounds were non-empty.
+
+        Unit test: LayerChromiumTestWithoutFixture.setBoundsTriggersSetNeedsRedrawAfterGettingNonEmptyBounds
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setBounds):
+
 2012-06-26  Jia Pu  <jpu@apple.com>
 
         On Mac, autocorrection sometimes fails to take place in Safari.
