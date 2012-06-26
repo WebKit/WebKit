@@ -39,32 +39,24 @@ namespace WebCore {
 
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)
 {
-    FILE* file;
-    struct stat fileStat;
-    RefPtr<SharedBuffer> result;
-
     if (filePath.isEmpty())
         return 0;
 
-    if (!(file = fopen(filePath.utf8().data(), "rb")))
+    FILE* file = fopen(filePath.utf8().data(), "rb");
+    if (!file)
         return 0;
 
+    struct stat fileStat;
     if (fstat(fileno(file), &fileStat)) {
         fclose(file);
         return 0;
     }
 
-    result = SharedBuffer::create();
-    result->m_buffer.resize(fileStat.st_size);
-    if (result->m_buffer.size() != static_cast<unsigned>(fileStat.st_size)) {
-        fclose(file);
-        return 0;
-    }
-
-    const size_t bytesRead = fread(result->m_buffer.data(), 1, fileStat.st_size, file);
+    Vector<char> buffer(fileStat.st_size);
+    const size_t bytesRead = fread(buffer.data(), 1, buffer.size(), file);
     fclose(file);
 
-    return bytesRead == static_cast<unsigned>(fileStat.st_size) ? result.release() : 0;
+    return (bytesRead == buffer.size()) ? SharedBuffer::adoptVector(buffer) : 0;
 }
 
 } // namespace WebCore
