@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,49 +24,31 @@
  */
 
 #include "config.h"
-#include <public/WebContentLayer.h>
+#include <public/WebScrollableLayer.h>
 
-#include "ContentLayerChromium.h"
-#include "WebContentLayerImpl.h"
+#include "LayerChromium.h"
 
-using namespace WebCore;
 
 namespace WebKit {
 
-WebContentLayer WebContentLayer::create(WebContentLayerClient* contentClient)
+void WebScrollableLayer::setScrollPosition(WebPoint position)
 {
-    return WebContentLayer(WebContentLayerImpl::create(contentClient));
+    m_private->setScrollPosition(position);
 }
 
-void WebContentLayer::clearClient()
+void WebScrollableLayer::setScrollable(bool scrollable)
 {
-    unwrap<ContentLayerChromium>()->clearDelegate();
+    m_private->setScrollable(scrollable);
 }
 
-void WebContentLayer::setDoubleSided(bool doubleSided)
+void WebScrollableLayer::setHaveWheelEventHandlers(bool haveWheelEventHandlers)
 {
-    m_private->setDoubleSided(doubleSided);
+    m_private->setHaveWheelEventHandlers(haveWheelEventHandlers);
 }
 
-void WebContentLayer::setContentsScale(float scale)
+void WebScrollableLayer::setShouldScrollOnMainThread(bool shouldScrollOnMainThread)
 {
-    m_private->setContentsScale(scale);
-}
-
-WebContentLayer::WebContentLayer(const PassRefPtr<ContentLayerChromium>& node)
-    : WebScrollableLayer(node)
-{
-}
-
-WebContentLayer& WebContentLayer::operator=(const PassRefPtr<ContentLayerChromium>& node)
-{
-    m_private = node;
-    return *this;
-}
-
-WebContentLayer::operator PassRefPtr<ContentLayerChromium>() const
-{
-    return static_cast<ContentLayerChromium*>(m_private.get());
+    m_private->setShouldScrollOnMainThread(shouldScrollOnMainThread);
 }
 
 } // namespace WebKit

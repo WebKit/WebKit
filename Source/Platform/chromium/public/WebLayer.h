@@ -65,6 +65,9 @@ public:
 
     WEBKIT_EXPORT WebLayer rootLayer() const;
     WEBKIT_EXPORT WebLayer parent() const;
+    WEBKIT_EXPORT size_t numberOfChildren() const;
+    WEBKIT_EXPORT WebLayer childAt(size_t) const;
+
     WEBKIT_EXPORT void addChild(const WebLayer&);
     WEBKIT_EXPORT void insertChild(const WebLayer&, size_t index);
     WEBKIT_EXPORT void replaceChild(const WebLayer& reference, const WebLayer& newLayer);
@@ -133,6 +136,11 @@ public:
 
     WEBKIT_EXPORT void setDebugBorderColor(const WebColor&);
     WEBKIT_EXPORT void setDebugBorderWidth(float);
+
+    // DEPRECATED.
+    // This requests that this layer's compositor-managed textures always be reserved
+    // when determining texture limits.
+    WEBKIT_EXPORT void setAlwaysReserveTextures(bool);
 
     // Forces this layer to use a render surface. There is no benefit in doing
     // so, but this is to facilitate benchmarks and tests.

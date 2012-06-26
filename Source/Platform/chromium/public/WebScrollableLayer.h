@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,36 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include <public/WebContentLayer.h>
+#ifndef WebScrollableLayer_h
+#define WebScrollableLayer_h
 
-#include "ContentLayerChromium.h"
-#include "WebContentLayerImpl.h"
-
-using namespace WebCore;
+#include "WebCommon.h"
+#include "WebLayer.h"
+#include "WebPoint.h"
 
 namespace WebKit {
 
-WebContentLayer WebContentLayer::create(WebContentLayerClient* contentClient)
-{
-    return WebContentLayer(WebContentLayerImpl::create(contentClient));
-}
+class WebScrollableLayer : public WebLayer {
+public:
+    WebScrollableLayer() { }
+    WebScrollableLayer(const WebScrollableLayer& layer) : WebLayer(layer) { }
+    virtual ~WebScrollableLayer() { }
+    WebScrollableLayer& operator=(const WebScrollableLayer& layer)
+    {
+        WebLayer::assign(layer);
+        return *this;
+    }
 
-void WebContentLayer::clearClient()
-{
-    unwrap<ContentLayerChromium>()->clearDelegate();
-}
+    WEBKIT_EXPORT void setScrollPosition(WebPoint);
+    WEBKIT_EXPORT void setScrollable(bool);
+    WEBKIT_EXPORT void setHaveWheelEventHandlers(bool);
+    WEBKIT_EXPORT void setShouldScrollOnMainThread(bool);
 
-void WebContentLayer::setDoubleSided(bool doubleSided)
-{
-    m_private->setDoubleSided(doubleSided);
-}
-
-void WebContentLayer::setContentsScale(float scale)
-{
-    m_private->setContentsScale(scale);
-}
-
-WebContentLayer::WebContentLayer(const PassRefPtr<ContentLayerChromium>& node)
-    : WebScrollableLayer(node)
-{
-}
-
-WebContentLayer& WebContentLayer::operator=(const PassRefPtr<ContentLayerChromium>& node)
-{
-    m_private = node;
-    return *this;
-}
-
-WebContentLayer::operator PassRefPtr<ContentLayerChromium>() const
-{
-    return static_cast<ContentLayerChromium*>(m_private.get());
-}
+#if WEBKIT_IMPLEMENTATION
+    WebScrollableLayer(const WTF::PassRefPtr<WebCore::LayerChromium>& layer) : WebLayer(layer) { }
+#endif
+};
 
 } // namespace WebKit
+
+#endif // WebScrollableLayer_h

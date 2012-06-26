@@ -1,3 +1,26 @@
+2012-06-25  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add WebLayer API for scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=89913
+
+        Reviewed by Adrienne Walker.
+
+        Use new WebScrollableLayer type in ScrollingCoordinatorChromium. This file peeks "under the hood" a fair amount
+        since we don't have WebLayer API for scrollbar layers yet.
+
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::ScrollingCoordinatorPrivate::setScrollLayer):
+        (WebCore::ScrollingCoordinatorPrivate::setHorizontalScrollbarLayer):
+        (WebCore::ScrollingCoordinatorPrivate::setVerticalScrollbarLayer):
+        (WebCore::ScrollingCoordinatorPrivate::hasScrollLayer):
+        (WebCore::ScrollingCoordinatorPrivate::scrollLayer):
+        (ScrollingCoordinatorPrivate):
+        (WebCore::createScrollbarLayer):
+        (WebCore::ScrollingCoordinator::setScrollLayer):
+        (WebCore::ScrollingCoordinator::setNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinator::setWheelEventHandlerCount):
+        (WebCore::ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread):
+
 2012-06-26  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r120501.

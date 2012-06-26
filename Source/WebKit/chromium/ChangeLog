@@ -1,3 +1,36 @@
+2012-06-25  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add WebLayer API for scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=89913
+
+        Reviewed by Adrienne Walker.
+
+        Use WebScrollableLayer type in NonCompositedContentHost.
+
+        * WebKit.gyp:
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::setScrollLayer):
+        (WebKit::reserveScrollbarLayers):
+        (WebKit::NonCompositedContentHost::setViewport):
+        (WebKit::NonCompositedContentHost::haveScrollLayer):
+        (WebKit):
+        (WebKit::NonCompositedContentHost::scrollLayer):
+        * src/NonCompositedContentHost.h:
+        (WebCore):
+        * src/WebContentLayer.cpp:
+        (WebKit::WebContentLayer::WebContentLayer):
+        * src/WebLayer.cpp:
+        (WebKit::WebLayer::numberOfChildren):
+        (WebKit):
+        (WebKit::WebLayer::childAt):
+        (WebKit::WebLayer::setAlwaysReserveTextures):
+        * src/WebScrollableLayer.cpp:
+        (WebKit):
+        (WebKit::WebScrollableLayer::setScrollPosition):
+        (WebKit::WebScrollableLayer::setScrollable):
+        (WebKit::WebScrollableLayer::setHaveWheelEventHandlers):
+        (WebKit::WebScrollableLayer::setShouldScrollOnMainThread):
+
 2012-06-26  Ian Vollick  <vollick@chromium.org>
 
         [chromium] The single thread proxy should not automatically tick new animations.

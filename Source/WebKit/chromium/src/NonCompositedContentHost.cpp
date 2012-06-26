@@ -34,6 +34,7 @@
 #include "PlatformContextSkia.h"
 #include "WebViewImpl.h"
 #include "cc/CCLayerTreeHost.h"
+#include <public/WebFloatPoint.h>
 
 namespace WebKit {
 
@@ -80,41 +81,41 @@ void NonCompositedContentHost::setScrollLayer(WebCore::GraphicsLayer* layer)
         return;
     }
 
-    if (layer->platformLayer() == scrollLayer())
+    if (WebScrollableLayer(layer->platformLayer()) == scrollLayer())
         return;
 
     layer->addChildAtIndex(m_graphicsLayer.get(), 0);
-    ASSERT(scrollLayer());
+    ASSERT(haveScrollLayer());
 }
 
-static void reserveScrollbarLayers(WebCore::LayerChromium* layer, WebCore::LayerChromium* clipLayer)
+static void reserveScrollbarLayers(WebLayer layer, WebLayer clipLayer)
 {
     // Scrollbars and corners are known to be attached outside the root clip
     // rect, so skip the clipLayer subtree.
     if (layer == clipLayer)
         return;
 
-    for (size_t i = 0; i < layer->children().size(); ++i)
-        reserveScrollbarLayers(layer->children()[i].get(), clipLayer);
+    for (size_t i = 0; i < layer.numberOfChildren(); ++i)
+        reserveScrollbarLayers(layer.childAt(i), clipLayer);
 
-    if (layer->drawsContent())
-        layer->setAlwaysReserveTextures(true);
+    if (layer.drawsContent())
+        layer.setAlwaysReserveTextures(true);
 }
 
 void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, float deviceScale)
 {
-    if (!scrollLayer())
+    if (!haveScrollLayer())
         return;
 
     bool visibleRectChanged = m_viewportSize != viewportSize;
 
     m_viewportSize = viewportSize;
-
-    scrollLayer()->setScrollPosition(scrollPosition + toSize(scrollOrigin));
-    scrollLayer()->setPosition(-scrollPosition);
+    WebScrollableLayer layer = scrollLayer();
+    layer.setScrollPosition(scrollPosition + scrollOrigin);
+    layer.setPosition(WebFloatPoint(-scrollPosition));
     // Due to the possibility of pinch zoom, the noncomposited layer is always
     // assumed to be scrollable.
-    scrollLayer()->setScrollable(true);
+    layer.setScrollable(true);
     m_deviceScaleFactor = deviceScale;
     m_graphicsLayer->deviceOrPageScaleFactorChanged();
     m_graphicsLayer->setSize(contentsSize);
@@ -135,18 +136,23 @@ void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize,
     } else if (visibleRectChanged)
         m_graphicsLayer->setNeedsDisplay();
 
-    WebCore::LayerChromium* clipLayer = scrollLayer()->parent();
-    WebCore::LayerChromium* rootLayer = clipLayer;
-    while (rootLayer->parent())
-        rootLayer = rootLayer->parent();
+    WebLayer clipLayer = layer.parent();
+    WebLayer rootLayer = clipLayer;
+    while (!rootLayer.parent().isNull())
+        rootLayer = rootLayer.parent();
     reserveScrollbarLayers(rootLayer, clipLayer);
 }
 
-WebCore::LayerChromium* NonCompositedContentHost::scrollLayer()
+bool NonCompositedContentHost::haveScrollLayer()
+{
+    return m_graphicsLayer->parent();
+}
+
+WebScrollableLayer NonCompositedContentHost::scrollLayer()
 {
     if (!m_graphicsLayer->parent())
-        return 0;
-    return m_graphicsLayer->parent()->platformLayer();
+        return WebScrollableLayer();
+    return WebScrollableLayer(m_graphicsLayer->parent()->platformLayer());
 }
 
 void NonCompositedContentHost::invalidateRect(const WebCore::IntRect& rect)

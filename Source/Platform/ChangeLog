@@ -1,3 +1,24 @@
+2012-06-25  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add WebLayer API for scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=89913
+
+        Reviewed by Adrienne Walker.
+
+        Adds WebScrollableLayer type to represent a layer that can be scrolled by the user. Currently WebContentLayers
+        are scrollable and no other layer types are, although this might change in the future.
+
+        * chromium/public/WebContentLayer.h:
+        (WebKit::WebContentLayer::WebContentLayer):
+        * chromium/public/WebLayer.h:
+        (WebLayer):
+        * chromium/public/WebScrollableLayer.h:
+        (WebKit):
+        (WebScrollableLayer):
+        (WebKit::WebScrollableLayer::WebScrollableLayer):
+        (WebKit::WebScrollableLayer::~WebScrollableLayer):
+        (WebKit::WebScrollableLayer::operator=):
+
 2012-06-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121176.

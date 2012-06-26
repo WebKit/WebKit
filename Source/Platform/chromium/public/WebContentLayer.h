@@ -27,7 +27,7 @@
 #define WebContentLayer_h
 
 #include "WebCommon.h"
-#include "WebLayer.h"
+#include "WebScrollableLayer.h"
 
 namespace WebCore {
 class ContentLayerChromium;
@@ -37,12 +37,12 @@ namespace WebKit {
 class WebContentLayerClient;
 class WebContentLayerImpl;
 
-class WebContentLayer : public WebLayer {
+class WebContentLayer : public WebScrollableLayer {
 public:
     WEBKIT_EXPORT static WebContentLayer create(WebContentLayerClient*);
 
     WebContentLayer() { }
-    WebContentLayer(const WebContentLayer& layer) : WebLayer(layer) { }
+    WebContentLayer(const WebContentLayer& layer) : WebScrollableLayer(layer) { }
     virtual ~WebContentLayer() { }
     WebContentLayer& operator=(const WebContentLayer& layer)
     {

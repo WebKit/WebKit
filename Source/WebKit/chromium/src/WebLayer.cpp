@@ -118,6 +118,16 @@ WebLayer WebLayer::parent() const
     return WebLayer(const_cast<LayerChromium*>(m_private->parent()));
 }
 
+size_t WebLayer::numberOfChildren() const
+{
+    return m_private->children().size();
+}
+
+WebLayer WebLayer::childAt(size_t index) const
+{
+    return WebLayer(m_private->children()[index]);
+}
+
 void WebLayer::addChild(const WebLayer& child)
 {
     m_private->addChild(child);
@@ -298,6 +308,11 @@ void WebLayer::setDebugBorderColor(const WebColor& color)
 void WebLayer::setDebugBorderWidth(float width)
 {
     m_private->setDebugBorderWidth(width);
+}
+
+void WebLayer::setAlwaysReserveTextures(bool reserve)
+{
+    m_private->setAlwaysReserveTextures(reserve);
 }
 
 void WebLayer::setForceRenderSurface(bool forceRenderSurface)

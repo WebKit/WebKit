@@ -29,6 +29,7 @@
 #include "GraphicsLayerClient.h"
 #include "IntSize.h"
 
+#include <public/WebScrollableLayer.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -39,7 +40,6 @@ class GraphicsLayer;
 class GraphicsContext;
 class IntPoint;
 class IntRect;
-class LayerChromium;
 }
 
 namespace WebKit {
@@ -79,7 +79,8 @@ private:
     // size, so it is always 1 for the GraphicsLayer.
     virtual float deviceScaleFactor() const OVERRIDE { return m_deviceScaleFactor; }
 
-    WebCore::LayerChromium* scrollLayer();
+    bool haveScrollLayer();
+    WebScrollableLayer scrollLayer();
 
     OwnPtr<WebCore::GraphicsLayer> m_graphicsLayer;
     WebViewImpl* m_webView;

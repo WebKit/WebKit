@@ -623,6 +623,7 @@
                 'src/WebScopedMicrotaskSuppression.cpp',
                 'src/WebScopedUserGesture.cpp',
                 'src/WebScriptController.cpp',
+                'src/WebScrollableLayer.cpp',
                 'src/WebScrollbarImpl.cpp',
                 'src/WebScrollbarImpl.h',
                 'src/WebSearchableFormData.cpp',
