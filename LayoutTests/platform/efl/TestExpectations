@@ -574,8 +574,6 @@ BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = TEXT IMAG
 // Times-out with debug build during heavy cpu loads
 BUGWK85902 SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 
-BUGWK82675 : http/tests/local/link-stylesheet-load-order.html = TEXT
-
 BUGWKEFL SLOW DEBUG : http/tests/incremental/slow-utf8-html.pl = PASS
 
 // Tests imported in r116658
