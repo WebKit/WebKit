@@ -60,9 +60,9 @@ public:
     
     virtual ~CSSCalcExpressionNode() = 0;
     virtual bool isZero() const = 0;
-    virtual PassOwnPtr<CalcExpressionNode> toCalcValue(RenderStyle*, RenderStyle* rootStyle, RenderStyle* parentStyle, double zoom = 1.0) const = 0;
+    virtual PassOwnPtr<CalcExpressionNode> toCalcValue(RenderStyle*, RenderStyle* rootStyle, double zoom = 1.0) const = 0;    
     virtual double doubleValue() const = 0;
-    virtual double computeLengthPx(RenderStyle* currentStyle, RenderStyle* rootStyle, RenderStyle* parentStyle, double multiplier = 1.0, bool computingFontSize = false) const = 0;
+    virtual double computeLengthPx(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const = 0;
     virtual String customCssText() const = 0;
     
     CalculationCategory category() const { return m_category; }    
@@ -84,15 +84,15 @@ public:
     static PassRefPtr<CSSCalcValue> create(CSSParserString name, CSSParserValueList*, CalculationPermittedValueRange);
     static PassRefPtr<CSSCalcValue> create(CalculationValue*);
 
-    PassRefPtr<CalculationValue> toCalcValue(RenderStyle* style, RenderStyle* rootStyle, RenderStyle* parentStyle, double zoom = 1.0) const
+    PassRefPtr<CalculationValue> toCalcValue(RenderStyle* style, RenderStyle* rootStyle, double zoom = 1.0) const
     {
-        return CalculationValue::create(m_expression->toCalcValue(style, rootStyle, parentStyle, zoom), m_nonNegative ? CalculationRangeNonNegative : CalculationRangeAll);
+        return CalculationValue::create(m_expression->toCalcValue(style, rootStyle, zoom), m_nonNegative ? CalculationRangeNonNegative : CalculationRangeAll);
     }
     CalculationCategory category() const { return m_expression->category(); }
     bool isInt() const { return m_expression->isInteger(); }    
     double doubleValue() const;
     bool isNegative() const { return m_expression->doubleValue() < 0; }
-    double computeLengthPx(RenderStyle* currentStyle, RenderStyle* rootStyle, RenderStyle* parentStyle, double multiplier = 1.0, bool computingFontSize = false) const;
+    double computeLengthPx(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const;
         
     String customCssText() const;
     

@@ -1,3 +1,25 @@
+2012-06-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121285.
+        http://trac.webkit.org/changeset/121285
+        https://bugs.webkit.org/show_bug.cgi?id=90014
+
+        "We misinterpreted 'size of the initial containing block'"
+        (Requested by tomz on #webkit).
+
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vh-border-expected.html: Removed.
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vh-border.html: Removed.
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vmin-border-expected.html: Removed.
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vmin-border.html: Removed.
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vw-border-expected.htm: Removed.
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vw-border.html: Removed.
+        * ietestcenter/css3/valuesandunits/units-000.htm:
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-06-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Convert editing/deleting/delete-3959464-fix.html, delete-at-paragraph-boundaries-001.html, merge-into-empty-block-1.html and merge-into-empty-block-2.html to dump-as-markup tests

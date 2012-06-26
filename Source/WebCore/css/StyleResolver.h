@@ -156,8 +156,7 @@ public:
     void setEffectiveZoom(float f) { m_fontDirty |= style()->setEffectiveZoom(f); }
     void setTextSizeAdjust(bool b) { m_fontDirty |= style()->setTextSizeAdjust(b); }
     bool hasParentNode() const { return m_parentNode; }
-    ContainerNode* parentNode() const { return m_parentNode; }
-
+    
     void appendAuthorStylesheets(unsigned firstNew, const Vector<RefPtr<StyleSheet> >&);
     
     // Find the ids or classes the selectors on a stylesheet are scoped to. The selectors only apply to elements in subtrees where the root element matches the scope.
@@ -245,7 +244,7 @@ public:
     bool usesBeforeAfterRules() const { return m_features.usesBeforeAfterRules; }
     bool usesLinkRules() const { return m_features.usesLinkRules; }
 
-    static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, RenderStyle* parentStyle, TransformOperations& outOperations);
+    static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, TransformOperations& outOperations);
     
     void invalidateMatchedPropertiesCache();
     
@@ -410,8 +409,8 @@ public:
     bool applyPropertyToRegularStyle() const { return m_applyPropertyToRegularStyle; }
     bool applyPropertyToVisitedLinkStyle() const { return m_applyPropertyToVisitedLinkStyle; }
 
-    static Length convertToIntLength(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, RenderStyle* parentStyle, double multiplier = 1);
-    static Length convertToFloatLength(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, RenderStyle* parentStyle, double multiplier = 1);
+    static Length convertToIntLength(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, double multiplier = 1);
+    static Length convertToFloatLength(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, double multiplier = 1);
 
     CSSToStyleMap* styleMap() { return &m_styleMap; }
     

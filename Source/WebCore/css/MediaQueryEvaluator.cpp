@@ -307,7 +307,7 @@ static bool gridMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFea
     return false;
 }
 
-static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, RenderStyle* rootStyle, RenderStyle* parentStyle, int& result)
+static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, RenderStyle* rootStyle, int& result)
 {
     if (!value->isPrimitiveValue())
         return false;
@@ -320,7 +320,7 @@ static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, Rend
     }
 
     if (primitiveValue->isLength()) {
-        result = primitiveValue->computeLength<int>(style, rootStyle, parentStyle);
+        result = primitiveValue->computeLength<int>(style, rootStyle);
         return true;
     }
 
@@ -332,12 +332,10 @@ static bool device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, F
     if (value) {
         FloatRect sg = screenRect(frame->page()->mainFrame()->view());
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
-        ContainerNode* parentNode = frame->document()->documentElement()->parentNodeForRenderingAndStyle();
-        RenderStyle* parentStyle = parentNode ? parentNode->renderStyle() : 0;
         int length;
         long height = sg.height();
         InspectorInstrumentation::applyScreenHeightOverride(frame, &height);
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, parentStyle, length) && compareValue(static_cast<int>(height), length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(static_cast<int>(height), length, op);
     }
     // ({,min-,max-}device-height)
     // assume if we have a device, assume non-zero
@@ -349,12 +347,10 @@ static bool device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Fr
     if (value) {
         FloatRect sg = screenRect(frame->page()->mainFrame()->view());
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
-        ContainerNode* parentNode = frame->document()->documentElement()->parentNodeForRenderingAndStyle();
-        RenderStyle* parentStyle = parentNode ? parentNode->renderStyle() : 0;
         int length;
         long width = sg.width();
         InspectorInstrumentation::applyScreenWidthOverride(frame, &width);
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, parentStyle, length) && compareValue(static_cast<int>(width), length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(static_cast<int>(width), length, op);
     }
     // ({,min-,max-}device-width)
     // assume if we have a device, assume non-zero
@@ -367,10 +363,8 @@ static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* f
 
     if (value) {
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
-        ContainerNode* parentNode = frame->document()->documentElement()->parentNodeForRenderingAndStyle();
-        RenderStyle* parentStyle = parentNode ? parentNode->renderStyle() : 0;
         int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, parentStyle, length) && compareValue(view->layoutHeight(), length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(view->layoutHeight(), length, op);
     }
 
     return view->layoutHeight() != 0;
@@ -382,10 +376,8 @@ static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* fr
 
     if (value) {
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
-        ContainerNode* parentNode = frame->document()->documentElement()->parentNodeForRenderingAndStyle();
-        RenderStyle* parentStyle = parentNode ? parentNode->renderStyle() : 0;
         int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, parentStyle, length) && compareValue(view->layoutWidth(), length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(view->layoutWidth(), length, op);
     }
 
     return view->layoutWidth() != 0;

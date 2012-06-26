@@ -34,7 +34,6 @@
 #include "CursorList.h"
 #include "Document.h"
 #include "Element.h"
-#include "NodeRenderStyle.h"
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderObject.h"
@@ -213,7 +212,7 @@ public:
         else if (valueType == Number)
             setValue(styleResolver->style(), *primitiveValue);
         else if (valueType == ComputeLength)
-            setValue(styleResolver->style(), primitiveValue->computeLength<T>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->parentStyle(), styleResolver->style()->effectiveZoom()));
+            setValue(styleResolver->style(), primitiveValue->computeLength<T>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom()));
     }
 
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
@@ -223,7 +222,7 @@ class ApplyPropertyClip {
 private:
     static Length convertToLength(StyleResolver* styleResolver, CSSPrimitiveValue* value)
     {
-        return value->convertToLength<FixedIntegerConversion | PercentConversion | FractionConversion | AutoConversion>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->parentStyle(), styleResolver->style()->effectiveZoom());
+        return value->convertToLength<FixedIntegerConversion | PercentConversion | FractionConversion | AutoConversion>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
     }
 public:
     static void applyInheritValue(StyleResolver* styleResolver)
@@ -380,13 +379,13 @@ public:
         if (autoEnabled && primitiveValue->getIdent() == CSSValueAuto)
             setValue(styleResolver->style(), Length());
         else if (primitiveValue->isLength()) {
-            Length length = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->parentStyle(), styleResolver->style()->effectiveZoom());
+            Length length = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
             length.setQuirk(primitiveValue->isQuirkValue());
             setValue(styleResolver->style(), length);
         } else if (primitiveValue->isPercentage())
             setValue(styleResolver->style(), Length(primitiveValue->getDoubleValue(), Percent));
         else if (primitiveValue->isCalculatedPercentageWithLength())
-            setValue(styleResolver->style(), Length(primitiveValue->cssCalcValue()->toCalcValue(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->parentStyle(), styleResolver->style()->effectiveZoom())));
+            setValue(styleResolver->style(), Length(primitiveValue->cssCalcValue()->toCalcValue(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom())));
         else if (primitiveValue->isViewportPercentageLength())
             setValue(styleResolver->style(), primitiveValue->viewportPercentageLength());
     }
@@ -446,7 +445,7 @@ public:
             // handle this case
             return;
         } else
-            radiusWidth = pair->first()->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->parentStyle(), styleResolver->style()->effectiveZoom());
+            radiusWidth = pair->first()->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
         if (pair->second()->isPercentage())
             radiusHeight = Length(pair->second()->getDoubleValue(), Percent);
         else if (pair->second()->isViewportPercentageLength())
@@ -456,7 +455,7 @@ public:
             // handle this case
             return;
         } else
-            radiusHeight = pair->second()->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->parentStyle(), styleResolver->style()->effectiveZoom());
+            radiusHeight = pair->second()->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
         int width = radiusWidth.value();
         int height = radiusHeight.value();
         if (width < 0 || height < 0)
@@ -601,7 +600,7 @@ public:
             length = 5;
         } else if (ident == CSSValueInvalid) {
             float zoom = (svgZoomEnabled && styleResolver->useSVGZoomRules()) ? 1.0f : styleResolver->style()->effectiveZoom();
-            length = primitiveValue->computeLength<T>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->parentStyle(), zoom);
+            length = primitiveValue->computeLength<T>(styleResolver->style(), styleResolver->rootElementStyle(), zoom);
         } else {
             ASSERT_NOT_REACHED();
             length = 0;
@@ -739,20 +738,12 @@ public:
         } else {
             fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize
                                               || !(primitiveValue->isPercentage() || primitiveValue->isFontRelativeLength()));
-
-            RenderStyle* gpStyle = 0;
-            ContainerNode* parentNode = styleResolver->parentNode();
-            if (parentNode) {
-                ContainerNode* gpNode = parentNode->parentNodeForRenderingAndStyle();
-                gpStyle = gpNode ? gpNode->renderStyle() : 0;
-            }
-
             if (primitiveValue->isLength())
-                size = primitiveValue->computeLength<float>(styleResolver->parentStyle(), styleResolver->rootElementStyle(), gpStyle, 1.0, true);
+                size = primitiveValue->computeLength<float>(styleResolver->parentStyle(), styleResolver->rootElementStyle(), 1.0, true);
             else if (primitiveValue->isPercentage())
                 size = (primitiveValue->getFloatValue() * parentSize) / 100.0f;
             else if (primitiveValue->isCalculatedPercentageWithLength())
-                size = primitiveValue->cssCalcValue()->toCalcValue(styleResolver->parentStyle(), styleResolver->rootElementStyle(), gpStyle)->evaluate(parentSize);
+                size = primitiveValue->cssCalcValue()->toCalcValue(styleResolver->parentStyle(), styleResolver->rootElementStyle())->evaluate(parentSize);
             else if (primitiveValue->isViewportPercentageLength())
                 size = valueForLength(primitiveValue->viewportPercentageLength(), 0, styleResolver->document()->renderView());
             else
@@ -1209,7 +1200,7 @@ public:
                 if (Frame* frame = styleResolver->document()->frame())
                     multiplier *= frame->textZoomFactor();
             }
-            lineHeight = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->parentStyle(), multiplier);
+            lineHeight = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), multiplier);
         } else if (primitiveValue->isPercentage()) {
             // FIXME: percentage should not be restricted to an integer here.
             lineHeight = Length((styleResolver->style()->fontSize() * primitiveValue->getIntValue()) / 100, Fixed);
@@ -1231,8 +1222,8 @@ public:
 
 class ApplyPropertyPageSize {
 private:
-    static Length mmLength(double mm) { return CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM)->computeLength<Length>(0, 0, 0); }
-    static Length inchLength(double inch) { return CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN)->computeLength<Length>(0, 0, 0); }
+    static Length mmLength(double mm) { return CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM)->computeLength<Length>(0, 0); }
+    static Length inchLength(double inch) { return CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN)->computeLength<Length>(0, 0); }
     static bool getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
     {
         DEFINE_STATIC_LOCAL(Length, a5Width, (mmLength(148)));
@@ -1327,8 +1318,8 @@ public:
                 // <length>{2}
                 if (!second->isLength())
                     return;
-                width = first->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->parentStyle());
-                height = second->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->parentStyle());
+                width = first->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle());
+                height = second->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle());
             } else {
                 // <page-size> <orientation>
                 // The value order is guaranteed. See CSSParser::parseSizeParameter.
@@ -1346,7 +1337,7 @@ public:
             if (primitiveValue->isLength()) {
                 // <length>
                 pageSizeType = PAGE_SIZE_RESOLVED;
-                width = height = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->parentStyle());
+                width = height = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle());
             } else {
                 switch (primitiveValue->getIdent()) {
                 case 0:
@@ -1580,7 +1571,7 @@ public:
         if (primitiveValue->getIdent())
             return styleResolver->style()->setVerticalAlign(*primitiveValue);
 
-        styleResolver->style()->setVerticalAlignLength(primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->parentStyle(), styleResolver->style()->effectiveZoom()));
+        styleResolver->style()->setVerticalAlignLength(primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom()));
     }
 
     static PropertyHandler createHandler()

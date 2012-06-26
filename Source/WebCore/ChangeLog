@@ -1,3 +1,73 @@
+2012-06-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121285.
+        http://trac.webkit.org/changeset/121285
+        https://bugs.webkit.org/show_bug.cgi?id=90014
+
+        "We misinterpreted 'size of the initial containing block'"
+        (Requested by tomz on #webkit).
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcValue::computeLengthPx):
+        (WebCore::CSSCalcPrimitiveValue::toCalcValue):
+        (WebCore::CSSCalcPrimitiveValue::computeLengthPx):
+        (WebCore::CSSCalcBinaryOperation::toCalcValue):
+        (WebCore::CSSCalcBinaryOperation::computeLengthPx):
+        * css/CSSCalculationValue.h:
+        (CSSCalcExpressionNode):
+        (WebCore::CSSCalcValue::toCalcValue):
+        (CSSCalcValue):
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::addStops):
+        (WebCore::positionFromValue):
+        (WebCore::CSSGradientValue::computeEndPoint):
+        (WebCore::CSSLinearGradientValue::createGradient):
+        (WebCore::CSSRadialGradientValue::resolveRadius):
+        (WebCore::CSSRadialGradientValue::createGradient):
+        * css/CSSGradientValue.h:
+        (CSSGradientValue):
+        (CSSRadialGradientValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLength):
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        * css/CSSPrimitiveValue.h:
+        (CSSPrimitiveValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::convertToLength):
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapFillSize):
+        (WebCore::CSSToStyleMap::mapFillXPosition):
+        (WebCore::CSSToStyleMap::mapFillYPosition):
+        (WebCore::CSSToStyleMap::mapNinePieceImageQuad):
+        * css/CSSToStyleMap.h:
+        (CSSToStyleMap):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::computeLength):
+        (WebCore::device_heightMediaFeatureEval):
+        (WebCore::device_widthMediaFeatureEval):
+        (WebCore::heightMediaFeatureEval):
+        (WebCore::widthMediaFeatureEval):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        * css/StyleBuilder.cpp:
+        (WebCore::ApplyPropertyAuto::applyValue):
+        (WebCore::ApplyPropertyClip::convertToLength):
+        (WebCore::ApplyPropertyLength::applyValue):
+        (WebCore::ApplyPropertyBorderRadius::applyValue):
+        (WebCore::ApplyPropertyComputeLength::applyValue):
+        (WebCore::ApplyPropertyFontSize::applyValue):
+        (WebCore::ApplyPropertyLineHeight::applyValue):
+        (WebCore::ApplyPropertyPageSize::mmLength):
+        (WebCore::ApplyPropertyPageSize::inchLength):
+        (WebCore::ApplyPropertyPageSize::applyValue):
+        (WebCore::ApplyPropertyVerticalAlign::applyValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::setMatrixValue):
+
 2012-06-26  Dave Tu  <dtu@chromium.org>
 
         [chromium] Expose rendering statistics to WebWidget.

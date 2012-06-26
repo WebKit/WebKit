@@ -3799,14 +3799,14 @@ enum LengthConversion {
     ViewportPercentageConversion = 1 << 6
 };
 
-template<int supported> Length CSSPrimitiveValue::convertToLength(RenderStyle* style, RenderStyle* rootStyle, RenderStyle* parentStyle, double multiplier, bool computingFontSize)
+template<int supported> Length CSSPrimitiveValue::convertToLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
 {
     if ((supported & (FixedIntegerConversion | FixedFloatConversion)) && isFontRelativeLength() && (!style || !rootStyle))
         return Length(Undefined);
     if ((supported & FixedIntegerConversion) && isLength())
-        return computeLength<Length>(style, rootStyle, parentStyle, multiplier, computingFontSize);
+        return computeLength<Length>(style, rootStyle, multiplier, computingFontSize);
     if ((supported & FixedFloatConversion) && isLength())
-        return Length(computeLength<double>(style, rootStyle, parentStyle, multiplier), Fixed);
+        return Length(computeLength<double>(style, rootStyle, multiplier), Fixed);
     if ((supported & PercentConversion) && isPercentage())
         return Length(getDoubleValue(), Percent);
     if ((supported & FractionConversion) && isNumber())
@@ -3814,7 +3814,7 @@ template<int supported> Length CSSPrimitiveValue::convertToLength(RenderStyle* s
     if ((supported & AutoConversion) && getIdent() == CSSValueAuto)
         return Length(Auto);
     if ((supported & CalculatedConversion) && isCalculated())
-        return Length(cssCalcValue()->toCalcValue(style, rootStyle, parentStyle, multiplier));
+        return Length(cssCalcValue()->toCalcValue(style, rootStyle, multiplier));
     if ((supported & ViewportPercentageConversion) && isViewportPercentageLength())
         return viewportPercentageLength();
     return Length(Undefined);

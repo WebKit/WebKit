@@ -3461,7 +3461,8 @@ BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
 BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
 // IETC CSS units
-BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
+BUGWK85308 DEBUG : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
+BUGWK85308 RELEASE : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 // IETC namespace failures
 BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE

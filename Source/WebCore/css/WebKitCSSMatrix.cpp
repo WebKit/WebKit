@@ -66,7 +66,7 @@ void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
             return;
 
         TransformOperations operations;
-        if (!StyleResolver::createTransformOperations(value.get(), 0, 0, 0, operations)) {
+        if (!StyleResolver::createTransformOperations(value.get(), 0, 0, operations)) {
             ec = SYNTAX_ERR;
             return;
         }
