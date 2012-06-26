@@ -39,26 +39,6 @@ using namespace WTF;
 
 namespace WebCore {
 
-class CCSingleThreadProxyAnimationTimer : public CCTimer, CCTimerClient {
-public:
-    static PassOwnPtr<CCSingleThreadProxyAnimationTimer> create(CCSingleThreadProxy* proxy) { return adoptPtr(new CCSingleThreadProxyAnimationTimer(proxy)); }
-
-    virtual void onTimerFired() OVERRIDE
-    {
-        if (m_proxy->m_layerRendererInitialized)
-            m_proxy->compositeImmediately();
-    }
-
-private:
-    explicit CCSingleThreadProxyAnimationTimer(CCSingleThreadProxy* proxy)
-        : CCTimer(CCProxy::mainThread(), this)
-        , m_proxy(proxy)
-    {
-    }
-
-    CCSingleThreadProxy* m_proxy;
-};
-
 PassOwnPtr<CCProxy> CCSingleThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 {
     return adoptPtr(new CCSingleThreadProxy(layerTreeHost));
@@ -68,7 +48,6 @@ CCSingleThreadProxy::CCSingleThreadProxy(CCLayerTreeHost* layerTreeHost)
     : m_layerTreeHost(layerTreeHost)
     , m_contextLost(false)
     , m_compositorIdentifier(-1)
-    , m_animationTimer(CCSingleThreadProxyAnimationTimer::create(this))
     , m_layerRendererInitialized(false)
     , m_nextFrameIsNewlyCommittedFrame(false)
 {
@@ -168,9 +147,7 @@ bool CCSingleThreadProxy::initializeLayerRenderer()
         if (ok) {
             m_layerRendererInitialized = true;
             m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
-        } else
-            // If we couldn't initialize the layer renderer, we shouldn't process any future animation events.
-            m_animationTimer->stop();
+        }
 
         return ok;
     }
@@ -277,7 +254,6 @@ bool CCSingleThreadProxy::commitRequested() const
 
 void CCSingleThreadProxy::didAddAnimation()
 {
-    m_animationTimer->startOneShot(animationTimerDelay());
 }
 
 void CCSingleThreadProxy::stop()
@@ -316,11 +292,6 @@ void CCSingleThreadProxy::compositeImmediately()
         m_layerTreeHostImpl->swapBuffers();
         didSwapFrame();
     }
-}
-
-double CCSingleThreadProxy::animationTimerDelay()
-{
-    return 1 / 60.0;
 }
 
 void CCSingleThreadProxy::forceSerializeOnSwapBuffers()

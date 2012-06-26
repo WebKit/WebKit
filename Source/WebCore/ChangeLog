@@ -1,3 +1,19 @@
+2012-06-26  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] The single thread proxy should not automatically tick new animations.
+        https://bugs.webkit.org/show_bug.cgi?id=89996
+
+        Reviewed by James Robinson.
+
+        No new tests. No change to existing functionality.
+
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::CCSingleThreadProxy):
+        (WebCore::CCSingleThreadProxy::initializeLayerRenderer):
+        (WebCore::CCSingleThreadProxy::didAddAnimation):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (WebCore):
+
 2012-06-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in FixedTableLayout::layout

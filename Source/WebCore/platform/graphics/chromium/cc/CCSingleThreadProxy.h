@@ -34,7 +34,6 @@
 namespace WebCore {
 
 class CCLayerTreeHost;
-class CCSingleThreadProxyAnimationTimer;
 
 class CCSingleThreadProxy : public CCProxy, CCLayerTreeHostImplClient {
 public:
@@ -77,12 +76,7 @@ public:
     // Called by the legacy path where RenderWidget does the scheduling.
     void compositeImmediately();
 
-    // Measured in seconds.
-    static double animationTimerDelay();
-
 private:
-    friend class CCSingleThreadProxyAnimationTimer;
-
     explicit CCSingleThreadProxy(CCLayerTreeHost*);
 
     bool commitAndComposite();
@@ -98,8 +92,6 @@ private:
     // Holds on to the context between initializeContext() and initializeLayerRenderer() calls. Shouldn't
     // be used for anything else.
     OwnPtr<CCGraphicsContext> m_contextBeforeInitialization;
-
-    OwnPtr<CCSingleThreadProxyAnimationTimer> m_animationTimer;
 
     // Used on the CCThread, but checked on main thread during initialization/shutdown.
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;
