@@ -1,3 +1,15 @@
+2012-06-26  Jun Mukai  <mukai@chromium.org>
+
+        Allow using <input type="color"> UI in ChromeOS.
+        https://bugs.webkit.org/show_bug.cgi?id=89944
+
+        Reviewed by Kent Tamura.
+
+        http://crrev.com/144111 adds the UI of <input type="color"> for
+        ChromeOS, so now we can set its flag too.
+
+        * features.gypi:
+
 2012-06-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Get rid of firstItem and nextItem from HTMLCollection
