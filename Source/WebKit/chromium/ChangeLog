@@ -1,3 +1,29 @@
+2012-06-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121206.
+        http://trac.webkit.org/changeset/121206
+        https://bugs.webkit.org/show_bug.cgi?id=89935
+
+        [chromium] webkit_unit_tests
+        WebViewTest.MHTMLWithMissingResourceFinishesLoading crash
+        (Requested by ukai on #webkit).
+
+        * tests/EventListenerTest.cpp:
+        * tests/FrameTestHelpers.cpp:
+        (WebKit::FrameTestHelpers::registerMockedURLLoad):
+        (WebKit::FrameTestHelpers::createWebViewAndLoad):
+        * tests/FrameTestHelpers.h:
+        (FrameTestHelpers):
+        * tests/ListenerLeakTest.cpp:
+        (WebKit::ListenerLeakTest::RunTest):
+        * tests/WebFrameTest.cpp:
+        (WebKit::WebFrameTest::registerMockedHttpURLLoad):
+        (WebKit::WebFrameTest::registerMockedChromeURLLoad):
+        * tests/WebViewTest.cpp:
+        (WebKit::TEST_F):
+        (WebKit::WebViewTest::testAutoResize):
+        (WebKit::WebViewTest::testTextInputType):
+
 2012-06-25  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Let the embedder override the max page scale factor set by the page

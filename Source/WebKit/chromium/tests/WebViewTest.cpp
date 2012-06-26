@@ -117,7 +117,7 @@ protected:
 
 TEST_F(WebViewTest, FocusIsInactive)
 {
-    FrameTestHelpers::registerMockedURLLoadAsHTML(m_baseURL, "visible_iframe.html");
+    FrameTestHelpers::registerMockedURLLoad(m_baseURL, "visible_iframe.html");
     WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "visible_iframe.html");
 
     webView->setFocus(true);
@@ -145,7 +145,7 @@ TEST_F(WebViewTest, FocusIsInactive)
 
 TEST_F(WebViewTest, ActiveState)
 {
-    FrameTestHelpers::registerMockedURLLoadAsHTML(m_baseURL, "visible_iframe.html");
+    FrameTestHelpers::registerMockedURLLoad(m_baseURL, "visible_iframe.html");
     WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "visible_iframe.html");
 
     ASSERT_TRUE(webView);
@@ -169,7 +169,7 @@ void WebViewTest::testAutoResize(const WebSize& minAutoResize, const WebSize& ma
 {
     AutoResizeWebViewClient client;
     std::string url = m_baseURL + "specify_size.html?" + pageWidth + ":" + pageHeight;
-    FrameTestHelpers::registerMockedURLLoadAsHTML(GURL(url), "specify_size.html");
+    FrameTestHelpers::registerMockedURLLoad(GURL(url), "specify_size.html");
     WebView* webView = FrameTestHelpers::createWebViewAndLoad(url, true, 0, &client);
     client.testData().setWebView(webView);
 
@@ -268,7 +268,7 @@ TEST_F(WebViewTest, AutoResizeMaxSize)
 
 void WebViewTest::testTextInputType(WebTextInputType expectedType, const std::string& htmlFile)
 {
-    FrameTestHelpers::registerMockedURLLoadAsHTML(m_baseURL, htmlFile);
+    FrameTestHelpers::registerMockedURLLoad(m_baseURL, htmlFile);
     WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + htmlFile);
     webView->setInitialFocus(false);
     EXPECT_EQ(expectedType, webView->textInputType());
@@ -308,7 +308,7 @@ TEST_F(WebViewTest, DISABLED_TextInputType)
 
 TEST_F(WebViewTest, SetEditableSelectionOffsets)
 {
-    FrameTestHelpers::registerMockedURLLoadAsHTML(m_baseURL, "input_field_populated.html");
+    FrameTestHelpers::registerMockedURLLoad(m_baseURL, "input_field_populated.html");
     WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "input_field_populated.html");
     webView->setInitialFocus(false);
     webView->setEditableSelectionOffsets(5, 13);
@@ -316,50 +316,12 @@ TEST_F(WebViewTest, SetEditableSelectionOffsets)
     EXPECT_EQ("56789abc", frame->selectionAsText());
     webView->close();
 
-    FrameTestHelpers::registerMockedURLLoadAsHTML(m_baseURL, "content_editable_populated.html");
+    FrameTestHelpers::registerMockedURLLoad(m_baseURL, "content_editable_populated.html");
     webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "content_editable_populated.html");
     webView->setInitialFocus(false);
     webView->setEditableSelectionOffsets(8, 19);
     frame = static_cast<WebFrameImpl*>(webView->mainFrame());
     EXPECT_EQ("89abcdefghi", frame->selectionAsText());
-    webView->close();
-}
-
-class TestWebViewClient : public WebViewClient {
-public:
-    TestWebViewClient() : m_didStartLoading(false), m_didStopLoading(false), m_loadProgress(0) { }
-    virtual void didStartLoading() { m_didStartLoading = true; }
-    virtual void didStopLoading() { m_didStopLoading = true; }
-    virtual void didChangeLoadProgress(WebFrame*, double loadProgress) { m_loadProgress = loadProgress; }
-
-    bool loadingStarted() const { return m_didStartLoading; }
-    bool loadingStopped() const { return m_didStopLoading; }
-    double loadProgress() const { return m_loadProgress; }
-
-private:
-    bool m_didStartLoading;
-    bool m_didStopLoading;
-    double m_loadProgress;
-};
-
-TEST_F(WebViewTest, MHTMLWithMissingResourceFinishesLoading)
-{
-    TestWebViewClient webViewClient;
-
-    std::string fileName = "page_with_image.mht";
-    std::string fileDir = webkit_support::GetWebKitRootDir().utf8();
-    fileDir.append("/Source/WebKit/chromium/tests/data/");
-    // Making file loading works in unit-tests would require some additional work.
-    // Mocking them as regular URLs works fine in the meantime.
-    FrameTestHelpers::registerMockedURLLoad("file://" + fileDir, fileName, "multipart/related");
-    WebView* webView = FrameTestHelpers::createWebViewAndLoad("file://" + fileDir + fileName, true, 0, &webViewClient);
-    webkit_support::RunAllPendingMessages();
-
-    EXPECT_TRUE(webViewClient.loadingStarted());
-    EXPECT_TRUE(webViewClient.loadingStopped());
-    EXPECT_EQ(1.0, webViewClient.loadProgress());
-
-    // Close the WebView after checking the loading state and progress, as the close() call triggers a stop loading callback.
     webView->close();
 }
 

@@ -90,7 +90,7 @@ public:
         std::string baseURL("http://www.example.com/");
         std::string fileName(filename);
         bool executeScript = true;
-        FrameTestHelpers::registerMockedURLLoadAsHTML(baseURL, fileName);
+        FrameTestHelpers::registerMockedURLLoad(baseURL, fileName);
         m_webView = FrameTestHelpers::createWebViewAndLoad(baseURL + fileName, executeScript);
     }
 

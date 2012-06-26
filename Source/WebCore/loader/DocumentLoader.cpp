@@ -689,9 +689,6 @@ bool DocumentLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceR
 #endif
 #if ENABLE(MHTML)
     case Archive::MHTML:
-        // Schedule this loader without a resource so that resource completion/failure notifications are still fired (which will trigger a call to ResourceLoader.didFail).
-        m_pendingSubstituteResources.set(loader, 0);
-        deliverSubstituteResourcesAfterDelay();
         return true; // Always fail the load for resources not included in the MHTML.
 #endif
     default:

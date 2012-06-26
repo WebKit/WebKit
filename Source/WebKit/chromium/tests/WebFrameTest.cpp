@@ -73,12 +73,12 @@ public:
 
     void registerMockedHttpURLLoad(const std::string& fileName)
     {
-        FrameTestHelpers::registerMockedURLLoadAsHTML(m_baseURL, fileName);
+        FrameTestHelpers::registerMockedURLLoad(m_baseURL, fileName);
     }
 
     void registerMockedChromeURLLoad(const std::string& fileName)
     {
-        FrameTestHelpers::registerMockedURLLoadAsHTML(m_chromeURL, fileName);
+        FrameTestHelpers::registerMockedURLLoad(m_chromeURL, fileName);
     }
 
 protected:
