@@ -1,3 +1,15 @@
+2012-06-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121176.
+        http://trac.webkit.org/changeset/121176
+        https://bugs.webkit.org/show_bug.cgi?id=89934
+
+        [chromium] browser_tests assert failed:
+        FATAL:native_theme_win.cc(1541)] Check failed: false. Invalid
+        part: 16 (Requested by ukai on #webkit).
+
+        * src/PlatformSupport.cpp:
+
 2012-06-25  Jay Civelli  <jcivelli@chromium.org>
 
         Fix progress load reporting for MHTML documents.

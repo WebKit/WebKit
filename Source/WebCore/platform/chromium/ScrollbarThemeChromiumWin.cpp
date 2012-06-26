@@ -250,15 +250,13 @@ IntSize ScrollbarThemeChromiumWin::buttonSize(ScrollbarThemeClient* scrollbar)
 
     int thickness = scrollbarThickness(scrollbar->controlSize());
 
-    int standardGirth = PlatformSupport::getThemePartSize(SBP_ARROWBTN).height();
-
     // In layout test mode, we force the button "girth" (i.e., the length of
     // the button along the axis of the scrollbar) to be a fixed size.
     // FIXME: This is retarded!  scrollbarThickness is already fixed in layout
     // test mode so that should be enough to result in repeatable results, but
     // preserving this hack avoids having to rebaseline pixel tests.
     const int kLayoutTestModeGirth = 17;
-    int girth = PlatformSupport::layoutTestMode() ? kLayoutTestModeGirth : standardGirth;
+    int girth = PlatformSupport::layoutTestMode() ? kLayoutTestModeGirth : thickness;
 
     if (scrollbar->orientation() == HorizontalScrollbar) {
         int width = scrollbar->width() < 2 * girth ? scrollbar->width() / 2 : girth;
