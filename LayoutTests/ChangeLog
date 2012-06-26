@@ -1,3 +1,9 @@
+2012-06-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a test after r121286.
+
+        * editing/deleting/merge-into-empty-block-2.html:
+
 2012-06-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121285.
