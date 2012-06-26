@@ -1,3 +1,77 @@
+2012-06-26  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Move method precondition checks to front end objects
+        https://bugs.webkit.org/show_bug.cgi?id=89377
+
+        Reviewed by Tony Chang.
+
+        Now that metadata exists on the front end, most of the pre-condition validation checks
+        done on IDB method calls from script can be moved to the front end which simplifies the
+        code significantly in the case of complex methods like IDBObjectStore::put().
+
+        Adds an internal "active" flag for transactions, although the behavior is not accurate
+        to the spec (it should only be true during event callbacks - http://webkit.org/b/89379).
+        The back-end methods can then be simplifed to just adding async tasks to the transaction,
+        and the front end methods can take care of all exception cases except for asynchronous
+        transaction abort which still requires plumbing back to the front end.
+
+        No functional changes - no new tests.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::update): Migrate from IDBObjectStoreBackendImpl::put.
+        (WebCore::IDBCursor::advance): Add more explicit transaction-is-active check.
+        (WebCore::IDBCursor::continueFunction): Ditto.
+        (WebCore::IDBCursor::deleteFunction): Ditto.
+        (WebCore::IDBCursor::effectiveObjectStore): Convenience function (source may be store or index).
+        (WebCore):
+        * Modules/indexeddb/IDBCursor.h:
+        (WebCore::IDBCursor::isKeyCursor): Distinguish from IDBCursorWithValue.
+        (IDBCursor):
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::update): Remove migrated check.
+        * Modules/indexeddb/IDBCursorWithValue.h:
+        (IDBCursorWithValue):
+        * Modules/indexeddb/IDBDatabase.cpp: Migrate checks.
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::deleteObjectStore):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp: Replace checks with assertions.
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::deleteObjectStore):
+        * Modules/indexeddb/IDBIndex.cpp: Add transaction-is-active checks.
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::count):
+        (WebCore::IDBIndex::openKeyCursor):
+        (WebCore::IDBIndex::get):
+        (WebCore::IDBIndex::getKey):
+        * Modules/indexeddb/IDBObjectStore.cpp: Migrate cehcks.
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::add): Delegates to put(PutMode)
+        (WebCore::IDBObjectStore::put): Delegates to put(PutMode)
+        (WebCore): Adds put(PutMode) which has the unified checks migrated from
+        IDBObjectStoreBackendImpl::put.
+        (WebCore::IDBObjectStore::deleteFunction):
+        (WebCore::IDBObjectStore::clear):
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::deleteIndex):
+        (WebCore::IDBObjectStore::openCursor):
+        (WebCore::IDBObjectStore::count):
+        * Modules/indexeddb/IDBObjectStore.h: Adds put(PutMode).
+        (IDBObjectStore):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::getInternal): Fix trace symbol.
+        (WebCore::IDBObjectStoreBackendImpl::put): Remove migrated checks.
+        (WebCore::IDBObjectStoreBackendImpl::createIndex): Remove migrated checks.
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndex): Remove migrated checks.
+        * Modules/indexeddb/IDBTransaction.cpp: Add active flag tracking.
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::abort):
+        (WebCore::IDBTransaction::onAbort):
+        (WebCore::IDBTransaction::onComplete):
+        * Modules/indexeddb/IDBTransaction.h:
+        (WebCore::IDBTransaction::isActive):
+        (WebCore::IDBTransaction::isReadOnly): Group IDL/non-IDL methods.
+        (IDBTransaction):
+
 2012-06-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121285.

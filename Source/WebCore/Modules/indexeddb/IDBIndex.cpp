@@ -65,6 +65,10 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, Pas
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
+    if (!m_transaction->isActive()) {
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+        return 0;
+    }
     unsigned short direction = IDBCursor::stringToDirection(directionString, ec);
     if (ec)
         return 0;
@@ -115,6 +119,10 @@ PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, PassRefP
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
+    if (!m_transaction->isActive()) {
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+        return 0;
+    }
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->count(keyRange, request, m_transaction->backend(), ec);
     if (ec) {
@@ -138,6 +146,10 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
     IDB_TRACE("IDBIndex::openKeyCursor");
     if (m_deleted) {
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        return 0;
+    }
+    if (!m_transaction->isActive()) {
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return 0;
     }
 
@@ -200,6 +212,10 @@ PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, PassRefPtr
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
+    if (!m_transaction->isActive()) {
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+        return 0;
+    }
     if (!keyRange) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
@@ -229,6 +245,10 @@ PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, PassRef
     IDB_TRACE("IDBIndex::getKey");
     if (m_deleted) {
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        return 0;
+    }
+    if (!m_transaction->isActive()) {
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return 0;
     }
     if (!keyRange) {

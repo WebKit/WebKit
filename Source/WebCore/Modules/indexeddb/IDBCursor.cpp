@@ -29,9 +29,11 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBAny.h"
+#include "IDBBindingUtilities.h"
 #include "IDBCallbacks.h"
 #include "IDBCursorBackendInterface.h"
 #include "IDBKey.h"
+#include "IDBObjectStore.h"
 #include "IDBRequest.h"
 #include "IDBTracing.h"
 #include "IDBTransaction.h"
@@ -125,22 +127,35 @@ IDBAny* IDBCursor::source() const
 PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> prpValue, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursor::update");
+    RefPtr<SerializedScriptValue> value = prpValue;
 
-    if (!m_gotValue) {
+    if (!m_gotValue || isKeyCursor()) {
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
-
+    if (!m_transaction->isActive()) {
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+        return 0;
+    }
     if (m_transaction->isReadOnly()) {
         ec = IDBDatabaseException::READ_ONLY_ERR;
         return 0;
     }
-
-    RefPtr<SerializedScriptValue> value = prpValue;
     if (value->blobURLs().size() > 0) {
         // FIXME: Add Blob/File/FileList support
         ec = IDBDatabaseException::IDB_DATA_CLONE_ERR;
         return 0;
+    }
+
+    RefPtr<IDBObjectStore> objectStore = effectiveObjectStore();
+    const IDBKeyPath& keyPath = objectStore->metadata().keyPath;
+    const bool usesInLineKeys = !keyPath.isNull();
+    if (usesInLineKeys) {
+        RefPtr<IDBKey> keyPathKey = createIDBKeyFromSerializedValueAndKeyPath(value, keyPath);
+        if (!keyPathKey || !keyPathKey->isEqual(m_currentPrimaryKey.get())) {
+            ec = IDBDatabaseException::DATA_ERR;
+            return 0;
+        }
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
@@ -160,7 +175,7 @@ void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
         return;
     }
 
-    if (!m_request) {
+    if (!m_transaction->isActive()) {
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return;
     }
@@ -188,7 +203,7 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
         return;
     }
 
-    if (!m_request) {
+    if (!m_transaction->isActive()) {
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return;
     }
@@ -213,6 +228,10 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursor::delete");
+    if (!m_transaction->isActive()) {
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+        return 0;
+    }
     if (m_transaction->isReadOnly()) {
         ec = IDBDatabaseException::READ_ONLY_ERR;
         return 0;
@@ -250,6 +269,14 @@ void IDBCursor::setValueReady()
     m_currentValue = IDBAny::create(m_backend->value());
     m_gotValue = true;
     m_valueIsDirty = true;
+}
+
+PassRefPtr<IDBObjectStore> IDBCursor::effectiveObjectStore()
+{
+    if (m_source->type() == IDBAny::IDBObjectStoreType)
+        return m_source->idbObjectStore();
+    RefPtr<IDBIndex> index = m_source->idbIndex();
+    return index->objectStore();
 }
 
 unsigned short IDBCursor::stringToDirection(const String& directionString, ExceptionCode& ec)

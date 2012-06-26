@@ -68,12 +68,13 @@ public:
     static const AtomicString& modeToString(Mode, ExceptionCode&);
 
     IDBTransactionBackendInterface* backend() const;
+    bool isActive() const { return m_active; }
     bool isFinished() const;
+    bool isReadOnly() const { return m_mode == READ_ONLY; }
     bool isVersionChange() const { return m_mode == VERSION_CHANGE; }
 
     // Implement the IDBTransaction IDL
     const String& mode() const;
-    bool isReadOnly() const { return m_mode == READ_ONLY; }
     IDBDatabase* db() const;
     PassRefPtr<DOMError> error(ExceptionCode&) const;
     void setError(PassRefPtr<DOMError>);
@@ -135,6 +136,7 @@ private:
     RefPtr<IDBTransactionBackendInterface> m_backend;
     RefPtr<IDBDatabase> m_database;
     const Mode m_mode;
+    bool m_active;
     bool m_transactionFinished; // Is it possible that we'll fire any more events or allow any new requests? If not, we're finished.
     bool m_contextStopped;
     RefPtr<DOMError> m_error;

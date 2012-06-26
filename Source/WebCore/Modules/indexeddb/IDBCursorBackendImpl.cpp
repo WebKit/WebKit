@@ -93,10 +93,9 @@ void IDBCursorBackendImpl::update(PassRefPtr<SerializedScriptValue> value, PassR
 {
     IDB_TRACE("IDBCursorBackendImpl::update");
     ASSERT(m_transaction->mode() != IDBTransaction::READ_ONLY);
-    if (!m_cursor || m_cursorType == IndexKeyCursor) {
-        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
-        return;
-    }
+
+    ASSERT(m_cursor);
+    ASSERT(m_cursorType != IndexKeyCursor);
 
     m_objectStore->put(value, m_cursor->primaryKey(), IDBObjectStoreBackendInterface::CursorUpdate, callbacks, m_transaction.get(), ec);
 }

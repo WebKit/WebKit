@@ -117,6 +117,10 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
+    if (!m_versionChangeTransaction->isActive()) {
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+        return 0;
+    }
 
     IDBKeyPath keyPath;
     if (!options.isUndefinedOrNull()) {
@@ -126,6 +130,11 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
             keyPath = IDBKeyPath(keyPathArray);
         else if (options.getWithUndefinedOrNullCheck("keyPath", keyPathString))
             keyPath = IDBKeyPath(keyPathString);
+    }
+
+    if (m_metadata.objectStores.contains(name)) {
+        ec = IDBDatabaseException::CONSTRAINT_ERR;
+        return 0;
     }
 
     if (!keyPath.isNull() && !keyPath.isValid()) {
@@ -160,6 +169,14 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
 {
     if (!m_versionChangeTransaction) {
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        return;
+    }
+    if (!m_versionChangeTransaction->isActive()) {
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+        return;
+    }
+    if (!m_metadata.objectStores.contains(name)) {
+        ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return;
     }
 

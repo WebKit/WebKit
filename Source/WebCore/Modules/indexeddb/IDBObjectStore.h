@@ -95,6 +95,7 @@ public:
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKey>, ExceptionCode&);
 
+    PassRefPtr<IDBRequest> put(IDBObjectStoreBackendInterface::PutMode, ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, ExceptionCode&);
     void markDeleted() { m_deleted = true; }
     void transactionFinished();
 
@@ -103,7 +104,6 @@ public:
 
 private:
     IDBObjectStore(const IDBObjectStoreMetadata&, PassRefPtr<IDBObjectStoreBackendInterface>, IDBTransaction*);
-    void removeTransactionFromPendingList();
 
     IDBObjectStoreMetadata m_metadata;
     RefPtr<IDBObjectStoreBackendInterface> m_backend;

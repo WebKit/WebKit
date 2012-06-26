@@ -42,7 +42,7 @@
 #include "IDBKeyPathBackendImpl.h"
 #include "IDBKeyRange.h"
 #include "IDBTracing.h"
-#include "IDBTransactionBackendInterface.h"
+#include "IDBTransactionBackendImpl.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -92,7 +92,7 @@ void IDBObjectStoreBackendImpl::get(PassRefPtr<IDBKeyRange> prpKeyRange, PassRef
 
 void IDBObjectStoreBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
 {
-    IDB_TRACE("IDBObjectStoreBackendImpl::getByRangeInternal");
+    IDB_TRACE("IDBObjectStoreBackendImpl::getInternal");
     RefPtr<IDBKey> key;
     if (keyRange->isOnlyKey())
         key = keyRange->lower();
@@ -147,53 +147,6 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
-
-    if (putMode != CursorUpdate) {
-        const bool autoIncrement = objectStore->autoIncrement();
-        const bool hasKeyPath = !objectStore->m_keyPath.isNull();
-
-        if (hasKeyPath && key) {
-            ec = IDBDatabaseException::DATA_ERR;
-            return;
-        }
-        if (!hasKeyPath && !autoIncrement && !key) {
-            ec = IDBDatabaseException::DATA_ERR;
-            return;
-        }
-        if (hasKeyPath) {
-            RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
-            if (keyPathKey && !keyPathKey->isValid()) {
-                ec = IDBDatabaseException::DATA_ERR;
-                return;
-            }
-            if (!autoIncrement && !keyPathKey) {
-                ec = IDBDatabaseException::DATA_ERR;
-                return;
-            }
-            if (autoIncrement && !keyPathKey) {
-                RefPtr<IDBKey> dummyKey = IDBKey::createNumber(-1);
-                RefPtr<SerializedScriptValue> valueAfterInjection = injectKeyIntoKeyPath(dummyKey, value, objectStore->m_keyPath);
-                if (!valueAfterInjection) {
-                    ec = IDBDatabaseException::DATA_ERR;
-                    return;
-                }
-            }
-        }
-        if (key && !key->isValid()) {
-            ec = IDBDatabaseException::DATA_ERR;
-            return;
-        }
-    } else {
-        ASSERT(key);
-        const bool hasKeyPath = !objectStore->m_keyPath.isNull();
-        if (hasKeyPath) {
-            RefPtr<IDBKey> keyPathKey = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
-            if (!keyPathKey || !keyPathKey->isEqual(key.get())) {
-                ec = IDBDatabaseException::DATA_ERR;
-                return;
-            }
-        }
-    }
 
     if (!transaction->scheduleTask(
             createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, putMode, callbacks, transaction),
@@ -459,18 +412,8 @@ bool IDBObjectStoreBackendImpl::populateIndex(IDBBackingStore& backingStore, int
 
 PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
-    if (name.isNull()) {
-        ec = IDBDatabaseException::IDB_TYPE_ERR;
-        return 0;
-    }
-    if (m_indexes.contains(name)) {
-        ec = IDBDatabaseException::CONSTRAINT_ERR;
-        return 0;
-    }
-    if (transaction->mode() != IDBTransaction::VERSION_CHANGE) {
-        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
-        return 0;
-    }
+    ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
+    ASSERT(!m_indexes.contains(name));
 
     RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(m_database, this, name, keyPath, unique, multiEntry);
     ASSERT(index->name() == name);
@@ -520,18 +463,11 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::index(const Stri
 
 void IDBObjectStoreBackendImpl::deleteIndex(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
-    if (transaction->mode() != IDBTransaction::VERSION_CHANGE) {
-        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
-        return;
-    }
-
-    RefPtr<IDBIndexBackendImpl> index = m_indexes.get(name);
-    if (!index) {
-        ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
-        return;
-    }
+    ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
+    ASSERT(m_indexes.contains(name));
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
+    RefPtr<IDBIndexBackendImpl> index = m_indexes.get(name);
     RefPtr<IDBTransactionBackendInterface> transactionPtr = transaction;
     if (!transaction->scheduleTask(
               createCallbackTask(&IDBObjectStoreBackendImpl::deleteIndexInternal,

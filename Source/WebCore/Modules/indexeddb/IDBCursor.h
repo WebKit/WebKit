@@ -91,8 +91,11 @@ public:
 
 protected:
     IDBCursor(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBAny* source, IDBTransaction*);
+    virtual bool isKeyCursor() const { return true; }
 
 private:
+    PassRefPtr<IDBObjectStore> effectiveObjectStore();
+
     RefPtr<IDBCursorBackendInterface> m_backend;
     RefPtr<IDBRequest> m_request;
     RefPtr<IDBAny> m_source;

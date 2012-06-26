@@ -84,6 +84,7 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTr
     , m_backend(backend)
     , m_database(db)
     , m_mode(mode)
+    , m_active(true)
     , m_transactionFinished(false)
     , m_contextStopped(false)
 {
@@ -193,6 +194,7 @@ void IDBTransaction::abort()
 {
     if (m_transactionFinished)
         return;
+    m_active = false;
     RefPtr<IDBTransaction> selfRef = this;
     if (m_backend)
         m_backend->abort();
@@ -242,6 +244,7 @@ void IDBTransaction::unregisterRequest(IDBRequest* request)
 void IDBTransaction::onAbort()
 {
     ASSERT(!m_transactionFinished);
+    m_active = false;
     while (!m_childRequests.isEmpty()) {
         IDBRequest* request = *m_childRequests.begin();
         m_childRequests.remove(request);
@@ -265,6 +268,7 @@ void IDBTransaction::onAbort()
 void IDBTransaction::onComplete()
 {
     ASSERT(!m_transactionFinished);
+    m_active = false;
     m_objectStoreCleanupMap.clear();
     closeOpenCursors();
     m_database->transactionFinished(this);

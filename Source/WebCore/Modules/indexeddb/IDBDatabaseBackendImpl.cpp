@@ -145,10 +145,7 @@ IDBDatabaseMetadata IDBDatabaseBackendImpl::metadata() const
 PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     ASSERT(transactionPtr->mode() == IDBTransaction::VERSION_CHANGE);
-    if (m_objectStores.contains(name)) {
-        ec = IDBDatabaseException::CONSTRAINT_ERR;
-        return 0;
-    }
+    ASSERT(!m_objectStores.contains(name));
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(this, name, keyPath, autoIncrement);
     ASSERT(objectStore->name() == name);
@@ -186,12 +183,10 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::objectStore(c
 void IDBDatabaseBackendImpl::deleteObjectStore(const String& name, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     ASSERT(transactionPtr->mode() == IDBTransaction::VERSION_CHANGE);
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = m_objectStores.get(name);
-    if (!objectStore) {
-        ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
-        return;
-    }
+    ASSERT(m_objectStores.contains(name));
+
     RefPtr<IDBDatabaseBackendImpl> database = this;
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = m_objectStores.get(name);
     RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
     if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::deleteObjectStoreInternal, database, objectStore, transaction),
                                    createCallbackTask(&IDBDatabaseBackendImpl::addObjectStoreToMap, database, objectStore))) {
