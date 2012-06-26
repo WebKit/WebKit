@@ -44,19 +44,25 @@ public:
     void ref() { m_base->ref(); }
     void deref() { m_base->deref(); }
 
+    // DOM API
     unsigned length() const;
-
     virtual Node* item(unsigned index) const;
-    virtual Node* nextItem() const;
-
     virtual Node* namedItem(const AtomicString& name) const;
+    PassRefPtr<NodeList> tags(const String&);
 
-    Node* firstItem() const;
-
+    // Non-DOM API
     bool hasNamedItem(const AtomicString& name) const;
     void namedItems(const AtomicString& name, Vector<RefPtr<Node> >&) const;
-
-    PassRefPtr<NodeList> tags(const String&);
+    bool hasAnyItem() const
+    {
+        invalidateCacheIfNeeded();
+        return (m_cache.hasLength && m_cache.length) || m_cache.current || item(0);
+    }
+    bool hasExactlyOneItem() const
+    {
+        invalidateCacheIfNeeded();
+        return (m_cache.hasLength && m_cache.length == 1) || (m_cache.current && !itemAfter(m_cache.current)) || (item(0) && !item(1));
+    }
 
     Node* base() const { return m_base; }
     CollectionType type() const { return static_cast<CollectionType>(m_type); }
@@ -98,7 +104,6 @@ protected:
     } m_cache;
 
 private:
-    static bool shouldIncludeChildren(CollectionType);
     bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
 
     virtual unsigned calcLength() const;

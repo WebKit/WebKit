@@ -74,12 +74,16 @@ unsigned WebNodeCollection::length() const
 
 WebNode WebNodeCollection::nextItem() const
 {
-    return WebNode(m_private->nextItem());
+    Node* node = m_private->item(m_current);
+    if (node)
+        m_current++;
+    return WebNode(node);
 }
 
 WebNode WebNodeCollection::firstItem() const
 {
-    return WebNode(m_private->firstItem());
+    m_current = 0;
+    return nextItem();
 }
 
 } // namespace WebKit

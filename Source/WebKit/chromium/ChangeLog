@@ -1,3 +1,24 @@
+2012-06-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Get rid of firstItem and nextItem from HTMLCollection
+        https://bugs.webkit.org/show_bug.cgi?id=89923
+
+        Reviewed by Andreas Kling.
+
+        Re-implement WebNodeCollection::firstItem() and WebNodeCollection::nextItem() in WebKit code
+        because we got rid of it from WebCore implementation.
+
+        This is an extremely poor API and we shouldn't be exposing it in the future.
+
+        * public/WebNodeCollection.h:
+        (WebKit::WebNodeCollection::WebNodeCollection):
+        (WebNodeCollection):
+        * src/WebNodeCollection.cpp:
+        (WebKit::WebNodeCollection::nextItem):
+        (WebKit::WebNodeCollection::firstItem):
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::collectTargetFrames):
+
 2012-06-25  Luke Macpherson  <macpherson@chromium.org>
 
         Add runtime flag to enable/disable CSS variables (in addition to existing compile-time flag).

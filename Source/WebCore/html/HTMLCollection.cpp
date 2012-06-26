@@ -36,16 +36,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLCollection::HTMLCollection(Node* base, CollectionType type)
-    : m_includeChildren(shouldIncludeChildren(type))
-    , m_type(type)
-    , m_base(base)
-{
-    ASSERT(m_base);
-    m_cache.clear();
-}
-
-bool HTMLCollection::shouldIncludeChildren(CollectionType type)
+static bool shouldIncludeChildren(CollectionType type)
 {
     switch (type) {
     case DocAll:
@@ -76,6 +67,15 @@ bool HTMLCollection::shouldIncludeChildren(CollectionType type)
     }
     ASSERT_NOT_REACHED();
     return false;
+}
+
+HTMLCollection::HTMLCollection(Node* base, CollectionType type)
+    : m_includeChildren(shouldIncludeChildren(type))
+    , m_type(type)
+    , m_base(base)
+{
+    ASSERT(m_base);
+    m_cache.clear();
 }
 
 PassOwnPtr<HTMLCollection> HTMLCollection::create(Node* base, CollectionType type)
@@ -199,39 +199,23 @@ unsigned HTMLCollection::length() const
 
 Node* HTMLCollection::item(unsigned index) const
 {
-     invalidateCacheIfNeeded();
-     if (m_cache.current && m_cache.position == index)
-         return m_cache.current;
-     if (m_cache.hasLength && m_cache.length <= index)
-         return 0;
-     if (!m_cache.current || m_cache.position > index) {
-         m_cache.current = itemAfter(0);
-         m_cache.position = 0;
-         if (!m_cache.current)
-             return 0;
-     }
-     Element* e = m_cache.current;
-     for (unsigned pos = m_cache.position; e && pos < index; pos++)
-         e = itemAfter(e);
-     m_cache.current = e;
-     m_cache.position = index;
-     return m_cache.current;
-}
-
-Node* HTMLCollection::firstItem() const
-{
-     return item(0);
-}
-
-Node* HTMLCollection::nextItem() const
-{
-     invalidateCacheIfNeeded();
-
-     // Look for the 'second' item. The first one is currentItem, already given back.
-     Element* retval = itemAfter(m_cache.current);
-     m_cache.current = retval;
-     m_cache.position++;
-     return retval;
+    invalidateCacheIfNeeded();
+    if (m_cache.current && m_cache.position == index)
+        return m_cache.current;
+    if (m_cache.hasLength && m_cache.length <= index)
+        return 0;
+    if (!m_cache.current || m_cache.position > index) {
+        m_cache.current = itemAfter(0);
+        m_cache.position = 0;
+        if (!m_cache.current)
+            return 0;
+    }
+    Element* e = m_cache.current;
+    for (unsigned pos = m_cache.position; e && pos < index; pos++)
+        e = itemAfter(e);
+    m_cache.current = e;
+    m_cache.position = index;
+    return m_cache.current;
 }
 
 static inline bool nameShouldBeVisibleInDocumentAll(HTMLElement* element)

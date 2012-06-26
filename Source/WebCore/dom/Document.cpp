@@ -4581,7 +4581,7 @@ KURL Document::openSearchDescriptionURL()
         return KURL();
 
     HTMLCollection* children = head()->children();
-    for (Node* child = children->firstItem(); child; child = children->nextItem()) {
+    for (unsigned i = 0; Node* child = children->item(i); i++) {
         if (!child->hasTagName(linkTag))
             continue;
         HTMLLinkElement* linkElement = static_cast<HTMLLinkElement*>(child);

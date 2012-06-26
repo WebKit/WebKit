@@ -521,9 +521,9 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
     if (doc && doc->isHTMLDocument()) {
         if (static_cast<HTMLDocument*>(doc)->hasNamedItem(propName.impl()) || doc->hasElementWithId(propName.impl())) {
             HTMLCollection* items = doc->windowNamedItems(propName);
-            if (items->length() >= 1) {
-                if (items->length() == 1)
-                    return toV8(items->firstItem(), info.GetIsolate());
+            if (items->hasAnyItem()) {
+                if (items->hasExactlyOneItem())
+                    return toV8(items->item(0), info.GetIsolate());
                 return toV8(items, info.GetIsolate());
             }
         }

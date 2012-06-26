@@ -2424,9 +2424,8 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(H
 void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& result)
 {
     Document* document = m_renderer->document();
-    HTMLCollection* coll = document->links();
-    Node* curr = coll->firstItem();
-    while (curr) {
+    HTMLCollection* links = document->links();
+    for (unsigned i = 0; Node* curr = links->item(i); i++) {
         RenderObject* obj = curr->renderer();
         if (obj) {
             RefPtr<AccessibilityObject> axobj = document->axObjectCache()->getOrCreate(obj);
@@ -2444,7 +2443,6 @@ void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& re
                 result.append(areaObject);
             }
         }
-        curr = coll->nextItem();
     }
 }
 

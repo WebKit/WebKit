@@ -117,8 +117,8 @@ static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, PropertyName p
     ASSERT(document->isHTMLDocument());
 
     HTMLCollection* collection = document->windowNamedItems(propertyNameToAtomicString(propertyName));
-    if (collection->length() == 1)
-        return toJS(exec, thisObj, collection->firstItem());
+    if (collection->hasExactlyOneItem())
+        return toJS(exec, thisObj, collection->item(0));
     return toJS(exec, thisObj, collection);
 }
 

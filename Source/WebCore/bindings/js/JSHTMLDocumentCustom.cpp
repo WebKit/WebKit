@@ -64,12 +64,11 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, PropertyNa
 
     HTMLCollection* collection = document->documentNamedItems(propertyNameToAtomicString(propertyName));
 
-    unsigned length = collection->length();
-    if (!length)
+    if (!collection->hasAnyItem())
         return jsUndefined();
 
-    if (length == 1) {
-        Node* node = collection->firstItem();
+    if (collection->hasExactlyOneItem()) {
+        Node* node = collection->item(0);
 
         Frame* frame;
         if (node->hasTagName(iframeTag) && (frame = static_cast<HTMLIFrameElement*>(node)->contentFrame()))
