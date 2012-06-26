@@ -168,6 +168,8 @@ public:
 
     unsigned long long localStorageQuota() const;
     void setLocalStorageQuota(unsigned long long);
+    unsigned long long sessionStorageQuota() const;
+    void setSessionStorageQuota(unsigned long long);
 
     // Page cache
     void setMaximumPagesInCache(int);

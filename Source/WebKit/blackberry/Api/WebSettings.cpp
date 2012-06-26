@@ -76,6 +76,7 @@ DEFINE_STATIC_LOCAL(String, WebKitLoadsImagesAutomatically, ("WebKitLoadsImagesA
 DEFINE_STATIC_LOCAL(String, WebKitLocalStorageEnabled, ("WebKitLocalStorageEnabled"));
 DEFINE_STATIC_LOCAL(String, WebKitLocalStoragePath, ("WebKitLocalStoragePath"));
 DEFINE_STATIC_LOCAL(String, WebKitLocalStorageQuota, ("WebKitLocalStorageQuota"));
+DEFINE_STATIC_LOCAL(String, WebKitSessionStorageQuota, ("WebKitSessionStorageQuota"));
 DEFINE_STATIC_LOCAL(String, WebKitMaximumPagesInCache, ("WebKitMaximumPagesInCache"));
 DEFINE_STATIC_LOCAL(String, WebKitMinimumFontSize, ("WebKitMinimumFontSize"));
 DEFINE_STATIC_LOCAL(String, WebKitOfflineWebApplicationCacheEnabled, ("WebKitOfflineWebApplicationCacheEnabled"));
@@ -180,6 +181,7 @@ WebSettings* WebSettings::standardSettings()
     settings->m_private->setBoolean(WebKitJavaScriptEnabled, true);
     settings->m_private->setBoolean(WebKitLoadsImagesAutomatically, true);
     settings->m_private->setUnsignedLongLong(WebKitLocalStorageQuota, 5 * 1024 * 1024);
+    settings->m_private->setUnsignedLongLong(WebKitSessionStorageQuota, 5 * 1024 * 1024);
     settings->m_private->setInteger(WebKitMaximumPagesInCache, 0);
     settings->m_private->setInteger(WebKitMinimumFontSize, 8);
     settings->m_private->setBoolean(WebKitWebSocketsEnabled, true);
@@ -597,6 +599,16 @@ unsigned long long WebSettings::localStorageQuota() const
 void WebSettings::setLocalStorageQuota(unsigned long long quota)
 {
     m_private->setUnsignedLongLong(WebKitLocalStorageQuota, quota);
+}
+
+unsigned long long WebSettings::sessionStorageQuota() const
+{
+    return m_private->getUnsignedLongLong(WebKitSessionStorageQuota);
+}
+
+void WebSettings::setSessionStorageQuota(unsigned long long quota)
+{
+    m_private->setUnsignedLongLong(WebKitSessionStorageQuota, quota);
 }
 
 int WebSettings::maximumPagesInCache() const

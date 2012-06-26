@@ -6312,6 +6312,7 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setOfflineWebApplicationCacheEnabled(webSettings->isAppCacheEnabled());
 
     m_page->group().groupSettings()->setLocalStorageQuotaBytes(webSettings->localStorageQuota());
+    coreSettings->setSessionStorageQuota(webSettings->sessionStorageQuota());
     coreSettings->setUsesPageCache(webSettings->maximumPagesInCache());
     coreSettings->setFrameFlatteningEnabled(webSettings->isFrameFlatteningEnabled());
 #endif

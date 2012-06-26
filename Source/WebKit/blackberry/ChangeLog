@@ -1,3 +1,23 @@
+2012-06-26  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] Limit session storage quota to 5MB by default
+        https://bugs.webkit.org/show_bug.cgi?id=89941
+
+        Reviewed by Rob Buis.
+
+        Limit session storage quota to 5MB by default for BlackBerry
+        porting.
+        Internally reviewed by George Staikos.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+        * Api/WebSettings.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+        (BlackBerry::WebKit::WebSettings::sessionStorageQuota):
+        (BlackBerry::WebKit::WebSettings::setSessionStorageQuota):
+        * Api/WebSettings.h:
+
 2012-06-26  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Use gesture SwipeDown to exit fullscreen for both video and plugin.
