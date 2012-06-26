@@ -30,7 +30,7 @@ body:-webkit-full-page-media {
 
 audio {
     width: 300px;
-    height: 32px;
+    height: 35px;
 }
 
 audio:-webkit-full-page-media, video:-webkit-full-page-media {
@@ -39,18 +39,40 @@ audio:-webkit-full-page-media, video:-webkit-full-page-media {
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
-    -webkit-user-select: none;
-    position: relative;
-    overflow: visible;
-    bottom: 0;
-    width: 100%;
-    height: 32px;
-    z-index: 0;
-    background-color: rgba(0, 0, 0, 0.6);
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    bottom: auto;
+    height: 35px;
+    background-color: rgba(20, 20, 20, 0.8);
 }
 
+audio:-webkit-full-page-media::-webkit-media-controls-panel,
 video:-webkit-full-page-media::-webkit-media-controls-panel {
     bottom: 0px;
+}
+
+::-webkit-media-controls {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-pack: end;
+    -webkit-box-align: center;
+}
+
+audio::-webkit-media-controls-enclosure, video::-webkit-media-controls-enclosure {
+    width: 100%;
+    max-width: 800px;
+    height: 35px;
+    bottom: 0;
+    text-indent: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+video::-webkit-media-controls-enclosure {
+    padding: 0px 5px 5px 5px;
+    height: 35px;
 }
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
@@ -59,77 +81,32 @@ audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-bu
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
     -webkit-appearance: media-play-button;
-
-    position: absolute;
-    top: auto;
-    bottom: 7px;
-    left: 7px;
-    right: 6px;
-
-    width: 18px;
-    height: 19px;
+    display: inline;
+    border: none;
+    box-sizing: border-box;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    margin-left: 9px;
+    margin-right: 9px;
+    padding: 0;
 }
 
-audio::-webkit-media-controls-timeline-container {
-    -webkit-appearance: media-timeline-container;
-    -webkit-user-select: none;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: center;
-    -webkit-box-flex: 1;
-
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    left: 30px;
-    right: 0;
-
-    width: auto;
-    height: 32px;
-
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
-    border-right: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-video::-webkit-media-controls-timeline-container {
-    -webkit-appearance: media-timeline-container;
-    -webkit-user-select: none;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: center;
-    -webkit-box-flex: 1;
-
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    left: 30px;
-    right: 34px;
-
-    width: auto;
-    height: 32px;
-
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
-    border-right: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
+audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
     -webkit-appearance: media-current-time-display;
     -webkit-user-select: none;
-    display: -webkit-box;
-    -webkit-box-flex: 0;
-    -webkit-box-pack: center;
-    -webkit-box-align: center;
-
-    overflow: hidden;
+    display: block;
+    border: none;
     cursor: default;
 
-    line-height: 21px;
-    height: 20px;
-    width: 58px;
+    height: 35px;
+    margin: 0 9px 0 0;
+    padding: 0;
 
-    text-align: center;
-    font-family: Arial;
-    font-size: 16px;
+    line-height: 35px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
     font-weight: bold;
     color: white;
 
@@ -144,39 +121,51 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
     display: -webkit-box;
-    box-sizing: border-box;
     -webkit-box-flex: 1;
-
-    padding: 0px;
-    margin: 0px 6px;
-    height: 18px;
-
-    border-color: rgba(255, 255, 255, 0.2);
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 2px;
-    background-color: rgba(255, 255, 255, 0.08);
-    color: rgb(50, 140, 223);
+    height: 8px;
+    margin: 0 15px 0 0;
+    padding: 0;
+    background-color: transparent;
+    min-width: 25px;
 }
 
 
 video::-webkit-media-controls-fullscreen-button {
     -webkit-appearance: media-enter-fullscreen-button;
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    right: 0;
-    left: auto;
+    display: inline;
+    border: none;
+    box-sizing: border-box;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    margin-left: -5px;
+    margin-right: 9px;
+    padding: 0;
+}
 
-    width: 34px;
-    height: 32px;
+input[type="range"]::-webkit-media-slider-container {
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-orient: horizontal;
+    -webkit-box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    border: 1px solid rgba(230, 230, 230, 0.35);
+    border-radius: 4px;
+    background-color: transparent;
+}
+
+input[type="range"]::-webkit-media-slider-thumb {
+    display: block;
+    -webkit-appearance: sliderthumb-horizontal;
+    -webkit-box-sizing: border-box;
+    position: relative;
+    bottom: 1px;
+    margin-left: -7px;
+    margin-right: -7px;
 }
 
 audio::-webkit-media-controls-fullscreen-button {
-    display: none;
-}
-
-audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container {
     display: none;
 }
 
