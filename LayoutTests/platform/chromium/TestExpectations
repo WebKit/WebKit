@@ -3765,3 +3765,6 @@ BUGWK89936 WIN : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
 BUGWK89936 WIN : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
 BUGWK89936 WIN : svg/zoom/page/zoom-foreignObject.svg = IMAGE
 BUGWK89936 WIN : fast/css/text-rendering.html = IMAGE+TEXT
+
+// Started failing after r121267.
+BUGWK89998 SNOWLEOPARD RELEASE : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
