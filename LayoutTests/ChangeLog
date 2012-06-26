@@ -1,3 +1,10 @@
+2012-06-26  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed gardening after r120845.
+        Update expectations for test crashing in the GTK 64bit debug bot.
+
+        * platform/gtk/TestExpectations: Add test to CRASHING section.
+
 2012-06-26  Dominic Cooney  <dominicc@chromium.org>
 
         WheelEvent should inherit from MouseEvent
