@@ -243,8 +243,8 @@ BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
 // Interferes with the tests that should pass
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 
-// Hits assert https://bugs.webkit.org/show_bug.cgi?id=86208
-BUGWK85308 SKIP : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
+// IETC units test failures
+BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
 // IETC namespace failures

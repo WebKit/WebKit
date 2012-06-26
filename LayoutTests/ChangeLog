@@ -1,3 +1,28 @@
+2012-06-26  Dave Tharp  <dtharp@codeaurora.org>
+
+        ietestcenter/css3/valuesandunits/units-000.htm asserts
+        https://bugs.webkit.org/show_bug.cgi?id=86176
+
+        Reviewed by Beth Dakin.
+
+        Adding explicit tests for viewport border length tests. Inspired by IE Test center
+        units-000 test which highlighted that vw, vh, and vmin were not being handled in computeLengthDouble().
+        Also, adjusting test_expectations and Skipped for units-000, which no longer Asserts with this
+        patch implemented.
+
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vh-border-expected.html: Added.
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vh-border.html: Added.
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vmin-border-expected.html: Added.
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vmin-border.html: Added.
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vw-border-expected.htm: Added.
+        * css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vw-border.html: Added.
+        * ietestcenter/css3/valuesandunits/units-000.htm:
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-06-26  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::operationNewArray is unnecessarily slow, and may use the wrong array

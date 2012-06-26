@@ -577,7 +577,7 @@ BUGWK85902 SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 BUGWKEFL SLOW DEBUG : http/tests/incremental/slow-utf8-html.pl = PASS
 
 // Tests imported in r116658
-BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE CRASH
+BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
 // New test introduced in r116694 fails

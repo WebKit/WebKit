@@ -73,6 +73,7 @@ private:
     // the current paint/layout.
     RenderStyle* style() const;
     RenderStyle* rootElementStyle() const;
+    RenderStyle* parentStyle() const;
     bool useSVGZoomRules() const;
 
     // FIXME: This should be part of some sort of StyleImageCache object which

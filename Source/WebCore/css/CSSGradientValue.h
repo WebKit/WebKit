@@ -81,10 +81,10 @@ protected:
     {
     }
 
-    void addStops(Gradient*, RenderObject*, RenderStyle* rootStyle, float maxLengthForRepeat = 0);
+    void addStops(Gradient*, RenderObject*, RenderStyle* rootStyle, RenderStyle* parentStyle, float maxLengthForRepeat = 0);
 
     // Resolve points/radii to front end values.
-    FloatPoint computeEndPoint(CSSPrimitiveValue*, CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, const IntSize&);
+    FloatPoint computeEndPoint(CSSPrimitiveValue*, CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, RenderStyle* parentStyle, const IntSize&);
 
     bool isCacheable() const;
 
@@ -154,7 +154,7 @@ private:
     }
 
     // Resolve points/radii to front end values.
-    float resolveRadius(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, float* widthOrHeight = 0);
+    float resolveRadius(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, RenderStyle* parentStyle, float* widthOrHeight = 0);
 
     // These may be null for non-deprecated gradients.
     RefPtr<CSSPrimitiveValue> m_firstRadius;

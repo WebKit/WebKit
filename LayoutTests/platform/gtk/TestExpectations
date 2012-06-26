@@ -356,8 +356,6 @@ BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH PASS
 BUGWK86443 : plugins/npruntime/delete-plugin-within-getProperty.html = CRASH
 BUGWK86443 : plugins/npruntime/delete-plugin-within-invoke.html = CRASH
 
-BUGWK86176 DEBUG : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
-
 BUGWK89188 RELEASE : storage/websql/quota-tracking.html = CRASH PASS
 
 BUGWK89954 DEBUG : http/tests/xmlhttprequest/reentrant-cancel.html = CRASH
@@ -1171,7 +1169,8 @@ BUGWK85969 : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT
 // Started failing after it was added in r116563
 BUGWK86061 : http/tests/security/referrer-policy-redirect-link.html = TEXT
 
-BUGWK85308 RELEASE : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
+// IETC Units test failures
+BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
 // IETC namespace failures

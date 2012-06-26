@@ -1,3 +1,85 @@
+2012-06-26  Dave Tharp  <dtharp@codeaurora.org>
+
+        ietestcenter/css3/valuesandunits/units-000.htm asserts
+        https://bugs.webkit.org/show_bug.cgi?id=86176
+
+        Reviewed by Beth Dakin.
+
+        Modified computeLengthDouble() to handle vh, vw, and vmin units. Per the spec
+        (http://dev.w3.org/csswg/css3-values/#viewport-relative-lengths) viewport -percentage
+        lengths are "relative to the size of the initial containing block", which I read to be
+        the size of the parent element. Since parentStyle was not available in computeLengthDouble,
+        most of the changes for this patch involved "pushing down" the parentStyle pointer through
+        the network of computeLength methods and dependencies.
+
+        Tests: css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vh-border.html
+               css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vmin-border.html
+               css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vw-border.html
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcValue::computeLengthPx):
+        (WebCore::CSSCalcPrimitiveValue::toCalcValue):
+        (WebCore::CSSCalcPrimitiveValue::computeLengthPx):
+        (WebCore::CSSCalcBinaryOperation::toCalcValue):
+        (WebCore::CSSCalcBinaryOperation::computeLengthPx):
+        * css/CSSCalculationValue.h:
+        (CSSCalcExpressionNode):
+        (WebCore::CSSCalcValue::toCalcValue):
+        (CSSCalcValue):
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::addStops):
+        (WebCore::positionFromValue):
+        (WebCore::CSSGradientValue::computeEndPoint):
+        (WebCore::CSSLinearGradientValue::createGradient):
+        (WebCore::CSSRadialGradientValue::resolveRadius):
+        (WebCore::CSSRadialGradientValue::createGradient):
+        * css/CSSGradientValue.h:
+        (CSSGradientValue):
+        (CSSRadialGradientValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLength):
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        * css/CSSPrimitiveValue.h:
+        (CSSPrimitiveValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::convertToLength):
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::parentStyle):
+        (WebCore):
+        (WebCore::CSSToStyleMap::mapFillSize):
+        (WebCore::CSSToStyleMap::mapFillXPosition):
+        (WebCore::CSSToStyleMap::mapFillYPosition):
+        (WebCore::CSSToStyleMap::mapNinePieceImageQuad):
+        * css/CSSToStyleMap.h:
+        (CSSToStyleMap):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::computeLength):
+        (WebCore::device_heightMediaFeatureEval):
+        (WebCore::device_widthMediaFeatureEval):
+        (WebCore::heightMediaFeatureEval):
+        (WebCore::widthMediaFeatureEval):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        * css/StyleBuilder.cpp:
+        (WebCore::ApplyPropertyAuto::applyValue):
+        (WebCore::ApplyPropertyClip::convertToLength):
+        (WebCore::ApplyPropertyLength::applyValue):
+        (WebCore::ApplyPropertyBorderRadius::applyValue):
+        (WebCore::ApplyPropertyComputeLength::applyValue):
+        (WebCore::ApplyPropertyFontSize::applyValue):
+        (WebCore::ApplyPropertyLineHeight::applyValue):
+        (WebCore::ApplyPropertyPageSize::mmLength):
+        (WebCore::ApplyPropertyPageSize::inchLength):
+        (WebCore::ApplyPropertyPageSize::applyValue):
+        (WebCore::ApplyPropertyVerticalAlign::applyValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::parentNode):
+        (StyleResolver):
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::setMatrixValue):
+
 2012-06-25  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add WebLayer API for scrolling
