@@ -414,6 +414,7 @@ GraphicsContext3D::~GraphicsContext3D()
     // If GraphicsContext3D init failed in constructor, m_private set to nullptr and no buffers are allocated.
     if (!m_private)
         return;
+
     makeContextCurrent();
     glDeleteTextures(1, &m_texture);
     glDeleteFramebuffers(1, &m_fbo);
@@ -486,13 +487,13 @@ bool GraphicsContext3D::getImageData(Image* image,
     UNUSED_PARAM(ignoreGammaAndColorProfile);
     if (!image)
         return false;
-    QImage nativeImage;
+
+    QImage qtImage;
     // Is image already loaded? If not, load it.
     if (image->data())
-        nativeImage = QImage::fromData(reinterpret_cast<const uchar*>(image->data()->data()), image->data()->size()).convertToFormat(QImage::Format_ARGB32);
+        qtImage = QImage::fromData(reinterpret_cast<const uchar*>(image->data()->data()), image->data()->size());
     else {
         QPixmap* nativePixmap = image->nativeImageForCurrentFrame();
-        QImage qtImage;
 #if HAVE(QT5)
         // With QPA, we can avoid a deep copy.
         qtImage = *nativePixmap->handle()->buffer();
@@ -500,19 +501,32 @@ bool GraphicsContext3D::getImageData(Image* image,
         // This might be a deep copy, depending on other references to the pixmap.
         qtImage = nativePixmap->toImage();
 #endif
-        nativeImage = qtImage.convertToFormat(QImage::Format_ARGB32);
     }
-    AlphaOp neededAlphaOp = AlphaDoNothing;
-    if (premultiplyAlpha)
-        neededAlphaOp = AlphaDoPremultiply;
+
+    AlphaOp alphaOp = AlphaDoNothing;
+    switch (qtImage.format()) {
+    case QImage::Format_ARGB32:
+        if (premultiplyAlpha)
+            alphaOp = AlphaDoPremultiply;
+        break;
+    case QImage::Format_ARGB32_Premultiplied:
+        if (!premultiplyAlpha)
+            alphaOp = AlphaDoUnmultiply;
+        break;
+    default:
+        // The image has a format that is not supported in packPixels. We have to convert it here.
+        qtImage = qtImage.convertToFormat(premultiplyAlpha ? QImage::Format_ARGB32_Premultiplied : QImage::Format_ARGB32);
+        break;
+    }
 
     unsigned int packedSize;
     // Output data is tightly packed (alignment == 1).
     if (computeImageSizeInBytes(format, type, image->width(), image->height(), 1, &packedSize, 0) != GraphicsContext3D::NO_ERROR)
         return false;
+
     outputVector.resize(packedSize);
 
-    return packPixels(nativeImage.bits(), SourceFormatBGRA8, image->width(), image->height(), 0, format, type, neededAlphaOp, outputVector.data());
+    return packPixels(qtImage.bits(), SourceFormatBGRA8, image->width(), image->height(), 0, format, type, alphaOp, outputVector.data());
 }
 
 void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)
