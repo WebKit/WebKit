@@ -267,6 +267,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
 #if ENABLE(CSS_SHADERS)
     case CachedResource::ShaderResource:
 #endif
+    case CachedResource::RawResource:
     case CachedResource::ImageResource:
     case CachedResource::FontResource: {
         // These resources can corrupt only the frame's pixels.
@@ -277,7 +278,6 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
         }
         break;
     }
-    case CachedResource::RawResource:
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
     case CachedResource::LinkSubresource:

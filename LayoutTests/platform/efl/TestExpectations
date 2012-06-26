@@ -714,3 +714,5 @@ BUGWK88984 : css3/flexbox/flexitem.html = TEXT
 
 // Failing after r121121 on both GTK and EFL
 BUGWK89845 : fast/forms/input-set-composition-scroll.html = TEXT
+
+BUGWK90007 : http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html = TEXT

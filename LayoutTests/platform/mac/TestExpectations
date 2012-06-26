@@ -279,3 +279,4 @@ BUGWK85918 : compositing/backface-visibility/backface-visibility-non3d.html = IM
 // Disable webaudio codec tests, including proprietary codecs.
 BUGWK88794 SKIP : webaudio/codec-tests = PASS
 
+BUGWK90007 : http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html = TEXT

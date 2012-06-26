@@ -102,3 +102,5 @@ BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = PA
 
 // Disable webaudio codec tests, including proprietary codecs.
 BUGWK88794 SKIP : webaudio/codec-tests = PASS
+
+BUGWK90007 : http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html = TEXT

@@ -1,3 +1,18 @@
+2012-06-26  Tom Sepez  <tsepez@chromium.org>
+
+        [chromium] HTML5 audio/video tags - loading http content from https page doesn't trigger warning.
+        https://bugs.webkit.org/show_bug.cgi?id=89906
+
+        Reviewed by Nate Chapin.
+
+        This patch treats mixed CachedRawResources as affecting the display of insecure content.
+
+        Tests: http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html
+               http/tests/security/mixedContent/insecure-xhr-in-main-frame.html
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::checkInsecureContent):
+
 2012-06-26  Joe Thomas  <joethomas@motorola.com>
 
         background-size:0 shows as 1px instead of invisible

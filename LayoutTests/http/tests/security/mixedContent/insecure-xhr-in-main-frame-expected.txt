@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: The page at https://127.0.0.1:8443/xmlhttprequest/access-control-response-with-body.html displayed insecure content from http://localhost:8000/xmlhttprequest/resources/access-control-allow-with-body.php.
+
+CONSOLE MESSAGE: The page at https://127.0.0.1:8443/xmlhttprequest/access-control-response-with-body.html displayed insecure content from http://localhost:8000/xmlhttprequest/resources/access-control-allow-with-body.php.
+
+This test opens a HTTPS window that loads insecure data via XHR. We should trigger a mixed content callback because the main frame in the window is HTTPS but now has insecure data.
