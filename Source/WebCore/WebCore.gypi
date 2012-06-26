@@ -3753,6 +3753,7 @@
             'platform/graphics/chromium/cc/CCProxy.h',
             'platform/graphics/chromium/cc/CCQuadCuller.cpp',
             'platform/graphics/chromium/cc/CCQuadCuller.h',
+            'platform/graphics/chromium/cc/CCRenderingStats.h',
             'platform/graphics/chromium/cc/CCRenderPass.cpp',
             'platform/graphics/chromium/cc/CCRenderPass.h',
             'platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp',

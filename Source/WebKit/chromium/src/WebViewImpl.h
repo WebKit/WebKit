@@ -294,6 +294,7 @@ public:
     virtual void updateBatteryStatus(const WebBatteryStatus&);
 #endif
     virtual void transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters&);
+    virtual void renderingStats(WebRenderingStats&) const;
 
     // WebLayerTreeViewClient
     virtual void willBeginFrame();

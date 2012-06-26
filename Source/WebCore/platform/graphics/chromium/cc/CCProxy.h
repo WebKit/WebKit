@@ -36,6 +36,7 @@ namespace WebCore {
 class CCFontAtlas;
 class CCThread;
 class CCGraphicsContext;
+struct CCRenderingStats;
 struct LayerRendererCapabilities;
 
 // Abstract class responsible for proxying commands from the main-thread side of
@@ -80,6 +81,8 @@ public:
     virtual bool recreateContext() = 0;
 
     virtual int compositorIdentifier() const = 0;
+
+    virtual void implSideRenderingStats(CCRenderingStats&) = 0;
 
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const = 0;
 

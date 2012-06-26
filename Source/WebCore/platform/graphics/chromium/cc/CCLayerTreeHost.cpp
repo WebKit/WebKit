@@ -39,6 +39,7 @@
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCOcclusionTracker.h"
 #include "cc/CCOverdrawMetrics.h"
+#include "cc/CCRenderingStats.h"
 #include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCThreadProxy.h"
@@ -72,7 +73,8 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCLayerTre
     , m_animating(false)
     , m_needsAnimateLayers(false)
     , m_client(client)
-    , m_frameNumber(0)
+    , m_animationFrameNumber(0)
+    , m_commitNumber(0)
     , m_layerRendererInitialized(false)
     , m_contextLost(false)
     , m_numTimesRecreateShouldFail(0)
@@ -211,6 +213,8 @@ void CCLayerTreeHost::updateAnimations(double monotonicFrameBeginTime)
     m_client->updateAnimations(monotonicFrameBeginTime);
     animateLayers(monotonicFrameBeginTime);
     m_animating = false;
+
+    m_animationFrameNumber++;
 }
 
 void CCLayerTreeHost::layout()
@@ -243,14 +247,14 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     if (rootLayer() && m_needsAnimateLayers)
         hostImpl->setNeedsAnimateLayers();
 
-    hostImpl->setSourceFrameNumber(frameNumber());
+    hostImpl->setSourceFrameNumber(commitNumber());
     hostImpl->setViewportSize(viewportSize());
     hostImpl->setDeviceScaleFactor(deviceScaleFactor());
     hostImpl->setPageScaleFactorAndLimits(m_pageScaleFactor, m_minPageScaleFactor, m_maxPageScaleFactor);
     hostImpl->setBackgroundColor(m_backgroundColor);
     hostImpl->setHasTransparentBackground(m_hasTransparentBackground);
 
-    m_frameNumber++;
+    m_commitNumber++;
 }
 
 void CCLayerTreeHost::commitComplete()
@@ -300,6 +304,12 @@ void CCLayerTreeHost::finishAllRendering()
     if (!m_layerRendererInitialized)
         return;
     m_proxy->finishAllRendering();
+}
+
+void CCLayerTreeHost::renderingStats(CCRenderingStats& stats) const
+{
+    m_proxy->implSideRenderingStats(stats);
+    stats.numAnimationFrames = animationFrameNumber();
 }
 
 const LayerRendererCapabilities& CCLayerTreeHost::layerRendererCapabilities() const

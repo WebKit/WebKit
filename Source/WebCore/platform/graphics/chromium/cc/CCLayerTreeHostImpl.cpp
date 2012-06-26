@@ -114,7 +114,7 @@ PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHostImpl::create(const CCLayerTreeSet
 CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCLayerTreeSettings& settings, CCLayerTreeHostImplClient* client)
     : m_client(client)
     , m_sourceFrameNumber(-1)
-    , m_frameNumber(0)
+    , m_sourceAnimationFrameNumber(0)
     , m_rootScrollLayerImpl(0)
     , m_currentlyScrollingLayerImpl(0)
     , m_scrollingLayerIdFromPreviousTree(-1)
@@ -519,7 +519,7 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
 
     m_layerRenderer->finishDrawingFrame();
 
-    ++m_frameNumber;
+    ++m_sourceAnimationFrameNumber;
 
     // The next frame should start by assuming nothing has changed, and changes are noted as they occur.
     m_rootLayerImpl->resetAllChangeTrackingForSubtree();
