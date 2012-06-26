@@ -78,7 +78,7 @@ public:
         std::string baseURL("http://www.example.com/");
         std::string fileName("listener/mutation_event_listener.html");
         bool executeScript = true;
-        FrameTestHelpers::registerMockedURLLoad(baseURL, fileName);
+        FrameTestHelpers::registerMockedURLLoadAsHTML(baseURL, fileName);
         m_webView = FrameTestHelpers::createWebViewAndLoad(baseURL + fileName, executeScript);
     }
 

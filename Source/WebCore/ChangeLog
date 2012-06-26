@@ -1,3 +1,16 @@
+2012-06-25  Jay Civelli  <jcivelli@chromium.org>
+
+        Fix progress load reporting for MHTML documents.
+
+        MHTML documents containing references to resources they don't include
+        never finish loading.
+        https://bugs.webkit.org/show_bug.cgi?id=71859
+
+        Reviewed by Nate Chapin.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::scheduleArchiveLoad):
+
 2012-06-25  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use WebGraphicsContext3D in compositor implementation

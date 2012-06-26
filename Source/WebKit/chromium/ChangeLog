@@ -1,3 +1,40 @@
+2012-06-25  Jay Civelli  <jcivelli@chromium.org>
+
+        Fix progress load reporting for MHTML documents.
+
+        MHTML documents containing references to resources they don't include
+        never finish loading.
+        https://bugs.webkit.org/show_bug.cgi?id=71859
+
+        Reviewed by Nate Chapin.
+
+        * tests/EventListenerTest.cpp:
+        * tests/FrameTestHelpers.cpp:
+        (FrameTestHelpers):
+        (WebKit::FrameTestHelpers::registerMockedURLLoad):
+        (WebKit::FrameTestHelpers::registerMockedURLLoadAsHTML):
+        (WebKit::FrameTestHelpers::createWebViewAndLoad):
+        * tests/FrameTestHelpers.h:
+        (FrameTestHelpers):
+        * tests/ListenerLeakTest.cpp:
+        (WebKit::ListenerLeakTest::RunTest):
+        * tests/WebFrameTest.cpp:
+        (WebKit::WebFrameTest::registerMockedHttpURLLoad):
+        (WebKit::WebFrameTest::registerMockedChromeURLLoad):
+        * tests/WebViewTest.cpp:
+        (WebKit::TEST_F):
+        (WebKit::WebViewTest::testAutoResize):
+        (WebKit::WebViewTest::testTextInputType):
+        (TestWebViewClient):
+        (WebKit::TestWebViewClient::TestWebViewClient):
+        (WebKit::TestWebViewClient::didStartLoading):
+        (WebKit::TestWebViewClient::didStopLoading):
+        (WebKit::TestWebViewClient::didChangeLoadProgress):
+        (WebKit::TestWebViewClient::loadingStarted):
+        (WebKit::TestWebViewClient::loadingStopped):
+        (WebKit::TestWebViewClient::loadProgress):
+        (WebKit):
+
 2012-06-25  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use WebGraphicsContext3D in compositor implementation
