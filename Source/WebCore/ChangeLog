@@ -1,3 +1,20 @@
+2012-06-26  Jia Pu  <jpu@apple.com>
+
+        On Mac, autocorrection sometimes fails to take place in Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=89982
+
+        Reviewed by Darin Adler.
+
+        Existing test was turned off due to intermittent failure, which is caused by autocorrection result depending on user data
+        that may be altered by previous test runs. Hopefully we can turn the test back on once we have a way to make autocorrection
+        behave consistently.
+
+        Basically we should check the value of shouldCheckForCorrection, not shouldShowCorrectionPanel, to determine if we should
+        early return in markAndReplaceFor(). 
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAndReplaceFor):
+
 2012-06-26  Joe Thomas  <joethomas@motorola.com>
 
         Do early-return when author and user styles are disabled.
