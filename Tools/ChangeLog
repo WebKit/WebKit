@@ -1,3 +1,29 @@
+2012-06-26  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        webkitpy: Make webkit-patch patches-to-review useful
+        https://bugs.webkit.org/show_bug.cgi?id=89470
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch patches-to-review will now output the list of
+        bugs with patches pending for review that has the user on CC,
+        excluding patches with cq-, sorted by the age of the patch.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (BugzillaQueries.fetch_bugs_from_review_queue):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        (MockBugzillaQueries.fetch_bugs_from_review_queue):
+        (MockBugzilla.__init__):
+        (MockBugzilla.authenticate):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PatchesToReview):
+        (PatchesToReview.__init__):
+        (PatchesToReview._print_report):
+        (PatchesToReview._generate_report):
+        (PatchesToReview.execute):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (QueryCommandsTest.test_patches_to_review):
+
 2012-06-26  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: broken for chromium on vista

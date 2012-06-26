@@ -1,5 +1,6 @@
 # Copyright (c) 2009 Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
+# Copyright (c) 2012 Intel Corporation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -30,6 +31,7 @@
 import fnmatch
 import re
 
+from datetime import datetime
 from optparse import make_option
 
 from webkitpy.tool import steps
@@ -121,14 +123,56 @@ class PatchesToCommitQueue(AbstractDeclarativeCommand):
 
 class PatchesToReview(AbstractDeclarativeCommand):
     name = "patches-to-review"
-    help_text = "List patches that are pending review"
+    help_text = "List bugs which have attachments pending review"
+
+    def __init__(self):
+        options = [
+            make_option("--all", action="store_true",
+                        help="Show all bugs regardless of who is on CC (it might take a while)"),
+            make_option("--include-cq-denied", action="store_true",
+                        help="By default, r? patches with cq- are omitted unless this option is set"),
+            make_option("--cc-email",
+                        help="Specifies the email on the CC field (defaults to your bugzilla login email)"),
+        ]
+        AbstractDeclarativeCommand.__init__(self, options=options)
+
+    def _print_report(self, report, cc_email, print_all):
+        if print_all:
+            print "Bugs with attachments pending review:"
+        else:
+            print "Bugs with attachments pending review that has %s in the CC list:" % cc_email
+
+        print "http://webkit.org/b/bugid   Description (age in days)"
+        for row in report:
+            print "%s (%d)" % (row[1], row[0])
+
+        print "Total: %d" % len(report)
+
+    def _generate_report(self, bugs, include_cq_denied):
+        report = []
+
+        for bug in bugs:
+            patch = bug.unreviewed_patches()[-1]
+
+            if not include_cq_denied and patch.commit_queue() == "-":
+                continue
+
+            age_in_days = (datetime.today() - patch.attach_date()).days
+            report.append((age_in_days, "http://webkit.org/b/%-7s %s" % (bug.id(), bug.title())))
+
+        report.sort()
+        return report
 
     def execute(self, options, args, tool):
-        patch_ids = tool.bugs.queries.fetch_attachment_ids_from_review_queue()
-        log("Patches pending review:")
-        for patch_id in patch_ids:
-            print patch_id
+        tool.bugs.authenticate()
 
+        cc_email = options.cc_email
+        if not cc_email and not options.all:
+            cc_email = tool.bugs.username
+
+        bugs = tool.bugs.queries.fetch_bugs_from_review_queue(cc_email=cc_email)
+        report = self._generate_report(bugs, options.include_cq_denied)
+        self._print_report(report, cc_email, options.all)
 
 class WhatBroke(AbstractDeclarativeCommand):
     name = "what-broke"

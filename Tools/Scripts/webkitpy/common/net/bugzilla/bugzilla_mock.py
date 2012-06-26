@@ -82,7 +82,9 @@ _patch3 = {
     "is_obsolete": False,
     "is_patch": True,
     "review": "?",
+    "commit-queue": "-",
     "attacher_email": "eric@webkit.org",
+    "attach_date": datetime.datetime.today(),
 }
 
 
@@ -266,6 +268,14 @@ class MockBugzillaQueries(object):
         # will return bugs with patches which have r+, but are also obsolete.
         return bug_ids + [50002]
 
+    def fetch_bugs_from_review_queue(self, cc_email=None):
+        unreviewed_bugs = [bug for bug in self._all_bugs() if bug.unreviewed_patches()]
+
+        if cc_email:
+            return [bug for bug in unreviewed_bugs if cc_email in bug.cc_emails()]
+
+        return unreviewed_bugs
+
     def fetch_patches_from_pending_commit_list(self):
         return sum([bug.reviewed_patches() for bug in self._all_bugs()], [])
 
@@ -302,7 +312,11 @@ class MockBugzilla(object):
         self.queries = MockBugzillaQueries(self)
         # FIXME: This should move onto the Host object, and we should use a MockCommitterList
         self.committers = CommitterList(reviewers=_mock_reviewers)
+        self.username = None
         self._override_patch = None
+
+    def authenticate(self):
+        self.username = "username@webkit.org"
 
     def create_bug(self,
                    bug_title,

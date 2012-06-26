@@ -219,6 +219,14 @@ class BugzillaQueries(object):
         return sum([self._fetch_bug(bug_id).reviewed_patches()
             for bug_id in self.fetch_bug_ids_from_pending_commit_list()], [])
 
+    def fetch_bugs_from_review_queue(self, cc_email=None):
+        query = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review?"
+
+        if cc_email:
+            query += "&emailcc1=1&emailtype1=substring&email1=%s" % urllib.quote(cc_email)
+
+        return self._fetch_bugs_from_advanced_query(query)
+
     def fetch_bug_ids_from_commit_queue(self):
         commit_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=commit-queue%2B&order=Last+Changed"
         return self._fetch_bug_ids_advanced_query(commit_queue_url)
