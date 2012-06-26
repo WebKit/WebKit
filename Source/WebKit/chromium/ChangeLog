@@ -1,3 +1,35 @@
+2012-06-25  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Let the embedder override the max page scale factor set by the page
+        https://bugs.webkit.org/show_bug.cgi?id=89406
+
+        Reviewed by James Robinson.
+
+        Chrome on Android has an option to force the web site to allow page
+        scaling (for accessibility). This patch adds
+        WebView::setIgnoreViewportTagMaximumScale, which instructs the WebView
+        to ignore the maximum scale factor supplied by by the page in the
+        viewport meta tag.
+
+        This patch is a bit different from how this is implemented on the
+        chromium-android branch, but I'll clean up the branch once this patch
+        lands.
+
+        * public/WebView.h:
+        (WebView):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::dispatchViewportPropertiesDidChange):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::setIgnoreViewportTagMaximumScale):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        (WebKit::WebViewImpl::ignoreViewportTagMaximumScale):
+        * tests/WebFrameTest.cpp:
+        (WebKit::TEST_F):
+        (WebKit):
+
 2012-06-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121176.

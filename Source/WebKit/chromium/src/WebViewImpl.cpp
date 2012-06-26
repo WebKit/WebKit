@@ -386,6 +386,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_pageDefinedMaximumPageScaleFactor(-1)
     , m_minimumPageScaleFactor(minPageScaleFactor)
     , m_maximumPageScaleFactor(maxPageScaleFactor)
+    , m_ignoreViewportTagMaximumScale(false)
     , m_pageScaleFactorIsSet(false)
     , m_contextMenuAllowed(false)
     , m_doingDragAndDrop(false)
@@ -2605,6 +2606,16 @@ void WebViewImpl::setPageScaleFactorLimits(float minPageScale, float maxPageScal
     m_pageDefinedMinimumPageScaleFactor = minPageScale;
     m_pageDefinedMaximumPageScaleFactor = maxPageScale;
     computePageScaleFactorLimits();
+}
+
+void WebViewImpl::setIgnoreViewportTagMaximumScale(bool flag)
+{
+    m_ignoreViewportTagMaximumScale = flag;
+
+    if (!page() || !page()->mainFrame())
+        return;
+
+    m_page->chrome()->client()->dispatchViewportPropertiesDidChange(page()->mainFrame()->document()->viewportArguments());
 }
 
 bool WebViewImpl::computePageScaleFactorLimits()

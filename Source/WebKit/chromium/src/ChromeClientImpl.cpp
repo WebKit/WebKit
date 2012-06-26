@@ -657,6 +657,11 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
         args, settings->layoutFallbackWidth(), deviceRect.width, deviceRect.height,
         dpi, IntSize(deviceRect.width, deviceRect.height));
 
+    if (m_webView->ignoreViewportTagMaximumScale()) {
+        computed.maximumScale = max(computed.maximumScale, m_webView->maxPageScaleFactor);
+        computed.userScalable = true;
+    }
+
     int layoutWidth = computed.layoutSize.width();
     int layoutHeight = computed.layoutSize.height();
     m_webView->setFixedLayoutSize(IntSize(layoutWidth, layoutHeight));

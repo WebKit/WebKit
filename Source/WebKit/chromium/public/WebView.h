@@ -249,6 +249,11 @@ public:
     virtual float minimumPageScaleFactor() const = 0;
     virtual float maximumPageScaleFactor() const = 0;
 
+    // Prevent the web page from setting a maximum scale via the viewport meta
+    // tag. This is an accessibility feature that lets folks zoom in to web
+    // pages even if the web page tries to block scaling.
+    virtual void setIgnoreViewportTagMaximumScale(bool) = 0;
+
     // The ratio of the current device's screen DPI to the target device's screen DPI.
     virtual float deviceScaleFactor() const = 0;
 

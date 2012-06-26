@@ -284,6 +284,28 @@ TEST_F(WebFrameTest, FixedLayoutInitializeAtMinimumPageScale)
 }
 #endif
 
+TEST_F(WebFrameTest, CanOverrideMaximumScaleFactor)
+{
+    registerMockedHttpURLLoad("no_scale_for_you.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.horizontalDPI = 160;
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+    client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
+
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "no_scale_for_you.html", true, 0, &client));
+    webViewImpl->enableFixedLayoutMode(true);
+    webViewImpl->settings()->setViewportEnabled(true);
+    webViewImpl->resize(WebSize(viewportWidth, viewportHeight));
+
+    EXPECT_EQ(1.0f, webViewImpl->maximumPageScaleFactor());
+
+    webViewImpl->setIgnoreViewportTagMaximumScale(true);
+
+    EXPECT_EQ(4.0f, webViewImpl->maximumPageScaleFactor());
+}
+
 #if ENABLE(GESTURE_EVENTS)
 TEST_F(WebFrameTest, DivAutoZoomParamsTest)
 {

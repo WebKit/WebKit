@@ -207,6 +207,7 @@ public:
     virtual void setPageScaleFactorLimits(float minPageScale, float maxPageScale);
     virtual float minimumPageScaleFactor() const;
     virtual float maximumPageScaleFactor() const;
+    virtual void setIgnoreViewportTagMaximumScale(bool);
 
     virtual float deviceScaleFactor() const;
     virtual void setDeviceScaleFactor(float);
@@ -450,6 +451,8 @@ public:
     {
         return m_emulatedTextZoomFactor;
     }
+
+    bool ignoreViewportTagMaximumScale() const { return m_ignoreViewportTagMaximumScale; }
 
     // Determines whether a page should e.g. be opened in a background tab.
     // Returns false if it has no opinion, in which case it doesn't set *policy.
@@ -708,6 +711,8 @@ private:
     float m_pageDefinedMaximumPageScaleFactor;
     float m_minimumPageScaleFactor;
     float m_maximumPageScaleFactor;
+
+    bool m_ignoreViewportTagMaximumScale;
 
     bool m_pageScaleFactorIsSet;
 
