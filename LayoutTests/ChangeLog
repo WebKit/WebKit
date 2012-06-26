@@ -1,3 +1,9 @@
+2012-06-25  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-25  Filip Pizlo  <fpizlo@apple.com>
 
         Value profiling should use tier-up threshold randomization to get more coverage
