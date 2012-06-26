@@ -43,7 +43,8 @@
 
 #onebar #platform-picker {
     float: right;
-    margin: 8px;
+    margin-top: 8px;
+    margin-right: 8px;
     font-size: larger;
 }
 

@@ -1,3 +1,19 @@
+2012-06-26  Ojan Vafai  <ojan@chromium.org>
+
+        Fix platform picker change handler in garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=90010
+
+        Reviewed by Simon Fraser.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        The old code never worked. This is hard to test because change handlers require
+        a user-initiated action and the code is changing the window's location, which would
+        navigate the test page.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/onebar.css:
+        Fix the CSS so it doesn't cause the tabstrip to be disconnected from the tabs on Linux
+        due to the large margin-bottom.
+
 2012-06-26  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         webkitpy: Make webkit-patch patches-to-review useful

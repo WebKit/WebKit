@@ -112,8 +112,8 @@ ui.onebar = base.extends('div', {
         });
         
         platformSelect.addEventListener('change', function() {
-            window.location.search = '?platform=' + platformSelect.selectedOptions[0]._platform;
-        }, false);
+            window.location.search = '?platform=' + platformSelect.options[platformSelect.selectedIndex]._platform;
+        });
         
         platformSelect.selectedIndex = currentPlatformIndex;
     },
