@@ -38,7 +38,7 @@ static TextCheckerState textCheckerState;
 
 const TextCheckerState& TextChecker::state()
 {
-    static bool didInitializeState;
+    static bool didInitializeState = false;
     if (didInitializeState)
         return textCheckerState;
 

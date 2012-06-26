@@ -1,3 +1,16 @@
+2012-06-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][GTK] Uninitialized variable in TextCheckerGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=89948
+
+        Reviewed by Martin Robinson.
+
+        Properly initialize didInitializeState in
+        TextChecker::state().
+
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::state):
+
 2012-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Make it possible to build WebKit without QtWidgets
