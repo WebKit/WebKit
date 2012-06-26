@@ -1,5 +1,20 @@
 2012-06-25  Dirk Pranke  <dpranke@chromium.org>
 
+        put vista back for chromium (non-webkit) bots ...
+        https://bugs.webkit.org/show_bug.cgi?id=89929
+
+        Unreviewed, build fix.
+
+        Turns out we've only gotten rid of vista on the webkit tests so
+        far. Put vista back for the other chromium bots ...
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (chromiumPlatform):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (test):
+
+2012-06-25  Dirk Pranke  <dpranke@chromium.org>
+
         update flakiness dashboard after removing chromium-vista bots
         https://bugs.webkit.org/show_bug.cgi?id=89925
 
