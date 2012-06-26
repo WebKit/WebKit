@@ -58,7 +58,7 @@ int screenVerticalDPI(Widget* widget)
 
 int screenDepth(Widget* widget)
 {
-    if (!widget->evas())
+    if (!widget || !widget->evas())
         return 0;
 
     return getPixelDepth(widget->evas());
@@ -66,7 +66,7 @@ int screenDepth(Widget* widget)
 
 int screenDepthPerComponent(Widget* widget)
 {
-    if (!widget->evas())
+    if (!widget || !widget->evas())
         return 0;
 
     // FIXME: How to support this functionality based on EFL library ?
