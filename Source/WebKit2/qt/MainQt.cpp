@@ -34,7 +34,9 @@
 
 namespace WebKit {
 Q_DECL_IMPORT int WebProcessMainQt(QGuiApplication*);
+#if !defined(QT_NO_WIDGETS)
 Q_DECL_IMPORT void initializeWebKit2Theme();
+#endif
 }
 
 #if !defined(NDEBUG) && defined(Q_OS_UNIX)
@@ -72,7 +74,9 @@ int main(int argc, char** argv)
     }
 #endif
 
+#if !defined(QT_NO_WIDGETS)
     WebKit::initializeWebKit2Theme();
+#endif
 
     // Has to be done before QApplication is constructed in case
     // QApplication itself produces debug output.

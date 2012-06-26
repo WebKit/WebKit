@@ -71,3 +71,7 @@ linux-*: {
     # -lrt is required for shm_open and shm_unlink.
     LIBS += -lrt
 }
+
+QT += qml quick
+
+contains(DEFINES, ENABLE_GEOLOCATION=1):haveQt(5): QT += location

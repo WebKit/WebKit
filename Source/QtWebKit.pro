@@ -27,11 +27,12 @@ declarative.file = WebKit/qt/declarative/declarative.pro
 declarative.makefile = Makefile.declarative
 SUBDIRS += declarative
 
-tests.file = tests.pri
-SUBDIRS += tests
+!no_webkit1 {
+    tests.file = tests.pri
+    SUBDIRS += tests
 
-examples.file = WebKit/qt/examples/examples.pro
-examples.CONFIG += no_default_target
-examples.makefile = Makefile
-SUBDIRS += examples
-
+    examples.file = WebKit/qt/examples/examples.pro
+    examples.CONFIG += no_default_target
+    examples.makefile = Makefile
+    SUBDIRS += examples
+}

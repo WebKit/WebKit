@@ -1,3 +1,16 @@
+2012-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Make it possible to build WebKit without QtWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=78109
+
+        Reviewed by Tor Arne Vestbø.
+
+        Moved WebKit1 sources into a separate static library. Only WK1
+        depends on QtWidgets.
+
+        * WebKit1.pri: Added.
+        * WebKit1.pro: Added.
+
 2012-06-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Implement Network Information API

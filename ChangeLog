@@ -1,3 +1,14 @@
+2012-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Make it possible to build WebKit without QtWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=78109
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Source/QtWebKit.pro: Don't build WK1 tests and examples if WK1 is disabled.
+        * Source/api.pri: Move WK1 sources away from here and use WEBKIT += webkit1 instead
+        * WebKit.pro: Add WK1 to SUBDIRS unless no_webkit1 is set.
+
 2012-06-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Implement Network Information API

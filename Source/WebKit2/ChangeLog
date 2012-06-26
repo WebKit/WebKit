@@ -1,3 +1,16 @@
+2012-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Make it possible to build WebKit without QtWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=78109
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WebKit2.pri: Add missing WK2 specific dependencies.
+        * qt/MainQt.cpp: Do the QStyle initialization hook only if we are
+        compiling with QtWidgets support.
+        (WebKit):
+        (main):
+
 2012-06-25  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL][WK2] Include unistd.h in PlatformProcessIdentifier.h.

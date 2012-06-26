@@ -1,3 +1,15 @@
+2012-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Make it possible to build WebKit without QtWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=78109
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Tools.pro: Disable various tools that depend on WK1.
+        * qmake/mkspecs/features/default_post.prf: Add WK1 as supported static lib in WEBKIT
+        * qmake/mkspecs/features/default_pre.prf: Disable WK1 if QtWidgets is not built.
+        * qmake/mkspecs/modules/webkit1.prf: Added.
+
 2012-06-25  Dirk Pranke  <dpranke@chromium.org>
 
         put vista back for chromium (non-webkit) bots ...

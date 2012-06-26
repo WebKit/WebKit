@@ -105,7 +105,8 @@ else: PYTHON = python
 
 haveQt(5): {
     isEmpty(QT.widgets.name)|isEmpty(QT.printsupport.name) {
-        root_project_file: error("Building WebKit against Qt 5.0 requires the QtWidgets and QtPrintSupport modules.")
+        root_project_file: message("WebKit1 requires the QtWidgets and QtPrintSupport modules. Disabling WebKit1.")
+        CONFIG += no_webkit1
     }
 }
 

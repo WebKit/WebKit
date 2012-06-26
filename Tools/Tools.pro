@@ -9,13 +9,16 @@ CONFIG += ordered
 
 load(features)
 
-SUBDIRS += QtTestBrowser/QtTestBrowser.pro
-SUBDIRS += DumpRenderTree/qt/DumpRenderTree.pro
-SUBDIRS += DumpRenderTree/qt/ImageDiff.pro
+!no_webkit1 {
+    SUBDIRS += QtTestBrowser/QtTestBrowser.pro
+    SUBDIRS += DumpRenderTree/qt/DumpRenderTree.pro
+    SUBDIRS += DumpRenderTree/qt/ImageDiff.pro
+}
 
 !no_webkit2 {
-    SUBDIRS += MiniBrowser/qt/MiniBrowser.pro \
-               WebKitTestRunner/WebKitTestRunner.pro
+    SUBDIRS += MiniBrowser/qt/MiniBrowser.pro
+    # WTR's InjectedBundle depends currently on WK1's DumpRenderTreeSupport
+    !no_webkit1: SUBDIRS += WebKitTestRunner/WebKitTestRunner.pro
 }
 
 # FIXME: with Qt 5 the test plugin cause some trouble during layout tests.
