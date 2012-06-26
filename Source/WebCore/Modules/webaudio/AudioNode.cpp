@@ -36,6 +36,10 @@
 #include <wtf/Atomics.h>
 #include <wtf/MainThread.h>
 
+#if DEBUG_AUDIONODE_REFERENCES
+#include <stdio.h>
+#endif
+
 namespace WebCore {
 
 AudioNode::AudioNode(AudioContext* context, float sampleRate)

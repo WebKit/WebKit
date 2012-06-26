@@ -1,3 +1,14 @@
+2012-06-26  Raymond Toy  <rtoy@google.com>
+
+        Include stdio.h when DEBUG_AUDIONODE_REFERENCES is set
+        https://bugs.webkit.org/show_bug.cgi?id=89997
+
+        Reviewed by Eric Seidel.
+
+        No new tests needed for a compile issue
+
+        * Modules/webaudio/AudioNode.cpp:  Include stdio.h
+
 2012-06-26  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Use premultiplied alpha when extracting image data in WebGL
