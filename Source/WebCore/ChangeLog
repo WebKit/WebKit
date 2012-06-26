@@ -1,3 +1,18 @@
+2012-06-25  Huang Dongsung  <luxtella@company100.net>
+
+        [Texmap] Remove platform specific code in BitmapImageGL::updateContents by using
+        GraphicsContext3D::extractImageData.
+        https://bugs.webkit.org/show_bug.cgi?id=89867
+
+        Reviewed by Noam Rosenthal.
+
+        No new tests. Covered by existing tests.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore):
+        (WebCore::BitmapTextureGL::didReset):
+        (WebCore::BitmapTextureGL::updateContents):
+
 2012-06-25  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove uncalled ManagedTexture::framebufferTexture2D
