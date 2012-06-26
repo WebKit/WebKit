@@ -88,6 +88,12 @@ void GraphicsSurface::platformCopyToGLTexture(uint32_t target, uint32_t id, cons
     glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE_ARB, 0, 0);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
     glPopAttrib();
+
+    // According to IOSurface's documentation, glBindFramebuffer is the one triggering an update of the surface's cache.
+    // If the web process starts rendering and unlocks the surface before this happens, we might copy contents
+    // of the currently rendering frame on our texture instead of the previously completed frame.
+    // Flush the command buffer to reduce the odds of this happening, this would not be necessary with double buffering.
+    glFlush();
 }
 
 void GraphicsSurface::platformCopyFromFramebuffer(uint32_t originFbo, const IntRect& sourceRect)
