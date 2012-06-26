@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "ExecutableAllocator.h"
+#include <wtf/StringExtras.h>
 
 namespace JSC {
 
@@ -125,7 +126,7 @@ bool ExecutionCounter::setThreshold(CodeBlock* codeBlock)
     ASSERT(!hasCrossedThreshold(codeBlock));
         
     // Compute the true total count.
-    double trueTotalCount = static_cast<double>(m_totalCount) + m_counter;
+    double trueTotalCount = count();
         
     // Correct the threshold for current memory usage.
     double threshold = applyMemoryUsageHeuristics(m_activeThreshold, codeBlock);
@@ -143,9 +144,11 @@ bool ExecutionCounter::setThreshold(CodeBlock* codeBlock)
         return true;
     }
 
-    if (threshold > std::numeric_limits<int32_t>::max())
-        threshold = std::numeric_limits<int32_t>::max();
-        
+    int32_t maxThreshold =
+        codeBlock->globalObject()->weakRandomInteger() % Options::maximumExecutionCountsBetweenCheckpoints;
+    if (threshold > maxThreshold)
+        threshold = maxThreshold;
+    
     m_counter = static_cast<int32_t>(-threshold);
         
     m_totalCount = trueTotalCount + threshold;
@@ -158,6 +161,13 @@ void ExecutionCounter::reset()
     m_counter = 0;
     m_totalCount = 0;
     m_activeThreshold = 0;
+}
+
+const char* ExecutionCounter::status() const
+{
+    static char result[80];
+    snprintf(result, sizeof(result), "%lf/%lf, %d", count(), static_cast<double>(m_activeThreshold), m_counter);
+    return result;
 }
 
 } // namespace JSC

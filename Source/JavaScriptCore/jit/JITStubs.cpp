@@ -1928,11 +1928,13 @@ DEFINE_STUB_FUNCTION(void, optimize)
     unsigned bytecodeIndex = stackFrame.args[0].int32();
 
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("%p: Entered optimize with bytecodeIndex = %u, executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u\n", codeBlock, bytecodeIndex, codeBlock->jitExecuteCounter(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
+    dataLog("%p: Entered optimize with bytecodeIndex = %u, executeCounter = %s, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u\n", codeBlock, bytecodeIndex, codeBlock->jitExecuteCounter().status(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
 #endif
 
-    if (!codeBlock->checkIfOptimizationThresholdReached())
+    if (!codeBlock->checkIfOptimizationThresholdReached()) {
+        codeBlock->updateAllPredictions();
         return;
+    }
 
     if (codeBlock->hasOptimizedReplacement()) {
 #if ENABLE(JIT_VERBOSE_OSR)

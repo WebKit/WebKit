@@ -986,13 +986,8 @@ void SpeculativeJIT::compile(BasicBlock& block)
     m_jit.jitAssertHasValidCallFrame();
 
     ASSERT(m_arguments.size() == block.variablesAtHead.numberOfArguments());
-    for (size_t i = 0; i < m_arguments.size(); ++i) {
-        NodeIndex nodeIndex = block.variablesAtHead.argument(i);
-        if (nodeIndex == NoNode || m_jit.codeBlock()->argumentIsCaptured(i))
-            m_arguments[i] = ValueSource(ValueInRegisterFile);
-        else
-            m_arguments[i] = ValueSource::forSpeculation(at(nodeIndex).variableAccessData()->prediction());
-    }
+    for (size_t i = 0; i < m_arguments.size(); ++i)
+        m_arguments[i] = ValueSource(ValueInRegisterFile);
     
     m_state.reset();
     m_state.beginBasicBlock(&block);

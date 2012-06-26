@@ -1238,12 +1238,12 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
     SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
     CodeBlock* codeBlock = debugInfo->codeBlock;
     CodeBlock* alternative = codeBlock->alternative();
-    dataLog("Speculation failure in %p at @%u with executeCounter = %d, "
+    dataLog("Speculation failure in %p at @%u with executeCounter = %s, "
             "reoptimizationRetryCounter = %u, optimizationDelayCounter = %u, "
             "success/fail %u/(%u+%u)\n",
             codeBlock,
             debugInfo->nodeIndex,
-            alternative ? alternative->jitExecuteCounter() : 0,
+            alternative ? alternative->jitExecuteCounter().status() : 0,
             alternative ? alternative->reoptimizationRetryCounter() : 0,
             alternative ? alternative->optimizationDelayCounter() : 0,
             codeBlock->speculativeSuccessCounter(),

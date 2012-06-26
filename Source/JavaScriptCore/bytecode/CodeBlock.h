@@ -913,9 +913,9 @@ namespace JSC {
             m_llintExecuteCounter.setNewThreshold(Options::thresholdForJITSoon, this);
         }
         
-        int32_t llintExecuteCounter() const
+        const ExecutionCounter& llintExecuteCounter() const
         {
-            return m_llintExecuteCounter.m_counter;
+            return m_llintExecuteCounter;
         }
         
         // Functions for controlling when tiered compilation kicks in. This
@@ -971,7 +971,7 @@ namespace JSC {
         static ptrdiff_t offsetOfJITExecutionActiveThreshold() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(ExecutionCounter, m_activeThreshold); }
         static ptrdiff_t offsetOfJITExecutionTotalCount() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(ExecutionCounter, m_totalCount); }
 
-        int32_t jitExecuteCounter() const { return m_jitExecuteCounter.m_counter; }
+        const ExecutionCounter& jitExecuteCounter() const { return m_jitExecuteCounter; }
         
         unsigned optimizationDelayCounter() const { return m_optimizationDelayCounter; }
         
@@ -1100,8 +1100,10 @@ namespace JSC {
 
 #if ENABLE(VALUE_PROFILER)
         bool shouldOptimizeNow();
+        void updateAllPredictions(OperationInProgress = NoOperation);
 #else
         bool shouldOptimizeNow() { return false; }
+        void updateAllPredictions(OperationInProgress = NoOperation) { }
 #endif
         
 #if ENABLE(JIT)
@@ -1133,6 +1135,9 @@ namespace JSC {
         void tallyFrequentExitSites();
 #else
         void tallyFrequentExitSites() { }
+#endif
+#if ENABLE(VALUE_PROFILER)
+        void updateAllPredictionsAndCountLiveness(OperationInProgress, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 #endif
         
         void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&);

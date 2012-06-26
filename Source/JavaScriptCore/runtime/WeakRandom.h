@@ -62,6 +62,9 @@ public:
         , m_high(seed)
     {
     }
+    
+    // Returns the seed provided that you've never called get() or getUint32().
+    unsigned seedUnsafe() const { return m_high; }
 
     double get()
     {

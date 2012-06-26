@@ -264,6 +264,8 @@ inline bool shouldJIT(ExecState* exec)
 // Returns true if we should try to OSR.
 inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
 {
+    codeBlock->updateAllPredictions();
+    
     if (!codeBlock->checkIfJITThresholdReached()) {
 #if ENABLE(JIT_VERBOSE_OSR)
         dataLog("    JIT threshold should be lifted.\n");
@@ -300,7 +302,8 @@ enum EntryKind { Prologue, ArityCheck };
 static SlowPathReturnType entryOSR(ExecState* exec, Instruction* pc, CodeBlock* codeBlock, const char *name, EntryKind kind)
 {
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("%p: Entered %s with executeCounter = %d\n", codeBlock, name, codeBlock->llintExecuteCounter());
+    dataLog("%p: Entered %s with executeCounter = %s\n", codeBlock, name,
+            codeBlock->llintExecuteCounter().status());
 #endif
     
     if (!shouldJIT(exec)) {
@@ -346,7 +349,8 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     CodeBlock* codeBlock = exec->codeBlock();
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("%p: Entered loop_osr with executeCounter = %d\n", codeBlock, codeBlock->llintExecuteCounter());
+    dataLog("%p: Entered loop_osr with executeCounter = %s\n", codeBlock,
+            codeBlock->llintExecuteCounter().status());
 #endif
     
     if (!shouldJIT(exec)) {
@@ -376,7 +380,8 @@ LLINT_SLOW_PATH_DECL(replace)
     CodeBlock* codeBlock = exec->codeBlock();
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("%p: Entered replace with executeCounter = %d\n", codeBlock, codeBlock->llintExecuteCounter());
+    dataLog("%p: Entered replace with executeCounter = %s\n", codeBlock,
+            codeBlock->llintExecuteCounter().status());
 #endif
     
     if (shouldJIT(exec))

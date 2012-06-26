@@ -1,3 +1,60 @@
+2012-06-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Value profiling should use tier-up threshold randomization to get more coverage
+        https://bugs.webkit.org/show_bug.cgi?id=89802
+
+        Reviewed by Gavin Barraclough.
+        
+        This patch causes both LLInt and Baseline JIT code to take the OSR slow path several
+        times before actually doing OSR. If we take the OSR slow path before the execution
+        count threshold is reached, then we just call CodeBlock::updateAllPredictions() to
+        compute the current latest least-upper-bound SpecType of all values seen in each
+        ValueProfile.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC):
+        (JSC::CodeBlock::updateAllPredictions):
+        (JSC::CodeBlock::shouldOptimizeNow):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::llintExecuteCounter):
+        (JSC::CodeBlock::jitExecuteCounter):
+        (CodeBlock):
+        (JSC::CodeBlock::updateAllPredictions):
+        * bytecode/ExecutionCounter.cpp:
+        (JSC::ExecutionCounter::setThreshold):
+        (JSC::ExecutionCounter::status):
+        (JSC):
+        * bytecode/ExecutionCounter.h:
+        (JSC::ExecutionCounter::count):
+        (ExecutionCounter):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::weakRandomInteger):
+        * runtime/Options.cpp:
+        (Options):
+        (JSC::Options::initializeOptions):
+        * runtime/Options.h:
+        (Options):
+        * runtime/WeakRandom.h:
+        (WeakRandom):
+        (JSC::WeakRandom::seedUnsafe):
+
 2012-06-25  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Add JSC statistics into about:memory

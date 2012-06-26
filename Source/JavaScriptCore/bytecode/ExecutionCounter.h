@@ -38,6 +38,8 @@ public:
     bool checkIfThresholdCrossedAndSet(CodeBlock*);
     void setNewThreshold(int32_t threshold, CodeBlock*);
     void deferIndefinitely();
+    double count() const { return static_cast<double>(m_totalCount) + m_counter; }
+    const char* status() const;
     static double applyMemoryUsageHeuristics(int32_t value, CodeBlock*);
     static int32_t applyMemoryUsageHeuristicsAndConvertToInt(int32_t value, CodeBlock*);
 

@@ -175,14 +175,7 @@ namespace JSC {
         static JS_EXPORTDATA const ClassInfo s_info;
 
     protected:
-        explicit JSGlobalObject(JSGlobalData& globalData, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable = 0)
-            : JSSegmentedVariableObject(globalData, structure, &m_symbolTable)
-            , m_globalScopeChain()
-            , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
-            , m_evalEnabled(true)
-            , m_globalObjectMethodTable(globalObjectMethodTable ? globalObjectMethodTable : &s_globalObjectMethodTable)
-        {
-        }
+        JS_EXPORT_PRIVATE explicit JSGlobalObject(JSGlobalData&, Structure*, const GlobalObjectMethodTable* = 0);
 
         void finishCreation(JSGlobalData& globalData)
         {
@@ -328,6 +321,7 @@ namespace JSC {
         }
 
         double weakRandomNumber() { return m_weakRandom.get(); }
+        unsigned weakRandomInteger() { return m_weakRandom.getUint32(); }
     protected:
 
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSSegmentedVariableObject::StructureFlags;

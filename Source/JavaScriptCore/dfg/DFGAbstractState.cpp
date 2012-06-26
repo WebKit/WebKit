@@ -1392,7 +1392,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     case StructureTransitionWatchpoint: {
         // FIXME: Turn CheckStructure into StructureTransitionWatchpoint when possible!
         AbstractValue& value = forNode(node.child1());
-        ASSERT(isCellSpeculation(value.m_type));
+        ASSERT(value.isClear() || isCellSpeculation(value.m_type)); // Value could be clear if we've proven must-exit due to a speculation statically known to be bad.
         value.filter(node.structure());
         node.setCanExit(true);
         break;

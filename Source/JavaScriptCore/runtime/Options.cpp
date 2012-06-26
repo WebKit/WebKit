@@ -67,6 +67,8 @@ int32_t thresholdForOptimizeSoon;
 int32_t executionCounterIncrementForLoop;
 int32_t executionCounterIncrementForReturn;
 
+int32_t maximumExecutionCountsBetweenCheckpoints;
+
 unsigned desiredSpeculativeSuccessFailRatio;
 
 double likelyToTakeSlowCaseThreshold;
@@ -94,6 +96,9 @@ unsigned minimumNumberOfScansBetweenRebalance;
 unsigned gcMarkStackSegmentSize;
 unsigned numberOfGCMarkers;
 unsigned opaqueRootMergeThreshold;
+
+bool forceWeakRandomSeed;
+unsigned forcedWeakRandomSeed;
 
 #if ENABLE(RUN_TIME_HEURISTICS)
 static bool parse(const char* string, bool& value)
@@ -184,6 +189,8 @@ void initializeOptions()
 
     SET(executionCounterIncrementForLoop,   1);
     SET(executionCounterIncrementForReturn, 15);
+    
+    SET(maximumExecutionCountsBetweenCheckpoints, 1000);
 
     SET(desiredSpeculativeSuccessFailRatio, 6);
     
@@ -227,6 +234,9 @@ void initializeOptions()
     
     ASSERT((static_cast<int64_t>(thresholdForOptimizeAfterLongWarmUp) << reoptimizationRetryCounterMax) > 0);
     ASSERT((static_cast<int64_t>(thresholdForOptimizeAfterLongWarmUp) << reoptimizationRetryCounterMax) <= static_cast<int64_t>(std::numeric_limits<int32_t>::max()));
+    
+    SET(forceWeakRandomSeed, false);
+    SET(forcedWeakRandomSeed, 0);
 }
 
 } } // namespace JSC::Options

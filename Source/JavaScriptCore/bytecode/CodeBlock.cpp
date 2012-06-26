@@ -2104,26 +2104,7 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
     }
 #endif
 
-#if ENABLE(DFG_JIT)
-    if (hasCodeOrigins()) {
-        // Make sure that executables that we have inlined don't die.
-        // FIXME: If they would have otherwise died, we should probably trigger recompilation.
-        for (size_t i = 0; i < inlineCallFrames().size(); ++i) {
-            InlineCallFrame& inlineCallFrame = inlineCallFrames()[i];
-            visitor.append(&inlineCallFrame.executable);
-            visitor.append(&inlineCallFrame.callee);
-        }
-    }
-    
-    m_lazyOperandValueProfiles.computeUpdatedPredictions(Collection);
-#endif
-
-#if ENABLE(VALUE_PROFILER)
-    for (unsigned profileIndex = 0; profileIndex < numberOfArgumentValueProfiles(); ++profileIndex)
-        valueProfileForArgument(profileIndex)->computeUpdatedPrediction(Collection);
-    for (unsigned profileIndex = 0; profileIndex < numberOfValueProfiles(); ++profileIndex)
-        valueProfile(profileIndex)->computeUpdatedPrediction(Collection);
-#endif
+    updateAllPredictions(Collection);
 }
 
 void CodeBlock::stronglyVisitWeakReferences(SlotVisitor& visitor)
@@ -2574,6 +2555,37 @@ bool FunctionCodeBlock::jitCompileImpl(ExecState* exec)
 #endif
 
 #if ENABLE(VALUE_PROFILER)
+void CodeBlock::updateAllPredictionsAndCountLiveness(
+    OperationInProgress operation, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
+{
+    numberOfLiveNonArgumentValueProfiles = 0;
+    numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
+    for (unsigned i = 0; i < totalNumberOfValueProfiles(); ++i) {
+        ValueProfile* profile = getFromAllValueProfiles(i);
+        unsigned numSamples = profile->totalNumberOfSamples();
+        if (numSamples > ValueProfile::numberOfBuckets)
+            numSamples = ValueProfile::numberOfBuckets; // We don't want profiles that are extremely hot to be given more weight.
+        numberOfSamplesInProfiles += numSamples;
+        if (profile->m_bytecodeOffset < 0) {
+            profile->computeUpdatedPrediction(operation);
+            continue;
+        }
+        if (profile->numberOfSamples() || profile->m_prediction != SpecNone)
+            numberOfLiveNonArgumentValueProfiles++;
+        profile->computeUpdatedPrediction(operation);
+    }
+    
+#if ENABLE(DFG_JIT)
+    m_lazyOperandValueProfiles.computeUpdatedPredictions(operation);
+#endif
+}
+
+void CodeBlock::updateAllPredictions(OperationInProgress operation)
+{
+    unsigned ignoredValue1, ignoredValue2;
+    updateAllPredictionsAndCountLiveness(operation, ignoredValue1, ignoredValue2);
+}
+
 bool CodeBlock::shouldOptimizeNow()
 {
 #if ENABLE(JIT_VERBOSE_OSR)
@@ -2587,22 +2599,9 @@ bool CodeBlock::shouldOptimizeNow()
     if (m_optimizationDelayCounter >= Options::maximumOptimizationDelay)
         return true;
     
-    unsigned numberOfLiveNonArgumentValueProfiles = 0;
-    unsigned numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
-    for (unsigned i = 0; i < totalNumberOfValueProfiles(); ++i) {
-        ValueProfile* profile = getFromAllValueProfiles(i);
-        unsigned numSamples = profile->totalNumberOfSamples();
-        if (numSamples > ValueProfile::numberOfBuckets)
-            numSamples = ValueProfile::numberOfBuckets; // We don't want profiles that are extremely hot to be given more weight.
-        numberOfSamplesInProfiles += numSamples;
-        if (profile->m_bytecodeOffset < 0) {
-            profile->computeUpdatedPrediction();
-            continue;
-        }
-        if (profile->numberOfSamples() || profile->m_prediction != SpecNone)
-            numberOfLiveNonArgumentValueProfiles++;
-        profile->computeUpdatedPrediction();
-    }
+    unsigned numberOfLiveNonArgumentValueProfiles;
+    unsigned numberOfSamplesInProfiles;
+    updateAllPredictionsAndCountLiveness(NoOperation, numberOfLiveNonArgumentValueProfiles, numberOfSamplesInProfiles);
 
 #if ENABLE(JIT_VERBOSE_OSR)
     dataLog("Profile hotness: %lf, %lf\n", (double)numberOfLiveNonArgumentValueProfiles / numberOfValueProfiles(), (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles());
