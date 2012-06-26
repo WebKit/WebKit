@@ -71,11 +71,19 @@ DeviceMotionData* DeviceMotionClientBlackBerry::lastMotion() const
 
 void DeviceMotionClientBlackBerry::onMotion(const BlackBerry::Platform::DeviceMotionEvent* event)
 {
-    RefPtr<DeviceMotionData::Acceleration> accel = DeviceMotionData::Acceleration::create(
-            true, event->x, true, event->y, true, event->z);
+    // All boolean parameters in the following create() calls indicate that if the following parameter is validly provided.
+
+    RefPtr<DeviceMotionData::Acceleration> acceleration = DeviceMotionData::Acceleration::create(
+        true, event->acceleration.x, true, event->acceleration.y, true, event->acceleration.z);
+
+    RefPtr<DeviceMotionData::Acceleration> accelerationIncludingGravity = DeviceMotionData::Acceleration::create(
+        true, event->accelerationIncludingGravity.x, true, event->accelerationIncludingGravity.y, true, event->accelerationIncludingGravity.z);
+
+    RefPtr<DeviceMotionData::RotationRate> rotationRate = DeviceMotionData::RotationRate::create(
+        true, event->rotationRate.alpha, true, event->rotationRate.beta, true, event->rotationRate.gamma);
 
     double now = WTF::currentTimeMS();
-    m_currentMotion = DeviceMotionData::create(0, accel, 0, m_lastEventTime, m_lastEventTime - now);
+    m_currentMotion = DeviceMotionData::create(acceleration, accelerationIncludingGravity, rotationRate, m_lastEventTime, m_lastEventTime - now);
     m_lastEventTime = now;
 
     if (!m_controller)
