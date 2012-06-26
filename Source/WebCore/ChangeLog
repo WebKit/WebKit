@@ -1,3 +1,16 @@
+2012-06-25  Anantanarayanan G Iyengar  <ananta@chromium.org>
+
+        [chromium] Ensure that the compositor code which is aware of flipped status of video-textures
+        per platform executes on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=89914
+        
+        Reviewed by James Robinson.
+
+        No new tests. (HW video decode is still only being tested manually for orientation)
+
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::appendQuads):
+
 2012-06-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121176.
