@@ -224,6 +224,7 @@ bool V8DOMWrapper::maybeDOMWrapper(v8::Handle<v8::Value> value)
 
     ASSERT(object->InternalFieldCount() >= v8DefaultWrapperInternalFieldCount);
 
+    v8::HandleScope scope;
     v8::Handle<v8::Value> wrapper = object->GetInternalField(v8DOMWrapperObjectIndex);
     ASSERT(wrapper->IsNumber() || wrapper->IsExternal());
 
