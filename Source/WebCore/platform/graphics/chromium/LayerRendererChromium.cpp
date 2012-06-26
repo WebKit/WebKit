@@ -115,16 +115,10 @@ static WebTransformationMatrix screenMatrix(int x, int y, int width, int height)
     return screen;
 }
 
-bool needsLionIOSurfaceReadbackWorkaround()
+bool needsIOSurfaceReadbackWorkaround()
 {
 #if OS(DARWIN)
-    static SInt32 systemVersion = 0;
-    if (!systemVersion) {
-        if (Gestalt(gestaltSystemVersion, &systemVersion) != noErr)
-            return false;
-    }
-
-    return systemVersion >= 0x1070;
+    return true;
 #else
     return false;
 #endif
@@ -1260,13 +1254,13 @@ void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& re
 
     makeContextCurrent();
 
-    bool doWorkaround = needsLionIOSurfaceReadbackWorkaround();
+    bool doWorkaround = needsIOSurfaceReadbackWorkaround();
 
     Platform3DObject temporaryTexture = NullPlatform3DObject;
     Platform3DObject temporaryFBO = NullPlatform3DObject;
 
     if (doWorkaround) {
-        // On Mac OS X 10.7, calling glReadPixels against an FBO whose color attachment is an
+        // On Mac OS X, calling glReadPixels against an FBO whose color attachment is an
         // IOSurface-backed texture causes corruption of future glReadPixels calls, even those on
         // different OpenGL contexts. It is believed that this is the root cause of top crasher
         // http://crbug.com/99393. <rdar://problem/10949687>
