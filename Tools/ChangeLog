@@ -1,3 +1,14 @@
+2012-06-25  Jocelyn Turcotte  <turcotte.j@gmail.com>
+
+        Add a note about hostname completion not working well with --cc completion
+
+        Reviewed by Simon Hausmann.
+
+        Hostname completion tries to resolve anything after an @ sign which is present
+        in the completed list of contributor emails to CC.
+
+        * Scripts/webkit-tools-completion.sh:
+
 2012-06-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121244.

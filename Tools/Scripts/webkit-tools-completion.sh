@@ -39,6 +39,7 @@ __webkit-patch_generate_reply()
 
 __webkit-patch_upload_cc_generate_reply()
 {
+    # Note: This won't work well if hostname completion is enabled, disable it with: shopt -u hostcomplete
     # Completion is done on tokens and our comma-separated list is one single token, so we have to do completion on the whole list each time.
     # Return a \n separated list for each possible bugzilla email completion of the substring following the last comma.
     # Redirect strerr to /dev/null to prevent noise in the shell if this ever breaks somehow.
