@@ -3596,6 +3596,8 @@ BUGWK86592 LINUX : http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html
 BUGWK86592 LINUX : fast/loader/unload-form-about-blank.html = TIMEOUT PASS
 BUGWK86592 LINUX : http/tests/xmlhttprequest/zero-length-response-sync.html = TIMEOUT PASS
 
+BUGWK89126 : platform/chromium/compositing/accelerated-drawing/svg-filters.html = IMAGE
+
 // strange "Unexpected no expected results found" on cr-linux ews
 BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload-within-iframe.html = MISSING PASS
 BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload.html = MISSING PASS

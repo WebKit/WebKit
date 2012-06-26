@@ -202,12 +202,7 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
 
 static bool drawNeedsCopy(GraphicsContext* src, GraphicsContext* dst)
 {
-    if (src == dst)
-        return true;
-    // If we're rendering into a deferred canvas, we need to make a deep copy of the source pixels because Skia does not
-    // retain a reference to the actual pixels otherwise. We check if we're drawing into a deferred canvas by seeing if the
-    // device's bitmap configuration is set or not - if it's not, then we must not have a bitmap target yet.
-    return dst->platformContext()->canvas()->getDevice()->config() == SkBitmap::kNo_Config;
+    return dst->platformContext()->isDeferred() || src == dst;
 }
 
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,

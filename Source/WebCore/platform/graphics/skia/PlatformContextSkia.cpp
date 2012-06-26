@@ -186,6 +186,7 @@ PlatformContextSkia::PlatformContextSkia(SkCanvas* canvas)
     , m_trackOpaqueRegion(false)
     , m_printing(false)
     , m_accelerated(false)
+    , m_deferred(false)
     , m_drawingToImageBuffer(false)
 {
     m_stateStack.append(State());

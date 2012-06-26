@@ -186,6 +186,12 @@ public:
     bool isAccelerated() const { return m_accelerated; }
     void setAccelerated(bool accelerated) { m_accelerated = accelerated; }
 
+    // True if this context is deferring draw calls to be executed later.
+    // We need to know this for context-to-context draws, in order to know if
+    // the source bitmap needs to be copied.
+    bool isDeferred() const { return m_deferred; }
+    void setDeferred(bool deferred) { m_deferred = deferred; }
+
     void setTrackOpaqueRegion(bool track) { m_trackOpaqueRegion = track; }
 
     // This will be an empty region unless tracking is enabled.
@@ -235,6 +241,7 @@ private:
     FloatSize m_imageResamplingHintDstSize;
     bool m_printing;
     bool m_accelerated;
+    bool m_deferred;
     bool m_drawingToImageBuffer;
 };
 

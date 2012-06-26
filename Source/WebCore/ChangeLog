@@ -1,3 +1,20 @@
+2012-06-26  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r120501.
+        http://trac.webkit.org/changeset/120501
+        https://bugs.webkit.org/show_bug.cgi?id=89126
+
+        [skia] Fix is too heavy-handed
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::drawNeedsCopy):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::PlatformContextSkia):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (PlatformContextSkia):
+        (WebCore::PlatformContextSkia::isDeferred):
+        (WebCore::PlatformContextSkia::setDeferred):
+
 2012-06-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in FixedTableLayout::layout
