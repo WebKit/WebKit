@@ -1,3 +1,15 @@
+2012-06-26  Simon Pena  <spena@igalia.com>
+
+        [GTK] Assert failure in fast/canvas/canvas-createImageData.html for 64bit Debug bot
+        https://bugs.webkit.org/show_bug.cgi?id=89647
+
+        Unreviewed, update GTK test expectations.
+
+        r121215 has fixed the assertion failure, so the test doesn't crash
+        anymore.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-26  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Add requestMetadata command and metadataReceived event to FileSystem

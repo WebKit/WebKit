@@ -360,8 +360,6 @@ BUGWK86176 DEBUG : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
 
 BUGWK89188 RELEASE : storage/websql/quota-tracking.html = CRASH PASS
 
-BUGWK89647 DEBUG : fast/canvas/canvas-createImageData.html = CRASH
-
 BUGWK89954 DEBUG : http/tests/xmlhttprequest/reentrant-cancel.html = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
