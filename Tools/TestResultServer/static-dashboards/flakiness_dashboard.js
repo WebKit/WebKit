@@ -40,10 +40,10 @@ var GPU_RESULTS_BASE_PATH = 'http://chromium-browser-gpu-tests.commondatastorage
 
 // FIXME: These platform names should probably be changed to match the directories in LayoutTests/platform
 // instead of matching the values we use in the TestExpectations file.
-var PLATFORMS = ['LION', 'SNOWLEOPARD', 'LEOPARD', 'XP', 'VISTA', 'WIN7', 'LUCID', 'APPLE_LION', 'APPLE_LEOPARD', 'APPLE_SNOWLEOPARD', 'APPLE_XP', 'APPLE_WIN7', 'GTK_LINUX', 'QT_LINUX'];
+var PLATFORMS = ['LION', 'SNOWLEOPARD', 'LEOPARD', 'XP', 'WIN7', 'LUCID', 'APPLE_LION', 'APPLE_LEOPARD', 'APPLE_SNOWLEOPARD', 'APPLE_XP', 'APPLE_WIN7', 'GTK_LINUX', 'QT_LINUX'];
 var PLATFORM_UNIONS = {
     'MAC': ['LEOPARD', 'SNOWLEOPARD', 'LION'],
-    'WIN': ['XP', 'VISTA', 'WIN7'],
+    'WIN': ['XP', 'WIN7'],
     'LINUX': ['LUCID']
 }
 
@@ -51,7 +51,6 @@ var PLATFORM_UNIONS = {
 var PLATFORM_FALLBACKS = {
     'WIN': 'ALL',
     'XP': 'WIN',
-    'VISTA': 'WIN',
     'WIN7': 'WIN',
     'MAC': 'ALL',
     'LION': 'MAC',
@@ -283,8 +282,6 @@ function chromiumPlatform(builderNameUpperCase)
     }
     if (stringContains(builderNameUpperCase, 'WIN7'))
         return 'WIN7';
-    if (stringContains(builderNameUpperCase, 'VISTA'))
-        return 'VISTA';
     if (stringContains(builderNameUpperCase, 'WIN') || stringContains(builderNameUpperCase, 'XP'))
         return 'XP';
     if (stringContains(builderNameUpperCase, 'LINUX'))
@@ -575,8 +572,8 @@ function addTestToAllExpectations(test, expectations, modifiers)
 // expectations and modifiers properties for this platform/buildType.
 //
 // platform and buildType both go through fallback sets of keys from most
-// specific key to least specific. For example, on Windows Vista, we first
-// check the platform WIN-VISTA, if there's no such object, we check WIN,
+// specific key to least specific. For example, on Windows XP, we first
+// check the platform WIN-XP, if there's no such object, we check WIN,
 // then finally we check ALL. For build types, we check the current
 // buildType, then ALL.
 var g_allExpectations;
@@ -2271,8 +2268,7 @@ function hideLegend()
 }
 
 var g_fallbacksMap = {};
-g_fallbacksMap['WIN-XP'] = ['chromium-win-xp', 'chromium-win-vista', 'chromium-win', 'chromium', 'mac'];
-g_fallbacksMap['WIN-VISTA'] = ['chromium-win-vista', 'chromium-win', 'chromium', 'mac'];
+g_fallbacksMap['WIN-XP'] = ['chromium-win-xp', 'chromium-win', 'chromium', 'mac'];
 g_fallbacksMap['WIN-7'] = ['chromium-win', 'chromium', 'mac'];
 g_fallbacksMap['MAC-LEOPARD'] = ['chromium-mac-leopard', 'chromium-mac-snowleopard', 'chromium-mac', 'chromium', 'mac'];
 g_fallbacksMap['MAC-SNOWLEOPARD'] = ['chromium-mac-snowleopard', 'chromium-mac', 'chromium', 'mac'];
