@@ -51,8 +51,6 @@ GraphicsContext3D::~GraphicsContext3D()
 {
     m_private->setContextLostCallback(nullptr);
     m_private->setErrorMessageCallback(nullptr);
-    m_private->setSwapBuffersCompleteCallbackCHROMIUM(nullptr);
-    m_private->setGpuMemoryAllocationChangedCallbackCHROMIUM(nullptr);
 }
 
 void GraphicsContext3D::setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback> callback)
@@ -83,7 +81,7 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
     if (!webContext)
         return 0;
 
-    return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), renderStyle, attrs.preserveDrawingBuffer);
+    return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), attrs.preserveDrawingBuffer);
 }
 
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D() const

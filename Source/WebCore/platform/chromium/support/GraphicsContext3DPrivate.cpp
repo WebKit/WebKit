@@ -38,6 +38,7 @@
 #include "GrGLInterface.h"
 #include "ImageBuffer.h"
 #include <public/WebGraphicsContext3D.h>
+#include <public/WebGraphicsMemoryAllocation.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
@@ -68,16 +69,15 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(PassOwnPtr<WebKit::WebGraphic
 GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 {
     if (m_grContext) {
+        m_impl->setMemoryAllocationChangedCallbackCHROMIUM(0);
         m_grContext->contextDestroyed();
         GrSafeUnref(m_grContext);
     }
 }
 
-PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D> webContext, GraphicsContext3D::RenderStyle renderStyle, bool preserveDrawingBuffer)
+PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D> webContext, bool preserveDrawingBuffer)
 {
-    bool renderDirectlyToHostWindow = renderStyle == GraphicsContext3D::RenderDirectlyToHostWindow;
-
-    RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(GraphicsContext3D::Attributes(), 0, renderDirectlyToHostWindow));
+    RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(GraphicsContext3D::Attributes(), 0, false /* onscreen */));
 
     OwnPtr<GraphicsContext3DPrivate> priv = adoptPtr(new GraphicsContext3DPrivate(webContext, preserveDrawingBuffer));
     context->m_private = priv.release();
@@ -91,28 +91,27 @@ WebKit::WebGraphicsContext3D* GraphicsContext3DPrivate::extractWebGraphicsContex
     return context->m_private->webContext();
 }
 
-class GrMemoryAllocationChangedCallback : public Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM {
+class GrMemoryAllocationChangedCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsMemoryAllocationChangedCallbackCHROMIUM {
 public:
-    GrMemoryAllocationChangedCallback(GraphicsContext3DPrivate* context)
+    GrMemoryAllocationChangedCallbackAdapter(GrContext* context)
         : m_context(context)
     {
     }
 
-    virtual void onGpuMemoryAllocationChanged(Extensions3DChromium::GpuMemoryAllocationCHROMIUM allocation)
+    virtual void onMemoryAllocationChanged(WebKit::WebGraphicsMemoryAllocation allocation) OVERRIDE
     {
-        GrContext* context = m_context->grContext();
-        if (!context)
+        if (!m_context)
             return;
 
         if (!allocation.gpuResourceSizeInBytes) {
-            context->freeGpuResources();
-            context->setTextureCacheLimits(0, 0);
+            m_context->freeGpuResources();
+            m_context->setTextureCacheLimits(0, 0);
         } else
-            context->setTextureCacheLimits(maxGaneshTextureCacheCount, maxGaneshTextureCacheBytes);
+            m_context->setTextureCacheLimits(maxGaneshTextureCacheCount, maxGaneshTextureCacheBytes);
     }
 
 private:
-    GraphicsContext3DPrivate* m_context;
+    GrContext* m_context;
 };
 
 GrContext* GraphicsContext3DPrivate::grContext()
@@ -122,9 +121,8 @@ GrContext* GraphicsContext3DPrivate::grContext()
         m_grContext = GrContext::Create(kOpenGL_Shaders_GrEngine, reinterpret_cast<GrPlatform3DContext>(interface.get()));
         if (m_grContext) {
             m_grContext->setTextureCacheLimits(maxGaneshTextureCacheCount, maxGaneshTextureCacheBytes);
-            Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(getExtensions());
-            if (extensions3DChromium->supports("GL_CHROMIUM_gpu_memory_manager"))
-                extensions3DChromium->setGpuMemoryAllocationChangedCallbackCHROMIUM(adoptPtr(new GrMemoryAllocationChangedCallback(this)));
+            m_grContextMemoryAllocationCallbackAdapter = adoptPtr(new GrMemoryAllocationChangedCallbackAdapter(m_grContext));
+            m_impl->setMemoryAllocationChangedCallbackCHROMIUM(m_grContextMemoryAllocationCallbackAdapter.get());
         }
     }
     return m_grContext;
@@ -323,57 +321,6 @@ bool GraphicsContext3DPrivate::isResourceSafe()
     if (m_resourceSafety == ResourceSafetyUnknown)
         m_resourceSafety = getExtensions()->isEnabled("GL_CHROMIUM_resource_safe") ? ResourceSafe : ResourceUnsafe;
     return m_resourceSafety == ResourceSafe;
-}
-
-class GraphicsContext3DMemoryAllocationChangedCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsMemoryAllocationChangedCallbackCHROMIUM {
-public:
-    GraphicsContext3DMemoryAllocationChangedCallbackAdapter(PassOwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM> callback)
-        : m_memoryAllocationChangedCallback(callback) { }
-
-    virtual ~GraphicsContext3DMemoryAllocationChangedCallbackAdapter() { }
-
-    virtual void onMemoryAllocationChanged(size_t gpuResourceSizeInBytes)
-    {
-        // FIXME: Remove this once clients start using WebGraphicsMemoryAllocation exclusively.
-        onMemoryAllocationChanged(WebKit::WebGraphicsMemoryAllocation(gpuResourceSizeInBytes, true));
-    }
-
-    virtual void onMemoryAllocationChanged(WebKit::WebGraphicsMemoryAllocation allocation)
-    {
-        if (m_memoryAllocationChangedCallback)
-            m_memoryAllocationChangedCallback->onGpuMemoryAllocationChanged(Extensions3DChromium::GpuMemoryAllocationCHROMIUM(allocation.gpuResourceSizeInBytes, allocation.suggestHaveBackbuffer));
-    }
-
-private:
-    OwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM> m_memoryAllocationChangedCallback;
-};
-
-void GraphicsContext3DPrivate::setGpuMemoryAllocationChangedCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM> callback)
-{
-    m_memoryAllocationChangedCallbackAdapter = adoptPtr(new GraphicsContext3DMemoryAllocationChangedCallbackAdapter(callback));
-    m_impl->setMemoryAllocationChangedCallbackCHROMIUM(m_memoryAllocationChangedCallbackAdapter.get());
-}
-
-class GraphicsContext3DSwapBuffersCompleteCallbackAdapter : public WebKit::WebGraphicsContext3D::WebGraphicsSwapBuffersCompleteCallbackCHROMIUM {
-public:
-    GraphicsContext3DSwapBuffersCompleteCallbackAdapter(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> callback)
-        : m_swapBuffersCompleteCallback(callback) { }
-    virtual ~GraphicsContext3DSwapBuffersCompleteCallbackAdapter() { }
-
-    virtual void onSwapBuffersComplete()
-    {
-        if (m_swapBuffersCompleteCallback)
-            m_swapBuffersCompleteCallback->onSwapBuffersComplete();
-    }
-
-private:
-    OwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> m_swapBuffersCompleteCallback;
-};
-
-void GraphicsContext3DPrivate::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> callback)
-{
-    m_swapBuffersCompleteCallbackAdapter = adoptPtr(new GraphicsContext3DSwapBuffersCompleteCallbackAdapter(callback));
-    m_impl->setSwapBuffersCompleteCallbackCHROMIUM(m_swapBuffersCompleteCallbackAdapter.get());
 }
 
 } // namespace WebCore

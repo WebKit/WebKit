@@ -90,48 +90,11 @@ public:
         COMMANDS_ISSUED_CHROMIUM = 0x84F2
     };
 
-    // GL_CHROMIUM_post_sub_buffer
-    void postSubBufferCHROMIUM(int x, int y, int width, int height);
-
     // GL_CHROMIUM_map_sub
     void* mapBufferSubDataCHROMIUM(unsigned target, int offset, int size, unsigned access);
     void unmapBufferSubDataCHROMIUM(const void*);
     void* mapTexSubImage2DCHROMIUM(unsigned target, int level, int xoffset, int yoffset, int width, int height, unsigned format, unsigned type, unsigned access);
     void unmapTexSubImage2DCHROMIUM(const void*);
-
-    // GL_CHROMIUM_set_visibility
-    void setVisibilityCHROMIUM(bool);
-
-    // GL_EXT_discard_framebuffer
-    virtual void discardFramebufferEXT(GC3Denum target, GC3Dsizei numAttachments, const GC3Denum* attachments);
-    virtual void ensureFramebufferCHROMIUM();
-
-    // GL_CHROMIUM_gpu_memory_manager
-    struct GpuMemoryAllocationCHROMIUM {
-        size_t gpuResourceSizeInBytes;
-        bool suggestHaveBackbuffer;
-
-        GpuMemoryAllocationCHROMIUM(size_t gpuResourceSizeInBytes, bool suggestHaveBackbuffer)
-            : gpuResourceSizeInBytes(gpuResourceSizeInBytes)
-            , suggestHaveBackbuffer(suggestHaveBackbuffer)
-        {
-        }
-    };
-    class GpuMemoryAllocationChangedCallbackCHROMIUM {
-    public:
-
-        virtual void onGpuMemoryAllocationChanged(GpuMemoryAllocationCHROMIUM) = 0;
-        virtual ~GpuMemoryAllocationChangedCallbackCHROMIUM() { }
-    };
-    void setGpuMemoryAllocationChangedCallbackCHROMIUM(PassOwnPtr<GpuMemoryAllocationChangedCallbackCHROMIUM>);
-
-    // GL_CHROMIUM_swapbuffers_complete_callback
-    class SwapBuffersCompleteCallbackCHROMIUM {
-    public:
-        virtual void onSwapBuffersComplete() = 0;
-        virtual ~SwapBuffersCompleteCallbackCHROMIUM() { }
-    };
-    void setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<SwapBuffersCompleteCallbackCHROMIUM>);
 
     // GL_CHROMIUM_rate_limit_offscreen_context
     void rateLimitOffscreenContextCHROMIUM();

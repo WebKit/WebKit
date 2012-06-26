@@ -1,3 +1,28 @@
+2012-06-26  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove dead compositor-related API from GraphicsContext3DPrivate / Extensions3DChromium
+        https://bugs.webkit.org/show_bug.cgi?id=89933
+
+        Reviewed by Kenneth Russell.
+
+        GraphicsContext3DPrivate and Extensions3DChromium had a fair amount of plumbing and boilerplate to support the
+        compositor's use of GraphicsContext3D. A number of extensions, etc, only make sense for a compositor context.
+        Since the compositor doesn't use GC3D any more, these are no longer needed.
+
+        * platform/chromium/support/Extensions3DChromium.cpp:
+        * platform/chromium/support/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::create):
+        * platform/chromium/support/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::createGraphicsContextFromWebContext):
+        (WebCore::GrMemoryAllocationChangedCallbackAdapter::GrMemoryAllocationChangedCallbackAdapter):
+        (WebCore::GraphicsContext3DPrivate::grContext):
+        * platform/chromium/support/GraphicsContext3DPrivate.h:
+        (WebCore):
+        (GraphicsContext3DPrivate):
+        * platform/graphics/chromium/Extensions3DChromium.h:
+
 2012-06-26  Yasuhiro Matsuda  <mazda@chromium.org>
 
         [chromium] Add the workaround of IOSurface-related corruption during readback on Mac OS X.

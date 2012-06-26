@@ -45,15 +45,14 @@ class DrawingBuffer;
 class Extensions3DChromium;
 class GraphicsContext3DContextLostCallbackAdapter;
 class GraphicsContext3DErrorMessageCallbackAdapter;
-class GraphicsContext3DMemoryAllocationChangedCallbackAdapter;
-class GraphicsContext3DSwapBuffersCompleteCallbackAdapter;
+class GrMemoryAllocationChangedCallbackAdapter;
 
 class GraphicsContext3DPrivate {
 public:
     // Callers must make the context current before using it AND check that the context was created successfully
     // via ContextLost before using the context in any way. Once made current on a thread, the context cannot
     // be used on any other thread.
-    static PassRefPtr<GraphicsContext3D> createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::RenderStyle, bool preserveDrawingBuffer = false);
+    static PassRefPtr<GraphicsContext3D> createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D>, bool preserveDrawingBuffer = false);
 
     // Helper function to provide access to the lower-level WebGraphicsContext3D,
     // which is needed for subordinate contexts like WebGL's to share resources
@@ -83,12 +82,6 @@ public:
 
     bool isResourceSafe();
 
-    // GL_CHROMIUM_gpu_memory_manager
-    void setGpuMemoryAllocationChangedCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM>);
-
-    // GL_CHROMIUM_swapbuffers_complete_callback
-    void setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM>);
-
     bool preserveDrawingBuffer() const { return m_preserveDrawingBuffer; }
 
 private:
@@ -100,8 +93,7 @@ private:
     OwnPtr<Extensions3DChromium> m_extensions;
     OwnPtr<GraphicsContext3DContextLostCallbackAdapter> m_contextLostCallbackAdapter;
     OwnPtr<GraphicsContext3DErrorMessageCallbackAdapter> m_errorMessageCallbackAdapter;
-    OwnPtr<GraphicsContext3DMemoryAllocationChangedCallbackAdapter> m_memoryAllocationChangedCallbackAdapter;
-    OwnPtr<GraphicsContext3DSwapBuffersCompleteCallbackAdapter> m_swapBuffersCompleteCallbackAdapter;
+    OwnPtr<GrMemoryAllocationChangedCallbackAdapter> m_grContextMemoryAllocationCallbackAdapter;
     bool m_initializedAvailableExtensions;
     HashSet<String> m_enabledExtensions;
     HashSet<String> m_requestableExtensions;

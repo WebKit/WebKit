@@ -73,11 +73,6 @@ void Extensions3DChromium::renderbufferStorageMultisample(unsigned long target, 
     m_private->webContext()->renderbufferStorageMultisampleCHROMIUM(target, samples, internalformat, width, height);
 }
 
-void Extensions3DChromium::postSubBufferCHROMIUM(int x, int y, int width, int height)
-{
-    m_private->webContext()->postSubBufferCHROMIUM(x, y, width, height);
-}
-
 void* Extensions3DChromium::mapBufferSubDataCHROMIUM(unsigned target, int offset, int size, unsigned access)
 {
     return m_private->webContext()->mapBufferSubDataCHROMIUM(target, offset, size, access);
@@ -96,26 +91,6 @@ void* Extensions3DChromium::mapTexSubImage2DCHROMIUM(unsigned target, int level,
 void Extensions3DChromium::unmapTexSubImage2DCHROMIUM(const void* data)
 {
     m_private->webContext()->unmapTexSubImage2DCHROMIUM(data);
-}
-
-void Extensions3DChromium::setVisibilityCHROMIUM(bool visibility)
-{
-    m_private->webContext()->setVisibilityCHROMIUM(visibility);
-}
-
-void Extensions3DChromium::discardFramebufferEXT(GC3Denum target, GC3Dsizei numAttachments, const GC3Denum* attachments)
-{
-    m_private->webContext()->discardFramebufferEXT(target, numAttachments, attachments);
-}
-
-void Extensions3DChromium::ensureFramebufferCHROMIUM()
-{
-    m_private->webContext()->ensureFramebufferCHROMIUM();
-}
-
-void Extensions3DChromium::setGpuMemoryAllocationChangedCallbackCHROMIUM(PassOwnPtr<GpuMemoryAllocationChangedCallbackCHROMIUM> callback)
-{
-    m_private->setGpuMemoryAllocationChangedCallbackCHROMIUM(callback);
 }
 
 Platform3DObject Extensions3DChromium::createVertexArrayOES()
@@ -139,11 +114,6 @@ void Extensions3DChromium::bindVertexArrayOES(Platform3DObject)
 String Extensions3DChromium::getTranslatedShaderSourceANGLE(Platform3DObject shader)
 {
     return m_private->webContext()->getTranslatedShaderSourceANGLE(shader);
-}
-
-void Extensions3DChromium::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<SwapBuffersCompleteCallbackCHROMIUM> callback)
-{
-    m_private->setSwapBuffersCompleteCallbackCHROMIUM(callback);
 }
 
 void Extensions3DChromium::rateLimitOffscreenContextCHROMIUM()
