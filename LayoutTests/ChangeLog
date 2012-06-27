@@ -1,3 +1,16 @@
+2012-06-27  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Rebase image mismatch caused by 121371.
+
+        Rebase test results for:
+        platform/chromium/compositing/scrollbars/custom-composited-different-track-parts.html
+
+        Not reviewed.
+
+        * platform/chromium-mac-snowleopard/platform/chromium/compositing/scrollbars/custom-composited-different-track-parts-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/compositing/scrollbars/custom-composited-different-track-parts-expected.png: Added.
+        * platform/chromium-win/platform/chromium/compositing/scrollbars/custom-composited-different-track-parts-expected.png: Added.
+
 2012-06-27  Tony Chang  <tony@chromium.org>
 
         Split flex into flex-grow/flex-shrink/flex-basis
