@@ -2551,15 +2551,15 @@ void WebViewImpl::setDeviceScaleFactor(float scaleFactor)
 
     page()->setDeviceScaleFactor(scaleFactor);
 
+    if (!m_layerTreeView.isNull() && m_webSettings->applyDefaultDeviceScaleFactorInCompositor()) {
+        m_deviceScaleInCompositor = page()->deviceScaleFactor();
+        m_layerTreeView.setDeviceScaleFactor(m_deviceScaleInCompositor);
+    }
     if (m_deviceScaleInCompositor != 1) {
         // Don't allow page scaling when compositor scaling is being used,
         // as they are currently incompatible. This means the deviceScale
         // needs to match the one in the compositor.
         ASSERT(scaleFactor == m_deviceScaleInCompositor);
-    }
-    if (!m_layerTreeView.isNull() && m_webSettings->applyDefaultDeviceScaleFactorInCompositor()) {
-        m_deviceScaleInCompositor = page()->deviceScaleFactor();
-        m_layerTreeView.setDeviceScaleFactor(m_deviceScaleInCompositor);
     }
 }
 
