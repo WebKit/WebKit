@@ -72,6 +72,9 @@ public:
 
     static IntSize preferredMinimumTrackingSize() { return IntSize(160, 160); }
 
+    // The following is used for visualization purposes.
+    void setOccludingScreenSpaceRectsContainer(Vector<IntRect>* rects) { m_occludingScreenSpaceRects = rects; }
+
 protected:
     struct StackObject {
         StackObject() : surface(0) { }
@@ -111,6 +114,9 @@ private:
     IntRect m_scissorRectInScreenSpace;
     OwnPtr<CCOverdrawMetrics> m_overdrawMetrics;
     IntSize m_minimumTrackingSize;
+
+    // This is used for visualizing the occlusion tracking process.
+    Vector<IntRect>* m_occludingScreenSpaceRects;
 };
 
 typedef CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium> CCOcclusionTracker;

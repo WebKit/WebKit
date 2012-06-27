@@ -40,10 +40,10 @@ CCDebugRectHistory::CCDebugRectHistory()
 
 bool CCDebugRectHistory::enabled(const CCLayerTreeSettings& settings)
 {
-    return settings.showPaintRects || settings.showPropertyChangedRects || settings.showSurfaceDamageRects;
+    return settings.showPaintRects || settings.showPropertyChangedRects || settings.showSurfaceDamageRects || settings.showScreenSpaceRects || settings.showReplicaScreenSpaceRects || settings.showOccludingRects;
 }
 
-void CCDebugRectHistory::saveDebugRectsForCurrentFrame(CCLayerImpl* rootLayer, const Vector<CCLayerImpl*>& renderSurfaceLayerList, const CCLayerTreeSettings& settings)
+void CCDebugRectHistory::saveDebugRectsForCurrentFrame(CCLayerImpl* rootLayer, const Vector<CCLayerImpl*>& renderSurfaceLayerList, const Vector<IntRect>& occludingScreenSpaceRects, const CCLayerTreeSettings& settings)
 {
     // For now, clear all rects from previous frames. In the future we may want to store
     // all debug rects for a history of many frames.
@@ -57,6 +57,12 @@ void CCDebugRectHistory::saveDebugRectsForCurrentFrame(CCLayerImpl* rootLayer, c
 
     if (settings.showSurfaceDamageRects)
         saveSurfaceDamageRects(renderSurfaceLayerList);
+
+    if (settings.showScreenSpaceRects)
+        saveScreenSpaceRects(renderSurfaceLayerList);
+
+    if (settings.showOccludingRects)
+        saveOccludingRects(occludingScreenSpaceRects);
 }
 
 
@@ -102,6 +108,26 @@ void CCDebugRectHistory::saveSurfaceDamageRects(const Vector<CCLayerImpl* >& ren
 
         m_debugRects.append(CCDebugRect(SurfaceDamageRectType, CCMathUtil::mapClippedRect(renderSurface->screenSpaceTransform(), renderSurface->damageTracker()->currentDamageRect())));
     }
+}
+
+void CCDebugRectHistory::saveScreenSpaceRects(const Vector<CCLayerImpl* >& renderSurfaceLayerList)
+{
+    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex];
+        CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
+        ASSERT(renderSurface);
+
+        m_debugRects.append(CCDebugRect(ScreenSpaceRectType, CCMathUtil::mapClippedRect(renderSurface->screenSpaceTransform(), renderSurface->contentRect())));
+
+        if (renderSurfaceLayer->replicaLayer())
+            m_debugRects.append(CCDebugRect(ReplicaScreenSpaceRectType, CCMathUtil::mapClippedRect(renderSurface->replicaScreenSpaceTransform(), renderSurface->contentRect())));
+    }
+}
+
+void CCDebugRectHistory::saveOccludingRects(const Vector<IntRect>& occludingRects)
+{
+    for (size_t i = 0; i < occludingRects.size(); ++i)
+        m_debugRects.append(CCDebugRect(OccludingRectType, occludingRects[i]));
 }
 
 } // namespace WebCore

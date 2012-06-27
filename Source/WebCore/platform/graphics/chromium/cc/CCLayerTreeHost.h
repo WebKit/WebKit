@@ -85,6 +85,9 @@ struct CCLayerTreeSettings {
             , showPaintRects(false)
             , showPropertyChangedRects(false)
             , showSurfaceDamageRects(false)
+            , showScreenSpaceRects(false)
+            , showReplicaScreenSpaceRects(false)
+            , showOccludingRects(false)
             , refreshRate(0)
             , maxPartialTextureUpdates(std::numeric_limits<size_t>::max())
             , defaultTileSize(IntSize(256, 256))
@@ -98,6 +101,9 @@ struct CCLayerTreeSettings {
     bool showPaintRects;
     bool showPropertyChangedRects;
     bool showSurfaceDamageRects;
+    bool showScreenSpaceRects;
+    bool showReplicaScreenSpaceRects;
+    bool showOccludingRects;
     double refreshRate;
     size_t maxPartialTextureUpdates;
     IntSize defaultTileSize;

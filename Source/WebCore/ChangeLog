@@ -1,3 +1,41 @@
+2012-06-27  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Allow screen space rects and occluding rects to be visualized for debugging.
+        https://bugs.webkit.org/show_bug.cgi?id=90012
+
+        Reviewed by Adrienne Walker.
+
+        No new tests. No new functionality.
+
+        * platform/graphics/chromium/cc/CCDebugRectHistory.cpp:
+        (WebCore::CCDebugRectHistory::enabled):
+        (WebCore::CCDebugRectHistory::saveDebugRectsForCurrentFrame):
+        (WebCore::CCDebugRectHistory::saveScreenSpaceRects):
+        (WebCore):
+        (WebCore::CCDebugRectHistory::saveOccludingRects):
+        * platform/graphics/chromium/cc/CCDebugRectHistory.h:
+        (WebCore):
+        (CCDebugRectHistory):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::showDebugRects):
+        (WebCore::CCHeadsUpDisplay::draw):
+        (WebCore::CCHeadsUpDisplay::drawDebugRects):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeSettings::CCLayerTreeSettings):
+        (CCLayerTreeSettings):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (FrameData):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        (WebCore::::CCOcclusionTrackerBase):
+        (WebCore::addOcclusionBehindLayer):
+        (WebCore::::markOccludedBehindLayer):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.h:
+        (CCOcclusionTrackerBase):
+        (WebCore::CCOcclusionTrackerBase::setOccludingScreenSpaceRectsContainer):
+
 2012-06-27  Anthony Scian  <ascian@rim.com>
 
         Web Inspector [JSC]: Implement ScriptCallStack::stackTrace

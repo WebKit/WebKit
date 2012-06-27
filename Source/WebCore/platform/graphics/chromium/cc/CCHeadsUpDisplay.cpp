@@ -63,7 +63,7 @@ bool CCHeadsUpDisplay::showPlatformLayerTree(const CCLayerTreeSettings& settings
 
 bool CCHeadsUpDisplay::showDebugRects(const CCLayerTreeSettings& settings) const
 {
-    return settings.showPaintRects || settings.showPropertyChangedRects || settings.showSurfaceDamageRects;
+    return settings.showPaintRects || settings.showPropertyChangedRects || settings.showSurfaceDamageRects || settings.showScreenSpaceRects || settings.showReplicaScreenSpaceRects || settings.showOccludingRects;
 }
 
 void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
@@ -81,8 +81,8 @@ void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
     // Use a fullscreen texture only if we need to...
     IntSize hudSize;
     if (showPlatformLayerTree(settings) || showDebugRects(settings)) {
-        hudSize.setWidth(min(2048, layerTreeHostImpl->viewportSize().width()));
-        hudSize.setHeight(min(2048, layerTreeHostImpl->viewportSize().height()));
+        hudSize.setWidth(min(2048, layerTreeHostImpl->deviceViewportSize().width()));
+        hudSize.setHeight(min(2048, layerTreeHostImpl->deviceViewportSize().height()));
     } else {
         hudSize.setWidth(512);
         hudSize.setHeight(128);
@@ -242,6 +242,27 @@ void CCHeadsUpDisplay::drawDebugRects(GraphicsContext* context, CCDebugRectHisto
             // Surface damage rects in yellow-orange
             context->setStrokeColor(Color(200, 100, 0, 255), ColorSpaceDeviceRGB);
             context->fillRect(debugRects[i].rect, Color(200, 100, 0, 30), ColorSpaceDeviceRGB);
+            context->strokeRect(debugRects[i].rect, 2.0);
+        }
+
+        if (debugRects[i].type == ReplicaScreenSpaceRectType) {
+            // Screen space rects in green.
+            context->setStrokeColor(Color(100, 200, 0, 255), ColorSpaceDeviceRGB);
+            context->fillRect(debugRects[i].rect, Color(100, 200, 0, 30), ColorSpaceDeviceRGB);
+            context->strokeRect(debugRects[i].rect, 2.0);
+        }
+
+        if (debugRects[i].type == ScreenSpaceRectType) {
+            // Screen space rects in purple.
+            context->setStrokeColor(Color(100, 0, 200, 255), ColorSpaceDeviceRGB);
+            context->fillRect(debugRects[i].rect, Color(100, 0, 200, 10), ColorSpaceDeviceRGB);
+            context->strokeRect(debugRects[i].rect, 2.0);
+        }
+
+        if (debugRects[i].type == OccludingRectType) {
+            // Occluding rects in a reddish color.
+            context->setStrokeColor(Color(200, 0, 100, 255), ColorSpaceDeviceRGB);
+            context->fillRect(debugRects[i].rect, Color(200, 0, 100, 10), ColorSpaceDeviceRGB);
             context->strokeRect(debugRects[i].rect, 2.0);
         }
     }

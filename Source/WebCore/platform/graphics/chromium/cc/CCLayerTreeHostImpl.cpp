@@ -294,6 +294,9 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
     CCOcclusionTrackerImpl occlusionTracker(enclosingIntRect(m_rootScissorRect), recordMetricsForFrame);
     occlusionTracker.setMinimumTrackingSize(CCOcclusionTrackerImpl::preferredMinimumTrackingSize());
 
+    if (settings().showOccludingRects)
+        occlusionTracker.setOccludingScreenSpaceRectsContainer(&frame.occludingScreenSpaceRects);
+
     // Add quads to the Render passes in FrontToBack order to allow for testing occlusion and performing culling during the tree walk.
     typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
 
@@ -512,7 +515,7 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
     }
 
     if (m_debugRectHistory->enabled(settings()))
-        m_debugRectHistory->saveDebugRectsForCurrentFrame(m_rootLayerImpl.get(), *frame.renderSurfaceLayerList, settings());
+        m_debugRectHistory->saveDebugRectsForCurrentFrame(m_rootLayerImpl.get(), *frame.renderSurfaceLayerList, frame.occludingScreenSpaceRects, settings());
 
     if (m_headsUpDisplay->enabled(settings()))
         m_headsUpDisplay->draw(this);

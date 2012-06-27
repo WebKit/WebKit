@@ -82,6 +82,7 @@ public:
     virtual void scheduleAnimation();
 
     struct FrameData {
+        Vector<IntRect> occludingScreenSpaceRects;
         CCRenderPassList renderPasses;
         CCRenderPassList skippedPasses;
         CCLayerList* renderSurfaceLayerList;
