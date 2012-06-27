@@ -1,3 +1,39 @@
+2012-06-27  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=87513
+        WebBackForwardList needs an overhaul to consistently and clearly handle error conditions.
+
+        Reviewed by Darin Adler.
+
+        - We think a null entry might somehow be getting in the list so we now try to prevent that.
+        - We think a null entry might somehow be in the list so we now null check when indexing into m_entries.
+        - A lot of index math - especially tracking "no current index" - was implicit or wrong.
+        - Operating on a WebBackForwardList whose page has been closed is now an explicit no-op.
+        - The session state data reading and writing code was fragile and needed an overhaul.
+        - This includes adding a new V1 format of the session data that is easier to validate when reading back in.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::~WebBackForwardList):
+        (WebKit::WebBackForwardList::pageClosed):
+        (WebKit::WebBackForwardList::addItem):
+        (WebKit::WebBackForwardList::goToItem):
+        (WebKit::WebBackForwardList::backListCount):
+        (WebKit::WebBackForwardList::forwardListCount):
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit):
+        (WebKit::WebBackForwardList::forwardListAsImmutableArrayWithLimit):
+        (WebKit::WebBackForwardList::clear):
+
+        * UIProcess/WebBackForwardList.h:
+        (WebBackForwardList):
+
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::createEmptySessionHistoryDictionary):
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation):
+        (WebKit::WebBackForwardList::restoreFromCFDictionaryRepresentation):
+        (WebKit::WebBackForwardList::restoreFromV0CFDictionaryRepresentation):
+        (WebKit::WebBackForwardList::restoreFromV1CFDictionaryRepresentation):
+        (WebKit::extractBackForwardListEntriesFromArray):
+
 2012-06-27  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Add support for the Gamepad API

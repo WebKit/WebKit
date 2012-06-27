@@ -80,6 +80,8 @@ public:
 #if USE(CF)
     CFDictionaryRef createCFDictionaryRepresentation(WebPageProxy::WebPageProxySessionStateFilterCallback, void* context) const;
     bool restoreFromCFDictionaryRepresentation(CFDictionaryRef);
+    bool restoreFromV0CFDictionaryRepresentation(CFDictionaryRef);
+    bool restoreFromV1CFDictionaryRepresentation(CFDictionaryRef);
 #endif
 
 private:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,10 @@ static uint64_t generateWebBackForwardItemID()
     return uniqueHistoryItemID;
 }
 
+static CFIndex currentVersion = 1;
+DEFINE_STATIC_GETTER(CFNumberRef, SessionHistoryCurrentVersion, (CFNumberCreate(0, kCFNumberCFIndexType, &currentVersion)));
+
+DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryVersionKey, (CFSTR("SessionHistoryVersion")));
 DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryCurrentIndexKey, (CFSTR("SessionHistoryCurrentIndex")));
 DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntriesKey, (CFSTR("SessionHistoryEntries")));
 DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntryTitleKey, (CFSTR("SessionHistoryEntryTitle")));
@@ -51,23 +55,41 @@ DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntryURLKey, (CFSTR("SessionHist
 DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntryOriginalURLKey, (CFSTR("SessionHistoryEntryOriginalURL")));
 DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntryDataKey, (CFSTR("SessionHistoryEntryData")));
 
+static bool extractBackForwardListEntriesFromArray(CFArrayRef, BackForwardListItemVector&);
+
+static CFDictionaryRef createEmptySessionHistoryDictionary()
+{
+    static const void* keys[1] = { SessionHistoryVersionKey() };
+    static const void* values[1] = { SessionHistoryCurrentVersion() };
+
+    return CFDictionaryCreate(0, keys, values, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+}
+
 CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProxy::WebPageProxySessionStateFilterCallback filter, void* context) const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
+
+    if (!m_hasCurrentIndex) {
+        // We represent having no current index by writing out an empty dictionary (besides the version).
+        return createEmptySessionHistoryDictionary();
+    }
 
     RetainPtr<CFMutableArrayRef> entries(AdoptCF, CFArrayCreateMutable(0, m_entries.size(), &kCFTypeArrayCallBacks));
 
     // We may need to update the current index to account for entries that are filtered by the callback.
     CFIndex currentIndex = m_currentIndex;
+    bool hasCurrentIndex = true;
 
     for (size_t i = 0; i < m_entries.size(); ++i) {
         // If we somehow ended up with a null entry then we should consider the data invalid and not save session history at all.
         ASSERT(m_entries[i]);
-        if (!m_entries[i])
+        if (!m_entries[i]) {
+            LOG(SessionState, "WebBackForwardList contained a null entry at index %lu", i);
             return 0;
+        }
 
         if (filter && !filter(toAPI(m_page), WKPageGetSessionHistoryURLValueType(), toURLRef(m_entries[i]->originalURL().impl()), context)) {
-            if (i <= static_cast<size_t>(m_currentIndex))
+            if (i <= m_currentIndex)
                 currentIndex--;
             continue;
         }
@@ -87,25 +109,61 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
         CFArrayAppendValue(entries.get(), entryDictionary.get());
     }
         
-    // If all items before and including the current item were filtered then currentIndex will be -1.
-    // Assuming we didn't start out with NoCurrentItemIndex, we should store "current" to point at the first item.
-    if (currentIndex == -1 && m_hasCurrentIndex && CFArrayGetCount(entries.get()))
-        currentIndex = 0;
+    ASSERT(currentIndex == -1 || (currentIndex > -1 && currentIndex < CFArrayGetCount(entries.get())));
+    if (currentIndex < -1 || currentIndex >= CFArrayGetCount(entries.get())) {
+        LOG(SessionState, "Filtering entries to be saved resulted in an inconsistent state that we cannot represent");
+        return 0;
+    }
 
-    // FIXME: We're relying on currentIndex == -1 to mean the exact same thing as NoCurrentItemIndex (UINT_MAX) in unsigned form.
-    // That seems implicit and fragile and we should find a better way of representing the NoCurrentItemIndex case.
-    if (!m_hasCurrentIndex || !CFArrayGetCount(entries.get()))
-        currentIndex = -1;
+    // If we have an index and all items before and including the current item were filtered then currentIndex will be -1.
+    // In this case the new current index should point at the first item.
+    // It's also possible that all items were filtered so we should represent not having a current index.
+    if (currentIndex == -1) {
+        if (CFArrayGetCount(entries.get()))
+            currentIndex = 0;
+        else
+            hasCurrentIndex = false;
+    }
 
-    RetainPtr<CFNumberRef> currentIndexNumber(AdoptCF, CFNumberCreate(0, kCFNumberCFIndexType, &currentIndex));
+    if (hasCurrentIndex) {
+        RetainPtr<CFNumberRef> currentIndexNumber(AdoptCF, CFNumberCreate(0, kCFNumberCFIndexType, &currentIndex));
+        const void* keys[3] = { SessionHistoryVersionKey(), SessionHistoryCurrentIndexKey(), SessionHistoryEntriesKey() };
+        const void* values[3] = { SessionHistoryCurrentVersion(), currentIndexNumber.get(), entries.get() };
+ 
+        return CFDictionaryCreate(0, keys, values, 3, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    }
 
-    const void* keys[2] = { SessionHistoryCurrentIndexKey(), SessionHistoryEntriesKey() };
-    const void* values[2] = { currentIndexNumber.get(), entries.get() };
-
-    return CFDictionaryCreate(0, keys, values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    // We represent having no current index by writing out an empty dictionary (besides the version).
+    return createEmptySessionHistoryDictionary();
 }
 
 bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef dictionary)
+{
+    CFNumberRef cfVersion = (CFNumberRef)CFDictionaryGetValue(dictionary, SessionHistoryVersionKey());
+    if (!cfVersion) {
+        // v0 session history dictionaries did not contain versioning
+        return restoreFromV0CFDictionaryRepresentation(dictionary);
+    }
+    
+    if (CFGetTypeID(cfVersion) != CFNumberGetTypeID()) {
+        LOG(SessionState, "WebBackForwardList dictionary representation contains a version that is not a number");
+        return false;
+    }
+
+    CFIndex version;
+    if (!CFNumberGetValue(cfVersion, kCFNumberCFIndexType, &version)) {
+        LOG(SessionState, "WebBackForwardList dictionary representation does not have a correctly typed current version");
+        return false;
+    }
+    
+    if (version == 1)
+        return restoreFromV1CFDictionaryRepresentation(dictionary);
+    
+    LOG(SessionState, "WebBackForwardList dictionary representation has an invalid current version (%ld)", version);
+    return false;
+}
+
+bool WebBackForwardList::restoreFromV0CFDictionaryRepresentation(CFDictionaryRef dictionary)
 {
     CFNumberRef cfIndex = (CFNumberRef)CFDictionaryGetValue(dictionary, SessionHistoryCurrentIndexKey());
     if (!cfIndex || CFGetTypeID(cfIndex) != CFNumberGetTypeID()) {
@@ -115,12 +173,12 @@ bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef d
 
     CFIndex currentCFIndex;
     if (!CFNumberGetValue(cfIndex, kCFNumberCFIndexType, &currentCFIndex)) {
-        LOG(SessionState, "WebBackForwardList dictionary representation does not have a valid integer current index");
+        LOG(SessionState, "WebBackForwardList dictionary representation does not have a correctly typed current index");
         return false;
     }
     
     if (currentCFIndex < -1) {
-        LOG(SessionState, "WebBackForwardList dictionary representation contains a negative current index that is bogus (%ld)", currentCFIndex);
+        LOG(SessionState, "WebBackForwardList dictionary representation contains an unexpected negative current index (%ld)", currentCFIndex);
         return false;
     }
 
@@ -131,23 +189,94 @@ bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef d
     }
 
     CFIndex size = CFArrayGetCount(cfEntries);
-    if (currentCFIndex < -1 || currentCFIndex >= size ) {
+    if (size < 0 || currentCFIndex >= size) {
         LOG(SessionState, "WebBackForwardList dictionary representation contains an invalid current index (%ld) for the number of entries (%ld)", currentCFIndex, size);
         return false;
     }
 
-    // FIXME: We're relying on currentIndex == -1 to mean the exact same thing as NoCurrentItemIndex (UINT_MAX) in unsigned form.
-    // That seems implicit and fragile and we should find a better way of representing the NoCurrentItemIndex case.
-    bool hasCurrentIndex = currentCFIndex > -1;
-    unsigned currentIndex = hasCurrentIndex ? static_cast<unsigned>(currentCFIndex) : 0;
+    // Version 0 session history relied on currentIndex == -1 to represent the same thing as not having a current index.
+    bool hasCurrentIndex = currentCFIndex != -1;
 
     if (!hasCurrentIndex && size) {
-        LOG(SessionState, "WebBackForwardList dictionary representation says there is no current item index, but there is a list of %ld entries - this is bogus", size);
+        LOG(SessionState, "WebBackForwardList dictionary representation says there is no current index, but there is a list of %ld entries", size);
         return false;
     }
     
-    BackForwardListItemVector newEntries;
-    newEntries.reserveCapacity(size);
+    BackForwardListItemVector entries;
+    if (!extractBackForwardListEntriesFromArray(cfEntries, entries)) {
+        // extractBackForwardListEntriesFromArray has already logged the appropriate error message.
+        return false;
+    }
+
+    ASSERT(entries.size() == static_cast<unsigned>(size));
+    
+    m_hasCurrentIndex = hasCurrentIndex;
+    m_currentIndex = m_hasCurrentIndex ? static_cast<uint32_t>(currentCFIndex) : 0;
+    m_entries = entries;
+
+    return true;
+}
+
+bool WebBackForwardList::restoreFromV1CFDictionaryRepresentation(CFDictionaryRef dictionary)
+{
+    CFNumberRef cfIndex = (CFNumberRef)CFDictionaryGetValue(dictionary, SessionHistoryCurrentIndexKey());
+    if (!cfIndex) {
+        // No current index means the dictionary represents an empty session.
+        m_hasCurrentIndex = false;
+        m_currentIndex = 0;
+        m_entries.clear();
+
+        return true;
+    }
+
+    if (CFGetTypeID(cfIndex) != CFNumberGetTypeID()) {
+        LOG(SessionState, "WebBackForwardList dictionary representation does not have a valid current index");
+        return false;
+    }
+
+    CFIndex currentCFIndex;
+    if (!CFNumberGetValue(cfIndex, kCFNumberCFIndexType, &currentCFIndex)) {
+        LOG(SessionState, "WebBackForwardList dictionary representation does not have a correctly typed current index");
+        return false;
+    }
+    
+    if (currentCFIndex < 0) {
+        LOG(SessionState, "WebBackForwardList dictionary representation contains an unexpected negative current index (%ld)", currentCFIndex);
+        return false;
+    }
+
+    CFArrayRef cfEntries = (CFArrayRef)CFDictionaryGetValue(dictionary, SessionHistoryEntriesKey());
+    if (!cfEntries || CFGetTypeID(cfEntries) != CFArrayGetTypeID()) {
+        LOG(SessionState, "WebBackForwardList dictionary representation does not have a valid list of entries");
+        return false;
+    }
+
+    CFIndex size = CFArrayGetCount(cfEntries);
+    if (currentCFIndex >= size) {
+        LOG(SessionState, "WebBackForwardList dictionary representation contains an invalid current index (%ld) for the number of entries (%ld)", currentCFIndex, size);
+        return false;
+    }
+    
+    BackForwardListItemVector entries;
+    if (!extractBackForwardListEntriesFromArray(cfEntries, entries)) {
+        // extractBackForwardListEntriesFromArray has already logged the appropriate error message.
+        return false;
+    }
+    
+    ASSERT(entries.size() == static_cast<unsigned>(size));
+    
+    m_hasCurrentIndex = true;
+    m_currentIndex = static_cast<uint32_t>(currentCFIndex);
+    m_entries = entries;
+
+    return true;
+}
+
+static bool extractBackForwardListEntriesFromArray(CFArrayRef cfEntries, BackForwardListItemVector& entries)
+{
+    CFIndex size = CFArrayGetCount(cfEntries);
+
+    entries.reserveCapacity(size);
     for (CFIndex i = 0; i < size; ++i) {
         CFDictionaryRef entryDictionary = (CFDictionaryRef)CFArrayGetValueAtIndex(cfEntries, i);
         if (!entryDictionary || CFGetTypeID(entryDictionary) != CFDictionaryGetTypeID()) {
@@ -179,12 +308,8 @@ bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef d
             return false;
         }
         
-        newEntries.append(WebBackForwardListItem::create(originalURL, entryURL, entryTitle, CFDataGetBytePtr(backForwardData), CFDataGetLength(backForwardData), generateWebBackForwardItemID()));
+        entries.append(WebBackForwardListItem::create(originalURL, entryURL, entryTitle, CFDataGetBytePtr(backForwardData), CFDataGetLength(backForwardData), generateWebBackForwardItemID()));
     }
-    
-    m_entries = newEntries;
-    m_hasCurrentIndex = hasCurrentIndex;
-    m_currentIndex = currentIndex;
 
     return true;
 }
