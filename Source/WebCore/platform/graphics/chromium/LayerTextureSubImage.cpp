@@ -68,7 +68,7 @@ void LayerTextureSubImage::uploadWithTexSubImage(const uint8_t* image, const Int
                                                  const IntRect& sourceRect, const IntRect& destRect,
                                                  GC3Denum format, CCGraphicsContext* context)
 {
-    TRACE_EVENT("LayerTextureSubImage::uploadWithTexSubImage", this, 0);
+    TRACE_EVENT0("cc", "LayerTextureSubImage::uploadWithTexSubImage");
     if (!m_subImage)
         m_subImage = adoptArrayPtr(new uint8_t[m_subImageSize.width() * m_subImageSize.height() * 4]);
 
@@ -101,7 +101,7 @@ void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const 
                                                     const IntRect& sourceRect, const IntRect& destRect,
                                                     GC3Denum format, CCGraphicsContext* context)
 {
-    TRACE_EVENT("LayerTextureSubImage::uploadWithMapTexSubImage", this, 0);
+    TRACE_EVENT0("cc", "LayerTextureSubImage::uploadWithMapTexSubImage");
     WebKit::WebGraphicsContext3D* context3d = context->context3D();
     if (!context3d) {
         // FIXME: Implement this path for software compositing.

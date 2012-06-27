@@ -57,7 +57,7 @@ void SkPictureCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentR
 
 void SkPictureCanvasLayerTextureUpdater::drawPicture(SkCanvas* canvas)
 {
-    TRACE_EVENT("SkPictureCanvasLayerTextureUpdater::drawPicture", this, 0);
+    TRACE_EVENT0("cc", "SkPictureCanvasLayerTextureUpdater::drawPicture");
     canvas->drawPicture(m_picture);
 }
 

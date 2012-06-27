@@ -67,7 +67,7 @@ AcceleratedTextureCopier::~AcceleratedTextureCopier()
 
 void AcceleratedTextureCopier::copyTexture(CCGraphicsContext* ccContext, unsigned sourceTextureId, unsigned destTextureId, const IntSize& size)
 {
-    TRACE_EVENT("TextureCopier::copyTexture", this, 0);
+    TRACE_EVENT0("cc", "TextureCopier::copyTexture");
 
     WebKit::WebGraphicsContext3D* context = ccContext->context3D();
     if (!context) {

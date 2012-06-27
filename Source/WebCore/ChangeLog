@@ -1,3 +1,88 @@
+2012-06-27  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use categorized TRACE_EVENTN() macros in compositor code
+        https://bugs.webkit.org/show_bug.cgi?id=90100
+
+        Reviewed by Adrienne Walker.
+
+        Specify the category in all traces in the compositor. Patch generated mostly by the sed command
+        's/TRACE_EVENT(\(.*\), this, 0)/TRACE_EVENT0("cc", \1)/'.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::beginDrawingFrame):
+        (WebCore::LayerRendererChromium::finish):
+        (WebCore::LayerRendererChromium::swapBuffers):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::tileCheckerboardProgram):
+        (WebCore::LayerRendererChromium::solidColorProgram):
+        (WebCore::LayerRendererChromium::headsUpDisplayProgram):
+        (WebCore::LayerRendererChromium::renderPassProgram):
+        (WebCore::LayerRendererChromium::renderPassProgramAA):
+        (WebCore::LayerRendererChromium::renderPassMaskProgram):
+        (WebCore::LayerRendererChromium::renderPassMaskProgramAA):
+        (WebCore::LayerRendererChromium::tileProgram):
+        (WebCore::LayerRendererChromium::tileProgramOpaque):
+        (WebCore::LayerRendererChromium::tileProgramAA):
+        (WebCore::LayerRendererChromium::tileProgramSwizzle):
+        (WebCore::LayerRendererChromium::tileProgramSwizzleOpaque):
+        (WebCore::LayerRendererChromium::tileProgramSwizzleAA):
+        (WebCore::LayerRendererChromium::textureProgram):
+        (WebCore::LayerRendererChromium::textureProgramFlip):
+        (WebCore::LayerRendererChromium::textureIOSurfaceProgram):
+        (WebCore::LayerRendererChromium::videoYUVProgram):
+        (WebCore::LayerRendererChromium::videoStreamTextureProgram):
+        * platform/graphics/chromium/LayerTextureSubImage.cpp:
+        (WebCore::LayerTextureSubImage::uploadWithTexSubImage):
+        (WebCore::LayerTextureSubImage::uploadWithMapTexSubImage):
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::SkPictureCanvasLayerTextureUpdater::drawPicture):
+        * platform/graphics/chromium/TextureCopier.cpp:
+        (WebCore::AcceleratedTextureCopier::copyTexture):
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::evictTexture):
+        * platform/graphics/chromium/cc/CCFrameRateController.cpp:
+        (WebCore::CCFrameRateController::setActive):
+        (WebCore::CCFrameRateController::onTimerTick):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::~CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initializeLayerRenderer):
+        (WebCore::CCLayerTreeHost::beginCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::didLoseContext):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        (WebCore::CCLayerTreeHost::animateLayers):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::CCSingleThreadProxy):
+        (WebCore::CCSingleThreadProxy::~CCSingleThreadProxy):
+        (WebCore::CCSingleThreadProxy::compositeAndReadback):
+        (WebCore::CCSingleThreadProxy::stop):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::~CCThreadProxy):
+        (WebCore::CCThreadProxy::compositeAndReadback):
+        (WebCore::CCThreadProxy::initializeContext):
+        (WebCore::CCThreadProxy::initializeLayerRenderer):
+        (WebCore::CCThreadProxy::setNeedsAnimate):
+        (WebCore::CCThreadProxy::setNeedsCommit):
+        (WebCore::CCThreadProxy::onSwapBuffersCompleteOnImplThread):
+        (WebCore::CCThreadProxy::setNeedsCommitOnImplThread):
+        (WebCore::CCThreadProxy::setNeedsForcedCommitOnImplThread):
+        (WebCore::CCThreadProxy::postAnimationEventsToMainThreadOnImplThread):
+        (WebCore::CCThreadProxy::setNeedsRedraw):
+        (WebCore::CCThreadProxy::setNeedsRedrawOnImplThread):
+        (WebCore::CCThreadProxy::stop):
+        (WebCore::CCThreadProxy::finishAllRenderingOnImplThread):
+        (WebCore::CCThreadProxy::beginFrame):
+        (WebCore::CCThreadProxy::beginFrameCompleteOnImplThread):
+        (WebCore::CCThreadProxy::scheduledActionUpdateMoreResources):
+        (WebCore::CCThreadProxy::scheduledActionCommit):
+        (WebCore::CCThreadProxy::scheduledActionDrawAndSwapInternal):
+        (WebCore::CCThreadProxy::acquireLayerTextures):
+        (WebCore::CCThreadProxy::initializeImplOnImplThread):
+        (WebCore::CCThreadProxy::initializeContextOnImplThread):
+        (WebCore::CCThreadProxy::initializeLayerRendererOnImplThread):
+        (WebCore::CCThreadProxy::layerTreeHostClosedOnImplThread):
+
 2012-06-27  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] ScrollbarLayerChromium should support painting forward-track and back-track in different styles.

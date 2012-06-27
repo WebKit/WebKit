@@ -332,7 +332,7 @@ void LayerRendererChromium::beginDrawingFrame(const CCRenderPass* rootRenderPass
     if (viewportSize().isEmpty())
         return;
 
-    TRACE_EVENT("LayerRendererChromium::drawLayers", this, 0);
+    TRACE_EVENT0("cc", "LayerRendererChromium::drawLayers");
     if (m_isViewportChanged) {
         // Only reshape when we know we are going to draw. Otherwise, the reshape
         // can leave the window at the wrong size if we never draw and the proper
@@ -1151,7 +1151,7 @@ void LayerRendererChromium::copyTextureToFramebuffer(int textureId, const IntSiz
 
 void LayerRendererChromium::finish()
 {
-    TRACE_EVENT("LayerRendererChromium::finish", this, 0);
+    TRACE_EVENT0("cc", "LayerRendererChromium::finish");
     m_context->finish();
 }
 
@@ -1160,7 +1160,7 @@ bool LayerRendererChromium::swapBuffers(const IntRect& subBuffer)
     ASSERT(m_visible);
     ASSERT(!m_isFramebufferDiscarded);
 
-    TRACE_EVENT("LayerRendererChromium::swapBuffers", this, 0);
+    TRACE_EVENT0("cc", "LayerRendererChromium::swapBuffers");
     // We're done! Time to swapbuffers!
 
     if (m_capabilities.usingPartialSwap) {
@@ -1407,7 +1407,7 @@ void LayerRendererChromium::setDrawFramebufferRect(const IntRect& drawRect, bool
 
 bool LayerRendererChromium::initializeSharedObjects()
 {
-    TRACE_EVENT("LayerRendererChromium::initializeSharedObjects", this, 0);
+    TRACE_EVENT0("cc", "LayerRendererChromium::initializeSharedObjects");
     makeContextCurrent();
 
     // Create an FBO for doing offscreen rendering.
@@ -1447,7 +1447,7 @@ const LayerRendererChromium::TileCheckerboardProgram* LayerRendererChromium::til
     if (!m_tileCheckerboardProgram)
         m_tileCheckerboardProgram = adoptPtr(new TileCheckerboardProgram(m_context));
     if (!m_tileCheckerboardProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::checkerboardProgram::initalize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::checkerboardProgram::initalize");
         m_tileCheckerboardProgram->initialize(m_context);
     }
     return m_tileCheckerboardProgram.get();
@@ -1458,7 +1458,7 @@ const LayerRendererChromium::SolidColorProgram* LayerRendererChromium::solidColo
     if (!m_solidColorProgram)
         m_solidColorProgram = adoptPtr(new SolidColorProgram(m_context));
     if (!m_solidColorProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::solidColorProgram::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::solidColorProgram::initialize");
         m_solidColorProgram->initialize(m_context);
     }
     return m_solidColorProgram.get();
@@ -1469,7 +1469,7 @@ const LayerRendererChromium::HeadsUpDisplayProgram* LayerRendererChromium::heads
     if (!m_headsUpDisplayProgram)
         m_headsUpDisplayProgram = adoptPtr(new HeadsUpDisplayProgram(m_context));
     if (!m_headsUpDisplayProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::headsUpDisplayProgram::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::headsUpDisplayProgram::initialize");
         m_headsUpDisplayProgram->initialize(m_context);
     }
     return m_headsUpDisplayProgram.get();
@@ -1479,7 +1479,7 @@ const LayerRendererChromium::RenderPassProgram* LayerRendererChromium::renderPas
 {
     ASSERT(m_renderPassProgram);
     if (!m_renderPassProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::renderPassProgram::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::renderPassProgram::initialize");
         m_renderPassProgram->initialize(m_context);
     }
     return m_renderPassProgram.get();
@@ -1490,7 +1490,7 @@ const LayerRendererChromium::RenderPassProgramAA* LayerRendererChromium::renderP
     if (!m_renderPassProgramAA)
         m_renderPassProgramAA = adoptPtr(new RenderPassProgramAA(m_context));
     if (!m_renderPassProgramAA->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::renderPassProgramAA::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::renderPassProgramAA::initialize");
         m_renderPassProgramAA->initialize(m_context);
     }
     return m_renderPassProgramAA.get();
@@ -1501,7 +1501,7 @@ const LayerRendererChromium::RenderPassMaskProgram* LayerRendererChromium::rende
     if (!m_renderPassMaskProgram)
         m_renderPassMaskProgram = adoptPtr(new RenderPassMaskProgram(m_context));
     if (!m_renderPassMaskProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::renderPassMaskProgram::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::renderPassMaskProgram::initialize");
         m_renderPassMaskProgram->initialize(m_context);
     }
     return m_renderPassMaskProgram.get();
@@ -1512,7 +1512,7 @@ const LayerRendererChromium::RenderPassMaskProgramAA* LayerRendererChromium::ren
     if (!m_renderPassMaskProgramAA)
         m_renderPassMaskProgramAA = adoptPtr(new RenderPassMaskProgramAA(m_context));
     if (!m_renderPassMaskProgramAA->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::renderPassMaskProgramAA::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::renderPassMaskProgramAA::initialize");
         m_renderPassMaskProgramAA->initialize(m_context);
     }
     return m_renderPassMaskProgramAA.get();
@@ -1522,7 +1522,7 @@ const LayerRendererChromium::TileProgram* LayerRendererChromium::tileProgram()
 {
     ASSERT(m_tileProgram);
     if (!m_tileProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::tileProgram::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::tileProgram::initialize");
         m_tileProgram->initialize(m_context);
     }
     return m_tileProgram.get();
@@ -1532,7 +1532,7 @@ const LayerRendererChromium::TileProgramOpaque* LayerRendererChromium::tileProgr
 {
     ASSERT(m_tileProgramOpaque);
     if (!m_tileProgramOpaque->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::tileProgramOpaque::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::tileProgramOpaque::initialize");
         m_tileProgramOpaque->initialize(m_context);
     }
     return m_tileProgramOpaque.get();
@@ -1543,7 +1543,7 @@ const LayerRendererChromium::TileProgramAA* LayerRendererChromium::tileProgramAA
     if (!m_tileProgramAA)
         m_tileProgramAA = adoptPtr(new TileProgramAA(m_context));
     if (!m_tileProgramAA->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::tileProgramAA::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::tileProgramAA::initialize");
         m_tileProgramAA->initialize(m_context);
     }
     return m_tileProgramAA.get();
@@ -1554,7 +1554,7 @@ const LayerRendererChromium::TileProgramSwizzle* LayerRendererChromium::tileProg
     if (!m_tileProgramSwizzle)
         m_tileProgramSwizzle = adoptPtr(new TileProgramSwizzle(m_context));
     if (!m_tileProgramSwizzle->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::tileProgramSwizzle::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::tileProgramSwizzle::initialize");
         m_tileProgramSwizzle->initialize(m_context);
     }
     return m_tileProgramSwizzle.get();
@@ -1565,7 +1565,7 @@ const LayerRendererChromium::TileProgramSwizzleOpaque* LayerRendererChromium::ti
     if (!m_tileProgramSwizzleOpaque)
         m_tileProgramSwizzleOpaque = adoptPtr(new TileProgramSwizzleOpaque(m_context));
     if (!m_tileProgramSwizzleOpaque->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::tileProgramSwizzleOpaque::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::tileProgramSwizzleOpaque::initialize");
         m_tileProgramSwizzleOpaque->initialize(m_context);
     }
     return m_tileProgramSwizzleOpaque.get();
@@ -1576,7 +1576,7 @@ const LayerRendererChromium::TileProgramSwizzleAA* LayerRendererChromium::tilePr
     if (!m_tileProgramSwizzleAA)
         m_tileProgramSwizzleAA = adoptPtr(new TileProgramSwizzleAA(m_context));
     if (!m_tileProgramSwizzleAA->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::tileProgramSwizzleAA::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::tileProgramSwizzleAA::initialize");
         m_tileProgramSwizzleAA->initialize(m_context);
     }
     return m_tileProgramSwizzleAA.get();
@@ -1587,7 +1587,7 @@ const LayerRendererChromium::TextureProgram* LayerRendererChromium::textureProgr
     if (!m_textureProgram)
         m_textureProgram = adoptPtr(new TextureProgram(m_context));
     if (!m_textureProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::textureProgram::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::textureProgram::initialize");
         m_textureProgram->initialize(m_context);
     }
     return m_textureProgram.get();
@@ -1598,7 +1598,7 @@ const LayerRendererChromium::TextureProgramFlip* LayerRendererChromium::textureP
     if (!m_textureProgramFlip)
         m_textureProgramFlip = adoptPtr(new TextureProgramFlip(m_context));
     if (!m_textureProgramFlip->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::textureProgramFlip::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::textureProgramFlip::initialize");
         m_textureProgramFlip->initialize(m_context);
     }
     return m_textureProgramFlip.get();
@@ -1609,7 +1609,7 @@ const LayerRendererChromium::TextureIOSurfaceProgram* LayerRendererChromium::tex
     if (!m_textureIOSurfaceProgram)
         m_textureIOSurfaceProgram = adoptPtr(new TextureIOSurfaceProgram(m_context));
     if (!m_textureIOSurfaceProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::textureIOSurfaceProgram::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::textureIOSurfaceProgram::initialize");
         m_textureIOSurfaceProgram->initialize(m_context);
     }
     return m_textureIOSurfaceProgram.get();
@@ -1620,7 +1620,7 @@ const LayerRendererChromium::VideoYUVProgram* LayerRendererChromium::videoYUVPro
     if (!m_videoYUVProgram)
         m_videoYUVProgram = adoptPtr(new VideoYUVProgram(m_context));
     if (!m_videoYUVProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::videoYUVProgram::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::videoYUVProgram::initialize");
         m_videoYUVProgram->initialize(m_context);
     }
     return m_videoYUVProgram.get();
@@ -1631,7 +1631,7 @@ const LayerRendererChromium::VideoStreamTextureProgram* LayerRendererChromium::v
     if (!m_videoStreamTextureProgram)
         m_videoStreamTextureProgram = adoptPtr(new VideoStreamTextureProgram(m_context));
     if (!m_videoStreamTextureProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::streamTextureProgram::initialize", this, 0);
+        TRACE_EVENT0("cc", "LayerRendererChromium::streamTextureProgram::initialize");
         m_videoStreamTextureProgram->initialize(m_context);
     }
     return m_videoStreamTextureProgram.get();

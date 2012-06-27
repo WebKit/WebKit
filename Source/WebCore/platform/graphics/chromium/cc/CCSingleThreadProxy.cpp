@@ -52,7 +52,7 @@ CCSingleThreadProxy::CCSingleThreadProxy(CCLayerTreeHost* layerTreeHost)
     , m_layerRendererInitialized(false)
     , m_nextFrameIsNewlyCommittedFrame(false)
 {
-    TRACE_EVENT("CCSingleThreadProxy::CCSingleThreadProxy", this, 0);
+    TRACE_EVENT0("cc", "CCSingleThreadProxy::CCSingleThreadProxy");
     ASSERT(CCProxy::isMainThread());
 }
 
@@ -64,14 +64,14 @@ void CCSingleThreadProxy::start()
 
 CCSingleThreadProxy::~CCSingleThreadProxy()
 {
-    TRACE_EVENT("CCSingleThreadProxy::~CCSingleThreadProxy", this, 0);
+    TRACE_EVENT0("cc", "CCSingleThreadProxy::~CCSingleThreadProxy");
     ASSERT(CCProxy::isMainThread());
     ASSERT(!m_layerTreeHostImpl && !m_layerTreeHost); // make sure stop() got called.
 }
 
 bool CCSingleThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect)
 {
-    TRACE_EVENT("CCSingleThreadProxy::compositeAndReadback", this, 0);
+    TRACE_EVENT0("cc", "CCSingleThreadProxy::compositeAndReadback");
     ASSERT(CCProxy::isMainThread());
 
     if (!commitAndComposite())
@@ -255,7 +255,7 @@ void CCSingleThreadProxy::didAddAnimation()
 
 void CCSingleThreadProxy::stop()
 {
-    TRACE_EVENT("CCSingleThreadProxy::stop", this, 0);
+    TRACE_EVENT0("cc", "CCSingleThreadProxy::stop");
     ASSERT(CCProxy::isMainThread());
     {
         DebugScopedSetMainThreadBlocked mainThreadBlocked;

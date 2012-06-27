@@ -195,7 +195,7 @@ void TextureManager::unprotectAllTextures()
 
 void TextureManager::evictTexture(TextureToken token, TextureInfo info)
 {
-    TRACE_EVENT("TextureManager::evictTexture", this, 0);
+    TRACE_EVENT0("cc", "TextureManager::evictTexture");
     removeTexture(token, info);
 }
 

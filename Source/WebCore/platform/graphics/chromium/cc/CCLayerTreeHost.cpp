@@ -96,7 +96,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCLayerTre
 
 bool CCLayerTreeHost::initialize()
 {
-    TRACE_EVENT("CCLayerTreeHost::initialize", this, 0);
+    TRACE_EVENT0("cc", "CCLayerTreeHost::initialize");
 
     if (CCProxy::hasImplThread())
         m_proxy = CCThreadProxy::create(this);
@@ -122,7 +122,7 @@ bool CCLayerTreeHost::initialize()
 CCLayerTreeHost::~CCLayerTreeHost()
 {
     ASSERT(CCProxy::isMainThread());
-    TRACE_EVENT("CCLayerTreeHost::~CCLayerTreeHost", this, 0);
+    TRACE_EVENT0("cc", "CCLayerTreeHost::~CCLayerTreeHost");
     ASSERT(m_proxy);
     m_proxy->stop();
     m_proxy.clear();
@@ -136,7 +136,7 @@ void CCLayerTreeHost::setSurfaceReady()
 
 void CCLayerTreeHost::initializeLayerRenderer()
 {
-    TRACE_EVENT("CCLayerTreeHost::initializeLayerRenderer", this, 0);
+    TRACE_EVENT0("cc", "CCLayerTreeHost::initializeLayerRenderer");
     if (!m_proxy->initializeLayerRenderer()) {
         // Uh oh, better tell the client that we can't do anything with this context.
         m_client->didRecreateContext(false);
@@ -225,7 +225,7 @@ void CCLayerTreeHost::layout()
 void CCLayerTreeHost::beginCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 {
     ASSERT(CCProxy::isImplThread());
-    TRACE_EVENT("CCLayerTreeHost::commitTo", this, 0);
+    TRACE_EVENT0("cc", "CCLayerTreeHost::commitTo");
 
     m_contentsTextureManager->reduceMemoryToLimit(m_contentsTextureManager->preferredMemoryLimitBytes());
     m_contentsTextureManager->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
@@ -278,7 +278,7 @@ PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl(CCLayer
 
 void CCLayerTreeHost::didLoseContext()
 {
-    TRACE_EVENT("CCLayerTreeHost::didLoseContext", 0, this);
+    TRACE_EVENT0("cc", "CCLayerTreeHost::didLoseContext");
     ASSERT(CCProxy::isMainThread());
     m_contextLost = true;
     m_numFailedRecreateAttempts = 0;
@@ -460,7 +460,7 @@ void CCLayerTreeHost::updateLayers(CCTextureUpdater& updater, size_t contentsMem
 
 void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& updater)
 {
-    TRACE_EVENT("CCLayerTreeHost::updateLayers", this, 0);
+    TRACE_EVENT0("cc", "CCLayerTreeHost::updateLayers");
 
     if (!rootLayer->renderSurface())
         rootLayer->createRenderSurface();
@@ -476,7 +476,7 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
     rootRenderSurface->clearLayerList();
 
     {
-        TRACE_EVENT("CCLayerTreeHost::updateLayers::calcDrawEtc", this, 0);
+        TRACE_EVENT0("cc", "CCLayerTreeHost::updateLayers::calcDrawEtc");
         WebTransformationMatrix identityMatrix;
         WebTransformationMatrix deviceScaleTransform;
         deviceScaleTransform.scale(m_deviceScaleFactor);
@@ -683,7 +683,7 @@ void CCLayerTreeHost::animateLayers(double monotonicTime)
     if (!CCSettings::acceleratedAnimationEnabled() || !m_needsAnimateLayers)
         return;
 
-    TRACE_EVENT("CCLayerTreeHostImpl::animateLayers", this, 0);
+    TRACE_EVENT0("cc", "CCLayerTreeHostImpl::animateLayers");
     m_needsAnimateLayers = animateLayersRecursive(m_rootLayer.get(), monotonicTime);
 }
 

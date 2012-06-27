@@ -66,7 +66,7 @@ void CCFrameRateController::setActive(bool active)
 {
     if (m_timeSource->active() == active)
         return;
-    TRACE_EVENT("CCFrameRateController::setActive", 0, (active ? "active" : "inactive"));
+    TRACE_EVENT1("cc", "CCFrameRateController::setActive", "active", active);
     m_timeSource->setActive(active);
 }
 
@@ -81,7 +81,7 @@ void CCFrameRateController::onTimerTick()
 
     // Don't forward the tick if we have too many frames in flight.
     if (m_maxFramesPending && m_numFramesPending >= m_maxFramesPending) {
-        TRACE_EVENT("CCFrameRateController::onTimerTickButMaxFramesPending", 0, 0);
+        TRACE_EVENT0("cc", "CCFrameRateController::onTimerTickButMaxFramesPending");
         return;
     }
 
