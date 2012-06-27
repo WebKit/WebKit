@@ -333,7 +333,7 @@ namespace WebCore {
 
 #if ENABLE(CSS_VARIABLES)
         void setCSSVariablesEnabled(bool enabled) { m_cssVariablesEnabled = enabled; }
-        bool cssVariablesEnabled() const { return true; }
+        bool cssVariablesEnabled() const { return m_cssVariablesEnabled; }
 #else
         void setCSSVariablesEnabled(bool) { }
         bool cssVariablesEnabled() const { return false; }

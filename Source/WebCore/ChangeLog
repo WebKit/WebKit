@@ -1,3 +1,16 @@
+2012-06-26  Luke Macpherson  <macpherson@chromium.org>
+
+        Return correct value for css variables enabled runtime flag.
+        https://bugs.webkit.org/show_bug.cgi?id=90040
+
+        Reviewed by Dimitri Glazkov.
+
+        Was always returning true for the runtime flag when the compile time flag was on. That was good for testing,
+        but not so much for production.
+
+        * page/Settings.h:
+        (WebCore::Settings::cssVariablesEnabled):
+
 2012-06-26  Xueqing Huang  <huangxueqing@baidu.com>
 
         DragData::asFilenames should not push same file names to result in Windows.
