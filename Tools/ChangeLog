@@ -1,3 +1,15 @@
+2012-06-27  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] DumpRenderTree on Android should call SkUseTestFontConfigFile once available
+        https://bugs.webkit.org/show_bug.cgi?id=89801
+
+        Reviewed by Nate Chapin.
+
+        Let's call SkUseTestFontConfigFile now that it exists.
+
+        * DumpRenderTree/chromium/TestShellAndroid.cpp:
+        (platformInit):
+
 2012-06-27  Dirk Pranke  <dpranke@chromium.org>
 
         Fix typo introduced in r121363.

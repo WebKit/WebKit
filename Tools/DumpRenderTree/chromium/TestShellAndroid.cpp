@@ -102,9 +102,7 @@ void redirectToFile(FILE* stream, const char* path, const char* mode)
 void platformInit(int* argc, char*** argv)
 {
     // Initialize skia with customized font config files.
-    // FIXME: Add this call once SkUseTestFontConfigFile is added to Skia and
-    // visible to WebKit. See https://bugs.webkit.org/show_bug.cgi?id=89801
-    // SkUseTestFontConfigFile(fontMainConfigFile, fontFallbackConfigFile, fontsDir);
+    SkUseTestFontConfigFile(fontMainConfigFile, fontFallbackConfigFile, fontsDir);
 
     const char* inFIFO = 0;
     const char* outFIFO = 0;
