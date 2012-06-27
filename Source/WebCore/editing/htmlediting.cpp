@@ -78,15 +78,15 @@ int comparePositions(const Position& a, const Position& b)
     if (!commonScope)
         return 0;
 
-    Node* nodeA = commonScope->ancestorInThisScope(a.deprecatedNode());
+    Node* nodeA = commonScope->ancestorInThisScope(a.containerNode());
     ASSERT(nodeA);
-    bool hasDescendentA = nodeA != a.deprecatedNode();
-    int offsetA = hasDescendentA ? 0 : a.deprecatedEditingOffset();
+    bool hasDescendentA = nodeA != a.containerNode();
+    int offsetA = hasDescendentA ? 0 : a.computeOffsetInContainerNode();
 
-    Node* nodeB = commonScope->ancestorInThisScope(b.deprecatedNode());
+    Node* nodeB = commonScope->ancestorInThisScope(b.containerNode());
     ASSERT(nodeB);
-    bool hasDescendentB = nodeB != b.deprecatedNode();
-    int offsetB = hasDescendentB ? 0 : b.deprecatedEditingOffset();
+    bool hasDescendentB = nodeB != b.containerNode();
+    int offsetB = hasDescendentB ? 0 : b.computeOffsetInContainerNode();
 
     int bias = 0;
     if (nodeA == nodeB) {

@@ -1,3 +1,23 @@
+2012-06-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Stop calling node() and deprecatedEditingOffset() in comparePositions
+        https://bugs.webkit.org/show_bug.cgi?id=54535
+
+        Reviewed by Enrica Casucci.
+
+        Replaced deprecatedNode() and deprecatedEditingOffset() by containerNode() and computeOffsetInContainerNode()
+        in comparePositions().
+        
+        In addition, fixed a bunch of bugs in DeleteSelectionCommand::handleSpecialCaseBRDelete revealed by this change:
+        - Use node after position instead of deprecated node in determinig whether start and end positions at a br.
+        - Don't set m_startsAtEmptyLine true when BR is wrapped in a block element. The only reason this code had worked
+        was positions like (div, offset, 0) and (br, before) in <div><br> were treated differently, which we no longer do.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::handleSpecialCaseBRDelete):
+        * editing/htmlediting.cpp:
+        (WebCore::comparePositions):
+
 2012-06-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Use eina_file_ls() in EFL implementation of FileSystem listDirectory()
