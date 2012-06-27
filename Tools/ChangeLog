@@ -1,3 +1,16 @@
+2012-06-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Add master.cfg unittest to help migration - pass BuildStep instances instead of BuildStep subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=89564
+
+        Reviewed by Tony Chang.
+
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (BuildStepsConstructorTest):
+        (BuildStepsConstructorTest.generateTests):
+        (BuildStepsConstructorTest.createTest):
+        (BuildStepsConstructorTest.createTest.doTest):
+
 2012-06-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add support for preciseTime() to WebKitTestRunner

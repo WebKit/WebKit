@@ -328,6 +328,29 @@ Tests that timed out:
 """)
 
 
+class BuildStepsConstructorTest(unittest.TestCase):
+    # "Passing a BuildStep subclass to factory.addStep is deprecated. Please pass a BuildStep instance instead.  Support will be dropped in v0.8.7."
+    # It checks if all builder's all buildsteps can be insantiated after migration.
+    # https://bugs.webkit.org/show_bug.cgi?id=89001
+    # http://buildbot.net/buildbot/docs/0.8.6p1/manual/customization.html#writing-buildstep-constructors
+
+    @staticmethod
+    def generateTests():
+        for builderNumber, builder in enumerate(c['builders']):
+            for stepNumber, step in enumerate(builder['factory'].steps):
+                builderName = builder['name'].encode('ascii', 'ignore')
+                setattr(BuildStepsConstructorTest, 'test_builder%02d_step%02d' % (builderNumber, stepNumber), BuildStepsConstructorTest.createTest(builderName, step))
+
+    @staticmethod
+    def createTest(builderName, step):
+        def doTest(self):
+            try:
+                buildStepFactory, kwargs = step
+                buildStepFactory(**kwargs)
+            except TypeError as e:
+                buildStepName = str(buildStepFactory).split('.')[-1]
+                self.fail("Error during instantiation %s buildstep for %s builder: %s\n" % (buildStepName, builderName, e))
+        return doTest
 
 # FIXME: We should run this file as part of test-webkitpy.
 # Unfortunately test-webkitpy currently requires that unittests
@@ -336,4 +359,5 @@ Tests that timed out:
 # so for now this is a stand-alone test harness.
 if __name__ == '__main__':
     BuildBotConfigLoader().load_config('master.cfg')
+    BuildStepsConstructorTest.generateTests()
     unittest.main()
