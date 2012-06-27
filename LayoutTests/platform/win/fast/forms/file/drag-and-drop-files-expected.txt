@@ -1,0 +1,12 @@
+Tests drag multi-files into <input type='file'>, and check the files name were correct.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fileInput.files[0].name is 'got-file-upload-0.html'
+PASS fileInput.files[1].name is 'got-file-upload-1.html'
+PASS fileInput.files[2].name is 'got-file-upload-2.html'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,15 @@
+2012-06-26  Xueqing Huang  <huangxueqing@baidu.com>
+
+        DragData::asFilenames should not push same file names to result in Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=79861
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: platform/win/fast/forms/file/drag-and-drop-files.html 
+
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::asFilenames):
+
 2012-06-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reduced (but did not eliminate) use of "berzerker GC"

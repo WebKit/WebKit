@@ -140,17 +140,17 @@ void DragData::asFilenames(Vector<String>& result) const
         STGMEDIUM medium;
         if (FAILED(m_platformDragData->GetData(cfHDropFormat(), &medium)))
             return;
-        
-        HDROP hdrop = (HDROP)GlobalLock(medium.hGlobal);
+       
+        HDROP hdrop = reinterpret_cast<HDROP>(GlobalLock(medium.hGlobal)); 
         
         if (!hdrop)
             return;
 
         const unsigned numFiles = DragQueryFileW(hdrop, 0xFFFFFFFF, 0, 0);
         for (unsigned i = 0; i < numFiles; i++) {
-            if (!DragQueryFileW(hdrop, 0, filename, WTF_ARRAY_LENGTH(filename)))
+            if (!DragQueryFileW(hdrop, i, filename, WTF_ARRAY_LENGTH(filename)))
                 continue;
-            result.append((UChar*)filename);
+            result.append(static_cast<UChar*>(filename)); 
         }
 
         // Free up memory from drag

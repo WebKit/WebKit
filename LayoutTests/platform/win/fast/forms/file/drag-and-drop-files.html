@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input id="fileInput" type="file" multiple="true" onchange="displayFiles()"></input>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+description("Tests drag multi-files into &lt;input type='file'&gt;, and check the files name were correct.");
+
+if (window.eventSender) {
+    var inputElement = document.getElementById("fileInput"); 
+    var fileRect = inputElement.getClientRects()[0];
+    var targetX = fileRect.left + fileRect.width / 2;
+    var targetY = fileRect.top + fileRect.height / 2;
+    eventSender.beginDragWithFiles(['got-file-upload-0.html', 'got-file-upload-1.html', 'got-file-upload-2.html']);
+    eventSender.mouseMoveTo(targetX, targetY);
+    eventSender.mouseUp();
+}
+
+function displayFiles()
+{
+    var input = document.getElementById("fileInput");
+    shouldBe("fileInput.files[0].name", "'got-file-upload-0.html'");
+    shouldBe("fileInput.files[1].name", "'got-file-upload-1.html'");
+    shouldBe("fileInput.files[2].name", "'got-file-upload-2.html'");
+}
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
