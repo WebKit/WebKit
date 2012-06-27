@@ -1,3 +1,16 @@
+2012-06-27  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Triggers assertion in VisibleSelection::adjustSelectionToAvoidCrossingBoundaries()
+        https://bugs.webkit.org/show_bug.cgi?id=89918
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds a testcase of selection from Shadow DOM to some elements outside of shadow host.
+        r121303, which is a patch for another issue, fixed this issue.
+
+        * editing/shadow/breaking-editing-boundaries-2-expected.txt: Added.
+        * editing/shadow/breaking-editing-boundaries-2.html: Added.
+
 2012-06-27  Alexandru Chiculita  <achicu@adobe.com>
 
         Blur filter causes issues when scrolling
