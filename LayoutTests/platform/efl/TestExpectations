@@ -515,7 +515,7 @@ BUGWK85466 : css3/images/cross-fade-background-size.html = TEXT
 BUGWK85492 : css3/zoom-coords.xhtml = TEXT
 
 // Occasionally missing chunks of output
-BUGWK66873:  http/tests/loading/redirect-methods.html = TEXT
+BUGWK66873 : http/tests/loading/redirect-methods.html = TEXT
 
 // IETC flexbox failures
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE

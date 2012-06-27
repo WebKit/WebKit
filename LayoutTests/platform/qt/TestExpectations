@@ -2,15 +2,15 @@
 //
 // See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
-BUGWK64526 DEBUG: svg/animations/svgtransform-animation-1.html = CRASH PASS
+BUGWK64526 DEBUG : svg/animations/svgtransform-animation-1.html = CRASH PASS
 
 // Slow tests
 // FIXME: File bugs.
-BUG_QT_SLOW SLOW DEBUG: editing/selection/empty-cell-right-click.html = PASS
-BUG_QT_SLOW SLOW DEBUG: editing/selection/dump-as-markup.html = PASS
-BUG_QT_SLOW DEBUG: fast/js/array-sort-modifying-tostring.html = TIMEOUT PASS
-BUG_QT_SLOW SLOW DEBUG: fast/overflow/lots-of-sibling-inline-boxes.html = PASS
-BUG_QT_SLOW SLOW DEBUG: fast/js/dfg-inline-function-dot-caller.html = PASS
+BUG_QT_SLOW SLOW DEBUG : editing/selection/empty-cell-right-click.html = PASS
+BUG_QT_SLOW SLOW DEBUG : editing/selection/dump-as-markup.html = PASS
+BUG_QT_SLOW DEBUG : fast/js/array-sort-modifying-tostring.html = TIMEOUT PASS
+BUG_QT_SLOW SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
+BUG_QT_SLOW SLOW DEBUG : fast/js/dfg-inline-function-dot-caller.html = PASS
 
 BUGWK62662 DEBUG : inspector/cookie-parser.html = CRASH PASS
 
@@ -86,7 +86,7 @@ BUGWK86441 SKIP : fast/borders/border-antialiasing.html = IMAGE
 BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE
 
 // Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
-BUGWK85405 SKIP: tables/mozilla/bugs/bug10296-1.html = TEXT
+BUGWK85405 SKIP : tables/mozilla/bugs/bug10296-1.html = TEXT
 
 // Paletted PNG with ICC color profiles not working.
 BUGWK86722 SKIP : fast/images/paletted-png-with-color-profile.html = PASS

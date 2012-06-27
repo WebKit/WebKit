@@ -1,3 +1,13 @@
+2012-06-27  Ojan Vafai  <ojan@chromium.org>
+
+        Fix some styling errors in the TestExpecations files.
+        There were automatically fixed when trying to make
+        webkit-patch rebaseline-expectations work for non-Chromium ports.
+
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-06-27  Andrei Onea  <onea@adobe.com>
 
         [CSSRegions]Change display values that allow regions
