@@ -43,7 +43,7 @@ void Disassembler::dump(LinkBuffer& linkBuffer)
 {
     m_graph.m_dominators.computeIfNecessary(m_graph);
     
-    dataLog("Generated JIT code for DFG CodeBlock %p:\n", m_graph.m_codeBlock);
+    dataLog("Generated JIT code for DFG CodeBlock %p, instruction count = %u:\n", m_graph.m_codeBlock, m_graph.m_codeBlock->instructionCount());
     dataLog("    Code at [%p, %p):\n", linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize());
     
     const char* prefix = "    ";
@@ -59,7 +59,7 @@ void Disassembler::dump(LinkBuffer& linkBuffer)
         m_graph.dumpBlockHeader(prefix, blockIndex, Graph::DumpLivePhisOnly);
         NodeIndex lastNodeIndexForDisassembly = block->at(0);
         for (size_t i = 0; i < block->size(); ++i) {
-            if (!m_graph[block->at(i)].willHaveCodeGen())
+            if (!m_graph[block->at(i)].willHaveCodeGenOrOSR())
                 continue;
             MacroAssembler::Label currentLabel;
             if (m_labelForNodeIndex[block->at(i)].isSet())

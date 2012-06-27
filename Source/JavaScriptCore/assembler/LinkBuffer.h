@@ -257,6 +257,11 @@ private:
 #endif
 };
 
+#define FINALIZE_CODE_IF(condition, linkBufferReference, dataLogArgumentsForHeading)  \
+    (UNLIKELY((condition))                                              \
+     ? ((linkBufferReference).finalizeCodeWithDisassembly dataLogArgumentsForHeading) \
+     : (linkBufferReference).finalizeCodeWithoutDisassembly())
+
 // Use this to finalize code, like so:
 //
 // CodeRef code = FINALIZE_CODE(linkBuffer, ("my super thingy number %d", number));
@@ -274,9 +279,7 @@ private:
 // is true, so you can hide expensive disassembly-only computations inside there.
 
 #define FINALIZE_CODE(linkBufferReference, dataLogArgumentsForHeading)  \
-    (UNLIKELY(Options::showDisassembly)                                 \
-     ? ((linkBufferReference).finalizeCodeWithDisassembly dataLogArgumentsForHeading) \
-     : (linkBufferReference).finalizeCodeWithoutDisassembly())
+    FINALIZE_CODE_IF(Options::showDisassembly, linkBufferReference, dataLogArgumentsForHeading)
 
 } // namespace JSC
 

@@ -1,3 +1,39 @@
+2012-06-27  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG disassembly should be easier to read
+        https://bugs.webkit.org/show_bug.cgi?id=90106
+
+        Reviewed by Mark Hahnenberg.
+        
+        Did a few things:
+        
+        - Options::showDFGDisassembly now shows OSR exit disassembly as well.
+        
+        - Phi node dumping doesn't attempt to do line wrapping since it just made the dump harder
+          to read.
+        
+        - DFG graph disassembly view shows a few additional node types that turn out to be
+          essential for understanding OSR exits.
+        
+        Put together, these changes reinforce the philosophy that anything needed for computing
+        OSR exit is just as important as the machine code itself. Of course, we still don't take
+        that philosophy to its full extreme - for example Phantom nodes are not dumped. We may
+        revisit that in the future.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+        * assembler/LinkBuffer.h:
+        (JSC):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dump):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dumpBlockHeader):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::willHaveCodeGenOrOSR):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+
 2012-06-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSLock should be per-JSGlobalData

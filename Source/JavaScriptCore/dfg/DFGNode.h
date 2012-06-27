@@ -731,9 +731,21 @@ struct Node {
         return m_refCount;
     }
     
-    bool willHaveCodeGen()
+    bool willHaveCodeGenOrOSR()
     {
-        return shouldGenerate() && op() != Phantom && op() != Nop;
+        switch (op()) {
+        case SetLocal:
+        case Int32ToDouble:
+        case ValueToInt32:
+        case UInt32ToNumber:
+        case DoubleAsInt32:
+            return true;
+        case Phantom:
+        case Nop:
+            return false;
+        default:
+            return shouldGenerate();
+        }
     }
 
     unsigned refCount()

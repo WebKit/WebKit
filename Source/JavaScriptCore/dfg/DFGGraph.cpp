@@ -327,14 +327,11 @@ void Graph::dumpBlockHeader(const char* prefix, BlockIndex blockIndex, PhiNodeDu
         dataLog("\n");
     }
     dataLog("%s  Phi Nodes:", prefix);
-    unsigned count = 0;
     for (size_t i = 0; i < block->phis.size(); ++i) {
         NodeIndex phiNodeIndex = block->phis[i];
         Node& phiNode = at(phiNodeIndex);
         if (!phiNode.shouldGenerate() && phiNodeDumpMode == DumpLivePhisOnly)
             continue;
-        if (!((++count) % 4))
-            dataLog("\n%s      ", prefix);
         dataLog(" @%u->(", phiNodeIndex);
         if (phiNode.child1()) {
             dataLog("@%u", phiNode.child1().index());

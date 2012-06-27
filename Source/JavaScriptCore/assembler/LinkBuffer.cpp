@@ -41,7 +41,7 @@ LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithoutDisassembly()
 
 LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(const char* format, ...)
 {
-    ASSERT(Options::showDisassembly);
+    ASSERT(Options::showDisassembly || Options::showDFGDisassembly);
     
     CodeRef result = finalizeCodeWithoutDisassembly();
     

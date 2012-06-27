@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CallFrame.h"
+#include "DFGCommon.h"
 #include "LinkBuffer.h"
 #include "RepatchBuffer.h"
 
@@ -79,7 +80,8 @@ void compileOSRExit(ExecState* exec)
         exitCompiler.compileExit(exit, recovery);
         
         LinkBuffer patchBuffer(*globalData, &jit, codeBlock);
-        exit.m_code = FINALIZE_CODE(
+        exit.m_code = FINALIZE_CODE_IF(
+            shouldShowDisassembly(),
             patchBuffer,
             ("DFG OSR exit #%u (bc#%u, @%u, %s) from CodeBlock %p",
              exitIndex, exit.m_codeOrigin.bytecodeIndex, exit.m_nodeIndex,

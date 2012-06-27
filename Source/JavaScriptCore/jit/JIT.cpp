@@ -763,7 +763,9 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
         *functionEntryArityCheck = patchBuffer.locationOf(arityCheck);
     
     CodeRef result = FINALIZE_CODE(
-        patchBuffer, ("Baseline JIT code for CodeBlock %p", m_codeBlock));
+        patchBuffer,
+        ("Baseline JIT code for CodeBlock %p, instruction count = %u",
+         m_codeBlock, m_codeBlock->instructionCount()));
     
     m_globalData->machineCodeBytesPerBytecodeWordForBaselineJIT.add(
         static_cast<double>(result.size()) /
