@@ -229,9 +229,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     if (!nativeImageForCurrentFrame())
         return;
 
-    ASSERT(patternTransform.isInvertible());
     if (!patternTransform.isInvertible())
-        // Avoid a hang under CGContextDrawTiledImage on release builds.
         return;
 
     CGContextRef context = ctxt->platformContext();
