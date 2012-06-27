@@ -1,3 +1,11 @@
+2012-06-27  Jeffrey Pfau  <jpfau@apple.com>
+
+        [Mac] Fix test expectation introduced in r121299
+
+        Unreviewed.
+
+        * platform/mac/editing/spelling/autocorrection-blockquote-crash-expected.txt:
+
 2012-06-27  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Rebase image mismatch caused by 121371.
