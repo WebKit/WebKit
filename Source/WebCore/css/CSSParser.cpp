@@ -8972,7 +8972,7 @@ restartAfterComment:
 
     case CharacterDash:
 #if ENABLE(CSS_VARIABLES)
-        if (cssVariablesEnabled() && m_currentCharacter[10] == '-' && isEqualToCSSIdentifier(m_currentCharacter, "webkit-var") && isIdentifierStartAfterDash(m_currentCharacter + 11)) {
+        if (cssVariablesEnabled() && isEqualToCSSIdentifier(m_currentCharacter, "webkit-var") && m_currentCharacter[10] == '-' && isIdentifierStartAfterDash(m_currentCharacter + 11)) {
             // handle variable declarations
             m_currentCharacter += 11;
             parseIdentifier(result, hasEscape);

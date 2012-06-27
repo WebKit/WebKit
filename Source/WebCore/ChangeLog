@@ -1,3 +1,15 @@
+2012-06-26  Luke Macpherson  <macpherson@chromium.org>
+
+        Be careful not to read past the end of input in CSSParser::lex() when looking for variable definitions.
+        https://bugs.webkit.org/show_bug.cgi?id=89949
+
+        Reviewed by Abhishek Arya.
+
+        Added repro case as fast/css/short-inline-style.html.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::lex):
+
 2012-06-26  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove WebView::graphicsContext3D getter
