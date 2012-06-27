@@ -261,15 +261,4 @@ lessThan(QT_GCC_MAJOR_VERSION, 5) {
         # Disable C++0x mode in JSC for those who enabled it in their Qt's mkspec.
         *-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x
     }
-
-    # GCC 4.6 and after.
-    greaterThan(QT_GCC_MINOR_VERSION, 5) {
-        if (!contains(QMAKE_CXXFLAGS, -std=c++0x) && !contains(QMAKE_CXXFLAGS, -std=gnu++0x)) {
-            # We need to deactivate those warnings because some names conflicts with upcoming c++0x types (e.g.nullptr).
-            QMAKE_CFLAGS_WARN_ON += -Wno-c++0x-compat
-            QMAKE_CXXFLAGS_WARN_ON += -Wno-c++0x-compat
-            QMAKE_CFLAGS += -Wno-c++0x-compat
-            QMAKE_CXXFLAGS += -Wno-c++0x-compat
-        }
-    }
 }

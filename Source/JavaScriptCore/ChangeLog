@@ -1,3 +1,13 @@
+2012-06-27  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Remove redundant c++11 warning suppression code
+
+        This is already handled in default_post.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Target.pri:
+
 2012-06-26  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Add missing heades to HEADERS
