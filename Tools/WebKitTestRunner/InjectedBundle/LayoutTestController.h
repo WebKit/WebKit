@@ -63,6 +63,7 @@ public:
     void dumpChildFramesAsText() { m_whatToDump = AllFramesText; }
     void waitUntilDone();
     void notifyDone();
+    double preciseTime();
 
     // Other dumping.
     void dumpBackForwardList() { m_shouldDumpBackForwardListsForAllWindows = true; }

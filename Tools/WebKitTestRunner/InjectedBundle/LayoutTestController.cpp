@@ -43,6 +43,7 @@
 #include <WebKit2/WKBundleScriptWorld.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WebKit2.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -615,6 +616,11 @@ void LayoutTestController::callSetBackingScaleFactorCallback()
 void LayoutTestController::overridePreference(JSStringRef preference, bool value)
 {
     WKBundleOverrideBoolPreferenceForTestRunner(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), toWK(preference).get(), value);
+}
+
+double LayoutTestController::preciseTime()
+{
+    return currentTime();
 }
 
 } // namespace WTR

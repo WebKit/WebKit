@@ -32,6 +32,7 @@ module WTR {
         void waitForPolicyDelegate();
         void waitUntilDone();
         void notifyDone();
+        double preciseTime();
 
         // Other dumping.
         void dumpBackForwardList();
