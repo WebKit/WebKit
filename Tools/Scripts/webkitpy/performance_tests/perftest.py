@@ -40,7 +40,7 @@ import sys
 import time
 
 # Import for auto-install
-if sys.platform != 'win32':
+if sys.platform not in ('cygwin', 'win32'):
     # FIXME: webpagereplay doesn't work on win32. See https://bugs.webkit.org/show_bug.cgi?id=88279.
     import webkitpy.thirdparty.autoinstalled.webpagereplay.replay
 

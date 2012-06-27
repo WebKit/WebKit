@@ -39,6 +39,7 @@ import sys
 import time
 
 from webkitpy.common.system import executive
+from webkitpy.common.system.path import cygpath
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.base import Port, VirtualTestSuite
 from webkitpy.layout_tests.port.driver import DriverOutput

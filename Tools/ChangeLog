@@ -1,3 +1,15 @@
+2012-06-27  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: fix a couple of issues running under cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=90035
+
+        Reviewed by Eric Seidel.
+
+        These were causing unit tests to fail on cygwin (apple win bot).
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/performance_tests/perftest.py:
+
 2012-06-27  Adam Barth  <abarth@webkit.org>
 
         [Chromium] DumpRenderTree on Android should call SkUseTestFontConfigFile once available
