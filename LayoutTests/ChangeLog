@@ -1,3 +1,26 @@
+2012-06-26  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Rebaseline 4 tests in editing/deleting. Caused by r121303.
+
+        Unreviewed.
+
+        * platform/chromium-linux-x86/editing/deleting/delete-br-002-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-br-002-expected.txt.
+        * platform/chromium-linux-x86/editing/deleting/delete-br-004-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-br-004-expected.txt.
+        * platform/chromium-linux-x86/editing/deleting/delete-br-005-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-br-005-expected.txt.
+        * platform/chromium-linux-x86/editing/deleting/delete-br-006-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-br-006-expected.txt.
+        * platform/chromium-linux/editing/deleting/delete-br-002-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-br-002-expected.txt.
+        * platform/chromium-linux/editing/deleting/delete-br-004-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-br-004-expected.txt.
+        * platform/chromium-linux/editing/deleting/delete-br-005-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-br-005-expected.txt.
+        * platform/chromium-linux/editing/deleting/delete-br-006-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-br-006-expected.txt.
+        * platform/chromium-win-xp/editing/deleting/delete-br-002-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-br-002-expected.txt.
+        * platform/chromium-win-xp/editing/deleting/delete-br-004-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-br-004-expected.txt.
+        * platform/chromium-win-xp/editing/deleting/delete-br-005-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-br-005-expected.txt.
+        * platform/chromium-win-xp/editing/deleting/delete-br-006-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-br-006-expected.txt.
+        * platform/chromium-win/editing/deleting/delete-br-002-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-br-004-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-br-005-expected.txt:
+        * platform/chromium-win/editing/deleting/delete-br-006-expected.txt:
+
 2012-06-26  Douglas Stockwell  <dstockwell@chromium.org>
 
         REGRESSION(r107836): box shadow not drawn for opaque images with an opaque background
