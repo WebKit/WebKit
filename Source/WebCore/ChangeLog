@@ -1,5 +1,54 @@
 2012-06-27  Kentaro Hara  <haraken@chromium.org>
 
+        Rename rareSVGData() to svgRareData()
+        https://bugs.webkit.org/show_bug.cgi?id=90051
+
+        Reviewed by Nikolas Zimmermann.
+
+        Since rareSVGData() returns SVGRareData, it would make sense to
+        rename rareSVGData() to svgRareData(). Similarly, we can rename
+        ensureRareSVGData() to ensureSVGRareData(), and hasRareSVGData()
+        to hasSVGRareData().
+
+        c.f. bug 90050 is trying to introduce elementRareData() and
+        ensureElementRareData().
+
+        No tests. No change in behavior.
+
+        * WebCore.order:
+        * dom/Node.h:
+        (WebCore::Node::hasSVGRareData):
+        (WebCore::Node::setHasSVGRareData):
+        (WebCore::Node::clearHasSVGRareData):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::~SVGElement):
+        (WebCore::SVGElement::willRecalcStyle):
+        (WebCore::SVGElement::svgRareData):
+        (WebCore::SVGElement::ensureSVGRareData):
+        (WebCore::SVGElement::mapInstanceToElement):
+        (WebCore::SVGElement::removeInstanceMapping):
+        (WebCore::SVGElement::instancesForElement):
+        (WebCore::SVGElement::setCursorElement):
+        (WebCore::SVGElement::cursorElementRemoved):
+        (WebCore::SVGElement::setCursorImageValue):
+        (WebCore::SVGElement::cursorImageValueRemoved):
+        (WebCore::SVGElement::correspondingElement):
+        (WebCore::SVGElement::setCorrespondingElement):
+        (WebCore::SVGElement::animatedSMILStyleProperties):
+        (WebCore::SVGElement::ensureAnimatedSMILStyleProperties):
+        (WebCore::SVGElement::setUseOverrideComputedStyle):
+        (WebCore::SVGElement::computedStyle):
+        * svg/SVGElement.h:
+        (SVGElement):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::instanceUpdatesBlocked):
+        (WebCore::SVGStyledElement::setInstanceUpdatesBlocked):
+        (WebCore::SVGStyledElement::hasPendingResources):
+        (WebCore::SVGStyledElement::setHasPendingResources):
+        (WebCore::SVGStyledElement::clearHasPendingResourcesIfPossible):
+
+2012-06-27  Kentaro Hara  <haraken@chromium.org>
+
         LabelableElement.cpp should include not ElementRareData.h but NodeRareData.h
         https://bugs.webkit.org/show_bug.cgi?id=90047
 

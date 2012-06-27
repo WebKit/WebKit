@@ -127,8 +127,8 @@ protected:
     
     virtual void removedFrom(ContainerNode*) OVERRIDE;
 
-    SVGElementRareData* rareSVGData() const;
-    SVGElementRareData* ensureRareSVGData();
+    SVGElementRareData* svgRareData() const;
+    SVGElementRareData* ensureSVGRareData();
 
     void reportAttributeParsingError(SVGParsingError, const Attribute&);
 

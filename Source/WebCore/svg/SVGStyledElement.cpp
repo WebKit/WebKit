@@ -423,29 +423,29 @@ PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& na
 
 bool SVGStyledElement::instanceUpdatesBlocked() const
 {
-    return hasRareSVGData() && rareSVGData()->instanceUpdatesBlocked();
+    return hasSVGRareData() && svgRareData()->instanceUpdatesBlocked();
 }
 
 void SVGStyledElement::setInstanceUpdatesBlocked(bool value)
 {
-    if (hasRareSVGData())
-        rareSVGData()->setInstanceUpdatesBlocked(value);
+    if (hasSVGRareData())
+        svgRareData()->setInstanceUpdatesBlocked(value);
 }
 
 bool SVGStyledElement::hasPendingResources() const
 {
-    return hasRareSVGData() && rareSVGData()->hasPendingResources();
+    return hasSVGRareData() && svgRareData()->hasPendingResources();
 }
 
 void SVGStyledElement::setHasPendingResources()
 {
-    ensureRareSVGData()->setHasPendingResources(true);
+    ensureSVGRareData()->setHasPendingResources(true);
 }
 
 void SVGStyledElement::clearHasPendingResourcesIfPossible()
 {
     if (!document()->accessSVGExtensions()->isElementPendingResources(this))
-        ensureRareSVGData()->setHasPendingResources(false);
+        ensureSVGRareData()->setHasPendingResources(false);
 }
 
 AffineTransform SVGStyledElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope) const

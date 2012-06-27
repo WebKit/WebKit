@@ -808,9 +808,9 @@ protected:
     bool isSynchronizingSVGAttributes() const { return getFlag(IsSynchronizingSVGAttributesFlag); }
     void setIsSynchronizingSVGAttributes() const { setFlag(IsSynchronizingSVGAttributesFlag); }
     void clearIsSynchronizingSVGAttributes() const { clearFlag(IsSynchronizingSVGAttributesFlag); }
-    bool hasRareSVGData() const { return getFlag(HasSVGRareDataFlag); }
-    void setHasRareSVGData() { setFlag(HasSVGRareDataFlag); }
-    void clearHasRareSVGData() { clearFlag(HasSVGRareDataFlag); }
+    bool hasSVGRareData() const { return getFlag(HasSVGRareDataFlag); }
+    void setHasSVGRareData() { setFlag(HasSVGRareDataFlag); }
+    void clearHasSVGRareData() { clearFlag(HasSVGRareDataFlag); }
 #endif
 
 #if ENABLE(MICRODATA)

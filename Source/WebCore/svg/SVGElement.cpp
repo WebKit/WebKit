@@ -61,7 +61,7 @@ PassRefPtr<SVGElement> SVGElement::create(const QualifiedName& tagName, Document
 
 SVGElement::~SVGElement()
 {
-    if (!hasRareSVGData())
+    if (!hasSVGRareData())
         ASSERT(!SVGElementRareData::rareDataMap().contains(this));
     else {
         SVGElementRareData::SVGElementRareDataMap& rareDataMap = SVGElementRareData::rareDataMap();
@@ -84,30 +84,30 @@ SVGElement::~SVGElement()
 
 bool SVGElement::willRecalcStyle(StyleChange change)
 {
-    if (!hasRareSVGData() || styleChangeType() == SyntheticStyleChange)
+    if (!hasSVGRareData() || styleChangeType() == SyntheticStyleChange)
         return true;
     // If the style changes because of a regular property change (not induced by SMIL animations themselves)
     // reset the "computed style without SMIL style properties", so the base value change gets reflected.
     if (change > NoChange || needsStyleRecalc())
-        rareSVGData()->setNeedsOverrideComputedStyleUpdate();
+        svgRareData()->setNeedsOverrideComputedStyleUpdate();
     return true;
 }
 
-SVGElementRareData* SVGElement::rareSVGData() const
+SVGElementRareData* SVGElement::svgRareData() const
 {
-    ASSERT(hasRareSVGData());
+    ASSERT(hasSVGRareData());
     return SVGElementRareData::rareDataFromMap(this);
 }
 
-SVGElementRareData* SVGElement::ensureRareSVGData()
+SVGElementRareData* SVGElement::ensureSVGRareData()
 {
-    if (hasRareSVGData())
-        return rareSVGData();
+    if (hasSVGRareData())
+        return svgRareData();
 
     ASSERT(!SVGElementRareData::rareDataMap().contains(this));
     SVGElementRareData* data = new SVGElementRareData;
     SVGElementRareData::rareDataMap().set(this, data);
-    setHasRareSVGData();
+    setHasSVGRareData();
     return data;
 }
 
@@ -220,7 +220,7 @@ void SVGElement::mapInstanceToElement(SVGElementInstance* instance)
 {
     ASSERT(instance);
 
-    HashSet<SVGElementInstance*>& instances = ensureRareSVGData()->elementInstances();
+    HashSet<SVGElementInstance*>& instances = ensureSVGRareData()->elementInstances();
     ASSERT(!instances.contains(instance));
 
     instances.add(instance);
@@ -229,9 +229,9 @@ void SVGElement::mapInstanceToElement(SVGElementInstance* instance)
 void SVGElement::removeInstanceMapping(SVGElementInstance* instance)
 {
     ASSERT(instance);
-    ASSERT(hasRareSVGData());
+    ASSERT(hasSVGRareData());
 
-    HashSet<SVGElementInstance*>& instances = rareSVGData()->elementInstances();
+    HashSet<SVGElementInstance*>& instances = svgRareData()->elementInstances();
     ASSERT(instances.contains(instance));
 
     instances.remove(instance);
@@ -239,11 +239,11 @@ void SVGElement::removeInstanceMapping(SVGElementInstance* instance)
 
 const HashSet<SVGElementInstance*>& SVGElement::instancesForElement() const
 {
-    if (!hasRareSVGData()) {
+    if (!hasSVGRareData()) {
         DEFINE_STATIC_LOCAL(HashSet<SVGElementInstance*>, emptyInstances, ());
         return emptyInstances;
     }
-    return rareSVGData()->elementInstances();
+    return svgRareData()->elementInstances();
 }
 
 bool SVGElement::boundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy styleUpdateStrategy)
@@ -261,7 +261,7 @@ bool SVGElement::boundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy 
 
 void SVGElement::setCursorElement(SVGCursorElement* cursorElement)
 {
-    SVGElementRareData* rareData = ensureRareSVGData();
+    SVGElementRareData* rareData = ensureSVGRareData();
     if (SVGCursorElement* oldCursorElement = rareData->cursorElement()) {
         if (cursorElement == oldCursorElement)
             return;
@@ -272,13 +272,13 @@ void SVGElement::setCursorElement(SVGCursorElement* cursorElement)
 
 void SVGElement::cursorElementRemoved() 
 {
-    ASSERT(hasRareSVGData());
-    rareSVGData()->setCursorElement(0);
+    ASSERT(hasSVGRareData());
+    svgRareData()->setCursorElement(0);
 }
 
 void SVGElement::setCursorImageValue(CSSCursorImageValue* cursorImageValue)
 {
-    SVGElementRareData* rareData = ensureRareSVGData();
+    SVGElementRareData* rareData = ensureSVGRareData();
     if (CSSCursorImageValue* oldCursorImageValue = rareData->cursorImageValue()) {
         if (cursorImageValue == oldCursorImageValue)
             return;
@@ -289,19 +289,19 @@ void SVGElement::setCursorImageValue(CSSCursorImageValue* cursorImageValue)
 
 void SVGElement::cursorImageValueRemoved()
 {
-    ASSERT(hasRareSVGData());
-    rareSVGData()->setCursorImageValue(0);
+    ASSERT(hasSVGRareData());
+    svgRareData()->setCursorImageValue(0);
 }
 
 SVGElement* SVGElement::correspondingElement()
 {
-    ASSERT(!hasRareSVGData() || !rareSVGData()->correspondingElement() || shadowRoot());
-    return hasRareSVGData() ? rareSVGData()->correspondingElement() : 0;
+    ASSERT(!hasSVGRareData() || !svgRareData()->correspondingElement() || shadowRoot());
+    return hasSVGRareData() ? svgRareData()->correspondingElement() : 0;
 }
 
 void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
 {
-    ensureRareSVGData()->setCorrespondingElement(correspondingElement);
+    ensureSVGRareData()->setCorrespondingElement(correspondingElement);
 }
 
 void SVGElement::parseAttribute(const Attribute& attribute)
@@ -591,25 +591,25 @@ PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
 
 StylePropertySet* SVGElement::animatedSMILStyleProperties() const
 {
-    if (hasRareSVGData())
-        return rareSVGData()->animatedSMILStyleProperties();
+    if (hasSVGRareData())
+        return svgRareData()->animatedSMILStyleProperties();
     return 0;
 }
 
 StylePropertySet* SVGElement::ensureAnimatedSMILStyleProperties()
 {
-    return ensureRareSVGData()->ensureAnimatedSMILStyleProperties();
+    return ensureSVGRareData()->ensureAnimatedSMILStyleProperties();
 }
 
 void SVGElement::setUseOverrideComputedStyle(bool value)
 {
-    if (hasRareSVGData())
-        rareSVGData()->setUseOverrideComputedStyle(value);
+    if (hasSVGRareData())
+        svgRareData()->setUseOverrideComputedStyle(value);
 }
 
 RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
 {
-    if (!hasRareSVGData() || !rareSVGData()->useOverrideComputedStyle())
+    if (!hasSVGRareData() || !svgRareData()->useOverrideComputedStyle())
         return Element::computedStyle(pseudoElementSpecifier);
 
     RenderStyle* parentStyle = 0;
@@ -618,7 +618,7 @@ RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
             parentStyle = renderer->style();
     }
 
-    return rareSVGData()->overrideComputedStyle(this, parentStyle);
+    return svgRareData()->overrideComputedStyle(this, parentStyle);
 }
 
 #ifndef NDEBUG
