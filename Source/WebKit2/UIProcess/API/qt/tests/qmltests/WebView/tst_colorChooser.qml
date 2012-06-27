@@ -46,12 +46,21 @@ TestWebView {
             webView.url = Qt.resolvedUrl("../common/colorChooser.html")
             verify(webView.waitForLoadSucceeded())
 
+            while (webView.title != "Feature enabled" && webView.title != "Feature disabled")
+                wait(0)
+
             webView.featureEnabled = (webView.title == "Feature enabled")
+            if (!webView.featureEnabled)
+                return
 
             titleSpy.clear()
 
-            webView.shouldReject = false;
-            webView.shouldAcceptCurrent = false;
+            webView.shouldReject = false
+            webView.shouldAcceptCurrent = false
+        }
+
+        function cleanup() {
+            titleSpy.clear()
         }
 
         function test_accept() {
@@ -64,8 +73,8 @@ TestWebView {
             // pick a new color with the chooser.
             webView.selectedColor = "#020020"
             openColorChooser()
-            titleSpy.wait()
-            compare(titleSpy.count, 2)
+            while (titleSpy.count != 2)
+                wait(0)
             compare(webView.title, "#020020")
         }
 

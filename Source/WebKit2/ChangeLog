@@ -1,3 +1,14 @@
+2012-06-27  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        REGRESSION(r121135): It made qmltests::WebViewColorChooser::test_accept() fail
+        https://bugs.webkit.org/show_bug.cgi?id=89871
+
+        Reviewed by Simon Hausmann.
+
+        Added proper event synchronization to the test case.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_colorChooser.qml:
+
 2012-06-27  Brady Eidson  <beidson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=87513
