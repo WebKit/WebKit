@@ -4075,27 +4075,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         m_style->setLineBoxContain(lineBoxContainValue->value());
         return;
     }
-#if ENABLE(CSS_EXCLUSIONS)
-    case CSSPropertyWebkitShapeInside:
-        HANDLE_INHERIT_AND_INITIAL(wrapShapeInside, WrapShapeInside);
-        if (!primitiveValue)
-            return;
-        if (primitiveValue->getIdent() == CSSValueAuto)
-            m_style->setWrapShapeInside(0);
-        else if (primitiveValue->isShape())
-            m_style->setWrapShapeInside(primitiveValue->getShapeValue());
-        return;
 
-    case CSSPropertyWebkitShapeOutside:
-        HANDLE_INHERIT_AND_INITIAL(wrapShapeOutside, WrapShapeOutside);
-        if (!primitiveValue)
-            return;
-        if (primitiveValue->getIdent() == CSSValueAuto)
-            m_style->setWrapShapeOutside(0);
-        else if (primitiveValue->isShape())
-            m_style->setWrapShapeOutside(primitiveValue->getShapeValue());
-        return;
-#endif
     // CSS Fonts Module Level 3
     case CSSPropertyWebkitFontFeatureSettings: {
         if (primitiveValue && primitiveValue->getIdent() == CSSValueNormal) {
@@ -4414,6 +4394,8 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitWrapMargin:
     case CSSPropertyWebkitWrapPadding:
     case CSSPropertyWebkitWrapThrough:
+    case CSSPropertyWebkitShapeInside:
+    case CSSPropertyWebkitShapeOutside:
 #endif
     case CSSPropertyWhiteSpace:
     case CSSPropertyWidows:
