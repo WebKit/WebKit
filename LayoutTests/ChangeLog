@@ -1,3 +1,17 @@
+2012-06-27  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] ScrollbarLayerChromium should support painting forward-track and back-track in different styles.
+        https://bugs.webkit.org/show_bug.cgi?id=89908
+
+        Reviewed by Adrienne Walker.
+
+        Adds support for accelerated drawing (impl thread) of scrollbars with different styles for the
+        forward-track and back-track parts.
+
+        * platform/chromium/compositing/scrollbars/custom-composited-different-track-parts-expected.png: Added.
+        * platform/chromium/compositing/scrollbars/custom-composited-different-track-parts-expected.txt: Added.
+        * platform/chromium/compositing/scrollbars/custom-composited-different-track-parts.html: Added.
+
 2012-06-27  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding a new baseline that's required

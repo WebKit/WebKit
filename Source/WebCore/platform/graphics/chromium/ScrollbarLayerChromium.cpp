@@ -76,10 +76,15 @@ void ScrollbarLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 
     scrollbarLayer->setScrollbarOverlayStyle(m_scrollbarOverlayStyle);
 
-    if (m_background && m_background->texture()->isReserved())
-        scrollbarLayer->setBackgroundTextureId(m_background->texture()->textureId());
+    if (m_backTrack && m_backTrack->texture()->isReserved())
+        scrollbarLayer->setBackTrackTextureId(m_backTrack->texture()->textureId());
     else
-        scrollbarLayer->setBackgroundTextureId(0);
+        scrollbarLayer->setBackTrackTextureId(0);
+
+    if (m_foreTrack && m_foreTrack->texture()->isReserved())
+        scrollbarLayer->setForeTrackTextureId(m_foreTrack->texture()->textureId());
+    else
+        scrollbarLayer->setForeTrackTextureId(0);
 
     if (m_thumb && m_thumb->texture()->isReserved())
         scrollbarLayer->setThumbTextureId(m_thumb->texture()->textureId());
@@ -106,9 +111,9 @@ void ScrollbarLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 class ScrollbarBackgroundPainter : public LayerPainterChromium {
     WTF_MAKE_NONCOPYABLE(ScrollbarBackgroundPainter);
 public:
-    static PassOwnPtr<ScrollbarBackgroundPainter> create(ScrollbarThemeClient* scrollbar, ScrollbarThemeComposite* theme)
+    static PassOwnPtr<ScrollbarBackgroundPainter> create(ScrollbarThemeClient* scrollbar, ScrollbarThemeComposite* theme, ScrollbarPart trackPart)
     {
-        return adoptPtr(new ScrollbarBackgroundPainter(scrollbar, theme));
+        return adoptPtr(new ScrollbarBackgroundPainter(scrollbar, theme, trackPart));
     }
 
     virtual void paint(SkCanvas* canvas, const IntRect& contentRect, IntRect&) OVERRIDE
@@ -138,26 +143,22 @@ public:
         m_theme->paintTrackBackground(&context, m_scrollbar, trackPaintRect);
 
         bool thumbPresent = m_theme->hasThumb(m_scrollbar);
-        if (thumbPresent) {
-            // FIXME: There's no "paint the whole track" part. Drawing both the
-            // BackTrackPart and the ForwardTrackPart in their splitTrack rects
-            // ends up leaving a distinctive line. Painting one part as the
-            // entire track appears to be identical to painting both and
-            // covering up the split between them with the thumb.
-            m_theme->paintTrackPiece(&context, m_scrollbar, trackPaintRect, BackTrackPart);
-        }
+        if (thumbPresent)
+            m_theme->paintTrackPiece(&context, m_scrollbar, trackPaintRect, m_trackPart);
 
         m_theme->paintTickmarks(&context, m_scrollbar, trackPaintRect);
     }
 private:
-    ScrollbarBackgroundPainter(ScrollbarThemeClient* scrollbar, ScrollbarThemeComposite* theme)
+    ScrollbarBackgroundPainter(ScrollbarThemeClient* scrollbar, ScrollbarThemeComposite* theme, ScrollbarPart trackPart)
         : m_scrollbar(scrollbar)
         , m_theme(theme)
+        , m_trackPart(trackPart)
     {
     }
 
     ScrollbarThemeClient* m_scrollbar;
     ScrollbarThemeComposite* m_theme;
+    ScrollbarPart m_trackPart;
 };
 
 class ScrollbarThumbPainter : public LayerPainterChromium {
@@ -193,8 +194,8 @@ private:
 void ScrollbarLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
     if (!host || host != layerTreeHost()) {
-        m_backgroundUpdater.clear();
-        m_background.clear();
+        m_backTrackUpdater.clear();
+        m_backTrack.clear();
         m_thumbUpdater.clear();
         m_thumb.clear();
     }
@@ -207,10 +208,19 @@ void ScrollbarLayerChromium::createTextureUpdaterIfNeeded()
     bool useMapSubImage = layerTreeHost()->layerRendererCapabilities().usingMapSub;
     m_textureFormat = layerTreeHost()->layerRendererCapabilities().bestTextureFormat;
 
-    if (!m_backgroundUpdater)
-        m_backgroundUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarBackgroundPainter::create(m_scrollbar.get(), theme()), useMapSubImage);
-    if (!m_background)
-        m_background = m_backgroundUpdater->createTexture(layerTreeHost()->contentsTextureManager());
+    if (!m_backTrackUpdater)
+        m_backTrackUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarBackgroundPainter::create(m_scrollbar.get(), theme(), BackTrackPart), useMapSubImage);
+    if (!m_backTrack)
+        m_backTrack = m_backTrackUpdater->createTexture(layerTreeHost()->contentsTextureManager());
+
+    // Only create two-part track if we think the two parts could be different in appearance.
+    if (m_scrollbar->isCustomScrollbar()) {
+        if (!m_foreTrackUpdater)
+            m_foreTrackUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarBackgroundPainter::create(m_scrollbar.get(), theme(), ForwardTrackPart), useMapSubImage);
+        if (!m_foreTrack)
+            m_foreTrack = m_foreTrackUpdater->createTexture(layerTreeHost()->contentsTextureManager());
+    }
+
 
     if (!m_thumbUpdater)
         m_thumbUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarThumbPainter::create(m_scrollbar.get(), theme()), useMapSubImage);
@@ -253,7 +263,9 @@ void ScrollbarLayerChromium::update(CCTextureUpdater& updater, const CCOcclusion
 
     IntPoint scrollbarOrigin(m_scrollbar->x(), m_scrollbar->y());
     IntRect contentRect(scrollbarOrigin, contentBounds());
-    updatePart(m_backgroundUpdater.get(), m_background.get(), contentRect, updater);
+    updatePart(m_backTrackUpdater.get(), m_backTrack.get(), contentRect, updater);
+    if (m_foreTrack && m_foreTrackUpdater)
+        updatePart(m_foreTrackUpdater.get(), m_foreTrack.get(), contentRect, updater);
 
     // Consider the thumb to be at the origin when painting.
     IntRect thumbRect = IntRect(IntPoint(), theme()->thumbRect(m_scrollbar.get()).size());

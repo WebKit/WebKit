@@ -1,3 +1,34 @@
+2012-06-27  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] ScrollbarLayerChromium should support painting forward-track and back-track in different styles.
+        https://bugs.webkit.org/show_bug.cgi?id=89908
+
+        Reviewed by Adrienne Walker.
+
+        Test: platform/chromium/compositing/scrollbars/custom-composited-different-track-parts.html
+
+        Adds support for accelerated drawing (impl thread) of scrollbars with different styles for the
+        forward-track and back-track parts.
+
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+        (WebCore::ScrollbarLayerChromium::pushPropertiesTo):
+        (WebCore::ScrollbarBackgroundPainter::create):
+        (WebCore::ScrollbarBackgroundPainter::ScrollbarBackgroundPainter):
+        (ScrollbarBackgroundPainter):
+        (WebCore::ScrollbarLayerChromium::setLayerTreeHost):
+        (WebCore::ScrollbarLayerChromium::createTextureUpdaterIfNeeded):
+        (WebCore::ScrollbarLayerChromium::update):
+        * platform/graphics/chromium/ScrollbarLayerChromium.h:
+        (ScrollbarLayerChromium):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.cpp:
+        (WebCore::CCScrollbarLayerImpl::CCScrollbarLayerImpl):
+        (WebCore):
+        (WebCore::CCScrollbarLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.h:
+        (WebCore::CCScrollbarLayerImpl::setBackTrackTextureId):
+        (WebCore::CCScrollbarLayerImpl::setForeTrackTextureId):
+        (CCScrollbarLayerImpl):
+
 2012-06-27  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Allow screen space rects and occluding rects to be visualized for debugging.

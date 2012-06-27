@@ -66,11 +66,13 @@ private:
 
     GC3Denum m_textureFormat;
 
-    RefPtr<LayerTextureUpdater> m_backgroundUpdater;
+    RefPtr<LayerTextureUpdater> m_backTrackUpdater;
+    RefPtr<LayerTextureUpdater> m_foreTrackUpdater;
     RefPtr<LayerTextureUpdater> m_thumbUpdater;
 
     // All the parts of the scrollbar except the thumb
-    OwnPtr<LayerTextureUpdater::Texture> m_background;
+    OwnPtr<LayerTextureUpdater::Texture> m_backTrack;
+    OwnPtr<LayerTextureUpdater::Texture> m_foreTrack;
     OwnPtr<LayerTextureUpdater::Texture> m_thumb;
 
     ScrollbarOverlayStyle m_scrollbarOverlayStyle;
