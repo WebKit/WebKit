@@ -199,9 +199,13 @@ void HTMLStyleElement::removedFrom(ContainerNode* insertionPoint)
     // Now, if we want to register <style scoped> even if it's not inDocument,
     // we'd need to find a way to discern whether that is the case, or whether <style scoped> itself is about to be removed.
     if (m_scopedStyleRegistrationState != NotRegistered) {
-        ContainerNode* scope = parentNode()? parentNode() : insertionPoint;
-        if (m_scopedStyleRegistrationState == RegisteredInShadowRoot)
-            scope = scope->shadowRoot();
+        ContainerNode* scope;
+        if (m_scopedStyleRegistrationState == RegisteredInShadowRoot) {
+            scope = shadowRoot();
+            if (!scope)
+                scope = insertionPoint->shadowRoot();
+        } else
+            scope = parentNode() ? parentNode() : insertionPoint;
         unregisterWithScopingNode(scope);
     }
 #endif
