@@ -463,10 +463,31 @@ public:
     
     bool byValIsPure(Node& node)
     {
-        return at(node.child2()).shouldSpeculateInteger()
-            && ((node.op() == PutByVal || node.op() == PutByValAlias)
-                ? isActionableMutableArraySpeculation(at(node.child1()).prediction())
-                : isActionableArraySpeculation(at(node.child1()).prediction()));
+        if (!at(node.child2()).shouldSpeculateInteger())
+            return false;
+        SpeculatedType prediction = at(node.child1()).prediction();
+        switch (node.op()) {
+        case PutByVal:
+            if (!isActionableMutableArraySpeculation(prediction))
+                return false;
+            if (isArraySpeculation(prediction))
+                return false;
+            return true;
+            
+        case PutByValAlias:
+            if (!isActionableMutableArraySpeculation(prediction))
+                return false;
+            return true;
+            
+        case GetByVal:
+            if (!isActionableArraySpeculation(prediction))
+                return false;
+            return true;
+            
+        default:
+            ASSERT_NOT_REACHED();
+            return false;
+        }
     }
     
     bool clobbersWorld(Node& node)
@@ -484,6 +505,8 @@ public:
         case CompareEq:
             return !isPredictedNumerical(node);
         case GetByVal:
+        case PutByVal:
+        case PutByValAlias:
             return !byValIsPure(node);
         default:
             ASSERT_NOT_REACHED();

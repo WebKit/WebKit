@@ -1,3 +1,29 @@
+2012-06-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG PutByValAlias is too aggressive
+        https://bugs.webkit.org/show_bug.cgi?id=90026
+        <rdar://problem/11751830>
+
+        Reviewed by Gavin Barraclough.
+        
+        For CSE on normal arrays, we now treat PutByVal as impure. This does not appear to affect
+        performance by much.
+        
+        For CSE on typed arrays, we fix PutByValAlias by making GetByVal speculate that the access
+        is within bounds. This also has the effect of making our out-of-bounds handling consistent
+        with WebCore.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::byValIsPure):
+        (JSC::DFG::Graph::clobbersWorld):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+
 2012-06-26  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Add JSC statistics into about:memory

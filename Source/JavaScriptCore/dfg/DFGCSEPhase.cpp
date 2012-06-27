@@ -1080,10 +1080,15 @@ private:
             break;
             
         case PutByVal:
-            if (m_graph.byValIsPure(node)
-                && !m_graph[node.child1()].shouldSpeculateArguments()
-                && getByValLoadElimination(node.child1().index(), node.child2().index()) != NoNode)
+            if (isActionableMutableArraySpeculation(m_graph[node.child1()].prediction())
+                && m_graph[node.child2()].shouldSpeculateInteger()
+                && !m_graph[node.child1()].shouldSpeculateArguments()) {
+                NodeIndex nodeIndex = getByValLoadElimination(
+                    node.child1().index(), node.child2().index());
+                if (nodeIndex == NoNode)
+                    break;
                 node.setOp(PutByValAlias);
+            }
             break;
             
         case CheckStructure:

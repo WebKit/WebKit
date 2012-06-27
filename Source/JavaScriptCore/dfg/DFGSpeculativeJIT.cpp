@@ -2000,10 +2000,10 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(const TypedArrayDescriptor& 
         return;
     }
 
-    MacroAssembler::Jump inBounds = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(baseReg, descriptor.m_lengthOffset));
-    m_jit.xorPtr(resultReg, resultReg);
-    MacroAssembler::Jump outOfBounds = m_jit.jump();
-    inBounds.link(&m_jit);
+    speculationCheck(
+        Uncountable, JSValueRegs(), NoNode,
+        m_jit.branch32(
+            MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, descriptor.m_lengthOffset)));
     switch (elementSize) {
     case 1:
         if (signedness == SignedTypedArray)
@@ -2023,7 +2023,6 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(const TypedArrayDescriptor& 
     default:
         ASSERT_NOT_REACHED();
     }
-    outOfBounds.link(&m_jit);
     if (elementSize < 4 || signedness == SignedTypedArray) {
         integerResult(resultReg, m_compileIndex);
         return;
@@ -2162,11 +2161,10 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(const TypedArrayDescriptor
     FPRTemporary result(this);
     FPRReg resultReg = result.fpr();
     ASSERT(speculationRequirements != NoTypedArraySpecCheck);
-    MacroAssembler::Jump inBounds = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(baseReg, descriptor.m_lengthOffset));
-    static const double zero = 0;
-    m_jit.loadDouble(&zero, resultReg);
-    MacroAssembler::Jump outOfBounds = m_jit.jump();
-    inBounds.link(&m_jit);
+    speculationCheck(
+        Uncountable, JSValueRegs(), NoNode,
+        m_jit.branch32(
+            MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, descriptor.m_lengthOffset)));
     switch (elementSize) {
     case 4:
         m_jit.loadFloat(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesFour), resultReg);
@@ -2183,7 +2181,6 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(const TypedArrayDescriptor
     default:
         ASSERT_NOT_REACHED();
     }
-    outOfBounds.link(&m_jit);
     doubleResult(resultReg, m_compileIndex);
 }
 

@@ -1,3 +1,21 @@
+2012-06-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG PutByValAlias is too aggressive
+        https://bugs.webkit.org/show_bug.cgi?id=90026
+        <rdar://problem/11751830>
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/dfg-put-by-val-setter-then-get-by-val-expected.txt: Added.
+        * fast/js/dfg-put-by-val-setter-then-get-by-val.html: Added.
+        * fast/js/dfg-uint8clampedarray-out-of-bounds-put-by-val-alias-expected.txt: Added.
+        * fast/js/dfg-uint8clampedarray-out-of-bounds-put-by-val-alias.html: Added.
+        * fast/js/script-tests/dfg-put-by-val-setter-then-get-by-val.js: Added.
+        (foo):
+        (for):
+        * fast/js/script-tests/dfg-uint8clampedarray-out-of-bounds-put-by-val-alias.js: Added.
+        (foo):
+
 2012-06-26  Kevin Ellis  <kevers@chromium.org>
 
         Touch adjustment does not target shadow DOM elements
