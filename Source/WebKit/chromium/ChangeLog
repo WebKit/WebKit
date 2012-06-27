@@ -1,3 +1,16 @@
+2012-06-27  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Expose WebIDBTransaction::commit() method in public API
+        https://bugs.webkit.org/show_bug.cgi?id=90089
+
+        Reviewed by James Robinson.
+
+        Prep work for http://webkit.org/b/89379 which requires empty transactions to
+        trigger a commit from the front-end.
+
+        * public/WebIDBTransaction.h:
+        (WebKit::WebIDBTransaction::commit):
+
 2012-06-27  Josh Horwich  <jhorwich@chromium.org>
 
         [chromium] Expose device scale factor in WebPluginContainer
