@@ -1,3 +1,13 @@
+2012-06-26  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
+
+        Unexpected element sizes when mixing inline-table with box-sizing
+        https://bugs.webkit.org/show_bug.cgi?id=89819
+
+        Reviewed by Julien Chaffraix.
+
+        * fast/box-sizing/css-table-with-box-sizing-expected.txt: Added.
+        * fast/box-sizing/css-table-with-box-sizing.html: Added.
+
 2012-06-26  Filip Pizlo  <fpizlo@apple.com>
 
         DFG PutByValAlias is too aggressive
