@@ -32,7 +32,7 @@
 #if ENABLE(NETWORK_INFO)
 namespace WebCore {
 
-NetworkInfo::NetworkInfo(long bandwidth, bool metered)
+NetworkInfo::NetworkInfo(double bandwidth, bool metered)
     : m_bandwidth(bandwidth)
     , m_metered(metered)
 {

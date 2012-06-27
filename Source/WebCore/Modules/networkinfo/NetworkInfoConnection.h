@@ -51,7 +51,7 @@ public:
 
     ~NetworkInfoConnection();
 
-    unsigned int bandwidth() const;
+    double bandwidth() const;
     bool metered() const;
     
     void didChangeNetworkInformation(PassRefPtr<Event>, PassRefPtr<NetworkInfo>);

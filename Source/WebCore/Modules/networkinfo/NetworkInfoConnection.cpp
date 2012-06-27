@@ -55,7 +55,7 @@ NetworkInfoConnection::~NetworkInfoConnection()
 {
 }
 
-unsigned int NetworkInfoConnection::bandwidth() const
+double NetworkInfoConnection::bandwidth() const
 {
     if (m_networkInfo)
         return m_networkInfo->bandwidth();

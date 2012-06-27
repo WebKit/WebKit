@@ -65,7 +65,7 @@ void NetworkInfoClientEfl::stopUpdating()
     eeze_shutdown();
 }
 
-unsigned int NetworkInfoClientEfl::bandwidth() const
+double NetworkInfoClientEfl::bandwidth() const
 {
     // FIXME : This function should consider cellular network as well. For example, 2G, 3G and 4G.
     // See https://bugs.webkit.org/show_bug.cgi?id=89851 for detail.
@@ -82,14 +82,14 @@ unsigned int NetworkInfoClientEfl::bandwidth() const
     if (!address)
         return 0; // If network is offline, return 0.
 
-    unsigned int bandwidth;
+    double bandwidth;
     const char* attribute = eeze_net_attribute_get(ethNet, "speed");
     if (attribute) {
         bool ok;
         bandwidth = String::fromUTF8(attribute).toUIntStrict(&ok);
     } else
-        bandwidth = UINT_MAX; // If bandwidth is unknown, return infinity value.
-    
+        bandwidth = std::numeric_limits<double>::infinity(); // If bandwidth is unknown, return infinity value.
+
     eeze_net_free(ethNet);
 
     return bandwidth / 8; // MB/s

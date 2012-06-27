@@ -1,3 +1,18 @@
+2012-06-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Change return type in bandwidth attribute of network information API
+        https://bugs.webkit.org/show_bug.cgi?id=89959
+
+        Reviewed by Adam Barth.
+
+        According to network information API spec, bandwidth attribute should return double type.
+        But, existing implementation has used *long* and *unsigned int* types.
+
+        * WebCoreSupport/NetworkInfoClientEfl.cpp:
+        (WebCore::NetworkInfoClientEfl::bandwidth):
+        * WebCoreSupport/NetworkInfoClientEfl.h:
+        (NetworkInfoClientEfl):
+
 2012-06-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Implement Network Information API

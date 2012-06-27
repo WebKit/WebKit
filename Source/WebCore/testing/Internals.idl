@@ -150,7 +150,7 @@ module window {
 #endif
 
 #if defined(ENABLE_NETWORK_INFO) && ENABLE_NETWORK_INFO
-        void setNetworkInformation(in Document document, in DOMString eventType, in long bandwidth, in boolean metered) raises (DOMException);
+        void setNetworkInformation(in Document document, in DOMString eventType, in double bandwidth, in boolean metered) raises (DOMException);
 #endif
 
         [Conditional=INSPECTOR] unsigned long numberOfLiveNodes();

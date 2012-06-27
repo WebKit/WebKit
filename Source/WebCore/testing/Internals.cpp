@@ -1005,7 +1005,7 @@ void Internals::setBatteryStatus(Document* document, const String& eventType, bo
 #endif
 }
 
-void Internals::setNetworkInformation(Document* document, const String& eventType, long bandwidth, bool metered, ExceptionCode& ec)
+void Internals::setNetworkInformation(Document* document, const String& eventType, double bandwidth, bool metered, ExceptionCode& ec)
 {
     if (!document || !document->page()) {
         ec = INVALID_ACCESS_ERR;

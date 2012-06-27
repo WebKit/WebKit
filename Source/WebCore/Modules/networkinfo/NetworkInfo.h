@@ -38,15 +38,15 @@ namespace WebCore {
 
 class NetworkInfo : public RefCounted<NetworkInfo> {
 public:
-    static PassRefPtr<NetworkInfo> create(long bandwidth, bool metered) { return adoptRef(new NetworkInfo(bandwidth, metered)); }
+    static PassRefPtr<NetworkInfo> create(double bandwidth, bool metered) { return adoptRef(new NetworkInfo(bandwidth, metered)); }
 
-    long bandwidth() const { return m_bandwidth; }
+    double bandwidth() const { return m_bandwidth; }
     bool metered() const { return m_metered; }
 
 private:
-    NetworkInfo(long bandwidth, bool metered);
+    NetworkInfo(double bandwidth, bool metered);
 
-    long m_bandwidth;
+    double m_bandwidth;
     bool m_metered;
 };
 

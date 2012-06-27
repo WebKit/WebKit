@@ -1,3 +1,33 @@
+2012-06-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Change return type in bandwidth attribute of network information API
+        https://bugs.webkit.org/show_bug.cgi?id=89959
+
+        Reviewed by Adam Barth.
+
+        According to network information API spec, bandwidth attribute should return double type.
+        But, existing implementation has used *long* and *unsigned int* types.
+
+        No new tests. Covered by existing tests.
+
+        * Modules/networkinfo/NetworkInfo.cpp:
+        (WebCore::NetworkInfo::NetworkInfo):
+        * Modules/networkinfo/NetworkInfo.h:
+        (WebCore::NetworkInfo::create):
+        (WebCore::NetworkInfo::bandwidth):
+        (NetworkInfo):
+        * Modules/networkinfo/NetworkInfoClient.h:
+        (NetworkInfoClient):
+        * Modules/networkinfo/NetworkInfoConnection.cpp:
+        (WebCore::NetworkInfoConnection::bandwidth):
+        * Modules/networkinfo/NetworkInfoConnection.h:
+        (NetworkInfoConnection):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setNetworkInformation):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-06-26  Luke Macpherson  <macpherson@chromium.org>
 
         Be careful not to read past the end of input in CSSParser::lex() when looking for variable definitions.

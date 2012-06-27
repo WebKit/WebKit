@@ -41,7 +41,7 @@ public:
     virtual void startUpdating();
     virtual void stopUpdating();
 
-    virtual unsigned int bandwidth() const;
+    virtual double bandwidth() const;
     virtual bool metered() const;
 
 private:
