@@ -48,16 +48,16 @@ template <typename View>
 void AcceptsFirstMouse::runTest(View view)
 {
     RetainPtr<NSWindow> window(AdoptNS, [[NSWindow alloc] initWithContentRect:view.frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
-    [window.get().contentView addSubview:view];
+    [[window.get() contentView] addSubview:view];
 
     CGFloat viewHeight = view.bounds.size.height;
 
     NSPoint pointInsideSelection = NSMakePoint(50, viewHeight - 50);
-    NSEvent *mouseEventInsideSelection = [NSEvent mouseEventWithType:NSLeftMouseDown location:pointInsideSelection modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:nil eventNumber:0 clickCount:1 pressure:1];
+    NSEvent *mouseEventInsideSelection = [NSEvent mouseEventWithType:NSLeftMouseDown location:pointInsideSelection modifierFlags:0 timestamp:0 windowNumber:[window.get() windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1];
     EXPECT_TRUE([[view hitTest:pointInsideSelection] acceptsFirstMouse:mouseEventInsideSelection]);
 
     NSPoint pointOutsideSelection = NSMakePoint(50, viewHeight - 150);
-    NSEvent *mouseEventOutsideSelection = [NSEvent mouseEventWithType:NSLeftMouseDown location:pointOutsideSelection modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:nil eventNumber:0 clickCount:1 pressure:1];
+    NSEvent *mouseEventOutsideSelection = [NSEvent mouseEventWithType:NSLeftMouseDown location:pointOutsideSelection modifierFlags:0 timestamp:0 windowNumber:[window.get() windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1];
     EXPECT_FALSE([[view hitTest:pointInsideSelection] acceptsFirstMouse:mouseEventOutsideSelection]);
 }
 

@@ -1,3 +1,18 @@
+2012-06-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix gcc build after r121302
+        https://bugs.webkit.org/show_bug.cgi?id=90055
+
+        Reviewed by Mark Rowe.
+
+        Assume RTTI is always disabled so that gtest builds on XCode 3.2.6.
+
+        It appears that gcc doesn't like window.get().* inside a template so replace that by [window.get() *] instead.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Tests/mac/AcceptsFirstMouse.mm:
+        (TestWebKitAPI::AcceptsFirstMouse::runTest):
+
 2012-06-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Add master.cfg unittest to help migration - pass BuildStep instances instead of BuildStep subclasses

@@ -1,3 +1,14 @@
+2012-06-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix gcc build after r121302
+        https://bugs.webkit.org/show_bug.cgi?id=90055
+
+        Reviewed by Mark Rowe.
+
+        Assume RTTI is disabled so that gtest builds under XCode 3.2.6.
+
+        * gtest/xcode/Config/General.xcconfig:
+
 2012-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
