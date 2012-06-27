@@ -1,3 +1,14 @@
+2012-06-27  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Fix lookup location for sqlite sources
+
+        Don't look in the install dir - we are unlikely to find anything there
+        unless we are doing a developer build.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-06-27  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Add support for the Gamepad API
