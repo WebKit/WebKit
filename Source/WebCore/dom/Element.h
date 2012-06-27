@@ -489,9 +489,6 @@ private:
     QualifiedName m_tagName;
     virtual OwnPtr<NodeRareData> createRareData();
 
-    ElementRareData* elementRareData() const;
-    ElementRareData* ensureElementRareData();
-
     SpellcheckAttributeState spellcheckAttributeState() const;
 
     void updateNamedItemRegistration(const AtomicString& oldName, const AtomicString& newName);
@@ -500,6 +497,9 @@ private:
     void unregisterNamedFlowContentNode();
 
 private:
+    ElementRareData* elementRareData() const;
+    ElementRareData* ensureElementRareData();
+
     mutable OwnPtr<ElementAttributeData> m_attributeData;
 };
     
