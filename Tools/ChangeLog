@@ -1,3 +1,11 @@
+2012-06-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Moving from committers to reviewers :-)
+
+        Rubber stamped by Filip Pizlo.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-06-27  Dirk Pranke  <dpranke@chromium.org>
 
         Derive ChromiumPort from WebKitPort to add support for missing symbols to skip tests
