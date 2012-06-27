@@ -93,15 +93,6 @@ void CCSingleThreadProxy::startPageScaleAnimation(const IntSize& targetPosition,
     m_layerTreeHostImpl->startPageScaleAnimation(targetPosition, useAnchor, scale, monotonicallyIncreasingTime(), duration);
 }
 
-CCGraphicsContext* CCSingleThreadProxy::context()
-{
-    ASSERT(CCProxy::isMainThread());
-    if (m_contextBeforeInitialization)
-        return m_contextBeforeInitialization.get();
-    DebugScopedSetImplThread impl;
-    return m_layerTreeHostImpl->context();
-}
-
 void CCSingleThreadProxy::finishAllRendering()
 {
     ASSERT(CCProxy::isMainThread());

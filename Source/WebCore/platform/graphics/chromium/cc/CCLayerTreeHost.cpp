@@ -285,12 +285,6 @@ void CCLayerTreeHost::didLoseContext()
     setNeedsCommit();
 }
 
-// Temporary hack until WebViewImpl context creation gets simplified
-CCGraphicsContext* CCLayerTreeHost::context()
-{
-    return m_proxy->context();
-}
-
 bool CCLayerTreeHost::compositeAndReadback(void *pixels, const IntRect& rect)
 {
     m_triggerIdlePaints = false;

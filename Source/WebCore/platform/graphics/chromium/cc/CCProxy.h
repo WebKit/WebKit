@@ -116,9 +116,6 @@ public:
     static void setMainThreadBlocked(bool);
 #endif
 
-    // Temporary hack while render_widget still does scheduling for CCLayerTreeHostMainThreadI
-    virtual CCGraphicsContext* context() = 0;
-
     // Testing hooks
     virtual void loseContext() = 0;
 

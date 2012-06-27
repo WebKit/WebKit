@@ -1,3 +1,23 @@
+2012-06-26  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove WebView::graphicsContext3D getter
+        https://bugs.webkit.org/show_bug.cgi?id=89916
+
+        Reviewed by Adrienne Walker.
+
+        Removes WebView::graphicsContext3D getter. This getter was used to access the compositor's context, which is an
+        inherently dangerous operation since the compositor context may not be safe to use on the main thread and has
+        somewhat complicated creation / recreation semantics. A shared context is exposed
+        (WebView::sharedGraphicsContext3D) for callers who may want access to a context in a share group with the
+        compositor.
+
+        * public/WebView.h:
+        (WebView):
+        * src/WebLayerTreeView.cpp:
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-06-26  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Decrease the number of conditional blocks in features.gypi

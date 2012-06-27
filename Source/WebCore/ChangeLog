@@ -1,3 +1,24 @@
+2012-06-26  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove WebView::graphicsContext3D getter
+        https://bugs.webkit.org/show_bug.cgi?id=89916
+
+        Reviewed by Adrienne Walker.
+
+        Deletes code supporting compositor context getter.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        (CCProxy):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        (CCSingleThreadProxy):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+
 2012-06-26  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
 
         Unexpected element sizes when mixing inline-table with box-sizing

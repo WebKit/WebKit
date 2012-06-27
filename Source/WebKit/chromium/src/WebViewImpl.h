@@ -520,13 +520,6 @@ public:
     void scheduleAnimation();
 #endif
 
-    // Returns the onscreen 3D context used by the compositor. This is
-    // used by the renderer's code to set up resource sharing between
-    // the compositor's context and subordinate contexts for APIs like
-    // WebGL. Returns 0 if compositing support is not compiled in or
-    // we could not successfully instantiate a context.
-    virtual WebGraphicsContext3D* graphicsContext3D();
-
     virtual WebGraphicsContext3D* sharedGraphicsContext3D();
 
     PassOwnPtr<WebGraphicsContext3D> createCompositorGraphicsContext3D();

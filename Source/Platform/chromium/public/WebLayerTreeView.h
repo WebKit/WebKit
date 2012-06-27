@@ -167,11 +167,6 @@ public:
     // This can have a significant performance impact and should be used with care.
     WEBKIT_EXPORT void finishAllRendering();
 
-    // Returns the context being used for rendering this view. In threaded compositing mode, it is
-    // not safe to use this context for anything on the main thread, other than passing the pointer to
-    // the compositor thread.
-    WEBKIT_EXPORT WebGraphicsContext3D* context();
-
     // Debugging / dangerous ---------------------------------------------
 
     // Fills in a WebRenderingStats struct containing information about the state of the compositor.

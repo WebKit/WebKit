@@ -157,11 +157,6 @@ void CCThreadProxy::requestStartPageScaleAnimationOnImplThread(IntSize targetPos
         m_layerTreeHostImpl->startPageScaleAnimation(targetPosition, useAnchor, scale, monotonicallyIncreasingTime(), duration);
 }
 
-CCGraphicsContext* CCThreadProxy::context()
-{
-    return 0;
-}
-
 void CCThreadProxy::finishAllRendering()
 {
     ASSERT(CCProxy::isMainThread());

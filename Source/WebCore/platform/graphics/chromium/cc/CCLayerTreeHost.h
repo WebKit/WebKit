@@ -185,10 +185,6 @@ public:
     void composite();
     void scheduleComposite();
 
-    // NOTE: The returned value can only be used to make GL calls or make the
-    // context current on the thread the compositor is running on!
-    CCGraphicsContext* context();
-
     // Composites and attempts to read back the result into the provided
     // buffer. If it wasn't possible, e.g. due to context lost, will return
     // false.

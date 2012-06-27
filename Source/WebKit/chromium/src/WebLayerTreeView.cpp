@@ -175,11 +175,6 @@ void WebLayerTreeView::finishAllRendering()
     m_private->layerTreeHost()->finishAllRendering();
 }
 
-WebGraphicsContext3D* WebLayerTreeView::context()
-{
-    return m_private->layerTreeHost()->context()->context3D();
-}
-
 void WebLayerTreeView::renderingStats(WebRenderingStats& stats) const
 {
     CCRenderingStats ccStats;

@@ -3716,30 +3716,6 @@ void WebViewImpl::updateLayerTreeViewport()
     m_layerTreeView.setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
 }
 
-WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
-{
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_page->settings()->acceleratedCompositingEnabled() && allowsAcceleratedCompositing()) {
-        if (!m_layerTreeView.isNull()) {
-            WebGraphicsContext3D* context = m_layerTreeView.context();
-            if (context && !context->isContextLost())
-                return context;
-        }
-        // If we get here it means that some system needs access to the context the compositor will use but the compositor itself
-        // hasn't requested a context or it was unable to successfully instantiate a context.
-        // We need to return the context that the compositor will later use so we allocate a new context (if needed) and stash it
-        // until the compositor requests and takes ownership of the context via createLayerTreeHost3D().
-        if (!m_temporaryOnscreenGraphicsContext3D)
-            m_temporaryOnscreenGraphicsContext3D = createCompositorGraphicsContext3D();
-
-        WebGraphicsContext3D* webContext = m_temporaryOnscreenGraphicsContext3D.get();
-        if (webContext && !webContext->isContextLost())
-            return webContext;
-    }
-#endif
-    return 0;
-}
-
 WebGraphicsContext3D* WebViewImpl::sharedGraphicsContext3D()
 {
     if (!m_page->settings()->acceleratedCompositingEnabled() || !allowsAcceleratedCompositing())
