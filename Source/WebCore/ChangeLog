@@ -1,3 +1,55 @@
+2012-06-27  Kentaro Hara  <haraken@chromium.org>
+
+        Rename Element::rareData() to Element::elementRareData(), and Element::ensureRareData() to Element::ensureElementRareData()
+        https://bugs.webkit.org/show_bug.cgi?id=90050
+
+        Reviewed by Ryosuke Niwa.
+
+        Element::rareData()/Element::ensureRareData() and
+        Node::rareData()/Node::ensureRareData() are confusing. They are not virtual
+        methods. For clarification, we can rename Element::rareData() to
+        Element::elementRareData(), and Element::ensureRareData() to
+        Element::ensureElementRareData().
+
+        c.f. SVGRareData uses SVGElement::rareSVGData() and SVGElement::ensureRareSVGData().
+        (We might want to rename them to SVGElement::svgRareData() and
+        SVGElement::ensureSVGRareData() in a follow-up patch.)
+
+        No tests. No change in behavior.
+
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::elementRareData):
+        (WebCore::Element::ensureElementRareData):
+        (WebCore::Element::attributes):
+        (WebCore::Element::attach):
+        (WebCore::Element::detach):
+        (WebCore::Element::recalcStyle):
+        (WebCore::Element::shadow):
+        (WebCore::Element::ensureShadow):
+        (WebCore::Element::shadowPseudoId):
+        (WebCore::Element::setShadowPseudoId):
+        (WebCore::Element::focus):
+        (WebCore::Element::minimumSizeForResizing):
+        (WebCore::Element::setMinimumSizeForResizing):
+        (WebCore::Element::computedStyle):
+        (WebCore::Element::setStyleAffectedByEmpty):
+        (WebCore::Element::styleAffectedByEmpty):
+        (WebCore::Element::cancelFocusAppearanceUpdate):
+        (WebCore::Element::classList):
+        (WebCore::Element::optionalClassList):
+        (WebCore::Element::dataset):
+        (WebCore::Element::containsFullScreenElement):
+        (WebCore::Element::setContainsFullScreenElement):
+        (WebCore::Element::hasNamedNodeMap):
+        (WebCore::Element::ensureCachedHTMLCollection):
+        (WebCore::Element::savedLayerScrollOffset):
+        (WebCore::Element::setSavedLayerScrollOffset):
+        * dom/Element.h:
+        (Element):
+        * html/LabelableElement.cpp:
+        (WebCore::LabelableElement::labels):
+
 2012-06-26  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Remove unused build scripts and empty folders for JavaScriptCore w/ gyp

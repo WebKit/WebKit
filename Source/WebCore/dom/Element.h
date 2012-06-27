@@ -489,8 +489,8 @@ private:
     QualifiedName m_tagName;
     virtual OwnPtr<NodeRareData> createRareData();
 
-    ElementRareData* rareData() const;
-    ElementRareData* ensureRareData();
+    ElementRareData* elementRareData() const;
+    ElementRareData* ensureElementRareData();
 
     SpellcheckAttributeState spellcheckAttributeState() const;
 

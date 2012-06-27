@@ -137,7 +137,7 @@ Element::~Element()
 
     if (ElementShadow* elementShadow = shadow()) {
         elementShadow->removeAllShadowRoots();
-        rareData()->m_shadow.clear();
+        elementRareData()->m_shadow.clear();
     }
 
     if (hasAttrList()) {
@@ -146,15 +146,15 @@ Element::~Element()
     }
 }
 
-inline ElementRareData* Element::rareData() const
+inline ElementRareData* Element::elementRareData() const
 {
     ASSERT(hasRareData());
     return static_cast<ElementRareData*>(NodeRareData::rareDataFromMap(this));
 }
     
-inline ElementRareData* Element::ensureRareData()
+inline ElementRareData* Element::ensureElementRareData()
 {
-    return static_cast<ElementRareData*>(Node::ensureRareData());
+    return static_cast<ElementRareData*>(ensureRareData());
 }
     
 OwnPtr<NodeRareData> Element::createRareData()
@@ -234,7 +234,7 @@ void Element::setBooleanAttribute(const QualifiedName& name, bool value)
 NamedNodeMap* Element::attributes() const
 {
     ensureUpdatedAttributeData();
-    ElementRareData* rareData = const_cast<Element*>(this)->ensureRareData();
+    ElementRareData* rareData = const_cast<Element*>(this)->ensureElementRareData();
     if (NamedNodeMap* attributeMap = rareData->m_attributeMap.get())
         return attributeMap;
 
@@ -948,7 +948,7 @@ void Element::attach()
     }
 
     if (hasRareData()) {   
-        ElementRareData* data = rareData();
+        ElementRareData* data = elementRareData();
         if (data->needsFocusAppearanceUpdateSoonAfterAttach()) {
             if (isFocusable() && document()->focusedNode() == this)
                 document()->updateFocusAppearanceSoon(false /* don't restore selection */);
@@ -974,7 +974,7 @@ void Element::detach()
     unregisterNamedFlowContentNode();
     cancelFocusAppearanceUpdate();
     if (hasRareData())
-        rareData()->resetComputedStyle();
+        elementRareData()->resetComputedStyle();
 
     if (ElementShadow* shadow = this->shadow()) {
         detachChildrenIfNeeded();
@@ -1048,7 +1048,7 @@ void Element::recalcStyle(StyleChange change)
 
     if ((change > NoChange || needsStyleRecalc())) {
         if (hasRareData()) {
-            ElementRareData* data = rareData();
+            ElementRareData* data = elementRareData();
             data->resetComputedStyle();
             data->m_styleAffectedByEmpty = false;
         }
@@ -1162,16 +1162,16 @@ ElementShadow* Element::shadow() const
     if (!hasRareData())
         return 0;
 
-    return rareData()->m_shadow.get();
+    return elementRareData()->m_shadow.get();
 }
 
 ElementShadow* Element::ensureShadow()
 {
-    if (ElementShadow* shadow = ensureRareData()->m_shadow.get())
+    if (ElementShadow* shadow = ensureElementRareData()->m_shadow.get())
         return shadow;
 
-    rareData()->m_shadow = adoptPtr(new ElementShadow());
-    return rareData()->m_shadow.get();
+    elementRareData()->m_shadow = adoptPtr(new ElementShadow());
+    return elementRareData()->m_shadow.get();
 }
 
 ShadowRoot* Element::ensureShadowRoot()
@@ -1184,7 +1184,7 @@ ShadowRoot* Element::ensureShadowRoot()
 
 const AtomicString& Element::shadowPseudoId() const
 {
-    return hasRareData() ? rareData()->m_shadowPseudoId : nullAtom;
+    return hasRareData() ? elementRareData()->m_shadowPseudoId : nullAtom;
 }
 
 void Element::setShadowPseudoId(const AtomicString& id, ExceptionCode& ec)
@@ -1197,7 +1197,7 @@ void Element::setShadowPseudoId(const AtomicString& id, ExceptionCode& ec)
         return;
     }
 
-    ensureRareData()->m_shadowPseudoId = id;
+    ensureElementRareData()->m_shadowPseudoId = id;
 }
 
 bool Element::childTypeAllowed(NodeType type) const
@@ -1554,7 +1554,7 @@ void Element::focus(bool restorePreviousSelection)
     doc->updateLayoutIgnorePendingStylesheets();
 
     if (!isFocusable()) {
-        ensureRareData()->setNeedsFocusAppearanceUpdateSoonAfterAttach(true);
+        ensureElementRareData()->setNeedsFocusAppearanceUpdateSoonAfterAttach(true);
         return;
     }
         
@@ -1624,14 +1624,14 @@ String Element::title() const
 
 LayoutSize Element::minimumSizeForResizing() const
 {
-    return hasRareData() ? rareData()->m_minimumSizeForResizing : defaultMinimumSizeForResizing();
+    return hasRareData() ? elementRareData()->m_minimumSizeForResizing : defaultMinimumSizeForResizing();
 }
 
 void Element::setMinimumSizeForResizing(const LayoutSize& size)
 {
     if (size == defaultMinimumSizeForResizing() && !hasRareData())
         return;
-    ensureRareData()->m_minimumSizeForResizing = size;
+    ensureElementRareData()->m_minimumSizeForResizing = size;
 }
 
 RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
@@ -1652,7 +1652,7 @@ RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
         // document tree and figure out when to destroy the computed style for such elements.
         return 0;
 
-    ElementRareData* data = ensureRareData();
+    ElementRareData* data = ensureElementRareData();
     if (!data->m_computedStyle)
         data->m_computedStyle = document()->styleForElementIgnoringPendingStylesheets(this);
     return pseudoElementSpecifier ? data->m_computedStyle->getCachedPseudoStyle(pseudoElementSpecifier) : data->m_computedStyle.get();
@@ -1660,13 +1660,13 @@ RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
 
 void Element::setStyleAffectedByEmpty()
 {
-    ElementRareData* data = ensureRareData();
+    ElementRareData* data = ensureElementRareData();
     data->m_styleAffectedByEmpty = true;
 }
 
 bool Element::styleAffectedByEmpty() const
 {
-    return hasRareData() && rareData()->m_styleAffectedByEmpty;
+    return hasRareData() && elementRareData()->m_styleAffectedByEmpty;
 }
 
 AtomicString Element::computeInheritedLanguage() const
@@ -1694,7 +1694,7 @@ AtomicString Element::computeInheritedLanguage() const
 void Element::cancelFocusAppearanceUpdate()
 {
     if (hasRareData())
-        rareData()->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
+        elementRareData()->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
     if (document()->focusedNode() == this)
         document()->cancelFocusAppearanceUpdate();
 }
@@ -1754,7 +1754,7 @@ bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
 
 DOMTokenList* Element::classList()
 {
-    ElementRareData* data = ensureRareData();
+    ElementRareData* data = ensureElementRareData();
     if (!data->m_classList)
         data->m_classList = ClassList::create(this);
     return data->m_classList.get();
@@ -1764,12 +1764,12 @@ DOMTokenList* Element::optionalClassList() const
 {
     if (!hasRareData())
         return 0;
-    return rareData()->m_classList.get();
+    return elementRareData()->m_classList.get();
 }
 
 DOMStringMap* Element::dataset()
 {
-    ElementRareData* data = ensureRareData();
+    ElementRareData* data = ensureElementRareData();
     if (!data->m_datasetDOMStringMap)
         data->m_datasetDOMStringMap = DatasetDOMStringMap::create(this);
     return data->m_datasetDOMStringMap.get();
@@ -1846,12 +1846,12 @@ void Element::webkitRequestFullScreen(unsigned short flags)
 
 bool Element::containsFullScreenElement() const
 {
-    return hasRareData() ? rareData()->m_containsFullScreenElement : false;
+    return hasRareData() ? elementRareData()->m_containsFullScreenElement : false;
 }
 
 void Element::setContainsFullScreenElement(bool flag)
 {
-    ensureRareData()->m_containsFullScreenElement = flag;
+    ensureElementRareData()->m_containsFullScreenElement = flag;
     setNeedsStyleRecalc(SyntheticStyleChange);
 }
 
@@ -1972,7 +1972,7 @@ bool Element::fastAttributeLookupAllowed(const QualifiedName& name) const
 #ifdef DUMP_NODE_STATISTICS
 bool Element::hasNamedNodeMap() const
 {
-    return hasRareData() && rareData()->m_attributeMap;
+    return hasRareData() && elementRareData()->m_attributeMap;
 }
 #endif
 
@@ -2041,19 +2041,19 @@ void Element::updateExtraNamedItemRegistration(const AtomicString& oldId, const 
 
 HTMLCollection* Element::ensureCachedHTMLCollection(CollectionType type)
 {
-    return ensureRareData()->ensureCachedHTMLCollection(this, type);
+    return ensureElementRareData()->ensureCachedHTMLCollection(this, type);
 }
 
 IntSize Element::savedLayerScrollOffset() const
 {
-    return hasRareData() ? rareData()->m_savedLayerScrollOffset : IntSize();
+    return hasRareData() ? elementRareData()->m_savedLayerScrollOffset : IntSize();
 }
 
 void Element::setSavedLayerScrollOffset(const IntSize& size)
 {
     if (size.isZero() && !hasRareData())
         return;
-    ensureRareData()->m_savedLayerScrollOffset = size;
+    ensureElementRareData()->m_savedLayerScrollOffset = size;
 }
 
 PassRefPtr<Attr> Element::attrIfExists(const QualifiedName& name)
