@@ -234,13 +234,13 @@ defineTest(prependEach) {
 defineReplace(resolveFinalLibraryName) {
     !debug_and_release: return($$1)
 
-    original_template = $$TEMPLATE
     original_framework_name = $$QMAKE_FRAMEWORK_BUNDLE_NAME
 
     TEMPLATE = lib # So that qtLibraryTarget works
     target = $$qtLibraryTarget($$1)
 
-    TEMPLATE = $$original_template
+    # qtLibraryTarget will export QMAKE_FRAMEWORK_BUNDLE_NAME, which gets
+    # exported not only to this function scope, but to our call site.
     QMAKE_FRAMEWORK_BUNDLE_NAME = $$original_framework_name
     export(QMAKE_FRAMEWORK_BUNDLE_NAME)
 

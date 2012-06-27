@@ -1,3 +1,18 @@
+2012-06-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] No need to save and restore TEMPLATE in a function
+
+        This was a leftover from when the logic was not in its own function scope.
+
+        QMAKE_FRAMEWORK_BUNDLE_NAME on the other hand is exported in qtLibraryTarget, which
+        will surprisingly affect the global scope as well, so we have to save and restore it.
+
+        Original patch by Oswald Buddenhagen <oswald.buddenhagen@nokia.com> on 2012-06-27
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/functions.prf:
+
 2012-06-27  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         [Qt] Fix lookup location for sqlite sources
