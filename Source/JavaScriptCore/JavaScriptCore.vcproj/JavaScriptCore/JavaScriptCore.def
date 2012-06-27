@@ -6,11 +6,14 @@ EXPORTS
     ??0Collator@WTF@@QAE@PBD@Z
     ??0DateInstance@JSC@@IAE@PAVExecState@1@PAVStructure@1@@Z
     ??0DefaultGCActivityCallback@JSC@@QAE@PAVHeap@1@@Z
-    ??0DropAllLocks@JSLock@JSC@@QAE@W4JSLockBehavior@2@@Z
+    ??0DropAllLocks@JSLock@JSC@@QAE@PAVExecState@2@@Z
+    ??0DropAllLocks@JSLock@JSC@@QAE@PAVJSGlobalData@2@@Z
     ??0DynamicGlobalObjectScope@JSC@@QAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@@Z 
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@@Z
     ??0JSGlobalObject@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@PBUGlobalObjectMethodTable@1@@Z
-    ??0JSLock@JSC@@QAE@PAVExecState@1@@Z
+    ??0JSLockHolder@JSC@@QAE@AAVJSGlobalData@1@@Z
+    ??0JSLockHolder@JSC@@QAE@PAVExecState@1@@Z
+    ??0JSLockHolder@JSC@@QAE@PAVJSGlobalData@1@@Z
     ??0MD5@WTF@@QAE@XZ
     ??0Mutex@WTF@@QAE@XZ
     ??0ParallelEnvironment@WTF@@QAE@P6AXPAX@ZIH@Z
@@ -33,6 +36,7 @@ EXPORTS
     ??1DropAllLocks@JSLock@JSC@@QAE@XZ
     ??1JSGlobalData@JSC@@QAE@XZ
     ??1JSGlobalObject@JSC@@QAE@XZ
+    ??1JSLockHolder@JSC@@QAE@XZ
     ??1Mutex@WTF@@QAE@XZ
     ??1RefCountedLeakCounter@WTF@@QAE@XZ
     ??1SourceProviderCache@JSC@@QAE@XZ
@@ -124,7 +128,6 @@ EXPORTS
     ?cryptographicallyRandomNumber@WTF@@YAIXZ
     ?cryptographicallyRandomValues@WTF@@YAXPAXI@Z
     ?currentThread@WTF@@YAIXZ
-    ?currentThreadIsHoldingLock@JSLock@JSC@@SA_NXZ
     ?currentTime@WTF@@YANXZ
     ?data@CString@WTF@@QBEPBDXZ
     ?dataLog@WTF@@YAXPBDZZ
@@ -236,10 +239,9 @@ EXPORTS
     ?jsOwnedString@JSC@@YAPAVJSString@1@PAVJSGlobalData@1@ABVUString@1@@Z
     ?jsString@JSC@@YAPAVJSString@1@PAVJSGlobalData@1@ABVUString@1@@Z
     ?length@CString@WTF@@QBEIXZ
-    ?lock@JSLock@JSC@@SAXW4JSLockBehavior@2@@Z
+    ?lock@JSLock@JSC@@QAEXXZ
     ?lock@Mutex@WTF@@QAEXXZ
     ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
-    ?lockCount@JSLock@JSC@@SAHXZ
     ?match@RegExp@JSC@@QAEHAAVJSGlobalData@2@ABVUString@2@IAAV?$Vector@H$0CA@@WTF@@@Z
     ?materializePropertyMap@Structure@JSC@@AAEXAAVJSGlobalData@2@@Z
     ?monotonicallyIncreasingTime@WTF@@YANXZ
@@ -324,6 +326,7 @@ EXPORTS
     ?stopSampling@JSGlobalData@JSC@@QAEXXZ
     ?substringSharingImpl@UString@JSC@@QBE?AV12@II@Z
     ?suggestedNewPropertyStorageSize@Structure@JSC@@QAEIXZ
+    ?sweeper@Heap@JSC@@QAEPAVIncrementalSweeper@2@XZ
     ?synthesizePrototype@JSValue@JSC@@QBEPAVJSObject@2@PAVExecState@2@@Z
     ?thisObject@DebuggerCallFrame@JSC@@QBEPAVJSObject@2@XZ
     ?throwError@JSC@@YA?AVJSValue@1@PAVExecState@1@V21@@Z
@@ -353,7 +356,7 @@ EXPORTS
     ?tryFinishCreationUninitialized@JSArray@JSC@@IAEPAV12@AAVJSGlobalData@2@I@Z
     ?tryLock@Mutex@WTF@@QAE_NXZ
     ?type@DebuggerCallFrame@JSC@@QBE?AW4Type@12@XZ
-    ?unlock@JSLock@JSC@@SAXW4JSLockBehavior@2@@Z
+    ?unlock@JSLock@JSC@@QAEXXZ
     ?unlock@Mutex@WTF@@QAEXXZ
     ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
     ?unprotect@Heap@JSC@@QAE_NVJSValue@2@@Z

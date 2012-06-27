@@ -62,7 +62,7 @@ bool JSC::Bindings::dispatchJNICall(ExecState* exec, const void* targetAppletVie
         // implemented in WebCore will guarantee that only appropriate JavaScript
         // can reference the applet.
         {
-           JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+           JSLock::DropAllLocks dropAllLocks(exec);
             result = [view webPlugInCallJava:obj isStatic:isStatic returnType:returnType method:methodID arguments:args callingURL:nil exceptionDescription:&_exceptionDescription];
         }
 
@@ -72,7 +72,7 @@ bool JSC::Bindings::dispatchJNICall(ExecState* exec, const void* targetAppletVie
         return true;
     }
     else if ([view respondsToSelector:@selector(webPlugInCallJava:method:returnType:arguments:)]) {
-        JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+        JSLock::DropAllLocks dropAllLocks(exec);
         result = [view webPlugInCallJava:obj method:methodID returnType:returnType arguments:args];
         return true;
     }

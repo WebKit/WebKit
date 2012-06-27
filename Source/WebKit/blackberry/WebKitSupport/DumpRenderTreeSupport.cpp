@@ -141,8 +141,8 @@ void DumpRenderTreeSupport::scalePageBy(WebPage* webPage, float scaleFactor, flo
 
 JSValueRef DumpRenderTreeSupport::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
 {
-    JSLock lock(SilenceAssertionsOnly);
     ExecState* exec = toJS(context);
+    JSLockHolder lock(exec);
     if (!value)
         return JSValueMakeUndefined(context);
     JSValue jsValue = toJS(exec, value);

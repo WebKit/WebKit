@@ -81,8 +81,8 @@ void HTMLImageLoader::notifyFinished(CachedResource*)
 #if USE(JSC)
     if (!loadError) {
         if (!elem->inDocument()) {
-            JSC::JSLock lock(JSC::SilenceAssertionsOnly);
             JSC::JSGlobalData* globalData = JSDOMWindowBase::commonJSGlobalData();
+            JSC::JSLockHolder lock(globalData);
             globalData->heap.reportExtraMemoryCost(cachedImage->encodedSize());
         }
     }

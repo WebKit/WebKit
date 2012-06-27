@@ -84,11 +84,11 @@ static JSStaticValue clientExtensionStaticValues[] = {
 // FIXME: Revisit the creation of this class and make sure this is the best way to approach it.
 void attachExtensionObjectToFrame(Frame* frame, WebPageClient* client)
 {
-    JSC::JSLock lock(JSC::SilenceAssertionsOnly);
-
     JSDOMWindow* window = frame->script()->windowShell(mainThreadNormalWorld())->window();
 
     JSC::ExecState* exec = window->globalExec();
+    JSC::JSLockHolder lock(exec);
+
     JSContextRef scriptCtx = toRef(exec);
 
     JSClassDefinition definition = kJSClassDefinitionEmpty;

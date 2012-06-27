@@ -177,7 +177,7 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
             return false;
         
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(exec);
         
         // Call the function object.
         JSValue function = obj->imp;
@@ -225,7 +225,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         if (!rootObject || !rootObject->isValid())
             return false;
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(exec);
         JSValue function = obj->imp->get(exec, identifierFromNPIdentifier(exec, i->string()));
         CallData callData;
         CallType callType = getCallData(function, callData);
@@ -264,7 +264,7 @@ bool _NPN_Evaluate(NPP instance, NPObject* o, NPString* s, NPVariant* variant)
         PluginView::keepAlive(instance);
 
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(exec);
         String scriptString = convertNPStringToUTF16(s);
         
         JSValue returnValue = JSC::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), makeSource(scriptString), JSC::JSValue());
@@ -290,7 +290,7 @@ bool _NPN_GetProperty(NPP, NPObject* o, NPIdentifier propertyName, NPVariant* va
         ExecState* exec = rootObject->globalObject()->globalExec();
         IdentifierRep* i = static_cast<IdentifierRep*>(propertyName);
         
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(exec);
         JSValue result;
         if (i->isString())
             result = obj->imp->get(exec, identifierFromNPIdentifier(exec, i->string()));
@@ -322,7 +322,7 @@ bool _NPN_SetProperty(NPP, NPObject* o, NPIdentifier propertyName, const NPVaria
             return false;
 
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(exec);
         IdentifierRep* i = static_cast<IdentifierRep*>(propertyName);
 
         if (i->isString()) {
@@ -363,7 +363,7 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
             }
         }
 
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(exec);
         if (i->isString())
             obj->imp->methodTable()->deleteProperty(obj->imp, exec, identifierFromNPIdentifier(exec, i->string()));
         else
@@ -386,7 +386,7 @@ bool _NPN_HasProperty(NPP, NPObject* o, NPIdentifier propertyName)
 
         ExecState* exec = rootObject->globalObject()->globalExec();
         IdentifierRep* i = static_cast<IdentifierRep*>(propertyName);
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(exec);
         if (i->isString()) {
             bool result = obj->imp->hasProperty(exec, identifierFromNPIdentifier(exec, i->string()));
             exec->clearException();
@@ -418,7 +418,7 @@ bool _NPN_HasMethod(NPP, NPObject* o, NPIdentifier methodName)
             return false;
 
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(exec);
         JSValue func = obj->imp->get(exec, identifierFromNPIdentifier(exec, i->string()));
         exec->clearException();
         return !func.isUndefined();
@@ -447,7 +447,7 @@ bool _NPN_Enumerate(NPP, NPObject* o, NPIdentifier** identifier, uint32_t* count
             return false;
         
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(exec);
         PropertyNameArray propertyNames(exec);
 
         obj->imp->methodTable()->getPropertyNames(obj->imp, exec, propertyNames, ExcludeDontEnumProperties);
@@ -484,7 +484,7 @@ bool _NPN_Construct(NPP, NPObject* o, const NPVariant* args, uint32_t argCount, 
             return false;
         
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(exec);
         
         // Call the constructor object.
         JSValue constructor = obj->imp;

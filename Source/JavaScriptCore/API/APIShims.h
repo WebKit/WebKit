@@ -28,31 +28,40 @@
 
 #include "CallFrame.h"
 #include "GCActivityCallback.h"
+#include "IncrementalSweeper.h"
 #include "JSLock.h"
 #include <wtf/WTFThreadData.h>
 
 namespace JSC {
 
 class APIEntryShimWithoutLock {
+public:
+    enum RefGlobalDataTag { DontRefGlobalData = 0, RefGlobalData };
+
 protected:
-    APIEntryShimWithoutLock(JSGlobalData* globalData, bool registerThread)
-        : m_globalData(globalData)
+    APIEntryShimWithoutLock(JSGlobalData* globalData, bool registerThread, RefGlobalDataTag shouldRefGlobalData)
+        : m_shouldRefGlobalData(shouldRefGlobalData)
+        , m_globalData(globalData)
         , m_entryIdentifierTable(wtfThreadData().setCurrentIdentifierTable(globalData->identifierTable))
     {
+        if (shouldRefGlobalData)
+            m_globalData->ref();
         UNUSED_PARAM(registerThread);
         if (registerThread)
             globalData->heap.machineThreads().addCurrentThread();
         m_globalData->heap.activityCallback()->synchronize();
-        m_globalData->timeoutChecker.start();
+        m_globalData->heap.sweeper()->synchronize();
     }
 
     ~APIEntryShimWithoutLock()
     {
-        m_globalData->timeoutChecker.stop();
         wtfThreadData().setCurrentIdentifierTable(m_entryIdentifierTable);
+        if (m_shouldRefGlobalData)
+            m_globalData->deref();
     }
 
-private:
+protected:
+    RefGlobalDataTag m_shouldRefGlobalData;
     JSGlobalData* m_globalData;
     IdentifierTable* m_entryIdentifierTable;
 };
@@ -61,20 +70,38 @@ class APIEntryShim : public APIEntryShimWithoutLock {
 public:
     // Normal API entry
     APIEntryShim(ExecState* exec, bool registerThread = true)
-        : APIEntryShimWithoutLock(&exec->globalData(), registerThread)
-        , m_lock(exec)
+        : APIEntryShimWithoutLock(&exec->globalData(), registerThread, RefGlobalData)
     {
+        init();
+    }
+
+    // This constructor is necessary for HeapTimer to prevent it from accidentally resurrecting 
+    // the ref count of a "dead" JSGlobalData.
+    APIEntryShim(JSGlobalData* globalData, RefGlobalDataTag refGlobalData, bool registerThread = true)
+        : APIEntryShimWithoutLock(globalData, registerThread, refGlobalData)
+    {
+        init();
     }
 
     // JSPropertyNameAccumulator only has a globalData.
     APIEntryShim(JSGlobalData* globalData, bool registerThread = true)
-        : APIEntryShimWithoutLock(globalData, registerThread)
-        , m_lock(globalData->isSharedInstance() ? LockForReal : SilenceAssertionsOnly)
+        : APIEntryShimWithoutLock(globalData, registerThread, RefGlobalData)
     {
+        init();
+    }
+
+    ~APIEntryShim()
+    {
+        m_globalData->timeoutChecker.stop();
+        m_globalData->apiLock().unlock();
     }
 
 private:
-    JSLock m_lock;
+    void init()
+    {
+        m_globalData->apiLock().lock();
+        m_globalData->timeoutChecker.start();
+    }
 };
 
 class APICallbackShim {
@@ -88,7 +115,6 @@ public:
 
     ~APICallbackShim()
     {
-        m_globalData->heap.activityCallback()->synchronize();
         wtfThreadData().setCurrentIdentifierTable(m_globalData->identifierTable);
     }
 

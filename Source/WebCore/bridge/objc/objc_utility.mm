@@ -86,7 +86,7 @@ ObjcValue convertValueToObjcValue(ExecState* exec, JSValue value, ObjcValueType 
 
     switch (type) {
         case ObjcObjectType: {
-            JSLock lock(SilenceAssertionsOnly);
+            JSLockHolder lock(exec);
             
             JSGlobalObject *originGlobalObject = exec->dynamicGlobalObject();
             RootObject* originRootObject = findRootObject(originGlobalObject);
@@ -146,7 +146,7 @@ ObjcValue convertValueToObjcValue(ExecState* exec, JSValue value, ObjcValueType 
 
 JSValue convertNSStringToString(ExecState* exec, NSString *nsstring)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
     
     unichar *chars;
     unsigned int length = [nsstring length];
@@ -178,7 +178,7 @@ JSValue convertNSStringToString(ExecState* exec, NSString *nsstring)
 */
 JSValue convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType type, RootObject* rootObject)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
     
     switch (type) {
         case ObjcObjectType: {

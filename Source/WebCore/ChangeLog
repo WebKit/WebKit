@@ -1,3 +1,246 @@
+2012-06-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSLock should be per-JSGlobalData
+        https://bugs.webkit.org/show_bug.cgi?id=89123
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests. Current regression tests are sufficient.
+
+        Changed all sites that used JSLock to instead use the new JSLockHolder
+        and pass in the correct JS context that the code is about to interact with that 
+        needs protection. Also added a couple JSLocks to places that didn't already 
+        have it that needed it.
+
+        * bindings/js/GCController.cpp:
+        (WebCore::collect):
+        (WebCore::GCController::garbageCollectSoon):
+        (WebCore::GCController::garbageCollectNow):
+        (WebCore::GCController::discardAllCompiledCode):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::nodeAsScriptValue):
+        (WebCore::JSInjectedScriptHost::inspectedObject):
+        * bindings/js/JSInjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::createInjectedScript):
+        (WebCore::InjectedScriptManager::canAccessInspectedWindow):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState::evaluate):
+        * bindings/js/JSMutationCallbackCustom.cpp:
+        (WebCore::JSMutationCallback::handleEvent):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        * bindings/js/JSRequestAnimationFrameCallbackCustom.cpp:
+        (WebCore::JSRequestAnimationFrameCallback::handleEvent):
+        * bindings/js/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::evaluate):
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::recompileAllJSFunctions):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::restore):
+        (WebCore::ScriptCachedFrameData::clear):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::initScript):
+        (WebCore::ScriptController::updateDocument):
+        (WebCore::ScriptController::cacheableBindingRootObject):
+        (WebCore::ScriptController::bindingRootObject):
+        (WebCore::ScriptController::windowScriptNPObject):
+        (WebCore::ScriptController::jsObjectForPluginElement):
+        (WebCore::ScriptController::clearScriptObjects):
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::ScriptController::windowScriptObject):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidPause):
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::eventListenerHandlerBody):
+        (WebCore::eventListenerHandlerLocation):
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptCallArgumentHandler::appendArgument):
+        (WebCore::ScriptFunctionCall::call):
+        (WebCore::ScriptFunctionCall::construct):
+        (WebCore::ScriptCallback::call):
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptGlobalObject::set):
+        (WebCore::ScriptGlobalObject::get):
+        (WebCore::ScriptGlobalObject::remove):
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::getString):
+        (WebCore::ScriptValue::toInspectorValue):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::~WorkerScriptController):
+        (WebCore::WorkerScriptController::initScript):
+        (WebCore::WorkerScriptController::evaluate):
+        (WebCore::WorkerScriptController::disableEval):
+        * bindings/objc/WebScriptObject.mm:
+        (_didExecute):
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject removeWebScriptKey:]):
+        (-[WebScriptObject hasWebScriptKey:]):
+        (-[WebScriptObject stringRepresentation]):
+        (-[WebScriptObject webScriptValueAtIndex:]):
+        (-[WebScriptObject setWebScriptValueAtIndex:value:]):
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallbackImplementation):
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::callbackWithNoParam):
+        (WebCore::JSTestCallback::callbackWithClass1Param):
+        (WebCore::JSTestCallback::callbackWithClass2Param):
+        (WebCore::JSTestCallback::callbackWithStringList):
+        (WebCore::JSTestCallback::callbackWithBoolean):
+        (WebCore::JSTestCallback::callbackRequiresThisToPass):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        (_NPN_Enumerate):
+        (_NPN_Construct):
+        * bridge/c/c_class.cpp:
+        (JSC::Bindings::CClass::~CClass):
+        (JSC::Bindings::CClass::methodsNamed):
+        (JSC::Bindings::CClass::fieldNamed):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::moveGlobalExceptionToExecState):
+        (JSC::Bindings::CInstance::invokeMethod):
+        (JSC::Bindings::CInstance::invokeDefaultMethod):
+        (JSC::Bindings::CInstance::invokeConstruct):
+        (JSC::Bindings::CInstance::getPropertyNames):
+        * bridge/c/c_runtime.cpp:
+        (JSC::Bindings::CField::valueFromInstance):
+        (JSC::Bindings::CField::setValueToInstance):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertValueToNPVariant):
+        (JSC::Bindings::convertNPVariantToValue):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::call):
+        (JavaJSObject::eval):
+        (JavaJSObject::getMember):
+        (JavaJSObject::setMember):
+        (JavaJSObject::removeMember):
+        (JavaJSObject::getSlot):
+        (JavaJSObject::setSlot):
+        (JavaJSObject::toString):
+        (JavaJSObject::convertValueToJObject):
+        (JavaJSObject::convertJObjectToValue):
+        * bridge/jni/jni_objc.mm:
+        (JSC::Bindings::dispatchJNICall):
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp:
+        (JSC::Bindings::convertValueToJValue):
+        * bridge/jni/jsc/JavaClassJSC.cpp:
+        (JavaClass::JavaClass):
+        (JavaClass::~JavaClass):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::stringValue):
+        * bridge/jni/jsc/JavaMethodJSC.cpp:
+        (appendClassName):
+        (JavaMethod::signature):
+        * bridge/jni/jsc/JavaStringJSC.h:
+        (JSC::Bindings::JavaString::JavaString):
+        (JSC::Bindings::JavaString::~JavaString):
+        (JSC::Bindings::JavaString::utf8):
+        (JSC::Bindings::JavaString::init):
+        * bridge/jsc/BridgeJSC.cpp:
+        (JSC::Bindings::Instance::createRuntimeObject):
+        (JSC::Bindings::Instance::newRuntimeObject):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::moveGlobalExceptionToExecState):
+        (ObjcInstance::invokeObjcMethod):
+        (ObjcInstance::invokeDefaultMethod):
+        (ObjcInstance::setValueOfUndefinedField):
+        (ObjcInstance::getValueOfUndefinedField):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcField::valueFromInstance):
+        (JSC::Bindings::ObjcField::setValueToInstance):
+        * bridge/objc/objc_utility.mm:
+        (JSC::Bindings::convertValueToObjcValue):
+        (JSC::Bindings::convertNSStringToString):
+        (JSC::Bindings::convertObjcValueToValue):
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::~QtInstance):
+        (JSC::Bindings::QtInstance::getQtInstance):
+        (JSC::Bindings::QtInstance::newRuntimeObject):
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::QtPixmapInstance::createPixmapRuntimeObject):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+        (JSC::Bindings::convertQVariantToValue):
+        (JSC::Bindings::QtRuntimeMetaMethod::call):
+        (JSC::Bindings::QtRuntimeConnectionMethod::call):
+        * bridge/qt/qt_runtime_qt4.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+        (JSC::Bindings::convertQVariantToValue):
+        (JSC::Bindings::QtRuntimeMetaMethod::call):
+        (JSC::Bindings::QtRuntimeConnectionMethod::call):
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::gcProtect):
+        (JSC::Bindings::RootObject::gcUnprotect):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::notifyFinished):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::start):
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::performRequest):
+        (WebCore::PluginView::npObject):
+        (WebCore::PluginView::privateBrowsingStateChanged):
+        * plugins/blackberry/PluginViewBlackBerry.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::getWindowInfo):
+        * plugins/efl/PluginViewEfl.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::platformStart):
+        * plugins/mac/PluginViewMac.mm:
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::dispatchNPEvent):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::platformStart):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setNPWindowRect):
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::injectInternalsObject):
+        (WebCoreTestSupport::resetInternalsObject):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dropProtection):
+
 2012-06-27  Tony Chang  <tony@chromium.org>
 
         Split flex into flex-grow/flex-shrink/flex-basis

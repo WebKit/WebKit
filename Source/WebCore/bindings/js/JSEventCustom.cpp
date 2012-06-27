@@ -54,7 +54,7 @@ JSValue JSEvent::clipboardData(ExecState* exec) const
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     if (!event)
         return jsNull();

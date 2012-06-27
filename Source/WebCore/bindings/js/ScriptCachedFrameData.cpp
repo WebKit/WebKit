@@ -46,7 +46,7 @@ namespace WebCore {
 
 ScriptCachedFrameData::ScriptCachedFrameData(Frame* frame)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
 
     ScriptController* scriptController = frame->script();
     ScriptController::ShellMap& windowShells = scriptController->m_windowShells;
@@ -67,7 +67,7 @@ ScriptCachedFrameData::~ScriptCachedFrameData()
 
 void ScriptCachedFrameData::restore(Frame* frame)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
 
     ScriptController* scriptController = frame->script();
     ScriptController::ShellMap& windowShells = scriptController->m_windowShells;
@@ -95,7 +95,7 @@ void ScriptCachedFrameData::clear()
     if (m_windows.isEmpty())
         return;
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
     m_windows.clear();
     gcController().garbageCollectSoon();
 }

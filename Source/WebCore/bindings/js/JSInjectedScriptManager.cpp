@@ -51,7 +51,7 @@ namespace WebCore {
 
 ScriptObject InjectedScriptManager::createInjectedScript(const String& source, ScriptState* scriptState, int id)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(scriptState);
 
     SourceCode sourceCode = makeSource(stringToUString(source));
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
@@ -81,7 +81,7 @@ ScriptObject InjectedScriptManager::createInjectedScript(const String& source, S
 
 bool InjectedScriptManager::canAccessInspectedWindow(ScriptState* scriptState)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(scriptState);
     JSDOMWindow* inspectedWindow = toJSDOMWindow(scriptState->lexicalGlobalObject());
     if (!inspectedWindow)
         return false;
