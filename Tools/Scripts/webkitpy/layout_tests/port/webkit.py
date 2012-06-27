@@ -276,7 +276,7 @@ class WebKitPort(Port):
         symbols = ''
         for path_to_module in self._modules_to_search_for_symbols():
             try:
-                symbols += self._executive.run_command([self.nm_command(), path_o_module], error_handler=Executive.ignore_error)
+                symbols += self._executive.run_command([self.nm_command(), path_to_module], error_handler=Executive.ignore_error)
             except OSError, e:
                 _log.warn("Failed to run nm: %s.  Can't determine supported features correctly." % e)
         return symbols

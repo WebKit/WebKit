@@ -1,3 +1,12 @@
+2012-06-27  Dirk Pranke  <dpranke@chromium.org>
+
+        Fix typo introduced in r121363.
+
+        Unreviewed, build fix.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._symbols_string):
+
 2012-06-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Moving from committers to reviewers :-)
