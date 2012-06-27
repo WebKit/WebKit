@@ -2727,6 +2727,7 @@ BUGWK82783 SKIP : css3/filters/filter-repaint.html = PASS
 BUGWK82783 SKIP : css3/filters/filter-with-transform.html = PASS
 BUGWK82783 SKIP : css3/filters/filter-repaint-sepia.html = PASS
 BUGWK82783 SKIP : css3/filters/nested-filter.html = PASS
+BUGWK82783 SKIP WIN : css3/filters/blur-filter-page-scroll.html = PASS
 
 // Following tests need baselines on Win and Linux
 BUGWK84800 SKIP WIN LINUX : css3/filters/custom/filter-repaint-custom-clipped.html = PASS

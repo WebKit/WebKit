@@ -1462,6 +1462,16 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
         if (renderBox->isComposited())
             continue;
 #endif
+#if ENABLE(CSS_FILTERS)
+        if (renderBox->layer() && renderBox->layer()->parent()) {
+            RenderBoxModelObject* renderer = renderBox->layer()->parent()->renderer();
+            if (renderer->style()->hasFilterOutsets()) {
+                // If the fixed layer has a blur/drop-shadow filter applied on its parent, we cannot 
+                // scroll using the fast path, otherwise the outsets of the filter will be moved around the page.
+                return false;
+            }
+        }
+#endif
         IntRect updateRect = pixelSnappedIntRect(renderBox->layer()->repaintRectIncludingNonCompositingDescendants());
         updateRect = contentsToRootView(updateRect);
         if (!isCompositedContentLayer && clipsRepaints())
