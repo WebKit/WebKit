@@ -22,8 +22,16 @@ function createRegionElement(elementType, displayType)
 shouldBeFalse('createRegionElement("div", "none")');
 shouldBeTrue('createRegionElement("div", "block")');
 shouldBeTrue('createRegionElement("div", "inline-block")');
-shouldBeTrue('createRegionElement("div", "run-in")');
-shouldBeTrue('createRegionElement("div", "compact")');
+shouldBeFalse('createRegionElement("div", "run-in")');
+shouldBeFalse('createRegionElement("div", "compact")');
 shouldBeFalse('createRegionElement("div", "inline")');
 shouldBeFalse('createRegionElement("div", "table")');
 shouldBeFalse('createRegionElement("div", "inline-table")');
+shouldBeTrue('createRegionElement("div", "table-cell")');
+shouldBeTrue('createRegionElement("div", "table-caption")');
+shouldBeTrue('createRegionElement("div", "list-item")');
+shouldBeFalse('createRegionElement("div", "-webkit-box")');
+shouldBeFalse('createRegionElement("div", "-webkit-inline-box")');
+shouldBeFalse('createRegionElement("div", "-webkit-flex")');
+shouldBeFalse('createRegionElement("div", "-webkit-inline-flex")');
+// FIXME: Also add grid and inline grid when it is enabled by default

@@ -1,3 +1,22 @@
+2012-06-27  Andrei Onea  <onea@adobe.com>
+
+        [CSSRegions]Change display values that allow regions
+        https://bugs.webkit.org/show_bug.cgi?id=89759
+
+        Reviewed by Tony Chang.
+
+        Allow only elements with display values of block, inline-block,
+        table-cell, table-caption and list-item to become regions, as per
+        CSSRegions spec: http://dev.w3.org/csswg/css3-regions .
+        Also added test for checking whether regions are destroyed and/or created
+        when changing display value.
+
+        Test: fast/regions/region-element-display-change.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/style/RenderStyle.h:
+
 2012-06-27  Mike Lawther  <mikelawther@chromium.org>
 
         CSS3 calc: blending involving expressions

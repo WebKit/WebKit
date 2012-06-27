@@ -1,3 +1,20 @@
+2012-06-27  Andrei Onea  <onea@adobe.com>
+
+        [CSSRegions]Change display values that allow regions
+        https://bugs.webkit.org/show_bug.cgi?id=89759
+
+        Reviewed by Tony Chang.
+
+        Added checks for more display values, and modified results to reflect proper values that can become
+        regions. Also created new test for dynamically changing display values, making sure regions are
+        created or destroyed correctly.
+        * fast/regions/region-element-display-change-expected.txt: Added.
+        * fast/regions/region-element-display-change.html: Added.
+        * fast/regions/region-element-display-restriction-expected.txt:
+        * fast/regions/script-tests/region-element-display-change.js: Added.
+        (testElement):
+        * fast/regions/script-tests/region-element-display-restriction.js:
+
 2012-06-27  Mike Lawther  <mikelawther@chromium.org>
 
         CSS3 calc: blending involving expressions

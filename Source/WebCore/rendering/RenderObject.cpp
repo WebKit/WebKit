@@ -150,7 +150,8 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     // treat <rt> as ruby text ONLY if it still has its default treatment of block
     if (node->hasTagName(rtTag) && style->display() == BLOCK)
         return new (arena) RenderRubyText(node);
-
+    if (doc->cssRegionsEnabled() && style->isDisplayRegionType() && !style->regionThread().isEmpty() && doc->renderView())
+        return new (arena) RenderRegion(node, doc->renderView()->flowThreadController()->ensureRenderFlowThreadWithName(style->regionThread()));
     switch (style->display()) {
     case NONE:
         return 0;
@@ -160,9 +161,6 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     case INLINE_BLOCK:
     case RUN_IN:
     case COMPACT:
-        // Only non-replaced block elements can become a region.
-        if (doc->cssRegionsEnabled() && !style->regionThread().isEmpty() && doc->renderView())
-            return new (arena) RenderRegion(node, doc->renderView()->flowThreadController()->ensureRenderFlowThreadWithName(style->regionThread()));
         if ((!style->hasAutoColumnCount() || !style->hasAutoColumnWidth()) && doc->regionBasedColumnsEnabled())
             return new (arena) RenderMultiColumnBlock(node);
         return new (arena) RenderBlock(node);

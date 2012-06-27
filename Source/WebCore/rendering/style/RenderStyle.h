@@ -1506,6 +1506,13 @@ public:
             || originalDisplay() == INLINE_BOX || originalDisplay() == INLINE_TABLE || originalDisplay() == INLINE_GRID;
     }
 
+    bool isDisplayRegionType() const
+    {
+        return display() == BLOCK || display() == INLINE_BLOCK
+            || display() == TABLE_CELL || display() == TABLE_CAPTION
+            || display() == LIST_ITEM;
+    }
+
     void setWritingMode(WritingMode v) { inherited_flags.m_writingMode = v; }
 
     // To tell if this style matched attribute selectors. This makes it impossible to share.
