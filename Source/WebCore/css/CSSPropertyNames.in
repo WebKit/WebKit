@@ -268,8 +268,11 @@ z-index
 -webkit-align-items
 -webkit-align-self
 -webkit-flex
+-webkit-flex-basis
 -webkit-flex-direction
 -webkit-flex-flow
+-webkit-flex-grow
+-webkit-flex-shrink
 -webkit-flex-wrap
 -webkit-justify-content
 #endif

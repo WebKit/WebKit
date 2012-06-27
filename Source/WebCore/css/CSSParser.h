@@ -189,7 +189,7 @@ public:
 
     bool parseReflect(CSSPropertyID, bool important);
 
-    PassRefPtr<CSSValue> parseFlex(CSSParserValueList* args);
+    bool parseFlex(CSSParserValueList* args, bool important);
 
     // Image generators
     bool parseCanvas(CSSParserValueList*, RefPtr<CSSValue>&);

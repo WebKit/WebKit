@@ -314,6 +314,13 @@ const StylePropertyShorthand& webkitFlexFlowShorthand()
     DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitFlexFlowLonghands, (flexFlowProperties, WTF_ARRAY_LENGTH(flexFlowProperties)));
     return webkitFlexFlowLonghands;
 }
+
+const StylePropertyShorthand& webkitFlexShorthand()
+{
+    static const CSSPropertyID flexProperties[] = { CSSPropertyWebkitFlexGrow, CSSPropertyWebkitFlexShrink, CSSPropertyWebkitFlexBasis };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitFlexLonghands, (flexProperties, WTF_ARRAY_LENGTH(flexProperties)));
+    return webkitFlexLonghands;
+}
 #endif
 
 const StylePropertyShorthand& webkitMarginCollapseShorthand()
@@ -480,6 +487,8 @@ const StylePropertyShorthand& shorthandForProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitColumnRule:
         return webkitColumnRuleShorthand();
 #if ENABLE(CSS3_FLEXBOX)
+    case CSSPropertyWebkitFlex:
+        return webkitFlexShorthand();
     case CSSPropertyWebkitFlexFlow:
         return webkitFlexFlowShorthand();
 #endif
