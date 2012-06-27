@@ -272,11 +272,16 @@ bool LocaleICU::initializeShortDateFormat()
 {
     if (m_didCreateShortDateFormat)
         return m_shortDateFormat;
-    const UChar gmtTimezone[3] = {'G', 'M', 'T'};
-    UErrorCode status = U_ZERO_ERROR;
-    m_shortDateFormat = udat_open(UDAT_NONE, UDAT_SHORT, m_locale.data(), gmtTimezone, WTF_ARRAY_LENGTH(gmtTimezone), 0, -1, &status);
+    m_shortDateFormat = openDateFormat(UDAT_NONE, UDAT_SHORT);
     m_didCreateShortDateFormat = true;
     return m_shortDateFormat;
+}
+
+UDateFormat* LocaleICU::openDateFormat(UDateFormatStyle timeStyle, UDateFormatStyle dateStyle) const
+{
+    const UChar gmtTimezone[3] = {'G', 'M', 'T'};
+    UErrorCode status = U_ZERO_ERROR;
+    return udat_open(timeStyle, dateStyle, m_locale.data(), gmtTimezone, WTF_ARRAY_LENGTH(gmtTimezone), 0, -1, &status);
 }
 
 double LocaleICU::parseLocalizedDate(const String& input)
@@ -313,6 +318,23 @@ String LocaleICU::formatLocalizedDate(const DateComponents& dateComponents)
 }
 
 #if ENABLE(CALENDAR_PICKER)
+static String getDateFormatPattern(const UDateFormat* dateFormat)
+{
+    if (!dateFormat)
+        return emptyString();
+
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t length = udat_toPattern(dateFormat, TRUE, 0, 0, &status);
+    if (status != U_BUFFER_OVERFLOW_ERROR || !length)
+        return emptyString();
+    Vector<UChar> buffer(length);
+    status = U_ZERO_ERROR;
+    udat_toPattern(dateFormat, TRUE, buffer.data(), length, &status);
+    if (U_FAILURE(status))
+        return emptyString();
+    return String::adopt(buffer);
+}
+
 static inline bool isICUYearSymbol(UChar letter)
 {
     return letter == 'y' || letter == 'Y';
@@ -330,12 +352,12 @@ static inline bool isICUDayInMonthSymbol(UChar letter)
 
 // Specification of the input:
 // http://icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details
-static String localizeFormat(const Vector<UChar>& buffer)
+static String localizeFormat(const String& buffer)
 {
     StringBuilder builder;
     UChar lastChar = 0;
     bool inQuote = false;
-    for (unsigned i = 0; i < buffer.size(); ++i) {
+    for (unsigned i = 0; i < buffer.length(); ++i) {
         if (inQuote) {
             if (buffer[i] == '\'') {
                 inQuote = false;
@@ -374,16 +396,7 @@ void LocaleICU::initializeLocalizedDateFormatText()
     m_localizedDateFormatText = emptyString();
     if (!initializeShortDateFormat())
         return;
-    UErrorCode status = U_ZERO_ERROR;
-    int32_t length = udat_toPattern(m_shortDateFormat, TRUE, 0, 0, &status);
-    if (status != U_BUFFER_OVERFLOW_ERROR)
-        return;
-    Vector<UChar> buffer(length);
-    status = U_ZERO_ERROR;
-    udat_toPattern(m_shortDateFormat, TRUE, buffer.data(), length, &status);
-    if (U_FAILURE(status))
-        return;
-    m_localizedDateFormatText = localizeFormat(buffer);
+    m_localizedDateFormatText = localizeFormat(getDateFormatPattern(m_shortDateFormat));
 }
 
 String LocaleICU::localizedDateFormatText()
@@ -392,23 +405,23 @@ String LocaleICU::localizedDateFormatText()
     return m_localizedDateFormatText;
 }
 
-PassOwnPtr<Vector<String> > LocaleICU::createLabelVector(UDateFormatSymbolType type, int32_t startIndex, int32_t size)
+PassOwnPtr<Vector<String> > LocaleICU::createLabelVector(const UDateFormat* dateFormat, UDateFormatSymbolType type, int32_t startIndex, int32_t size)
 {
-    if (!m_shortDateFormat)
+    if (!dateFormat)
         return PassOwnPtr<Vector<String> >();
-    if (udat_countSymbols(m_shortDateFormat, type) != startIndex + size)
+    if (udat_countSymbols(dateFormat, type) != startIndex + size)
         return PassOwnPtr<Vector<String> >();
 
     OwnPtr<Vector<String> > labels = adoptPtr(new Vector<String>());
     labels->reserveCapacity(size);
     for (int32_t i = 0; i < size; ++i) {
         UErrorCode status = U_ZERO_ERROR;
-        int32_t length = udat_getSymbols(m_shortDateFormat, type, startIndex + i, 0, 0, &status);
+        int32_t length = udat_getSymbols(dateFormat, type, startIndex + i, 0, 0, &status);
         if (status != U_BUFFER_OVERFLOW_ERROR)
             return PassOwnPtr<Vector<String> >();
         Vector<UChar> buffer(length);
         status = U_ZERO_ERROR;
-        udat_getSymbols(m_shortDateFormat, type, startIndex + i, buffer.data(), length, &status);
+        udat_getSymbols(dateFormat, type, startIndex + i, buffer.data(), length, &status);
         if (U_FAILURE(status))
             return PassOwnPtr<Vector<String> >();
         labels->append(String::adopt(buffer));
@@ -452,11 +465,11 @@ void LocaleICU::initializeCalendar()
     }
     m_firstDayOfWeek = ucal_getAttribute(udat_getCalendar(m_shortDateFormat), UCAL_FIRST_DAY_OF_WEEK) - UCAL_SUNDAY;
 
-    m_monthLabels = createLabelVector(UDAT_MONTHS, UCAL_JANUARY, 12);
+    m_monthLabels = createLabelVector(m_shortDateFormat, UDAT_MONTHS, UCAL_JANUARY, 12);
     if (!m_monthLabels)
         m_monthLabels = createFallbackMonthLabels();
 
-    m_weekDayShortLabels = createLabelVector(UDAT_SHORT_WEEKDAYS, UCAL_SUNDAY, 7);
+    m_weekDayShortLabels = createLabelVector(m_shortDateFormat, UDAT_SHORT_WEEKDAYS, UCAL_SUNDAY, 7);
     if (!m_weekDayShortLabels)
         m_weekDayShortLabels = createFallbackWeekDayShortLabels();
 }

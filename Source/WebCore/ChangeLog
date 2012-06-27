@@ -1,3 +1,30 @@
+2012-06-26  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform] Change implementation of LocaleICU class to support more UDateFormat.
+        https://bugs.webkit.org/show_bug.cgi?id=89967
+
+        Reviewed by Kent Tamura.
+
+        This patch changes internal functions of LocaleICU class to process
+        multiple ICU date time format handles in addition to short date time
+        format handle.
+
+        This patch is a part of implementing input type time. I'll add time
+        format related ICU date time format handles.
+
+        No new tests. This patch doesn't change behavior.
+
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::initializeShortDateFormat): Changed to use openDateFormat().
+        (WebCore::LocaleICU::openDateFormat): Added for common usage of udt_open().
+        (WebCore::getDateFormatPattern): Added for common usage of udt_toPattern().
+        (WebCore::localizeFormat): Changed to take String parameter.
+        (WebCore::LocaleICU::initializeLocalizedDateFormatText): Changed to use getDateFormatPattern.
+        (WebCore::LocaleICU::createLabelVector): Changed to take UDateFormat parameter.
+        (WebCore::LocaleICU::initializeCalendar): Changed for helper functions.
+        * platform/text/LocaleICU.h:
+        (LocaleICU):
+
 2012-06-26  Luke Macpherson  <macpherson@chromium.org>
 
         Return correct value for css variables enabled runtime flag.

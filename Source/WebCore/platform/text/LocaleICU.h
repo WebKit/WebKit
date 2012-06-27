@@ -75,10 +75,11 @@ private:
     unsigned matchedDecimalSymbolIndex(const String& input, unsigned& position);
 
     bool initializeShortDateFormat();
+    UDateFormat* openDateFormat(UDateFormatStyle timeStyle, UDateFormatStyle dateStyle) const;
 
 #if ENABLE(CALENDAR_PICKER)
     void initializeLocalizedDateFormatText();
-    PassOwnPtr<Vector<String> > createLabelVector(UDateFormatSymbolType, int32_t startIndex, int32_t size);
+    PassOwnPtr<Vector<String> > createLabelVector(const UDateFormat*, UDateFormatSymbolType, int32_t startIndex, int32_t size);
     void initializeCalendar();
 #endif
 
