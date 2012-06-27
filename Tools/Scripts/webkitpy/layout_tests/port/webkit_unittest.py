@@ -66,16 +66,14 @@ class TestWebKitPort(WebKitPort):
 class WebKitPortUnitTests(unittest.TestCase):
     def test_default_options(self):
         # The WebKit ports override new-run-webkit-test default options.
-        options = MockOptions(pixel_tests=None, time_out_ms=None)
+        options = MockOptions(pixel_tests=None)
         port = WebKitPort(MockSystemHost(), options=options)
         self.assertEquals(port._options.pixel_tests, False)
-        self.assertEquals(port._options.time_out_ms, 35000)
 
         # Note that we don't override options if specified by the user.
-        options = MockOptions(pixel_tests=True, time_out_ms=6000)
+        options = MockOptions(pixel_tests=True)
         port = WebKitPort(MockSystemHost(), options=options)
         self.assertEquals(port._options.pixel_tests, True)
-        self.assertEquals(port._options.time_out_ms, 6000)
 
 
 class WebKitPortTest(port_testcase.PortTestCase):

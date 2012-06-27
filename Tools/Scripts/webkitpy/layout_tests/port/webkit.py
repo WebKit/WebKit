@@ -52,16 +52,20 @@ _log = logging.getLogger(__name__)
 
 class WebKitPort(Port):
     pixel_tests_option_default = False  # FIXME: Disable until they are run by default on build.webkit.org.
-    time_out_ms_option_default = 35 * 1000
 
     def __init__(self, host, port_name=None, **kwargs):
         Port.__init__(self, host, port_name=port_name, **kwargs)
         self.set_option_default("pixel_tests", self.pixel_tests_option_default)
 
-        # FIXME: --guard-malloc is only supported on Mac, so this logic should be in mac.py.
+    def default_test_timeout_ms(self):
         if self.get_option('guard_malloc'):
-            self.time_out_ms_option_default = 350 * 1000
-        self.set_option_default("time_out_ms", self.time_out_ms_option_default)
+            # FIXME: --guard-malloc is only supported on Mac, so this logic should be in mac.py.
+            return 350 * 1000
+        if self.get_option.configuration == 'Debug':
+            # FIXME: the generic code in run_webkit_tests.py multiplies this by 2 :(.
+            # We want to use the same timeout for both release and debug.
+            return 17.5 * 1000
+        return 35 * 1000
 
     def driver_name(self):
         if self.get_option('webkit_test_runner'):

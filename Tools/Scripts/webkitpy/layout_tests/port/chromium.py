@@ -52,7 +52,6 @@ _log = logging.getLogger(__name__)
 class ChromiumPort(WebKitPort):
     """Abstract base class for Chromium implementations of the Port class."""
     pixel_tests_option_default = True
-    time_out_ms_option_default = 6 * 1000
 
     ALL_SYSTEMS = (
         ('leopard', 'x86'),
@@ -112,6 +111,9 @@ class ChromiumPort(WebKitPort):
         super(ChromiumPort, self).__init__(host, port_name, **kwargs)
         # All sub-classes override this, but we need an initial value for testing.
         self._chromium_base_dir_path = None
+
+    def default_test_timeout_ms(self):
+        return 6 * 1000
 
     def _check_file_exists(self, path_to_file, file_description,
                            override_step=None, logging=True):

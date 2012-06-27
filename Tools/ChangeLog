@@ -1,5 +1,23 @@
 2012-06-27  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: default timeout for debug bots broke in r121363
+        https://bugs.webkit.org/show_bug.cgi?id=90112
+
+        Unreviewed, build fix.
+
+        I forgot to account for release and debug having different
+        default values :(.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.default_test_timeout_ms):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort):
+        (WebKitPort.default_test_timeout_ms):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (WebKitPortUnitTests.test_default_options):
+
+2012-06-27  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: fix a couple of issues running under cygwin
         https://bugs.webkit.org/show_bug.cgi?id=90035
 
