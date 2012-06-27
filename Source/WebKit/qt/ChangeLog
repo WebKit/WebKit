@@ -1,3 +1,19 @@
+2012-06-27  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix compilation of example platform plugin with Qt 5
+
+        Reviewed by Kenneth Christiansen.
+
+        Use QLatin1String where appropriate and use the Qt 5 plugin
+        system with Qt 5.
+
+        * examples/platformplugin/WebPlugin.cpp:
+        (SingleSelectionPopup::SingleSelectionPopup):
+        (MultipleItemListDelegate::MultipleItemListDelegate):
+        (MultipleSelectionPopup::MultipleSelectionPopup):
+        * examples/platformplugin/WebPlugin.h:
+        (WebPlugin):
+
 2012-06-26  Tony Chang  <tony@chromium.org>
 
         [Qt] Enable grid layout LayoutTests

@@ -126,7 +126,7 @@ SingleSelectionPopup::SingleSelectionPopup(const QWebSelectData& data)
     if (qstrcmp(title, "weba_ti_texlist_single"))
         setWindowTitle(QString::fromUtf8(title));
     else
-        setWindowTitle("Select item");
+        setWindowTitle(QLatin1String("Select item"));
 
     QHBoxLayout* hLayout = new QHBoxLayout(this);
     hLayout->setContentsMargins(0, 0, 0, 0);
@@ -150,7 +150,7 @@ public:
     MultipleItemListDelegate(QObject* parent = 0)
            : QStyledItemDelegate(parent)
     {
-        tickMark = QIcon::fromTheme("widgets_tickmark_list").pixmap(48, 48);
+        tickMark = QIcon::fromTheme(QLatin1String("widgets_tickmark_list")).pixmap(48, 48);
     }
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
@@ -172,7 +172,7 @@ MultipleSelectionPopup::MultipleSelectionPopup(const QWebSelectData& data)
     if (qstrcmp(title, "weba_ti_textlist_multi"))
         setWindowTitle(QString::fromUtf8(title));
     else
-        setWindowTitle("Select items");
+        setWindowTitle(QLatin1String("Select items"));
 
     QHBoxLayout* hLayout = new QHBoxLayout(this);
     hLayout->setContentsMargins(0, 0, 0, 0);
@@ -197,7 +197,7 @@ MultipleSelectionPopup::MultipleSelectionPopup(const QWebSelectData& data)
     if (qstrcmp(title, "wdgt_bd_done"))
         done->setText(QString::fromUtf8(title));
     else
-        done->setText("Done");
+        done->setText(QLatin1String("Done"));
 
     done->setMinimumWidth(178);
     vLayout->addWidget(done);
@@ -315,4 +315,6 @@ QObject* WebPlugin::createExtension(Extension extension) const
     }
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(platformplugin, WebPlugin)
+#endif

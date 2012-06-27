@@ -137,6 +137,9 @@ class WebPlugin : public QObject, public QWebKitPlatformPlugin
 {
     Q_OBJECT
     Q_INTERFACES(QWebKitPlatformPlugin)
+#if QT_VERSION >= 0x050000
+    Q_PLUGIN_METADATA(IID "org.qt-project.QtWebKit.PlatformPluginInterface")
+#endif
 public:
     virtual bool supportsExtension(Extension extension) const;
     virtual QObject* createExtension(Extension extension) const;
