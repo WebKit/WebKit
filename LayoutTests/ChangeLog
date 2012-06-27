@@ -1,3 +1,9 @@
+2012-06-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rebaseline after r121286 and r121290.
+
+        * editing/deleting/merge-into-empty-block-2-expected.txt:
+
 2012-06-26  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] Rebaseline fast/backgrounds/size/zero.html. Caused by r121296
