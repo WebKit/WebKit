@@ -30,12 +30,6 @@
 
 namespace WebCore {
 
-IDBKey::IDBKey()
-    : m_type(InvalidType)
-    , m_sizeEstimate(kOverheadSize)
-{
-}
-
 IDBKey::~IDBKey()
 {
 }
@@ -75,8 +69,6 @@ int IDBKey::compare(const IDBKey* other) const
     case StringType:
         return -codePointCompare(other->m_string, m_string);
     case DateType:
-        return (m_date < other->m_date) ? -1 :
-                (m_date > other->m_date) ? 1 : 0;
     case NumberType:
         return (m_number < other->m_number) ? -1 :
                 (m_number > other-> m_number) ? 1 : 0;

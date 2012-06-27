@@ -1,3 +1,28 @@
+2012-06-27  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: make IDBKey immutable
+        https://bugs.webkit.org/show_bug.cgi?id=90016
+
+        Reviewed by Tony Chang.
+
+        Make all members of IDBKey const, so that this can be considered
+        an immutable, and thus safe to copy and/or stop ref-counting.
+
+        No new tests, existing tests show this works.
+
+        * Modules/indexeddb/IDBKey.cpp:
+        (WebCore::IDBKey::compare):
+        * Modules/indexeddb/IDBKey.h:
+        (WebCore::IDBKey::createInvalid):
+        (WebCore::IDBKey::createNumber):
+        (WebCore::IDBKey::createString):
+        (WebCore::IDBKey::createDate):
+        (WebCore::IDBKey::createMultiEntryArray):
+        (WebCore::IDBKey::createArray):
+        (WebCore::IDBKey::date):
+        (WebCore::IDBKey::IDBKey):
+        (IDBKey):
+
 2012-06-27  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Improve variable resolution order on window
