@@ -1,3 +1,23 @@
+2012-06-27  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Improve variable resolution order on window
+        https://bugs.webkit.org/show_bug.cgi?id=84247
+
+        Reviewed by Ojan Vafai.
+
+        This changes the V8 flag to turn on es52_globals and updates the layout tests to reflect the fixed behavior.
+
+        This is the second (third?) try. Last time there was a bug in the V8 code related to the split window.
+        I added a test that tests the failure that caused this to be rolled back last time.
+
+        Tests: fast/dom/Window/es52-globals.html
+               fast/dom/Window/window-property-shadowing-onclick.html
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initIsolate):
+
 2012-06-27  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use categorized TRACE_EVENTN() macros in compositor code

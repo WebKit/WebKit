@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+
+description('This tests the ES5.2 behavior where global variables should not trigger setters on the Window object');
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var onClickCalled = false;
+
+var onclick = function(e) {
+    onClickCalled = true;
+};
+
+var e = document.createEvent('MouseEvents');
+e.initMouseEvent('click', true, true, window,
+                 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+document.dispatchEvent(e);
+
+shouldBeFalse('onClickCalled');
+
+</script>
+<script src="../../js/resources/js-test-pre.js"></script>

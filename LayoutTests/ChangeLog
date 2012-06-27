@@ -1,3 +1,23 @@
+2012-06-27  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Improve variable resolution order on window
+        https://bugs.webkit.org/show_bug.cgi?id=84247
+
+        Reviewed by Ojan Vafai.
+
+        This changes the V8 flag to turn on es52_globals and updates the layout tests to reflect the fixed behavior.
+
+        This is the second (third?) try. Last time there was a bug in the V8 code related to the split window.
+        I added a test that tests the failure that caused this to be rolled back last time.
+
+        * fast/dom/Window/es52-globals-expected.txt: Added.
+        * fast/dom/Window/es52-globals.html: Added.
+        * fast/dom/Window/window-property-shadowing-onclick-expected.txt: Added.
+        * fast/dom/Window/window-property-shadowing-onclick.html: Added.
+        * platform/chromium/fast/dom/Window/es52-globals-expected.txt: Added.
+        * platform/chromium/fast/dom/Window/window-property-shadowing-name-expected.txt: Added.
+        * platform/chromium/fast/dom/Window/window-property-shadowing-onclick-expected.txt: Added.
+
 2012-06-27  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] ScrollbarLayerChromium should support painting forward-track and back-track in different styles.

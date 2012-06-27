@@ -1,0 +1,16 @@
+PASS window.hasOwnProperty("Element") is true
+PASS window.hasOwnProperty("x") is true
+FAIL window.hasOwnProperty("y") should be false. Was true.
+PASS window.hasOwnProperty("f") is true
+PASS window.hasOwnProperty("div") is true
+FAIL window.hasOwnProperty("a") should be true. Was false.
+PASS Element is not undefined
+PASS x is 1
+FAIL y should be undefined. Was 2
+FAIL f should be undefined. Was [object Window]
+FAIL div should be undefined. Was [object HTMLDivElement]
+PASS a is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

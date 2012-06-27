@@ -1,0 +1,7 @@
+This tests the ES5.2 behavior where global variables should not trigger setters on the Window object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS onClickCalled is false
+
