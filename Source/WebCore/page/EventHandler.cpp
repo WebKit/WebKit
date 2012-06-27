@@ -2483,11 +2483,19 @@ bool EventHandler::bestClickableNodeForTouchPoint(const IntPoint& touchCenter, c
 {
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
     IntPoint hitTestPoint = m_frame->view()->windowToContents(touchCenter);
-    HitTestResult result = hitTestResultAtPoint(hitTestPoint, /*allowShadowContent*/ false, /*ignoreClipping*/ false, DontHitTestScrollbars, hitType, touchRadius);
+    HitTestResult result = hitTestResultAtPoint(hitTestPoint, /*allowShadowContent*/ true, /*ignoreClipping*/ false, DontHitTestScrollbars, hitType, touchRadius);
 
     IntRect touchRect(touchCenter - touchRadius, touchRadius + touchRadius);
     RefPtr<StaticHashSetNodeList> nodeList = StaticHashSetNodeList::adopt(result.rectBasedTestResult());
-    return findBestClickableCandidate(targetNode, targetPoint, touchCenter, touchRect, *nodeList.get());
+
+    // FIXME: Should be able to handle targetNode being a shadow DOM node to avoid performing uncessary hit tests
+    // in the case where further processing on the node is required. Returning the shadow ancestor prevents a
+    // regression in touchadjustment/html-label.html. Some refinement is required to testing/internals to
+    // handle targetNode being a shadow DOM node. 
+    bool success = findBestClickableCandidate(targetNode, targetPoint, touchCenter, touchRect, *nodeList.get());
+    if (success && targetNode)
+        targetNode = targetNode->shadowAncestorNode();
+    return success;
 }
 
 bool EventHandler::bestZoomableAreaForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntRect& targetArea, Node*& targetNode)

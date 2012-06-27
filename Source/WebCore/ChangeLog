@@ -1,3 +1,22 @@
+2012-06-26  Kevin Ellis  <kevers@chromium.org>
+
+        Touch adjustment does not target shadow DOM elements
+        https://bugs.webkit.org/show_bug.cgi?id=89556
+
+        The position of internal shadow-DOM nodes were not being considered
+        when determining the snap position when TOUCH_ADJUSTMENT is enabled 
+        for fine tuning the position of synthetic mouse events.  This 
+        restriction results in not being able to select the calendar picker
+        when input type=date, or to clear the search field for input 
+        type=search.
+
+        Reviewed by Antonio Gomes.
+
+        Test: touchadjustment/nested-shadow-node.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::bestClickableNodeForTouchPoint):
+
 2012-06-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Stop calling node() and deprecatedEditingOffset() in comparePositions

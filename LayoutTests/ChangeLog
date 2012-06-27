@@ -1,3 +1,21 @@
+2012-06-26  Kevin Ellis  <kevers@chromium.org>
+
+        Touch adjustment does not target shadow DOM elements
+        https://bugs.webkit.org/show_bug.cgi?id=89556
+
+        Cannot open calendar picker for input type=date using a touch tap
+        gesture if TOUCH_ADJUSTMENT is enabled. When touch adjustment is 
+        enabled, the position of a touch point is snapped to the center of an
+        element when generating synthetic mouse events.  The position of shadow
+        nodes was not being considered when determining the snap position. 
+        This test verifies that touch adjustment now considers shadow-DOM
+        when calculating the snap position. 
+
+        Reviewed by Antonio Gomes.
+
+        * touchadjustment/nested-shadow-node-expected.txt: Added.
+        * touchadjustment/nested-shadow-node.html: Added.
+
 2012-06-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Stop calling node() and deprecatedEditingOffset() in comparePositions
@@ -3702,7 +3720,6 @@
         * fast/css/vertical-align-baseline-rowspan-009.htm: Added.
             These make sure the alignment used in the first row of the span is correct when things like
             the height of the cell and the height of the span are specified.
-
 
 2012-06-18  Hayato Ito  <hayato@chromium.org>
 
