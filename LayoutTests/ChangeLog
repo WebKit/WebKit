@@ -1,3 +1,10 @@
+2012-06-27  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding a new baseline that's required
+        after the Gamepad API has been turned on in r121332.
+
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt: Added.
+
 2012-06-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (Safari 5?): Pasting a line into textarea inserts two newlines
