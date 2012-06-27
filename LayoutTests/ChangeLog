@@ -1,3 +1,12 @@
+2012-06-27  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening, rebaseline after r121303.
+
+        * platform/qt/editing/deleting/delete-br-002-expected.txt:
+        * platform/qt/editing/deleting/delete-br-004-expected.txt:
+        * platform/qt/editing/deleting/delete-br-005-expected.txt:
+        * platform/qt/editing/deleting/delete-br-006-expected.txt:
+
 2012-06-27  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, updating baselines after r121303.
