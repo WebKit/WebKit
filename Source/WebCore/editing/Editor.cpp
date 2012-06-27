@@ -2085,7 +2085,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
             if (result->type == TextCheckingTypeLink && selectionOffset > resultLocation + resultLength + 1)
                 continue;
 
-            if (!(shouldPerformReplacement || shouldCheckForCorrection || shouldMarkLink) || !doReplacement)
+            if (!(shouldPerformReplacement || shouldShowCorrectionPanel || shouldMarkLink) || !doReplacement)
                 continue;
 
             String replacedString = plainText(rangeToReplace.get());

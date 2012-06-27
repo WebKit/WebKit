@@ -1,3 +1,15 @@
+2012-06-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121271.
+        http://trac.webkit.org/changeset/121271
+        https://bugs.webkit.org/show_bug.cgi?id=90056
+
+        Broke a whole bunch of tests and also caused crashes in some
+        tests (Requested by rniwa on #webkit).
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAndReplaceFor):
+
 2012-06-27  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Add support for the Gamepad API
