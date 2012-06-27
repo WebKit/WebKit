@@ -248,6 +248,8 @@ SOURCES += \
     tools/CodeProfiling.cpp \
     yarr/YarrJIT.cpp \
 
+HEADERS += $$files(*.h, true)
+
 *sh4* {
     QMAKE_CXXFLAGS += -mieee -w
     QMAKE_CFLAGS   += -mieee -w

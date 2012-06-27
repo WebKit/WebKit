@@ -1,3 +1,14 @@
+2012-06-26  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Add missing heades to HEADERS
+
+        For JavaScriptCore there aren't any Qt specific files, so we include all
+        headers for easy editing in Qt Creator.
+
+        Reviewed by Simon Hausmann.
+
+        * Target.pri:
+
 2012-06-26  Dominic Cooney  <dominicc@chromium.org>
 
         [Chromium] Remove unused build scripts and empty folders for JavaScriptCore w/ gyp

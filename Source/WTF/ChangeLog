@@ -1,3 +1,14 @@
+2012-06-26  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Add missing heades to HEADERS
+
+        For JavaScriptCore there aren't any Qt specific files, so we include all
+        headers for easy editing in Qt Creator.
+
+        Reviewed by Simon Hausmann.
+
+        * WTF.pro:
+
 2012-06-25  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, rolling out r121145.
