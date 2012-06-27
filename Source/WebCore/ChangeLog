@@ -1,5 +1,11 @@
 2012-06-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Let Xcode have its own way.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2012-06-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION (Safari 5?): Pasting a line into textarea inserts two newlines
         https://bugs.webkit.org/show_bug.cgi?id=49288
 
