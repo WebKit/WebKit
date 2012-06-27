@@ -101,7 +101,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 63
+%expect 62
 
 %nonassoc LOWEST_PREC
 
@@ -789,7 +789,7 @@ margin_sym :
 
 font_face:
     FONT_FACE_SYM maybe_space
-    '{' maybe_space declaration_list '}'  maybe_space {
+    '{' maybe_space declaration_list closing_brace {
         $$ = static_cast<CSSParser*>(parser)->createFontFaceRule();
     }
     | FONT_FACE_SYM error invalid_block {

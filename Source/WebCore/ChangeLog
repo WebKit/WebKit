@@ -1,3 +1,16 @@
+2012-06-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unexpected end of style sheet in @font-face rule discards it rather than closes all open constructs
+        https://bugs.webkit.org/show_bug.cgi?id=89980
+
+        Reviewed by Antti Koivisto.
+
+        Use the "closing_brace" at the end of font_face rather than the explicit "'}' maybe_space".
+
+        Test: fast/css/font-face-unexpected-end.html
+
+        * css/CSSGrammar.y:
+
 2012-06-26  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Add missing heades to HEADERS

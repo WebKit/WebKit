@@ -1,3 +1,13 @@
+2012-06-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unexpected end of style sheet in @font-face rule discards it rather than closes all open constructs
+        https://bugs.webkit.org/show_bug.cgi?id=89980
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/font-face-unexpected-end-expected.html: Added.
+        * fast/css/font-face-unexpected-end.html: Added.
+
 2012-06-27  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening, rebaseline after r121303.
