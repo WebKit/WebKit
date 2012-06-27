@@ -1,3 +1,35 @@
+2012-06-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reduced (but did not eliminate) use of "berzerker GC"
+        https://bugs.webkit.org/show_bug.cgi?id=89237
+
+        Reviewed by Gavin Barraclough.
+
+        (PART 2)
+
+        Don't ASSERT that RootObject's destructor runs and invalidates all
+        RuntimeObjects before their destructors run.
+
+        We don't guarantee this behavior because some RuntimeObjects may already
+        be garbage by the time RootObject's destructor runs, in which case
+        RootObject's weak pointers will be NULL, and RootObject will not call
+        invalidate() on them.
+
+        It's been theoretically possible for this ASSERT to fire for a while now.
+        This patch makes it fire all the time.
+
+        Luckily, we only needed the behavior guarded by this ASSERT for WebKit1
+        in Safari on Windows (cf. https://bugs.webkit.org/show_bug.cgi?id=61317),
+        to handle the way WebKit1 would unload plugin DLLs. If this ever becomes
+        an issue again, we can fix it by (a) not unloading plugin DLLs,
+        (b) migrating WebKit1 to the WebKit2 JS-plugin binding model, (c) making
+        the Instance pointer in a RuntimeObject an indirect pointer through
+        RootObject, or (c) giving RuntimeObject some sort of special way to
+        access a zombie weak pointer.
+
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::destroy): ASSERT removed. Anders said so.
+
 2012-06-26  Douglas Stockwell  <dstockwell@chromium.org>
 
         REGRESSION(r107836): box shadow not drawn for opaque images with an opaque background

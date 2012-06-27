@@ -78,6 +78,7 @@ void IncrementalSweeper::doSweep(double sweepBeginTime)
             continue;
 
         block->sweep();
+        m_globalData->heap.objectSpace().freeOrShrinkBlock(block);
 
         CFTimeInterval elapsedTime = WTF::monotonicallyIncreasingTime() - sweepBeginTime;
         if (elapsedTime < sweepTimeSlice)

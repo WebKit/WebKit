@@ -75,7 +75,7 @@ void DefaultGCActivityCallback::doWork()
         return;
     }
 #endif
-    heap->collectAllGarbage();
+    heap->collect(Heap::DoNotSweep);
 }
     
 void DefaultGCActivityCallback::scheduleTimer(double newDelay)

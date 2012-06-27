@@ -408,7 +408,7 @@ namespace JSC {
 
     inline bool MarkedBlock::needsSweeping()
     {
-        return m_state == Marked;
+        return m_state == Marked || m_state == Zapped;
     }
 
 #if ENABLE(GGC)
