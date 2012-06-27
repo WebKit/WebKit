@@ -34,7 +34,6 @@
 
 #include "ImageLayerChromium.h"
 
-#include "Image.h"
 #include "LayerTextureSubImage.h"
 #include "LayerTextureUpdater.h"
 #include "ManagedTexture.h"

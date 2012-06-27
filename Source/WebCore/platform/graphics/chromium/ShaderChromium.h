@@ -28,8 +28,8 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "PlatformString.h"
 #include "SkColorPriv.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 class WebGraphicsContext3D;

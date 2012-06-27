@@ -26,7 +26,6 @@
 
 #include "cc/CCLayerAnimationController.h"
 
-#include "GraphicsLayer.h" // for KeyframeValueList
 #include "cc/CCActiveAnimation.h"
 #include "cc/CCKeyframedAnimationCurve.h"
 #include <public/WebTransformationMatrix.h>

@@ -32,7 +32,6 @@
 
 #include "LayerPainterChromium.h"
 #include "PlatformColor.h"
-#include "PlatformContextSkia.h"
 #include "skia/ext/platform_canvas.h"
 
 namespace WebCore {

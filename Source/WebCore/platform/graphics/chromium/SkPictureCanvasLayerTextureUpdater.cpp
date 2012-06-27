@@ -30,9 +30,7 @@
 
 #include "SkPictureCanvasLayerTextureUpdater.h"
 
-#include "GraphicsContext.h"
 #include "LayerPainterChromium.h"
-#include "PlatformContextSkia.h"
 #include "SkCanvas.h"
 #include "TraceEvent.h"
 

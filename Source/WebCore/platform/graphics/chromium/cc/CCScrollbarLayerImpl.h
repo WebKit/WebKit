@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-class GraphicsContext;
 class ScrollView;
 
 class CCScrollbarLayerImpl : public CCLayerImpl {

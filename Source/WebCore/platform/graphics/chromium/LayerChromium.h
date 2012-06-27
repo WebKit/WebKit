@@ -34,9 +34,8 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "Color.h"
 #include "FloatPoint.h"
-#include "GraphicsContext.h"
-#include "PlatformString.h"
 #include "Region.h"
 #include "RenderSurfaceChromium.h"
 #include "cc/CCLayerAnimationController.h"

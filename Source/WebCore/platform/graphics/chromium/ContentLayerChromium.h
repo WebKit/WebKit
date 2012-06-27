@@ -40,7 +40,6 @@ class SkCanvas;
 
 namespace WebCore {
 
-class GraphicsContext;
 class IntRect;
 class LayerTextureUpdater;
 

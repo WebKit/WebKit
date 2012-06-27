@@ -451,7 +451,7 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
 
     // Calling prepareToUpdate() calls into WebKit to paint, which may have the side
     // effect of disabling compositing, which causes our reference to the texture updater to be deleted.
-    // However, we can't free the memory backing the GraphicsContext until the paint finishes,
+    // However, we can't free the memory backing the SkCanvas until the paint finishes,
     // so we grab a local reference here to hold the updater alive until the paint completes.
     RefPtr<LayerTextureUpdater> protector(textureUpdater());
     IntRect paintedOpaqueRect;

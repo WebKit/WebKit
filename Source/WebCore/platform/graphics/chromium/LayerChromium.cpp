@@ -33,9 +33,6 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "LayerChromium.h"
 
-#include "NativeImageSkia.h"
-#include "PlatformContextSkia.h"
-#include "RenderLayerBacking.h"
 #include "TextStream.h"
 #include "cc/CCActiveAnimation.h"
 #include "cc/CCAnimationEvents.h"
@@ -44,7 +41,6 @@
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCSettings.h"
-#include "skia/ext/platform_canvas.h"
 
 using namespace std;
 using WebKit::WebTransformationMatrix;
