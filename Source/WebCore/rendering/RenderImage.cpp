@@ -453,6 +453,14 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const LayoutRect& rect
     context->drawImage(m_imageResource->image(alignedRect.width(), alignedRect.height()).get(), style()->colorSpace(), alignedRect, compositeOperator, shouldRespectImageOrientation(), useLowQualityScaling);
 }
 
+bool RenderImage::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox*) const
+{
+    if (!RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(bleedAvoidance))
+        return false;
+
+    return !backgroundIsObscured();
+}
+
 bool RenderImage::backgroundIsObscured() const
 {
     if (!m_imageResource->hasImage() || m_imageResource->errorOccurred())

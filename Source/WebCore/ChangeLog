@@ -1,3 +1,21 @@
+2012-06-26  Douglas Stockwell  <dstockwell@chromium.org>
+
+        REGRESSION(r107836): box shadow not drawn for opaque images with an opaque background
+        https://bugs.webkit.org/show_bug.cgi?id=89958
+
+        Reviewed by Simon Fraser.
+
+        Don't attempt to draw the box shadow as part of the background if the background is
+        obscured.
+
+        Test: fast/box-shadow/image-box-shadow.html
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::boxShadowShouldBeAppliedToBackground):
+        (WebCore):
+        * rendering/RenderImage.h:
+        (RenderImage):
+
 2012-06-26  Nico Weber  <thakis@chromium.org>
 
         Fix new Wunused-private-field violations that crept in

@@ -1,3 +1,16 @@
+2012-06-26  Douglas Stockwell  <dstockwell@chromium.org>
+
+        REGRESSION(r107836): box shadow not drawn for opaque images with an opaque background
+        https://bugs.webkit.org/show_bug.cgi?id=89958
+
+        Reviewed by Simon Fraser.
+
+        * fast/box-shadow/image-box-shadow-expected.html: Added.
+        * fast/box-shadow/image-box-shadow.html: Added.
+        * fast/box-shadow/resources/green-alpha.png: Added.
+        * fast/box-shadow/resources/green.jpg: Added.
+        * fast/box-shadow/resources/green.png: Added.
+
 2012-06-26  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
 
         Unexpected element sizes when mixing inline-table with box-sizing
