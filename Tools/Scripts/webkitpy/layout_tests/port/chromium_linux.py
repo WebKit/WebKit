@@ -110,6 +110,9 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         port_names = self.FALLBACK_PATHS[self._architecture]
         return map(self._webkit_baseline_path, port_names)
 
+    def _modules_to_search_for_symbols(self):
+        return [self._build_path(self.get_option('configuration'), 'libffmpegsumo.so')]
+
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)
         if not result:

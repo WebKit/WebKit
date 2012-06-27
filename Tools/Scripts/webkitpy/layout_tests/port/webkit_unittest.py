@@ -53,7 +53,7 @@ class TestWebKitPort(WebKitPort):
     def all_test_configurations(self):
         return [self.test_configuration()]
 
-    def _webcore_symbols_string(self):
+    def _symbols_string(self):
         return self.symbols_string
 
     def _tests_for_other_platforms(self):

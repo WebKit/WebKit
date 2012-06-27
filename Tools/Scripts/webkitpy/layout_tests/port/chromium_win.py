@@ -106,6 +106,11 @@ class ChromiumWinPort(chromium.ChromiumPort):
         port_names = self.FALLBACK_PATHS[self.version()]
         return map(self._webkit_baseline_path, port_names)
 
+    def _modules_to_search_for_symbols(self):
+        # FIXME: we should return the path to the ffmpeg equivalents to detect if we have the mp3 and aac codecs installed.
+        # See https://bugs.webkit.org/show_bug.cgi?id=89706.
+        return []
+
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)
         if not result:

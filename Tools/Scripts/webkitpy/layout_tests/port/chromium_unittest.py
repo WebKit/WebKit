@@ -180,6 +180,13 @@ class ChromiumPortTest(port_testcase.PortTestCase):
     port_name = 'chromium-mac'
     port_maker = chromium.ChromiumPort
 
+    def test_missing_symbol_to_skipped_tests(self):
+        # Test that we get the chromium skips and not the webkit default skips
+        port = self.make_port()
+        skip_dict = port._missing_symbol_to_skipped_tests()
+        self.assertTrue('ff_mp3_decoder' in skip_dict)
+        self.assertFalse('WebGLShader' in skip_dict)
+
     def test_all_test_configurations(self):
         """Validate the complete set of configurations this port knows about."""
         port = self.make_port()

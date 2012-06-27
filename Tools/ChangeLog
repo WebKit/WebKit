@@ -1,3 +1,58 @@
+2012-06-27  Dirk Pranke  <dpranke@chromium.org>
+
+        Derive ChromiumPort from WebKitPort to add support for missing symbols to skip tests
+        https://bugs.webkit.org/show_bug.cgi?id=89706
+
+        Reviewed by Adam Barth.
+
+        Based on the original patch by Raymond Toy.
+
+        This patch changes ChromiumPort to derive from webkit.WebKitPort
+        instead of base.Port. This is a long-awaited change and a
+        precursor to merging base.Port and webkit.WebKitPort, but is
+        driven by the desire to dynamically detect whether the MP3 and
+        AAC codecs are compiled into DRT on Chromium, for which we
+        wanted to re-use the existing logic in WebKit port for determine
+        what to skip at compile time.
+
+        Most of the changes are shuffling things around so that we don't
+        change any other logic and so we override the necessary methods
+        in WebKitPort (and try to follow the same method definition
+        order where possible).
+
+        Also, on the Chromium port the mp3 and aac codecs are actually
+        defined in a separate library, so scanning webcore isn't
+        sufficient. This patch generalizes the symbol lookup to handle
+        multiple libraries, and uses different libraries as appropriate
+        for Chromium.
+
+        The only functional/visible changes should be in the value
+        returned for skipped_layout_tests().
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort):
+        (ChromiumPort.__init__):
+        (ChromiumPort.driver_name):
+        (ChromiumPort._driver_class):
+        (ChromiumPort._missing_symbol_to_skipped_tests):
+        (ChromiumPort.skipped_layout_tests):
+        (ChromiumPort.setup_test_run):
+        (ChromiumPort._path_to_image_diff):
+        (ChromiumPort._convert_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumPortTest.test_missing_symbol_to_skipped_tests):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort._modules_to_search_for_symbols):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumLinuxPort._modules_to_search_for_symbols):
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumLinuxPort._modules_to_search_for_symbols):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort):
+        (WebKitPort.__init__):
+        (WebKitPort._symbols_string):
+        (WebKitPort._modules_to_search_for_symbols):
+
 2012-06-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(r121339): It broke the build on the Qt Windows bots
