@@ -90,7 +90,6 @@ private:
     virtual EventTargetData* ensureEventTargetData();
 
     EventTargetData m_eventTargetData;
-    ScriptExecutionContext *m_scriptExecutionContext;
 
     mutable RefPtr<PerformanceNavigation> m_navigation;
     mutable RefPtr<PerformanceTiming> m_timing;

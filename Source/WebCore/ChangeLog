@@ -1,3 +1,13 @@
+2012-06-26  Nico Weber  <thakis@chromium.org>
+
+        Fix new Wunused-private-field violations that crept in
+        https://bugs.webkit.org/show_bug.cgi?id=90032
+
+        Reviewed by Adam Barth.
+
+        * page/Performance.h:
+        (Performance):
+
 2012-06-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Change return type in bandwidth attribute of network information API
