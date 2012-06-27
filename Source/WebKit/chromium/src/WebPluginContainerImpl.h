@@ -116,6 +116,10 @@ public:
     WebPlugin* plugin() { return m_webPlugin; }
     void setPlugin(WebPlugin*);
 
+    virtual float deviceScaleFactor();
+    virtual float pageScaleFactor();
+    virtual float pageZoomFactor();
+
     // Printing interface. The plugin can support custom printing
     // (which means it controls the layout, number of pages etc).
     // Whether the plugin supports its own paginated print. The other print

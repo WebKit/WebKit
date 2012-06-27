@@ -98,6 +98,7 @@ public:
         const WebURLRequest&, const WebString& target, bool notifyNeeded, void* notifyData) = 0;
 
     // Notifies that the zoom level has changed.
+    // Note, this does NOT affect pageScaleFactor or pageZoomFactor
     virtual void zoomLevelChanged(double zoomLevel) = 0;
 
     // Notifies whether the contents of the plugin are entirely opaque.
@@ -112,6 +113,10 @@ public:
 
     virtual WebPlugin* plugin() = 0;
     virtual void setPlugin(WebPlugin*) = 0;
+
+    virtual float deviceScaleFactor() = 0;
+    virtual float pageScaleFactor() = 0;
+    virtual float pageZoomFactor() = 0;
 
 protected:
     ~WebPluginContainer() { }

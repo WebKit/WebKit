@@ -245,6 +245,30 @@ void WebPluginContainerImpl::setPlugin(WebPlugin* plugin)
     }
 }
 
+float WebPluginContainerImpl::deviceScaleFactor()
+{
+    Page* page = m_element->document()->page();
+    if (!page)
+        return 1.0;
+    return page->deviceScaleFactor();
+}
+
+float WebPluginContainerImpl::pageScaleFactor()
+{
+    Page* page = m_element->document()->page();
+    if (!page)
+        return 1.0;
+    return page->pageScaleFactor();
+}
+
+float WebPluginContainerImpl::pageZoomFactor()
+{
+    Frame* frame = m_element->document()->frame();
+    if (!frame)
+        return 1.0;
+    return frame->pageZoomFactor();
+}
+
 bool WebPluginContainerImpl::supportsPaginatedPrint() const
 {
     return m_webPlugin->supportsPaginatedPrint();
