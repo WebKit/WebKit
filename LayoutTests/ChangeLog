@@ -1,5 +1,14 @@
 2012-06-26  Keishi Hattori  <keishi@webkit.org>
 
+        [Chromium] Rebaseline fast/backgrounds/size/zero.html. Caused by r121296
+
+        Unreviewed.
+
+        * platform/chromium-mac-snowleopard/fast/backgrounds/size/zero-expected.png:
+        * platform/chromium-mac/fast/backgrounds/size/zero-expected.png:
+
+2012-06-26  Keishi Hattori  <keishi@webkit.org>
+
         [Chromium] Rebaseline 4 tests in editing/deleting. Caused by r121303.
 
         Unreviewed.
