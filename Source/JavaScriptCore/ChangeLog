@@ -1,5 +1,18 @@
 2012-06-27  Filip Pizlo  <fpizlo@apple.com>
 
+        x86 disassembler confuses immediates with addresses
+        https://bugs.webkit.org/show_bug.cgi?id=90099
+
+        Reviewed by Mark Hahnenberg.
+        
+        Prepend "$" to immediates to disambiguate between immediates and addresses. This is in
+        accordance with the gas and AT&T syntax.
+
+        * disassembler/udis86/udis86_syn-att.c:
+        (gen_operand):
+
+2012-06-27  Filip Pizlo  <fpizlo@apple.com>
+
         Add a comment clarifying Options::showDisassembly versus Options::showDFGDisassembly.
 
         Rubber stamped by Mark Hahnenberg.

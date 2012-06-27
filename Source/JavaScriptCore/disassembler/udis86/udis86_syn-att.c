@@ -109,7 +109,7 @@ gen_operand(struct ud* u, struct ud_operand* op)
         }
         if ( sext_size < 64 )
             sext_mask = ( 1ull << sext_size ) - 1;
-        mkasm( u, "0x" FMT64 "x", imm & sext_mask ); 
+        mkasm( u, "$0x" FMT64 "x", imm & sext_mask ); 
 
 		break;
     }
