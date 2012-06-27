@@ -1,3 +1,24 @@
+2012-06-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Optimize mappings of simple transforms in RenderGeometryMap
+        https://bugs.webkit.org/show_bug.cgi?id=90034
+
+        Reviewed by Dean Jackson.
+        
+        For transforms that are identity or simple translations, don't
+        fall off the fast path in RenderGeometryMap; we can just
+        treat them as offsets.
+        
+        Improves performance on pages with lots of translateZ(0) elements.
+        
+        Remove RenderGeometryMapStep::mapPoint() and mapQuad(), which
+        were unused.
+
+        No new tests; optimization only, and tested by assertions.
+
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::push):
+
 2012-06-26  Kevin Ellis  <kevers@chromium.org>
 
         Touch adjustment does not target shadow DOM elements

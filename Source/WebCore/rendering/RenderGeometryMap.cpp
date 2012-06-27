@@ -46,25 +46,6 @@ public:
     {
     }
         
-    FloatPoint mapPoint(const FloatPoint& p) const
-    {
-        if (!m_transform)
-            return p + m_offset;
-        
-        return m_transform->mapPoint(p);
-    }
-    
-    FloatQuad mapQuad(const FloatQuad& quad) const
-    {
-        if (!m_transform) {
-            FloatQuad q = quad;
-            q.move(m_offset);
-            return q;
-        }
-        
-        return m_transform->mapQuad(quad);
-    }
-    
     const RenderObject* m_renderer;
     LayoutSize m_offset;
     OwnPtr<TransformationMatrix> m_transform; // Includes offset if non-null.
@@ -216,8 +197,11 @@ void RenderGeometryMap::push(const RenderObject* renderer, const TransformationM
     ASSERT(m_insertionPosition != notFound);
 
     OwnPtr<RenderGeometryMapStep> step = adoptPtr(new RenderGeometryMapStep(renderer, accumulatingTransform, isNonUniform, isFixedPosition, hasTransform));
-    step->m_transform = adoptPtr(new TransformationMatrix(t));
-
+    if (!t.isIntegerTranslation())
+        step->m_transform = adoptPtr(new TransformationMatrix(t));
+    else
+        step->m_offset = LayoutSize(t.e(), t.f());
+    
     stepInserted(*step.get());
     m_mapping.insert(m_insertionPosition, step.release());
 }
