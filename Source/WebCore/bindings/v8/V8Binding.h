@@ -120,15 +120,12 @@ namespace WebCore {
     public:
         static V8BindingPerIsolateData* create(v8::Isolate*);
         static void ensureInitialized(v8::Isolate*);
-        static V8BindingPerIsolateData* get(v8::Isolate* isolate)
-        {
-            ASSERT(isolate->GetData());
-            return static_cast<V8BindingPerIsolateData*>(isolate->GetData()); 
-        }
-
         static V8BindingPerIsolateData* current(v8::Isolate* isolate = 0)
         {
-            return isolate ? static_cast<V8BindingPerIsolateData*>(isolate->GetData()) : get(v8::Isolate::GetCurrent());
+            if (UNLIKELY(!isolate))
+                isolate = v8::Isolate::GetCurrent();
+            ASSERT(isolate->GetData());
+            return static_cast<V8BindingPerIsolateData*>(isolate->GetData()); 
         }
         static void dispose(v8::Isolate*);
 

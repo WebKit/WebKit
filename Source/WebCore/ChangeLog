@@ -1,3 +1,19 @@
+2012-06-27  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Refactor V8BindingPerIsolateData::current() and V8BindingPerIsolateData::get()
+        https://bugs.webkit.org/show_bug.cgi?id=90044
+
+        Reviewed by Adam Barth.
+
+        'static_cast<V8BindingPerIsolateData*>(isolate->GetData())' is duplicated
+        in V8BindingPerIsolateData::current() and V8BindingPerIsolateData::get().
+        This patch removes the duplication.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Binding.h:
+        (WebCore::V8BindingPerIsolateData::current):
+
 2012-06-26  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Platform] Change implementation of LocaleICU class to support more UDateFormat.
