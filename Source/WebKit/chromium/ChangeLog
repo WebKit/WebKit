@@ -1,3 +1,15 @@
+2012-06-26  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Decrease the number of conditional blocks in features.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=90013
+
+        Reviewed by Adam Barth.
+
+        Consolidate two Android-specific and accelerated-compositing-specific
+        conditional blocks into other blocks which serve an identical purpose.
+
+        * features.gypi:
+
 2012-06-26  Dave Tu  <dtu@chromium.org>
 
         [chromium] Expose rendering statistics to WebWidget.

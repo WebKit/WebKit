@@ -137,6 +137,7 @@
           'ENABLE_CALENDAR_PICKER=0',
           'ENABLE_FONT_BOOSTING=1',
           'ENABLE_INPUT_SPEECH=0',
+          'ENABLE_INPUT_TYPE_COLOR=0',
           'ENABLE_INPUT_TYPE_DATETIME=1',
           'ENABLE_INPUT_TYPE_DATETIMELOCAL=1',
           'ENABLE_INPUT_TYPE_MONTH=1',
@@ -157,11 +158,12 @@
           'WTF_USE_NATIVE_FULLSCREEN_VIDEO=1',
         ],
         'enable_touch_icon_loading': 1,
-      }, {
+      }, { # OS!="android"
         'feature_defines': [
           'ENABLE_CALENDAR_PICKER=1',
           'ENABLE_FONT_BOOSTING=0',
           'ENABLE_INPUT_SPEECH=1',
+          'ENABLE_INPUT_TYPE_COLOR=1',
           'ENABLE_JAVASCRIPT_I18N_API=1',
           'ENABLE_LEGACY_NOTIFICATIONS=1',
           'ENABLE_MEDIA_CAPTURE=0',
@@ -174,24 +176,11 @@
           'ENABLE_WEB_AUDIO=1',
         ],
       }],
-      ['OS=="android"', {
-        'feature_defines': [
-          'ENABLE_INPUT_TYPE_COLOR=0',
-        ],
-      }, {
-        'feature_defines': [
-          'ENABLE_INPUT_TYPE_COLOR=1',
-        ],
-      }],
       ['use_accelerated_compositing==1', {
         'feature_defines': [
-          'WTF_USE_ACCELERATED_COMPOSITING=1',
           'ENABLE_3D_RENDERING=1',
-        ],
-      }],
-      ['use_accelerated_compositing==1', {
-        'feature_defines': [
           'ENABLE_ACCELERATED_2D_CANVAS=1',
+          'WTF_USE_ACCELERATED_COMPOSITING=1',
         ],
       }],
       # Mac OS X uses Accelerate.framework FFT by default instead of FFmpeg.
