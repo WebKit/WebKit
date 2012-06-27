@@ -371,8 +371,9 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_touchEventModePriorGoingFullScreen(ProcessedTouchEvents)
 #endif
 #endif
-#if ENABLE(FULLSCREEN_API)
-    , m_xScrollOffsetPriorGoingFullScreen(-1)
+#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
+    , m_scaleBeforeFullScreen(-1.0)
+    , m_xScrollOffsetBeforeFullScreen(-1)
 #endif
     , m_currentCursor(Platform::CursorNone)
     , m_dumpRenderTree(0) // Lazy initialization.
@@ -6209,13 +6210,18 @@ void WebPagePrivate::enterFullScreenForElement(Element* element)
         // we temporarily scroll the WebPage to x:0 so that the wrapper gets properly
         // positioned. The original scroll position is restored once element leaves fullscreen.
         WebCore::IntPoint scrollPosition = m_mainFrame->view()->scrollPosition();
-        m_xScrollOffsetPriorGoingFullScreen = scrollPosition.x();
+        m_xScrollOffsetBeforeFullScreen = scrollPosition.x();
         m_mainFrame->view()->setScrollPosition(WebCore::IntPoint(0, scrollPosition.y()));
 
 #if ENABLE(EVENT_MODE_METATAGS)
         m_touchEventModePriorGoingFullScreen = m_touchEventMode;
         didReceiveTouchEventMode(PureTouchEventsWithMouseConversion);
 #endif
+        // The current scale can be clamped to a greater minimum scale when we relayout contents during
+        // the change of the viewport size. Cache the current scale so that we can restore it when
+        // leaving fullscreen. Otherwise, it is possible that we will use the wrong scale.
+        m_scaleBeforeFullScreen = currentScale();
+
         // No fullscreen video widget has been made available by the Browser
         // chrome, or this is not a video element. The webkitRequestFullScreen
         // Javascript call is often made on a div element.
@@ -6237,16 +6243,27 @@ void WebPagePrivate::exitFullScreenForElement(Element* element)
         exitFullscreenForNode(element);
     } else {
         // When leaving fullscreen mode, we need to restore the 'x' scroll position
-        // prior going full screen.
+        // before fullscreen.
+        // FIXME: We may need to respect 'y' position as well, because the web page always scrolls to
+        // the top when leaving fullscreen mode.
         WebCore::IntPoint scrollPosition = m_mainFrame->view()->scrollPosition();
         m_mainFrame->view()->setScrollPosition(
-            WebCore::IntPoint(m_xScrollOffsetPriorGoingFullScreen, scrollPosition.y()));
-        m_xScrollOffsetPriorGoingFullScreen = -1;
+            WebCore::IntPoint(m_xScrollOffsetBeforeFullScreen, scrollPosition.y()));
+        m_xScrollOffsetBeforeFullScreen = -1;
 
 #if ENABLE(EVENT_MODE_METATAGS)
         didReceiveTouchEventMode(m_touchEventModePriorGoingFullScreen);
         m_touchEventModePriorGoingFullScreen = ProcessedTouchEvents;
 #endif
+        if (m_scaleBeforeFullScreen > 0) {
+            // Restore the scale when leaving fullscreen. We can't use TransformationMatrix::scale(double) here, as it
+            // will multiply the scale rather than set the scale.
+            // FIXME: We can refactor this into setCurrentScale(double) if it is useful in the future.
+            m_transformationMatrix->setM11(m_scaleBeforeFullScreen);
+            m_transformationMatrix->setM22(m_scaleBeforeFullScreen);
+            m_scaleBeforeFullScreen = -1.0;
+        }
+
         // This is where we would restore the browser's chrome
         // if hidden above.
         client()->fullscreenStop();

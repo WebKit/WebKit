@@ -1,5 +1,27 @@
 2012-06-27  Jacky Jiang  <zhajiang@rim.com>
 
+        [BlackBerry] Wrong scale after leaving fullscreen <video>
+        https://bugs.webkit.org/show_bug.cgi?id=89546
+
+        Reviewed by Antonio Gomes.
+
+        PR: 164948
+        When we were entering fullscreen, the current scale A was clamped to a
+        greater minimum scale B as we relayouted the contents during the change
+        of the viewport size. When leaving fullscreen, we still used that scale
+        B as the current scale which was incorrect.
+        To fix this, we can save the current scale when entering fullscreen and
+        restore it when leaving fullscreen.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullScreenForElement):
+        (BlackBerry::WebKit::WebPagePrivate::exitFullScreenForElement):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
+2012-06-27  Jacky Jiang  <zhajiang@rim.com>
+
         [BlackBerry] Scale was incorrect when reloading a simple web page after initial load
         https://bugs.webkit.org/show_bug.cgi?id=88889
 
