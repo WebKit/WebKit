@@ -31,7 +31,7 @@
 #include <QCursor>
 #include <QDrag>
 #include <QGuiApplication>
-#include <QInputPanel>
+#include <QInputMethod>
 #include <QMimeData>
 #include <QtQuick/QQuickCanvas>
 #include <QStyleHints>
@@ -100,12 +100,12 @@ QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, QQuickWebPage* q
     , m_postponeTextInputStateChanged(false)
     , m_isTapHighlightActive(false)
 {
-    connect(qApp->inputPanel(), SIGNAL(visibleChanged()), this, SLOT(inputPanelVisibleChanged()));
+    connect(qApp->inputMethod(), SIGNAL(visibleChanged()), this, SLOT(inputPanelVisibleChanged()));
 }
 
 QtWebPageEventHandler::~QtWebPageEventHandler()
 {
-    disconnect(qApp->inputPanel(), SIGNAL(visibleChanged()), this, SLOT(inputPanelVisibleChanged()));
+    disconnect(qApp->inputMethod(), SIGNAL(visibleChanged()), this, SLOT(inputPanelVisibleChanged()));
 }
 
 void QtWebPageEventHandler::handleMouseMoveEvent(QMouseEvent* ev)
@@ -390,10 +390,10 @@ void QtWebPageEventHandler::resetGestureRecognizers()
 
 static void setInputPanelVisible(bool visible)
 {
-    if (qApp->inputPanel()->visible() == visible)
+    if (qApp->inputMethod()->visible() == visible)
         return;
 
-    qApp->inputPanel()->setVisible(visible);
+    qApp->inputMethod()->setVisible(visible);
 }
 
 void QtWebPageEventHandler::inputPanelVisibleChanged()
@@ -402,7 +402,7 @@ void QtWebPageEventHandler::inputPanelVisibleChanged()
         return;
 
     // We only respond to the input panel becoming visible.
-    if (!m_webView->hasActiveFocus() || !qApp->inputPanel()->visible())
+    if (!m_webView->hasActiveFocus() || !qApp->inputMethod()->visible())
         return;
 
     const EditorState& editor = m_webPageProxy->editorState();
@@ -422,7 +422,7 @@ void QtWebPageEventHandler::updateTextInputState()
     if (!m_webView->hasActiveFocus())
         return;
 
-    qApp->inputPanel()->update(Qt::ImQueryInput | Qt::ImEnabled);
+    qApp->inputMethod()->update(Qt::ImQueryInput | Qt::ImEnabled);
 
     setInputPanelVisible(editor.isContentEditable);
 }

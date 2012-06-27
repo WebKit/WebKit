@@ -1,3 +1,19 @@
+2012-06-26  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Avoid use of deprecated Qt API
+
+        Reviewed by Tor Arne Vestbø.
+
+        QGuiApplication::inputPanel() has been deprecated in favour of
+        inputMethod().
+
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::QtWebPageEventHandler):
+        (WebKit::QtWebPageEventHandler::~QtWebPageEventHandler):
+        (WebKit::setInputPanelVisible):
+        (WebKit::QtWebPageEventHandler::inputPanelVisibleChanged):
+        (WebKit::QtWebPageEventHandler::updateTextInputState):
+
 2012-06-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][GTK] Uninitialized variable in TextCheckerGtk.cpp
