@@ -123,6 +123,9 @@ static Position positionAvoidingPrecedingNodes(Position pos)
     // The two positions above are the same visual position, but we want to stay in the same block.
     Node* enclosingBlockNode = enclosingBlock(pos.containerNode());
     for (Position nextPosition = pos; nextPosition.containerNode() != enclosingBlockNode; pos = nextPosition) {
+        if (lineBreakExistsAtPosition(pos))
+            break;
+
         if (pos.containerNode()->nonShadowBoundaryParentNode())
             nextPosition = positionInParentAfterNode(pos.containerNode());
         

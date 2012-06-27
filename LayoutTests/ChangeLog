@@ -1,3 +1,15 @@
+2012-06-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (Safari 5?): Pasting a line into textarea inserts two newlines
+        https://bugs.webkit.org/show_bug.cgi?id=49288
+
+        Reviewed by Tony Chang.
+
+        Add a test regerssion test for copying & pasting a line in pre into textarea twice.
+
+        * editing/pasteboard/copy-paste-pre-line-content-expected.txt: Added.
+        * editing/pasteboard/copy-paste-pre-line-content.html: Added.
+
 2012-06-27  Alpha Lam  <hclam@chromium.org>
 
         [Chromium] Rebaseline svg/text/scaled-font.svg and svg/text/scaling-font-with-geometric-precision.html caused by r121343.

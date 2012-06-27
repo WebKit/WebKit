@@ -1,3 +1,21 @@
+2012-06-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (Safari 5?): Pasting a line into textarea inserts two newlines
+        https://bugs.webkit.org/show_bug.cgi?id=49288
+
+        Reviewed by Tony Chang.
+
+        The bug was caused by positionAvoidingPrecedingNodes getting out of a block when the insertion point is at a line break.
+        It caused the subsequent code to be misinformed of the insertion position and ended up not pruning the extra line break.
+
+        Fixed the bug by checking this special case and bailing out so that we don't crawl out of the enclosing block.
+        It's similar to checks several lines below it.
+
+        Test: editing/pasteboard/copy-paste-pre-line-content.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::positionAvoidingPrecedingNodes):
+
 2012-06-27  Andrei Onea  <onea@adobe.com>
 
         [CSSRegions]Change display values that allow regions
