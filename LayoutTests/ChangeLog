@@ -1,3 +1,13 @@
+2012-06-27  Alpha Lam  <hclam@chromium.org>
+
+        [Chromium] Rebaseline svg/text/scaled-font.svg and svg/text/scaling-font-with-geometric-precision.html caused by r121343.
+
+        Not reviewed. Build fix.
+
+        * platform/chromium-mac-snowleopard/svg/text/scaling-font-with-geometric-precision-expected.png:
+        * platform/chromium-mac/svg/text/scaled-font-expected.png:
+        * platform/chromium-mac/svg/text/scaling-font-with-geometric-precision-expected.png:
+
 2012-06-27  Ojan Vafai  <ojan@chromium.org>
 
         Fix some styling errors in the TestExpecations files.
