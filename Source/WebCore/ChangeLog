@@ -1,3 +1,13 @@
+2012-06-27  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Remove redundant NDEBUG definition
+
+        Already handled in default_post.prf.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WebCore.pri:
+
 2012-06-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Unexpected end of style sheet in @font-face rule discards it rather than closes all open constructs
