@@ -1,3 +1,18 @@
+2012-06-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2] [GTK] WebKit2 testing bot fails to run tests due to missing files
+        https://bugs.webkit.org/show_bug.cgi?id=90061
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add "-no-install -no-fast-install" to the LDFLAGS in bots. With
+        this flag libtool tells the linker to set the rpath for the output
+        file to the full path of the .libs directory, instead of using a
+        wrapper script to set up the LD_LIBRARY_PATH. This will allow us
+        to directly reuse builds in the pure testing bots.
+
+        * BuildSlaveSupport/gtk/daemontools-buildbot.conf:
+
 2012-06-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] No need to save and restore TEMPLATE in a function
