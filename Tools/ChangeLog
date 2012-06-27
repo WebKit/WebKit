@@ -1,3 +1,14 @@
+2012-06-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] REGRESSION(r121339): It broke the build on the Qt Windows bots
+        https://bugs.webkit.org/show_bug.cgi?id=90081
+
+        Buildfix for Qt 4.8 Windows. Use the former path for Qt 4.8, and the newer one for Qt 5.
+
+        Reviewed by Noam Rosenthal.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-06-27  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2] [GTK] WebKit2 testing bot fails to run tests due to missing files
