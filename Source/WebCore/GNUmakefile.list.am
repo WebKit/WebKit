@@ -192,6 +192,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFloat32Array.h \
 	DerivedSources/WebCore/JSFloat64Array.cpp \
 	DerivedSources/WebCore/JSFloat64Array.h \
+	DerivedSources/WebCore/JSGamepad.cpp \
+	DerivedSources/WebCore/JSGamepad.h \
+	DerivedSources/WebCore/JSGamepadList.cpp \
+	DerivedSources/WebCore/JSGamepadList.h \
 	DerivedSources/WebCore/JSGeolocation.cpp \
 	DerivedSources/WebCore/JSGeolocation.h \
 	DerivedSources/WebCore/JSGeoposition.cpp \
@@ -677,6 +681,9 @@ webcore_built_sources += \
 	DerivedSources/WebCore/XPathGrammar.h
 
 dom_binding_idls += \
+	$(WebCore)/Modules/gamepad/Gamepad.idl \
+	$(WebCore)/Modules/gamepad/GamepadList.idl \
+	$(WebCore)/Modules/gamepad/NavigatorGamepad.idl \
 	$(WebCore)/Modules/geolocation/Geolocation.idl \
 	$(WebCore)/Modules/geolocation/Geoposition.idl \
 	$(WebCore)/Modules/geolocation/NavigatorGeolocation.idl \
@@ -1053,6 +1060,12 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/filesystem/WebKitFlags.h \
 	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.cpp \
 	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.h \
+	Source/WebCore/Modules/gamepad/Gamepad.cpp \
+	Source/WebCore/Modules/gamepad/Gamepad.h \
+	Source/WebCore/Modules/gamepad/GamepadList.cpp \
+	Source/WebCore/Modules/gamepad/GamepadList.h \
+	Source/WebCore/Modules/gamepad/NavigatorGamepad.cpp \
+	Source/WebCore/Modules/gamepad/NavigatorGamepad.h \
 	Source/WebCore/Modules/geolocation/Geolocation.cpp \
 	Source/WebCore/Modules/geolocation/Geolocation.h \
 	Source/WebCore/Modules/geolocation/GeolocationController.cpp \
@@ -3160,6 +3173,7 @@ webcore_sources += \
 	Source/WebCore/platform/FileSystem.h \
 	Source/WebCore/platform/FloatConversion.h \
 	Source/WebCore/platform/FractionalLayoutUnit.h \
+	Source/WebCore/platform/Gamepads.h \
 	Source/WebCore/platform/HashTools.h \
 	Source/WebCore/platform/HistogramSupport.cpp \
 	Source/WebCore/platform/HistogramSupport.h \
@@ -3408,6 +3422,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/WOFFFileFormat.h \
 	Source/WebCore/platform/gtk/ErrorsGtk.cpp \
 	Source/WebCore/platform/gtk/ErrorsGtk.h \
+	Source/WebCore/platform/gtk/GamepadsGtk.cpp \
 	Source/WebCore/platform/gtk/KURLGtk.cpp \
 	Source/WebCore/platform/gtk/LanguageGtk.cpp \
 	Source/WebCore/platform/gtk/LoggingGtk.cpp \
@@ -3468,6 +3483,8 @@ webcore_sources += \
 	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h \
 	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
 	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
+	Source/WebCore/platform/linux/GamepadDeviceLinux.cpp \
+	Source/WebCore/platform/linux/GamepadDeviceLinux.h \
 	Source/WebCore/platform/mediastream/DeprecatedPeerConnectionHandler.h \
 	Source/WebCore/platform/mediastream/DeprecatedPeerConnectionHandlerClient.h \
 	Source/WebCore/platform/mediastream/IceCandidateDescriptor.cpp \

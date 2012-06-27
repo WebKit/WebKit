@@ -214,7 +214,7 @@ my @features = (
       define => "ENABLE_FULLSCREEN_API", default => (isAppleMacWebKit() || isEfl() || isGtk() || isBlackBerry() || isQt()), value => \$fullscreenAPISupport },
 
     { option => "gamepad", desc => "Toggle Gamepad support",
-      define => "ENABLE_GAMEPAD", default => 0, value => \$gamepadSupport },
+      define => "ENABLE_GAMEPAD", default => isGtk(), value => \$gamepadSupport },
 
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$geolocationSupport },

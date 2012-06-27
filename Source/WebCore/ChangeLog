@@ -1,3 +1,64 @@
+2012-06-27  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Add support for the Gamepad API
+        https://bugs.webkit.org/show_bug.cgi?id=87503
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add support for the Gamepad feature on the GTK port.
+
+        The support is available only on Linux, with each gamepad device being presented
+        through a GamepadDeviceLinux object. The implementation of this class relies on
+        the Linux kernel joystick API.
+
+        Gamepad devices are recognized through the GamepadsGtk class, of which implementation
+        is based on GUdev. This way devices are properly registered on connection as objects of
+        the GamepadDeviceGtk class which inherits GamepadDeviceLinux. GamepadDeviceGtk reads the
+        joystick data through GIO pollable streams and updates the device state accordingly. The
+        GamepadsGtk object is then polled for gamepads data through the sampleGamepads method.
+
+        No new tests - tests already exist but require additional testing infrastructure.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * bindings/gobject/GNUmakefile.am:
+        * bindings/js/JSDOMBinding.h: Add the jsArray method that operates on a Vector of floats.
+        (WebCore):
+        (WebCore::jsArray):
+        * platform/gtk/GamepadsGtk.cpp: Added.
+        (WebCore):
+        (GamepadDeviceGtk):
+        (WebCore::GamepadDeviceGtk::create):
+        (WebCore::GamepadDeviceGtk::GamepadDeviceGtk):
+        (WebCore::GamepadDeviceGtk::~GamepadDeviceGtk):
+        (WebCore::GamepadDeviceGtk::readCallback):
+        (GamepadsGtk):
+        (WebCore::GamepadsGtk::GamepadsGtk):
+        (WebCore::GamepadsGtk::~GamepadsGtk):
+        (WebCore::GamepadsGtk::registerDevice):
+        (WebCore::GamepadsGtk::unregisterDevice):
+        (WebCore::GamepadsGtk::updateGamepadList):
+        (WebCore::GamepadsGtk::onUEventCallback):
+        (WebCore::GamepadsGtk::isGamepadDevice):
+        (WebCore::sampleGamepads):
+        * platform/linux/GamepadDeviceLinux.cpp: Added.
+        (WebCore):
+        (WebCore::GamepadDeviceLinux::GamepadDeviceLinux):
+        (WebCore::GamepadDeviceLinux::~GamepadDeviceLinux):
+        (WebCore::GamepadDeviceLinux::updateForEvent):
+        (WebCore::GamepadDeviceLinux::normalizeAxisValue):
+        (WebCore::GamepadDeviceLinux::normalizeButtonValue):
+        * platform/linux/GamepadDeviceLinux.h: Added.
+        (WebCore):
+        (GamepadDeviceLinux):
+        (WebCore::GamepadDeviceLinux::connected):
+        (WebCore::GamepadDeviceLinux::id):
+        (WebCore::GamepadDeviceLinux::timestamp):
+        (WebCore::GamepadDeviceLinux::axesCount):
+        (WebCore::GamepadDeviceLinux::axesData):
+        (WebCore::GamepadDeviceLinux::buttonsCount):
+        (WebCore::GamepadDeviceLinux::buttonsData):
+
 2012-06-27  Kentaro Hara  <haraken@chromium.org>
 
         Rename rareSVGData() to svgRareData()

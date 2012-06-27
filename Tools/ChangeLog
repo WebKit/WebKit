@@ -1,3 +1,14 @@
+2012-06-27  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Add support for the Gamepad API
+        https://bugs.webkit.org/show_bug.cgi?id=87503
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable the gamepad support for the GTK port.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-06-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix gcc build after r121302

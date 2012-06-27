@@ -653,6 +653,11 @@ AC_ARG_ENABLE(gamepad,
               [],[enable_gamepad="no"])
 AC_MSG_RESULT([$enable_gamepad])
 
+if test "$enable_gamepad" = "yes" && test "$os_linux" = no; then
+   AC_MSG_WARN([Gamepad support is only available on Linux. Disabling Gamepad support.])
+   enable_gamepad=no;
+fi
+
 # check whether to build with data transfer items support
 AC_MSG_CHECKING([whether to enable HTML5 data transfer items support])
 AC_ARG_ENABLE(data_transfer_items,
@@ -1274,6 +1279,13 @@ if test "$enable_webkit2" = "yes"; then
 
    AC_SUBST([ATSPI2_CFLAGS])
    AC_SUBST([ATSPI2_LIBS])
+fi
+
+if test "$enable_gamepad" = "yes"; then
+   PKG_CHECK_MODULES([GAMEPAD], [gio-unix-2.0 gudev-1.0])
+
+   AC_SUBST(GAMEPAD_CFLAGS)
+   AC_SUBST(GAMEPAD_LIBS)
 fi
 
 # check for code coverage support

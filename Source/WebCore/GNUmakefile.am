@@ -12,6 +12,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include/GLSLANG \
 	-I$(srcdir)/Source/WebCore \
 	-I$(srcdir)/Source/WebCore/Modules/filesystem \
+	-I$(srcdir)/Source/WebCore/Modules/gamepad \
 	-I$(srcdir)/Source/WebCore/Modules/geolocation \
 	-I$(srcdir)/Source/WebCore/Modules/indexeddb \
 	-I$(srcdir)/Source/WebCore/Modules/mediastream \
@@ -67,6 +68,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/image-decoders/webp \
 	-I$(srcdir)/Source/WebCore/platform/image-decoders/png \
 	-I$(srcdir)/Source/WebCore/platform/leveldb \
+	-I$(srcdir)/Source/WebCore/platform/linux \
 	-I$(srcdir)/Source/WebCore/platform/mediastream \
 	-I$(srcdir)/Source/WebCore/platform/mediastream/gstreamer \
 	-I$(srcdir)/Source/WebCore/platform/mock \
@@ -866,6 +868,7 @@ DerivedSources/ANGLE/glslang_tab.h: DerivedSources/ANGLE/glslang_tab.cpp
 
 IDL_PATH := \
     $(WebCore)/Modules/filesystem \
+    $(WebCore)/Modules/gamepad \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
     $(WebCore)/Modules/mediastream \
@@ -961,6 +964,7 @@ libWebCore_la_CPPFLAGS = \
 	$(CLUTTER_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
 	$(ENCHANT_CFLAGS) \
+	$(GAMEPAD_CFLAGS) \
 	$(GEOCLUE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
@@ -1032,6 +1036,7 @@ libWebCoreGtk_la_CPPFLAGS = \
 
 EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/filesystem/*.idl) \
+	$(shell ls $(srcdir)/Source/WebCore/Modules/gamepad/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/geolocation/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/indexeddb/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/mediastream/*.idl) \

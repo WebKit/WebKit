@@ -307,6 +307,18 @@ enum ParameterDefaultPolicy {
         return JSC::constructArray(exec, globalObject, array);
     }
 
+    template<>
+    inline JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<float>& iterator)
+    {
+        JSC::MarkedArgumentBuffer array;
+        Vector<float>::const_iterator end = iterator.end();
+
+        for (Vector<float>::const_iterator it = iterator.begin(); it != end; ++it)
+            array.append(JSC::jsNumber(*it));
+
+        return JSC::constructArray(exec, globalObject, array);
+    }
+
     template <class T>
     Vector<T> toNativeArray(JSC::ExecState* exec, JSC::JSValue value)
     {
