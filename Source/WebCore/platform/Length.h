@@ -230,14 +230,13 @@ public:
     Length blend(const Length& from, double progress) const
     {
         // Blend two lengths to produce a new length that is in between them.  Used for animation.
+        if (from.type() == Calculated || type() == Calculated)
+            return blendCalculation(from, progress);
+        
         if (!from.isZero() && !isZero() && from.type() != type())
             return *this;
 
         if (from.isZero() && isZero())
-            return *this;
-
-        // FIXME http://webkit.org/b/86160 - Blending doesn't work with calculated expressions
-        if (from.type() == Calculated || type() == Calculated)
             return *this;
         
         LengthType resultType = type();
@@ -292,6 +291,8 @@ private:
         if (isCalculated())
             incrementCalculatedRef();
     }
+
+    Length blendCalculation(const Length& from, double progress) const;
 
     int calculationHandle() const
     {

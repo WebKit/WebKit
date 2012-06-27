@@ -1,3 +1,23 @@
+2012-06-27  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc: blending involving expressions
+        https://bugs.webkit.org/show_bug.cgi?id=86160
+
+        Reviewed by Tony Chang.
+
+        If either endpoint of a blend involves a calc expression, we create a new
+        expression to perform the blend calculation.
+
+        Test: css3/calc/transitions.html
+              css3/calc/transitions-dependent.html
+
+        * platform/Length.cpp:
+        (WebCore):
+        (WebCore::Length::blendCalculation):
+        * platform/Length.h:
+        (WebCore::Length::blend):
+        (Length):
+
 2012-06-27  Hans Muller  <hmuller@adobe.com>
 
         Move CSSWrapShape style resolution from StyleResolver to StyleBuilder

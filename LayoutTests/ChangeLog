@@ -1,3 +1,19 @@
+2012-06-27  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc: blending involving expressions
+        https://bugs.webkit.org/show_bug.cgi?id=86160
+
+        Reviewed by Tony Chang.
+
+        Removed existing test as it was folded into transitions.html.
+
+        * css3/calc/transition-start-end-with-calc-expected.txt: Removed.
+        * css3/calc/transition-start-end-with-calc.html: Removed.
+        * css3/calc/transitions-dependent-expected.txt: Added.
+        * css3/calc/transitions-dependent.html: Added.
+        * css3/calc/transitions-expected.txt: Added.
+        * css3/calc/transitions.html: Added.
+
 2012-06-27  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Triggers assertion in VisibleSelection::adjustSelectionToAvoidCrossingBoundaries()
