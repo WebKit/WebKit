@@ -172,7 +172,7 @@ void initializeOptions()
     SET(useJIT, true);
     
     SET(showDisassembly, false);
-    SET(showDFGDisassembly, false);
+    SET(showDFGDisassembly, false); // DFG disassembly is shown if showDisassembly || showDFGDisassembly
     
     SET(maximumOptimizationCandidateInstructionCount, 10000);
     

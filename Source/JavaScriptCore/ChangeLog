@@ -1,3 +1,12 @@
+2012-06-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Add a comment clarifying Options::showDisassembly versus Options::showDFGDisassembly.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * runtime/Options.cpp:
+        (JSC::Options::initializeOptions):
+
 2012-06-27  Anthony Scian  <ascian@rim.com>
 
         Web Inspector [JSC]: Implement ScriptCallStack::stackTrace
