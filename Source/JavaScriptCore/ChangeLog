@@ -1,3 +1,16 @@
+2012-06-26  Dominic Cooney  <dominicc@chromium.org>
+
+        [Chromium] Remove unused build scripts and empty folders for JavaScriptCore w/ gyp
+        https://bugs.webkit.org/show_bug.cgi?id=90029
+
+        Reviewed by Adam Barth.
+
+        * gyp: Removed.
+        * gyp/generate-derived-sources.sh: Removed.
+        * gyp/generate-dtrace-header.sh: Removed.
+        * gyp/run-if-exists.sh: Removed.
+        * gyp/update-info-plist.sh: Removed.
+
 2012-06-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reduced (but did not eliminate) use of "berzerker GC"
