@@ -1,3 +1,20 @@
+2012-06-27  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Scale was incorrect when reloading a simple web page after initial load
+        https://bugs.webkit.org/show_bug.cgi?id=88889
+
+        Reviewed by Antonio Gomes.
+
+        PR: 164442
+        For FrameLoadTypeStandard load, the layout timer can be fired which can
+        call dispatchDidFirstVisuallyNonEmptyLayout() after the load Finished
+        state, in which case the web page will have no chance to zoom to
+        initial scale. We should give it a chance as well as FrameLoadTypeSame
+        load.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::shouldZoomToInitialScaleOnLoad):
+
 2012-06-26  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Add WebPage interface for Async spell check.

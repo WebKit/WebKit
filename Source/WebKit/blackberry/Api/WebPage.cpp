@@ -1638,12 +1638,13 @@ void WebPagePrivate::layoutFinished()
 
 bool WebPagePrivate::shouldZoomToInitialScaleOnLoad() const
 {
-    // For FrameLoadTypeSame load, the first layout timer can be fired after the load Finished state. We should
-    // zoom to initial scale for this case as well, otherwise the scale of the web page can be incorrect.
+    // For FrameLoadTypeSame or FrameLoadTypeStandard load, the layout timer can be fired which can call dispatchDidFirstVisuallyNonEmptyLayout()
+    // after the load Finished state, in which case the web page will have no chance to zoom to initial scale. So we should give it a chance,
+    // otherwise the scale of the web page can be incorrect.
     FrameLoadType frameLoadType = FrameLoadTypeStandard;
     if (m_mainFrame && m_mainFrame->loader())
         frameLoadType = m_mainFrame->loader()->loadType();
-    if (m_loadState == Committed || (m_loadState == Finished && frameLoadType == FrameLoadTypeSame))
+    if (m_loadState == Committed || (m_loadState == Finished && (frameLoadType == FrameLoadTypeSame || frameLoadType == FrameLoadTypeStandard)))
         return true;
     return false;
 }
