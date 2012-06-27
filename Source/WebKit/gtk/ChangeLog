@@ -1,3 +1,21 @@
+2012-06-27  Martin Robinson  <mrobinson@igalia.com>
+
+        [gtk] Spell checker doesn't recognize contractions (apostrophes)
+        https://bugs.webkit.org/show_bug.cgi?id=86118
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Work-around a bug in Pango by trying to detect apostrophes
+        that create contractions. This work-around is similar to one
+        found in gtkspell.
+
+        * webkit/webkitspellcheckerenchant.cpp:
+        (wordEndIsAContractionApostrophe): Added this helper which tries to detect
+        situations where a word end is both an apostrophe and followed by a alphabetic
+        character.
+        (checkSpellingOfString): When searching for the end of a word, skip over
+        apostrophes that appear to be part of contractions.
+
 2012-06-27  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Add support for the Gamepad API
