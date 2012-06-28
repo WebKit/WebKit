@@ -1,3 +1,17 @@
+2012-06-27  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/90096> Building within Xcode sometimes does a full rebuild after building via build-webkit
+
+        We need to ensure that build-webkit uses the same setting for SHARED_PRECOMPS_DIR
+        as what Xcode itself will use when building, otherwise switching between the two
+        can result in the precompiled headers being rebuilt and thus the entire world
+        rebuilding.
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir):
+
 2012-06-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121363, r121367, r121384, and

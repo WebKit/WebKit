@@ -206,8 +206,12 @@ sub determineBaseProductDir
                 my $buildLocationType = join '', readXcodeUserDefault("CustomBuildLocationType");
                 # FIXME: Read CustomBuildIntermediatesPath and set OBJROOT accordingly.
                 $baseProductDir = readXcodeUserDefault("CustomBuildProductsPath") if $buildLocationType eq "Absolute";
-                $setSharedPrecompsDir = 1;
             }
+
+            # DeterminedByTargets corresponds to a setting of "Legacy" in Xcode.
+            # It is the only build location style for which SHARED_PRECOMPS_DIR is not
+            # overridden when building from within Xcode.
+            $setSharedPrecompsDir = 1 if $buildLocationStyle ne "DeterminedByTargets";
         }
 
         if (!defined($baseProductDir)) {
@@ -226,9 +230,8 @@ sub determineBaseProductDir
         }
     }
 
-    if (!defined($baseProductDir)) { # Port-spesific checks failed, use default
+    if (!defined($baseProductDir)) { # Port-specific checks failed, use default
         $baseProductDir = "$sourceDir/WebKitBuild";
-        undef $setSharedPrecompsDir;
     }
 
     if (isBlackBerry()) {
