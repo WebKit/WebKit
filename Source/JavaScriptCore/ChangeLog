@@ -1,5 +1,22 @@
 2012-06-27  Filip Pizlo  <fpizlo@apple.com>
 
+        Javascript SHA-512 gives wrong hash on second and subsequent runs unless Web Inspector Javascript Debugging is on
+        https://bugs.webkit.org/show_bug.cgi?id=90053
+        <rdar://problem/11764613>
+
+        Reviewed by Mark Hahnenberg.
+        
+        The problem is that the code was assuming that the recovery should be Undefined if the source of
+        the SetLocal was !shouldGenerate(). But that's wrong, since the DFG optimizer may skip around a
+        UInt32ToNumber node (hence making it !shouldGenerate()) and keep the source of that node alive.
+        In that case we should base the recovery on the source of the UInt32ToNumber. The logic for this
+        was already in place but the fast check for !shouldGenerate() broke it.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+
+2012-06-27  Filip Pizlo  <fpizlo@apple.com>
+
         DFG disassembly should be easier to read
         https://bugs.webkit.org/show_bug.cgi?id=90106
 

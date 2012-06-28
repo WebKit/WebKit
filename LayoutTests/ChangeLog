@@ -1,3 +1,16 @@
+2012-06-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Javascript SHA-512 gives wrong hash on second and subsequent runs unless Web Inspector Javascript Debugging is on
+        https://bugs.webkit.org/show_bug.cgi?id=90053
+        <rdar://problem/11764613>
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/dfg-uint32-to-number-skip-then-exit-expected.txt: Added.
+        * fast/js/dfg-uint32-to-number-skip-then-exit.html: Added.
+        * fast/js/script-tests/dfg-uint32-to-number-skip-then-exit.js: Added.
+        (foo):
+
 2012-06-27  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Rebase image mismatch caused by 121371.
