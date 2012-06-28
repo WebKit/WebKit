@@ -1,3 +1,21 @@
+2012-06-27  Yusuke Sato  <yusukes@chromium.org>
+
+        [chromium] Improve keyboardEvent() so a web page could receive a DOM3 spec compliant keyboard event.
+        https://bugs.webkit.org/show_bug.cgi?id=89637
+
+        Reviewed by Tony Chang.
+
+        This is a Gtk port of http://crrev.com/142209.
+
+        Normalizes event->state to make it Windows/Mac compatible. Since the
+        way of setting modifier mask on X is very different than Windows/Mac
+        as shown in http://crbug.com/127142#c8, the normalization is necessary.
+
+        * src/gtk/WebInputEventFactory.cpp:
+        (WebKit):
+        (WebKit::normalizeEventState):
+        (WebKit::WebInputEventFactory::keyboardEvent):
+
 2012-06-27  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use SkColor in compositor internals
