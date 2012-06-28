@@ -1716,70 +1716,6 @@ public:
     }
 };
 
-class ApplyPropertyFlex {
-public:
-    static void applyInheritValue(StyleResolver* styleResolver)
-    {
-        ApplyPropertyDefaultBase<float, &RenderStyle::flexGrow, float, &RenderStyle::setFlexGrow, float, &RenderStyle::initialFlexGrow>::applyInheritValue(styleResolver);
-        ApplyPropertyDefaultBase<float, &RenderStyle::flexShrink, float, &RenderStyle::setFlexShrink, float, &RenderStyle::initialFlexShrink>::applyInheritValue(styleResolver);
-        ApplyPropertyDefaultBase<Length, &RenderStyle::flexBasis, Length, &RenderStyle::setFlexBasis, Length, &RenderStyle::initialFlexBasis>::applyInheritValue(styleResolver);
-    }
-
-    static void applyInitialValue(StyleResolver* styleResolver)
-    {
-        styleResolver->style()->setFlexGrow(RenderStyle::initialFlexGrow());
-        styleResolver->style()->setFlexShrink(RenderStyle::initialFlexShrink());
-        styleResolver->style()->setFlexBasis(RenderStyle::initialFlexBasis());
-    }
-
-    static void applyValue(StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (value->isPrimitiveValue()) {
-            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-            if (primitiveValue->getIdent() == CSSValueNone) {
-                styleResolver->style()->setFlexGrow(0);
-                styleResolver->style()->setFlexShrink(0);
-                styleResolver->style()->setFlexBasis(Length(Auto));
-            }
-            return;
-        }
-
-        if (!value->isValueList())
-            return;
-        CSSValueList* valueList = static_cast<CSSValueList*>(value);
-        if (valueList->length() != 3)
-            return;
-
-        float flexValue = 0;
-        if (!getFlexValue(valueList->itemWithoutBoundsCheck(0), flexValue))
-            return;
-        styleResolver->style()->setFlexGrow(flexValue);
-
-        if (!getFlexValue(valueList->itemWithoutBoundsCheck(1), flexValue))
-            return;
-        styleResolver->style()->setFlexShrink(flexValue);
-
-        ApplyPropertyLength<&RenderStyle::flexBasis, &RenderStyle::setFlexBasis, &RenderStyle::initialFlexBasis, AutoEnabled>::applyValue(styleResolver, valueList->itemWithoutBoundsCheck(2));
-    }
-
-    static PropertyHandler createHandler()
-    {
-        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
-    }
-private:
-    static bool getFlexValue(CSSValue* value, float& flexValue)
-    {
-        if (!value->isPrimitiveValue())
-            return false;
-        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-        if (!primitiveValue->isNumber())
-            return false;
-        flexValue = primitiveValue->getFloatValue();
-        return true;
-    }
-
-};
-
 #if ENABLE(CSS_EXCLUSIONS)
 template <CSSWrapShape* (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(PassRefPtr<CSSWrapShape>), CSSWrapShape* (*initialFunction)()>
 class ApplyPropertyWrapShape {
@@ -2030,9 +1966,10 @@ StyleBuilder::StyleBuilder()
     setPropertyHandler(CSSPropertyWebkitAlignContent, ApplyPropertyDefault<EAlignContent, &RenderStyle::alignContent, EAlignContent, &RenderStyle::setAlignContent, EAlignContent, &RenderStyle::initialAlignContent>::createHandler());
     setPropertyHandler(CSSPropertyWebkitAlignItems, ApplyPropertyDefault<EAlignItems, &RenderStyle::alignItems, EAlignItems, &RenderStyle::setAlignItems, EAlignItems, &RenderStyle::initialAlignItems>::createHandler());
     setPropertyHandler(CSSPropertyWebkitAlignSelf, ApplyPropertyDefault<EAlignItems, &RenderStyle::alignSelf, EAlignItems, &RenderStyle::setAlignSelf, EAlignItems, &RenderStyle::initialAlignSelf>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitFlex, ApplyPropertyFlex::createHandler());
+    setPropertyHandler(CSSPropertyWebkitFlexBasis, ApplyPropertyLength<&RenderStyle::flexBasis, &RenderStyle::setFlexBasis, &RenderStyle::initialFlexBasis, AutoEnabled>::createHandler());
     setPropertyHandler(CSSPropertyWebkitFlexDirection, ApplyPropertyDefault<EFlexDirection, &RenderStyle::flexDirection, EFlexDirection, &RenderStyle::setFlexDirection, EFlexDirection, &RenderStyle::initialFlexDirection>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitFlexFlow, ApplyPropertyExpanding<SuppressValue, CSSPropertyWebkitFlexDirection, CSSPropertyWebkitFlexWrap>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitFlexGrow, ApplyPropertyDefault<float, &RenderStyle::flexGrow, float, &RenderStyle::setFlexGrow, float, &RenderStyle::initialFlexGrow>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitFlexShrink, ApplyPropertyDefault<float, &RenderStyle::flexShrink, float, &RenderStyle::setFlexShrink, float, &RenderStyle::initialFlexShrink>::createHandler());
     setPropertyHandler(CSSPropertyWebkitFlexWrap, ApplyPropertyDefault<EFlexWrap, &RenderStyle::flexWrap, EFlexWrap, &RenderStyle::setFlexWrap, EFlexWrap, &RenderStyle::initialFlexWrap>::createHandler());
     setPropertyHandler(CSSPropertyWebkitJustifyContent, ApplyPropertyDefault<EJustifyContent, &RenderStyle::justifyContent, EJustifyContent, &RenderStyle::setJustifyContent, EJustifyContent, &RenderStyle::initialJustifyContent>::createHandler());
     setPropertyHandler(CSSPropertyWebkitOrder, ApplyPropertyDefault<float, &RenderStyle::order, float, &RenderStyle::setOrder, float, &RenderStyle::initialOrder>::createHandler());

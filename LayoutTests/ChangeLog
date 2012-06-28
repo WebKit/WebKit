@@ -1,3 +1,22 @@
+2012-06-28  Tony Chang  <tony@chromium.org>
+
+        Split flex into flex-grow/flex-shrink/flex-basis
+        https://bugs.webkit.org/show_bug.cgi?id=86525
+
+        Reviewed by Ojan Vafai.
+
+        If -webkit-flex is set to none, when the user reads the value back out, it is
+        now 0 0 auto. 'none' is for convenience, not an actual value.
+
+        * css3/flexbox/flex-longhand-parsing-expected.txt:
+        * css3/flexbox/flex-longhand-parsing.html: Test flex-grow, flex-shrink and flex-basis.
+        * css3/flexbox/flex-property-parsing-expected.txt:
+        * css3/flexbox/flex-property-parsing.html: Update results for 'none'.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js: Remove -webkit-flex since it's no longer enumerable.
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2012-06-28  Andreas Kling  <kling@webkit.org>
 
         [WK2] platform/mac/editing/spelling/autocorrection-blockquote-crash.html fails.

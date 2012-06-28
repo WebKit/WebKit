@@ -1,3 +1,42 @@
+2012-06-28  Tony Chang  <tony@chromium.org>
+
+        Split flex into flex-grow/flex-shrink/flex-basis
+        https://bugs.webkit.org/show_bug.cgi?id=86525
+
+        Reviewed by Ojan Vafai.
+
+        Split flex into 3 separate properties per the spec:
+        http://dev.w3.org/csswg/css3-flexbox/#flex-components
+
+        Tests: css3/flexbox/flex-longhand-parsing.html
+               css3/flexbox/flex-property-parsing.html: Updated test results.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore): -webkit-flex is no longer enumerable.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Add new css property names and use
+        getCSSPropertyValuesForShorthandProperties for WebkitFlex. Also sort flex propery names.
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue): Fix indent.
+        (WebCore::CSSParser::parseValue): Add parsing for new properties and handle -webkit-flex: none.
+        (WebCore::CSSParser::parseFlex): Switch to new names (positive -> grow, negative -> shrink,
+        preferred size -> basis) and assign to longhand properties.
+        * css/CSSParser.h:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty): Add new properties.
+        * css/CSSPropertyNames.in: Add new properties.
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder): Delete special handling of applying flex and just use shorthand handlers.
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getPropertyValue): Add new shorthand.
+        (WebCore::StylePropertySet::asText):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::webkitFlexShorthand): Add new shorthand.
+        (WebCore::shorthandForProperty):
+        * css/StylePropertyShorthand.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList): Add to list of properties applied by StyleBuilder.
+        Handle initial and inherit for flex.
+
 2012-06-28  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK][Win]: Fix plugin drawing to an offscreen buffer
