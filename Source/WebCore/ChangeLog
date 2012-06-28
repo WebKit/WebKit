@@ -1,3 +1,18 @@
+2012-06-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        m_cssVariablesEnabled member is not initialized in Page Settings
+        https://bugs.webkit.org/show_bug.cgi?id=90147
+
+        Reviewed by Simon Hausmann.
+
+        Properly initialize the m_cssVariablesEnabled member in Page
+        Settings.
+
+        No new tests, no behavior change.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+
 2012-06-28  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] plugin is loaded to the web process via MainResourceLoader::substituteMIMETypeFromPluginDatabase

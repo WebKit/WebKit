@@ -192,6 +192,9 @@ Settings::Settings(Page* page)
 #if ENABLE(CSS_REGIONS)
     , m_cssRegionsEnabled(false)
 #endif
+#if ENABLE(CSS_VARIABLES)
+    , m_cssVariablesEnabled(false)
+#endif
     , m_regionBasedColumnsEnabled(false)
     , m_cssGridLayoutEnabled(false)
     // FIXME: This should really be disabled by default as it makes platforms that don't support the feature download files
