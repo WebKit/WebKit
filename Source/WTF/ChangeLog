@@ -1,3 +1,16 @@
+2012-06-28  Kalev Lember  <kalevlember@gmail.com>
+
+        ThreadingWin: Silence GCC compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=89491
+
+        Reviewed by Adam Roben.
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::createThreadInternal):
+        (WTF::PlatformCondition::timedWait):
+        (WTF::PlatformCondition::signal): Fix unused-but-set-variable
+        warnings.
+
 2012-06-26  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Add missing heades to HEADERS

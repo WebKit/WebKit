@@ -244,7 +244,8 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     }
 
     // The thread will take ownership of invocation.
-    invocation.leakPtr();
+    ThreadFunctionInvocation* leakedInvocation = invocation.leakPtr();
+    UNUSED_PARAM(leakedInvocation);
 
     threadID = static_cast<ThreadIdentifier>(threadIdentifier);
     storeThreadHandleByIdentifier(threadIdentifier, threadHandle);
@@ -344,10 +345,10 @@ bool PlatformCondition::timedWait(PlatformMutex& mutex, DWORD durationMillisecon
 {
     // Enter the wait state.
     DWORD res = WaitForSingleObject(m_blockLock, INFINITE);
-    ASSERT(res == WAIT_OBJECT_0);
+    ASSERT_UNUSED(res, res == WAIT_OBJECT_0);
     ++m_waitersBlocked;
     res = ReleaseSemaphore(m_blockLock, 1, 0);
-    ASSERT(res);
+    ASSERT_UNUSED(res, res);
 
     --mutex.m_recursionCount;
     LeaveCriticalSection(&mutex.m_internalMutex);
@@ -356,7 +357,7 @@ bool PlatformCondition::timedWait(PlatformMutex& mutex, DWORD durationMillisecon
     bool timedOut = (WaitForSingleObject(m_blockQueue, durationMilliseconds) == WAIT_TIMEOUT);
 
     res = WaitForSingleObject(m_unblockLock, INFINITE);
-    ASSERT(res == WAIT_OBJECT_0);
+    ASSERT_UNUSED(res, res == WAIT_OBJECT_0);
 
     int signalsLeft = m_waitersToUnblock;
 
@@ -367,19 +368,19 @@ bool PlatformCondition::timedWait(PlatformMutex& mutex, DWORD durationMillisecon
         // this may occur if many calls to wait with a timeout are made and
         // no call to notify_* is made
         res = WaitForSingleObject(m_blockLock, INFINITE);
-        ASSERT(res == WAIT_OBJECT_0);
+        ASSERT_UNUSED(res, res == WAIT_OBJECT_0);
         m_waitersBlocked -= m_waitersGone;
         res = ReleaseSemaphore(m_blockLock, 1, 0);
-        ASSERT(res);
+        ASSERT_UNUSED(res, res);
         m_waitersGone = 0;
     }
 
     res = ReleaseMutex(m_unblockLock);
-    ASSERT(res);
+    ASSERT_UNUSED(res, res);
 
     if (signalsLeft == 1) {
         res = ReleaseSemaphore(m_blockLock, 1, 0); // Open the gate.
-        ASSERT(res);
+        ASSERT_UNUSED(res, res);
     }
 
     EnterCriticalSection (&mutex.m_internalMutex);
@@ -393,12 +394,12 @@ void PlatformCondition::signal(bool unblockAll)
     unsigned signalsToIssue = 0;
 
     DWORD res = WaitForSingleObject(m_unblockLock, INFINITE);
-    ASSERT(res == WAIT_OBJECT_0);
+    ASSERT_UNUSED(res, res == WAIT_OBJECT_0);
 
     if (m_waitersToUnblock) { // the gate is already closed
         if (!m_waitersBlocked) { // no-op
             res = ReleaseMutex(m_unblockLock);
-            ASSERT(res);
+            ASSERT_UNUSED(res, res);
             return;
         }
 
@@ -413,7 +414,7 @@ void PlatformCondition::signal(bool unblockAll)
         }
     } else if (m_waitersBlocked > m_waitersGone) {
         res = WaitForSingleObject(m_blockLock, INFINITE); // Close the gate.
-        ASSERT(res == WAIT_OBJECT_0);
+        ASSERT_UNUSED(res, res == WAIT_OBJECT_0);
         if (m_waitersGone != 0) {
             m_waitersBlocked -= m_waitersGone;
             m_waitersGone = 0;
@@ -429,16 +430,16 @@ void PlatformCondition::signal(bool unblockAll)
         }
     } else { // No-op.
         res = ReleaseMutex(m_unblockLock);
-        ASSERT(res);
+        ASSERT_UNUSED(res, res);
         return;
     }
 
     res = ReleaseMutex(m_unblockLock);
-    ASSERT(res);
+    ASSERT_UNUSED(res, res);
 
     if (signalsToIssue) {
         res = ReleaseSemaphore(m_blockQueue, signalsToIssue, 0);
-        ASSERT(res);
+        ASSERT_UNUSED(res, res);
     }
 }
 
