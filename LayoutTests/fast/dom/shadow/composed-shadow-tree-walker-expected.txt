@@ -87,7 +87,7 @@ DIV	 id=f1
 DIV	 id=b
 DIV	 id=a
 
-Fallback elements should not be used if  element selects any elements.
+Fallback elements should not be used if a content element selects an element.
 Composed Shadow Tree:
 DIV	 id=a
 	DIV	 id=b
@@ -101,6 +101,21 @@ Traverse in backward.
 DIV	 id=c
 DIV	 id=b
 DIV	 id=a
+
+Test for traversal, starting with a fallback element which is not used.
+Composed Shadow Tree:
+DIV	 id=f1
+	DIV	 id=f2
+
+Traverse in forward.
+DIV	 id=f1
+DIV	 id=f2
+Traverse in backward.
+DIV	 id=f2
+DIV	 id=f1
+
+Next node of [DIV	 id=f1] is [DIV	 id=f2]
+Next node of [DIV	 id=f2] is [(null)]
 
 Test for Nested ShadowRoots.
 Composed Shadow Tree:

@@ -1,3 +1,22 @@
+2012-06-28  Hayato Ito  <hayato@chromium.org>
+
+        CompositeShadowTreeWalker should use InsertionPoint::hasDistribution() instead of InsertionPoint::isActive().
+        https://bugs.webkit.org/show_bug.cgi?id=89177
+
+        Reviewed by Dimitri Glazkov.
+
+        Prevents ComposedShadowTreeWalker from escaping out of an
+        insertion point (which has distributed nodes) from a non-used
+        fallback element in the insertion point.  Such a fallback element
+        should be treated as in an orphaned subtree.
+
+        ComposedShadowTreeParentWalker will be also fixed in a follow-up patch.
+
+        Test: fast/dom/shadow/composed-shadow-tree-walker.html
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::traverseNodeEscapingFallbackContents):
+
 2012-06-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cleanup HTMLFormCollection

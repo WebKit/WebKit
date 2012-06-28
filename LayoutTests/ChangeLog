@@ -1,3 +1,13 @@
+2012-06-28  Hayato Ito  <hayato@chromium.org>
+
+        CompositeShadowTreeWalker should use InsertionPoint::hasDistribution() instead of InsertionPoint::isActive().
+        https://bugs.webkit.org/show_bug.cgi?id=89177
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/composed-shadow-tree-walker-expected.txt:
+        * fast/dom/shadow/composed-shadow-tree-walker.html:
+
 2012-06-28  Gregg Tavares  <gman@google.com>
 
         Add support for DEPTH_STENCIL to WEBGL_depth_texture

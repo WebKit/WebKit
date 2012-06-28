@@ -188,9 +188,11 @@ Node* ComposedShadowTreeWalker::escapeFallbackContentElement(const Node* node, T
 Node* ComposedShadowTreeWalker::traverseNodeEscapingFallbackContents(const Node* node) const
 {
     ASSERT(node);
-    if (isActiveInsertionPoint(node))
-        return traverseParent(node);
-    return const_cast<Node*>(node);
+    if (!isInsertionPoint(node))
+        return const_cast<Node*>(node);
+    const InsertionPoint* insertionPoint = toInsertionPoint(node);
+    return insertionPoint->hasDistribution() ? 0 :
+        insertionPoint->isActive() ? traverseParent(node) : const_cast<Node*>(node);
 }
 
 void ComposedShadowTreeWalker::parent()

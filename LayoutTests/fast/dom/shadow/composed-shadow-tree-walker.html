@@ -15,6 +15,8 @@ if (window.testRunner)
 
 function dumpNode(node)
 {
+    if (!node)
+        return '(null)'
     var output = node.nodeName + "\t";
     if (node.id)
         output += ' id=' + node.id;
@@ -78,6 +80,11 @@ function showComposedShadowTree(node)
     debug('');
 }
 
+function showNextNode(node) {
+    var next = internals.nextNodeByWalker(node);
+    debug('Next node of [' + dumpNode(node) + '] is [' + dumpNode(next) + ']');
+}
+
 function testComposedShadowTree(node)
 {
     var sandbox = document.getElementById('sandbox');
@@ -129,14 +136,20 @@ testComposedShadowTree(
                                          createDOM('div', {'id': 'f2'}))),
               createDOM('div', {'id': 'c'})));
 
-debug('Fallback elements should not be used if <content> element selects any elements.');
+debug('Fallback elements should not be used if a content element selects an element.');
 testComposedShadowTree(
     createDOM('div', {'id': 'a'},
               createShadowRoot(createDOM('div', {'id': 'b'}),
                                createDOM('content', {'select': '#c'},
-                                         createDOM('div', {'id': 'f1'}),
-                                         createDOM('div', {'id': 'f2'}))),
+                                         createDOM('div', {'id': 'f1'},
+                                                   createDOM('div', {'id': 'f2'})))),
               createDOM('div', {'id': 'c'})));
+
+debug('Test for traversal, starting with a fallback element which is not used.');
+showComposedShadowTree(getNodeInShadowTreeStack('a/f1'));
+showNextNode(getNodeInShadowTreeStack('a/f1'));
+showNextNode(getNodeInShadowTreeStack('a/f2'));
+debug('');
 
 debug('Test for Nested ShadowRoots.');
 testComposedShadowTree(
