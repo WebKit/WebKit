@@ -3738,9 +3738,6 @@ BUGWK89529 MAC LEOPARD DEBUG : fast/canvas/webgl/tex-image-and-sub-image-2d-with
 BUGWK89702 : compositing/geometry/fixed-position-transform-composited-page-scale-down.html = PASS IMAGE
 BUGWK89702 : compositing/scaling/tiled-layer-recursion.html = PASS IMAGE
 
-// Flaky
-BUGWK89717 : fast/speech/scripted/speechgrammar-basics.html = PASS CRASH
-
 BUGWK89789 MAC : plugins/embed-attributes-style.html = PASS IMAGE
 BUGWK89789 MAC : userscripts/user-script-video-document.html = PASS CRASH
 

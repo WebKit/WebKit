@@ -122,7 +122,8 @@ void SpeechRecognition::didStart()
 
 void SpeechRecognition::didEnd()
 {
-    dispatchEvent(Event::create(eventNames().endEvent, /*canBubble=*/false, /*cancelable=*/false));
+    if (!m_stoppedByActiveDOMObject)
+        dispatchEvent(Event::create(eventNames().endEvent, /*canBubble=*/false, /*cancelable=*/false));
     unsetPendingActivity(this);
 }
 
@@ -138,6 +139,7 @@ ScriptExecutionContext* SpeechRecognition::scriptExecutionContext() const
 
 void SpeechRecognition::stop()
 {
+    m_stoppedByActiveDOMObject = true;
     if (hasPendingActivity())
         abort();
 }
@@ -148,6 +150,7 @@ SpeechRecognition::SpeechRecognition(ScriptExecutionContext* context)
     , m_continuous(false)
     , m_maxAlternatives(1)
     , m_controller(0)
+    , m_stoppedByActiveDOMObject(false)
 {
     ASSERT(scriptExecutionContext()->isDocument());
     Document* document = static_cast<Document*>(scriptExecutionContext());

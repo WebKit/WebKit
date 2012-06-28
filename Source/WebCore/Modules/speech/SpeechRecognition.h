@@ -121,6 +121,7 @@ private:
     EventTargetData m_eventTargetData;
 
     SpeechRecognitionController* m_controller;
+    bool m_stoppedByActiveDOMObject;
 };
 
 } // namespace WebCore
