@@ -157,13 +157,35 @@
         },
         "MathML": {
             "filename": r"(Source|LayoutTests|Websites)/.*mathml",
-        }
+        },
+        "Editing": {
+            "filename": r"Source/WebCore/editing/",
+        },
+        "BlackBerry": {
+            "filename": r"Source/WebKit/blackberry/"
+                        r"|Source/WebCore/page/blackberry"
+                        r"|Source/WebCore/history/blackberry"
+                        r"|Source/WebCore/plugins/blackberry"
+                        r"|Source/WebCore/editing/blackberry"
+                        r"|Source/WebCore/Resources/blackberry"
+                        r"|Source/WebCore/platform/image-decoders/blackberry"
+                        r"|Source/WebCore/platform/blackberry"
+                        r"|Source/WebCore/platform/text/blackberry"
+                        r"|Source/WebCore/platform/network/blackberry"
+                        r"|Source/WebCore/platform/graphics/blackberry"
+                        r"|Source/WTF/wtf/blackberry"
+                        r"|ManualTests/blackberry"
+                        r"|Tools/DumpRenderTree/blackberry"
+                        r"|LayoutTests/platform/blackberry",
+        },
+
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
         # Specifically, levin@chromium.org and levin+threading@chromium.org are
         # two different accounts as far as bugzilla is concerned.
         "AppleMacPublicApi": [ "timothy@apple.com" ],
+        "BlackBerry": [ "mifenton@rim.com" ],
         "CMake": [ "rakuco@webkit.org", ],
         "CSS": [ "alexis.menard@openbossa.org", "macpherson@chromium.org", "cmarcelo@webkit.org" ],
         "ChromiumDumpRenderTree": [ "tkent@chromium.org", ],
@@ -171,7 +193,8 @@
         "ChromiumPublicApi": [ "abarth@webkit.org", "dglazkov@chromium.org", "fishd@chromium.org", "jamesr@chromium.org", "tkent+wkapi@chromium.org" ],
         "DOMAttributes": [ "cmarcelo@webkit.org", ],
         "EFL": [ "rakuco@webkit.org", ],
-        "Forms": [ "tkent@chromium.org", ],
+        "Editing": [ "mifenton@rim.com" ],
+        "Forms": [ "tkent@chromium.org", "mifenton@rim.com" ],
         "FrameLoader": [ "abarth@webkit.org", "japhet@chromium.org", "jochen@chromium.org" ],
         "GStreamerGraphics": [ "alexis.menard@openbossa.org", "pnormand@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
