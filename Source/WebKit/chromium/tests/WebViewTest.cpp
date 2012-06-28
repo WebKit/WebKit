@@ -306,7 +306,7 @@ TEST_F(WebViewTest, DISABLED_TextInputType)
 
 }
 
-TEST_F(WebViewTest, SetEditableSelectionOffsets)
+TEST_F(WebViewTest, SetEditableSelectionOffsetsAndTextInputInfo)
 {
     FrameTestHelpers::registerMockedURLLoad(m_baseURL, "input_field_populated.html");
     WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "input_field_populated.html");
@@ -314,6 +314,12 @@ TEST_F(WebViewTest, SetEditableSelectionOffsets)
     webView->setEditableSelectionOffsets(5, 13);
     WebFrameImpl* frame = static_cast<WebFrameImpl*>(webView->mainFrame());
     EXPECT_EQ("56789abc", frame->selectionAsText());
+    WebTextInputInfo info = webView->textInputInfo();
+    EXPECT_EQ("0123456789abcdefghijklmnopqrstuvwxyz", info.value);
+    EXPECT_EQ(5, info.selectionStart);
+    EXPECT_EQ(13, info.selectionEnd);
+    EXPECT_EQ(-1, info.compositionStart);
+    EXPECT_EQ(-1, info.compositionEnd);
     webView->close();
 
     FrameTestHelpers::registerMockedURLLoad(m_baseURL, "content_editable_populated.html");
@@ -322,6 +328,12 @@ TEST_F(WebViewTest, SetEditableSelectionOffsets)
     webView->setEditableSelectionOffsets(8, 19);
     frame = static_cast<WebFrameImpl*>(webView->mainFrame());
     EXPECT_EQ("89abcdefghi", frame->selectionAsText());
+    info = webView->textInputInfo();
+    EXPECT_EQ("0123456789abcdefghijklmnopqrstuvwxyz", info.value);
+    EXPECT_EQ(8, info.selectionStart);
+    EXPECT_EQ(19, info.selectionEnd);
+    EXPECT_EQ(-1, info.compositionStart);
+    EXPECT_EQ(-1, info.compositionEnd);
     webView->close();
 }
 

@@ -1,3 +1,26 @@
+2012-06-28  Oli Lan  <olilan@chromium.org>
+
+        [chromium] Change WebViewImpl::textInputInfo to use root editable element.
+        https://bugs.webkit.org/show_bug.cgi?id=90179
+
+        Reviewed by Adam Barth.
+
+        WebViewImpl::textInputInfo currently returns text value and offsets relative to the
+        focused node. For contenteditable nodes, this may not give the expected result.
+
+        This patch changes the method to return value and offsets for the root editable element.
+        This also allows the implementation to be simplified somewhat.
+
+        This also ensures that the offsets returned will use the same basis as the recently added
+        method Editor::setSelectionOffsets (and WebViewImpl::setEditableSelectionOffsets).
+
+        Testing for textInputInfo has been added to WebViewTest.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::textInputInfo):
+        * tests/WebViewTest.cpp:
+        (WebKit::TEST_F):
+
 2012-06-28  James Robinson  <jamesr@chromium.org>
 
         [chromium] Should schedule a commit when dropping contents textures

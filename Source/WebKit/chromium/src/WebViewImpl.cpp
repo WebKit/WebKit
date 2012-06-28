@@ -1987,7 +1987,7 @@ WebTextInputInfo WebViewImpl::textInputInfo()
     if (!selection)
         return info;
 
-    Node* node = focusedWebCoreNode();
+    Node* node = selection->selection().rootEditableElement();
     if (!node)
         return info;
 
@@ -1995,33 +1995,22 @@ WebTextInputInfo WebViewImpl::textInputInfo()
     if (info.type == WebTextInputTypeNone)
         return info;
 
-    if (node->hasTagName(HTMLNames::textareaTag))
-        info.value = static_cast<HTMLTextAreaElement*>(node)->value();
-    else if (node->hasTagName(HTMLNames::inputTag))
-        info.value = static_cast<HTMLInputElement*>(node)->value();
-    else if (node->shouldUseInputMethod())
-        info.value = node->nodeValue();
-    else
-        return info;
+    info.value = plainText(rangeOfContents(node).get());
 
     if (info.value.isEmpty())
         return info;
 
-    if (node->hasTagName(HTMLNames::textareaTag) || node->hasTagName(HTMLNames::inputTag)) {
-        HTMLTextFormControlElement* formElement = static_cast<HTMLTextFormControlElement*>(node);
-        info.selectionStart = formElement->selectionStart();
-        info.selectionEnd = formElement->selectionEnd();
-        if (editor->hasComposition()) {
-            info.compositionStart = formElement->indexForVisiblePosition(Position(editor->compositionNode(), editor->compositionStart()));
-            info.compositionEnd = formElement->indexForVisiblePosition(Position(editor->compositionNode(), editor->compositionEnd()));
-        }
-    } else {
-        info.selectionStart = selection->start().computeOffsetInContainerNode();
-        info.selectionEnd = selection->end().computeOffsetInContainerNode();
-        if (editor->hasComposition()) {
-            info.compositionStart = static_cast<int>(editor->compositionStart());
-            info.compositionEnd = static_cast<int>(editor->compositionEnd());
-        }
+    size_t location;
+    size_t length;
+    RefPtr<Range> range = selection->selection().firstRange();
+    if (range && TextIterator::getLocationAndLengthFromRange(selection->rootEditableElement(), range.get(), location, length)) {
+        info.selectionStart = location;
+        info.selectionEnd = location + length;
+    }
+    range = editor->compositionRange();
+    if (range && TextIterator::getLocationAndLengthFromRange(selection->rootEditableElement(), range.get(), location, length)) {
+        info.compositionStart = location;
+        info.compositionEnd = location + length;
     }
 
     return info;
