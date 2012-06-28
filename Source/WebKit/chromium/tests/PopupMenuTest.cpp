@@ -43,7 +43,6 @@
 #include "PopupMenuClient.h"
 #include "PopupMenuChromium.h"
 #include "RuntimeEnabledFeatures.h"
-#include "URLTestHelpers.h"
 #include "WebDocument.h"
 #include "WebElement.h"
 #include "WebFrame.h"
@@ -64,7 +63,6 @@
 
 using namespace WebCore;
 using namespace WebKit;
-using WebKit::URLTestHelpers::toKURL;
 
 namespace {
 
@@ -251,7 +249,15 @@ protected:
 
     void registerMockedURLLoad(const std::string& fileName)
     {
-        URLTestHelpers::registerMockedURLFromBaseURL(toKURL(baseURL + fileName), WebString::fromUTF8(fileName), WebString::fromUTF8("popup/"), WebString::fromUTF8("text/html"));
+        WebURLResponse response;
+        response.initialize();
+        response.setMIMEType("text/html");
+
+        std::string filePath = webkit_support::GetWebKitRootDir().utf8();
+        filePath += "/Source/WebKit/chromium/tests/data/popup/";
+        filePath += fileName;
+
+        webkit_support::RegisterMockedURL(WebURL(GURL(baseURL + fileName)), response, WebString::fromUTF8(filePath));
     }
 
     void serveRequests()
@@ -263,7 +269,7 @@ protected:
     {
         WebURLRequest urlRequest;
         urlRequest.initialize();
-        urlRequest.setURL(WebURL(toKURL(baseURL + fileName)));
+        urlRequest.setURL(WebURL(GURL(baseURL + fileName)));
         frame->loadRequest(urlRequest);
     }
 

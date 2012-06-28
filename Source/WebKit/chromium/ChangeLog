@@ -1,3 +1,57 @@
+2012-06-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121405.
+        http://trac.webkit.org/changeset/121405
+        https://bugs.webkit.org/show_bug.cgi?id=90135
+
+        broke windows build (Requested by shawnsingh_ on #webkit).
+
+        * WebKit.gypi:
+        * WebKitUnitTests.gyp:
+        * public/WebDOMMessageEvent.h:
+        * tests/AssociatedURLLoaderTest.cpp:
+        (WebKit::AssociatedURLLoaderTest::AssociatedURLLoaderTest):
+        (WebKit::AssociatedURLLoaderTest::SetUp):
+        (WebKit::AssociatedURLLoaderTest::CheckMethodFails):
+        (WebKit::AssociatedURLLoaderTest::CheckHeaderFails):
+        (WebKit::AssociatedURLLoaderTest::CheckAccessControlHeaders):
+        (WebKit::TEST_F):
+        * tests/EventListenerTest.cpp:
+        * tests/FrameTestHelpers.cpp:
+        (WebKit::FrameTestHelpers::registerMockedURLLoad):
+        (FrameTestHelpers):
+        (WebKit::FrameTestHelpers::loadFrame):
+        * tests/FrameTestHelpers.h:
+        (FrameTestHelpers):
+        * tests/ListenerLeakTest.cpp:
+        (WebKit::ListenerLeakTest::RunTest):
+        * tests/PopupMenuTest.cpp:
+        (WebKit::SelectPopupMenuTest::registerMockedURLLoad):
+        (WebKit::SelectPopupMenuTest::loadFrame):
+        * tests/RunAllTests.cpp:
+        * tests/URLTestHelpers.cpp: Removed.
+        * tests/URLTestHelpers.h: Removed.
+        * tests/WebFrameTest.cpp:
+        (WebKit::WebFrameTest::registerMockedHttpURLLoad):
+        (WebKit::WebFrameTest::registerMockedChromeURLLoad):
+        (WebKit::TEST_F):
+        * tests/WebPageNewSerializerTest.cpp:
+        (WebKit::WebPageNewSerializeTest::registerMockedURLLoad):
+        (WebPageNewSerializeTest):
+        (WebKit::WebPageNewSerializeTest::setUpCSSTestPage):
+        (WebKit::WebPageNewSerializeTest::loadURLInTopFrame):
+        (WebKit::WebPageNewSerializeTest::resourceVectorContains):
+        (WebKit::TEST_F):
+        * tests/WebPageSerializerTest.cpp:
+        (WebKit::WebPageSerializerTest::registerMockedURLLoad):
+        (WebKit::WebPageSerializerTest::loadURLInTopFrame):
+        (WebKit::WebPageSerializerTest::webVectorContains):
+        (WebKit::TEST_F):
+        * tests/WebViewTest.cpp:
+        (WebKit::TEST_F):
+        (WebKit::WebViewTest::testAutoResize):
+        (WebKit::WebViewTest::testTextInputType):
+
 2012-06-27  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Use WEBKIT_IMPLEMENTATION == 1 for webkit_unit_tests
