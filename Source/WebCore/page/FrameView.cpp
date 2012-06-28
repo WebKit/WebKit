@@ -1440,11 +1440,7 @@ IntPoint FrameView::currentMousePosition() const
 
 bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
-    RenderBlock::PositionedObjectsListHashSet* positionedObjects = 0;
-    if (RenderView* root = rootRenderer(this))
-        positionedObjects = root->positionedObjects();
-
-    if (!positionedObjects || positionedObjects->isEmpty()) {
+    if (!m_fixedObjects || m_fixedObjects->isEmpty()) {
         hostWindow()->scroll(scrollDelta, rectToScroll, clipRect);
         return true;
     }
@@ -1453,18 +1449,23 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
 
     // Get the rects of the fixed objects visible in the rectToScroll
     Region regionToUpdate;
-    RenderBlock::PositionedObjectsListHashSet::const_iterator end = positionedObjects->end();
-    for (RenderBlock::PositionedObjectsListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
-        RenderBox* renderBox = *it;
-        if (renderBox->style()->position() != FixedPosition)
+    FixedObjectSet::const_iterator end = m_fixedObjects->end();
+    for (FixedObjectSet::const_iterator it = m_fixedObjects->begin(); it != end; ++it) {
+        RenderObject* renderer = *it;
+        if (renderer->style()->position() != FixedPosition)
             continue;
 #if USE(ACCELERATED_COMPOSITING)
-        if (renderBox->isComposited())
+        if (renderer->isComposited())
             continue;
 #endif
+    
+        // Fixed items should always have layers.
+        ASSERT(renderer->hasLayer());
+        RenderLayer* layer = toRenderBoxModelObject(renderer)->layer();
+        
 #if ENABLE(CSS_FILTERS)
-        if (renderBox->layer() && renderBox->layer()->parent()) {
-            RenderBoxModelObject* renderer = renderBox->layer()->parent()->renderer();
+        if (layer->parent()) {
+            RenderBoxModelObject* renderer = layer->parent()->renderer();
             if (renderer->style()->hasFilterOutsets()) {
                 // If the fixed layer has a blur/drop-shadow filter applied on its parent, we cannot 
                 // scroll using the fast path, otherwise the outsets of the filter will be moved around the page.
@@ -1472,7 +1473,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
             }
         }
 #endif
-        IntRect updateRect = pixelSnappedIntRect(renderBox->layer()->repaintRectIncludingNonCompositingDescendants());
+        IntRect updateRect = pixelSnappedIntRect(layer->repaintRectIncludingNonCompositingDescendants());
         updateRect = contentsToRootView(updateRect);
         if (!isCompositedContentLayer && clipsRepaints())
             updateRect.intersect(rectToScroll);
