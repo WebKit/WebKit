@@ -1,3 +1,27 @@
+2012-06-27  Michael Saboff  <msaboff@apple.com>
+
+        [Win] jscore-tests flakey
+        https://bugs.webkit.org/show_bug.cgi?id=88118
+
+        Reviewed by Jessie Berlin.
+
+        jsDriver.pl on windows intermittently doesn't get the returned value from jsc,
+        instead it gets 126.  Added a new option to jsc (-x) which prints the exit
+        code before exiting.  jsDriver.pl uses this option on Windows and parses the
+        exit code output for the exit code, removing it before comparing the actual
+        and expected outputs.  Filed a follow on "FIXME" defect:
+        [WIN] Intermittent failure for jsc return value to propagate through jsDriver.pl
+        https://bugs.webkit.org/show_bug.cgi?id=90119
+
+        * jsc.cpp:
+        (CommandLine::CommandLine):
+        (CommandLine):
+        (printUsageStatement):
+        (parseArguments):
+        (jscmain):
+        * tests/mozilla/jsDriver.pl:
+        (execute_tests):
+
 2012-06-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121359.

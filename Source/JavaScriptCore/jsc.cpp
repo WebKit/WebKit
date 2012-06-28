@@ -117,11 +117,13 @@ struct CommandLine {
     CommandLine()
         : interactive(false)
         , dump(false)
+        , exitCode(false)
     {
     }
 
     bool interactive;
     bool dump;
+    bool exitCode;
     Vector<Script> scripts;
     Vector<UString> arguments;
 };
@@ -611,6 +613,7 @@ static NO_RETURN void printUsageStatement(bool help = false)
 #if HAVE(SIGNAL_H)
     fprintf(stderr, "  -s         Installs signal handlers that exit on a crash (Unix platforms only)\n");
 #endif
+    fprintf(stderr, "  -x         Output exit code before terminating\n");
 
     exit(help ? EXIT_SUCCESS : EXIT_FAILURE);
 }
@@ -649,6 +652,10 @@ static void parseArguments(int argc, char** argv, CommandLine& options)
 #endif
             continue;
         }
+        if (!strcmp(arg, "-x")) {
+            options.exitCode = true;
+            continue;
+        }
         if (!strcmp(arg, "--")) {
             ++i;
             break;
@@ -667,9 +674,9 @@ static void parseArguments(int argc, char** argv, CommandLine& options)
 
 int jscmain(int argc, char** argv)
 {
-    
     RefPtr<JSGlobalData> globalData = JSGlobalData::create(ThreadStackTypeLarge, LargeHeap);
     JSLockHolder lock(globalData.get());
+    int result;
 
     CommandLine options;
     parseArguments(argc, argv, options);
@@ -679,7 +686,12 @@ int jscmain(int argc, char** argv)
     if (options.interactive && success)
         runInteractive(globalObject);
 
-    return success ? 0 : 3;
+    result = success ? 0 : 3;
+
+    if (options.exitCode)
+        printf("jsc exiting %d\n", result);
+
+    return result;
 }
 
 static bool fillBufferWithContentsOfFile(const UString& fileName, Vector<char>& buffer)
