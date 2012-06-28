@@ -1,3 +1,12 @@
+2012-06-28  Andreas Kling  <kling@webkit.org>
+
+        [WK2] platform/mac/editing/spelling/autocorrection-blockquote-crash.html fails.
+        <http://webkit.org/b/90156>
+
+        Skip this test on mac-wk2 for now.
+
+        * platform/mac-wk2/Skipped:
+
 2012-06-28  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Don't dispatch end event after ActiveDOMObject::stop()
