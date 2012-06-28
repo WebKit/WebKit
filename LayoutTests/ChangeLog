@@ -1,3 +1,11 @@
+2012-06-28  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed gardening.
+        
+        Remove a duplicate expectation.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-28  Stephen Chenney  <schenney@chromium.org>
 
         [chromium] svg/custom/clip-path-referencing-use2.svg fails in "drt mode" in DRT
