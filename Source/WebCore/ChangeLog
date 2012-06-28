@@ -1,3 +1,16 @@
+2012-06-28  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move chromium compositor implementation files into separate section in WebCore.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=90201
+
+        Reviewed by Adam Barth.
+
+        This moves the chromium compositor implementation files to a separate gyp variable to make future changes
+        easier. The files still all link into webcore_platform.lib, as before.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2012-06-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Use Eina_Module API instead of dlopen in PluginPackageEfl
