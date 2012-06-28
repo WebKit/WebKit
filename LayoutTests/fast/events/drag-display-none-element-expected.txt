@@ -1,0 +1,2 @@
+To test, try dragging this div around. It shouldn't crash, and PASS should appear below when you end the drag.
+PASS
