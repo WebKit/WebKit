@@ -43,15 +43,14 @@ from webkitpy.common.system.path import cygpath
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.base import Port, VirtualTestSuite
 from webkitpy.layout_tests.port.driver import DriverOutput
-from webkitpy.layout_tests.port.webkit import WebKitPort, WebKitDriver
+from webkitpy.layout_tests.port.webkit import WebKitDriver
 
 
 _log = logging.getLogger(__name__)
 
 
-class ChromiumPort(WebKitPort):
+class ChromiumPort(Port):
     """Abstract base class for Chromium implementations of the Port class."""
-    pixel_tests_option_default = True
 
     ALL_SYSTEMS = (
         ('leopard', 'x86'),
@@ -108,12 +107,9 @@ class ChromiumPort(WebKitPort):
             return module_path[0:offset]
 
     def __init__(self, host, port_name, **kwargs):
-        super(ChromiumPort, self).__init__(host, port_name, **kwargs)
+        Port.__init__(self, host, port_name, **kwargs)
         # All sub-classes override this, but we need an initial value for testing.
         self._chromium_base_dir_path = None
-
-    def default_test_timeout_ms(self):
-        return 6 * 1000
 
     def _check_file_exists(self, path_to_file, file_description,
                            override_step=None, logging=True):
@@ -134,11 +130,6 @@ class ChromiumPort(WebKitPort):
             return False
         return True
 
-    def driver_name(self):
-        # FIXME: merge this with Port.driver_name, WebKitPort.driver_name
-        if self.get_option('driver_name'):
-            return self.get_option('driver_name')
-        return 'DumpRenderTree'
 
     def check_build(self, needs_http):
         result = True
@@ -266,20 +257,6 @@ class ChromiumPort(WebKitPort):
         except AssertionError:
             return self._build_path(self.get_option('configuration'), 'layout-test-results')
 
-    def _driver_class(self):
-        return ChromiumDriver
-
-    def _missing_symbol_to_skipped_tests(self):
-        # FIXME: Should WebKitPort have these definitions also?
-        return {
-            "ff_mp3_decoder": ["webaudio/codec-tests/mp3"],
-            "ff_aac_decoder": ["webaudio/codec-tests/aac"],
-        }
-
-    def skipped_layout_tests(self, test_list):
-        # FIXME: Merge w/ WebKitPort.skipped_layout_tests()
-        return set(self._skipped_tests_for_unsupported_features(test_list))
-
     def setup_test_run(self):
         # Delete the disk cache if any to ensure a clean test run.
         dump_render_tree_binary_path = self._path_to_driver()
@@ -287,6 +264,9 @@ class ChromiumPort(WebKitPort):
         cachedir = self._filesystem.join(cachedir, "cache")
         if self._filesystem.exists(cachedir):
             self._filesystem.rmtree(cachedir)
+
+    def _driver_class(self):
+        return ChromiumDriver
 
     def start_helper(self):
         helper_path = self._path_to_helper()
@@ -386,10 +366,6 @@ class ChromiumPort(WebKitPort):
     def _build_path(self, *comps):
         return self._static_build_path(self._filesystem, self.get_option('build_directory'), self.path_from_chromium_base(), self.path_from_webkit_base(), *comps)
 
-    def _path_to_image_diff(self):
-        binary_name = 'ImageDiff'
-        return self._build_path(self.get_option('configuration'), binary_name)
-
     def _check_driver_build_up_to_date(self, configuration):
         if configuration in ('Debug', 'Release'):
             try:
@@ -424,6 +400,10 @@ class ChromiumPort(WebKitPort):
         if sys.platform == 'cygwin':
             return cygpath(path)
         return path
+
+    def _path_to_image_diff(self):
+        binary_name = 'ImageDiff'
+        return self._build_path(self.get_option('configuration'), binary_name)
 
 
 class ChromiumDriver(WebKitDriver):

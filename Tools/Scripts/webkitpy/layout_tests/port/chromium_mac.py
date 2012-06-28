@@ -88,9 +88,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
         fallback_paths = self.FALLBACK_PATHS
         return map(self._webkit_baseline_path, fallback_paths[self._version])
 
-    def _modules_to_search_for_symbols(self):
-        return [self._build_path(self.get_option('configuration'), 'ffmpegsumo.so')]
-
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)
         if not result:

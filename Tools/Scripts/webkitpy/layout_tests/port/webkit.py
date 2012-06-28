@@ -51,21 +51,15 @@ _log = logging.getLogger(__name__)
 
 
 class WebKitPort(Port):
-    pixel_tests_option_default = False  # FIXME: Disable until they are run by default on build.webkit.org.
-
     def __init__(self, host, port_name=None, **kwargs):
         Port.__init__(self, host, port_name=port_name, **kwargs)
-        self.set_option_default("pixel_tests", self.pixel_tests_option_default)
 
-    def default_test_timeout_ms(self):
-        if self.get_option('guard_malloc'):
-            # FIXME: --guard-malloc is only supported on Mac, so this logic should be in mac.py.
-            return 350 * 1000
-        if self.get_option('configuration') == 'Debug':
-            # FIXME: the generic code in run_webkit_tests.py multiplies this by 2 :(.
-            # We want to use the same timeout for both release and debug.
-            return 17.5 * 1000
-        return 35 * 1000
+        # FIXME: Disable pixel tests until they are run by default on build.webkit.org.
+        self.set_option_default("pixel_tests", False)
+        # WebKit ports expect a 35s timeout, or 350s timeout when running with -g/--guard-malloc.
+        # FIXME: --guard-malloc is only supported on Mac, so this logic should be in mac.py.
+        default_time_out_seconds = 350 if self.get_option('guard_malloc') else 35
+        self.set_option_default("time_out_ms", default_time_out_seconds * 1000)
 
     def driver_name(self):
         if self.get_option('webkit_test_runner'):
@@ -270,20 +264,15 @@ class WebKitPort(Port):
     def nm_command(self):
         return 'nm'
 
-    def _modules_to_search_for_symbols(self):
-        path = self._path_to_webcore_library()
-        if path:
-            return [path]
-        return []
-
-    def _symbols_string(self):
-        symbols = ''
-        for path_to_module in self._modules_to_search_for_symbols():
-            try:
-                symbols += self._executive.run_command([self.nm_command(), path_to_module], error_handler=Executive.ignore_error)
-            except OSError, e:
-                _log.warn("Failed to run nm: %s.  Can't determine supported features correctly." % e)
-        return symbols
+    def _webcore_symbols_string(self):
+        webcore_library_path = self._path_to_webcore_library()
+        if not webcore_library_path:
+            return None
+        try:
+            return self._executive.run_command([self.nm_command(), webcore_library_path], error_handler=Executive.ignore_error)
+        except OSError, e:
+            _log.warn("Failed to run nm: %s.  Can't determine WebCore supported features." % e)
+        return None
 
     # Ports which use run-time feature detection should define this method and return
     # a dictionary mapping from Feature Names to skipped directoires.  NRWT will
@@ -342,10 +331,10 @@ class WebKitPort(Port):
         # This is a performance optimization to avoid the calling nm.
         if self._has_test_in_directories(self._missing_symbol_to_skipped_tests().values(), test_list):
             # Runtime feature detection not supported, fallback to static dectection:
-            # Disable any tests for symbols missing from the executable or libraries.
-            symbols_string = self._symbols_string()
-            if symbols_string is not None:
-                return reduce(operator.add, [directories for symbol_substring, directories in self._missing_symbol_to_skipped_tests().items() if symbol_substring not in symbols_string], [])
+            # Disable any tests for symbols missing from the webcore symbol string.
+            webcore_symbols_string = self._webcore_symbols_string()
+            if webcore_symbols_string is not None:
+                return reduce(operator.add, [directories for symbol_substring, directories in self._missing_symbol_to_skipped_tests().items() if symbol_substring not in webcore_symbols_string], [])
 
         # Failed to get any runtime or symbol information, don't skip any tests.
         return []

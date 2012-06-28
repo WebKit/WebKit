@@ -1,3 +1,40 @@
+2012-06-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121363, r121367, r121384, and
+        r121390.
+        http://trac.webkit.org/changeset/121363
+        http://trac.webkit.org/changeset/121367
+        http://trac.webkit.org/changeset/121384
+        http://trac.webkit.org/changeset/121390
+        https://bugs.webkit.org/show_bug.cgi?id=90134
+
+        It broke debug NRWT on GTK and on Qt (Requested by Ossy_NIGHT
+        on #webkit).
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort):
+        (ChromiumPort.__init__):
+        (ChromiumPort._check_file_exists):
+        (ChromiumPort.default_results_directory):
+        (ChromiumPort._driver_class):
+        (ChromiumPort._build_path):
+        (ChromiumPort._path_to_image_diff):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort.baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort.baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumPortTest):
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumWinPort.baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort.__init__):
+        (WebKitPort._webcore_symbols_string):
+        (WebKitPort._skipped_tests_for_unsupported_features):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (TestWebKitPort._webcore_symbols_string):
+        (WebKitPortUnitTests.test_default_options):
+
 2012-06-27  Dirk Pranke  <dpranke@chromium.org>
 
         Fix typo in r121384 :(
