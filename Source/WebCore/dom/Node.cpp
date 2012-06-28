@@ -399,7 +399,6 @@ Node::~Node()
     liveNodeSet.remove(this);
 #endif
 
-    ASSERT(hasRareData() == NodeRareData::rareDataMap().contains(this));
     if (hasRareData())
         clearRareData();
 
@@ -459,17 +458,25 @@ TreeScope* Node::treeScope() const
 NodeRareData* Node::rareData() const
 {
     ASSERT(hasRareData());
-    return NodeRareData::rareDataFromMap(this);
+    NodeRareData* data = isDocumentNode() ? static_cast<const Document*>(this)->documentRareData() : NodeRareData::rareDataFromMap(this);
+    ASSERT(data);
+    return data;
 }
 
 NodeRareData* Node::ensureRareData()
 {
     if (hasRareData())
         return rareData();
-    
-    ASSERT(!NodeRareData::rareDataMap().contains(this));
+
     NodeRareData* data = createRareData().leakPtr();
-    NodeRareData::rareDataMap().set(this, data);
+    if (isDocumentNode()) {
+        // Fast path for a Document. A Document knows a pointer to NodeRareData.
+        ASSERT(!static_cast<Document*>(this)->documentRareData());
+        static_cast<Document*>(this)->setDocumentRareData(data);
+    } else {
+        ASSERT(!NodeRareData::rareDataMap().contains(this));
+        NodeRareData::rareDataMap().set(this, data);
+    }
     setFlag(HasRareDataFlag);
     return data;
 }
@@ -489,11 +496,19 @@ void Node::clearRareData()
     ASSERT(!transientMutationObserverRegistry() || transientMutationObserverRegistry()->isEmpty());
 #endif
 
-    NodeRareData::NodeRareDataMap& dataMap = NodeRareData::rareDataMap();
-    NodeRareData::NodeRareDataMap::iterator it = dataMap.find(this);
-    ASSERT(it != dataMap.end());
-    delete it->second;
-    dataMap.remove(it);
+    if (isDocumentNode()) {
+        Document* document = static_cast<Document*>(this);
+        NodeRareData* data = document->documentRareData();
+        ASSERT(data);
+        delete data;
+        document->setDocumentRareData(0);
+    } else {
+        NodeRareData::NodeRareDataMap& dataMap = NodeRareData::rareDataMap();
+        NodeRareData::NodeRareDataMap::iterator it = dataMap.find(this);
+        ASSERT(it != dataMap.end());
+        delete it->second;
+        dataMap.remove(it);
+    }
     clearFlag(HasRareDataFlag);
 }
 

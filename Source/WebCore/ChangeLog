@@ -1,3 +1,48 @@
+2012-06-27  Kentaro Hara  <haraken@chromium.org>
+
+        Performance: Optimize Dromaeo/dom-query.html by caching NodeRareData on Document
+        https://bugs.webkit.org/show_bug.cgi?id=90059
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch improves performance of document.getElementsBy*().
+        e.g. the patch makes Dromaeo/dom-query.html 5.4% faster.
+
+        Dromaeo/dom-query.html without the patch (Chromium/Linux):
+        784714 runs/s, 765947 runs/s, 803109 runs/s, 804450 runs/s
+
+        Dromaeo/dom-query.html with the patch (Chromium/Linux):
+        839245 runs/s, 829867 runs/s, 811032 runs/s, 847486 runs/s
+
+        Based on the assumption that document.getElementsByClassName(),
+        document.getElementsByTagName() and document.getElementsByName()
+        would be used frequently in the real world, this patch implements
+        a fast path for Document methods that require to access NodeRareData.
+        Specifically, this patch caches a pointer to NodeRareData on Document,
+        by which Document can access NodeRareData without looking up a HashMap.
+
+        The only performance concern is the overhead of the isDocumentNode() check
+        that this patch added to Node::ensureRareData. However, I could not
+        observe any performance regression caused by the overhead.
+
+        No tests. No change in behavior.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::setCachedRareData): I didn't inline this method,
+        since the inlining slightly regressed performance for some reason.
+        (WebCore):
+        * dom/Document.h:
+        (WebCore):
+        (WebCore::Document::cachedRareData):
+        (Document):
+        (~Document): Moved 'm_document = 0' to the tail of the destructor,
+        since isDocumentNode() has to return true in clearRareData() that is called
+        in ~Document().
+        * dom/Node.cpp:
+        (WebCore::Node::ensureRareData):
+        (~Node): Moved the assertion into clearRareData().
+
 2012-06-27  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         [BlackBerry] 0-length response with no content-type shouldn't download

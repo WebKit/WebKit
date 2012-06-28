@@ -111,6 +111,7 @@ class MediaQueryMatcher;
 class MouseEventWithHitTestResults;
 class NodeFilter;
 class NodeIterator;
+class NodeRareData;
 class Page;
 class PlatformMouseEvent;
 class ProcessingInstruction;
@@ -431,6 +432,9 @@ public:
     virtual bool isFrameSet() const { return false; }
 
     bool isSrcdocDocument() const { return m_isSrcdocDocument; }
+
+    NodeRareData* documentRareData() const { return m_documentRareData; };
+    void setDocumentRareData(NodeRareData*);
 
     StyleResolver* styleResolverIfExists() const { return m_styleResolver.get(); }
 
@@ -1434,6 +1438,8 @@ private:
     bool m_isViewSource;
     bool m_sawElementsInKnownNamespaces;
     bool m_isSrcdocDocument;
+
+    NodeRareData* m_documentRareData;
 
     RefPtr<DocumentEventQueue> m_eventQueue;
 
