@@ -111,33 +111,33 @@ uint16_t PluginPackage::NPVersion() const
 
 bool PluginPackage::load()
 {
-    char* errmsg;
-
     if (m_isLoaded) {
-        m_loadCount++;
+        ++m_loadCount;
         return true;
     }
 
-    m_module = dlopen(m_path.utf8().data(), RTLD_LAZY | RTLD_LOCAL);
-    if ((errmsg = dlerror())) {
-        EINA_LOG_WARN("%s not loaded: %s", m_path.utf8().data(), errmsg);
+    m_module = eina_module_new(m_path.utf8().data());
+    if (!m_module) {
+        EINA_LOG_WARN("%s not loaded: eina_module_new() failed", m_path.utf8().data());
+        return false;
+    }
+    if (!eina_module_load(m_module)) {
+        const char* errorMessage = eina_error_msg_get(eina_error_get());
+        EINA_LOG_WARN("%s not loaded: %s", m_path.utf8().data(), errorMessage ? errorMessage : "None");
         return false;
     }
 
     m_isLoaded = true;
 
-    NP_InitializeFuncPtr initialize;
-    NPError err;
-
-    initialize = reinterpret_cast<NP_InitializeFuncPtr>(dlsym(m_module, "NP_Initialize"));
-    if ((errmsg = dlerror())) {
-        EINA_LOG_ERR("Could not get symbol NP_Initialize: %s", errmsg);
+    NP_InitializeFuncPtr initialize = reinterpret_cast<NP_InitializeFuncPtr>(eina_module_symbol_get(m_module, "NP_Initialize"));
+    if (!initialize) {
+        EINA_LOG_ERR("Could not get symbol NP_Initialize");
         goto abort;
     }
 
-    m_NPP_Shutdown = reinterpret_cast<NPP_ShutdownProcPtr>(dlsym(m_module, "NP_Shutdown"));
-    if ((errmsg = dlerror())) {
-        EINA_LOG_ERR("Could not get symbol NP_Shutdown: %s", errmsg);
+    m_NPP_Shutdown = reinterpret_cast<NPP_ShutdownProcPtr>(eina_module_symbol_get(m_module, "NP_Shutdown"));
+    if (!m_NPP_Shutdown) {
+        EINA_LOG_ERR("Could not get symbol NP_Shutdown");
         goto abort;
     }
 
@@ -147,14 +147,14 @@ bool PluginPackage::load()
     initializeBrowserFuncs();
 
 #if defined(XP_UNIX)
-    err = initialize(&m_browserFuncs, &m_pluginFuncs);
+    NPError err = initialize(&m_browserFuncs, &m_pluginFuncs);
 #else
-    err = initialize(&m_browserFuncs);
+    NPError err = initialize(&m_browserFuncs);
 #endif
     if (err != NPERR_NO_ERROR)
         goto abort;
 
-    m_loadCount++;
+    ++m_loadCount;
     return true;
 
 abort:

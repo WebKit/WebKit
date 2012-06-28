@@ -1,3 +1,22 @@
+2012-06-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Use Eina_Module API instead of dlopen in PluginPackageEfl
+        https://bugs.webkit.org/show_bug.cgi?id=89972
+
+        Reviewed by Antonio Gomes.
+
+        Use convenience helpers in Eina_Module to load plugins instead
+        of POSIX dlopen().
+
+        No new tests, behavior has not changed.
+
+        * platform/FileSystem.h:
+        (WebCore):
+        * platform/efl/FileSystemEfl.cpp:
+        (WebCore::unloadModule):
+        * plugins/efl/PluginPackageEfl.cpp:
+        (WebCore::PluginPackage::load):
+
 2012-06-28  Jocelyn Turcotte  <turcotte.j@gmail.com>
 
         [Qt] Fix TextureMapper rendering of GraphicsSurface on Mac

@@ -70,7 +70,7 @@ bool unloadModule(PlatformModule module)
     // caution, closing handle will make memory vanish and any remaining
     // timer, idler, threads or any other left-over will crash,
     // maybe just ignore this is a safer solution?
-    return !dlclose(module);
+    return eina_module_free(module);
 }
 
 String homeDirectoryPath()

@@ -71,6 +71,10 @@ typedef struct _GFileIOStream GFileIOStream;
 typedef struct _GModule GModule;
 #endif
 
+#if PLATFORM(EFL)
+typedef struct _Eina_Module Eina_Module;
+#endif
+
 namespace WebCore {
 
 // PlatformModule
@@ -78,6 +82,8 @@ namespace WebCore {
 typedef HMODULE PlatformModule;
 #elif PLATFORM(GTK)
 typedef GModule* PlatformModule;
+#elif PLATFORM(EFL)
+typedef Eina_Module* PlatformModule;
 #elif PLATFORM(QT)
 #if defined(Q_WS_MAC)
 typedef CFBundleRef PlatformModule;
