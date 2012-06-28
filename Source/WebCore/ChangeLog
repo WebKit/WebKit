@@ -1,3 +1,36 @@
+2012-06-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve compositing logging output
+        https://bugs.webkit.org/show_bug.cgi?id=90199
+
+        Reviewed by Tim Horton (w00t!).
+
+        Improve the compositing logging channel output in a few
+        useful ways:
+        1. Report memory use, rather than megapixels
+        2. Show element class names
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::backingStoreMemoryEstimate):
+        * platform/graphics/GraphicsLayer.h:
+        (GraphicsLayer):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::backingStoreMemoryEstimate):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (GraphicsLayerCA):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::nameForLayer):
+        (WebCore::RenderLayerBacking::backingStoreMemoryEstimate):
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+
 2012-06-28  James Robinson  <jamesr@chromium.org>
 
         [chromium] Fix up more includes in compositor code

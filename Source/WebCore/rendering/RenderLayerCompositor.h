@@ -353,8 +353,8 @@ private:
     int m_rootLayerUpdateCount;
     int m_obligateCompositedLayerCount; // count of layer that have to be composited.
     int m_secondaryCompositedLayerCount; // count of layers that have to be composited because of stacking or overlap.
-    double m_obligatoryBackingAreaMegaPixels;
-    double m_secondaryBackingAreaMegaPixels;
+    double m_obligatoryBackingStoreBytes;
+    double m_secondaryBackingStoreBytes;
 #endif
 };
 

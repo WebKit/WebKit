@@ -162,7 +162,7 @@ private:
     virtual void platformCALayerDidCreateTiles(const Vector<FloatRect>& dirtyRects) OVERRIDE;
     virtual float platformCALayerDeviceScaleFactor() OVERRIDE;
 
-    virtual double backingStoreArea() const;
+    virtual double backingStoreMemoryEstimate() const;
 
     void updateOpacityOnLayer();
     

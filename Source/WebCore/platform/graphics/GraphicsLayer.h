@@ -426,8 +426,8 @@ public:
     // pointers for the layers and timing data will be included in the returned string.
     String layerTreeAsText(LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;
 
-    // Return an estimate of the backing store area (in pixels). May be incorrect for tiled layers.
-    virtual double backingStoreArea() const;
+    // Return an estimate of the backing store memory cost (in bytes). May be incorrect for tiled layers.
+    virtual double backingStoreMemoryEstimate() const;
 
     bool usingTiledLayer() const { return m_usingTiledLayer; }
 

@@ -1541,7 +1541,18 @@ String RenderLayerBacking::nameForLayer() const
         if (node->isElementNode())
             name += " " + static_cast<Element*>(node)->tagName();
         if (node->hasID())
-            name += " \'" + static_cast<Element*>(node)->getIdAttribute() + "\'";
+            name += " id=\'" + static_cast<Element*>(node)->getIdAttribute() + "\'";
+
+        if (node->hasClass()) {
+            StyledElement* styledElement = static_cast<StyledElement*>(node);
+            String classes;
+            for (size_t i = 0; i < styledElement->classNames().size(); ++i) {
+                if (i > 0)
+                    classes += " ";
+                classes += styledElement->classNames()[i];
+            }
+            name += " class=\'" + classes + "\'";
+        }
     }
 
     if (m_owningLayer->isReflection())
@@ -1561,27 +1572,27 @@ CompositingLayerType RenderLayerBacking::compositingLayerType() const
     return ContainerCompositingLayer;
 }
 
-double RenderLayerBacking::backingStoreArea() const
+double RenderLayerBacking::backingStoreMemoryEstimate() const
 {
-    double backingArea;
+    double backingMemory;
     
     // m_ancestorClippingLayer and m_clippingLayer are just used for masking, so have no backing.
-    backingArea = m_graphicsLayer->backingStoreArea();
+    backingMemory = m_graphicsLayer->backingStoreMemoryEstimate();
     if (m_foregroundLayer)
-        backingArea += m_foregroundLayer->backingStoreArea();
+        backingMemory += m_foregroundLayer->backingStoreMemoryEstimate();
     if (m_maskLayer)
-        backingArea += m_maskLayer->backingStoreArea();
+        backingMemory += m_maskLayer->backingStoreMemoryEstimate();
 
     if (m_layerForHorizontalScrollbar)
-        backingArea += m_layerForHorizontalScrollbar->backingStoreArea();
+        backingMemory += m_layerForHorizontalScrollbar->backingStoreMemoryEstimate();
 
     if (m_layerForVerticalScrollbar)
-        backingArea += m_layerForVerticalScrollbar->backingStoreArea();
+        backingMemory += m_layerForVerticalScrollbar->backingStoreMemoryEstimate();
 
     if (m_layerForScrollCorner)
-        backingArea += m_layerForScrollCorner->backingStoreArea();
+        backingMemory += m_layerForScrollCorner->backingStoreMemoryEstimate();
     
-    return backingArea;
+    return backingMemory;
 }
 
 } // namespace WebCore
