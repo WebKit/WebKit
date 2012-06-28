@@ -79,7 +79,7 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContentNode(Node* contentNode)
     return StaticNodeList::adopt(regionNodes);
 }
 
-PassRefPtr<NodeList> WebKitNamedFlow::contentNodes() const
+PassRefPtr<NodeList> WebKitNamedFlow::getContent()
 {
     m_parentFlowThread->document()->updateLayoutIgnorePendingStylesheets();
 

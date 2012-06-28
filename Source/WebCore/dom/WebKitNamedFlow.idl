@@ -34,7 +34,7 @@ module core {
         readonly attribute DOMString name;
         readonly attribute boolean overset;
         NodeList getRegionsByContentNode(in Node contentNode);
-        readonly attribute NodeList contentNodes;
+        NodeList getContent();
     };
 }
 

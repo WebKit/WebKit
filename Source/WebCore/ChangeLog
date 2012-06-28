@@ -1,3 +1,22 @@
+2012-06-28  Andrei Onea  <onea@adobe.com>
+
+        [CSSRegions]Rename NamedFlow::contentNodes to NamedFlow::getContent()
+        https://bugs.webkit.org/show_bug.cgi?id=90163
+
+        Reviewed by Andreas Kling.
+
+        Latest CSS Regions spec defines the NamedFlow interface as having a function named getContent,
+        rather than an attribute named contentNodes.
+        http://www.w3.org/TR/css3-regions/#the-namedflow-interface
+
+        Test: fast/regions/webkit-named-flow-get-content.html
+
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::getContent):
+        * dom/WebKitNamedFlow.h:
+        (WebKitNamedFlow):
+        * dom/WebKitNamedFlow.idl:
+
 2012-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r121232): named properties on document and window may return wrong object

@@ -52,7 +52,7 @@ public:
     String name() const;
     bool overset() const;
     PassRefPtr<NodeList> getRegionsByContentNode(Node*);
-    PassRefPtr<NodeList> contentNodes() const;
+    PassRefPtr<NodeList> getContent();
 
 private:
     WebKitNamedFlow(RenderNamedFlowThread*);
