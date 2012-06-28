@@ -1,3 +1,19 @@
+2012-06-28  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: IDBDatabase should have a close pending field.
+        https://bugs.webkit.org/show_bug.cgi?id=71129
+
+        Reviewed by Tony Chang.
+
+        Handle the IDB spec case that "versionchange" events should not be fired 
+        against connections that have the internal "closePending" flag set but 
+        are not yet closed due to running transactions.
+
+        Test: storage/indexeddb/database-closepending-flag.html
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::onVersionChange):
+
 2012-06-28  Adrienne Walker  <enne@google.com>
 
         [chromium] Split WebScrollbar into WebPluginScrollbar and WebScrollbar

@@ -1,3 +1,30 @@
+2012-06-28  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: IDBDatabase should have a close pending field.
+        https://bugs.webkit.org/show_bug.cgi?id=71129
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/database-closepending-flag-expected.txt: Added.
+        * storage/indexeddb/database-closepending-flag.html: Added.
+        * storage/indexeddb/resources/database-closepending-flag.js: Added.
+        (test):
+        (openConnection.request.onsuccess.request.onsuccess):
+        (openConnection.request.onsuccess):
+        (openConnection):
+        (testIDBDatabaseName):
+        (testIDBDatabaseObjectStoreNames.request.onsuccess.request.onsuccess.transaction.oncomplete):
+        (testIDBDatabaseObjectStoreNames.request.onsuccess.request.onsuccess):
+        (testIDBDatabaseObjectStoreNames.request.onsuccess):
+        (testIDBDatabaseObjectStoreNames):
+        (testIDBDatabaseTransaction):
+        (testVersionChangeTransactionSteps.request.onsuccess.request.onsuccess.request.onblocked):
+        (testVersionChangeTransactionSteps.request.onsuccess.request.onsuccess.request.onsuccess.transaction.oncomplete):
+        (testVersionChangeTransactionSteps.request.onsuccess.request.onsuccess.request.onsuccess):
+        (testVersionChangeTransactionSteps.request.onsuccess.request.onsuccess):
+        (testDatabaseDeletion.request.onsuccess.request.onblocked):
+        (testDatabaseDeletion.request.onsuccess.request.onsuccess):
+
 2012-06-28  Ojan Vafai  <ojan@chromium.org>
 
         Replace a BUG_OJAN with a proper tracking bug and unskip two

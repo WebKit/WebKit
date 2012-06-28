@@ -297,6 +297,9 @@ void IDBDatabase::onVersionChange(const String& version)
     if (m_contextStopped || !scriptExecutionContext())
         return;
 
+    if (m_closePending)
+        return;
+
     enqueueEvent(IDBVersionChangeEvent::create(version, eventNames().versionchangeEvent));
 }
 
