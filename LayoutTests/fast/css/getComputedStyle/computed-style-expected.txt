@@ -146,6 +146,7 @@ zoom: 1;
 -webkit-align-content: stretch;
 -webkit-align-items: stretch;
 -webkit-align-self: stretch;
+-webkit-flex: 0 1 auto;
 -webkit-flex-direction: row;
 -webkit-flex-wrap: none;
 -webkit-justify-content: flex-start;

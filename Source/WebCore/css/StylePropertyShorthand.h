@@ -88,7 +88,6 @@ const StylePropertyShorthand& webkitColumnsShorthand();
 const StylePropertyShorthand& webkitColumnRuleShorthand();
 #if ENABLE(CSS3_FLEXBOX)
 const StylePropertyShorthand& webkitFlexFlowShorthand();
-const StylePropertyShorthand& webkitFlexShorthand();
 #endif
 const StylePropertyShorthand& webkitMarginCollapseShorthand();
 const StylePropertyShorthand& webkitMarqueeShorthand();

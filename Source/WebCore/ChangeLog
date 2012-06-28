@@ -1,3 +1,42 @@
+2012-06-27  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, rolling out r121380.
+        http://trac.webkit.org/changeset/121380
+        https://bugs.webkit.org/show_bug.cgi?id=86525
+
+        Hits an ASSERT in debug.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFlex):
+        * css/CSSParser.h:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilder.cpp:
+        (ApplyPropertyFlex):
+        (WebCore::ApplyPropertyFlex::applyInheritValue):
+        (WebCore::ApplyPropertyFlex::applyInitialValue):
+        (WebCore::ApplyPropertyFlex::applyValue):
+        (WebCore::ApplyPropertyFlex::createHandler):
+        (WebCore::ApplyPropertyFlex::getFlexValue):
+        (WebCore):
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getPropertyValue):
+        (WebCore::StylePropertySet::asText):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::webkitFlexFlowShorthand):
+        (WebCore::shorthandForProperty):
+        * css/StylePropertyShorthand.h:
+        (WebCore):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-06-27  Rakesh KN  <rakesh.kn@motorola.com>
 
         HTMLFieldSetElement::m_documentVersion is not initialized

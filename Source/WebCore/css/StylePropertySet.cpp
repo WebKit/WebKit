@@ -162,8 +162,6 @@ String StylePropertySet::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyBorderStyle:
         return get4Values(borderStyleShorthand());
 #if ENABLE(CSS3_FLEXBOX)
-    case CSSPropertyWebkitFlex:
-        return getShorthandValue(webkitFlexShorthand());
     case CSSPropertyWebkitFlexFlow:
         return getShorthandValue(webkitFlexFlowShorthand());
 #endif
@@ -756,11 +754,6 @@ String StylePropertySet::asText() const
         case CSSPropertyWebkitFlexDirection:
         case CSSPropertyWebkitFlexWrap:
             shorthandPropertyID = CSSPropertyWebkitFlexFlow;
-            break;
-        case CSSPropertyWebkitFlexBasis:
-        case CSSPropertyWebkitFlexGrow:
-        case CSSPropertyWebkitFlexShrink:
-            shorthandPropertyID = CSSPropertyWebkitFlex;
             break;
 #endif
         case CSSPropertyWebkitMaskPositionX:

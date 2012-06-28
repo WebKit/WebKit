@@ -716,7 +716,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         break;
     case CSSPropertyWebkitFlexDirection:
         if (valueID == CSSValueRow || valueID == CSSValueRowReverse || valueID == CSSValueColumn || valueID == CSSValueColumnReverse)
-            return true;
+                return true;
         break;
     case CSSPropertyWebkitFlexWrap:
         if (valueID == CSSValueNone || valueID == CSSValueWrap || valueID == CSSValueWrapReverse)
@@ -2275,26 +2275,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
 #endif
 #if ENABLE(CSS3_FLEXBOX)
-    case CSSPropertyWebkitFlex: {
-        ShorthandScope scope(this, propId);
-        if (id == CSSValueNone) {
-            addProperty(CSSPropertyWebkitFlexGrow, cssValuePool().createValue(0, CSSPrimitiveValue::CSS_NUMBER), important);
-            addProperty(CSSPropertyWebkitFlexShrink, cssValuePool().createValue(0, CSSPrimitiveValue::CSS_NUMBER), important);
-            addProperty(CSSPropertyWebkitFlexBasis, cssValuePool().createIdentifierValue(CSSValueAuto), important);
-            return true;
-        }
-        return parseFlex(m_valueList.get(), important);
-    }
-    case CSSPropertyWebkitFlexBasis:
-        // FIXME: Support intrinsic dimensions too.
-        if (id == CSSValueAuto)
+    case CSSPropertyWebkitFlex:
+        if (id == CSSValueNone)
             validPrimitive = true;
         else
-            validPrimitive = (!id && validUnit(value, FLength | FPercent | FNonNeg));
-        break;
-    case CSSPropertyWebkitFlexGrow:
-    case CSSPropertyWebkitFlexShrink:
-        validPrimitive = validUnit(value, FNumber | FNonNeg);
+            parsedValue = parseFlex(m_valueList.get());
         break;
     case CSSPropertyWebkitOrder:
         validPrimitive = validUnit(value, FNumber);
@@ -5795,48 +5780,49 @@ bool CSSParser::parseReflect(CSSPropertyID propId, bool important)
 
 #if ENABLE(CSS3_FLEXBOX)
 
-bool CSSParser::parseFlex(CSSParserValueList* args, bool important)
+PassRefPtr<CSSValue> CSSParser::parseFlex(CSSParserValueList* args)
 {
     if (!args || !args->size() || args->size() > 3)
-        return false;
+        return 0;
     static const double unsetValue = -1;
-    double flexGrow = unsetValue;
-    double flexShrink = unsetValue;
-    RefPtr<CSSPrimitiveValue> flexBasis;
+    double positiveFlex = unsetValue;
+    double negativeFlex = unsetValue;
+    RefPtr<CSSPrimitiveValue> preferredSize;
 
     while (CSSParserValue* arg = args->current()) {
         if (validUnit(arg, FNumber | FNonNeg)) {
-            if (flexGrow == unsetValue)
-                flexGrow = arg->fValue;
-            else if (flexShrink == unsetValue)
-                flexShrink = arg->fValue;
+            if (positiveFlex == unsetValue)
+                positiveFlex = arg->fValue;
+            else if (negativeFlex == unsetValue)
+                negativeFlex = arg->fValue;
             else if (!arg->fValue) {
-                // flex only allows a basis of 0 (sans units) if flex-grow and flex-shrink values have already been set.
-                flexBasis = cssValuePool().createValue(0, CSSPrimitiveValue::CSS_PX);
+                // flex() only allows a preferred size of 0 (sans units) if the positive and negative flex values have already been set.
+                preferredSize = cssValuePool().createValue(0, CSSPrimitiveValue::CSS_PX);
             } else {
-                // We only allow 3 numbers without units if the last value is 0. E.g., flex:1 1 1 is invalid.
-                return false;
+                // We only allow 3 numbers without units if the last value is 0. E.g., flex(1 1 1) is invalid.
+                return 0;
             }
-        } else if (!flexBasis && (arg->id == CSSValueAuto || validUnit(arg, FLength | FPercent | FNonNeg)))
-            flexBasis = parseValidPrimitive(arg->id, arg);
+        } else if (!preferredSize && (arg->id == CSSValueAuto || validUnit(arg, FLength | FPercent | FNonNeg)))
+            preferredSize = parseValidPrimitive(arg->id, arg);
         else {
-            // Not a valid arg for flex.
-            return false;
+            // Not a valid arg for flex().
+            return 0;
         }
         args->next();
     }
 
-    if (flexGrow == unsetValue)
-        flexGrow = 0;
-    if (flexShrink == unsetValue)
-        flexShrink = 1;
-    if (!flexBasis)
-        flexBasis = cssValuePool().createValue(0, CSSPrimitiveValue::CSS_PX);
+    if (positiveFlex == unsetValue)
+        positiveFlex = 0;
+    if (negativeFlex == unsetValue)
+        negativeFlex = 1;
+    if (!preferredSize)
+        preferredSize = cssValuePool().createValue(0, CSSPrimitiveValue::CSS_PX);
 
-    addProperty(CSSPropertyWebkitFlexGrow, cssValuePool().createValue(clampToFloat(flexGrow), CSSPrimitiveValue::CSS_NUMBER), important);
-    addProperty(CSSPropertyWebkitFlexShrink, cssValuePool().createValue(clampToFloat(flexShrink), CSSPrimitiveValue::CSS_NUMBER), important);
-    addProperty(CSSPropertyWebkitFlexBasis, flexBasis, important);
-    return true;
+    RefPtr<CSSValueList> flex = CSSValueList::createSpaceSeparated();
+    flex->append(cssValuePool().createValue(clampToFloat(positiveFlex), CSSPrimitiveValue::CSS_NUMBER));
+    flex->append(cssValuePool().createValue(clampToFloat(negativeFlex), CSSPrimitiveValue::CSS_NUMBER));
+    flex->append(preferredSize);
+    return flex;
 }
 
 #endif
