@@ -1,3 +1,37 @@
+2012-06-28  Dan Alcantara  <dfalcantara@chromium.org>
+
+        [chromium] Introduce way to reload a page using the original request URL
+        https://bugs.webkit.org/show_bug.cgi?id=89788
+
+        Reviewed by Adam Barth.
+
+        Adds a new reload method for cases where we need to override the URL
+        when reloading a page. This is needed for situations where a server
+        redirects navigation based on information that may have changed since
+        the last time the page was loaded.
+        
+        User agents, for example, can cause a server to redirect to the mobile
+        version of a page.  Changing to the desktop version by switching user agents
+        requires loading a URL from before the redirect occurred.
+
+        Also adds a unit test to confirm that scroll position and page scale are
+        saved when the reload occurs.
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::reloadWithGivenURL):
+        (WebKit):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::setClearPageScaleFactorOnLoad):
+        (WebKit):
+        (WebKit::WebViewImpl::didCommitLoad):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-06-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121395.

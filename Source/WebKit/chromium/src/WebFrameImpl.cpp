@@ -978,6 +978,12 @@ void WebFrameImpl::reload(bool ignoreCache)
     m_frame->loader()->reload(ignoreCache);
 }
 
+void WebFrameImpl::reloadWithOverrideURL(const WebURL& overrideUrl, bool ignoreCache)
+{
+    m_frame->loader()->history()->saveDocumentAndScrollState();
+    m_frame->loader()->reloadWithOverrideURL(overrideUrl, ignoreCache);
+}
+
 void WebFrameImpl::loadRequest(const WebURLRequest& request)
 {
     ASSERT(!request.isNull());

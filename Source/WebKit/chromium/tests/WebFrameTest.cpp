@@ -419,6 +419,40 @@ TEST_F(WebFrameTest, ReloadDoesntSetRedirect)
     webkit_support::ServeAsynchronousMockedRequests();
 }
 
+TEST_F(WebFrameTest, ReloadWithOverrideURLPreservesState)
+{
+    const std::string firstURL = "find.html";
+    const std::string secondURL = "form.html";
+    const std::string thirdURL = "history.html";
+    const float pageScaleFactor = 1.1684f;
+    const int pageWidth = 640;
+    const int pageHeight = 480;
+
+    registerMockedHttpURLLoad(firstURL);
+    registerMockedHttpURLLoad(secondURL);
+    registerMockedHttpURLLoad(thirdURL);
+
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + firstURL, true));
+    webViewImpl->resize(WebSize(pageWidth, pageHeight));
+    webViewImpl->mainFrame()->setScrollOffset(WebSize(pageWidth / 4, pageHeight / 4));
+    webViewImpl->setPageScaleFactorPreservingScrollOffset(pageScaleFactor);
+
+    WebSize previousOffset = webViewImpl->mainFrame()->scrollOffset();
+    float previousScale = webViewImpl->pageScaleFactor();
+
+    // Reload the page using the cache.
+    webViewImpl->mainFrame()->reloadWithOverrideURL(GURL(m_baseURL + secondURL), false);
+    webkit_support::ServeAsynchronousMockedRequests();
+    ASSERT_EQ(previousOffset, webViewImpl->mainFrame()->scrollOffset());
+    ASSERT_EQ(previousScale, webViewImpl->pageScaleFactor());
+
+    // Reload the page while ignoring the cache.
+    webViewImpl->mainFrame()->reloadWithOverrideURL(GURL(m_baseURL + thirdURL), true);
+    webkit_support::ServeAsynchronousMockedRequests();
+    ASSERT_EQ(previousOffset, webViewImpl->mainFrame()->scrollOffset());
+    ASSERT_EQ(previousScale, webViewImpl->pageScaleFactor());
+}
+
 TEST_F(WebFrameTest, IframeRedirect)
 {
     registerMockedHttpURLLoad("iframe_redirect.html");

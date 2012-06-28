@@ -136,6 +136,7 @@ public:
                                                   bool isDirectory);
 #endif
     virtual void reload(bool ignoreCache);
+    virtual void reloadWithOverrideURL(const WebURL& overrideUrl, bool ignoreCache);
     virtual void loadRequest(const WebURLRequest&);
     virtual void loadHistoryItem(const WebHistoryItem&);
     virtual void loadData(

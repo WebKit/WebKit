@@ -319,6 +319,9 @@ public:
     // False |ignoreCache| revalidates any existing cache entries.
     virtual void reload(bool ignoreCache = false) = 0;
 
+    // This is used for situations where we want to reload a different URL because of a redirect.
+    virtual void reloadWithOverrideURL(const WebURL& overrideUrl, bool ignoreCache = false) = 0;
+
     // Load the given URL.
     virtual void loadRequest(const WebURLRequest&) = 0;
 
