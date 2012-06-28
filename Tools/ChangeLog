@@ -1,3 +1,19 @@
+2012-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Cleanup HTMLFormCollection
+        https://bugs.webkit.org/show_bug.cgi?id=90111
+
+        Reviewed by Andreas Kling.
+
+        Add a WebKit API test using copy-paste design pattern per kling's request.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/HTMLFormCollectionNamedItem.html: Added.
+        * TestWebKitAPI/Tests/mac/HTMLFormCollectionNamedItem.mm: Added.
+        (-[HTMLFormCollectionNamedItemTest webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2012-06-28  Tim Horton  <timothy_horton@apple.com>
 
         [mac] WKTR windows still don't stay off screen sometimes
