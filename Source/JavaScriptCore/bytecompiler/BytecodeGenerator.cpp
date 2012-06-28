@@ -32,6 +32,7 @@
 #include "BytecodeGenerator.h"
 
 #include "BatchedTransitionOptimizer.h"
+#include "Comment.h"
 #include "JSActivation.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
@@ -245,6 +246,9 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
     , m_shouldEmitRichSourceInfo(scopeChain->globalObject->globalObjectMethodTable()->supportsRichSourceInfo(scopeChain->globalObject.get()))
     , m_scopeChain(*scopeChain->globalData, scopeChain)
     , m_symbolTable(symbolTable)
+#if ENABLE(BYTECODE_COMMENTS)
+    , m_currentCommentString(0)
+#endif
     , m_scopeNode(programNode)
     , m_codeBlock(codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
@@ -270,6 +274,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
     if (m_shouldEmitDebugHooks)
         m_codeBlock->setNeedsFullScopeChain(true);
 
+    prependComment("entering Program block");
     emitOpcode(op_enter);
     codeBlock->setGlobalData(m_globalData);
 
@@ -322,6 +327,9 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
     , m_shouldEmitRichSourceInfo(scopeChain->globalObject->globalObjectMethodTable()->supportsRichSourceInfo(scopeChain->globalObject.get()))
     , m_scopeChain(*scopeChain->globalData, scopeChain)
     , m_symbolTable(symbolTable)
+#if ENABLE(BYTECODE_COMMENTS)
+    , m_currentCommentString(0)
+#endif
     , m_scopeNode(functionBody)
     , m_codeBlock(codeBlock)
     , m_activationRegister(0)
@@ -349,9 +357,11 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
 
     codeBlock->setGlobalData(m_globalData);
     
+    prependComment("entering Function block");
     emitOpcode(op_enter);
     if (m_codeBlock->needsFullScopeChain()) {
         m_activationRegister = addVar();
+        prependComment("activation for Full Scope Chain");
         emitInitLazyRegister(m_activationRegister);
         m_codeBlock->setActivationRegister(m_activationRegister->index());
     }
@@ -368,10 +378,13 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
         codeBlock->setArgumentsRegister(argumentsRegister->index());
         ASSERT_UNUSED(unmodifiedArgumentsRegister, unmodifiedArgumentsRegister->index() == JSC::unmodifiedArgumentsRegister(codeBlock->argumentsRegister()));
 
+        prependComment("arguments for Full Scope Chain");
         emitInitLazyRegister(argumentsRegister);
+        prependComment("unmodified arguments for Full Scope Chain");
         emitInitLazyRegister(unmodifiedArgumentsRegister);
         
         if (m_codeBlock->isStrictMode()) {
+            prependComment("create arguments for strict mode");
             emitOpcode(op_create_arguments);
             instructions().append(argumentsRegister->index());
         }
@@ -380,6 +393,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
         // it from a call frame.  In the long-term it should stop doing that (<rdar://problem/6911886>),
         // but for now we force eager creation of the arguments object when debugging.
         if (m_shouldEmitDebugHooks) {
+            prependComment("create arguments for debug hooks");
             emitOpcode(op_create_arguments);
             instructions().append(argumentsRegister->index());
         }
@@ -398,10 +412,12 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
             if (functionBody->captures(ident)) {
                 if (!m_hasCreatedActivation) {
                     m_hasCreatedActivation = true;
+                    prependComment("activation for captured vars");
                     emitOpcode(op_create_activation);
                     instructions().append(m_activationRegister->index());
                 }
                 m_functions.add(ident.impl());
+                prependComment("captured function var");
                 emitNewFunction(addVar(ident, false), function);
             }
         }
@@ -414,6 +430,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
     bool canLazilyCreateFunctions = !functionBody->needsActivationForMoreThanVariables() && !m_shouldEmitDebugHooks;
     if (!canLazilyCreateFunctions && !m_hasCreatedActivation) {
         m_hasCreatedActivation = true;
+        prependComment("cannot lazily create functions");
         emitOpcode(op_create_activation);
         instructions().append(m_activationRegister->index());
     }
@@ -428,6 +445,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
             RefPtr<RegisterID> reg = addVar(ident, false);
             // Don't lazily create functions that override the name 'arguments'
             // as this would complicate lazy instantiation of actual arguments.
+            prependComment("a function that override 'arguments'");
             if (!canLazilyCreateFunctions || ident == propertyNames().arguments)
                 emitNewFunction(reg.get(), function);
             else {
@@ -460,6 +478,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
     preserveLastVar();
 
     if (isConstructor()) {
+        prependComment("'this' because we are a Constructor function");
         emitOpcode(op_create_this);
         instructions().append(m_thisRegister.index());
     } else if (!codeBlock->isStrictMode() && (functionBody->usesThis() || codeBlock->usesEval() || m_shouldEmitDebugHooks)) {
@@ -475,6 +494,9 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, ScopeChainNode* scopeCh
     , m_shouldEmitRichSourceInfo(scopeChain->globalObject->globalObjectMethodTable()->supportsRichSourceInfo(scopeChain->globalObject.get()))
     , m_scopeChain(*scopeChain->globalData, scopeChain)
     , m_symbolTable(symbolTable)
+#if ENABLE(BYTECODE_COMMENTS)
+    , m_currentCommentString(0)
+#endif
     , m_scopeNode(evalNode)
     , m_codeBlock(codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
@@ -500,6 +522,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, ScopeChainNode* scopeCh
     if (m_shouldEmitDebugHooks || m_baseScopeDepth)
         m_codeBlock->setNeedsFullScopeChain(true);
 
+    prependComment("entering Eval block");
     emitOpcode(op_enter);
     codeBlock->setGlobalData(m_globalData);
     m_codeBlock->setNumParameters(1);
@@ -658,9 +681,30 @@ void BytecodeGenerator::emitOpcode(OpcodeID opcodeID)
     ASSERT(opcodePosition - m_lastOpcodePosition == opcodeLength(m_lastOpcodeID) || m_lastOpcodeID == op_end);
     m_lastOpcodePosition = opcodePosition;
 #endif
+    emitComment();
     instructions().append(globalData()->interpreter->getOpcode(opcodeID));
     m_lastOpcodeID = opcodeID;
 }
+
+#if ENABLE(BYTECODE_COMMENTS)
+// Record a comment in the CodeBlock's comments list for the current opcode
+// that is about to be emitted.
+void BytecodeGenerator::emitComment()
+{
+    if (m_currentCommentString) {
+        size_t opcodePosition = instructions().size();
+        Comment comment = { opcodePosition, m_currentCommentString };
+        m_codeBlock->bytecodeComments().append(comment);
+        m_currentCommentString = 0;
+    }
+}
+
+// Register a comment to be associated with the next opcode that will be emitted.
+void BytecodeGenerator::prependComment(const char* string)
+{
+    m_currentCommentString = string;
+}
+#endif
 
 ValueProfile* BytecodeGenerator::emitProfiledOpcode(OpcodeID opcodeID)
 {

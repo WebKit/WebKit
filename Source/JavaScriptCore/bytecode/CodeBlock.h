@@ -35,6 +35,7 @@
 #include "CallReturnOffsetToBytecodeOffset.h"
 #include "CodeOrigin.h"
 #include "CodeType.h"
+#include "Comment.h"
 #include "CompactJITCodeMap.h"
 #include "DFGCodeBlocks.h"
 #include "DFGCommon.h"
@@ -66,9 +67,34 @@
 #include <wtf/RefCountedArray.h>
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/Vector.h>
+
+// Set ENABLE_BYTECODE_COMMENTS to 1 to enable recording bytecode generator
+// comments for the bytecodes that it generates. This will allow
+// CodeBlock::dump() to provide some contextual info about the bytecodes.
+//
+// The way this comment system works is as follows:
+// 1. The BytecodeGenerator calls prependComment() with a constant comment
+//    string in .text. The string must not be a stack or heap allocated
+//    string.
+// 2. When the BytecodeGenerator's emitOpcode() is called, the last
+//    prepended comment will be recorded with the PC of the opcode being
+//    emitted. This comment is being recorded in the CodeBlock's
+//    m_bytecodeComments.
+// 3. When CodeBlock::dump() is called, it will pair up the comments with
+//    their corresponding bytecodes based on the bytecode and comment's
+//    PC. If a matching pair is found, the comment will be printed after
+//    the bytecode. If not, no comment is printed.
+//
+// NOTE: Enabling this will consume additional memory at runtime to store
+// the comments. Since these comments are only useful for VM debugging
+// (as opposed to app debugging), this feature is to be disabled by default,
+// and can be enabled as needed for VM development use only.
+
+#define ENABLE_BYTECODE_COMMENTS 0
 
 namespace JSC {
 
@@ -154,6 +180,12 @@ namespace JSC {
         {
             return index >= m_numVars;
         }
+
+        void dumpBytecodeCommentAndNewLine(int location);
+#if ENABLE(BYTECODE_COMMENTS)
+        const char* commentForBytecodeOffset(unsigned bytecodeOffset);
+        void dumpBytecodeComments();
+#endif
 
         HandlerInfo* handlerForBytecodeOffset(unsigned bytecodeOffset);
         int lineNumberForBytecodeOffset(unsigned bytecodeOffset);
@@ -365,6 +397,10 @@ namespace JSC {
         RefCountedArray<Instruction>& instructions() { return m_instructions; }
         const RefCountedArray<Instruction>& instructions() const { return m_instructions; }
         
+#if ENABLE(BYTECODE_COMMENTS)
+        Vector<Comment>& bytecodeComments() { return m_bytecodeComments; }
+#endif
+
         size_t predictedMachineCodeSize();
         
         bool usesOpcode(OpcodeID);
@@ -1302,6 +1338,10 @@ namespace JSC {
         uint16_t m_reoptimizationRetryCounter;
 
         Vector<LineInfo> m_lineInfo;
+#if ENABLE(BYTECODE_COMMENTS)
+        Vector<Comment>  m_bytecodeComments;
+        size_t m_bytecodeCommentIterator;
+#endif
 
         struct RareData {
            WTF_MAKE_FAST_ALLOCATED;

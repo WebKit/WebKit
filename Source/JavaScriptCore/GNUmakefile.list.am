@@ -92,6 +92,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/CodeBlock.cpp \
 	Source/JavaScriptCore/bytecode/CodeBlock.h \
 	Source/JavaScriptCore/bytecode/CodeOrigin.h \
+	Source/JavaScriptCore/bytecode/Comment.h \
 	Source/JavaScriptCore/bytecode/DataFormat.h \
 	Source/JavaScriptCore/bytecode/DFGExitProfile.cpp \
 	Source/JavaScriptCore/bytecode/DFGExitProfile.h \

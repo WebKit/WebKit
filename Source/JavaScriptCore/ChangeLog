@@ -1,3 +1,60 @@
+2012-06-28  Mark Lam  <mark.lam@apple.com>
+
+        Adding a commenting utility to record BytecodeGenerator comments
+        with opcodes that are emitted.  Presently, the comments can only
+        be constant strings.  Adding comments for opcodes is optional.
+        If a comment is added, the comment will be printed following the
+        opcode when CodeBlock::dump() is called.
+
+        This utility is disabled by default, and is only meant for VM
+        development purposes.  It should not be enabled for product builds.
+
+        To enable this utility, set ENABLE_BYTECODE_COMMENTS in CodeBlock.h
+        to 1.
+
+        https://bugs.webkit.org/show_bug.cgi?id=90095
+
+        Reviewed by Geoffrey Garen.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecodeCommentAndNewLine): Dumps the comment.
+        (JSC):
+        (JSC::CodeBlock::printUnaryOp): Add comment dumps.
+        (JSC::CodeBlock::printBinaryOp): Add comment dumps.
+        (JSC::CodeBlock::printConditionalJump): Add comment dumps.
+        (JSC::CodeBlock::printCallOp): Add comment dumps.
+        (JSC::CodeBlock::printPutByIdOp): Add comment dumps.
+        (JSC::CodeBlock::dump): Add comment dumps.
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::commentForBytecodeOffset):
+            Finds the comment for an opcode if available.
+        (JSC::CodeBlock::dumpBytecodeComments):
+            For debugging whether comments are collected.
+            It is not being called anywhere.
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::bytecodeComments):
+        * bytecode/Comment.h: Added.
+        (JSC):
+        (Comment):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitOpcode): Calls emitComment().
+        (JSC):
+        (JSC::BytecodeGenerator::emitComment): Adds comment to CodeBlock.
+        (JSC::BytecodeGenerator::prependComment):
+            Registers a comment for emitComemnt() to use later.
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitComment):
+        (JSC::BytecodeGenerator::prependComment):
+            These are inlined versions of these functions that nullify them
+            when ENABLE_BYTECODE_COMMENTS is 0.
+        (JSC::BytecodeGenerator::comments):
+
 2012-06-28  Oliver Hunt  <oliver@apple.com>
 
         32bit DFG incorrectly claims an fpr is fillable even if it has not been proven double

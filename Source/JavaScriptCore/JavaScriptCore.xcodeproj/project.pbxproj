@@ -1446,6 +1446,7 @@
 		F692A8850255597D01FF60F7 /* UString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UString.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8860255597D01FF60F7 /* UString.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = UString.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8870255597D01FF60F7 /* JSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValue.cpp; sourceTree = "<group>"; tabWidth = 8; };
+		FEB63AA2159B9DA3008932A6 /* Comment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comment.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2360,6 +2361,7 @@
 				0F0B83B314BCF85E00885B4F /* MethodCallLinkInfo.h */,
 				0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */,
 				0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */,
+				FEB63AA2159B9DA3008932A6 /* Comment.h */,
 				0F0B83AC14BCF60200885B4F /* LineInfo.h */,
 				0F0B83AA14BCF5B900885B4F /* ExpressionRangeInfo.h */,
 				0F0B83A814BCF55E00885B4F /* HandlerInfo.h */,

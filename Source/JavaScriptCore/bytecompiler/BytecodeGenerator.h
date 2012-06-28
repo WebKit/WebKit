@@ -542,6 +542,18 @@ namespace JSC {
     private:
         friend class Label;
         
+#if ENABLE(BYTECODE_COMMENTS)
+        // Record a comment in the CodeBlock's comments list for the current
+        // opcode that is about to be emitted.
+        void emitComment();
+        // Register a comment to be associated with the next opcode that will
+        // be emitted.
+        void prependComment(const char* string);
+#else
+        ALWAYS_INLINE void emitComment() { }
+        ALWAYS_INLINE void prependComment(const char*) { }
+#endif
+
         void emitOpcode(OpcodeID);
         ValueProfile* emitProfiledOpcode(OpcodeID);
         void retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index);
@@ -623,6 +635,9 @@ namespace JSC {
 
         Vector<Instruction>& instructions() { return m_instructions; }
         SymbolTable& symbolTable() { return *m_symbolTable; }
+#if ENABLE(BYTECODE_COMMENTS)
+        Vector<Comment>& comments() { return m_comments; }
+#endif
 
         bool shouldOptimizeLocals()
         {
@@ -663,6 +678,11 @@ namespace JSC {
 
         Strong<ScopeChainNode> m_scopeChain;
         SymbolTable* m_symbolTable;
+
+#if ENABLE(BYTECODE_COMMENTS)
+        Vector<Comment> m_comments;
+        const char *m_currentCommentString;
+#endif
 
         ScopeNode* m_scopeNode;
         CodeBlock* m_codeBlock;
