@@ -58,7 +58,7 @@ class QtPortTest(port_testcase.PortTestCase):
         {'search_paths':['qt-5.0-wk1', 'qt-5.0', 'qt-linux', 'qt'], 'os_name':'linux', 'use_webkit2':False, 'qt_version':'5.0'},
     ]
 
-    def _assert_search_path(self, search_paths, os_name=None, use_webkit2=False, qt_version='4.8'):
+    def _assert_search_path(self, search_paths, os_name, use_webkit2=False, qt_version='4.8'):
         # FIXME: Port constructors should not "parse" the port name, but
         # rather be passed components (directly or via setters).  Once
         # we fix that, this method will need a re-write.
@@ -70,7 +70,7 @@ class QtPortTest(port_testcase.PortTestCase):
         absolute_search_paths = map(port._webkit_baseline_path, search_paths)
         self.assertEquals(port.baseline_search_path(), absolute_search_paths)
 
-    def _assert_skipped_path(self, search_paths, os_name=None, use_webkit2=False, qt_version='4.8'):
+    def _assert_skipped_path(self, search_paths, os_name, use_webkit2=False, qt_version='4.8'):
         host = MockSystemHost(os_name=os_name)
         host.executive = MockExecutive2(self._qt_version(qt_version))
         port_name = 'qt-' + os_name
