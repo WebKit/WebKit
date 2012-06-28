@@ -266,7 +266,21 @@ void IDBCursor::setValueReady()
 {
     m_currentKey = m_backend->key();
     m_currentPrimaryKey = m_backend->primaryKey();
-    m_currentValue = IDBAny::create(m_backend->value());
+
+    RefPtr<SerializedScriptValue> value = m_backend->value();
+#ifndef NDEBUG
+    if (!isKeyCursor()) {
+        // FIXME: Actually inject the primaryKey at the keyPath.
+        RefPtr<IDBObjectStore> objectStore = effectiveObjectStore();
+        if (objectStore->autoIncrement() && !objectStore->metadata().keyPath.isNull()) {
+            const IDBKeyPath& keyPath = objectStore->metadata().keyPath;
+            RefPtr<IDBKey> expectedKey = createIDBKeyFromSerializedValueAndKeyPath(value, keyPath);
+            ASSERT(expectedKey->isEqual(m_currentPrimaryKey.get()));
+        }
+    }
+#endif
+    m_currentValue = IDBAny::create(value.release());
+
     m_gotValue = true;
     m_valueIsDirty = true;
 }

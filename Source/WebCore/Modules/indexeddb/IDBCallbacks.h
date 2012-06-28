@@ -34,6 +34,7 @@
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseError.h"
 #include "IDBKey.h"
+#include "IDBKeyPath.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBTransactionBackendInterface.h"
 #include "SerializedScriptValue.h"
@@ -55,6 +56,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBKey>) = 0;
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) = 0;
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) = 0;
+    virtual void onSuccess(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, const IDBKeyPath&) = 0;
     virtual void onSuccessWithContinuation() = 0;
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >& keys, const Vector<RefPtr<IDBKey> >& primaryKeys, const Vector<RefPtr<SerializedScriptValue> >& values) = 0;
     virtual void onBlocked() = 0;

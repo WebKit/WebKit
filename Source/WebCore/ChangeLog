@@ -1,3 +1,29 @@
+2012-06-28  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Hook up render-side key ASSERTing for get()
+        https://bugs.webkit.org/show_bug.cgi?id=90001
+
+        Reviewed by Tony Chang.
+
+        Hook up the new onSuccess and add it to the interface. For now,
+        simply assert that the right value is set. Add the same assertion
+        logic in the value-construction logic when the cursor advances.
+
+        No new tests, existing tests verify this refactor is correct.
+
+        * Modules/indexeddb/IDBCallbacks.h:
+        (IDBCallbacks):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::getInternal):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore):
+        (WebCore::IDBRequest::onSuccess):
+        * Modules/indexeddb/IDBRequest.h:
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromSerializedValueAndKeyPath):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+
 2012-06-28  Gregg Tavares  <gman@google.com>
 
         Add support for DEPTH_STENCIL to WEBGL_depth_texture

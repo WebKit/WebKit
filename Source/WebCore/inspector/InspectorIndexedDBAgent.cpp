@@ -105,16 +105,17 @@ class InspectorIDBCallback : public IDBCallbacks {
 public:
     virtual ~InspectorIDBCallback() { }
 
-    virtual void onError(PassRefPtr<IDBDatabaseError>) { }
-    virtual void onSuccess(PassRefPtr<DOMStringList>) { }
-    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>) { }
-    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>) { }
-    virtual void onSuccess(PassRefPtr<IDBKey>) { }
-    virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) { }
-    virtual void onSuccess(PassRefPtr<SerializedScriptValue>) { }
-    virtual void onSuccessWithContinuation() { }
-    virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) { }
-    virtual void onBlocked() { }
+    virtual void onError(PassRefPtr<IDBDatabaseError>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<DOMStringList>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<IDBKey>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<SerializedScriptValue>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, const IDBKeyPath&) OVERRIDE { }
+    virtual void onSuccessWithContinuation() OVERRIDE { }
+    virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) OVERRIDE { }
+    virtual void onBlocked() OVERRIDE { }
 };
 
 class InspectorIDBDatabaseCallbacks : public IDBDatabaseCallbacks {

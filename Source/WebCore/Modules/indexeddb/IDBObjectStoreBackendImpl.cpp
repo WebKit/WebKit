@@ -112,6 +112,11 @@ void IDBObjectStoreBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<
         return;
     }
 
+    if (objectStore->autoIncrement() && !objectStore->keyPath().isNull()) {
+        callbacks->onSuccess(SerializedScriptValue::createFromWire(wireData),
+                             key, objectStore->keyPath());
+        return;
+    }
     callbacks->onSuccess(SerializedScriptValue::createFromWire(wireData));
 }
 

@@ -35,6 +35,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventQueue.h"
+#include "IDBBindingUtilities.h"
 #include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
 #include "IDBEventDispatcher.h"
@@ -302,6 +303,21 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptVal
     m_result = IDBAny::create(serializedScriptValue);
     m_cursor.clear();
     enqueueEvent(createSuccessEvent());
+}
+
+
+void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> prpSerializedScriptValue, PassRefPtr<IDBKey> prpPrimaryKey, const IDBKeyPath& keyPath)
+{
+    LOG_ERROR("CHECKING: onSuccess(value, key, keypath)");
+    RefPtr<SerializedScriptValue> serializedScriptValue = prpSerializedScriptValue;
+#ifndef NDEBUG
+    // FIXME: Assert until we can actually inject the right value.
+    RefPtr<IDBKey> primaryKey = prpPrimaryKey;
+    RefPtr<IDBKey> expectedKey =
+              createIDBKeyFromSerializedValueAndKeyPath(serializedScriptValue, keyPath);
+    ASSERT(expectedKey->isEqual(primaryKey.get()));
+#endif
+    onSuccess(serializedScriptValue.release());
 }
 
 void IDBRequest::onSuccessWithContinuation()

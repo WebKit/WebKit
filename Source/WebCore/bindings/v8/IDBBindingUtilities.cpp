@@ -154,12 +154,14 @@ v8::Handle<v8::Value> ensureNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, 
 
 } // anonymous namespace
 
-static PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> value, const String& keyPath)
+static PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> prpValue, const String& keyPath)
 {
     Vector<String> keyPathElements;
     IDBKeyPathParseError error;
     IDBParseKeyPath(keyPath, keyPathElements, error);
     ASSERT(error == IDBKeyPathParseErrorNone);
+
+    RefPtr<SerializedScriptValue> value = prpValue;
 
     V8AuxiliaryContext context;
     v8::Handle<v8::Value> v8Value(value->deserialize());
