@@ -1,3 +1,36 @@
+2012-06-28  Antti Koivisto  <antti@apple.com>
+
+        Don't malloc RenderGeometryMap steps individually
+        https://bugs.webkit.org/show_bug.cgi?id=90074
+
+        Reviewed by Simon Fraser.
+
+        Mallocs and frees for steps under RenderGeometryMap::pus/popMappingsToAncestor can total ~2% of the profile when animating transforms.
+
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore):
+        (WebCore::RenderGeometryMap::absolutePoint):
+        (WebCore::RenderGeometryMap::absoluteRect):
+        (WebCore::RenderGeometryMap::mapToAbsolute):
+        (WebCore::RenderGeometryMap::push):
+        (WebCore::RenderGeometryMap::pushView):
+        (WebCore::RenderGeometryMap::popMappingsToAncestor):
+        * rendering/RenderGeometryMap.h:
+        (WebCore):
+        (WebCore::RenderGeometryMapStep::RenderGeometryMapStep):
+        
+            Move to header.
+
+        (RenderGeometryMapStep):
+        (RenderGeometryMap):
+        
+            Make the step vector hold RenderGeometryMapSteps instead of RenderGeometryMapStep*'s.
+
+        (WTF):
+        
+            Give RenderGeometryMapSteps SimpleClassVectorTraits. This is needed for dealing with OwnPtr in the struct (and makes it faster too).
+            The type is simple enought to move by memcpy.
+
 2012-06-28  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Remove Windows support from plugins/gtk/
