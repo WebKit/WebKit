@@ -1,3 +1,18 @@
+2012-06-28  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [Qt] Make GC's fill{Rounded}Rect use optimized shadow blur code
+        https://bugs.webkit.org/show_bug.cgi?id=90082
+
+        Reviewed by Noam Rosenthal.
+
+        ShadowBlur::drawRectShadow makes use of optimized tiles-based drawPattern, which
+        is not present when using {begin/end}shadowLayer.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::pushTransparencyLayerInternal):
+
 2012-06-28  Rahul Tiwari  <rahultiwari.cse.iitr@gmail.com>
 
         Web Inspector: Provide context menu 'Delete all watch expressions.'

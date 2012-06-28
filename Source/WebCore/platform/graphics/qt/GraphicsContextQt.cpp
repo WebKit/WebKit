@@ -703,28 +703,19 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     if (paintingDisabled() || !color.isValid())
         return;
 
-    m_data->solidColor.setColor(color);
+    QRectF platformRect(rect);
     QPainter* p = m_data->p();
-    QRectF normalizedRect = rect.normalized();
-
     if (hasShadow()) {
         ShadowBlur* shadow = shadowBlur();
         if (shadow->mustUseShadowBlur(this)) {
-            GraphicsContext* shadowContext = shadow->beginShadowLayer(this, normalizedRect);
-            if (shadowContext) {
-                QPainter* shadowPainter = shadowContext->platformContext();
-                shadowPainter->setCompositionMode(QPainter::CompositionMode_Source);
-                shadowPainter->fillRect(normalizedRect, m_state.shadowColor);
-                shadow->endShadowLayer(this);
-            }
+            shadow->drawRectShadow(this, platformRect, RoundedRect::Radii());
         } else {
             QColor shadowColor = m_state.shadowColor;
             shadowColor.setAlphaF(shadowColor.alphaF() * p->brush().color().alphaF());
-            p->fillRect(normalizedRect.translated(QPointF(m_state.shadowOffset.width(), m_state.shadowOffset.height())), shadowColor);
+            p->fillRect(platformRect.translated(QPointF(m_state.shadowOffset.width(), m_state.shadowOffset.height())), shadowColor);
         }
     }
-
-    p->fillRect(normalizedRect, m_data->solidColor);
+    p->fillRect(platformRect, QColor(color));
 }
 
 void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color, ColorSpace colorSpace)
@@ -738,13 +729,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     if (hasShadow()) {
         ShadowBlur* shadow = shadowBlur();
         if (shadow->mustUseShadowBlur(this)) {
-            GraphicsContext* shadowContext = shadow->beginShadowLayer(this, rect);
-            if (shadowContext) {
-                QPainter* shadowPainter = shadowContext->platformContext();
-                shadowPainter->setCompositionMode(QPainter::CompositionMode_Source);
-                shadowPainter->fillPath(path.platformPath(), QColor(m_state.shadowColor));
-                shadow->endShadowLayer(this);
-            }
+            shadow->drawRectShadow(this, rect, RoundedRect::Radii(topLeft, topRight, bottomLeft, bottomRight));
         } else {
             const QPointF shadowOffset(m_state.shadowOffset.width(), m_state.shadowOffset.height());
             p->translate(shadowOffset);
@@ -1045,7 +1030,10 @@ void GraphicsContext::pushTransparencyLayerInternal(const QRect &rect, qreal opa
 {
     QPainter* p = m_data->p();
 
-    QRect deviceClip = p->transform().mapRect(rect);
+    QTransform deviceTransform = p->transform();
+    QRect deviceClip = deviceTransform.mapRect(rect);
+
+    alphaMask = alphaMask.transformed(deviceTransform);
     if (alphaMask.width() != deviceClip.width() || alphaMask.height() != deviceClip.height())
         alphaMask = alphaMask.scaled(deviceClip.width(), deviceClip.height());
 
