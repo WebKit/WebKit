@@ -1,3 +1,18 @@
+2012-06-28  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] [WK2] Memory leak in ResourceHandleSoup.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=90168
+
+        Reviewed by Martin Robinson.
+
+        Fixed a memory leak in WebCoreSynchronousLoader by using adoptGRef
+        instead of just getting new reference of GMainLoop.
+
+        No new tests. No change in behavior.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::WebCoreSynchronousLoader::WebCoreSynchronousLoader):
+
 2012-06-27  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Do not multiply bounds by contentsScale in TiledLayerChromium and CanvasLayerTextureUpdater

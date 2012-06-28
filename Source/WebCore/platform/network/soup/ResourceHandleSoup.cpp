@@ -88,7 +88,7 @@ public:
         loadingSynchronousRequest = true;
         GRefPtr<GMainContext> innerMainContext = adoptGRef(g_main_context_new());
         g_main_context_push_thread_default(innerMainContext.get());
-        m_mainLoop = g_main_loop_new(innerMainContext.get(), false);
+        m_mainLoop = adoptGRef(g_main_loop_new(innerMainContext.get(), false));
 
         adjustMaxConnections(1);
     }
