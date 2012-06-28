@@ -40,6 +40,23 @@ from webkitpy.tool.mocktool import MockOptions
 class QtPortTest(port_testcase.PortTestCase):
     port_name = 'qt-mac'
     port_maker = QtPort
+    search_paths_cases = [
+        {'search_paths':['qt-4.8', 'qt-mac', 'qt'], 'os_name':'mac', 'use_webkit2':False, 'qt_version':'4.8'},
+        {'search_paths':['qt-4.8', 'qt-win', 'qt'], 'os_name':'win', 'use_webkit2':False, 'qt_version':'4.8'},
+        {'search_paths':['qt-4.8', 'qt-linux', 'qt'], 'os_name':'linux', 'use_webkit2':False, 'qt_version':'4.8'},
+
+        {'search_paths':['qt-4.8', 'qt-mac', 'qt'], 'os_name':'mac', 'use_webkit2':False},
+        {'search_paths':['qt-4.8', 'qt-win', 'qt'], 'os_name':'win', 'use_webkit2':False},
+        {'search_paths':['qt-4.8', 'qt-linux', 'qt'], 'os_name':'linux', 'use_webkit2':False},
+
+        {'search_paths':['qt-5.0-wk2', 'qt-5.0', 'qt-mac', 'qt'], 'os_name':'mac', 'use_webkit2':True, 'qt_version':'5.0'},
+        {'search_paths':['qt-5.0-wk2', 'qt-5.0', 'qt-win', 'qt'], 'os_name':'win', 'use_webkit2':True, 'qt_version':'5.0'},
+        {'search_paths':['qt-5.0-wk2', 'qt-5.0', 'qt-linux', 'qt'], 'os_name':'linux', 'use_webkit2':True, 'qt_version':'5.0'},
+
+        {'search_paths':['qt-5.0-wk1', 'qt-5.0', 'qt-mac', 'qt'], 'os_name':'mac', 'use_webkit2':False, 'qt_version':'5.0'},
+        {'search_paths':['qt-5.0-wk1', 'qt-5.0', 'qt-win', 'qt'], 'os_name':'win', 'use_webkit2':False, 'qt_version':'5.0'},
+        {'search_paths':['qt-5.0-wk1', 'qt-5.0', 'qt-linux', 'qt'], 'os_name':'linux', 'use_webkit2':False, 'qt_version':'5.0'},
+    ]
 
     def _assert_search_path(self, search_paths, os_name=None, use_webkit2=False, qt_version='4.8'):
         # FIXME: Port constructors should not "parse" the port name, but
@@ -53,6 +70,14 @@ class QtPortTest(port_testcase.PortTestCase):
         absolute_search_paths = map(port._webkit_baseline_path, search_paths)
         self.assertEquals(port.baseline_search_path(), absolute_search_paths)
 
+    def _assert_skipped_path(self, search_paths, os_name=None, use_webkit2=False, qt_version='4.8'):
+        host = MockSystemHost(os_name=os_name)
+        host.executive = MockExecutive2(self._qt_version(qt_version))
+        port_name = 'qt-' + os_name
+        port = self.make_port(host=host, qt_version=qt_version, port_name=port_name,
+                              options=MockOptions(webkit_test_runner=use_webkit2, platform='qt'))
+        self.assertEquals(port._skipped_file_search_paths(), search_paths)
+
     def _qt_version(self, qt_version):
         if qt_version in '4.8':
             return 'QMake version 2.01a\nUsing Qt version 4.8.0 in /usr/local/Trolltech/Qt-4.8.2/lib'
@@ -60,21 +85,15 @@ class QtPortTest(port_testcase.PortTestCase):
             return 'QMake version 2.01a\nUsing Qt version 5.0.0 in /usr/local/Trolltech/Qt-5.0.0/lib'
 
     def test_baseline_search_path(self):
-        self._assert_search_path(['qt-mac', 'qt-4.8', 'qt'], 'mac', qt_version='4.8')
-        self._assert_search_path(['qt-win', 'qt-4.8', 'qt'], 'win', qt_version='4.8')
-        self._assert_search_path(['qt-linux', 'qt-4.8', 'qt'], 'linux', qt_version='4.8')
+        for case in self.search_paths_cases:
+            self._assert_search_path(**case)
 
-        self._assert_search_path(['qt-mac', 'qt-4.8', 'qt'], 'mac')
-        self._assert_search_path(['qt-win', 'qt-4.8', 'qt'], 'win')
-        self._assert_search_path(['qt-linux', 'qt-4.8', 'qt'], 'linux')
-
-        self._assert_search_path(['qt-5.0-wk2', 'qt-mac', 'qt-5.0', 'qt'], 'mac', use_webkit2=True, qt_version='5.0')
-        self._assert_search_path(['qt-5.0-wk2', 'qt-win', 'qt-5.0', 'qt'], 'win', use_webkit2=True, qt_version='5.0')
-        self._assert_search_path(['qt-5.0-wk2', 'qt-linux', 'qt-5.0', 'qt'], 'linux', use_webkit2=True, qt_version='5.0')
-
-        self._assert_search_path(['qt-5.0-wk1', 'qt-mac', 'qt-5.0', 'qt'], 'mac', use_webkit2=False, qt_version='5.0')
-        self._assert_search_path(['qt-5.0-wk1', 'qt-win', 'qt-5.0', 'qt'], 'win', use_webkit2=False, qt_version='5.0')
-        self._assert_search_path(['qt-5.0-wk1', 'qt-linux', 'qt-5.0', 'qt'], 'linux', use_webkit2=False, qt_version='5.0')
+    def test_skipped_file_search_path(self):
+        caselist = self.search_paths_cases[:]
+        for case in caselist:
+            if case['use_webkit2'] and case['qt_version'] == '5.0':
+                case['search_paths'].append("wk2")
+            self._assert_skipped_path(**case)
 
     def test_show_results_html_file(self):
         port = self.make_port()
