@@ -247,10 +247,19 @@ WebInspector.WatchExpressionsSection.prototype = {
 
     updateExpression: function(element, value)
     {
-        if (value === null)
-            delete this.watchExpressions[element.property.watchIndex];
+        if (value === null) {
+            var index = element.property.watchIndex;
+            this.watchExpressions.splice(index, 1);
+        }
         else
             this.watchExpressions[element.property.watchIndex] = value;
+        this.saveExpressions();
+        this.update();
+    },
+    
+    _deleteAllExpressions: function()
+    {
+        this.watchExpressions = [];
         this.saveExpressions();
         this.update();
     },
@@ -258,9 +267,10 @@ WebInspector.WatchExpressionsSection.prototype = {
     findAddedTreeElement: function()
     {
         var children = this.propertiesTreeOutline.children;
-        for (var i = 0; i < children.length; ++i)
+        for (var i = 0; i < children.length; ++i) {
             if (children[i].property.name === WebInspector.WatchExpressionsSection.NewWatchExpression)
                 return children[i];
+        }
     },
 
     saveExpressions: function()
@@ -348,7 +358,22 @@ WebInspector.WatchExpressionTreeElement.prototype = {
         deleteButton.addStyleClass("enabled-button");
         deleteButton.addStyleClass("delete-button");
         deleteButton.addEventListener("click", this._deleteButtonClicked.bind(this), false);
+        this.listItemElement.addEventListener("contextmenu", this._contextMenu.bind(this), false);
         this.listItemElement.insertBefore(deleteButton, this.listItemElement.firstChild);
+    },
+    
+    _contextMenu: function(event)
+    {
+        var contextMenu = new WebInspector.ContextMenu();
+        contextMenu.appendItem(WebInspector.UIString("Delete watch expression"), this._deleteButtonClicked.bind(this));
+        if (this.treeOutline.section.watchExpressions.length > 1)
+            contextMenu.appendItem(WebInspector.UIString("Delete all watch expressions"), this._deleteAllButtonClicked.bind(this));
+        contextMenu.show(event);
+    },
+    
+    _deleteAllButtonClicked: function()
+    {
+        this.treeOutline.section._deleteAllExpressions();
     },
 
     _deleteButtonClicked: function()

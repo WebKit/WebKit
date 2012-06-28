@@ -1,3 +1,23 @@
+2012-06-28  Rahul Tiwari  <rahultiwari.cse.iitr@gmail.com>
+
+        Web Inspector: Provide context menu 'Delete all watch expressions.'
+        https://bugs.webkit.org/show_bug.cgi?id=89735
+
+        Reviewed by Yury Semikhatsky.
+
+        Added context menu delete and delete all watch expressions.
+
+        No new tests required as its a minor UI related change.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.updateExpression):
+        (WebInspector.WatchExpressionsSection.prototype._deleteAllExpressions):
+        (WebInspector.WatchExpressionsSection.prototype.findAddedTreeElement):
+        (WebInspector.WatchExpressionTreeElement.prototype.update):
+        (WebInspector.WatchExpressionTreeElement.prototype._contextMenu):
+        (WebInspector.WatchExpressionTreeElement.prototype._deleteAllButtonClicked):
+
 2012-06-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         m_cssVariablesEnabled member is not initialized in Page Settings
