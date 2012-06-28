@@ -161,6 +161,33 @@ BUGWK85262 SKIP : fast/css/image-resolution = PASS
 // Chromium needs larger media files to test buffering this way.
 BUGWK88172 SKIP : http/tests/media/video-buffered.html = PASS
 
+// Remove after rebaselined images are available.
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg = IMAGE
+BUGWK72073 MAC WIN : fast/borders/border-image-scale-transform.html = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-SVG-1.1/render-groups-03-t.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-SVG-1.1/render-groups-01-b.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-SVG-1.1/render-groups-03-t.svg = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
+BUGWK72073 MAC WIN : svg/carto.net/scrollbar.svg = IMAGE
+BUGWK72073 MAC WIN : svg/custom/image-small-width-height.svg = IMAGE
+BUGWK72073 MAC WIN : svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html = IMAGE
+BUGWK72073 MAC WIN : transitions/cross-fade-background-image.html = IMAGE
+BUGWK72073 MAC WIN : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg = IMAGE
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------

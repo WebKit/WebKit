@@ -251,9 +251,18 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
     ResamplingMode resampling;
     if (platformContext->isAccelerated())
         resampling = RESAMPLE_LINEAR;
-    else
-        resampling = platformContext->printing() ? RESAMPLE_NONE :
-            computeResamplingMode(platformContext, bitmap, srcRect.width(), srcRect.height(), SkScalarToFloat(destRect.width()), SkScalarToFloat(destRect.height()));
+    else if (platformContext->printing())
+        resampling = RESAMPLE_NONE;
+    else {
+        // Take into account scale applied to the canvas when computing sampling mode (e.g. CSS scale or page scale).
+        SkRect destRectTarget = destRect;
+        if (!(canvas->getTotalMatrix().getType() & (SkMatrix::kAffine_Mask | SkMatrix::kPerspective_Mask)))
+            canvas->getTotalMatrix().mapRect(&destRectTarget, destRect);
+
+        resampling = computeResamplingMode(platformContext, bitmap, srcRect.width(), srcRect.height(),
+                                           SkScalarToFloat(destRectTarget.width()), SkScalarToFloat(destRectTarget.height()));
+    }
+
     if (resampling == RESAMPLE_NONE) {
       // FIXME: This is to not break tests (it results in the filter bitmap flag
       // being set to true). We need to decide if we respect RESAMPLE_NONE

@@ -1,3 +1,26 @@
+2012-06-28  Zeev Lieber  <zlieber@chromium.org>
+
+        [Skia] Computing the resampling mode ignores scale applied to the canvas
+        https://bugs.webkit.org/show_bug.cgi?id=72073
+
+        Reviewed by Stephen White.
+
+        Re-basing earlier patch by Daniel Sievers; updated tests.
+
+        Take into account canvas scale when computing image resampling mode.
+
+        When drawing a bitmap and computing the best resampling mode based
+        on the requested scale, take into account CSS scale and page scale
+        that are applied to the canvas. This allows for single-pass scaling
+        in potentially better quality (RESAMPLE_AWESOME) and also takes
+        better advantage of the scaled image cache in that codepath.
+
+        Existing tests updated to expect different resampling method (and
+        therefore a different image) whenever canvas scaling changes.
+
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::paintSkBitmap):
+
 2012-06-28  James Robinson  <jamesr@chromium.org>
 
         [chromium] Should schedule a commit when dropping contents textures
