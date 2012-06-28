@@ -922,6 +922,11 @@ void DumpRenderTreeSupportQt::addUserStyleSheet(QWebPage* page, const QString& s
     page->handle()->page->group().addUserStyleSheetToWorld(mainThreadNormalWorld(), sourceCode, QUrl(), nullptr, nullptr, WebCore::InjectInAllFrames);
 }
 
+void DumpRenderTreeSupportQt::removeUserStyleSheets(QWebPage* page)
+{
+    page->handle()->page->group().removeUserStyleSheetsFromWorld(mainThreadNormalWorld());
+}
+
 void DumpRenderTreeSupportQt::simulateDesktopNotificationClick(const QString& title)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

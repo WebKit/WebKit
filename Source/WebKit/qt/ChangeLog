@@ -1,3 +1,14 @@
+2012-06-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Qt] inspector/styles/inject-stylesheet.html makes 4 tests flakey (TEXT PASS)
+        https://bugs.webkit.org/show_bug.cgi?id=90167
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::removeUserStyleSheets):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2012-06-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Restore original value of mock scrollbars between tests
