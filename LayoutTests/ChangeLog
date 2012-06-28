@@ -1,3 +1,13 @@
+2012-06-28  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Mark a test as failing on Linux debug
+
+        fast/forms/select/select-state-restore.html is failing on Linux debug because of timeout.
+
+        Not reviewed.
+
+        * platform/chromium/TestExpectations:
+
 2012-06-28  Ojan Vafai  <ojan@chromium.org>
 
         Rebaselines after http://trac.webkit.org/changeset/119507.
