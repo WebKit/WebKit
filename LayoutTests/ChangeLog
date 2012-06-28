@@ -1,3 +1,13 @@
+2012-06-28  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r121388
+        https://bugs.webkit.org/show_bug.cgi?id=90145
+
+        Unreviewed EFL gardening. The new fast/events/drag-display-none-element.html 
+        test added in r121388 does not pass on EFL port because of missing drag'n'drop support.
+
+        * platform/efl/TestExpectations:
+
 2012-06-28  Kent Tamura  <tkent@chromium.org>
 
         Classify form control states by their owner forms

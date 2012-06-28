@@ -94,6 +94,7 @@ BUGWK86623 : editing/pasteboard/drop-text-events.html = TEXT
 BUGWK86623 : editing/pasteboard/get-data-text-plain-drop.html = TEXT
 BUGWK86623 : fast/dom/shadow/drop-event-for-input-in-shadow.html = TEXT
 BUGWK86623 : fast/dom/shadow/drop-event-in-shadow.html = TEXT
+BUGWK86623 : fast/events/drag-display-none-element.html = TEXT
 BUGWK86623 : http/tests/local/fileapi/file-last-modified-after-delete.html = TEXT
 
 BUGWK88198 : svg/stroke/non-scaling-stroke-pattern.svg = PASS IMAGE
