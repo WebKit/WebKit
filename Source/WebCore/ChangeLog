@@ -1,3 +1,80 @@
+2012-06-28  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Optimize Integer::New() by caching persistent handles for small integers
+        https://bugs.webkit.org/show_bug.cgi?id=90043
+
+        Reviewed by Adam Barth.
+
+        The patch improves performance of Dromaeo/dom-query.html by 3.6%,
+        and Bindings/scroll-top.html by 17.3%.
+
+        The performance results in my Chromium/Linux:
+
+        [Dromaeo/dom-query.html]
+        796310.4 runs/s => 824745.4 runs/s (+3.6%)
+
+        [Bindings/scroll-top.html]
+        204.68 runs/s => 240.15 runs/s (+17.3%)
+
+        This patch introduces V8BindingPerIsolateData::IntegerCache (just like
+        V8BindingPerIsolateData::StringCache) to cache persistent handles
+        for small integers.
+
+        No new tests. No change in behavior.
+
+        * bindings/v8/V8Binding.h: Implemented v8Integer() and v8UnsignedInteger(),
+        which returns cached persistent handles for integers smaller than 64.
+        (WebCore):
+        (IntegerCache):
+        (WebCore::IntegerCache::IntegerCache):
+        (WebCore::IntegerCache::v8Integer):
+        (WebCore::IntegerCache::v8UnsignedInteger):
+        (WebCore::V8BindingPerIsolateData::integerCache):
+        (V8BindingPerIsolateData):
+        (WebCore::v8Integer):
+        (WebCore::v8UnsignedInteger):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore):
+        (WebCore::IntegerCache::createSmallIntegers):
+        * bindings/v8/WorkerScriptController.cpp:
+        (~WorkerScriptController): ~V8BindingPerIsolateData() should be called before
+        isolate->Exit(), since ~V8BindingPerIsolateData() calls V8 APIs that requires
+        the current isolate.
+
+        * bindings/scripts/CodeGeneratorV8.pm: Replaced Integer::New() and Integer::NewFromUnsigned()
+        with v8Integer() and v8UnsignedInteger().
+        (GenerateNormalAttrGetter):
+        (NativeToJSValue):
+
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp: Updated run-bindings-tests results.
+        (WebCore::TestActiveDOMObjectV8Internal::excitingAttrAttrGetter):
+        * bindings/scripts/test/V8/V8TestObj.cpp: Ditto.
+        (WebCore::TestObjV8Internal::readOnlyIntAttrAttrGetter):
+        (WebCore::TestObjV8Internal::shortAttrAttrGetter):
+        (WebCore::TestObjV8Internal::unsignedShortAttrAttrGetter):
+        (WebCore::TestObjV8Internal::intAttrAttrGetter):
+        (WebCore::TestObjV8Internal::reflectedIntegralAttrAttrGetter):
+        (WebCore::TestObjV8Internal::reflectedUnsignedIntegralAttrAttrGetter):
+        (WebCore::TestObjV8Internal::reflectedCustomIntegralAttrAttrGetter):
+        (WebCore::TestObjV8Internal::attrWithGetterExceptionAttrGetter):
+        (WebCore::TestObjV8Internal::attrWithSetterExceptionAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptStateAttributeAttrGetter):
+        (WebCore::TestObjV8Internal::conditionalAttr1AttrGetter):
+        (WebCore::TestObjV8Internal::conditionalAttr2AttrGetter):
+        (WebCore::TestObjV8Internal::conditionalAttr3AttrGetter):
+        (WebCore::TestObjV8Internal::enabledAtRuntimeAttr1AttrGetter):
+        (WebCore::TestObjV8Internal::enabledAtRuntimeAttr2AttrGetter):
+        (WebCore::TestObjV8Internal::enabledAtContextAttr1AttrGetter):
+        (WebCore::TestObjV8Internal::enabledAtContextAttr2AttrGetter):
+        (WebCore::TestObjV8Internal::strawberryAttrGetter):
+        (WebCore::TestObjV8Internal::descriptionAttrGetter):
+        (WebCore::TestObjV8Internal::idAttrGetter):
+        (WebCore::TestObjV8Internal::intMethodCallback):
+        (WebCore::TestObjV8Internal::intMethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::classMethodWithOptionalCallback):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp: Ditto.
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::portsAttrGetter):
+
 2012-06-28  Kent Tamura  <tkent@chromium.org>
 
         Classify form control states by their owner forms

@@ -45,7 +45,7 @@ static v8::Handle<v8::Value> excitingAttrAttrGetter(v8::Local<v8::String> name, 
 {
     INC_STATS("DOM.TestActiveDOMObject.excitingAttr._get");
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(info.Holder());
-    return v8::Integer::New(imp->excitingAttr());
+    return v8Integer(imp->excitingAttr(), info.GetIsolate());
 }
 
 static v8::Handle<v8::Value> excitingFunctionCallback(const v8::Arguments& args)

@@ -77,8 +77,8 @@ WorkerScriptController::~WorkerScriptController()
     WebKit::Platform::current()->didStopWorkerRunLoop(WebKit::WebWorkerRunLoop(&m_workerContext->thread()->runLoop()));
 #endif
     m_proxy.clear();
-    m_isolate->Exit();
     V8BindingPerIsolateData::dispose(m_isolate);
+    m_isolate->Exit();
     m_isolate->Dispose();
 }
 

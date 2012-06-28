@@ -89,6 +89,38 @@ namespace WebCore {
         RefPtr<StringImpl> m_lastStringImpl;
     };
 
+    const int numberOfCachedSmallIntegers = 64;
+
+    class IntegerCache {
+    public:
+        IntegerCache() : m_initialized(false) { };
+        ~IntegerCache();
+
+        v8::Handle<v8::Integer> v8Integer(int value)
+        {
+            if (!m_initialized)
+                createSmallIntegers();
+            if (0 <= value && value < numberOfCachedSmallIntegers)
+                return m_smallIntegers[value];
+            return v8::Integer::New(value);
+        }
+
+        v8::Handle<v8::Integer> v8UnsignedInteger(unsigned value)
+        {
+            if (!m_initialized)
+                createSmallIntegers();
+            if (value < static_cast<unsigned>(numberOfCachedSmallIntegers))
+                return m_smallIntegers[value];
+            return v8::Integer::NewFromUnsigned(value);
+        }
+
+    private:
+        void createSmallIntegers();
+
+        v8::Persistent<v8::Integer> m_smallIntegers[numberOfCachedSmallIntegers];
+        bool m_initialized;
+    };
+
     class ScriptGCEventListener;
 
     class GCEventData {
@@ -142,6 +174,8 @@ namespace WebCore {
         }
 
         StringCache* stringCache() { return &m_stringCache; }
+        IntegerCache* integerCache() { return &m_integerCache; }
+
 #if ENABLE(INSPECTOR)
         void visitExternalStrings(ExternalStringVisitor*);
 #endif
@@ -190,6 +224,7 @@ namespace WebCore {
         v8::Persistent<v8::FunctionTemplate> m_toStringTemplate;
         v8::Persistent<v8::FunctionTemplate> m_lazyEventListenerToStringTemplate;
         StringCache m_stringCache;
+        IntegerCache m_integerCache;
 
         DOMDataList m_domDataList;
         DOMDataStore* m_domDataStore;
@@ -288,6 +323,18 @@ namespace WebCore {
     inline v8::Handle<v8::String> v8String(const String& string, v8::Isolate* isolate = 0)
     {
         return v8ExternalString(string, isolate);
+    }
+
+    inline v8::Handle<v8::Integer> v8Integer(int value, v8::Isolate* isolate = 0)
+    {
+        V8BindingPerIsolateData* data = V8BindingPerIsolateData::current(isolate);
+        return data->integerCache()->v8Integer(value);
+    }
+
+    inline v8::Handle<v8::Integer> v8UnsignedInteger(unsigned value, v8::Isolate* isolate = 0)
+    {
+        V8BindingPerIsolateData* data = V8BindingPerIsolateData::current(isolate);
+        return data->integerCache()->v8UnsignedInteger(value);
     }
 
     template<typename T>

@@ -1060,7 +1060,7 @@ END
     MessagePortArray portsCopy(*ports);
     v8::Local<v8::Array> portArray = v8::Array::New(portsCopy.size());
     for (size_t i = 0; i < portsCopy.size(); ++i)
-        portArray->Set(v8::Integer::New(i), toV8(portsCopy[i].get(), info.GetIsolate()));
+        portArray->Set(v8Integer(i, info.GetIsolate()), toV8(portsCopy[i].get(), info.GetIsolate()));
     return portArray;
 END
     } else {
@@ -3892,14 +3892,14 @@ sub NativeToJSValue
     # should be returned instead.
     if ($signature->extendedAttributes->{"Reflect"} and ($type eq "unsigned long" or $type eq "unsigned short")) {
         $value =~ s/getUnsignedIntegralAttribute/getIntegralAttribute/g;
-        return "v8::Integer::NewFromUnsigned(std::max(0, " . $value . "))";
+        return "v8UnsignedInteger(std::max(0, " . $value . ")$getIsolateArg)";
     }
 
     # For all the types where we use 'int' as the representation type,
-    # we use Integer::New which has a fast Smi conversion check.
+    # we use v8Integer() which has a fast small integer conversion check.
     my $nativeType = GetNativeType($type);
-    return "v8::Integer::New($value)" if $nativeType eq "int";
-    return "v8::Integer::NewFromUnsigned($value)" if $nativeType eq "unsigned";
+    return "v8Integer($value$getIsolateArg)" if $nativeType eq "int";
+    return "v8UnsignedInteger($value$getIsolateArg)" if $nativeType eq "unsigned";
 
     return "v8DateOrNull($value$getIsolateArg)" if $type eq "Date";
     # long long and unsigned long long are not representable in ECMAScript.
