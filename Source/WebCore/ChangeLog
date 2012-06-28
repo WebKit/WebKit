@@ -1,3 +1,17 @@
+2012-06-28  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK][Win]: Fix plugin drawing to an offscreen buffer
+        https://bugs.webkit.org/show_bug.cgi?id=89499
+
+        Reviewed by Brent Fulgham.
+
+        Take into account that the GTK+ port draws to a backing store and adjust
+        the target rectangle calculation accordingly.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::setNPWindowRect):
+
 2012-06-28  Kentaro Hara  <haraken@chromium.org>
 
         Optimize Dromaeo/dom-attr.html by speeding up Element::getAttribute()

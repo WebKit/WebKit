@@ -648,7 +648,15 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     }
 
     ASSERT(parent()->isFrameView());
+
+    // In the GTK port we draw in an offscreen buffer and don't want to use the window
+    // coordinates.
+#if PLATFORM(GTK)
+    IntRect rectInWindow(rect);
+    rectInWindow.intersect(frameRect());
+#else
     IntRect rectInWindow = static_cast<FrameView*>(parent())->contentsToWindow(frameRect());
+#endif
     LocalWindowsContext windowsContext(context, rectInWindow, m_isTransparent);
 
     // On Safari/Windows without transparency layers the GraphicsContext returns the HDC
@@ -832,7 +840,13 @@ void PluginView::setNPWindowRect(const IntRect& rect)
     m_npWindow.clipRect.right = r.width();
     m_npWindow.clipRect.bottom = r.height();
 #else
+    // In the GTK port we draw in an offscreen buffer and don't want to use the window
+    // coordinates.
+# if PLATFORM(GTK)
+    IntPoint p = rect.location();
+# else
     IntPoint p = static_cast<FrameView*>(parent())->contentsToWindow(rect.location());
+# endif
     m_npWindow.x = p.x();
     m_npWindow.y = p.y();
 
