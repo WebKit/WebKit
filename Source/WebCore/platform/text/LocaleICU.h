@@ -52,6 +52,9 @@ public:
     // For LocalizedNumber
     String convertToLocalizedNumber(const String&);
     String convertFromLocalizedNumber(const String&);
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+    String localizedDecimalSeparator();
+#endif
 
     // For LocalizedDate
     double parseLocalizedDate(const String&);

@@ -47,4 +47,13 @@ String convertFromLocalizedNumber(const String& localizedNumberString)
     return localizedNumberString;
 }
 
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+
+UChar localizedDecimalSeparator()
+{
+    return '.';
+}
+
+#endif
+
 } // namespace WebCore

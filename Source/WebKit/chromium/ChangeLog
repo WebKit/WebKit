@@ -1,3 +1,16 @@
+2012-06-27  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform] Implement localizedDecimalSeparator function
+        https://bugs.webkit.org/show_bug.cgi?id=90036
+
+        Reviewed by Kent Tamura.
+
+        This patch adds test case for localizedDecimalSeparator().
+
+        * tests/LocalizedNumberICUTest.cpp:
+        (testDecimalSeparator):
+        (TEST):
+
 2012-06-27  Yusuke Sato  <yusukes@chromium.org>
 
         [chromium] Improve keyboardEvent() so a web page could receive a DOM3 spec compliant keyboard event.

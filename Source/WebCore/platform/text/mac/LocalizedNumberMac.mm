@@ -116,5 +116,15 @@ String convertFromLocalizedNumber(const String& localizedNumberString)
     return String(numberToString(doubleValue, buffer));
 }
 
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+
+String localizedDecimalSeparator()
+{
+    RetainPtr<NSNumberFormatter> formatter = numberFormatterForDisplay();
+    return String([formatter.get() decimalSeparator]);
+}
+
+#endif
+
 } // namespace WebCore
 

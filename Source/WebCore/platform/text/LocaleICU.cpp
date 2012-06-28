@@ -493,5 +493,15 @@ unsigned LocaleICU::firstDayOfWeek()
 }
 #endif
 
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+
+String LocaleICU::localizedDecimalSeparator()
+{
+    initializeDecimalFormat();
+    return m_decimalSymbols[DecimalSeparatorIndex];
+}
+
+#endif
+
 } // namespace WebCore
 

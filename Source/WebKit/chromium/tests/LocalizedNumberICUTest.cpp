@@ -79,3 +79,19 @@ TEST(LocalizedNumberICUTest, Reversible)
     testNumbers("zh_HK");
     testNumbers("zh_TW");
 }
+
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+
+static String testDecimalSeparator(const char* localeString)
+{
+    OwnPtr<LocaleICU> locale = LocaleICU::create(localeString);
+    return locale->localizedDecimalSeparator();
+}
+
+TEST(LocalizedNumberICUTest, localizedDecimalSeparator)
+{
+    EXPECT_EQ(String("."), testDecimalSeparator("en_US"));
+    EXPECT_EQ(String(","), testDecimalSeparator("fr"));
+}
+
+#endif

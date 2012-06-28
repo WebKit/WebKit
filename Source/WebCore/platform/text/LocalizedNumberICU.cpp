@@ -45,4 +45,12 @@ String convertFromLocalizedNumber(const String& localizedNumberString)
     return LocaleICU::currentLocale()->convertFromLocalizedNumber(localizedNumberString);
 }
 
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+
+String localizedDecimalSeparator()
+{
+    return LocaleICU::currentLocale()->localizedDecimalSeparator();
+}
+
+#endif
 } // namespace WebCore

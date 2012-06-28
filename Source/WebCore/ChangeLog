@@ -1,3 +1,28 @@
+2012-06-27  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform] Implement localizedDecimalSeparator function
+        https://bugs.webkit.org/show_bug.cgi?id=90036
+
+        Reviewed by Kent Tamura.
+
+        This patch introduces new function localizedDecimalSeparator() when
+        ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS). It will be used for
+        displaying millisecond for time fields UI.
+
+        Test: WebKit/chromium/tests/LocalizedNumberICUTest.cpp
+
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::localizedDecimalSeparator): Added
+        * platform/text/LocaleICU.h:
+        (LocaleICU): Added localizedDecimalSeparator.
+        * platform/text/LocalizedNumber.h:
+        * platform/text/LocalizedNumberICU.cpp:
+        (WebCore::localizedDecimalSeparator): Added.
+        * platform/text/LocalizedNumberNone.cpp:
+        (WebCore::localizedDecimalSeparator): Added.
+        * platform/text/mac/LocalizedNumberMac.mm:
+        (WebCore::localizedDecimalSeparator): Added.
+
 2012-06-27  Lu Guanqun  <guanqun.lu@intel.com>
 
         Add OVERRIDE to functions in UnthrottledTextureUploader class
