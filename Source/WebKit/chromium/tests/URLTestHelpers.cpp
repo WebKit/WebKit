@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,39 +29,43 @@
  */
 
 #include "config.h"
+#include "URLTestHelpers.h"
 
-// FIXME: Avoid this source dependency on Chromium's base module.
-#include <base/test/test_suite.h>
-
-#include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebURLResponse.h"
+#include <public/WebString.h>
+#include <public/WebURL.h>
 #include <webkit/support/webkit_support.h>
 
-#if defined(WEBKIT_DLL_UNITTEST)
-#include "WebUnitTests.h"
-#endif
+namespace WebKit {
+namespace URLTestHelpers {
 
-#include <gmock/gmock.h>
-
-// TestSuite must be created before SetUpTestEnvironment so it performs
-// initializations needed by WebKit support. This is slightly complicated by the
-// fact that chromium multi-dll build requires that the TestSuite object be created
-// and run inside webkit.dll.
-int main(int argc, char** argv)
+void registerMockedURLFromBaseURL(const WebString& baseURL, const WebString& fileName, const WebString& mimeType)
 {
-#if defined(WEBKIT_DLL_UNITTEST)
-    WebKit::InitTestSuite(argc, argv);
-    webkit_support::SetUpTestEnvironmentForUnitTests();
-    int result = WebKit::RunAllUnitTests();
-    webkit_support::TearDownTestEnvironment();
-    WebKit::DeleteTestSuite();
-#else
-    ::testing::InitGoogleMock(&argc, argv);
-    TestSuite testSuite(argc, argv);
-    webkit_support::SetUpTestEnvironmentForUnitTests();
-    int result = testSuite.Run();
-    webkit_support::TearDownTestEnvironment();
-#endif
-
-    return result;
+    // fullURL = baseURL + fileName.
+    std::string fullString = std::string(baseURL.utf8().data()) + std::string(fileName.utf8().data());
+    registerMockedURLLoad(toKURL(fullString.c_str()), fileName, WebString::fromUTF8(""), mimeType);
 }
+
+void registerMockedURLLoad(const WebURL& fullURL, const WebString& fileName, const WebString& mimeType)
+{
+    registerMockedURLLoad(fullURL, fileName, WebString::fromUTF8(""), mimeType);
+}
+
+void registerMockedURLLoad(const WebURL& fullURL, const WebString& fileName, const WebString& relativeBaseDirectory, const WebString& mimeType)
+{
+    WebURLResponse response;
+    response.initialize();
+    response.setMIMEType(mimeType);
+    response.setHTTPStatusCode(200);
+
+    // Physical file path for the mock = <webkitRootDir> + relativeBaseDirectory + fileName.
+    std::string filePath = std::string(webkit_support::GetWebKitRootDir().utf8().data());
+    filePath.append("/Source/WebKit/chromium/tests/data/");
+    filePath.append(std::string(relativeBaseDirectory.utf8().data()));
+    filePath.append(std::string(fileName.utf8().data()));
+
+    webkit_support::RegisterMockedURL(fullURL, response, WebString::fromUTF8(filePath.c_str()));
+}
+
+} // namespace URLTestHelpers
+} // namespace WebKit

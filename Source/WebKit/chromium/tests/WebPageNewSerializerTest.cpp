@@ -30,6 +30,7 @@
 
 #include "config.h"
 
+#include "URLTestHelpers.h"
 #include "WebFrame.h"
 #include "WebFrameClient.h"
 #include "WebPageSerializer.h"
@@ -41,11 +42,12 @@
 #include "platform/WebURLResponse.h"
 #include "WebView.h"
 
-#include <googleurl/src/gurl.h>
 #include <gtest/gtest.h>
 #include <webkit/support/webkit_support.h>
 
 using namespace WebKit;
+using WebKit::URLTestHelpers::toKURL;
+using WebKit::URLTestHelpers::registerMockedURLLoad;
 
 namespace {
 
@@ -110,41 +112,29 @@ protected:
         m_webView->close();
     }
 
-    void registerMockedURLLoad(const WebURL& url, const WebString& fileName, const WebString& mimeType)
-    {
-        WebURLResponse response;
-        response.initialize();
-        response.setMIMEType(mimeType);
-        response.setHTTPStatusCode(200);
-        std::string filePath = webkit_support::GetWebKitRootDir().utf8();
-        filePath.append("/Source/WebKit/chromium/tests/data/pageserializer/");
-        filePath.append(fileName.utf8());
-        webkit_support::RegisterMockedURL(url, response, WebString::fromUTF8(filePath));
-    }
-
     WebURL setUpCSSTestPage()
     {
-        WebURL topFrameURL = GURL("http://www.test.com");
-        registerMockedURLLoad(topFrameURL, WebString::fromUTF8("css_test_page.html"), htmlMimeType());
-        registerMockedURLLoad(GURL("http://www.test.com/link_styles.css"), WebString::fromUTF8("link_styles.css"), cssMimeType());
-        registerMockedURLLoad(GURL("http://www.test.com/import_style_from_link.css"), WebString::fromUTF8("import_style_from_link.css"), cssMimeType());
-        registerMockedURLLoad(GURL("http://www.test.com/import_styles.css"), WebString::fromUTF8("import_styles.css"), cssMimeType());
-        registerMockedURLLoad(GURL("http://www.test.com/red_background.png"), WebString::fromUTF8("red_background.png"), pngMimeType());
-        registerMockedURLLoad(GURL("http://www.test.com/orange_background.png"), WebString::fromUTF8("orange_background.png"), pngMimeType());
-        registerMockedURLLoad(GURL("http://www.test.com/yellow_background.png"), WebString::fromUTF8("yellow_background.png"), pngMimeType());
-        registerMockedURLLoad(GURL("http://www.test.com/green_background.png"), WebString::fromUTF8("green_background.png"), pngMimeType());
-        registerMockedURLLoad(GURL("http://www.test.com/blue_background.png"), WebString::fromUTF8("blue_background.png"), pngMimeType());
-        registerMockedURLLoad(GURL("http://www.test.com/purple_background.png"), WebString::fromUTF8("purple_background.png"), pngMimeType());
-        registerMockedURLLoad(GURL("http://www.test.com/ul-dot.png"), WebString::fromUTF8("ul-dot.png"), pngMimeType());
-        registerMockedURLLoad(GURL("http://www.test.com/ol-dot.png"), WebString::fromUTF8("ol-dot.png"), pngMimeType());
+        WebURL topFrameURL = toKURL("http://www.test.com");
+        registerMockedURLLoad(topFrameURL, WebString::fromUTF8("css_test_page.html"), WebString::fromUTF8("pageserializer/"), htmlMimeType());
+        registerMockedURLLoad(toKURL("http://www.test.com/link_styles.css"), WebString::fromUTF8("link_styles.css"), WebString::fromUTF8("pageserializer/"), cssMimeType());
+        registerMockedURLLoad(toKURL("http://www.test.com/import_style_from_link.css"), WebString::fromUTF8("import_style_from_link.css"), WebString::fromUTF8("pageserializer/"), cssMimeType());
+        registerMockedURLLoad(toKURL("http://www.test.com/import_styles.css"), WebString::fromUTF8("import_styles.css"), WebString::fromUTF8("pageserializer/"), cssMimeType());
+        registerMockedURLLoad(toKURL("http://www.test.com/red_background.png"), WebString::fromUTF8("red_background.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
+        registerMockedURLLoad(toKURL("http://www.test.com/orange_background.png"), WebString::fromUTF8("orange_background.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
+        registerMockedURLLoad(toKURL("http://www.test.com/yellow_background.png"), WebString::fromUTF8("yellow_background.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
+        registerMockedURLLoad(toKURL("http://www.test.com/green_background.png"), WebString::fromUTF8("green_background.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
+        registerMockedURLLoad(toKURL("http://www.test.com/blue_background.png"), WebString::fromUTF8("blue_background.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
+        registerMockedURLLoad(toKURL("http://www.test.com/purple_background.png"), WebString::fromUTF8("purple_background.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
+        registerMockedURLLoad(toKURL("http://www.test.com/ul-dot.png"), WebString::fromUTF8("ul-dot.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
+        registerMockedURLLoad(toKURL("http://www.test.com/ol-dot.png"), WebString::fromUTF8("ol-dot.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
         return topFrameURL;
     }
 
-    void loadURLInTopFrame(const GURL& url)
+    void loadURLInTopFrame(const WebURL& url)
     {
         WebURLRequest urlRequest;
         urlRequest.initialize();
-        urlRequest.setURL(WebURL(url));
+        urlRequest.setURL(url);
         m_webView->mainFrame()->loadRequest(urlRequest);
         // Make sure any pending request get served.
         webkit_support::ServeAsynchronousMockedRequests();
@@ -161,7 +151,7 @@ protected:
 
     static bool resourceVectorContains(const WebVector<WebPageSerializer::Resource>& resources, const char* url, const char* mimeType)
     {
-        WebURL webURL = WebURL(GURL(url));
+        WebURL webURL = WebURL(toKURL(url));
         for (size_t i = 0; i < resources.size(); ++i) {
             const WebPageSerializer::Resource& resource = resources[i];
             if (resource.url == webURL && !resource.data.isEmpty() && !resource.mimeType.compare(WebCString(mimeType)))
@@ -184,13 +174,13 @@ private:
 TEST_F(WebPageNewSerializeTest, PageWithFrames)
 {
     // Register the mocked frames.
-    WebURL topFrameURL = GURL("http://www.test.com");
-    registerMockedURLLoad(topFrameURL, WebString::fromUTF8("top_frame.html"), htmlMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/iframe.html"), WebString::fromUTF8("iframe.html"), htmlMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/iframe2.html"), WebString::fromUTF8("iframe2.html"), htmlMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/red_background.png"), WebString::fromUTF8("red_background.png"), pngMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/green_background.png"), WebString::fromUTF8("green_background.png"), pngMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/blue_background.png"), WebString::fromUTF8("blue_background.png"), pngMimeType());
+    WebURL topFrameURL = toKURL("http://www.test.com");
+    registerMockedURLLoad(topFrameURL, WebString::fromUTF8("top_frame.html"), WebString::fromUTF8("pageserializer/"), htmlMimeType());
+    registerMockedURLLoad(toKURL("http://www.test.com/iframe.html"), WebString::fromUTF8("iframe.html"), WebString::fromUTF8("pageserializer/"), htmlMimeType());
+    registerMockedURLLoad(toKURL("http://www.test.com/iframe2.html"), WebString::fromUTF8("iframe2.html"), WebString::fromUTF8("pageserializer/"), htmlMimeType());
+    registerMockedURLLoad(toKURL("http://www.test.com/red_background.png"), WebString::fromUTF8("red_background.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
+    registerMockedURLLoad(toKURL("http://www.test.com/green_background.png"), WebString::fromUTF8("green_background.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
+    registerMockedURLLoad(toKURL("http://www.test.com/blue_background.png"), WebString::fromUTF8("blue_background.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
 
     loadURLInTopFrame(topFrameURL);
 
@@ -200,7 +190,7 @@ TEST_F(WebPageNewSerializeTest, PageWithFrames)
 
     // The first resource should be the main-frame.
     const WebPageSerializer::Resource& resource = resources[0];
-    EXPECT_TRUE(resource.url == GURL("http://www.test.com"));
+    EXPECT_TRUE(resource.url == WebURL(toKURL("http://www.test.com")));
     EXPECT_EQ(0, resource.mimeType.compare(WebCString("text/html")));
     EXPECT_FALSE(resource.data.isEmpty());
 
@@ -227,7 +217,7 @@ TEST_F(WebPageNewSerializeTest, FAILS_CSSResources)
 
     // The first resource should be the main-frame.
     const WebPageSerializer::Resource& resource = resources[0];
-    EXPECT_TRUE(resource.url == GURL("http://www.test.com"));
+    EXPECT_TRUE(resource.url == WebURL(toKURL("http://www.test.com")));
     EXPECT_EQ(0, resource.mimeType.compare(WebCString("text/html")));
     EXPECT_FALSE(resource.data.isEmpty());
 
@@ -249,11 +239,11 @@ TEST_F(WebPageNewSerializeTest, FAILS_CSSResources)
 TEST_F(WebPageNewSerializeTest, BlankFrames)
 {
     // Register the mocked frame and load it.
-    WebURL topFrameURL = GURL("http://www.test.com");
-    registerMockedURLLoad(topFrameURL, WebString::fromUTF8("blank_frames.html"), htmlMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/red_background.png"), WebString::fromUTF8("red_background.png"), pngMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/orange_background.png"), WebString::fromUTF8("orange_background.png"), pngMimeType());
-    registerMockedURLLoad(GURL("http://www.test.com/blue_background.png"), WebString::fromUTF8("blue_background.png"), pngMimeType());
+    WebURL topFrameURL = toKURL("http://www.test.com");
+    registerMockedURLLoad(topFrameURL, WebString::fromUTF8("blank_frames.html"), WebString::fromUTF8("pageserializer/"), htmlMimeType());
+    registerMockedURLLoad(toKURL("http://www.test.com/red_background.png"), WebString::fromUTF8("red_background.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
+    registerMockedURLLoad(toKURL("http://www.test.com/orange_background.png"), WebString::fromUTF8("orange_background.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
+    registerMockedURLLoad(toKURL("http://www.test.com/blue_background.png"), WebString::fromUTF8("blue_background.png"), WebString::fromUTF8("pageserializer/"), pngMimeType());
 
     loadURLInTopFrame(topFrameURL);
 
@@ -263,7 +253,7 @@ TEST_F(WebPageNewSerializeTest, BlankFrames)
 
     // The first resource should be the main-frame.
     const WebPageSerializer::Resource& resource = resources[0];
-    EXPECT_TRUE(resource.url == GURL("http://www.test.com"));
+    EXPECT_TRUE(resource.url == WebURL(toKURL("http://www.test.com")));
     EXPECT_EQ(0, resource.mimeType.compare(WebCString("text/html")));
     EXPECT_FALSE(resource.data.isEmpty());
 
@@ -279,8 +269,8 @@ TEST_F(WebPageNewSerializeTest, BlankFrames)
 
 TEST_F(WebPageNewSerializeTest, SerializeXMLHasRightDeclaration)
 {
-    WebURL topFrameURL = GURL("http://www.test.com/simple.xhtml");
-    registerMockedURLLoad(topFrameURL, WebString::fromUTF8("simple.xhtml"), xhtmlMimeType());
+    WebURL topFrameURL = toKURL("http://www.test.com/simple.xhtml");
+    registerMockedURLLoad(topFrameURL, WebString::fromUTF8("simple.xhtml"), WebString::fromUTF8("pageserializer/"), xhtmlMimeType());
 
     loadURLInTopFrame(topFrameURL);
 
@@ -290,7 +280,7 @@ TEST_F(WebPageNewSerializeTest, SerializeXMLHasRightDeclaration)
 
     // We expect only one resource, the XML.
     ASSERT_EQ(1U, resources.size());
-    std::string xml = resources[0].data;
+    std::string xml = std::string(resources[0].data.data());
 
     // We should have one and only one instance of the XML declaration.
     size_t pos = xml.find("<?xml version=");
@@ -310,7 +300,7 @@ TEST_F(WebPageNewSerializeTest, FAILS_TestMHTMLEncoding)
     ASSERT_FALSE(mhtmlData.isEmpty());
 
     // Read the MHTML data line per line and do some pseudo-parsing to make sure the right encoding is used for the different sections.
-    LineReader lineReader(mhtmlData);
+    LineReader lineReader(std::string(mhtmlData.data()));
     int sectionCheckedCount = 0;
     const char* expectedEncoding = 0;
     std::string line;

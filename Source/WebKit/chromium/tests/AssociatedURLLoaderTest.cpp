@@ -30,6 +30,7 @@
 
 #include "config.h"
 
+#include "URLTestHelpers.h"
 #include "WebFrame.h"
 #include "WebFrameClient.h"
 #include "WebURLLoaderOptions.h"
@@ -42,11 +43,11 @@
 #include "platform/WebURLResponse.h"
 #include <wtf/text/WTFString.h>
 
-#include <googleurl/src/gurl.h>
 #include <gtest/gtest.h>
 #include <webkit/support/webkit_support.h>
 
 using namespace WebKit;
+using WebKit::URLTestHelpers::toKURL;
 
 namespace {
 
@@ -76,9 +77,9 @@ public:
         ,  m_runningMessageLoop(false)
     {
         // Reuse one of the test files from WebFrameTest.
-        std::string filePath = webkit_support::GetWebKitRootDir().utf8();
+        std::string filePath = std::string(webkit_support::GetWebKitRootDir().utf8().data());
         filePath += "/Source/WebKit/chromium/tests/data/iframes_test.html";
-        m_frameFilePath = WebString::fromUTF8(filePath);
+        m_frameFilePath = WebString::fromUTF8(filePath.c_str());
     }
 
     void SetUp()
@@ -87,7 +88,7 @@ public:
         m_webView->initializeMainFrame(&m_webFrameClient);
 
         // Load the frame before trying to load resources.
-        GURL url = GURL("http://www.test.com/iframes_test.html");
+        WebCore::KURL url = toKURL("http://www.test.com/iframes_test.html");
         WebURLResponse response;
         response.initialize();
         response.setMIMEType("text/html");
@@ -184,7 +185,7 @@ public:
     {
         WebURLRequest request;
         request.initialize();
-        request.setURL(GURL("http://www.test.com/success.html"));
+        request.setURL(toKURL("http://www.test.com/success.html"));
         request.setHTTPMethod(WebString::fromUTF8(unsafeMethod));
         WebURLLoaderOptions options;
         options.untrustedHTTP = true;
@@ -200,7 +201,7 @@ public:
     {
         WebURLRequest request;
         request.initialize();
-        request.setURL(GURL("http://www.test.com/success.html"));
+        request.setURL(toKURL("http://www.test.com/success.html"));
         request.setHTTPHeaderField(WebString::fromUTF8(headerField), WebString::fromUTF8(headerValue));
         WebURLLoaderOptions options;
         options.untrustedHTTP = true;
@@ -230,7 +231,7 @@ public:
             id.append("-Exposed");
         id.append(".html");
 
-        GURL url = GURL(id);
+        WebCore::KURL url = toKURL(id);
         WebURLRequest request;
         request.initialize();
         request.setURL(url);
@@ -282,7 +283,7 @@ protected:
 // Test a successful same-origin URL load.
 TEST_F(AssociatedURLLoaderTest, SameOriginSuccess)
 {
-    GURL url = GURL("http://www.test.com/SameOriginSuccess.html");
+    WebCore::KURL url = toKURL("http://www.test.com/SameOriginSuccess.html");
     WebURLRequest request;
     request.initialize();
     request.setURL(url);
@@ -305,7 +306,7 @@ TEST_F(AssociatedURLLoaderTest, SameOriginSuccess)
 TEST_F(AssociatedURLLoaderTest, SameOriginRestriction)
 {
     // This is cross-origin since the frame was loaded from www.test.com.
-    GURL url = GURL("http://www.other.com/SameOriginRestriction.html");
+    WebCore::KURL url = toKURL("http://www.other.com/SameOriginRestriction.html");
     WebURLRequest request;
     request.initialize();
     request.setURL(url);
@@ -316,7 +317,7 @@ TEST_F(AssociatedURLLoaderTest, SameOriginRestriction)
 TEST_F(AssociatedURLLoaderTest, CrossOriginSuccess)
 {
     // This is cross-origin since the frame was loaded from www.test.com.
-    GURL url = GURL("http://www.other.com/CrossOriginSuccess.html");
+    WebCore::KURL url = toKURL("http://www.other.com/CrossOriginSuccess.html");
     WebURLRequest request;
     request.initialize();
     request.setURL(url);
@@ -341,7 +342,7 @@ TEST_F(AssociatedURLLoaderTest, CrossOriginSuccess)
 TEST_F(AssociatedURLLoaderTest, CrossOriginWithAccessControlSuccess)
 {
     // This is cross-origin since the frame was loaded from www.test.com.
-    GURL url = GURL("http://www.other.com/CrossOriginWithAccessControlSuccess.html");
+    WebCore::KURL url = toKURL("http://www.other.com/CrossOriginWithAccessControlSuccess.html");
     WebURLRequest request;
     request.initialize();
     request.setURL(url);
@@ -367,7 +368,7 @@ TEST_F(AssociatedURLLoaderTest, CrossOriginWithAccessControlSuccess)
 TEST_F(AssociatedURLLoaderTest, CrossOriginWithAccessControlFailure)
 {
     // This is cross-origin since the frame was loaded from www.test.com.
-    GURL url = GURL("http://www.other.com/CrossOriginWithAccessControlFailure.html");
+    WebCore::KURL url = toKURL("http://www.other.com/CrossOriginWithAccessControlFailure.html");
     WebURLRequest request;
     request.initialize();
     request.setURL(url);
@@ -398,9 +399,9 @@ TEST_F(AssociatedURLLoaderTest, CrossOriginWithAccessControlFailure)
 // Test a same-origin URL redirect and load.
 TEST_F(AssociatedURLLoaderTest, RedirectSuccess)
 {
-    GURL url = GURL("http://www.test.com/RedirectSuccess.html");
+    WebCore::KURL url = toKURL("http://www.test.com/RedirectSuccess.html");
     char redirect[] = "http://www.test.com/RedirectSuccess2.html";  // Same-origin
-    GURL redirectURL = GURL(redirect);
+    WebCore::KURL redirectURL = toKURL(redirect);
 
     WebURLRequest request;
     request.initialize();
@@ -435,9 +436,9 @@ TEST_F(AssociatedURLLoaderTest, RedirectSuccess)
 // Test that a cross origin redirect response without CORS headers fails.
 TEST_F(AssociatedURLLoaderTest, RedirectCrossOriginWithAccessControlFailure)
 {
-    GURL url = GURL("http://www.test.com/RedirectCrossOriginWithAccessControlFailure.html");
+    WebCore::KURL url = toKURL("http://www.test.com/RedirectCrossOriginWithAccessControlFailure.html");
     char redirect[] = "http://www.other.com/RedirectCrossOriginWithAccessControlFailure.html";  // Cross-origin
-    GURL redirectURL = GURL(redirect);
+    WebCore::KURL redirectURL = toKURL(redirect);
 
     WebURLRequest request;
     request.initialize();
@@ -467,9 +468,9 @@ TEST_F(AssociatedURLLoaderTest, RedirectCrossOriginWithAccessControlFailure)
 // Test that a cross origin redirect response with CORS headers that allow the requesting origin succeeds.
 TEST_F(AssociatedURLLoaderTest, RedirectCrossOriginWithAccessControlSuccess)
 {
-    GURL url = GURL("http://www.test.com/RedirectCrossOriginWithAccessControlSuccess.html");
+    WebCore::KURL url = toKURL("http://www.test.com/RedirectCrossOriginWithAccessControlSuccess.html");
     char redirect[] = "http://www.other.com/RedirectCrossOriginWithAccessControlSuccess.html";  // Cross-origin
-    GURL redirectURL = GURL(redirect);
+    WebCore::KURL redirectURL = toKURL(redirect);
 
     WebURLRequest request;
     request.initialize();
@@ -590,7 +591,7 @@ TEST_F(AssociatedURLLoaderTest, CrossOriginHeaderAllowResponseHeaders)
 {
     WebURLRequest request;
     request.initialize();
-    GURL url = GURL("http://www.other.com/CrossOriginHeaderAllowResponseHeaders.html");
+    WebCore::KURL url = toKURL("http://www.other.com/CrossOriginHeaderAllowResponseHeaders.html");
     request.setURL(url);
 
     WebString headerNameString(WebString::fromUTF8("non-whitelisted"));

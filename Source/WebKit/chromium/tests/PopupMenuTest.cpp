@@ -43,6 +43,7 @@
 #include "PopupMenuClient.h"
 #include "PopupMenuChromium.h"
 #include "RuntimeEnabledFeatures.h"
+#include "URLTestHelpers.h"
 #include "WebDocument.h"
 #include "WebElement.h"
 #include "WebFrame.h"
@@ -63,6 +64,7 @@
 
 using namespace WebCore;
 using namespace WebKit;
+using WebKit::URLTestHelpers::toKURL;
 
 namespace {
 
@@ -249,15 +251,7 @@ protected:
 
     void registerMockedURLLoad(const std::string& fileName)
     {
-        WebURLResponse response;
-        response.initialize();
-        response.setMIMEType("text/html");
-
-        std::string filePath = webkit_support::GetWebKitRootDir().utf8();
-        filePath += "/Source/WebKit/chromium/tests/data/popup/";
-        filePath += fileName;
-
-        webkit_support::RegisterMockedURL(WebURL(GURL(baseURL + fileName)), response, WebString::fromUTF8(filePath));
+        URLTestHelpers::registerMockedURLLoad(toKURL(baseURL + fileName), WebString::fromUTF8(fileName.c_str()), WebString::fromUTF8("popup/"), WebString::fromUTF8("text/html"));
     }
 
     void serveRequests()
@@ -269,7 +263,7 @@ protected:
     {
         WebURLRequest urlRequest;
         urlRequest.initialize();
-        urlRequest.setURL(WebURL(GURL(baseURL + fileName)));
+        urlRequest.setURL(WebURL(toKURL(baseURL + fileName)));
         frame->loadRequest(urlRequest);
     }
 
@@ -427,7 +421,7 @@ TEST_F(SelectPopupMenuTest, DISABLED_SelectItemEventFire)
 
     // mousedown event is held by select node, and we don't simulate the event for the node.
     // So we can only see mouseup and click event.
-    EXPECT_STREQ("upclick", std::string(element.innerText().utf8()).c_str());
+    EXPECT_STREQ("upclick", element.innerText().utf8().data());
 
     // Disable the item at index 1.
     m_popupMenuClient.setDisabledIndex(1);
@@ -439,7 +433,7 @@ TEST_F(SelectPopupMenuTest, DISABLED_SelectItemEventFire)
     simulateLeftMouseUpEvent(row1Point);
 
     // The item at index 1 is disabled, so the text should not be changed.
-    EXPECT_STREQ("upclick", std::string(element.innerText().utf8()).c_str());
+    EXPECT_STREQ("upclick", element.innerText().utf8().data());
 
     showPopup();
     // menuItemHeight * 2.5 means the Y position on the item at index 2.
@@ -448,7 +442,7 @@ TEST_F(SelectPopupMenuTest, DISABLED_SelectItemEventFire)
     simulateLeftMouseUpEvent(row1Point);
 
     // The item is changed to the item at index 2, from index 0, so change event is fired.
-    EXPECT_STREQ("upclickchangeupclick", std::string(element.innerText().utf8()).c_str());
+    EXPECT_STREQ("upclickchangeupclick", element.innerText().utf8().data());
 }
 
 TEST_F(SelectPopupMenuTest, FLAKY_SelectItemKeyEvent)
@@ -469,7 +463,7 @@ TEST_F(SelectPopupMenuTest, FLAKY_SelectItemKeyEvent)
 
     WebElement element = m_webView->mainFrame()->document().getElementById("message");
     // We only can see change event but no other mouse related events.
-    EXPECT_STREQ("change", std::string(element.innerText().utf8()).c_str());
+    EXPECT_STREQ("change", element.innerText().utf8().data());
 }
 
 TEST_F(SelectPopupMenuTest, SelectItemRemoveSelectOnChange)
@@ -491,7 +485,7 @@ TEST_F(SelectPopupMenuTest, SelectItemRemoveSelectOnChange)
     simulateLeftMouseUpEvent(row1Point);
 
     WebElement element = m_webView->mainFrame()->document().getElementById("message");
-    EXPECT_STREQ("change", std::string(element.innerText().utf8()).c_str());
+    EXPECT_STREQ("change", element.innerText().utf8().data());
 }
 
 TEST_F(SelectPopupMenuTest, SelectItemRemoveSelectOnClick)
@@ -513,7 +507,7 @@ TEST_F(SelectPopupMenuTest, SelectItemRemoveSelectOnClick)
     simulateLeftMouseUpEvent(row1Point);
 
     WebElement element = m_webView->mainFrame()->document().getElementById("message");
-    EXPECT_STREQ("click", std::string(element.innerText().utf8()).c_str());
+    EXPECT_STREQ("click", element.innerText().utf8().data());
 }
 
 } // namespace
