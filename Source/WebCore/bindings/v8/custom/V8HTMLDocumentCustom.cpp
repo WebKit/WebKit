@@ -85,7 +85,7 @@ v8::Handle<v8::Value> V8HTMLDocument::GetNamedProperty(HTMLDocument* htmlDocumen
         return v8::Handle<v8::Value>();
 
     HTMLCollection* items = htmlDocument->documentNamedItems(key);
-    if (!items->hasAnyItem())
+    if (items->isEmpty())
         return v8::Handle<v8::Value>();
 
     if (items->hasExactlyOneItem()) {

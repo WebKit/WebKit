@@ -1,3 +1,24 @@
+2012-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r121232): named properties on document and window may return wrong object
+        https://bugs.webkit.org/show_bug.cgi?id=90133
+
+        Reviewed by Andreas Kling.
+
+        Fixed the bug. Also replaced hasAnyItem by isEmpty (hasAnyItem() is equivalent to !isEmpty()).
+
+        Test: fast/dom/HTMLDocument/named-item-multiple-match.html
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::nameGetter):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::GetNamedProperty):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::isEmpty):
+        (WebCore::HTMLCollection::hasExactlyOneItem):
+
 2012-06-28  Zeev Lieber  <zlieber@chromium.org>
 
         [Skia] Computing the resampling mode ignores scale applied to the canvas

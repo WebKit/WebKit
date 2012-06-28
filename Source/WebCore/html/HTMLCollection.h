@@ -53,15 +53,21 @@ public:
     // Non-DOM API
     bool hasNamedItem(const AtomicString& name) const;
     void namedItems(const AtomicString& name, Vector<RefPtr<Node> >&) const;
-    bool hasAnyItem() const
+    bool isEmpty() const
     {
         invalidateCacheIfNeeded();
-        return (m_cache.hasLength && m_cache.length) || m_cache.current || item(0);
+        if (m_cache.hasLength)
+            return !m_cache.length;
+        return !m_cache.current && !item(0);
     }
     bool hasExactlyOneItem() const
     {
         invalidateCacheIfNeeded();
-        return (m_cache.hasLength && m_cache.length == 1) || (m_cache.current && !itemAfter(m_cache.current)) || (item(0) && !item(1));
+        if (m_cache.hasLength)
+            return m_cache.length == 1;
+        if (m_cache.current)
+            return !m_cache.position && !item(1);
+        return item(0) && !item(1);
     }
 
     Node* base() const { return m_base; }

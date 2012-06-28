@@ -1,3 +1,15 @@
+2012-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r121232): named properties on document and window may return wrong object
+        https://bugs.webkit.org/show_bug.cgi?id=90133
+
+        Reviewed by Andreas Kling.
+
+        Add a regression test.
+
+        * fast/dom/HTMLDocument/named-item-multiple-match-expected.txt: Added.
+        * fast/dom/HTMLDocument/named-item-multiple-match.html: Added.
+
 2012-06-28  Zeev Lieber  <zlieber@chromium.org>
 
         [Skia] Computing the resampling mode ignores scale applied to the canvas

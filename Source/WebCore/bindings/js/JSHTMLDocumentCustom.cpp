@@ -64,7 +64,7 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, PropertyNa
 
     HTMLCollection* collection = document->documentNamedItems(propertyNameToAtomicString(propertyName));
 
-    if (!collection->hasAnyItem())
+    if (collection->isEmpty())
         return jsUndefined();
 
     if (collection->hasExactlyOneItem()) {
