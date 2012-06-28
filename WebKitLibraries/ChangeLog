@@ -1,3 +1,11 @@
+2012-06-28  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build correction.  Add two missing macro
+        declarations to vsprops file.
+
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops: Add missing
+        ENABLE_HIGH_DPI_CANVAS and ENABLE_REQUEST_ANIMATION_FRAME macros.
+
 2012-06-27  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build correction.  Accidentally turned on

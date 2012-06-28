@@ -137,6 +137,11 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
+		Name="ENABLE_HIGH_DPI_CANVAS"
+		Value="ENABLE_HIGH_DPI_CANVAS"
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
 		Name="ENABLE_ICONDATABASE"
 		Value="ENABLE_ICONDATABASE"
 		PerformEnvironmentSet="true"
@@ -268,6 +273,11 @@
 	/>
   <UserMacro
 		Name="ENABLE_REGISTER_PROTOCOL_HANDLER"
+		Value=""
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
+		Name="ENABLE_REQUEST_ANIMATION_FRAME"
 		Value=""
 		PerformEnvironmentSet="true"
 	/>
