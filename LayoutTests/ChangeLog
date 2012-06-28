@@ -1,3 +1,10 @@
+2012-06-28  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding a crash expectation for the
+        fast/workers/worker-context-gc.html test that started crashing after r121395.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-27  Pablo Flouret  <pablof@motorola.com>
 
         pattern="" should only accept the empty string
