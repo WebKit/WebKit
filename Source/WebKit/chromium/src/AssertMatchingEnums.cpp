@@ -93,7 +93,6 @@
 #include "WebMediaPlayerClient.h"
 #include "WebNotificationPresenter.h"
 #include "WebPageVisibilityState.h"
-#include "WebScrollbar.h"
 #include "WebSettings.h"
 #include "WebSpeechRecognizerClient.h"
 #include "WebStorageQuotaError.h"
@@ -111,6 +110,7 @@
 #include <public/WebFileSystem.h>
 #include <public/WebFilterOperation.h>
 #include <public/WebReferrerPolicy.h>
+#include <public/WebScrollbar.h>
 #include <public/WebURLResponse.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/StringImpl.h>

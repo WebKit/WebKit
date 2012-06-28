@@ -68,7 +68,7 @@
             'variables': { 'enable_wexit_time_destructors': 1, },
             'dependencies': [
                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
-                '../../Platform/Platform.gyp/Platform.gyp:webkit_platform', # actually WebCore should depend on this
+                '../../Platform/Platform.gyp/Platform.gyp:webkit_platform',
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
@@ -76,6 +76,7 @@
                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
             ],
             'export_dependent_settings': [
+                '../../Platform/Platform.gyp/Platform.gyp:webkit_platform',
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
@@ -239,8 +240,6 @@
                 'public/WebScreenInfo.h',
                 'public/WebScriptController.h',
                 'public/WebScriptSource.h',
-                'public/WebScrollbar.h',
-                'public/WebScrollbarClient.h',
                 'public/WebSearchableFormData.h',
                 'public/WebSecurityOrigin.h',
                 'public/WebSecurityPolicy.h',
@@ -616,6 +615,8 @@
                 'src/WebPluginListBuilderImpl.h',
                 'src/WebPluginLoadObserver.cpp',
                 'src/WebPluginLoadObserver.h',
+                'src/WebPluginScrollbarImpl.cpp',
+                'src/WebPluginScrollbarImpl.h',
                 'src/WebPopupMenuImpl.cpp',
                 'src/WebPopupMenuImpl.h',
                 'src/WebRange.cpp',
@@ -625,8 +626,6 @@
                 'src/WebScopedUserGesture.cpp',
                 'src/WebScriptController.cpp',
                 'src/WebScrollableLayer.cpp',
-                'src/WebScrollbarImpl.cpp',
-                'src/WebScrollbarImpl.h',
                 'src/WebSearchableFormData.cpp',
                 'src/WebSecurityOrigin.cpp',
                 'src/WebSecurityPolicy.cpp',

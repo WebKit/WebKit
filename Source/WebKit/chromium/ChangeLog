@@ -1,3 +1,81 @@
+2012-06-28  Adrienne Walker  <enne@google.com>
+
+        [chromium] Split WebScrollbar into WebPluginScrollbar and WebScrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=90117
+
+        Reviewed by James Robinson.
+
+        Convert WebScrollbar/WebScrollbarClient/WebScrollbarImpl to be
+        WebPluginScrollbar, WebPluginScrollbarClient, and
+        WebPluginScrollbarImpl. Modify ScrollbarGroup
+        to use this instead.
+
+        WebScrollbar is now the base interface for a pre-existing scrollbar
+        that is accessed in a const manner. It also provides all of the common
+        WebKit ScrollTypes.h enums. WebPluginScrollbar is now a scrollbar that
+        has been externally created and is externally modified in terms of its
+        position, invalidation, and painting.
+
+        This is a pre-refactoring for adding Web versions of ScrollbarTheme
+        into the Platform directory which will operate on WebScrollbar, but
+        that don't need all of what WebPluginScrollbar provides.
+
+        As WebScrollbar is moved to Platform, WebKit.gyp now must depend on
+        Platform as well.
+
+        * WebKit.gyp:
+        * public/WebPluginScrollbar.h:
+        (WebKit):
+        (WebPluginScrollbar):
+        (WebKit::WebPluginScrollbar::~WebPluginScrollbar):
+        * public/WebPluginScrollbarClient.h:
+        (WebKit):
+        (WebPluginScrollbarClient):
+        * public/WebScrollbar.h: Removed.
+        * public/WebScrollbarClient.h: Removed.
+        * src/AssertMatchingEnums.cpp:
+        * src/ScrollbarGroup.cpp:
+        (WebKit::ScrollbarGroup::scrollbarCreated):
+        (WebKit::ScrollbarGroup::scrollbarDestroyed):
+        (WebKit::ScrollbarGroup::scrollSize):
+        (WebKit::ScrollbarGroup::scrollPosition):
+        (WebKit::ScrollbarGroup::contentsSize):
+        * src/ScrollbarGroup.h:
+        (WebKit):
+        (ScrollbarGroup):
+        * src/WebPluginScrollbarImpl.cpp: Renamed from Source/WebKit/chromium/src/WebScrollbarImpl.cpp.
+        (WebKit):
+        (WebKit::WebPluginScrollbar::createForPlugin):
+        (WebKit::WebPluginScrollbar::defaultThickness):
+        (WebKit::WebPluginScrollbarImpl::WebPluginScrollbarImpl):
+        (WebKit::WebPluginScrollbarImpl::~WebPluginScrollbarImpl):
+        (WebKit::WebPluginScrollbarImpl::setScrollOffset):
+        (WebKit::WebPluginScrollbarImpl::invalidateScrollbarRect):
+        (WebKit::WebPluginScrollbarImpl::getTickmarks):
+        (WebKit::WebPluginScrollbarImpl::convertFromContainingViewToScrollbar):
+        (WebKit::WebPluginScrollbarImpl::scrollbarStyleChanged):
+        (WebKit::WebPluginScrollbarImpl::isOverlay):
+        (WebKit::WebPluginScrollbarImpl::value):
+        (WebKit::WebPluginScrollbarImpl::setLocation):
+        (WebKit::WebPluginScrollbarImpl::setValue):
+        (WebKit::WebPluginScrollbarImpl::setDocumentSize):
+        (WebKit::WebPluginScrollbarImpl::scroll):
+        (WebKit::WebPluginScrollbarImpl::paint):
+        (WebKit::WebPluginScrollbarImpl::handleInputEvent):
+        (WebKit::WebPluginScrollbarImpl::onMouseDown):
+        (WebKit::WebPluginScrollbarImpl::onMouseUp):
+        (WebKit::WebPluginScrollbarImpl::onMouseMove):
+        (WebKit::WebPluginScrollbarImpl::onMouseLeave):
+        (WebKit::WebPluginScrollbarImpl::onMouseWheel):
+        (WebKit::WebPluginScrollbarImpl::onKeyDown):
+        * src/WebPluginScrollbarImpl.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebPluginScrollbarImpl):
+        (WebKit::WebPluginScrollbarImpl::scrollOffset):
+        (WebKit::WebPluginScrollbarImpl::scrollbar):
+        * src/WebScrollbarImpl.h: Removed.
+
 2012-06-28  Adam Barth  <abarth@webkit.org>
 
         [Chromium] On Android, we should be able to ask the embedder what intents exist in a region of the page

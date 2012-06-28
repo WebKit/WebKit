@@ -1,3 +1,18 @@
+2012-06-28  Adrienne Walker  <enne@google.com>
+
+        [chromium] Split WebScrollbar into WebPluginScrollbar and WebScrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=90117
+
+        Reviewed by James Robinson.
+
+        Move WebScrollbar from client API to Platform.
+
+        * Platform.gypi:
+        * chromium/public/WebScrollbar.h: Copied from Source/WebKit/chromium/public/WebPluginScrollbarClient.h.
+        (WebKit):
+        (WebScrollbar):
+        (WebKit::WebScrollbar::~WebScrollbar):
+
 2012-06-26  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove WebView::graphicsContext3D getter

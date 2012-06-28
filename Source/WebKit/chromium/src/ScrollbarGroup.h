@@ -36,15 +36,15 @@ class FrameView;
 
 namespace WebKit {
 
-class WebScrollbarImpl;
+class WebPluginScrollbarImpl;
 
 class ScrollbarGroup : public WebCore::ScrollableArea {
 public:
     ScrollbarGroup(WebCore::FrameView*, const WebCore::IntRect& frameRect);
     ~ScrollbarGroup();
 
-    void scrollbarCreated(WebScrollbarImpl*);
-    void scrollbarDestroyed(WebScrollbarImpl*);
+    void scrollbarCreated(WebPluginScrollbarImpl*);
+    void scrollbarDestroyed(WebPluginScrollbarImpl*);
     void setLastMousePosition(const WebCore::IntPoint&);
     void setFrameRect(const WebCore::IntRect&);
 
@@ -79,8 +79,8 @@ private:
     WebCore::FrameView* m_frameView;
     WebCore::IntPoint m_lastMousePosition;
     WebCore::IntRect m_frameRect;
-    WebScrollbarImpl* m_horizontalScrollbar;
-    WebScrollbarImpl* m_verticalScrollbar;
+    WebPluginScrollbarImpl* m_horizontalScrollbar;
+    WebPluginScrollbarImpl* m_verticalScrollbar;
 };
 
 } // namespace WebKit

@@ -29,8 +29,8 @@
 #include "FrameView.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
-#include "platform/WebRect.h"
-#include "WebScrollbarImpl.h"
+#include "WebPluginScrollbarImpl.h"
+#include <public/WebRect.h>
 
 using namespace WebCore;
 
@@ -50,7 +50,7 @@ ScrollbarGroup::~ScrollbarGroup()
     ASSERT(!m_verticalScrollbar);
 }
 
-void ScrollbarGroup::scrollbarCreated(WebScrollbarImpl* scrollbar)
+void ScrollbarGroup::scrollbarCreated(WebPluginScrollbarImpl* scrollbar)
 {
     bool hadScrollbars = m_horizontalScrollbar || m_verticalScrollbar;
     if (scrollbar->scrollbar()->orientation() == HorizontalScrollbar) {
@@ -69,7 +69,7 @@ void ScrollbarGroup::scrollbarCreated(WebScrollbarImpl* scrollbar)
     }
 }
 
-void ScrollbarGroup::scrollbarDestroyed(WebScrollbarImpl* scrollbar)
+void ScrollbarGroup::scrollbarDestroyed(WebPluginScrollbarImpl* scrollbar)
 {
     if (scrollbar == m_horizontalScrollbar) {
         willRemoveHorizontalScrollbar(scrollbar->scrollbar());
@@ -93,7 +93,7 @@ void ScrollbarGroup::setLastMousePosition(const IntPoint& point)
 
 int ScrollbarGroup::scrollSize(WebCore::ScrollbarOrientation orientation) const
 {
-    WebScrollbarImpl* webScrollbar = orientation == HorizontalScrollbar ? m_horizontalScrollbar : m_verticalScrollbar;
+    WebPluginScrollbarImpl* webScrollbar = orientation == HorizontalScrollbar ? m_horizontalScrollbar : m_verticalScrollbar;
     if (!webScrollbar)
         return 0;
     Scrollbar* scrollbar = webScrollbar->scrollbar();
@@ -102,7 +102,7 @@ int ScrollbarGroup::scrollSize(WebCore::ScrollbarOrientation orientation) const
 
 int ScrollbarGroup::scrollPosition(Scrollbar* scrollbar) const
 {
-    WebScrollbarImpl* webScrollbar = scrollbar->orientation() == HorizontalScrollbar ? m_horizontalScrollbar : m_verticalScrollbar;
+    WebPluginScrollbarImpl* webScrollbar = scrollbar->orientation() == HorizontalScrollbar ? m_horizontalScrollbar : m_verticalScrollbar;
     if (!webScrollbar)
         return 0;
     return webScrollbar->scrollOffset();
@@ -225,14 +225,14 @@ IntSize ScrollbarGroup::contentsSize() const
     else if (m_verticalScrollbar) {
         size.setWidth(m_verticalScrollbar->scrollbar()->x());
         if (m_verticalScrollbar->scrollbar()->isOverlayScrollbar())
-            size.expand(WebScrollbar::defaultThickness(), 0);
+            size.expand(WebPluginScrollbar::defaultThickness(), 0);
     }
     if (m_verticalScrollbar)
         size.setHeight(m_verticalScrollbar->scrollbar()->totalSize());
     else if (m_horizontalScrollbar) {
         size.setHeight(m_horizontalScrollbar->scrollbar()->y());
         if (m_horizontalScrollbar->scrollbar()->isOverlayScrollbar())
-            size.expand(0, WebScrollbar::defaultThickness());
+            size.expand(0, WebPluginScrollbar::defaultThickness());
     }
     return size;
 }

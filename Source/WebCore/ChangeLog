@@ -1,3 +1,14 @@
+2012-06-28  Adrienne Walker  <enne@google.com>
+
+        [chromium] Split WebScrollbar into WebPluginScrollbar and WebScrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=90117
+
+        Reviewed by James Robinson.
+
+        Make WebCore also depend on Platform.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2012-06-28  Hayato Ito  <hayato@chromium.org>
 
         CompositeShadowTreeWalker should use InsertionPoint::hasDistribution() instead of InsertionPoint::isActive().

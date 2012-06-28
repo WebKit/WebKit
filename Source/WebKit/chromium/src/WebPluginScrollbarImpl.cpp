@@ -1,35 +1,29 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
  *
- *     * Redistributions of source code must retain the above copyright
- * notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above
- * copyright notice, this list of conditions and the following disclaimer
- * in the documentation and/or other materials provided with the
- * distribution.
- *     * Neither the name of Google Inc. nor the names of its
- * contributors may be used to endorse or promote products derived from
- * this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "WebScrollbarImpl.h"
+#include "WebPluginScrollbarImpl.h"
 
 #include "GraphicsContext.h"
 #include "KeyboardCodes.h"
@@ -38,37 +32,37 @@
 #include "Scrollbar.h"
 #include "ScrollbarGroup.h"
 #include "ScrollbarTheme.h"
-#include "platform/WebCanvas.h"
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
 #include "WebPluginContainerImpl.h"
-#include "platform/WebRect.h"
-#include "WebScrollbarClient.h"
-#include "platform/WebVector.h"
+#include "WebPluginScrollbarClient.h"
 #include "WebViewImpl.h"
 #include "painting/GraphicsContextBuilder.h"
+#include <public/WebCanvas.h>
+#include <public/WebRect.h>
+#include <public/WebVector.h>
 
 using namespace std;
 using namespace WebCore;
 
 namespace WebKit {
 
-WebScrollbar* WebScrollbar::createForPlugin(Orientation orientation,
-                                            WebPluginContainer* pluginContainer,
-                                            WebScrollbarClient* client)
+WebPluginScrollbar* WebPluginScrollbar::createForPlugin(Orientation orientation,
+                                                        WebPluginContainer* pluginContainer,
+                                                        WebPluginScrollbarClient* client)
 {
     WebPluginContainerImpl* plugin = static_cast<WebPluginContainerImpl*>(pluginContainer);
-    return new WebScrollbarImpl(orientation, plugin->scrollbarGroup(), client);
+    return new WebPluginScrollbarImpl(orientation, plugin->scrollbarGroup(), client);
 }
 
-int WebScrollbar::defaultThickness()
+int WebPluginScrollbar::defaultThickness()
 {
     return ScrollbarTheme::theme()->scrollbarThickness();
 }
 
-WebScrollbarImpl::WebScrollbarImpl(Orientation orientation,
+WebPluginScrollbarImpl::WebPluginScrollbarImpl(Orientation orientation,
                                    ScrollbarGroup* group,
-                                   WebScrollbarClient* client)
+                                   WebPluginScrollbarClient* client)
     : m_group(group)
     , m_client(client)
     , m_scrollOffset(0)
@@ -80,18 +74,18 @@ WebScrollbarImpl::WebScrollbarImpl(Orientation orientation,
     m_group->scrollbarCreated(this);
 }
 
-WebScrollbarImpl::~WebScrollbarImpl()
+WebPluginScrollbarImpl::~WebPluginScrollbarImpl()
 {
     m_group->scrollbarDestroyed(this);
 }
 
-void WebScrollbarImpl::setScrollOffset(int scrollOffset)
+void WebPluginScrollbarImpl::setScrollOffset(int scrollOffset)
 {
     m_scrollOffset = scrollOffset;
     m_client->valueChanged(this);
 }
 
-void WebScrollbarImpl::invalidateScrollbarRect(const IntRect& rect)
+void WebPluginScrollbarImpl::invalidateScrollbarRect(const IntRect& rect)
 {
     WebRect webrect(rect);
     webrect.x += m_scrollbar->x();
@@ -99,32 +93,37 @@ void WebScrollbarImpl::invalidateScrollbarRect(const IntRect& rect)
     m_client->invalidateScrollbarRect(this, webrect);
 }
 
-void WebScrollbarImpl::getTickmarks(Vector<IntRect>& tickmarks) const
+void WebPluginScrollbarImpl::getTickmarks(Vector<IntRect>& tickmarks) const
 {
     WebVector<WebRect> ticks;
-    m_client->getTickmarks(const_cast<WebScrollbarImpl*>(this), &ticks);
+    m_client->getTickmarks(const_cast<WebPluginScrollbarImpl*>(this), &ticks);
     tickmarks.resize(ticks.size());
     for (size_t i = 0; i < ticks.size(); ++i)
         tickmarks[i] = ticks[i];
 }
 
-IntPoint WebScrollbarImpl::convertFromContainingViewToScrollbar(const IntPoint& parentPoint) const
+IntPoint WebPluginScrollbarImpl::convertFromContainingViewToScrollbar(const IntPoint& parentPoint) const
 {
     IntPoint offset(parentPoint.x() - m_scrollbar->x(), parentPoint.y() - m_scrollbar->y());
     return m_scrollbar->Widget::convertFromContainingView(offset);
 }
 
-void WebScrollbarImpl::scrollbarStyleChanged()
+void WebPluginScrollbarImpl::scrollbarStyleChanged()
 {
     m_client->overlayChanged(this);
 }
 
-bool WebScrollbarImpl::isOverlay() const
+bool WebPluginScrollbarImpl::isOverlay() const
 {
     return m_scrollbar->isOverlayScrollbar();
 }
 
-void WebScrollbarImpl::setLocation(const WebRect& rect)
+int WebPluginScrollbarImpl::value() const
+{
+    return m_scrollOffset;
+}
+
+void WebPluginScrollbarImpl::setLocation(const WebRect& rect)
 {
     IntRect oldRect = m_scrollbar->frameRect();
     m_scrollbar->setFrameRect(rect);
@@ -138,24 +137,19 @@ void WebScrollbarImpl::setLocation(const WebRect& rect)
     m_scrollbar->setProportion(length, m_scrollbar->totalSize());
 }
 
-int WebScrollbarImpl::value() const
-{
-    return m_scrollOffset;
-}
-
-void WebScrollbarImpl::setValue(int position)
+void WebPluginScrollbarImpl::setValue(int position)
 {
     m_group->scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), static_cast<float>(position));
 }
 
-void WebScrollbarImpl::setDocumentSize(int size)
+void WebPluginScrollbarImpl::setDocumentSize(int size)
 {
     int length = m_scrollbar->orientation() == HorizontalScrollbar ? m_scrollbar->width() : m_scrollbar->height();
     m_scrollbar->setEnabled(size > length);
     m_scrollbar->setProportion(length, size);
 }
 
-void WebScrollbarImpl::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
+void WebPluginScrollbarImpl::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
     WebCore::ScrollDirection dir;
     bool horizontal = m_scrollbar->orientation() == HorizontalScrollbar;
@@ -167,12 +161,12 @@ void WebScrollbarImpl::scroll(ScrollDirection direction, ScrollGranularity granu
     m_group->scroll(dir, static_cast<WebCore::ScrollGranularity>(granularity), multiplier);
 }
 
-void WebScrollbarImpl::paint(WebCanvas* canvas, const WebRect& rect)
+void WebPluginScrollbarImpl::paint(WebCanvas* canvas, const WebRect& rect)
 {
     m_scrollbar->paint(&GraphicsContextBuilder(canvas).context(), rect);
 }
 
-bool WebScrollbarImpl::handleInputEvent(const WebInputEvent& event)
+bool WebPluginScrollbarImpl::handleInputEvent(const WebInputEvent& event)
 {
     switch (event.type) {
     case WebInputEvent::MouseDown:
@@ -202,7 +196,7 @@ bool WebScrollbarImpl::handleInputEvent(const WebInputEvent& event)
     return false;
 }
 
-bool WebScrollbarImpl::onMouseDown(const WebInputEvent& event)
+bool WebPluginScrollbarImpl::onMouseDown(const WebInputEvent& event)
 {
     WebMouseEvent mousedown = *static_cast<const WebMouseEvent*>(&event);
     if (!m_scrollbar->frameRect().contains(mousedown.x, mousedown.y))
@@ -214,7 +208,7 @@ bool WebScrollbarImpl::onMouseDown(const WebInputEvent& event)
     return true;
 }
 
-bool WebScrollbarImpl::onMouseUp(const WebInputEvent& event)
+bool WebPluginScrollbarImpl::onMouseUp(const WebInputEvent& event)
 {
     WebMouseEvent mouseup = *static_cast<const WebMouseEvent*>(&event);
     if (m_scrollbar->pressedPart() == NoPart)
@@ -223,7 +217,7 @@ bool WebScrollbarImpl::onMouseUp(const WebInputEvent& event)
     return m_scrollbar->mouseUp(PlatformMouseEventBuilder(m_scrollbar.get(), mouseup));
 }
 
-bool WebScrollbarImpl::onMouseMove(const WebInputEvent& event)
+bool WebPluginScrollbarImpl::onMouseMove(const WebInputEvent& event)
 {
     WebMouseEvent mousemove = *static_cast<const WebMouseEvent*>(&event);
     if (m_scrollbar->frameRect().contains(mousemove.x, mousemove.y)
@@ -238,7 +232,7 @@ bool WebScrollbarImpl::onMouseMove(const WebInputEvent& event)
     return false;
 }
 
-bool WebScrollbarImpl::onMouseLeave(const WebInputEvent& event)
+bool WebPluginScrollbarImpl::onMouseLeave(const WebInputEvent& event)
 {
     if (m_scrollbar->hoveredPart() != NoPart)
         m_scrollbar->mouseExited();
@@ -246,14 +240,14 @@ bool WebScrollbarImpl::onMouseLeave(const WebInputEvent& event)
     return false;
 }
 
-bool WebScrollbarImpl::onMouseWheel(const WebInputEvent& event)
+bool WebPluginScrollbarImpl::onMouseWheel(const WebInputEvent& event)
 {
     WebMouseWheelEvent mousewheel = *static_cast<const WebMouseWheelEvent*>(&event);
     PlatformWheelEventBuilder platformEvent(m_scrollbar.get(), mousewheel);
     return m_group->handleWheelEvent(platformEvent);
 }
 
-bool WebScrollbarImpl::onKeyDown(const WebInputEvent& event)
+bool WebPluginScrollbarImpl::onKeyDown(const WebInputEvent& event)
 {
     WebKeyboardEvent keyboard = *static_cast<const WebKeyboardEvent*>(&event);
     int keyCode;

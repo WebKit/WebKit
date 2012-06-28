@@ -22,21 +22,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPluginScrollbarClient_h
-#define WebPluginScrollbarClient_h
+#ifndef WebScrollbar_h
+#define WebScrollbar_h
 
 namespace WebKit {
 
-class WebPluginScrollbar;
-struct WebRect;
-template <typename T> class WebVector;
-
-class WebPluginScrollbarClient {
+class WebScrollbar {
 public:
-    virtual void valueChanged(WebPluginScrollbar*) = 0;
-    virtual void overlayChanged(WebPluginScrollbar*) = 0;
-    virtual void invalidateScrollbarRect(WebPluginScrollbar*, const WebRect&) = 0;
-    virtual void getTickmarks(WebPluginScrollbar*, WebVector<WebRect>*) const = 0;
+    enum Orientation {
+        Horizontal,
+        Vertical
+    };
+
+    enum ScrollDirection {
+        ScrollBackward,
+        ScrollForward
+    };
+
+    enum ScrollGranularity {
+        ScrollByLine,
+        ScrollByPage,
+        ScrollByDocument,
+        ScrollByPixel
+    };
+
+    virtual ~WebScrollbar() { }
+
+    // Return true if this is an overlay scrollbar.
+    virtual bool isOverlay() const = 0;
+
+    // Gets the current value (i.e. position inside the region).
+    virtual int value() const = 0;
 };
 
 } // namespace WebKit
