@@ -43,6 +43,7 @@
 #include "PlatformColor.h"
 #include "SharedGraphicsContext3D.h"
 #include "SkBitmap.h"
+#include "SkColor.h"
 #include "TextureManager.h"
 #include "ThrottledTextureUploader.h"
 #include "TraceEvent.h"
@@ -459,10 +460,10 @@ void LayerRendererChromium::drawDebugBorderQuad(const CCDebugBorderDrawQuad* qua
     LayerRendererChromium::toGLMatrix(&glMatrix[0], projectionMatrix() * renderMatrix);
     GLC(context(), context()->uniformMatrix4fv(program->vertexShader().matrixLocation(), 1, false, &glMatrix[0]));
 
-    const Color& color = quad->color();
-    float alpha = color.alpha() / 255.0;
+    SkColor color = quad->color();
+    float alpha = SkColorGetA(color) / 255.0;
 
-    GLC(context(), context()->uniform4f(program->fragmentShader().colorLocation(), (color.red() / 255.0) * alpha, (color.green() / 255.0) * alpha, (color.blue() / 255.0) * alpha, alpha));
+    GLC(context(), context()->uniform4f(program->fragmentShader().colorLocation(), (SkColorGetR(color) / 255.0) * alpha, (SkColorGetG(color) / 255.0) * alpha, (SkColorGetB(color) / 255.0) * alpha, alpha));
 
     GLC(context(), context()->lineWidth(quad->width()));
 
@@ -681,11 +682,11 @@ void LayerRendererChromium::drawSolidColorQuad(const CCSolidColorDrawQuad* quad)
     WebTransformationMatrix tileTransform = quad->quadTransform();
     tileTransform.translate(tileRect.x() + tileRect.width() / 2.0, tileRect.y() + tileRect.height() / 2.0);
 
-    const Color& color = quad->color();
+    SkColor color = quad->color();
     float opacity = quad->opacity();
-    float alpha = (color.alpha() / 255.0) * opacity;
+    float alpha = (SkColorGetA(color) / 255.0) * opacity;
 
-    GLC(context(), context()->uniform4f(program->fragmentShader().colorLocation(), (color.red() / 255.0) * alpha, (color.green() / 255.0) * alpha, (color.blue() / 255.0) * alpha, alpha));
+    GLC(context(), context()->uniform4f(program->fragmentShader().colorLocation(), (SkColorGetR(color) / 255.0) * alpha, (SkColorGetG(color) / 255.0) * alpha, (SkColorGetB(color) / 255.0) * alpha, alpha));
 
     drawTexturedQuad(tileTransform,
                      tileRect.width(), tileRect.height(), 1.0, FloatQuad(),

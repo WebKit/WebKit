@@ -26,7 +26,7 @@
 #ifndef CCSolidColorDrawQuad_h
 #define CCSolidColorDrawQuad_h
 
-#include "Color.h"
+#include "SkColor.h"
 #include "cc/CCDrawQuad.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -35,14 +35,14 @@ namespace WebCore {
 class CCSolidColorDrawQuad : public CCDrawQuad {
     WTF_MAKE_NONCOPYABLE(CCSolidColorDrawQuad);
 public:
-    static PassOwnPtr<CCSolidColorDrawQuad> create(const CCSharedQuadState*, const IntRect&, const Color&);
+    static PassOwnPtr<CCSolidColorDrawQuad> create(const CCSharedQuadState*, const IntRect&, SkColor);
 
-    const Color& color() const { return m_color; };
+    SkColor color() const { return m_color; };
 
 private:
-    CCSolidColorDrawQuad(const CCSharedQuadState*, const IntRect&, const Color&);
+    CCSolidColorDrawQuad(const CCSharedQuadState*, const IntRect&, SkColor);
 
-    Color m_color;
+    SkColor m_color;
 };
 
 }

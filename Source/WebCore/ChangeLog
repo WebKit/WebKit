@@ -1,3 +1,66 @@
+2012-06-27  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use SkColor in compositor internals
+        https://bugs.webkit.org/show_bug.cgi?id=90108
+
+        Reviewed by Adrienne Walker.
+
+        As the title says, cutting dependencies. If we support color spaces in the compositor we will probably need to
+        use a more sophisticated type, but for our current use SkColor is sufficient and matches our API better.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::setBackgroundColor):
+        (WebCore::LayerChromium::setDebugBorderColor):
+        * platform/graphics/chromium/LayerChromium.h:
+        (LayerChromium):
+        (WebCore::LayerChromium::backgroundColor):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawDebugBorderQuad):
+        (WebCore::LayerRendererChromium::drawSolidColorQuad):
+        * platform/graphics/chromium/cc/CCDebugBorderDrawQuad.cpp:
+        (WebCore::CCDebugBorderDrawQuad::create):
+        (WebCore::CCDebugBorderDrawQuad::CCDebugBorderDrawQuad):
+        * platform/graphics/chromium/cc/CCDebugBorderDrawQuad.h:
+        (CCDebugBorderDrawQuad):
+        (WebCore::CCDebugBorderDrawQuad::color):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        (WebCore::CCLayerImpl::setBackgroundColor):
+        (WebCore::CCLayerImpl::setDebugBorderColor):
+        (WebCore::CCLayerImpl::hasDebugBorders):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (CCLayerImpl):
+        (WebCore::CCLayerImpl::backgroundColor):
+        (WebCore::CCLayerImpl::debugBorderColor):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeHost::setBackgroundColor):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (WebCore::CCLayerTreeHostImpl::backgroundColor):
+        (WebCore::CCLayerTreeHostImpl::setBackgroundColor):
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        (WebCore::appendQuadInternal):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::appendQuadsToFillScreen):
+        * platform/graphics/chromium/cc/CCRenderPass.h:
+        (WebCore):
+        (CCRenderPass):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::appendQuads):
+        * platform/graphics/chromium/cc/CCSolidColorDrawQuad.cpp:
+        (WebCore::CCSolidColorDrawQuad::create):
+        (WebCore::CCSolidColorDrawQuad::CCSolidColorDrawQuad):
+        * platform/graphics/chromium/cc/CCSolidColorDrawQuad.h:
+        (CCSolidColorDrawQuad):
+        (WebCore::CCSolidColorDrawQuad::color):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::appendQuads):
+
 2012-06-27  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         IndexedDB: should make the LevelDB persistant to the directory indicated in PageGroupSettings::indexedDBDataBasePath

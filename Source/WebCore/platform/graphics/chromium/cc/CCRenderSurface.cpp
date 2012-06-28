@@ -281,7 +281,7 @@ void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sha
         int red = forReplica ? debugReplicaBorderColorRed : debugSurfaceBorderColorRed;
         int green = forReplica ?  debugReplicaBorderColorGreen : debugSurfaceBorderColorGreen;
         int blue = forReplica ? debugReplicaBorderColorBlue : debugSurfaceBorderColorBlue;
-        Color color(red, green, blue, debugSurfaceBorderAlpha);
+        SkColor color = SkColorSetARGB(debugSurfaceBorderAlpha, red, green, blue);
         quadList.appendSurface(CCDebugBorderDrawQuad::create(sharedQuadState, contentRect(), color, debugSurfaceBorderWidth));
     }
 

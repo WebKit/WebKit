@@ -26,10 +26,10 @@
 #ifndef CCLayerImpl_h
 #define CCLayerImpl_h
 
-#include "Color.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "Region.h"
+#include "SkColor.h"
 #include "TextStream.h"
 #include "cc/CCInputHandler.h"
 #include "cc/CCLayerAnimationController.h"
@@ -111,8 +111,8 @@ public:
     void setAnchorPointZ(float);
     float anchorPointZ() const { return m_anchorPointZ; }
 
-    void setBackgroundColor(const Color&);
-    Color backgroundColor() const { return m_backgroundColor; }
+    void setBackgroundColor(SkColor);
+    SkColor backgroundColor() const { return m_backgroundColor; }
 
     void setFilters(const WebKit::WebFilterOperations&);
     const WebKit::WebFilterOperations& filters() const { return m_filters; }
@@ -154,8 +154,8 @@ public:
     const WebKit::WebTransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
     // Debug layer border - visual effect only, do not change geometry/clipping/etc.
-    void setDebugBorderColor(Color);
-    Color debugBorderColor() const { return m_debugBorderColor; }
+    void setDebugBorderColor(SkColor);
+    SkColor debugBorderColor() const { return m_debugBorderColor; }
     void setDebugBorderWidth(float);
     float debugBorderWidth() const { return m_debugBorderWidth; }
     bool hasDebugBorders() const;
@@ -317,7 +317,7 @@ private:
     bool m_shouldScrollOnMainThread;
     bool m_haveWheelEventHandlers;
     Region m_nonFastScrollableRegion;
-    Color m_backgroundColor;
+    SkColor m_backgroundColor;
 
     // Whether the "back" of this layer should draw.
     bool m_doubleSided;
@@ -371,7 +371,7 @@ private:
     bool m_drawOpacityIsAnimating;
 
     // Debug borders.
-    Color m_debugBorderColor;
+    SkColor m_debugBorderColor;
     float m_debugBorderWidth;
 
     // Debug layer name.

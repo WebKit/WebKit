@@ -34,10 +34,10 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "Color.h"
 #include "FloatPoint.h"
 #include "Region.h"
 #include "RenderSurfaceChromium.h"
+#include "SkColor.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCOcclusionTracker.h"
 
@@ -105,8 +105,8 @@ public:
     void setAnchorPointZ(float);
     float anchorPointZ() const { return m_anchorPointZ; }
 
-    void setBackgroundColor(const Color&);
-    Color backgroundColor() const { return m_backgroundColor; }
+    void setBackgroundColor(SkColor);
+    SkColor backgroundColor() const { return m_backgroundColor; }
 
     // A layer's bounds are in logical, non-page-scaled pixels (however, the
     // root layer's bounds are in physical pixels).
@@ -215,7 +215,7 @@ public:
     virtual void bindContentsTexture() { }
     virtual bool needsContentsScale() const { return false; }
 
-    void setDebugBorderColor(const Color&);
+    void setDebugBorderColor(SkColor);
     void setDebugBorderWidth(float);
     void setDebugName(const String&);
 
@@ -359,8 +359,8 @@ private:
     bool m_nonFastScrollableRegionChanged;
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
-    Color m_backgroundColor;
-    Color m_debugBorderColor;
+    SkColor m_backgroundColor;
+    SkColor m_debugBorderColor;
     float m_debugBorderWidth;
     String m_debugName;
     float m_opacity;

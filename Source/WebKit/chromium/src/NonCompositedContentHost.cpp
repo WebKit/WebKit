@@ -62,7 +62,7 @@ NonCompositedContentHost::~NonCompositedContentHost()
 
 void NonCompositedContentHost::setBackgroundColor(const WebCore::Color& color)
 {
-    m_graphicsLayer->platformLayer()->setBackgroundColor(color);
+    m_graphicsLayer->platformLayer()->setBackgroundColor(color.rgb());
 }
 
 void NonCompositedContentHost::setOpaque(bool opaque)

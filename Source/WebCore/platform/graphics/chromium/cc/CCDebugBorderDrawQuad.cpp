@@ -29,18 +29,18 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCDebugBorderDrawQuad> CCDebugBorderDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const Color& color, int width)
+PassOwnPtr<CCDebugBorderDrawQuad> CCDebugBorderDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color, int width)
 {
     return adoptPtr(new CCDebugBorderDrawQuad(sharedQuadState, quadRect, color, width));
 }
 
-CCDebugBorderDrawQuad::CCDebugBorderDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const Color& color, int width)
+CCDebugBorderDrawQuad::CCDebugBorderDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color, int width)
     : CCDrawQuad(sharedQuadState, CCDrawQuad::DebugBorder, quadRect)
     , m_color(color)
     , m_width(width)
 {
     m_quadOpaque = false;
-    if (m_color.hasAlpha())
+    if (SkColorGetA(m_color) < 255)
         m_needsBlending = true;
 }
 

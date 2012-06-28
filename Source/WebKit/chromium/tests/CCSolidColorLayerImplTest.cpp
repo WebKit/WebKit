@@ -62,7 +62,7 @@ TEST(CCSolidColorLayerImplTest, verifyCorrectBackgroundColorInQuad)
 {
     DebugScopedSetImplThread scopedImplThread;
 
-    const Color testColor = 0xFFA55AFF;
+    SkColor testColor = 0xFFA55AFF;
 
     MockCCQuadCuller quadCuller;
     IntSize layerSize = IntSize(100, 100);

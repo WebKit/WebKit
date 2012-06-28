@@ -26,7 +26,7 @@
 #ifndef CCDebugBorderDrawQuad_h
 #define CCDebugBorderDrawQuad_h
 
-#include "Color.h"
+#include "SkColor.h"
 #include "cc/CCDrawQuad.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -35,15 +35,15 @@ namespace WebCore {
 class CCDebugBorderDrawQuad : public CCDrawQuad {
     WTF_MAKE_NONCOPYABLE(CCDebugBorderDrawQuad);
 public:
-    static PassOwnPtr<CCDebugBorderDrawQuad> create(const CCSharedQuadState*, const IntRect&, const Color&, int width);
+    static PassOwnPtr<CCDebugBorderDrawQuad> create(const CCSharedQuadState*, const IntRect&, SkColor, int width);
 
-    const Color& color() const { return m_color; };
+    SkColor color() const { return m_color; };
     int width() const { return m_width; }
 
 private:
-    CCDebugBorderDrawQuad(const CCSharedQuadState*, const IntRect&, const Color&, int width);
+    CCDebugBorderDrawQuad(const CCSharedQuadState*, const IntRect&, SkColor, int width);
 
-    Color m_color;
+    SkColor m_color;
     int m_width;
 };
 

@@ -25,11 +25,11 @@
 #ifndef CCLayerTreeHost_h
 #define CCLayerTreeHost_h
 
-#include "Color.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsTypes3D.h"
 #include "IntRect.h"
 #include "RateLimiter.h"
+#include "SkColor.h"
 #include "cc/CCAnimationEvents.h"
 #include "cc/CCOcclusionTracker.h"
 #include "cc/CCProxy.h"
@@ -232,7 +232,7 @@ public:
 
     void setPageScaleFactorAndLimits(float pageScaleFactor, float minPageScaleFactor, float maxPageScaleFactor);
 
-    void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
+    void setBackgroundColor(SkColor color) { m_backgroundColor = color; }
 
     void setHasTransparentBackground(bool transparent) { m_hasTransparentBackground = transparent; }
 
@@ -320,7 +320,7 @@ private:
     float m_pageScaleFactor;
     float m_minPageScaleFactor, m_maxPageScaleFactor;
     bool m_triggerIdlePaints;
-    Color m_backgroundColor;
+    SkColor m_backgroundColor;
     bool m_hasTransparentBackground;
 
     TextureList m_deleteTextureAfterCommitList;

@@ -25,7 +25,7 @@
 #ifndef CCLayerTreeHostImpl_h
 #define CCLayerTreeHostImpl_h
 
-#include "Color.h"
+#include "SkColor.h"
 #include "cc/CCAnimationEvents.h"
 #include "cc/CCInputHandler.h"
 #include "cc/CCLayerSorter.h"
@@ -163,8 +163,8 @@ public:
 
     void startPageScaleAnimation(const IntSize& tragetPosition, bool useAnchor, float scale, double durationSec);
 
-    const Color& backgroundColor() const { return m_backgroundColor; }
-    void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
+    SkColor backgroundColor() const { return m_backgroundColor; }
+    void setBackgroundColor(SkColor color) { m_backgroundColor = color; }
 
     bool hasTransparentBackground() const { return m_hasTransparentBackground; }
     void setHasTransparentBackground(bool transparent) { m_hasTransparentBackground = transparent; }
@@ -246,7 +246,7 @@ private:
     float m_sentPageScaleDelta;
     float m_minPageScale, m_maxPageScale;
 
-    Color m_backgroundColor;
+    SkColor m_backgroundColor;
     bool m_hasTransparentBackground;
 
     // If this is true, it is necessary to traverse the layer tree ticking the animators.

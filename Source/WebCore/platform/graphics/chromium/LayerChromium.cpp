@@ -66,7 +66,8 @@ LayerChromium::LayerChromium()
     , m_haveWheelEventHandlers(false)
     , m_nonFastScrollableRegionChanged(false)
     , m_anchorPoint(0.5, 0.5)
-    , m_backgroundColor(0, 0, 0, 0)
+    , m_backgroundColor(0)
+    , m_debugBorderColor(0)
     , m_debugBorderWidth(0)
     , m_opacity(1.0)
     , m_anchorPointZ(0)
@@ -277,7 +278,7 @@ void LayerChromium::setAnchorPointZ(float anchorPointZ)
     setNeedsCommit();
 }
 
-void LayerChromium::setBackgroundColor(const Color& backgroundColor)
+void LayerChromium::setBackgroundColor(SkColor backgroundColor)
 {
     if (m_backgroundColor == backgroundColor)
         return;
@@ -597,7 +598,7 @@ PassOwnPtr<CCLayerImpl> LayerChromium::createCCLayerImpl()
     return CCLayerImpl::create(m_layerId);
 }
 
-void LayerChromium::setDebugBorderColor(const Color& color)
+void LayerChromium::setDebugBorderColor(SkColor color)
 {
     m_debugBorderColor = color;
     setNeedsCommit();

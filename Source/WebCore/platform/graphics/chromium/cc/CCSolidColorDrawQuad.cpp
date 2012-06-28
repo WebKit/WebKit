@@ -29,16 +29,16 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCSolidColorDrawQuad> CCSolidColorDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const Color& color)
+PassOwnPtr<CCSolidColorDrawQuad> CCSolidColorDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color)
 {
     return adoptPtr(new CCSolidColorDrawQuad(sharedQuadState, quadRect, color));
 }
 
-CCSolidColorDrawQuad::CCSolidColorDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const Color& color)
+CCSolidColorDrawQuad::CCSolidColorDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color)
     : CCDrawQuad(sharedQuadState, CCDrawQuad::SolidColor, quadRect)
     , m_color(color)
 {
-    if (m_color.hasAlpha())
+    if (SkColorGetA(m_color) < 255)
         m_quadOpaque = false;
     else
         m_opaqueRect = quadRect;

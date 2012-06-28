@@ -27,7 +27,6 @@
 
 #include "cc/CCRenderPass.h"
 
-#include "Color.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCQuadCuller.h"
 #include "cc/CCSharedQuadState.h"
@@ -83,9 +82,9 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, const CC
     m_sharedQuadStateList.append(replicaSharedQuadState.release());
 }
 
-void CCRenderPass::appendQuadsToFillScreen(CCLayerImpl* rootLayer, const Color& screenBackgroundColor, const CCOcclusionTrackerImpl& occlusionTracker)
+void CCRenderPass::appendQuadsToFillScreen(CCLayerImpl* rootLayer, SkColor screenBackgroundColor, const CCOcclusionTrackerImpl& occlusionTracker)
 {
-    if (!rootLayer || !screenBackgroundColor.isValid())
+    if (!rootLayer || !screenBackgroundColor)
         return;
 
     Region fillRegion = occlusionTracker.computeVisibleRegionInScreen();

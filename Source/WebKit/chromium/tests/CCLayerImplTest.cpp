@@ -97,7 +97,7 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     IntPoint arbitraryIntPoint = IntPoint(333, 444);
     IntRect arbitraryIntRect = IntRect(arbitraryIntPoint, arbitraryIntSize);
     FloatRect arbitraryFloatRect = FloatRect(arbitraryFloatPoint, FloatSize(1.234f, 5.678f));
-    Color arbitraryColor = Color(10, 20, 30);
+    SkColor arbitraryColor = SkColorSetRGB(10, 20, 30);
     WebTransformationMatrix arbitraryTransform;
     arbitraryTransform.scale3d(0.1, 0.2, 0.3);
     WebFilterOperations arbitraryFilters;
@@ -124,7 +124,7 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setDebugBorderColor(arbitraryColor));
     EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setDebugBorderWidth(arbitraryNumber));
     EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setDrawsContent(true));
-    EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setBackgroundColor(Color::gray));
+    EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setBackgroundColor(SK_ColorGRAY));
     EXECUTE_AND_VERIFY_ONLY_LAYER_CHANGED(root->setBackgroundFilters(arbitraryFilters));
 
     // Changing these properties only affects how render surface is drawn

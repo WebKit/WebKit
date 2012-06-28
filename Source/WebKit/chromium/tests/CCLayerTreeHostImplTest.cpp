@@ -1402,7 +1402,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
 TEST_F(CCLayerTreeHostImplTest, viewportCovered)
 {
     m_hostImpl->initializeLayerRenderer(createContext(), UnthrottledUploader);
-    m_hostImpl->setBackgroundColor(Color::gray);
+    m_hostImpl->setBackgroundColor(SK_ColorGRAY);
 
     IntSize viewportSize(1000, 1000);
     m_hostImpl->setViewportSize(viewportSize);
@@ -1631,7 +1631,7 @@ public:
 
     virtual void appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&) OVERRIDE
     {
-        const Color gray(100, 100, 100);
+        SkColor gray = SkColorSetRGB(100, 100, 100);
         IntRect quadRect(0, 0, 5, 5);
         OwnPtr<CCDrawQuad> myQuad = CCSolidColorDrawQuad::create(sharedQuadState, quadRect, gray);
         quadList.append(myQuad.release());
@@ -2383,7 +2383,7 @@ TEST_F(CCLayerTreeHostImplTest, hasTransparentBackground)
 
     // Run test case
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = createLayerTreeHost(false, context.release(), CCLayerImpl::create(1));
-    myHostImpl->setBackgroundColor(Color::white);
+    myHostImpl->setBackgroundColor(SK_ColorWHITE);
 
     // Verify one quad is drawn when transparent background set is not set.
     myHostImpl->setHasTransparentBackground(false);
@@ -2988,7 +2988,7 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
         while (*currentChar != '\n' && *currentChar != '\0') {
             if (*currentChar == 's') {
                 // Solid color draw quad
-                OwnPtr<CCDrawQuad> quad = CCSolidColorDrawQuad::create(testData.sharedQuadState.get(), IntRect(0, 0, 10, 10), Color::white);
+                OwnPtr<CCDrawQuad> quad = CCSolidColorDrawQuad::create(testData.sharedQuadState.get(), IntRect(0, 0, 10, 10), SK_ColorWHITE);
                 
                 static_cast<CCTestRenderPass*>(renderPass.get())->appendQuad(quad.release());
                 currentChar++;
