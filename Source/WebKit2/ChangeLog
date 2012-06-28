@@ -1,3 +1,23 @@
+2012-06-28  John Sullivan  <sullivan@apple.com>
+
+        <https://bugs.webkit.org/show_bug.cgi?id=90216>
+        <rdar://problem/11766518>
+        Undo handling in WebKit2 is not robust against some page-closing code paths
+
+        Reviewed by Enrica Casucci.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        Declared public function viewWillMoveToAnotherWindow().
+        
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::viewWillMoveToAnotherWindow):
+        New function, calls clearAllEditCommands() to remove any Undo actions from the stack.
+        This guarantees that no Undo actions will be abandoned when the PageClientImpl is dealloc'ed.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewWillMoveToWindow:]):
+        Now informs PageClientImpl via new function PageClientImpl::viewWillMoveToAnotherWindow().
+
 2012-06-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add C API to inspect a Web Intent service

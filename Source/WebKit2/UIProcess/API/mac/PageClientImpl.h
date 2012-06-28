@@ -44,6 +44,8 @@ class PageClientImpl : public PageClient {
 public:
     static PassOwnPtr<PageClientImpl> create(WKView*);
     virtual ~PageClientImpl();
+    
+    void viewWillMoveToAnotherWindow();
 
 private:
     PageClientImpl(WKView*);

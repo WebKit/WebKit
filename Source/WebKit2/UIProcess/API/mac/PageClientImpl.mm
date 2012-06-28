@@ -201,6 +201,11 @@ bool PageClientImpl::isViewInWindow()
     return [m_wkView window];
 }
 
+void PageClientImpl::viewWillMoveToAnotherWindow()
+{
+    clearAllEditCommands();
+}
+
 LayerHostingMode PageClientImpl::viewLayerHostingMode()
 {
 #if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
