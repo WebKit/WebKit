@@ -607,10 +607,10 @@ static inline bool shouldIgnoreAttributeCase(const Element* e)
     return e && e->document()->isHTMLDocument() && e->isHTMLElement();
 }
 
-const AtomicString& Element::getAttribute(const String& name) const
+const AtomicString& Element::getAttribute(const AtomicString& name) const
 {
     bool ignoreCase = shouldIgnoreAttributeCase(this);
-    
+
     // Update the 'style' attribute if it's invalid and being requested:
     if (!isStyleAttributeValid() && equalPossiblyIgnoringCase(name, styleAttr.localName(), ignoreCase))
         updateStyleAttribute();

@@ -1,3 +1,90 @@
+2012-06-28  Kentaro Hara  <haraken@chromium.org>
+
+        Optimize Dromaeo/dom-attr.html by speeding up Element::getAttribute()
+        https://bugs.webkit.org/show_bug.cgi?id=90174
+
+        Reviewed by Adam Barth.
+
+        This patch improves performance of Dromaeo/dom-attr.html by 4.0%.
+        The patch improves performance of getAttribute() and JavaScript
+        property setter for DOM objects (e.g. 'div.foo = 123').
+        The performance improvement becomes larger, as the number of
+        attributes defined on the DOM object increases.
+
+        Without the patch in Chromium/Linux (runs/s)
+        7679.4, 7739.7, 7634.0, 7726.4, 7663.9
+
+        With the patch in Chromium/Linux (runs/s)
+        7977.7, 8032.2, 8112.8, 7948.1, 7924.5
+
+        This patch just changes a type of 'name' of Element::getAttribute(String& name)
+        from String& to AtomicString&.
+
+        The key observation is that AtomicString(String& x) is faster than
+        operator==(String& x, AtomicString& y). AtomicString(String& x) calculates
+        a hash of a given String and adds it to a hash table. The calculation
+        complexity is O(the length of x). On the other hand,
+        operator==(String& x, AtomicString& y) compares a String and an AtomicString by
+        StringImpl::equal(StringImpl*, StringImpl*), the calculation complexity of
+        which is O(2 * min(the length of x, the length of y)).
+        In addition, the comparison logic is more complicated than the logic
+        of calculating the hash. Consequently, AtomicString(String& x) is
+        faster than operator==(String& x, AtomicString& y).
+
+        Keeping that in mind, let's estimate the performance of
+        Element::getAttribute("class") for <div id="A" lang="B" title="C" class="D" dir="E">.
+        Here "id", "lang", "title", "class" and "dir" are stored as AtomicStrings
+        in QualifiedName::localName(). Initially, "class" in Element::getAttribute("class")
+        is a String.
+
+        If we use Element::getAttribute(String& name) (i.e. without the patch),
+        ElementAttributeData::getAttributeItemIndex() executes four
+        operator==(String&, AtomicString&) by the time it finds the "class" attribute:
+
+        (1) if ("class" == "id")       // operator==(String&, AtomicString&)
+        (2) if ("class" == "lang")     // operator==(String&, AtomicString&)
+        (3) if ("class" == "title")    // operator==(String&, AtomicString&)
+        (4) if ("class" == "class")    // operator==(String&, AtomicString&)
+
+        On the other hand, if we use Element::getAttribute(AtomicString& name)
+        (i.e. with the patch), ElementAttributeData::getAttributeItemIndex()
+        executes one AtomicString(String&) and four operator==(AtomicString&, AtomicString&)
+        by the time it finds the "class" attribute:
+
+        (1) AtomicString("class")      // AtomicString(String&)
+        (2) if ("class" == "id")       // operator==(AtomicString&, AtomicString&)
+        (3) if ("class" == "lang")     // operator==(AtomicString&, AtomicString&)
+        (4) if ("class" == "title")    // operator==(AtomicString&, AtomicString&)
+        (5) if ("class" == "class")    // operator==(AtomicString&, AtomicString&)
+
+        Considering that the overhead of operator==(AtomicString&, AtomicString&) is close
+        to 0 since it is just a pointer comparison, the latter approach is faster than
+        the former approach.
+
+        Performance improvement will be large for elements that have multiple attributes,
+        but it is faster even for elements that have only one attribute.
+        For exmaple, Dromaeo/dom-attr.html tests getAttribute() for an element that has
+        only one attribute, the result shows 4.0% improvement.
+
+        Another example optimized by this patch is 'div.foo = 123', where foo is not
+        an attribute of div. In this case, before 123 is set, JavaScript calls back
+        Element::getAttribute() to check whether 'foo' is defined on div by
+        scanning all the attributes of div.
+
+        No tests. No change in behavior.
+
+        * dom/Element.cpp:
+        (WebCore::Element::getAttribute):
+        * dom/Element.h:
+        (Element):
+        (WebCore::Element::getAttributeItemIndex):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::getAttributeItemIndexSlowCase):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+        (WebCore::ElementAttributeData::getAttributeItem):
+        (WebCore::ElementAttributeData::getAttributeItemIndex):
+
 2012-06-28  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Don't dispatch end event after ActiveDOMObject::stop()

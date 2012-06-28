@@ -230,7 +230,7 @@ void ElementAttributeData::detachAttrObjectsFromElement(Element* element)
     ASSERT(!element->hasAttrList());
 }
 
-size_t ElementAttributeData::getAttributeItemIndexSlowCase(const String& name, bool shouldIgnoreAttributeCase) const
+size_t ElementAttributeData::getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
     // Continue to checking case-insensitively and/or full namespaced names if necessary:
     for (unsigned i = 0; i < m_attributes.size(); ++i) {

@@ -82,7 +82,7 @@ public:
     Attribute* attributeItem(unsigned index) const { return &const_cast<ElementAttributeData*>(this)->m_attributes[index]; }
     Attribute* getAttributeItem(const QualifiedName& name) const { return findAttributeInVector(m_attributes, name); }
     size_t getAttributeItemIndex(const QualifiedName&) const;
-    size_t getAttributeItemIndex(const String& name, bool shouldIgnoreAttributeCase) const;
+    size_t getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
 
     // These functions do no error checking.
     void addAttribute(const Attribute&, Element*, EInUpdateStyleAttribute = NotInUpdateStyleAttribute);
@@ -122,8 +122,8 @@ private:
     Vector<Attribute> clonedAttributeVector() const { return m_attributes; }
 
     void detachAttrObjectsFromElement(Element*);
-    Attribute* getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const;
-    size_t getAttributeItemIndexSlowCase(const String& name, bool shouldIgnoreAttributeCase) const;
+    Attribute* getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
+    size_t getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
     void cloneDataFrom(const ElementAttributeData& sourceData, const Element& sourceElement, Element& targetElement);
     void clearAttributes(Element*);
     void replaceAttribute(size_t index, const Attribute&, Element*);
@@ -145,7 +145,7 @@ inline void ElementAttributeData::removeAttribute(const QualifiedName& name, Ele
     return;
 }
 
-inline Attribute* ElementAttributeData::getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const
+inline Attribute* ElementAttributeData::getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
     size_t index = getAttributeItemIndex(name, shouldIgnoreAttributeCase);
     if (index != notFound)
@@ -164,7 +164,7 @@ inline size_t ElementAttributeData::getAttributeItemIndex(const QualifiedName& n
 
 // We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
 // can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
-inline size_t ElementAttributeData::getAttributeItemIndex(const String& name, bool shouldIgnoreAttributeCase) const
+inline size_t ElementAttributeData::getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
     unsigned len = length();
     bool doSlowCheck = shouldIgnoreAttributeCase;
