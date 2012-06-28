@@ -27,6 +27,8 @@
 #ifndef LayerTreeHostGtk_h
 #define LayerTreeHostGtk_h
 
+#if USE(TEXTURE_MAPPER_GL)
+
 #include "LayerTreeContext.h"
 #include "LayerTreeHost.h"
 #include "TextureMapperLayer.h"
@@ -103,5 +105,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif
 
 #endif // LayerTreeHostGtk_h

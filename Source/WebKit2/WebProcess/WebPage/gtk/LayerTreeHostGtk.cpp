@@ -27,6 +27,8 @@
 #include "config.h"
 #include "LayerTreeHostGtk.h"
 
+#if USE(TEXTURE_MAPPER_GL)
+
 #include "DrawingAreaImpl.h"
 #include "TextureMapperGL.h"
 #include "WebPage.h"
@@ -392,3 +394,5 @@ void LayerTreeHostGtk::cancelPendingLayerFlush()
 }
 
 } // namespace WebKit
+
+#endif

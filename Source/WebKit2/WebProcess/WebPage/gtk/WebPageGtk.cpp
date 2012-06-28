@@ -55,7 +55,9 @@ void WebPage::platformInitialize()
     GOwnPtr<gchar> plugID(atk_plug_get_id(ATK_PLUG(m_accessibilityObject)));
     send(Messages::WebPageProxy::BindAccessibilityTree(String(plugID.get())));
 
+#if USE(TEXTURE_MAPPER_GL)
     m_nativeWindowHandle = 0;
+#endif
 }
 
 void WebPage::updateAccessibilityTree()
