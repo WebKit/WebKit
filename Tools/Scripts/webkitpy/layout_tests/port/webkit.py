@@ -61,7 +61,7 @@ class WebKitPort(Port):
         if self.get_option('guard_malloc'):
             # FIXME: --guard-malloc is only supported on Mac, so this logic should be in mac.py.
             return 350 * 1000
-        if self.get_option.configuration == 'Debug':
+        if self.get_option('configuration') == 'Debug':
             # FIXME: the generic code in run_webkit_tests.py multiplies this by 2 :(.
             # We want to use the same timeout for both release and debug.
             return 17.5 * 1000

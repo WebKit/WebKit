@@ -1,5 +1,14 @@
 2012-06-27  Dirk Pranke  <dpranke@chromium.org>
 
+        Fix typo in r121384 :(
+
+        Unreviewed, build fix.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort.default_test_timeout_ms):
+
+2012-06-27  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: default timeout for debug bots broke in r121363
         https://bugs.webkit.org/show_bug.cgi?id=90112
 
