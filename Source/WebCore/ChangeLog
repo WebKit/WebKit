@@ -1,3 +1,22 @@
+2012-06-28  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] plugin is loaded to the web process via MainResourceLoader::substituteMIMETypeFromPluginDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=86489
+
+        Reviewed by Simon Hausmann.
+
+        Removed the substituteMIMETypeFromPluginDatabase quirk from
+        MainResourceLoader. It would be possible to fix it in a way
+        that is compatible with WebKit2, but given that it was a Qt
+        only fix, and that it's not clear that we still need it, and
+        it's not even work currently, I decided to remove it. At least
+        it is -1 platform ifdef in common code.
+
+        Just removed a non-tested quirk, no test needed.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveResponse):
+
 2012-06-28  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Optimize Integer::New() by caching persistent handles for small integers

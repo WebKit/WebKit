@@ -352,29 +352,6 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction policy)
     deref(); // balances ref in didReceiveResponse
 }
 
-#if PLATFORM(QT)
-void MainResourceLoader::substituteMIMETypeFromPluginDatabase(const ResourceResponse& r)
-{
-    if (!m_frame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
-        return;
-
-    String filename = r.url().lastPathComponent();
-    if (filename.endsWith('/'))
-        return;
-
-    size_t extensionPos = filename.reverseFind('.');
-    if (extensionPos == notFound)
-        return;
-
-    String extension = filename.substring(extensionPos + 1);
-    String mimeType = PluginDatabase::installedPlugins()->MIMETypeForExtension(extension);
-    if (!mimeType.isEmpty()) {
-        ResourceResponse* response = const_cast<ResourceResponse*>(&r);
-        response->setMimeType(mimeType);
-    }
-}
-#endif
-
 void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
 {
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForMainResponse(request(), r))
@@ -397,11 +374,6 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
     // See <rdar://problem/6304600> for more details.
 #if !USE(CF)
     ASSERT(shouldLoadAsEmptyDocument(r.url()) || !defersLoading());
-#endif
-
-#if PLATFORM(QT)
-    if (r.mimeType() == "application/octet-stream")
-        substituteMIMETypeFromPluginDatabase(r);
 #endif
 
     if (m_loadingMultipartContent) {
