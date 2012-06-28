@@ -1,5 +1,14 @@
 2012-06-28  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [WK2] New fast/events/drag-display-none-element.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=90177
+
+        Unreviewed gardening, skip the new failing test.
+
+        * platform/wk2/Skipped:
+
+2012-06-28  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] css3/filters/huge-region-composited.html makes css3/filters/huge-region.html crash
         https://bugs.webkit.org/show_bug.cgi?id=90165
 

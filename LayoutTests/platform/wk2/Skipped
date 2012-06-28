@@ -1412,6 +1412,10 @@ platform/mac/fast/events/objc-keyboard-event-creation.html
 # in its WebPreferences implementation.
 fast/parser/pre-html5-parser-quirks.html
 
+# [WK2] New fast/events/drag-display-none-element.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=90177
+fast/events/drag-display-none-element.html
+
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################
 
