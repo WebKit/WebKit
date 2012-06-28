@@ -453,6 +453,9 @@ public:
     // resulting in the changed setting being ignored.
     void setTextSubpixelPositioning(const CppArgumentList&, CppVariant*);
 
+    // Used to set the device scale factor.
+    void setBackingScaleFactor(const CppArgumentList&, CppVariant*);
+
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }

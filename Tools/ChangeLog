@@ -1,3 +1,24 @@
+2012-06-28  Terry Anderson  <tdanderson@chromium.org>
+
+        [Chromium] Chromium's LayoutTestController is missing setBackingScaleFactor
+        https://bugs.webkit.org/show_bug.cgi?id=83635
+
+        Reviewed by Adam Barth.
+
+        Added InvokeCallbackTask, a new derived class of MethodTask. When
+        setBackingScaleFactor is called, a call to setDeviceScaleFactor in
+        WebView is made and then postTask is used to invoke the callback
+        function specified in testRunner.setBackingScaleFactor. 
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (InvokeCallbackTask):
+        (InvokeCallbackTask::InvokeCallbackTask):
+        (InvokeCallbackTask::runIfValid):
+        (LayoutTestController::setBackingScaleFactor):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController):
+
 2012-06-28  Ojan Vafai  <ojan@chromium.org>
 
         Make rebaseline-test and rebaseline-expectations work for non-Chromium ports

@@ -73,10 +73,7 @@
 #include <limits>
 #include <sstream>
 #include <wtf/text/WTFString.h>
-
-#if OS(WINDOWS)
 #include <wtf/OwnArrayPtr.h>
-#endif
 
 #if OS(LINUX) || OS(ANDROID)
 #include "linux/WebFontRendering.h"
@@ -221,6 +218,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setScrollbarPolicy", &LayoutTestController::setScrollbarPolicy);
     bindMethod("setSelectTrailingWhitespaceEnabled", &LayoutTestController::setSelectTrailingWhitespaceEnabled);
     bindMethod("setTextSubpixelPositioning", &LayoutTestController::setTextSubpixelPositioning);
+    bindMethod("setBackingScaleFactor", &LayoutTestController::setBackingScaleFactor);
     bindMethod("setSmartInsertDeleteEnabled", &LayoutTestController::setSmartInsertDeleteEnabled);
     bindMethod("setStopProvisionalFrameLoads", &LayoutTestController::setStopProvisionalFrameLoads);
     bindMethod("setTabKeyCyclesThroughElements", &LayoutTestController::setTabKeyCyclesThroughElements);
@@ -2209,6 +2207,40 @@ void LayoutTestController::setTextSubpixelPositioning(const CppArgumentList& arg
         WebFontRendering::setSubpixelPositioning(arguments[0].value.boolValue);
 #endif
     result->setNull();
+}
+
+class InvokeCallbackTask : public MethodTask<LayoutTestController> {
+public:
+    InvokeCallbackTask(LayoutTestController* object, PassOwnArrayPtr<CppVariant> callbackArguments, uint32_t numberOfArguments)
+        : MethodTask<LayoutTestController>(object)
+        , m_callbackArguments(callbackArguments)
+        , m_numberOfArguments(numberOfArguments)
+    {
+    }
+
+    virtual void runIfValid()
+    {
+        CppVariant invokeResult;
+        m_callbackArguments[0].invokeDefault(m_callbackArguments.get(), m_numberOfArguments, invokeResult);
+    }
+
+private:
+    OwnArrayPtr<CppVariant> m_callbackArguments;
+    uint32_t m_numberOfArguments;
+};
+
+void LayoutTestController::setBackingScaleFactor(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isObject())
+        return;
+    
+    float value = arguments[0].value.doubleValue;
+    m_shell->webView()->setDeviceScaleFactor(value);
+
+    OwnArrayPtr<CppVariant> callbackArguments = adoptArrayPtr(new CppVariant[1]);
+    callbackArguments[0].set(arguments[1]);
+    result->setNull();
+    postTask(new InvokeCallbackTask(this, callbackArguments.release(), 1));
 }
 
 void LayoutTestController::setPluginsEnabled(const CppArgumentList& arguments, CppVariant* result)
