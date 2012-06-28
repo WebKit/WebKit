@@ -1,3 +1,38 @@
+2012-06-28  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform] Implement functions for localized time format information
+        https://bugs.webkit.org/show_bug.cgi?id=89965
+
+        Reviewed by Kent Tamura.
+
+        This patch introduces three functions for time format:
+          1. localizedTimeFormatText()
+          2. localizedShortTimeFormatText()
+          2. timeAMPMLabels()
+        for input type "time" if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) is true.
+
+        Having both localizedTimeFormat and localizedShortTimeFormat is for
+        displaying only two fields hour and minute when step >= 60. There is
+        no way to remove second field from "h:m:s" pattern string. We don't
+        know whether ":" after "m" belongs minute or second field.
+
+        Test: WebKit/chromium/tests/LocalizedDateICUTest.cpp
+
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::LocaleICU):
+        (WebCore::createFallbackAMPMLabels): Added.
+        (WebCore::LocaleICU::initializeDateTimeFormat):  Added.
+        (WebCore::LocaleICU::localizedTimeFormatText):  Added.
+        (WebCore::LocaleICU::localizedShortTimeFormatText):  Added.
+        (WebCore::LocaleICU::timeAMPMLabels):  Added.
+        * platform/text/LocaleICU.h:
+        (LocaleICU):
+        * platform/text/LocalizedDate.h:
+        * platform/text/LocalizedDateICU.cpp:
+        (WebCore::localizedTimeFormatText):  Added.
+        (WebCore::localizedShortTimeFormatText):  Added.
+        (WebCore::timeAMPMLabels):  Added.
+
 2012-06-27  Kentaro Hara  <haraken@chromium.org>
 
         Performance: Optimize Dromaeo/dom-query.html by caching NodeRareData on Document

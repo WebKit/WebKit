@@ -51,6 +51,11 @@ LocaleICU::LocaleICU(const char* locale)
 #if ENABLE(CALENDAR_PICKER)
     , m_firstDayOfWeek(0)
 #endif
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+    , m_mediumTimeFormat(0)
+    , m_shortTimeFormat(0)
+    , m_didCreateTimeFormat(false)
+#endif
 {
 }
 
@@ -317,7 +322,7 @@ String LocaleICU::formatLocalizedDate(const DateComponents& dateComponents)
     return String::adopt(buffer);
 }
 
-#if ENABLE(CALENDAR_PICKER)
+#if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
 static String getDateFormatPattern(const UDateFormat* dateFormat)
 {
     if (!dateFormat)
@@ -334,7 +339,9 @@ static String getDateFormatPattern(const UDateFormat* dateFormat)
         return emptyString();
     return String::adopt(buffer);
 }
+#endif
 
+#if ENABLE(CALENDAR_PICKER)
 static inline bool isICUYearSymbol(UChar letter)
 {
     return letter == 'y' || letter == 'Y';
@@ -499,6 +506,54 @@ String LocaleICU::localizedDecimalSeparator()
 {
     initializeDecimalFormat();
     return m_decimalSymbols[DecimalSeparatorIndex];
+}
+
+static PassOwnPtr<Vector<String> > createFallbackAMPMLabels()
+{
+    OwnPtr<Vector<String> > labels = adoptPtr(new Vector<String>());
+    labels->reserveCapacity(2);
+    labels->append("AM");
+    labels->append("PM");
+    return labels.release();
+}
+
+void LocaleICU::initializeDateTimeFormat()
+{
+    if (m_didCreateTimeFormat)
+        return;
+
+    // We assume ICU medium time pattern and short time pattern are compatible
+    // with LDML, because ICU specific pattern character "V" doesn't appear
+    // in both medium and short time pattern.
+    m_mediumTimeFormat = openDateFormat(UDAT_MEDIUM, UDAT_NONE);
+    m_localizedTimeFormatText = getDateFormatPattern(m_mediumTimeFormat);
+
+    m_shortTimeFormat = openDateFormat(UDAT_SHORT, UDAT_NONE);
+    m_localizedShortTimeFormatText = getDateFormatPattern(m_shortTimeFormat);
+
+    m_timeAMPMLabels = createLabelVector(m_mediumTimeFormat, UDAT_AM_PMS, UCAL_AM, 2);
+    if (!m_timeAMPMLabels)
+        m_timeAMPMLabels = createFallbackAMPMLabels();
+
+    m_didCreateTimeFormat = true;
+}
+
+String LocaleICU::localizedTimeFormatText()
+{
+    initializeDateTimeFormat();
+    return m_localizedTimeFormatText;
+}
+
+String LocaleICU::localizedShortTimeFormatText()
+{
+    initializeDateTimeFormat();
+    return m_localizedShortTimeFormatText;
+}
+
+const Vector<String>& LocaleICU::timeAMPMLabels()
+{
+    initializeDateTimeFormat();
+    return *m_timeAMPMLabels;
 }
 
 #endif

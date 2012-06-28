@@ -123,6 +123,7 @@
             'tests/LevelDBTest.cpp',
             'tests/LinkHighlightTest.cpp',
             'tests/ListenerLeakTest.cpp',
+            'tests/LocalizedDateICUTest.cpp',
             'tests/LocalizedNumberICUTest.cpp',
             'tests/MockCCQuadCuller.h',
             'tests/OpaqueRectTrackingContentLayerDelegateTest.cpp',

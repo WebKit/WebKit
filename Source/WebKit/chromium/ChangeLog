@@ -1,3 +1,27 @@
+2012-06-28  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform] Implement functions for localized time format information
+        https://bugs.webkit.org/show_bug.cgi?id=89965
+
+        Reviewed by Kent Tamura.
+
+        This patch adds new test LocalizedDateICUTest if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+        is true.
+
+        * WebKit.gypi:
+        * tests/LocalizedDateICUTest.cpp: Added.
+        (LocalizedDateICUTest):
+        (Labels):
+        (LocalizedDateICUTest::Labels::Labels):
+        (LocalizedDateICUTest::Labels::operator==):
+        (LocalizedDateICUTest::Labels::toString):
+        (LocalizedDateICUTest::labels):
+        (LocalizedDateICUTest::localizedDateFormatText):
+        (LocalizedDateICUTest::localizedShortDateFormatText):
+        (LocalizedDateICUTest::timeAMPMLabels):
+        (operator<<):
+        (TEST_F):
+
 2012-06-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121405.
