@@ -1,3 +1,30 @@
+2012-06-27  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Selection overlay can become visible after it has been hidden
+        https://bugs.webkit.org/show_bug.cgi?id=90105
+
+        Reviewed by George Staikos.
+
+        When SelectionOverlay::hide is called from UI thread,
+        rather than setting the override opacity, dispatch to the
+        WebKit thread, which removes the overlay (normal case).
+
+        Internal PR164183.
+        Internally Reviewed by: Arvid Nilsson.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::~WebPagePrivate):
+        (BlackBerry::WebKit::WebPage::selectionOverlay):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * Api/WebSelectionOverlay.h:
+        * WebKitSupport/SelectionOverlay.cpp:
+        (BlackBerry::WebKit::SelectionOverlay::SelectionOverlay):
+        (BlackBerry::WebKit::SelectionOverlay::hide):
+        * WebKitSupport/SelectionOverlay.h:
+        (BlackBerry::WebKit::SelectionOverlay::create):
+        (SelectionOverlay):
+
 2012-06-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSLock should be per-JSGlobalData

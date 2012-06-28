@@ -23,6 +23,7 @@
 #include "SelectionOverlay.h"
 
 #include "GraphicsContext.h"
+#include "LayerMessage.h"
 #include "Path.h"
 #include "PlatformContextSkia.h"
 #include "RenderTheme.h"
@@ -37,6 +38,7 @@ namespace WebKit {
 
 SelectionOverlay::SelectionOverlay(WebPagePrivate* page)
     : m_page(page)
+    , m_hideDispatched(false)
 {
 }
 
@@ -69,15 +71,27 @@ void SelectionOverlay::draw(const Platform::IntRectRegion& region)
 
 void SelectionOverlay::hide()
 {
+    // Track a dispatched message, we don't want to flood the webkit thread.
+    // There can be as many as one more message enqued as needed but never less.
+    if (isWebKitThread())
+        m_hideDispatched = false;
+    else if (m_hideDispatched) {
+        // Early return if there is message already pending on the webkit thread.
+        return;
+    }
+    if (!isWebKitThread()) {
+        m_hideDispatched = true;
+        // Normally, this method is called on the WebKit thread, but it can also be
+        // called from the compositing thread.
+        dispatchWebKitMessage(BlackBerry::Platform::createMethodCallMessage(&SelectionOverlay::hide, this));
+        return;
+    }
+    ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
+
     if (!m_overlay)
         return;
 
-    // Normally, this method is called on the WebKit thread, but it can also be
-    // called from the compositing thread.
-    if (BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread())
-        m_page->m_webPage->removeOverlay(m_overlay.get());
-    else if (BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread())
-        m_overlay->override()->setOpacity(0);
+    m_page->m_webPage->removeOverlay(m_overlay.get());
 }
 
 void SelectionOverlay::notifySyncRequired(const GraphicsLayer*)

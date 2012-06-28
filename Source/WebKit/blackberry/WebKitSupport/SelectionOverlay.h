@@ -30,7 +30,6 @@
 
 #include <BlackBerryPlatformIntRectRegion.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace BlackBerry {
 namespace WebKit {
@@ -39,9 +38,9 @@ class WebPagePrivate;
 
 class SelectionOverlay : public WebSelectionOverlay, public WebCore::GraphicsLayerClient {
 public:
-    static PassOwnPtr<SelectionOverlay> create(WebPagePrivate* page)
+    static SelectionOverlay* create(WebPagePrivate* page)
     {
-        return adoptPtr(new SelectionOverlay(page));
+        return new SelectionOverlay(page);
     }
 
     virtual ~SelectionOverlay();
@@ -64,6 +63,7 @@ private:
     WebPagePrivate* m_page;
     OwnPtr<WebOverlay> m_overlay;
     BlackBerry::Platform::IntRectRegion m_region;
+    bool m_hideDispatched;
 };
 
 } // namespace WebKit

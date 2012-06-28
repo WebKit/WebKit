@@ -21,12 +21,13 @@
 
 #include "BlackBerryGlobal.h"
 
+#include <BlackBerryPlatformGuardedPointer.h>
 #include <BlackBerryPlatformIntRectRegion.h>
 
 namespace BlackBerry {
 namespace WebKit {
 
-class BLACKBERRY_EXPORT WebSelectionOverlay {
+class BLACKBERRY_EXPORT WebSelectionOverlay : public BlackBerry::Platform::GuardedPointerBase {
 public:
     virtual ~WebSelectionOverlay() { }
 
