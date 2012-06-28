@@ -162,6 +162,7 @@ HEADERS += \
     UIProcess/API/C/WKIconDatabase.h \
     UIProcess/API/C/WKInspector.h \
     UIProcess/API/C/WKIntentData.h \
+    UIProcess/API/C/WKIntentServiceInfo.h \
     UIProcess/API/C/WKOpenPanelParameters.h \
     UIProcess/API/C/WKOpenPanelResultListener.h \
     UIProcess/API/C/WKNavigationData.h \
@@ -521,6 +522,7 @@ SOURCES += \
     UIProcess/API/C/WKIconDatabase.cpp \
     UIProcess/API/C/WKInspector.cpp \
     UIProcess/API/C/WKIntentData.cpp \
+    UIProcess/API/C/WKIntentServiceInfo.cpp \
     UIProcess/API/C/WKNotification.cpp \
     UIProcess/API/C/WKNotificationManager.cpp \
     UIProcess/API/C/WKNotificationPermissionRequest.cpp \

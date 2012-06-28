@@ -1,3 +1,25 @@
+2012-06-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Add C API to inspect a Web Intent service
+        https://bugs.webkit.org/show_bug.cgi?id=89276
+
+        Reviewed by Anders Carlsson.
+
+        Add C API for Web intent service so that it can be queried
+        on client side.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UIProcess/API/C/WKIntentServiceInfo.cpp: Added.
+        (WKIntentServiceInfoGetTypeID):
+        (WKIntentServiceInfoCopyAction):
+        (WKIntentServiceInfoCopyType):
+        (WKIntentServiceInfoCopyHref):
+        (WKIntentServiceInfoCopyTitle):
+        (WKIntentServiceInfoCopyDisposition):
+        * UIProcess/API/C/WKIntentServiceInfo.h: Added.
+
 2012-06-28  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] KURL assert at fast/loader/opaque-base-url.html

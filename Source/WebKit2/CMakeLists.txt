@@ -280,6 +280,7 @@ SET(WebKit2_SOURCES
     UIProcess/API/C/WKIconDatabase.cpp
     UIProcess/API/C/WKInspector.cpp
     UIProcess/API/C/WKIntentData.cpp
+    UIProcess/API/C/WKIntentServiceInfo.cpp
     UIProcess/API/C/WKKeyValueStorageManager.cpp
     UIProcess/API/C/WKMediaCacheManager.cpp
     UIProcess/API/C/WKNavigationData.cpp
