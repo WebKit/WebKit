@@ -1,0 +1,36 @@
+Test for the list attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.list is null
+PASS input.list is null
+PASS input.list is null
+FAIL datalist.className should be former. Threw exception TypeError: 'null' is not an object (evaluating 'datalist.className')
+FAIL document.getElementById("text").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("search").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("url").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("telephone").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("email").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("datetime").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("date").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("month").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("week").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("time").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("datetime-local").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("number").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("range").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("color").list should be [object HTMLDataListElement]. Was null.
+PASS document.getElementById("hidden").list is null
+PASS document.getElementById("password").list is null
+PASS document.getElementById("checkbox").list is null
+PASS document.getElementById("radio").list is null
+PASS document.getElementById("file").list is null
+PASS document.getElementById("submit").list is null
+PASS document.getElementById("image").list is null
+PASS document.getElementById("reset").list is null
+PASS document.getElementById("button").list is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,17 @@
+2012-06-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Enable support for HTML5 datalist
+        https://bugs.webkit.org/show_bug.cgi?id=90157
+
+        Reviewed by Martin Robinson.
+
+        * platform/efl/Skipped: Unskip fast/forms/datalist tests now that
+        the DATALIST flag is turned on by default on EFL port.
+        * platform/efl/fast/forms/datalist/input-list-expected.txt: Added.
+        We need platform-specific result because we don't support datalist
+        UI for any element yet. This should be progressively added later
+        on and the expected result will evolve.
+
 2012-06-28  Tony Chang  <tony@chromium.org>
 
         Enable CSS grid layout LayoutTests on platform Mac

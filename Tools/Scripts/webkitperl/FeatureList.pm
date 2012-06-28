@@ -181,7 +181,7 @@ my @features = (
       define => "ENABLE_CUSTOM_SCHEME_HANDLER", default => 0, value => \$customSchemeHandlerSupport },
 
     { option => "datalist", desc => "Toggle Datalist support",
-      define => "ENABLE_DATALIST", default => 0, value => \$datalistSupport },
+      define => "ENABLE_DATALIST", default => isEfl(), value => \$datalistSupport },
 
     { option => "data-transfer-items", desc => "Toggle Data Transfer Items support",
       define => "ENABLE_DATA_TRANSFER_ITEMS", default => 0, value => \$dataTransferItemsSupport },
