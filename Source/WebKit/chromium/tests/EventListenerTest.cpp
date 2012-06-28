@@ -31,7 +31,6 @@
 #include "config.h"
 
 #include "FrameTestHelpers.h"
-#include "URLTestHelpers.h"
 #include "WebDOMEvent.h"
 #include "WebDOMEventListener.h"
 #include "WebDOMMutationEvent.h"
@@ -79,7 +78,7 @@ public:
         std::string baseURL("http://www.example.com/");
         std::string fileName("listener/mutation_event_listener.html");
         bool executeScript = true;
-        URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(baseURL.c_str()), WebString::fromUTF8(fileName.c_str()));
+        FrameTestHelpers::registerMockedURLLoad(baseURL, fileName);
         m_webView = FrameTestHelpers::createWebViewAndLoad(baseURL + fileName, executeScript);
     }
 

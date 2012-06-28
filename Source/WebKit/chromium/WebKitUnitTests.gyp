@@ -78,9 +78,6 @@
                 # add the include path directly.
                 '../../Platform/chromium',
             ],
-            'defines': [
-                'WEBKIT_IMPLEMENTATION=1',
-            ],
             'conditions': [
                 ['inside_chromium_build==1 and component=="shared_library"', {
                     'defines': [
