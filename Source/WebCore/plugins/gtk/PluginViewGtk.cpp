@@ -70,7 +70,6 @@
 #endif
 #include <gtk/gtk.h>
 
-#if defined(XP_UNIX)
 #define String XtStringType
 #include "RefPtrCairo.h"
 #include "gtk2xtbin.h"
@@ -79,11 +78,6 @@
 #include <X11/extensions/Xrender.h>
 #include <cairo/cairo-xlib.h>
 #include <gdk/gdkx.h>
-#elif defined(GDK_WINDOWING_WIN32)
-#include "PluginMessageThrottlerWin.h"
-#include <gdk/gdkwin32.h>
-#undef String
-#endif
 
 using JSC::ExecState;
 using JSC::Interpreter;
@@ -116,14 +110,12 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
     return accepted;
 }
 
-#if defined(XP_UNIX)
 static Window getRootWindow(Frame* parentFrame)
 {
     GtkWidget* parentWidget = parentFrame->view()->hostWindow()->platformPageClient();
     GdkScreen* gscreen = gtk_widget_get_screen(parentWidget);
     return GDK_WINDOW_XWINDOW(gdk_screen_get_root_window(gscreen));
 }
-#endif
 
 void PluginView::updatePluginWidget()
 {
@@ -146,7 +138,6 @@ void PluginView::updatePluginWidget()
     if (m_status != PluginStatusLoadedSuccessfully)
         return;
 
-#if defined(XP_UNIX)
     if (!m_isWindowed && !m_windowRect.isEmpty()) {
         Display* display = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
         if (m_drawable)
@@ -157,7 +148,6 @@ void PluginView::updatePluginWidget()
                                    ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth);
         XSync(display, false); // make sure that the server knows about the Drawable
     }
-#endif
 
     setNPWindowIfNeeded();
 }
@@ -197,7 +187,6 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     if (m_isWindowed)
         return;
 
-#if defined(XP_UNIX)
     if (!m_drawable)
         return;
 
@@ -271,7 +260,6 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     cairo_paint(cr);
 
     cairo_restore(cr);
-#endif // defined(XP_UNIX)
 }
 
 void PluginView::handleKeyboardEvent(KeyboardEvent* event)
@@ -285,7 +273,6 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
         return;
 
     NPEvent xEvent;
-#if defined(XP_UNIX)
     initXEvent(&xEvent);
     GdkEventKey* gdkEvent = event->keyEvent()->gdkEventKey();
 
@@ -305,13 +292,11 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
     xEvent.xkey.y = 0;
     xEvent.xkey.x_root = 0;
     xEvent.xkey.y_root = 0;
-#endif
 
     if (dispatchNPEvent(xEvent))
         event->setDefaultHandled();
 }
 
-#if defined(XP_UNIX)
 static unsigned int inputEventState(MouseEvent* event)
 {
     unsigned int state = 0;
@@ -402,7 +387,6 @@ static void setXCrossingEventSpecificFields(XEvent* xEvent, MouseEvent* event, c
     xcrossing.same_screen = true;
     xcrossing.focus = false;
 }
-#endif
 
 void PluginView::handleMouseEvent(MouseEvent* event)
 {
@@ -421,7 +405,6 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     }
 
     NPEvent xEvent;
-#if defined(XP_UNIX)
     initXEvent(&xEvent);
 
     IntPoint postZoomPos = roundedIntPoint(m_element->renderer()->absoluteToLocal(event->absoluteLocation()));
@@ -440,13 +423,11 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     }
     else
         return;
-#endif
 
     if (dispatchNPEvent(xEvent))
         event->setDefaultHandled();
 }
 
-#if defined(XP_UNIX)
 void PluginView::handleFocusInEvent()
 {
     if (!m_isStarted || m_status != PluginStatusLoadedSuccessfully)
@@ -478,7 +459,6 @@ void PluginView::handleFocusOutEvent()
 
     dispatchNPEvent(npEvent);
 }
-#endif
 
 void PluginView::setParent(ScrollView* parent)
 {
@@ -544,14 +524,12 @@ void PluginView::setNPWindowIfNeeded()
     if (!m_isWindowed)
         return;
 
-#if defined(XP_UNIX)
     // GtkXtBin will call gtk_widget_size_allocate, so we don't need to do it here.
     if (!m_needsXEmbed) {
         gtk_xtbin_set_position(GTK_XTBIN(platformPluginWidget()), m_windowRect.x(), m_windowRect.y());
         gtk_xtbin_resize(platformPluginWidget(), m_windowRect.width(), m_windowRect.height());
         return;
     }
-#endif
 
     m_delayedAllocation = m_windowRect;
     updateWidgetAllocationAndClip();
@@ -647,20 +625,12 @@ bool PluginView::platformGetValueStatic(NPNVariable variable, void* value, NPErr
 {
     switch (variable) {
     case NPNVToolkit:
-#if defined(XP_UNIX)
         *static_cast<uint32_t*>(value) = 2;
-#else
-        *static_cast<uint32_t*>(value) = 0;
-#endif
         *result = NPERR_NO_ERROR;
         return true;
 
     case NPNVSupportsXEmbedBool:
-#if defined(XP_UNIX)
         *static_cast<NPBool*>(value) = true;
-#else
-        *static_cast<NPBool*>(value) = false;
-#endif
         *result = NPERR_NO_ERROR;
         return true;
 
@@ -670,11 +640,7 @@ bool PluginView::platformGetValueStatic(NPNVariable variable, void* value, NPErr
         return true;
 
     case NPNVSupportsWindowless:
-#if defined(XP_UNIX)
         *static_cast<NPBool*>(value) = true;
-#else
-        *static_cast<NPBool*>(value) = false;
-#endif
         *result = NPERR_NO_ERROR;
         return true;
 
@@ -687,18 +653,13 @@ bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* re
 {
     switch (variable) {
     case NPNVxDisplay:
-#if defined(XP_UNIX)
         if (m_needsXEmbed)
             *(void **)value = (void *)GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
         else
             *(void **)value = (void *)GTK_XTBIN(platformPluginWidget())->xtclient.xtdisplay;
         *result = NPERR_NO_ERROR;
-#else
-        *result = NPERR_GENERIC_ERROR;
-#endif
         return true;
 
-#if defined(XP_UNIX)
     case NPNVxtAppContext:
         if (!m_needsXEmbed) {
             *(void **)value = XtDisplayToApplicationContext (GTK_XTBIN(platformPluginWidget())->xtclient.xtdisplay);
@@ -707,20 +668,15 @@ bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* re
         } else
             *result = NPERR_GENERIC_ERROR;
         return true;
-#endif
 
         case NPNVnetscapeWindow: {
             GdkWindow* gdkWindow = gtk_widget_get_window(m_parentFrame->view()->hostWindow()->platformPageClient());
-#if defined(XP_UNIX)
             GdkWindow* toplevelWindow = gdk_window_get_toplevel(gdkWindow);
             if (!toplevelWindow) {
                 *result = NPERR_GENERIC_ERROR;
                 return true;
             }
             *static_cast<Window*>(value) = GDK_WINDOW_XWINDOW(toplevelWindow);
-#elif defined(GDK_WINDOWING_WIN32)
-            *static_cast<HGDIOBJ*>(value) = GDK_WINDOW_HWND(gdkWindow);
-#endif
             *result = NPERR_NO_ERROR;
             return true;
         }
@@ -765,7 +721,6 @@ void PluginView::forceRedraw()
         gtk_widget_queue_draw(m_parentFrame->view()->hostWindow()->platformPageClient());
 }
 
-#ifndef GDK_WINDOWING_WIN32
 static Display* getPluginDisplay()
 {
     // The plugin toolkit might have a different X connection open.  Since we're
@@ -773,15 +728,9 @@ static Display* getPluginDisplay()
     // plugins, so we can return that.  We might want to add other implementations here
     // later.
 
-#if defined(XP_UNIX)
     return GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
-#else
-    return 0;
-#endif
 }
-#endif
 
-#if defined(XP_UNIX)
 static void getVisualAndColormap(int depth, Visual** visual, Colormap* colormap)
 {
     *visual = 0;
@@ -818,7 +767,6 @@ static void getVisualAndColormap(int depth, Visual** visual, Colormap* colormap)
     if (*visual)
         *colormap = XCreateColormap(display, GDK_ROOT_WINDOW(), *visual, AllocNone);
 }
-#endif
 
 gboolean PluginView::plugRemovedCallback(GtkSocket* socket, PluginView* view)
 {
@@ -839,7 +787,6 @@ bool PluginView::platformStart()
     ASSERT(m_isStarted);
     ASSERT(m_status == PluginStatusLoadedSuccessfully);
 
-#if defined(XP_UNIX)
     if (m_plugin->pluginFuncs()->getvalue) {
         PluginView::setCurrentPluginView(this);
         JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
@@ -848,11 +795,9 @@ bool PluginView::platformStart()
         setCallingPlugin(false);
         PluginView::setCurrentPluginView(0);
     }
-#endif
 
     if (m_isWindowed) {
         GtkWidget* pageClient = m_parentFrame->view()->hostWindow()->platformPageClient();
-#if defined(XP_UNIX)
         if (m_needsXEmbed) {
             // If our parent is not anchored the startup process will
             // fail miserably for XEmbed plugins a bit later on when
@@ -868,31 +813,18 @@ bool PluginView::platformStart()
             g_signal_connect(platformPluginWidget(), "plug-removed", G_CALLBACK(PluginView::plugRemovedCallback), this);
         } else
             setPlatformWidget(gtk_xtbin_new(pageClient, 0));
-#else
-#if OS(WINDOWS) && !defined(GTK_API_VERSION_2)
-        setPlatformWidget(0);
-#else
-        setPlatformWidget(gtk_socket_new());
-#endif
-        gtk_container_add(GTK_CONTAINER(pageClient), platformPluginWidget());
-#endif
     } else {
         setPlatformWidget(0);
-#if defined(XP_UNIX)
         m_pluginDisplay = getPluginDisplay();
-#endif
     }
 
     show();
 
-#if defined(XP_UNIX)
         NPSetWindowCallbackStruct* ws = new NPSetWindowCallbackStruct();
         ws->type = 0;
-#endif
 
     if (m_isWindowed) {
         m_npWindow.type = NPWindowTypeWindow;
-#if defined(XP_UNIX)
         if (m_needsXEmbed) {
             GtkWidget* widget = platformPluginWidget();
             gtk_widget_realize(widget);
@@ -910,14 +842,10 @@ bool PluginView::platformStart()
             ws->colormap = GTK_XTBIN(platformPluginWidget())->xtclient.xtcolormap;
         }
         XFlush (ws->display);
-#elif defined(GDK_WINDOWING_WIN32)
-        m_npWindow.window = (void*)GDK_WINDOW_HWND(gtk_widget_get_window(platformPluginWidget()));
-#endif
     } else {
         m_npWindow.type = NPWindowTypeDrawable;
         m_npWindow.window = 0; // Not used?
 
-#if defined(XP_UNIX)
         GdkScreen* gscreen = gdk_screen_get_default();
         GdkVisual* gvisual = gdk_screen_get_system_visual(gscreen);
 
@@ -939,16 +867,9 @@ bool PluginView::platformStart()
         m_npWindow.y = 0;
         m_npWindow.width = -1;
         m_npWindow.height = -1;
-#else
-        notImplemented();
-        m_status = PluginStatusCanNotLoadPlugin;
-        return false;
-#endif
     }
 
-#if defined(XP_UNIX)
     m_npWindow.ws_info = ws;
-#endif
 
     // TODO remove in favor of null events, like mac port?
     if (!(m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall)))
@@ -959,12 +880,10 @@ bool PluginView::platformStart()
 
 void PluginView::platformDestroy()
 {
-#if defined(XP_UNIX)
     if (m_drawable) {
         XFreePixmap(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), m_drawable);
         m_drawable = 0;
     }
-#endif
 }
 
 } // namespace WebCore

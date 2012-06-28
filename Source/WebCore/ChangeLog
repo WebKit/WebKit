@@ -1,3 +1,33 @@
+2012-06-28  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Remove Windows support from plugins/gtk/
+        https://bugs.webkit.org/show_bug.cgi?id=89501
+
+        Reviewed by Martin Robinson.
+
+        The GTK+ port now uses plugins/gtk/ on Windows, which leaves
+        PluginPackageGtk.cpp and PluginViewGtk.cpp solely for XP_UNIX platforms.
+
+        * plugins/gtk/PluginPackageGtk.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::webkitgtkXError):
+        (WebCore::PluginPackage::load):
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::getRootWindow):
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::setXCrossingEventSpecificFields):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::handleFocusOutEvent):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::platformGetValueStatic):
+        (WebCore::PluginView::platformGetValue):
+        (WebCore::getPluginDisplay):
+        (WebCore::getVisualAndColormap):
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::platformDestroy):
+
 2012-06-28  Simon Fraser  <simon.fraser@apple.com>
 
         Change FrameView::scrollContentsFastPath to use m_fixedObjects

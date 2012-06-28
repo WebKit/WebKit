@@ -42,7 +42,6 @@ namespace WebCore {
 
 bool PluginPackage::fetchInfo()
 {
-#if defined(XP_UNIX)
     if (!load())
         return false;
 
@@ -97,13 +96,8 @@ bool PluginPackage::fetchInfo()
     g_strfreev(mimeDescs);
 
     return true;
-#else
-    notImplemented();
-    return false;
-#endif
 }
 
-#if defined(XP_UNIX)
 static int webkitgtkXError(Display* xdisplay, XErrorEvent* error)
 {
     gchar errorMessage[64];
@@ -117,7 +111,6 @@ static int webkitgtkXError(Display* xdisplay, XErrorEvent* error)
               error->request_code, error->minor_code);
     return 0;
 }
-#endif
 
 static bool moduleMixesGtkSymbols(GModule* module)
 {
@@ -167,14 +160,12 @@ bool PluginPackage::load()
 
     m_isLoaded = true;
 
-#if defined(XP_UNIX)
     if (!g_strcmp0(baseName.get(), "libflashplayer.so")) {
         // Flash plugin can produce X errors that are handled by the GDK X error handler, which
         // exits the process. Since we don't want to crash due to flash bugs, we install a
         // custom error handler to show a warning when a X error happens without aborting.
         XSetErrorHandler(webkitgtkXError);
     }
-#endif
 
     NP_InitializeFuncPtr NP_Initialize = 0;
     m_NPP_Shutdown = 0;
@@ -192,11 +183,7 @@ bool PluginPackage::load()
 
     initializeBrowserFuncs();
 
-#if defined(XP_UNIX)
     npErr = NP_Initialize(&m_browserFuncs, &m_pluginFuncs);
-#else
-    npErr = NP_Initialize(&m_browserFuncs);
-#endif
     if (npErr != NPERR_NO_ERROR)
         goto abort;
 
