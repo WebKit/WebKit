@@ -44,13 +44,10 @@ bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder* decoder, ResourceRe
     // FIXME: Add *more* coding implementation when we want to implement something that
     // depends on this like the policy client.
 
-    ResourceRequest request;
     String url;
     if (!decoder->decode(url))
         return false;
-    request.setURL(KURL(WebCore::ParsedURLString, url));
-
-    resourceRequest = request;
+    resourceRequest.setURL(KURL(KURL(), url));
     return true;
 }
 

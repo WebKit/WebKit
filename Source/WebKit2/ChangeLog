@@ -1,3 +1,17 @@
+2012-06-28  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] KURL assert at fast/loader/opaque-base-url.html
+        https://bugs.webkit.org/show_bug.cgi?id=89468
+
+        Reviewed by Simon Hausmann.
+
+        Don't use the KURL(ParsedURLStringTag, const String&) constructor.
+        We cannot be sure that the url in encode was valid and even if it
+        was the message could have been corrupted.
+        * Shared/qt/WebCoreArgumentCodersQt.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+
 2012-06-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the build without TEXTURE_MAPPER_GL.
