@@ -1,3 +1,9 @@
+2012-06-28  Ojan Vafai  <ojan@chromium.org>
+
+        Replace a BUG_OJAN with a proper tracking bug and unskip two
+        tests in preparation for rebaselining them.
+        * platform/chromium/TestExpectations:
+
 2012-06-28  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Mark a test as failing on Linux debug

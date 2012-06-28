@@ -1770,7 +1770,7 @@ BUGCR27850 : fast/history/back-forward-reset-after-error-handling.html = TEXT
 // Started failing with move from Lighttpd to Apache.
 // Since we have some bots on Lighttpd and some on Apache, mark it as flaky for
 // now. Once we decide on one or the other, then we can address these tests.
-BUG_OJAN LINUX MAC : http/tests/loading/text-content-type-with-binary-extension.html = TEXT
+BUGWK90225 LINUX MAC : http/tests/loading/text-content-type-with-binary-extension.html = TEXT
 
 // These tests time out *and* are slow. The test should be fixed to not timeout,
 // then should be marked as SLOW/PASS.
@@ -3412,11 +3412,11 @@ BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = TEXT IMAGE
 // certain "native" functions where the V8 output does not include
 // newline characters. This is working as intended and we don't care
 // if the tests pass or fail. (It should probably simply be re-baselined.)
-BUG_OJAN SKIP : fast/js/function-names.html = PASS
+BUG_OJAN : fast/js/function-names.html = PASS TEXT
 // This is a Safari specific test used to document the set of global
 // constructors they expose and the exact way they are printed.  Not
 // important.
-BUG_OJAN SKIP : fast/js/global-constructors.html = PASS
+BUG_OJAN : fast/js/global-constructors.html = PASS TEXT
 
 // This should only be a layer change.
 BUGWK82129 MAC : fast/block/lineboxcontain/glyphs.html = TEXT
