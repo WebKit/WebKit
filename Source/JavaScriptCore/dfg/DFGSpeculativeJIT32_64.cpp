@@ -1173,7 +1173,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatInteger);
-            if (spillFormat == DataFormatJSDouble) {
+            if (spillFormat == DataFormatJSDouble || spillFormat == DataFormatDouble) {
                 FPRReg fpr = fprAllocate();
                 m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
                 m_fprs.retain(fpr, virtualRegister, SpillOrderSpilled);
@@ -1201,6 +1201,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
 
             m_fprs.retain(fpr, virtualRegister, SpillOrderSpilled);
             info.fillDouble(fpr);
+            info.killSpilled();
             return fpr;
         }
     }

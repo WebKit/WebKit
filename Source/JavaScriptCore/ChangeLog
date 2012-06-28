@@ -1,3 +1,17 @@
+2012-06-28  Oliver Hunt  <oliver@apple.com>
+
+        32bit DFG incorrectly claims an fpr is fillable even if it has not been proven double
+        https://bugs.webkit.org/show_bug.cgi?id=90127
+
+        Reviewed by Filip Pizlo.
+
+        The 32-bit version of fillSpeculateDouble doesn't handle Number->fpr loads
+        correctly.  This patch fixes this by killing the fill info in the GenerationInfo
+        when the spillFormat doesn't guarantee the value is a double.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+
 2012-06-28  Kent Tamura  <tkent@chromium.org>
 
         Classify form control states by their owner forms
