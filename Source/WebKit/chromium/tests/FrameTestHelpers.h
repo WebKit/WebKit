@@ -33,8 +33,6 @@
 
 #include <string>
 
-class GURL;
-
 namespace WebKit {
 
 class WebFrame;
@@ -43,10 +41,6 @@ class WebView;
 class WebViewClient;
 
 namespace FrameTestHelpers {
-
-void registerMockedURLLoad(const std::string& base, const std::string& fileName);
-// Like the previous overload, but it allows more flexibility in the url since it is given by the caller.
-void registerMockedURLLoad(GURL, const std::string& fileName);
 
 void loadFrame(WebFrame*, const std::string& url);
 
