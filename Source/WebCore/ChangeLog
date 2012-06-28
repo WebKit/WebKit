@@ -1,3 +1,14 @@
+2012-06-27  Lu Guanqun  <guanqun.lu@intel.com>
+
+        Add OVERRIDE to functions in UnthrottledTextureUploader class
+        https://bugs.webkit.org/show_bug.cgi?id=90130
+
+        Reviewed by James Robinson.
+
+        No new tests required.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+
 2012-06-27  Pablo Flouret  <pablof@motorola.com>
 
         pattern="" should only accept the empty string

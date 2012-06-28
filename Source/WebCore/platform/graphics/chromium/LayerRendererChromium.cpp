@@ -132,10 +132,10 @@ public:
     }
     virtual ~UnthrottledTextureUploader() { }
 
-    virtual bool isBusy() { return false; }
-    virtual void beginUploads() { }
-    virtual void endUploads() { }
-    virtual void uploadTexture(CCGraphicsContext* context, LayerTextureUpdater::Texture* texture, TextureAllocator* allocator, const IntRect sourceRect, const IntRect destRect) { texture->updateRect(context, allocator, sourceRect, destRect); }
+    virtual bool isBusy() OVERRIDE { return false; }
+    virtual void beginUploads() OVERRIDE { }
+    virtual void endUploads() OVERRIDE { }
+    virtual void uploadTexture(CCGraphicsContext* context, LayerTextureUpdater::Texture* texture, TextureAllocator* allocator, const IntRect sourceRect, const IntRect destRect) OVERRIDE { texture->updateRect(context, allocator, sourceRect, destRect); }
 
 protected:
     UnthrottledTextureUploader() { }
