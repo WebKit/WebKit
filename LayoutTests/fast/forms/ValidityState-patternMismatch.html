@@ -31,6 +31,7 @@
 /><input id="match-17" type="text" pattern="foobar" value="" />
 <input id="match-18" type="text" pattern="[0-9]|10|11|12" value="10" />
 <input id="match-19" type="text" pattern="10|11|12|[0-9]" value="12" />
+<input id="empty-pattern-match" type="text" pattern="" value="" />
 <input id="wrong-gray-or-grey" type="text" pattern="gr[ae]y" value="Wrong!"
 /><input id="gray" type="text" pattern="gr[ae]y" value="gray"
 /><input id="grey" type="text" pattern="gr[ae]y" value="grey"
@@ -55,7 +56,7 @@
 /><input id="mismatch-18" type="text" pattern="foo\\" value="food"
 /><input id="mismatch-19" type="text" pattern="^" value="wrong"
 /><input id="mismatch-20" type="text" pattern="$" value="wrong"
-/><input id="empty-pattern" type="text" pattern="" value="Lorem Ipsum"
+/><input id="empty-pattern-mismatch" type="text" pattern="" value="Lorem Ipsum"
 /><input id="disabled" pattern="[0-9][A-Z]{3}" value="00AA" disabled /></div>
 <script language="JavaScript" type="text/javascript">
 function patternMismatchFor(id) {
@@ -116,7 +117,8 @@ shouldBeTrue('patternMismatchFor("mismatch-18")');
 shouldBeTrue('patternMismatchFor("mismatch-19")');
 shouldBeTrue('patternMismatchFor("mismatch-20")');
 
-shouldBeFalse('patternMismatchFor("empty-pattern")');
+shouldBeFalse('patternMismatchFor("empty-pattern-match")');
+shouldBeTrue('patternMismatchFor("empty-pattern-mismatch")');
 
 shouldBeFalse('patternMismatchFor("disabled")');
 

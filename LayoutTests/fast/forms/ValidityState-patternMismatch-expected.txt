@@ -51,7 +51,8 @@ PASS patternMismatchFor("mismatch-17") is true
 PASS patternMismatchFor("mismatch-18") is true
 PASS patternMismatchFor("mismatch-19") is true
 PASS patternMismatchFor("mismatch-20") is true
-PASS patternMismatchFor("empty-pattern") is false
+PASS patternMismatchFor("empty-pattern-match") is false
+PASS patternMismatchFor("empty-pattern-mismatch") is true
 PASS patternMismatchFor("disabled") is false
 PASS successfullyParsed is true
 

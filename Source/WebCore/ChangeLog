@@ -1,3 +1,21 @@
+2012-06-27  Pablo Flouret  <pablof@motorola.com>
+
+        pattern="" should only accept the empty string
+        https://bugs.webkit.org/show_bug.cgi?id=89569
+
+        Reviewed by Kent Tamura.
+
+        An empty pattern attribute was being treated essentially as if the
+        pattern wasn't present.
+
+        No new tests. Covered by existing tests (plus a modified one).
+
+        * html/BaseTextInputType.cpp:
+        (WebCore::BaseTextInputType::patternMismatch):
+            Check if the pattern attribute is present. If it is then use the
+            pattern as is (in the particular case of this bug, an empty pattern
+            will only match an empty value).
+
 2012-06-27  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use SkColor in compositor internals
