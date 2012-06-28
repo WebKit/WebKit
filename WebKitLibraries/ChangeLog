@@ -1,5 +1,13 @@
 2012-06-27  Brent Fulgham  <bfulgham@webkit.org>
 
+        [WinCairo] Unreviewed build correction.  Accidentally turned on
+        CSS_FILTERS, which is not available in tree.
+
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops: Turn CSS_FILTERS
+        back off for WinCairo target.
+
+2012-06-27  Brent Fulgham  <bfulgham@webkit.org>
+
         [WinCairo] Unreviewed build correction.  Resync feature defines with
         Apple port. Things have drifted apart a little.
 
