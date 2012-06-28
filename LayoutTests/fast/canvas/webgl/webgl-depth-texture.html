@@ -43,6 +43,7 @@ var gl = wtu.create3DContext(canvas, {antialias: false});
 var program = wtu.setupTexturedQuad(gl);
 var ext = null;
 var vao = null;
+var tex;
 var name;
 var supportedFormats;
 
@@ -144,13 +145,15 @@ function runTestExtension() {
     gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
 
     var types = [
-        {type: 'UNSIGNED_SHORT', data: 'new Uint16Array(1)' },
-        {type: 'UNSIGNED_INT',   data: 'new Uint32Array(1)' }
+        {obj: 'gl',  attachment: 'DEPTH_ATTACHMENT',         format: 'DEPTH_COMPONENT', type: 'UNSIGNED_SHORT',          data: 'new Uint16Array(1)' },
+        {obj: 'gl',  attachment: 'DEPTH_ATTACHMENT',         format: 'DEPTH_COMPONENT', type: 'UNSIGNED_INT',            data: 'new Uint32Array(1)' },
+        {obj: 'ext', attachment: 'DEPTH_STENCIL_ATTACHMENT', format: 'DEPTH_STENCIL',   type: 'UNSIGNED_INT_24_8_WEBGL', data: 'new Uint32Array(1)' }
     ];
 
     for (var ii = 0; ii < types.length; ++ii) {
         var typeInfo = types[ii];
         var type = typeInfo.type;
+        var typeStr = typeInfo.obj + '.' + type;
 
         debug("");
         debug("testing: " + type);
@@ -167,11 +170,11 @@ function runTestExtension() {
           'TEXTURE_CUBE_MAP_NEGATIVE_Z'
         ];
         for (var tt = 0; tt < targets.length; ++tt) {
-            shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.texImage2D(gl.' + targets[ii] + ', 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.' + type + ', null)');
+            shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.texImage2D(gl.' + targets[ii] + ', 1, gl.' + typeInfo.format + ', 1, 1, 0, gl.' + typeInfo.format + ', ' + typeStr + ', null)');
         }
 
         // check 2d textures.
-        var tex = gl.createTexture();
+        tex = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, tex);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -179,22 +182,22 @@ function runTestExtension() {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
         // test level > 0
-        shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.texImage2D(gl.TEXTURE_2D, 1, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.' + type + ', null)');
+        shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.texImage2D(gl.TEXTURE_2D, 1, gl.' + typeInfo.format + ', 1, 1, 0, gl.' + typeInfo.format + ', ' + typeStr + ', null)');
 
         // test with data
-        shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.' + type + ', ' + typeInfo.data + ')');
+        shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.' + typeInfo.format + ', 1, 1, 0, gl.' + typeInfo.format + ', ' + typeStr + ', ' + typeInfo.data + ')');
 
         // test with canvas
-        shouldGenerateGLError(gl, [gl.INVALID_VALUE, gl.INVALID_ENUM, gl.INVALID_OPERATION], 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.' + type  + ', canvas2)');
+        shouldGenerateGLError(gl, [gl.INVALID_VALUE, gl.INVALID_ENUM, gl.INVALID_OPERATION], 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.' + typeInfo.format + ', gl.' + typeInfo.format + ', ' + typeStr  + ', canvas2)');
 
         // test copyTexImage2D
-        shouldGenerateGLError(gl, [gl.INVALID_ENUM, gl.INVALID_OPERATION], 'gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 0, 0, 1, 1, 0)');
+        shouldGenerateGLError(gl, [gl.INVALID_ENUM, gl.INVALID_OPERATION], 'gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.' + typeInfo.format + ', 0, 0, 1, 1, 0)');
 
         // test real thing
-        shouldGenerateGLError(gl, gl.NO_ERROR, 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, ' + res + ', ' + res + ', 0, gl.DEPTH_COMPONENT, gl.' + type + ', null)');
+        shouldGenerateGLError(gl, gl.NO_ERROR, 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.' + typeInfo.format + ', ' + res + ', ' + res + ', 0, gl.' + typeInfo.format + ', ' + typeStr + ', null)');
 
         // test texSubImage2D
-        shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.DEPTH_COMPONENT, gl.' + type  + ', ' + typeInfo.data + ')');
+        shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.' + typeInfo.format + ', ' + typeStr  + ', ' + typeInfo.data + ')');
 
         // test copyTexSubImage2D
         shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)');
@@ -204,8 +207,9 @@ function runTestExtension() {
 
         var fbo = gl.createFramebuffer();
         gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, tex, 0);
-        //if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE)
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl[typeInfo.attachment], gl.TEXTURE_2D, tex, 0);
+        // TODO: remove this check if the spec is updated to require these combinations to work.
+        if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE)
         {
             // try adding a color buffer.
             var colorTex = gl.createTexture();
@@ -260,8 +264,9 @@ function runTestExtension() {
                 testFailed('R != B');
                 success = false;
             }
-            if (actualPixels[actual + 3] != 0xFF) {
-                testFailed('A != 255');
+            // ALPHA is implementation dependent
+            if (actualPixels[actual + 3] != 0xFF && actualPixels[actual + 3] != actualPixels[actual + 0]) {
+                testFailed('A != 255 && A != R');
                 success = false;
             }
 
@@ -289,6 +294,16 @@ function runTestExtension() {
         if (success) {
             testPassed("depth texture rendered correctly.");
         }
+
+        // check limitations
+        gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl[typeInfo.attachment], gl.TEXTURE_2D, null, 0);
+        var badAttachment = typeInfo.attachment == 'DEPTH_ATTACHMENT' ? 'DEPTH_STENCIL_ATTACHMENT' : 'DEPTH_ATTACHMENT';
+        shouldGenerateGLError(gl, gl.NO_ERROR, 'gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.' + badAttachment + ', gl.TEXTURE_2D, tex, 0)');
+        shouldNotBe('gl.checkFramebufferStatus(gl.FRAMEBUFFER)', 'gl.FRAMEBUFFER_COMPLETE');
+        shouldGenerateGLError(gl, gl.INVALID_FRAMEBUFFER_OPERATION, 'gl.clear(gl.DEPTH_BUFFER_BIT)');
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        shouldBe('gl.getError()', 'gl.NO_ERROR');
     }
 }
 

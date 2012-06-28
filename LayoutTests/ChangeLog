@@ -1,3 +1,13 @@
+2012-06-28  Gregg Tavares  <gman@google.com>
+
+        Add support for DEPTH_STENCIL to WEBGL_depth_texture
+        https://bugs.webkit.org/show_bug.cgi?id=90109
+
+        Reviewed by Kenneth Russell.
+
+        * fast/canvas/webgl/webgl-depth-texture-expected.txt:
+        * fast/canvas/webgl/webgl-depth-texture.html:
+
 2012-06-28  Stephen Chenney  <schenney@chromium.org>
 
         [chromium] rebaseline svg text layouts?

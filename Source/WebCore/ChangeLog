@@ -1,3 +1,16 @@
+2012-06-28  Gregg Tavares  <gman@google.com>
+
+        Add support for DEPTH_STENCIL to WEBGL_depth_texture
+        https://bugs.webkit.org/show_bug.cgi?id=90109
+
+        Reviewed by Kenneth Russell.
+
+        * html/canvas/WebGLDepthTexture.idl:
+        * html/canvas/WebGLFramebuffer.cpp:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::validateTexFuncFormatAndType):
+
 2012-06-28  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move chromium compositor implementation files into separate section in WebCore.gypi
