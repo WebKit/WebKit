@@ -94,14 +94,12 @@ PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const S
             return 0;
         Frame* frame = document->frame();
         RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), 0);
-        m_backend->open(name, request.get(), context->securityOrigin(), frame, document->page()->group().groupSettings()->indexedDBDatabasePath());
+        m_backend->open(name, request.get(), context->securityOrigin(), frame, String());
         return request;
     }
 #if ENABLE(WORKERS)
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), 0);
-    WorkerContext* workerContext = static_cast<WorkerContext*>(context);
-    GroupSettings* groupSettings = workerContext->thread()->groupSettings();
-    m_backend->openFromWorker(name, request.get(), context->securityOrigin(), workerContext, groupSettings ? groupSettings->indexedDBDatabasePath() : String());
+    m_backend->openFromWorker(name, request.get(), context->securityOrigin(), static_cast<WorkerContext*>(context), String());
     return request;
 #else
     return 0;
