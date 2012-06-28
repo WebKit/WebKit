@@ -1,3 +1,11 @@
+2012-06-28  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed, upgrade myself to a reviewer!
+
+        http://www.webkit.org/blog/2082/tim-horton-is-now-a-webkit-reviewer/
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-06-28  Terry Anderson  <tdanderson@chromium.org>
 
         [Chromium] Chromium's LayoutTestController is missing setBackingScaleFactor
