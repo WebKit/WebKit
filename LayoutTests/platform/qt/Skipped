@@ -1906,11 +1906,6 @@ fast/events/keydown-leftright-keys.html
 # https://bugs.webkit.org/show_bug.cgi?id=87469
 fast/events/domactivate-sets-underlying-click-event-as-handled.html
 
-# [Qt] New fast/dom/window-scroll-scaling.html made 3-400 tests flakey
-# Restore original value of mock scrollbars enabled in InternalSettings
-# https://bugs.webkit.org/show_bug.cgi?id=87680
-fast/dom/window-scroll-scaling.html
-
 # New fast/dom/Window/mozilla-focus-blur.html introduced in r118916 fails
 # https://bugs.webkit.org/show_bug.cgi?id=87951
 fast/dom/Window/mozilla-focus-blur.html
@@ -2533,7 +2528,3 @@ fast/block/float/previous-sibling-abspos-001.html
 fast/block/float/previous-sibling-float-001.html
 fast/block/negative-margin-start-positive-margin-end.html
 fast/block/positive-margin-start-negative-margin-end-align-center.html
-
-# Restore original value of mock scrollbars enabled in InternalSettings
-# https://bugs.webkit.org/show_bug.cgi?id=87680
-css3/filters/blur-filter-page-scroll.html

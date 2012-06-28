@@ -1,3 +1,14 @@
+2012-06-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Restore original value of mock scrollbars between tests
+        https://bugs.webkit.org/show_bug.cgi?id=90155
+
+        Reviewed by Simon Hausmann.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setMockScrollbarsEnabled):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2012-06-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSLock should be per-JSGlobalData

@@ -154,6 +154,7 @@ public slots:
     void removeAllVisitedLinks();
     void setMediaType(const QString& type);
     void setFrameFlatteningEnabled(bool enable);
+    void setMockScrollbarsEnabled(bool enable);
     void setAllowUniversalAccessFromFileURLs(bool enable);
     void setAllowFileAccessFromFileURLs(bool enable);
     void setAppCacheMaximumSize(unsigned long long quota);

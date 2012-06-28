@@ -195,6 +195,7 @@ void WebPage::resetSettings()
     m_drt->layoutTestController()->setCaretBrowsingEnabled(false);
     m_drt->layoutTestController()->setAuthorAndUserStylesEnabled(true);
     m_drt->layoutTestController()->setFrameFlatteningEnabled(false);
+    m_drt->layoutTestController()->setMockScrollbarsEnabled(false);
     m_drt->layoutTestController()->setSmartInsertDeleteEnabled(true);
     m_drt->layoutTestController()->setSelectTrailingWhitespaceEnabled(false);
     m_drt->layoutTestController()->setDefersLoading(false);

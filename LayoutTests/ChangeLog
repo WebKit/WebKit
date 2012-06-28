@@ -1,3 +1,12 @@
+2012-06-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Restore original value of mock scrollbars between tests
+        https://bugs.webkit.org/show_bug.cgi?id=90155
+
+        Reviewed by Simon Hausmann.
+
+        * platform/qt/Skipped: Unskip tests which doesn't break anything now.
+
 2012-06-28  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r121388
