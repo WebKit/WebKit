@@ -32,17 +32,20 @@
 namespace WebCore {
 
 class FormAssociatedElement;
+class FormKeyGenerator;
 class HTMLFormControlElementWithState;
+class HTMLFormElement;
 
 class FormElementKey {
 public:
-    FormElementKey(AtomicStringImpl* = 0, AtomicStringImpl* = 0);
+    FormElementKey(AtomicStringImpl* = 0, AtomicStringImpl* = 0, AtomicStringImpl* = 0);
     ~FormElementKey();
     FormElementKey(const FormElementKey&);
     FormElementKey& operator=(const FormElementKey&);
 
     AtomicStringImpl* name() const { return m_name; }
     AtomicStringImpl* type() const { return m_type; }
+    AtomicStringImpl* formKey() const { return m_formKey; }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     FormElementKey(WTF::HashTableDeletedValueType) : m_name(hashTableDeletedValue()) { }
@@ -56,11 +59,12 @@ private:
 
     AtomicStringImpl* m_name;
     AtomicStringImpl* m_type;
+    AtomicStringImpl* m_formKey;
 };
 
 inline bool operator==(const FormElementKey& a, const FormElementKey& b)
 {
-    return a.name() == b.name() && a.type() == b.type();
+    return a.name() == b.name() && a.type() == b.type() && a.formKey() == b.formKey();
 }
 
 struct FormElementKeyHash {
@@ -126,6 +130,7 @@ public:
     // This should be callled only by Document::setStateForNewFormElements().
     void setStateForNewFormElements(const Vector<String>&);
     FormControlState takeStateForFormElement(const HTMLFormControlElementWithState&);
+    void willDeleteForm(HTMLFormElement*);
 
     void registerFormElementWithFormAttribute(FormAssociatedElement*);
     void unregisterFormElementWithFormAttribute(FormAssociatedElement*);
@@ -143,7 +148,7 @@ private:
 
     typedef HashMap<FormElementKey, Deque<FormControlState>, FormElementKeyHash, FormElementKeyHashTraits> FormElementStateMap;
     FormElementStateMap m_stateForNewFormElements;
-    
+    OwnPtr<FormKeyGenerator> m_formKeyGenerator;
 };
 
 } // namespace WebCore

@@ -1,0 +1,16 @@
+<script>
+if (window.internals) {
+    buffer = 'Form state vector:';
+    var states = internals.formControlStateOfPreviousHistoryItem();
+    for (var i = 1; i < states.length; ++i) {
+        if (i % 5 == 1) {
+            console.log(buffer);
+            buffer = '';
+        }
+        buffer += states[i] + ', ';
+    }
+    console.log(buffer);
+    console.log('');
+}
+history.back();
+</script>

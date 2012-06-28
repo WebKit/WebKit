@@ -1,5 +1,20 @@
 2012-06-28  Kent Tamura  <tkent@chromium.org>
 
+        Classify form control states by their owner forms
+        https://bugs.webkit.org/show_bug.cgi?id=89950
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/resources/state-restore-per-form-back.html: Added.
+        * fast/forms/state-restore-per-form-expected.txt:
+        Added. This contains some FAIL lines. They are expected and will
+        be fixed in webkit.org/b/89962.
+        * fast/forms/state-restore-per-form.html: Added.
+        * fast/forms/state-restore-broken-state-expected.txt:
+        Updated for the serialization format change.
+
+2012-06-28  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Test expectation update
 
         * platform/chromium/TestExpectations:

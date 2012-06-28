@@ -1,3 +1,56 @@
+2012-06-28  Kent Tamura  <tkent@chromium.org>
+
+        Classify form control states by their owner forms
+        https://bugs.webkit.org/show_bug.cgi?id=89950
+
+        Reviewed by Hajime Morita.
+
+        To improve robustness of the form state restore feature, we classify
+        form control states by their owner forms. Owner forms are identified by
+        their action URLs and index numbers in forms with the same action URLs.
+
+        Implementation approach:
+        Extend FormElementKey class to have "formKey" string, which is a
+        combination of the action URL and an index number, or a fixed string for
+        no form owner.
+        FormKeyGenerator class is responsible to generate the "formKey" strings
+
+        Test: fast/forms/state-restore-per-form.html
+
+        * html/FormController.cpp:
+        (FormKeyGenerator):
+        (WebCore::FormKeyGenerator::create): A factory function.
+        (WebCore::FormKeyGenerator::FormKeyGenerator): A private constructor.
+        (WebCore::createKey):
+        A helper for formKey(). This makes strings like "<action URL> #<index>".
+        (WebCore::FormKeyGenerator::formKey):
+        Returns a formKey for the specified HTMLFormElement*.
+        (WebCore::FormKeyGenerator::willDeleteForm):
+        Unregister HTMLFormElement*. This function is necessary because form
+        restore feature works during parsing and a script might delete form
+        elements.
+        (WebCore::formStateSignature): Bump the version.
+        (WebCore::FormController::formElementsState):
+        Records a formKey string for each of control state.
+        (WebCore::FormController::setStateForNewFormElements):
+        Loads formKeys from stateVector, and uses them for FormElementKey.
+        (WebCore::FormController::takeStateForFormElement):
+        - Construct and destruct FormKeyGenerator if needed.
+        - Passing a formKey for the specified form control to FormElementKey.
+        (WebCore::FormController::willDeleteForm):
+        Delegate to FormKeyGenerator::willDeleteForm.
+
+        (WebCore::FormElementKey::FormElementKey): Add formKey argument and member.
+        (WebCore::FormElementKey::operator=): ditto.
+        (WebCore::FormElementKey::ref): ditto.
+        (WebCore::FormElementKey::deref): ditto.
+        * html/FormController.h:
+        (FormElementKey): Add formKey argument and member.
+        (FormController): Add a FormKeyGenerator member which is used during restoring.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::~HTMLFormElement): Notify the death to FormController.
+
 2012-06-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121395.
