@@ -3725,9 +3725,6 @@ BUGCR131687 RELEASE : fast/js/dfg-double-vote-fuzz.html = PASS TEXT
 
 BUGWK88593 : fast/table/multiple-captions-display.xhtml = PASS IMAGE IMAGE+TEXT
 
-// Needs rebaseline after the bots cycle.
-BUG_OJAN WIN MAC : tables/mozilla/bugs/bug131020.html = PASS IMAGE IMAGE+TEXT
-
 BUGWK88900 MAC : http/tests/misc/embed-image-load-outlives-gc-without-crashing.html = TEXT
 
 BUGWK88939 DEBUG : fast/events/before-unload-adopt-subframe-to-outside.html = TEXT

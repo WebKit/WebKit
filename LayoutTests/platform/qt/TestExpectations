@@ -94,9 +94,6 @@ BUGWK86722 SKIP : fast/images/paletted-png-with-color-profile.html = PASS
 // Needs Rebaseline after bug 86942
 BUGWK86942 : fast/backgrounds/size/zero.html = TEXT
 
-// Needs rebaseline after the bots cycle.
-BUG_OJAN : tables/mozilla/bugs/bug131020.html = PASS TEXT IMAGE IMAGE+TEXT
-
 // LayoutTestController::setAutomaticLinkDetectionEnabled isn't implemented
 BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = PASS
 

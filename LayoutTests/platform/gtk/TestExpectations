@@ -1219,9 +1219,6 @@ BUGWK87734 : svg/dom/viewspec-parser-3.html = TEXT
 BUGWK87734 : svg/dom/viewspec-parser-4.html = TEXT
 BUGWK87734 : svg/dom/viewspec-parser-5.html = TEXT
 
-// Needs rebaseline after the bots cycle.
-BUG_OJAN : tables/mozilla/bugs/bug131020.html = TEXT
-
 BUGWK88138 : http/tests/media/video-buffered.html = TEXT
 
 BUGWK89205 : editing/spelling/grammar-edit-word.html = TEXT

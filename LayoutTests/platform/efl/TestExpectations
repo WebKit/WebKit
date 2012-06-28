@@ -704,9 +704,6 @@ BUGWK88729 SKIP : userscripts/window-onerror-for-isolated-world-2.html = PASS
 // Needs Rebaseline after bug 86942
 BUGWK86942 : fast/backgrounds/size/zero.html = IMAGE+TEXT
 
-// Needs rebaseline after the bots cycle.
-BUG_OJAN : tables/mozilla/bugs/bug131020.html = TEXT IMAGE IMAGE+TEXT
-
 // These tests do not seem to fail anywhere else.
 BUGWK88031 : fast/multicol/span/generated-child-split-flow-crash.html = TEXT
 

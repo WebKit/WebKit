@@ -1,3 +1,24 @@
+2012-06-28  Ojan Vafai  <ojan@chromium.org>
+
+        Rebaselines after http://trac.webkit.org/changeset/119507.
+        These were all done using "webkit-patch rebaseline-expectations".
+
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug131020-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug131020-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug131020-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug131020-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug131020-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/tables/mozilla/bugs/bug131020-expected.txt: Copied from LayoutTests/tables/mozilla/bugs/bug131020-expected.txt.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/tables/mozilla/bugs/bug131020-expected.txt: Renamed from LayoutTests/tables/mozilla/bugs/bug131020-expected.txt.
+        * platform/mac/TestExpectations:
+        * platform/mac/tables/mozilla/bugs/bug131020-expected.txt:
+        * platform/qt/TestExpectations:
+        * platform/qt/tables/mozilla/bugs/bug131020-expected.txt:
+        * platform/win/TestExpectations:
+
 2012-06-28  Hayato Ito  <hayato@chromium.org>
 
         CompositeShadowTreeWalker should use InsertionPoint::hasDistribution() instead of InsertionPoint::isActive().
