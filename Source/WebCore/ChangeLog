@@ -5,7 +5,7 @@
 
         Reviewed by Andreas Kling.
 
-        Got rid of getNamedItem and enamed getNamedFormItem to firstNamedItem and got rid of duplicateNumber argument since
+        Got rid of getNamedItem and renamed getNamedFormItem to firstNamedItem and got rid of duplicateNumber argument since
         it's always 0. Also made it a static local function. In addition, removed nextItem() since it's not used anywhere.
 
         WebKit API Test: WebKit1.HTMLFormCollectionNamedItemTest
