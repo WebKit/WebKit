@@ -1,3 +1,14 @@
+2012-06-27  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Rebase image mismatch caused by 121371.
+
+        Rebase test results for:
+        platform/chromium/compositing/scrollbars/custom-composited-different-track-parts.html
+
+        Not reviewed.
+
+        * platform/chromium-linux/platform/chromium/compositing/scrollbars/custom-composited-different-track-parts-expected.png: Added.
+
 2012-06-27  Daniel Cheng  <dcheng@chromium.org>
 
         Fix crash in Frame::nodeImage.
