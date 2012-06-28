@@ -3715,9 +3715,6 @@ BUGCR131187 : fast/canvas/canvas-currentColor.html = TEXT
 // The test has its own notion of timeouts that manifest timeouts as TEXT.
 BUGWK88833 DEBUG : media/video-played-collapse.html = PASS TEXT
 
-// HTMLSelectElement::selectedOptions was removed.
-BUGWK89192 : platform/chromium/accessibility/add-to-menu-list-crashes.html = TEXT
-
 BUGWK88833 WIN DEBUG : media/track/track-kind.html = PASS TIMEOUT
 BUGWK88833 : http/tests/media/video-play-progress.html = PASS TIMEOUT
 BUGWK88833 MAC DEBUG : media/track/track-cues-cuechange.html = PASS TIMEOUT
