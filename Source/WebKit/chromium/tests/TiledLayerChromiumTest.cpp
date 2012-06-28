@@ -26,10 +26,12 @@
 
 #include "TiledLayerChromium.h"
 
+#include "BitmapCanvasLayerTextureUpdater.h"
 #include "CCAnimationTestCommon.h"
 #include "CCLayerTreeTestCommon.h"
 #include "CCTiledLayerTestCommon.h"
 #include "FakeCCLayerTreeHostClient.h"
+#include "LayerPainterChromium.h"
 #include "WebCompositor.h"
 #include "cc/CCOverdrawMetrics.h"
 #include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
@@ -1375,6 +1377,101 @@ TEST(TiledLayerChromiumTest, pixelsPaintedMetrics)
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 0, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedTranslucent(), 30000 + 1 + 100, 1);
     EXPECT_EQ(0, occluded.overdrawMetrics().tilesCulledForUpload());
+}
+
+class TrackingLayerPainter : public LayerPainterChromium {
+public:
+    static PassOwnPtr<TrackingLayerPainter> create() { return adoptPtr(new TrackingLayerPainter()); }
+
+    virtual void paint(SkCanvas*, const IntRect& contentRect, IntRect&)
+    {
+        m_paintedRect = contentRect;
+    }
+
+    const IntRect& paintedRect() const { return m_paintedRect; }
+    void resetPaintedRect() { m_paintedRect = IntRect(); }
+
+private:
+    TrackingLayerPainter() { }
+
+    IntRect m_paintedRect;
+};
+
+class UpdateTrackingTiledLayerChromium : public FakeTiledLayerChromium {
+public:
+    explicit UpdateTrackingTiledLayerChromium(WebCore::TextureManager* manager)
+        : FakeTiledLayerChromium(manager)
+    {
+        OwnPtr<TrackingLayerPainter> trackingLayerPainter(TrackingLayerPainter::create());
+        m_trackingLayerPainter = trackingLayerPainter.get();
+        m_layerTextureUpdater = BitmapCanvasLayerTextureUpdater::create(trackingLayerPainter.release(), false);
+    }
+    virtual ~UpdateTrackingTiledLayerChromium() { }
+
+    TrackingLayerPainter* trackingLayerPainter() const { return m_trackingLayerPainter; }
+
+protected:
+    virtual WebCore::LayerTextureUpdater* textureUpdater() const OVERRIDE { return m_layerTextureUpdater.get(); }
+
+private:
+    TrackingLayerPainter* m_trackingLayerPainter;
+    RefPtr<BitmapCanvasLayerTextureUpdater> m_layerTextureUpdater;
+};
+
+TEST(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringPaint)
+{
+    OwnPtr<TextureManager> textureManager(TextureManager::create(4000000, 4000000, 4000000));
+    CCTextureUpdater updater;
+
+    RefPtr<UpdateTrackingTiledLayerChromium> layer = adoptRef(new UpdateTrackingTiledLayerChromium(textureManager.get()));
+
+    IntRect layerRect(0, 0, 30, 31);
+    layer->setPosition(layerRect.location());
+    layer->setBounds(layerRect.size());
+    layer->setContentsScale(1.5);
+
+    IntRect contentRect(0, 0, 45, 47);
+    EXPECT_EQ(contentRect.size(), layer->contentBounds());
+    layer->setVisibleLayerRect(contentRect);
+
+    // Update the whole tile.
+    layer->updateLayerRect(updater, contentRect, 0);
+    layer->trackingLayerPainter()->resetPaintedRect();
+
+    EXPECT_INT_RECT_EQ(IntRect(), layer->trackingLayerPainter()->paintedRect());
+
+    // Invalidate the entire layer in content space. When painting, the rect given to webkit should match the layer's bounds.
+    layer->invalidateRect(contentRect);
+    layer->updateLayerRect(updater, contentRect, 0);
+
+    EXPECT_INT_RECT_EQ(layerRect, layer->trackingLayerPainter()->paintedRect());
+}
+
+TEST(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringInvalidation)
+{
+    OwnPtr<TextureManager> textureManager(TextureManager::create(4000000, 4000000, 4000000));
+    CCTextureUpdater updater;
+
+    RefPtr<UpdateTrackingTiledLayerChromium> layer = adoptRef(new UpdateTrackingTiledLayerChromium(textureManager.get()));
+
+    IntRect layerRect(0, 0, 30, 31);
+    layer->setPosition(layerRect.location());
+    layer->setBounds(layerRect.size());
+    layer->setContentsScale(1.3);
+
+    IntRect contentRect(IntPoint(), layer->contentBounds());
+
+    // Update the whole tile.
+    layer->updateLayerRect(updater, contentRect, 0);
+    layer->trackingLayerPainter()->resetPaintedRect();
+
+    EXPECT_INT_RECT_EQ(IntRect(), layer->trackingLayerPainter()->paintedRect());
+
+    // Invalidate the entire layer in layer space. When painting, the rect given to webkit should match the layer's bounds.
+    layer->setNeedsDisplayRect(layerRect);
+    layer->updateLayerRect(updater, contentRect, 0);
+
+    EXPECT_INT_RECT_EQ(layerRect, layer->trackingLayerPainter()->paintedRect());
 }
 
 } // namespace

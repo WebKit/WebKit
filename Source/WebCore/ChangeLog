@@ -1,3 +1,43 @@
+2012-06-27  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Do not multiply bounds by contentsScale in TiledLayerChromium and CanvasLayerTextureUpdater
+        https://bugs.webkit.org/show_bug.cgi?id=90103
+
+        Reviewed by Adrienne Walker.
+
+        Non-integer scale factors can scale the bounds of a layer such that
+        different rounding is applied to the width and height in the content
+        bounds. We should never multiply bounds by contentsScale in order to
+        work correctly with non-integer scale factors. Instead, always use the
+        contentBounds/bounds ratio for width and height independently.
+
+        Tests: TiledLayerChromiumTest.nonIntegerContentsScaleIsNotDistortedDuringPaint
+               TiledLayerChromiumTest.nonIntegerContentsScaleIsNotDistortedDuringInvalidation
+
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapCanvasLayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h:
+        (BitmapCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h:
+        (BitmapSkPictureCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.cpp:
+        (WebCore::CanvasLayerTextureUpdater::paintContents):
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.h:
+        (CanvasLayerTextureUpdater):
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        (WebCore::LayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+        (WebCore::ScrollbarLayerChromium::updatePart):
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::SkPictureCanvasLayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.h:
+        (SkPictureCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::setNeedsDisplayRect):
+        (WebCore::TiledLayerChromium::updateTiles):
+
 2012-06-28  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [Qt] Make GC's fill{Rounded}Rect use optimized shadow blur code

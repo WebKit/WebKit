@@ -57,7 +57,7 @@ public:
 
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager*) OVERRIDE;
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) OVERRIDE;
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, float contentsScale, IntRect& resultingOpaqueRect) OVERRIDE;
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect) OVERRIDE;
     void paintContentsRect(SkCanvas*, const IntRect& sourceRect);
     void updateTextureRect(CCGraphicsContext*, GC3Denum format, const IntRect& destRect, const uint8_t* pixels);
 

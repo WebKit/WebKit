@@ -61,7 +61,7 @@ public:
     virtual PassOwnPtr<WebCore::LayerTextureUpdater::Texture> createTexture(WebCore::TextureManager*) OVERRIDE;
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum) OVERRIDE { return SampledTexelFormatRGBA; }
 
-    virtual void prepareToUpdate(const WebCore::IntRect& contentRect, const WebCore::IntSize&, float, WebCore::IntRect& resultingOpaqueRect) OVERRIDE;
+    virtual void prepareToUpdate(const WebCore::IntRect& contentRect, const WebCore::IntSize&, float, float, WebCore::IntRect& resultingOpaqueRect) OVERRIDE;
     // Sets the rect to invalidate during the next call to prepareToUpdate(). After the next
     // call to prepareToUpdate() the rect is reset.
     void setRectToInvalidate(const WebCore::IntRect&, FakeTiledLayerChromium*);
@@ -128,10 +128,11 @@ public:
     FakeLayerTextureUpdater* fakeLayerTextureUpdater() { return m_fakeTextureUpdater.get(); }
     WebCore::FloatRect updateRect() { return m_updateRect; }
 
-private:
+protected:
     virtual WebCore::LayerTextureUpdater* textureUpdater() const OVERRIDE { return m_fakeTextureUpdater.get(); }
     virtual void createTextureUpdaterIfNeeded() OVERRIDE { }
 
+private:
     RefPtr<FakeLayerTextureUpdater> m_fakeTextureUpdater;
     WebCore::TextureManager* m_textureManager;
     WebCore::FloatRect m_lastNeedsDisplayRect;

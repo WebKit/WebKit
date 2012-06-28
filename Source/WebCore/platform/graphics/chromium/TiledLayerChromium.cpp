@@ -279,8 +279,10 @@ UpdatableTile* TiledLayerChromium::createTile(int i, int j)
 
 void TiledLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 {
+    float contentsWidthScale = static_cast<float>(contentBounds().width()) / bounds().width();
+    float contentsHeightScale = static_cast<float>(contentBounds().height()) / bounds().height();
     FloatRect scaledDirtyRect(dirtyRect);
-    scaledDirtyRect.scale(contentsScale());
+    scaledDirtyRect.scale(contentsWidthScale, contentsHeightScale);
     IntRect dirty = enclosingIntRect(scaledDirtyRect);
     invalidateRect(dirty);
     LayerChromium::setNeedsDisplayRect(dirtyRect);
@@ -455,7 +457,7 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
     // so we grab a local reference here to hold the updater alive until the paint completes.
     RefPtr<LayerTextureUpdater> protector(textureUpdater());
     IntRect paintedOpaqueRect;
-    textureUpdater()->prepareToUpdate(paintRect, m_tiler->tileSize(), contentsScale(), paintedOpaqueRect);
+    textureUpdater()->prepareToUpdate(paintRect, m_tiler->tileSize(), 1 / widthScale, 1 / heightScale, paintedOpaqueRect);
     m_didPaint = true;
 
     for (int j = top; j <= bottom; ++j) {

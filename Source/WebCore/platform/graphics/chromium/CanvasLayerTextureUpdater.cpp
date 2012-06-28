@@ -48,7 +48,7 @@ CanvasLayerTextureUpdater::~CanvasLayerTextureUpdater()
 {
 }
 
-void CanvasLayerTextureUpdater::paintContents(SkCanvas* canvas, const IntRect& contentRect, float contentsScale, IntRect& resultingOpaqueRect)
+void CanvasLayerTextureUpdater::paintContents(SkCanvas* canvas, const IntRect& contentRect, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect)
 {
     TRACE_EVENT0("cc", "CanvasLayerTextureUpdater::paintContents");
     canvas->save();
@@ -56,11 +56,11 @@ void CanvasLayerTextureUpdater::paintContents(SkCanvas* canvas, const IntRect& c
 
     IntRect scaledContentRect = contentRect;
 
-    if (contentsScale != 1.0) {
-        canvas->scale(WebCoreFloatToSkScalar(contentsScale), WebCoreFloatToSkScalar(contentsScale));
+    if (contentsWidthScale != 1 || contentsHeightScale != 1) {
+        canvas->scale(WebCoreFloatToSkScalar(contentsWidthScale), WebCoreFloatToSkScalar(contentsHeightScale));
 
         FloatRect rect = contentRect;
-        rect.scale(1 / contentsScale);
+        rect.scale(1 / contentsWidthScale, 1 / contentsHeightScale);
         scaledContentRect = enclosingIntRect(rect);
     }
 

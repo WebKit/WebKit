@@ -47,7 +47,7 @@ public:
 protected:
     explicit CanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);
 
-    void paintContents(SkCanvas*, const IntRect& contentRect, float contentsScale, IntRect& resultingOpaqueRect);
+    void paintContents(SkCanvas*, const IntRect& contentRect, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect);
     const IntRect& contentRect() const { return m_contentRect; }
 
 private:

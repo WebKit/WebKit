@@ -247,7 +247,7 @@ void ScrollbarLayerChromium::updatePart(LayerTextureUpdater* painter, LayerTextu
 
     // Paint and upload the entire part.
     IntRect paintedOpaqueRect;
-    painter->prepareToUpdate(rect, rect.size(), 1, paintedOpaqueRect);
+    painter->prepareToUpdate(rect, rect.size(), 1, 1, paintedOpaqueRect);
     texture->prepareRect(rect);
 
     IntRect destRect(IntPoint(), rect.size());
