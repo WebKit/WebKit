@@ -72,15 +72,16 @@
     [super setFrame:NSMakeRect(currentFrame.origin.x, currentFrame.origin.y, windowFrame.size.width, windowFrame.size.height) display:displayViews];
 }
 
-- (NSRect)frame
+- (NSRect)frameRespectingFakeOrigin
 {
-    NSRect currentFrame = [super frame];
+    NSRect currentFrame = [self frame];
 
     if (_shouldUseFakeOrigin)
         return NSMakeRect(_fakeOrigin.x, _fakeOrigin.y, currentFrame.size.width, currentFrame.size.height);
 
     return currentFrame;
 }
+
 @end
 
 namespace WTR {
@@ -126,7 +127,7 @@ void PlatformWebView::focus()
 
 WKRect PlatformWebView::windowFrame()
 {
-    NSRect frame = [m_window frame];
+    NSRect frame = [m_window frameRespectingFakeOrigin];
 
     WKRect wkFrame;
     wkFrame.origin.x = frame.origin.x;

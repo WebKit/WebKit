@@ -1,3 +1,19 @@
+2012-06-28  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] WKTR windows still don't stay off screen sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=90214
+        <rdar://problem/11760263>
+
+        Reviewed by Simon Fraser.
+
+        In some cases, the system itself will consult [WebKitTestRunnerWindow frame], so we should refrain from
+        overriding it and instead provide a different method to use when we want the web-facing "fake" window origin
+        (for PlatformWebView::windowFrame()).
+
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (-[WebKitTestRunnerWindow frameRespectingFakeOrigin]):
+        (WTR::PlatformWebView::windowFrame):
+
 2012-06-28  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add unit tests for GtkInputMethodFilter
