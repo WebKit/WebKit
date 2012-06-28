@@ -191,6 +191,7 @@ void WebPage::resetSettings()
     settings()->resetAttribute(QWebSettings::ZoomTextOnly);
     settings()->resetAttribute(QWebSettings::CSSRegionsEnabled);
     settings()->resetAttribute(QWebSettings::CSSGridLayoutEnabled);
+    settings()->resetAttribute(QWebSettings::AcceleratedCompositingEnabled);
 
     m_drt->layoutTestController()->setCaretBrowsingEnabled(false);
     m_drt->layoutTestController()->setAuthorAndUserStylesEnabled(true);
