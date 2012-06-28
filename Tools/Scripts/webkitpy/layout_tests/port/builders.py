@@ -58,11 +58,17 @@ _exact_matches = {
     "Apple Lion Debug WK2 (Tests)": {"port_name": "mac-lion", "specifiers": set(["lion", "wk2", "debug"])},
 
     "Apple Win XP Debug (Tests)": {"port_name": "win-xp", "specifiers": set(["win", "debug"])},
-    "Apple Win 7 Release (Tests)": {"port_name": "win-xp", "specifiers": set(["win"])},
+    "Apple Win 7 Release (Tests)": {"port_name": "win-7sp0", "specifiers": set(["win"])},
 
-    "GTK Linux 32-bit Debug": {"port_name": "gtk", "specifiers": set(["gtk"])},
+    "GTK Linux 32-bit Release": {"port_name": "gtk", "specifiers": set(["gtk", "x86", "release"])},
+    "GTK Linux 64-bit Debug": {"port_name": "gtk", "specifiers": set(["gtk", "x86_64", "debug"])},
+    "GTK Linux 64-bit Release": {"port_name": "gtk", "specifiers": set(["gtk", "x86_64", "release"])},
+    "GTK Linux 64-bit Release WK2 (Tests)": {"port_name": "gtk", "specifiers": set(["gtk", "x86_64", "wk2", "release"])},
+
     "Qt Linux Release": {"port_name": "qt-linux", "specifiers": set(["win", "linux", "mac"])},
-    "EFL Linux Release": {"port_name": "efl", "specifiers": set(["efl"])},
+
+    "EFL Linux 64-bit Debug": {"port_name": "efl", "specifiers": set(["efl", "debug"])},
+    "EFL Linux 64-bit Release": {"port_name": "efl", "specifiers": set(["efl", "release"])},
 }
 
 

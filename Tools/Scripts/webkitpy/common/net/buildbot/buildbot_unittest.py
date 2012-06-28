@@ -112,9 +112,19 @@ class BuilderTest(unittest.TestCase):
         expectations = {
             "r47483 (1)/" : (47483, 1),
             "r47483 (1).zip" : (47483, 1),
+            "random junk": None,
         }
         for filename, revision_and_build in expectations.items():
             self.assertEqual(self.builder._revision_and_build_for_filename(filename), revision_and_build)
+
+    def test_file_info_list_to_revision_to_build_list(self):
+        file_info_list = [
+            {"filename": "r47483 (1)/"},
+            {"filename": "r47483 (1).zip"},
+            {"filename": "random junk"},
+        ]
+        builds_and_revisions_list = [(47483, 1), (47483, 1)]
+        self.assertEqual(self.builder._file_info_list_to_revision_to_build_list(file_info_list), builds_and_revisions_list)
 
     def test_fetch_build(self):
         buildbot = BuildBot()

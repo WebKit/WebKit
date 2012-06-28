@@ -80,9 +80,11 @@ class RebaselineTest(AbstractRebaseliningCommand):
         self._scm_changes = {}
 
     def _results_url(self, builder_name):
-        # FIXME: Generalize this command to work with non-build.chromium.org builders.
-        builder = self._tool.chromium_buildbot().builder_with_name(builder_name)
-        return builder.accumulated_results_url()
+        port = self._tool.port_factory.get_from_builder_name(builder_name)
+        # FIXME: Come up with a better way than string manipulation to see if the port is a chromium port.
+        if port.name().startswith('chromium-'):
+            return self._tool.chromium_buildbot().builder_with_name(builder_name).accumulated_results_url()
+        return self._tool.buildbot.builder_with_name(builder_name).latest_cached_build().results_url()
 
     def _baseline_directory(self, builder_name):
         port = self._tool.port_factory.get_from_builder_name(builder_name)
@@ -250,15 +252,9 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
         try:
             self._tool.executive.run_command([self._tool.path()] + args, cwd=self._tool.scm().checkout_root)
         except ScriptError, e:
-            pass
-
-    def _is_supported_port(self, port_name):
-        # FIXME: Support non-Chromium ports.
-        return port_name.startswith('chromium-')
+            _log.error(e)
 
     def _update_expectations_file(self, port_name):
-        if not self._is_supported_port(port_name):
-            return
         port = self._tool.port_factory.get(port_name)
 
         # FIXME: This will intentionally skip over any REBASELINE expectations that were in an overrides file.
@@ -277,13 +273,13 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
         return tests_to_rebaseline
 
     def _rebaseline_port(self, port_name):
-        if not self._is_supported_port(port_name):
-            return
         builder_name = builders.builder_name_for_port_name(port_name)
         if not builder_name:
             return
-        _log.info("Retrieving results for %s from %s." % (port_name, builder_name))
-        for test_name, suffixes in self._tests_to_rebaseline(self._tool.port_factory.get(port_name)).iteritems():
+        tests = self._tests_to_rebaseline(self._tool.port_factory.get(port_name)).items()
+        if tests:
+            _log.info("Retrieving results for %s from %s." % (port_name, builder_name))
+        for test_name, suffixes in tests:
             self._touched_tests.setdefault(test_name, set()).update(set(suffixes))
             _log.info("    %s (%s)" % (test_name, ','.join(suffixes)))
             # FIXME: we should use executive.run_in_parallel() to speed this up.

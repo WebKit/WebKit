@@ -1,3 +1,38 @@
+2012-06-28  Ojan Vafai  <ojan@chromium.org>
+
+        Make rebaseline-test and rebaseline-expectations work for non-Chromium ports
+        https://bugs.webkit.org/show_bug.cgi?id=90186
+
+        Reviewed by Adam Barth.
+
+        This makes rebaselining work for all ports that have a TestExpectations file
+        in the tree. I didn't test other ports.
+
+        This doesn't address 100% of the problem. The rebaseline code puts the expectations
+        in the most specific directory and relies on optimize-baselines to merge baselines
+        appropriately. This only works if every platform directory has an equivalent bot
+        that runs the tests, which is not true for most ports.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (Builder._revision_and_build_for_filename):
+        Some bots have filenames that aren't revision/build number pairs
+        e.g. they are random junk like aQhxvx. Handle this gracefully.
+        (Builder._fetch_revision_to_build_map):
+        (Builder._file_info_list_to_revision_to_build_list):
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        (BuilderTest.test_build_and_revision_for_filename):
+        (BuilderTest.test_file_info_list_to_revision_to_build_list):
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        Update the list of builders. This list needs to be kept up
+        to date for the rebaseline tool to work.
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._results_url):
+        (RebaselineExpectations._run_webkit_patch):
+        (RebaselineExpectations._rebaseline_port):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        Qt port uses qmake to determine the right version. Systems without qmake correctly fallback
+        to a specific version.
+
 2012-06-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][NRWT] Fix baseline and skipped file search path.

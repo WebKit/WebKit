@@ -210,6 +210,21 @@ Retrieving results for chromium-win-win7 from Webkit Win7.
 Retrieving results for chromium-win-xp from Webkit Win.
     userscripts/another-test.html (txt)
     userscripts/images.svg (png)
+Retrieving results for efl from EFL Linux 64-bit Release.
+    userscripts/another-test.html (txt)
+    userscripts/images.svg (png)
+Retrieving results for gtk from GTK Linux 64-bit Release.
+    userscripts/another-test.html (txt)
+    userscripts/images.svg (png)
+Retrieving results for mac-lion from Apple Lion Release WK1 (Tests).
+    userscripts/another-test.html (txt)
+    userscripts/images.svg (png)
+Retrieving results for qt-linux from Qt Linux Release.
+    userscripts/another-test.html (txt)
+    userscripts/images.svg (png)
+Retrieving results for win-7sp0 from Apple Win 7 Release (Tests).
+    userscripts/another-test.html (txt)
+    userscripts/images.svg (png)
 """
 
         expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Webkit Linux 32', 'userscripts/another-test.html'], cwd=/mock-checkout
@@ -226,6 +241,20 @@ MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Webkit Win7'
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Webkit Win7', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Webkit Win', 'userscripts/another-test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Webkit Win', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'EFL Linux 64-bit Release', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'EFL Linux 64-bit Release', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'GTK Linux 64-bit Release', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'GTK Linux 64-bit Release', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Apple Lion Release WK1 (Tests)', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Apple Lion Release WK1 (Tests)', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Qt Linux Release', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Qt Linux Release', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Apple Win 7 Release (Tests)', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Apple Win 7 Release (Tests)', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['qmake', '-v'], cwd=None
+MOCK run_command: ['qmake', '-v'], cwd=None
+MOCK run_command: ['qmake', '-v'], cwd=None
+MOCK run_command: ['qmake', '-v'], cwd=None
 """
 
         command._tests_to_rebaseline = lambda port: {'userscripts/another-test.html': set(['txt']), 'userscripts/images.svg': set(['png'])}

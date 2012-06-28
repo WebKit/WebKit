@@ -120,6 +120,8 @@ class Builder(object):
     def _revision_and_build_for_filename(self, filename):
         # Example: "r47483 (1)/" or "r47483 (1).zip"
         match = self.file_name_regexp.match(filename)
+        if not match:
+            return None
         return (int(match.group("revision")), int(match.group("build_number")))
 
     def _fetch_revision_to_build_map(self):
@@ -135,10 +137,18 @@ class Builder(object):
         except urllib2.HTTPError, error:
             if error.code != 404:
                 raise
+            _log.debug("Revision/build list failed to load.")
             result_files = []
+        return dict(self._file_info_list_to_revision_to_build_list(result_files))
 
+    def _file_info_list_to_revision_to_build_list(self, file_info_list):
         # This assumes there was only one build per revision, which is false but we don't care for now.
-        return dict([self._revision_and_build_for_filename(file_info["filename"]) for file_info in result_files])
+        revisions_and_builds = []
+        for file_info in file_info_list:
+            revision_and_build = self._revision_and_build_for_filename(file_info["filename"])
+            if revision_and_build:
+                revisions_and_builds.append(revision_and_build)
+        return revisions_and_builds
 
     def _revision_to_build_map(self):
         if not self._revision_to_build_number:
