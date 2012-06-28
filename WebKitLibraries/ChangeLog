@@ -1,3 +1,11 @@
+2012-06-27  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build correction.  Resync feature defines with
+        Apple port. Things have drifted apart a little.
+
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops: Update to match
+        Apple port, define some missing features.
+
 2012-06-19  Mike West  <mkwst@chromium.org>
 
         Introduce ENABLE_CSP_NEXT configuration flag.
