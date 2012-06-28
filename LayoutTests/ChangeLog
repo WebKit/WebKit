@@ -1,3 +1,11 @@
+2012-06-28  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, removing crash expectation for the
+        fast/workers/worker-context-gc.html test as the offending revision
+        was rolled out in r121417.
+
+        * platform/gtk/TestExpectations:
+
 2012-06-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip a new test to hide an annoying bug
