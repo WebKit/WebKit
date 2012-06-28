@@ -293,3 +293,83 @@ INSTALL(FILES ${EWebKit_HEADERS}
 
 INSTALL(FILES ${WebKit_THEME}
         DESTINATION ${DATA_INSTALL_DIR}/themes)
+
+INCLUDE_DIRECTORIES(${THIRDPARTY_DIR}/gtest
+                    ${THIRDPARTY_DIR}/gtest/include
+)
+
+SET(GTEST_SOURCES "${THIRDPARTY_DIR}/gtest/src")
+
+ADD_LIBRARY(gtest
+    ${GTEST_SOURCES}/gtest.cc
+    ${GTEST_SOURCES}/gtest-death-test.cc
+    ${GTEST_SOURCES}/gtest_main.cc
+    ${GTEST_SOURCES}/gtest-filepath.cc
+    ${GTEST_SOURCES}/gtest-port.cc
+    ${GTEST_SOURCES}/gtest-test-part.cc
+    ${GTEST_SOURCES}/gtest-typed-test.cc
+)
+
+SET(EWKUnitTests_LIBRARIES
+    ${JavaScriptCore_LIBRARY_NAME}
+    ${WebCore_LIBRARY_NAME}
+    ${WebKit_LIBRARY_NAME}
+    ${ECORE_LIBRARIES}
+    ${ECORE_EVAS_LIBRARIES}
+    ${EVAS_LIBRARIES}
+    ${EDJE_LIBRARIES}
+)
+
+SET(EWKUnitTests_INCLUDE_DIRECTORIES
+    "${CMAKE_SOURCE_DIR}/Source"
+    "${WEBKIT_DIR}/efl/ewk"
+    "${WEBKIT_DIR}/efl/tests/src/UnitTestUtils"
+    "${JAVASCRIPTCORE_DIR}"
+    "${WTF_DIR}"
+    "${WTF_DIR}/wtf"
+    ${ECORE_INCLUDE_DIRS}
+    ${ECORE_EVAS_INCLUDE_DIRS}
+    ${EVAS_INCLUDE_DIRS}
+    ${EDJE_INCLUDE_DIRS}
+)
+
+SET(EWKUnitTests_LINK_FLAGS
+    ${ECORE_LDFLAGS}
+    ${ECORE_EVAS_LDFLAGS}
+    ${EVAS_LDFLAGS}
+    ${EDJE_LDFLAGS}
+)
+
+IF (ENABLE_GLIB_SUPPORT)
+    LIST(APPEND EWKUnitTests_INCLUDE_DIRECTORIES "${WTF_DIR}/wtf/gobject")
+
+    LIST(APPEND EWKUnitTests_LIBRARIES
+        ${Gdk_LIBRARIES}
+        ${Glib_LIBRARIES}
+        ${Gthread_LIBRARIES}
+    )
+ENDIF ()
+
+SET(DEFAULT_TEST_PAGE_DIR ${CMAKE_SOURCE_DIR}/Source/WebKit/efl/tests/resources)
+
+ADD_DEFINITIONS(-DDEFAULT_TEST_PAGE_DIR=\"${DEFAULT_TEST_PAGE_DIR}\")
+ADD_DEFINITIONS(-DDEFAULT_THEME_PATH=\"${THEME_BINARY_DIR}\")
+
+ADD_LIBRARY(ewkTestUtils
+    ${WEBKIT_DIR}/efl/tests/UnitTestUtils/EWKTestBase.cpp
+    ${WEBKIT_DIR}/efl/tests/UnitTestUtils/EWKTestView.cpp
+)
+
+SET(WEBKIT_EFL_TEST_DIR "${WEBKIT_DIR}/efl/tests/")
+
+SET(EWKUnitTests_BINARIES
+    test_ewk_view
+)
+
+FOREACH(testName ${EWKUnitTests_BINARIES})
+    ADD_EXECUTABLE(bin/${testName} ${WEBKIT_EFL_TEST_DIR}/${testName}.cpp ${WEBKIT_EFL_TEST_DIR}/test_runner.cpp)
+    TARGET_LINK_LIBRARIES(bin/${testName} ${EWKUnitTests_LIBRARIES} ewkTestUtils gtest pthread)
+    ADD_TARGET_PROPERTIES(bin/${testName} LINK_FLAGS "${EWKUnitTests_LINK_FLAGS}")
+    SET_TARGET_PROPERTIES(bin/${testName} PROPERTIES FOLDER "WebKit")
+    SET_TARGET_PROPERTIES(bin/${testName} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+ENDFOREACH()
