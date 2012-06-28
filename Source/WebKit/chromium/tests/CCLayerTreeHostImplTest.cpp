@@ -2855,6 +2855,12 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingMemoryLimit)
     }
 }
 
+TEST_F(CCLayerTreeHostImplTest, releaseContentsTextureShouldTriggerCommit)
+{
+    m_hostImpl->releaseContentsTextures();
+    EXPECT_TRUE(m_didRequestCommit);
+}
+
 struct RenderPassCacheEntry {
     mutable OwnPtr<CCRenderPass> renderPassPtr;
     CCRenderPass* renderPass;

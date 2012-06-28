@@ -159,6 +159,7 @@ void CCScheduler::processScheduledActions()
     do {
         action = nextAction();
         m_stateMachine.updateState(action);
+        TRACE_EVENT1("cc", "CCScheduler::processScheduledActions()", "action", action);
 
         switch (action) {
         case CCSchedulerStateMachine::ACTION_NONE:

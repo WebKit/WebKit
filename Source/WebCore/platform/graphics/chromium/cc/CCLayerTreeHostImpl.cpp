@@ -155,6 +155,7 @@ void CCLayerTreeHostImpl::beginCommit()
 
 void CCLayerTreeHostImpl::commitComplete()
 {
+    TRACE_EVENT0("cc", "CCLayerTreeHostImpl::commitComplete");
     // Recompute max scroll position; must be after layer content bounds are
     // updated.
     updateMaxScrollPosition();
@@ -163,14 +164,22 @@ void CCLayerTreeHostImpl::commitComplete()
 
 bool CCLayerTreeHostImpl::canDraw()
 {
-    if (!m_rootLayerImpl)
+    if (!m_rootLayerImpl) {
+        TRACE_EVENT_INSTANT0("cc", "CCLayerTreeHostImpl::canDraw no root layer");
         return false;
-    if (viewportSize().isEmpty())
+    }
+    if (viewportSize().isEmpty()) {
+        TRACE_EVENT_INSTANT0("cc", "CCLayerTreeHostImpl::canDraw empty viewport");
         return false;
-    if (!m_layerRenderer)
+    }
+    if (!m_layerRenderer) {
+        TRACE_EVENT_INSTANT0("cc", "CCLayerTreeHostImpl::canDraw no layerRenderer");
         return false;
-    if (m_contentsTexturesWerePurgedSinceLastCommit)
+    }
+    if (m_contentsTexturesWerePurgedSinceLastCommit) {
+        TRACE_EVENT_INSTANT0("cc", "CCLayerTreeHostImpl::canDraw contents textures purged");
         return false;
+    }
     return true;
 }
 
@@ -478,6 +487,7 @@ void CCLayerTreeHostImpl::releaseContentsTextures()
 {
     contentsTextureAllocator()->deleteAllTextures();
     m_contentsTexturesWerePurgedSinceLastCommit = true;
+    m_client->setNeedsCommitOnImplThread();
 }
 
 void CCLayerTreeHostImpl::setMemoryAllocationLimitBytes(size_t bytes)

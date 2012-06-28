@@ -1,3 +1,14 @@
+2012-06-28  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Should schedule a commit when dropping contents textures
+        https://bugs.webkit.org/show_bug.cgi?id=90031
+
+        Reviewed by Adrienne Walker.
+
+        Adds a somewhat vacuous test unit test for committing when releasing textures.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-06-27  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Do not multiply bounds by contentsScale in TiledLayerChromium and CanvasLayerTextureUpdater
