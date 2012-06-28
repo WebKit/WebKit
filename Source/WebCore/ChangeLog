@@ -1,3 +1,21 @@
+2012-06-27  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        [BlackBerry] 0-length response with no content-type shouldn't download
+        https://bugs.webkit.org/show_bug.cgi?id=89860
+
+        Reviewed by Rob Buis.
+
+        RIM PR# 168419
+
+        For 0-length response, if we can't get its mimetype from the filename,
+        we set the mimetype to "text/plain" instead of "application/octet-stream",
+        so it won't go to download.
+
+        Reviewed internally by Charles Wei.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::sendResponseIfNeeded):
+
 2012-06-27  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Platform] Implement localizedDecimalSeparator function

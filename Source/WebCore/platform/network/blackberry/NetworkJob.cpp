@@ -625,12 +625,12 @@ void NetworkJob::sendResponseIfNeeded()
         mimeType = "application/x-ftp-directory";
     else if (mimeType.isNull())
         mimeType = extractMIMETypeFromMediaType(m_contentType);
-    if (mimeType.isNull()) {
-        if (m_dataReceived)
-            mimeType = MIMETypeRegistry::getMIMETypeForPath(urlFilename);
-        else
-            // For empty content, we shouldn't download.
-            mimeType = "text/plain";
+    if (mimeType.isNull())
+        mimeType = MIMETypeRegistry::getMIMETypeForPath(urlFilename);
+    if (!m_dataReceived && mimeType == "application/octet-stream") {
+        // For empty content, if can't guess its mimetype from filename, we manually
+        // set the mimetype to "text/plain" in case it goes to download.
+        mimeType = "text/plain";
     }
     m_response.setMimeType(mimeType);
 
