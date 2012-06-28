@@ -245,6 +245,9 @@ void HTMLOptionElement::setSelectedState(bool selected)
 
     m_isSelected = selected;
     setNeedsStyleRecalc();
+
+    if (HTMLSelectElement* select = ownerSelectElement())
+        select->invalidateSelectedItems();
 }
 
 void HTMLOptionElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

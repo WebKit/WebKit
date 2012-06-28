@@ -1,3 +1,17 @@
+2012-06-27  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Implement selectedOptions attribute of HTMLSelectElement.
+        https://bugs.webkit.org/show_bug.cgi?id=80631
+
+        Reviewed by Ryosuke Niwa.
+
+        New tests to cover the feature.
+
+        * fast/dom/HTMLSelectElement/select-selectedOptions-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/select-selectedOptions.html: Added.
+        * fast/dom/htmlcollection-non-html-expected.txt:
+        * fast/dom/htmlcollection-non-html.html:
+
 2012-06-27  Filip Pizlo  <fpizlo@apple.com>
 
         Javascript SHA-512 gives wrong hash on second and subsequent runs unless Web Inspector Javascript Debugging is on

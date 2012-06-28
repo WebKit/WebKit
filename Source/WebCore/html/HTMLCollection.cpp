@@ -52,6 +52,7 @@ static bool shouldIncludeChildren(CollectionType type)
     case MapAreas:
     case OtherCollection:
     case SelectOptions:
+    case SelectedOptions:
     case DataListOptions:
     case WindowNamedItems:
 #if ENABLE(MICRODATA)
@@ -98,6 +99,11 @@ void HTMLCollection::invalidateCacheIfNeeded() const
     m_cache.version = docversion;
 }
 
+void HTMLCollection::clearCache()
+{
+    m_cache.clear();
+}
+
 inline bool HTMLCollection::isAcceptableElement(Element* element) const
 {
     if (!element->isHTMLElement() && !(m_type == DocAll || m_type == NodeChildren))
@@ -118,6 +124,8 @@ inline bool HTMLCollection::isAcceptableElement(Element* element) const
         return element->hasLocalName(trTag);
     case SelectOptions:
         return element->hasLocalName(optionTag);
+    case SelectedOptions:
+        return element->hasLocalName(optionTag) && toHTMLOptionElement(element)->selected();
     case DataListOptions:
         if (element->hasLocalName(optionTag)) {
             HTMLOptionElement* option = static_cast<HTMLOptionElement*>(element);

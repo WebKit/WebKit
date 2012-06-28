@@ -67,10 +67,10 @@ public:
     Node* base() const { return m_base; }
     CollectionType type() const { return static_cast<CollectionType>(m_type); }
 
+    void clearCache();
+    void invalidateCacheIfNeeded() const;
 protected:
     HTMLCollection(Node* base, CollectionType);
-
-    void invalidateCacheIfNeeded() const;
 
     virtual void updateNameCache() const;
     virtual Element* itemAfter(Element*) const;

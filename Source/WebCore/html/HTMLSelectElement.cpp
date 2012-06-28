@@ -350,6 +350,13 @@ bool HTMLSelectElement::childShouldCreateRenderer(const NodeRenderingContext& ch
     return childContext.isOnUpperEncapsulationBoundary() && HTMLFormControlElementWithState::childShouldCreateRenderer(childContext);
 }
 
+HTMLCollection* HTMLSelectElement::selectedOptions()
+{
+    if (!m_selectedOptionsCollection)
+        m_selectedOptionsCollection = HTMLCollection::create(this, SelectedOptions);
+    return m_selectedOptionsCollection.get();
+}
+
 HTMLOptionsCollection* HTMLSelectElement::options()
 {
     if (!m_optionsCollection)
@@ -700,6 +707,12 @@ const Vector<HTMLElement*>& HTMLSelectElement::listItems() const
     return m_listItems;
 }
 
+void HTMLSelectElement::invalidateSelectedItems()
+{
+    if (m_selectedOptionsCollection)
+        m_selectedOptionsCollection->clearCache();
+}
+
 void HTMLSelectElement::setRecalcListItems()
 {
     m_shouldRecalcListItems = true;
@@ -709,6 +722,8 @@ void HTMLSelectElement::setRecalcListItems()
     setNeedsStyleRecalc();
     if (!inDocument() && m_optionsCollection)
         m_optionsCollection->invalidateCacheIfNeeded();
+    if (!inDocument() && m_selectedOptionsCollection)
+        m_selectedOptionsCollection->invalidateCacheIfNeeded();
 }
 
 void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const

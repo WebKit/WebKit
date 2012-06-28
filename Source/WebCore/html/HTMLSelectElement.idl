@@ -53,6 +53,7 @@ module html {
 #else
         void remove(in long index);
 #endif
+        readonly attribute HTMLCollection selectedOptions;
         attribute long selectedIndex;
         attribute [TreatNullAs=NullString] DOMString value;
 

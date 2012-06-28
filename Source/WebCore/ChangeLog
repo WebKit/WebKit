@@ -1,3 +1,41 @@
+2012-06-27  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Implement selectedOptions attribute of HTMLSelectElement.
+        https://bugs.webkit.org/show_bug.cgi?id=80631
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a new collection as a member of HTMLSelectElement which is
+        used to store the selected elements. Extend HTMLCollection to
+        support the new collection type needed by this feature. Make sure
+        that we invalidate the collection when the select state of an
+        option changes as the select state change does not trigger a dom
+        tree version change.
+
+        Reference : http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#dom-select-selectedoptions
+
+        Test: fast/dom/HTMLSelectElement/select-selectedOptions.html
+
+        * html/CollectionType.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::shouldIncludeChildren):
+        (WebCore::HTMLCollection::clearCache):
+        (WebCore):
+        (WebCore::HTMLCollection::isAcceptableElement):
+        * html/HTMLCollection.h:
+        (HTMLCollection):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::setSelectedState):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::selectedOptions):
+        (WebCore):
+        (WebCore::HTMLSelectElement::invalidateSelectedItems):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        * html/HTMLSelectElement.h:
+        (WebCore):
+        (HTMLSelectElement):
+        * html/HTMLSelectElement.idl:
+
 2012-06-27  Daniel Cheng  <dcheng@chromium.org>
 
         Fix crash in Frame::nodeImage.
