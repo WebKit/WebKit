@@ -1,3 +1,23 @@
+2012-06-28  Stephen Chenney  <schenney@chromium.org>
+
+        [chromium] rebaseline svg text layouts?
+        https://bugs.webkit.org/show_bug.cgi?id=89936
+
+        Unreviewed Chromium test expectations update.
+
+        The SVG tests for this bug all seem OK, so they are being rebaselined.
+        The other content is less clear, so it is being left for an expert.
+
+        * platform/chromium-win-xp/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt: Added.
+        * platform/chromium-win-xp/svg/W3C-SVG-1.1/animate-elem-52-t-expected.png: Added.
+        * platform/chromium-win-xp/svg/W3C-SVG-1.1/filters-conv-01-f-expected.png: Added.
+        * platform/chromium-win-xp/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png: Added.
+        * platform/chromium-win-xp/svg/W3C-SVG-1.1/text-intro-05-t-expected.txt: Added.
+        * platform/chromium-win-xp/svg/custom/js-late-gradient-and-object-creation-expected.png: Added.
+        * platform/chromium-win-xp/svg/text/text-intro-05-t-expected.txt: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-foreignObject-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-06-28  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Mark a test as slow.
@@ -42,7 +62,7 @@
 2012-06-28  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed gardening.
-        
+
         Remove a duplicate expectation.
 
         * platform/chromium/TestExpectations:

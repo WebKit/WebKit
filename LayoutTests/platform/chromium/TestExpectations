@@ -3777,16 +3777,8 @@ BUGWK89813 LINUX DEBUG : fast/js/large-expressions.html = PASS TIMEOUT
 
 BUGWK89820 : fast/text/hyphen-min-preferred-width.html = IMAGE
 
-BUGWK89936 WIN : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = TEXT
-BUGWK89936 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = TEXT
-BUGWK89936 WIN : svg/text/text-intro-05-t.svg = TEXT
 BUGWK89936 WIN : compositing/shadows/shadow-drawing.html = IMAGE
 BUGWK89936 WIN : fast/text/atsui-kerning-and-ligatures.html = IMAGE
-BUGWK89936 WIN : svg/W3C-SVG-1.1/animate-elem-52-t.svg = IMAGE
-BUGWK89936 WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE
-BUGWK89936 WIN : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
-BUGWK89936 WIN : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
-BUGWK89936 WIN : svg/zoom/page/zoom-foreignObject.svg = IMAGE
 BUGWK89936 WIN : fast/css/text-rendering.html = IMAGE+TEXT
 
 // Started failing after r121267.
