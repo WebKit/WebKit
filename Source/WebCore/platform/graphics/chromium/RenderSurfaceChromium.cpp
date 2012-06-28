@@ -29,7 +29,6 @@
 
 #include "RenderSurfaceChromium.h"
 
-#include "FilterOperations.h"
 #include "LayerChromium.h"
 #include "cc/CCMathUtil.h"
 #include <public/WebTransformationMatrix.h>

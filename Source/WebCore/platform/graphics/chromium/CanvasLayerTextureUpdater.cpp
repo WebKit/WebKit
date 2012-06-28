@@ -30,6 +30,7 @@
 
 #include "CanvasLayerTextureUpdater.h"
 
+#include "FloatRect.h"
 #include "LayerPainterChromium.h"
 #include "SkCanvas.h"
 #include "SkPaint.h"

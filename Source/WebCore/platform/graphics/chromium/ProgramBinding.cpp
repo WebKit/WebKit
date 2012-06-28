@@ -34,6 +34,7 @@
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include <public/WebGraphicsContext3D.h>
+#include <wtf/text/CString.h>
 
 using WebKit::WebGraphicsContext3D;
 

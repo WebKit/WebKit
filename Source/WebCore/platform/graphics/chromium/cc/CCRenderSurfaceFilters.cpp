@@ -29,8 +29,8 @@
 
 #include "cc/CCRenderSurfaceFilters.h"
 
+#include "FloatSize.h"
 #include "GraphicsContext3D.h"
-#include "LengthFunctions.h"
 #include "SkBlurImageFilter.h"
 #include "SkCanvas.h"
 #include "SkColorMatrixFilter.h"
@@ -38,6 +38,7 @@
 #include "SkGrTexturePixelRef.h"
 #include <public/WebFilterOperation.h>
 #include <public/WebFilterOperations.h>
+#include <wtf/MathExtras.h>
 
 namespace {
 

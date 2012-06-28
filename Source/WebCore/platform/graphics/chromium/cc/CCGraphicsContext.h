@@ -29,6 +29,7 @@
 #include <public/WebGraphicsContext3D.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
