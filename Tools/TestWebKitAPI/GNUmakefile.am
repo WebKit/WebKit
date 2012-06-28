@@ -24,7 +24,8 @@ Libraries_libTestWebKitAPIMain_la_CPPFLAGS = \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags) \
-	$(GLIB_CFLAGS)
+	$(GLIB_CFLAGS) \
+	$(GTK_CFLAGS)
 
 noinst_PROGRAMS += \
 	Programs/TestWebKitAPI/TestWTF
@@ -32,7 +33,6 @@ noinst_PROGRAMS += \
 Programs_TestWebKitAPI_TestWTF_CPPFLAGS = \
 	$(Libraries_libTestWebKitAPIMain_la_CPPFLAGS) \
 	$(GLIB_LIBS) \
-	$(GTK_CFLAGS) \
 	$(CAIRO_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
 
@@ -61,6 +61,32 @@ Programs_TestWebKitAPI_TestWTF_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WTF/Vector.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/VectorReverse.cpp \
 	Tools/TestWebKitAPI/WTFStringUtilities.h
+
+noinst_PROGRAMS += \
+	Programs/TestWebKitAPI/TestGtk
+
+Programs_TestWebKitAPI_TestGtk_CPPFLAGS = \
+	$(Programs_TestWebKitAPI_TestWTF_CPPFLAGS) \
+	$(webcore_cppflags) \
+	$(webcoregtk_cppflags) \
+	$(CAIRO_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
+
+Programs_TestWebKitAPI_TestGtk_LDADD = \
+	$(Programs_TestWebKitAPI_TestWTF_LDADD) \
+	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
+
+Programs_TestWebKitAPI_TestGtk_LDFLAGS = \
+	$(Programs_TestWebKitAPI_TestWTF_LDFLAGS)
+
+Programs_TestWebKitAPI_TestGtk_SOURCES = \
+	Source/WebCore/platform/graphics/IntRect.cpp \
+	Source/WebCore/platform/graphics/cairo/IntRectCairo.cpp \
+	Source/WebCore/platform/graphics/gtk/IntRectGtk.cpp \
+	Source/WebCore/platform/gtk/GtkInputMethodFilter.cpp \
+	Tools/TestWebKitAPI/config.h \
+	Tools/TestWebKitAPI/Tests/gtk/InputMethodFilter.cpp
 
 if ENABLE_WEBKIT2
 noinst_PROGRAMS += \

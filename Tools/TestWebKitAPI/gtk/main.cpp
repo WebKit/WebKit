@@ -26,11 +26,11 @@
 #include "config.h"
 #include "TestsController.h"
 
-#include <glib-object.h>
+#include <gtk/gtk.h>
 
 int main(int argc, char** argv)
 {
-    g_type_init();
+    gtk_init(&argc, &argv);
 
     return TestWebKitAPI::TestsController::shared().run(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

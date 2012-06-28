@@ -34,7 +34,6 @@ namespace TestWebKitAPI {
 
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    gtk_init(0, 0);
     m_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     m_view = WKViewCreate(contextRef, pageGroupRef);
     gtk_container_add(GTK_CONTAINER(m_window), GTK_WIDGET(m_view));

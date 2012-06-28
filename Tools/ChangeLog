@@ -1,3 +1,21 @@
+2012-06-28  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add unit tests for GtkInputMethodFilter
+        https://bugs.webkit.org/show_bug.cgi?id=88698
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add unit tests for GtkInputMethodFilter in the WebCore platform layer.
+        This change adds the TestGtk test suite which will be used for all non-API
+        layer GTK unit tests.
+
+        * TestWebKitAPI/GNUmakefile.am: Update the build to include the new tests.
+        * TestWebKitAPI/Tests/gtk/InputMethodFilter.cpp: Added.
+        (TestWebKitAPI::PlatformWebView::PlatformWebView): Remove the call to gtk_init here
+        as it's now in main.cpp.
+        * TestWebKitAPI/gtk/main.cpp: Change the g_type_init call to gtk_init, because now
+        a majority of all unit tests depend on GTK+ being initialized.
+
 2012-06-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Enable support for HTML5 datalist
