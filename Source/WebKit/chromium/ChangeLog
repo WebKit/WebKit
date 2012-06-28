@@ -1,3 +1,32 @@
+2012-06-28  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] On Android, we should be able to ask the embedder what intents exist in a region of the page
+        https://bugs.webkit.org/show_bug.cgi?id=90210
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch introduces a function that asks the embedder to analyze the
+        region around a hit test result for interesting content, like phone
+        numbers, email addresses, or physical addresses. The embedder then
+        responds with the "most interesting" content, together with an intent
+        URL for enacting the intent embodied by that content.
+
+        This function will be used in a subsequent patch to detect content
+        after touch events.
+
+        * WebKit.gyp:
+        * public/WebContentDetectionResult.h: Added.
+        (WebKit):
+        (WebContentDetectionResult):
+        (WebKit::WebContentDetectionResult::WebContentDetectionResult):
+        (WebKit::WebContentDetectionResult::isValid):
+        (WebKit::WebContentDetectionResult::range):
+        (WebKit::WebContentDetectionResult::string):
+        (WebKit::WebContentDetectionResult::intent):
+        * public/WebViewClient.h:
+        (WebViewClient):
+        (WebKit::WebViewClient::detechContentAround):
+
 2012-06-28  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Hook up render-side key ASSERTing for get()

@@ -116,6 +116,7 @@
                 'public/WebCompositorInputHandler.h',
                 'public/WebCompositorInputHandlerClient.h',
                 'public/WebConsoleMessage.h',
+                'public/WebContentDetectionResult.h',
                 'public/WebContextMenuData.h',
                 'public/WebCrossOriginPreflightResultCache.h',
                 'public/WebCursorInfo.h',
