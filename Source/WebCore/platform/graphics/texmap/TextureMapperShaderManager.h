@@ -53,6 +53,7 @@ public:
     virtual void prepare(float opacity, const BitmapTexture*) { }
     GLint matrixLocation() const { return m_matrixLocation; }
     GLint flipLocation() const { return m_flipLocation; }
+    GLint textureSizeLocation() const { return m_textureSizeLocation; }
     GLint sourceTextureLocation() const { return m_sourceTextureLocation; }
     GLint maskTextureLocation() const { return m_maskTextureLocation; }
     GLint opacityLocation() const { return m_opacityLocation; }
@@ -72,6 +73,7 @@ protected:
     GLuint m_fragmentShader;
     GLint m_matrixLocation;
     GLint m_flipLocation;
+    GLint m_textureSizeLocation;
     GLint m_sourceTextureLocation;
     GLint m_opacityLocation;
     GLint m_maskTextureLocation;

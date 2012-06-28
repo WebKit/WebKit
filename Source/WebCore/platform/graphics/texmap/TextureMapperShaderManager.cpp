@@ -108,11 +108,12 @@ static const char* fragmentShaderSourceSimple =
 static const char* fragmentShaderSourceRectSimple =
     FRAGMENT_SHADER(
         uniform sampler2DRect s_source;
+        uniform lowp vec2 u_textureSize;
         uniform lowp float u_opacity;
         varying highp vec2 v_sourceTexCoord;
         void main(void)
         {
-            lowp vec4 color = texture2DRect(s_source, v_sourceTexCoord);
+            lowp vec4 color = texture2DRect(s_source, u_textureSize * v_sourceTexCoord);
             gl_FragColor = vec4(color.rgb * u_opacity, color.a * u_opacity);
         }
     );
@@ -195,6 +196,7 @@ TextureMapperShaderProgram::TextureMapperShaderProgram(const char* vertexShaderS
     , m_fragmentShader(0)
     , m_matrixLocation(-1)
     , m_flipLocation(-1)
+    , m_textureSizeLocation(-1)
     , m_sourceTextureLocation(-1)
     , m_opacityLocation(-1)
     , m_maskTextureLocation(-1)
@@ -265,8 +267,9 @@ TextureMapperShaderProgramRectSimple::TextureMapperShaderProgramRectSimple()
     : TextureMapperShaderProgram(vertexShaderSourceSimple, fragmentShaderSourceRectSimple)
 {
     initializeProgram();
-    getUniformLocation(m_flipLocation, "u_flip");
     getUniformLocation(m_matrixLocation, "u_matrix");
+    getUniformLocation(m_flipLocation, "u_flip");
+    getUniformLocation(m_textureSizeLocation, "u_textureSize");
     getUniformLocation(m_sourceTextureLocation, "s_source");
     getUniformLocation(m_opacityLocation, "u_opacity");
 }

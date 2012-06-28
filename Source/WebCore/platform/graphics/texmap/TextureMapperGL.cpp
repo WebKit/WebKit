@@ -382,6 +382,7 @@ void TextureMapperGL::drawTextureRectangleARB(uint32_t texture, Flags flags, con
     GL_CMD(glUniform1i(program->sourceTextureLocation(), 0));
 
     GL_CMD(glUniform1f(program->flipLocation(), !!(flags & ShouldFlipTexture)));
+    GL_CMD(glUniform2f(program->textureSizeLocation(), textureSize.width(), textureSize.height()));
 
     if (TextureMapperShaderProgram::isValidUniformLocation(program->opacityLocation()))
         GL_CMD(glUniform1f(program->opacityLocation(), opacity));
