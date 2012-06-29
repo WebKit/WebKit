@@ -41,10 +41,9 @@ void V8RecursionScope::didLeaveScriptContext()
     // FIXME: Instrument any work that takes place when script exits to c++ (e.g. Mutation Observers).
 
 #if ENABLE(INDEXED_DATABASE)
-    // If we've just left a script context and indexed database has been
-    // instantiated, we must let its transaction coordinator know so it can terminate
-    // any not-yet-started transactions.
-    IDBPendingTransactionMonitor::abortPendingTransactions();
+    // Indexed DB requires that transactions are created with an internal |active| flag
+    // set to true, but the flag becomes false when control returns to the event loop.
+    IDBPendingTransactionMonitor::deactivateNewTransactions();
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS)

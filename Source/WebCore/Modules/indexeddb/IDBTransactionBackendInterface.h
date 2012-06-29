@@ -53,6 +53,7 @@ public:
     virtual unsigned short mode() const = 0;
     virtual bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task> task, PassOwnPtr<ScriptExecutionContext::Task> abortTask = nullptr) = 0;
     virtual void didCompleteTaskEvents() = 0;
+    virtual void commit() = 0;
     virtual void abort() = 0;
     virtual void setCallbacks(IDBTransactionCallbacks*) = 0;
     virtual void registerOpenCursor(IDBCursorBackendImpl*) = 0;

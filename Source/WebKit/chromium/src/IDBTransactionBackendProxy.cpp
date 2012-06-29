@@ -67,6 +67,11 @@ unsigned short IDBTransactionBackendProxy::mode() const
     return m_webIDBTransaction->mode();
 }
 
+void IDBTransactionBackendProxy::commit()
+{
+    m_webIDBTransaction->commit();
+}
+
 void IDBTransactionBackendProxy::abort()
 {
     m_webIDBTransaction->abort();

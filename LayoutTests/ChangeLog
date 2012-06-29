@@ -1,3 +1,27 @@
+2012-06-28  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Implement IDBTransaction internal active flag
+        https://bugs.webkit.org/show_bug.cgi?id=89379
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/resources/transaction-active-flag.js: Added.
+        * storage/indexeddb/resources/transaction-basics.js:
+        (completeCallback): Empty transactions now commit rather than abort.
+        (emptyCompleteCallback):
+        * storage/indexeddb/resources/transaction-complete-workers.js: Renamed from LayoutTests/storage/indexeddb/resources/transaction-abort-workers.js.
+        * storage/indexeddb/structured-clone.html: Assumed empty transactions aborted.
+        * storage/indexeddb/transaction-active-flag-expected.txt: Added.
+        * storage/indexeddb/transaction-active-flag.html: Added.
+        * storage/indexeddb/transaction-basics-expected.txt:
+        * storage/indexeddb/transaction-complete-with-js-recursion-cross-frame-expected.txt: Renamed from LayoutTests/storage/indexeddb/transaction-abort-with-js-recursion-cross-frame-expected.txt.
+        * storage/indexeddb/transaction-complete-with-js-recursion-cross-frame.html: Renamed from LayoutTests/storage/indexeddb/transaction-abort-with-js-recursion-cross-frame.html.
+        * storage/indexeddb/transaction-complete-with-js-recursion-expected.txt: Renamed from LayoutTests/storage/indexeddb/transaction-abort-with-js-recursion-expected.txt.
+        * storage/indexeddb/transaction-complete-with-js-recursion.html: Renamed from LayoutTests/storage/indexeddb/transaction-abort-with-js-recursion.html.
+        * storage/indexeddb/transaction-complete-workers-expected.txt: Renamed from LayoutTests/storage/indexeddb/transaction-abort-workers-expected.txt.
+        * storage/indexeddb/transaction-complete-workers.html: Renamed from LayoutTests/storage/indexeddb/transaction-abort-workers.html.
+        * storage/indexeddb/tutorial.html: Assumed empty transactions aborted.
+
 2012-06-28  Philip Rogers  <pdr@google.com>
 
         Prevent crash in animate resource handling

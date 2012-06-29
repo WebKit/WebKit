@@ -85,29 +85,34 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTr
     , m_database(db)
     , m_mode(mode)
     , m_active(true)
-    , m_transactionFinished(false)
+    , m_state(Unused)
     , m_contextStopped(false)
 {
     ASSERT(m_backend);
     ASSERT(m_mode == m_backend->mode());
-    IDBPendingTransactionMonitor::addPendingTransaction(m_backend.get());
+
+    if (mode == VERSION_CHANGE) {
+        // Not active until the callback.
+        m_active = false;
+        // Implicitly used by the version change itself.
+        m_state = Used;
+    }
+
     // We pass a reference of this object before it can be adopted.
     relaxAdoptionRequirement();
+    if (m_active)
+        IDBPendingTransactionMonitor::addNewTransaction(this);
     m_database->transactionCreated(this);
 }
 
 IDBTransaction::~IDBTransaction()
 {
+    ASSERT(m_state == Finished);
 }
 
 IDBTransactionBackendInterface* IDBTransaction::backend() const
 {
     return m_backend.get();
-}
-
-bool IDBTransaction::isFinished() const
-{
-    return m_transactionFinished;
 }
 
 const String& IDBTransaction::mode() const
@@ -125,7 +130,7 @@ IDBDatabase* IDBTransaction::db() const
 
 PassRefPtr<DOMError> IDBTransaction::error(ExceptionCode& ec) const
 {
-    if (!m_transactionFinished) {
+    if (m_state != Finished) {
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
@@ -134,7 +139,7 @@ PassRefPtr<DOMError> IDBTransaction::error(ExceptionCode& ec) const
 
 void IDBTransaction::setError(PassRefPtr<DOMError> error)
 {
-    ASSERT(!m_transactionFinished);
+    ASSERT(m_state != Finished);
     ASSERT(error);
 
     // The first error to be set is the true cause of the
@@ -145,7 +150,7 @@ void IDBTransaction::setError(PassRefPtr<DOMError> error)
 
 PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, ExceptionCode& ec)
 {
-    if (m_transactionFinished) {
+    if (m_state == Finished) {
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
@@ -170,7 +175,7 @@ PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, Excep
 
 void IDBTransaction::objectStoreCreated(const String& name, PassRefPtr<IDBObjectStore> prpObjectStore)
 {
-    ASSERT(!m_transactionFinished);
+    ASSERT(m_state != Finished);
     RefPtr<IDBObjectStore> objectStore = prpObjectStore;
     m_objectStoreMap.set(name, objectStore);
     if (isVersionChange())
@@ -179,7 +184,7 @@ void IDBTransaction::objectStoreCreated(const String& name, PassRefPtr<IDBObject
 
 void IDBTransaction::objectStoreDeleted(const String& name)
 {
-    ASSERT(!m_transactionFinished);
+    ASSERT(m_state != Finished);
     ASSERT(isVersionChange());
     IDBObjectStoreMap::iterator it = m_objectStoreMap.find(name);
     if (it != m_objectStoreMap.end()) {
@@ -190,10 +195,24 @@ void IDBTransaction::objectStoreDeleted(const String& name)
     }
 }
 
+void IDBTransaction::setActive(bool active)
+{
+    ASSERT(m_state != Finished);
+    if (m_state == Finishing)
+        return;
+    ASSERT(m_state == Unused || m_state == Used);
+    ASSERT(active != m_active);
+    m_active = active;
+
+    if (!active && m_state == Unused)
+        m_backend->commit();
+}
+
 void IDBTransaction::abort()
 {
-    if (m_transactionFinished)
+    if (m_state == Finishing || m_state == Finished)
         return;
+    m_state = Finishing;
     m_active = false;
     RefPtr<IDBTransaction> selfRef = this;
     if (m_backend)
@@ -232,22 +251,27 @@ void IDBTransaction::closeOpenCursors()
 
 void IDBTransaction::registerRequest(IDBRequest* request)
 {
-    m_childRequests.add(request);
+    ASSERT(request);
+    ASSERT(m_state == Unused || m_state == Used);
+    ASSERT(m_active);
+    m_requestList.add(request);
+    m_state = Used;
 }
 
 void IDBTransaction::unregisterRequest(IDBRequest* request)
 {
+    ASSERT(request);
     // If we aborted the request, it will already have been removed.
-    m_childRequests.remove(request);
+    m_requestList.remove(request);
 }
 
 void IDBTransaction::onAbort()
 {
-    ASSERT(!m_transactionFinished);
-    m_active = false;
-    while (!m_childRequests.isEmpty()) {
-        IDBRequest* request = *m_childRequests.begin();
-        m_childRequests.remove(request);
+    ASSERT(m_state != Finished);
+    m_state = Finishing;
+    while (!m_requestList.isEmpty()) {
+        IDBRequest* request = *m_requestList.begin();
+        m_requestList.remove(request);
         request->abort();
     }
 
@@ -267,8 +291,8 @@ void IDBTransaction::onAbort()
 
 void IDBTransaction::onComplete()
 {
-    ASSERT(!m_transactionFinished);
-    m_active = false;
+    ASSERT(m_state != Finished);
+    m_state = Finishing;
     m_objectStoreCleanupMap.clear();
     closeOpenCursors();
     m_database->transactionFinished(this);
@@ -284,7 +308,7 @@ bool IDBTransaction::hasPendingActivity() const
     // FIXME: In an ideal world, we should return true as long as anyone has a or can
     //        get a handle to us or any child request object and any of those have
     //        event listeners. This is  in order to handle user generated events properly.
-    return !m_transactionFinished || ActiveDOMObject::hasPendingActivity();
+    return m_state != Finished || ActiveDOMObject::hasPendingActivity();
 }
 
 IDBTransaction::Mode IDBTransaction::stringToMode(const String& modeString, ExceptionCode& ec)
@@ -332,10 +356,10 @@ ScriptExecutionContext* IDBTransaction::scriptExecutionContext() const
 bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
 {
     IDB_TRACE("IDBTransaction::dispatchEvent");
-    ASSERT(!m_transactionFinished);
+    ASSERT(m_state != Finished);
     ASSERT(scriptExecutionContext());
     ASSERT(event->target() == this);
-    m_transactionFinished = true;
+    m_state = Finished;
 
     // Break reference cycles.
     for (IDBObjectStoreMap::iterator it = m_objectStoreMap.begin(); it != m_objectStoreMap.end(); ++it)
@@ -355,7 +379,7 @@ bool IDBTransaction::canSuspend() const
 {
     // FIXME: Technically we can suspend before the first request is schedule
     //        and after the complete/abort event is enqueued.
-    return m_transactionFinished;
+    return m_state == Finished;
 }
 
 void IDBTransaction::stop()
@@ -368,7 +392,7 @@ void IDBTransaction::stop()
 
 void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)
 {
-    ASSERT_WITH_MESSAGE(!m_transactionFinished, "A finished transaction tried to enqueue an event of type %s.", event->type().string().utf8().data());
+    ASSERT_WITH_MESSAGE(m_state != Finished, "A finished transaction tried to enqueue an event of type %s.", event->type().string().utf8().data());
     if (m_contextStopped || !scriptExecutionContext())
         return;
 

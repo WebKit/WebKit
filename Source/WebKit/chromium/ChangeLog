@@ -1,3 +1,24 @@
+2012-06-28  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Implement IDBTransaction internal active flag
+        https://bugs.webkit.org/show_bug.cgi?id=89379
+
+        Reviewed by Tony Chang.
+
+        To match the IDB spec, transactions that have had no requests
+        filed against them should commit, not abort. This requires plumbing
+        through the commit() call from front-end to back-end.
+
+        * src/IDBTransactionBackendProxy.cpp:
+        (WebKit::IDBTransactionBackendProxy::commit):
+        (WebKit):
+        * src/IDBTransactionBackendProxy.h:
+        (IDBTransactionBackendProxy):
+        * src/WebIDBTransactionImpl.cpp:
+        (WebKit::WebIDBTransactionImpl::commit):
+        (WebKit):
+        * src/WebIDBTransactionImpl.h:
+
 2012-06-28  Adrienne Walker  <enne@google.com>
 
         [chromium] Split WebScrollbar into WebPluginScrollbar and WebScrollbar

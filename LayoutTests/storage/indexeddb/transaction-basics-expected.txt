@@ -187,7 +187,7 @@ PASS complete event fired
 db.transaction(['storeName'])
 store = transaction.objectStore('storeName')
 PASS store.name is "storeName"
-PASS abort event fired
+PASS complete event fired
 
 Verifying DOMStringList works as argument for IDBDatabase.transaction()
 db.objectStoreNames is [object DOMStringList]

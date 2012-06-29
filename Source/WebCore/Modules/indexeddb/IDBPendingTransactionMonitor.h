@@ -33,20 +33,18 @@
 
 namespace WebCore {
 
-class IDBTransactionBackendInterface;
+class IDBTransaction;
 
 // This class keeps track of the transactions created during the current
-// Javascript execution context. A transaction is 'pending' if no asynchronous
-// operation is currently queued for it (e.g. an IDBObjectStore::put() or similar).
-// All pending transactions are aborted as soon as execution returns from
-// the script engine.
+// Javascript execution context. Transactions have an internal |active| flag
+// which is set to true on creation, but must be set to false when control
+// returns to the event loop.
 
 class IDBPendingTransactionMonitor {
     WTF_MAKE_NONCOPYABLE(IDBPendingTransactionMonitor);
 public:
-    static void addPendingTransaction(IDBTransactionBackendInterface*);
-    static void removePendingTransaction(IDBTransactionBackendInterface*);
-    static void abortPendingTransactions();
+    static void addNewTransaction(PassRefPtr<IDBTransaction>);
+    static void deactivateNewTransactions();
 
 private:
     IDBPendingTransactionMonitor();

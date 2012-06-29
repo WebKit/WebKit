@@ -1,3 +1,75 @@
+2012-06-28  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Implement IDBTransaction internal active flag
+        https://bugs.webkit.org/show_bug.cgi?id=89379
+
+        Reviewed by Tony Chang.
+
+        IDB transactions should only be "active" during IDB success/error callbacks;
+        attempts to make new requests otherwise (e.g. in a setTimeout callback)
+        should fail even if the transaction has not yet finished. Implement this logic,
+        and the closely related requirement that transactions are deactivated when
+        the context they were created in returns to the event loop, and finally that
+        when so deactivated they should commit rather than abort (as previously
+        implemented) if no requests have been filed.
+
+        Tests: storage/indexeddb/transaction-active-flag.html
+               storage/indexeddb/transaction-complete-with-js-recursion-cross-frame.html
+               storage/indexeddb/transaction-complete-with-js-recursion.html
+               storage/indexeddb/transaction-complete-workers.html
+
+        * Modules/indexeddb/IDBPendingTransactionMonitor.cpp: Simplify API.
+        (WebCore::transactions):
+        (WebCore::IDBPendingTransactionMonitor::addNewTransaction):
+        (WebCore::IDBPendingTransactionMonitor::deactivateNewTransactions):
+        * Modules/indexeddb/IDBPendingTransactionMonitor.h:
+        (WebCore):
+        (IDBPendingTransactionMonitor):
+        * Modules/indexeddb/IDBRequest.cpp: Unregisters from transaction when done,
+        not on destruction. No longer responsible for working with the pending monitor.
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::~IDBRequest):
+        (WebCore::IDBRequest::markEarlyDeath):
+        (WebCore::IDBRequest::resetReadyState):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::dispatchEvent): Set active flag on transaction during callback.
+        * Modules/indexeddb/IDBTransaction.cpp: Use state enum to better track lifecycle, and
+        take ownership of relationship with pending monitor.
+        (WebCore::IDBTransaction::IDBTransaction): Special cases for version change
+        transactions.
+        (WebCore::IDBTransaction::~IDBTransaction):
+        (WebCore::IDBTransaction::error):
+        (WebCore::IDBTransaction::setError):
+        (WebCore::IDBTransaction::objectStore):
+        (WebCore::IDBTransaction::objectStoreCreated):
+        (WebCore::IDBTransaction::objectStoreDeleted):
+        (WebCore::IDBTransaction::setActive): Let IDBRequest and IDBPendingTransactionMonitor
+        toggle the active state. Needs some smarts because (1) state may move to Finishing during
+        the request's dispatch phase due to an implicit/explicit abort, and (2) a monitor call
+        will only trigger a commit if the transaction hasn't had any requests filed.
+        (WebCore):
+        (WebCore::IDBTransaction::abort):
+        (WebCore::IDBTransaction::registerRequest):
+        (WebCore::IDBTransaction::unregisterRequest):
+        (WebCore::IDBTransaction::onAbort):
+        (WebCore::IDBTransaction::onComplete):
+        (WebCore::IDBTransaction::hasPendingActivity):
+        (WebCore::IDBTransaction::dispatchEvent):
+        (WebCore::IDBTransaction::canSuspend):
+        (WebCore::IDBTransaction::enqueueEvent):
+        * Modules/indexeddb/IDBTransaction.h:
+        (WebCore::IDBTransaction::isFinished):
+        (IDBTransaction):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::commit): Allow explicit commit() calls from the front end
+        if no requests have been filed.
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+        (IDBTransactionBackendInterface): Expose commit() method.
+        * bindings/js/JSMainThreadExecState.cpp:
+        (WebCore::JSMainThreadExecState::didLeaveScriptContext): Change target function name.
+        * bindings/v8/V8RecursionScope.cpp:
+        (WebCore::V8RecursionScope::didLeaveScriptContext): Change target function name.
+
 2012-06-28  Philip Rogers  <pdr@google.com>
 
         Prevent crash in animate resource handling

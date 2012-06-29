@@ -9,7 +9,7 @@ function test()
 {
     removeVendorPrefixes();
 
-    evalAndLog("request = indexedDB.open('transaction-abort-worker')");
+    evalAndLog("request = indexedDB.open('transaction-complete-worker')");
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function () {
         evalAndLog("db = request.result");
@@ -31,14 +31,14 @@ function createTransaction()
     debug("createTransaction():");
     evalAndLog("transaction = db.transaction('store')");
     evalAndLog("store = transaction.objectStore('store')");
-    transaction.oncomplete = unexpectedCompleteCallback;
     transaction.onerror = unexpectedErrorCallback;
-    transaction.onabort = transactionAborted;
+    transaction.onabort = unexpectedAbortCallback;
+    transaction.oncomplete = emptyTransactionCompleted;
 }
 
-function transactionAborted()
+function emptyTransactionCompleted()
 {
-    testPassed("Transaction aborted");
+    testPassed("Transaction completed");
     evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
     recursionTest();
 }
@@ -86,9 +86,9 @@ function timeoutTest()
 
     evalAndLog("transaction = db.transaction('store')");
     evalAndLog("store = transaction.objectStore('store')");
-    transaction.oncomplete = unexpectedCompleteCallback;
-    transaction.onabort = function () {
-        testPassed("transaction started in setTimeout() callback aborted");
+    transaction.onabort = unexpectedAbortCallback;
+    transaction.oncomplete = function () {
+        testPassed("transaction started in setTimeout() callback completed");
         evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
 
         errorTest();
@@ -113,14 +113,14 @@ function errorHandler(e)
     evalAndLog("self.onerror = self.old_onerror");
     evalAndLog("transaction = db.transaction('store')");
     evalAndLog("store = transaction.objectStore('store')");
-    transaction.oncomplete = unexpectedCompleteCallback;
     transaction.onerror = unexpectedErrorCallback;
-    transaction.onabort = errorTransactionAborted;
+    transaction.onabort = unexpectedAbortCallback;
+    transaction.oncomplete = errorTransactionCompleted;
 }
 
-function errorTransactionAborted()
+function errorTransactionCompleted()
 {
-    testPassed("Transaction aborted");
+    testPassed("Transaction completed");
     evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
     finishJSTest();
 }

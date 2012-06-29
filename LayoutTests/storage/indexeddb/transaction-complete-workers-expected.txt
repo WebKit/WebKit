@@ -3,10 +3,10 @@
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Starting worker: resources/transaction-abort-workers.js
+Starting worker: resources/transaction-complete-workers.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 [Worker] 
-[Worker] request = indexedDB.open('transaction-abort-worker')
+[Worker] request = indexedDB.open('transaction-complete-worker')
 [Worker] db = request.result
 [Worker] request = db.setVersion('1')
 [Worker] Deleted all object stores.
@@ -16,7 +16,7 @@ Starting worker: resources/transaction-abort-workers.js
 [Worker] createTransaction():
 [Worker] transaction = db.transaction('store')
 [Worker] store = transaction.objectStore('store')
-PASS [Worker] Transaction aborted
+PASS [Worker] Transaction completed
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
@@ -57,7 +57,7 @@ PASS [Worker] ename is 'TransactionInactiveError'
 [Worker] timeoutTest():
 [Worker] transaction = db.transaction('store')
 [Worker] store = transaction.objectStore('store')
-PASS [Worker] transaction started in setTimeout() callback aborted
+PASS [Worker] transaction started in setTimeout() callback completed
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
@@ -73,7 +73,7 @@ PASS [Worker] ename is 'TransactionInactiveError'
 [Worker] store = transaction.objectStore('store')
 Got expected error from worker, ignoring
 event.preventDefault()
-PASS [Worker] Transaction aborted
+PASS [Worker] Transaction completed
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR

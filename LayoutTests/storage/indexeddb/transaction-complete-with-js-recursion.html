@@ -4,25 +4,22 @@
 <script src="resources/shared.js"></script>
 </head>
 <body>
-<iframe>
-    <body>
-    </body>
-</iframe>
 <script>
 
 var transaction;
 var store;
 var db;
-var body = document.getElementsByTagName("iframe")[0].contentDocument.body;
+var body = document.getElementsByTagName("body")[0];
 
-description("Test that pending transactions are not aborted during recursive JS calls until all JS (in all frames) is finished.");
+description("Test that pending transactions are not completed during recursive JS calls until all JS is finished.");
 
 function setup() {
     removeVendorPrefixes();
-    request = evalAndLog("indexedDB.deleteDatabase('transaction-abort-with-js-recursion-cross-frame')");
+
+    request = evalAndLog("indexedDB.deleteDatabase('transaction-complete-with-js-recursion')");
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function () {
-        request = evalAndLog("indexedDB.open('transaction-abort-with-js-recursion-cross-frame')");
+        request = evalAndLog("indexedDB.open('transaction-complete-with-js-recursion')");
         request.onsuccess = setVersion;
         request.onerror = unexpectedErrorCallback;
     };
@@ -35,17 +32,19 @@ function setVersion() {
     request.onerror = unexpectedErrorCallback;
 }
 
-function setVersionSuccess() {
+function setVersionSuccess()
+{
     store = db.createObjectStore('objectStore', null);
     event.target.result.oncomplete = click;
 }
 
-function click() {
+function click()
+{
     body.onclick = test;
     var pendingTransaction = evalAndLog("pendingTransaction = db.transaction(['objectStore'], 'readwrite')");
     pendingTransaction.onsuccess = unexpectedErrorCallback;
     pendingTransaction.onerror = unexpectedErrorCallback;
-    pendingTransaction.onabort = abortCallback;
+    pendingTransaction.oncomplete = completeCallback;
     var event = document.createEvent("MouseEvent");
     event.initMouseEvent("click", true, true, document.defaultView, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
     body.dispatchEvent(event);
@@ -62,9 +61,9 @@ function test()
 }
 
 
-function abortCallback()
+function completeCallback()
 {
-    debug("Pending transaction aborted");
+    testPassed("Pending transaction completed");
     finishJSTest();
 }
 

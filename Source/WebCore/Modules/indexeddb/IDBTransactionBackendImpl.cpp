@@ -201,12 +201,13 @@ void IDBTransactionBackendImpl::commit()
     // commit steps below. We therefore take a self reference to keep ourselves
     // alive while executing this method.
     RefPtr<IDBTransactionBackendImpl> self(this);
-    ASSERT(m_state == Running);
+    ASSERT(m_state == Unused || m_state == Running);
     ASSERT(m_taskQueue.isEmpty());
 
+    bool unused = m_state == Unused;
     m_state = Finished;
 
-    bool committed = m_transaction->commit();
+    bool committed = unused || m_transaction->commit();
 
     // Backing store resources (held via cursors) must be released before script callbacks
     // are fired, as the script callbacks may release references and allow the backing store
@@ -216,7 +217,8 @@ void IDBTransactionBackendImpl::commit()
 
     // Transactions must also be marked as completed before the front-end is notified, as
     // the transaction completion unblocks operations like closing connections.
-    m_database->transactionCoordinator()->didFinishTransaction(this);
+    if (!unused)
+        m_database->transactionCoordinator()->didFinishTransaction(this);
     m_database->transactionFinished(this);
 
     if (committed)

@@ -514,8 +514,8 @@ function testBadTypes()
     evalAndLog("transaction = db.transaction('storeName', 'readwrite')");
     evalAndLog("store = transaction.objectStore('storeName')");
     transaction.onerror = unexpectedErrorCallback;
-    transaction.oncomplete = unexpectedCompleteCallback;
-    transaction.onabort = finishJSTest;
+    transaction.onabort = unexpectedAbortCallback;
+    transaction.oncomplete = finishJSTest;
 
     debug("");
     debug("Other JavaScript object types:");

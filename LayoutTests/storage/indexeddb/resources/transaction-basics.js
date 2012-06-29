@@ -249,14 +249,14 @@ function completeCallback()
     shouldBeFalse("event.cancelable");
     testPassed("complete event fired");
     transaction = evalAndLog("db.transaction(['storeName'])");
-    transaction.onabort = abortCallback;
+    transaction.oncomplete = emptyCompleteCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
     shouldBeEqualToString("store.name", "storeName");
 }
 
-function abortCallback()
+function emptyCompleteCallback()
 {
-    testPassed("abort event fired");
+    testPassed("complete event fired");
     testDOMStringList();
 }
 

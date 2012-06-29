@@ -43,6 +43,7 @@ public:
 
     virtual PassRefPtr<WebCore::IDBObjectStoreBackendInterface> objectStore(const String& name, WebCore::ExceptionCode&);
     virtual unsigned short mode() const;
+    virtual void commit();
     virtual void abort();
     virtual bool scheduleTask(PassOwnPtr<WebCore::ScriptExecutionContext::Task>, PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
     virtual void didCompleteTaskEvents();

@@ -82,11 +82,8 @@ function unexpectedError()
     // the correct values.
     logError("Error " + event.code + ": " + event.message);
 
-    // Unfortunately, Chromium/WebKit do not implicitly abort a transaction when an error occurs
-    // within one of its async operations. In the future, when an error occurs and the event is
-    // not canceled, the transaction will be aborted.
-    if (currentTransaction)
-        currentTransaction.abort();
+    // If the default behavior of the error is not prevented, the transaction will implicitly
+    // be aborted.
 }
 
 function onOpen()
@@ -219,8 +216,8 @@ function onSetVersionComplete()
     // That's fine for this case, but later we'll ask for 'readwrite'. At the moment,
     // Chromium/WebKit pretends every transaction is READ_WRITE, which is kind of bad.
     window.currentTransaction = db.transaction("people", 'readwrite');
-    currentTransaction.oncomplete = unexpectedComplete;
-    currentTransaction.onabort = onTransactionAborted;
+    currentTransaction.oncomplete = onTransactionCompleted;
+    currentTransaction.onabort = unexpectedAbort;
 
     // Verify that "people" is the only object store in existance. The objectStoreNames attribute is
     // a DOMStringList which is somewhat like an array.
@@ -254,16 +251,11 @@ function onSetVersionComplete()
     if (objectStore.indexNames.length != 2)
         logError("Something went wrong.");
 
-    // Note that no async actions were ever queued up agianst our transaction, so it'll abort once
+    // Note that no async actions were ever queued up against our transaction. It will commit when
     // we leave this context.
 }
 
-function unexpectedComplete()
-{
-    logError("A transaction committed unexpectedly!");
-}
-
-function onTransactionAborted()
+function onTransactionCompleted()
 {
     // Now let's make a real transaction and a person to our objectStore.
     window.currentTransaction = db.transaction("people", 'readwrite');

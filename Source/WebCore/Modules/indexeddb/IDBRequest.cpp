@@ -39,7 +39,6 @@
 #include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
 #include "IDBEventDispatcher.h"
-#include "IDBPendingTransactionMonitor.h"
 #include "IDBTracing.h"
 #include "IDBTransaction.h"
 
@@ -66,15 +65,12 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
 {
     if (m_transaction) {
         m_transaction->registerRequest(this);
-        IDBPendingTransactionMonitor::removePendingTransaction(m_transaction->backend());
     }
 }
 
 IDBRequest::~IDBRequest()
 {
     ASSERT(m_readyState == DONE || m_readyState == EarlyDeath || !scriptExecutionContext());
-    if (m_transaction)
-        m_transaction->unregisterRequest(this);
 }
 
 PassRefPtr<IDBAny> IDBRequest::result(ExceptionCode& ec) const
@@ -139,6 +135,8 @@ void IDBRequest::markEarlyDeath()
 {
     ASSERT(m_readyState == PENDING);
     m_readyState = EarlyDeath;
+    if (m_transaction)
+        m_transaction->unregisterRequest(this);
 }
 
 bool IDBRequest::resetReadyState(IDBTransaction* transaction)
@@ -154,8 +152,8 @@ bool IDBRequest::resetReadyState(IDBTransaction* transaction)
     m_errorCode = 0;
     m_error.clear();
     m_errorMessage = String();
-
-    IDBPendingTransactionMonitor::removePendingTransaction(m_transaction->backend());
+    ASSERT(m_transaction);
+    m_transaction->registerRequest(this);
 
     return true;
 }
@@ -290,8 +288,6 @@ void IDBRequest::onSuccess(PassRefPtr<IDBTransactionBackendInterface> prpBackend
     ASSERT(m_source->type() == IDBAny::IDBDatabaseType);
     ASSERT(m_transaction->isVersionChange());
 
-    IDBPendingTransactionMonitor::removePendingTransaction(m_transaction->backend());
-
     m_result = IDBAny::create(frontend.release());
     enqueueEvent(createSuccessEvent());
 }
@@ -404,7 +400,13 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 
     // FIXME: When we allow custom event dispatching, this will probably need to change.
     ASSERT(event->type() == eventNames().successEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().blockedEvent);
+    const bool setTransactionActive = m_transaction && (event->type() == eventNames().successEvent || (event->type() == eventNames().errorEvent && m_errorCode != IDBDatabaseException::IDB_ABORT_ERR));
+
+    if (setTransactionActive)
+        m_transaction->setActive(true);
     bool dontPreventDefault = IDBEventDispatcher::dispatch(event.get(), targets);
+    if (setTransactionActive)
+        m_transaction->setActive(false);
 
     // If the result was of type IDBCursor, or a onBlocked event, then we'll fire again.
     if (event->type() != eventNames().blockedEvent && (!cursorToNotify || m_cursorFinished))
@@ -421,6 +423,10 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
         }
         m_transaction->backend()->didCompleteTaskEvents();
     }
+
+    if (m_transaction && m_readyState == DONE)
+        m_transaction->unregisterRequest(this);
+
     return dontPreventDefault;
 }
 

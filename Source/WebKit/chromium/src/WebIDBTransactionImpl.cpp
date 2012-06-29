@@ -59,6 +59,11 @@ WebIDBObjectStore* WebIDBTransactionImpl::objectStore(const WebString& name, Exc
     return new WebIDBObjectStoreImpl(objectStore);
 }
 
+void WebIDBTransactionImpl::commit()
+{
+    m_backend->commit();
+}
+
 void WebIDBTransactionImpl::abort()
 {
     m_backend->abort();

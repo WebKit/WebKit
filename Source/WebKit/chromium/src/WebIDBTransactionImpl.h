@@ -43,6 +43,7 @@ public:
 
     virtual int mode() const;
     virtual WebIDBObjectStore* objectStore(const WebString& name, WebExceptionCode&);
+    virtual void commit();
     virtual void abort();
     virtual void didCompleteTaskEvents();
     virtual void setCallbacks(WebIDBTransactionCallbacks*);
