@@ -1,3 +1,16 @@
+2012-06-29  Kwang Yul Seo  <skyul@company100.net>
+
+        Don't call SegmentedString::toString() twice in XMLDocumentParser::append(const SegmentedString&)
+        https://bugs.webkit.org/show_bug.cgi?id=90254
+
+        Reviewed by Adam Barth.
+
+        We can reuse the local variable parseString instead of calling s.toString() again.
+        No behavior change, so no new tests.
+
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::append):
+
 2012-06-29  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Crash when flowing a fixed positioned element into a region.

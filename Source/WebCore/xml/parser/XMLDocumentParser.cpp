@@ -127,7 +127,7 @@ void XMLDocumentParser::append(const SegmentedString& s)
         return;
     }
 
-    doWrite(s.toString());
+    doWrite(parseString);
 
     // After parsing, go ahead and dispatch image beforeload events.
     ImageLoader::dispatchPendingBeforeLoadEvents();
