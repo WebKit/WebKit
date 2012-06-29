@@ -1,3 +1,16 @@
+2012-06-28  Terry Anderson  <tdanderson@chromium.org>
+
+        [chromium] Reset the device scale factor to 1 before each test is run
+        https://bugs.webkit.org/show_bug.cgi?id=90212
+
+        Reviewed by Adam Barth.
+
+        Some tests change the device scale factor, so this needs to be reset to
+        1.0 at the start of each test to avoid test flakiness.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::reset):
+
 2012-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cleanup HTMLFormCollection

@@ -650,6 +650,7 @@ void LayoutTestController::reset()
         m_shell->webView()->removeAllUserContent();
         WebKit::WebSize empty;
         m_shell->webView()->disableAutoResizeMode();
+        m_shell->webView()->setDeviceScaleFactor(1);
     }
     m_dumpAsText = false;
     m_dumpAsAudio = false;
