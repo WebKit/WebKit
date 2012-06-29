@@ -113,6 +113,27 @@ config.kPlatforms = {
             return builderName.indexOf('GTK') != -1;
         },
     },
+    'qt' : {
+        label : 'Qt',
+        buildConsoleURL: 'http://build.webkit.org',
+        layoutTestResultsURL: 'http://build.webkit.org/results',
+        waterfallURL: 'http://build.webkit.org/waterfall',
+        builders: {
+            'Qt Linux Release' : {version : '32-bit release'},
+        },
+        haveBuilderAccumulatedResults : false,
+        useDirectoryListingForOldBuilds: false,
+        useFlakinessDashboard: false,
+        resultsDirectoryNameFromBuilderName: function(builderName) {
+            return encodeURIComponent(builderName);
+        },
+        resultsDirectoryForBuildNumber: function(buildNumber, revision) {
+            return encodeURIComponent('r' + revision + ' (' + buildNumber + ')');
+        },
+        builderApplies: function(builderName) {
+            return builderName.indexOf('Qt') != -1;
+        },
+    },
 };
 
 config.kTracURL = 'http://trac.webkit.org';

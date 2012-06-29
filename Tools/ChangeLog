@@ -1,3 +1,13 @@
+2012-06-29  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Added Qt port for garden-o-matic.
+        https://bugs.webkit.org/show_bug.cgi?id=82719
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        (.):
+
 2012-06-29  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WTR] Get rid of using DumpRenderTreeSupportQt
