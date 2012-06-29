@@ -60,8 +60,9 @@ def port_options(**help_strings):
 
 def _builder_options(builder_name):
     configuration = "Debug" if re.search(r"[d|D](ebu|b)g", builder_name) else "Release"
+    is_webkit2 = builder_name.find("WK2") != -1
     builder_name = builder_name
-    return optparse.Values({'builder_name': builder_name, 'configuration': configuration})
+    return optparse.Values({'builder_name': builder_name, 'configuration': configuration, 'webkit_test_runner': is_webkit2})
 
 
 class PortFactory(object):

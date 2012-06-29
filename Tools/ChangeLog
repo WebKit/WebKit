@@ -1,3 +1,25 @@
+2012-06-28  Ojan Vafai  <ojan@chromium.org>
+
+        Fix rebaselining for Qt and Apple ports
+        https://bugs.webkit.org/show_bug.cgi?id=90204
+
+        Reviewed by Dirk Pranke.
+
+        -Apporpriately put wk2 results in the -wk2 directories.
+        -Since Qt and Apple-Win don't have bots that correspond to the
+        platform/qt and platform/win directories, we need to fudge it
+        and always put the results in those directories for those ports.
+
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        (rebaseline_override_dir):
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (_builder_options):
+        Identify webkit2 builders by the WK2 in the builder name.
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._baseline_directory):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_baseline_directory):
+
 2012-06-29  Zoltan Horvath  <zoltan@webkit.org>
 
         Add support for --force parameter to run-performance-tests

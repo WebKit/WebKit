@@ -88,7 +88,10 @@ class RebaselineTest(AbstractRebaseliningCommand):
 
     def _baseline_directory(self, builder_name):
         port = self._tool.port_factory.get_from_builder_name(builder_name)
-        return port.baseline_path()
+        override_dir = builders.rebaseline_override_dir(builder_name)
+        if override_dir:
+            return self._tool.filesystem.join(port.layout_tests_dir(), 'platform', override_dir)
+        return port.baseline_version_dir()
 
     def _copy_existing_baseline(self, platforms_to_move_existing_baselines_to, test_name, suffix):
         old_baselines = []
