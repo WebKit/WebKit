@@ -1,3 +1,15 @@
+2012-06-29  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [GTK] [QT] fast/viewport/viewport-91.html is failing after r121555
+        https://bugs.webkit.org/show_bug.cgi?id=90287
+
+        Unreviewed gardening. Skip fast/viewport/viewport-91.html
+        for EFL, GTK and QT ports. The test is failing after r121555.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-06-29  Tony Chang  <tony@chromium.org>
 
         [GTK] Enable CSS grid layout LayoutTests on GTK+
