@@ -1,5 +1,12 @@
 2012-06-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Mac build fix after r121575. It rolls out r121547 but didn't roll out the follow up build fix r121553.
+
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        (FontCustomPlatformData):
+
+2012-06-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         Share the same cache in HTMLCollection and DynamicNodeLists
         https://bugs.webkit.org/show_bug.cgi?id=90118
 

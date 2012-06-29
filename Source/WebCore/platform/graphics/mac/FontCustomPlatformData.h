@@ -60,6 +60,7 @@ public:
 
     static bool supportsFormat(const String&);
 
+    ATSFontContainerRef m_atsContainer;
     CGFontRef m_cgFont;
 #if USE(SKIA_ON_MAC_CHROMIUM)
     SkTypeface* m_typeface;
