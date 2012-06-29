@@ -1,3 +1,20 @@
+2012-06-29  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WTR] Get rid of using DumpRenderTreeSupportQt
+        https://bugs.webkit.org/show_bug.cgi?id=90262
+
+        Reviewed by Alexey Proskuryakov.
+
+        Now that we decided to not support v8 in WebKit2
+        we can get rid of using DumpRenderTreeSupportQt
+        in WebKitTestRunner.
+
+        * Tools.pro:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::resetAfterTest):
+        (WTR::InjectedBundlePage::didClearWindowForFrame):
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+
 2012-06-29  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Revert r121540, it broke most Qt builds

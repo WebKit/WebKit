@@ -17,8 +17,7 @@ load(features)
 
 !no_webkit2 {
     SUBDIRS += MiniBrowser/qt/MiniBrowser.pro
-    # WTR's InjectedBundle depends currently on WK1's DumpRenderTreeSupport
-    !no_webkit1: SUBDIRS += WebKitTestRunner/WebKitTestRunner.pro
+    SUBDIRS += WebKitTestRunner/WebKitTestRunner.pro
 }
 
 # FIXME: with Qt 5 the test plugin cause some trouble during layout tests.
