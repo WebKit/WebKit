@@ -110,7 +110,7 @@ static bool isValidPropertyName(const String& name)
     return true;
 }
 
-static String convertPropertyNameToAttributeName(const String& name)
+static const String convertPropertyNameToAttributeName(const String& name)
 {
     StringBuilder builder;
     builder.append("data-");

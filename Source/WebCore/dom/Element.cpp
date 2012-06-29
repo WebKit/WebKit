@@ -630,7 +630,7 @@ const AtomicString& Element::getAttribute(const AtomicString& name) const
     return nullAtom;
 }
 
-const AtomicString& Element::getAttributeNS(const String& namespaceURI, const String& localName) const
+const AtomicString& Element::getAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const
 {
     return getAttribute(QualifiedName(nullAtom, localName, namespaceURI));
 }
@@ -1459,7 +1459,7 @@ void Element::removeAttribute(size_t index)
     attributeData()->removeAttribute(index, this);
 }
 
-void Element::removeAttribute(const String& name)
+void Element::removeAttribute(const AtomicString& name)
 {
     ElementAttributeData* attributeData = this->attributeData();
     if (!attributeData)
@@ -1473,12 +1473,12 @@ void Element::removeAttribute(const String& name)
     attributeData->removeAttribute(index, this);
 }
 
-void Element::removeAttributeNS(const String& namespaceURI, const String& localName)
+void Element::removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName)
 {
     removeAttribute(QualifiedName(nullAtom, localName, namespaceURI));
 }
 
-PassRefPtr<Attr> Element::getAttributeNode(const String& name)
+PassRefPtr<Attr> Element::getAttributeNode(const AtomicString& name)
 {
     ElementAttributeData* attributeData = updatedAttributeData();
     if (!attributeData)
@@ -1486,7 +1486,7 @@ PassRefPtr<Attr> Element::getAttributeNode(const String& name)
     return attributeData->getAttributeNode(name, shouldIgnoreAttributeCase(this), this);
 }
 
-PassRefPtr<Attr> Element::getAttributeNodeNS(const String& namespaceURI, const String& localName)
+PassRefPtr<Attr> Element::getAttributeNodeNS(const AtomicString& namespaceURI, const AtomicString& localName)
 {
     ElementAttributeData* attributeData = updatedAttributeData();
     if (!attributeData)
@@ -1494,7 +1494,7 @@ PassRefPtr<Attr> Element::getAttributeNodeNS(const String& namespaceURI, const S
     return attributeData->getAttributeNode(QualifiedName(nullAtom, localName, namespaceURI), this);
 }
 
-bool Element::hasAttribute(const String& name) const
+bool Element::hasAttribute(const AtomicString& name) const
 {
     ElementAttributeData* attributeData = updatedAttributeData();
     if (!attributeData)
@@ -1506,7 +1506,7 @@ bool Element::hasAttribute(const String& name) const
     return attributeData->getAttributeItem(localName, false);
 }
 
-bool Element::hasAttributeNS(const String& namespaceURI, const String& localName) const
+bool Element::hasAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const
 {
     ElementAttributeData* attributeData = updatedAttributeData();
     if (!attributeData)

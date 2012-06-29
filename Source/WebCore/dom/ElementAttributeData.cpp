@@ -299,7 +299,7 @@ void ElementAttributeData::replaceAttribute(size_t index, const Attribute& attri
     element->didModifyAttribute(attribute);
 }
 
-PassRefPtr<Attr> ElementAttributeData::getAttributeNode(const String& name, bool shouldIgnoreAttributeCase, Element* element) const
+PassRefPtr<Attr> ElementAttributeData::getAttributeNode(const AtomicString& name, bool shouldIgnoreAttributeCase, Element* element) const
 {
     ASSERT(element);
     Attribute* attribute = getAttributeItem(name, shouldIgnoreAttributeCase);

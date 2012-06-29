@@ -139,11 +139,11 @@ public:
     // in style attribute or one of the SVG animation attributes.
     bool hasAttributesWithoutUpdate() const;
 
-    bool hasAttribute(const String& name) const;
-    bool hasAttributeNS(const String& namespaceURI, const String& localName) const;
+    bool hasAttribute(const AtomicString& name) const;
+    bool hasAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
 
     const AtomicString& getAttribute(const AtomicString& name) const;
-    const AtomicString& getAttributeNS(const String& namespaceURI, const String& localName) const;
+    const AtomicString& getAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
 
     void setAttribute(const AtomicString& name, const AtomicString& value, ExceptionCode&);
     void setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value, ExceptionCode&, FragmentScriptingPermission = AllowScriptingContent);
@@ -197,13 +197,13 @@ public:
     // Returns the absolute bounding box translated into screen coordinates:
     IntRect screenRect() const;
 
-    void removeAttribute(const String& name);
-    void removeAttributeNS(const String& namespaceURI, const String& localName);
+    void removeAttribute(const AtomicString& name);
+    void removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName);
 
     PassRefPtr<Attr> detachAttribute(size_t index);
 
-    PassRefPtr<Attr> getAttributeNode(const String& name);
-    PassRefPtr<Attr> getAttributeNodeNS(const String& namespaceURI, const String& localName);
+    PassRefPtr<Attr> getAttributeNode(const AtomicString& name);
+    PassRefPtr<Attr> getAttributeNodeNS(const AtomicString& namespaceURI, const AtomicString& localName);
     PassRefPtr<Attr> setAttributeNode(Attr*, ExceptionCode&);
     PassRefPtr<Attr> setAttributeNodeNS(Attr*, ExceptionCode&);
     PassRefPtr<Attr> removeAttributeNode(Attr*, ExceptionCode&);

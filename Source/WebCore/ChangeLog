@@ -1,3 +1,36 @@
+2012-06-28  Kentaro Hara  <haraken@chromium.org>
+
+        Change argument types of Element::getAttribute*() from String to AtomicString
+        https://bugs.webkit.org/show_bug.cgi?id=90246
+
+        Reviewed by Ryosuke Niwa.
+
+        This is a follow-up patch for r121439. r121439 changed an argument type of
+        Element::getAttribute() from String to AtomicString, which optimized
+        performance of Dromaeo/dom-attr.html. This patch changes other argument types
+        of Element::getAttribute*() from String to AtomicString. See the ChangeLog in
+        http://trac.webkit.org/changeset/121439 for more details about why this change
+        optimizes performance.
+
+        No tests. No change in behavior.
+
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::convertPropertyNameToAttributeName):
+        * dom/Element.cpp:
+        (WebCore::Element::getAttributeNS):
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::removeAttributeNS):
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::getAttributeNodeNS):
+        (WebCore::Element::hasAttribute):
+        (WebCore::Element::hasAttributeNS):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::getAttributeNode):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+
 2012-06-28  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r106388): Form hidden element values being restored
