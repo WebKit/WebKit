@@ -109,8 +109,10 @@ static void releaseTableData(void* userData)
 static hb_blob_t* harfbuzzCoreTextGetTable(hb_face_t* face, hb_tag_t tag, void* userData)
 {
     FontPlatformData* platformData = reinterpret_cast<FontPlatformData*>(userData);
-    CTFontRef ctFont = platformData->ctFont();
-    CFDataRef cfData = CTFontCopyTable(ctFont, tag, kCTFontTableOptionNoOptions);
+    // It seems that CTFontCopyTable of MacOSX10.5 sdk doesn't work for
+    // OpenType layout tables(GDEF, GSUB, GPOS). Use CGFontCopyTableForTag instead.
+    CGFontRef cgFont = platformData->cgFont();
+    CFDataRef cfData = CGFontCopyTableForTag(cgFont, tag);
     if (!cfData)
         return 0;
 
