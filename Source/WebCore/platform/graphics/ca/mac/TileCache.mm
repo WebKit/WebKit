@@ -36,7 +36,7 @@
 
 using namespace std;
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
 @interface CALayer (WebCALayerDetails)
 - (void)setAcceleratesDrawing:(BOOL)flag;
 @end
@@ -154,7 +154,7 @@ void TileCache::setScale(CGFloat scale)
     if (m_scale == scale && m_deviceScaleFactor == deviceScaleFactor)
         return;
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     Vector<FloatRect> dirtyRects;
 
     m_deviceScaleFactor = deviceScaleFactor;
@@ -179,7 +179,7 @@ void TileCache::setScale(CGFloat scale)
 
 void TileCache::setAcceleratesDrawing(bool acceleratesDrawing)
 {
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     if (m_acceleratesDrawing == acceleratesDrawing)
         return;
 
@@ -395,7 +395,7 @@ RetainPtr<WebTileLayer> TileCache::createTileLayer(const IntRect& tileRect)
     [layer.get() setEdgeAntialiasingMask:0];
     [layer.get() setOpaque:YES];
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     [layer.get() setContentsScale:m_deviceScaleFactor];
     [layer.get() setAcceleratesDrawing:m_acceleratesDrawing];
 #endif

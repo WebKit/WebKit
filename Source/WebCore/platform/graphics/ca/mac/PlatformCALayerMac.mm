@@ -44,8 +44,6 @@
 #import <wtf/CurrentTime.h>
 #import <wtf/UnusedParam.h>
 
-#define HAVE_MODERN_QUARTZCORE (!defined(BUILDING_ON_LEOPARD))
-
 using std::min;
 using std::max;
 
@@ -95,7 +93,7 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 @end
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
 @interface CATiledLayer(GraphicsLayerCAPrivate)
 - (void)displayInRect:(CGRect)r levelOfDetail:(int)lod options:(NSDictionary *)dict;
 - (BOOL)canDrawConcurrently;
@@ -105,7 +103,7 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 @interface CALayer(Private)
 - (void)setContentsChanged;
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
 - (void)setAcceleratesDrawing:(BOOL)flag;
 - (BOOL)acceleratesDrawing;
 #endif
@@ -148,7 +146,6 @@ static NSDictionary* nullActionsDictionary()
     return actions;
 }
 
-#if HAVE_MODERN_QUARTZCORE
 static NSString* toCAFilterType(PlatformCALayer::FilterType type)
 {
     switch (type) {
@@ -158,7 +155,6 @@ static NSString* toCAFilterType(PlatformCALayer::FilterType type)
     default: return 0;
     }
 }
-#endif
 
 PassRefPtr<PlatformCALayer> PlatformCALayer::create(LayerType layerType, PlatformCALayerClient* owner)
 {
@@ -460,9 +456,7 @@ FloatPoint3D PlatformCALayer::anchorPoint() const
 {
     CGPoint point = [m_layer.get() anchorPoint];
     float z = 0;
-#if HAVE_MODERN_QUARTZCORE
     z = [m_layer.get() anchorPointZ];
-#endif
     return FloatPoint3D(point.x, point.y, z);
 }
 
@@ -470,9 +464,7 @@ void PlatformCALayer::setAnchorPoint(const FloatPoint3D& value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setAnchorPoint:CGPointMake(value.x(), value.y())];
-#if HAVE_MODERN_QUARTZCORE
     [m_layer.get() setAnchorPointZ:value.z()];
-#endif
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -502,28 +494,14 @@ void PlatformCALayer::setSublayerTransform(const TransformationMatrix& value)
 
 TransformationMatrix PlatformCALayer::contentsTransform() const
 {
-#if !HAVE_MODERN_QUARTZCORE
-    if (m_layerType != LayerTypeWebLayer)
-        return TransformationMatrix();
-        
-    return [static_cast<WebLayer*>(m_layer.get()) contentsTransform];
-#else
+    // FIXME: This function can be removed.
     return TransformationMatrix();
-#endif
 }
 
 void PlatformCALayer::setContentsTransform(const TransformationMatrix& value)
 {
-#if !HAVE_MODERN_QUARTZCORE
-    if (m_layerType != LayerTypeWebLayer)
-        return;
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() setContentsTransform:value];
-    END_BLOCK_OBJC_EXCEPTIONS
-#else
+    // FIXME: This function can be removed.
     UNUSED_PARAM(value);
-#endif
 }
 
 bool PlatformCALayer::isHidden() const
@@ -540,22 +518,14 @@ void PlatformCALayer::setHidden(bool value)
 
 bool PlatformCALayer::isGeometryFlipped() const
 {
-#if HAVE_MODERN_QUARTZCORE
     return [m_layer.get() isGeometryFlipped];
-#else
-    return false;
-#endif
 }
 
 void PlatformCALayer::setGeometryFlipped(bool value)
 {
-#if HAVE_MODERN_QUARTZCORE
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setGeometryFlipped:value];
     END_BLOCK_OBJC_EXCEPTIONS
-#else
-    UNUSED_PARAM(value);
-#endif
 }
 
 bool PlatformCALayer::isDoubleSided() const
@@ -584,7 +554,7 @@ void PlatformCALayer::setMasksToBounds(bool value)
 
 bool PlatformCALayer::acceleratesDrawing() const
 {
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     return [m_layer.get() acceleratesDrawing];
 #else
     return false;
@@ -593,7 +563,7 @@ bool PlatformCALayer::acceleratesDrawing() const
 
 void PlatformCALayer::setAcceleratesDrawing(bool acceleratesDrawing)
 {
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setAcceleratesDrawing:acceleratesDrawing];
     END_BLOCK_OBJC_EXCEPTIONS
@@ -628,24 +598,16 @@ void PlatformCALayer::setContentsRect(const FloatRect& value)
 
 void PlatformCALayer::setMinificationFilter(FilterType value)
 {
-#if HAVE_MODERN_QUARTZCORE
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setMinificationFilter:toCAFilterType(value)];
     END_BLOCK_OBJC_EXCEPTIONS
-#else
-    UNUSED_PARAM(value);
-#endif
 }
 
 void PlatformCALayer::setMagnificationFilter(FilterType value)
 {
-#if HAVE_MODERN_QUARTZCORE
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setMagnificationFilter:toCAFilterType(value)];
     END_BLOCK_OBJC_EXCEPTIONS
-#else
-    UNUSED_PARAM(value);
-#endif
 }
 
 Color PlatformCALayer::backgroundColor() const
@@ -948,7 +910,7 @@ void PlatformCALayer::setTimeOffset(CFTimeInterval value)
 
 float PlatformCALayer::contentsScale() const
 {
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     return [m_layer.get() contentsScale];
 #else
     return 1;
@@ -957,7 +919,7 @@ float PlatformCALayer::contentsScale() const
 
 void PlatformCALayer::setContentsScale(float value)
 {
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setContentsScale:value];
     END_BLOCK_OBJC_EXCEPTIONS
@@ -975,7 +937,7 @@ TiledBacking* PlatformCALayer::tiledBacking()
     return [tileCacheLayer tiledBacking];
 }
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
 void PlatformCALayer::synchronouslyDisplayTilesInRect(const FloatRect& rect)
 {
     if (m_layerType != LayerTypeWebTiledLayer)

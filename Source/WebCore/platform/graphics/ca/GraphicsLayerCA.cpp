@@ -1517,9 +1517,7 @@ void GraphicsLayerCA::updateContentsImage()
 
         // FIXME: maybe only do trilinear if the image is being scaled down,
         // but then what if the layer size changes?
-#ifndef BUILDING_ON_LEOPARD
         m_contentsLayer->setMinificationFilter(PlatformCALayer::Trilinear);
-#endif
         m_contentsLayer->setContents(m_pendingContentsImage.get());
         m_pendingContentsImage = 0;
 
@@ -2392,7 +2390,7 @@ void GraphicsLayerCA::setDebugBorder(const Color& color, float borderWidth)
 FloatSize GraphicsLayerCA::constrainedSize() const
 {
     FloatSize constrainedSize = m_size;
-#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if defined(BUILDING_ON_SNOW_LEOPARD)
     float tileColumns = ceilf(m_size.width() / kTiledLayerTileSize);
     float tileRows = ceilf(m_size.height() / kTiledLayerTileSize);
     double numTiles = tileColumns * tileRows;
