@@ -1,3 +1,26 @@
+2012-06-28  Dirk Pranke  <dpranke@chromium.org>
+
+        add a pylint wrapper for linting python code
+        https://bugs.webkit.org/show_bug.cgi?id=90232
+
+        Reviewed by Adam Barth.
+
+        Currently we use 'pep8' to check python code in
+        check-webkit-style. pep8 is fast but simple; pylint is slower
+        but has much more robust linting capabilities and will catch
+        variable typos and all sorts of other things. Eventually we
+        should switch check-webkit-style to use this, but our code is
+        far from linting now so it needs to be cleaned up first.
+
+        This change adds the infrastructure and a wrapper so we can
+        start doing that.
+
+        * Scripts/lint-webkitpy: Added.
+        * Scripts/webkitpy/pylintrc: Added.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_pylint):
+
 2012-06-28  Tony Chang  <tony@chromium.org>
 
         [GTK] Use WEBKITOUTPUTDIR to find fonts in DumpRenderTree

@@ -74,6 +74,8 @@ class AutoinstallImportHook(object):
             self._install_mechanize()
         elif '.pep8' in fullname:
             self._install_pep8()
+        elif '.pylint' in fullname:
+            self._install_pylint()
         elif '.coverage' in fullname:
             self._install_coverage()
         elif '.eliza' in fullname:
@@ -92,6 +94,12 @@ class AutoinstallImportHook(object):
     def _install_pep8(self):
         self._install("http://pypi.python.org/packages/source/p/pep8/pep8-0.5.0.tar.gz#md5=512a818af9979290cd619cce8e9c2e2b",
                       "pep8-0.5.0/pep8.py")
+
+    def _install_pylint(self):
+        if not self._fs.exists(self._fs.join(_AUTOINSTALLED_DIR, "pylint")):
+            self._install('http://pypi.python.org/packages/source/p/pylint/pylint-0.25.1.tar.gz#md5=728bbc2b339bc3749af013709a7f87a5', 'pylint-0.25.1')
+            self._fs.move(self._fs.join(_AUTOINSTALLED_DIR, "pylint-0.25.1"), self._fs.join(_AUTOINSTALLED_DIR, "pylint"))
+
 
     # autoinstalled.buildbot is used by BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py
     # and should ideally match the version of BuildBot used at build.webkit.org.
