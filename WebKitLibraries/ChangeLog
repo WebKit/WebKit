@@ -1,3 +1,17 @@
+2012-06-29  Mihai Balan  <mibalan@adobe.com>
+
+        [CSS Regions] Adding feature defines for CSS Regions for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=88645
+
+        Reviewed by Tony Chang.
+
+        Re-trying to enable CSS regions on Windows. This time only enabling
+        regions since exclusions lead to some very strange compiling/linking
+        problems.
+
+        * win/tools/vsprops/FeatureDefines.vsprops: Added default value for ENABLE_CSS_REGIONS
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops: ditto
+
 2012-06-28  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build correction.  Add two missing macro

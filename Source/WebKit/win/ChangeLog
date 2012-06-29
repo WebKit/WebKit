@@ -1,3 +1,27 @@
+2012-06-29  Mihai Balan  <mibalan@adobe.com>
+
+        [CSS Regions] Adding feature defines for CSS Regions for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=88645
+
+        Reviewed by Tony Chang.
+
+        Re-trying to enable CSS regions on Windows. This time only enabling
+        regions since exclusions lead to some very strange compiling/linking
+        problems. This time adding preferences code to make sure the settings
+        get propagated to DRT (previous experiments by abucur showed they
+        didn't.).
+
+        * WebPreferenceKeysPrivate.h: Added preference key for CSS regions
+        * Interfaces/IWebPreferences.idl: Added getters and setters for CSS regions settings
+        * WebPreferences.cpp: ditto
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::isCSSRegionsEnabled):
+        (WebPreferences::setCSSRegionsEnabled):
+        * WebPreferences.h: ditto
+        (WebPreferences):
+        * WebView.cpp: Added settings code to handle CSS regions, too
+        (WebView::notifyPreferencesChanged):
+
 2012-06-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSLock should be per-JSGlobalData

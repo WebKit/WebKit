@@ -1,3 +1,18 @@
+2012-06-29  Mihai Balan  <mibalan@adobe.com>
+
+        [CSS Regions] Adding feature defines for CSS Regions for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=88645
+
+        Reviewed by Tony Chang.
+
+        Re-trying to enable CSS regions on Windows. This time only enabling
+        regions (not exclusions) because of some strange compilation/linking
+        issues. Fixing a couple of non-regions related tests that get different
+        results once regions are enabled.
+
+        * platform/win/fast/js/global-constructors-expected.txt: Added WebKitCSSRule to expected
+
+
 2012-06-29  No'am Rosenthal  <noam.rosenthal@nokia.com>0
 
         [Qt][WK2] Unskip/rebaseline some compositing tests.

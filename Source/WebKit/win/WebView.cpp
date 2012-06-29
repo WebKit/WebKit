@@ -4668,6 +4668,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setPluginsEnabled(!!enabled);
 
+    hr = preferences->isCSSRegionsEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setCSSRegionsEnabled(!!enabled);
+
     hr = preferences->privateBrowsingEnabled(&enabled);
     if (FAILED(hr))
         return hr;

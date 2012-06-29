@@ -1,3 +1,16 @@
+2012-06-29  Mihai Balan  <mibalan@adobe.com>
+
+        [CSS Regions] Adding feature defines for CSS Regions for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=88645
+
+        Reviewed by Tony Chang.
+
+        Re-trying to enable CSS regions on Windows. This time only enabling
+        regions (not exclusions) because of some strange compilation/linking
+        issues.
+
+        * css/CSSPropertyNames.in: Touched file to make sure property names get properly rebuilt.
+
 2012-06-29  Hanna Ma  <Hanma@rim.com>
 
         Web Inspector: Add data length to resource events on timeline to

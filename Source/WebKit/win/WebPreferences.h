@@ -162,6 +162,12 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE setPlugInsEnabled( 
         /* [in] */ BOOL enabled);
+
+    virtual HRESULT STDMETHODCALLTYPE isCSSRegionsEnabled(
+        /* [retval][out] */ BOOL* enabled);
+    
+    virtual HRESULT STDMETHODCALLTYPE setCSSRegionsEnabled(
+        /* [in] */ BOOL);
     
     virtual HRESULT STDMETHODCALLTYPE allowsAnimatedImages( 
         /* [retval][out] */ BOOL* enabled);

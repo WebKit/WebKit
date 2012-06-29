@@ -63,7 +63,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_CSS_REGIONS"
-		Value=""
+		Value="ENABLE_CSS_REGIONS"
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro

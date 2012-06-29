@@ -6,7 +6,7 @@
 //
 // Microsoft extensions are documented here:
 // http://msdn.microsoft.com/workshop/author/css/reference/attributes.asp
-//
+// 
 
 // high-priority property names have to be listed first, to simplify the check
 // for applying them first.
