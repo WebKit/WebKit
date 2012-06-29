@@ -600,7 +600,16 @@ public:
             length = 5;
         } else if (ident == CSSValueInvalid) {
             float zoom = (svgZoomEnabled && styleResolver->useSVGZoomRules()) ? 1.0f : styleResolver->style()->effectiveZoom();
-            length = primitiveValue->computeLength<T>(styleResolver->style(), styleResolver->rootElementStyle(), zoom);
+
+            // Any original result that was >= 1 should not be allowed to fall below 1.
+            // This keeps border lines from vanishing.
+            length = primitiveValue->computeLength<T>(styleResolver->style(), styleResolver->rootElementStyle(), 1.0);
+            T zoomedLength = length * zoom;
+            if (zoom < 1.0f && zoomedLength < 1.0 && length >= 1.0)
+                length = 1.0;
+            else
+                length = zoomedLength;
+
         } else {
             ASSERT_NOT_REACHED();
             length = 0;

@@ -557,12 +557,7 @@ double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* r
     if (computingFontSize || isFontRelativeLength())
         return result;
 
-    // Any original result that was >= 1 should not be allowed to fall below 1.  This keeps border lines from
-    // vanishing.
-    double zoomedResult = result * multiplier;
-    if (zoomedResult < 1.0 && result >= 1.0)
-        return 1.0;
-    return zoomedResult;
+    return result * multiplier;
 }
 
 void CSSPrimitiveValue::setFloatValue(unsigned short, double, ExceptionCode& ec)

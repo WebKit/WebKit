@@ -1,3 +1,27 @@
+2012-06-29  Emil A Eklund  <eae@chromium.org>
+
+        Allow non-borders to be adjusted to less than 1 when zoomed out
+        https://bugs.webkit.org/show_bug.cgi?id=90104
+
+        Reviewed by Eric Seidel.
+
+        Change CSSPrimitiveValue::computeLengthDouble to allow values to be
+        adjusted to less than 1.0 when zoomed out. This avoids an off by one
+        error for floats with margins when zoomed out that can cause floats to
+        wrap and break pages.
+
+        The logic that prevents the value from being adjusted to less than 1 was
+        added to ensure that borders are still painted even when zoomed out.
+        By moving the logic to ApplyPropertyComputeLength::applyValue, which is
+        used for borders and outlines, that functionality is preserved.
+
+        Test: fast/sub-pixel/float-with-margin-in-container.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        * css/StyleBuilder.cpp:
+        (WebCore::ApplyPropertyComputeLength::applyValue):
+
 2012-06-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Let Xcode have its own way after r121513.
