@@ -1,3 +1,25 @@
+2012-06-28  Philip Rogers  <pdr@google.com>
+
+        Prevent crash in animate resource handling
+        https://bugs.webkit.org/show_bug.cgi?id=90042
+
+        Reviewed by Abhishek Arya.
+
+        This patch adds a check that we are in a document before registering animation
+        resources and creating a target element in SVGSMILElement. This prevents a crash where
+        we would register resources and create the target when we were not in a document
+        but fail to deregister / reset the target when we were removed from a document.
+        In failing to reset the target, we can crash when trying to deregister resources that
+        were not created after being inserted into a document and then removed.
+
+        The existence of m_targetResources and registered animation resources is now
+        tied to being in a document.
+
+        Test: svg/custom/animate-reference-crash.html
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::targetElement):
+
 2012-06-28  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: IDBDatabase should have a close pending field.
