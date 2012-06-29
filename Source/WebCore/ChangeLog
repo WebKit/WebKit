@@ -1,3 +1,28 @@
+2012-06-28  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r106388): Form hidden element values being restored
+        incorrectly for dynamically generated content
+        https://bugs.webkit.org/show_bug.cgi?id=88685
+
+        Reviewed by Hajime Morita.
+
+        We should not save value attribute updated during parsing.
+
+        Test: fast/forms/state-restore-to-non-edited-controls.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        Initialize m_valueAttributeWasUpdatedAfterParsing.
+        (WebCore::HTMLInputElement::parseAttribute):
+        Set true to m_valueAttributeWasUpdatedAfterParsing if value
+        attribute is updated and it's not in parsing.
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::valueAttributeWasUpdatedAfterParsing):
+        Added for HiddenInputType.
+        * html/HiddenInputType.cpp:
+        (WebCore::HiddenInputType::saveFormControlState):
+        Save the value only if valueAttributeWasUpdatedAfterParsing() is true.
+
 2012-06-28  MORITA Hajime  <morrita@google.com>
 
         [Refactoring] NodeRenderingContext ctor could be built on top of the ComposedShadowTreeWalker
