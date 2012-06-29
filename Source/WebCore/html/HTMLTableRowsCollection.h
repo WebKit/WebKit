@@ -46,7 +46,7 @@ public:
 private:
     HTMLTableRowsCollection(HTMLTableElement*);
 
-    virtual Element* itemAfter(Element*) const;
+    virtual Element* itemAfter(Node*) const OVERRIDE;
 };
 
 } // namespace

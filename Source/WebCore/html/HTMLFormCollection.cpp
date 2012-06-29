@@ -84,28 +84,23 @@ Node* HTMLFormCollection::item(unsigned index) const
 {
     invalidateCacheIfNeeded();
 
-    if (m_cache.current && m_cache.position == index)
-        return m_cache.current;
+    if (isItemCacheValid() && cachedItemOffset() == index)
+        return cachedItem();
 
-    if (m_cache.hasLength && m_cache.length <= index)
+    if (isLengthCacheValid() && cachedLength() <= index)
         return 0;
 
-    if (!m_cache.current || m_cache.position > index) {
-        m_cache.current = 0;
-        m_cache.position = 0;
-        m_cache.elementsArrayPosition = 0;
-    }
+    if (!isItemCacheValid() || cachedItemOffset() > index)
+        setItemCache(0, 0, 0);
 
     const Vector<FormAssociatedElement*>& elementsArray = formControlElements();
-    unsigned currentIndex = m_cache.position;
-    
-    for (unsigned i = m_cache.elementsArrayPosition; i < elementsArray.size(); i++) {
+    unsigned currentIndex = cachedItemOffset();
+
+    for (unsigned i = cachedElementsArrayOffset(); i < elementsArray.size(); i++) {
         if (elementsArray[i]->isEnumeratable()) {
             HTMLElement* element = toHTMLElement(elementsArray[i]);
             if (index == currentIndex) {
-                m_cache.position = index;
-                m_cache.current = element;
-                m_cache.elementsArrayPosition = i;
+                setItemCache(element, index, i);
                 return element;
             }
 
@@ -156,7 +151,7 @@ Node* HTMLFormCollection::namedItem(const AtomicString& name) const
 
 void HTMLFormCollection::updateNameCache() const
 {
-    if (m_cache.hasNameCache)
+    if (hasNameCache())
         return;
 
     HashSet<AtomicStringImpl*> foundInputElements;
@@ -170,11 +165,11 @@ void HTMLFormCollection::updateNameCache() const
             const AtomicString& idAttrVal = element->getIdAttribute();
             const AtomicString& nameAttrVal = element->getNameAttribute();
             if (!idAttrVal.isEmpty()) {
-                append(m_cache.idCache, idAttrVal, element);
+                appendIdCache(idAttrVal, element);
                 foundInputElements.add(idAttrVal.impl());
             }
             if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal) {
-                append(m_cache.nameCache, nameAttrVal, element);
+                appendNameCache(nameAttrVal, element);
                 foundInputElements.add(nameAttrVal.impl());
             }
         }
@@ -187,13 +182,13 @@ void HTMLFormCollection::updateNameCache() const
             const AtomicString& idAttrVal = element->getIdAttribute();
             const AtomicString& nameAttrVal = element->getNameAttribute();
             if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl()))
-                append(m_cache.idCache, idAttrVal, element);
+                appendIdCache(idAttrVal, element);
             if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && !foundInputElements.contains(nameAttrVal.impl()))
-                append(m_cache.nameCache, nameAttrVal, element);
+                appendNameCache(nameAttrVal, element);
         }
     }
 
-    m_cache.hasNameCache = true;
+    setHasNameCache();
 }
 
 }

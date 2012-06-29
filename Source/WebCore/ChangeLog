@@ -1,3 +1,119 @@
+2012-06-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Share the same cache in HTMLCollection and DynamicNodeLists
+        https://bugs.webkit.org/show_bug.cgi?id=90118
+
+        Reviewed by Anders Carlsson.
+
+        This patch introduces two new base classes DynamicNodeListCacheBase and HTMLCollectionCacheBase to share
+        the cache object between DynamicNodeList and HTMLCollection. HTMLCollectionCacheBase inherits from
+        DynamicNodeListCacheBase and contains extra caches and bit flags for HTMLCollection. DynamicNodeList::Cache
+        and HTMLCollection::Cache had been removed and flattened into these two classes for the easy inheritance.
+
+        In DynamicNodeList, we have a very straight forward one-to-one mapping from old Caches member variables:
+
+        m_caches.lastItem -> cachedItem()
+        m_caches.lastItemOffset -> cachedItemOffset()
+        m_caches.cachedLength -> cachedLength()
+        m_caches.isItemCacheValid -> isItemCacheValid()
+        m_caches.isLengthCacheValid -> isLengthCacheValid()
+        m_caches.type -> removed because it was never used.
+        m_caches.rootedAtDocument -> isRootedAtDocument()
+        m_caches.shouldInvalidateOnAttributeChange -> shouldInvalidateOnAttributeChange()
+
+        In HTMLCollection, there is one semantic change in the way item cache is managed. Previously, we only had
+        m_cache.current which was used as both cachedItem() and isItemCacheValid() (not valid when current is null).
+        There are some asymmetric code changes due to one-to-many relationship. Also, all method names have been updated
+        to use that of DynamicNodeList terminology. Thus we have the following correspondence:
+
+        m_cache.current -> cachedItem() / isItemCacheValid()
+        m_cache.position -> cachedItemOffset()
+        m_cache.length -> cachedLength()
+        m_cache.elementsArrayPosition -> cachedElementsArrayOffset()
+        m_cache.hasLength -> isLengthCacheValid()
+        m_cache.hasNameCache -> hasNameCache() / setHasNameCache()
+        m_cache.idCache -> idCache() / addIdCache()
+        m_cache.nameCache -> idCache() / addNameCache()
+
+        In addition, we had to rename HTMLCollection::clearCache to invalidateCache to avoid the name collision with
+        HTMLCollectionCacheBase::clearCache.
+
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::length):
+        (WebCore::ChildNodeList::item):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicSubtreeNodeList::length):
+        (WebCore::DynamicSubtreeNodeList::itemForwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::itemBackwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::item):
+        * dom/DynamicNodeList.h:
+        (DynamicNodeListCacheBase):
+        (WebCore::DynamicNodeListCacheBase::DynamicNodeListCacheBase):
+        (WebCore::DynamicNodeListCacheBase::isRootedAtDocument):
+        (WebCore::DynamicNodeListCacheBase::shouldInvalidateOnAttributeChange):
+        (WebCore::DynamicNodeListCacheBase::isItemCacheValid):
+        (WebCore::DynamicNodeListCacheBase::cachedItem):
+        (WebCore::DynamicNodeListCacheBase::cachedItemOffset):
+        (WebCore::DynamicNodeListCacheBase::isLengthCacheValid):
+        (WebCore::DynamicNodeListCacheBase::cachedLength):
+        (WebCore::DynamicNodeListCacheBase::setLengthCache):
+        (WebCore::DynamicNodeListCacheBase::setItemCache):
+        (WebCore::DynamicNodeListCacheBase::clearCache):
+        (WebCore):
+        (WebCore::DynamicNodeList::DynamicNodeList):
+        (WebCore::DynamicNodeList::invalidateCache):
+        (WebCore::DynamicNodeList::rootNode):
+        (DynamicNodeList):
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::namedItemWithIndex):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::invalidateCacheIfNeeded):
+        (WebCore::HTMLCollection::invalidateCache):
+        (WebCore::HTMLCollection::isAcceptableElement):
+        (WebCore::HTMLCollection::itemAfter):
+        (WebCore::HTMLCollection::length):
+        (WebCore::HTMLCollection::item):
+        (WebCore::HTMLCollection::checkForNameMatch):
+        (WebCore::HTMLCollection::namedItem):
+        (WebCore::HTMLCollection::updateNameCache):
+        (WebCore::HTMLCollection::hasNamedItem):
+        (WebCore::HTMLCollection::namedItems):
+        (WebCore::HTMLCollectionCacheBase::append):
+        * html/HTMLCollection.h:
+        (HTMLCollectionCacheBase):
+        (WebCore::HTMLCollectionCacheBase::HTMLCollectionCacheBase):
+        (WebCore::HTMLCollectionCacheBase::type):
+        (WebCore::HTMLCollectionCacheBase::clearCache):
+        (WebCore::HTMLCollectionCacheBase::setItemCache):
+        (WebCore::HTMLCollectionCacheBase::cachedElementsArrayOffset):
+        (WebCore::HTMLCollectionCacheBase::includeChildren):
+        (WebCore::HTMLCollectionCacheBase::cacheTreeVersion):
+        (WebCore::HTMLCollectionCacheBase::idCache):
+        (WebCore::HTMLCollectionCacheBase::nameCache):
+        (WebCore::HTMLCollectionCacheBase::appendIdCache):
+        (WebCore::HTMLCollectionCacheBase::appendNameCache):
+        (WebCore::HTMLCollectionCacheBase::hasNameCache):
+        (WebCore::HTMLCollectionCacheBase::setHasNameCache):
+        (WebCore):
+        (WebCore::HTMLCollection::isEmpty):
+        (WebCore::HTMLCollection::hasExactlyOneItem):
+        (WebCore::HTMLCollection::base):
+        (HTMLCollection):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::item):
+        (WebCore::HTMLFormCollection::updateNameCache):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::itemAfter):
+        * html/HTMLNameCollection.h:
+        (HTMLNameCollection):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::invalidateSelectedItems):
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::itemAfter):
+        * html/HTMLTableRowsCollection.h:
+        (HTMLTableRowsCollection):
+
 2012-06-29  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r121572.

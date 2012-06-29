@@ -710,7 +710,7 @@ const Vector<HTMLElement*>& HTMLSelectElement::listItems() const
 void HTMLSelectElement::invalidateSelectedItems()
 {
     if (m_selectedOptionsCollection)
-        m_selectedOptionsCollection->clearCache();
+        m_selectedOptionsCollection->invalidateCache();
 }
 
 void HTMLSelectElement::setRecalcListItems()

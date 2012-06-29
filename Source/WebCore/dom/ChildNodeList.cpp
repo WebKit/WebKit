@@ -39,15 +39,14 @@ ChildNodeList::~ChildNodeList()
 
 unsigned ChildNodeList::length() const
 {
-    if (m_caches.isLengthCacheValid)
-        return m_caches.cachedLength;
+    if (isLengthCacheValid())
+        return cachedLength();
 
     unsigned len = 0;
     for (Node* n = rootNode()->firstChild(); n; n = n->nextSibling())
         len++;
 
-    m_caches.cachedLength = len;
-    m_caches.isLengthCacheValid = true;
+    setLengthCache(len);
 
     return len;
 }
@@ -57,27 +56,27 @@ Node* ChildNodeList::item(unsigned index) const
     unsigned int pos = 0;
     Node* n = rootNode()->firstChild();
 
-    if (m_caches.isItemCacheValid) {
-        if (index == m_caches.lastItemOffset)
-            return m_caches.lastItem;
-        
-        int diff = index - m_caches.lastItemOffset;
+    if (isItemCacheValid()) {
+        if (index == cachedItemOffset())
+            return cachedItem();
+
+        int diff = index - cachedItemOffset();
         unsigned dist = abs(diff);
         if (dist < index) {
-            n = m_caches.lastItem;
-            pos = m_caches.lastItemOffset;
+            n = cachedItem();
+            pos = cachedItemOffset();
         }
     }
 
-    if (m_caches.isLengthCacheValid) {
-        if (index >= m_caches.cachedLength)
+    if (isLengthCacheValid()) {
+        if (index >= cachedLength())
             return 0;
 
         int diff = index - pos;
         unsigned dist = abs(diff);
-        if (dist > m_caches.cachedLength - 1 - index) {
+        if (dist > cachedLength() - 1 - index) {
             n = rootNode()->lastChild();
-            pos = m_caches.cachedLength - 1;
+            pos = cachedLength() - 1;
         }
     }
 
@@ -94,9 +93,7 @@ Node* ChildNodeList::item(unsigned index) const
     }
 
     if (n) {
-        m_caches.lastItem = n;
-        m_caches.lastItemOffset = pos;
-        m_caches.isItemCacheValid = true;
+        setItemCache(n, pos);
         return n;
     }
 

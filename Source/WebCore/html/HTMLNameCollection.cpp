@@ -38,7 +38,7 @@ HTMLNameCollection::HTMLNameCollection(Document* document, CollectionType type, 
 {
 }
 
-Element* HTMLNameCollection::itemAfter(Element* previous) const
+Element* HTMLNameCollection::itemAfter(Node* previous) const
 {
     ASSERT(previous != base());
 

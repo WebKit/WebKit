@@ -34,7 +34,68 @@ namespace WebCore {
 class Element;
 class Node;
 
-class DynamicNodeList : public NodeList {
+class DynamicNodeListCacheBase {
+public:
+    enum RootType {
+        RootedAtNode,
+        RootedAtDocument,
+    };
+
+    enum InvalidationType {
+        AlwaysInvalidate,
+        DoNotInvalidateOnAttributeChange,
+    };
+
+    DynamicNodeListCacheBase(RootType rootType, InvalidationType invalidationType)
+        : m_rootedAtDocument(rootType == RootedAtDocument)
+        , m_shouldInvalidateOnAttributeChange(invalidationType == AlwaysInvalidate)
+    {
+        clearCache();
+    }
+
+public:
+    ALWAYS_INLINE bool isRootedAtDocument() const { return m_rootedAtDocument; }
+    ALWAYS_INLINE bool shouldInvalidateOnAttributeChange() const { return m_shouldInvalidateOnAttributeChange; }
+
+protected:
+    ALWAYS_INLINE bool isItemCacheValid() const { return m_isItemCacheValid; }
+    ALWAYS_INLINE Node* cachedItem() const { return m_cachedItem; }
+    ALWAYS_INLINE unsigned cachedItemOffset() const { return m_cachedItemOffset; }
+
+    ALWAYS_INLINE bool isLengthCacheValid() const { return m_isLengthCacheValid; }
+    ALWAYS_INLINE unsigned cachedLength() const { return m_cachedLength; }
+    ALWAYS_INLINE void setLengthCache(unsigned length) const
+    {
+        m_cachedLength = length;
+        m_isLengthCacheValid = true;
+    }
+    ALWAYS_INLINE void setItemCache(Node* item, unsigned offset) const
+    {
+        m_cachedItem = item;
+        m_cachedItemOffset = offset;
+        m_isItemCacheValid = true;
+    }
+
+    void clearCache() const
+    {
+        m_cachedItem = 0;
+        m_isLengthCacheValid = false;
+        m_isItemCacheValid = false;
+    }
+
+private:
+    mutable Node* m_cachedItem;
+    mutable unsigned m_cachedLength;
+    mutable unsigned m_cachedItemOffset;
+    mutable unsigned m_isLengthCacheValid : 1;
+    mutable unsigned m_isItemCacheValid : 1;
+
+    // From DynamicNodeList
+    const unsigned m_rootedAtDocument : 1;
+    const unsigned m_shouldInvalidateOnAttributeChange : 1;
+};
+
+class DynamicNodeList : public NodeList, public DynamicNodeListCacheBase {
 public:
     enum NodeListType {
         ChildNodeListType,
@@ -45,17 +106,9 @@ public:
         LabelsNodeListType,
         MicroDataItemListType,
     };
-    enum RootType {
-        RootedAtNode,
-        RootedAtDocument,
-    };
-    enum InvalidationType {
-        AlwaysInvalidate,
-        DoNotInvalidateOnAttributeChange,
-    };
     DynamicNodeList(PassRefPtr<Node> ownerNode, RootType rootType, InvalidationType invalidationType)
-        : m_ownerNode(ownerNode)
-        , m_caches(rootType, invalidationType)
+        : DynamicNodeListCacheBase(rootType, invalidationType)
+        , m_ownerNode(ownerNode)
     { }
     virtual ~DynamicNodeList() { }
 
@@ -66,52 +119,21 @@ public:
 
     // Other methods (not part of DOM)
     Node* ownerNode() const { return m_ownerNode.get(); }
-    bool isRootedAtDocument() const { return m_caches.rootedAtDocument; }
-    bool shouldInvalidateOnAttributeChange() const { return m_caches.shouldInvalidateOnAttributeChange; }
-    void invalidateCache() { m_caches.reset(); }
+    void invalidateCache() { clearCache(); }
 
 protected:
     Node* rootNode() const
     {
-        if (m_caches.rootedAtDocument && m_ownerNode->inDocument())
+        if (isRootedAtDocument() && m_ownerNode->inDocument())
             return m_ownerNode->document();
         return m_ownerNode.get();
     }
     Document* document() const { return m_ownerNode->document(); }
     virtual bool nodeMatches(Element*) const = 0;
 
-    struct Caches {
-        Caches(RootType rootType, InvalidationType invalidationType)
-            : rootedAtDocument(rootType == RootedAtDocument)
-            , shouldInvalidateOnAttributeChange(invalidationType == AlwaysInvalidate)
-        {
-            reset();
-        }
-
-        void reset()
-        {
-            lastItem = 0;
-            isLengthCacheValid = false;
-            isItemCacheValid = false;
-        }
-
-        Node* lastItem;
-        unsigned cachedLength;
-        unsigned lastItemOffset;
-        unsigned isLengthCacheValid : 1;
-        unsigned isItemCacheValid : 1;
-
-        // Following flags should belong in DynamicSubtreeNode but are here for bit-packing.
-        unsigned type : 4;
-        unsigned rootedAtDocument : 1;
-        unsigned shouldInvalidateOnAttributeChange : 1;
-    };
-
-    RefPtr<Node> m_ownerNode;
-    mutable Caches m_caches;
-
 private:
     virtual bool isDynamicNodeList() const OVERRIDE { return true; }
+    RefPtr<Node> m_ownerNode;
 };
 
 class DynamicSubtreeNodeList : public DynamicNodeList {
