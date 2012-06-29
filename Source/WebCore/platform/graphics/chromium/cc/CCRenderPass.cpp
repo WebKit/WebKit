@@ -28,6 +28,7 @@
 #include "cc/CCRenderPass.h"
 
 #include "cc/CCLayerImpl.h"
+#include "cc/CCMathUtil.h"
 #include "cc/CCQuadCuller.h"
 #include "cc/CCSharedQuadState.h"
 #include "cc/CCSolidColorDrawQuad.h"
@@ -95,7 +96,8 @@ void CCRenderPass::appendQuadsToFillScreen(CCLayerImpl* rootLayer, SkColor scree
     WebTransformationMatrix transformToLayerSpace = rootLayer->screenSpaceTransform().inverse();
     Vector<IntRect> fillRects = fillRegion.rects();
     for (size_t i = 0; i < fillRects.size(); ++i) {
-        IntRect layerRect = transformToLayerSpace.mapRect(fillRects[i]);
+        // The root layer transform is composed of translations and scales only, no perspective, so mapping is sufficient.
+        IntRect layerRect = CCMathUtil::mapClippedRect(transformToLayerSpace, fillRects[i]);
         m_quadList.append(CCSolidColorDrawQuad::create(sharedQuadState.get(), layerRect, screenBackgroundColor));
     }
     m_sharedQuadStateList.append(sharedQuadState.release());

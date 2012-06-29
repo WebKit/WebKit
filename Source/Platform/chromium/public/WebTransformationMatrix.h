@@ -141,13 +141,9 @@ public:
     // FIXME: these map functions should not exist, should be using CCMathUtil
     // instead. Eventually CCMathUtil functions could be merged here, but its
     // not yet the right time for that.
-    WebCore::FloatRect mapRect(const WebCore::FloatRect&) const;
-    WebCore::IntRect mapRect(const WebCore::IntRect&) const;
     WebCore::FloatPoint3D mapPoint(const WebCore::FloatPoint3D&) const;
     WebCore::FloatPoint mapPoint(const WebCore::FloatPoint&) const;
     WebCore::IntPoint mapPoint(const WebCore::IntPoint&) const;
-    WebCore::FloatQuad mapQuad(const WebCore::FloatQuad&) const;
-    WebCore::FloatPoint projectPoint(const WebCore::FloatPoint&, bool* clamped = 0) const;
 #endif
 
 protected:

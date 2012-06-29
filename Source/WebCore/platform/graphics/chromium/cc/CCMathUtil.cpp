@@ -278,13 +278,13 @@ FloatQuad CCMathUtil::projectQuad(const WebTransformationMatrix& transform, cons
 {
     FloatQuad projectedQuad;
     bool clippedPoint;
-    projectedQuad.setP1(transform.projectPoint(q.p1(), &clippedPoint));
+    projectedQuad.setP1(projectPoint(transform, q.p1(), clippedPoint));
     clipped = clippedPoint;
-    projectedQuad.setP2(transform.projectPoint(q.p2(), &clippedPoint));
+    projectedQuad.setP2(projectPoint(transform, q.p2(), clippedPoint));
     clipped |= clippedPoint;
-    projectedQuad.setP3(transform.projectPoint(q.p3(), &clippedPoint));
+    projectedQuad.setP3(projectPoint(transform, q.p3(), clippedPoint));
     clipped |= clippedPoint;
-    projectedQuad.setP4(transform.projectPoint(q.p4(), &clippedPoint));
+    projectedQuad.setP4(projectPoint(transform, q.p4(), clippedPoint));
     clipped |= clippedPoint;
 
     return projectedQuad;

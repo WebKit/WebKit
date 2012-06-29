@@ -33,6 +33,7 @@
 #include "TraceEvent.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostImpl.h"
+#include "cc/CCMathUtil.h"
 #include <public/Platform.h>
 #include <public/WebTransformationMatrix.h>
 
@@ -57,13 +58,25 @@ static inline float wedgeProduct(const FloatPoint& p1, const FloatPoint& p2)
     return p1.x() * p2.y() - p1.y() * p2.x();
 }
 
-// Computes area of quads that are possibly non-rectangular. Can be easily extended to polygons.
-static inline float quadArea(const FloatQuad& quad)
+// Calculates area of an arbitrary convex polygon with up to 8 points.
+static inline float polygonArea(const FloatPoint points[8], int numPoints)
 {
-    return fabs(0.5 * (wedgeProduct(quad.p1(), quad.p2()) +
-                       wedgeProduct(quad.p2(), quad.p3()) +
-                       wedgeProduct(quad.p3(), quad.p4()) +
-                       wedgeProduct(quad.p4(), quad.p1())));
+    if (numPoints < 3)
+        return 0;
+
+    float area = 0;
+    for (int i = 0; i < numPoints; ++i)
+        area += wedgeProduct(points[i], points[(i+1)%numPoints]);
+    return fabs(0.5f * area);
+}
+
+// Takes a given quad, maps it by the given transformation, and gives the area of the resulting polygon.
+static inline float areaOfMappedQuad(const WebTransformationMatrix& transform, const FloatQuad& quad)
+{
+    FloatPoint clippedQuad[8];
+    int numVerticesInClippedQuad = 0;
+    CCMathUtil::mapClippedQuad(transform, quad, clippedQuad, numVerticesInClippedQuad);
+    return polygonArea(clippedQuad, numVerticesInClippedQuad);
 }
 
 void CCOverdrawMetrics::didPaint(const IntRect& paintedRect)
@@ -85,8 +98,8 @@ void CCOverdrawMetrics::didUpload(const WebTransformationMatrix& transformToTarg
     if (!m_recordMetricsForFrame)
         return;
 
-    float uploadArea = quadArea(transformToTarget.mapQuad(FloatQuad(uploadRect)));
-    float uploadOpaqueArea = quadArea(transformToTarget.mapQuad(FloatQuad(intersection(opaqueRect, uploadRect))));
+    float uploadArea = areaOfMappedQuad(transformToTarget, FloatQuad(uploadRect));
+    float uploadOpaqueArea = areaOfMappedQuad(transformToTarget, FloatQuad(intersection(opaqueRect, uploadRect)));
 
     m_pixelsUploadedOpaque += uploadOpaqueArea;
     m_pixelsUploadedTranslucent += uploadArea - uploadOpaqueArea;
@@ -97,8 +110,8 @@ void CCOverdrawMetrics::didCullForDrawing(const WebTransformationMatrix& transfo
     if (!m_recordMetricsForFrame)
         return;
 
-    float beforeCullArea = quadArea(transformToTarget.mapQuad(FloatQuad(beforeCullRect)));
-    float afterCullArea = quadArea(transformToTarget.mapQuad(FloatQuad(afterCullRect)));
+    float beforeCullArea = areaOfMappedQuad(transformToTarget, FloatQuad(beforeCullRect));
+    float afterCullArea = areaOfMappedQuad(transformToTarget, FloatQuad(afterCullRect));
 
     m_pixelsCulledForDrawing += beforeCullArea - afterCullArea;
 }
@@ -108,8 +121,8 @@ void CCOverdrawMetrics::didDraw(const WebTransformationMatrix& transformToTarget
     if (!m_recordMetricsForFrame)
         return;
 
-    float afterCullArea = quadArea(transformToTarget.mapQuad(FloatQuad(afterCullRect)));
-    float afterCullOpaqueArea = quadArea(transformToTarget.mapQuad(FloatQuad(intersection(opaqueRect, afterCullRect))));
+    float afterCullArea = areaOfMappedQuad(transformToTarget, FloatQuad(afterCullRect));
+    float afterCullOpaqueArea = areaOfMappedQuad(transformToTarget, FloatQuad(intersection(opaqueRect, afterCullRect)));
 
     m_pixelsDrawnOpaque += afterCullOpaqueArea;
     m_pixelsDrawnTranslucent += afterCullArea - afterCullOpaqueArea;

@@ -587,7 +587,9 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
     if (drawingSurface->hasValidBackgroundTexture())
         copyTextureToFramebuffer(drawingSurface->backgroundTexture()->textureId(), quad->quadRect().size(), quad->layerTransform());
 
-    FloatQuad deviceQuad = contentsDeviceTransform.mapQuad(sharedGeometryQuad());
+    bool clipped = false;
+    FloatQuad deviceQuad = CCMathUtil::mapQuad(contentsDeviceTransform, sharedGeometryQuad(), clipped);
+    ASSERT(!clipped);
     CCLayerQuad deviceLayerBounds = CCLayerQuad(FloatQuad(deviceQuad.boundingBox()));
     CCLayerQuad deviceLayerEdges = CCLayerQuad(deviceQuad);
 
@@ -660,8 +662,9 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
         GLC(context(), context()->uniform3fv(shaderEdgeLocation, 8, edge));
     }
 
-    // Map device space quad to surface space.
-    FloatQuad surfaceQuad = contentsDeviceTransform.inverse().mapQuad(deviceLayerEdges.floatQuad());
+    // Map device space quad to surface space. contentsDeviceTransform has no perspective since it was generated with to2dTransform() so we don't need to project.
+    FloatQuad surfaceQuad = CCMathUtil::mapQuad(contentsDeviceTransform.inverse(), deviceLayerEdges.floatQuad(), clipped);
+    ASSERT(!clipped);
 
     drawTexturedQuad(quad->layerTransform(), quad->quadRect().width(), quad->quadRect().height(), quad->opacity(), surfaceQuad,
                      shaderMatrixLocation, shaderAlphaLocation, shaderQuadLocation);
@@ -761,6 +764,7 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
 
     bool clipped = false;
     FloatQuad deviceLayerQuad = CCMathUtil::mapQuad(deviceTransform, FloatQuad(quad->layerRect()), clipped);
+    ASSERT(!clipped);
 
     TileProgramUniforms uniforms;
     // For now, we simply skip anti-aliasing with the quad is clipped. This only happens
@@ -845,7 +849,8 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
 
         // Map quad to layer space.
         WebTransformationMatrix inverseDeviceTransform = deviceTransform.inverse();
-        localQuad = inverseDeviceTransform.mapQuad(deviceQuad.floatQuad());
+        localQuad = CCMathUtil::mapQuad(inverseDeviceTransform, deviceQuad.floatQuad(), clipped);
+        ASSERT(!clipped);
     } else {
         // Move fragment shader transform to vertex shader. We can do this while
         // still producing correct results as fragmentTexTransformLocation

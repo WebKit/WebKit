@@ -27,6 +27,8 @@
 
 #include "cc/CCSharedQuadState.h"
 
+#include "cc/CCMathUtil.h"
+
 using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
@@ -50,8 +52,9 @@ bool CCSharedQuadState::isLayerAxisAlignedIntRect() const
 {
     // Note: this doesn't consider window or projection matrices.
     // Assume that they're orthonormal and have integer scales and translations.
-    FloatQuad quad = quadTransform().mapQuad(FloatQuad(layerRect()));
-    return quad.isRectilinear() && quad.boundingBox().isExpressibleAsIntRect();
+    bool clipped = false;
+    FloatQuad quad = CCMathUtil::mapQuad(quadTransform(), FloatQuad(layerRect()), clipped);
+    return !clipped && quad.isRectilinear() && quad.boundingBox().isExpressibleAsIntRect();
 }
 
 }

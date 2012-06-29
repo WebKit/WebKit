@@ -231,7 +231,7 @@ const IntRect CCLayerImpl::getDrawRect() const
     // Form the matrix used by the shader to map the corners of the layer's
     // bounds into the view space.
     FloatRect layerRect(-0.5 * bounds().width(), -0.5 * bounds().height(), bounds().width(), bounds().height());
-    IntRect mappedRect = enclosingIntRect(drawTransform().mapRect(layerRect));
+    IntRect mappedRect = enclosingIntRect(CCMathUtil::mapClippedRect(drawTransform(), layerRect));
     return mappedRect;
 }
 

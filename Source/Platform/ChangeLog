@@ -1,3 +1,15 @@
+2012-06-28  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove mapRect and mapQuad from WebTransformationMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=90230
+
+        Reviewed by Adrienne Walker.
+
+        Removes clipping-unaware mapRect, mapQuad and projectPoint functions from the WebTransformationMatrix interface.
+
+        * chromium/public/WebTransformationMatrix.h:
+        (WebTransformationMatrix):
+
 2012-06-28  Adrienne Walker  <enne@google.com>
 
         [chromium] Split WebScrollbar into WebPluginScrollbar and WebScrollbar

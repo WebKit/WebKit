@@ -422,16 +422,6 @@ TransformationMatrix WebTransformationMatrix::toWebCoreTransform() const
     return m_private;
 }
 
-FloatRect WebTransformationMatrix::mapRect(const FloatRect& rect) const
-{
-    return m_private.mapRect(rect);
-}
-
-IntRect WebTransformationMatrix::mapRect(const IntRect& rect) const
-{
-    return m_private.mapRect(rect);
-}
-
 FloatPoint3D WebTransformationMatrix::mapPoint(const FloatPoint3D& p) const
 {
     return m_private.mapPoint(p);
@@ -445,16 +435,6 @@ FloatPoint WebTransformationMatrix::mapPoint(const FloatPoint& p) const
 IntPoint WebTransformationMatrix::mapPoint(const IntPoint& p) const
 {
     return m_private.mapPoint(p);
-}
-
-FloatQuad WebTransformationMatrix::mapQuad(const FloatQuad& quad) const
-{
-    return m_private.mapQuad(quad);
-}
-
-FloatPoint WebTransformationMatrix::projectPoint(const FloatPoint& p, bool* clamped) const
-{
-    return m_private.projectPoint(p, clamped);
 }
 
 } // namespace WebKit

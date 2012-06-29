@@ -151,9 +151,9 @@ static inline Region transformSurfaceOpaqueRegion(const RenderSurfaceType* surfa
     Region transformedRegion;
 
     Vector<IntRect> rects = region.rects();
-    // Clipping has been verified above, so mapRect will give correct results.
     for (size_t i = 0; i < rects.size(); ++i) {
-        IntRect transformedRect = enclosedIntRect(transform.mapRect(FloatRect(rects[i])));
+        // We've already checked for clipping in the mapQuad call above, these calls should not clip anything further.
+        IntRect transformedRect = enclosedIntRect(CCMathUtil::mapClippedRect(transform, FloatRect(rects[i])));
         if (!surface->clipRect().isEmpty())
             transformedRect.intersect(surface->clipRect());
         transformedRegion.unite(transformedRect);
@@ -319,9 +319,9 @@ static inline void addOcclusionBehindLayer(Region& region, const LayerType* laye
         return;
 
     Vector<IntRect> contentRects = opaqueContents.rects();
-    // We verify that the possible bounds of this region are not clipped above, so we can use mapRect() safely here.
     for (size_t i = 0; i < contentRects.size(); ++i) {
-        IntRect transformedRect = enclosedIntRect(transform.mapRect(FloatRect(contentRects[i])));
+        // We've already checked for clipping in the mapQuad call above, these calls should not clip anything further.
+        IntRect transformedRect = enclosedIntRect(CCMathUtil::mapClippedRect(transform, FloatRect(contentRects[i])));
         transformedRect.intersect(scissorRect);
         if (transformedRect.width() >= minimumTrackingSize.width() || transformedRect.height() >= minimumTrackingSize.height()) {
             if (occludingScreenSpaceRects)
