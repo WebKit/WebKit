@@ -97,6 +97,7 @@
             'tests/CCTimerTest.cpp',
             'tests/ClipboardChromiumTest.cpp',
             'tests/CompositorFakeWebGraphicsContext3D.h',
+            'tests/DateTimeFormatTest.cpp',
             'tests/DecimalTest.cpp',
             'tests/DragImageTest.cpp',
             'tests/EventListenerTest.cpp',

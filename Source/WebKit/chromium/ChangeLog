@@ -1,3 +1,34 @@
+2012-06-29  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform] Implement Date Time format parser
+        https://bugs.webkit.org/show_bug.cgi?id=89963
+
+        Reviewed by Kent Tamura.
+
+        This patch adds an unit test for date time format parser if
+        ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS) is true.
+
+        * tests/DateTimeFormatTest.cpp: Added.
+        (DateTimeFormatTest):
+        (Token):
+        (DateTimeFormatTest::Token::Token):
+        (DateTimeFormatTest::Token::operator==):
+        (DateTimeFormatTest::Token::toString):
+        (Tokens):
+        (DateTimeFormatTest::Tokens::Tokens):
+        (DateTimeFormatTest::Tokens::operator==):
+        (DateTimeFormatTest::Tokens::toString):
+        (DateTimeFormatTest::parse):
+        (DateTimeFormatTest::single):
+        (TokenHandler):
+        (DateTimeFormatTest::TokenHandler::~TokenHandler):
+        (DateTimeFormatTest::TokenHandler::fieldType):
+        (DateTimeFormatTest::TokenHandler::tokens):
+        (DateTimeFormatTest::TokenHandler::visitField):
+        (DateTimeFormatTest::TokenHandler::visitLiteral):
+        (operator<<):
+        (TEST_F):
+
 2012-06-28  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Implement IDBTransaction internal active flag

@@ -1192,6 +1192,8 @@
 		45099C411370A7800058D513 /* IconURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45099C401370A7800058D513 /* IconURL.cpp */; };
 		450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 450CEBEE15073BBE002BB149 /* LabelableElement.cpp */; };
 		450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 450CEBEF15073BBE002BB149 /* LabelableElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		453EB636159C570400001BB7 /* DateTimeFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 453EB634159C570400001BB7 /* DateTimeFormat.cpp */; };
+		453EB637159C570400001BB7 /* DateTimeFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 453EB635159C570400001BB7 /* DateTimeFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		458FE4091589DF0B005609E6 /* RenderSearchField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 458FE4071589DF0B005609E6 /* RenderSearchField.cpp */; };
 		458FE40A1589DF0B005609E6 /* RenderSearchField.h in Headers */ = {isa = PBXBuildFile; fileRef = 458FE4081589DF0B005609E6 /* RenderSearchField.h */; };
 		45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 45BAC2AF1360BBAB005DA258 /* IconURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8245,6 +8247,8 @@
 		45099C401370A7800058D513 /* IconURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconURL.cpp; sourceTree = "<group>"; };
 		450CEBEE15073BBE002BB149 /* LabelableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelableElement.cpp; sourceTree = "<group>"; };
 		450CEBEF15073BBE002BB149 /* LabelableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelableElement.h; sourceTree = "<group>"; };
+		453EB634159C570400001BB7 /* DateTimeFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTimeFormat.cpp; sourceTree = "<group>"; };
+		453EB635159C570400001BB7 /* DateTimeFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeFormat.h; sourceTree = "<group>"; };
 		458FE4071589DF0B005609E6 /* RenderSearchField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSearchField.cpp; sourceTree = "<group>"; };
 		458FE4081589DF0B005609E6 /* RenderSearchField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSearchField.h; sourceTree = "<group>"; };
 		45BAC2AF1360BBAB005DA258 /* IconURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconURL.h; sourceTree = "<group>"; };
@@ -19722,6 +19726,8 @@
 				B2C3D9F30D006C1D00EF6F26 /* BidiContext.h */,
 				B2C3D9F40D006C1D00EF6F26 /* BidiResolver.h */,
 				A8C402921348B2220063F1E5 /* BidiRunList.h */,
+				453EB634159C570400001BB7 /* DateTimeFormat.cpp */,
+				453EB635159C570400001BB7 /* DateTimeFormat.h */,
 				CECCFC3A141973D5002A0AC1 /* DecodeEscapeSequences.h */,
 				375CD231119D43C800A2A859 /* Hyphenation.h */,
 				A5ABB78613B904BC00F197E3 /* LineBreakIteratorPoolICU.h */,
@@ -22271,6 +22277,7 @@
 				81AC599A131636E60009A7E0 /* DataTransferItemList.h in Headers */,
 				2E97CCEB12939CB800C5C8FF /* DataView.h in Headers */,
 				A5732B0B136A161D005C8D7C /* DateComponents.h in Headers */,
+				453EB637159C570400001BB7 /* DateTimeFormat.h in Headers */,
 				F55B3DB61251F12D003EF269 /* DateInputType.h in Headers */,
 				F55B3DB81251F12D003EF269 /* DateTimeInputType.h in Headers */,
 				F55B3DBA1251F12D003EF269 /* DateTimeLocalInputType.h in Headers */,
@@ -25787,6 +25794,7 @@
 				2E97CCEA12939CB800C5C8FF /* DataView.cpp in Sources */,
 				A5732B0A136A161D005C8D7C /* DateComponents.cpp in Sources */,
 				F55B3DB51251F12D003EF269 /* DateInputType.cpp in Sources */,
+				453EB636159C570400001BB7 /* DateTimeFormat.cpp in Sources */,
 				F55B3DB71251F12D003EF269 /* DateTimeInputType.cpp in Sources */,
 				F55B3DB91251F12D003EF269 /* DateTimeLocalInputType.cpp in Sources */,
 				45FEA5CF156DDE8C00654101 /* Decimal.cpp in Sources */,

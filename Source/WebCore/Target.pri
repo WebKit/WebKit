@@ -1076,6 +1076,7 @@ SOURCES += \
     platform/Arena.cpp \
     platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
+    platform/text/DateTimeFormat.cpp \
     platform/text/Hyphenation.cpp \
     platform/text/LocaleToScriptMappingDefault.cpp \
     platform/text/LocalizedDateNone.cpp \
@@ -2414,6 +2415,7 @@ HEADERS += \
     platform/sql/SQLValue.h \
     platform/text/Base64.h \
     platform/text/BidiContext.h \
+    platform/text/DateTimeFormat.h \
     platform/text/DecodeEscapeSequences.h \
     platform/text/Hyphenation.h \
     platform/text/QuotedPrintable.h \

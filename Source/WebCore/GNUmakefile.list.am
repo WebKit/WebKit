@@ -3681,6 +3681,8 @@ webcore_sources += \
 	Source/WebCore/platform/text/BidiContext.h \
 	Source/WebCore/platform/text/BidiResolver.h \
 	Source/WebCore/platform/text/BidiRunList.h \
+	Source/WebCore/platform/text/DateTimeFormat.cpp \
+	Source/WebCore/platform/text/DateTimeFormat.h \
 	Source/WebCore/platform/text/DecodeEscapeSequences.h \
 	Source/WebCore/platform/text/Hyphenation.cpp \
 	Source/WebCore/platform/text/Hyphenation.h \

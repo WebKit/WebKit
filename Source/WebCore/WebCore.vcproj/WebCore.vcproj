@@ -33202,6 +33202,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\DateTimeFormat.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\DateTimeFormat.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\DecodeEscapeSequences.h"
 					>
 				</File>
