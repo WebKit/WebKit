@@ -1512,7 +1512,6 @@
       'sources': [
         '<@(webcore_privateheader_files)',
         '<@(webcore_files)',
-        '<@(webcore_chromium_compositor_files)',
 
         # For WebCoreSystemInterface, Mac-only.
         '../../WebKit/mac/WebCoreSupport/WebSystemInterface.mm',
@@ -1755,6 +1754,19 @@
             ['exclude', 'Android\\.cpp$'],
           ],
         }],
+      ],
+    },
+    {
+      'target_name': 'webcore_chromium_compositor',
+      'type': 'static_library',
+      'dependencies': [
+        'webcore_prerequisites',
+      ],
+      'defines': [
+        'WEBKIT_IMPLEMENTATION=1',
+      ],
+      'sources': [
+        '<@(webcore_chromium_compositor_files)',
       ],
     },
     # The *NEON.cpp files fail to compile when -mthumb is passed. Force
@@ -2007,6 +2019,7 @@
         'webcore_dom',
         'webcore_html',
         'webcore_platform',
+        'webcore_chromium_compositor',
         'webcore_remaining',
         'webcore_rendering',
         # Exported.

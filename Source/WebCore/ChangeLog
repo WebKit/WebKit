@@ -1,3 +1,12 @@
+2012-06-28  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Compile chromium compositor implementation files into separate .lib
+        https://bugs.webkit.org/show_bug.cgi?id=90233
+
+        Reviewed by Adam Barth.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2012-06-28  Erik Arvidsson  <arv@chromium.org>
 
         [V8] NodeList wrappers are not kept alive as needed
