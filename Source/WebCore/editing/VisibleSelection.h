@@ -28,7 +28,6 @@
 
 #include "TextGranularity.h"
 #include "VisiblePosition.h"
-#include "htmlediting.h"
 
 namespace WebCore {
 

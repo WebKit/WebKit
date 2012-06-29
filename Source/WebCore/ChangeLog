@@ -1,3 +1,9 @@
+2012-06-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove a #include erroneously added in r120896.
+
+        * editing/VisibleSelection.h:
+
 2012-06-29  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Platform] Implement Date Time format parser
