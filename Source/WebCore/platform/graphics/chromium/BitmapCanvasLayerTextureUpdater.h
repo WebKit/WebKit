@@ -37,6 +37,7 @@ class SkCanvas;
 namespace WebCore {
 
 class LayerPainterChromium;
+class CCGraphicsContext;
 
 // This class rasterizes the contentRect into a skia bitmap canvas. It then updates
 // textures by copying from the canvas into the texture, using MapSubImage if
@@ -45,7 +46,7 @@ class BitmapCanvasLayerTextureUpdater : public CanvasLayerTextureUpdater {
 public:
     class Texture : public LayerTextureUpdater::Texture {
     public:
-        Texture(BitmapCanvasLayerTextureUpdater*, PassOwnPtr<ManagedTexture>);
+        Texture(BitmapCanvasLayerTextureUpdater*, PassOwnPtr<CCPrioritizedTexture>);
         virtual ~Texture();
 
         virtual void updateRect(CCGraphicsContext*, TextureAllocator*, const IntRect& sourceRect, const IntRect& destRect) OVERRIDE;
@@ -59,10 +60,10 @@ public:
     static PassRefPtr<BitmapCanvasLayerTextureUpdater> create(PassOwnPtr<LayerPainterChromium>, bool useMapTexSubImage);
     virtual ~BitmapCanvasLayerTextureUpdater();
 
-    virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager*);
+    virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(CCPrioritizedTextureManager*);
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat);
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect) OVERRIDE;
-    void updateTextureRect(CCGraphicsContext*, TextureAllocator*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
+    void updateTextureRect(CCGraphicsContext*, TextureAllocator*, CCPrioritizedTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
     virtual void setOpaque(bool) OVERRIDE;
 

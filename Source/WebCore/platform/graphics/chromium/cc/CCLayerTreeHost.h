@@ -31,8 +31,12 @@
 #include "RateLimiter.h"
 #include "SkColor.h"
 #include "cc/CCAnimationEvents.h"
+#include "cc/CCGraphicsContext.h"
+#include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCOcclusionTracker.h"
+#include "cc/CCPrioritizedTextureManager.h"
 #include "cc/CCProxy.h"
+
 
 #include <limits>
 #include <wtf/HashMap.h>
@@ -50,7 +54,7 @@ class CCTextureUpdater;
 class ManagedTexture;
 class Region;
 class TextureAllocator;
-class TextureManager;
+class CCPrioritizedTextureManager;
 struct CCRenderingStats;
 struct CCScrollAndScaleSet;
 
@@ -236,7 +240,7 @@ public:
 
     void setHasTransparentBackground(bool transparent) { m_hasTransparentBackground = transparent; }
 
-    TextureManager* contentsTextureManager() const;
+    CCPrioritizedTextureManager* contentsTextureManager() const;
 
     // This will cause contents texture manager to evict all textures, but
     // without deleting them. This happens after all content textures have
@@ -259,7 +263,7 @@ public:
 
     bool bufferedUpdates();
     bool requestPartialTextureUpdate();
-    void deleteTextureAfterCommit(PassOwnPtr<ManagedTexture>);
+    void deleteTextureAfterCommit(PassOwnPtr<CCPrioritizedTexture>);
 
     void setDeviceScaleFactor(float);
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
@@ -270,7 +274,7 @@ protected:
 
 private:
     typedef Vector<RefPtr<LayerChromium> > LayerList;
-    typedef Vector<OwnPtr<ManagedTexture> > TextureList;
+    typedef Vector<OwnPtr<CCPrioritizedTexture> > TextureList;
 
     void initializeLayerRenderer();
 
@@ -280,8 +284,8 @@ private:
     void paintMasksForRenderSurface(LayerChromium*, PaintType, CCTextureUpdater&);
 
     void updateLayers(LayerChromium*, CCTextureUpdater&);
-    // Pre-reserve textures for any layer marked "always reserve textures"
-    void reserveTextures(const LayerList&);
+
+    void prioritizeTextures(const LayerList& updateList);
 
     void animateLayers(double monotonicTime);
     bool animateLayersRecursive(LayerChromium* current, double monotonicTime);
@@ -304,7 +308,7 @@ private:
     int m_numFailedRecreateAttempts;
 
     RefPtr<LayerChromium> m_rootLayer;
-    OwnPtr<TextureManager> m_contentsTextureManager;
+    OwnPtr<CCPrioritizedTextureManager> m_contentsTextureManager;
 
     CCLayerTreeSettings m_settings;
 

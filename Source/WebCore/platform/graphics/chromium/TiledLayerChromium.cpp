@@ -57,7 +57,7 @@ public:
     }
 
     LayerTextureUpdater::Texture* texture() { return m_texture.get(); }
-    ManagedTexture* managedTexture() { return m_texture->texture(); }
+    CCPrioritizedTexture* managedTexture() { return m_texture->texture(); }
 
     bool isDirty() const { return !dirtyRect.isEmpty(); }
     void copyAndClearDirty()
@@ -220,7 +220,7 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         if (!tile)
             continue;
         tile->isInUseOnImpl = false;
-        if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat)) {
+        if (!tile->managedTexture()->haveBackingTexture()) {
             invalidTiles.append(tile);
             continue;
         }
@@ -234,7 +234,7 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         m_tiler->takeTile((*iter)->i(), (*iter)->j());
 }
 
-TextureManager* TiledLayerChromium::textureManager() const
+CCPrioritizedTextureManager* TiledLayerChromium::textureManager() const
 {
     if (!layerTreeHost())
         return 0;
@@ -262,7 +262,11 @@ UpdatableTile* TiledLayerChromium::tileAt(int i, int j) const
 
 UpdatableTile* TiledLayerChromium::createTile(int i, int j)
 {
+    createTextureUpdaterIfNeeded();
+
     OwnPtr<UpdatableTile> tile(UpdatableTile::create(textureUpdater()->createTexture(textureManager())));
+    tile->managedTexture()->setDimensions(m_tiler->tileSize(), m_textureFormat);
+
     UpdatableTile* addedTile = tile.get();
     m_tiler->addTile(tile.release(), i, j);
 
@@ -320,25 +324,6 @@ void TiledLayerChromium::invalidateRect(const IntRect& layerRect)
     }
 }
 
-void TiledLayerChromium::protectTileTextures(const IntRect& layerRect)
-{
-    if (m_tiler->isEmpty() || layerRect.isEmpty())
-        return;
-
-    int left, top, right, bottom;
-    m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
-
-    for (int j = top; j <= bottom; ++j) {
-        for (int i = left; i <= right; ++i) {
-            UpdatableTile* tile = tileAt(i, j);
-            if (!tile || !tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
-                continue;
-
-            tile->managedTexture()->reserve(m_tiler->tileSize(), m_textureFormat);
-        }
-    }
-}
-
 // Returns true if tile is dirty and only part of it needs to be updated.
 bool TiledLayerChromium::tileOnlyNeedsPartialUpdate(UpdatableTile* tile)
 {
@@ -349,7 +334,7 @@ bool TiledLayerChromium::tileOnlyNeedsPartialUpdate(UpdatableTile* tile)
 // we don't modify textures currently used for drawing by the impl thread.
 bool TiledLayerChromium::tileNeedsBufferedUpdate(UpdatableTile* tile)
 {
-    if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
+    if (!tile->managedTexture()->haveBackingTexture())
         return false;
 
     if (!tile->isDirty())
@@ -373,6 +358,7 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             UpdatableTile* tile = tileAt(i, j);
+            ASSERT(tile); // Did setTexturePriorites get skipped?
             if (!tile)
                 tile = createTile(i, j);
 
@@ -380,7 +366,7 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
             if (!m_tiler)
                 CRASH();
 
-            if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat)) {
+            if (!tile->managedTexture()->haveBackingTexture()) {
                 // Sets the dirty rect to a full-sized tile with border texels.
                 tile->dirtyRect = m_tiler->tileRect(tile);
             }
@@ -399,19 +385,11 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
             // any single time through the function.
             tile->updated = true;
 
-            if (layerTreeHost() && layerTreeHost()->bufferedUpdates() && tileNeedsBufferedUpdate(tile)) {
-                // FIXME: Decide if partial update should be allowed based on cost
-                // of update. https://bugs.webkit.org/show_bug.cgi?id=77376
-                if (tileOnlyNeedsPartialUpdate(tile) && layerTreeHost()->requestPartialTextureUpdate())
-                    tile->partialUpdate = true;
-                else {
-                    layerTreeHost()->deleteTextureAfterCommit(tile->managedTexture()->steal());
-                    // Sets the dirty rect to a full-sized tile with border texels.
-                    tile->dirtyRect = m_tiler->tileRect(tile);
-                }
-            }
+            // Always try to get memory for visible textures.
+            if (!idle && !tile->managedTexture()->canAcquireBackingTexture())
+                tile->managedTexture()->requestLate();
 
-            if (!tile->managedTexture()->reserve(m_tiler->tileSize(), m_textureFormat)) {
+            if (!tile->managedTexture()->canAcquireBackingTexture()) {
                 m_skipsIdlePaint = true;
                 if (!idle) {
                     m_skipsDraw = true;
@@ -534,30 +512,75 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
     }
 }
 
-void TiledLayerChromium::reserveTextures()
+void TiledLayerChromium::setTexturePriorities(const CCPriorityCalculator& priorityCalc)
+{
+    setTexturePrioritiesInRect(priorityCalc, visibleLayerRect());
+}
+
+void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& priorityCalc, const IntRect& visibleRect)
 {
     updateBounds();
+    resetUpdateState();
 
-    const IntRect& layerRect = visibleLayerRect();
-    if (layerRect.isEmpty() || m_tiler->hasEmptyBounds())
-        return;
+    IntRect prepaintRect = idlePaintRect(visibleRect);
 
-    int left, top, right, bottom;
-    m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
+    // Minimally create the tiles in the desired pre-paint rect.
+    if (!prepaintRect.isEmpty()) {
+        int left, top, right, bottom;
+        m_tiler->layerRectToTileIndices(prepaintRect, left, top, right, bottom);
+        for (int j = top; j <= bottom; ++j)
+            for (int i = left; i <= right; ++i)
+                if (!tileAt(i, j))
+                    createTile(i, j);
+    }
 
-    createTextureUpdaterIfNeeded();
-    for (int j = top; j <= bottom; ++j) {
-        for (int i = left; i <= right; ++i) {
-            UpdatableTile* tile = tileAt(i, j);
-            if (!tile)
-                tile = createTile(i, j);
+    // Create additional textures for double-buffered updates when needed.
+    // These textures must stay alive while the updated textures are incrementally
+    // uploaded, swapped atomically via pushProperties, and finally deleted
+    // after the commit is complete, after which they can be recycled.
+    if (!visibleRect.isEmpty()) {
+        int left, top, right, bottom;
+        m_tiler->layerRectToTileIndices(visibleRect, left, top, right, bottom);
+        for (int j = top; j <= bottom; ++j) {
+            for (int i = left; i <= right; ++i) {
+                UpdatableTile* tile = tileAt(i, j);
+                if (!tile)
+                    tile = createTile(i, j);
+                // We need an additional texture if the tile needs a buffered-update and it's not a partial update.
+                // FIXME: Decide if partial update should be allowed based on cost
+                // of update. https://bugs.webkit.org/show_bug.cgi?id=77376
+                if (!layerTreeHost() || !layerTreeHost()->bufferedUpdates() || !tileNeedsBufferedUpdate(tile))
+                    continue;
+                if (tileOnlyNeedsPartialUpdate(tile) && layerTreeHost()->requestPartialTextureUpdate()) {
+                    tile->partialUpdate = true;
+                    continue;
+                }
 
-            if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat))
                 tile->dirtyRect = m_tiler->tileRect(tile);
-
-            if (!tile->managedTexture()->reserve(m_tiler->tileSize(), m_textureFormat))
-                return;
+                LayerTextureUpdater::Texture* backBuffer = tile->texture();
+                backBuffer->texture()->setRequestPriority(priorityCalc.priorityFromVisibility(true));
+                OwnPtr<CCPrioritizedTexture> frontBuffer = CCPrioritizedTexture::create(backBuffer->texture()->textureManager(),
+                                                                                        backBuffer->texture()->size(),
+                                                                                        backBuffer->texture()->format());
+                // Swap backBuffer into frontBuffer and add it to delete after commit queue.
+                backBuffer->swapTextureWith(frontBuffer);
+                layerTreeHost()->deleteTextureAfterCommit(frontBuffer.release());
+            }
         }
+    }
+
+    // Now set priorities on all tiles.
+    for (CCLayerTilingData::TileMap::const_iterator iter = m_tiler->tiles().begin(); iter != m_tiler->tiles().end(); ++iter) {
+        UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
+        IntRect tileRect = m_tiler->tileRect(tile);
+        // FIXME: This indicates the "small animated layer" case. This special case
+        // can be removed soon with better priorities, but for now paint these layers after
+        // 512 pixels of pre-painting. Later we can just pass an animating flag etc. to the
+        // calculator and it can take care of this special case if we still need it.
+        if (visibleRect.isEmpty() && !prepaintRect.isEmpty())
+            tile->managedTexture()->setRequestPriority(priorityCalc.priorityFromDistance(512));
+        else if (!visibleRect.isEmpty())
+            tile->managedTexture()->setRequestPriority(priorityCalc.priorityFromDistance(visibleRect, tileRect));
     }
 }
 
@@ -579,8 +602,8 @@ void TiledLayerChromium::resetUpdateState()
         if (!tile)
             continue;
         tile->updateRect = IntRect();
-        tile->partialUpdate = false;
         tile->updated = false;
+        tile->partialUpdate = false;
     }
 }
 
@@ -591,8 +614,6 @@ void TiledLayerChromium::updateLayerRect(CCTextureUpdater& updater, const IntRec
     m_didPaint = false;
 
     updateBounds();
-
-    resetUpdateState();
 
     if (layerRect.isEmpty() || m_tiler->hasEmptyBounds())
         return;
@@ -619,11 +640,6 @@ void TiledLayerChromium::idleUpdateLayerRect(CCTextureUpdater& updater, const In
     IntRect idlePaintLayerRect = idlePaintRect(layerRect);
     if (idlePaintLayerRect.isEmpty())
         return;
-
-    // Protect any textures in the pre-paint area, as we would steal them from other layers
-    // over time anyhow. This ensures we don't lose tiles in the first rounds of idle painting
-    // that we have already painted.
-    protectTileTextures(idlePaintLayerRect);
 
     int prepaintLeft, prepaintTop, prepaintRight, prepaintBottom;
     m_tiler->layerRectToTileIndices(idlePaintLayerRect, prepaintLeft, prepaintTop, prepaintRight, prepaintBottom);
@@ -694,13 +710,21 @@ bool TiledLayerChromium::needsIdlePaint(const IntRect& layerRect)
 
     int left, top, right, bottom;
     m_tiler->layerRectToTileIndices(idlePaintLayerRect, left, top, right, bottom);
+
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             // If the layerRect is empty, then we are painting the outer-most set of tiles only.
             if (layerRect.isEmpty() && i != left && i != right && j != top && j != bottom)
                 continue;
             UpdatableTile* tile = tileAt(i, j);
-            if (!tile || !tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat) || tile->isDirty())
+            ASSERT(tile); // Did setTexturePriorities get skipped?
+            if (!tile)
+                continue;
+
+            bool updated = tile->updated;
+            bool canAcquire = tile->managedTexture()->canAcquireBackingTexture();
+            bool dirty = tile->isDirty() || !tile->managedTexture()->haveBackingTexture();
+            if (!updated && canAcquire && dirty)
                 return true;
         }
     }
@@ -709,24 +733,25 @@ bool TiledLayerChromium::needsIdlePaint(const IntRect& layerRect)
 
 IntRect TiledLayerChromium::idlePaintRect(const IntRect& visibleLayerRect)
 {
+    IntRect contentRect(IntPoint::zero(), contentBounds());
+
     // For layers that are animating transforms but not visible at all, we don't know what part
     // of them is going to become visible. For small layers we return the entire layer, for larger
     // ones we avoid prepainting the layer at all.
     if (visibleLayerRect.isEmpty()) {
         bool isSmallLayer = m_tiler->numTilesX() <= 9 && m_tiler->numTilesY() <= 9 && m_tiler->numTilesX() * m_tiler->numTilesY() <= 9;
         if ((drawTransformIsAnimating() || screenSpaceTransformIsAnimating()) && isSmallLayer)
-            return IntRect(IntPoint(), contentBounds());
+            return contentRect;
         return IntRect();
     }
 
+    // FIXME: This can be made a lot larger now! We should increase
+    //        this slowly while insuring it doesn't cause any perf issues.
     IntRect prepaintRect = visibleLayerRect;
-    // FIXME: This can be made a lot larger if we can:
-    // - reserve memory at a lower priority than for visible content
-    // - only reserve idle paint tiles up to a memory reclaim threshold and
-    // - insure we play nicely with other layers
     prepaintRect.inflateX(m_tiler->tileSize().width());
-    prepaintRect.inflateY(m_tiler->tileSize().height());
-    prepaintRect.intersect(IntRect(IntPoint::zero(), contentBounds()));
+    prepaintRect.inflateY(m_tiler->tileSize().height() * 2);
+    prepaintRect.intersect(contentRect);
+
     return prepaintRect;
 }
 

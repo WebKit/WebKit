@@ -46,7 +46,7 @@ class ImageLayerTextureUpdater : public LayerTextureUpdater {
 public:
     class Texture : public LayerTextureUpdater::Texture {
     public:
-        Texture(ImageLayerTextureUpdater* textureUpdater, PassOwnPtr<ManagedTexture> texture)
+        Texture(ImageLayerTextureUpdater* textureUpdater, PassOwnPtr<CCPrioritizedTexture> texture)
             : LayerTextureUpdater::Texture(texture)
             , m_textureUpdater(textureUpdater)
         {
@@ -70,9 +70,9 @@ public:
 
     virtual ~ImageLayerTextureUpdater() { }
 
-    virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager* manager)
+    virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(CCPrioritizedTextureManager* manager)
     {
-        return adoptPtr(new Texture(this, ManagedTexture::create(manager)));
+        return adoptPtr(new Texture(this, CCPrioritizedTexture::create(manager)));
     }
 
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) OVERRIDE
@@ -81,7 +81,7 @@ public:
                 LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
     }
 
-    void updateTextureRect(CCGraphicsContext* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+    void updateTextureRect(CCGraphicsContext* context, TextureAllocator* allocator, CCPrioritizedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
     {
         texture->bindTexture(context, allocator);
 
@@ -139,6 +139,14 @@ void ImageLayerChromium::setBitmap(const SkBitmap& bitmap)
 
     m_bitmap = bitmap;
     setNeedsDisplay();
+}
+
+void ImageLayerChromium::setTexturePriorities(const CCPriorityCalculator& priorityCalc)
+{
+    // Update the tile data before creating all the layer's tiles.
+    updateTileSizeAndTilingOption();
+
+    TiledLayerChromium::setTexturePriorities(priorityCalc);
 }
 
 void ImageLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)

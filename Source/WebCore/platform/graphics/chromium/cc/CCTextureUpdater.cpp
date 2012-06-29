@@ -29,6 +29,7 @@
 
 #include "cc/CCTextureUpdater.h"
 
+#include "CCPrioritizedTexture.h"
 #include "GraphicsContext3D.h"
 #include "LayerTextureUpdater.h"
 #include "TextureCopier.h"

@@ -40,6 +40,7 @@
 #include "SkColor.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCOcclusionTracker.h"
+#include "cc/CCPrioritizedTexture.h"
 
 #include <public/WebFilterOperations.h>
 #include <public/WebTransformationMatrix.h>
@@ -262,8 +263,8 @@ public:
 
     CCLayerTreeHost* layerTreeHost() const { return m_layerTreeHost; }
 
-    // Reserve any textures needed for this layer.
-    virtual void reserveTextures() { }
+    // Set the priority of all desired textures in this layer.
+    virtual void setTexturePriorities(const CCPriorityCalculator&) { }
 
     void setAlwaysReserveTextures(bool alwaysReserveTextures) { m_alwaysReserveTextures = alwaysReserveTextures; }
     bool alwaysReserveTextures() const { return m_alwaysReserveTextures; }

@@ -149,7 +149,7 @@ void CCLayerTreeHost::initializeLayerRenderer()
     // Update m_settings based on partial update capability.
     m_settings.maxPartialTextureUpdates = min(m_settings.maxPartialTextureUpdates, m_proxy->maxPartialTextureUpdates());
 
-    m_contentsTextureManager = TextureManager::create(0, 0, m_proxy->layerRendererCapabilities().maxTextureSize);
+    m_contentsTextureManager = CCPrioritizedTextureManager::create(0, 0, m_proxy->layerRendererCapabilities().maxTextureSize);
 
     m_layerRendererInitialized = true;
 
@@ -198,7 +198,7 @@ void CCLayerTreeHost::deleteContentsTexturesOnImplThread(TextureAllocator* alloc
 {
     ASSERT(CCProxy::isImplThread());
     if (m_layerRendererInitialized)
-        m_contentsTextureManager->evictAndDeleteAllTextures(allocator);
+        m_contentsTextureManager->clearAllMemory(allocator);
 }
 
 void CCLayerTreeHost::acquireLayerTextures()
@@ -227,8 +227,7 @@ void CCLayerTreeHost::beginCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     ASSERT(CCProxy::isImplThread());
     TRACE_EVENT0("cc", "CCLayerTreeHost::commitTo");
 
-    m_contentsTextureManager->reduceMemoryToLimit(m_contentsTextureManager->preferredMemoryLimitBytes());
-    m_contentsTextureManager->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
+    m_contentsTextureManager->reduceMemory(hostImpl->contentsTextureAllocator());
 }
 
 // This function commits the CCLayerTreeHost to an impl tree. When modifying
@@ -260,7 +259,6 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 void CCLayerTreeHost::commitComplete()
 {
     m_deleteTextureAfterCommitList.clear();
-    m_contentsTextureManager->unprotectAllTextures();
     m_client->didCommit();
 }
 
@@ -395,7 +393,7 @@ void CCLayerTreeHost::evictAllContentTextures()
 {
     ASSERT(CCProxy::isMainThread());
     ASSERT(m_contentsTextureManager.get());
-    m_contentsTextureManager->evictAndRemoveAllDeletedTextures();
+    m_contentsTextureManager->allBackingTexturesWereDeleted();
 }
 
 void CCLayerTreeHost::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec)
@@ -410,7 +408,7 @@ void CCLayerTreeHost::loseContext(int numTimes)
     m_proxy->loseContext();
 }
 
-TextureManager* CCLayerTreeHost::contentsTextureManager() const
+CCPrioritizedTextureManager* CCLayerTreeHost::contentsTextureManager() const
 {
     return m_contentsTextureManager.get();
 }
@@ -489,40 +487,42 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
     // Reset partial texture update requests.
     m_partialTextureUpdateRequests = 0;
 
-    reserveTextures(updateList);
+    prioritizeTextures(updateList);
 
     paintLayerContents(updateList, PaintVisible, updater);
     if (!m_triggerIdlePaints)
         return;
 
-    size_t preferredLimitBytes = m_contentsTextureManager->preferredMemoryLimitBytes();
-    size_t maxLimitBytes = m_contentsTextureManager->maxMemoryLimitBytes();
-    m_contentsTextureManager->reduceMemoryToLimit(preferredLimitBytes);
-    if (m_contentsTextureManager->currentMemoryUseBytes() >= preferredLimitBytes)
-        return;
-
-    // Idle painting should fail when we hit the preferred memory limit,
-    // otherwise it will always push us towards the maximum limit.
-    m_contentsTextureManager->setMaxMemoryLimitBytes(preferredLimitBytes);
     // The second (idle) paint will be a no-op in layers where painting already occured above.
+    // FIXME: This pass can be merged with the visible pass now that textures
+    //        are prioritized above.
     paintLayerContents(updateList, PaintIdle, updater);
-    m_contentsTextureManager->setMaxMemoryLimitBytes(maxLimitBytes);
 
     for (size_t i = 0; i < updateList.size(); ++i)
         updateList[i]->clearRenderSurface();
 }
 
-void CCLayerTreeHost::reserveTextures(const LayerList& updateList)
+void CCLayerTreeHost::prioritizeTextures(const LayerList& updateList)
 {
     // Use BackToFront since it's cheap and this isn't order-dependent.
     typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
 
+    m_contentsTextureManager->clearPriorities();
+
+    CCPriorityCalculator calculator;
     CCLayerIteratorType end = CCLayerIteratorType::end(&updateList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&updateList); it != end; ++it) {
-        if (!it.representsItself() || !it->alwaysReserveTextures())
-            continue;
-        it->reserveTextures();
+        if (it.representsItself())
+            it->setTexturePriorities(calculator);
+        else if (it.representsTargetRenderSurface()) {
+            if (it->maskLayer())
+                it->maskLayer()->setTexturePriorities(calculator);
+            if (it->replicaLayer() && it->replicaLayer()->maskLayer())
+                it->replicaLayer()->maskLayer()->setTexturePriorities(calculator);
+        }
     }
+
+    m_contentsTextureManager->prioritizeTextures();
 }
 
 // static
@@ -662,7 +662,7 @@ bool CCLayerTreeHost::requestPartialTextureUpdate()
     return true;
 }
 
-void CCLayerTreeHost::deleteTextureAfterCommit(PassOwnPtr<ManagedTexture> texture)
+void CCLayerTreeHost::deleteTextureAfterCommit(PassOwnPtr<CCPrioritizedTexture> texture)
 {
     m_deleteTextureAfterCommitList.append(texture);
 }

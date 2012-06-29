@@ -32,11 +32,13 @@
 
 #include "LayerPainterChromium.h"
 #include "PlatformColor.h"
+#include "PlatformContextSkia.h"
+#include "cc/CCGraphicsContext.h"
 #include "skia/ext/platform_canvas.h"
 
 namespace WebCore {
 
-BitmapCanvasLayerTextureUpdater::Texture::Texture(BitmapCanvasLayerTextureUpdater* textureUpdater, PassOwnPtr<ManagedTexture> texture)
+BitmapCanvasLayerTextureUpdater::Texture::Texture(BitmapCanvasLayerTextureUpdater* textureUpdater, PassOwnPtr<CCPrioritizedTexture> texture)
     : LayerTextureUpdater::Texture(texture)
     , m_textureUpdater(textureUpdater)
 {
@@ -67,9 +69,9 @@ BitmapCanvasLayerTextureUpdater::~BitmapCanvasLayerTextureUpdater()
 {
 }
 
-PassOwnPtr<LayerTextureUpdater::Texture> BitmapCanvasLayerTextureUpdater::createTexture(TextureManager* manager)
+PassOwnPtr<LayerTextureUpdater::Texture> BitmapCanvasLayerTextureUpdater::createTexture(CCPrioritizedTextureManager* manager)
 {
-    return adoptPtr(new Texture(this, ManagedTexture::create(manager)));
+    return adoptPtr(new Texture(this, CCPrioritizedTexture::create(manager)));
 }
 
 LayerTextureUpdater::SampledTexelFormat BitmapCanvasLayerTextureUpdater::sampledTexelFormat(GC3Denum textureFormat)
@@ -91,7 +93,7 @@ void BitmapCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect
     paintContents(m_canvas.get(), contentRect, contentsWidthScale, contentsHeightScale, resultingOpaqueRect);
 }
 
-void BitmapCanvasLayerTextureUpdater::updateTextureRect(CCGraphicsContext* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void BitmapCanvasLayerTextureUpdater::updateTextureRect(CCGraphicsContext* context, TextureAllocator* allocator, CCPrioritizedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
     const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(false);
     bitmap.lockPixels();

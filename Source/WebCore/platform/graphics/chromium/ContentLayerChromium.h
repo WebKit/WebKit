@@ -61,6 +61,7 @@ public:
     void clearDelegate() { m_delegate = 0; }
 
     virtual bool drawsContent() const OVERRIDE;
+    virtual void setTexturePriorities(const CCPriorityCalculator&) OVERRIDE;
     virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
     virtual void idleUpdate(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
 

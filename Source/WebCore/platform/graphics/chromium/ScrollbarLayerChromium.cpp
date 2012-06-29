@@ -76,17 +76,17 @@ void ScrollbarLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 
     scrollbarLayer->setScrollbarOverlayStyle(m_scrollbarOverlayStyle);
 
-    if (m_backTrack && m_backTrack->texture()->isReserved())
+    if (m_backTrack && m_backTrack->texture()->haveBackingTexture())
         scrollbarLayer->setBackTrackTextureId(m_backTrack->texture()->textureId());
     else
         scrollbarLayer->setBackTrackTextureId(0);
 
-    if (m_foreTrack && m_foreTrack->texture()->isReserved())
+    if (m_foreTrack && m_foreTrack->texture()->haveBackingTexture())
         scrollbarLayer->setForeTrackTextureId(m_foreTrack->texture()->textureId());
     else
         scrollbarLayer->setForeTrackTextureId(0);
 
-    if (m_thumb && m_thumb->texture()->isReserved())
+    if (m_thumb && m_thumb->texture()->haveBackingTexture())
         scrollbarLayer->setThumbTextureId(m_thumb->texture()->textureId());
     else
         scrollbarLayer->setThumbTextureId(0);
@@ -221,7 +221,6 @@ void ScrollbarLayerChromium::createTextureUpdaterIfNeeded()
             m_foreTrack = m_foreTrackUpdater->createTexture(layerTreeHost()->contentsTextureManager());
     }
 
-
     if (!m_thumbUpdater)
         m_thumbUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarThumbPainter::create(m_scrollbar.get(), theme()), useMapSubImage);
     if (!m_thumb)
@@ -230,19 +229,16 @@ void ScrollbarLayerChromium::createTextureUpdaterIfNeeded()
 
 void ScrollbarLayerChromium::updatePart(LayerTextureUpdater* painter, LayerTextureUpdater::Texture* texture, const IntRect& rect, CCTextureUpdater& updater)
 {
-    bool textureValid = texture->texture()->isValid(rect.size(), m_textureFormat);
-    // Skip painting and uploading if there are no invalidations.
-    if (textureValid && m_updateRect.isEmpty()) {
-        texture->texture()->reserve(rect.size(), m_textureFormat);
+    // Skip painting and uploading if there are no invalidations and
+    // we already have valid texture data.
+    if (texture->texture()->haveBackingTexture()
+            && texture->texture()->size() == rect.size()
+            && m_updateRect.isEmpty())
         return;
-    }
 
-    // ScrollbarLayerChromium doesn't support partial uploads, so any
-    // invalidation is treated a full layer invalidation.
-    if (layerTreeHost()->bufferedUpdates() && textureValid)
-        layerTreeHost()->deleteTextureAfterCommit(texture->texture()->steal());
-
-    if (!texture->texture()->reserve(rect.size(), m_textureFormat))
+    // We should always have enough memory for UI.
+    ASSERT(texture->texture()->canAcquireBackingTexture());
+    if (!texture->texture()->canAcquireBackingTexture())
         return;
 
     // Paint and upload the entire part.
@@ -252,6 +248,29 @@ void ScrollbarLayerChromium::updatePart(LayerTextureUpdater* painter, LayerTextu
 
     IntRect destRect(IntPoint(), rect.size());
     updater.appendUpdate(texture, rect, destRect);
+}
+
+
+void ScrollbarLayerChromium::setTexturePriorities(const CCPriorityCalculator&)
+{
+    if (contentBounds().isEmpty())
+        return;
+
+    createTextureUpdaterIfNeeded();
+
+    if (m_backTrack) {
+        m_backTrack->texture()->setDimensions(contentBounds(), m_textureFormat);
+        m_backTrack->texture()->setRequestPriority(CCPriorityCalculator::uiPriority());
+    }
+    if (m_foreTrack) {
+        m_foreTrack->texture()->setDimensions(contentBounds(), m_textureFormat);
+        m_foreTrack->texture()->setRequestPriority(CCPriorityCalculator::uiPriority());
+    }
+    if (m_thumb) {
+        IntSize thumbSize = theme()->thumbRect(m_scrollbar.get()).size();
+        m_thumb->texture()->setDimensions(thumbSize, m_textureFormat);
+        m_thumb->texture()->setRequestPriority(CCPriorityCalculator::uiPriority());
+    }
 }
 
 void ScrollbarLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker*)

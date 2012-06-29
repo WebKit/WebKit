@@ -1488,9 +1488,6 @@ public:
             context->resetUsedTextures();
             break;
         case 1:
-            // Number of textures should be four as the first two
-            // textures are used by the impl thread.
-            ASSERT_EQ(4, context->numTextures());
             // Number of textures used for commit should still be two.
             EXPECT_EQ(2, context->numUsedTextures());
             // First two textures should not have been used.
@@ -1503,32 +1500,18 @@ public:
             context->resetUsedTextures();
             break;
         case 2:
-            // Number of textures should be three as we allow one
-            // partial update and the first two textures are used by
-            // the impl thread.
-            ASSERT_EQ(3, context->numTextures());
             // Number of textures used for commit should still be two.
             EXPECT_EQ(2, context->numUsedTextures());
-            // First texture should have been used.
-            EXPECT_TRUE(context->usedTexture(context->texture(0)));
-            // Second texture should not have been used.
-            EXPECT_FALSE(context->usedTexture(context->texture(1)));
-            // Third texture should have been used.
-            EXPECT_TRUE(context->usedTexture(context->texture(2)));
 
             context->resetUsedTextures();
             break;
         case 3:
-            // Number of textures should be two.
-            EXPECT_EQ(2, context->numTextures());
             // No textures should be used for commit.
             EXPECT_EQ(0, context->numUsedTextures());
 
             context->resetUsedTextures();
             break;
         case 4:
-            // Number of textures should be two.
-            EXPECT_EQ(2, context->numTextures());
             // Number of textures used for commit should be one.
             EXPECT_EQ(1, context->numUsedTextures());
 

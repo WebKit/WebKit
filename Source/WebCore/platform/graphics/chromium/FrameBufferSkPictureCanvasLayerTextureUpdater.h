@@ -40,7 +40,7 @@ class FrameBufferSkPictureCanvasLayerTextureUpdater : public SkPictureCanvasLaye
 public:
     class Texture : public LayerTextureUpdater::Texture {
     public:
-        Texture(FrameBufferSkPictureCanvasLayerTextureUpdater*, PassOwnPtr<ManagedTexture>);
+        Texture(FrameBufferSkPictureCanvasLayerTextureUpdater*, PassOwnPtr<CCPrioritizedTexture>);
         virtual ~Texture();
 
         virtual void updateRect(CCGraphicsContext*, TextureAllocator*, const IntRect& sourceRect, const IntRect& destRect) OVERRIDE;
@@ -54,9 +54,9 @@ public:
     static PassRefPtr<FrameBufferSkPictureCanvasLayerTextureUpdater> create(PassOwnPtr<LayerPainterChromium>);
     virtual ~FrameBufferSkPictureCanvasLayerTextureUpdater();
 
-    virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager*) OVERRIDE;
+    virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(CCPrioritizedTextureManager*) OVERRIDE;
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) OVERRIDE;
-    void updateTextureRect(PassRefPtr<GraphicsContext3D>, TextureAllocator*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
+    void updateTextureRect(PassRefPtr<GraphicsContext3D>, TextureAllocator*, CCPrioritizedTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
 private:
     explicit FrameBufferSkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);

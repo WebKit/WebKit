@@ -91,9 +91,16 @@ bool ContentLayerChromium::drawsContent() const
     return TiledLayerChromium::drawsContent() && m_delegate;
 }
 
+void ContentLayerChromium::setTexturePriorities(const CCPriorityCalculator& priorityCalc)
+{
+    // Update the tile data before creating all the layer's tiles.
+    updateTileSizeAndTilingOption();
+
+    TiledLayerChromium::setTexturePriorities(priorityCalc);
+}
+
 void ContentLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)
 {
-    updateTileSizeAndTilingOption();
     createTextureUpdaterIfNeeded();
 
     IntRect layerRect;

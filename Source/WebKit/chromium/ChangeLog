@@ -1,3 +1,36 @@
+2012-06-29  Eric Penner  <epenner@google.com>
+
+        [chromium] Adding PrioritizedTexture and replacing ContentsTextureManager
+        https://bugs.webkit.org/show_bug.cgi?id=84308
+
+        Reviewed by Adrienne Walker.
+
+        * WebKit.gypi:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestAtomicCommitWithPartialUpdate::commitCompleteOnCCThread):
+        * tests/CCPrioritizedTextureTest.cpp: Added.
+        (WTF):
+        (CCPrioritizedTextureTest):
+        (WTF::CCPrioritizedTextureTest::CCPrioritizedTextureTest):
+        (WTF::CCPrioritizedTextureTest::~CCPrioritizedTextureTest):
+        (WTF::CCPrioritizedTextureTest::texturesMemorySize):
+        (WTF::CCPrioritizedTextureTest::createManager):
+        (WTF::CCPrioritizedTextureTest::validateTexture):
+        (WTF::CCPrioritizedTextureTest::allocator):
+        (WTF::TEST_F):
+        * tests/CCTiledLayerTestCommon.cpp:
+        (WebKitTests::FakeLayerTextureUpdater::Texture::Texture):
+        (WebKitTests::FakeLayerTextureUpdater::Texture::updateRect):
+        (WebKitTests::FakeLayerTextureUpdater::createTexture):
+        (WebKitTests::FakeTiledLayerChromium::FakeTiledLayerChromium):
+        (WebKitTests::FakeTiledLayerWithScaledBounds::FakeTiledLayerWithScaledBounds):
+        * tests/CCTiledLayerTestCommon.h:
+        (Texture):
+        (FakeLayerTextureUpdater):
+        (FakeTiledLayerChromium):
+        (FakeTiledLayerWithScaledBounds):
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-06-29  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Roll chromium rev to 144906

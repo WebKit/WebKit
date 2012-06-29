@@ -56,11 +56,7 @@ public:
 
     virtual void setLayerTreeHost(CCLayerTreeHost*) OVERRIDE;
 
-    // Reserves all existing and valid tile textures to protect them from being
-    // recycled by the texture manager.
-    void protectTileTextures(const IntRect& layerRect);
-
-    virtual void reserveTextures() OVERRIDE;
+    virtual void setTexturePriorities(const CCPriorityCalculator&) OVERRIDE;
 
     virtual Region visibleContentOpaqueRegion() const OVERRIDE;
 
@@ -86,6 +82,8 @@ protected:
     // Reset state on tiles that will be used for updating the layer.
     void resetUpdateState();
 
+    void setTexturePrioritiesInRect(const CCPriorityCalculator&, const IntRect& visibleLayerRect);
+
     // Prepare data needed to update textures that intersect with layerRect.
     void updateLayerRect(CCTextureUpdater&, const IntRect& layerRect, const CCOcclusionTracker*);
 
@@ -100,7 +98,7 @@ protected:
     bool skipsDraw() const { return m_skipsDraw; }
 
     // Virtual for testing
-    virtual TextureManager* textureManager() const;
+    virtual CCPrioritizedTextureManager* textureManager() const;
 
 private:
     virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl() OVERRIDE;

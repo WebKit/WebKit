@@ -44,6 +44,7 @@ public:
     static PassRefPtr<ScrollbarLayerChromium> create(Scrollbar*, int scrollLayerId);
 
     // LayerChromium interface
+    virtual void setTexturePriorities(const CCPriorityCalculator&) OVERRIDE;
     virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
     virtual void setLayerTreeHost(CCLayerTreeHost*) OVERRIDE;
     virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;

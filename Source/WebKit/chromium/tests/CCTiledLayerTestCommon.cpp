@@ -30,7 +30,7 @@ using namespace WebCore;
 
 namespace WebKitTests {
 
-FakeLayerTextureUpdater::Texture::Texture(FakeLayerTextureUpdater* layer, PassOwnPtr<ManagedTexture> texture)
+FakeLayerTextureUpdater::Texture::Texture(FakeLayerTextureUpdater* layer, PassOwnPtr<CCPrioritizedTexture> texture)
     : LayerTextureUpdater::Texture(texture)
     , m_layer(layer)
 {
@@ -43,7 +43,7 @@ FakeLayerTextureUpdater::Texture::~Texture()
 void FakeLayerTextureUpdater::Texture::updateRect(CCGraphicsContext*, TextureAllocator* allocator, const IntRect&, const IntRect&)
 {
     if (allocator)
-        texture()->allocate(allocator);
+        texture()->acquireBackingTexture(allocator);
     m_layer->updateRect();
 }
 
@@ -81,9 +81,9 @@ void FakeLayerTextureUpdater::setRectToInvalidate(const IntRect& rect, FakeTiled
     m_layer = layer;
 }
 
-PassOwnPtr<LayerTextureUpdater::Texture> FakeLayerTextureUpdater::createTexture(TextureManager* manager)
+PassOwnPtr<LayerTextureUpdater::Texture> FakeLayerTextureUpdater::createTexture(CCPrioritizedTextureManager* manager)
 {
-    return adoptPtr(new Texture(this, ManagedTexture::create(manager)));
+    return adoptPtr(new Texture(this, CCPrioritizedTexture::create(manager)));
 }
 
 FakeCCTiledLayerImpl::FakeCCTiledLayerImpl(int id)
@@ -95,7 +95,7 @@ FakeCCTiledLayerImpl::~FakeCCTiledLayerImpl()
 {
 }
 
-FakeTiledLayerChromium::FakeTiledLayerChromium(TextureManager* textureManager)
+FakeTiledLayerChromium::FakeTiledLayerChromium(CCPrioritizedTextureManager* textureManager)
     : TiledLayerChromium()
     , m_fakeTextureUpdater(adoptRef(new FakeLayerTextureUpdater))
     , m_textureManager(textureManager)
@@ -121,7 +121,7 @@ void FakeTiledLayerChromium::update(CCTextureUpdater& updater, const CCOcclusion
     updateLayerRect(updater, visibleLayerRect(), occlusion);
 }
 
-FakeTiledLayerWithScaledBounds::FakeTiledLayerWithScaledBounds(TextureManager* textureManager)
+FakeTiledLayerWithScaledBounds::FakeTiledLayerWithScaledBounds(CCPrioritizedTextureManager* textureManager)
     : FakeTiledLayerChromium(textureManager)
 {
 }

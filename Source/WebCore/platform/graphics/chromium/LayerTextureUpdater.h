@@ -29,8 +29,9 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "ManagedTexture.h"
 #include "GraphicsTypes3D.h"
+#include "cc/CCGraphicsContext.h"
+#include "cc/CCPrioritizedTexture.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -48,14 +49,15 @@ public:
     public:
         virtual ~Texture() { }
 
-        ManagedTexture* texture() { return m_texture.get(); }
+        CCPrioritizedTexture* texture() { return m_texture.get(); }
+        void swapTextureWith(OwnPtr<CCPrioritizedTexture>& texture) { m_texture.swap(texture); }
         virtual void prepareRect(const IntRect& /* sourceRect */) { }
         virtual void updateRect(CCGraphicsContext*, TextureAllocator*, const IntRect& sourceRect, const IntRect& destRect) = 0;
     protected:
-        explicit Texture(PassOwnPtr<ManagedTexture> texture) : m_texture(texture) { }
+        explicit Texture(PassOwnPtr<CCPrioritizedTexture> texture) : m_texture(texture) { }
 
     private:
-        OwnPtr<ManagedTexture> m_texture;
+        OwnPtr<CCPrioritizedTexture> m_texture;
     };
 
     virtual ~LayerTextureUpdater() { }
@@ -65,7 +67,7 @@ public:
         SampledTexelFormatBGRA,
         SampledTexelFormatInvalid,
     };
-    virtual PassOwnPtr<Texture> createTexture(TextureManager*) = 0;
+    virtual PassOwnPtr<Texture> createTexture(CCPrioritizedTextureManager*) = 0;
     // Returns the format of the texel uploaded by this interface.
     // This format should not be confused by texture internal format.
     // This format specifies the component order in the sampled texel.

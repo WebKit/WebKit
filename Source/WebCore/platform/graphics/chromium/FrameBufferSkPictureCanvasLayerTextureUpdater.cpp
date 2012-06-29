@@ -40,10 +40,10 @@ namespace WebCore {
 
 static PassOwnPtr<SkCanvas> createAcceleratedCanvas(GraphicsContext3D* context,
                                                     TextureAllocator* allocator,
-                                                    ManagedTexture* texture)
+                                                    CCPrioritizedTexture* texture)
 {
     // Allocate so that we have a valid texture id.
-    texture->allocate(allocator);
+    texture->acquireBackingTexture(allocator);
 
     GrContext* grContext = context->grContext();
     IntSize canvasSize = texture->size();
@@ -58,7 +58,7 @@ static PassOwnPtr<SkCanvas> createAcceleratedCanvas(GraphicsContext3D* context,
     return adoptPtr(new SkCanvas(device.get()));
 }
 
-FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::Texture(FrameBufferSkPictureCanvasLayerTextureUpdater* textureUpdater, PassOwnPtr<ManagedTexture> texture)
+FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::Texture(FrameBufferSkPictureCanvasLayerTextureUpdater* textureUpdater, PassOwnPtr<CCPrioritizedTexture> texture)
     : LayerTextureUpdater::Texture(texture)
     , m_textureUpdater(textureUpdater)
 {
@@ -90,9 +90,9 @@ FrameBufferSkPictureCanvasLayerTextureUpdater::~FrameBufferSkPictureCanvasLayerT
 {
 }
 
-PassOwnPtr<LayerTextureUpdater::Texture> FrameBufferSkPictureCanvasLayerTextureUpdater::createTexture(TextureManager* manager)
+PassOwnPtr<LayerTextureUpdater::Texture> FrameBufferSkPictureCanvasLayerTextureUpdater::createTexture(CCPrioritizedTextureManager* manager)
 {
-    return adoptPtr(new Texture(this, ManagedTexture::create(manager)));
+    return adoptPtr(new Texture(this, CCPrioritizedTexture::create(manager)));
 }
 
 LayerTextureUpdater::SampledTexelFormat FrameBufferSkPictureCanvasLayerTextureUpdater::sampledTexelFormat(GC3Denum textureFormat)
@@ -101,7 +101,7 @@ LayerTextureUpdater::SampledTexelFormat FrameBufferSkPictureCanvasLayerTextureUp
     return LayerTextureUpdater::SampledTexelFormatRGBA;
 }
 
-void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(PassRefPtr<GraphicsContext3D> prpContext, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(PassRefPtr<GraphicsContext3D> prpContext, TextureAllocator* allocator, CCPrioritizedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
     RefPtr<GraphicsContext3D> context(prpContext);
 

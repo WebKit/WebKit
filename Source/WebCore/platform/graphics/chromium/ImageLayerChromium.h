@@ -48,6 +48,7 @@ public:
     virtual ~ImageLayerChromium();
 
     virtual bool drawsContent() const OVERRIDE;
+    virtual void setTexturePriorities(const CCPriorityCalculator&) OVERRIDE;
     virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
     virtual bool needsContentsScale() const OVERRIDE;
 

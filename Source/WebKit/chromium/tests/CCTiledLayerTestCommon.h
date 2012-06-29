@@ -30,10 +30,10 @@
 #include "LayerTextureUpdater.h"
 #include "Region.h"
 #include "TextureCopier.h"
-#include "TextureManager.h"
 #include "TextureUploader.h"
 #include "TiledLayerChromium.h"
 #include "cc/CCGraphicsContext.h"
+#include "cc/CCPrioritizedTexture.h"
 #include "cc/CCTextureUpdater.h"
 #include "cc/CCTiledLayerImpl.h"
 
@@ -45,7 +45,7 @@ class FakeLayerTextureUpdater : public WebCore::LayerTextureUpdater {
 public:
     class Texture : public WebCore::LayerTextureUpdater::Texture {
     public:
-        Texture(FakeLayerTextureUpdater*, PassOwnPtr<WebCore::ManagedTexture>);
+        Texture(FakeLayerTextureUpdater*, PassOwnPtr<WebCore::CCPrioritizedTexture>);
         virtual ~Texture();
 
         virtual void updateRect(WebCore::CCGraphicsContext*, WebCore::TextureAllocator* , const WebCore::IntRect&, const WebCore::IntRect&) OVERRIDE;
@@ -58,7 +58,7 @@ public:
     FakeLayerTextureUpdater();
     virtual ~FakeLayerTextureUpdater();
 
-    virtual PassOwnPtr<WebCore::LayerTextureUpdater::Texture> createTexture(WebCore::TextureManager*) OVERRIDE;
+    virtual PassOwnPtr<WebCore::LayerTextureUpdater::Texture> createTexture(WebCore::CCPrioritizedTextureManager*) OVERRIDE;
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum) OVERRIDE { return SampledTexelFormatRGBA; }
 
     virtual void prepareToUpdate(const WebCore::IntRect& contentRect, const WebCore::IntSize&, float, float, WebCore::IntRect& resultingOpaqueRect) OVERRIDE;
@@ -105,7 +105,7 @@ public:
 
 class FakeTiledLayerChromium : public WebCore::TiledLayerChromium {
 public:
-    explicit FakeTiledLayerChromium(WebCore::TextureManager*);
+    explicit FakeTiledLayerChromium(WebCore::CCPrioritizedTextureManager*);
     virtual ~FakeTiledLayerChromium();
 
     static WebCore::IntSize tileSize() { return WebCore::IntSize(100, 100); }
@@ -117,6 +117,7 @@ public:
     using WebCore::TiledLayerChromium::skipsDraw;
     using WebCore::TiledLayerChromium::numPaintedTiles;
     using WebCore::TiledLayerChromium::idlePaintRect;
+    using WebCore::TiledLayerChromium::setTexturePrioritiesInRect;
 
     virtual void setNeedsDisplayRect(const WebCore::FloatRect&) OVERRIDE;
     const WebCore::FloatRect& lastNeedsDisplayRect() const { return m_lastNeedsDisplayRect; }
@@ -124,7 +125,7 @@ public:
     // Updates the visibleLayerRect().
     virtual void update(WebCore::CCTextureUpdater&, const WebCore::CCOcclusionTracker*) OVERRIDE;
 
-    virtual WebCore::TextureManager* textureManager() const OVERRIDE { return m_textureManager; }
+    virtual WebCore::CCPrioritizedTextureManager* textureManager() const OVERRIDE { return m_textureManager; }
     FakeLayerTextureUpdater* fakeLayerTextureUpdater() { return m_fakeTextureUpdater.get(); }
     WebCore::FloatRect updateRect() { return m_updateRect; }
 
@@ -134,13 +135,13 @@ protected:
 
 private:
     RefPtr<FakeLayerTextureUpdater> m_fakeTextureUpdater;
-    WebCore::TextureManager* m_textureManager;
+    WebCore::CCPrioritizedTextureManager* m_textureManager;
     WebCore::FloatRect m_lastNeedsDisplayRect;
 };
 
 class FakeTiledLayerWithScaledBounds : public FakeTiledLayerChromium {
 public:
-    explicit FakeTiledLayerWithScaledBounds(WebCore::TextureManager*);
+    explicit FakeTiledLayerWithScaledBounds(WebCore::CCPrioritizedTextureManager*);
 
     void setContentBounds(const WebCore::IntSize& contentBounds) { m_forcedContentBounds = contentBounds; }
     virtual WebCore::IntSize contentBounds() const OVERRIDE { return m_forcedContentBounds; }

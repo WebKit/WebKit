@@ -1,3 +1,204 @@
+2012-06-29  Eric Penner  <epenner@google.com>
+
+        [chromium] Adding PrioritizedTexture and replacing ContentsTextureManager
+        https://bugs.webkit.org/show_bug.cgi?id=84308
+
+        Reviewed by Adrienne Walker.
+
+        PrioritizedTextures have a priority such that all texture requests can be
+        prioritized. There are three steps involved:
+            - Call setRequestPriority()
+            - Check if the request succeeded with canAcquireBackingTexture()
+            - Call acquireBackingTexture() when uploading a new texture.
+
+        Internally both the texture requests and the backing textures get sorted.
+        Requests are sorted so they can be prioritized. Backing textures are sorted
+        so that they can be recycled/evicted in the right order (lowest priority first).
+
+        Prioritizing textures doesn't assign backing textures to texture requests but
+        rather just marks which textures can have a backing texture "when needed". This
+        allows us to keep the old textures in use as long as possible.
+
+        The unit tests support all the use cases from the original texture manager
+        but also adds assumptions about priority order throughout all the tests. The
+        function assertInvariants() is added to test the validity of the manager
+        and all textures/allocations within it.
+
+        The TiledLayerChromium tests are updated to request textures first with
+        prioritizeTextures(), and update them with the updater (such that allocate
+        gets called) before pushPropertiesTo is called (when they need to be valid).
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapCanvasLayerTextureUpdater::Texture::Texture):
+        (WebCore::BitmapCanvasLayerTextureUpdater::createTexture):
+        (WebCore::BitmapCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h:
+        (WebCore):
+        (Texture):
+        (BitmapCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::Texture::Texture):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::createTexture):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h:
+        (Texture):
+        (BitmapSkPictureCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::setTexturePriorities):
+        (WebCore):
+        (WebCore::ContentLayerChromium::update):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (ContentLayerChromium):
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::createAcceleratedCanvas):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::Texture):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::createTexture):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.h:
+        (Texture):
+        (FrameBufferSkPictureCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::Texture::Texture):
+        (WebCore::ImageLayerTextureUpdater::createTexture):
+        (WebCore::ImageLayerTextureUpdater::updateTextureRect):
+        (WebCore::ImageLayerChromium::setTexturePriorities):
+        (WebCore):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        (ImageLayerChromium):
+        * platform/graphics/chromium/LayerChromium.h:
+        (LayerChromium):
+        (WebCore::LayerChromium::setTexturePriorities):
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        (WebCore::LayerTextureUpdater::Texture::texture):
+        (WebCore::LayerTextureUpdater::Texture::swapTextureWith):
+        (WebCore::LayerTextureUpdater::Texture::Texture):
+        (Texture):
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+        (WebCore::ScrollbarLayerChromium::pushPropertiesTo):
+        (WebCore::ScrollbarLayerChromium::createTextureUpdaterIfNeeded):
+        (WebCore::ScrollbarLayerChromium::updatePart):
+        (WebCore):
+        (WebCore::ScrollbarLayerChromium::setTexturePriorities):
+        * platform/graphics/chromium/ScrollbarLayerChromium.h:
+        (ScrollbarLayerChromium):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::UpdatableTile::managedTexture):
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore::TiledLayerChromium::textureManager):
+        (WebCore::TiledLayerChromium::createTile):
+        (WebCore::TiledLayerChromium::tileNeedsBufferedUpdate):
+        (WebCore::TiledLayerChromium::updateTiles):
+        (WebCore::TiledLayerChromium::setTexturePriorities):
+        (WebCore):
+        (WebCore::TiledLayerChromium::setTexturePrioritiesInRect):
+        (WebCore::TiledLayerChromium::resetUpdateState):
+        (WebCore::TiledLayerChromium::updateLayerRect):
+        (WebCore::TiledLayerChromium::idleUpdateLayerRect):
+        (WebCore::TiledLayerChromium::needsIdlePaint):
+        (WebCore::TiledLayerChromium::idlePaintRect):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (TiledLayerChromium):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initializeLayerRenderer):
+        (WebCore::CCLayerTreeHost::deleteContentsTexturesOnImplThread):
+        (WebCore::CCLayerTreeHost::beginCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::commitComplete):
+        (WebCore::CCLayerTreeHost::evictAllContentTextures):
+        (WebCore::CCLayerTreeHost::contentsTextureManager):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        (WebCore::CCLayerTreeHost::prioritizeTextures):
+        (WebCore::CCLayerTreeHost::deleteTextureAfterCommit):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore):
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCPrioritizedTexture.cpp: Added.
+        (WebCore):
+        (WebCore::CCPrioritizedTexture::CCPrioritizedTexture):
+        (WebCore::CCPrioritizedTexture::~CCPrioritizedTexture):
+        (WebCore::CCPrioritizedTexture::setTextureManager):
+        (WebCore::CCPrioritizedTexture::setDimensions):
+        (WebCore::CCPrioritizedTexture::requestLate):
+        (WebCore::CCPrioritizedTexture::acquireBackingTexture):
+        (WebCore::CCPrioritizedTexture::textureId):
+        (WebCore::CCPrioritizedTexture::bindTexture):
+        (WebCore::CCPrioritizedTexture::framebufferTexture2D):
+        (WebCore::CCPrioritizedTexture::setCurrentBacking):
+        * platform/graphics/chromium/cc/CCPrioritizedTexture.h: Added.
+        (WebCore):
+        (CCPrioritizedTexture):
+        (WebCore::CCPrioritizedTexture::create):
+        (WebCore::CCPrioritizedTexture::textureManager):
+        (WebCore::CCPrioritizedTexture::format):
+        (WebCore::CCPrioritizedTexture::size):
+        (WebCore::CCPrioritizedTexture::memorySizeBytes):
+        (WebCore::CCPrioritizedTexture::setRequestPriority):
+        (WebCore::CCPrioritizedTexture::requestPriority):
+        (WebCore::CCPrioritizedTexture::canAcquireBackingTexture):
+        (WebCore::CCPrioritizedTexture::haveBackingTexture):
+        (Backing):
+        (WebCore::CCPrioritizedTexture::Backing::size):
+        (WebCore::CCPrioritizedTexture::Backing::format):
+        (WebCore::CCPrioritizedTexture::Backing::memorySizeBytes):
+        (WebCore::CCPrioritizedTexture::Backing::textureId):
+        (WebCore::CCPrioritizedTexture::Backing::currentTexture):
+        (WebCore::CCPrioritizedTexture::Backing::setCurrentTexture):
+        (WebCore::CCPrioritizedTexture::Backing::Backing):
+        (WebCore::CCPrioritizedTexture::Backing::~Backing):
+        (WebCore::CCPrioritizedTexture::isAbovePriorityCutoff):
+        (WebCore::CCPrioritizedTexture::setAbovePriorityCutoff):
+        (WebCore::CCPrioritizedTexture::setManagerInternal):
+        (WebCore::CCPrioritizedTexture::currentBacking):
+        * platform/graphics/chromium/cc/CCPrioritizedTextureManager.cpp: Added.
+        (WebCore):
+        (WebCore::CCPrioritizedTextureManager::CCPrioritizedTextureManager):
+        (WebCore::CCPrioritizedTextureManager::~CCPrioritizedTextureManager):
+        (WebCore::CCPrioritizedTextureManager::setMemoryAllocationLimitBytes):
+        (WebCore::CCPrioritizedTextureManager::prioritizeTextures):
+        (WebCore::CCPrioritizedTextureManager::clearPriorities):
+        (WebCore::CCPrioritizedTextureManager::requestLate):
+        (WebCore::CCPrioritizedTextureManager::acquireBackingTextureIfNeeded):
+        (WebCore::CCPrioritizedTextureManager::reduceMemory):
+        (WebCore::CCPrioritizedTextureManager::clearAllMemory):
+        (WebCore::CCPrioritizedTextureManager::allBackingTexturesWereDeleted):
+        (WebCore::CCPrioritizedTextureManager::unlink):
+        (WebCore::CCPrioritizedTextureManager::link):
+        (WebCore::CCPrioritizedTextureManager::registerTexture):
+        (WebCore::CCPrioritizedTextureManager::unregisterTexture):
+        (WebCore::CCPrioritizedTextureManager::returnBackingTexture):
+        (WebCore::CCPrioritizedTextureManager::createBacking):
+        (WebCore::CCPrioritizedTextureManager::destroyBacking):
+        (WebCore::CCPrioritizedTextureManager::assertInvariants):
+        * platform/graphics/chromium/cc/CCPrioritizedTextureManager.h: Added.
+        (WebCore):
+        (CCPrioritizedTextureManager):
+        (WebCore::CCPrioritizedTextureManager::create):
+        (WebCore::CCPrioritizedTextureManager::createTexture):
+        (WebCore::CCPrioritizedTextureManager::memoryUseBytes):
+        (WebCore::CCPrioritizedTextureManager::memoryAboveCutoffBytes):
+        (WebCore::CCPrioritizedTextureManager::setMaxMemoryLimitBytes):
+        (WebCore::CCPrioritizedTextureManager::maxMemoryLimitBytes):
+        (WebCore::CCPrioritizedTextureManager::setPreferredMemoryLimitBytes):
+        (WebCore::CCPrioritizedTextureManager::preferredMemoryLimitBytes):
+        (WebCore::CCPrioritizedTextureManager::setMaxMemoryPriorityCutoff):
+        (WebCore::CCPrioritizedTextureManager::maxMemoryPriorityCutoff):
+        (WebCore::CCPrioritizedTextureManager::compareTextures):
+        (WebCore::CCPrioritizedTextureManager::compareBackings):
+        * platform/graphics/chromium/cc/CCPriorityCalculator.cpp: Added.
+        (WebCore):
+        (WebCore::CCPriorityCalculator::uiPriority):
+        (WebCore::CCPriorityCalculator::visiblePriority):
+        (WebCore::CCPriorityCalculator::lingeringPriority):
+        (WebCore::CCPriorityCalculator::priorityFromDistance):
+        (WebCore::CCPriorityCalculator::priorityFromVisibility):
+        * platform/graphics/chromium/cc/CCPriorityCalculator.h: Added.
+        (WebCore):
+        (CCPriorityCalculator):
+        (WebCore::CCPriorityCalculator::highestPriority):
+        (WebCore::CCPriorityCalculator::lowestPriority):
+        (WebCore::CCPriorityCalculator::priorityIsLower):
+        (WebCore::CCPriorityCalculator::priorityIsHigher):
+        * platform/graphics/chromium/cc/CCTextureUpdater.cpp:
+
 2012-06-29  Eric Seidel  <eric@webkit.org>
 
         Remove BUILDING_ON_LEOPARD now that no ports build on Leopard
