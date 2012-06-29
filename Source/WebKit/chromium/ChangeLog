@@ -1,3 +1,16 @@
+2012-06-29  Amy Ousterhout  <aousterh@chromium.org>
+
+        Deleting unused function in WebDeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=90185
+
+        Reviewed by Adam Barth.
+
+        Deleting the unused copy assignment function in WebDeviceOrientation.
+
+        * public/WebDeviceOrientation.h:
+        (WebDeviceOrientation):
+        * src/WebDeviceOrientation.cpp:
+
 2012-06-29  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Platform] Implement Date Time format parser

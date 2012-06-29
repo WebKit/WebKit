@@ -87,7 +87,6 @@ public:
 
 #if WEBKIT_IMPLEMENTATION
     WebDeviceOrientation(const WebCore::DeviceOrientationData*);
-    WebDeviceOrientation& operator=(const WebCore::DeviceOrientationData*);
     operator WTF::PassRefPtr<WebCore::DeviceOrientationData>() const;
 #endif
 
