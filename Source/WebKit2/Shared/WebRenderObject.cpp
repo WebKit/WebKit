@@ -27,6 +27,7 @@
 #include "WebRenderObject.h"
 
 #include "WebPage.h"
+#include "WebString.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/RenderText.h>
@@ -50,12 +51,28 @@ PassRefPtr<WebRenderObject> WebRenderObject::create(WebPage* page)
     if (!contentRenderer)
         return 0;
 
-    return adoptRef(new WebRenderObject(contentRenderer));
+    return adoptRef(new WebRenderObject(contentRenderer, true));
 }
 
-WebRenderObject::WebRenderObject(RenderObject* renderer)
+WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDescendants)
 {
     m_name = renderer->renderName();
+
+    if (Node* node = renderer->node()) {
+        if (node->isElementNode()) {
+            Element* element = toElement(node);
+            m_elementTagName = element->tagName();
+            m_elementID = element->getIdAttribute();
+            if (element->isStyledElement() && element->hasClass()) {
+                StyledElement* styledElement = static_cast<StyledElement*>(element);
+                if (size_t classNameCount = styledElement->classNames().size()) {
+                    m_elementClassNames = MutableArray::create();
+                    for (size_t i = 0; i < classNameCount; ++i)
+                        m_elementClassNames->append(WebString::create(styledElement->classNames()[i]).get());
+                }
+            }
+        }
+    }
 
     // FIXME: broken with transforms
     m_absolutePosition = flooredIntPoint(renderer->localToAbsolute(FloatPoint()));
@@ -69,9 +86,12 @@ WebRenderObject::WebRenderObject(RenderObject* renderer)
     } else if (renderer->isRenderInline())
         m_frameRect = toRenderBoxModelObject(renderer)->borderBoundingBox();
 
+    if (!shouldIncludeDescendants)
+        return;
+
     m_children = MutableArray::create();
     for (RenderObject* coreChild = renderer->firstChild(); coreChild; coreChild = coreChild->nextSibling()) {
-        RefPtr<WebRenderObject> child = adoptRef(new WebRenderObject(coreChild));
+        RefPtr<WebRenderObject> child = adoptRef(new WebRenderObject(coreChild, shouldIncludeDescendants));
         m_children->append(child.get());
     }
 
@@ -84,7 +104,7 @@ WebRenderObject::WebRenderObject(RenderObject* renderer)
 
     FrameView* frameView = static_cast<FrameView*>(widget);
     if (RenderView* coreContentRenderer = frameView->frame()->contentRenderer()) {
-        RefPtr<WebRenderObject> contentRenderer = adoptRef(new WebRenderObject(coreContentRenderer));
+        RefPtr<WebRenderObject> contentRenderer = adoptRef(new WebRenderObject(coreContentRenderer, shouldIncludeDescendants));
         m_children->append(contentRenderer.get());
     }
 }

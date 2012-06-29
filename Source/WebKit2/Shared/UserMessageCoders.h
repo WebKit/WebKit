@@ -145,10 +145,7 @@ public:
         }
         case APIObject::TypeRenderLayer: {
             WebRenderLayer* renderLayer = static_cast<WebRenderLayer*>(m_root);
-            encoder->encode(renderLayer->renderObjectName());
-            encoder->encode(renderLayer->elementTagName());
-            encoder->encode(renderLayer->elementID());
-            encoder->encode(Owner(renderLayer->elementClassNames()));
+            encoder->encode(Owner(renderLayer->renderer()));
             encoder->encode(renderLayer->isReflection());
             encoder->encode(renderLayer->isClipping());
             encoder->encode(renderLayer->isClipped());
@@ -162,6 +159,9 @@ public:
         case APIObject::TypeRenderObject: {
             WebRenderObject* renderObject = static_cast<WebRenderObject*>(m_root);
             encoder->encode(renderObject->name());
+            encoder->encode(renderObject->elementTagName());
+            encoder->encode(renderObject->elementID());
+            encoder->encode(Owner(renderObject->elementClassNames()));
             encoder->encode(renderObject->absolutePosition());
             encoder->encode(renderObject->frameRect());
             encoder->encode(Owner(renderObject->children().get()));
@@ -367,10 +367,7 @@ public:
             break;
         }
         case APIObject::TypeRenderLayer: {
-            String renderObjectName;
-            String elementTagName;
-            String elementID;
-            RefPtr<APIObject> elementClassNames;
+            RefPtr<APIObject> renderer;
             bool isReflection;
             bool isClipping;
             bool isClipped;
@@ -380,14 +377,10 @@ public:
             RefPtr<APIObject> normalFlowList;
             RefPtr<APIObject> positiveZOrderList;
 
-            if (!decoder->decode(renderObjectName))
+            Owner rendererCoder(coder, renderer);
+            if (!decoder->decode(rendererCoder))
                 return false;
-            if (!decoder->decode(elementTagName))
-                return false;
-            if (!decoder->decode(elementID))
-                return false;
-            Owner classNamesCoder(coder, elementClassNames);
-            if (!decoder->decode(classNamesCoder))
+            if (renderer->type() != APIObject::TypeRenderObject)
                 return false;
             if (!decoder->decodeBool(isReflection))
                 return false;
@@ -408,19 +401,28 @@ public:
             Owner positiveZOrderListCoder(coder, positiveZOrderList);
             if (!decoder->decode(positiveZOrderListCoder))
                 return false;
-            coder.m_root = WebRenderLayer::create(renderObjectName, elementTagName, elementID, static_pointer_cast<MutableArray>(elementClassNames),
-                isReflection, isClipping, isClipped, static_cast<WebRenderLayer::CompositingLayerType>(compositingLayerTypeAsUInt32),
+            coder.m_root = WebRenderLayer::create(static_pointer_cast<WebRenderObject>(renderer), isReflection, isClipping, isClipped, static_cast<WebRenderLayer::CompositingLayerType>(compositingLayerTypeAsUInt32),
                 absoluteBoundingBox, static_pointer_cast<MutableArray>(negativeZOrderList), static_pointer_cast<MutableArray>(normalFlowList),
                 static_pointer_cast<MutableArray>(positiveZOrderList));
             break;
         }
         case APIObject::TypeRenderObject: {
             String name;
+            String elementTagName;
+            String elementID;
+            RefPtr<APIObject> elementClassNames;
             WebCore::IntPoint absolutePosition;
             WebCore::IntRect frameRect;
             RefPtr<APIObject> children;
             
             if (!decoder->decode(name))
+                return false;
+            if (!decoder->decode(elementTagName))
+                return false;
+            if (!decoder->decode(elementID))
+                return false;
+            Owner classNamesCoder(coder, elementClassNames);
+            if (!decoder->decode(classNamesCoder))
                 return false;
             if (!decoder->decode(absolutePosition))
                 return false;
@@ -429,9 +431,9 @@ public:
             Owner messageCoder(coder, children);
             if (!decoder->decode(messageCoder))
                 return false;
-            if (children->type() != APIObject::TypeArray)
+            if (children && children->type() != APIObject::TypeArray)
                 return false;
-            coder.m_root = WebRenderObject::create(name, absolutePosition, frameRect, WTF::static_pointer_cast<MutableArray>(children));
+            coder.m_root = WebRenderObject::create(name, elementTagName, elementID, WTF::static_pointer_cast<MutableArray>(elementClassNames), absolutePosition, frameRect, WTF::static_pointer_cast<MutableArray>(children));
             break;
         }
         case APIObject::TypeURL: {

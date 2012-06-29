@@ -36,8 +36,12 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKRenderLayerGetTypeID();
 
+WK_EXPORT WKRenderObjectRef WKRenderLayerGetRenderer(WKRenderLayerRef renderLayer);
+
+// FIXME: Remove this function once Safari does not require it.
 WK_EXPORT WKStringRef WKRenderLayerCopyRendererName(WKRenderLayerRef renderLayer);
 
+// FIXME: Remove these three functions once Safari does not require them.
 WK_EXPORT WKStringRef WKRenderLayerCopyElementTagName(WKRenderLayerRef renderLayer);
 WK_EXPORT WKStringRef WKRenderLayerCopyElementID(WKRenderLayerRef renderLayer);
 WK_EXPORT WKArrayRef WKRenderLayerGetElementClassNames(WKRenderLayerRef renderLayer);

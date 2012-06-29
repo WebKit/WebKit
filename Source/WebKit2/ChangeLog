@@ -1,3 +1,57 @@
+2012-06-29  Dan Bernstein  <mitz@apple.com>
+
+        Can’t get basic element info from a WKRenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=90301
+
+        Reviewed by Anders Carlsson.
+
+        Moved the element info (tag name, id and class names) from WebRenderLayer to WebRenderObject,
+        and gave WebRenderLayer a reference to a (shallow) WebRenderObject. Added WKRenderObject API
+        for getting element info, while leaving the WKRenderLayer API in place for now for Safari.
+
+        * Shared/API/c/WKRenderLayer.cpp:
+        (WKRenderLayerGetRenderer): Added this wrapper.
+        (WKRenderLayerCopyRendererName): Changed to get the name from the renderer.
+        (WKRenderLayerCopyElementTagName): Changed to go through the renderer.
+        (WKRenderLayerCopyElementID): Ditto.
+        (WKRenderLayerGetElementClassNames): Ditto.
+        * Shared/API/c/WKRenderLayer.h: Added declaration of WKRenderLayerGetRenderer() and comments
+        about removing older API.
+        * Shared/API/c/WKRenderObject.cpp:
+        (WKRenderObjectCopyElementTagName): Added this wrapper.
+        (WKRenderObjectCopyElementID): Ditto.
+        (WKRenderObjectGetElementClassNames): Ditto.
+        * Shared/API/c/WKRenderObject.h:
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode): Removed the element info from the encoding of
+        WebRenderLayer, and added the renderer. Added the element info to the encoding of
+        WebRenderObject.
+        (WebKit::UserMessageDecoder::baseDecode): Updated to match the encoding changes.
+        * Shared/WebRenderLayer.cpp:
+        (WebKit::WebRenderLayer::WebRenderLayer): Changed to initialize the m_renderer member
+        variable with a WebRenderObject for the layer’s renderer, and removed the initialization of
+        the element-related member variables that were removed.
+        * Shared/WebRenderLayer.h:
+        (WebKit::WebRenderLayer::create): Changed to take a renderer instead of renderer and element
+        info.
+        (WebKit::WebRenderLayer::renderer): Added this getter.
+        (WebKit::WebRenderLayer::WebRenderLayer): Changed to take a renderer instead of renderer and
+        element info.
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::create): Changed to pass true for the shouldIncludeDescendants
+        parameter.
+        (WebKit::WebRenderObject::WebRenderObject): Added a shouldIncludeDescdendants boolean
+        parameter. When it is false, the m_children array remains null. Added initialization of
+        member variables with the element’s tag name, id and class list.
+        * Shared/WebRenderObject.h:
+        (WebKit::WebRenderObject::create): Added an overload that takes a RenderObject and creates
+        a shallow WebRenderObject.
+        (WebRenderObject): Changed to take element tag name, id and class list.
+        (WebKit::WebRenderObject::elementTagName): Added this getter.
+        (WebKit::WebRenderObject::elementID): Ditto.
+        (WebKit::WebRenderObject::elementClassNames): Ditto.
+        (WebKit::WebRenderObject::WebRenderObject): 
+
 2012-06-29  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r121572.

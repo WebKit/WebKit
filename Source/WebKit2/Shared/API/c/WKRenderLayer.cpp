@@ -37,16 +37,21 @@ WKTypeID WKRenderLayerGetTypeID()
     return toAPI(WebRenderLayer::APIType);
 }
 
+WKRenderObjectRef WKRenderLayerGetRenderer(WKRenderLayerRef renderLayerRef)
+{
+    return toAPI(toImpl(renderLayerRef)->renderer());
+}
+
 WKStringRef WKRenderLayerCopyRendererName(WKRenderLayerRef renderLayerRef)
 {
-    return toCopiedAPI(toImpl(renderLayerRef)->renderObjectName());
+    return toCopiedAPI(toImpl(renderLayerRef)->renderer()->name());
 }
 
 WKStringRef WKRenderLayerCopyElementTagName(WKRenderLayerRef renderLayerRef)
 {
     WebRenderLayer* renderLayer = toImpl(renderLayerRef);
-    if (!renderLayer->elementTagName().isNull())
-        return toCopiedAPI(toImpl(renderLayerRef)->elementTagName());
+    if (!renderLayer->renderer()->elementTagName().isNull())
+        return toCopiedAPI(renderLayer->renderer()->elementTagName());
 
     return 0;
 }
@@ -54,15 +59,15 @@ WKStringRef WKRenderLayerCopyElementTagName(WKRenderLayerRef renderLayerRef)
 WKStringRef WKRenderLayerCopyElementID(WKRenderLayerRef renderLayerRef)
 {
     WebRenderLayer* renderLayer = toImpl(renderLayerRef);
-    if (!renderLayer->elementID().isNull())
-        return toCopiedAPI(toImpl(renderLayerRef)->elementID());
+    if (!renderLayer->renderer()->elementID().isNull())
+        return toCopiedAPI(renderLayer->renderer()->elementID());
 
     return 0;
 }
 
 WKArrayRef WKRenderLayerGetElementClassNames(WKRenderLayerRef renderLayerRef)
 {
-    return toAPI(toImpl(renderLayerRef)->elementClassNames());
+    return toAPI(toImpl(renderLayerRef)->renderer()->elementClassNames());
 }
 
 WKRect WKRenderLayerGetAbsoluteBounds(WKRenderLayerRef renderLayerRef)

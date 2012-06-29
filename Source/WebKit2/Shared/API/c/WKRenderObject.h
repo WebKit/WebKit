@@ -36,6 +36,11 @@ extern "C" {
 WK_EXPORT WKTypeID WKRenderObjectGetTypeID();
 
 WK_EXPORT WKStringRef WKRenderObjectCopyName(WKRenderObjectRef renderObject);
+
+WK_EXPORT WKStringRef WKRenderObjectCopyElementTagName(WKRenderObjectRef renderObject);
+WK_EXPORT WKStringRef WKRenderObjectCopyElementID(WKRenderObjectRef renderObject);
+WK_EXPORT WKArrayRef WKRenderObjectGetElementClassNames(WKRenderObjectRef renderObject);
+
 WK_EXPORT WKPoint WKRenderObjectGetAbsolutePosition(WKRenderObjectRef renderObject);
 WK_EXPORT WKRect WKRenderObjectGetFrameRect(WKRenderObjectRef renderObject);
 WK_EXPORT WKArrayRef WKRenderObjectGetChildren(WKRenderObjectRef renderObject);

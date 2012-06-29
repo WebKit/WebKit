@@ -42,6 +42,29 @@ WKStringRef WKRenderObjectCopyName(WKRenderObjectRef renderObjectRef)
     return toCopiedAPI(toImpl(renderObjectRef)->name());
 }
 
+WKStringRef WKRenderObjectCopyElementTagName(WKRenderObjectRef renderObjectRef)
+{
+    WebRenderObject* renderObject = toImpl(renderObjectRef);
+    if (!renderObject->elementTagName().isNull())
+        return toCopiedAPI(renderObject->elementTagName());
+
+    return 0;
+}
+
+WKStringRef WKRenderObjectCopyElementID(WKRenderObjectRef renderObjectRef)
+{
+    WebRenderObject* renderObject = toImpl(renderObjectRef);
+    if (!renderObject->elementID().isNull())
+        return toCopiedAPI(renderObject->elementID());
+
+    return 0;
+}
+
+WKArrayRef WKRenderObjectGetElementClassNames(WKRenderObjectRef renderObjectRef)
+{
+    return toAPI(toImpl(renderObjectRef)->elementClassNames());
+}
+
 WKPoint WKRenderObjectGetAbsolutePosition(WKRenderObjectRef renderObjectRef)
 {
     IntPoint absolutePosition = toImpl(renderObjectRef)->absolutePosition();

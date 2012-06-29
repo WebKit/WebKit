@@ -75,27 +75,7 @@ PassRefPtr<MutableArray> WebRenderLayer::createArrayFromLayerList(Vector<RenderL
 
 WebRenderLayer::WebRenderLayer(RenderLayer* layer)
 {
-    RenderBoxModelObject* renderer = layer->renderer();
-
-    m_renderObjectName = renderer->renderName();
-
-    if (Node* node = renderer->node()) {
-        if (node->isElementNode()) {
-            Element* element = toElement(node);
-            m_elementTagName = element->tagName();
-            m_elementID = element->getIdAttribute();
-            if (element->isStyledElement() && element->hasClass()) {
-                StyledElement* styledElement = static_cast<StyledElement*>(element);
-                if (size_t classNameCount = styledElement->classNames().size()) {
-                    m_elementClassNames = MutableArray::create();
-                    for (size_t i = 0; i < classNameCount; ++i)
-                        m_elementClassNames->append(WebString::create(styledElement->classNames()[i]).get());
-                }
-            }
-
-        }
-    }
-
+    m_renderer = WebRenderObject::create(layer->renderer());
     m_isReflection = layer->isReflection();
 
 #if USE(ACCELERATED_COMPOSITING)
