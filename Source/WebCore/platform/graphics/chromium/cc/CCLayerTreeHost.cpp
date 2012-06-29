@@ -127,6 +127,9 @@ CCLayerTreeHost::~CCLayerTreeHost()
     m_proxy->stop();
     m_proxy.clear();
     numLayerTreeInstances--;
+    RateLimiterMap::iterator it = m_rateLimiters.begin();
+    if (it != m_rateLimiters.end())
+        it->second->stop();
 }
 
 void CCLayerTreeHost::setSurfaceReady()

@@ -1,3 +1,26 @@
+2012-06-29  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use CCThread::Task in compositor's RateLimiter instead of Timer
+        https://bugs.webkit.org/show_bug.cgi?id=90300
+
+        Reviewed by Adrienne Walker.
+
+        * platform/graphics/chromium/RateLimiter.cpp:
+        (RateLimiter::Task):
+        (WebCore::RateLimiter::Task::create):
+        (WebCore::RateLimiter::Task::~Task):
+        (WebCore::RateLimiter::Task::Task):
+        (WebCore):
+        (WebCore::RateLimiter::RateLimiter):
+        (WebCore::RateLimiter::start):
+        (WebCore::RateLimiter::stop):
+        (WebCore::RateLimiter::rateLimitContext):
+        * platform/graphics/chromium/RateLimiter.h:
+        (WebCore):
+        (RateLimiter):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::~CCLayerTreeHost):
+
 2012-06-29  Tony Payne  <tpayne@chromium.org>
 
         Remove type from screenColorProfile API
