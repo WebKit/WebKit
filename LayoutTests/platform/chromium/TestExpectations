@@ -1291,10 +1291,10 @@ BUGWK83199 : svg/filters/big-sized-filter.svg = IMAGE PASS
 
 // This will need to be rebaselined after
 // https://bugs.webkit.org/show_bug.cgi?id=72443 lands.
-BUG_SENORBLANCO WIN MAC : css3/filters/effect-reference.html = IMAGE IMAGE+TEXT TEXT
-BUG_SENORBLANCO WIN MAC : css3/filters/effect-reference-hw.html = IMAGE IMAGE+TEXT TEXT
-BUG_SENORBLANCO WIN MAC : css3/filters/effect-reference-external.html = IMAGE IMAGE+TEXT TEXT
-BUG_SENORBLANCO WIN MAC : css3/filters/effect-reference-ordering.html = IMAGE IMAGE+TEXT TEXT
+BUG_SENORBLANCO WIN MAC : css3/filters/effect-reference.html = MISSING IMAGE IMAGE+TEXT TEXT
+BUG_SENORBLANCO WIN MAC : css3/filters/effect-reference-hw.html = MISSING IMAGE IMAGE+TEXT TEXT
+BUG_SENORBLANCO WIN MAC : css3/filters/effect-reference-external.html = MISSING IMAGE IMAGE+TEXT TEXT
+BUG_SENORBLANCO WIN MAC : css3/filters/effect-reference-ordering.html = MISSING IMAGE IMAGE+TEXT TEXT
 
 // Many WIN and Linux SVG tests containing text are flaky. It seems different fonts are used at different times.
 BUGWK83303 WIN LINUX : svg/zoom/text/zoom-hixie-mixed-009.xml = PASS IMAGE
