@@ -53,7 +53,7 @@ namespace WebCore {
     FloatRect screenRect(Widget*);
     FloatRect screenAvailableRect(Widget*);
     // type can be "monitor" or the name of a profile such as "sRGB" or "Adobe RGB".
-    void screenColorProfile(Widget*, const String& type, ColorProfile&);
+    void screenColorProfile(Widget*, ColorProfile&);
 
 #if PLATFORM(MAC)
     NSScreen *screenForWindow(NSWindow *);

@@ -1,3 +1,14 @@
+2012-06-29  Tony Payne  <tpayne@chromium.org>
+
+        Remove type from screenColorProfile API
+        https://bugs.webkit.org/show_bug.cgi?id=90299
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/Platform.h:
+        (WebKit::Platform::screenColorProfile): Removed type from chromium
+        public API's version of screenColorProfile().
+
 2012-06-28  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove mapRect and mapQuad from WebTransformationMatrix

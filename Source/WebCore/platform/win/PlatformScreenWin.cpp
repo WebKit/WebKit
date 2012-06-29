@@ -118,7 +118,7 @@ FloatRect screenAvailableRect(Widget* widget)
     return monitorInfo.rcWork;
 }
 
-void screenColorProfile(Widget*, const String&, ColorProfile&)
+void screenColorProfile(Widget*, ColorProfile&)
 {
     notImplemented();
 }

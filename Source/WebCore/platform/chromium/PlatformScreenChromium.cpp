@@ -73,11 +73,11 @@ FloatRect screenAvailableRect(Widget* widget)
     return PlatformSupport::screenAvailableRect(widget);
 }
 
-void screenColorProfile(Widget*, const String& type, ColorProfile& toProfile)
+void screenColorProfile(Widget*, ColorProfile& toProfile)
 {
     // FIXME: Add support for multiple monitors.
     WebKit::WebVector<char> profile;
-    WebKit::Platform::current()->screenColorProfile(WebKit::WebString(type), &profile);
+    WebKit::Platform::current()->screenColorProfile(&profile);
     toProfile.append(profile.data(), profile.size());
 }
 

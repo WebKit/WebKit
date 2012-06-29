@@ -1,3 +1,32 @@
+2012-06-29  Tony Payne  <tpayne@chromium.org>
+
+        Remove type from screenColorProfile API
+        https://bugs.webkit.org/show_bug.cgi?id=90299
+
+        Reviewed by Adam Barth.
+
+        Covered by existing tests.
+
+        * platform/PlatformScreen.h:
+        (WebCore): Removed type from screenColorProfile().
+        * platform/blackberry/PlatformScreenBlackBerry.cpp:
+        (WebCore::screenColorProfile):
+        * platform/chromium/PlatformScreenChromium.cpp:
+        (WebCore::screenColorProfile):
+        * platform/efl/PlatformScreenEfl.cpp:
+        (WebCore::screenColorProfile):
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenColorProfile):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::qcmsOutputDeviceProfile): Updated call to
+        screenColorProfile() to not pass type param.
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenColorProfile):
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenColorProfile):
+        * platform/win/PlatformScreenWin.cpp:
+        (WebCore::screenColorProfile):
+
 2012-06-29  Emil A Eklund  <eae@chromium.org>
 
         Allow non-borders to be adjusted to less than 1 when zoomed out
