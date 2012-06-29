@@ -7275,6 +7275,16 @@ RenderBlock* RenderBlock::createAnonymousColumnSpanWithParentRenderer(const Rend
 }
 
 #ifndef NDEBUG
+void RenderBlock::checkPositionedObjectsNeedLayout()
+{
+    if (PositionedObjectsListHashSet* positionedObjects = this->positionedObjects()) {
+        PositionedObjectsListHashSet::const_iterator end = positionedObjects->end();
+        for (PositionedObjectsListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
+            RenderBox* currBox = *it;
+            ASSERT(!currBox->needsLayout());
+        }
+    }
+}
 
 void RenderBlock::showLineTreeAndMark(const InlineBox* markedBox1, const char* markedLabel1, const InlineBox* markedBox2, const char* markedLabel2, const RenderObject* obj) const
 {

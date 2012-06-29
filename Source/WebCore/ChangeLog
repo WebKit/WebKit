@@ -1,3 +1,42 @@
+2012-06-29  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Crash when flowing a fixed positioned element into a region.
+        https://bugs.webkit.org/show_bug.cgi?id=88133
+
+        Reviewed by Julien Chaffraix and Abhishek Arya.
+
+        When a fixed positioned element is collected into a named flow, we have to make sure
+        that such element has the RenderFlowThread as containing block instead of RenderView,
+        so that the fixed positioned element is laid out properly.
+        Making the RenderFlowThread the top most containing block for named flow elements required the
+        modification of RenderLayer::convertToLayerCoords so that the fixed positioned elements inside the
+        named flow take the same code path as the absolute positioned elements inside the named flow.
+        I also added a method, checkBlockPositionedObjectsNeedLayout, in order to verify that a block
+        that is ending its layout, setNeedsLayout(false), has all the positioned children laid out.
+        This way, we will hit an assertion if an out-of-flow positioned child inside a RenderFlowThread
+        is not laid out after the RenderFlowThread is laid out.
+
+        Tests: fast/regions/absolute-pos-elem-in-named-flow.html
+               fast/regions/absolute-pos-elem-in-region.html
+               fast/regions/fixed-pos-elem-in-named-flow.html
+               fast/regions/fixed-pos-elem-in-named-flow2.html
+               fast/regions/fixed-pos-elem-in-region.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::checkPositionedObjectsNeedLayout):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::convertToLayerCoords):
+        * rendering/RenderObject.cpp:
+        (WebCore):
+        (WebCore::RenderObject::checkBlockPositionedObjectsNeedLayout):
+        (WebCore::RenderObject::containingBlock):
+        (WebCore::RenderObject::container):
+        * rendering/RenderObject.h:
+        (RenderObject):
+        (WebCore::RenderObject::setNeedsLayout):
+
 2012-06-29  Konrad Piascik  <kpiascik@rim.com>
 
         Don't hardcode target dpi of 160 (it should be 96 on desktop)

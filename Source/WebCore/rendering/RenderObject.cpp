@@ -676,6 +676,16 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderOb
         last->scheduleRelayout();
 }
 
+#ifndef NDEBUG
+void RenderObject::checkBlockPositionedObjectsNeedLayout()
+{
+    ASSERT(!needsLayout());
+
+    if (isRenderBlock())
+        toRenderBlock(this)->checkPositionedObjectsNeedLayout();
+}
+#endif
+
 void RenderObject::setPreferredLogicalWidthsDirty(bool shouldBeDirty, MarkingBehavior markParents)
 {
     bool alreadyDirty = preferredLogicalWidthsDirty();
@@ -727,6 +737,10 @@ RenderBlock* RenderObject::containingBlock() const
             if (o->isRenderView())
                 break;
             if (o->hasTransform() && o->isRenderBlock())
+                break;
+            // The render flow thread is the top most containing block
+            // for the fixed positioned elements.
+            if (o->isRenderFlowThread())
                 break;
 #if ENABLE(SVG)
             // foreignObject is the containing block for its contents.
@@ -2218,6 +2232,11 @@ RenderObject* RenderObject::container(const RenderBoxModelObject* repaintContain
             if (o->isSVGForeignObject())
                 break;
 #endif
+            // The render flow thread is the top most containing block
+            // for the fixed positioned elements.
+            if (o->isRenderFlowThread())
+                break;
+
             if (repaintContainerSkipped && o == repaintContainer)
                 *repaintContainerSkipped = true;
 

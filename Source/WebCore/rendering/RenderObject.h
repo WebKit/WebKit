@@ -932,7 +932,11 @@ private:
     StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;
 
     Color selectionColor(int colorProperty) const;
-    
+
+#ifndef NDEBUG
+    void checkBlockPositionedObjectsNeedLayout();
+#endif
+
     RefPtr<RenderStyle> m_style;
 
     Node* m_node;
@@ -1104,6 +1108,9 @@ inline void RenderObject::setNeedsLayout(bool needsLayout, MarkingBehavior markP
         setNormalChildNeedsLayout(false);
         setNeedsPositionedMovementLayout(false);
         setAncestorLineBoxDirty(false);
+#ifndef NDEBUG
+        checkBlockPositionedObjectsNeedLayout();
+#endif
     }
 }
 

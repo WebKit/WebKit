@@ -1,3 +1,25 @@
+2012-06-29  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Crash when flowing a fixed positioned element into a region.
+        https://bugs.webkit.org/show_bug.cgi?id=88133
+
+        Reviewed by Julien Chaffraix and Abhishek Arya.
+
+        When a fixed positioned element is collected into a named flow, we have to make sure
+        that such element has the RenderFlowThread as containing block instead of RenderView,
+        so that the fixed positioned element is laid out properly.
+
+        * fast/regions/absolute-pos-elem-in-named-flow-expected.txt: Added.
+        * fast/regions/absolute-pos-elem-in-named-flow.html: Added.
+        * fast/regions/absolute-pos-elem-in-region-expected.html: Added.
+        * fast/regions/absolute-pos-elem-in-region.html: Added.
+        * fast/regions/fixed-pos-elem-in-named-flow-expected.txt: Added.
+        * fast/regions/fixed-pos-elem-in-named-flow.html: Added.
+        * fast/regions/fixed-pos-elem-in-named-flow2-expected.txt: Added.
+        * fast/regions/fixed-pos-elem-in-named-flow2.html: Added.
+        * fast/regions/fixed-pos-elem-in-region-expected.html: Added.
+        * fast/regions/fixed-pos-elem-in-region.html: Added.
+
 2012-06-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Device Metrics] "Fit window" option inhibits adjusting the page zoom factor
