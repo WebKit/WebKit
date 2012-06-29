@@ -75,7 +75,7 @@ public:
     size_t length() const { return m_attributes.size(); }
     bool isEmpty() const { return m_attributes.isEmpty(); }
 
-    PassRefPtr<Attr> getAttributeNode(const AtomicString&, bool shouldIgnoreAttributeCase, Element*) const;
+    PassRefPtr<Attr> getAttributeNode(const String&, bool shouldIgnoreAttributeCase, Element*) const;
     PassRefPtr<Attr> getAttributeNode(const QualifiedName&, Element*) const;
 
     // Internal interface.

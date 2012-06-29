@@ -1,5 +1,30 @@
 2012-06-29  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed, rolling out r121520.
+        http://trac.webkit.org/changeset/121520
+        https://bugs.webkit.org/show_bug.cgi?id=90246
+
+        the performance optimization needs more investigation
+
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::convertPropertyNameToAttributeName):
+        * dom/Element.cpp:
+        (WebCore::Element::getAttributeNS):
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::removeAttributeNS):
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::getAttributeNodeNS):
+        (WebCore::Element::hasAttribute):
+        (WebCore::Element::hasAttributeNS):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::getAttributeNode):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+
+2012-06-29  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Replace v8::Integer::New() with v8Integer() in bindings/v8/*.{h,cpp}
         https://bugs.webkit.org/show_bug.cgi?id=90238
 
