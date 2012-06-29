@@ -42,8 +42,6 @@
 WebInspector.Resource = function(request, url, documentURL, frameId, loaderId, type, mimeType, isHidden)
 {
     this._request = request;
-    if (this._request)
-        this._request.setResource(this);
     this.url = url;
     this._documentURL = documentURL;
     this._frameId = frameId;
@@ -56,6 +54,8 @@ WebInspector.Resource = function(request, url, documentURL, frameId, loaderId, t
     /** @type {?string} */ this._content;
     /** @type {boolean} */ this._contentEncoded;
     this._pendingContentCallbacks = [];
+    if (this._request && !this._request.finished)
+        this._request.addEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, this._requestFinished, this);
 }
 
 WebInspector.Resource._domainModelBindings = [];
@@ -400,7 +400,8 @@ WebInspector.Resource.prototype = {
         }
 
         this._pendingContentCallbacks.push(callback);
-        this._innerRequestContent();
+        if (!this._request || this._request.finished)
+            this._innerRequestContent();
     },
 
     canonicalMimeType: function()
@@ -456,6 +457,15 @@ WebInspector.Resource.prototype = {
 
         return "data:" + this.mimeType + (this._contentEncoded ? ";base64," : ",") + this._content;
     },
+
+
+    _requestFinished: function()
+    {
+        this._request.removeEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, this._requestFinished, this);
+        if (this._pendingContentCallbacks.length)
+            this._innerRequestContent();
+    },
+
 
     _innerRequestContent: function()
     {

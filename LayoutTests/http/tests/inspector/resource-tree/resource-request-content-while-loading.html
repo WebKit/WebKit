@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../resources-test.js"></script>
+<script src="resource-tree-test.js"></script>
+<link rel="stylesheet" href="resources/styles-initial.css">
+<script>
+function test()
+{
+      var contentWasRequested = false;
+      var resource;
+      InspectorTest.addSniffer(WebInspector.ResourceTreeFrame.prototype, "_addRequest", requestAdded, true);
+      InspectorTest.addSniffer(PageAgent, "getResourceContent", pageAgentGetResourceContentCalled, true);
+      InspectorTest.reloadPage(function() {});
+
+      function requestAdded(request)
+      {
+          if (request.url.indexOf("styles-initial") === -1)
+              return;
+          resource = InspectorTest.resourceMatchingURL("styles-initial");
+          if (!resource || !resource.request || contentWasRequested)
+              return;
+          resource.requestContent(contentLoaded);
+          contentWasRequested = true;
+      }
+
+      function pageAgentGetResourceContentCalled()
+      {
+          InspectorTest.assertTrue(resource.request.finished);
+      }
+
+      function contentLoaded(content)
+      {
+          InspectorTest.addResult("Resource url: " + resource.url);
+          InspectorTest.addResult("Resource content: " + content);
+          InspectorTest.completeTest();
+      }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests resource content is correctly loaded if Resource.requestContent was called before network request was finished.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=90153">Bug 90153</a>
+</body>
+</html>

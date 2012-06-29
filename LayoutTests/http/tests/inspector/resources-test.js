@@ -41,13 +41,10 @@ InspectorTest.runAfterResourcesAreFinished = function(resourceURLs, callback)
 
     function checkResources()
     {
-        WebInspector.resourceTreeModel.forAllResources(visit);
-        function visit(resource)
-        {
-            for (url in resourceURLsMap) {
-                if (resource.url.indexOf(url) !== -1)
-                    delete resourceURLsMap[url];
-            }
+        for (url in resourceURLsMap) {
+            var resource = InspectorTest.resourceMatchingURL(url);
+            if (resource)
+                delete resourceURLsMap[url];
         }
         if (!Object.keys(resourceURLsMap).length) {
             WebInspector.resourceTreeModel.removeEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, checkResources);
@@ -72,21 +69,31 @@ InspectorTest.showResource = function(resourceURL, callback)
 
     function showResourceCallback()
     {
-        WebInspector.resourceTreeModel.forAllResources(visit);
-        function visit(resource)
-        {
-            if (resource.url.indexOf(resourceURL) !== -1) {
-                WebInspector.panels.resources.showResource(resource, 1);
-                var sourceFrame = WebInspector.panels.resources._resourceViewForResource(resource);
-                if (sourceFrame.loaded)
-                    callbackWrapper(sourceFrame);
-                else
-                    InspectorTest.addSniffer(sourceFrame, "onTextViewerContentLoaded", callbackWrapper.bind(null, sourceFrame));
-                return true;
-            }
-        }
+        var resource = InspectorTest.resourceMatchingURL(resourceURL);
+        if (!resource)
+            return;
+        WebInspector.panels.resources.showResource(resource, 1);
+        var sourceFrame = WebInspector.panels.resources._resourceViewForResource(resource);
+        if (sourceFrame.loaded)
+            callbackWrapper(sourceFrame);
+        else
+            InspectorTest.addSniffer(sourceFrame, "onTextViewerContentLoaded", callbackWrapper.bind(null, sourceFrame));
     }
     InspectorTest.runAfterResourcesAreFinished([resourceURL], showResourceCallback);
+}
+
+InspectorTest.resourceMatchingURL = function(resourceURL, callback)
+{
+    var result = null;
+    WebInspector.resourceTreeModel.forAllResources(visit);
+    function visit(resource)
+    {
+        if (resource.url.indexOf(resourceURL) !== -1) {
+            result = resource;
+            return true;
+        }
+    }
+    return result;
 }
 
 }

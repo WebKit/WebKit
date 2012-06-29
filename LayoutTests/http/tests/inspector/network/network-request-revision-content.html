@@ -18,7 +18,7 @@ function test()
     function step2(msg)
     {
         var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
-        resource = request.resource();
+        resource = WebInspector.resourceForURL(request.url);
         resource.addRevision("");
         resource.history[0].requestContent(step3);
     }

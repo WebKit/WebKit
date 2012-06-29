@@ -59,7 +59,7 @@ function test()
     {
         var resource = null;
         if (request && request.finished) {
-            resource = request.resource();
+            resource = WebInspector.resourceForURL(request.url)
             request = null;
         }
         var rawSourceCode = new WebInspector.RawSourceCode("id", script, resource, request, compilerSourceMapping);

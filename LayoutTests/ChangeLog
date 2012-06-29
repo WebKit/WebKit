@@ -1,3 +1,26 @@
+2012-06-28  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Resource content is not loaded if Resource.requestContent method is called before network request is finished.
+        https://bugs.webkit.org/show_bug.cgi?id=90153
+
+        Reviewed by Yury Semikhatsky.
+
+        Resource.requestContent() now checks that request (if there is one) was already loaded before requesting content from PageAgent.
+        Drive-by: Removed unneeded legacy request._resource field.
+
+        * http/tests/inspector/network/network-request-revision-content.html:
+        * http/tests/inspector/resource-tree/resource-request-content-while-loading-expected.txt: Added.
+        * http/tests/inspector/resource-tree/resource-request-content-while-loading.html: Added.
+        * http/tests/inspector/resources-test.js:
+        (initialize_ResourceTest.InspectorTest.runAfterResourcesAreFinished.checkResources):
+        (initialize_ResourceTest.InspectorTest.runAfterResourcesAreFinished):
+        (initialize_ResourceTest.InspectorTest.showResource.showResourceCallback):
+        (initialize_ResourceTest.InspectorTest.showResource):
+        (initialize_ResourceTest.InspectorTest.resourceMatchingURL.visit):
+        (initialize_ResourceTest.InspectorTest.resourceMatchingURL):
+        (initialize_ResourceTest):
+        * inspector/debugger/raw-source-code.html:
+
 2012-06-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: IDBObjectStore.autoIncrement flag not exposed

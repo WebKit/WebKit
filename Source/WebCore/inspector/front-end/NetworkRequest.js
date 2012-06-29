@@ -802,22 +802,6 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @param {WebInspector.Resource} resource
-     */
-    setResource: function(resource)
-    {
-        this._resource = resource;
-    },
-
-    /**
-     * @return {WebInspector.Resource}
-     */
-    resource: function()
-    {
-        return this._resource;
-    },
-
-    /**
      * @return {Object}
      */
     frames: function()
