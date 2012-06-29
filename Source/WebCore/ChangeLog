@@ -1,3 +1,10 @@
+2012-06-29  Ojan Vafai  <ojan@chromium.org>
+
+        Add FIXMEs for vertical writing mode and override sizes.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::overrideLogicalContentWidth):
+        (WebCore::RenderBox::overrideLogicalContentHeight):
+
 2012-06-29  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use CCThread::Task in compositor's RateLimiter instead of Timer

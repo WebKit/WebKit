@@ -702,11 +702,13 @@ void RenderBox::clearOverrideSize()
 
 LayoutUnit RenderBox::overrideLogicalContentWidth() const
 {
+    // FIXME: This should probably be returning contentLogicalWidth instead of contentWidth.
     return hasOverrideWidth() ? gOverrideWidthMap->get(this) : contentWidth();
 }
 
 LayoutUnit RenderBox::overrideLogicalContentHeight() const
 {
+    // FIXME: This should probably be returning contentLogicalHeight instead of contentHeight.
     return hasOverrideHeight() ? gOverrideHeightMap->get(this) : contentHeight();
 }
 
