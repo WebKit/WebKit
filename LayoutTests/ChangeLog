@@ -1,3 +1,14 @@
+2012-06-29  Ojan Vafai  <ojan@chromium.org>
+
+        Rebaseline some tests where Chrome differs due to V8's different toString implementation
+        for some built-ins. We should probably get V8 and JSC to agree here, but that's not terribly
+        pressing since the web clearly doesn't depend on the specifics here.
+
+        * platform/chromium-win/fast/js/global-constructors-expected.txt: Removed.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/js/function-names-expected.txt: Added.
+        * platform/chromium/fast/js/global-constructors-expected.txt: Added.
+
 2012-06-29  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding a new baseline required after r121555.

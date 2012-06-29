@@ -3377,18 +3377,6 @@ BUGWK82417 LINUX SLOW : fast/frames/set-unloaded-frame-location.html = PASS
 // Needs a text rebaseline after bug 83954
 BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = TEXT IMAGE+TEXT
 
-// These tests rely on specific details of decompilation of
-// functions. V8 always returns the source code as written; there's
-// no decompilation or pretty printing involved except for
-// certain "native" functions where the V8 output does not include
-// newline characters. This is working as intended and we don't care
-// if the tests pass or fail. (It should probably simply be re-baselined.)
-BUG_OJAN : fast/js/function-names.html = PASS TEXT
-// This is a Safari specific test used to document the set of global
-// constructors they expose and the exact way they are printed.  Not
-// important.
-BUG_OJAN : fast/js/global-constructors.html = PASS TEXT
-
 // This should only be a layer change.
 BUGWK82129 MAC : fast/block/lineboxcontain/glyphs.html = TEXT
 
