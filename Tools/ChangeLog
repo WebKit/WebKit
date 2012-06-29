@@ -1,3 +1,12 @@
+2012-06-27  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Use LIBS_PRIVATE instead of putting dependencies into LIBS
+
+        Reviewed by Tor Arne Vestbø..
+
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/functions.prf:
+
 2012-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         DOMHTMLCollection::item may return a wrong element after namedItem is called
