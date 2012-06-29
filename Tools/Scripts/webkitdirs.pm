@@ -2276,6 +2276,8 @@ sub buildQMakeProjects
     } elsif ($passedConfig =~ m/release/i) {
         push @buildArgs, "CONFIG+=release";
         push @buildArgs, "CONFIG-=debug";
+    } elsif ($passedConfig) {
+        die "Build type $passedConfig is not supported with --qt.\n";
     }
     push @buildArgs, "CONFIG-=debug_and_release" if ($passedConfig && isDarwin());
 
