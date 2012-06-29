@@ -1,3 +1,9 @@
+2012-06-29  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed build fix after r121518, adding a missing symbol to symbols.filter.
+
+        * Source/autotools/symbols.filter:
+
 2012-06-28  MORITA Hajime  <morrita@google.com>
 
         [Refactoring] NodeRenderingContext ctor could be built on top of the ComposedShadowTreeWalker

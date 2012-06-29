@@ -162,6 +162,7 @@ _ZN7WebCore8Document34webkitWillExitFullScreenForElementEPNS_7ElementE;
 _ZN7WebCore8Document35webkitWillEnterFullScreenForElementEPNS_7ElementE;
 _ZN7WebCore17JSDOMGlobalObject6s_infoE;
 _ZN7WebCore7TextRun22setAllowsRoundingHacksEb;
+_ZNK7WebCore14InsertionPoint8isActiveEv;
 local:
 _Z*;
 cti*;
