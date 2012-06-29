@@ -70,18 +70,14 @@ int32_t executionCounterIncrementForReturn;
 bool randomizeExecutionCountsBetweenCheckpoints;
 int32_t maximumExecutionCountsBetweenCheckpoints;
 
-unsigned desiredSpeculativeSuccessFailRatio;
-
 double likelyToTakeSlowCaseThreshold;
 double couldTakeSlowCaseThreshold;
 unsigned likelyToTakeSlowCaseMinimumCount;
 unsigned couldTakeSlowCaseMinimumCount;
 
 double osrExitProminenceForFrequentExitSite;
-
-unsigned largeFailCountThresholdBase;
-unsigned largeFailCountThresholdBaseForLoop;
-unsigned forcedOSRExitCountForReoptimization;
+unsigned osrExitCountForReoptimization;
+unsigned osrExitCountForReoptimizationFromLoop;
 
 unsigned reoptimizationRetryCounterMax;
 unsigned reoptimizationRetryCounterStep;
@@ -194,18 +190,14 @@ void initializeOptions()
     SET(randomizeExecutionCountsBetweenCheckpoints, false);
     SET(maximumExecutionCountsBetweenCheckpoints, 1000);
 
-    SET(desiredSpeculativeSuccessFailRatio, 6);
-    
     SET(likelyToTakeSlowCaseThreshold,    0.15);
     SET(couldTakeSlowCaseThreshold,       0.05); // Shouldn't be zero because some ops will spuriously take slow case, for example for linking or caching.
     SET(likelyToTakeSlowCaseMinimumCount, 100);
     SET(couldTakeSlowCaseMinimumCount,    10);
     
-    SET(osrExitProminenceForFrequentExitSite, 0.3);
-
-    SET(largeFailCountThresholdBase,         20);
-    SET(largeFailCountThresholdBaseForLoop,  1);
-    SET(forcedOSRExitCountForReoptimization, 250);
+    SET(osrExitProminenceForFrequentExitSite,  0.3);
+    SET(osrExitCountForReoptimization,         100);
+    SET(osrExitCountForReoptimizationFromLoop, 5);
 
     SET(reoptimizationRetryCounterStep, 1);
 

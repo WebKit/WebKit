@@ -56,18 +56,14 @@ extern int32_t executionCounterIncrementForReturn;
 extern bool randomizeExecutionCountsBetweenCheckpoints;
 extern int32_t maximumExecutionCountsBetweenCheckpoints;
 
-extern unsigned desiredSpeculativeSuccessFailRatio;
-
 extern double likelyToTakeSlowCaseThreshold;
 extern double couldTakeSlowCaseThreshold;
 extern unsigned likelyToTakeSlowCaseMinimumCount;
 extern unsigned couldTakeSlowCaseMinimumCount;
 
 extern double osrExitProminenceForFrequentExitSite;
-
-extern unsigned largeFailCountThresholdBase;
-extern unsigned largeFailCountThresholdBaseForLoop;
-extern unsigned forcedOSRExitCountForReoptimization;
+extern unsigned osrExitCountForReoptimization;
+extern unsigned osrExitCountForReoptimizationFromLoop;
 
 extern unsigned reoptimizationRetryCounterMax;
 extern unsigned reoptimizationRetryCounterStep;

@@ -1,3 +1,53 @@
+2012-06-28  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG recompilation heuristics should be based on count, not rate
+        https://bugs.webkit.org/show_bug.cgi?id=90146
+
+        Reviewed by Oliver Hunt.
+        
+        This removes a bunch of code that was previously trying to prevent spurious
+        reoptimizations if a large enough majority of executions of a code block did
+        not result in OSR exit. It turns out that this code was purely harmful. This
+        patch removes all of that logic and replaces it with a dead-simple
+        heuristic: if you exit more than N times (where N is an exponential function
+        of the number of times the code block has already been recompiled) then we
+        will recompile.
+        
+        This appears to be a broad ~1% win on many benchmarks large and small.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::osrExitCounter):
+        (JSC::CodeBlock::countOSRExit):
+        (CodeBlock):
+        (JSC::CodeBlock::addressOfOSRExitCounter):
+        (JSC::CodeBlock::offsetOfOSRExitCounter):
+        (JSC::CodeBlock::adjustedExitCountThreshold):
+        (JSC::CodeBlock::exitCountThresholdForReoptimization):
+        (JSC::CodeBlock::exitCountThresholdForReoptimizationFromLoop):
+        (JSC::CodeBlock::shouldReoptimizeNow):
+        (JSC::CodeBlock::shouldReoptimizeFromLoopNow):
+        * bytecode/ExecutionCounter.cpp:
+        (JSC::ExecutionCounter::setThreshold):
+        * bytecode/ExecutionCounter.h:
+        (ExecutionCounter):
+        (JSC::ExecutionCounter::clippedThreshold):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileBody):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGOSRExitCompiler.cpp:
+        (JSC::DFG::OSRExitCompiler::handleExitCounts):
+        * dfg/DFGOperations.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Options.cpp:
+        (Options):
+        (JSC::Options::initializeOptions):
+        * runtime/Options.h:
+        (Options):
+
 2012-06-28  Mark Lam  <mark.lam@apple.com>
 
         Adding a commenting utility to record BytecodeGenerator comments
