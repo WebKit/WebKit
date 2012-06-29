@@ -1,3 +1,20 @@
+2012-06-28  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] NodeList wrappers are not kept alive as needed
+        https://bugs.webkit.org/show_bug.cgi?id=90194
+
+        Reviewed by Ojan Vafai.
+
+        We need to add custom reachability code for DynamicNodeLists. If the owner of
+        a DynamicNodeList is reachable then the DynamicNodeList must also be reachable.
+
+        Test: fast/dom/NodeList/nodelist-reachable.html
+
+        * bindings/v8/custom/V8NodeListCustom.cpp:
+        (WebCore::V8NodeList::visitDOMWrapper): AddImplicitReferences from the owner wrapper.
+        (WebCore):
+        * dom/NodeList.idl:
+
 2012-06-28  Elliott Sprehn  <esprehn@gmail.com>
 
         frameborder="no" on frameset is ignored if border attribute set

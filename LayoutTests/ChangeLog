@@ -1,3 +1,14 @@
+2012-06-28  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] NodeList wrappers are not kept alive as needed
+        https://bugs.webkit.org/show_bug.cgi?id=90194
+
+        Reviewed by Ojan Vafai.
+
+        * fast/dom/NodeList/nodelist-reachable-expected.txt: Added.
+        * fast/dom/NodeList/nodelist-reachable.html: Added.
+        * platform/chromium/fast/dom/NodeList/nodelist-reachable-expected.txt: Added.
+
 2012-06-28  Hayato Ito  <hayato@chromium.org>
 
         Add a test for a 'user-modify' css property of distributed nodes.

@@ -21,9 +21,10 @@
 module core {
 
     interface [
-        JSCustomIsReachable,
+        CustomIsReachable,
         IndexedGetter,
-        NamedGetter
+        NamedGetter,
+        V8DependentLifetime
     ] NodeList {
 
         Node item(in [IsIndex,Optional=DefaultIsUndefined] unsigned long index);

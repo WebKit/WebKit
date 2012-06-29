@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<body>
+<form>
+<input name="radios" type="radio">
+<input name="radios" type="radio">
+</form>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+
+var nodeListKind = {
+    ChildNodeListType: 'document.body.childNodes',
+    ClassNodeListType: 'document.getElementsByClassName("class")',
+    NameNodeListType: 'document.getElementsByName("name")',
+    TagNodeListType: 'document.getElementsByTagName("body")',
+    RadioNodeListType: 'document.querySelector("form").elements["radios"]',
+    LabelsNodeListType: 'document.querySelector("input").labels',
+    // Microdata is not enabled.
+    // MicroDataItemListType: 'document.getItems("items")',
+};
+
+var i = 1;
+for (var kind in nodeListKind) {
+    var code = nodeListKind[kind];
+    eval(code).customProperty = i;
+    gc();
+    shouldBe(code + '.customProperty', '' + i++);
+}
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>

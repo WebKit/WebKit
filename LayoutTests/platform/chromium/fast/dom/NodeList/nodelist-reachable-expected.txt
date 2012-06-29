@@ -1,0 +1,10 @@
+PASS document.body.childNodes.customProperty is 1
+PASS document.getElementsByClassName("class").customProperty is 2
+PASS document.getElementsByName("name").customProperty is 3
+PASS document.getElementsByTagName("body").customProperty is 4
+FAIL document.querySelector("form").elements["radios"].customProperty should be 5 (of type number). Was undefined (of type undefined).
+PASS document.querySelector("input").labels.customProperty is 6
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 
