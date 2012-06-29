@@ -1,3 +1,16 @@
+2012-06-29  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [Qt] Add missing support for tiled shadow blur on fillRect
+        https://bugs.webkit.org/show_bug.cgi?id=90082
+
+        Reviewed by Noam Rosenthal.
+
+        This overloaded fillRect implementation also supports this optimization in
+        certain situations.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillRect):
+
 2012-06-29  Brady Eidson  <beidson@apple.com>
 
         Build fix - These should not be executable!
