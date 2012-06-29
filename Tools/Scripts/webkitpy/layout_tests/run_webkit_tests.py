@@ -37,7 +37,7 @@ import signal
 import sys
 
 from webkitpy.common.host import Host
-from webkitpy.layout_tests.controllers.manager import Manager, WorkerException
+from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.port import port_options
 from webkitpy.layout_tests.views import printing
@@ -455,7 +455,7 @@ if '__main__' == __name__:
         # This mirrors what the shell normally does.
         INTERRUPTED_EXIT_STATUS = signal.SIGINT + 128
         sys.exit(INTERRUPTED_EXIT_STATUS)
-    except WorkerException:
+    except Exception:
         # This is a randomly chosen exit code that can be tested against to
         # indicate that an unexpected exception occurred.
         EXCEPTIONAL_EXIT_STATUS = 254

@@ -1,5 +1,23 @@
 2012-06-28  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: don't try to catch worker exceptions in run_webkit_tests.__main__
+        https://bugs.webkit.org/show_bug.cgi?id=90125
+
+        Reviewed by Ojan Vafai.
+
+        It turns out run_webkit_tests.py wasn't really using
+        WorkerException and the catch we had for it was pointless. I've
+        removed the symbol import and moved it to the integration tests
+        where it is needed. Eventually the definition of the exception
+        moves to the broker module, and so minimizing the number of
+        users of it is a good thing.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_exception_raised):
+
+2012-06-28  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: clean up passing of log messages between processes
         https://bugs.webkit.org/show_bug.cgi?id=90123
 
