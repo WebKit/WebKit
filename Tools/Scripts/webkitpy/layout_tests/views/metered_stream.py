@@ -58,7 +58,6 @@ class MeteredStream(object):
         self._verbose = verbose
         self._time_fn = time_fn or time.time
         self._pid = pid or os.getpid()
-
         self._isatty = self._stream.isatty()
         self._erasing = self._isatty and not verbose
         self._last_partial_line = ''
@@ -128,4 +127,4 @@ class _LogHandler(logging.Handler):
         self.name = LOG_HANDLER_NAME
 
     def emit(self, record):
-        self._meter.writeln(record.getMessage(), record.created)
+        self._meter.writeln(record.getMessage(), record.created, record.process)

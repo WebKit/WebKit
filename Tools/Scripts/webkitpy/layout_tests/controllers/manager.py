@@ -1515,7 +1515,7 @@ class Manager(object):
 
     def _log_messages(self, messages):
         for message in messages:
-            self._printer.writeln(*message)
+            logging.root.handle(message)
 
     def _log_worker_stack(self, stack):
         webkitpydir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy') + self._filesystem.sep

@@ -1,5 +1,28 @@
 2012-06-28  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: clean up passing of log messages between processes
+        https://bugs.webkit.org/show_bug.cgi?id=90123
+
+        Reviewed by Ojan Vafai.
+
+        It turns out log messages are perfectly picklable by themselves
+        and contain the process id of the process that generated the
+        message, so if we just pass the record from the worker to the
+        manager and call logger.handle() in the manager, everything just
+        works :).
+
+        The change is covered by existing tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._log_messages):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (_WorkerLogHandler.emit):
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (MeteredStream.__init__):
+        (_LogHandler.emit):
+
+2012-06-28  Dirk Pranke  <dpranke@chromium.org>
+
         add a pylint wrapper for linting python code
         https://bugs.webkit.org/show_bug.cgi?id=90232
 

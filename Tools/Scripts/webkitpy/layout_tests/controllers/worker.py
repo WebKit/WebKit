@@ -305,4 +305,4 @@ class _WorkerLogHandler(logging.Handler):
         self._pid = os.getpid()
 
     def emit(self, record):
-        self._worker._log_messages.append(tuple([record.getMessage(), record.created, self._pid]))
+        self._worker._log_messages.append(record)
