@@ -1,3 +1,150 @@
+2012-06-29  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed gardening.
+
+        Rebaseline tests affected by r121452.
+
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-linux/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-linux/svg/carto.net/scrollbar-expected.png:
+        * platform/chromium-mac-snowleopard/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-mac-snowleopard/svg/carto.net/scrollbar-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/chromium-mac-snowleopard/transitions/cross-fade-background-image-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/render-groups-01-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/struct-symbol-01-b-expected.png:
+        * platform/chromium-mac/svg/carto.net/scrollbar-expected.png:
+        * platform/chromium-mac/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/chromium-mac/transitions/cross-fade-background-image-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-win-xp/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-win-xp/svg/carto.net: Removed.
+        * platform/chromium-win/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-symbol-01-b-expected.png:
+        * platform/chromium-win/svg/carto.net/scrollbar-expected.png:
+        * platform/chromium-win/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-win/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/chromium-win/transitions/cross-fade-background-image-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png: Added.
+        * platform/win-7sp0/svg/W3C-I18N/text-anchor-no-markup-expected.png: Added.
+        * platform/win-7sp0/svg/carto.net: Added.
+        * platform/win-7sp0/svg/carto.net/scrollbar-expected.png: Added.
+        * platform/win/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png: Removed.
+        * platform/win/svg/W3C-I18N/text-anchor-no-markup-expected.png: Removed.
+        * platform/win/svg/carto.net: Removed.
+        * platform/win/svg/carto.net/scrollbar-expected.png: Removed.
+
 2012-06-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         [chromium] Layout Test inspector/debugger/debugger-compile-and-run.html is failing
