@@ -1,3 +1,23 @@
+2012-06-29  Konrad Piascik  <kpiascik@rim.com>
+
+        Don't hardcode target dpi of 160 (it should be 96 on desktop)
+        https://bugs.webkit.org/show_bug.cgi?id=88114
+
+        Reviewed by Adam Barth.
+
+        No behavioural change, current tests in fast/viewport cover all
+        functionality.
+
+        * WebCore.exp.in: Updated symbol for computeViewportAttributes.
+        * dom/ViewportArguments.cpp: Use new parameter for devicePixelRatio
+                                     and don't calculate it anymore.
+        (WebCore::computeViewportAttributes):
+        * dom/ViewportArguments.h: Change the deviceDPI parameter to
+                                   devicePixelRatio and put the onus
+                                   on the embedder to supply the
+                                   correct value.  Add temporary constant.
+        (WebCore):
+
 2012-06-29  Vineet Chaudhary  <rgf748@motorola.com>
 
         JS binding code generator doesn't handle "attribute unsigned long[]" well.

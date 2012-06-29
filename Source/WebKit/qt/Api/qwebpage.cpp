@@ -2559,7 +2559,7 @@ QWebPage::ViewportAttributes QWebPage::viewportAttributesForSize(const QSize& av
         deviceHeight = size.height();
     }
 
-    WebCore::ViewportAttributes conf = WebCore::computeViewportAttributes(d->viewportArguments(), desktopWidth, deviceWidth, deviceHeight, qt_defaultDpi(), availableSize);
+    WebCore::ViewportAttributes conf = WebCore::computeViewportAttributes(d->viewportArguments(), desktopWidth, deviceWidth, deviceHeight, qt_defaultDpi() / WebCore::ViewportArguments::deprecatedTargetDPI, availableSize);
     WebCore::restrictMinimumScaleFactorToViewportSize(conf, availableSize);
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(conf);
 

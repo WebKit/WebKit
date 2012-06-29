@@ -50,10 +50,6 @@ public:
         ValueDesktopWidth = -2,
         ValueDeviceWidth = -3,
         ValueDeviceHeight = -4,
-        ValueDeviceDPI = -5,
-        ValueLowDPI = -6,
-        ValueMediumDPI = -7,
-        ValueHighDPI = -8
     };
 
     float initialScale() const;
@@ -71,9 +67,8 @@ public:
     float height() const;
     void setHeight(float);
 
-    // FIXME: Can we remove these functions? WebKit no longer supports targetDensityDpi.
-    float targetDensityDpi() const;
-    void setTargetDensityDpi(float);
+    float devicePixelRatio() const;
+    void setDevicePixelRatio(float);
 
     float userScalable() const;
     void setUserScalable(float);

@@ -3444,9 +3444,7 @@ IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
     int desktopWidth = defaultMaxLayoutSize().width();
     int deviceWidth = Platform::Graphics::Screen::primaryScreen()->width();
     int deviceHeight = Platform::Graphics::Screen::primaryScreen()->height();
-    FloatSize currentPPI = Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(-1);
-    int deviceDPI = int(roundf((currentPPI.width() + currentPPI.height()) / 2));
-    ViewportAttributes result = computeViewportAttributes(m_viewportArguments, desktopWidth, deviceWidth, deviceHeight, deviceDPI, m_defaultLayoutSize);
+    ViewportAttributes result = computeViewportAttributes(m_viewportArguments, desktopWidth, deviceWidth, deviceHeight, m_webSettings->devicePixelRatio(), m_defaultLayoutSize);
     m_page->setDeviceScaleFactor(result.devicePixelRatio);
     return IntSize(result.layoutSize.width(), result.layoutSize.height());
 }

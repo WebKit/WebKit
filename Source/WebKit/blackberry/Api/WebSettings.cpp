@@ -24,9 +24,13 @@
 
 #include "WebString.h"
 #include <Base64.h>
+#include <BlackBerryPlatformDeviceInfo.h>
 #include <BlackBerryPlatformFontInfo.h>
+#include <BlackBerryPlatformScreen.h>
 #include <Color.h>
+#include <FloatSize.h>
 #include <PageCache.h>
+#include <ViewportArguments.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -58,6 +62,7 @@ DEFINE_STATIC_LOCAL(String, BlackBerryZoomToFitOnLoadEnabled, ("BlackBerryZoomTo
 DEFINE_STATIC_LOCAL(String, BlackBerryFullScreenVideoCapable, ("BlackBerryFullScreenVideoCapable"));
 DEFINE_STATIC_LOCAL(String, BlackBerryCredentialAutofillEnabled, ("BlackBerryCredentialAutofillEnabled"));
 DEFINE_STATIC_LOCAL(String, BlackBerryFormAutofillEnabled, ("BlackBerryFormAutofillEnabled"));
+DEFINE_STATIC_LOCAL(String, BlackBerryDevicePixelRatio, ("BlackBerryDevicePixelRatio"));
 DEFINE_STATIC_LOCAL(String, SpatialNavigationEnabled, ("SpatialNavigationEnabled"));
 DEFINE_STATIC_LOCAL(String, WebKitDatabasePath, ("WebKitDatabasePath"));
 DEFINE_STATIC_LOCAL(String, WebKitDatabasesEnabled, ("WebKitDatabasesEnabled"));
@@ -172,6 +177,13 @@ WebSettings* WebSettings::standardSettings()
     settings->m_private->setBoolean(BlackBerryFullScreenVideoCapable, false);
     settings->m_private->setBoolean(BlackBerryCredentialAutofillEnabled, false);
     settings->m_private->setBoolean(BlackBerryFormAutofillEnabled, false);
+
+    if (BlackBerry::Platform::DeviceInfo::instance()->isMobile()) {
+        WebCore::FloatSize currentPPI = Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(-1);
+        int deviceDPI = int(roundf((currentPPI.width() + currentPPI.height()) / 2));
+        settings->m_private->setDouble(BlackBerryDevicePixelRatio, deviceDPI / WebCore::ViewportArguments::deprecatedTargetDPI);
+    } else
+        settings->m_private->setDouble(BlackBerryDevicePixelRatio, 1);
 
     settings->m_private->setInteger(WebKitDefaultFontSize, 16);
     settings->m_private->setInteger(WebKitDefaultFixedFontSize, 13);
@@ -823,6 +835,16 @@ bool WebSettings::isFormAutofillEnabled() const
 void WebSettings::setFormAutofillEnabled(bool enable)
 {
     return m_private->setBoolean(BlackBerryFormAutofillEnabled, enable);
+}
+
+double WebSettings::devicePixelRatio() const
+{
+    return m_private->getDouble(BlackBerryDevicePixelRatio);
+}
+
+void WebSettings::setDevicePixelRatio(double ratio)
+{
+    m_private->setDouble(BlackBerryDevicePixelRatio, ratio);
 }
 
 } // namespace WebKit

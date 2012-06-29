@@ -587,7 +587,7 @@ void DumpRenderTreeSupportEfl::dumpConfigurationForViewport(Evas_Object* ewkView
     WebCore::ViewportAttributes attributes = computeViewportAttributes(arguments,
             /* default layout width for non-mobile pages */ 980,
             deviceSize.width(), deviceSize.height(),
-            deviceDPI,
+            deviceDPI / WebCore::ViewportArguments::deprecatedTargetDPI,
             availableSize);
     restrictMinimumScaleFactorToViewportSize(attributes, availableSize);
     restrictScaleFactorToInitialScaleIfNotUserScalable(attributes);

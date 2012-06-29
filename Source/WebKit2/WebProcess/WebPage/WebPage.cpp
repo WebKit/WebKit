@@ -918,7 +918,7 @@ void WebPage::sendViewportAttributesChanged()
     int deviceWidth = (settings->deviceWidth() > 0) ? settings->deviceWidth() : m_viewportSize.width();
     int deviceHeight = (settings->deviceHeight() > 0) ? settings->deviceHeight() : m_viewportSize.height();
 
-    ViewportAttributes attr = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, deviceWidth, deviceHeight, static_cast<int>(160 * m_page->deviceScaleFactor()), m_viewportSize);
+    ViewportAttributes attr = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, deviceWidth, deviceHeight, m_page->deviceScaleFactor(), m_viewportSize);
 
     setResizesToContentsUsingLayoutSize(IntSize(static_cast<int>(attr.layoutSize.width()), static_cast<int>(attr.layoutSize.height())));
     send(Messages::WebPageProxy::DidChangeViewportProperties(attr));
@@ -3122,7 +3122,7 @@ void WebPage::simulateMouseMotion(WebCore::IntPoint position, double time)
 String WebPage::viewportConfigurationAsText(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
 {
     ViewportArguments arguments = mainFrame()->document()->viewportArguments();
-    ViewportAttributes attrs = WebCore::computeViewportAttributes(arguments, /* default layout width for non-mobile pages */ 980, deviceWidth, deviceHeight, deviceDPI, IntSize(availableWidth, availableHeight));
+    ViewportAttributes attrs = WebCore::computeViewportAttributes(arguments, /* default layout width for non-mobile pages */ 980, deviceWidth, deviceHeight, m_page->deviceScaleFactor(), IntSize(availableWidth, availableHeight));
     WebCore::restrictMinimumScaleFactorToViewportSize(attrs, IntSize(availableWidth, availableHeight));
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(attrs);
     return String::format("viewport size %dx%d scale %f with limits [%f, %f] and userScalable %f\n", static_cast<int>(attrs.layoutSize.width()), static_cast<int>(attrs.layoutSize.height()), attrs.initialScale, attrs.minimumScale, attrs.maximumScale, attrs.userScalable);

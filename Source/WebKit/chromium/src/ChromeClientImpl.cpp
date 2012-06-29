@@ -655,7 +655,7 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     // Call the common viewport computing logic in ViewportArguments.cpp.
     ViewportAttributes computed = computeViewportAttributes(
         args, settings->layoutFallbackWidth(), deviceRect.width, deviceRect.height,
-        dpi, IntSize(deviceRect.width, deviceRect.height));
+        dpi / ViewportArguments::deprecatedTargetDPI, IntSize(deviceRect.width, deviceRect.height));
 
     if (m_webView->ignoreViewportTagMaximumScale()) {
         computed.maximumScale = max(computed.maximumScale, m_webView->maxPageScaleFactor);

@@ -1,3 +1,17 @@
+2012-06-29  Konrad Piascik  <kpiascik@rim.com>
+
+        Don't hardcode target dpi of 160 (it should be 96 on desktop)
+        https://bugs.webkit.org/show_bug.cgi?id=88114
+
+        Reviewed by Adam Barth.
+
+        Updated the call to computeViewportAttributes.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::dumpConfigurationForViewport):
+        * webkit/webkitviewportattributes.cpp:
+        (webkitViewportAttributesRecompute):
+
 2012-06-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSLock should be per-JSGlobalData

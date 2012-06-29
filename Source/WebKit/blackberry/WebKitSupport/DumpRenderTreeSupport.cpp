@@ -87,7 +87,7 @@ bool DumpRenderTreeSupport::linksIncludedInFocusChain()
 void DumpRenderTreeSupport::dumpConfigurationForViewport(Frame* mainFrame, int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
 {
     ViewportArguments arguments = mainFrame->page()->viewportArguments();
-    ViewportAttributes attrs = computeViewportAttributes(arguments, /* default layout width for non-mobile pages */ 980, deviceWidth, deviceHeight, deviceDPI, IntSize(availableWidth, availableHeight));
+    ViewportAttributes attrs = computeViewportAttributes(arguments, /* default layout width for non-mobile pages */ 980, deviceWidth, deviceHeight, deviceDPI / ViewportArguments::deprecatedTargetDPI, IntSize(availableWidth, availableHeight));
     restrictMinimumScaleFactorToViewportSize(attrs, IntSize(availableWidth, availableHeight));
     restrictScaleFactorToInitialScaleIfNotUserScalable(attrs);
 

@@ -1,3 +1,24 @@
+2012-06-29  Konrad Piascik  <kpiascik@rim.com>
+
+        Don't hardcode target dpi of 160 (it should be 96 on desktop)
+        https://bugs.webkit.org/show_bug.cgi?id=88114
+
+        Reviewed by Adam Barth.
+
+        Added new WebSetting to specify what the devicePixelRatio should be.
+        Updated the call to computeViewportAttributes.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::recomputeVirtualViewportFromViewportArguments):
+        * Api/WebSettings.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+        (BlackBerry::WebKit::WebSettings::devicePixelRatio):
+        (BlackBerry::WebKit::WebSettings::setDevicePixelRatio):
+        * Api/WebSettings.h:
+        * WebKitSupport/DumpRenderTreeSupport.cpp:
+        (DumpRenderTreeSupport::dumpConfigurationForViewport):
+
 2012-06-28  Jason Liu  <jason.liu@torchmobile.com.cn>
 
         [BlackBerry] Selection items show as garbage for non-ascii characters.

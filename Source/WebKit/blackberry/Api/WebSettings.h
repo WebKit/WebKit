@@ -237,6 +237,9 @@ public:
     bool isFormAutofillEnabled() const;
     void setFormAutofillEnabled(bool);
 
+    double devicePixelRatio() const;
+    void setDevicePixelRatio(double);
+
 private:
     WebSettingsPrivate* m_private;
     WebSettings();

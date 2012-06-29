@@ -742,10 +742,10 @@ QString DumpRenderTreeSupportQt::viewportAsText(QWebPage* page, int deviceDPI, c
     WebCore::ViewportArguments args = page->d->viewportArguments();
 
     WebCore::ViewportAttributes conf = WebCore::computeViewportAttributes(args,
-        /* desktop-width */ 980,
-        /* device-width  */ deviceSize.width(),
-        /* device-height */ deviceSize.height(),
-        /* device-dpi    */ deviceDPI,
+        /* desktop-width    */ 980,
+        /* device-width     */ deviceSize.width(),
+        /* device-height    */ deviceSize.height(),
+        /* devicePixelRatio */ deviceDPI / WebCore::ViewportArguments::deprecatedTargetDPI,
         availableSize);
     WebCore::restrictMinimumScaleFactorToViewportSize(conf, availableSize);
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(conf);

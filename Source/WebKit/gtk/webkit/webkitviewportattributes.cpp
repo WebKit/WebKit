@@ -534,7 +534,7 @@ void webkitViewportAttributesRecompute(WebKitViewportAttributes* viewportAttribu
 
     ViewportArguments arguments = webView->priv->corePage->mainFrame()->document()->viewportArguments();
 
-    ViewportAttributes attributes = computeViewportAttributes(arguments, priv->desktopWidth, priv->deviceWidth, priv->deviceHeight, priv->deviceDPI, IntSize(priv->availableWidth, priv->availableHeight));
+    ViewportAttributes attributes = computeViewportAttributes(arguments, priv->desktopWidth, priv->deviceWidth, priv->deviceHeight, priv->deviceDPI / ViewportArguments::deprecatedTargetDPI, IntSize(priv->availableWidth, priv->availableHeight));
     restrictMinimumScaleFactorToViewportSize(attributes, IntSize(priv->availableWidth, priv->availableHeight));
     restrictScaleFactorToInitialScaleIfNotUserScalable(attributes);
 
