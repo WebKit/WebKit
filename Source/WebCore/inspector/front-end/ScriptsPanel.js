@@ -133,6 +133,10 @@ WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
     helpSection.addKey(outlineShortcut.name, WebInspector.UIString("Go to member"));
     this.registerShortcut(outlineShortcut.key, this._showOutlineDialog.bind(this));
 
+    var createBreakpointShortcut = WebInspector.KeyboardShortcut.makeDescriptor("b", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta);
+    helpSection.addKey(createBreakpointShortcut.name, WebInspector.UIString("Toggle breakpoint"));
+    this.registerShortcut(createBreakpointShortcut.key, this._toggleBreakpoint.bind(this));
+
     var panelEnablerHeading = WebInspector.UIString("You need to enable debugging before you can use the Scripts panel.");
     var panelEnablerDisclaimer = WebInspector.UIString("Enabling debugging will make scripts run slower.");
     var panelEnablerButton = WebInspector.UIString("Enable Debugging");
@@ -952,16 +956,28 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.addExpression(expression);
     },
 
+    _toggleBreakpoint: function()
+    {
+        var sourceFrame = this.visibleView;
+        if (!sourceFrame)
+            return;
+
+        if (sourceFrame instanceof WebInspector.JavaScriptSourceFrame) {
+            var javaScriptSourceFrame = /** @type {WebInspector.JavaScriptSourceFrame} */ sourceFrame;
+            javaScriptSourceFrame.toggleBreakpointOnCurrentLine();
+        }            
+    },
+
     _showOutlineDialog: function()
     {
-         var uiSourceCode = this._editorContainer.currentFile();
-         if (!uiSourceCode)
-             return;
+        var uiSourceCode = this._editorContainer.currentFile();
+        if (!uiSourceCode)
+            return;
 
-         if (uiSourceCode instanceof WebInspector.JavaScriptSource)
-             WebInspector.JavaScriptOutlineDialog.show(this.visibleView, uiSourceCode);
-         else if (uiSourceCode instanceof WebInspector.StyleSource)
-             WebInspector.StyleSheetOutlineDialog.show(this.visibleView, /** @type {WebInspector.StyleSource} */ uiSourceCode);
+        if (uiSourceCode instanceof WebInspector.JavaScriptSource)
+            WebInspector.JavaScriptOutlineDialog.show(this.visibleView, uiSourceCode);
+        else if (uiSourceCode instanceof WebInspector.StyleSource)
+            WebInspector.StyleSheetOutlineDialog.show(this.visibleView, /** @type {WebInspector.StyleSource} */ uiSourceCode);
     },
 
     _installDebuggerSidebarController: function()

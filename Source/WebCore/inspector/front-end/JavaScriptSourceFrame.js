@@ -359,14 +359,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             return;
         var lineNumber = target.lineNumber;
 
-        var breakpoint = this._breakpointManager.findBreakpoint(this._javaScriptSource, lineNumber);
-        if (breakpoint) {
-            if (event.shiftKey)
-                breakpoint.setEnabled(!breakpoint.enabled());
-            else
-                breakpoint.remove();
-        } else
-            this._setBreakpoint(lineNumber, "", true);
+        this._toggleBreakpoint(lineNumber, event.shiftKey);
         event.preventDefault();
     },
 
@@ -528,6 +521,30 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             var message = messages[i];
             this.addMessageToSource(message.lineNumber, message.originalMessage);
         }
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {boolean} onlyDisable
+     */
+    _toggleBreakpoint: function(lineNumber, onlyDisable)
+    {
+        var breakpoint = this._breakpointManager.findBreakpoint(this._javaScriptSource, lineNumber);
+        if (breakpoint) {
+            if (onlyDisable)
+                breakpoint.setEnabled(!breakpoint.enabled());
+            else
+                breakpoint.remove();
+        } else
+            this._setBreakpoint(lineNumber, "", true);
+    },
+
+    toggleBreakpointOnCurrentLine: function()
+    {
+        var selection = this.textViewer.selection();
+        if (!selection)
+            return;
+        this._toggleBreakpoint(selection.startLine, false);
     },
 
     /**

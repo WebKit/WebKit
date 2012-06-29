@@ -308,6 +308,14 @@ WebInspector.TextViewer.prototype = {
     },
 
     /**
+     * @return {WebInspector.TextRange}
+     */
+    selection: function(textRange)
+    {
+        return this._mainPanel._getSelection();
+    },
+    
+    /**
      * @param {WebInspector.TextRange} textRange
      */
     setSelection: function(textRange)
