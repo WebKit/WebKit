@@ -93,12 +93,13 @@ void HTMLFrameSetElement::parseAttribute(const Attribute& attribute)
         }
     } else if (attribute.name() == frameborderAttr) {
         if (!attribute.isNull()) {
-            // false or "no" or "0"..
-            if (attribute.value().toInt() == 0) {
+            const AtomicString& value = attribute.value();
+            if (equalIgnoringCase(value, "no") || equalIgnoringCase(value, "0")) {
                 m_frameborder = false;
-                m_border = 0;
+                m_frameborderSet = true;
+            } else if (equalIgnoringCase(value, "yes") || equalIgnoringCase(value, "1")) {
+                m_frameborderSet = true;
             }
-            m_frameborderSet = true;
         } else {
             m_frameborder = false;
             m_frameborderSet = false;
@@ -108,8 +109,6 @@ void HTMLFrameSetElement::parseAttribute(const Attribute& attribute)
     } else if (attribute.name() == borderAttr) {
         if (!attribute.isNull()) {
             m_border = attribute.value().toInt();
-            if (!m_border)
-                m_frameborder = false;
             m_borderSet = true;
         } else
             m_borderSet = false;

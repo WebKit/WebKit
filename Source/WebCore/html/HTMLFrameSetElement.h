@@ -38,7 +38,7 @@ public:
 
     int totalRows() const { return m_totalRows; }
     int totalCols() const { return m_totalCols; }
-    int border() const { return m_border; }
+    int border() const { return hasFrameBorder() ? m_border : 0; }
 
     bool hasBorderColor() const { return m_borderColorSet; }
 

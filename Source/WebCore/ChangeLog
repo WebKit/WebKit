@@ -1,3 +1,25 @@
+2012-06-28  Elliott Sprehn  <esprehn@gmail.com>
+
+        frameborder="no" on frameset is ignored if border attribute set
+        https://bugs.webkit.org/show_bug.cgi?id=17767
+
+        Reviewed by Tony Chang.
+
+        Fixes <frameset> frameborder and border handling. Previously we'd
+        override the frameborder=no setting if border was set. We also
+        treated frameborder="anything" the same as frameborder=0 since we
+        we just converted it to a number so frameborder=yes was incorrectly
+        treated the same as frameborder=no.
+
+        Tests: fast/frames/frameset-frameborder-boolean-values.html
+               fast/frames/frameset-frameborder-inheritance.html
+               fast/frames/frameset-frameborder-overrides-border.html
+
+        * html/HTMLFrameSetElement.cpp: Proper parsing of yes,no,1,0 values.
+        (WebCore::HTMLFrameSetElement::parseAttribute):
+        * html/HTMLFrameSetElement.h:
+        (WebCore::HTMLFrameSetElement::border): Border should be 0 if frameborder=no.
+
 2012-06-28  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Implement IDBTransaction internal active flag

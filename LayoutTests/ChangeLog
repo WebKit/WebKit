@@ -1,3 +1,19 @@
+2012-06-28  Elliott Sprehn  <esprehn@gmail.com>
+
+        frameborder="no" on frameset is ignored if border attribute set
+        https://bugs.webkit.org/show_bug.cgi?id=17767
+
+        Reviewed by Tony Chang.
+
+        Add lots of tests for <frameset> frameborder and border handling.
+
+        * fast/frames/frameset-frameborder-boolean-values-expected.txt: Added.
+        * fast/frames/frameset-frameborder-boolean-values.html: Added.
+        * fast/frames/frameset-frameborder-inheritance-expected.txt: Added.
+        * fast/frames/frameset-frameborder-inheritance.html: Added.
+        * fast/frames/frameset-frameborder-overrides-border-expected.txt: Added.
+        * fast/frames/frameset-frameborder-overrides-border.html: Added.
+
 2012-06-28  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Implement IDBTransaction internal active flag
