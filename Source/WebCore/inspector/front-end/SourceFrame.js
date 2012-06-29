@@ -177,6 +177,17 @@ WebInspector.SourceFrame.prototype = {
             this._lineToReveal = line;
     },
 
+    /**
+     * @param {WebInspector.TextRange} textRange
+     */
+    setSelection: function(textRange)
+    {
+        if (this.loaded)
+            this._textViewer.setSelection(textRange);
+        else
+            this._selectionToSet = textRange;
+    },
+
     _clearLineToReveal: function()
     {
         delete this._lineToReveal;
@@ -216,6 +227,11 @@ WebInspector.SourceFrame.prototype = {
         if (typeof this._lineToReveal === "number") {
             this.revealLine(this._lineToReveal);
             delete this._lineToReveal;
+        }
+
+        if (typeof this._selectionToSet === "object") {
+            this.setSelection(this._selectionToSet);
+            delete this._selectionToSet;
         }
 
         if (this._delayedFindSearchMatches) {

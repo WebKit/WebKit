@@ -1,3 +1,28 @@
+2012-06-28  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Cursor should follow execution line when debugging.
+        https://bugs.webkit.org/show_bug.cgi?id=90184
+
+        Reviewed by Yury Semikhatsky.
+
+        Added TextViewer.setSelection public method to set cursor selection in the editor.
+        Added TextRange.createFromLocation method to create TextRanges with the same start and end points.
+        Drive-by: removed unused _setCaretLocation() method in TextViewer.js
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.setExecutionLine):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._revealExecutionLine):
+        (WebInspector.ScriptsPanel.prototype._editorSelected):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.setSelection):
+        (WebInspector.SourceFrame.prototype.setContent):
+        * inspector/front-end/TextEditorModel.js:
+        (WebInspector.TextRange.createFromLocation):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype.setSelection):
+        (WebInspector.TextEditorMainPanel.prototype.highlightLine):
+
 2012-06-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: IDBObjectStore.autoIncrement flag not exposed

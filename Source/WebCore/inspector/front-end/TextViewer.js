@@ -307,6 +307,14 @@ WebInspector.TextViewer.prototype = {
         return true;
     },
 
+    /**
+     * @param {WebInspector.TextRange} textRange
+     */
+    setSelection: function(textRange)
+    {
+        this._mainPanel._restoreSelection(textRange);
+    },
+    
     wasShown: function()
     {
         if (!this.readOnly())
@@ -1059,7 +1067,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         this.revealLine(lineNumber);
 
         if (!this._readOnly)
-            this._restoreSelection(new WebInspector.TextRange(lineNumber, 0, lineNumber, 0), false);
+            this._restoreSelection(WebInspector.TextRange.createFromLocation(lineNumber, 0), false);
 
         this.addDecoration(lineNumber, "webkit-highlighted-line");
     },
@@ -1160,7 +1168,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             indentEndLine--;
 
         for (var lineNumber = range.startLine; lineNumber <= indentEndLine; lineNumber++)
-            this._textModel.editRange(new WebInspector.TextRange(lineNumber, 0, lineNumber, 0), indent);
+            this._textModel.editRange(new WebInspector.TextRange.createFromLocation(lineNumber, 0), indent);
 
         this._lastEditedRange = newRange;
 
@@ -1534,6 +1542,9 @@ WebInspector.TextEditorMainPanel.prototype = {
         this._cachedRows.push(lineRow);
     },
 
+    /**
+     * @return {WebInspector.TextRange}
+     */
     _getSelection: function()
     {
         var selection = window.getSelection();
@@ -1566,12 +1577,6 @@ WebInspector.TextEditorMainPanel.prototype = {
                 }
             }
         }
-    },
-
-    _setCaretLocation: function(line, column, scrollIntoView)
-    {
-        var range = new WebInspector.TextRange(line, column, line, column);
-        this._restoreSelection(range, scrollIntoView);
     },
 
     _selectionToPosition: function(container, offset)

@@ -548,6 +548,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._editorContainer.uiSourceCodeAdded(uiLocation.uiSourceCode);
         var sourceFrame = this._showFile(uiLocation.uiSourceCode);
         sourceFrame.revealLine(uiLocation.lineNumber);
+        sourceFrame.focus();
     },
 
     _callFrameSelected: function(event)
@@ -578,8 +579,9 @@ WebInspector.ScriptsPanel.prototype = {
     _editorSelected: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
-        this._showFile(uiSourceCode);
+        var sourceFrame = this._showFile(uiSourceCode);
         this._navigatorController.hideNavigatorOverlay();
+        sourceFrame.focus();
     },
 
     _scriptSelected: function(event)
