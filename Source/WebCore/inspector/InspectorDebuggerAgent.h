@@ -111,7 +111,7 @@ public:
                              RefPtr<TypeBuilder::Runtime::RemoteObject>& result,
                              TypeBuilder::OptOutput<bool>* wasThrown);
     void compileScript(ErrorString*, const String& expression, const String& sourceURL, TypeBuilder::OptOutput<TypeBuilder::Debugger::ScriptId>*, TypeBuilder::OptOutput<String>* syntaxErrorMessage);
-    void runScript(ErrorString*, const int* executionContextId, const TypeBuilder::Debugger::ScriptId&, const String* objectGroup, const bool* doNotPauseOnExceptionsAndMuteConsole, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown);
+    void runScript(ErrorString*, const TypeBuilder::Debugger::ScriptId&, const int* executionContextId, const String* objectGroup, const bool* doNotPauseOnExceptionsAndMuteConsole, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown);
 
     class Listener {
     public:

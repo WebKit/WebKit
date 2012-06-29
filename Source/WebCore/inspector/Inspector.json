@@ -471,7 +471,7 @@
                     { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." },
                     { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Determines whether Command Line API should be available during the evaluation.", "hidden": true },
                     { "name": "doNotPauseOnExceptionsAndMuteConsole", "type": "boolean", "optional": true, "description": "Specifies whether evaluation should stop on exceptions and mute console. Overrides setPauseOnException state.", "hidden": true },
-                    { "name": "contextId", "$ref": "Runtime.ExecutionContextId", "optional": true, "description": "Specifies in which isolated context to perform evaluation. Each content script lives in an isolated context and this parameter may be used to specify on of those contexts. If the parameter is omitted or 0 the evaluation will be performed in the context of the inspected page.", "hidden": true },
+                    { "name": "contextId", "$ref": "Runtime.ExecutionContextId", "optional": true, "description": "Specifies in which isolated context to perform evaluation. Each content script lives in an isolated context and this parameter may be used to specify one of those contexts. If the parameter is omitted or 0 the evaluation will be performed in the context of the inspected page.", "hidden": true },
                     { "name": "returnByValue", "type": "boolean", "optional": true, "description": "Whether the result is expected to be a JSON object that should be sent by value." }
                 ],
                 "returns": [
@@ -2595,8 +2595,8 @@
                 "name": "runScript",
                 "hidden": true,
                 "parameters": [
-                    { "name": "contextId", "$ref": "Runtime.ExecutionContextId", "optional": true, "description": "Specifies in which isolated context to perform script run. Each content script lives in an isolated context and this parameter may be used to specify on of those contexts. If the parameter is omitted or 0 the evaluation will be performed in the context of the inspected page." },
                     { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to run." },
+                    { "name": "contextId", "$ref": "Runtime.ExecutionContextId", "optional": true, "description": "Specifies in which isolated context to perform script run. Each content script lives in an isolated context and this parameter may be used to specify one of those contexts. If the parameter is omitted or 0 the evaluation will be performed in the context of the inspected page." },
                     { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." },
                     { "name": "doNotPauseOnExceptionsAndMuteConsole", "type": "boolean", "optional": true, "description": "Specifies whether script run should stop on exceptions and mute console. Overrides setPauseOnException state." }
                 ],

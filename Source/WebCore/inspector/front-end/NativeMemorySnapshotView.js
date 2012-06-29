@@ -456,9 +456,9 @@ WebInspector.NativeMemoryBarChart.prototype = {
                 nameDiv.textContent = title;
                 nameDiv.addStyleClass("memory-bar-chart-name");
                 var barCell = row.insertCell(-1);
-                barDiv = barCell.createChild("div");
+                var barDiv = barCell.createChild("div");
                 barDiv.addStyleClass("memory-bar-chart-bar");
-                var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(child);
+                viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(child);
                 barDiv.style.backgroundColor = viewProperties._fillStyle;
                 var unusedDiv = barDiv.createChild("div");
                 unusedDiv.addStyleClass("memory-bar-chart-unused");
@@ -483,8 +483,8 @@ WebInspector.NativeMemoryBarChart.prototype = {
             divs.sizeDiv.textContent = (child.size / MB).toFixed(1) + "\u2009MB";
         }
 
-        var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(memoryBlock);
-        this._totalDiv.textContent = viewProperties._description + ": " + (memoryBlock.size / MB).toFixed(1) + "\u2009MB";
+        var memoryBlockViewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(memoryBlock);
+        this._totalDiv.textContent = memoryBlockViewProperties._description + ": " + (memoryBlock.size / MB).toFixed(1) + "\u2009MB";
     }
 }
 

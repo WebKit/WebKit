@@ -1,3 +1,27 @@
+2012-06-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Annotate TextViewer.js
+        https://bugs.webkit.org/show_bug.cgi?id=90266
+
+        Reviewed by Yury Semikhatsky.
+
+        Annotated TextViewer.js and fixed found errors.
+        Drive-by: Fixed NativeMemorySnapshotView.js compilation.
+        Drive-by: Fixed protocol-externs.js compilation.
+        Drive-by: Removed unused platform parameter from TextViewer constructor.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::runScript):
+        * inspector/InspectorDebuggerAgent.h:
+        (InspectorDebuggerAgent):
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeMemoryBarChart.prototype._updateView):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorMainPanel.prototype._updateHighlightsForRange):
+
 2012-06-29  Eric Seidel  <eric@webkit.org>
 
         Remove still more BUILDING_ON_LEOPARD branches now that no port supports leopard

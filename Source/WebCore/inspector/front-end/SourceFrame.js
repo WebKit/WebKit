@@ -44,7 +44,7 @@ WebInspector.SourceFrame = function(contentProvider)
     this._textModel = new WebInspector.TextEditorModel();
 
     var textViewerDelegate = new WebInspector.TextViewerDelegateForSourceFrame(this);
-    this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform(), this._url, textViewerDelegate);
+    this._textViewer = new WebInspector.TextViewer(this._textModel, this._url, textViewerDelegate);
 
     this._currentSearchResultIndex = -1;
     this._searchResults = [];
