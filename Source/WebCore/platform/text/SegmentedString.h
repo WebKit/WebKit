@@ -22,6 +22,7 @@
 
 #include "PlatformString.h"
 #include <wtf/Deque.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {
@@ -54,15 +55,12 @@ public:
 
     int numberOfCharactersConsumed() const { return m_string.length() - m_length; }
 
-    void appendTo(String& str) const
+    void appendTo(StringBuilder& builder) const
     {
-        if (m_string.characters() == m_current) {
-            if (str.isEmpty())
-                str = m_string;
-            else
-                str.append(m_string);
-        } else
-            str.append(String(m_current, m_length));
+        if (m_string.characters() == m_current)
+            builder.append(m_string);
+        else
+            builder.append(String(m_current, m_length));
     }
 
 public:

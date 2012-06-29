@@ -184,7 +184,7 @@ void SegmentedString::advanceSubstring()
 
 String SegmentedString::toString() const
 {
-    String result;
+    StringBuilder result;
     if (m_pushedChar1) {
         result.append(m_pushedChar1);
         if (m_pushedChar2)
@@ -197,7 +197,7 @@ String SegmentedString::toString() const
         for (; it != e; ++it)
             it->appendTo(result);
     }
-    return result;
+    return result.toString();
 }
 
 void SegmentedString::advance(unsigned count, UChar* consumedCharacters)

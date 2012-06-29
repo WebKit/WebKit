@@ -1,3 +1,18 @@
+2012-06-29  Kwang Yul Seo  <skyul@company100.net>
+
+        Use StringBuilder in SegmentedString::toString()
+        https://bugs.webkit.org/show_bug.cgi?id=90247
+
+        Reviewed by Adam Barth.
+
+        Use a StringBuilder instead of String concatenation because StringBuilder is generally faster.
+        No new tests. Covered by existing tests.
+
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::toString):
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedSubstring::appendTo):
+
 2012-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac build fix after r121518.
