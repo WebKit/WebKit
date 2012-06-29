@@ -1,3 +1,16 @@
+2012-06-29  Kwang Yul Seo  <skyul@company100.net>
+
+        Update FIXME comment in XMLDocumentParser::wellFormed
+        https://bugs.webkit.org/show_bug.cgi?id=90223
+
+        Reviewed by Adam Barth.
+
+        XMLDocumentParser::wellFormed is still used by the XMLHttpRequest to check if the responseXML was well formed.
+        So it can't be removed.
+
+        * xml/parser/XMLDocumentParser.h:
+        (XMLDocumentParser):
+
 2012-06-29  Andreas Kling  <kling@webkit.org>
 
         Separate mutating CSSStyleDeclaration operations.

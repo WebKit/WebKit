@@ -94,7 +94,7 @@ class Text;
 
         static bool parseDocumentFragment(const String&, DocumentFragment*, Element* parent = 0, FragmentScriptingPermission = AllowScriptingContent);
 
-        // FIXME: This function used to be used by WML. Can we remove it?
+        // Used by the XMLHttpRequest to check if the responseXML was well formed.
         virtual bool wellFormed() const { return !m_sawError; }
 
         TextPosition textPosition() const;
