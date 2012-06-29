@@ -59,7 +59,7 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool isPrinterFon
     CGFontRef cgFont = 0;
     loadFont(nsFont, size, m_font, cgFont);
     
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     // FIXME: Chromium: The following code isn't correct for the Chromium port since the sandbox might
     // have blocked font loading, in which case we'll only have the real loaded font file after the call to loadFont().
     {
@@ -150,7 +150,7 @@ void FontPlatformData::setFont(NSFont *font)
 #endif
     
     m_cgFont.adoptCF(cgFont);
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     {
         CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(toCTFontRef(m_font));
         m_isColorBitmapFont = traits & kCTFontColorGlyphsTrait;

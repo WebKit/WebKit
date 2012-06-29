@@ -119,7 +119,7 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
         } else
             CGContextShowGlyphsWithAdvances(context, glyphs, advances, count);
     }
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     else {
         if (!count)
             return;

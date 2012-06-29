@@ -1,3 +1,17 @@
+2012-06-29  Eric Seidel  <eric@webkit.org>
+
+        Remove more BUILDING_ON_LEOPARD branches now that no port builds on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=90252
+
+        Reviewed by Ryosuke Niwa.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:WebCore::finalFrame:WebCore::]):
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.mm:
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2012-06-28  MORITA Hajime  <morrita@google.com>
 
         [Refactoring] NodeRenderingContext ctor could be built on top of the ComposedShadowTreeWalker

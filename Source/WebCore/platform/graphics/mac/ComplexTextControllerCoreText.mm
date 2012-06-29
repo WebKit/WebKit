@@ -39,15 +39,6 @@
 #include <CoreText/CoreText.h>
 #endif
 
-#if defined(BUILDING_ON_LEOPARD)
-// The following symbols are SPI in 10.5.
-extern "C" {
-void CTRunGetAdvances(CTRunRef run, CFRange range, CGSize buffer[]);
-const CGSize* CTRunGetAdvancesPtr(CTRunRef run);
-extern const CFStringRef kCTTypesetterOptionForcedEmbeddingLevel;
-}
-#endif
-
 @interface WebCascadeList : NSArray {
     @private
     const WebCore::Font* _font;
@@ -218,7 +209,7 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
         static CFDictionaryRef ltrTypesetterOptions = CFDictionaryCreate(kCFAllocatorDefault, optionKeys, ltrOptionValues, WTF_ARRAY_LENGTH(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
         static CFDictionaryRef rtlTypesetterOptions = CFDictionaryCreate(kCFAllocatorDefault, optionKeys, rtlOptionValues, WTF_ARRAY_LENGTH(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
         ProviderInfo info = { cp, length, stringAttributes.get() };
         RetainPtr<CTTypesetterRef> typesetter(AdoptCF, wkCreateCTTypesetterWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run.ltr() ? ltrTypesetterOptions : rtlTypesetterOptions));
 #else

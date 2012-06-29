@@ -28,7 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API) && ENABLE(PLUGIN_PROCESS)
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
 
 #import "PluginProcess.h"
 #import "NetscapePluginModule.h"
@@ -190,6 +190,6 @@ NPError WKN_FileStopAccessing(const char* path)
     return NPERR_NO_ERROR;
 }
 
-#endif // !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // !defined(BUILDING_ON_SNOW_LEOPARD)
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API) && ENABLE(PLUGIN_PROCESS)

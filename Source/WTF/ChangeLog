@@ -1,5 +1,17 @@
 2012-06-29  Eric Seidel  <eric@webkit.org>
 
+        Remove more BUILDING_ON_LEOPARD branches now that no port builds on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=90252
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::userDefault):
+
+2012-06-29  Eric Seidel  <eric@webkit.org>
+
         Remove more BUILDING_ON_LEOPARD usage in PLATFORM(MAC) code
         https://bugs.webkit.org/show_bug.cgi?id=85846
 

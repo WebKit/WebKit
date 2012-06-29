@@ -72,7 +72,7 @@ static String formatLocalizedString(String format, ...)
 #endif
 }
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
 static String truncatedStringForLookupMenuItem(const String& original)
 {
     if (original.isEmpty())
