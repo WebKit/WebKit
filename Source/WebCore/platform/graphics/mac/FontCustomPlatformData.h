@@ -30,6 +30,8 @@
 #include <wtf/Noncopyable.h>
 
 typedef struct CGFont* CGFontRef;
+typedef UInt32 ATSFontContainerRef;
+typedef UInt32 ATSFontRef;
 
 #if USE(SKIA_ON_MAC_CHROMIUM)
 class SkTypeface;
@@ -43,8 +45,9 @@ class SharedBuffer;
 struct FontCustomPlatformData {
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
-    explicit FontCustomPlatformData(CGFontRef cgFont)
-        : m_cgFont(cgFont)
+    FontCustomPlatformData(ATSFontContainerRef container, CGFontRef cgFont)
+        : m_atsContainer(container)
+        , m_cgFont(cgFont)
 #if USE(SKIA_ON_MAC_CHROMIUM)
         , m_typeface(0)
 #endif

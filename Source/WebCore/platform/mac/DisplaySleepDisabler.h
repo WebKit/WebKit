@@ -29,6 +29,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
+#ifdef BUILDING_ON_LEOPARD
+#include "Timer.h"
+#endif
+
 namespace WebCore {
 
 class DisplaySleepDisabler {
@@ -36,11 +40,18 @@ class DisplaySleepDisabler {
 public:
     static PassOwnPtr<DisplaySleepDisabler> create(const char* reason) { return adoptPtr(new DisplaySleepDisabler(reason)); }
     ~DisplaySleepDisabler();
-
+    
 private:
     DisplaySleepDisabler(const char* reason);
+
+#ifdef BUILDING_ON_LEOPARD
+    void systemActivityTimerFired(Timer<DisplaySleepDisabler>*);
+#endif
     
     uint32_t m_disableDisplaySleepAssertion;
+#ifdef BUILDING_ON_LEOPARD
+    Timer<DisplaySleepDisabler> m_systemActivityTimer;
+#endif
 };
 
 }

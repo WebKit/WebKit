@@ -36,6 +36,13 @@ namespace WebCore {
     class PlatformCALayerClient;
 }
 
+#if defined(BUILDING_ON_LEOPARD)
+@interface CALayer(WebLayerInternal)
+- (CGAffineTransform)contentsTransform;
+- (void)setContentsTransform:(CGAffineTransform)t;
+@end
+#endif
+
 @interface WebLayer : CALayer 
 {
 }

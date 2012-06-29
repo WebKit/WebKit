@@ -75,8 +75,10 @@ void PopupMenuMac::populate()
     if (!client()->shouldPopOver())
         [m_popup.get() addItemWithTitle:@""];
 
+#ifndef BUILDING_ON_LEOPARD
     TextDirection menuTextDirection = client()->menuStyle().textDirection();
     [m_popup.get() setUserInterfaceLayoutDirection:menuTextDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+#endif // !defined(BUILDING_ON_LEOPARD)
 
     ASSERT(client());
     int size = client()->listSize();
@@ -96,6 +98,7 @@ void PopupMenuMac::populate()
                 [attributes setObject:font forKey:NSFontAttributeName];
             }
 
+#ifndef BUILDING_ON_LEOPARD
             RetainPtr<NSMutableParagraphStyle> paragraphStyle(AdoptNS, [[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
             [paragraphStyle.get() setAlignment:menuTextDirection == LTR ? NSLeftTextAlignment : NSRightTextAlignment];
             NSWritingDirection writingDirection = style.textDirection() == LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
@@ -106,6 +109,7 @@ void PopupMenuMac::populate()
                 [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
             }
             [attributes setObject:paragraphStyle.get() forKey:NSParagraphStyleAttributeName];
+#endif // !defined(BUILDING_ON_LEOPARD)
 
             // FIXME: Add support for styling the foreground and background colors.
             // FIXME: Find a way to customize text color when an item is highlighted.

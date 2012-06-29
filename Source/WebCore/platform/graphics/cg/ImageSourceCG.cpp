@@ -85,11 +85,21 @@ ImageSource::~ImageSource()
 
 void ImageSource::clear(bool destroyAllFrames, size_t, SharedBuffer* data, bool allDataReceived)
 {
-    // ImageIO discards previously decoded image frames if the client
+#if !defined(BUILDING_ON_LEOPARD)
+    // Recent versions of ImageIO discard previously decoded image frames if the client
     // application no longer holds references to them, so there's no need to throw away
     // the decoder unless we're explicitly asked to destroy all of the frames.
+
     if (!destroyAllFrames)
         return;
+#else
+    // Older versions of ImageIO hold references to previously decoded image frames.
+    // There is no API to selectively release some of the frames it is holding, and
+    // if we don't release the frames we use too much memory on large images.
+    // Destroying the decoder is the only way to release previous frames.
+
+    UNUSED_PARAM(destroyAllFrames);
+#endif
 
     if (m_decoder) {
         CFRelease(m_decoder);

@@ -755,6 +755,7 @@ String htmlSelectMultipleItems(size_t count)
 String imageTitle(const String& filename, const IntSize& size)
 {
 #if USE(CF)
+#if !defined(BUILDING_ON_LEOPARD)
     RetainPtr<CFStringRef> filenameCFString(AdoptCF, filename.createCFString());
     RetainPtr<CFLocaleRef> locale(AdoptCF, CFLocaleCopyCurrent());
     RetainPtr<CFNumberFormatterRef> formatter(AdoptCF, CFNumberFormatterCreate(0, locale.get(), kCFNumberFormatterDecimalStyle));
@@ -768,6 +769,10 @@ String imageTitle(const String& filename, const IntSize& size)
     RetainPtr<CFStringRef> heightString(AdoptCF, CFNumberFormatterCreateStringWithNumber(0, formatter.get(), height.get()));
 
     return formatLocalizedString(WEB_UI_STRING("%@ %@×%@ pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filenameCFString.get(), widthString.get(), heightString.get());
+#else
+    RetainPtr<CFStringRef> filenameCFString(AdoptCF, filename.createCFString());
+    return formatLocalizedString(WEB_UI_STRING("%@ %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filenameCFString.get(), size.width(), size.height());
+#endif
 #else
     return formatLocalizedString(WEB_UI_STRING("<filename> %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)"), size.width(), size.height()).replace("<filename>", filename);
 #endif
