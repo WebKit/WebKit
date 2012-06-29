@@ -1,3 +1,13 @@
+2012-06-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        Use floating keyframe rule list when parsing @-webkit-keyframes and allow abrupt rule termination
+        https://bugs.webkit.org/show_bug.cgi?id=90073
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/css-keyframe-unexpected-end-expected.txt: Added.
+        * fast/css/css-keyframe-unexpected-end.html: Added.
+
 2012-06-29  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening after r121494. Added new baseline to

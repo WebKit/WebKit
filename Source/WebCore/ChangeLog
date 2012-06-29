@@ -1,3 +1,23 @@
+2012-06-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        Use floating keyframe rule list when parsing @-webkit-keyframes and allow abrupt rule termination
+        https://bugs.webkit.org/show_bug.cgi?id=90073
+
+        Reviewed by Antti Koivisto.
+
+        - The grammar is changed to allow abruptly terminated stylesheet in the @-webkit-keyframes (use closing_brace, not '}').
+        - A floating StyleKeyframe vector is introduced to separate the creation and filling of StyleRuleKeyframes, as other rules do.
+
+        Test: fast/css/css-keyframe-unexpected-end.html
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createFloatingKeyframeVector):
+        (WebCore):
+        (WebCore::CSSParser::sinkFloatingKeyframeVector):
+        (WebCore::CSSParser::createKeyframesRule):
+        * css/CSSParser.h:
+
 2012-06-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: add character data to the DOM section of native memory view

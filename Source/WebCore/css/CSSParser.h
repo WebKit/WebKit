@@ -255,7 +255,7 @@ public:
     MediaQuerySet* createMediaQuerySet();
     StyleRuleBase* createImportRule(const CSSParserString&, MediaQuerySet*);
     StyleKeyframe* createKeyframe(CSSParserValueList*);
-    StyleRuleKeyframes* createKeyframesRule();
+    StyleRuleKeyframes* createKeyframesRule(const String&, PassOwnPtr<Vector<RefPtr<StyleKeyframe> > >);
 
     typedef Vector<RefPtr<StyleRuleBase> > RuleList;
     StyleRuleBase* createMediaRule(MediaQuerySet*, RuleList*);
@@ -275,6 +275,9 @@ public:
     MediaQuery* createFloatingMediaQuery(MediaQuery::Restrictor, const String&, PassOwnPtr<Vector<OwnPtr<MediaQueryExp> > >);
     MediaQuery* createFloatingMediaQuery(PassOwnPtr<Vector<OwnPtr<MediaQueryExp> > >);
     PassOwnPtr<MediaQuery> sinkFloatingMediaQuery(MediaQuery*);
+
+    Vector<RefPtr<StyleKeyframe> >* createFloatingKeyframeVector();
+    PassOwnPtr<Vector<RefPtr<StyleKeyframe> > > sinkFloatingKeyframeVector(Vector<RefPtr<StyleKeyframe> >*);
 
     void addNamespace(const AtomicString& prefix, const AtomicString& uri);
     QualifiedName determineNameInNamespace(const AtomicString& prefix, const AtomicString& localName);
@@ -438,6 +441,8 @@ private:
     OwnPtr<MediaQuery> m_floatingMediaQuery;
     OwnPtr<MediaQueryExp> m_floatingMediaQueryExp;
     OwnPtr<Vector<OwnPtr<MediaQueryExp> > > m_floatingMediaQueryExpList;
+
+    OwnPtr<Vector<RefPtr<StyleKeyframe> > > m_floatingKeyframeVector;
 
     Vector<OwnPtr<CSSParserSelector> > m_reusableSelectorVector;
     Vector<OwnPtr<CSSParserSelector> > m_reusableRegionSelectorVector;

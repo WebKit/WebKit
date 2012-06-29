@@ -9374,6 +9374,18 @@ PassOwnPtr<MediaQuery> CSSParser::sinkFloatingMediaQuery(MediaQuery* query)
     return m_floatingMediaQuery.release();
 }
 
+Vector<RefPtr<StyleKeyframe> >* CSSParser::createFloatingKeyframeVector()
+{
+    m_floatingKeyframeVector = adoptPtr(new Vector<RefPtr<StyleKeyframe> >());
+    return m_floatingKeyframeVector.get();
+}
+
+PassOwnPtr<Vector<RefPtr<StyleKeyframe> > > CSSParser::sinkFloatingKeyframeVector(Vector<RefPtr<StyleKeyframe> >* keyframeVector)
+{
+    ASSERT_UNUSED(keyframeVector, m_floatingKeyframeVector == keyframeVector);
+    return m_floatingKeyframeVector.release();
+}
+
 MediaQuerySet* CSSParser::createMediaQuerySet()
 {
     RefPtr<MediaQuerySet> queries = MediaQuerySet::create();
@@ -9433,10 +9445,14 @@ PassRefPtr<CSSRuleSourceData> CSSParser::popRuleData()
     return data.release();
 }
 
-StyleRuleKeyframes* CSSParser::createKeyframesRule()
+StyleRuleKeyframes* CSSParser::createKeyframesRule(const String& name, PassOwnPtr<Vector<RefPtr<StyleKeyframe> > > popKeyframes)
 {
+    OwnPtr<Vector<RefPtr<StyleKeyframe> > > keyframes = popKeyframes;
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     RefPtr<StyleRuleKeyframes> rule = StyleRuleKeyframes::create();
+    for (size_t i = 0; i < keyframes->size(); ++i)
+        rule->parserAppendKeyframe(keyframes->at(i));
+    rule->setName(name);
     StyleRuleKeyframes* rulePtr = rule.get();
     m_parsedRules.append(rule.release());
     return rulePtr;

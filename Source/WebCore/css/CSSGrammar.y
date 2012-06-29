@@ -82,7 +82,7 @@ using namespace HTMLNames;
     CSSParserValueList* valueList;
     Vector<OwnPtr<MediaQueryExp> >* mediaQueryExpList;
     StyleKeyframe* keyframe;
-    StyleRuleKeyframes* keyframesRule;
+    Vector<RefPtr<StyleKeyframe> >* keyframeRuleList;
     float val;
     CSSPropertyID id;
 }
@@ -252,7 +252,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %type <string> keyframe_name
 %type <keyframe> keyframe_rule
-%type <keyframesRule> keyframes_rule
+%type <keyframeRuleList> keyframes_rule
 %type <valueList> key_list
 %type <value> key
 
@@ -621,9 +621,8 @@ medium:
   ;
 
 keyframes:
-    WEBKIT_KEYFRAMES_SYM maybe_space keyframe_name maybe_space '{' maybe_space keyframes_rule '}' {
-        $$ = $7;
-        $7->setName($3);
+    WEBKIT_KEYFRAMES_SYM maybe_space keyframe_name maybe_space '{' maybe_space keyframes_rule closing_brace {
+        $$ = static_cast<CSSParser*>(parser)->createKeyframesRule($3, static_cast<CSSParser*>(parser)->sinkFloatingKeyframeVector($7));
     }
     ;
   
@@ -633,11 +632,11 @@ keyframe_name:
     ;
 
 keyframes_rule:
-    /* empty */ { $$ = static_cast<CSSParser*>(parser)->createKeyframesRule(); }
+    /* empty */ { $$ = static_cast<CSSParser*>(parser)->createFloatingKeyframeVector(); }
     | keyframes_rule keyframe_rule maybe_space {
         $$ = $1;
         if ($2)
-            $$->parserAppendKeyframe($2);
+            $$->append($2);
     }
     ;
 
