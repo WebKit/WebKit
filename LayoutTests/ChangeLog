@@ -1,3 +1,12 @@
+2012-06-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        [chromium] Layout Test inspector/debugger/debugger-compile-and-run.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=90285
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/debugger-compile-and-run.html:
+
 2012-06-29  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Unreviewed gardening.

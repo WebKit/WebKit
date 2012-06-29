@@ -19,7 +19,7 @@ var test = function()
                 InspectorTest.assertTrue(!!scriptId);
                 var contextId = undefined;
                 InspectorTest.addResult("Running script");
-                DebuggerAgent.runScript(contextId, scriptId, "console", false, runCallback.bind(this));
+                DebuggerAgent.runScript(scriptId, contextId, "console", false, runCallback.bind(this));
             }
 
             function runCallback(error, result, wasThrown)
@@ -44,7 +44,7 @@ var test = function()
                 InspectorTest.assertTrue(!!scriptId);
                 var contextId = undefined;
                 InspectorTest.addResult("Running script");
-                DebuggerAgent.runScript(contextId, scriptId, "console", false, runCallback.bind(this));
+                DebuggerAgent.runScript(scriptId, contextId, "console", false, runCallback.bind(this));
             }
 
             function runCallback(error, result, wasThrown)
