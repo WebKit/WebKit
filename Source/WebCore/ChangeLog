@@ -1,3 +1,9 @@
+2012-06-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Let Xcode have its own way after r121513.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-06-29  Mihai Balan  <mibalan@adobe.com>
 
         [CSS Regions] Adding feature defines for CSS Regions for Windows
