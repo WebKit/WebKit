@@ -903,7 +903,7 @@ void MediaPlayerPrivateQTKit::setClosedCaptionsVisible(bool closedCaptionsVisibl
     if (metaDataAvailable()) {
         wkQTMovieSetShowClosedCaptions(m_qtMovie.get(), closedCaptionsVisible);
 
-#if USE(ACCELERATED_COMPOSITING) && !defined(BUILDING_ON_LEOPARD)
+#if USE(ACCELERATED_COMPOSITING)
     if (closedCaptionsVisible && m_qtVideoLayer) {
         // Captions will be rendered upside down unless we flag the movie as flipped (again). See <rdar://7408440>.
         [m_qtVideoLayer.get() setGeometryFlipped:YES];

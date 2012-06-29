@@ -1,3 +1,16 @@
+2012-06-29  Eric Seidel  <eric@webkit.org>
+
+        Remove BUILDING_ON_LEOPARD now that no ports build on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=90249
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldEraseMarkersAfterChangeSelection):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
 2012-06-29  Konrad Piascik  <kpiascik@rim.com>
 
         Don't hardcode target dpi of 160 (it should be 96 on desktop)

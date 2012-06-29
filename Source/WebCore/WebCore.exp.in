@@ -2535,7 +2535,7 @@ __ZNK7WebCore4KURL7isValidEv
 __ZNK7WebCore4KURL22protocolIsInHTTPFamilyEv
 #endif
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
 __ZN7WebCore27AlternativeTextUIController15addAlternativesERKN3WTF9RetainPtrI18NSTextAlternativesEE
 __ZN7WebCore27AlternativeTextUIController22alternativesForContextEy
 __ZN7WebCore27AlternativeTextUIController5clearEv

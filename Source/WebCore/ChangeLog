@@ -1,3 +1,32 @@
+2012-06-29  Eric Seidel  <eric@webkit.org>
+
+        Remove BUILDING_ON_LEOPARD now that no ports build on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=90249
+
+        Reviewed by Ryosuke Niwa.
+
+        I don't think I quite got it all yet, but this is another step towards
+        removing Leopard support in WebCore.
+
+        * WebCore.exp.in:
+        * page/AlternativeTextClient.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+        * platform/graphics/cg/ImageBufferDataCG.h:
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::setClosedCaptionsVisible):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/network/Credential.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore):
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost):
+        * platform/text/TextChecking.h:
+        (WebCore):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::containsPaintedContent):
+
 2012-06-29  Andreas Kling  <kling@webkit.org>
 
         Unreviewed, rolling out r121562.

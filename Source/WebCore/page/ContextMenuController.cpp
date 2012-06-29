@@ -934,7 +934,7 @@ void ContextMenuController::populate()
                         appendItem(IgnoreGrammarItem, m_contextMenu.get());
                     appendItem(*separatorItem(), m_contextMenu.get());
                     haveContextMenuItemsForMisspellingOrGrammer = true;
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC)
                 } else {
                     // If the string was autocorrected, generate a contextual menu item allowing it to be changed back.
                     String replacedString = m_hitTestResult.replacedString();
