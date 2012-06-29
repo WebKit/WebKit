@@ -991,7 +991,7 @@ bool RenderLayerBacking::containsPaintedContent() const
     if (renderer()->isVideo() && toRenderVideo(renderer())->shouldDisplayVideo())
         return hasBoxDecorationsOrBackground(renderer());
 #endif
-#if PLATFORM(MAC) && USE(CA) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && USE(CA) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 #elif ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
     if (isAcceleratedCanvas(renderer()))
         return hasBoxDecorationsOrBackground(renderer());

@@ -58,7 +58,7 @@ typedef UInt32 FMFont;
 typedef FMFont ATSUFontID;
 typedef UInt16 ATSGlyphRef;
 
-#if PLATFORM(MAC) && USE(CA) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && USE(CA) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 typedef struct __IOSurface *IOSurfaceRef;
 #endif
 

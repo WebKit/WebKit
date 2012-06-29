@@ -1,5 +1,33 @@
 2012-06-29  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, rolling out r121572.
+        http://trac.webkit.org/changeset/121572
+        https://bugs.webkit.org/show_bug.cgi?id=90249
+
+        Breaks Mac build since it depends on r121547, which was rolled
+        out
+
+        * WebCore.exp.in:
+        * page/AlternativeTextClient.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+        * platform/graphics/cg/ImageBufferDataCG.h:
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::setClosedCaptionsVisible):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/network/Credential.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore):
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost):
+        * platform/text/TextChecking.h:
+        (WebCore):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::containsPaintedContent):
+
+2012-06-29  Tony Chang  <tony@chromium.org>
+
         Unreviewed, rolling out r121547.
         http://trac.webkit.org/changeset/121547
         https://bugs.webkit.org/show_bug.cgi?id=90256
