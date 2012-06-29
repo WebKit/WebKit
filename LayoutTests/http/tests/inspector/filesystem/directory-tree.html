@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="../inspector-test.js"></script>
+<script src="filesystem-test.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", runTest);
+function test()
+{
+    var resourcesPanel = WebInspector.panels.resources;
+    var fileSystemListTreeElement = resourcesPanel.fileSystemListTreeElement;
+    if (!fileSystemListTreeElement) {
+        fileSystemListTreeElement = new WebInspector.FileSystemListTreeElement(resourcesPanel);
+        resourcesPanel.fileSystemListTreeElement = fileSystemListTreeElement;
+        resourcesPanel.sidebarTree.appendChild(fileSystemListTreeElement);
+    }
+
+    var fileSystemItem = null;
+    var fileSystemView = null;
+    var directoryTree = null;
+
+    var testStep = [
+        function()
+        {
+            WebInspector.showPanel("resources");
+            InspectorTest.createDirectory("/hoge", testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.createDirectory("/hoge/fuga", testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.createFile("/hoge/fuga/piyo", testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.addSniffer(WebInspector.FileSystemListTreeElement.prototype, "_fileSystemAdded", testStep.shift(), false);
+            fileSystemListTreeElement._refreshFileSystem();
+        },
+
+        function(event)
+        {
+            if (event.data.name !== "filesystem:http://127.0.0.1:8000/temporary")
+                return;
+
+            fileSystemItem = fileSystemListTreeElement._fileSystemTreeElementByName("filesystem:http://127.0.0.1:8000/temporary");
+
+            fileSystemItem.select();
+            fileSystemView = fileSystemItem._fileSystemView;
+            directoryTree = fileSystemView.directoryTree;
+
+            InspectorTest.callOnRequestCompleted(testStep.shift());
+        },
+
+        function() {
+            dumpDirectoryTree(directoryTree);
+            InspectorTest.addResult("");
+
+            directoryTree.children[0].expandRecursively();
+            InspectorTest.callOnRequestCompleted(testStep.shift());
+        },
+
+        function() {
+            dumpDirectoryTree(directoryTree);
+
+            InspectorTest.clearFileSystem(testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.completeTest();
+        }
+    ];
+
+    InspectorTest.clearFileSystem(testStep.shift());
+
+    function dumpDirectoryTree(treeNode, indent)
+    {
+        indent = indent || "";
+        InspectorTest.addResult(indent + "[directory tree node]");
+        InspectorTest.addResult(indent + "expanded: " + treeNode.expanded);
+        if (treeNode._entry)
+            InspectorTest.addResult(indent + "entry: " + treeNode._entry.url)
+        else
+            InspectorTest.addResult(indent + "entry: (null)")
+        InspectorTest.addResult(indent + "#children: " + treeNode.children.length);
+
+        for (var i = 0; i < treeNode.children.length; ++i)
+            dumpDirectoryTree(treeNode.children[i], indent + "  ");
+    }
+}
+</script>
+</head>
+<body>
+<p>Tests directory tree on FileSystemView.</p>
+</body>
+</html>

@@ -291,6 +291,18 @@ WebInspector.FileSystemModel.Entry = function(fileSystemModel, fileSystem, backe
     this._isDirectory = backendEntry.isDirectory;
 }
 
+/**
+ * @param {WebInspector.FileSystemModel.Entry} x
+ * @param {WebInspector.FileSystemModel.Entry} y
+ * @return {number}
+ */
+WebInspector.FileSystemModel.Entry.compare = function(x, y)
+{
+    if (x.isDirectory != y.isDirectory)
+        return y.isDirectory ? 1 : -1;
+    return x.name.localeCompare(y.name);
+}
+
 WebInspector.FileSystemModel.Entry.prototype = {
     /**
      * @type {WebInspector.FileSystemModel}

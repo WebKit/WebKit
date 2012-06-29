@@ -3,6 +3,37 @@ var initialize_FileSystemTest = function()
     var nextCallbackId = 0;
     var callbacks = {};
 
+    InspectorTest.addSniffer(WebInspector.FileSystemRequestManager.prototype, "requestFileSystemRoot", incrementRequestCount, true);
+    InspectorTest.addSniffer(WebInspector.FileSystemRequestManager.prototype, "requestDirectoryContent", incrementRequestCount, true);
+    InspectorTest.addSniffer(WebInspector.FileSystemRequestManager.prototype, "requestMetadata", incrementRequestCount, true);
+
+    InspectorTest.addSniffer(WebInspector.FileSystemRequestManager.prototype, "_fileSystemRootReceived", decrementRequestCount, true);
+    InspectorTest.addSniffer(WebInspector.FileSystemRequestManager.prototype, "_directoryContentReceived", decrementRequestCount, true);
+    InspectorTest.addSniffer(WebInspector.FileSystemRequestManager.prototype, "_metadataReceived", decrementRequestCount, true);
+
+    var idleCallbacks = [];
+    var requestCount = 0;
+    function incrementRequestCount()
+    {
+        ++requestCount;
+    }
+
+    function decrementRequestCount()
+    {
+        if (--requestCount !== 0)
+            return;
+
+        var callbacks = idleCallbacks;
+        idleCallbacks = [];
+        for (var i = 0; i < callbacks.length; ++i)
+            callbacks[i]();
+    }
+
+    InspectorTest.callOnRequestCompleted = function(callback)
+    {
+        idleCallbacks.push(callback);
+    };
+
     InspectorTest.registerCallback = function(callback)
     {
         var callbackId = ++nextCallbackId;

@@ -1,3 +1,31 @@
+2012-06-29  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Add FileSystemView
+        https://bugs.webkit.org/show_bug.cgi?id=73301
+
+        This patch introduce a split view as FileSystemView. Including directory tree as sidebar tree.
+
+        Reviewed by Vsevolod Vlasov.
+
+        Test: http/tests/inspector/filesystem/directory-tree.html
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/FileSystemModel.js:
+        (WebInspector.FileSystemModel.Entry.compare):
+        * inspector/front-end/FileSystemView.js: Added.
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.showFileSystem):
+        (WebInspector.FileSystemTreeElement.prototype.get itemURL):
+        (WebInspector.FileSystemTreeElement.prototype.onattach):
+        (WebInspector.FileSystemTreeElement.prototype._handleContextMenuEvent):
+        (WebInspector.FileSystemTreeElement.prototype._refreshFileSystem):
+        (WebInspector.FileSystemTreeElement.prototype.onselect):
+        (WebInspector.FileSystemTreeElement.prototype.clear):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2012-06-29  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Replace v8::Integer::New() with v8Integer() in custom bindings

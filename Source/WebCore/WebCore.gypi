@@ -6277,6 +6277,7 @@
             'inspector/front-end/ExtensionServer.js',
             'inspector/front-end/FileManager.js',
             'inspector/front-end/FileSystemModel.js',
+            'inspector/front-end/FileSystemView.js',
             'inspector/front-end/FilteredItemSelectionDialog.js',
             'inspector/front-end/FontView.js',
             'inspector/front-end/GoToLineDialog.js',

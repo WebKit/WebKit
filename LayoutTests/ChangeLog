@@ -1,3 +1,19 @@
+2012-06-29  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Add FileSystemView
+        https://bugs.webkit.org/show_bug.cgi?id=73301
+
+        This patch introduce a split view as FileSystemView. Including directory tree as sidebar tree.
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/filesystem/directory-tree-expected.txt: Added.
+        * http/tests/inspector/filesystem/directory-tree.html: Added.
+        * http/tests/inspector/filesystem/filesystem-test.js:
+        (initialize_FileSystemTest.incrementRequestCount):
+        (initialize_FileSystemTest.decrementRequestCount):
+        (initialize_FileSystemTest.InspectorTest.callOnRequestCompleted):
+
 2012-06-28  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Resource content is not loaded if Resource.requestContent method is called before network request is finished.

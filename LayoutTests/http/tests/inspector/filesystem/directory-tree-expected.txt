@@ -1,0 +1,32 @@
+Tests directory tree on FileSystemView.
+
+[directory tree node]
+expanded: true
+entry: (null)
+#children: 1
+  [directory tree node]
+  expanded: true
+  entry: filesystem:http://127.0.0.1:8000/temporary/
+  #children: 1
+    [directory tree node]
+    expanded: false
+    entry: filesystem:http://127.0.0.1:8000/temporary/hoge
+    #children: 0
+
+[directory tree node]
+expanded: true
+entry: (null)
+#children: 1
+  [directory tree node]
+  expanded: true
+  entry: filesystem:http://127.0.0.1:8000/temporary/
+  #children: 1
+    [directory tree node]
+    expanded: true
+    entry: filesystem:http://127.0.0.1:8000/temporary/hoge
+    #children: 1
+      [directory tree node]
+      expanded: false
+      entry: filesystem:http://127.0.0.1:8000/temporary/hoge/fuga
+      #children: 0
+

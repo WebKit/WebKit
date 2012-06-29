@@ -211,6 +211,7 @@ modules = [
             "DatabaseQueryView.js",
             "DatabaseTableView.js",
             "DOMStorageItemsView.js",
+            "FileSystemView.js",
             "IndexedDBViews.js",
             "ResourcesPanel.js",
         ]
