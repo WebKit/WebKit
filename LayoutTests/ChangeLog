@@ -1,3 +1,12 @@
+2012-06-29  Tony Chang  <tony@chromium.org>
+
+        [GTK] Enable CSS grid layout LayoutTests on GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=90226
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/TestExpectations: Tests should pass.
+
 2012-06-29  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed gardening.

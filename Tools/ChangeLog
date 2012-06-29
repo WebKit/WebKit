@@ -1,3 +1,21 @@
+2012-06-29  Tony Chang  <tony@chromium.org>
+
+        [GTK] Enable CSS grid layout LayoutTests on GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=90226
+
+        Reviewed by Martin Robinson.
+
+        This feature is disabled via Settings by default, but for testing,
+        we enable it using layoutTestController.overridePreferences. Add the
+        necessary plumbing for DRT.
+
+        WTR already works because support was added for Apple Mac earlier.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues): Feature is off by default.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::overridePreference): Add handling of WebKitCSSGridLayoutEnabled.
+
 2012-06-29  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Added Qt port for garden-o-matic.

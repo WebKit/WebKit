@@ -796,6 +796,11 @@ void DumpRenderTreeSupportGtk::setPageCacheSupportsPlugins(WebKitWebView* webVie
     core(webView)->settings()->setPageCacheSupportsPlugins(enabled);
 }
 
+void DumpRenderTreeSupportGtk::setCSSGridLayoutEnabled(WebKitWebView* webView, bool enabled)
+{
+    core(webView)->settings()->setCSSGridLayoutEnabled(enabled);
+}
+
 bool DumpRenderTreeSupportGtk::elementDoesAutoCompleteForElementWithId(WebKitWebFrame* frame, JSStringRef id)
 {
     Frame* coreFrame = core(frame);
