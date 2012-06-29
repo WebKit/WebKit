@@ -397,6 +397,17 @@ max 1120
         port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
         self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html'])
 
+    def test_collect_tests_with_skipped_list(self):
+        runner, port = self.create_runner(args=['--force'])
+
+        self._add_file(runner, 'inspector', 'test1.html')
+        self._add_file(runner, 'inspector', 'unsupported_test1.html')
+        self._add_file(runner, 'inspector', 'test2.html')
+        self._add_file(runner, 'inspector/resources', 'resource_file.html')
+        self._add_file(runner, 'unsupported', 'unsupported_test2.html')
+        port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
+        self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html', 'inspector/unsupported_test1.html', 'unsupported/unsupported_test2.html'])
+
     def test_collect_tests_with_page_load_svg(self):
         runner, port = self.create_runner()
         self._add_file(runner, 'PageLoad', 'some-svg-test.svg')
