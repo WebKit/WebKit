@@ -1,3 +1,11 @@
+2012-06-29  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium xp rebaseline.
+
+        * platform/chromium-win-xp/http/tests/inspector: Added.
+        * platform/chromium-win-xp/http/tests/inspector/resource-tree: Added.
+        * platform/chromium-win-xp/http/tests/inspector/resource-tree/resource-request-content-while-loading-expected.txt: Added.
+
 2012-06-29  Ojan Vafai  <ojan@chromium.org>
 
         Rebaseline some tests where Chrome differs due to V8's different toString implementation

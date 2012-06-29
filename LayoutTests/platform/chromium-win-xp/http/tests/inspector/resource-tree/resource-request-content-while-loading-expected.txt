@@ -1,0 +1,4 @@
+Tests resource content is correctly loaded if Resource.requestContent was called before network request was finished.
+
+Bug 90153
+
