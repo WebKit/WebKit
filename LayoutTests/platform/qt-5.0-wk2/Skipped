@@ -270,17 +270,21 @@ platform/qt/plugins/qt-qwidget-plugin.html
 # https://bugs.webkit.org/show_bug.cgi?id=76986
 scrollbars/scroll-rtl-or-bt-layer.html
 
-###################################
-# Unskipping 'compositing' tests. #
-###################################
-
-# Most of these tests crash or doesn't generate expected results.
-compositing/reflections
+# There are some bugs with reflections.
+compositing/reflections/animation-inside-reflection.html
+compositing/reflections/backface-hidden-reflection.html
+compositing/reflections/deeply-nested-reflections.html
+compositing/reflections/nested-reflection-anchor-point.html
+compositing/reflections/nested-reflection-animated.html
+compositing/reflections/nested-reflection.html
+compositing/reflections/nested-reflection-on-overflow.html
+compositing/reflections/nested-reflection-opacity.html
+compositing/reflections/nested-reflection-size-change.html
+compositing/reflections/nested-reflection-transition.html
+compositing/reflections/load-video-in-reflection.html
+compositing/reflections/transform-inside-reflection.html
 
 # Flaky tests.
-compositing/masks/simple-composited-mask.html
-compositing/masks/direct-image-mask.html
-compositing/masks/masked-ancestor.html
 compositing/geometry/limit-layer-bounds-fixed-positioned.html
 compositing/geometry/video-opacity-overlay.html
 compositing/rtl/rtl-absolute-overflow-scrolled.html
@@ -288,19 +292,7 @@ compositing/visibility/layer-visible-content.html
 
 # Some of them crashes once other tests are skipped.
 compositing/overflow/clip-descendents.html
-compositing/overflow/clip-content-under-overflow-controls.html
-compositing/overflow/ancestor-overflow.html
-compositing/masks/simple-composited-mask.html
-compositing/masks/multiple-masks.html
-compositing/color-matching/image-color-matching.html
-compositing/culling/tile-occlusion-boundaries.html
-compositing/direct-image-compositing.html
-compositing/fixed-position-changed-in-composited-layer.html
-compositing/images/content-image-change.html
-compositing/images/content-image.html
-compositing/tiling/crash-huge-layer.html
 compositing/visibility/visibility-image-layers-dynamic.html
-compositing/visibility/visibility-image-layers.html
 compositing/visibility/visibility-simple-webgl-layer.html
 
 # The following tests doesnt match expected text files.
@@ -314,24 +306,19 @@ compositing/geometry/limit-layer-bounds-positioned-transition.html
 compositing/geometry/limit-layer-bounds-positioned.html
 compositing/geometry/limit-layer-bounds-transformed-overflow.html
 compositing/geometry/limit-layer-bounds-transformed.html
-compositing/iframes/composited-iframe-scroll.html
-compositing/iframes/iframe-content-flipping.html
-compositing/iframes/iframe-size-to-zero.html
-compositing/iframes/leave-compositing-iframe.html
 compositing/layer-creation/overflow-scroll-overlap.html
 compositing/layer-creation/scroll-partial-update.html
 compositing/layer-creation/spanOverlapsCanvas.html
-compositing/plugins/1x1-composited-plugin.html
-compositing/plugins/invalidate_rect.html
-compositing/plugins/large-to-small-composited-plugin.html
-compositing/plugins/small-to-large-composited-plugin.html
 compositing/tiling/crash-reparent-tiled-layer.html
-compositing/video/video-poster.html
-compositing/layers-inside-overflow-scroll.html
 
 # The following tests doesnt match both expected image and text.
 compositing/geometry/ancestor-overflow-change.html
 compositing/geometry/tall-page-composited.html
+
+# We still don't accelerate plugin and video in WK2.
+compositing/plugins
+compositing/video
+compositing/layers-inside-overflow-scroll.html
 
 # [Qt][WK2] New compositing/backface-visibility/backface-visibility-webgl.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=89645
@@ -368,16 +355,6 @@ fast/frames/iframe-window-focus.html
 # Missing layoutTestController.numberOfPendingGeolocationPermissionRequests() implementation
 fast/dom/Geolocation/page-reload-cancel-permission-requests.html
 
-# [Qt] REGRESSION(r116560): It made 7 compositing tests fail
-# https://bugs.webkit.org/show_bug.cgi?id=86086
-compositing/rtl/rtl-absolute-overflow.html
-compositing/rtl/rtl-fixed-overflow-scrolled.html
-compositing/rtl/rtl-fixed-overflow.html
-compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html
-compositing/rtl/rtl-iframe-absolute-overflow.html
-compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html
-compositing/rtl/rtl-iframe-fixed-overflow.html
-
 # [Qt] New failing and flakey tests with newer Qt 5
 # https://bugs.webkit.org/show_bug.cgi?id=86452
 fast/ruby/ruby-inline-style-not-updated.html
@@ -407,9 +384,6 @@ fast/multicol/pagination-v-horizontal-tb.html
 fast/dom/beforeload/image-object-before-load-innerHTML.html
 fast/dom/beforeload/image-object-before-load.html
 
-# [Qt][WK2] Modified test failing after r119529
-compositing/layer-creation/no-compositing-for-preserve-3d.html
-
 # [Qt][WK2] New http/tests/cache/xhr-vary-header.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=89278
 http/tests/cache/xhr-vary-header.html
@@ -418,3 +392,4 @@ http/tests/cache/xhr-vary-header.html
 # https://bugs.webkit.org/show_bug.cgi?id=89473
 editing/pasteboard/copy-in-password-field.html
 editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html
+.
