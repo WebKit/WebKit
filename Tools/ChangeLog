@@ -1,5 +1,78 @@
 2012-06-28  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: clean up how arguments are passed to workers
+        https://bugs.webkit.org/show_bug.cgi?id=90126
+
+        Reviewed by Ojan Vafai.
+
+        The way arguments are passed to workers has been crufty. It
+        turns out it can be a lot cleaner via two things:
+        1) using a factory method instead of instantiating objects
+        directly in manager_worker_broker removes the need for passing
+        'worker arguments' to the broker.
+        2) it turns out that since mock hosts and test ports are purely
+        in-memory constructions, they can be pickled and passed to child
+        workers, meaning that the worker no longer needs hacky code to
+        pass the port in a special case or to guess what to do if we
+        don't have a host - all of the test-specific logic can move to
+        the test file, where we can stub out the mock host's
+        port_factory to return the same already-created port when it
+        needs to be shared.
+
+        This change also moves WorkerException to manager_worker_broker.py
+        where it belongs, and removes several useless tests that were
+        just a maintenance burden (and would've needed rewriting when we
+        change the rest of the broker implementation).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests.worker_factory):
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (get):
+        (WorkerException):
+        (AbstractWorker.__init__):
+        (_ManagerConnection.__init__):
+        (_ManagerConnection.start_worker):
+        (_InlineManager.__init__):
+        (_InlineManager.start_worker):
+        (_MultiProcessManager._can_pickle_host):
+        (_MultiProcessManager):
+        (_MultiProcessManager.start_worker):
+        (_WorkerConnection.__init__):
+        (_InlineWorkerConnection.__init__):
+        (_InlineWorkerConnection.join):
+        (_InlineWorkerConnection.run):
+        (_Process.run):
+        (_MultiProcessWorkerConnection.__init__):
+        (_MultiProcessWorkerConnection.start):
+        (_MultiProcessWorkerConnection):
+        (_MultiProcessWorkerConnection.run):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        (_TestWorker.__init__):
+        (_TestWorker.run):
+        (_TestsMixin.test_name):
+        (_TestsMixin.test_cancel):
+        (_TestsMixin.test_done):
+        (_TestsMixin.test_unknown_message):
+        (InlineBrokerTests.setUp):
+        (MultiProcessBrokerTests.setUp):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.__init__):
+        (Worker.run):
+        * Scripts/webkitpy/layout_tests/controllers/worker_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (passing_run):
+        (logging_run):
+        (run_and_capture):
+        (MainTest.test_child_processes_2):
+        (MainTest.test_child_processes_min):
+        (MainTest.test_exception_raised):
+        (MainTest.test_keyboard_interrupt):
+        (MainTest.test_retrying_and_flaky_tests):
+        (MainTest.test_run_order__inline):
+
+2012-06-28  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: don't try to catch worker exceptions in run_webkit_tests.__main__
         https://bugs.webkit.org/show_bug.cgi?id=90125
 

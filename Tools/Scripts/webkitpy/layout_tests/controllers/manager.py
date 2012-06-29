@@ -266,9 +266,7 @@ class TestRunInterruptedException(Exception):
         return self.__class__, (self.reason,)
 
 
-class WorkerException(Exception):
-    """Raised when we receive an unexpected/unknown exception from a worker."""
-    pass
+WorkerException = manager_worker_broker.WorkerException
 
 
 class TestShard(object):
@@ -771,25 +769,17 @@ class Manager(object):
         num_workers = min(num_workers, len(all_shards))
         self._log_num_workers(num_workers, len(all_shards), len(locked_shards))
 
-        manager_connection = manager_worker_broker.get(num_workers, self, worker.Worker)
+        def worker_factory(worker_connection, worker_number):
+            return worker.Worker(worker_connection, worker_number, self.results_directory(), self._options)
+
+        manager_connection = manager_worker_broker.get(num_workers, self, worker_factory, self._port.host)
 
         if self._options.dry_run:
             return (keyboard_interrupted, interrupted, thread_timings, self._group_stats, self._all_results)
 
         self._printer.print_update('Starting %s ...' % grammar.pluralize('worker', num_workers))
         for worker_number in xrange(num_workers):
-            worker_arguments = worker.WorkerArguments(worker_number, self.results_directory(), self._options)
-            worker_connection = manager_connection.start_worker(worker_arguments)
-            if num_workers == 1:
-                # FIXME: We need to be able to share a port with the work so
-                # that some of the tests can query state on the port; ideally
-                # we'd rewrite the tests so that this wasn't necessary.
-                #
-                # Note that this only works because in the inline case
-                # the worker hasn't really started yet and won't start
-                # running until we call run_message_loop(), below.
-                worker_connection.set_inline_arguments(self._port)
-
+            worker_connection = manager_connection.start_worker(worker_number)
             worker_state = _WorkerState(worker_number, worker_connection)
             self._worker_states[worker_connection.name()] = worker_state
 

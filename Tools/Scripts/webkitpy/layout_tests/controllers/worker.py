@@ -45,20 +45,11 @@ from webkitpy.layout_tests.views import metered_stream
 _log = logging.getLogger(__name__)
 
 
-class WorkerArguments(object):
-    def __init__(self, worker_number, results_directory, options):
-        self.worker_number = worker_number
-        self.results_directory = results_directory
-        self.options = options
-
-
 class Worker(manager_worker_broker.AbstractWorker):
-    def __init__(self, worker_connection, worker_arguments):
-        super(Worker, self).__init__(worker_connection, worker_arguments)
-        self._worker_number = worker_arguments.worker_number
-        self._name = 'worker/%d' % self._worker_number
-        self._results_directory = worker_arguments.results_directory
-        self._options = worker_arguments.options
+    def __init__(self, worker_connection, worker_number, results_directory, options):
+        super(Worker, self).__init__(worker_connection, worker_number)
+        self._results_directory = results_directory
+        self._options = options
         self._port = None
         self._batch_size = None
         self._batch_count = None
@@ -100,24 +91,16 @@ class Worker(manager_worker_broker.AbstractWorker):
         self._log_handler = _WorkerLogHandler(self)
         self._logger.addHandler(self._log_handler)
 
-    def _set_up_host_and_port(self):
-        options = self._options
-        if options.platform and 'test' in options.platform:
-            # It is lame to import mocks into real code, but this allows us to use the test port in multi-process tests as well.
-            from webkitpy.common.host_mock import MockHost
-            host = MockHost()
-        else:
+    def run(self, host, set_up_logging):
+        if not host:
             host = Host()
-        self._port = host.port_factory.get(options.platform, options)
 
-    def set_inline_arguments(self, port):
-        self._port = port
-
-    def run(self):
-        if not self._port:
-            # We are running in a child process and need to initialize things.
+        # FIXME: this should move into manager_worker_broker.py.
+        if set_up_logging:
             self._set_up_logging()
-            self._set_up_host_and_port()
+
+        options = self._options
+        self._port = host.port_factory.get(options.platform, options)
 
         self.safe_init()
         try:
