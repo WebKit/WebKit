@@ -33,7 +33,7 @@
 
 #include "FontPlatformData.h"
 
-#if OS(LINUX)
+#if OS(LINUX) && !OS(ANDROID)
 #include "WebFontInfo.h"
 #endif
 
@@ -75,7 +75,7 @@ void WebFontRendering::setSubpixelRendering(bool useSubpixelRendering)
 void WebFontRendering::setSubpixelPositioning(bool useSubpixelPositioning)
 {
     FontPlatformData::setSubpixelPositioning(useSubpixelPositioning);
-#if OS(LINUX)
+#if OS(LINUX) && !OS(ANDROID)
     WebFontInfo::setSubpixelPositioning(useSubpixelPositioning);
 #endif
 }

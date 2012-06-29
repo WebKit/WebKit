@@ -1,3 +1,19 @@
+2012-06-29  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] WebFontRendering.cpp requires some OS(ANDROID) ifdefs to build downstream
+        https://bugs.webkit.org/show_bug.cgi?id=90292
+
+        Reviewed by Nate Chapin.
+
+        These ifdefs are required to build this file downstream. There's some
+        sublte difference between how the OS flags are set upstream and
+        downstream. This is on our list of issues to resolve, but in the
+        meantime, this patch makes these files identical upstream and
+        downstream to reduce noise in the upstreaming queue.
+
+        * src/linux/WebFontRendering.cpp:
+        (WebKit::WebFontRendering::setSubpixelPositioning):
+
 2012-06-29  Eric Penner  <epenner@google.com>
 
         [chromium] Adding PrioritizedTexture and replacing ContentsTextureManager
