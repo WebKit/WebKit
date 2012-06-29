@@ -1,3 +1,73 @@
+2012-06-25  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Provide source data for all known rule types in CSSParser, except "keyframe" and "region"
+        https://bugs.webkit.org/show_bug.cgi?id=88420
+
+        Reviewed by Antti Koivisto.
+
+        This change transitions the CSS source code model from a flat list of style rules to a tree of all types of CSS rules
+        (some of them lack actual source code data), which is crucial to model-based CSS stylesheet source editing
+        (add/remove CSS rule) and navigation.
+        As a side effect, the CSS parsing performance on PerformanceTests/Parser/css-parser-yui.html is improved roughly by 2%:
+        - originally: median= 282.051282051 runs/s, stdev= 1.51236798322 runs/s, min= 278.481012658 runs/s, max= 283.870967742 runs/s
+        - with patch applied: median= 287.206266319 runs/s, stdev= 1.31518320219 runs/s, min= 282.051282051 runs/s, max= 288.713910761 runs/s
+
+        No new tests, as there is no client-visible behavior change. Existing Inspector tests will be modified
+        to test the new data provided, along with the necessary Inspector plumbing.
+
+        * css/CSSGrammar.y:
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::reattach): Check for mediaQueries() validity before reattaching.
+        * css/CSSParser.cpp: Unless explicitly specified below, the method changes are related to the extension of the
+        source-based CSS model provided by the parser.
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::setupParser):
+        (WebCore::CSSParser::parseDeclaration): Accept a CSSRuleSourceData for filling, since it now contains
+        the related style source range.
+        (WebCore::CSSParser::createImportRule):
+        (WebCore::CSSParser::createMediaRule): Create CSSMediaRule even if media and rules are empty,
+        which is consistent with Mozilla.
+        (WebCore::CSSParser::processAndAddNewRuleToSourceTreeIfNeeded):
+        (WebCore):
+        (WebCore::CSSParser::addNewRuleToSourceTree):
+        (WebCore::CSSParser::createKeyframesRule):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        (WebCore::CSSParser::createPageRule):
+        (WebCore::CSSParser::createRegionRule):
+        (WebCore::CSSParser::fixUnparsedPropertyRanges):
+        (WebCore::CSSParser::markRuleHeaderStart):
+        (WebCore::CSSParser::markRuleHeaderEnd):
+        (WebCore::CSSParser::markRuleBodyStart):
+        (WebCore::CSSParser::markRuleBodyEnd):
+        (WebCore::CSSParser::markPropertyStart):
+        (WebCore::CSSParser::markPropertyEnd):
+        * css/CSSParser.h:
+        (CSSParser):
+        * css/CSSPropertySourceData.h: Extend the model to handle more types of rules and their containments.
+        (WebCore):
+        (WebCore::CSSRuleSourceData::create):
+        (WebCore::CSSRuleSourceData::createUnknown):
+        (CSSRuleSourceData):
+        (WebCore::CSSRuleSourceData::CSSRuleSourceData):
+        * inspector/InspectorStyleSheet.cpp: Follow the CSSParser API changes but retain the flat stored CSS rules structure.
+        (ParsedStyleSheet):
+        (flattenSourceData): Flatten the rule tree to retain the existing rule-handling code intact.
+        (ParsedStyleSheet::setSourceData):
+        (ParsedStyleSheet::ruleSourceDataAt):
+        (WebCore::InspectorStyle::buildObjectForStyle):
+        (WebCore::InspectorStyle::setPropertyText):
+        (WebCore::InspectorStyle::styleText):
+        (WebCore::InspectorStyleSheet::setRuleSelector):
+        (WebCore::InspectorStyleSheet::deleteRule):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        (WebCore::InspectorStyleSheet::buildObjectForStyle):
+        (WebCore::InspectorStyleSheet::ensureSourceData):
+        (WebCore::InspectorStyleSheet::styleSheetTextWithChangedStyle):
+        (WebCore::InspectorStyleSheetForInlineStyle::ensureParsedDataReady):
+        (WebCore::InspectorStyleSheetForInlineStyle::getStyleAttributeRanges):
+        * inspector/InspectorStyleSheet.h:
+
 2012-06-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Annotate TextViewer.js

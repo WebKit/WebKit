@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-class StyleRule;
+class StyleRuleBase;
 
 struct SourceRange {
     SourceRange();
@@ -78,8 +78,6 @@ struct CSSStyleSourceData : public RefCounted<CSSStyleSourceData> {
         return adoptRef(new CSSStyleSourceData());
     }
 
-    // Range of the style text in the enclosing source.
-    SourceRange styleBodyRange;
     Vector<CSSPropertySourceData> propertyData;
 };
 
@@ -87,16 +85,48 @@ struct CSSRuleSourceData;
 typedef Vector<RefPtr<CSSRuleSourceData> > RuleSourceDataList;
 
 struct CSSRuleSourceData : public RefCounted<CSSRuleSourceData> {
-    static PassRefPtr<CSSRuleSourceData> create()
+    enum Type {
+        UNKNOWN_RULE,
+        STYLE_RULE,
+        CHARSET_RULE,
+        IMPORT_RULE,
+        MEDIA_RULE,
+        FONT_FACE_RULE,
+        PAGE_RULE,
+        KEYFRAMES_RULE
+    };
+
+    static PassRefPtr<CSSRuleSourceData> create(Type type)
     {
-        return adoptRef(new CSSRuleSourceData());
+        return adoptRef(new CSSRuleSourceData(type));
     }
 
+    static PassRefPtr<CSSRuleSourceData> createUnknown()
+    {
+        return adoptRef(new CSSRuleSourceData(UNKNOWN_RULE));
+    }
+
+    CSSRuleSourceData(Type type)
+        : type(type)
+    {
+        if (type == STYLE_RULE || type == FONT_FACE_RULE || type == PAGE_RULE)
+            styleSourceData = CSSStyleSourceData::create();
+    }
+
+    Type type;
+
     // Range of the selector list in the enclosing source.
-    SourceRange selectorListRange;
+    SourceRange ruleHeaderRange;
+
+    // Range of the rule body (e.g. style text for style rules) in the enclosing source.
+    SourceRange ruleBodyRange;
+
+    // Only for CSSStyleRules, CSSFontFaceRules, and CSSPageRules.
     RefPtr<CSSStyleSourceData> styleSourceData;
+
+    // Only for CSSMediaRules.
+    RuleSourceDataList childRules;
 };
-typedef HashMap<StyleRule*, RefPtr<CSSRuleSourceData> > StyleRuleRangeMap;
 
 } // namespace WebCore
 

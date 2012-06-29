@@ -166,7 +166,7 @@ void CSSMediaRule::reattach(StyleRuleMedia* rule)
 {
     ASSERT(rule);
     m_mediaRule = rule;
-    if (m_mediaCSSOMWrapper)
+    if (m_mediaCSSOMWrapper && m_mediaRule->mediaQueries())
         m_mediaCSSOMWrapper->reattach(m_mediaRule->mediaQueries());
     for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
         if (m_childRuleCSSOMWrappers[i])

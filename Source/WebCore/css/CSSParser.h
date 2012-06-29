@@ -78,7 +78,7 @@ public:
     static bool parseSystemColor(RGBA32& color, const String&, Document*);
     static PassRefPtr<CSSValueList> parseFontFaceValue(const AtomicString&);
     PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(int ident, CSSParserValue*);
-    bool parseDeclaration(StylePropertySet*, const String&, PassRefPtr<CSSStyleSourceData>, StyleSheetContents* contextStyleSheet);
+    bool parseDeclaration(StylePropertySet*, const String&, PassRefPtr<CSSRuleSourceData>, StyleSheetContents* contextStyleSheet);
     PassOwnPtr<MediaQuery> parseMediaQuery(const String&);
 
     void addProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important, bool implicit = false);
@@ -324,27 +324,20 @@ public:
 
     // tokenizer methods and data
     size_t m_parsedTextPrefixLength;
-    bool m_inStyleRuleOrDeclaration;
-    SourceRange m_selectorListRange;
-    SourceRange m_ruleBodyRange;
     SourceRange m_propertyRange;
     OwnPtr<RuleSourceDataList> m_currentRuleDataStack;
     RuleSourceDataList* m_ruleSourceDataResult;
 
     void fixUnparsedPropertyRanges(CSSRuleSourceData*);
-    void markStyleRuleHeaderStart();
+    void markRuleHeaderStart(CSSRuleSourceData::Type);
     void markRuleHeaderEnd();
-
-    void markSelectorListStart();
-    void markSelectorListEnd();
     void markRuleBodyStart();
     void markRuleBodyEnd();
     void markPropertyStart();
     void markPropertyEnd(bool isImportantFound, bool isPropertyParsed);
+    void processAndAddNewRuleToSourceTreeIfNeeded();
     void addNewRuleToSourceTree(PassRefPtr<CSSRuleSourceData>);
     PassRefPtr<CSSRuleSourceData> popRuleData();
-    void resetSelectorListMarks() { m_selectorListRange.start = m_selectorListRange.end = 0; }
-    void resetRuleBodyMarks() { m_ruleBodyRange.start = m_ruleBodyRange.end = 0; }
     void resetPropertyRange() { m_propertyRange.start = m_propertyRange.end = UINT_MAX; }
     bool isExtractingSourceData() const { return !!m_currentRuleDataStack; }
     int lex(void* yylval);
