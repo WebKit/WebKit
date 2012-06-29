@@ -1,3 +1,11 @@
+2012-06-29  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r121494. Added new baseline to
+        fast/frames/flattening/frameset-flattening-advanced.html
+
+        * platform/qt/fast/frames/flattening/frameset-flattening-advanced-expected.png:
+        * platform/qt/fast/frames/flattening/frameset-flattening-advanced-expected.txt:
+
 2012-06-28  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r106388): Form hidden element values being restored
