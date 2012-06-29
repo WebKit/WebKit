@@ -2,10 +2,10 @@
 from twisted.application import service
 from buildbot.master import BuildMaster
 
-basedir = r'/buildbot/webkit'
+basedir = r'/var/buildbot'
 configfile = r'master.cfg'
-rotateLength = 1000000
-maxRotatedFiles = None
+rotateLength = 10000000
+maxRotatedFiles = 100
 
 application = service.Application('buildmaster')
 try:
