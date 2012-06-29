@@ -58,8 +58,8 @@ class FactoryTest(unittest.TestCase):
     def test_mac(self):
         self.assert_port(port_name='mac-leopard', cls=mac.MacPort)
         self.assert_port(port_name='mac-leopard-wk2', cls=mac.MacPort)
-        self.assert_port(port_name='mac', os_name='mac', os_version='leopard', cls=mac.MacPort)
-        self.assert_port(port_name=None,  os_name='mac', os_version='leopard', cls=mac.MacPort)
+        self.assert_port(port_name='mac', os_name='mac', os_version='lion', cls=mac.MacPort)
+        self.assert_port(port_name=None,  os_name='mac', os_version='lion', cls=mac.MacPort)
 
     def test_win(self):
         self.assert_port(port_name='win-xp', cls=win.WinPort)
@@ -75,10 +75,9 @@ class FactoryTest(unittest.TestCase):
         self.assert_port(port_name='qt', cls=qt.QtPort)
 
     def test_chromium_mac(self):
-        self.assert_port(port_name='chromium-mac-leopard', cls=chromium_mac.ChromiumMacPort)
-        self.assert_port(port_name='chromium-mac', os_name='mac', os_version='leopard',
+        self.assert_port(port_name='chromium-mac', os_name='mac', os_version='snowleopard',
                          cls=chromium_mac.ChromiumMacPort)
-        self.assert_port(port_name='chromium', os_name='mac', os_version='leopard',
+        self.assert_port(port_name='chromium', os_name='mac', os_version='lion',
                          cls=chromium_mac.ChromiumMacPort)
 
     def test_chromium_linux(self):

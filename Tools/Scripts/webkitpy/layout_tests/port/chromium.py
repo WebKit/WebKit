@@ -53,7 +53,6 @@ class ChromiumPort(WebKitPort):
     """Abstract base class for Chromium implementations of the Port class."""
 
     ALL_SYSTEMS = (
-        ('leopard', 'x86'),
         ('snowleopard', 'x86'),
         ('lion', 'x86'),
         ('xp', 'x86'),
@@ -71,7 +70,7 @@ class ChromiumPort(WebKitPort):
     ]
 
     CONFIGURATION_SPECIFIER_MACROS = {
-        'mac': ['leopard', 'snowleopard', 'lion'],
+        'mac': ['snowleopard', 'lion'],
         'win': ['xp', 'win7'],
         'linux': ['lucid'],
         'android': ['icecreamsandwich'],

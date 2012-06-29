@@ -99,7 +99,7 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         OutputCapture().assert_outputs(self, command._rebaseline_test_and_update_expectations, ["Webkit Mac10.7", "userscripts/another-test.html", None], expected_logs=expected_logs)
 
         new_expectations = tool.filesystem.read_text_file(lion_port.path_to_test_expectations_file())
-        self.assertEqual(new_expectations, "BUGX LEOPARD SNOWLEOPARD : userscripts/another-test.html = IMAGE\nBUGZ LINUX : userscripts/another-test.html = IMAGE\n")
+        self.assertEqual(new_expectations, "BUGX SNOWLEOPARD : userscripts/another-test.html = IMAGE\nBUGZ LINUX : userscripts/another-test.html = IMAGE\n")
 
     def test_rebaseline_does_not_include_overrides(self):
         command = RebaselineTest()
@@ -119,7 +119,7 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         OutputCapture().assert_outputs(self, command._rebaseline_test_and_update_expectations, ["Webkit Mac10.7", "userscripts/another-test.html", None], expected_logs=expected_logs)
 
         new_expectations = tool.filesystem.read_text_file(lion_port.path_to_test_expectations_file())
-        self.assertEqual(new_expectations, "BUGX LEOPARD SNOWLEOPARD : userscripts/another-test.html = IMAGE\nBUGZ LINUX : userscripts/another-test.html = IMAGE\n")
+        self.assertEqual(new_expectations, "BUGX SNOWLEOPARD : userscripts/another-test.html = IMAGE\nBUGZ LINUX : userscripts/another-test.html = IMAGE\n")
 
     def test_rebaseline_test(self):
         command = RebaselineTest()
@@ -169,10 +169,9 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         tool.filesystem.write_text_file(os.path.join(lion_port.baseline_path(), "userscripts/another-test-expected.txt"), "Dummy expected result")
 
         expected_logs = """Copying baseline from /mock-checkout/LayoutTests/platform/chromium-mac/userscripts/another-test-expected.txt to /mock-checkout/LayoutTests/platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt.
-Copying baseline from /mock-checkout/LayoutTests/platform/chromium-mac/userscripts/another-test-expected.txt to /mock-checkout/LayoutTests/platform/chromium-mac-leopard/userscripts/another-test-expected.txt.
 Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt.
 """
-        OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard", "chromium-mac-leopard"], "txt"], expected_logs=expected_logs)
+        OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt"], expected_logs=expected_logs)
 
     def test_rebaseline_and_copy_no_overwrite_test(self):
         command = RebaselineTest()
@@ -209,9 +208,6 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
 Retrieving results for chromium-linux-x86_64 from Webkit Linux.
     userscripts/another-test.html (txt)
     userscripts/images.svg (png)
-Retrieving results for chromium-mac-leopard from Webkit Mac10.5.
-    userscripts/another-test.html (txt)
-    userscripts/images.svg (png)
 Retrieving results for chromium-mac-lion from Webkit Mac10.7.
     userscripts/another-test.html (txt)
     userscripts/images.svg (png)
@@ -245,8 +241,6 @@ Retrieving results for win-7sp0 from Apple Win 7 Release (Tests).
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Webkit Linux 32', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Webkit Linux', 'userscripts/another-test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Webkit Linux', 'userscripts/images.svg'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Webkit Mac10.5', 'userscripts/another-test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Webkit Mac10.5', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Webkit Mac10.7', 'userscripts/another-test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'png', 'Webkit Mac10.7', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', '--suffixes', 'txt', 'Webkit Mac10.6', 'userscripts/another-test.html'], cwd=/mock-checkout

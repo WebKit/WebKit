@@ -44,9 +44,6 @@ _exact_matches = {
     "Webkit Linux": {"port_name": "chromium-linux-x86_64", "specifiers": set(["linux", "x86_64", "release"])},
     "Webkit Linux 32": {"port_name": "chromium-linux-x86", "specifiers": set(["linux", "x86"])},
     "Webkit Linux (dbg)": {"port_name": "chromium-linux-x86_64", "specifiers": set(["linux", "debug"])},
-    "Webkit Mac10.5": {"port_name": "chromium-mac-leopard", "specifiers": set(["leopard"])},
-    "Webkit Mac10.5 (dbg)(1)": {"port_name": "chromium-mac-leopard", "specifiers": set(["leopard", "debug"])},
-    "Webkit Mac10.5 (dbg)(2)": {"port_name": "chromium-mac-leopard", "specifiers": set(["leopard", "debug"])},
     "Webkit Mac10.6": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard"])},
     "Webkit Mac10.6 (dbg)": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard", "debug"])},
     "Webkit Mac10.7": {"port_name": "chromium-mac-lion", "specifiers": set(["lion"])},
@@ -79,7 +76,6 @@ _fuzzy_matches = {
     # These builders are on build.webkit.org.
     r"SnowLeopard": "mac-snowleopard",
     r"Apple Lion": "mac-lion",
-    r"Leopard": "mac-leopard",
     r"Windows": "win",
     r"GTK": "gtk",
     r"Qt": "qt",

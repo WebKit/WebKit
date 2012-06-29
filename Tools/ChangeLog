@@ -1,3 +1,31 @@
+2012-06-29  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: remove support for mac leopard from chromium configurations
+        https://bugs.webkit.org/show_bug.cgi?id=90313
+
+        Reviewed by Tony Chang.
+
+        Google has shipped the last version of Chrome that will support
+        Mac OS 10.5 (Leopard), and we no longer have bots that run this
+        configuration, so we're removing support for it.
+
+        A subsequent change will remove the baselines in platform/chromium-mac-leopard.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        (BaselineOptimizerTest.test_complex_shadowing):
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        (ChromiumMacPortTest.test_versions):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest.test_mac):
+        (FactoryTest.test_chromium_mac):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline_and_copy_test_with_lion_result):
+
 2012-06-29  Ojan Vafai  <ojan@chromium.org>
 
         Fix optimize-baselines to not move baselines from win to win-7sp0
