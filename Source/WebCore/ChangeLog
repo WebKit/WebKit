@@ -1,3 +1,11 @@
+2012-06-29  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed mac build fix after r121547.
+        Remove the now-unused FontCustomPlatformData::m_atsContainer.
+
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        (FontCustomPlatformData):
+
 2012-06-29  Kent Tamura  <tkent@chromium.org>
 
         <textarea> unnecessarily saves the value in some cases
