@@ -87,8 +87,6 @@ _fuzzy_matches = {
 
 
 _ports_without_builders = [
-    "google-chrome-linux32",
-    "google-chrome-linux64",
     "qt-mac",
     "qt-win",
     "qt-wk2",
