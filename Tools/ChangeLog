@@ -1,3 +1,17 @@
+2012-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DOMHTMLCollection::item may return a wrong element after namedItem is called
+        https://bugs.webkit.org/show_bug.cgi?id=90240
+
+        Reviewed by Antti Koivisto.
+
+        Add a WebKit API test since namedItem is not used in the JS/V8 binding code.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/HTMLCollectionNamedItem.html: Copied from Tools/TestWebKitAPI/Tests/mac/HTMLFormCollectionNamedItem.html.
+        * TestWebKitAPI/Tests/mac/HTMLCollectionNamedItem.mm: Copied from Tools/TestWebKitAPI/Tests/mac/HTMLFormCollectionNamedItem.mm.
+        (TestWebKitAPI::TEST):
+
 2012-06-28  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: remove the 'google-chrome' port code

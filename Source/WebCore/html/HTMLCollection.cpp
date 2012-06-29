@@ -263,21 +263,26 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
     // that are allowed a name attribute.
     invalidateCacheIfNeeded();
 
+    unsigned i = 0;
     for (Element* e = itemAfter(0); e; e = itemAfter(e)) {
         if (checkForNameMatch(e, /* checkName */ false, name)) {
             m_cache.current = e;
+            m_cache.position = i;
             return e;
         }
+        i++;
     }
 
+    i = 0;
     for (Element* e = itemAfter(0); e; e = itemAfter(e)) {
         if (checkForNameMatch(e, /* checkName */ true, name)) {
             m_cache.current = e;
+            m_cache.position = i;
             return e;
         }
+        i++;
     }
 
-    m_cache.current = 0;
     return 0;
 }
 

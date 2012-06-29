@@ -1,3 +1,18 @@
+2012-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DOMHTMLCollection::item may return a wrong element after namedItem is called
+        https://bugs.webkit.org/show_bug.cgi?id=90240
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by namedItem updating m_cache.current without updating m_cache.position.
+        Fixed the bug by updating both. This is similar to the bug I fixed in r121478.
+
+        WebKit API Test: WebKit1.HTMLCollectionNamedItemTest
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::namedItem):
+
 2012-06-28  Kentaro Hara  <haraken@chromium.org>
 
         Change argument types of Element::getAttribute*() from String to AtomicString
