@@ -1631,6 +1631,16 @@ void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, PassRefPtr<StringCall
     process()->send(Messages::WebPage::GetSourceForFrame(frame->frameID(), callbackID), m_pageID);
 }
 
+#if ENABLE(WEB_INTENTS)
+void WebPageProxy::deliverIntentToFrame(WebFrameProxy* frame, WebIntentData* webIntentData)
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::DeliverIntentToFrame(frame->frameID(), webIntentData->store()), m_pageID);
+}
+#endif
+
 void WebPageProxy::getContentsAsString(PassRefPtr<StringCallback> prpCallback)
 {
     RefPtr<StringCallback> callback = prpCallback;

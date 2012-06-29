@@ -50,10 +50,6 @@ class WebFormSubmissionListenerProxy;
 class WebFramePolicyListenerProxy;
 class WebPageProxy;
 
-#if ENABLE(WEB_INTENTS)
-class WebIntentData;
-#endif
-
 typedef GenericCallback<WKDataRef> DataCallback;
 
 class WebFrameProxy : public APIObject {
@@ -90,10 +86,6 @@ public:
     bool isFrameSet() const { return m_isFrameSet; }
 
     LoadState loadState() const { return m_loadState; }
-
-#if ENABLE(WEB_INTENTS)
-    void deliverIntent(WebIntentData*);
-#endif
     
     void stopLoading() const;
 

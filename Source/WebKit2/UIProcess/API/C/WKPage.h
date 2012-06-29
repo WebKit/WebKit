@@ -468,6 +468,8 @@ WK_EXPORT void WKPageGetContentsAsString_b(WKPageRef page, WKPageGetContentsAsSt
 typedef void (*WKPageForceRepaintFunction)(WKErrorRef, void*);
 WK_EXPORT void WKPageForceRepaint(WKPageRef page, void* context, WKPageForceRepaintFunction function);
 
+WK_EXPORT void WKPageDeliverIntentToFrame(WKPageRef page, WKFrameRef frame, WKIntentDataRef intent);
+
 /*
     Some of the more common command name strings include the following, although any WebCore EditorCommand string is supported:
     

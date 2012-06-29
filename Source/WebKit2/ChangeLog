@@ -1,3 +1,26 @@
+2012-06-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Move intent delivery code from the frame to the page
+        https://bugs.webkit.org/show_bug.cgi?id=89974
+
+        Reviewed by Anders Carlsson.
+
+        Move the intent delivery code from the frame to the page
+        and add the corresponding C API for WKPage.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageDeliverIntentToFrame):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::stopLoading):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit):
+        (WebKit::WebPageProxy::deliverIntentToFrame):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+
 2012-06-29  Dan Bernstein  <mitz@apple.com>
 
         Can’t get basic element info from a WKRenderObject

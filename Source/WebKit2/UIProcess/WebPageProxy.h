@@ -124,6 +124,10 @@ typedef GtkWidget* PlatformWidget;
 typedef Evas_Object* PlatformWidget;
 #endif
 
+#if ENABLE(WEB_INTENTS)
+class WebIntentData;
+#endif
+
 namespace WebKit {
 
 class NativeWebKeyboardEvent;
@@ -529,6 +533,10 @@ public:
     void getWebArchiveOfFrame(WebFrameProxy*, PassRefPtr<DataCallback>);
     void runJavaScriptInMainFrame(const String&, PassRefPtr<ScriptValueCallback>);
     void forceRepaint(PassRefPtr<VoidCallback>);
+
+#if ENABLE(WEB_INTENTS)
+    void deliverIntentToFrame(WebFrameProxy*, WebIntentData*);
+#endif
 
     float headerHeight(WebFrameProxy*);
     float footerHeight(WebFrameProxy*);
