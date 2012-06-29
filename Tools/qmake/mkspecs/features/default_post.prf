@@ -204,13 +204,15 @@ for(library, WEBKIT) {
 
     # More juggling
     dependent_libs = $$LIBS
-    LIBS = $$existing_libs
+    unset(LIBS)
 
     # But we might also need to link against it
     needToLink() {
         linkAgainstLibrary($$library, $$eval(WEBKIT.$${library_identifier}.root_source_dir))
-        LIBS_PRIVATE += $$dependent_libs
+        LIBS += $$dependent_libs
     }
+
+    LIBS = $$existing_libs $$LIBS
 }
 
 equals(_PRO_FILE_, $${ROOT_WEBKIT_DIR}/WebKit.pro):!isEmpty(OVERRIDE_SUBDIRS) {
