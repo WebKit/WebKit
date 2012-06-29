@@ -29,40 +29,20 @@
 #include <IOKit/pwr_mgt/IOPMLib.h>
 #include <wtf/RetainPtr.h>
 
-#ifdef BUILDING_ON_LEOPARD
-#include <wtf/UnusedParam.h>
-#endif
-
 namespace WebCore {
 
 static const double systemActivityInterval = 1;
 
 DisplaySleepDisabler::DisplaySleepDisabler(const char* reason)
     : m_disableDisplaySleepAssertion(0)
-#ifdef BUILDING_ON_LEOPARD
-    , m_systemActivityTimer(this, &DisplaySleepDisabler::systemActivityTimerFired)
-#endif
 {
-#ifndef BUILDING_ON_LEOPARD
     RetainPtr<CFStringRef> reasonCF(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
     IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, reasonCF.get(), &m_disableDisplaySleepAssertion);
-#else
-    UNUSED_PARAM(reason);
-    IOPMAssertionCreate(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, &m_disableDisplaySleepAssertion);
-    m_systemActivityTimer.startRepeating(systemActivityInterval);
-#endif
 }
 
 DisplaySleepDisabler::~DisplaySleepDisabler()
 {
     IOPMAssertionRelease(m_disableDisplaySleepAssertion);
 }
-    
-#ifdef BUILDING_ON_LEOPARD
-void DisplaySleepDisabler::systemActivityTimerFired(Timer<DisplaySleepDisabler>*)
-{
-    UpdateSystemActivity(OverallAct);
-}
-#endif
 
 }

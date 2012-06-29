@@ -1597,11 +1597,8 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 
 void GraphicsContext::setAllowsFontSmoothing(bool allowsFontSmoothing)
 {
-    UNUSED_PARAM(allowsFontSmoothing);
-#if !defined(BUILDING_ON_LEOPARD)
     CGContextRef context = platformContext();
     CGContextSetAllowsFontSmoothing(context, allowsFontSmoothing);
-#endif
 }
 
 void GraphicsContext::setIsCALayerContext(bool isLayerContext)

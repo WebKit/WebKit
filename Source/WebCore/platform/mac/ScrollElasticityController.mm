@@ -33,12 +33,6 @@
 
 #if ENABLE(RUBBER_BANDING)
 
-#ifdef BUILDING_ON_LEOPARD
-@interface NSProcessInfo (ScrollAnimatorMacExt)
-- (NSTimeInterval)systemUptime;
-@end
-#endif
-
 #if ENABLE(RUBBER_BANDING)
 static NSTimeInterval systemUptime()
 {

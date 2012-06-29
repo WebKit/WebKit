@@ -79,12 +79,10 @@ namespace WebCore {
     } _flags;
 }
 
-#if !defined(BUILDING_ON_LEOPARD)
 - (id)init;
 - (id)initWithDOMRange:(DOMRange *)domRange;
 
 - (NSAttributedString *)attributedString;
-#endif
 
 + (NSAttributedString *)editingAttributedStringFromRange:(WebCore::Range*)range;
 @end

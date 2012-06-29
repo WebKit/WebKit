@@ -254,11 +254,7 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::ContextMenu:
-#if !defined(BUILDING_ON_LEOPARD)
         m_platformCursor = [NSCursor contextualMenuCursor];
-#else
-        m_platformCursor = createNamedCursor("contextMenuCursor", 3, 2);
-#endif
         break;
 
     case Cursor::Alias:
@@ -278,19 +274,11 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::NoDrop:
-#if !defined(BUILDING_ON_LEOPARD)
         m_platformCursor = [NSCursor operationNotAllowedCursor];
-#else
-        m_platformCursor = createNamedCursor("noDropCursor", 3, 1);
-#endif
         break;
 
     case Cursor::Copy:
-#if !defined(BUILDING_ON_LEOPARD)
         m_platformCursor = [NSCursor dragCopyCursor];
-#else
-        m_platformCursor = createNamedCursor("copyCursor", 3, 2);
-#endif
         break;
 
     case Cursor::None:
@@ -298,11 +286,7 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::NotAllowed:
-#if !defined(BUILDING_ON_LEOPARD)
         m_platformCursor = [NSCursor operationNotAllowedCursor];
-#else
-        m_platformCursor = createNamedCursor("notAllowedCursor", 11, 11);
-#endif
         break;
 
     case Cursor::ZoomIn:

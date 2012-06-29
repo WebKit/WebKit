@@ -52,30 +52,17 @@ static void invalidateFontCache(void*)
     fontCache()->invalidate();
 }
 
-#if !defined(BUILDING_ON_LEOPARD)
 static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void *, CFDictionaryRef)
 {
     ASSERT_UNUSED(observer, observer == fontCache());
     ASSERT_UNUSED(name, CFEqual(name, kCTFontManagerRegisteredFontsChangedNotification));
     invalidateFontCache(0);
 }
-#else
-static void fontCacheATSNotificationCallback(ATSFontNotificationInfoRef, void*)
-{
-    invalidateFontCache(0);
-}
-#endif
 
 void FontCache::platformInit()
 {
     wkSetUpFontCache();
-#if !defined(BUILDING_ON_LEOPARD)
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, fontCacheRegisteredFontsChangedNotificationCallback, kCTFontManagerRegisteredFontsChangedNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
-#else
-    // kCTFontManagerRegisteredFontsChangedNotification does not exist on Leopard and earlier.
-    // FIXME: Passing kATSFontNotifyOptionReceiveWhileSuspended may be an overkill and does not seem to work anyway.
-    ATSFontNotificationSubscribe(fontCacheATSNotificationCallback, kATSFontNotifyOptionReceiveWhileSuspended, 0, 0);
-#endif
 }
 
 static int toAppKitFontWeight(FontWeight fontWeight)

@@ -1,3 +1,48 @@
+2012-06-29  Eric Seidel  <eric@webkit.org>
+
+        Remove still more BUILDING_ON_LEOPARD branches now that no port supports leopard
+        https://bugs.webkit.org/show_bug.cgi?id=90256
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/LocalizedStrings.cpp:
+        (WebCore::imageTitle):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setAllowsFontSmoothing):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::Image::drawPattern):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::clear):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::boundingRect):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::ctFont):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        * platform/graphics/mac/ComplexTextController.cpp:
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::fontCacheRegisteredFontsChangedNotificationCallback):
+        (WebCore::FontCache::platformInit):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/mac/WebLayer.h:
+        * platform/mac/CursorMac.mm:
+        (WebCore::Cursor::ensurePlatformCursor):
+        * platform/mac/DisplaySleepDisabler.cpp:
+        (WebCore::DisplaySleepDisabler::DisplaySleepDisabler):
+        (WebCore::DisplaySleepDisabler::~DisplaySleepDisabler):
+        * platform/mac/DisplaySleepDisabler.h:
+        (DisplaySleepDisabler):
+        * platform/mac/HTMLConverter.h:
+        * platform/mac/HTMLConverter.mm:
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenuMac::populate):
+        * platform/mac/ScrollElasticityController.mm:
+
 2012-06-29  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed attempt at a build fix for 64-bit debug build,

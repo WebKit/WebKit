@@ -171,15 +171,8 @@ void Path::translate(const FloatSize& size)
 
 FloatRect Path::boundingRect() const
 {
-    // CGPathGetBoundingBox includes the path's control points, CGPathGetPathBoundingBox
-    // does not, but only exists on 10.6 and above.
-
-    CGRect bound = CGRectZero;
-#if !defined(BUILDING_ON_LEOPARD)
-    bound = CGPathGetPathBoundingBox(m_path);
-#else
-    bound = CGPathGetBoundingBox(m_path);
-#endif
+    // CGPathGetPathBoundingBox does not include the path's control points.
+    CGRect bound = CGPathGetPathBoundingBox(m_path);
     return CGRectIsNull(bound) ? CGRectZero : bound;
 }
 

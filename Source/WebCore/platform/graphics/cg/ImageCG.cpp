@@ -262,22 +262,13 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
 
     // Adjust the color space.
     subImage = Image::imageWithColorSpace(subImage.get(), styleColorSpace);
-    
-    // Leopard has an optimized call for the tiling of image patterns, but we can only use it if the image has been decoded enough that
-    // its buffer is the same size as the overall image.  Because a partially decoded CGImageRef with a smaller width or height than the
-    // overall image buffer needs to tile with "gaps", we can't use the optimized tiling call in that case.
-    // FIXME: We cannot use CGContextDrawTiledImage with scaled tiles on Leopard, because it suffers from rounding errors.  Snow Leopard is ok.
+
     float scaledTileWidth = tileRect.width() * narrowPrecisionToFloat(patternTransform.a());
     float w = CGImageGetWidth(tileImage);
-#ifdef BUILDING_ON_LEOPARD
-    if (w == size().width() && h == size().height() && scaledTileWidth == tileRect.width() && scaledTileHeight == tileRect.height())
-#else
     if (w == size().width() && h == size().height())
-#endif
         CGContextDrawTiledImage(context, FloatRect(adjustedX, adjustedY, scaledTileWidth, scaledTileHeight), subImage.get());
     else {
-
-    // On Leopard and newer, this code now only runs for partially decoded images whose buffers do not yet match the overall size of the image.
+    // This code now only runs for partially decoded images whose buffers do not yet match the overall size of the image.
     static const CGPatternCallbacks patternCallbacks = { 0, drawPatternCallback, NULL };
     CGAffineTransform matrix = CGAffineTransformMake(narrowPrecisionToCGFloat(patternTransform.a()), 0, 0, narrowPrecisionToCGFloat(patternTransform.d()), adjustedX, adjustedY);
     matrix = CGAffineTransformConcat(matrix, CGContextGetCTM(context));
@@ -301,7 +292,6 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
 
     CGContextSetFillColorWithColor(context, color.get());
     CGContextFillRect(context, CGContextGetClipBoundingBox(context));
-
     }
 
     stateSaver.restore();
