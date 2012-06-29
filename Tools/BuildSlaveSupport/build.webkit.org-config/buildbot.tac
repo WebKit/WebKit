@@ -6,6 +6,7 @@ basedir = r'/var/buildbot'
 configfile = r'master.cfg'
 rotateLength = 10000000
 maxRotatedFiles = 100
+umask = 022
 
 application = service.Application('buildmaster')
 try:
