@@ -218,7 +218,7 @@ private:
     NSMenu* searchMenuTemplate() const;
     NSSliderCell* sliderThumbHorizontal() const;
     NSSliderCell* sliderThumbVertical() const;
-    NSTextFieldCell* textField(bool useNewGradient) const;
+    NSTextFieldCell* textField() const;
 
 #if ENABLE(METER_TAG)
     NSLevelIndicatorStyle levelIndicatorStyleFor(ControlPart) const;

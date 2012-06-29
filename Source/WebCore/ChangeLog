@@ -1,3 +1,41 @@
+2012-06-28  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 117502
+
+    2012-05-17  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=86266
+            r112643/r116697 break Webview form input fields
+            -and corresponding-
+            <rdar://problem/11400430>
+
+            Reviewed by Dan Bernstein.
+
+            There is a recent history of changes in this are that seem worth documenting. 
+            First was the change to switch to using NSTextFieldCell to draw text fields: 
+            http://trac.webkit.org/changeset/104240
+
+            That led to problems because of the clear background that I thought at the time 
+            were specific to MountainLion. To fix that, I made this change:
+            http://trac.webkit.org/changeset/110480
+
+            But that change resulted in styled text fields getting an un-themed border, which 
+            led to this change on the branch: http://trac.webkit.org/changeset/112643 and a 
+            change on TOT that was identical for Lion and SnowLeopard but introduced new 
+            behavior for MountainLion: http://trac.webkit.org/changeset/116697
+
+            And that brings us to this bug, where it turns out the clear background is a 
+            problem on Lion and SnowLeopard too. This patch fixes the bug by using the 
+            original WebCoreSystemInterface function to paint all text fields on Lion and 
+            SnowLeopard that are styled. This is what we used to paint all text fields before 
+            r104240, which is the first change listed above. Un-styled text fields will still 
+            use NSTextFieldCell on these platforms, but with a hardcoded white background. 
+            * rendering/RenderThemeMac.h:
+            (RenderThemeMac):
+            * rendering/RenderThemeMac.mm:
+            (WebCore::RenderThemeMac::paintTextField):
+            (WebCore::RenderThemeMac::textField):
+
 2012-05-30  Lucas Forschler  <lforschler@apple.com>
 
     Merge 108550

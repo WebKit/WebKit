@@ -709,18 +709,22 @@ bool RenderThemeMac::paintTextField(RenderObject* o, const PaintInfo& paintInfo,
 {
     LocalCurrentGraphicsContext localContext(paintInfo.context);
 
-    // See comment in RenderThemeMac::textField() for a complete explanation of this. In short,
-    // we only want to use the new style gradient for completely unstyled text fields in HiDPI. 
-    // isControledStyle(), however, treats all text fields that do not have custom borders as
-    // "unstyled" to avoid using the CSS border in that case, so we have to sniff around for 
-    // other types of styling.
-    bool useNewGradient = WebCore::deviceScaleFactor(o->frame()) != 1;
-    if (useNewGradient) {
-        useNewGradient = o->style()->hasAppearance() 
-            && o->style()->visitedDependentColor(CSSPropertyBackgroundColor) == Color::white
-            && !o->style()->hasBackgroundImage();
+#if defined(BUILDING_ON_LION) || defined(BUILDING_ON_SNOW_LEOPARD)
+    bool useNSTextFieldCell = o->style()->hasAppearance()
+        && o->style()->visitedDependentColor(CSSPropertyBackgroundColor) == Color::white
+        && !o->style()->hasBackgroundImage();
+
+    // We do not use NSTextFieldCell to draw styled text fields on Lion and SnowLeopard because
+    // there are a number of bugs on those platforms that require NSTextFieldCell to be in charge
+    // of painting its own background. We need WebCore to paint styled backgrounds, so we'll use
+    // this WebCoreSystemInterface function instead.
+    if (!useNSTextFieldCell) {
+        wkDrawBezeledTextFieldCell(r, isEnabled(o) && !isReadOnlyControl(o));
+        return false;
     }
-    NSTextFieldCell* textField = this->textField(useNewGradient);
+#endif
+
+    NSTextFieldCell *textField = this->textField();
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
@@ -2047,7 +2051,7 @@ NSSliderCell* RenderThemeMac::sliderThumbVertical() const
     return m_sliderThumbVertical.get();
 }
 
-NSTextFieldCell* RenderThemeMac::textField(bool useNewGradient) const
+NSTextFieldCell* RenderThemeMac::textField() const
 {
     if (!m_textField) {
         m_textField.adoptNS([[NSTextFieldCell alloc] initTextCell:@""]);
@@ -2055,18 +2059,8 @@ NSTextFieldCell* RenderThemeMac::textField(bool useNewGradient) const
         [m_textField.get() setEditable:YES];
         [m_textField.get() setFocusRingType:NSFocusRingTypeExterior];
         [m_textField.get() setDrawsBackground:YES];
+        [m_textField.get() setBackgroundColor:[NSColor whiteColor]];
     }
-
-    // This is a workaround for <rdar://problem/11150452>. With this workaround, when the deviceScaleFactor is 1,
-    // we have an old-school gradient bezel in text fields whether they are styled or not. This is good and 
-    // matches shipping Safari. When the deviceScaleFactor is greater than 1, text fields will have newer, 
-    // AppKit-matching gradients that look much more appropriate at the higher resolutions. However, if the text 
-    // field is styled  in any way, we'll revert to the old-school bezel, which doesn't look great in HiDPI, but 
-    // it looks better than the CSS border, which is the only alternative until 11150452 is resolved.
-    if (useNewGradient)
-        [m_textField.get() setBackgroundColor:[NSColor whiteColor]]; 
-    else
-        [m_textField.get() setBackgroundColor:[NSColor clearColor]];
 
     return m_textField.get();
 }
