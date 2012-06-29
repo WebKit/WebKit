@@ -1,3 +1,22 @@
+2012-06-29  Vineet Chaudhary  <rgf748@motorola.com>
+
+        JS binding code generator doesn't handle "attribute unsigned long[]" well.
+        https://bugs.webkit.org/show_bug.cgi?id=84540
+
+        Reviewed by Kentaro Hara.
+
+        In JS/V8 Bindings using traits instead of specialised functions.
+        Also added support for "unsigned long" in JSDOMBinding and V8Binding.
+
+        No new tests, as no behavioural changes.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::Traits::arrayJSValue):
+        (WebCore::jsArray):
+        * bindings/v8/V8Binding.h:
+        (WebCore::Traits::arrayV8Value):
+        (WebCore::v8Array):
+
 2012-06-29  Andreas Kling  <kling@webkit.org>
 
         Unreviewed mac build fix after r121547.

@@ -337,26 +337,40 @@ namespace WebCore {
         return data->integerCache()->v8UnsignedInteger(value);
     }
 
+    template <class T>
+    struct Traits {
+        static inline v8::Handle<v8::Value> arrayV8Value(const T& value, v8::Isolate* isolate)
+        {
+            return toV8(WTF::getPtr(value), isolate);
+        }
+    };
+
+    template<>
+    struct Traits<String> {
+        static inline v8::Handle<v8::Value> arrayV8Value(const String& value, v8::Isolate* isolate)
+        {
+            return v8String(value, isolate);
+        }
+    };
+
+    template<>
+    struct Traits<unsigned long> {
+        static inline v8::Handle<v8::Value> arrayV8Value(const unsigned long& value, v8::Isolate* isolate)
+        {
+            return v8UnsignedInteger(value, isolate);
+        }
+    };
+
     template<typename T>
     v8::Handle<v8::Value> v8Array(const Vector<T>& iterator, v8::Isolate* isolate)
     {
         v8::Local<v8::Array> result = v8::Array::New(iterator.size());
         int index = 0;
         typename Vector<T>::const_iterator end = iterator.end();
+        typedef Traits<T> TraitsType;
         for (typename Vector<T>::const_iterator iter = iterator.begin(); iter != end; ++iter)
-            result->Set(v8Integer(index++, isolate), toV8(WTF::getPtr(*iter), isolate));
+            result->Set(v8Integer(index++, isolate), TraitsType::arrayV8Value(*iter, isolate));
         return result;
-    }
-
-    template<>
-    inline v8::Handle<v8::Value> v8Array(const Vector<String>& iterator, v8::Isolate* isolate)
-    {
-        v8::Local<v8::Array> array = v8::Array::New(iterator.size());
-        Vector<String>::const_iterator end = iterator.end();
-        int index = 0;
-        for (Vector<String>::const_iterator iter = iterator.begin(); iter != end; ++iter)
-            array->Set(v8Integer(index++, isolate), v8String(*iter, isolate));
-        return array;
     }
 
     v8::Handle<v8::Value> v8Array(PassRefPtr<DOMStringList>, v8::Isolate*);

@@ -281,43 +281,52 @@ enum ParameterDefaultPolicy {
         return toJS(exec, globalObject, ptr.get());
     }
 
+    template <class T>
+    struct Traits {
+        static inline JSC::JSValue arrayJSValue(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const T& value)
+        {
+            return toJS(exec, globalObject, WTF::getPtr(value));
+        }
+    };
+
+    template<>
+    struct Traits<String> {
+        static inline JSC::JSValue arrayJSValue(JSC::ExecState* exec, JSDOMGlobalObject*, const String& value)
+        {
+            return jsString(exec, stringToUString(value));
+        }
+    };
+
+    template<>
+    struct Traits<float> {
+        static inline JSC::JSValue arrayJSValue(JSC::ExecState*, JSDOMGlobalObject*, const float& value)
+        {
+            return JSC::jsNumber(value);
+        }
+    };
+
+    template<>
+    struct Traits<unsigned long> {
+        static inline JSC::JSValue arrayJSValue(JSC::ExecState*, JSDOMGlobalObject*, const unsigned long& value)
+        {
+            return JSC::jsNumber(value);
+        }
+    };
+
     template <typename T, size_t inlineCapacity>
     JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T, inlineCapacity>& iterator)
     {
         JSC::MarkedArgumentBuffer list;
-        typename Vector<T, inlineCapacity>::const_iterator end = iterator.end();
+        typename Vector<T, inlineCapacity>::const_iterator end = iterator.end();        
+        typedef Traits<T> TraitsType;
 
         for (typename Vector<T, inlineCapacity>::const_iterator iter = iterator.begin(); iter != end; ++iter)
-            list.append(toJS(exec, globalObject, WTF::getPtr(*iter)));
+            list.append(TraitsType::arrayJSValue(exec, globalObject, *iter));
 
         return JSC::constructArray(exec, globalObject, list);
     }
 
     JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, PassRefPtr<DOMStringList>);
-
-    template<>
-    inline JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<String>& iterator)
-    {
-        JSC::MarkedArgumentBuffer array;
-        Vector<String>::const_iterator end = iterator.end();
-
-        for (Vector<String>::const_iterator it = iterator.begin(); it != end; ++it)
-            array.append(jsString(exec, stringToUString(*it)));
-
-        return JSC::constructArray(exec, globalObject, array);
-    }
-
-    template<>
-    inline JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<float>& iterator)
-    {
-        JSC::MarkedArgumentBuffer array;
-        Vector<float>::const_iterator end = iterator.end();
-
-        for (Vector<float>::const_iterator it = iterator.begin(); it != end; ++it)
-            array.append(JSC::jsNumber(*it));
-
-        return JSC::constructArray(exec, globalObject, array);
-    }
 
     template <class T>
     Vector<T> toNativeArray(JSC::ExecState* exec, JSC::JSValue value)
