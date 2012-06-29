@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NodeRenderingContext.h"
 
+#include "ComposedShadowTreeWalker.h"
 #include "ContainerNode.h"
 #include "ContentDistributor.h"
 #include "ElementShadow.h"
@@ -53,80 +54,14 @@ static RenderObject* lastRendererOf(Node*);
 
 NodeRenderingContext::NodeRenderingContext(Node* node)
     : m_node(node)
-    , m_parentNodeForRenderingAndStyle(0)
-    , m_resetStyleInheritance(false)
-    , m_insertionPoint(0)
     , m_style(0)
     , m_parentFlowRenderer(0)
 {
-    ContainerNode* parent = m_node->parentOrHostNode();
-    if (!parent)
-        return;
-
-    if (parent->isShadowRoot() && toShadowRoot(parent)->isYoungest()) {
-        m_parentNodeForRenderingAndStyle = toShadowRoot(parent)->host();
-        m_resetStyleInheritance = toShadowRoot(parent)->resetStyleInheritance();
-        return;
-    }
-
-    if (parent->isElementNode() || parent->isShadowRoot()) {
-        ElementShadow* parentShadow = 0;
-
-        if (parent->isElementNode())
-            parentShadow = toElement(parent)->shadow();
-        else if (parent->isShadowRoot())
-            parentShadow = toShadowRoot(parent)->owner();
-
-        if (parentShadow) {
-            parentShadow->ensureDistribution();
-
-            if (InsertionPoint* insertionPoint = parentShadow->insertionPointFor(m_node)) {
-                if (insertionPoint->shadowRoot()->isUsedForRendering()) {
-                    NodeRenderingContext insertionPointContext(insertionPoint);
-                    m_parentNodeForRenderingAndStyle = insertionPointContext.parentNodeForRenderingAndStyle();
-                    m_resetStyleInheritance = insertionPointContext.resetStyleInheritance();
-                    m_insertionPoint = insertionPoint;
-                    return;
-                }
-            }
-
-            return;
-        }
-
-        if (isLowerEncapsulationBoundary(parent)) {
-            ShadowRoot* parentScope = parent->shadowRoot();
-            parentScope->owner()->ensureDistribution();
-
-            // The shadow tree isn't part of composed tree.
-            if (!parentScope->isUsedForRendering())
-                return;
-
-            // the parent insertion point doesn't need any fallback content.
-            if (toInsertionPoint(parent)->hasDistribution())
-                return;
-
-            if (toInsertionPoint(parent)->isActive()) {
-                // Uses m_node as a fallback node of the insertion point.
-                NodeRenderingContext parentContext(parent);
-                m_parentNodeForRenderingAndStyle = parentContext.parentNodeForRenderingAndStyle();
-                m_resetStyleInheritance = parentContext.resetStyleInheritance();
-                return;
-            }
-
-            // The insertion point isn't active thus behaves as a plain old element.
-            m_parentNodeForRenderingAndStyle = parent;
-            return;
-        }
-    }
-
-    m_parentNodeForRenderingAndStyle = parent;
+    ComposedShadowTreeWalker::findParent(m_node, &m_parentDetails);
 }
 
 NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
     : m_node(node)
-    , m_parentNodeForRenderingAndStyle(0)
-    , m_resetStyleInheritance(false)
-    , m_insertionPoint(0)
     , m_style(style)
     , m_parentFlowRenderer(0)
 {
@@ -242,10 +177,10 @@ RenderObject* NodeRenderingContext::nextRenderer() const
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer->nextRendererForNode(m_node);
 
-    if (m_insertionPoint) {
-        if (RenderObject* found = nextRendererOfInsertionPoint(m_insertionPoint, m_node))
+    if (m_parentDetails.insertionPoint()) {
+        if (RenderObject* found = nextRendererOfInsertionPoint(m_parentDetails.insertionPoint(), m_node))
             return found;
-        return NodeRenderingContext(m_insertionPoint).nextRenderer();
+        return NodeRenderingContext(m_parentDetails.insertionPoint()).nextRenderer();
     }
 
     // Avoid an O(N^2) problem with this function by not checking for
@@ -264,10 +199,10 @@ RenderObject* NodeRenderingContext::previousRenderer() const
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer->previousRendererForNode(m_node);
 
-    if (m_insertionPoint) {
-        if (RenderObject* found = previousRendererOfInsertionPoint(m_insertionPoint, m_node))
+    if (m_parentDetails.insertionPoint()) {
+        if (RenderObject* found = previousRendererOfInsertionPoint(m_parentDetails.insertionPoint(), m_node))
             return found;
-        return NodeRenderingContext(m_insertionPoint).previousRenderer();
+        return NodeRenderingContext(m_parentDetails.insertionPoint()).previousRenderer();
     }
 
     // FIXME: We should have the same O(N^2) avoidance as nextRenderer does
@@ -282,19 +217,19 @@ RenderObject* NodeRenderingContext::parentRenderer() const
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer;
 
-    return m_parentNodeForRenderingAndStyle ? m_parentNodeForRenderingAndStyle->renderer() : 0;
+    return m_parentDetails.node() ? m_parentDetails.node()->renderer() : 0;
 }
 
 bool NodeRenderingContext::shouldCreateRenderer() const
 {
-    if (!m_parentNodeForRenderingAndStyle)
+    if (!m_parentDetails.node())
         return false;
     RenderObject* parentRenderer = this->parentRenderer();
     if (!parentRenderer)
         return false;
     if (!parentRenderer->canHaveChildren())
         return false;
-    if (!m_parentNodeForRenderingAndStyle->childShouldCreateRenderer(*this))
+    if (!m_parentDetails.node()->childShouldCreateRenderer(*this))
         return false;
     return true;
 }
@@ -327,7 +262,7 @@ void NodeRenderingContext::moveToFlowThreadIfNeeded()
 
 bool NodeRenderingContext::isOnEncapsulationBoundary() const
 {
-    return isOnUpperEncapsulationBoundary() || isLowerEncapsulationBoundary(m_insertionPoint) || isLowerEncapsulationBoundary(m_node->parentNode());
+    return isOnUpperEncapsulationBoundary() || isLowerEncapsulationBoundary(m_parentDetails.insertionPoint()) || isLowerEncapsulationBoundary(m_node->parentNode());
 }
 
 bool NodeRenderingContext::isOnUpperEncapsulationBoundary() const

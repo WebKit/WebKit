@@ -1,3 +1,65 @@
+2012-06-28  MORITA Hajime  <morrita@google.com>
+
+        [Refactoring] NodeRenderingContext ctor could be built on top of the ComposedShadowTreeWalker
+        https://bugs.webkit.org/show_bug.cgi?id=89732
+
+        Reviewed by Dimitri Glazkov.
+
+        The constructor of NodeRenderingContext implements almost same
+        logic as ComposedShadowTreeWalker::parent().  This change
+        eliminates the duplication by employing ComposedShadowTreeWalker in the constructor.
+
+        ComposedShadowTreeWalker has same difference from
+        NodeRenderingContext though. So this change also extends
+        ComposedShadowTreeWalker to support these missing pieces, which
+        are encapsulated in newly introduced ParentTranversalDetails
+        class where:
+
+        - not only the parent, but also the insertion point of the child is returned,
+        - resetStyleInheritance from the child-parent traversal is computed and
+        - if the starting point is out of the composition, it returns null as a parent.
+
+        This change also inlines some ComposedShadowTreeWalker methods for speed.
+
+        No new tests. Covered by existing tests.
+
+        * WebCore.exp.in:
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::shadowOfParent):
+        (WebCore::ComposedShadowTreeWalker::ParentTranversalDetails::didTraverseInsertionPoint):
+        (WebCore):
+        (WebCore::ComposedShadowTreeWalker::ParentTranversalDetails::didTraverseShadowRoot):
+        (WebCore::ComposedShadowTreeWalker::ParentTranversalDetails::didFindNode):
+        (WebCore::ComposedShadowTreeWalker::findParent):
+        (WebCore::ComposedShadowTreeWalker::escapeFallbackContentElement):
+        (WebCore::ComposedShadowTreeWalker::traverseNodeEscapingFallbackContents):
+        (WebCore::ComposedShadowTreeWalker::traverseParent):
+        (WebCore::ComposedShadowTreeWalker::traverseParentInCurrentTree):
+        (WebCore::ComposedShadowTreeWalker::traverseParentBackToYoungerShadowRootOrHost):
+        * dom/ComposedShadowTreeWalker.h:
+        (ParentTranversalDetails):
+        (WebCore::ComposedShadowTreeWalker::ParentTranversalDetails::ParentTranversalDetails):
+        (WebCore::ComposedShadowTreeWalker::ParentTranversalDetails::node):
+        (WebCore::ComposedShadowTreeWalker::ParentTranversalDetails::insertionPoint):
+        (WebCore::ComposedShadowTreeWalker::ParentTranversalDetails::resetStyleInheritance):
+        (WebCore::ComposedShadowTreeWalker::ParentTranversalDetails::outOfComposition):
+        (WebCore::ComposedShadowTreeWalker::ParentTranversalDetails::childWasOutOfComposition):
+        (ComposedShadowTreeWalker):
+        (WebCore::ComposedShadowTreeWalker::ComposedShadowTreeWalker):
+        (WebCore):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        (WebCore::NodeRenderingContext::parentRenderer):
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        (WebCore::NodeRenderingContext::isOnEncapsulationBoundary):
+        * dom/NodeRenderingContext.h:
+        (NodeRenderingContext):
+        (WebCore::NodeRenderingContext::parentNodeForRenderingAndStyle):
+        (WebCore::NodeRenderingContext::resetStyleInheritance):
+        (WebCore::NodeRenderingContext::insertionPoint):
+
 2012-06-28  Stephen White  <senorblanco@chromium.org>
 
         Implement filter url() function.

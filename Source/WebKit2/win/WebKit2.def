@@ -184,13 +184,13 @@ EXPORTS
         ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVElement@2@PBVRange@2@AAI2@Z
         ?inputTag@HTMLNames@WebCore@@3VQualifiedName@2@B
         ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPAVInstrumentingAgents@2@PAVPage@2@@Z
+        ?isActiveInsertionPoint@WebCore@@YA_NPBVNode@1@@Z
         ?isCSSExclusionsEnabled@RuntimeEnabledFeatures@WebCore@@0_NA
         ?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z
         ?jsArray@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z
         ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ
         ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@@WTF@@PAVNode@2@VMarkerTypes@DocumentMarker@2@@Z
         ?nextSibling@ComposedShadowTreeWalker@WebCore@@QAEXXZ
-        ??0ComposedShadowTreeWalker@WebCore@@QAE@PBVNode@1@W4Policy@01@@Z
         ?firstChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?lastChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?next@ComposedShadowTreeWalker@WebCore@@QAEXXZ
@@ -262,6 +262,7 @@ EXPORTS
         ?webkitWillExitFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
         ?webkitDidExitFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
         ?isPageBoxVisible@Document@WebCore@@QAE_NH@Z
+        ?isActive@InsertionPoint@WebCore@@QBE_NXZ
         ?suspendAnimations@AnimationController@WebCore@@QAEXXZ
         ?resumeAnimations@AnimationController@WebCore@@QAEXXZ
         ?setAllowsRoundingHacks@TextRun@WebCore@@SAX_N@Z
