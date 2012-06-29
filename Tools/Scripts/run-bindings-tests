@@ -51,7 +51,7 @@ def main(argv):
 
     from webkitpy.bindings.main import BindingsTests
 
-    BindingsTests(reset_results, generators, executive.Executive()).main()
+    return BindingsTests(reset_results, generators, executive.Executive()).main()
 
 
 if __name__ == '__main__':

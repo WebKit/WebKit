@@ -1,3 +1,13 @@
+2012-06-28  Joshua Bell  <jsbell@chromium.org>
+
+        run-bindings-tests should return non-zero exit code on test failure
+        https://bugs.webkit.org/show_bug.cgi?id=90205
+
+        Reviewed by Adam Barth.
+
+        * Scripts/run-bindings-tests:
+        (main):
+
 2012-06-28  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Reset the device scale factor to 1 before each test is run
