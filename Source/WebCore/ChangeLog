@@ -1,3 +1,14 @@
+2012-06-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: showConsole() should close previous view in drawer.
+        https://bugs.webkit.org/show_bug.cgi?id=90070
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.showConsole):
+        (WebInspector.showPanel):
+
 2012-06-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove a #include erroneously added in r120896.

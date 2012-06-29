@@ -823,8 +823,11 @@ WebInspector.toggleSearchingForNode = function()
 
 WebInspector.showConsole = function()
 {
-    if (WebInspector._toggleConsoleButton && !WebInspector._toggleConsoleButton.toggled)
+    if (WebInspector._toggleConsoleButton && !WebInspector._toggleConsoleButton.toggled) {
+        if (WebInspector.drawer.visible)
+            this._closePreviousDrawerView();
         WebInspector._toggleConsoleButtonClicked();
+    }
 }
 
 WebInspector.showPanel = function(panel)
