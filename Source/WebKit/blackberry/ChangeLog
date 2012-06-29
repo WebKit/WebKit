@@ -1,3 +1,16 @@
+2012-06-28  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Checkerboard shown when clicking on error page buttons
+        https://bugs.webkit.org/show_bug.cgi?id=90152
+        RIM PR #161867
+
+        Reviewed by George Staikos.
+
+        Reset m_hasBlitJobs when resetting tiles to prevent ui thread from drawing checkerboard unintentionally.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::resetTiles):
+
 2012-06-27  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Selection overlay can become visible after it has been hidden

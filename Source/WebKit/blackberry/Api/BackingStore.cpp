@@ -1887,6 +1887,10 @@ void BackingStorePrivate::clearVisibleZoom()
 
 void BackingStorePrivate::resetTiles(bool resetBackground)
 {
+    // We need to reset m_hasBlitJobs to prevent ui thread from
+    // drawing checkerboard unintentionally. See RIM PR #161867.
+    m_hasBlitJobs = false;
+
     BackingStoreGeometry* currentState = frontState();
     TileMap currentMap = currentState->tileMap();
 
