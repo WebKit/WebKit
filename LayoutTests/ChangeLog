@@ -1,3 +1,13 @@
+2012-06-29  Kent Tamura  <tkent@chromium.org>
+
+        <textarea> unnecessarily saves the value in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=90259
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/textarea/textarea-state-restore-expected.txt: Added.
+        * fast/forms/textarea/textarea-state-restore.html: Added.
+
 2012-06-29  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Gardening after r121468

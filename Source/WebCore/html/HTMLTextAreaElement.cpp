@@ -101,10 +101,7 @@ const AtomicString& HTMLTextAreaElement::formControlType() const
 
 FormControlState HTMLTextAreaElement::saveFormControlState() const
 {
-    String currentValue = value();
-    if (currentValue == defaultValue())
-        return FormControlState();
-    return FormControlState(currentValue);
+    return m_isDirty ? FormControlState(value()) : FormControlState();
 }
 
 void HTMLTextAreaElement::restoreFormControlState(const FormControlState& state)

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<div id="console"></div>
+
+<input id=emptyOnFirstVisit>
+
+<script>
+jsTestIsAsync = true;
+
+function makeForms(stage) {
+    document.write('<div id=parent>');
+    document.write('<form id=form1 action="data:text/html,&lt;script>history.back()&lt;/script>">');
+    if (stage == 2)
+        document.write('<textarea id=inserted></textarea>');
+    document.write('<textarea id=saved1></textarea>');
+    document.write('<textarea id=saved2>aaa&#x0d;&#x0a;bbb</textarea>');
+    document.write('</form>');
+    document.write('</div>');
+}
+
+function runTest()
+{
+    var state = $('emptyOnFirstVisit');
+    if (!state.value) {
+        // First visit.
+        state.value = 'visited';
+        makeForms(1);
+    
+        setTimeout(function() {
+            $('form1').submit();
+        }, 0);
+    } else {
+        // Second visit.
+        makeForms(2);
+    
+        debug('Confirm nothing is saved and restored:');
+        shouldBeEqualToString('$("inserted").value', '');
+        shouldBeEqualToString('$("saved1").value', '');
+        shouldBeEqualToString('$("saved2").value', 'aaa\nbbb');
+    
+        $('parent').innerHTML = '';
+        setTimeout(function() { finishJSTest(); }, 0);
+    }
+}
+
+runTest();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>

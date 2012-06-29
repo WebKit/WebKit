@@ -1,3 +1,18 @@
+2012-06-29  Kent Tamura  <tkent@chromium.org>
+
+        <textarea> unnecessarily saves the value in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=90259
+
+        Reviewed by Hajime Morita.
+
+        Test: fast/forms/textarea/textarea-state-restore.html
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::saveFormControlState):
+        We apply EOL normalization to value(), but don't apply it to
+        defaultValue(). Also value() can return a null string, which never
+        equals to any strings. To check m_isDirty is what we need..
+
 2012-06-25  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Provide source data for all known rule types in CSSParser, except "keyframe" and "region"
