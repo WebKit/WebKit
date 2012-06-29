@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -1159,8 +1159,11 @@ void BackingStorePrivate::blitVisibleContents(bool force)
 {
     // Blitting must never happen for direct rendering case.
     ASSERT(!shouldDirectRenderingToWindow());
-    if (shouldDirectRenderingToWindow())
+    if (shouldDirectRenderingToWindow()) {
+        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical,
+            "BackingStore::blitVisibleContents operation not supported in direct rendering mode");
         return;
+    }
 
     if (m_suspendScreenUpdates) {
         // Avoid client going into busy loop while updates suspended.
@@ -2808,6 +2811,11 @@ bool BackingStore::isScrollingOrZooming() const
 void BackingStore::setScrollingOrZooming(bool scrollingOrZooming)
 {
     d->setScrollingOrZooming(scrollingOrZooming);
+}
+
+void BackingStore::blitVisibleContents()
+{
+    d->blitVisibleContents(false /*force*/);
 }
 
 void BackingStore::blitContents(const BlackBerry::Platform::IntRect& dstRect, const BlackBerry::Platform::IntRect& contents)

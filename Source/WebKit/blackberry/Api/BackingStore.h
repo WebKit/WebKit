@@ -59,6 +59,7 @@ public:
     bool isScrollingOrZooming() const;
     void setScrollingOrZooming(bool);
 
+    void blitVisibleContents();
     void blitContents(const BlackBerry::Platform::IntRect& dstRect, const BlackBerry::Platform::IntRect& contents);
     void repaint(int x, int y, int width, int height, bool contentChanged, bool immediate);
 
