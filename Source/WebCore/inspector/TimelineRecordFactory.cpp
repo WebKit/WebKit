@@ -161,10 +161,11 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceFinishData(cons
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createReceiveResourceData(const String& requestId)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createReceiveResourceData(const String& requestId, int length)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
     data->setString("requestId", requestId);
+    data->setNumber("encodedDataLength", length);
     return data.release();
 }
     

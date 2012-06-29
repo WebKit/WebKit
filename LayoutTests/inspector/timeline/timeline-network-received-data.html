@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+var scriptUrl = "timeline-network-resource.js";
+
+function performActions() 
+{
+    var image = new Image();
+    image.src = "resources/anImage.png";
+    var script = document.createElement("script");
+    script.src = scriptUrl;
+    document.body.appendChild(script);
+}
+
+function test()
+{
+    var scriptUrl = "timeline-network-resource.js";
+
+    var calledOnce;
+
+    InspectorTest.startTimeline(function() {
+        InspectorTest.evaluateInPage("performActions()");
+    });
+
+    InspectorTest.waitForRecordType("ResourceReceivedData", finish);
+
+    function finish(object)
+    {
+        for (var prop in object) {
+            if (!InspectorTest.timelinePropertyFormatters[prop]) {
+                for (var property in object[prop]) {
+                    if (property === "encodedDataLength") {
+                        if (!calledOnce) {
+                            calledOnce = true;
+                            InspectorTest.addResult("Resource received data has length, test passed.");
+                            InspectorTest.completeTest();
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline API instrumentation of a network resource received data
+</p>
+</body>
+</html>

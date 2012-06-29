@@ -346,10 +346,10 @@ void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, c
     m_frontend->eventRecorded(record.release());
 }
 
-void InspectorTimelineAgent::willReceiveResourceData(unsigned long identifier, Frame* frame)
+void InspectorTimelineAgent::willReceiveResourceData(unsigned long identifier, Frame* frame, int length)
 {
     String requestId = IdentifiersFactory::requestId(identifier);
-    pushCurrentRecord(TimelineRecordFactory::createReceiveResourceData(requestId), TimelineRecordType::ResourceReceivedData, false, frame);
+    pushCurrentRecord(TimelineRecordFactory::createReceiveResourceData(requestId, length), TimelineRecordType::ResourceReceivedData, false, frame);
 }
 
 void InspectorTimelineAgent::didReceiveResourceData()

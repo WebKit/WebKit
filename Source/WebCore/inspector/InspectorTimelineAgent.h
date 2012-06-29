@@ -130,7 +130,7 @@ public:
     void willReceiveResourceResponse(unsigned long, const ResourceResponse&, Frame*);
     void didReceiveResourceResponse();
     void didFinishLoadingResource(unsigned long, bool didFail, double finishTime, Frame*);
-    void willReceiveResourceData(unsigned long identifier, Frame*);
+    void willReceiveResourceData(unsigned long identifier, Frame*, int length);
     void didReceiveResourceData();
 
     void didRequestAnimationFrame(int callbackId, Frame*);

@@ -706,3 +706,5 @@ localizedStrings["apply original content"] = "apply original content";
 localizedStrings["apply revision content"] = "apply revision content";
 localizedStrings["revert"] = "revert";
 localizedStrings["CPU Time"] = "CPU Time";
+localizedStrings["Encoded Data Length"] = "Encoded Data Length";
+localizedStrings["%d Bytes"] = "%d Bytes";

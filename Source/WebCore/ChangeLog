@@ -1,3 +1,41 @@
+2012-06-29  Hanna Ma  <Hanma@rim.com>
+
+        Web Inspector: Add data length to resource events on timeline to
+        keep track of the amount of data loaded and the total data length
+        https://bugs.webkit.org/show_bug.cgi?id=89244
+
+        Reviewed by Pavel Feldman.
+
+        Added data length to inspector timeline popup
+        content for resources to keep track of the amount of data loaded.
+        Tests: inspector/timeline/timeline-network-received-data.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willReceiveResourceDataImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::willReceiveResourceData):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willReceiveResourceData):
+        * inspector/InspectorTimelineAgent.h:
+        (InspectorTimelineAgent):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createReceiveResourceData):
+        * inspector/TimelineRecordFactory.h:
+        (TimelineRecordFactory):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._showPopover):
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.prototype.reset):
+        (WebInspector.TimelinePresentationModel.Record):
+        (WebInspector.TimelinePresentationModel.Record.prototype.generatePopupContent):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveData):
+        * inspector/timeline/timeline-network-received-data.html: Added.
+        * inspector/timeline/timeline-network-received-data-expected.txt: Added.
+        * inspector/timeline/timeline-test.js:
+
 2012-06-29  Shawn Singh  <shawnsingh@chromium.org>
 
         Unreviewed build fix after 121580.

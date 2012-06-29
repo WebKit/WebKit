@@ -19,7 +19,8 @@ InspectorTest.timelinePropertyFormatters = {
     timerId: "formatAsTypeName",
     scriptLine: "formatAsTypeName",
     lineNumber: "formatAsTypeName",
-    frameId: "formatAsTypeName"
+    frameId: "formatAsTypeName",
+    encodedDataLength: "formatAsTypeName"
 };
 
 InspectorTest.startTimeline = function(callback)

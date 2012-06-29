@@ -515,6 +515,8 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
                     contentHelper._appendTextRow(WebInspector.UIString("Status Code"), this.data["statusCode"]);
                 if (this.data["mimeType"])
                     contentHelper._appendTextRow(WebInspector.UIString("MIME Type"), this.data["mimeType"]);
+                if (this.data["encodedDataLength"])
+                    contentHelper._appendTextRow(WebInspector.UIString("Encoded Data Length"), WebInspector.UIString("%d Bytes", this.data["encodedDataLength"]));
                 break;
             case recordTypes.EvaluateScript:
                 if (this.data && this.url)
