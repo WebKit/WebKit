@@ -9,6 +9,8 @@ PASS computedStyle(prepareNodeInShadowRoot(document.getElementById("contentedita
 PASS computedStyle(prepareNodeInShadowRoot(document.getElementById("non-contenteditable-host1"), null), userModifyPropertyName) is "read-only"
 PASS computedStyle(prepareNodeInShadowRoot(document.getElementById("non-contenteditable-host2"), "false"), userModifyPropertyName) is "read-only"
 PASS computedStyle(prepareNodeInShadowRoot(document.getElementById("non-contenteditable-host3"), "true"), userModifyPropertyName) is "read-write"
+PASS getUserModifyProperty("child-a") is "read-write"
+PASS getUserModifyProperty("child-b") is "read-write"
 PASS successfullyParsed is true
 
 TEST COMPLETE

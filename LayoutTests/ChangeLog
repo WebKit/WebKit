@@ -1,3 +1,13 @@
+2012-06-28  Hayato Ito  <hayato@chromium.org>
+
+        Add a test for a 'user-modify' css property of distributed nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=90197
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/shadow/user-modify-inheritance-expected.txt:
+        * fast/dom/shadow/user-modify-inheritance.html:
+
 2012-06-28  Elliott Sprehn  <esprehn@gmail.com>
 
         frameborder="no" on frameset is ignored if border attribute set

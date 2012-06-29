@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/shadow-dom.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -11,6 +12,7 @@
 <div id="non-contenteditable-host1"></div>
 <div id="non-contenteditable-host2"></div>
 <div id="non-contenteditable-host3"></div>
+<div id="sandbox"></div>
 <pre id="console"></pre>
 <script>
 description("Tests to ensure that a '-webkit-user-modify' CSS porperty is not inherited across shadow boundaries.");
@@ -24,6 +26,10 @@ function computedStyle(element, style) {
     if (cs.getPropertyCSSValue(style))
         return cs.getPropertyCSSValue(style).cssText;
     return undefined;
+}
+
+function getUserModifyProperty(id) {
+    return computedStyle(document.getElementById("child-a"), userModifyPropertyName);
 }
 
 function prepareNodeInShadowRoot(host, contentEditableAttributeValueForNode) {
@@ -44,6 +50,20 @@ shouldBeEqualToString('computedStyle(prepareNodeInShadowRoot(document.getElement
 shouldBeEqualToString('computedStyle(prepareNodeInShadowRoot(document.getElementById("non-contenteditable-host1"), null), userModifyPropertyName)', 'read-only');
 shouldBeEqualToString('computedStyle(prepareNodeInShadowRoot(document.getElementById("non-contenteditable-host2"), "false"), userModifyPropertyName)', 'read-only');
 shouldBeEqualToString('computedStyle(prepareNodeInShadowRoot(document.getElementById("non-contenteditable-host3"), "true"), userModifyPropertyName)', 'read-write');
+
+document.getElementById('sandbox').appendChild(
+    createDOM('div', {'id': 'host', 'contenteditable': 'true'},
+              createShadowRoot(createDOM('content', {'select': '#child-a'}),
+                               createDOM('div', {},
+                                         createDOM('content', {'select': '#child-b'}))),
+              createDOM('div', {'id': 'child-a'}),
+              createDOM('div', {'id': 'child-b'})));
+
+document.body.offsetLeft;
+
+shouldBeEqualToString('getUserModifyProperty("child-a")', 'read-write');
+shouldBeEqualToString('getUserModifyProperty("child-b")', 'read-write');
+
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>
