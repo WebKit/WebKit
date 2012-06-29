@@ -42,14 +42,11 @@ public:
     PropertySetCSSStyleDeclaration(StylePropertySet* propertySet) : m_propertySet(propertySet) { }
     
     virtual StyledElement* parentElement() const { return 0; }
+    virtual void clearParentElement() { ASSERT_NOT_REACHED(); }
     StyleSheetContents* contextStyleSheet() const;
     
     virtual void ref() OVERRIDE;
     virtual void deref() OVERRIDE;
-
-protected:
-    const StylePropertySet* propertySet() const { return m_propertySet; }
-    virtual StylePropertySet* ensureMutablePropertySet() { return m_propertySet; }
 
 private:
     virtual CSSRule* parentRule() const OVERRIDE { return 0; };
@@ -109,8 +106,6 @@ private:
     virtual void willMutate() OVERRIDE;
     virtual void didMutate(MutationType) OVERRIDE;
 
-    virtual StylePropertySet* ensureMutablePropertySet() OVERRIDE { return m_propertySet; }
-
     unsigned m_refCount;
     CSSRule* m_parentRule;
 };
@@ -118,18 +113,18 @@ private:
 class InlineCSSStyleDeclaration : public PropertySetCSSStyleDeclaration
 {
 public:
-    InlineCSSStyleDeclaration(StyledElement*);
-
-    virtual void ref() OVERRIDE;
-    virtual void deref() OVERRIDE;
+    InlineCSSStyleDeclaration(StylePropertySet* propertySet, StyledElement* parentElement)
+        : PropertySetCSSStyleDeclaration(propertySet)
+        , m_parentElement(parentElement) 
+    {
+    }
     
 private:
     virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
     virtual StyledElement* parentElement() const OVERRIDE { return m_parentElement; }
+    virtual void clearParentElement() OVERRIDE { m_parentElement = 0; }
 
     virtual void didMutate(MutationType) OVERRIDE;
-
-    virtual StylePropertySet* ensureMutablePropertySet() OVERRIDE;
     
     StyledElement* m_parentElement;
 };

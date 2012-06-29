@@ -1,3 +1,54 @@
+2012-06-29  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed, rolling out r121562.
+        http://trac.webkit.org/changeset/121562
+        https://bugs.webkit.org/show_bug.cgi?id=89945
+
+        Broke a couple of editing/pasteboard tests.
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::length):
+        (WebCore::PropertySetCSSStyleDeclaration::item):
+        (WebCore::PropertySetCSSStyleDeclaration::cssText):
+        (WebCore::PropertySetCSSStyleDeclaration::setCssText):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyCSSValue):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyValue):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyPriority):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyShorthand):
+        (WebCore::PropertySetCSSStyleDeclaration::isPropertyImplicit):
+        (WebCore::PropertySetCSSStyleDeclaration::setProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::removeProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyValueInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::setPropertyInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::copy):
+        (WebCore::PropertySetCSSStyleDeclaration::makeMutable):
+        (WebCore::PropertySetCSSStyleDeclaration::cssPropertyMatches):
+        (WebCore::InlineCSSStyleDeclaration::didMutate):
+        (WebCore::InlineCSSStyleDeclaration::parentStyleSheet):
+        * css/PropertySetCSSStyleDeclaration.h:
+        (WebCore::PropertySetCSSStyleDeclaration::clearParentElement):
+        (PropertySetCSSStyleDeclaration):
+        (WebCore::InlineCSSStyleDeclaration::InlineCSSStyleDeclaration):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::ensureInlineCSSStyleDeclaration):
+        (WebCore::StylePropertySet::clearParentElement):
+        (WebCore):
+        * css/StylePropertySet.h:
+        (StylePropertySet):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::destroyInlineStyle):
+        (WebCore):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::~StyledElement):
+        (WebCore):
+        (WebCore::StyledElement::styleAttributeChanged):
+        * dom/StyledElement.h:
+        (StyledElement):
+        (WebCore::StyledElement::destroyInlineStyle):
+
 2012-06-29  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [Qt] Add missing support for tiled shadow blur on fillRect

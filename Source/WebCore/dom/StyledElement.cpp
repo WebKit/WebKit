@@ -135,6 +135,11 @@ StyledElement::StyledElement(const QualifiedName& name, Document* document, Cons
 {
 }
 
+StyledElement::~StyledElement()
+{
+    destroyInlineStyle();
+}
+
 CSSStyleDeclaration* StyledElement::style()
 {
     return ensureAttributeData()->ensureMutableInlineStyle(this)->ensureInlineCSSStyleDeclaration(this); 
@@ -178,7 +183,9 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, Sh
         WTF::OrdinalNumber startLineNumber = WTF::OrdinalNumber::beforeFirst();
         if (document() && document()->scriptableDocumentParser() && !document()->isInDocumentWrite())
             startLineNumber = document()->scriptableDocumentParser()->lineNumber();
-        if (document()->contentSecurityPolicy()->allowInlineStyle(document()->url(), startLineNumber))
+        if (newStyleString.isNull())
+            destroyInlineStyle();
+        else if (document()->contentSecurityPolicy()->allowInlineStyle(document()->url(), startLineNumber))
             ensureAttributeData()->updateInlineStyleAvoidingMutation(this, newStyleString);
         setIsStyleAttributeValid();
     }

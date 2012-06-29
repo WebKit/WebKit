@@ -161,6 +161,14 @@ void ElementAttributeData::updateInlineStyleAvoidingMutation(StyledElement* elem
     m_inlineStyleDecl->parseDeclaration(text, element->document()->elementSheet()->contents());
 }
 
+void ElementAttributeData::destroyInlineStyle(StyledElement* element)
+{
+    if (!m_inlineStyleDecl)
+        return;
+    m_inlineStyleDecl->clearParentElement(element);
+    m_inlineStyleDecl = 0;
+}
+
 void ElementAttributeData::addAttribute(const Attribute& attribute, Element* element, EInUpdateStyleAttribute inUpdateStyleAttribute)
 {
     if (element && inUpdateStyleAttribute == NotInUpdateStyleAttribute)
