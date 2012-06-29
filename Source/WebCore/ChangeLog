@@ -1,3 +1,29 @@
+2012-06-28  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [Qt] Remove unnecessary AffineTransform calls
+        https://bugs.webkit.org/show_bug.cgi?id=90178
+
+        Reviewed by Noam Rosenthal.
+
+        Qt currently ignores the const AffineTransform& parameter on
+        Pattern::createPlatformPattern, so removing it from all its Qt calls and
+        changing the function signature if platform is Qt.
+
+        * platform/graphics/Pattern.h:
+        (Pattern):
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::fillPenForContext):
+        (WebCore::strokePenForContext):
+        * platform/graphics/qt/FontQt4.cpp:
+        (WebCore::fillPenForContext):
+        (WebCore::strokePenForContext):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::drawRepeatPattern):
+        * platform/graphics/qt/PatternQt.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+
 2012-06-28  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] When uploading an opaque image to a texture for TextureMapper, unnecessary alpha operations take place

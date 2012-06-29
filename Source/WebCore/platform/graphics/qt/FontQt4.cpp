@@ -83,8 +83,7 @@ static QPen fillPenForContext(GraphicsContext* ctx)
     }
 
     if (ctx->fillPattern()) {
-        AffineTransform affine;
-        return QPen(QBrush(ctx->fillPattern()->createPlatformPattern(affine)), 0);
+        return QPen(QBrush(ctx->fillPattern()->createPlatformPattern()), 0);
     }
 
     return QPen(QColor(ctx->fillColor()));
@@ -99,8 +98,7 @@ static QPen strokePenForContext(GraphicsContext* ctx)
     }
 
     if (ctx->strokePattern()) {
-        AffineTransform affine;
-        QBrush brush(ctx->strokePattern()->createPlatformPattern(affine));
+        QBrush brush(ctx->strokePattern()->createPlatformPattern());
         return QPen(brush, ctx->strokeThickness());
     }
 

@@ -507,8 +507,7 @@ void GraphicsContext::fillPath(const Path& path)
             if (shadowContext) {
                 QPainter* shadowPainter = shadowContext->platformContext();
                 if (m_state.fillPattern) {
-                    AffineTransform affine;
-                    shadowPainter->fillPath(platformPath, QBrush(m_state.fillPattern->createPlatformPattern(affine)));
+                    shadowPainter->fillPath(platformPath, QBrush(m_state.fillPattern->createPlatformPattern()));
                 } else if (m_state.fillGradient) {
                     QBrush brush(*m_state.fillGradient->platformGradient());
                     brush.setTransform(m_state.fillGradient->gradientSpaceTransform());
@@ -528,8 +527,7 @@ void GraphicsContext::fillPath(const Path& path)
         }
     }
     if (m_state.fillPattern) {
-        AffineTransform affine;
-        p->fillPath(platformPath, QBrush(m_state.fillPattern->createPlatformPattern(affine)));
+        p->fillPath(platformPath, QBrush(m_state.fillPattern->createPlatformPattern()));
     } else if (m_state.fillGradient) {
         QBrush brush(*m_state.fillGradient->platformGradient());
         brush.setTransform(m_state.fillGradient->gradientSpaceTransform());
@@ -590,8 +588,7 @@ void GraphicsContext::strokePath(const Path& path)
     }
 
     if (m_state.strokePattern) {
-        AffineTransform affine;
-        QBrush brush = m_state.strokePattern->createPlatformPattern(affine);
+        QBrush brush = m_state.strokePattern->createPlatformPattern();
         fillPathStroke(p, pathStroker, platformPath, brush);
     } else if (m_state.strokeGradient) {
         QBrush brush(*m_state.strokeGradient->platformGradient());
@@ -605,8 +602,7 @@ static inline void drawRepeatPattern(QPainter* p, PassRefPtr<Pattern> pattern, c
 {
     ASSERT(pattern);
 
-    AffineTransform affine;
-    const QBrush brush = pattern->createPlatformPattern(affine);
+    const QBrush brush = pattern->createPlatformPattern();
     if (brush.style() != Qt::TexturePattern)
         return;
 
