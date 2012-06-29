@@ -1,3 +1,12 @@
+2012-06-29  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Roll chromium rev to 144906
+        https://bugs.webkit.org/show_bug.cgi?id=90278
+
+        Unreviewed. Deps roll.
+
+        * DEPS:
+
 2012-06-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Device Metrics] "Fit window" option inhibits adjusting the page zoom factor
