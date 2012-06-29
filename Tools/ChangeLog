@@ -1,3 +1,84 @@
+2012-06-28  Dirk Pranke  <dpranke@chromium.org>
+
+        derive ChromiumPort from WebKitPort in NRWT in order to support skipping tests if symbols are missing
+        https://bugs.webkit.org/show_bug.cgi?id=89706
+
+        Reviewed by Ojan Vafai.
+
+        Try again to land the change first landed in r121363. This patch
+        adds a bunch more tests and reworks the handling of
+        port-specific default values for --pixel-tests and --time-out-ms
+        to be more consistent (adding a default_pixel_tests() method,
+        pushing the webkit default_timeout_ms() value up into base.py,
+        and overriding it properly in the chromium and apple mac ports.
+
+        Also change the logic in
+        run_webkit_tests._setup_derived_options() to not second-guess
+        what the port wants the timeout value to be for debug builds;
+        computing this in two different places led to several bugs.
+
+        This change also changes the Chromium unittest ports to derive
+        from ChromiumPortTestCase instead of PortTestCase, so that we
+        ensure that we're running the same tests on all port variants
+        more easily. There's more cleanup that can be done here, but
+        this is good enough for now
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.default_pixel_tests):
+        (Port):
+        (Port.default_timeout_ms):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort):
+        (ChromiumPort.__init__):
+        (ChromiumPort.default_pixel_tests):
+        (ChromiumPort.default_timeout_ms):
+        (ChromiumPort.driver_name):
+        (ChromiumPort._driver_class):
+        (ChromiumPort._missing_symbol_to_skipped_tests):
+        (ChromiumPort.skipped_layout_tests):
+        (ChromiumPort.setup_test_run):
+        (ChromiumPort._path_to_image_diff):
+        (ChromiumPort._convert_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidPortTest):
+        (ChromiumAndroidPortTest.test_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort._modules_to_search_for_symbols):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py:
+        (ChromiumLinuxPortTest):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort._modules_to_search_for_symbols):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        (ChromiumMacPortTest):
+        * Scripts/webkitpy/layout_tests/port/chromium_port_testcase.py:
+        split off from chromium_unittest.
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumWinPort._modules_to_search_for_symbols):
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        (ChromiumWinTest):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.default_timeout_ms):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (MacTest.test_default_timeout_ms):
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        (MockDRTPort.start_http_server):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_default_timeout_ms):
+        (PortTestCase):
+        (PortTestCase.test_default_pixel_tests):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.default_pixel_tests):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._modules_to_search_for_symbols):
+        (WebKitPort):
+        (WebKitPort._symbols_string):
+        (WebKitPort._skipped_tests_for_unsupported_features):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (TestWebKitPort._symbols_string):
+        (TestWebKitPort._tests_for_disabled_features):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+
 2012-06-28  Joshua Bell  <jsbell@chromium.org>
 
         run-bindings-tests should return non-zero exit code on test failure

@@ -29,11 +29,11 @@
 import unittest
 
 from webkitpy.layout_tests.port import chromium_mac
-from webkitpy.layout_tests.port import port_testcase
+from webkitpy.layout_tests.port import chromium_port_testcase
 from webkitpy.tool.mocktool import MockOptions
 
 
-class ChromiumMacPortTest(port_testcase.PortTestCase):
+class ChromiumMacPortTest(chromium_port_testcase.ChromiumPortTestCase):
     os_name = 'mac'
     os_version = 'leopard'
     port_name = 'chromium-mac'

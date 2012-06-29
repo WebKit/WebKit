@@ -65,6 +65,11 @@ class MacPort(ApplePort):
             # with MallocStackLogging enabled.
             self.set_option_default("batch_size", 1000)
 
+    def default_timeout_ms(self):
+        if self.get_option('guard_malloc'):
+            return 350 * 1000
+        return super(MacPort, self).default_timeout_ms()
+
     def _build_driver_flags(self):
         return ['ARCHS=i386'] if self.architecture() == 'x86' else []
 

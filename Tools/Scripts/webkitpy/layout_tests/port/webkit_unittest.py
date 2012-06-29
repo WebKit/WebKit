@@ -53,7 +53,7 @@ class TestWebKitPort(WebKitPort):
     def all_test_configurations(self):
         return [self.test_configuration()]
 
-    def _webcore_symbols_string(self):
+    def _symbols_string(self):
         return self.symbols_string
 
     def _tests_for_other_platforms(self):
@@ -61,21 +61,6 @@ class TestWebKitPort(WebKitPort):
 
     def _tests_for_disabled_features(self):
         return ["accessibility", ]
-
-
-class WebKitPortUnitTests(unittest.TestCase):
-    def test_default_options(self):
-        # The WebKit ports override new-run-webkit-test default options.
-        options = MockOptions(pixel_tests=None, time_out_ms=None)
-        port = WebKitPort(MockSystemHost(), options=options)
-        self.assertEquals(port._options.pixel_tests, False)
-        self.assertEquals(port._options.time_out_ms, 35000)
-
-        # Note that we don't override options if specified by the user.
-        options = MockOptions(pixel_tests=True, time_out_ms=6000)
-        port = WebKitPort(MockSystemHost(), options=options)
-        self.assertEquals(port._options.pixel_tests, True)
-        self.assertEquals(port._options.time_out_ms, 6000)
 
 
 class WebKitPortTest(port_testcase.PortTestCase):

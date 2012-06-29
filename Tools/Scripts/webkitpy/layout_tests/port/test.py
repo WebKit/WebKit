@@ -357,6 +357,9 @@ class TestPort(Port):
         }
         self._version = version_map[port_name]
 
+    def default_pixel_tests(self):
+        return True
+
     def _path_to_driver(self):
         # This routine shouldn't normally be called, but it is called by
         # the mock_drt Driver. We return something, but make sure it's useless.

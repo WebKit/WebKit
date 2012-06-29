@@ -33,10 +33,10 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.tool.mocktool import MockOptions
 
 from webkitpy.layout_tests.port import chromium_linux
-from webkitpy.layout_tests.port import port_testcase
+from webkitpy.layout_tests.port import chromium_port_testcase
 
 
-class ChromiumLinuxPortTest(port_testcase.PortTestCase):
+class ChromiumLinuxPortTest(chromium_port_testcase.ChromiumPortTestCase):
     port_name = 'chromium-linux'
     port_maker = chromium_linux.ChromiumLinuxPort
 

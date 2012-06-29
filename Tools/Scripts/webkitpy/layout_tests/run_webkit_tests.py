@@ -138,13 +138,10 @@ def _set_up_derived_options(port, options):
         options.configuration = port.default_configuration()
 
     if options.pixel_tests is None:
-        options.pixel_tests = True
+        options.pixel_tests = port.default_pixel_tests()
 
     if not options.time_out_ms:
-        if options.configuration == "Debug":
-            options.time_out_ms = str(2 * port.default_test_timeout_ms())
-        else:
-            options.time_out_ms = str(port.default_test_timeout_ms())
+        options.time_out_ms = str(port.default_timeout_ms())
 
     options.slow_time_out_ms = str(5 * int(options.time_out_ms))
 

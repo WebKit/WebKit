@@ -136,8 +136,12 @@ class Port(object):
         self._reftest_list = {}
         self._results_directory = None
 
-    def default_test_timeout_ms(self):
-        return 6 * 1000
+    def default_pixel_tests(self):
+        # FIXME: Disable until they are run by default on build.webkit.org.
+        return False
+
+    def default_timeout_ms(self):
+        return 35 * 1000
 
     def wdiff_available(self):
         if self._wdiff_available is None:

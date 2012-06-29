@@ -45,6 +45,10 @@ class MacTest(port_testcase.PortTestCase):
         port = self.make_port(port_name=port_name, options=MockOptions(webkit_test_runner=use_webkit2))
         self.assertEqual(port._skipped_file_search_paths(), expected_paths)
 
+    def test_default_timeout_ms(self):
+        super(MacTest, self).test_default_timeout_ms()
+        self.assertEquals(self.make_port(options=MockOptions(guard_malloc=True)).default_timeout_ms(), 350000)
+
     def test_skipped_file_search_paths(self):
         self.assert_skipped_file_search_paths('mac-snowleopard', set(['mac-snowleopard', 'mac']))
         self.assert_skipped_file_search_paths('mac-leopard', set(['mac-leopard', 'mac']))
