@@ -875,7 +875,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     DOMRange *range = [self _selectedRange];
     Frame* coreFrame = core([self _frame]);
     
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard inContext:range allowPlainText:allowPlainText];
     if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:range givenAction:WebViewInsertActionPasted])
         coreFrame->editor()->pasteAsFragment(core(fragment), [self _canSmartReplaceWithPasteboard:pasteboard], false);

@@ -3055,7 +3055,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     automaticSpellingCorrectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticSpellingCorrectionEnabled];
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticTextReplacementEnabled])
         automaticTextReplacementEnabled = [NSSpellChecker isAutomaticTextReplacementEnabled];
     if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticSpellingCorrectionEnabled])
@@ -5699,7 +5699,7 @@ static WebFrameView *containingFrameView(NSView *view)
 
     NSWindow *window = [self window];
     NSWindow *hostWindow = [self hostWindow];
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     if (window)
         return [window backingScaleFactor];
     if (hostWindow)

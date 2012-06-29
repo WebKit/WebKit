@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Hyphenation.h"
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
 #include "AtomicStringKeyedMRUCache.h"
 #include "TextBreakIteratorInternalICU.h"
@@ -76,4 +76,4 @@ size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeI
 
 } // namespace WebCore
 
-#endif // !defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)

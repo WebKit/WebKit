@@ -74,7 +74,7 @@ using namespace WebCore;
 
 using namespace HTMLNames;
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 @interface NSSpellChecker (WebNSSpellCheckerDetails)
 - (NSString *)languageForWordRange:(NSRange)range inString:(NSString *)string orthography:(NSOrthography *)orthography;
 @end
@@ -698,7 +698,7 @@ void WebEditorClient::textDidChangeInTextArea(Element* element)
 bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(TextCheckingType type) const
 {
     // This prevents erasing spelling markers on OS X Lion or later to match AppKit on these Mac OS X versions.
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     return type != TextCheckingTypeSpelling;
 #else
     return true;
@@ -895,7 +895,7 @@ bool WebEditorClient::spellingUIIsShowing()
 
 void WebEditorClient::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses) {
     guesses.clear();
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     NSString* language = nil;
     NSOrthography* orthography = nil;
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];

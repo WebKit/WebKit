@@ -1,3 +1,19 @@
+2012-06-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121529.
+        http://trac.webkit.org/changeset/121529
+        https://bugs.webkit.org/show_bug.cgi?id=90260
+
+        Failed to compile on Chromium WebKitMacBuilder (Requested by
+        keishi on #webkit).
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:WebCore::finalFrame:WebCore::]):
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.mm:
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2012-06-29  Eric Seidel  <eric@webkit.org>
 
         Remove more BUILDING_ON_LEOPARD branches now that no port builds on Leopard

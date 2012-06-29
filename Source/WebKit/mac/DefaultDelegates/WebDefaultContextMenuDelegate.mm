@@ -89,7 +89,7 @@
             action = @selector(_searchWithSpotlightFromMenu:);
             break;
         case WebMenuItemTagSearchWeb: {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
             RetainPtr<CFStringRef> searchProviderName(AdoptCF, WKCopyDefaultSearchProviderDisplayName());
             title = [NSString stringWithFormat:UI_STRING_INTERNAL("Search with %@", "Search with search provider context menu item with provider name inserted"), searchProviderName.get()];
 #else

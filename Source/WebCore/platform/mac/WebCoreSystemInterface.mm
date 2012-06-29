@@ -28,7 +28,7 @@
 #import <Foundation/Foundation.h>
 
 void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef context, void (^block)(CGRect rect));
 #endif
 BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
@@ -125,7 +125,7 @@ void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRequestRe
 void (*wkGetGlyphsForCharacters)(CGFontRef, const UniChar[], CGGlyph[], size_t);
 bool (*wkGetVerticalGlyphsForCharacters)(CTFontRef, const UniChar[], CGGlyph[], size_t);
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 void* wkGetHyphenationLocationBeforeIndex;
 #else
 CFIndex (*wkGetHyphenationLocationBeforeIndex)(CFStringRef string, CFIndex index);
@@ -133,7 +133,7 @@ int (*wkGetNSEventMomentumPhase)(NSEvent *);
 #endif
 
 CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
 CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);
@@ -178,7 +178,7 @@ CFStringRef (*wkCopyCFURLResponseSuggestedFilename)(CFURLResponseRef);
 void (*wkSetCFURLResponseMIMEType)(CFURLResponseRef, CFStringRef mimeType);
 void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSString *path);
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
 #endif
 
@@ -187,7 +187,7 @@ NSString *(*wkGetMacOSXVersionString)(void);
 bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 #endif
 

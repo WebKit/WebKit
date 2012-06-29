@@ -33,7 +33,7 @@
 #import <wtf/CurrentTime.h>
 #import <wtf/FastMalloc.h>
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !PLATFORM(IOS)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && !PLATFORM(IOS)
 #import "WebCoreSystemInterface.h"
 #import <notify.h>
 #endif
@@ -42,7 +42,7 @@ using std::max;
 
 namespace WebCore {
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
 #if !PLATFORM(IOS)
 static dispatch_source_t _cache_event_source = 0;

@@ -2111,7 +2111,7 @@ IntPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonB
 
 bool RenderThemeMac::shouldShowPlaceholderWhenFocused() const
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     return true;
 #else
     return false;

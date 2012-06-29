@@ -109,7 +109,7 @@ extern "C" {
 // In alphabetical order.
 
 extern void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 extern void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef, void (^block)(CGRect rect));
 #endif
 
@@ -215,7 +215,7 @@ extern bool (*wkGetVerticalGlyphsForCharacters)(CTFontRef, const UniChar[], CGGl
 
 extern BOOL (*wkUseSharedMediaUI)();
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 extern void* wkGetHyphenationLocationBeforeIndex;
 #else
 extern CFIndex (*wkGetHyphenationLocationBeforeIndex)(CFStringRef string, CFIndex index);
@@ -232,7 +232,7 @@ extern int (*wkGetNSEventMomentumPhase)(NSEvent *);
 
 extern CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
 extern CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
@@ -296,7 +296,7 @@ extern void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRe
 #endif
 extern void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSString *path);
     
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 #import <dispatch/dispatch.h>
 
 extern dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
@@ -308,7 +308,7 @@ extern NSString *(*wkGetMacOSXVersionString)(void);
 extern bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 extern void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 #endif
 

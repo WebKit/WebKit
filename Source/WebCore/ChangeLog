@@ -1,3 +1,43 @@
+2012-06-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121529.
+        http://trac.webkit.org/changeset/121529
+        https://bugs.webkit.org/show_bug.cgi?id=90260
+
+        Failed to compile on Chromium WebKitMacBuilder (Requested by
+        keishi on #webkit).
+
+        * platform/LocalizedStrings.cpp:
+        (WebCore):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::platformAddPathForRoundedRect):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::setFont):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersCoreText):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::showGlyphsWithAdvances):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore):
+        * platform/mac/CursorMac.mm:
+        (WebCore::Cursor::ensurePlatformCursor):
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::momentumPhaseForEvent):
+        (WebCore::phaseForEvent):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * platform/text/cf/HyphenationCF.cpp:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::shouldShowPlaceholderWhenFocused):
+
 2012-06-28  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add toggle breakpoint shortcut.
