@@ -1,3 +1,13 @@
+2012-06-29  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Don't add Qt module dependencies in features.prf
+
+        The required dependencies are already added in WebCore.pri.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-06-27  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         [Qt] Use LIBS_PRIVATE instead of putting dependencies into LIBS

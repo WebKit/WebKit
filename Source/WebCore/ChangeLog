@@ -1,3 +1,13 @@
+2012-06-29  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Don't add Qt module dependencies in features.prf
+
+        The required dependencies are already added in WebCore.pri.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WebCore.pri:
+
 2012-06-29  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Add FileSystemView

@@ -171,7 +171,7 @@ contains(DEFINES, ENABLE_GEOLOCATION=1) {
     MOBILITY *= location
 }
 
-contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
+contains(DEFINES, ENABLE_ORIENTATION_EVENTS=1)|contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
     haveQt(5) {
         QT += sensors
     } else {

@@ -145,10 +145,6 @@ haveQt(5) {
     contains(MOBILITY_CONFIG, sensors) {
         !contains(DEFINES, ENABLE_ORIENTATION_EVENTS=.): DEFINES += ENABLE_ORIENTATION_EVENTS=1
         !contains(DEFINES, ENABLE_DEVICE_ORIENTATION=.): DEFINES += ENABLE_DEVICE_ORIENTATION=1
-
-        # FIXME: These should not be here, but in the target that needs them
-        CONFIG *= mobility
-        MOBILITY *= sensors
     }
 }
 
