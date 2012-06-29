@@ -1325,7 +1325,16 @@ void WebPage::setScrollPosition(const Platform::IntPoint& point)
         d->m_userPerformedManualScroll = true;
 
     d->m_backingStoreClient->setIsClientGeneratedScroll(true);
+
+    // UI thread can call BackingStorePrivate::setScrollingOrZooming(false) before WebKit thread calls WebPage::setScrollPosition(),
+    // in which case it will set ScrollableArea::m_constrainsScrollingToContentEdge to true earlier.
+    // We can cache ScrollableArea::m_constrainsScrollingToContentEdge and always set it to false before we set scroll position in
+    // WebKit thread to avoid scroll position clamping during scrolling, and restore it to what it was after that.
+    bool constrainsScrollingToContentEdge = d->m_mainFrame->view()->constrainsScrollingToContentEdge();
+    d->m_mainFrame->view()->setConstrainsScrollingToContentEdge(false);
     d->setScrollPosition(d->mapFromTransformed(point));
+    d->m_mainFrame->view()->setConstrainsScrollingToContentEdge(constrainsScrollingToContentEdge);
+
     d->m_backingStoreClient->setIsClientGeneratedScroll(false);
 }
 

@@ -1,3 +1,26 @@
+2012-06-29  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Page jumps after post-pinch-zoom re-render
+        https://bugs.webkit.org/show_bug.cgi?id=90282
+
+        Reviewed by Antonio Gomes.
+
+        PR: 170255
+        In r120622, we moved ScrollableArea::setConstrainsScrollingToContentEdge(false|true)
+        from WebPage::setScrollPosition() to BackingStorePrivate::setScrollingOrZooming()
+        to address an overscroll reset issue.
+        However, when we are ending bitmap zooming, UI thread can call
+        BackingStorePrivate::setScrollingOrZooming(false) before WebKit thread
+        calls WebPage::setScrollPosition(), in which case it will set
+        ScrollableArea::m_constrainsScrollingToContentEdge to true earlier.
+        To fix this, we can cache ScrollableArea::m_constrainsScrollingToContentEdge
+        and always set it to false before we set scroll position in WebKit
+        thread to avoid scroll position clamping during scrolling, and restore
+        it to what it was after that.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::setScrollPosition):
+
 2012-06-29  Jakob Petsovits  <jpetsovits@rim.com>
 
         Add blitVisibleContents() as public API.
