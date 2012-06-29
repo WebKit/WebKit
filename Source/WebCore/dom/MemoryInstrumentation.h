@@ -31,6 +31,7 @@
 #ifndef MemoryInstrumentation_h
 #define MemoryInstrumentation_h
 
+#include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -62,6 +63,7 @@ public:
 private:
     friend class MemoryObjectInfo;
 
+    virtual void reportString(ObjectType, const String&) = 0;
     virtual void countObjectSize(ObjectType, size_t) = 0;
     virtual bool visited(const void*) = 0;
 };
@@ -102,6 +104,11 @@ public:
             return;
         m_objectType = objectType;
         m_objectSize = sizeof(T);
+    }
+
+    void reportString(const String& string)
+    {
+        m_memoryInstrumentation->reportString(objectType(), string);
     }
 
     MemoryInstrumentation::ObjectType objectType() const { return m_objectType; }

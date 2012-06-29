@@ -47,6 +47,8 @@ public:
     // Returns how much could be added before length limit was met.
     unsigned parserAppendData(const UChar*, unsigned dataLength, unsigned lengthLimit);
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
+
 protected:
     CharacterData(Document* document, const String& text, ConstructionType type)
         : Node(document, type)

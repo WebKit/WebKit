@@ -26,6 +26,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
+#include "MemoryInstrumentation.h"
 #include "MutationEvent.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
@@ -90,6 +91,13 @@ unsigned CharacterData::parserAppendData(const UChar* data, unsigned dataLength,
         parentNode()->childrenChanged();
     
     return end;
+}
+
+void CharacterData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
+    Node::reportMemoryUsage(memoryObjectInfo);
+    memoryObjectInfo->reportString(m_data);
 }
 
 void CharacterData::appendData(const String& data, ExceptionCode&)

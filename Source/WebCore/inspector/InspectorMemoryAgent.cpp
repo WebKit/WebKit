@@ -55,6 +55,8 @@
 #include <wtf/ArrayBufferView.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringImpl.h>
+#include <wtf/text/WTFString.h>
 
 using WebCore::TypeBuilder::Memory::DOMGroup;
 using WebCore::TypeBuilder::Memory::ListenerCount;
@@ -92,6 +94,8 @@ static const char domTreeCSS[] = "DOMTreeCSS";
 
 namespace {
 
+typedef HashSet<const void*> VisitedObjects;
+
 String nodeName(Node* node)
 {
     if (node->document()->isXHTMLDocument())
@@ -101,8 +105,15 @@ String nodeName(Node* node)
 
 size_t stringSize(StringImpl* string)
 {
+    // TODO: support substrings
     size_t size = string->length();
-    if (!string->is8Bit())
+    if (string->is8Bit()) {
+        if (string->has16BitShadow()) {
+            size += 2 * size;
+            if (string->hasTerminatingNullCharacter())
+                size += 2;
+        }
+    } else
         size *= 2;
     return size + sizeof(*string);
 }
@@ -315,8 +326,9 @@ private:
 
 class ExternalResourceVisitor : public ExternalStringVisitor, public ExternalArrayVisitor {
 public:
-    ExternalResourceVisitor()
-        : m_jsExternalStringSize(0)
+    explicit ExternalResourceVisitor(VisitedObjects& visitedObjects)
+        : m_visitedObjects(visitedObjects)
+        , m_jsExternalStringSize(0)
         , m_externalArraySize(0)
     { }
 
@@ -327,18 +339,18 @@ private:
     virtual void visitJSExternalArray(ArrayBufferView* bufferView)
     {
         ArrayBuffer* buffer = bufferView->buffer().get();
-        if (m_arrayBuffers.add(buffer).isNewEntry)
+        if (m_visitedObjects.add(buffer).isNewEntry)
             m_externalArraySize += buffer->byteLength();
     }
     virtual void visitJSExternalString(StringImpl* string)
     {
-        int size = stringSize(string);
-        m_jsExternalStringSize += size;
+        if (m_visitedObjects.add(string).isNewEntry)
+            m_jsExternalStringSize += stringSize(string);
     }
 
+    VisitedObjects& m_visitedObjects;
     size_t m_jsExternalStringSize;
     size_t m_externalArraySize;
-    HashSet<ArrayBuffer*> m_arrayBuffers;
 };
 
 } // namespace
@@ -418,7 +430,8 @@ namespace {
 
 class MemoryInstrumentationImpl : public MemoryInstrumentation {
 public:
-    MemoryInstrumentationImpl()
+    explicit MemoryInstrumentationImpl(VisitedObjects& visitedObjects)
+        : m_visitedObjects(visitedObjects)
     {
         for (int i = 0; i < LastTypeEntry; ++i)
             m_totalSizes[i] = 0;
@@ -442,6 +455,13 @@ public:
     }
 
 private:
+    virtual void reportString(ObjectType objectType, const String& string)
+    {
+        if (visited(string.impl()))
+            return;
+        countObjectSize(objectType, stringSize(string.impl()));
+    }
+
     virtual void countObjectSize(ObjectType objectType, size_t size)
     {
         ASSERT(objectType >= 0 && objectType < LastTypeEntry);
@@ -453,13 +473,16 @@ private:
         return !m_visitedObjects.add(object).isNewEntry;
     }
     size_t m_totalSizes[LastTypeEntry];
-    typedef HashSet<const void*> VisitedObjects;
-    VisitedObjects m_visitedObjects;
+    VisitedObjects& m_visitedObjects;
 };
 
 class DOMTreesIterator : public NodeWrapperVisitor {
 public:
-    explicit DOMTreesIterator(Page* page) : m_page(page) { }
+    DOMTreesIterator(Page* page, VisitedObjects& visitedObjects)
+        : m_page(page)
+        , m_domMemoryUsage(visitedObjects)
+    {
+    }
 
     virtual void visitNode(Node* node)
     {
@@ -478,9 +501,9 @@ private:
 
 }
 
-static PassRefPtr<InspectorMemoryBlock> domTreeInfo(Page* page)
+static PassRefPtr<InspectorMemoryBlock> domTreeInfo(Page* page, VisitedObjects& visitedObjects)
 {
-    DOMTreesIterator domTreesIterator(page);
+    DOMTreesIterator domTreesIterator(page, visitedObjects);
     ScriptProfiler::visitNodeWrappers(&domTreesIterator);
 
     // Make sure all documents reachable from the main frame are accounted.
@@ -513,9 +536,9 @@ static PassRefPtr<InspectorMemoryBlock> memoryCacheInfo()
     return memoryCacheStats.release();
 }
 
-static PassRefPtr<InspectorMemoryBlock> jsExternalResourcesInfo()
+static PassRefPtr<InspectorMemoryBlock> jsExternalResourcesInfo(VisitedObjects& visitedObjects)
 {
-    ExternalResourceVisitor visitor;
+    ExternalResourceVisitor visitor(visitedObjects);
     ScriptProfiler::visitExternalStrings(&visitor);
     ScriptProfiler::visitExternalArrays(&visitor);
 
@@ -542,13 +565,14 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
     processMemory = InspectorMemoryBlock::create().setName(MemoryBlockName::processPrivateMemory);
     processMemory->setSize(privateBytes);
 
+    VisitedObjects visitedObjects;
     RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
     children->addItem(jsHeapInfo());
-    children->addItem(jsExternalResourcesInfo());
     children->addItem(inspectorData());
     children->addItem(memoryCacheInfo());
     children->addItem(renderTreeInfo(m_page)); // TODO: collect for all pages?
-    children->addItem(domTreeInfo(m_page)); // TODO: collect for all pages?
+    children->addItem(domTreeInfo(m_page, visitedObjects)); // TODO: collect for all pages?
+    children->addItem(jsExternalResourcesInfo(visitedObjects));
     processMemory->setChildren(children);
 }
 

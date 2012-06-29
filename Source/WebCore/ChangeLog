@@ -1,3 +1,30 @@
+2012-06-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add character data to the DOM section of native memory view
+        https://bugs.webkit.org/show_bug.cgi?id=89968
+
+        Reviewed by Vsevolod Vlasov.
+
+        Count strings referenced from CharacterData node and its descendants
+        as part of the DOM tree structures in the native memory view.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::reportMemoryUsage):
+        (WebCore):
+        * dom/CharacterData.h:
+        (CharacterData):
+        * dom/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        (WebCore::MemoryObjectInfo::reportString):
+        (MemoryObjectInfo):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore):
+        (WebCore::domTreeInfo):
+        (WebCore::jsExternalResourcesInfo):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.MemoryBlockViewProperties._initialize):
+
 2012-06-29  Eric Seidel  <eric@webkit.org>
 
         Remove more BUILDING_ON_LEOPARD branches now that no port builds on Leopard
