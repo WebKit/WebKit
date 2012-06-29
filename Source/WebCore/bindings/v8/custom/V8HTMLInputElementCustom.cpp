@@ -48,7 +48,7 @@ v8::Handle<v8::Value> V8HTMLInputElement::selectionStartAccessorGetter(v8::Local
         return V8Proxy::throwTypeError("Accessing selectionStart on an input element that cannot have a selection.", info.GetIsolate());
 
     int v = imp->selectionStart();
-    return v8::Integer::New(v);
+    return v8Integer(v, info.GetIsolate());
 }
 
 void V8HTMLInputElement::selectionStartAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -74,7 +74,7 @@ v8::Handle<v8::Value> V8HTMLInputElement::selectionEndAccessorGetter(v8::Local<v
         return V8Proxy::throwTypeError("Accessing selectionEnd on an input element that cannot have a selection.", info.GetIsolate());
 
     int v = imp->selectionEnd();
-    return v8::Integer::New(v);
+    return v8Integer(v, info.GetIsolate());
 }
 
 void V8HTMLInputElement::selectionEndAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

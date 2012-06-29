@@ -131,7 +131,7 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
     } else {
         RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());
         if (imp->document() && !imp->document()->contentSecurityPolicy()->allowEval(callStack.release()))
-            return v8::Integer::New(0);
+            return v8Integer(0, args.GetIsolate());
         id = DOMTimer::install(scriptContext, adoptPtr(new ScheduledAction(V8Proxy::context(imp->frame()), functionString)), timeout, singleShot);
     }
 
@@ -142,7 +142,7 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
         V8GCForContextDispose::instance().notifyIdleSooner(maximumFireInterval);
     }
 
-    return v8::Integer::New(id);
+    return v8Integer(id, args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8DOMWindow::eventAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)

@@ -88,7 +88,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::lengthAccessorGetter(v8::Local<v8
     INC_STATS("DOM.HTMLOptionsCollection.length._get");
     HTMLOptionsCollection* imp = V8HTMLOptionsCollection::toNative(info.Holder());
     int v = imp->length();
-    return v8::Integer::New(v);
+    return v8Integer(v, info.GetIsolate());
 }
 
 void V8HTMLOptionsCollection::lengthAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

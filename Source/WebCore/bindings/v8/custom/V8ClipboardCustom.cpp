@@ -57,7 +57,7 @@ v8::Handle<v8::Value> V8Clipboard::typesAccessorGetter(v8::Local<v8::String> nam
     HashSet<String>::const_iterator end = types.end();
     int index = 0;
     for (HashSet<String>::const_iterator it = types.begin(); it != end; ++it, ++index)
-        result->Set(v8::Integer::New(index), v8String(*it, info.GetIsolate()));
+        result->Set(v8Integer(index, info.GetIsolate()), v8String(*it, info.GetIsolate()));
 
     return result;
 }

@@ -83,7 +83,7 @@ v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singl
     } else
         return v8::Undefined();
 
-    return v8::Integer::New(timerId);
+    return v8Integer(timerId, args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8WorkerContext::importScriptsCallback(const v8::Arguments& args)

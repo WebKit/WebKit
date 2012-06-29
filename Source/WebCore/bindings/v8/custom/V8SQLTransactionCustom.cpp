@@ -73,7 +73,7 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
             sqlArgsLength = length->Uint32Value();
 
         for (unsigned int i = 0; i < sqlArgsLength; ++i) {
-            v8::Local<v8::Integer> key = v8::Integer::New(i);
+            v8::Handle<v8::Integer> key = v8Integer(i, args.GetIsolate());
             EXCEPTION_BLOCK(v8::Local<v8::Value>, value, sqlArgsObject->Get(key));
 
             if (value.IsEmpty() || value->IsNull())

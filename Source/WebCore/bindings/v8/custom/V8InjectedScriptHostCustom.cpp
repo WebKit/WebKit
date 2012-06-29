@@ -168,8 +168,8 @@ v8::Handle<v8::Value> V8InjectedScriptHost::functionDetailsCallback(const v8::Ar
     int columnNumber = function->GetScriptColumnNumber();
 
     v8::Local<v8::Object> location = v8::Object::New();
-    location->Set(v8::String::New("lineNumber"), v8::Integer::New(lineNumber));
-    location->Set(v8::String::New("columnNumber"), v8::Integer::New(columnNumber));
+    location->Set(v8::String::New("lineNumber"), v8Integer(lineNumber, args.GetIsolate()));
+    location->Set(v8::String::New("columnNumber"), v8Integer(columnNumber, args.GetIsolate()));
     location->Set(v8::String::New("scriptId"), function->GetScriptId()->ToString());
 
     v8::Local<v8::Object> result = v8::Object::New();

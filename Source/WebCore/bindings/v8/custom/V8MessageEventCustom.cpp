@@ -101,7 +101,7 @@ v8::Handle<v8::Value> V8MessageEvent::portsAccessorGetter(v8::Local<v8::String> 
 
     v8::Local<v8::Array> portArray = v8::Array::New(portsCopy.size());
     for (size_t i = 0; i < portsCopy.size(); ++i)
-        portArray->Set(v8::Integer::New(i), toV8(portsCopy[i].get(), info.GetIsolate()));
+        portArray->Set(v8Integer(i, info.GetIsolate()), toV8(portsCopy[i].get(), info.GetIsolate()));
 
     return portArray;
 }

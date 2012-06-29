@@ -47,7 +47,7 @@ v8::Handle<v8::Array> V8Storage::namedPropertyEnumerator(const v8::AccessorInfo&
         String key = storage->key(i);
         ASSERT(!key.isNull());
         String val = storage->getItem(key);
-        properties->Set(v8::Integer::New(i), v8String(key, info.GetIsolate()));
+        properties->Set(v8Integer(i, info.GetIsolate()), v8String(key, info.GetIsolate()));
     }
 
     return properties;
@@ -67,7 +67,7 @@ static v8::Handle<v8::Value> storageGetter(v8::Local<v8::String> v8Name, const v
 v8::Handle<v8::Value> V8Storage::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Storage.IndexedPropertyGetter");
-    v8::Local<v8::Integer> indexV8 = v8::Integer::New(index);
+    v8::Handle<v8::Integer> indexV8 = v8Integer(index, info.GetIsolate());
     return storageGetter(indexV8->ToString(), info);
 }
 
@@ -87,7 +87,7 @@ v8::Handle<v8::Integer> V8Storage::namedPropertyQuery(v8::Local<v8::String> v8Na
     String name = toWebCoreString(v8Name);
 
     if (name != "length" && storage->contains(name))
-        return v8::Integer::New(v8::None);
+        return v8Integer(0, info.GetIsolate());
 
     return v8::Handle<v8::Integer>();
 }
@@ -116,7 +116,7 @@ static v8::Handle<v8::Value> storageSetter(v8::Local<v8::String> v8Name, v8::Loc
 v8::Handle<v8::Value> V8Storage::indexedPropertySetter(uint32_t index, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Storage.NamedPropertyGetter");
-    v8::Local<v8::Integer> indexV8 = v8::Integer::New(index);
+    v8::Handle<v8::Integer> indexV8 = v8Integer(index, info.GetIsolate());
     return storageSetter(indexV8->ToString(), value, info);
 }
 
@@ -142,7 +142,7 @@ static v8::Handle<v8::Boolean> storageDeleter(v8::Local<v8::String> v8Name, cons
 v8::Handle<v8::Boolean> V8Storage::indexedPropertyDeleter(uint32_t index, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Storage.IndexedPropertyDeleter");
-    v8::Local<v8::Integer> indexV8 = v8::Integer::New(index);
+    v8::Handle<v8::Integer> indexV8 = v8Integer(index, info.GetIsolate());
     return storageDeleter(indexV8->ToString(), info);
 }
 

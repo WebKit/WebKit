@@ -174,7 +174,7 @@ v8::Handle<v8::Array> V8CSSStyleDeclaration::namedPropertyEnumerator(const v8::A
     for (unsigned i = 0; i < propertyNamesLength; ++i) {
         String key = propertyNames.at(i);
         ASSERT(!key.isNull());
-        properties->Set(v8::Integer::New(i), v8String(key, info.GetIsolate()));
+        properties->Set(v8Integer(i, info.GetIsolate()), v8String(key, info.GetIsolate()));
     }
 
     return properties;
@@ -185,7 +185,7 @@ v8::Handle<v8::Integer> V8CSSStyleDeclaration::namedPropertyQuery(v8::Local<v8::
     INC_STATS("DOM.CSSStyleDeclaration.NamedPropertyQuery");
 
     if (cssPropertyInfo(v8Name))
-        return v8::Integer::New(v8::None);
+        return v8Integer(0, info.GetIsolate());
 
     return v8::Handle<v8::Integer>();
 }

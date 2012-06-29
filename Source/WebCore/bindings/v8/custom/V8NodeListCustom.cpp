@@ -51,7 +51,7 @@ v8::Handle<v8::Value> V8NodeList::namedPropertyGetter(v8::Local<v8::String> name
     // Length property cannot be overridden.
     DEFINE_STATIC_LOCAL(const AtomicString, length, ("length"));
     if (key == length)
-        return v8::Integer::New(list->length());
+        return v8Integer(list->length(), info.GetIsolate());
 
     RefPtr<Node> result = list->itemWithName(key);
     if (!result)
