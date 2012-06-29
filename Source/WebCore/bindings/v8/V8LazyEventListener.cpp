@@ -180,11 +180,11 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     v8::Local<v8::Object> thisObject = v8::Object::New();
     if (thisObject.IsEmpty())
         return;
-    if (!thisObject->ForceSet(v8::Integer::NewFromUnsigned(0), nodeWrapper))
+    if (!thisObject->ForceSet(v8UnsignedInteger(0), nodeWrapper))
         return;
-    if (!thisObject->ForceSet(v8::Integer::NewFromUnsigned(1), formWrapper))
+    if (!thisObject->ForceSet(v8UnsignedInteger(1), formWrapper))
         return;
-    if (!thisObject->ForceSet(v8::Integer::NewFromUnsigned(2), documentWrapper))
+    if (!thisObject->ForceSet(v8UnsignedInteger(2), documentWrapper))
         return;
 
     // FIXME: Remove this code when we stop doing the 'with' hack above.

@@ -277,7 +277,7 @@ bool Dictionary::get(const String& key, HashSet<AtomicString>& value) const
 
     v8::Local<v8::Array> v8Array = v8::Local<v8::Array>::Cast(v8Value);
     for (size_t i = 0; i < v8Array->Length(); ++i) {
-        v8::Local<v8::Value> indexedValue = v8Array->Get(v8::Integer::New(i));
+        v8::Local<v8::Value> indexedValue = v8Array->Get(v8Integer(i));
         value.add(v8ValueToWebCoreString(indexedValue));
     }
 

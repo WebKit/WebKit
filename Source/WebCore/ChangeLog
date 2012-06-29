@@ -1,3 +1,56 @@
+2012-06-29  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Replace v8::Integer::New() with v8Integer() in bindings/v8/*.{h,cpp}
+        https://bugs.webkit.org/show_bug.cgi?id=90238
+
+        Reviewed by Yury Semikhatsky.
+
+        v8Integer() is a fast wrapper of v8::Integer::New().
+        We can replace v8::Integer::New() with v8Integer()
+        in bindings/v8/*.{h,cpp}. In addition, we pass isolate
+        to v8Integer() where possible.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/Dictionary.cpp:
+        (WebCore::Dictionary::get):
+        * bindings/v8/NPV8Object.cpp:
+        (_NPN_Enumerate): Changed v8::None to 0, for consistency with other code.
+        * bindings/v8/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::addListener):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::compileScript):
+        * bindings/v8/SerializedScriptValue.cpp:
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::v8Array):
+        (WebCore::v8ValueToWebCoreDOMStringList):
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8Array):
+        (WebCore::v8NumberArrayToVector):
+        * bindings/v8/V8Collection.h:
+        (WebCore::nodeCollectionIndexedPropertyEnumerator):
+        (WebCore::collectionIndexedPropertyEnumerator):
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::prepareListenerObject):
+        * bindings/v8/V8NPObject.cpp:
+        (WebCore::npObjectQueryProperty):
+        (WebCore::npObjectPropertyEnumerator):
+        * bindings/v8/V8NPUtils.cpp:
+        (WebCore::convertNPVariantToV8Object):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::batchConfigureConstants):
+        (WebCore::V8Proxy::compileScript):
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::createHiddenDependency):
+        (WebCore::removeHiddenDependency):
+        * bindings/v8/V8WindowErrorHandler.cpp:
+        (WebCore::V8WindowErrorHandler::callListenerFunction):
+        * bindings/v8/V8WorkerContextErrorHandler.cpp:
+        (WebCore::V8WorkerContextErrorHandler::callListenerFunction):
+        * bindings/v8/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::addListener):
+
 2012-06-28  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Resource content is not loaded if Resource.requestContent method is called before network request is finished.

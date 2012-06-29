@@ -115,8 +115,8 @@ void batchConfigureConstants(v8::Handle<v8::FunctionTemplate> functionDescriptor
 {
     for (size_t i = 0; i < constantCount; ++i) {
         const BatchedConstant* constant = &constants[i];
-        functionDescriptor->Set(v8::String::New(constant->name), v8::Integer::New(constant->value), v8::ReadOnly);
-        proto->Set(v8::String::New(constant->name), v8::Integer::New(constant->value), v8::ReadOnly);
+        functionDescriptor->Set(v8::String::New(constant->name), v8Integer(constant->value), v8::ReadOnly);
+        proto->Set(v8::String::New(constant->name), v8Integer(constant->value), v8::ReadOnly);
     }
 }
 
@@ -181,8 +181,8 @@ v8::Handle<v8::Script> V8Proxy::compileScript(v8::Handle<v8::String> code, const
 {
     const uint16_t* fileNameString = fromWebCoreString(fileName);
     v8::Handle<v8::String> name = v8::String::New(fileNameString, fileName.length());
-    v8::Handle<v8::Integer> line = v8::Integer::New(scriptStartPosition.m_line.zeroBasedInt());
-    v8::Handle<v8::Integer> column = v8::Integer::New(scriptStartPosition.m_column.zeroBasedInt());
+    v8::Handle<v8::Integer> line = v8Integer(scriptStartPosition.m_line.zeroBasedInt());
+    v8::Handle<v8::Integer> column = v8Integer(scriptStartPosition.m_column.zeroBasedInt());
     v8::ScriptOrigin origin(name, line, column);
     v8::Handle<v8::Script> script = v8::Script::Compile(code, &origin, scriptData);
     return script;

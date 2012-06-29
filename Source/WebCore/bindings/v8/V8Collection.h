@@ -106,7 +106,7 @@ template<class Collection> static v8::Handle<v8::Array> nodeCollectionIndexedPro
     v8::Handle<v8::Array> properties = v8::Array::New(length);
     for (int i = 0; i < length; ++i) {
         // FIXME: Do we need to check that the item function returns a non-null value for this index?
-        v8::Handle<v8::Integer> integer = v8::Integer::New(i);
+        v8::Handle<v8::Integer> integer = v8Integer(i, info.GetIsolate());
         properties->Set(integer, integer);
     }
     return properties;
@@ -121,7 +121,7 @@ template<class Collection> static v8::Handle<v8::Array> collectionIndexedPropert
     v8::Handle<v8::Array> properties = v8::Array::New(length);
     for (int i = 0; i < length; ++i) {
         // FIXME: Do we need to check that the item function returns a non-null value for this index?
-        v8::Handle<v8::Integer> integer = v8::Integer::New(i);
+        v8::Handle<v8::Integer> integer = v8Integer(i, info.GetIsolate());
         properties->Set(integer, integer);
     }
     return properties;

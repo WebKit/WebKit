@@ -344,7 +344,7 @@ namespace WebCore {
         int index = 0;
         typename Vector<T>::const_iterator end = iterator.end();
         for (typename Vector<T>::const_iterator iter = iterator.begin(); iter != end; ++iter)
-            result->Set(v8::Integer::New(index++), toV8(WTF::getPtr(*iter), isolate));
+            result->Set(v8Integer(index++, isolate), toV8(WTF::getPtr(*iter), isolate));
         return result;
     }
 
@@ -355,7 +355,7 @@ namespace WebCore {
         Vector<String>::const_iterator end = iterator.end();
         int index = 0;
         for (Vector<String>::const_iterator iter = iterator.begin(); iter != end; ++iter)
-            array->Set(v8::Integer::New(index++), v8String(*iter, isolate));
+            array->Set(v8Integer(index++, isolate), v8String(*iter, isolate));
         return array;
     }
 
@@ -551,7 +551,7 @@ namespace WebCore {
         v8::Local<v8::Array> v8Array = v8::Local<v8::Array>::Cast(v8Value);
         size_t length = v8Array->Length();
         for (size_t i = 0; i < length; ++i) {
-            v8::Local<v8::Value> indexedValue = v8Array->Get(v8::Integer::New(i));
+            v8::Local<v8::Value> indexedValue = v8Array->Get(v8Integer(i));
             result.append(static_cast<T>(indexedValue->NumberValue()));
         }
         return result;

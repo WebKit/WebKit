@@ -264,7 +264,7 @@ v8::Handle<v8::Value> npObjectGetIndexedProperty(v8::Local<v8::Object> self, uin
 v8::Handle<v8::Integer> npObjectQueryProperty(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     NPIdentifier identifier = getStringIdentifier(name);
-    return npObjectGetProperty(info.Holder(), identifier, name, info.GetIsolate()).IsEmpty() ? v8::Handle<v8::Integer>() : v8::Integer::New(v8::None);
+    return npObjectGetProperty(info.Holder(), identifier, name, info.GetIsolate()).IsEmpty() ? v8::Handle<v8::Integer>() : v8Integer(0, info.GetIsolate());
 }
 
 static v8::Handle<v8::Value> npObjectSetProperty(v8::Local<v8::Object> self, NPIdentifier identifier, v8::Local<v8::Value> value, v8::Isolate* isolate)
@@ -335,9 +335,9 @@ v8::Handle<v8::Array> npObjectPropertyEnumerator(const v8::AccessorInfo& info, b
             for (uint32_t i = 0; i < count; ++i) {
                 IdentifierRep* identifier = static_cast<IdentifierRep*>(identifiers[i]);
                 if (namedProperty)
-                    properties->Set(v8::Integer::New(i), v8::String::New(identifier->string()));
+                    properties->Set(v8Integer(i, info.GetIsolate()), v8::String::New(identifier->string()));
                 else
-                    properties->Set(v8::Integer::New(i), v8::Integer::New(identifier->number()));
+                    properties->Set(v8Integer(i, info.GetIsolate()), v8Integer(identifier->number(), info.GetIsolate()));
             }
 
             return properties;

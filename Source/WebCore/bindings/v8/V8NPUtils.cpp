@@ -83,7 +83,7 @@ v8::Handle<v8::Value> convertNPVariantToV8Object(const NPVariant* variant, NPObj
 
     switch (type) {
     case NPVariantType_Int32:
-        return v8::Integer::New(NPVARIANT_TO_INT32(*variant));
+        return v8Integer(NPVARIANT_TO_INT32(*variant));
     case NPVariantType_Double:
         return v8::Number::New(NPVARIANT_TO_DOUBLE(*variant));
     case NPVariantType_Bool:
