@@ -64,6 +64,7 @@ class GtkPort(WebKitPort, PulseAudioSanitizer):
         environment['AUDIO_RESOURCES_PATH'] = self._filesystem.join(self._config.webkit_base_dir(),
                                                                     'Source', 'WebCore', 'platform',
                                                                     'audio', 'resources')
+        self._copy_value_from_environ_if_set(environment, 'WEBKITOUTPUTDIR')
         if self.get_option('webkit_test_runner'):
             # FIXME: This is a workaround to ensure that testing with WebKitTestRunner is started with
             # a non-existing cache. This should be removed when (and if) it will be possible to properly

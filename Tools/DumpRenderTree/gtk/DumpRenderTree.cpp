@@ -190,9 +190,15 @@ static void initializeFonts(const char* testURL = 0)
     if (!FcConfigParseAndLoad(config, reinterpret_cast<FcChar8*>(fontConfigFilename.get()), true))
         g_error("Couldn't load font configuration file from: %s", fontConfigFilename.get());
 
-    CString topLevelPath = getTopLevelPath();
-    GOwnPtr<char> fontsPath(g_build_filename(topLevelPath.data(), "WebKitBuild", "Dependencies",
-                                             "Root", "webkitgtk-test-fonts", NULL));
+    GOwnPtr<char> fontsPath;
+    const char* webkitOutputDir = g_getenv("WEBKITOUTPUTDIR");
+    if (webkitOutputDir)
+        fontsPath.set(g_build_filename(webkitOutputDir, "Dependencies", "Root", "webkitgtk-test-fonts", NULL));
+    else {
+        CString topLevelPath = getTopLevelPath();
+        fontsPath.set(g_build_filename(topLevelPath.data(), "WebKitBuild", "Dependencies", "Root", "webkitgtk-test-fonts", NULL));
+    }
+
     if (!g_file_test(fontsPath.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)))
         g_error("Could not locate test fonts at %s. Is WEBKIT_TOP_LEVEL set?", fontsPath.get());
 
