@@ -1,3 +1,19 @@
+2012-06-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Device Metrics] "Fit window" option inhibits adjusting the page zoom factor
+        https://bugs.webkit.org/show_bug.cgi?id=90187
+
+        Reviewed by Vsevolod Vlasov.
+
+        This change fixes the stale zoom factor, which does not get updated upon browser window resize in the "Fit window" mode.
+        The expected test results have little to do with actual dimensions of the test page in Chrome on a real mobile device,
+        since Chrome on the mobile uses a different zooming technique (pageScaleFactor-based viewport using layout width
+        rather than plain pageZoomFactor) and font boosting, which has not been upstreamed yet.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::DeviceMetricsSupport::autoZoomPageToFitWidth):
+        (WebKit::DeviceMetricsSupport::ensureOriginalZoomFactor):
+
 2012-06-29  Konrad Piascik  <kpiascik@rim.com>
 
         Don't hardcode target dpi of 160 (it should be 96 on desktop)

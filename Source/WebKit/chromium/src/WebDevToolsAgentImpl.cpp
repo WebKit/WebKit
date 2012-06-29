@@ -232,10 +232,12 @@ public:
 
         frame->setTextZoomFactor(m_webView->emulatedTextZoomFactor());
         ensureOriginalZoomFactor(frame->view());
-        frame->setPageAndTextZoomFactors(m_originalZoomFactor, m_webView->emulatedTextZoomFactor());
-        Document* doc = frame->document();
-        doc->styleResolverChanged(RecalcStyleImmediately);
-        doc->updateLayout();
+        Document* document = frame->document();
+        float numerator = document->renderView() ? document->renderView()->viewWidth() : frame->view()->contentsWidth();
+        float factor = m_originalZoomFactor * (numerator / m_emulatedFrameSize.width);
+        frame->setPageAndTextZoomFactors(factor, m_webView->emulatedTextZoomFactor());
+        document->styleResolverChanged(RecalcStyleImmediately);
+        document->updateLayout();
     }
 
     void webViewResized()

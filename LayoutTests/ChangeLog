@@ -1,3 +1,13 @@
+2012-06-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Device Metrics] "Fit window" option inhibits adjusting the page zoom factor
+        https://bugs.webkit.org/show_bug.cgi?id=90187
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/styles/override-screen-size-expected.txt:
+        * platform/chromium/inspector/styles/device-metrics-fit-window-expected.txt:
+
 2012-06-29  Kent Tamura  <tkent@chromium.org>
 
         <textarea> unnecessarily saves the value in some cases
