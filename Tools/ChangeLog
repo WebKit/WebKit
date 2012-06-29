@@ -1,3 +1,18 @@
+2012-06-29  Ojan Vafai  <ojan@chromium.org>
+
+        Fix optimize-baselines to not move baselines from win to win-7sp0
+        https://bugs.webkit.org/show_bug.cgi?id=90312
+
+        Reviewed by Dirk Pranke.
+
+        It used to consider win-7sp0 as the common directory for all the Apple
+        windows ports and incorrectly move results out of win.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        (BaselineOptimizerTest.test_win_does_not_drop_to_win_7sp0):
+        (BaselineOptimizerTest.test_common_directory_includes_root):
+
 2012-06-28  Ojan Vafai  <ojan@chromium.org>
 
         Fix rebaselining for Qt and Apple ports

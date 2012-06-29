@@ -52,6 +52,7 @@ def _baseline_search_hypergraph(host):
 
 _VIRTUAL_PORTS = {
     'mac-future': ['LayoutTests/platform/mac-future', 'LayoutTests/platform/mac', 'LayoutTests'],
+    'win-future': ['LayoutTests/platform/win-future', 'LayoutTests/platform/win', 'LayoutTests'],
     'qt-unknown': ['LayoutTests/platform/qt-unknown', 'LayoutTests/platform/qt', 'LayoutTests'],
 }
 

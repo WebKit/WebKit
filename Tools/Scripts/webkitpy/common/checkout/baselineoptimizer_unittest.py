@@ -119,6 +119,21 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/qt': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
         })
 
+    def test_win_does_not_drop_to_win_7sp0(self):
+        self._assertOptimization({
+            'LayoutTests/platform/win': '1',
+            'LayoutTests/platform/mac': '2',
+            'LayoutTests/platform/gtk': '3',
+            'LayoutTests/platform/qt': '4',
+            'LayoutTests/platform/chromium': '5',
+        }, {
+            'LayoutTests/platform/win': '1',
+            'LayoutTests/platform/mac': '2',
+            'LayoutTests/platform/gtk': '3',
+            'LayoutTests/platform/qt': '4',
+            'LayoutTests/platform/chromium': '5',
+        })
+
     def test_common_directory_includes_root(self):
         # Note: The resulting directories are "wrong" in the sense that
         # enacting this plan would change semantics. However, this test case
@@ -138,7 +153,7 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/chromium-win': '23a30302a6910f8a48b1007fa36f3e3158341834',
             'LayoutTests': '9c876f8c3e4cc2aef9519a6c1174eb3432591127',
             'LayoutTests/platform/chromium-mac': '23a30302a6910f8a48b1007fa36f3e3158341834',
-            'LayoutTests/platform/chromium-mac': '23a30302a6910f8a48b1007fa36f3e3158341834',
+            'LayoutTests/platform/chromium': '1',
         }, {
             'LayoutTests/platform/chromium': '23a30302a6910f8a48b1007fa36f3e3158341834',
             'LayoutTests': '9c876f8c3e4cc2aef9519a6c1174eb3432591127',
