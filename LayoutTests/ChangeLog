@@ -1,3 +1,9 @@
+2012-06-29  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding a new baseline required after r121555.
+
+        * platform/gtk/fast/viewport/viewport-91-expected.txt: Added.
+
 2012-06-29  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [GTK] [QT] fast/viewport/viewport-91.html is failing after r121555
