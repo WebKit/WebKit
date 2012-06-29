@@ -35,7 +35,7 @@ struct PresentationAttributeCacheKey;
 
 class StyledElement : public Element {
 public:
-    virtual ~StyledElement();
+    virtual ~StyledElement() { }
 
     virtual StylePropertySet* additionalAttributeStyle() { return 0; }
     void invalidateStyleAttribute();
@@ -86,12 +86,6 @@ private:
 
     void makePresentationAttributeCacheKey(PresentationAttributeCacheKey&) const;
     void updateAttributeStyle();
-
-    void destroyInlineStyle()
-    {
-        if (attributeData())
-            attributeData()->destroyInlineStyle(this);
-    }
 };
 
 inline const SpaceSplitString& StyledElement::classNames() const

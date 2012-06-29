@@ -1051,17 +1051,9 @@ CSSStyleDeclaration* StylePropertySet::ensureInlineCSSStyleDeclaration(const Sty
         return propertySetCSSOMWrapperMap().get(this);
     }
     m_ownsCSSOMWrapper = true;
-    PropertySetCSSStyleDeclaration* cssomWrapper = new InlineCSSStyleDeclaration(const_cast<StylePropertySet*>(this), const_cast<StyledElement*>(parentElement));
+    PropertySetCSSStyleDeclaration* cssomWrapper = new InlineCSSStyleDeclaration(const_cast<StyledElement*>(parentElement));
     propertySetCSSOMWrapperMap().add(this, adoptPtr(cssomWrapper));
     return cssomWrapper;
-}
-
-void StylePropertySet::clearParentElement(StyledElement* element)
-{
-    if (!m_ownsCSSOMWrapper)
-        return;
-    ASSERT_UNUSED(element, propertySetCSSOMWrapperMap().get(this)->parentElement() == element);
-    propertySetCSSOMWrapperMap().get(this)->clearParentElement();
 }
 
 unsigned StylePropertySet::averageSizeInBytes()

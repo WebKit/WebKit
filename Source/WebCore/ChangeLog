@@ -1,3 +1,69 @@
+2012-06-29  Andreas Kling  <kling@webkit.org>
+
+        Separate mutating CSSStyleDeclaration operations.
+        <http://webkit.org/b/89945>
+
+        Reviewed by Antti Koivisto.
+
+        Use separate paths for mutating the StylePropertySet wrapped by a CSSStyleDeclaration.
+        PropertySetCSSStyleDeclaration now has:
+
+            - propertySet() const
+            - ensureMutablePropertySet()
+
+        This is prep work for supporting immutable ElementAttributeData objects, the idea being
+        that calling ensureMutablePropertySet() may cause the element to convert its internal
+        attribute storage (which also holds the inline StylePropertySet.)
+
+        To that end, also removed the weird logic that allowed you to kill the inline style object
+        by removing the 'style' attribute. We now simply clear out all the properties in that case
+        which saves us a bunch of hassle (no need for a ~StyledElement anymore.)
+        Note that InlineCSSStyleDeclaration now refs the element rather than the inline style.
+
+        There should be no web-facing behavior change from any of this.
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::length):
+        (WebCore::PropertySetCSSStyleDeclaration::item):
+        (WebCore::PropertySetCSSStyleDeclaration::cssText):
+        (WebCore::PropertySetCSSStyleDeclaration::setCssText):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyCSSValue):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyValue):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyPriority):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyShorthand):
+        (WebCore::PropertySetCSSStyleDeclaration::isPropertyImplicit):
+        (WebCore::PropertySetCSSStyleDeclaration::setProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::removeProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyValueInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::setPropertyInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::copy):
+        (WebCore::PropertySetCSSStyleDeclaration::makeMutable):
+        (WebCore::PropertySetCSSStyleDeclaration::cssPropertyMatches):
+        (WebCore::InlineCSSStyleDeclaration::InlineCSSStyleDeclaration):
+        (WebCore::InlineCSSStyleDeclaration::ref):
+        (WebCore::InlineCSSStyleDeclaration::deref):
+        (WebCore::InlineCSSStyleDeclaration::didMutate):
+        (WebCore::InlineCSSStyleDeclaration::parentStyleSheet):
+        (WebCore::InlineCSSStyleDeclaration::ensureMutablePropertySet):
+        * css/PropertySetCSSStyleDeclaration.h:
+        (PropertySetCSSStyleDeclaration):
+        (WebCore::PropertySetCSSStyleDeclaration::propertySet):
+        (WebCore::PropertySetCSSStyleDeclaration::ensureMutablePropertySet):
+        (InlineCSSStyleDeclaration):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::ensureInlineCSSStyleDeclaration):
+        * css/StylePropertySet.h:
+        (StylePropertySet):
+        * dom/ElementAttributeData.cpp:
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::styleAttributeChanged):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::~StyledElement):
+        (StyledElement):
+
 2012-06-29  Kwang Yul Seo  <skyul@company100.net>
 
         Don't call SegmentedString::toString() twice in XMLDocumentParser::append(const SegmentedString&)

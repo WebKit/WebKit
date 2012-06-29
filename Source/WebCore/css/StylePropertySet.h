@@ -103,8 +103,6 @@ public:
     
     String asText() const;
     
-    void clearParentElement(StyledElement*);
-
     CSSStyleDeclaration* ensureCSSStyleDeclaration() const;
     CSSStyleDeclaration* ensureInlineCSSStyleDeclaration(const StyledElement* parentElement) const;
 
