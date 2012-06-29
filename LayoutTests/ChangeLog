@@ -1,3 +1,13 @@
+2012-06-29  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Gardening after r121468
+        https://bugs.webkit.org/show_bug.cgi?id=90257
+
+        Unreviewed EFL gardening after r121468.
+
+        * platform/efl/fast/dom/Window/window-lookup-precedence-expected.txt: Removed.
+        * platform/efl/fast/forms/label/labelable-elements-expected.txt: Added.
+
 2012-06-29  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Add FileSystemView
