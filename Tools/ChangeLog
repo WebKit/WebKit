@@ -1,5 +1,18 @@
 2012-06-29  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: add comment about how determine_full_port_name() works for apple ports, fix -wk2 bug
+        https://bugs.webkit.org/show_bug.cgi?id=90314
+
+        Reviewed by Ojan Vafai.
+
+        Add comments and fix a bug in how we would handle the mac-wk2
+        and win-wk2 port names after confusion around in bug 90312 :).
+
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort.determine_full_port_name):
+
+2012-06-29  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: remove support for mac leopard from chromium configurations
         https://bugs.webkit.org/show_bug.cgi?id=90313
 
