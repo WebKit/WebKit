@@ -47,7 +47,7 @@ public:
         , m_type(type)
         , m_includeChildren(includeChildren)
     {
-        ASSERT(m_type == type);
+        ASSERT(static_cast<CollectionType>(m_type) == type);
     }
 
     CollectionType type() const { return static_cast<CollectionType>(m_type); }

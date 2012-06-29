@@ -1,3 +1,12 @@
+2012-06-29  Shawn Singh  <shawnsingh@chromium.org>
+
+        Unreviewed build fix after 121580.
+
+        WebKit Linux debug bots was complaining about signed vs unsigned integer comparison.
+
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollectionCacheBase::HTMLCollectionCacheBase):
+
 2012-06-28  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove mapRect and mapQuad from WebTransformationMatrix
