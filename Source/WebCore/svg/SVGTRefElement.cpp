@@ -185,6 +185,8 @@ void SVGTRefElement::detachTarget()
     if (container)
         container->setTextContent(emptyContent, ignore);
 
+    ASSERT(inDocument());
+
     // Mark the referenced ID as pending.
     String id;
     SVGURIReference::targetElementFromIRIString(href(), document(), &id);
