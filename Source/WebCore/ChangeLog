@@ -1,5 +1,11 @@
 2012-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Mac build fix after r121518.
+
+        * WebCore.exp.in:
+
+2012-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
         DOMHTMLCollection::item may return a wrong element after namedItem is called
         https://bugs.webkit.org/show_bug.cgi?id=90240
 
