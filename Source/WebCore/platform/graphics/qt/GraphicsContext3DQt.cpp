@@ -505,6 +505,9 @@ bool GraphicsContext3D::getImageData(Image* image,
 
     AlphaOp alphaOp = AlphaDoNothing;
     switch (qtImage.format()) {
+    case QImage::Format_RGB32:
+        // For opaque images, we should not premultiply or unmultiply alpha.
+        break;
     case QImage::Format_ARGB32:
         if (premultiplyAlpha)
             alphaOp = AlphaDoPremultiply;

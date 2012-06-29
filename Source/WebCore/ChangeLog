@@ -1,3 +1,18 @@
+2012-06-28  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] When uploading an opaque image to a texture for TextureMapper, unnecessary alpha operations take place
+        https://bugs.webkit.org/show_bug.cgi?id=90229
+
+        Reviewed by Luiz Agostini.
+
+        For opaque web content in WebKit2, we use the RGB32 image format. When we special-case
+        it in GraphicsContext3DQt, we can avoid any alpha operations and perform a regular copy.
+
+        Covered existing API tests, as this code path is always used when rendering.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+
 2012-06-28  James Robinson  <jamesr@chromium.org>
 
         [chromium] Compile chromium compositor implementation files into separate .lib
