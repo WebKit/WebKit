@@ -305,14 +305,6 @@ public:
 
         m_itemType->setValue(value);
     }
-
-    HTMLPropertiesCollection* properties(Node* node)
-    {
-        if (!m_properties)
-            m_properties = HTMLPropertiesCollection::create(node);
-
-        return m_properties.get();
-    }
 #endif
 
 #if ENABLE(STYLE_SCOPED)
@@ -368,7 +360,6 @@ private:
     mutable RefPtr<DOMSettableTokenList> m_itemProp;
     mutable RefPtr<DOMSettableTokenList> m_itemRef;
     mutable RefPtr<DOMSettableTokenList> m_itemType;
-    mutable OwnPtr<HTMLPropertiesCollection> m_properties;
 #endif
 
 #if ENABLE(STYLE_SCOPED)

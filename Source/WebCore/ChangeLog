@@ -1,3 +1,79 @@
+2012-06-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLCollection's caches should be owned by either ElementRareData or Document
+        https://bugs.webkit.org/show_bug.cgi?id=90322
+
+        Reviewed by Anders Carlsson.
+
+        Removed all instances of OwnPtr<HTMLCollection> except ones on ElementRareData and Document.
+        ElementRareData::ensureCachedHTMLCollection then polymorphically creates HTMLCollection or
+        its subclass as deemed necessary.
+
+        This refactoring allows us to move HTMLCollection to use the same invalidation model as
+        DynamicNodeList (invalidated during DOM mutations) in a follow up.
+
+        * dom/Document.cpp:
+        (WebCore::Document::all):
+        * dom/Document.h:
+        (Document):
+        * dom/Element.cpp:
+        (WebCore::ElementRareData::ensureCachedHTMLCollection):
+        (WebCore):
+        (WebCore::Element::cachedHTMLCollection):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementRareData.h:
+        (WebCore):
+        (ElementRareData):
+        (WebCore::ElementRareData::cachedHTMLCollection):
+        * dom/Node.cpp:
+        (WebCore):
+        * dom/Node.h:
+        (Node):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::setItemType):
+        (NodeRareData):
+        * html/CollectionType.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::shouldIncludeChildren):
+        (WebCore::HTMLCollection::isAcceptableElement):
+        * html/HTMLElement.cpp:
+        (WebCore):
+        (WebCore::HTMLElement::properties):
+        * html/HTMLElement.h:
+        (HTMLElement):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::elements):
+        * html/HTMLFieldSetElement.h:
+        (HTMLFieldSetElement):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::HTMLFormCollection):
+        (WebCore::HTMLFormCollection::create):
+        * html/HTMLFormCollection.h:
+        (HTMLFormCollection):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::elements):
+        * html/HTMLFormElement.h:
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::HTMLOptionsCollection):
+        (WebCore::HTMLOptionsCollection::create):
+        * html/HTMLOptionsCollection.h:
+        (HTMLOptionsCollection):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::selectedOptions):
+        (WebCore::HTMLSelectElement::options):
+        (WebCore::HTMLSelectElement::invalidateSelectedItems):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        * html/HTMLSelectElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::rows):
+        * html/HTMLTableElement.h:
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::HTMLTableRowsCollection):
+        (WebCore::HTMLTableRowsCollection::create):
+        * html/HTMLTableRowsCollection.h:
+        (HTMLTableRowsCollection):
+
 2012-06-29  Ojan Vafai  <ojan@chromium.org>
 
         Add FIXMEs for vertical writing mode and override sizes.

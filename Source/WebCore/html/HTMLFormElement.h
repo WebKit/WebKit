@@ -150,7 +150,6 @@ private:
 
     FormSubmission::Attributes m_attributes;
     OwnPtr<AliasMap> m_elementAliases;
-    OwnPtr<HTMLFormCollection> m_elementsCollection;
 
     CheckedRadioButtons m_checkedRadioButtons;
 

@@ -987,6 +987,11 @@ void HTMLElement::setItemValueText(const String& value, ExceptionCode& ec)
 {
     setTextContent(value, ec);
 }
+
+HTMLPropertiesCollection* HTMLElement::properties()
+{
+    return ensureCachedHTMLCollection(ItemProperties);
+}
 #endif
 
 void HTMLElement::addHTMLLengthToStyle(StylePropertySet* style, CSSPropertyID propertyID, const String& value)

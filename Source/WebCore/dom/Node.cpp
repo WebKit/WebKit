@@ -2778,10 +2778,6 @@ void Node::setItemType(const String& value)
     ensureRareData()->setItemType(value);
 }
 
-HTMLPropertiesCollection* Node::properties()
-{
-    return ensureRareData()->properties(this);
-}
 #endif
 
 void NodeRareData::createNodeLists(Node* node)

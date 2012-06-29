@@ -1396,7 +1396,6 @@ private:
     InheritedBool m_designMode;
     
     OwnPtr<HTMLCollection> m_collections[NumUnnamedDocumentCachedTypes];
-    OwnPtr<HTMLAllCollection> m_allCollection;
     HashSet<DynamicSubtreeNodeList*> m_listsInvalidatedAtDocument;
 
     typedef HashMap<AtomicStringImpl*, OwnPtr<HTMLNameCollection> > NamedCollectionMap;

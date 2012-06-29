@@ -26,12 +26,13 @@
 #include "DatasetDOMStringMap.h"
 #include "Element.h"
 #include "ElementShadow.h"
-#include "HTMLCollection.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
+
+class HTMLCollection;
 
 class ElementRareData : public NodeRareData {
 public:
@@ -50,15 +51,13 @@ public:
         return m_cachedCollections;
     }
 
-    HTMLCollection* ensureCachedHTMLCollection(Element* element, CollectionType type)
+    HTMLCollection* ensureCachedHTMLCollection(Element*, CollectionType);
+    HTMLCollection* cachedHTMLCollection(CollectionType type)
     {
         if (!m_cachedCollections)
-            m_cachedCollections = adoptPtr(new CachedHTMLCollectionArray);
+            return 0;
 
-        OwnPtr<HTMLCollection>& collection = (*m_cachedCollections)[type - FirstNodeCollectionType];
-        if (!collection)
-            collection = HTMLCollection::create(element, type);
-        return collection.get();
+        return (*m_cachedCollections)[type - FirstNodeCollectionType].get();
     }
 
     OwnPtr<CachedHTMLCollectionArray> m_cachedCollections;

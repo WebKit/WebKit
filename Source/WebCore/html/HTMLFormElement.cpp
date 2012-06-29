@@ -537,9 +537,7 @@ void HTMLFormElement::removeImgElement(HTMLImageElement* e)
 
 HTMLCollection* HTMLFormElement::elements()
 {
-    if (!m_elementsCollection)
-        m_elementsCollection = HTMLFormCollection::create(this);
-    return m_elementsCollection.get();
+    return ensureCachedHTMLCollection(FormControls);
 }
 
 String HTMLFormElement::name() const

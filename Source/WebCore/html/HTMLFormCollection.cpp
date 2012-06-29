@@ -36,12 +36,13 @@ using namespace HTMLNames;
 // Since the collections are to be "live", we have to do the
 // calculation every time if anything has changed.
 
-HTMLFormCollection::HTMLFormCollection(HTMLElement* base)
+HTMLFormCollection::HTMLFormCollection(Element* base)
     : HTMLCollection(base, FormControls)
 {
+    ASSERT(base->hasTagName(formTag) || base->hasTagName(fieldsetTag));
 }
 
-PassOwnPtr<HTMLFormCollection> HTMLFormCollection::create(HTMLElement* base)
+PassOwnPtr<HTMLFormCollection> HTMLFormCollection::create(Element* base)
 {
     return adoptPtr(new HTMLFormCollection(base));
 }

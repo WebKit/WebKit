@@ -630,7 +630,6 @@ public:
     DOMSettableTokenList* itemProp();
     DOMSettableTokenList* itemRef();
     DOMSettableTokenList* itemType();
-    HTMLPropertiesCollection* properties();
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS)

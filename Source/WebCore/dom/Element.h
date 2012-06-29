@@ -448,6 +448,7 @@ protected:
     virtual bool shouldRegisterAsExtraNamedItem() const { return false; }
 
     HTMLCollection* ensureCachedHTMLCollection(CollectionType);
+    HTMLCollection* cachedHTMLCollection(CollectionType);
 
 private:
     void updateInvalidAttributes() const;

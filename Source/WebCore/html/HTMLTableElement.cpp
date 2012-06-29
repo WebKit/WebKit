@@ -562,9 +562,7 @@ bool HTMLTableElement::isURLAttribute(const Attribute& attribute) const
 
 HTMLCollection* HTMLTableElement::rows()
 {
-    if (!m_rowsCollection)
-        m_rowsCollection = HTMLTableRowsCollection::create(this);
-    return m_rowsCollection.get();
+    return ensureCachedHTMLCollection(TableRows);
 }
 
 HTMLCollection* HTMLTableElement::tBodies()

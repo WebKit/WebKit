@@ -97,7 +97,6 @@ private:
                                 // are present, to none otherwise).
 
     unsigned short m_padding;
-    OwnPtr<HTMLTableRowsCollection> m_rowsCollection;
     RefPtr<StylePropertySet> m_sharedCellStyle;
 };
 

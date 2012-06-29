@@ -352,16 +352,12 @@ bool HTMLSelectElement::childShouldCreateRenderer(const NodeRenderingContext& ch
 
 HTMLCollection* HTMLSelectElement::selectedOptions()
 {
-    if (!m_selectedOptionsCollection)
-        m_selectedOptionsCollection = HTMLCollection::create(this, SelectedOptions);
-    return m_selectedOptionsCollection.get();
+    return ensureCachedHTMLCollection(SelectedOptions);
 }
 
 HTMLOptionsCollection* HTMLSelectElement::options()
 {
-    if (!m_optionsCollection)
-        m_optionsCollection = HTMLOptionsCollection::create(this);
-    return m_optionsCollection.get();
+    return static_cast<HTMLOptionsCollection*>(ensureCachedHTMLCollection(SelectOptions));
 }
 
 void HTMLSelectElement::updateListItemSelectedStates()
@@ -709,8 +705,8 @@ const Vector<HTMLElement*>& HTMLSelectElement::listItems() const
 
 void HTMLSelectElement::invalidateSelectedItems()
 {
-    if (m_selectedOptionsCollection)
-        m_selectedOptionsCollection->invalidateCache();
+    if (HTMLCollection* collection = cachedHTMLCollection(SelectedOptions))
+        collection->invalidateCache();
 }
 
 void HTMLSelectElement::setRecalcListItems()
@@ -720,10 +716,12 @@ void HTMLSelectElement::setRecalcListItems()
     m_activeSelectionAnchorIndex = -1;
     setOptionsChangedOnRenderer();
     setNeedsStyleRecalc();
-    if (!inDocument() && m_optionsCollection)
-        m_optionsCollection->invalidateCacheIfNeeded();
-    if (!inDocument() && m_selectedOptionsCollection)
-        m_selectedOptionsCollection->invalidateCacheIfNeeded();
+    if (!inDocument()) {
+        if (HTMLCollection* collection = cachedHTMLCollection(SelectOptions))
+            collection->invalidateCache();
+    }
+    if (!inDocument())
+        invalidateSelectedItems();
 }
 
 void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const

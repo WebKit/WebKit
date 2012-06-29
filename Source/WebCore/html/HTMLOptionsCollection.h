@@ -35,7 +35,7 @@ typedef int ExceptionCode;
 
 class HTMLOptionsCollection : public HTMLCollection {
 public:
-    static PassOwnPtr<HTMLOptionsCollection> create(HTMLSelectElement*);
+    static PassOwnPtr<HTMLOptionsCollection> create(Element*);
 
     void add(PassRefPtr<HTMLOptionElement>, ExceptionCode&);
     void add(PassRefPtr<HTMLOptionElement>, int index, ExceptionCode&);
@@ -49,7 +49,7 @@ public:
     using HTMLCollection::invalidateCacheIfNeeded;
 
 private:
-    HTMLOptionsCollection(HTMLSelectElement*);
+    HTMLOptionsCollection(Element*);
 };
 
 } //namespace

@@ -4745,9 +4745,9 @@ HTMLCollection* Document::anchors()
 
 HTMLAllCollection* Document::all()
 {
-    if (!m_allCollection)
-        m_allCollection = HTMLAllCollection::create(this);
-    return m_allCollection.get();
+    if (!m_collections[DocAll])
+        m_collections[DocAll] = HTMLAllCollection::create(this);
+    return static_cast<HTMLAllCollection*>(m_collections[DocAll].get());
 }
 
 HTMLCollection* Document::windowNamedItems(const AtomicString& name)

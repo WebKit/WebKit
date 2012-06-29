@@ -59,7 +59,6 @@ private:
     static void invalidateDisabledStateUnder(Element*);
     void refreshElementsIfNeeded() const;
 
-    OwnPtr<HTMLFormCollection> m_elementsCollection;
     mutable Vector<FormAssociatedElement*> m_associatedElements;
     // When dom tree is modified, we have to refresh the m_associatedElements array.
     mutable uint64_t m_documentVersion;

@@ -50,7 +50,7 @@ static bool shouldIncludeChildren(CollectionType type)
     case DocScripts:
     case DocumentNamedItems:
     case MapAreas:
-    case OtherCollection:
+    case TableRows:
     case SelectOptions:
     case SelectedOptions:
     case DataListOptions:
@@ -151,7 +151,7 @@ inline bool HTMLCollection::isAcceptableElement(Element* element) const
 #endif
     case FormControls:
     case DocumentNamedItems:
-    case OtherCollection:
+    case TableRows:
     case WindowNamedItems:
         ASSERT_NOT_REACHED();
     }

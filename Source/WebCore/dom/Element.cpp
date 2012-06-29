@@ -46,9 +46,12 @@
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
+#include "HTMLFormCollection.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptionsCollection.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLTableRowsCollection.h"
 #include "InspectorInstrumentation.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
@@ -2042,6 +2045,37 @@ void Element::updateExtraNamedItemRegistration(const AtomicString& oldId, const 
 HTMLCollection* Element::ensureCachedHTMLCollection(CollectionType type)
 {
     return ensureElementRareData()->ensureCachedHTMLCollection(this, type);
+}
+
+HTMLCollection* ElementRareData::ensureCachedHTMLCollection(Element* element, CollectionType type)
+{
+    if (!m_cachedCollections)
+        m_cachedCollections = adoptPtr(new CachedHTMLCollectionArray);
+    
+    OwnPtr<HTMLCollection>& collection = (*m_cachedCollections)[type - FirstNodeCollectionType];
+    if (!collection) {
+        if (type == TableRows) {
+            ASSERT(element->hasTagName(tableTag));
+            collection = HTMLTableRowsCollection::create(element);
+        } else if (type == SelectOptions) {
+            ASSERT(element->hasTagName(selectTag));
+            collection = HTMLOptionsCollection::create(element);
+        } else if (type == FormControls) {
+            ASSERT(element->hasTagName(formTag) || element->hasTagName(fieldsetTag));
+            collection = HTMLFormCollection::create(element);
+#if ENABLE(MICRODATA)
+        } else if (type == ItemProperties) {
+            collection = HTMLPropertiesCollection::create(element);
+#endif
+        } else
+            collection = HTMLCollection::create(element, type);
+    }
+    return collection.get();
+}
+
+HTMLCollection* Element::cachedHTMLCollection(CollectionType type)
+{
+    return hasRareData() ? elementRareData()->cachedHTMLCollection(type) : 0;
 }
 
 IntSize Element::savedLayerScrollOffset() const

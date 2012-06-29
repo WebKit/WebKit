@@ -36,7 +36,7 @@ class QualifiedName;
 
 class HTMLFormCollection : public HTMLCollection {
 public:
-    static PassOwnPtr<HTMLFormCollection> create(HTMLElement*);
+    static PassOwnPtr<HTMLFormCollection> create(Element*);
 
     virtual ~HTMLFormCollection();
 
@@ -44,7 +44,7 @@ public:
     virtual Node* namedItem(const AtomicString& name) const;
 
 private:
-    HTMLFormCollection(HTMLElement*);
+    HTMLFormCollection(Element*);
 
     virtual void updateNameCache() const;
     virtual unsigned calcLength() const;

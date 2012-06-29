@@ -96,6 +96,7 @@ public:
 #if ENABLE(MICRODATA)
     void setItemValue(const String&, ExceptionCode&);
     PassRefPtr<MicroDataItemValue> itemValue() const;
+    HTMLPropertiesCollection* properties();
 #endif
 
 #ifndef NDEBUG
