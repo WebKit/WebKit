@@ -3772,6 +3772,9 @@ BUGWK89812 DEBUG : fast/parser/parser-yield-timing.html = PASS TEXT
 // Flaky
 BUGWK89813 LINUX DEBUG : fast/js/large-expressions.html = PASS TIMEOUT
 
+// Flaky in transition test framework
+BUGWK90234 : css3/calc/transitions.html = PASS TEXT
+
 BUGWK89820 : fast/text/hyphen-min-preferred-width.html = IMAGE
 
 BUGWK89936 WIN : compositing/shadows/shadow-drawing.html = IMAGE
