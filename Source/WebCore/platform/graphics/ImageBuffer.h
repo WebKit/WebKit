@@ -33,7 +33,7 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #if USE(ACCELERATED_COMPOSITING)
-#include "GraphicsLayer.h"
+#include "PlatformLayer.h"
 #endif
 #include "GraphicsTypes.h"
 #include "GraphicsTypes3D.h"

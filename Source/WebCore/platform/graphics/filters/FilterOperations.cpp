@@ -98,6 +98,15 @@ bool FilterOperations::hasCustomFilter() const
 }
 #endif
 
+bool FilterOperations::hasReferenceFilter() const
+{
+    for (size_t i = 0; i < m_operations.size(); ++i) {
+        if (m_operations.at(i)->getOperationType() == FilterOperation::REFERENCE)
+            return true;
+    }
+    return false;
+}
+
 bool FilterOperations::hasOutsets() const
 {
     for (size_t i = 0; i < m_operations.size(); ++i) {

@@ -1772,6 +1772,8 @@ webcore_sources += \
 	Source/WebCore/css/WebKitCSSMatrix.h \
 	Source/WebCore/css/WebKitCSSRegionRule.cpp \
 	Source/WebCore/css/WebKitCSSRegionRule.h \
+	Source/WebCore/css/WebKitCSSSVGDocumentValue.cpp \
+	Source/WebCore/css/WebKitCSSSVGDocumentValue.h \
 	Source/WebCore/css/WebKitCSSShaderValue.cpp \
 	Source/WebCore/css/WebKitCSSShaderValue.h \
 	Source/WebCore/css/WebKitCSSTransformValue.cpp \
@@ -3368,6 +3370,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/PathTraversalState.h \
 	Source/WebCore/platform/graphics/Pattern.cpp \
 	Source/WebCore/platform/graphics/Pattern.h \
+	Source/WebCore/platform/graphics/PlatformLayer.h \
 	Source/WebCore/platform/graphics/Region.cpp \
 	Source/WebCore/platform/graphics/Region.h \
 	Source/WebCore/platform/graphics/RoundedRect.cpp \

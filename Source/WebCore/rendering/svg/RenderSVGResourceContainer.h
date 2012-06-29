@@ -26,6 +26,8 @@
 
 namespace WebCore {
 
+class RenderLayer;
+
 class RenderSVGResourceContainer : public RenderSVGHiddenContainer,
                                    public RenderSVGResource {
 public:
@@ -42,6 +44,8 @@ public:
     static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);
 
     void idChanged();
+    void addClientRenderLayer(RenderLayer*);
+    void removeClientRenderLayer(RenderLayer*);
 
 protected:
     enum InvalidationMode {
@@ -68,6 +72,7 @@ private:
     bool m_registered : 1;
     bool m_isInvalidating : 1;
     HashSet<RenderObject*> m_clients;
+    HashSet<RenderLayer*> m_clientLayers;
 };
 
 inline RenderSVGResourceContainer* getRenderSVGResourceContainerById(Document* document, const AtomicString& id)

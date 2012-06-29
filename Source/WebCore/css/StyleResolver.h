@@ -87,6 +87,7 @@ class StyleSheetList;
 class StyledElement;
 class WebKitCSSFilterValue;
 class WebKitCSSShaderValue;
+class WebKitCSSSVGDocumentValue;
 
 #if ENABLE(CSS_SHADERS)
 typedef Vector<RefPtr<CustomFilterParameter> > CustomFilterParameterList;
@@ -262,7 +263,12 @@ public:
     PassRefPtr<CustomFilterOperation> createCustomFilterOperation(WebKitCSSFilterValue*);
     void loadPendingShaders();
 #endif
+#if ENABLE(SVG)
+    void loadPendingSVGDocuments();
+#endif
 #endif // ENABLE(CSS_FILTERS)
+
+    void loadPendingResources();
 
     struct RuleFeature {
         RuleFeature(StyleRule* rule, CSSSelector* selector, bool hasDocumentSecurityOrigin)
@@ -493,6 +499,10 @@ private:
 
 #if ENABLE(CSS_SHADERS)
     bool m_hasPendingShaders;
+#endif
+
+#if ENABLE(CSS_FILTERS) && ENABLE(SVG)
+    HashMap<FilterOperation*, WebKitCSSSVGDocumentValue*> m_pendingSVGDocuments;
 #endif
 
 #if ENABLE(STYLE_SCOPED)

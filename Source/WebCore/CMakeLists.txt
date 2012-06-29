@@ -539,6 +539,7 @@ SET(WebCore_SOURCES
     css/WebKitCSSKeyframesRule.cpp
     css/WebKitCSSMatrix.cpp
     css/WebKitCSSRegionRule.cpp
+    css/WebKitCSSSVGDocumentValue.cpp
     css/WebKitCSSTransformValue.cpp
 
     dom/ActiveDOMObject.cpp

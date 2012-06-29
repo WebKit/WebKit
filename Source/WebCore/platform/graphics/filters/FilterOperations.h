@@ -72,6 +72,7 @@ public:
 #if ENABLE(CSS_SHADERS)
     bool hasCustomFilter() const;
 #endif
+    bool hasReferenceFilter() const;
 private:
     Vector<RefPtr<FilterOperation> > m_operations;
 };

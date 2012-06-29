@@ -4994,7 +4994,14 @@ void RenderLayer::updateOrRemoveFilterEffect()
     else if (hasFilterInfo())
         filterInfo()->removeCustomFilterClients();
 #endif
-    
+
+#if ENABLE(SVG)
+    if (renderer()->style()->filter().hasReferenceFilter())
+        ensureFilterInfo()->updateReferenceFilterClients(renderer()->style()->filter());
+    else if (hasFilterInfo())
+        filterInfo()->removeReferenceFilterClients();
+#endif
+
     if (!paintsWithFilters()) {
         // Don't delete the whole filter info here, because we might use it
         // for loading CSS shader files.
@@ -5020,7 +5027,8 @@ void RenderLayer::updateOrRemoveFilterEffect()
 void RenderLayer::filterNeedsRepaint()
 {
     renderer()->node()->setNeedsStyleRecalc(SyntheticStyleChange);
-    renderer()->repaint();
+    if (renderer()->view())
+        renderer()->repaint();
 }
 #endif
 

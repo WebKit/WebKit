@@ -29362,6 +29362,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\PlatformLayer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\Region.cpp"
 					>
 				</File>
@@ -37575,11 +37579,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\WebKitCSSShaderValue.cpp"
+				RelativePath="..\css\WebKitCSSSVGDocumentValue.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\css\WebKitCSSShaderValue.h"
+				RelativePath="..\css\WebKitCSSSVGDocumentValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\WebKitCSSShaderValue.cpp"
 				>
 			</File>
 			<File

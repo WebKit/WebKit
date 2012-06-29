@@ -59,6 +59,10 @@
 #include "WebKitCSSShaderValue.h"
 #include "WebKitCSSTransformValue.h"
 
+#if ENABLE(SVG)
+#include "WebKitCSSSVGDocumentValue.h"
+#endif
+
 namespace WebCore {
 
 struct SameSizeAsCSSValue : public RefCounted<SameSizeAsCSSValue> {
@@ -197,6 +201,8 @@ String CSSValue::cssText() const
         return static_cast<const SVGColor*>(this)->customCssText();
     case SVGPaintClass:
         return static_cast<const SVGPaint*>(this)->customCssText();
+    case WebKitCSSSVGDocumentClass:
+        return static_cast<const WebKitCSSSVGDocumentValue*>(this)->customCssText();
 #endif
     }
     ASSERT_NOT_REACHED();
@@ -330,6 +336,9 @@ void CSSValue::destroy()
         return;
     case SVGPaintClass:
         delete static_cast<SVGPaint*>(this);
+        return;
+    case WebKitCSSSVGDocumentClass:
+        delete static_cast<WebKitCSSSVGDocumentValue*>(this);
         return;
 #endif
     }

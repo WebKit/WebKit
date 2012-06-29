@@ -32,6 +32,10 @@
 
 #if ENABLE(CSS_FILTERS)
 
+#if ENABLE(SVG)
+#include "CachedSVGDocument.h"
+#endif
+#include "FilterOperation.h"
 #include "LayoutTypes.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -53,6 +57,11 @@ typedef HashMap<const RenderLayer*, RenderLayerFilterInfo*> RenderLayerFilterInf
 class RenderLayerFilterInfo
 #if ENABLE(CSS_SHADERS)
     : public CustomFilterProgramClient
+#if ENABLE(SVG)
+    , public CachedSVGDocumentClient
+#endif
+#elif ENABLE(SVG)
+    : public CachedSVGDocumentClient
 #endif
 {
 public:
@@ -75,7 +84,12 @@ public:
     void removeCustomFilterClients();
 #endif
 
-    
+#if ENABLE(SVG)
+    void updateReferenceFilterClients(const FilterOperations&);
+    virtual void notifyFinished(CachedResource*);
+    void removeReferenceFilterClients();
+#endif
+
 private:
     RenderLayerFilterInfo(RenderLayer*);
     ~RenderLayerFilterInfo();
@@ -91,6 +105,10 @@ private:
 #endif
     
     static RenderLayerFilterInfoMap* s_filterMap;
+#if ENABLE(SVG)
+    Vector<RefPtr<Element> > m_internalSVGReferences;
+    Vector<CachedResourceHandle<CachedSVGDocument> > m_externalSVGReferences;
+#endif
 };
 
 } // namespace WebCore

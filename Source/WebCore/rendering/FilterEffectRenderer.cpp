@@ -50,6 +50,13 @@
 #include "Settings.h"
 #endif
 
+#if ENABLE(SVG)
+#include "CachedSVGDocument.h"
+#include "SVGElement.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
+#include "SourceAlpha.h"
+#endif
+
 namespace WebCore {
 
 static inline void endMatrixRow(Vector<float>& parameters)
@@ -108,6 +115,56 @@ GraphicsContext* FilterEffectRenderer::inputContext()
     return sourceImage() ? sourceImage()->context() : 0;
 }
 
+PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(Document* document, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation* op)
+{
+#if ENABLE(SVG)
+    CachedSVGDocument* cachedSVGDocument = static_cast<CachedSVGDocument*>(op->data());
+
+    // If we have an SVG document, this is an external reference. Otherwise
+    // we look up the referenced node in the current document.
+    if (cachedSVGDocument)
+        document = cachedSVGDocument->document();
+
+    if (!document)
+        return 0;
+
+    Element* filter = document->getElementById(op->fragment());
+    if (!filter)
+        return 0;
+
+    RefPtr<FilterEffect> effect;
+
+    // FIXME: Figure out what to do with SourceAlpha. Right now, we're
+    // using the alpha of the original input layer, which is obviously
+    // wrong. We should probably be extracting the alpha from the 
+    // previousEffect, but this requires some more processing.  
+    // This may need a spec clarification.
+    RefPtr<SVGFilterBuilder> builder = SVGFilterBuilder::create(previousEffect, SourceAlpha::create(this));
+
+    for (Node* node = filter->firstChild(); node; node = node->nextSibling()) {
+        if (!node->isSVGElement())
+            continue;
+
+        SVGElement* element = static_cast<SVGElement*>(node);
+        if (!element->isFilterEffect())
+            continue;
+
+        SVGFilterPrimitiveStandardAttributes* effectElement = static_cast<SVGFilterPrimitiveStandardAttributes*>(element);
+
+        effect = effectElement->build(builder.get(), this);
+        if (!effect)
+            continue;
+
+        effectElement->setStandardAttributes(effect.get());
+        builder->add(effectElement->result(), effect);
+        m_effects.append(effect);
+    }
+    return effect;
+#else
+    return 0;
+#endif
+}
+
 bool FilterEffectRenderer::build(Document* document, const FilterOperations& operations)
 {
 #if !ENABLE(CSS_SHADERS) || !ENABLE(WEBGL)
@@ -122,14 +179,13 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
         operations.getOutsets(m_topOutset, m_rightOutset, m_bottomOutset, m_leftOutset);
     m_effects.clear();
 
-    RefPtr<FilterEffect> previousEffect;
+    RefPtr<FilterEffect> previousEffect = m_sourceGraphic;
     for (size_t i = 0; i < operations.operations().size(); ++i) {
         RefPtr<FilterEffect> effect;
         FilterOperation* filterOperation = operations.operations().at(i).get();
         switch (filterOperation->getOperationType()) {
         case FilterOperation::REFERENCE: {
-            // FIXME: Not yet implemented.
-            // https://bugs.webkit.org/show_bug.cgi?id=72443
+            effect = buildReferenceFilter(document, previousEffect, static_cast<ReferenceFilterOperation*>(filterOperation));
             break;
         }
         case FilterOperation::GRAYSCALE: {
@@ -291,18 +347,18 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
             // Unlike SVG, filters applied here should not clip to their primitive subregions.
             effect->setClipsToBounds(false);
             
-            if (previousEffect)
+            if (filterOperation->getOperationType() != FilterOperation::REFERENCE) {
                 effect->inputEffects().append(previousEffect);
-            m_effects.append(effect);
+                m_effects.append(effect);
+            }
             previousEffect = effect.release();
         }
     }
 
     // If we didn't make any effects, tell our caller we are not valid
-    if (!previousEffect)
+    if (!m_effects.size())
         return false;
 
-    m_effects.first()->inputEffects().append(m_sourceGraphic);
     setMaxEffectRects(m_sourceDrawingRegion);
     
     return true;

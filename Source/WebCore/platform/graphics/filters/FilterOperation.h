@@ -33,7 +33,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/WTFString.h>
 
 // Annoyingly, wingdi.h #defines this.
 #ifdef PASSTHROUGH
@@ -147,21 +147,25 @@ private:
 
 class ReferenceFilterOperation : public FilterOperation {
 public:
-    static PassRefPtr<ReferenceFilterOperation> create(const AtomicString& reference, OperationType type)
+    static PassRefPtr<ReferenceFilterOperation> create(const String& url, const String& fragment, OperationType type)
     {
-        return adoptRef(new ReferenceFilterOperation(reference, type));
+        return adoptRef(new ReferenceFilterOperation(url, fragment, type));
     }
 
     virtual PassRefPtr<FilterOperation> clone() const
     {
-        // AtomicString is thread-hostile, so we can't be cloned.
+        // Unimplemented
         return 0;
     }
 
     virtual bool affectsOpacity() const { return true; }
     virtual bool movesPixels() const { return true; }
 
-    const AtomicString& reference() const { return m_reference; }
+    const String& url() const { return m_url; }
+    const String& fragment() const { return m_fragment; }
+
+    void* data() const { return m_data; }
+    void setData(void* data) { m_data = data; }
 
 private:
 
@@ -170,16 +174,20 @@ private:
         if (!isSameType(o))
             return false;
         const ReferenceFilterOperation* other = static_cast<const ReferenceFilterOperation*>(&o);
-        return m_reference == other->m_reference;
+        return m_url == other->m_url;
     }
 
-    ReferenceFilterOperation(const AtomicString& reference, OperationType type)
+    ReferenceFilterOperation(const String& url, const String& fragment, OperationType type)
         : FilterOperation(type)
-        , m_reference(reference)
+        , m_url(url)
+        , m_fragment(fragment)
+        , m_data(0)
     {
     }
 
-    AtomicString m_reference;
+    String m_url;
+    String m_fragment;
+    void* m_data;
 };
 
 // GRAYSCALE, SEPIA, SATURATE and HUE_ROTATE are variations on a basic color matrix effect.

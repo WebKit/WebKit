@@ -94,6 +94,9 @@
 
 #if ENABLE(CSS_FILTERS)
 #include "WebKitCSSFilterValue.h"
+#if ENABLE(SVG)
+#include "WebKitCSSSVGDocumentValue.h"
+#endif
 #endif
 
 #if ENABLE(CSS_SHADERS)
@@ -7558,9 +7561,11 @@ PassRefPtr<CSSValueList> CSSParser::parseFilter()
 
         // See if the specified primitive is one we understand.
         if (value->unit == CSSPrimitiveValue::CSS_URI) {
+#if ENABLE(SVG)
             RefPtr<WebKitCSSFilterValue> referenceFilterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::ReferenceFilterOperation);
             list->append(referenceFilterValue);
-            referenceFilterValue->append(cssValuePool().createValue(value->string, CSSPrimitiveValue::CSS_STRING));
+            referenceFilterValue->append(WebKitCSSSVGDocumentValue::create(value->string));
+#endif
         } else {
             const CSSParserString name = value->function->name;
             unsigned maximumArgumentCount = 1;

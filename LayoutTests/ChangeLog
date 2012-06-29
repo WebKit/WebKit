@@ -1,3 +1,25 @@
+2012-06-28  Stephen White  <senorblanco@chromium.org>
+
+        Add tests for the url() filter function.
+        https://bugs.webkit.org/show_bug.cgi?id=72443
+
+        Reviewed by Dean Jackson.
+
+        * css3/filters/effect-reference-external.html: Added.
+        * css3/filters/effect-reference-hw.html: Added.
+        * css3/filters/effect-reference-ordering.html: Added.
+        * css3/filters/effect-reference.html: Added.
+        * css3/filters/resources/hueRotate.svg: Added.
+        * platform/chromium-linux/css3/filters/effect-reference-expected.png: Added.
+        * platform/chromium-linux/css3/filters/effect-reference-expected.txt: Added.
+        * platform/chromium-linux/css3/filters/effect-reference-external-expected.png: Added.
+        * platform/chromium-linux/css3/filters/effect-reference-external-expected.txt: Added.
+        * platform/chromium-linux/css3/filters/effect-reference-hw-expected.png: Added.
+        * platform/chromium-linux/css3/filters/effect-reference-hw-expected.txt: Added.
+        * platform/chromium-linux/css3/filters/effect-reference-ordering-expected.png: Added.
+        * platform/chromium-linux/css3/filters/effect-reference-ordering-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-06-28  Mike Lawther  <mikelawther@chromium.org>
 
         Unreviewed gardening.

@@ -502,6 +502,7 @@ SOURCES += \
     css/WebKitCSSKeyframesRule.cpp \
     css/WebKitCSSMatrix.cpp \
     css/WebKitCSSRegionRule.cpp \
+    css/WebKitCSSSVGDocumentValue.cpp \
     css/WebKitCSSShaderValue.cpp \
     css/WebKitCSSTransformValue.cpp \
     dom/ActiveDOMObject.cpp \
@@ -1686,6 +1687,7 @@ HEADERS += \
     css/WebKitCSSKeyframesRule.h \
     css/WebKitCSSMatrix.h \
     css/WebKitCSSRegionRule.h \
+    css/WebKitCSSSVGDocumentValue.h \
     css/WebKitCSSShaderValue.h \
     css/WebKitCSSTransformValue.h \
     dom/ActiveDOMObject.h \
@@ -2300,6 +2302,7 @@ HEADERS += \
     platform/graphics/Path.h \
     platform/graphics/PathTraversalState.h \
     platform/graphics/Pattern.h \
+    platform/graphics/PlatformLayer.h \
     platform/graphics/Region.h \
     platform/graphics/RoundedRect.h \
     platform/graphics/qt/FontCustomPlatformData.h \

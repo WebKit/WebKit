@@ -22,6 +22,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGResourceContainer.h"
 
+#include "RenderLayer.h"
 #include "RenderSVGRoot.h"
 #include "RenderView.h"
 #include "SVGRenderingContext.h"
@@ -91,7 +92,7 @@ void RenderSVGResourceContainer::idChanged()
 
 void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode mode)
 {
-    if (m_clients.isEmpty() || m_isInvalidating)
+    if ((m_clients.isEmpty() && m_clientLayers.isEmpty()) || m_isInvalidating)
         return;
 
     m_isInvalidating = true;
@@ -111,6 +112,13 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
 
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(client, needsLayout);
     }
+
+#if ENABLE(CSS_FILTERS)
+    HashSet<RenderLayer*>::iterator layerEnd = m_clientLayers.end();
+    for (HashSet<RenderLayer*>::iterator it = m_clientLayers.begin(); it != layerEnd; ++it)
+        (*it)->filterNeedsRepaint();
+#endif
+
     m_isInvalidating = false;
 }
 
@@ -143,6 +151,18 @@ void RenderSVGResourceContainer::removeClient(RenderObject* client)
 {
     ASSERT(client);
     m_clients.remove(client);
+}
+
+void RenderSVGResourceContainer::addClientRenderLayer(RenderLayer* client)
+{
+    ASSERT(client);
+    m_clientLayers.add(client);
+}
+
+void RenderSVGResourceContainer::removeClientRenderLayer(RenderLayer* client)
+{
+    ASSERT(client);
+    m_clientLayers.remove(client);
 }
 
 void RenderSVGResourceContainer::registerResource()

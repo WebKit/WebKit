@@ -38,50 +38,11 @@
 #include "FloatSize.h"
 #include "GraphicsLayerClient.h"
 #include "IntRect.h"
+#include "PlatformLayer.h"
 #include "TransformationMatrix.h"
 #include "TransformOperations.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
-
-#if PLATFORM(MAC)
-OBJC_CLASS CALayer;
-typedef CALayer PlatformLayer;
-#elif PLATFORM(WIN)
-typedef struct _CACFLayer PlatformLayer;
-#elif PLATFORM(QT)
-#if USE(TEXTURE_MAPPER)
-namespace WebCore {
-class TextureMapperPlatformLayer;
-typedef TextureMapperPlatformLayer PlatformLayer;
-};
-#else
-QT_BEGIN_NAMESPACE
-class QGraphicsObject;
-QT_END_NAMESPACE
-namespace WebCore {
-typedef QGraphicsObject PlatformLayer;
-}
-#endif
-#elif PLATFORM(CHROMIUM)
-namespace WebCore {
-class LayerChromium;
-typedef LayerChromium PlatformLayer;
-}
-#elif PLATFORM(GTK)
-#if USE(TEXTURE_MAPPER_CAIRO) || USE(TEXTURE_MAPPER_GL)
-namespace WebCore {
-class TextureMapperPlatformLayer;
-typedef TextureMapperPlatformLayer PlatformLayer;
-};
-#elif USE(CLUTTER)
-typedef struct _ClutterActor ClutterActor;
-namespace WebCore {
-typedef ClutterActor PlatformLayer;
-};
-#endif
-#else
-typedef void* PlatformLayer;
-#endif
 
 enum LayerTreeAsTextBehaviorFlags {
     LayerTreeAsTextBehaviorNormal = 0,

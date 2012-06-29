@@ -1,3 +1,154 @@
+2012-06-28  Stephen White  <senorblanco@chromium.org>
+
+        Implement filter url() function.
+        https://bugs.webkit.org/show_bug.cgi?id=72443
+
+        url() references can be internal, in which case the DOM nodes are
+        retrieved directly from the current document, or external, in which
+        case a CachedSVGDocument request is made, and the filter node build is
+        deferred until the document is loaded.  WebKitSVGDocumentValue
+        holds the CachedSVGDocument (if any) and the URL as a CSSValue,
+        and is stored in the CSSValue chain as the argument to the reference
+        filter.
+
+        One notable difference between internal and external references is
+        that internal references will automatically update on an SVG filter node
+        attribute change, while external references will not, since they live
+        in a separate document.  This is consistent with the Mozilla
+        implementation.  In order to make this work, the RenderLayer is made a
+        client of the RenderSVGResourceContainer, and calls
+        filterNeedsRepaint() when the SVG nodes are invalidated.
+
+        Some plumbing:  The CSS StyleResolver was refactored to load all
+        all external resources (images, shaders and (now) SVG filters) in a
+        single function, loadPendingResources().  The PlatformLayer typedef
+        was moved out into its own file, in order to break a cyclic
+        dependency.  SVGFilterBuilder was modified to accept the SourceGraphic
+        and SourceAlpha FilterEffects in its constructor and factory function,
+        rather than extracting them from the parent Filter.  (This is necessary
+        so that the url() filter can correctly hook up its inputs from
+        previous CSS filters.)
+
+        Reviewed by Dean Jackson.
+
+        Tests: css3/filters/effect-reference-external.html
+               css3/filters/effect-reference-hw.html
+               css3/filters/effect-reference-ordering.html
+               css3/filters/effect-reference.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add WebKitCSSSVGDocumentValue to the various build files.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter):
+        Use the reference filter's url when getting the computed style for
+        a reference filter.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFilter):
+        Create the referenceFilterValue's argument as a
+        WebKitCSSSVGDocumentValue instead of a CSS string.
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::cssText):
+        Add support for WebKitCSSSVGDocumentValue.
+        (WebCore::CSSValue::destroy):
+        Add support for WebKitCSSSVGDocumentValue.
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isWebKitCSSSVGDocumentValue):
+        Add support for WebKitCSSSVGDocumentValue.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        Keep track of pending SVG document references, and load them when
+        necessary.
+        * css/StyleResolver.h:
+        * css/WebKitCSSSVGDocumentValue.cpp: Added.
+        New CSSValue subclass for holding SVG document references.
+        (WebCore::WebKitCSSSVGDocumentValue::WebKitCSSSVGDocumentValue):
+        (WebCore::WebKitCSSSVGDocumentValue::~WebKitCSSSVGDocumentValue):
+        (WebCore::WebKitCSSSVGDocumentValue::load):
+        (WebCore::WebKitCSSSVGDocumentValue::customCssText):
+        * css/WebKitCSSSVGDocumentValue.h: Added.
+        (WebCore::WebKitCSSSVGDocumentValue::create):
+        (WebCore::WebKitCSSSVGDocumentValue::cachedSVGDocument):
+        (WebCore::WebKitCSSSVGDocumentValue::url):
+        (WebCore::WebKitCSSSVGDocumentValue::loadRequested):
+        * platform/graphics/GraphicsLayer.h:
+        Refactor PlatformLayer out into its own file, to avoid circular
+        includes.
+        * platform/graphics/ImageBuffer.h:
+        Include PlatformLayer.h instead of GraphicsLayer.h.
+        * platform/graphics/PlatformLayer.h: Added.
+        Refactor PlatformLayer out into its own file, to avoid circular
+        includes.
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::ReferenceFilterOperation::create):
+        (WebCore::ReferenceFilterOperation::clone):
+        (WebCore::ReferenceFilterOperation::url):
+        (WebCore::ReferenceFilterOperation::fragment):
+        (ReferenceFilterOperation):
+        (WebCore::ReferenceFilterOperation::data):
+        (WebCore::ReferenceFilterOperation::setData):
+        (WebCore::ReferenceFilterOperation::operator==):
+        (WebCore::ReferenceFilterOperation::ReferenceFilterOperation):
+        Augment ReferenceFilterOperation to maintain a data pointer,
+        in order to preserve context while loading external SVG documents.
+        Replace "reference" with "url" and "fragment" members, in order to
+        ease retrieval of the appropriate DOM objects.
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::hasReferenceFilter):
+        Convenience function for finding reference filters.
+        * platform/graphics/filters/FilterOperations.h:
+        (FilterOperations):
+        * platform/mac/ScrollbarThemeMac.mm:
+        Include GraphicsLayer.h explicitly, since ImageBuffer.h no longer
+        includes it (and only includes PlatformLayer.h).
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::buildReferenceFilter):
+        Utility function to build a FilterEffect node graph for a
+        ReferenceFilterOperation.
+        (WebCore::FilterEffectRenderer::build):
+        Call the above builder function for ReferenceFilterOperations.
+        * rendering/FilterEffectRenderer.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateOrRemoveFilterEffect):
+        If we have reference filters, update them along with other filters.
+        (WebCore::RenderLayer::filterNeedsRepaint):
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayerFilterInfo::~RenderLayerFilterInfo):
+        (WebCore::RenderLayerFilterInfo::notifyFinished):
+        Implement callback function when external SVGDocuments are loaded.
+        (WebCore::RenderLayerFilterInfo::updateReferenceFilterClients):
+        Add the FilterInfo as a client to be called when SVGDocuments are
+        loaded.
+        (WebCore::RenderLayerFilterInfo::removeReferenceFilterClients):
+        Remove this from the list of notified clients.
+        * rendering/RenderLayerFilterInfo.h:
+        Add new member vars for tracking internal and external SVG
+        references, so we can remove ourselves as a client when done.
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::markAllClientsForInvalidation):
+        When marking client DOM nodes for repaint, also mark any RenderLayers
+        referring to this DOM tree via filters as needing repaint.
+        (WebCore::RenderSVGResourceContainer::addClientRenderLayer):
+        (WebCore::RenderSVGResourceContainer::removeClientRenderLayer):
+        * rendering/svg/RenderSVGResourceContainer.h:
+        Maintain a list of RenderLayer clients on each SVG resource container,
+        and turn SVG DOM repaint notifications into filter repaint (CSS)
+        notifications.
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives):
+        Construct a SourceGraphic and SourceAlpha node explicitly for the
+        SVG builder case.
+        * svg/graphics/filters/SVGFilterBuilder.cpp:
+        (WebCore::SVGFilterBuilder::SVGFilterBuilder):
+        * svg/graphics/filters/SVGFilterBuilder.h:
+        (WebCore::SVGFilterBuilder::create):
+        Add the SourceGraphic and SourceAlpha as parameters to the constructor
+        and create() methods, so they can be supplied by the caller.
+
 2012-06-28  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] CTFontCopyTable of MacOSX10.5 SDK doesn't work for layout tables

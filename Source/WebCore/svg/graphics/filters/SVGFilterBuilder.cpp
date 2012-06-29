@@ -31,10 +31,10 @@
 
 namespace WebCore {
 
-SVGFilterBuilder::SVGFilterBuilder(Filter* filter)
+SVGFilterBuilder::SVGFilterBuilder(PassRefPtr<FilterEffect> sourceGraphic, PassRefPtr<FilterEffect> sourceAlpha)
 {
-    m_builtinEffects.add(SourceGraphic::effectName(), SourceGraphic::create(filter));
-    m_builtinEffects.add(SourceAlpha::effectName(), SourceAlpha::create(filter));
+    m_builtinEffects.add(SourceGraphic::effectName(), sourceGraphic);
+    m_builtinEffects.add(SourceAlpha::effectName(), sourceAlpha);
     addBuiltinEffects();
 }
 

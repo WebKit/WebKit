@@ -35,6 +35,13 @@
 #include "FilterEffectRenderer.h"
 #include "RenderLayer.h"
 
+#if ENABLE(SVG)
+#include "CachedSVGDocument.h"
+#include "SVGElement.h"
+#include "SVGFilter.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
+#endif
+
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterOperation.h"
 #include "CustomFilterProgram.h"
@@ -96,12 +103,65 @@ RenderLayerFilterInfo::~RenderLayerFilterInfo()
 #if ENABLE(CSS_SHADERS)
     removeCustomFilterClients();
 #endif
+#if ENABLE(SVG)
+    removeReferenceFilterClients();
+#endif
 }
 
 void RenderLayerFilterInfo::setRenderer(PassRefPtr<FilterEffectRenderer> renderer)
 { 
     m_renderer = renderer; 
 }
+
+#if ENABLE(SVG)
+void RenderLayerFilterInfo::notifyFinished(CachedResource*)
+{
+    RenderObject* renderer = m_layer->renderer();
+    renderer->node()->setNeedsStyleRecalc(SyntheticStyleChange);
+    renderer->repaint();
+}
+
+void RenderLayerFilterInfo::updateReferenceFilterClients(const FilterOperations& operations)
+{
+    removeReferenceFilterClients();
+    for (size_t i = 0; i < operations.size(); ++i) {
+        RefPtr<FilterOperation> filterOperation = operations.operations().at(i);
+        if (filterOperation->getOperationType() != FilterOperation::REFERENCE)
+            continue;
+        ReferenceFilterOperation* referenceFilterOperation = static_cast<ReferenceFilterOperation*>(filterOperation.get());
+        CachedSVGDocument* cachedSVGDocument = static_cast<CachedSVGDocument*>(referenceFilterOperation->data());
+
+        if (cachedSVGDocument) {
+            // Reference is external; wait for notifyFinished().
+            cachedSVGDocument->addClient(this);
+            m_externalSVGReferences.append(cachedSVGDocument);
+        } else {
+            // Reference is internal; add layer as a client so we can trigger
+            // filter repaint on SVG attribute change.
+            Element* filter = m_layer->renderer()->node()->document()->getElementById(referenceFilterOperation->fragment());
+            if (!filter || !filter->renderer())
+                continue;
+            ASSERT(filter->renderer()->isSVGResourceContainer());
+            filter->renderer()->toRenderSVGResourceContainer()->addClientRenderLayer(m_layer);
+            m_internalSVGReferences.append(filter);
+        }
+    }
+}
+
+void RenderLayerFilterInfo::removeReferenceFilterClients()
+{
+    for (size_t i = 0; i < m_externalSVGReferences.size(); ++i)
+        m_externalSVGReferences.at(i)->removeClient(this);
+    m_externalSVGReferences.clear();
+    for (size_t i = 0; i < m_internalSVGReferences.size(); ++i) {
+        Element* filter = m_internalSVGReferences.at(i).get();
+        if (!filter->renderer())
+            continue;
+        filter->renderer()->toRenderSVGResourceContainer()->removeClientRenderLayer(m_layer);
+    }
+    m_internalSVGReferences.clear();
+}
+#endif
 
 #if ENABLE(CSS_SHADERS)
 void RenderLayerFilterInfo::notifyCustomFilterProgramLoaded(CustomFilterProgram*)

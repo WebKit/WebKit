@@ -38,7 +38,6 @@
 #include "Page.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceFilterPrimitive.h"
-#include "Settings.h"
 #include "SVGElement.h"
 #include "SVGFilter.h"
 #include "SVGFilterElement.h"
@@ -47,6 +46,9 @@
 #include "SVGRenderingContext.h"
 #include "SVGStyledElement.h"
 #include "SVGUnitTypes.h"
+#include "Settings.h"
+#include "SourceAlpha.h"
+#include "SourceGraphic.h"
 
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
@@ -101,7 +103,7 @@ PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter*
     FloatRect targetBoundingBox = filter->targetBoundingBox();
 
     // Add effects to the builder
-    RefPtr<SVGFilterBuilder> builder = SVGFilterBuilder::create(filter);
+    RefPtr<SVGFilterBuilder> builder = SVGFilterBuilder::create(SourceGraphic::create(filter), SourceAlpha::create(filter));
     for (Node* node = filterElement->firstChild(); node; node = node->nextSibling()) {
         if (!node->isSVGElement())
             continue;

@@ -136,8 +136,12 @@
 #endif
 
 #if ENABLE(SVG)
+#include "CachedSVGDocument.h"
+#include "SVGDocument.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
+#include "SVGURIReference.h"
+#include "WebKitCSSSVGDocumentValue.h"
 #endif
 
 #if ENABLE(CSS_SHADERS)
@@ -1793,14 +1797,9 @@ PassRefPtr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* eleme
     // go ahead and update it a second time.
     updateFont();
 
-    // Start loading images referenced by this style.
-    loadPendingImages();
+    // Start loading resources referenced by this style.
+    loadPendingResources();
     
-#if ENABLE(CSS_SHADERS)
-    // Start loading the shaders referenced by this style.
-    loadPendingShaders();
-#endif
-
     // Add all the animating properties to the keyframe.
     if (StylePropertySet* styleDeclaration = keyframe->properties()) {
         unsigned propertyCount = styleDeclaration->propertyCount();
@@ -1914,13 +1913,8 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(PseudoId pseudo, El
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style(), parentStyle, 0);
 
-    // Start loading images referenced by this style.
-    loadPendingImages();
-
-#if ENABLE(CSS_SHADERS)
-    // Start loading the shaders referenced by this style.
-    loadPendingShaders();
-#endif
+    // Start loading resources referenced by this style.
+    loadPendingResources();
 
     // Now return the style.
     return m_style.release();
@@ -1958,13 +1952,8 @@ PassRefPtr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 
     applyMatchedProperties<LowPriorityProperties>(result, false, 0, result.matchedProperties.size() - 1, inheritedOnly);
 
-    // Start loading images referenced by this style.
-    loadPendingImages();
-
-#if ENABLE(CSS_SHADERS)
-    // Start loading the shaders referenced by this style.
-    loadPendingShaders();
-#endif
+    // Start loading resources referenced by this style.
+    loadPendingResources();
 
     // Now return the style.
     return m_style.release();
@@ -3009,12 +2998,9 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     applyMatchedProperties<LowPriorityProperties>(matchResult, true, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly);
     applyMatchedProperties<LowPriorityProperties>(matchResult, true, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly);
     applyMatchedProperties<LowPriorityProperties>(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
-    
-    loadPendingImages();
-    
-#if ENABLE(CSS_SHADERS)
-    loadPendingShaders();
-#endif
+   
+    // Start loading resources referenced by this style.
+    loadPendingResources();
     
     ASSERT(!m_fontDirty);
     
@@ -5092,6 +5078,34 @@ static FilterOperation::OperationType filterOperationForType(WebKitCSSFilterValu
     return FilterOperation::NONE;
 }
 
+#if ENABLE(CSS_FILTERS) && ENABLE(SVG)
+void StyleResolver::loadPendingSVGDocuments()
+{
+    if (!m_style->hasFilter() || m_pendingSVGDocuments.isEmpty())
+        return;
+
+    CachedResourceLoader* cachedResourceLoader = m_element->document()->cachedResourceLoader();
+    Vector<RefPtr<FilterOperation> >& filterOperations = m_style->filter().operations();
+    for (unsigned i = 0; i < filterOperations.size(); ++i) {
+        RefPtr<FilterOperation> filterOperation = filterOperations.at(i);
+        if (filterOperation->getOperationType() == FilterOperation::REFERENCE) {
+            ReferenceFilterOperation* referenceFilter = static_cast<ReferenceFilterOperation*>(filterOperation.get());
+
+            WebKitCSSSVGDocumentValue* value = m_pendingSVGDocuments.get(referenceFilter);
+            if (!value)
+                continue;
+            CachedSVGDocument* cachedDocument = value->load(cachedResourceLoader);
+            if (!cachedDocument)
+                continue;
+
+            // Stash the CachedSVGDocument on the reference filter.
+            referenceFilter->setData(cachedDocument);
+        }
+    }
+    m_pendingSVGDocuments.clear();
+}
+#endif
+
 #if ENABLE(CSS_SHADERS)
 StyleShader* StyleResolver::styleShader(CSSValue* value)
 {
@@ -5337,6 +5351,29 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, RenderStyle* style
             continue;
         }
 #endif
+        if (operationType == FilterOperation::REFERENCE) {
+#if ENABLE(SVG)
+            if (filterValue->length() != 1)
+                continue;
+            CSSValue* argument = filterValue->itemWithoutBoundsCheck(0);
+
+            if (!argument->isWebKitCSSSVGDocumentValue())
+                continue;
+
+            WebKitCSSSVGDocumentValue* svgDocumentValue = static_cast<WebKitCSSSVGDocumentValue*>(argument);
+            KURL url = m_element->document()->completeURL(svgDocumentValue->url());
+
+            RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(svgDocumentValue->url(), url.fragmentIdentifier(), operationType);
+            if (SVGURIReference::isExternalURIReference(svgDocumentValue->url(), m_element->document())) {
+                if (!svgDocumentValue->loadRequested())
+                    m_pendingSVGDocuments.set(operation.get(), svgDocumentValue);
+                else
+                    operation->setData(svgDocumentValue->cachedSVGDocument());
+            }
+            operations.operations().append(operation);
+#endif
+            continue;
+        }
 
         // Check that all parameters are primitive values, with the
         // exception of drop shadow which has a ShadowValue parameter.
@@ -5354,11 +5391,6 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, RenderStyle* style
 
         CSSPrimitiveValue* firstValue = filterValue->length() ? static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(0)) : 0;
         switch (filterValue->operationType()) {
-        case WebKitCSSFilterValue::ReferenceFilterOperation: {
-            if (firstValue)
-                operations.operations().append(ReferenceFilterOperation::create(firstValue->getStringValue(), operationType));
-            break;
-        }
         case WebKitCSSFilterValue::GrayscaleFilterOperation:
         case WebKitCSSFilterValue::SepiaFilterOperation:
         case WebKitCSSFilterValue::SaturateFilterOperation: {
@@ -5541,6 +5573,22 @@ void StyleResolver::loadPendingImages()
     }
 
     m_pendingImageProperties.clear();
+}
+
+void StyleResolver::loadPendingResources()
+{
+    // Start loading images referenced by this style.
+    loadPendingImages();
+
+#if ENABLE(CSS_SHADERS)
+    // Start loading the shaders referenced by this style.
+    loadPendingShaders();
+#endif
+    
+#if ENABLE(CSS_FILTERS) && ENABLE(SVG)
+    // Start loading the SVG Documents referenced by this style.
+    loadPendingSVGDocuments();
+#endif
 }
 
 } // namespace WebCore

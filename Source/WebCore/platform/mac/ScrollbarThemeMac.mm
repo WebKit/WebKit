@@ -27,6 +27,7 @@
 #include "ScrollbarThemeMac.h"
 
 #include "ImageBuffer.h"
+#include "GraphicsLayer.h"
 #include "LocalCurrentGraphicsContext.h"
 #include "NSScrollerImpDetails.h"
 #include "PlatformMouseEvent.h"
