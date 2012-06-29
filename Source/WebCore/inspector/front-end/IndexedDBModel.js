@@ -390,7 +390,7 @@ WebInspector.IndexedDBModel.prototype = {
             for (var i = 0; i < databaseWithObjectStores.objectStores.length; ++i) {
                 var objectStore = databaseWithObjectStores.objectStores[i];
                 var objectStoreIDBKeyPath = WebInspector.IndexedDBModel.idbKeyPathFromKeyPath(objectStore.keyPath);
-                var objectStoreModel = new WebInspector.IndexedDBModel.ObjectStore(objectStore.name, objectStoreIDBKeyPath);
+                var objectStoreModel = new WebInspector.IndexedDBModel.ObjectStore(objectStore.name, objectStoreIDBKeyPath, objectStore.autoIncrement);
                 for (var j = 0; j < objectStore.indexes.length; ++j) {
                      var index = objectStore.indexes[j];
                      var indexIDBKeyPath = WebInspector.IndexedDBModel.idbKeyPathFromKeyPath(index.keyPath);
@@ -538,10 +538,11 @@ WebInspector.IndexedDBModel.Database = function(databaseId, version)
  * @param {string} name
  * @param {*} keyPath
  */
-WebInspector.IndexedDBModel.ObjectStore = function(name, keyPath)
+WebInspector.IndexedDBModel.ObjectStore = function(name, keyPath, autoIncrement)
 {
     this.name = name;
     this.keyPath = keyPath;
+    this.autoIncrement = autoIncrement;
     this.indexes = {};
 }
 

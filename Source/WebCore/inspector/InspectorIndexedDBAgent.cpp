@@ -330,10 +330,11 @@ public:
                     .setMultiEntry(indexMetadata.multiEntry);
                 indexes->addItem(objectStoreIndex);
             }
-            // FIXME: add objectStoreMetadata.autoIncrement property http://webkit.org/b/89701
+
             RefPtr<ObjectStore> objectStore = ObjectStore::create()
                 .setName(objectStoreMetadata.name)
                 .setKeyPath(keyPathFromIDBKeyPath(objectStoreMetadata.keyPath))
+                .setAutoIncrement(objectStoreMetadata.autoIncrement)
                 .setIndexes(indexes);
             objectStores->addItem(objectStore);
         }

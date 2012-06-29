@@ -659,6 +659,7 @@ localizedStrings["Glue asynchronous events to causes"] = "Glue asynchronous even
 localizedStrings["undefined × %d"] = "undefined × %d";
 localizedStrings["Version"] = "Version";
 localizedStrings["Key path: "] = "Key path: ";
+localizedStrings["autoIncrement"] = "autoIncrement";
 localizedStrings["unique"] = "unique";
 localizedStrings["multiEntry"] = "multiEntry";
 localizedStrings["Show each event category as a horizontal strip in overview"] = "Show each event category as a horizontal strip in overview";

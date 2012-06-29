@@ -1,3 +1,13 @@
+2012-06-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: IDBObjectStore.autoIncrement flag not exposed
+        https://bugs.webkit.org/show_bug.cgi?id=89701
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/indexeddb/database-structure-expected.txt:
+        * http/tests/inspector/indexeddb/database-structure.html:
+
 2012-06-28  Alexander Pavlov  <apavlov@chromium.org>
 
         Use floating keyframe rule list when parsing @-webkit-keyframes and allow abrupt rule termination

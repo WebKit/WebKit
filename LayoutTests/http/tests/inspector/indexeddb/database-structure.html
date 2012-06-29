@@ -28,6 +28,7 @@ function test()
             var objectStore = database.objectStores[objectStoreNames[i]];
             InspectorTest.addResult("    " + objectStore.name);
             InspectorTest.addResult("        keyPath: " + JSON.stringify(objectStore.keyPath));
+            InspectorTest.addResult("        autoIncrement: " + objectStore.autoIncrement);
             InspectorTest.addResult("        indexes: ");
             var indexNames = [];
             for (var indexName in objectStore.indexes)

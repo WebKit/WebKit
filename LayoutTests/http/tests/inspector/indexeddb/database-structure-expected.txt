@@ -22,6 +22,7 @@ testDatabase1
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
+        autoIncrement: true
         indexes: 
 
 Dumping database:
@@ -30,9 +31,11 @@ testDatabase1
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
+        autoIncrement: true
         indexes: 
     testObjectStore2
         keyPath: null
+        autoIncrement: false
         indexes: 
 
 Dumping database:
@@ -41,9 +44,11 @@ testDatabase1
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
+        autoIncrement: true
         indexes: 
     testObjectStore2
         keyPath: null
+        autoIncrement: false
         indexes: 
         testIndexName1
             keyPath: ""
@@ -56,9 +61,11 @@ testDatabase1
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
+        autoIncrement: true
         indexes: 
     testObjectStore2
         keyPath: null
+        autoIncrement: false
         indexes: 
         testIndexName1
             keyPath: ""
@@ -75,9 +82,11 @@ testDatabase1
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
+        autoIncrement: true
         indexes: 
     testObjectStore2
         keyPath: null
+        autoIncrement: false
         indexes: 
         testIndexName1
             keyPath: ""
@@ -90,9 +99,11 @@ testDatabase1
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
+        autoIncrement: true
         indexes: 
     testObjectStore2
         keyPath: null
+        autoIncrement: false
         indexes: 
 
 Dumping database:
@@ -101,6 +112,7 @@ testDatabase1
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
+        autoIncrement: true
         indexes: 
 
 Dumping database:

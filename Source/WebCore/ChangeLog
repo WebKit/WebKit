@@ -1,3 +1,23 @@
+2012-06-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: IDBObjectStore.autoIncrement flag not exposed
+        https://bugs.webkit.org/show_bug.cgi?id=89701
+
+        Reviewed by Yury Semikhatsky.
+
+        Plumbed objectStore.autoIncrement to inspector front-end and added it to tooltip.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+        * inspector/front-end/IndexedDBModel.js:
+        (WebInspector.IndexedDBModel.prototype._loadDatabase.callback):
+        (WebInspector.IndexedDBModel.prototype._loadDatabase):
+        (WebInspector.IndexedDBModel.ObjectStore):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.IDBObjectStoreTreeElement.prototype._updateTooltip):
+
 2012-06-28  Alexander Pavlov  <apavlov@chromium.org>
 
         Use floating keyframe rule list when parsing @-webkit-keyframes and allow abrupt rule termination

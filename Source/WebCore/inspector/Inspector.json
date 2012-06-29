@@ -1097,6 +1097,7 @@
                 "properties": [
                     { "name": "name", "type": "string", "description": "Object store name." },
                     { "name": "keyPath", "$ref": "KeyPath", "description": "Object store key path." },
+                    { "name": "autoIncrement", "type": "boolean", "description": "If true, object store has auto increment flag set." },
                     { "name": "indexes", "type": "array", "items": { "$ref": "ObjectStoreIndex" }, "description": "Indexes in this object store." }
                 ]
             },

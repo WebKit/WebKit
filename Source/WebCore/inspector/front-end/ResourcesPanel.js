@@ -1722,8 +1722,12 @@ WebInspector.IDBObjectStoreTreeElement.prototype = {
 
     _updateTooltip: function()
     {
+        
         var keyPathString = this._objectStore.keyPathString;
-        this.tooltip = keyPathString !== null ? (WebInspector.UIString("Key path: ") + keyPathString) : "";
+        var tooltipString = keyPathString !== null ? (WebInspector.UIString("Key path: ") + keyPathString) : "";
+        if (this._objectStore.autoIncrement)
+            tooltipString += "\n" + WebInspector.UIString("autoIncrement");
+        this.tooltip = tooltipString
     },
 
     onselect: function()
