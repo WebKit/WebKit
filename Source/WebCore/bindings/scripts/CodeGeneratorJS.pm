@@ -2346,7 +2346,7 @@ sub GenerateImplementation
                 $rootString .= "    void* root = WebCore::root(element);\n";
             } elsif ($interfaceName eq "CanvasRenderingContext") {
                 $rootString  = "    void* root = WebCore::root(js${implClassName}->impl()->canvas());\n";
-            } elsif ($interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection") {
+            } elsif (GetGenerateIsReachable($dataNode) eq "ImplBaseRoot") {
                 $rootString  = "    void* root = WebCore::root(js${implClassName}->impl()->base());\n";
             } else {
                 $rootString  = "    void* root = WebCore::root(js${implClassName}->impl());\n";

@@ -30,7 +30,8 @@ module html {
         NamedGetter,
         CustomCall,
         MasqueradesAsUndefined,
-        JSGenerateIsReachable
+        GenerateIsReachable=ImplBaseRoot,
+        V8DependentLifetime
     ] HTMLAllCollection {
         readonly attribute unsigned long length;
         [Custom] Node item(in [Optional=DefaultIsUndefined] unsigned long index);

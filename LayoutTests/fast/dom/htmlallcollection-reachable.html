@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+
+document.all.customProperty = 42;
+gc();
+shouldBe('document.all.customProperty', '42');
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>

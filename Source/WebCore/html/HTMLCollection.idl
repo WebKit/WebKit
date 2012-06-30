@@ -24,7 +24,8 @@ module html {
         IndexedGetter,
         NamedGetter,
         CustomToJSObject,
-        JSGenerateIsReachable,
+        GenerateIsReachable=ImplBaseRoot,
+        V8DependentLifetime,
         ObjCPolymorphic
     ] HTMLCollection {
         readonly attribute unsigned long length;

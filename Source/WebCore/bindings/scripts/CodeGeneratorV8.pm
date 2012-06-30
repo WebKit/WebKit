@@ -214,12 +214,14 @@ void V8${implClassName}::visitDOMWrapper(DOMDataStore* store, void* object, v8::
 END
     if (GetGenerateIsReachable($dataNode) eq  "ImplElementRoot" ||
         GetGenerateIsReachable($dataNode) eq  "ImplOwnerRoot" ||
-        GetGenerateIsReachable($dataNode) eq  "ImplOwnerNodeRoot") {
+        GetGenerateIsReachable($dataNode) eq  "ImplOwnerNodeRoot" ||
+        GetGenerateIsReachable($dataNode) eq  "ImplBaseRoot") {
 
         my $methodName;
         $methodName = "element" if (GetGenerateIsReachable($dataNode) eq "ImplElementRoot");
         $methodName = "owner" if (GetGenerateIsReachable($dataNode) eq "ImplOwnerRoot");
         $methodName = "ownerNode" if (GetGenerateIsReachable($dataNode) eq "ImplOwnerNodeRoot");
+        $methodName = "base" if (GetGenerateIsReachable($dataNode) eq "ImplBaseRoot");
 
         push(@implContent, <<END);
     if (Node* owner = impl->${methodName}()) {

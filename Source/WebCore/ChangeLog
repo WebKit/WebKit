@@ -1,3 +1,25 @@
+2012-06-29  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] HTMLCollection wrappers are not retained
+        https://bugs.webkit.org/show_bug.cgi?id=90208
+
+        Reviewed by Adam Barth.
+
+        Generate visitDOMWrapper for HTMLCollection and HTMLAllCollection so that we add an implicit reference from the owner
+        to the collection.
+
+        Tests: fast/dom/htmlallcollection-reachable.html
+               fast/dom/htmlcollection-reachable.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Instead of hard coding to use base() for HTMLAllCollection and HTMLCollection we now
+        annotate the IDL file to use GenerateIsReachable=ImplBaseRoot.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateVisitDOMWrapper): Generate visitDOMWrapper if GenerateIsReachable is ImplBaseRoot.
+        * bindings/scripts/IDLAttributes.txt: Added ImplBaseRoot.
+        * html/HTMLAllCollection.idl: Added annotations.
+        * html/HTMLCollection.idl: Ditto.
+
 2012-06-29  Tony Chang  <tony@chromium.org>
 
         All child elements of a flex container should be turned into a flex item
