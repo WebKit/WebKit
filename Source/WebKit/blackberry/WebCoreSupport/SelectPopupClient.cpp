@@ -82,7 +82,7 @@ void SelectPopupClient::generateHTML(bool multiple, int size, const ScopeArray<B
     // Add labels.
     source.append("[");
     for (int i = 0; i < size; i++) {
-        source.append("'" + String(labels[i].impl()) + "'");
+        source.append("'" + String(labels[i].impl()).replace("'", "\\'") + "'");
         // Don't append ',' to last element.
         if (i != size - 1)
             source.append(", ");
