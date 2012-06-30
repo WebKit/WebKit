@@ -1,3 +1,52 @@
+2012-06-29  Krzysztof Czech  <k.czech@samsung.com>, Tomasz Morawski <t.morawski@samsung.com>
+
+        [EFL] Implementation of testing framework and unit tests for WebKit-EFL port.
+        https://bugs.webkit.org/show_bug.cgi?id=68509
+
+        Reviewed by Chang Shu.
+
+        Testing framework is based on gtest library. Gtest library is part of the WebKit project. Framework is devided into base part and view part.
+        Base part takes care of efl initialization, defines test macros and prepares test to run. View part is a context of each test.
+
+        * tests/UnitTestUtils/EWKTestBase.cpp: Added.
+        (EWKUnitTests):
+        (EWKUnitTests::EWKTestBase::init):
+        (EWKUnitTests::EWKTestBase::shutdown):
+        (EWKUnitTests::EWKTestBase::shutdownAll):
+        (EWKUnitTests::EWKTestBase::startTest):
+        (EWKUnitTests::EWKTestBase::endTest):
+        (EWKUnitTests::EWKTestBase::createTest):
+        (EWKUnitTests::EWKTestBase::runTest):
+        * tests/UnitTestUtils/EWKTestBase.h: Added.
+        (EWKUnitTests):
+        (EWKTestBase):
+        * tests/UnitTestUtils/EWKTestConfig.h: Added.
+        (Config):
+        * tests/UnitTestUtils/EWKTestView.cpp: Added.
+        (EWKUnitTests):
+        (EWKUnitTests::EWKTestEcoreEvas::EWKTestEcoreEvas):
+        (EWKUnitTests::EWKTestEcoreEvas::evas):
+        (EWKUnitTests::EWKTestEcoreEvas::show):
+        (EWKUnitTests::EWKTestView::EWKTestView):
+        (EWKUnitTests::EWKTestView::init):
+        (EWKUnitTests::EWKTestView::show):
+        (EWKUnitTests::EWKTestView::mainFrame):
+        (EWKUnitTests::EWKTestView::evas):
+        (EWKUnitTests::EWKTestView::bindEvents):
+        * tests/UnitTestUtils/EWKTestView.h: Added.
+        (EWKUnitTests):
+        (EWKTestEcoreEvas):
+        (EWKTestView):
+        (EWKUnitTests::EWKTestView::webView):
+        * tests/resources/default_test_page.html: Added.
+        * tests/test_ewk_view.cpp: Added.
+        (ewkViewEditableGetCb):
+        (TEST):
+        (ewkViewUriGetCb):
+        * tests/test_runner.cpp: Added.
+        (parseCustomArguments):
+        (main):
+
 2012-06-29  Konrad Piascik  <kpiascik@rim.com>
 
         Don't hardcode target dpi of 160 (it should be 96 on desktop)
